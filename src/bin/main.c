@@ -176,6 +176,7 @@ _cb_op_theme(void *data, Evas_Object *obj, void *event)
    Evas_Object *o;
 
    elm_box_clear(op_opbox);
+   // XXX: not done yet
 }
 
 static void
@@ -184,6 +185,7 @@ _cb_op_behavior(void *data, Evas_Object *obj, void *event)
    Evas_Object *o;
 
    elm_box_clear(op_opbox);
+   // XXX: not done yet
 }
 
 static void
