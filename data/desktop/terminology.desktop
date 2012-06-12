@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Terminology
+Generic=Terminal
+Comment=Terminal emulator
+Exec=terminology
+Icon=terminology.png
+Categories=Utility;TerminalEmulator;
+Terminal=false
+StartupWMClass=terminology

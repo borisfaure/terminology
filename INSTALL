@@ -1,0 +1,11 @@
+COMPILING and INSTALLING:
+
+If you got a official release tar archive do:
+    ./configure
+    
+Then to compile:
+    make
+
+To install (run this as root, or the user who handles installs):
+    make install
+

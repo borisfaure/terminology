@@ -1,0 +1,91 @@
+collections {
+   group { name: "terminology/background";
+      images {
+        image: "bg_bevel.png" COMP;
+        image: "bg_shine.png" COMP;
+      }
+      parts {
+         part { name: "base"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               color: 48 48 48 255;
+            }
+         }
+         part { name: "terminology.content"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.offset: 1 2;
+               rel2.offset: -2 -2;
+            }
+         }
+         part { name: "bevel";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 0 1;
+               rel2.offset: -1 -1;
+               image.normal: "bg_bevel.png";
+               image.border: 2 2 2 2;
+               image.middle: 0;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "shine";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 0 1;
+               rel2.offset: -1 -1;
+               image.normal: "bg_shine.png";
+               align: 0.5 0.0;
+               aspect: (255/120) (255/120);
+               aspect_preference: HORIZONTAL;
+            }
+         }
+      }
+   }
+   group { name: "terminology/cursor";
+      parts {
+         part { name: "base"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               color: 255 255 255 30;
+            }
+            description { state: "focused" 0.0;
+               color: 255 255 255 160;
+            }
+         }
+         programs {
+            program { name: "focus_in";
+               signal: "focus,in";
+               source: "terminology";
+               action: STATE_SET "focused" 0.0;
+               target: "base";
+               after: "focus2";
+            }
+            program { name: "focus2";
+               in: 0.2 0.0;
+               action: STATE_SET "default" 0.0;
+               target: "base";
+               after: "focus3";
+            }
+            program { name: "focus3";
+               in: 0.2 0.0;
+               action: STATE_SET "focused" 0.0;
+               target: "base";
+               after: "focus2";
+            }
+            program { name: "focus_out";
+               signal: "focus,out";
+               source: "terminology";
+               action: ACTION_STOP;
+               target: "focus_in";
+               target: "focus2";
+               target: "focus3";
+               after: "focus_out2";
+            }
+            program { name: "focus_out2";
+               action: STATE_SET "default" 0.0;
+               target: "base";
+            }
+         }
+      }
+   }
+}
