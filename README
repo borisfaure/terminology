@@ -1,10 +1,10 @@
 Terminology
 -----------
 
-An EFL terminal emtulator
+An EFL terminal emulator
 
-Requiremnents:
---------------
+Requirements:
+-------------
 
   * elementary 1.1 (1.0.99 SVN latest)
   * evas 1.3 (1.2.99 SVN latest)
