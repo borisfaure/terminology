@@ -315,6 +315,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    evas_object_raise(sd->cur.obj);
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
+   printf("req grid %ix%i\n", sd->grid.w, sd->grid.h);
    evas_object_size_hint_request_set(obj, 
                                      sd->font.chw * sd->grid.w,
                                      sd->font.chh * sd->grid.h);

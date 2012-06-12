@@ -7,7 +7,7 @@ const char *cmd = NULL;
 static Evas_Object *win, *bg, *term;
 static Evas_Object 
   *op_frame, *op_box, *op_toolbar, *op_opbox, 
-  *op_fontslider, *op_fontllist;
+  *op_fontslider, *op_fontlist;
 static Eina_Bool op_out = EINA_FALSE;
 
 static void
@@ -55,6 +55,23 @@ static Eina_List *fonts = NULL;
 static Eina_Hash *fonthash = NULL;
 
 static void
+_update_sizing(void)
+{
+   Evas_Coord ow = 0, oh = 0, mw = 1, mh = 1, w, h;
+   
+   evas_object_data_del(term, "sizedone");
+   termio_config_update(term);
+   evas_object_geometry_get(term, NULL, NULL, &ow, &oh);
+   evas_object_size_hint_min_get(term, &mw, &mh);
+   if (mw < 1) mw = 1;
+   if (mh < 1) mh = 1;
+   w = ow / mw;
+   h = oh / mh;
+   evas_object_data_del(term, "sizedone");
+   evas_object_size_hint_request_set(term, w * mw, h * mh);
+}
+
+static void
 _cb_op_font_sel(void *data, Evas_Object *obj, void *event)
 {
    Font *f = data;
@@ -63,8 +80,7 @@ _cb_op_font_sel(void *data, Evas_Object *obj, void *event)
    if (config->font.name) eina_stringshare_del(config->font.name);
    config->font.name = eina_stringshare_add(f->name);
    config->font.bitmap = f->bitmap;
-   evas_object_data_del(term, "sizedone");
-   termio_config_update(term);
+   _update_sizing();
 }
 
 static void
@@ -74,8 +90,7 @@ _cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event)
 
    if (config->font.size == size) return;
    config->font.size = size;
-   evas_object_data_del(term, "sizedone");
-   termio_config_update(term);
+   _update_sizing();
 }
 
 static int
@@ -118,7 +133,7 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_fontsize_sel, NULL);
    
-   o = elm_list_add(win);
+   op_fontlist = o = elm_list_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    
