@@ -39,6 +39,43 @@ collections {
                aspect_preference: HORIZONTAL;
             }
          }
+         part { name: "terminology.options"; type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 120 120;
+               align: 0.0 0.5;
+               rel1 {
+                  relative: 1.0 0.02;
+                  offset: 8 8;
+               }
+               rel2 {
+                  relative: 1.0 0.98;
+                  offset: 8 -9;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               align: 1.0 0.5;
+               rel1.offset: -9 8;
+               rel2.offset: -9 -9;
+            }
+         }
+         programs {
+            program { name: "op_show";
+               signal: "options,show";
+               source: "terminology";
+               action: STATE_SET "visible" 0.0;
+               transition: DECELERATE 0.5;
+               target: "terminology.options";
+            }
+            program { name: "op_hide";
+               signal: "options,hide";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               transition: DECELERATE 0.5;
+               target: "terminology.options";
+            }
+         }
       }
    }
    group { name: "terminology/cursor";

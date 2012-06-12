@@ -252,14 +252,17 @@ _smart_apply(Evas_Object *obj)
 }
 
 static void
-_smart_size(Evas_Object *obj, int w, int h)
+_smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   if ((w == sd->grid.w) && (h == sd->grid.h)) return;
+   if (!force)
+     {
+        if ((w == sd->grid.w) && (h == sd->grid.h)) return;
+     }
 
    evas_event_freeze(evas_object_evas_get(obj));
    if (sd->grid.array)
@@ -337,7 +340,7 @@ _smart_cb_delayed_size(void *data)
    
    w = ow / sd->font.chw;
    h = oh / sd->font.chh;
-   _smart_size(obj, w, h);
+   _smart_size(obj, w, h, EINA_FALSE);
    return EINA_FALSE;
 }
 
@@ -606,9 +609,7 @@ _smart_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event)
    else if (ev->button == 2)
      _paste_selection(data);
    else if (ev->button == 3)
-     {
-        // XXX: popup config panel
-     }
+     evas_object_smart_callback_call(data, "options", NULL);
 }
 
 static void
@@ -954,7 +955,6 @@ _smart_pty_cancel_sel(void *data)
    if (sd->cur.sel)
      {
         sd->cur.sel = 0;
-        _clear_selection(data);
         sd->cur.makesel = 0;
         if (sd->job) ecore_job_del(sd->job);
         sd->job = ecore_job_add(_smart_cb_change, data);
@@ -987,15 +987,14 @@ termio_add(Evas_Object *parent, const char *cmd, int w, int h)
    sd->pty->cb.set_icon.data = obj;
    sd->pty->cb.cancel_sel.func = _smart_pty_cancel_sel;
    sd->pty->cb.cancel_sel.data = obj;
-   _smart_size(obj, w, h);
+   _smart_size(obj, w, h, EINA_FALSE);
    return obj;
 }
 
 void
 termio_win_set(Evas_Object *obj, Evas_Object *win)
 {
-   Termio *sd;
-   sd = evas_object_smart_data_get(obj);
+   Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->win = win;
 }
@@ -1003,8 +1002,7 @@ termio_win_set(Evas_Object *obj, Evas_Object *win)
 char *
 termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
 {
-   Termio *sd;
-   sd = evas_object_smart_data_get(obj);
+   Termio *sd = evas_object_smart_data_get(obj);
    Eina_Strbuf *sb;
    char *s, txt[8];
    int x, y;
@@ -1081,4 +1079,39 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
    s = eina_strbuf_string_steal(sb);
    eina_strbuf_free(sb);
    return s;
+}
+
+void
+termio_config_update(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Object *o;
+   Evas_Coord w, h;
+   char buf[4096];
+   
+   if (!sd) return;
+   
+   if (sd->font.name) eina_stringshare_del(sd->font.name);
+   sd->font.name = NULL;
+   
+   if (config->font.bitmap)
+     {
+        snprintf(buf, sizeof(buf), "%s/fonts/%s",
+                 elm_app_data_dir_get(), config->font.name);
+        sd->font.name = eina_stringshare_add(buf);
+     }
+   else
+     sd->font.name = eina_stringshare_add(config->font.name);
+   sd->font.size = config->font.size;
+   
+   o = evas_object_text_add(evas_object_evas_get(obj));
+   evas_object_text_font_set(o, sd->font.name, sd->font.size);
+   evas_object_text_text_set(o, "X");
+   evas_object_geometry_get(o, NULL, NULL, &w, &h);
+   evas_object_del(o);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   sd->font.chw = w;
+   sd->font.chh = h;
+   _smart_size(obj, sd->grid.w, sd->grid.h, EINA_TRUE);
 }
