@@ -15,7 +15,7 @@ tg_win_add(void)
    elm_win_icon_name_set(win, "Terminology");
    
    o = evas_object_image_add(evas_object_evas_get(win));
-   snprintf(buf, sizeof(buf), "%s/icons/terminology.png",
+   snprintf(buf, sizeof(buf), "%s/images/terminology.png",
             elm_app_data_dir_get());
    evas_object_image_file_set(o, buf, NULL);
    elm_win_icon_object_set(win, o);
