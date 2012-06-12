@@ -6,6 +6,7 @@ Config *config = NULL;
 void
 config_init(void)
 {
+   // XXX: need to load config and only if not found use this
    config = calloc(1, sizeof(Config));
 //   config->font.bitmap = 0;
 //   config->font.name = eina_stringshare_add("Monospace");
@@ -21,4 +22,5 @@ config_init(void)
 void
 config_shutdown(void)
 {
+   // XXX: free config
 }
