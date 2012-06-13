@@ -385,15 +385,6 @@ _take_selection(Evas_Object *obj)
      }
 }
 
-static void
-_clear_selection(Evas_Object *obj)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (!sd->win) return;
-   elm_object_cnp_selection_clear(sd->win, ELM_SEL_TYPE_PRIMARY);
-}
-
 static Eina_Bool
 _getsel_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
 {
@@ -593,11 +584,7 @@ _smart_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event)
           }
         else
           {
-             if (sd->cur.sel)
-               {
-                  sd->cur.sel = 0;
-                  _clear_selection(data);
-               }
+             if (sd->cur.sel) sd->cur.sel = 0;
              sd->cur.makesel = 1;
              sd->cur.sel1.x = cx;
              sd->cur.sel1.y = cy - sd->scroll;
@@ -1017,7 +1004,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
 
         w = 0;
         last0 = -1;
-        cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
+        cells = termpty_cellrow_get(sd->pty, y, &w);
         if (w > sd->grid.w) w = sd->grid.w;
         x1 = c1x;
         x2 = c2x;
