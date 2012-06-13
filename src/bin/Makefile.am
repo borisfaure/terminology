@@ -12,7 +12,9 @@ terminology_SOURCES = \
 col.c col.h \
 config.c config.h \
 keyin.c keyin.h \
-main.c \
+main.c main.h \
+options.c options.h \
+options_font.c options_font.h \
 termio.c termio.h \
 termpty.c termpty.h \
 utf8.c utf8.h \
