@@ -3,7 +3,6 @@ The following fonts are artwiz fonts:
 anorexia.pcf
 aqui.pcf
 cure.pcf
-cursor.pcf
 drift.pcf
 edges.pcf
 fkp.pcf

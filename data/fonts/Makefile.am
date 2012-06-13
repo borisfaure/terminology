@@ -4,7 +4,6 @@ files_DATA = \
 anorexia.pcf \
 aqui.pcf \
 cure.pcf \
-cursor.pcf \
 drift.pcf \
 edges.pcf \
 fkp.pcf \
