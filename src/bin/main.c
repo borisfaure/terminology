@@ -106,7 +106,8 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
    char buf[4096], *file, *fname, *s;
    Eina_List *files, *fontlist, *l;
    Font *f;
-
+   Elm_Object_Item *it, *sel_it;
+   
    EINA_LIST_FREE(fonts, f)
      {
         eina_stringshare_del(f->name);
@@ -137,6 +138,8 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
+   elm_list_select_mode_set(o, ELM_OBJECT_SELECT_MODE_DEFAULT);
+
    evas_event_freeze(evas_object_evas_get(win));
    edje_freeze();
 
@@ -148,15 +151,27 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
         f->name = eina_stringshare_add(file);
         f->bitmap = EINA_TRUE;
         fonts = eina_list_append(fonts, f);
-        elm_list_item_append(o, f->name, NULL, NULL, _cb_op_font_sel, f);
+        it = elm_list_item_append(o, f->name, NULL, NULL, _cb_op_font_sel, f);
+        if ((config->font.bitmap) && (config->font.name) && 
+            (!strcmp(config->font.name, f->name)))
+          {
+             elm_list_item_selected_set(it, EINA_TRUE);
+             sel_it = it;
+          }
         free(file);
      }
 
    fontlist = evas_font_available_list(evas_object_evas_get(win));
-   fonthash = eina_hash_string_superfast_new(NULL);
-
    fontlist = eina_list_sort(fontlist, eina_list_count(fontlist),
                              _cb_op_font_sort);
+   fonthash = eina_hash_string_superfast_new(NULL);
+
+   if ((files) && (fontlist))
+     {
+        it = elm_list_item_append(o, "", NULL, NULL, NULL, NULL);
+        elm_list_item_separator_set(it, EINA_TRUE);
+     }
+   
    EINA_LIST_FOREACH(fontlist, l, fname)
      {
         snprintf(buf, sizeof(buf), "%s", fname);
@@ -170,14 +185,21 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
              f->bitmap = EINA_FALSE;
              eina_hash_add(fonthash, fname, f);
              fonts = eina_list_append(fonts, f);
-             elm_list_item_append(o, f->name, NULL, NULL, _cb_op_font_sel, f);
+             it = elm_list_item_append(o, f->name, NULL, NULL, _cb_op_font_sel, f);
+             if ((!config->font.bitmap) && (config->font.name) && 
+                 (!strcmp(config->font.name, f->name)))
+               {
+                  elm_list_item_selected_set(it, EINA_TRUE);
+                  sel_it = it;
+               }
           }
      }
    if (fontlist)
      evas_font_available_list_free(evas_object_evas_get(win), fontlist);
 
    elm_list_go(o);
-
+   if (sel_it) elm_list_item_show(sel_it);
+   
    edje_thaw();
    evas_event_thaw(evas_object_evas_get(win));
 
