@@ -5,8 +5,8 @@
 
 const char *cmd = NULL;
 static Evas_Object *win, *bg, *term;
-static Evas_Object 
-  *op_frame, *op_box, *op_toolbar, *op_opbox, 
+static Evas_Object
+  *op_frame, *op_box, *op_toolbar, *op_opbox,
   *op_fontslider, *op_fontlist;
 static Eina_Bool op_out = EINA_FALSE;
 
@@ -28,10 +28,10 @@ static void
 _cb_size_hint(void *data, Evas *e, Evas_Object *obj, void *event)
 {
    Evas_Coord mw, mh, rw, rh, w = 0, h = 0;
-   
+
    evas_object_size_hint_min_get(obj, &mw, &mh);
    evas_object_size_hint_request_get(obj, &rw, &rh);
-   
+
    edje_object_size_min_calc(bg, &w, &h);
    evas_object_size_hint_min_set(bg, w, h);
    elm_win_size_base_set(win, w - mw, h - mh);
@@ -58,7 +58,7 @@ static void
 _update_sizing(void)
 {
    Evas_Coord ow = 0, oh = 0, mw = 1, mh = 1, w, h;
-   
+
    evas_object_data_del(term, "sizedone");
    termio_config_update(term);
    evas_object_geometry_get(term, NULL, NULL, &ow, &oh);
@@ -106,7 +106,7 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
    char buf[4096], *file, *fname, *s;
    Eina_List *files, *fontlist, *l;
    Font *f;
-   
+
    EINA_LIST_FREE(fonts, f)
      {
         eina_stringshare_del(f->name);
@@ -118,7 +118,7 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
         fonthash = NULL;
      }
    elm_box_clear(op_opbox);
-   
+
    op_fontslider = o = elm_slider_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -129,14 +129,14 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
    elm_slider_value_set(o, config->font.size);
    elm_box_pack_end(op_opbox, o);
    evas_object_show(o);
-   
+
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_fontsize_sel, NULL);
-   
+
    op_fontlist = o = elm_list_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   
+
    evas_event_freeze(evas_object_evas_get(win));
    edje_freeze();
 
@@ -151,7 +151,7 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
         elm_list_item_append(o, f->name, NULL, NULL, _cb_op_font_sel, f);
         free(file);
      }
-   
+
    fontlist = evas_font_available_list(evas_object_evas_get(win));
    fonthash = eina_hash_string_superfast_new(NULL);
 
@@ -175,9 +175,9 @@ _cb_op_font(void *data, Evas_Object *obj, void *event)
      }
    if (fontlist)
      evas_font_available_list_free(evas_object_evas_get(win), fontlist);
-   
+
    elm_list_go(o);
-   
+
    edje_thaw();
    evas_event_thaw(evas_object_evas_get(win));
 
@@ -211,18 +211,18 @@ _cb_options(void *data, Evas_Object *obj, void *event)
    if (!op_frame)
      {
         Elm_Object_Item *it_fn, *it_th, *it_bh;
-        
+
         op_frame = o = elm_frame_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_object_text_set(o, "Options");
-        
+
         op_box = o = elm_box_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
         elm_object_content_set(op_frame, o);
         evas_object_show(o);
-        
+
         op_toolbar = o = elm_toolbar_add(win);
         elm_object_style_set(o, "item_horizontal");
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -232,14 +232,14 @@ _cb_options(void *data, Evas_Object *obj, void *event)
         elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_DEFAULT);
         elm_toolbar_menu_parent_set(o, win);
         elm_toolbar_homogeneous_set(o, EINA_FALSE);
-        
+
         it_fn = elm_toolbar_item_append(o, "preferences-desktop-font", "Font",
                                         _cb_op_font, NULL);
         it_th = elm_toolbar_item_append(o, "preferences-desktop-theme", "Theme",
                                         _cb_op_theme, NULL);
         it_bh = elm_toolbar_item_append(o, "system-run", "Behavior",
                                         _cb_op_behavior, NULL);
-        
+
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
 
@@ -248,9 +248,9 @@ _cb_options(void *data, Evas_Object *obj, void *event)
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
-        
+
         elm_toolbar_item_selected_set(it_fn, EINA_TRUE);
-        
+
         evas_smart_objects_calculate(evas_object_evas_get(win));
         edje_object_part_swallow(bg, "terminology.options", op_frame);
         evas_object_show(o);
@@ -289,7 +289,7 @@ elm_main(int argc, char **argv)
              cmd = argv[i];
           }
      }
-   
+
    win = tg_win_add();
 
    bg = o = edje_object_add(evas_object_evas_get(win));
@@ -300,7 +300,7 @@ elm_main(int argc, char **argv)
    edje_object_file_set(o, buf, "terminology/background");
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
-   
+
    term = o = termio_add(win, cmd, 80, 24);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -314,9 +314,9 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(win, "focus,in", _cb_focus_in, term);
    evas_object_smart_callback_add(win, "focus,out", _cb_focus_out, term);
    _cb_size_hint(win, evas_object_evas_get(win), term, NULL);
-   
+
    evas_object_show(win);
-   
+
    elm_run();
    elm_shutdown();
    config_shutdown();

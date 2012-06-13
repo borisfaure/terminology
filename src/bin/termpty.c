@@ -22,7 +22,7 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
 {
    int i;
    Termatt clear;
-   
+
    memset(&clear, 0, sizeof(clear));
    if (inherit_att)
      {
@@ -52,7 +52,7 @@ static void
 _text_save_top(Termpty *ty)
 {
    Termsave *ts;
-   
+
    ts = malloc(sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
    ts->w = ty->w;
    _text_copy(ty, ty->screen, ts->cell, ty->w);
@@ -124,7 +124,7 @@ static void
 _text_scroll_test(Termpty *ty)
 {
    int e = ty->h;
-   
+
    if (ty->state.scroll_y2 != 0) e = ty->state.scroll_y2;
    if (ty->state.cy >= e)
      {
@@ -137,7 +137,7 @@ static void
 _text_scroll_rev_test(Termpty *ty)
 {
    int b = 0;
-   
+
    if (ty->state.scroll_y2 != 0) b = ty->state.scroll_y1;
    if (ty->state.cy < b)
      {
@@ -228,7 +228,7 @@ static void
 _clear_screen(Termpty *ty, int mode)
 {
    Termcell *cells;
-           
+
    cells = ty->screen;
    switch (mode)
      {
@@ -323,7 +323,7 @@ _csi_arg_get(char **ptr)
    char *b = *ptr;
    int octal = 0;
    int sum = 0;
-   
+
    while ((*b) && (!isdigit(*b))) b++;
    if (!*b)
      {
@@ -347,7 +347,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
 {
    int *cc, arg, first = 1, i;
    char buf[4096], *b;
-   
+
    cc = (int *)c;
    b = buf;
    while ((cc < ce) && (*cc >= '0') && (*cc <= '?'))
@@ -506,7 +506,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
           {
              int pi = ty->state.insert;
              int blank[1] = { ' ' };
-             
+
              ty->state.wrapnext = 0;
              ty->state.insert = 1;
              for (i = 0; i < arg; i++)
@@ -638,7 +638,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
         arg = _csi_arg_get(&b);
           {
              int sy1, sy2;
-             
+
              sy1 = ty->state.scroll_y1;
              sy2 = ty->state.scroll_y2;
              if (ty->state.scroll_y2 == 0)
@@ -667,7 +667,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
           {
              Termcell *cells;
              int x, lim;
-             
+
              if (arg < 1) arg = 1;
              cells = &(ty->screen[ty->state.cy * ty->w]);
              lim = ty->w - arg;
@@ -722,7 +722,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
           {
              int mode = 0, priv = 0;
              int handled = 0;
-             
+
              if (*cc == 'h') mode = 1;
              if (*b == '?')
                {
@@ -737,7 +737,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                        if (b)
                          {
                             int i, size;
-                                      
+
                             switch (arg)
                               {
                                case 1:
@@ -792,7 +792,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  for (i = 0; i < size; i++)
                                    {
                                       Termcell t;
-                                      
+
                                       t = ty->screen[i];
                                       ty->screen[i] = ty->screen2[i];
                                       ty->screen2[i] = t;
@@ -856,7 +856,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
         else
           {
              int arg2;
-             
+
              arg2 = _csi_arg_get(&b);
              if (!b)
                {
@@ -890,7 +890,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
       case 'u': // restore cursor pos
         _cursor_copy(&(ty->save), &(ty->state));
         break;
-/*        
+/*
       case 'R': // report cursor
         break;
       case 'n': // "6n" queires cursor pos, 0n, 3n, 5n too
@@ -925,7 +925,7 @@ _handle_esc_xterm(Termpty *ty, const int *c, int *ce)
 {
    int *cc;
    char buf[4096], *b;
-   
+
    cc = (int *)c;
    b = buf;
    while ((cc < ce) && (*cc >= ' ') && (*cc < 0x7f))
@@ -1043,7 +1043,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
           {
              int i, size;
              Termcell *cells;
-             
+
              DBG("reset to init mode and clear then fill with E\n");
              _reset_state(ty);
              ty->save = ty->state;
@@ -1067,7 +1067,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
       case '8': // restore cursor pos
         _cursor_copy(&(ty->save), &(ty->state));
         return 2;
-/*        
+/*
       case 'G': // query gfx mode
         return 3;
       case 'H': // set tab at current column
@@ -1088,12 +1088,12 @@ static int
 _handle_seq(Termpty *ty, const int *c, int *ce)
 {
    int *cc, len = 0;
-   
+
    if (c[0] < 0x20)
      {
         switch (c[0])
           {
-/*             
+/*
            case 0x00: // NUL
              return 1;
            case 0x01: // SOH (start of heading)
@@ -1109,7 +1109,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              _term_txt_write(ty, "ABC\r\n");
              ty->state.had_cr = 0;
              return 1;
-/*            
+/*
            case 0x06: // ACK (acknowledge)
              return 1;
  */
@@ -1134,7 +1134,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
                ty->state.cx = ty->w - 1;
              ty->state.had_cr = 0;
              return 1;
-           case 0x0a: // LF  '\n' (new line) 
+           case 0x0a: // LF  '\n' (new line)
            case 0x0b: // VT  '\v' (vertical tab)
            case 0x0c: // FF  '\f' (form feed)
              DBG("->LF\n");
@@ -1157,7 +1157,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              ty->state.cx = 0;
              ty->state.had_cr = 1;
              return 1;
-/*             
+/*
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
              return 1;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
@@ -1188,7 +1188,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
            case 0x1b: // ESC (escape)
              ty->state.had_cr = 0;
              return _handle_esc(ty, c, ce);
-/*             
+/*
            case 0x1c: // FS  (file separator)
              return 1;
            case 0x1d: // GS  (group separator)
@@ -1210,7 +1210,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
         ty->state.had_cr = 0;
         return 1;
      }
-        
+
    cc = (int *)c;
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != 0xf7))
@@ -1229,7 +1229,7 @@ static void
 _handle_buf(Termpty *ty, const int *glyphs, int len)
 {
    int *c, *ce, n, *b, bytes;
-   
+
    c = (int *)glyphs;
    ce = &(c[len]);
 
@@ -1312,7 +1312,7 @@ static void
 _pty_size(Termpty *ty)
 {
    struct winsize sz;
-   
+
    sz.ws_col = ty->w;
    sz.ws_row = ty->h;
    sz.ws_xpixel = 0;
@@ -1325,7 +1325,7 @@ _cb_exe_exit(void *data, int type, void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
    Termpty *ty = data;
-   
+
    if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
    // XXX: report via cb
    exit(ev->exit_code);
@@ -1351,7 +1351,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         for (i = 0; i < len;)
           {
              int g = 0;
-             
+
              if (buf[i])
                {
                   i = evas_string_char_next_get(buf, i, &g);
@@ -1390,7 +1390,7 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
 {
    Termpty *ty;
    const char *pty;
-   
+
    ty = calloc(1, sizeof(Termpty));
    if (!ty) return NULL;
    ty->w = w;
@@ -1400,12 +1400,12 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
    _reset_state(ty);
    ty->save = ty->state;
    ty->swap = ty->state;
-   
+
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen) goto err;
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen2) goto err;
-   
+
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0) goto err;
    if (grantpt(ty->fd) != 0) goto err;
@@ -1431,13 +1431,13 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
           }
         ty->fd = ty->slavefd;
         setsid();
-        
+
         dup2(ty->fd, 0);
         dup2(ty->fd, 1);
         dup2(ty->fd, 2);
-        
+
         if (ioctl(ty->fd, TIOCSCTTY, NULL) < 0) exit(1);
-        
+
         uid = getuid();
         pw = getpwuid(uid);
         if (!pw) shell = "/bin/sh";
@@ -1479,7 +1479,7 @@ termpty_free(Termpty *ty)
    if (ty->back)
      {
         int i;
-        
+
         for (i = 0; i < ty->backmax; i++)
           {
              if (ty->back[i]) free(ty->back[i]);
@@ -1497,7 +1497,7 @@ Termcell *
 termpty_cellrow_get(Termpty *ty, int y, int *wret)
 {
    Termsave *ts;
-   
+
    if (y >= 0)
      {
         if (y >= ty->h) return NULL;
@@ -1522,21 +1522,21 @@ termpty_resize(Termpty *ty, int w, int h)
 {
    Termcell *olds, *olds2;
    int y, ww, hh, oldw, oldh;
-   
+
    if ((ty->w == w) && (ty->h == h)) return;
 
    olds = ty->screen;
    olds2 = ty->screen2;
    oldw = ty->w;
    oldh = ty->h;
-   
+
    ty->w = w;
    ty->h = h;
    ty->state.had_cr = 0;
    _limit_coord(ty, &(ty->state));
    _limit_coord(ty, &(ty->swap));
    _limit_coord(ty, &(ty->save));
-   
+
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
      {
@@ -1548,7 +1548,7 @@ termpty_resize(Termpty *ty, int w, int h)
      {
         ERR("memerr");
      }
-   
+
    ww = ty->w;
    hh = ty->h;
    if (ww > oldw) ww = oldw;
@@ -1557,11 +1557,11 @@ termpty_resize(Termpty *ty, int w, int h)
    for (y = 0; y < hh; y++)
      {
         Termcell *c1, *c2;
-        
+
         c1 = &(olds[y * oldw]);
         c2 = &(ty->screen[y * ty->w]);
         _text_copy(ty, c1, c2, ww);
-        
+
         c1 = &(olds2[y * oldw]);
         c2 = &(ty->screen2[y * ty->w]);
         _text_copy(ty, c1, c2, ww);
