@@ -20,6 +20,13 @@ _cb_op_theme(void *data, Evas_Object *obj, void *event)
 }
 
 static void
+_cb_op_wallpaper(void *data, Evas_Object *obj, void *event)
+{
+   elm_box_clear(op_opbox);
+   // XXX: not done yet
+}
+
+static void
 _cb_op_behavior(void *data, Evas_Object *obj, void *event)
 {
    elm_box_clear(op_opbox);
@@ -33,7 +40,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 
    if (!op_frame)
      {
-        Elm_Object_Item *it_fn, *it_th, *it_bh;
+        Elm_Object_Item *it_fn, *it_th, *it_wp, *it_bh;
 
         op_frame = o = elm_frame_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -41,15 +48,15 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_object_text_set(o, "Options");
 
         op_box = o = elm_box_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+        elm_box_horizontal_set(o, EINA_TRUE);
         elm_object_content_set(op_frame, o);
         evas_object_show(o);
 
         op_toolbar = o = elm_toolbar_add(win);
+        elm_toolbar_horizontal_set(o, EINA_FALSE);
         elm_object_style_set(o, "item_horizontal");
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+        evas_object_size_hint_weight_set(o, 0.0, 0.0);
+        evas_object_size_hint_align_set(o, 0.5, 0.0);
         elm_toolbar_icon_size_set(o, 16);
         elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_NONE);
         elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_DEFAULT);
@@ -60,6 +67,8 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
                                         _cb_op_font, term);
         it_th = elm_toolbar_item_append(o, "preferences-desktop-theme", "Theme",
                                         _cb_op_theme, NULL);
+        it_wp = elm_toolbar_item_append(o, "video-display", "Wallpaper",
+                                        _cb_op_wallpaper, NULL);
         it_bh = elm_toolbar_item_append(o, "system-run", "Behavior",
                                         _cb_op_behavior, NULL);
 
