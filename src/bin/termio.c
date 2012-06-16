@@ -791,7 +791,7 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
-   sd->delayed_size_timer = ecore_timer_add(0.02, _smart_cb_delayed_size, obj);
+   sd->delayed_size_timer = ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
    evas_object_resize(sd->event, ow, oh);
 }
 
@@ -1061,7 +1061,6 @@ void
 termio_config_update(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Evas_Object *o;
    Evas_Coord w, h;
    char buf[4096];
 
@@ -1080,11 +1079,8 @@ termio_config_update(Evas_Object *obj)
      sd->font.name = eina_stringshare_add(config->font.name);
    sd->font.size = config->font.size;
 
-   o = evas_object_text_add(evas_object_evas_get(obj));
-   evas_object_text_font_set(o, sd->font.name, sd->font.size);
-   evas_object_text_text_set(o, "X");
-   evas_object_geometry_get(o, NULL, NULL, &w, &h);
-   evas_object_del(o);
+   evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
+   evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    sd->font.chw = w;

@@ -45,6 +45,7 @@ _cb_op_font_sel(void *data, Evas_Object *obj, void *event)
    config->font.name = eina_stringshare_add(f->name);
    config->font.bitmap = f->bitmap;
    _update_sizing(f->term);
+   config_save();
 }
 
 static void
@@ -55,6 +56,7 @@ _cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event)
    if (config->font.size == size) return;
    config->font.size = size;
    _update_sizing(data);
+   config_save();
 }
 
 static int
