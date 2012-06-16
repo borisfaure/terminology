@@ -1,0 +1,77 @@
+
+here's a short list of things i think we can do in the short to medium term to
+make it a first-class terminal:
+
+[X] evas textgrid needs creating and to be used
+[ ] underline and strikethrough need supporting at termio level
+[ ] blink and blink2 attributes need to be supported
+[ ] improve terminal emulation handling (i know it doesn't handle gfx
+    chars and it definitely has an incomplete escape handling core -
+    many are commented out and unhandled)
+[ ] copy & paste support for clipboard not just primary (like xterm)
+[ ] dnd text (to/from terminal)
+[ ] ecore-imf support
+[ ] handle multibyte displays better (does handle utf8 only atm and
+    then maybe not according to convention)
+[ ] general input mode handling improvements (keypad, other key
+    input, mousereporting etc.)
+[ ] save of config after options changes (option checkbox for
+    temporary local only changes)
+[ ] selection of themes
+[ ] selection of background "wallpapers" (and support them at all -
+    doesn't right now - should support regular images, animated gifs,
+    and edje files)
+[ ] transparency support (theme needs to be told to go into
+    tranpsarency mode and then window alpha enabled)
+[ ] visual bell reporting (signals to theme)
+[ ] scrollbar (elm scroller that mirrors the term smart size/position
+    - gives us fingerscroll - layer on top of term smart, stick
+    invisible rect inside to track for scrolling etc.)
+[ ] selection mode mirrors entry style for touch displays (handle
+    on_hold flags, etc.)
+[ ] selection off edge scrolls in that direction (as per selection
+    mode too if it gets NEAR an edge)
+[ ] selection should become single edje object so it can be styled nicely
+[ ] selection should have handles on the start/end so u can drag and
+    change its size once there
+[ ] improve selection text extraction logic
+[ ] font selector should include font previews in the list -
+    preferably ONLY be a list of previews
+[ ] options widgets should be deleted once they are hidden. they stay
+    in memory at the moment
+[ ] clicking with ANY mouse button while options is up outside of
+    options should dismiss it.
+
+things in future to make it totally kick-butt:
+
+[ ] "tabs" (multiple terminals inside a window) with a nice selector
+    that looks like e17's wallpaper2 selector a bit :)
+[ ] track child process stats like cwd etc. and when launching a new
+    "tab" or shell use the last child process cwd to put the shell
+    inot
+[ ] track mem and iowait and cpu stats for child procs and their
+    children and display them as little overlays in the terminal so u
+    know if your "grep -r /" is cpu or io bound and what is eating up
+    all your cpu cycles or causing a tonne of hdd interrupts etc. -
+    send results of these stats to theme with messages much like
+    cpufreq, battery etc. do in e17 so theme can display as bars,
+    dials or anything it likes (text, led's etc. too).
+[ ] tiling layout within 1 window to lay out multiple terms in a
+    flexible split/merge column/row grid setup
+[ ] remember tile layouts and be able to restore them and at least as
+    much of child processes as the term can manage reasonably reliably
+[ ] split it out into a library - maybe just as part of elementary and
+    make a terminal widget where you can specify your own read/write
+    funcs for the term fd etc. so u can make a custom bit of code that
+    uses the terminal widget as if it were stdin/out but just as
+    loopback within the app (ie don't exec process - just create pty
+    and offer read/write to/from it)
+[ ] start supporting some of the crazy escape codes that let you
+    inline images into terminals or just create our own extensions and
+    then start making replacement "std command" wrappers/replacements
+    that are prepended to $PATH that  can do the right thing when u do
+    "ls" - i see a list of files and if some are images or documents -
+    u see thumbnails too. if u cat a jpeg.. u see it. if u cat a url
+    or html file.. up comes an inline web browser, provide nicer
+    visual "progessbars" and modified tools like wget that use these
+    escapes etc.
