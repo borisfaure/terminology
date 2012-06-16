@@ -69,6 +69,7 @@ _smart_apply(Evas_Object *obj)
         w = 0; j = 0;
         cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
+        if (!tc) continue;
         ch1 = -1;
         for (x = 0; x < sd->grid.w; x++)
           {
