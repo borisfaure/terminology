@@ -200,6 +200,9 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_slider_value_set(o, config->font.size);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   
+   evas_object_smart_callback_add(o, "delay,changed",
+                                  _cb_op_fontsize_sel, term);
 
    o = elm_label_add(opbox);
    elm_object_text_set(o, "<font_size=24>A</font_size>");
@@ -208,9 +211,6 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    
    elm_box_pack_end(opbox, bx);
    evas_object_show(bx);
-   
-   evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_op_fontsize_sel, term);
    
    it_class = elm_genlist_item_class_new();
    it_class->item_style = "default";
