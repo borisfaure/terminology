@@ -27,11 +27,22 @@ kates.pcf \
 lime.pcf \
 mints-mild.pcf \
 mints-strong.pcf \
-nex6x10.pcf \
+nexus.pcf \
 nu.pcf \
 smoothansi.pcf \
-snap.pcf
+snap.pcf \
+terminus-12.pcf \
+terminus-14-bold.pcf \
+terminus-14.pcf \
+terminus-16-bold.pcf \
+terminus-16.pcf \
+terminus-18-bold.pcf \
+terminus-18.pcf \
+terminus-20-bold.pcf \
+terminus-20.pcf
 
 EXTRA_DIST = $(files_DATA) \
 ARTWIZ.txt \
+TERMINUS.txt \
 XFONT.txt
+

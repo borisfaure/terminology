@@ -62,10 +62,8 @@ config_init(void)
    if (!config)
      {
         config = calloc(1, sizeof(Config));
-//        config->font.bitmap = 0;
-//        config->font.name = eina_stringshare_add("Monospace");
         config->font.bitmap = 1;
-        config->font.name = eina_stringshare_add("nex6x10.pcf");
+        config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
         config->scrollback = 4096;
         config->theme = eina_stringshare_add("default.edj");
