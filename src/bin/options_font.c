@@ -56,6 +56,7 @@ _cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event)
    if (config->font.size == size) return;
    config->font.size = size;
    _update_sizing(data);
+   elm_genlist_realized_items_update(op_fontlist);
    config_save();
 }
 
