@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include "options.h"
 #include "options_font.h"
+#include "options_behavior.h"
 
 static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL, *op_opbox = NULL;
 static Eina_Bool op_out = EINA_FALSE;
@@ -30,7 +31,7 @@ static void
 _cb_op_behavior(void *data, Evas_Object *obj, void *event)
 {
    elm_box_clear(op_opbox);
-   // XXX: not done yet
+   options_behavior(op_opbox, data);
 }
 
 void

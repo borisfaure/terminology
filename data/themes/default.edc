@@ -13,11 +13,19 @@ collections {
                fill.smooth: 0;
                visible: 0;
             }
+            description { state: "translucent" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
          }
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
                color: 48 48 48 255;
+            }
+            description { state: "translucent" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
             }
          }
          part { name: "terminology.content"; type: SWALLOW;
@@ -83,6 +91,20 @@ collections {
                action: STATE_SET "default" 0.0;
                transition: DECELERATE 0.5;
                target: "terminology.options";
+            }
+            program { name: "trans_on";
+               signal: "translucent,on";
+               source: "terminology";
+               action: STATE_SET "translucent" 0.0;
+               target: "base";
+               target: "shadow";
+            }
+            program { name: "trans_off";
+               signal: "translucent,off";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               target: "base";
+               target: "shadow";
             }
          }
       }

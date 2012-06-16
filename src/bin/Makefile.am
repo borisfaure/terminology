@@ -15,6 +15,7 @@ keyin.c keyin.h \
 main.c main.h \
 options.c options.h \
 options_font.c options_font.h \
+options_behavior.c options_behavior.h \
 termio.c termio.h \
 termpty.c termpty.h \
 utf8.c utf8.h \

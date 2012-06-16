@@ -47,6 +47,21 @@ _cb_options(void *data, Evas_Object *obj, void *event)
    options_toggle(win, bg, term);
 }
 
+void
+main_trans_update(void)
+{
+   if (config->translucent)
+     {
+        edje_object_signal_emit(bg, "translucent,on", "terminology");
+        elm_win_alpha_set(win, EINA_TRUE);
+     }
+   else
+     {
+        edje_object_signal_emit(bg, "translucent,off", "terminology");
+        elm_win_alpha_set(win, EINA_FALSE);
+     }
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -90,6 +105,8 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
    evas_object_show(o);
 
+   main_trans_update();
+   
    evas_object_smart_callback_add(win, "focus,in", _cb_focus_in, term);
    evas_object_smart_callback_add(win, "focus,out", _cb_focus_out, term);
    _cb_size_hint(win, evas_object_evas_get(win), term, NULL);
