@@ -7,7 +7,6 @@
 #include "config.h"
 
 typedef struct _Termio Termio;
-typedef struct _Termch Termch;
 
 struct _Termio
 {
@@ -37,12 +36,6 @@ struct _Termio
    Ecore_Timer *delayed_size_timer;
    Evas_Object *win;
    Eina_Bool jump_on_change : 1;
-};
-
-struct _Termch
-{
-   Evas_Object *bg;
-   Evas_Object *tx;
 };
 
 static Evas_Smart *_smart = NULL;
