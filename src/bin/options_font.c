@@ -104,6 +104,8 @@ _cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
           }
         else
           evas_object_text_font_set(o, f->name, config->font.size);
+        evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
+        evas_object_size_hint_min_set(o, ow, oh);
         edje_object_part_swallow(obj, "terminology.content", o);
      }
 }
@@ -122,7 +124,9 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
         snprintf(buf, sizeof(buf), "%s/themes/%s",
                  elm_app_data_dir_get(), config->theme);
         edje_object_file_set(o, buf, "terminology/fontpreview");
-        evas_object_size_hint_min_set(o, 40, 40);
+        evas_object_size_hint_min_set(o, 
+                                      40 * elm_config_scale_get(), 
+                                      40 * elm_config_scale_get());
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE,
                                        _cb_op_font_preview_eval, f);
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
