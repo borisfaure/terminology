@@ -9,7 +9,7 @@ config_init(void)
    // XXX: need to load config and only if not found use this
    config = calloc(1, sizeof(Config));
 //   config->font.bitmap = 0;
-//   config->font.name = eina_stringshare_add("Monospace");
+// config->font.name = eina_stringshare_add("Monospace");
    config->font.bitmap = 1;
    config->font.name = eina_stringshare_add("nex6x10.pcf");
    config->font.size = 10;

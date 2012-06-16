@@ -13,9 +13,10 @@ typedef struct _Termsave  Termsave;
 #define COL_MAGENTA    6
 #define COL_CYAN       7
 #define COL_WHITE      8
+#define COL_INVIS      9
 
-#define COL_INVERSE    9
-#define COL_INVERSEBG 10
+#define COL_INVERSE   10
+#define COL_INVERSEBG 11
 
 struct _Termatt
 {

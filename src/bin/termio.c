@@ -19,7 +19,7 @@ struct _Termio
    } font;
    struct {
       int w, h;
-      Termch *array;
+      Evas_Object *obj;
    } grid;
    struct {
       Evas_Object *obj, *selo1, *selo2, *selo3;
@@ -56,128 +56,131 @@ _smart_apply(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
    char txt[8];
+   int i, j, x, y, w, ch1, ch2;
+
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
-   if (sd->grid.array)
+   for (y = 0; y < sd->grid.h; y++)
      {
-        int i, j, x, y, w;
+        Termcell *cells;
+        Evas_Textgrid_Cell *tc;
 
-        i = 0;
-        for (y = 0; y < sd->grid.h; y++)
+        w = 0; j = 0;
+        cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
+        tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
+        ch1 = -1;
+        for (x = 0; x < sd->grid.w; x++)
           {
-             Termcell *cells;
-
-             w = 0;
-             cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
-             j = 0;
-             for (x = 0; x < sd->grid.w; x++)
+             if ((!cells) || (x >= w))
                {
-                  Evas_Object *bg = sd->grid.array[i].bg;
-                  Evas_Object *tx = sd->grid.array[i].tx;
-
-                  if ((!cells) || (x >= w))
+                  if ((tc[x].codepoint != 0) ||
+                      (tc[x].bg != COL_INVIS) ||
+                      (tc[x].bg_extended))
                     {
-                       evas_object_hide(bg);
-                       evas_object_hide(tx);
+                       if (ch1 < 0) ch1 = x;
+                       ch2 = x;
+                    }
+                  tc[x].codepoint = 0;
+                  tc[x].bg = COL_INVIS;
+                  tc[x].bg_extended = 0;
+               }
+             else
+               {
+                  if (cells[j].att.invisible)
+                    {
+                       if ((tc[x].codepoint != 0) ||
+                           (tc[x].bg != COL_INVIS) ||
+                           (tc[x].bg_extended))
+                         {
+                            if (ch1 < 0) ch1 = x;
+                            ch2 = x;
+                         }
+                       tc[x].codepoint = 0;
+                       tc[x].bg = COL_INVIS;
+                       tc[x].bg_extended = 0;
                     }
                   else
                     {
-                       Color c1, c2;
-
-                       if (cells[j].att.invisible)
+                       int bold, fg, bg, fgext, bgext, glyph;
+                       
+                       // colors
+                       bold = cells[j].att.bold;
+                       fgext = cells[j].att.fg256;
+                       bgext = cells[j].att.bg256;
+                       glyph = cells[j].glyph;
+                       
+                       if (cells[j].att.inverse)
                          {
-                            evas_object_hide(tx);
-                            evas_object_hide(bg);
-                         }
-                       else
-                         {
-                            int cbd, cbdbg, cfg, cbg;
-
-                            // colors
-                            cbd = cells[j].att.bold;
-                            cbdbg = 0;
-                            cfg = cells[j].att.fg;
-                            cbg = cells[j].att.bg;
-
-                            if (cells[j].att.inverse)
+                            fgext = 0;
+                            bgext = 0;
+                            fg = COL_INVERSE;
+                            bg = COL_INVERSEBG;
+                            if (bold)
                               {
-                                 cfg = COL_INVERSE;
-                                 cbg = COL_INVERSEBG;
-                                 cbdbg = cbd;
-                                 c1 = colors[cbd][cfg];
-                                 c2 = colors[cbdbg][cbg];
-                                 if (cbg == COL_DEF) evas_object_hide(bg);
-                                 else evas_object_show(bg);
-                              }
-                            else
-                              {
-                                 if (cells[j].att.fg256)
-                                   c1 = colors256[cfg];
-                                 else
-                                   c1 = colors[cbd][cfg];
-                                 if (cells[j].att.bg256)
-                                   {
-                                      c2 = colors256[cbg];
-                                      evas_object_show(bg);
-                                   }
-                                 else
-                                   {
-                                      c2 = colors[cbdbg][cbg];
-                                      if (cbg == COL_DEF) evas_object_hide(bg);
-                                      else evas_object_show(bg);
-                                   }
+                                 fg += 12;
+                                 bg += 12;
                               }
                             if (cells[j].att.faint)
                               {
-                                 c1.r /= 2;
-                                 c1.g /= 2;
-                                 c1.b /= 2;
-                                 c1.a /= 2;
-
-                                 c2.r /= 2;
-                                 c2.g /= 2;
-                                 c2.b /= 2;
-                                 c2.a /= 2;
-                              }
-//                            if (cells[j].att.unerline) {}
-//                            if (cells[j].att.italic) {} // never going 2 support
-//                            if (cells[j].att.strike) {}
-//                            if (cells[j].att.blink) {}
-//                            if (cells[j].att.blink2) {}
-                            evas_object_color_set(tx, c1.r, c1.g, c1.b, c1.a);
-                            evas_object_color_set(bg, c2.r, c2.g, c2.b, c2.a);
-
-                            // text - convert glyph back to utf8 str seq
-                            if (cells[j].glyph > 0)
-                              {
-                                 int g = cells[j].glyph;
-
-                                 glyph_to_utf8(g, txt);
-                                 // special case for whitespace :)
-                                 if (cells[j].glyph == ' ')
-                                   {
-                                      evas_object_hide(tx);
-                                   }
-                                 else
-                                   {
-                                      evas_object_text_text_set(tx, txt);
-                                      evas_object_show(tx);
-                                   }
-                              }
-                            else
-                              {
-                                 evas_object_hide(tx);
-                                 if (cbg == COL_DEF) evas_object_hide(bg);
-                                 else evas_object_show(bg);
+                                 fg += 24;
+                                 bg += 24;
                               }
                          }
+                       else
+                         {
+                            fg = cells[j].att.fg;
+                            bg = cells[j].att.bg;
+                            
+                            if (!fgext)
+                              {
+                                 if (bold) fg += 12;
+                              }
+                            if (!bgext)
+                              {
+                                 if (bg == COL_DEF) bg = COL_INVIS;
+                              }
+                            if (cells[j].att.faint)
+                              {
+                                 if (!fgext) fg += 24;
+                                 if (!bgext) bg += 24;
+                              }
+                            if ((glyph == ' ') || (glyph == 0))
+                              fg = COL_INVIS;
+                         }
+                       if ((tc[x].codepoint != glyph) ||
+                           (tc[x].fg != fg) ||
+                           (tc[x].bg != bg) ||
+                           (tc[x].fg_extended != fgext) ||
+                           (tc[x].bg_extended != bgext) ||
+                           (tc[x].underline != cells[j].att.underline) ||
+                           (tc[x].strikethrough != cells[j].att.strike))
+                         {
+                            if (ch1 < 0) ch1 = x;
+                            ch2 = x;
+                         }
+                       tc[x].fg_extended = fgext;
+                       tc[x].bg_extended = bgext;
+                       tc[x].underline = cells[j].att.underline;
+                       tc[x].strikethrough = cells[j].att.strike;
+                       tc[x].fg = fg;
+                       tc[x].bg = bg;
+                       tc[x].codepoint = glyph;
+                       // cells[j].att.italic // never going 2 support
+                       // cells[j].att.blink
+                       // cells[j].att.blink2
                     }
-                  j++;
-                  i++;
                }
+             j++;
           }
+        evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
+        /* only bothering to keep 1 change span per row - not worth doing
+         * more really */
+        if (ch1 >= 0)
+          evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
+                                          ch2 - ch1 + 1, 1);
      }
+   
    if ((sd->scroll != 0) || (sd->pty->state.hidecursor))
      evas_object_hide(sd->cur.obj);
    else
@@ -265,61 +268,14 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
      }
 
    evas_event_freeze(evas_object_evas_get(obj));
-   if (sd->grid.array)
-     {
-        int i, size = sd->grid.w * sd->grid.h;
-
-        for (i = 0; i < size; i++)
-          {
-             if (sd->grid.array[i].bg) evas_object_del(sd->grid.array[i].bg);
-             if (sd->grid.array[i].tx) evas_object_del(sd->grid.array[i].tx);
-          }
-        free(sd->grid.array);
-        sd->grid.array = NULL;
-     }
+   evas_object_textgrid_size_set(sd->grid.obj, w, h);
    sd->grid.w = w;
    sd->grid.h = h;
-   sd->grid.array = calloc(1, sizeof(Termch) * sd->grid.w * sd->grid.h);
-   if (sd->grid.array)
-     {
-        int i, x, y;
-
-        i = 0;
-        for (y = 0; y < sd->grid.h; y++)
-          {
-             for (x = 0; x < sd->grid.w; x++)
-               {
-                  Evas_Object *bg, *tx;
-
-                  bg = evas_object_rectangle_add(evas_object_evas_get(obj));
-                  tx = evas_object_text_add(evas_object_evas_get(obj));
-                  evas_object_pass_events_set(bg, EINA_TRUE);
-                  evas_object_pass_events_set(tx, EINA_TRUE);
-                  evas_object_propagate_events_set(bg, EINA_FALSE);
-                  evas_object_propagate_events_set(tx, EINA_FALSE);
-                  sd->grid.array[i].bg = bg;
-                  sd->grid.array[i].tx = tx;
-                  evas_object_smart_member_add(bg, obj);
-                  evas_object_smart_member_add(tx, obj);
-                  evas_object_resize(bg, sd->font.chw, sd->font.chh);
-                  evas_object_text_font_set(tx, sd->font.name, sd->font.size);
-                  evas_object_color_set(tx, 0, 0, 0, 0);
-                  evas_object_color_set(bg, 0, 0, 0, 0);
-                  i++;
-                }
-          }
-     }
-   evas_object_raise(sd->cur.selo1);
-   evas_object_raise(sd->cur.selo2);
-   evas_object_raise(sd->cur.selo3);
-   evas_object_raise(sd->cur.obj);
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
-   printf("req grid %ix%i\n", sd->grid.w, sd->grid.h);
    evas_object_size_hint_request_set(obj,
                                      sd->font.chw * sd->grid.w,
                                      sd->font.chh * sd->grid.h);
-   evas_object_raise(sd->event);
    termpty_resize(sd->pty, w, h);
    _smart_calculate(obj);
    _smart_apply(obj);
@@ -667,10 +623,30 @@ _smart_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
+_win_obj_del(void *data, Evas *e, Evas_Object *obj, void *event)
+{
+   Termio *sd;
+
+   sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   if (obj == sd->win)
+     {
+        evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
+                                            _win_obj_del, data);
+        sd->win = NULL;
+     }
+}
+
+static void
 _smart_add(Evas_Object *obj)
 {
    Termio *sd;
    Evas_Object_Smart_Clipped_Data *cd;
+   Evas_Object *o;
+   Evas_Coord w = 2, h = 2;
+   char buf[4096];
+   int i, j, k, n;
+   
    _termio_sc.add(obj);
    cd = evas_object_smart_data_get(obj);
    if (!cd) return;
@@ -682,75 +658,92 @@ _smart_add(Evas_Object *obj)
 
    sd->jump_on_change = config->jump_on_change;
 
+   if (config->font.bitmap)
      {
-        Evas_Object *o;
-        Evas_Coord w = 2, h = 2;
-        char buf[4096];
-
-        if (config->font.bitmap)
-          {
-             snprintf(buf, sizeof(buf), "%s/fonts/%s",
-                      elm_app_data_dir_get(), config->font.name);
-             sd->font.name = eina_stringshare_add(buf);
-          }
-        else
-          sd->font.name = eina_stringshare_add(config->font.name);
-        sd->font.size = config->font.size;
-        o = evas_object_text_add(evas_object_evas_get(obj));
-        evas_object_text_font_set(o, sd->font.name, sd->font.size);
-        evas_object_text_text_set(o, "X");
-        evas_object_geometry_get(o, NULL, NULL, &w, &h);
-        evas_object_del(o);
-        if (w < 1) w = 1;
-        if (h < 1) h = 1;
-        sd->font.chw = w;
-        sd->font.chh = h;
-
-        o = evas_object_rectangle_add(evas_object_evas_get(obj));
-        evas_object_pass_events_set(o, EINA_TRUE);
-        evas_object_propagate_events_set(o, EINA_FALSE);
-        evas_object_smart_member_add(o, obj);
-        sd->cur.selo1 = o;
-        evas_object_color_set(o, 64, 64, 64, 64);
-        o = evas_object_rectangle_add(evas_object_evas_get(obj));
-        evas_object_pass_events_set(o, EINA_TRUE);
-        evas_object_propagate_events_set(o, EINA_FALSE);
-        evas_object_smart_member_add(o, obj);
-        sd->cur.selo2 = o;
-        evas_object_color_set(o, 64, 64, 64, 64);
-        o = evas_object_rectangle_add(evas_object_evas_get(obj));
-        evas_object_pass_events_set(o, EINA_TRUE);
-        evas_object_propagate_events_set(o, EINA_FALSE);
-        evas_object_smart_member_add(o, obj);
-        sd->cur.selo3 = o;
-        evas_object_color_set(o, 64, 64, 64, 64);
-
-        o = edje_object_add(evas_object_evas_get(obj));
-        evas_object_pass_events_set(o, EINA_TRUE);
-        evas_object_propagate_events_set(o, EINA_FALSE);
-        evas_object_smart_member_add(o, obj);
-        sd->cur.obj = o;
-        snprintf(buf, sizeof(buf), "%s/themes/%s",
-                 elm_app_data_dir_get(), config->theme);
-        edje_object_file_set(o, buf, "terminology/cursor");
-        evas_object_resize(o, sd->font.chw, sd->font.chh);
-        evas_object_show(o);
-
-        o = evas_object_rectangle_add(evas_object_evas_get(obj));
-        evas_object_smart_member_add(o, obj);
-        sd->event = o;
-        evas_object_color_set(o, 0, 0, 0, 0);
-        evas_object_show(o);
-
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _smart_cb_mouse_down, obj);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
-                                       _smart_cb_mouse_up, obj);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
-                                       _smart_cb_mouse_move, obj);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
-                                       _smart_cb_mouse_wheel, obj);
+        snprintf(buf, sizeof(buf), "%s/fonts/%s",
+                 elm_app_data_dir_get(), config->font.name);
+        sd->font.name = eina_stringshare_add(buf);
      }
+   else
+     sd->font.name = eina_stringshare_add(config->font.name);
+   sd->font.size = config->font.size;
+   
+   o = evas_object_textgrid_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   evas_object_show(o);
+   sd->grid.obj = o;
+   evas_object_textgrid_font_set(o, sd->font.name, sd->font.size);
+   evas_object_textgrid_size_set(o, 1, 1);
+   evas_object_textgrid_cell_size_get(o, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   sd->font.chw = w;
+   sd->font.chh = h;
+   
+   for (n = 0, k = 0; k < 2; k++)
+     {
+        for (j = 0; j < 2; j++)
+          {
+             for (i = 0; i < 12; i++, n++)
+               evas_object_textgrid_palette_set
+               (o, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+                   colors[j][i].r / (k + 1), colors[j][i].g / (k + 1),
+                   colors[j][i].b / (k + 1), colors[j][i].a / (k + 1));
+          }
+     }
+   for (n = 0; n < 256; n++)
+     {
+        evas_object_textgrid_palette_set
+          (o, EVAS_TEXTGRID_PALETTE_EXTENDED, n,
+              colors256[n].r, colors256[n].g,
+              colors256[n].b, colors256[n].a);
+     }
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   sd->cur.selo1 = o;
+   evas_object_color_set(o, 64, 64, 64, 64);
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   sd->cur.selo2 = o;
+   evas_object_color_set(o, 64, 64, 64, 64);
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   sd->cur.selo3 = o;
+   evas_object_color_set(o, 64, 64, 64, 64);
+   
+   o = edje_object_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   sd->cur.obj = o;
+   snprintf(buf, sizeof(buf), "%s/themes/%s",
+            elm_app_data_dir_get(), config->theme);
+   edje_object_file_set(o, buf, "terminology/cursor");
+   evas_object_resize(o, sd->font.chw, sd->font.chh);
+   evas_object_show(o);
+   
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(o, obj);
+   sd->event = o;
+   evas_object_color_set(o, 0, 0, 0, 0);
+   evas_object_show(o);
+   
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _smart_cb_mouse_down, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                  _smart_cb_mouse_up, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _smart_cb_mouse_move, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _smart_cb_mouse_wheel, obj);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                   _smart_cb_key_down, obj);
@@ -772,7 +765,6 @@ _smart_del(Evas_Object *obj)
    if (sd->cur.selo3) evas_object_del(sd->cur.selo3);
    if (sd->job) ecore_job_del(sd->job);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
-   if (sd->grid.array) free(sd->grid.array);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    sd->cur.obj = NULL;
@@ -782,7 +774,6 @@ _smart_del(Evas_Object *obj)
    sd->cur.selo3 = NULL;
    sd->job = NULL;
    sd->delayed_size_timer = NULL;
-   sd->grid.array = NULL;
    sd->font.name = NULL;
    sd->pty = NULL;
    _termio_sc.del(obj);
@@ -812,25 +803,10 @@ _smart_calculate(Evas_Object *obj)
    if (!sd) return;
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   if (sd->grid.array)
-     {
-        int i, x, y;
-
-        i = 0;
-        for (y = 0; y < sd->grid.h; y++)
-          {
-             for (x = 0; x < sd->grid.w; x++)
-               {
-                  evas_object_move(sd->grid.array[i].bg,
-                                   ox + (x * sd->font.chw),
-                                   oy + (y * sd->font.chh));
-                  evas_object_move(sd->grid.array[i].tx,
-                                   ox + (x * sd->font.chw),
-                                   oy + (y * sd->font.chh));
-                  i++;
-               }
-          }
-     }
+   evas_object_move(sd->grid.obj, ox, oy);
+   evas_object_resize(sd->grid.obj,
+                      sd->grid.w * sd->font.chw,
+                      sd->grid.h * sd->font.chh);
    evas_object_move(sd->cur.obj,
                     ox + (sd->cur.x * sd->font.chw),
                     oy + (sd->cur.y * sd->font.chh));
@@ -984,7 +960,18 @@ termio_win_set(Evas_Object *obj, Evas_Object *win)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->win = win;
+   if (sd->win)
+     {
+        evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
+                                            _win_obj_del, obj);
+        sd->win = NULL;
+     }
+   if (!win) return;
+     {
+        sd->win = win;
+        evas_object_event_callback_add(sd->win, EVAS_CALLBACK_DEL,
+                                       _win_obj_del, obj);
+     }
 }
 
 char *
