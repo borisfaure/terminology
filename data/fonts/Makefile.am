@@ -32,4 +32,6 @@ nu.pcf \
 smoothansi.pcf \
 snap.pcf
 
-EXTRA_DIST = $(files_DATA)
+EXTRA_DIST = $(files_DATA) \
+ARTWIZ.txt \
+XFONT.txt
