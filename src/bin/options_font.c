@@ -164,7 +164,7 @@ _cb_op_font_group_text_get(void *data, Evas_Object *obj, const char *part)
 void
 options_font(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o;
+   Evas_Object *o, *bx;
    char buf[4096], *file, *fname, *s;
    Eina_List *files, *fontlist, *l;
    Font *f;
@@ -182,6 +182,14 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         fonthash = NULL;
      }
 
+   bx = o = elm_box_add(opbox);
+   elm_box_horizontal_set(o, EINA_TRUE);
+   
+   o = elm_label_add(opbox);
+   elm_object_text_set(o, "<font_size=6>A</font_size>");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
    op_fontslider = o = elm_slider_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -190,9 +198,17 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_slider_indicator_format_set(o, "%1.0f");
    elm_slider_min_max_set(o, 5, 45);
    elm_slider_value_set(o, config->font.size);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
 
+   o = elm_label_add(opbox);
+   elm_object_text_set(o, "<font_size=24>A</font_size>");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   
+   elm_box_pack_end(opbox, bx);
+   evas_object_show(bx);
+   
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_fontsize_sel, term);
    
