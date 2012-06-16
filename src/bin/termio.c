@@ -1072,6 +1072,11 @@ termio_config_update(Evas_Object *obj)
      sd->font.name = eina_stringshare_add(config->font.name);
    sd->font.size = config->font.size;
 
+   sd->jump_on_change = config->jump_on_change;
+
+   termpty_backscroll_set(sd->pty, config->scrollback);
+   sd->scroll = 0;
+   
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
    if (w < 1) w = 1;

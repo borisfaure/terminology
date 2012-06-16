@@ -305,5 +305,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_genlist_item_class_free(it_group);
    
    elm_box_pack_end(opbox, o);
+   evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 }

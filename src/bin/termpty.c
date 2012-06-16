@@ -1572,3 +1572,25 @@ termpty_resize(Termpty *ty, int w, int h)
 
    _pty_size(ty);
 }
+
+void
+termpty_backscroll_set(Termpty *ty, int size)
+{
+   int i;
+   Termsave *tso;
+   
+   if (ty->backmax == size) return;
+
+   if (ty->back)
+     {
+        for (i = 0; i < ty->backmax; i++)
+          {
+             if (ty->back[i]) free(ty->back[i]);
+          }
+        free(ty->back);
+     }
+   ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
+   ty->backscroll_num = 0;
+   ty->backpos = 0;
+   ty->backmax = size;
+}
