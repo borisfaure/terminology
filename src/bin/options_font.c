@@ -225,6 +225,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_genlist_mode_set(o, ELM_LIST_COMPRESS);
+   elm_genlist_homogeneous_set(o, EINA_TRUE);
    
    snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
    files = ecore_file_ls(buf);
