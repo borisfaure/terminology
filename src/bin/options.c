@@ -114,11 +114,11 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         it_fn = elm_toolbar_item_append(o, "preferences-desktop-font",
                                         "Font", _cb_op_font, term);
         it_th = elm_toolbar_item_append(o, "preferences-desktop-theme",
-                                        "Theme", _cb_op_theme, NULL);
+                                        "Theme", _cb_op_theme, term);
         it_wp = elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
-                                        "Wallpaper", _cb_op_wallpaper, NULL);
+                                        "Wallpaper", _cb_op_wallpaper, term);
         it_wp = elm_toolbar_item_append(o, "preferences-desktop-multimedia",
-                                        "Video", _cb_op_video, NULL);
+                                        "Video", _cb_op_video, term);
         it_bh = elm_toolbar_item_append(o, "system-run",
                                         "Behavior", _cb_op_behavior, term);
 
