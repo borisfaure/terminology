@@ -187,55 +187,55 @@ _smart_apply(Evas_Object *obj)
                     oy + (sd->cur.y * sd->font.chh));
    if (sd->cur.sel)
      {
-        int x1, y1, x2, y2;
+        int start_x, start_y, end_x, end_y;
 
-        x1 = sd->cur.sel1.x;
-        y1 = sd->cur.sel1.y;
-        x2 = sd->cur.sel2.x;
-        y2 = sd->cur.sel2.y;
-        if ((y1 > y2) || ((y1 == y2) && (x2 < x1)))
+        start_x = sd->cur.sel1.x;
+        start_y = sd->cur.sel1.y;
+        end_x = sd->cur.sel2.x;
+        end_y = sd->cur.sel2.y;
+        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
           {
              int t;
 
-             t = x1; x1 = x2; x2 = t;
-             t = y1; y1 = y2; y2 = t;
+             t = start_x; start_x = end_x; end_x = t;
+             t = start_y; start_y = end_y; end_y = t;
           }
 
-        if (y2 > y1)
+        if (end_y > start_y)
           {
              evas_object_move(sd->cur.selo1,
-                              ox + (x1 * sd->font.chw),
-                              oy + ((y1 + sd->scroll) * sd->font.chh));
+                              ox + (start_x * sd->font.chw),
+                              oy + ((start_y + sd->scroll) * sd->font.chh));
              evas_object_resize(sd->cur.selo1,
-                                (sd->grid.w - x1) * sd->font.chw,
+                                (sd->grid.w - start_x) * sd->font.chw,
                                 sd->font.chh);
              evas_object_show(sd->cur.selo1);
 
              evas_object_move(sd->cur.selo3,
-                              ox, oy + ((y2 + sd->scroll) * sd->font.chh));
+                              ox, oy + ((end_y + sd->scroll) * sd->font.chh));
              evas_object_resize(sd->cur.selo3,
-                                (x2 + 1) * sd->font.chw,
+                                (end_x + 1) * sd->font.chw,
                                 sd->font.chh);
              evas_object_show(sd->cur.selo3);
           }
         else
           {
              evas_object_move(sd->cur.selo1,
-                              ox + (x1 * sd->font.chw),
-                              oy + ((y1 + sd->scroll) * sd->font.chh));
+                              ox + (start_x * sd->font.chw),
+                              oy + ((start_y + sd->scroll) * sd->font.chh));
              evas_object_resize(sd->cur.selo1,
-                                (x2 - x1 + 1) * sd->font.chw,
+                                (end_x - start_x + 1) * sd->font.chw,
                                 sd->font.chh);
              evas_object_show(sd->cur.selo1);
              evas_object_hide(sd->cur.selo3);
           }
-        if (y2 > (y1 + 1))
+        if (end_y > (start_y + 1))
           {
              evas_object_move(sd->cur.selo2,
-                              ox, oy + ((y1 + 1 + sd->scroll) * sd->font.chh));
+                              ox, oy + ((start_y + 1 + sd->scroll) * sd->font.chh));
              evas_object_resize(sd->cur.selo2,
                                 sd->grid.w * sd->font.chw,
-                                (y2 - y1 - 1) * sd->font.chh);
+                                (end_y - start_y - 1) * sd->font.chh);
              evas_object_show(sd->cur.selo2);
           }
         else
@@ -312,22 +312,22 @@ static void
 _take_selection(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   int x1, y1, x2, y2;
+   int start_x, start_y, end_x, end_y;
    char *s;
 
    if (!sd) return;
-   x1 = sd->cur.sel1.x;
-   y1 = sd->cur.sel1.y;
-   x2 = sd->cur.sel2.x;
-   y2 = sd->cur.sel2.y;
-   if ((y1 > y2) || ((y1 == y2) && (x2 < x1)))
+   start_x = sd->cur.sel1.x;
+   start_y = sd->cur.sel1.y;
+   end_x = sd->cur.sel2.x;
+   end_y = sd->cur.sel2.y;
+   if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
      {
         int t;
 
-        t = x1; x1 = x2; x2 = t;
-        t = y1; y1 = y2; y2 = t;
+        t = start_x; start_x = end_x; end_x = t;
+        t = start_y; start_y = end_y; end_y = t;
      }
-   s = termio_selection_get(obj, x1, y1, x2, y2);
+   s = termio_selection_get(obj, start_x, start_y, end_x, end_y);
    if (s)
      {
         if (sd->win)
@@ -984,25 +984,25 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
-        int w, last0, v, x1, x2;
+        int w, last0, v, start_x, end_x;
 
         w = 0;
         last0 = -1;
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (w > sd->grid.w) w = sd->grid.w;
-        x1 = c1x;
-        x2 = c2x;
+        start_x = c1x;
+        end_x = c2x;
         if (c1y != c2y)
           {
-             if (y == c1y) x2 = w - 1;
-             else if (y == c2y) x1 = 0;
+             if (y == c1y) end_x = w - 1;
+             else if (y == c2y) start_x = 0;
              else
                {
-                  x1 = 0;
-                  x2 = w - 1;
+                  start_x = 0;
+                  end_x = w - 1;
                }
           }
-        for (x = x1; x <= x2; x++)
+        for (x = start_x; x <= end_x; x++)
           {
              if (x >= w) break;
              if (cells[x].glyph == 0)

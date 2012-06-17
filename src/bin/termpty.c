@@ -60,12 +60,12 @@ static void
 _text_scroll(Termpty *ty)
 {
    Termcell *cells = NULL, *cells2;
-   int y, y1 = 0, y2 = ty->h - 1;
+   int y, start_y = 0, end_y = ty->h - 1;
 
    if (ty->state.scroll_y2 != 0)
      {
-        y1 = ty->state.scroll_y1;
-        y2 = ty->state.scroll_y2 - 1;
+        start_y = ty->state.scroll_y1;
+        end_y = ty->state.scroll_y2 - 1;
      }
    else
      {
@@ -78,9 +78,9 @@ _text_scroll(Termpty *ty)
           if (ty->cb.cancel_sel.func)
             ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
      }
-   DBG("... scroll!!!!! [%i->%i]\n", y1, y2);
-   cells2 = &(ty->screen[y2 * ty->w]);
-   for (y = y1; y < y2; y++)
+   DBG("... scroll!!!!! [%i->%i]\n", start_y, end_y);
+   cells2 = &(ty->screen[end_y * ty->w]);
+   for (y = start_y; y < end_y; y++)
      {
         cells = &(ty->screen[y * ty->w]);
         cells2 = &(ty->screen[(y + 1) * ty->w]);
@@ -93,16 +93,16 @@ static void
 _text_scroll_rev(Termpty *ty)
 {
    Termcell *cells, *cells2 = NULL;
-   int y, y1 = 0, y2 = ty->h - 1;
+   int y, start_y = 0, end_y = ty->h - 1;
 
    if (ty->state.scroll_y2 != 0)
      {
-        y1 = ty->state.scroll_y1;
-        y2 = ty->state.scroll_y2 - 1;
+        start_y = ty->state.scroll_y1;
+        end_y = ty->state.scroll_y2 - 1;
      }
-   DBG("... scroll rev!!!!! [%i->%i]\n", y1, y2);
-   cells = &(ty->screen[y2 * ty->w]);
-   for (y = y2; y > y1; y--)
+   DBG("... scroll rev!!!!! [%i->%i]\n", start_y, end_y);
+   cells = &(ty->screen[end_y * ty->w]);
+   for (y = end_y; y > start_y; y--)
      {
         cells = &(ty->screen[(y - 1) * ty->w]);
         cells2 = &(ty->screen[y * ty->w]);
