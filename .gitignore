@@ -51,4 +51,4 @@ src/bin/terminology-win.o
 stamp-h1
 terminology_config.h
 terminology_config.h.in
-
+*.o
