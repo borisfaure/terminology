@@ -1,6 +1,4 @@
-#ifdef HAVE_CONFIG_H
-#include "terminology_config.h"
-#endif
+#include "private.h"
 
 #include <Ecore_Getopt.h>
 #include <Elementary.h>
@@ -10,6 +8,8 @@
 #include "config.h"
 #include "options.h"
 #include "media.h"
+
+int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
@@ -180,6 +180,15 @@ elm_main(int argc, char **argv)
    int args, retval = EXIT_SUCCESS;
    Evas_Object *o;
 
+
+   _log_domain = eina_log_domain_register("terminology", NULL);
+   if (_log_domain < 0)
+     {
+        EINA_LOG_CRIT("could not create log domain 'terminology'.");
+        elm_shutdown();
+        return EXIT_FAILURE;
+     }
+
    config_init();
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
@@ -189,7 +198,7 @@ elm_main(int argc, char **argv)
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        fputs("Could not parse command line options.\n", stderr);
+        ERR("Could not parse command line options.");
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -276,6 +285,10 @@ elm_main(int argc, char **argv)
    elm_run();
  end:
    config_shutdown();
+
+   eina_log_domain_unregister(_log_domain);
+   _log_domain = -1;
+
    elm_shutdown();
    return retval;
 }

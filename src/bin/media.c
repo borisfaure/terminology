@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include <Emotion.h>
 #include "media.h"
@@ -343,9 +345,9 @@ _cb_mov_progress(void *data, Evas_Object *obj, void *event)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   printf("progress: '%s' '%3.3f\n",
-          emotion_object_progress_info_get(sd->o_img),
-          emotion_object_progress_status_get(sd->o_img));
+   DBG("progress: '%s' '%3.3f",
+       emotion_object_progress_info_get(sd->o_img),
+       emotion_object_progress_status_get(sd->o_img));
 }
 
 static void
@@ -353,9 +355,9 @@ _cb_mov_ref(void *data, Evas_Object *obj, void *event)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   printf("ref: '%s' num '%i'\n", 
-          emotion_object_ref_file_get(sd->o_img),
-          emotion_object_ref_num_get(sd->o_img));
+   DBG("ref: '%s' num '%i'",
+       emotion_object_ref_file_get(sd->o_img),
+       emotion_object_ref_num_get(sd->o_img));
 }
 
 static void
@@ -381,7 +383,7 @@ _type_mov_init(Evas_Object *obj)
      mod = modules[config->vidmod];
    if (!emotion_object_init(o, mod))
      {
-        printf("can't init emotion module '%s'\n", mod);
+        ERR("can't init emotion module '%s'", mod);
         evas_object_del(sd->o_img);
         sd->o_img = NULL;
         return;

@@ -8,16 +8,6 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
-///////////////////////////////////////////////////////////////////////////
-//#define DBG(f, args...) printf(f, ##args)
-#define DBG(f, args...) do {} while (0)
-///////////////////////////////////////////////////////////////////////////
-//#define INF(f, args...) printf("==INF: "f, ##args)
-#define INF(f, args...) do {} while (0)
-///////////////////////////////////////////////////////////////////////////
-#define ERR(f, args...) printf("######ERR: "f, ##args)
-//#define ERR(f, args...) do {} while (0)
-
 static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
 {
