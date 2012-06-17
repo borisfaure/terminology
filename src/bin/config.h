@@ -13,6 +13,8 @@ struct _Config
    unsigned char     jump_on_change;
    unsigned char     translucent;
    const char       *wordsep;
+   int               vidmod;
+   unsigned char     mute;
 };
 
 extern Config *config;

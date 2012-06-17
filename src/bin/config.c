@@ -46,6 +46,10 @@ config_init(void)
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "vidmod", vidmod, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "mute", mute, EET_T_UCHAR);
 
    home = (char *)_homedir();
    snprintf(buf, sizeof(buf), "%s/.terminology/config/standard/base.cfg", home);
@@ -71,6 +75,8 @@ config_init(void)
         config->translucent = 0;
         config->jump_on_change = 0;
         config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
+        config->vidmod = 0;
+        config->mute = 0;
      }
 }
 

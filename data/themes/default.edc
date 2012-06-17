@@ -40,6 +40,18 @@ collections {
             clip_to: "fade";
             description { state: "default" 0.0;
             }
+            description { state: "image" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "scale" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "edje" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "movie" 0.0;
+               inherit: "default" 0.0;
+            }
          }
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
@@ -121,6 +133,36 @@ collections {
                target: "base";
                target: "shadow";
                target: "fade";
+            }
+            program { name: "media_off";
+               signal: "media,off";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               target: "terminology.background";
+            }
+            program { name: "media_img";
+               signal: "media,image";
+               source: "terminology";
+               action: STATE_SET "image" 0.0;
+               target: "terminology.background";
+            }
+            program { name: "media_scale";
+               signal: "media,scale";
+               source: "terminology";
+               action: STATE_SET "scale" 0.0;
+               target: "terminology.background";
+            }
+            program { name: "media_edje";
+               signal: "media,edje";
+               source: "terminology";
+               action: STATE_SET "edje" 0.0;
+               target: "terminology.background";
+            }
+            program { name: "media_mov";
+               signal: "media,movie";
+               source: "terminology";
+               action: STATE_SET "movie" 0.0;
+               target: "terminology.background";
             }
          }
       }

@@ -84,18 +84,28 @@ void
 main_media_update(void)
 {
    Evas_Object *o;
+   int type = 0;
    
    if ((config->background) && (config->background[0]))
      {
         if (media) evas_object_del(media);
-        o = media = media_add(win, config->background, MEDIA_BG);
+        o = media = media_add(win, config->background, MEDIA_BG, &type);
         edje_object_part_swallow(bg, "terminology.background", o);
+        if (type == TYPE_IMG)
+          edje_object_signal_emit(bg, "media,image", "terminology");
+        else if (type == TYPE_SCALE)
+          edje_object_signal_emit(bg, "media,scale", "terminology");
+        else if (type == TYPE_EDJE)
+          edje_object_signal_emit(bg, "media,edje", "terminology");
+        else if (type == TYPE_MOV)
+          edje_object_signal_emit(bg, "media,movie", "terminology");
         evas_object_show(o);
      }
    else
      {
         if (media)
           {
+             edje_object_signal_emit(bg, "media,off", "terminology");
              evas_object_del(media);
              media = NULL;
           }
@@ -122,9 +132,12 @@ elm_main(int argc, char **argv)
             (!strcmp(argv[i], "--help")))
           {
              printf("Options:\n"
-                    "  -e CMD   Execute command CMD instead of the users shell\n"
-                    "  -t THEME Use the named edje theme or path to theme file\n"
-                    "  -b FILE  Use the named file as a background wallpaper\n");
+                    "  -e  CMD   Execute command CMD instead of the users shell\n"
+                    "  -t  THEME Use the named edje theme or path to theme file\n"
+                    "  -b  FILE  Use the named file as a background wallpaper\n"
+                    "  -m  [0/1] Set mute mode for video playback\n"
+                    "  -vm MOD   Set emotion module to use (auto, gstreamer, xine, generic)\n"
+                   );
              exit(0);
           }
         else if ((!strcmp(argv[i], "-e")) && (i < (argc - 1)))
@@ -150,6 +163,19 @@ elm_main(int argc, char **argv)
              i++;
              if (config->background) eina_stringshare_del(config->background);
              config->background = eina_stringshare_add(argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-m")) && (i < (argc - 1)))
+          {
+             i++;
+             config->mute = atoi(argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-vm")) && (i < (argc - 1)))
+          {
+             i++;
+             if (!strcmp(argv[i], "auto")) config->vidmod = 0;
+             else if (!strcmp(argv[i], "gstreamer")) config->vidmod = 1;
+             else if (!strcmp(argv[i], "xine")) config->vidmod = 2;
+             else if (!strcmp(argv[i], "generic")) config->vidmod = 3;
           }
      }
 

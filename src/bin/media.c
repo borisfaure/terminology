@@ -1,10 +1,7 @@
 #include <Elementary.h>
+#include <Emotion.h>
+#include "media.h"
 #include "config.h"
-
-#define TYPE_IMG   0
-#define TYPE_SCALE 1
-#define TYPE_EDJE  2
-#define TYPE_MOV   3
 
 typedef struct _Media Media;
 
@@ -13,6 +10,7 @@ struct _Media
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *clip, *o_img, *o_tmp;
    Ecore_Timer *anim;
+   Ecore_Job *restart_job;
    const char *src;
    int iw, ih;
    int sw, sh;
@@ -289,12 +287,123 @@ _type_edje_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
 }
 
 //////////////////////// movie
+static void _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+static void
+_cb_mov_frame_decode(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   Evas_Coord ox, oy, ow, oh;
+
+   if (!sd) return;
+   evas_object_geometry_get(data, &ox, &oy, &ow, &oh);
+   evas_object_show(sd->o_img);
+   _type_mov_calc(data, ox, oy, ow, oh);
+}
+
+static void
+_cb_mov_frame_resize(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   Evas_Coord ox, oy, ow, oh;
+
+   if (!sd) return;
+   evas_object_geometry_get(data, &ox, &oy, &ow, &oh);
+   _type_mov_calc(data, ox, oy, ow, oh);
+}
+
+static void
+_cb_mov_len_change(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+}
+
+static void
+_cb_mov_restart(void *data)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   sd->restart_job = NULL;
+   emotion_object_position_set(sd->o_img, 0.0);
+   emotion_object_play_set(sd->o_img, EINA_TRUE);
+}
+
+static void
+_cb_mov_decode_stop(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   if (sd->restart_job) ecore_job_del(sd->restart_job);
+   sd->restart_job = ecore_job_add(_cb_mov_restart, data);
+}
+
+static void
+_cb_mov_progress(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   printf("progress: '%s' '%3.3f\n",
+          emotion_object_progress_info_get(sd->o_img),
+          emotion_object_progress_status_get(sd->o_img));
+}
+
+static void
+_cb_mov_ref(void *data, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   printf("ref: '%s' num '%i'\n", 
+          emotion_object_ref_file_get(sd->o_img),
+          emotion_object_ref_num_get(sd->o_img));
+}
+
 static void
 _type_mov_init(Evas_Object *obj)
 {
+   Evas_Object *o;
+   char *modules[] =
+     {
+        NULL,
+        "gstreamer",
+        "xine",
+        "generic"
+     };
+   char *mod = NULL;
+        
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->type = TYPE_MOV;
+   emotion_init();
+   o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
+   if ((config->vidmod >= 0) && 
+       (config->vidmod < (sizeof(modules) / sizeof(modules[0]))))
+     mod = modules[config->vidmod];
+   if (!emotion_object_init(o, mod))
+     {
+        printf("can't init emotion module '%s'\n", mod);
+        evas_object_del(sd->o_img);
+        sd->o_img = NULL;
+        return;
+     }
+   evas_object_smart_callback_add(o, "frame_decode",
+                                  _cb_mov_frame_decode, obj);
+   evas_object_smart_callback_add(o, "frame_resize",
+                                  _cb_mov_frame_resize, obj);
+   evas_object_smart_callback_add(o, "length_change",
+                                  _cb_mov_len_change, obj);
+   evas_object_smart_callback_add(o, "decode_stop",
+                                  _cb_mov_decode_stop, obj);
+   evas_object_smart_callback_add(o, "progress_change",
+                                  _cb_mov_progress, obj);
+   evas_object_smart_callback_add(o, "ref_change",
+                                  _cb_mov_ref, obj);
+   emotion_object_file_set(o, sd->src);
+   evas_object_smart_member_add(o, obj);
+   evas_object_clip_set(o, sd->clip);
+   emotion_object_position_set(o, 0.0);
+   emotion_object_play_set(o, EINA_TRUE);
+   if (config->mute) emotion_object_audio_mute_set(o, EINA_TRUE);
 }
 
 static void
@@ -302,6 +411,34 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   emotion_object_size_get(sd->o_img, &(sd->iw), &(sd->ih));
+   if ((w <= 0) || (h <= 0) || (sd->iw <= 0) || (sd->ih <= 0))
+     {
+        w = 1;
+        h = 1;
+     }
+   else
+     {
+        int iw, ih;
+        double ratio;
+        
+        ratio = emotion_object_ratio_get(sd->o_img);
+        if (ratio > 0.0) sd->iw = (sd->ih * ratio) + 0.5;
+        else ratio = (double)sd->iw / (double)sd->ih;
+        
+        iw = w;
+        ih = w / ratio;
+        if (ih < h)
+          {
+             ih = h;
+             iw = h * ratio;
+             if (iw < w) iw = w;
+          }
+        x += ((w - iw) / 2);
+        y += ((h - ih) / 2);
+        w = iw;
+        h = ih;
+     }
    evas_object_move(sd->o_img, x, y);
    evas_object_resize(sd->o_img, w, h);
 }
@@ -341,6 +478,7 @@ _smart_del(Evas_Object *obj)
    if (sd->o_img) evas_object_del(sd->o_img);
    if (sd->o_tmp) evas_object_del(sd->o_tmp);
    if (sd->anim) ecore_timer_del(sd->anim);
+   if (sd->restart_job) ecore_job_del(sd->restart_job);
    _meida_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
 }
@@ -399,7 +537,7 @@ _smart_init(void)
 }
 
 Evas_Object *
-media_add(Evas_Object *parent, const char *src, int mode)
+media_add(Evas_Object *parent, const char *src, int mode, int *type)
 {
    Evas *e;
    Evas_Object *obj;
