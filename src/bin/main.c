@@ -207,14 +207,21 @@ elm_main(int argc, char **argv)
 
    if (theme)
      {
+        char path[PATH_MAX];
+        char name[PATH_MAX];
+
         if (eina_str_has_suffix(theme, ".edj"))
-          eina_stringshare_replace(&(config->theme), theme);
+          eina_strlcpy(name, theme, sizeof(name));
         else
-          {
-             char buf[PATH_MAX];
-             snprintf(buf, sizeof(buf), "%s.edj", theme);
-             eina_stringshare_replace(&(config->theme), buf);
-          }
+          snprintf(name, sizeof(name), "%s.edj", theme);
+
+        if (strchr(name, '/'))
+          eina_strlcpy(path, name, sizeof(path));
+        else
+          snprintf(path, sizeof(path), "%s/themes/%s",
+                   elm_app_data_dir_get(), name);
+
+        eina_stringshare_replace(&(config->theme), path);
         config_tmp = EINA_TRUE;
      }
 
@@ -250,15 +257,7 @@ elm_main(int argc, char **argv)
    bg = o = edje_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   if (strchr(config->theme, '/'))
-        edje_object_file_set(o, config->theme, "terminology/background");
-   else
-     {
-        char buf[PATH_MAX];
-        snprintf(buf, sizeof(buf), "%s/themes/%s",
-                 elm_app_data_dir_get(), config->theme);
-        edje_object_file_set(o, buf, "terminology/background");
-     }
+   edje_object_file_set(o, config->theme, "terminology/background");
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
 

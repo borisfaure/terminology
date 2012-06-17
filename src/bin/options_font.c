@@ -120,12 +120,9 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
        (!strcmp(part, "elm.swallow.end")))
      {
         Evas_Object *o;
-        char buf[4096];
-        
+
         o = edje_object_add(evas_object_evas_get(obj));
-        snprintf(buf, sizeof(buf), "%s/themes/%s",
-                 elm_app_data_dir_get(), config->theme);
-        edje_object_file_set(o, buf, "terminology/fontpreview");
+        edje_object_file_set(o, config->theme, "terminology/fontpreview");
         evas_object_size_hint_min_set(o, 
                                       40 * elm_config_scale_get(), 
                                       40 * elm_config_scale_get());

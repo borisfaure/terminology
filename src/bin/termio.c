@@ -720,9 +720,7 @@ _smart_add(Evas_Object *obj)
    evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_smart_member_add(o, obj);
    sd->cur.obj = o;
-   snprintf(buf, sizeof(buf), "%s/themes/%s",
-            elm_app_data_dir_get(), config->theme);
-   edje_object_file_set(o, buf, "terminology/cursor");
+   edje_object_file_set(o, config->theme, "terminology/cursor");
    evas_object_resize(o, sd->font.chw, sd->font.chh);
    evas_object_show(o);
    
