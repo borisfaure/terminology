@@ -69,7 +69,7 @@ config_init(void)
         config->theme = eina_stringshare_add("default.edj");
         config->background = NULL;
         config->translucent = 0;
-        config->jump_on_change = 1;
+        config->jump_on_change = 0;
         config->wordsep = eina_stringshare_add("'\"()[]{}=*!#$^\\:;,?` ");
      }
 }

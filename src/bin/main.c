@@ -7,6 +7,7 @@
 
 const char *cmd = NULL;
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL;
+static Ecore_Timer *flush_timer = NULL;
 
 static void
 _cb_focus_in(void *data, Evas_Object *obj, void *event)
@@ -20,6 +21,7 @@ _cb_focus_out(void *data, Evas_Object *obj, void *event)
 {
    edje_object_signal_emit(bg, "focus,out", "terminology");
    elm_object_focus_set(data, EINA_FALSE);
+   elm_cache_all_flush();
 }
 
 static void
@@ -45,6 +47,21 @@ static void
 _cb_options(void *data, Evas_Object *obj, void *event)
 {
    options_toggle(win, bg, term);
+}
+
+static Eina_Bool
+_cb_flush(void *data)
+{
+   flush_timer = NULL;
+   elm_cache_all_flush();
+   return EINA_FALSE;
+}
+
+static void
+_cb_change(void *data, Evas_Object *obj, void *event)
+{
+   if (!flush_timer) flush_timer = ecore_timer_add(0.25, _cb_flush, NULL);
+   else ecore_timer_delay(flush_timer, 0.25);
 }
 
 void
@@ -103,6 +120,7 @@ elm_main(int argc, char **argv)
                                   _cb_size_hint, win);
    edje_object_part_swallow(bg, "terminology.content", o);
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
+   evas_object_smart_callback_add(o, "options", _cb_change, NULL);
    evas_object_show(o);
 
    main_trans_update();

@@ -304,6 +304,7 @@ _smart_cb_change(void *data)
    if (!sd) return;
    sd->job = NULL;
    _smart_apply(obj);
+   evas_object_smart_callback_call(obj, "changed", NULL);
 }
 
 static void
@@ -783,8 +784,9 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
-   if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
-   sd->delayed_size_timer = ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
+   if (!sd->delayed_size_timer) sd->delayed_size_timer = 
+     ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
+   else ecore_timer_delay(sd->delayed_size_timer, 0.0);
    evas_object_resize(sd->event, ow, oh);
 }
 

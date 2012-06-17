@@ -71,7 +71,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         it_wp = elm_toolbar_item_append(o, "video-display", "Wallpaper",
                                         _cb_op_wallpaper, NULL);
         it_bh = elm_toolbar_item_append(o, "system-run", "Behavior",
-                                        _cb_op_behavior, NULL);
+                                        _cb_op_behavior, term);
 
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
