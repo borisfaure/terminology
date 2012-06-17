@@ -6,20 +6,43 @@
 static Eet_Data_Descriptor *edd_base = NULL;
 
 static const char *
-_homedir(void)
+_config_home_get(void)
 {
-   const char *home;
-   
-   home = getenv("HOME");
-   if (!home) home = getenv("TMP");
-   if (!home) home = "/tmp";
-   return home;
+   static char path[PATH_MAX] = "";
+
+#ifdef ELM_EFREET
+   const char *tmp = efreet_config_home_get();
+   size_t len = eina_stringshare_strlen(tmp);
+
+   if (len + 1 < PATH_MAX)
+     memcpy(path, tmp, len + 1);
+   eina_stringshare_del(tmp);
+
+#else
+   const char *v = getenv("XDG_CONFIG_HOME");
+   if (v) eina_strlcpy(path, v, sizeof(path));
+   else
+     {
+        v = getenv("HOME");
+        if (v) snprintf(path, sizeof(path), "%s/.config", v);
+        else
+          {
+             if (!v) v = getenv("TMP");
+             if (!v) v = "/tmp";
+             eina_strlcpy(path, v, sizeof(path));
+          }
+     }
+#endif
+
+   return path;
 }
 
 void
 config_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
+
+   elm_need_efreet();
    
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
@@ -64,7 +87,7 @@ config_save(const Config *config, const char *key)
 {
    Eet_File *ef;
    char buf[PATH_MAX], buf2[PATH_MAX];
-   const char *home;
+   const char *cfgdir;
    int ok;
 
    EINA_SAFETY_ON_NULL_RETURN(config);
@@ -72,11 +95,11 @@ config_save(const Config *config, const char *key)
    if (config->temporary) return;
    if (!key) key = config->config_key;
 
-   home = _homedir();
-   snprintf(buf, sizeof(buf), "%s/.terminology/config/standard", home);
+   cfgdir = _config_home_get();
+   snprintf(buf, sizeof(buf), "%s/terminology/config/standard", cfgdir);
    ecore_file_mkpath(buf);
-   snprintf(buf, sizeof(buf), "%s/.terminology/config/standard/base.cfg.tmp", home);
-   snprintf(buf2, sizeof(buf2), "%s/.terminology/config/standard/base.cfg", home);
+   snprintf(buf, sizeof(buf), "%s/terminology/config/standard/base.cfg.tmp", cfgdir);
+   snprintf(buf2, sizeof(buf2), "%s/terminology/config/standard/base.cfg", cfgdir);
    ef = eet_open(buf, EET_FILE_MODE_WRITE);
    if (ef)
      {
@@ -91,13 +114,13 @@ config_load(const char *key)
 {
    Eet_File *ef;
    char buf[PATH_MAX];
-   const char *home;
-   Config *config;
+   const char *cfgdir;
+   Config *config = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
 
-   home = _homedir();
-   snprintf(buf, sizeof(buf), "%s/.terminology/config/standard/base.cfg", home);
+   cfgdir = _config_home_get();
+   snprintf(buf, sizeof(buf), "%s/terminology/config/standard/base.cfg", cfgdir);
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
