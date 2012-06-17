@@ -21,7 +21,7 @@ make it a first-class terminal:
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)
-[ ] transparency support (theme needs to be told to go into
+[X] transparency support (theme needs to be told to go into
     tranpsarency mode and then window alpha enabled)
 [ ] visual bell reporting (signals to theme)
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
@@ -35,7 +35,7 @@ make it a first-class terminal:
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic
-[ ] font selector should include font previews in the list -
+[X] font selector should include font previews in the list -
     preferably ONLY be a list of previews
 [ ] options widgets should be deleted once they are hidden. they stay
     in memory at the moment
