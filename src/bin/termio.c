@@ -37,11 +37,12 @@ struct _Termio
    Ecore_Job *job;
    Ecore_Timer *delayed_size_timer;
    Evas_Object *win;
+   Config *config;
    Eina_Bool jump_on_change : 1;
 };
 
 static Evas_Smart *_smart = NULL;
-static Evas_Smart_Class _termio_sc = EVAS_SMART_CLASS_INIT_NULL;
+static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
 
@@ -464,7 +465,7 @@ _sel_line(Evas_Object *obj, int cx, int cy)
 }
 
 static Eina_Bool
-_glyph_is_wordsep(int g)
+_glyph_is_wordsep(const Config *config, int g)
 {
    int i;
 
@@ -499,7 +500,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    for (x = sd->cur.sel1.x; x >= 0; x--)
      {
         if (x >= w) break;
-        if (_glyph_is_wordsep(cells[x].glyph)) break;
+        if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
         sd->cur.sel1.x = x;
      }
    sd->cur.sel2.x = cx;
@@ -507,7 +508,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
      {
         if (x >= w) break;
-        if (_glyph_is_wordsep(cells[x].glyph)) break;
+        if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
         sd->cur.sel2.x = x;
      }
 }
@@ -634,16 +635,49 @@ _win_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNU
 }
 
 static void
+_termio_config_set(Evas_Object *obj, Config *config)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Coord w = 2, h = 2;
+
+   sd->config = config;
+
+   sd->jump_on_change = config->jump_on_change;
+
+   if (config->font.bitmap)
+     {
+        char buf[PATH_MAX];
+        snprintf(buf, sizeof(buf), "%s/fonts/%s",
+                 elm_app_data_dir_get(), config->font.name);
+        sd->font.name = eina_stringshare_add(buf);
+     }
+   else
+     sd->font.name = eina_stringshare_add(config->font.name);
+   sd->font.size = config->font.size;
+
+   evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
+   evas_object_textgrid_size_set(sd->grid.obj, 1, 1);
+   evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   sd->font.chw = w;
+   sd->font.chh = h;
+
+   edje_object_file_set(sd->cur.obj,
+                        config_theme_path_get(config), "terminology/cursor");
+   evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
+   evas_object_show(sd->cur.obj);
+}
+
+static void
 _smart_add(Evas_Object *obj)
 {
    Termio *sd;
    Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
-   Evas_Coord w = 2, h = 2;
-   char buf[4096];
    int i, j, k, n;
-   
-   _termio_sc.add(obj);
+
+   _parent_sc.add(obj);
    cd = evas_object_smart_data_get(obj);
    if (!cd) return;
    sd = calloc(1, sizeof(Termio));
@@ -652,32 +686,13 @@ _smart_add(Evas_Object *obj)
    free(cd);
    evas_object_smart_data_set(obj, sd);
 
-   sd->jump_on_change = config->jump_on_change;
-
-   if (config->font.bitmap)
-     {
-        snprintf(buf, sizeof(buf), "%s/fonts/%s",
-                 elm_app_data_dir_get(), config->font.name);
-        sd->font.name = eina_stringshare_add(buf);
-     }
-   else
-     sd->font.name = eina_stringshare_add(config->font.name);
-   sd->font.size = config->font.size;
-   
    o = evas_object_textgrid_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_smart_member_add(o, obj);
    evas_object_show(o);
    sd->grid.obj = o;
-   evas_object_textgrid_font_set(o, sd->font.name, sd->font.size);
-   evas_object_textgrid_size_set(o, 1, 1);
-   evas_object_textgrid_cell_size_get(o, &w, &h);
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-   sd->font.chw = w;
-   sd->font.chh = h;
-   
+
    for (n = 0, k = 0; k < 2; k++)
      {
         for (j = 0; j < 2; j++)
@@ -720,9 +735,6 @@ _smart_add(Evas_Object *obj)
    evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_smart_member_add(o, obj);
    sd->cur.obj = o;
-   edje_object_file_set(o, config->theme, "terminology/cursor");
-   evas_object_resize(o, sd->font.chw, sd->font.chh);
-   evas_object_show(o);
    
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
@@ -770,7 +782,7 @@ _smart_del(Evas_Object *obj)
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;
    sd->pty = NULL;
-   _termio_sc.del(obj);
+   _parent_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
 }
 
@@ -822,8 +834,8 @@ _smart_init(void)
 {
    static Evas_Smart_Class sc;
 
-   evas_object_smart_clipped_smart_set(&_termio_sc);
-   sc           = _termio_sc;
+   evas_object_smart_clipped_smart_set(&_parent_sc);
+   sc           = _parent_sc;
    sc.name      = "termio";
    sc.version   = EVAS_SMART_CLASS_VERSION;
    sc.add       = _smart_add;
@@ -921,7 +933,7 @@ _smart_pty_cancel_sel(void *data)
 }
 
 Evas_Object *
-termio_add(Evas_Object *parent, const char *cmd, int w, int h)
+termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
 {
    Evas *e;
    Evas_Object *obj;
@@ -935,6 +947,9 @@ termio_add(Evas_Object *parent, const char *cmd, int w, int h)
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
    if (!sd) return obj;
+
+   _termio_config_set(obj, config);
+
    sd->pty = termpty_new(cmd, w, h, config->scrollback);
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
@@ -1063,19 +1078,19 @@ termio_config_update(Evas_Object *obj)
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    sd->font.name = NULL;
 
-   if (config->font.bitmap)
+   if (sd->config->font.bitmap)
      {
         snprintf(buf, sizeof(buf), "%s/fonts/%s",
-                 elm_app_data_dir_get(), config->font.name);
+                 elm_app_data_dir_get(), sd->config->font.name);
         sd->font.name = eina_stringshare_add(buf);
      }
    else
-     sd->font.name = eina_stringshare_add(config->font.name);
-   sd->font.size = config->font.size;
+     sd->font.name = eina_stringshare_add(sd->config->font.name);
+   sd->font.size = sd->config->font.size;
 
-   sd->jump_on_change = config->jump_on_change;
+   sd->jump_on_change = sd->config->jump_on_change;
 
-   termpty_backscroll_set(sd->pty, config->scrollback);
+   termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
    
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
@@ -1085,4 +1100,12 @@ termio_config_update(Evas_Object *obj)
    sd->font.chw = w;
    sd->font.chh = h;
    _smart_size(obj, sd->grid.w, sd->grid.h, EINA_TRUE);
+}
+
+Config *
+termio_config_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+   return sd->config;
 }

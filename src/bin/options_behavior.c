@@ -12,16 +12,20 @@ static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep;
 static void
 _cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
    config->jump_on_change = elm_check_state_get(obj);
-   termio_config_update(data);
-   config_save();
+   termio_config_update(term);
+   config_save(config, NULL);
 }
 
 static void
 _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
    char *txt;
-   
+
    if (config->wordsep)
      {
         eina_stringshare_del(config->wordsep);
@@ -33,21 +37,25 @@ _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
         config->wordsep = eina_stringshare_add(txt);
         free(txt);
      }
-   termio_config_update(data);
-   config_save();
+   termio_config_update(term);
+   config_save(config, NULL);
 }
 
 static void
 _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+
    config->scrollback = elm_slider_value_get(obj) + 0.5;
-   termio_config_update(data);
-   config_save();
+   termio_config_update(term);
+   config_save(config, NULL);
 }
 
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
+   Config *config = termio_config_get(term);
    Evas_Object *o;
    char *txt;
 

@@ -70,7 +70,7 @@ _cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
 }
 
 void
-main_trans_update(void)
+main_trans_update(const Config *config)
 {
    if (config->translucent)
      {
@@ -85,7 +85,7 @@ main_trans_update(void)
 }
 
 void
-main_media_update(void)
+main_media_update(const Config *config)
 {
    Evas_Object *o;
    int type = 0;
@@ -93,7 +93,7 @@ main_media_update(void)
    if ((config->background) && (config->background[0]))
      {
         if (media) evas_object_del(media);
-        o = media = media_add(win, config->background, MEDIA_BG, &type);
+        o = media = media_add(win, config->background, config, MEDIA_BG, &type);
         edje_object_part_swallow(bg, "terminology.background", o);
         if (type == TYPE_IMG)
           edje_object_signal_emit(bg, "media,image", "terminology");
@@ -117,7 +117,7 @@ main_media_update(void)
 }
 
 void
-main_media_mute_update(void)
+main_media_mute_update(const Config *config)
 {
    if (media) media_mute_set(media, config->mute);
 }
@@ -178,6 +178,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE
    };
    int args, retval = EXIT_SUCCESS;
+   Config *config;
    Evas_Object *o;
 
 
@@ -190,6 +191,9 @@ elm_main(int argc, char **argv)
      }
 
    config_init();
+
+   config = config_load("config");
+
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
@@ -222,13 +226,13 @@ elm_main(int argc, char **argv)
                    elm_app_data_dir_get(), name);
 
         eina_stringshare_replace(&(config->theme), path);
-        config_tmp = EINA_TRUE;
+        config->temporary = EINA_TRUE;
      }
 
    if (background)
      {
         eina_stringshare_replace(&(config->background), background);
-        config_tmp = EINA_TRUE;
+        config->temporary = EINA_TRUE;
      }
 
    if (video_module)
@@ -243,13 +247,13 @@ elm_main(int argc, char **argv)
         if (i == EINA_C_ARRAY_LENGTH(emotion_choices))
           i = 0; /* ecore getopt shouldn't let this happen, but... */
         config->vidmod = i;
-        config_tmp = EINA_TRUE;
+        config->temporary = EINA_TRUE;
      }
 
    if (video_mute != 0xff)
      {
         config->mute = video_mute;
-        config_tmp = EINA_TRUE;
+        config->temporary = EINA_TRUE;
      }
 
    win = tg_win_add();
@@ -257,11 +261,12 @@ elm_main(int argc, char **argv)
    bg = o = edje_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_file_set(o, config->theme, "terminology/background");
+   edje_object_file_set(o, config_theme_path_get(config),
+                        "terminology/background");
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
 
-   term = o = termio_add(win, cmd, 80, 24);
+   term = o = termio_add(win, config, cmd, 80, 24);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -272,8 +277,8 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "change", _cb_change, NULL);
    evas_object_show(o);
 
-   main_trans_update();
-   main_media_update();
+   main_trans_update(config);
+   main_media_update(config);
    
    evas_object_smart_callback_add(win, "focus,in", _cb_focus_in, term);
    evas_object_smart_callback_add(win, "focus,out", _cb_focus_out, term);
@@ -283,6 +288,8 @@ elm_main(int argc, char **argv)
 
    elm_run();
  end:
+
+   config_del(config);
    config_shutdown();
 
    eina_log_domain_unregister(_log_domain);

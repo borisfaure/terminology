@@ -10,35 +10,42 @@
 static Evas_Object *op_trans, *op_mute, *op_vidmod;
 
 static void
-_cb_op_video_trans_chg(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
    config->translucent = elm_check_state_get(obj);
-   main_trans_update();
-   config_save();
+   main_trans_update(config);
+   config_save(config, NULL);
 }
 
 static void
-_cb_op_video_mute_chg(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
    config->mute = elm_check_state_get(obj);
-   main_media_mute_update();
-   config_save();
+   main_media_mute_update(config);
+   config_save(config, NULL);
 }
 
 static void
-_cb_op_video_vidmod_chg(void *data  __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
    int v = elm_radio_value_get(obj);
    if (v == config->vidmod) return;
    config->vidmod = v;
-   main_media_update();
-   config_save();
+   main_media_update(config);
+   config_save(config, NULL);
 }
 
 void
 options_video(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o;
+   Config *config = termio_config_get(term);
 
    op_trans = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -48,7 +55,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_trans_chg, NULL);
+                                  _cb_op_video_trans_chg, term);
 
    o = elm_separator_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -65,7 +72,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_mute_chg, NULL);
+                                  _cb_op_video_mute_chg, term);
    o = elm_separator_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -88,7 +95,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_vidmod_chg, NULL);
+                                  _cb_op_video_vidmod_chg, term);
    
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -99,7 +106,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_vidmod_chg, NULL);
+                                  _cb_op_video_vidmod_chg, term);
    
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -110,7 +117,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_vidmod_chg, NULL);
+                                  _cb_op_video_vidmod_chg, term);
    
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -121,7 +128,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_video_vidmod_chg, NULL);
+                                  _cb_op_video_vidmod_chg, term);
    
    elm_radio_value_set(o, config->vidmod);
 

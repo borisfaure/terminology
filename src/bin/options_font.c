@@ -41,25 +41,28 @@ static void
 _cb_op_font_sel(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Font *f = data;
+   Config *config = termio_config_get(f->term);
    if ((config->font.name) && (!strcmp(f->name, config->font.name)))
      return;
    if (config->font.name) eina_stringshare_del(config->font.name);
    config->font.name = eina_stringshare_add(f->name);
    config->font.bitmap = f->bitmap;
    _update_sizing(f->term);
-   config_save();
+   config_save(config, NULL);
 }
 
 static void
 _cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
-   int size  = elm_slider_value_get(obj) + 0.5;
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   int size = elm_slider_value_get(obj) + 0.5;
 
    if (config->font.size == size) return;
    config->font.size = size;
-   _update_sizing(data);
+   _update_sizing(term);
    elm_genlist_realized_items_update(op_fontlist);
-   config_save();
+   config_save(config, NULL);
 }
 
 static int
@@ -84,6 +87,7 @@ _cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
    Evas_Object *o;
    Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
    char buf[4096];
+   Config *config = termio_config_get(f->term);
    
    if (!evas_object_visible_get(obj)) return;
    if (edje_object_part_swallow_get(obj, "terminology.content")) return;
@@ -116,13 +120,16 @@ static Evas_Object *
 _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Font *f = data;
+   Config *config = termio_config_get(f->term);
+
    if ((!strcmp(part, "elm.swallow.icon")) ||
        (!strcmp(part, "elm.swallow.end")))
      {
         Evas_Object *o;
 
         o = edje_object_add(evas_object_evas_get(obj));
-        edje_object_file_set(o, config->theme, "terminology/fontpreview");
+        edje_object_file_set(o, config_theme_path_get(config),
+                             "terminology/fontpreview");
         evas_object_size_hint_min_set(o, 
                                       40 * elm_config_scale_get(), 
                                       40 * elm_config_scale_get());
@@ -186,6 +193,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    Font *f;
    Elm_Object_Item *it, *sel_it = NULL, *grp_it = NULL;
    Elm_Genlist_Item_Class *it_class, *it_group;
+   Config *config = termio_config_get(term);
 
    options_font_clear();
    

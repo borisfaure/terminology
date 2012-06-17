@@ -14,6 +14,7 @@ struct _Media
    Ecore_Timer *anim;
    Ecore_Job *restart_job;
    const char *src;
+   const Config *config;
    int iw, ih;
    int sw, sh;
    int fr, frnum;
@@ -378,9 +379,9 @@ _type_mov_init(Evas_Object *obj)
    sd->type = TYPE_MOV;
    emotion_init();
    o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
-   if ((config->vidmod >= 0) && 
-       (config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
-     mod = modules[config->vidmod];
+   if ((sd->config->vidmod >= 0) && 
+       (sd->config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
+     mod = modules[sd->config->vidmod];
    if (!emotion_object_init(o, mod))
      {
         ERR("can't init emotion module '%s'", mod);
@@ -405,7 +406,7 @@ _type_mov_init(Evas_Object *obj)
    evas_object_clip_set(o, sd->clip);
    emotion_object_position_set(o, 0.0);
    emotion_object_play_set(o, EINA_TRUE);
-   if (config->mute) emotion_object_audio_mute_set(o, EINA_TRUE);
+   if (sd->config->mute) emotion_object_audio_mute_set(o, EINA_TRUE);
 }
 
 static void
@@ -538,7 +539,7 @@ _smart_init(void)
 }
 
 Evas_Object *
-media_add(Evas_Object *parent, const char *src, int mode, int *type)
+media_add(Evas_Object *parent, const char *src, const Config *config, int mode, int *type)
 {
    Evas *e;
    Evas_Object *obj;
@@ -552,8 +553,9 @@ media_add(Evas_Object *parent, const char *src, int mode, int *type)
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
    if (!sd) return obj;
-   
+
    sd->src = eina_stringshare_add(src);
+   sd->config = config;
    sd->mode = mode;
    if      (_is_fmt(src, extn_img))
      {

@@ -1,4 +1,9 @@
+#ifndef _CONFIG_H__
+#define _CONFIG_H__ 1
+
 typedef struct _Config Config;
+
+/* TODO: separate config per terminal (tab, window) and global. */
 
 struct _Config
 {
@@ -7,19 +12,24 @@ struct _Config
       int            size;
       unsigned char  bitmap;
    } font;
-   int               scrollback;
    const char       *theme;
    const char       *background;
-   unsigned char     jump_on_change;
-   unsigned char     translucent;
    const char       *wordsep;
+   int               scrollback;
    int               vidmod;
-   unsigned char     mute;
+   Eina_Bool         jump_on_change;
+   Eina_Bool         translucent;
+   Eina_Bool         mute;
+   Eina_Bool         temporary; /* not in EET */
+   const char       *config_key; /* not in EET, the key that config was loaded */
 };
-
-extern Config *config;
-extern Eina_Bool config_tmp;
 
 void config_init(void);
 void config_shutdown(void);
-void config_save(void);
+void config_save(const Config *config, const char *key);
+Config *config_load(const char *key);
+void config_del(Config *config);
+
+const char *config_theme_path_get(const Config *config);
+
+#endif
