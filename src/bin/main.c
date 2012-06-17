@@ -15,14 +15,14 @@ static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
 
 static void
-_cb_focus_in(void *data, Evas_Object *obj, void *event)
+_cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    edje_object_signal_emit(bg, "focus,in", "terminology");
    elm_object_focus_set(data, EINA_TRUE);
 }
 
 static void
-_cb_focus_out(void *data, Evas_Object *obj, void *event)
+_cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    edje_object_signal_emit(bg, "focus,out", "terminology");
    elm_object_focus_set(data, EINA_FALSE);
@@ -30,7 +30,7 @@ _cb_focus_out(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_size_hint(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_size_hint(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Coord mw, mh, rw, rh, w = 0, h = 0;
 
@@ -49,13 +49,13 @@ _cb_size_hint(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_options(void *data, Evas_Object *obj, void *event)
+_cb_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    options_toggle(win, bg, term);
 }
 
 static Eina_Bool
-_cb_flush(void *data)
+_cb_flush(void *data __UNUSED__)
 {
    flush_timer = NULL;
    elm_cache_all_flush();
@@ -63,7 +63,7 @@ _cb_flush(void *data)
 }
 
 static void
-_cb_change(void *data, Evas_Object *obj, void *event)
+_cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (!flush_timer) flush_timer = ecore_timer_add(0.25, _cb_flush, NULL);
    else ecore_timer_delay(flush_timer, 0.25);
@@ -227,7 +227,7 @@ elm_main(int argc, char **argv)
    if (video_module)
      {
         int i;
-        for (i = 0; i < EINA_C_ARRAY_LENGTH(emotion_choices); i++)
+        for (i = 0; i < (int)EINA_C_ARRAY_LENGTH(emotion_choices); i++)
           {
              if (video_module == emotion_choices[i])
                break;

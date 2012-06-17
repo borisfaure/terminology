@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "config.h"
 #include "termio.h"
@@ -8,7 +10,7 @@
 static Evas_Object *op_trans, *op_mute, *op_vidmod;
 
 static void
-_cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_video_trans_chg(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    config->translucent = elm_check_state_get(obj);
    main_trans_update();
@@ -16,7 +18,7 @@ _cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_video_mute_chg(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    config->mute = elm_check_state_get(obj);
    main_media_mute_update();
@@ -24,7 +26,7 @@ _cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_video_vidmod_chg(void *data  __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    int v = elm_radio_value_get(obj);
    if (v == config->vidmod) return;
@@ -37,7 +39,6 @@ void
 options_video(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o;
-   char *txt;
 
    op_trans = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);

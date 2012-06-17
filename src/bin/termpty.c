@@ -1312,7 +1312,7 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_cb_exe_exit(void *data, int type, void *event)
+_cb_exe_exit(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
    Termpty *ty = data;
@@ -1324,7 +1324,7 @@ _cb_exe_exit(void *data, int type, void *event)
 }
 
 static Eina_Bool
-_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
+_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Termpty *ty = data;
    char buf[4097];
@@ -1568,8 +1568,7 @@ void
 termpty_backscroll_set(Termpty *ty, int size)
 {
    int i;
-   Termsave *tso;
-   
+
    if (ty->backmax == size) return;
 
    if (ty->back)

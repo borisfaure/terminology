@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "termio.h"
 #include "termpty.h"
@@ -48,8 +50,7 @@ _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
-   char txt[8];
-   int i, j, x, y, w, ch1, ch2;
+   int j, x, y, w, ch1, ch2;
 
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
@@ -337,7 +338,7 @@ _take_selection(Evas_Object *obj)
 }
 
 static Eina_Bool
-_getsel_cb(void *data, Evas_Object *obj, Elm_Selection_Data *ev)
+_getsel_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Selection_Data *ev)
 {
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return EINA_FALSE;
@@ -361,7 +362,7 @@ _paste_selection(Evas_Object *obj)
 }
 
 void
-_smart_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Termio *sd;
@@ -403,7 +404,7 @@ _smart_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 void
-_smart_cb_focus_in(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -415,7 +416,7 @@ _smart_cb_focus_in(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 void
-_smart_cb_focus_out(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -512,7 +513,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
 }
 
 static void
-_smart_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd;
@@ -552,7 +553,7 @@ _smart_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_smart_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd;
@@ -576,7 +577,7 @@ _smart_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_smart_cb_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd;
@@ -601,7 +602,7 @@ _smart_cb_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_smart_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj, void *event)
+_smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Termio *sd;
@@ -618,7 +619,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_win_obj_del(void *data, Evas *e, Evas_Object *obj, void *event)
+_win_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -811,7 +812,7 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_smart_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;

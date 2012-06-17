@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "options.h"
 #include "options_font.h"
@@ -11,48 +13,48 @@ static Eina_Bool op_out = EINA_FALSE;
 static Ecore_Timer *op_del_timer = NULL;
 
 static void
-_cb_op_font(void *data, Evas_Object *obj, void *event)
+_cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    options_font(op_opbox, data);
 }
 
 static void
-_cb_op_theme(void *data, Evas_Object *obj, void *event)
+_cb_op_theme(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    // XXX: not done yet
 }
 
 static void
-_cb_op_wallpaper(void *data, Evas_Object *obj, void *event)
+_cb_op_wallpaper(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    // XXX: not done yet
 }
 
 static void
-_cb_op_video(void *data, Evas_Object *obj, void *event)
+_cb_op_video(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    options_video(op_opbox, data);
 }
 
 static void
-_cb_op_behavior(void *data, Evas_Object *obj, void *event)
+_cb_op_behavior(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    options_behavior(op_opbox, data);
 }
 
 static void
-_cb_op_tmp_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_tmp_chg(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    config_tmp = elm_check_state_get(obj);
 }
 
 static Eina_Bool
-_cb_op_del_delay(void *data)
+_cb_op_del_delay(void *data __UNUSED__)
 {
    evas_object_del(op_frame);
    options_font_clear();

@@ -73,7 +73,7 @@ _is_fmt(const char *f, const char **extn)
 
 //////////////////////// img
 static void
-_cb_img_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_img_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -160,7 +160,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
 
 //////////////////////// scalable img
 static void
-_cb_scale_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_scale_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -243,7 +243,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
 
 //////////////////////// edj
 static void
-_cb_edje_preloaded(void *data, Evas_Object *obj, const char *sig, const char *src)
+_cb_edje_preloaded(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -292,7 +292,7 @@ _type_edje_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
 static void _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
 static void
-_cb_mov_frame_decode(void *data, Evas_Object *obj, void *event)
+_cb_mov_frame_decode(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord ox, oy, ow, oh;
@@ -304,7 +304,7 @@ _cb_mov_frame_decode(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_mov_frame_resize(void *data, Evas_Object *obj, void *event)
+_cb_mov_frame_resize(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord ox, oy, ow, oh;
@@ -315,7 +315,7 @@ _cb_mov_frame_resize(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_mov_len_change(void *data, Evas_Object *obj, void *event)
+_cb_mov_len_change(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -332,7 +332,7 @@ _cb_mov_restart(void *data)
 }
 
 static void
-_cb_mov_decode_stop(void *data, Evas_Object *obj, void *event)
+_cb_mov_decode_stop(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -341,7 +341,7 @@ _cb_mov_decode_stop(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_mov_progress(void *data, Evas_Object *obj, void *event)
+_cb_mov_progress(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -351,7 +351,7 @@ _cb_mov_progress(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_mov_ref(void *data, Evas_Object *obj, void *event)
+_cb_mov_ref(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -379,7 +379,7 @@ _type_mov_init(Evas_Object *obj)
    emotion_init();
    o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
    if ((config->vidmod >= 0) && 
-       (config->vidmod < (sizeof(modules) / sizeof(modules[0]))))
+       (config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
      mod = modules[config->vidmod];
    if (!emotion_object_init(o, mod))
      {
@@ -453,8 +453,7 @@ _smart_add(Evas_Object *obj)
    Media *sd;
    Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
-   char buf[4096];
-   
+
    _meida_sc.add(obj);
    cd = evas_object_smart_data_get(obj);
    if (!cd) return;
@@ -514,7 +513,7 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+_smart_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -556,10 +555,26 @@ media_add(Evas_Object *parent, const char *src, int mode, int *type)
    
    sd->src = eina_stringshare_add(src);
    sd->mode = mode;
-   if      (_is_fmt(src, extn_img))   _type_img_init(obj);
-   else if (_is_fmt(src, extn_scale)) _type_scale_init(obj);
-   else if (_is_fmt(src, extn_edj))   _type_edje_init(obj);
-   else if (_is_fmt(src, extn_mov))   _type_mov_init(obj);
+   if      (_is_fmt(src, extn_img))
+     {
+        _type_img_init(obj);
+        if (type) *type = TYPE_IMG;
+     }
+   else if (_is_fmt(src, extn_scale))
+     {
+        _type_scale_init(obj);
+        if (type) *type = TYPE_SCALE;
+     }
+   else if (_is_fmt(src, extn_edj))
+     {
+        _type_edje_init(obj);
+        if (type) *type = TYPE_EDJE;
+     }
+   else if (_is_fmt(src, extn_mov))
+     {
+        _type_mov_init(obj);
+        if (type) *type = TYPE_MOV;
+     }
    return obj;
 }
 

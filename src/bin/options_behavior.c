@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "config.h"
 #include "termio.h"
@@ -8,7 +10,7 @@
 static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep;
 
 static void
-_cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    config->jump_on_change = elm_check_state_get(obj);
    termio_config_update(data);
@@ -16,7 +18,7 @@ _cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    char *txt;
    
@@ -36,7 +38,7 @@ _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event)
+_cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    config->scrollback = elm_slider_value_get(obj) + 0.5;
    termio_config_update(data);

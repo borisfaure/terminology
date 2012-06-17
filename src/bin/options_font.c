@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "config.h"
 #include "termio.h"
@@ -36,7 +38,7 @@ _update_sizing(Evas_Object *term)
 }
 
 static void
-_cb_op_font_sel(void *data, Evas_Object *obj, void *event)
+_cb_op_font_sel(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Font *f = data;
    if ((config->font.name) && (!strcmp(f->name, config->font.name)))
@@ -49,7 +51,7 @@ _cb_op_font_sel(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event)
+_cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    int size  = elm_slider_value_get(obj) + 0.5;
 
@@ -67,7 +69,7 @@ _cb_op_font_sort(const void *d1, const void *d2)
 }
 
 static void
-_cb_op_font_preview_del(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o;
    
@@ -76,7 +78,7 @@ _cb_op_font_preview_del(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Font *f = data;
    Evas_Object *o;
@@ -143,12 +145,12 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static char *
-_cb_op_font_text_get(void *data, Evas_Object *obj, const char *part)
+_cb_op_font_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    Font *f = data;
    char buf[4096], *p;
-   
-   snprintf(buf, sizeof(buf), "%s", f->name);
+
+   eina_strlcpy(buf, f->name, sizeof(buf));
    buf[0] = toupper(buf[0]);
    p = strrchr(buf, '.');
    if (p) *p = 0;
@@ -156,7 +158,7 @@ _cb_op_font_text_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static char *
-_cb_op_font_group_text_get(void *data, Evas_Object *obj, const char *part)
+_cb_op_font_group_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return strdup(data);
 }

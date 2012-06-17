@@ -16,6 +16,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_USE_SYSTEM_EXTENSIONS
 AM_PROG_CC_STDC
 AM_PROG_CC_C_O
+AC_C___ATTRIBUTE__
 
 requirements="\
    elementary >= 1.0.99 \
