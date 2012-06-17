@@ -51,6 +51,7 @@ collections {
                rel1.offset: 0 1;
                rel2.offset: -1 -1;
                image.normal: "bg_shine.png";
+               fill.smooth: 0;
                align: 0.5 0.0;
                aspect: (255/120) (255/120);
                aspect_preference: HORIZONTAL;
