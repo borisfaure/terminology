@@ -59,7 +59,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    op_mute = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Audo muted");
+   elm_object_text_set(o, "Audio muted");
    elm_check_state_set(o, config->mute);
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
