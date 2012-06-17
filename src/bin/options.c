@@ -8,6 +8,7 @@
 static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL,
                    *op_opbox = NULL, *op_tbox = NULL, *op_temp = NULL;
 static Eina_Bool op_out = EINA_FALSE;
+static Ecore_Timer *op_del_timer = NULL;
 
 static void
 _cb_op_font(void *data, Evas_Object *obj, void *event)
@@ -48,6 +49,17 @@ static void
 _cb_op_tmp_chg(void *data, Evas_Object *obj, void *event)
 {
    config_tmp = elm_check_state_get(obj);
+}
+
+static Eina_Bool
+_cb_op_del_delay(void *data)
+{
+   evas_object_del(op_frame);
+   options_font_clear();
+   op_frame = NULL;
+   op_del_timer = NULL;
+   elm_cache_all_flush();
+   return EINA_FALSE;
 }
 
 void
@@ -126,11 +138,18 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         edje_object_signal_emit(bg, "options,show", "terminology");
         op_out = EINA_TRUE;
+        if (op_del_timer)
+          {
+             ecore_timer_del(op_del_timer);
+             op_del_timer = NULL;
+          }
      }
    else
      {
         edje_object_signal_emit(bg, "options,hide", "terminology");
         op_out = EINA_FALSE;
         elm_object_focus_set(term, EINA_TRUE);
+        if (op_del_timer) ecore_timer_del(op_del_timer);
+        op_del_timer = ecore_timer_add(10.0, _cb_op_del_delay, NULL);
      }
 }

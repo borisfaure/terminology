@@ -162,14 +162,9 @@ _cb_op_font_group_text_get(void *data, Evas_Object *obj, const char *part)
 }
 
 void
-options_font(Evas_Object *opbox, Evas_Object *term)
+options_font_clear(void)
 {
-   Evas_Object *o, *bx;
-   char buf[4096], *file, *fname, *s;
-   Eina_List *files, *fontlist, *l;
    Font *f;
-   Elm_Object_Item *it, *sel_it = NULL, *grp_it = NULL;
-   Elm_Genlist_Item_Class *it_class, *it_group;
    
    EINA_LIST_FREE(fonts, f)
      {
@@ -181,7 +176,20 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         eina_hash_free(fonthash);
         fonthash = NULL;
      }
+}
 
+void
+options_font(Evas_Object *opbox, Evas_Object *term)
+{
+   Evas_Object *o, *bx;
+   char buf[4096], *file, *fname, *s;
+   Eina_List *files, *fontlist, *l;
+   Font *f;
+   Elm_Object_Item *it, *sel_it = NULL, *grp_it = NULL;
+   Elm_Genlist_Item_Class *it_class, *it_group;
+
+   options_font_clear();
+   
    bx = o = elm_box_add(opbox);
    elm_box_horizontal_set(o, EINA_TRUE);
    

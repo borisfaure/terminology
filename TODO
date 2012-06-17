@@ -37,7 +37,7 @@ make it a first-class terminal:
 [ ] improve selection text extraction logic
 [X] font selector should include font previews in the list -
     preferably ONLY be a list of previews
-[ ] options widgets should be deleted once they are hidden. they stay
+[X] options widgets should be deleted once they are hidden. they stay
     in memory at the moment
 [ ] clicking with ANY mouse button while options is up outside of
     options should dismiss it.
