@@ -22,7 +22,9 @@ requirements="\
    eet >= 1.6.99 \
    evas >= 1.2.99 \
    ecore >= 1.2.99 \
-   edje >= 1.2.99"
+   edje >= 1.2.99 \
+   emotion >= 1.0.99 \
+   "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 

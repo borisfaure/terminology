@@ -117,7 +117,17 @@ elm_main(int argc, char **argv)
 
    for (i = 1; i < argc; i++)
      {
-        if ((!strcmp(argv[i], "-e")) && (i < (argc - 1)))
+        if ((!strcmp(argv[i], "-h")) ||
+            (!strcmp(argv[i], "-help")) ||
+            (!strcmp(argv[i], "--help")))
+          {
+             printf("Options:\n"
+                    "  -e CMD   Execute command CMD instead of the users shell\n"
+                    "  -t THEME Use the named edje theme or path to theme file\n"
+                    "  -b FILE  Use the named file as a background wallpaper\n");
+             exit(0);
+          }
+        else if ((!strcmp(argv[i], "-e")) && (i < (argc - 1)))
           {
              i++;
              cmd = argv[i];
