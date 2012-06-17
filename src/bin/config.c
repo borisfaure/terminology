@@ -65,12 +65,12 @@ config_init(void)
         config->font.bitmap = 1;
         config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
-        config->scrollback = 4096;
+        config->scrollback = 2000;
         config->theme = eina_stringshare_add("default.edj");
         config->background = NULL;
         config->translucent = 0;
         config->jump_on_change = 0;
-        config->wordsep = eina_stringshare_add("'\"()[]{}=*!#$^\\:;,?` ");
+        config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
      }
 }
 
