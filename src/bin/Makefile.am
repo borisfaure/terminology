@@ -9,6 +9,7 @@ terminology_CPPFLAGS = -I. \
 terminology_LDADD = @TERMINOLOGY_LIBS@
 
 terminology_SOURCES = \
+private.h \
 col.c col.h \
 config.c config.h \
 keyin.c keyin.h \

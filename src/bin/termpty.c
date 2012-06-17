@@ -1,4 +1,5 @@
-#define _XOPEN_SOURCE 600
+#include "private.h"
+
 #include <Elementary.h>
 #include "termpty.h"
 #include <sys/types.h>
