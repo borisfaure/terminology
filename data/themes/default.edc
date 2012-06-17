@@ -85,7 +85,7 @@ collections {
          part { name: "terminology.options"; type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 1;
-               min: 120 120;
+               min: 80 80;
                align: 0.0 0.5;
                rel1 {
                   relative: 1.0 0.02;

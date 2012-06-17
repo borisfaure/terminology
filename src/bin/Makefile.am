@@ -17,6 +17,7 @@ media.c media.h \
 options.c options.h \
 options_behavior.c options_behavior.h \
 options_font.c options_font.h \
+options_video.c options_video.h \
 termio.c termio.h \
 termpty.c termpty.h \
 utf8.c utf8.h \

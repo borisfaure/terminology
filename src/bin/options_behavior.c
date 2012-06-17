@@ -2,24 +2,16 @@
 #include "config.h"
 #include "termio.h"
 #include "options.h"
-#include "options_font.h"
+#include "options_behavior.h"
 #include "main.h"
 
-static Evas_Object *op_sbslider, *op_jumpcheck, *op_trans, *op_wordsep;
+static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep;
 
 static void
 _cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event)
 {
    config->jump_on_change = elm_check_state_get(obj);
    termio_config_update(data);
-   config_save();
-}
-
-static void
-_cb_op_behavior_trans_chg(void *data, Evas_Object *obj, void *event)
-{
-   config->translucent = elm_check_state_get(obj);
-   main_trans_update();
    config_save();
 }
 
@@ -67,16 +59,13 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_jump_chg, term);
    
-   op_jumpcheck = o = elm_check_add(opbox);
+   o = elm_separator_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Translucent");
-   elm_check_state_set(o, config->translucent);
+   elm_separator_horizontal_set(o, EINA_TRUE);
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_trans_chg, NULL);
-
+   
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -101,6 +90,13 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_wsep_chg, term);
 
+   o = elm_separator_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -121,7 +117,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_behavior_sback_chg, term);
    
-   elm_box_pack_end(opbox, o);
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, 0.0);
    evas_object_show(o);

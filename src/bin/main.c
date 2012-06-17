@@ -112,6 +112,12 @@ main_media_update(void)
      }
 }
 
+void
+main_media_mute_update(void)
+{
+   if (media) media_mute_set(media, config->mute);
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {

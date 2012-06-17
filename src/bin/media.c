@@ -560,3 +560,12 @@ media_add(Evas_Object *parent, const char *src, int mode, int *type)
    else if (_is_fmt(src, extn_mov))   _type_mov_init(obj);
    return obj;
 }
+
+void
+media_mute_set(Evas_Object *obj, Eina_Bool mute)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (sd->type != TYPE_MOV) return;
+   emotion_object_audio_mute_set(sd->o_img, mute);
+}

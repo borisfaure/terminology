@@ -2,6 +2,7 @@
 #include "options.h"
 #include "options_font.h"
 #include "options_behavior.h"
+#include "options_video.h"
 
 static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL, *op_opbox = NULL;
 static Eina_Bool op_out = EINA_FALSE;
@@ -25,6 +26,13 @@ _cb_op_wallpaper(void *data, Evas_Object *obj, void *event)
 {
    elm_box_clear(op_opbox);
    // XXX: not done yet
+}
+
+static void
+_cb_op_video(void *data, Evas_Object *obj, void *event)
+{
+   elm_box_clear(op_opbox);
+   options_video(op_opbox, data);
 }
 
 static void
@@ -53,6 +61,12 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_object_content_set(op_frame, o);
         evas_object_show(o);
 
+        op_opbox = o = elm_box_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(op_box, o);
+        evas_object_show(o);
+
         op_toolbar = o = elm_toolbar_add(win);
         elm_toolbar_horizontal_set(o, EINA_FALSE);
         elm_object_style_set(o, "item_horizontal");
@@ -64,21 +78,17 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_toolbar_menu_parent_set(o, win);
         elm_toolbar_homogeneous_set(o, EINA_FALSE);
 
-        it_fn = elm_toolbar_item_append(o, "preferences-desktop-font", "Font",
-                                        _cb_op_font, term);
-        it_th = elm_toolbar_item_append(o, "preferences-desktop-theme", "Theme",
-                                        _cb_op_theme, NULL);
-        it_wp = elm_toolbar_item_append(o, "video-display", "Wallpaper",
-                                        _cb_op_wallpaper, NULL);
-        it_bh = elm_toolbar_item_append(o, "system-run", "Behavior",
-                                        _cb_op_behavior, term);
+        it_fn = elm_toolbar_item_append(o, "preferences-desktop-font",
+                                        "Font", _cb_op_font, term);
+        it_th = elm_toolbar_item_append(o, "preferences-desktop-theme",
+                                        "Theme", _cb_op_theme, NULL);
+        it_wp = elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
+                                        "Wallpaper", _cb_op_wallpaper, NULL);
+        it_wp = elm_toolbar_item_append(o, "preferences-desktop-multimedia",
+                                        "Video", _cb_op_video, NULL);
+        it_bh = elm_toolbar_item_append(o, "system-run",
+                                        "Behavior", _cb_op_behavior, term);
 
-        elm_box_pack_end(op_box, o);
-        evas_object_show(o);
-
-        op_opbox = o = elm_box_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
 
