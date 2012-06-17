@@ -6,7 +6,7 @@
 #include "options.h"
 #include "media.h"
 
-const char *cmd = NULL;
+static const char *cmd = NULL;
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
 
