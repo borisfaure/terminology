@@ -1411,8 +1411,46 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
    ty->pid = fork();
    if (!ty->pid)
      {
-        char **args;
+        const char *shell = NULL;
+        const char *args[4] = {NULL, NULL, NULL, NULL};
+        Eina_Bool needs_shell;
         int i;
+
+        needs_shell = ((!cmd) ||
+                       (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
+        DBG("cmd='%s' needs_shell=%u", cmd ? cmd : "", needs_shell);
+
+        if (needs_shell)
+          {
+             shell = getenv("SHELL");
+             if (!shell)
+               {
+                  uid_t uid = getuid();
+                  struct passwd *pw = getpwuid(uid);
+                  if (pw) shell = pw->pw_shell;
+               }
+             if (!shell)
+               {
+                  WRN("Could not find shell, fallback to /bin/sh");
+                  shell = "/bin/sh";
+               }
+          }
+
+        if (!needs_shell)
+          args[0] = cmd;
+        else
+          {
+             args[0] = shell;
+             if (cmd)
+               {
+                  args[1] = "-c";
+                  args[2] = cmd;
+               }
+          }
+
+#define NC(x) (args[x] != NULL ? args[x] : "")
+        DBG("exec %s %s %s %s", NC(0), NC(1), NC(2), NC(3));
+#undef NC
 
         for (i = 0; i < 100; i++)
           {
@@ -1427,22 +1465,12 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
 
         if (ioctl(ty->fd, TIOCSCTTY, NULL) < 0) exit(1);
 
-        if (!cmd) cmd = getenv("SHELL");
-        if (!cmd)
-          {
-             uid_t uid = getuid();
-             struct passwd *pw = getpwuid(uid);
-             if (pw) cmd = pw->pw_shell;
-          }
-        if (!cmd) cmd = "/bin/sh";
+        /* TODO: should we reset signals here? */
 
-        args = malloc(2 * sizeof(char *));
-        args[0] = (char *)cmd;
-        args[1] = NULL;
         // pretend to be xterm
         putenv("TERM=xterm");
-        execvp(args[0], args);
-        exit(1);
+        execvp(args[0], (char *const *)args);
+        exit(127); /* same as system() for failed commands */
      }
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd, ECORE_FD_READ,
                                            _cb_fd_read, ty,
