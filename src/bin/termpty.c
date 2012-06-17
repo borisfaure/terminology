@@ -1411,9 +1411,7 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
    ty->pid = fork();
    if (!ty->pid)
      {
-        char **args, *shell;
-        struct passwd *pw;
-        uid_t uid;
+        char **args;
         int i;
 
         for (i = 0; i < 100; i++)
@@ -1429,12 +1427,15 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
 
         if (ioctl(ty->fd, TIOCSCTTY, NULL) < 0) exit(1);
 
-        uid = getuid();
-        pw = getpwuid(uid);
-        if (!pw) shell = "/bin/sh";
-        shell = pw->pw_shell;
-        if (!shell) shell = "/bin/sh";
-        if (!cmd) cmd = shell;
+        if (!cmd) cmd = getenv("SHELL");
+        if (!cmd)
+          {
+             uid_t uid = getuid();
+             struct passwd *pw = getpwuid(uid);
+             if (pw) cmd = pw->pw_shell;
+          }
+        if (!cmd) cmd = "/bin/sh";
+
         args = malloc(2 * sizeof(char *));
         args[0] = (char *)cmd;
         args[1] = NULL;
