@@ -10,14 +10,20 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V)) -id $(top_srcdir)/data/themes/images -fd $(top_s
 
 filesdir = $(pkgdatadir)/themes
 files_DATA = \
-default.edj
+default.edj \
+mild.edj
 
-EXTRA_DIST = default.edc
+EXTRA_DIST = default.edc mild.edc
 
 default.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/default.edj
+
+mild.edj: Makefile mild.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/mild.edc \
+	$(top_builddir)/data/themes/mild.edj
 
 clean-local:
 	rm -f *.edj
