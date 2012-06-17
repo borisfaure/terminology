@@ -11,10 +11,11 @@ typedef struct _Media Media;
 struct _Media
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
-   Evas_Object *clip, *o_img;
+   Evas_Object *clip, *o_img, *o_tmp;
    Ecore_Timer *anim;
    const char *src;
    int iw, ih;
+   int sw, sh;
    int fr, frnum;
    int mode, type;
 };
@@ -34,7 +35,7 @@ static const char *extn_img[] =
 
 static const char *extn_scale[] =
 {
-   ".svg", ".svgz", ".svg.gz", ".ps", ".psd", 
+   ".svg", ".svgz", ".svg.gz", ".ps", ".ps.gz", ".pdf",
    NULL
 };
 
@@ -77,7 +78,6 @@ _cb_img_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
    evas_object_show(sd->o_img);
-   printf("preloaded\n");
 }
 
 static Eina_Bool
@@ -92,7 +92,6 @@ _cb_img_frame(void *data)
    evas_object_image_animated_frame_set(sd->o_img, fr);
    t = evas_object_image_animated_frame_duration_get(sd->o_img, fr, 0);
    ecore_timer_interval_set(sd->anim, t);
-//   sd->anim = ecore_timer_add(t, _cb_img_frame, data);
    return EINA_TRUE;
 }
 
@@ -124,9 +123,7 @@ _type_img_init(Evas_Object *obj)
                                   _cb_img_preloaded, obj);
    evas_object_image_file_set(o, sd->src, NULL);
    evas_object_image_size_get(o, &(sd->iw), &(sd->ih));
-   printf("start preload\n");
    evas_object_image_preload(o, EINA_FALSE);
-   printf("start preload done\n");
    _type_img_anim_handle(obj);
 }
 
@@ -163,25 +160,83 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
 
 //////////////////////// scalable img
 static void
+_cb_scale_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   if (!sd->o_tmp) evas_object_show(sd->o_img);
+   else
+     {
+        evas_object_del(sd->o_img);
+        sd->o_img = sd->o_tmp;
+        sd->o_tmp = NULL;
+        evas_object_show(sd->o_img);
+     }
+}
+
+static void
 _type_scale_init(Evas_Object *obj)
 {
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->type = TYPE_SCALE;
-   // XXX
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
-   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                  _cb_scale_preloaded, obj);
    evas_object_image_file_set(o, sd->src, NULL);
+   evas_object_image_size_get(o, &(sd->iw), &(sd->ih));
+   evas_object_image_preload(o, EINA_FALSE);
 }
 
 static void
 _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if ((w <= 0) || (h <= 0) || (sd->iw <= 0) || (sd->ih <= 0))
+     {
+        w = 1;
+        h = 1;
+     }
+   else
+     {
+        int iw, ih;
+        
+        iw = w;
+        ih = (sd->ih * w) / sd->iw;
+        if (ih < h)
+          {
+             ih = h;
+             iw = (sd->iw * h) / sd->ih;
+             if (iw < w) iw = w;
+          }
+        x += ((w - iw) / 2);
+        y += ((h - ih) / 2);
+        w = iw;
+        h = ih;
+     }
+   if ((w != sd->sw) || (h != sd->sh))
+     {
+        o = sd->o_tmp = evas_object_image_filled_add(evas_object_evas_get(obj));
+        evas_object_smart_member_add(o, obj);
+        evas_object_clip_set(o, sd->clip);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                       _cb_scale_preloaded, obj);
+        evas_object_image_file_set(o, sd->src, NULL);
+        evas_object_image_load_size_set(sd->o_tmp, w, h);
+        evas_object_image_preload(o, EINA_FALSE);
+     }
+   sd->sw = w;
+   sd->sh = h;
+   if (sd->o_tmp)
+     {
+        evas_object_move(sd->o_tmp, x, y);
+        evas_object_resize(sd->o_tmp, w, h);
+     }
    evas_object_move(sd->o_img, x, y);
    evas_object_resize(sd->o_img, w, h);
 }
@@ -284,6 +339,7 @@ _smart_del(Evas_Object *obj)
    if (!sd) return;
    if (sd->clip) evas_object_del(sd->clip);
    if (sd->o_img) evas_object_del(sd->o_img);
+   if (sd->o_tmp) evas_object_del(sd->o_tmp);
    if (sd->anim) ecore_timer_del(sd->anim);
    _meida_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
