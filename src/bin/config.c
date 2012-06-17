@@ -8,17 +8,10 @@ static Eet_Data_Descriptor *edd_base = NULL;
 static const char *
 _config_home_get(void)
 {
-   static char path[PATH_MAX] = "";
-
 #ifdef ELM_EFREET
-   const char *tmp = efreet_config_home_get();
-   size_t len = eina_stringshare_strlen(tmp);
-
-   if (len + 1 < PATH_MAX)
-     memcpy(path, tmp, len + 1);
-   eina_stringshare_del(tmp);
-
+   return efreet_config_home_get();
 #else
+   static char path[PATH_MAX] = "";
    const char *v = getenv("XDG_CONFIG_HOME");
    if (v) eina_strlcpy(path, v, sizeof(path));
    else
@@ -32,9 +25,8 @@ _config_home_get(void)
              eina_strlcpy(path, v, sizeof(path));
           }
      }
-#endif
-
    return path;
+#endif
 }
 
 void
