@@ -727,7 +727,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                        arg = _csi_arg_get(&b);
                        if (b)
                          {
-                            int i, size;
+                            int size;
 
                             switch (arg)
                               {
