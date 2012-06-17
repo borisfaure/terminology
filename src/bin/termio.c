@@ -962,7 +962,7 @@ termio_win_set(Evas_Object *obj, Evas_Object *win)
                                             _win_obj_del, obj);
         sd->win = NULL;
      }
-   if (!win) return;
+   if (win)
      {
         sd->win = win;
         evas_object_event_callback_add(sd->win, EVAS_CALLBACK_DEL,
