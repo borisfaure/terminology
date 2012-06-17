@@ -18,6 +18,7 @@ struct _Config
 };
 
 extern Config *config;
+extern Eina_Bool config_tmp;
 
 void config_init(void);
 void config_shutdown(void);

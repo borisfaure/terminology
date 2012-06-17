@@ -3,7 +3,7 @@ here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
 [X] evas textgrid needs creating and to be used
-[ ] underline and strikethrough need supporting at termio level
+[X] underline and strikethrough need supporting at termio level
 [ ] blink and blink2 attributes need to be supported
 [ ] improve terminal emulation handling (i know it doesn't handle gfx
     chars and it definitely has an incomplete escape handling core -
@@ -15,7 +15,7 @@ make it a first-class terminal:
     then maybe not according to convention)
 [ ] general input mode handling improvements (keypad, other key
     input, mousereporting etc.)
-[ ] save of config after options changes (option checkbox for
+[X] save of config after options changes (option checkbox for
     temporary local only changes)
 [ ] selection of themes
 [ ] selection of background "wallpapers" (and support them at all -

@@ -5,6 +5,7 @@
 
 static Eet_Data_Descriptor *edd_base = NULL;
 Config *config = NULL;
+Eina_Bool config_tmp = EINA_FALSE;
 
 static const char *
 _homedir(void)
@@ -105,7 +106,8 @@ config_save(void)
    Eet_File *ef;
    char buf[4096], buf2[4096], *home;
    int ok;
-   
+
+   if (config_tmp) return;
    home = (char *)_homedir();
    snprintf(buf, sizeof(buf), "%s/.terminology/config/standard", home);
    ecore_file_mkpath(buf);

@@ -3,8 +3,10 @@
 #include "options_font.h"
 #include "options_behavior.h"
 #include "options_video.h"
+#include "config.h"
 
-static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL, *op_opbox = NULL;
+static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL,
+                   *op_opbox = NULL, *op_tbox = NULL, *op_temp = NULL;
 static Eina_Bool op_out = EINA_FALSE;
 
 static void
@@ -42,6 +44,12 @@ _cb_op_behavior(void *data, Evas_Object *obj, void *event)
    options_behavior(op_opbox, data);
 }
 
+static void
+_cb_op_tmp_chg(void *data, Evas_Object *obj, void *event)
+{
+   config_tmp = elm_check_state_get(obj);
+}
+
 void
 options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 {
@@ -67,7 +75,15 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
 
+        op_tbox = o = elm_box_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(op_box, o);
+        evas_object_show(o);
+        
         op_toolbar = o = elm_toolbar_add(win);
+        evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, 0.5, 0.0);
         elm_toolbar_horizontal_set(o, EINA_FALSE);
         elm_object_style_set(o, "item_horizontal");
         evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -89,12 +105,21 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         it_bh = elm_toolbar_item_append(o, "system-run",
                                         "Behavior", _cb_op_behavior, term);
 
-        elm_box_pack_end(op_box, o);
+        elm_box_pack_end(op_tbox, o);
         evas_object_show(o);
 
         elm_toolbar_item_selected_set(it_fn, EINA_TRUE);
+        
+        op_temp = o = elm_check_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
+        elm_object_text_set(o, "Temporary");
+        elm_check_state_set(o, config_tmp);
+        elm_box_pack_end(op_tbox, o);
+        evas_object_show(o);
+        evas_object_smart_callback_add(o, "changed", _cb_op_tmp_chg, NULL);
 
-        evas_smart_objects_calculate(evas_object_evas_get(win));
+//        evas_smart_objects_calculate(evas_object_evas_get(win));
         edje_object_part_swallow(bg, "terminology.options", op_frame);
         evas_object_show(o);
      }

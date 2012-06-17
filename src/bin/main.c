@@ -163,17 +163,20 @@ elm_main(int argc, char **argv)
                }
              else
                config->theme = eina_stringshare_add(argv[i]);
+             config_tmp = EINA_TRUE;
           }
         else if ((!strcmp(argv[i], "-b")) && (i < (argc - 1)))
           {
              i++;
              if (config->background) eina_stringshare_del(config->background);
              config->background = eina_stringshare_add(argv[i]);
+             config_tmp = EINA_TRUE;
           }
         else if ((!strcmp(argv[i], "-m")) && (i < (argc - 1)))
           {
              i++;
              config->mute = atoi(argv[i]);
+             config_tmp = EINA_TRUE;
           }
         else if ((!strcmp(argv[i], "-vm")) && (i < (argc - 1)))
           {
@@ -182,6 +185,7 @@ elm_main(int argc, char **argv)
              else if (!strcmp(argv[i], "gstreamer")) config->vidmod = 1;
              else if (!strcmp(argv[i], "xine")) config->vidmod = 2;
              else if (!strcmp(argv[i], "generic")) config->vidmod = 3;
+             config_tmp = EINA_TRUE;
           }
      }
 
