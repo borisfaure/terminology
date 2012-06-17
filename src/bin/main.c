@@ -1,3 +1,8 @@
+#ifdef HAVE_CONFIG_H
+#include "terminology_config.h"
+#endif
+
+#include <Ecore_Getopt.h>
 #include <Elementary.h>
 #include "main.h"
 #include "win.h"
@@ -6,7 +11,6 @@
 #include "options.h"
 #include "media.h"
 
-static const char *cmd = NULL;
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
 
@@ -118,12 +122,63 @@ main_media_mute_update(void)
    if (media) media_mute_set(media, config->mute);
 }
 
+static const char *emotion_choices[] = {
+  "auto", "gstreamer", "xine", "generic",
+  NULL
+};
+
+static const Ecore_Getopt options = {
+   PACKAGE_NAME,
+   "%prog [options]",
+   PACKAGE_VERSION,
+   "(C) 2012 Carsten Haitzler",
+   "GPL-2",
+   "Terminal emulator written with Enlightenment Foundation Libraries.",
+   EINA_TRUE,
+   {
+      ECORE_GETOPT_STORE_STR('e', "exec",
+                             "command to execute. "
+                             "Defaults to $SHELL (or passwd shel or /bin/sh)"),
+      ECORE_GETOPT_STORE_STR('t', "theme",
+                             "Use the named edje theme or path to theme file."),
+      ECORE_GETOPT_STORE_STR('b', "background",
+                             "Use the named file as a background wallpaper."),
+      ECORE_GETOPT_CHOICE(0, "video-module",
+                          "Set emotion module to use.",
+                          emotion_choices),
+      ECORE_GETOPT_STORE_BOOL(0, "video-mute",
+                              "Set mute mode for video playback."),
+      ECORE_GETOPT_VERSION('V', "version"),
+      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+      ECORE_GETOPT_LICENSE('L', "license"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
+};
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   int i;
+   char *cmd = NULL;
+   char *theme = NULL;
+   char *background = NULL;
+   char *video_module = NULL;
+   Eina_Bool video_mute = 0xff; /* unset */
+   Eina_Bool quit_option = EINA_FALSE;
+   Ecore_Getopt_Value values[] = {
+     ECORE_GETOPT_VALUE_STR(cmd),
+     ECORE_GETOPT_VALUE_STR(theme),
+     ECORE_GETOPT_VALUE_STR(background),
+     ECORE_GETOPT_VALUE_STR(video_module),
+     ECORE_GETOPT_VALUE_BOOL(video_mute),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_NONE
+   };
+   int args, retval = EXIT_SUCCESS;
    Evas_Object *o;
-   char buf[4096], *p;
 
    config_init();
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -131,62 +186,54 @@ elm_main(int argc, char **argv)
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
    elm_app_info_set(elm_main, "terminology", "themes/default.edj");
 
-   for (i = 1; i < argc; i++)
+   args = ecore_getopt_parse(&options, values, argc, argv);
+   if (args < 0)
      {
-        if ((!strcmp(argv[i], "-h")) ||
-            (!strcmp(argv[i], "-help")) ||
-            (!strcmp(argv[i], "--help")))
+        fputs("Could not parse command line options.\n", stderr);
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   if (quit_option) goto end;
+
+   if (theme)
+     {
+        if (eina_str_has_suffix(theme, ".edj"))
+          eina_stringshare_replace(&(config->theme), theme);
+        else
           {
-             printf("Options:\n"
-                    "  -e  CMD   Execute command CMD instead of the users shell\n"
-                    "  -t  THEME Use the named edje theme or path to theme file\n"
-                    "  -b  FILE  Use the named file as a background wallpaper\n"
-                    "  -m  [0/1] Set mute mode for video playback\n"
-                    "  -vm MOD   Set emotion module to use (auto, gstreamer, xine, generic)\n"
-                   );
-             exit(0);
+             char buf[PATH_MAX];
+             snprintf(buf, sizeof(buf), "%s.edj", theme);
+             eina_stringshare_replace(&(config->theme), buf);
           }
-        else if ((!strcmp(argv[i], "-e")) && (i < (argc - 1)))
+        config_tmp = EINA_TRUE;
+     }
+
+   if (background)
+     {
+        eina_stringshare_replace(&(config->background), background);
+        config_tmp = EINA_TRUE;
+     }
+
+   if (video_module)
+     {
+        int i;
+        for (i = 0; i < EINA_C_ARRAY_LENGTH(emotion_choices); i++)
           {
-             i++;
-             cmd = argv[i];
+             if (video_module == emotion_choices[i])
+               break;
           }
-        else if ((!strcmp(argv[i], "-t")) && (i < (argc - 1)))
-          {
-             i++;
-             if (config->theme) eina_stringshare_del(config->theme);
-             p = strchr(argv[i], '.');
-             if ((!p) || (strcasecmp(p, ".edj")))
-               {
-                  snprintf(buf, sizeof(buf), "%s.edj", argv[i]);
-                  config->theme = eina_stringshare_add(buf);
-               }
-             else
-               config->theme = eina_stringshare_add(argv[i]);
-             config_tmp = EINA_TRUE;
-          }
-        else if ((!strcmp(argv[i], "-b")) && (i < (argc - 1)))
-          {
-             i++;
-             if (config->background) eina_stringshare_del(config->background);
-             config->background = eina_stringshare_add(argv[i]);
-             config_tmp = EINA_TRUE;
-          }
-        else if ((!strcmp(argv[i], "-m")) && (i < (argc - 1)))
-          {
-             i++;
-             config->mute = atoi(argv[i]);
-             config_tmp = EINA_TRUE;
-          }
-        else if ((!strcmp(argv[i], "-vm")) && (i < (argc - 1)))
-          {
-             i++;
-             if (!strcmp(argv[i], "auto")) config->vidmod = 0;
-             else if (!strcmp(argv[i], "gstreamer")) config->vidmod = 1;
-             else if (!strcmp(argv[i], "xine")) config->vidmod = 2;
-             else if (!strcmp(argv[i], "generic")) config->vidmod = 3;
-             config_tmp = EINA_TRUE;
-          }
+
+        if (i == EINA_C_ARRAY_LENGTH(emotion_choices))
+          i = 0; /* ecore getopt shouldn't let this happen, but... */
+        config->vidmod = i;
+        config_tmp = EINA_TRUE;
+     }
+
+   if (video_mute != 0xff)
+     {
+        config->mute = video_mute;
+        config_tmp = EINA_TRUE;
      }
 
    win = tg_win_add();
@@ -198,6 +245,7 @@ elm_main(int argc, char **argv)
         edje_object_file_set(o, config->theme, "terminology/background");
    else
      {
+        char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%s/themes/%s",
                  elm_app_data_dir_get(), config->theme);
         edje_object_file_set(o, buf, "terminology/background");
@@ -226,8 +274,9 @@ elm_main(int argc, char **argv)
    evas_object_show(win);
 
    elm_run();
+ end:
    config_shutdown();
    elm_shutdown();
-   return 0;
+   return retval;
 }
 ELM_MAIN()
