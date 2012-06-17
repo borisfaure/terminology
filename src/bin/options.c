@@ -119,7 +119,6 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
         evas_object_smart_callback_add(o, "changed", _cb_op_tmp_chg, NULL);
 
-//        evas_smart_objects_calculate(evas_object_evas_get(win));
         edje_object_part_swallow(bg, "terminology.options", op_frame);
         evas_object_show(o);
      }
