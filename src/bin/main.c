@@ -85,7 +85,7 @@ main_media_update(void)
 {
    Evas_Object *o;
    
-   if (config->background)
+   if ((config->background) && (config->background[0]))
      {
         if (media) evas_object_del(media);
         o = media = media_add(win, config->background, MEDIA_BG);

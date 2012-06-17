@@ -12,8 +12,10 @@ struct _Media
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *clip, *o_img;
+   Ecore_Timer *anim;
    const char *src;
    int iw, ih;
+   int fr, frnum;
    int mode, type;
 };
 
@@ -78,6 +80,36 @@ _cb_img_preloaded(void *data, Evas *e, Evas_Object *obj, void *event)
    printf("preloaded\n");
 }
 
+static Eina_Bool
+_cb_img_frame(void *data)
+{
+   double t;
+   int fr;
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return EINA_FALSE;
+   sd->fr++;
+   fr = ((sd->fr - 1) % (sd->frnum)) + 1;
+   evas_object_image_animated_frame_set(sd->o_img, fr);
+   t = evas_object_image_animated_frame_duration_get(sd->o_img, fr, 0);
+   ecore_timer_interval_set(sd->anim, t);
+//   sd->anim = ecore_timer_add(t, _cb_img_frame, data);
+   return EINA_TRUE;
+}
+
+static void
+_type_img_anim_handle(Evas_Object *obj)
+{
+   double t;
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (!evas_object_image_animated_get(sd->o_img)) return;
+   sd->fr = 1;
+   sd->frnum = evas_object_image_animated_frame_count_get(sd->o_img);
+   if (sd->frnum < 2) return;
+   t = evas_object_image_animated_frame_duration_get(sd->o_img, sd->fr, 0);
+   sd->anim = ecore_timer_add(t, _cb_img_frame, obj);
+}
+
 static void
 _type_img_init(Evas_Object *obj)
 {
@@ -95,6 +127,7 @@ _type_img_init(Evas_Object *obj)
    printf("start preload\n");
    evas_object_image_preload(o, EINA_FALSE);
    printf("start preload done\n");
+   _type_img_anim_handle(obj);
 }
 
 static void
@@ -251,6 +284,7 @@ _smart_del(Evas_Object *obj)
    if (!sd) return;
    if (sd->clip) evas_object_del(sd->clip);
    if (sd->o_img) evas_object_del(sd->o_img);
+   if (sd->anim) ecore_timer_del(sd->anim);
    _meida_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
 }
