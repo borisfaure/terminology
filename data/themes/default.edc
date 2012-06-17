@@ -28,6 +28,19 @@ collections {
                visible: 0;
             }
          }
+         part { name: "fade"; type: RECT;
+            description { state: "default" 0.0;
+            }
+            description { state: "translucent" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 128;
+            }
+         }
+         part { name: "terminology.background"; type: SWALLOW;
+            clip_to: "fade";
+            description { state: "default" 0.0;
+            }
+         }
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
                rel1.offset: 1 2;
@@ -99,6 +112,7 @@ collections {
                action: STATE_SET "translucent" 0.0;
                target: "base";
                target: "shadow";
+               target: "fade";
             }
             program { name: "trans_off";
                signal: "translucent,off";
@@ -106,6 +120,7 @@ collections {
                action: STATE_SET "default" 0.0;
                target: "base";
                target: "shadow";
+               target: "fade";
             }
          }
       }

@@ -4,9 +4,10 @@
 #include "termio.h"
 #include "config.h"
 #include "options.h"
+#include "media.h"
 
 const char *cmd = NULL;
-static Evas_Object *win = NULL, *bg = NULL, *term = NULL;
+static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
 
 static void
@@ -79,12 +80,34 @@ main_trans_update(void)
      }
 }
 
+void
+main_media_update(void)
+{
+   Evas_Object *o;
+   
+   if (config->background)
+     {
+        if (media) evas_object_del(media);
+        o = media = media_add(win, config->background, MEDIA_BG);
+        edje_object_part_swallow(bg, "terminology.background", o);
+        evas_object_show(o);
+     }
+   else
+     {
+        if (media)
+          {
+             evas_object_del(media);
+             media = NULL;
+          }
+     }
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    int i;
    Evas_Object *o;
-   char buf[4096];
+   char buf[4096], *p;
 
    config_init();
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -99,6 +122,25 @@ elm_main(int argc, char **argv)
              i++;
              cmd = argv[i];
           }
+        else if ((!strcmp(argv[i], "-t")) && (i < (argc - 1)))
+          {
+             i++;
+             if (config->theme) eina_stringshare_del(config->theme);
+             p = strchr(argv[i], '.');
+             if ((!p) || (strcasecmp(p, ".edj")))
+               {
+                  snprintf(buf, sizeof(buf), "%s.edj", argv[i]);
+                  config->theme = eina_stringshare_add(buf);
+               }
+             else
+               config->theme = eina_stringshare_add(argv[i]);
+          }
+        else if ((!strcmp(argv[i], "-b")) && (i < (argc - 1)))
+          {
+             i++;
+             if (config->background) eina_stringshare_del(config->background);
+             config->background = eina_stringshare_add(argv[i]);
+          }
      }
 
    win = tg_win_add();
@@ -106,9 +148,14 @@ elm_main(int argc, char **argv)
    bg = o = edje_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   snprintf(buf, sizeof(buf), "%s/themes/%s",
-            elm_app_data_dir_get(), config->theme);
-   edje_object_file_set(o, buf, "terminology/background");
+   if (strchr(config->theme, '/'))
+        edje_object_file_set(o, config->theme, "terminology/background");
+   else
+     {
+        snprintf(buf, sizeof(buf), "%s/themes/%s",
+                 elm_app_data_dir_get(), config->theme);
+        edje_object_file_set(o, buf, "terminology/background");
+     }
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
 
@@ -120,10 +167,11 @@ elm_main(int argc, char **argv)
                                   _cb_size_hint, win);
    edje_object_part_swallow(bg, "terminology.content", o);
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
-   evas_object_smart_callback_add(o, "options", _cb_change, NULL);
+   evas_object_smart_callback_add(o, "change", _cb_change, NULL);
    evas_object_show(o);
 
    main_trans_update();
+   main_media_update();
    
    evas_object_smart_callback_add(win, "focus,in", _cb_focus_in, term);
    evas_object_smart_callback_add(win, "focus,out", _cb_focus_out, term);
