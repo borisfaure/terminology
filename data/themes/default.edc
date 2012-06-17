@@ -33,7 +33,7 @@ collections {
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 128;
+               color: 255 255 255 64;
             }
          }
          part { name: "terminology.background"; type: SWALLOW;
