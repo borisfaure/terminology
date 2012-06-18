@@ -44,6 +44,7 @@ _text_save_top(Termpty *ty)
 {
    Termsave *ts;
 
+   if (ty->backmax <= 0) return;
    ts = malloc(sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
    ts->w = ty->w;
    _text_copy(ty, ty->screen, ts->cell, ty->w);
@@ -1608,7 +1609,10 @@ termpty_backscroll_set(Termpty *ty, int size)
           }
         free(ty->back);
      }
-   ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
+   if (size > 0)
+     ty->back = calloc(1, sizeof(Termsave *) * size);
+   else
+     ty->back = NULL;
    ty->backscroll_num = 0;
    ty->backpos = 0;
    ty->backmax = size;
