@@ -26,4 +26,5 @@ m4/ltoptions.m4 \
 m4/ltsugar.m4 \
 m4/ltversion.m4
 
-EXTRA_DIST = README AUTHORS COPYING
+EXTRA_DIST = README AUTHORS COPYING autogen.sh
+
