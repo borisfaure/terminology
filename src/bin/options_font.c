@@ -134,13 +134,11 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-        char buf[4096];
         Config *config = termio_config_get(f->term);
         
         o = edje_object_add(evas_object_evas_get(obj));
-        snprintf(buf, sizeof(buf), "%s/themes/%s",
-                 elm_app_data_dir_get(), config->theme);
-        edje_object_file_set(o, buf, "terminology/fontpreview");
+        edje_object_file_set(o, config_theme_path_get(config),
+                             "terminology/fontpreview");
         edje_object_signal_callback_add(o, "edje,change,file", "edje",
                                         _reload_theme, NULL);
         evas_object_size_hint_min_set(o,
