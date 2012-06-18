@@ -108,8 +108,6 @@ _cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
-//        printf("text: %i %i %ix%i visible: %i in canvas for %s\n", 
-//               ox, oy, ow, oh, f->name);
         o = evas_object_text_add(evas_object_evas_get(obj));
         evas_object_color_set(o, 0, 0, 0, 255);
         evas_object_text_text_set(o, "Abc 123 $@#");
