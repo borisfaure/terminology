@@ -108,12 +108,11 @@ _cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
+//        printf("text: %i %i %ix%i visible: %i in canvas for %s\n", 
+//               ox, oy, ow, oh, f->name);
         o = evas_object_text_add(evas_object_evas_get(obj));
         evas_object_color_set(o, 0, 0, 0, 255);
-        if (evas_object_data_get(obj, "_f"))
-          evas_object_text_text_set(o, "Abc");
-        else
-          evas_object_text_text_set(o, "123");
+        evas_object_text_text_set(o, "Abc 123 $@#");
         if (f->bitmap)
           {
              snprintf(buf, sizeof(buf), "%s/fonts/%s",
@@ -133,8 +132,7 @@ static Evas_Object *
 _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Font *f = data;
-   if ((!strcmp(part, "elm.swallow.icon")) ||
-       (!strcmp(part, "elm.swallow.end")))
+   if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
         char buf[4096];
@@ -147,7 +145,7 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
         edje_object_signal_callback_add(o, "edje,change,file", "edje",
                                         _reload_theme, NULL);
         evas_object_size_hint_min_set(o,
-                                      40 * elm_config_scale_get(),
+                                      96 * elm_config_scale_get(),
                                       40 * elm_config_scale_get());
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE,
                                        _cb_op_font_preview_eval, f);
@@ -157,8 +155,6 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
                                        _cb_op_font_preview_eval, f);
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_op_font_preview_del, f);
-        if (!strcmp(part, "elm.swallow.icon"))
-          evas_object_data_set(o, "_f", o);
         return o;
      }
    return NULL;
@@ -244,7 +240,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(bx);
    
    it_class = elm_genlist_item_class_new();
-   it_class->item_style = "default";
+   it_class->item_style = "end_icon";
    it_class->func.text_get = _cb_op_font_text_get;
    it_class->func.content_get = _cb_op_font_content_get;
    
