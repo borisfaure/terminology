@@ -69,7 +69,7 @@ _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
-   int j, x, y, w, ch1, ch2;
+   int j, x, y, w, ch1 = 0, ch2 = 0;
 
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
@@ -330,7 +330,7 @@ _smart_cb_change(void *data)
    Evas_Object *obj = data;
    Termio *sd;
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return EINA_FALSE;
    sd->anim = NULL;
    _smart_apply(obj);
    evas_object_smart_callback_call(obj, "changed", NULL);
