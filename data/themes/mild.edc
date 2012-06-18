@@ -46,26 +46,25 @@ collections {
             description { state: "default" 0.0;
                fixed: 1 1;
                min: 80 80;
-               align: 1.0 0.5;
+               align: 0.0 0.5;
                visible: 0;
                rel1 {
                   relative: 1.0 0.02;
                   offset: 8 8;
                }
                rel2 {
-                  relative: 2.0 0.98;
-                  offset: -9 -9;
+                  relative: 1.0 0.98;
+                  offset: 8 -9;
                }
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
                visible: 1;
+               align: 1.0 0.5;
                rel1 {
-                  relative: 0.0 0.02;
-                  offset: 8 8;
+                  offset: -9 8;
                }
                rel2 {
-                  relative: 1.0 0.98;
                   offset: -9 -9;
                }
             }
@@ -208,28 +207,27 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                color: 255 255 255 255;
-               rel1 {
-                  offset: -2 -2;
-                  to: "terminology.text.preview";
-               }
-               rel2 {
-                  offset: 3 3;
-                  to: "terminology.text.preview";
-               }
+               rel1.offset: 2 2;
+               rel2.offset: -3 -3;
             }
          }
-         part { name: "terminology.text.preview"; type: TEXT;
+         part { name: "clip"; type: RECT;
             description { state: "default" 0.0;
-               color: 0 0 0 255;
-               rel1.offset: 5 5;
-               rel2.offset: -6 -6;
-               text {
-                  text: "test";
-                  text_class: "terminology.preview";
-                  font: "Monospace";
-                  size: 14;
-                  min: 1 1;
-                  align: 0.0 0.5;
+               rel1.to: "base";
+               rel2.to: "base";
+               color: 255 255 255 255;
+            }
+         }                                              
+         part { name: "terminology.text.preview"; type: SWALLOW;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "base";
+                  offset: 1 1;
+               }
+               rel2 {
+                  to: "base";
+                  offset: -2 -2;
                }
             }
          }
