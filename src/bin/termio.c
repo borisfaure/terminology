@@ -47,6 +47,18 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 static void _smart_calculate(Evas_Object *obj);
 
 static void
+_reload_theme(void *data __UNUSED__, Evas_Object *obj,
+	      const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   const char *file;
+   const char *group;
+
+   edje_object_file_get(obj, &file, &group);
+   edje_object_file_set(obj, file, group);
+   fprintf(stderr, "RELOADING THEME termio\n");
+}
+
+static void
 _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -665,6 +677,7 @@ _termio_config_set(Evas_Object *obj, Config *config)
 
    edje_object_file_set(sd->cur.obj,
                         config_theme_path_get(config), "terminology/cursor");
+   edje_object_signal_callback_add(sd->cur.obj, "edje,change,file", "edje", _reload_theme, NULL);
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_show(sd->cur.obj);
 }

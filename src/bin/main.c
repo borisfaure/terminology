@@ -49,6 +49,18 @@ _cb_size_hint(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
 }
 
 static void
+_reload_theme(void *data __UNUSED__, Evas_Object *obj,
+	      const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   const char *file;
+   const char *group;
+
+   edje_object_file_get(obj, &file, &group);
+   edje_object_file_set(obj, file, group);
+   fprintf(stderr, "RELOADING THEME main.c\n");
+}
+
+static void
 _cb_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    options_toggle(win, bg, term);
@@ -263,6 +275,7 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    edje_object_file_set(o, config_theme_path_get(config),
                         "terminology/background");
+   edje_object_signal_callback_add(o, "edje,change,file", "edje", _reload_theme, NULL);
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
 

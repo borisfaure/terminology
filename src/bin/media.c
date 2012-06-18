@@ -74,6 +74,18 @@ _is_fmt(const char *f, const char **extn)
 
 //////////////////////// img
 static void
+_reload_theme(void *data __UNUSED__, Evas_Object *obj,
+	      const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   const char *file;
+   const char *group;
+
+   edje_object_file_get(obj, &file, &group);
+   edje_object_file_set(obj, file, group);
+   fprintf(stderr, "RELOADING THEME media.c\n");
+}
+
+static void
 _cb_img_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Media *sd = evas_object_smart_data_get(data);
@@ -274,6 +286,7 @@ _type_edje_init(Evas_Object *obj)
           {
              edje_object_signal_callback_add(o, "preload,done", "",
                                              _cb_edje_preloaded, obj);
+	     edje_object_signal_callback_add(o, "edje,change,file", "edje", _reload_theme, NULL);
              edje_object_preload(o, EINA_FALSE);
              return;
           }
