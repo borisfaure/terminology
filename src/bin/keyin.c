@@ -37,6 +37,16 @@ static const Keyout appcur_keyout[] =
    KEY(NULL, "END")
 };
 
+static const Keyout ctrl_keyout[] =
+{
+   KEY("Left",         "\033[1;5D"),
+   KEY("Right",        "\033[1;5C"),
+   KEY("Up",           "\033[1;5A"),
+   KEY("Down",         "\033[1;5B"),
+   
+   KEY(NULL, "END")
+};
+
 static const Keyout keyout[] =
 {
    KEY("BackSpace",    "\177"),
@@ -184,7 +194,6 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      {
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
-   if (_key_try(ty, keyout, ev)) return;
    if (
        ((ty->state.alt_kp) &&
            (evas_key_modifier_is_set(ev->modifiers, "Shift"))) ||
@@ -209,7 +218,12 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
              termpty_write(ty, "\0", 1); // generate 0 byte for ctrl+space
              return;
           }
+        else if (!evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          {
+             if (_key_try(ty, ctrl_keyout, ev)) return;
+          }
      }
+   if (_key_try(ty, keyout, ev)) return;
    if (ev->string)
      {
         if ((ev->string[0]) && (!ev->string[1]))
