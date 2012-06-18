@@ -138,6 +138,21 @@ _text_scroll_rev_test(Termpty *ty)
      }
 }
 
+/* translates VT100 ACS escape codes to Unicode values.
+ * Based on rxvt-unicode screen.C table.
+ */
+static int vt100_to_unicode[62] = {
+  0x2191, 0x2193, 0x2192, 0x2190, 0x2588, 0x259a, 0x2603,
+  0,      0,      0,      0,      0,      0,      0,      0,
+  0,      0,      0,      0,      0,      0,      0,      0,
+  0,      0,      0,      0,      0,      0,      0,      0x0020,
+  0x25c6, 0x2592, 0x2409, 0x240c, 0x240d, 0x240a, 0x00b0, 0x00b1,
+  0x2424, 0x240b, 0x2518, 0x2510, 0x250c, 0x2514, 0x253c, 0x23ba,
+  0x23bb, 0x2500, 0x23bc, 0x23bd, 0x251c, 0x2524, 0x2534, 0x252c,
+  0x2502, 0x2264, 0x2265, 0x03c0, 0x2260, 0x00a3, 0x00b7
+};
+
+
 static void
 _text_append(Termpty *ty, const int *glyphs, int len)
 {
@@ -147,6 +162,8 @@ _text_append(Termpty *ty, const int *glyphs, int len)
    cells = &(ty->screen[ty->state.cy * ty->w]);
    for (i = 0; i < len; i++)
      {
+        int g;
+
         if (ty->state.wrapnext)
           {
              cells[ty->state.cx].att.autowrapped = 1;
@@ -161,7 +178,20 @@ _text_append(Termpty *ty, const int *glyphs, int len)
              for (j = ty->w - 1; j > ty->state.cx; j--)
                cells[j] = cells[j - 1];
           }
-        cells[ty->state.cx].glyph = glyphs[i];
+
+        g = glyphs[i];
+        switch (ty->state.charsetch)
+          {
+           case '0': /* DEC Special Character & Line Drawing Set */
+              if ((g >= 0x41) && (g <= 0x7e) && (vt100_to_unicode[g - 0x41]))
+                g = vt100_to_unicode[g - 0x41];
+              break;
+           case 'A': /* UK, replaces # with GBP */
+              if (g == '#') g = 0x20A4;
+              break;
+          }
+
+        cells[ty->state.cx].glyph = g;
         cells[ty->state.cx].att = ty->state.att;
         if (ty->state.wrap)
           {
@@ -1225,11 +1255,16 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              ty->state.cx = 0;
              ty->state.had_cr = 1;
              return 1;
-/*
+
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
+             ty->state.charset = 1;
+             ty->state.charsetch = ty->state.chset[1];
              return 1;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
+             ty->state.charset = 0;
+             ty->state.charsetch = ty->state.chset[0];
              return 1;
+/*
            case 0x10: // DLE (data link escape)
              return 1;
            case 0x11: // DC1 (device control 1)
