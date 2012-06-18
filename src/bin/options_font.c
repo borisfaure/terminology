@@ -113,6 +113,7 @@ _cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
         o = evas_object_text_add(evas_object_evas_get(obj));
         evas_object_color_set(o, 0, 0, 0, 255);
         evas_object_text_text_set(o, "Abc 123 $@#");
+        evas_object_scale_set(o, elm_config_scale_get());
         if (f->bitmap)
           {
              snprintf(buf, sizeof(buf), "%s/fonts/%s",

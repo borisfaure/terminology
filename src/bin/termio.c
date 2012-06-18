@@ -667,6 +667,7 @@ _termio_config_set(Evas_Object *obj, Config *config)
      sd->font.name = eina_stringshare_add(config->font.name);
    sd->font.size = config->font.size;
 
+   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_size_set(sd->grid.obj, 1, 1);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
@@ -1106,6 +1107,7 @@ termio_config_update(Evas_Object *obj)
    termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
    
+   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
    if (w < 1) w = 1;
