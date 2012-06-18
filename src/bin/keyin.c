@@ -47,6 +47,16 @@ static const Keyout ctrl_keyout[] =
    KEY(NULL, "END")
 };
 
+static const Keyout shift_keyout[] =
+{
+   KEY("Left",         "\033[1;2D"),
+   KEY("Right",        "\033[1;2C"),
+   KEY("Up",           "\033[1;2A"),
+   KEY("Down",         "\033[1;2B"),
+   
+   KEY(NULL, "END")
+};
+
 static const Keyout keyout[] =
 {
    KEY("BackSpace",    "\177"),
@@ -190,10 +200,6 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      {
         if (_key_try(ty, nocrlf_keyout, ev)) return;
      }
-   if (ty->state.appcursor)
-     {
-        if (_key_try(ty, appcur_keyout, ev)) return;
-     }
    if (
        ((ty->state.alt_kp) &&
            (evas_key_modifier_is_set(ev->modifiers, "Shift"))) ||
@@ -223,6 +229,16 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
              if (_key_try(ty, ctrl_keyout, ev)) return;
           }
      }
+   else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+     {
+        if (_key_try(ty, shift_keyout, ev)) return;
+     }
+
+   if (ty->state.appcursor)
+     {
+        if (_key_try(ty, appcur_keyout, ev)) return;
+     }
+
    if (_key_try(ty, keyout, ev)) return;
    if (ev->string)
      {
