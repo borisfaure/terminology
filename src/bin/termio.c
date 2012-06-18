@@ -126,10 +126,15 @@ _smart_apply(Evas_Object *obj)
                        
                        if (cells[j].att.inverse)
                          {
+                            int t;
+                            
                             fgext = 0;
                             bgext = 0;
-                            fg = COL_INVERSE;
-                            bg = COL_INVERSEBG;
+                            fg = cells[j].att.fg;
+                            bg = cells[j].att.bg;
+                            if (fg == COL_DEF) fg = COL_INVERSEBG;
+                            if (bg == COL_DEF) bg = COL_INVERSE;
+                            t = bg; bg = fg; fg = t;
                             if (bold)
                               {
                                  fg += 12;
@@ -140,6 +145,8 @@ _smart_apply(Evas_Object *obj)
                                  fg += 24;
                                  bg += 24;
                               }
+                            if (cells[j].att.fgintense) fg += 48;
+                            if (cells[j].att.bgintense) bg += 48;
                          }
                        else
                          {
@@ -159,6 +166,8 @@ _smart_apply(Evas_Object *obj)
                                  if (!fgext) fg += 24;
                                  if (!bgext) bg += 24;
                               }
+                            if (cells[j].att.fgintense) fg += 48;
+                            if (cells[j].att.bgintense) bg += 48;
                             if ((glyph == ' ') || (glyph == 0))
                               fg = COL_INVIS;
                          }
@@ -749,7 +758,7 @@ _smart_add(Evas_Object *obj)
    Termio *sd;
    Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
-   int i, j, k, n;
+   int i, j, k, l, n;
 
    _parent_sc.add(obj);
    cd = evas_object_smart_data_get(obj);
@@ -767,15 +776,20 @@ _smart_add(Evas_Object *obj)
    evas_object_show(o);
    sd->grid.obj = o;
 
-   for (n = 0, k = 0; k < 2; k++)
+   for (n = 0, l = 0; l < 2; l++) // normal/intense
      {
-        for (j = 0; j < 2; j++)
+        for (k = 0; k < 2; k++) // normal/faint
           {
-             for (i = 0; i < 12; i++, n++)
-               evas_object_textgrid_palette_set
-               (o, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                   colors[j][i].r / (k + 1), colors[j][i].g / (k + 1),
-                   colors[j][i].b / (k + 1), colors[j][i].a / (k + 1));
+             for (j = 0; j < 2; j++) // normal/bright
+               {
+                  for (i = 0; i < 12; i++, n++) //colors
+                    evas_object_textgrid_palette_set
+                    (o, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+                        colors[l][j][i].r / (k + 1),
+                        colors[l][j][i].g / (k + 1),
+                        colors[l][j][i].b / (k + 1),
+                        colors[l][j][i].a / (k + 1));
+               }
           }
      }
    for (n = 0; n < 256; n++)

@@ -270,6 +270,8 @@ _reset_att(Termatt *att)
    att->strike = 0;
    att->fg256 = 0;
    att->bg256 = 0;
+   att->fgintense = 0;
+   att->bgintense = 0;
    att->autowrapped = 0;
    att->newline = 0;
    att->tab = 0;
@@ -433,6 +435,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 37:
                        ty->state.att.fg256 = 0;
                        ty->state.att.fg = (arg - 30) + COL_BLACK;
+                       ty->state.att.fgintense = 0;
                        break;
                      case 38: // xterm 256 fg color ???
                        // now check if next arg is 5
@@ -449,10 +452,12 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  ty->state.att.fg = arg;
                               }
                          }
+                       ty->state.att.fgintense = 0;
                        break;
                      case 39: // default fg color
                        ty->state.att.fg256 = 0;
                        ty->state.att.fg = COL_DEF;
+                       ty->state.att.fgintense = 0;
                        break;
                      case 40: // bg
                      case 41:
@@ -464,6 +469,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 47:
                        ty->state.att.bg256 = 0;
                        ty->state.att.bg = (arg - 40) + COL_BLACK;
+                       ty->state.att.bgintense = 0;
                        break;
                      case 48: // xterm 256 bg color ???
                        // now check if next arg is 5
@@ -480,10 +486,80 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  ty->state.att.bg = arg;
                               }
                          }
+                       ty->state.att.bgintense = 0;
                        break;
                      case 49: // default bg color
                        ty->state.att.bg256 = 0;
                        ty->state.att.bg = COL_DEF;
+                       ty->state.att.bgintense = 0;
+                       break;
+                     case 90: // fg
+                     case 91:
+                     case 92:
+                     case 93:
+                     case 94:
+                     case 95:
+                     case 96:
+                     case 97:
+                       ty->state.att.fg256 = 0;
+                       ty->state.att.fg = (arg - 90) + COL_BLACK;
+                       ty->state.att.fgintense = 1;
+                       break;
+                     case 98: // xterm 256 fg color ???
+                       // now check if next arg is 5
+                       arg = _csi_arg_get(&b);
+                       if (arg != 5) ERR("Failed xterm 256 color fg esc 5\n");
+                       else
+                         {
+                            // then get next arg - should be color index 0-255
+                            arg = _csi_arg_get(&b);
+                            if (!b) ERR("Failed xterm 256 color fg esc val\n");
+                            else
+                              {
+                                 ty->state.att.fg256 = 1;
+                                 ty->state.att.fg = arg;
+                              }
+                         }
+                       ty->state.att.fgintense = 1;
+                       break;
+                     case 99: // default fg color
+                       ty->state.att.fg256 = 0;
+                       ty->state.att.fg = COL_DEF;
+                       ty->state.att.fgintense = 1;
+                       break;
+                     case 100: // bg
+                     case 101:
+                     case 102:
+                     case 103:
+                     case 104:
+                     case 105:
+                     case 106:
+                     case 107:
+                       ty->state.att.bg256 = 0;
+                       ty->state.att.bg = (arg - 100) + COL_BLACK;
+                       ty->state.att.bgintense = 1;
+                       break;
+                     case 108: // xterm 256 bg color ???
+                       // now check if next arg is 5
+                       arg = _csi_arg_get(&b);
+                       if (arg != 5) ERR("Failed xterm 256 color bg esc 5\n");
+                       else
+                         {
+                            // then get next arg - should be color index 0-255
+                            arg = _csi_arg_get(&b);
+                            if (!b) ERR("Failed xterm 256 color bg esc val\n");
+                            else
+                              {
+                                 ty->state.att.bg256 = 1;
+                                 ty->state.att.bg = arg;
+                              }
+                         }
+                       ty->state.att.bgintense = 1;
+                       break;
+                     case 109: // default bg color
+                       ty->state.att.bg256 = 0;
+                       ty->state.att.bg = COL_DEF;
+                       ty->state.att.bgintense = 1;
                        break;
                      default: //  not handled???
                        ERR("  color cmd [%i] not handled\n", arg);

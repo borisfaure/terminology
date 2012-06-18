@@ -32,11 +32,12 @@ struct _Termatt
    unsigned short strike : 1;
    unsigned short fg256 : 1;
    unsigned short bg256 : 1;
+   unsigned short fgintense : 1;
+   unsigned short bgintense : 1;
    // below used for working out text from selections
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
    unsigned short tab : 1;
-   // 2 bits left
 };
 
 struct _Termstate
