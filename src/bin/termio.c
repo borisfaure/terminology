@@ -40,7 +40,7 @@ struct _Termio
    int scroll;
    Evas_Object *event;
    Termpty *pty;
-   Ecore_Job *job;
+   Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
    Evas_Object *win;
    Config *config;
@@ -315,16 +315,24 @@ _smart_cb_delayed_size(void *data)
    return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _smart_cb_change(void *data)
 {
    Evas_Object *obj = data;
    Termio *sd;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->job = NULL;
+   sd->anim = NULL;
    _smart_apply(obj);
    evas_object_smart_callback_call(obj, "changed", NULL);
+   return EINA_FALSE;
+}
+
+static void
+_smart_update_queue(Evas_Object *obj, Termio *sd)
+{
+   if (sd->anim) return;
+   sd->anim = ecore_animator_add(_smart_cb_change, obj);
 }
 
 static void
@@ -400,16 +408,14 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
                   sd->scroll += by;
                   if (sd->scroll > sd->pty->backscroll_num)
                     sd->scroll = sd->pty->backscroll_num;
-                  if (sd->job) ecore_job_del(sd->job);
-                  sd->job = ecore_job_add(_smart_cb_change, obj);
+                  _smart_update_queue(data, sd);
                   return;
                }
              else if (!strcmp(ev->keyname, "Next"))
                {
                   sd->scroll -= by;
                   if (sd->scroll < 0) sd->scroll = 0;
-                  if (sd->job) ecore_job_del(sd->job);
-                  sd->job = ecore_job_add(_smart_cb_change, obj);
+                  _smart_update_queue(data, sd);
                   return;
                }
              else if (!strcmp(ev->keyname, "Insert"))
@@ -614,8 +620,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
           }
-        if (sd->job) ecore_job_del(sd->job);
-        sd->job = ecore_job_add(_smart_cb_change, data);
+        _smart_update_queue(data, sd);
      }
    else if (ev->button == 2)
      _paste_selection(data);
@@ -640,8 +645,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           {
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
-             if (sd->job) ecore_job_del(sd->job);
-             sd->job = ecore_job_add(_smart_cb_change, data);
+             _smart_update_queue(data, sd);
              _take_selection(data);
           }
      }
@@ -667,8 +671,7 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
           }
         sd->cur.sel2.x = cx;
         sd->cur.sel2.y = cy - sd->scroll;
-        if (sd->job) ecore_job_del(sd->job);
-        sd->job = ecore_job_add(_smart_cb_change, data);
+        _smart_update_queue(data, sd);
      }
 }
 
@@ -685,8 +688,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    if (sd->scroll > sd->pty->backscroll_num)
      sd->scroll = sd->pty->backscroll_num;
    else if (sd->scroll < 0) sd->scroll = 0;
-   if (sd->job) ecore_job_del(sd->job);
-   sd->job = ecore_job_add(_smart_cb_change, data);
+   _smart_update_queue(data, sd);
 }
 
 static void
@@ -841,7 +843,7 @@ _smart_del(Evas_Object *obj)
    if (sd->cur.selo1) evas_object_del(sd->cur.selo1);
    if (sd->cur.selo2) evas_object_del(sd->cur.selo2);
    if (sd->cur.selo3) evas_object_del(sd->cur.selo3);
-   if (sd->job) ecore_job_del(sd->job);
+   if (sd->anim) ecore_animator_del(sd->anim);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
@@ -850,7 +852,7 @@ _smart_del(Evas_Object *obj)
    sd->cur.selo1 = NULL;
    sd->cur.selo2 = NULL;
    sd->cur.selo3 = NULL;
-   sd->job = NULL;
+   sd->anim = NULL;
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;
    sd->pty = NULL;
@@ -926,13 +928,9 @@ _smart_pty_change(void *data)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
-   if (sd->jump_on_change) // if scroll to bottom on updates
-     {
-        // if term changed = croll back to bottom
-        sd->scroll = 0;
-     }
-   if (sd->job) ecore_job_del(sd->job);
-   sd->job = ecore_job_add(_smart_cb_change, obj);
+// if scroll to bottom on updates
+   if (sd->jump_on_change)  sd->scroll = 0;
+   _smart_update_queue(data, sd);
 }
 
 static void
@@ -959,11 +957,7 @@ _smart_pty_scroll(void *data)
         sd->cur.sel2.y--;
         changed = 1;
      }
-   if (changed)
-     {
-        if (sd->job) ecore_job_del(sd->job);
-        sd->job = ecore_job_add(_smart_cb_change, obj);
-     }
+   if (changed) _smart_update_queue(data, sd);
 }
 
 static void
@@ -999,8 +993,7 @@ _smart_pty_cancel_sel(void *data)
      {
         sd->cur.sel = 0;
         sd->cur.makesel = 0;
-        if (sd->job) ecore_job_del(sd->job);
-        sd->job = ecore_job_add(_smart_cb_change, data);
+        _smart_update_queue(data, sd);
      }
 }
 

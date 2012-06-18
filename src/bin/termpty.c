@@ -1332,7 +1332,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    int glyph[4097];
    int len, i, j, reads;
 
-   // read up to 64 * 4096 bytes
+   // read up to 64 * 4096 bytes OR until time expires;
    for (reads = 0; reads < 64; reads++)
      {
         len = read(ty->fd, buf, sizeof(buf) - 1);
