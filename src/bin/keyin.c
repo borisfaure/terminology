@@ -8,10 +8,11 @@ struct _Keyout
 {
    const char *in;
    const char *out;
+   int         inlen;
    int         outlen;
 };
 
-#define KEY(in, out) {in, out, sizeof(out) - 1}
+#define KEY(in, out) {in, out, sizeof(in) - 1, sizeof(out) - 1}
 
 static const Keyout crlf_keyout[] =
 {
@@ -175,12 +176,14 @@ static const Keyout kps_keyout[] =
 static Eina_Bool
 _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 {
-   int i;
+   int i, inlen;
    
    if (!ev->keyname) return EINA_FALSE;
+
+   inlen = strlen(ev->keyname);
    for (i = 0; map[i].in; i++)
      {
-        if (!strcmp(ev->keyname, map[i].in))
+        if ((inlen == map[i].inlen) && (!memcmp(ev->keyname, map[i].in, inlen)))
           {
              termpty_write(ty, map[i].out, map[i].outlen);
              return EINA_TRUE;
