@@ -31,6 +31,12 @@ struct _Termio
       Eina_Bool sel : 1;
       Eina_Bool makesel : 1;
    } cur;
+   struct {
+      struct {
+         int x, y;
+      } sel1, sel2;
+      Eina_Bool sel : 1;
+   } backup;
    int scroll;
    Evas_Object *event;
    Termpty *pty;
@@ -526,6 +532,40 @@ _sel_word(Evas_Object *obj, int cx, int cy)
 }
 
 static void
+_sel_word_to(Evas_Object *obj, int cx, int cy)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Termcell *cells;
+   int x, w = 0;
+   if (!sd) return;
+
+   cells = termpty_cellrow_get(sd->pty, cy - sd->scroll, &w);
+   if (!cells) return;
+   if (sd->cur.sel1.x > cx || sd->cur.sel1.y > cy)
+     {
+        sd->cur.sel1.x = cx;
+        sd->cur.sel1.y = cy;
+        for (x = sd->cur.sel1.x; x >= 0; x--)
+          {
+             if (x >= w) break;
+             if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+             sd->cur.sel1.x = x;
+          }
+     }
+   else if (sd->cur.sel2.x < cx || sd->cur.sel2.y < cy)
+     {
+        sd->cur.sel2.x = cx;
+        sd->cur.sel2.y = cy;
+        for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
+          {
+             if (x >= w) break;
+             if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+             sd->cur.sel2.x = x;
+          }
+     }
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -544,11 +584,29 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             _sel_word(data, cx, cy - sd->scroll);
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift") && sd->backup.sel)
+               {
+                  sd->cur.sel = 1;
+                  sd->cur.sel1.x = sd->backup.sel1.x;
+                  sd->cur.sel1.y = sd->backup.sel1.y;
+                  sd->cur.sel2.x = sd->backup.sel2.x;
+                  sd->cur.sel2.y = sd->backup.sel2.y;
+                  
+                  _sel_word_to(data, cx, cy - sd->scroll);
+               }
+             else
+               {
+                  _sel_word(data, cx, cy - sd->scroll);
+               }
              if (sd->cur.sel) _take_selection(data);
           }
         else
           {
+             sd->backup.sel = sd->cur.sel;
+             sd->backup.sel1.x = sd->cur.sel1.x;
+             sd->backup.sel1.y = sd->cur.sel1.y;
+             sd->backup.sel2.x = sd->cur.sel2.x;
+             sd->backup.sel2.y = sd->cur.sel2.y;
              if (sd->cur.sel) sd->cur.sel = 0;
              sd->cur.makesel = 1;
              sd->cur.sel1.x = cx;
