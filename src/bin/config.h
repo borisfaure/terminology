@@ -31,5 +31,6 @@ Config *config_load(const char *key);
 void config_del(Config *config);
 
 const char *config_theme_path_get(const Config *config);
+const char *config_theme_path_default_get(const Config *config);
 
 #endif

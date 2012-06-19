@@ -22,4 +22,5 @@ options_video.c options_video.h \
 termio.c termio.h \
 termpty.c termpty.h \
 utf8.c utf8.h \
-win.c win.h
+win.c win.h \
+utils.c utils.h

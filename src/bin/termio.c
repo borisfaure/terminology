@@ -8,6 +8,7 @@
 #include "col.h"
 #include "keyin.h"
 #include "config.h"
+#include "utils.h"
 
 typedef struct _Termio Termio;
 
@@ -53,18 +54,6 @@ static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
-
-static void
-_reload_theme(void *data __UNUSED__, Evas_Object *obj,
-	      const char *emission __UNUSED__, const char *source __UNUSED__)
-{
-   const char *file;
-   const char *group;
-
-   edje_object_file_get(obj, &file, &group);
-   edje_object_file_set(obj, file, group);
-   fprintf(stderr, "RELOADING THEME termio\n");
-}
 
 static void
 _smart_apply(Evas_Object *obj)
@@ -800,9 +789,8 @@ _termio_config_set(Evas_Object *obj, Config *config)
    sd->font.chw = w;
    sd->font.chh = h;
 
-   edje_object_file_set(sd->cur.obj,
-                        config_theme_path_get(config), "terminology/cursor");
-   edje_object_signal_callback_add(sd->cur.obj, "edje,change,file", "edje", _reload_theme, NULL);
+   theme_apply(sd->cur.obj, config, "terminology/cursor");
+   theme_auto_reload_enable(sd->cur.obj);
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_show(sd->cur.obj);
 }

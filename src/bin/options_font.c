@@ -5,6 +5,7 @@
 #include "termio.h"
 #include "options.h"
 #include "options_font.h"
+#include "utils.h"
 
 static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
 
@@ -20,18 +21,6 @@ struct _Font
 
 static Eina_List *fonts = NULL;
 static Eina_Hash *fonthash = NULL;
-
-static void
-_reload_theme(void *data __UNUSED__, Evas_Object *obj,
-	      const char *emission __UNUSED__, const char *source __UNUSED__)
-{
-   const char *file;
-   const char *group;
-
-   edje_object_file_get(obj, &file, &group);
-   edje_object_file_set(obj, file, group);
-   fprintf(stderr, "RELOADING THEME\n");
-}
 
 static void
 _update_sizing(Evas_Object *term)
@@ -140,10 +129,8 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
         Config *config = termio_config_get(f->term);
         
         o = edje_object_add(evas_object_evas_get(obj));
-        edje_object_file_set(o, config_theme_path_get(config),
-                             "terminology/fontpreview");
-        edje_object_signal_callback_add(o, "edje,change,file", "edje",
-                                        _reload_theme, NULL);
+        theme_apply(o, config, "terminology/fontpreview");
+        theme_auto_reload_enable(o);
         evas_object_size_hint_min_set(o,
                                       96 * elm_config_scale_get(),
                                       40 * elm_config_scale_get());

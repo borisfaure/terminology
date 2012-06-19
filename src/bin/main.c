@@ -8,6 +8,7 @@
 #include "config.h"
 #include "options.h"
 #include "media.h"
+#include "utils.h"
 
 int _log_domain = -1;
 
@@ -46,18 +47,6 @@ _cb_size_hint(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
         evas_object_resize(win, w - mw + rw, h - mh + rh);
         evas_object_data_set(obj, "sizedone", obj);
      }
-}
-
-static void
-_reload_theme(void *data __UNUSED__, Evas_Object *obj,
-	      const char *emission __UNUSED__, const char *source __UNUSED__)
-{
-   const char *file;
-   const char *group;
-
-   edje_object_file_get(obj, &file, &group);
-   edje_object_file_set(obj, file, group);
-   fprintf(stderr, "RELOADING THEME main.c\n");
 }
 
 static void
@@ -273,9 +262,13 @@ elm_main(int argc, char **argv)
    bg = o = edje_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_file_set(o, config_theme_path_get(config),
-                        "terminology/background");
-   edje_object_signal_callback_add(o, "edje,change,file", "edje", _reload_theme, NULL);
+   if (!theme_apply(o, config, "terminology/background"))
+     {
+        CRITICAL("Couldn't find terminology theme! Forgot 'make install'?");
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+   theme_auto_reload_enable(o);
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
 
@@ -292,7 +285,7 @@ elm_main(int argc, char **argv)
 
    main_trans_update(config);
    main_media_update(config);
-   
+
    evas_object_smart_callback_add(win, "focus,in", _cb_focus_in, term);
    evas_object_smart_callback_add(win, "focus,out", _cb_focus_out, term);
    _cb_size_hint(win, evas_object_evas_get(win), term, NULL);

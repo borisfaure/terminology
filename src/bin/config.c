@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include "config.h"
 
@@ -171,5 +173,20 @@ config_theme_path_get(const Config *config)
 
    snprintf(path, sizeof(path), "%s/themes/%s",
             elm_app_data_dir_get(), config->theme);
+   return path;
+}
+
+const char *
+config_theme_path_default_get(const Config *config __UNUSED__)
+{
+   static char path[PATH_MAX] = "";
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(config->theme, NULL);
+
+   if (path[0]) return path;
+
+   snprintf(path, sizeof(path), "%s/themes/default.edj",
+            elm_app_data_dir_get());
    return path;
 }
