@@ -1,10 +1,6 @@
 #include "private.h"
-
-#ifdef HAVE_ECORE_IMF
-# include <Ecore_IMF.h>
-# include <Ecore_IMF_Evas.h>
-#endif
-
+#include <Ecore_IMF.h>
+#include <Ecore_IMF_Evas.h>
 #include <Elementary.h>
 #include "termio.h"
 #include "termpty.h"
@@ -49,9 +45,7 @@ struct _Termio
    Ecore_Timer *delayed_size_timer;
    Evas_Object *win;
    Config *config;
-#if HAVE_ECORE_IMF
    Ecore_IMF_Context *imf;
-#endif
    Eina_Bool jump_on_change : 1;
 };
 
@@ -405,7 +399,6 @@ _paste_selection(Evas_Object *obj)
                          _getsel_cb, obj);
 }
 
-#ifdef HAVE_ECORE_IMF
 static void
 _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -414,7 +407,6 @@ _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-
    if (sd->imf)
      {
         Ecore_IMF_Event_Key_Up imf_ev;
@@ -424,7 +416,6 @@ _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
           return;
      }
 }
-#endif
 
 void
 _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
@@ -434,8 +425,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-
-#ifdef HAVE_ECORE_IMF
    if (sd->imf)
      {
         Ecore_IMF_Event_Key_Down imf_ev;
@@ -444,8 +433,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
             (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
           return;
      }
-#endif
-
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      {
         if (ev->keyname)
@@ -478,7 +465,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
    keyin_handle(sd->pty, ev);
 }
 
-#ifdef HAVE_ECORE_IMF
 static void
 _imf_cursor_set(Termio *sd)
 {
@@ -488,10 +474,9 @@ _imf_cursor_set(Termio *sd)
    if (sd->imf)
      ecore_imf_context_cursor_location_set(sd->imf, cx, cy, cw, ch);
    /*
-   ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
-   */
+    ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
+    */
 }
-#endif
 
 void
 _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -503,15 +488,12 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
-
-#ifdef HAVE_ECORE_IMF
    if (sd->imf)
      {
         ecore_imf_context_reset(sd->imf);
         ecore_imf_context_focus_in(sd->imf);
         _imf_cursor_set(sd);
      }
-#endif
 }
 
 void
@@ -524,15 +506,12 @@ _smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
-
-#ifdef HAVE_ECORE_IMF
    if (sd->imf)
      {
         ecore_imf_context_reset(sd->imf);
         _imf_cursor_set(sd);
         ecore_imf_context_focus_out(sd->imf);
      }
-#endif
 }
 
 static void
@@ -833,13 +812,9 @@ _cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-
-#ifdef HAVE_ECORE_IMF
    _imf_cursor_set(sd);
-#endif
 }
 
-#ifdef HAVE_ECORE_IMF
 static void
 _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info)
 {
@@ -849,7 +824,6 @@ _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_
    if (!str) return;
    termpty_write(sd->pty, str, strlen(str));
 }
-#endif
 
 static void
 _smart_add(Evas_Object *obj)
@@ -942,16 +916,13 @@ _smart_add(Evas_Object *obj)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                   _smart_cb_key_down, obj);
-#ifdef HAVE_ECORE_IMF
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
                                   _smart_cb_key_up, obj);
-#endif
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN,
                                   _smart_cb_focus_in, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT,
                                   _smart_cb_focus_out, obj);
 
-#ifdef HAVE_ECORE_IMF
    if (ecore_imf_init())
      {
         const char *imf_id = ecore_imf_context_default_id_get();
@@ -969,8 +940,7 @@ _smart_add(Evas_Object *obj)
              else
                {
                   imf_id = ecore_imf_context_default_id_by_canvas_type_get("evas");
-                  if (imf_id)
-                    sd->imf = ecore_imf_context_add(imf_id);
+                  if (imf_id) sd->imf = ecore_imf_context_add(imf_id);
                }
           }
 
@@ -988,12 +958,10 @@ _smart_add(Evas_Object *obj)
         ecore_imf_context_use_preedit_set(sd->imf, EINA_FALSE);
         ecore_imf_context_prediction_allow_set(sd->imf, EINA_FALSE);
         ecore_imf_context_autocapital_type_set(sd->imf, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
-
-     imf_done:
+imf_done:
         if (sd->imf) DBG("Ecore IMF Setup");
         else WRN("Ecore IMF failed");
      }
-#endif
 }
 
 static void
@@ -1001,6 +969,12 @@ _smart_del(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->imf)
+     {
+        ecore_imf_context_event_callback_del
+          (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
+        ecore_imf_context_del(sd->imf);
+     }
    if (sd->cur.obj) evas_object_del(sd->cur.obj);
    if (sd->event) evas_object_del(sd->event);
    if (sd->cur.selo1) evas_object_del(sd->cur.selo1);
@@ -1019,17 +993,8 @@ _smart_del(Evas_Object *obj)
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;
    sd->pty = NULL;
-
-#ifdef HAVE_ECORE_IMF
-   if (sd->imf)
-     {
-        ecore_imf_context_event_callback_del
-          (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
-        ecore_imf_context_del(sd->imf);
-        sd->imf = NULL;
-     }
+   sd->imf = NULL;
    ecore_imf_shutdown();
-#endif
 
    _parent_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
@@ -1068,10 +1033,7 @@ _smart_calculate(Evas_Object *obj)
                     oy + (sd->cur.y * sd->font.chh));
    evas_object_move(sd->event, ox, oy);
    evas_object_resize(sd->event, ow, oh);
-
-#ifdef HAVE_ECORE_IMF
    if (sd->imf) _imf_cursor_set(sd);
-#endif
 }
 
 static void
