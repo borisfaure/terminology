@@ -8,7 +8,8 @@ collections {
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
-               visible: 0;
+               color: 16 16 16 220;
+               visible: 1;
             }
          }
          part { name: "fade"; type: RECT;
