@@ -833,7 +833,9 @@ _cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
 
+#ifdef HAVE_ECORE_IMF
    _imf_cursor_set(sd);
+#endif
 }
 
 #ifdef HAVE_ECORE_IMF
