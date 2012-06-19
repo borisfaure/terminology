@@ -78,11 +78,15 @@ static const Keyout keyout[] =
    KEY("Down",         "\033[B"),
 //   KEY("Tab",          "\t"),
 //   KEY("ISO_Left_Tab", "\t"),
-//// non-xterm escapes. for xterm we want the next 2
+
+//// PROBLEM: vim needs these to work
 //   KEY("Home",         "\033[7~"),
 //   KEY("End",          "\033[8~"),
+//// BUT: shells nedd these to work (emacs style)   
    KEY("Home",         "\033[H"),
    KEY("End",          "\033[F"),
+////
+
    KEY("Prior",        "\033[5~"),
    KEY("Next",         "\033[6~"),
    KEY("Insert",       "\033[2~"),
