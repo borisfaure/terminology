@@ -431,7 +431,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
         if (ecore_imf_context_filter_event
             (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-          return;
+          goto end;
      }
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      {
@@ -446,23 +446,24 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                   if (sd->scroll > sd->pty->backscroll_num)
                     sd->scroll = sd->pty->backscroll_num;
                   _smart_update_queue(data, sd);
-                  return;
+                  goto end;
                }
              else if (!strcmp(ev->keyname, "Next"))
                {
                   sd->scroll -= by;
                   if (sd->scroll < 0) sd->scroll = 0;
                   _smart_update_queue(data, sd);
-                  return;
+                  goto end;
                }
              else if (!strcmp(ev->keyname, "Insert"))
                {
                   _paste_selection(data);
-                  return;
+                  goto end;
                }
           }
      }
    keyin_handle(sd->pty, ev);
+end:
    edje_object_signal_emit(sd->cur.obj, "key,down", "terminology");
 }
 
