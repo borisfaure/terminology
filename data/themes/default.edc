@@ -206,6 +206,7 @@ collections {
    group { name: "terminology/cursor";
       images {
         image: "cr_fill.png" COMP;
+        image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
         image: "cr_pulse.png" COMP;
       }
@@ -224,6 +225,34 @@ collections {
             }
             description { state: "focused" 0.0;
                color: 255 255 255 255;
+            }
+         }
+         part { name: "key";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "outline";
+                  offset: -5 -5;
+               }
+               rel2 {
+                  to: "outline";
+                  offset: 4 4;
+               }
+               image {
+                  normal: "cr_key.png";
+                  border: 4 4 4 4;
+               }
+               color: 255 255 255 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+            description { state: "out" 0.0;
+               inherit: "default" 0.0;
+               color: 160 100 255 0;
+               rel1.offset: -7 -15;
+               rel2.offset: 6 14;
             }
          }
          part { name: "pulse";
@@ -316,6 +345,23 @@ collections {
                action: STATE_SET "default" 0.0;
                target: "fill";
                target: "outline";
+            }
+            program { name: "key";
+               signal: "key,down";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               target: "key";
+               after: "key2";
+            }
+            program { name: "key2";
+               action: STATE_SET "on" 0.0;
+               target: "key";
+               after: "key3";
+            }
+            program { name: "key3";
+               action: STATE_SET "out" 0.0;
+               transition: DECELERATE 0.3;
+               target: "key";
             }
          }
       }

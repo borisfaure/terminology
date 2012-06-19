@@ -463,6 +463,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           }
      }
    keyin_handle(sd->pty, ev);
+   edje_object_signal_emit(sd->cur.obj, "key,down", "terminology");
 }
 
 static void
