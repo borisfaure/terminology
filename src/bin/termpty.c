@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <string.h>
+#include <errno.h>
 
 static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
@@ -79,7 +81,7 @@ _text_scroll(Termpty *ty)
           if (ty->cb.cancel_sel.func)
             ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
      }
-   DBG("... scroll!!!!! [%i->%i]\n", start_y, end_y);
+   DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
    cells2 = &(ty->screen[end_y * ty->w]);
    for (y = start_y; y < end_y; y++)
      {
@@ -101,7 +103,7 @@ _text_scroll_rev(Termpty *ty)
         start_y = ty->state.scroll_y1;
         end_y = ty->state.scroll_y2 - 1;
      }
-   DBG("... scroll rev!!!!! [%i->%i]\n", start_y, end_y);
+   DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
    cells = &(ty->screen[end_y * ty->w]);
    for (y = end_y; y > start_y; y--)
      {
@@ -212,7 +214,7 @@ _text_append(Termpty *ty, const int *glyphs, int len)
 static void
 _term_write(Termpty *ty, const char *txt, int size)
 {
-   if (write(ty->fd, txt, size) < 0) perror("write");
+   if (write(ty->fd, txt, size) < 0) ERR("write: %s", strerror(errno));
 }
 #define _term_txt_write(ty, txt) _term_write(ty, txt, sizeof(txt) - 1)
 
@@ -386,7 +388,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
    if (cc == ce) return -2;
    *b = 0;
    b = buf;
-   DBG(" CSI: '%c' args '%s'\n", *cc, buf);
+   DBG(" CSI: '%c' args '%s'", *cc, buf);
    switch (*cc)
      {
       case 'm': // color set
@@ -470,12 +472,12 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 38: // xterm 256 fg color ???
                        // now check if next arg is 5
                        arg = _csi_arg_get(&b);
-                       if (arg != 5) ERR("Failed xterm 256 color fg esc 5\n");
+                       if (arg != 5) ERR("Failed xterm 256 color fg esc 5");
                        else
                          {
                             // then get next arg - should be color index 0-255
                             arg = _csi_arg_get(&b);
-                            if (!b) ERR("Failed xterm 256 color fg esc val\n");
+                            if (!b) ERR("Failed xterm 256 color fg esc val");
                             else
                               {
                                  ty->state.att.fg256 = 1;
@@ -504,12 +506,12 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 48: // xterm 256 bg color ???
                        // now check if next arg is 5
                        arg = _csi_arg_get(&b);
-                       if (arg != 5) ERR("Failed xterm 256 color bg esc 5\n");
+                       if (arg != 5) ERR("Failed xterm 256 color bg esc 5");
                        else
                          {
                             // then get next arg - should be color index 0-255
                             arg = _csi_arg_get(&b);
-                            if (!b) ERR("Failed xterm 256 color bg esc val\n");
+                            if (!b) ERR("Failed xterm 256 color bg esc val");
                             else
                               {
                                  ty->state.att.bg256 = 1;
@@ -538,12 +540,12 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 98: // xterm 256 fg color ???
                        // now check if next arg is 5
                        arg = _csi_arg_get(&b);
-                       if (arg != 5) ERR("Failed xterm 256 color fg esc 5\n");
+                       if (arg != 5) ERR("Failed xterm 256 color fg esc 5");
                        else
                          {
                             // then get next arg - should be color index 0-255
                             arg = _csi_arg_get(&b);
-                            if (!b) ERR("Failed xterm 256 color fg esc val\n");
+                            if (!b) ERR("Failed xterm 256 color fg esc val");
                             else
                               {
                                  ty->state.att.fg256 = 1;
@@ -572,12 +574,12 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                      case 108: // xterm 256 bg color ???
                        // now check if next arg is 5
                        arg = _csi_arg_get(&b);
-                       if (arg != 5) ERR("Failed xterm 256 color bg esc 5\n");
+                       if (arg != 5) ERR("Failed xterm 256 color bg esc 5");
                        else
                          {
                             // then get next arg - should be color index 0-255
                             arg = _csi_arg_get(&b);
-                            if (!b) ERR("Failed xterm 256 color bg esc val\n");
+                            if (!b) ERR("Failed xterm 256 color bg esc val");
                             else
                               {
                                  ty->state.att.bg256 = 1;
@@ -592,7 +594,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                        ty->state.att.bgintense = 1;
                        break;
                      default: //  not handled???
-                       ERR("  color cmd [%i] not handled\n", arg);
+                       ERR("  color cmd [%i] not handled", arg);
                        break;
                     }
                }
@@ -800,7 +802,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
              if ((arg >= CLR_END) && (arg <= CLR_ALL))
                _clear_screen(ty, arg);
              else
-               ERR("invalid clr scr %i\n", arg);
+               ERR("invalid clr scr %i", arg);
           }
         else _clear_screen(ty, CLR_END);
         break;
@@ -811,7 +813,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
              if ((arg >= CLR_END) && (arg <= CLR_ALL))
                _clear_line(ty, arg, ty->w);
              else
-               ERR("invalid clr lin %i\n", arg);
+               ERR("invalid clr lin %i", arg);
           }
         else _clear_line(ty, CLR_END, ty->w);
         break;
@@ -847,7 +849,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  break;
                                case 7:
                                  handled = 1;
-                                 DBG("DDD: set wrap mode to %i\n", mode);
+                                 DBG("DDD: set wrap mode to %i", mode);
                                  ty->state.wrap = mode;
                                  break;
                                case 20:
@@ -855,7 +857,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  break;
                                case 12:
                                  handled = 1;
-//                                 DBG("XXX: set blinking cursor to (stop?) %i\n", mode);
+//                                 DBG("XXX: set blinking cursor to (stop?) %i", mode);
                                  break;
                                case 25:
                                  handled = 1;
@@ -863,13 +865,13 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  break;
                                case 1000:
                                  handled = 1;
-                                 INF("XXX: set x11 mouse reporting to %i\n", mode);
+                                 INF("XXX: set x11 mouse reporting to %i", mode);
                                  break;
                                case 1049:
                                case 47:
                                case 1047:
                                  handled = 1;
-                                 DBG("DDD: switch buf\n");
+                                 DBG("DDD: switch buf");
                                  if (ty->altbuf)
                                    {
                                       // if we are looking at alt buf now,
@@ -914,7 +916,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                   DBG("Ignored screen mode %i", arg);
                                   break;
                                default:
-                                 ERR("unhandled screen mode arg %i\n", arg);
+                                 ERR("unhandled screen mode arg %i", arg);
                                  break;
                               }
                          }
@@ -935,27 +937,27 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                             else if (arg == 4)
                               {
                                  handled = 1;
-                                 DBG("DDD: set insert mode to %i\n", mode);
+                                 DBG("DDD: set insert mode to %i", mode);
                                  ty->state.insert = mode;
                               }
 //                            else if (arg == 24)
 //                              {
-//                                 ERR("unhandled #24 arg %i\n", arg);
+//                                 ERR("unhandled #24 arg %i", arg);
 //                                  // ???
 //                              }
                             else
-                              ERR("unhandled screen non-priv mode arg %i, mode %i, ch '%c'\n", arg, mode, *cc);
+                              ERR("unhandled screen non-priv mode arg %i, mode %i, ch '%c'", arg, mode, *cc);
                          }
                     }
                }
-             if (!handled) ERR("unhandled '%c' : '%s'\n", *cc, buf);
+             if (!handled) ERR("unhandled '%c' : '%s'", *cc, buf);
           }
         break;
       case 'r':
         arg = _csi_arg_get(&b);
         if (!b)
           {
-             INF("no region args reset region\n");
+             INF("no region args reset region");
              ty->state.scroll_y1 = 0;
              ty->state.scroll_y2 = 0;
           }
@@ -966,7 +968,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
              arg2 = _csi_arg_get(&b);
              if (!b)
                {
-                  INF("failed to give 2 region args reset region\n");
+                  INF("failed to give 2 region args reset region");
                   ty->state.scroll_y1 = 0;
                   ty->state.scroll_y2 = 0;
                }
@@ -974,13 +976,13 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                {
                   if (arg >= arg2)
                     {
-                       ERR("scroll region beginning >= end [%i %i]\n", arg, arg2);
+                       ERR("scroll region beginning >= end [%i %i]", arg, arg2);
                        ty->state.scroll_y1 = 0;
                        ty->state.scroll_y2 = 0;
                     }
                   else
                     {
-                       INF("2 region args: %i %i\n", arg, arg2);
+                       INF("2 region args: %i %i", arg, arg2);
                        if (arg >= ty->h) arg = ty->h - 1;
                        if (arg2 > ty->h) arg2 = ty->h;
                        arg2++;
@@ -1019,7 +1021,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
         break;
  */
       default:
-        ERR("unhandled CSI '%c' (0x%02x), buf='%s'\n", *cc, *cc, buf);
+        ERR("unhandled CSI '%c' (0x%02x), buf='%s'", *cc, *cc, buf);
         break;
      }
    cc++;
@@ -1075,7 +1077,7 @@ _handle_esc_xterm(Termpty *ty, const int *c, int *ce)
         break;
       default:
         // many others
-        ERR("unhandled xterm esc '%c' -> '%s'\n", buf[0], buf);
+        ERR("unhandled xterm esc '%c' -> '%s'", buf[0], buf);
         break;
      }
     return cc - c;
@@ -1085,7 +1087,7 @@ static int
 _handle_esc(Termpty *ty, const int *c, int *ce)
 {
    if ((ce - c) < 2) return 0;
-   DBG("ESC: '%c'\n", c[1]);
+   DBG("ESC: '%c'", c[1]);
    switch (c[1])
      {
       case '[':
@@ -1118,7 +1120,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
         _term_txt_write(ty, "\033[?1;2C");
         return 2;
       case 'c': // reset terminal to initial state
-        DBG("reset to init mode and clear\n");
+        DBG("reset to init mode and clear");
         _reset_state(ty);
         _clear_screen(ty, CLR_ALL);
         if (ty->cb.cancel_sel.func)
@@ -1150,7 +1152,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
              int i, size;
              Termcell *cells;
 
-             DBG("reset to init mode and clear then fill with E\n");
+             DBG("reset to init mode and clear then fill with E");
              _reset_state(ty);
              ty->save = ty->state;
              ty->swap = ty->state;
@@ -1184,7 +1186,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
         return 2;
  */
       default:
-        ERR("eek - esc unhandled '%c' (0x%02x)\n", c[1], c[1]);
+        ERR("eek - esc unhandled '%c' (0x%02x)", c[1], c[1]);
         break;
      }
    return 1;
@@ -1220,18 +1222,18 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              return 1;
  */
            case 0x07: // BEL '\a' (bell)
-             INF("BEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP\n");
+             INF("BEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP");
              ty->state.had_cr = 0;
              return 1;
            case 0x08: // BS  '\b' (backspace)
-             DBG("->BS\n");
+             DBG("->BS");
              ty->state.wrapnext = 0;
              ty->state.cx--;
              if (ty->state.cx < 0) ty->state.cx = 0;
              ty->state.had_cr = 0;
              return 1;
            case 0x09: // HT  '\t' (horizontal tab)
-             DBG("->HT\n");
+             DBG("->HT");
              ty->screen[ty->state.cx + (ty->state.cy * ty->w)].att.tab = 1;
              ty->state.wrapnext = 0;
              ty->state.cx += 8;
@@ -1243,7 +1245,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
            case 0x0a: // LF  '\n' (new line)
            case 0x0b: // VT  '\v' (vertical tab)
            case 0x0c: // FF  '\f' (form feed)
-             DBG("->LF\n");
+             DBG("->LF");
              if (ty->state.had_cr)
                ty->screen[ty->state.had_cr_x + (ty->state.had_cr_y * ty->w)].att.newline = 1;
              ty->state.wrapnext = 0;
@@ -1253,7 +1255,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              ty->state.had_cr = 0;
              return 1;
            case 0x0d: // CR  '\r' (carriage ret)
-             DBG("->CR\n");
+             DBG("->CR");
              if (ty->state.cx != 0)
                {
                   ty->state.had_cr_x = ty->state.cx;
@@ -1310,14 +1312,14 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              return 1;
  */
            default:
-             ERR("unhandled char 0x%02x\n", c[0]);
+             ERR("unhandled char 0x%02x", c[0]);
              ty->state.had_cr = 0;
              return 1;
           }
      }
    else if (c[0] == 0xf7) // DEL
      {
-        ERR("unhandled char 0x%02x [DEL]\n", c[0]);
+        ERR("unhandled char 0x%02x [DEL]", c[0]);
         ty->state.had_cr = 0;
         return 1;
      }
@@ -1330,7 +1332,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
         cc++;
         len++;
      }
-   DBG("]\n");
+   DBG("]");
    _text_append(ty, c, len);
    ty->state.had_cr = 0;
    return len;
@@ -1350,9 +1352,9 @@ _handle_buf(Termpty *ty, const int *glyphs, int len)
         b = realloc(ty->buf, bytes);
         if (!b)
           {
-             ERR("memerr\n");
+             ERR("memerr");
           }
-        INF("realloc add %i + %i\n", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
+        INF("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
         bytes = len * sizeof(int);
         memcpy(&(b[ty->buflen]), glyphs, bytes);
         ty->buf = b;
@@ -1369,11 +1371,11 @@ _handle_buf(Termpty *ty, const int *glyphs, int len)
                   ty->buf = NULL;
                   ty->buflen = 0;
                   bytes = ((char *)ce - (char *)c) + sizeof(int);
-                  INF("malloc til %i\n", (int)(bytes - sizeof(int)));
+                  INF("malloc til %i", (int)(bytes - sizeof(int)));
                   ty->buf = malloc(bytes);
                   if (!ty->buf)
                     {
-                       ERR("memerr\n");
+                       ERR("memerr");
                     }
                   bytes = (char *)ce - (char *)c;
                   memcpy(ty->buf, c, bytes);
@@ -1403,10 +1405,10 @@ _handle_buf(Termpty *ty, const int *glyphs, int len)
                {
                   bytes = ((char *)ce - (char *)c) + sizeof(int);
                   ty->buf = malloc(bytes);
-                  INF("malloc %i\n", (int)(bytes - sizeof(int)));
+                  INF("malloc %i", (int)(bytes - sizeof(int)));
                   if (!ty->buf)
                     {
-                       ERR("memerr\n");
+                       ERR("memerr");
                     }
                   bytes = (char *)ce - (char *)c;
                   memcpy(ty->buf, c, bytes);
@@ -1428,7 +1430,8 @@ _pty_size(Termpty *ty)
    sz.ws_row = ty->h;
    sz.ws_xpixel = 0;
    sz.ws_ypixel = 0;
-   if (ioctl(ty->fd, TIOCSWINSZ, &sz) < 0) perror("Size set ioctl failed\n");
+   if (ioctl(ty->fd, TIOCSWINSZ, &sz) < 0)
+     ERR("Size set ioctl failed: %s", strerror(errno));
 }
 
 static Eina_Bool
@@ -1467,11 +1470,11 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                {
                   i = evas_string_char_next_get(buf, i, &g);
                   if (i < 0) break;
-//                  DBG("(%i) %02x '%c'\n", j, g, g);
+//                  DBG("(%i) %02x '%c'", j, g, g);
                }
              else
                {
-                  ERR("ZERO GLYPH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+                  ERR("ZERO GLYPH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                   g = 0;
                   i++;
                }
@@ -1479,7 +1482,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              j++;
           }
         glyph[j] = 0;
-//        DBG("---------------- handle buf %i\n", j);
+//        DBG("---------------- handle buf %i", j);
         _handle_buf(ty, glyph, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
@@ -1654,7 +1657,7 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
-   if (write(ty->fd, input, len) < 0) perror("write");
+   if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
 }
 
 void

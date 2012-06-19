@@ -10,7 +10,7 @@ make it a first-class terminal:
     many are commented out and unhandled)
 [ ] copy & paste support for clipboard not just primary (like xterm)
 [ ] dnd text (to/from terminal)
-[ ] ecore-imf support
+[X] ecore-imf support
 [ ] handle multibyte displays better (does handle utf8 only atm and
     then maybe not according to convention)
 [ ] general input mode handling improvements (keypad, other key
