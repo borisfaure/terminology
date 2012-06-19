@@ -905,6 +905,14 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  else
                                    _cursor_copy(&(ty->save), &(ty->state));
                                  break;
+
+                               case 1034:
+                                  /* libreadline6 emits it but it shouldn't.
+                                     See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
+                                  */
+                                  handled = 1;
+                                  DBG("Ignored screen mode %i", arg);
+                                  break;
                                default:
                                  ERR("unhandled screen mode arg %i\n", arg);
                                  break;
