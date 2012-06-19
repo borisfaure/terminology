@@ -27,6 +27,7 @@ requirements="\
    edje >= 1.2.99 \
    emotion >= 1.0.99 \
    ecore-imf >= 1.2.99 \
+   ecore-imf-evas >= 1.2.99 \
    "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
