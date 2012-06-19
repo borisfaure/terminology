@@ -8,6 +8,12 @@ terminology_CPPFLAGS = -I. \
 
 terminology_LDADD = @TERMINOLOGY_LIBS@
 
+if HAVE_ECORE_IMF
+
+terminology_LDADD += @ECORE_IMF_LIBS@
+
+endif
+
 terminology_SOURCES = \
 private.h \
 col.c col.h \
