@@ -825,6 +825,17 @@ _termio_config_set(Evas_Object *obj, Config *config)
    evas_object_show(sd->cur.obj);
 }
 
+static void
+_cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Termio *sd;
+
+   sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+
+   _imf_cursor_set(sd);
+}
+
 #ifdef HAVE_ECORE_IMF
 static void
 _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info)
@@ -908,6 +919,8 @@ _smart_add(Evas_Object *obj)
    evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_smart_member_add(o, obj);
    sd->cur.obj = o;
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cursor_cb_move, obj);
    
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
