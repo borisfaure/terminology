@@ -93,8 +93,8 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
 
         op_tbox = o = elm_box_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, 1.0, EVAS_HINT_FILL);
         elm_box_pack_end(op_box, o);
         evas_object_show(o);
         
