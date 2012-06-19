@@ -34,7 +34,7 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
 }
 
 static void
-_text_copy(Termpty *ty, Termcell *cells, Termcell *dest, int count)
+_text_copy(Termpty *ty __UNUSED__, Termcell *cells, Termcell *dest, int count)
 {
    memcpy(dest, cells, sizeof(*(cells)) * count);
 }

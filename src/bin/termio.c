@@ -418,7 +418,7 @@ _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 }
 
 void
-_smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
+_smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Termio *sd;
@@ -537,7 +537,7 @@ _smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *cx, int *
 }
 
 static void
-_sel_line(Evas_Object *obj, int cx, int cy)
+_sel_line(Evas_Object *obj, int cx __UNUSED__, int cy)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -806,7 +806,7 @@ _termio_config_set(Evas_Object *obj, Config *config)
 }
 
 static void
-_cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Termio *sd;
 
