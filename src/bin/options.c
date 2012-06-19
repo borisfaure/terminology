@@ -143,6 +143,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         edje_object_signal_emit(bg, "options,show", "terminology");
         op_out = EINA_TRUE;
+        elm_object_focus_set(op_toolbar, EINA_TRUE);
         if (op_del_timer)
           {
              ecore_timer_del(op_del_timer);
@@ -153,6 +154,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         edje_object_signal_emit(bg, "options,hide", "terminology");
         op_out = EINA_FALSE;
+        elm_object_focus_set(op_frame, EINA_FALSE);
         elm_object_focus_set(term, EINA_TRUE);
         if (op_del_timer) ecore_timer_del(op_del_timer);
         op_del_timer = ecore_timer_add(10.0, _cb_op_del_delay, NULL);
