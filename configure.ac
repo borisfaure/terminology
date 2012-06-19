@@ -26,33 +26,12 @@ requirements="\
    ecore >= 1.2.99 \
    edje >= 1.2.99 \
    emotion >= 1.0.99 \
+   ecore-imf >= 1.2.99 \
    "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
-
-have_ecore_imf="no"
-want_ecore_imf="auto"
-
-AC_ARG_ENABLE([ecore-imf],
-   [AC_HELP_STRING([--disable-ecore-imf], [disable ecore-imf (Input Method Framework) usage. @<:@default=enabled@:>@])],
-   [want_ecore_imf=$enableval], [])
-
-if test "x$want_ecore_imf" != "xno"; then
-   PKG_CHECK_MODULES([ECORE_IMF],
-       [ecore-imf >= 1.2.0 ecore-imf-evas >= 1.2.0],
-       [
-          AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support])
-          have_ecore_imf="yes"
-          requirements="ecore-imf-evas >= 1.2.0 ecore-imf >= 1.2.0 ${requirements}"
-       ],
-       [have_ecore_imf="no"])
-
-   if test "x$want_ecore_imf" = "xyes" -a "x$have_ecore_imf" = "xno"; then
-      AC_MSG_ERROR([ecore-imf support requested but not found by pkg-config.])
-   fi
-fi
 
 with_max_log_level="<unset>"
 AC_ARG_WITH(maximum-log-level,
