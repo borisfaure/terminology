@@ -34,6 +34,8 @@ static const Keyout appcur_keyout[] =
    KEY("Right",        "\033OC"),
    KEY("Up",           "\033OA"),
    KEY("Down",         "\033OB"),
+   KEY("Home",         "\033[7~"),
+   KEY("End",          "\033[8~"),
    
    KEY(NULL, "END")
 };
@@ -78,15 +80,8 @@ static const Keyout keyout[] =
    KEY("Down",         "\033[B"),
 //   KEY("Tab",          "\t"),
 //   KEY("ISO_Left_Tab", "\t"),
-
-//// PROBLEM: vim needs these to work
-//   KEY("Home",         "\033[7~"),
-//   KEY("End",          "\033[8~"),
-//// BUT: shells nedd these to work (emacs style)   
    KEY("Home",         "\033[H"),
    KEY("End",          "\033[F"),
-////
-
    KEY("Prior",        "\033[5~"),
    KEY("Next",         "\033[6~"),
    KEY("Insert",       "\033[2~"),
