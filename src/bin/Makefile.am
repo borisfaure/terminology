@@ -4,15 +4,9 @@ bin_PROGRAMS = terminology
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@ @ECORE_IMF_CFLAGS@
 
-terminology_LDADD = @TERMINOLOGY_LIBS@
-
-if HAVE_ECORE_IMF
-
-terminology_LDADD += @ECORE_IMF_LIBS@
-
-endif
+terminology_LDADD = @TERMINOLOGY_LIBS@ @ECORE_IMF_LIBS@
 
 terminology_SOURCES = \
 private.h \

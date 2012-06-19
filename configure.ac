@@ -39,13 +39,11 @@ AC_ARG_ENABLE([ecore-imf],
    [AC_HELP_STRING([--disable-ecore-imf], [disable ecore-imf (Input Method Framework) usage. @<:@default=enabled@:>@])],
    [want_ecore_imf=$enableval], [])
 
-AM_CONDITIONAL(HAVE_ECORE_IMF, false)
 if test "x$want_ecore_imf" != "xno"; then
    PKG_CHECK_MODULES([ECORE_IMF],
        [ecore-imf >= 1.2.0 ecore-imf-evas >= 1.2.0],
        [
           AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support])
-          AM_CONDITIONAL(HAVE_ECORE_IMF, true)
           have_ecore_imf="yes"
           requirements="ecore-imf-evas >= 1.2.0 ecore-imf >= 1.2.0 ${requirements}"
        ],
