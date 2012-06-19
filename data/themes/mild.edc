@@ -46,27 +46,29 @@ collections {
          part { name: "terminology.options"; type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 1;
-               min: 80 80;
-               align: 0.0 0.5;
+               min: 100 100;
+               max: 500 800;
                visible: 0;
+               align: 1.0 1.0;
                rel1 {
-                  relative: 1.0 0.02;
-                  offset: 8 8;
+                  relative: 1.0 0.04;
+                  offset: 10 10;
                }
                rel2 {
-                  relative: 1.0 0.98;
-                  offset: 8 -9;
+                  relative: 2.0 1.0;
+                  offset: -1 -1;
                }
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
                visible: 1;
-               align: 1.0 0.5;
                rel1 {
-                  offset: -9 8;
+                  relative: 0.0 0.04;
+                  offset: 10 10;
                }
                rel2 {
-                  offset: -9 -9;
+                  relative: 1.0 1.0;
+                  offset: -1 -1;
                }
             }
          }
@@ -82,7 +84,7 @@ collections {
                signal: "options,hide";
                source: "terminology";
                action: STATE_SET "default" 0.0;
-               transition: DECELERATE 0.5;
+               transition: ACCELERATE 0.5;
                target: "terminology.options";
             }
             program { name: "trans_on";
@@ -137,10 +139,10 @@ collections {
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: 255 255 255 30;
+               color: 170 170 170 32;
             }
             description { state: "focused" 0.0;
-               color: 255 255 255 160;
+               color: 170 170 170 128;
             }
          }
          programs {
@@ -218,7 +220,7 @@ collections {
                rel2.to: "base";
                color: 255 255 255 255;
             }
-         }                                              
+         }
          part { name: "terminology.text.preview"; type: SWALLOW;
             clip_to: "clip";
             description { state: "default" 0.0;
