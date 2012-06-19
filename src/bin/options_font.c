@@ -6,7 +6,7 @@
 #include "options.h"
 #include "options_font.h"
 
-static Evas_Object *op_fontslider, *op_fontlist;
+static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
 
 typedef struct _Font Font;
 
@@ -62,6 +62,9 @@ _cb_op_font_sel(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    config->font.bitmap = f->bitmap;
    _update_sizing(f->term);
    config_save(config, NULL);
+   elm_object_disabled_set(op_fsml, f->bitmap);
+   elm_object_disabled_set(op_fontslider, f->bitmap);
+   elm_object_disabled_set(op_fbig, f->bitmap);
 }
 
 static void
@@ -209,7 +212,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    bx = o = elm_box_add(opbox);
    elm_box_horizontal_set(o, EINA_TRUE);
    
-   o = elm_label_add(opbox);
+   op_fsml = o = elm_label_add(opbox);
    elm_object_text_set(o, "<font_size=6>A</font_size>");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -228,7 +231,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_fontsize_sel, term);
 
-   o = elm_label_add(opbox);
+   op_fbig = o = elm_label_add(opbox);
    elm_object_text_set(o, "<font_size=24>A</font_size>");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -279,6 +282,9 @@ options_font(Evas_Object *opbox, Evas_Object *term)
           {
              elm_genlist_item_selected_set(it, EINA_TRUE);
              sel_it = it;
+             elm_object_disabled_set(op_fsml, EINA_TRUE);
+             elm_object_disabled_set(op_fontslider, EINA_TRUE);
+             elm_object_disabled_set(op_fbig, EINA_TRUE);
           }
         free(file);
      }
