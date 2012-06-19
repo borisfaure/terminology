@@ -1,8 +1,10 @@
 collections {
+   //// the background and general contaiiner for the terminal
    group { name: "terminology/background";
       images {
         image: "bg_bevel.png" COMP;
         image: "bg_shine.png" COMP;
+        image: "bg_glint.png" COMP;
         image: "bg_shadow.png" COMP;
       }
       parts {
@@ -33,7 +35,7 @@ collections {
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 64;
+               color: 255 255 255 128;
             }
          }
          part { name: "terminology.background"; type: SWALLOW;
@@ -62,12 +64,36 @@ collections {
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.offset: 0 1;
+               rel1.offset: 0 0;
                rel2.offset: -1 -1;
                image.normal: "bg_bevel.png";
-               image.border: 2 2 2 2;
+               image.border: 3 3 5 3;
                image.middle: 0;
                fill.smooth: 0;
+               visible: 1;
+            }
+         }
+         part { name: "glintclip"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+            }
+         }
+         part { name: "glint";
+            mouse_events: 0;
+            clip_to: "glintclip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 79 5;
+               max: 79 5;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 1;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 1;
+               }
+               image.normal: "bg_glint.png";
             }
          }
          part { name: "shine";
@@ -173,15 +199,70 @@ collections {
          }
       }
    }
+   //// the cursor to show where text is typed
    group { name: "terminology/cursor";
+      images {
+        image: "cr_fill.png" COMP;
+        image: "cr_out.png" COMP;
+        image: "cr_pulse.png" COMP;
+      }
       parts {
-         part { name: "base"; type: RECT;
-            mouse_events: 1;
+         part { name: "fill";
+            mouse_events: 0;
             description { state: "default" 0.0;
-               color: 255 255 255 30;
+               image.normal: "cr_fill.png";
+               fill {
+                  size {
+                     relative: 0.0 0.0;
+                     offset: 32 32;
+                  }
+               }
+               color: 255 255 255 80;
             }
             description { state: "focused" 0.0;
-               color: 255 255 255 160;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "pulse";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "outline";
+                  offset: -4 -4;
+               }
+               rel2 {
+                  to: "outline";
+                  offset: 3 3;
+               }
+               image {
+                  normal: "cr_pulse.png";
+                  border: 4 4 4 4;
+               }
+               color: 255 255 255 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+            description { state: "out" 0.0;
+               inherit: "default" 0.0;
+               color: 100 160 255 0;
+               rel1.offset: -8 -8;
+               rel2.offset: 7 7;
+            }
+         }
+         part { name: "outline";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image {
+                  normal: "cr_out.png";
+                  border: 3 3 3 3;
+               }
+               color: 255 255 255 80;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
             }
          }
          programs {
@@ -189,20 +270,35 @@ collections {
                signal: "focus,in";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "base";
+               target: "fill";
+               target: "outline";
                after: "focus2";
+               after: "pulse";
             }
             program { name: "focus2";
-               in: 0.2 0.0;
+               in: 0.5 0.0;
                action: STATE_SET "default" 0.0;
-               target: "base";
+               target: "fill";
+               target: "outline";
                after: "focus3";
             }
             program { name: "focus3";
-               in: 0.2 0.0;
+               in: 0.5 0.0;
                action: STATE_SET "focused" 0.0;
-               target: "base";
+               target: "fill";
+               target: "outline";
                after: "focus2";
+               after: "pulse";
+            }
+            program { name: "pulse";
+               action: STATE_SET "on" 0.0;
+               target: "pulse";
+               after: "pulse2";
+            }
+            program { name: "pulse2";
+               action: STATE_SET "out" 0.0;
+               transition: DECELERATE 0.4;
+               target: "pulse";
             }
             program { name: "focus_out";
                signal: "focus,out";
@@ -215,11 +311,14 @@ collections {
             }
             program { name: "focus_out2";
                action: STATE_SET "default" 0.0;
-               target: "base";
+               target: "fill";
+               target: "outline";
             }
          }
       }
    }
+   //// used in the font selection dialog to give a base for black text
+   //// previews so they are always visible
    group { name: "terminology/fontpreview";
       images {
         image: "fn_shadow.png" COMP;
