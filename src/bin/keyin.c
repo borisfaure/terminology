@@ -58,6 +58,16 @@ static const Keyout shift_keyout[] =
    KEY(NULL, "END")
 };
 
+static const Keyout alt_keyout[] =
+{
+   KEY("Left",         "\033[1;3D"),
+   KEY("Right",        "\033[1;3C"),
+   KEY("Up",           "\033[1;3A"),
+   KEY("Down",         "\033[1;3B"),
+   
+   KEY(NULL, "END")
+};
+
 static const Keyout keyout[] =
 {
    KEY("BackSpace",    "\177"),
@@ -235,6 +245,11 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
    else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      {
         if (_key_try(ty, shift_keyout, ev)) return;
+     }
+
+   else if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
+     {
+        if (_key_try(ty, alt_keyout, ev)) return;
      }
 
    if (ty->state.appcursor)
