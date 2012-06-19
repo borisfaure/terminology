@@ -1189,7 +1189,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Eina_Strbuf *sb;
-   char *s, txt[8];
+   char *s;
    int x, y;
 
    if (!sd) return NULL;
@@ -1225,39 +1225,43 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
              else if (cells[x].att.newline)
                {
                   last0 = -1;
-                  eina_strbuf_append(sb, "\n");
+                  eina_strbuf_append_char(sb, '\n');
                   break;
                }
              else if (cells[x].att.tab)
                {
-                  eina_strbuf_append(sb, "\t");
+                  eina_strbuf_append_char(sb, '\t');
                   x = ((x + 8) / 8) * 8;
                   x--;
                }
              else
                {
+                  char txt[8];
+                  int txtlen;
+
                   if (last0 >= 0)
                     {
                        v = x - last0 - 1;
                        last0 = -1;
                        while (v >= 0)
                          {
-                            eina_strbuf_append(sb, " ");
+                            eina_strbuf_append_char(sb, ' ');
                             v--;
                          }
                        if (x == (w - 1))
                          {
                             if (!cells[x].att.autowrapped)
-                              eina_strbuf_append(sb, "\n");
+                              eina_strbuf_append_char(sb, '\n');
                          }
                     }
-                  glyph_to_utf8(cells[x].glyph, txt);
-                  eina_strbuf_append(sb, txt);
+                  txtlen = glyph_to_utf8(cells[x].glyph, txt);
+                  if (txtlen > 0)
+                    eina_strbuf_append_length(sb, txt, txtlen);
                }
           }
         if (last0 >= 0)
           {
-             eina_strbuf_append(sb, "\n");
+             eina_strbuf_append_char(sb, '\n');
           }
      }
 
