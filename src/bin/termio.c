@@ -485,7 +485,8 @@ _imf_cursor_set(Termio *sd)
    /* TODO */
    Evas_Coord cx, cy, cw, ch;
    evas_object_geometry_get(sd->cur.obj, &cx, &cy, &cw, &ch);
-   ecore_imf_context_cursor_location_set(sd->imf, cx, cy, cw, ch);
+   if (sd->imf)
+     ecore_imf_context_cursor_location_set(sd->imf, cx, cy, cw, ch);
    /*
    ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
    */
