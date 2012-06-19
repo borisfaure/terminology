@@ -85,7 +85,7 @@ _cb_op_font_sort(const void *d1, const void *d2)
 }
 
 static void
-_cb_op_font_preview_del(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o;
    o = edje_object_part_swallow_get(obj, "terminology.text.preview");
@@ -93,7 +93,7 @@ _cb_op_font_preview_del(void *data, Evas *e, Evas_Object *obj, void *event)
 }
 
 static void
-_cb_op_font_preview_eval(void *data, Evas *e, Evas_Object *obj, void *event)
+_cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Font *f = data;
    Evas_Object *o;
