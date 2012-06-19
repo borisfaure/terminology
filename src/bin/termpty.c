@@ -10,6 +10,39 @@
 #include <string.h>
 #include <errno.h>
 
+/* specific log domain to help debug only terminal code parser */
+static int _termpty_log_dom = -1;
+
+#undef CRITICAL
+#undef ERR
+#undef WRN
+#undef INF
+#undef DBG
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_termpty_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(_termpty_log_dom, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
+
+void
+termpty_init(void)
+{
+   if (_termpty_log_dom >= 0) return;
+
+   _termpty_log_dom = eina_log_domain_register("termpty", NULL);
+   if (_termpty_log_dom < 0)
+     EINA_LOG_CRIT("could not create log domain 'termpty'.");
+}
+
+void
+termpty_shutdown(void)
+{
+   if (_termpty_log_dom < 0) return;
+   eina_log_domain_unregister(_termpty_log_dom);
+   _termpty_log_dom = -1;
+}
+
 static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
 {
@@ -143,7 +176,7 @@ _text_scroll_rev_test(Termpty *ty)
 /* translates VT100 ACS escape codes to Unicode values.
  * Based on rxvt-unicode screen.C table.
  */
-static int vt100_to_unicode[62] = {
+static const int vt100_to_unicode[62] = {
   0x2191, 0x2193, 0x2192, 0x2190, 0x2588, 0x259a, 0x2603,
   0,      0,      0,      0,      0,      0,      0,      0,
   0,      0,      0,      0,      0,      0,      0,      0,

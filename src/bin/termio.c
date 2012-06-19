@@ -986,6 +986,8 @@ _smart_del(Evas_Object *obj)
    sd->imf = NULL;
    ecore_imf_shutdown();
 
+   termpty_shutdown();
+
    _parent_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
 }
@@ -1145,6 +1147,8 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
    if (!sd) return obj;
 
    _termio_config_set(obj, config);
+
+   termpty_init();
 
    sd->pty = termpty_new(cmd, w, h, config->scrollback);
    sd->pty->cb.change.func = _smart_pty_change;

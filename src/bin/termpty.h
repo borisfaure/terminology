@@ -99,6 +99,9 @@ struct _Termsave
    Termcell cell[1];
 };
 
+void      termpty_init(void);
+void      termpty_shutdown(void);
+
 Termpty  *termpty_new(const char *cmd, int w, int h, int backscroll);
 void      termpty_free(Termpty *ty);
 Termcell *termpty_cellrow_get(Termpty *ty, int y, int *wret);
