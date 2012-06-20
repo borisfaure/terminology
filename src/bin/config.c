@@ -57,6 +57,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "jump_on_change", jump_on_change, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "flicker_on_key", flicker_on_key, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
@@ -136,6 +138,7 @@ config_load(const char *key)
         config->background = NULL;
         config->translucent = EINA_FALSE;
         config->jump_on_change = EINA_FALSE;
+        config->flicker_on_key = EINA_TRUE;
         config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
         config->vidmod = 0;
         config->mute = EINA_FALSE;
