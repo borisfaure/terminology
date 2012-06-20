@@ -176,15 +176,26 @@ _text_scroll_rev_test(Termpty *ty)
 /* translates VT100 ACS escape codes to Unicode values.
  * Based on rxvt-unicode screen.C table.
  */
-static const int vt100_to_unicode[62] = {
-  0x2191, 0x2193, 0x2192, 0x2190, 0x2588, 0x259a, 0x2603,
-  0,      0,      0,      0,      0,      0,      0,      0,
-  0,      0,      0,      0,      0,      0,      0,      0,
-  0,      0,      0,      0,      0,      0,      0,      0x0020,
-  0x25c6, 0x2592, 0x2409, 0x240c, 0x240d, 0x240a, 0x00b0, 0x00b1,
-  0x2424, 0x240b, 0x2518, 0x2510, 0x250c, 0x2514, 0x253c, 0x23ba,
-  0x23bb, 0x2500, 0x23bc, 0x23bd, 0x251c, 0x2524, 0x2534, 0x252c,
-  0x2502, 0x2264, 0x2265, 0x03c0, 0x2260, 0x00a3, 0x00b7
+static const int vt100_to_unicode[62] =
+{
+// A=      B=      C=      D=      E=      F=      G=
+   0x2191, 0x2193, 0x2192, 0x2190, 0x2588, 0x259a, 0x2603,
+// H=      I=      J=      K=      L=      M=      N=
+   0,      0,      0,      0,      0,      0,      0,
+// O=      P=      Q=      R=      S=      T=      U=
+   0,      0,      0,      0,      0,      0,      0,
+// V=      W=      X=      Y=      Z=      [=      \=
+   0,      0,      0,      0,      0,      0,      0,
+// ]=      ^=      _=      `=      a=      b=      c=
+   0,      0,      0x0020, 0x25c6, 0x2592, 0x2409, 0x240c,
+// d=      e=      f=      g=      h=      i=      j=
+   0x240d, 0x240a, 0x00b0, 0x00b1, 0x2424, 0x240b, 0x2518,
+// k=      l=      m=      n=      o=      p=      q=
+   0x2510, 0x250c, 0x2514, 0x253c, 0x23ba, 0x23bb, 0x2500,
+// r=      s=      t=      u=      v=      w=      x=
+   0x23bc, 0x23bd, 0x251c, 0x2524, 0x2534, 0x252c, 0x2502,
+// y=      z=      {=      |=      }=      ~=
+   0x2264, 0x2265, 0x03c0, 0x2260, 0x00a3, 0x00b7
 };
 
 
@@ -218,12 +229,15 @@ _text_append(Termpty *ty, const int *glyphs, int len)
         switch (ty->state.charsetch)
           {
            case '0': /* DEC Special Character & Line Drawing Set */
-              if ((g >= 0x41) && (g <= 0x7e) && (vt100_to_unicode[g - 0x41]))
+              if ((g >= 0x41) && (g <= 0x7e) && 
+                  (vt100_to_unicode[g - 0x41]))
                 g = vt100_to_unicode[g - 0x41];
               break;
            case 'A': /* UK, replaces # with GBP */
               if (g == '#') g = 0x20A4;
               break;
+           default:
+             break;
           }
 
         cells[ty->state.cx].glyph = g;
