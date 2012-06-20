@@ -1130,6 +1130,12 @@ _smart_pty_cancel_sel(void *data)
      }
 }
 
+static void
+_smart_pty_exited(void *data)
+{
+   evas_object_smart_callback_call(data, "exited", NULL);
+}
+
 Evas_Object *
 termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
 {
@@ -1161,6 +1167,8 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
    sd->pty->cb.set_icon.data = obj;
    sd->pty->cb.cancel_sel.func = _smart_pty_cancel_sel;
    sd->pty->cb.cancel_sel.data = obj;
+   sd->pty->cb.exited.func = _smart_pty_exited;
+   sd->pty->cb.exited.data = obj;
    _smart_size(obj, w, h, EINA_FALSE);
    return obj;
 }

@@ -1488,8 +1488,8 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
    Termpty *ty = data;
 
    if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
-   // XXX: report via cb
-   exit(ev->exit_code);
+   ty->exit_code = ev->exit_code;
+   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
    return ECORE_CALLBACK_PASS_ON;
 }
 

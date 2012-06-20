@@ -68,7 +68,7 @@ struct _Termpty
       struct {
          void (*func) (void *data);
          void *data;
-      } change, scroll, set_title, set_icon, cancel_sel;
+      } change, scroll, set_title, set_icon, cancel_sel, exited;
    } cb;
    struct {
       const char *title;
@@ -84,6 +84,7 @@ struct _Termpty
    int *buf;
    int buflen;
    Termstate state, save, swap;
+   int exit_code;
    unsigned int altbuf : 1;
 };
 

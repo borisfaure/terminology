@@ -70,6 +70,12 @@ _cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
    else ecore_timer_delay(flush_timer, 0.25);
 }
 
+static void
+_cb_exited(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   elm_exit();
+}
+
 void
 main_trans_update(const Config *config)
 {
@@ -281,6 +287,7 @@ elm_main(int argc, char **argv)
    edje_object_part_swallow(bg, "terminology.content", o);
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
    evas_object_smart_callback_add(o, "change", _cb_change, NULL);
+   evas_object_smart_callback_add(o, "exited", _cb_exited, NULL);
    evas_object_show(o);
 
    main_trans_update(config);
