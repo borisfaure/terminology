@@ -1025,7 +1025,6 @@ _smart_calculate(Evas_Object *obj)
                     oy + (sd->cur.y * sd->font.chh));
    evas_object_move(sd->event, ox, oy);
    evas_object_resize(sd->event, ow, oh);
-   if (sd->imf) _imf_cursor_set(sd);
 }
 
 static void
