@@ -199,7 +199,7 @@ static const int vt100_to_unicode[62] =
 // v->13   v->14   v->15   v->16   v->17   v->18   v->19   
 // r=SL-T4 s=SL-T5 t=SL-VR u=SL-VL v=SL-HU w=Sl-HD x=SL-VT
    0x23bc, 0x23bd, 0x251c, 0x2524, 0x2534, 0x252c, 0x2502,
-// v->1a   v->1b   b->1c   v->1d   v->1e   v->1f
+// v->1a   v->1b   b->1c   v->1d   v->1e/a3 v->1f
 // y=LT-EQ z=GT-EQ {=PI    |=NOTEQ }=POUND ~=DOT
    0x2264, 0x2265, 0x03c0, 0x2260, 0x00a3, 0x00b7
 };
