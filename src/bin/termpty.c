@@ -204,7 +204,6 @@ static const int vt100_to_unicode[62] =
    0x2264, 0x2265, 0x03c0, 0x2260, 0x20a4, 0x00b7
 };
 
-
 static void
 _text_append(Termpty *ty, const int *glyphs, int len)
 {
@@ -891,38 +890,156 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                          {
                             int size;
 
+                            // complete-ish list here:
+                            // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
                             switch (arg)
                               {
                                case 1:
                                  handled = 1;
                                  ty->state.appcursor = mode;
                                  break;
+                               case 2:
+                                 handled = 1;
+                                 ty->state.kbd_lock = mode;
+                                 break;
+                               case 3: // should we handle this?
+                                 handled = 1;
+                                 ERR("XXX: 132 column mode %i", mode);
+                                 break;
+                               case 4:
+                                 handled = 1;
+                                 ERR("XXX: set insert mode to %i", mode);
+                                 break;
                                case 5:
                                  handled = 1;
+                                 ty->state.reverse = mode;
+                                 break;
+                               case 6:
+                                 handled = 1;
+                                 ERR("XXX: origin mode: cursor is at 0,0/cursor limited to screen/start point for line #'s depends on top margin");
                                  break;
                                case 7:
                                  handled = 1;
                                  DBG("DDD: set wrap mode to %i", mode);
                                  ty->state.wrap = mode;
                                  break;
-                               case 20:
-                                 ty->state.crlf = mode;
-                                 break;
-                               case 12:
+                               case 8:
                                  handled = 1;
-//                                 DBG("XXX: set blinking cursor to (stop?) %i", mode);
+                                 ty->state.no_autorepeat = !mode;
+                                 INF("XXX: auto repeat %i", mode);
+                                 break;
+                               case 9:
+                                 handled = 1;
+                                 if (mode) ty->state.mouse_rep = MOUSE_X10;
+                                 else ty->state.mouse_rep = MOUSE_OFF;
+                                 break;
+                               case 12: // ignore
+                                 handled = 1;
+//                                 DBG("XXX: set blinking cursor to (stop?) %i or local echo", mode);
+                                 break;
+                               case 19: // never seen this - what to do?
+                                 handled = 1;
+//                                 INF("XXX: set print extent to full screen");
+                                 break;
+                               case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
+                                 handled = 1;
+                                 ty->state.crlf = mode;
                                  break;
                                case 25:
                                  handled = 1;
                                  ty->state.hidecursor = !mode;
                                  break;
+                               case 30: // ignore
+                                 handled = 1;
+//                                 DBG("XXX: set scrollbar mapping %i", mode);
+                                 break;
+                               case 33: // ignore
+                                 handled = 1;
+//                                 INF("XXX: Stop cursor blink %i", mode);
+                                 break;
+                               case 34: // ignore
+                                 handled = 1;
+//                                 INF("XXX: Underline cursor mode %i", mode);
+                                 break;
+                               case 35: // ignore
+                                 handled = 1;
+//                                 DBG("XXX: set shift keys %i", mode);
+                                 break;
+                               case 38: // ignore
+                                 handled = 1;
+//                                 INF("XXX: switch to tek window %i", mode);
+                                 break;
+                               case 59: // ignore
+                                 handled = 1;
+//                                 INF("XXX: kanji terminal mode %i", mode);
+                                 break;
+                               case 66:
+                                 handled = 1;
+                                 ERR("XXX: app keypad mode %i", mode);
+                                 break;
+                               case 67:
+                                 handled = 1;
+                                 ty->state.send_bs = mode;
+                                 INF("XXX: backspace send bs not del = %i", mode);
+                                 break;
                                case 1000:
                                  handled = 1;
-                                 INF("XXX: set x11 mouse reporting to %i", mode);
+                                 if (mode) ty->state.mouse_rep = MOUSE_NORMAL;
+                                 else ty->state.mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (press+release only) to %i", mode);
                                  break;
+                               case 1001:
+                                 handled = 1;
+                                 ERR("XXX: x11 mouse highlighting %i", mode);
+                                 break;
+                               case 1002:
+                                 handled = 1;
+                                 ERR("XXX: set mouse (press+relese+motion while pressed) %i", mode);
+                                 break;
+                               case 1003:
+                                 handled = 1;
+                                 ERR("XXX: set mouse (press+relese+all motion) %i", mode);
+                                 break;
+                               case 1004: // i dont know what focus repporting is?
+                                 handled = 1;
+                                 ERR("XXX: enable focus reporting %i", mode);
+                                 break;
+                               case 1005:
+                                 handled = 1;
+                                 if (mode) ty->state.mouse_rep = MOUSE_UTF8;
+                                 else ty->state.mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (xterm utf8 style) %i", mode);
+                                 break;
+                               case 1006:
+                                 handled = 1;
+                                 if (mode) ty->state.mouse_rep = MOUSE_SGR;
+                                 else ty->state.mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (xterm sgr style) %i", mode);
+                                 break;
+                               case 1010: // ignore
+                                 handled = 1;
+//                                 DBG("XXX: set home on tty output %i", mode);
+                                 break;
+                               case 1012: // ignore
+                                 handled = 1;
+//                                 DBG("XXX: set home on tty input %i", mode);
+                                 break;
+                               case 1015:
+                                 handled = 1;
+                                 if (mode) ty->state.mouse_rep = MOUSE_URXVT;
+                                 else ty->state.mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (rxvt-unicdode style) %i", mode);
+                                 break;
+                               case 1034: // ignore
+                                  /* libreadline6 emits it but it shouldn't.
+                                     See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
+                                  */
+                                  handled = 1;
+//                                  DBG("Ignored screen mode %i", arg);
+                                  break;
+                               case 1047:
                                case 1049:
                                case 47:
-                               case 1047:
                                  handled = 1;
                                  DBG("DDD: switch buf");
                                  if (ty->altbuf)
@@ -960,14 +1077,18 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                                  else
                                    _cursor_copy(&(ty->save), &(ty->state));
                                  break;
-
-                               case 1034:
-                                  /* libreadline6 emits it but it shouldn't.
-                                     See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
-                                  */
-                                  handled = 1;
-                                  DBG("Ignored screen mode %i", arg);
-                                  break;
+                               case 2004: // ignore
+                                 handled = 1;
+//                                 INF("XXX: enable bracketed paste mode %i", mode);
+                                 break;
+                               case 7727: // ignore
+                                 handled = 1;
+//                                 INF("XXX: enable application escape mode %i", mode);
+                                 break;
+                               case 7786: // ignore
+                                 handled = 1;
+//                                 INF("XXX: enable mouse wheel -> cursor key xlation %i", mode);
+                                 break;
                                default:
                                  ERR("unhandled screen mode arg %i", arg);
                                  break;
@@ -1027,9 +1148,9 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                }
              else
                {
-                  if (arg >= arg2)
+                  if (arg > arg2)
                     {
-                       ERR("scroll region beginning >= end [%i %i]", arg, arg2);
+                       ERR("scroll region beginning > end [%i %i]", arg, arg2);
                        ty->state.scroll_y1 = 0;
                        ty->state.scroll_y2 = 0;
                     }
@@ -1250,6 +1371,18 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
 {
    int *cc, len = 0;
 
+/*   
+   printf(" B: ");
+   int j;
+   for (j = 0; c + j < ce && j < 100; j++)
+     {
+        if ((c[j] < ' ') || (c[j] >= 0x7f))
+          printf("\033[35m%02x\033[0m", c[j]);
+        else
+          printf("%c", c[j]);
+     }
+   printf("\n");
+ */
    if (c[0] < 0x20)
      {
         switch (c[0])
@@ -1375,6 +1508,16 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
         ERR("unhandled char 0x%02x [DEL]", c[0]);
         ty->state.had_cr = 0;
         return 1;
+     }
+   else if (c[0] == 0x9b) // ANSI ESC!!!
+     {
+        int v;
+        
+        printf("ANSI CSI!!!!!\n");
+        ty->state.had_cr = 0;
+        v = _handle_esc_csi(ty, c + 1, ce);
+        if (v == -2) return 0;
+        return v + 1;
      }
 
    cc = (int *)c;
@@ -1507,11 +1650,24 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    int glyph[4097];
    int len, i, j, reads;
 
-   // read up to 64 * 4096 bytes OR until time expires;
+   // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
      {
         len = read(ty->fd, buf, sizeof(buf) - 1);
         if (len <= 0) break;
+        
+/*        
+        printf(" I: ");
+        int jj;
+        for (jj = 0; jj < len && jj < 100; jj++)
+          {
+             if ((buf[jj] < ' ') || (buf[jj] >= 0x7f))
+               printf("\033[33m%02x\033[0m", buf[jj]);
+             else
+               printf("%c", buf[jj]);
+          }
+        printf("\n");
+ */
         buf[len] = 0;
         // convert UTF8 to glyph integers
         j = 0;
@@ -1527,7 +1683,6 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                }
              else
                {
-                  ERR("ZERO GLYPH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                   g = 0;
                   i++;
                }
@@ -1582,6 +1737,7 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
    if (ty->slavefd < 0) goto err;
    fcntl(ty->fd, F_SETFL, O_NDELAY);
 
+   printf("@@@@@@@@@@@@ ty->fd = %i\n", ty->fd);
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
    ty->pid = fork();

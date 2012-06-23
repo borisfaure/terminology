@@ -40,6 +40,7 @@ struct _Termio
       Eina_Bool sel : 1;
    } backup;
    int scroll;
+   unsigned int last_keyup;
    Evas_Object *event;
    Termpty *pty;
    Ecore_Animator *anim;
@@ -60,11 +61,12 @@ _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
-   int j, x, y, w, ch1 = 0, ch2 = 0;
+   int j, x, y, w, ch1 = 0, ch2 = 0, inv = 0;
 
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
+   inv = sd->pty->state.reverse;
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;
@@ -87,7 +89,8 @@ _smart_apply(Evas_Object *obj)
                        ch2 = x;
                     }
                   tc[x].codepoint = 0;
-                  tc[x].bg = COL_INVIS;
+                  if (inv) tc[x].bg = COL_INVERSEBG;
+                  else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
                }
              else
@@ -102,7 +105,8 @@ _smart_apply(Evas_Object *obj)
                             ch2 = x;
                          }
                        tc[x].codepoint = 0;
-                       tc[x].bg = COL_INVIS;
+                       if (inv) tc[x].bg = COL_INVERSEBG;
+                       else tc[x].bg = COL_INVIS;
                        tc[x].bg_extended = 0;
                     }
                   else
@@ -115,7 +119,7 @@ _smart_apply(Evas_Object *obj)
                        bgext = cells[j].att.bg256;
                        glyph = cells[j].glyph;
                        
-                       if (cells[j].att.inverse)
+                       if (cells[j].att.inverse ^ inv)
                          {
                             int t;
                             
@@ -396,6 +400,7 @@ _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
+   sd->last_keyup = ev->timestamp;
    if (sd->imf)
      {
         Ecore_IMF_Event_Key_Up imf_ev;
@@ -451,6 +456,12 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
           }
      }
+   // if term app asked fro kbd lock - dont handle here
+   if (sd->pty->state.kbd_lock) return;
+   // if app asked us to not do autorepeat - ignore pree is it is the same
+   // timestamp as last one
+   if ((sd->pty->state.no_autorepeat) &&
+       (ev->timestamp == sd->last_keyup)) return;
    keyin_handle(sd->pty, ev);
 end:
    if (sd->config->flicker_on_key)
@@ -626,6 +637,197 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
 }
 
 static void
+_rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
+{
+   Termio *sd;
+   char buf[64];
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
+   switch (sd->pty->state.mouse_rep)
+     {
+      case MOUSE_X10:
+        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+          {
+             int btn = ev->button - 1;
+             
+             if (btn <= 2)
+               {
+                  buf[0] = 0x1b;
+                  buf[1] = '[';
+                  buf[2] = 'M';
+                  buf[3] = btn + ' ';
+                  buf[4] = cx + 1 + ' ';
+                  buf[5] = cy + 1 + ' ';
+                  buf[6] = 0;
+                  termpty_write(sd->pty, buf, strlen(buf));
+               }
+          }
+        break;
+      case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
+          {
+             int btn = ev->button - 1;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
+             int v, i;
+             
+             if (btn > 2) btn = 0;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl | dbl) + ' ';
+             i = 4;
+             v = cx + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             v = cy + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             buf[i] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      case MOUSE_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+          {
+             int btn = ev->button - 1;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
+             
+             snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
+                      (btn | shift | meta | ctrl | dbl), cx + 1, cy + 1);
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      case MOUSE_NORMAL:
+      case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
+        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+          {
+             int btn = ev->button - 1;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
+             
+             if (btn > 2) btn = 0;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl | dbl) + ' ';
+             buf[4] = cx + 1 + ' ';
+             buf[5] = cy + 1 + ' ';
+             buf[6] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      default:
+        break;
+     }
+}
+
+static void
+_rep_mouse_up(Evas_Object *obj, Evas_Event_Mouse_Up *ev, int cx, int cy)
+{
+   Termio *sd;
+   char buf[64];
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
+   switch (sd->pty->state.mouse_rep)
+     {
+      case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
+          {
+             int btn = 3;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             int v, i;
+             
+             btn = 3;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             i = 4;
+             v = cx + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             v = cy + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             buf[i] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      case MOUSE_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+          {
+             int btn = 3;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             
+             snprintf(buf, sizeof(buf), "%c[<%i;%i;%im", 0x1b,
+                      (btn | shift | meta | ctrl), cx + 1, cy + 1);
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      case MOUSE_NORMAL:
+      case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
+        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+          {
+             int btn = 3;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             buf[4] = cx + 1 + ' ';
+             buf[5] = cy + 1 + ' ';
+             buf[6] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        break;
+      default:
+        break;
+     }
+}
+
+static void
+_rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev, int cx, int cy)
+{
+   Termio *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
+   // not sure what to d here right now so do nothing.
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -635,6 +837,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _rep_mouse_down(data, ev, cx, cy);
    if (ev->button == 1)
      {
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
@@ -692,6 +895,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _rep_mouse_up(data, ev, cx, cy);
    if (sd->cur.makesel)
      {
         sd->cur.makesel = 0;
@@ -715,6 +919,7 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->cur.canvas.x, ev->cur.canvas.y, &cx, &cy);
+   _rep_mouse_move(data, ev, cx, cy);
    if (sd->cur.makesel)
      {
         if (!sd->cur.sel)

@@ -18,6 +18,13 @@ typedef struct _Termsave  Termsave;
 #define COL_INVERSE   10
 #define COL_INVERSEBG 11
 
+#define MOUSE_OFF      0
+#define MOUSE_X10      1
+#define MOUSE_NORMAL   2
+#define MOUSE_UTF8     3
+#define MOUSE_SGR      4
+#define MOUSE_URXVT    5
+
 struct _Termatt
 {
    unsigned char fg, bg;
@@ -58,6 +65,11 @@ struct _Termstate
    unsigned int  hidecursor : 1;
    unsigned int  crlf : 1;
    unsigned int  had_cr : 1;
+   unsigned int  send_bs : 1;
+   unsigned int  kbd_lock : 1;
+   unsigned int  reverse : 1;
+   unsigned int  no_autorepeat : 1;
+   unsigned int  mouse_rep : 3;
 };
 
 struct _Termpty

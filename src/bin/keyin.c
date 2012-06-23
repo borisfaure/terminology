@@ -260,6 +260,12 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
 
+   if ((ty->state.send_bs) &&
+       (!strcmp(ev->keyname, "Bakcspace")))
+     {
+        termpty_write(ty, "\b", 1);
+        return;
+     }
    if (_key_try(ty, keyout, ev)) return;
    if (ev->string)
      {
