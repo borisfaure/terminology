@@ -1737,7 +1737,6 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
    if (ty->slavefd < 0) goto err;
    fcntl(ty->fd, F_SETFL, O_NDELAY);
 
-   printf("@@@@@@@@@@@@ ty->fd = %i\n", ty->fd);
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
    ty->pid = fork();
