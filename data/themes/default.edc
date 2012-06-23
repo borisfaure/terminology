@@ -6,7 +6,9 @@ collections {
         image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "bg_shadow.png" COMP;
+        image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
+        image: "bg_led_strobe.png" COMP;
       }
       parts {
          part { name: "shadow";
@@ -109,21 +111,66 @@ collections {
                aspect_preference: HORIZONTAL;
             }
          }
-         part { name: "bell";
+         part { name: "bell_base";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                visible: 0;
                color: 255 255 255 0;
                min: 32 32;
                max: 32 32;
-               rel2.offset: -5 -5;
+               rel2.offset: -1 -1;
                align: 1.0 1.0;
+               image.normal: "bg_led_base.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "bell";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1.to: "bell_base";
+               rel2.to: "bell_base";
                image.normal: "bg_led.png";
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
                visible: 1;
                color: 255 255 255 255;
+            }
+         }
+         part { name: "bell_strobe";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1.to: "bell";
+               rel2.to: "bell";
+               image.normal: "bg_led_strobe.png";
+               map {
+                  on: 1;
+                  smooth: 1;
+                  rotation.center: "bell";
+               }
+            }
+            description { state: "spin" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+               map.rotation.z: 36.0;
+            }
+            description { state: "spin_done" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               map.rotation.z: 684.0;
             }
          }
          part { name: "terminology.options"; type: SWALLOW;
@@ -187,17 +234,48 @@ collections {
                target: "shadow";
                target: "fade";
             }
-            program { name: "bell";
+            program { name: "bell0";
                signal: "bell";
                source: "terminology";
-               action: STATE_SET "visible" 0.0;
+               action: STATE_SET "default" 0.0;
+               target: "bell_base";
                target: "bell";
+               target: "bell_strobe";
+               after: "bell";
+            }
+            program { name: "bell";
+               action: STATE_SET "visible" 0.0;
+               target: "bell_base";
                after: "bell2";
             }
             program { name: "bell2";
-               action: STATE_SET "default" 0.0;
-               transition: BOUNCE 1.0 1.0 3.0;
+               action: STATE_SET "visible" 0.0;
+               transition: DECELERATE 0.1;
                target: "bell";
+               after: "bell3";
+            }
+            program { name: "bell3";
+               action: STATE_SET "spin" 0.0;
+               transition: LINEAR 0.1;
+               target: "bell_strobe";
+               after: "bell4.0";
+               after: "bell4.1";
+               after: "bell4.2";
+            }
+            program { name: "bell4.0";
+               action: STATE_SET "default" 0.0;
+               transition: ACCELERATE 1.2;
+               target: "bell";
+            }
+            program { name: "bell4.1";
+               action: STATE_SET "default" 0.0;
+               transition: ACCELERATE 1.6;
+               target: "bell_base";
+            }
+            program { name: "bell4.2";
+               action: STATE_SET "spin_done" 0.0;
+               transition: LINEAR 0.9;
+               target: "bell_strobe";
             }
 //            program { name: "focus_in";
 //               signal: "focus,in";
