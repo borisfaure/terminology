@@ -2,28 +2,20 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
-[X] evas textgrid needs creating and to be used
-[X] underline and strikethrough need supporting at termio level
 [ ] blink and blink2 attributes need to be supported
-[ ] improve terminal emulation handling (i know it doesn't handle gfx
-    chars and it definitely has an incomplete escape handling core -
-    many are commented out and unhandled)
+[ ] improve terminal emulation handling. known apps with problems:
+      mc
 [ ] copy & paste support for clipboard not just primary (like xterm)
 [ ] dnd text (to/from terminal)
-[X] ecore-imf support
 [ ] handle multibyte displays better (does handle utf8 only atm and
-    then maybe not according to convention)
+    then maybe not according to convention like double cell spacing
+    for jp/kr/zh etc.)
 [ ] general input mode handling improvements (keypad, other key
-    input, mousereporting etc.)
-[X] save of config after options changes (option checkbox for
-    temporary local only changes)
+    input, etc.)
 [ ] selection of themes
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)
-[X] transparency support (theme needs to be told to go into
-    tranpsarency mode and then window alpha enabled)
-[ ] visual bell reporting (signals to theme)
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
     - gives us fingerscroll - layer on top of term smart, stick
     invisible rect inside to track for scrolling etc.)
@@ -34,11 +26,7 @@ make it a first-class terminal:
 [ ] selection should become single edje object so it can be styled nicely
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
-[ ] improve selection text extraction logic
-[X] font selector should include font previews in the list -
-    preferably ONLY be a list of previews
-[X] options widgets should be deleted once they are hidden. they stay
-    in memory at the moment
+[ ] improve selection text extraction logic so its reliable
 [ ] clicking with ANY mouse button while options is up outside of
     options should dismiss it.
 

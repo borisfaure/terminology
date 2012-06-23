@@ -1410,7 +1410,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              return 1;
  */
            case 0x07: // BEL '\a' (bell)
-             INF("BEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP");
+             if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
              ty->state.had_cr = 0;
              return 1;
            case 0x08: // BS  '\b' (backspace)

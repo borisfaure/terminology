@@ -6,6 +6,7 @@ collections {
         image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "bg_shadow.png" COMP;
+        image: "bg_led.png" COMP;
       }
       parts {
          part { name: "shadow";
@@ -108,6 +109,23 @@ collections {
                aspect_preference: HORIZONTAL;
             }
          }
+         part { name: "bell";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               min: 32 32;
+               max: 32 32;
+               rel2.offset: -5 -5;
+               align: 1.0 1.0;
+               image.normal: "bg_led.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
          part { name: "terminology.options"; type: SWALLOW;
             scale: 1;
             description { state: "default" 0.0;
@@ -169,6 +187,26 @@ collections {
                target: "shadow";
                target: "fade";
             }
+            program { name: "bell";
+               signal: "bell";
+               source: "terminology";
+               action: STATE_SET "visible" 0.0;
+               target: "bell";
+               after: "bell2";
+            }
+            program { name: "bell2";
+               action: STATE_SET "default" 0.0;
+               transition: BOUNCE 1.0 1.0 3.0;
+               target: "bell";
+            }
+//            program { name: "focus_in";
+//               signal: "focus,in";
+//               source: "terminology";
+//            }
+//            program { name: "focus_out";
+//               signal: "focus,out";
+//               source: "terminology";
+//            }
             program { name: "media_off";
                signal: "media,off";
                source: "terminology";

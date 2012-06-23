@@ -14,10 +14,13 @@ int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
 static Ecore_Timer *flush_timer = NULL;
+static Eina_Bool focused = EINA_FALSE;
 
 static void
 _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (!focused) elm_win_urgent_set(win, EINA_FALSE);
+   focused = EINA_TRUE;
    edje_object_signal_emit(bg, "focus,in", "terminology");
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -25,6 +28,7 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 static void
 _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   focused = EINA_FALSE;
    edje_object_signal_emit(bg, "focus,out", "terminology");
    elm_object_focus_set(data, EINA_FALSE);
    elm_cache_all_flush();
@@ -74,6 +78,19 @@ static void
 _cb_exited(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_exit();
+}
+
+static void
+_cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Config *config = termio_config_get(term);
+   
+   edje_object_signal_emit(bg, "bell", "terminology");
+   if (!config) return;
+   if (config->urg_bell)
+     {
+        if (!focused) elm_win_urgent_set(win, EINA_TRUE);
+     }
 }
 
 void
@@ -288,6 +305,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
    evas_object_smart_callback_add(o, "change", _cb_change, NULL);
    evas_object_smart_callback_add(o, "exited", _cb_exited, NULL);
+   evas_object_smart_callback_add(o, "bell", _cb_bell, NULL);
    evas_object_show(o);
 
    main_trans_update(config);

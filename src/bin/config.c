@@ -49,11 +49,15 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.bitmap", font.bitmap, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "scrollback", scrollback, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "background", background, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "scrollback", scrollback, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "vidmod", vidmod, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "jump_on_change", jump_on_change, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -61,11 +65,9 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "vidmod", vidmod, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "urg_bell", urg_bell, EET_T_UCHAR);
 }
 
 void
@@ -142,6 +144,7 @@ config_load(const char *key)
         config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
         config->vidmod = 0;
         config->mute = EINA_FALSE;
+        config->urg_bell = EINA_TRUE;
      }
 
    config->config_key = eina_stringshare_add(key); /* not in eet */

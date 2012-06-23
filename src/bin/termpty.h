@@ -80,7 +80,7 @@ struct _Termpty
       struct {
          void (*func) (void *data);
          void *data;
-      } change, scroll, set_title, set_icon, cancel_sel, exited;
+      } change, scroll, set_title, set_icon, cancel_sel, exited, bell;
    } cb;
    struct {
       const char *title;
