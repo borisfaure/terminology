@@ -201,7 +201,7 @@ static const int vt100_to_unicode[62] =
    0x23bc, 0x23bd, 0x251c, 0x2524, 0x2534, 0x252c, 0x2502,
 // v->1a   v->1b   b->1c   v->1d   v->1e/a3 v->1f
 // y=LT-EQ z=GT-EQ {=PI    |=NOTEQ }=POUND ~=DOT
-   0x2264, 0x2265, 0x03c0, 0x2260, 0x00a3, 0x00b7
+   0x2264, 0x2265, 0x03c0, 0x2260, 0x20a4, 0x00b7
 };
 
 
@@ -240,7 +240,7 @@ _text_append(Termpty *ty, const int *glyphs, int len)
                 g = vt100_to_unicode[g - 0x41];
               break;
            case 'A': /* UK, replaces # with GBP */
-              if (g == '#') g = 0x20A4;
+              if (g == '#') g = 0x20a4;
               break;
            default:
              break;

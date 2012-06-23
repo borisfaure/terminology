@@ -14,23 +14,7 @@ files_DATA = \
 8x13.pcf \
 9x15.pcf \
 9x18.pcf \
-anorexia.pcf \
-aqui.pcf \
-cure.pcf \
-drift.pcf \
-edges.pcf \
-fkp.pcf \
-gelly.pcf \
-glisp-bold.pcf \
-glisp.pcf \
-kates.pcf \
-lime.pcf \
-mints-mild.pcf \
-mints-strong.pcf \
 nexus.pcf \
-nu.pcf \
-smoothansi.pcf \
-snap.pcf \
 terminus-12.pcf \
 terminus-14-bold.pcf \
 terminus-14.pcf \
@@ -42,7 +26,6 @@ terminus-20-bold.pcf \
 terminus-20.pcf
 
 EXTRA_DIST = $(files_DATA) \
-ARTWIZ.txt \
 TERMINUS.txt \
 XFONT.txt
 
