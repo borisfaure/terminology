@@ -170,6 +170,11 @@ void
 options_font_clear(void)
 {
    Font *f;
+
+   op_fontslider = NULL;
+   op_fontlist = NULL;
+   op_fsml = NULL;
+   op_fbig = NULL;
    
    EINA_LIST_FREE(fonts, f)
      {
