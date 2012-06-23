@@ -658,12 +658,14 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
           {
              int pi = ty->state.insert;
              int blank[1] = { ' ' };
+             int cx = ty->state.cx;
 
              ty->state.wrapnext = 0;
              ty->state.insert = 1;
              for (i = 0; i < arg; i++)
                _text_append(ty, blank, 1);
              ty->state.insert = pi;
+             ty->state.cx = cx;
           }
         break;
       case 'A': // cursor up N
