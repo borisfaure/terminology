@@ -1,0 +1,126 @@
+#include "private.h"
+
+#include <Elementary.h>
+#include "controls.h"
+#include "options.h"
+#include "termio.h"
+
+static Evas_Object *ct_frame, *ct_box = NULL;
+static Eina_Bool ct_out = EINA_FALSE;
+static Ecore_Timer *ct_del_timer = NULL;
+
+static Evas_Object *ct_win, *ct_bg, *ct_term;
+
+static Eina_Bool
+_cb_ct_del_delay(void *data __UNUSED__)
+{
+   evas_object_del(ct_frame);
+   ct_frame = NULL;
+   ct_del_timer = NULL;
+   elm_cache_all_flush();
+   return EINA_FALSE;
+}
+
+static void
+_cb_ct_copy(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   controls_toggle(ct_win, ct_bg, ct_term);
+   termio_copy_clipboard(data);
+}
+
+static void
+_cb_ct_paste(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   controls_toggle(ct_win, ct_bg, ct_term);
+   termio_paste_clipboard(data);
+}
+
+static void
+_cb_ct_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   controls_toggle(ct_win, ct_bg, ct_term);
+   options_toggle(ct_win, ct_bg, ct_term);
+}
+
+void
+controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
+{
+   Evas_Object *o;
+
+   if (!ct_out)
+     {
+        if (options_active_get())
+          {
+             options_toggle(win, bg, term);
+             return;
+          }
+     }
+   if (!ct_frame)
+     {
+        ct_frame = o = elm_frame_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, "Controls");
+
+        ct_box = o = elm_box_add(win);
+        elm_object_content_set(ct_frame, o);
+        evas_object_show(o);
+        
+        o = elm_button_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, "Copy");
+        elm_box_pack_end(ct_box, o);
+        evas_object_show(o);
+        evas_object_smart_callback_add(o, "clicked", _cb_ct_copy, term);
+        
+        o = elm_button_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, "Paste");
+        elm_box_pack_end(ct_box, o);
+        evas_object_show(o);
+        evas_object_smart_callback_add(o, "clicked", _cb_ct_paste, term);
+        
+        o = elm_separator_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+        elm_separator_horizontal_set(o, EINA_TRUE);
+        elm_box_pack_end(ct_box, o);
+        evas_object_show(o);
+        
+        o = elm_button_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, "Options");
+        elm_box_pack_end(ct_box, o);
+        evas_object_show(o);
+        evas_object_smart_callback_add(o, "clicked", _cb_ct_options, NULL);
+        
+        edje_object_part_swallow(bg, "terminology.controls", ct_frame);
+        evas_object_show(ct_frame);
+     }
+   if (!ct_out)
+     {
+        ct_win = win;
+        ct_bg = bg;
+        ct_term = term;
+        edje_object_signal_emit(bg, "controls,show", "terminology");
+        ct_out = EINA_TRUE;
+        elm_object_focus_set(ct_frame, EINA_TRUE);
+        if (ct_del_timer)
+          {
+             ecore_timer_del(ct_del_timer);
+             ct_del_timer = NULL;
+          }
+     }
+   else
+     {
+        edje_object_signal_emit(bg, "controls,hide", "terminology");
+        ct_out = EINA_FALSE;
+        elm_object_focus_set(ct_frame, EINA_FALSE);
+        elm_object_focus_set(term, EINA_TRUE);
+        if (ct_del_timer) ecore_timer_del(ct_del_timer);
+        ct_del_timer = ecore_timer_add(10.0, _cb_ct_del_delay, NULL);
+     }
+}

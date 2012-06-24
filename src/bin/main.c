@@ -6,7 +6,7 @@
 #include "win.h"
 #include "termio.h"
 #include "config.h"
-#include "options.h"
+#include "controls.h"
 #include "media.h"
 #include "utils.h"
 
@@ -56,7 +56,7 @@ _cb_size_hint(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
 static void
 _cb_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   options_toggle(win, bg, term);
+   controls_toggle(win, bg, term);
 }
 
 static Eina_Bool

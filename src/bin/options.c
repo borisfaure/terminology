@@ -73,7 +73,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 
    if (!op_frame)
      {
-        Elm_Object_Item *it_fn, *it_th, *it_wp, *it_bh;
+        Elm_Object_Item *it_fn;
         Config *config = termio_config_get(term);
 
         op_frame = o = elm_frame_add(win);
@@ -113,14 +113,14 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 
         it_fn = elm_toolbar_item_append(o, "preferences-desktop-font",
                                         "Font", _cb_op_font, term);
-        it_th = elm_toolbar_item_append(o, "preferences-desktop-theme",
-                                        "Theme", _cb_op_theme, term);
-        it_wp = elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
-                                        "Wallpaper", _cb_op_wallpaper, term);
-        it_wp = elm_toolbar_item_append(o, "preferences-desktop-multimedia",
-                                        "Video", _cb_op_video, term);
-        it_bh = elm_toolbar_item_append(o, "system-run",
-                                        "Behavior", _cb_op_behavior, term);
+        elm_toolbar_item_append(o, "preferences-desktop-theme",
+                                "Theme", _cb_op_theme, term);
+        elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
+                                "Wallpaper", _cb_op_wallpaper, term);
+        elm_toolbar_item_append(o, "preferences-desktop-multimedia",
+                                "Video", _cb_op_video, term);
+        elm_toolbar_item_append(o, "system-run",
+                                "Behavior", _cb_op_behavior, term);
 
         elm_box_pack_end(op_tbox, o);
         evas_object_show(o);
@@ -137,7 +137,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_smart_callback_add(o, "changed", _cb_op_tmp_chg, config);
 
         edje_object_part_swallow(bg, "terminology.options", op_frame);
-        evas_object_show(o);
+        evas_object_show(op_frame);
      }
    if (!op_out)
      {
@@ -159,4 +159,10 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         if (op_del_timer) ecore_timer_del(op_del_timer);
         op_del_timer = ecore_timer_add(10.0, _cb_op_del_delay, NULL);
      }
+}
+
+Eina_Bool
+options_active_get(void)
+{
+   return op_out;
 }

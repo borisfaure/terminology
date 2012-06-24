@@ -340,7 +340,7 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 }
 
 static void
-_take_selection(Evas_Object *obj)
+_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    int start_x, start_y, end_x, end_y;
@@ -362,7 +362,7 @@ _take_selection(Evas_Object *obj)
    if (s)
      {
         if (sd->win)
-          elm_cnp_selection_set(sd->win, ELM_SEL_TYPE_PRIMARY,
+          elm_cnp_selection_set(sd->win, type,
                                 ELM_SEL_FORMAT_TEXT, s, strlen(s));
         free(s);
      }
@@ -383,12 +383,12 @@ _getsel_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Selection_Data *ev)
 }
 
 static void
-_paste_selection(Evas_Object *obj)
+_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (!sd->win) return;
-   elm_cnp_selection_get(sd->win, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT,
+   elm_cnp_selection_get(sd->win, type, ELM_SEL_FORMAT_TEXT,
                          _getsel_cb, obj);
 }
 
@@ -457,7 +457,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "Insert"))
                {
-                  _paste_selection(data);
+                  _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
                }
           }
@@ -823,7 +823,7 @@ _rep_mouse_up(Evas_Object *obj, Evas_Event_Mouse_Up *ev, int cx, int cy)
 }
 
 static void
-_rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev, int cx, int cy)
+_rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev __UNUSED__, int cx __UNUSED__, int cy __UNUSED__)
 {
    Termio *sd;
    
@@ -849,7 +849,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              _sel_line(data, cx, cy - sd->scroll);
-             if (sd->cur.sel) _take_selection(data);
+             if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
@@ -867,7 +867,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                {
                   _sel_word(data, cx, cy - sd->scroll);
                }
-             if (sd->cur.sel) _take_selection(data);
+             if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
         else
           {
@@ -886,7 +886,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         _smart_update_queue(data, sd);
      }
    else if (ev->button == 2)
-     _paste_selection(data);
+     _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
    else if (ev->button == 3)
      evas_object_smart_callback_call(data, "options", NULL);
 }
@@ -910,7 +910,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
              _smart_update_queue(data, sd);
-             _take_selection(data);
+             _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
      }
 }
@@ -1540,4 +1540,16 @@ termio_config_get(const Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
    return sd->config;
+}
+
+void
+termio_copy_clipboard(Evas_Object *obj)
+{
+   _take_selection(obj, ELM_SEL_TYPE_CLIPBOARD);
+}
+
+void
+termio_paste_clipboard(Evas_Object *obj)
+{
+   _paste_selection(obj, ELM_SEL_TYPE_CLIPBOARD);
 }

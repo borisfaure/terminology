@@ -322,15 +322,58 @@ collections {
             signal: "options,show";
             source: "terminology";
             action: STATE_SET "visible" 0.0;
-            transition: DECELERATE 0.5;
+            transition: DECELERATE 0.4;
             target: "terminology.options";
          }
          program { name: "op_hide";
             signal: "options,hide";
             source: "terminology";
             action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
+            transition: DECELERATE 0.6;
             target: "terminology.options";
+         }
+         part { name: "terminology.controls"; type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 10 10;
+               align: 0.0 0.5;
+               visible: 0;
+               rel1 {
+                  relative: 1.0 0.5;
+                  offset: 8 8;
+               }
+               rel2 {
+                  relative: 1.0 0.5;
+                  offset: 8 -9;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               align: 1.0 0.5;
+               rel1 {
+                  relative: 1.0 0.5;
+                  offset: -9 8;
+               }
+               rel2 {
+                  offset: -9 -9;
+               }
+            }
+         }
+         program { name: "ct_show";
+            signal: "controls,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.3;
+            target: "terminology.controls";
+         }
+         program { name: "ct_hide";
+            signal: "controls,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.controls";
          }
       }
    }
