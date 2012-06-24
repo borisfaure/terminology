@@ -11,4 +11,9 @@ cr_fill.png \
 cr_key.png \
 cr_out.png \
 cr_pulse.png \
-fn_shadow.png
+fn_shadow.png \
+media_bg.png \
+media_line.png \
+media_pause.png \
+media_play.png \
+media_stop.png

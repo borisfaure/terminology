@@ -544,7 +544,157 @@ collections {
          }
       }
    }
-   
+
+//////////////////////////////////////////////////////////////////////////////
+   //// the multimedia controls
+   group { name: "terminology/mediactrl";
+      images {
+        image: "media_bg.png" COMP;
+        image: "media_play.png" COMP;
+        image: "media_stop.png" COMP;
+        image: "media_pause.png" COMP;
+        image: "media_line.png" COMP;
+      }
+      parts {
+         part { name: "media_clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "media_bg";
+               rel2.to: "media_bg";
+            }
+         }
+         part { name: "media_bg";
+            clip_to: "media_clip";
+            description { state: "default" 0.0;
+               image.normal: "media_bg.png";
+               image.border: 11 11 11 11;
+               max: 24 24;
+               align: 0.0 1.0;
+            }
+            description { state: "expanded" 0.0;
+               inherit: "default" 0.0;
+               min: 200 24;
+               max: 200 24;
+            }
+         }
+         part { name: "play";
+            mouse_events: 1;
+            repeat_events: 1;
+            clip_to: "media_clip";
+            description { state: "default" 0.0;
+               image.normal: "media_pause.png";
+               max: 24 24;
+               align: 0.0 1.0;
+            }
+            description { state: "paused" 0.0;
+               inherit: "default" 0.0;
+               image.normal: "media_play.png";
+            }
+         }
+         part { name: "stop";
+            mouse_events: 1;
+            repeat_events: 1;
+            clip_to: "media_clip";
+            description { state: "default" 0.0;
+               image.normal: "media_stop.png";
+               max: 24 24;
+               rel1.to: "play";
+               rel2.to: "play";
+               rel1.offset: 16 0;
+               rel2.offset: 16 0;
+            }
+         }
+         part { name: "volline";
+            mouse_events: 0;
+            repeat_events: 1;
+            clip_to: "media_clip";
+            description { state: "default" 0.0;
+               image.normal: "media_line.png";
+               min: 150 10;
+               max: 150 10;
+               rel1.to: "stop";
+               rel2.to: "stop";
+               rel1.offset: 25 0;
+               rel2.offset: 150 0;
+            }
+         }
+         part { name: "terminology.voldrag"; type: RECT;
+            mouse_events: 1;
+            repeat_events: 1;
+            clip_to: "media_clip";
+            dragable {
+               confine: "volline";
+               x: 1 1 0;
+               y: 0 0 0;
+            }
+            description { state: "default" 0.0;
+               color: 255 0 0 150;
+               min: 10 10;
+               max: 10 10;
+            }
+            description { state: "muted" 0.0;
+               visible: 0;
+            }
+         }
+         programs {
+            program { name: "media_mouse_in";
+               signal: "mouse,in";
+               source: "media_bg";
+               action: STATE_SET "expanded" 0.0;
+               transition: SINUSOIDAL 0.4 CURRENT;
+               target: "media_bg";
+            }
+            program { name: "media_mouse_out";
+               signal: "mouse,out";
+               source: "media_bg";
+               action: STATE_SET "default" 0.0;
+               transition: SINUSOIDAL 0.4 CURRENT;
+               target: "media_bg";
+            }
+            program { name: "media_pause_click";
+               signal: "mouse,up,*";
+               source: "play";
+               filter: "play" "default";
+               action: SIGNAL_EMIT "pause" "";
+            }
+            program { name: "media_play_click";
+               signal: "mouse,up,1";
+               source: "play";
+               filter: "play" "paused";
+               action: SIGNAL_EMIT "play" "";
+            }
+            program { name: "media_stop_click";
+               signal: "mouse,up,1";
+               source: "stop";
+               action: SIGNAL_EMIT "stop" "";
+            }
+            program { name: "media_signal_pause";
+               signal: "pause,set";
+               source: "terminology";
+               action: STATE_SET "paused" 0.0;
+               target: "play";
+            }
+            program { name: "media_signal_play";
+               signal: "play,set";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               target: "play";
+            }
+            program { name: "media_signal_mute";
+               signal: "mute,set";
+               source: "terminology";
+               action: STATE_SET "muted" 0.0;
+               target: "terminology.voldrag";
+            }
+            program { name: "media_signal_unmute";
+               signal: "mute,unset";
+               source: "terminology";
+               action: STATE_SET "default" 0.0;
+               target: "terminology.voldrag";
+            }
+         }
+      }
+   }
 //////////////////////////////////////////////////////////////////////////////
    //// used in the font selection dialog to give a base for black text
    //// previews so they are always visible

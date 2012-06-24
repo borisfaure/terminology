@@ -11,7 +11,7 @@ typedef struct _Media Media;
 struct _Media
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
-   Evas_Object *clip, *o_img, *o_tmp;
+   Evas_Object *clip, *o_img, *o_tmp, *o_ctrl;
    Ecore_Timer *anim;
    Ecore_Job *restart_job;
    const char *src;
@@ -364,9 +364,39 @@ _cb_mov_ref(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
+_cb_media_play(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   media_play_set(data, EINA_TRUE);
+}
+
+static void
+_cb_media_pause(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   media_play_set(data, EINA_FALSE);
+}
+
+static void
+_cb_media_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   media_play_set(data, EINA_FALSE);
+   media_position_set(data, 0.0);
+}
+
+static void
+_cb_media_vol(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   double vx, vy;
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   edje_object_part_drag_value_get(sd->o_ctrl, "terminology.voldrag", &vx, &vy);
+   media_volume_set(data, vx + vy);
+}
+
+static void
 _type_mov_init(Evas_Object *obj)
 {
    Evas_Object *o;
+   double vol;
    char *modules[] =
      {
         NULL,
@@ -406,9 +436,26 @@ _type_mov_init(Evas_Object *obj)
    emotion_object_file_set(o, sd->src);
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
-   emotion_object_position_set(o, 0.0);
-   emotion_object_play_set(o, EINA_TRUE);
-   if (sd->config->mute) emotion_object_audio_mute_set(o, EINA_TRUE);
+
+   o = sd->o_ctrl = edje_object_add(evas_object_evas_get(obj));
+   theme_apply(o, sd->config, "terminology/mediactrl");
+   vol = emotion_object_audio_volume_get(sd->o_img);
+   edje_object_part_drag_value_set(o, "terminology.voldrag", vol, vol);
+   edje_object_signal_callback_add(o, "play", "", _cb_media_play, obj);
+   edje_object_signal_callback_add(o, "pause", "", _cb_media_pause, obj);
+   edje_object_signal_callback_add(o, "stop", "", _cb_media_stop, obj);
+   edje_object_signal_callback_add(o, "drag", "terminology.voldrag", _cb_media_vol, obj);
+   /* TODO where to stack the object in the ui? controls cannot be part of
+    * the 'media smart obj' becouse controls need to be on top of the term obj.
+    * 
+    * I think we need to swallow inside the bg object. but how to
+    * retrive the edje bg object from here?
+    * */
+   evas_object_show(o);
+
+   media_position_set(obj, 0.0);
+   media_play_set(obj, EINA_TRUE);
+   if (sd->config->mute) media_mute_set(obj, EINA_TRUE);
 }
 
 static void
@@ -416,6 +463,10 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+
+   evas_object_move(sd->o_ctrl, x, y);
+   evas_object_resize(sd->o_ctrl, w, h);
+
    emotion_object_size_get(sd->o_img, &(sd->iw), &(sd->ih));
    if ((w <= 0) || (h <= 0) || (sd->iw <= 0) || (sd->ih <= 0))
      {
@@ -481,6 +532,7 @@ _smart_del(Evas_Object *obj)
    if (sd->clip) evas_object_del(sd->clip);
    if (sd->o_img) evas_object_del(sd->o_img);
    if (sd->o_tmp) evas_object_del(sd->o_tmp);
+   if (sd->o_ctrl) evas_object_del(sd->o_ctrl);
    if (sd->anim) ecore_timer_del(sd->anim);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
    _meida_sc.del(obj);
@@ -586,7 +638,40 @@ void
 media_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (sd->type != TYPE_MOV) return;
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_audio_mute_set(sd->o_img, mute);
+   if (mute)
+      edje_object_signal_emit(sd->o_ctrl, "mute,set", "terminology");
+   else
+      edje_object_signal_emit(sd->o_ctrl, "mute,unset", "terminology");
+}
+
+void
+media_play_set(Evas_Object *obj, Eina_Bool play)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   emotion_object_play_set(sd->o_img, play);
+   if (play)
+      edje_object_signal_emit(sd->o_ctrl, "play,set", "terminology");
+   else
+      edje_object_signal_emit(sd->o_ctrl, "pause,set", "terminology");
+}
+
+void
+media_position_set(Evas_Object *obj, double pos)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   emotion_object_position_set(sd->o_img, pos);
+   edje_object_part_drag_value_set(sd->o_ctrl, "terminology.posdrag", pos, pos);
+}
+
+void
+media_volume_set(Evas_Object *obj, double vol)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   emotion_object_audio_volume_set(sd->o_img, vol);
+   edje_object_part_drag_value_set(sd->o_ctrl, "terminology.voldrag", vol, vol);
 }
