@@ -586,7 +586,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    int x, w = 0;
    if (!sd) return;
 
-   cells = termpty_cellrow_get(sd->pty, cy - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, cy, &w);
    if (!cells) return;
    sd->cur.sel = 1;
    sd->cur.makesel = 0;
@@ -616,7 +616,7 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
    int x, w = 0;
    if (!sd) return;
 
-   cells = termpty_cellrow_get(sd->pty, cy - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, cy, &w);
    if (!cells) return;
    if (sd->cur.sel1.x > cx || sd->cur.sel1.y > cy)
      {
