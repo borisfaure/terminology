@@ -16,4 +16,6 @@ media_bg.png \
 media_line.png \
 media_pause.png \
 media_play.png \
-media_stop.png
+media_stop.png \
+media_knob_pos.png \
+media_knob_vol.png

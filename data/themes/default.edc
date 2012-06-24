@@ -554,6 +554,8 @@ collections {
         image: "media_stop.png" COMP;
         image: "media_pause.png" COMP;
         image: "media_line.png" COMP;
+        image: "media_knob_vol.png" COMP;
+        image: "media_knob_pos.png" COMP;
       }
       parts {
          part { name: "media_clip"; type: RECT;
@@ -610,15 +612,16 @@ collections {
             clip_to: "media_clip";
             description { state: "default" 0.0;
                image.normal: "media_line.png";
-               min: 90 10;
-               max: 90 10;
+               image.border: 15 15 0 0;
+               min: 90 14;
+               max: 90 14;
                rel1.to: "stop";
                rel2.to: "stop";
                rel1.offset: 25 0;
                rel2.offset: 90 0;
             }
          }
-         part { name: "terminology.posdrag"; type: RECT;
+         part { name: "terminology.posdrag";
             mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
@@ -628,9 +631,9 @@ collections {
                y: 0 0 0;
             }
             description { state: "default" 0.0;
-               color: 255 0 0 150;
-               min: 10 10;
-               max: 10 10;
+               image.normal: "media_knob_pos.png";
+               min: 14 14;
+               max: 14 14;
             }
             description { state: "muted" 0.0;
                visible: 0;
@@ -642,8 +645,9 @@ collections {
             clip_to: "media_clip";
             description { state: "default" 0.0;
                image.normal: "media_line.png";
-               min: 60 10;
-               max: 60 10;
+               image.border: 15 15 0 0;
+               min: 60 14;
+               max: 60 14;
                rel1.to: "posline";
                rel2.to: "posline";
                rel1.relative: 1.0 0.0;
@@ -652,7 +656,7 @@ collections {
                rel2.offset: 60 0;
             }
          }
-         part { name: "terminology.voldrag"; type: RECT;
+         part { name: "terminology.voldrag"; type: IMAGE;
             mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
@@ -662,73 +666,74 @@ collections {
                y: 0 0 0;
             }
             description { state: "default" 0.0;
-               color: 255 0 0 150;
-               min: 10 10;
-               max: 10 10;
+               image.normal: "media_knob_vol.png";
+               min: 14 14;
+               max: 14 14;
             }
             description { state: "muted" 0.0;
                visible: 0;
             }
          }
-         programs {
-            program { name: "media_mouse_in";
-               signal: "mouse,in";
-               source: "media_bg";
-               action: STATE_SET "expanded" 0.0;
-               transition: SINUSOIDAL 0.4 CURRENT;
-               target: "media_bg";
-            }
-            program { name: "media_mouse_out";
-               signal: "mouse,out";
-               source: "media_bg";
-               action: STATE_SET "default" 0.0;
-               transition: SINUSOIDAL 0.4 CURRENT;
-               target: "media_bg";
-            }
-            program { name: "media_pause_click";
-               signal: "mouse,up,*";
-               source: "play";
-               filter: "play" "default";
-               action: SIGNAL_EMIT "pause" "";
-            }
-            program { name: "media_play_click";
-               signal: "mouse,up,1";
-               source: "play";
-               filter: "play" "paused";
-               action: SIGNAL_EMIT "play" "";
-            }
-            program { name: "media_stop_click";
-               signal: "mouse,up,1";
-               source: "stop";
-               action: SIGNAL_EMIT "stop" "";
-            }
-            program { name: "media_signal_pause";
-               signal: "pause,set";
-               source: "terminology";
-               action: STATE_SET "paused" 0.0;
-               target: "play";
-            }
-            program { name: "media_signal_play";
-               signal: "play,set";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               target: "play";
-            }
-            program { name: "media_signal_mute";
-               signal: "mute,set";
-               source: "terminology";
-               action: STATE_SET "muted" 0.0;
-               target: "terminology.voldrag";
-            }
-            program { name: "media_signal_unmute";
-               signal: "mute,unset";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               target: "terminology.voldrag";
-            }
+      }
+      programs {
+         program { name: "media_mouse_in";
+            signal: "mouse,in";
+            source: "media_bg";
+            action: STATE_SET "expanded" 0.0;
+            transition: SINUSOIDAL 0.4 CURRENT;
+            target: "media_bg";
+         }
+         program { name: "media_mouse_out";
+            signal: "mouse,out";
+            source: "media_bg";
+            action: STATE_SET "default" 0.0;
+            transition: SINUSOIDAL 0.4 CURRENT;
+            target: "media_bg";
+         }
+         program { name: "media_pause_click";
+            signal: "mouse,up,*";
+            source: "play";
+            filter: "play" "default";
+            action: SIGNAL_EMIT "pause" "";
+         }
+         program { name: "media_play_click";
+            signal: "mouse,up,1";
+            source: "play";
+            filter: "play" "paused";
+            action: SIGNAL_EMIT "play" "";
+         }
+         program { name: "media_stop_click";
+            signal: "mouse,up,1";
+            source: "stop";
+            action: SIGNAL_EMIT "stop" "";
+         }
+         program { name: "media_signal_pause";
+            signal: "pause,set";
+            source: "terminology";
+            action: STATE_SET "paused" 0.0;
+            target: "play";
+         }
+         program { name: "media_signal_play";
+            signal: "play,set";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "play";
+         }
+         program { name: "media_signal_mute";
+            signal: "mute,set";
+            source: "terminology";
+            action: STATE_SET "muted" 0.0;
+            target: "terminology.voldrag";
+         }
+         program { name: "media_signal_unmute";
+            signal: "mute,unset";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.voldrag";
          }
       }
    }
+
 //////////////////////////////////////////////////////////////////////////////
    //// used in the font selection dialog to give a base for black text
    //// previews so they are always visible
