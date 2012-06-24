@@ -1,4 +1,6 @@
 collections {
+   
+//////////////////////////////////////////////////////////////////////////////
    //// the background and general contaiiner for the terminal
    group { name: "terminology/background";
       images {
@@ -11,6 +13,18 @@ collections {
         image: "bg_led_strobe.png" COMP;
       }
       parts {
+// other signals sent not handled here         
+//            program { name: "focus_in";
+//               signal: "focus,in";
+//               source: "terminology";
+//            }
+//            program { name: "focus_out";
+//               signal: "focus,out";
+//               source: "terminology";
+//            }
+
+         ////////////////////////////////////////////////////////////////////
+         // background handling
          part { name: "shadow";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -58,12 +72,64 @@ collections {
                inherit: "default" 0.0;
             }
          }
+         program { name: "trans_on";
+            signal: "translucent,on";
+            source: "terminology";
+            action: STATE_SET "translucent" 0.0;
+            target: "base";
+            target: "shadow";
+            target: "fade";
+         }
+         program { name: "trans_off";
+            signal: "translucent,off";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "base";
+            target: "shadow";
+             target: "fade";
+         }
+         program { name: "media_off";
+            signal: "media,off";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.background";
+         }
+         program { name: "media_img";
+            signal: "media,image";
+            source: "terminology";
+            action: STATE_SET "image" 0.0;
+            target: "terminology.background";
+         }
+         program { name: "media_scale";
+            signal: "media,scale";
+            source: "terminology";
+            action: STATE_SET "scale" 0.0;
+            target: "terminology.background";
+         }
+         program { name: "media_edje";
+            signal: "media,edje";
+            source: "terminology";
+            action: STATE_SET "edje" 0.0;
+            target: "terminology.background";
+         }
+         program { name: "media_mov";
+            signal: "media,movie";
+            source: "terminology";
+            action: STATE_SET "movie" 0.0;
+            target: "terminology.background";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
+         // actual text grid for chars, cursors, selectiond etc. goes here
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
                rel1.offset: 1 2;
                rel2.offset: -2 -2;
             }
          }
+         
+         ////////////////////////////////////////////////////////////////////
+         // overlayed prettiness
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -111,6 +177,9 @@ collections {
                aspect_preference: HORIZONTAL;
             }
          }
+
+         ////////////////////////////////////////////////////////////////////
+         // visual bell - spinning red siren light
          part { name: "bell_base";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -173,6 +242,52 @@ collections {
                map.rotation.z: 684.0;
             }
          }
+         program { name: "bell0";
+            signal: "bell";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "bell_base";
+            target: "bell";
+            target: "bell_strobe";
+            after: "bell";
+         }
+         program { name: "bell";
+            action: STATE_SET "visible" 0.0;
+            target: "bell_base";
+            after: "bell2";
+         }
+         program { name: "bell2";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.1;
+            target: "bell";
+            after: "bell3";
+         }
+         program { name: "bell3";
+            action: STATE_SET "spin" 0.0;
+            transition: LINEAR 0.1;
+            target: "bell_strobe";
+            after: "bell4.0";
+            after: "bell4.1";
+            after: "bell4.2";
+         }
+         program { name: "bell4.0";
+            action: STATE_SET "default" 0.0;
+            transition: ACCELERATE 1.2;
+            target: "bell";
+         }
+         program { name: "bell4.1";
+            action: STATE_SET "default" 0.0;
+            transition: ACCELERATE 1.6;
+            target: "bell_base";
+         }
+         program { name: "bell4.2";
+            action: STATE_SET "spin_done" 0.0;
+            transition: LINEAR 0.9;
+            target: "bell_strobe";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
+         // overlayed options and controls
          part { name: "terminology.options"; type: SWALLOW;
             scale: 1;
             description { state: "default" 0.0;
@@ -203,121 +318,25 @@ collections {
                }
             }
          }
-         programs {
-            program { name: "op_show";
-               signal: "options,show";
-               source: "terminology";
-               action: STATE_SET "visible" 0.0;
-               transition: DECELERATE 0.5;
-               target: "terminology.options";
-            }
-            program { name: "op_hide";
-               signal: "options,hide";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               transition: DECELERATE 0.5;
-               target: "terminology.options";
-            }
-            program { name: "trans_on";
-               signal: "translucent,on";
-               source: "terminology";
-               action: STATE_SET "translucent" 0.0;
-               target: "base";
-               target: "shadow";
-               target: "fade";
-            }
-            program { name: "trans_off";
-               signal: "translucent,off";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               target: "base";
-               target: "shadow";
-               target: "fade";
-            }
-            program { name: "bell0";
-               signal: "bell";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               target: "bell_base";
-               target: "bell";
-               target: "bell_strobe";
-               after: "bell";
-            }
-            program { name: "bell";
-               action: STATE_SET "visible" 0.0;
-               target: "bell_base";
-               after: "bell2";
-            }
-            program { name: "bell2";
-               action: STATE_SET "visible" 0.0;
-               transition: DECELERATE 0.1;
-               target: "bell";
-               after: "bell3";
-            }
-            program { name: "bell3";
-               action: STATE_SET "spin" 0.0;
-               transition: LINEAR 0.1;
-               target: "bell_strobe";
-               after: "bell4.0";
-               after: "bell4.1";
-               after: "bell4.2";
-            }
-            program { name: "bell4.0";
-               action: STATE_SET "default" 0.0;
-               transition: ACCELERATE 1.2;
-               target: "bell";
-            }
-            program { name: "bell4.1";
-               action: STATE_SET "default" 0.0;
-               transition: ACCELERATE 1.6;
-               target: "bell_base";
-            }
-            program { name: "bell4.2";
-               action: STATE_SET "spin_done" 0.0;
-               transition: LINEAR 0.9;
-               target: "bell_strobe";
-            }
-//            program { name: "focus_in";
-//               signal: "focus,in";
-//               source: "terminology";
-//            }
-//            program { name: "focus_out";
-//               signal: "focus,out";
-//               source: "terminology";
-//            }
-            program { name: "media_off";
-               signal: "media,off";
-               source: "terminology";
-               action: STATE_SET "default" 0.0;
-               target: "terminology.background";
-            }
-            program { name: "media_img";
-               signal: "media,image";
-               source: "terminology";
-               action: STATE_SET "image" 0.0;
-               target: "terminology.background";
-            }
-            program { name: "media_scale";
-               signal: "media,scale";
-               source: "terminology";
-               action: STATE_SET "scale" 0.0;
-               target: "terminology.background";
-            }
-            program { name: "media_edje";
-               signal: "media,edje";
-               source: "terminology";
-               action: STATE_SET "edje" 0.0;
-               target: "terminology.background";
-            }
-            program { name: "media_mov";
-               signal: "media,movie";
-               source: "terminology";
-               action: STATE_SET "movie" 0.0;
-               target: "terminology.background";
-            }
+         program { name: "op_show";
+            signal: "options,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.options";
+         }
+         program { name: "op_hide";
+            signal: "options,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.options";
          }
       }
    }
+   
+   
+//////////////////////////////////////////////////////////////////////////////
    //// the cursor to show where text is typed
    group { name: "terminology/cursor";
       images {
@@ -482,6 +501,8 @@ collections {
          }
       }
    }
+   
+//////////////////////////////////////////////////////////////////////////////
    //// used in the font selection dialog to give a base for black text
    //// previews so they are always visible
    group { name: "terminology/fontpreview";
