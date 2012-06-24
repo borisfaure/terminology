@@ -155,7 +155,7 @@ static const Ecore_Getopt options = {
    PACKAGE_NAME,
    "%prog [options]",
    PACKAGE_VERSION,
-   "(C) 2012 Carsten Haitzler",
+   "(C) 2012 Carsten Haitzler and others",
    "BSD 2-Clause",
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
@@ -204,7 +204,6 @@ elm_main(int argc, char **argv)
    int args, retval = EXIT_SUCCESS;
    Config *config;
    Evas_Object *o;
-
 
    _log_domain = eina_log_domain_register("terminology", NULL);
    if (_log_domain < 0)
@@ -279,6 +278,9 @@ elm_main(int argc, char **argv)
         config->mute = video_mute;
         config->temporary = EINA_TRUE;
      }
+
+   // set an env so terminal apps can detect they are in terminology :)
+   putenv("TERMINOLOGY=1");
 
    win = tg_win_add();
 
