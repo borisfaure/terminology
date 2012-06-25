@@ -8,6 +8,7 @@ collections {
         image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "bg_shadow.png" COMP;
+        image: "bg_led_glow.png" COMP;
         image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
         image: "bg_led_strobe.png" COMP;
@@ -180,6 +181,30 @@ collections {
 
          ////////////////////////////////////////////////////////////////////
          // visual bell - spinning red siren light
+         part { name: "bell_glow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1.to: "bell_base";
+               rel2.to: "bell_base";
+               min: 1600 1600;
+               fill.smooth: 0;
+               image.normal: "bg_led_glow.png";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+            description { state: "done" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               min: 0 0;
+            }
+         }
          part { name: "bell_base";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -249,18 +274,22 @@ collections {
             target: "bell_base";
             target: "bell";
             target: "bell_strobe";
+            target: "bell_glow";
             after: "bell";
          }
          program { name: "bell";
             action: STATE_SET "visible" 0.0;
             target: "bell_base";
+            target: "bell_glow";
             after: "bell2";
          }
          program { name: "bell2";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.1;
             target: "bell";
+            target: "bell_glow";
             after: "bell3";
+            after: "bell3.1";
          }
          program { name: "bell3";
             action: STATE_SET "spin" 0.0;
@@ -269,6 +298,11 @@ collections {
             after: "bell4.0";
             after: "bell4.1";
             after: "bell4.2";
+         }
+         program { name: "bell3.1";
+            action: STATE_SET "done" 0.0;
+            transition: DECELERATE 0.5;
+            target: "bell_glow";
          }
          program { name: "bell4.0";
             action: STATE_SET "default" 0.0;
