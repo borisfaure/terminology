@@ -36,6 +36,10 @@ static const Keyout appcur_keyout[] =
    KEY("Down",         "\033OB"),
    KEY("Home",         "\033[7~"),
    KEY("End",          "\033[8~"),
+   KEY("F1",           "\033OP"),
+   KEY("F2",           "\033OQ"),
+   KEY("F3",           "\033OR"),
+   KEY("F4",           "\033OS"),
    
    KEY(NULL, "END")
 };
@@ -92,10 +96,10 @@ static const Keyout keyout[] =
    KEY("Help",         "\033[28~"),
    KEY("Execute",      "\033[3~"),
    KEY("Select",       "\033[4~"),
-   KEY("F1",           "\033[11~"),
-   KEY("F2",           "\033[12~"),
-   KEY("F3",           "\033[13~"),
-   KEY("F4",           "\033[14~"),
+   KEY("F1",           "\033[11~"), // \033OP
+   KEY("F2",           "\033[12~"), // \033OQ
+   KEY("F3",           "\033[13~"), // \033OR
+   KEY("F4",           "\033[14~"), // \033OR
    KEY("F5",           "\033[15~"),
    KEY("F6",           "\033[17~"),
    KEY("F7",           "\033[18~"),
