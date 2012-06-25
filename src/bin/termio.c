@@ -49,6 +49,7 @@ struct _Termio
    Config *config;
    Ecore_IMF_Context *imf;
    Eina_Bool jump_on_change : 1;
+   Eina_Bool have_sel : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -340,6 +341,20 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 }
 
 static void
+_lost_selection(void *data, Elm_Sel_Type selection)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   if (sd->have_sel)
+     {
+        sd->cur.sel = 0;
+        elm_object_cnp_selection_clear(sd->win, selection);
+        _smart_update_queue(data, sd);
+        sd->have_sel = EINA_FALSE;
+     }
+}
+
+static void
 _take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -362,8 +377,13 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    if (s)
      {
         if (sd->win)
-          elm_cnp_selection_set(sd->win, type,
-                                ELM_SEL_FORMAT_TEXT, s, strlen(s));
+          {
+             sd->have_sel = EINA_FALSE;
+             elm_cnp_selection_set(sd->win, type,
+                                   ELM_SEL_FORMAT_TEXT, s, strlen(s));
+             elm_cnp_selection_loss_callback_set(type, _lost_selection, obj);
+             sd->have_sel = EINA_TRUE;
+          }
         free(s);
      }
 }

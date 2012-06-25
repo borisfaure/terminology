@@ -5,9 +5,6 @@ make it a first-class terminal:
 [ ] blink and blink2 attributes need to be supported
 [ ] improve terminal emulation handling. known apps with problems:
       mc
-[ ] elm_cnp has no way to call an event/cb to let you know your
-    selection has gone (selection_clear() doesnt do anything). also
-    elm_cnp doesn't track target object delections.
 [ ] dnd text (to/from terminal)
 [ ] handle multibyte displays better (does handle utf8 only atm and
     then maybe not according to convention like double cell spacing
