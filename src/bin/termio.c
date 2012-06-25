@@ -1465,7 +1465,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
         for (x = start_x; x <= end_x; x++)
           {
              if (x >= w) break;
-             if (cells[x].glyph == 0)
+             if ((cells[x].glyph == 0) ||  (cells[x].glyph == ' '))
                {
                   if (last0 < 0) last0 = x;
                }
