@@ -22,6 +22,7 @@ data/images/Makefile.in
 data/themes/Makefile
 data/themes/Makefile.in
 data/themes/default.edj
+data/themes/mild.edj
 data/themes/images/Makefile
 data/themes/images/Makefile.in
 depcomp
