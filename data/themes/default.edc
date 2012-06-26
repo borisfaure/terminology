@@ -510,6 +510,13 @@ collections {
             }
          }
          programs {
+            program { name: "focus_in_noblink";
+               signal: "focus,in,noblink";
+               source: "terminology";
+               action: STATE_SET "focused" 0.0;
+               target: "fill";
+               target: "outline";
+            }
             program { name: "focus_in";
                signal: "focus,in";
                source: "terminology";

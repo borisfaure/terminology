@@ -63,6 +63,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "flicker_on_key", flicker_on_key, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "disable_cursor_blink", disable_cursor_blink, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
@@ -141,6 +143,7 @@ config_load(const char *key)
         config->translucent = EINA_FALSE;
         config->jump_on_change = EINA_FALSE;
         config->flicker_on_key = EINA_TRUE;
+        config->disable_cursor_blink = EINA_TRUE;
         // XXX: add
         // 
         // // more invisible spaces

@@ -20,6 +20,16 @@ _cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
+_cb_op_behavior_cursor_blink_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->disable_cursor_blink = elm_check_state_get(obj);
+   termio_config_update(term);
+   config_save(config, NULL);
+}
+
+static void
 _cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *term = data;
@@ -97,6 +107,16 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_flicker_chg, term);
+
+   o = elm_check_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Disable cursor blinking");
+   elm_check_state_set(o, config->disable_cursor_blink);
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_cursor_blink_chg, term);
    
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);

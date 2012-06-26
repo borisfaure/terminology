@@ -19,6 +19,7 @@ struct _Config
    int               vidmod;
    Eina_Bool         jump_on_change;
    Eina_Bool         flicker_on_key;
+   Eina_Bool         disable_cursor_blink;
    Eina_Bool         translucent;
    Eina_Bool         mute;
    Eina_Bool         urg_bell;

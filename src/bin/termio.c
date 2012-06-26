@@ -526,7 +526,10 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
+   if (sd->config->disable_cursor_blink)
+     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
+   else
+     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
    if (sd->imf)
@@ -1576,6 +1579,12 @@ termio_config_update(Evas_Object *obj)
 
    termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
+
+   edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
+   if (sd->config->disable_cursor_blink)
+     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
+   else
+     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
    
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
