@@ -141,6 +141,33 @@ config_load(const char *key)
         config->translucent = EINA_FALSE;
         config->jump_on_change = EINA_FALSE;
         config->flicker_on_key = EINA_TRUE;
+        // XXX: add
+        // 
+        // // more invisible spaces
+        // 0xa0
+        // 0x1680
+        // 0x180e
+        // 0x2000
+        // 0x2001
+        // 0x2002
+        // 0x2003
+        // 0x2004
+        // 0x2005
+        // 0x2005
+        // 0x2007
+        // 0x2008
+        // 0x2009
+        // 0x200a
+        // 0x200b
+        // 0x202f
+        // 0x205f
+        // 0x3000
+        // 0xfeff
+        // 
+        // // visible spaces
+        // 0x2423
+        // 0x2422
+        // 0x2420
         config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
         config->vidmod = 0;
         config->mute = EINA_FALSE;
