@@ -25,15 +25,24 @@ typedef struct _Termsave  Termsave;
 #define MOUSE_SGR      4
 #define MOUSE_URXVT    5
 
+// choose - italic OR double-width support   
+
+//#define SUPPORT_ITALIC   1
+#define SUPPORT_DBLWIDTH 1
+
 struct _Termatt
 {
    unsigned char fg, bg;
    unsigned short bold : 1;
    unsigned short faint : 1;
+#if defined(SUPPORT_ITALIC)
    unsigned short italic : 1;
+#elif defined(SUPPORT_DBLWIDTH)
+   unsigned short dblwidth : 1;
+#endif   
    unsigned short underline : 1;
-   unsigned short blink : 1;
-   unsigned short blink2 : 1;
+   unsigned short blink : 1; // don't intend to support this currently
+   unsigned short blink2 : 1; // don't intend to support this currently
    unsigned short inverse : 1;
    unsigned short invisible : 1;
    unsigned short strike : 1;
@@ -70,6 +79,7 @@ struct _Termstate
    unsigned int  reverse : 1;
    unsigned int  no_autorepeat : 1;
    unsigned int  mouse_rep : 3;
+   unsigned int  cjk_ambiguous_wide : 1;
 };
 
 struct _Termpty
@@ -102,7 +112,7 @@ struct _Termpty
 
 struct _Termcell
 {
-   int      glyph;
+   int      codepoint;
    Termatt  att;
 };
 

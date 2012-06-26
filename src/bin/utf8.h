@@ -1,2 +1,2 @@
-int glyph_to_utf8(int g, char *txt);
+int codepoint_to_utf8(int g, char *txt);
     

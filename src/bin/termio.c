@@ -93,6 +93,10 @@ _smart_apply(Evas_Object *obj)
                   if (inv) tc[x].bg = COL_INVERSEBG;
                   else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
+                  tc[x].double_width = cells[j].att.dblwidth;
+                  if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
+                      (ch2 == x - 1))
+                    ch2 = x;
                }
              else
                {
@@ -109,16 +113,20 @@ _smart_apply(Evas_Object *obj)
                        if (inv) tc[x].bg = COL_INVERSEBG;
                        else tc[x].bg = COL_INVIS;
                        tc[x].bg_extended = 0;
+                       tc[x].double_width = cells[j].att.dblwidth;
+                       if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
+                           (ch2 == x - 1))
+                         ch2 = x;
                     }
                   else
                     {
-                       int bold, fg, bg, fgext, bgext, glyph;
+                       int bold, fg, bg, fgext, bgext, codepoint;
                        
                        // colors
                        bold = cells[j].att.bold;
                        fgext = cells[j].att.fg256;
                        bgext = cells[j].att.bg256;
-                       glyph = cells[j].glyph;
+                       codepoint = cells[j].codepoint;
                        
                        if (cells[j].att.inverse ^ inv)
                          {
@@ -164,10 +172,10 @@ _smart_apply(Evas_Object *obj)
                               }
                             if (cells[j].att.fgintense) fg += 48;
                             if (cells[j].att.bgintense) bg += 48;
-                            if ((glyph == ' ') || (glyph == 0))
+                            if ((codepoint == ' ') || (codepoint == 0))
                               fg = COL_INVIS;
                          }
-                       if ((tc[x].codepoint != glyph) ||
+                       if ((tc[x].codepoint != codepoint) ||
                            (tc[x].fg != fg) ||
                            (tc[x].bg != bg) ||
                            (tc[x].fg_extended != fgext) ||
@@ -184,7 +192,11 @@ _smart_apply(Evas_Object *obj)
                        tc[x].strikethrough = cells[j].att.strike;
                        tc[x].fg = fg;
                        tc[x].bg = bg;
-                       tc[x].codepoint = glyph;
+                       tc[x].codepoint = codepoint;
+                       tc[x].double_width = cells[j].att.dblwidth;
+                       if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
+                           (ch2 == x - 1))
+                         ch2 = x;
                        // cells[j].att.italic // never going 2 support
                        // cells[j].att.blink
                        // cells[j].att.blink2
@@ -580,7 +592,7 @@ _sel_line(Evas_Object *obj, int cx __UNUSED__, int cy)
 }
 
 static Eina_Bool
-_glyph_is_wordsep(const Config *config, int g)
+_codepoint_is_wordsep(const Config *config, int g)
 {
    int i;
 
@@ -614,16 +626,25 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    sd->cur.sel1.y = cy;
    for (x = sd->cur.sel1.x; x >= 0; x--)
      {
+        if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+            (x > 0))
+          x--;
         if (x >= w) break;
-        if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+        if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
         sd->cur.sel1.x = x;
      }
    sd->cur.sel2.x = cx;
    sd->cur.sel2.y = cy;
    for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
      {
+        if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+            (x < (sd->grid.w - 1)))
+          {
+             sd->cur.sel2.x = x;
+             x++;
+          }
         if (x >= w) break;
-        if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+        if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
         sd->cur.sel2.x = x;
      }
 }
@@ -644,8 +665,11 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         sd->cur.sel1.y = cy;
         for (x = sd->cur.sel1.x; x >= 0; x--)
           {
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+                 (x > 0))
+               x--;
              if (x >= w) break;
-             if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
              sd->cur.sel1.x = x;
           }
      }
@@ -655,8 +679,14 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         sd->cur.sel2.y = cy;
         for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
           {
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+                 (x < (sd->grid.w - 1)))
+               {
+                  sd->cur.sel2.x = x;
+                  x++;
+               }
              if (x >= w) break;
-             if (_glyph_is_wordsep(sd->config, cells[x].glyph)) break;
+             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
              sd->cur.sel2.x = x;
           }
      }
@@ -1464,8 +1494,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
           }
         for (x = start_x; x <= end_x; x++)
           {
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+                 (x < end_x))
+               x++;
              if (x >= w) break;
-             if ((cells[x].glyph == 0) ||  (cells[x].glyph == ' '))
+             if ((cells[x].codepoint == 0) ||  (cells[x].codepoint == ' '))
                {
                   if (last0 < 0) last0 = x;
                }
@@ -1496,7 +1529,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
                             v--;
                          }
                     }
-                  txtlen = glyph_to_utf8(cells[x].glyph, txt);
+                  txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
                     eina_strbuf_append_length(sb, txt, txtlen);
                   if (x == (w - 1))

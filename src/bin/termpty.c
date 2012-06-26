@@ -43,6 +43,220 @@ termpty_shutdown(void)
    _termpty_log_dom = -1;
 }
 
+#if defined(SUPPORT_DBLWIDTH)
+static Eina_Bool
+_is_dblwidth_get(Termpty *ty, int g)
+{
+   // check for east asian full-width (F), half-width (H), wide (W),
+   // narrow (Na) or ambiguous (A) codepoints
+   // ftp://ftp.unicode.org/Public/UNIDATA/EastAsianWidth.txt
+   
+   // optimize for latin1 non-ambiguous
+   if (g <= 0xa0)
+     return EINA_FALSE;
+   // (F)
+   if ((g == 0x3000) ||
+       ((g >= 0xff01) && (g <= 0xffe6)))
+     return EINA_TRUE;
+   // (W)
+   if (((g >= 0x1100) && (g <= 0x11ff)) ||
+       ((g >= 0x2329) && (g <= 0x232A)) ||
+       ((g >= 0x2E80) && (g <= 0x4dbf)) ||
+       ((g >= 0x4e00) && (g <= 0x9fff)) ||
+       ((g >= 0xa000) && (g <= 0xa4c6)) ||
+       ((g >= 0xa960) && (g <= 0xa97c)) ||
+       ((g >= 0xac00) && (g <= 0xd7a3)) ||
+       ((g >= 0xd7b0) && (g <= 0xd7fb)) ||
+       ((g >= 0xf900) && (g <= 0xfaff)) ||
+       ((g >= 0xfe10) && (g <= 0xfe6b)) ||
+       ((g >= 0x1b000) && (g <= 0x1b001)) ||
+       ((g >= 0x1f200) && (g <= 0x1f202)) ||
+       ((g >= 0x1f210) && (g <= 0x1f251)) ||
+       ((g >= 0x20000) && (g <= 0x2fffd)) ||
+       ((g >= 0x30000) && (g <= 0x3FFFD)))
+     return EINA_TRUE;
+   // (A)
+   if (ty->state.cjk_ambiguous_wide)
+     {
+        // grep ';A #' EastAsianWidth.txt | wc -l
+        // :(
+        if ((g == 0x00a1) ||
+            (g == 0x00a4) ||
+            ((g >= 0x00a7) && (g <= 0x00a8)) ||
+            (g == 0x00aa) ||
+            ((g >= 0x00ad) && (g <= 0x00ae)) ||
+            ((g >= 0x00b0) && (g <= 0x00bf)) ||
+            (g == 0x00c6) ||
+            (g == 0x00d0) ||
+            ((g >= 0x00d7) && (g <= 0x00d8)) ||
+            ((g >= 0x00de) && (g <= 0x00df)) ||
+            (g == 0x00e0) ||
+            (g == 0x00e1) ||
+            (g == 0x00e6) ||
+            ((g >= 0x00e8) && (g <= 0x00e9)) ||
+            (g == 0x00ea) ||
+            ((g >= 0x00ec) && (g <= 0x00ed)) ||
+            (g == 0x00f0) ||
+            ((g >= 0x00f2) && (g <= 0x00f3)) ||
+            ((g >= 0x00f7) && (g <= 0x00f9)) ||
+            (g == 0x00fa) ||
+            (g == 0x00fc) ||
+            (g == 0x00fe) ||
+            (g == 0x0101) ||
+            (g == 0x0111) ||
+            (g == 0x0113) ||
+            (g == 0x011b) ||
+            ((g >= 0x0126) && (g <= 0x0127)) ||
+            (g == 0x012b) ||
+            ((g >= 0x0131) && (g <= 0x0133)) ||
+            (g == 0x0138) ||
+            ((g >= 0x013f) && (g <= 0x0142)) ||
+            (g == 0x0144) ||
+            ((g >= 0x0148) && (g <= 0x014b)) ||
+            (g == 0x014d) ||
+            ((g >= 0x0152) && (g <= 0x0153)) ||
+            ((g >= 0x0166) && (g <= 0x0167)) ||
+            (g == 0x016b) ||
+            (g == 0x01ce) ||
+            (g == 0x01d0) ||
+            (g == 0x01d2) ||
+            (g == 0x01d4) ||
+            (g == 0x01d6) ||
+            (g == 0x01d8) ||
+            (g == 0x01da) ||
+            (g == 0x01dc) ||
+            (g == 0x0251) ||
+            (g == 0x0261) ||
+            (g == 0x02c4) ||
+            (g == 0x02c7) ||
+            (g == 0x02c9) ||
+            ((g >= 0x02ca) && (g <= 0x02cb)) ||
+            (g == 0x02cd) ||
+            (g == 0x02d0) ||
+            ((g >= 0x02d8) && (g <= 0x02d9)) ||
+            ((g >= 0x02da) && (g <= 0x02db)) ||
+            (g == 0x02dd) ||
+            (g == 0x02df) ||
+            ((g >= 0x0300) && (g <= 0x036f)) ||
+            ((g >= 0x0391) && (g <= 0x03c9)) ||
+            (g == 0x0401) ||
+            ((g >= 0x0410) && (g <= 0x044f)) ||
+            (g == 0x0451) ||
+            (g == 0x2010) ||
+            ((g >= 0x2013) && (g <= 0x2016)) ||
+            ((g >= 0x2018) && (g <= 0x2019)) ||
+            (g == 0x201c) ||
+            (g == 0x201d) ||
+            ((g >= 0x2020) && (g <= 0x2022)) ||
+            ((g >= 0x2024) && (g <= 0x2027)) ||
+            (g == 0x2030) ||
+            ((g >= 0x2032) && (g <= 0x2033)) ||
+            (g == 0x2035) ||
+            (g == 0x203b) ||
+            (g == 0x203e) ||
+            (g == 0x2074) ||
+            (g == 0x207f) ||
+            ((g >= 0x2081) && (g <= 0x2084)) ||
+            (g == 0x20ac) ||
+            (g == 0x2103) ||
+            (g == 0x2105) ||
+            (g == 0x2109) ||
+            (g == 0x2113) ||
+            (g == 0x2116) ||
+            ((g >= 0x2121) && (g <= 0x2122)) ||
+            (g == 0x2126) ||
+            (g == 0x212b) ||
+            ((g >= 0x2153) && (g <= 0x2154)) ||
+            ((g >= 0x215b) && (g <= 0x215e)) ||
+            ((g >= 0x2160) && (g <= 0x216b)) ||
+            ((g >= 0x2170) && (g <= 0x2179)) ||
+            ((g >= 0x2189) && (g <= 0x2199)) ||
+            ((g >= 0x21b8) && (g <= 0x21b9)) ||
+            (g == 0x21d2) ||
+            (g == 0x21d4) ||
+            (g == 0x21e7) ||
+            (g == 0x2200) ||
+            ((g >= 0x2202) && (g <= 0x2203)) ||
+            ((g >= 0x2207) && (g <= 0x2208)) ||
+            (g == 0x220b) ||
+            (g == 0x220f) ||
+            (g == 0x2211) ||
+            (g == 0x2215) ||
+            (g == 0x221a) ||
+            ((g >= 0x221d) && (g <= 0x221f)) ||
+            (g == 0x2220) ||
+            (g == 0x2223) ||
+            (g == 0x2225) ||
+            ((g >= 0x2227) && (g <= 0x222e)) ||
+            ((g >= 0x2234) && (g <= 0x2237)) ||
+            ((g >= 0x223c) && (g <= 0x223d)) ||
+            (g == 0x2248) ||
+            (g == 0x224c) ||
+            (g == 0x2252) ||
+            ((g >= 0x2260) && (g <= 0x2261)) ||
+            ((g >= 0x2264) && (g <= 0x2267)) ||
+            ((g >= 0x226a) && (g <= 0x226b)) ||
+            ((g >= 0x226e) && (g <= 0x226f)) ||
+            ((g >= 0x2282) && (g <= 0x2283)) ||
+            ((g >= 0x2286) && (g <= 0x2287)) ||
+            (g == 0x2295) ||
+            (g == 0x2299) ||
+            (g == 0x22a5) ||
+            (g == 0x22bf) ||
+            (g == 0x2312) ||
+            ((g >= 0x2460) && (g <= 0x2595)) ||
+            ((g >= 0x25a0) && (g <= 0x25bd)) ||
+            ((g >= 0x25c0) && (g <= 0x25c1)) ||
+            ((g >= 0x25c6) && (g <= 0x25c7)) ||
+            (g == 0x25c8) ||
+            (g == 0x25cb) ||
+            ((g >= 0x25ce) && (g <= 0x25cf)) ||
+            ((g >= 0x25d0) && (g <= 0x25d1)) ||
+            ((g >= 0x25e2) && (g <= 0x25e3)) ||
+            ((g >= 0x25e4) && (g <= 0x25e5)) ||
+            (g == 0x25ef) ||
+            ((g >= 0x2605) && (g <= 0x2606)) ||
+            (g == 0x2609) ||
+            ((g >= 0x260e) && (g <= 0x260f)) ||
+            ((g >= 0x2614) && (g <= 0x2615)) ||
+            (g == 0x261c) ||
+            (g == 0x261e) ||
+            (g == 0x2640) ||
+            (g == 0x2642) ||
+            ((g >= 0x2660) && (g <= 0x2661)) ||
+            ((g >= 0x2663) && (g <= 0x2665)) ||
+            ((g >= 0x2667) && (g <= 0x266a)) ||
+            ((g >= 0x266c) && (g <= 0x266d)) ||
+            (g == 0x266f) ||
+            ((g >= 0x269e) && (g <= 0x269f)) ||
+            ((g >= 0x26be) && (g <= 0x26bf)) ||
+            ((g >= 0x26c4) && (g <= 0x26cd)) ||
+            (g == 0x26cf) ||
+            ((g >= 0x26d0) && (g <= 0x26e1)) ||
+            (g == 0x26e3) ||
+            ((g >= 0x26e8) && (g <= 0x26ff)) ||
+            (g == 0x273d) ||
+            (g == 0x2757) ||
+            ((g >= 0x2776) && (g <= 0x277f)) ||
+            ((g >= 0x2b55) && (g <= 0x2b59)) ||
+            ((g >= 0x3248) && (g <= 0x324f)) ||
+            ((g >= 0xe000) && (g <= 0xf8ff)) ||
+            ((g >= 0xfe00) && (g <= 0xfe0f)) ||
+            (g == 0xfffd) ||
+            ((g >= 0x1f100) && (g <= 0x1f12d)) ||
+            ((g >= 0x1f130) && (g <= 0x1f169)) ||
+            ((g >= 0x1f170) && (g <= 0x1f19a)) ||
+            ((g >= 0xe0100) && (g <= 0xe01ef)) ||
+            ((g >= 0xf0000) && (g <= 0xffffd)) ||
+            ((g >= 0x100000) && (g <= 0x10fffd)))
+          return EINA_TRUE;
+     }
+   
+   // Na, H -> not checked
+   return EINA_FALSE;
+}
+#endif
+
 static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
 {
@@ -54,7 +268,7 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
      {
         for (i = 0; i < count; i++)
           {
-             cells[i].glyph = val;
+             cells[i].codepoint = val;
              cells[i].att = ty->state.att;
           }
      }
@@ -62,7 +276,7 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
      {
         for (i = 0; i < count; i++)
           {
-             cells[i].glyph = val;
+             cells[i].codepoint = val;
              cells[i].att = clear;
           }
      }
@@ -205,7 +419,7 @@ static const int vt100_to_unicode[62] =
 };
 
 static void
-_text_append(Termpty *ty, const int *glyphs, int len)
+_text_append(Termpty *ty, const int *codepoints, int len)
 {
    Termcell *cells;
    int i, j;
@@ -230,7 +444,7 @@ _text_append(Termpty *ty, const int *glyphs, int len)
                cells[j] = cells[j - 1];
           }
 
-        g = glyphs[i];
+        g = codepoints[i];
         switch (ty->state.charsetch)
           {
            case '0': /* DEC Special Character & Line Drawing Set */
@@ -245,20 +459,55 @@ _text_append(Termpty *ty, const int *glyphs, int len)
              break;
           }
 
-        cells[ty->state.cx].glyph = g;
+        cells[ty->state.cx].codepoint = g;
         cells[ty->state.cx].att = ty->state.att;
+#if defined(SUPPORT_DBLWIDTH)
+        cells[ty->state.cx].att.dblwidth = _is_dblwidth_get(ty, g);
+        if ((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1)))
+          {
+             cells[ty->state.cx + 1].codepoint = 0;
+             cells[ty->state.cx + 1].att = cells[ty->state.cx].att;
+          }
+#endif        
         if (ty->state.wrap)
           {
              ty->state.wrapnext = 0;
+#if defined(SUPPORT_DBLWIDTH)
+             if (cells[ty->state.cx].att.dblwidth)
+               {
+                  if (ty->state.cx >= (ty->w - 2)) ty->state.wrapnext = 1;
+                  else ty->state.cx += 2;
+               }
+             else
+               {
+                  if (ty->state.cx >= (ty->w - 1)) ty->state.wrapnext = 1;
+                  else ty->state.cx++;
+               }
+#else
              if (ty->state.cx >= (ty->w - 1)) ty->state.wrapnext = 1;
              else ty->state.cx++;
+#endif
           }
         else
           {
              ty->state.wrapnext = 0;
              ty->state.cx++;
+#if defined(SUPPORT_DBLWIDTH)
+             if (cells[ty->state.cx].att.dblwidth)
+               {
+                  ty->state.cx++;
+                  if (ty->state.cx >= (ty->w - 1))
+                    ty->state.cx = ty->w - 2;
+               }
+             else
+               {
+                  if (ty->state.cx >= ty->w)
+                    ty->state.cx = ty->w - 1;
+               }
+#else
              if (ty->state.cx >= ty->w)
                ty->state.cx = ty->w - 1;
+#endif
           }
      }
 }
@@ -345,7 +594,11 @@ _reset_att(Termatt *att)
    att->bg = COL_DEF;
    att->bold = 0;
    att->faint = 0;
+#if defined(SUPPORT_ITALIC)
    att->italic = 0;
+#elif defined(SUPPORT_DBLWIDTH)
+   att->dblwidth = 0;
+#endif
    att->underline = 0;
    att->blink = 0;
    att->blink2 = 0;
@@ -464,7 +717,9 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                        ty->state.att.faint = 1;
                        break;
                      case 3: // italic
+#if defined(SUPPORT_ITALIC)
                        ty->state.att.italic = 1;
+#endif                       
                        break;
                      case 4: // underline
                        ty->state.att.underline = 1;
@@ -491,7 +746,9 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                        ty->state.att.faint = 0;
                        break;
                      case 23: // no italic
+#if defined(SUPPORT_ITALIC)
                        ty->state.att.italic = 0;
+#endif                       
                        break;
                      case 24: // no underline
                        ty->state.att.underline = 0;
@@ -1339,7 +1596,7 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
              size = ty->w * ty->h;
              if (cells)
                {
-                  for (i = 0; i < size; i++) cells[i].glyph = 'E';
+                  for (i = 0; i < size; i++) cells[i].codepoint = 'E';
                }
           }
         return 3;
@@ -1537,11 +1794,11 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
 }
 
 static void
-_handle_buf(Termpty *ty, const int *glyphs, int len)
+_handle_buf(Termpty *ty, const int *codepoints, int len)
 {
    int *c, *ce, n, *b, bytes;
 
-   c = (int *)glyphs;
+   c = (int *)codepoints;
    ce = &(c[len]);
 
    if (ty->buf)
@@ -1554,7 +1811,7 @@ _handle_buf(Termpty *ty, const int *glyphs, int len)
           }
         INF("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
         bytes = len * sizeof(int);
-        memcpy(&(b[ty->buflen]), glyphs, bytes);
+        memcpy(&(b[ty->buflen]), codepoints, bytes);
         ty->buf = b;
         ty->buflen += len;
         ty->buf[ty->buflen] = 0;
@@ -1649,7 +1906,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Termpty *ty = data;
    char buf[4097];
-   int glyph[4097];
+   int codepoint[4097];
    int len, i, j, reads;
 
    // read up to 64 * 4096 bytes
@@ -1671,7 +1928,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         printf("\n");
  */
         buf[len] = 0;
-        // convert UTF8 to glyph integers
+        // convert UTF8 to codepoint integers
         j = 0;
         for (i = 0; i < len;)
           {
@@ -1688,12 +1945,12 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   g = 0;
                   i++;
                }
-             glyph[j] = g;
+             codepoint[j] = g;
              j++;
           }
-        glyph[j] = 0;
+        codepoint[j] = 0;
 //        DBG("---------------- handle buf %i", j);
-        _handle_buf(ty, glyph, j);
+        _handle_buf(ty, codepoint, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
    return EINA_TRUE;

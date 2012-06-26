@@ -1,7 +1,7 @@
 #include "utf8.h"
 
 int
-glyph_to_utf8(int g, char *txt)
+codepoint_to_utf8(int g, char *txt)
 {
    if (g < (1 << (7)))
      { // 0xxxxxxx
