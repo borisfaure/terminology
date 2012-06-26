@@ -133,48 +133,82 @@ config_load(const char *key)
      }
    if (!config)
      {
+        const Eina_Unicode sep[] =
+          {
+             // invisible spaces
+             ' ',
+             0xa0,
+             0x1680,
+             0x180e,
+             0x2000,
+             0x2001,
+             0x2002,
+             0x2003,
+             0x2004,
+             0x2005,
+             0x2006,
+             0x2007,
+             0x2008,
+             0x2009,
+             0x200a,
+             0x200b,
+             0x202f,
+             0x205f,
+             0x3000,
+             0xfeff,
+             // visible spaces
+             0x2420,
+             0x2422,
+             0x2423,
+             // other chars
+             '\'',
+             '"',
+             '(',
+             ')',
+             '[',
+             ']',
+             '{',
+             '}',
+             '=',
+             '*',
+             '!',
+             '#',
+             '$',
+             '^',
+             '\\',
+             ':',
+             ';',
+             ',',
+             '?',
+             '`',
+             0
+          };
+        char *s;
+        int slen = 0;
+        
         config = calloc(1, sizeof(Config));
-        config->font.bitmap = EINA_TRUE;
-        config->font.name = eina_stringshare_add("nexus.pcf");
-        config->font.size = 10;
-        config->scrollback = 2000;
-        config->theme = eina_stringshare_add("default.edj");
-        config->background = NULL;
-        config->translucent = EINA_FALSE;
-        config->jump_on_change = EINA_FALSE;
-        config->flicker_on_key = EINA_TRUE;
-        config->disable_cursor_blink = EINA_TRUE;
-        // XXX: add
-        // 
-        // // more invisible spaces
-        // 0xa0
-        // 0x1680
-        // 0x180e
-        // 0x2000
-        // 0x2001
-        // 0x2002
-        // 0x2003
-        // 0x2004
-        // 0x2005
-        // 0x2005
-        // 0x2007
-        // 0x2008
-        // 0x2009
-        // 0x200a
-        // 0x200b
-        // 0x202f
-        // 0x205f
-        // 0x3000
-        // 0xfeff
-        // 
-        // // visible spaces
-        // 0x2423
-        // 0x2422
-        // 0x2420
-        config->wordsep = eina_stringshare_add(" '\"()[]{}=*!#$^\\:;,?`");
-        config->vidmod = 0;
-        config->mute = EINA_FALSE;
-        config->urg_bell = EINA_TRUE;
+        if (config)
+          {
+             config->font.bitmap = EINA_TRUE;
+             config->font.name = eina_stringshare_add("nexus.pcf");
+             config->font.size = 10;
+             config->scrollback = 2000;
+             config->theme = eina_stringshare_add("default.edj");
+             config->background = NULL;
+             config->translucent = EINA_FALSE;
+             config->jump_on_change = EINA_FALSE;
+             config->flicker_on_key = EINA_TRUE;
+             config->disable_cursor_blink = EINA_TRUE;
+             s = eina_unicode_unicode_to_utf8(sep, &slen);
+             if (s)
+               {
+                  config->wordsep = eina_stringshare_add(s);
+                  free(s);
+               }
+             config->vidmod = 0;
+             config->mute = EINA_FALSE;
+             config->urg_bell = EINA_TRUE;
+          }
      }
 
    config->config_key = eina_stringshare_add(key); /* not in eet */
