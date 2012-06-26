@@ -212,6 +212,8 @@ _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 void
 keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
 {
+   // XXX: handle Multi_Key composition. see:
+   // http://en.wikipedia.org/wiki/Compose_key
    if (ty->state.crlf)
      {
         if (_key_try(ty, crlf_keyout, ev)) return;
