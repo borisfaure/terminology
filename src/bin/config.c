@@ -196,9 +196,9 @@ config_load(const char *key)
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;
              config->translucent = EINA_FALSE;
-             config->jump_on_change = EINA_FALSE;
+             config->jump_on_change = EINA_TRUE;
              config->flicker_on_key = EINA_TRUE;
-             config->disable_cursor_blink = EINA_TRUE;
+             config->disable_cursor_blink = EINA_FALSE;
              s = eina_unicode_unicode_to_utf8(sep, &slen);
              if (s)
                {
