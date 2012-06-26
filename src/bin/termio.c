@@ -50,6 +50,7 @@ struct _Termio
    Ecore_IMF_Context *imf;
    Eina_Bool jump_on_change : 1;
    Eina_Bool have_sel : 1;
+   Eina_Bool noreqsize : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -304,9 +305,10 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    sd->grid.h = h;
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
-   evas_object_size_hint_request_set(obj,
-                                     sd->font.chw * sd->grid.w,
-                                     sd->font.chh * sd->grid.h);
+   if (!sd->noreqsize)
+     evas_object_size_hint_request_set(obj,
+                                       sd->font.chw * sd->grid.w,
+                                       sd->font.chh * sd->grid.h);
    termpty_resize(sd->pty, w, h);
    _smart_calculate(obj);
    _smart_apply(obj);
@@ -490,6 +492,80 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              else if (!strcmp(ev->keyname, "Insert"))
                {
                   _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+                  goto end;
+               }
+             else if (!strcmp(ev->keyname, "KP_Add"))
+               {
+                  Config *config = termio_config_get(data);
+                  
+                  if (config)
+                    {
+                       Evas_Coord mw = 1, mh = 1;
+                       int gw, gh;
+
+                       config->temporary = EINA_TRUE;
+                       config->font.size += 1;
+                       gw = sd->grid.w;
+                       gh = sd->grid.h;
+                       evas_object_size_hint_min_get(obj, &mw, &mh);
+                       sd->noreqsize = 1;
+                       termio_config_update(data);
+                       sd->noreqsize = 0;
+                       evas_object_size_hint_min_get(data, &mw, &mh);
+                       evas_object_data_del(data, "sizedone");
+                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
+                    }
+                  goto end;
+               }
+             else if (!strcmp(ev->keyname, "KP_Subtract"))
+               {
+                  Config *config = termio_config_get(data);
+                  
+                  if (config)
+                    {
+                       Evas_Coord mw = 1, mh = 1;
+                       int gw, gh;
+
+                       config->temporary = EINA_TRUE;
+                       config->font.size -= 1;
+                       gw = sd->grid.w;
+                       gh = sd->grid.h;
+                       evas_object_size_hint_min_get(obj, &mw, &mh);
+                       sd->noreqsize = 1;
+                       termio_config_update(data);
+                       sd->noreqsize = 0;
+                       evas_object_size_hint_min_get(data, &mw, &mh);
+                       evas_object_data_del(data, "sizedone");
+                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
+                    }
+                  goto end;
+               }
+             else if (!strcmp(ev->keyname, "KP_Multiply"))
+               {
+                  Config *config = termio_config_get(data);
+                  
+                  if (config)
+                    {
+                       Evas_Coord mw = 1, mh = 1;
+                       int gw, gh;
+
+                       config->temporary = EINA_TRUE;
+                       config->font.size = 10;
+                       gw = sd->grid.w;
+                       gh = sd->grid.h;
+                       evas_object_size_hint_min_get(obj, &mw, &mh);
+                       sd->noreqsize = 1;
+                       termio_config_update(data);
+                       sd->noreqsize = 0;
+                       evas_object_size_hint_min_get(data, &mw, &mh);
+                       evas_object_data_del(data, "sizedone");
+                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
+                    }
+                  goto end;
+               }
+             else if (!strcmp(ev->keyname, "KP_Divide"))
+               {
+                  _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
                }
           }
@@ -887,6 +963,69 @@ _rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev __UNUSED__, int cx _
 }
 
 static void
+_selection_dbl_fix(Evas_Object *obj)
+{
+   Termio *sd;
+   int w = 0;
+   Termcell *cells;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   cells = termpty_cellrow_get(sd->pty, sd->cur.sel2.y - sd->scroll, &w);
+   if (cells)
+     {
+        // if sel2 after sel1
+        if ((sd->cur.sel2.y > sd->cur.sel1.y) ||
+            ((sd->cur.sel2.y == sd->cur.sel1.y) &&
+                (sd->cur.sel2.x >= sd->cur.sel1.x)))
+          {
+             if (sd->cur.sel2.x < (w - 1))
+               {
+                  if ((cells[sd->cur.sel2.x].codepoint != 0) &&
+                      (cells[sd->cur.sel2.x].att.dblwidth))
+                    sd->cur.sel2.x++;
+               }
+          }
+        // else sel1 after sel 2
+        else
+          {
+             if (sd->cur.sel2.x > 0)
+               {
+                  if ((cells[sd->cur.sel2.x].codepoint == 0) &&
+                      (cells[sd->cur.sel2.x].att.dblwidth))
+                    sd->cur.sel2.x--;
+               }
+          }
+     }
+   cells = termpty_cellrow_get(sd->pty, sd->cur.sel1.y - sd->scroll, &w);
+   if (cells)
+     {
+        // if sel2 after sel1
+        if ((sd->cur.sel2.y > sd->cur.sel1.y) ||
+            ((sd->cur.sel2.y == sd->cur.sel1.y) &&
+                (sd->cur.sel2.x >= sd->cur.sel1.x)))
+          {
+             if (sd->cur.sel1.x > 0)
+               {
+                  if ((cells[sd->cur.sel1.x].codepoint == 0) &&
+                      (cells[sd->cur.sel1.x].att.dblwidth))
+                    sd->cur.sel1.x--;
+               }
+          }
+        // else sel1 after sel 2
+        else
+          {
+             if (sd->cur.sel1.x < (w - 1))
+               {
+                  if ((cells[sd->cur.sel1.x].codepoint != 0) &&
+                      (cells[sd->cur.sel1.x].att.dblwidth))
+                    sd->cur.sel1.x++;
+               }
+          }
+     }
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -913,7 +1052,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                   sd->cur.sel1.y = sd->backup.sel1.y;
                   sd->cur.sel2.x = sd->backup.sel2.x;
                   sd->cur.sel2.y = sd->backup.sel2.y;
-                  
+                  _selection_dbl_fix(data);
                   _sel_word_to(data, cx, cy - sd->scroll);
                }
              else
@@ -935,6 +1074,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
              sd->cur.sel1.y = cy - sd->scroll;
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
+             _selection_dbl_fix(data);
           }
         _smart_update_queue(data, sd);
      }
@@ -962,6 +1102,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           {
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
+             _selection_dbl_fix(data);
              _smart_update_queue(data, sd);
              _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
@@ -988,8 +1129,9 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                sd->cur.sel = 1;
           }
         sd->cur.sel2.x = cx;
-        sd->cur.sel2.y = cy - sd->scroll;
-        _smart_update_queue(data, sd);
+        sd->cur.sel2.y = cy - sd->scroll; 
+        _selection_dbl_fix(data);
+       _smart_update_queue(data, sd);
      }
 }
 
@@ -1497,9 +1639,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
           }
         for (x = start_x; x <= end_x; x++)
           {
-             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
-                 (x < end_x))
-               x++;
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth))
+               {
+                  if (x < end_x) x++;
+                  else break;
+               }
              if (x >= w) break;
              if ((cells[x].codepoint == 0) ||  (cells[x].codepoint == ' '))
                {

@@ -131,6 +131,7 @@ static const Keyout keyout[] =
    KEY("F33",          "\033[47~"),
    KEY("F34",          "\033[48~"),
    KEY("F35",          "\033[49~"),
+/*   
    KEY("KP_F1",        "\033OP"),
    KEY("KP_F2",        "\033OQ"),
    KEY("KP_F3",        "\033OR"),
@@ -143,16 +144,16 @@ static const Keyout keyout[] =
    KEY("KP_Decimal",   "\033On"),
    KEY("KP_Divide",    "\033Oo"),
    KEY("KP_0",         "\033Op"),
-   KEY("KP_0",         "\033Oq"),
-   KEY("KP_0",         "\033Or"),
-   KEY("KP_0",         "\033Os"),
-   KEY("KP_0",         "\033Ot"),
-   KEY("KP_0",         "\033Ou"),
-   KEY("KP_0",         "\033Ov"),
-   KEY("KP_0",         "\033Ow"),
-   KEY("KP_0",         "\033Ox"),
-   KEY("KP_0",         "\033Oy"),
-   
+   KEY("KP_1",         "\033Oq"),
+   KEY("KP_2",         "\033Or"),
+   KEY("KP_3",         "\033Os"),
+   KEY("KP_4",         "\033Ot"),
+   KEY("KP_5",         "\033Ou"),
+   KEY("KP_6",         "\033Ov"),
+   KEY("KP_7",         "\033Ow"),
+   KEY("KP_8",         "\033Ox"),
+   KEY("KP_9",         "\033Oy"),
+ */
    KEY(NULL, "END")
 };
 
@@ -162,14 +163,13 @@ static const Keyout kp_keyout[] =
    KEY("KP_Right",        "\033[C"),
    KEY("KP_Up",           "\033[A"),
    KEY("KP_Down",         "\033[B"),
-   KEY("KP_Home",         "\033[7~"),
-   KEY("KP_End",          "\033[8~"),
+   KEY("KP_Home",         "\033[H"),
+   KEY("KP_End",          "\033[F"),
    KEY("KP_Prior",        "\033[5~"),
    KEY("KP_Next",         "\033[6~"),
    KEY("KP_Insert",       "\033[2~"),
    KEY("KP_Delete",       "\033[3~"),
    KEY("KP_Enter",        "\r"),
-   
    KEY(NULL, "END")
 };
 
@@ -222,15 +222,19 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      }
    if (
        ((ty->state.alt_kp) &&
-           (evas_key_modifier_is_set(ev->modifiers, "Shift"))) ||
-       ((!ty->state.alt_kp) &&
-           (!evas_key_modifier_is_set(ev->modifiers, "Shift"))))
+           (evas_key_modifier_is_set(ev->modifiers, "Shift")))
+//       || ((!ty->state.alt_kp) &&
+//           (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
+      )
      {
         if (_key_try(ty, kp_keyout, ev)) return;
      }
    else
      {
-        if (_key_try(ty, kps_keyout, ev)) return;
+        if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
+          {
+             if (_key_try(ty, kp_keyout, ev)) return;
+          }
      }
    if (evas_key_modifier_is_set(ev->modifiers, "Control"))
      {
