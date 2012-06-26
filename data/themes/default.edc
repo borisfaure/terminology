@@ -611,8 +611,9 @@ collections {
             description { state: "default" 0.0;
                image.normal: "media_bg.png";
                image.border: 11 11 11 11;
+               min: 24 24;
                max: 24 24;
-               align: 0.0 1.0;
+               align: 1.0 0.0;
             }
             description { state: "expanded" 0.0;
                inherit: "default" 0.0;
@@ -627,7 +628,7 @@ collections {
             description { state: "default" 0.0;
                image.normal: "media_pause.png";
                max: 24 24;
-               align: 0.0 1.0;
+               align: 1.0 0.0;
             }
             description { state: "paused" 0.0;
                inherit: "default" 0.0;
@@ -643,8 +644,8 @@ collections {
                max: 24 24;
                rel1.to: "play";
                rel2.to: "play";
-               rel1.offset: 16 0;
-               rel2.offset: 16 0;
+               rel1.offset: -16 0;
+               rel2.offset: -16 0;
             }
          }
          part { name: "posline";
@@ -658,8 +659,8 @@ collections {
                max: 90 14;
                rel1.to: "stop";
                rel2.to: "stop";
-               rel1.offset: 25 0;
-               rel2.offset: 90 0;
+               rel1.offset: -25 0;
+               rel2.offset: -90 0;
             }
          }
          part { name: "terminology.posdrag";
@@ -689,12 +690,15 @@ collections {
                image.border: 15 15 0 0;
                min: 60 14;
                max: 60 14;
-               rel1.to: "posline";
-               rel2.to: "posline";
-               rel1.relative: 1.0 0.0;
-               rel2.relative: 1.0 1.0;
-               rel1.offset: 25 0;
-               rel2.offset: 60 0;
+               rel1 {
+                  to: "posline";
+                  offset: -25 0;
+               }
+               rel2 {
+                  to: "posline";
+                  relative: 0.0 1.0;
+                  offset: -60 0;
+               }
             }
          }
          part { name: "terminology.voldrag"; type: IMAGE;
