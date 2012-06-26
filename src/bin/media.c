@@ -384,8 +384,7 @@ _cb_media_pause(void *data, Evas_Object *obj, const char *emission, const char *
 static void
 _cb_media_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
 {
-   media_play_set(data, EINA_FALSE);
-   media_position_set(data, 0.0);
+   media_stop(data);
 }
 
 static void
@@ -678,6 +677,15 @@ media_play_set(Evas_Object *obj, Eina_Bool play)
       edje_object_signal_emit(sd->o_ctrl, "play,set", "terminology");
    else
       edje_object_signal_emit(sd->o_ctrl, "pause,set", "terminology");
+}
+
+void
+media_stop(Evas_Object *obj)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
+
+   evas_object_del(obj);
 }
 
 void
