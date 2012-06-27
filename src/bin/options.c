@@ -5,6 +5,8 @@
 #include "options_font.h"
 #include "options_behavior.h"
 #include "options_video.h"
+#include "options_theme.h"
+#include "options_wallpaper.h"
 #include "config.h"
 #include "termio.h"
 
@@ -21,16 +23,18 @@ _cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_theme(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_theme(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
+   options_theme(op_opbox, data);
    // XXX: not done yet
 }
 
 static void
-_cb_op_wallpaper(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_wallpaper(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
+   options_wallpaper(op_opbox, data);
    // XXX: not done yet
 }
 
