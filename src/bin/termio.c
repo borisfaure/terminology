@@ -41,7 +41,7 @@ struct _Termio
    } backup;
    int scroll;
    unsigned int last_keyup;
-   unsigned char compose[2];
+   char *compose[10]; // max 10 chars
    Evas_Object *event;
    Termpty *pty;
    Ecore_Animator *anim;
@@ -464,9 +464,12 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         if (!((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
               (evas_key_modifier_is_set(ev->modifiers, "Alt"))))
           {
-             if (ecore_imf_context_filter_event
-                 (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-               goto end;
+             if (!sd->composing)
+               {
+                  if (ecore_imf_context_filter_event
+                      (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
+                    goto end;
+               }
           }
      }
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
@@ -585,33 +588,80 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    // timestamp as last one
    if ((sd->pty->state.no_autorepeat) &&
        (ev->timestamp == sd->last_keyup)) return;
-   if (!strcmp(ev->keyname, "Multi_key"))
+   if (!sd->composing)
      {
-        sd->composing = EINA_TRUE;
-        sd->compose[0] = 0;
-        sd->compose[1] = 0;
-        return;
-     }
-   if (sd->composing)
-     {
-        if (ev->string)
+        int i;
+        
+        for (i = 0; i < 10; i++)
           {
-             if (!sd->compose[0])
+             if (sd->compose[i])
                {
-                  sd->compose[0] = ev->string[0];
-                  return;
+                  free(sd->compose[i]);
+                  sd->compose[i] = NULL;
                }
-             else if (!ev->compose[1])
-               {
-                  sd->compose[1] = ev->string[0];
-                  keyin_handle_compose(sd->pty,
-                                       sd->compose[0], sd->compose[1]);
-                  sd->composing = EINA_FALSE;
-                  goto end;
-               }
+             else break;
+          }
+        sd->compose[0] = strdup(ev->key);
+        sd->compose[1] = NULL;
+        if (keyin_handle_compose(sd->pty, sd->compose))
+          sd->composing = EINA_TRUE;
+        if (!sd->composing)
+          {
+             free(sd->compose[0]);
+             sd->compose[0] = NULL;
           }
         else
-          return;
+          {
+             goto end;
+          }
+     }
+   else
+     {
+        int status, i;
+
+        if (!strncmp(ev->key, "Shift", 5)) goto end;
+        if (!strncmp(ev->key, "Control", 7)) goto end;
+        if (!strncmp(ev->key, "Alt", 3)) goto end;
+//        if (!ev->string) goto end;
+        for (i = 0; i < 10; i++)
+          {
+             if (!sd->compose[i])
+               {
+                  sd->compose[i] = strdup(ev->key);
+                  sd->compose[i + 1] = NULL;
+                  break;
+               }
+          }
+        status = keyin_handle_compose(sd->pty, sd->compose);
+        if (status == 0)
+          {
+             for (i = 0; i < 10; i++)
+               {
+                  if (sd->compose[i])
+                    {
+                       free(sd->compose[i]);
+                       sd->compose[i] = NULL;
+                    }
+                  else break;
+               }
+             sd->composing = 0;
+          }
+        else if (status == -1)
+          {
+             for (i = 0; i < 10; i++)
+               {
+                  if (sd->compose[i])
+                    {
+                       free(sd->compose[i]);
+                       sd->compose[i] = NULL;
+                    }
+                  else break;
+               }
+             sd->composing = 0;
+             goto end;
+          }
+        else
+          goto end;
      }
    keyin_handle(sd->pty, ev);
 end:
@@ -1401,6 +1451,7 @@ imf_done:
 static void
 _smart_del(Evas_Object *obj)
 {
+   int i;
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (sd->imf)
@@ -1418,6 +1469,15 @@ _smart_del(Evas_Object *obj)
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
+   for (i = 0; i < 10; i++)
+     {
+        if (sd->compose[i])
+          {
+             free(sd->compose[i]);
+             sd->compose[i] = NULL;
+          }
+        else break;
+     }
    sd->cur.obj = NULL;
    sd->event = NULL;
    sd->cur.selo1 = NULL;

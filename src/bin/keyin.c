@@ -212,8 +212,6 @@ _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 void
 keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
 {
-   // XXX: handle Multi_Key composition. see:
-   // http://en.wikipedia.org/wiki/Compose_key
    if (ty->state.crlf)
      {
         if (_key_try(ty, crlf_keyout, ev)) return;
@@ -287,6 +285,50 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      }
 }
 
+// http://en.wikipedia.org/wiki/Compose_key
+// http://andrew.triumf.ca/iso8859-1-compose.html
+// http://cgit.freedesktop.org/xorg/lib/libX11/plain/nls/en_US.UTF-8/Compose.pre
+
+// isolate compose tree into its own file
+#include "keycomp.h"
+
+int
+keyin_handle_compose(Termpty *ty, char **seq)
+{
+   Comp *c, *cend;
+   const char *s;
+   int i = 0;
+   
+   s = seq[i];
+   cend = (Comp *)comp + (sizeof(comp) / sizeof(comp[0]));
+   for (c = (Comp *)comp; c->s && s;)
+     {
+        // doesn't match -> jump to next level entry
+        if (!(!strcmp(s, c->s)))
+          {
+             c += c->jump + 1;
+             if (c >= cend) return 0;
+          }
+        else
+          {
+             cend = c + c->jump;
+             // advance to next sequence member 
+             i++;
+             s = seq[i];
+             c++;
+             // if advanced item jump is an endpoint - it's the string we want
+             if (c->jump == 0)
+               {
+                  termpty_write(ty, c->s, strlen(c->s));
+                  return -1;
+               }
+          }
+     }
+   if (i > 0) return 1;
+   return 0;
+}
+
+/*
 typedef struct _Compose Compose;
 
 struct _Compose
@@ -322,7 +364,7 @@ static Compose composes[] =
    COM('\'', '\'',    "´"),
    COM('/',  'u',     "µ"),
    COM('p',  '!',     "¶"),
-   COM('.',  '.',     "·"),
+   COM('.',  '.',     "…"),
    COM(',',  ',',     "¸"),
    COM('^',  '1',     "¹"),
    COM('_',  'o',     "º"),
@@ -395,6 +437,7 @@ static Compose composes[] =
    COM('\'', 'y',     "ý"),
    COM('t',  'h',     "þ"),
    COM('"',  'y',     "ÿ"),
+
    COM(0, 0, "END")
 };
 
@@ -412,3 +455,4 @@ keyin_handle_compose(Termpty *ty, unsigned char c1, unsigned char c2)
           }
      }
 }
+*/
