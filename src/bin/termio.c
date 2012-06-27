@@ -41,6 +41,7 @@ struct _Termio
    } backup;
    int scroll;
    unsigned int last_keyup;
+   unsigned char compose[2];
    Evas_Object *event;
    Termpty *pty;
    Ecore_Animator *anim;
@@ -51,6 +52,7 @@ struct _Termio
    Eina_Bool jump_on_change : 1;
    Eina_Bool have_sel : 1;
    Eina_Bool noreqsize : 1;
+   Eina_Bool composing : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -476,6 +478,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              if (by < 1) by = 1;
              if (!strcmp(ev->keyname, "Prior"))
                {
+                  sd->composing = EINA_FALSE;
                   sd->scroll += by;
                   if (sd->scroll > sd->pty->backscroll_num)
                     sd->scroll = sd->pty->backscroll_num;
@@ -484,6 +487,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "Next"))
                {
+                  sd->composing = EINA_FALSE;
                   sd->scroll -= by;
                   if (sd->scroll < 0) sd->scroll = 0;
                   _smart_update_queue(data, sd);
@@ -491,6 +495,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "Insert"))
                {
+                  sd->composing = EINA_FALSE;
                   _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
                }
@@ -498,6 +503,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  sd->composing = EINA_FALSE;
                   if (config)
                     {
                        Evas_Coord mw = 1, mh = 1;
@@ -521,6 +527,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  sd->composing = EINA_FALSE;
                   if (config)
                     {
                        Evas_Coord mw = 1, mh = 1;
@@ -544,6 +551,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  sd->composing = EINA_FALSE;
                   if (config)
                     {
                        Evas_Coord mw = 1, mh = 1;
@@ -565,6 +573,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "KP_Divide"))
                {
+                  sd->composing = EINA_FALSE;
                   _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
                }
@@ -576,6 +585,34 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    // timestamp as last one
    if ((sd->pty->state.no_autorepeat) &&
        (ev->timestamp == sd->last_keyup)) return;
+   if (!strcmp(ev->keyname, "Multi_key"))
+     {
+        sd->composing = EINA_TRUE;
+        sd->compose[0] = 0;
+        sd->compose[1] = 0;
+        return;
+     }
+   if (sd->composing)
+     {
+        if (ev->string)
+          {
+             if (!sd->compose[0])
+               {
+                  sd->compose[0] = ev->string[0];
+                  return;
+               }
+             else if (!ev->compose[1])
+               {
+                  sd->compose[1] = ev->string[0];
+                  keyin_handle_compose(sd->pty,
+                                       sd->compose[0], sd->compose[1]);
+                  sd->composing = EINA_FALSE;
+                  goto end;
+               }
+          }
+        else
+          return;
+     }
    keyin_handle(sd->pty, ev);
 end:
    if (sd->config->flicker_on_key)

@@ -229,7 +229,7 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
 //           (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
       )
      {
-        if (_key_try(ty, kp_keyout, ev)) return;
+        if (_key_try(ty, kps_keyout, ev)) return;
      }
    else
      {
@@ -284,5 +284,131 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
                termpty_write(ty, "\033", 1);
           }
         termpty_write(ty, ev->string, strlen(ev->string));
+     }
+}
+
+typedef struct _Compose Compose;
+
+struct _Compose
+{
+   unsigned char c1, c2;
+   const char *out;
+   int         outlen;
+};
+
+#define COM(c1, c2, out) {c1, c2, out, sizeof(out) - 1}
+
+static Compose composes[] =
+{
+   COM('!',  '!',     "¡"),
+   COM('|',  'c',     "¢"),
+   COM('-',  'L',     "£"),
+   COM('o',  'x',     "¤"),
+   COM('Y',  '-',     "¥"),
+   COM('|',  '|',     "¦"),
+   COM('s',  'o',     "§"),
+   COM('"',  '"',     "¨"),
+   COM('O',  'c',     "©"),
+   COM('_',  'a',     "ª"),
+   COM('<',  '<',     "«"),
+   COM(',',  '-',     "¬"),
+   COM('-',  '-',     "­"),
+   COM('O',  'R',     "®"),
+   COM('-',  '^',     "¯"),
+   COM('^',  '0',     "°"),
+   COM('+',  '-',     "±"),
+   COM('^',  '2',     "²"),
+   COM('^',  '3',     "³"),
+   COM('\'', '\'',    "´"),
+   COM('/',  'u',     "µ"),
+   COM('p',  '!',     "¶"),
+   COM('.',  '.',     "·"),
+   COM(',',  ',',     "¸"),
+   COM('^',  '1',     "¹"),
+   COM('_',  'o',     "º"),
+   COM('>',  '>',     "»"),
+   COM('1',  '4',     "¼"),
+   COM('1',  '2',     "½"),
+   COM('3',  '4',     "¾"),
+   COM('?',  '?',     "¿"),
+   COM('`',  'A',     "À"),
+   COM('\'', 'A',     "Á"),
+   COM('^',  'A',     "Â"),
+   COM('~',  'A',     "Ã"),
+   COM('"',  'A',     "Ä"),
+   COM('*',  'A',     "Å"),
+   COM('A',  'E',     "Æ"),
+   COM(',',  'C',     "Ç"),
+   COM('`',  'E',     "È"),
+   COM('\'', 'E',     "É"),
+   COM('^',  'E',     "Ê"),
+   COM('"',  'E',     "Ë"),
+   COM('`',  'I',     "Ì"),
+   COM('\'', 'I',     "Í"),
+   COM('^',  'I',     "Î"),
+   COM('"',  'I',     "Ï"),
+   COM('-',  'D',     "Ð"),
+   COM('~',  'N',     "Ñ"),
+   COM('`',  'O',     "Ò"),
+   COM('\'', 'O',     "Ó"),
+   COM('^',  'O',     "Ô"),
+   COM('~',  'O',     "Õ"),
+   COM('"',  'O',     "Ö"),
+   COM('x',  'x',     "×"),
+   COM('/',  'O',     "Ø"),
+   COM('`',  'U',     "Ù"),
+   COM('\'', 'U',     "Ú"),
+   COM('^',  'U',     "Û"),
+   COM('"',  'U',     "Ü"),
+   COM('\'', 'Y',     "Ý"),
+   COM('T',  'H',     "þ"),
+   COM('s',  's',     "ß"),
+   COM('`',  'a',     "à"),
+   COM('\'', 'a',     "á"),
+   COM('^',  'a',     "â"),
+   COM('~',  'a',     "ã"),
+   COM('"',  'a',     "ä"),
+   COM('*',  'a',     "å"),
+   COM('a',  'e',     "æ"),
+   COM(',',  'c',     "ç"),
+   COM('`',  'e',     "è"),
+   COM('\'', 'e',     "é"),
+   COM('^',  'e',     "ê"),
+   COM('"',  'e',     "ë"),
+   COM('`',  'i',     "ì"),
+   COM('\'', 'i',     "í"),
+   COM('^',  'i',     "î"),
+   COM('"',  'i',     "ï"),
+   COM('-',  'd',     "ð"),
+   COM('~',  'n',     "ñ"),
+   COM('`',  'o',     "ò"),
+   COM('\'', 'o',     "ó"),
+   COM('^',  'o',     "ô"),
+   COM('~',  'o',     "õ"),
+   COM('"',  'o',     "ö"),
+   COM('-',  ':',     "÷"),
+   COM('/',  'o',     "ø"),
+   COM('`',  'u',     "ù"),
+   COM('\'', 'u',     "ú"),
+   COM('^',  'u',     "û"),
+   COM('"',  'u',     "ü"),
+   COM('\'', 'y',     "ý"),
+   COM('t',  'h',     "þ"),
+   COM('"',  'y',     "ÿ"),
+   COM(0, 0, "END")
+};
+
+void
+keyin_handle_compose(Termpty *ty, unsigned char c1, unsigned char c2)
+{
+   int i;
+   
+   for (i = 0; composes[i].c1; i++)
+     {
+        if ((c1 == composes[i].c1) && (c2 == composes[i].c2))
+          {
+             termpty_write(ty, composes[i].out, composes[i].outlen);
+             break;
+          }
      }
 }
