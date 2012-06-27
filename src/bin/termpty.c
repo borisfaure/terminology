@@ -1762,6 +1762,12 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
              return 1;
           }
      }
+   else if (c[0] == 0x7f) // DEL
+     {
+        ERR("unhandled char 0x%02x [DEL]", c[0]);
+        ty->state.had_cr = 0;
+        return 1;
+     }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
         int v;
@@ -1775,7 +1781,7 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
 
    cc = (int *)c;
    DBG("txt: [");
-   while ((cc < ce) && (*cc >= 0x20))
+   while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f))
      {
         DBG("%c", *cc);
         cc++;
