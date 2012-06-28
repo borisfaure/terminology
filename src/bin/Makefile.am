@@ -13,7 +13,7 @@ private.h \
 col.c col.h \
 config.c config.h \
 controls.c controls.h \
-keyin.c keyin.h keycomp.h \
+keyin.c keyin.h \
 main.c main.h \
 media.c media.h \
 options.c options.h \

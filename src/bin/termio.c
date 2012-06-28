@@ -2,6 +2,7 @@
 #include <Ecore_IMF.h>
 #include <Ecore_IMF_Evas.h>
 #include <Elementary.h>
+#include <Ecore_Input.h>
 #include "termio.h"
 #include "termpty.h"
 #include "utf8.h"
@@ -41,7 +42,7 @@ struct _Termio
    } backup;
    int scroll;
    unsigned int last_keyup;
-   char *compose[10]; // max 10 chars
+   Eina_List *seq;
    Evas_Object *event;
    Termpty *pty;
    Ecore_Animator *anim;
@@ -452,6 +453,8 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    Evas_Event_Key_Down *ev = event;
    Termio *sd;
+   Ecore_Compose_State state;
+   char *compres = NULL, *str;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -481,6 +484,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              if (by < 1) by = 1;
              if (!strcmp(ev->keyname, "Prior"))
                {
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   sd->scroll += by;
                   if (sd->scroll > sd->pty->backscroll_num)
@@ -490,6 +494,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "Next"))
                {
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   sd->scroll -= by;
                   if (sd->scroll < 0) sd->scroll = 0;
@@ -498,6 +503,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "Insert"))
                {
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
@@ -506,6 +512,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   if (config)
                     {
@@ -530,6 +537,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   if (config)
                     {
@@ -554,6 +562,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   Config *config = termio_config_get(data);
                   
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   if (config)
                     {
@@ -576,6 +585,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
              else if (!strcmp(ev->keyname, "KP_Divide"))
                {
+                  EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
                   _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
@@ -590,78 +600,42 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (ev->timestamp == sd->last_keyup)) return;
    if (!sd->composing)
      {
-        int i;
-        
-        for (i = 0; i < 10; i++)
-          {
-             if (sd->compose[i])
-               {
-                  free(sd->compose[i]);
-                  sd->compose[i] = NULL;
-               }
-             else break;
-          }
-        sd->compose[0] = strdup(ev->key);
-        sd->compose[1] = NULL;
-        if (keyin_handle_compose(sd->pty, sd->compose))
-          sd->composing = EINA_TRUE;
+        EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
+        sd->seq = eina_list_append(sd->seq, eina_stringshare_add(ev->key));
+        state = ecore_compose_get(sd->seq, &compres);
+        if (state == ECORE_COMPOSE_MIDDLE) sd->composing = EINA_TRUE;
+        else sd->composing = EINA_FALSE;
         if (!sd->composing)
           {
-             free(sd->compose[0]);
-             sd->compose[0] = NULL;
+             EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
           }
-        else
-          {
-             goto end;
-          }
+        else goto end;
      }
    else
      {
-        int status, i;
-
         if (!strncmp(ev->key, "Shift", 5)) goto end;
         if (!strncmp(ev->key, "Control", 7)) goto end;
         if (!strncmp(ev->key, "Alt", 3)) goto end;
-//        if (!ev->string) goto end;
-        for (i = 0; i < 10; i++)
+        sd->seq = eina_list_append(sd->seq, eina_stringshare_add(ev->key));
+        state = ecore_compose_get(sd->seq, &compres);
+        if (state == ECORE_COMPOSE_NONE)
           {
-             if (!sd->compose[i])
-               {
-                  sd->compose[i] = strdup(ev->key);
-                  sd->compose[i + 1] = NULL;
-                  break;
-               }
+             EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
+             sd->composing = EINA_FALSE;
           }
-        status = keyin_handle_compose(sd->pty, sd->compose);
-        if (status == 0)
+        else if (state == ECORE_COMPOSE_DONE)
           {
-             for (i = 0; i < 10; i++)
+             EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
+             sd->composing = EINA_FALSE;
+             if (compres)
                {
-                  if (sd->compose[i])
-                    {
-                       free(sd->compose[i]);
-                       sd->compose[i] = NULL;
-                    }
-                  else break;
+                  termpty_write(sd->pty, compres, strlen(compres));
+                  free(compres);
+                  compres = NULL;
                }
-             sd->composing = 0;
-          }
-        else if (status == -1)
-          {
-             for (i = 0; i < 10; i++)
-               {
-                  if (sd->compose[i])
-                    {
-                       free(sd->compose[i]);
-                       sd->compose[i] = NULL;
-                    }
-                  else break;
-               }
-             sd->composing = 0;
              goto end;
           }
-        else
-          goto end;
+        else goto end;
      }
    keyin_handle(sd->pty, ev);
 end:
@@ -1451,7 +1425,7 @@ imf_done:
 static void
 _smart_del(Evas_Object *obj)
 {
-   int i;
+   char *str;
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (sd->imf)
@@ -1469,15 +1443,7 @@ _smart_del(Evas_Object *obj)
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
-   for (i = 0; i < 10; i++)
-     {
-        if (sd->compose[i])
-          {
-             free(sd->compose[i]);
-             sd->compose[i] = NULL;
-          }
-        else break;
-     }
+   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
    sd->cur.obj = NULL;
    sd->event = NULL;
    sd->cur.selo1 = NULL;

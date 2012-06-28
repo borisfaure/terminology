@@ -26,6 +26,7 @@ requirements="\
    ecore >= 1.2.99 \
    edje >= 1.2.99 \
    emotion >= 1.0.99 \
+   ecore-input >= 1.2.99 \
    ecore-imf >= 1.2.99 \
    ecore-imf-evas >= 1.2.99 \
    "
