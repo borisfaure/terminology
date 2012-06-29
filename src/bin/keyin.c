@@ -71,6 +71,7 @@ static const Keyout alt_keyout[] =
    KEY("Right",        "\033[1;3C"),
    KEY("Up",           "\033[1;3A"),
    KEY("Down",         "\033[1;3B"),
+   KEY("BackSpace",    "\033\177"),
    
    KEY(NULL, "END")
 };
