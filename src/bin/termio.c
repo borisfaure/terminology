@@ -505,7 +505,10 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                {
                   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
-                  _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+                  if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+                    _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
+                  else
+                    _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
                   goto end;
                }
              else if (!strcmp(ev->keyname, "KP_Add"))

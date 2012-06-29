@@ -27,9 +27,25 @@ Once you have met requirements, compiling and installing is simple:
   make
   make install
 
-Note: to make accented chars with deadkeys work, you need to use an
-input method handler. Right now only XIM works, so try this before you
-run terminology:
+Note: to make terminology work with input methods in general you need:
 
 export ECORE_IMF_MODULE="xim"
 export XMODIFIERS="@im=none"
+
+Special key controls:
+
+Shift+PgUp = Scroll 1 page up
+Shift+PgDn = Scroll 1 page down
+Shift+Insert = Paste Clipboard (ctrl+v/c) selection
+Shift+Ctrl+Insert = Paste Primary (hilight) selection
+Shift+Keypad-Plus = Font size up 1
+Shift+Keypad-Minus = Font size down 1
+Shift+Keypad-Multiply = Reset font size to 10
+Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
+
+Mouse controls:
+
+Right mouse button = controls menu
+Middle mouse button = paste highlight selection
+Left mouse button/drag = make highlight
+Wheel = scroll up or down in history
