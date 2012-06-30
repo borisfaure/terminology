@@ -11,9 +11,12 @@
 #include "termio.h"
 
 static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL,
-                   *op_opbox = NULL, *op_tbox = NULL, *op_temp = NULL;
+                   *op_opbox = NULL, *op_tbox = NULL, *op_temp = NULL,
+                   *op_over = NULL;
 static Eina_Bool op_out = EINA_FALSE;
 static Ecore_Timer *op_del_timer = NULL;
+static Evas_Object *saved_win = NULL;
+static Evas_Object *saved_bg = NULL;
 
 static void
 _cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -70,11 +73,19 @@ _cb_op_del_delay(void *data __UNUSED__)
    return EINA_FALSE;
 }
 
+static void
+_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+{
+   options_toggle(saved_win, saved_bg, data);
+}
+
 void
 options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 {
    Evas_Object *o;
 
+   saved_win = win;
+   saved_bg = bg;
    if (!op_frame)
      {
         Elm_Object_Item *it_fn;
@@ -145,6 +156,13 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      }
    if (!op_out)
      {
+        op_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_color_set(o, 0, 0, 0, 0);
+        edje_object_part_swallow(bg, "terminology.dismiss", o);
+        evas_object_show(o);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cb_mouse_down, term);
+
         edje_object_signal_emit(bg, "options,show", "terminology");
         op_out = EINA_TRUE;
         elm_object_focus_set(op_toolbar, EINA_TRUE);
@@ -156,6 +174,9 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      }
    else
      {
+        evas_object_del(op_over);
+        op_over = NULL;
+
         edje_object_signal_emit(bg, "options,hide", "terminology");
         op_out = EINA_FALSE;
         elm_object_focus_set(op_frame, EINA_FALSE);

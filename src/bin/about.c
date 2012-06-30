@@ -3,7 +3,7 @@
 #include <Elementary.h>
 #include "about.h"
 
-static Evas_Object *ab_layout = NULL, *ab_over;
+static Evas_Object *ab_layout = NULL, *ab_over = NULL;
 static Eina_Bool ab_out = EINA_FALSE;
 static Ecore_Timer *ab_del_timer = NULL;
 static Evas_Object *saved_win = NULL;
@@ -90,10 +90,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
    if (!ab_out)
      {
         ab_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_color_set(o, 0, 0, 0, 0);
-        elm_win_resize_object_add(win, o);
+        edje_object_part_swallow(bg, "terminology.dismiss", o);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, term);
@@ -111,6 +109,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         evas_object_del(ab_over);
         ab_over = NULL;
+        
         edje_object_signal_emit(bg, "about,hide", "terminology");
         ab_out = EINA_FALSE;
         elm_object_focus_set(ab_layout, EINA_FALSE);

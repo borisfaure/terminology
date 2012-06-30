@@ -6,9 +6,6 @@ make it a first-class terminal:
 [ ] improve terminal emulation handling. known apps with problems:
       mc
 [ ] dnd text (to/from terminal)
-[ ] handle multibyte displays better (does handle utf8 only atm and
-    then maybe not according to convention like double cell spacing
-    for jp/kr/zh etc. needs textgrid work in evas)
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
 [ ] selection of themes
@@ -26,8 +23,6 @@ make it a first-class terminal:
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic so its reliable
-[ ] clicking with ANY mouse button while options is up outside of
-    options should dismiss it.
 
 things in future to make it totally kick-butt:
 
