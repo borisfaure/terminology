@@ -10,6 +10,7 @@ terminology_LDADD = @TERMINOLOGY_LIBS@
 
 terminology_SOURCES = \
 private.h \
+about.c about.h \
 col.c col.h \
 config.c config.h \
 controls.c controls.h \

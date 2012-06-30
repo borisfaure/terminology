@@ -1,5 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
+ab_base.png \
+ab_shell.png \
 bg_bevel.png \
 bg_shine.png \
 bg_glint.png \

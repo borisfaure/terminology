@@ -3,6 +3,7 @@
 #include <Elementary.h>
 #include "controls.h"
 #include "options.h"
+#include "about.h"
 #include "termio.h"
 
 static Evas_Object *ct_frame, *ct_box = NULL;
@@ -46,7 +47,7 @@ static void
 _cb_ct_about(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    controls_toggle(ct_win, ct_bg, ct_term);
-   // XXX: show about box.
+   about_toggle(ct_win, ct_bg, ct_term);
 }
 
 void

@@ -1,7 +1,7 @@
 collections {
    
 //////////////////////////////////////////////////////////////////////////////
-   //// the background and general contaiiner for the terminal
+   //// the background and general container for the terminal
    group { name: "terminology/background";
       images {
         image: "bg_bevel.png" COMP;
@@ -366,6 +366,41 @@ collections {
             transition: DECELERATE 0.6;
             target: "terminology.options";
          }
+         
+         part { name: "terminology.about"; type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 198 198;
+               max: 198 198;
+               align: 0.5 0.0;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               rel2.relative: 1.0 1.0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               align: 0.5 0.5;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         program { name: "ab_show";
+            signal: "about,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: SPRING 1.2 2.0 6;
+            target: "terminology.about";
+         }
+         program { name: "ab_hide";
+            signal: "about,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.6;
+            target: "terminology.about";
+         }
+         
          part { name: "terminology.controls"; type: SWALLOW;
             scale: 1;
             description { state: "default" 0.0;
@@ -779,6 +814,95 @@ collections {
       }
    }
 
+//////////////////////////////////////////////////////////////////////////////
+   //// the about box content image
+   group { name: "terminology/about";
+      images {
+        image: "ab_base.png" COMP;
+        image: "ab_shell.png" COMP;
+      }
+      styles {
+         style { name: "aboutstyle";
+            base: "font=Sans font_size=8 color=#3f1 style=glow glow2_color=#3f13 glow_color=#3f11 wrap=word";
+            tag:  "b" "+ color=#8f8 glow2_color=#3f15 glow_color=#3f12";
+         }
+      }
+      parts {
+         part { name: "base";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: (39/198) (27/198);
+                  to: "shell";
+               }
+               rel2 {
+                  relative: (151/198) (115/198);
+                  to: "shell";
+               }
+               image.normal: "ab_base.png";
+            }
+         }
+         part { name: "baseclip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               rel1.to: "base";
+               rel2.to: "base";
+            }
+         }
+         part { name: "terminology.text"; type: TEXTBLOCK;
+            clip_to: "baseclip";
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               align: 0.5 0.0;
+               max: 10000 10000;
+               rel1 {
+                  to: "base";
+                  relative: 0.08 1.0;
+               }
+               rel2 {
+                  to: "base";
+                  relative: 0.97 1.0;
+               }
+               text {
+                  style: "aboutstyle";
+                  text: "Hello world.<br>This is <b>Terminology</b>, your friendly neighbourhood terminal.<br><br>This needs more text to test vertical scrolling to see if the animation works right.<br>I hope this will be enough now.";
+                  min: 0 1;
+               }
+            }
+            description { state: "up" 0.0;
+               inherit: "default" 0.0;
+               align: 0.5 1.0;
+               rel1.relative: 0.08 0.0;
+               rel2.relative: 0.97 0.0;
+            }
+         }
+         part { name: "shell";
+            description { state: "default" 0.0;
+               max: 198 198;
+               aspect: 1.0 1.0;
+               aspect_preference: BOTH;
+               image.normal: "ab_shell.png";
+            }
+         }                                              
+      }
+      programs {
+         program { name: "show";
+            signal: "show";
+            source: "";
+            action: STATE_SET "up" 0.0;
+            transition: LINEAR 45.0;
+            target: "terminology.text";
+            after: "show2";
+         }
+         program { name: "show2";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.text";
+            after: "show";
+         }
+      }
+   }
+   
 //////////////////////////////////////////////////////////////////////////////
    //// used in the font selection dialog to give a base for black text
    //// previews so they are always visible
