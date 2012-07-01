@@ -97,6 +97,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
                                        _cb_mouse_down, term);
         
         edje_object_signal_emit(bg, "about,show", "terminology");
+        elm_object_signal_emit(ab_layout, "begin" ,"terminology");
         ab_out = EINA_TRUE;
         elm_object_focus_set(ab_layout, EINA_TRUE);
         if (ab_del_timer)

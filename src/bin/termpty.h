@@ -90,7 +90,7 @@ struct _Termpty
       struct {
          void (*func) (void *data);
          void *data;
-      } change, scroll, set_title, set_icon, cancel_sel, exited, bell;
+      } change, scroll, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
       const char *title;
@@ -99,6 +99,7 @@ struct _Termpty
    int w, h;
    int fd, slavefd;
    pid_t pid;
+   const char *cur_cmd;
    Termcell *screen, *screen2;
    Termsave **back;
    int backmax, backpos;

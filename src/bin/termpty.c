@@ -649,9 +649,9 @@ _cursor_copy(Termstate *state, Termstate *dest)
 }
 
 static int
-_csi_arg_get(char **ptr)
+_csi_arg_get(Eina_Unicode **ptr)
 {
-   char *b = *ptr;
+   Eina_Unicode *b = *ptr;
    int octal = 0;
    int sum = 0;
 
@@ -674,12 +674,13 @@ _csi_arg_get(char **ptr)
 }
 
 static int
-_handle_esc_csi(Termpty *ty, const int *c, int *ce)
+_handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   int *cc, arg, first = 1, i;
-   char buf[4096], *b;
+   Eina_Unicode *cc;
+   int arg, first = 1, i;
+   Eina_Unicode buf[4096], *b;
 
-   cc = (int *)c;
+   cc = (Eina_Unicode *)c;
    b = buf;
    while ((cc < ce) && (*cc >= '0') && (*cc <= '?'))
      {
@@ -693,7 +694,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
    if (cc == ce) return -2;
    *b = 0;
    b = buf;
-   DBG(" CSI: '%c' args '%s'", *cc, buf);
+//   DBG(" CSI: '%c' args '%s'", *cc, buf);
    switch (*cc)
      {
       case 'm': // color set
@@ -1383,7 +1384,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
                          }
                     }
                }
-             if (!handled) ERR("unhandled '%c' : '%s'", *cc, buf);
+             if (!handled) ERR("unhandled '%c'", *cc);
           }
         break;
       case 'r':
@@ -1454,7 +1455,7 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
         break;
  */
       default:
-        ERR("unhandled CSI '%c' (0x%02x), buf='%s'", *cc, *cc, buf);
+        ERR("unhandled CSI '%c' (0x%02x)", *cc, *cc);
         break;
      }
    cc++;
@@ -1462,12 +1463,14 @@ _handle_esc_csi(Termpty *ty, const int *c, int *ce)
 }
 
 static int
-_handle_esc_xterm(Termpty *ty, const int *c, int *ce)
+_handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   int *cc;
-   char buf[4096], *b;
-
-   cc = (int *)c;
+   Eina_Unicode *cc;
+   Eina_Unicode buf[4096], *b;
+   char *s;
+   int len = 0;
+   
+   cc = (Eina_Unicode *)c;
    b = buf;
    while ((cc < ce) && (*cc >= ' ') && (*cc < 0x7f))
      {
@@ -1482,26 +1485,51 @@ _handle_esc_xterm(Termpty *ty, const int *c, int *ce)
      {
       case '0':
         // XXX: title + name - callback
-        b = &(buf[2]);
+        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
         if (ty->prop.title) eina_stringshare_del(ty->prop.title);
         if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-        ty->prop.title = eina_stringshare_add(b);
-        ty->prop.icon = eina_stringshare_add(b);
+        if (b)
+          {
+             ty->prop.title = eina_stringshare_add(s);
+             ty->prop.icon = eina_stringshare_add(s);
+             free(s);
+          }
+        else
+          {
+             ty->prop.title = NULL;
+             ty->prop.icon = NULL;
+          }
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         if (ty->cb.set_icon.func) ty->cb.set_title.func(ty->cb.set_icon.data);
         break;
       case '1':
         // XXX: icon name - callback
-        b = &(buf[2]);
+        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
         if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-        ty->prop.icon = eina_stringshare_add(b);
+        if (s)
+          {
+             ty->prop.icon = eina_stringshare_add(s);
+             free(s);
+          }
+        else
+          {
+             ty->prop.icon = NULL;
+          }
         if (ty->cb.set_icon.func) ty->cb.set_title.func(ty->cb.set_icon.data);
         break;
       case '2':
         // XXX: title - callback
-        b = &(buf[2]);
+        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
         if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-        ty->prop.title = eina_stringshare_add(b);
+        if (s)
+          {
+             ty->prop.title = eina_stringshare_add(s);
+             free(s);
+          }
+        else
+          {
+             ty->prop.title = NULL;
+          }
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
       case '4':
@@ -1510,14 +1538,42 @@ _handle_esc_xterm(Termpty *ty, const int *c, int *ce)
         break;
       default:
         // many others
-        ERR("unhandled xterm esc '%c' -> '%s'", buf[0], buf);
+        ERR("unhandled xterm esc '%c'", buf[0]);
         break;
      }
     return cc - c;
 }
 
 static int
-_handle_esc(Termpty *ty, const int *c, int *ce)
+_handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+{
+   Eina_Unicode *cc;
+   Eina_Unicode buf[4096], *b;
+   char *s;
+   int slen =  0;
+
+   cc = (Eina_Unicode *)c;
+   b = buf;
+   while ((cc < ce) && (*cc != 0x0))
+     {
+        *b = *cc;
+        b++;
+        cc++;
+     }
+   *b = 0;
+   if (*cc == 0x0) cc++;
+   else return -2;
+   // commands are stored in the buffer, 0 bytes not allowd (end marker)
+   s = eina_unicode_unicode_to_utf8(buf, &slen);
+   ty->cur_cmd = s;
+   if (ty->cb.command.func) ty->cb.command.func(ty->cb.command.data);
+   ty->cur_cmd = NULL;
+   if (s) free(s);
+   return cc - c;
+}
+
+static int
+_handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    if ((ce - c) < 2) return 0;
    DBG("ESC: '%c'", c[1]);
@@ -1527,6 +1583,8 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
         return 2 + _handle_esc_csi(ty, c + 2, ce);
       case ']':
         return 2 + _handle_esc_xterm(ty, c + 2, ce);
+      case '}':
+        return 2 + _handle_esc_terminology(ty, c + 2, ce);
       case '=': // set alternate keypad mode
         ty->state.alt_kp = 1;
         return 2;
@@ -1626,9 +1684,10 @@ _handle_esc(Termpty *ty, const int *c, int *ce)
 }
 
 static int
-_handle_seq(Termpty *ty, const int *c, int *ce)
+_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
 {
-   int *cc, len = 0;
+   Eina_Unicode *cc;
+   int len = 0;
 
 /*   
    printf(" B: ");
@@ -1794,9 +1853,10 @@ _handle_seq(Termpty *ty, const int *c, int *ce)
 }
 
 static void
-_handle_buf(Termpty *ty, const int *codepoints, int len)
+_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
-   int *c, *ce, n, *b, bytes;
+   Eina_Unicode *c, *ce, *b;
+   int n, bytes;
 
    c = (int *)codepoints;
    ce = &(c[len]);
@@ -1810,7 +1870,7 @@ _handle_buf(Termpty *ty, const int *codepoints, int len)
              ERR("memerr");
           }
         INF("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
-        bytes = len * sizeof(int);
+        bytes = len * sizeof(Eina_Unicode);
         memcpy(&(b[ty->buflen]), codepoints, bytes);
         ty->buf = b;
         ty->buflen += len;
@@ -1822,11 +1882,11 @@ _handle_buf(Termpty *ty, const int *codepoints, int len)
              n = _handle_seq(ty, c, ce);
              if (n == 0)
                {
-                  int *tmp = ty->buf;
+                  Eina_Unicode *tmp = ty->buf;
                   ty->buf = NULL;
                   ty->buflen = 0;
-                  bytes = ((char *)ce - (char *)c) + sizeof(int);
-                  INF("malloc til %i", (int)(bytes - sizeof(int)));
+                  bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
+                  INF("malloc til %i", (int)(bytes - sizeof(Eina_Unicode)));
                   ty->buf = malloc(bytes);
                   if (!ty->buf)
                     {
@@ -1834,7 +1894,7 @@ _handle_buf(Termpty *ty, const int *codepoints, int len)
                     }
                   bytes = (char *)ce - (char *)c;
                   memcpy(ty->buf, c, bytes);
-                  ty->buflen = bytes / sizeof(int);
+                  ty->buflen = bytes / sizeof(Eina_Unicode);
                   ty->buf[ty->buflen] = 0;
                   free(tmp);
                   break;
@@ -1858,16 +1918,16 @@ _handle_buf(Termpty *ty, const int *codepoints, int len)
              n = _handle_seq(ty, c, ce);
              if (n == 0)
                {
-                  bytes = ((char *)ce - (char *)c) + sizeof(int);
+                  bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
                   ty->buf = malloc(bytes);
-                  INF("malloc %i", (int)(bytes - sizeof(int)));
+                  INF("malloc %i", (int)(bytes - sizeof(Eina_Unicode)));
                   if (!ty->buf)
                     {
                        ERR("memerr");
                     }
                   bytes = (char *)ce - (char *)c;
                   memcpy(ty->buf, c, bytes);
-                  ty->buflen = bytes / sizeof(int);
+                  ty->buflen = bytes / sizeof(Eina_Unicode);
                   ty->buf[ty->buflen] = 0;
                   break;
                }
@@ -1906,7 +1966,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Termpty *ty = data;
    char buf[4097];
-   int codepoint[4097];
+   Eina_Unicode codepoint[4097];
    int len, i, j, reads;
 
    // read up to 64 * 4096 bytes

@@ -34,8 +34,11 @@ static const Keyout appcur_keyout[] =
    KEY("Right",        "\033OC"),
    KEY("Up",           "\033OA"),
    KEY("Down",         "\033OB"),
-   KEY("Home",         "\033[7~"),
-   KEY("End",          "\033[8~"),
+   KEY("Home",         "\033OH"),
+   KEY("End",          "\033OF"),
+//// why did i change these?   
+//   KEY("Home",         "\033[7~"),
+//   KEY("End",          "\033[8~"),
    KEY("F1",           "\033OP"),
    KEY("F2",           "\033OQ"),
    KEY("F3",           "\033OR"),
@@ -266,6 +269,7 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
 
    if (ty->state.appcursor)
      {
+        printf("appcur...\n");
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
 

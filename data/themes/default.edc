@@ -322,10 +322,6 @@ collections {
          
          ////////////////////////////////////////////////////////////////////
          // overlayed options and controls
-         part { name: "terminology.dismiss"; type: SWALLOW;
-            description { state: "default" 0.0;
-            }
-         }
          part { name: "terminology.about"; type: SWALLOW;
             scale: 1;
             description { state: "default" 0.0;
@@ -358,6 +354,13 @@ collections {
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.about";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
+         // swallow to hold invisile rect to click on to dismiss things
+         part { name: "terminology.dismiss"; type: SWALLOW;
+            description { state: "default" 0.0;
+            }
          }
          
          ////////////////////////////////////////////////////////////////////
@@ -893,9 +896,20 @@ collections {
          }                                              
       }
       programs {
+         program { name: "begin";
+            signal: "begin";
+            source: "terminology";
+            action: ACTION_STOP;
+            target: "show";
+            target: "show2";
+            after: "begin2";
+         }
+         program { name: "begin2";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.text";
+            after: "show";
+         }
          program { name: "show";
-            signal: "show";
-            source: "";
             action: STATE_SET "up" 0.0;
             transition: LINEAR 45.0;
             target: "terminology.text";

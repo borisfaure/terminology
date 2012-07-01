@@ -1614,6 +1614,16 @@ _smart_pty_bell(void *data)
    evas_object_smart_callback_call(data, "bell", NULL);
 }
 
+static void
+_smart_pty_command(void *data)
+{
+   Evas_Object *obj = data;
+   Termio *sd;
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   printf("COMMAND: '%s'\n", sd->pty->cur_cmd);
+}
+
 Evas_Object *
 termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
 {
@@ -1649,6 +1659,8 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
    sd->pty->cb.exited.data = obj;
    sd->pty->cb.bell.func = _smart_pty_bell;
    sd->pty->cb.bell.data = obj;
+   sd->pty->cb.command.func = _smart_pty_command;
+   sd->pty->cb.command.data = obj;
    _smart_size(obj, w, h, EINA_FALSE);
    return obj;
 }
