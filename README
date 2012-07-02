@@ -49,6 +49,7 @@ Right mouse button = controls menu
 Middle mouse button = paste highlight selection
 Left mouse button/drag = make highlight
 Wheel = scroll up or down in history
+Ctrl+Wheel = zoom font size up/down
 
 Extended escapes for terminology only:
 
