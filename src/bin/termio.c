@@ -40,6 +40,7 @@ struct _Termio
       } sel1, sel2;
       Eina_Bool sel : 1;
    } backup;
+   int zoom_fontsize_start;
    int scroll;
    unsigned int last_keyup;
    Eina_List *seq;
@@ -430,9 +431,37 @@ _paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 }
 
 static void
-_smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_font_size_set(Evas_Object *obj, int size)
 {
-   Evas_Event_Key_Up *ev = event_info;
+   Termio *sd = evas_object_smart_data_get(obj);
+   Config *config = termio_config_get(obj);
+   if (!sd) return;
+
+   if (size < 5) size = 5;
+   else if (size > 100) size = 100;
+   if (config)
+     {
+        Evas_Coord mw = 1, mh = 1;
+        int gw, gh;
+        
+        config->temporary = EINA_TRUE;
+        config->font.size = size;
+        gw = sd->grid.w;
+        gh = sd->grid.h;
+        evas_object_size_hint_min_get(obj, &mw, &mh);
+        sd->noreqsize = 1;
+        termio_config_update(obj);
+        sd->noreqsize = 0;
+        evas_object_size_hint_min_get(obj, &mw, &mh);
+        evas_object_data_del(obj, "sizedone");
+        evas_object_size_hint_request_set(obj, mw * gw, mh * gh);
+     }
+}
+
+static void
+_smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Key_Up *ev = event;
    Termio *sd;
 
    sd = evas_object_smart_data_get(data);
@@ -517,23 +546,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                   
                   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
-                  if (config)
-                    {
-                       Evas_Coord mw = 1, mh = 1;
-                       int gw, gh;
-
-                       config->temporary = EINA_TRUE;
-                       config->font.size += 1;
-                       gw = sd->grid.w;
-                       gh = sd->grid.h;
-                       evas_object_size_hint_min_get(obj, &mw, &mh);
-                       sd->noreqsize = 1;
-                       termio_config_update(data);
-                       sd->noreqsize = 0;
-                       evas_object_size_hint_min_get(data, &mw, &mh);
-                       evas_object_data_del(data, "sizedone");
-                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
-                    }
+                  if (config) _font_size_set(data, config->font.size + 1);
                   goto end;
                }
              else if (!strcmp(ev->keyname, "KP_Subtract"))
@@ -542,23 +555,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                   
                   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
-                  if (config)
-                    {
-                       Evas_Coord mw = 1, mh = 1;
-                       int gw, gh;
-
-                       config->temporary = EINA_TRUE;
-                       config->font.size -= 1;
-                       gw = sd->grid.w;
-                       gh = sd->grid.h;
-                       evas_object_size_hint_min_get(obj, &mw, &mh);
-                       sd->noreqsize = 1;
-                       termio_config_update(data);
-                       sd->noreqsize = 0;
-                       evas_object_size_hint_min_get(data, &mw, &mh);
-                       evas_object_data_del(data, "sizedone");
-                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
-                    }
+                  if (config) _font_size_set(data, config->font.size - 1);
                   goto end;
                }
              else if (!strcmp(ev->keyname, "KP_Multiply"))
@@ -567,23 +564,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                   
                   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
                   sd->composing = EINA_FALSE;
-                  if (config)
-                    {
-                       Evas_Coord mw = 1, mh = 1;
-                       int gw, gh;
-
-                       config->temporary = EINA_TRUE;
-                       config->font.size = 10;
-                       gw = sd->grid.w;
-                       gh = sd->grid.h;
-                       evas_object_size_hint_min_get(obj, &mw, &mh);
-                       sd->noreqsize = 1;
-                       termio_config_update(data);
-                       sd->noreqsize = 0;
-                       evas_object_size_hint_min_get(data, &mw, &mh);
-                       evas_object_data_del(data, "sizedone");
-                       evas_object_size_hint_request_set(data, mw * gw, mh * gh);
-                    }
+                  if (config) _font_size_set(data, 10);
                   goto end;
                }
              else if (!strcmp(ev->keyname, "KP_Divide"))
@@ -1210,6 +1191,9 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    if (sd->pty->altbuf) return;
+   if (evas_key_modifier_is_set(ev->modifiers, "Control")) return;
+   if (evas_key_modifier_is_set(ev->modifiers, "Alt")) return;
+   if (evas_key_modifier_is_set(ev->modifiers, "Shift")) return;
    sd->scroll -= (ev->z * 4);
    if (sd->scroll > sd->pty->backscroll_num)
      sd->scroll = sd->pty->backscroll_num;
@@ -1278,11 +1262,86 @@ _cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    _imf_cursor_set(sd);
 }
 
+static Evas_Event_Flags
+_smart_cb_gest_long_start(void *data, void *event __UNUSED__)
+{
+//   Elm_Gesture_Taps_Info *p = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   
+   if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
+   evas_object_smart_callback_call(data, "options", NULL);
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+_smart_cb_gest_zoom_start(void *data, void *event)
+{
+   Elm_Gesture_Zoom_Info *p = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   Config *config = termio_config_get(data);
+   
+   if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
+   if (config)
+     {
+        sd->zoom_fontsize_start = config->font.size;
+        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+     }
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+_smart_cb_gest_zoom_move(void *data, void *event)
+{
+   Elm_Gesture_Zoom_Info *p = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   Config *config = termio_config_get(data);
+   
+   if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
+   if (config)
+     {
+        sd->zoom_fontsize_start = config->font.size;
+        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+     }
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+_smart_cb_gest_zoom_end(void *data, void *event)
+{
+   Elm_Gesture_Zoom_Info *p = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   Config *config = termio_config_get(data);
+   
+   if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
+   if (config)
+     {
+        sd->zoom_fontsize_start = config->font.size;
+        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+     }
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
+static Evas_Event_Flags
+_smart_cb_gest_zoom_abort(void *data, void *event __UNUSED__)
+{
+//   Elm_Gesture_Zoom_Info *p = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   Config *config = termio_config_get(data);
+   
+   if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
+   if (config)
+     {
+        sd->zoom_fontsize_start = config->font.size;
+        _font_size_set(data, sd->zoom_fontsize_start);
+     }
+   return EVAS_EVENT_FLAG_ON_HOLD;
+}
+
 static void
-_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info)
+_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event)
 {
    Termio *sd = data;
-   char *str = event_info;
+   char *str = event;
    DBG("IMF committed '%s'", str);
    if (!str) return;
    termpty_write(sd->pty, str, strlen(str));
@@ -1293,7 +1352,7 @@ _smart_add(Evas_Object *obj)
 {
    Termio *sd;
    Evas_Object_Smart_Clipped_Data *cd;
-   Evas_Object *o;
+   Evas_Object *o, *g;
    int i, j, k, l, n;
 
    _parent_sc.add(obj);
@@ -1367,7 +1426,7 @@ _smart_add(Evas_Object *obj)
    sd->event = o;
    evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_show(o);
-   
+
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _smart_cb_mouse_down, obj);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
@@ -1641,7 +1700,7 @@ Evas_Object *
 termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
 {
    Evas *e;
-   Evas_Object *obj;
+   Evas_Object *obj, *g;
    Termio *sd;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1655,6 +1714,26 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
 
    _termio_config_set(obj, config);
 
+   g = elm_gesture_layer_add(parent);
+   elm_gesture_layer_attach(g, sd->event);
+
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
+                            ELM_GESTURE_STATE_START, _smart_cb_gest_long_start,
+                            obj);
+   
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
+                            ELM_GESTURE_STATE_START, _smart_cb_gest_zoom_start,
+                            obj);
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
+                            ELM_GESTURE_STATE_MOVE, _smart_cb_gest_zoom_move,
+                            obj);
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
+                            ELM_GESTURE_STATE_END, _smart_cb_gest_zoom_end,
+                            obj);
+   elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
+                            ELM_GESTURE_STATE_ABORT, _smart_cb_gest_zoom_abort,
+                            obj);
+   
    termpty_init();
 
    sd->pty = termpty_new(cmd, w, h, config->scrollback);
