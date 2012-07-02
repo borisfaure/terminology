@@ -269,7 +269,6 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
 
    if (ty->state.appcursor)
      {
-        printf("appcur...\n");
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
 
