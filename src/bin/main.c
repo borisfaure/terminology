@@ -168,11 +168,15 @@ static const Ecore_Getopt options = {
                              "Use the named edje theme or path to theme file."),
       ECORE_GETOPT_STORE_STR('b', "background",
                              "Use the named file as a background wallpaper."),
-      ECORE_GETOPT_CHOICE(0, "video-module",
+      ECORE_GETOPT_STORE_STR('g', "geometry",
+                             "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."),
+      ECORE_GETOPT_CHOICE('v', "video-module",
                           "Set emotion module to use.",
                           emotion_choices),
-      ECORE_GETOPT_STORE_BOOL(0, "video-mute",
+      ECORE_GETOPT_STORE_BOOL('m', "video-mute",
                               "Set mute mode for video playback."),
+      ECORE_GETOPT_STORE_BOOL('F', "fullscreen",
+                              "Go into fullscreen mode from start."),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('C', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -187,15 +191,19 @@ elm_main(int argc, char **argv)
    char *cmd = NULL;
    char *theme = NULL;
    char *background = NULL;
+   char *geometry = NULL;
    char *video_module = NULL;
    Eina_Bool video_mute = 0xff; /* unset */
+   Eina_Bool fullscreen = 0xff; /* unset */
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(cmd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
+     ECORE_GETOPT_VALUE_STR(geometry),
      ECORE_GETOPT_VALUE_STR(video_module),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
+     ECORE_GETOPT_VALUE_BOOL(fullscreen),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -205,6 +213,9 @@ elm_main(int argc, char **argv)
    int args, retval = EXIT_SUCCESS;
    Config *config;
    Evas_Object *o;
+   int pos_set = 0, size_set = 0;
+   int pos_x = 0, pos_y = 0;
+   int size_w = 1, size_h = 1;
 
    _log_domain = eina_log_domain_register("terminology", NULL);
    if (_log_domain < 0)
@@ -279,11 +290,67 @@ elm_main(int argc, char **argv)
         config->mute = video_mute;
         config->temporary = EINA_TRUE;
      }
+   
+   if (geometry)
+     {
+        if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+          {
+             pos_set = 1;
+             size_set = 1;
+          }
+        else if (sscanf(geometry,"%ix%i-%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+          {
+             pos_set = 1;
+             size_set = 1;
+          }
+        else if (sscanf(geometry,"%ix%i-%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+          {
+             pos_set = 1;
+             size_set = 1;
+          }
+        else if (sscanf(geometry,"%ix%i+%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+          {
+             pos_set = 1;
+             size_set = 1;
+          }
+        else if (sscanf(geometry,"%ix%i", &size_w, &size_h) == 2)
+          {
+             size_set = 1;
+          }
+        else if (sscanf(geometry,"+%i+%i", &pos_x, &pos_y) == 2)
+          {
+             pos_set = 1;
+          }
+        else if (sscanf(geometry,"-%i+%i", &pos_x, &pos_y) == 2)
+          {
+             pos_set = 1;
+          }
+        else if (sscanf(geometry,"+%i-%i", &pos_x, &pos_y) == 2)
+          {
+             pos_set = 1;
+          }
+        else if (sscanf(geometry,"-%i-%i", &pos_x, &pos_y) == 2)
+          {
+             pos_set = 1;
+          }
+     }
+   if (!size_set)
+     {
+        size_w = 80;
+        size_h = 24;
+     }
 
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
 
    win = tg_win_add();
+   
+   elm_win_conformant_set(win, EINA_TRUE);
+
+   if (fullscreen != 0xff)
+     {
+        if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
+     }
    
    conform = o = elm_conformant_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -304,7 +371,9 @@ elm_main(int argc, char **argv)
    elm_object_content_set(conform, o);
    evas_object_show(o);
 
-   term = o = termio_add(win, config, cmd, 80, 24);
+   if (pos_set) evas_object_move(win, pos_x, pos_y);
+   
+   term = o = termio_add(win, config, cmd, size_w, size_h);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);

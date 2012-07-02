@@ -21,22 +21,24 @@ struct _Font
 
 static Eina_List *fonts = NULL;
 static Eina_Hash *fonthash = NULL;
+static Evas_Coord tsize_w = 0, tsize_h = 0;
+static int expecting_resize = 0;
 
 static void
 _update_sizing(Evas_Object *term)
 {
-   Evas_Coord ow = 0, oh = 0, mw = 1, mh = 1, w, h;
+   Evas_Coord mw = 1, mh = 1, w, h;
 
    evas_object_data_del(term, "sizedone");
    termio_config_update(term);
-   evas_object_geometry_get(term, NULL, NULL, &ow, &oh);
    evas_object_size_hint_min_get(term, &mw, &mh);
    if (mw < 1) mw = 1;
    if (mh < 1) mh = 1;
-   w = ow / mw;
-   h = oh / mh;
+   w = tsize_w / mw;
+   h = tsize_h / mh;
    evas_object_data_del(term, "sizedone");
    evas_object_size_hint_request_set(term, w * mw, h * mh);
+   expecting_resize = 1;
 }
 
 static void
@@ -164,6 +166,26 @@ static char *
 _cb_op_font_group_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return strdup(data);
+}
+
+static void
+_cb_term_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   if (expecting_resize)
+     {
+        expecting_resize = 0;
+        return;
+     }
+   evas_object_geometry_get(term, NULL, NULL, &tsize_w, &tsize_h);
+}
+
+static void
+_cb_font_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   evas_object_event_callback_del_full(term, EVAS_CALLBACK_RESIZE, 
+                                       _cb_term_resize, term);
 }
 
 void
@@ -331,4 +353,11 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
+
+   expecting_resize = 0;
+   evas_object_geometry_get(term, NULL, NULL, &tsize_w, &tsize_h);
+   evas_object_event_callback_add(term, EVAS_CALLBACK_RESIZE,
+                                  _cb_term_resize, term);
+   evas_object_event_callback_add(opbox, EVAS_CALLBACK_DEL,
+                                  _cb_font_del, term);
 }
