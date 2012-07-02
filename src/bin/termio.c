@@ -826,8 +826,8 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
-   switch (sd->pty->state.mouse_rep)
+   if (sd->pty->mouse_rep == MOUSE_OFF) return;
+   switch (sd->pty->mouse_rep)
      {
       case MOUSE_X10:
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
@@ -927,8 +927,8 @@ _rep_mouse_up(Evas_Object *obj, Evas_Event_Mouse_Up *ev, int cx, int cy)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
-   switch (sd->pty->state.mouse_rep)
+   if (sd->pty->mouse_rep == MOUSE_OFF) return;
+   switch (sd->pty->mouse_rep)
      {
       case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
           {
@@ -1005,7 +1005,7 @@ _rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev __UNUSED__, int cx _
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (sd->pty->state.mouse_rep == MOUSE_OFF) return;
+   if (sd->pty->mouse_rep == MOUSE_OFF) return;
    // not sure what to d here right now so do nothing.
 }
 

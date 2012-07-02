@@ -78,7 +78,6 @@ struct _Termstate
    unsigned int  kbd_lock : 1;
    unsigned int  reverse : 1;
    unsigned int  no_autorepeat : 1;
-   unsigned int  mouse_rep : 3;
    unsigned int  cjk_ambiguous_wide : 1;
 };
 
@@ -109,6 +108,7 @@ struct _Termpty
    Termstate state, save, swap;
    int exit_code;
    unsigned int altbuf : 1;
+   unsigned int mouse_rep : 3;
 };
 
 struct _Termcell
