@@ -674,6 +674,7 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
    if (sd->imf)
      {
+        ecore_imf_context_input_panel_show(sd->imf);
         ecore_imf_context_reset(sd->imf);
         ecore_imf_context_focus_in(sd->imf);
         _imf_cursor_set(sd);
@@ -695,6 +696,7 @@ _smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
         ecore_imf_context_reset(sd->imf);
         _imf_cursor_set(sd);
         ecore_imf_context_focus_out(sd->imf);
+        ecore_imf_context_input_panel_hide(sd->imf);
      }
 }
 
@@ -1416,9 +1418,20 @@ _smart_add(Evas_Object *obj)
           (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb, sd);
 
         /* make IMF usable by a terminal - no preedit, prediction... */
-        ecore_imf_context_use_preedit_set(sd->imf, EINA_FALSE);
-        ecore_imf_context_prediction_allow_set(sd->imf, EINA_FALSE);
-        ecore_imf_context_autocapital_type_set(sd->imf, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
+        ecore_imf_context_use_preedit_set
+          (sd->imf, EINA_FALSE);
+        ecore_imf_context_prediction_allow_set
+          (sd->imf, EINA_FALSE);
+        ecore_imf_context_autocapital_type_set
+          (sd->imf, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
+        ecore_imf_context_input_panel_layout_set
+          (sd->imf, ECORE_IMF_INPUT_PANEL_LAYOUT_TERMINAL);
+        ecore_imf_context_input_mode_set
+          (sd->imf, ECORE_IMF_INPUT_MODE_FULL);
+        ecore_imf_context_input_panel_language_set
+          (sd->imf, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
+        ecore_imf_context_input_panel_return_key_type_set
+          (sd->imf, ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT);
 imf_done:
         if (sd->imf) DBG("Ecore IMF Setup");
         else WRN("Ecore IMF failed");

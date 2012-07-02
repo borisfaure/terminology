@@ -13,6 +13,7 @@
 int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
+static Evas_Object *conform = NULL;
 static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
 
@@ -283,6 +284,12 @@ elm_main(int argc, char **argv)
    putenv("TERMINOLOGY=1");
 
    win = tg_win_add();
+   
+   conform = o = elm_conformant_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, o);
+   evas_object_show(o);
 
    bg = o = edje_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -294,7 +301,7 @@ elm_main(int argc, char **argv)
         goto end;
      }
    theme_auto_reload_enable(o);
-   elm_win_resize_object_add(win, o);
+   elm_object_content_set(conform, o);
    evas_object_show(o);
 
    term = o = termio_add(win, config, cmd, 80, 24);
