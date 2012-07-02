@@ -911,7 +911,7 @@ collections {
          }
          program { name: "show";
             action: STATE_SET "up" 0.0;
-            transition: LINEAR 45.0;
+            transition: LINEAR 60.0;
             target: "terminology.text";
             after: "show2";
          }
