@@ -290,7 +290,7 @@ elm_main(int argc, char **argv)
         config->mute = video_mute;
         config->temporary = EINA_TRUE;
      }
-   
+  
    if (geometry)
      {
         if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
@@ -300,16 +300,20 @@ elm_main(int argc, char **argv)
           }
         else if (sscanf(geometry,"%ix%i-%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
           {
+             pos_x = -pos_x;
              pos_set = 1;
              size_set = 1;
           }
         else if (sscanf(geometry,"%ix%i-%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
           {
+             pos_x = -pos_x;
+             pos_y = -pos_y;
              pos_set = 1;
              size_set = 1;
           }
         else if (sscanf(geometry,"%ix%i+%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
           {
+             pos_y = -pos_y;
              pos_set = 1;
              size_set = 1;
           }
@@ -323,14 +327,18 @@ elm_main(int argc, char **argv)
           }
         else if (sscanf(geometry,"-%i+%i", &pos_x, &pos_y) == 2)
           {
+             pos_x = -pos_x;
              pos_set = 1;
           }
         else if (sscanf(geometry,"+%i-%i", &pos_x, &pos_y) == 2)
           {
+             pos_y = -pos_y;
              pos_set = 1;
           }
         else if (sscanf(geometry,"-%i-%i", &pos_x, &pos_y) == 2)
           {
+             pos_x = -pos_x;
+             pos_y = -pos_y;
              pos_set = 1;
           }
      }
@@ -339,7 +347,7 @@ elm_main(int argc, char **argv)
         size_w = 80;
         size_h = 24;
      }
-
+    
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
 
@@ -351,7 +359,7 @@ elm_main(int argc, char **argv)
      {
         if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
      }
-   
+ 
    conform = o = elm_conformant_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -371,7 +379,14 @@ elm_main(int argc, char **argv)
    elm_object_content_set(conform, o);
    evas_object_show(o);
 
-   if (pos_set) evas_object_move(win, pos_x, pos_y);
+   if (pos_set)
+     {
+        int screen_w, screen_h;
+        elm_win_screen_size_get(win, NULL, NULL, &screen_w, &screen_h);
+        if (pos_x < 0) pos_x = screen_w + pos_x;
+        if (pos_y < 0) pos_y = screen_h + pos_y;
+        evas_object_move(win, pos_x, pos_y);
+     }
    
    term = o = termio_add(win, config, cmd, size_w, size_h);
    termio_win_set(o, win);
