@@ -35,6 +35,9 @@ struct _Termio
       Eina_Bool makesel : 1;
    } cur;
    struct {
+      int cx, cy;
+   } mouse;
+   struct {
       struct {
          int x, y;
       } sel1, sel2;
@@ -48,6 +51,7 @@ struct _Termio
    Termpty *pty;
    Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
+   Ecore_Job *mouse_move_job;
    Evas_Object *win;
    Config *config;
    Ecore_IMF_Context *imf;
@@ -61,6 +65,179 @@ static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
+
+static Eina_Bool
+coord_back(Termio *sd, int *x, int *y)
+{
+   (*x)--;
+   if ((*x) < 0)
+     {
+        if ((*y) <= 0)
+          {
+             (*x)++;
+             return EINA_FALSE;
+          }
+        (*x) = sd->grid.w - 1;
+        (*y)--;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+coord_forward(Termio *sd, int *x, int *y)
+{
+   (*x)++;
+   if ((*x) >= sd->grid.w)
+     {
+        if ((*y) >= (sd->grid.h - 1))
+          {
+             (*x)--;
+             return EINA_FALSE;
+          }
+        (*x) = 0;
+        (*y)++;
+     }
+   return EINA_TRUE;
+}
+
+static void
+_smart_mouseover_apply(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   char *s;
+   char endmatch = 0;
+   int x1, x2, y1, y2, len;
+   Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, extend = EINA_FALSE;
+   
+   if (!sd) return;
+   x1 = sd->mouse.cx;
+   y1 = sd->mouse.cy;
+   x2 = sd->mouse.cx;
+   y2 = sd->mouse.cy;
+   if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
+   for (;;)
+     {
+        s = termio_selection_get(obj,
+                                 x1, y1 - sd->scroll,
+                                 x2, y2 - sd->scroll);
+        if (!s) break;
+        if (goback)
+          {
+             if      ((!strncasecmp(s, "http://", 7))||
+                      (!strncasecmp(s, "https://", 8)) ||
+                      (!strncasecmp(s, "ftp://", 6)))
+               {
+                  goback = EINA_FALSE;
+                  coord_back(sd, &x1, &y1);
+                  free(s);
+                  s = termio_selection_get(obj,
+                                           x1, y1 - sd->scroll,
+                                           x2, y2 - sd->scroll);
+                  if (!s) break;
+                  if (s[0] == '"') endmatch = '"';
+                  else if (s[0] == '\'') endmatch = '\'';
+                  else if (s[0] == '<') endmatch = '>';
+                  coord_forward(sd, &x1, &y1);
+                  free(s);
+                  s = termio_selection_get(obj,
+                                           x1, y1 - sd->scroll,
+                                           x2, y2 - sd->scroll);
+                  if (!s) break;
+               }
+             else if ((isspace(s[0])) ||
+                      (s[0] == '"') ||
+                      (s[0] == '\'') ||
+                      (s[0] == '<') ||
+                      (s[0] == '='))
+               {
+                  if (s[0] == '"') endmatch = '"';
+                  else if (s[0] == '\'') endmatch = '\'';
+                  else if (s[0] == '<') endmatch = '>';
+                  if ((!strncasecmp((s + 1), "www.", 4)) ||
+                      (!strncasecmp((s + 1), "ftp.", 4)))
+                    {
+                       goback = EINA_FALSE;
+                       coord_forward(sd, &x1, &y1);
+                    }
+                  else if (strchr((s + 2), '@'))
+                    {
+                       goback = EINA_FALSE;
+                       coord_forward(sd, &x1, &y1);
+                    }
+                  else
+                    {
+                       free(s);
+                       s = NULL;
+                       break;
+                    }
+               }
+          }
+        if (goforward)
+          {
+             len = strlen(s);
+             if (len > 1)
+               {
+                  if (((endmatch) && (s[len - 1] == endmatch)) ||
+                      ((!endmatch) && (isspace(s[len - 1]))))
+                    {
+                       goforward = EINA_FALSE;
+                       coord_back(sd, &x2, &y2);
+                    }
+               }
+          }
+        
+        if (goforward)
+          {
+             if (!coord_forward(sd, &x2, &y2)) goforward = EINA_FALSE;
+          }
+        if (goback)
+          {
+             if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
+          }
+        else if (!extend)
+          {
+             goforward = EINA_TRUE;
+             extend = EINA_TRUE;
+          }
+        if ((!goback) && (!goforward))
+          {
+             free(s);
+             s = termio_selection_get(obj, 
+                                      x1, y1 - sd->scroll, 
+                                      x2, y2 - sd->scroll);
+             break;
+          }
+        free(s);
+        s = NULL;
+     }
+   if (s)
+     {
+        len = strlen(s);
+        while (len > 1)
+          {
+             if (isspace(s[len - 1]))
+               {
+                  s[len - 1] = 0;
+                  len--;
+               }
+             else break;
+          }
+        if (!isspace(s[0]))
+          {
+             if ((strchr(s, '@')) ||
+                 (!strncasecmp(s, "http://", 7))||
+                 (!strncasecmp(s, "https://", 8)) ||
+                 (!strncasecmp(s, "ftp://", 6)) ||
+                 (!strncasecmp(s, "www.", 4)) ||
+                 (!strncasecmp(s, "ftp.", 4)))
+               {
+                  printf("FOUND: '%s' @ %i,%i -> %i,%i\n", s, x1, y1, x2, y2);
+                  // XXX: record coords and url string
+               }
+          }
+        free(s);
+     }
+}
 
 static void
 _smart_apply(Evas_Object *obj)
@@ -288,6 +465,7 @@ _smart_apply(Evas_Object *obj)
         evas_object_hide(sd->cur.selo2);
         evas_object_hide(sd->cur.selo3);
      }
+   _smart_mouseover_apply(obj);
 }
 
 static void
@@ -1073,6 +1251,17 @@ _selection_dbl_fix(Evas_Object *obj)
 }
 
 static void
+_smart_cb_mouse_move_job(void *data)
+{
+   Termio *sd;
+   
+   sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   sd->mouse_move_job = NULL;
+   _smart_mouseover_apply(data);
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -1162,10 +1351,14 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd;
    int cx, cy;
+   Eina_Bool mc_change = EINA_FALSE;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->cur.canvas.x, ev->cur.canvas.y, &cx, &cy);
+   if ((sd->mouse.cx != cx) || (sd->mouse.cy != cy)) mc_change = EINA_TRUE;
+   sd->mouse.cx = cx;
+   sd->mouse.cy = cy;
    _rep_mouse_move(data, ev, cx, cy);
    if (sd->cur.makesel)
      {
@@ -1179,6 +1372,11 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         sd->cur.sel2.y = cy - sd->scroll; 
         _selection_dbl_fix(data);
        _smart_update_queue(data, sd);
+     }
+   if (mc_change)
+     {
+        if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
+        sd->mouse_move_job = ecore_job_add(_smart_cb_mouse_move_job, data);
      }
 }
 
@@ -1516,6 +1714,7 @@ _smart_del(Evas_Object *obj)
    if (sd->cur.selo3) evas_object_del(sd->cur.selo3);
    if (sd->anim) ecore_animator_del(sd->anim);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
+   if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
