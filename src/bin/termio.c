@@ -1352,7 +1352,7 @@ _smart_add(Evas_Object *obj)
 {
    Termio *sd;
    Evas_Object_Smart_Clipped_Data *cd;
-   Evas_Object *o, *g;
+   Evas_Object *o;
    int i, j, k, l, n;
 
    _parent_sc.add(obj);
@@ -1815,7 +1815,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
                   else break;
                }
              if (x >= w) break;
-             if ((cells[x].codepoint == 0) ||  (cells[x].codepoint == ' '))
+             if ((cells[x].codepoint == 0) || (cells[x].codepoint == ' '))
                {
                   if (last0 < 0) last0 = x;
                }
@@ -1858,7 +1858,44 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
           }
         if (last0 >= 0)
           {
-             eina_strbuf_append_char(sb, '\n');
+             if (y == c2y)
+               {
+                  Eina_Bool have_more = EINA_FALSE;
+                  
+                  for (x = end_x + 1; x < w; x++)
+                    {
+                       if ((cells[x].codepoint == 0) &&
+                           (cells[x].att.dblwidth))
+                         {
+                            if (x < (w - 1)) x++;
+                            else break;
+                         }
+                       if (((cells[x].codepoint != 0) &&
+                            (cells[x].codepoint != ' ')) ||
+                           (cells[x].att.newline) ||
+                           (cells[x].att.tab))
+                         {
+                            have_more = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!have_more) eina_strbuf_append_char(sb, '\n');
+                  else
+                    {
+                       for (x = last0; x <= end_x; x++)
+                         {
+                            if ((cells[x].codepoint == 0) &&
+                                (cells[x].att.dblwidth))
+                              {
+                                 if (x < (w - 1)) x++;
+                                 else break;
+                              }
+                            if (x >= w) break;
+                            eina_strbuf_append_char(sb, ' ');
+                         }
+                    }
+               }
+             else eina_strbuf_append_char(sb, '\n');
           }
      }
 
