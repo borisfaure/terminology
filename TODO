@@ -23,6 +23,7 @@ make it a first-class terminal:
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic so its reliable
+[ ] fast text/regex searching similar to urxvt
 
 things in future to make it totally kick-butt:
 
