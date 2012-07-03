@@ -1263,7 +1263,7 @@ _cursor_cb_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 }
 
 static Evas_Event_Flags
-_smart_cb_gest_long_start(void *data, void *event __UNUSED__)
+_smart_cb_gest_long_move(void *data, void *event __UNUSED__)
 {
 //   Elm_Gesture_Taps_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -1718,7 +1718,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, int w, int h)
    elm_gesture_layer_attach(g, sd->event);
 
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
-                            ELM_GESTURE_STATE_START, _smart_cb_gest_long_start,
+                            ELM_GESTURE_STATE_MOVE, _smart_cb_gest_long_move,
                             obj);
    
    elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
