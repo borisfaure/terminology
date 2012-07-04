@@ -12,6 +12,9 @@ collections {
         image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
         image: "bg_led_strobe.png" COMP;
+        image: "pm_shadow.png" COMP;
+        image: "pm_overlay.png" COMP;
+        image: "pm_fill.png" COMP;
       }
       parts {
 // other signals sent not handled here         
@@ -321,6 +324,317 @@ collections {
          }
          
          ////////////////////////////////////////////////////////////////////
+         // popup media over the terminal (until dismissed)
+         part { name: "popmedia_clip"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+               color: 255 255 255 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "popmedia_shadow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1 {
+                  to: "terminology.popmedia";
+               }
+               rel2 {
+                  to: "terminology.popmedia";
+               }
+               image.normal: "pm_shadow.png";
+               image.border: 64 64 64 64;
+               image.border_scale_by: 0.1;
+               fill.smooth: 0;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               rel1.offset: -32 -32;
+               rel2.offset: 31 31;
+               image.border_scale_by: 1.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_fill";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
+               image.normal: "pm_fill.png";
+               fill {
+                  size.relative: 0.0 0.0;
+                  size.offset: 64 64;
+               }
+            }
+         }
+         part { name: "terminology.popmedia"; type: SWALLOW;
+            clip_to: "popmedia_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.relative: 0.5 0.5;
+               rel2.relative: 0.5 0.5;
+               visible: 0;
+            }
+            description { state: "image" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+               visible: 1;
+            }
+            description { state: "scale" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+               visible: 1;
+            }
+            description { state: "edje" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+               visible: 1;
+            }
+            description { state: "movie" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_overlay";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
+               image.normal: "pm_overlay.png";
+               fill.smooth: 0;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_bevel";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
+               image.normal: "bg_bevel.png";
+               image.border: 3 3 5 3;
+               image.middle: 0;
+               fill.smooth: 0;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_glintclip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_glint";
+            mouse_events: 0;
+            clip_to: "popmedia_glintclip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 79 5;
+               max: 79 5;
+               rel1 {
+                  to: "terminology.popmedia";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "terminology.popmedia";
+                  relative: 1.0 0.0;
+                  offset: -1 0;
+               }
+               image.normal: "bg_glint.png";
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_shine";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
+               image.normal: "bg_shine.png";
+               fill.smooth: 0;
+               align: 0.5 0.0;
+               aspect: (255/120) (255/120);
+               aspect_preference: HORIZONTAL;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "popmedia_dismiss"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               color: 0 0 0 0;
+               visible: 0;
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         program { name: "popmedia_dismiss";
+            signal: "mouse,clicked,*";
+            source: "popmedia_dismiss";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.popmedia";
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+            after: "popmedia_dismiss2";
+         }
+         program { name: "popmedia_dismiss2";
+            action: SIGNAL_EMIT "popmedia,done" "terminology";
+         }
+         program { name: "popmedia_off";
+            signal: "popmedia,off";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.popmedia";
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+            after: "popmedia_dismiss2";
+         }
+         program { name: "popmedia_img";
+            signal: "popmedia,image";
+            source: "terminology";
+            action: STATE_SET "image" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.popmedia";
+         }
+         program { name: "popmedia_scale";
+            signal: "popmedia,scale";
+            source: "terminology";
+            action: STATE_SET "scale" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.popmedia";
+         }
+         program { name: "popmedia_edje";
+            signal: "popmedia,edje";
+            source: "terminology";
+            action: STATE_SET "edje" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.popmedia";
+         }
+         program { name: "popmedia_mov";
+            signal: "popmedia,movie";
+            source: "terminology";
+            action: STATE_SET "movie" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.popmedia";
+         }
+         program { name: "popmedia_img2";
+            signal: "popmedia,image";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.2;
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+         }
+         program { name: "popmedia_scale2";
+            signal: "popmedia,scale";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.2;
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+         }
+         program { name: "popmedia_edje2";
+            signal: "popmedia,edje";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.2;
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+         }
+         program { name: "popmedia_mov2";
+            signal: "popmedia,movie";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.2;
+            target: "popmedia_clip";
+            target: "popmedia_dismiss";
+            target: "popmedia_shadow";
+            target: "popmedia_fill";
+            target: "popmedia_overlay";
+            target: "popmedia_bevel";
+            target: "popmedia_glint";
+            target: "popmedia_glintclip";
+            target: "popmedia_shine";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
          // overlayed options and controls
          part { name: "terminology.about"; type: SWALLOW;
             scale: 1;
@@ -625,6 +939,118 @@ collections {
                action: STATE_SET "out" 0.0;
                transition: DECELERATE 0.3;
                target: "key";
+            }
+         }
+      }
+   }
+
+//////////////////////////////////////////////////////////////////////////////
+   //// an object overlayd on text that is a link
+   group { name: "terminology/link";
+      images {
+        image: "lk_bottom.png" COMP;
+        image: "lk_left.png" COMP;
+        image: "lk_right.png" COMP;
+      }
+      parts {
+         part { name: "bottom";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "lk_bottom.png";
+               image.border: 9 9 0 0;
+               align: 0.5 1.0;
+               min: 20 8;
+               rel1.offset: -6 0;
+               rel1.relative: 0.0 1.0;
+               rel2.offset: 5 0;
+               color: 100 200 255 255;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "l";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "lk_left.png";
+               align: 0.0 1.0;
+               min: 4 4;
+               rel1.offset: 16 -1;
+               rel1.relative: 0.0 1.0;
+               rel2.offset: 16 -1;
+               rel2.relative: 0.0 1.0;
+               color: 100 200 255 0;
+            }
+            description { state: "out" 0.0;
+               inherit: "default" 0.0;
+               min: 16 16;
+               rel1.offset: -10 -1;
+               rel2.offset: -10 -1;
+               color: 180 220 255 255;
+            }
+            description { state: "out2" 0.0;
+               inherit: "default" 0.0;
+               min: 32 32;
+               rel1.offset: -26 -1;
+               rel2.offset: -26 -1;
+               color: 100 200 255 0;
+            }
+         }
+         part { name: "r";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "lk_right.png";
+               align: 1.0 1.0;
+               min: 4 4;
+               rel1.offset: -15 0;
+               rel1.relative: 1.0 1.0;
+               rel2.offset: -15 0;
+               rel2.relative: 1.0 1.0;
+               color: 100 200 255 0;
+            }
+            description { state: "out" 0.0;
+               inherit: "default" 0.0;
+               min: 16 16;
+               rel1.offset: 9 -1;
+               rel2.offset: 9 -1;
+               color: 180 220 255 255;
+            }
+            description { state: "out2" 0.0;
+               inherit: "default" 0.0;
+               min: 32 32;
+               rel1.offset: 25 -1;
+               rel2.offset: 25 -1;
+               color: 100 200 255 0;
+            }
+         }
+         part { name: "event"; type: RECT;
+            mouse_events: 1;
+            repeat_events: 1;
+            description { state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+         programs {
+            program { name: "show";
+               signal: "show";
+               source: "";
+               action: STATE_SET "out" 0.0;
+               transition: LINEAR 0.3;
+               target: "l";
+               target: "r";
+               after: "show2";
+            }
+            program { name: "show2";
+               action: STATE_SET "default" 0.0;
+               action: STATE_SET "out2" 0.0;
+               transition: LINEAR 0.3;
+               target: "l";
+               target: "r";
+               after: "show3";
+            }
+            program { name: "show3";
+               action: STATE_SET "default" 0.0;
+               target: "l";
+               target: "r";
+               after: "show";
             }
          }
       }

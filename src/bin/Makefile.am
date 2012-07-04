@@ -19,6 +19,7 @@ main.c main.h \
 media.c media.h \
 options.c options.h \
 options_behavior.c options_behavior.h \
+options_helpers.c options_helpers.h \
 options_font.c options_font.h \
 options_video.c options_video.h \
 options_theme.c options_theme.h \

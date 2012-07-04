@@ -12,6 +12,15 @@ struct _Config
       int            size;
       unsigned char  bitmap;
    } font;
+   struct {
+      const char    *email;
+      struct {
+         const char    *general;
+         const char    *video;
+         const char    *image;
+      } url, local;
+      Eina_Bool      inline_please;
+   } helper;
    const char       *theme;
    const char       *background;
    const char       *wordsep;

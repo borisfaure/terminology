@@ -13,6 +13,7 @@
 int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
+static Evas_Object *popmedia = NULL;
 static Evas_Object *conform = NULL;
 static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
@@ -94,6 +95,43 @@ _cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSE
      }
 }
 
+static void
+_cb_popmedia_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+{
+   if (popmedia)
+     {
+        evas_object_del(popmedia);
+        popmedia = NULL;
+        termio_mouseover_suspend_pushpop(term, -1);
+     }
+}
+
+static void
+_cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Evas_Object *o;
+   Config *config = termio_config_get(term);
+   const char *src;
+   int type = 0;
+   
+   if (!config) return;
+   src = termio_link_get(term);
+   if (!src) return;
+   if (popmedia) evas_object_del(popmedia);
+   if (!popmedia) termio_mouseover_suspend_pushpop(term, 1);
+   popmedia = o = media_add(win, src, config, MEDIA_POP, &type);
+   edje_object_part_swallow(bg, "terminology.popmedia", o);
+   evas_object_show(o);
+   if (type == TYPE_IMG)
+     edje_object_signal_emit(bg, "popmedia,image", "terminology");
+   else if (type == TYPE_SCALE)
+     edje_object_signal_emit(bg, "popmedia,scale", "terminology");
+   else if (type == TYPE_EDJE)
+     edje_object_signal_emit(bg, "popmedia,edje", "terminology");
+   else if (type == TYPE_MOV)
+     edje_object_signal_emit(bg, "popmedia,movie", "terminology");
+}
+
 void
 main_trans_update(const Config *config)
 {
@@ -120,6 +158,7 @@ main_media_update(const Config *config)
         if (media) evas_object_del(media);
         o = media = media_add(win, config->background, config, MEDIA_BG, &type);
         edje_object_part_swallow(bg, "terminology.background", o);
+        evas_object_show(o);
         if (type == TYPE_IMG)
           edje_object_signal_emit(bg, "media,image", "terminology");
         else if (type == TYPE_SCALE)
@@ -128,7 +167,6 @@ main_media_update(const Config *config)
           edje_object_signal_emit(bg, "media,edje", "terminology");
         else if (type == TYPE_MOV)
           edje_object_signal_emit(bg, "media,movie", "terminology");
-        evas_object_show(o);
      }
    else
      {
@@ -378,6 +416,9 @@ elm_main(int argc, char **argv)
    theme_auto_reload_enable(o);
    elm_object_content_set(conform, o);
    evas_object_show(o);
+   
+   edje_object_signal_callback_add(o, "popmedia,done", "terminology",
+                                   _cb_popmedia_done, NULL);
 
    if (pos_set)
      {
@@ -399,6 +440,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "change", _cb_change, NULL);
    evas_object_smart_callback_add(o, "exited", _cb_exited, NULL);
    evas_object_smart_callback_add(o, "bell", _cb_bell, NULL);
+   evas_object_smart_callback_add(o, "popup", _cb_popup, NULL);
    evas_object_show(o);
 
    main_trans_update(config);

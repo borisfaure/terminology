@@ -143,13 +143,32 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      {
         int iw, ih;
         
-        iw = w;
-        ih = (sd->ih * w) / sd->iw;
-        if (ih < h)
+        if (sd->mode == MEDIA_BG)
           {
-             ih = h;
-             iw = (sd->iw * h) / sd->ih;
-             if (iw < w) iw = w;
+             iw = w;
+             ih = (sd->ih * w) / sd->iw;
+             if (ih < h)
+               {
+                  ih = h;
+                  iw = (sd->iw * h) / sd->ih;
+                  if (iw < w) iw = w;
+               }
+          }
+        else if (sd->mode == MEDIA_POP)
+          {
+             iw = w;
+             ih = (sd->ih * w) / sd->iw;
+             if (ih > h)
+               {
+                  ih = h;
+                  iw = (sd->iw * h) / sd->ih;
+                  if (iw > w) iw = w;
+               }
+             if ((iw > sd->iw) || (ih > sd->ih))
+               {
+                  iw = sd->iw;
+                  ih = sd->ih;
+               }
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -208,13 +227,27 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
      {
         int iw, ih;
         
-        iw = w;
-        ih = (sd->ih * w) / sd->iw;
-        if (ih < h)
+        if (sd->mode == MEDIA_BG)
           {
-             ih = h;
-             iw = (sd->iw * h) / sd->ih;
-             if (iw < w) iw = w;
+             iw = w;
+             ih = (sd->ih * w) / sd->iw;
+             if (ih < h)
+               {
+                  ih = h;
+                  iw = (sd->iw * h) / sd->ih;
+                  if (iw < w) iw = w;
+               }
+          }
+        else if (sd->mode == MEDIA_POP)
+          {
+             iw = w;
+             ih = (sd->ih * w) / sd->iw;
+             if (ih > h)
+               {
+                  ih = h;
+                  iw = (sd->iw * h) / sd->ih;
+                  if (iw > w) iw = w;
+               }
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -502,14 +535,28 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
         ratio = emotion_object_ratio_get(sd->o_img);
         if (ratio > 0.0) sd->iw = (sd->ih * ratio) + 0.5;
         else ratio = (double)sd->iw / (double)sd->ih;
-        
-        iw = w;
-        ih = w / ratio;
-        if (ih < h)
+
+        if (sd->mode == MEDIA_BG)
           {
-             ih = h;
-             iw = h * ratio;
-             if (iw < w) iw = w;
+             iw = w;
+             ih = w / ratio;
+             if (ih < h)
+               {
+                  ih = h;
+                  iw = h * ratio;
+                  if (iw < w) iw = w;
+               }
+          }
+        else if (sd->mode == MEDIA_POP)
+          {
+             iw = w;
+             ih = w / ratio;
+             if (ih > h)
+               {
+                  ih = h;
+                  iw = h * ratio;
+                  if (iw > w) iw = w;
+               }
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -705,4 +752,16 @@ media_volume_set(Evas_Object *obj, double vol)
    if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_audio_volume_set(sd->o_img, vol);
    edje_object_part_drag_value_set(sd->o_ctrl, "terminology.voldrag", vol, vol);
+}
+
+int
+media_src_type_get(const char *src)
+{
+   int type = TYPE_UNKNOWN;
+   
+   if      (_is_fmt(src, extn_img))   type = TYPE_IMG;
+   else if (_is_fmt(src, extn_scale)) type = TYPE_SCALE;
+   else if (_is_fmt(src, extn_edj))   type = TYPE_EDJE;
+   else if (_is_fmt(src, extn_mov))   type = TYPE_MOV;
+   return type;
 }

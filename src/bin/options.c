@@ -3,6 +3,7 @@
 #include <Elementary.h>
 #include "options.h"
 #include "options_font.h"
+#include "options_helpers.h"
 #include "options_behavior.h"
 #include "options_video.h"
 #include "options_theme.h"
@@ -53,6 +54,13 @@ _cb_op_behavior(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_box_clear(op_opbox);
    options_behavior(op_opbox, data);
+}
+
+static void
+_cb_op_helpers(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   elm_box_clear(op_opbox);
+   options_helpers(op_opbox, data);
 }
 
 static void
@@ -136,6 +144,8 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
                                 "Video", _cb_op_video, term);
         elm_toolbar_item_append(o, "system-run",
                                 "Behavior", _cb_op_behavior, term);
+        elm_toolbar_item_append(o, "document-open",
+                                "Helpers", _cb_op_helpers, term);
 
         elm_box_pack_end(op_tbox, o);
         evas_object_show(o);

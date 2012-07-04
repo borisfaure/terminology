@@ -49,6 +49,22 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.bitmap", font.bitmap, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.email", helper.email, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.url.general", helper.url.general, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.url.video", helper.url.video, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.url.image", helper.url.image, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.local.general", helper.local.general, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.local.video", helper.local.video, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.local.image", helper.local.image, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "helper.inline_please", helper.inline_please, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "background", background, EET_T_STRING);
@@ -192,6 +208,14 @@ config_load(const char *key)
              config->font.bitmap = EINA_TRUE;
              config->font.name = eina_stringshare_add("nexus.pcf");
              config->font.size = 10;
+             config->helper.email = eina_stringshare_add("xdg-email");;
+             config->helper.url.general = eina_stringshare_add("xdg-open");
+             config->helper.url.video = eina_stringshare_add("xdg-open");
+             config->helper.url.image = eina_stringshare_add("xdg-open");
+             config->helper.local.general = eina_stringshare_add("xdg-open");
+             config->helper.local.video = eina_stringshare_add("xdg-open");
+             config->helper.local.image = eina_stringshare_add("xdg-open");
+             config->helper.inline_please = EINA_TRUE;
              config->scrollback = 2000;
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;

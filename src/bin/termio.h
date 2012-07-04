@@ -10,5 +10,6 @@ void         termio_config_update(Evas_Object *obj);
 Config      *termio_config_get(const Evas_Object *obj);
 void         termio_copy_clipboard(Evas_Object *obj);
 void         termio_paste_clipboard(Evas_Object *obj);
-
+const char  *termio_link_get(const Evas_Object *obj);
+void         termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir);
 #endif

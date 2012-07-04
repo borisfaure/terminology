@@ -21,4 +21,10 @@ media_pause.png \
 media_play.png \
 media_stop.png \
 media_knob_pos.png \
-media_knob_vol.png
+media_knob_vol.png \
+pm_fill.png \
+pm_overlay.png \
+pm_shadow.png \
+lk_bottom.png \
+lk_left.png \
+lk_right.png

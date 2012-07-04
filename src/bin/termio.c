@@ -10,6 +10,7 @@
 #include "keyin.h"
 #include "config.h"
 #include "utils.h"
+#include "media.h"
 
 typedef struct _Termio Termio;
 
@@ -43,6 +44,12 @@ struct _Termio
       } sel1, sel2;
       Eina_Bool sel : 1;
    } backup;
+   struct {
+      char *string;
+      int x1, y1, x2, y2;
+      int suspend;
+      Eina_List *objs;
+   } link;
    int zoom_fontsize_start;
    int scroll;
    unsigned int last_keyup;
@@ -51,6 +58,7 @@ struct _Termio
    Termpty *pty;
    Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
+   Ecore_Timer *link_do_timer;
    Ecore_Job *mouse_move_job;
    Evas_Object *win;
    Config *config;
@@ -59,6 +67,7 @@ struct _Termio
    Eina_Bool have_sel : 1;
    Eina_Bool noreqsize : 1;
    Eina_Bool composing : 1;
+   Eina_Bool didclick : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -100,8 +109,8 @@ coord_forward(Termio *sd, int *x, int *y)
    return EINA_TRUE;
 }
 
-static void
-_smart_mouseover_apply(Evas_Object *obj)
+static char *
+_magic_string_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r, int *y2r)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    char *s;
@@ -109,11 +118,11 @@ _smart_mouseover_apply(Evas_Object *obj)
    int x1, x2, y1, y2, len;
    Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, extend = EINA_FALSE;
    
-   if (!sd) return;
-   x1 = sd->mouse.cx;
-   y1 = sd->mouse.cy;
-   x2 = sd->mouse.cx;
-   y2 = sd->mouse.cy;
+   if (!sd) return NULL;
+   x1 = cx;
+   y1 = cy;
+   x2 = cx;
+   y2 = cy;
    if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
    for (;;)
      {
@@ -125,6 +134,7 @@ _smart_mouseover_apply(Evas_Object *obj)
           {
              if      ((!strncasecmp(s, "http://", 7))||
                       (!strncasecmp(s, "https://", 8)) ||
+                      (!strncasecmp(s, "file://", 7)) ||
                       (!strncasecmp(s, "ftp://", 6)))
                {
                   goback = EINA_FALSE;
@@ -154,7 +164,8 @@ _smart_mouseover_apply(Evas_Object *obj)
                   else if (s[0] == '\'') endmatch = '\'';
                   else if (s[0] == '<') endmatch = '>';
                   if ((!strncasecmp((s + 1), "www.", 4)) ||
-                      (!strncasecmp((s + 1), "ftp.", 4)))
+                      (!strncasecmp((s + 1), "ftp.", 4)) ||
+                      (!strncasecmp((s + 1), "/", 1)))
                     {
                        goback = EINA_FALSE;
                        coord_forward(sd, &x1, &y1);
@@ -163,6 +174,9 @@ _smart_mouseover_apply(Evas_Object *obj)
                     {
                        goback = EINA_FALSE;
                        coord_forward(sd, &x1, &y1);
+                    }
+                  else if (s[0] == '=')
+                    {
                     }
                   else
                     {
@@ -178,7 +192,9 @@ _smart_mouseover_apply(Evas_Object *obj)
              if (len > 1)
                {
                   if (((endmatch) && (s[len - 1] == endmatch)) ||
-                      ((!endmatch) && (isspace(s[len - 1]))))
+                      ((!endmatch) && 
+                          ((isspace(s[len - 1])) || (s[len - 1] == '>'))
+                      ))
                     {
                        goforward = EINA_FALSE;
                        coord_back(sd, &x2, &y2);
@@ -194,7 +210,7 @@ _smart_mouseover_apply(Evas_Object *obj)
           {
              if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
           }
-        else if (!extend)
+        if ((!extend) && (!goback))
           {
              goforward = EINA_TRUE;
              extend = EINA_TRUE;
@@ -222,21 +238,307 @@ _smart_mouseover_apply(Evas_Object *obj)
                }
              else break;
           }
-        if (!isspace(s[0]))
+        if ((!isspace(s[0])) && (len > 1))
           {
              if ((strchr(s, '@')) ||
                  (!strncasecmp(s, "http://", 7))||
                  (!strncasecmp(s, "https://", 8)) ||
                  (!strncasecmp(s, "ftp://", 6)) ||
+                 (!strncasecmp(s, "file://", 7)) ||
                  (!strncasecmp(s, "www.", 4)) ||
-                 (!strncasecmp(s, "ftp.", 4)))
+                 (!strncasecmp(s, "ftp.", 4)) ||
+                 (!strncasecmp(s, "/", 1))
+                )
                {
-                  printf("FOUND: '%s' @ %i,%i -> %i,%i\n", s, x1, y1, x2, y2);
-                  // XXX: record coords and url string
+                  if (x1r) *x1r = x1;
+                  if (y1r) *y1r = y1;
+                  if (x2r) *x2r = x2;
+                  if (y2r) *y2r = y2;
+                  return s;
                }
           }
         free(s);
      }
+   return NULL;
+}
+
+static void
+_activate_link(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Config *config = termio_config_get(obj);
+   char buf[PATH_MAX], *s;
+   const char *path = NULL, *cmd = NULL;
+   Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
+   int type;
+   
+   if (!sd) return;
+   if (!config) return;
+   if (!sd->link.string) return;
+   if      ((!strncasecmp(sd->link.string, "http://", 7))||
+            (!strncasecmp(sd->link.string, "https://", 8)) ||
+            (!strncasecmp(sd->link.string, "ftp://", 6)) ||
+            (!strncasecmp(sd->link.string, "www.", 4)) ||
+            (!strncasecmp(sd->link.string, "ftp.", 4)))
+     {
+        url = EINA_TRUE;
+     }
+   else if ((!strncasecmp(sd->link.string, "file://", 7)) ||
+            (!strncasecmp(sd->link.string, "/", 1)))
+     {
+        path = sd->link.string;
+        if (!strncasecmp(sd->link.string, "file://", 7)) path = path + 7;
+     }
+   else if (strchr(sd->link.string, '@'))
+     {
+        email = EINA_TRUE;
+     }
+   
+   s = eina_str_escape(sd->link.string);
+   if (!s) return;
+   if (email)
+     {
+        // run mail client
+        cmd = "xdg-email";
+        
+        if ((config->helper.email) &&
+            (config->helper.email[0]))
+          cmd = config->helper.email;
+        snprintf(buf, sizeof(buf), "%s %s", cmd, s);
+     }
+   else if (path)
+     {
+        // locally accessible file
+        cmd = "xdg-open";
+        
+        type = media_src_type_get(sd->link.string);
+        if (config->helper.inline_please)
+          {
+             if ((type == TYPE_IMG) ||
+                 (type == TYPE_SCALE) ||
+                 (type == TYPE_EDJE))
+               {
+                  evas_object_smart_callback_call(obj, "popup", NULL);
+                  handled = EINA_TRUE;
+               }
+             else if (type == TYPE_MOV)
+               {
+                  evas_object_smart_callback_call(obj, "popup", NULL);
+                  handled = EINA_TRUE;
+               }
+          }
+        if (!handled)
+          {
+             if ((type == TYPE_IMG) ||
+                 (type == TYPE_SCALE) ||
+                 (type == TYPE_EDJE))
+               {
+                  if ((config->helper.local.image) &&
+                      (config->helper.local.image[0]))
+                    cmd = config->helper.local.image;
+               }
+             else if (type == TYPE_MOV)
+               {
+                  if ((config->helper.local.video) &&
+                      (config->helper.local.video[0]))
+                    cmd = config->helper.local.video;
+               }
+             else
+               {
+                  if ((config->helper.local.general) &&
+                      (config->helper.local.general[0]))
+                    cmd = config->helper.local.general;
+               }
+             snprintf(buf, sizeof(buf), "%s %s", cmd, s);
+          }
+     }
+   else if (url)
+     {
+        // remote file needs ecore-con-url
+        cmd = "xdg-open";
+        
+        type = media_src_type_get(sd->link.string);
+        if (config->helper.inline_please)
+          {
+             if ((type == TYPE_IMG) ||
+                 (type == TYPE_SCALE) ||
+                 (type == TYPE_EDJE))
+               {
+                  // XXX: begin fetch of url, once done, show
+                  evas_object_smart_callback_call(obj, "popup", NULL);
+                  handled = EINA_TRUE;
+               }
+             else if (type == TYPE_MOV)
+               {
+                  // XXX: if no http:// add
+                  evas_object_smart_callback_call(obj, "popup", NULL);
+                  handled = EINA_TRUE;
+               }
+          }
+        if (!handled)
+          {
+             if ((type == TYPE_IMG) ||
+                 (type == TYPE_SCALE) ||
+                 (type == TYPE_EDJE))
+               {
+                  if ((config->helper.url.image) &&
+                      (config->helper.url.image[0]))
+                    cmd = config->helper.url.image;
+               }
+             else if (type == TYPE_MOV)
+               {
+                  if ((config->helper.url.video) &&
+                      (config->helper.url.video[0]))
+                    cmd = config->helper.url.video;
+               }
+             else
+               {
+                  if ((config->helper.url.general) &&
+                      (config->helper.url.general[0]))
+                    cmd = config->helper.url.general;
+               }
+             snprintf(buf, sizeof(buf), "%s %s", cmd, s);
+          }
+     }
+   else
+     {
+        free(s);
+        return;
+     }
+   free(s);
+   if (!handled) ecore_exe_run(buf, NULL);
+}
+
+static Eina_Bool
+_cb_link_up_delay(void *data)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   
+   if (!sd) return EINA_FALSE;
+   sd->link_do_timer = NULL;
+   if (!sd->didclick) _activate_link(data);
+   sd->didclick = EINA_FALSE;
+   return EINA_FALSE;
+}
+
+static void
+_cb_link_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Mouse_Up *ev = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   
+   if (!sd) return;
+   if (ev->button == 1)
+     {
+        if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
+        sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
+     }
+}
+
+static void
+_update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   
+   if (!sd) return;
+   
+   if (!same_link)
+     {
+        // check link and re-probe/fetch create popup preview
+     }
+   
+   if (!same_geom)
+     {
+        Evas_Coord ox, oy, ow, oh;
+        Evas_Object *o;
+        // fix up edje objects "underlining" the link
+        int y;
+        
+        evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+        EINA_LIST_FREE(sd->link.objs, o) evas_object_del(o);
+        if ((sd->link.string) && (sd->link.suspend == 0))
+          {
+             for (y = sd->link.y1; y <= sd->link.y2; y++)
+               {
+                  o = edje_object_add(evas_object_evas_get(obj));
+                  evas_object_smart_member_add(o, obj);
+                  theme_apply(o, sd->config, "terminology/link");
+                  
+                  if (y == sd->link.y1)
+                    {
+                       evas_object_move(o, ox + (sd->link.x1 * sd->font.chw),
+                                        oy + (y * sd->font.chh));
+                       if (sd->link.y1 == sd->link.y2)
+                         evas_object_resize(o,
+                                            ((sd->link.x2 - sd->link.x1 + 1) * sd->font.chw),
+                                            sd->font.chh);
+                       else
+                         evas_object_resize(o,
+                                            ((sd->grid.w - sd->link.x1) * sd->font.chw),
+                                            sd->font.chh);
+                    }
+                  else if (y == sd->link.y2)
+                    {
+                       evas_object_move(o, ox, oy + (y * sd->font.chh));
+                       evas_object_resize(o,
+                                          ((sd->link.x2 + 1) * sd->font.chw),
+                                          sd->font.chh);
+                    }
+                  else
+                    {
+                       evas_object_move(o, ox, oy + (y * sd->font.chh));
+                       evas_object_resize(o, (sd->grid.w * sd->font.chw),
+                                          sd->font.chh);
+                    }
+                  
+                  sd->link.objs = eina_list_append(sd->link.objs, o);
+                  evas_object_show(o);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                                 _cb_link_up, obj);
+               }
+          }
+     }
+}
+
+static void
+_smart_mouseover_apply(Evas_Object *obj)
+{
+   char *s;
+   int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+   Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
+   Termio *sd = evas_object_smart_data_get(obj);
+   
+   if (!sd) return;
+
+   s = _magic_string_find(obj, sd->mouse.cx, sd->mouse.cy,
+                         &x1, &y1, &x2, &y2);
+   if (!s)
+     {
+        if (sd->link.string) free(sd->link.string);
+        sd->link.string = NULL;
+        sd->link.x1 = -1;
+        sd->link.y1 = -1;
+        sd->link.x2 = -1;
+        sd->link.y2 = -1;
+        _update_link(obj, same_link, same_geom);
+        return;
+     }
+   
+   if ((sd->link.string) && (!strcmp(sd->link.string, s)))
+     same_link = EINA_TRUE;
+   if (sd->link.string) free(sd->link.string);
+   sd->link.string = s;
+   if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
+       (x2 == sd->link.x2) && (y2 == sd->link.y2))
+     same_geom = EINA_TRUE;
+   if (((sd->link.suspend != 0) && (sd->link.objs)) ||
+       ((sd->link.suspend == 0) && (!sd->link.objs)))
+     same_geom = EINA_FALSE;
+   sd->link.x1 = x1;
+   sd->link.y1 = y1;
+   sd->link.x2 = x2;
+   sd->link.y2 = y2;
+   _update_link(obj, same_link, same_geom);
 }
 
 static void
@@ -1272,12 +1574,14 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    _rep_mouse_down(data, ev, cx, cy);
+   sd->didclick = EINA_FALSE;
    if (ev->button == 1)
      {
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              _sel_line(data, cx, cy - sd->scroll);
              if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             sd->didclick = EINA_TRUE;
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
@@ -1296,6 +1600,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                   _sel_word(data, cx, cy - sd->scroll);
                }
              if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             sd->didclick = EINA_TRUE;
           }
         else
           {
@@ -1304,7 +1609,11 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
              sd->backup.sel1.y = sd->cur.sel1.y;
              sd->backup.sel2.x = sd->cur.sel2.x;
              sd->backup.sel2.y = sd->cur.sel2.y;
-             if (sd->cur.sel) sd->cur.sel = 0;
+             if (sd->cur.sel)
+               {
+                  sd->cur.sel = 0;
+                  sd->didclick = EINA_TRUE;
+               }
              sd->cur.makesel = 1;
              sd->cur.sel1.x = cx;
              sd->cur.sel1.y = cy - sd->scroll;
@@ -1336,6 +1645,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         sd->cur.makesel = 0;
         if (sd->cur.sel)
           {
+             sd->didclick = EINA_TRUE;
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
              _selection_dbl_fix(data);
@@ -1378,6 +1688,18 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
         sd->mouse_move_job = ecore_job_add(_smart_cb_mouse_move_job, data);
      }
+}
+
+static void
+_smart_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   termio_mouseover_suspend_pushpop(data, -1);
+}
+
+static void
+_smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   termio_mouseover_suspend_pushpop(data, 1);
 }
 
 static void
@@ -1468,6 +1790,7 @@ _smart_cb_gest_long_move(void *data, void *event __UNUSED__)
    
    if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
    evas_object_smart_callback_call(data, "options", NULL);
+   sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -1484,6 +1807,7 @@ _smart_cb_gest_zoom_start(void *data, void *event)
         sd->zoom_fontsize_start = config->font.size;
         _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
      }
+   sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -1500,6 +1824,7 @@ _smart_cb_gest_zoom_move(void *data, void *event)
         sd->zoom_fontsize_start = config->font.size;
         _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
      }
+   sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -1516,6 +1841,7 @@ _smart_cb_gest_zoom_end(void *data, void *event)
         sd->zoom_fontsize_start = config->font.size;
         _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
      }
+   sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -1532,6 +1858,7 @@ _smart_cb_gest_zoom_abort(void *data, void *event __UNUSED__)
         sd->zoom_fontsize_start = config->font.size;
         _font_size_set(data, sd->zoom_fontsize_start);
      }
+   sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
 }
 
@@ -1631,6 +1958,10 @@ _smart_add(Evas_Object *obj)
                                   _smart_cb_mouse_up, obj);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
                                   _smart_cb_mouse_move, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
+                                  _smart_cb_mouse_in, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT,
+                                  _smart_cb_mouse_out, obj);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _smart_cb_mouse_wheel, obj);
 
@@ -1643,6 +1974,8 @@ _smart_add(Evas_Object *obj)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT,
                                   _smart_cb_focus_out, obj);
 
+   sd->link.suspend = 1;
+   
    if (ecore_imf_init())
      {
         const char *imf_id = ecore_imf_context_default_id_get();
@@ -1699,7 +2032,9 @@ static void
 _smart_del(Evas_Object *obj)
 {
    char *str;
+   Evas_Object *o;
    Termio *sd = evas_object_smart_data_get(obj);
+   
    if (!sd) return;
    if (sd->imf)
      {
@@ -1714,9 +2049,12 @@ _smart_del(Evas_Object *obj)
    if (sd->cur.selo3) evas_object_del(sd->cur.selo3);
    if (sd->anim) ecore_animator_del(sd->anim);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
+   if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
+   if (sd->link.string) free(sd->link.string);
+   EINA_LIST_FREE(sd->link.objs, o) evas_object_del(o);
    EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
    sd->cur.obj = NULL;
    sd->event = NULL;
@@ -1993,6 +2331,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
         w = 0;
         last0 = -1;
         cells = termpty_cellrow_get(sd->pty, y, &w);
+        if (!cells) continue;
         if (w > sd->grid.w) w = sd->grid.w;
         start_x = c1x;
         end_x = c2x;
@@ -2164,4 +2503,22 @@ void
 termio_paste_clipboard(Evas_Object *obj)
 {
    _paste_selection(obj, ELM_SEL_TYPE_CLIPBOARD);
+}
+
+const char  *
+termio_link_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+   return sd->link.string;
+}
+
+void
+termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   sd->link.suspend += dir;
+   if (sd->link.suspend < 0) sd->link.suspend = 0;
+   _smart_update_queue(obj, sd);
 }
