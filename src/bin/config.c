@@ -3,6 +3,8 @@
 #include <Elementary.h>
 #include "config.h"
 
+#define CONF_VER 1
+
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
 static Eet_Data_Descriptor *edd_base = NULL;
@@ -42,6 +44,8 @@ config_init(void)
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
    edd_base = eet_data_descriptor_stream_new(&eddc);
    
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.name", font.name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -146,7 +150,18 @@ config_load(const char *key)
         eet_close(ef);
         if (config)
           {
-             LIM(config->font.size, 3, 400);
+             if (config->version < CONF_VER)
+               {
+                  // currently no upgrade path so reset config.
+                  config_del(config);
+                  config = NULL;
+               }
+             else
+               {
+                  LIM(config->font.size, 3, 400);
+                  LIM(config->scrollback, 0, 200000);
+                  LIM(config->vidmod, 0, 3)
+               }
           }
      }
    if (!config)
@@ -207,6 +222,7 @@ config_load(const char *key)
         config = calloc(1, sizeof(Config));
         if (config)
           {
+             config->version = CONF_VER;
              config->font.bitmap = EINA_TRUE;
              config->font.name = eina_stringshare_add("nexus.pcf");
              config->font.size = 10;
@@ -252,6 +268,13 @@ config_del(Config *config)
    eina_stringshare_del(config->theme);
    eina_stringshare_del(config->background);
    eina_stringshare_del(config->wordsep);
+   eina_stringshare_del(config->helper.email);
+   eina_stringshare_del(config->helper.url.general);
+   eina_stringshare_del(config->helper.url.video);
+   eina_stringshare_del(config->helper.url.image);
+   eina_stringshare_del(config->helper.local.general);
+   eina_stringshare_del(config->helper.local.video);
+   eina_stringshare_del(config->helper.local.image);
 
    eina_stringshare_del(config->config_key); /* not in eet */
    free(config);

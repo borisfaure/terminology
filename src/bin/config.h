@@ -7,6 +7,7 @@ typedef struct _Config Config;
 
 struct _Config
 {
+   int version;
    struct {
       const char    *name;
       int            size;

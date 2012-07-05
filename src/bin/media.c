@@ -141,7 +141,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      }
    else
      {
-        int iw, ih;
+        int iw = 1, ih = 1;
         
         if (sd->mode == MEDIA_BG)
           {
@@ -225,7 +225,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
      }
    else
      {
-        int iw, ih;
+        int iw = 1, ih = 1;
         
         if (sd->mode == MEDIA_BG)
           {
@@ -529,7 +529,7 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      }
    else
      {
-        int iw = 0, ih = 0;
+        int iw = 1, ih = 1;
         double ratio;
         
         ratio = emotion_object_ratio_get(sd->o_img);
