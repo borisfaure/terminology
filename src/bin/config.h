@@ -26,6 +26,7 @@ struct _Config
    const char       *wordsep;
    int               scrollback;
    int               vidmod;
+   Eina_Bool         jump_on_keypress;
    Eina_Bool         jump_on_change;
    Eina_Bool         flicker_on_key;
    Eina_Bool         disable_cursor_blink;

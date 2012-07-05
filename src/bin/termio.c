@@ -64,6 +64,7 @@ struct _Termio
    Config *config;
    Ecore_IMF_Context *imf;
    Eina_Bool jump_on_change : 1;
+   Eina_Bool jump_on_keypress : 1;
    Eina_Bool have_sel : 1;
    Eina_Bool noreqsize : 1;
    Eina_Bool composing : 1;
@@ -1056,6 +1057,11 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
           }
      }
+   if (sd->jump_on_keypress)
+     {
+        sd->scroll = 0;
+        _smart_update_queue(data, sd);
+     }
    // if term app asked fro kbd lock - dont handle here
    if (sd->pty->state.kbd_lock) return;
    // if app asked us to not do autorepeat - ignore pree is it is the same
@@ -1745,6 +1751,7 @@ _termio_config_set(Evas_Object *obj, Config *config)
    sd->config = config;
 
    sd->jump_on_change = config->jump_on_change;
+   sd->jump_on_keypress = config->jump_on_keypress;
 
    if (config->font.bitmap)
      {
@@ -2465,6 +2472,7 @@ termio_config_update(Evas_Object *obj)
    sd->font.size = sd->config->font.size;
 
    sd->jump_on_change = sd->config->jump_on_change;
+   sd->jump_on_keypress = sd->config->jump_on_keypress;
 
    termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;

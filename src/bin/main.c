@@ -458,6 +458,8 @@ elm_main(int argc, char **argv)
    config_del(config);
    config_shutdown();
 
+   evas_object_del(win);
+
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
 

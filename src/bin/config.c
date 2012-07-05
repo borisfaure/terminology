@@ -77,6 +77,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "jump_on_change", jump_on_change, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "jump_on_keypress", jump_on_keypress, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "flicker_on_key", flicker_on_key, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_cursor_blink", disable_cursor_blink, EET_T_UCHAR);
@@ -221,6 +223,7 @@ config_load(const char *key)
              config->background = NULL;
              config->translucent = EINA_FALSE;
              config->jump_on_change = EINA_TRUE;
+	     config->jump_on_keypress = EINA_TRUE;
              config->flicker_on_key = EINA_TRUE;
              config->disable_cursor_blink = EINA_FALSE;
              s = eina_unicode_unicode_to_utf8(sep, &slen);
