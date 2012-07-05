@@ -1620,6 +1620,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case '(': // charset 0
         ty->state.chset[0] = c[2];
         ty->state.multibyte = 0;
+        ty->state.charsetch = c[2];
         return 3;
       case ')': // charset 1
         ty->state.chset[1] = c[2];
