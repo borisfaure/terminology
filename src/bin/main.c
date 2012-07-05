@@ -86,7 +86,7 @@ static void
 _cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Config *config = termio_config_get(term);
-   
+
    edje_object_signal_emit(bg, "bell", "terminology");
    if (!config) return;
    if (config->urg_bell)
@@ -113,7 +113,7 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
    Config *config = termio_config_get(term);
    const char *src;
    int type = 0;
-   
+
    if (!config) return;
    src = termio_link_get(term);
    if (!src) return;
@@ -152,7 +152,7 @@ main_media_update(const Config *config)
 {
    Evas_Object *o;
    int type = 0;
-   
+
    if ((config->background) && (config->background[0]))
      {
         if (media) evas_object_del(media);
@@ -273,7 +273,6 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(borderless),
      ECORE_GETOPT_VALUE_BOOL(override),
      ECORE_GETOPT_VALUE_BOOL(maximized),
-      
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -360,7 +359,7 @@ elm_main(int argc, char **argv)
         config->mute = video_mute;
         config->temporary = EINA_TRUE;
      }
-  
+
    if (geometry)
      {
         if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
@@ -417,12 +416,12 @@ elm_main(int argc, char **argv)
         size_w = 80;
         size_h = 24;
      }
-    
+
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
 
    win = tg_win_add(name, role, title, icon_name);
-   
+
    elm_win_conformant_set(win, EINA_TRUE);
 
    if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
@@ -449,7 +448,7 @@ elm_main(int argc, char **argv)
    theme_auto_reload_enable(o);
    elm_object_content_set(conform, o);
    evas_object_show(o);
-   
+
    edje_object_signal_callback_add(o, "popmedia,done", "terminology",
                                    _cb_popmedia_done, NULL);
 
@@ -461,7 +460,7 @@ elm_main(int argc, char **argv)
         if (pos_y < 0) pos_y = screen_h + pos_y;
         evas_object_move(win, pos_x, pos_y);
      }
-   
+
    term = o = termio_add(win, config, cmd, size_w, size_h);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
