@@ -403,25 +403,25 @@ _cb_mov_ref(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_media_play(void *data, Evas_Object *obj, const char *emission, const char *source)
+_cb_media_play(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    media_play_set(data, EINA_TRUE);
 }
 
 static void
-_cb_media_pause(void *data, Evas_Object *obj, const char *emission, const char *source)
+_cb_media_pause(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    media_play_set(data, EINA_FALSE);
 }
 
 static void
-_cb_media_stop(void *data, Evas_Object *obj, const char *emission, const char *source)
+_cb_media_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    media_stop(data);
 }
 
 static void
-_cb_media_vol(void *data, Evas_Object *obj, const char *emission, const char *source)
+_cb_media_vol(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
@@ -431,7 +431,7 @@ _cb_media_vol(void *data, Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
-_cb_media_pos(void *data, Evas_Object *obj, const char *emission, const char *source)
+_cb_media_pos(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
@@ -529,7 +529,7 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      }
    else
      {
-        int iw, ih;
+        int iw = 0, ih = 0;
         double ratio;
         
         ratio = emotion_object_ratio_get(sd->o_img);
