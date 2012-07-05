@@ -3,8 +3,6 @@ here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
 [ ] blink and blink2 attributes need to be supported
-[ ] improve terminal emulation handling. known apps with problems:
-      mc
 [ ] dnd text (to/from terminal)
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
