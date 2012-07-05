@@ -230,6 +230,8 @@ static const Ecore_Getopt options = {
                               "Become an override-redirect window."),
       ECORE_GETOPT_STORE_TRUE('M', "maximized",
                               "Become maximized from the start."),
+      ECORE_GETOPT_STORE_TRUE('W', "nowm",
+                              "Terminology is run without a wm."),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('C', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -256,6 +258,7 @@ elm_main(int argc, char **argv)
    Eina_Bool borderless = EINA_FALSE;
    Eina_Bool override = EINA_FALSE;
    Eina_Bool maximized = EINA_FALSE;
+   Eina_Bool nowm = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(cmd),
@@ -273,6 +276,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(borderless),
      ECORE_GETOPT_VALUE_BOOL(override),
      ECORE_GETOPT_VALUE_BOOL(maximized),
+     ECORE_GETOPT_VALUE_BOOL(nowm),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -483,6 +487,9 @@ elm_main(int argc, char **argv)
    _cb_size_hint(win, evas_object_evas_get(win), term, NULL);
 
    evas_object_show(win);
+   if (nowm)
+     ecore_evas_focus_set(
+        ecore_evas_ecore_evas_get(evas_object_evas_get(win)), 1);
 
    elm_run();
  end:
