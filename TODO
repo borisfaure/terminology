@@ -2,8 +2,6 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
-[ ] ecore-fb doesnt seem to do keyrpeat?
-[ ] ecore-fb ctrl, alt broken.
 [ ] blink and blink2 attributes need to be supported
 [ ] improve terminal emulation handling. known apps with problems:
       mc
