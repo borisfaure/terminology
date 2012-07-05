@@ -199,22 +199,37 @@ static const Ecore_Getopt options = {
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-      ECORE_GETOPT_STORE_STR('e', "exec",
-                             "command to execute. "
-                             "Defaults to $SHELL (or passwd shel or /bin/sh)"),
-      ECORE_GETOPT_STORE_STR('t', "theme",
-                             "Use the named edje theme or path to theme file."),
-      ECORE_GETOPT_STORE_STR('b', "background",
-                             "Use the named file as a background wallpaper."),
-      ECORE_GETOPT_STORE_STR('g', "geometry",
-                             "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."),
-      ECORE_GETOPT_CHOICE('v', "video-module",
-                          "Set emotion module to use.",
-                          emotion_choices),
+      ECORE_GETOPT_STORE_STR ('e', "exec",
+                              "command to execute. "
+                              "Defaults to $SHELL (or passwd shel or /bin/sh)"),
+      ECORE_GETOPT_STORE_STR ('t', "theme",
+                              "Use the named edje theme or path to theme file."),
+      ECORE_GETOPT_STORE_STR ('b', "background",
+                              "Use the named file as a background wallpaper."),
+      ECORE_GETOPT_STORE_STR ('g', "geometry",
+                              "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."),
+      ECORE_GETOPT_STORE_STR ('n', "name",
+                              "Set window name."),
+      ECORE_GETOPT_STORE_STR ('r', "role",
+                              "Set window role."),
+      ECORE_GETOPT_STORE_STR ('T', "title",
+                              "Set window title."),
+      ECORE_GETOPT_STORE_STR ('i', "icon-name",
+                              "Set icon name."),
+      ECORE_GETOPT_CHOICE    ('v', "video-module",
+                              "Set emotion module to use.", emotion_choices),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
                               "Set mute mode for video playback."),
       ECORE_GETOPT_STORE_BOOL('F', "fullscreen",
-                              "Go into fullscreen mode from start."),
+                              "Go into the fullscreen mode from start."),
+      ECORE_GETOPT_STORE_BOOL('I', "iconic",
+                              "Go into an iconic state from the start."),
+      ECORE_GETOPT_STORE_BOOL('B', "borderless",
+                              "Become a borderless managed window."),
+      ECORE_GETOPT_STORE_BOOL('O', "override",
+                              "Become an override-redirect window."),
+      ECORE_GETOPT_STORE_BOOL('M', "maximized",
+                              "Become maximized from the start."),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('C', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -230,18 +245,35 @@ elm_main(int argc, char **argv)
    char *theme = NULL;
    char *background = NULL;
    char *geometry = NULL;
+   char *name = NULL;
+   char *role = NULL;
+   char *title = NULL;
+   char *icon_name = NULL;
    char *video_module = NULL;
    Eina_Bool video_mute = 0xff; /* unset */
    Eina_Bool fullscreen = 0xff; /* unset */
+   Eina_Bool iconic = 0xff; /* unset */
+   Eina_Bool borderless = 0xff; /* unset */
+   Eina_Bool override = 0xff; /* unset */
+   Eina_Bool maximized = 0xff; /* unset */
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(cmd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
      ECORE_GETOPT_VALUE_STR(geometry),
+     ECORE_GETOPT_VALUE_STR(name),
+     ECORE_GETOPT_VALUE_STR(role),
+     ECORE_GETOPT_VALUE_STR(title),
+     ECORE_GETOPT_VALUE_STR(icon_name),
      ECORE_GETOPT_VALUE_STR(video_module),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(fullscreen),
+     ECORE_GETOPT_VALUE_BOOL(iconic),
+     ECORE_GETOPT_VALUE_BOOL(borderless),
+     ECORE_GETOPT_VALUE_BOOL(override),
+     ECORE_GETOPT_VALUE_BOOL(maximized),
+      
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -285,18 +317,18 @@ elm_main(int argc, char **argv)
    if (theme)
      {
         char path[PATH_MAX];
-        char name[PATH_MAX];
+        char nom[PATH_MAX];
 
         if (eina_str_has_suffix(theme, ".edj"))
-          eina_strlcpy(name, theme, sizeof(name));
+          eina_strlcpy(nom, theme, sizeof(nom));
         else
-          snprintf(name, sizeof(name), "%s.edj", theme);
+          snprintf(nom, sizeof(nom), "%s.edj", theme);
 
-        if (strchr(name, '/'))
-          eina_strlcpy(path, name, sizeof(path));
+        if (strchr(nom, '/'))
+          eina_strlcpy(path, nom, sizeof(path));
         else
           snprintf(path, sizeof(path), "%s/themes/%s",
-                   elm_app_data_dir_get(), name);
+                   elm_app_data_dir_get(), nom);
 
         eina_stringshare_replace(&(config->theme), path);
         config->temporary = EINA_TRUE;
@@ -389,13 +421,29 @@ elm_main(int argc, char **argv)
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
 
-   win = tg_win_add();
+   win = tg_win_add(name, role, title, icon_name);
    
    elm_win_conformant_set(win, EINA_TRUE);
 
    if (fullscreen != 0xff)
      {
         if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
+     }
+   if (iconic != 0xff)
+     {
+        if (iconic) elm_win_iconified_set(win, EINA_TRUE);
+     }
+   if (borderless != 0xff)
+     {
+        if (borderless) elm_win_borderless_set(win, EINA_TRUE);
+     }
+   if (override != 0xff)
+     {
+        if (override) elm_win_override_set(win, EINA_TRUE);
+     }
+   if (maximized != 0xff)
+     {
+        if (maximized) elm_win_maximized_set(win, EINA_TRUE);
      }
  
    conform = o = elm_conformant_add(win);
