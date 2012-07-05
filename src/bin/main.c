@@ -220,15 +220,15 @@ static const Ecore_Getopt options = {
                               "Set emotion module to use.", emotion_choices),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
                               "Set mute mode for video playback."),
-      ECORE_GETOPT_STORE_BOOL('F', "fullscreen",
+      ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
                               "Go into the fullscreen mode from start."),
-      ECORE_GETOPT_STORE_BOOL('I', "iconic",
+      ECORE_GETOPT_STORE_TRUE('I', "iconic",
                               "Go into an iconic state from the start."),
-      ECORE_GETOPT_STORE_BOOL('B', "borderless",
+      ECORE_GETOPT_STORE_TRUE('B', "borderless",
                               "Become a borderless managed window."),
-      ECORE_GETOPT_STORE_BOOL('O', "override",
+      ECORE_GETOPT_STORE_TRUE('O', "override",
                               "Become an override-redirect window."),
-      ECORE_GETOPT_STORE_BOOL('M', "maximized",
+      ECORE_GETOPT_STORE_TRUE('M', "maximized",
                               "Become maximized from the start."),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('C', "copyright"),
@@ -251,11 +251,11 @@ elm_main(int argc, char **argv)
    char *icon_name = NULL;
    char *video_module = NULL;
    Eina_Bool video_mute = 0xff; /* unset */
-   Eina_Bool fullscreen = 0xff; /* unset */
-   Eina_Bool iconic = 0xff; /* unset */
-   Eina_Bool borderless = 0xff; /* unset */
-   Eina_Bool override = 0xff; /* unset */
-   Eina_Bool maximized = 0xff; /* unset */
+   Eina_Bool fullscreen = EINA_FALSE;
+   Eina_Bool iconic = EINA_FALSE;
+   Eina_Bool borderless = EINA_FALSE;
+   Eina_Bool override = EINA_FALSE;
+   Eina_Bool maximized = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(cmd),
@@ -425,27 +425,12 @@ elm_main(int argc, char **argv)
    
    elm_win_conformant_set(win, EINA_TRUE);
 
-   if (fullscreen != 0xff)
-     {
-        if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
-     }
-   if (iconic != 0xff)
-     {
-        if (iconic) elm_win_iconified_set(win, EINA_TRUE);
-     }
-   if (borderless != 0xff)
-     {
-        if (borderless) elm_win_borderless_set(win, EINA_TRUE);
-     }
-   if (override != 0xff)
-     {
-        if (override) elm_win_override_set(win, EINA_TRUE);
-     }
-   if (maximized != 0xff)
-     {
-        if (maximized) elm_win_maximized_set(win, EINA_TRUE);
-     }
- 
+   if (fullscreen) elm_win_fullscreen_set(win, EINA_TRUE);
+   if (iconic) elm_win_iconified_set(win, EINA_TRUE);
+   if (borderless) elm_win_borderless_set(win, EINA_TRUE);
+   if (override) elm_win_override_set(win, EINA_TRUE);
+   if (maximized) elm_win_maximized_set(win, EINA_TRUE);
+
    conform = o = elm_conformant_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
