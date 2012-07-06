@@ -13,13 +13,17 @@ struct _Media
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *clip, *o_img, *o_tmp, *o_ctrl;
    Ecore_Timer *anim;
+   Ecore_Timer *smooth_timer;
    Ecore_Job *restart_job;
    const char *src;
    const Config *config;
+   int w, h;
    int iw, ih;
    int sw, sh;
    int fr, frnum;
    int mode, type;
+   int resizes;
+   Eina_Bool nosmooth : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -254,19 +258,28 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
         w = iw;
         h = ih;
      }
-   if ((w != sd->sw) || (h != sd->sh))
+   if (!sd->nosmooth)
      {
-        o = sd->o_tmp = evas_object_image_filled_add(evas_object_evas_get(obj));
-        evas_object_smart_member_add(o, obj);
-        evas_object_clip_set(o, sd->clip);
-        evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
-                                       _cb_scale_preloaded, obj);
-        evas_object_image_file_set(o, sd->src, NULL);
-        evas_object_image_load_size_set(sd->o_tmp, w, h);
-        evas_object_image_preload(o, EINA_FALSE);
+        Evas_Coord lw, lh;
+        
+        lw = w;
+        lh = h;
+        if (lw < 256) lw = 256;
+        if (lh < 256) lh = 256;
+        if ((lw != sd->sw) || (lh != sd->sh))
+          {
+             o = sd->o_tmp = evas_object_image_filled_add(evas_object_evas_get(obj));
+             evas_object_smart_member_add(o, obj);
+             evas_object_clip_set(o, sd->clip);
+             evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                            _cb_scale_preloaded, obj);
+             evas_object_image_file_set(o, sd->src, NULL);
+             evas_object_image_load_size_set(sd->o_tmp, lw, lh);
+             evas_object_image_preload(o, EINA_FALSE);
+          }
+        sd->sw = lw;
+        sd->sh = lh;
      }
-   sd->sw = w;
-   sd->sh = h;
    if (sd->o_tmp)
      {
         evas_object_move(sd->o_tmp, x, y);
@@ -602,6 +615,7 @@ _smart_del(Evas_Object *obj)
    if (sd->o_tmp) evas_object_del(sd->o_tmp);
    if (sd->o_ctrl) evas_object_del(sd->o_ctrl);
    if (sd->anim) ecore_timer_del(sd->anim);
+   if (sd->smooth_timer) sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
    _meida_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
@@ -619,6 +633,67 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_resize(sd->clip, ow, oh);
 }
 
+static Eina_Bool
+_unsmooth_timeout(void *data)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   Evas_Coord ox, oy, ow, oh;
+
+   if (!sd) return EINA_FALSE;
+   evas_object_geometry_get(data, &ox, &oy, &ow, &oh);
+   sd->smooth_timer = NULL;
+   sd->nosmooth = EINA_FALSE;
+   if ((sd->type == TYPE_IMG) || (sd->type == TYPE_SCALE))
+     {
+        evas_object_image_smooth_scale_set(sd->o_img, !sd->nosmooth);
+        if (sd->o_tmp)
+          evas_object_image_smooth_scale_set(sd->o_tmp, !sd->nosmooth);
+        if (sd->type == TYPE_SCALE) _type_scale_calc(data, ox, oy, ow, oh);
+     }
+   else if (sd->type == TYPE_MOV)
+     emotion_object_smooth_scale_set(sd->o_img, !sd->nosmooth);
+   return EINA_FALSE;
+}
+
+static void
+_smooth_handler(Evas_Object *obj)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   double t, interval;
+   
+   if (!sd) return;
+   t = ecore_loop_time_get();
+   interval = ecore_animator_frametime_get();
+   if (interval <= 0.0) interval = 1.0/60.0;
+   if (!sd->nosmooth)
+     {
+        if (sd->resizes >= 2)
+          {
+             sd->nosmooth = EINA_TRUE;
+             sd->resizes = 0;
+             if ((sd->type == TYPE_IMG) || (sd->type == TYPE_SCALE))
+               {
+                  evas_object_image_smooth_scale_set(sd->o_img, !sd->nosmooth);
+                  if (sd->o_tmp)
+                    evas_object_image_smooth_scale_set(sd->o_tmp, !sd->nosmooth);
+               }
+             else if (sd->type == TYPE_MOV)
+               emotion_object_smooth_scale_set(sd->o_img, !sd->nosmooth);
+             if (sd->smooth_timer)
+               sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
+             sd->smooth_timer = ecore_timer_add(interval * 10,
+                                                _unsmooth_timeout, obj);
+          }
+     }
+   else
+     {
+        if (sd->smooth_timer)
+          sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
+        sd->smooth_timer = ecore_timer_add(interval * 10,
+                                           _unsmooth_timeout, obj);
+     }
+}
+
 static void
 _smart_calculate(Evas_Object *obj)
 {
@@ -627,6 +702,11 @@ _smart_calculate(Evas_Object *obj)
 
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   if ((ow != sd->w) || (oh != sd->h)) sd->resizes++;
+   else sd->resizes = 0;
+   _smooth_handler(obj);
+   sd->w = ow;
+   sd->h = oh;
    if (sd->type == TYPE_IMG) _type_img_calc(obj, ox, oy, ow, oh);
    else if (sd->type == TYPE_SCALE) _type_scale_calc(obj, ox, oy, ow, oh);
    else if (sd->type == TYPE_EDJE) _type_edje_calc(obj, ox, oy, ow, oh);
