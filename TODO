@@ -3,10 +3,6 @@ here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
 [ ] elm cnp doesnt work in the fb :(
-[ ] paste top bit of
-    http://aur.archlinux.org/packages/te/terminology-svn/PKGBUILD 
-    into nano screrws with newlines.
-[ ] ctrl+home/end in emacs should change top/bottom bufffer position
 [ ] blink and blink2 attributes need to be supported
 [ ] dnd text (to/from terminal)
 [ ] general input mode handling improvements (keypad, other key

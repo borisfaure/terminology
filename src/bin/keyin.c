@@ -53,6 +53,8 @@ static const Keyout ctrl_keyout[] =
    KEY("Right",        "\033[1;5C"),
    KEY("Up",           "\033[1;5A"),
    KEY("Down",         "\033[1;5B"),
+   KEY("Home",         "\033[1;5H"),
+   KEY("End",          "\033[1;5F"),
    
    KEY(NULL, "END")
 };
