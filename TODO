@@ -2,6 +2,7 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] jed menus dont draw lines right
 [ ] paste top bit of
     http://aur.archlinux.org/packages/te/terminology-svn/PKGBUILD 
     into nano screrws with newlines.
