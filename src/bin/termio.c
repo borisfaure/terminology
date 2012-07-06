@@ -896,7 +896,24 @@ _getsel_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Selection_Data *ev)
    if (ev->format == ELM_SEL_FORMAT_TEXT)
      {
         if (ev->len > 0)
-          termpty_write(sd->pty, ev->data, ev->len - 1);
+          {
+             char *tmp, *s;
+             int i;
+
+             // apparently we have to convert \n into \r in terminal land.
+             tmp = malloc(ev->len);
+             if (tmp)
+               {
+                  s = ev->data;
+                  for (i = 0; i < ev->len; i++)
+                    {
+                       tmp[i] = s[i];
+                       if (tmp[i] == '\n') tmp[i] = '\r';
+                    }
+                  termpty_write(sd->pty, tmp, ev->len - 1);
+                  free(tmp);
+               }
+          }
      }
    return EINA_TRUE;
 }
