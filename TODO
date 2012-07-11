@@ -19,7 +19,7 @@ make it a first-class terminal:
     on_hold flags, etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
-[ ] selection should become single edje object so it can be styled nicely
+[ ] make selection theme nice
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic so its reliable

@@ -27,7 +27,7 @@ struct _Termio
       Evas_Object *obj;
    } grid;
    struct {
-      Evas_Object *obj, *selo1, *selo2, *selo3;
+      Evas_Object *obj, *selo_top, *selo_bottom, *selo_theme;
       int x, y;
       struct {
          int x, y;
@@ -722,51 +722,29 @@ _smart_apply(Evas_Object *obj)
              t = start_y; start_y = end_y; end_y = t;
           }
 
-        if (end_y > start_y)
-          {
-             evas_object_move(sd->cur.selo1,
-                              ox + (start_x * sd->font.chw),
-                              oy + ((start_y + sd->scroll) * sd->font.chh));
-             evas_object_resize(sd->cur.selo1,
-                                (sd->grid.w - start_x) * sd->font.chw,
-                                sd->font.chh);
-             evas_object_show(sd->cur.selo1);
-
-             evas_object_move(sd->cur.selo3,
-                              ox, oy + ((end_y + sd->scroll) * sd->font.chh));
-             evas_object_resize(sd->cur.selo3,
-                                (end_x + 1) * sd->font.chw,
-                                sd->font.chh);
-             evas_object_show(sd->cur.selo3);
-          }
-        else
-          {
-             evas_object_move(sd->cur.selo1,
-                              ox + (start_x * sd->font.chw),
-                              oy + ((start_y + sd->scroll) * sd->font.chh));
-             evas_object_resize(sd->cur.selo1,
-                                (end_x - start_x + 1) * sd->font.chw,
-                                sd->font.chh);
-             evas_object_show(sd->cur.selo1);
-             evas_object_hide(sd->cur.selo3);
-          }
-        if (end_y > (start_y + 1))
-          {
-             evas_object_move(sd->cur.selo2,
-                              ox, oy + ((start_y + 1 + sd->scroll) * sd->font.chh));
-             evas_object_resize(sd->cur.selo2,
-                                sd->grid.w * sd->font.chw,
-                                (end_y - start_y - 1) * sd->font.chh);
-             evas_object_show(sd->cur.selo2);
-          }
-        else
-          evas_object_hide(sd->cur.selo2);
+        evas_object_size_hint_min_set(sd->cur.selo_top,
+                                      start_x * sd->font.chw,
+                                      sd->font.chh);
+        evas_object_size_hint_max_set(sd->cur.selo_top,
+                                      start_x * sd->font.chw,
+                                      sd->font.chh);
+        evas_object_size_hint_min_set(sd->cur.selo_bottom,
+                                      (sd->grid.w - end_x) * sd->font.chw,
+                                      sd->font.chh);
+        evas_object_size_hint_max_set(sd->cur.selo_bottom,
+                                      (sd->grid.w - end_x) * sd->font.chw,
+                                      sd->font.chh);
+        evas_object_move(sd->cur.selo_theme,
+                         ox,
+                         oy + ((start_y + sd->scroll) * sd->font.chh));
+        evas_object_resize(sd->cur.selo_theme,
+                           (sd->grid.w + 1) * sd->font.chw,
+                           (end_y + 1 - start_y + sd->scroll) * sd->font.chh);
+        evas_object_show(sd->cur.selo_theme);
      }
    else
      {
-        evas_object_hide(sd->cur.selo1);
-        evas_object_hide(sd->cur.selo2);
-        evas_object_hide(sd->cur.selo3);
+        evas_object_hide(sd->cur.selo_theme);
      }
    _smart_mouseover_apply(obj);
 }
@@ -1794,6 +1772,11 @@ _termio_config_set(Evas_Object *obj, Config *config)
    theme_auto_reload_enable(sd->cur.obj);
    evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
    evas_object_show(sd->cur.obj);
+
+   theme_apply(sd->cur.selo_theme, config, "terminology/selection");
+   theme_auto_reload_enable(sd->cur.selo_theme);
+   edje_object_part_swallow(sd->cur.selo_theme, "terminology.top_left", sd->cur.selo_top);
+   edje_object_part_swallow(sd->cur.selo_theme, "terminology.bottom_right", sd->cur.selo_bottom);
 }
 
 static void
@@ -1946,22 +1929,15 @@ _smart_add(Evas_Object *obj)
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
-   evas_object_smart_member_add(o, obj);
-   sd->cur.selo1 = o;
-   evas_object_color_set(o, 64, 64, 64, 64);
+   sd->cur.selo_top = o;
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
+   sd->cur.selo_bottom = o;
+   o = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
-   sd->cur.selo2 = o;
-   evas_object_color_set(o, 64, 64, 64, 64);
-   o = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_pass_events_set(o, EINA_TRUE);
-   evas_object_propagate_events_set(o, EINA_FALSE);
-   evas_object_smart_member_add(o, obj);
-   sd->cur.selo3 = o;
-   evas_object_color_set(o, 64, 64, 64, 64);
-   
+   sd->cur.selo_theme = o;
+  
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
@@ -1971,6 +1947,7 @@ _smart_add(Evas_Object *obj)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cursor_cb_move, obj);
    
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_repeat_events_set(o, EINA_TRUE);
    evas_object_smart_member_add(o, obj);
    sd->event = o;
    evas_object_color_set(o, 0, 0, 0, 0);
@@ -2068,9 +2045,9 @@ _smart_del(Evas_Object *obj)
      }
    if (sd->cur.obj) evas_object_del(sd->cur.obj);
    if (sd->event) evas_object_del(sd->event);
-   if (sd->cur.selo1) evas_object_del(sd->cur.selo1);
-   if (sd->cur.selo2) evas_object_del(sd->cur.selo2);
-   if (sd->cur.selo3) evas_object_del(sd->cur.selo3);
+   if (sd->cur.selo_top) evas_object_del(sd->cur.selo_top);
+   if (sd->cur.selo_bottom) evas_object_del(sd->cur.selo_bottom);
+   if (sd->cur.selo_theme) evas_object_del(sd->cur.selo_theme);
    if (sd->anim) ecore_animator_del(sd->anim);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
@@ -2082,9 +2059,9 @@ _smart_del(Evas_Object *obj)
    EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
    sd->cur.obj = NULL;
    sd->event = NULL;
-   sd->cur.selo1 = NULL;
-   sd->cur.selo2 = NULL;
-   sd->cur.selo3 = NULL;
+   sd->cur.selo_top = NULL;
+   sd->cur.selo_bottom = NULL;
+   sd->cur.selo_theme = NULL;
    sd->anim = NULL;
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;

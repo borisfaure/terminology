@@ -4,7 +4,7 @@ collections {
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: 48 48 48 255;
+               color: 0 0 0 255;
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
@@ -141,8 +141,23 @@ collections {
             description { state: "default" 0.0;
                color: 170 170 170 32;
             }
+         }
+         part { name: "effect"; type: RECT;
+            mouse_events: 1;
+            description { state: "default" 0.0;
+               color: 255 255 255 180;
+               visible: 0;
+               rel1.relative: 0.0 1.0;
+               rel1.offset: 0 -1;
+               rel2.relative: 1.0 1.0;
+               rel2.offset: -1 -1;
+            }
             description { state: "focused" 0.0;
                color: 170 170 170 128;
+            }
+            description { state: "end" 0.0;
+               inherit: "focused" 0.0;
+               color: 255 255 255 90;
             }
          }
          programs {
@@ -150,21 +165,19 @@ collections {
                signal: "focus,in";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "base";
+               target: "effect";
                after: "focus2";
             }
             program { name: "focus2";
-               in: 0.2 0.0;
-               transition: DECELERATE 0.1;
-               action: STATE_SET "default" 0.0;
-               target: "base";
+               in: 0.2 0.5;
+               transition: DECELERATE 0.5;
+               action: STATE_SET "end" 0.0;
+               target: "effect";
                after: "focus3";
             }
             program { name: "focus3";
-               in: 0.2 0.0;
-               transition: ACCELERATE 0.1;
                action: STATE_SET "focused" 0.0;
-               target: "base";
+               target: "effect";
                after: "focus2";
             }
             program { name: "focus_out";
@@ -179,6 +192,7 @@ collections {
             program { name: "focus_out2";
                action: STATE_SET "default" 0.0;
                target: "base";
+               target: "effect";
             }
          }
       }

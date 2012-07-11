@@ -769,6 +769,245 @@ collections {
          }
       }
    }
+
+//////////////////////////////////////////////////////////////////////////////
+   group { name: "terminology/selection";
+      parts {
+         // This 3 parts should have the same nice image background
+         part {
+            name: "terminology.background_top"; type: RECT;
+            mouse_events: 0;
+            clip_to: "terminology.top_clip";
+            description { state: "default" 0.0;
+               color: 128 128 128 128;
+            }
+         }
+         part {
+            name: "terminology.background_middle";
+            mouse_events: 0; type: RECT;
+            clip_to: "terminology.middle_clip";
+            description { state: "default" 0.0;
+               color: 128 128 128 128;
+            }
+         }
+         part {
+            name: "terminology.background_bottom";
+            mouse_events: 0; type: RECT;
+            clip_to: "terminology.bottom_clip";
+            description { state: "default" 0.0;
+               color: 128 128 128 128;
+            }
+         }
+
+         part { name: "terminology.top_left"; type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "terminology.top_clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 1.0 0.0;
+               rel2.to_y: "terminology.top_left";
+               rel2.relative: 1.0 1.0;
+            }
+            description { state: "oneline" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "terminology.cursor.top_left"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "terminology.top_left";
+               rel2.relative: 1.0 1.0;
+               rel2.offset: 0 -1;
+               color: 255 0 0 128;
+            }
+         }
+         part { name: "terminology.cursor_blink.top_left"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.cursor.top_left";
+               rel2.to: "terminology.cursor.top_left";
+               visible: 0;
+            }
+            description { state: "fading" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 255;
+               visible: 1;
+            }
+            description { state: "fading" 1.0;
+               inherit: "fading" 0.0;
+               color: 255 0 0 64;
+               rel1.offset: -5 0;
+            }
+         }
+         part { name: "terminology.zone.top_left"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.cursor.top_left";
+               rel1.offset: -5 0;
+               rel2.to: "terminology.cursor.top_left";
+               rel2.offset: +5 0;
+               color: 0 0 0 0;
+            }
+
+            program {
+               name: "top_left.blink";
+               signal: "mouse,in";
+               source: "terminology.zone.top_left";
+               action: STATE_SET fading 0.0;
+               target: terminology.cursor_blink.top_left;
+               after: "top_left.fade";
+            }
+            program {
+               name: "top_left.fade";
+               action: STATE_SET fading 1.0;
+               transition: LINEAR 0.3;
+               target: terminology.cursor_blink.top_left;
+               after: "top_left.blink";
+            }
+            program {
+               name: "top_left.stop";
+               signal: "mouse,out";
+               source: "terminology.zone.top_left";
+               action: STATE_SET default 0.0;
+               target: terminology.cursor_blink.top_left;
+            }
+         }
+
+         part { name: "terminology.middle_clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 0.0 1.0;
+               rel2.to: "terminology.bottom_right";
+               rel2.relative: 1.0 0.0;
+            }
+            description { state: "oneline" 0.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "terminology.bottom_right";
+               rel2.relative: 0.0 1.0;
+            }
+         }
+         part { name: "terminology.track"; type: SPACER;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 0.0 0.0;
+               rel2.to: "terminology.bottom_right";
+               rel2.relative: 0.0 0.0;
+               limit: HEIGHT;
+            }
+         }
+
+         part { name: "terminology.bottom_clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to_y: "terminology.bottom_right";
+               rel1.relative: 0.0 0.0;
+               rel2.to_x: "terminology.bottom_right";
+               rel2.relative: 0.0 1.0;
+            }
+            description { state: "oneline" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "terminology.bottom_right"; type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               align: 1.0 1.0;
+               visible: 0;
+            }
+         }
+         part { name: "terminology.cursor.bottom_right"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.bottom_right";
+               rel1.relative: 0.0 0.0;
+               rel2.to: "terminology.bottom_right";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: 0 -1;
+               color: 255 0 0 128;
+            }
+         }
+         
+         part { name: "terminology.cursor_blink.bottom_right"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.cursor.bottom_right";
+               rel2.to: "terminology.cursor.bottom_right";
+               visible: 0;
+            }
+            description { state: "fading" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 255;
+               visible: 1;
+            }
+            description { state: "fading" 1.0;
+               inherit: "fading" 0.0;
+               color: 255 0 0 64;
+               rel2.offset: +5 0;
+            }
+         }
+         part { name: "terminology.zone.bottom_right"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.cursor.bottom_right";
+               rel1.offset: -5 0;
+               rel2.to: "terminology.cursor.bottom_right";
+               rel2.offset: +5 0;
+               color: 0 0 0 0;
+            }
+
+            program {
+               name: "bottom_right.blink";
+               signal: "mouse,in";
+               source: "terminology.zone.bottom_right";
+               action: STATE_SET fading 0.0;
+               target: terminology.cursor_blink.bottom_right;
+               after: "bottom_right.fade";
+            }
+            program {
+               name: "bottom_right.fade";
+               action: STATE_SET fading 1.0;
+               transition: LINEAR 0.3;
+               target: terminology.cursor_blink.bottom_right;
+               after: "bottom_right.blink";
+            }
+            program {
+               name: "bottom_right.stop";
+               signal: "mouse,out";
+               source: "terminology.zone.bottom_right";
+               action: STATE_SET default 0.0;
+               target: terminology.cursor_blink.bottom_right;
+            }
+         }
+      }
+      programs {
+         program {
+            name: "oneline";
+            signal: "limit,height,zero";
+            source: "terminology.track";
+            action: STATE_SET oneline 0.0;
+            target: "terminology.top_clip";
+            target: "terminology.middle_clip";
+            target: "terminology.bottom_clip";
+         }
+         program {
+            name: "multiline";
+            signal: "limit,height,over";
+            source: "terminology.track";
+            action: STATE_SET default 0.0;
+            target: "terminology.top_clip";
+            target: "terminology.middle_clip";
+            target: "terminology.bottom_clip";
+         }
+      }
+   }
    
    
 //////////////////////////////////////////////////////////////////////////////
