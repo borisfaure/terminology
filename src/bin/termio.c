@@ -1074,7 +1074,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
           }
      }
-   if (sd->jump_on_keypress)
+   if (sd->jump_on_keypress && ev->string && (ev->string[0] != 0))
      {
         sd->scroll = 0;
         _smart_update_queue(data, sd);
