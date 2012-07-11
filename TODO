@@ -19,11 +19,17 @@ make it a first-class terminal:
     on_hold flags, etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
-[ ] make selection theme nice
+[ ] selection should become single edje object so it can be styled nicely
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic so its reliable
 [ ] fast text/regex searching similar to urxvt
+[ ] search in terminal (and keep highlighting until search cleared)
+[ ] single key combo to go into terminal command mode for search etc.
+[ ] logging of terminal to file
+[ ] number recognition with base conversion
+[ ] dnd of file to term offer to past path, with escapes or paste file
+    content (if text) with or without escaping
 
 things in future to make it totally kick-butt:
 
