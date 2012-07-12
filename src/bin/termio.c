@@ -2231,7 +2231,6 @@ _smart_pty_command(void *data)
    Termio *sd;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   printf("COMMAND: '%s'\n", sd->pty->cur_cmd);
 }
 
 Evas_Object *
