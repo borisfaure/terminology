@@ -876,7 +876,7 @@ _getsel_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Selection_Data *ev)
         if (ev->len > 0)
           {
              char *tmp, *s;
-             int i;
+             size_t i;
 
              // apparently we have to convert \n into \r in terminal land.
              tmp = malloc(ev->len);
