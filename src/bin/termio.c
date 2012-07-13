@@ -560,7 +560,7 @@ _smart_apply(Evas_Object *obj)
                          oy + ((start_y + sd->scroll) * sd->font.chh));
         evas_object_resize(sd->cur.selo_theme,
                            (sd->grid.w + 1) * sd->font.chw,
-                           (end_y + 1 - start_y + sd->scroll) * sd->font.chh);
+                           (end_y + 1 - start_y) * sd->font.chh);
         evas_object_show(sd->cur.selo_theme);
      }
    else
