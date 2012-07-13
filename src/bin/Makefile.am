@@ -26,6 +26,7 @@ options_theme.c options_theme.h \
 options_wallpaper.c options_wallpaper.h \
 termio.c termio.h \
 termpty.c termpty.h \
+termptydbl.c termptydbl.h \
 utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h
