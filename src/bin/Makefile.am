@@ -27,6 +27,10 @@ options_wallpaper.c options_wallpaper.h \
 termio.c termio.h \
 termpty.c termpty.h \
 termptydbl.c termptydbl.h \
+termptyesc.c termptyesc.h \
+termptyops.c termptyops.h \
+termptygfx.c termptygfx.h \
+termptyext.c termptyext.h \
 utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h

@@ -132,3 +132,5 @@ Termcell *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 void      termpty_write(Termpty *ty, const char *input, int len);
 void      termpty_resize(Termpty *ty, int w, int h);
 void      termpty_backscroll_set(Termpty *ty, int size);
+
+extern int _termpty_log_dom;
