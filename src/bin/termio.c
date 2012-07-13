@@ -709,6 +709,7 @@ _smart_apply(Evas_Object *obj)
    if (sd->cur.sel)
      {
         int start_x, start_y, end_x, end_y;
+	int size_top, size_bottom;
 
         start_x = sd->cur.sel1.x;
         start_y = sd->cur.sel1.y;
@@ -722,17 +723,23 @@ _smart_apply(Evas_Object *obj)
              t = start_y; start_y = end_y; end_y = t;
           }
 
+	size_top = start_x * sd->font.chw;
+	if (!size_top) size_top = 1;
+
+	size_bottom = (sd->grid.w - end_x) * sd->font.chw;
+	if (!size_bottom) size_bottom = 1;
+
         evas_object_size_hint_min_set(sd->cur.selo_top,
-                                      start_x * sd->font.chw,
+                                      size_top,
                                       sd->font.chh);
         evas_object_size_hint_max_set(sd->cur.selo_top,
-                                      start_x * sd->font.chw,
+                                      size_top,
                                       sd->font.chh);
         evas_object_size_hint_min_set(sd->cur.selo_bottom,
-                                      (sd->grid.w - end_x) * sd->font.chw,
+                                      size_bottom,
                                       sd->font.chh);
         evas_object_size_hint_max_set(sd->cur.selo_bottom,
-                                      (sd->grid.w - end_x) * sd->font.chw,
+                                      size_bottom,
                                       sd->font.chh);
         evas_object_move(sd->cur.selo_theme,
                          ox,
