@@ -4,6 +4,7 @@
 #include <Elementary.h>
 #include <Ecore_Input.h>
 #include "termio.h"
+#include "termiolink.h"
 #include "termpty.h"
 #include "utf8.h"
 #include "col.h"
@@ -75,193 +76,6 @@ static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
-
-static Eina_Bool
-coord_back(Termio *sd, int *x, int *y)
-{
-   (*x)--;
-   if ((*x) < 0)
-     {
-        if ((*y) <= 0)
-          {
-             (*x)++;
-             return EINA_FALSE;
-          }
-        (*x) = sd->grid.w - 1;
-        (*y)--;
-     }
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-coord_forward(Termio *sd, int *x, int *y)
-{
-   (*x)++;
-   if ((*x) >= sd->grid.w)
-     {
-        if ((*y) >= (sd->grid.h - 1))
-          {
-             (*x)--;
-             return EINA_FALSE;
-          }
-        (*x) = 0;
-        (*y)++;
-     }
-   return EINA_TRUE;
-}
-
-static char *
-_magic_string_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r, int *y2r)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   char *s;
-   char endmatch = 0;
-   int x1, x2, y1, y2, len;
-   Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, extend = EINA_FALSE;
-   
-   if (!sd) return NULL;
-   x1 = cx;
-   y1 = cy;
-   x2 = cx;
-   y2 = cy;
-   if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
-   for (;;)
-     {
-        s = termio_selection_get(obj,
-                                 x1, y1 - sd->scroll,
-                                 x2, y2 - sd->scroll);
-        if (!s) break;
-        if (goback)
-          {
-             if      ((!strncasecmp(s, "http://", 7))||
-                      (!strncasecmp(s, "https://", 8)) ||
-                      (!strncasecmp(s, "file://", 7)) ||
-                      (!strncasecmp(s, "ftp://", 6)))
-               {
-                  goback = EINA_FALSE;
-                  coord_back(sd, &x1, &y1);
-                  free(s);
-                  s = termio_selection_get(obj,
-                                           x1, y1 - sd->scroll,
-                                           x2, y2 - sd->scroll);
-                  if (!s) break;
-                  if (s[0] == '"') endmatch = '"';
-                  else if (s[0] == '\'') endmatch = '\'';
-                  else if (s[0] == '<') endmatch = '>';
-                  coord_forward(sd, &x1, &y1);
-                  free(s);
-                  s = termio_selection_get(obj,
-                                           x1, y1 - sd->scroll,
-                                           x2, y2 - sd->scroll);
-                  if (!s) break;
-               }
-             else if ((isspace(s[0])) ||
-                      (s[0] == '"') ||
-                      (s[0] == '\'') ||
-                      (s[0] == '<') ||
-                      (s[0] == '='))
-               {
-                  if (s[0] == '"') endmatch = '"';
-                  else if (s[0] == '\'') endmatch = '\'';
-                  else if (s[0] == '<') endmatch = '>';
-                  if ((!strncasecmp((s + 1), "www.", 4)) ||
-                      (!strncasecmp((s + 1), "ftp.", 4)) ||
-                      (!strncasecmp((s + 1), "/", 1)))
-                    {
-                       goback = EINA_FALSE;
-                       coord_forward(sd, &x1, &y1);
-                    }
-                  else if (strchr((s + 2), '@'))
-                    {
-                       goback = EINA_FALSE;
-                       coord_forward(sd, &x1, &y1);
-                    }
-                  else if (s[0] == '=')
-                    {
-                    }
-                  else
-                    {
-                       free(s);
-                       s = NULL;
-                       break;
-                    }
-               }
-          }
-        if (goforward)
-          {
-             len = strlen(s);
-             if (len > 1)
-               {
-                  if (((endmatch) && (s[len - 1] == endmatch)) ||
-                      ((!endmatch) && 
-                          ((isspace(s[len - 1])) || (s[len - 1] == '>'))
-                      ))
-                    {
-                       goforward = EINA_FALSE;
-                       coord_back(sd, &x2, &y2);
-                    }
-               }
-          }
-        
-        if (goforward)
-          {
-             if (!coord_forward(sd, &x2, &y2)) goforward = EINA_FALSE;
-          }
-        if (goback)
-          {
-             if (!coord_back(sd, &x1, &y1)) goback = EINA_FALSE;
-          }
-        if ((!extend) && (!goback))
-          {
-             goforward = EINA_TRUE;
-             extend = EINA_TRUE;
-          }
-        if ((!goback) && (!goforward))
-          {
-             free(s);
-             s = termio_selection_get(obj, 
-                                      x1, y1 - sd->scroll, 
-                                      x2, y2 - sd->scroll);
-             break;
-          }
-        free(s);
-        s = NULL;
-     }
-   if (s)
-     {
-        len = strlen(s);
-        while (len > 1)
-          {
-             if (isspace(s[len - 1]))
-               {
-                  s[len - 1] = 0;
-                  len--;
-               }
-             else break;
-          }
-        if ((!isspace(s[0])) && (len > 1))
-          {
-             if ((strchr(s, '@')) ||
-                 (!strncasecmp(s, "http://", 7))||
-                 (!strncasecmp(s, "https://", 8)) ||
-                 (!strncasecmp(s, "ftp://", 6)) ||
-                 (!strncasecmp(s, "file://", 7)) ||
-                 (!strncasecmp(s, "www.", 4)) ||
-                 (!strncasecmp(s, "ftp.", 4)) ||
-                 (!strncasecmp(s, "/", 1))
-                )
-               {
-                  if (x1r) *x1r = x1;
-                  if (y1r) *y1r = y1;
-                  if (x2r) *x2r = x2;
-                  if (y2r) *y2r = y2;
-                  return s;
-               }
-          }
-        free(s);
-     }
-   return NULL;
-}
 
 static void
 _activate_link(Evas_Object *obj)
@@ -511,7 +325,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    
    if (!sd) return;
 
-   s = _magic_string_find(obj, sd->mouse.cx, sd->mouse.cy,
+   s = _termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
                          &x1, &y1, &x2, &y2);
    if (!s)
      {
@@ -2529,4 +2343,26 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
    sd->link.suspend += dir;
    if (sd->link.suspend < 0) sd->link.suspend = 0;
    _smart_update_queue(obj, sd);
+}
+
+void
+termio_size_get(Evas_Object *obj, int *w, int *h)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd)
+     {
+        if (w) *w = 0;
+        if (h) *h = 0;
+        return;
+     }
+   if (w) *w = sd->grid.w;
+   if (h) *h = sd->grid.h;
+}
+
+int
+termio_scroll_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return 0;
+   return sd->scroll;
 }

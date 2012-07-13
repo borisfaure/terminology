@@ -12,4 +12,7 @@ void         termio_copy_clipboard(Evas_Object *obj);
 void         termio_paste_clipboard(Evas_Object *obj);
 const char  *termio_link_get(const Evas_Object *obj);
 void         termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir);
+void         termio_size_get(Evas_Object *obj, int *w, int *h);
+int          termio_scroll_get(Evas_Object *obj);
+
 #endif
