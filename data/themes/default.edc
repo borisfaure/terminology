@@ -793,9 +793,9 @@ collections {
    // |        ######|
    // |##############|
 #define PATCOL  100 160 255 128
-#define PATCOL2 255 50   20 160
+#define PATCOL2 120 180 255 144
 #define OUTCOL  120 220 255 128
-#define OUTCOL2 255 200 120 200
+#define OUTCOL2 180 240 255 144
    
    group { name: "terminology/selection";
       images {
