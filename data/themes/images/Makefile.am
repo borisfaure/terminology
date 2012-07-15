@@ -27,4 +27,12 @@ pm_overlay.png \
 pm_shadow.png \
 lk_bottom.png \
 lk_left.png \
-lk_right.png
+lk_right.png \
+sl_htop.png \
+sl_hbottom.png \
+sl_left.png \
+sl_top.png \
+sl_bottom.png \
+sl_stripe.png \
+sl_right.png
+
