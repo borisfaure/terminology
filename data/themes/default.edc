@@ -771,42 +771,91 @@ collections {
    }
 
 //////////////////////////////////////////////////////////////////////////////
+   //// the selection
+   // selections come in 5 modes:
+   // 
+   // oneline (also multiple lines but all fill the row):
+   // |  #########   |
+   // 
+   // disjoint:
+   // |       #######|
+   // |##            |
+   // 
+   // default:
+   // |   ###########|
+   // |#########     |
+   // 
+   // topfull:
+   // |##############|
+   // |######        |
+   // 
+   // bottomfull:
+   // |        ######|
+   // |##############|
+#define PATCOL  100 160 255 128
+#define PATCOL2 255 50   20 160
+#define OUTCOL  120 220 255 128
+#define OUTCOL2 255 200 120 200
+   
    group { name: "terminology/selection";
+      images {
+         image: "sl_stripe.png" COMP;
+         image: "sl_left.png" COMP;
+         image: "sl_right.png" COMP;
+         image: "sl_top.png" COMP;
+         image: "sl_bottom.png" COMP;
+         image: "sl_htop.png" COMP;
+         image: "sl_hbottom.png" COMP;
+      }
       parts {
-         // This 3 parts should have the same nice image background
-         part {
-            name: "terminology.background_top"; type: RECT;
+         // background pattern. duplicated because clips cut out regions of
+         // it to see and clips don't overlap
+         part { name: "background_top";
             mouse_events: 0;
-            clip_to: "terminology.top_clip";
+            clip_to: "top_clip";
             description { state: "default" 0.0;
-               color: 128 128 128 128;
+               color: PATCOL;
+               image.normal: "sl_stripe.png";
+               fill.size.relative: 0.0 0.0;
+               fill.size.offset: 40 40;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: PATCOL2;
             }
          }
-         part {
-            name: "terminology.background_middle";
-            mouse_events: 0; type: RECT;
-            clip_to: "terminology.middle_clip";
-            description { state: "default" 0.0;
-               color: 128 128 128 128;
-            }
-         }
-         part {
-            name: "terminology.background_bottom";
-            mouse_events: 0; type: RECT;
-            clip_to: "terminology.bottom_clip";
-            description { state: "default" 0.0;
-               color: 128 128 128 128;
-            }
-         }
-
-         part { name: "terminology.top_left"; type: SWALLOW;
+         part { name: "background_middle";
             mouse_events: 0;
+            clip_to: "middle_clip";
             description { state: "default" 0.0;
-               align: 0.0 0.0;
-               visible: 0;
+               color: PATCOL;
+               image.normal: "sl_stripe.png";
+               fill.size.relative: 0.0 0.0;
+               fill.size.offset: 40 40;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: PATCOL2;
             }
          }
-         part { name: "terminology.top_clip"; type: RECT;
+         part { name: "background_bottom";
+            mouse_events: 0;
+            clip_to: "bottom_clip";
+            description { state: "default" 0.0;
+               color: PATCOL;
+               image.normal: "sl_stripe.png";
+               fill.size.relative: 0.0 0.0;
+               fill.size.offset: 40 40;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: PATCOL2;
+            }
+         }
+         
+         // clips that clip the above pattern images to occupy specific
+         // regions of the object (or be invisible since clip is invisible)
+         part { name: "top_clip"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to: "terminology.top_left";
@@ -818,69 +867,7 @@ collections {
                visible: 0;
             }
          }
-         part { name: "terminology.cursor.top_left"; type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "terminology.top_left";
-               rel1.relative: 1.0 0.0;
-               rel2.to: "terminology.top_left";
-               rel2.relative: 1.0 1.0;
-               rel2.offset: 0 -1;
-               color: 255 0 0 128;
-            }
-         }
-         part { name: "terminology.cursor_blink.top_left"; type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.to: "terminology.cursor.top_left";
-               rel2.to: "terminology.cursor.top_left";
-               visible: 0;
-            }
-            description { state: "fading" 0.0;
-               inherit: "default" 0.0;
-               color: 255 0 0 255;
-               visible: 1;
-            }
-            description { state: "fading" 1.0;
-               inherit: "fading" 0.0;
-               color: 255 0 0 64;
-               rel1.offset: -5 0;
-            }
-         }
-         part { name: "terminology.zone.top_left"; type: RECT;
-            description { state: "default" 0.0;
-               rel1.to: "terminology.cursor.top_left";
-               rel1.offset: -5 0;
-               rel2.to: "terminology.cursor.top_left";
-               rel2.offset: +5 0;
-               color: 0 0 0 0;
-            }
-
-            program {
-               name: "top_left.blink";
-               signal: "mouse,in";
-               source: "terminology.zone.top_left";
-               action: STATE_SET fading 0.0;
-               target: terminology.cursor_blink.top_left;
-               after: "top_left.fade";
-            }
-            program {
-               name: "top_left.fade";
-               action: STATE_SET fading 1.0;
-               transition: LINEAR 0.3;
-               target: terminology.cursor_blink.top_left;
-               after: "top_left.blink";
-            }
-            program {
-               name: "top_left.stop";
-               signal: "mouse,out";
-               source: "terminology.zone.top_left";
-               action: STATE_SET default 0.0;
-               target: terminology.cursor_blink.top_left;
-            }
-         }
-
-         part { name: "terminology.middle_clip"; type: RECT;
+         part { name: "middle_clip"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to: "terminology.top_left";
@@ -895,17 +882,7 @@ collections {
                rel2.relative: 0.0 1.0;
             }
          }
-         part { name: "terminology.track"; type: SPACER;
-            description { state: "default" 0.0;
-               rel1.to: "terminology.top_left";
-               rel1.relative: 0.0 0.0;
-               rel2.to: "terminology.bottom_right";
-               rel2.relative: 0.0 0.0;
-               limit: HEIGHT;
-            }
-         }
-
-         part { name: "terminology.bottom_clip"; type: RECT;
+         part { name: "bottom_clip"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to_y: "terminology.bottom_right";
@@ -917,30 +894,984 @@ collections {
                visible: 0;
             }
          }
+         
+         // the outline around the selection...
+#define TARGETS \
+target: "top_clip"; target: "middle_clip"; target: "bottom_clip"; \
+target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: "4.clip"
+         
+         part { name: "0.clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "oneline" 0.0;    visible: 1; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "disjoint" 0.0;   visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "topfull" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "bottomfull" 0.0; visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+         }
+         part { name: "1.clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "oneline" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "disjoint" 0.0;   visible: 1; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "topfull" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "bottomfull" 0.0; visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+         }
+         part { name: "2.clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;    visible: 1; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "oneline" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "disjoint" 0.0;   visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "topfull" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "bottomfull" 0.0; visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+         }
+         part { name: "3.clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "oneline" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "disjoint" 0.0;   visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "topfull" 0.0;    visible: 1; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "bottomfull" 0.0; visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+         }
+         part { name: "4.clip"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "oneline" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "disjoint" 0.0;   visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "topfull" 0.0;    visible: 0; rel1.offset: -100 -100; rel2.offset: 101 101; }
+            description { state: "bottomfull" 0.0; visible: 1; rel1.offset: -100 -100; rel2.offset: 101 101; }
+         }
+         
+         // oneline (also multiple lines but all fill the row):
+         // |  #########   |
+         part { name: "0.left";
+            mouse_events: 0;
+            clip_to: "0.clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  to_x: "terminology.top_left";
+                  relative: 1.0 0.0;
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to_x: "terminology.top_left";
+                  relative: 1.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "0.right";
+            mouse_events: 0;
+            clip_to: "0.clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  to_x: "terminology.bottom_right";
+                  relative: 0.0 0.0;
+                  offset: -3 -1;
+               }
+               rel2 {
+                  to_x: "terminology.bottom_right";
+                  relative: 0.0 1.0;
+                  offset: 0 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "0.top";
+            mouse_events: 0;
+            clip_to: "0.clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "0.left";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "0.right";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "0.bottom";
+            mouse_events: 0;
+            clip_to: "0.clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "0.left";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "0.right";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         program { name: "oneline";
+            signal: "mode,oneline";
+            source: "terminology";
+            action: STATE_SET "oneline" 0.0;
+            TARGETS;
+         }
+
+         // disjoint:
+         // |       #######|
+         // |##            |
+         part { name: "1.left";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "terminology.top_left";
+                  relative: 1.0 0.0;
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to: "terminology.top_left";
+                  relative: 1.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.right";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to_y: "terminology.top_left";
+                  relative: 1.0 0.0;
+                  offset: -4 -1;
+               }
+               rel2 {
+                  to_y: "terminology.top_left";
+                  relative: 1.0 1.0;
+                  offset: -1 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.top";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "1.left";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "1.right";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.bottom";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "1.left";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "1.right";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.left2";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to_y: "terminology.bottom_right";
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to_y: "terminology.bottom_right";
+                  relative: 0.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.right2";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "terminology.bottom_right";
+                  relative: 0.0 0.0;
+                  offset: -3 -1;
+               }
+               rel2 {
+                  to: "terminology.bottom_right";
+                  relative: 0.0 1.0;
+                  offset: 0 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.top2";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "1.left2";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "1.right2";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "1.bottom2";
+            mouse_events: 0;
+            clip_to: "1.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "1.left2";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "1.right2";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         program { name: "disjoint";
+            signal: "mode,disjoint";
+            source: "terminology";
+            action: STATE_SET "disjoint" 0.0;
+            TARGETS;
+         }
+
+         // default:
+         // |   ###########|
+         // |#########     |
+         part { name: "2.topkink";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  relative: 0.0 0.0;
+                  offset: -4 -1;
+               }
+               rel2 {
+                  to: "top_clip";
+                  relative: 0.0 1.0;
+                  offset: 2 2;
+               }
+               color: OUTCOL;
+               image.normal: "sl_top.png";
+               image.border: 0 0 4 7;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.bottomkink";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "bottom_clip";
+                  relative: 1.0 0.0;
+                  offset: -3 -3;
+               }
+               rel2 {
+                  to: "bottom_clip";
+                  relative: 1.0 1.0;
+                  offset: 3 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_bottom.png";
+               image.border: 0 0 7 4;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.left";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "middle_clip";
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to: "bottom_clip";
+                  relative: 0.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.right";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  relative: 1.0 0.0;
+                  offset: -3 -1;
+               }
+               rel2 {
+                  to: "middle_clip";
+                  offset: 0 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.top";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "2.topkink";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "2.right";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.top2";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "2.left";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "2.topkink";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.bottom";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "2.left";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "2.bottomkink";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "2.bottom2";
+            mouse_events: 0;
+            clip_to: "2.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "2.bottomkink";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "2.right";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         program { name: "multiline";
+            signal: "mode,multiline";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            TARGETS;
+         }
+
+         // topfull:
+         // |##############|
+         // |######        |
+         part { name: "3.bottomkink";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "bottom_clip";
+                  relative: 1.0 0.0;
+                  offset: -3 -3;
+               }
+               rel2 {
+                  to: "bottom_clip";
+                  relative: 1.0 1.0;
+                  offset: 3 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_bottom.png";
+               image.border: 0 0 7 4;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "3.left";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to: "bottom_clip";
+                  relative: 0.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "3.right";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  relative: 1.0 0.0;
+                  offset: -3 -1;
+               }
+               rel2 {
+                  to: "middle_clip";
+                  offset: 0 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "3.top";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "3.left";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "3.right";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "3.bottom";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "3.left";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "3.bottomkink";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "3.bottom2";
+            mouse_events: 0;
+            clip_to: "3.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "3.bottomkink";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "3.right";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         program { name: "topfull";
+            signal: "mode,topfull";
+            source: "terminology";
+            action: STATE_SET "topfull" 0.0;
+            TARGETS;
+         }
+
+         // bottomfull:
+         // |        ######|
+         // |##############|
+         part { name: "4.topkink";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  relative: 0.0 0.0;
+                  offset: -4 -1;
+               }
+               rel2 {
+                  to: "top_clip";
+                  relative: 0.0 1.0;
+                  offset: 2 2;
+               }
+               color: OUTCOL;
+               image.normal: "sl_top.png";
+               image.border: 0 0 4 7;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "4.left";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "middle_clip";
+                  offset: -1 -1;
+               }
+               rel2 {
+                  to: "bottom_clip";
+                  relative: 0.0 1.0;
+                  offset: 2 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_left.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "4.right";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "top_clip";
+                  relative: 1.0 0.0;
+                  offset: -3 -1;
+               }
+               rel2 {
+                  offset: 0 0;
+               }
+               color: OUTCOL;
+               image.normal: "sl_right.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "4.top";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "4.topkink";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "4.right";
+                  relative: 0.0 0.0;
+                  offset: -1 3;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "4.top2";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "4.left";
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "4.topkink";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_htop.png";
+               fill.smooth: 0;
+            }
+            description { state: "pluse" 0.0;
+               inherit: "default" 0.0;
+               color: OUTCOL2;
+            }
+         }
+         part { name: "4.bottom";
+            mouse_events: 0;
+            clip_to: "4.clip"; 
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "4.left";
+                  relative: 1.0 1.0;
+                  offset: 0 -4;
+               }
+               rel2 {
+                  to: "4.right";
+                  relative: 1.0 1.0;
+                  offset: -1 -1;
+               }
+               color: OUTCOL;
+               image.normal: "sl_hbottom.png";
+               fill.smooth: 0;
+            }
+         }
+         program { name: "bottomfull";
+            signal: "mode,bottomfull";
+            source: "terminology";
+            action: STATE_SET "bottomfull" 0.0;
+            TARGETS;
+         }
+
+#define SELPULSE \
+target: "background_top"; \
+target: "background_middle"; \
+target: "background_bottom"; \
+target: "0.left"; \
+target: "0.right"; \
+target: "0.top"; \
+target: "0.bottom"; \
+target: "1.left"; \
+target: "1.right"; \
+target: "1.top"; \
+target: "1.bottom"; \
+target: "1.left2"; \
+target: "1.right2"; \
+target: "1.top2"; \
+target: "1.bottom2"; \
+target: "2.topkink"; \
+target: "2.bottomkink"; \
+target: "2.left"; \
+target: "2.right"; \
+target: "2.top2"; \
+target: "2.top"; \
+target: "2.bottom"; \
+target: "2.bottom2"; \
+target: "3.bottomkink"; \
+target: "3.left"; \
+target: "3.right"; \
+target: "3.top"; \
+target: "3.bottom"; \
+target: "3.bottom2"; \
+target: "4.topkink"; \
+target: "4.left"; \
+target: "4.right"; \
+target: "4.top2"; \
+target: "4.top"; \
+target: "4.bottom"
+         
+         program { name: "selpulse";
+            signal: "show";
+            source: "";
+            action: STATE_SET "pluse" 0.0;
+            transition: SINUSOIDAL 0.5;
+            SELPULSE;
+            after: "selpulse2";
+         }
+         program { name: "selpulse2";
+            action: STATE_SET "default" 0.0;
+            transition: SINUSOIDAL 1.0;
+            SELPULSE;
+            after: "selpulse";
+         }
+         
+         // top and bottom swallows used to coimmunicate via min/max size the
+         // size of the top and bottom lines
+         part { name: "terminology.top_left"; type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               rel2.relative: 0.0 0.0;
+               visible: 0;
+            }
+         }
          part { name: "terminology.bottom_right"; type: SWALLOW;
             mouse_events: 0;
             description { state: "default" 0.0;
                align: 1.0 1.0;
+               rel1.relative: 1.0 1.0;
                visible: 0;
             }
          }
-         part { name: "terminology.cursor.bottom_right"; type: RECT;
+         
+         // blinky cursors indicating you can drag the ends of the selection
+         part { name: "cursor.top_left"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.to: "terminology.bottom_right";
-               rel1.relative: 0.0 0.0;
-               rel2.to: "terminology.bottom_right";
-               rel2.relative: 0.0 1.0;
+               rel1.to: "terminology.top_left";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "terminology.top_left";
+               rel2.relative: 1.0 1.0;
                rel2.offset: 0 -1;
                color: 255 0 0 128;
             }
          }
-         
-         part { name: "terminology.cursor_blink.bottom_right"; type: RECT;
+         part { name: "cursor_blink.top_left"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.to: "terminology.cursor.bottom_right";
-               rel2.to: "terminology.cursor.bottom_right";
+               rel1.to: "cursor.top_left";
+               rel2.to: "cursor.top_left";
+               visible: 0;
+            }
+            description { state: "fading" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 255;
+               visible: 1;
+            }
+            description { state: "fading" 1.0;
+               inherit: "fading" 0.0;
+               color: 255 0 0 64;
+               rel1.offset: -5 0;
+            }
+         }
+         part { name: "zone.top_left"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "cursor.top_left";
+               rel1.offset: -5 0;
+               rel2.to: "cursor.top_left";
+               rel2.offset:  5 0;
+               color: 0 0 0 0;
+            }
+            program { name: "top_left.blink";
+               signal: "mouse,in";
+               source: "zone.top_left";
+               action: STATE_SET "fading" 0.0;
+               target: "cursor_blink.top_left";
+               after: "top_left.fade";
+            }
+            program { name: "top_left.fade";
+               action: STATE_SET "fading" 1.0;
+               transition: LINEAR 0.3;
+               target: "cursor_blink.top_left";
+               after: "top_left.blink";
+            }
+            program { name: "top_left.stop";
+               signal: "mouse,out";
+               source: "zone.top_left";
+               action: STATE_SET "default" 0.0;
+               target: "cursor_blink.top_left";
+            }
+         }
+         part { name: "cursor.bottom_right"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.bottom_right";
+               rel1.relative: 0.0 0.0;
+               rel1.offset: -1 0;
+               rel2.to: "terminology.bottom_right";
+               rel2.relative: 0.0 1.0;
+               rel2.offset: -1 -1;
+               color: 255 0 0 128;
+            }
+         }
+         part { name: "cursor_blink.bottom_right"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "cursor.bottom_right";
+               rel2.to: "cursor.bottom_right";
                visible: 0;
             }
             description { state: "fading" 0.0;
@@ -954,57 +1885,33 @@ collections {
                rel2.offset: +5 0;
             }
          }
-         part { name: "terminology.zone.bottom_right"; type: RECT;
+         part { name: "zone.bottom_right"; type: RECT;
             description { state: "default" 0.0;
-               rel1.to: "terminology.cursor.bottom_right";
+               rel1.to: "cursor.bottom_right";
                rel1.offset: -5 0;
-               rel2.to: "terminology.cursor.bottom_right";
-               rel2.offset: +5 0;
+               rel2.to: "cursor.bottom_right";
+               rel2.offset:  5 0;
                color: 0 0 0 0;
             }
-
-            program {
-               name: "bottom_right.blink";
+            program { name: "bottom_right.blink";
                signal: "mouse,in";
-               source: "terminology.zone.bottom_right";
-               action: STATE_SET fading 0.0;
-               target: terminology.cursor_blink.bottom_right;
+               source: "zone.bottom_right";
+               action: STATE_SET "fading" 0.0;
+               target: "cursor_blink.bottom_right";
                after: "bottom_right.fade";
             }
-            program {
-               name: "bottom_right.fade";
-               action: STATE_SET fading 1.0;
+            program { name: "bottom_right.fade";
+               action: STATE_SET "fading" 1.0;
                transition: LINEAR 0.3;
-               target: terminology.cursor_blink.bottom_right;
+               target: "cursor_blink.bottom_right";
                after: "bottom_right.blink";
             }
-            program {
-               name: "bottom_right.stop";
+            program { name: "bottom_right.stop";
                signal: "mouse,out";
-               source: "terminology.zone.bottom_right";
-               action: STATE_SET default 0.0;
-               target: terminology.cursor_blink.bottom_right;
+               source: "zone.bottom_right";
+               action: STATE_SET "default" 0.0;
+               target: "cursor_blink.bottom_right";
             }
-         }
-      }
-      programs {
-         program {
-            name: "oneline";
-            signal: "limit,height,zero";
-            source: "terminology.track";
-            action: STATE_SET oneline 0.0;
-            target: "terminology.top_clip";
-            target: "terminology.middle_clip";
-            target: "terminology.bottom_clip";
-         }
-         program {
-            name: "multiline";
-            signal: "limit,height,over";
-            source: "terminology.track";
-            action: STATE_SET default 0.0;
-            target: "terminology.top_clip";
-            target: "terminology.middle_clip";
-            target: "terminology.bottom_clip";
          }
       }
    }

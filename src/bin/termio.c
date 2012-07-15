@@ -538,10 +538,8 @@ _smart_apply(Evas_Object *obj)
           }
 
 	size_top = start_x * sd->font.chw;
-	if (!size_top) size_top = 1;
 
-	size_bottom = (sd->grid.w - end_x) * sd->font.chw;
-	if (!size_bottom) size_bottom = 1;
+	size_bottom = (sd->grid.w - end_x - 1) * sd->font.chw;
 
         evas_object_size_hint_min_set(sd->cur.selo_top,
                                       size_top,
@@ -559,14 +557,31 @@ _smart_apply(Evas_Object *obj)
                          ox,
                          oy + ((start_y + sd->scroll) * sd->font.chh));
         evas_object_resize(sd->cur.selo_theme,
-                           (sd->grid.w + 1) * sd->font.chw,
+                           sd->grid.w * sd->font.chw,
                            (end_y + 1 - start_y) * sd->font.chh);
+        if ((start_y == end_y) ||
+            ((start_x == 0) && (end_x == (sd->grid.w - 1))))
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,oneline", "terminology");
+        else if ((start_y == (end_y - 1)) &&
+                 (start_x > end_x))
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,disjoint", "terminology");
+        else if (start_x == 0)
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,topfull", "terminology");
+        else if (end_x == (sd->grid.w - 1))
+          {
+             edje_object_signal_emit(sd->cur.selo_theme, 
+                                     "mode,bottomfull", "terminology");
+          }
+        else
+          edje_object_signal_emit(sd->cur.selo_theme,
+                                  "mode,multiline", "terminology");
         evas_object_show(sd->cur.selo_theme);
      }
    else
-     {
-        evas_object_hide(sd->cur.selo_theme);
-     }
+     evas_object_hide(sd->cur.selo_theme);
    _smart_mouseover_apply(obj);
 }
 
