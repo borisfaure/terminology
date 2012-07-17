@@ -95,74 +95,87 @@ void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o;
+   Evas_Object *o, *bx, *sc;
    char *txt;
 
-   op_jumpcheck = o = elm_check_add(opbox);
+   sc = o = elm_scroller_add(opbox);
+   elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
+   bx = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(sc, o);
+   evas_object_show(o);
+   
+   op_jumpcheck = o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Jump to bottom on change");
    elm_check_state_set(o, config->jump_on_change);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_jump_chg, term);
 
-   o = elm_check_add(opbox);
+   o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Jump to bottom on keypress");
    elm_check_state_set(o, config->jump_on_keypress);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_jump_keypress_chg, term);
 
-   o = elm_check_add(opbox);
+   o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "React to key press");
    elm_check_state_set(o, config->flicker_on_key);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_flicker_chg, term);
 
-   o = elm_check_add(opbox);
+   o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Disable cursor blinking");
    elm_check_state_set(o, config->disable_cursor_blink);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_cursor_blink_chg, term);
    
-   o = elm_check_add(opbox);
+   o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Urgent on bell");
    elm_check_state_set(o, config->urg_bell);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_urg_bell_chg, term);
    
-   o = elm_separator_add(opbox);
+   o = elm_separator_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    
-   o = elm_label_add(opbox);
+   o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Word separators:");
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   op_wordsep = o = elm_entry_add(opbox);
+   op_wordsep = o = elm_entry_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -174,26 +187,26 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_wsep_chg, term);
 
-   o = elm_separator_add(opbox);
+   o = elm_separator_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    
-   o = elm_label_add(opbox);
+   o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Scrollback lines:");
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    
-   op_sbslider = o = elm_slider_add(opbox);
+   op_sbslider = o = elm_slider_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 160);
@@ -201,12 +214,12 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_slider_indicator_format_set(o, "%1.0f");
    elm_slider_min_max_set(o, 0, 10000);
    elm_slider_value_set(o, config->scrollback);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_behavior_sback_chg, term);
    
-   evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, 0.0);
+   evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 }

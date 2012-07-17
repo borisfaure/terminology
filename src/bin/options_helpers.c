@@ -47,7 +47,7 @@ _cb_op_helper_url_image_chg(void *data, Evas_Object *obj, void *event __UNUSED__
    if (config->helper.url.image)
      {
         eina_stringshare_del(config->helper.url.image);
-        config->helper.email = NULL;
+        config->helper.url.image = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -68,7 +68,7 @@ _cb_op_helper_url_video_chg(void *data, Evas_Object *obj, void *event __UNUSED__
    if (config->helper.url.video)
      {
         eina_stringshare_del(config->helper.url.video);
-        config->helper.email = NULL;
+        config->helper.url.video = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -89,7 +89,7 @@ _cb_op_helper_url_general_chg(void *data, Evas_Object *obj, void *event __UNUSED
    if (config->helper.url.general)
      {
         eina_stringshare_del(config->helper.url.general);
-        config->helper.email = NULL;
+        config->helper.url.general = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -110,7 +110,7 @@ _cb_op_helper_local_image_chg(void *data, Evas_Object *obj, void *event __UNUSED
    if (config->helper.local.image)
      {
         eina_stringshare_del(config->helper.local.image);
-        config->helper.email = NULL;
+        config->helper.local.image = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -131,7 +131,7 @@ _cb_op_helper_local_video_chg(void *data, Evas_Object *obj, void *event __UNUSED
    if (config->helper.local.video)
      {
         eina_stringshare_del(config->helper.local.video);
-        config->helper.email = NULL;
+        config->helper.local.video = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -152,7 +152,7 @@ _cb_op_helper_local_general_chg(void *data, Evas_Object *obj, void *event __UNUS
    if (config->helper.local.general)
      {
         eina_stringshare_del(config->helper.local.general);
-        config->helper.email = NULL;
+        config->helper.local.general = NULL;
      }
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
    if (txt)
@@ -188,6 +188,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    
    sc = o = elm_scroller_add(opbox);
+   elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(opbox, o);
