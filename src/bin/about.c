@@ -54,7 +54,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
               // add more authors here
               "<br>"
               "<br>"
-              "Distrubted under the 2-clause BSD license detailed below:<br>"
+              "Distributed under the 2-clause BSD license detailed below:<br>"
               "<br>"
               "All rights reserved.<br>"
               "<br>"
