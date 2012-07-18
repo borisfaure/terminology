@@ -70,6 +70,8 @@ struct _Termio
    Eina_Bool noreqsize : 1;
    Eina_Bool composing : 1;
    Eina_Bool didclick : 1;
+   Eina_Bool bottom_right : 1;
+   Eina_Bool top_left : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -1401,6 +1403,42 @@ _smart_cb_mouse_move_job(void *data)
 }
 
 static void
+_edje_cb_bottom_right_in(void *data, Evas_Object *obj __UNUSED__,
+                         const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Termio *sd = data;
+
+   sd->bottom_right = EINA_TRUE;
+}
+
+static void
+_edje_cb_top_left_in(void *data, Evas_Object *obj __UNUSED__,
+                     const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Termio *sd = data;
+
+   sd->top_left = EINA_TRUE;
+}
+
+static void
+_edje_cb_bottom_right_out(void *data, Evas_Object *obj __UNUSED__,
+                          const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Termio *sd = data;
+
+   sd->bottom_right = EINA_FALSE;
+}
+
+static void
+_edje_cb_top_left_out(void *data, Evas_Object *obj __UNUSED__,
+                      const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Termio *sd = data;
+
+   sd->top_left = EINA_FALSE;
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -1441,22 +1479,41 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
           }
         else
           {
-             sd->backup.sel = sd->cur.sel;
-             sd->backup.sel1.x = sd->cur.sel1.x;
-             sd->backup.sel1.y = sd->cur.sel1.y;
-             sd->backup.sel2.x = sd->cur.sel2.x;
-             sd->backup.sel2.y = sd->cur.sel2.y;
-             if (sd->cur.sel)
+             if (sd->top_left || sd->bottom_right)
                {
-                  sd->cur.sel = 0;
-                  sd->didclick = EINA_TRUE;
+                  sd->cur.makesel = 1;
+                  sd->cur.sel = 1;
+                  if (sd->top_left)
+                    {
+                       sd->cur.sel1.x = cx;
+                       sd->cur.sel1.y = cy - sd->scroll;
+                    }
+                  else
+                    {
+                       sd->cur.sel2.x = cx;
+                       sd->cur.sel2.y = cy - sd->scroll;
+                    }
+                  _selection_dbl_fix(data);
                }
-             sd->cur.makesel = 1;
-             sd->cur.sel1.x = cx;
-             sd->cur.sel1.y = cy - sd->scroll;
-             sd->cur.sel2.x = cx;
-             sd->cur.sel2.y = cy - sd->scroll;
-             _selection_dbl_fix(data);
+             else
+               {
+                  sd->backup.sel = sd->cur.sel;
+                  sd->backup.sel1.x = sd->cur.sel1.x;
+                  sd->backup.sel1.y = sd->cur.sel1.y;
+                  sd->backup.sel2.x = sd->cur.sel2.x;
+                  sd->backup.sel2.y = sd->cur.sel2.y;
+                  if (sd->cur.sel)
+                    {
+                       sd->cur.sel = 0;
+                       sd->didclick = EINA_TRUE;
+                    }
+                  sd->cur.makesel = 1;
+                  sd->cur.sel1.x = cx;
+                  sd->cur.sel1.y = cy - sd->scroll;
+                  sd->cur.sel2.x = cx;
+                  sd->cur.sel2.y = cy - sd->scroll;
+                  _selection_dbl_fix(data);
+               }
           }
         _smart_update_queue(data, sd);
      }
@@ -1483,8 +1540,16 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         if (sd->cur.sel)
           {
              sd->didclick = EINA_TRUE;
-             sd->cur.sel2.x = cx;
-             sd->cur.sel2.y = cy - sd->scroll;
+             if (sd->top_left)
+               {
+                  sd->cur.sel1.x = cx;
+                  sd->cur.sel1.y = cy - sd->scroll;
+               }
+             else
+               {
+                  sd->cur.sel2.x = cx;
+                  sd->cur.sel2.y = cy - sd->scroll;
+               }
              _selection_dbl_fix(data);
              _smart_update_queue(data, sd);
              _take_selection(data, ELM_SEL_TYPE_PRIMARY);
@@ -1515,8 +1580,16 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                  ((cy - sd->scroll) != sd->cur.sel1.y))
                sd->cur.sel = 1;
           }
-        sd->cur.sel2.x = cx;
-        sd->cur.sel2.y = cy - sd->scroll; 
+        if (sd->top_left)
+          {
+             sd->cur.sel1.x = cx;
+             sd->cur.sel1.y = cy - sd->scroll;
+          }
+        else
+          {
+             sd->cur.sel2.x = cx;
+             sd->cur.sel2.y = cy - sd->scroll;
+          }
         _selection_dbl_fix(data);
        _smart_update_queue(data, sd);
      }
@@ -1732,6 +1805,7 @@ _smart_add(Evas_Object *obj)
    free(cd);
    evas_object_smart_data_set(obj, sd);
 
+   /* Terminal output widget */
    o = evas_object_textgrid_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
@@ -1762,6 +1836,17 @@ _smart_add(Evas_Object *obj)
               colors256[n].r, colors256[n].g,
               colors256[n].b, colors256[n].a);
      }
+
+   /* Setup cursor */
+   o = edje_object_add(evas_object_evas_get(obj));
+   evas_object_pass_events_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
+   evas_object_smart_member_add(o, obj);
+   sd->cur.obj = o;
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cursor_cb_move, obj);
+
+   /* Setup the selection widget */
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
@@ -1773,15 +1858,12 @@ _smart_add(Evas_Object *obj)
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    sd->cur.selo_theme = o;
-  
-   o = edje_object_add(evas_object_evas_get(obj));
-   evas_object_pass_events_set(o, EINA_TRUE);
-   evas_object_propagate_events_set(o, EINA_FALSE);
-   evas_object_smart_member_add(o, obj);
-   sd->cur.obj = o;
+   edje_object_signal_callback_add(o, "mouse,in", "zone.bottom_right", _edje_cb_bottom_right_in, sd);
+   edje_object_signal_callback_add(o, "mouse,in", "zone.top_left", _edje_cb_top_left_in, sd);
+   edje_object_signal_callback_add(o, "mouse,out", "zone.bottom_right", _edje_cb_bottom_right_out, sd);
+   edje_object_signal_callback_add(o, "mouse,out", "zone.top_left", _edje_cb_top_left_out, sd);
 
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cursor_cb_move, obj);
-   
+   /* Setup event catcher */
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_repeat_events_set(o, EINA_TRUE);
    evas_object_smart_member_add(o, obj);
