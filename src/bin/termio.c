@@ -2139,7 +2139,10 @@ _smart_pty_exited(void *data)
 static void
 _smart_pty_bell(void *data)
 {
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
    evas_object_smart_callback_call(data, "bell", NULL);
+   edje_object_signal_emit(sd->cur.obj, "bell", "terminology");
 }
 
 static void
