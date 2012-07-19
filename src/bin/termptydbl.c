@@ -33,13 +33,11 @@ _termpty_is_dblwidth_get(Termpty *ty, int g)
        (((g >> 12) == 0x4) &&
            (((g >= 0x4e00) && (g <= 0x9fff)))) ||
        // aXXX
-       (((g >> 12) == 0xa) &&
+       ((((g >> 12) >= 0xa) && ((g >> 12) <= 0xd)) &&
            (((g >= 0xa000) && (g <= 0xa4c6)) ||
             ((g >= 0xa960) && (g <= 0xa97c)) ||
-            ((g >= 0xac00) && (g <= 0xd7a3)))) ||
-       // dXXX
-       (((g >> 12) == 0xd) &&
-           (((g >= 0xd7b0) && (g <= 0xd7fb)))) ||
+            ((g >= 0xac00) && (g <= 0xd7a3)) ||
+            ((g >= 0xd7b0) && (g <= 0xd7fb)))) ||
        // fXXX
        (((g >> 12) == 0xf) &&
            (((g >= 0xf900) && (g <= 0xfaff)) ||
