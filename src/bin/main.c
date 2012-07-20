@@ -17,12 +17,11 @@ static Evas_Object *popmedia = NULL;
 static Evas_Object *conform = NULL;
 static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
-static Eina_Bool win_deleted = EINA_FALSE;
 
 static void
 _cb_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   win_deleted = EINA_TRUE;
+   win = NULL;
 }
 
 static void
@@ -505,7 +504,7 @@ elm_main(int argc, char **argv)
    config_del(config);
    config_shutdown();
 
-   if (!win_deleted) evas_object_del(win);
+   if (win) evas_object_del(win);
 
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
