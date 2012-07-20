@@ -537,6 +537,21 @@ _smart_apply(Evas_Object *obj)
 
              t = start_x; start_x = end_x; end_x = t;
              t = start_y; start_y = end_y; end_y = t;
+
+	     if (sd->top_left)
+	       {
+                  sd->top_left = EINA_FALSE;
+                  sd->bottom_right = EINA_TRUE;
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.top_left");
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.bottom_right");
+	       }
+             else if (sd->bottom_right)
+               {
+                  sd->top_left = EINA_TRUE;
+                  sd->bottom_right = EINA_FALSE;
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.bottom_right");
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.top_left");
+               }
           }
 
 	size_top = start_x * sd->font.chw;
