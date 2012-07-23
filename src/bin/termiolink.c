@@ -76,12 +76,14 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                }
              else if ((isspace(s[0])) ||
                       (s[0] == '"') ||
+                      (s[0] == '`') ||
                       (s[0] == '\'') ||
                       (s[0] == '<') ||
                       (s[0] == '='))
                {
                   if (s[0] == '"') endmatch = '"';
                   else if (s[0] == '\'') endmatch = '\'';
+                  else if (s[0] == '`') endmatch = '\'';
                   else if (s[0] == '<') endmatch = '>';
                   if ((!strncasecmp((s + 1), "www.", 4)) ||
                       (!strncasecmp((s + 1), "ftp.", 4)) ||

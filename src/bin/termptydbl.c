@@ -11,7 +11,7 @@ _termpty_is_dblwidth_get(Termpty *ty, int g)
    // check for east asian full-width (F), half-width (H), wide (W),
    // narrow (Na) or ambiguous (A) codepoints
    // ftp://ftp.unicode.org/Public/UNIDATA/EastAsianWidth.txt
-   
+
    // optimize for latin1 non-ambiguous
    if (g <= 0xa0)
      return EINA_FALSE;
