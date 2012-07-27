@@ -310,8 +310,8 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
         /* TODO: should we reset signals here? */
 
         // pretend to be xterm
-//        putenv("TERM=xterm");
-        putenv("TERM=xterm-256color");
+        putenv("TERM=xterm");
+//        putenv("TERM=xterm-256color");
         putenv("XTERM_256_COLORS=1");
         execvp(args[0], (char *const *)args);
         exit(127); /* same as system() for failed commands */
