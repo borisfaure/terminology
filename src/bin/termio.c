@@ -806,6 +806,22 @@ _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
      }
 }
 
+static Eina_Bool
+_is_modifier(const char *key)
+{
+   if ((!strncmp(key, "Shift", 5)) ||
+       (!strncmp(key, "Control", 7)) ||
+       (!strncmp(key, "Alt", 3)) ||
+       (!strncmp(key, "Meta", 4)) ||
+       (!strncmp(key, "Super", 5)) ||
+       (!strncmp(key, "Hyper", 5)) ||
+       (!strcmp(key, "Scroll_Lock")) ||
+       (!strcmp(key, "Num_Lock")) ||
+       (!strcmp(key, "Caps_Lock")))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 void
 _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
@@ -905,10 +921,13 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                }
           }
      }
-   if (sd->jump_on_keypress && ev->string && (ev->string[0] != 0))
+   if (sd->jump_on_keypress)
      {
-        sd->scroll = 0;
-        _smart_update_queue(data, sd);
+        if (!_is_modifier(ev->key))
+          {
+             sd->scroll = 0;
+             _smart_update_queue(data, sd);
+          }
      }
    // if term app asked fro kbd lock - dont handle here
    if (sd->pty->state.kbd_lock) return;
@@ -931,9 +950,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
      }
    else
      {
-        if (!strncmp(ev->key, "Shift", 5)) goto end;
-        if (!strncmp(ev->key, "Control", 7)) goto end;
-        if (!strncmp(ev->key, "Alt", 3)) goto end;
+        if (_is_modifier(ev->key)) goto end;
         sd->seq = eina_list_append(sd->seq, eina_stringshare_add(ev->key));
         state = ecore_compose_get(sd->seq, &compres);
         if (state == ECORE_COMPOSE_NONE)
