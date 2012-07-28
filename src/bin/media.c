@@ -659,10 +659,9 @@ static void
 _smooth_handler(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   double t, interval;
+   double interval;
    
    if (!sd) return;
-   t = ecore_loop_time_get();
    interval = ecore_animator_frametime_get();
    if (interval <= 0.0) interval = 1.0/60.0;
    if (!sd->nosmooth)
