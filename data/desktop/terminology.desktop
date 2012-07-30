@@ -7,5 +7,4 @@ Comment=Terminal emulator
 Exec=terminology
 Icon=terminology.png
 Categories=Utility;TerminalEmulator;
-Terminal=false
 StartupWMClass=terminology
