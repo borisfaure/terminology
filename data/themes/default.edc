@@ -819,7 +819,7 @@ collections {
                fill.size.relative: 0.0 0.0;
                fill.size.offset: 40 40;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: PATCOL2;
             }
@@ -833,7 +833,7 @@ collections {
                fill.size.relative: 0.0 0.0;
                fill.size.offset: 40 40;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: PATCOL2;
             }
@@ -847,7 +847,7 @@ collections {
                fill.size.relative: 0.0 0.0;
                fill.size.offset: 40 40;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: PATCOL2;
             }
@@ -962,7 +962,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -986,7 +986,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1009,7 +1009,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1032,7 +1032,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1066,7 +1066,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1090,7 +1090,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1113,7 +1113,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1136,7 +1136,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1159,7 +1159,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1183,7 +1183,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1206,7 +1206,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1229,7 +1229,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1262,7 +1262,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_top.png";
                image.border: 0 0 4 7;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1285,7 +1285,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_bottom.png";
                image.border: 0 0 7 4;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1308,7 +1308,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1331,7 +1331,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1354,7 +1354,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1377,7 +1377,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1400,7 +1400,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1423,7 +1423,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1456,7 +1456,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_bottom.png";
                image.border: 0 0 7 4;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1479,7 +1479,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1502,7 +1502,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1525,7 +1525,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1548,7 +1548,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1571,7 +1571,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1604,7 +1604,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_top.png";
                image.border: 0 0 4 7;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1627,7 +1627,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1649,7 +1649,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1672,7 +1672,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1695,7 +1695,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pluse" 0.0;
+            description { state: "pulse" 0.0;
                inherit: "default" 0.0;
                color: OUTCOL2;
             }
@@ -1766,7 +1766,7 @@ target: "4.bottom"
          program { name: "selpulse";
             signal: "show";
             source: "";
-            action: STATE_SET "pluse" 0.0;
+            action: STATE_SET "pulse" 0.0;
             transition: SINUSOIDAL 0.5;
             SELPULSE;
             after: "selpulse2";
@@ -1830,9 +1830,9 @@ target: "4.bottom"
          part { name: "zone.top_left"; type: RECT;
             description { state: "default" 0.0;
                rel1.to: "cursor.top_left";
-               rel1.offset: -5 0;
+               rel1.offset: -15 0;
                rel2.to: "cursor.top_left";
-               rel2.offset:  5 0;
+               rel2.offset:  15 0;
                color: 0 0 0 0;
             }
             program { name: "top_left.blink";
@@ -1888,9 +1888,9 @@ target: "4.bottom"
          part { name: "zone.bottom_right"; type: RECT;
             description { state: "default" 0.0;
                rel1.to: "cursor.bottom_right";
-               rel1.offset: -5 0;
+               rel1.offset: -15 0;
                rel2.to: "cursor.bottom_right";
-               rel2.offset:  5 0;
+               rel2.offset:  15 0;
                color: 0 0 0 0;
             }
             program { name: "bottom_right.blink";
@@ -1940,6 +1940,7 @@ target: "4.bottom"
                color: 255 255 255 80;
             }
             description { state: "focused" 0.0;
+               inherit: "default" 0.0;
                color: 255 255 255 255;
             }
          }
