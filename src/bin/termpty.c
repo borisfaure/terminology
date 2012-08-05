@@ -150,6 +150,16 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
    if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
    ty->exit_code = ev->exit_code;
    if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
+   
+   if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+   ty->hand_exe_exit = NULL;
+   if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+   ty->hand_fd = NULL;
+   if (ty->fd >= 0) close(ty->fd);
+   ty->fd = -1;
+   if (ty->slavefd >= 0) close(ty->slavefd);
+   ty->slavefd = -1;
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -219,7 +229,7 @@ _limit_coord(Termpty *ty, Termstate *state)
 }
 
 Termpty *
-termpty_new(const char *cmd, int w, int h, int backscroll)
+termpty_new(const char *cmd, const char *cd, int w, int h, int backscroll)
 {
    Termpty *ty;
    const char *pty;
@@ -258,6 +268,16 @@ termpty_new(const char *cmd, int w, int h, int backscroll)
         Eina_Bool needs_shell;
         int i;
 
+        if (cd)
+          {
+             if (chdir(cd) != 0)
+               {
+                  perror("chdir");
+                  ERR("Cannot change to directory '%s'", cd);
+                  exit(127);
+               }
+          }
+        
         needs_shell = ((!cmd) ||
                        (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
         DBG("cmd='%s' needs_shell=%u", cmd ? cmd : "", needs_shell);
@@ -378,6 +398,7 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
+   if (ty->fd < 0) return;
    if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
 }
 

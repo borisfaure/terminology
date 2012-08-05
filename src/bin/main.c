@@ -17,6 +17,7 @@ static Evas_Object *popmedia = NULL;
 static Evas_Object *conform = NULL;
 static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
+static Eina_Bool hold = EINA_FALSE;
 
 static void
 _cb_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -85,7 +86,8 @@ _cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
 static void
 _cb_exited(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   elm_exit();
+   printf("hold = %i\n", hold);
+   if (!hold) elm_exit();
 }
 
 static void
@@ -93,7 +95,8 @@ _cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSE
 {
    Config *config = termio_config_get(term);
 
-   edje_object_signal_emit(bg, "bell", "terminology");
+   if (!config->disable_visual_bell)
+     edje_object_signal_emit(bg, "bell", "terminology");
    if (!config) return;
    if (config->urg_bell)
      {
@@ -208,6 +211,8 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR ('e', "exec",
                               "command to execute. "
                               "Defaults to $SHELL (or passwd shel or /bin/sh)"),
+      ECORE_GETOPT_STORE_STR ('C', "current-directory",
+                              "Change to directory for execution of terminal command."),
       ECORE_GETOPT_STORE_STR ('t', "theme",
                               "Use the named edje theme or path to theme file."),
       ECORE_GETOPT_STORE_STR ('b', "background",
@@ -222,10 +227,17 @@ static const Ecore_Getopt options = {
                               "Set window title."),
       ECORE_GETOPT_STORE_STR ('i', "icon-name",
                               "Set icon name."),
+      ECORE_GETOPT_STORE_STR ('f', "font",
+                              "Set font (NAME/SIZE for scalable, NAME for bitmap."),
       ECORE_GETOPT_CHOICE    ('v', "video-module",
                               "Set emotion module to use.", emotion_choices),
+        
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
                               "Set mute mode for video playback."),
+      ECORE_GETOPT_STORE_BOOL('c', "cursor-blink",
+                              "Set cursor blink mode."),
+      ECORE_GETOPT_STORE_BOOL('V', "visual-bell",
+                              "Set visual bell mode."),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
                               "Go into the fullscreen mode from start."),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
@@ -238,10 +250,13 @@ static const Ecore_Getopt options = {
                               "Become maximized from the start."),
       ECORE_GETOPT_STORE_TRUE('W', "nowm",
                               "Terminology is run without a wm."),
-      ECORE_GETOPT_VERSION('V', "version"),
-      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-      ECORE_GETOPT_LICENSE('L', "license"),
-      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_STORE_TRUE('H', "hold",
+                              "Don't exit when the command process exits."),
+        
+      ECORE_GETOPT_VERSION   ('V', "version"),
+      ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
+      ECORE_GETOPT_LICENSE   ('L', "license"),
+      ECORE_GETOPT_HELP      ('h', "help"),
       ECORE_GETOPT_SENTINEL
    }
 };
@@ -250,6 +265,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    char *cmd = NULL;
+   char *cd = NULL;
    char *theme = NULL;
    char *background = NULL;
    char *geometry = NULL;
@@ -257,8 +273,11 @@ elm_main(int argc, char **argv)
    char *role = NULL;
    char *title = NULL;
    char *icon_name = NULL;
+   char *font = NULL;
    char *video_module = NULL;
    Eina_Bool video_mute = 0xff; /* unset */
+   Eina_Bool cursor_blink = 0xff; /* unset */
+   Eina_Bool visual_bell = 0xff; /* unset */
    Eina_Bool fullscreen = EINA_FALSE;
    Eina_Bool iconic = EINA_FALSE;
    Eina_Bool borderless = EINA_FALSE;
@@ -268,6 +287,7 @@ elm_main(int argc, char **argv)
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(cmd),
+     ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
      ECORE_GETOPT_VALUE_STR(geometry),
@@ -275,18 +295,25 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(role),
      ECORE_GETOPT_VALUE_STR(title),
      ECORE_GETOPT_VALUE_STR(icon_name),
+     ECORE_GETOPT_VALUE_STR(font),
      ECORE_GETOPT_VALUE_STR(video_module),
+      
      ECORE_GETOPT_VALUE_BOOL(video_mute),
+     ECORE_GETOPT_VALUE_BOOL(cursor_blink),
+     ECORE_GETOPT_VALUE_BOOL(visual_bell),
      ECORE_GETOPT_VALUE_BOOL(fullscreen),
      ECORE_GETOPT_VALUE_BOOL(iconic),
      ECORE_GETOPT_VALUE_BOOL(borderless),
      ECORE_GETOPT_VALUE_BOOL(override),
      ECORE_GETOPT_VALUE_BOOL(maximized),
      ECORE_GETOPT_VALUE_BOOL(nowm),
+     ECORE_GETOPT_VALUE_BOOL(hold),
+      
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      
      ECORE_GETOPT_VALUE_NONE
    };
    int args, retval = EXIT_SUCCESS;
@@ -349,6 +376,52 @@ elm_main(int argc, char **argv)
         config->temporary = EINA_TRUE;
      }
 
+   if (font)
+     {
+        if (strchr(font, '/'))
+          {
+             char *fname = alloca(strlen(font) + 1);
+             char *p;
+             
+             strcpy(fname, font);
+             p = strrchr(fname, '/');
+             if (p)
+               {
+                  int sz;
+                  
+                  *p = 0;
+                  p++;
+                  sz = atoi(p);
+                  if (sz > 0) config->font.size = sz;
+                  eina_stringshare_replace(&(config->font.name), fname);
+               }
+             config->font.bitmap = 0;
+          }
+        else
+          {
+             char buf[4096], *file;
+             Eina_List *files;
+             int n = strlen(font);
+             
+             snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
+             files = ecore_file_ls(buf);
+             EINA_LIST_FREE(files, file)
+               {
+                  if (n > 0)
+                    {
+                       if (!strncasecmp(file, font, n))
+                         {
+                            n = -1;
+                            eina_stringshare_replace(&(config->font.name), file);
+                            config->font.bitmap = 1;
+                         }
+                    }
+                  free(file);
+               }
+          }
+        config->temporary = EINA_TRUE;
+     }
+
    if (video_module)
      {
         int i;
@@ -369,7 +442,17 @@ elm_main(int argc, char **argv)
         config->mute = video_mute;
         config->temporary = EINA_TRUE;
      }
-
+   if (cursor_blink != 0xff)
+     {
+        config->disable_cursor_blink = !cursor_blink;
+        config->temporary = EINA_TRUE;
+     }
+   if (visual_bell != 0xff)
+     {
+        config->disable_visual_bell = !visual_bell;
+        config->temporary = EINA_TRUE;
+     }
+   
    if (geometry)
      {
         if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
@@ -472,7 +555,7 @@ elm_main(int argc, char **argv)
         evas_object_move(win, pos_x, pos_y);
      }
 
-   term = o = termio_add(win, config, cmd, size_w, size_h);
+   term = o = termio_add(win, config, cmd, cd, size_w, size_h);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);

@@ -87,6 +87,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_cursor_blink", disable_cursor_blink, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
@@ -363,6 +365,7 @@ config_load(const char *key)
 	     config->jump_on_keypress = EINA_TRUE;
              config->flicker_on_key = EINA_TRUE;
              config->disable_cursor_blink = EINA_FALSE;
+             config->disable_visual_bell = EINA_FALSE;
              s = eina_unicode_unicode_to_utf8(sep, &slen);
              if (s)
                {
