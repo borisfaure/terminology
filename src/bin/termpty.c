@@ -4,6 +4,8 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include <sys/types.h>
+#include <signal.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -151,6 +153,8 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
    ty->exit_code = ev->exit_code;
    if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
    
+   ty->pid = -1;
+
    if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
    ty->hand_exe_exit = NULL;
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
@@ -354,6 +358,41 @@ err:
 void
 termpty_free(Termpty *ty)
 {
+   if (ty->pid >= 0)
+     {
+        int i;
+        
+        // in case someone stopped the child - cont it
+        kill(ty->pid, SIGCONT);
+        // signpipe for shells
+        kill(ty->pid, SIGPIPE);
+        // try 400 time (sleeping for 1ms) to check for death of child
+        for (i = 0; i < 400; i++)
+          {
+             int status = 0;
+
+             // poll exit of child pid
+             if (waitpid(ty->pid, &status, WNOHANG) == ty->pid)
+               {
+                  // if child exited - break loop and mark pid as done
+                  ty->pid = -1;
+                  break;
+               }
+             // after 100ms set sigint
+             if      (i == 100) kill(ty->pid, SIGINT);
+             // after 200ms send term signal
+             else if (i == 200) kill(ty->pid, SIGTERM);
+             // after 300ms send quit signal
+             else if (i == 300) kill(ty->pid, SIGQUIT);
+             usleep(1000); // sleep 1ms
+          }
+        // so 400ms and child not gone - KILL!
+        if (ty->pid >= 0)
+          {
+             kill(ty->pid, SIGKILL);
+             ty->pid = -1;
+          }
+     }
    if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
    if (ty->prop.title) eina_stringshare_del(ty->prop.title);
