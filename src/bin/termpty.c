@@ -358,6 +358,8 @@ err:
 void
 termpty_free(Termpty *ty)
 {
+   if (ty->fd >= 0) close(ty->fd);
+   if (ty->slavefd >= 0) close(ty->slavefd);
    if (ty->pid >= 0)
      {
         int i;
@@ -397,8 +399,6 @@ termpty_free(Termpty *ty)
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
    if (ty->prop.title) eina_stringshare_del(ty->prop.title);
    if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-   if (ty->fd >= 0) close(ty->fd);
-   if (ty->slavefd >= 0) close(ty->slavefd);
    if (ty->back)
      {
         int i;
