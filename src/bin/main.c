@@ -211,7 +211,7 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR ('e', "exec",
                               "command to execute. "
                               "Defaults to $SHELL (or passwd shel or /bin/sh)"),
-      ECORE_GETOPT_STORE_STR ('C', "current-directory",
+      ECORE_GETOPT_STORE_STR ('d', "current-directory",
                               "Change to directory for execution of terminal command."),
       ECORE_GETOPT_STORE_STR ('t', "theme",
                               "Use the named edje theme or path to theme file."),
@@ -236,7 +236,7 @@ static const Ecore_Getopt options = {
                               "Set mute mode for video playback."),
       ECORE_GETOPT_STORE_BOOL('c', "cursor-blink",
                               "Set cursor blink mode."),
-      ECORE_GETOPT_STORE_BOOL('V', "visual-bell",
+      ECORE_GETOPT_STORE_BOOL('G', "visual-bell",
                               "Set visual bell mode."),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
                               "Go into the fullscreen mode from start."),
