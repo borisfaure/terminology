@@ -92,14 +92,8 @@ _activate_link(Evas_Object *obj)
    if (!sd) return;
    if (!config) return;
    if (!sd->link.string) return;
-   if      ((!strncasecmp(sd->link.string, "http://", 7))||
-            (!strncasecmp(sd->link.string, "https://", 8)) ||
-            (!strncasecmp(sd->link.string, "ftp://", 6)) ||
-            (!strncasecmp(sd->link.string, "www.", 4)) ||
-            (!strncasecmp(sd->link.string, "ftp.", 4)))
-     {
-        url = EINA_TRUE;
-     }
+   if (link_is_url(sd->link.string))
+     url = EINA_TRUE;
    else if ((!strncasecmp(sd->link.string, "file://", 7)) ||
             (!strncasecmp(sd->link.string, "/", 1)))
      {
@@ -107,9 +101,7 @@ _activate_link(Evas_Object *obj)
         if (!strncasecmp(sd->link.string, "file://", 7)) path = path + 7;
      }
    else if (strchr(sd->link.string, '@'))
-     {
-        email = EINA_TRUE;
-     }
+     email = EINA_TRUE;
    
    s = eina_str_escape(sd->link.string);
    if (!s) return;

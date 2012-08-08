@@ -50,3 +50,15 @@ theme_auto_reload_enable(Evas_Object *edje)
    edje_object_signal_callback_add
      (edje, "edje,change,file", "edje", theme_reload_cb, NULL);
 }
+
+Eina_Bool
+link_is_url(const char *str)
+{
+   if ((!strncasecmp(str, "http://", 7))||
+       (!strncasecmp(str, "https://", 8)) ||
+       (!strncasecmp(str, "ftp://", 6)) ||
+       (!strncasecmp(str, "www.", 4)) ||
+       (!strncasecmp(str, "ftp.", 4)))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}

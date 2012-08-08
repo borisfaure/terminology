@@ -22,6 +22,9 @@ media_play.png \
 media_stop.png \
 media_knob_pos.png \
 media_knob_vol.png \
+media_busy_knob.png \
+media_busy_progress.png \
+media_busy_spinner.png \
 pm_fill.png \
 pm_overlay.png \
 pm_shadow.png \
