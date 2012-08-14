@@ -70,6 +70,10 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
                        config->font.name = eina_stringshare_add("10x20.pcf");
                        termio_font_size_set(obj, 20);
                     }
+                  else
+                    {
+                       termio_font_size_set(obj, 20);
+                    }
                }
              else if (cmd[1] == '+') // size up
                {
