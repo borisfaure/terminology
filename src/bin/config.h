@@ -10,8 +10,11 @@ struct _Config
    int version;
    struct {
       const char    *name;
+      const char    *orig_name;
       int            size;
+      int            orig_size;
       unsigned char  bitmap;
+      unsigned char  orig_bitmap;
    } font;
    struct {
       const char    *email;
@@ -42,7 +45,7 @@ struct _Config
 
 void config_init(void);
 void config_shutdown(void);
-void config_save(const Config *config, const char *key);
+void config_save(Config *config, const char *key);
 Config *config_load(const char *key);
 void config_del(Config *config);
 

@@ -779,6 +779,12 @@ _font_size_set(Evas_Object *obj, int size)
      }
 }
 
+void
+termio_font_size_set(Evas_Object *obj, int size)
+{
+   _font_size_set(obj, size);
+}
+
 static void
 _smart_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
@@ -840,6 +846,14 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                     goto end;
                }
           }
+     }
+   if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
+       (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+       (!evas_key_modifier_is_set(ev->modifiers, "Control")) &&
+       (!strcmp(ev->keyname, "grave")))
+     {
+        evas_object_smart_callback_call(data, "cmdbox", NULL);
+        goto end;
      }
    if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      {

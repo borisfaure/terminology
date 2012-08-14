@@ -5,6 +5,7 @@
 #include "main.h"
 #include "win.h"
 #include "termio.h"
+#include "termcmd.h"
 #include "config.h"
 #include "controls.h"
 #include "media.h"
@@ -13,11 +14,13 @@
 int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
+static Evas_Object *cmdbox = NULL;
 static Evas_Object *popmedia = NULL;
 static Evas_Object *conform = NULL;
 static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
 static Eina_Bool hold = EINA_FALSE;
+static Eina_Bool cmdbox_up = EINA_FALSE;
 
 static void
 _cb_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -31,7 +34,10 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    if (!focused) elm_win_urgent_set(win, EINA_FALSE);
    focused = EINA_TRUE;
    edje_object_signal_emit(bg, "focus,in", "terminology");
-   elm_object_focus_set(data, EINA_TRUE);
+   if (cmdbox_up)
+     elm_object_focus_set(cmdbox, EINA_TRUE);
+   else
+     elm_object_focus_set(data, EINA_TRUE);
 }
 
 static void
@@ -39,7 +45,10 @@ _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    focused = EINA_FALSE;
    edje_object_signal_emit(bg, "focus,out", "terminology");
-   elm_object_focus_set(data, EINA_FALSE);
+   if (cmdbox_up)
+     elm_object_focus_set(cmdbox, EINA_FALSE);
+   else
+     elm_object_focus_set(data, EINA_FALSE);
    elm_cache_all_flush();
 }
 
@@ -86,7 +95,6 @@ _cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
 static void
 _cb_exited(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   printf("hold = %i\n", hold);
    if (!hold) elm_exit();
 }
 
@@ -139,6 +147,71 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
      edje_object_signal_emit(bg, "popmedia,edje", "terminology");
    else if (type == TYPE_MOV)
      edje_object_signal_emit(bg, "popmedia,movie", "terminology");
+}
+
+static void
+_cb_cmdbox(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   cmdbox_up = EINA_TRUE;
+   elm_object_focus_set(term, EINA_FALSE);
+   edje_object_signal_emit(bg, "cmdbox,show", "terminology");
+   elm_entry_entry_set(cmdbox, "");
+   evas_object_show(cmdbox);
+   elm_object_focus_set(cmdbox, EINA_TRUE);
+}
+
+static void
+_cb_cmd_activated(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   char *cmd;
+   
+   elm_object_focus_set(obj, EINA_FALSE);
+   edje_object_signal_emit(bg, "cmdbox,hide", "terminology");
+   elm_object_focus_set(term, EINA_TRUE);
+   cmd = (char *)elm_entry_entry_get(obj);
+   if (cmd)
+     {
+        cmd = elm_entry_markup_to_utf8(cmd);
+        if (cmd)
+          {
+             termcmd_do(term, win, bg, cmd);
+             free(cmd);
+          }
+     }
+   cmdbox_up = EINA_FALSE;
+}
+
+static void
+_cb_cmd_aborted(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   elm_object_focus_set(obj, EINA_FALSE);
+   edje_object_signal_emit(bg, "cmdbox,hide", "terminology");
+   elm_object_focus_set(term, EINA_TRUE);
+   cmdbox_up = EINA_FALSE;
+}
+
+static void
+_cb_cmd_changed(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   char *cmd;
+   
+   cmd = (char *)elm_entry_entry_get(obj);
+   if (cmd)
+     {
+        cmd = elm_entry_markup_to_utf8(cmd);
+        if (cmd)
+          {
+             termcmd_watch(term, win, bg, cmd);
+             free(cmd);
+          }
+     }
+}
+
+static void
+_cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   evas_object_show(obj);
+   edje_object_part_swallow(data, "terminology.cmdbox", obj);
 }
 
 void
@@ -554,7 +627,24 @@ elm_main(int argc, char **argv)
         if (pos_y < 0) pos_y = screen_h + pos_y;
         evas_object_move(win, pos_x, pos_y);
      }
-
+   
+   cmdbox = o = elm_entry_add(win);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_FALSE);
+   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_input_panel_layout_set(o, ELM_INPUT_PANEL_LAYOUT_TERMINAL);
+   elm_entry_autocapital_type_set(o, ELM_AUTOCAPITAL_TYPE_NONE);
+   elm_entry_input_panel_enabled_set(o, EINA_TRUE);
+   elm_entry_input_panel_language_set(o, ELM_INPUT_PANEL_LANG_ALPHABET);
+   elm_entry_input_panel_return_key_type_set(o, ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO);
+   elm_entry_prediction_allow_set(o, EINA_FALSE);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "activated", _cb_cmd_activated, bg);
+   evas_object_smart_callback_add(o, "aborted", _cb_cmd_aborted, bg);
+   evas_object_smart_callback_add(o, "changed,user", _cb_cmd_changed, bg);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _cb_cmd_hints_changed, bg);
+   edje_object_part_swallow(bg, "terminology.cmdbox", o);
+   
    term = o = termio_add(win, config, cmd, cd, size_w, size_h);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -567,6 +657,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "exited", _cb_exited, NULL);
    evas_object_smart_callback_add(o, "bell", _cb_bell, NULL);
    evas_object_smart_callback_add(o, "popup", _cb_popup, NULL);
+   evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, NULL);
    evas_object_show(o);
 
    main_trans_update(config);

@@ -25,6 +25,7 @@ options_video.c options_video.h \
 options_theme.c options_theme.h \
 options_wallpaper.c options_wallpaper.h \
 termio.c termio.h \
+termcmd.c termcmd.h \
 termiolink.c termiolink.h \
 termpty.c termpty.h \
 termptydbl.c termptydbl.h \

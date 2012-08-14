@@ -183,6 +183,74 @@ collections {
          }
 
          ////////////////////////////////////////////////////////////////////
+         // a place terminology will place an entry box for internal commands
+         part { name: "cmdclip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               rel1.to: "terminology.cmdbox";
+               rel1.offset: -100 -100;
+               rel2.to: "terminology.cmdbox";
+               rel2.offset: 99 99;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+               visible: 1;
+            }
+         }
+         part { name: "cmdback"; type: RECT;
+            clip_to: "cmdclip";
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               rel1.to: "terminology.cmdbox";
+               rel1.offset: -2 -2;
+               rel2.to: "terminology.cmdbox";
+               rel2.offset: 1 1;
+            }
+         }
+         part { name: "terminology.cmdbox"; type: SWALLOW;
+            clip_to: "cmdclip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 8 8;
+               rel1.relative: 0.0 1.0;
+               rel1.offset: 8 9;
+               rel2.offset: -9 9;
+               align: 0.5 0.0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               rel1.offset: 8 -9;
+               rel2.offset: -9 -9;
+               align: 0.5 1.0;
+            }
+         }
+         program { name: "cmdshow0";
+            signal: "cmdbox,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.4;
+            target: "cmdclip";
+         }
+         program { name: "cmdshow";
+            signal: "cmdbox,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: SPRING 0.4 0.5 4;
+            target: "terminology.cmdbox";
+         }
+         program { name: "cmdhide";
+            signal: "cmdbox,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: ACCELERATE 0.5;
+            target: "terminology.cmdbox";
+            target: "cmdclip";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
          // visual bell - spinning red siren light
          part { name: "bell_glow";
             mouse_events: 0;

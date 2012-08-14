@@ -107,7 +107,7 @@ config_shutdown(void)
 }
 
 void
-config_save(const Config *config, const char *key)
+config_save(Config *config, const char *key)
 {
    Eet_File *ef;
    char buf[PATH_MAX], buf2[PATH_MAX];
@@ -118,7 +118,12 @@ config_save(const Config *config, const char *key)
 
    if (config->temporary) return;
    if (!key) key = config->config_key;
-
+   config->font.orig_size = config->font.size;
+   eina_stringshare_del(config->font.orig_name);
+   config->font.orig_name = NULL;
+   if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
+   config->font.orig_bitmap = config->font.bitmap;
+   
    cfgdir = _config_home_get();
    snprintf(buf, sizeof(buf), "%s/terminology/config/standard", cfgdir);
    ecore_file_mkpath(buf);
@@ -152,6 +157,9 @@ config_load(const char *key)
         eet_close(ef);
         if (config)
           {
+             config->font.orig_size = config->font.size;
+             if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
+             config->font.orig_bitmap = config->font.bitmap;
              if (config->version < CONF_VER)
                {
                   // currently no upgrade path so reset config.
@@ -389,6 +397,7 @@ config_del(Config *config)
    if (!config) return;
 
    eina_stringshare_del(config->font.name);
+   eina_stringshare_del(config->font.orig_name);
    eina_stringshare_del(config->theme);
    eina_stringshare_del(config->background);
    eina_stringshare_del(config->wordsep);

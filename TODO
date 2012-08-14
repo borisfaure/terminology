@@ -1,10 +1,9 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
-[ ] finish off remote http fetch code for media
-[ ] filenames is `xxx' quotes not recognized (as ` different to ')
 [ ] blink and blink2 attributes need to be supported
 [ ] dnd text (to/from terminal)
+[ ] dnd file uri's too as text etc.
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
 [ ] selection of themes
@@ -18,7 +17,6 @@ make it a first-class terminal:
     on_hold flags, etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
-[ ] selection should become single edje object so it can be styled nicely
 [ ] selection should have handles on the start/end so u can drag and
     change its size once there
 [ ] improve selection text extraction logic so its reliable
