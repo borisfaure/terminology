@@ -850,7 +850,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Control")) &&
-       (!strcmp(ev->keyname, "grave")))
+       (!strcmp(ev->keyname, "Home")))
      {
         evas_object_smart_callback_call(data, "cmdbox", NULL);
         goto end;

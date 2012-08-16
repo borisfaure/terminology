@@ -52,7 +52,14 @@ Shift+Keypad-Plus = Font size up 1
 Shift+Keypad-Minus = Font size down 1
 Shift+Keypad-Multiply = Reset font size to 10
 Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
-Alt+backtick(grave) = Enter command mode
+Alt+Home = Enter command mode (enter commands to control terminology itself)
+
+Command mode commands currently understood:
+
+f = Reset font to default settign saved in config
+f+ = Increase fontsize
+f- = Decreate fontsize
+fb = Display big font size (10x20 bitmap, or size 20 with scalable).
 
 Mouse controls:
 
