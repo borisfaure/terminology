@@ -21,6 +21,7 @@ static Ecore_Timer *flush_timer = NULL;
 static Eina_Bool focused = EINA_FALSE;
 static Eina_Bool hold = EINA_FALSE;
 static Eina_Bool cmdbox_up = EINA_FALSE;
+static Ecore_Timer *_cmdbox_focus_timer = NULL;
 
 static void
 _cb_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -149,6 +150,14 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
      edje_object_signal_emit(bg, "popmedia,movie", "terminology");
 }
 
+static Eina_Bool
+_cb_cmd_focus(void *data)
+{
+   _cmdbox_focus_timer = NULL;
+   elm_object_focus_set(data, EINA_TRUE);
+   return EINA_FALSE;
+}
+
 static void
 _cb_cmdbox(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
@@ -157,7 +166,8 @@ _cb_cmdbox(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
    edje_object_signal_emit(bg, "cmdbox,show", "terminology");
    elm_entry_entry_set(cmdbox, "");
    evas_object_show(cmdbox);
-   elm_object_focus_set(cmdbox, EINA_TRUE);
+   if (_cmdbox_focus_timer) ecore_timer_del(_cmdbox_focus_timer);
+   _cmdbox_focus_timer = ecore_timer_add(0.1, _cb_cmd_focus, cmdbox);
 }
 
 static void
@@ -178,6 +188,11 @@ _cb_cmd_activated(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED_
              free(cmd);
           }
      }
+   if (_cmdbox_focus_timer)
+     {
+        ecore_timer_del(_cmdbox_focus_timer);
+        _cmdbox_focus_timer = NULL;
+     }
    cmdbox_up = EINA_FALSE;
 }
 
@@ -187,6 +202,11 @@ _cb_cmd_aborted(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
    elm_object_focus_set(obj, EINA_FALSE);
    edje_object_signal_emit(bg, "cmdbox,hide", "terminology");
    elm_object_focus_set(term, EINA_TRUE);
+   if (_cmdbox_focus_timer)
+     {
+        ecore_timer_del(_cmdbox_focus_timer);
+        _cmdbox_focus_timer = NULL;
+     }
    cmdbox_up = EINA_FALSE;
 }
 
