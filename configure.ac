@@ -54,6 +54,7 @@ AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${with_max_log_level}, [if set, loggi
 
 AC_CONFIG_FILES([
 Makefile
+terminology.spec
 src/Makefile
 src/bin/Makefile
 data/Makefile
