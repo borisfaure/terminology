@@ -841,13 +841,14 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if (!sd) return;
    if (sd->imf)
      {
-        Ecore_IMF_Event_Key_Down imf_ev;
-        ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
         // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
         // and jed (alt+shift+5 for search/replace for example)
         // Don't filter modifiers alt, is used by shells
         if (!evas_key_modifier_is_set(ev->modifiers, "Alt"))
           {
+             Ecore_IMF_Event_Key_Down imf_ev;
+             
+             ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
              if (!sd->composing)
                {
                   if (ecore_imf_context_filter_event
