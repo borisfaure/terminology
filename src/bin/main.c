@@ -605,6 +605,7 @@ elm_main(int argc, char **argv)
 
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
+   unsetenv("DESKTOP_STARTUP_ID");
 
    win = tg_win_add(name, role, title, icon_name);
 
