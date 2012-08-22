@@ -86,17 +86,55 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
           }
         return EINA_TRUE;
      }
-   if ((cmd[0] == 'g') || (cmd[0] == 'G')) // font size
+   if ((cmd[0] == 'g') || (cmd[0] == 'G')) // grid size
      {
         int w = -1, h = -1;
-        
-        if (sscanf(cmd, "g%ix%i", &w, &h) == 2)
+        int r = sscanf(cmd, "g%ix%i", &w, &h);
+
+        if (r == 1)
           {
-             if ((w > 0) && (h > 0))
+             switch (w)
                {
-                  termio_grid_size_set(obj, w, h);
+                case 0:
+                   w = 80;
+                   h = 24;
+                   break;
+                case 1:
+                   w = 80;
+                   h = 40;
+                   break;
+                case 2:
+                   w = 80;
+                   h = 60;
+                   break;
+                case 3:
+                   w = 80;
+                   h = 80;
+                   break;
+                case 4:
+                   w = 120;
+                   h = 24;
+                   break;
+                case 5:
+                   w = 120;
+                   h = 40;
+                   break;
+                case 6:
+                   w = 120;
+                   h = 60;
+                   break;
+                case 7:
+                   w = 120;
+                   h = 80;
+                   break;
+                case 8:
+                   w = 120;
+                   h = 120;
+                   break;
                }
           }
+        if ((w > 0) && (h > 0))
+          termio_grid_size_set(obj, w, h);
         return EINA_TRUE;
      }
    return EINA_FALSE;
