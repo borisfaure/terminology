@@ -568,8 +568,6 @@ collections {
                fixed: 1 1;
                color: 0 0 0 0;
                visible: 0;
-               rel1.to: "terminology.popmedia";
-               rel2.to: "terminology.popmedia";
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
