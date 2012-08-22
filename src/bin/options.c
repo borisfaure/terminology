@@ -157,20 +157,14 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_toolbar_menu_parent_set(o, win);
         elm_toolbar_homogeneous_set(o, EINA_FALSE);
 
-        it_fn = elm_toolbar_item_append(o, "preferences-desktop-font",
-                                        "Font", _cb_op_font, term);
-        elm_toolbar_item_append(o, "preferences-desktop-theme",
-                                "Theme", _cb_op_theme, term);
-        elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
-                                "Wallpaper", _cb_op_wallpaper, term);
-        elm_toolbar_item_append(o, "preferences-color",
-                                "Colors", _cb_op_colors, term);
-        elm_toolbar_item_append(o, "preferences-desktop-multimedia",
-                                "Video", _cb_op_video, term);
-        elm_toolbar_item_append(o, "system-run",
-                                "Behavior", _cb_op_behavior, term);
-        elm_toolbar_item_append(o, "document-open",
-                                "Helpers", _cb_op_helpers, term);
+        it_fn = 
+        elm_toolbar_item_append(o, "preferences-desktop-font",       "Font",      _cb_op_font,      term);
+        elm_toolbar_item_append(o, "preferences-desktop-theme",      "Theme",     _cb_op_theme,     term);
+        elm_toolbar_item_append(o, "preferences-desktop-wallpaper",  "Wallpaper", _cb_op_wallpaper, term);
+        elm_toolbar_item_append(o, "preferences-color",              "Colors",    _cb_op_colors,    term);
+        elm_toolbar_item_append(o, "preferences-desktop-multimedia", "Video",     _cb_op_video,     term);
+        elm_toolbar_item_append(o, "system-run",                     "Behavior",  _cb_op_behavior,  term);
+        elm_toolbar_item_append(o, "document-open",                  "Helpers",   _cb_op_helpers,   term);
 
         elm_box_pack_end(op_tbox, o);
         evas_object_show(o);
