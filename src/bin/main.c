@@ -125,6 +125,12 @@ _cb_popmedia_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char
 }
 
 static void
+_cb_popmedia_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+{
+   edje_object_signal_emit(bg, "popmedia,off", "terminology");
+}
+
+static void
 _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Evas_Object *o;
@@ -138,6 +144,7 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
    if (popmedia) evas_object_del(popmedia);
    if (!popmedia) termio_mouseover_suspend_pushpop(term, 1);
    popmedia = o = media_add(win, src, config, MEDIA_POP, &type);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, NULL);
    edje_object_part_swallow(bg, "terminology.popmedia", o);
    evas_object_show(o);
    if (type == TYPE_IMG)
