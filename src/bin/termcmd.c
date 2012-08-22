@@ -86,6 +86,19 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
           }
         return EINA_TRUE;
      }
+   if ((cmd[0] == 'g') || (cmd[0] == 'G')) // font size
+     {
+        int w = -1, h = -1;
+        
+        if (sscanf(cmd, "g%ix%i", &w, &h) == 2)
+          {
+             if ((w > 0) && (h > 0))
+               {
+                  termio_grid_size_set(obj, w, h);
+               }
+          }
+        return EINA_TRUE;
+     }
    return EINA_FALSE;
    obj = win = bg = NULL;
 }

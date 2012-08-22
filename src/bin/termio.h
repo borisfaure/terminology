@@ -15,5 +15,6 @@ void         termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir);
 void         termio_size_get(Evas_Object *obj, int *w, int *h);
 int          termio_scroll_get(Evas_Object *obj);
 void         termio_font_size_set(Evas_Object *obj, int size);
+void         termio_grid_size_set(Evas_Object *obj, int w, int h);
 
 #endif

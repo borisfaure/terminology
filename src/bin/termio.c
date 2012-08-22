@@ -770,7 +770,6 @@ _font_size_set(Evas_Object *obj, int size)
         config->font.size = size;
         gw = sd->grid.w;
         gh = sd->grid.h;
-        evas_object_size_hint_min_get(obj, &mw, &mh);
         sd->noreqsize = 1;
         termio_config_update(obj);
         sd->noreqsize = 0;
@@ -784,6 +783,20 @@ void
 termio_font_size_set(Evas_Object *obj, int size)
 {
    _font_size_set(obj, size);
+}
+
+void
+termio_grid_size_set(Evas_Object *obj, int w, int h)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Coord mw = 1, mh = 1;
+   
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   if (!sd) return;
+   evas_object_size_hint_min_get(obj, &mw, &mh);
+   evas_object_data_del(obj, "sizedone");
+   evas_object_size_hint_request_set(obj, mw * w, mh * h);
 }
 
 static void
