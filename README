@@ -60,6 +60,7 @@ f = Reset font to default settign saved in config
 f+ = Increase fontsize
 f- = Decreate fontsize
 fb = Display big font size (10x20 bitmap, or size 20 with scalable).
+gNxM = make terminal NxM chars in size (if possible). e.g. g80x48 g40x20
 
 Mouse controls:
 
