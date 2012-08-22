@@ -8,6 +8,7 @@
 #include "options_video.h"
 #include "options_theme.h"
 #include "options_wallpaper.h"
+#include "options_colors.h"
 #include "config.h"
 #include "termio.h"
 
@@ -18,49 +19,72 @@ static Eina_Bool op_out = EINA_FALSE;
 static Ecore_Timer *op_del_timer = NULL;
 static Evas_Object *saved_win = NULL;
 static Evas_Object *saved_bg = NULL;
+static int mode = -1;
 
 static void
 _cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 1) return;
    elm_box_clear(op_opbox);
    options_font(op_opbox, data);
+   mode = 1;
 }
 
 static void
 _cb_op_theme(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 2) return;
    elm_box_clear(op_opbox);
    options_theme(op_opbox, data);
    // XXX: not done yet
+   mode = 2;
 }
 
 static void
 _cb_op_wallpaper(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 3) return;
    elm_box_clear(op_opbox);
    options_wallpaper(op_opbox, data);
    // XXX: not done yet
+   mode = 3;
+}
+
+static void
+_cb_op_colors(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   if (mode == 4) return;
+   elm_box_clear(op_opbox);
+   options_colors(op_opbox, data);
+   // XXX: not done yet
+   mode = 4;
 }
 
 static void
 _cb_op_video(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 5) return;
    elm_box_clear(op_opbox);
    options_video(op_opbox, data);
+   mode = 5;
 }
 
 static void
 _cb_op_behavior(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 6) return;
    elm_box_clear(op_opbox);
    options_behavior(op_opbox, data);
+   mode = 6;
 }
 
 static void
 _cb_op_helpers(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+   if (mode == 7) return;
    elm_box_clear(op_opbox);
    options_helpers(op_opbox, data);
+   mode = 7;
 }
 
 static void
@@ -94,6 +118,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 
    saved_win = win;
    saved_bg = bg;
+   mode = -1;
    if (!op_frame)
      {
         Elm_Object_Item *it_fn;
@@ -123,14 +148,12 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         
         op_toolbar = o = elm_toolbar_add(win);
         evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, 0.5, 0.0);
+        evas_object_size_hint_align_set(o, 0.5, EVAS_HINT_FILL);
         elm_toolbar_horizontal_set(o, EINA_FALSE);
         elm_object_style_set(o, "item_horizontal");
-        evas_object_size_hint_weight_set(o, 0.0, 0.0);
-        evas_object_size_hint_align_set(o, 0.5, 0.0);
         elm_toolbar_icon_size_set(o, 16);
-        elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_NONE);
-        elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_DEFAULT);
+        elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_SCROLL);
+        elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_ALWAYS);
         elm_toolbar_menu_parent_set(o, win);
         elm_toolbar_homogeneous_set(o, EINA_FALSE);
 
@@ -140,6 +163,8 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
                                 "Theme", _cb_op_theme, term);
         elm_toolbar_item_append(o, "preferences-desktop-wallpaper",
                                 "Wallpaper", _cb_op_wallpaper, term);
+        elm_toolbar_item_append(o, "preferences-color",
+                                "Colors", _cb_op_colors, term);
         elm_toolbar_item_append(o, "preferences-desktop-multimedia",
                                 "Video", _cb_op_video, term);
         elm_toolbar_item_append(o, "system-run",
@@ -153,7 +178,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_toolbar_item_selected_set(it_fn, EINA_TRUE);
         
         op_temp = o = elm_check_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
         elm_object_text_set(o, "Temporary");
         elm_check_state_set(o, config->temporary);

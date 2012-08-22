@@ -7,6 +7,8 @@
 #include "options_font.h"
 #include "utils.h"
 
+#define TEST_STRING "oislOIS.015!|,"
+
 static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
 
 typedef struct _Font Font;
@@ -104,7 +106,7 @@ _cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
      {
         o = evas_object_text_add(evas_object_evas_get(obj));
         evas_object_color_set(o, 0, 0, 0, 255);
-        evas_object_text_text_set(o, "Abc 123 $@#");
+        evas_object_text_text_set(o, TEST_STRING);
         evas_object_scale_set(o, elm_config_scale_get());
         if (f->bitmap)
           {
