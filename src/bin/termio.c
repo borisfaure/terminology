@@ -703,7 +703,8 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
              sd->have_sel = EINA_FALSE;
              elm_cnp_selection_set(sd->win, type,
                                    ELM_SEL_FORMAT_TEXT, s, strlen(s));
-             elm_cnp_selection_loss_callback_set(type, _lost_selection, obj);
+             elm_cnp_selection_loss_callback_set(sd->win, type,
+                                                 _lost_selection, obj);
              sd->have_sel = EINA_TRUE;
           }
         free(s);
