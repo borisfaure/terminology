@@ -186,7 +186,6 @@ collections {
          // a place terminology will place an entry box for internal commands
          part { name: "cmdclip"; type: RECT;
             description { state: "default" 0.0;
-               color: 255 255 255 255;
                rel1.to: "terminology.cmdbox";
                rel1.offset: -100 -100;
                rel2.to: "terminology.cmdbox";
