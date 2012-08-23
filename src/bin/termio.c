@@ -79,6 +79,23 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
 
+static inline Eina_Bool
+_should_inline(const Evas_Object *obj)
+{
+   const Config *config = termio_config_get(obj);
+   const Evas *e;
+   const Evas_Modifier *mods;
+
+   if (!config->helper.inline_please) return EINA_FALSE;
+
+   e = evas_object_evas_get(obj);
+   mods = evas_key_modifier_get(e);
+
+   if (evas_key_modifier_is_set(mods, "Control"))  return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 static void
 _activate_link(Evas_Object *obj)
 {
@@ -121,7 +138,7 @@ _activate_link(Evas_Object *obj)
         cmd = "xdg-open";
         
         type = media_src_type_get(sd->link.string);
-        if (config->helper.inline_please)
+        if (_should_inline(obj))
           {
              if ((type == TYPE_IMG) ||
                  (type == TYPE_SCALE) ||
@@ -167,7 +184,7 @@ _activate_link(Evas_Object *obj)
         cmd = "xdg-open";
         
         type = media_src_type_get(sd->link.string);
-        if (config->helper.inline_please)
+        if (_should_inline(obj))
           {
              if ((type == TYPE_IMG) ||
                  (type == TYPE_SCALE) ||
