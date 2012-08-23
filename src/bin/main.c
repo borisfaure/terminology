@@ -256,6 +256,15 @@ main_trans_update(const Config *config)
      }
 }
 
+static void
+_cb_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Config *config = data;
+   media = NULL;
+   edje_object_signal_emit(bg, "media,off", "terminology");
+   if (config->temporary) eina_stringshare_replace(&(config->background), NULL);
+}
+
 void
 main_media_update(const Config *config)
 {
@@ -264,8 +273,15 @@ main_media_update(const Config *config)
 
    if ((config->background) && (config->background[0]))
      {
-        if (media) evas_object_del(media);
+        if (media)
+          {
+             evas_object_event_callback_del(media, EVAS_CALLBACK_DEL,
+                                            _cb_media_del);
+             evas_object_del(media);
+          }
         o = media = media_add(win, config->background, config, MEDIA_BG, &type);
+        evas_object_event_callback_add(media, EVAS_CALLBACK_DEL,
+                                       _cb_media_del, config);
         edje_object_part_swallow(bg, "terminology.background", o);
         evas_object_show(o);
         if (type == TYPE_IMG)
