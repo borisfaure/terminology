@@ -13,7 +13,7 @@
 
 int _log_domain = -1;
 
-static Evas_Object *win = NULL, *bg = NULL, *term = NULL, *media = NULL;
+static Evas_Object *win = NULL, *bg = NULL, *backbg = NULL, *term = NULL, *media = NULL;
 static Evas_Object *cmdbox = NULL;
 static Evas_Object *popmedia = NULL;
 static Evas_Object *conform = NULL;
@@ -248,11 +248,13 @@ main_trans_update(const Config *config)
      {
         edje_object_signal_emit(bg, "translucent,on", "terminology");
         elm_win_alpha_set(win, EINA_TRUE);
+        evas_object_hide(backbg);
      }
    else
      {
         edje_object_signal_emit(bg, "translucent,off", "terminology");
         elm_win_alpha_set(win, EINA_FALSE);
+        evas_object_show(backbg);
      }
 }
 
@@ -640,6 +642,13 @@ elm_main(int argc, char **argv)
    if (borderless) elm_win_borderless_set(win, EINA_TRUE);
    if (override) elm_win_override_set(win, EINA_TRUE);
    if (maximized) elm_win_maximized_set(win, EINA_TRUE);
+
+   backbg = o = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(o, 0, 0, 0, 255);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, o);
+   evas_object_show(o);
 
    conform = o = elm_conformant_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
