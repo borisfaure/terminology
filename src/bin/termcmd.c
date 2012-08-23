@@ -62,6 +62,8 @@ _termcmd_font_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
           {
              termio_font_size_set(obj, config->font.size - 1);
           }
+        else
+          ERR("Unknown font command: %s", cmd);
      }
    return EINA_TRUE;
 }
@@ -116,6 +118,9 @@ _termcmd_grid_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
      }
    if ((w > 0) && (h > 0))
      termio_grid_size_set(obj, w, h);
+   else
+     ERR("Unknown grid size command: %s", cmd);
+
    return EINA_TRUE;
 }
 
@@ -152,7 +157,6 @@ termcmd_watch(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *c
    if ((cmd[0] == '/') || (cmd[0] == 's'))
      return _termcmd_search(obj, win, bg, cmd + 1);
    return EINA_FALSE;
-   obj = win = bg = NULL;
 }
 
 // called when you hit enter
@@ -169,6 +173,6 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
    if ((cmd[0] == 'b') || (cmd[0] == 'B'))
      return _termcmd_background(obj, win, bg, cmd + 1);
 
+   ERR("Unknown command: %s", cmd);
    return EINA_FALSE;
-   obj = win = bg = NULL;
 }
