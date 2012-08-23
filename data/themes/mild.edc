@@ -3,9 +3,15 @@
 #ifndef BG_COLOR
 #define BG_COLOR 48 48 48 255
 #endif
+
 #ifndef BG_COLOR_TRANSLUCENT
 #define BG_COLOR_TRANSLUCENT 48 48 48 200
 #endif
+
+#ifndef BELL_OVERLAY_COLOR
+#define BELL_OVERLAY_COLOR 220 220 220 16
+#endif
+
 
 collections {
    group { name: "terminology/background";
@@ -180,7 +186,7 @@ collections {
             }
             description { state: "pulse2" 0.0;
                inherit: "default" 0.0;
-               color: 220 220 220 16;
+               color: BELL_OVERLAY_COLOR;
                visible: 1;
             }
          }
