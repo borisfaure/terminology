@@ -76,44 +76,15 @@ _termcmd_grid_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
 
    if (r == 1)
      {
-        switch (w)
+        static const int size_table[][2] = {
+           { 80, 24 }, { 80, 40 }, { 80, 60 }, { 80, 80 }, { 120, 24 },
+           { 120, 40 }, { 120, 60 }, { 120, 80 }, { 120, 120 }
+        };
+
+        if (w >= 0 && w <= 8)
           {
-           case 0:
-              w = 80;
-              h = 24;
-              break;
-           case 1:
-              w = 80;
-              h = 40;
-              break;
-           case 2:
-              w = 80;
-              h = 60;
-              break;
-           case 3:
-              w = 80;
-              h = 80;
-              break;
-           case 4:
-              w = 120;
-              h = 24;
-              break;
-           case 5:
-              w = 120;
-              h = 40;
-              break;
-           case 6:
-              w = 120;
-              h = 60;
-              break;
-           case 7:
-              w = 120;
-              h = 80;
-              break;
-           case 8:
-              w = 120;
-              h = 120;
-              break;
+             h = size_table[w][1];
+             w = size_table[w][0];
           }
      }
    if ((w > 0) && (h > 0))
