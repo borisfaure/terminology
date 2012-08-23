@@ -134,7 +134,7 @@ termcmd_watch(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *c
 Eina_Bool
 termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
 {
-   if (!cmd) return EINA_FALSE;
+   if (!cmd || !cmd[0]) return EINA_FALSE;
    if ((cmd[0] == '/') || (cmd[0] == 's'))
      return _termcmd_search(obj, win, bg, cmd + 1);
    if ((cmd[0] == 'f') || (cmd[0] == 'F'))
