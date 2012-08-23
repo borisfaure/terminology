@@ -16,8 +16,31 @@ collections {
          ////////////////////////////////////////////////////////////////////
          // background handling
 
-         part { name: "baseclip"; type: RECT;
+         part { name: "focusclip"; type: RECT;
             clip_to: "bellclip";
+            description { state: "default" 0.0;
+            }
+            description { state: "unfocused" 0.0;
+               color: 200 200 200 255;
+            }
+         }
+         program {
+            signal: "focus,in";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: ACCELERATE 0.1;
+            target: "focusclip";
+         }
+         program {
+            signal: "focus,out";
+            source: "terminology";
+            action: STATE_SET "unfocused" 0.0;
+            transition: ACCELERATE 0.1;
+            target: "focusclip";
+         }
+
+         part { name: "baseclip"; type: RECT;
+            clip_to: "focusclip";
             description { state: "default" 0.0;
             }
             description { state: "image" 0.0;
@@ -826,7 +849,7 @@ collections {
                      offset: 32 32;
                   }
                }
-               color: 255 255 255 80;
+               color: 255 255 255 16;
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
@@ -867,7 +890,7 @@ collections {
                   normal: "cr_out.png";
                   border: 3 3 3 3;
                }
-               color: 255 255 255 80;
+               color: 255 255 255 64;
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
@@ -888,9 +911,13 @@ collections {
                action: STATE_SET "focused" 0.0;
                target: "fill";
                target: "outline";
+               after: "pulse-prepare";
+            }
+            program { name: "pulse-prepare";
+               action: STATE_SET "default" 0.0;
+               target: "pulsclip";
                after: "pulse";
             }
-
             program { name: "pulse";
                action: STATE_SET "pulse" 0.0;
                transition: DECELERATE 0.5;
@@ -918,6 +945,7 @@ collections {
                action: STATE_SET "default" 0.0;
                target: "fill";
                target: "outline";
+               target: "pulsclip";
             }
             program { name: "key";
                signal: "key,down";
