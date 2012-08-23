@@ -64,6 +64,8 @@ gNxM = make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
        If just one number is provided, it will use the following shortcuts:
        g0=80x24; g1=80x40; g2=80x60; g3=80x80; g4=120x24; g5=120x40; g6=120x60;
        g7=120x80; g8=120x120
+b = reset the background (no media)
+bPATH = set the background media to an absolute file PATH
 
 Mouse controls:
 

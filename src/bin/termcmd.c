@@ -119,6 +119,31 @@ _termcmd_grid_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_termcmd_background(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *bg __UNUSED__, const char *cmd)
+{
+   Config *config = termio_config_get(obj);
+
+   if (!config) return EINA_TRUE;
+
+   if (cmd[0] == 0)
+     {
+        config->temporary = EINA_TRUE;
+        eina_stringshare_replace(&(config->background), NULL);
+        main_media_update(config);
+     }
+   else if (ecore_file_can_read(cmd))
+     {
+        config->temporary = EINA_TRUE;
+        eina_stringshare_replace(&(config->background), cmd);
+        main_media_update(config);
+     }
+   else
+     ERR("Background file cannot be read: %s", cmd);
+
+   return EINA_TRUE;
+}
+
 // called as u type
 Eina_Bool
 termcmd_watch(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
@@ -141,6 +166,8 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
      return _termcmd_font_size(obj, win, bg, cmd + 1);
    if ((cmd[0] == 'g') || (cmd[0] == 'G'))
      return _termcmd_grid_size(obj, win, bg, cmd + 1);
+   if ((cmd[0] == 'b') || (cmd[0] == 'B'))
+     return _termcmd_background(obj, win, bg, cmd + 1);
 
    return EINA_FALSE;
    obj = win = bg = NULL;
