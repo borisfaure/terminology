@@ -843,6 +843,72 @@ _compose_seq_reset(Termio *sd)
    sd->composing = EINA_FALSE;
 }
 
+static Eina_Bool
+_handle_alt_ctrl(const char *keyname, Evas_Object *term)
+{
+   if (!strcmp(keyname, "equal"))
+     termcmd_do(term, NULL, NULL, "f+");
+   else if (!strcmp(keyname, "minus"))
+     termcmd_do(term, NULL, NULL, "f-");
+   else if (!strcmp(keyname, "0"))
+     termcmd_do(term, NULL, NULL, "f");
+   else if (!strcmp(keyname, "9"))
+     termcmd_do(term, NULL, NULL, "fb");
+   else
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
+{
+   if (!strcmp(ev->keyname, "Prior"))
+     {
+        sd->scroll += by;
+        if (sd->scroll > sd->pty->backscroll_num)
+          sd->scroll = sd->pty->backscroll_num;
+        _smart_update_queue(term, sd);
+     }
+   else if (!strcmp(ev->keyname, "Next"))
+     {
+        sd->scroll -= by;
+        if (sd->scroll < 0) sd->scroll = 0;
+        _smart_update_queue(term, sd);
+     }
+   else if (!strcmp(ev->keyname, "Insert"))
+     {
+        if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+          _paste_selection(term, ELM_SEL_TYPE_PRIMARY);
+        else
+          _paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
+     }
+   else if (!strcmp(ev->keyname, "KP_Add"))
+     {
+        Config *config = termio_config_get(term);
+        
+        if (config) _font_size_set(term, config->font.size + 1);
+     }
+   else if (!strcmp(ev->keyname, "KP_Subtract"))
+     {
+        Config *config = termio_config_get(term);
+        
+        if (config) _font_size_set(term, config->font.size - 1);
+     }
+   else if (!strcmp(ev->keyname, "KP_Multiply"))
+     {
+        Config *config = termio_config_get(term);
+        
+        if (config) _font_size_set(term, 10);
+     }
+   else if (!strcmp(ev->keyname, "KP_Divide"))
+     _take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
+   else
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 void
 _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
@@ -884,91 +950,23 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
      {
-        _compose_seq_reset(sd);
-        if (!strcmp(ev->keyname, "equal"))
+        if (_handle_alt_ctrl(ev->keyname, data))
           {
-             termcmd_do(data, NULL, NULL, "f+");
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "minus"))
-          {
-             termcmd_do(data, NULL, NULL, "f-");
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "0"))
-          {
-             termcmd_do(data, NULL, NULL, "f");
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "9"))
-          {
-             termcmd_do(data, NULL, NULL, "fb");
+             _compose_seq_reset(sd);
              goto end;
           }
      }
-   if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+   if ((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+       (ev->keyname))
      {
-        if (ev->keyname)
-          {
-             int by = sd->grid.h - 2;
+        int by = sd->grid.h - 2;
 
-             if (by < 1) by = 1;
-             if (!strcmp(ev->keyname, "Prior"))
-               {
-                  _compose_seq_reset(sd);
-                  sd->scroll += by;
-                  if (sd->scroll > sd->pty->backscroll_num)
-                    sd->scroll = sd->pty->backscroll_num;
-                  _smart_update_queue(data, sd);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "Next"))
-               {
-                  _compose_seq_reset(sd);
-                  sd->scroll -= by;
-                  if (sd->scroll < 0) sd->scroll = 0;
-                  _smart_update_queue(data, sd);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "Insert"))
-               {
-                  _compose_seq_reset(sd);
-                  if (evas_key_modifier_is_set(ev->modifiers, "Control"))
-                    _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
-                  else
-                    _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "KP_Add"))
-               {
-                  Config *config = termio_config_get(data);
-                  
-                  _compose_seq_reset(sd);
-                  if (config) _font_size_set(data, config->font.size + 1);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "KP_Subtract"))
-               {
-                  Config *config = termio_config_get(data);
-                  
-                  _compose_seq_reset(sd);
-                  if (config) _font_size_set(data, config->font.size - 1);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "KP_Multiply"))
-               {
-                  Config *config = termio_config_get(data);
-                  
-                  _compose_seq_reset(sd);
-                  if (config) _font_size_set(data, 10);
-                  goto end;
-               }
-             else if (!strcmp(ev->keyname, "KP_Divide"))
-               {
-                  _compose_seq_reset(sd);
-                  _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-                  goto end;
-               }
+        if (by < 1) by = 1;
+
+        if (_handle_shift(ev, by, data, sd))
+          {
+             _compose_seq_reset(sd);
+             goto end;
           }
      }
    if (sd->jump_on_keypress)
