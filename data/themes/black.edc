@@ -1,0 +1,4 @@
+#define BG_COLOR 0 0 0 255
+#define BG_COLOR_TRANSLUCENT 0 0 0 200
+
+#include "mild.edc"

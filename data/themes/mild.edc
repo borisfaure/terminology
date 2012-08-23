@@ -1,4 +1,12 @@
 /* overlay to default to make theme easier on the eyes, less effects */
+
+#ifndef BG_COLOR
+#define BG_COLOR 48 48 48 255
+#endif
+#ifndef BG_COLOR_TRANSLUCENT
+#define BG_COLOR_TRANSLUCENT 48 48 48 200
+#endif
+
 collections {
    group { name: "terminology/background";
       images {
@@ -68,11 +76,11 @@ collections {
             mouse_events: 1;
             clip_to: "baseclip";
             description { state: "default" 0.0;
-               color: 48 48 48 255;
+               color: BG_COLOR;
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
-               color: 48 48 48 200;
+               color: BG_COLOR_TRANSLUCENT;
             }
          }
          part { name: "fade"; type: RECT;
