@@ -17,16 +17,26 @@ make it a first-class terminal:
     on_hold flags, etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
-[ ] selection should have handles on the start/end so u can drag and
-    change its size once there
+[ ] selection should have nice visible handles on the start/end so u can
+    drag and change its size once there
 [ ] improve selection text extraction logic so its reliable
 [ ] fast text/regex searching similar to urxvt
 [ ] search in terminal (and keep highlighting until search cleared)
-[ ] single key combo to go into terminal command mode for search etc.
 [ ] logging of terminal to file
 [ ] number recognition with base conversion
-[ ] dnd of file to term offer to past path, with escapes or paste file
+[ ] dnd of file to term offer to paste path, with escapes or paste file
     content (if text) with or without escaping
+[ ] helpers when executed need to escape path/uri in command buffer
+[ ] media - improve position slider to track ucr position as u play
+[ ] improve look of meida controls
+[ ] make media controls an api where controls are provided by the media
+    object owner so they can be custom placed/swallowed/handled better
+[ ] media controls need to have zoom controls for all formats
+[ ] media controls need next/prev page controls for paged media (ps/pdf)
+[ ] add better handling of music files (with just playbar+vol, no image)
+[ ] allow queueing of media (eg music playlist)
+[ ] add escapes for displaying media
+[ ] add option for cjk double width mode
 
 things in future to make it totally kick-butt:
 
@@ -34,7 +44,7 @@ things in future to make it totally kick-butt:
     that looks like e17's wallpaper2 selector a bit :)
 [ ] track child process stats like cwd etc. and when launching a new
     "tab" or shell use the last child process cwd to put the shell
-    inot
+    into
 [ ] track mem and iowait and cpu stats for child procs and their
     children and display them as little overlays in the terminal so u
     know if your "grep -r /" is cpu or io bound and what is eating up
@@ -60,4 +70,4 @@ things in future to make it totally kick-butt:
     u see thumbnails too. if u cat a jpeg.. u see it. if u cat a url
     or html file.. up comes an inline web browser, provide nicer
     visual "progessbars" and modified tools like wget that use these
-    escapes etc.
+    escapes etc. all of these are handled by the media object
