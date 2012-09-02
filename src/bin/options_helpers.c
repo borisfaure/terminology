@@ -167,15 +167,28 @@ void
 options_helpers(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o, *bx, *sc;
+   Evas_Object *o, *bx, *sc, *fr, *bx0;
    char *txt;
 
+   fr = o = elm_frame_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Helpers");
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
+   bx0 = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(fr, o);
+   evas_object_show(o);
+   
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Inline if possible");
    elm_check_state_set(o, config->helper.inline_please);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_inline_chg, term);
@@ -184,14 +197,14 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    
    sc = o = elm_scroller_add(opbox);
    elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
 
    bx = o = elm_box_add(opbox);

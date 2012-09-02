@@ -215,7 +215,7 @@ options_font_clear(void)
 void
 options_font(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *bx;
+   Evas_Object *o, *bx, *fr, *bx0;
    char buf[4096], *file, *fname, *s;
    Eina_List *files, *fontlist, *l;
    Font *f;
@@ -224,6 +224,19 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    Config *config = termio_config_get(term);
 
    options_font_clear();
+   
+   fr = o = elm_frame_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Font");
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
+   bx0 = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(fr, o);
+   evas_object_show(o);
    
    bx = o = elm_box_add(opbox);
    elm_box_horizontal_set(o, EINA_TRUE);
@@ -252,7 +265,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    
-   elm_box_pack_end(opbox, bx);
+   elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
    
    it_class = elm_genlist_item_class_new();
@@ -351,7 +364,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_genlist_item_class_free(it_class);
    elm_genlist_item_class_free(it_group);
    
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);

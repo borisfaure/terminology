@@ -104,14 +104,21 @@ void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o, *bx, *sc;
+   Evas_Object *o, *bx, *sc, *fr;
    char *txt;
 
+   fr = o = elm_frame_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Behavior");
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
    sc = o = elm_scroller_add(opbox);
    elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(opbox, o);
+   elm_object_content_set(fr, o);
    evas_object_show(o);
    
    bx = o = elm_box_add(opbox);

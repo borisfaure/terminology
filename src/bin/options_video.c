@@ -44,15 +44,28 @@ _cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 void
 options_video(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o;
+   Evas_Object *o, *fr, *bx0;
    Config *config = termio_config_get(term);
 
+   fr = o = elm_frame_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, "Video");
+   elm_box_pack_end(opbox, o);
+   evas_object_show(o);
+   
+   bx0 = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(fr, o);
+   evas_object_show(o);
+   
    op_trans = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Translucent");
    elm_check_state_set(o, config->translucent);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_trans_chg, term);
@@ -61,7 +74,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    
    op_mute = o = elm_check_add(opbox);
@@ -69,7 +82,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Audio muted");
    elm_check_state_set(o, config->mute);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_mute_chg, term);
@@ -77,14 +90,14 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Video Engine:");
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
 
    op_vidmod = o = elm_radio_add(opbox);
@@ -92,7 +105,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Automatic");
    elm_radio_state_value_set(o, 0);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_vidmod_chg, term);
@@ -103,7 +116,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, "Gstreamer");
    elm_radio_state_value_set(o, 1);
    elm_radio_group_add(o, op_vidmod);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_vidmod_chg, term);
@@ -114,7 +127,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, "Xine");
    elm_radio_state_value_set(o, 2);
    elm_radio_group_add(o, op_vidmod);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_vidmod_chg, term);
@@ -125,7 +138,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, "Generic (VLC)");
    elm_radio_state_value_set(o, 3);
    elm_radio_group_add(o, op_vidmod);
-   elm_box_pack_end(opbox, o);
+   elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_vidmod_chg, term);
