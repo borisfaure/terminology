@@ -761,6 +761,96 @@ collections {
 
          ////////////////////////////////////////////////////////////////////
          // overlayed options and controls
+         part { name: "terminology.optdetails"; type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 80 80;
+               max: 500 800;
+               align: 0.0 0.5;
+               visible: 0;
+               rel1 {
+                  relative: 1.0 0.02;
+                  offset: 2 2;
+               }
+               rel2 {
+                  relative: 1.0 0.98;
+                  offset: 2 -3;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               align: 1.0 0.5;
+               rel1 {
+                  relative: 0.25 0.02;
+                  offset: 2 2;
+               }
+               rel2 {
+                  to_x: "terminology.options";
+                  relative: 0.0 0.98;
+                  offset: -3 -3;
+               }
+            }
+         }
+         program { name: "opdt_show";
+            signal: "optdetails,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.4;
+            target: "terminology.optdetails";
+         }
+         program { name: "opdt_hide";
+            signal: "optdetails,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.optdetails";
+            after: "opdt_hide2";
+         }
+         program { name: "opdt_hide2";
+            action: SIGNAL_EMIT "optdetails,hide,done" "terminology";
+         }
+         
+         part { name: "terminology.options"; type: SWALLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               align: 0.0 0.5;
+               visible: 0;
+               rel1.relative: 1.0 0.02;
+               rel2 {
+                  relative: 1.0 0.98;
+                  offset: -3 -3;
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               align: 1.0 0.5;
+               rel1 {
+                  offset: -3 2;
+               }
+               rel2 {
+                  offset: -3 -3;
+               }
+            }
+         }
+         program { name: "op_show";
+            signal: "options,show";
+            source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.4;
+            target: "terminology.options";
+         }
+         program { name: "op_hide";
+            signal: "options,hide";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.6;
+            target: "terminology.options";
+         }
+         
          part { name: "terminology.controls"; type: SWALLOW;
             scale: 1;
             description { state: "default" 0.0;
@@ -792,45 +882,6 @@ collections {
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.5;
             target: "terminology.controls";
-         }
-
-         part { name: "terminology.options"; type: SWALLOW;
-            scale: 1;
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               min: 200 200;
-               max: 500 800;
-               align: 1.0 1.0;
-               visible: 0;
-               rel1.relative: 1.0 0.02;
-               rel2 {
-                  relative: 1.75 1.0;
-                  offset: -3 -3;
-               }
-            }
-            description { state: "visible" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               rel1.relative: 0.25 0.02;
-               rel2 {
-                  relative: 1.0 1.0;
-                  offset: -3 -3;
-               }
-            }
-         }
-         program { name: "op_show";
-            signal: "options,show";
-            source: "terminology";
-            action: STATE_SET "visible" 0.0;
-            transition: DECELERATE 0.4;
-            target: "terminology.options";
-         }
-         program { name: "op_hide";
-            signal: "options,hide";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.6;
-            target: "terminology.options";
          }
       }
    }
