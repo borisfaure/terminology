@@ -44,7 +44,7 @@ static const char *extn_img[] =
    ".bmp", ".ico", ".ppm", ".pgm", ".pbm", ".pnm", ".xpm", ".psd", ".wbmp",
    ".cur", ".xcf", ".xcf.gz", ".arw", ".cr2", ".crw", ".dcr", ".dng", ".k25",
    ".kdc", ".erf", ".mrw", ".nef", ".nrf", ".nrw", ".orf", ".raw", ".rw2",
-   ".rw2", ".pef", ".raf", ".sr2", ".srf", ".x3f",
+   ".rw2", ".pef", ".raf", ".sr2", ".srf", ".x3f", ".webp", 
    NULL
 };
 
