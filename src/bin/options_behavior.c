@@ -235,7 +235,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    op_sbslider = o = elm_slider_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_slider_span_size_set(o, 160);
+   elm_slider_span_size_set(o, 40);
    elm_slider_unit_format_set(o, "%1.0f");
    elm_slider_indicator_format_set(o, "%1.0f");
    elm_slider_min_max_set(o, 0, 10000);

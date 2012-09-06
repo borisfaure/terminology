@@ -239,6 +239,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    
    bx = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
    elm_box_horizontal_set(o, EINA_TRUE);
    
    op_fsml = o = elm_label_add(opbox);
@@ -249,7 +251,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    op_fontslider = o = elm_slider_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(o, 160);
+   elm_slider_span_size_set(o, 40);
    elm_slider_unit_format_set(o, "%1.0f");
    elm_slider_indicator_format_set(o, "%1.0f");
    elm_slider_min_max_set(o, 5, 45);

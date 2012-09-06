@@ -748,8 +748,7 @@ collections {
             scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
-               min: 80 80;
-               max: 500 800;
+               min: 40 40;
                align: 0.0 0.5;
                visible: 0;
                rel1 {
@@ -766,7 +765,7 @@ collections {
                visible: 1;
                align: 1.0 0.5;
                rel1 {
-                  relative: 0.25 0.02;
+                  relative: 0.1 0.02;
                   offset: 8 8;
                }
                rel2 {
