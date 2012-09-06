@@ -130,7 +130,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    op_jumpcheck = o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Jump to bottom on change");
+   elm_object_text_set(o, "Jump on change");
    elm_check_state_set(o, config->jump_on_change);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -140,7 +140,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Jump to bottom on keypress");
+   elm_object_text_set(o, "Jump on key");
    elm_check_state_set(o, config->jump_on_keypress);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -150,7 +150,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "React to key press");
+   elm_object_text_set(o, "React to key");
    elm_check_state_set(o, config->flicker_on_key);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -180,7 +180,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Urgent on bell");
+   elm_object_text_set(o, "Urgent Bell");
    elm_check_state_set(o, config->urg_bell);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -228,7 +228,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Scrollback lines:");
+   elm_object_text_set(o, "Scrollback:");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    
