@@ -6,6 +6,7 @@
 #include "termio.h"
 #include "termiolink.h"
 #include "termpty.h"
+#include "termcmd.h"
 #include "utf8.h"
 #include "col.h"
 #include "keyin.h"
@@ -1827,7 +1828,8 @@ _smart_cb_gest_zoom_move(void *data, void *event)
    if (config)
      {
         sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+        _font_size_set(data, (double)sd->zoom_fontsize_start * 
+                       (p->zoom / 30.0));
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -1844,7 +1846,8 @@ _smart_cb_gest_zoom_end(void *data, void *event)
    if (config)
      {
         sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+        _font_size_set(data, (double)sd->zoom_fontsize_start * 
+                       (p->zoom / 30.0));
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
