@@ -225,7 +225,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.email);
    if (txt)
      {
@@ -249,7 +249,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.url.image);
    if (txt)
      {
@@ -273,7 +273,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.url.video);
    if (txt)
      {
@@ -297,7 +297,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.url.general);
    if (txt)
      {
@@ -321,7 +321,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.local.image);
    if (txt)
      {
@@ -345,7 +345,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.local.video);
    if (txt)
      {
@@ -369,7 +369,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    txt = elm_entry_utf8_to_markup(config->helper.local.general);
    if (txt)
      {

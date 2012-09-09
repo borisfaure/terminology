@@ -684,7 +684,7 @@ elm_main(int argc, char **argv)
    cmdbox = o = elm_entry_add(win);
    elm_entry_single_line_set(o, EINA_TRUE);
    elm_entry_scrollable_set(o, EINA_FALSE);
-   elm_entry_scrollbar_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_input_panel_layout_set(o, ELM_INPUT_PANEL_LAYOUT_TERMINAL);
    elm_entry_autocapital_type_set(o, ELM_AUTOCAPITAL_TYPE_NONE);
    elm_entry_input_panel_enabled_set(o, EINA_TRUE);
