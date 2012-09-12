@@ -39,6 +39,7 @@ make it a first-class terminal:
 [ ] add option for cjk double width mode
 [ ] apparently there are problems with mutt, screen and tmux? vim
     mousewheel scroll suport doesnt work
+[ ] possible evas font problem with probby fonts: http://www.proggyfonts.com/
 
 things in future to make it totally kick-butt:
 
