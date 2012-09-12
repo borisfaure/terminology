@@ -42,6 +42,7 @@ make it a first-class terminal:
 
 things in future to make it totally kick-butt:
 
+[ ] reflow text on resize
 [ ] "tabs" (multiple terminals inside a window) with a nice selector
     that looks like e17's wallpaper2 selector a bit :)
 [ ] track child process stats like cwd etc. and when launching a new
