@@ -23,6 +23,7 @@ data/themes/Makefile
 data/themes/Makefile.in
 data/themes/default.edj
 data/themes/mild.edj
+data/themes/black.edj
 data/themes/images/Makefile
 data/themes/images/Makefile.in
 depcomp
@@ -52,4 +53,5 @@ src/bin/terminology-win.o
 stamp-h1
 terminology_config.h
 terminology_config.h.in
+terminology.spec
 *.o
