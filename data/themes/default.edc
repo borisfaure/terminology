@@ -2175,6 +2175,8 @@ target: "4.bottom"
                target: "focus_in";
                target: "focus2";
                target: "focus3";
+               target: "pulse";
+               target: "pulse2";
                after: "focus_out2";
             }
             program { name: "focus_out2";
