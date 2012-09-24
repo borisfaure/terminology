@@ -860,6 +860,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
    sd->mode = mode;
    sd->tmpfd = -1;
 
+#if HAVE_MKSTEMPS
    if (link_is_url(sd->src))
      {
         const char *ext = NULL;
@@ -936,6 +937,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
                }
           }
      }
+#endif
 
    if (!sd->url) sd->realf = eina_stringshare_add(sd->src);
    
