@@ -350,6 +350,8 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_CHOICE    ('v', "video-module",
                               "Set emotion module to use.", emotion_choices),
         
+      ECORE_GETOPT_STORE_BOOL('l', "login",
+                              "Run the shell as a login shell."),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
                               "Set mute mode for video playback."),
       ECORE_GETOPT_STORE_BOOL('c', "cursor-blink",
@@ -393,6 +395,7 @@ elm_main(int argc, char **argv)
    char *icon_name = NULL;
    char *font = NULL;
    char *video_module = NULL;
+   Eina_Bool login_shell = 0xff; /* unset */
    Eina_Bool video_mute = 0xff; /* unset */
    Eina_Bool cursor_blink = 0xff; /* unset */
    Eina_Bool visual_bell = 0xff; /* unset */
@@ -416,6 +419,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(font),
      ECORE_GETOPT_VALUE_STR(video_module),
       
+     ECORE_GETOPT_VALUE_BOOL(login_shell),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(cursor_blink),
      ECORE_GETOPT_VALUE_BOOL(visual_bell),
@@ -622,11 +626,16 @@ elm_main(int argc, char **argv)
              pos_set = 1;
           }
      }
+   
+   // later allow default size to be configured
    if (!size_set)
      {
         size_w = 80;
         size_h = 24;
      }
+   
+   // for now if not set - dont do login shell - later from config
+   if (login_shell == 0xff) login_shell = EINA_FALSE;
 
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
@@ -698,7 +707,7 @@ elm_main(int argc, char **argv)
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _cb_cmd_hints_changed, bg);
    edje_object_part_swallow(bg, "terminology.cmdbox", o);
    
-   term = o = termio_add(win, config, cmd, cd, size_w, size_h);
+   term = o = termio_add(win, config, cmd, login_shell, cd, size_w, size_h);
    termio_win_set(o, win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);

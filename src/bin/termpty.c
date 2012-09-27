@@ -233,7 +233,7 @@ _limit_coord(Termpty *ty, Termstate *state)
 }
 
 Termpty *
-termpty_new(const char *cmd, const char *cd, int w, int h, int backscroll)
+termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll)
 {
    Termpty *ty;
    const char *pty;
@@ -337,7 +337,19 @@ termpty_new(const char *cmd, const char *cd, int w, int h, int backscroll)
         putenv("TERM=xterm");
 //        putenv("TERM=xterm-256color");
         putenv("XTERM_256_COLORS=1");
-        execvp(args[0], (char *const *)args);
+        if (!login_shell)
+          execvp(args[0], (char *const *)args);
+        else
+          {
+             char *cmdfile, *cmd0;
+             
+             cmdfile = (char *)args[0];
+             cmd0 = alloca(strlen(cmdfile) + 2);
+             cmd0[0] = '-';
+             strcpy(cmd0 + 1, cmdfile);
+             args[0] = cmd0;
+             execvp(cmdfile, (char *const *)args);
+          }
         exit(127); /* same as system() for failed commands */
      }
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd, ECORE_FD_READ,

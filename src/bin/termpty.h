@@ -126,7 +126,7 @@ struct _Termsave
 void      termpty_init(void);
 void      termpty_shutdown(void);
 
-Termpty  *termpty_new(const char *cmd, const char *cd, int w, int h, int backscroll);
+Termpty  *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll);
 void      termpty_free(Termpty *ty);
 Termcell *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 void      termpty_write(Termpty *ty, const char *input, int len);

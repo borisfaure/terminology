@@ -2246,7 +2246,7 @@ _smart_pty_command(void *data)
 }
 
 Evas_Object *
-termio_add(Evas_Object *parent, Config *config, const char *cmd, const char *cd, int w, int h)
+termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h)
 {
    Evas *e;
    Evas_Object *obj, *g;
@@ -2285,7 +2285,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, const char *cd,
    
    termpty_init();
 
-   sd->pty = termpty_new(cmd, cd, w, h, config->scrollback);
+   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
    sd->pty->cb.scroll.func = _smart_pty_scroll;
