@@ -835,19 +835,23 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 static int
 _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   Eina_Unicode *cc;
+   const Eina_Unicode *cc;
    Eina_Unicode buf[4096], *b;
    char *s;
    int len = 0;
    
-   cc = (Eina_Unicode *)c;
+   cc = c;
    b = buf;
-   while ((cc < ce) && (*cc >= ' ') && (*cc < 0x7f))
+#define ST 0x9c // String Terminator
+#define BEL 0x07 // Bell
+   while ((cc < ce) && (*cc != ST) && (*cc != BEL))
      {
         *b = *cc;
         b++;
         cc++;
      }
+#undef ST
+#undef BEL
    *b = 0;
    if ((*cc < ' ') || (*cc >= 0x7f)) cc++;
    else return -2;
