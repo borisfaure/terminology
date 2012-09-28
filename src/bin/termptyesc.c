@@ -1069,7 +1069,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
    for (j = 0; c + j < ce && j < 100; j++)
      {
         if ((c[j] < ' ') || (c[j] >= 0x7f))
-          printf("\033[35m%02x\033[0m", c[j]);
+          printf("\033[35m%08x\033[0m", c[j]);
         else
           printf("%c", c[j]);
      }
