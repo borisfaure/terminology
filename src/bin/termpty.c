@@ -187,7 +187,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         for (jj = 0; jj < len && jj < 100; jj++)
           {
              if ((buf[jj] < ' ') || (buf[jj] >= 0x7f))
-               printf("\033[33m%02x\033[0m", buf[jj]);
+               printf("\033[33m%02x\033[0m", (unsigned char)buf[jj]);
              else
                printf("%c", buf[jj]);
           }
