@@ -22,7 +22,7 @@ static Evas_Object *saved_bg = NULL;
 static int mode = -1;
 
 static void
-_cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_font(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 1) return;
    mode = 1;
@@ -30,7 +30,7 @@ _cb_op_font(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_theme(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_theme(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 2) return;
    mode = 2;
@@ -38,7 +38,7 @@ _cb_op_theme(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_wallpaper(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_wallpaper(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 3) return;
    mode = 3;
@@ -46,7 +46,7 @@ _cb_op_wallpaper(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__
 }
 
 static void
-_cb_op_colors(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_colors(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 4) return;
    mode = 4;
@@ -54,7 +54,7 @@ _cb_op_colors(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_video(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 5) return;
    mode = 5;
@@ -62,7 +62,7 @@ _cb_op_video(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_behavior(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_behavior(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 6) return;
    mode = 6;
@@ -70,7 +70,7 @@ _cb_op_behavior(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_op_helpers(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_op_helpers(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (mode == 7) return;
    mode = 7;
@@ -104,7 +104,7 @@ _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_cb_opdt_hide_done(void *data, Evas_Object *obj __UNUSED__, const char *sig, const char *src)
+_cb_opdt_hide_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
 {
    elm_box_clear(op_opbox);
    switch (mode)
