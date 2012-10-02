@@ -62,7 +62,7 @@ struct _Termio
    Ecore_Timer *delayed_size_timer;
    Ecore_Timer *link_do_timer;
    Ecore_Job *mouse_move_job;
-   Evas_Object *win;
+    Evas_Object *win, *theme;
    Config *config;
    Ecore_IMF_Context *imf;
    Eina_Bool jump_on_change : 1;
@@ -2323,6 +2323,24 @@ termio_win_set(Evas_Object *obj, Evas_Object *win)
         evas_object_event_callback_add(sd->win, EVAS_CALLBACK_DEL,
                                        _win_obj_del, obj);
      }
+}
+
+void
+termio_theme_set(Evas_Object *obj, Evas_Object *theme)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (theme)
+       sd->theme = theme;
+}
+
+Evas_Object *
+termio_theme_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+
+   return sd->theme;
 }
 
 char *

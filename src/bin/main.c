@@ -674,6 +674,7 @@ elm_main(int argc, char **argv)
         retval = EXIT_FAILURE;
         goto end;
      }
+
    theme_auto_reload_enable(o);
    elm_object_content_set(conform, o);
    evas_object_show(o);
@@ -709,6 +710,7 @@ elm_main(int argc, char **argv)
    
    term = o = termio_add(win, config, cmd, login_shell, cd, size_w, size_h);
    termio_win_set(o, win);
+   termio_theme_set(o, bg);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,

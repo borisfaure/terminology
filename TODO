@@ -6,7 +6,6 @@ make it a first-class terminal:
 [ ] dnd file uri's too as text etc.
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
-[ ] selection of themes
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)

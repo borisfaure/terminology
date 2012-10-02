@@ -90,6 +90,7 @@ _cb_op_del_delay(void *data __UNUSED__)
    evas_object_del(op_opbox);
    evas_object_del(op_frame);
    options_font_clear();
+   options_theme_clear();
    op_opbox = NULL;
    op_frame = NULL;
    op_del_timer = NULL;
