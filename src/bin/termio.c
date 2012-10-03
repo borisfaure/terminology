@@ -1227,15 +1227,16 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
      }
 }
 
-static void
+static Eina_Bool
 _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
 {
    Termio *sd;
    char buf[64];
+   Eina_Bool ret = EINA_FALSE;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (sd->pty->mouse_rep == MOUSE_OFF) return;
+   if (!sd) return EINA_FALSE;
+   if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
    switch (sd->pty->mouse_rep)
      {
       case MOUSE_X10:
@@ -1253,6 +1254,7 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
                   buf[5] = cy + 1 + ' ';
                   buf[6] = 0;
                   termpty_write(sd->pty, buf, strlen(buf));
+                  ret = EINA_TRUE;
                }
           }
         break;
@@ -1287,6 +1289,7 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
                }
              buf[i] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
           }
         break;
       case MOUSE_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
@@ -1300,6 +1303,7 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                       (btn | shift | meta | ctrl | dbl), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
           }
         break;
       case MOUSE_NORMAL:
@@ -1321,11 +1325,13 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
              buf[5] = cy + 1 + ' ';
              buf[6] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
           }
         break;
       default:
         break;
      }
+   return ret;
 }
 
 static void
@@ -1532,13 +1538,14 @@ static void
 _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
+   Eina_Bool paste;
    Termio *sd;
    int cx, cy;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   _rep_mouse_down(data, ev, cx, cy);
+   paste = _rep_mouse_down(data, ev, cx, cy);
    sd->didclick = EINA_FALSE;
    if (ev->button == 1)
      {
@@ -1608,7 +1615,10 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
         _smart_update_queue(data, sd);
      }
    else if (ev->button == 2)
-     _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
+     {
+        if (!paste)
+          _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
+     }
    else if (ev->button == 3)
      evas_object_smart_callback_call(data, "options", NULL);
 }
@@ -2338,7 +2348,7 @@ Evas_Object *
 termio_theme_get(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return NULL;
 
    return sd->theme;
 }
