@@ -473,7 +473,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //             5  GO and STP
 //             6  GO and AVO
 //             7  GO, STP, and AVO
-             snprintf(bf, sizeof(bf), "\033[?1;%ic", 0);
+             snprintf(bf, sizeof(bf), "\033[>1;271;%ic", 0);
              termpty_write(ty, bf, strlen(bf));
           }
         break;
