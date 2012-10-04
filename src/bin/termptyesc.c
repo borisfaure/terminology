@@ -658,7 +658,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  handled = 1;
                                  if (mode) ty->mouse_rep = MOUSE_URXVT;
                                  else ty->mouse_rep = MOUSE_OFF;
-                                 INF("XXX: set mouse (rxvt-unicdode style) %i", mode);
+                                 INF("XXX: set mouse (rxvt-unicode style) %i", mode);
                                  break;
                                case 1034: // ignore
                                   /* libreadline6 emits it but it shouldn't.
