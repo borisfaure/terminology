@@ -20,6 +20,7 @@
 
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
+#define ESC 033 // Escape
 
 static int
 _csi_arg_get(Eina_Unicode **ptr)
@@ -873,12 +874,17 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    b = buf;
    while ((cc < ce) && (*cc != ST) && (*cc != BEL))
      {
+        if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
+          {
+             cc++;
+             break;
+          }
         *b = *cc;
         b++;
         cc++;
      }
    *b = 0;
-   if ((*cc == ST) || (*cc == BEL)) cc++;
+   if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
    else return -2;
    switch (buf[0])
      {
