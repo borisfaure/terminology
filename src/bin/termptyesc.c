@@ -18,6 +18,9 @@
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
 
+#define ST 0x9c // String Terminator
+#define BEL 0x07 // Bell
+
 static int
 _csi_arg_get(Eina_Unicode **ptr)
 {
@@ -868,16 +871,12 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    
    cc = c;
    b = buf;
-#define ST 0x9c // String Terminator
-#define BEL 0x07 // Bell
    while ((cc < ce) && (*cc != ST) && (*cc != BEL))
      {
         *b = *cc;
         b++;
         cc++;
      }
-#undef ST
-#undef BEL
    *b = 0;
    if ((*cc < ' ') || (*cc >= 0x7f)) cc++;
    else return -2;
