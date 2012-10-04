@@ -1228,14 +1228,11 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
+_rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
 {
-   Termio *sd;
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
    
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return EINA_FALSE;
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
    switch (sd->pty->mouse_rep)
      {
@@ -1332,14 +1329,11 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_up(Evas_Object *obj, Evas_Event_Mouse_Up *ev, int cx, int cy)
+_rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 {
-   Termio *sd;
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
    
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return EINA_FALSE;
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
    switch (sd->pty->mouse_rep)
      {
@@ -1416,13 +1410,10 @@ _rep_mouse_up(Evas_Object *obj, Evas_Event_Mouse_Up *ev, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_move(Evas_Object *obj, Evas_Event_Mouse_Move *ev __UNUSED__, int cx __UNUSED__, int cy __UNUSED__)
+_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev __UNUSED__, int cx __UNUSED__, int cy __UNUSED__)
 {
-   Termio *sd;
    Eina_Bool ret = EINA_FALSE;
    
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return EINA_FALSE;
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
    // not sure what to d here right now so do nothing.
    return ret;
@@ -1548,7 +1539,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   if (_rep_mouse_down(data, ev, cx, cy)) return;
+   if (_rep_mouse_down(sd, ev, cx, cy)) return;
    sd->didclick = EINA_FALSE;
    if (ev->button == 1)
      {
@@ -1638,7 +1629,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   if (_rep_mouse_up(data, ev, cx, cy)) return;
+   if (_rep_mouse_up(sd, ev, cx, cy)) return;
    if (sd->cur.makesel)
      {
         sd->cur.makesel = 0;
@@ -1676,7 +1667,7 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if ((sd->mouse.cx != cx) || (sd->mouse.cy != cy)) mc_change = EINA_TRUE;
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
-   if (_rep_mouse_move(data, ev, cx, cy)) return;
+   if (_rep_mouse_move(sd, ev, cx, cy)) return;
    if (sd->cur.makesel)
      {
         if (!sd->cur.sel)
