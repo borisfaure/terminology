@@ -981,6 +981,43 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 }
 
 static int
+_handle_esc_dcs(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+{
+   const Eina_Unicode *cc;
+   Eina_Unicode buf[4096], *b;
+   char *s;
+   int len = 0;
+   
+   cc = c;
+   b = buf;
+   while ((cc < ce) && (*cc != ST))
+     {
+        if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
+          {
+             cc++;
+             break;
+          }
+        *b = *cc;
+        b++;
+        cc++;
+     }
+   *b = 0;
+   if ((*cc == ST) || (*cc == '\\')) cc++;
+   else return -2;
+   switch (buf[0])
+     {
+      case '+':
+         /* TODO: Set request termcap/terminfo */
+         break;
+      default:
+        // many others
+        ERR("unhandled dcs esc '%c'", buf[0]);
+        break;
+     }
+   return cc - c;
+}
+
+static int
 _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    if ((ce - c) < 2) return 0;
@@ -993,6 +1030,8 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 2 + _handle_esc_xterm(ty, c + 2, ce);
       case '}':
         return 2 + _handle_esc_terminology(ty, c + 2, ce);
+      case 'P':
+        return 2 + _handle_esc_dcs(ty, c + 2, ce);
       case '=': // set alternate keypad mode
         ty->state.alt_kp = 1;
         return 2;
