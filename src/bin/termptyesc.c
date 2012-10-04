@@ -878,7 +878,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         cc++;
      }
    *b = 0;
-   if ((*cc < ' ') || (*cc >= 0x7f)) cc++;
+   if ((*cc == ST) || (*cc == BEL)) cc++;
    else return -2;
    switch (buf[0])
      {
