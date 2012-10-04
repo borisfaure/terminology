@@ -824,6 +824,32 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'g': // clear tabulation
         break;
  */
+       case 'Z': // Cursor Back Tab
+       {
+          int i, size, cx = ty->state.cx, cy = ty->state.cy;
+
+          arg = _csi_arg_get(&b);
+          if (arg < 1) arg = 1;
+
+          size = ty->w * cy + cx + 1;
+          for (i = size - 1; i >= 0; i--)
+            {
+               if (ty->screen[cx + (cy * ty->w)].att.tab) arg--;
+               cx--;
+               if (cx < 0)
+                 {
+                    cx = ty->w - 1;
+                    cy--;
+                 }
+               if (!arg) break;
+            }
+          if (!arg)
+            {
+               ty->state.cx = cx;
+               ty->state.cy = cy;
+            }
+       }
+       break;
       default:
         ERR("unhandled CSI '%c' (0x%02x)", *cc, *cc);
         break;
