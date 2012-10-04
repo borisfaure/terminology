@@ -18,12 +18,13 @@ typedef struct _Termsave  Termsave;
 #define COL_INVERSE   10
 #define COL_INVERSEBG 11
 
-#define MOUSE_OFF      0
-#define MOUSE_X10      1
-#define MOUSE_NORMAL   2
-#define MOUSE_UTF8     3
-#define MOUSE_SGR      4
-#define MOUSE_URXVT    5
+#define MOUSE_OFF              0
+#define MOUSE_X10              1
+#define MOUSE_NORMAL           2
+#define MOUSE_UTF8             3
+#define MOUSE_SGR              4
+#define MOUSE_URXVT            5
+#define MOUSE_NORMAL_BTN_MOVE  6
 
 // choose - italic OR double-width support   
 

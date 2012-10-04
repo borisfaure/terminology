@@ -39,6 +39,7 @@ struct _Termio
    } cur;
    struct {
       int cx, cy;
+      int button;
    } mouse;
    struct {
       struct {
@@ -1234,6 +1235,11 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
    Eina_Bool ret = EINA_FALSE;
    
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
+   if (!sd->mouse.button)
+     {
+        /* Need to remember the first button pressed for terminal handling */
+        sd->mouse.button = ev->button;
+     }
    switch (sd->pty->mouse_rep)
      {
       case MOUSE_X10:
@@ -1302,6 +1308,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
           }
         break;
       case MOUSE_NORMAL:
+      case MOUSE_NORMAL_BTN_MOVE:
       case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
@@ -1335,6 +1342,8 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
    Eina_Bool ret = EINA_FALSE;
    
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
+   if (sd->mouse.button == ev->button)
+     sd->mouse.button = 0;
    switch (sd->pty->mouse_rep)
      {
       case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
@@ -1384,6 +1393,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
           }
         break;
       case MOUSE_NORMAL:
+      case MOUSE_NORMAL_BTN_MOVE:
       case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
@@ -1410,12 +1420,52 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev __UNUSED__, int cx __UNUSED__, int cy __UNUSED__)
+_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy __UNUSED__, Eina_Bool change)
 {
+   char buf[64];
    Eina_Bool ret = EINA_FALSE;
    
    if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
-   // not sure what to d here right now so do nothing.
+   switch (sd->pty->mouse_rep)
+     {
+      case MOUSE_NORMAL_BTN_MOVE: // ESC.[.M.BTN/FLGS.X.Y
+        if (change)
+          {
+             int btn = sd->mouse.button - 1;
+             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             int v, i;
+             
+             if (btn > 2) btn = 0;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl) + ' ' + 32;
+             i = 4;
+             v = cx + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             v = cy + 1 + ' ';
+             if (v <= 127) buf[i++] = v;
+             else
+               { // 14 bits for cx/cy - enough i think
+                   buf[i++] = 0xc0 + (v >> 6);
+                   buf[i++] = 0x80 + (v & 0x3f);
+               }
+             buf[i] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        /* Always handle this, even if we don't send position update */
+        ret = EINA_TRUE;
+        break;
+      default:
+        break;
+     }
    return ret;
 }
 
@@ -1667,7 +1717,7 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if ((sd->mouse.cx != cx) || (sd->mouse.cy != cy)) mc_change = EINA_TRUE;
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
-   if (_rep_mouse_move(sd, ev, cx, cy)) return;
+   if (_rep_mouse_move(sd, ev, cx, cy, mc_change)) return;
    if (sd->cur.makesel)
      {
         if (!sd->cur.sel)

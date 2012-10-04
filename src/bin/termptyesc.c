@@ -628,7 +628,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 1002:
                                  handled = 1;
-                                 ERR("XXX: set mouse (press+release+motion while pressed) %i", mode);
+                                 if (mode) ty->mouse_rep = MOUSE_NORMAL_BTN_MOVE;
+                                 else ty->mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (press+release+motion while pressed) %i", mode);
                                  break;
                                case 1003:
                                  handled = 1;
