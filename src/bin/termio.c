@@ -1264,14 +1264,13 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
              int v, i;
              
              if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl | dbl) + ' ';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -1298,10 +1297,9 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
              
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl | dbl), cx + 1, cy + 1);
+                      (btn | shift | meta | ctrl), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1314,13 +1312,12 @@ _rep_mouse_down(Evas_Object *obj, Evas_Event_Mouse_Down *ev, int cx, int cy)
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             int dbl = (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) ? 32 : 0;
              
              if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl | dbl) + ' ';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
              buf[4] = cx + 1 + ' ';
              buf[5] = cy + 1 + ' ';
              buf[6] = 0;
