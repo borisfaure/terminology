@@ -127,7 +127,7 @@ _termpty_text_scroll_test(Termpty *ty)
    int e = ty->h;
 
    if (ty->state.scroll_y2 != 0) e = ty->state.scroll_y2;
-   if (ty->state.cy >= e)
+   if (ty->state.cy >= e && ty->state.cy >= ty->h)
      {
         _termpty_text_scroll(ty);
         ty->state.cy = e - 1;
