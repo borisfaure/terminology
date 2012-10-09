@@ -1,6 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include "termio.h"
+#include "utils.h"
 
 static Eina_Bool
 coord_back(int *x, int *y, int w, int h __UNUSED__)
@@ -56,10 +57,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
         if (!s) break;
         if (goback)
           {
-             if      ((!strncasecmp(s, "http://", 7))||
-                      (!strncasecmp(s, "https://", 8)) ||
-                      (!strncasecmp(s, "file://", 7)) ||
-                      (!strncasecmp(s, "ftp://", 6)))
+             if (link_is_protocol(s))
                {
                   goback = EINA_FALSE;
                   coord_back(&x1, &y1, w, h);
@@ -87,7 +85,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                   else if (s[0] == '<') endmatch = '>';
                   if ((!strncasecmp((s + 1), "www.", 4)) ||
                       (!strncasecmp((s + 1), "ftp.", 4)) ||
-                      (!strncasecmp((s + 1), "/", 1)))
+                      (s[1] == '/'))
                     {
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
@@ -160,17 +158,9 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
           }
         if ((!isspace(s[0])) && (len > 1))
           {
-             const char *at = strchr(s, '@');
-
-             if ((at && (strchr(at + 1, '.'))) ||
-                 (!strncasecmp(s, "http://", 7))||
-                 (!strncasecmp(s, "https://", 8)) ||
-                 (!strncasecmp(s, "ftp://", 6)) ||
-                 (!strncasecmp(s, "file://", 7)) ||
-                 (!strncasecmp(s, "www.", 4)) ||
-                 (!strncasecmp(s, "ftp.", 4)) ||
-                 (!strncasecmp(s, "/", 1))
-                )
+             if (link_is_email(s) ||
+                 link_is_url(s) ||
+                 (s[0] == '/'))
                {
                   if (x1r) *x1r = x1;
                   if (y1r) *y1r = y1;

@@ -52,13 +52,31 @@ theme_auto_reload_enable(Evas_Object *edje)
 }
 
 Eina_Bool
-link_is_url(const char *str)
+link_is_protocol(const char *str)
 {
    if ((!strncasecmp(str, "http://", 7))||
        (!strncasecmp(str, "https://", 8)) ||
        (!strncasecmp(str, "ftp://", 6)) ||
+       (!strncasecmp(str, "file://", 7)))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+link_is_url(const char *str)
+{
+   if (link_is_protocol(str) ||
        (!strncasecmp(str, "www.", 4)) ||
        (!strncasecmp(str, "ftp.", 4)))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+link_is_email(const char *str)
+{
+   const char *at = strchr(str, '@');
+   if (at && strchr(at + 1, '.'))
      return EINA_TRUE;
    return EINA_FALSE;
 }
