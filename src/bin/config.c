@@ -25,7 +25,8 @@ _config_home_get(void)
           snprintf(path, sizeof(path), "%s/.config", homepath);
         else
           {
-             if (!v) v = getenv("TMP");
+             if (!v) v = getenv("XDG_RUNTIME_DIR");
+             if (!v) v = getenv("TMPDIR");
              if (!v) v = "/tmp";
              eina_strlcpy(path, v, sizeof(path));
           }
