@@ -41,7 +41,6 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-        Config *config = termio_config_get(t->term);
 	snprintf(buf, sizeof(buf), "%s/themes/%s", elm_app_data_dir_get(), t->name);
         o = edje_object_add(evas_object_evas_get(obj));
 	if (!edje_object_file_set(o, buf, "terminology/background"))
@@ -57,7 +56,7 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void
-_cb_op_theme_sel(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_theme_sel(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Theme *t = data;
    Config *config = termio_config_get(t->term);

@@ -983,13 +983,11 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 }
 
 static int
-_handle_esc_dcs(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    const Eina_Unicode *cc;
    Eina_Unicode buf[4096], *b;
-   char *s;
-   int len = 0;
-   
+ 
    cc = c;
    b = buf;
    while ((cc < ce) && (*cc != ST))
