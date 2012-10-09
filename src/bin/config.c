@@ -20,8 +20,9 @@ _config_home_get(void)
    if (v) eina_strlcpy(path, v, sizeof(path));
    else
      {
-        v = getenv("HOME");
-        if (v) snprintf(path, sizeof(path), "%s/.config", v);
+        char homepath[PATH_MAX];
+        if (homedir_get(homepath, sizeof(homepath)))
+          snprintf(path, sizeof(path), "%s/.config", homepath);
         else
           {
              if (!v) v = getenv("TMP");

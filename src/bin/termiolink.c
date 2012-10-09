@@ -58,21 +58,12 @@ _cwd_path_get(const Evas_Object *obj, const char *relpath)
 static char *
 _home_path_get(const Evas_Object *obj __UNUSED__, const char *relpath)
 {
-   char tmppath[PATH_MAX];
-   const char *home = getenv("HOME");
-   if (!home)
-     {
-        uid_t uid = getuid();
-        struct passwd *pw = getpwuid(uid);
-        if (pw) home = pw->pw_dir;
-     }
-   if (!home)
-     {
-        ERR("Could not get $HOME");
-        return NULL;
-     }
+   char tmppath[PATH_MAX], homepath[PATH_MAX];
 
-   eina_str_join(tmppath, sizeof(tmppath), '/', home, relpath);
+   if (!homedir_get(homepath, sizeof(homepath)))
+     return NULL;
+
+   eina_str_join(tmppath, sizeof(tmppath), '/', homepath, relpath);
    return strdup(tmppath);
 }
 
