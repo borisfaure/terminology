@@ -5,6 +5,7 @@
 #include "termio.h"
 #include "options.h"
 #include "options_theme.h"
+#include "utils.h"
 
 static Evas_Object *op_themelist;
 
