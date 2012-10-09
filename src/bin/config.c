@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Efreet.h>
 #include "config.h"
 
 #define CONF_VER 1
@@ -12,27 +13,7 @@ static Eet_Data_Descriptor *edd_base = NULL;
 static const char *
 _config_home_get(void)
 {
-#ifdef ELM_EFREET
    return efreet_config_home_get();
-#else
-   static char path[PATH_MAX] = "";
-   const char *v = getenv("XDG_CONFIG_HOME");
-   if (v) eina_strlcpy(path, v, sizeof(path));
-   else
-     {
-        char homepath[PATH_MAX];
-        if (homedir_get(homepath, sizeof(homepath)))
-          snprintf(path, sizeof(path), "%s/.config", homepath);
-        else
-          {
-             if (!v) v = getenv("XDG_RUNTIME_DIR");
-             if (!v) v = getenv("TMPDIR");
-             if (!v) v = "/tmp";
-             eina_strlcpy(path, v, sizeof(path));
-          }
-     }
-   return path;
-#endif
 }
 
 void
@@ -41,6 +22,7 @@ config_init(void)
    Eet_Data_Descriptor_Class eddc;
 
    elm_need_efreet();
+   efreet_init();
    
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
@@ -106,6 +88,8 @@ config_shutdown(void)
         eet_data_descriptor_free(edd_base);
         edd_base = NULL;
      }
+
+   efreet_shutdown();
 }
 
 void

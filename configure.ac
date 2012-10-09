@@ -29,6 +29,7 @@ requirements="\
    ecore-input >= 1.7.0 \
    ecore-imf >= 1.7.0 \
    ecore-imf-evas >= 1.7.0 \
+   efreet >= 1.7.0
    "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
