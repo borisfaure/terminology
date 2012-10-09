@@ -83,8 +83,8 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                   else if (s[0] == '\'') endmatch = '\'';
                   else if (s[0] == '`') endmatch = '\'';
                   else if (s[0] == '<') endmatch = '>';
-                  if ((!strncasecmp((s + 1), "www.", 4)) ||
-                      (!strncasecmp((s + 1), "ftp.", 4)) ||
+                  if ((casestartswith((s + 1), "www.")) ||
+                      (casestartswith((s + 1), "ftp.")) ||
                       (s[1] == '/'))
                     {
                        goback = EINA_FALSE;

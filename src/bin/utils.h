@@ -12,4 +12,7 @@ Eina_Bool link_is_protocol(const char *str);
 Eina_Bool link_is_url(const char *str);
 Eina_Bool link_is_email(const char *str);
 
+#define casestartswith(str, constref) \
+  (!strncasecmp(str, constref, sizeof(constref) - 1))
+
 #endif
