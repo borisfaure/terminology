@@ -57,7 +57,8 @@ link_is_protocol(const char *str)
    if (casestartswith(str, "http://") ||
        casestartswith(str, "https://") ||
        casestartswith(str, "ftp://") ||
-       casestartswith(str, "file://"))
+       casestartswith(str, "file://") ||
+       casestartswith(str, "mailto:"))
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -77,6 +78,8 @@ link_is_email(const char *str)
 {
    const char *at = strchr(str, '@');
    if (at && strchr(at + 1, '.'))
+     return EINA_TRUE;
+   if (casestartswith(str, "mailto:"))
      return EINA_TRUE;
    return EINA_FALSE;
 }

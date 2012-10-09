@@ -113,7 +113,7 @@ _activate_link(Evas_Object *obj)
    if (!sd->link.string) return;
    if (link_is_url(sd->link.string))
      {
-        if (!strncasecmp(sd->link.string, "file://", 7))
+        if (casestartswith(sd->link.string, "file://"))
           // TODO: decode string: %XX -> char
           path = sd->link.string + sizeof("file://") - 1;
         else
@@ -124,17 +124,29 @@ _activate_link(Evas_Object *obj)
    else if (link_is_email(sd->link.string))
      email = EINA_TRUE;
 
+   if (url && casestartswith(sd->link.string, "mailto:"))
+     {
+        email = EINA_TRUE;
+        url = EINA_FALSE;
+     }
+
    s = eina_str_escape(sd->link.string);
    if (!s) return;
    if (email)
      {
+        const char *p = s;
+
         // run mail client
         cmd = "xdg-email";
         
         if ((config->helper.email) &&
             (config->helper.email[0]))
           cmd = config->helper.email;
-        snprintf(buf, sizeof(buf), "%s %s", cmd, s);
+
+        if (casestartswith(s, "mailto:"))
+          p += sizeof("mailto:") - 1;
+
+        snprintf(buf, sizeof(buf), "%s %s", cmd, p);
      }
    else if (path)
      {
