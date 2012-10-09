@@ -18,5 +18,6 @@ void         termio_size_get(Evas_Object *obj, int *w, int *h);
 int          termio_scroll_get(Evas_Object *obj);
 void         termio_font_size_set(Evas_Object *obj, int size);
 void         termio_grid_size_set(Evas_Object *obj, int w, int h);
+pid_t        termio_pid_get(const Evas_Object *obj);
 
 #endif

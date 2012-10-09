@@ -37,6 +37,80 @@ coord_forward(int *x, int *y, int w, int h)
    return EINA_TRUE;
 }
 
+static char *
+_cwd_path_get(const Evas_Object *obj, const char *relpath)
+{
+   char procpath[PATH_MAX], cwdpath[PATH_MAX], tmppath[PATH_MAX];
+   pid_t pid = termio_pid_get(obj);
+
+   snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
+   if (readlink(procpath, cwdpath, sizeof(cwdpath)) < 1)
+     {
+        ERR("Could not load working directory %s: %s",
+            procpath, strerror(errno));
+        return NULL;
+     }
+
+   eina_str_join(tmppath, sizeof(tmppath), '/', cwdpath, relpath);
+   return strdup(tmppath);
+}
+
+static char *
+_home_path_get(const Evas_Object *obj __UNUSED__, const char *relpath)
+{
+   char tmppath[PATH_MAX];
+   const char *home = getenv("HOME");
+   if (!home)
+     {
+        uid_t uid = getuid();
+        struct passwd *pw = getpwuid(uid);
+        if (pw) home = pw->pw_dir;
+     }
+   if (!home)
+     {
+        ERR("Could not get $HOME");
+        return NULL;
+     }
+
+   eina_str_join(tmppath, sizeof(tmppath), '/', home, relpath);
+   return strdup(tmppath);
+}
+
+static char *
+_local_path_get(const Evas_Object *obj, const char *relpath)
+{
+   if (relpath[0] == '/')
+     return strdup(relpath);
+   else if (eina_str_has_prefix(relpath, "~/"))
+     return _home_path_get(obj, relpath + 2);
+   else
+     return _cwd_path_get(obj, relpath);
+}
+
+static Eina_Bool
+_is_file(const char *str)
+{
+   switch (str[0])
+     {
+      case '/':
+      case '~':
+         if (str[1] == '/')
+           return EINA_TRUE;
+         return EINA_FALSE;
+
+      case '.':
+         if (str[1] == '/')
+           return EINA_TRUE;
+         else if ((str[1] == '.') && (str[2] == '/'))
+           return EINA_TRUE;
+
+         return EINA_FALSE;
+
+      default:
+         return EINA_FALSE;
+     }
+}
+
 char *
 _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r, int *y2r)
 {
@@ -85,7 +159,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                   else if (s[0] == '<') endmatch = '>';
                   if ((casestartswith((s + 1), "www.")) ||
                       (casestartswith((s + 1), "ftp.")) ||
-                      (s[1] == '/'))
+                      (_is_file(s + 1)))
                     {
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
@@ -158,14 +232,23 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
           }
         if ((!isspace(s[0])) && (len > 1))
           {
-             if (link_is_email(s) ||
-                 link_is_url(s) ||
-                 (s[0] == '/'))
+             Eina_Bool is_file = _is_file(s);
+             if (is_file ||
+                 link_is_email(s) ||
+                 link_is_url(s))
                {
                   if (x1r) *x1r = x1;
                   if (y1r) *y1r = y1;
                   if (x2r) *x2r = x2;
                   if (y2r) *y2r = y2;
+
+                  if (is_file && (s[0] != '/'))
+                    {
+                       char *ret = _local_path_get(obj, s);
+                       free(s);
+                       return ret;
+                    }
+
                   return s;
                }
           }

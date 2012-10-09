@@ -2649,3 +2649,11 @@ termio_scroll_get(Evas_Object *obj)
    if (!sd) return 0;
    return sd->scroll;
 }
+
+pid_t
+termio_pid_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return 0;
+   return termpty_pid_get(sd->pty);
+}

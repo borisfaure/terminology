@@ -134,4 +134,6 @@ void      termpty_write(Termpty *ty, const char *input, int len);
 void      termpty_resize(Termpty *ty, int w, int h);
 void      termpty_backscroll_set(Termpty *ty, int size);
 
+pid_t     termpty_pid_get(const Termpty *ty);
+
 extern int _termpty_log_dom;

@@ -532,3 +532,9 @@ termpty_backscroll_set(Termpty *ty, int size)
    ty->backpos = 0;
    ty->backmax = size;
 }
+
+pid_t
+termpty_pid_get(const Termpty *ty)
+{
+   return ty->pid;
+}
