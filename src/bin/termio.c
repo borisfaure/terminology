@@ -2657,3 +2657,24 @@ termio_pid_get(const Evas_Object *obj)
    if (!sd) return 0;
    return termpty_pid_get(sd->pty);
 }
+
+Eina_Bool
+termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
+{
+   char procpath[PATH_MAX];
+   Termio *sd = evas_object_smart_data_get(obj);
+   pid_t pid;
+
+   if (!sd) return EINA_FALSE;
+
+   pid = termpty_pid_get(sd->pty);
+   snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
+   if (readlink(procpath, buf, size) < 1)
+     {
+        ERR("Could not load working directory %s: %s",
+            procpath, strerror(errno));
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}

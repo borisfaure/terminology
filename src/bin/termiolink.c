@@ -40,16 +40,10 @@ coord_forward(int *x, int *y, int w, int h)
 static char *
 _cwd_path_get(const Evas_Object *obj, const char *relpath)
 {
-   char procpath[PATH_MAX], cwdpath[PATH_MAX], tmppath[PATH_MAX];
-   pid_t pid = termio_pid_get(obj);
+   char cwdpath[PATH_MAX], tmppath[PATH_MAX];
 
-   snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
-   if (readlink(procpath, cwdpath, sizeof(cwdpath)) < 1)
-     {
-        ERR("Could not load working directory %s: %s",
-            procpath, strerror(errno));
-        return NULL;
-     }
+   if (!termio_cwd_get(obj, cwdpath, sizeof(cwdpath)))
+     return NULL;
 
    eina_str_join(tmppath, sizeof(tmppath), '/', cwdpath, relpath);
    return strdup(tmppath);
