@@ -160,7 +160,9 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
           }
         if ((!isspace(s[0])) && (len > 1))
           {
-             if ((strchr(s, '@')) ||
+             const char *at = strchr(s, '@');
+
+             if ((at && (strchr(at + 1, '.'))) ||
                  (!strncasecmp(s, "http://", 7))||
                  (!strncasecmp(s, "https://", 8)) ||
                  (!strncasecmp(s, "ftp://", 6)) ||

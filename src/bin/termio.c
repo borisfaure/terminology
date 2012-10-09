@@ -119,9 +119,13 @@ _activate_link(Evas_Object *obj)
         path = sd->link.string;
         if (!strncasecmp(sd->link.string, "file://", 7)) path = path + 7;
      }
-   else if (strchr(sd->link.string, '@'))
-     email = EINA_TRUE;
-   
+   else
+     {
+        const char *at = strchr(sd->link.string, '@');
+        if (at && (strchr(at + 1, '.')))
+            email = EINA_TRUE;
+     }
+
    s = eina_str_escape(sd->link.string);
    if (!s) return;
    if (email)
