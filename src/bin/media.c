@@ -845,6 +845,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
    Evas *e;
    Evas_Object *obj;
    Media *sd;
+   int t;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
@@ -861,7 +862,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
    sd->tmpfd = -1;
 
 #if HAVE_MKSTEMPS
-   if (link_is_url(sd->src))
+   if (link_is_url(sd->src) && 0)
      {
         const char *ext = NULL;
         char *tbuf;
@@ -941,26 +942,27 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
 
    if (!sd->url) sd->realf = eina_stringshare_add(sd->src);
    
-   if      (_is_fmt(sd->src, extn_img))
+   t = media_src_type_get(sd->src);
+   switch (t)
      {
+      case TYPE_IMG:
         if (!sd->url) _type_img_init(obj);
-        if (type) *type = TYPE_IMG;
-     }
-   else if (_is_fmt(sd->src, extn_scale))
-     {
+        break;
+      case TYPE_SCALE:
         if (!sd->url) _type_scale_init(obj);
-        if (type) *type = TYPE_SCALE;
-     }
-   else if (_is_fmt(sd->src, extn_edj))
-     {
+        break;
+      case TYPE_EDJE:
         if (!sd->url) _type_edje_init(obj);
-        if (type) *type = TYPE_EDJE;
+        break;
+      case TYPE_MOV:
+// media can stream a url...        
+//        if (!sd->url)
+          _type_mov_init(obj);
+        break;
+      default:
+        break;
      }
-   else if (_is_fmt(sd->src, extn_mov))
-     {
-        if (!sd->url) _type_mov_init(obj);
-        if (type) *type = TYPE_MOV;
-     }
+   if (type) *type = t;
    return obj;
 }
 
@@ -1025,5 +1027,10 @@ media_src_type_get(const char *src)
    else if (_is_fmt(src, extn_scale)) type = TYPE_SCALE;
    else if (_is_fmt(src, extn_edj))   type = TYPE_EDJE;
    else if (_is_fmt(src, extn_mov))   type = TYPE_MOV;
+   // handle youtube direct url's
+   else if ((!strncasecmp(src, "http://", 7)) &&
+            (strstr(src, ".youtube.com/")) &&
+            (strchr(src, '=')) &&
+            (strchr(src, '&')))       type = TYPE_MOV;
    return type;
 }
