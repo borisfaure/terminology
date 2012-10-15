@@ -17,6 +17,16 @@ collections {
         image: "pm_fill.png" COMP;
       }
       parts {
+// other signals sent not handled here         
+//            program { name: "focus_in";
+//               signal: "focus,in";
+//               source: "terminology";
+//            }
+//            program { name: "focus_out";
+//               signal: "focus,out";
+//               source: "terminology";
+//            }
+
          ////////////////////////////////////////////////////////////////////
          // background handling
          part { name: "shadow";
@@ -34,7 +44,7 @@ collections {
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: 0 43 54 255;
+               color: 48 48 48 255;
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
@@ -169,27 +179,8 @@ collections {
                align: 0.5 0.0;
                aspect: (255/120) (255/120);
                aspect_preference: HORIZONTAL;
-               color: 141 148 150 128;
-               visible: 0;
-            }
-            description { state: "focused" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
             }
          }
-         program { name: "focus_in";
-             signal: "focus,in";
-             source: "terminology";
-             action: STATE_SET "focused" 0.0;
-             target: "shine";
-         }
-         program { name: "focus_out";
-             signal: "focus,out";
-             source: "terminology";
-             action: STATE_SET "default" 0.0;
-             target: "shine";
-         }
-
 
          ////////////////////////////////////////////////////////////////////
          // a place terminology will place an entry box for internal commands
