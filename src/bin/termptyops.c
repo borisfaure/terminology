@@ -97,7 +97,6 @@ _termpty_text_scroll(Termpty *ty)
         _termpty_text_copy(ty, cells2, cells, ty->w);
      }
    _text_clear(ty, cells2, ty->w, ' ', EINA_TRUE);
-   ty->state.scroll_y2 = 0;
 }
 
 void
@@ -120,7 +119,6 @@ _termpty_text_scroll_rev(Termpty *ty)
         _termpty_text_copy(ty, cells, cells2, ty->w);
      }
    _text_clear(ty, cells, ty->w, ' ', EINA_TRUE);
-   ty->state.scroll_y2 = 0;
 }
 
 void
