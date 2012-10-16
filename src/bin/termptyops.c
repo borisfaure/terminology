@@ -277,6 +277,7 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
         break;
       case TERMPTY_CLR_ALL:
         _text_clear(ty, cells, ty->w * ty->h, 0, EINA_TRUE);
+        ty->state.scroll_y2 = 0;
         break;
       default:
         break;
