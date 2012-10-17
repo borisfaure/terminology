@@ -639,7 +639,7 @@ _smart_del(Evas_Object *obj)
    sd->url_compl_hand = NULL;
    if (sd->tmpfd >= 0)
      {
-        unlink(sd->realf);
+        if (sd->realf) unlink(sd->realf);
         close(sd->tmpfd);
      }
    if (sd->src) eina_stringshare_del(sd->src);
@@ -955,9 +955,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
         if (!sd->url) _type_edje_init(obj);
         break;
       case TYPE_MOV:
-// media can stream a url...        
-//        if (!sd->url)
-          _type_mov_init(obj);
+        if (!sd->url) _type_mov_init(obj);
         break;
       default:
         break;

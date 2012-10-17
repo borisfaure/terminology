@@ -167,8 +167,9 @@ void
 options_helpers(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o, *bx, *sc, *fr, *bx0;
+   Evas_Object *o, *tb, *sc, *fr, *bx;
    char *txt;
+   int row = 0;
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -177,7 +178,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    
-   bx0 = o = elm_box_add(opbox);
+   bx = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, o);
@@ -188,7 +189,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Inline if possible");
    elm_check_state_set(o, config->helper.inline_please);
-   elm_box_pack_end(bx0, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_inline_chg, term);
@@ -197,30 +198,30 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx0, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
    
    sc = o = elm_scroller_add(opbox);
    elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx0, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   bx = o = elm_box_add(opbox);
+   tb = o = elm_table_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(sc, o);
    evas_object_show(o);
    
-   o = elm_label_add(bx);
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "E-mail:");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -232,19 +233,28 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_email_chg, term);
+   row++;
 
-   o = elm_label_add(bx);
+   o = elm_separator_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_table_pack(tb, o, 0, row, 2, 1);
+   evas_object_show(o);
+   row++;
+   
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "URL (Images):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -256,19 +266,20 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_url_image_chg, term);
+   row++;
    
-   o = elm_label_add(bx);
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "URL (Video):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -280,19 +291,20 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_url_video_chg, term);
+   row++;
    
-   o = elm_label_add(bx);
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "URL (All):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -304,19 +316,28 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_url_general_chg, term);
-
-   o = elm_label_add(bx);
+   row++;
+   
+   o = elm_separator_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_table_pack(tb, o, 0, row, 2, 1);
+   evas_object_show(o);
+   row++;
+   
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Local (Images):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -328,19 +349,20 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_local_image_chg, term);
+   row++;
    
-   o = elm_label_add(bx);
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Local (Video):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -352,19 +374,20 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_local_video_chg, term);
+   row++;
    
-   o = elm_label_add(bx);
+   o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, "Local (All):");
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
-   o = elm_entry_add(bx);
+   o = elm_entry_add(tb);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -376,10 +399,11 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(o, txt);
         free(txt);
      }
-   elm_box_pack_end(bx, o);
+   elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_helper_local_general_chg, term);
+   row++;
    
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
