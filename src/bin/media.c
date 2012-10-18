@@ -861,12 +861,14 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
    sd->mode = mode;
    sd->tmpfd = -1;
 
+   t = media_src_type_get(sd->src);
+   
 #if HAVE_MKSTEMPS
-   if (link_is_url(sd->src) && 0)
+   if (link_is_url(sd->src) && (t != TYPE_MOV))
      {
         const char *ext = NULL;
         char *tbuf;
-        
+
         if (!strncasecmp(sd->src, "www.", 4))
           {
              tbuf = alloca(strlen(sd->src) + 10);
@@ -942,7 +944,6 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
 
    if (!sd->url) sd->realf = eina_stringshare_add(sd->src);
    
-   t = media_src_type_get(sd->src);
    switch (t)
      {
       case TYPE_IMG:
