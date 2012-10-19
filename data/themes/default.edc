@@ -60,6 +60,7 @@ collections {
             }
          }
          part { name: "terminology.background"; type: SWALLOW;
+            api: "background" "The background";
             clip_to: "fade";
             description { state: "default" 0.0;
             }
@@ -83,6 +84,7 @@ collections {
             target: "base";
             target: "shadow";
             target: "fade";
+            api: "translucent,on" "Set the state \"translucent\" to the parts base, shadow and fade";
          }
          program { name: "trans_off";
             signal: "translucent,off";
@@ -90,42 +92,49 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "base";
             target: "shadow";
-             target: "fade";
+            target: "fade";
+            api: "translucent,off" "Set the state \"default\" to the parts base, shadow and fade";
          }
          program { name: "media_off";
             signal: "media,off";
             source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.background";
+            api: "media,off" "Set the state \"default\" to part terminology.background";
          }
          program { name: "media_img";
             signal: "media,image";
             source: "terminology";
             action: STATE_SET "image" 0.0;
             target: "terminology.background";
+            api: "media,image" "Set the state \"image\" to part terminology.background";
          }
          program { name: "media_scale";
             signal: "media,scale";
             source: "terminology";
             action: STATE_SET "scale" 0.0;
             target: "terminology.background";
+            api: "media,scale" "Set the state \"scale\" to part terminology.background";
          }
          program { name: "media_edje";
             signal: "media,edje";
             source: "terminology";
             action: STATE_SET "edje" 0.0;
             target: "terminology.background";
+            api: "media,edje" "Set the state \"edje\" to part terminology.background";
          }
          program { name: "media_mov";
             signal: "media,movie";
             source: "terminology";
             action: STATE_SET "movie" 0.0;
             target: "terminology.background";
+            api: "media,movie" "Set the state \"movie\" to part terminology.background";
          }
          
          ////////////////////////////////////////////////////////////////////
          // actual text grid for chars, cursors, selectiond etc. goes here
          part { name: "terminology.content"; type: SWALLOW;
+            api: "content" "actual text grid for chars, cursors, selectiond etc. goes here";
             description { state: "default" 0.0;
                rel1.offset: 1 2;
                rel2.offset: -2 -2;
@@ -210,6 +219,7 @@ collections {
             }
          }
          part { name: "terminology.cmdbox"; type: SWALLOW;
+            api: "cmdbox" "The command box";
             clip_to: "cmdclip";
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -232,6 +242,7 @@ collections {
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "cmdclip";
+            api: "command_box,show" "Set the state \"visible\" to part cmdclip";
          }
          program { name: "cmdshow";
             signal: "cmdbox,show";
@@ -247,6 +258,7 @@ collections {
             transition: ACCELERATE 0.5;
             target: "terminology.cmdbox";
             target: "cmdclip";
+            api: "command_box,hide" "Set the state \"visible\" to parts terminology.cmdbox and cmdclip";
          }
          
          ////////////////////////////////////////////////////////////////////
@@ -346,6 +358,7 @@ collections {
             target: "bell_strobe";
             target: "bell_glow";
             after: "bell";
+            api: "bell" "Set the state \"default\" to the parts bell_base, bell, bell_strobe and bell_glow";
          }
          program { name: "bell";
             action: STATE_SET "visible" 0.0;
@@ -443,6 +456,7 @@ collections {
             }
          }
          part { name: "terminology.popmedia"; type: SWALLOW;
+            api: "popmedia" "The popup for media";
             clip_to: "popmedia_clip";
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -592,6 +606,7 @@ collections {
          }
          program { name: "popmedia_dismiss2";
             action: SIGNAL_EMIT "popmedia,done" "terminology";
+            api: "popup_dismiss" "Dismiss the media popup. It emits the signal \"popmedia,done\"";
          }
          program { name: "popmedia_off";
             signal: "popmedia,off";
@@ -609,6 +624,7 @@ collections {
             target: "popmedia_glintclip";
             target: "popmedia_shine";
             after: "popmedia_dismiss2";
+            api: "popup_off" "Set the state \"default\" for several parts";
          }
          program { name: "popmedia_img";
             signal: "popmedia,image";
@@ -616,6 +632,7 @@ collections {
             action: STATE_SET "image" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
+            api: "popup_image" "Set the state \"image\" to part terminology.popmedia";
          }
          program { name: "popmedia_scale";
             signal: "popmedia,scale";
@@ -623,6 +640,7 @@ collections {
             action: STATE_SET "scale" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
+            api: "popup_scale" "Set the state \"scale\" to part terminology.popmedia";
          }
          program { name: "popmedia_edje";
             signal: "popmedia,edje";
@@ -630,6 +648,7 @@ collections {
             action: STATE_SET "edje" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
+            api: "popup_edje" "Set the state \"edje\" to part terminology.popmedia";
          }
          program { name: "popmedia_mov";
             signal: "popmedia,movie";
@@ -637,6 +656,7 @@ collections {
             action: STATE_SET "movie" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
+            api: "popup_movie" "Set the state \"movie\" to part terminology.popmedia";
          }
          program { name: "popmedia_img2";
             signal: "popmedia,image";
@@ -702,6 +722,7 @@ collections {
          ////////////////////////////////////////////////////////////////////
          // overlayed options and controls
          part { name: "terminology.about"; type: SWALLOW;
+            api: "about" "overlayed options and controls";
             scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -726,6 +747,7 @@ collections {
             action: STATE_SET "visible" 0.0;
             transition: SPRING 1.2 2.0 6;
             target: "terminology.about";
+            api: "about_show" "It sets the state visible fot the part terminology.about";
          }
          program { name: "ab_hide";
             signal: "about,hide";
@@ -733,11 +755,13 @@ collections {
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.about";
+            api: "about_hide" "It sets the state default for the part terminology.about";
          }
          
          ////////////////////////////////////////////////////////////////////
          // swallow to hold invisile rect to click on to dismiss things
          part { name: "terminology.dismiss"; type: SWALLOW;
+            api: "dismiss" "swallow to hold invisile rect to click on to dismiss things";
             description { state: "default" 0.0;
             }
          }
@@ -745,6 +769,7 @@ collections {
          ////////////////////////////////////////////////////////////////////
          // overlayed options and controls
          part { name: "terminology.optdetails"; type: SWALLOW;
+            api: "option_details" "overlayed options and controls";
             scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -781,6 +806,7 @@ collections {
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "terminology.optdetails";
+            api: "option_details_show" "Show the options details";
          }
          program { name: "opdt_hide";
             signal: "optdetails,hide";
@@ -789,12 +815,15 @@ collections {
             transition: DECELERATE 0.2;
             target: "terminology.optdetails";
             after: "opdt_hide2";
+            api: "option_details_hide" "Hide the options details";
          }
          program { name: "opdt_hide2";
             action: SIGNAL_EMIT "optdetails,hide,done" "terminology";
+            api: "option_details,hide,done" "Signal emitted when the option_details has hidden";
          }
          
          part { name: "terminology.options"; type: SWALLOW;
+            api: "options" "The options";
             scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -827,6 +856,7 @@ collections {
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "terminology.options";
+            api: "options,show" "To show the options";
          }
          program { name: "op_hide";
             signal: "options,hide";
@@ -834,9 +864,11 @@ collections {
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.options";
+            api: "options,hide" "To hide the options";
          }
          
          part { name: "terminology.controls"; type: SWALLOW;
+            api: "controls" "The controls";
             scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -871,6 +903,7 @@ collections {
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.3;
             target: "terminology.controls";
+            api: "controls,show" "Set the state \"visible\" to part terminology.controls";
          }
          program { name: "ct_hide";
             signal: "controls,hide";
@@ -878,6 +911,7 @@ collections {
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.5;
             target: "terminology.controls";
+            api: "controls,hide" "Set the state \"default\" to part terminology.controls";
          }
       }
    }
@@ -1154,6 +1188,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             source: "terminology";
             action: STATE_SET "oneline" 0.0;
             TARGETS;
+            api: "mode,oneline" "Set the state \"oneline\"";
          }
 
          // disjoint:
@@ -1351,6 +1386,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             source: "terminology";
             action: STATE_SET "disjoint" 0.0;
             TARGETS;
+            api: "mode,disjoint" "Set the state \"disjoint\"";
          }
 
          // default:
@@ -1545,6 +1581,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             source: "terminology";
             action: STATE_SET "default" 0.0;
             TARGETS;
+            api: "mode,multiline" "Set the state \"default\"";
          }
 
          // topfull:
@@ -1693,6 +1730,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             source: "terminology";
             action: STATE_SET "topfull" 0.0;
             TARGETS;
+            api: "mode,topfull" "Set the state \"topfull\"";
          }
 
          // bottomfull:
@@ -1836,6 +1874,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             source: "terminology";
             action: STATE_SET "bottomfull" 0.0;
             TARGETS;
+            api: "mode,bottomfull" "Set the state \"bottomfull\"";
          }
 
 #define SELPULSE \
@@ -1893,6 +1932,7 @@ target: "4.bottom"
          // top and bottom swallows used to coimmunicate via min/max size the
          // size of the top and bottom lines
          part { name: "terminology.top_left"; type: SWALLOW;
+            api: "top_left" "top swallow used to coimmunicate via min/max size the size of the top line";
             mouse_events: 0;
             description { state: "default" 0.0;
                align: 0.0 0.0;
@@ -1901,6 +1941,7 @@ target: "4.bottom"
             }
          }
          part { name: "terminology.bottom_right"; type: SWALLOW;
+            api: "bottom_right" "bottom swallow used to coimmunicate via min/max size the size of the bottom line";
             mouse_events: 0;
             description { state: "default" 0.0;
                align: 1.0 1.0;
@@ -1953,6 +1994,7 @@ target: "4.bottom"
                action: STATE_SET "fading" 0.0;
                target: "cursor_blink.top_left";
                after: "top_left.fade";
+               api: "top_left,blinking" "Start blinking the part cursor_blink.top_left";
             }
             program { name: "top_left.fade";
                action: STATE_SET "fading" 1.0;
@@ -1965,6 +2007,7 @@ target: "4.bottom"
                source: "zone.top_left";
                action: STATE_SET "default" 0.0;
                target: "cursor_blink.top_left";
+               api: "top_left,blinking,stop" "Stop blinking the part cursor_blink.top_left";
             }
          }
          part { name: "cursor.bottom_right"; type: RECT;
@@ -2011,6 +2054,7 @@ target: "4.bottom"
                action: STATE_SET "fading" 0.0;
                target: "cursor_blink.bottom_right";
                after: "bottom_right.fade";
+               api: "bottom_right,blinking" "Start blinking the part cursor_blink.bottom_right";
             }
             program { name: "bottom_right.fade";
                action: STATE_SET "fading" 1.0;
@@ -2023,6 +2067,7 @@ target: "4.bottom"
                source: "zone.bottom_right";
                action: STATE_SET "default" 0.0;
                target: "cursor_blink.bottom_right";
+               api: "bottom_right,blinking,stop" "Stop blinking the bottom right";
             }
          }
       }
@@ -2133,6 +2178,7 @@ target: "4.bottom"
                action: STATE_SET "focused" 0.0;
                target: "fill";
                target: "outline";
+               api: "focus,in,noblink" "No blink the cursor when focus in";
             }
             program { name: "focus_in";
                signal: "focus,in";
@@ -2142,6 +2188,7 @@ target: "4.bottom"
                target: "outline";
                after: "focus2";
                after: "pulse";
+               api: "focus,in" "Set the focus to cursor";
             }
             program { name: "focus2";
                in: 0.5 0.0;
@@ -2178,6 +2225,7 @@ target: "4.bottom"
                target: "pulse";
                target: "pulse2";
                after: "focus_out2";
+               api: "focus,out" "ACTION_STOP for  parts focus_in, focus2, focus3, pulse and pulse2";
             }
             program { name: "focus_out2";
                action: STATE_SET "default" 0.0;
@@ -2190,6 +2238,7 @@ target: "4.bottom"
                action: STATE_SET "default" 0.0;
                target: "key";
                after: "key2";
+               api: "key,down" "Set the state \"default\" to the part key";
             }
             program { name: "key2";
                action: STATE_SET "on" 0.0;
@@ -2416,6 +2465,7 @@ target: "4.bottom"
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.5;
             target: "fade";
+            api: "busy" "Set the state \"visible\" to part fade";
          }
          program { name: "spin1";
             signal: "busy";
@@ -2441,6 +2491,7 @@ target: "4.bottom"
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 1.5;
             target: "fade";
+            api: "done" "Set the state default to the part \"fade\"";
          }
       }
    }
@@ -2522,6 +2573,7 @@ target: "4.bottom"
             }
          }
          part { name: "terminology.posdrag";
+            api: "position" "The position drag";
             mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
@@ -2560,6 +2612,7 @@ target: "4.bottom"
             }
          }
          part { name: "terminology.voldrag"; type: IMAGE;
+            api: "volume" "The volume drag";
             mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
@@ -2585,6 +2638,7 @@ target: "4.bottom"
             action: STATE_SET "expanded" 0.0;
             transition: SINUSOIDAL 0.4 CURRENT;
             target: "media_bg";
+            api: "mouse,in" "Set the state \"expanded\" to the part media_bg";
          }
          program { name: "media_mouse_out";
             signal: "mouse,out";
@@ -2592,47 +2646,55 @@ target: "4.bottom"
             action: STATE_SET "default" 0.0;
             transition: SINUSOIDAL 0.4 CURRENT;
             target: "media_bg";
+            api: "mouse,out" "Set the state \"default\" to the part media_bg";
          }
          program { name: "media_pause_click";
             signal: "mouse,up,*";
             source: "play";
             filter: "play" "default";
             action: SIGNAL_EMIT "pause" "";
+            api: "pause" "It emits the signal \"pause\"";
          }
          program { name: "media_play_click";
             signal: "mouse,up,1";
             source: "play";
             filter: "play" "paused";
             action: SIGNAL_EMIT "play" "";
+            api: "play" "It emits the signal \"play\"";
          }
          program { name: "media_stop_click";
             signal: "mouse,up,1";
             source: "stop";
             action: SIGNAL_EMIT "stop" "";
+            api: "stop" "It emits the signal \"stop\"";
          }
          program { name: "media_signal_pause";
             signal: "pause,set";
             source: "terminology";
             action: STATE_SET "paused" 0.0;
             target: "play";
+            api: "pause,set" "It sets the state \"paused\"";
          }
          program { name: "media_signal_play";
             signal: "play,set";
             source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "play";
+            api: "play,set" "It sets the state \"default\" to play";
          }
          program { name: "media_signal_mute";
             signal: "mute,set";
             source: "terminology";
             action: STATE_SET "muted" 0.0;
             target: "terminology.voldrag";
+            api: "mute,set" "It sets the state \"muted\" to volume drag";
          }
          program { name: "media_signal_unmute";
             signal: "mute,unset";
             source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.voldrag";
+            api: "mute,unset" "It sets the state \"default\" to volume drag";
          }
       }
    }
@@ -2779,6 +2841,7 @@ target: "4.bottom"
             }
          }                                              
          part { name: "terminology.text.preview"; type: SWALLOW;
+            api: "text_preview" "Text preview for the font selection";
             clip_to: "clip";
             description { state: "default" 0.0;
                rel1 {

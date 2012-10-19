@@ -3,6 +3,8 @@
 #include <Elementary.h>
 #include "about.h"
 
+#include "background_generated.h"
+
 static Evas_Object *ab_layout = NULL, *ab_over = NULL;
 static Eina_Bool ab_out = EINA_FALSE;
 static Ecore_Timer *ab_del_timer = NULL;
@@ -100,18 +102,18 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
               "DAMAGE.</b>"
           );
         evas_object_show(o);
-        edje_object_part_swallow(bg, "terminology.about", ab_layout);
+        background_about_set(bg, ab_layout);
      }
    if (!ab_out)
      {
         ab_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_color_set(o, 0, 0, 0, 0);
-        edje_object_part_swallow(bg, "terminology.dismiss", o);
+        background_about_set(bg, o);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, term);
         
-        edje_object_signal_emit(bg, "about,show", "terminology");
+        background_about_show_emit(bg);
         elm_object_signal_emit(ab_layout, "begin" ,"terminology");
         ab_out = EINA_TRUE;
         elm_object_focus_set(ab_layout, EINA_TRUE);
@@ -125,8 +127,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         evas_object_del(ab_over);
         ab_over = NULL;
-        
-        edje_object_signal_emit(bg, "about,hide", "terminology");
+
+        background_about_hide_emit(bg);
         ab_out = EINA_FALSE;
         elm_object_focus_set(ab_layout, EINA_FALSE);
         elm_object_focus_set(term, EINA_TRUE);
