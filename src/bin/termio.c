@@ -502,7 +502,9 @@ _smart_apply(Evas_Object *obj)
                               }
                             if (cells[j].att.fgintense) fg += 48;
                             if (cells[j].att.bgintense) bg += 48;
-                            if ((codepoint == ' ') || (codepoint == 0))
+                            if (((codepoint == ' ') || (codepoint == 0)) &&
+                                (!cells[j].att.strike) &&
+                                (!cells[j].att.underline))
                               fg = COL_INVIS;
                          }
                        if ((tc[x].codepoint != codepoint) ||
