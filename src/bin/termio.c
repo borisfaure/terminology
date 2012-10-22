@@ -14,10 +14,6 @@
 #include "utils.h"
 #include "media.h"
 
-#include "background_generated.h"
-#include "cursor_generated.h"
-#include "selection_generated.h"
-
 typedef struct _Termio Termio;
 
 struct _Termio
@@ -502,9 +498,7 @@ _smart_apply(Evas_Object *obj)
                               }
                             if (cells[j].att.fgintense) fg += 48;
                             if (cells[j].att.bgintense) bg += 48;
-                            if (((codepoint == ' ') || (codepoint == 0)) &&
-                                (!cells[j].att.strike) &&
-                                (!cells[j].att.underline))
+                            if ((codepoint == ' ') || (codepoint == 0))
                               fg = COL_INVIS;
                          }
                        if ((tc[x].codepoint != codepoint) ||
@@ -573,16 +567,15 @@ _smart_apply(Evas_Object *obj)
 	       {
                   sd->top_left = EINA_FALSE;
                   sd->bottom_right = EINA_TRUE;
-                  mediactrl_mouse_out_emit(sd->cur.selo_theme);
-                  selection_top_left_blinking_stop_emit(sd->cur.selo_theme);
-                  selection_bottom_right_blinking_emit(sd->cur.selo_theme);
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.top_left");
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.bottom_right");
 	       }
              else if (sd->bottom_right)
                {
                   sd->top_left = EINA_TRUE;
                   sd->bottom_right = EINA_FALSE;
-                  selection_bottom_right_blinking_stop_emit(sd->cur.selo_theme);
-                  selection_top_left_blinking_emit(sd->cur.selo_theme);
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.bottom_right");
+                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.top_left");
                }
           }
 
@@ -610,16 +603,23 @@ _smart_apply(Evas_Object *obj)
                            (end_y + 1 - start_y) * sd->font.chh);
         if ((start_y == end_y) ||
             ((start_x == 0) && (end_x == (sd->grid.w - 1))))
-          selection_mode_oneline_emit(sd->cur.selo_theme);
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,oneline", "terminology");
         else if ((start_y == (end_y - 1)) &&
                  (start_x > end_x))
-          selection_mode_disjoint_emit(sd->cur.selo_theme);
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,disjoint", "terminology");
         else if (start_x == 0)
-          selection_mode_topfull_emit(sd->cur.selo_theme);
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,topfull", "terminology");
         else if (end_x == (sd->grid.w - 1))
-          selection_mode_bottomfull_emit(sd->cur.selo_theme);
+          {
+             edje_object_signal_emit(sd->cur.selo_theme, 
+                                     "mode,bottomfull", "terminology");
+          }
         else
-          selection_mode_multiline_emit(sd->cur.selo_theme);
+          edje_object_signal_emit(sd->cur.selo_theme,
+                                  "mode,multiline", "terminology");
         evas_object_show(sd->cur.selo_theme);
      }
    else
@@ -1048,7 +1048,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    keyin_handle(sd->pty, ev);
 end:
    if (sd->config->flicker_on_key)
-     cursor_key_down_emit(sd->cur.obj);
+     edje_object_signal_emit(sd->cur.obj, "key,down", "terminology");
 }
 
 static void
@@ -1072,9 +1072,9 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    if (sd->config->disable_cursor_blink)
-     cursor_focus_in_noblink_emit(sd->cur.obj);
+     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
    else
-     cursor_focus_in_emit(sd->cur.obj);
+     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
    if (sd->imf)
@@ -1093,7 +1093,7 @@ _smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   cursor_focus_out_emit(sd->cur.obj);
+   edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
    if (sd->imf)
@@ -1848,8 +1848,8 @@ _termio_config_set(Evas_Object *obj, Config *config)
 
    theme_apply(sd->cur.selo_theme, config, "terminology/selection");
    theme_auto_reload_enable(sd->cur.selo_theme);
-   selection_top_left_set(sd->cur.selo_theme, sd->cur.selo_top);
-   selection_bottom_right_set(sd->cur.selo_theme, sd->cur.selo_bottom);
+   edje_object_part_swallow(sd->cur.selo_theme, "terminology.top_left", sd->cur.selo_top);
+   edje_object_part_swallow(sd->cur.selo_theme, "terminology.bottom_right", sd->cur.selo_bottom);
 }
 
 static void
@@ -2307,7 +2307,7 @@ _smart_pty_bell(void *data)
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return;
    evas_object_smart_callback_call(data, "bell", NULL);
-   background_bell_emit(sd->cur.obj);
+   edje_object_signal_emit(sd->cur.obj, "bell", "terminology");
 }
 
 static void
@@ -2574,11 +2574,11 @@ termio_config_update(Evas_Object *obj)
    termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
 
-   cursor_focus_out_emit(sd->cur.obj);
+   edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
    if (sd->config->disable_cursor_blink)
-     cursor_focus_in_noblink_emit(sd->cur.obj);
+     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
    else
-     cursor_focus_in_emit(sd->cur.obj);
+     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
    
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);

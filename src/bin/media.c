@@ -8,9 +8,6 @@
 #include "config.h"
 #include "utils.h"
 
-#include "mediabusy_generated.h"
-#include "mediactrl_generated.h"
-
 typedef struct _Media Media;
 
 struct _Media
@@ -375,7 +372,7 @@ _cb_mov_frame_decode(void *data, Evas_Object *obj __UNUSED__, void *event __UNUS
    len = emotion_object_play_length_get(sd->o_img);
    pos = emotion_object_position_get(sd->o_img);
    pos /= len;
-   mediactrl_volume_drag_value_set(sd->o_ctrl, pos, pos);
+   edje_object_part_drag_value_set(sd->o_ctrl, "terminology.posdrag", pos, pos);
 }
 
 static void
@@ -459,8 +456,7 @@ _cb_media_vol(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-
-   mediactrl_volume_drag_value_get(sd->o_ctrl, &vx, &vy);
+   edje_object_part_drag_value_get(sd->o_ctrl, "terminology.voldrag", &vx, &vy);
    media_volume_set(data, vx + vy);
 }
 
@@ -470,8 +466,7 @@ _cb_media_pos(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-
-   mediactrl_volume_drag_value_get(sd->o_ctrl, &vx, &vy);
+   edje_object_part_drag_value_get(sd->o_ctrl, "terminology.posdrag", &vx, &vy);
    media_position_set(data, vx + vy);
 }
 
@@ -523,14 +518,16 @@ _type_mov_init(Evas_Object *obj)
    o = sd->o_ctrl = edje_object_add(evas_object_evas_get(obj));
    theme_apply(o, sd->config, "terminology/mediactrl");
    vol = emotion_object_audio_volume_get(sd->o_img);
-   mediactrl_volume_drag_value_set(o, vol, vol);
-   mediactrl_play_callback_add(o, _cb_media_play, obj);
-   mediactrl_pause_callback_add(o,
-                                _cb_media_pause, obj);
-   mediactrl_stop_callback_add(o, _cb_media_stop, obj);
+   edje_object_part_drag_value_set(o, "terminology.voldrag", vol, vol);
+   edje_object_signal_callback_add(o, "play", "",
+                                   _cb_media_play, obj);
+   edje_object_signal_callback_add(o, "pause", "",
+                                   _cb_media_pause, obj);
+   edje_object_signal_callback_add(o, "stop", "",
+                                   _cb_media_stop, obj);
    edje_object_signal_callback_add(o, "drag", "terminology.posdrag",
                                    _cb_media_pos, obj);
-   edje_object_signal_callback_add(o, "drag", "terminology.volume",
+   edje_object_signal_callback_add(o, "drag", "terminology.voldrag",
                                    _cb_media_vol, obj);
    /* TODO where to stack the object in the ui? controls cannot be part of
     * the 'media smart obj' becouse controls need to be on top of the term obj.
@@ -801,8 +798,8 @@ _url_compl_cb(void *data, int type __UNUSED__, void *event_info)
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_TRUE;
    if (ev->url_con != sd->url) return EINA_TRUE;
-
-   mediabusy_done_emit(sd->o_busy);
+   
+   edje_object_signal_emit(sd->o_busy, "done", "terminology");
    ecore_event_handler_del(sd->url_prog_hand);
    ecore_event_handler_del(sd->url_compl_hand);
    ecore_con_url_free(sd->url);
@@ -931,7 +928,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
                             evas_object_smart_member_add(o, obj);
                             theme_apply(o, sd->config, "terminology/mediabusy");
                             evas_object_show(o);
-                            mediabusy_busy_emit(o);
+                            edje_object_signal_emit(o, "busy", "terminology");
                             
                             sd->realf = eina_stringshare_add(buf);
                             sd->url_prog_hand = ecore_event_handler_add
@@ -975,9 +972,9 @@ media_mute_set(Evas_Object *obj, Eina_Bool mute)
    if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_audio_mute_set(sd->o_img, mute);
    if (mute)
-     mediactrl_mute_set_emit(sd->o_ctrl);
+      edje_object_signal_emit(sd->o_ctrl, "mute,set", "terminology");
    else
-     mediactrl_mute_unset_emit(sd->o_ctrl);
+      edje_object_signal_emit(sd->o_ctrl, "mute,unset", "terminology");
 }
 
 void
@@ -987,9 +984,9 @@ media_play_set(Evas_Object *obj, Eina_Bool play)
    if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_play_set(sd->o_img, play);
    if (play)
-     mediactrl_play_set_emit(sd->o_ctrl);
+      edje_object_signal_emit(sd->o_ctrl, "play,set", "terminology");
    else
-     mediactrl_pause_set_emit(sd->o_ctrl);
+      edje_object_signal_emit(sd->o_ctrl, "pause,set", "terminology");
 }
 
 void
@@ -1017,7 +1014,7 @@ media_volume_set(Evas_Object *obj, double vol)
    Media *sd = evas_object_smart_data_get(obj);
    if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_audio_volume_set(sd->o_img, vol);
-   mediactrl_volume_drag_value_set(sd->o_ctrl, vol, vol);
+   edje_object_part_drag_value_set(sd->o_ctrl, "terminology.voldrag", vol, vol);
 }
 
 int

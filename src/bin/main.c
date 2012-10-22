@@ -11,9 +11,6 @@
 #include "media.h"
 #include "utils.h"
 
-#include "background_generated.h"
-#include "cursor_generated.h"
-
 int _log_domain = -1;
 
 static Evas_Object *win = NULL, *bg = NULL, *backbg = NULL, *term = NULL, *media = NULL;
@@ -37,7 +34,7 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    if (!focused) elm_win_urgent_set(win, EINA_FALSE);
    focused = EINA_TRUE;
-   cursor_focus_in_emit(bg);
+   edje_object_signal_emit(bg, "focus,in", "terminology");
    if (cmdbox_up)
      elm_object_focus_set(cmdbox, EINA_TRUE);
    else
@@ -48,7 +45,7 @@ static void
 _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    focused = EINA_FALSE;
-   cursor_focus_out_emit(bg);
+   edje_object_signal_emit(bg, "focus,out", "terminology");
    if (cmdbox_up)
      elm_object_focus_set(cmdbox, EINA_FALSE);
    else
@@ -108,7 +105,7 @@ _cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSE
    Config *config = termio_config_get(term);
 
    if (!config->disable_visual_bell)
-     background_bell_emit(bg);
+     edje_object_signal_emit(bg, "bell", "terminology");
    if (!config) return;
    if (config->urg_bell)
      {
@@ -130,7 +127,7 @@ _cb_popmedia_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char
 static void
 _cb_popmedia_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   background_popup_off_emit(bg);
+   edje_object_signal_emit(bg, "popmedia,off", "terminology");
 }
 
 static void
@@ -148,16 +145,16 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
    if (!popmedia) termio_mouseover_suspend_pushpop(term, 1);
    popmedia = o = media_add(win, src, config, MEDIA_POP, &type);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, NULL);
-   background_popmedia_set(bg, o);
+   edje_object_part_swallow(bg, "terminology.popmedia", o);
    evas_object_show(o);
    if (type == TYPE_IMG)
-     background_popup_image_emit(bg);
+     edje_object_signal_emit(bg, "popmedia,image", "terminology");
    else if (type == TYPE_SCALE)
-     background_popup_scale_emit(bg);
+     edje_object_signal_emit(bg, "popmedia,scale", "terminology");
    else if (type == TYPE_EDJE)
-     background_popup_edje_emit(bg);
+     edje_object_signal_emit(bg, "popmedia,edje", "terminology");
    else if (type == TYPE_MOV)
-     background_popup_movie_emit(bg);
+     edje_object_signal_emit(bg, "popmedia,movie", "terminology");
 }
 
 static Eina_Bool
@@ -173,7 +170,7 @@ _cb_cmdbox(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNU
 {
    cmdbox_up = EINA_TRUE;
    elm_object_focus_set(term, EINA_FALSE);
-   background_command_box_show_emit(bg);
+   edje_object_signal_emit(bg, "cmdbox,show", "terminology");
    elm_entry_entry_set(cmdbox, "");
    evas_object_show(cmdbox);
    if (_cmdbox_focus_timer) ecore_timer_del(_cmdbox_focus_timer);
@@ -186,7 +183,7 @@ _cb_cmd_activated(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED_
    char *cmd;
    
    elm_object_focus_set(obj, EINA_FALSE);
-   background_command_box_hide_emit(bg);
+   edje_object_signal_emit(bg, "cmdbox,hide", "terminology");
    elm_object_focus_set(term, EINA_TRUE);
    cmd = (char *)elm_entry_entry_get(obj);
    if (cmd)
@@ -210,7 +207,7 @@ static void
 _cb_cmd_aborted(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    elm_object_focus_set(obj, EINA_FALSE);
-   background_command_box_hide_emit(bg);
+   edje_object_signal_emit(bg, "cmdbox,hide", "terminology");
    elm_object_focus_set(term, EINA_TRUE);
    if (_cmdbox_focus_timer)
      {
@@ -241,7 +238,7 @@ static void
 _cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    evas_object_show(obj);
-   background_cmdbox_set(data, obj);
+   edje_object_part_swallow(data, "terminology.cmdbox", obj);
 }
 
 void
@@ -249,13 +246,13 @@ main_trans_update(const Config *config)
 {
    if (config->translucent)
      {
-        background_translucent_on_emit(bg);
+        edje_object_signal_emit(bg, "translucent,on", "terminology");
         elm_win_alpha_set(win, EINA_TRUE);
         evas_object_hide(backbg);
      }
    else
      {
-        background_translucent_off_emit(bg);
+        edje_object_signal_emit(bg, "translucent,off", "terminology");
         elm_win_alpha_set(win, EINA_FALSE);
         evas_object_show(backbg);
      }
@@ -266,7 +263,7 @@ _cb_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
 {
    Config *config = data;
    media = NULL;
-   background_media_off_emit(bg);
+   edje_object_signal_emit(bg, "media,off", "terminology");
    if (config->temporary) eina_stringshare_replace(&(config->background), NULL);
 }
 
@@ -287,22 +284,22 @@ main_media_update(const Config *config)
         o = media = media_add(win, config->background, config, MEDIA_BG, &type);
         evas_object_event_callback_add(media, EVAS_CALLBACK_DEL,
                                        _cb_media_del, config);
-        background_background_set(bg, o);
+        edje_object_part_swallow(bg, "terminology.background", o);
         evas_object_show(o);
         if (type == TYPE_IMG)
-          background_media_image_emit(bg);
+          edje_object_signal_emit(bg, "media,image", "terminology");
         else if (type == TYPE_SCALE)
-          background_media_scale_emit(bg);
+          edje_object_signal_emit(bg, "media,scale", "terminology");
         else if (type == TYPE_EDJE)
-          background_media_edje_emit(bg);
+          edje_object_signal_emit(bg, "media,edje", "terminology");
         else if (type == TYPE_MOV)
-          background_media_movie_emit(bg);
+          edje_object_signal_emit(bg, "media,movie", "terminology");
      }
    else
      {
         if (media)
           {
-             background_media_off_emit(bg);
+             edje_object_signal_emit(bg, "media,off", "terminology");
              evas_object_del(media);
              media = NULL;
           }
@@ -682,7 +679,8 @@ elm_main(int argc, char **argv)
    elm_object_content_set(conform, o);
    evas_object_show(o);
 
-   background_popup_dismiss_callback_add(o, _cb_popmedia_done, NULL);
+   edje_object_signal_callback_add(o, "popmedia,done", "terminology",
+                                   _cb_popmedia_done, NULL);
 
    if (pos_set)
      {
@@ -708,7 +706,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "aborted", _cb_cmd_aborted, bg);
    evas_object_smart_callback_add(o, "changed,user", _cb_cmd_changed, bg);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _cb_cmd_hints_changed, bg);
-   background_cmdbox_set(bg, o);
+   edje_object_part_swallow(bg, "terminology.cmdbox", o);
    
    term = o = termio_add(win, config, cmd, login_shell, cd, size_w, size_h);
    termio_win_set(o, win);
@@ -717,7 +715,7 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _cb_size_hint, win);
-   background_content_set(bg, o);
+   edje_object_part_swallow(bg, "terminology.content", o);
    evas_object_smart_callback_add(o, "options", _cb_options, NULL);
    evas_object_smart_callback_add(o, "change", _cb_change, NULL);
    evas_object_smart_callback_add(o, "exited", _cb_exited, NULL);

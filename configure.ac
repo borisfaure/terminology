@@ -37,7 +37,6 @@ PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 AC_CHECK_FUNCS(mkstemps)
 
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
-EFL_WITH_BIN([edje], [edje-codegen], [edje_codegen])
 
 with_max_log_level="EINA_LOG_LEVEL_ERR"
 AC_ARG_WITH(maximum-log-level,

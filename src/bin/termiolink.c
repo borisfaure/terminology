@@ -3,7 +3,6 @@
 #include "termio.h"
 #include "utils.h"
 
-
 static Eina_Bool
 coord_back(int *x, int *y, int w, int h __UNUSED__)
 {

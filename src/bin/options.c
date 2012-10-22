@@ -12,8 +12,6 @@
 #include "config.h"
 #include "termio.h"
 
-#include "background_generated.h"
-
 static Evas_Object *op_frame, *op_box = NULL, *op_toolbar = NULL,
                    *op_opbox = NULL, *op_tbox = NULL, *op_temp = NULL,
                    *op_over = NULL;
@@ -28,7 +26,7 @@ _cb_op_font(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UN
 {
    if (mode == 1) return;
    mode = 1;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -36,7 +34,7 @@ _cb_op_theme(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __U
 {
    if (mode == 2) return;
    mode = 2;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -44,7 +42,7 @@ _cb_op_wallpaper(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    if (mode == 3) return;
    mode = 3;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -52,7 +50,7 @@ _cb_op_colors(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __
 {
    if (mode == 4) return;
    mode = 4;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -60,7 +58,7 @@ _cb_op_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __U
 {
    if (mode == 5) return;
    mode = 5;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -68,7 +66,7 @@ _cb_op_behavior(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
 {
    if (mode == 6) return;
    mode = 6;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -76,7 +74,7 @@ _cb_op_helpers(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event _
 {
    if (mode == 7) return;
    mode = 7;
-   background_option_details_hide_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
 static void
@@ -121,7 +119,7 @@ _cb_opdt_hide_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UN
       case 7: options_helpers(op_opbox, data); break;
       default: break;
      }
-   background_option_details_show_emit(saved_bg);
+   edje_object_signal_emit(saved_bg, "optdetails,show", "terminology");
 }
 
 void
@@ -140,7 +138,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         op_opbox = o = elm_box_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        background_option_details_set(bg, o);
+        edje_object_part_swallow(bg, "terminology.optdetails", o);
         evas_object_show(o);
 
         op_frame = o = elm_frame_add(win);
@@ -193,25 +191,25 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
         evas_object_smart_callback_add(o, "changed", _cb_op_tmp_chg, config);
 
-        background_options_set(bg, op_frame);
+        edje_object_part_swallow(bg, "terminology.options", op_frame);
         evas_object_show(op_frame);
      }
    else if ((op_opbox) && (!op_out))
-     background_option_details_show_emit(bg);
+     edje_object_signal_emit(bg, "optdetails,show", "terminology");
      
    if (!op_out)
      {
-         background_option_details_hide_done_callback_add(bg,
-                                                          _cb_opdt_hide_done,
-                                                          term);
+        edje_object_signal_callback_add(bg, "optdetails,hide,done",
+                                        "terminology",
+                                        _cb_opdt_hide_done, term);
         op_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_color_set(o, 0, 0, 0, 0);
-        background_dismiss_set(bg, o);
+        edje_object_part_swallow(bg, "terminology.dismiss", o);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, term);
 
-        background_options_show_emit(bg);
+        edje_object_signal_emit(bg, "options,show", "terminology");
         op_out = EINA_TRUE;
         elm_object_focus_set(op_toolbar, EINA_TRUE);
         if (op_del_timer)
@@ -222,13 +220,13 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      }
    else
      {
-         background_option_details_hide_done_callback_del_full(bg,
-                                                             _cb_opdt_hide_done,
-                                                             NULL);
+        edje_object_signal_callback_del(bg, "optdetails,hide,done",
+                                        "terminology",
+                                        _cb_opdt_hide_done);
         evas_object_del(op_over);
         op_over = NULL;
-        background_options_hide_emit(bg);
-        background_option_details_hide_emit(bg);
+        edje_object_signal_emit(bg, "options,hide", "terminology");
+        edje_object_signal_emit(bg, "optdetails,hide", "terminology");
         op_out = EINA_FALSE;
         elm_object_focus_set(op_frame, EINA_FALSE);
         elm_object_focus_set(term, EINA_TRUE);

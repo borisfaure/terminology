@@ -6,8 +6,6 @@
 #include "about.h"
 #include "termio.h"
 
-#include "background_generated.h"
-
 static Evas_Object *ct_frame = NULL, *ct_box = NULL, *ct_over = NULL;
 static Eina_Bool ct_out = EINA_FALSE;
 static Ecore_Timer *ct_del_timer = NULL;
@@ -132,14 +130,14 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", _cb_ct_about, NULL);
         
-        background_controls_set(bg, ct_frame);
+        edje_object_part_swallow(bg, "terminology.controls", ct_frame);
         evas_object_show(ct_frame);
      }
    if (!ct_out)
      {
         ct_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_color_set(o, 0, 0, 0, 0);
-        background_dismiss_set(bg, o);
+        edje_object_part_swallow(bg, "terminology.dismiss", o);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, term);
@@ -147,7 +145,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         ct_win = win;
         ct_bg = bg;
         ct_term = term;
-        background_controls_show_emit(bg);
+        edje_object_signal_emit(bg, "controls,show", "terminology");
         ct_out = EINA_TRUE;
         elm_object_focus_set(ct_frame, EINA_TRUE);
         if (ct_del_timer)
@@ -161,7 +159,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_del(ct_over);
         ct_over = NULL;
 
-        background_controls_hide_emit(bg);
+        edje_object_signal_emit(bg, "controls,hide", "terminology");
         ct_out = EINA_FALSE;
         elm_object_focus_set(ct_frame, EINA_FALSE);
         elm_object_focus_set(term, EINA_TRUE);

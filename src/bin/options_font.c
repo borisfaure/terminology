@@ -7,8 +7,6 @@
 #include "options_font.h"
 #include "utils.h"
 
-#include "fontpreview_generated.h"
-
 #define TEST_STRING "oislOIS.015!|,"
 
 static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
@@ -86,7 +84,7 @@ static void
 _cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o;
-   o = fontpreview_text_preview_get(obj);
+   o = edje_object_part_swallow_get(obj, "terminology.text.preview");
    if (o) evas_object_del(o);
 }
 
@@ -100,7 +98,7 @@ _cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
    char buf[4096];
    
    if (!evas_object_visible_get(obj)) return;
-   if (fontpreview_text_preview_get(obj)) return;
+   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    if ((ow < 2) || (oh < 2)) return;
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
@@ -120,7 +118,7 @@ _cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
           evas_object_text_font_set(o, f->name, config->font.size);
         evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
         evas_object_size_hint_min_set(o, ow, oh);
-        fontpreview_text_preview_set(obj, o);
+        edje_object_part_swallow(obj, "terminology.text.preview", o);
      }
 }
 
@@ -191,6 +189,7 @@ _cb_font_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    evas_object_event_callback_del_full(term, EVAS_CALLBACK_RESIZE, 
                                        _cb_term_resize, term);
 }
+
 void
 options_font_clear(void)
 {
