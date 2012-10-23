@@ -832,13 +832,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
  */
        case 'Z': // Cursor Back Tab
        {
-          int i, size, cx = ty->state.cx, cy = ty->state.cy;
+          int idx, size, cx = ty->state.cx, cy = ty->state.cy;
 
           arg = _csi_arg_get(&b);
           if (arg < 1) arg = 1;
 
           size = ty->w * cy + cx + 1;
-          for (i = size - 1; i >= 0; i--)
+          for (idx = size - 1; idx >= 0; idx--)
             {
                if (ty->screen[cx + (cy * ty->w)].att.tab) arg--;
                cx--;
