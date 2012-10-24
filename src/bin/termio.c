@@ -1247,26 +1247,46 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   
-   if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
+
+   if (sd->pty->mouse_mode == MOUSE_OFF) return EINA_FALSE;
    if (!sd->mouse.button)
      {
         /* Need to remember the first button pressed for terminal handling */
         sd->mouse.button = ev->button;
      }
-   switch (sd->pty->mouse_rep)
+   switch (sd->pty->mouse_ext)
      {
-      case MOUSE_X10:
+      case MOUSE_EXT_NONE:
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
              int btn = ev->button - 1;
-             
-             if (btn <= 2)
+
+             if (sd->pty->mouse_mode == MOUSE_X10)
                {
+                  if (btn <= 2)
+                    {
+                       buf[0] = 0x1b;
+                       buf[1] = '[';
+                       buf[2] = 'M';
+                       buf[3] = btn + ' ';
+                       buf[4] = cx + 1 + ' ';
+                       buf[5] = cy + 1 + ' ';
+                       buf[6] = 0;
+                       termpty_write(sd->pty, buf, strlen(buf));
+                       ret = EINA_TRUE;
+                    }
+               }
+             else
+               {
+                  int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+                  int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+                  int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+
+                  if (btn > 2) btn = 0;
                   buf[0] = 0x1b;
                   buf[1] = '[';
                   buf[2] = 'M';
-                  buf[3] = btn + ' ';
+                  buf[3] = (btn | shift | meta | ctrl) + ' ';
                   buf[4] = cx + 1 + ' ';
                   buf[5] = cy + 1 + ' ';
                   buf[6] = 0;
@@ -1275,14 +1295,14 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
                }
           }
         break;
-      case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
+      case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
           {
              int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
              int v, i;
-             
+
              if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
@@ -1308,37 +1328,30 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
              ret = EINA_TRUE;
           }
         break;
-      case MOUSE_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+      case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
              int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             
+
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                       (btn | shift | meta | ctrl), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
         break;
-      case MOUSE_NORMAL:
-      case MOUSE_NORMAL_BTN_MOVE:
-      case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
-        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+      case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
              int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             
+
              if (btn > 2) btn = 0;
-             buf[0] = 0x1b;
-             buf[1] = '[';
-             buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl) + ' ';
-             buf[4] = cx + 1 + ' ';
-             buf[5] = cy + 1 + ' ';
-             buf[6] = 0;
+             snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
+                      (btn | shift | meta | ctrl) + ' ',
+                      cx + 1 + ' ', cy + 1 + ' ');
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1354,21 +1367,41 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   
-   if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
+   int btn, shift, meta, ctrl;
+
+   if ((sd->pty->mouse_mode == MOUSE_OFF) ||
+       (sd->pty->mouse_mode == MOUSE_X10))
+     return EINA_FALSE;
    if (sd->mouse.button == ev->button)
      sd->mouse.button = 0;
-   switch (sd->pty->mouse_rep)
+
+   btn = ev->button - 1;
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+   meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+
+   switch (sd->pty->mouse_ext)
      {
-      case MOUSE_UTF8: // ESC.[.M.BTN/FLGS.UTF8.YUTF8
+      case MOUSE_EXT_NONE:
+        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
-             int btn = 3;
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+             if (btn > 2) btn = 0;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             buf[4] = cx + 1 + ' ';
+             buf[5] = cy + 1 + ' ';
+             buf[6] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
+          }
+        break;
+      case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
+          {
              int v, i;
-             
-             btn = 3;
+
+             if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
@@ -1393,36 +1426,20 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
              ret = EINA_TRUE;
           }
         break;
-      case MOUSE_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+      case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.m
           {
-             int btn = 3;
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%im", 0x1b,
                       (btn | shift | meta | ctrl), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
         break;
-      case MOUSE_NORMAL:
-      case MOUSE_NORMAL_BTN_MOVE:
-      case MOUSE_URXVT: // ESC.[.M.BTN/FLGS.X.Y
-        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+      case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             int btn = 3;
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             
-             buf[0] = 0x1b;
-             buf[1] = '[';
-             buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl) + ' ';
-             buf[4] = cx + 1 + ' ';
-             buf[5] = cy + 1 + ' ';
-             buf[6] = 0;
+             if (btn > 2) btn = 0;
+             snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
+                      (btn | shift | meta | ctrl) + ' ',
+                      cx + 1 + ' ', cy + 1 + ' ');
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1438,24 +1455,50 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   
-   if (sd->pty->mouse_rep == MOUSE_OFF) return EINA_FALSE;
-   switch (sd->pty->mouse_rep)
+   int btn, shift, meta, ctrl;
+
+   if ((sd->pty->mouse_mode == MOUSE_OFF) ||
+       (sd->pty->mouse_mode == MOUSE_X10) ||
+       (sd->pty->mouse_mode == MOUSE_NORMAL))
+     return EINA_FALSE;
+
+   if ((!sd->mouse.button) && (sd->pty->mouse_mode == MOUSE_NORMAL_BTN_MOVE))
+     return EINA_FALSE;
+
+   if (!change) return EINA_TRUE;
+
+   btn = sd->mouse.button - 1;
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
+   meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
+
+   switch (sd->pty->mouse_ext)
      {
-      case MOUSE_NORMAL_BTN_MOVE: // ESC.[.M.BTN/FLGS.X.Y
-        if (change)
+      case MOUSE_EXT_NONE:
+        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
-             int btn = sd->mouse.button - 1;
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
-             int v, i;
-             
+
              if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl) + ' ' + 32;
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             buf[4] = cx + 1 + ' ';
+             buf[5] = cy + 1 + ' ';
+             buf[6] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
+          }
+        break;
+      case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
+          {
+             int v, i;
+
+             if (btn > 2) btn = 0;
+             buf[0] = 0x1b;
+             buf[1] = '[';
+             buf[2] = 'M';
+             buf[3] = (btn | shift | meta | ctrl) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -1473,9 +1516,26 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
                }
              buf[i] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
           }
-        /* Always handle this, even if we don't send position update */
-        ret = EINA_TRUE;
+        break;
+      case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+          {
+             snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
+                      (btn | shift | meta | ctrl), cx + 1, cy + 1);
+             termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
+          }
+        break;
+      case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
+          {
+             if (btn > 2) btn = 0;
+             snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
+                      (btn | shift | meta | ctrl) + ' ',
+                      cx + 1 + ' ', cy + 1 + ' ');
+             termpty_write(sd->pty, buf, strlen(buf));
+             ret = EINA_TRUE;
+          }
         break;
       default:
         break;

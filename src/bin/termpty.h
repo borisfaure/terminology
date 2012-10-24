@@ -19,14 +19,17 @@ typedef struct _Termsave  Termsave;
 #define COL_INVERSEBG 11
 
 #define MOUSE_OFF              0
-#define MOUSE_X10              1
-#define MOUSE_NORMAL           2
-#define MOUSE_UTF8             3
-#define MOUSE_SGR              4
-#define MOUSE_URXVT            5
-#define MOUSE_NORMAL_BTN_MOVE  6
+#define MOUSE_X10              1 // Press only
+#define MOUSE_NORMAL           2 // Press+release only
+#define MOUSE_NORMAL_BTN_MOVE  3 // Press+release+motion while pressed
+#define MOUSE_NORMAL_ALL_MOVE  4 // Press+release+all motion
 
-// choose - italic OR double-width support   
+#define MOUSE_EXT_NONE         0
+#define MOUSE_EXT_UTF8         1
+#define MOUSE_EXT_SGR          2
+#define MOUSE_EXT_URXVT        3
+
+// choose - italic OR double-width support
 
 //#define SUPPORT_ITALIC   1
 #define SUPPORT_DBLWIDTH 1
@@ -109,7 +112,8 @@ struct _Termpty
    Termstate state, save, swap;
    int exit_code;
    unsigned int altbuf : 1;
-   unsigned int mouse_rep : 3;
+   unsigned int mouse_mode : 3;
+   unsigned int mouse_ext : 2;
 };
 
 struct _Termcell

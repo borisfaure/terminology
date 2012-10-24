@@ -566,8 +566,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 9:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_X10;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 INF("XXX: set mouse (X10) %i", mode);
+                                 if (mode) ty->mouse_mode = MOUSE_X10;
+                                 else ty->mouse_mode = MOUSE_OFF;
                                  break;
                                case 12: // ignore
                                  handled = 1;
@@ -620,8 +621,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 1000:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_NORMAL;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 if (mode) ty->mouse_mode = MOUSE_NORMAL;
+                                 else ty->mouse_mode = MOUSE_OFF;
                                  INF("XXX: set mouse (press+release only) to %i", mode);
                                  break;
                                case 1001:
@@ -630,12 +631,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 1002:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_NORMAL_BTN_MOVE;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
+                                 else ty->mouse_mode = MOUSE_OFF;
                                  INF("XXX: set mouse (press+release+motion while pressed) %i", mode);
                                  break;
                                case 1003:
                                  handled = 1;
+                                 if (mode) ty->mouse_mode = MOUSE_NORMAL_ALL_MOVE;
+                                 else ty->mouse_mode = MOUSE_OFF;
                                  ERR("XXX: set mouse (press+release+all motion) %i", mode);
                                  break;
                                case 1004: // i dont know what focus repporting is?
@@ -644,14 +647,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 1005:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_UTF8;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
+                                 else ty->mouse_ext = MOUSE_EXT_NONE;
                                  INF("XXX: set mouse (xterm utf8 style) %i", mode);
                                  break;
                                case 1006:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_SGR;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 if (mode) ty->mouse_ext = MOUSE_EXT_SGR;
+                                 else ty->mouse_ext = MOUSE_EXT_NONE;
                                  INF("XXX: set mouse (xterm sgr style) %i", mode);
                                  break;
                                case 1010: // ignore
@@ -664,8 +667,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 1015:
                                  handled = 1;
-                                 if (mode) ty->mouse_rep = MOUSE_URXVT;
-                                 else ty->mouse_rep = MOUSE_OFF;
+                                 if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
+                                 else ty->mouse_ext = MOUSE_EXT_NONE;
                                  INF("XXX: set mouse (rxvt-unicode style) %i", mode);
                                  break;
                                case 1034: // ignore
