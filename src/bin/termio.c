@@ -1247,6 +1247,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
+   int btn;
 
    if (sd->pty->mouse_mode == MOUSE_OFF) return EINA_FALSE;
    if (!sd->mouse.button)
@@ -1254,12 +1255,13 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         /* Need to remember the first button pressed for terminal handling */
         sd->mouse.button = ev->button;
      }
+
+   btn = ev->button - 1;
    switch (sd->pty->mouse_ext)
      {
       case MOUSE_EXT_NONE:
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
-             int btn = ev->button - 1;
 
              if (sd->pty->mouse_mode == MOUSE_X10)
                {
@@ -1297,7 +1299,6 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
           {
-             int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
@@ -1330,7 +1331,6 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
-             int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
@@ -1343,7 +1343,6 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             int btn = ev->button - 1;
              int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
              int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
@@ -1844,15 +1843,88 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   if (sd->pty->altbuf) return;
    if (evas_key_modifier_is_set(ev->modifiers, "Control")) return;
    if (evas_key_modifier_is_set(ev->modifiers, "Alt")) return;
    if (evas_key_modifier_is_set(ev->modifiers, "Shift")) return;
-   sd->scroll -= (ev->z * 4);
-   if (sd->scroll > sd->pty->backscroll_num)
-     sd->scroll = sd->pty->backscroll_num;
-   else if (sd->scroll < 0) sd->scroll = 0;
-   _smart_update_queue(data, sd);
+
+   if (sd->pty->mouse_mode == MOUSE_OFF)
+     {
+
+        sd->scroll -= (ev->z * 4);
+        if (sd->scroll > sd->pty->backscroll_num)
+          sd->scroll = sd->pty->backscroll_num;
+        else if (sd->scroll < 0) sd->scroll = 0;
+        _smart_update_queue(data, sd);
+     }
+   else
+     {
+       char buf[64];
+       int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
+       int cx, cy;
+
+       _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+
+       switch (sd->pty->mouse_ext)
+         {
+          case MOUSE_EXT_NONE:
+            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+              {
+                 buf[0] = 0x1b;
+                 buf[1] = '[';
+                 buf[2] = 'M';
+                 buf[3] = btn + ' ';
+                 buf[4] = cx + 1 + ' ';
+                 buf[5] = cy + 1 + ' ';
+                 buf[6] = 0;
+                 termpty_write(sd->pty, buf, strlen(buf));
+              }
+            break;
+          case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
+              {
+                 int v, i;
+
+                 buf[0] = 0x1b;
+                 buf[1] = '[';
+                 buf[2] = 'M';
+                 buf[3] = btn + ' ';
+                 i = 4;
+                 v = cx + 1 + ' ';
+                 if (v <= 127) buf[i++] = v;
+                 else
+                   { // 14 bits for cx/cy - enough i think
+                       buf[i++] = 0xc0 + (v >> 6);
+                       buf[i++] = 0x80 + (v & 0x3f);
+                   }
+                 v = cy + 1 + ' ';
+                 if (v <= 127) buf[i++] = v;
+                 else
+                   { // 14 bits for cx/cy - enough i think
+                       buf[i++] = 0xc0 + (v >> 6);
+                       buf[i++] = 0x80 + (v & 0x3f);
+                   }
+                 buf[i] = 0;
+                 termpty_write(sd->pty, buf, strlen(buf));
+              }
+            break;
+          case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
+              {
+                 snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
+                          btn, cx + 1, cy + 1);
+                 termpty_write(sd->pty, buf, strlen(buf));
+              }
+            break;
+          case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
+              {
+                 snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
+                          btn + ' ',
+                          cx + 1 + ' ', cy + 1 + ' ');
+                 termpty_write(sd->pty, buf, strlen(buf));
+              }
+            break;
+          default:
+            break;
+         }
+     }
 }
 
 static void
