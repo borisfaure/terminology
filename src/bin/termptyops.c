@@ -208,6 +208,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              ty->state.wrapnext = 0;
              ty->state.cx++;
+             if (ty->state.cx >= (ty->w - 1)) return;
 #if defined(SUPPORT_DBLWIDTH)
              if (cells[ty->state.cx].att.dblwidth)
                {
