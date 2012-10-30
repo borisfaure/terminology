@@ -18,7 +18,7 @@ _termpty_is_dblwidth_get(Termpty *ty, int g)
    // (F)
    if ((g == 0x3000) ||
        ((g >= 0xff01) && (g <= 0xff60)) ||
-       ((g >= 0xffe0) && (g <= 0xff06)))
+       ((g >= 0xffe0) && (g <= 0xffe6)))
      return EINA_TRUE;
    // (W)
    if (
