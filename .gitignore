@@ -42,14 +42,8 @@ src/bin/.deps/
 src/bin/Makefile
 src/bin/Makefile.in
 src/bin/terminology
-src/bin/terminology-col.o
-src/bin/terminology-config.o
-src/bin/terminology-keyin.o
-src/bin/terminology-main.o
-src/bin/terminology-termio.o
-src/bin/terminology-termpty.o
-src/bin/terminology-utf8.o
-src/bin/terminology-win.o
+src/bin/*_generated.c
+src/bin/*_generated.h
 stamp-h1
 terminology_config.h
 terminology_config.h.in
