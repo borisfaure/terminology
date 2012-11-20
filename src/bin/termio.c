@@ -419,7 +419,9 @@ _smart_apply(Evas_Object *obj)
                   if (inv) tc[x].bg = COL_INVERSEBG;
                   else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
+#if defined(SUPPORT_DBLWIDTH)
                   tc[x].double_width = cells[j].att.dblwidth;
+#endif
                   if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                       (ch2 == x - 1))
                     ch2 = x;
@@ -439,7 +441,9 @@ _smart_apply(Evas_Object *obj)
                        if (inv) tc[x].bg = COL_INVERSEBG;
                        else tc[x].bg = COL_INVIS;
                        tc[x].bg_extended = 0;
+#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[j].att.dblwidth;
+#endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
@@ -519,7 +523,9 @@ _smart_apply(Evas_Object *obj)
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
+#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[j].att.dblwidth;
+#endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
@@ -1176,9 +1182,11 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    sd->cur.sel1.y = cy;
    for (x = sd->cur.sel1.x; x >= 0; x--)
      {
+#if defined(SUPPORT_DBLWIDTH)
         if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
             (x > 0))
           x--;
+#endif
         if (x >= w) break;
         if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
         sd->cur.sel1.x = x;
@@ -1187,12 +1195,14 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    sd->cur.sel2.y = cy;
    for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
      {
+#if defined(SUPPORT_DBLWIDTH)
         if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
             (x < (sd->grid.w - 1)))
           {
              sd->cur.sel2.x = x;
              x++;
           }
+#endif
         if (x >= w) break;
         if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
         sd->cur.sel2.x = x;
@@ -1215,9 +1225,11 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         sd->cur.sel1.y = cy;
         for (x = sd->cur.sel1.x; x >= 0; x--)
           {
+#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x > 0))
                x--;
+#endif
              if (x >= w) break;
              if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
              sd->cur.sel1.x = x;
@@ -1229,12 +1241,14 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         sd->cur.sel2.y = cy;
         for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
           {
+#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x < (sd->grid.w - 1)))
                {
                   sd->cur.sel2.x = x;
                   x++;
                }
+#endif
              if (x >= w) break;
              if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
              sd->cur.sel2.x = x;
@@ -1536,6 +1550,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
    return ret;
 }
 
+#if defined(SUPPORT_DBLWIDTH)
 static void
 _selection_dbl_fix(Evas_Object *obj)
 {
@@ -1598,6 +1613,7 @@ _selection_dbl_fix(Evas_Object *obj)
           }
      }
 }
+#endif
 
 static void
 _smart_cb_mouse_move_job(void *data)
@@ -1680,7 +1696,9 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                   sd->cur.sel1.y = sd->backup.sel1.y;
                   sd->cur.sel2.x = sd->backup.sel2.x;
                   sd->cur.sel2.y = sd->backup.sel2.y;
+#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
+#endif
                   _sel_word_to(data, cx, cy - sd->scroll);
                }
              else
@@ -1706,7 +1724,9 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                        sd->cur.sel2.x = cx;
                        sd->cur.sel2.y = cy - sd->scroll;
                     }
+#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
+#endif
                }
              else
                {
@@ -1725,7 +1745,9 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
                   sd->cur.sel1.y = cy - sd->scroll;
                   sd->cur.sel2.x = cx;
                   sd->cur.sel2.y = cy - sd->scroll;
+#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
+#endif
                }
           }
         _smart_update_queue(data, sd);
@@ -1767,7 +1789,9 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                   sd->cur.sel2.x = cx;
                   sd->cur.sel2.y = cy - sd->scroll;
                }
+#if defined(SUPPORT_DBLWIDTH)
              _selection_dbl_fix(data);
+#endif
              _smart_update_queue(data, sd);
              _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
@@ -1807,7 +1831,9 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
              sd->cur.sel2.x = cx;
              sd->cur.sel2.y = cy - sd->scroll;
           }
+#if defined(SUPPORT_DBLWIDTH)
         _selection_dbl_fix(data);
+#endif
        _smart_update_queue(data, sd);
      }
    if (mc_change)
@@ -2577,11 +2603,13 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
           }
         for (x = start_x; x <= end_x; x++)
           {
+#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth))
                {
                   if (x < end_x) x++;
                   else break;
                }
+#endif
              if (x >= w) break;
              if ((cells[x].codepoint == 0) || (cells[x].codepoint == ' '))
                {
@@ -2632,12 +2660,14 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
                   
                   for (x = end_x + 1; x < w; x++)
                     {
+#if defined(SUPPORT_DBLWIDTH)
                        if ((cells[x].codepoint == 0) &&
                            (cells[x].att.dblwidth))
                          {
                             if (x < (w - 1)) x++;
                             else break;
                          }
+#endif
                        if (((cells[x].codepoint != 0) &&
                             (cells[x].codepoint != ' ')) ||
                            (cells[x].att.newline) ||
@@ -2652,12 +2682,14 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
                     {
                        for (x = last0; x <= end_x; x++)
                          {
+#if defined(SUPPORT_DBLWIDTH)
                             if ((cells[x].codepoint == 0) &&
                                 (cells[x].att.dblwidth))
                               {
                                  if (x < (w - 1)) x++;
                                  else break;
                               }
+#endif
                             if (x >= w) break;
                             eina_strbuf_append_char(sb, ' ');
                          }
