@@ -1505,7 +1505,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             buf[3] = (btn | shift | meta | ctrl | 32) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -1529,7 +1529,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl), cx + 1, cy + 1);
+                      (btn | shift | meta | ctrl | 32), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1538,7 +1538,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
           {
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl) + ' ',
+                      (btn | shift | meta | ctrl | 32) + ' ',
                       cx + 1 + ' ', cy + 1 + ' ');
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
