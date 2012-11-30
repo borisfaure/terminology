@@ -1,10 +1,10 @@
 [Desktop Entry]
-Encoding=UTF-8
+#Encoding=UTF-8
 Type=Application
 Name=Terminology
-Generic=Terminal
-Generic[it]=Terminale
-Generic[ru]=Терминал
+#GenericName=Terminal
+#GenericName[it]=Terminale
+#GenericName[ru]=Терминал
 Comment=Terminal emulator
 Comment[es]=Emulador de terminal
 Comment[gl]=Emulador de terminal
@@ -12,6 +12,6 @@ Comment[it]=Emulatore di terminale
 Comment[pt]=Emulador de terminal
 Comment[ru]=Эмулятор терминала
 Exec=terminology
-Icon=terminology.png
-Categories=Utility;TerminalEmulator;
+Icon=terminology
+Categories=System;TerminalEmulator;
 StartupWMClass=terminology
