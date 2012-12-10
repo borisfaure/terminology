@@ -326,7 +326,7 @@ static const Ecore_Getopt options = {
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-      ECORE_GETOPT_STORE_STR ('e', "exec",
+      ECORE_GETOPT_BREAK_STR ('e', "exec",
                               "command to execute. "
                               "Defaults to $SHELL (or passwd shel or /bin/sh)"),
       ECORE_GETOPT_STORE_STR ('d', "current-directory",
@@ -406,8 +406,9 @@ elm_main(int argc, char **argv)
    Eina_Bool maximized = EINA_FALSE;
    Eina_Bool nowm = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
+   Eina_Bool cmd_options = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(cmd),
+     ECORE_GETOPT_VALUE_BOOL(cmd_options),
      ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
@@ -471,6 +472,28 @@ elm_main(int argc, char **argv)
      }
 
    if (quit_option) goto end;
+
+   if (cmd_options)
+     {
+        int i;
+        Eina_Strbuf *strb;
+
+        if (args == argc)
+          {
+             fprintf(stdout, "ERROR: option %s requires an argument!\n", argv[args-1]);
+             fprintf(stdout, "ERROR: invalid options found. See --help.\n");
+             goto end;
+          }
+        
+        strb = eina_strbuf_new();
+        for(i = args; i < argc; i++)
+          {
+             eina_strbuf_append(strb, argv[i]);
+             eina_strbuf_append_char(strb, ' ');
+          }
+        cmd = eina_strbuf_string_steal(strb);
+        eina_strbuf_free(strb);
+     }
 
    if (theme)
      {
@@ -738,6 +761,7 @@ elm_main(int argc, char **argv)
 
    elm_run();
  end:
+   free(cmd);
 
    config_del(config);
    config_shutdown();

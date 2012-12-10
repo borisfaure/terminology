@@ -19,17 +19,17 @@ AM_PROG_CC_C_O
 AC_C___ATTRIBUTE__
 
 requirements="\
-   elementary >= 1.7.0 \
-   eina >= 1.7.0 \
-   eet >= 1.7.0 \
-   evas >= 1.7.0 \
-   ecore >= 1.7.0 \
-   edje >= 1.7.0 \
-   emotion >= 1.7.0 \
-   ecore-input >= 1.7.0 \
-   ecore-imf >= 1.7.0 \
-   ecore-imf-evas >= 1.7.0 \
-   efreet >= 1.7.0
+   elementary >= 1.7.99 \
+   eina >= 1.7.99 \
+   eet >= 1.7.99 \
+   evas >= 1.7.99 \
+   ecore >= 1.7.99 \
+   edje >= 1.7.99 \
+   emotion >= 1.7.99 \
+   ecore-input >= 1.7.99 \
+   ecore-imf >= 1.7.99 \
+   ecore-imf-evas >= 1.7.99 \
+   efreet >= 1.7.99
    "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
