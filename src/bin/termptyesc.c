@@ -16,11 +16,15 @@
 #define ERR(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_termpty_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
 
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
 #define ESC 033 // Escape
+
+/* XXX: all handle_ functions return the number of bytes successfully read, 0
+ * if not enought bytes could be read
+ */
 
 static int
 _csi_arg_get(Eina_Unicode **ptr)
@@ -62,10 +66,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         b++;
         cc++;
      }
-   // if cc == ce then we got to the end of the string with no end marker
-   // so return -2 to indicate to go back to the escape beginning when
-   // there is more bufer available
-   if (cc == ce) return -2;
+   if (cc == ce) return 0;
    *b = 0;
    b = buf;
 //   DBG(" CSI: '%c' args '%s'", *cc, buf);
@@ -892,7 +893,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
      }
    *b = 0;
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
-   else return -2;
+   else return 0;
    switch (buf[0])
      {
       case '0':
@@ -946,6 +947,8 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case '4':
         // XXX: set palette entry. not supported.
+        DBG("set palette, not supported");
+        if ((cc - c) < 3) return 0;
         b = &(buf[2]);
         break;
       default:
@@ -974,7 +977,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
      }
    *b = 0;
    if (*cc == 0x0) cc++;
-   else return -2;
+   else return 0;
    // commands are stored in the buffer, 0 bytes not allowd (end marker)
    s = eina_unicode_unicode_to_utf8(buf, &slen);
    ty->cur_cmd = s;
@@ -1008,7 +1011,7 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, Eina_Unicode *ce)
      }
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
-   else return -2;
+   else return 0;
    switch (buf[0])
      {
       case '+':
@@ -1025,73 +1028,89 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, Eina_Unicode *ce)
 static int
 _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   if ((ce - c) < 2) return 0;
-   DBG("ESC: '%c'", c[1]);
-   switch (c[1])
+   int len = ce - c;
+
+   if (len < 1) return 0;
+   DBG("ESC: '%c'", c[0]);
+   switch (c[0])
      {
       case '[':
-        return 2 + _handle_esc_csi(ty, c + 2, ce);
+        len = _handle_esc_csi(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
       case ']':
-        return 2 + _handle_esc_xterm(ty, c + 2, ce);
+        len = _handle_esc_xterm(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
       case '}':
-        return 2 + _handle_esc_terminology(ty, c + 2, ce);
+        len = _handle_esc_terminology(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
       case 'P':
-        return 2 + _handle_esc_dcs(ty, c + 2, ce);
+        len =  _handle_esc_dcs(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
       case '=': // set alternate keypad mode
         ty->state.alt_kp = 1;
-        return 2;
+        return 1;
       case '>': // set numeric keypad mode
         ty->state.alt_kp = 0;
-        return 2;
+        return 1;
       case 'M': // move to prev line
         ty->state.wrapnext = 0;
         ty->state.cy--;
         _termpty_text_scroll_rev_test(ty);
-        return 2;
+        return 1;
       case 'D': // move to next line
         ty->state.wrapnext = 0;
         ty->state.cy++;
         _termpty_text_scroll_test(ty);
-        return 2;
+        return 1;
       case 'E': // add \n\r
         ty->state.wrapnext = 0;
         ty->state.cx = 0;
         ty->state.cy++;
         _termpty_text_scroll_test(ty);
-        return 2;
+        return 1;
       case 'Z': // same a 'ESC [ Pn c'
         _term_txt_write(ty, "\033[?1;2C");
-        return 2;
+        return 1;
       case 'c': // reset terminal to initial state
         DBG("reset to init mode and clear");
         _termpty_reset_state(ty);
         _termpty_clear_screen(ty, TERMPTY_CLR_ALL);
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
-        return 2;
+        return 1;
       case '(': // charset 0
-        ty->state.chset[0] = c[2];
+        if (len < 2) return 0;
+        ty->state.chset[0] = c[1];
         ty->state.multibyte = 0;
-        ty->state.charsetch = c[2];
-        return 3;
+        ty->state.charsetch = c[1];
+        return 2;
       case ')': // charset 1
-        ty->state.chset[1] = c[2];
+        if (len < 2) return 0;
+        ty->state.chset[1] = c[1];
         ty->state.multibyte = 0;
-        return 3;
+        return 2;
       case '*': // charset 2
-        ty->state.chset[2] = c[2];
+        if (len < 2) return 0;
+        ty->state.chset[2] = c[1];
         ty->state.multibyte = 0;
-        return 3;
+        return 2;
       case '+': // charset 3
-        ty->state.chset[3] = c[2];
+        if (len < 2) return 0;
+        ty->state.chset[3] = c[1];
         ty->state.multibyte = 0;
-        return 3;
+        return 2;
       case '$': // charset -2
-        ty->state.chset[2] = c[2];
+        if (len < 2) return 0;
+        ty->state.chset[2] = c[1];
         ty->state.multibyte = 1;
-        return 3;
+        return 2;
       case '#': // #8 == test mode -> fill screen with "E";
-        if (c[2] == '8')
+        if (len < 2) return 0;
+        if (c[1] == '8')
           {
              int i, size;
              Termcell *cells;
@@ -1110,30 +1129,31 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   for (i = 0; i < size; i++) cells[i].codepoint = 'E';
                }
           }
-        return 3;
+        return 2;
       case '@': // just consume this plus next char
-        return 3;
+        if (len < 2) return 0;
+        return 2;
       case '7': // save cursor pos
         _termpty_cursor_copy(&(ty->state), &(ty->save));
-        return 2;
+        return 1;
       case '8': // restore cursor pos
         _termpty_cursor_copy(&(ty->save), &(ty->state));
-        return 2;
+        return 1;
 /*
       case 'G': // query gfx mode
-        return 3;
+        return 2;
       case 'H': // set tab at current column
-        return 2;
+        return 1;
       case 'n': // single shift 2
-        return 2;
+        return 1;
       case 'o': // single shift 3
-        return 2;
+        return 1;
  */
       default:
-        ERR("eek - esc unhandled '%c' (0x%02x)", c[1], c[1]);
-        break;
+        ERR("eek - esc unhandled '%c' (0x%02x)", c[0], c[0]);
+        return 1;
      }
-   return 1;
+   return 0;
 }
 
 int
@@ -1257,7 +1277,9 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
  */
            case 0x1b: // ESC (escape)
              ty->state.had_cr = 0;
-             return _handle_esc(ty, c, ce);
+             len = _handle_esc(ty, c + 1, ce);
+             if (len == 0) return 0;
+             return 1 + len;
 /*
            case 0x1c: // FS  (file separator)
              return 1;
@@ -1282,13 +1304,11 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
-        int v;
-        
         printf("ANSI CSI!!!!!\n");
         ty->state.had_cr = 0;
-        v = _handle_esc_csi(ty, c + 1, ce);
-        if (v == -2) return 0;
-        return v + 1;
+        len = _handle_esc_csi(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
      }
 
    cc = (int *)c;
