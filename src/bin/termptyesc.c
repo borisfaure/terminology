@@ -16,7 +16,7 @@
 #define ERR(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_termpty_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
 
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
