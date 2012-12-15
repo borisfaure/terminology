@@ -127,7 +127,7 @@ collections {
          // actual text grid for chars, cursors, selectiond etc. goes here
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
-               rel1.offset: 1 2;
+               rel1.offset: 1 1;
                rel2.offset: -2 -2;
             }
          }
@@ -137,7 +137,7 @@ collections {
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.offset: 0 0;
+               rel1.offset: 0 -1;
                rel2.offset: -1 -1;
                image.normal: "bg_bevel.png";
                image.border: 3 3 5 3;
@@ -160,11 +160,11 @@ collections {
                max: 79 5;
                rel1 {
                   relative: 0.0 0.0;
-                  offset: 0 1;
+                  offset: 0 0;
                }
                rel2 {
                   relative: 1.0 0.0;
-                  offset: -1 1;
+                  offset: -1 0;
                }
                image.normal: "bg_glint.png";
             }
@@ -172,7 +172,7 @@ collections {
          part { name: "shine";
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.offset: 0 1;
+               rel1.offset: 0 0;
                rel2.offset: -1 -1;
                image.normal: "bg_shine.png";
                fill.smooth: 0;
