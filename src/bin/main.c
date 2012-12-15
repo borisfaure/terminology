@@ -326,7 +326,11 @@ static const Ecore_Getopt options = {
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
+#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
       ECORE_GETOPT_BREAK_STR ('e', "exec",
+#else
+      ECORE_GETOPT_STORE_STR ('e', "exec",
+#endif
                               "command to execute. "
                               "Defaults to $SHELL (or passwd shel or /bin/sh)"),
       ECORE_GETOPT_STORE_STR ('d', "current-directory",
@@ -406,9 +410,15 @@ elm_main(int argc, char **argv)
    Eina_Bool maximized = EINA_FALSE;
    Eina_Bool nowm = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
+#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool cmd_options = EINA_FALSE;
+#endif   
    Ecore_Getopt_Value values[] = {
+#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
+#else
+     ECORE_GETOPT_VALUE_STR(cmd),
+#endif      
      ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
@@ -473,6 +483,7 @@ elm_main(int argc, char **argv)
 
    if (quit_option) goto end;
 
+#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
    if (cmd_options)
      {
         int i;
@@ -494,7 +505,8 @@ elm_main(int argc, char **argv)
         cmd = eina_strbuf_string_steal(strb);
         eina_strbuf_free(strb);
      }
-
+#endif
+   
    if (theme)
      {
         char path[PATH_MAX];
@@ -761,8 +773,10 @@ elm_main(int argc, char **argv)
 
    elm_run();
  end:
+#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
    free(cmd);
-
+#endif
+   
    config_del(config);
    config_shutdown();
 
