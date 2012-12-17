@@ -3,9 +3,11 @@
 Type=Application
 Name=Terminology
 #GenericName=Terminal
+#GenericName[eo]=Terminalo
 #GenericName[it]=Terminale
 #GenericName[ru]=Терминал
 Comment=Terminal emulator
+Comment[eo]=Terminalimitilo
 Comment[es]=Emulador de terminal
 Comment[gl]=Emulador de terminal
 Comment[it]=Emulatore di terminale
