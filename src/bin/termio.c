@@ -773,7 +773,16 @@ _getsel_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Selection_Data *ev)
                   for (i = 0; i < ev->len; i++)
                     {
                        tmp[i] = s[i];
-                       if (tmp[i] == '\n') tmp[i] = '\r';
+                       if (tmp[i] == '\n')
+                         {
+                            // remove trailing new line
+                            if (i != (ev->len - 2)) tmp[i] = '\r';
+                            else
+                              {
+                                 tmp[i] = '\0';
+                                 break;
+                              }
+                         }
                     }
                   termpty_write(sd->pty, tmp, ev->len - 1);
                   free(tmp);
