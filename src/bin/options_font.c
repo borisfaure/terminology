@@ -89,21 +89,27 @@ _cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *
 }
 
 static void
-_cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_font_preview_delayed_eval(void *data)
 {
-   Font *f = data;
+   Evas_Object *obj = data;
+   Font *f;
    Evas_Object *o;
    Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
-   Config *config = termio_config_get(f->term);
-   char buf[4096];
+   Config *config;
    
-   if (!evas_object_visible_get(obj)) return;
-   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) return;
+   if (!evas_object_visible_get(obj)) goto done;
+   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) goto done;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   if ((ow < 2) || (oh < 2)) return;
+   if ((ow < 2) || (oh < 2)) goto done;
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
+   f = evas_object_data_get(obj, "font");
+   if (!f) goto done;
+   config = termio_config_get(f->term);
+   if (!config) goto done;
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
+        char buf[4096];
+        
         o = evas_object_text_add(evas_object_evas_get(obj));
         evas_object_color_set(o, 0, 0, 0, 255);
         evas_object_text_text_set(o, TEST_STRING);
@@ -119,6 +125,34 @@ _cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
         evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
         evas_object_size_hint_min_set(o, ow, oh);
         edje_object_part_swallow(obj, "terminology.text.preview", o);
+     }
+done:
+   evas_object_data_del(obj, "delay");
+   return EINA_FALSE;
+}
+
+static void
+_cb_op_font_preview_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   Font *f = data;
+   Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
+   
+   if (!evas_object_visible_get(obj)) return;
+   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) return;
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   if ((ow < 2) || (oh < 2)) return;
+   evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
+   if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
+     {
+        Ecore_Timer *timer;
+        double rnd = 0.2;
+
+        timer = evas_object_data_get(obj, "delay");
+        if (timer) return;
+        else evas_object_data_set(obj, "font", f);
+        rnd += (double)(rand() % 100) / 500.0;
+        timer = ecore_timer_add(rnd, _cb_op_font_preview_delayed_eval, obj);
+        evas_object_data_set(obj, "delay", timer);
      }
 }
 
