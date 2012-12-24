@@ -80,10 +80,10 @@ Extended escapes for terminology only:
 [\033][{][COMMAND][\000]
 i.e.
   1.   ESC char (\033 or 0x1b)
-  2.   { char
+  2.   } char
   3... sequence of UTF8 chars other than nul (\000 or 0x00).
   4    \000 char (nul byte or 0x00 to indicate end of sequence)
 e.g.
-  echo -n '\033{Hello world\000'
+  echo -n '\033}Hello world\000'
   
 Commands understood:
