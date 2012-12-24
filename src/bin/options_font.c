@@ -88,7 +88,7 @@ _cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *
    if (o) evas_object_del(o);
 }
 
-static void
+static Eina_Bool
 _cb_op_font_preview_delayed_eval(void *data)
 {
    Evas_Object *obj = data;
