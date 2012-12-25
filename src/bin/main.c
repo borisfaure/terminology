@@ -139,7 +139,10 @@ static void
 _cb_media_loop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
 {
    if (_popmedia_queue)
-     edje_object_signal_emit(bg, "popmedia,off", "terminology");
+     {
+        if (popmedia) media_play_set(popmedia, EINA_FALSE);
+        edje_object_signal_emit(bg, "popmedia,off", "terminology");
+     }
 }
 
 static void
@@ -226,27 +229,62 @@ _cb_command(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
      {
         if (cmd[1] == 't') // temporary
           {
+             Config *config = termio_config_get(term);
+
+             if (config)
+               {
+                  config->temporary = EINA_TRUE;
+                  eina_stringshare_replace(&(config->background), cmd + 2);
+                  main_media_update(config);
+               }
           }
         else if (cmd[1] == 'p') // permanent
           {
+             Config *config = termio_config_get(term);
+
+             if (config)
+               {
+                  config->temporary = EINA_FALSE;
+                  eina_stringshare_replace(&(config->background), cmd + 2);
+                  main_media_update(config);
+               }
           }
      }
    else if (cmd[0] == 'a') // set alpha
      {
         if (cmd[1] == 't') // temporary
           {
+             Config *config = termio_config_get(term);
+
+             if (config)
+               {
+                  config->temporary = EINA_TRUE;
+                  if ((cmd[2] == '1') ||
+                      (!strcasecmp(cmd + 2, "on")) ||
+                      (!strcasecmp(cmd + 2, "true")) ||
+                      (!strcasecmp(cmd + 2, "yes")))
+                    config->translucent = EINA_FALSE;
+                  else
+                    config->translucent = EINA_FALSE;
+                  main_trans_update(config);
+               }
           }
         else if (cmd[1] == 'p') // permanent
           {
-          }
-     }
-   else if (cmd[0] == 'a') // set alpha
-     {
-        if (cmd[1] == 't') // temporary
-          {
-          }
-        else if (cmd[1] == 'p') // permanent
-          {
+             Config *config = termio_config_get(term);
+
+             if (config)
+               {
+                  config->temporary = EINA_FALSE;
+                  if ((cmd[2] == '1') ||
+                      (!strcasecmp(cmd + 2, "on")) ||
+                      (!strcasecmp(cmd + 2, "true")) ||
+                      (!strcasecmp(cmd + 2, "yes")))
+                    config->translucent = EINA_FALSE;
+                  else
+                    config->translucent = EINA_FALSE;
+                  main_trans_update(config);
+               }
           }
      }
 }

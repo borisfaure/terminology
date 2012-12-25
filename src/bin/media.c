@@ -68,6 +68,7 @@ static const char *extn_mov[] =
    ".ogg", ".ogm", ".ogv", ".qt", ".rm", ".rmj", ".rmm", ".rms", ".rmvb",
    ".rmx", ".rv", ".swf", ".ts", ".weba", ".webm", ".wmv", ".3g2", ".3gp",
    ".3gp2", ".3gpp", ".3gpp2", ".3p2", ".264",
+   ".mp3", ".aac", ".wav",
    NULL
 };
 
