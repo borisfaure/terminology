@@ -157,6 +157,50 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
      edje_object_signal_emit(bg, "popmedia,movie", "terminology");
 }
 
+static void
+_cb_command(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   const char *cmd = event;
+
+   printf("CMD: '%s'\n", cmd);
+   if (cmd[0] == 'p') // popmedia
+     {
+        if (cmd[1] == 'n') // now
+          {
+          }
+        else if (cmd[1] == 'q') // queue it to display after current one
+          {
+          }
+     }
+   else if (cmd[0] == 'b') // set background
+     {
+        if (cmd[1] == 't') // temporary
+          {
+          }
+        else if (cmd[1] == 'p') // permanent
+          {
+          }
+     }
+   else if (cmd[0] == 'a') // set alpha
+     {
+        if (cmd[1] == 't') // temporary
+          {
+          }
+        else if (cmd[1] == 'p') // permanent
+          {
+          }
+     }
+   else if (cmd[0] == 'a') // set alpha
+     {
+        if (cmd[1] == 't') // temporary
+          {
+          }
+        else if (cmd[1] == 'p') // permanent
+          {
+          }
+     }
+}
+
 static Eina_Bool
 _cb_cmd_focus(void *data)
 {
@@ -757,6 +801,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(o, "bell", _cb_bell, NULL);
    evas_object_smart_callback_add(o, "popup", _cb_popup, NULL);
    evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, NULL);
+   evas_object_smart_callback_add(o, "command", _cb_command, NULL);
    evas_object_show(o);
 
    main_trans_update(config);
