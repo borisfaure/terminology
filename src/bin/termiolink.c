@@ -78,21 +78,19 @@ _is_file(const char *str)
    switch (str[0])
      {
       case '/':
+        return EINA_TRUE;
       case '~':
-         if (str[1] == '/')
-           return EINA_TRUE;
-         return EINA_FALSE;
-
+        if (str[1] == '/')
+          return EINA_TRUE;
+        return EINA_FALSE;
       case '.':
-         if (str[1] == '/')
-           return EINA_TRUE;
-         else if ((str[1] == '.') && (str[2] == '/'))
-           return EINA_TRUE;
-
-         return EINA_FALSE;
-
+        if (str[1] == '/')
+          return EINA_TRUE;
+        else if ((str[1] == '.') && (str[2] == '/'))
+          return EINA_TRUE;
+        return EINA_FALSE;
       default:
-         return EINA_FALSE;
+        return EINA_FALSE;
      }
 }
 
