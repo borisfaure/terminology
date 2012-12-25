@@ -410,6 +410,7 @@ _cb_mov_decode_stop(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSE
    if (!sd) return;
    if (sd->restart_job) ecore_job_del(sd->restart_job);
    sd->restart_job = ecore_job_add(_cb_mov_restart, data);
+   evas_object_smart_callback_call(data, "loop", NULL);
 }
 
 static void

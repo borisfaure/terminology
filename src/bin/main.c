@@ -22,6 +22,9 @@ static Eina_Bool focused = EINA_FALSE;
 static Eina_Bool hold = EINA_FALSE;
 static Eina_Bool cmdbox_up = EINA_FALSE;
 static Ecore_Timer *_cmdbox_focus_timer = NULL;
+static Eina_List *_popmedia_queue = NULL;
+
+static void _popmedia_queue_process(void);
 
 static void
 _cb_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -114,36 +117,53 @@ _cb_bell(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSE
 }
 
 static void
-_cb_popmedia_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
-{
-   if (popmedia)
-     {
-        evas_object_del(popmedia);
-        popmedia = NULL;
-        termio_mouseover_suspend_pushpop(term, -1);
-     }
-}
-
-static void
 _cb_popmedia_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    edje_object_signal_emit(bg, "popmedia,off", "terminology");
 }
 
 static void
-_cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_popmedia_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+{
+   if (popmedia)
+     {
+        evas_object_event_callback_del(popmedia, EVAS_CALLBACK_DEL, _cb_popmedia_del);
+        evas_object_del(popmedia);
+        popmedia = NULL;
+        termio_mouseover_suspend_pushpop(term, -1);
+        _popmedia_queue_process();
+     }
+}
+
+static void
+_cb_media_loop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   if (_popmedia_queue)
+     edje_object_signal_emit(bg, "popmedia,off", "terminology");
+}
+
+static void
+_popmedia_show(const char *src)
 {
    Evas_Object *o;
    Config *config = termio_config_get(term);
-   const char *src;
    int type = 0;
 
    if (!config) return;
-   src = termio_link_get(term);
-   if (!src) return;
-   if (popmedia) evas_object_del(popmedia);
-   if (!popmedia) termio_mouseover_suspend_pushpop(term, 1);
+   if (popmedia)
+     {
+        const char *s;
+        
+        EINA_LIST_FREE(_popmedia_queue, s)
+          eina_stringshare_del(s);
+        _popmedia_queue = eina_list_append(_popmedia_queue,
+                                           eina_stringshare_add(src));
+        edje_object_signal_emit(bg, "popmedia,off", "terminology");
+        return;
+     }
+   termio_mouseover_suspend_pushpop(term, 1);
    popmedia = o = media_add(win, src, config, MEDIA_POP, &type);
+   evas_object_smart_callback_add(o, "loop", _cb_media_loop, NULL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, NULL);
    edje_object_part_swallow(bg, "terminology.popmedia", o);
    evas_object_show(o);
@@ -158,18 +178,48 @@ _cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUS
 }
 
 static void
+_popmedia_queue_process(void)
+{
+   const char *src;
+   
+   if (!_popmedia_queue) return;
+   src = _popmedia_queue->data;
+   _popmedia_queue = eina_list_remove_list(_popmedia_queue, _popmedia_queue);
+   if (!src) return;
+   _popmedia_show(src);
+   eina_stringshare_del(src);
+}
+
+static void
+_popmedia_queue_add(const char *src)
+{
+   _popmedia_queue = eina_list_append(_popmedia_queue,
+                                      eina_stringshare_add(src));
+   if (!popmedia) _popmedia_queue_process();
+}
+
+static void
+_cb_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   const char *src = termio_link_get(term);
+   if (!src) return;
+   _popmedia_show(src);
+}
+
+static void
 _cb_command(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    const char *cmd = event;
 
-   printf("CMD: '%s'\n", cmd);
    if (cmd[0] == 'p') // popmedia
      {
         if (cmd[1] == 'n') // now
           {
+             _popmedia_show(cmd + 2);
           }
         else if (cmd[1] == 'q') // queue it to display after current one
           {
+              _popmedia_queue_add(cmd + 2);
           }
      }
    else if (cmd[0] == 'b') // set background
