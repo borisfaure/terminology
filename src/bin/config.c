@@ -78,6 +78,8 @@ config_init(void)
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "urg_bell", urg_bell, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "multi_instance", multi_instance, EET_T_UCHAR);
 }
 
 void
@@ -369,6 +371,7 @@ config_load(const char *key)
              config->vidmod = 0;
              config->mute = EINA_FALSE;
              config->urg_bell = EINA_TRUE;
+             config->multi_instance = EINA_FALSE;
           }
      }
 

@@ -14,6 +14,7 @@ about.c about.h \
 col.c col.h \
 config.c config.h \
 controls.c controls.h \
+ipc.c ipc.h \
 keyin.c keyin.h \
 main.c main.h \
 media.c media.h \

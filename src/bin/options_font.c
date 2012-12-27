@@ -84,8 +84,19 @@ static void
 _cb_op_font_preview_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *o;
+   Ecore_Timer *timer = evas_object_data_get(obj, "delay");
+        
+   if (timer)
+     {
+        ecore_timer_del(timer);
+        evas_object_data_del(obj, "delay");
+     }
+
    o = edje_object_part_swallow_get(obj, "terminology.text.preview");
-   if (o) evas_object_del(o);
+   if (o)
+     {
+        evas_object_del(o);
+     }
 }
 
 static Eina_Bool

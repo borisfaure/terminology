@@ -151,7 +151,6 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
 
    if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
    ty->exit_code = ev->exit_code;
-   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
    
    ty->pid = -1;
 
@@ -164,6 +163,8 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
    if (ty->slavefd >= 0) close(ty->slavefd);
    ty->slavefd = -1;
 
+   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
+   
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -322,15 +323,17 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
           {
              if (i != ty->slavefd) close(i);
           }
-        ty->fd = ty->slavefd;
         setsid();
 
-        dup2(ty->fd, 0);
-        dup2(ty->fd, 1);
-        dup2(ty->fd, 2);
+        dup2(ty->slavefd, 0);
+        dup2(ty->slavefd, 1);
+        dup2(ty->slavefd, 2);
 
-        if (ioctl(ty->fd, TIOCSCTTY, NULL) < 0) exit(1);
-
+        if (ioctl(ty->slavefd, TIOCSCTTY, NULL) < 0) exit(1);
+        
+        close(ty->fd);
+        close(ty->slavefd);
+        
         /* TODO: should we reset signals here? */
 
         // pretend to be xterm
@@ -356,6 +359,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
                                            _cb_fd_read, ty,
                                            NULL, NULL);
    close(ty->slavefd);
+   ty->slavefd = -1;
    _pty_size(ty);
    return ty;
 err:
