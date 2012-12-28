@@ -856,7 +856,7 @@ static const Ecore_Getopt options = {
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
    {
-#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
       ECORE_GETOPT_BREAK_STR ('e', "exec",
 #else
       ECORE_GETOPT_STORE_STR ('e', "exec",
@@ -945,11 +945,11 @@ elm_main(int argc, char **argv)
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool hold = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
-#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool cmd_options = EINA_FALSE;
 #endif   
    Ecore_Getopt_Value values[] = {
-#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
 #else
      ECORE_GETOPT_VALUE_STR(cmd),
@@ -1019,7 +1019,7 @@ elm_main(int argc, char **argv)
 
    if (quit_option) goto end;
 
-#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    if (cmd_options)
      {
         int i;
@@ -1299,7 +1299,7 @@ elm_main(int argc, char **argv)
      (ecore_evas_ecore_evas_get(evas_object_evas_get(wn->win)), 1);
    elm_run();
  end:
-#if (ECORE_VERSION_MAJOR >= 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    free(cmd);
 #endif
 
