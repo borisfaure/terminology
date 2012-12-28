@@ -822,6 +822,26 @@ main_ipc_new(Ipc_Instance *inst)
      (ecore_evas_ecore_evas_get(evas_object_evas_get(wn->win)), 1);
 }
 
+static void
+_dummy_exit3(void *data __UNUSED__)
+{
+   elm_exit();
+}
+
+static Eina_Bool
+_dummy_exit2(void *data __UNUSED__)
+{
+   ecore_job_add(_dummy_exit3, NULL);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_dummy_exit(void *data __UNUSED__)
+{
+   ecore_idler_add(_dummy_exit2, NULL);
+   return EINA_FALSE;
+}
+
 static const char *emotion_choices[] = {
   "auto", "gstreamer", "xine", "generic",
   NULL
@@ -1223,7 +1243,12 @@ elm_main(int argc, char **argv)
         inst.maximized = maximized;
         inst.hold = hold;
         inst.nowm = nowm;
-        if (ipc_instance_add(&inst)) goto end;
+        if (ipc_instance_add(&inst))
+          {
+             ecore_timer_add(0.1, _dummy_exit, NULL);
+             elm_run();
+             goto end;
+          }
      }
    if ((!single) && (config->multi_instance))
      {
@@ -1291,7 +1316,7 @@ elm_main(int argc, char **argv)
 
 // efreet/edbus... you are being bad! :( disable shutdown for now
 // to avoid segs.   
-//   elm_shutdown();
+   elm_shutdown();
    return retval;
 }
 ELM_MAIN()

@@ -1618,6 +1618,43 @@ _selection_dbl_fix(Evas_Object *obj)
 #endif
 
 static void
+_selection_newline_extend_fix(Evas_Object *obj)
+{
+   Termio *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if ((!sd->top_left) && (sd->cur.sel2.y >= sd->cur.sel1.y))
+     {
+        if (((sd->cur.sel1.y == sd->cur.sel2.y) && 
+             (sd->cur.sel1.x <= sd->cur.sel2.x)) ||
+            (sd->cur.sel1.y < sd->cur.sel2.y))
+          {
+             char *lastline;
+             int x1, y1, x2, y2;
+             
+             if (sd->cur.sel1.y == sd->cur.sel2.y) x1 = sd->cur.sel1.x;
+             else x1 = 0;
+             x2 = sd->cur.sel2.x;
+             y1 = y2 = sd->cur.sel2.y;
+             lastline = termio_selection_get(obj, x1, y1, x2, y2);
+             if (lastline)
+               {
+                  int len = strlen(lastline);
+                  
+                  if ((len > 0) && (lastline[len - 1] == '\n'))
+                    {
+                       sd->cur.sel2.x = sd->grid.w - 1;
+#if defined(SUPPORT_DBLWIDTH)
+                       _selection_dbl_fix(obj);
+#endif
+                    }
+                  free(lastline);
+               }
+          }
+     }
+}
+
+static void
 _smart_cb_mouse_move_job(void *data)
 {
    Termio *sd;
@@ -1794,12 +1831,12 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 #if defined(SUPPORT_DBLWIDTH)
              _selection_dbl_fix(data);
 #endif
+             _selection_newline_extend_fix(data);
              _smart_update_queue(data, sd);
              _take_selection(data, ELM_SEL_TYPE_PRIMARY);
           }
      }
 }
-
 static void
 _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
@@ -1836,6 +1873,7 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 #if defined(SUPPORT_DBLWIDTH)
         _selection_dbl_fix(data);
 #endif
+        _selection_newline_extend_fix(data);
        _smart_update_queue(data, sd);
      }
    if (mc_change)
