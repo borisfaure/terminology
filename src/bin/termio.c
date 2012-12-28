@@ -2346,7 +2346,7 @@ _smart_del(Evas_Object *obj)
 
    termpty_shutdown();
 
-   _parent_sc.del(obj);
+   //_parent_sc.del(obj);
    evas_object_smart_data_set(obj, NULL);
    free(sd);
 }
