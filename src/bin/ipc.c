@@ -117,16 +117,17 @@ ipc_init(void)
                                  "nowm", nowm, EET_T_INT);
 }
 
-void
+Eina_Bool
 ipc_serve(void)
 {
    char *hash = _ipc_hash_get();
-   if (!hash) return;
+   if (!hash) return EINA_FALSE;
    ipc = ecore_ipc_server_add(ECORE_IPC_LOCAL_USER, hash, 0, NULL);
    free(hash);
-   if (!ipc) return;
+   if (!ipc) return EINA_FALSE;
    hnd_data = ecore_event_handler_add
      (ECORE_IPC_EVENT_CLIENT_DATA, _ipc_cb_client_data, NULL);
+   return EINA_TRUE;
 }
 
 void

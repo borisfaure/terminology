@@ -921,6 +921,7 @@ elm_main(int argc, char **argv)
 {
    Win *wn;
    Term *term;
+   int remote_try = 0;
    char *cmd = NULL;
    char *cd = NULL;
    char *theme = NULL;
@@ -1209,6 +1210,7 @@ elm_main(int argc, char **argv)
    if (login_shell == 0xff) login_shell = EINA_FALSE;
 
    ipc_init();
+remote:
    if ((!single) && (config->multi_instance))
      {
         Ipc_Instance inst;
@@ -1253,7 +1255,14 @@ elm_main(int argc, char **argv)
    if ((!single) && (config->multi_instance))
      {
         ipc_instance_new_func_set(main_ipc_new);
-        ipc_serve();
+        if (!ipc_serve())
+          {
+             if (remote_try < 1)
+               {
+                  remote_try++;
+                  goto remote;
+               }
+          }
      }
    
    wn = main_win_new(name, role, title, icon_name,

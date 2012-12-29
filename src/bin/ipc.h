@@ -30,7 +30,7 @@ struct _Ipc_Instance
 
 void ipc_init(void);
 void ipc_shutdown(void);
-void ipc_serve(void);
+Eina_Bool ipc_serve(void);
 void ipc_instance_new_func_set(void (*func) (Ipc_Instance *inst));
 Eina_Bool ipc_instance_add(Ipc_Instance *inst);
 
