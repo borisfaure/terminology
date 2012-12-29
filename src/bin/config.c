@@ -10,25 +10,10 @@
 
 static Eet_Data_Descriptor *edd_base = NULL;
 
-// edbus is segving like crazy now... i need a terminal. disable edbus using
-// stuff
-#define BROKEN_EDBUS 1
-
 static const char *
 _config_home_get(void)
 {
-#ifdef BROKEN_EDBUS
-   static char buf[4096] = "";
-   const char *s;
-   
-   if (buf[0]) return buf;
-   s = getenv("HOME");
-   if (!s) s = "/tmp";
-   snprintf(buf, sizeof(buf), "%s/.config", s);
-   return buf;
-#else   
    return efreet_config_home_get();
-#endif   
 }
 
 void
@@ -36,10 +21,8 @@ config_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
-#ifndef BROKEN_EDBUS
    elm_need_efreet();
    efreet_init();
-#endif   
    
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
@@ -107,9 +90,7 @@ config_shutdown(void)
         eet_data_descriptor_free(edd_base);
         edd_base = NULL;
      }
-#ifndef BROKEN_EDBUS
    efreet_shutdown();
-#endif   
 }
 
 void
