@@ -1219,11 +1219,7 @@ remote:
         
         inst.cmd = cmd;
         if (cd) inst.cd = cd;
-        else
-          {
-             getcwd(cwdbuf, sizeof(cwdbuf));
-             inst.cd = cwdbuf;
-          }
+        else inst.cd = getcwd(cwdbuf, sizeof(cwdbuf));
         inst.background = background;
         inst.name = name;
         inst.role = role;
