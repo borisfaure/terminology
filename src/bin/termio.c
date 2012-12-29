@@ -2150,18 +2150,14 @@ static void
 _smart_add(Evas_Object *obj)
 {
    Termio *sd;
-   Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
    int i, j, k, l, n;
 
-   _parent_sc.add(obj);
-   cd = evas_object_smart_data_get(obj);
-   if (!cd) return;
    sd = calloc(1, sizeof(Termio));
-   if (!sd) return;
-   sd->__clipped_data = *cd;
-   free(cd);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_data_set(obj, sd);
+
+   _parent_sc.add(obj);
 
    /* Terminal output widget */
    o = evas_object_textgrid_add(evas_object_evas_get(obj));
@@ -2347,8 +2343,6 @@ _smart_del(Evas_Object *obj)
    termpty_shutdown();
 
    _parent_sc.del(obj);
-   evas_object_smart_data_set(obj, NULL);
-   free(sd);
 }
 
 static void
