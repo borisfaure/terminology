@@ -36,26 +36,37 @@ _ipc_cb_client_data(void *data __UNUSED__, int type __UNUSED__, void *event)
 static char *
 _ipc_hash_get(void)
 {
-   char buf[1024], hash[128];
-   const char *disp, *session;
+   char buf[1024], hash[64];
+   const char *disp, *session, *xdg_session, *xdg_id, *xdg_seat, *xdg_vt;
    char *s, i;
    unsigned char c1, c2;
    
-   /* sumb stoopid hash - i'm feeling lazy */
+   /* dumb stoopid hash - i'm feeling lazy */
    disp = getenv("DISPLAY");
    if (!disp) disp = "-unknown-";
    session = getenv("DBUS_SESSION_BUS_ADDRESS");
    if (!session) session = ":unknown:";
-   snprintf(buf, sizeof(buf), "%s/%s", disp, session);
+   xdg_session = getenv("XDG_SESSION_COOKIE");
+   if (!xdg_session) xdg_session = "/unknown/";
+   xdg_id = getenv("XDG_SESSION_ID");
+   if (!xdg_id) xdg_id = "=unknown=";
+   xdg_seat = getenv("XDG_SEAT");
+   if (!xdg_seat) xdg_seat = "@unknown@";
+   xdg_vt = getenv("XDG_VTNR");
+   if (!xdg_vt) xdg_vt = "!unknown!";
+   snprintf(buf, sizeof(buf), "%s.%s.%s.%s.%s.%s", 
+            disp, session, xdg_session, 
+            xdg_id, xdg_seat, xdg_vt);
    memset(hash, 0, sizeof(hash));
-   memset(hash, 'x', 32);
+   memset(hash, 'x', 12 + 32);
+   memcpy(hash, "terminology-", 12);
    for (i = 0, s = buf; *s; s++)
      {
-        c1 = (((unsigned char)*s) >> 4) & 0xf;;
+        c1 = (((unsigned char)*s) >> 4) & 0xf;
         c2 = ((unsigned char)*s) & 0x0f;
-        hash[i % 32] = (((hash[i % 32] - 'a') ^ c1) % 26) + 'a';
+        hash[12 + (i % 32)] = (((hash[12 + (i % 32)] - 'a') ^ c1) % 26) + 'a';
         i++;
-        hash[i % 32] = (((hash[i % 32] - 'a') ^ c2) % 26) + 'a';
+        hash[12 + (i % 32)] = (((hash[12 + (i % 32)] - 'a') ^ c2) % 26) + 'a';
         i++;
      }
    return strdup(hash);
