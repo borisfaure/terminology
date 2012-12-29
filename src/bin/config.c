@@ -13,7 +13,15 @@ static Eet_Data_Descriptor *edd_base = NULL;
 static const char *
 _config_home_get(void)
 {
-   return efreet_config_home_get();
+   static char buf[4096] = "";
+   const char *s;
+   
+   if (buf[0]) return buf;
+   s = getenv("HOME");
+   if (!s) s = "/tmp";
+   snprintf(buf, sizeof(buf), "%s/.config", s);
+   return buf;
+//   return efreet_config_home_get();
 }
 
 void
@@ -21,8 +29,8 @@ config_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
-   elm_need_efreet();
-   efreet_init();
+//   elm_need_efreet();
+//   efreet_init();
    
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
@@ -91,7 +99,7 @@ config_shutdown(void)
         edd_base = NULL;
      }
 
-   efreet_shutdown();
+//   efreet_shutdown();
 }
 
 void
