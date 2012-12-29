@@ -36,7 +36,7 @@ struct _Media
 };
 
 static Evas_Smart *_smart = NULL;
-static Evas_Smart_Class _meida_sc = EVAS_SMART_CLASS_INIT_NULL;
+static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static const char *extn_img[] =
 {
@@ -612,7 +612,7 @@ _smart_add(Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_data_set(obj, sd);
 
-   _meida_sc.add(obj);
+   _parent_sc.add(obj);
 
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
@@ -652,7 +652,7 @@ _smart_del(Evas_Object *obj)
    if (sd->smooth_timer) sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
 
-   _meida_sc.del(obj);
+   _parent_sc.del(obj);
 }
 
 static void
@@ -826,8 +826,8 @@ _smart_init(void)
 {
    static Evas_Smart_Class sc;
 
-   evas_object_smart_clipped_smart_set(&_meida_sc);
-   sc           = _meida_sc;
+   evas_object_smart_clipped_smart_set(&_parent_sc);
+   sc           = _parent_sc;
    sc.name      = "media";
    sc.version   = EVAS_SMART_CLASS_VERSION;
    sc.add       = _smart_add;
