@@ -608,15 +608,12 @@ _smart_add(Evas_Object *obj)
    Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
 
-   _meida_sc.add(obj);
-   cd = evas_object_smart_data_get(obj);
-   if (!cd) return;
    sd = calloc(1, sizeof(Media));
-   if (!sd) return;
-   sd->__clipped_data = *cd;
-   free(cd);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_data_set(obj, sd);
-   
+
+   _meida_sc.add(obj);
+
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    sd->clip = o;
@@ -654,8 +651,8 @@ _smart_del(Evas_Object *obj)
    if (sd->anim) ecore_timer_del(sd->anim);
    if (sd->smooth_timer) sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
+
    _meida_sc.del(obj);
-   evas_object_smart_data_set(obj, NULL);
 }
 
 static void
