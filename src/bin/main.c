@@ -390,7 +390,7 @@ _cb_cmdbox(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_activated(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_cmd_activated(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
    char *cmd;
@@ -417,7 +417,7 @@ _cb_cmd_activated(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_aborted(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_cmd_aborted(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
    
@@ -433,7 +433,7 @@ _cb_cmd_aborted(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
    char *cmd;
@@ -451,7 +451,7 @@ _cb_cmd_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Term *term = data;
    
@@ -919,9 +919,6 @@ static const Ecore_Getopt options = {
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Win *wn;
-   Term *term;
-   int remote_try = 0;
    char *cmd = NULL;
    char *cd = NULL;
    char *theme = NULL;
@@ -986,9 +983,11 @@ elm_main(int argc, char **argv)
       
      ECORE_GETOPT_VALUE_NONE
    };
-   int args, retval = EXIT_SUCCESS;
+   Win *wn;
+   Term *term;
    Config *config;
-   Evas_Object *o;
+   int args, retval = EXIT_SUCCESS;
+   int remote_try = 0;
    int pos_set = 0, size_set = 0;
    int pos_x = 0, pos_y = 0;
    int size_w = 1, size_h = 1;
