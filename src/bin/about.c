@@ -42,7 +42,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_layout_file_set(o, buf, "terminology/about");
         elm_object_part_text_set
           (o, "terminology.text",
-              "<b>Terminology</b><br>"
+              "<b>Terminology "PACKAGE_VERSION"</b><br>"
               "Why should terminals be boring?<br>"
               "<br>"
               "This terminal was written for Enlightenment, to use EFL "
