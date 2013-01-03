@@ -574,6 +574,7 @@ main_win_free(Win *wn)
 {
    Term *term;
 
+   printf("free wn %p win %p\n", wn, wn->win);
    wins = eina_list_remove(wins, wn);
    EINA_LIST_FREE(wn->terms, term)
      {
@@ -633,6 +634,7 @@ main_win_new(const char *name, const char *role,
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_focus_out, wn);
    
    wins = eina_list_append(wins, wn);
+   printf("new wn %p win %p\n", wn, wn->win);
    return wn;
 }
 
@@ -884,7 +886,6 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = (char *)inst->cmd;
      }
    ecore_app_args_set(nargc, (const char **)nargv);
-   for (i = 0; i < nargc; i++)
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
                      inst->fullscreen, inst->iconic, inst->borderless,
                      inst->override, inst->maximized);
