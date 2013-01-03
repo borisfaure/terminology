@@ -600,7 +600,7 @@ main_win_new(const char *name, const char *role,
    
    wn = calloc(1, sizeof(Win));
    if (!wn) return NULL;
-   
+
    wn->win = tg_win_add(name, role, title, icon_name);
    if (!wn->win)
      {
@@ -729,6 +729,8 @@ main_ipc_new(Ipc_Instance *inst)
    Win *wn;
    Term *term;
    Config *config;
+   int pargc = 0, nargc, i;
+   char **pargv = NULL, **nargv = NULL, geom[256];
 
    if (inst->startup_id)
      {
@@ -737,10 +739,161 @@ main_ipc_new(Ipc_Instance *inst)
         snprintf(buf, sizeof(buf), "DESKTOP_STARTUP_ID=%s", inst->startup_id);
         putenv(buf);
      }
+   ecore_app_args_get(&pargc, &pargv);
+   nargc = 1;
+
+   if (inst->cd) nargc += 2;
+   if (inst->background) nargc += 2;
+   if (inst->name) nargc += 2;
+   if (inst->role) nargc += 2;
+   if (inst->title) nargc += 2;
+   if (inst->font) nargc += 2;
+   if ((inst->pos) || (inst->w > 0) || (inst->h > 0)) nargc += 2;
+   if (inst->login_shell) nargc += 1;
+   if (inst->fullscreen) nargc += 1;
+   if (inst->iconic) nargc += 1;
+   if (inst->borderless) nargc += 1;
+   if (inst->override) nargc += 1;
+   if (inst->maximized) nargc += 1;
+   if (inst->hold) nargc += 1;
+   if (inst->nowm) nargc += 1;
+   if (inst->cmd) nargc += 2;
+   
+   nargv = calloc(nargc + 1, sizeof(char *));
+   if (!nargv) return;
+   
+   i = 0;
+   nargv[i++] = pargv[0];
+   if (inst->cd)
+     {
+        nargv[i++] = "-d";
+        nargv[i++] = (char *)inst->cd;
+     }
+   if (inst->background)
+     {
+        nargv[i++] = "-b";
+        nargv[i++] = (char *)inst->background;
+     }
+   if (inst->name)
+     {
+        nargv[i++] = "-n";
+        nargv[i++] = (char *)inst->name;
+     }
+   if (inst->role)
+     {
+        nargv[i++] = "-r";
+        nargv[i++] = (char *)inst->role;
+     }
+   if (inst->title)
+     {
+        nargv[i++] = "-t";
+        nargv[i++] = (char *)inst->title;
+     }
+   if (inst->font)
+     {
+        nargv[i++] = "-f";
+        nargv[i++] = (char *)inst->font;
+     }
+   if ((inst->pos) || (inst->w > 0) || (inst->h > 0))
+     {
+        if (!inst->pos)
+          snprintf(geom, sizeof(geom), "%ix%i", inst->w, inst->h);
+        else
+          {
+             if ((inst->w > 0) && (inst->h > 0))
+               {
+                  if (inst->x >= 0)
+                    {
+                       if (inst->y >= 0)
+                         snprintf(geom, sizeof(geom), "%ix%i+%i+%i",
+                                  inst->w, inst->h, inst->x, inst->y);
+                       else
+                         snprintf(geom, sizeof(geom), "%ix%i+%i%i",
+                                  inst->w, inst->h, inst->x, inst->y);
+                    }
+                  else
+                    {
+                       if (inst->y >= 0)
+                         snprintf(geom, sizeof(geom), "%ix%i%i+%i",
+                                  inst->w, inst->h, inst->x, inst->y);
+                       else
+                         snprintf(geom, sizeof(geom), "%ix%i%i%i",
+                                  inst->w, inst->h, inst->x, inst->y);
+                    }
+               }
+             else
+               {
+                  if (inst->x >= 0)
+                    {
+                       if (inst->y >= 0)
+                         snprintf(geom, sizeof(geom), "+%i+%i",
+                                  inst->x, inst->y);
+                       else
+                         snprintf(geom, sizeof(geom), "+%i%i",
+                                  inst->x, inst->y);
+                    }
+                  else
+                    {
+                       if (inst->y >= 0)
+                         snprintf(geom, sizeof(geom), "%i+%i",
+                                  inst->x, inst->y);
+                       else
+                         snprintf(geom, sizeof(geom), "%i%i",
+                                  inst->x, inst->y);
+                    }
+               }
+          }
+        nargv[i++] = "-g";
+        nargv[i++] = geom;
+     }
+   if (inst->login_shell)
+     {
+        nargv[i++] = "-l";
+     }
+   if (inst->fullscreen)
+     {
+        nargv[i++] = "-F";
+     }
+   if (inst->iconic)
+     {
+        nargv[i++] = "-I";
+     }
+   if (inst->borderless)
+     {
+        nargv[i++] = "-B";
+     }
+   if (inst->override)
+     {
+        nargv[i++] = "-O";
+     }
+   if (inst->maximized)
+     {
+        nargv[i++] = "-M";
+     }
+   if (inst->hold)
+     {
+        nargv[i++] = "-H";
+     }
+   if (inst->nowm)
+     {
+        nargv[i++] = "-W";
+     }
+   if (inst->cmd)
+     {
+        nargv[i++] = "-e";
+        nargv[i++] = (char *)inst->cmd;
+     }
+   ecore_app_args_set(nargc, (const char **)nargv);
+   for (i = 0; i < nargc; i++)
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
                      inst->fullscreen, inst->iconic, inst->borderless,
                      inst->override, inst->maximized);
-   if (!wn) return;
+   if (!wn)
+     {
+        ecore_app_args_set(pargc, (const char **)pargv);
+        free(nargv);
+        return;
+     }
    config = config_load("config");
    wn->config = config;
    
@@ -796,12 +949,16 @@ main_ipc_new(Ipc_Instance *inst)
           }
         config->temporary = EINA_TRUE;
      }
-   
+
+   if (inst->w <= 0) inst->w = 80;
+   if (inst->h <= 0) inst->h = 24;
    term = main_term_new(wn, config, inst->cmd, inst->login_shell,
                         inst->cd, inst->w, inst->h, inst->hold);
    if (!term)
      {
         main_win_free(wn);
+        ecore_app_args_set(pargc, (const char **)pargv);
+        free(nargv);
         return;
      }
    else
@@ -824,6 +981,8 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->nowm)
      ecore_evas_focus_set
      (ecore_evas_ecore_evas_get(evas_object_evas_get(wn->win)), 1);
+   ecore_app_args_set(pargc, (const char **)pargv);
+   free(nargv);
 }
 
 static void
