@@ -68,7 +68,6 @@ _cb_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Win *wn = data;
 
-   wins = eina_list_remove(wins, wn);
    // already obj here is deleted - dont do it again
    wn->win = NULL;
    main_win_free(wn);
@@ -574,12 +573,17 @@ static void
 main_win_free(Win *wn)
 {
    Term *term;
-   
+
+   wins = eina_list_remove(wins, wn);
    EINA_LIST_FREE(wn->terms, term)
      {
         main_term_free(term);
      }
-   if (wn->win) evas_object_del(wn->win);
+   if (wn->win)
+     {
+        evas_object_event_callback_del_full(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
+        evas_object_del(wn->win);
+     }
    if (wn->config) config_del(wn->config);
    free(wn);
 }
@@ -1309,8 +1313,9 @@ remote:
 
    ipc_shutdown();
 
-   EINA_LIST_FREE(wins, wn)
+   while (wins)
      {
+        wn = eina_list_data_get(wins);
         main_win_free(wn);
      }
 
