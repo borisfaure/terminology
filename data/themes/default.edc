@@ -44,7 +44,7 @@ collections {
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: 48 48 48 255;
+               color: 32 32 32 255;
             }
             description { state: "translucent" 0.0;
                inherit: "default" 0.0;
@@ -904,10 +904,10 @@ collections {
    // bottomfull:
    // |        ######|
    // |##############|
-#define PATCOL  100 160 255 128
-#define PATCOL2 120 180 255 144
-#define OUTCOL  120 220 255 128
-#define OUTCOL2 180 240 255 144
+#define PATCOL   51 153 255 128
+#define PATCOL2  51 153 255 144
+#define OUTCOL   51 153 255 128
+#define OUTCOL2 255 255 255 255
    
    group { name: "terminology/selection";
       images {
@@ -2049,7 +2049,7 @@ target: "4.bottom"
                      offset: 32 32;
                   }
                }
-               color: 255 255 255 80;
+               color: 51 153 255 80;
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
@@ -2079,7 +2079,7 @@ target: "4.bottom"
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
-               color: 160 100 255 0;
+               color:  51 153 255 0;
                rel1.offset: -7 -15;
                rel2.offset: 6 14;
             }
@@ -2107,7 +2107,7 @@ target: "4.bottom"
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
-               color: 100 160 255 0;
+               color: 51 153 255 0;
                rel1.offset: -8 -8;
                rel2.offset: 7 7;
             }
@@ -2119,7 +2119,7 @@ target: "4.bottom"
                   normal: "cr_out.png";
                   border: 3 3 3 3;
                }
-               color: 255 255 255 80;
+               color: 51 153 255 80;
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
@@ -2224,7 +2224,7 @@ target: "4.bottom"
                rel1.offset: -6 0;
                rel1.relative: 0.0 1.0;
                rel2.offset: 5 0;
-               color: 100 200 255 255;
+               color: 51 153 255 255;
                fill.smooth: 0;
             }
          }
@@ -2238,21 +2238,21 @@ target: "4.bottom"
                rel1.relative: 0.0 1.0;
                rel2.offset: 16 -1;
                rel2.relative: 0.0 1.0;
-               color: 100 200 255 0;
+               color: 51 153 255 0;
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
                min: 16 16;
                rel1.offset: -10 -1;
                rel2.offset: -10 -1;
-               color: 180 220 255 255;
+               color: 51 153 255 255;
             }
             description { state: "out2" 0.0;
                inherit: "default" 0.0;
                min: 32 32;
                rel1.offset: -26 -1;
                rel2.offset: -26 -1;
-               color: 100 200 255 0;
+               color: 51 153 255 0;
             }
          }
          part { name: "r";
@@ -2265,21 +2265,21 @@ target: "4.bottom"
                rel1.relative: 1.0 1.0;
                rel2.offset: -15 0;
                rel2.relative: 1.0 1.0;
-               color: 100 200 255 0;
+               color: 51 153 255 0;
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
                min: 16 16;
                rel1.offset: 9 -1;
                rel2.offset: 9 -1;
-               color: 180 220 255 255;
+               color: 51 153 255 255;
             }
             description { state: "out2" 0.0;
                inherit: "default" 0.0;
                min: 32 32;
                rel1.offset: 25 -1;
                rel2.offset: 25 -1;
-               color: 100 200 255 0;
+               color: 51 153 255 0;
             }
          }
          part { name: "event"; type: RECT;
@@ -2357,7 +2357,7 @@ target: "4.bottom"
                rel1.to: "progress_area";
                rel2.to: "progress_area";
                rel2.relative: 0.0 1.0;
-               color: 100 160 255 255;
+               color: 51 153 255 255;
                image.normal: "media_busy_progress.png";
                image.border: 5 5 0 0;
                min: 10 40;
@@ -2392,7 +2392,7 @@ target: "4.bottom"
             mouse_events: 0;
             description { state: "default" 0.0;
                fixed: 1 1;
-               color: 100 160 255 255;
+               color: 51 153 255 255;
                rel1.to: "knob";
                rel2.to: "knob";
                image.normal: "media_busy_spinner.png";
