@@ -907,7 +907,7 @@ collections {
 #define PATCOL   51 153 255 128
 #define PATCOL2  51 153 255 144
 #define OUTCOL   51 153 255 128
-#define OUTCOL2 255 255 255 255
+#define OUTCOL2  51 153 255 255
    
    group { name: "terminology/selection";
       images {
