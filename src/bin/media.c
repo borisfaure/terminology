@@ -605,7 +605,6 @@ static void
 _smart_add(Evas_Object *obj)
 {
    Media *sd;
-   Evas_Object_Smart_Clipped_Data *cd;
    Evas_Object *o;
 
    sd = calloc(1, sizeof(Media));
