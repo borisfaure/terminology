@@ -12,9 +12,10 @@ filesdir = $(pkgdatadir)/themes
 files_DATA = \
 default.edj \
 mild.edj \
-black.edj
+black.edj \
+solarized.edj
 
-EXTRA_DIST = default.edc mild.edc black.edc
+EXTRA_DIST = default.edc mild.edc black.edc default_colors.in.edc
 
 default.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
@@ -30,6 +31,11 @@ black.edj: Makefile black.edc mild.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/black.edc \
 	$(top_builddir)/data/themes/black.edj
+
+solarized.edj: Makefile solarized.edc default_colors.in.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/solarized.edc \
+	$(top_builddir)/data/themes/solarized.edj
 
 clean-local:
 	rm -f *.edj
