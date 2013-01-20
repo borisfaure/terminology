@@ -2167,30 +2167,6 @@ _smart_add(Evas_Object *obj)
    evas_object_show(o);
    sd->grid.obj = o;
 
-   for (n = 0, l = 0; l < 2; l++) // normal/intense
-     {
-        for (k = 0; k < 2; k++) // normal/faint
-          {
-             for (j = 0; j < 2; j++) // normal/bright
-               {
-                  for (i = 0; i < 12; i++, n++) //colors
-                    evas_object_textgrid_palette_set
-                    (o, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                        colors[l][j][i].r / (k + 1),
-                        colors[l][j][i].g / (k + 1),
-                        colors[l][j][i].b / (k + 1),
-                        colors[l][j][i].a / (k + 1));
-               }
-          }
-     }
-   for (n = 0; n < 256; n++)
-     {
-        evas_object_textgrid_palette_set
-          (o, EVAS_TEXTGRID_PALETTE_EXTENDED, n,
-              colors256[n].r, colors256[n].g,
-              colors256[n].b, colors256[n].a);
-     }
-
    /* Setup cursor */
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
@@ -2872,4 +2848,13 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
      }
 
    return EINA_TRUE;
+}
+
+Evas_Object *
+termio_textgrid_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+
+   return sd->grid.obj;
 }

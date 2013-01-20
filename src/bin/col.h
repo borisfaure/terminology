@@ -1,9 +1,8 @@
-typedef struct _Color Color;
+#ifndef _COL_H__
+#define _COL_H__ 1
 
-struct _Color
-{
-   unsigned char r, g, b, a;
-};
+#include <Evas.h>
 
-extern const Color colors[2][2][12];
-extern const Color colors256[256];
+void colors_term_init(Evas_Object *textgrid, Evas_Object *bg);
+
+#endif

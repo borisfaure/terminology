@@ -1,6 +1,16 @@
+#include "private.h"
 #include "col.h"
+#include <Edje.h>
 
-const Color colors[2][2][12] =
+typedef struct _Color Color;
+
+struct _Color
+{
+   unsigned char r, g, b, a;
+};
+
+
+static const Color colors[2][2][12] =
 {
    { // normal
         { // normal
@@ -64,7 +74,7 @@ const Color colors[2][2][12] =
    }
 };
 
-const Color colors256[256] =
+static const Color colors256[256] =
 {
    // basic 16 repeated
 /*
@@ -383,3 +393,62 @@ const Color colors256[256] =
    { 0xe4, 0xe4, 0xe4, 0xff },
    { 0xee, 0xee, 0xee, 0xff },
 };
+
+void colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
+{
+   int c, n, l, k, j, i;
+   int r, g, b, a;
+   char buf[32];
+
+   for (c = 0; c < 4 * 12; c++)
+     {
+        snprintf(buf, sizeof(buf) - 1, "color-%d", c);
+
+        n = c + 24 * ( c / 24);
+
+        if (edje_object_color_class_get(bg, buf,
+                                        &r, &g, &b, &a,
+                                        NULL, NULL, NULL, NULL,
+                                        NULL, NULL, NULL, NULL))
+          {
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
+                 r, g, b, a);
+          }
+        else
+          {
+             Color color = colors[c/24][(c%24)/12][c%12];
+
+             /* normal */
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+                 color.r, color.g, color.b, color.a);
+             /* faint */
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+                 r/2, g/2, b/2, a/2);
+          }
+     }
+   for (c = 0; c < 256; c++)
+     {
+        snprintf(buf, sizeof(buf) - 1, "256color-%d", c);
+
+        if (edje_object_color_class_get(bg, buf,
+                                        &r, &g, &b, &a,
+                                        NULL, NULL, NULL, NULL,
+                                        NULL, NULL, NULL, NULL))
+          {
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
+                 r, g, b, a);
+          }
+        else
+          {
+             Color color = colors256[c];
+
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
+                 color.r, color.g, color.b, color.a);
+          }
+     }
+}

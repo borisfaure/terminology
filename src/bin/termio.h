@@ -2,6 +2,7 @@
 #define _TERMIO_H__ 1
 
 #include "config.h"
+#include "col.h"
 
 Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
@@ -20,5 +21,6 @@ void         termio_font_size_set(Evas_Object *obj, int size);
 void         termio_grid_size_set(Evas_Object *obj, int w, int h);
 pid_t        termio_pid_get(const Evas_Object *obj);
 Eina_Bool    termio_cwd_get(const Evas_Object *obj, char *buf, size_t size);
+Evas_Object *termio_textgrid_get(Evas_Object *obj);
 
 #endif
