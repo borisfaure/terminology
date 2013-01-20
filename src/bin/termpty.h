@@ -105,7 +105,6 @@ struct _Termpty
    const char *cur_cmd;
    Termcell *screen, *screen2;
    Termsave **back;
-   int circular_offset;
    int backmax, backpos;
    int backscroll_num;
    int *buf;
@@ -142,6 +141,3 @@ void      termpty_backscroll_set(Termpty *ty, int size);
 pid_t     termpty_pid_get(const Termpty *ty);
 
 extern int _termpty_log_dom;
-
-#define TERMPTY_SCREEN(Tpty, X, Y) \
-  Tpty->screen[X + (((Y + Tpty->circular_offset) % Tpty->h) * Tpty->w)]
