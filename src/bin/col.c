@@ -411,9 +411,14 @@ void colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
                                         NULL, NULL, NULL, NULL,
                                         NULL, NULL, NULL, NULL))
           {
+             /* normal */
              evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
+                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
                  r, g, b, a);
+             /* faint */
+             evas_object_textgrid_palette_set(
+                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+                 r/2, g/2, b/2, a/2);
           }
         else
           {
