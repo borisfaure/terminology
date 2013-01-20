@@ -50,7 +50,7 @@ _text_save_top(Termpty *ty)
    if (ty->backmax <= 0) return;
    ts = malloc(sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
    ts->w = ty->w;
-   _termpty_text_copy(ty, ty->screen, ts->cell, ty->w);
+   _termpty_text_copy(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ts->cell, ty->w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos]) free(ty->back[ty->backpos]);
    ty->back[ty->backpos] = ts;
@@ -69,8 +69,8 @@ _termpty_text_copy(Termpty *ty __UNUSED__, Termcell *cells, Termcell *dest, int 
 void
 _termpty_text_scroll(Termpty *ty)
 {
-   Termcell *cells = NULL, *cells2;
-   int y, start_y = 0, end_y = ty->h - 1;
+   Termcell /* *cells = NULL, */ *cells2;
+   int start_y = 0, end_y = ty->h - 1;
 
    if (ty->state.scroll_y2 != 0)
      {
@@ -89,21 +89,20 @@ _termpty_text_scroll(Termpty *ty)
             ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
      }
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
-   cells2 = &(ty->screen[end_y * ty->w]);
-   for (y = start_y; y < end_y; y++)
-     {
-        cells = &(ty->screen[y * ty->w]);
-        cells2 = &(ty->screen[(y + 1) * ty->w]);
-        _termpty_text_copy(ty, cells2, cells, ty->w);
-     }
+   // screen is a circular buffer now
+   ty->circular_offset++;
+   if (ty->circular_offset >= ty->h)
+     ty->circular_offset = 0;
+
+   cells2 = &(TERMPTY_SCREEN(ty, 0, end_y));
    _text_clear(ty, cells2, ty->w, ' ', EINA_TRUE);
 }
 
 void
 _termpty_text_scroll_rev(Termpty *ty)
 {
-   Termcell *cells, *cells2 = NULL;
-   int y, start_y = 0, end_y = ty->h - 1;
+   Termcell *cells/* , *cells2 = NULL */;
+   int start_y = 0, end_y = ty->h - 1;
 
    if (ty->state.scroll_y2 != 0)
      {
@@ -111,13 +110,12 @@ _termpty_text_scroll_rev(Termpty *ty)
         end_y = ty->state.scroll_y2 - 1;
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
-   cells = &(ty->screen[end_y * ty->w]);
-   for (y = end_y; y > start_y; y--)
-     {
-        cells = &(ty->screen[(y - 1) * ty->w]);
-        cells2 = &(ty->screen[y * ty->w]);
-        _termpty_text_copy(ty, cells, cells2, ty->w);
-     }
+   // screen is a circular buffer now
+   ty->circular_offset--;
+   if (ty->circular_offset < 0)
+     ty->circular_offset = ty->h - 1;
+
+   cells = &(TERMPTY_SCREEN(ty, 0, end_y));
    _text_clear(ty, cells, ty->w, ' ', EINA_TRUE);
 }
 
@@ -153,7 +151,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    Termcell *cells;
    int i, j;
 
-   cells = &(ty->screen[ty->state.cy * ty->w]);
+   cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
    for (i = 0; i < len; i++)
      {
         Eina_Unicode g;
@@ -165,7 +163,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->state.cx = 0;
              ty->state.cy++;
              _termpty_text_scroll_test(ty);
-             cells = &(ty->screen[ty->state.cy * ty->w]);
+             cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
           }
         if (ty->state.insert)
           {
@@ -235,7 +233,7 @@ _termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
    Termcell *cells;
    int n = 0;
 
-   cells = &(ty->screen[ty->state.cy * ty->w]);
+   cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
    switch (mode)
      {
       case TERMPTY_CLR_END:
@@ -260,24 +258,42 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 {
    Termcell *cells;
 
-   cells = ty->screen;
+   // FIXME: Handle clear with the new layout
+   cells = &(TERMPTY_SCREEN(ty, 0, 0));
    switch (mode)
      {
       case TERMPTY_CLR_END:
         _termpty_clear_line(ty, mode, ty->w);
         if (ty->state.cy < (ty->h - 1))
           {
-             cells = &(ty->screen[(ty->state.cy + 1) * ty->w]);
+             cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + 1)));
              _text_clear(ty, cells, ty->w * (ty->h - ty->state.cy - 1), 0, EINA_TRUE);
           }
         break;
       case TERMPTY_CLR_BEGIN:
         if (ty->state.cy > 0)
-          _text_clear(ty, cells, ty->w * ty->state.cy, 0, EINA_TRUE);
+	  {
+	    // First clear from circular > height, then from 0 to circular
+	    int y = ty->state.cy + ty->circular_offset;
+
+	    if (y < ty->h)
+	      {
+		_text_clear(ty, cells, ty->w * ty->state.cy, 0, EINA_TRUE);
+	      }
+	    else
+	      {
+		int yt = y % ty->w;
+		int yb = ty->h - ty->circular_offset;
+
+		_text_clear(ty, cells, ty->w * yb, 0, EINA_TRUE);
+		_text_clear(ty, ty->screen, ty->w * yt, 0, EINA_TRUE);
+	      }
+	  }
         _termpty_clear_line(ty, mode, ty->w);
         break;
       case TERMPTY_CLR_ALL:
-        _text_clear(ty, cells, ty->w * ty->h, 0, EINA_TRUE);
+	ty->circular_offset = 0;
+        _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
         ty->state.scroll_y2 = 0;
         break;
       default:
