@@ -33,7 +33,7 @@ black.edj: Makefile black.edc mild.edc
 	$(top_srcdir)/data/themes/black.edc \
 	$(top_builddir)/data/themes/black.edj
 
-solarized.edj: Makefile solarized.edc default_colors.in.edc
+solarized.edj: Makefile solarized.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/solarized.edc \
 	$(top_builddir)/data/themes/solarized.edj
