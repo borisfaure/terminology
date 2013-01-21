@@ -480,7 +480,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //             61 → VT510
 //             64 → VT520
 //             65 → VT525
-             snprintf(bf, sizeof(bf), "\033[>0;271;%ic", 0);
+             snprintf(bf, sizeof(bf), "\033[>41;285;%ic", 0);
              termpty_write(ty, bf, strlen(bf));
           }
         break;
