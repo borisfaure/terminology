@@ -4,6 +4,7 @@
 
 collections {
     color_classes {
+        color_class { name: "color-0";  color: 255 255 255 255; }
         color_class { name: "256color-0";  color: 0 0 0 255; }
         color_class { name: "256color-1";  color: 255 101 101 255; }
         color_class { name: "256color-2";  color: 147 212 79 255; }
