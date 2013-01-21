@@ -13,9 +13,10 @@ files_DATA = \
 default.edj \
 mild.edj \
 black.edj \
-solarized.edj
+solarized.edj \
+mustang.edj
 
-EXTRA_DIST = default.edc mild.edc black.edc solarized.edc default_colors.in.edc
+EXTRA_DIST = default.edc mild.edc black.edc solarized.edc mustang.edc default_colors.in.edc
 
 default.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
@@ -36,6 +37,11 @@ solarized.edj: Makefile solarized.edc default_colors.in.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/solarized.edc \
 	$(top_builddir)/data/themes/solarized.edj
+
+mustang.edj: Makefile mustang.edc
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/mustang.edc \
+	$(top_builddir)/data/themes/mustang.edj
 
 clean-local:
 	rm -f *.edj

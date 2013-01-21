@@ -25,6 +25,7 @@ data/themes/default.edj
 data/themes/mild.edj
 data/themes/black.edj
 data/themes/solarized.edj
+data/themes/mustang.edj
 data/themes/images/Makefile
 data/themes/images/Makefile.in
 depcomp

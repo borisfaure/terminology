@@ -1,0 +1,26 @@
+#define BG_COLOR 26 26 26 255
+#define BG_COLOR_TRANSLUCENT 26 26 26 200
+#define BELL_OVERLAY_COLOR 220 220 220 32
+
+collections {
+    color_classes {
+        color_class { name: "256color-0";  color: 0 0 0 255; }
+        color_class { name: "256color-1";  color: 255 101 101 255; }
+        color_class { name: "256color-2";  color: 147 212 79 255; }
+        color_class { name: "256color-3";  color: 234 185 61 255; }
+        color_class { name: "256color-4";  color: 32 74 135 255; }
+        color_class { name: "256color-5";  color: 206 92 0 255; }
+        color_class { name: "256color-6";  color: 137 182 226 255; }
+        color_class { name: "256color-7";  color: 204 204 204 255; }
+        color_class { name: "256color-8";  color: 85 87 83 255; }
+        color_class { name: "256color-9";  color: 255 141 141 255; }
+        color_class { name: "256color-10";  color: 200 231 168 255; }
+        color_class { name: "256color-11";  color: 255 193 35 255; }
+        color_class { name: "256color-12";  color: 52 101 164 255; }
+        color_class { name: "256color-13";  color: 245 121 0 255; }
+        color_class { name: "256color-14";  color: 70 164 255 255; }
+        color_class { name: "256color-15";  color: 255 255 255 255; }
+    }
+}
+
+#include "mild.edc"
