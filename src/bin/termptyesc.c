@@ -456,7 +456,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              int x, lim;
 
              if (arg < 1) arg = 1;
-             cells = &(ty->screen[ty->state.cy * ty->w]);
+             cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
              lim = ty->w - arg;
              for (x = ty->state.cx; x < (ty->w); x++)
                {
@@ -705,8 +705,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                    {
                                       Termcell t;
 
-                                      t = ty->screen[i];
-                                      ty->screen[i] = ty->screen2[i];
+                                      t = ty->screen[(i + ty->circular_offset) % ty->h];
+                                      ty->screen[(i + ty->circular_offset) % ty->h] = ty->screen2[i];
                                       ty->screen2[i] = t;
                                    }
                                  ty->altbuf = !ty->altbuf;
@@ -846,7 +846,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           size = ty->w * cy + cx + 1;
           for (idx = size - 1; idx >= 0; idx--)
             {
-               if (ty->screen[cx + (cy * ty->w)].att.tab) arg--;
+               if (TERMPTY_SCREEN(ty, cx, cy).att.tab) arg--;
                cx--;
                if (cx < 0)
                  {
@@ -1211,7 +1211,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
            case 0x09: // HT  '\t' (horizontal tab)
              DBG("->HT");
-             ty->screen[ty->state.cx + (ty->state.cy * ty->w)].att.tab = 1;
+	     TERMPTY_SCREEN(ty, ty->state.cx, ty->state.cy).att.tab = 1;
              ty->state.wrapnext = 0;
              ty->state.cx += 8;
              ty->state.cx = (ty->state.cx / 8) * 8;
@@ -1224,7 +1224,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
            case 0x0c: // FF  '\f' (form feed)
              DBG("->LF");
              if (ty->state.had_cr)
-               ty->screen[ty->state.had_cr_x + (ty->state.had_cr_y * ty->w)].att.newline = 1;
+               TERMPTY_SCREEN(ty, ty->state.had_cr_x, ty->state.had_cr_y).att.newline = 1;
              ty->state.wrapnext = 0;
              if (ty->state.crlf) ty->state.cx = 0;
              ty->state.cy++;

@@ -255,6 +255,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen2) goto err;
 
+   ty->circular_offset = 0;
+
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0) goto err;
    if (grantpt(ty->fd) != 0) goto err;
@@ -442,7 +444,8 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
      {
         if (y >= ty->h) return NULL;
         *wret = ty->w;
-        return &(ty->screen[y * ty->w]);
+	/* fprintf(stderr, "getting: %i (%i, %i)\n", y, ty->circular_offset, ty->h); */
+        return &(TERMPTY_SCREEN(ty, 0, y));
      }
    if (y < -ty->backmax) return NULL;
    ts = ty->back[(ty->backmax + ty->backpos + y) % ty->backmax];
@@ -495,12 +498,13 @@ termpty_resize(Termpty *ty, int w, int h)
    if (ww > oldw) ww = oldw;
    if (hh > oldh) hh = oldh;
 
+   // FIXME: handle pointer copy here
    for (y = 0; y < hh; y++)
      {
         Termcell *c1, *c2;
 
         c1 = &(olds[y * oldw]);
-        c2 = &(ty->screen[y * ty->w]);
+        c2 = &(TERMPTY_SCREEN(ty, 0, y));
         _termpty_text_copy(ty, c1, c2, ww);
 
         c1 = &(olds2[y * oldw]);
@@ -508,6 +512,7 @@ termpty_resize(Termpty *ty, int w, int h)
         _termpty_text_copy(ty, c1, c2, ww);
      }
 
+   ty->circular_offset = 0;
    free(olds);
    free(olds2);
 
