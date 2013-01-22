@@ -24,7 +24,6 @@ struct _Win
    Evas_Object *table;
    Eina_List   *terms;
    Split       *split;
-   Config      *config;
    Ecore_Job   *size_job;
    Eina_Bool    focused : 1;
 };
@@ -119,6 +118,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
 {
    Split *sp2;
    Evas_Object *o;
+   Config *config;
 
    if (!sp->term) return;
    
@@ -140,7 +140,8 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
    sp2->wn = sp->wn;
-   sp2->term = main_term_new(sp->wn, sp->wn->config,
+   config = config_load("config");
+   sp2->term = main_term_new(sp->wn, config,
                              NULL, EINA_FALSE, NULL,
                              80, 24, EINA_FALSE);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
@@ -1004,6 +1005,7 @@ main_media_update(const Config *config)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
+             if (term->config != config) continue;
              if ((config->background) && (config->background[0]))
                {
                   Evas_Object *o;
@@ -1056,6 +1058,7 @@ main_media_mute_update(const Config *config)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
+             if (term->config != config) continue;
              if (term->media) media_mute_set(term->media, config->mute);
           }
      }
@@ -1077,7 +1080,6 @@ main_win_free(Win *wn)
         evas_object_event_callback_del_full(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
         evas_object_del(wn->win);
      }
-   if (wn->config) config_del(wn->config);
    if (wn->size_job) ecore_job_del(wn->size_job);
    free(wn);
 }
@@ -1160,6 +1162,8 @@ main_term_free(Term *term)
    term->popmedia = NULL;
    if (term->media) evas_object_del(term->media);
    term->media = NULL;
+   if (term->config) config_del(term->config);
+   term->config = NULL;
    free(term);
 }
 
@@ -1449,7 +1453,6 @@ main_ipc_new(Ipc_Instance *inst)
         return;
      }
    config = config_load("config");
-   wn->config = config;
    
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
@@ -1972,7 +1975,6 @@ remote:
         retval = EXIT_FAILURE;
         goto end;
      }
-   wn->config = config;
 
    term = main_term_new(wn, config, cmd, login_shell, cd,
                         size_w, size_h, hold);
