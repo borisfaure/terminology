@@ -17,16 +17,6 @@ collections {
         image: "pm_fill.png" COMP;
       }
       parts {
-// other signals sent not handled here         
-//            program { name: "focus_in";
-//               signal: "focus,in";
-//               source: "terminology";
-//            }
-//            program { name: "focus_out";
-//               signal: "focus,out";
-//               source: "terminology";
-//            }
-
          ////////////////////////////////////////////////////////////////////
          // background handling
          part { name: "shadow";
@@ -167,6 +157,11 @@ collections {
                   offset: -1 0;
                }
                image.normal: "bg_glint.png";
+               color: 255 255 255 128;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
             }
          }
          part { name: "shine";
@@ -179,7 +174,26 @@ collections {
                align: 0.5 0.0;
                aspect: (255/120) (255/120);
                aspect_preference: HORIZONTAL;
+               color: 255 255 255 128;
             }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         program { name: "focus_in";
+            signal: "focus,in";
+            source: "terminology";
+            action: STATE_SET "focused" 0.0;
+            target: "glint";
+            target: "shine";
+         }
+         program { name: "focus_out";
+            signal: "focus,out";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "glint";
+            target: "shine";
          }
 
          ////////////////////////////////////////////////////////////////////

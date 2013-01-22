@@ -63,7 +63,7 @@ struct _Termio
    Ecore_Timer *delayed_size_timer;
    Ecore_Timer *link_do_timer;
    Ecore_Job *mouse_move_job;
-    Evas_Object *win, *theme;
+   Evas_Object *win, *theme, *glayer;
    Config *config;
    Ecore_IMF_Context *imf;
    Eina_Bool jump_on_change : 1;
@@ -1010,6 +1010,21 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              goto end;
           }
      }
+   if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
+       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
+       (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
+     {
+        if (!strcmp(ev->keyname, "Prior"))
+          {
+             evas_object_smart_callback_call(data, "prev", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "Next"))
+          {
+             evas_object_smart_callback_call(data, "next", NULL);
+             goto end;
+          }
+     }
    if (sd->jump_on_keypress)
      {
         if (!_is_modifier(ev->key))
@@ -1797,6 +1812,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
      }
    else if (ev->button == 3)
      {
+        elm_object_focus_set(data, EINA_TRUE);
         evas_object_smart_callback_call(data, "options", NULL);
      }
 }
@@ -1806,7 +1822,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd;
-   int cx, cy;
+   int cx, cy, dx, dy, f;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -2302,6 +2318,10 @@ _smart_del(Evas_Object *obj)
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    if (sd->link.string) free(sd->link.string);
+   if (sd->glayer) evas_object_del(sd->glayer);
+   if (sd->win)
+     evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
+                                         _win_obj_del, obj);
    EINA_LIST_FREE(sd->link.objs, o) evas_object_del(o);
    _compose_seq_reset(sd);
    sd->cur.obj = NULL;
@@ -2314,6 +2334,8 @@ _smart_del(Evas_Object *obj)
    sd->font.name = NULL;
    sd->pty = NULL;
    sd->imf = NULL;
+   sd->win = NULL;
+   sd->glayer = NULL;
    ecore_imf_shutdown();
 
    termpty_shutdown();
@@ -2502,7 +2524,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
 
    _termio_config_set(obj, config);
 
-   g = elm_gesture_layer_add(parent);
+   sd->glayer = g = elm_gesture_layer_add(parent);
    elm_gesture_layer_attach(g, sd->event);
 
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
@@ -2569,8 +2591,7 @@ termio_theme_set(Evas_Object *obj, Evas_Object *theme)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (theme)
-       sd->theme = theme;
+   if (theme) sd->theme = theme;
 }
 
 Evas_Object *
@@ -2578,7 +2599,6 @@ termio_theme_get(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;
-
    return sd->theme;
 }
 
@@ -2602,6 +2622,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells) continue;
         if (w > sd->grid.w) w = sd->grid.w;
+        if (c1x >= w) continue;
+        if (c2x >= w) c2x = w - 1;
         start_x = c1x;
         end_x = c2x;
         if (c1y != c2y)
@@ -2745,11 +2767,14 @@ termio_config_update(Evas_Object *obj)
    termpty_backscroll_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
 
-   edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
-   if (sd->config->disable_cursor_blink)
-     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
-   else
-     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
+   if (evas_object_focus_get(obj))
+     {
+        edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
+        if (sd->config->disable_cursor_blink)
+          edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
+        else
+          edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
+     }
    
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
