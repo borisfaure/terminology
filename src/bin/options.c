@@ -127,14 +127,16 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 {
    Evas_Object *o;
 
-   saved_win = win;
-   saved_bg = bg;
    mode = -1;
    if (!op_frame)
      {
         Elm_Object_Item *it_fn;
         Config *config = termio_config_get(term);
-
+        
+        if (!config) return;
+        saved_win = win;
+        saved_bg = bg;
+        
         op_opbox = o = elm_box_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -195,7 +197,12 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(op_frame);
      }
    else if ((op_opbox) && (!op_out))
-     edje_object_signal_emit(bg, "optdetails,show", "terminology");
+     {
+        edje_object_part_swallow(bg, "terminology.optdetails", op_opbox);
+        edje_object_part_swallow(bg, "terminology.options", op_frame);
+        edje_object_signal_emit(bg, "optdetails,show", "terminology");
+        edje_object_signal_emit(bg, "options,show", "terminology");
+     }
      
    if (!op_out)
      {

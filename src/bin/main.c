@@ -642,9 +642,9 @@ _cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    Term *term = data;
    Config *config = termio_config_get(term->term);
 
+   if (!config) return;
    if (!config->disable_visual_bell)
      edje_object_signal_emit(term->bg, "bell", "terminology");
-   if (!config) return;
    if (config->urg_bell)
      {
         if (!term->wn->focused) elm_win_urgent_set(term->wn->win, EINA_TRUE);
@@ -1006,6 +1006,7 @@ main_media_update(const Config *config)
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
              if (term->config != config) continue;
+             if (!config) continue;
              if ((config->background) && (config->background[0]))
                {
                   Evas_Object *o;
@@ -1205,6 +1206,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
 
+   if (!config) abort();
+   
    term->wn = wn;
    term->hold = hold;
    term->config = config;

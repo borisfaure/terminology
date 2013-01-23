@@ -13,8 +13,7 @@ static Eina_Bool ct_out = EINA_FALSE;
 static Ecore_Timer *ct_del_timer = NULL;
 static Evas_Object *saved_win = NULL;
 static Evas_Object *saved_bg = NULL;
-
-static Evas_Object *ct_win, *ct_bg, *ct_term;
+static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
 
 static Eina_Bool
 _cb_ct_del_delay(void *data __UNUSED__)
@@ -80,7 +79,8 @@ _cb_ct_about(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __U
 static void
 _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   controls_toggle(saved_win, saved_bg, data);
+   controls_toggle(ct_win, ct_bg, ct_term);
+   options_toggle(ct_win, ct_bg, ct_term);
 }
 
 static void
@@ -240,6 +240,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         ct_win = win;
         ct_bg = bg;
         ct_term = term;
+        saved_win = win;
+        saved_bg = bg;
         edje_object_signal_emit(bg, "controls,show", "terminology");
         ct_out = EINA_TRUE;
         elm_object_focus_set(ct_frame, EINA_TRUE);
@@ -262,9 +264,9 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_object_focus_set(ct_term, EINA_TRUE);
         if (ct_del_timer) ecore_timer_del(ct_del_timer);
         ct_del_timer = ecore_timer_add(10.0, _cb_ct_del_delay, NULL);
-        ct_term = NULL;
-        ct_bg = NULL;
-        ct_win = NULL;
+//        ct_term = NULL;
+//        ct_bg = NULL;
+//        ct_win = NULL;
      }
    if (saved_win)
      {
@@ -274,8 +276,6 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      }
    if (ct_out)
      {
-        saved_win = win;
-        saved_bg = bg;
         evas_object_event_callback_add(saved_win, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
         evas_object_event_callback_add(saved_bg, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
         evas_object_event_callback_add(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
@@ -284,8 +284,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         saved_win = NULL;
         saved_bg = NULL;
-        ct_term = NULL;
-        ct_bg = NULL;
-        ct_win = NULL;
+//        ct_term = NULL;
+//        ct_bg = NULL;
+//        ct_win = NULL;
      }
 }
