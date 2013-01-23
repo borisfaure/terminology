@@ -21,25 +21,16 @@ static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
 {
    int i;
-   Termatt clear;
+   Termcell src;
 
-   memset(&clear, 0, sizeof(clear));
-   if (inherit_att)
-     {
-        for (i = 0; i < count; i++)
-          {
-             cells[i].codepoint = val;
-             cells[i].att = ty->state.att;
-          }
-     }
-   else
-     {
-        for (i = 0; i < count; i++)
-          {
-             cells[i].codepoint = val;
-             cells[i].att = clear;
-          }
-     }
+   memset(&src, 0, sizeof (src));
+
+   src.codepoint = val;
+
+   if (inherit_att) src.att = ty->state.att;
+
+   for (i = 0; i < count; i++)
+     memcpy(cells + i, &src, sizeof (src));
 }
 
 static void
