@@ -288,7 +288,9 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
         if (ty->state.cy < (ty->h - 1))
           {
              cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + 1)));
-             _text_clear(ty, cells, ty->w * (ty->h - ty->state.cy - 1), 0, EINA_TRUE);
+             _text_clear(ty, cells,
+                         ty->w * (ty->h - ty->circular_offset - 1 - ty->state.cy),
+                         0, EINA_TRUE);
           }
         break;
       case TERMPTY_CLR_BEGIN:
