@@ -1229,7 +1229,9 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    if (!term) return NULL;
 
    if (!config) abort();
-   
+
+   termpty_init();
+
    term->wn = wn;
    term->hold = hold;
    term->config = config;
@@ -2050,6 +2052,8 @@ remote:
         wn = eina_list_data_get(wins);
         main_win_free(wn);
      }
+
+   termpty_shutdown();
 
    config_shutdown();
    eina_log_domain_unregister(_log_domain);

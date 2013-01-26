@@ -2358,8 +2358,6 @@ _smart_del(Evas_Object *obj)
    sd->glayer = NULL;
    ecore_imf_shutdown();
 
-   termpty_shutdown();
-
    _parent_sc.del(obj);
 }
 
@@ -2564,7 +2562,6 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
                             ELM_GESTURE_STATE_ABORT, _smart_cb_gest_zoom_abort,
                             obj);
    
-   termpty_init();
 
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
    sd->pty->cb.change.func = _smart_pty_change;
