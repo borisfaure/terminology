@@ -52,8 +52,11 @@ Shift+Keypad-Plus = Font size up 1
 Shift+Keypad-Minus = Font size down 1
 Shift+Keypad-Multiply = Reset font size to 10
 Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
-Ctrl+PgUp = reserved later for multi-terms
-Ctrl+PgDn = reserved later for multi-terms
+Ctrl+PgUp = switch focus to previous terminal inside a window
+Ctrl+PgDn = switch focus to next terminal inside a window
+Ctrl+t = create new terminal on top of current inside window (tabs) (not implemented)
+Ctrl+Shift+PgUp = split terminal horizontally (1 term above the other)
+Ctrl+Shift+PgDn = split terminal vertically (1 term to the left of the other)
 Alt+Home = Enter command mode (enter commands to control terminology itself)
 
 Command mode commands currently understood:

@@ -857,6 +857,28 @@ _cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    if (term2) _term_focus(term2);
 }
 
+static void
+_cb_new(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+}
+
+static void
+_cb_split_h(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+
+   main_split_h(term->wn->win, term->term);
+}
+
+static void
+_cb_split_v(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+   
+   main_split_v(term->wn->win, term->term);
+}
+
 static Eina_Bool
 _cb_cmd_focus(void *data)
 {
@@ -1267,6 +1289,9 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "command", _cb_command, term);
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);
    evas_object_smart_callback_add(o, "next", _cb_next, term);
+   evas_object_smart_callback_add(o, "new", _cb_new, term);
+   evas_object_smart_callback_add(o, "split,h", _cb_split_h, term);
+   evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
    evas_object_show(o);
    
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
