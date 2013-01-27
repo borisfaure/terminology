@@ -21,11 +21,15 @@ struct _Win
    Evas_Object *win;
    Evas_Object *conform;
    Evas_Object *backbg;
-   Evas_Object *table;
+   Evas_Object *base;
+   Config      *config;
    Eina_List   *terms;
    Split       *split;
    Ecore_Job   *size_job;
+   Evas_Object *cmdbox;
+   Ecore_Timer *cmdbox_focus_timer;
    Eina_Bool    focused : 1;
+   Eina_Bool    cmdbox_up : 1;
 };
 
 struct _Term
@@ -36,15 +40,12 @@ struct _Term
    Evas_Object *term;
    Evas_Object *media;
    Evas_Object *popmedia;
-   Evas_Object *cmdbox;
-   Ecore_Timer *cmdbox_focus_timer;
    Eina_List   *popmedia_queue;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
    struct {
       int       x, y;
    } down;
    Eina_Bool    focused : 1;
-   Eina_Bool    cmdbox_up : 1;
    Eina_Bool    hold : 1;
 };
 
@@ -134,7 +135,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->wn = sp->wn;
    sp2->term = sp->term;
    
-   if (!sp->parent) elm_table_unpack(sp->wn->table, sp->term->bg);
+   if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
    main_term_bg_redo(sp->term);
    
    sp2 = sp->s2 = calloc(1, sizeof(Split));
@@ -151,7 +152,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    elm_object_part_content_set(sp->panes, "bottom", sp->s2->term->bg);
    
    if (!sp->parent)
-     elm_table_pack(sp->wn->table, sp->panes, 0, 0, 1, 1);
+     edje_object_part_swallow(sp->wn->base, "terminology.content", sp->panes);
    else
      {
         if (sp == sp->parent->s1)
@@ -282,7 +283,7 @@ _split_merge(Split *spp, Split *sp, const char *slot)
              elm_object_part_content_set(spp->parent->panes, slot, o);
           }
         else
-          elm_table_pack(spp->wn->table, o, 0, 0, 1, 1);
+          edje_object_part_swallow(spp->wn->base, "terminology.content", o);
      }
    else
      {
@@ -298,7 +299,7 @@ _split_merge(Split *spp, Split *sp, const char *slot)
              elm_object_part_content_set(spp->parent->panes, slot, o);
           }
         else
-          elm_table_pack(spp->wn->table, o, 0, 0, 1, 1);
+          edje_object_part_swallow(spp->wn->base, "terminology.content", o);
         evas_object_del(spp->panes);
         spp->panes = o;
         sp->s1 = NULL;
@@ -368,7 +369,7 @@ main_close(Evas_Object *win, Evas_Object *term)
      }
    else
      {
-        elm_table_unpack(sp->wn->table, sp->term->bg);
+        edje_object_part_unswallow(sp->wn->base, sp->term->bg);
         main_term_free(sp->term);
         sp->term = NULL;
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
@@ -406,11 +407,11 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    
    if (!wn->focused) elm_win_urgent_set(wn->win, EINA_FALSE);
    wn->focused = EINA_TRUE;
+   if (wn->cmdbox_up) elm_object_focus_set(wn->cmdbox, EINA_TRUE);
    term = main_win_focused_term_get(wn);
    if (!term) return;
    edje_object_signal_emit(term->bg, "focus,in", "terminology");
-   if (term->cmdbox_up) elm_object_focus_set(term->cmdbox, EINA_TRUE);
-   else elm_object_focus_set(term->term, EINA_TRUE);
+   if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_TRUE);
 }
 
 static void
@@ -420,11 +421,11 @@ _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    Term *term;
    
    wn->focused = EINA_FALSE;
+   if (wn->cmdbox_up) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    term = main_win_focused_term_get(wn);
    if (!term) return;
    edje_object_signal_emit(term->bg, "focus,out", "terminology");
-   if (term->cmdbox_up) elm_object_focus_set(term->cmdbox, EINA_FALSE);
-   else elm_object_focus_set(term->term, EINA_FALSE);
+   if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_FALSE);
    elm_cache_all_flush();
 }
 
@@ -610,7 +611,7 @@ _cb_options(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
 
-   controls_toggle(term->wn->win, term->bg, term->term);
+   controls_toggle(term->wn->win, term->wn->base, term->term);
 }
 
 static Eina_Bool
@@ -882,83 +883,93 @@ _cb_split_v(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 static Eina_Bool
 _cb_cmd_focus(void *data)
 {
-   Term *term = data;
+   Win *wn = data;
+   Term *term;
    
-   term->cmdbox_focus_timer = NULL;
-   elm_object_focus_set(term->cmdbox, EINA_TRUE);
+   wn->cmdbox_focus_timer = NULL;
+   term = main_win_focused_term_get(wn);
+   if (term) elm_object_focus_set(term->term, EINA_FALSE);
+   elm_object_focus_set(wn->cmdbox, EINA_TRUE);
    return EINA_FALSE;
 }
 
 static void
 _cb_cmdbox(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Term *term = data;
+   Win *wn = data;
+   Term *term;
    
-   term->cmdbox_up = EINA_TRUE;
-   elm_object_focus_set(term->term, EINA_FALSE);
-   edje_object_signal_emit(term->bg, "cmdbox,show", "terminology");
-   elm_entry_entry_set(term->cmdbox, "");
-   evas_object_show(term->cmdbox);
-   if (term->cmdbox_focus_timer) ecore_timer_del(term->cmdbox_focus_timer);
-   term->cmdbox_focus_timer = ecore_timer_add(0.1, _cb_cmd_focus, term);
+   wn->cmdbox_up = EINA_TRUE;
+   edje_object_signal_emit(wn->base, "cmdbox,show", "terminology");
+   term = main_win_focused_term_get(wn);
+   if (term) elm_object_focus_set(term->term, EINA_TRUE);
+   elm_entry_entry_set(wn->cmdbox, "");
+   evas_object_show(wn->cmdbox);
+   if (wn->cmdbox_focus_timer) ecore_timer_del(wn->cmdbox_focus_timer);
+   wn->cmdbox_focus_timer = ecore_timer_add(0.2, _cb_cmd_focus, wn);
 }
 
 static void
 _cb_cmd_activated(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Term *term = data;
+   Win *wn = data;
    char *cmd;
+   Term *term;
    
-   elm_object_focus_set(term->cmdbox, EINA_FALSE);
-   edje_object_signal_emit(term->bg, "cmdbox,hide", "terminology");
-   elm_object_focus_set(term->term, EINA_TRUE);
-   cmd = (char *)elm_entry_entry_get(term->cmdbox);
+   elm_object_focus_set(wn->cmdbox, EINA_FALSE);
+   edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
+   term = main_win_focused_term_get(wn);
+   if (term) elm_object_focus_set(term->term, EINA_TRUE);
+   cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
      {
         cmd = elm_entry_markup_to_utf8(cmd);
         if (cmd)
           {
-             termcmd_do(term->term, term->wn->win, term->bg, cmd);
+             if (term) termcmd_do(term->term, term->wn->win, term->bg, cmd);
              free(cmd);
           }
      }
-   if (term->cmdbox_focus_timer)
+   if (wn->cmdbox_focus_timer)
      {
-        ecore_timer_del(term->cmdbox_focus_timer);
-        term->cmdbox_focus_timer = NULL;
+        ecore_timer_del(wn->cmdbox_focus_timer);
+        wn->cmdbox_focus_timer = NULL;
      }
-   term->cmdbox_up = EINA_FALSE;
+   wn->cmdbox_up = EINA_FALSE;
 }
 
 static void
 _cb_cmd_aborted(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Term *term = data;
+   Win *wn = data;
+   Term *term;
    
-   elm_object_focus_set(term->cmdbox, EINA_FALSE);
-   edje_object_signal_emit(term->bg, "cmdbox,hide", "terminology");
-   elm_object_focus_set(term->term, EINA_TRUE);
-   if (term->cmdbox_focus_timer)
+   elm_object_focus_set(wn->cmdbox, EINA_FALSE);
+   edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
+   term = main_win_focused_term_get(wn);
+   if (term) elm_object_focus_set(term->term, EINA_TRUE);
+   if (wn->cmdbox_focus_timer)
      {
-        ecore_timer_del(term->cmdbox_focus_timer);
-        term->cmdbox_focus_timer = NULL;
+        ecore_timer_del(wn->cmdbox_focus_timer);
+        wn->cmdbox_focus_timer = NULL;
      }
-   term->cmdbox_up = EINA_FALSE;
+   wn->cmdbox_up = EINA_FALSE;
 }
 
 static void
 _cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Term *term = data;
+   Win *wn = data;
    char *cmd;
+   Term *term;
    
-   cmd = (char *)elm_entry_entry_get(term->cmdbox);
+   cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
      {
         cmd = elm_entry_markup_to_utf8(cmd);
         if (cmd)
           {
-             termcmd_watch(term->term, term->wn->win, term->bg, cmd);
+             if (term) termcmd_watch(term->term, term->wn->win, term->bg, cmd);
              free(cmd);
           }
      }
@@ -967,10 +978,10 @@ _cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 static void
 _cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Term *term = data;
+   Win *wn = data;
    
-   evas_object_show(term->cmdbox);
-   edje_object_part_swallow(term->bg, "terminology.cmdbox", term->cmdbox);
+   evas_object_show(wn->cmdbox);
+   edje_object_part_swallow(wn->base, "terminology.cmdbox", wn->cmdbox);
 }
 
 void
@@ -1097,6 +1108,13 @@ main_win_free(Win *wn)
      {
         main_term_free(term);
      }
+   if (wn->cmdbox_focus_timer)
+     {
+        ecore_timer_del(wn->cmdbox_focus_timer);
+        wn->cmdbox_focus_timer = NULL;
+     }
+   evas_object_del(wn->cmdbox);
+   wn->cmdbox = NULL;
    if (wn->split) _split_free(wn->split);
    if (wn->win)
      {
@@ -1104,12 +1122,13 @@ main_win_free(Win *wn)
         evas_object_del(wn->win);
      }
    if (wn->size_job) ecore_job_del(wn->size_job);
+   if (wn->config) config_del(wn->config);
    free(wn);
 }
 
 static Win *
-main_win_new(const char *name, const char *role,
-             const char *title, const char *icon_name,
+main_win_new(const char *name, const char *role, const char *title,
+             const char *icon_name, Config *config,
              Eina_Bool fullscreen, Eina_Bool iconic,
              Eina_Bool borderless, Eina_Bool override,
              Eina_Bool maximized)
@@ -1127,6 +1146,8 @@ main_win_new(const char *name, const char *role,
         return NULL;
      }
 
+   wn->config = config;
+   
    evas_object_event_callback_add(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
    
    if (fullscreen) elm_win_fullscreen_set(wn->win, EINA_TRUE);
@@ -1147,12 +1168,31 @@ main_win_new(const char *name, const char *role,
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(wn->win, o);
    evas_object_show(o);
-   
-   wn->table = o = elm_table_add(wn->win);
+
+   wn->base = o = edje_object_add(evas_object_evas_get(wn->win));
+   theme_apply(o, config, "terminology/base");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(wn->conform, o);
    evas_object_show(o);
+
+   wn->cmdbox = o = elm_entry_add(wn->win);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_FALSE);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_input_panel_layout_set(o, ELM_INPUT_PANEL_LAYOUT_TERMINAL);
+   elm_entry_autocapital_type_set(o, ELM_AUTOCAPITAL_TYPE_NONE);
+   elm_entry_input_panel_enabled_set(o, EINA_TRUE);
+   elm_entry_input_panel_language_set(o, ELM_INPUT_PANEL_LANG_ALPHABET);
+   elm_entry_input_panel_return_key_type_set(o, ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO);
+   elm_entry_prediction_allow_set(o, EINA_FALSE);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "activated", _cb_cmd_activated, wn);
+   evas_object_smart_callback_add(o, "aborted", _cb_cmd_aborted, wn);
+   evas_object_smart_callback_add(o, "changed,user", _cb_cmd_changed, wn);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _cb_cmd_hints_changed, wn);
+   edje_object_part_swallow(wn->base, "terminology.cmdbox", o);
    
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_focus_out, wn);
@@ -1170,15 +1210,8 @@ main_term_free(Term *term)
      {
         eina_stringshare_del(s);
      }
-   if (term->cmdbox_focus_timer)
-     {
-        ecore_timer_del(term->cmdbox_focus_timer);
-        term->cmdbox_focus_timer = NULL;
-     }
    evas_object_del(term->term);
    term->term = NULL;
-   evas_object_del(term->cmdbox);
-   term->cmdbox = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
    if (term->popmedia) evas_object_del(term->popmedia);
@@ -1207,7 +1240,6 @@ main_term_bg_redo(Term *term)
 
    edje_object_signal_callback_add(o, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
-   edje_object_part_swallow(term->bg, "terminology.cmdbox", term->cmdbox);
    termio_theme_set(term->term, term->bg);
    edje_object_part_swallow(term->bg, "terminology.content", term->term);
    if ((term->focused) && (term->wn->focused))
@@ -1253,24 +1285,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    edje_object_signal_callback_add(o, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
 
-   term->cmdbox = o = elm_entry_add(wn->win);
-   elm_entry_single_line_set(o, EINA_TRUE);
-   elm_entry_scrollable_set(o, EINA_FALSE);
-   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_input_panel_layout_set(o, ELM_INPUT_PANEL_LAYOUT_TERMINAL);
-   elm_entry_autocapital_type_set(o, ELM_AUTOCAPITAL_TYPE_NONE);
-   elm_entry_input_panel_enabled_set(o, EINA_TRUE);
-   elm_entry_input_panel_language_set(o, ELM_INPUT_PANEL_LANG_ALPHABET);
-   elm_entry_input_panel_return_key_type_set(o, ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO);
-   elm_entry_prediction_allow_set(o, EINA_FALSE);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "activated", _cb_cmd_activated, term);
-   evas_object_smart_callback_add(o, "aborted", _cb_cmd_aborted, term);
-   evas_object_smart_callback_add(o, "changed,user", _cb_cmd_changed, term);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _cb_cmd_hints_changed, term);
-   edje_object_part_swallow(term->bg, "terminology.cmdbox", o);
-   
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                size_w, size_h);
    colors_term_init(termio_textgrid_get(term->term), term->bg);
@@ -1472,18 +1486,20 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
+   config = config_load("config");
    ecore_app_args_set(nargc, (const char **)nargv);
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
-                     inst->fullscreen, inst->iconic, inst->borderless,
-                     inst->override, inst->maximized);
+                     config, inst->fullscreen, inst->iconic,
+                     inst->borderless, inst->override, inst->maximized);
    if (!wn)
      {
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
+        config_del(config);
         return;
      }
-   config = config_load("config");
    
+   config = config_load("config");
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
@@ -1550,7 +1566,7 @@ main_ipc_new(Ipc_Instance *inst)
      }
    else
      {
-        elm_table_pack(wn->table, term->bg, 0, 0, 1, 1);
+        edje_object_part_swallow(wn->base, "terminology.content", term->bg);
         _cb_size_hint(term, evas_object_evas_get(wn->win), term->term, NULL);
      }
    
@@ -1993,7 +2009,7 @@ remote:
           }
      }
 
-   wn = main_win_new(name, role, title, icon_name,
+   wn = main_win_new(name, role, title, icon_name, config,
                      fullscreen, iconic, borderless, override, maximized);
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
@@ -2006,6 +2022,7 @@ remote:
         goto end;
      }
 
+   config = config_load("config");
    term = main_term_new(wn, config, cmd, login_shell, cd,
                         size_w, size_h, hold);
    if (!term)
@@ -2015,7 +2032,7 @@ remote:
      }
    else
      {
-        elm_table_pack(wn->table, term->bg, 0, 0, 1, 1);
+        edje_object_part_swallow(wn->base, "terminology.content", term->bg);
         _cb_size_hint(term, evas_object_evas_get(wn->win), term->term, NULL);
      }
    

@@ -11,8 +11,6 @@ static Evas_Object *ct_frame = NULL, *ct_boxh = NULL, *ct_box = NULL;
 static Evas_Object *ct_box2 = NULL, *ct_over = NULL;
 static Eina_Bool ct_out = EINA_FALSE;
 static Ecore_Timer *ct_del_timer = NULL;
-static Evas_Object *saved_win = NULL;
-static Evas_Object *saved_bg = NULL;
 static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
 
 static Eina_Bool
@@ -80,38 +78,40 @@ static void
 _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
    controls_toggle(ct_win, ct_bg, ct_term);
-   options_toggle(ct_win, ct_bg, ct_term);
 }
 
 static void
 _cb_saved_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   if ((obj == saved_win) || (obj == saved_bg) || (obj == ct_term))
+   if ((obj == ct_win) || (obj == ct_term))
      {
-        if (ct_frame)
+        if (obj == ct_term)
           {
-             evas_object_del(ct_frame);
-             ct_frame = NULL;
+             if (ct_out) controls_toggle(ct_win, ct_bg, ct_term);
+             ct_term = NULL;
           }
-        if (ct_del_timer)
+        else
           {
-             ecore_timer_del(ct_del_timer);
-             ct_del_timer = NULL;
+             if (ct_frame)
+               {
+                  evas_object_del(ct_frame);
+                  ct_frame = NULL;
+               }
+             if (ct_del_timer)
+               {
+                  ecore_timer_del(ct_del_timer);
+                  ct_del_timer = NULL;
+               }
+             if (ct_over)
+               {
+                  evas_object_del(ct_over);
+                  ct_over = NULL;
+               }
+             evas_object_event_callback_del(ct_win, EVAS_CALLBACK_DEL, _cb_saved_del);
+             ct_win = NULL;
           }
-        if (ct_over)
-          {
-             evas_object_del(ct_over);
-             ct_over = NULL;
-          }
-        evas_object_event_callback_del(saved_win, EVAS_CALLBACK_DEL, _cb_saved_del);
-        evas_object_event_callback_del(saved_bg, EVAS_CALLBACK_DEL, _cb_saved_del);
         evas_object_event_callback_del(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del);
-        saved_win = NULL;
-        saved_bg = NULL;
-        ct_win = NULL;
         ct_bg = NULL;
-        ct_term = NULL;
-        ct_out = EINA_FALSE;
      }
 }
 
@@ -240,8 +240,6 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         ct_win = win;
         ct_bg = bg;
         ct_term = term;
-        saved_win = win;
-        saved_bg = bg;
         edje_object_signal_emit(bg, "controls,show", "terminology");
         ct_out = EINA_TRUE;
         elm_object_focus_set(ct_frame, EINA_TRUE);
@@ -258,34 +256,21 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
              evas_object_del(ct_over);
              ct_over = NULL;
           }
-        edje_object_signal_emit(saved_bg, "controls,hide", "terminology");
+        edje_object_signal_emit(ct_bg, "controls,hide", "terminology");
         ct_out = EINA_FALSE;
         elm_object_focus_set(ct_frame, EINA_FALSE);
         elm_object_focus_set(ct_term, EINA_TRUE);
         if (ct_del_timer) ecore_timer_del(ct_del_timer);
         ct_del_timer = ecore_timer_add(10.0, _cb_ct_del_delay, NULL);
-//        ct_term = NULL;
-//        ct_bg = NULL;
-//        ct_win = NULL;
      }
-   if (saved_win)
+   if (ct_win)
      {
-        evas_object_event_callback_del(saved_win, EVAS_CALLBACK_DEL, _cb_saved_del);
-        evas_object_event_callback_del(saved_bg, EVAS_CALLBACK_DEL, _cb_saved_del);
+        evas_object_event_callback_del(ct_win, EVAS_CALLBACK_DEL, _cb_saved_del);
         evas_object_event_callback_del(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del);
      }
    if (ct_out)
      {
-        evas_object_event_callback_add(saved_win, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
-        evas_object_event_callback_add(saved_bg, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
+        evas_object_event_callback_add(ct_win, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
         evas_object_event_callback_add(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del, NULL);
-     }
-   else
-     {
-        saved_win = NULL;
-        saved_bg = NULL;
-//        ct_term = NULL;
-//        ct_bg = NULL;
-//        ct_win = NULL;
      }
 }
