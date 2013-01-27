@@ -890,7 +890,6 @@ collections {
    //// the cursor to show where text is typed
    group { name: "terminology/cursor";
       images {
-        image: "cr_fill.png" COMP;
         image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
       }
@@ -900,24 +899,6 @@ collections {
             }
             description { state: "pulse" 0.0;
                color: 255 255 255 80;
-            }
-         }
-         part { name: "fill";
-            mouse_events: 0;
-            clip_to: "pulsclip";
-            description { state: "default" 0.0;
-               image.normal: "cr_fill.png";
-               fill {
-                  size {
-                     relative: 0.0 0.0;
-                     offset: 32 32;
-                  }
-               }
-               color: 255 255 255 16;
-            }
-            description { state: "focused" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
             }
          }
          part { name: "key";
@@ -966,14 +947,12 @@ collections {
                signal: "focus,in,noblink";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "fill";
                target: "outline";
             }
             program { name: "focus_in";
                signal: "focus,in";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "fill";
                target: "outline";
                after: "pulse-prepare";
             }
@@ -1007,7 +986,6 @@ collections {
             }
             program { name: "focus_out2";
                action: STATE_SET "default" 0.0;
-               target: "fill";
                target: "outline";
                target: "pulsclip";
             }
