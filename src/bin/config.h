@@ -46,6 +46,7 @@ struct _Config
 
 void config_init(void);
 void config_shutdown(void);
+void config_sync(const Config *config_src, Config *config);
 void config_save(Config *config, const char *key);
 Config *config_load(const char *key);
 void config_del(Config *config);

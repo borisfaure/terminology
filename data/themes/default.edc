@@ -7,6 +7,7 @@ collections {
         image: "bg_bevel.png" COMP;
         image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
+        image: "bg_glow_in.png" COMP;
         image: "bg_shadow.png" COMP;
         image: "bg_led_glow.png" COMP;
         image: "bg_led_base.png" COMP;
@@ -124,6 +125,24 @@ collections {
          
          ////////////////////////////////////////////////////////////////////
          // overlayed prettiness
+         part { name: "glow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "bg_glow_in.png";
+               image.border: 7 7 7 7;
+               image.middle: 0;
+               fill.smooth: 0;
+               color: 51 153 255 0;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+            description { state: "focused2" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 64;
+            }
+         }
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -133,7 +152,6 @@ collections {
                image.border: 3 3 5 3;
                image.middle: 0;
                fill.smooth: 0;
-               visible: 1;
             }
          }
          part { name: "glintclip"; type: RECT;
@@ -174,7 +192,7 @@ collections {
                align: 0.5 0.0;
                aspect: (255/120) (255/120);
                aspect_preference: HORIZONTAL;
-               color: 255 255 255 128;
+               color: 255 255 255 64;
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
@@ -186,14 +204,22 @@ collections {
             source: "terminology";
             action: STATE_SET "focused" 0.0;
             target: "glint";
+            target: "glow";
             target: "shine";
+            after: "focus_in2";
          }
          program { name: "focus_out";
             signal: "focus,out";
             source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "glint";
+            target: "glow";
             target: "shine";
+         }
+         program { name: "focus_in2";
+            action: STATE_SET "focused2" 0.0;
+            transition: DECELERATE 0.5;
+            target: "glow";
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -2059,12 +2085,14 @@ target: "4.bottom"
    //// the cursor to show where text is typed
    group { name: "terminology/cursor";
       images {
-        image: "cr_fill.png" COMP;
+//        image: "cr_fill.png" COMP;
         image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
         image: "cr_pulse.png" COMP;
+        image: "cr_glow.png" COMP;
       }
       parts {
+/*         
          part { name: "fill";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -2082,6 +2110,7 @@ target: "4.bottom"
                color: 255 255 255 255;
             }
          }
+ */
          part { name: "key";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -2097,11 +2126,11 @@ target: "4.bottom"
                   normal: "cr_key.png";
                   border: 4 4 4 4;
                }
-               color: 255 255 255 0;
+               color: 51 153 255 0;
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
+               color: 51 153 255 255;
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
@@ -2125,17 +2154,33 @@ target: "4.bottom"
                   normal: "cr_pulse.png";
                   border: 4 4 4 4;
                }
-               color: 255 255 255 0;
+               color: 51 153 255 0;
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
+               color: 51 153 255 255;
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
                color: 51 153 255 0;
                rel1.offset: -8 -8;
                rel2.offset: 7 7;
+            }
+         }
+         part { name: "glow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 40;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
             }
          }
          part { name: "outline";
@@ -2157,14 +2202,14 @@ target: "4.bottom"
                signal: "focus,in,noblink";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "fill";
+               target: "glow";
                target: "outline";
             }
             program { name: "focus_in";
                signal: "focus,in";
                source: "terminology";
                action: STATE_SET "focused" 0.0;
-               target: "fill";
+               target: "glow";
                target: "outline";
                after: "focus2";
                after: "pulse";
@@ -2172,14 +2217,15 @@ target: "4.bottom"
             program { name: "focus2";
                in: 0.5 0.0;
                action: STATE_SET "default" 0.0;
-               target: "fill";
+               transition: DECELERATE 0.2;
+               target: "glow";
                target: "outline";
                after: "focus3";
             }
             program { name: "focus3";
                in: 0.5 0.0;
                action: STATE_SET "focused" 0.0;
-               target: "fill";
+               target: "glow";
                target: "outline";
                after: "focus2";
                after: "pulse";
@@ -2207,7 +2253,7 @@ target: "4.bottom"
             }
             program { name: "focus_out2";
                action: STATE_SET "default" 0.0;
-               target: "fill";
+               target: "glow";
                target: "outline";
             }
             program { name: "key";

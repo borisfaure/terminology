@@ -984,32 +984,56 @@ _cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    edje_object_part_swallow(wn->base, "terminology.cmdbox", wn->cmdbox);
 }
 
+static void
+_win_trans(Win *wn, Term *term, Eina_Bool trans)
+{
+   if (term->config->translucent)
+     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+   else
+     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+   if (trans)
+     {
+        elm_win_alpha_set(wn->win, EINA_TRUE);
+        evas_object_hide(wn->backbg);
+     }
+   else
+     {
+        elm_win_alpha_set(wn->win, EINA_FALSE);
+        evas_object_show(wn->backbg);
+     }
+}
+
 void
 main_trans_update(const Config *config)
 {
    Win *wn;
-   Term *term;
+   Term *term, *term2;
    Eina_List *l, *ll;
    
    EINA_LIST_FOREACH(wins, l, wn)
      {
-        if (config->translucent)
+        EINA_LIST_FOREACH(wn->terms, ll, term)
           {
-             EINA_LIST_FOREACH(wn->terms, ll, term)
+             if (term->config == config)
                {
-                  edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+                  if (config->translucent)
+                    _win_trans(wn, term, EINA_TRUE);
+                  else
+                    {
+                       Eina_Bool trans_exists = EINA_FALSE;
+                       
+                       EINA_LIST_FOREACH(wn->terms, ll, term2)
+                         {
+                            if (term2->config->translucent)
+                              {
+                                 trans_exists = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                       _win_trans(wn, term, trans_exists);
+                    }
+                  return;
                }
-             elm_win_alpha_set(wn->win, EINA_TRUE);
-             evas_object_hide(wn->backbg);
-          }
-        else
-          {
-             EINA_LIST_FOREACH(wn->terms, ll, term)
-               {
-                  edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-               }
-             elm_win_alpha_set(wn->win, EINA_FALSE);
-             evas_object_show(wn->backbg);
           }
      }
 }
@@ -1094,6 +1118,44 @@ main_media_mute_update(const Config *config)
           {
              if (term->config != config) continue;
              if (term->media) media_mute_set(term->media, config->mute);
+          }
+     }
+}
+
+void
+main_config_sync(const Config *config)
+{
+   Win *wn;
+   Term *term;
+   Eina_List *l, *ll;
+   
+   EINA_LIST_FOREACH(wins, l, wn)
+     {
+        if (wn->config != config)
+          {
+             config_sync(config, wn->config);
+          }
+        EINA_LIST_FOREACH(wn->terms, ll, term)
+          {
+             if (term->config != config)
+               {
+                  Evas_Coord mw = 1, mh = 1, w, h, tsize_w = 0, tsize_h = 0;
+                  
+                  config_sync(config, term->config);
+               
+                  evas_object_geometry_get(term->term, NULL, NULL,
+                                           &tsize_w, &tsize_h);
+                  evas_object_data_del(term->term, "sizedone");
+                  termio_config_update(term->term);
+                  evas_object_size_hint_min_get(term->term, &mw, &mh);
+                  if (mw < 1) mw = 1;
+                  if (mh < 1) mh = 1;
+                  w = tsize_w / mw;
+                  h = tsize_h / mh;
+                  evas_object_data_del(term->term, "sizedone");
+                  evas_object_size_hint_request_set(term->term,
+                                                    w * mw, h * mh);
+               }
           }
      }
 }

@@ -103,7 +103,11 @@ config_save(Config *config, const char *key)
 
    EINA_SAFETY_ON_NULL_RETURN(config);
 
-   if (config->temporary) return;
+   if (config->temporary)
+     {
+        main_config_sync(config);
+        return;
+     }
    if (!key) key = config->config_key;
    config->font.orig_size = config->font.size;
    eina_stringshare_del(config->font.orig_name);
@@ -123,6 +127,37 @@ config_save(Config *config, const char *key)
         eet_close(ef);
         if (ok) ecore_file_mv(buf, buf2);
      }
+   main_config_sync(config);
+}
+
+void
+config_sync(const Config *config_src, Config *config)
+{
+   // SOME fields have to be consistent between configs
+   config->font.size = config_src->font.size;
+   eina_stringshare_replace(&(config->font.name), config_src->font.name);
+   config->font.bitmap = config_src->font.bitmap;
+   config->helper.inline_please = config_src->helper.inline_please;
+   eina_stringshare_replace(&(config->helper.email), config_src->helper.email);
+   eina_stringshare_replace(&(config->helper.url.general), config_src->helper.url.general);
+   eina_stringshare_replace(&(config->helper.url.video), config_src->helper.url.video);
+   eina_stringshare_replace(&(config->helper.url.image), config_src->helper.url.image);
+   eina_stringshare_replace(&(config->helper.local.general), config_src->helper.local.general);
+   eina_stringshare_replace(&(config->helper.local.video), config_src->helper.local.video);
+   eina_stringshare_replace(&(config->helper.local.image), config_src->helper.local.image);
+   eina_stringshare_replace(&(config->theme), config_src->theme);
+   eina_stringshare_replace(&(config->wordsep), config_src->wordsep);
+   config->scrollback = config_src->scrollback;
+   config->vidmod = config_src->vidmod;
+   config->jump_on_keypress = config_src->jump_on_keypress;
+   config->jump_on_change = config_src->jump_on_change;
+   config->flicker_on_key = config_src->flicker_on_key;
+   config->disable_cursor_blink = config_src->disable_cursor_blink;
+   config->disable_visual_bell = config_src->disable_visual_bell;
+   config->mute = config_src->mute;
+   config->urg_bell = config_src->urg_bell;
+   config->multi_instance = config_src->multi_instance;
+   config->temporary = config_src->temporary;
 }
 
 Config *
