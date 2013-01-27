@@ -91,4 +91,35 @@ i.e.
 e.g.
   echo -n '\033}Hello world\000'
   
-Commands understood:
+Commands:
+
+any values inside square brackets [] are to be replaced by some
+content (numbers, strings, paths, url's etc.). example:
+
+aa[PATH-OF-FILE] should be come something like:
+  aa/tmp/file.png
+or aa[true/false] should become something like:
+  aatrue
+or
+  aafalse
+
+---
+
+pn[FULL-PATH-OR-URL]
+  = popup the given media file/url now
+
+pq[FULL-PATH-OR-URL]
+  = quque a popup for the given media file/url
+
+bt[FULL-PATH-OR-URL]
+  = set the terminal background me3edia file/url temporarily
+
+bp[FULL-PATH-OR-URL]
+  = set the terminal background me3edia file/url permanently
+
+at[on/true/yes/off/false/no]
+  = set the terminal alpha state to be on, or off temporarily
+
+ap[on/true/yes/off/false/no]
+  = set the terminal alpha state to be on, or off permanently
+
