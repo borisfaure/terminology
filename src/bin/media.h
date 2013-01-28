@@ -1,8 +1,15 @@
 #ifndef _MEDIA_H__
 #define _MEDIA_H__ 1
 
-#define MEDIA_BG 0
-#define MEDIA_POP 1
+#define MEDIA_SIZE_MASK    0x000f
+#define MEDIA_OPTIONS_MASK 0x00f0
+// enum list types
+#define MEDIA_BG           0x0000
+#define MEDIA_POP          0x0001
+#define MEDIA_STRETCH      0x0002
+// bitmask for options - on or off
+#define MEDIA_RECOVER      0x0010
+#define MEDIA_SAVE         0x0020
 
 #define TYPE_UNKNOWN -1
 #define TYPE_IMG      0

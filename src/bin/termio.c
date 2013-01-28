@@ -388,11 +388,18 @@ _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh;
+   Eina_List *l, *ln;
+   Termblock *blk;
    int j, x, y, w, ch1 = 0, ch2 = 0, inv = 0;
 
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-
+   
+   EINA_LIST_FOREACH(sd->pty->block.active, l, blk)
+     {
+        blk->was_active = blk->active;
+        blk->active = EINA_FALSE;
+     }
    inv = sd->pty->state.reverse;
    for (y = 0; y < sd->grid.h; y++)
      {
@@ -428,7 +435,67 @@ _smart_apply(Evas_Object *obj)
                }
              else
                {
-                  if (cells[j].att.invisible)
+                  int bid, bx = 0, by = 0;
+                  
+                  bid = termpty_block_id_get(&(cells[j]), &bx, &by);
+                  if (bid >= 0)
+                    {
+                       if (ch1 < 0) ch1 = x;
+                       ch2 = x;
+                       tc[x].codepoint = 0;
+                       tc[x].fg_extended = 0;
+                       tc[x].bg_extended = 0;
+                       tc[x].underline = 0;
+                       tc[x].strikethrough = 0;
+                       tc[x].fg = COL_INVIS;
+                       tc[x].bg = COL_INVIS;
+#if defined(SUPPORT_DBLWIDTH)
+                       tc[x].double_width = 0;
+#endif
+                       blk = termpty_block_get(sd->pty, bid);
+                       if (blk)
+                         {
+                            if (!blk->active)
+                              {
+                                 blk->active = EINA_TRUE;
+                                 if (!blk->obj)
+                                   {
+                                      int type = 0;
+                                      int media = MEDIA_STRETCH;
+                                      
+                                      if (blk->scale_stretch)
+                                        media = MEDIA_STRETCH;
+                                      else if (blk->scale_center)
+                                        media = MEDIA_POP;
+                                      else if (blk->scale_fill)
+                                        media = MEDIA_BG;
+                                      if (!blk->was_active_before)
+                                        media |= MEDIA_SAVE;
+                                      else
+                                        media |= MEDIA_RECOVER | MEDIA_SAVE;
+                                      blk->obj = media_add(obj, blk->path,
+                                                           sd->config,
+                                                           media, &type);
+                                      blk->type = type;
+                                      evas_object_smart_member_add(blk->obj, obj);
+                                      evas_object_stack_above(blk->obj, sd->grid.obj);
+                                      evas_object_show(blk->obj);
+                                   }
+                                 blk->was_active_before = EINA_TRUE;
+                                 if (!blk->was_active)
+                                   sd->pty->block.active = eina_list_append(sd->pty->block.active, blk);
+                              }
+                            blk->x = (x - bx);
+                            blk->y = (y - by);
+                            evas_object_move(blk->obj,
+                                             ox + (blk->x * sd->font.chw),
+                                             oy + (blk->y * sd->font.chh));
+                            evas_object_resize(blk->obj,
+                                               blk->w * sd->font.chw,
+                                               blk->h * sd->font.chh);
+                         }
+                    }
+                  else if (cells[j].att.invisible)
                     {
                        if ((tc[x].codepoint != 0) ||
                            (tc[x].bg != COL_INVIS) ||
@@ -544,6 +611,21 @@ _smart_apply(Evas_Object *obj)
         if (ch1 >= 0)
           evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
                                           ch2 - ch1 + 1, 1);
+     }
+   
+   EINA_LIST_FOREACH_SAFE(sd->pty->block.active, l, ln, blk)
+     {
+        if (!blk->active)
+          {
+             blk->was_active = EINA_FALSE;
+             if (blk->obj)
+               {
+                  evas_object_del(blk->obj);
+                  blk->obj = NULL;
+               }
+             sd->pty->block.active = eina_list_remove_list
+               (sd->pty->block.active, l);
+          }
      }
    
    if ((sd->scroll != 0) || (sd->pty->state.hidecursor))
@@ -992,11 +1074,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              evas_object_smart_callback_call(data, "next", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "t"))
-          {
-             evas_object_smart_callback_call(data, "new", NULL);
-             goto end;
-          }
      }
    if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
@@ -1010,6 +1087,11 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         else if (!strcmp(ev->keyname, "Next"))
           {
              evas_object_smart_callback_call(data, "split,v", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "t"))
+          {
+             evas_object_smart_callback_call(data, "new", NULL);
              goto end;
           }
      }
@@ -2521,6 +2603,67 @@ _smart_pty_command(void *data)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (!sd->pty->cur_cmd) return;
+   if (sd->pty->cur_cmd[0] == 'i')
+     {
+        if ((sd->pty->cur_cmd[1] == 's') ||
+            (sd->pty->cur_cmd[1] == 'c') ||
+            (sd->pty->cur_cmd[1] == 'f'))
+          {
+             const char *p, *p0, *path;
+             int ww = 0, hh = 0;
+             
+             // exact size in CHAR CELLS - WW (decimal) width CELLS,
+             // HH (decimal) in CELLS.
+             // 
+             // isWW;HH;PATH
+             for (p0 = p = &(sd->pty->cur_cmd[2]); *p; p++)
+               {
+                  if (*p == ';')
+                    {
+                       ww = strtol(p0, NULL, 10);
+                       p++;
+                       break;
+                    }
+               }
+             for (p0 = p; *p; p++)
+               {
+                  if (*p == ';')
+                    {
+                       hh = strtol(p0, NULL, 10);
+                       p++;
+                       break;
+                    }
+               }
+             path = p;
+             if ((ww < 512) && (hh < 512))
+               {
+                  Termblock *blk = termpty_block_new(sd->pty, ww, hh, path);
+                  if (blk)
+                    {
+                       if (sd->pty->cur_cmd[1] == 's')
+                         blk->scale_stretch = EINA_TRUE;
+                       else if (sd->pty->cur_cmd[1] == 'c')
+                         blk->scale_center = EINA_TRUE;
+                       else if (sd->pty->cur_cmd[1] == 'f')
+                         blk->scale_fill = EINA_TRUE;
+                       termpty_block_insert(sd->pty, blk);
+                    }
+               }
+             return;
+          }
+     }
+   else if (sd->pty->cur_cmd[0] == 'q')
+     {
+        if (sd->pty->cur_cmd[1] == 's')
+          {
+             char buf[256];
+             
+             snprintf(buf, sizeof(buf), "%i;%i;%i;%i\n",
+                      sd->grid.w, sd->grid.h, sd->font.chw, sd->font.chh);
+             termpty_write(sd->pty, buf, strlen(buf));
+             return;
+          }
+     }
    evas_object_smart_callback_call(obj, "command", (void *)sd->pty->cur_cmd);
 }
 

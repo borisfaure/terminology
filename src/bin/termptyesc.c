@@ -1310,7 +1310,33 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
         if (len == 0) return 0;
         return 1 + len;
      }
-
+   else if (ty->block.expecting.left > 0)
+     {
+        if (c[0] == '#')
+          {
+             Eina_Unicode cp;
+             
+             cp = (1 << 31) | 
+               ((ty->block.expecting.id & 0x1fff) << 18) |
+               ((ty->block.expecting.x & 0x1ff) << 9) | 
+               (ty->block.expecting.y & 0x1ff);
+             ty->block.expecting.x++;
+             if (ty->block.expecting.x >= ty->block.expecting.w)
+               {
+                  ty->block.expecting.x = 0;
+                  ty->block.expecting.y++;
+               }
+             ty->block.expecting.left--;
+             _termpty_text_append(ty, &cp, 1);
+             return 1;
+          }
+        else
+          {
+             _termpty_text_append(ty, c, 1);
+             ty->state.had_cr = 0;
+             return 1;
+          }
+     }
    cc = (int *)c;
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f))

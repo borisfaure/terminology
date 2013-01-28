@@ -54,7 +54,7 @@ Shift+Keypad-Multiply = Reset font size to 10
 Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
 Ctrl+PgUp = switch focus to previous terminal inside a window
 Ctrl+PgDn = switch focus to next terminal inside a window
-Ctrl+t = create new terminal on top of current inside window (tabs) (not implemented)
+Ctrl+Shift+t = create new terminal on top of current inside window (tabs) (not implemented)
 Ctrl+Shift+PgUp = split terminal horizontally (1 term above the other)
 Ctrl+Shift+PgDn = split terminal vertically (1 term to the left of the other)
 Alt+Home = Enter command mode (enter commands to control terminology itself)
@@ -122,4 +122,12 @@ at[on/true/yes/off/false/no]
 
 ap[on/true/yes/off/false/no]
   = set the terminal alpha state to be on, or off permanently
+
+qs
+  = query grid and font size. stdin will have written to it:
+    W;H;FW;FH\n
+    where W is the width of the terminal grid in characters
+    where H is the height of the terminal grid in characters
+    where FW is the width of 1 character cell in pixels
+    where FH is the height of 1 character cell in pixels
 

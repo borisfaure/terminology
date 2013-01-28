@@ -377,6 +377,8 @@ err:
 void
 termpty_free(Termpty *ty)
 {
+   if (ty->block.blocks) eina_hash_free(ty->block.blocks);
+   if (ty->block.active) eina_list_free(ty->block.active);
    if (ty->fd >= 0) close(ty->fd);
    if (ty->slavefd >= 0) close(ty->slavefd);
    if (ty->pid >= 0)
@@ -547,4 +549,79 @@ pid_t
 termpty_pid_get(const Termpty *ty)
 {
    return ty->pid;
+}
+
+void
+termpty_block_free(Termblock *tb)
+{
+   if (tb->path) eina_stringshare_del(tb->path);
+   if (tb->obj) evas_object_del(tb->obj);
+   free(tb);
+}
+
+Termblock *
+termpty_block_new(Termpty *ty, int w, int h, const char *path)
+{
+   Termblock *tb;
+   int id;
+   
+   id = ty->block.curid;
+   if (!ty->block.blocks)
+     ty->block.blocks = eina_hash_int32_new((Eina_Free_Cb)termpty_block_free);
+   if (!ty->block.blocks) return NULL;
+   tb = eina_hash_find(ty->block.blocks, &id);
+   if (tb)
+     {
+        if (tb->active)
+          ty->block.active = eina_list_remove(ty->block.active, tb);
+        eina_hash_del(ty->block.blocks, &id, tb);
+     }
+   tb = calloc(1, sizeof(Termblock));
+   if (!tb) return NULL;
+   tb->id = id;
+   tb->w = w;
+   tb->h = h;
+   tb->path = eina_stringshare_add(path);
+   eina_hash_add(ty->block.blocks, &id, tb);
+   ty->block.curid++;
+   if (ty->block.curid >= 8192) ty->block.curid = 0;
+   return tb;
+}
+
+void
+termpty_block_insert(Termpty *ty, Termblock *blk)
+{
+   // bit 0-8 = y (9b 0->511)
+   // bit 9-17 = x (9b 0->511)
+   // bit 18-30 = id (13b 0->8191)
+   // bit 31 = 1
+   // 
+   // fg/bg = 8+8bit unused. (use for extra id bits? so 16 + 13 == 29bit?)
+   // 
+   // cp = (1 << 31) | ((id 0x1fff) << 18) | ((x & 0x1ff) << 9) | (y & 0x1ff);
+
+   ty->block.expecting.left = blk->w * blk->h;
+   ty->block.expecting.x = 0;
+   ty->block.expecting.y = 0;
+   ty->block.expecting.id = blk->id;
+   ty->block.expecting.w = blk->w;
+   ty->block.expecting.h = blk->h;
+}
+
+int
+termpty_block_id_get(Termcell *cell, int *x, int *y)
+{
+   int id;
+   
+   if (!(cell->codepoint & 0x80000000)) return -1;
+   id = (cell->codepoint >> 18) & 0x1fff;
+   *x = (cell->codepoint >> 9) & 0x1ff;
+   *y = cell->codepoint & 0x1ff;
+   return id;
+}
+
+Termblock *
+termpty_block_get(Termpty *ty, int id)
+{
+   return eina_hash_find(ty->block.blocks, &id);
 }

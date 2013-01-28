@@ -158,7 +158,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      {
         int iw = 1, ih = 1;
         
-        if (sd->mode == MEDIA_BG)
+        if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_BG)
           {
              iw = w;
              ih = (sd->ih * w) / sd->iw;
@@ -169,7 +169,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
                   if (iw < w) iw = w;
                }
           }
-        else if (sd->mode == MEDIA_POP)
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_POP)
           {
              iw = w;
              ih = (sd->ih * w) / sd->iw;
@@ -184,6 +184,11 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
                   iw = sd->iw;
                   ih = sd->ih;
                }
+          }
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_STRETCH)
+          {
+             iw = w;
+             ih = h;
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -247,7 +252,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
      {
         int iw = 1, ih = 1;
         
-        if (sd->mode == MEDIA_BG)
+        if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_BG)
           {
              iw = w;
              ih = (sd->ih * w) / sd->iw;
@@ -258,7 +263,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
                   if (iw < w) iw = w;
                }
           }
-        else if (sd->mode == MEDIA_POP)
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_POP)
           {
              iw = w;
              ih = (sd->ih * w) / sd->iw;
@@ -268,6 +273,11 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
                   iw = (sd->iw * h) / sd->ih;
                   if (iw > w) iw = w;
                }
+          }
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_STRETCH)
+          {
+             iw = w;
+             ih = h;
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -514,6 +524,9 @@ _type_mov_init(Evas_Object *obj)
    evas_object_smart_callback_add(o, "ref_change",
                                   _cb_mov_ref, obj);
    emotion_object_file_set(o, sd->realf);
+   if (((sd->mode & MEDIA_OPTIONS_MASK) & MEDIA_RECOVER)
+       && (sd->type == TYPE_MOV) && (sd->o_img))
+     emotion_object_last_position_load(sd->o_img);
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
 
@@ -568,7 +581,7 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
         if (ratio > 0.0) sd->iw = (sd->ih * ratio) + 0.5;
         else ratio = (double)sd->iw / (double)sd->ih;
 
-        if (sd->mode == MEDIA_BG)
+        if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_BG)
           {
              iw = w;
              ih = w / ratio;
@@ -579,7 +592,7 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
                   if (iw < w) iw = w;
                }
           }
-        else if (sd->mode == MEDIA_POP)
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_POP)
           {
              iw = w;
              ih = w / ratio;
@@ -589,6 +602,11 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
                   iw = h * ratio;
                   if (iw > w) iw = w;
                }
+          }
+        else if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_STRETCH)
+          {
+             iw = w;
+             ih = h;
           }
         x += ((w - iw) / 2);
         y += ((h - ih) / 2);
@@ -624,6 +642,9 @@ _smart_del(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (((sd->mode & MEDIA_OPTIONS_MASK) & MEDIA_SAVE)
+       && (sd->type == TYPE_MOV) && (sd->o_img))
+     emotion_object_last_position_save(sd->o_img);
    if (sd->url)
      {
         ecore_event_handler_del(sd->url_prog_hand);

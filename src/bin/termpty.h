@@ -3,6 +3,7 @@ typedef struct _Termcell  Termcell;
 typedef struct _Termatt   Termatt;
 typedef struct _Termstate Termstate;
 typedef struct _Termsave  Termsave;
+typedef struct _Termblock Termblock;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -96,22 +97,30 @@ struct _Termpty
       } change, scroll, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
-      const char *title;
-      const char *icon;
+      const char *title, *icon;
    } prop;
-   int w, h;
-   int fd, slavefd;
-   pid_t pid;
    const char *cur_cmd;
    Termcell *screen, *screen2;
    Termsave **back;
+   int *buf;
+   int buflen;
+   int w, h;
+   int fd, slavefd;
    int circular_offset;
    int backmax, backpos;
    int backscroll_num;
-   int *buf;
-   int buflen;
+   struct {
+      int curid;
+      Eina_Hash *blocks;
+      Eina_List *active;
+      struct {
+         int left, id;
+         int x, y, w, h;
+      } expecting;
+   } block;
    Termstate state, save, swap;
    int exit_code;
+   pid_t pid;
    unsigned int altbuf : 1;
    unsigned int mouse_mode : 3;
    unsigned int mouse_ext : 2;
@@ -129,17 +138,39 @@ struct _Termsave
    Termcell cell[1];
 };
 
-void      termpty_init(void);
-void      termpty_shutdown(void);
+struct _Termblock
+{
+   int          id;
+   int          type;
+   short        w, h;
+   short        x, y;
+   const char  *path;
+   Evas_Object *obj;
+   Eina_Bool    scale_stretch : 1;
+   Eina_Bool    scale_center : 1;
+   Eina_Bool    scale_fill : 1;
+   
+   Eina_Bool    active : 1;
+   Eina_Bool    was_active : 1;
+   Eina_Bool    was_active_before : 1;
+};
 
-Termpty  *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll);
-void      termpty_free(Termpty *ty);
-Termcell *termpty_cellrow_get(Termpty *ty, int y, int *wret);
-void      termpty_write(Termpty *ty, const char *input, int len);
-void      termpty_resize(Termpty *ty, int w, int h);
-void      termpty_backscroll_set(Termpty *ty, int size);
+void       termpty_init(void);
+void       termpty_shutdown(void);
 
-pid_t     termpty_pid_get(const Termpty *ty);
+Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll);
+void       termpty_free(Termpty *ty);
+Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
+void       termpty_write(Termpty *ty, const char *input, int len);
+void       termpty_resize(Termpty *ty, int w, int h);
+void       termpty_backscroll_set(Termpty *ty, int size);
+
+pid_t      termpty_pid_get(const Termpty *ty);
+void       termpty_block_free(Termblock *tb);
+Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path);
+void       termpty_block_insert(Termpty *ty, Termblock *blk);
+int        termpty_block_id_get(Termcell *cell, int *x, int *y);
+Termblock *termpty_block_get(Termpty *ty, int id);
 
 extern int _termpty_log_dom;
 

@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = terminology
+bin_PROGRAMS = terminology tcat
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -38,3 +38,11 @@ termptyext.c termptyext.h \
 utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h
+
+tcat_SOURCES = tcat.c
+
+tcat_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
+
+tcat_LDADD = @TERMINOLOGY_LIBS@
