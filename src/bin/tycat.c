@@ -3,6 +3,7 @@
 #include <Evas.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
+#include <Edje.h>
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,6 +61,7 @@ main(int argc, char **argv)
    ecore_file_init();
    evas_init();
    ecore_evas_init();
+   edje_init();
    ee = ecore_evas_buffer_new(1, 1);
    if (ee)
      {
@@ -149,6 +151,7 @@ main(int argc, char **argv)
 //   ecore_main_loop_begin();
         ecore_evas_free(ee);
      }
+   edje_shutdown();
    ecore_evas_shutdown();
    evas_shutdown();
    ecore_file_shutdown();

@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = terminology tcat
+bin_PROGRAMS = terminology tycat
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -39,10 +39,10 @@ utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h
 
-tcat_SOURCES = tcat.c
+tycat_SOURCES = tycat.c
 
-tcat_CPPFLAGS = -I. \
+tycat_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
-tcat_LDADD = @TERMINOLOGY_LIBS@
+tycat_LDADD = @TERMINOLOGY_LIBS@
