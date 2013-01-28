@@ -2,6 +2,7 @@
 #include <Ecore.h>
 #include <Evas.h>
 #include <Ecore_Evas.h>
+#include <Ecore_File.h>
 #include <termios.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,6 +57,7 @@ main(int argc, char **argv)
      }
    eina_init();
    ecore_init();
+   ecore_file_init();
    evas_init();
    ecore_evas_init();
    ee = ecore_evas_buffer_new(1, 1);
@@ -65,9 +67,18 @@ main(int argc, char **argv)
         
         evas = ecore_evas_get(ee);
         o = evas_object_image_add(evas);
+        echo_off();
+        snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
+        write(0, buf, strlen(buf) + 1);
+        if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
+          {
+             echo_on();
+             return 0;
+          }
+        echo_on();
         for (i = 1; i < argc; i++)
           {
-             char *path;
+             char *path, *rp;
 
              if (!strcmp(argv[i], "-c"))
                {
@@ -89,51 +100,50 @@ main(int argc, char **argv)
                }
              
              path = argv[i];
-             evas_object_image_file_set(o, path, NULL);
-             evas_object_image_size_get(o, &w, &h);
-             if ((w >= 0) && (h > 0))
+             rp = ecore_file_realpath(path);
+             if (rp)
                {
-                  int x, y;
-                  
-                  echo_off();
-                  snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
-                  write(0, buf, strlen(buf) + 1);
-                  if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
+                  evas_object_image_file_set(o, rp, NULL);
+                  evas_object_image_size_get(o, &w, &h);
+                  if ((w >= 0) && (h > 0))
                     {
-                       echo_on();
-                       continue;
-                    }
-                  echo_on();
-                  if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
-                    continue;
-                  if (w > (tw * cw))
-                    {
-                       iw = tw;
-                       ih = ((h * (tw * cw) / w) + (ch - 1)) / ch;
-                    }
-                  else
-                    {
-                       iw = (w + (cw - 1)) / cw;
-                       ih = (h + (ch - 1)) / ch;
-                    }
-                  if (mode == CENTER)
-                    snprintf(buf, sizeof(buf), "%c}ic%i;%i;%s",
-                             0x1b, iw, ih, path);
-                  else if (mode == FILL)
-                    snprintf(buf, sizeof(buf), "%c}if%i;%i;%s",
-                             0x1b, iw, ih, path);
-                  else
-                    snprintf(buf, sizeof(buf), "%c}is%i;%i;%s",
-                             0x1b, iw, ih, path);
-                  write(0, buf, strlen(buf) + 1);
-                  for (y = 0; y < ih; y++)
-                    {
-                       for (x = 0; x < iw; x++)
+                       int x, y;
+                       
+                       if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
                          {
-                            write(0, "#", 1);
+                            free(rp);
+                            continue;
                          }
-                       write(0, "\n", 1);
+                       if (w > (tw * cw))
+                         {
+                            iw = tw;
+                            ih = ((h * (tw * cw) / w) + (ch - 1)) / ch;
+                         }
+                       else
+                         {
+                            iw = (w + (cw - 1)) / cw;
+                            ih = (h + (ch - 1)) / ch;
+                         }
+                       if (mode == CENTER)
+                         snprintf(buf, sizeof(buf), "%c}ic%i;%i;%s",
+                                  0x1b, iw, ih, rp);
+                       else if (mode == FILL)
+                         snprintf(buf, sizeof(buf), "%c}if%i;%i;%s",
+                                  0x1b, iw, ih, rp);
+                       else
+                         snprintf(buf, sizeof(buf), "%c}is%i;%i;%s",
+                                  0x1b, iw, ih, rp);
+                       write(0, buf, strlen(buf) + 1);
+                       for (y = 0; y < ih; y++)
+                         {
+                            for (x = 0; x < iw; x++)
+                              {
+                                 write(0, "#", 1);
+                              }
+                            write(0, "\n", 1);
+                         }
                     }
+                  free(rp);
                }
           }
 //   ecore_main_loop_begin();
@@ -141,6 +151,7 @@ main(int argc, char **argv)
      }
    ecore_evas_shutdown();
    evas_shutdown();
+   ecore_file_shutdown();
    ecore_shutdown();
    eina_shutdown();
    return 0;

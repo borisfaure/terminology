@@ -25,6 +25,7 @@ requirements="\
    evas >= 1.7.0 \
    ecore >= 1.7.0 \
    ecore-evas >= 1.7.0 \
+   ecore-file >= 1.7.0 \
    edje >= 1.7.0 \
    emotion >= 1.7.0 \
    ecore-input >= 1.7.0 \
