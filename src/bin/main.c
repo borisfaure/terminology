@@ -261,7 +261,7 @@ _term_prev_get(Term *termin)
 #if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
    sp = eina_list_last_data_get(flat);
 #else   
-   sp = eina_list_data_get(eina_list_last((flat));
+   sp = eina_list_data_get(eina_list_last(flat));
 #endif                           
    eina_list_free(flat);
    return sp->term;
