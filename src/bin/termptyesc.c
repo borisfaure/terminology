@@ -461,9 +461,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              for (x = ty->state.cx; x < (ty->w); x++)
                {
                   if (x < lim)
-                    cells[x] = cells[x + arg];
+                    termpty_cell_copy(ty, &(cells[x + arg]), &(cells[x]), 1);
                   else
-                    memset(&(cells[x]), 0, sizeof(*cells));
+                    termpty_cell_fill(ty, NULL, &(cells[x]), 1);
                }
           }
         break;
@@ -702,13 +702,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  size = ty->w * ty->h;
                                  // swap screen content now
                                  for (i = 0; i < size; i++)
-                                   {
-                                      Termcell t;
-
-                                      t = ty->screen[(i + ty->circular_offset) % ty->h];
-                                      ty->screen[(i + ty->circular_offset) % ty->h] = ty->screen2[i];
-                                      ty->screen2[i] = t;
-                                   }
+                                   termpty_cell_swap(ty, 
+                                                     &(ty->screen[(i + ty->circular_offset) % ty->h]),
+                                                     &(ty->screen2[i]),
+                                                     1);
                                  ty->altbuf = !ty->altbuf;
                                  if (ty->cb.cancel_sel.func)
                                    ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
@@ -963,10 +960,18 @@ static int
 _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
-   Eina_Unicode buf[4096], *b;
+   Eina_Unicode *buf, bufsmall[1024], *b;
    char *s;
-   int slen =  0;
+   int blen = 0, slen =  0;
 
+   cc = (Eina_Unicode *)c;
+   while ((cc < ce) && (*cc != 0x0))
+     {
+        blen++;
+        cc++;
+     }
+   buf = bufsmall;
+   if (blen > (int)(sizeof(bufsmall) - 10)) buf = malloc(blen + 10);
    cc = (Eina_Unicode *)c;
    b = buf;
    while ((cc < ce) && (*cc != 0x0))
@@ -976,8 +981,12 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         cc++;
      }
    *b = 0;
-   if (*cc == 0x0) cc++;
-   else return 0;
+   if ((*cc == 0x0) && (cc < ce)) cc++;
+   else
+     {
+        if (buf != bufsmall) free(buf);
+        return 0;
+     }
    // commands are stored in the buffer, 0 bytes not allowd (end marker)
    s = eina_unicode_unicode_to_utf8(buf, &slen);
    ty->cur_cmd = s;
@@ -987,6 +996,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
      }
    ty->cur_cmd = NULL;
    if (s) free(s);
+   if (buf != bufsmall) free(buf);
    return cc - c;
 }
 
@@ -1112,7 +1122,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (len < 2) return 0;
         if (c[1] == '8')
           {
-             int i, size;
+             int size;
              Termcell *cells;
 
              DBG("reset to init mode and clear then fill with E");
@@ -1126,7 +1136,10 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              size = ty->w * ty->h;
              if (cells)
                {
-                  for (i = 0; i < size; i++) cells[i].codepoint = 'E';
+                  Termatt att;
+                  
+                  memset((&att), 0, sizeof(att));
+                  termpty_cell_codepoint_att_fill(ty, 'E', att, cells, size);
                }
           }
         return 2;
@@ -1293,6 +1306,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
            default:
              ERR("unhandled char 0x%02x", c[0]);
              ty->state.had_cr = 0;
+             sleep(1);
              return 1;
           }
      }

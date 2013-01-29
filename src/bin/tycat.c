@@ -24,6 +24,8 @@ Evas_Object *o = NULL;
 struct termios told, tnew;
 int tw = 0, th = 0, cw = 0, ch = 0;
 
+#include "extns.h"
+
 static int
 echo_off(void)
 {
@@ -55,6 +57,21 @@ scaleterm(int w, int h, int *iw, int *ih)
      }
 }
 
+static const char *
+is_fmt(const char *f, const char **extn)
+{
+   int i, len, l;
+   
+   len = strlen(f);
+   for (i = 0; extn[i]; i++)
+     {
+        l = strlen(extn[i]);
+        if (len < l) continue;
+        if (!strcasecmp(extn[i], f + len - l)) return extn[i];
+     }
+   return NULL;
+}
+
 static void
 prnt(const char *path, int w, int h, int mode)
 {
@@ -84,7 +101,6 @@ prnt(const char *path, int w, int h, int mode)
    line[i++] = 'e';
    line[i++] = 0;
    line[i++] = '\n';
-   line[i++] = 0;
    for (y = 0; y < h; y++)
      {
         if (write(0, line, i) < 0) perror("write");
@@ -164,15 +180,24 @@ main(int argc, char **argv)
              rp = ecore_file_realpath(path);
              if (rp)
                {
-                  o = evas_object_image_add(evas);
-                  evas_object_image_file_set(o, rp, NULL);
-                  evas_object_image_size_get(o, &w, &h);
-                  if ((w >= 0) && (h > 0))
+                  if ((is_fmt(rp, extn_img)) ||
+                      (is_fmt(rp, extn_scale)) ||
+                      (is_fmt(rp, extn_mov)))
                     {
-                       scaleterm(w, h, &iw, &ih);
-                       prnt(rp, iw, ih, mode);
+                       o = evas_object_image_add(evas);
+                       evas_object_image_file_set(o, rp, NULL);
+                       evas_object_image_size_get(o, &w, &h);
+                       if ((w >= 0) && (h > 0))
+                         {
+                            scaleterm(w, h, &iw, &ih);
+                            prnt(rp, iw, ih, mode);
+                            goto done;
+                         }
+                       evas_object_del(o);
+                       o = NULL;
                     }
-                  else
+                  
+                  if (is_fmt(rp, extn_edj))
                     {
                        Eina_Bool ok = EINA_TRUE;
                        
@@ -199,36 +224,44 @@ main(int argc, char **argv)
                               }
                             scaleterm(mw, mh, &iw, &ih);
                             prnt(rp, iw, ih, mode);
+                            goto done;
                          }
-                       else
+                       evas_object_del(o);
+                       o = NULL;
+                    }
+                  
+                  if ((is_fmt(rp, extn_aud)) ||
+                      (is_fmt(rp, extn_mov)))
+                    {
+                       Eina_Bool ok = EINA_TRUE;
+                       
+                       o = emotion_object_add(evas);
+                       ok = emotion_object_init(o, NULL);
+                       if (ok)
                          {
-                            ok = EINA_TRUE;
-                            
-                            evas_object_del(o);
-                            
-                            o = emotion_object_add(evas);
-                            ok = emotion_object_init(o, NULL);
-                            if (ok)
+                            if (emotion_object_file_set(o, rp))
                               {
-                                 if (emotion_object_file_set(o, rp))
+                                 emotion_object_audio_mute_set(o, EINA_TRUE);
+                                 if (emotion_object_video_handled_get(o))
                                    {
-                                      emotion_object_audio_mute_set(o, EINA_TRUE);
-                                      if (emotion_object_video_handled_get(o))
+                                      emotion_object_size_get(o, &w, &h);
+                                      if ((w >= 0) && (h > 0))
                                         {
-                                           emotion_object_size_get(o, &w, &h);
-                                           if ((w >= 0) && (h > 0))
-                                             {
-                                                scaleterm(w, h, &iw, &ih);
-                                                prnt(rp, iw, ih, mode);
-                                             }
+                                           scaleterm(w, h, &iw, &ih);
+                                           prnt(rp, iw, ih, mode);
                                         }
-                                      else
-                                        prnt(rp, tw, 3, NOIMG);
                                    }
+                                 else
+                                   prnt(rp, tw, 3, NOIMG);
+                                 goto done;
                               }
                          }
+                       evas_object_del(o);
+                       o = NULL;
                     }
-                  evas_object_del(o);
+done:
+                  if (o) evas_object_del(o);
+                  o = NULL;
                   free(rp);
                }
              evas_norender(evas);

@@ -514,10 +514,12 @@ termpty_resize(Termpty *ty, int w, int h)
         c1 = &(olds[y * oldw]);
         c2 = &(TERMPTY_SCREEN(ty, 0, y));
         _termpty_text_copy(ty, c1, c2, ww);
+        termpty_cell_fill(ty, NULL, c1, ww);
 
         c1 = &(olds2[y * oldw]);
         c2 = &(ty->screen2[y * ty->w]);
         _termpty_text_copy(ty, c1, c2, ww);
+        termpty_cell_fill(ty, NULL, c1, ww);
      }
 
    ty->circular_offset = 0;
@@ -634,5 +636,103 @@ termpty_block_id_get(Termcell *cell, int *x, int *y)
 Termblock *
 termpty_block_get(Termpty *ty, int id)
 {
+   if (!ty->block.blocks) return NULL;
    return eina_hash_find(ty->block.blocks, &id);
+}
+
+
+
+
+
+static void
+_handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
+{
+   Termblock *tb;
+   int ido = 0, idn = 0;
+   
+   if (oldc & 0x80000000) ido = (oldc >> 18) & 0x1fff;
+   if (newc & 0x80000000) idn = (newc >> 18) & 0x1fff;
+   if (((oldc & 0x80000000) && (newc & 0x80000000)) && (idn == ido)) return;
+   
+   if (oldc & 0x80000000)
+     {
+        tb = termpty_block_get(ty, ido);
+        if (!tb) return;
+        tb->refs--;
+        if (tb->refs == 0)
+          {
+             if (tb->active)
+               ty->block.active = eina_list_remove(ty->block.active, tb);
+             eina_hash_del(ty->block.blocks, &ido, tb);
+          }
+     }
+   
+   if (newc & 0x80000000)
+     {
+        tb = termpty_block_get(ty, idn);
+        if (!tb) return;
+        tb->refs++;
+     }
+}
+
+void
+termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n)
+{
+   int i;
+   
+   for (i = 0; i < n; i++)
+     {
+        _handle_block_codepoint_overwrite(ty, dst[i].codepoint, src[i].codepoint);
+        dst[i] = src[i];
+     }
+}
+
+void
+termpty_cell_swap(Termpty *ty __UNUSED__, Termcell *src, Termcell *dst, int n)
+{
+   int i;
+   Termcell t;
+   
+   for (i = 0; i < n; i++)
+     {
+        t = dst[i];
+        dst[i] = src[i];
+        dst[i] = t;
+     }
+}
+
+void
+termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
+{
+   int i;
+
+   if (src)
+     {
+        for (i = 0; i < n; i++)
+          {
+             _handle_block_codepoint_overwrite(ty, dst[i].codepoint, src[0].codepoint);
+             dst[i] = src[0];
+          }
+     }
+   else
+     {
+        for (i = 0; i < n; i++)
+          {
+             _handle_block_codepoint_overwrite(ty, dst[i].codepoint, 0);
+             memset(&(dst[i]), 0, sizeof(*dst));
+          }
+     }
+}
+
+void
+termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcell *dst, int n)
+{
+   int i;
+   
+   for (i = 0; i < n; i++)
+     {
+        _handle_block_codepoint_overwrite(ty, dst[i].codepoint, codepoint);
+        dst[i].codepoint = codepoint;
+        dst[i].att = att;
+     }
 }

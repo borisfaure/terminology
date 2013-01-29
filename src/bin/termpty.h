@@ -141,6 +141,7 @@ struct _Termblock
 {
    int          id;
    int          type;
+   int          refs;
    short        w, h;
    short        x, y;
    const char  *path;
@@ -176,6 +177,11 @@ Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path);
 void       termpty_block_insert(Termpty *ty, int ch, Termblock *blk);
 int        termpty_block_id_get(Termcell *cell, int *x, int *y);
 Termblock *termpty_block_get(Termpty *ty, int id);
+
+void       termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n);
+void       termpty_cell_swap(Termpty *ty, Termcell *src, Termcell *dst, int n);
+void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);
+void       termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcell *dst, int n);
 
 extern int _termpty_log_dom;
 

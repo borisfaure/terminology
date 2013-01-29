@@ -37,9 +37,12 @@ termptygfx.c termptygfx.h \
 termptyext.c termptyext.h \
 utf8.c utf8.h \
 win.c win.h \
-utils.c utils.h
+utils.c utils.h \
+extns.h
 
-tycat_SOURCES = tycat.c
+tycat_SOURCES = \
+tycat.c \
+extns.h
 
 tycat_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \

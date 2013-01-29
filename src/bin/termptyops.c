@@ -20,17 +20,12 @@
 static void
 _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
 {
-   int i;
    Termcell src;
 
-   memset(&src, 0, sizeof (src));
-
+   memset(&src, 0, sizeof(src));
    src.codepoint = val;
-
    if (inherit_att) src.att = ty->state.att;
-
-   for (i = 0; i < count; i++)
-     memcpy(cells + i, &src, sizeof (src));
+   termpty_cell_fill(ty, &src, cells, count);
 }
 
 static void
@@ -43,7 +38,12 @@ _text_save_top(Termpty *ty)
    ts->w = ty->w;
    _termpty_text_copy(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ts->cell, ty->w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
-   if (ty->back[ty->backpos]) free(ty->back[ty->backpos]);
+   if (ty->back[ty->backpos])
+     {
+        termpty_cell_fill(ty, NULL, ty->back[ty->backpos]->cell,
+                          ty->back[ty->backpos]->w);
+        free(ty->back[ty->backpos]);
+     }
    ty->back[ty->backpos] = ts;
    ty->backpos++;
    if (ty->backpos >= ty->backmax) ty->backpos = 0;
@@ -52,9 +52,9 @@ _text_save_top(Termpty *ty)
 }
 
 void
-_termpty_text_copy(Termpty *ty __UNUSED__, Termcell *cells, Termcell *dest, int count)
+_termpty_text_copy(Termpty *ty, Termcell *cells, Termcell *dest, int count)
 {
-   memcpy(dest, cells, sizeof(*(cells)) * count);
+   termpty_cell_copy(ty, cells, dest, count);
 }
 
 void
@@ -190,20 +190,18 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
         if (ty->state.insert)
           {
              for (j = ty->w - 1; j > ty->state.cx; j--)
-               cells[j] = cells[j - 1];
+               termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
         g = _termpty_charset_trans(codepoints[i], ty->state.charsetch);
         
-        cells[ty->state.cx].codepoint = g;
-        cells[ty->state.cx].att = ty->state.att;
+        termpty_cell_codepoint_att_fill(ty, g, ty->state.att,
+                                        &(cells[ty->state.cx]), 1);
 #if defined(SUPPORT_DBLWIDTH)
         cells[ty->state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if ((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1)))
-          {
-             cells[ty->state.cx + 1].codepoint = 0;
-             cells[ty->state.cx + 1].att = cells[ty->state.cx].att;
-          }
+          termpty_cell_codepoint_att_fill(ty, 0, cells[ty->state.cx].att,
+                                          &(cells[ty->state.cx + 1]), 1);
 #endif        
         if (ty->state.wrap)
           {
@@ -330,7 +328,7 @@ void
 _termpty_clear_all(Termpty *ty)
 {
    if (!ty->screen) return;
-   memset(ty->screen, 0, sizeof(*(ty->screen)) * ty->w * ty->h);
+   termpty_cell_fill(ty, NULL, ty->screen, ty->w * ty->h);
 }
 
 void
