@@ -2654,6 +2654,14 @@ _smart_pty_command(void *data)
                }
              return;
           }
+        else if (sd->pty->cur_cmd[1] == 'b')
+          {
+             sd->pty->block.on = EINA_TRUE;
+          }
+        else if (sd->pty->cur_cmd[1] == 'e')
+          {
+             sd->pty->block.on = EINA_FALSE;
+          }
      }
    else if (sd->pty->cur_cmd[0] == 'q')
      {

@@ -1310,7 +1310,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
         if (len == 0) return 0;
         return 1 + len;
      }
-   else if (ty->block.expecting)
+   else if ((ty->block.expecting) && (ty->block.on))
      {
         Termexp *ex;
         Eina_List *l;

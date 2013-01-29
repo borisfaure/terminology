@@ -115,6 +115,7 @@ struct _Termpty
       Eina_Hash *blocks;
       Eina_List *active;
       Eina_List *expecting;
+      Eina_Bool on : 1;
    } block;
    Termstate state, save, swap;
    int exit_code;

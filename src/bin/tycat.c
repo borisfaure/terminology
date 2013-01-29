@@ -109,7 +109,7 @@ main(int argc, char **argv)
                   evas_object_image_size_get(o, &w, &h);
                   if ((w >= 0) && (h > 0))
                     {
-                       int x, y;
+                       int x, y, i;
                        char *line;
                        
                       if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
@@ -127,7 +127,7 @@ main(int argc, char **argv)
                             iw = (w + (cw - 1)) / cw;
                             ih = (h + (ch - 1)) / ch;
                          }
-                       line = malloc(iw + 2);
+                       line = malloc(iw + 100);
                        if (!line)
                          {
                             free(rp);
@@ -143,12 +143,23 @@ main(int argc, char **argv)
                          snprintf(buf, sizeof(buf), "%c}is#%i;%i;%s",
                                   0x1b, iw, ih, rp);
                        if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
-                       for (x = 0; x < iw; x++) line[x] = '#';
-                       line[x++] = '\n';
-                       line[x++] = 0;
+                       i = 0;
+                       line[i++] = 0x1b;
+                       line[i++] = '}';
+                       line[i++] = 'i';
+                       line[i++] = 'b';
+                       line[i++] = 0;
+                       for (x = 0; x < iw; x++) line[i++] = '#';
+                       line[i++] = 0x1b;
+                       line[i++] = '}';
+                       line[i++] = 'i';
+                       line[i++] = 'e';
+                       line[i++] = 0;
+                       line[i++] = '\n';
+                       line[i++] = 0;
                        for (y = 0; y < ih; y++)
                          {
-                            if (write(0, line, iw + 1) < 0) perror("write");
+                            if (write(0, line, i) < 0) perror("write");
                          }
                        free(line);
                     }
