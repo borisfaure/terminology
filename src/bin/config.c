@@ -3,6 +3,7 @@
 #include <Elementary.h>
 #include <Efreet.h>
 #include "config.h"
+#include "main.h"
 
 #define CONF_VER 1
 

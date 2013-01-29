@@ -1304,38 +1304,48 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
-        printf("ANSI CSI!!!!!\n");
+        DBG("ANSI CSI!!!!!");
         ty->state.had_cr = 0;
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0) return 0;
         return 1 + len;
      }
-   else if (ty->block.expecting.left > 0)
+   else if (ty->block.expecting)
      {
-        if (c[0] == '#')
+        Termexp *ex;
+        Eina_List *l;
+        
+        EINA_LIST_FOREACH(ty->block.expecting, l, ex)
           {
-             Eina_Unicode cp;
-             
-             cp = (1 << 31) | 
-               ((ty->block.expecting.id & 0x1fff) << 18) |
-               ((ty->block.expecting.x & 0x1ff) << 9) | 
-               (ty->block.expecting.y & 0x1ff);
-             ty->block.expecting.x++;
-             if (ty->block.expecting.x >= ty->block.expecting.w)
+             if (c[0] == ex->ch)
                {
-                  ty->block.expecting.x = 0;
-                  ty->block.expecting.y++;
+                  Eina_Unicode cp;
+             
+                  cp = (1 << 31) | ((ex->id & 0x1fff) << 18) |
+                    ((ex->x & 0x1ff) << 9) | (ex->y & 0x1ff);
+                  ex->x++;
+                  if (ex->x >= ex->w)
+                    {
+                       ex->x = 0;
+                       ex->y++;
+                    }
+                  ex->left--;
+                  _termpty_text_append(ty, &cp, 1);
+                  if (ex->left <= 0)
+                    {
+                       ty->block.expecting = 
+                         eina_list_remove_list(ty->block.expecting, l);
+                       free(ex);
+                    }
+                  else
+                    ty->block.expecting =
+                    eina_list_promote_list(ty->block.expecting, l);
+                  return 1;
                }
-             ty->block.expecting.left--;
-             _termpty_text_append(ty, &cp, 1);
-             return 1;
           }
-        else
-          {
-             _termpty_text_append(ty, c, 1);
-             ty->state.had_cr = 0;
-             return 1;
-          }
+        _termpty_text_append(ty, c, 1);
+        ty->state.had_cr = 0;
+        return 1;
      }
    cc = (int *)c;
    DBG("txt: [");

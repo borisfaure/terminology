@@ -377,6 +377,9 @@ err:
 void
 termpty_free(Termpty *ty)
 {
+   Termexp *ex;
+   
+   EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
    if (ty->block.active) eina_list_free(ty->block.active);
    if (ty->fd >= 0) close(ty->fd);
@@ -589,7 +592,7 @@ termpty_block_new(Termpty *ty, int w, int h, const char *path)
 }
 
 void
-termpty_block_insert(Termpty *ty, Termblock *blk)
+termpty_block_insert(Termpty *ty, int ch, Termblock *blk)
 {
    // bit 0-8 = y (9b 0->511)
    // bit 9-17 = x (9b 0->511)
@@ -599,13 +602,18 @@ termpty_block_insert(Termpty *ty, Termblock *blk)
    // fg/bg = 8+8bit unused. (use for extra id bits? so 16 + 13 == 29bit?)
    // 
    // cp = (1 << 31) | ((id 0x1fff) << 18) | ((x & 0x1ff) << 9) | (y & 0x1ff);
-
-   ty->block.expecting.left = blk->w * blk->h;
-   ty->block.expecting.x = 0;
-   ty->block.expecting.y = 0;
-   ty->block.expecting.id = blk->id;
-   ty->block.expecting.w = blk->w;
-   ty->block.expecting.h = blk->h;
+   Termexp *ex;
+   
+   ex = calloc(1, sizeof(Termexp));
+   if (!ex) return;
+   ex->ch = ch;
+   ex->left = blk->w * blk->h;
+   ex->x = 0;
+   ex->y = 0;
+   ex->id = blk->id;
+   ex->w = blk->w;
+   ex->h = blk->h;
+   ty->block.expecting = eina_list_append(ty->block.expecting, ex);
 }
 
 int

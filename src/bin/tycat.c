@@ -71,7 +71,7 @@ main(int argc, char **argv)
         o = evas_object_image_add(evas);
         echo_off();
         snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
-        write(0, buf, strlen(buf) + 1);
+        if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
         if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
           {
              echo_on();
@@ -110,8 +110,9 @@ main(int argc, char **argv)
                   if ((w >= 0) && (h > 0))
                     {
                        int x, y;
+                       char *line;
                        
-                       if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
+                      if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
                          {
                             free(rp);
                             continue;
@@ -126,24 +127,30 @@ main(int argc, char **argv)
                             iw = (w + (cw - 1)) / cw;
                             ih = (h + (ch - 1)) / ch;
                          }
-                       if (mode == CENTER)
-                         snprintf(buf, sizeof(buf), "%c}ic%i;%i;%s",
+                       line = malloc(iw + 2);
+                       if (!line)
+                         {
+                            free(rp);
+                            continue;
+                         }
+                        if (mode == CENTER)
+                         snprintf(buf, sizeof(buf), "%c}ic#%i;%i;%s",
                                   0x1b, iw, ih, rp);
                        else if (mode == FILL)
-                         snprintf(buf, sizeof(buf), "%c}if%i;%i;%s",
+                         snprintf(buf, sizeof(buf), "%c}if#%i;%i;%s",
                                   0x1b, iw, ih, rp);
                        else
-                         snprintf(buf, sizeof(buf), "%c}is%i;%i;%s",
+                         snprintf(buf, sizeof(buf), "%c}is#%i;%i;%s",
                                   0x1b, iw, ih, rp);
-                       write(0, buf, strlen(buf) + 1);
+                       if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
+                       for (x = 0; x < iw; x++) line[x] = '#';
+                       line[x++] = '\n';
+                       line[x++] = 0;
                        for (y = 0; y < ih; y++)
                          {
-                            for (x = 0; x < iw; x++)
-                              {
-                                 write(0, "#", 1);
-                              }
-                            write(0, "\n", 1);
+                            if (write(0, line, iw + 1) < 0) perror("write");
                          }
+                       free(line);
                     }
                   free(rp);
                }

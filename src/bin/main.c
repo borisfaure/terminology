@@ -5,6 +5,7 @@
 #include "main.h"
 #include "win.h"
 #include "termio.h"
+#include "termpty.h"
 #include "termcmd.h"
 #include "config.h"
 #include "controls.h"
@@ -859,9 +860,9 @@ _cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_new(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Term *term = data;
+//   Term *term = data;
 }
 
 static void
@@ -963,13 +964,15 @@ _cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    char *cmd;
    Term *term;
    
+   term = main_win_focused_term_get(wn);
+   if (!term) return;
    cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
      {
         cmd = elm_entry_markup_to_utf8(cmd);
         if (cmd)
           {
-             if (term) termcmd_watch(term->term, term->wn->win, term->bg, cmd);
+             termcmd_watch(term->term, term->wn->win, term->bg, cmd);
              free(cmd);
           }
      }

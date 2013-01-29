@@ -75,7 +75,7 @@ _cb_ct_about(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __U
 }
 
 static void
-_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_cb_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
    controls_toggle(ct_win, ct_bg, ct_term);
 }

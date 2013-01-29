@@ -396,7 +396,7 @@ static const Color colors256[256] =
 
 void colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
 {
-   int c, n, l, k, j, i;
+   int c, n;
    int r, g, b, a;
    char buf[32];
 

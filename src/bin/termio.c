@@ -1924,7 +1924,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd;
-   int cx, cy, dx, dy, f;
+   int cx, cy;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -2269,7 +2269,6 @@ _smart_add(Evas_Object *obj)
 {
    Termio *sd;
    Evas_Object *o;
-   int i, j, k, l, n;
 
    sd = calloc(1, sizeof(Termio));
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -2610,43 +2609,47 @@ _smart_pty_command(void *data)
             (sd->pty->cur_cmd[1] == 'f'))
           {
              const char *p, *p0, *path;
-             int ww = 0, hh = 0;
+             int ww = 0, hh = 0, repch;
              
              // exact size in CHAR CELLS - WW (decimal) width CELLS,
              // HH (decimal) in CELLS.
              // 
-             // isWW;HH;PATH
-             for (p0 = p = &(sd->pty->cur_cmd[2]); *p; p++)
+             // isCWW;HH;PATH
+             repch = sd->pty->cur_cmd[2];
+             if (repch)
                {
-                  if (*p == ';')
+                  for (p0 = p = &(sd->pty->cur_cmd[3]); *p; p++)
                     {
-                       ww = strtol(p0, NULL, 10);
-                       p++;
-                       break;
+                       if (*p == ';')
+                         {
+                            ww = strtol(p0, NULL, 10);
+                            p++;
+                            break;
+                         }
                     }
-               }
-             for (p0 = p; *p; p++)
-               {
-                  if (*p == ';')
+                  for (p0 = p; *p; p++)
                     {
-                       hh = strtol(p0, NULL, 10);
-                       p++;
-                       break;
+                       if (*p == ';')
+                         {
+                            hh = strtol(p0, NULL, 10);
+                            p++;
+                            break;
+                         }
                     }
-               }
-             path = p;
-             if ((ww < 512) && (hh < 512))
-               {
-                  Termblock *blk = termpty_block_new(sd->pty, ww, hh, path);
-                  if (blk)
+                  path = p;
+                  if ((ww < 512) && (hh < 512))
                     {
-                       if (sd->pty->cur_cmd[1] == 's')
-                         blk->scale_stretch = EINA_TRUE;
-                       else if (sd->pty->cur_cmd[1] == 'c')
-                         blk->scale_center = EINA_TRUE;
-                       else if (sd->pty->cur_cmd[1] == 'f')
-                         blk->scale_fill = EINA_TRUE;
-                       termpty_block_insert(sd->pty, blk);
+                       Termblock *blk = termpty_block_new(sd->pty, ww, hh, path);
+                       if (blk)
+                         {
+                            if (sd->pty->cur_cmd[1] == 's')
+                              blk->scale_stretch = EINA_TRUE;
+                            else if (sd->pty->cur_cmd[1] == 'c')
+                              blk->scale_center = EINA_TRUE;
+                            else if (sd->pty->cur_cmd[1] == 'f')
+                              blk->scale_fill = EINA_TRUE;
+                            termpty_block_insert(sd->pty, repch, blk);
+                         }
                     }
                }
              return;

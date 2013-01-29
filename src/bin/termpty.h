@@ -4,6 +4,7 @@ typedef struct _Termatt   Termatt;
 typedef struct _Termstate Termstate;
 typedef struct _Termsave  Termsave;
 typedef struct _Termblock Termblock;
+typedef struct _Termexp   Termexp;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -113,10 +114,7 @@ struct _Termpty
       int curid;
       Eina_Hash *blocks;
       Eina_List *active;
-      struct {
-         int left, id;
-         int x, y, w, h;
-      } expecting;
+      Eina_List *expecting;
    } block;
    Termstate state, save, swap;
    int exit_code;
@@ -155,6 +153,12 @@ struct _Termblock
    Eina_Bool    was_active_before : 1;
 };
 
+struct _Termexp
+{
+   int ch, left, id;
+   int x, y, w, h;
+};
+
 void       termpty_init(void);
 void       termpty_shutdown(void);
 
@@ -168,7 +172,7 @@ void       termpty_backscroll_set(Termpty *ty, int size);
 pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);
 Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path);
-void       termpty_block_insert(Termpty *ty, Termblock *blk);
+void       termpty_block_insert(Termpty *ty, int ch, Termblock *blk);
 int        termpty_block_id_get(Termcell *cell, int *x, int *y);
 Termblock *termpty_block_get(Termpty *ty, int id);
 
