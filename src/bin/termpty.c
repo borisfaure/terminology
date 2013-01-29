@@ -203,8 +203,11 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
              if (buf[i])
                {
+#if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
                   g = eina_unicode_utf8_next_get(buf, &i);
-                  /* i = evas_string_char_next_get(buf, i, &g); */
+#else                  
+                  i = evas_string_char_next_get(buf, i, &g);
+#endif                  
                   if (i < 0) break;
 //                  DBG("(%i) %02x '%c'", j, g, g);
                }
