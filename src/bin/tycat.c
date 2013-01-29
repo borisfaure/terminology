@@ -234,8 +234,8 @@ main(int argc, char **argv)
              evas_norender(evas);
           }
         exit(0);
-//   ecore_main_loop_begin();
-//        ecore_evas_free(ee);
+//        ecore_main_loop_begin();
+        ecore_evas_free(ee);
      }
    emotion_shutdown();
    edje_shutdown();
