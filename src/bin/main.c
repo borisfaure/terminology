@@ -1370,7 +1370,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
-   evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, term);
+   evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, wn);
    evas_object_smart_callback_add(o, "command", _cb_command, term);
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);
    evas_object_smart_callback_add(o, "next", _cb_next, term);
