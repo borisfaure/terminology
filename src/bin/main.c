@@ -901,17 +901,17 @@ _cb_cmd_focus(void *data)
 static void
 _cb_cmdbox(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Win *wn = data;
-   Term *term;
+   Term *term = data;
    
-   wn->cmdbox_up = EINA_TRUE;
-   edje_object_signal_emit(wn->base, "cmdbox,show", "terminology");
-   term = main_win_focused_term_get(wn);
-   if (term) elm_object_focus_set(term->term, EINA_TRUE);
-   elm_entry_entry_set(wn->cmdbox, "");
-   evas_object_show(wn->cmdbox);
-   if (wn->cmdbox_focus_timer) ecore_timer_del(wn->cmdbox_focus_timer);
-   wn->cmdbox_focus_timer = ecore_timer_add(0.2, _cb_cmd_focus, wn);
+   term->wn->cmdbox_up = EINA_TRUE;
+   edje_object_signal_emit(term->wn->base, "cmdbox,show", "terminology");
+   elm_object_focus_set(term->term, EINA_TRUE);
+   elm_entry_entry_set(term->wn->cmdbox, "");
+   evas_object_show(term->wn->cmdbox);
+   if (term->wn->cmdbox_focus_timer)
+     ecore_timer_del(term->wn->cmdbox_focus_timer);
+   term->wn->cmdbox_focus_timer =
+     ecore_timer_add(0.2, _cb_cmd_focus, term->wn);
 }
 
 static void
@@ -1370,7 +1370,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
-   evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, wn);
+   evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, term);
    evas_object_smart_callback_add(o, "command", _cb_command, term);
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);
    evas_object_smart_callback_add(o, "next", _cb_next, term);
