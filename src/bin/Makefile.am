@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = terminology tycat
+bin_PROGRAMS = terminology tycat tyls
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -49,3 +49,13 @@ tycat_CPPFLAGS = -I. \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 tycat_LDADD = @TERMINOLOGY_LIBS@
+
+tyls_SOURCES = \
+tyls.c \
+extns.h
+
+tyls_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
+
+tyls_LDADD = @TERMINOLOGY_LIBS@
