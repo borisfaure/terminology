@@ -415,6 +415,48 @@ config_load(const char *key)
    return config;
 }
 
+Config *
+config_fork(Config *config)
+{
+   Config *config2;
+   
+   config2 = calloc(1, sizeof(Config));
+   if (!config2) return NULL;
+#define CPY(fld) config2->fld = config->fld;   
+#define SCPY(fld) if (config->fld) config2->fld = eina_stringshare_add(config->fld)
+
+   CPY(version);
+   SCPY(font.name);   
+   CPY(font.size);
+   CPY(font.bitmap);
+   SCPY(helper.email);   
+   SCPY(helper.url.general);
+   SCPY(helper.url.video);
+   SCPY(helper.url.image);
+   SCPY(helper.local.general);
+   SCPY(helper.local.video);
+   SCPY(helper.local.image);
+   CPY(helper.inline_please);
+   SCPY(theme);
+   SCPY(background);
+   SCPY(wordsep);
+   CPY(scrollback);
+   CPY(vidmod);
+   CPY(jump_on_change);
+   CPY(jump_on_keypress);
+   CPY(flicker_on_key);
+   CPY(disable_cursor_blink);
+   CPY(disable_visual_bell);
+   CPY(translucent);
+   CPY(mute);
+   CPY(urg_bell);
+   CPY(multi_instance);
+   
+   CPY(temporary);
+   SCPY(config_key);
+   return config2;
+}
+
 void
 config_del(Config *config)
 {

@@ -42,6 +42,7 @@ struct _Term
    Evas_Object *media;
    Evas_Object *popmedia;
    Eina_List   *popmedia_queue;
+   int          poptype, mediatype;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
    struct {
       int       x, y;
@@ -65,6 +66,9 @@ int _log_domain = -1;
 static Eina_List   *wins = NULL;
 static Ecore_Timer *flush_timer = NULL;
 
+static Config *main_config = NULL;
+
+static void _term_media_update(Term *term, const Config *config);
 static void _popmedia_queue_process(Term *term);
 static void main_win_free(Win *wn);
 static void main_term_free(Term *term);
@@ -142,10 +146,11 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
    sp2->wn = sp->wn;
-   config = config_load("config");
+   config = config_fork(sp->term->config);
    sp2->term = main_term_new(sp->wn, config,
                              NULL, EINA_FALSE, NULL,
                              80, 24, EINA_FALSE);
+   _term_media_update(sp2->term, config);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
    
 
@@ -720,6 +725,7 @@ _popmedia_show(Term *term, const char *src)
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, term);
    edje_object_part_swallow(term->bg, "terminology.popmedia", o);
    evas_object_show(o);
+   term->poptype = type;
    if (type == TYPE_IMG)
      edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
    else if (type == TYPE_SCALE)
@@ -1049,13 +1055,60 @@ static void
 _cb_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Term *term = data;
-   Config *config = termio_config_get(term->term);
-
+   Config *config = NULL;
+   
+   if (term->term) config = termio_config_get(term->term);
    term->media = NULL;
-   edje_object_signal_emit(term->bg, "media,off", "terminology");
+   if (term->bg) edje_object_signal_emit(term->bg, "media,off", "terminology");
    if (!config) return;
    if (config->temporary)
      eina_stringshare_replace(&(config->background), NULL);
+}
+
+static void
+_term_media_update(Term *term, const Config *config)
+{
+   if ((config->background) && (config->background[0]))
+     {
+        Evas_Object *o;
+        int type = 0;
+        
+        if (term->media)
+          {
+             evas_object_event_callback_del(term->media,
+                                            EVAS_CALLBACK_DEL,
+                                            _cb_media_del);
+             evas_object_del(term->media);
+          }
+        term->media = o = media_add(term->wn->win,
+                                    config->background, config,
+                                    MEDIA_BG, &type);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _cb_media_del, term);
+        edje_object_part_swallow(term->bg, "terminology.background", o);
+        evas_object_show(o);
+        term->mediatype = type;
+        if (type == TYPE_IMG)
+          edje_object_signal_emit(term->bg, "media,image", "terminology");
+        else if (type == TYPE_SCALE)
+          edje_object_signal_emit(term->bg, "media,scale", "terminology");
+        else if (type == TYPE_EDJE)
+          edje_object_signal_emit(term->bg, "media,edje", "terminology");
+        else if (type == TYPE_MOV)
+          edje_object_signal_emit(term->bg, "media,movie", "terminology");
+     }
+   else
+     {
+        if (term->media)
+          {
+             evas_object_event_callback_del(term->media,
+                                            EVAS_CALLBACK_DEL,
+                                            _cb_media_del);
+             edje_object_signal_emit(term->bg, "media,off", "terminology");
+             evas_object_del(term->media);
+             term->media = NULL;
+          }
+     }
 }
 
 void
@@ -1071,43 +1124,7 @@ main_media_update(const Config *config)
           {
              if (term->config != config) continue;
              if (!config) continue;
-             if ((config->background) && (config->background[0]))
-               {
-                  Evas_Object *o;
-                  int type = 0;
-             
-                  if (term->media)
-                    {
-                       evas_object_event_callback_del(term->media,
-                                                      EVAS_CALLBACK_DEL,
-                                                      _cb_media_del);
-                       evas_object_del(term->media);
-                    }
-                  term->media = o = media_add(term->wn->win,
-                                              config->background, config,
-                                              MEDIA_BG, &type);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
-                                                 _cb_media_del, term);
-                  edje_object_part_swallow(term->bg, "terminology.background", o);
-                  evas_object_show(o);
-                  if (type == TYPE_IMG)
-                    edje_object_signal_emit(term->bg, "media,image", "terminology");
-                  else if (type == TYPE_SCALE)
-                    edje_object_signal_emit(term->bg, "media,scale", "terminology");
-                  else if (type == TYPE_EDJE)
-                    edje_object_signal_emit(term->bg, "media,edje", "terminology");
-                  else if (type == TYPE_MOV)
-                    edje_object_signal_emit(term->bg, "media,movie", "terminology");
-               }
-             else
-               {
-                  if (term->media)
-                    {
-                       edje_object_signal_emit(term->bg, "media,off", "terminology");
-                       evas_object_del(term->media);
-                       term->media = NULL;
-                    }
-               }
+             _term_media_update(term, config);
           }
      }
 }
@@ -1135,13 +1152,11 @@ main_config_sync(const Config *config)
    Win *wn;
    Term *term;
    Eina_List *l, *ll;
-   
+
+   if (config != main_config) config_sync(config, main_config);
    EINA_LIST_FOREACH(wins, l, wn)
      {
-        if (wn->config != config)
-          {
-             config_sync(config, wn->config);
-          }
+        if (wn->config != config) config_sync(config, wn->config);
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
              if (term->config != config)
@@ -1149,7 +1164,6 @@ main_config_sync(const Config *config)
                   Evas_Coord mw = 1, mh = 1, w, h, tsize_w = 0, tsize_h = 0;
                   
                   config_sync(config, term->config);
-               
                   evas_object_geometry_get(term->term, NULL, NULL,
                                            &tsize_w, &tsize_h);
                   evas_object_data_del(term->term, "sizedone");
@@ -1279,14 +1293,20 @@ main_term_free(Term *term)
      {
         eina_stringshare_del(s);
      }
+   if (term->media)
+     {
+        evas_object_event_callback_del(term->media,
+                                       EVAS_CALLBACK_DEL,
+                                       _cb_media_del);
+        evas_object_del(term->media);
+     }
+   term->media = NULL;
+   if (term->popmedia) evas_object_del(term->popmedia);
+   term->popmedia = NULL;
    evas_object_del(term->term);
    term->term = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
-   if (term->popmedia) evas_object_del(term->popmedia);
-   term->popmedia = NULL;
-   if (term->media) evas_object_del(term->media);
-   term->media = NULL;
    if (term->config) config_del(term->config);
    term->config = NULL;
    free(term);
@@ -1311,6 +1331,31 @@ main_term_bg_redo(Term *term)
                                    _cb_popmedia_done, term);
    termio_theme_set(term->term, term->bg);
    edje_object_part_swallow(term->bg, "terminology.content", term->term);
+   if (term->popmedia)
+     {
+        edje_object_part_swallow(term->bg, "terminology.popmedia", term->popmedia);
+        if (term->poptype == TYPE_IMG)
+          edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
+        else if (term->poptype == TYPE_SCALE)
+          edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
+        else if (term->poptype == TYPE_EDJE)
+          edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
+        else if (term->poptype == TYPE_MOV)
+          edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+     }
+   if (term->media)
+     {
+        edje_object_part_swallow(term->bg, "terminology.background", term->media);
+        if (term->mediatype == TYPE_IMG)
+          edje_object_signal_emit(term->bg, "media,image", "terminology");
+        else if (term->mediatype == TYPE_SCALE)
+          edje_object_signal_emit(term->bg, "media,scale", "terminology");
+        else if (term->mediatype == TYPE_EDJE)
+          edje_object_signal_emit(term->bg, "media,edje", "terminology");
+        else if (term->mediatype == TYPE_MOV)
+          edje_object_signal_emit(term->bg, "media,movie", "terminology");
+     }
+   
    if ((term->focused) && (term->wn->focused))
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
@@ -1555,7 +1600,7 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
-   config = config_load("config");
+   config = config_fork(main_config);
    ecore_app_args_set(nargc, (const char **)nargv);
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
                      config, inst->fullscreen, inst->iconic,
@@ -1568,7 +1613,8 @@ main_ipc_new(Ipc_Instance *inst)
         return;
      }
    
-   config = config_load("config");
+   config = config_fork(config);
+   
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
@@ -1824,7 +1870,8 @@ elm_main(int argc, char **argv)
 
    config_init();
 
-   config = config_load("config");
+   main_config = config_load("config");
+   config = config_fork(main_config);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
@@ -2091,7 +2138,7 @@ remote:
         goto end;
      }
 
-   config = config_load("config");
+   config = config_fork(config);
    term = main_term_new(wn, config, cmd, login_shell, cd,
                         size_w, size_h, hold);
    if (!term)
@@ -2141,6 +2188,7 @@ remote:
 
    termpty_shutdown();
 
+   config_del(main_config);
    config_shutdown();
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;

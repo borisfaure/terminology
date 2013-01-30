@@ -10,11 +10,11 @@ struct _Config
    int version;
    struct {
       const char    *name;
-      const char    *orig_name;
+      const char    *orig_name; /* not in EET */
       int            size;
-      int            orig_size;
+      int            orig_size; /* not in EET */
       unsigned char  bitmap;
-      unsigned char  orig_bitmap;
+      unsigned char  orig_bitmap; /* not in EET */
    } font;
    struct {
       const char    *email;
@@ -49,6 +49,7 @@ void config_shutdown(void);
 void config_sync(const Config *config_src, Config *config);
 void config_save(Config *config, const char *key);
 Config *config_load(const char *key);
+Config *config_fork(Config *config);
 void config_del(Config *config);
 
 const char *config_theme_path_get(const Config *config);
