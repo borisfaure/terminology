@@ -2,6 +2,8 @@
 
 #include <Elementary.h>
 #include "about.h"
+#include "config.h"
+#include "termio.h"
 
 static Evas_Object *ab_layout = NULL, *ab_over = NULL;
 static Eina_Bool ab_out = EINA_FALSE;
@@ -34,12 +36,17 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
    saved_bg = bg;
    if (!ab_layout)
      {
+        Config *config = termio_config_get(term);
         char buf[PATH_MAX];
         
         ab_layout = o = elm_layout_add(win);
-        snprintf(buf, sizeof(buf), "%s/themes/default.edj",
-                 elm_app_data_dir_get());
-        elm_layout_file_set(o, buf, "terminology/about");
+        if (elm_layout_file_set(o, config_theme_path_get(config),
+                                "terminology/about") == 0)
+          {
+             snprintf(buf, sizeof(buf), "%s/themes/default.edj",
+                      elm_app_data_dir_get());
+             elm_layout_file_set(o, buf, "terminology/about");
+          }
         elm_object_part_text_set
           (o, "terminology.text",
               "<b>Terminology "PACKAGE_VERSION"</b><br>"
