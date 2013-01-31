@@ -63,6 +63,7 @@ struct _Termio
    Ecore_Timer *delayed_size_timer;
    Ecore_Timer *link_do_timer;
    Ecore_Job *mouse_move_job;
+   Ecore_Timer *mouseover_delay;
    Evas_Object *win, *theme, *glayer;
    Config *config;
    Ecore_IMF_Context *imf;
@@ -381,6 +382,17 @@ _smart_mouseover_apply(Evas_Object *obj)
    sd->link.x2 = x2;
    sd->link.y2 = y2;
    _update_link(obj, same_link, same_geom);
+}
+
+static Eina_Bool
+_smart_mouseover_delay(void *data)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   
+   if (!sd) return EINA_FALSE;
+   sd->mouseover_delay = NULL;
+   _smart_mouseover_apply(data);
+   return EINA_FALSE;
 }
 
 static void
@@ -703,10 +715,8 @@ _smart_apply(Evas_Object *obj)
           edje_object_signal_emit(sd->cur.selo_theme, 
                                   "mode,topfull", "terminology");
         else if (end_x == (sd->grid.w - 1))
-          {
-             edje_object_signal_emit(sd->cur.selo_theme, 
-                                     "mode,bottomfull", "terminology");
-          }
+          edje_object_signal_emit(sd->cur.selo_theme, 
+                                  "mode,bottomfull", "terminology");
         else
           edje_object_signal_emit(sd->cur.selo_theme,
                                   "mode,multiline", "terminology");
@@ -714,7 +724,8 @@ _smart_apply(Evas_Object *obj)
      }
    else
      evas_object_hide(sd->cur.selo_theme);
-   _smart_mouseover_apply(obj);
+   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
+   sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
 }
 
 static void
@@ -1779,7 +1790,8 @@ _smart_cb_mouse_move_job(void *data)
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    sd->mouse_move_job = NULL;
-   _smart_mouseover_apply(data);
+   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
+   sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, data);
 }
 
 static void
@@ -2416,6 +2428,7 @@ _smart_del(Evas_Object *obj)
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
+   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    if (sd->link.string) free(sd->link.string);
