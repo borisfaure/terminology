@@ -154,12 +154,12 @@ list_dir(const char *dir, int mode)
                     snprintf(sz, sizeof(sz), "%4lldK", size / (1024));
                   else if (size < (1024 * 1024 * 1024))
                     snprintf(sz, sizeof(sz), "%4lldM", size / (1024 * 1024));
-                  else if (size < (1024 * 1024 * 1024 * 1024))
-                    snprintf(sz, sizeof(sz), "%4lldG", size / (1024 * 1024 * 1024));
-                  else if (size < (1024 * 1024 * 1024 * 1024 * 1024))
-                    snprintf(sz, sizeof(sz), "%4lldT", size / (1024 * 1024 * 1024 * 1024));
-                  else if (size < (1024 * 1024 * 1024 * 1024 * 1024 * 1024))
-                    snprintf(sz, sizeof(sz), "%4lldP", size / (1024 * 1024 * 1024 * 1024 * 1024));
+                  else if (size < (1024 * 1024 * 1024 * 1024LL))
+                    snprintf(sz, sizeof(sz), "%4lldG", size / (1024 * 1024 * 1024LL));
+                  else if (size < (1024 * 1024 * 1024 * 1024LL * 1024LL))
+                    snprintf(sz, sizeof(sz), "%4lldT", size / (1024 * 1024 * 1024 * 1024LL));
+                  else if (size < (1024 * 1024 * 1024 * 1024LL * 1024LL * 1024LL))
+                    snprintf(sz, sizeof(sz), "%4lldP", size / (1024 * 1024 * 1024 * 1024LL * 1024LL));
                   len += stuff;
                   printf("%c}ic#%i;%i;%s%c", 0x1b, 2, 1, buf, 0);
                   printf("%c}ib%c", 0x1b, 0);
