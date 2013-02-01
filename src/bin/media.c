@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Ethumb_Client.h>
 #include <Emotion.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -19,6 +20,7 @@ struct _Media
    Ecore_Job *restart_job;
    Ecore_Con_Url *url;
    Ecore_Event_Handler *url_prog_hand, *url_compl_hand;
+   Ethumb_Client_Async *et_req;
    const char *src;
    const char *ext;
    const char *realf;
@@ -53,6 +55,140 @@ _is_fmt(const char *f, const char **extn)
         if (!strcasecmp(extn[i], f + len - l)) return extn[i];
      }
    return NULL;
+}
+
+//////////////////////// thumb
+
+static Ethumb_Client *et_client = NULL;
+static Eina_Bool et_connected = EINA_FALSE;
+
+static void _et_init(void);
+
+static void
+_et_disconnect(void *data __UNUSED__, Ethumb_Client *c)
+{
+   if (c != et_client) return;
+   ethumb_client_disconnect(et_client);
+   et_connected = EINA_FALSE;
+   et_client = NULL;
+   _et_init();
+}
+
+static void
+_et_connect(void *data __UNUSED__, Ethumb_Client *c, Eina_Bool ok)
+{
+   if (ok)
+     {
+        et_connected = EINA_TRUE;
+        ethumb_client_on_server_die_callback_set(c, _et_disconnect,
+                                                 NULL, NULL);
+     }
+   else
+     et_client = NULL;
+}
+
+static void
+_et_init(void)
+{
+   if (et_client) return;
+
+   ethumb_client_init();
+   et_client = ethumb_client_connect(_et_connect, NULL, NULL);
+}
+
+static void
+_type_thumb_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+
+   if ((w <= 0) || (h <= 0) || (sd->iw <= 0) || (sd->ih <= 0))
+     {
+        w = 1;
+        h = 1;
+     }
+   else
+     {
+        int iw = 1, ih = 1;
+        
+        iw = w;
+        ih = (sd->ih * w) / sd->iw;
+        if (ih > h)
+          {
+             ih = h;
+             iw = (sd->iw * h) / sd->ih;
+             if (iw > w) iw = w;
+          }
+        if ((iw > sd->iw) || (ih > sd->ih))
+          {
+             iw = sd->iw;
+             ih = sd->ih;
+          }
+        x += ((w - iw) / 2);
+        y += ((h - ih) / 2);
+        w = iw;
+        h = ih;
+     }
+   evas_object_move(sd->o_img, x, y);
+   evas_object_resize(sd->o_img, w, h);
+}
+
+static void
+_cb_thumb_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Media *sd = evas_object_smart_data_get(data);
+   Evas_Coord ox, oy, ow, oh;
+   if (!sd) return;
+
+   evas_object_geometry_get(data, &ox, &oy, &ow, &oh);
+   _type_thumb_calc(data, ox, oy, ow, oh);
+   evas_object_show(sd->o_img);
+   evas_object_show(sd->clip);
+}
+
+static void
+_et_done(Ethumb_Client *c, const char *file, const char *key, void *data)
+{
+   Evas_Object *obj = data;
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   
+   if (c != et_client) return;
+   sd->et_req = NULL;
+   evas_object_event_callback_add(sd->o_img, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                  _cb_thumb_preloaded, obj);
+   evas_object_image_file_set(sd->o_img, file, key);
+   evas_object_image_size_get(sd->o_img, &(sd->iw), &(sd->ih));
+   evas_object_image_preload(sd->o_img, EINA_FALSE);
+}
+
+static void
+_et_error(Ethumb_Client *c, void *data)
+{
+   Evas_Object *obj = data;
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+
+   if (c != et_client) return;
+   sd->et_req = NULL;
+}
+
+static void
+_type_thumb_init(Evas_Object *obj)
+{
+   Evas_Object *o;
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   sd->type = TYPE_THUMB;
+   _et_init();
+   o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(o, obj);
+   evas_object_clip_set(o, sd->clip);
+   sd->iw = 64;
+   sd->ih = 64;
+   ethumb_client_file_set(et_client, sd->realf, NULL);
+   sd->et_req = ethumb_client_thumb_async_get(et_client, _et_done,
+                                              _et_error, obj);
 }
 
 //////////////////////// img
@@ -639,6 +775,9 @@ _smart_del(Evas_Object *obj)
    if (sd->anim) ecore_timer_del(sd->anim);
    if (sd->smooth_timer) sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
+   if ((et_client) && (sd->et_req))
+     ethumb_client_thumb_async_cancel(et_client, sd->et_req);
+   sd->et_req = NULL;
 
    _parent_sc.del(obj);
 }
@@ -732,6 +871,7 @@ _smart_calculate(Evas_Object *obj)
    else if (sd->type == TYPE_SCALE) _type_scale_calc(obj, ox, oy, ow, oh);
    else if (sd->type == TYPE_EDJE) _type_edje_calc(obj, ox, oy, ow, oh);
    else if (sd->type == TYPE_MOV) _type_mov_calc(obj, ox, oy, ow, oh);
+   else if (sd->type == TYPE_THUMB) _type_thumb_calc(obj, ox, oy, ow, oh);
    evas_object_move(sd->clip, ox, oy);
    evas_object_resize(sd->clip, ow, oh);
    if (sd->o_busy)
@@ -930,23 +1070,31 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
 #endif
 
    if (!sd->url) sd->realf = eina_stringshare_add(sd->src);
-   
-   switch (t)
+
+   if ((mode & MEDIA_SIZE_MASK) == MEDIA_THUMB)
      {
-      case TYPE_IMG:
-        if (!sd->url) _type_img_init(obj);
-        break;
-      case TYPE_SCALE:
-        if (!sd->url) _type_scale_init(obj);
-        break;
-      case TYPE_EDJE:
-        if (!sd->url) _type_edje_init(obj);
-        break;
-      case TYPE_MOV:
-        if (!sd->url) _type_mov_init(obj);
-        break;
-      default:
-        break;
+        // XXX: handle sd->url being true?
+        _type_thumb_init(obj);
+     }
+   else
+     {
+        switch (t)
+          {
+           case TYPE_IMG:
+             if (!sd->url) _type_img_init(obj);
+             break;
+           case TYPE_SCALE:
+             if (!sd->url) _type_scale_init(obj);
+             break;
+           case TYPE_EDJE:
+             if (!sd->url) _type_edje_init(obj);
+             break;
+           case TYPE_MOV:
+             if (!sd->url) _type_mov_init(obj);
+             break;
+           default:
+             break;
+          }
      }
    if (type) *type = t;
    return obj;

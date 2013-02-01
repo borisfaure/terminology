@@ -481,6 +481,9 @@ _smart_apply(Evas_Object *obj)
                                         media = MEDIA_POP;
                                       else if (blk->scale_fill)
                                         media = MEDIA_BG;
+                                      else if (blk->thumb)
+                                        media = MEDIA_THUMB;
+//                                        media = MEDIA_POP;
                                       if (!blk->was_active_before)
                                         media |= MEDIA_SAVE;
                                       else
@@ -2619,7 +2622,8 @@ _smart_pty_command(void *data)
      {
         if ((sd->pty->cur_cmd[1] == 's') ||
             (sd->pty->cur_cmd[1] == 'c') ||
-            (sd->pty->cur_cmd[1] == 'f'))
+            (sd->pty->cur_cmd[1] == 'f') ||
+            (sd->pty->cur_cmd[1] == 't'))
           {
              const char *p, *p0, *path;
              int ww = 0, hh = 0, repch;
@@ -2661,6 +2665,8 @@ _smart_pty_command(void *data)
                               blk->scale_center = EINA_TRUE;
                             else if (sd->pty->cur_cmd[1] == 'f')
                               blk->scale_fill = EINA_TRUE;
+                            else if (sd->pty->cur_cmd[1] == 't')
+                              blk->thumb = EINA_TRUE;
                             termpty_block_insert(sd->pty, repch, blk);
                          }
                     }

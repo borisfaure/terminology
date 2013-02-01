@@ -11,6 +11,9 @@
 #include <unistd.h>
 #include <string.h>
 
+// this code sucks. just letting you know... in advance... in case you
+// might be tempted to think otherwise... :)
+
 enum {
    SMALL,
    MEDIUM,
@@ -72,34 +75,22 @@ is_fmt(const char *f, const char **extn)
 }
 
 static void
-prnt(const char *path, int w, int h, int mode)
+size_print(char *buf, int bufsz, unsigned long long size)
 {
-   int x, y, i;
-   char *line, buf[4096];
-
-   if ((w >= 512) || (h >= 512)) return;
-   line = malloc(w + 100);
-   if (!line) return;
-   snprintf(buf, sizeof(buf), "%c}ic#%i;%i;%s", 0x1b, w, h, path);
-   if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
-   i = 0;
-   line[i++] = 0x1b;
-   line[i++] = '}';
-   line[i++] = 'i';
-   line[i++] = 'b';
-   line[i++] = 0;
-   for (x = 0; x < w; x++) line[i++] = '#';
-   line[i++] = 0x1b;
-   line[i++] = '}';
-   line[i++] = 'i';
-   line[i++] = 'e';
-   line[i++] = 0;
-   line[i++] = '\n';
-   for (y = 0; y < h; y++)
-     {
-        if (write(0, line, i) < 0) perror("write");
-     }
-   free(line);
+   if (size < 1024LL)
+     snprintf(buf, bufsz, " %4lld", size);
+   else if (size < (1024LL * 1024LL))
+     snprintf(buf, bufsz, "%4lldK", size / (1024LL));
+   else if (size < (1024LL * 1024LL * 1024LL))
+     snprintf(buf, bufsz, "%4lldM", size / (1024LL * 1024LL));
+   else if (size < (1024LL * 1024LL * 1024LL * 1024LL))
+     snprintf(buf, bufsz, "%4lldG", size / (1024LL * 1024 * 1024LL));
+   else if (size < (1024LL * 1024LL * 1024LL * 1024LL * 1024LL))
+     snprintf(buf, bufsz, "%4lldT", size / (1024LL * 1024LL * 1024LL * 1024LL));
+   else if (size < (1024LL * 1024LL * 1024LL * 1024LL * 1024LL * 1024LL))
+     snprintf(buf, bufsz, "%4lldP", size / (1024LL * 1024LL * 1024LL * 1024LL * 1024LL));
+   else
+     snprintf(buf, bufsz, "%4lldE", size / (1024LL * 1024LL * 1024LL * 1024LL * 1024LL * 1024LL));
 }
 
 static void
@@ -107,11 +98,11 @@ list_dir(const char *dir, int mode)
 {
    Eina_List *files, *l;
    char *s, **names;
-   int maxlen = 0, cols, c, i, j, num, cw, stuff;
+   int maxlen = 0, cols, c, rows, i, j, k, num, cw, stuff;
    
    files = ecore_file_ls(dir);
    if (!files) return;
-   names = calloc(eina_list_count(files), sizeof(char *));
+   names = calloc(eina_list_count(files) * 2, sizeof(char *));
    if (!names) return;
    i = 0;
    EINA_LIST_FOREACH(files, l, s)
@@ -126,8 +117,10 @@ list_dir(const char *dir, int mode)
    num = i;
    stuff = 0;
    if (mode == SMALL) stuff += 2;
-   stuff += 1; // spacer at start
+   else if (mode == MEDIUM) stuff += 4;
    stuff += 5; // xxxx[ /K/M/G/T/P...]
+   stuff += 1; // spacer at start
+   // name
    stuff += 1; // type [@/*/|/=...]
    stuff += 1; // spacer
    maxlen += stuff;
@@ -135,56 +128,113 @@ list_dir(const char *dir, int mode)
      {
         cols = tw / maxlen;
         if (cols < 1) cols = 1;
-        for (i = 0; i < ((num + (cols - 1)) / cols); i++)
+        if (cols == 1)
           {
-             for (c = 0; c < cols; c++)
+             maxlen--;
+             stuff--;
+          }
+        rows = ((num + (cols - 1)) / cols);
+        for (i = 0; i < rows; i++)
+          {
+             if (mode == SMALL)
                {
-                  char buf[4096], sz[6];
-                  long long size;
-                  
-                  s = names[((c * (num + (cols - 1))) / cols) + i];
-                  if (!s) continue;
-                  snprintf(buf, sizeof(buf), "%s/%s", dir, s);
-                  int len = eina_unicode_utf8_get_len(s);
-                  cw = tw / cols;
-                  size = ecore_file_size(buf);
-                  if (size < 1024)
-                    snprintf(sz, sizeof(sz), " %4lld", size);
-                  else if (size < (1024 * 1024))
-                    snprintf(sz, sizeof(sz), "%4lldK", size / (1024));
-                  else if (size < (1024 * 1024 * 1024))
-                    snprintf(sz, sizeof(sz), "%4lldM", size / (1024 * 1024));
-                  else if (size < (1024 * 1024 * 1024 * 1024LL))
-                    snprintf(sz, sizeof(sz), "%4lldG", size / (1024 * 1024 * 1024LL));
-                  else if (size < (1024 * 1024 * 1024 * 1024LL * 1024LL))
-                    snprintf(sz, sizeof(sz), "%4lldT", size / (1024 * 1024 * 1024 * 1024LL));
-                  else if (size < (1024 * 1024 * 1024 * 1024LL * 1024LL * 1024LL))
-                    snprintf(sz, sizeof(sz), "%4lldP", size / (1024 * 1024 * 1024 * 1024LL * 1024LL));
-                  len += stuff;
-                  printf("%c}ic#%i;%i;%s%c", 0x1b, 2, 1, buf, 0);
-                  printf("%c}ib%c", 0x1b, 0);
-                  printf("##");
-                  printf("%c}ie%c", 0x1b, 0);
-                  printf(" %s %s", sz, s);
-                  if (ecore_file_is_dir(buf)) printf("/");
-                  else
+                  for (c = 0; c < cols; c++)
                     {
-                       char *ts;
+                       char buf[4096], sz[6];
+                       long long size;
                        
-                       ts = ecore_file_readlink(buf);
-                       if (ts)
-                         {
-                            printf("@");
-                            free(ts);
-                         }
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       snprintf(buf, sizeof(buf), "%s/%s", dir, s);
+                       int len = eina_unicode_utf8_get_len(s);
+                       cw = tw / cols;
+                       size = ecore_file_size(buf);
+                       size_print(sz, sizeof(sz), size);
+                       len += stuff;
+                       printf("%c}it#%i;%i;%s%c", 0x1b, 2, 1, buf, 0);
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("##");
+                       printf("%c}ie%c", 0x1b, 0);
+                       printf("%s %s", sz, s);
+                       if (ecore_file_is_dir(buf)) printf("/");
                        else
                          {
-                            printf(" ");
+                            char *ts;
+                            
+                            ts = ecore_file_readlink(buf);
+                            if (ts)
+                              {
+                                 printf("@");
+                                 free(ts);
+                              }
+                            else
+                              {
+                                 printf(" ");
+                              }
                          }
+                       for (j = 0; j < (cw - len); j++) printf(" ");
                     }
-                  for (j = 0; j < (cw - len); j++) printf(" ");
+                  printf("\n");
                }
-             printf("\n");
+             else if (mode == MEDIUM)
+               {
+                  for (c = 0; c < cols; c++)
+                    {
+                       char buf[4096];
+                       
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       int len = eina_unicode_utf8_get_len(s);
+                       snprintf(buf, sizeof(buf), "%s/%s", dir, s);
+                       cw = tw / cols;
+                       len += 4;
+                       if (cols > 1) len += 1;
+                       printf("%c}it%c%i;%i;%s%c", 0x1b, 33 + c, 4, 2, buf, 0);
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
+                       printf("%c}ie%c", 0x1b, 0);
+                       printf("%s", s);
+                       for (j = 0; j < (cw - len); j++) printf(" ");
+                    }
+                  printf("\n");
+                  for (c = 0; c < cols; c++)
+                    {
+                       char buf[4096], sz[6];
+                       long long size;
+                       int len;
+                       
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       snprintf(buf, sizeof(buf), "%s/%s", dir, s);
+                       cw = tw / cols;
+                       size = ecore_file_size(buf);
+                       size_print(sz, sizeof(sz), size);
+                       len = eina_unicode_utf8_get_len(sz) + 2;
+                       if (cols > 1) len += 1;
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
+                       printf("%c}ie%c", 0x1b, 0);
+                       printf("%s ", sz);
+                       if (ecore_file_is_dir(buf)) printf("/");
+                       else
+                         {
+                            char *ts;
+                            
+                            ts = ecore_file_readlink(buf);
+                            if (ts)
+                              {
+                                 printf("@");
+                                 free(ts);
+                              }
+                            else
+                              {
+                                 printf(" ");
+                              }
+                         }
+                       for (j = 0; j < (cw - len); j++) printf(" ");
+                    }
+                  printf("\n");
+               }
           }
      }
    free(names);

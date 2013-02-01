@@ -7,6 +7,7 @@
 #define MEDIA_BG           0x0000
 #define MEDIA_POP          0x0001
 #define MEDIA_STRETCH      0x0002
+#define MEDIA_THUMB        0x0003
 // bitmask for options - on or off
 #define MEDIA_RECOVER      0x0010
 #define MEDIA_SAVE         0x0020
@@ -16,6 +17,7 @@
 #define TYPE_SCALE    1
 #define TYPE_EDJE     2
 #define TYPE_MOV      3
+#define TYPE_THUMB    4
 
 #include "config.h"
 

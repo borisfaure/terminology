@@ -32,7 +32,8 @@ requirements="\
    ecore-imf >= 1.7.0 \
    ecore-imf-evas >= 1.7.0 \
    ecore-ipc >= 1.7.0 \
-   efreet >= 1.7.0
+   efreet >= 1.7.0 \
+   ethumb_client >= 1.7.0 \
    "
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
