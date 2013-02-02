@@ -194,7 +194,10 @@ list_dir(const char *dir, int mode)
                        printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
                        printf("%c}ie%c", 0x1b, 0);
                        printf("%s", s);
-                       for (j = 0; j < (cw - len); j++) printf(" ");
+                       if (c < (cols - 1))
+                         {
+                            for (j = 0; j < (cw - len); j++) printf(" ");
+                         }
                     }
                   printf("\n");
                   for (c = 0; c < cols; c++)
@@ -209,7 +212,7 @@ list_dir(const char *dir, int mode)
                        cw = tw / cols;
                        size = ecore_file_size(buf);
                        size_print(sz, sizeof(sz), size);
-                       len = eina_unicode_utf8_get_len(sz) + 2;
+                       len = eina_unicode_utf8_get_len(sz) + 2 + 4;
                        if (cols > 1) len += 1;
                        printf("%c}ib%c", 0x1b, 0);
                        printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
@@ -231,7 +234,10 @@ list_dir(const char *dir, int mode)
                                  printf(" ");
                               }
                          }
-                       for (j = 0; j < (cw - len); j++) printf(" ");
+                       if (c < (cols - 1))
+                         {
+                            for (j = 0; j < (cw - len); j++) printf(" ");
+                         }
                     }
                   printf("\n");
                }
