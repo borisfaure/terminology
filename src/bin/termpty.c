@@ -613,8 +613,6 @@ termpty_block_insert(Termpty *ty, int ch, Termblock *blk)
    if (!ex) return;
    ex->ch = ch;
    ex->left = blk->w * blk->h;
-   ex->x = 0;
-   ex->y = 0;
    ex->id = blk->id;
    ex->w = blk->w;
    ex->h = blk->h;
