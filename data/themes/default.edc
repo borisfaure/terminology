@@ -81,7 +81,7 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "base";
             target: "shadow";
-             target: "fade";
+            target: "fade";
          }
          program { name: "media_off";
             signal: "media,off";
