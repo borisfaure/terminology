@@ -34,7 +34,7 @@ _text_save_top(Termpty *ty)
    Termsave *ts;
 
    if (ty->backmax <= 0) return;
-   ts = malloc(sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
+   ts = calloc(1, sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
    ts->w = ty->w;
    _termpty_text_copy(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ts->cell, ty->w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
