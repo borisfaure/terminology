@@ -1306,7 +1306,6 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
            default:
              ERR("unhandled char 0x%02x", c[0]);
              ty->state.had_cr = 0;
-             sleep(1);
              return 1;
           }
      }
