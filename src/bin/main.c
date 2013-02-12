@@ -75,6 +75,7 @@ static void main_win_free(Win *wn);
 static void main_term_free(Term *term);
 static void main_term_bg_redo(Term *term);
 static Term *main_term_new(Win *wn, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int size_w, int size_h, Eina_Bool hold);
+static void _term_focus(Term *term);
 
 static void
 _split_free(Split *sp)
@@ -151,6 +152,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->term = main_term_new(sp->wn, config,
                              NULL, EINA_FALSE, NULL,
                              80, 24, EINA_FALSE);
+   _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
    
