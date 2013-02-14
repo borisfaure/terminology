@@ -75,6 +75,7 @@ struct _Termio
    Eina_Bool didclick : 1;
    Eina_Bool bottom_right : 1;
    Eina_Bool top_left : 1;
+   Eina_Bool boxsel : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -395,6 +396,11 @@ _smart_mouseover_delay(void *data)
    return EINA_FALSE;
 }
 
+#define INT_SWAP(_a, _b) do {    \
+    int _swap = _a; _a = _b; _b = _swap; \
+} while (0)
+
+
 static void
 _smart_apply(Evas_Object *obj)
 {
@@ -542,15 +548,13 @@ _smart_apply(Evas_Object *obj)
                        
                        if (cells[j].att.inverse ^ inv)
                          {
-                            int t;
-                            
                             fgext = 0;
                             bgext = 0;
                             fg = cells[j].att.fg;
                             bg = cells[j].att.bg;
                             if (fg == COL_DEF) fg = COL_INVERSEBG;
                             if (bg == COL_DEF) bg = COL_INVERSE;
-                            t = bg; bg = fg; fg = t;
+                            INT_SWAP(bg, fg);
                             if (bold)
                               {
                                  fg += 12;
@@ -655,38 +659,55 @@ _smart_apply(Evas_Object *obj)
    if (sd->cur.sel)
      {
         int start_x, start_y, end_x, end_y;
-	int size_top, size_bottom;
+        int size_top, size_bottom;
 
         start_x = sd->cur.sel1.x;
         start_y = sd->cur.sel1.y;
         end_x = sd->cur.sel2.x;
         end_y = sd->cur.sel2.y;
-        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
+
+        if (sd->boxsel)
           {
-             int t;
+             if (start_y > end_y)
+               INT_SWAP(start_y, end_y);
+             if (start_x > end_x)
+               INT_SWAP(start_x, end_x);
+           }
+         else
+           {
+              if ((start_y > end_y) ||
+                  ((start_y == end_y) && (end_x < start_x)))
+                {
+                   INT_SWAP(start_y, end_y);
+                   INT_SWAP(start_x, end_x);
 
-             t = start_x; start_x = end_x; end_x = t;
-             t = start_y; start_y = end_y; end_y = t;
+                   if (sd->top_left)
+                     {
+                        sd->top_left = EINA_FALSE;
+                        sd->bottom_right = EINA_TRUE;
+                        edje_object_signal_emit(sd->cur.selo_theme,
+                                                "mouse,out",
+                                                "zone.top_left");
+                        edje_object_signal_emit(sd->cur.selo_theme,
+                                                "mouse,in",
+                                                "zone.bottom_right");
+                     }
+                   else if (sd->bottom_right)
+                     {
+                        sd->top_left = EINA_TRUE;
+                        sd->bottom_right = EINA_FALSE;
+                        edje_object_signal_emit(sd->cur.selo_theme,
+                                                "mouse,out",
+                                                "zone.bottom_right");
+                        edje_object_signal_emit(sd->cur.selo_theme,
+                                                "mouse,in",
+                                                "zone.top_left");
+                     }
+                }
+           }
+        size_top = start_x * sd->font.chw;
 
-	     if (sd->top_left)
-	       {
-                  sd->top_left = EINA_FALSE;
-                  sd->bottom_right = EINA_TRUE;
-                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.top_left");
-                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.bottom_right");
-	       }
-             else if (sd->bottom_right)
-               {
-                  sd->top_left = EINA_TRUE;
-                  sd->bottom_right = EINA_FALSE;
-                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,out", "zone.bottom_right");
-                  edje_object_signal_emit(sd->cur.selo_theme, "mouse,in", "zone.top_left");
-               }
-          }
-
-	size_top = start_x * sd->font.chw;
-
-	size_bottom = (sd->grid.w - end_x - 1) * sd->font.chw;
+        size_bottom = (sd->grid.w - end_x - 1) * sd->font.chw;
 
         evas_object_size_hint_min_set(sd->cur.selo_top,
                                       size_top,
@@ -706,23 +727,42 @@ _smart_apply(Evas_Object *obj)
         evas_object_resize(sd->cur.selo_theme,
                            sd->grid.w * sd->font.chw,
                            (end_y + 1 - start_y) * sd->font.chh);
-        if ((start_y == end_y) ||
-            ((start_x == 0) && (end_x == (sd->grid.w - 1))))
-          edje_object_signal_emit(sd->cur.selo_theme, 
+
+        if (sd->boxsel)
+          {
+             edje_object_signal_emit(sd->cur.selo_theme,
                                   "mode,oneline", "terminology");
-        else if ((start_y == (end_y - 1)) &&
-                 (start_x > end_x))
-          edje_object_signal_emit(sd->cur.selo_theme, 
-                                  "mode,disjoint", "terminology");
-        else if (start_x == 0)
-          edje_object_signal_emit(sd->cur.selo_theme, 
-                                  "mode,topfull", "terminology");
-        else if (end_x == (sd->grid.w - 1))
-          edje_object_signal_emit(sd->cur.selo_theme, 
-                                  "mode,bottomfull", "terminology");
+          }
         else
-          edje_object_signal_emit(sd->cur.selo_theme,
-                                  "mode,multiline", "terminology");
+          {
+             if ((start_y == end_y) ||
+                 ((start_x == 0) && (end_x == (sd->grid.w - 1))))
+               {
+                  edje_object_signal_emit(sd->cur.selo_theme,
+                                          "mode,oneline", "terminology");
+               }
+             else if ((start_y == (end_y - 1)) &&
+                      (start_x > end_x))
+               {
+                  edje_object_signal_emit(sd->cur.selo_theme,
+                                          "mode,disjoint", "terminology");
+               }
+             else if (start_x == 0)
+               {
+                  edje_object_signal_emit(sd->cur.selo_theme,
+                                          "mode,topfull", "terminology");
+               }
+             else if (end_x == (sd->grid.w - 1))
+               {
+                  edje_object_signal_emit(sd->cur.selo_theme,
+                                          "mode,bottomfull", "terminology");
+               }
+             else
+               {
+                  edje_object_signal_emit(sd->cur.selo_theme,
+                                          "mode,multiline", "terminology");
+               }
+          }
         evas_object_show(sd->cur.selo_theme);
      }
    else
@@ -825,14 +865,42 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    start_y = sd->cur.sel1.y;
    end_x = sd->cur.sel2.x;
    end_y = sd->cur.sel2.y;
-   if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
-     {
-        int t;
 
-        t = start_x; start_x = end_x; end_x = t;
-        t = start_y; start_y = end_y; end_y = t;
+
+   if (sd->boxsel)
+     {
+        int i;
+        Eina_Strbuf *sb;
+
+        if (start_y > end_y)
+          INT_SWAP(start_y, end_y);
+        if (start_x > end_x)
+          INT_SWAP(start_x, end_x);
+
+        sb = eina_strbuf_new();
+        for (i = start_y; i <= end_y; i++)
+          {
+             char *tmp = termio_selection_get(obj, start_x, i, end_x, i);
+             size_t len = strlen(tmp);
+
+             eina_strbuf_append_length(sb, tmp, len);
+             if (len && tmp[len - 1] != '\n')
+               eina_strbuf_append_char(sb, '\n');
+             free(tmp);
+          }
+        s = eina_strbuf_string_steal(sb);
+        eina_strbuf_free(sb);
      }
-   s = termio_selection_get(obj, start_x, start_y, end_x, end_y);
+   else
+     {
+        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
+          {
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
+        s = termio_selection_get(obj, start_x, start_y, end_x, end_y);
+     }
+
    if (s)
      {
         if (sd->win)
@@ -1844,6 +1912,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    sd->didclick = EINA_FALSE;
+   sd->boxsel = EINA_FALSE;
    if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Control"))
      {
         evas_object_smart_callback_call(data, "options", NULL);
@@ -1881,6 +1950,19 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
           }
         else
           {
+            if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+              {
+                 sd->cur.sel1.x = cx;
+                 sd->cur.sel1.y = cy - sd->scroll;
+                 sd->cur.sel2.x = cx;
+                 sd->cur.sel2.y = cy - sd->scroll;
+                 sd->cur.sel = EINA_TRUE;
+                 sd->cur.makesel = EINA_TRUE;
+                 sd->boxsel = EINA_TRUE;
+#if defined(SUPPORT_DBLWIDTH)
+                 _selection_dbl_fix(data);
+#endif
+              }
              if (sd->top_left || sd->bottom_right)
                {
                   sd->cur.makesel = 1;
@@ -1964,9 +2046,19 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 #if defined(SUPPORT_DBLWIDTH)
              _selection_dbl_fix(data);
 #endif
-             _selection_newline_extend_fix(data);
-             _smart_update_queue(data, sd);
-             _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             if (sd->boxsel)
+              {
+                 sd->cur.sel2.x = cx;
+                 sd->cur.sel2.y = cy - sd->scroll;
+                 _smart_update_queue(data, sd);
+                 _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+              }
+            else
+              {
+                 _selection_newline_extend_fix(data);
+                 _smart_update_queue(data, sd);
+                 _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+              }
           }
      }
 }
@@ -2006,8 +2098,9 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 #if defined(SUPPORT_DBLWIDTH)
         _selection_dbl_fix(data);
 #endif
-        _selection_newline_extend_fix(data);
-       _smart_update_queue(data, sd);
+        if (!sd->boxsel)
+          _selection_newline_extend_fix(data);
+        _smart_update_queue(data, sd);
      }
    if (mc_change)
      {
