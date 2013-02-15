@@ -372,9 +372,6 @@ const Cmatch fmatch[] =
    { 5, 1, 1,  9, 9, 9, "*.cpio"},
    { 5, 1, 1,  9, 9, 9, "*.CPIO"},
 
-   { 5, 1, 2,  9, 9, 9, "*.bin"},
-   { 5, 1, 2,  9, 9, 9, "*.BIN"},
-
    { 0, 5, 2,  9, 9, 9, "*.iso"},
    { 0, 5, 2,  9, 9, 9, "*.ISO"},
    { 0, 5, 2,  9, 9, 9, "*.img"},
@@ -389,6 +386,8 @@ const Cmatch fmatch[] =
    { 4, 1, 5,  9, 9, 9, "*.m4"},
 
    { 5, 2, 0,  9, 9, 9, "*.sh"},
+   { 5, 2, 0,  9, 9, 9, "*.bin"},
+   { 5, 2, 0,  9, 9, 9, "*.BIN"},
 
    { 2, 2, 3,  9, 9, 9, "*.in"},
    
@@ -459,6 +458,13 @@ const Cmatch dmatch[] =
 // for exectuable files
 const Cmatch xmatch[] =
 {
+   { 5, 2, 0,  9, 9, 9, "*.sh"},
+   { 5, 2, 0,  9, 9, 9, "*.bin"},
+   { 5, 2, 0,  9, 9, 9, "*.BIN"},
+
+   { 4, 0, 4,  9, 9, 9, "*.exe"},
+   { 4, 0, 4,  9, 9, 9, "*.EXE"},
+   
    { 0, 0, 0,  0, 0, 0, NULL}
 };
 
@@ -485,6 +491,7 @@ fileprint(char *path, char *name, Eina_Bool type)
 {
    Eina_Bool isdir = EINA_FALSE;
    Eina_Bool islink = EINA_FALSE;
+   Eina_Bool isexec = EINA_FALSE;
    
    if (name || type)
      {
@@ -497,6 +504,7 @@ fileprint(char *path, char *name, Eina_Bool type)
              islink = EINA_TRUE;
              free(ts);
           }
+        if (ecore_file_can_exec(path)) isexec = EINA_TRUE;
      }
    if (name)
      {
@@ -505,6 +513,14 @@ fileprint(char *path, char *name, Eina_Bool type)
              if (!printmatch(name, dmatch))
                {
                   colorprint(CUBE, FG, 1, 3, 5);
+                  printf("%s", name);
+               }
+          }
+        else if (isexec)
+          {
+             if (!printmatch(name, xmatch))
+               {
+                  colorprint(CUBE, FG, 5, 1, 5);
                   printf("%s", name);
                }
           }
@@ -527,6 +543,11 @@ fileprint(char *path, char *name, Eina_Bool type)
           {
              colorprint(CUBE, FG, 3, 4, 5);
              printf("/");
+          }
+        else if (isexec)
+          {
+             colorprint(CUBE, FG, 5, 1, 5);
+             printf("*");
           }
         else
           printf(" ");
