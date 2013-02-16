@@ -1950,7 +1950,9 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
           }
         else
           {
-            if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+            if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+                evas_key_modifier_is_set(ev->modifiers, "Control") ||
+                evas_key_modifier_is_set(ev->modifiers, "Alt"))
               {
                  sd->cur.sel1.x = cx;
                  sd->cur.sel1.y = cy - sd->scroll;
