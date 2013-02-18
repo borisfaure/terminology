@@ -2316,8 +2316,11 @@ _smart_cb_gest_zoom_start(void *data, void *event)
    if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
    if (config)
      {
+        int sz;
+        
         sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, (double)sd->zoom_fontsize_start * p->zoom);
+        sz = (double)sd->zoom_fontsize_start * p->zoom;
+        if (sz != config->font.size) _font_size_set(data, sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -2333,9 +2336,9 @@ _smart_cb_gest_zoom_move(void *data, void *event)
    if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
    if (config)
      {
-        sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, (double)sd->zoom_fontsize_start * 
-                       (p->zoom / 30.0));
+        int sz = (double)sd->zoom_fontsize_start *
+          (1.0 + ((p->zoom - 1.0) / 30.0));
+        if (sz != config->font.size) _font_size_set(data, sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -2351,9 +2354,9 @@ _smart_cb_gest_zoom_end(void *data, void *event)
    if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
    if (config)
      {
-        sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, (double)sd->zoom_fontsize_start * 
-                       (p->zoom / 30.0));
+        int sz = (double)sd->zoom_fontsize_start *
+          (1.0 + ((p->zoom - 1.0) / 30.0));
+        if (sz != config->font.size) _font_size_set(data, sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -2369,8 +2372,8 @@ _smart_cb_gest_zoom_abort(void *data, void *event __UNUSED__)
    if (!sd) return EVAS_EVENT_FLAG_ON_HOLD;
    if (config)
      {
-        sd->zoom_fontsize_start = config->font.size;
-        _font_size_set(data, sd->zoom_fontsize_start);
+        if (sd->zoom_fontsize_start != config->font.size)
+          _font_size_set(data, sd->zoom_fontsize_start);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
