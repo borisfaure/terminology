@@ -479,7 +479,7 @@ _cb_term_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Evas_Event_Mouse_Down *ev = event;
    Term *term = data;
    Term *term2;
-   
+
    term2 = main_win_focused_term_get(term->wn);
    if (term == term2) return;
    if (ev->button == 1)
@@ -793,11 +793,11 @@ _popmedia_queue_add(Term *term, const char *src)
 }
 
 static void
-_cb_popup(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_popup(void *data, Evas_Object *obj __UNUSED__, void *event)
 {
    Term *term = data;
-   const char *src = termio_link_get(term->term);
-   
+   const char *src = event;
+   if (!src) src = termio_link_get(term->term);
    if (!src) return;
    _popmedia_show(term, src);
 }

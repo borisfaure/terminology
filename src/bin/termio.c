@@ -400,6 +400,14 @@ _smart_mouseover_delay(void *data)
     int _swap = _a; _a = _b; _b = _swap; \
 } while (0)
 
+static void
+_smart_media_clicked(void *data, Evas_Object *obj, void *info __UNUSED__)
+{
+//   Termio *sd = evas_object_smart_data_get(data);
+   const char *file = media_get(obj);
+   if (!file) return;
+   evas_object_smart_callback_call(data, "popup", (void *)file);
+}
 
 static void
 _smart_apply(Evas_Object *obj)
@@ -501,6 +509,10 @@ _smart_apply(Evas_Object *obj)
                                       evas_object_smart_member_add(blk->obj, obj);
                                       evas_object_stack_above(blk->obj, sd->grid.obj);
                                       evas_object_show(blk->obj);
+                                      if (blk->thumb)
+                                        evas_object_smart_callback_add
+                                        (blk->obj, "clicked",
+                                            _smart_media_clicked, obj);
                                    }
                                  blk->was_active_before = EINA_TRUE;
                                  if (!blk->was_active)

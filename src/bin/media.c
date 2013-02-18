@@ -14,7 +14,7 @@ typedef struct _Media Media;
 struct _Media
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
-   Evas_Object *clip, *o_img, *o_tmp, *o_ctrl, *o_busy;
+   Evas_Object *clip, *o_img, *o_tmp, *o_ctrl, *o_busy, *o_event;
    Ecore_Timer *anim;
    Ecore_Timer *smooth_timer;
    Ecore_Job *restart_job;
@@ -33,6 +33,10 @@ struct _Media
    int fr, frnum;
    int mode, type;
    int resizes;
+   struct {
+      Evas_Coord x, y;
+      Eina_Bool down : 1;
+   } down;
    Eina_Bool nosmooth : 1;
    Eina_Bool downloading : 1;
 };
@@ -184,6 +188,7 @@ _type_thumb_init(Evas_Object *obj)
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
    sd->iw = 64;
    sd->ih = 64;
    ethumb_client_file_set(et_client, sd->realf, NULL);
@@ -240,6 +245,7 @@ _type_img_init(Evas_Object *obj)
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
    evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _cb_img_preloaded, obj);
    evas_object_image_file_set(o, sd->realf, NULL);
@@ -334,6 +340,7 @@ _type_scale_init(Evas_Object *obj)
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
    evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _cb_scale_preloaded, obj);
    evas_object_image_file_set(o, sd->realf, NULL);
@@ -401,6 +408,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
              o = sd->o_tmp = evas_object_image_filled_add(evas_object_evas_get(obj));
              evas_object_smart_member_add(o, obj);
              evas_object_clip_set(o, sd->clip);
+             evas_object_raise(sd->o_event);
              evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
                                             _cb_scale_preloaded, obj);
              evas_object_image_file_set(o, sd->realf, NULL);
@@ -446,6 +454,7 @@ _type_edje_init(Evas_Object *obj)
    o = sd->o_img = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
    for (i = 0; groups[i]; i++)
      {
         if (edje_object_file_set(o, sd->realf, groups[i]))
@@ -633,6 +642,7 @@ _type_mov_init(Evas_Object *obj)
      emotion_object_last_position_load(sd->o_img);
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
 
    o = sd->o_ctrl = edje_object_add(evas_object_evas_get(obj));
    theme_apply(o, sd->config, "terminology/mediactrl");
@@ -772,6 +782,7 @@ _smart_del(Evas_Object *obj)
    if (sd->o_tmp) evas_object_del(sd->o_tmp);
    if (sd->o_ctrl) evas_object_del(sd->o_ctrl);
    if (sd->o_busy) evas_object_del(sd->o_busy);
+   if (sd->o_event) evas_object_del(sd->o_event);
    if (sd->anim) ecore_timer_del(sd->anim);
    if (sd->smooth_timer) sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
    if (sd->restart_job) ecore_job_del(sd->restart_job);
@@ -879,6 +890,11 @@ _smart_calculate(Evas_Object *obj)
         evas_object_move(sd->o_busy, ox, oy);
         evas_object_resize(sd->o_busy, ow, oh);
      }
+   if (sd->o_event)
+     {
+        evas_object_move(sd->o_event, ox, oy);
+        evas_object_resize(sd->o_event, ow, oh);
+     }
 }
 
 static void
@@ -945,8 +961,40 @@ _url_compl_cb(void *data, int type __UNUSED__, void *event_info)
    else if (_is_fmt(sd->src, extn_mov))
      _type_mov_init(obj);
    evas_object_raise(sd->o_busy);
+   evas_object_raise(sd->o_event);
    _smart_calculate(obj);
    return EINA_FALSE;
+}
+
+static void
+_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Mouse_Down *ev = event;
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   
+   if (sd->down.down) return;
+   if (ev->button != 1) return;
+   sd->down.x = ev->canvas.x;
+   sd->down.y = ev->canvas.y;
+   sd->down.down = EINA_TRUE;
+}
+
+static void
+_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Mouse_Down *ev = event;
+   Media *sd = evas_object_smart_data_get(data);
+   Evas_Coord dx, dy;
+   if (!sd) return;
+   
+   if (!sd->down.down) return;
+   sd->down.down = EINA_FALSE;
+   dx = abs(ev->canvas.x - sd->down.x);
+   dy = abs(ev->canvas.y - sd->down.y);
+   if ((dx <= elm_config_finger_size_get()) &&
+       (dy <= elm_config_finger_size_get()))
+     evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -1096,6 +1144,18 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
              break;
           }
      }
+   
+   sd->o_event = evas_object_rectangle_add(e);
+   evas_object_color_set(sd->o_event, 0, 0, 0, 0);
+   evas_object_repeat_events_set(sd->o_event, EINA_TRUE);
+   evas_object_smart_member_add(sd->o_event, obj);
+   evas_object_clip_set(sd->o_event, sd->clip);
+   evas_object_show(sd->o_event);
+   evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _mouse_down_cb, obj);
+   evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_UP,
+                                  _mouse_up_cb, obj);
+   
    if (type) *type = t;
    return obj;
 }
@@ -1129,7 +1189,6 @@ media_stop(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if ((!sd) || (sd->type != TYPE_MOV)) return;
-
    evas_object_del(obj);
 }
 
@@ -1150,6 +1209,14 @@ media_volume_set(Evas_Object *obj, double vol)
    if ((!sd) || (sd->type != TYPE_MOV)) return;
    emotion_object_audio_volume_set(sd->o_img, vol);
    edje_object_part_drag_value_set(sd->o_ctrl, "terminology.voldrag", vol, vol);
+}
+
+const char *
+media_get(const Evas_Object *obj)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   return sd->realf;
 }
 
 int
