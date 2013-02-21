@@ -52,6 +52,11 @@ struct _Termio
       int x1, y1, x2, y2;
       int suspend;
       Eina_List *objs;
+      struct {
+         Evas_Coord x, y;
+         Eina_Bool down : 1;
+         Eina_Bool dnd : 1;
+      } down;
    } link;
    int zoom_fontsize_start;
    int scroll;
@@ -253,12 +258,25 @@ _activate_link(Evas_Object *obj)
    if (!handled) ecore_exe_run(buf, NULL);
 }
 
+static void
+_cb_link_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Mouse_Down *ev = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   
+   if (ev->button != 1) return;
+   sd->link.down.down = EINA_TRUE;
+   sd->link.down.x = ev->canvas.x;
+   sd->link.down.y = ev->canvas.y;
+}
+
 static Eina_Bool
 _cb_link_up_delay(void *data)
 {
    Termio *sd = evas_object_smart_data_get(data);
-   
    if (!sd) return EINA_FALSE;
+   
    sd->link_do_timer = NULL;
    if (!sd->didclick) _activate_link(data);
    sd->didclick = EINA_FALSE;
@@ -270,12 +288,74 @@ _cb_link_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   Evas_Coord dx, dy;
    
    if (!sd) return;
-   if (ev->button == 1)
+   dx = abs(ev->canvas.x - sd->link.down.x);
+   dy = abs(ev->canvas.y - sd->link.down.y);
+   if ((ev->button == 1) && (sd->link.down.down) &&
+       ((dx <= elm_config_finger_size_get()) &&
+           (dy <= elm_config_finger_size_get())))
      {
         if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
         sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
+     }
+   if ((ev->button == 1) && (sd->link.down.down))
+     {
+        sd->link.down.down = EINA_FALSE;
+     }
+}
+
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+static void
+_cb_link_drag_done(void *data, Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   
+   printf("dnd done\n");
+   sd->link.down.dnd = EINA_FALSE;
+}
+
+static Evas_Object *
+_cb_link_icon_new(void *data, Evas_Object *par, Evas_Coord *xoff, Evas_Coord *yoff)
+{
+   Evas_Object *icon;
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return NULL;
+   
+   icon = elm_button_add(par);
+   elm_object_text_set(icon, sd->link.string);
+   *xoff = 0;
+   *yoff = 0;
+   return icon;
+}
+#endif
+
+static void
+_cb_link_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
+{
+   Evas_Event_Mouse_Move *ev = event;
+   Termio *sd = evas_object_smart_data_get(data);
+   Evas_Coord dx, dy;
+   if (!sd) return;
+   
+   if (!sd->link.down.down) return;
+   dx = abs(ev->cur.canvas.x - sd->link.down.x);
+   dy = abs(ev->cur.canvas.y - sd->link.down.y);
+   if ((sd->link.string) &&
+       ((dx > elm_config_finger_size_get()) ||
+           (dy > elm_config_finger_size_get())))
+     {
+        sd->link.down.down = EINA_FALSE;
+        sd->link.down.dnd = EINA_TRUE;
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+        printf("dnd start %s\n", sd->link.string);
+        elm_drag_start(obj, ELM_SEL_FORMAT_IMAGE,
+                       sd->link.string,
+                       _cb_link_icon_new, data,
+                       _cb_link_drag_done, data);
+#endif
      }
 }
 
@@ -337,8 +417,12 @@ _update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
                   
                   sd->link.objs = eina_list_append(sd->link.objs, o);
                   evas_object_show(o);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                                 _cb_link_down, obj);
                   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
                                                  _cb_link_up, obj);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
+                                                 _cb_link_move, obj);
                }
           }
      }
@@ -2041,6 +2125,7 @@ _smart_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    if (_rep_mouse_up(sd, ev, cx, cy)) return;
+   if (sd->link.down.dnd) return;
    if (sd->cur.makesel)
      {
         sd->cur.makesel = 0;
@@ -2091,6 +2176,13 @@ _smart_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
    if (_rep_mouse_move(sd, ev, cx, cy, mc_change)) return;
+   if (sd->link.down.dnd)
+     {
+        sd->cur.makesel = 0;
+        sd->cur.sel = 0;
+        _smart_update_queue(data, sd);
+        return;
+     }
    if (sd->cur.makesel)
      {
         if (!sd->cur.sel)
@@ -2724,8 +2816,7 @@ static void
 _smart_pty_command(void *data)
 {
    Evas_Object *obj = data;
-   Termio *sd;
-   sd = evas_object_smart_data_get(obj);
+   Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (!sd->pty->cur_cmd) return;
    if (sd->pty->cur_cmd[0] == 'i')
@@ -2807,6 +2898,37 @@ _smart_pty_command(void *data)
    evas_object_smart_callback_call(obj, "command", (void *)sd->pty->cur_cmd);
 }
 
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+static void
+_smart_cb_drag_enter(void *data, Evas_Object *o)
+{
+   printf("dnd enter\n");
+}
+
+static void
+_smart_cb_drag_leave(void *data, Evas_Object *o)
+{
+   printf("dnd leave\n");
+}
+
+static void
+_smart_cb_drag_pos(void *data, Evas_Object *o, Evas_Coord x, Evas_Coord y)
+{
+   printf("dnd at %i %i\n", x, y);
+}
+
+static Eina_Bool
+_smart_cb_drop(void *data, Evas_Object *o, Elm_Selection_Data *ev)
+{
+   Evas_Object *obj = data;
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return EINA_TRUE;
+   printf("drop: '%s'\n", ev->data);
+   termpty_write(sd->pty, ev->data, strlen(ev->data));
+   return EINA_TRUE;
+}
+#endif
+
 Evas_Object *
 termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h)
 {
@@ -2845,7 +2967,15 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
                             ELM_GESTURE_STATE_ABORT, _smart_cb_gest_zoom_abort,
                             obj);
    
-
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+   elm_drop_target_add(sd->event,
+                       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_IMAGE,
+                       _smart_cb_drag_enter, obj,
+                       _smart_cb_drag_leave, obj,
+                       _smart_cb_drag_pos, obj,
+                       _smart_cb_drop, obj);
+#endif
+   
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
