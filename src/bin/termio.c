@@ -53,9 +53,11 @@ struct _Termio
       int suspend;
       Eina_List *objs;
       struct {
+         Evas_Object *dndobj;
          Evas_Coord x, y;
          Eina_Bool down : 1;
          Eina_Bool dnd : 1;
+         Eina_Bool dndobjdel : 1;
       } down;
    } link;
    int zoom_fontsize_start;
@@ -308,13 +310,43 @@ _cb_link_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 static void
-_cb_link_drag_done(void *data, Evas_Object *obj)
+_cb_link_drag_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
+{
+   const Evas_Modifier *em = NULL;
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   
+   printf("dnd %i %i act %i\n", x, y, action);
+   em = evas_key_modifier_get(evas_object_evas_get(sd->event));
+   if (em)
+     {
+        if (evas_key_modifier_is_set(em, "Control"))
+          elm_drag_action_set(obj, ELM_XDND_ACTION_COPY);
+        else
+          elm_drag_action_set(obj, ELM_XDND_ACTION_MOVE);
+     }
+}
+
+static void
+_cb_link_drag_accept(void *data, Evas_Object *obj __UNUSED__, Eina_Bool doaccept)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   
+   printf("dnd accept: %i\n", doaccept);
+}
+
+static void
+_cb_link_drag_done(void *data, Evas_Object *obj __UNUSED__)
 {
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return;
    
    printf("dnd done\n");
    sd->link.down.dnd = EINA_FALSE;
+   if ((sd->link.down.dndobjdel) && (sd->link.down.dndobj))
+     evas_object_del(sd->link.down.dndobj);
+   sd->link.down.dndobj = NULL;
 }
 
 static Evas_Object *
@@ -350,11 +382,25 @@ _cb_link_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
         sd->link.down.down = EINA_FALSE;
         sd->link.down.dnd = EINA_TRUE;
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-        printf("dnd start %s\n", sd->link.string);
-        elm_drag_start(obj, ELM_SEL_FORMAT_IMAGE,
-                       sd->link.string,
-                       _cb_link_icon_new, data,
-                       _cb_link_drag_done, data);
+        printf("dnd start %s %i %i\n", sd->link.string,
+               evas_key_modifier_is_set(ev->modifiers, "Control"),
+               evas_key_modifier_is_set(ev->modifiers, "Shift"));
+        if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+          elm_drag_start(obj, ELM_SEL_FORMAT_IMAGE, sd->link.string,
+                         ELM_XDND_ACTION_COPY,
+                         _cb_link_icon_new, data,
+                         _cb_link_drag_move, data,
+                         _cb_link_drag_accept, data,
+                         _cb_link_drag_done, data);
+        else
+          elm_drag_start(obj, ELM_SEL_FORMAT_IMAGE, sd->link.string,
+                         ELM_XDND_ACTION_MOVE,
+                         _cb_link_icon_new, data,
+                         _cb_link_drag_move, data,
+                         _cb_link_drag_accept, data,
+                         _cb_link_drag_done, data);
+        sd->link.down.dndobj = obj;
+        sd->link.down.dndobjdel = EINA_FALSE;
 #endif
      }
 }
@@ -379,7 +425,16 @@ _update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
         int y;
         
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        EINA_LIST_FREE(sd->link.objs, o) evas_object_del(o);
+        EINA_LIST_FREE(sd->link.objs, o)
+          {
+             if (sd->link.down.dndobj == o)
+               {
+                  sd->link.down.dndobjdel = EINA_TRUE;
+                  evas_object_hide(o);
+               }
+             else
+               evas_object_del(o);
+          }
         if ((sd->link.string) && (sd->link.suspend == 0))
           {
              for (y = sd->link.y1; y <= sd->link.y2; y++)
@@ -2641,8 +2696,14 @@ _smart_del(Evas_Object *obj)
    if (sd->win)
      evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
                                          _win_obj_del, obj);
-   EINA_LIST_FREE(sd->link.objs, o) evas_object_del(o);
+   EINA_LIST_FREE(sd->link.objs, o)
+     {
+        if (o == sd->link.down.dndobj) sd->link.down.dndobj = NULL;
+        evas_object_del(o);
+     }
+   if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);
    _compose_seq_reset(sd);
+   sd->link.down.dndobj = NULL;
    sd->cur.obj = NULL;
    sd->event = NULL;
    sd->cur.selo_top = NULL;
@@ -2900,31 +2961,33 @@ _smart_pty_command(void *data)
 
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 static void
-_smart_cb_drag_enter(void *data, Evas_Object *o)
+_smart_cb_drag_enter(void *data __UNUSED__, Evas_Object *o __UNUSED__)
 {
    printf("dnd enter\n");
 }
 
 static void
-_smart_cb_drag_leave(void *data, Evas_Object *o)
+_smart_cb_drag_leave(void *data __UNUSED__, Evas_Object *o __UNUSED__)
 {
    printf("dnd leave\n");
 }
 
 static void
-_smart_cb_drag_pos(void *data, Evas_Object *o, Evas_Coord x, Evas_Coord y)
+_smart_cb_drag_pos(void *data __UNUSED__, Evas_Object *o __UNUSED__, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
-   printf("dnd at %i %i\n", x, y);
+   printf("dnd at %i %i act:%i\n", x, y, action);
 }
 
 static Eina_Bool
-_smart_cb_drop(void *data, Evas_Object *o, Elm_Selection_Data *ev)
+_smart_cb_drop(void *data, Evas_Object *o __UNUSED__, Elm_Selection_Data *ev)
 {
    Evas_Object *obj = data;
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_TRUE;
-   printf("drop: '%s'\n", ev->data);
-   termpty_write(sd->pty, ev->data, strlen(ev->data));
+   if (ev->action == ELM_XDND_ACTION_COPY)
+     evas_object_smart_callback_call(obj, "popup", ev->data);
+   else
+     termpty_write(sd->pty, ev->data, strlen(ev->data));
    return EINA_TRUE;
 }
 #endif
