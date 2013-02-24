@@ -14,7 +14,11 @@
 #include "ipc.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
-  #define ELM_PANE_BUG_1_7
+  #define PANES_TOP "left"
+  #define PANES_BOTTOM "right"
+#else
+  #define PANES_TOP "top"
+  #define PANES_BOTTOM "bottom"
 #endif
 
 typedef struct _Win   Win;
@@ -159,13 +163,8 @@ _split_split(Split *sp, Eina_Bool horizontal)
    _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
-#ifdef ELM_PANE_BUG_1_7
-   elm_object_part_content_set(sp->panes, "left", sp->s1->term->bg);
-   elm_object_part_content_set(sp->panes, "right", sp->s2->term->bg);
-#else
-   elm_object_part_content_set(sp->panes, "top", sp->s1->term->bg);
-   elm_object_part_content_set(sp->panes, "bottom", sp->s2->term->bg);
-#endif
+   elm_object_part_content_set(sp->panes, PANES_TOP, sp->s1->term->bg);
+   elm_object_part_content_set(sp->panes, PANES_BOTTOM, sp->s2->term->bg);
 
    if (!sp->parent)
      edje_object_part_swallow(sp->wn->base, "terminology.content", sp->panes);
@@ -173,23 +172,13 @@ _split_split(Split *sp, Eina_Bool horizontal)
      {
         if (sp == sp->parent->s1)
           {
-#ifdef ELM_PANE_BUG_1_7
-             elm_object_part_content_unset(sp->parent->panes, "left");
-             elm_object_part_content_set(sp->parent->panes, "left", sp->panes);
+             elm_object_part_content_unset(sp->parent->panes, PANES_TOP);
+             elm_object_part_content_set(sp->parent->panes, PANES_TOP, sp->panes);
           }
         else
           {
-             elm_object_part_content_unset(sp->parent->panes, "right");
-             elm_object_part_content_set(sp->parent->panes, "right", sp->panes);
-#else
-             elm_object_part_content_unset(sp->parent->panes, "top");
-             elm_object_part_content_set(sp->parent->panes, "top", sp->panes);
-          }
-        else
-          {
-             elm_object_part_content_unset(sp->parent->panes, "bottom");
-             elm_object_part_content_set(sp->parent->panes, "bottom", sp->panes);
-#endif
+             elm_object_part_content_unset(sp->parent->panes, PANES_BOTTOM);
+             elm_object_part_content_set(sp->parent->panes, PANES_BOTTOM, sp->panes);
           }
      }
    evas_object_show(sp->panes);
@@ -399,11 +388,7 @@ main_close(Evas_Object *win, Evas_Object *term)
 
         if ((spp->parent) && (spp->parent->s2 == spp))
           {
-#ifdef ELM_PANE_BUG_1_7
-             slot = "right";
-#else
-             slot = "bottom";
-#endif
+             slot = PANES_BOTTOM;
           }
         _split_merge(spp, spkeep, slot);
 
