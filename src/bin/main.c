@@ -788,6 +788,16 @@ _cb_popup(void *data, Evas_Object *obj __UNUSED__, void *event)
 }
 
 static void
+_cb_popup_queue(void *data, Evas_Object *obj __UNUSED__, void *event)
+{
+   Term *term = data;
+   const char *src = event;
+   if (!src) src = termio_link_get(term->term);
+   if (!src) return;
+   _popmedia_queue_add(term, src);
+}
+
+static void
 _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
 {
    Term *term = data;
@@ -1479,6 +1489,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
+   evas_object_smart_callback_add(o, "popup,queue", _cb_popup_queue, term);
    evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, term);
    evas_object_smart_callback_add(o, "command", _cb_command, term);
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);

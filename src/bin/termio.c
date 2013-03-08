@@ -2985,7 +2985,49 @@ _smart_cb_drop(void *data, Evas_Object *o __UNUSED__, Elm_Selection_Data *ev)
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_TRUE;
    if (ev->action == ELM_XDND_ACTION_COPY)
-     evas_object_smart_callback_call(obj, "popup", ev->data);
+     {
+        if (strchr(ev->data, '\n'))
+          {
+             char *p, *p2, *p3, *tb;
+             
+             tb = malloc(strlen(ev->data) + 1);
+             if (tb)
+               {
+                  for (p = ev->data; p;)
+                    {
+                       p2 = strchr(p, '\n');
+                       p3 = strchr(p, '\r');
+                       if (p2 && p3)
+                         {
+                            if (p3 < p2) p2 = p3;
+                         }
+                       else if (!p2) p3 = p2;
+                       if (p2)
+                         {
+                            strncpy(tb, p, p2 - p);
+                            tb[p2 - p] = 0;
+                            p = p2;
+                            while ((*p) && (isspace(*p))) p++;
+                            if (strlen(tb) > 0)
+                              evas_object_smart_callback_call
+                              (obj, "popup,queue", tb);
+                         }
+                       else
+                         {
+                            strcpy(tb, p);
+                            printf("'%s'\n", tb);
+                            if (strlen(tb) > 0)
+                              evas_object_smart_callback_call
+                              (obj, "popup,queue", tb);
+                            break;
+                         }
+                    }
+                  free(tb);
+               }
+          }
+        else
+          evas_object_smart_callback_call(obj, "popup", ev->data);
+     }
    else
      termpty_write(sd->pty, ev->data, strlen(ev->data));
    return EINA_TRUE;
