@@ -3015,7 +3015,6 @@ _smart_cb_drop(void *data, Evas_Object *o __UNUSED__, Elm_Selection_Data *ev)
                        else
                          {
                             strcpy(tb, p);
-                            printf("'%s'\n", tb);
                             if (strlen(tb) > 0)
                               evas_object_smart_callback_call
                               (obj, "popup,queue", tb);
