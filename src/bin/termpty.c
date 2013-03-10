@@ -469,6 +469,93 @@ termpty_write(Termpty *ty, const char *input, int len)
    if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
 }
 
+static void
+_termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
+                             Termcell *old_screen, Termcell *old_screen2)
+{
+   int old_y,
+       old_x,
+       old_circular_offset = ty->circular_offset,
+       x = 0,
+       y = 0;
+   Eina_Bool rewrapping = EINA_FALSE;
+
+   if (ty->altbuf)
+     return;
+
+   ty->circular_offset = 0;
+
+   /* TODO:
+    * backscroll
+    * change of height (handle later?)
+    * double-width :)
+    * remove empty lines created because of reflowing
+    */
+#define OLD_SCREEN(_X, _Y) \
+  old_screen[_X + (((_Y + old_circular_offset) % old_h) * old_w)]
+
+   for (old_y = 0; old_y < old_h; old_y++)
+     {
+        if (rewrapping)
+          {
+             int remaining_width = ty->w - x,
+                 len = old_w;
+
+             old_x = 0;
+
+             if (old_w >= remaining_width)
+               {
+                  /* TODO: use termpty_cell_copy */
+                  memcpy(ty->screen + (y * ty->w) + x,
+                         &OLD_SCREEN(0, old_y),
+                         remaining_width * sizeof(Termcell));
+                  TERMPTY_SCREEN(ty, ty->w - 1, y).att.autowrapped = 1;
+                  y++;
+                  x = 0;
+                  old_x = remaining_width;
+                  len -= remaining_width;
+               }
+             if (len)
+               {
+                  /* TODO: use termpty_cell_copy */
+                  memcpy(ty->screen + (y * ty->w) + x,
+                         &OLD_SCREEN(old_x, old_y),
+                         len * sizeof(Termcell));
+                  x += len;
+                  TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 0;
+               }
+             rewrapping = OLD_SCREEN(old_w - 1, old_y).att.autowrapped;
+             if (!rewrapping)
+               y++;
+          }
+        else
+          {
+             /* TODO: use termpty_cell_copy */
+             memcpy(ty->screen + (y * ty->w),
+                    &OLD_SCREEN(0, old_y),
+                    old_w * sizeof(Termcell));
+             if (OLD_SCREEN(old_w - 1, old_y).att.autowrapped)
+               {
+                  rewrapping = EINA_TRUE;
+                  TERMPTY_SCREEN(ty, old_w - 1, old_y).att.autowrapped = 0;
+                  x = old_w;
+               }
+             else
+               {
+                  y++;
+               }
+          }
+     }
+#undef OLD_SCREEN
+}
+
+static void
+_termpty_horizontally_shrink(Termpty *ty, int oldw, int oldh,
+                             Termcell *oldscreen, Termcell *oldscreen2)
+{
+   /* TODO */
+}
+
 void
 termpty_resize(Termpty *ty, int w, int h)
 {
@@ -503,6 +590,20 @@ termpty_resize(Termpty *ty, int w, int h)
 
    ww = ty->w;
    hh = ty->h;
+
+   if (oldh == ty->h && oldw != ty->w)
+     {
+        if (ty->w > oldw)
+          {
+             _termpty_horizontally_expand(ty, oldw, oldh, olds, olds2);
+             return;
+          }
+        else
+          {
+             _termpty_horizontally_shrink(ty, oldw, oldh, olds, olds2);
+          }
+     }
+
    if (ww > oldw) ww = oldw;
    if (hh > oldh) hh = oldh;
 
