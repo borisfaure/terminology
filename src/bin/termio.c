@@ -591,12 +591,7 @@ _smart_apply(Evas_Object *obj)
                   if (inv) tc[x].bg = COL_INVERSEBG;
                   else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
-#if defined(SUPPORT_DBLWIDTH)
-                  tc[x].double_width = cells[j].att.dblwidth;
-#endif
-                  if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
-                      (ch2 == x - 1))
-                    ch2 = x;
+                  tc[x].double_width = 0;
                }
              else
                {
