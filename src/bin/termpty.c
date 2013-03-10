@@ -470,8 +470,109 @@ termpty_write(Termpty *ty, const char *input, int len)
 }
 
 static void
-_termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
-                             Termcell *old_screen, Termcell *old_screen2)
+_termpty_horizontally_expand_backscroll(Termpty *ty, int old_w, int old_h)
+{
+   int i,
+       new_back_pos = 0;
+   Termsave **new_back,
+            *new_ts;
+   Eina_Bool rewrapping = EINA_FALSE;
+
+   if (!ty->backmax || !ty->back)
+     return;
+
+   new_back = calloc(sizeof(Termsave*), ty->backmax);
+
+   for (i = 0; i < ty->backmax; i++)
+     {
+        Termsave *ts;
+
+        if (ty->backscroll_num == ty->backmax - 1)
+          ts = ty->back[(ty->backpos + i) % ty->backscroll_num];
+        else
+          ts = ty->back[i];
+        if (!ts)
+          break;
+
+        if (!ts->w)
+          {
+             if (rewrapping)
+               {
+                  rewrapping = EINA_FALSE;
+                  new_ts->cell[new_ts->w - 1].att.autowrapped = 0;
+               }
+             else
+               new_back[new_back_pos++] = ts;
+             continue;
+          }
+
+        if (rewrapping)
+          {
+             int remaining_width = ty->w - new_ts->w;
+             int len = ts->w;
+             Termcell *cells = ts->cell;
+
+             if (ts->w >= remaining_width)
+               {
+                  memcpy(new_ts->cell + new_ts->w,
+                         cells,
+                         remaining_width * sizeof(Termcell));
+                  new_ts->w = ty->w;
+                  new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
+                  len -= remaining_width;
+                  cells += remaining_width;
+
+                  new_ts = calloc(1, sizeof(Termsave) +
+                                  (ty->w - 1) * sizeof(Termcell));
+                  new_ts->w = 0;
+                  new_back[new_back_pos++] = new_ts;
+               }
+             if (len)
+               {
+                  memcpy(new_ts->cell + new_ts->w,
+                         cells,
+                         len * sizeof(Termcell));
+                  new_ts->w += len;
+                  new_ts->cell[new_ts->w - 1].att.autowrapped = 0;
+               }
+
+             rewrapping = ts->cell[ts->w - 1].att.autowrapped;
+             if (!rewrapping)
+               new_back_pos++;
+
+             free(ts);
+          }
+        else
+          {
+             if (ts->cell[ts->w - 1].att.autowrapped)
+               {
+                  rewrapping = EINA_TRUE;
+                  new_ts = calloc(1, sizeof(Termsave) +
+                                  (ty->w - 1) * sizeof(Termcell));
+                  new_ts->w = ts->w;
+                  memcpy(new_ts->cell, ts->cell, ts->w * sizeof(Termcell));
+                  new_ts->cell[ts->w - 1].att.autowrapped = 0;
+
+                  new_back[new_back_pos++] = new_ts;
+                  free(ts);
+               }
+             else
+               {
+                  new_back[new_back_pos++] = ts;
+               }
+          }
+     }
+
+   ty->backscroll_num = new_back_pos;
+   ty->backpos = new_back_pos;
+
+   free(ty->back);
+   ty->back = new_back;
+}
+
+static void
+_termpty_horizontally_expand_screen(Termpty *ty, int old_w, int old_h,
+                                    Termcell *old_screen)
 {
    int old_y,
        old_x,
@@ -486,7 +587,6 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
    ty->circular_offset = 0;
 
    /* TODO:
-    * backscroll
     * change of height (handle later?)
     * double-width :)
     * remove empty lines created because of reflowing
@@ -595,7 +695,8 @@ termpty_resize(Termpty *ty, int w, int h)
      {
         if (ty->w > oldw)
           {
-             _termpty_horizontally_expand(ty, oldw, oldh, olds, olds2);
+             _termpty_horizontally_expand_screen(ty, oldw, oldh, olds);
+             _termpty_horizontally_expand_backscroll(ty, oldw, oldh);
              return;
           }
         else
