@@ -549,6 +549,20 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *info __UNUSED__)
 }
 
 static void
+_smart_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
+{
+   Termblock *blk = data;
+   
+   if (blk->obj == obj)
+     {
+        evas_object_event_callback_del_full
+          (blk->obj, EVAS_CALLBACK_DEL,
+              _smart_media_del, blk);
+        blk->obj = NULL;
+     }
+}
+
+static void
 _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -639,6 +653,9 @@ _smart_apply(Evas_Object *obj)
                                       blk->obj = media_add(obj, blk->path,
                                                            sd->config,
                                                            media, &type);
+                                      evas_object_event_callback_add
+                                      (blk->obj, EVAS_CALLBACK_DEL,
+                                          _smart_media_del, blk);
                                       blk->type = type;
                                       evas_object_smart_member_add(blk->obj, obj);
                                       evas_object_stack_above(blk->obj, sd->grid.obj);
@@ -785,6 +802,9 @@ _smart_apply(Evas_Object *obj)
              blk->was_active = EINA_FALSE;
              if (blk->obj)
                {
+                  evas_object_event_callback_del_full
+                    (blk->obj, EVAS_CALLBACK_DEL,
+                        _smart_media_del, blk);
                   evas_object_del(blk->obj);
                   blk->obj = NULL;
                }
@@ -2889,9 +2909,13 @@ _smart_pty_command(void *data)
              // HH (decimal) in CELLS.
              // 
              // isCWW;HH;PATH
+             //  OR
+             // isCWW;HH;LINK\nPATH
              repch = sd->pty->cur_cmd[2];
              if (repch)
                {
+                  char *link = NULL;
+                  
                   for (p0 = p = &(sd->pty->cur_cmd[3]); *p; p++)
                     {
                        if (*p == ';')
@@ -2911,9 +2935,18 @@ _smart_pty_command(void *data)
                          }
                     }
                   path = p;
+                  p = strchr(path, '\n');
+                  if (p)
+                    {
+                       link = strdup(path);
+                       link[p - path] = 0;
+                       path = p + 1;
+                    }
                   if ((ww < 512) && (hh < 512))
                     {
-                       Termblock *blk = termpty_block_new(sd->pty, ww, hh, path);
+                       Termblock *blk;
+                       
+                       blk = termpty_block_new(sd->pty, ww, hh, path, link);
                        if (blk)
                          {
                             if (sd->pty->cur_cmd[1] == 's')
@@ -2927,6 +2960,7 @@ _smart_pty_command(void *data)
                             termpty_block_insert(sd->pty, repch, blk);
                          }
                     }
+                  if (link) free(link);
                }
              return;
           }

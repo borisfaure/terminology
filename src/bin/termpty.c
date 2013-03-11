@@ -563,12 +563,13 @@ void
 termpty_block_free(Termblock *tb)
 {
    if (tb->path) eina_stringshare_del(tb->path);
+   if (tb->link) eina_stringshare_del(tb->link);
    if (tb->obj) evas_object_del(tb->obj);
    free(tb);
 }
 
 Termblock *
-termpty_block_new(Termpty *ty, int w, int h, const char *path)
+termpty_block_new(Termpty *ty, int w, int h, const char *path, const char *link)
 {
    Termblock *tb;
    int id;
@@ -590,6 +591,7 @@ termpty_block_new(Termpty *ty, int w, int h, const char *path)
    tb->w = w;
    tb->h = h;
    tb->path = eina_stringshare_add(path);
+   if (link) tb->link = eina_stringshare_add(link);
    eina_hash_add(ty->block.blocks, &id, tb);
    ty->block.curid++;
    if (ty->block.curid >= 8192) ty->block.curid = 0;

@@ -144,7 +144,7 @@ struct _Termblock
    int          refs;
    short        w, h;
    short        x, y;
-   const char  *path;
+   const char  *path, *link;
    Evas_Object *obj;
    Eina_Bool    scale_stretch : 1;
    Eina_Bool    scale_center : 1;
@@ -174,7 +174,7 @@ void       termpty_backscroll_set(Termpty *ty, int size);
 
 pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);
-Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path);
+Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path, const char *link);
 void       termpty_block_insert(Termpty *ty, int ch, Termblock *blk);
 int        termpty_block_id_get(Termcell *cell, int *x, int *y);
 Termblock *termpty_block_get(Termpty *ty, int id);
