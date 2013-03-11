@@ -470,16 +470,23 @@ termpty_write(Termpty *ty, const char *input, int len)
 }
 
 static void
-_termpty_horizontally_expand_backscroll(Termpty *ty, int old_w, int old_h)
+_termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
+                             Termcell *old_screen)
 {
    int i,
-       new_back_pos = 0;
+       new_back_pos = 0,
+       old_y,
+       old_x,
+       old_circular_offset = ty->circular_offset,
+       x = 0,
+       y = 0;
+
    Termsave **new_back,
-            *new_ts;
+            *new_ts = NULL;
    Eina_Bool rewrapping = EINA_FALSE;
 
    if (!ty->backmax || !ty->back)
-     return;
+     goto expand_screen;
 
    new_back = calloc(sizeof(Termsave*), ty->backmax);
 
@@ -512,6 +519,10 @@ _termpty_horizontally_expand_backscroll(Termpty *ty, int old_w, int old_h)
              int len = ts->w;
              Termcell *cells = ts->cell;
 
+             if (new_ts->w)
+               {
+                  new_ts->cell[new_ts->w - 1].att.autowrapped = 0;
+               }
              if (ts->w >= remaining_width)
                {
                   memcpy(new_ts->cell + new_ts->w,
@@ -533,12 +544,13 @@ _termpty_horizontally_expand_backscroll(Termpty *ty, int old_w, int old_h)
                          cells,
                          len * sizeof(Termcell));
                   new_ts->w += len;
-                  new_ts->cell[new_ts->w - 1].att.autowrapped = 0;
                }
 
              rewrapping = ts->cell[ts->w - 1].att.autowrapped;
              if (!rewrapping)
-               new_back_pos++;
+               {
+                  new_ts = NULL;
+               }
 
              free(ts);
           }
@@ -568,18 +580,8 @@ _termpty_horizontally_expand_backscroll(Termpty *ty, int old_w, int old_h)
 
    free(ty->back);
    ty->back = new_back;
-}
 
-static void
-_termpty_horizontally_expand_screen(Termpty *ty, int old_w, int old_h,
-                                    Termcell *old_screen)
-{
-   int old_y,
-       old_x,
-       old_circular_offset = ty->circular_offset,
-       x = 0,
-       y = 0;
-   Eina_Bool rewrapping = EINA_FALSE;
+expand_screen:
 
    if (ty->altbuf)
      return;
@@ -598,35 +600,67 @@ _termpty_horizontally_expand_screen(Termpty *ty, int old_w, int old_h,
      {
         if (rewrapping)
           {
-             int remaining_width = ty->w - x,
-                 len = old_w;
-
-             old_x = 0;
-
-             if (old_w >= remaining_width)
+             if (new_ts)
                {
-                  /* TODO: use termpty_cell_copy */
-                  memcpy(ty->screen + (y * ty->w) + x,
-                         &OLD_SCREEN(0, old_y),
-                         remaining_width * sizeof(Termcell));
-                  TERMPTY_SCREEN(ty, ty->w - 1, y).att.autowrapped = 1;
-                  y++;
-                  x = 0;
-                  old_x = remaining_width;
-                  len -= remaining_width;
-               }
-             if (len)
-               {
-                  /* TODO: use termpty_cell_copy */
-                  memcpy(ty->screen + (y * ty->w) + x,
-                         &OLD_SCREEN(old_x, old_y),
+                  int remaining_width = ty->w - new_ts->w;
+                  int len = MIN(old_w, remaining_width);
+                  Termcell *cells = &OLD_SCREEN(0, old_y);
+
+                  memcpy(new_ts->cell + new_ts->w,
+                         cells,
                          len * sizeof(Termcell));
-                  x += len;
-                  TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 0;
+                  new_ts->w += len;
+                  cells += len;
+                  if (old_w > remaining_width)
+                    {
+                       new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
+                       new_ts = NULL;
+                       len = old_w - remaining_width;
+                       memcpy(ty->screen + (y * ty->w),
+                              cells,
+                              len * sizeof(Termcell));
+                       x += len;
+                    }
+
+                  rewrapping = OLD_SCREEN(old_w - 1, old_y).att.autowrapped;
+                  if (!rewrapping)
+                    {
+                       new_ts = NULL;
+                       y++;
+                    }
                }
-             rewrapping = OLD_SCREEN(old_w - 1, old_y).att.autowrapped;
-             if (!rewrapping)
-               y++;
+             else
+               {
+                  int remaining_width = ty->w - x,
+                      len = old_w;
+
+                  old_x = 0;
+
+                  if (old_w >= remaining_width)
+                    {
+                       /* TODO: use termpty_cell_copy */
+                       memcpy(ty->screen + (y * ty->w) + x,
+                              &OLD_SCREEN(0, old_y),
+                              remaining_width * sizeof(Termcell));
+                       TERMPTY_SCREEN(ty, ty->w - 1, y).att.autowrapped = 1;
+                       y++;
+                       x = 0;
+                       old_x = remaining_width;
+                       len -= remaining_width;
+                    }
+                  if (len)
+                    {
+                       /* TODO: use termpty_cell_copy */
+                       memcpy(ty->screen + (y * ty->w) + x,
+                              &OLD_SCREEN(old_x, old_y),
+                              len * sizeof(Termcell));
+                       x += len;
+                       TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 0;
+                    }
+                  rewrapping = OLD_SCREEN(old_w - 1, old_y).att.autowrapped;
+                  if (!rewrapping)
+                    y++;
+               }
           }
         else
           {
@@ -695,8 +729,7 @@ termpty_resize(Termpty *ty, int w, int h)
      {
         if (ty->w > oldw)
           {
-             _termpty_horizontally_expand_screen(ty, oldw, oldh, olds);
-             _termpty_horizontally_expand_backscroll(ty, oldw, oldh);
+             _termpty_horizontally_expand(ty, oldw, oldh, olds);
              return;
           }
         else
