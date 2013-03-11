@@ -308,7 +308,7 @@ _cb_link_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
      }
 }
 
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
 static void
 _cb_link_drag_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
@@ -381,7 +381,7 @@ _cb_link_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
      {
         sd->link.down.down = EINA_FALSE;
         sd->link.down.dnd = EINA_TRUE;
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
         printf("dnd start %s %i %i\n", sd->link.string,
                evas_key_modifier_is_set(ev->modifiers, "Control"),
                evas_key_modifier_is_set(ev->modifiers, "Shift"));
@@ -3021,7 +3021,7 @@ _smart_pty_command(void *data)
    evas_object_smart_callback_call(obj, "command", (void *)sd->pty->cur_cmd);
 }
 
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
 static void
 _smart_cb_drag_enter(void *data __UNUSED__, Evas_Object *o __UNUSED__)
 {
@@ -3133,7 +3133,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
                             ELM_GESTURE_STATE_ABORT, _smart_cb_gest_zoom_abort,
                             obj);
    
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
    elm_drop_target_add(sd->event,
                        ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_IMAGE,
                        _smart_cb_drag_enter, obj,
