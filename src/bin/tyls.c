@@ -521,7 +521,6 @@ static const char *
 fileicon(const char *path)
 {
    Eina_Bool isdir = EINA_FALSE;
-   Eina_Bool islink = EINA_FALSE;
    Eina_Bool isexec = EINA_FALSE;
    const char *name;
    
@@ -534,7 +533,6 @@ fileicon(const char *path)
         ts = ecore_file_readlink(path);
         if (ts)
           {
-             islink = EINA_TRUE;
              free(ts);
           }
         if (ecore_file_can_exec(path)) isexec = EINA_TRUE;
@@ -638,7 +636,7 @@ list_dir(const char *dir, int mode)
 {
    Eina_List *files, *l;
    char *s, **names;
-   int maxlen = 0, cols, c, rows, i, j, k, num, cw, stuff;
+   int maxlen = 0, cols, c, rows, i, j, num, cw, stuff;
    
    files = ecore_file_ls(dir);
    if (!files) return;
@@ -773,8 +771,6 @@ int
 main(int argc, char **argv)
 {
    char buf[64];
-   int w = 0, h = 0;
-   int iw = 0, ih = 0;
    Eina_Bool listed = EINA_FALSE;
    
    if (!getenv("TERMINOLOGY")) return 0;
