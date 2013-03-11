@@ -720,7 +720,7 @@ list_dir(const char *dir, int mode)
                        snprintf(buf, sizeof(buf), "%s/%s", dir, s);
                        icon = fileicon(buf);
                        cw = tw / cols;
-                       len += 4;
+                       len += 3;
                        if (cols > 1) len += 1;
                        if (icon)
                          printf("%c}it%c%i;%i;%s\n%s%c", 0x1b, 33 + c, 4, 2, buf, icon, 0);
