@@ -191,7 +191,31 @@ _type_thumb_init(Evas_Object *obj)
    evas_object_raise(sd->o_event);
    sd->iw = 64;
    sd->ih = 64;
-   ethumb_client_file_set(et_client, sd->realf, NULL);
+   if ((sd->realf) && (sd->realf[0] != '/'))
+     {
+        Efreet_Icon_Theme *theme;
+        const char *icon_theme = NULL, *fl;
+        
+        theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
+        if (!theme)
+          {
+             const char **itr;
+             static const char *themes[] = {
+                "gnome", "Human", "oxygen", "hicolor", NULL
+             };
+             for (itr = themes; *itr; itr++)
+               {
+                  theme = efreet_icon_theme_find(*itr);
+                  if (theme) break;
+               }
+          }
+        if (theme)
+          icon_theme = eina_stringshare_add(theme->name.internal);
+        fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
+        ethumb_client_file_set(et_client, fl, NULL);
+     }
+   else
+     ethumb_client_file_set(et_client, sd->realf, NULL);
    sd->et_req = ethumb_client_thumb_async_get(et_client, _et_done,
                                               _et_error, obj);
 }

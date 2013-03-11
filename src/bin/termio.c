@@ -543,8 +543,35 @@ static void
 _smart_media_clicked(void *data, Evas_Object *obj, void *info __UNUSED__)
 {
 //   Termio *sd = evas_object_smart_data_get(data);
+   Termblock *blk;
    const char *file = media_get(obj);
    if (!file) return;
+   blk = evas_object_data_get(obj, "blk");
+   if (blk)
+     {
+        if (blk->link)
+          {
+             Config *config = termio_config_get(data);
+             
+             if (config)
+               {
+                  const char *cmd = NULL;
+                  
+                  file = blk->link;
+                  if ((config->helper.local.general) &&
+                      (config->helper.local.general[0]))
+                    cmd = config->helper.local.general;
+                  if (cmd)
+                    {
+                       char buf[PATH_MAX];
+                       
+                       snprintf(buf, sizeof(buf), "%s %s", cmd, file);
+                       ecore_exe_run(buf, NULL);
+                       return;
+                    }
+               }
+          }
+     }
    evas_object_smart_callback_call(data, "popup", (void *)file);
 }
 
@@ -660,6 +687,7 @@ _smart_apply(Evas_Object *obj)
                                       evas_object_smart_member_add(blk->obj, obj);
                                       evas_object_stack_above(blk->obj, sd->grid.obj);
                                       evas_object_show(blk->obj);
+                                      evas_object_data_set(blk->obj, "blk", blk);
                                       if (blk->thumb)
                                         evas_object_smart_callback_add
                                         (blk->obj, "clicked",
@@ -2903,6 +2931,7 @@ _smart_pty_command(void *data)
             (sd->pty->cur_cmd[1] == 't'))
           {
              const char *p, *p0, *path;
+             char *pp;
              int ww = 0, hh = 0, repch;
              
              // exact size in CHAR CELLS - WW (decimal) width CELLS,
@@ -2939,13 +2968,17 @@ _smart_pty_command(void *data)
                   if (p)
                     {
                        link = strdup(path);
-                       link[p - path] = 0;
                        path = p + 1;
+                       if (isspace(path[0])) path++;
+                       pp = strchr(link, '\n');
+                       if (pp) *pp = 0;
+                       pp = strchr(link, '\r');
+                       if (pp) *pp = 0;
                     }
                   if ((ww < 512) && (hh < 512))
                     {
                        Termblock *blk;
-                       
+
                        blk = termpty_block_new(sd->pty, ww, hh, path, link);
                        if (blk)
                          {

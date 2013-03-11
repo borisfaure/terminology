@@ -194,284 +194,357 @@ typedef struct _Cmatch
 {
    short fr, fg, fb;
    short br, bg, bb;
-   const char *match;
+   const char *match, *icon;
 } Cmatch;
 
 // for regular files
 const Cmatch fmatch[] =
 {
-   { 5, 5, 5,  9, 9, 9, "*.jpg"},
-   { 5, 5, 5,  9, 9, 9, "*.JPG"},
-   { 5, 5, 5,  9, 9, 9, "*.jpeg"},
-   { 5, 5, 5,  9, 9, 9, "*.JPEG"},
-   { 5, 5, 5,  9, 9, 9, "*.jfif"},
-   { 5, 5, 5,  9, 9, 9, "*.JFIF"},
-   { 5, 5, 5,  9, 9, 9, "*.jfi"},
-   { 5, 5, 5,  9, 9, 9, "*.JFI"},
-   { 5, 5, 5,  9, 9, 9, "*.png"},
-   { 5, 5, 5,  9, 9, 9, "*.PNG"},
-   { 5, 5, 5,  9, 9, 9, "*.bmp"},
-   { 5, 5, 5,  9, 9, 9, "*.BMP"},
-   { 5, 5, 5,  9, 9, 9, "*.gif"},
-   { 5, 5, 5,  9, 9, 9, "*.GIF"},
-   { 5, 5, 5,  9, 9, 9, "*.xcf"},
-   { 5, 5, 5,  9, 9, 9, "*.XCF"},
-   { 5, 5, 5,  9, 9, 9, "*.xcf.gz"},
-   { 5, 5, 5,  9, 9, 9, "*.XCF.gz"},
-   { 5, 5, 5,  9, 9, 9, "*.svg"},
-   { 5, 5, 5,  9, 9, 9, "*.SVG"},
-   { 5, 5, 5,  9, 9, 9, "*.svgz"},
-   { 5, 5, 5,  9, 9, 9, "*.SVGZ"},
-   { 5, 5, 5,  9, 9, 9, "*.svg.gz"},
-   { 5, 5, 5,  9, 9, 9, "*.SVG.GZ"},
-   { 5, 5, 5,  9, 9, 9, "*.ppm"},
-   { 5, 5, 5,  9, 9, 9, "*.PPM"},
-   { 5, 5, 5,  9, 9, 9, "*.tif"},
-   { 5, 5, 5,  9, 9, 9, "*.TIF"},
-   { 5, 5, 5,  9, 9, 9, "*.tiff"},
-   { 5, 5, 5,  9, 9, 9, "*.TIFF"},
-   { 5, 5, 5,  9, 9, 9, "*.ico"},
-   { 5, 5, 5,  9, 9, 9, "*.ICO"},
-   { 5, 5, 5,  9, 9, 9, "*.pgm"},
-   { 5, 5, 5,  9, 9, 9, "*.PGM"},
-   { 5, 5, 5,  9, 9, 9, "*.pbm"},
-   { 5, 5, 5,  9, 9, 9, "*.PBM"},
-   { 5, 5, 5,  9, 9, 9, "*.psd"},
-   { 5, 5, 5,  9, 9, 9, "*.PSD"},
-   { 5, 5, 5,  9, 9, 9, "*.wbmp"},
-   { 5, 5, 5,  9, 9, 9, "*.WBMP"},
-   { 5, 5, 5,  9, 9, 9, "*.cur"},
-   { 5, 5, 5,  9, 9, 9, "*.CUR"},
-   { 5, 5, 5,  9, 9, 9, "*.arw"},
-   { 5, 5, 5,  9, 9, 9, "*.ARW"},
-   { 5, 5, 5,  9, 9, 9, "*.webp"},
-   { 5, 5, 5,  9, 9, 9, "*.WEBP"},
-   { 5, 5, 5,  9, 9, 9, "*.cr2"},
-   { 5, 5, 5,  9, 9, 9, "*.CR2"},
-   { 5, 5, 5,  9, 9, 9, "*.crw"},
-   { 5, 5, 5,  9, 9, 9, "*.CRW"},
-   { 5, 5, 5,  9, 9, 9, "*.dcr"},
-   { 5, 5, 5,  9, 9, 9, "*.DCR"},
-   { 5, 5, 5,  9, 9, 9, "*.dng"},
-   { 5, 5, 5,  9, 9, 9, "*.DNG"},
-   { 5, 5, 5,  9, 9, 9, "*.k25"},
-   { 5, 5, 5,  9, 9, 9, "*.K25"},
-   { 5, 5, 5,  9, 9, 9, "*.kdc"},
-   { 5, 5, 5,  9, 9, 9, "*.KDC"},
-   { 5, 5, 5,  9, 9, 9, "*.thm"},
-   { 5, 5, 5,  9, 9, 9, "*.THM"},
-   { 5, 5, 5,  9, 9, 9, "*.erf"},
-   { 5, 5, 5,  9, 9, 9, "*.ERF"},
-   { 5, 5, 5,  9, 9, 9, "*.mrw"},
-   { 5, 5, 5,  9, 9, 9, "*.MRW"},
-   { 5, 5, 5,  9, 9, 9, "*.nef"},
-   { 5, 5, 5,  9, 9, 9, "*.NEF"},
-   { 5, 5, 5,  9, 9, 9, "*.nrf"},
-   { 5, 5, 5,  9, 9, 9, "*.NRF"},
-   { 5, 5, 5,  9, 9, 9, "*.nrw"},
-   { 5, 5, 5,  9, 9, 9, "*.NRW"},
-   { 5, 5, 5,  9, 9, 9, "*.orf"},
-   { 5, 5, 5,  9, 9, 9, "*.ORF"},
-   { 5, 5, 5,  9, 9, 9, "*.raw"},
-   { 5, 5, 5,  9, 9, 9, "*.RAW"},
-   { 5, 5, 5,  9, 9, 9, "*.rw2"},
-   { 5, 5, 5,  9, 9, 9, "*.RW2"},
-   { 5, 5, 5,  9, 9, 9, "*.pef"},
-   { 5, 5, 5,  9, 9, 9, "*.PEF"},
-   { 5, 5, 5,  9, 9, 9, "*.raf"},
-   { 5, 5, 5,  9, 9, 9, "*.RAF"},
-   { 5, 5, 5,  9, 9, 9, "*.sr2"},
-   { 5, 5, 5,  9, 9, 9, "*.SR2"},
-   { 5, 5, 5,  9, 9, 9, "*.srf"},
-   { 5, 5, 5,  9, 9, 9, "*.SRF"},
-   { 5, 5, 5,  9, 9, 9, "*.x3f"},
-   { 5, 5, 5,  9, 9, 9, "*.X3F"},
+   { 5, 5, 5,  9, 9, 9, "*.jpg", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.JPG", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.jpeg", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.JPEG", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.jfif", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.JFIF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.jfi", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.JFI", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.png", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PNG", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.bmp", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.BMP", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.gif", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.GIF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.xcf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.XCF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.xcf.gz", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.XCF.gz", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.svg", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.SVG", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.svgz", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.SVGZ", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.svg.gz", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.SVG.GZ", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ppm", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PPM", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.tif", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.TIF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.tiff", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.TIFF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ico", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ICO", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.pgm", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PGM", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.pbm", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PBM", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.psd", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PSD", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.wbmp", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.WBMP", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.cur", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.CUR", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.arw", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ARW", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.webp", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.WEBP", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.cr2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.CR2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.crw", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.CRW", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.dcr", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.DCR", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.dng", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.DNG", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.k25", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.K25", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.kdc", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.KDC", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.thm", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.THM", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.erf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ERF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.mrw", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.MRW", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.nef", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.NEF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.nrf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.NRF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.nrw", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.NRW", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.orf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.ORF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.raw", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.RAW", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.rw2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.RW2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.pef", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.PEF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.raf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.RAF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.sr2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.SR2", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.srf", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.SRF", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.x3f", NULL},
+   { 5, 5, 5,  9, 9, 9, "*.X3F", NULL},
    
-   { 5, 5, 2,  9, 9, 9, "*.pdf"},
-   { 5, 5, 2,  9, 9, 9, "*.PDF"},
-   { 5, 5, 2,  9, 9, 9, "*.pdf"},
-   { 5, 5, 2,  9, 9, 9, "*.ps"},
-   { 5, 5, 2,  9, 9, 9, "*.PS"},
-   { 5, 5, 2,  9, 9, 9, "*.ps.gz"},
-   { 5, 5, 2,  9, 9, 9, "*.PS.GZ"},
+   { 5, 5, 2,  9, 9, 9, "*.pdf", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.PDF", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.pdf", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.ps", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.PS", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.ps.gz", NULL},
+   { 5, 5, 2,  9, 9, 9, "*.PS.GZ", NULL},
 
-   { 3, 4, 5,  9, 9, 9, "*.asf"},
-   { 3, 4, 5,  9, 9, 9, "*.avi"},
-   { 3, 4, 5,  9, 9, 9, "*.bdm"},
-   { 3, 4, 5,  9, 9, 9, "*.bdmv"},
-   { 3, 4, 5,  9, 9, 9, "*.clpi"},
-   { 3, 4, 5,  9, 9, 9, "*.cpi"},
-   { 3, 4, 5,  9, 9, 9, "*.dv"},
-   { 3, 4, 5,  9, 9, 9, "*.fla"},
-   { 3, 4, 5,  9, 9, 9, "*.flv"},
-   { 3, 4, 5,  9, 9, 9, "*.m1v"},
-   { 3, 4, 5,  9, 9, 9, "*.m2t"},
-   { 3, 4, 5,  9, 9, 9, "*.m4v"},
-   { 3, 4, 5,  9, 9, 9, "*.mkv"},
-   { 3, 4, 5,  9, 9, 9, "*.mov"},
-   { 3, 4, 5,  9, 9, 9, "*.mp2"},
-   { 3, 4, 5,  9, 9, 9, "*.mp2ts"},
-   { 3, 4, 5,  9, 9, 9, "*.mp4"},
-   { 3, 4, 5,  9, 9, 9, "*.mpe"},
-   { 3, 4, 5,  9, 9, 9, "*.mpeg"},
-   { 3, 4, 5,  9, 9, 9, "*.mpg"},
-   { 3, 4, 5,  9, 9, 9, "*.mpl"},
-   { 3, 4, 5,  9, 9, 9, "*.mpls"},
-   { 3, 4, 5,  9, 9, 9, "*.mts"},
-   { 3, 4, 5,  9, 9, 9, "*.mxf"},
-   { 3, 4, 5,  9, 9, 9, "*.nut"},
-   { 3, 4, 5,  9, 9, 9, "*.nuv"},
-   { 3, 4, 5,  9, 9, 9, "*.ogg"},
-   { 3, 4, 5,  9, 9, 9, "*.ogv"},
-   { 3, 4, 5,  9, 9, 9, "*.ogm"},
-   { 3, 4, 5,  9, 9, 9, "*.qt"},
-   { 3, 4, 5,  9, 9, 9, "*.rm"},
-   { 3, 4, 5,  9, 9, 9, "*.rmj"},
-   { 3, 4, 5,  9, 9, 9, "*.rmm"},
-   { 3, 4, 5,  9, 9, 9, "*.rms"},
-   { 3, 4, 5,  9, 9, 9, "*.rmvb"},
-   { 3, 4, 5,  9, 9, 9, "*.rmx"},
-   { 3, 4, 5,  9, 9, 9, "*.rv"},
-   { 3, 4, 5,  9, 9, 9, "*.swf"},
-   { 3, 4, 5,  9, 9, 9, "*.ts"},
-   { 3, 4, 5,  9, 9, 9, "*.weba"},
-   { 3, 4, 5,  9, 9, 9, "*.webm"},
-   { 3, 4, 5,  9, 9, 9, "*.wmv"},
-   { 3, 4, 5,  9, 9, 9, "*.3g2"},
-   { 3, 4, 5,  9, 9, 9, "*.3gp2"},
-   { 3, 4, 5,  9, 9, 9, "*.3gpp"},
-   { 3, 4, 5,  9, 9, 9, "*.3gpp2"},
-   { 3, 4, 5,  9, 9, 9, "*.3p2"},
-   { 3, 4, 5,  9, 9, 9, "*.264"},
-   { 3, 4, 5,  9, 9, 9, "*.3gp"},
+   { 3, 4, 5,  9, 9, 9, "*.asf", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.avi", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.bdm", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.bdmv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.clpi", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.cpi", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.dv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.fla", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.flv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.m1v", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.m2t", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.m4v", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mkv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mov", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mp2", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mp2ts", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mp4", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mpe", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mpeg", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mpg", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mpl", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mpls", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mts", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.mxf", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.nut", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.nuv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.ogg", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.ogv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.ogm", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.qt", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rm", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rmj", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rmm", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rms", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rmvb", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rmx", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.rv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.swf", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.ts", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.weba", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.webm", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.wmv", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3g2", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3gp2", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3gpp", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3gpp2", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3p2", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.264", NULL},
+   { 3, 4, 5,  9, 9, 9, "*.3gp", NULL},
    
-   { 2, 3, 5,  9, 9, 9, "*.mp3"},
-   { 2, 3, 5,  9, 9, 9, "*.MP3"},
-   { 2, 3, 5,  9, 9, 9, "*.aac"},
-   { 2, 3, 5,  9, 9, 9, "*.AAC"},
-   { 2, 3, 5,  9, 9, 9, "*.wav"},
-   { 2, 3, 5,  9, 9, 9, "*.WAV"},
-   { 2, 3, 5,  9, 9, 9, "*.m3u"},
-   { 2, 3, 5,  9, 9, 9, "*.M3U"},
+   { 2, 3, 5,  9, 9, 9, "*.mp3", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.MP3", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.aac", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.AAC", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.wav", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.WAV", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.m3u", "audio-x-mp3-playlist"},
+   { 2, 3, 5,  9, 9, 9, "*.M3U", "audio-x-mp3-playlist"},
    
-   { 3, 5, 2,  9, 9, 9, "*.patch"},
-   { 3, 5, 2,  9, 9, 9, "*.PATCH"},
-   { 3, 5, 2,  9, 9, 9, "*.diff"},
-   { 3, 5, 2,  9, 9, 9, "*.DIFF"},
+   { 3, 5, 2,  9, 9, 9, "*.patch", "text-x-generic"},
+   { 3, 5, 2,  9, 9, 9, "*.PATCH", "text-x-generic"},
+   { 3, 5, 2,  9, 9, 9, "*.diff", "text-x-generic"},
+   { 3, 5, 2,  9, 9, 9, "*.DIFF", "text-x-generic"},
 
-   { 5, 1, 1,  9, 9, 9, "*.tar.*"},
-   { 5, 1, 1,  9, 9, 9, "*.TAR.*"},
-   { 5, 1, 1,  9, 9, 9, "*.tar"},
-   { 5, 1, 1,  9, 9, 9, "*.TAR"},
-   { 5, 1, 1,  9, 9, 9, "*.tgz"},
-   { 5, 1, 1,  9, 9, 9, "*.TGZ"},
-   { 5, 1, 1,  9, 9, 9, "*.tbz"},
-   { 5, 1, 1,  9, 9, 9, "*.TBZ"},
-   { 5, 1, 1,  9, 9, 9, "*.zip"},
-   { 5, 1, 1,  9, 9, 9, "*.ZIP"},
-   { 5, 1, 1,  9, 9, 9, "*.rar"},
-   { 5, 1, 1,  9, 9, 9, "*.RAR"},
-   { 5, 1, 1,  9, 9, 9, "*.cpio"},
-   { 5, 1, 1,  9, 9, 9, "*.CPIO"},
+   { 5, 3, 0,  9, 9, 9, "*.rpm", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.RPM", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.srpm", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.SRPM", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.deb", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.DEB", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.pkg.tar.xz", "package-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.PKG.TAR.XZ", "package-x-generic"},
 
-   { 0, 5, 2,  9, 9, 9, "*.iso"},
-   { 0, 5, 2,  9, 9, 9, "*.ISO"},
-   { 0, 5, 2,  9, 9, 9, "*.img"},
-   { 0, 5, 2,  9, 9, 9, "*.IMG"},
+   { 5, 1, 1,  9, 9, 9, "*.tar.*", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.TAR.*", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.tar", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.TAR", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.tgz", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.TGZ", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.tbz", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.TBZ", "application-x-tar"},
+   { 5, 1, 1,  9, 9, 9, "*.zip", "application-x-zip"},
+   { 5, 1, 1,  9, 9, 9, "*.ZIP", "application-x-zip"},
+   { 5, 1, 1,  9, 9, 9, "*.rar", "text-x-generic"},
+   { 5, 1, 1,  9, 9, 9, "*.RAR", "text-x-generic"},
+   { 5, 1, 1,  9, 9, 9, "*.cpio", "text-x-generic"},
+   { 5, 1, 1,  9, 9, 9, "*.CPIO", "text-x-generic"},
+
+   { 0, 5, 2,  9, 9, 9, "*.iso", "application-x-cd-image"},
+   { 0, 5, 2,  9, 9, 9, "*.ISO", "application-x-cd-image"},
+   { 0, 5, 2,  9, 9, 9, "*.img", "text-x-generic"},
+   { 0, 5, 2,  9, 9, 9, "*.IMG", "text-x-generic"},
    
-   { 1, 1, 1,  9, 9, 9, "*~"},
+   { 3, 5, 1,  9, 9, 9, "*.ttf", "font-x-generic"},
+   { 3, 5, 1,  9, 9, 9, "*.TTF", "font-x-generic"},
+   { 3, 5, 1,  9, 9, 9, "*.bdf", "font-x-generic"},
+   { 3, 5, 1,  9, 9, 9, "*.BDF", "font-x-generic"},
+   { 3, 5, 1,  9, 9, 9, "*.pcf", "font-x-generic"},
+   { 3, 5, 1,  9, 9, 9, "*.PCF", "font-x-generic"},
 
-   { 5, 3, 1,  9, 9, 9, "Makefile"},
-   { 4, 2, 0,  9, 9, 9, "Makefile.in"},
-   { 3, 1, 0,  9, 9, 9, "*.am"},
-
-   { 4, 1, 5,  9, 9, 9, "*.m4"},
-
-   { 5, 2, 0,  9, 9, 9, "*.sh"},
-   { 5, 2, 0,  9, 9, 9, "*.SH"},
-   { 5, 2, 0,  9, 9, 9, "*.bin"},
-   { 5, 2, 0,  9, 9, 9, "*.BIN"},
-   { 5, 2, 0,  9, 9, 9, "*.run"},
-   { 5, 2, 0,  9, 9, 9, "*.RUN"},
-
-   { 5, 4, 0,  9, 9, 9, "configure"},
-   { 5, 3, 0,  9, 9, 9, "configure.in"},
-   { 5, 2, 0,  9, 9, 9, "configure.ac"},
-
-   { 2, 2, 3,  9, 9, 9, "*.in"},
+   { 1, 1, 1,  9, 9, 9, "*~", "text-x-generic"},
    
-   { 0, 5, 5,  9, 9, 9, "*.c"},
-   { 0, 5, 5,  9, 9, 9, "*.C"},
-   { 1, 4, 5,  9, 9, 9, "*.x"},
-   { 1, 4, 5,  9, 9, 9, "*.X"},
-   { 1, 3, 5,  9, 9, 9, "*.h"},
-   { 1, 3, 5,  9, 9, 9, "*.H"},
+   { 1, 2, 2,  9, 9, 9, "stamp-h1", "text-x-generic"},
 
-   { 5, 5, 2,  9, 9, 9, "*.edc"},
-   { 5, 5, 2,  9, 9, 9, "*.EDC"},
+   { 5, 3, 1,  9, 9, 9, "Makefile", "text-x-generic"},
+   { 4, 2, 0,  9, 9, 9, "Makefile.in", "text-x-generic"},
+   { 3, 1, 0,  9, 9, 9, "*.am", "text-x-generic"},
 
-   { 5, 3, 0,  9, 9, 9, "*.edj"},
-   { 5, 3, 0,  9, 9, 9, "*.EDJ"},
+   { 4, 2, 5,  9, 9, 9, "*.spec", "text-x-generic"},
    
-   { 5, 0, 5,  9, 9, 9, "*.cc"},
-   { 5, 0, 5,  9, 9, 9, "*.CC"},
-   { 3, 1, 5,  9, 9, 9, "*.hh"},
-   { 3, 1, 5,  9, 9, 9, "*.HH"},
-
-   { 2, 0, 5,  9, 9, 9, "*.desktop"},
-   { 2, 0, 5,  9, 9, 9, "*.directory"},
+   { 4, 1, 5,  9, 9, 9, "*.m4", "application-x-m4"},
    
-   { 0, 1, 3,  9, 9, 9, "*.o"},
-   { 0, 1, 3,  9, 9, 9, "*.O"},
-   { 0, 1, 3,  9, 9, 9, "*.lo"},
+   { 5, 2, 0,  9, 9, 9, "*.sh", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "*.SH", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "*.bin", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "*.BIN", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "*.run", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "*.RUN", "text-x-generic"},
 
-   { 5, 1, 3,  9, 9, 9, "*.log"},
-   { 5, 1, 3,  9, 9, 9, "*.LOG"},
+   { 5, 4, 0,  9, 9, 9, "configure", "text-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "configure.in", "text-x-generic"},
+   { 5, 2, 0,  9, 9, 9, "configure.ac", "text-x-generic"},
 
-   { 3, 1, 5,  9, 9, 9, "*.txt"},
-   { 3, 1, 5,  9, 9, 9, "*.TXT"},
-   { 3, 1, 5,  9, 9, 9, "README"},
-   { 3, 1, 5,  9, 9, 9, "Readme"},
-   { 3, 1, 5,  9, 9, 9, "readme"},
-   { 3, 1, 5,  9, 9, 9, "INSTALL"},
-   { 3, 1, 5,  9, 9, 9, "COPYING"},
-   { 3, 1, 5,  9, 9, 9, "NEWS"},
-   { 3, 1, 5,  9, 9, 9, "ChangeLog"},
-   { 3, 1, 5,  9, 9, 9, "AUTHORS"},
-   { 3, 1, 5,  9, 9, 9, "TODO"},
-   { 3, 1, 5,  9, 9, 9, "*.doc"},
-   { 3, 1, 5,  9, 9, 9, "*.DOC"},
-   { 3, 1, 5,  9, 9, 9, "*.docx"},
-   { 3, 1, 5,  9, 9, 9, "*.DOCX"},
-   { 3, 1, 5,  9, 9, 9, "*.html"},
-   { 3, 1, 5,  9, 9, 9, "*.HTML"},
-   { 3, 1, 5,  9, 9, 9, "*.htm"},
-   { 3, 1, 5,  9, 9, 9, "*.HTM"},
+   { 2, 2, 3,  9, 9, 9, "*.in", "text-x-generic"},
    
-   { 0, 0, 0,  0, 0, 0, NULL}
+   { 0, 5, 5,  9, 9, 9, "*.c", "text-x-c"},
+   { 0, 5, 5,  9, 9, 9, "*.C", "text-x-c"},
+   { 1, 4, 5,  9, 9, 9, "*.x", "text-x-c"},
+   { 1, 4, 5,  9, 9, 9, "*.X", "text-x-c"},
+   { 1, 3, 5,  9, 9, 9, "*.h", "text-x-chdr"},
+   { 1, 3, 5,  9, 9, 9, "*.H", "text-x-chdr"},
+
+   { 5, 5, 2,  9, 9, 9, "*.edc", "text-x-generic"},
+   { 5, 5, 2,  9, 9, 9, "*.EDC", "text-x-generic"},
+
+   { 5, 3, 0,  9, 9, 9, "*.edj", "text-x-generic"},
+   { 5, 3, 0,  9, 9, 9, "*.EDJ", "text-x-generic"},
+   
+   { 5, 0, 5,  9, 9, 9, "*.cc", "text-x-c++"},
+   { 5, 0, 5,  9, 9, 9, "*.CC", "text-x-c++"},
+   { 3, 1, 5,  9, 9, 9, "*.hh", "text-x-c++hdr"},
+   { 3, 1, 5,  9, 9, 9, "*.HH", "text-x-c++hdr"},
+
+   { 5, 5, 2,  9, 9, 9, "*.php", "application-x-php"},
+   { 5, 5, 2,  9, 9, 9, "*.PHP", "application-x-php"},
+
+   { 2, 0, 5,  9, 9, 9, "*.desktop", "application-x-desktop"},
+   { 2, 0, 5,  9, 9, 9, "*.directory", "application-x-desktop"},
+   
+   { 0, 1, 3,  9, 9, 9, "*.o", "text-x-generic"},
+   { 0, 1, 3,  9, 9, 9, "*.O", "text-x-generic"},
+   { 0, 1, 3,  9, 9, 9, "*.lo", "text-x-generic"},
+   { 0, 1, 3,  9, 9, 9, "*.la", "text-x-generic"},
+
+   { 5, 1, 3,  9, 9, 9, "*.log", "text-x-generic"},
+   { 5, 1, 3,  9, 9, 9, "*.LOG", "text-x-generic"},
+
+   { 3, 1, 5,  9, 9, 9, "*.txt", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "*.TXT", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "*.xml", "text-xml"},
+   { 3, 1, 5,  9, 9, 9, "*.XML", "text-xml"},
+   { 3, 1, 5,  9, 9, 9, "README", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "Readme", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "readme", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "INSTALL", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "COPYING", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "NEWS", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "ChangeLog", "text-x-changelog"},
+   { 3, 1, 5,  9, 9, 9, "AUTHORS", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "TODO", "text-x-generic"},
+   { 3, 1, 5,  9, 9, 9, "*.doc", "x-office-document"},
+   { 3, 1, 5,  9, 9, 9, "*.DOC", "x-office-document"},
+   { 3, 1, 5,  9, 9, 9, "*.docx", "x-office-document"},
+   { 3, 1, 5,  9, 9, 9, "*.DOCX", "x-office-document"},
+   { 3, 1, 5,  9, 9, 9, "*.html", "text-x-html"},
+   { 3, 1, 5,  9, 9, 9, "*.HTML", "text-x-html"},
+   { 3, 1, 5,  9, 9, 9, "*.htm", "text-x-html"},
+   { 3, 1, 5,  9, 9, 9, "*.HTM", "text-x-html"},
+   { 3, 1, 5,  9, 9, 9, "*.css", "text-x-css"},
+   { 3, 1, 5,  9, 9, 9, "*.CSS", "text-x-css"},
+   
+   { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
 
 // for directories
 const Cmatch dmatch[] =
 {
-   { 5, 3, 0,  9, 9, 9, "Desktop"},
-   { 5, 3, 0,  9, 9, 9, "Desktop-*"},
-   { 4, 1, 5,  9, 9, 9, "public_html"},
-   { 0, 0, 0,  0, 0, 0, NULL}
+   { 5, 3, 0,  9, 9, 9, "Desktop", "user-desktop"},
+   { 5, 3, 0,  9, 9, 9, "Desktop-*", "user-desktop"},
+   { 4, 1, 5,  9, 9, 9, "public_html", "folder"},
+   { 1, 3, 5,  9, 9, 9, "*", "folder"},
+   { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
 
 // for exectuable files
 const Cmatch xmatch[] =
 {
-   { 5, 2, 0,  9, 9, 9, "*.sh"},
-   { 5, 2, 0,  9, 9, 9, "*.bin"},
-   { 5, 2, 0,  9, 9, 9, "*.BIN"},
+   { 5, 2, 0,  9, 9, 9, "*.sh", "text-x-script"},
+   { 5, 2, 0,  9, 9, 9, "*.bin", "application-x-executable"},
+   { 5, 2, 0,  9, 9, 9, "*.BIN", "application-x-executable"},
 
-   { 4, 0, 4,  9, 9, 9, "*.exe"},
-   { 4, 0, 4,  9, 9, 9, "*.EXE"},
+   { 4, 0, 4,  9, 9, 9, "*.exe", "application-x-executable"},
+   { 4, 0, 4,  9, 9, 9, "*.EXE", "application-x-executable"},
+
+   { 5, 0, 5,  9, 9, 9, "*", "application-x-executable"},
    
-   { 0, 0, 0,  0, 0, 0, NULL}
+   { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
+
+static const char *
+filematch(const char *name, const Cmatch *m)
+{
+   int i;
+   
+   for (i = 0; m[i].match; i++)
+     {
+        if (!fnmatch(m[i].match, name, 0))
+          return m[i].icon;
+     }
+   return NULL;
+}
+
+static const char *
+fileicon(const char *path)
+{
+   Eina_Bool isdir = EINA_FALSE;
+   Eina_Bool islink = EINA_FALSE;
+   Eina_Bool isexec = EINA_FALSE;
+   const char *name;
+   
+   name = ecore_file_file_get(path);
+   if (name)
+     {
+        char *ts;
+             
+        if (ecore_file_is_dir(path)) isdir = EINA_TRUE;
+        ts = ecore_file_readlink(path);
+        if (ts)
+          {
+             islink = EINA_TRUE;
+             free(ts);
+          }
+        if (ecore_file_can_exec(path)) isexec = EINA_TRUE;
+        
+        if (isdir) return filematch(name, dmatch);
+        else if (isexec) return filematch(name, xmatch);
+        else return filematch(name, fmatch);
+     }
+   return NULL;
+}
 
 static Eina_Bool
 printmatch(const char *name, const Cmatch *m)
@@ -604,22 +677,29 @@ list_dir(const char *dir, int mode)
         rows = ((num + (cols - 1)) / cols);
         for (i = 0; i < rows; i++)
           {
+             char buf[4096];
+             const char *icon;
+             
              if (mode == SMALL)
                {
                   for (c = 0; c < cols; c++)
                     {
-                       char buf[4096], sz[6], szch = ' ';
+                       char sz[6], szch = ' ';
                        long long size;
                        
                        s = names[(c * rows) + i];
                        if (!s) continue;
                        snprintf(buf, sizeof(buf), "%s/%s", dir, s);
                        int len = eina_unicode_utf8_get_len(s);
+                       icon = fileicon(buf);
                        cw = tw / cols;
                        size = ecore_file_size(buf);
                        size_print(sz, sizeof(sz), &szch, size);
                        len += stuff;
-                       printf("%c}it#%i;%i;%s%c", 0x1b, 2, 1, buf, 0);
+                       if (icon)
+                         printf("%c}it#%i;%i;%s\n%s%c", 0x1b, 2, 1, buf, icon, 0);
+                       else
+                         printf("%c}it#%i;%i;%s%c", 0x1b, 2, 1, buf, 0);
                        printf("%c}ib%c", 0x1b, 0);
                        printf("##");
                        printf("%c}ie%c", 0x1b, 0);
@@ -634,16 +714,18 @@ list_dir(const char *dir, int mode)
                {
                   for (c = 0; c < cols; c++)
                     {
-                       char buf[4096];
-                       
                        s = names[(c * rows) + i];
                        if (!s) continue;
                        int len = eina_unicode_utf8_get_len(s);
                        snprintf(buf, sizeof(buf), "%s/%s", dir, s);
+                       icon = fileicon(buf);
                        cw = tw / cols;
                        len += 4;
                        if (cols > 1) len += 1;
-                       printf("%c}it%c%i;%i;%s%c", 0x1b, 33 + c, 4, 2, buf, 0);
+                       if (icon)
+                         printf("%c}it%c%i;%i;%s\n%s%c", 0x1b, 33 + c, 4, 2, buf, icon, 0);
+                       else
+                         printf("%c}it%c%i;%i;%s%c", 0x1b, 33 + c, 4, 2, buf, 0);
                        printf("%c}ib%c", 0x1b, 0);
                        printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
                        printf("%c}ie%c", 0x1b, 0);
@@ -656,7 +738,7 @@ list_dir(const char *dir, int mode)
                   printf("\n");
                   for (c = 0; c < cols; c++)
                     {
-                       char buf[4096], sz[6], szch = ' ';
+                       char sz[6], szch = ' ';
                        long long size;
                        int len;
                        

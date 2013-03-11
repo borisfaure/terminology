@@ -18,6 +18,7 @@
 #define TYPE_EDJE     2
 #define TYPE_MOV      3
 #define TYPE_THUMB    4
+#define TYPE_ICON     5
 
 #include "config.h"
 

@@ -145,6 +145,19 @@ is[CW;H;FULL-PATH-OR-URL]
     sequence of such replace characters bebung with a 'ib' escape command
     and ending with an 'ie' escape command.
     
+    the FULL-PATH-OR-URL for all  the i commands (is, ic, if, it) may
+    be of the form:
+    
+      /full/path/to/file.png
+    
+    OR
+    
+      /full/path/to/link\n/full/path/to/file.png
+      
+      where a newline character separates a URI for a link and a full
+      path to a file to display in the region. the link is the
+      destination URI when a user may clikc on the given media image.
+    
     example:
     
       printf("\033}is#5;3;%s\000"
