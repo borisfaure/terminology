@@ -957,9 +957,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 }
 
 static int
-_handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   Eina_Unicode *cc;
+   Eina_Unicode *cc, *be;
    Eina_Unicode *buf, bufsmall[1024], *b;
    char *s;
    int blen = 0, slen =  0;
@@ -971,22 +971,23 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         cc++;
      }
    buf = bufsmall;
-   if (blen > (int)(sizeof(bufsmall) - 10)) buf = malloc(blen + 10);
+   if (blen > (int)(sizeof(bufsmall) - 10)) buf = malloc(blen * sizeof(Eina_Unicode) + 10);
    cc = (Eina_Unicode *)c;
    b = buf;
-   while ((cc < ce) && (*cc != 0x0))
+   be = buf + blen;
+   while ((b < be) && (cc < ce) && (*cc != 0x0))
      {
         *b = *cc;
         b++;
         cc++;
      }
-   *b = 0;
-   if ((*cc == 0x0) && (cc < ce)) cc++;
+   if ((b < be) && (cc < ce) && (*cc == 0x0)) cc++;
    else
      {
         if (buf != bufsmall) free(buf);
-        return 0;
+        return cc - c;
      }
+   *b = 0;
    // commands are stored in the buffer, 0 bytes not allowd (end marker)
    s = eina_unicode_unicode_to_utf8(buf, &slen);
    ty->cur_cmd = s;
@@ -1001,14 +1002,15 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 }
 
 static int
-_handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   const Eina_Unicode *cc;
+   const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
  
    cc = c;
    b = buf;
-   while ((cc < ce) && (*cc != ST))
+   be = buf + sizeof(buf) / sizeof(buf[0]);
+   while ((cc < ce) && (*cc != ST) && b != be)
      {
         if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
           {
@@ -1019,6 +1021,11 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, Eina_Unicode *ce)
         b++;
         cc++;
      }
+   if (b == be)
+	 {
+        ERR("dcs parsing overflowed (binary data?)");
+        return cc - c;
+	 }
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
    else return 0;
@@ -1203,10 +1210,12 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
            case 0x04: // EOT (end of transmission)
              return 1;
  */
+/*
            case 0x05: // ENQ (enquiry)
              _term_txt_write(ty, "ABC\r\n");
              ty->state.had_cr = 0;
              return 1;
+ */
 /*
            case 0x06: // ACK (acknowledge)
              return 1;
@@ -1304,7 +1313,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            default:
-             ERR("unhandled char 0x%02x", c[0]);
+             //ERR("unhandled char 0x%02x", c[0]);
              ty->state.had_cr = 0;
              return 1;
           }
