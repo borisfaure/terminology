@@ -971,21 +971,22 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
         cc++;
      }
    buf = bufsmall;
-   if (blen > (int)(sizeof(bufsmall) / sizeof(Eina_Unicode) - 10)) buf = malloc(blen * sizeof(Eina_Unicode) + 10);
+   if (blen > (int)((sizeof(bufsmall) / sizeof(Eina_Unicode)) - 40))
+     buf = malloc((blen * sizeof(Eina_Unicode)) + 40);
    cc = (Eina_Unicode *)c;
    b = buf;
-   be = buf + blen;
-   while ((b < be) && (cc < ce) && (*cc != 0x0))
+   be = buf + blen + 1;
+   while ((cc < ce) && (*cc != 0x0))
      {
         *b = *cc;
         b++;
         cc++;
      }
-   if ((b < be) && (cc < ce) && (*cc == 0x0)) cc++;
+   if ((cc < ce) && (*cc == 0x0)) cc++;
    else
      {
         if (buf != bufsmall) free(buf);
-        return cc - c;
+        return 0;
      }
    *b = 0;
    // commands are stored in the buffer, 0 bytes not allowd (end marker)
