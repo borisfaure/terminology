@@ -971,7 +971,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
         cc++;
      }
    buf = bufsmall;
-   if (blen > (int)(sizeof(bufsmall) - 10)) buf = malloc(blen * sizeof(Eina_Unicode) + 10);
+   if (blen > (int)(sizeof(bufsmall) / sizeof(Eina_Unicode) - 10)) buf = malloc(blen * sizeof(Eina_Unicode) + 10);
    cc = (Eina_Unicode *)c;
    b = buf;
    be = buf + blen;
