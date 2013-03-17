@@ -703,11 +703,66 @@ expand_screen:
 }
 
 static void
+_termpty_vertically_expand(Termpty *ty, int oldh,
+                           Termcell *oldscreen, Termcell *oldscreen2)
+{
+   /* TODO */
+   int hh, y;
+
+   hh = oldh;
+
+   // FIXME: handle pointer copy here
+   for (y = 0; y < hh; y++)
+     {
+        Termcell *c1, *c2;
+
+        c1 = &(oldscreen[y * ty->w]);
+        c2 = &(TERMPTY_SCREEN(ty, 0, y));
+        _termpty_text_copy(ty, c1, c2, ty->w);
+        termpty_cell_fill(ty, NULL, c1, ty->w);
+
+        c1 = &(oldscreen2[y * ty->w]);
+        c2 = &(ty->screen2[y * ty->w]);
+        _termpty_text_copy(ty, c1, c2, ty->w);
+        termpty_cell_fill(ty, NULL, c1, ty->w);
+     }
+}
+
+
+static void
+_termpty_vertically_shrink(Termpty *ty, int oldh,
+                           Termcell *oldscreen, Termcell *oldscreen2)
+{
+   /* TODO */
+   int hh, y;
+
+   hh = ty->h;
+
+   // FIXME: handle pointer copy here
+   for (y = 0; y < hh; y++)
+     {
+        Termcell *c1, *c2;
+
+        c1 = &(oldscreen[y * ty->w]);
+        c2 = &(TERMPTY_SCREEN(ty, 0, y));
+        _termpty_text_copy(ty, c1, c2, ty->w);
+        termpty_cell_fill(ty, NULL, c1, ty->w);
+
+        c1 = &(oldscreen2[y * ty->w]);
+        c2 = &(ty->screen2[y * ty->w]);
+        _termpty_text_copy(ty, c1, c2, ty->w);
+        termpty_cell_fill(ty, NULL, c1, ty->w);
+     }
+}
+
+
+static void
 _termpty_horizontally_shrink(Termpty *ty, int oldw, int oldh,
                              Termcell *oldscreen, Termcell *oldscreen2)
 {
    /* TODO */
 }
+
 
 void
 termpty_resize(Termpty *ty, int w, int h)
@@ -741,39 +796,20 @@ termpty_resize(Termpty *ty, int w, int h)
         ERR("memerr");
      }
 
-   ww = ty->w;
-   hh = ty->h;
-
-   if (oldh == ty->h && oldw != ty->w)
+   if (oldw != ty->w)
      {
         if (ty->w > oldw)
-          {
-             _termpty_horizontally_expand(ty, oldw, oldh, olds);
-             return;
-          }
+          _termpty_horizontally_expand(ty, oldw, oldh, olds);
         else
-          {
-             _termpty_horizontally_shrink(ty, oldw, oldh, olds, olds2);
-          }
+          _termpty_horizontally_shrink(ty, oldw, oldh, olds, olds2);
      }
 
-   if (ww > oldw) ww = oldw;
-   if (hh > oldh) hh = oldh;
-
-   // FIXME: handle pointer copy here
-   for (y = 0; y < hh; y++)
+   if (oldh != ty->h)
      {
-        Termcell *c1, *c2;
-
-        c1 = &(olds[y * oldw]);
-        c2 = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, c1, c2, ww);
-        termpty_cell_fill(ty, NULL, c1, ww);
-
-        c1 = &(olds2[y * oldw]);
-        c2 = &(ty->screen2[y * ty->w]);
-        _termpty_text_copy(ty, c1, c2, ww);
-        termpty_cell_fill(ty, NULL, c1, ww);
+        if (ty->h > oldh)
+          _termpty_vertically_expand(ty, oldh, olds, olds2);
+        else
+          _termpty_vertically_shrink(ty, oldh, olds, olds2);
      }
 
    ty->circular_offset = 0;
