@@ -439,7 +439,6 @@ main_close(Evas_Object *win, Evas_Object *term)
    spp = sp->parent;
    if ((sp->term->focused) && (spp)) termfoc = _term_next_get(sp->term);
    sp->wn->terms = eina_list_remove(sp->wn->terms, sp->term);
-//   printf("main_close %p %p\n", win, term);
    if (spp)
      {
         if (eina_list_count(sp->terms) <= 1)
@@ -464,7 +463,6 @@ main_close(Evas_Object *win, Evas_Object *term)
              else if (l->prev) sp->term = l->prev->data;
              sp->terms = eina_list_remove_list(sp->terms, l);
           }
-//        printf("sp->term = %p foc %p\n", sp->term, termfoc);
         if (!sp->term)
           {
              _split_free(sp);
@@ -482,11 +480,6 @@ main_close(Evas_Object *win, Evas_Object *term)
         else
           {
              if ((sp->parent) && (sp->parent->s2 == sp)) slot = PANES_BOTTOM;
-/*             
-             printf("slot '%s' par: %p s1=%p s2=%p\n", 
-                    slot, sp->parent,
-                   sp->parent->s1, sp->parent->s2);
- */
              elm_object_part_content_set(sp->parent->panes, slot,
                                          sp->term->bg);
              evas_object_show(sp->term->bg);
