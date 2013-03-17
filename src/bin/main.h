@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+void main_new(Evas_Object *win, Evas_Object *term);
 void main_split_h(Evas_Object *win, Evas_Object *term);
 void main_split_v(Evas_Object *win, Evas_Object *term);
 void main_close(Evas_Object *win, Evas_Object *term);

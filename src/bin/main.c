@@ -65,8 +65,9 @@ struct _Split
    Win         *wn; // win this split belongs to
    Split       *parent; // the parent split or null if toplevel
    Split       *s1, *s2; // left/right or top/bottom child splits, null if leaf
-   Term        *term; // if leaf node this is not null
-   Evas_Object *panes;
+   Term        *term; // if leaf node this is not null - the CURRENT term from terms list
+   Eina_List   *terms; // list of terms in the "tabs"
+   Evas_Object *panes; // null if a leaf node
    Eina_Bool    horizontal : 1;
 };
 
@@ -98,10 +99,16 @@ static Split *
 _split_split_find(Split *sp, Evas_Object *term)
 {
    Split *sp2;
+   Eina_List *l;
+   Term *tm;
    
    if (sp->term)
      {
         if (sp->term->term == term) return sp;
+        EINA_LIST_FOREACH(sp->terms, l, tm)
+          {
+             if (tm->term == term) return sp;
+          }
      }
    if (sp->s1)
      {
@@ -149,9 +156,11 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->parent = sp;
    sp2->wn = sp->wn;
    sp2->term = sp->term;
+   sp2->terms = sp->terms;
+   sp->terms = NULL;
    
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
-   main_term_bg_redo(sp->term);
+   main_term_bg_redo(sp2->term);
    
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
@@ -160,6 +169,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->term = main_term_new(sp->wn, config,
                              NULL, EINA_FALSE, NULL,
                              80, 24, EINA_FALSE);
+   sp2->terms = eina_list_append(sp2->terms, sp2->term);
    _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
@@ -185,6 +195,56 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp->term = NULL;
 }
 
+static void
+_term_focus_show(Split *sp, Term *term)
+{
+   if (term != sp->term)
+     {
+        evas_object_hide(sp->term->bg);
+        sp->term = term;
+     }
+   if (!sp->parent)
+     edje_object_part_swallow(sp->wn->base, "terminology.content",
+                              sp->term->bg);
+   else
+     {
+        if (sp == sp->parent->s1)
+          {
+             elm_object_part_content_unset(sp->parent->panes, PANES_TOP);
+             elm_object_part_content_set(sp->parent->panes, PANES_TOP,
+                                         sp->term->bg);
+          }
+        else
+          {
+             elm_object_part_content_unset(sp->parent->panes, PANES_BOTTOM);
+             elm_object_part_content_set(sp->parent->panes, PANES_BOTTOM,
+                                         sp->term->bg);
+          }
+     }
+   evas_object_show(sp->term->bg);
+}
+
+void
+main_new(Evas_Object *win, Evas_Object *term)
+{
+   Split *sp = _split_find(win, term);
+   Config *config;
+   int w, h;
+   
+   if (!sp) return;
+   evas_object_hide(sp->term->bg);
+   config = config_fork(sp->term->config);
+   termio_size_get(sp->term->term, &w, &h);
+   sp->term = main_term_new(sp->wn, config,
+                            NULL, EINA_FALSE, NULL,
+                            w, h, EINA_FALSE);
+   sp->terms = eina_list_append(sp->terms, sp->term);
+   _term_focus(sp->term);
+   _term_media_update(sp->term, config);
+   evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
+   _term_focus_show(sp, sp->term);
+}
+
 void
 main_split_h(Evas_Object *win, Evas_Object *term)
 {
@@ -206,7 +266,8 @@ main_split_v(Evas_Object *win, Evas_Object *term)
 static void
 _split_append(Split *sp, Eina_List **flat)
 {
-   if (sp->term) *flat = eina_list_append(*flat, sp);
+   if (sp->term)
+     *flat = eina_list_append(*flat, sp);
    else
      {
         _split_append(sp->s1, flat);
@@ -230,6 +291,8 @@ _term_next_get(Term *termin)
    Eina_List *flat, *l;
    
    sp = _split_find(termin->wn->win, termin->term);
+   l = eina_list_data_find_list(sp->terms, termin);
+   if ((l) && (l->next)) return l->next->data;
    if (!sp->parent) return NULL;
    flat = _split_flatten(termin->wn->split);
    if (!flat) return NULL;
@@ -243,10 +306,12 @@ _term_next_get(Term *termin)
      {
         sp = l->next->data;
         eina_list_free(flat);
+        if (sp->terms) return sp->terms->data;
         return sp->term;
      }
    sp = flat->data;
    eina_list_free(flat);
+   if (sp->terms) return sp->terms->data;
    return sp->term;
 }
 
@@ -257,6 +322,8 @@ _term_prev_get(Term *termin)
    Eina_List *flat, *l;
    
    sp = _split_find(termin->wn->win, termin->term);
+   l = eina_list_data_find_list(sp->terms, termin);
+   if ((l) && (l->prev)) return l->prev->data;
    if (!sp->parent) return NULL;
    flat = _split_flatten(termin->wn->split);
    if (!flat) return NULL;
@@ -270,6 +337,8 @@ _term_prev_get(Term *termin)
      {
         sp = l->prev->data;
         eina_list_free(flat);
+        l = eina_list_last(sp->terms);
+        if (l) return l->data;
         return sp->term;
      }
 #if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
@@ -278,6 +347,8 @@ _term_prev_get(Term *termin)
    sp = eina_list_data_get(eina_list_last(flat));
 #endif                           
    eina_list_free(flat);
+   l = eina_list_last(sp->terms);
+   if (l) return l->data;
    return sp->term;
 }
 
@@ -291,6 +362,8 @@ _split_merge(Split *spp, Split *sp, const char *slot)
         main_term_bg_redo(sp->term);
         spp->term = sp->term;
         sp->term = NULL;
+        spp->terms = sp->terms;
+        sp->terms = NULL;
         o = spp->term->bg;
         spp->s1 = NULL;
         spp->s2 = NULL;
@@ -358,47 +431,91 @@ main_close(Evas_Object *win, Evas_Object *term)
    Split *sp = _split_find(win, term);
    Split *spp, *spkeep = NULL;
    Term *termfoc = NULL;
-#ifdef ELM_PANE_BUG_1_7
-   const char *slot = "left";
-#else
-   const char *slot = "top";
-#endif
+   Eina_List *l;
+   const char *slot = PANES_TOP;
 
    if (!sp) return;
    if (!sp->term) return;
    spp = sp->parent;
    if ((sp->term->focused) && (spp)) termfoc = _term_next_get(sp->term);
    sp->wn->terms = eina_list_remove(sp->wn->terms, sp->term);
+//   printf("main_close %p %p\n", win, term);
    if (spp)
      {
-        if (sp == spp->s2)
+        if (eina_list_count(sp->terms) <= 1)
           {
-             spkeep = spp->s1;
-             spp->s2 = NULL;
+             if (sp == spp->s2)
+               {
+                  spkeep = spp->s1;
+                  spp->s2 = NULL;
+               }
+             else
+               {
+                  spkeep = spp->s2;
+                  spp->s1 = NULL;
+               }
+          }
+        l = eina_list_data_find_list(sp->terms, sp->term);
+        main_term_free(sp->term);
+        sp->term = NULL;
+        if (l)
+          {
+             if (l->next) sp->term = l->next->data;
+             else if (l->prev) sp->term = l->prev->data;
+             sp->terms = eina_list_remove_list(sp->terms, l);
+          }
+//        printf("sp->term = %p foc %p\n", sp->term, termfoc);
+        if (!sp->term)
+          {
+             _split_free(sp);
+             if ((spp->parent) && (spp->parent->s2 == spp))
+               slot = PANES_BOTTOM;
+             _split_merge(spp, spkeep, slot);
+
+             if (termfoc)
+               {
+                  _term_focus(termfoc);
+                  sp = _split_find(win, termfoc->term);
+                  if (sp) _term_focus_show(sp, termfoc);
+               }
           }
         else
           {
-             spkeep = spp->s2;
-             spp->s1 = NULL;
+             if ((sp->parent) && (sp->parent->s2 == sp)) slot = PANES_BOTTOM;
+/*             
+             printf("slot '%s' par: %p s1=%p s2=%p\n", 
+                    slot, sp->parent,
+                   sp->parent->s1, sp->parent->s2);
+ */
+             elm_object_part_content_set(sp->parent->panes, slot,
+                                         sp->term->bg);
+             evas_object_show(sp->term->bg);
+             _term_focus(sp->term);
+             _term_focus_show(sp, sp->term);
           }
-
-        main_term_free(sp->term);
-        sp->term = NULL;
-        _split_free(sp);
-
-        if ((spp->parent) && (spp->parent->s2 == spp))
-          {
-             slot = PANES_BOTTOM;
-          }
-        _split_merge(spp, spkeep, slot);
-
-        if (termfoc) _term_focus(termfoc);
      }
    else
      {
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
+        l = eina_list_data_find_list(sp->terms, sp->term);
         main_term_free(sp->term);
         sp->term = NULL;
+        if (l)
+          {
+             if (l->next)
+               sp->term = l->next->data;
+             else if (l->prev)
+               sp->term = l->prev->data;
+             sp->terms = eina_list_remove_list(sp->terms, l);
+          }
+        if (sp->term)
+          {
+             edje_object_part_swallow(sp->wn->base, "terminology.content",
+                                      sp->term->bg);
+             evas_object_show(sp->term->bg);
+             _term_focus(sp->term);
+             _term_focus_show(sp, sp->term);
+          }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
      }
 }
@@ -523,6 +640,7 @@ _split_size_walk(Split *sp, Sizeinfo *info)
         info->step_y = sp->term->step_y;
         info->req_w = sp->term->req_w;
         info->req_h = sp->term->req_h;
+        // XXXX sp->terms sizedone too?
         if (!evas_object_data_get(sp->term->term, "sizedone"))
           {
              evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
@@ -885,7 +1003,14 @@ _cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    Term *term2 = NULL;
 
    if (term->focused) term2 = _term_prev_get(term);
-   if (term2) _term_focus(term2);
+   if (term2)
+     {
+        Split *sp;
+        
+        _term_focus(term2);
+        sp = _split_find(term2->wn->win, term2->term);
+        if (sp) _term_focus_show(sp, term2);
+     }
 }
 
 static void
@@ -895,13 +1020,22 @@ _cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    Term *term2 = NULL;
    
    if (term->focused) term2 = _term_next_get(term);
-   if (term2) _term_focus(term2);
+   if (term2)
+     {
+        Split *sp;
+        
+        _term_focus(term2);
+        sp = _split_find(term2->wn->win, term2->term);
+        if (sp) _term_focus_show(sp, term2);
+     }
 }
 
 static void
 _cb_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-//   Term *term = data;
+   Term *term = data;
+   
+   main_new(term->wn->win, term->term);
 }
 
 static void
@@ -1763,6 +1897,7 @@ main_ipc_new(Ipc_Instance *inst)
    sp = wn->split = calloc(1, sizeof(Split));
    sp->wn = wn;
    sp->term = term;
+   sp->terms = eina_list_append(sp->terms, sp->term);
    
    main_trans_update(config);
    main_media_update(config);
@@ -2230,6 +2365,7 @@ remote:
    sp = wn->split = calloc(1, sizeof(Split));
    sp->wn = wn;
    sp->term = term;
+   sp->terms = eina_list_append(sp->terms, sp->term);
    
    main_trans_update(config);
    main_media_update(config);

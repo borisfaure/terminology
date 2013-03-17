@@ -63,6 +63,7 @@ struct _Termio
    int zoom_fontsize_start;
    int scroll;
    unsigned int last_keyup;
+   Eina_List *mirrors;
    Eina_List *seq;
    Evas_Object *event;
    Termpty *pty;
@@ -89,6 +90,7 @@ static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
+static void _smart_mirror_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *info __UNUSED__);
 
 static inline Eina_Bool
 _should_inline(const Evas_Object *obj)
@@ -2716,6 +2718,12 @@ _smart_del(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    
    if (!sd) return;
+   EINA_LIST_FREE(sd->mirrors, o)
+     {
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
+                                            _smart_mirror_del, obj);
+        evas_object_del(o);
+     }
    if (sd->imf)
      {
         ecore_imf_context_event_callback_del
@@ -3478,4 +3486,29 @@ termio_textgrid_get(Evas_Object *obj)
    if (!sd) return NULL;
 
    return sd->grid.obj;
+}
+
+static void
+_smart_mirror_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _smart_mirror_del, data);
+   sd->mirrors = eina_list_remove(sd->mirrors, obj);
+}
+
+Evas_Object *
+termio_mirror_add(Evas_Object *obj)
+{
+   Evas_Object *img;
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   img = evas_object_image_filled_add(evas_object_evas_get(obj));
+   evas_object_image_source_set(img, obj);
+   sd->mirrors = eina_list_append(sd->mirrors, img);
+   evas_object_data_set(img, "termio", obj);
+   evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
+                                  _smart_mirror_del, obj);
+   return obj;
 }

@@ -43,6 +43,12 @@ _cb_ct_paste(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
+_cb_ct_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   main_new(ct_win, ct_term);
+}
+
+static void
 _cb_ct_split_v(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    main_split_v(ct_win, ct_term);
@@ -144,6 +150,16 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
         
+        // XXX: need real icon
+        o = elm_button_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, "*");
+        elm_box_pack_end(ct_box2, o);
+        evas_object_show(o);
+        evas_object_smart_callback_add(o, "clicked", _cb_ct_new, NULL);
+        
+        // XXX: need real icon
         o = elm_button_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -152,6 +168,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", _cb_ct_split_v, NULL);
         
+        // XXX: need real icon
         o = elm_button_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -160,6 +177,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         evas_object_show(o);
         evas_object_smart_callback_add(o, "clicked", _cb_ct_split_h, NULL);
         
+        // XXX: need real icon
         o = elm_button_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);

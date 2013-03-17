@@ -959,7 +959,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 static int
 _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   Eina_Unicode *cc, *be;
+   Eina_Unicode *cc;
    Eina_Unicode *buf, bufsmall[1024], *b;
    char *s;
    int blen = 0, slen =  0;
@@ -975,7 +975,6 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
      buf = malloc((blen * sizeof(Eina_Unicode)) + 40);
    cc = (Eina_Unicode *)c;
    b = buf;
-   be = buf + blen + 1;
    while ((cc < ce) && (*cc != 0x0))
      {
         *b = *cc;
