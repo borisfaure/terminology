@@ -85,7 +85,7 @@ _termpty_text_scroll(Termpty *ty)
      {
        // screen is a circular buffer now
        cells2 = &(ty->screen[ty->circular_offset * ty->w]);
-       _text_clear(ty, cells2, ty->w, ' ', EINA_TRUE);
+       _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
 
        ty->circular_offset++;
        if (ty->circular_offset >= ty->h)
@@ -100,7 +100,7 @@ _termpty_text_scroll(Termpty *ty)
 	   cells2 = &(ty->screen[(y + 1) * ty->w]);
 	   _termpty_text_copy(ty, cells2, cells, ty->w);
 	 }
-       _text_clear(ty, cells2, ty->w, ' ', EINA_TRUE);
+       _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
      }
 }
 
@@ -125,7 +125,7 @@ _termpty_text_scroll_rev(Termpty *ty)
 	 ty->circular_offset = ty->h - 1;
 
        cells = &(ty->screen[ty->circular_offset * ty->w]);
-       _text_clear(ty, cells, ty->w, ' ', EINA_TRUE);
+       _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
    else
      {
@@ -137,7 +137,7 @@ _termpty_text_scroll_rev(Termpty *ty)
 	   _termpty_text_copy(ty, cells, cells2, ty->w);
 	 }
        y = start_y;
-       _text_clear(ty, cells, ty->w, ' ', EINA_TRUE);
+       _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
 }
 
