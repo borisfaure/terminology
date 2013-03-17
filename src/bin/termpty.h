@@ -184,6 +184,8 @@ void       termpty_cell_swap(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcell *dst, int n);
 
+ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
+
 extern int _termpty_log_dom;
 
 #define TERMPTY_SCREEN(Tpty, X, Y) \

@@ -32,11 +32,16 @@ static void
 _text_save_top(Termpty *ty)
 {
    Termsave *ts;
+   Termcell *cells;
+   ssize_t w;
 
    if (ty->backmax <= 0) return;
-   ts = calloc(1, sizeof(Termsave) + ((ty->w - 1) * sizeof(Termcell)));
-   ts->w = ty->w;
-   _termpty_text_copy(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ts->cell, ty->w);
+
+   cells = &(TERMPTY_SCREEN(ty, 0, 0));
+   w = termpty_line_length(cells, ty->w);
+   ts = calloc(1, sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
+   ts->w = w;
+   _termpty_text_copy(ty, cells, ts->cell, w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos])
      {

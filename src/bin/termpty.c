@@ -469,7 +469,7 @@ termpty_write(Termpty *ty, const char *input, int len)
    if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
 }
 
-ssize_t _line_length(const Termcell *cells, ssize_t nb_cells)
+ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
    ssize_t len = nb_cells;
 
@@ -616,7 +616,7 @@ expand_screen:
      {
         ssize_t cur_line_length;
 
-        cur_line_length = _line_length(&OLD_SCREEN(0, old_y), old_w);
+        cur_line_length = termpty_line_length(&OLD_SCREEN(0, old_y), old_w);
         if (rewrapping)
           {
              if (new_ts)
