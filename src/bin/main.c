@@ -137,6 +137,39 @@ _split_find(Evas_Object *win, Evas_Object *term)
 }
 
 static void
+_cb_size_track(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   Split *sp = data;
+   Eina_List *l;
+   Term *term;
+   Evas_Coord w = 0, h = 0;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   EINA_LIST_FOREACH(sp->terms, l, term)
+     {
+        if (term->bg != obj) evas_object_resize(term->bg, w, h);
+     }
+}
+
+static void
+_term_resize_track_start(Split *sp)
+{
+   if ((!sp) || (!sp->term) || (!sp->term->bg)) return;
+   evas_object_event_callback_del_full(sp->term->bg, EVAS_CALLBACK_RESIZE,
+                                       _cb_size_track, sp);
+   evas_object_event_callback_add(sp->term->bg, EVAS_CALLBACK_RESIZE,
+                                  _cb_size_track, sp);
+}
+
+static void
+_term_resize_track_stop(Split *sp)
+{
+   if ((!sp) || (!sp->term) || (!sp->term->bg)) return;
+   evas_object_event_callback_del_full(sp->term->bg, EVAS_CALLBACK_RESIZE,
+                                       _cb_size_track, sp);
+}
+
+static void
 _split_split(Split *sp, Eina_Bool horizontal)
 {
    Split *sp2;
@@ -152,12 +185,15 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp->horizontal = horizontal;
    elm_panes_horizontal_set(o, sp->horizontal);
    
+   _term_resize_track_stop(sp);
    sp2 = sp->s1 = calloc(1, sizeof(Split));
    sp2->parent = sp;
    sp2->wn = sp->wn;
    sp2->term = sp->term;
    sp2->terms = sp->terms;
-   sp->terms = NULL;
+   _term_resize_track_start(sp2);
+
+   sp->terms = NULL;   
    
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
    main_term_bg_redo(sp2->term);
@@ -170,6 +206,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
                              NULL, EINA_FALSE, NULL,
                              80, 24, EINA_FALSE);
    sp2->terms = eina_list_append(sp2->terms, sp2->term);
+   _term_resize_track_start(sp2);
    _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
@@ -200,8 +237,10 @@ _term_focus_show(Split *sp, Term *term)
 {
    if (term != sp->term)
      {
+        _term_resize_track_stop(sp);
         evas_object_hide(sp->term->bg);
         sp->term = term;
+        _term_resize_track_start(sp);
      }
    if (!sp->parent)
      edje_object_part_swallow(sp->wn->base, "terminology.content",
@@ -232,6 +271,7 @@ main_new(Evas_Object *win, Evas_Object *term)
    int w, h;
    
    if (!sp) return;
+   _term_resize_track_stop(sp);
    evas_object_hide(sp->term->bg);
    config = config_fork(sp->term->config);
    termio_size_get(sp->term->term, &w, &h);
@@ -239,6 +279,7 @@ main_new(Evas_Object *win, Evas_Object *term)
                             NULL, EINA_FALSE, NULL,
                             w, h, EINA_FALSE);
    sp->terms = eina_list_append(sp->terms, sp->term);
+   _term_resize_track_start(sp);
    _term_focus(sp->term);
    _term_media_update(sp->term, config);
    evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
@@ -360,10 +401,12 @@ _split_merge(Split *spp, Split *sp, const char *slot)
    if (sp->term)
      {
         main_term_bg_redo(sp->term);
+        _term_resize_track_stop(sp);
         spp->term = sp->term;
-        sp->term = NULL;
         spp->terms = sp->terms;
+        sp->term = NULL;
         sp->terms = NULL;
+        _term_resize_track_start(spp);
         o = spp->term->bg;
         spp->s1 = NULL;
         spp->s2 = NULL;
@@ -455,6 +498,7 @@ main_close(Evas_Object *win, Evas_Object *term)
                }
           }
         l = eina_list_data_find_list(sp->terms, sp->term);
+        _term_resize_track_stop(sp);
         main_term_free(sp->term);
         sp->term = NULL;
         if (l)
@@ -479,6 +523,7 @@ main_close(Evas_Object *win, Evas_Object *term)
           }
         else
           {
+             _term_resize_track_start(sp);
              if ((sp->parent) && (sp->parent->s2 == sp)) slot = PANES_BOTTOM;
              elm_object_part_content_set(sp->parent->panes, slot,
                                          sp->term->bg);
@@ -489,6 +534,7 @@ main_close(Evas_Object *win, Evas_Object *term)
      }
    else
      {
+        _term_resize_track_stop(sp);
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
         l = eina_list_data_find_list(sp->terms, sp->term);
         main_term_free(sp->term);
@@ -503,6 +549,7 @@ main_close(Evas_Object *win, Evas_Object *term)
           }
         if (sp->term)
           {
+             _term_resize_track_start(sp);
              edje_object_part_swallow(sp->wn->base, "terminology.content",
                                       sp->term->bg);
              evas_object_show(sp->term->bg);
@@ -1891,6 +1938,7 @@ main_ipc_new(Ipc_Instance *inst)
    sp->wn = wn;
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
+   _term_resize_track_start(sp);
    
    main_trans_update(config);
    main_media_update(config);
@@ -2359,6 +2407,7 @@ remote:
    sp->wn = wn;
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
+   _term_resize_track_start(sp);
    
    main_trans_update(config);
    main_media_update(config);
