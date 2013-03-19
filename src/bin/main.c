@@ -1059,7 +1059,9 @@ _sel_restore(Split *sp)
      {
         if (tm->unswallowed)
           {
+#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
              evas_object_image_source_visible_set(tm->sel, EINA_TRUE);
+#endif
              edje_object_part_swallow(tm->bg, "terminology.content", tm->term);
              tm->unswallowed = EINA_FALSE;
              evas_object_show(tm->term);
@@ -1117,7 +1119,9 @@ _sel_go(Split *sp, Term *term)
         evas_object_move(tm->term, 0, 0);
         evas_object_show(tm->term);
         evas_object_clip_unset(tm->term);
+#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
         evas_object_image_source_visible_set(tm->sel, EINA_FALSE);
+#endif
         tm->unswallowed = EINA_TRUE;
         
         tm->sel = termio_mirror_add(tm->term);
