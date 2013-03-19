@@ -1372,6 +1372,11 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              evas_object_smart_callback_call(data, "new", NULL);
              goto end;
           }
+        else if (!strcmp(ev->keyname, "Home"))
+          {
+             evas_object_smart_callback_call(data, "select", NULL);
+             goto end;
+          }
      }
    if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -3503,12 +3508,15 @@ termio_mirror_add(Evas_Object *obj)
 {
    Evas_Object *img;
    Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Coord w = 0, h = 0;
    if (!sd) return NULL;
    img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_image_source_set(img, obj);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(img, w, h);
    sd->mirrors = eina_list_append(sd->mirrors, img);
    evas_object_data_set(img, "termio", obj);
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _smart_mirror_del, obj);
-   return obj;
+   return img;
 }

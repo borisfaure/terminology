@@ -12,6 +12,7 @@
 #include "media.h"
 #include "utils.h"
 #include "ipc.h"
+#include "sel.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"
@@ -50,6 +51,7 @@ struct _Term
    Evas_Object *term;
    Evas_Object *media;
    Evas_Object *popmedia;
+   Evas_Object *sel;
    Eina_List   *popmedia_queue;
    int          poptype, mediatype;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
@@ -58,6 +60,7 @@ struct _Term
    } down;
    Eina_Bool    focused : 1;
    Eina_Bool    hold : 1;
+   Eina_Bool    unswallowed : 1;
 };
 
 struct _Split
@@ -68,6 +71,7 @@ struct _Split
    Term        *term; // if leaf node this is not null - the CURRENT term from terms list
    Eina_List   *terms; // list of terms in the "tabs"
    Evas_Object *panes; // null if a leaf node
+   Evas_Object *sel; // multi "tab" selector is active
    Eina_Bool    horizontal : 1;
 };
 
@@ -449,7 +453,7 @@ _term_focus(Term *term)
 {
    Eina_List *l;
    Term *term2;
-   
+
    EINA_LIST_FOREACH(term->wn->terms, l, term2)
      {
         if (term2 != term)
@@ -588,6 +592,7 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Win *wn = data;
    Term *term;
+   Split *sp;
    
    if (!wn->focused) elm_win_urgent_set(wn->win, EINA_FALSE);
    wn->focused = EINA_TRUE;
@@ -595,8 +600,16 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
    term = main_win_focused_term_get(wn);
    if (!term) return;
-   edje_object_signal_emit(term->bg, "focus,in", "terminology");
-   if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_TRUE);
+   sp = _split_find(wn->win, term->term);
+   if (sp->sel)
+     {
+        if (!wn->cmdbox_up) elm_object_focus_set(sp->sel, EINA_TRUE);
+     }
+   else
+     {
+        edje_object_signal_emit(term->bg, "focus,in", "terminology");
+        if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_TRUE);
+     }
 }
 
 static void
@@ -1037,6 +1050,113 @@ _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
 }
 
 static void
+_sel_restore(Split *sp)
+{
+   Eina_List *l;
+   Term *tm;
+
+   EINA_LIST_FOREACH(sp->terms, l, tm)
+     {
+        if (tm->unswallowed)
+          {
+             evas_object_image_source_visible_set(tm->sel, EINA_TRUE);
+             edje_object_part_swallow(tm->bg, "terminology.content", tm->term);
+             tm->unswallowed = EINA_FALSE;
+             evas_object_show(tm->term);
+             tm->sel = NULL;
+          }
+     }
+   evas_object_del(sp->sel);
+   sp->sel = NULL;
+}
+
+static void
+_sel_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *info)
+{
+   Split *sp = data;
+   Eina_List *l;
+   Term *tm;
+   
+   EINA_LIST_FOREACH(sp->terms, l, tm)
+     {
+        if (tm->sel == info)
+          {
+             _term_focus(tm);
+             _term_focus_show(sp, tm);
+             _sel_restore(sp);
+             return;
+          }
+     }
+   _sel_restore(sp);
+   _term_focus(sp->term);
+   _term_focus_show(sp, sp->term);
+}
+
+static void
+_sel_cb_exit(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Split *sp = data;
+   _sel_restore(sp);
+   _term_focus(sp->term);
+   _term_focus_show(sp, sp->term);
+}
+
+static void
+_sel_go(Split *sp, Term *term)
+{
+   Eina_List *l;
+   Term *tm;
+   double z;
+
+   evas_object_hide(sp->term->bg);
+   sp->sel = sel_add(sp->wn->win);
+   EINA_LIST_FOREACH(sp->terms, l, tm)
+     {
+        edje_object_part_unswallow(tm->bg, tm->term);
+        evas_object_lower(tm->term);
+        evas_object_move(tm->term, 0, 0);
+        evas_object_show(tm->term);
+        evas_object_clip_unset(tm->term);
+        evas_object_image_source_visible_set(tm->sel, EINA_FALSE);
+        tm->unswallowed = EINA_TRUE;
+        
+        tm->sel = termio_mirror_add(tm->term);
+        sel_entry_add(sp->sel, tm->sel, (tm == sp->term), tm->config);
+     }
+   if (!sp->parent)
+     edje_object_part_swallow(sp->wn->base, "terminology.content", sp->sel);
+   else
+     {
+        if (sp == sp->parent->s1)
+          {
+             elm_object_part_content_unset(sp->parent->panes, PANES_TOP);
+             elm_object_part_content_set(sp->parent->panes, PANES_TOP, sp->sel);
+          }
+        else
+          {
+             elm_object_part_content_unset(sp->parent->panes, PANES_BOTTOM);
+             elm_object_part_content_set(sp->parent->panes, PANES_BOTTOM, sp->sel);
+          }
+     }
+   evas_object_show(sp->sel);
+   z = 1.0;
+   sel_go(sp->sel);
+   if (eina_list_count(sp->terms) >= 1)
+     z = 1.0 / (sqrt(eina_list_count(sp->terms)) * 0.8);
+   if (z > 1.0) z = 1.0;
+   sel_orig_zoom_set(sp->sel, z);
+   sel_zoom(sp->sel, z);
+   if (term != sp->term)
+     {
+        sel_entry_selected_set(sp->sel, term->sel);
+        sel_exit(sp->sel);
+     }
+   elm_object_focus_set(sp->sel, EINA_TRUE);
+   evas_object_smart_callback_add(sp->sel, "selected", _sel_cb_selected, sp);
+   evas_object_smart_callback_add(sp->sel, "exit", _sel_cb_exit, sp);
+}
+
+static void
 _cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
@@ -1045,11 +1165,17 @@ _cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    if (term->focused) term2 = _term_prev_get(term);
    if (term2)
      {
-        Split *sp;
+        Split *sp, *sp0;
         
-        _term_focus(term2);
+        sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp) _term_focus_show(sp, term2);
+        if (sp == sp0)
+          _sel_go(sp, term2);
+        else
+          {
+             _term_focus(term2);
+             if (sp) _term_focus_show(sp, term2);
+          }
      }
 }
 
@@ -1062,11 +1188,17 @@ _cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    if (term->focused) term2 = _term_next_get(term);
    if (term2)
      {
-        Split *sp;
+        Split *sp, *sp0;
         
-        _term_focus(term2);
+        sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp) _term_focus_show(sp, term2);
+        if (sp == sp0)
+          _sel_go(sp, term2);
+        else
+          {
+             _term_focus(term2);
+             if (sp) _term_focus_show(sp, term2);
+          }
      }
 }
 
@@ -1077,6 +1209,17 @@ _cb_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED
    
    main_new(term->wn->win, term->term);
 }
+
+static void
+_cb_select(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+   Split *sp;
+        
+   sp = _split_find(term->wn->win, term->term);
+   _sel_go(sp, term);
+}
+
 
 static void
 _cb_split_h(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -1669,6 +1812,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);
    evas_object_smart_callback_add(o, "next", _cb_next, term);
    evas_object_smart_callback_add(o, "new", _cb_new, term);
+   evas_object_smart_callback_add(o, "select", _cb_select, term);
    evas_object_smart_callback_add(o, "split,h", _cb_split_h, term);
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
    evas_object_show(o);
