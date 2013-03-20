@@ -1,6 +1,9 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] splits need to size only by steps in font size (elm feature)
+[ ] split handles need to become invisible (elm theme)
+[ ] new term/split/cose buttons need proper icons
 [ ] better info in tyls -m
 [ ] tyls -b needs doing
 [ ] blink and blink2 attributes need to be supported
