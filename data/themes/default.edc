@@ -146,8 +146,6 @@ collections {
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.offset: 0 -1;
-               rel2.offset: -1 -1;
                image.normal: "bg_bevel.png";
                image.border: 3 3 5 3;
                image.middle: 0;
