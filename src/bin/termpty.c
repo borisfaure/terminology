@@ -703,53 +703,52 @@ expand_screen:
 }
 
 static void
-_termpty_vertically_expand(Termpty *ty, int oldh,
-                           Termcell *oldscreen, Termcell *oldscreen2)
+_termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
+                           Termcell *old_screen)
 {
-   /* TODO */
-   int hh, y;
-
-   hh = oldh;
-
-   // FIXME: handle pointer copy here
-   for (y = 0; y < hh; y++)
+   if (old_screen)
      {
-        Termcell *c1, *c2;
+        int y,
+            old_circular_offset = ty->circular_offset;
 
-        c1 = &(oldscreen[y * ty->w]);
-        c2 = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, c1, c2, ty->w);
-        termpty_cell_fill(ty, NULL, c1, ty->w);
+        ty->circular_offset = 0;
 
-        c1 = &(oldscreen2[y * ty->w]);
-        c2 = &(ty->screen2[y * ty->w]);
-        _termpty_text_copy(ty, c1, c2, ty->w);
-        termpty_cell_fill(ty, NULL, c1, ty->w);
+#define OLD_SCREEN(_X, _Y) \
+        old_screen[_X + (((_Y + old_circular_offset) % old_h) * old_w)]
+
+        for (y = 0; y < old_h; y++)
+          {
+             Termcell *c1, *c2;
+
+             c1 = &(OLD_SCREEN(0, y));
+             c2 = &(TERMPTY_SCREEN(ty, 0, y));
+             _termpty_text_copy(ty, c1, c2, old_w);
+          }
+#undef OLD_SCREEN
      }
+
+   /* TODO: display content from backlog */
 }
 
 
 static void
-_termpty_vertically_shrink(Termpty *ty, int oldh,
-                           Termcell *oldscreen, Termcell *oldscreen2)
+_termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
+                           Termcell *old_screen)
 {
    /* TODO */
    int hh, y;
 
    hh = ty->h;
 
+   if (!old_screen) return;
+
    // FIXME: handle pointer copy here
    for (y = 0; y < hh; y++)
      {
         Termcell *c1, *c2;
 
-        c1 = &(oldscreen[y * ty->w]);
+        c1 = &(old_screen[y * ty->w]);
         c2 = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, c1, c2, ty->w);
-        termpty_cell_fill(ty, NULL, c1, ty->w);
-
-        c1 = &(oldscreen2[y * ty->w]);
-        c2 = &(ty->screen2[y * ty->w]);
         _termpty_text_copy(ty, c1, c2, ty->w);
         termpty_cell_fill(ty, NULL, c1, ty->w);
      }
@@ -757,8 +756,8 @@ _termpty_vertically_shrink(Termpty *ty, int oldh,
 
 
 static void
-_termpty_horizontally_shrink(Termpty *ty, int oldw, int oldh,
-                             Termcell *oldscreen, Termcell *oldscreen2)
+_termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
+                             Termcell *old_screen)
 {
    /* TODO */
 }
@@ -801,18 +800,25 @@ termpty_resize(Termpty *ty, int w, int h)
         if (ty->w > oldw)
           _termpty_horizontally_expand(ty, oldw, oldh, olds);
         else
-          _termpty_horizontally_shrink(ty, oldw, oldh, olds, olds2);
+          _termpty_horizontally_shrink(ty, oldw, oldh, olds);
+
+        free(olds); olds = NULL;
+        free(olds2); olds2 = NULL;
+        ty->circular_offset = 0;
+     }
+   else
+     {
+
      }
 
    if (oldh != ty->h)
      {
         if (ty->h > oldh)
-          _termpty_vertically_expand(ty, oldh, olds, olds2);
+          _termpty_vertically_expand(ty, oldw, oldh, olds);
         else
-          _termpty_vertically_shrink(ty, oldh, olds, olds2);
+          _termpty_vertically_shrink(ty, oldw, oldh, olds);
      }
 
-   ty->circular_offset = 0;
    free(olds);
    free(olds2);
 
