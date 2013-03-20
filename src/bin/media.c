@@ -3,6 +3,7 @@
 #include <Elementary.h>
 #include <Ethumb_Client.h>
 #include <Emotion.h>
+#include <Efreet.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "media.h"
