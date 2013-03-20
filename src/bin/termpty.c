@@ -512,7 +512,7 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
         Termsave *ts;
 
         if (ty->backscroll_num == ty->backmax - 1)
-          ts = ty->back[(ty->backpos + i) % ty->backscroll_num];
+          ts = ty->back[(ty->backpos + i) % ty->backmax];
         else
           ts = ty->back[i];
         if (!ts)
@@ -592,8 +592,16 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
           }
      }
 
-   ty->backscroll_num = new_back_pos;
-   ty->backpos = new_back_pos;
+   if (new_back_pos >= ty->backmax)
+     {
+        ty->backscroll_num = ty->backmax - 1;
+        ty->backpos = 0;
+     }
+   else
+     {
+        ty->backscroll_num = new_back_pos;
+        ty->backpos = new_back_pos;
+     }
 
    free(ty->back);
    ty->back = new_back;
