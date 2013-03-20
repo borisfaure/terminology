@@ -5,6 +5,7 @@ typedef enum _Termpty_Clear
    TERMPTY_CLR_ALL
 } Termpty_Clear;
 
+void termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max);
 void _termpty_text_copy(Termpty *ty, Termcell *cells, Termcell *dest, int count);
 void _termpty_text_scroll(Termpty *ty);
 void _termpty_text_scroll_rev(Termpty *ty);

@@ -28,17 +28,15 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
    termpty_cell_fill(ty, &src, cells, count);
 }
 
-static void
-_text_save_top(Termpty *ty)
+void
+termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 {
    Termsave *ts;
-   Termcell *cells;
    ssize_t w;
 
    if (ty->backmax <= 0) return;
 
-   cells = &(TERMPTY_SCREEN(ty, 0, 0));
-   w = termpty_line_length(cells, ty->w);
+   w = termpty_line_length(cells, w_max);
    ts = calloc(1, sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
    ts->w = w;
    _termpty_text_copy(ty, cells, ts->cell, w);
@@ -77,7 +75,7 @@ _termpty_text_scroll(Termpty *ty)
      {
         if (!ty->altbuf)
           {
-             _text_save_top(ty);
+             termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
              if (ty->cb.scroll.func) ty->cb.scroll.func(ty->cb.scroll.data);
           }
         else
