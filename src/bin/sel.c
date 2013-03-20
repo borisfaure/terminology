@@ -123,7 +123,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
                   if (l->next)
                     {
                        en = l->next->data;
-                       sel_entry_selected_set(obj, en->obj);
+                       sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
                }
@@ -141,7 +141,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
                   if (l->prev)
                     {
                        en = l->prev->data;
-                       sel_entry_selected_set(obj, en->obj);
+                       sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
                }
@@ -170,7 +170,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
           {
              if (en->selected_orig) entry = en->obj;
           }
-        if (entry) sel_entry_selected_set(obj, entry);
+        if (entry) sel_entry_selected_set(obj, entry, EINA_FALSE);
         sd->select_me = EINA_FALSE;
         sd->exit_me = EINA_TRUE;
         if (sd->autozoom_timeout)
@@ -221,7 +221,7 @@ _layout(Evas_Object *obj)
 
    sd->px = sd->px0 + ((sd->px1 - sd->px0) * sd->interp);
    sd->py = sd->py0 + ((sd->py1 - sd->py0) * sd->interp);
-
+   
    px = sd->px;
    py = sd->py;
    
@@ -467,7 +467,7 @@ sel_go(Evas_Object *obj)
 }
 
 void
-sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry)
+sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_before)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    Eina_List *l;
@@ -488,7 +488,7 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry)
                   en->selected = EINA_FALSE;
                }
           }
-        en->selected_before = EINA_FALSE;
+        if (!keep_before) en->selected_before = EINA_FALSE;
      }
    _transit(obj, 0.3);
 }

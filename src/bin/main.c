@@ -1152,7 +1152,7 @@ _sel_go(Split *sp, Term *term)
    sel_zoom(sp->sel, z);
    if (term != sp->term)
      {
-        sel_entry_selected_set(sp->sel, term->sel);
+        sel_entry_selected_set(sp->sel, term->sel, EINA_TRUE);
         sel_exit(sp->sel);
      }
    elm_object_focus_set(sp->sel, EINA_TRUE);
