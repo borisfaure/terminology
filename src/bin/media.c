@@ -194,24 +194,30 @@ _type_thumb_init(Evas_Object *obj)
    sd->ih = 64;
    if ((sd->realf) && (sd->realf[0] != '/'))
      {
-        Efreet_Icon_Theme *theme;
-        const char *icon_theme = NULL, *fl;
-        
-        theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
-        if (!theme)
+        /* TODO: Listen for theme cache changes */
+        static const char *icon_theme = NULL;
+        const char *fl;
+
+        if (!icon_theme)
           {
-             const char **itr;
-             static const char *themes[] = {
-                "gnome", "Human", "oxygen", "hicolor", NULL
-             };
-             for (itr = themes; *itr; itr++)
+             Efreet_Icon_Theme *theme;
+
+             theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
+             if (!theme)
                {
-                  theme = efreet_icon_theme_find(*itr);
-                  if (theme) break;
+                  const char **itr;
+                  static const char *themes[] = {
+                       "Human", "oxygen", "gnome", "hicolor", NULL
+                  };
+                  for (itr = themes; *itr; itr++)
+                    {
+                       theme = efreet_icon_theme_find(*itr);
+                       if (theme) break;
+                    }
                }
+             if (theme)
+               icon_theme = eina_stringshare_add(theme->name.internal);
           }
-        if (theme)
-          icon_theme = eina_stringshare_add(theme->name.internal);
         fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
         ethumb_client_file_set(et_client, fl, NULL);
      }
