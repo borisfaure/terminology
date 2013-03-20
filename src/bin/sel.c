@@ -160,6 +160,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
              ecore_timer_del(sd->autozoom_timeout);
              sd->autozoom_timeout = NULL;
           }
+        evas_object_smart_callback_call(data, "ending", NULL);
         sel_zoom(data, 1.0);
      }
    else if (!strcmp(ev->keyname, "Escape"))
@@ -178,6 +179,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
              ecore_timer_del(sd->autozoom_timeout);
              sd->autozoom_timeout = NULL;
           }
+        evas_object_smart_callback_call(data, "ending", NULL);
         sel_zoom(data, 1.0);
      }
 }
@@ -277,6 +279,7 @@ _anim_cb(void *data)
                   sd->autozoom_timeout = NULL;
                }
              sd->exit_now = EINA_TRUE;
+             evas_object_smart_callback_call(obj, "ending", NULL);
              sel_zoom(obj, 1.0);
              return EINA_FALSE;
           }
@@ -446,14 +449,14 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *
    en->selected_before = selected;
    en->selected_orig = selected;
    en->bg = edje_object_add(evas_object_evas_get(obj));
-   theme_apply(en->bg, config, "terminology/background");
+   theme_apply(en->bg, config, "terminology/sel/item");
    evas_object_smart_member_add(en->bg, obj);
    evas_object_clip_set(en->bg, sd->clip);
    edje_object_part_swallow(en->bg, "terminology.content", en->obj);
    evas_object_show(en->obj);
    evas_object_stack_below(en->bg, sd->o_event);
    if (en->selected)
-     edje_object_signal_emit(en->bg, "focus,in", "terminology");
+     edje_object_signal_emit(en->bg, "selected,start", "terminology");
    sd->interp = 1.0;
 }
 
@@ -461,9 +464,19 @@ void
 sel_go(Evas_Object *obj)
 {
    Sel *sd = evas_object_smart_data_get(obj);
+   Eina_List *l;
+   Entry *en;
    if (!sd) return;
    _layout(obj);
    evas_object_show(sd->clip);
+   EINA_LIST_FOREACH(sd->items, l, en)
+     {
+        if (en->selected)
+          {
+             evas_object_stack_below(en->bg, sd->o_event);
+             break;
+          }
+     }
 }
 
 void
@@ -477,14 +490,15 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
      {
         if (en->obj == entry)
           {
-             edje_object_signal_emit(en->bg, "focus,in", "terminology");
+             edje_object_signal_emit(en->bg, "selected", "terminology");
+             evas_object_stack_below(en->bg, sd->o_event);
              en->selected = EINA_TRUE;
           }
         else if (en->obj != entry)
           {
              if (en->selected)
                {
-                  edje_object_signal_emit(en->bg, "focus,out", "terminology");
+                  edje_object_signal_emit(en->bg, "unselected", "terminology");
                   en->selected = EINA_FALSE;
                }
           }

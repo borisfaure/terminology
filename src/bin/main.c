@@ -72,6 +72,7 @@ struct _Split
    Eina_List   *terms; // list of terms in the "tabs"
    Evas_Object *panes; // null if a leaf node
    Evas_Object *sel; // multi "tab" selector is active
+   Evas_Object *sel_bg; // multi "tab" selector wrapper edje obj for styling
    Eina_Bool    horizontal : 1;
 };
 
@@ -1069,7 +1070,9 @@ _sel_restore(Split *sp)
           }
      }
    evas_object_del(sp->sel);
+   evas_object_del(sp->sel_bg);
    sp->sel = NULL;
+   sp->sel_bg = NULL;
 }
 
 static void
@@ -1104,6 +1107,13 @@ _sel_cb_exit(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
 }
 
 static void
+_sel_cb_ending(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Split *sp = data;
+   edje_object_signal_emit(sp->sel_bg, "end", "terminology");
+}
+
+static void
 _sel_go(Split *sp, Term *term)
 {
    Eina_List *l;
@@ -1111,6 +1121,13 @@ _sel_go(Split *sp, Term *term)
    double z;
 
    evas_object_hide(sp->term->bg);
+   sp->sel_bg = edje_object_add(evas_object_evas_get(sp->wn->win));
+   theme_apply(sp->sel_bg, term->config, "terminology/sel/base");
+   if (term->config->translucent)
+     edje_object_signal_emit(sp->sel_bg, "translucent,on", "terminology");
+   else
+     edje_object_signal_emit(sp->sel_bg, "translucent,off", "terminology");
+   edje_object_signal_emit(sp->sel_bg, "begin", "terminology");
    sp->sel = sel_add(sp->wn->win);
    EINA_LIST_FOREACH(sp->terms, l, tm)
      {
@@ -1127,22 +1144,29 @@ _sel_go(Split *sp, Term *term)
         tm->sel = termio_mirror_add(tm->term);
         sel_entry_add(sp->sel, tm->sel, (tm == sp->term), tm->config);
      }
+   edje_object_part_swallow(sp->sel_bg, "terminology.content", sp->sel);
+   evas_object_show(sp->sel);
    if (!sp->parent)
-     edje_object_part_swallow(sp->wn->base, "terminology.content", sp->sel);
+     edje_object_part_swallow(sp->wn->base, "terminology.content", sp->sel_bg);
    else
      {
         if (sp == sp->parent->s1)
           {
              elm_object_part_content_unset(sp->parent->panes, PANES_TOP);
-             elm_object_part_content_set(sp->parent->panes, PANES_TOP, sp->sel);
+             elm_object_part_content_set(sp->parent->panes, PANES_TOP,
+                                         sp->sel_bg);
           }
         else
           {
              elm_object_part_content_unset(sp->parent->panes, PANES_BOTTOM);
-             elm_object_part_content_set(sp->parent->panes, PANES_BOTTOM, sp->sel);
+             elm_object_part_content_set(sp->parent->panes, PANES_BOTTOM,
+                                         sp->sel_bg);
           }
      }
-   evas_object_show(sp->sel);
+   evas_object_show(sp->sel_bg);
+   evas_object_smart_callback_add(sp->sel, "selected", _sel_cb_selected, sp);
+   evas_object_smart_callback_add(sp->sel, "exit", _sel_cb_exit, sp);
+   evas_object_smart_callback_add(sp->sel, "ending", _sel_cb_ending, sp);
    z = 1.0;
    sel_go(sp->sel);
    if (eina_list_count(sp->terms) >= 1)
@@ -1156,8 +1180,6 @@ _sel_go(Split *sp, Term *term)
         sel_exit(sp->sel);
      }
    elm_object_focus_set(sp->sel, EINA_TRUE);
-   evas_object_smart_callback_add(sp->sel, "selected", _sel_cb_selected, sp);
-   evas_object_smart_callback_add(sp->sel, "exit", _sel_cb_exit, sp);
 }
 
 static void

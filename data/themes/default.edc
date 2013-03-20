@@ -2085,32 +2085,12 @@ target: "4.bottom"
    //// the cursor to show where text is typed
    group { name: "terminology/cursor";
       images {
-//        image: "cr_fill.png" COMP;
         image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
         image: "cr_pulse.png" COMP;
         image: "cr_glow.png" COMP;
       }
       parts {
-/*         
-         part { name: "fill";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               image.normal: "cr_fill.png";
-               fill {
-                  size {
-                     relative: 0.0 0.0;
-                     offset: 32 32;
-                  }
-               }
-               color: 51 153 255 80;
-            }
-            description { state: "focused" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-            }
-         }
- */
          part { name: "key";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -2276,7 +2256,249 @@ target: "4.bottom"
          }
       }
    }
-
+//////////////////////////////////////////////////////////////////////////////
+   //// an object to contain the selection tool used for selecting tabs (with
+   //// a glow grid of terms
+   group { name: "terminology/sel/base";
+      images {
+        image: "pm_overlay.png" COMP;
+        image: "pm_fill.png" COMP;
+      }
+      parts {
+         part { name: "fill";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "pm_fill.png";
+               fill {
+                  size.relative: 0.0 0.0;
+                  size.offset: 64 64;
+               }
+            }
+            description { state: "translucent" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         program {
+            signal: "translucent,on"; source: "terminology";
+            action: STATE_SET "translucent" 0.0;
+            target: "fill";
+         }
+         program {
+            signal: "translucent,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "fill";
+         }
+         
+         part { name: "clip"; type: RECT;
+            description { state: "default" 0.0;
+            }
+         }
+         part { name: "terminology.content"; type: SWALLOW;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+            }
+         }
+         
+         part { name: "overlay";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "pm_overlay.png";
+               color: 255 255 255 0;
+               fill.smooth: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         program {
+            signal: "begin"; source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.3;
+            target: "overlay";
+         }
+         program {
+            signal: "end"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.3 CURRENT;
+            target: "overlay";
+         }
+      }
+   }
+   
+   group { name: "terminology/sel/item";
+      images {
+        image: "bg_bevel.png" COMP;
+        image: "bg_shine.png" COMP;
+        image: "bg_glint.png" COMP;
+        image: "pm_shadow.png" COMP;
+        image: "cr_glow.png" COMP;
+      }
+      parts {
+         part { name: "clip"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               color: 128 128 128 255;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "shadow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               rel1.offset: -5 -5;
+               rel2.offset: 4 4;
+               image.normal: "pm_shadow.png";
+               image.border: 64 64 64 64;
+               image.border_scale_by: 0.1;
+               color: 255 255 255 128;
+               fill.smooth: 0;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               rel1.offset: -40 -40;
+               rel2.offset: 39 39;
+               image.border_scale_by: 1.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "glow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 0;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "base"; type: RECT;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               color: 32 32 32 255;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+            }
+         }
+         
+         part { name: "terminology.content"; type: SWALLOW;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.relative: 0.1 0.1;
+               rel2.relative: 0.9 0.9;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         program {
+            signal: "selected"; source: "terminology";
+            action: STATE_SET "selected" 0.0;
+            transition: DECELERATE 0.2 CURRENT;
+            target: "terminology.content";
+            target: "shadow";
+            target: "clip";
+            target: "glow";
+         }
+         program {
+            signal: "selected,start"; source: "terminology";
+            action: STATE_SET "selected" 0.0;
+            target: "terminology.content";
+            target: "shadow";
+            target: "clip";
+            target: "glow";
+         }
+         program {
+            signal: "unselected"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.4 CURRENT;
+            target: "terminology.content";
+            target: "shadow";
+            target: "clip";
+            target: "glow";
+         }
+         
+         part { name: "overlay";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               image.normal: "pm_overlay.png";
+               fill.smooth: 0;
+            }
+         }
+         part { name: "bevel";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               image.normal: "bg_bevel.png";
+               image.border: 3 3 5 3;
+               image.middle: 0;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "clip2"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+            }
+         }
+         part { name: "glint";
+            mouse_events: 0;
+            clip_to: "clip2";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               min: 79 5;
+               max: 79 5;
+               rel1 {
+                  to: "terminology.content";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "terminology.content";
+                  relative: 1.0 0.0;
+                  offset: -1 0;
+               }
+               image.normal: "bg_glint.png";
+            }
+         }
+         part { name: "shine";
+            mouse_events: 0;
+            clip_to: "clip2";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               image.normal: "bg_shine.png";
+               fill.smooth: 0;
+               align: 0.5 0.0;
+               aspect: (255/120) (255/120);
+               aspect_preference: HORIZONTAL;
+            }
+         }
+      }
+   }
 //////////////////////////////////////////////////////////////////////////////
    //// an object overlayd on text that is a link
    group { name: "terminology/link";
