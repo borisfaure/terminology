@@ -1,6 +1,8 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] better info in tyls -m
+[ ] tyls -b needs doing
 [ ] blink and blink2 attributes need to be supported
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
@@ -24,32 +26,18 @@ make it a first-class terminal:
 [ ] dnd of file to term offer to paste path, with escapes or paste file
     content (if text) with or without escaping
 [ ] helpers when executed need to escape path/uri in command buffer
-[ ] media - improve position slider to track ucr position as u play
+[ ] media - improve position slider to track position as u play
 [ ] improve look of meida controls (youtube like better with mouse move show)
-[ ] media controls for music files need to be compact for music
 [ ] make media controls an api where controls are provided by the media
     object owner so they can be custom placed/swallowed/handled better
 [ ] media controls need to have zoom controls for all formats
 [ ] media controls need next/prev page controls for paged media (ps/pdf)
 [ ] add better handling of music files (with just playbar+vol, no image)
 [ ] display queue of media visually
-[ ] add escapes for displaying media
 [ ] add option for cjk double width mode
 [ ] apparently there are problems with mutt, screen and tmux? vim
     mousewheel scroll suport doesnt work
 [ ] possible evas font problem with proggy fonts: http://www.proggyfonts.com/
-[ ] alt+return doesn't copy current selection to input line.
-[ ] ctrl+shift+c and ctrl+shift+v should do copy & paste
-[ ] tab sel needs decent edje styling with spacing and shadows around items
-[ ] tab sel needs to display term title and track changes
-[ ] tab sel needs to display alert/bell state and display it
-[ ] termio needs a bg mode for invisible tabs (until sel view is up)
-[ ] termio needs a visible but not selected mode (for media volume?)
-[ ] tab sel needs to use temio bg/visible modes
-[ ] main term needs to track title in its struct and win title needs
-    to show it when we switch focus to that term
-[ ] need an edje bg/overlay/swallow around sel  that is put in the pane or
-    terminology main swallow for styling and bg.
 [ ] need mouse control for sel object (autoscroll based on position)
 [ ] need mouseover top of term to go into sel mode
 [ ] need to track bell on bg terms and indicate a bg term wants attention

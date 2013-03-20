@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = terminology tycat tyls
+bin_PROGRAMS = terminology tybg tyalpha typop tyq tycat tyls
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -40,6 +40,42 @@ utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h \
 extns.h
+
+tybg_SOURCES = \
+tybg.c
+
+tybg_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
+tybg_LDADD =
+
+tyalpha_SOURCES = \
+tyalpha.c
+
+tyalpha_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
+tyalpha_LDADD =
+
+typop_SOURCES = \
+typop.c
+
+typop_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
+typop_LDADD =
+
+tyq_SOURCES = \
+tyq.c
+
+tyq_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
+tyq_LDADD =
 
 tycat_SOURCES = \
 tycat.c \

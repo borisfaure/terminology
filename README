@@ -1,4 +1,4 @@
-Terminology 0.2.0
+Terminology 0.3.0
 
 ******************************************************************************
 
@@ -10,16 +10,20 @@ Terminology 0.2.0
 Requirements:
 -------------
 
-  * elementary 1.1 (1.0.99 SVN latest)
-  * eina
-  * eet
-  * evas 1.3 (1.2.99 SVN latest)
-  * ecore
-  * edje
-  * emotion
-  * ecore-imf
-  * ecore-imf-evas
-  * ecore-input 1.3 (1.2.99 SVN latest)
+  * elementary (>= 1.7.0)
+  * eina (>= 1.7.0)
+  * eet (>= 1.7.0)
+  * evas (>= 1.7.0)
+  * ecore (>= 1.7.0)
+  * edje (>= 1.7.0)
+  * emotion (>= 1.7.0)
+  * ecore-imf (>= 1.7.0)
+  * ecore-imf-evas (>= 1.7.0)
+  * ecore-input (>= 1.7.0)
+  * ethumb (>= 1.7.0)
+
+Please note that some features may not quite function correction or
+completely on EFL 1.7, and 1.8 or newer would be better.
 
 Please see http://www.enlightenment.org for information on these.
 
@@ -59,6 +63,9 @@ Ctrl+Shift+Home = bring up "tab" switcher
 Ctrl+Shift+PgUp = split terminal horizontally (1 term above the other)
 Ctrl+Shift+PgDn = split terminal vertically (1 term to the left of the other)
 Alt+Home = Enter command mode (enter commands to control terminology itself)
+Alt+Return = paste primary selection
+Ctrl+Shift+c = copy current selection to clipboard
+Ctrl+Shift+v = paste current clipboard selection
 
 Command mode commands currently understood:
 

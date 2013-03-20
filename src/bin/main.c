@@ -90,6 +90,7 @@ static void main_term_free(Term *term);
 static void main_term_bg_redo(Term *term);
 static Term *main_term_new(Win *wn, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int size_w, int size_h, Eina_Bool hold);
 static void _term_focus(Term *term);
+static void _sel_restore(Split *sp);
 
 static void
 _split_free(Split *sp)
@@ -485,6 +486,7 @@ main_close(Evas_Object *win, Evas_Object *term)
 
    if (!sp) return;
    if (!sp->term) return;
+   if (sp->sel) _sel_restore(sp);
    spp = sp->parent;
    if ((sp->term->focused) && (spp)) termfoc = _term_next_get(sp->term);
    sp->wn->terms = eina_list_remove(sp->wn->terms, sp->term);
@@ -996,7 +998,10 @@ _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
              if (config)
                {
                   config->temporary = EINA_TRUE;
-                  eina_stringshare_replace(&(config->background), cmd + 2);
+                  if (cmd[2])
+                    eina_stringshare_replace(&(config->background), cmd + 2);
+                  else
+                    eina_stringshare_replace(&(config->background), NULL);
                   main_media_update(config);
                }
           }
@@ -1007,8 +1012,12 @@ _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
              if (config)
                {
                   config->temporary = EINA_FALSE;
-                  eina_stringshare_replace(&(config->background), cmd + 2);
+                  if (cmd[2])
+                    eina_stringshare_replace(&(config->background), cmd + 2);
+                  else
+                    eina_stringshare_replace(&(config->background), NULL);
                   main_media_update(config);
+                  config_save(config, NULL);
                }
           }
      }
@@ -1025,7 +1034,7 @@ _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
                       (!strcasecmp(cmd + 2, "on")) ||
                       (!strcasecmp(cmd + 2, "true")) ||
                       (!strcasecmp(cmd + 2, "yes")))
-                    config->translucent = EINA_FALSE;
+                    config->translucent = EINA_TRUE;
                   else
                     config->translucent = EINA_FALSE;
                   main_trans_update(config);
@@ -1042,10 +1051,11 @@ _cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
                       (!strcasecmp(cmd + 2, "on")) ||
                       (!strcasecmp(cmd + 2, "true")) ||
                       (!strcasecmp(cmd + 2, "yes")))
-                    config->translucent = EINA_FALSE;
+                    config->translucent = EINA_TRUE;
                   else
                     config->translucent = EINA_FALSE;
                   main_trans_update(config);
+                  config_save(config, NULL);
                }
           }
      }
@@ -1134,7 +1144,7 @@ _sel_go(Split *sp, Term *term)
      {
         edje_object_part_unswallow(tm->bg, tm->term);
         evas_object_lower(tm->term);
-        evas_object_move(tm->term, 0, 0);
+        evas_object_move(tm->term, -9999, -9999);
         evas_object_show(tm->term);
         evas_object_clip_unset(tm->term);
 #if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
@@ -1756,6 +1766,11 @@ main_term_bg_redo(Term *term)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    theme_apply(o, term->config, "terminology/background");
 
+   if (term->config->translucent)
+     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+   else
+     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+   
    theme_auto_reload_enable(o);
    evas_object_show(o);
 
@@ -1827,6 +1842,11 @@ main_term_new(Win *wn, Config *config, const char *cmd,
         return NULL;
      }
 
+   if (term->config->translucent)
+     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+   else
+     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+   
    theme_auto_reload_enable(o);
    evas_object_show(o);
 

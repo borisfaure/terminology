@@ -6,6 +6,8 @@
 #include "sel.h"
 #include "config.h"
 #include "utils.h"
+#include "termio.h"
+#include "media.h"
 
 typedef struct _Sel Sel;
 typedef struct _Entry Entry;
@@ -37,7 +39,7 @@ struct _Sel
 
 struct _Entry
 {
-   Evas_Object *obj, *bg;
+   Evas_Object *obj, *bg, *media, *termio;
    Eina_Bool selected : 1;
    Eina_Bool selected_before : 1;
    Eina_Bool selected_orig : 1;
@@ -317,6 +319,68 @@ _transit(Evas_Object *obj, double tim)
 }
 
 static void
+_label_redo(Entry *en)
+{
+   const char *s;
+   
+   if (!en->obj) return;
+   if (!en->termio) return;
+   s = termio_title_get(en->termio);
+   if (!s) s = termio_icon_name_get(en->termio);
+   if (s) edje_object_part_text_set(en->bg, "terminology.label", s);
+}
+
+static void
+_title_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   _label_redo(data);
+}
+
+static void
+_icon_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   _label_redo(data);
+}
+
+static void
+_bell_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Entry *en = data;
+   edje_object_signal_emit(en->bg, "bell", "terminology");
+}
+
+static void
+_media_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Entry *en = data;
+   en->media = NULL;
+}
+
+static void
+_entry_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Entry *en = data;
+   en->obj = NULL;
+   if (en->termio)
+     {
+        evas_object_smart_callback_del_full(en->termio, "title,change",
+                                            _title_cb, en);
+        evas_object_smart_callback_del_full(en->termio, "icon,change",
+                                            _icon_cb, en);
+        evas_object_smart_callback_del_full(en->termio, "bell",
+                                            _bell_cb, en);
+        en->termio = NULL;
+     }
+}
+
+static void
+_entry_termio_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Entry *en = data;
+   en->termio = NULL;
+}
+
+static void
 _smart_add(Evas_Object *obj)
 {
    Sel *sd;
@@ -346,7 +410,17 @@ _smart_del(Evas_Object *obj)
    if (sd->autozoom_timeout) ecore_timer_del(sd->autozoom_timeout);
    EINA_LIST_FREE(sd->items, en)
      {
-        evas_object_del(en->obj);
+        if (en->termio)
+          {
+             evas_object_smart_callback_del_full(en->termio, "title,change",
+                                                 _title_cb, en);
+             evas_object_smart_callback_del_full(en->termio, "icon,change",
+                                                 _icon_cb, en);
+             evas_object_smart_callback_del_full(en->termio, "bell",
+                                                 _bell_cb, en);
+          }
+        if (en->obj) evas_object_del(en->obj);
+        if (en->media) evas_object_del(en->media);
         evas_object_del(en->bg);
         free(en);
      }
@@ -441,7 +515,6 @@ void
 sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *config)
 {
    Sel *sd = evas_object_smart_data_get(obj);
-   Evas_Object *o;
    Entry *en = calloc(1, sizeof(Entry));
    if (!en) return;
    sd->items = eina_list_append(sd->items, en);
@@ -455,20 +528,48 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *
    evas_object_clip_set(en->bg, sd->clip);
    edje_object_part_swallow(en->bg, "terminology.content", en->obj);
    evas_object_show(en->obj);
+
+   if (config->background)
+     {
+        Evas_Object *o;
+        int type = 0;
+        
+        en->media = o = media_add(obj,
+                                  config->background, config,
+                                  MEDIA_BG, &type);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _media_del_cb, en);
+        edje_object_part_swallow(en->bg, "terminology.background", o);
+        evas_object_show(o);
+        if (type == TYPE_IMG)
+          edje_object_signal_emit(en->bg, "media,image", "terminology");
+        else if (type == TYPE_SCALE)
+          edje_object_signal_emit(en->bg, "media,scale", "terminology");
+        else if (type == TYPE_EDJE)
+          edje_object_signal_emit(en->bg, "media,edje", "terminology");
+        else if (type == TYPE_MOV)
+          edje_object_signal_emit(en->bg, "media,movie", "terminology");
+     }
+   
    evas_object_stack_below(en->bg, sd->o_event);
    if (en->selected)
      edje_object_signal_emit(en->bg, "selected,start", "terminology");
    sd->interp = 1.0;
-   
-   o = evas_object_data_get(en->obj, "termio");
-   if (o)
+   en->termio = evas_object_data_get(en->obj, "termio");
+   if (en->termio)
      {
-        const char *s;
-        
-        s = termio_title_get(o);
-        if (!s) s = termio_icon_name_get(o);
-        if (s) edje_object_part_text_set(en->bg, "terminology.label", s);
+        evas_object_smart_callback_add(en->termio, "title,change",
+                                       _title_cb, en);
+        evas_object_smart_callback_add(en->termio, "icon,change",
+                                       _icon_cb, en);
+        evas_object_smart_callback_add(en->termio, "bell",
+                                       _bell_cb, en);
+        _label_redo(en);
+        evas_object_event_callback_add(en->termio, EVAS_CALLBACK_DEL,
+                                       _entry_termio_del_cb, en);
      }
+   evas_object_event_callback_add(en->obj, EVAS_CALLBACK_DEL,
+                                  _entry_del_cb, en);
 }
 
 void

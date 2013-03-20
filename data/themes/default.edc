@@ -2261,8 +2261,16 @@ target: "4.bottom"
       images {
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
+        image: "bg_shadow.png" COMP;
       }
       parts {
+         part { name: "shadow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "bg_shadow.png";
+               fill.smooth: 0;
+            }
+         }
          part { name: "fill";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -2393,7 +2401,24 @@ target: "4.bottom"
                rel2.to: "terminology.content";
             }
          }
-         
+         part { name: "terminology.background"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+            }
+            description { state: "image" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "scale" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "edje" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "movie" 0.0;
+               inherit: "default" 0.0;
+            }
+         }
          part { name: "terminology.content"; type: SWALLOW;
             clip_to: "clip";
             description { state: "default" 0.0;
