@@ -2885,7 +2885,8 @@ _smart_pty_title(void *data)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (!sd->win) return;
-   elm_win_title_set(sd->win, sd->pty->prop.title);
+   evas_object_smart_callback_call(obj, "title,change", NULL);
+//   elm_win_title_set(sd->win, sd->pty->prop.title);
 }
 
 static void
@@ -2896,7 +2897,8 @@ _smart_pty_icon(void *data)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (!sd->win) return;
-   elm_win_icon_name_set(sd->win, sd->pty->prop.icon);
+   evas_object_smart_callback_call(obj, "icon,change", NULL);
+//   elm_win_icon_name_set(sd->win, sd->pty->prop.icon);
 }
 
 static void
@@ -3519,4 +3521,20 @@ termio_mirror_add(Evas_Object *obj)
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _smart_mirror_del, obj);
    return img;
+}
+
+const char *
+termio_title_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   return sd->pty->prop.title;
+}
+
+const char *
+termio_icon_name_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   return sd->pty->prop.icon;
 }

@@ -441,6 +441,7 @@ void
 sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *config)
 {
    Sel *sd = evas_object_smart_data_get(obj);
+   Evas_Object *o;
    Entry *en = calloc(1, sizeof(Entry));
    if (!en) return;
    sd->items = eina_list_append(sd->items, en);
@@ -458,6 +459,16 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *
    if (en->selected)
      edje_object_signal_emit(en->bg, "selected,start", "terminology");
    sd->interp = 1.0;
+   
+   o = evas_object_data_get(en->obj, "termio");
+   if (o)
+     {
+        const char *s;
+        
+        s = termio_title_get(o);
+        if (!s) s = termio_icon_name_get(o);
+        if (s) edje_object_part_text_set(en->bg, "terminology.label", s);
+     }
 }
 
 void

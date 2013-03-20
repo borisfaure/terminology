@@ -2411,6 +2411,7 @@ target: "4.bottom"
             action: STATE_SET "selected" 0.0;
             transition: DECELERATE 0.2 CURRENT;
             target: "terminology.content";
+            target: "terminology.label";
             target: "shadow";
             target: "clip";
             target: "glow";
@@ -2419,6 +2420,7 @@ target: "4.bottom"
             signal: "selected,start"; source: "terminology";
             action: STATE_SET "selected" 0.0;
             target: "terminology.content";
+            target: "terminology.label";
             target: "shadow";
             target: "clip";
             target: "glow";
@@ -2428,6 +2430,7 @@ target: "4.bottom"
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.4 CURRENT;
             target: "terminology.content";
+            target: "terminology.label";
             target: "shadow";
             target: "clip";
             target: "glow";
@@ -2453,6 +2456,28 @@ target: "4.bottom"
                image.border: 3 3 5 3;
                image.middle: 0;
                fill.smooth: 0;
+            }
+         }
+         part { name: "terminology.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+               color: 51 153 255 255;
+               color2: 51 153 255 24;
+               color3: 51 153 255 18;
+               align: 0.5 1.0;
+               text { font: "Sans"; size: 10;
+                  align: 0.5 1.0;
+                  min: 0 1;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+               color2: 51 153 255 128;
+               color3: 51 153 255 20;
             }
          }
          part { name: "clip2"; type: RECT;

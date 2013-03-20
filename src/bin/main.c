@@ -471,6 +471,7 @@ _term_focus(Term *term)
    edje_object_signal_emit(term->bg, "focus,in", "terminology");
    if (term->wn->cmdbox) elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
    elm_object_focus_set(term->term, EINA_TRUE);
+   elm_win_title_set(term->wn->win, termio_title_get(term->term));
 }
 
 void
@@ -1263,6 +1264,22 @@ _cb_split_v(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    main_split_v(term->wn->win, term->term);
 }
 
+static void
+_cb_title(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+   if (term->focused)
+     elm_win_title_set(term->wn->win, termio_title_get(term->term));
+}
+
+static void
+_cb_icon(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+   if (term->focused)
+     elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->term));
+}
+
 static Eina_Bool
 _cb_cmd_focus(void *data)
 {
@@ -1841,6 +1858,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "select", _cb_select, term);
    evas_object_smart_callback_add(o, "split,h", _cb_split_h, term);
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
+   evas_object_smart_callback_add(o, "title,change", _cb_title, term);
+   evas_object_smart_callback_add(o, "icon,change", _cb_icon, term);
    evas_object_show(o);
    
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
