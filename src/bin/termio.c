@@ -2137,7 +2137,6 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    sd->didclick = EINA_FALSE;
-   sd->boxsel = EINA_FALSE;
    if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Control"))
      {
         evas_object_smart_callback_call(data, "options", NULL);
@@ -2146,6 +2145,7 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
      {
+        sd->boxsel = EINA_FALSE;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              _sel_line(data, cx, cy - sd->scroll);
