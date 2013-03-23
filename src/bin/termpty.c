@@ -743,23 +743,46 @@ static void
 _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
-   /* TODO */
-   int hh, y;
+   int to_history = old_h - ty->h,
+       circular_offset,
+       w,
+       h,
+       y;
+   Termcell *screen;
 
-   hh = ty->h;
+   if (old_screen)
+     {
+        screen = old_screen;
+        w = old_w;
+        h = old_h;
+        circular_offset = ty->circular_offset;
+     }
+   else
+     {
+        screen = ty->screen;
+        w = ty->w;
+        h = ty->h;
+        circular_offset = 0;
+     }
 
-   if (!old_screen) return;
+#define _SCREEN(_X, _Y) \
+        screen[_X + (((_Y + circular_offset) % h) * w)]
 
-   // FIXME: handle pointer copy here
-   for (y = 0; y < hh; y++)
+   for (y = 0; y < to_history; y++)
+     {
+        termpty_text_save_top(ty, &(_SCREEN(0, y)), w);
+     }
+
+   for (y = 0; y < ty->h; y++)
      {
         Termcell *c1, *c2;
 
-        c1 = &(old_screen[y * ty->w]);
+        c1 = &(_SCREEN(0, y + to_history));
         c2 = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, c1, c2, ty->w);
-        termpty_cell_fill(ty, NULL, c1, ty->w);
+        _termpty_text_copy(ty, c1, c2, old_w);
      }
+
+#undef _SCREEN
 }
 
 
