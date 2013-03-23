@@ -744,45 +744,59 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
    int to_history = old_h - ty->h,
-       circular_offset,
-       w,
-       h,
+       old_circular_offset,
        y;
-   Termcell *screen;
+   Termcell *src, *dst;
 
-   if (old_screen)
-     {
-        screen = old_screen;
-        w = old_w;
-        h = old_h;
-        circular_offset = ty->circular_offset;
-     }
-   else
-     {
-        screen = ty->screen;
-        w = ty->w;
-        h = ty->h;
-        circular_offset = 0;
-     }
+   circular_offset = ty->circular_offset;
 
-#define _SCREEN(_X, _Y) \
-        screen[_X + (((_Y + circular_offset) % h) * w)]
+#define OLD_SCREEN(_X, _Y) \
+        old_screen[_X + (((_Y + old_circular_offset) % old_h) * old_w)]
+
+   old_circular_offset = ty->circular_offset;
 
    for (y = 0; y < to_history; y++)
      {
-        termpty_text_save_top(ty, &(_SCREEN(0, y)), w);
+        termpty_text_save_top(ty, &(OLD_SCREEN(0, y)), old_w);
      }
+   ty->state.cy -= to_history;
+   if (ty->state.cy < 0) ty->state.cy = 0;
 
-   for (y = 0; y < ty->h; y++)
+   if (old_w == ty->w)
      {
-        Termcell *c1, *c2;
+        ty->circular_offset = 0;
+        for (y = 0; y < ty->h; y++)
+          {
+             src = &(OLD_SCREEN(0, y + to_history));
+             dst = &(TERMPTY_SCREEN(ty, 0, y));
+             _termpty_text_copy(ty, src, dst, old_w);
+          }
+     }
+   else
+     {
+        /* in place */
+        old_circular_offset = (old_circular_offset + to_history) % old_h;
+        ty->circular_offset = old_circular_offset;
+        if (ty->circular_offset == 0)
+          return;
 
-        c1 = &(_SCREEN(0, y + to_history));
-        c2 = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, c1, c2, old_w);
+        /* 2 times */
+        for (y = ty->circular_offset - 1; y > 0; y--)
+          {
+             src = &(old_screen[y * old_h]);
+             dst = &(OLD_SCREEN(0, y));
+             _termpty_text_copy(ty, src, dst, old_w);
+          }
+        for (y = 0; y < ty->circular_offset; y++)
+          {
+             src = &(OLD_SCREEN(0, y));
+             dst = &(old_screen[y * old_h]);
+             _termpty_text_copy(ty, src, dst, old_w);
+          }
+        ty->circular_offset = 0;
      }
 
-#undef _SCREEN
+#undef OLD_SCREEN
 }
 
 
@@ -826,6 +840,14 @@ termpty_resize(Termpty *ty, int w, int h)
         ERR("memerr");
      }
 
+   /* Shrink vertically, in place, if needed */
+   if (ty->h < oldh)
+     {
+        _termpty_vertically_shrink(ty, oldw, oldh, olds);
+        oldh = ty->h;
+     }
+
+
    if (oldw != ty->w)
      {
         if (ty->w > oldw)
@@ -837,18 +859,9 @@ termpty_resize(Termpty *ty, int w, int h)
         free(olds2); olds2 = NULL;
         ty->circular_offset = 0;
      }
-   else
-     {
 
-     }
-
-   if (oldh != ty->h)
-     {
-        if (ty->h > oldh)
-          _termpty_vertically_expand(ty, oldw, oldh, olds);
-        else
-          _termpty_vertically_shrink(ty, oldw, oldh, olds);
-     }
+   if (ty->h > oldh)
+     _termpty_vertically_expand(ty, oldw, oldh, olds);
 
    free(olds);
    free(olds2);
