@@ -707,6 +707,11 @@ expand_screen:
                }
           }
      }
+   if (y < old_h)
+     {
+        ty->state.cy -= old_h - y;
+        if (ty->state.cy < 0) ty->state.cy = 0;
+     }
 #undef OLD_SCREEN
 }
 
