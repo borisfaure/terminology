@@ -357,12 +357,25 @@ _media_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
 }
 
 static void
+_entry_termio_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+{
+   Entry *en = data;
+   if (en->termio) evas_object_event_callback_add
+     (en->termio, EVAS_CALLBACK_DEL, _entry_termio_del_cb, en);
+   en->termio = NULL;
+}
+
+static void
 _entry_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
 {
    Entry *en = data;
+   if (en->obj) evas_object_event_callback_del_full
+     (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
    en->obj = NULL;
    if (en->termio)
      {
+        evas_object_event_callback_del_full(en->termio, EVAS_CALLBACK_DEL,
+                                            _entry_termio_del_cb, en);
         evas_object_smart_callback_del_full(en->termio, "title,change",
                                             _title_cb, en);
         evas_object_smart_callback_del_full(en->termio, "icon,change",
@@ -371,13 +384,6 @@ _entry_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
                                             _bell_cb, en);
         en->termio = NULL;
      }
-}
-
-static void
-_entry_termio_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
-{
-   Entry *en = data;
-   en->termio = NULL;
 }
 
 static void
@@ -412,6 +418,8 @@ _smart_del(Evas_Object *obj)
      {
         if (en->termio)
           {
+             evas_object_event_callback_del_full(en->termio, EVAS_CALLBACK_DEL,
+                                                 _entry_termio_del_cb, en);
              evas_object_smart_callback_del_full(en->termio, "title,change",
                                                  _title_cb, en);
              evas_object_smart_callback_del_full(en->termio, "icon,change",
@@ -419,6 +427,8 @@ _smart_del(Evas_Object *obj)
              evas_object_smart_callback_del_full(en->termio, "bell",
                                                  _bell_cb, en);
           }
+        if (en->obj) evas_object_event_callback_del_full
+          (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
         if (en->obj) evas_object_del(en->obj);
         if (en->media) evas_object_del(en->media);
         evas_object_del(en->bg);
@@ -616,7 +626,7 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
           }
         if (!keep_before) en->selected_before = EINA_FALSE;
      }
-   _transit(obj, 0.3);
+   _transit(obj, 0.5);
 }
 
 void
@@ -625,7 +635,7 @@ sel_zoom(Evas_Object *obj, double zoom)
    Sel *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->zoom1 = zoom;
-   _transit(obj, 0.3);
+   _transit(obj, 0.5);
 }
 
 void
