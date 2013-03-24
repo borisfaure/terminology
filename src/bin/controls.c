@@ -121,6 +121,30 @@ _cb_saved_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
 }
 
+static Evas_Object *
+_button_add(Evas_Object *win, const char *label, const char *icon, Evas_Smart_Cb cb, void *cbdata)
+{
+   Evas_Object *o, *bt, *ic;
+   
+   bt = o = elm_button_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   if (label) elm_object_text_set(o, label);
+   evas_object_smart_callback_add(o, "clicked", cb, cbdata);
+        
+   if (icon)
+     {
+        ic = o = elm_icon_add(win);
+        evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        elm_icon_standard_set(o, icon);
+        elm_object_part_content_set(bt, "icon", o);
+        evas_object_show(o);
+     }
+   
+   evas_object_show(bt);
+   return bt;
+}
+
 void
 controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
 {
@@ -150,41 +174,14 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
         
-        // XXX: need real icon
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "*");
+        o = _button_add(win, "New", "new", _cb_ct_new, term);
         elm_box_pack_end(ct_box2, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_new, NULL);
-        
-        // XXX: need real icon
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "|");
+        o = _button_add(win, "Split V", "split-h", _cb_ct_split_v, term);
         elm_box_pack_end(ct_box2, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_split_v, NULL);
-        
-        // XXX: need real icon
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "-");
+        o = _button_add(win, "Split H", "split-v", _cb_ct_split_h, term);
         elm_box_pack_end(ct_box2, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_split_h, NULL);
-        
-        // XXX: need real icon
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "X");
+        o = _button_add(win, "Close", "close", _cb_ct_close, term);
         elm_box_pack_end(ct_box2, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_close, NULL);
         
         o = elm_separator_add(win);
         evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
@@ -197,21 +194,10 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
         
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "Copy");
+        o = _button_add(win, "Copy", "copy", _cb_ct_copy, term);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_copy, term);
-        
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "Paste");
+        o = _button_add(win, "Paste", "paste", _cb_ct_paste, term);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_paste, term);
         
         o = elm_separator_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -220,13 +206,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(ct_box, o);
         evas_object_show(o);
                 
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "Options");
+        o = _button_add(win, "Settings", "settings", _cb_ct_options, term);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_options, NULL);
         
         o = elm_separator_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -235,14 +216,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         elm_box_pack_end(ct_box, o);
         evas_object_show(o);
         
-        o = elm_button_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "About");
+        o = _button_add(win, "About", "about", _cb_ct_about, term);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
-        evas_object_smart_callback_add(o, "clicked", _cb_ct_about, NULL);
-        
      }
    if (!ct_out)
      {

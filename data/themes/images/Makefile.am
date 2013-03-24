@@ -16,6 +16,15 @@ cr_key.png \
 cr_out.png \
 cr_pulse.png \
 fn_shadow.png \
+icon_about.png \
+icon_close.png \
+icon_copy.png \
+icon_new.png \
+icon_paste.png \
+icon_settings.png \
+icon_split_h.png \
+icon_split_v.png \
+inset_shadow.png \
 media_bg.png \
 media_line.png \
 media_pause.png \

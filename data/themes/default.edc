@@ -2262,6 +2262,7 @@ target: "4.bottom"
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
         image: "bg_shadow.png" COMP;
+        image: "inset_shadow.png" COMP;
       }
       parts {
          part { name: "shadow";
@@ -2318,17 +2319,32 @@ target: "4.bottom"
                color: 255 255 255 255;
             }
          }
+         part { name: "overlay_shadow"; mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "inset_shadow.png";
+               image.border: 5 5 7 3;
+               image.middle: 0;
+               fill.smooth: 0;
+               color: 255 255 255 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
          program {
             signal: "begin"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.3;
             target: "overlay";
+            target: "overlay_shadow";
          }
          program {
             signal: "end"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.3 CURRENT;
             target: "overlay";
+            target: "overlay_shadow";
          }
       }
    }
@@ -2978,6 +2994,22 @@ target: "4.bottom"
          }
       }
    }
+
+#define ICON(Grp, Img) \
+   group { name: "elm/icon/"##Grp##"/default"; min: 10 10; max: 80 80; \
+      images.image: Img COMP; \
+      parts { part { name: "base"; description { state: "default" 0.0; \
+      aspect: 1.0 1.0; aspect_preference: BOTH; image.normal: Img; \
+   } } } }
+   ICON("new",      "icon_new.png");
+   ICON("split-h",  "icon_split_h.png");
+   ICON("split-v",  "icon_split_v.png");
+   ICON("close",    "icon_close.png");
+   ICON("copy",     "icon_copy.png");
+   ICON("paste",    "icon_paste.png");
+   ICON("settings", "icon_settings.png");
+   ICON("about",    "icon_about.png");
+#undef ICON   
 
 //////////////////////////////////////////////////////////////////////////////
    //// the about box content image

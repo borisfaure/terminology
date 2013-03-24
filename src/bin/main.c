@@ -2328,15 +2328,21 @@ elm_main(int argc, char **argv)
         return EXIT_FAILURE;
      }
 
-   config_init();
-
-   main_config = config_load("config");
-   config = config_fork(main_config);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
    elm_app_info_set(elm_main, "terminology", "themes/default.edj");
+
+   config_init();
+
+   main_config = config_load("config");
+   
+//   elm_theme_extension_add(NULL, config_theme_path_get(main_config));
+//   elm_theme_extension_add(NULL, config_theme_path_default_get(main_config));
+   elm_theme_overlay_add(NULL, config_theme_path_get(main_config));
+   elm_theme_overlay_add(NULL, config_theme_path_default_get(main_config));
+   
+   config = config_fork(main_config);
 
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
