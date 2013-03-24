@@ -798,6 +798,162 @@ static void
 _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
                              Termcell *old_screen)
 {
+   int i,
+       new_back_pos = 0,
+       new_back_scroll_num = 0,
+       old_y,
+       old_x,
+       old_circular_offset = ty->circular_offset,
+       x = 0,
+       y = 0;
+   Termsave **new_back,
+            *new_ts = NULL,
+            *old_ts = NULL;
+   Termcell *old_cells = NULL;
+   Eina_Bool rewrapping = EINA_FALSE;
+
+   if (!ty->backmax || !ty->back)
+     goto shrink_screen;
+
+   new_back = calloc(sizeof(Termsave*), ty->backmax);
+
+   for (i = 0; i < ty->backmax; i++)
+     {
+        Termsave *ts;
+        Termcell *cells;
+        int remaining_width;
+
+        if (ty->backscroll_num == ty->backmax - 1)
+          ts = ty->back[(ty->backpos + i) % ty->backmax];
+        else
+          ts = ty->back[i];
+        if (!ts)
+          break;
+
+#define PUSH_BACK_TS(_ts) do {           \
+        if (new_back[new_back_pos])      \
+          free(new_back[new_back_pos]);  \
+        new_back[new_back_pos++] = _ts;  \
+        new_back_scroll_num++;           \
+        if (new_back_pos >= ty->backmax) \
+          new_back_pos = 0;              \
+        } while(0)
+
+        if (!ts->w)
+          {
+             if (rewrapping)
+               {
+                  rewrapping = EINA_FALSE;
+                  new_ts = calloc(1, sizeof(Termsave) +
+                                  (old_ts->w - 1) * sizeof(Termcell));
+                  new_ts->w = old_ts->w;
+                  memcpy(new_ts->cell, old_cells, old_ts->w * sizeof(Termcell));
+
+                  PUSH_BACK_TS(new_ts);
+
+                  free(old_ts);
+                  old_ts = NULL;
+                  free(ts);
+               }
+             else
+               PUSH_BACK_TS(ts);
+             continue;
+          }
+
+        if (!old_ts && ts->w <= ty->w)
+          {
+             PUSH_BACK_TS(ts);
+             continue;
+          }
+
+        cells = ts->cell;
+
+        if (old_ts)
+          {
+             int len = MIN(old_ts->w + ts->w, ty->w);
+
+             new_ts = calloc(1, sizeof(Termsave) +
+                             (len - 1) * sizeof(Termcell));
+             new_ts->w = len;
+             memcpy(new_ts->cell, old_cells,
+                    old_ts->w * sizeof(Termcell));
+
+             remaining_width = len - old_ts->w;
+
+             memcpy(new_ts->cell + old_ts->w,
+                    cells, remaining_width * sizeof(Termcell));
+
+             rewrapping = ts->cell[ts->w - 1].att.autowrapped;
+             cells += remaining_width;
+             ts->w -= remaining_width;
+
+             new_ts->cell[new_ts->w - 1].att.autowrapped =
+                rewrapping || ts->w > 0;
+
+             free(old_ts);
+             old_ts = NULL;
+
+             PUSH_BACK_TS(new_ts);
+          }
+
+        while (ts->w >= ty->w)
+          {
+             new_ts = calloc(1, sizeof(Termsave) +
+                             (ty->w - 1) * sizeof(Termcell));
+             new_ts->w = ty->w;
+             memcpy(new_ts->cell, cells, ty->w * sizeof(Termcell));
+             rewrapping = ts->cell[ts->w - 1].att.autowrapped;
+
+             new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
+             if (!rewrapping && ty->w == ts->w)
+               new_ts->cell[new_ts->w - 1].att.autowrapped = 0;
+
+             cells += ty->w;
+             ts->w -= ty->w;
+
+             PUSH_BACK_TS(new_ts);
+          }
+
+        if (!ts->w)
+          {
+             old_cells = 0;
+             free(old_ts);
+             old_ts = NULL;
+             rewrapping = EINA_FALSE;
+             continue;
+          }
+
+        if (rewrapping)
+          {
+             old_cells = cells;
+             old_ts = ts;
+          }
+        else
+          {
+             new_ts = calloc(1, sizeof(Termsave) +
+                             (ts->w - 1) * sizeof(Termcell));
+             new_ts->w = ts->w;
+             memcpy(new_ts->cell, cells, ts->w * sizeof(Termcell));
+
+             PUSH_BACK_TS(new_ts);
+             free(ts);
+          }
+     }
+#undef PUSH_BACK_TS
+
+   ty->backpos = new_back_pos;
+   ty->backscroll_num = new_back_scroll_num;
+   if (ty->backscroll_num >= ty->backmax)
+     ty->backscroll_num = ty->backmax - 1;
+
+   free(ty->back);
+   ty->back = new_back;
+
+shrink_screen:
+
+   if (ty->altbuf)
+     return;
+
    /* TODO */
 }
 #undef OLD_SCREEN
