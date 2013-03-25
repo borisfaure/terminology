@@ -710,6 +710,7 @@ expand_screen:
         ty->state.cy -= old_h - y;
         if (ty->state.cy < 0) ty->state.cy = 0;
      }
+   ty->circular_offset = 0;
 }
 
 static void
@@ -1091,7 +1092,6 @@ termpty_resize(Termpty *ty, int w, int h)
 
         free(olds); olds = NULL;
         free(olds2); olds2 = NULL;
-        ty->circular_offset = 0;
      }
 
    if (ty->h > oldh)
