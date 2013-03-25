@@ -553,24 +553,31 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *info __UNUSED__)
      {
         if (blk->link)
           {
+             int type = media_src_type_get(blk->link);
              Config *config = termio_config_get(data);
              
              if (config)
                {
-                  const char *cmd = NULL;
-                  
-                  file = blk->link;
-                  if ((config->helper.local.general) &&
-                      (config->helper.local.general[0]))
-                    cmd = config->helper.local.general;
-                  if (cmd)
+                  if ((!config->helper.inline_please) ||
+                      (!((type == TYPE_IMG) || (type == TYPE_SCALE) ||
+                         (type == TYPE_EDJE) || (type == TYPE_MOV))))
                     {
-                       char buf[PATH_MAX];
+                       const char *cmd = NULL;
                        
-                       snprintf(buf, sizeof(buf), "%s %s", cmd, file);
-                       ecore_exe_run(buf, NULL);
-                       return;
+                       file = blk->link;
+                       if ((config->helper.local.general) &&
+                           (config->helper.local.general[0]))
+                         cmd = config->helper.local.general;
+                       if (cmd)
+                         {
+                            char buf[PATH_MAX];
+                            
+                            snprintf(buf, sizeof(buf), "%s %s", cmd, file);
+                            ecore_exe_run(buf, NULL);
+                            return;
+                         }
                     }
+                  file = blk->link;
                }
           }
      }

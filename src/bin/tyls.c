@@ -345,12 +345,12 @@ const Cmatch fmatch[] =
    { 3, 4, 5,  9, 9, 9, "*.264", NULL},
    { 3, 4, 5,  9, 9, 9, "*.3gp", NULL},
    
-   { 2, 3, 5,  9, 9, 9, "*.mp3", NULL},
-   { 2, 3, 5,  9, 9, 9, "*.MP3", NULL},
-   { 2, 3, 5,  9, 9, 9, "*.aac", NULL},
-   { 2, 3, 5,  9, 9, 9, "*.AAC", NULL},
-   { 2, 3, 5,  9, 9, 9, "*.wav", NULL},
-   { 2, 3, 5,  9, 9, 9, "*.WAV", NULL},
+   { 2, 3, 5,  9, 9, 9, "*.mp3", "audio-x-mpeg.svg"},
+   { 2, 3, 5,  9, 9, 9, "*.MP3", "audio-x-mpeg.svg"},
+   { 2, 3, 5,  9, 9, 9, "*.aac", "audio-x-generic.svg"},
+   { 2, 3, 5,  9, 9, 9, "*.AAC", "audio-x-generic.svg"},
+   { 2, 3, 5,  9, 9, 9, "*.wav", "audio-x-wav.svg"},
+   { 2, 3, 5,  9, 9, 9, "*.WAV", "audio-x-wav.svg"},
    { 2, 3, 5,  9, 9, 9, "*.m3u", "audio-x-mp3-playlist"},
    { 2, 3, 5,  9, 9, 9, "*.M3U", "audio-x-mp3-playlist"},
    
