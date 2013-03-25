@@ -124,7 +124,7 @@ _cb_saved_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 static Evas_Object *
 _button_add(Evas_Object *win, const char *label, const char *icon, Evas_Smart_Cb cb, void *cbdata)
 {
-   Evas_Object *o, *bt, *ic;
+   Evas_Object *o, *bt;
    
    bt = o = elm_button_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -134,7 +134,7 @@ _button_add(Evas_Object *win, const char *label, const char *icon, Evas_Smart_Cb
         
    if (icon)
      {
-        ic = o = elm_icon_add(win);
+        o = elm_icon_add(win);
         evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         elm_icon_standard_set(o, icon);
         elm_object_part_content_set(bt, "icon", o);
