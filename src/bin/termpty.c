@@ -616,10 +616,7 @@ expand_screen:
 
    ty->circular_offset = 0;
 
-   /* TODO:
-    * change of height (handle later?)
-    * double-width :)
-    */
+   /* TODO double-width :) */
 
    for (old_y = 0; old_y < old_h; old_y++)
      {
@@ -954,7 +951,93 @@ shrink_screen:
    if (ty->altbuf)
      return;
 
-   /* TODO */
+   ty->circular_offset = 0;
+
+   /* TODO double-width :) */
+   x = 0;
+   y = 0;
+
+   if (old_ts)
+     {
+        memcpy(ty->screen,
+               old_cells,
+               old_ts->w * sizeof(Termcell));
+        x = old_ts->w;
+        if (!rewrapping)
+          y++;
+        free(old_ts);
+        old_ts = NULL;
+        old_cells = NULL;
+     }
+
+   for (old_y = 0; old_y < old_h; old_y++)
+     {
+        ssize_t cur_line_length;
+        int remaining_width,
+            len;
+
+        cur_line_length = termpty_line_length(&OLD_SCREEN(0, old_y), old_w);
+
+        old_x = 0;
+        do
+          {
+             Eina_Bool need_new_line = EINA_FALSE;
+
+             remaining_width = ty->w - x;
+             len = MIN(remaining_width, cur_line_length);
+             memcpy(&TERMPTY_SCREEN(ty, x, y),
+                    &OLD_SCREEN(old_x, old_y),
+                    len * sizeof(Termcell));
+             x += len;
+             old_x += len;
+             cur_line_length -= len;
+             if (cur_line_length > 0)
+               {
+                  TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 1;
+                  need_new_line = EINA_TRUE;
+               }
+             else
+               {
+                  Termcell *cell = &TERMPTY_SCREEN(ty, x - 1, y);
+                  if (cell->att.autowrapped)
+                    {
+                       if (x >= ty->w)
+                         need_new_line = EINA_TRUE;
+                       else
+                         {
+                            cell->att.autowrapped = 0;
+                            need_new_line = EINA_FALSE;
+                         }
+                    }
+                  else
+                    {
+                       if (old_y < old_h - 1)
+                          need_new_line = EINA_TRUE;
+                    }
+               }
+             if (need_new_line)
+               {
+                  x = 0;
+                  if (y >= ty->h - 1)
+                    {
+                       Termcell *cells;
+
+                       ty->circular_offset++;
+                       if (ty->circular_offset >= ty->h)
+                         ty->circular_offset = 0;
+                       cells = &TERMPTY_SCREEN(ty, 0, y);
+                       len = termpty_line_length(cells, ty->w);
+                       termpty_text_save_top(ty, cells, len);
+                       ty->state.cy++;
+                    }
+                  else
+                    y++;
+               }
+          }
+        while (cur_line_length > 0);
+     }
+   if (ty->state.cy >= ty->h)
+     ty->state.cy = ty->h - 1;
 }
 #undef OLD_SCREEN
 
