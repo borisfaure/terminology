@@ -1,6 +1,8 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] tabs: reordering
+[ ] tabs: key bindings for each tab ex) alt + 1, alt + 2, ...
 [ ] splits/tabs need to use cwd of "current term"
 [ ] splits need to size only by steps in font size (elm feature)
 [ ] split handles need to become invisible (elm theme)
