@@ -22,7 +22,7 @@ Requirements:
   * ecore-input (>= 1.7.0)
   * ethumb (>= 1.7.0)
 
-Please note that some features may not quite function correction or
+Please note that some features may not quite function correctly or
 completely on EFL 1.7, and 1.8 or newer would be better.
 
 Please see http://www.enlightenment.org for information on these.
@@ -51,7 +51,7 @@ Special key controls:
 Shift+PgUp = Scroll 1 page up
 Shift+PgDn = Scroll 1 page down
 Shift+Insert = Paste Clipboard (ctrl+v/c) selection
-Shift+Ctrl+Insert = Paste Primary (hilight) selection
+Shift+Ctrl+Insert = Paste Primary (highlight) selection
 Shift+Keypad-Plus = Font size up 1
 Shift+Keypad-Minus = Font size down 1
 Shift+Keypad-Multiply = Reset font size to 10
@@ -87,6 +87,7 @@ Middle mouse button = paste highlight selection
 Left mouse button/drag = make highlight
 Wheel = scroll up or down in history
 Ctrl+Wheel = zoom font size up/down
+Ctrl+Left mouse button/drag = make block selection highlight
 
 Extended escapes for terminology only:
 
