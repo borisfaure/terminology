@@ -779,8 +779,8 @@ main(int argc, char **argv)
         printf("Usage: %s [-s|-m|-l] FILE1 [FILE2 ...]\n"
                "\n"
                "  -s  Small list mode\n"
-               "  -m  Medium list mode\n"
-               "  -l  Large list mode\n",
+               "  -m  Medium list mode\n",
+               /*"  -l  Large list mode\n", Enable again once we support it */
               argv[0]);
         return 0;
      }
