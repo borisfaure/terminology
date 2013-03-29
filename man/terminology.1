@@ -1,0 +1,392 @@
+.\" Manpage for Terminology
+.TH man 1 "27 Mar 2013" "0.3" "Terminology man page"
+.SH NAME
+Terminology \- Terminal Emulator written with EFL (Enligthenment Foundation Libraries).
+.SH SYNOPSIS
+.B terminology [options]
+.SH DESCRIPTION
+This is an EFL terminal emulator with some extra bells and whistles.
+It's brand new and was only started near the begining of June 2012, so
+expecting it to do everything a mature terminal emulator does is a bit
+premature, but considering it's young age, it does a lot.
+It has many features including split terminal support, support for tabs, preview
+icons for files 
+.SH OPTIONS
+.
+.TP
+.B \-e, \-\-exec <cmnd>
+Specify command to execute.
+Defaults to $SHELL (or passwd shel or /bin/sh)
+.
+.TP
+.B \-d=CURRENT-DIRECTORY, \-\-current\-directory=CURRENT-DIRECTORY
+Change to directory for execution of terminal command.
+Type: STR.
+.
+.TP
+.B \-t=THEME, \-\-theme=THEME
+Use the named edje theme or path to theme file.
+Type: STR.
+.
+.TP
+.B \-b=BACKGROUND, \-\-background=BACKGROUND
+Use the named file as a background wallpaper for terminology.
+Type: STR.
+.
+.TP
+.B \-g=GEOMETRY, \-\-geometry=GEOMETRY
+Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.).
+Type: STR.
+.
+.TP
+.B \-n=NAME, \-\-name=NAME    
+Set window name. 
+Type: STR.
+.
+.TP
+.B \-r=ROLE, \-\-role=ROLE    
+Set window role.
+Type: STR.
+.
+.TP
+.B \-T=TITLE, \-\-title=TITLE
+Set window title.
+Type: STR.
+.
+.TP
+.B \-i=ICON\-NAME, \-\-icon-name=ICON\-NAME
+Set icon name.
+Type: STR.
+.
+.TP
+.B \-f=FONT, \-\-font=FONT    
+Set font (NAME/SIZE for scalable, NAME for bitmap.
+Type: STR.
+.
+.TP
+.B \-v=VIDEO\-MODULE, \-\-video-module=VIDEO\-MODULE
+Set emotion module to use. Choices are: auto, gstreamer, xine, generic.
+.
+.Tp
+.B \-l=LOGIN, \-\-login=LOGIN
+Run the shell as a login shell.
+Type: BOOL.
+.
+.TP
+.B \-m=VIDEO\-MUTE, \-\-video-mute=VIDEO\-MUTE
+Set mute mode for video playback.
+Type: BOOL.
+.
+.TP
+.B \-c=CURSOR\-BLINK, \-\-cursor-blink=CURSOR\-BLINK
+Set cursor blink mode.
+Type: BOOL.
+.
+.TP
+.B \-G=VISUAL\-BELL, \-\-visual\-bell=VISUAL\-BELL
+Set visual bell mode.
+Type: BOOL.
+.
+.TP
+.B \-F, \-\-fullscreen        
+Go into the fullscreen mode from start.
+.
+.TP
+.B \-I, \-\-iconic            
+Go into an iconic state from the start.
+.
+.TP
+.B \-B, \-\-borderless        
+Become a borderless managed window.
+.
+.TP
+.B \-O, \-\-override
+Become an override-redirect window.
+.
+.TP
+.B \-M, \-\-maximized        
+Become maximized from the start.
+.
+.TP
+.B \-W, \-\-nowm  
+Terminology is run without a wm.
+.
+.TP
+.B \-H, \-\-hold  
+Don't exit when the command process exits.
+.
+.TP
+.B \-s, \-\-single
+Force single executable if multi-instance is enabled..
+.
+.TP
+.B \-V, \-\-version
+Show program version.
+.
+.TP
+.B \-C, \-\-copyright  
+Show copyright.
+.
+.TP
+.B \-L, \-\-license
+Show license.
+.
+.TP
+.B \-h, \-\-help
+Show this message.
+
+.SH CONTROLS / SHORTCUTS
+.
+.TP
+.B Shift+PgUp  
+Scroll terminology one page up
+.
+.TP
+.B Shift+PgDn 
+Scroll terminology one page down
+.
+.TP
+.B Shift+Insert 
+Paste Clipboard (ctrl+v/c) selection
+.
+.TP
+.B Shift+Ctrl+Insert 
+Paste Primary (highlight) selection
+.
+.TP
+.B Shift+Keypad\-Plus 
+Font size up by one unit.
+.
+.TP
+.B Shift+Keypad\-Minus 
+Font size down by one unit.
+.
+.TP
+.B Shift+Keypad\-Multiply 
+Reset font size to 10.
+.
+.TP
+.B Shift+Keypad\-Divide 
+Copy highlight to Clipboard (same as ctrl+c in gui apps).
+.
+.TP
+.B Ctrl+PgUp 
+Switch focus to previous terminal inside a window (when using splits).
+.
+.TP
+.B Ctrl+PgDn 
+Switch focus to next terminal inside a window (when using splits).
+.
+.TP
+.B Ctrl+Shift+t 
+Create a new terminal on top of current inside window (tabs).
+.
+.TP
+.B Ctrl+Shift+Home 
+Bring up "tab" switcher.
+.
+.TP
+.B Ctrl+Shift+PgUp 
+Split terminal horizontally (one terminal above the other).
+.
+.TP
+.B Ctrl+Shift+PgDn 
+Split terminal vertically (one terminal to the left of the other).
+.
+.TP
+.B Alt+Home 
+Enter command mode (enter commands to control terminology itself)
+.
+.TP
+.B Alt+Return 
+Paste primary selection.
+.
+.TP
+.B Ctrl+Shift+c 
+Copy current selection to clipboard.
+.
+.TP
+.B Ctrl+Shift+v 
+Paste current clipboard selection.
+
+.SH MOUSE CONTROLS
+.
+.TP
+.B Right mouse click
+Bring up controls menus.
+.
+.TP
+.B Middle mouse click
+Paste highlight selection.
+.
+.TP
+.B Left mouse click/drag
+Make a selection highlight.
+.
+.TP
+.B Ctrl + Left mouse click/drag
+Make a block selection.
+.
+.TP
+.B Wheel
+Scroll up or down in history.
+.
+.TP
+.B Ctrl + Wheel
+Zoom font size up/down.
+
+.SH COMMAND MODE COMMANDS
+To enter command mode in terminology press Alt+Home. Currently command mode
+understands the following commands:
+.
+.TP
+.B f
+Reset font to default setting saved in config.
+.
+.TP
+.B f+
+Increase font size. Note that it works on scalable fonts only.
+.
+.TP
+.B f\-
+Decrease font size. Note that it works on scalable fonts only.
+.
+.TP
+.B fb
+Display big font size (10x20 bitmap, or size 20 with scalable).
+.
+.TP
+.B gNxM 
+Make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
+If just one number is provided, it will use the following shortcuts:
+g0=80x24; g1=80x40; g2=80x60; g3=80x80; g4=120x24; g5=120x40; g6=120x60;
+g7=120x80; g8=120x120
+.
+.TP
+.B b 
+Reset the background (no media)
+.
+.TP
+.B bPATH 
+Set the background media to an absolute file PATH
+
+.SH EXTENDED ESCAPES FOR TERMINOLOGY:
+.
+.TP
+.B [\\\033][}][COMMAND][\\\000]
+i.e.
+  1.   ESC char (\\033 or 0x1b)
+  2.   } char
+  3... sequence of UTF8 chars other than nul (\\000 or 0x00).
+  4    \\000 char (nul byte or 0x00 to indicate end of sequence)
+e.g.
+  echo \-n '\\033}Hello world\000'
+  
+.B Commands:
+
+any values inside square brackets [] are to be replaced by some
+content (numbers, strings, paths, url's etc.). example:
+
+aa[PATH\-OF\-FILE] should be come something like:
+  aa/tmp/file.png
+or aa[true/false] should become something like:
+  aatrue
+or
+  aafalse
+
+\-\-\-
+
+pn[FULL\-PATH\-OR\-URL]
+  = popup the given media file/url now
+
+pq[FULL\-PATH\-OR\-URL]
+  = quque a popup for the given media file/url
+
+bt[FULL\-PATH\-OR\-URL]
+  = set the terminal background media file/url temporarily
+
+bp[FULL\-PATH\-OR\-URL]
+  = set the terminal background media file/url permanently
+
+at[on/true/yes/off/false/no]
+  = set the terminal alpha state to be on, or off temporarily
+
+ap[on/true/yes/off/false/no]
+  = set the terminal alpha state to be on, or off permanently
+
+qs
+  = query grid and font size. stdin will have written to it:
+    W;H;FW;FH\n
+    where W is the width of the terminal grid in characters
+    where H is the height of the terminal grid in characters
+    where FW is the width of 1 character cell in pixels
+    where FH is the height of 1 character cell in pixels
+
+is[CW;H;FULL\-PATH\-OR\-URL]
+  = insert STRETCHED media (where image will stretch to fill the cell area)
+    and define expected cell area to be W cells wide and H cells high,
+    with the image/media/url.
+    where C is the replace character to be identified in later text
+    where W is the width in character cells (up to 511).
+    where H is the height in character cells (up to 511).
+    
+    note that this escape alone has no effect. it indicates a future
+    intention of inserting media into the terminal. the terminal will
+    EXPECT a grid of WxH "replace characters" to follow, with each
+    sequence of such replace characters bebung with a 'ib' escape command
+    and ending with an 'ie' escape command.
+    
+    the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may
+    be of the form:
+    
+      /full/path/to/file.png
+    
+    OR
+    
+      /full/path/to/link\n/full/path/to/file.png
+      
+      where a newline character separates a URI for a link and a full
+      path to a file to display in the region. the link is the
+      destination URI when a user may clikc on the given media image.
+    
+    example:
+    
+      printf("\\\033}is#5;3;%s\000"
+             "\\\033}ib#####\\\033}ie\\\n"
+             "\\\033}ib#####\\\033}ie\\\n"
+             "\\\033}ib#####\\\033}ie\\\n", "/tmp/icon.png");
+    
+    note that '#' is the replace character, and later '#' chars if inside
+    begin/end escapes, will be replaced by the given media indicated
+    in the insert media escape.
+
+ic[CW;H;FULL\-PATH\-OR\-URL]
+  = insert CENTERED media (centered in cell area). otherwise paramaters are
+    identical to the "is" command, but retains aspect and is padded by
+    blank space.
+
+if[CW;H;FULL\-PATH\-OR\-URL]
+  = insert FILLED media (fill in cell area). otherwise paramaters are
+    identical to the "is" command but ensures the entire area is
+    filled like a background even if media goes beyond cell bounds and is
+    clipped.
+
+it[CW;H;FULL\-PATH\-OR\-URL]
+  = insert THUMB media (thumbnail cell area). otherwise paramaters are
+    identical to the "is" command, but uses thumbnail generation to
+    make a fast to load but low resolution version (cached) of the media.
+
+ib
+  = begin media replace sequence run
+
+ie
+  = end media replace sequence run
+
+.SH BUGS
+If you find a bug or for known issues/bugs/feature requests please email 
+enlightenment-devel@lists.sourceforge.net or visit the place where all the hard
+work is done http://phab.enlightenment.org/ 
+
+.SH AUTHOR
+Terminology was writtern by Carsten Haitzler <raster@rasterman.com> and others. See
+AUTHORS file for other contributors.

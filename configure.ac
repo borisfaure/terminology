@@ -71,6 +71,7 @@ data/images/Makefile
 data/fonts/Makefile
 data/themes/Makefile
 data/themes/images/Makefile
+man/Makefile
 ])
 
 AC_OUTPUT
