@@ -801,14 +801,17 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
        new_back_scroll_num = 0,
        old_y,
        old_x,
+       screen_height_used,
        old_circular_offset = ty->circular_offset,
        x = 0,
        y = 0;
+   ssize_t *screen_lengths;
    Termsave **new_back,
             *new_ts = NULL,
             *old_ts = NULL;
    Termcell *old_cells = NULL;
-   Eina_Bool rewrapping = EINA_FALSE;
+   Eina_Bool rewrapping = EINA_FALSE,
+             done = EINA_FALSE;
 
    if (!ty->backmax || !ty->back)
      goto shrink_screen;
@@ -970,14 +973,28 @@ shrink_screen:
         old_ts = NULL;
         old_cells = NULL;
      }
+   screen_height_used = old_h;
+   screen_lengths = malloc(sizeof(ssize_t) * old_h);
+   for (old_y = old_h - 1; old_y >= 0; old_y--)
+     {
+        screen_lengths[old_y] = termpty_line_length(&OLD_SCREEN(0, old_y), old_w);
 
-   for (old_y = 0; old_y < old_h; old_y++)
+        if (!screen_lengths[old_y] && done != EINA_TRUE)
+          screen_height_used--;
+        else
+          done = EINA_TRUE;
+     }
+
+   for (old_y = 0; old_y < screen_height_used; old_y++)
      {
         ssize_t cur_line_length;
         int remaining_width,
             len;
 
-        cur_line_length = termpty_line_length(&OLD_SCREEN(0, old_y), old_w);
+        cur_line_length = screen_lengths[old_y];
+
+        if (old_y == ty->state.cy)
+          ty->state.cy = y;
 
         old_x = 0;
         do
@@ -1039,6 +1056,8 @@ shrink_screen:
      }
    if (ty->state.cy >= ty->h)
      ty->state.cy = ty->h - 1;
+
+   free(screen_lengths);
 }
 #undef OLD_SCREEN
 
