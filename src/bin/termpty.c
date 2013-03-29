@@ -473,7 +473,6 @@ ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
    ssize_t len = nb_cells;
 
-
    for (len = nb_cells - 1; len >= 0; len--)
      {
         const Termcell *cell = cells + len;
@@ -1066,9 +1065,12 @@ void
 termpty_resize(Termpty *ty, int w, int h)
 {
    Termcell *olds, *olds2;
-   int y, ww, hh, oldw, oldh;
+   int oldw, oldh;
 
    if ((ty->w == w) && (ty->h == h)) return;
+
+   if (w == h && h == 1) // fuck off
+     return;
 
    olds = ty->screen;
    olds2 = ty->screen2;
