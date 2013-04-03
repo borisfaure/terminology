@@ -1,6 +1,7 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] VT100-compatibilyt: pass all of http://invisible-island.net/vttest/ tests!
 [ ] tabs: reordering
 [ ] tabs: key bindings for each tab ex) alt + 1, alt + 2, ...
 [ ] splits/tabs need to use cwd of "current term"
