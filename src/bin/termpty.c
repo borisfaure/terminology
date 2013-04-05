@@ -769,22 +769,40 @@ static void
 _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
-   int to_history = old_h - ty->h,
+   int to_history,
+       real_h = old_h,
        old_circular_offset,
        y;
    Termcell *src, *dst;
 
    old_circular_offset = ty->circular_offset;
 
-   for (y = 0; y < to_history; y++)
+
+   for (y = old_h - 1; y >= 0; y--)
      {
-        termpty_text_save_top(ty, &(OLD_SCREEN(0, y)), old_w);
+        ssize_t screen_length = termpty_line_length(&OLD_SCREEN(0, y), old_w);
+
+        if (screen_length)
+          break;
+        else
+          real_h--;
      }
-   ty->state.cy -= to_history;
-   if (ty->state.cy < 0) ty->state.cy = 0;
+
+   to_history = real_h - ty->h;
+   if (to_history > 0)
+     {
+        for (y = 0; y < to_history; y++)
+          {
+             termpty_text_save_top(ty, &(OLD_SCREEN(0, y)), old_w);
+          }
+        ty->state.cy -= to_history;
+        if (ty->state.cy < 0) ty->state.cy = 0;
+     }
 
    if (old_w == ty->w)
      {
+        if (to_history < 0)
+          to_history = 0;
         ty->circular_offset = 0;
         for (y = 0; y < ty->h; y++)
           {
@@ -796,6 +814,8 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
    else
      {
         /* in place */
+        if (to_history <= 0)
+          return;
         old_circular_offset = (old_circular_offset + to_history) % old_h;
         ty->circular_offset = old_circular_offset;
         if (ty->circular_offset == 0)
@@ -804,14 +824,14 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
         /* 2 times */
         for (y = ty->circular_offset - 1; y > 0; y--)
           {
-             src = &(old_screen[y * old_h]);
+             src = &(old_screen[y * old_w]);
              dst = &(OLD_SCREEN(0, y));
              _termpty_text_copy(ty, src, dst, old_w);
           }
         for (y = 0; y < ty->circular_offset; y++)
           {
              src = &(OLD_SCREEN(0, y));
-             dst = &(old_screen[y * old_h]);
+             dst = &(old_screen[y * old_w]);
              _termpty_text_copy(ty, src, dst, old_w);
           }
         ty->circular_offset = 0;
@@ -1108,9 +1128,6 @@ termpty_resize(Termpty *ty, int w, int h)
    ty->w = w;
    ty->h = h;
    ty->state.had_cr = 0;
-   _limit_coord(ty, &(ty->state));
-   _limit_coord(ty, &(ty->swap));
-   _limit_coord(ty, &(ty->save));
 
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
@@ -1131,7 +1148,6 @@ termpty_resize(Termpty *ty, int w, int h)
         oldh = ty->h;
      }
 
-
    if (oldw != ty->w)
      {
         if (ty->w > oldw)
@@ -1148,6 +1164,10 @@ termpty_resize(Termpty *ty, int w, int h)
 
    free(olds);
    free(olds2);
+
+   _limit_coord(ty, &(ty->state));
+   _limit_coord(ty, &(ty->swap));
+   _limit_coord(ty, &(ty->save));
 
    _pty_size(ty);
 }
