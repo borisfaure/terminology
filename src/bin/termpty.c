@@ -716,10 +716,15 @@ static void
 _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
+   int from_history = 0,
+       y;
+
+   if (ty->backmax > 0)
+     from_history = MIN(ty->h - old_h, ty->backscroll_num);
+
    if (old_screen)
      {
-        int y,
-            old_circular_offset = ty->circular_offset;
+        int old_circular_offset = ty->circular_offset;
 
         ty->circular_offset = 0;
 
@@ -728,12 +733,35 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
              Termcell *c1, *c2;
 
              c1 = &(OLD_SCREEN(0, y));
-             c2 = &(TERMPTY_SCREEN(ty, 0, y));
+             c2 = &(TERMPTY_SCREEN(ty, 0, y + from_history));
              _termpty_text_copy(ty, c1, c2, old_w);
           }
      }
 
-   /* TODO: display content from backlog */
+   if (from_history <= 0 || !ty->back)
+     return;
+
+   /* display content from backlog */
+   for (y = from_history - 1; y >= 0; y--)
+     {
+        Termsave *ts;
+        Termcell *src, *dst;
+
+        ty->backpos--;
+        if (ty->backpos < 0)
+          ty->backpos = ty->backscroll_num - 1;
+        ts = ty->back[ty->backpos];
+
+        src = ts->cell;
+        dst = &(TERMPTY_SCREEN(ty, 0, y));
+        _termpty_text_copy(ty, src, dst, ts->w);
+
+        free(ts);
+        ty->back[ty->backpos] = NULL;
+        ty->backscroll_num--;
+     }
+
+   ty->state.cy += from_history;
 }
 
 
