@@ -1093,7 +1093,7 @@ shrink_screen:
                        cells = &TERMPTY_SCREEN(ty, 0, y);
                        len = termpty_line_length(cells, ty->w);
                        termpty_text_save_top(ty, cells, len);
-                       ty->state.cy++;
+                       ty->state.cy--;
                     }
                   else
                     y++;
@@ -1103,6 +1103,8 @@ shrink_screen:
      }
    if (ty->state.cy >= ty->h)
      ty->state.cy = ty->h - 1;
+   else if (ty->state.cy < 0)
+     ty->state.cy = 0;
 
    free(screen_lengths);
 }
