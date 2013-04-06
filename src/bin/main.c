@@ -53,6 +53,7 @@ struct _Term
    Evas_Object *media;
    Evas_Object *popmedia;
    Evas_Object *sel;
+   Evas_Object *tabcount_spacer;
    Eina_List   *popmedia_queue;
    int          poptype, mediatype;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
@@ -100,6 +101,37 @@ _split_free(Split *sp)
    if (sp->s2) _split_free(sp->s2);
    if (sp->panes) evas_object_del(sp->panes);
    free(sp);
+}
+
+static void
+_split_tabcount_update(Split *sp)
+{
+   char buf[32];
+   int n = eina_list_count(sp->terms);
+   Eina_List *l;
+   Term *term;
+   
+   snprintf(buf, sizeof(buf), "%i", n);
+   EINA_LIST_FOREACH(sp->terms, l, term)
+     {
+        Evas_Coord w = 0, h = 0;
+             
+        if (!term->tabcount_spacer)
+          {
+             term->tabcount_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+             evas_object_color_set(term->tabcount_spacer, 0, 0, 0, 0);
+          }
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tabcount_spacer, w, h);
+        edje_object_part_swallow(term->bg, "terminology.tabcount.control", term->tabcount_spacer);
+        if (n > 1)
+          {
+             edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
+             edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
+          }
+        else
+          edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+     }
 }
 
 static Split *
@@ -204,6 +236,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
    main_term_bg_redo(sp2->term);
+   _split_tabcount_update(sp2);
    
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
@@ -216,6 +249,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    _term_resize_track_start(sp2);
    _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
+   _split_tabcount_update(sp2);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
    elm_object_part_content_set(sp->panes, PANES_TOP, sp->s1->term->bg);
    elm_object_part_content_set(sp->panes, PANES_BOTTOM, sp->s2->term->bg);
@@ -291,6 +325,7 @@ main_new(Evas_Object *win, Evas_Object *term)
    _term_media_update(sp->term, config);
    evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
    _term_focus_show(sp, sp->term);
+   _split_tabcount_update(sp);
 }
 
 void
@@ -426,6 +461,7 @@ _split_merge(Split *spp, Split *sp, const char *slot)
           }
         else
           edje_object_part_swallow(spp->wn->base, "terminology.content", o);
+        _split_tabcount_update(sp);
      }
    else
      {
@@ -569,6 +605,7 @@ main_close(Evas_Object *win, Evas_Object *term)
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
      }
+   _split_tabcount_update(sp);
 }
 
 static Term *
@@ -1212,6 +1249,16 @@ _sel_go(Split *sp, Term *term)
 }
 
 static void
+_cb_tabcount_go(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+{
+   Term *term = data;
+   Split *sp;
+   
+   sp = _split_find(term->wn->win, term->term);
+   _sel_go(sp, term);
+}
+
+static void
 _cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
@@ -1792,6 +1839,11 @@ main_term_free(Term *term)
    term->base = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
+   if (term->tabcount_spacer)
+     {
+        evas_object_del(term->tabcount_spacer);
+        term->tabcount_spacer = NULL;
+     }
    if (term->config) config_del(term->config);
    term->config = NULL;
    free(term);
@@ -1802,6 +1854,11 @@ main_term_bg_redo(Term *term)
 {
    Evas_Object *o;
 
+   if (term->tabcount_spacer)
+     {
+        evas_object_del(term->tabcount_spacer);
+        term->tabcount_spacer = NULL;
+     }
    evas_object_del(term->base);
    evas_object_del(term->bg);
    
@@ -1830,9 +1887,11 @@ main_term_bg_redo(Term *term)
         edje_object_signal_emit(term->base, "translucent,off", "terminology");
      }
    
-   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
-                                   _cb_popmedia_done, term);
    termio_theme_set(term->term, term->bg);
+   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
+                                   _cb_popmedia_done, term); 
+   edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
+                                   _cb_tabcount_go, term);
    edje_object_part_swallow(term->base, "terminology.content", term->term);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    if (term->popmedia)
@@ -1932,15 +1991,18 @@ main_term_new(Win *wn, Config *config, const char *cmd,
         edje_object_signal_emit(term->base, "translucent,off", "terminology");
      }
    
-   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
-                                   _cb_popmedia_done, term);
-
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                size_w, size_h);
    colors_term_init(termio_textgrid_get(term->term), term->bg);
 
    termio_win_set(o, wn->win);
    termio_theme_set(o, term->bg);
+   
+   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
+                                   _cb_popmedia_done, term);
+   edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
+                                   _cb_tabcount_go, term);
+
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -2232,6 +2294,7 @@ main_ipc_new(Ipc_Instance *inst)
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
+   _split_tabcount_update(sp);
    
    main_trans_update(config);
    main_media_update(config);
@@ -2707,6 +2770,7 @@ remote:
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
+   _split_tabcount_update(sp);
    
    main_trans_update(config);
    main_media_update(config);

@@ -35,6 +35,7 @@ struct _Sel
    Eina_Bool exit_on_sel : 1;
    Eina_Bool exit_now : 1;
    Eina_Bool pending_sel : 1;
+   Eina_Bool use_px : 1;
 };
 
 struct _Entry
@@ -50,7 +51,7 @@ static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void _smart_calculate(Evas_Object *obj);
-
+static void _transit(Evas_Object *obj, double tim);
 
 static void
 _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
@@ -80,7 +81,66 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    dy = abs(ev->canvas.y - sd->down.y);
    if ((dx <= elm_config_finger_size_get()) &&
        (dy <= elm_config_finger_size_get()))
-     evas_object_smart_callback_call(data, "clicked", NULL);
+     {
+        Eina_List *l;
+        Entry *en;
+        Evas_Coord x, y, ox, oy, ow, oh;
+        
+        x = ev->canvas.x;
+        y = ev->canvas.y;
+        EINA_LIST_FOREACH(sd->items, l, en)
+          {
+             evas_object_geometry_get(en->bg, &ox, &oy, &ow, &oh);
+             if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, x, y, 1, 1))
+               {
+                  sel_entry_selected_set(data, en->obj, EINA_FALSE);
+                  sd->select_me = EINA_TRUE;
+                  sd->exit_me = EINA_FALSE;
+                  if (sd->autozoom_timeout)
+                    {
+                       ecore_timer_del(sd->autozoom_timeout);
+                       sd->autozoom_timeout = NULL;
+                    }
+                  evas_object_smart_callback_call(data, "ending", NULL);
+                  sel_zoom(data, 1.0);
+                  return;
+               }
+          }
+        evas_object_smart_callback_call(data, "clicked", NULL);
+     }
+}
+
+static void
+_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Mouse_Move *ev = event;
+   Sel *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, sw, sh;
+   int iw, ih;
+   
+   if ((sd->exit_me) || (sd->exit_now) || (sd->select_me)) return;
+   iw = sqrt(eina_list_count(sd->items));
+   if (iw < 1) iw = 1;
+   ih = (eina_list_count(sd->items) + (iw - 1)) / iw;
+   if (ih < 1) ih = 1;
+   evas_object_geometry_get(data, &x, &y, &w, &h);
+   sw = w * sd->zoom;
+   sh = h * sd->zoom;
+   if (!sd->down.down)
+     {
+        if ((w > 0) && (h > 0))
+          {
+             _transit(data, 0.5);
+             sd->px1 = ((ev->cur.canvas.x - x) * ((iw - 1) * sw)) / w;
+             sd->py1 = ((ev->cur.canvas.y - y) * ((ih - 1) * sh)) / h;
+             sd->use_px = EINA_TRUE;
+          }
+     }
+   else
+     {
+        // XXX: drag to scroll
+     }
 }
 
 static Eina_Bool
@@ -152,6 +212,58 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         sd->exit_now = EINA_FALSE;
         _autozoom(data);
      }
+   else if (!strcmp(ev->keyname, "Up"))
+     {
+        EINA_LIST_FOREACH(sd->items, l, en)
+          {
+             if (en->selected)
+               {
+                  Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
+                  
+                  evas_object_geometry_get(en->bg, &x, &y, &w, &h);
+                  sgx = x + (w / 2);
+                  sgy = y - (h / 2);
+                  EINA_LIST_FOREACH(sd->items, l, en)
+                    {
+                       evas_object_geometry_get(en->bg, &x, &y, &w, &h);
+                       if (ELM_RECTS_INTERSECT(x, y, w, h, sgx, sgy, 1, 1))
+                         {
+                            sel_entry_selected_set(obj, en->obj, EINA_FALSE);
+                            break;
+                         }
+                    }
+                  break;
+               }
+          }
+        sd->exit_now = EINA_FALSE;
+        _autozoom(data);
+     }
+   else if (!strcmp(ev->keyname, "Down"))
+     {
+        EINA_LIST_FOREACH(sd->items, l, en)
+          {
+             if (en->selected)
+               {
+                  Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
+                  
+                  evas_object_geometry_get(en->bg, &x, &y, &w, &h);
+                  sgx = x + (w / 2);
+                  sgy = y + h + (h / 2);
+                  EINA_LIST_FOREACH(sd->items, l, en)
+                    {
+                       evas_object_geometry_get(en->bg, &x, &y, &w, &h);
+                       if (ELM_RECTS_INTERSECT(x, y, w, h, sgx, sgy, 1, 1))
+                         {
+                            sel_entry_selected_set(obj, en->obj, EINA_FALSE);
+                            break;
+                         }
+                    }
+                  break;
+               }
+          }
+        sd->exit_now = EINA_FALSE;
+        _autozoom(data);
+     }
    else if ((!strcmp(ev->keyname, "Return")) ||
             (!strcmp(ev->keyname, "KP_Enter")) ||
             (!strcmp(ev->keyname, "space")))
@@ -185,7 +297,6 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         evas_object_smart_callback_call(data, "ending", NULL);
         sel_zoom(data, 1.0);
      }
-   // XXX: handle up/down
 }
 
 static void
@@ -205,34 +316,37 @@ _layout(Evas_Object *obj)
    w = ow * sd->zoom;
    h = oh * sd->zoom;
    x = y = 0;
-   EINA_LIST_FOREACH(sd->items, l, en)
+   if (!sd->use_px)
      {
-        if (en->selected_before)
-          {
-             sd->px0 = (x * w);
-             sd->py0 = (y * h);
-          }
-        if ((sd->exit_on_sel) && (!sd->exit_now))
+        EINA_LIST_FOREACH(sd->items, l, en)
           {
              if (en->selected_before)
                {
-                  sd->px1 = (x * w);
-                  sd->py1 = (y * h);
+                  sd->px0 = (x * w);
+                  sd->py0 = (y * h);
                }
-          }
-        else
-          {
-             if (en->selected)
+             if ((sd->exit_on_sel) && (!sd->exit_now))
                {
-                  sd->px1 = (x * w);
-                  sd->py1 = (y * h);
+                  if (en->selected_before)
+                    {
+                       sd->px1 = (x * w);
+                       sd->py1 = (y * h);
+                    }
                }
-          }
-        x++;
-        if (x >= iw)
-          {
-             x = 0;
-             y++;
+             else
+               {
+                  if (en->selected)
+                    {
+                       sd->px1 = (x * w);
+                       sd->py1 = (y * h);
+                    }
+               }
+             x++;
+             if (x >= iw)
+               {
+                  x = 0;
+                  y++;
+               }
           }
      }
 
@@ -462,7 +576,6 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
-   evas_object_resize(sd->clip, ow, oh);
 }
 
 static void
@@ -477,6 +590,8 @@ _smart_calculate(Evas_Object *obj)
    sd->h = oh;
    evas_object_move(sd->clip, ox, oy);
    evas_object_resize(sd->clip, ow, oh);
+   evas_object_move(sd->o_event, ox, oy);
+   evas_object_resize(sd->o_event, ow, oh);
    _layout(obj);
 }
 
@@ -530,6 +645,8 @@ sel_add(Evas_Object *parent)
                                   _mouse_down_cb, obj);
    evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up_cb, obj);
+   evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _mouse_move_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                   _key_down_cb, obj);
    sd->zoom = 1.0;
@@ -634,6 +751,7 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
           }
         if (!keep_before) en->selected_before = EINA_FALSE;
      }
+   sd->use_px = EINA_FALSE;
    _transit(obj, 0.5);
 }
 
