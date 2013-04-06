@@ -39,7 +39,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    w = termpty_line_length(cells, w_max);
    ts = calloc(1, sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
    ts->w = w;
-   _termpty_text_copy(ty, cells, ts->cell, w);
+   termpty_cell_copy(ty, cells, ts->cell, w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos])
      {
@@ -52,12 +52,6 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    if (ty->backpos >= ty->backmax) ty->backpos = 0;
    ty->backscroll_num++;
    if (ty->backscroll_num >= ty->backmax) ty->backscroll_num = ty->backmax - 1;
-}
-
-void
-_termpty_text_copy(Termpty *ty, Termcell *cells, Termcell *dest, int count)
-{
-   termpty_cell_copy(ty, cells, dest, count);
 }
 
 void
@@ -98,11 +92,11 @@ _termpty_text_scroll(Termpty *ty)
      {
        cells2 = &(ty->screen[end_y * ty->w]);
        for (y = start_y; y < end_y; y++)
-	 {
-	   cells = &(ty->screen[y * ty->w]);
-	   cells2 = &(ty->screen[(y + 1) * ty->w]);
-	   _termpty_text_copy(ty, cells2, cells, ty->w);
-	 }
+         {
+            cells = &(ty->screen[y * ty->w]);
+            cells2 = &(ty->screen[(y + 1) * ty->w]);
+            termpty_cell_copy(ty, cells2, cells, ty->w);
+         }
        _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
      }
 }
@@ -134,11 +128,11 @@ _termpty_text_scroll_rev(Termpty *ty)
      {
        cells = &(TERMPTY_SCREEN(ty, 0, end_y));
        for (y = end_y; y > start_y; y--)
-	 {
-	   cells = &(TERMPTY_SCREEN(ty, 0, (y - 1)));
-	   cells2 = &(TERMPTY_SCREEN(ty, 0, y));
-	   _termpty_text_copy(ty, cells, cells2, ty->w);
-	 }
+         {
+            cells = &(TERMPTY_SCREEN(ty, 0, (y - 1)));
+            cells2 = &(TERMPTY_SCREEN(ty, 0, y));
+            termpty_cell_copy(ty, cells, cells2, ty->w);
+         }
        y = start_y;
        _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }

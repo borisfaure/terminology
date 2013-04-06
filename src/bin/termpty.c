@@ -544,9 +544,8 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                }
              if (ts->w >= remaining_width)
                {
-                  memcpy(new_ts->cell + new_ts->w,
-                         cells,
-                         remaining_width * sizeof(Termcell));
+                  termpty_cell_copy(ty, cells, new_ts->cell + new_ts->w,
+                                    remaining_width);
                   new_ts->w = ty->w;
                   new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
                   len -= remaining_width;
@@ -559,9 +558,7 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                }
              if (len)
                {
-                  memcpy(new_ts->cell + new_ts->w,
-                         cells,
-                         len * sizeof(Termcell));
+                  termpty_cell_copy(ty, cells, new_ts->cell + new_ts->w, len);
                   new_ts->w += len;
                }
 
@@ -581,7 +578,7 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                   new_ts = calloc(1, sizeof(Termsave) +
                                   (ty->w - 1) * sizeof(Termcell));
                   new_ts->w = ts->w;
-                  memcpy(new_ts->cell, ts->cell, ts->w * sizeof(Termcell));
+                  termpty_cell_copy(ty, ts->cell, new_ts->cell, ts->w);
                   new_ts->cell[ts->w - 1].att.autowrapped = 0;
 
                   new_back[new_back_pos++] = new_ts;
@@ -630,9 +627,7 @@ expand_screen:
                   ssize_t len = MIN(cur_line_length, remaining_width);
                   Termcell *cells = &OLD_SCREEN(0, old_y);
 
-                  memcpy(new_ts->cell + new_ts->w,
-                         cells,
-                         len * sizeof(Termcell));
+                  termpty_cell_copy(ty, cells, new_ts->cell + new_ts->w, len);
                   new_ts->w += len;
                   cells += len;
                   if (cur_line_length > remaining_width)
@@ -640,9 +635,8 @@ expand_screen:
                        new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
                        new_ts = NULL;
                        len = cur_line_length - remaining_width;
-                       memcpy(ty->screen + (y * ty->w),
-                              cells,
-                              len * sizeof(Termcell));
+                       termpty_cell_copy(ty, cells, ty->screen + (y * ty->w),
+                              len);
                        x += len;
                     }
 
@@ -662,10 +656,10 @@ expand_screen:
 
                   if (cur_line_length >= remaining_width)
                     {
-                       /* TODO: use termpty_cell_copy */
-                       memcpy(ty->screen + (y * ty->w) + x,
-                              &OLD_SCREEN(0, old_y),
-                              remaining_width * sizeof(Termcell));
+                       termpty_cell_copy(ty,
+                                         &OLD_SCREEN(0, old_y),
+                                         ty->screen + (y * ty->w) + x,
+                                         remaining_width);
                        TERMPTY_SCREEN(ty, ty->w - 1, y).att.autowrapped = 1;
                        y++;
                        x = 0;
@@ -674,10 +668,10 @@ expand_screen:
                     }
                   if (len)
                     {
-                       /* TODO: use termpty_cell_copy */
-                       memcpy(ty->screen + (y * ty->w) + x,
-                              &OLD_SCREEN(old_x, old_y),
-                              len * sizeof(Termcell));
+                       termpty_cell_copy(ty,
+                                         &OLD_SCREEN(old_x, old_y),
+                                         ty->screen + (y * ty->w) + x,
+                                         len);
                        x += len;
                        TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 0;
                     }
@@ -688,10 +682,10 @@ expand_screen:
           }
         else
           {
-             /* TODO: use termpty_cell_copy */
-             memcpy(ty->screen + (y * ty->w),
-                    &OLD_SCREEN(0, old_y),
-                    cur_line_length * sizeof(Termcell));
+             termpty_cell_copy(ty,
+                               &OLD_SCREEN(0, old_y),
+                               ty->screen + (y * ty->w),
+                               cur_line_length);
              if (OLD_SCREEN(old_w - 1, old_y).att.autowrapped)
                {
                   rewrapping = EINA_TRUE;
@@ -734,7 +728,7 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
 
              c1 = &(OLD_SCREEN(0, y));
              c2 = &(TERMPTY_SCREEN(ty, 0, y + from_history));
-             _termpty_text_copy(ty, c1, c2, old_w);
+             termpty_cell_copy(ty, c1, c2, old_w);
           }
      }
 
@@ -754,7 +748,7 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
 
         src = ts->cell;
         dst = &(TERMPTY_SCREEN(ty, 0, y));
-        _termpty_text_copy(ty, src, dst, ts->w);
+        termpty_cell_copy(ty, src, dst, ts->w);
 
         free(ts);
         ty->back[ty->backpos] = NULL;
@@ -808,7 +802,7 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
           {
              src = &(OLD_SCREEN(0, y + to_history));
              dst = &(TERMPTY_SCREEN(ty, 0, y));
-             _termpty_text_copy(ty, src, dst, old_w);
+             termpty_cell_copy(ty, src, dst, old_w);
           }
      }
    else
@@ -826,13 +820,13 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
           {
              src = &(old_screen[y * old_w]);
              dst = &(OLD_SCREEN(0, y));
-             _termpty_text_copy(ty, src, dst, old_w);
+             termpty_cell_copy(ty, src, dst, old_w);
           }
         for (y = 0; y < ty->circular_offset; y++)
           {
              src = &(OLD_SCREEN(0, y));
              dst = &(old_screen[y * old_w]);
-             _termpty_text_copy(ty, src, dst, old_w);
+             termpty_cell_copy(ty, src, dst, old_w);
           }
         ty->circular_offset = 0;
      }
@@ -895,7 +889,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
                   new_ts = calloc(1, sizeof(Termsave) +
                                   (old_ts->w - 1) * sizeof(Termcell));
                   new_ts->w = old_ts->w;
-                  memcpy(new_ts->cell, old_cells, old_ts->w * sizeof(Termcell));
+                  termpty_cell_copy(ty, old_cells, new_ts->cell, old_ts->w);
 
                   PUSH_BACK_TS(new_ts);
 
@@ -923,13 +917,12 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
              new_ts = calloc(1, sizeof(Termsave) +
                              (len - 1) * sizeof(Termcell));
              new_ts->w = len;
-             memcpy(new_ts->cell, old_cells,
-                    old_ts->w * sizeof(Termcell));
+             termpty_cell_copy(ty, old_cells, new_ts->cell, old_ts->w);
 
              remaining_width = len - old_ts->w;
 
-             memcpy(new_ts->cell + old_ts->w,
-                    cells, remaining_width * sizeof(Termcell));
+             termpty_cell_copy(ty, cells, new_ts->cell + old_ts->w,
+                               remaining_width);
 
              rewrapping = ts->cell[ts->w - 1].att.autowrapped;
              cells += remaining_width;
@@ -949,7 +942,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
              new_ts = calloc(1, sizeof(Termsave) +
                              (ty->w - 1) * sizeof(Termcell));
              new_ts->w = ty->w;
-             memcpy(new_ts->cell, cells, ty->w * sizeof(Termcell));
+             termpty_cell_copy(ty, cells, new_ts->cell, ty->w);
              rewrapping = ts->cell[ts->w - 1].att.autowrapped;
 
              new_ts->cell[new_ts->w - 1].att.autowrapped = 1;
@@ -981,7 +974,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
              new_ts = calloc(1, sizeof(Termsave) +
                              (ts->w - 1) * sizeof(Termcell));
              new_ts->w = ts->w;
-             memcpy(new_ts->cell, cells, ts->w * sizeof(Termcell));
+             termpty_cell_copy(ty, cells, new_ts->cell, ts->w);
 
              PUSH_BACK_TS(new_ts);
              free(ts);
@@ -1010,9 +1003,7 @@ shrink_screen:
 
    if (old_ts)
      {
-        memcpy(ty->screen,
-               old_cells,
-               old_ts->w * sizeof(Termcell));
+        termpty_cell_copy(ty, old_cells, ty->screen, old_ts->w);
         x = old_ts->w;
         if (!rewrapping)
           y++;
@@ -1050,9 +1041,10 @@ shrink_screen:
 
              remaining_width = ty->w - x;
              len = MIN(remaining_width, cur_line_length);
-             memcpy(&TERMPTY_SCREEN(ty, x, y),
-                    &OLD_SCREEN(old_x, old_y),
-                    len * sizeof(Termcell));
+             termpty_cell_copy(ty,
+                               &OLD_SCREEN(old_x, old_y),
+                               &TERMPTY_SCREEN(ty, x, y),
+                               len);
              x += len;
              old_x += len;
              cur_line_length -= len;
