@@ -1796,7 +1796,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                       (btn | shift | meta | ctrl) + ' ',
-                      cx + 1 + ' ', cy + 1 + ' ');
+                      cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1880,7 +1880,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
           {
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                       (3 | shift | meta | ctrl) + ' ',
-                      cx + 1 + ' ', cy + 1 + ' ');
+                      cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1972,7 +1972,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx __UNUSED__, int cy
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                       (btn | shift | meta | ctrl | 32) + ' ',
-                      cx + 1 + ' ', cy + 1 + ' ');
+                      cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -2445,7 +2445,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
               {
                  snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                           btn + ' ',
-                          cx + 1 + ' ', cy + 1 + ' ');
+                          cx + 1, cy + 1);
                  termpty_write(sd->pty, buf, strlen(buf));
               }
             break;
