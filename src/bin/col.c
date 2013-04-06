@@ -394,7 +394,8 @@ static const Color colors256[256] =
    { 0xee, 0xee, 0xee, 0xff },
 };
 
-void colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
+void
+colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
 {
    int c, n;
    int r, g, b, a;

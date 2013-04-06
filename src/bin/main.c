@@ -48,6 +48,7 @@ struct _Term
    Win         *wn;
    Config      *config;
    Evas_Object *bg;
+   Evas_Object *base;
    Evas_Object *term;
    Evas_Object *media;
    Evas_Object *popmedia;
@@ -464,12 +465,14 @@ _term_focus(Term *term)
                {
                   term2->focused = EINA_FALSE;
                   edje_object_signal_emit(term2->bg, "focus,out", "terminology");
+                  edje_object_signal_emit(term2->base, "focus,out", "terminology");
                   elm_object_focus_set(term2->term, EINA_FALSE);
                }
           }
      }
    term->focused = EINA_TRUE;
    edje_object_signal_emit(term->bg, "focus,in", "terminology");
+   edje_object_signal_emit(term->base, "focus,in", "terminology");
    if (term->wn->cmdbox) elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
    elm_object_focus_set(term->term, EINA_TRUE);
    elm_win_title_set(term->wn->win, termio_title_get(term->term));
@@ -612,6 +615,7 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    else
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
+        edje_object_signal_emit(term->base, "focus,in", "terminology");
         if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_TRUE);
      }
 }
@@ -628,6 +632,7 @@ _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    term = main_win_focused_term_get(wn);
    if (!term) return;
    edje_object_signal_emit(term->bg, "focus,out", "terminology");
+   edje_object_signal_emit(term->base, "focus,out", "terminology");
    if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_FALSE);
    elm_cache_all_flush();
 }
@@ -796,7 +801,8 @@ _cb_size_hint(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UN
 
    evas_object_size_hint_min_get(obj, &mw, &mh);
    evas_object_size_hint_request_get(obj, &rw, &rh);
-
+   edje_object_size_min_calc(term->base, &w, &h);
+   evas_object_size_hint_min_set(term->base, w, h);
    edje_object_size_min_calc(term->bg, &w, &h);
    evas_object_size_hint_min_set(term->bg, w, h);
    term->step_x = mw;
@@ -849,7 +855,10 @@ _cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 
    if (!config) return;
    if (!config->disable_visual_bell)
-     edje_object_signal_emit(term->bg, "bell", "terminology");
+     {
+        edje_object_signal_emit(term->bg, "bell", "terminology");
+        edje_object_signal_emit(term->base, "bell", "terminology");
+     }
    if (config->urg_bell)
      {
         if (!term->wn->focused) elm_win_urgent_set(term->wn->win, EINA_TRUE);
@@ -1074,9 +1083,9 @@ _sel_restore(Split *sp)
 #if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
              evas_object_image_source_visible_set(tm->sel, EINA_TRUE);
 #endif
-             edje_object_part_swallow(tm->bg, "terminology.content", tm->term);
+             edje_object_part_swallow(tm->bg, "terminology.content", tm->base);
              tm->unswallowed = EINA_FALSE;
-             evas_object_show(tm->term);
+             evas_object_show(tm->base);
              tm->sel = NULL;
           }
      }
@@ -1142,17 +1151,26 @@ _sel_go(Split *sp, Term *term)
    sp->sel = sel_add(sp->wn->win);
    EINA_LIST_FOREACH(sp->terms, l, tm)
      {
-        edje_object_part_unswallow(tm->bg, tm->term);
-        evas_object_lower(tm->term);
-        evas_object_move(tm->term, -9999, -9999);
-        evas_object_show(tm->term);
-        evas_object_clip_unset(tm->term);
+        Evas_Object *img;
+        Evas_Coord w, h;
+        
+        edje_object_part_unswallow(tm->bg, tm->base);
+        evas_object_lower(tm->base);
+        evas_object_move(tm->base, -9999, -9999);
+        evas_object_show(tm->base);
+        evas_object_clip_unset(tm->base);
 #if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
         evas_object_image_source_visible_set(tm->sel, EINA_FALSE);
 #endif
         tm->unswallowed = EINA_TRUE;
+
+        img = evas_object_image_filled_add(evas_object_evas_get(sp->wn->win));
+        evas_object_image_source_set(img, tm->base);
+        evas_object_geometry_get(tm->base, NULL, NULL, &w, &h);
+        evas_object_resize(img, w, h);
+        evas_object_data_set(img, "termio", tm->term);
+        tm->sel = img;
         
-        tm->sel = termio_mirror_add(tm->term);
         sel_entry_add(sp->sel, tm->sel, (tm == sp->term), tm->config);
      }
    edje_object_part_swallow(sp->sel_bg, "terminology.content", sp->sel);
@@ -1449,9 +1467,15 @@ static void
 _win_trans(Win *wn, Term *term, Eina_Bool trans)
 {
    if (term->config->translucent)
-     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+     {
+        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+        edje_object_signal_emit(term->base, "translucent,on", "terminology");
+     }
    else
-     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+     {
+        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+        edje_object_signal_emit(term->base, "translucent,off", "terminology");
+     }
    if (trans)
      {
         elm_win_alpha_set(wn->win, EINA_TRUE);
@@ -1507,7 +1531,11 @@ _cb_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
    
    if (term->term) config = termio_config_get(term->term);
    term->media = NULL;
-   if (term->bg) edje_object_signal_emit(term->bg, "media,off", "terminology");
+   if (term->bg)
+     {
+        edje_object_signal_emit(term->bg, "media,off", "terminology");
+        edje_object_signal_emit(term->base, "media,off", "terminology");
+     }
    if (!config) return;
    if (config->temporary)
      eina_stringshare_replace(&(config->background), NULL);
@@ -1533,17 +1561,29 @@ _term_media_update(Term *term, const Config *config)
                                     MEDIA_BG, &type);
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_media_del, term);
-        edje_object_part_swallow(term->bg, "terminology.background", o);
+        edje_object_part_swallow(term->base, "terminology.background", o);
         evas_object_show(o);
         term->mediatype = type;
         if (type == TYPE_IMG)
-          edje_object_signal_emit(term->bg, "media,image", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,image", "terminology");
+             edje_object_signal_emit(term->base, "media,image", "terminology");
+          }
         else if (type == TYPE_SCALE)
-          edje_object_signal_emit(term->bg, "media,scale", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,scale", "terminology");
+             edje_object_signal_emit(term->base, "media,scale", "terminology");
+          }
         else if (type == TYPE_EDJE)
-          edje_object_signal_emit(term->bg, "media,edje", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,edje", "terminology");
+             edje_object_signal_emit(term->base, "media,edje", "terminology");
+          }
         else if (type == TYPE_MOV)
-          edje_object_signal_emit(term->bg, "media,movie", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,movie", "terminology");
+             edje_object_signal_emit(term->base, "media,movie", "terminology");
+          }
      }
    else
      {
@@ -1553,6 +1593,7 @@ _term_media_update(Term *term, const Config *config)
                                             EVAS_CALLBACK_DEL,
                                             _cb_media_del);
              edje_object_signal_emit(term->bg, "media,off", "terminology");
+             edje_object_signal_emit(term->base, "media,off", "terminology");
              evas_object_del(term->media);
              term->media = NULL;
           }
@@ -1747,6 +1788,8 @@ main_term_free(Term *term)
    term->popmedia = NULL;
    evas_object_del(term->term);
    term->term = NULL;
+   evas_object_del(term->base);
+   term->base = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
    if (term->config) config_del(term->config);
@@ -1759,25 +1802,39 @@ main_term_bg_redo(Term *term)
 {
    Evas_Object *o;
 
+   evas_object_del(term->base);
    evas_object_del(term->bg);
    
+   term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
+   theme_apply(o, term->config, "terminology/core");
+
+   theme_auto_reload_enable(o);
+   evas_object_show(o);
+
    term->bg = o = edje_object_add(evas_object_evas_get(term->wn->win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    theme_apply(o, term->config, "terminology/background");
 
-   if (term->config->translucent)
-     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
-   else
-     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-   
    theme_auto_reload_enable(o);
    evas_object_show(o);
 
-   edje_object_signal_callback_add(o, "popmedia,done", "terminology",
+   if (term->config->translucent)
+     {
+        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+        edje_object_signal_emit(term->base, "translucent,on", "terminology");
+     }
+   else
+     {
+        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+        edje_object_signal_emit(term->base, "translucent,off", "terminology");
+     }
+   
+   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
    termio_theme_set(term->term, term->bg);
-   edje_object_part_swallow(term->bg, "terminology.content", term->term);
+   edje_object_part_swallow(term->base, "terminology.content", term->term);
+   edje_object_part_swallow(term->bg, "terminology.content", term->base);
    if (term->popmedia)
      {
         edje_object_part_swallow(term->bg, "terminology.popmedia", term->popmedia);
@@ -1792,20 +1849,33 @@ main_term_bg_redo(Term *term)
      }
    if (term->media)
      {
-        edje_object_part_swallow(term->bg, "terminology.background", term->media);
+        edje_object_part_swallow(term->base, "terminology.background", term->media);
         if (term->mediatype == TYPE_IMG)
-          edje_object_signal_emit(term->bg, "media,image", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,image", "terminology");
+             edje_object_signal_emit(term->base, "media,image", "terminology");
+          }
         else if (term->mediatype == TYPE_SCALE)
-          edje_object_signal_emit(term->bg, "media,scale", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,scale", "terminology");
+             edje_object_signal_emit(term->base, "media,scale", "terminology");
+          }
         else if (term->mediatype == TYPE_EDJE)
-          edje_object_signal_emit(term->bg, "media,edje", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,edje", "terminology");
+             edje_object_signal_emit(term->base, "media,edje", "terminology");
+          }
         else if (term->mediatype == TYPE_MOV)
-          edje_object_signal_emit(term->bg, "media,movie", "terminology");
+          {
+             edje_object_signal_emit(term->bg, "media,movie", "terminology");
+             edje_object_signal_emit(term->base, "media,movie", "terminology");
+          }
      }
    
    if ((term->focused) && (term->wn->focused))
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
+        edje_object_signal_emit(term->base, "focus,in", "terminology");
         if (term->wn->cmdbox)
           elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
         elm_object_focus_set(term->term, EINA_TRUE);
@@ -1831,6 +1901,12 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    term->hold = hold;
    term->config = config;
    
+   term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
+   theme_apply(o, term->config, "terminology/core");
+
+   theme_auto_reload_enable(o);
+   evas_object_show(o);
+
    term->bg = o = edje_object_add(evas_object_evas_get(wn->win));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1842,15 +1918,21 @@ main_term_new(Win *wn, Config *config, const char *cmd,
         return NULL;
      }
 
-   if (term->config->translucent)
-     edje_object_signal_emit(term->bg, "translucent,on", "terminology");
-   else
-     edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-   
    theme_auto_reload_enable(o);
    evas_object_show(o);
 
-   edje_object_signal_callback_add(o, "popmedia,done", "terminology",
+   if (term->config->translucent)
+     {
+        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
+        edje_object_signal_emit(term->base, "translucent,on", "terminology");
+     }
+   else
+     {
+        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
+        edje_object_signal_emit(term->base, "translucent,off", "terminology");
+     }
+   
+   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
 
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
@@ -1863,7 +1945,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _cb_size_hint, term);
-   edje_object_part_swallow(term->bg, "terminology.content", o);
+   edje_object_part_swallow(term->base, "terminology.content", o);
+   edje_object_part_swallow(term->bg, "terminology.content", term->base);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
    evas_object_smart_callback_add(o, "change", _cb_change, term);
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
@@ -1891,6 +1974,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
      {
         term->focused = EINA_TRUE;
 //        edje_object_signal_emit(term->bg, "focus,in", "terminology");
+//        edje_object_signal_emit(term->base, "focus,in", "terminology");
      }
    wn->terms = eina_list_append(wn->terms, term);
    

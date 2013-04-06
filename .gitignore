@@ -57,3 +57,5 @@
 /src/bin/tyq
 /src/bin/*_generated.c
 /src/bin/*_generated.h
+/man/Makefile
+/man/Makefile.in

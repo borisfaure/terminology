@@ -2,6 +2,83 @@ collections {
    
 //////////////////////////////////////////////////////////////////////////////
    //// the background and general container for the terminal
+   group { name: "terminology/core";
+      parts {
+         ////////////////////////////////////////////////////////////////////
+         // background handling
+         part { name: "fade"; type: RECT;
+            description { state: "default" 0.0;
+            }
+            description { state: "translucent" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 128;
+            }
+         }
+         program {
+            signal: "translucent,on"; source: "terminology";
+            action: STATE_SET "translucent" 0.0;
+            target: "fade";
+         }
+         program {
+            signal: "translucent,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "fade";
+         }
+         part { name: "terminology.background"; type: SWALLOW;
+            clip_to: "fade";
+            description { state: "default" 0.0;
+            }
+            description { state: "image" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "scale" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "edje" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "movie" 0.0;
+               inherit: "default" 0.0;
+            }
+         }
+         program {
+            signal: "media,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.background";
+         }
+         program {
+            signal: "media,image"; source: "terminology";
+            action: STATE_SET "image" 0.0;
+            target: "terminology.background";
+         }
+         program {
+            signal: "media,scale"; source: "terminology";
+            action: STATE_SET "scale" 0.0;
+            target: "terminology.background";
+         }
+         program {
+            signal: "media,edje"; source: "terminology";
+            action: STATE_SET "edje" 0.0;
+            target: "terminology.background";
+         }
+         program {
+            signal: "media,movie"; source: "terminology";
+            action: STATE_SET "movie" 0.0;
+            target: "terminology.background";
+         }
+         
+         ////////////////////////////////////////////////////////////////////
+         // actual text grid for chars, cursors, selectiond etc. goes here
+         part { name: "terminology.content"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.offset: 1 1;
+               rel2.offset: -2 -2;
+            }
+         }
+      }
+   }
+         
+   //// the background and general container for the terminal
    group { name: "terminology/background";
       images {
         image: "bg_bevel.png" COMP;
@@ -42,85 +119,25 @@ collections {
                visible: 0;
             }
          }
-         part { name: "fade"; type: RECT;
+         ////////////////////////////////////////////////////////////////////
+         // actual text grid for chars, cursors, selectiond etc. goes here
+         // and has a background layered behind it inside the swallowed
+         // child edje
+         part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
             }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 128;
-            }
          }
-         part { name: "terminology.background"; type: SWALLOW;
-            clip_to: "fade";
-            description { state: "default" 0.0;
-            }
-            description { state: "image" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "scale" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "edje" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "movie" 0.0;
-               inherit: "default" 0.0;
-            }
-         }
-         program { name: "trans_on";
-            signal: "translucent,on";
-            source: "terminology";
+         program {
+            signal: "translucent,on"; source: "terminology";
             action: STATE_SET "translucent" 0.0;
             target: "base";
             target: "shadow";
-            target: "fade";
          }
-         program { name: "trans_off";
-            signal: "translucent,off";
-            source: "terminology";
+         program {
+            signal: "translucent,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "base";
             target: "shadow";
-            target: "fade";
-         }
-         program { name: "media_off";
-            signal: "media,off";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "terminology.background";
-         }
-         program { name: "media_img";
-            signal: "media,image";
-            source: "terminology";
-            action: STATE_SET "image" 0.0;
-            target: "terminology.background";
-         }
-         program { name: "media_scale";
-            signal: "media,scale";
-            source: "terminology";
-            action: STATE_SET "scale" 0.0;
-            target: "terminology.background";
-         }
-         program { name: "media_edje";
-            signal: "media,edje";
-            source: "terminology";
-            action: STATE_SET "edje" 0.0;
-            target: "terminology.background";
-         }
-         program { name: "media_mov";
-            signal: "media,movie";
-            source: "terminology";
-            action: STATE_SET "movie" 0.0;
-            target: "terminology.background";
-         }
-         
-         ////////////////////////////////////////////////////////////////////
-         // actual text grid for chars, cursors, selectiond etc. goes here
-         part { name: "terminology.content"; type: SWALLOW;
-            description { state: "default" 0.0;
-               rel1.offset: 1 1;
-               rel2.offset: -2 -2;
-            }
          }
          
          ////////////////////////////////////////////////////////////////////
@@ -197,27 +214,25 @@ collections {
                color: 255 255 255 255;
             }
          }
-         program { name: "focus_in";
-            signal: "focus,in";
-            source: "terminology";
+         program {
+            signal: "focus,in"; source: "terminology";
             action: STATE_SET "focused" 0.0;
             target: "glint";
             target: "glow";
             target: "shine";
             after: "focus_in2";
          }
-         program { name: "focus_out";
-            signal: "focus,out";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "glint";
-            target: "glow";
-            target: "shine";
-         }
          program { name: "focus_in2";
             action: STATE_SET "focused2" 0.0;
             transition: DECELERATE 0.5;
             target: "glow";
+         }
+         program {
+            signal: "focus,out"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "glint";
+            target: "glow";
+            target: "shine";
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -308,9 +323,8 @@ collections {
                map.rotation.z: 684.0;
             }
          }
-         program { name: "bell0";
-            signal: "bell";
-            source: "terminology";
+         program {
+            signal: "bell"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "bell_base";
             target: "bell";
@@ -380,12 +394,8 @@ collections {
             mouse_events: 0;
             description { state: "default" 0.0;
                fixed: 1 1;
-               rel1 {
-                  to: "terminology.popmedia";
-               }
-               rel2 {
-                  to: "terminology.popmedia";
-               }
+               rel1.to: "terminology.popmedia";
+               rel2.to: "terminology.popmedia";
                image.normal: "pm_shadow.png";
                image.border: 64 64 64 64;
                image.border_scale_by: 0.1;
@@ -544,9 +554,8 @@ collections {
                visible: 1;
             }
          }
-         program { name: "popmedia_dismiss";
-            signal: "mouse,clicked,*";
-            source: "popmedia_dismiss";
+         program {
+            signal: "mouse,clicked,*"; source: "popmedia_dismiss";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.5;
             target: "terminology.popmedia";
@@ -564,9 +573,8 @@ collections {
          program { name: "popmedia_dismiss2";
             action: SIGNAL_EMIT "popmedia,done" "terminology";
          }
-         program { name: "popmedia_off";
-            signal: "popmedia,off";
-            source: "terminology";
+         program {
+            signal: "popmedia,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
@@ -581,37 +589,32 @@ collections {
             target: "popmedia_shine";
             after: "popmedia_dismiss2";
          }
-         program { name: "popmedia_img";
-            signal: "popmedia,image";
-            source: "terminology";
+         program {
+            signal: "popmedia,image"; source: "terminology";
             action: STATE_SET "image" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
          }
-         program { name: "popmedia_scale";
-            signal: "popmedia,scale";
-            source: "terminology";
+         program {
+            signal: "popmedia,scale"; source: "terminology";
             action: STATE_SET "scale" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
          }
-         program { name: "popmedia_edje";
-            signal: "popmedia,edje";
-            source: "terminology";
+         program {
+            signal: "popmedia,edje"; source: "terminology";
             action: STATE_SET "edje" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
          }
-         program { name: "popmedia_mov";
-            signal: "popmedia,movie";
-            source: "terminology";
+         program {
+            signal: "popmedia,movie"; source: "terminology";
             action: STATE_SET "movie" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.popmedia";
          }
-         program { name: "popmedia_img2";
-            signal: "popmedia,image";
-            source: "terminology";
+         program {
+            signal: "popmedia,image"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.2;
             target: "popmedia_clip";
@@ -624,9 +627,8 @@ collections {
             target: "popmedia_glintclip";
             target: "popmedia_shine";
          }
-         program { name: "popmedia_scale2";
-            signal: "popmedia,scale";
-            source: "terminology";
+         program {
+            signal: "popmedia,scale"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.2;
             target: "popmedia_clip";
@@ -639,9 +641,8 @@ collections {
             target: "popmedia_glintclip";
             target: "popmedia_shine";
          }
-         program { name: "popmedia_edje2";
-            signal: "popmedia,edje";
-            source: "terminology";
+         program {
+            signal: "popmedia,edje"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.2;
             target: "popmedia_clip";
@@ -654,9 +655,8 @@ collections {
             target: "popmedia_glintclip";
             target: "popmedia_shine";
          }
-         program { name: "popmedia_mov2";
-            signal: "popmedia,movie";
-            source: "terminology";
+         program {
+            signal: "popmedia,movie"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.2;
             target: "popmedia_clip";
@@ -722,23 +722,20 @@ collections {
                align: 0.5 1.0;
             }
          }
-         program { name: "cmdshow0";
-            signal: "cmdbox,show";
-            source: "terminology";
+         program {
+            signal: "cmdbox,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "cmdclip";
          }
-         program { name: "cmdshow";
-            signal: "cmdbox,show";
-            source: "terminology";
+         program {
+            signal: "cmdbox,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: SPRING 0.4 0.5 4;
             target: "terminology.cmdbox";
          }
-         program { name: "cmdhide";
-            signal: "cmdbox,hide";
-            source: "terminology";
+         program {
+            signal: "cmdbox,hide"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: ACCELERATE 0.5;
             target: "terminology.cmdbox";
@@ -766,16 +763,14 @@ collections {
                rel2.relative: 1.0 1.0;
             }
          }
-         program { name: "ab_show";
-            signal: "about,show";
-            source: "terminology";
+         program {
+            signal: "about,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: SPRING 1.2 2.0 6;
             target: "terminology.about";
          }
-         program { name: "ab_hide";
-            signal: "about,hide";
-            source: "terminology";
+         program {
+            signal: "about,hide"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.about";
@@ -821,16 +816,14 @@ collections {
                }
             }
          }
-         program { name: "opdt_show";
-            signal: "optdetails,show";
-            source: "terminology";
+         program {
+            signal: "optdetails,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "terminology.optdetails";
          }
-         program { name: "opdt_hide";
-            signal: "optdetails,hide";
-            source: "terminology";
+         program {
+            signal: "optdetails,hide"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.2;
             target: "terminology.optdetails";
@@ -867,16 +860,14 @@ collections {
                }
             }
          }
-         program { name: "op_show";
-            signal: "options,show";
-            source: "terminology";
+         program {
+            signal: "options,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.4;
             target: "terminology.options";
          }
-         program { name: "op_hide";
-            signal: "options,hide";
-            source: "terminology";
+         program {
+            signal: "options,hide"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.options";
@@ -911,16 +902,14 @@ collections {
                }
             }
          }
-         program { name: "ct_show";
-            signal: "controls,show";
-            source: "terminology";
+         program {
+            signal: "controls,show"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.3;
             target: "terminology.controls";
          }
-         program { name: "ct_hide";
-            signal: "controls,hide";
-            source: "terminology";
+         program {
+            signal: "controls,hide"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.5;
             target: "terminology.controls";
@@ -1881,9 +1870,8 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL2;
             }
          }
-         program { name: "bottomfull";
-            signal: "mode,bottomfull";
-            source: "terminology";
+         program {
+            signal: "mode,bottomfull"; source: "terminology";
             action: STATE_SET "bottomfull" 0.0;
             TARGETS;
          }
@@ -1926,8 +1914,7 @@ target: "4.top"; \
 target: "4.bottom"
          
          program { name: "selpulse";
-            signal: "show";
-            source: "";
+            signal: "show"; source: "";
             action: STATE_SET "pulse" 0.0;
             transition: SINUSOIDAL 0.5;
             SELPULSE;
@@ -2056,8 +2043,7 @@ target: "4.bottom"
                color: 0 0 0 0;
             }
             program { name: "bottom_right.blink";
-               signal: "mouse,in";
-               source: "zone.bottom_right";
+               signal: "mouse,in"; source: "zone.bottom_right";
                action: STATE_SET "fading" 0.0;
                target: "cursor_blink.bottom_right";
                after: "bottom_right.fade";
@@ -2069,8 +2055,7 @@ target: "4.bottom"
                after: "bottom_right.blink";
             }
             program { name: "bottom_right.stop";
-               signal: "mouse,out";
-               source: "zone.bottom_right";
+               signal: "mouse,out"; source: "zone.bottom_right";
                action: STATE_SET "default" 0.0;
                target: "cursor_blink.bottom_right";
             }
@@ -2176,16 +2161,14 @@ target: "4.bottom"
             }
          }
          programs {
-            program { name: "focus_in_noblink";
-               signal: "focus,in,noblink";
-               source: "terminology";
+            program {
+               signal: "focus,in,noblink"; source: "terminology";
                action: STATE_SET "focused" 0.0;
                target: "glow";
                target: "outline";
             }
             program { name: "focus_in";
-               signal: "focus,in";
-               source: "terminology";
+               signal: "focus,in"; source: "terminology";
                action: STATE_SET "focused" 0.0;
                target: "glow";
                target: "outline";
@@ -2218,9 +2201,8 @@ target: "4.bottom"
                transition: DECELERATE 0.4;
                target: "pulse";
             }
-            program { name: "focus_out";
-               signal: "focus,out";
-               source: "terminology";
+            program {
+               signal: "focus,out"; source: "terminology";
                action: ACTION_STOP;
                target: "focus_in";
                target: "focus2";
@@ -2234,9 +2216,8 @@ target: "4.bottom"
                target: "glow";
                target: "outline";
             }
-            program { name: "key";
-               signal: "key,down";
-               source: "terminology";
+            program {
+               signal: "key,down"; source: "terminology";
                action: STATE_SET "default" 0.0;
                target: "key";
                after: "key2";
@@ -2417,24 +2398,6 @@ target: "4.bottom"
                rel2.to: "terminology.content";
             }
          }
-         part { name: "terminology.background"; type: SWALLOW;
-            description { state: "default" 0.0;
-               rel1.to: "terminology.content";
-               rel2.to: "terminology.content";
-            }
-            description { state: "image" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "scale" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "edje" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "movie" 0.0;
-               inherit: "default" 0.0;
-            }
-         }
          part { name: "terminology.content"; type: SWALLOW;
             clip_to: "clip";
             description { state: "default" 0.0;
@@ -2563,6 +2526,7 @@ target: "4.bottom"
          }
       }
    }
+   
 //////////////////////////////////////////////////////////////////////////////
    //// an object overlayd on text that is a link
    group { name: "terminology/link";
@@ -2649,8 +2613,7 @@ target: "4.bottom"
          }
          programs {
             program { name: "show";
-               signal: "show";
-               source: "";
+               signal: "show"; source: "";
                action: STATE_SET "out" 0.0;
                transition: LINEAR 0.3;
                target: "l";
@@ -2768,16 +2731,14 @@ target: "4.bottom"
          }
       }
       programs {
-         program { name: "busy";
-            signal: "busy";
-            source: "terminology";
+         program {
+            signal: "busy"; source: "terminology";
             action: STATE_SET "visible" 0.0;
             transition: DECELERATE 0.5;
             target: "fade";
          }
          program { name: "spin1";
-            signal: "busy";
-            source: "terminology";
+            signal: "busy"; source: "terminology";
             action: STATE_SET "spin" 0.0;
             transition: LINEAR 0.5;
             target: "knob_spinner";
@@ -2793,9 +2754,8 @@ target: "4.bottom"
 //            source: "terminology";
 //            action: STATE_SET "default" 0.0;
 //         }
-         program { name: "done";
-            signal: "done";
-            source: "terminology";
+         program {
+            signal: "done"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 1.5;
             target: "fade";
@@ -2937,58 +2897,49 @@ target: "4.bottom"
          }
       }
       programs {
-         program { name: "media_mouse_in";
-            signal: "mouse,in";
-            source: "media_bg";
+         program {
+            signal: "mouse,in"; source: "media_bg";
             action: STATE_SET "expanded" 0.0;
             transition: SINUSOIDAL 0.4 CURRENT;
             target: "media_bg";
          }
-         program { name: "media_mouse_out";
-            signal: "mouse,out";
-            source: "media_bg";
+         program {
+            signal: "mouse,out"; source: "media_bg";
             action: STATE_SET "default" 0.0;
             transition: SINUSOIDAL 0.4 CURRENT;
             target: "media_bg";
          }
-         program { name: "media_pause_click";
-            signal: "mouse,up,*";
-            source: "play";
+         program {
+            signal: "mouse,up,*"; source: "play";
             filter: "play" "default";
             action: SIGNAL_EMIT "pause" "";
          }
-         program { name: "media_play_click";
-            signal: "mouse,up,1";
-            source: "play";
+         program {
+            signal: "mouse,up,1"; source: "play";
             filter: "play" "paused";
             action: SIGNAL_EMIT "play" "";
          }
-         program { name: "media_stop_click";
-            signal: "mouse,up,1";
-            source: "stop";
+         program {
+            signal: "mouse,up,1"; source: "stop";
             action: SIGNAL_EMIT "stop" "";
          }
-         program { name: "media_signal_pause";
-            signal: "pause,set";
-            source: "terminology";
+         program {
+            signal: "pause,set"; source: "terminology";
             action: STATE_SET "paused" 0.0;
             target: "play";
          }
-         program { name: "media_signal_play";
-            signal: "play,set";
-            source: "terminology";
+         program {
+            signal: "play,set"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "play";
          }
-         program { name: "media_signal_mute";
-            signal: "mute,set";
-            source: "terminology";
+         program {
+            signal: "mute,set"; source: "terminology";
             action: STATE_SET "muted" 0.0;
             target: "terminology.voldrag";
          }
-         program { name: "media_signal_unmute";
-            signal: "mute,unset";
-            source: "terminology";
+         program {
+            signal: "mute,unset"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.voldrag";
          }
@@ -3084,9 +3035,8 @@ target: "4.bottom"
          }                                              
       }
       programs {
-         program { name: "begin";
-            signal: "begin";
-            source: "terminology";
+         program {
+            signal: "begin"; source: "terminology";
             action: ACTION_STOP;
             target: "show";
             target: "show2";
