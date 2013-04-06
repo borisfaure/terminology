@@ -278,7 +278,6 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 {
    Termcell *cells;
 
-   cells = &(TERMPTY_SCREEN(ty, 0, 0));
    switch (mode)
      {
       case TERMPTY_CLR_END:
@@ -287,23 +286,11 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
           {
              int l = ty->h - (ty->state.cy + 1);
 
-             cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + 1)));
-             if (l > ty->circular_offset)
+             while (l)
                {
-                  cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + 1)));
-                  _text_clear(ty, cells,
-                              ty->w * (ty->circular_offset - l),
-                               0, EINA_TRUE);
-                  cells = ty->screen;
-                  _text_clear(ty, cells,
-                              ty->w * ty->circular_offset,
-                               0, EINA_TRUE);
-               }
-             else
-               {
-                  _text_clear(ty, cells,
-                              ty->w * l,
-                              0, EINA_TRUE);
+                  cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + l)));
+                  _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+                  l--;
                }
           }
         break;
@@ -312,6 +299,8 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 	  {
 	    // First clear from circular > height, then from 0 to circular
 	    int y = ty->state.cy + ty->circular_offset;
+
+            cells = &(TERMPTY_SCREEN(ty, 0, 0));
 
 	    if (y < ty->h)
 	      {
