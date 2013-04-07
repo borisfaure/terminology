@@ -727,7 +727,7 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
              Termcell *c1, *c2;
 
              c1 = &(OLD_SCREEN(0, y));
-             c2 = &(TERMPTY_SCREEN(ty, 0, y + from_history));
+             c2 = &(TERMPTY_SCREEN(ty, 0, y));
              termpty_cell_copy(ty, c1, c2, old_w);
           }
      }
@@ -747,13 +747,15 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
         ts = ty->back[ty->backpos];
 
         src = ts->cell;
-        dst = &(TERMPTY_SCREEN(ty, 0, y));
+        dst = &(TERMPTY_SCREEN(ty, 0, ty->h - from_history + y));
         termpty_cell_copy(ty, src, dst, ts->w);
 
         free(ts);
         ty->back[ty->backpos] = NULL;
         ty->backscroll_num--;
      }
+
+   ty->circular_offset = (ty->circular_offset + ty->h - from_history) % ty->h;
 
    ty->state.cy += from_history;
 }
