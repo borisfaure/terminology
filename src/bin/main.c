@@ -578,6 +578,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              _term_focus(sp->term);
              _term_focus_show(sp, sp->term);
           }
+        _split_tabcount_update(sp);
      }
    else
      {
@@ -604,8 +605,8 @@ main_close(Evas_Object *win, Evas_Object *term)
              _term_focus_show(sp, sp->term);
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
+        else _split_tabcount_update(sp);
      }
-   _split_tabcount_update(sp);
 }
 
 static Term *
