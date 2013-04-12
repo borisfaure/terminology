@@ -53,7 +53,7 @@ things in future to make it totally kick-butt:
 [ ] maybe want a new sel width that slides/fades in on mouseover on top
     that lists miniature thumbs like current sel does but in a linear
     way along the top
-[ ] reflow text on resize
+[ ] support double-width when reflowing text on resize
 [ ] track child process stats like cwd etc. and when launching a new
     "tab" or shell use the last child process cwd to put the shell
     into
