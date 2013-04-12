@@ -868,7 +868,8 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
             *old_ts = NULL;
    Termcell *old_cells = NULL;
    Eina_Bool rewrapping = EINA_FALSE,
-             done = EINA_FALSE;
+             done = EINA_FALSE,
+             cy_pushed_back = EINA_FALSE;
 
    if (!ty->backmax || !ty->back)
      goto shrink_screen;
@@ -1085,7 +1086,7 @@ shrink_screen:
                   else
                     {
                        if (old_y < old_h - 1)
-                          need_new_line = EINA_TRUE;
+                         need_new_line = EINA_TRUE;
                     }
                }
              if (need_new_line)
@@ -1101,7 +1102,12 @@ shrink_screen:
                        cells = &TERMPTY_SCREEN(ty, 0, y);
                        len = termpty_line_length(cells, ty->w);
                        termpty_text_save_top(ty, cells, len);
-                       ty->state.cy--;
+                       memset(cells, 0, sizeof(Termcell) * len);
+                       if (ty->state.cy == old_y || cy_pushed_back)
+                         {
+                            cy_pushed_back = EINA_TRUE;
+                            ty->state.cy--;
+                         }
                     }
                   else
                     y++;
