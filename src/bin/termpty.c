@@ -810,27 +810,41 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
    else
      {
         /* in place */
+        int len, pos, offset;
+
         if (to_history <= 0)
           return;
-        old_circular_offset = (old_circular_offset + to_history) % old_h;
-        ty->circular_offset = old_circular_offset;
+
         if (ty->circular_offset == 0)
           return;
 
+        ty->circular_offset = (ty->circular_offset + to_history) % old_h;
+        len = real_h - to_history;
+        pos = (len + ty->circular_offset) % old_h;
+        offset = len - pos;
+
         /* 2 times */
-        for (y = ty->circular_offset - 1; y > 0; y--)
+        for (y = pos - 1; y >= 0; y--)
           {
              src = &(old_screen[y * old_w]);
-             dst = &(OLD_SCREEN(0, y));
+             dst = &(old_screen[(y + offset) * old_w]);
              termpty_cell_copy(ty, src, dst, old_w);
           }
-        for (y = 0; y < ty->circular_offset; y++)
+        for (y = 0; y < offset; y++)
           {
-             src = &(OLD_SCREEN(0, y));
+             src = &(old_screen[(ty->circular_offset + y) * old_w]);
              dst = &(old_screen[y * old_w]);
              termpty_cell_copy(ty, src, dst, old_w);
           }
         ty->circular_offset = 0;
+
+        len = ty->h - len;
+        if (len)
+          {
+             memset(&old_screen[(old_h - len) * old_w],
+                    0,
+                    sizeof(Termcell) * len * old_w);
+          }
      }
 }
 
