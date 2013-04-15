@@ -197,8 +197,11 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 #if defined(SUPPORT_DBLWIDTH)
         cells[ty->state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if ((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1)))
-          termpty_cell_codepoint_att_fill(ty, 0, cells[ty->state.cx].att,
-                                          &(cells[ty->state.cx + 1]), 1);
+          {
+             TERMPTY_FMTCLR(cells[ty->state.cx].att);
+             termpty_cell_codepoint_att_fill(ty, 0, cells[ty->state.cx].att,
+                                             &(cells[ty->state.cx + 1]), 1);
+          }
 #endif        
         if (ty->state.wrap)
           {
