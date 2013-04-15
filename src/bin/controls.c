@@ -23,8 +23,11 @@ _cb_ct_del_delay(void *data __UNUSED__)
         evas_object_del(ct_over);
         ct_over = NULL;
      }
-   evas_object_del(ct_frame);
-   ct_frame = NULL;
+   if (ct_frame)
+     {
+        evas_object_del(ct_frame);
+        ct_frame = NULL;
+     }
    ct_del_timer = NULL;
    elm_cache_all_flush();
    return EINA_FALSE;
@@ -86,6 +89,18 @@ static void
 _cb_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
+}
+
+static void
+_cb_frame_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+{
+   ct_frame = NULL;
+}
+
+static void
+_cb_over_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+{
+   ct_over = NULL;
 }
 
 static void
@@ -227,6 +242,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         
         o = _button_add(win, "About", "about", _cb_ct_about, term);
         elm_box_pack_end(ct_box, o);
+        evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
+                                       _cb_frame_del, NULL);
      }
    if (!ct_out)
      {
@@ -238,6 +255,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, term);
+        evas_object_event_callback_add(ct_over, EVAS_CALLBACK_DEL,
+                                       _cb_over_del, NULL);
         
         ct_win = win;
         ct_bg = bg;
