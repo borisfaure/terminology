@@ -12,6 +12,8 @@ static Evas_Object *ct_box2 = NULL, *ct_over = NULL;
 static Eina_Bool ct_out = EINA_FALSE;
 static Ecore_Timer *ct_del_timer = NULL;
 static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
+static void (*ct_donecb) (void *data) = NULL;
+static void *ct_donedata = NULL;
 
 static Eina_Bool
 _cb_ct_del_delay(void *data __UNUSED__)
@@ -31,14 +33,14 @@ _cb_ct_del_delay(void *data __UNUSED__)
 static void
 _cb_ct_copy(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   controls_toggle(ct_win, ct_bg, ct_term);
+   controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    termio_copy_clipboard(data);
 }
 
 static void
 _cb_ct_paste(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   controls_toggle(ct_win, ct_bg, ct_term);
+   controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    termio_paste_clipboard(data);
 }
 
@@ -69,21 +71,21 @@ _cb_ct_close(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __U
 static void
 _cb_ct_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   controls_toggle(ct_win, ct_bg, ct_term);
-   options_toggle(ct_win, ct_bg, ct_term);
+   controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
+   options_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
 _cb_ct_about(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   controls_toggle(ct_win, ct_bg, ct_term);
-   about_toggle(ct_win, ct_bg, ct_term);
+   controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
+   about_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
 _cb_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   controls_toggle(ct_win, ct_bg, ct_term);
+   controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
@@ -93,7 +95,8 @@ _cb_saved_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      {
         if (obj == ct_term)
           {
-             if (ct_out) controls_toggle(ct_win, ct_bg, ct_term);
+             if (ct_out) 
+               controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
              ct_term = NULL;
           }
         else
@@ -146,7 +149,8 @@ _button_add(Evas_Object *win, const char *label, const char *icon, Evas_Smart_Cb
 }
 
 void
-controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
+controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
+                void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
 
@@ -154,9 +158,14 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
      {
         if (options_active_get())
           {
-             options_toggle(win, bg, term);
+             options_toggle(win, bg, term, ct_donecb, ct_donedata);
              return;
           }
+     }
+   if ((win != ct_win) && (ct_frame))
+     {
+        evas_object_del(ct_frame);
+        ct_frame = NULL;
      }
    if (!ct_frame)
      {
@@ -233,6 +242,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         ct_win = win;
         ct_bg = bg;
         ct_term = term;
+        ct_donecb = donecb;
+        ct_donedata = donedata;
         edje_object_signal_emit(bg, "controls,show", "terminology");
         ct_out = EINA_TRUE;
         elm_object_focus_set(ct_frame, EINA_TRUE);
@@ -252,7 +263,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         edje_object_signal_emit(ct_bg, "controls,hide", "terminology");
         ct_out = EINA_FALSE;
         elm_object_focus_set(ct_frame, EINA_FALSE);
-        elm_object_focus_set(ct_term, EINA_TRUE);
+        if (ct_donecb) ct_donecb(ct_donedata);
+//        elm_object_focus_set(ct_term, EINA_TRUE);
         if (ct_del_timer) ecore_timer_del(ct_del_timer);
         ct_del_timer = ecore_timer_add(10.0, _cb_ct_del_delay, NULL);
      }

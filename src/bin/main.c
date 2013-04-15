@@ -855,11 +855,26 @@ _cb_size_hint(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UN
 }
 
 static void
+_cb_options_done(void *data)
+{
+   Win *wn = data;
+   Eina_List *l;
+   Term *term;
+   
+   if (!wn->focused) return;
+   EINA_LIST_FOREACH(wn->terms, l, term)
+     {
+        if (term->focused) elm_object_focus_set(term->term, EINA_TRUE);
+     }
+}
+
+static void
 _cb_options(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
 
-   controls_toggle(term->wn->win, term->wn->base, term->term);
+   controls_toggle(term->wn->win, term->wn->base, term->term,
+                   _cb_options_done, term->wn);
 }
 
 static Eina_Bool

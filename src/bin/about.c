@@ -10,6 +10,8 @@ static Eina_Bool ab_out = EINA_FALSE;
 static Ecore_Timer *ab_del_timer = NULL;
 static Evas_Object *saved_win = NULL;
 static Evas_Object *saved_bg = NULL;
+static void (*ab_donecb) (void *data) = NULL;
+static void *ab_donedata = NULL;
 
 static Eina_Bool
 _cb_ab_del_delay(void *data __UNUSED__)
@@ -24,11 +26,12 @@ _cb_ab_del_delay(void *data __UNUSED__)
 static void
 _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   about_toggle(saved_win, saved_bg, data);
+   about_toggle(saved_win, saved_bg, data, ab_donecb, ab_donedata);
 }
 
 void
-about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
+about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
+             void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
 
@@ -122,6 +125,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         edje_object_signal_emit(bg, "about,show", "terminology");
         elm_object_signal_emit(ab_layout, "begin" ,"terminology");
         ab_out = EINA_TRUE;
+        ab_donecb = donecb;
+        ab_donedata = donedata;
         elm_object_focus_set(ab_layout, EINA_TRUE);
         if (ab_del_timer)
           {
@@ -137,7 +142,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term)
         edje_object_signal_emit(bg, "about,hide", "terminology");
         ab_out = EINA_FALSE;
         elm_object_focus_set(ab_layout, EINA_FALSE);
-        elm_object_focus_set(term, EINA_TRUE);
+        if (ab_donecb) ab_donecb(ab_donedata);
+//        elm_object_focus_set(term, EINA_TRUE);
         if (ab_del_timer) ecore_timer_del(ab_del_timer);
         ab_del_timer = ecore_timer_add(10.0,  _cb_ab_del_delay, NULL);
      }
