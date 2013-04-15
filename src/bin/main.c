@@ -214,6 +214,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    Split *sp2;
    Evas_Object *o;
    Config *config;
+   char buf[PATH_MAX], *wdir = NULL;
 
    if (!sp->term) return;
    
@@ -242,8 +243,9 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->parent = sp;
    sp2->wn = sp->wn;
    config = config_fork(sp->term->config);
+   if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
    sp2->term = main_term_new(sp->wn, config,
-                             NULL, EINA_FALSE, NULL,
+                             NULL, EINA_FALSE, wdir,
                              80, 24, EINA_FALSE);
    sp2->terms = eina_list_append(sp2->terms, sp2->term);
    _term_resize_track_start(sp2);
@@ -310,14 +312,16 @@ main_new(Evas_Object *win, Evas_Object *term)
    Split *sp = _split_find(win, term);
    Config *config;
    int w, h;
+   char buf[PATH_MAX], *wdir = NULL;
    
    if (!sp) return;
    _term_resize_track_stop(sp);
    evas_object_hide(sp->term->bg);
    config = config_fork(sp->term->config);
    termio_size_get(sp->term->term, &w, &h);
+   if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
    sp->term = main_term_new(sp->wn, config,
-                            NULL, EINA_FALSE, NULL,
+                            NULL, EINA_FALSE, wdir,
                             w, h, EINA_FALSE);
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);

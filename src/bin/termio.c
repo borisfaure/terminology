@@ -3555,18 +3555,19 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
    char procpath[PATH_MAX];
    Termio *sd = evas_object_smart_data_get(obj);
    pid_t pid;
+   ssize_t siz;
 
    if (!sd) return EINA_FALSE;
 
    pid = termpty_pid_get(sd->pty);
    snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
-   if (readlink(procpath, buf, size) < 1)
+   if ((siz = readlink(procpath, buf, size)) < 1)
      {
         ERR("Could not load working directory %s: %s",
             procpath, strerror(errno));
         return EINA_FALSE;
      }
-
+   buf[siz] = 0;
    return EINA_TRUE;
 }
 
