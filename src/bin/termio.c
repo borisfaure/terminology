@@ -75,6 +75,10 @@ struct _Termio
    Evas_Object *win, *theme, *glayer;
    Config *config;
    Ecore_IMF_Context *imf;
+   const char *sel_str;
+   Ecore_Job *sel_reset_job;
+   double set_sel_at;
+   Elm_Sel_Type sel_type;
    Eina_Bool jump_on_change : 1;
    Eina_Bool jump_on_keypress : 1;
    Eina_Bool have_sel : 1;
@@ -84,13 +88,17 @@ struct _Termio
    Eina_Bool bottom_right : 1;
    Eina_Bool top_left : 1;
    Eina_Bool boxsel : 1;
+   Eina_Bool reset_sel : 1;
 };
 
 static Evas_Smart *_smart = NULL;
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
+static Eina_List *terms = NULL;
+
 static void _smart_calculate(Evas_Object *obj);
 static void _smart_mirror_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *info __UNUSED__);
+static void _lost_selection(void *data, Elm_Sel_Type selection);
 
 static inline Eina_Bool
 _should_inline(const Evas_Object *obj)
@@ -1043,16 +1051,51 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 }
 
 static void
-_lost_selection(void *data, Elm_Sel_Type selection)
+_lost_selection_reset_job(void *data)
 {
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   if (sd->have_sel)
+   sd->sel_reset_job = NULL;
+   elm_cnp_selection_set(sd->win, sd->sel_type,
+                         ELM_SEL_FORMAT_TEXT,
+                         sd->sel_str, strlen(sd->sel_str));
+   elm_cnp_selection_loss_callback_set(sd->win, sd->sel_type,
+                                       _lost_selection, data);
+}
+
+static void
+_lost_selection(void *data, Elm_Sel_Type selection)
+{
+   Eina_List *l;
+   Evas_Object *obj;
+   double t = ecore_time_get();
+   EINA_LIST_FOREACH(terms, l, obj)
      {
-        sd->cur.sel = 0;
-        elm_object_cnp_selection_clear(sd->win, selection);
-        _smart_update_queue(data, sd);
-        sd->have_sel = EINA_FALSE;
+        Termio *sd = evas_object_smart_data_get(obj);
+        if (!sd) continue;
+        if ((t - sd->set_sel_at) < 0.2) /// hack
+          {
+             if ((sd->have_sel) && (sd->sel_str) && (!sd->reset_sel))
+               {
+                  sd->reset_sel = EINA_TRUE;
+                  if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
+                  sd->sel_reset_job = ecore_job_add
+                    (_lost_selection_reset_job, data);
+               }
+             continue;
+          }
+        if (sd->have_sel)
+          {
+             if (sd->sel_str)
+               {
+                  eina_stringshare_del(sd->sel_str);
+                  sd->sel_str = NULL;
+               }
+             sd->cur.sel = 0;
+             elm_object_cnp_selection_clear(sd->win, selection);
+             _smart_update_queue(obj, sd);
+             sd->have_sel = EINA_FALSE;
+          }
      }
 }
 
@@ -1068,7 +1111,6 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    start_y = sd->cur.sel1.y;
    end_x = sd->cur.sel2.x;
    end_y = sd->cur.sel2.y;
-
 
    if (sd->boxsel)
      {
@@ -1109,11 +1151,16 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
         if (sd->win)
           {
              sd->have_sel = EINA_FALSE;
+             sd->reset_sel = EINA_FALSE;
+             sd->set_sel_at = ecore_time_get(); // hack
+             sd->sel_type = type;
              elm_cnp_selection_set(sd->win, type,
                                    ELM_SEL_FORMAT_TEXT, s, strlen(s));
              elm_cnp_selection_loss_callback_set(sd->win, type,
                                                  _lost_selection, obj);
              sd->have_sel = EINA_TRUE;
+             if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+             sd->sel_str = eina_stringshare_add(s);
           }
         free(s);
      }
@@ -2745,6 +2792,7 @@ imf_done:
         if (sd->imf) DBG("Ecore IMF Setup");
         else WRN("Ecore IMF failed");
      }
+   terms = eina_list_append(terms, obj);
 }
 
 static void
@@ -2754,6 +2802,7 @@ _smart_del(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    
    if (!sd) return;
+   terms = eina_list_remove(terms, obj);
    EINA_LIST_FREE(sd->mirrors, o)
      {
         evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
@@ -2790,6 +2839,10 @@ _smart_del(Evas_Object *obj)
      }
    if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);
    _compose_seq_reset(sd);
+   if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+   if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
+   sd->sel_str = NULL;
+   sd->sel_reset_job = NULL;
    sd->link.down.dndobj = NULL;
    sd->cur.obj = NULL;
    sd->event = NULL;
