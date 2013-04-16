@@ -155,6 +155,33 @@ collections {
                color: 255 255 255 255;
             }
          }
+         part { name: "terminology.tabmissed.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            clip_to: "tabcount_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabcount.label";
+               rel2.to: "terminology.tabcount.label";
+               rel1.offset: -4 0;
+               rel2.relative: 0.0 1.0;
+               rel2.offset: -5 -1;
+               color: 255 153 51 64;
+               color2: 255 51 0 18;
+               color3: 255 0 0 8;
+               align: 1.0 0.5;
+               text { font: "Sans"; size: 8;
+                  align: 1.0 0.5;
+                  min: 1 1;
+               }
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 64 255;
+               color2: 255 153 51 128;
+               color3: 255 0 0 20;
+            }
+         }
          part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;
             effect: GLOW;
             scale: 1;
@@ -343,6 +370,7 @@ collections {
             target: "tabcount_glow_r2";
             target: "tabcount_glow_r3";
             target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
          }
          program {
             signal: "mouse,out"; source: "tabcount_ev";
@@ -357,6 +385,7 @@ collections {
             target: "tabcount_glow_r2";
             target: "tabcount_glow_r3";
             target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
          }
          program {
             signal: "mouse,clicked,1"; source: "tabcount_ev";
@@ -373,6 +402,25 @@ collections {
             action: STATE_SET "on" 0.0;
             transition: DECELERATE 0.5;
             target: "tabcount_clip";
+         }
+         program {
+            signal: "tabmissed,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "tabmissed,on"; source: "terminology";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.tabmissed.label";
+            after: "tabmissed2";
+         }
+         program { name: "tabmissed2";
+            signal: "tabmissed,on"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 3.0;
+            target: "terminology.tabmissed.label";
          }
 
          ////////////////////////////////////////////////////////////////////

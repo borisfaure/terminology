@@ -63,6 +63,7 @@ struct _Term
    Eina_Bool    focused : 1;
    Eina_Bool    hold : 1;
    Eina_Bool    unswallowed : 1;
+   Eina_Bool    missed_bell : 1;
 };
 
 struct _Split
@@ -106,12 +107,19 @@ _split_free(Split *sp)
 static void
 _split_tabcount_update(Split *sp)
 {
-   char buf[32];
+   char buf[32], bufm[32];
    int n = eina_list_count(sp->terms);
+   int missed = 0;
    Eina_List *l;
    Term *term;
    
+   EINA_LIST_FOREACH(sp->terms, l, term)
+     {
+        if (term->missed_bell) missed++;
+     }
    snprintf(buf, sizeof(buf), "%i", n);
+   if (missed > 0) snprintf(bufm, sizeof(bufm), "%i", missed);
+   else bufm[0] = 0;
    EINA_LIST_FOREACH(sp->terms, l, term)
      {
         Evas_Coord w = 0, h = 0;
@@ -127,10 +135,15 @@ _split_tabcount_update(Split *sp)
         if (n > 1)
           {
              edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
+             edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufm);
              edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
           }
         else
           edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+        if (missed > 0)
+          edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
+        else
+          edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
      }
 }
 
@@ -516,6 +529,13 @@ _term_focus(Term *term)
    if (term->wn->cmdbox) elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
    elm_object_focus_set(term->term, EINA_TRUE);
    elm_win_title_set(term->wn->win, termio_title_get(term->term));
+   if (term->missed_bell)
+     {
+        Split *sp = _split_find(term->wn->win, term->term);
+        
+        term->missed_bell = EINA_FALSE;
+        if (sp) _split_tabcount_update(sp);
+     }
 }
 
 void
@@ -913,8 +933,19 @@ _cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    if (!config) return;
    if (!config->disable_visual_bell)
      {
+        Split *sp;
+        
         edje_object_signal_emit(term->bg, "bell", "terminology");
         edje_object_signal_emit(term->base, "bell", "terminology");
+        sp = _split_find(term->wn->win, term->term);
+        if (sp)
+          {
+             if (sp->term != term)
+               {
+                  term->missed_bell = EINA_TRUE;
+                  _split_tabcount_update(sp);
+               }
+          }
      }
    if (config->urg_bell)
      {
