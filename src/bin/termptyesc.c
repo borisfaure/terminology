@@ -1015,7 +1015,8 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
- 
+   int len;
+
    cc = c;
    b = buf;
    be = buf + sizeof(buf) / sizeof(buf[0]);
@@ -1030,11 +1031,12 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
         b++;
         cc++;
      }
+   len = cc - c;
    if (b == be)
-	 {
+     {
         ERR("dcs parsing overflowed (binary data?)");
-        return cc - c;
-	 }
+        goto end;
+     }
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
    else return 0;
@@ -1043,12 +1045,51 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
       case '+':
          /* TODO: Set request termcap/terminfo */
          break;
+      case '$':
+         /* Request status string */
+         if (len > 1 && buf[1] != 'q')
+           {
+              ERR("invalid/unhandled dsc esc '$%c' (expected '$q')", buf[1]);
+              goto end;
+           }
+         if (len < 4)
+           goto end;
+         switch (buf[2])
+           {
+            case '"':
+               if (buf[3] == 'p') /* DECSCL */
+                 {
+                    char bf[32];
+                    snprintf(bf, sizeof(bf), "\033P1$r64;1\"p\033\\");
+                    termpty_write(ty, bf, strlen(bf));
+                 }
+               else if (buf[3] == 'q') /* DECSCA */
+                 {
+                    /* TODO: */
+                 }
+               else
+                 {
+                    ERR("invalid/unhandled dsc esc '$q\"%c'", buf[3]);
+                    goto end;
+                 }
+               break;
+            case 'm': /* SGR */
+               /* TODO: */
+            case 'r': /* DECSTBM */
+               /* TODO: */
+            default:
+               ERR("unhandled dsc request status string '$q%c'", buf[2]);
+               goto end;
+           }
+         /* TODO */
+         break;
       default:
         // many others
         ERR("unhandled dcs esc '%c'", buf[0]);
         break;
      }
-   return cc - c;
+end:
+   return len;
 }
 
 static int
