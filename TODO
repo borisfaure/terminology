@@ -4,9 +4,7 @@ make it a first-class terminal:
 [ ] VT100-compatibilyt: pass all of http://invisible-island.net/vttest/ tests!
 [ ] tabs: reordering
 [ ] tabs: key bindings for each tab ex) alt + 1, alt + 2, ...
-[ ] splits/tabs need to use cwd of "current term"
 [ ] splits need to size only by steps in font size (elm feature)
-[ ] split handles need to become invisible (elm theme)
 [ ] better info in tyls -m
 [ ] tyls -b needs doing
 [ ] blink and blink2 attributes need to be supported
@@ -45,8 +43,8 @@ make it a first-class terminal:
     mousewheel scroll suport doesnt work
 [ ] possible evas font problem with proggy fonts: http://www.proggyfonts.com/
 [ ] need mouse control for sel object (autoscroll based on position)
-[ ] need mouseover top of term to go into sel mode
-[ ] need to track bell on bg terms and indicate a bg term wants attention
+[ ] key controls to begin/change/end selections
+[ ] key controls to hilight visible links and select them
 
 things in future to make it totally kick-butt:
 
