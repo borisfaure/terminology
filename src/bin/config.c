@@ -189,7 +189,7 @@ config_load(const char *key)
         eet_close(ef);
         if (config)
           {
-	     config->font.orig_size = config->font.size;
+             config->font.orig_size = config->font.size;
              if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
              config->font.orig_bitmap = config->font.bitmap;
              if (config->version < CONF_VER)
