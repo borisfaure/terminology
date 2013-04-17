@@ -550,11 +550,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 3: // should we handle this?
                                  handled = 1;
-                                 ERR("XXX: 132 column mode %i", mode);
+                                 ERR("TODO: 132 column mode %i", mode);
                                  break;
                                case 4:
                                  handled = 1;
-                                 ERR("XXX: set insert mode to %i", mode);
+                                 ERR("TODO: set insert mode to %i", mode);
                                  break;
                                case 5:
                                  handled = 1;
@@ -562,11 +562,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 6:
                                  handled = 1;
-                                 ERR("XXX: origin mode: cursor is at 0,0/cursor limited to screen/start point for line #'s depends on top margin");
+                                 ERR("TODO: origin mode: cursor is at 0,0"
+                                     "cursor limited to screen/start point"
+                                     " for line #'s depends on top margin");
                                  break;
                                case 7:
                                  handled = 1;
-                                 DBG("DDD: set wrap mode to %i", mode);
+                                 DBG("XXX: set wrap mode to %i", mode);
                                  ty->state.wrap = mode;
                                  break;
                                case 8:
@@ -615,6 +617,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                case 38: // ignore
                                  handled = 1;
 //                                 INF("XXX: switch to tek window %i", mode);
+                                 break;
+                               case 40:
+                                 handled = 1;
+                                 ERR("TODO: Allow 80 -> 132 Mode");
+                                 break;
+                               case 45: // ignore
+                                 handled = 1;
+                                 INF("TODO: Reverse-wraparound Mode");
                                  break;
                                case 59: // ignore
                                  handled = 1;
