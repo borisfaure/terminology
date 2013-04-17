@@ -1259,7 +1259,8 @@ _sel_go(Split *sp, Term *term)
         evas_object_data_set(img, "termio", tm->term);
         tm->sel = img;
         
-        sel_entry_add(sp->sel, tm->sel, (tm == sp->term), tm->config);
+        sel_entry_add(sp->sel, tm->sel, (tm == sp->term),
+                      tm->missed_bell, tm->config);
      }
    edje_object_part_swallow(sp->sel_bg, "terminology.content", sp->sel);
    evas_object_show(sp->sel);

@@ -655,7 +655,7 @@ sel_add(Evas_Object *parent)
 }
 
 void
-sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *config)
+sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Bool bell, Config *config)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    Entry *en = calloc(1, sizeof(Entry));
@@ -676,6 +676,11 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Config *
    if (en->selected)
      {
         edje_object_signal_emit(en->bg, "selected,start", "terminology");
+        edje_object_message_signal_process(en->bg);
+     }
+   if (bell)
+     {
+        edje_object_signal_emit(en->bg, "bell", "terminology");
         edje_object_message_signal_process(en->bg);
      }
    sd->interp = 1.0;
