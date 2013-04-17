@@ -39,7 +39,10 @@ struct _Config
    Eina_Bool         mute;
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;
-   
+   Eina_Bool         custom_geometry;
+   int               cg_width;
+   int               cg_height;
+
    Eina_Bool         temporary; /* not in EET */
    const char       *config_key; /* not in EET, the key that config was loaded */
 };

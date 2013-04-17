@@ -2732,11 +2732,18 @@ elm_main(int argc, char **argv)
           }
      }
    
-   // later allow default size to be configured
    if (!size_set)
      {
-        size_w = 80;
-        size_h = 24;
+        if (config->custom_geometry)
+          {
+             size_w = config->cg_width;
+             size_h = config->cg_height;
+          }
+        else
+          {
+             size_w = 80;
+             size_h = 24;
+          }
      }
    
    // for now if not set - dont do login shell - later from config

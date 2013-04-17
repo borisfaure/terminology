@@ -81,6 +81,12 @@ config_init(void)
      (edd_base, Config, "urg_bell", urg_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "multi_instance", multi_instance, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "custom_geometry", custom_geometry, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "cg_width", cg_width, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "cg_height", cg_height, EET_T_INT);
 }
 
 void
@@ -159,6 +165,9 @@ config_sync(const Config *config_src, Config *config)
    config->urg_bell = config_src->urg_bell;
    config->multi_instance = config_src->multi_instance;
    config->temporary = config_src->temporary;
+   config->custom_geometry = config_src->custom_geometry;
+   config->cg_width = config_src->cg_width;
+   config->cg_height = config_src->cg_height;
 }
 
 Config *
@@ -180,7 +189,7 @@ config_load(const char *key)
         eet_close(ef);
         if (config)
           {
-             config->font.orig_size = config->font.size;
+	     config->font.orig_size = config->font.size;
              if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
              config->font.orig_bitmap = config->font.bitmap;
              if (config->version < CONF_VER)
@@ -407,6 +416,9 @@ config_load(const char *key)
              config->mute = EINA_FALSE;
              config->urg_bell = EINA_TRUE;
              config->multi_instance = EINA_FALSE;
+             config->custom_geometry = EINA_FALSE;
+             config->cg_width = 80;
+             config->cg_height = 24;
           }
      }
 
@@ -451,6 +463,9 @@ config_fork(Config *config)
    CPY(mute);
    CPY(urg_bell);
    CPY(multi_instance);
+   CPY(custom_geometry);
+   CPY(cg_width);
+   CPY(cg_height);
    
    CPY(temporary);
    SCPY(config_key);

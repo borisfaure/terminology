@@ -7,7 +7,7 @@
 #include "options_behavior.h"
 #include "main.h"
 
-static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep;
+static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep, *op_w, *op_h;
 
 static void
 _cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
@@ -109,12 +109,59 @@ _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
    config_save(config, NULL);
 }
 
+static void
+_cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+
+   config->custom_geometry = elm_check_state_get(obj);
+   if (config->custom_geometry)
+     {
+        config->cg_width = (int) elm_spinner_value_get(op_w);
+        config->cg_height = (int) elm_spinner_value_get(op_h);
+     }
+   config_save(config, NULL);
+
+   elm_object_disabled_set(op_w, !config->custom_geometry);
+   elm_object_disabled_set(op_h, !config->custom_geometry);
+}
+
+static void
+_cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+
+   if (config->custom_geometry)
+     {
+        config->cg_width = (int) elm_spinner_value_get(obj);
+        config_save(config, NULL);
+     }
+}
+
+static void
+_cb_op_behavior_cg_height(void *data, Evas_Object *obj, void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+
+   if (config->custom_geometry)
+     {
+        config->cg_height = (int) elm_spinner_value_get(obj);
+        config_save(config, NULL);
+     }
+}
+
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
    Evas_Object *o, *bx, *sc, *fr;
    char *txt;
+   int w, h;
+
+   termio_size_get(term, &w, &h);
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -206,6 +253,58 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_multi_instance_chg, term);
    
+   o = elm_check_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Always open terminology in custom geometry (default is 80x24):");
+   elm_check_state_set(o, config->custom_geometry);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_custom_geometry, term);
+
+   o = elm_label_add(bx);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   elm_object_text_set(o, "Width:");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   op_w = o = elm_spinner_add(bx);
+   elm_spinner_min_max_set( o, 2.0, 350.0);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   if (config->custom_geometry)
+     elm_spinner_value_set(o, (double) config->cg_width);
+   else
+     elm_spinner_value_set(o, (double) w);
+   elm_object_disabled_set(o, !config->custom_geometry);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_cg_width, term);
+
+   o = elm_label_add(bx);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   elm_object_text_set(o, "Height:");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   op_h = o = elm_spinner_add(bx);
+   elm_spinner_min_max_set( o, 1.0, 150.0);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   if (config->custom_geometry)
+     elm_spinner_value_set(o, (double) config->cg_height);
+   else
+     elm_spinner_value_set(o, (double) h);
+   elm_object_disabled_set(o, !config->custom_geometry);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_cg_height, term);
+
    o = elm_separator_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
