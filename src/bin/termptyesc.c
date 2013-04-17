@@ -467,20 +467,29 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                }
           }
         break;
-      case 'c': // query device id
+      case 'c': // query device attributes
           {
              char bf[32];
-//              0 → VT100
-//              1 → VT220
-//              2 → VT240
-//             18 → VT330
-//             19 → VT340
-//             24 → VT320
-//             41 → VT420
-//             61 → VT510
-//             64 → VT520
-//             65 → VT525
-             snprintf(bf, sizeof(bf), "\033[>41;285;%ic", 0);
+             if (b && *b == '>')
+               {
+                  // Primary device attributes
+                  //  0 → VT100
+                  //  1 → VT220
+                  //  2 → VT240
+                  // 18 → VT330
+                  // 19 → VT340
+                  // 24 → VT320
+                  // 41 → VT420
+                  // 61 → VT510
+                  // 64 → VT520
+                  // 65 → VT525
+                  snprintf(bf, sizeof(bf), "\033[>41;285;%ic", 0);
+               }
+             else
+               {
+                  // Secondary device attributes
+                  snprintf(bf, sizeof(bf), "\033[?64;1;2;6;9;15;18;21;22c");
+               }
              termpty_write(ty, bf, strlen(bf));
           }
         break;
