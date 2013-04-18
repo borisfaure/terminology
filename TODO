@@ -1,6 +1,11 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
+[ ] inlined media edje objects need to specify group
+[ ] edje objects need to be able to set text part contents
+[ ] edje objects need to be able to emit signals
+[ ] edje objects need to be able to swallow sub-objects (and specify
+    group, text, signals etc.)
 [ ] vt100-compatibility: pass all of http://invisible-island.net/vttest/ tests!
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)

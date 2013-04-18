@@ -204,6 +204,13 @@ it[CW;H;FULL-PATH-OR-URL]
     identical to the "is" command, but uses thumbnail generation to
     make a fast to load but low resolution version (cached) of the media.
 
+it[CW;H;LINK\nFULL-PATH-OR-URL]
+  = insert THUMB media (thumbnail cell area). otherwise paramaters are
+    identical to the "is" command, but uses thumbnail generation to
+    make a fast to load but low resolution version (cached) of the media.
+    LINK is a path (or url) to open WHEN the thumb is clicked on by the
+    user.
+
 ib
   = begin media replace sequence run
 
