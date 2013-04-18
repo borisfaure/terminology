@@ -66,6 +66,16 @@ Alt+Home = Enter command mode (enter commands to control terminology itself)
 Alt+Return = paste primary selection
 Ctrl+Shift+c = copy current selection to clipboard
 Ctrl+Shift+v = paste current clipboard selection
+Alt+1 = switch to terminal tab 1
+Alt+2 = switch to terminal tab 2
+Alt+3 = switch to terminal tab 3
+Alt+4 = switch to terminal tab 4
+Alt+5 = switch to terminal tab 5
+Alt+6 = switch to terminal tab 6
+Alt+7 = switch to terminal tab 7
+Alt+8 = switch to terminal tab 8
+Alt+9 = switch to terminal tab 9
+Alt+0 = switch to terminal tab 10
 
 Command mode commands currently understood:
 
