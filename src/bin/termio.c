@@ -1464,6 +1464,66 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
              goto end;
           }
+        else if (!strcmp(ev->keyname, "1"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,1", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "2"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,2", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "3"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,3", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "4"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,4", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "5"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,5", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "6"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,6", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "7"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,7", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "8"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,8", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "9"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,9", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "0"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "tab,0", NULL);
+             goto end;
+          }
      }
    if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&

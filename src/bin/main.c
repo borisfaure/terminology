@@ -1407,6 +1407,78 @@ _cb_icon(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
      elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->term));
 }
 
+static void
+_tab_go(Term *term, int tnum)
+{
+   Term *term2;
+   Split *sp = _split_find(term->wn->win, term->term);;
+   if (!sp) return;
+   
+   term2 = eina_list_nth(sp->terms, tnum);
+   if ((!term2) || (term2 == term)) return;
+   _sel_go(sp, term2);
+}
+
+static void
+_cb_tab_1(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 0);
+}
+
+static void
+_cb_tab_2(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 1);
+}
+
+static void
+_cb_tab_3(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 2);
+}
+
+static void
+_cb_tab_4(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 3);
+}
+
+static void
+_cb_tab_5(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 4);
+}
+
+static void
+_cb_tab_6(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 5);
+}
+
+static void
+_cb_tab_7(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 6);
+}
+
+static void
+_cb_tab_8(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 7);
+}
+
+static void
+_cb_tab_9(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 8);
+}
+
+static void
+_cb_tab_0(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   _tab_go(data, 9);
+}
+
 static Eina_Bool
 _cb_cmd_focus(void *data)
 {
@@ -2077,6 +2149,16 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
    evas_object_smart_callback_add(o, "title,change", _cb_title, term);
    evas_object_smart_callback_add(o, "icon,change", _cb_icon, term);
+   evas_object_smart_callback_add(o, "tab,1", _cb_tab_1, term);
+   evas_object_smart_callback_add(o, "tab,2", _cb_tab_2, term);
+   evas_object_smart_callback_add(o, "tab,3", _cb_tab_3, term);
+   evas_object_smart_callback_add(o, "tab,4", _cb_tab_4, term);
+   evas_object_smart_callback_add(o, "tab,5", _cb_tab_5, term);
+   evas_object_smart_callback_add(o, "tab,6", _cb_tab_6, term);
+   evas_object_smart_callback_add(o, "tab,7", _cb_tab_7, term);
+   evas_object_smart_callback_add(o, "tab,8", _cb_tab_8, term);
+   evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
+   evas_object_smart_callback_add(o, "tab,0", _cb_tab_0, term);
    evas_object_show(o);
    
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,

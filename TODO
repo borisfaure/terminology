@@ -3,7 +3,6 @@ make it a first-class terminal:
 
 [ ] VT100-compatibilyt: pass all of http://invisible-island.net/vttest/ tests!
 [ ] tabs: reordering
-[ ] tabs: key bindings for each tab ex) alt + 1, alt + 2, ...
 [ ] splits need to size only by steps in font size (elm feature)
 [ ] better info in tyls -m
 [ ] tyls -b needs doing
