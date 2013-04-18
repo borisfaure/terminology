@@ -776,7 +776,7 @@ main(int argc, char **argv)
    if (!getenv("TERMINOLOGY")) return 0;
    if ((argc == 2) && (!strcmp(argv[1], "-h")))
      {
-        printf("Usage: %s [-s|-m|-l] FILE1 [FILE2 ...]\n"
+        printf("Usage: %s [-s|-m] FILE1 [FILE2 ...]\n"
                "\n"
                "  -s  Small list mode\n"
                "  -m  Medium list mode\n",
