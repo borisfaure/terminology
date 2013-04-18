@@ -1,14 +1,17 @@
 here's a short list of things i think we can do in the short to medium term to
 make it a first-class terminal:
 
-[ ] VT100-compatibilyt: pass all of http://invisible-island.net/vttest/ tests!
-[ ] tabs: reordering
-[ ] splits need to size only by steps in font size (elm feature)
-[ ] better info in tyls -m
-[ ] tyls -b needs doing
-[ ] blink and blink2 attributes need to be supported
+[ ] vt100-compatibility: pass all of http://invisible-island.net/vttest/ tests!
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
+[ ] apparently there are problems with mutt, screen and tmux? vim
+    mousewheel scroll suport doesnt work
+[ ] tyls code is just horrible. fix it.
+[ ] better info in tyls -m
+[ ] need help screen/page/info with keybindings
+[ ] tabs: reordering should be possible
+[ ] splits need to size only by steps in font size (elm feature)
+[ ] blink and blink2 attributes need to be supported
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)
@@ -25,7 +28,7 @@ make it a first-class terminal:
 [ ] fast text/regex searching similar to urxvt
 [ ] search in terminal (and keep highlighting until search cleared)
 [ ] logging of terminal to file
-[ ] number recognition with base conversion
+[ ] number recognition with base (hex/dec/oct/binary etc.) conversion
 [ ] dnd of file to term offer to paste path, with escapes or paste file
     content (if text) with or without escaping
 [ ] helpers when executed need to escape path/uri in command buffer
@@ -38,10 +41,7 @@ make it a first-class terminal:
 [ ] add better handling of music files (with just playbar+vol, no image)
 [ ] display queue of media visually
 [ ] add option for cjk double width mode
-[ ] apparently there are problems with mutt, screen and tmux? vim
-    mousewheel scroll suport doesnt work
 [ ] possible evas font problem with proggy fonts: http://www.proggyfonts.com/
-[ ] need mouse control for sel object (autoscroll based on position)
 [ ] key controls to begin/change/end selections
 [ ] key controls to hilight visible links and select them
 
