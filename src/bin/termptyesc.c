@@ -309,7 +309,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         for (i = 0; i < arg; i++)
           {
              ty->state.cy--;
-             _termpty_text_scroll_rev_test(ty);
+             _termpty_text_scroll_rev_test(ty, EINA_FALSE);
           }
         break;
       case 'B': // cursor down N
@@ -319,7 +319,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         for (i = 0; i < arg; i++)
           {
              ty->state.cy++;
-             _termpty_text_scroll_test(ty);
+             _termpty_text_scroll_test(ty, EINA_FALSE);
           }
         break;
       case 'D': // cursor left N
@@ -413,12 +413,12 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'S': // scroll up N lines
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        for (i = 0; i < arg; i++) _termpty_text_scroll(ty);
+        for (i = 0; i < arg; i++) _termpty_text_scroll(ty, EINA_FALSE);
         break;
       case 'T': // scroll down N lines
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        for (i = 0; i < arg; i++) _termpty_text_scroll_rev(ty);
+        for (i = 0; i < arg; i++) _termpty_text_scroll_rev(ty, EINA_FALSE);
         break;
       case 'M': // delete N lines - cy
       case 'L': // insert N lines - cy
@@ -442,8 +442,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (arg < 1) arg = 1;
              for (i = 0; i < arg; i++)
                {
-                  if (*cc == 'M') _termpty_text_scroll(ty);
-                  else _termpty_text_scroll_rev(ty);
+                  if (*cc == 'M') _termpty_text_scroll(ty, EINA_TRUE);
+                  else _termpty_text_scroll_rev(ty, EINA_TRUE);
                }
              ty->state.scroll_y1 = sy1;
              ty->state.scroll_y2 = sy2;
@@ -1136,18 +1136,18 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'M': // move to prev line
         ty->state.wrapnext = 0;
         ty->state.cy--;
-        _termpty_text_scroll_rev_test(ty);
+        _termpty_text_scroll_rev_test(ty, EINA_FALSE);
         return 1;
       case 'D': // move to next line
         ty->state.wrapnext = 0;
         ty->state.cy++;
-        _termpty_text_scroll_test(ty);
+        _termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'E': // add \n\r
         ty->state.wrapnext = 0;
         ty->state.cx = 0;
         ty->state.cy++;
-        _termpty_text_scroll_test(ty);
+        _termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'Z': // same a 'ESC [ Pn c'
         _term_txt_write(ty, "\033[?1;2C");
@@ -1310,7 +1310,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              ty->state.wrapnext = 0;
              if (ty->state.crlf) ty->state.cx = 0;
              ty->state.cy++;
-             _termpty_text_scroll_test(ty);
+             _termpty_text_scroll_test(ty, EINA_TRUE);
              ty->state.had_cr = 0;
              return 1;
            case 0x0d: // CR  '\r' (carriage ret)

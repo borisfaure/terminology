@@ -55,7 +55,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 }
 
 void
-_termpty_text_scroll(Termpty *ty)
+_termpty_text_scroll(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells = NULL, *cells2;
    int y, start_y = 0, end_y = ty->h - 1;
@@ -78,6 +78,9 @@ _termpty_text_scroll(Termpty *ty)
      }
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
 
+   if (!clear)
+     return;
+
    if (start_y == 0 && end_y == ty->h - 1)
      {
        // screen is a circular buffer now
@@ -86,7 +89,7 @@ _termpty_text_scroll(Termpty *ty)
 
        ty->circular_offset++;
        if (ty->circular_offset >= ty->h)
-	 ty->circular_offset = 0;
+         ty->circular_offset = 0;
      }
    else
      {
@@ -102,7 +105,7 @@ _termpty_text_scroll(Termpty *ty)
 }
 
 void
-_termpty_text_scroll_rev(Termpty *ty)
+_termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells, *cells2 = NULL;
    int y, start_y = 0, end_y = ty->h - 1;
@@ -114,12 +117,15 @@ _termpty_text_scroll_rev(Termpty *ty)
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
 
+   if (!clear)
+     return;
+
    if (start_y == 0 && end_y == ty->h - 1)
      {
        // screen is a circular buffer now
        ty->circular_offset--;
        if (ty->circular_offset < 0)
-	 ty->circular_offset = ty->h - 1;
+         ty->circular_offset = ty->h - 1;
 
        cells = &(ty->screen[ty->circular_offset * ty->w]);
        _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
@@ -139,27 +145,27 @@ _termpty_text_scroll_rev(Termpty *ty)
 }
 
 void
-_termpty_text_scroll_test(Termpty *ty)
+_termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {
    int e = ty->h;
 
    if (ty->state.scroll_y2 != 0) e = ty->state.scroll_y2;
    if (ty->state.cy >= e)
      {
-        _termpty_text_scroll(ty);
+        _termpty_text_scroll(ty, clear);
         ty->state.cy = e - 1;
      }
 }
 
 void
-_termpty_text_scroll_rev_test(Termpty *ty)
+_termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
 {
    int b = 0;
 
-   if (ty->state.scroll_y2 != 0) b = ty->state.scroll_y1;
+   if (ty->state.scroll_y1 != 0) b = ty->state.scroll_y1;
    if (ty->state.cy < b)
      {
-        _termpty_text_scroll_rev(ty);
+        _termpty_text_scroll_rev(ty, clear);
         ty->state.cy = b;
      }
 }
@@ -181,7 +187,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->state.wrapnext = 0;
              ty->state.cx = 0;
              ty->state.cy++;
-             _termpty_text_scroll_test(ty);
+             _termpty_text_scroll_test(ty, EINA_TRUE);
              cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
           }
         if (ty->state.insert)
