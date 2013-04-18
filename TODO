@@ -31,7 +31,6 @@ make it a first-class terminal:
 [ ] number recognition with base (hex/dec/oct/binary etc.) conversion
 [ ] dnd of file to term offer to paste path, with escapes or paste file
     content (if text) with or without escaping
-[ ] helpers when executed need to escape path/uri in command buffer
 [ ] media - improve position slider to track position as u play
 [ ] improve look of meida controls (youtube like better with mouse move show)
 [ ] make media controls an api where controls are provided by the media

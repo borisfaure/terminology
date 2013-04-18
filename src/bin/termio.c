@@ -122,7 +122,7 @@ _activate_link(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config = termio_config_get(obj);
-   char buf[PATH_MAX], *s;
+   char buf[PATH_MAX], *s, *escaped;
    const char *path = NULL, *cmd = NULL;
    Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
    int type;
@@ -165,52 +165,62 @@ _activate_link(Evas_Object *obj)
         if (casestartswith(s, "mailto:"))
           p += sizeof("mailto:") - 1;
 
-        snprintf(buf, sizeof(buf), "%s %s", cmd, p);
+        escaped = ecore_file_escape_name(p);
+        if (escaped)
+          {
+             snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+             free(escaped);
+          }
      }
    else if (path)
      {
         // locally accessible file
         cmd = "xdg-open";
         
-        type = media_src_type_get(sd->link.string);
-        if (_should_inline(obj))
+        escaped = ecore_file_escape_name(s);
+        if (escaped)
           {
-             if ((type == TYPE_IMG) ||
-                 (type == TYPE_SCALE) ||
-                 (type == TYPE_EDJE))
+             type = media_src_type_get(sd->link.string);
+             if (_should_inline(obj))
                {
-                  evas_object_smart_callback_call(obj, "popup", NULL);
-                  handled = EINA_TRUE;
+                  if ((type == TYPE_IMG) ||
+                      (type == TYPE_SCALE) ||
+                      (type == TYPE_EDJE))
+                    {
+                       evas_object_smart_callback_call(obj, "popup", NULL);
+                       handled = EINA_TRUE;
+                    }
+                  else if (type == TYPE_MOV)
+                    {
+                       evas_object_smart_callback_call(obj, "popup", NULL);
+                       handled = EINA_TRUE;
+                    }
                }
-             else if (type == TYPE_MOV)
+             if (!handled)
                {
-                  evas_object_smart_callback_call(obj, "popup", NULL);
-                  handled = EINA_TRUE;
+                  if ((type == TYPE_IMG) ||
+                      (type == TYPE_SCALE) ||
+                      (type == TYPE_EDJE))
+                    {
+                       if ((config->helper.local.image) &&
+                           (config->helper.local.image[0]))
+                         cmd = config->helper.local.image;
+                    }
+                  else if (type == TYPE_MOV)
+                    {
+                       if ((config->helper.local.video) &&
+                           (config->helper.local.video[0]))
+                         cmd = config->helper.local.video;
+                    }
+                  else
+                    {
+                       if ((config->helper.local.general) &&
+                           (config->helper.local.general[0]))
+                         cmd = config->helper.local.general;
+                    }
+                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+                  free(escaped);
                }
-          }
-        if (!handled)
-          {
-             if ((type == TYPE_IMG) ||
-                 (type == TYPE_SCALE) ||
-                 (type == TYPE_EDJE))
-               {
-                  if ((config->helper.local.image) &&
-                      (config->helper.local.image[0]))
-                    cmd = config->helper.local.image;
-               }
-             else if (type == TYPE_MOV)
-               {
-                  if ((config->helper.local.video) &&
-                      (config->helper.local.video[0]))
-                    cmd = config->helper.local.video;
-               }
-             else
-               {
-                  if ((config->helper.local.general) &&
-                      (config->helper.local.general[0]))
-                    cmd = config->helper.local.general;
-               }
-             snprintf(buf, sizeof(buf), "%s %s", cmd, s);
           }
      }
    else if (url)
@@ -218,47 +228,52 @@ _activate_link(Evas_Object *obj)
         // remote file needs ecore-con-url
         cmd = "xdg-open";
         
-        type = media_src_type_get(sd->link.string);
-        if (_should_inline(obj))
+        escaped = ecore_file_escape_name(s);
+        if (escaped)
           {
-             if ((type == TYPE_IMG) ||
-                 (type == TYPE_SCALE) ||
-                 (type == TYPE_EDJE))
+             type = media_src_type_get(sd->link.string);
+             if (_should_inline(obj))
                {
-                  // XXX: begin fetch of url, once done, show
-                  evas_object_smart_callback_call(obj, "popup", NULL);
-                  handled = EINA_TRUE;
+                  if ((type == TYPE_IMG) ||
+                      (type == TYPE_SCALE) ||
+                      (type == TYPE_EDJE))
+                    {
+                       // XXX: begin fetch of url, once done, show
+                       evas_object_smart_callback_call(obj, "popup", NULL);
+                       handled = EINA_TRUE;
+                    }
+                  else if (type == TYPE_MOV)
+                    {
+                       // XXX: if no http:// add
+                       evas_object_smart_callback_call(obj, "popup", NULL);
+                       handled = EINA_TRUE;
+                    }
                }
-             else if (type == TYPE_MOV)
+             if (!handled)
                {
-                  // XXX: if no http:// add
-                  evas_object_smart_callback_call(obj, "popup", NULL);
-                  handled = EINA_TRUE;
+                  if ((type == TYPE_IMG) ||
+                      (type == TYPE_SCALE) ||
+                      (type == TYPE_EDJE))
+                    {
+                       if ((config->helper.url.image) &&
+                           (config->helper.url.image[0]))
+                         cmd = config->helper.url.image;
+                    }
+                  else if (type == TYPE_MOV)
+                    {
+                       if ((config->helper.url.video) &&
+                           (config->helper.url.video[0]))
+                         cmd = config->helper.url.video;
+                    }
+                  else
+                    {
+                       if ((config->helper.url.general) &&
+                           (config->helper.url.general[0]))
+                         cmd = config->helper.url.general;
+                    }
+                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+                  free(escaped);
                }
-          }
-        if (!handled)
-          {
-             if ((type == TYPE_IMG) ||
-                 (type == TYPE_SCALE) ||
-                 (type == TYPE_EDJE))
-               {
-                  if ((config->helper.url.image) &&
-                      (config->helper.url.image[0]))
-                    cmd = config->helper.url.image;
-               }
-             else if (type == TYPE_MOV)
-               {
-                  if ((config->helper.url.video) &&
-                      (config->helper.url.video[0]))
-                    cmd = config->helper.url.video;
-               }
-             else
-               {
-                  if ((config->helper.url.general) &&
-                      (config->helper.url.general[0]))
-                    cmd = config->helper.url.general;
-               }
-             snprintf(buf, sizeof(buf), "%s %s", cmd, s);
           }
      }
    else
