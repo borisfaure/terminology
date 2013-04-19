@@ -2631,6 +2631,8 @@ elm_main(int argc, char **argv)
    elm_theme_overlay_add(NULL, config_theme_path_get(main_config));
    elm_theme_overlay_add(NULL, config_theme_path_default_get(main_config));
    
+   ipc_init();
+
    config = config_fork(main_config);
 
    args = ecore_getopt_parse(&options, values, argc, argv);
@@ -2839,7 +2841,6 @@ elm_main(int argc, char **argv)
    // for now if not set - dont do login shell - later from config
    if (login_shell == 0xff) login_shell = EINA_FALSE;
 
-   ipc_init();
 remote:
    if ((!single) && (config->multi_instance))
      {
