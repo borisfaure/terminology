@@ -765,7 +765,10 @@ static void
 _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
-/*
+/* See the XXX: below - disable this line of protection:
+ *         if (offset < 0) offset = 0;
+ * and we get the following crash:
+ * 
  * - Open terminology
  * - Maximize (with Ctrl+Alt+n)
  * - Choose some repo
@@ -862,7 +865,10 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
         len = real_h - to_history;
         pos = (len + ty->circular_offset) % old_h;
         offset = len - pos;
-
+        
+        // XXX: this is a segv protection... it may cause mis-drawing?
+        if (offset < 0) offset = 0;
+        
         /* 2 times */
         for (y = pos - 1; y >= 0; y--)
           {
