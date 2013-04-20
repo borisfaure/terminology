@@ -941,7 +941,6 @@ _block_edje_cmds(Termpty *ty, Termblock *blk, Eina_List *cmds, Eina_Bool created
                                                   blk);
                }
           }
-        
         if (l) l = l->next;
      }
 }
@@ -3529,7 +3528,7 @@ _smart_pty_command(void *data)
                             if ((*p1 == '\n') || (*p1 == '\r') || (!*p1))
                               {
                                  // if string is non-empty...
-                                 if ((p1 - p0) > 1)
+                                 if ((p1 - p0) >= 1)
                                    {
                                       // allocate, fill and add to list
                                       pp = malloc(p1 - p0 + 1);
