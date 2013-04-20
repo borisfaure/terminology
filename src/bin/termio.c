@@ -622,6 +622,200 @@ _smart_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __
 }
 
 static void
+_block_edje_cmds(Termblock *blk, Eina_List *cmds)
+{
+   Eina_List *l;
+   char *s;
+        
+#define ISCMD(cmd) !strcmp(s, cmd)
+#define GETS(var) l = l->next; if (!l) break; var = l->data
+#define GETI(var) l = l->next; if (!l) break; var = atoi(l->data)
+#define GETF(var) l = l->next; if (!l) break; var = (double)atoi(l->data) / 1000.0
+   l = cmds;
+   while (l)
+     {
+        s = l->data;
+        
+        /////////////////////////////////////////////////////////////////////
+        if (ISCMD("text")) // set text part
+          {
+             char *prt, *txt;
+             
+             GETS(prt);
+             GETS(txt);
+             edje_object_part_text_set(blk->obj, prt, txt);
+          }
+        /////////////////////////////////////////////////////////////////////
+        else if (ISCMD("emit")) // emit signal
+          {
+             char *sig, *src;
+             
+             GETS(sig);
+             GETS(src);
+             edje_object_signal_emit(blk->obj, sig, src);
+          }
+        /////////////////////////////////////////////////////////////////////
+        else if (ISCMD("drag")) // set dragable
+          {
+             char *prt, *val;
+             double v1, v2;
+             
+             GETS(prt);
+             GETS(val);
+             GETF(v1);
+             GETF(v2);
+             if (!strcmp(val, "value"))
+               edje_object_part_drag_value_set(blk->obj, prt, v1, v2);
+             else if (!strcmp(val, "size"))
+               edje_object_part_drag_size_set(blk->obj, prt, v1, v2);
+             else if (!strcmp(val, "step"))
+               edje_object_part_drag_step_set(blk->obj, prt, v1, v2);
+             else if (!strcmp(val, "page"))
+               edje_object_part_drag_page_set(blk->obj, prt, v1, v2);
+          }
+        /////////////////////////////////////////////////////////////////////
+        else if (ISCMD("message")) // send message
+          {
+             char *typ;
+             
+             GETS(typ);
+             // XXX: handle
+             if (!strcmp(typ, "string"))
+               {
+               }
+             else if (!strcmp(typ, "int"))
+               {
+               }
+             else if (!strcmp(typ, "float"))
+               {
+               }
+             else if (!strcmp(typ, "string_set"))
+               {
+               }
+             else if (!strcmp(typ, "int_set"))
+               {
+               }
+             else if (!strcmp(typ, "float_set"))
+               {
+               }
+             else if (!strcmp(typ, "string_int"))
+               {
+               }
+             else if (!strcmp(typ, "string_float"))
+               {
+               }
+             else if (!strcmp(typ, "string_int_set"))
+               {
+               }
+             else if (!strcmp(typ, "string_float_set"))
+               {
+               }
+          }
+        /////////////////////////////////////////////////////////////////////
+        else if (ISCMD("chid")) // set callback channel id
+          {
+             char *chid;
+             
+             GETS(chid);
+             if (!blk->chid)
+               {
+                  blk->chid = eina_stringshare_add(chid);
+                  // XXX: add to a hash by chid
+                  // XXX: all signal callbacks, messages and dragable signals
+                  // are routed to the named callback channel IF it is active
+                  // at the time
+               }
+          }
+        
+        if (l) l = l->next;
+     }
+}
+
+static void
+_block_edje_activate(Evas_Object *obj, Termblock *blk)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Eina_Bool ok = EINA_FALSE;
+   
+   if (!sd) return;
+   if ((!blk->path) || (!blk->link)) return;
+   blk->obj = edje_object_add(evas_object_evas_get(obj));
+   if (blk->path[0] == '/')
+     ok = edje_object_file_set(blk->obj, blk->path, blk->link);
+   else if (!strcmp(blk->path, "THEME"))
+     ok = edje_object_file_set(blk->obj, 
+                               config_theme_path_default_get
+                               (sd->config),
+                               blk->link);
+   else
+     {
+        char path[PATH_MAX], home[PATH_MAX];
+        
+        if (homedir_get(home, sizeof(home)))
+          {
+             snprintf(path, sizeof(path), "%s/.terminology/objlib/%s",
+                      home, blk->path);
+             ok = edje_object_file_set(blk->obj, path, blk->link);
+          }
+        if (!ok)
+          {
+             snprintf(path, sizeof(path), "%s/objlib/%s",
+                      elm_app_data_dir_get(), blk->path);
+             ok = edje_object_file_set(blk->obj, path, blk->link);
+          }
+     }
+   evas_object_smart_member_add(blk->obj, obj);
+   evas_object_stack_above(blk->obj, sd->grid.obj);
+   evas_object_show(blk->obj);
+   evas_object_data_set(blk->obj, "blk", blk);
+
+   if (ok) _block_edje_cmds(blk, blk->cmds);
+}
+
+static void
+_block_media_activate(Evas_Object *obj, Termblock *blk)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   int type = 0;
+   int media = MEDIA_STRETCH;
+        
+   if (!sd) return;
+   if (blk->scale_stretch) media = MEDIA_STRETCH;
+   else if (blk->scale_center) media = MEDIA_POP;
+   else if (blk->scale_fill) media = MEDIA_BG;
+   else if (blk->thumb) media = MEDIA_THUMB;
+//   media = MEDIA_POP;
+   if (!blk->was_active_before) media |= MEDIA_SAVE;
+   else media |= MEDIA_RECOVER | MEDIA_SAVE;
+   blk->obj = media_add(obj, blk->path, sd->config, media, &type);
+   evas_object_event_callback_add
+     (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);
+   blk->type = type;
+   evas_object_smart_member_add(blk->obj, obj);
+   evas_object_stack_above(blk->obj, sd->grid.obj);
+   evas_object_show(blk->obj);
+   evas_object_data_set(blk->obj, "blk", blk);
+   if (blk->thumb)
+     evas_object_smart_callback_add
+     (blk->obj, "clicked", _smart_media_clicked, obj);
+}
+
+static void
+_block_activate(Evas_Object *obj, Termblock *blk)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   if (blk->active) return;
+   blk->active = EINA_TRUE;
+   if (blk->obj) return;
+   if (blk->edje) _block_edje_activate(obj, blk);
+   else _block_media_activate(obj, blk);
+   blk->was_active_before = EINA_TRUE;
+   if (!blk->was_active)
+     sd->pty->block.active = eina_list_append(sd->pty->block.active, blk);
+}
+
+static void
 _smart_apply(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -688,47 +882,7 @@ _smart_apply(Evas_Object *obj)
                        blk = termpty_block_get(sd->pty, bid);
                        if (blk)
                          {
-                            if (!blk->active)
-                              {
-                                 blk->active = EINA_TRUE;
-                                 if (!blk->obj)
-                                   {
-                                      int type = 0;
-                                      int media = MEDIA_STRETCH;
-                                      
-                                      if (blk->scale_stretch)
-                                        media = MEDIA_STRETCH;
-                                      else if (blk->scale_center)
-                                        media = MEDIA_POP;
-                                      else if (blk->scale_fill)
-                                        media = MEDIA_BG;
-                                      else if (blk->thumb)
-                                        media = MEDIA_THUMB;
-//                                        media = MEDIA_POP;
-                                      if (!blk->was_active_before)
-                                        media |= MEDIA_SAVE;
-                                      else
-                                        media |= MEDIA_RECOVER | MEDIA_SAVE;
-                                      blk->obj = media_add(obj, blk->path,
-                                                           sd->config,
-                                                           media, &type);
-                                      evas_object_event_callback_add
-                                      (blk->obj, EVAS_CALLBACK_DEL,
-                                          _smart_media_del, blk);
-                                      blk->type = type;
-                                      evas_object_smart_member_add(blk->obj, obj);
-                                      evas_object_stack_above(blk->obj, sd->grid.obj);
-                                      evas_object_show(blk->obj);
-                                      evas_object_data_set(blk->obj, "blk", blk);
-                                      if (blk->thumb)
-                                        evas_object_smart_callback_add
-                                        (blk->obj, "clicked",
-                                            _smart_media_clicked, obj);
-                                   }
-                                 blk->was_active_before = EINA_TRUE;
-                                 if (!blk->was_active)
-                                   sd->pty->block.active = eina_list_append(sd->pty->block.active, blk);
-                              }
+                            _block_activate(obj, blk);
                             blk->x = (x - bx);
                             blk->y = (y - by);
                             evas_object_move(blk->obj,
@@ -860,8 +1014,10 @@ _smart_apply(Evas_Object *obj)
         if (!blk->active)
           {
              blk->was_active = EINA_FALSE;
+             // XXX: move to func
              if (blk->obj)
                {
+                  // XXX: handle if edje not media
                   evas_object_event_callback_del_full
                     (blk->obj, EVAS_CALLBACK_DEL,
                         _smart_media_del, blk);
@@ -3102,11 +3258,13 @@ _smart_pty_command(void *data)
         if ((sd->pty->cur_cmd[1] == 's') ||
             (sd->pty->cur_cmd[1] == 'c') ||
             (sd->pty->cur_cmd[1] == 'f') ||
-            (sd->pty->cur_cmd[1] == 't'))
+            (sd->pty->cur_cmd[1] == 't') ||
+            (sd->pty->cur_cmd[1] == 'j'))
           {
-             const char *p, *p0, *path;
+             const char *p, *p0, *p1, *path = NULL;
              char *pp;
              int ww = 0, hh = 0, repch;
+             Eina_List *strs = NULL;
              
              // exact size in CHAR CELLS - WW (decimal) width CELLS,
              // HH (decimal) in CELLS.
@@ -3114,6 +3272,12 @@ _smart_pty_command(void *data)
              // isCWW;HH;PATH
              //  OR
              // isCWW;HH;LINK\nPATH
+             //  OR specific to 'j' (edje)
+             // ijCWW;HH;PATH\nGROUP[commands]
+             //  WHERE [commands] is an optional string set of:
+             // \nCMD\nP1[\nP2][\nP3][[\nCMD2\nP21[\nP22]]...
+             //  CMD is the command, P1, P2, P3 etc. are parameters (P2 and
+             //  on are optional depending on CMD)
              repch = sd->pty->cur_cmd[2];
              if (repch)
                {
@@ -3137,23 +3301,75 @@ _smart_pty_command(void *data)
                             break;
                          }
                     }
-                  path = p;
-                  p = strchr(path, '\n');
-                  if (p)
+                  if (sd->pty->cur_cmd[1] == 'j')
                     {
-                       link = strdup(path);
-                       path = p + 1;
-                       if (isspace(path[0])) path++;
-                       pp = strchr(link, '\n');
-                       if (pp) *pp = 0;
-                       pp = strchr(link, '\r');
-                       if (pp) *pp = 0;
+                       // parse from p until end of string - one newline
+                       // per list item in strs
+                       p0 = p1 = p;
+                       for (;;)
+                         {
+                            // end of str param
+                            if ((*p1 == '\n') || (*p1 == '\r') || (!*p1))
+                              {
+                                 // if string is non-empty...
+                                 if ((p1 - p0) > 1)
+                                   {
+                                      // allocate, fill and add to list
+                                      pp = malloc(p1 - p0 + 1);
+                                      if (pp)
+                                        {
+                                           strncpy(pp, p0, p1 - p0);
+                                           pp[p1 - p0] = 0;
+                                           strs = eina_list_append(strs, pp);
+                                        }
+                                   }
+                                 // end of string buffer
+                                 if (!*p1) break;
+                                 p1++; // skip \n or \r
+                                 p0 = p1;
+                              }
+                            else
+                              p1++;
+                         }
+                    }
+                  else
+                    {
+                       path = p;
+                       p = strchr(path, '\n');
+                       if (p)
+                         {
+                            link = strdup(path);
+                            path = p + 1;
+                            if (isspace(path[0])) path++;
+                            pp = strchr(link, '\n');
+                            if (pp) *pp = 0;
+                            pp = strchr(link, '\r');
+                            if (pp) *pp = 0;
+                         }
                     }
                   if ((ww < 512) && (hh < 512))
                     {
-                       Termblock *blk;
+                       Termblock *blk = NULL;
 
-                       blk = termpty_block_new(sd->pty, ww, hh, path, link);
+                       if (strs)
+                         {
+                            const char *file, *group;
+                            Eina_List *l;
+                            
+                            file = eina_list_nth(strs, 0);
+                            group = eina_list_nth(strs, 1);
+                            l = eina_list_nth_list(strs, 2);
+                            blk = termpty_block_new(sd->pty, ww, hh, file, group);
+                            for (;l; l = l->next)
+                              {
+                                 pp = l->data;
+                                 if (pp)
+                                   blk->cmds = eina_list_append(blk->cmds, pp);
+                                 l->data = NULL;
+                              }
+                         }
+                       else
+                         blk = termpty_block_new(sd->pty, ww, hh, path, link);
                        if (blk)
                          {
                             if (sd->pty->cur_cmd[1] == 's')
@@ -3164,10 +3380,13 @@ _smart_pty_command(void *data)
                               blk->scale_fill = EINA_TRUE;
                             else if (sd->pty->cur_cmd[1] == 't')
                               blk->thumb = EINA_TRUE;
+                            else if (sd->pty->cur_cmd[1] == 'j')
+                              blk->edje = EINA_TRUE;
                             termpty_block_insert(sd->pty, repch, blk);
                          }
                     }
                   if (link) free(link);
+                  EINA_LIST_FREE(strs, pp) free(pp);
                }
              return;
           }

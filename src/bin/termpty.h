@@ -144,12 +144,14 @@ struct _Termblock
    int          refs;
    short        w, h;
    short        x, y;
-   const char  *path, *link;
+   const char  *path, *link, *chid;
    Evas_Object *obj;
+   Eina_List   *cmds;
    Eina_Bool    scale_stretch : 1;
    Eina_Bool    scale_center : 1;
    Eina_Bool    scale_fill : 1;
    Eina_Bool    thumb : 1;
+   Eina_Bool    edje : 1;
    
    Eina_Bool    active : 1;
    Eina_Bool    was_active : 1;

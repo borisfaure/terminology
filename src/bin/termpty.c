@@ -1221,9 +1221,12 @@ termpty_pid_get(const Termpty *ty)
 void
 termpty_block_free(Termblock *tb)
 {
+   char *s;
    if (tb->path) eina_stringshare_del(tb->path);
    if (tb->link) eina_stringshare_del(tb->link);
+   if (tb->chid) eina_stringshare_del(tb->chid);
    if (tb->obj) evas_object_del(tb->obj);
+   EINA_LIST_FREE(tb->cmds, s) free(s);
    free(tb);
 }
 
