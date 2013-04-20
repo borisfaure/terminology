@@ -384,6 +384,7 @@ termpty_free(Termpty *ty)
    
    EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
+   if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
    if (ty->block.active) eina_list_free(ty->block.active);
    if (ty->fd >= 0) close(ty->fd);
    if (ty->slavefd >= 0) close(ty->slavefd);
@@ -1293,6 +1294,7 @@ termpty_block_new(Termpty *ty, int w, int h, const char *path, const char *link)
      }
    tb = calloc(1, sizeof(Termblock));
    if (!tb) return NULL;
+   tb->pty = ty;
    tb->id = id;
    tb->w = w;
    tb->h = h;
@@ -1346,7 +1348,24 @@ termpty_block_get(Termpty *ty, int id)
    return eina_hash_find(ty->block.blocks, &id);
 }
 
+void
+termpty_block_chid_update(Termpty *ty, Termblock *blk)
+{
+   if (!blk->chid) return;
+   if (!ty->block.chid_map)
+     ty->block.chid_map = eina_hash_string_superfast_new(NULL);
+   if (!ty->block.chid_map) return;
+   eina_hash_add(ty->block.chid_map, blk->chid, blk);
+}
 
+Termblock *
+termpty_block_chid_get(Termpty *ty, const char *chid)
+{
+   Termblock *tb;
+   
+   tb = eina_hash_find(ty->block.chid_map, chid);
+   return tb;
+}
 
 
 

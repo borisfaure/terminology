@@ -76,6 +76,7 @@ struct _Termio
    Config *config;
    Ecore_IMF_Context *imf;
    const char *sel_str;
+   const char *cur_chid;
    Ecore_Job *sel_reset_job;
    double set_sel_at;
    Elm_Sel_Type sel_type;
@@ -622,15 +623,118 @@ _smart_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __
 }
 
 static void
-_block_edje_cmds(Termblock *blk, Eina_List *cmds)
+_block_edje_signal_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
+{
+   Termblock *blk = data;
+   Termio *sd = evas_object_smart_data_get(blk->pty->obj);
+   char *buf = NULL;
+   int buflen = 0;
+   
+   if (!sd) return;
+   if ((!blk->chid) || (!sd->cur_chid)) return;
+   if (!(!strcmp(blk->chid, sd->cur_chid))) return;
+   if ((!strcmp(sig, "drag")) ||
+       (!strcmp(sig, "drag,start")) ||
+       (!strcmp(sig, "drag,stop")) ||
+       (!strcmp(sig, "drag,step")) ||
+       (!strcmp(sig, "drag,set")))
+     {
+        int v1, v2;
+        double f1 = 0.0, f2 = 0.0;
+        
+        edje_object_part_drag_value_get(blk->obj, src, &f1, &f2);
+        v1 = (int)(f1 * 1000.0);
+        v2 = (int)(f2 * 1000.0);
+        buf = alloca(strlen(src) + 256);
+        buflen = sprintf(buf, "%c}%s;%s\n%i\n%i", 0x1b, sig, src, v1, v2);
+        termpty_write(sd->pty, buf, buflen + 1);
+     }
+   else
+     {
+        buf = alloca(strlen(sig) + strlen(src) + 128);
+        buflen = sprintf(buf, "%c}signal;%s\n%s", 0x1b, sig, src);
+        termpty_write(sd->pty, buf, buflen + 1);
+     }
+}
+
+static void
+_block_edje_message_cb(void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+{
+   Termblock *blk = data;
+   Termio *sd = evas_object_smart_data_get(blk->pty->obj);
+   
+   if (!sd) return;
+   if ((!blk->chid) || (!sd->cur_chid)) return;
+   if (!(!strcmp(blk->chid, sd->cur_chid))) return;
+
+   switch (type)
+     {
+        // XXX: handle
+      case EDJE_MESSAGE_STRING:
+          {
+             Edje_Message_String *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_INT:
+          {
+             Edje_Message_Int *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_FLOAT:
+          {
+             Edje_Message_Float *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_STRING_SET:
+          {
+             Edje_Message_String_Set *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_INT_SET:
+          {
+             Edje_Message_Int_Set *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_FLOAT_SET:
+          {
+             Edje_Message_Float_Set *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_STRING_INT:
+          {
+             Edje_Message_String_Int *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_STRING_FLOAT:
+          {
+             Edje_Message_String_Float *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_STRING_INT_SET:
+          {
+             Edje_Message_String_Int_Set *m = msg;
+          }
+        break;
+      case EDJE_MESSAGE_STRING_FLOAT_SET:
+          {
+             Edje_Message_String_Float_Set *m = msg;
+          }
+        break;
+      default:
+        break;
+     }
+}
+
+static void
+_block_edje_cmds(Termpty *ty, Termblock *blk, Eina_List *cmds, Eina_Bool created)
 {
    Eina_List *l;
    char *s;
         
 #define ISCMD(cmd) !strcmp(s, cmd)
-#define GETS(var) l = l->next; if (!l) break; var = l->data
-#define GETI(var) l = l->next; if (!l) break; var = atoi(l->data)
-#define GETF(var) l = l->next; if (!l) break; var = (double)atoi(l->data) / 1000.0
+#define GETS(var) l = l->next; if (!l) return; var = l->data
+#define GETI(var) l = l->next; if (!l) return; var = atoi(l->data)
+#define GETF(var) l = l->next; if (!l) return; var = (double)atoi(l->data) / 1000.0
    l = cmds;
    while (l)
      {
@@ -676,39 +780,144 @@ _block_edje_cmds(Termblock *blk, Eina_List *cmds)
         /////////////////////////////////////////////////////////////////////
         else if (ISCMD("message")) // send message
           {
+             int id;
              char *typ;
              
+             GETI(id);
              GETS(typ);
-             // XXX: handle
              if (!strcmp(typ, "string"))
                {
+                  Edje_Message_String *m;
+                  
+                  m = alloca(sizeof(Edje_Message_String));
+                  GETS(m->str);
+                  edje_object_message_send(blk->obj, EDJE_MESSAGE_STRING,
+                                           id, m);
                }
              else if (!strcmp(typ, "int"))
                {
+                  Edje_Message_Int *m;
+                  
+                  m = alloca(sizeof(Edje_Message_Int));
+                  GETI(m->val);
+                  edje_object_message_send(blk->obj, EDJE_MESSAGE_INT,
+                                           id, m);
                }
              else if (!strcmp(typ, "float"))
                {
+                  Edje_Message_Float *m;
+                  
+                  m = alloca(sizeof(Edje_Message_Float));
+                  GETF(m->val);
+                  edje_object_message_send(blk->obj, EDJE_MESSAGE_FLOAT,
+                                           id, m);
                }
              else if (!strcmp(typ, "string_set"))
                {
+                  Edje_Message_String_Set *m;
+                  int i, count;
+                  
+                  GETI(count);
+                  m = alloca(sizeof(Edje_Message_String_Set) + 
+                             ((count - 1) * sizeof(char *)));
+                  m->count = count;
+                  for (i = 0; i < m->count; i++)
+                    {
+                       GETS(m->str[i]);
+                    }
+                  edje_object_message_send(blk->obj,
+                                           EDJE_MESSAGE_STRING_SET,
+                                           id, m);
                }
              else if (!strcmp(typ, "int_set"))
                {
+                  Edje_Message_Int_Set *m;
+                  int i, count;
+                  
+                  GETI(count);
+                  m = alloca(sizeof(Edje_Message_Int_Set) + 
+                             ((count - 1) * sizeof(int)));
+                  m->count = count;
+                  for (i = 0; i < m->count; i++)
+                    {
+                       GETI(m->val[i]);
+                    }
+                  edje_object_message_send(blk->obj,
+                                           EDJE_MESSAGE_INT_SET,
+                                           id, m);
                }
              else if (!strcmp(typ, "float_set"))
                {
+                  Edje_Message_Float_Set *m;
+                  int i, count;
+                  
+                  GETI(count);
+                  m = alloca(sizeof(Edje_Message_Float_Set) +
+                             ((count - 1) * sizeof(double)));
+                  m->count = count;
+                  for (i = 0; i < m->count; i++)
+                    {
+                       GETF(m->val[i]);
+                    }
+                  edje_object_message_send(blk->obj,
+                                           EDJE_MESSAGE_FLOAT_SET,
+                                           id, m);
                }
              else if (!strcmp(typ, "string_int"))
                {
+                  Edje_Message_String_Int *m;
+                  
+                  m = alloca(sizeof(Edje_Message_String_Int));
+                  GETS(m->str);
+                  GETI(m->val);
+                  edje_object_message_send(blk->obj, EDJE_MESSAGE_STRING_INT,
+                                           id, m);
                }
              else if (!strcmp(typ, "string_float"))
                {
+                  Edje_Message_String_Float *m;
+                  
+                  m = alloca(sizeof(Edje_Message_String_Float));
+                  GETS(m->str);
+                  GETF(m->val);
+                  edje_object_message_send(blk->obj, EDJE_MESSAGE_STRING_FLOAT,
+                                           id, m);
                }
              else if (!strcmp(typ, "string_int_set"))
                {
+                  Edje_Message_String_Int_Set *m;
+                  int i, count;
+                  
+                  GETI(count);
+                  m = alloca(sizeof(Edje_Message_String_Int_Set) + 
+                             ((count - 1) * sizeof(int)));
+                  GETS(m->str);
+                  m->count = count;
+                  for (i = 0; i < m->count; i++)
+                    {
+                       GETI(m->val[i]);
+                    }
+                  edje_object_message_send(blk->obj,
+                                           EDJE_MESSAGE_STRING_INT_SET,
+                                           id, m);
                }
              else if (!strcmp(typ, "string_float_set"))
                {
+                  Edje_Message_String_Float_Set *m;
+                  int i, count;
+                  
+                  GETI(count);
+                  m = alloca(sizeof(Edje_Message_String_Float_Set) + 
+                             ((count - 1) * sizeof(double)));
+                  GETS(m->str);
+                  m->count = count;
+                  for (i = 0; i < m->count; i++)
+                    {
+                       GETF(m->val[i]);
+                    }
+                  edje_object_message_send(blk->obj,
+                                           EDJE_MESSAGE_STRING_FLOAT_SET,
+                                           id, m);
                }
           }
         /////////////////////////////////////////////////////////////////////
@@ -720,10 +929,16 @@ _block_edje_cmds(Termblock *blk, Eina_List *cmds)
              if (!blk->chid)
                {
                   blk->chid = eina_stringshare_add(chid);
-                  // XXX: add to a hash by chid
-                  // XXX: all signal callbacks, messages and dragable signals
-                  // are routed to the named callback channel IF it is active
-                  // at the time
+                  termpty_block_chid_update(ty, blk);
+               }
+             if (created)
+               {
+                  edje_object_signal_callback_add(blk->obj, "*", "*",
+                                                  _block_edje_signal_cb,
+                                                  blk);
+                  edje_object_message_handler_set(blk->obj,
+                                                  _block_edje_message_cb,
+                                                  blk);
                }
           }
         
@@ -765,11 +980,11 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
           }
      }
    evas_object_smart_member_add(blk->obj, obj);
-   evas_object_stack_above(blk->obj, sd->grid.obj);
+   evas_object_stack_above(blk->obj, sd->event);
    evas_object_show(blk->obj);
    evas_object_data_set(blk->obj, "blk", blk);
 
-   if (ok) _block_edje_cmds(blk, blk->cmds);
+   if (ok) _block_edje_cmds(sd->pty, blk, blk->cmds, EINA_TRUE);
 }
 
 static void
@@ -3072,6 +3287,8 @@ _smart_del(Evas_Object *obj)
    _compose_seq_reset(sd);
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
+   if (sd->cur_chid) eina_stringshare_del(sd->cur_chid);
+   sd->cur_chid = NULL;
    sd->sel_str = NULL;
    sd->sel_reset_job = NULL;
    sd->link.down.dndobj = NULL;
@@ -3410,6 +3627,23 @@ _smart_pty_command(void *data)
              termpty_write(sd->pty, buf, strlen(buf));
              return;
           }
+        else if (sd->pty->cur_cmd[1] == 'j')
+          {
+             if (sd->pty->cur_cmd[2])
+               {
+                  if (sd->cur_chid) eina_stringshare_del(sd->cur_chid);
+                  sd->cur_chid = eina_stringshare_add(&(sd->pty->cur_cmd[2]));
+               }
+             else
+               {
+                  if (sd->cur_chid)
+                    {
+                       eina_stringshare_del(sd->cur_chid);
+                       sd->cur_chid = NULL;
+                    }
+               }
+             return;
+          }
      }
    evas_object_smart_callback_call(obj, "command", (void *)sd->pty->cur_cmd);
 }
@@ -3536,6 +3770,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
 #endif
    
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
+   sd->pty->obj = obj;
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
    sd->pty->cb.scroll.func = _smart_pty_scroll;

@@ -89,6 +89,7 @@ struct _Termstate
 
 struct _Termpty
 {
+   Evas_Object *obj;
    Ecore_Event_Handler *hand_exe_exit;
    Ecore_Fd_Handler *hand_fd;
    struct {
@@ -113,6 +114,7 @@ struct _Termpty
    struct {
       int curid;
       Eina_Hash *blocks;
+      Eina_Hash *chid_map;
       Eina_List *active;
       Eina_List *expecting;
       Eina_Bool on : 1;
@@ -139,14 +141,15 @@ struct _Termsave
 
 struct _Termblock
 {
+   Termpty     *pty;
+   const char  *path, *link, *chid;
+   Evas_Object *obj;
+   Eina_List   *cmds;
    int          id;
    int          type;
    int          refs;
    short        w, h;
    short        x, y;
-   const char  *path, *link, *chid;
-   Evas_Object *obj;
-   Eina_List   *cmds;
    Eina_Bool    scale_stretch : 1;
    Eina_Bool    scale_center : 1;
    Eina_Bool    scale_fill : 1;
@@ -180,6 +183,8 @@ Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path, const 
 void       termpty_block_insert(Termpty *ty, int ch, Termblock *blk);
 int        termpty_block_id_get(Termcell *cell, int *x, int *y);
 Termblock *termpty_block_get(Termpty *ty, int id);
+void       termpty_block_chid_update(Termpty *ty, Termblock *blk);
+Termblock *termpty_block_chid_get(Termpty *ty, const char *chid);
 
 void       termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_swap(Termpty *ty, Termcell *src, Termcell *dst, int n);
