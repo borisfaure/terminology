@@ -765,6 +765,46 @@ static void
 _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
+/*
+ * - Open terminology
+ * - Maximize (with Ctrl+Alt+n)
+ * - Choose some repo
+ * - git log | head -n 1000000
+ * - Minimize (with Ctrl+Alt+n)
+ * - Crash
+ * 
+ * ==18772== Invalid read of size 4
+ * ==18772==    at 0x432774: termpty_cell_copy (termpty.c:1347)
+ * ==18772==    by 0x430EA7: _termpty_vertically_shrink (termpty.c:831)
+ * ==18772==    by 0x431FCC: termpty_resize (termpty.c:1163)
+ * ==18772==    by 0x425764: _smart_size (termio.c:1179)
+ * ==18772==    by 0x425852: _smart_cb_delayed_size (termio.c:1200)
+ * ==18772==    by 0x62AFFB4: _ecore_call_task_cb (ecore_private.h:303)
+ * ==18772==    by 0x62B1918: _ecore_timer_expired_call (ecore_timer.c:912)
+ * ==18772==    by 0x62B1794: _ecore_timer_expired_timers_call (ecore_timer.c:866)
+ * ==18772==    by 0x62AD66D: _ecore_main_loop_iterate_internal (ecore_main.c:1832)
+ * ==18772==    by 0x62ABAD4: ecore_main_loop_begin (ecore_main.c:963)
+ * ==18772==    by 0x4F8A1C8: elm_run (elm_main.c:967)
+ * ==18772==    by 0x4161D0: elm_main (main.c:2932)
+ * ==18772==    by 0x4162B0: main (main.c:2956)
+ * ==18772==  Address 0x1a29d048 is 556,040 bytes inside a block of size 560,056 free'd
+ * ==18772==    at 0x4C2A82E: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+ * ==18772==    by 0x5F68419: _size_set (evas_object_textgrid.c:1050)
+ * ==18772==    by 0x806AE75: _eo_op_internal (eo.c:328)
+ * ==18772==    by 0x806AFBC: _eo_dov_internal (eo.c:362)
+ * ==18772==    by 0x806B245: eo_do_internal (eo.c:391)
+ * ==18772==    by 0x5F682DF: evas_object_textgrid_size_set (evas_object_textgrid.c:1026)
+ * ==18772==    by 0x4256B7: _smart_size (termio.c:1170)
+ * ==18772==    by 0x425852: _smart_cb_delayed_size (termio.c:1200)
+ * ==18772==    by 0x62AFFB4: _ecore_call_task_cb (ecore_private.h:303)
+ * ==18772==    by 0x62B1918: _ecore_timer_expired_call (ecore_timer.c:912)
+ * ==18772==    by 0x62B1794: _ecore_timer_expired_timers_call (ecore_timer.c:866)
+ * ==18772==    by 0x62AD66D: _ecore_main_loop_iterate_internal (ecore_main.c:1832)
+ * ==18772==    by 0x62ABAD4: ecore_main_loop_begin (ecore_main.c:963)
+ * ==18772==    by 0x4F8A1C8: elm_run (elm_main.c:967)
+ * ==18772==    by 0x4161D0: elm_main (main.c:2932)
+ * ==18772==    by 0x4162B0: main (main.c:2956)
+ */
    int to_history,
        real_h = old_h,
        old_circular_offset,
@@ -840,11 +880,9 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
 
         len = ty->h - len;
         if (len)
-          {
-             memset(&old_screen[(old_h - len) * old_w],
-                    0,
-                    sizeof(Termcell) * len * old_w);
-          }
+          termpty_cell_fill(ty, NULL, 
+                            &old_screen[(old_h - len) * old_w],
+                            len * old_w);
      }
 }
 
@@ -1102,7 +1140,7 @@ shrink_screen:
                        cells = &TERMPTY_SCREEN(ty, 0, y);
                        len = termpty_line_length(cells, ty->w);
                        termpty_text_save_top(ty, cells, len);
-                       memset(cells, 0, sizeof(Termcell) * len);
+                       termpty_cell_fill(ty, NULL, cells, len);
                        if (ty->state.cy == old_y || cy_pushed_back)
                          {
                             cy_pushed_back = EINA_TRUE;
