@@ -22,6 +22,7 @@ void         termio_grid_size_set(Evas_Object *obj, int w, int h);
 pid_t        termio_pid_get(const Evas_Object *obj);
 Eina_Bool    termio_cwd_get(const Evas_Object *obj, char *buf, size_t size);
 Evas_Object *termio_textgrid_get(Evas_Object *obj);
+Evas_Object *termio_win_get(Evas_Object *obj);
 Evas_Object *termio_mirror_add(Evas_Object *obj);
 const char  *termio_title_get(Evas_Object *obj);
 const char  *termio_icon_name_get(Evas_Object *obj);
