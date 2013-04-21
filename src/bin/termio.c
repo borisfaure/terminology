@@ -4375,6 +4375,16 @@ termio_textgrid_get(Evas_Object *obj)
    return sd->grid.obj;
 }
 
+Evas_Object *
+termio_win_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+
+   return sd->win;
+}
+
+
 static void
 _smart_mirror_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
 {
