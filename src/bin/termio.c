@@ -76,7 +76,7 @@ struct _Termio
    Config *config;
    Ecore_IMF_Context *imf;
    const char *sel_str;
-   const char *cur_chid;
+   Eina_List *cur_chids;
    Ecore_Job *sel_reset_job;
    double set_sel_at;
    Elm_Sel_Type sel_type;
@@ -623,16 +623,22 @@ _smart_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __
 }
 
 static void
-_block_edje_signal_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
+_block_edje_signal_cb(void *data, Evas_Object *obj __UNUSED__, const char *sig, const char *src)
 {
    Termblock *blk = data;
    Termio *sd = evas_object_smart_data_get(blk->pty->obj);
-   char *buf = NULL;
+   char *buf = NULL, *chid = NULL;
    int buflen = 0;
+   Eina_List *l;
    
    if (!sd) return;
-   if ((!blk->chid) || (!sd->cur_chid)) return;
-   if (!(!strcmp(blk->chid, sd->cur_chid))) return;
+   if ((!blk->chid) || (!sd->cur_chids)) return;
+   EINA_LIST_FOREACH(sd->cur_chids, l, chid)
+     {
+        if (!(!strcmp(blk->chid, chid))) break;
+        chid = NULL;
+     }
+   if (!chid) return;
    if ((!strcmp(sig, "drag")) ||
        (!strcmp(sig, "drag,start")) ||
        (!strcmp(sig, "drag,stop")) ||
@@ -645,28 +651,36 @@ _block_edje_signal_cb(void *data, Evas_Object *obj, const char *sig, const char 
         edje_object_part_drag_value_get(blk->obj, src, &f1, &f2);
         v1 = (int)(f1 * 1000.0);
         v2 = (int)(f2 * 1000.0);
-        buf = alloca(strlen(src) + 256);
-        buflen = sprintf(buf, "%c}%s;%s\n%i\n%i", 0x1b, sig, src, v1, v2);
+        buf = alloca(strlen(src) + strlen(blk->chid) + 256);
+        buflen = sprintf(buf, "%c}%s;%s\n%s\n%i\n%i", 0x1b,
+                         sig, blk->chid, src, v1, v2);
         termpty_write(sd->pty, buf, buflen + 1);
      }
    else
      {
-        buf = alloca(strlen(sig) + strlen(src) + 128);
-        buflen = sprintf(buf, "%c}signal;%s\n%s", 0x1b, sig, src);
+        buf = alloca(strlen(sig) + strlen(src) + strlen(blk->chid) + 128);
+        buflen = sprintf(buf, "%c}signal;%s\n%s\n%s", 0x1b,
+                         blk->chid, sig, src);
         termpty_write(sd->pty, buf, buflen + 1);
      }
 }
 
 static void
-_block_edje_message_cb(void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+_block_edje_message_cb(void *data, Evas_Object *obj __UNUSED__, Edje_Message_Type type, int id, void *msg)
 {
    Termblock *blk = data;
    Termio *sd = evas_object_smart_data_get(blk->pty->obj);
+   char *chid = NULL;
+   Eina_List *l;
    
    if (!sd) return;
-   if ((!blk->chid) || (!sd->cur_chid)) return;
-   if (!(!strcmp(blk->chid, sd->cur_chid))) return;
-
+   if ((!blk->chid) || (!sd->cur_chids)) return;
+   EINA_LIST_FOREACH(sd->cur_chids, l, chid)
+     {
+        if (!(!strcmp(blk->chid, chid))) break;
+        chid = NULL;
+     }
+   if (!chid) return;
    switch (type)
      {
         // XXX: handle
@@ -3245,6 +3259,7 @@ _smart_del(Evas_Object *obj)
 {
    Evas_Object *o;
    Termio *sd = evas_object_smart_data_get(obj);
+   char *chid;
    
    if (!sd) return;
    terms = eina_list_remove(terms, obj);
@@ -3286,8 +3301,7 @@ _smart_del(Evas_Object *obj)
    _compose_seq_reset(sd);
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
-   if (sd->cur_chid) eina_stringshare_del(sd->cur_chid);
-   sd->cur_chid = NULL;
+   EINA_LIST_FREE(sd->cur_chids, chid) eina_stringshare_del(chid);
    sd->sel_str = NULL;
    sd->sel_reset_job = NULL;
    sd->link.down.dndobj = NULL;
@@ -3606,6 +3620,51 @@ _smart_pty_command(void *data)
                }
              return;
           }
+        else if (sd->pty->cur_cmd[1] == 'C')
+          {
+             Termblock *blk = NULL;
+             const char *p, *p0, *p1;
+             char *pp;
+             Eina_List *strs = NULL;
+             
+             p = &(sd->pty->cur_cmd[2]);
+             // parse from p until end of string - one newline
+             // per list item in strs
+             p0 = p1 = p;
+             for (;;)
+               {
+                  // end of str param
+                  if ((*p1 == '\n') || (*p1 == '\r') || (!*p1))
+                    {
+                       // if string is non-empty...
+                       if ((p1 - p0) >= 1)
+                         {
+                            // allocate, fill and add to list
+                            pp = malloc(p1 - p0 + 1);
+                            if (pp)
+                              {
+                                 strncpy(pp, p0, p1 - p0);
+                                 pp[p1 - p0] = 0;
+                                 strs = eina_list_append(strs, pp);
+                              }
+                         }
+                       // end of string buffer
+                       if (!*p1) break;
+                       p1++; // skip \n or \r
+                       p0 = p1;
+                    }
+                  else
+                    p1++;
+               }
+             if (strs)
+               {
+                  char *chid = strs->data;
+                  blk = termpty_block_chid_get(sd->pty, chid);
+                  if (blk)
+                    _block_edje_cmds(sd->pty, blk, strs->next, EINA_FALSE);
+               }
+             EINA_LIST_FREE(strs, pp) free(pp);
+          }
         else if (sd->pty->cur_cmd[1] == 'b')
           {
              sd->pty->block.on = EINA_TRUE;
@@ -3628,18 +3687,36 @@ _smart_pty_command(void *data)
           }
         else if (sd->pty->cur_cmd[1] == 'j')
           {
+             const char *chid = &(sd->pty->cur_cmd[3]);
+                  
              if (sd->pty->cur_cmd[2])
                {
-                  if (sd->cur_chid) eina_stringshare_del(sd->cur_chid);
-                  sd->cur_chid = eina_stringshare_add(&(sd->pty->cur_cmd[2]));
+                  if (sd->pty->cur_cmd[2] == '+')
+                    {
+                       sd->cur_chids = eina_list_append
+                         (sd->cur_chids, eina_stringshare_add(chid));
+                    }
+                  else if (sd->pty->cur_cmd[2] == '-')
+                    {
+                       Eina_List *l;
+                       char *chid2;
+                       
+                       EINA_LIST_FOREACH(sd->cur_chids, l, chid2)
+                         {
+                            if (!(!strcmp(chid, chid2)))
+                              {
+                                 sd->cur_chids =
+                                   eina_list_remove_list(sd->cur_chids, l);
+                                 eina_stringshare_del(chid2);
+                                 break;
+                              }
+                         }
+                    }
                }
              else
                {
-                  if (sd->cur_chid)
-                    {
-                       eina_stringshare_del(sd->cur_chid);
-                       sd->cur_chid = NULL;
-                    }
+                  EINA_LIST_FREE(sd->cur_chids, chid)
+                    eina_stringshare_del(chid);
                }
              return;
           }
