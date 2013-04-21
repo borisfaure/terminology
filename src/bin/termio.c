@@ -652,8 +652,8 @@ _block_edje_signal_cb(void *data, Evas_Object *obj __UNUSED__, const char *sig, 
         v1 = (int)(f1 * 1000.0);
         v2 = (int)(f2 * 1000.0);
         buf = alloca(strlen(src) + strlen(blk->chid) + 256);
-        buflen = sprintf(buf, "%c}%s;%s\n%s\n%i\n%i", 0x1b,
-                         sig, blk->chid, src, v1, v2);
+        buflen = sprintf(buf, "%c};%s\n%s\n%s\n%i\n%i", 0x1b,
+                         blk->chid, sig, src, v1, v2);
         termpty_write(sd->pty, buf, buflen + 1);
      }
    else
@@ -670,8 +670,9 @@ _block_edje_message_cb(void *data, Evas_Object *obj __UNUSED__, Edje_Message_Typ
 {
    Termblock *blk = data;
    Termio *sd = evas_object_smart_data_get(blk->pty->obj);
-   char *chid = NULL;
+   char *chid = NULL, buf[4096];
    Eina_List *l;
+   int buflen;
    
    if (!sd) return;
    if ((!blk->chid) || (!sd->cur_chids)) return;
@@ -687,51 +688,148 @@ _block_edje_message_cb(void *data, Evas_Object *obj __UNUSED__, Edje_Message_Typ
       case EDJE_MESSAGE_STRING:
           {
              Edje_Message_String *m = msg;
+             
+             buflen = sprintf(buf, "%c}message;%s\n%i\nstring\n%s", 0x1b,
+                              blk->chid, id, m->str);
+             termpty_write(sd->pty, buf, buflen + 1);
           }
         break;
       case EDJE_MESSAGE_INT:
           {
              Edje_Message_Int *m = msg;
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nint\n%i", 0x1b,
+                               blk->chid, id, m->val);
+             termpty_write(sd->pty, buf, buflen + 1);
           }
         break;
       case EDJE_MESSAGE_FLOAT:
           {
              Edje_Message_Float *m = msg;
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nfloat\n%i", 0x1b,
+                               blk->chid, id, (int)(m->val * 1000.0));
+             termpty_write(sd->pty, buf, buflen + 1);
           }
         break;
       case EDJE_MESSAGE_STRING_SET:
           {
              Edje_Message_String_Set *m = msg;
-          }
+             int i;
+             char zero[1] = { 0 };
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nstring_set\n%i", 0x1b,
+                               blk->chid, id, m->count);
+             termpty_write(sd->pty, buf, buflen);
+             for (i = 0; i < m->count; i++)
+               {
+                  termpty_write(sd->pty, "\n", 1);
+                  termpty_write(sd->pty, m->str[i], strlen(m->str[i]));
+               }
+             termpty_write(sd->pty, zero, 1);
+         }
         break;
       case EDJE_MESSAGE_INT_SET:
           {
              Edje_Message_Int_Set *m = msg;
+             int i;
+             char zero[1] = { 0 };
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nint_set\n%i", 0x1b,
+                               blk->chid, id, m->count);
+             termpty_write(sd->pty, buf, buflen);
+             for (i = 0; i < m->count; i++)
+               {
+                  termpty_write(sd->pty, "\n", 1);
+                  buflen = snprintf(buf, sizeof(buf), "%i", m->val[i]);
+                  termpty_write(sd->pty, buf, buflen);
+               }
+             termpty_write(sd->pty, zero, 1);
           }
         break;
       case EDJE_MESSAGE_FLOAT_SET:
           {
              Edje_Message_Float_Set *m = msg;
+             int i;
+             char zero[1] = { 0 };
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nfloat_set\n%i", 0x1b,
+                               blk->chid, id, m->count);
+             termpty_write(sd->pty, buf, buflen);
+             for (i = 0; i < m->count; i++)
+               {
+                  termpty_write(sd->pty, "\n", 1);
+                  buflen = snprintf(buf, sizeof(buf), "%i", (int)(m->val[i] * 1000.0));
+                  termpty_write(sd->pty, buf, buflen);
+               }
+             termpty_write(sd->pty, zero, 1);
           }
         break;
       case EDJE_MESSAGE_STRING_INT:
           {
              Edje_Message_String_Int *m = msg;
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nstring_int\n%s\n%i", 0x1b,
+                               blk->chid, id, m->str, m->val);
+             termpty_write(sd->pty, buf, buflen + 1);
           }
         break;
       case EDJE_MESSAGE_STRING_FLOAT:
           {
              Edje_Message_String_Float *m = msg;
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nstring_float\n%s\n%i", 0x1b,
+                               blk->chid, id, m->str, (int)(m->val * 1000.0));
+             termpty_write(sd->pty, buf, buflen + 1);
           }
         break;
       case EDJE_MESSAGE_STRING_INT_SET:
           {
              Edje_Message_String_Int_Set *m = msg;
+             int i;
+             char zero[1] = { 0 };
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nstring_int_set\n%i", 0x1b,
+                               blk->chid, id, m->count);
+             termpty_write(sd->pty, buf, buflen);
+             termpty_write(sd->pty, "\n", 1);
+             termpty_write(sd->pty, m->str, strlen(m->str));
+             for (i = 0; i < m->count; i++)
+               {
+                  termpty_write(sd->pty, "\n", 1);
+                  buflen = snprintf(buf, sizeof(buf), "%i", m->val[i]);
+                  termpty_write(sd->pty, buf, buflen);
+               }
+             termpty_write(sd->pty, zero, 1);
           }
         break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
           {
              Edje_Message_String_Float_Set *m = msg;
+             int i;
+             char zero[1] = { 0 };
+             
+             buflen = snprintf(buf, sizeof(buf),
+                               "%c}message;%s\n%i\nstring_float_set\n%i", 0x1b,
+                               blk->chid, id, m->count);
+             termpty_write(sd->pty, buf, buflen);
+             termpty_write(sd->pty, "\n", 1);
+             termpty_write(sd->pty, m->str, strlen(m->str));
+             for (i = 0; i < m->count; i++)
+               {
+                  termpty_write(sd->pty, "\n", 1);
+                  buflen = snprintf(buf, sizeof(buf), "%i", (int)(m->val[i] * 1000.0));
+                  termpty_write(sd->pty, buf, buflen);
+               }
+             termpty_write(sd->pty, zero, 1);
           }
         break;
       default:
