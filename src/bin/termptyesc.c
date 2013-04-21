@@ -5,6 +5,9 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#if defined(SUPPORT_80_132_COLUMNS)
+#include "termio.h"
+#endif
 
 #undef CRITICAL
 #undef ERR
@@ -69,7 +72,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    if (cc == ce) return 0;
    *b = 0;
    b = buf;
-//   DBG(" CSI: '%c' args '%s'", *cc, buf);
+   ERR(" CSI: '%c' args '%s'", *cc, (char *) buf);
    switch (*cc)
      {
       case 'm': // color set
@@ -548,9 +551,23 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  handled = 1;
                                  ty->state.kbd_lock = mode;
                                  break;
-                               case 3: // should we handle this?
+                               case 3: // 132 column mode… should we handle this?
                                  handled = 1;
-                                 ERR("TODO: 132 column mode %i", mode);
+#if defined(SUPPORT_80_132_COLUMNS)
+                                 if (ty->state.att.is_80_132_mode_allowed)
+                                   {
+                                      /* ONLY FOR TESTING PURPOSE FTM */
+                                      Evas_Object *wn;
+                                      int w, h;
+
+                                      wn = termio_win_get(ty->obj);
+                                      elm_win_size_step_get(wn, &w, &h);
+                                      evas_object_resize(wn,
+                                                         2 + (mode ? 132 : 80) * w,
+                                                         2 + 24 * h);
+                                      termpty_resize(ty, mode ? 132 : 80, 24);
+                                   }
+#endif
                                  break;
                                case 4:
                                  handled = 1;
@@ -620,7 +637,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 40:
                                  handled = 1;
-                                 ERR("TODO: Allow 80 -> 132 Mode");
+                                 // INF("XXX: Allow 80 -> 132 Mode %i", mode);
+#if defined(SUPPORT_80_132_COLUMNS)
+                                 ty->state.att.is_80_132_mode_allowed = mode;
+#endif
                                  break;
                                case 45: // ignore
                                  handled = 1;
