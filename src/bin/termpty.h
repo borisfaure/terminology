@@ -37,6 +37,9 @@ typedef struct _Termexp       Termexp;
 //#define SUPPORT_ITALIC   1
 #define SUPPORT_DBLWIDTH 1
 
+// Only for testing purpose
+//#define SUPPORT_80_132_COLUMNS 1
+
 struct _Termatt
 {
    unsigned char fg, bg;
@@ -61,6 +64,9 @@ struct _Termatt
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
    unsigned short tab : 1;
+#if defined(SUPPORT_80_132_COLUMNS)
+   unsigned short is_80_132_mode_allowed : 1;
+#endif
 };
 
 struct _Termstate
