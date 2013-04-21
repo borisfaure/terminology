@@ -684,7 +684,6 @@ _block_edje_message_cb(void *data, Evas_Object *obj __UNUSED__, Edje_Message_Typ
    if (!chid) return;
    switch (type)
      {
-        // XXX: handle
       case EDJE_MESSAGE_STRING:
           {
              Edje_Message_String *m = msg;
