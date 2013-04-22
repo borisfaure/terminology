@@ -361,9 +361,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              arg--;
              if (arg < 0) arg = 0;
              else if (arg >= ty->h) arg = ty->h - 1;
-             if (b) ty->state.cy = arg;
              if (b)
                {
+                  ty->state.cy = arg;
                   arg = _csi_arg_get(&b);
                   if (arg < 1) arg = 1;
                   arg--;
@@ -373,6 +373,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              else if (arg >= ty->w) arg = ty->w - 1;
              if (b) ty->state.cx = arg;
           }
+        ty->state.cy += ty->state.margin_top;
        break;
       case 'G': // to column N
         arg = _csi_arg_get(&b);
@@ -566,6 +567,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                                          4 + (mode ? 132 : 80) * w,
                                                          4 + 24 * h);
                                       termpty_resize(ty, mode ? 132 : 80, 24);
+                                      _termpty_reset_state(ty);
+                                      _termpty_clear_screen(ty, TERMPTY_CLR_ALL);
                                    }
 #endif
                                  break;
@@ -579,9 +582,20 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 6:
                                  handled = 1;
-                                 ERR("TODO: origin mode: cursor is at 0,0"
+                                 if (mode)
+                                   {
+                                      ty->state.margin_top = ty->state.cy;
+                                      ty->state.cx = 0;
+                                   }
+                                 else
+                                   {
+                                      ty->state.cx = 0;
+                                      ty->state.margin_top = 0;
+                                   }
+                                 DBG("XXX: origin mode (%d): cursor is at 0,0"
                                      "cursor limited to screen/start point"
-                                     " for line #'s depends on top margin");
+                                     " for line #'s depends on top margin",
+                                     mode);
                                  break;
                                case 7:
                                  handled = 1;

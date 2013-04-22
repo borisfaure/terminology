@@ -78,6 +78,7 @@ struct _Termstate
    unsigned char chset[4];
    int           scroll_y1, scroll_y2;
    int           had_cr_x, had_cr_y;
+   int           margin_top; // soon, more to come...
    unsigned int  multibyte : 1;
    unsigned int  alt_kp : 1;
    unsigned int  insert : 1;
