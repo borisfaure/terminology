@@ -54,6 +54,63 @@ _csi_arg_get(Eina_Unicode **ptr)
    return sum;
 }
 
+static void
+_handle_cursor_control(Termpty *ty, Eina_Unicode *cc)
+{
+   switch (*cc)
+     {
+      case 0x07: // BEL '\a' (bell)
+         if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
+         ty->state.had_cr = 0;
+         return;
+      case 0x08: // BS  '\b' (backspace)
+         DBG("->BS");
+         ty->state.wrapnext = 0;
+         ty->state.cx--;
+         if (ty->state.cx < 0) ty->state.cx = 0;
+         ty->state.had_cr = 0;
+         return;
+      case 0x09: // HT  '\t' (horizontal tab)
+         DBG("->HT");
+         TERMPTY_SCREEN(ty, ty->state.cx, ty->state.cy).att.tab = 1;
+         ty->state.wrapnext = 0;
+         ty->state.cx += 8;
+         ty->state.cx = (ty->state.cx / 8) * 8;
+         if (ty->state.cx >= ty->w)
+           ty->state.cx = ty->w - 1;
+         ty->state.had_cr = 0;
+         return;
+      case 0x0a: // LF  '\n' (new line)
+      case 0x0b: // VT  '\v' (vertical tab)
+      case 0x0c: // FF  '\f' (form feed)
+         DBG("->LF");
+         if (ty->state.had_cr)
+           {
+              TERMPTY_SCREEN(ty, ty->state.had_cr_x,
+                                 ty->state.had_cr_y).att.newline = 1;
+           }
+         ty->state.wrapnext = 0;
+         if (ty->state.crlf) ty->state.cx = 0;
+         ty->state.cy++;
+         _termpty_text_scroll_test(ty, EINA_TRUE);
+         ty->state.had_cr = 0;
+         return;
+      case 0x0d: // CR  '\r' (carriage ret)
+         DBG("->CR");
+         if (ty->state.cx != 0)
+           {
+              ty->state.had_cr_x = ty->state.cx;
+              ty->state.had_cr_y = ty->state.cy;
+           }
+         ty->state.wrapnext = 0;
+         ty->state.cx = 0;
+         ty->state.had_cr = 1;
+         return;
+      default:
+         return;
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
@@ -63,8 +120,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 
    cc = (Eina_Unicode *)c;
    b = buf;
-   while ((cc < ce) && (*cc >= '0') && (*cc <= '?'))
+   while ((cc < ce) && (*cc <= '?'))
      {
+        _handle_cursor_control(ty, cc);
         *b = *cc;
         b++;
         cc++;
@@ -1315,48 +1373,13 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            case 0x07: // BEL '\a' (bell)
-             if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
-             ty->state.had_cr = 0;
-             return 1;
            case 0x08: // BS  '\b' (backspace)
-             DBG("->BS");
-             ty->state.wrapnext = 0;
-             ty->state.cx--;
-             if (ty->state.cx < 0) ty->state.cx = 0;
-             ty->state.had_cr = 0;
-             return 1;
            case 0x09: // HT  '\t' (horizontal tab)
-             DBG("->HT");
-	     TERMPTY_SCREEN(ty, ty->state.cx, ty->state.cy).att.tab = 1;
-             ty->state.wrapnext = 0;
-             ty->state.cx += 8;
-             ty->state.cx = (ty->state.cx / 8) * 8;
-             if (ty->state.cx >= ty->w)
-               ty->state.cx = ty->w - 1;
-             ty->state.had_cr = 0;
-             return 1;
            case 0x0a: // LF  '\n' (new line)
            case 0x0b: // VT  '\v' (vertical tab)
            case 0x0c: // FF  '\f' (form feed)
-             DBG("->LF");
-             if (ty->state.had_cr)
-               TERMPTY_SCREEN(ty, ty->state.had_cr_x, ty->state.had_cr_y).att.newline = 1;
-             ty->state.wrapnext = 0;
-             if (ty->state.crlf) ty->state.cx = 0;
-             ty->state.cy++;
-             _termpty_text_scroll_test(ty, EINA_TRUE);
-             ty->state.had_cr = 0;
-             return 1;
            case 0x0d: // CR  '\r' (carriage ret)
-             DBG("->CR");
-             if (ty->state.cx != 0)
-               {
-                  ty->state.had_cr_x = ty->state.cx;
-                  ty->state.had_cr_y = ty->state.cy;
-               }
-             ty->state.wrapnext = 0;
-             ty->state.cx = 0;
-             ty->state.had_cr = 1;
+             _handle_cursor_control(ty, c);
              return 1;
 
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
