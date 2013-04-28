@@ -179,13 +179,28 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
      {
-        len = read(ty->fd, buf, sizeof(buf) - 1);
+        char *rbuf = buf;
+        len = sizeof(buf) - 1;
+
+        for (i = 0; i < (int)sizeof(ty->oldbuf) && ty->oldbuf[i] & 0x80; i++)
+          {
+             *rbuf = ty->oldbuf[i];
+             rbuf++;
+             len--;
+          }
+        len = read(ty->fd, rbuf, len);
         if (len <= 0) break;
-        
-/*        
+
+
+        for (i = 0; i < (int)sizeof(ty->oldbuf); i++)
+          ty->oldbuf[i] = 0;
+
+        len += rbuf - buf;
+
+        /*
         printf(" I: ");
         int jj;
-        for (jj = 0; jj < len && jj < 100; jj++)
+        for (jj = 0; jj < len; jj++)
           {
              if ((buf[jj] < ' ') || (buf[jj] >= 0x7f))
                printf("\033[33m%02x\033[0m", (unsigned char)buf[jj]);
@@ -193,23 +208,35 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                printf("%c", buf[jj]);
           }
         printf("\n");
- */
+        */
         buf[len] = 0;
         // convert UTF8 to codepoint integers
         j = 0;
         for (i = 0; i < len;)
           {
-             int g = 0;
+             int g = 0, prev_i = i;
 
              if (buf[i])
                {
 #if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
                   g = eina_unicode_utf8_next_get(buf, &i);
-#else                  
+                  if (0xdc80 <= g && g <= 0xdcff &&
+#else
                   i = evas_string_char_next_get(buf, i, &g);
-#endif                  
-                  if (i < 0) break;
-//                  DBG("(%i) %02x '%c'", j, g, g);
+                  if (i < 0 &&
+#endif
+                  (len - prev_i) <= (int) sizeof(ty->oldbuf))
+                    {
+                       int k;
+                       for (k = 0;
+                            k < (int)sizeof(ty->oldbuf) && k < (len - prev_i);
+                            k++)
+                         {
+                            ty->oldbuf[k] = buf[prev_i+k];
+                         }
+                       DBG("failure at %d/%d/%d", prev_i, i, len);
+                       break;
+                    }
                }
              else
                {

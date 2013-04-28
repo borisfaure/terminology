@@ -111,6 +111,7 @@ struct _Termpty
    const char *cur_cmd;
    Termcell *screen, *screen2;
    Termsave **back;
+   unsigned char oldbuf[4];
    int *buf;
    int buflen;
    int w, h;
