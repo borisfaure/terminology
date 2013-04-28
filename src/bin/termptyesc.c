@@ -127,7 +127,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    if (cc == ce) return 0;
    *b = 0;
    b = buf;
-   ERR(" CSI: '%c' args '%s'", *cc, (char *) buf);
+   DBG(" CSI: '%c' args '%s'", *cc, (char *) buf);
    switch (*cc)
      {
       case 'm': // color set
