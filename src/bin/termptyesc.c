@@ -33,7 +33,6 @@ static int
 _csi_arg_get(Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
-   int octal = 0;
    int sum = 0;
 
    while ((*b) && (!isdigit(*b))) b++;
@@ -42,11 +41,9 @@ _csi_arg_get(Eina_Unicode **ptr)
         *ptr = NULL;
         return 0;
      }
-   if (*b == '0') octal = 1;
    while (isdigit(*b))
      {
-        if (octal) sum *= 8;
-        else sum *= 10;
+        sum *= 10;
         sum += *b - '0';
         b++;
      }
