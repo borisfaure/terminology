@@ -17,20 +17,26 @@ make it a first-class terminal:
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)
+[ ] theme selector could be a whole lot better (decent large preview
+    maybe with cursor, selections and bell?)
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
     - gives us fingerscroll - layer on top of term smart, stick
     invisible rect inside to track for scrolling etc.)
-[ ] selection mode mirrors entry style for touch displays (handle
-    on_hold flags, etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
 [ ] selection should have nice visible handles on the start/end so u can
-    drag and change its size once there
-[ ] improve selection text extraction logic so its reliable
+    drag and change its size once there (theme thing - red blinky
+    things now)
+[ ] selection mode mirrors entry style for touch displays (handle
+    on_hold flags, etc.)
+[ ] improve selection text extraction logic so its reliable (seems to
+    be a bug where we keep the newline etc. bit flags set when they should
+    be reset in the pty array)
 [ ] fast text/regex searching similar to urxvt
 [ ] search in terminal (and keep highlighting until search cleared)
 [ ] logging of terminal to file
 [ ] number recognition with base (hex/dec/oct/binary etc.) conversion
+    with some overlay/popup on mouseover
 [ ] dnd of file to term offer to paste path, with escapes or paste file
     content (if text) with or without escaping
 [ ] media - improve position slider to track position as u play
@@ -40,7 +46,7 @@ make it a first-class terminal:
 [ ] media controls need to have zoom controls for all formats
 [ ] media controls need next/prev page controls for paged media (ps/pdf)
 [ ] add better handling of music files (with just playbar+vol, no image)
-[ ] display queue of media visually
+[ ] display queue of media visually and allow deletion from queue etc.
 [ ] add option for cjk double width mode
 [ ] possible evas font problem with proggy fonts: http://www.proggyfonts.com/
 [ ] key controls to begin/change/end selections
@@ -48,13 +54,10 @@ make it a first-class terminal:
 
 things in future to make it totally kick-butt:
 
-[ ] maybe want a new sel width that slides/fades in on mouseover on top
+[ ] maybe want a new "tab" sel width that slides/fades in on mouseover on top
     that lists miniature thumbs like current sel does but in a linear
     way along the top
 [ ] support double-width when reflowing text on resize
-[ ] track child process stats like cwd etc. and when launching a new
-    "tab" or shell use the last child process cwd to put the shell
-    into
 [ ] track mem and iowait and cpu stats for child procs and their
     children and display them as little overlays in the terminal so u
     know if your "grep -r /" is cpu or io bound and what is eating up
@@ -62,7 +65,7 @@ things in future to make it totally kick-butt:
     send results of these stats to theme with messages much like
     cpufreq, battery etc. do in e17 so theme can display as bars,
     dials or anything it likes (text, led's etc. too).
-[ ] remember tile layouts and be able to restore them and at least as
+[ ] remember split layouts/tabs and be able to restore them and at least as
     much of child processes as the term can manage reasonably reliably
 [ ] split it out into a library - maybe just as part of elementary and
     make a terminal widget where you can specify your own read/write
