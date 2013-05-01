@@ -7,7 +7,7 @@
 #include "options_behavior.h"
 #include "main.h"
 
-static Evas_Object *op_sbslider, *op_jumpcheck, *op_wordsep, *op_w, *op_h;
+static Evas_Object *op_w, *op_h;
 
 static void
 _cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
@@ -183,7 +183,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(sc, o);
    evas_object_show(o);
    
-   op_jumpcheck = o = elm_check_add(bx);
+   o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Jump on change");
@@ -319,7 +319,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   op_wordsep = o = elm_entry_add(bx);
+   o = elm_entry_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_entry_single_line_set(o, EINA_TRUE);
@@ -350,7 +350,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    
-   op_sbslider = o = elm_slider_add(bx);
+   o = elm_slider_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
