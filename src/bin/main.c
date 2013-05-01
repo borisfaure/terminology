@@ -105,19 +105,23 @@ _split_free(Split *sp)
 }
 
 static void
-_split_tabcount_update(Split *sp)
+_split_tabcount_update(Split *sp, Term *tm)
 {
    char buf[32], bufm[32];
    int n = eina_list_count(sp->terms);
    int missed = 0;
+   int cnt = 0, term_cnt = 0;
    Eina_List *l;
    Term *term;
    
    EINA_LIST_FOREACH(sp->terms, l, term)
      {
         if (term->missed_bell) missed++;
+
+        cnt++;
+        if (tm == term) term_cnt = cnt;
      }
-   snprintf(buf, sizeof(buf), "%i", n);
+   snprintf(buf, sizeof(buf), "%i/%i", term_cnt, n);
    if (missed > 0) snprintf(bufm, sizeof(bufm), "%i", missed);
    else bufm[0] = 0;
    EINA_LIST_FOREACH(sp->terms, l, term)
@@ -250,7 +254,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
    main_term_bg_redo(sp2->term);
-   _split_tabcount_update(sp2);
+   _split_tabcount_update(sp2, sp2->term);
    
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
@@ -264,7 +268,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    _term_resize_track_start(sp2);
    _term_focus(sp2->term);
    _term_media_update(sp2->term, config);
-   _split_tabcount_update(sp2);
+   _split_tabcount_update(sp2, sp2->term);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
    elm_object_part_content_set(sp->panes, PANES_TOP, sp->s1->term->bg);
    elm_object_part_content_set(sp->panes, PANES_BOTTOM, sp->s2->term->bg);
@@ -342,7 +346,7 @@ main_new(Evas_Object *win, Evas_Object *term)
    _term_media_update(sp->term, config);
    evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
    _term_focus_show(sp, sp->term);
-   _split_tabcount_update(sp);
+   _split_tabcount_update(sp, sp->term);
 }
 
 void
@@ -478,7 +482,7 @@ _split_merge(Split *spp, Split *sp, const char *slot)
           }
         else
           edje_object_part_swallow(spp->wn->base, "terminology.content", o);
-        _split_tabcount_update(sp);
+        _split_tabcount_update(sp, sp->term);
      }
    else
      {
@@ -509,6 +513,7 @@ _term_focus(Term *term)
 {
    Eina_List *l;
    Term *term2;
+   Split *sp = NULL;
 
    EINA_LIST_FOREACH(term->wn->terms, l, term2)
      {
@@ -530,12 +535,10 @@ _term_focus(Term *term)
    elm_object_focus_set(term->term, EINA_TRUE);
    elm_win_title_set(term->wn->win, termio_title_get(term->term));
    if (term->missed_bell)
-     {
-        Split *sp = _split_find(term->wn->win, term->term);
-        
-        term->missed_bell = EINA_FALSE;
-        if (sp) _split_tabcount_update(sp);
-     }
+     term->missed_bell = EINA_FALSE;
+
+   sp = _split_find(term->wn->win, term->term);
+   if (sp) _split_tabcount_update(sp, term);
 }
 
 void
@@ -602,7 +605,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              _term_focus(sp->term);
              _term_focus_show(sp, sp->term);
           }
-        _split_tabcount_update(sp);
+        _split_tabcount_update(sp, sp->term);
      }
    else
      {
@@ -629,7 +632,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              _term_focus_show(sp, sp->term);
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
-        else _split_tabcount_update(sp);
+        else _split_tabcount_update(sp, sp->term);
      }
 }
 
@@ -943,7 +946,7 @@ _cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
              if (sp->term != term)
                {
                   term->missed_bell = EINA_TRUE;
-                  _split_tabcount_update(sp);
+                  _split_tabcount_update(sp, sp->term);
                }
           }
      }
@@ -2428,7 +2431,7 @@ main_ipc_new(Ipc_Instance *inst)
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
-   _split_tabcount_update(sp);
+   _split_tabcount_update(sp, sp->term);
    
    main_trans_update(config);
    main_media_update(config);
@@ -2911,7 +2914,7 @@ remote:
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
-   _split_tabcount_update(sp);
+   _split_tabcount_update(sp, sp->term);
    
    main_trans_update(config);
    main_media_update(config);
