@@ -5,7 +5,7 @@
 #include "config.h"
 #include "main.h"
 
-#define CONF_VER 1
+#define CONF_VER 2
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
