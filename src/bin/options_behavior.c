@@ -110,6 +110,18 @@ _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
+_cb_op_behavior_tab_zoom_slider_chg(void *data, Evas_Object *obj,
+                                    void *event __UNUSED__)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+
+   config->tab_zoom = (double)(int)round(elm_slider_value_get(obj) * 10.0) / 10.0;
+   termio_config_update(term);
+   config_save(config, NULL);
+}
+
+static void
 _cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event __UNUSED__)
 {
    Evas_Object *term = data;
@@ -362,6 +374,26 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_behavior_sback_chg, term);
+
+   o = elm_label_add(bx);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   elm_object_text_set(o, "Tab Zoom Animation:");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_slider_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_slider_span_size_set(o, 40);
+   elm_slider_unit_format_set(o, "%1.1f");
+   elm_slider_indicator_format_set(o, "%1.1f");
+   elm_slider_min_max_set(o, 0.1, 1.0);
+   elm_slider_value_set(o, config->tab_zoom);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "delay,changed",
+                                  _cb_op_behavior_tab_zoom_slider_chg, term);
    
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);

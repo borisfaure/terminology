@@ -29,6 +29,7 @@ struct _Config
    const char       *background;
    const char       *wordsep;
    int               scrollback;
+   double            tab_zoom;
    int               vidmod;
    Eina_Bool         jump_on_keypress;
    Eina_Bool         jump_on_change;

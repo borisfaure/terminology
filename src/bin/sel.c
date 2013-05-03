@@ -30,6 +30,7 @@ struct _Sel
       Evas_Coord x, y;
       Eina_Bool down : 1;
    } down;
+   Config *config;
    Eina_Bool select_me : 1;
    Eina_Bool exit_me : 1;
    Eina_Bool exit_on_sel : 1;
@@ -661,6 +662,7 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Boo
    Entry *en = calloc(1, sizeof(Entry));
    if (!en) return;
    sd->items = eina_list_append(sd->items, en);
+   sd->config = config;
    en->obj = entry;
    en->selected = selected;
    en->selected_before = selected;
@@ -726,7 +728,11 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
    Sel *sd = evas_object_smart_data_get(obj);
    Eina_List *l;
    Entry *en;
+   Config *config;
    if (!sd) return;
+
+   config = sd->config;
+   if (!config) return;
 
    EINA_LIST_FOREACH(sd->items, l, en)
      {
@@ -757,7 +763,7 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
         if (!keep_before) en->selected_before = EINA_FALSE;
      }
    sd->use_px = EINA_FALSE;
-   _transit(obj, 0.5);
+   _transit(obj, config->tab_zoom);
 }
 
 void
@@ -765,8 +771,11 @@ sel_zoom(Evas_Object *obj, double zoom)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   Config *config = sd->config;
+   if (!config) return;
+
    sd->zoom1 = zoom;
-   _transit(obj, 0.5);
+   _transit(obj, config->tab_zoom);
 }
 
 void

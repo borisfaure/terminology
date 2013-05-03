@@ -62,6 +62,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "scrollback", scrollback, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "tab_zoom", tab_zoom, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "vidmod", vidmod, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "jump_on_change", jump_on_change, EET_T_UCHAR);
@@ -155,6 +157,7 @@ config_sync(const Config *config_src, Config *config)
    eina_stringshare_replace(&(config->theme), config_src->theme);
    eina_stringshare_replace(&(config->wordsep), config_src->wordsep);
    config->scrollback = config_src->scrollback;
+   config->tab_zoom = config_src->tab_zoom;
    config->vidmod = config_src->vidmod;
    config->jump_on_keypress = config_src->jump_on_keypress;
    config->jump_on_change = config_src->jump_on_change;
@@ -202,6 +205,7 @@ config_load(const char *key)
                {
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 200000);
+                  LIM(config->tab_zoom, 0.1, 1.0);
                   LIM(config->vidmod, 0, 3)
                }
           }
@@ -398,6 +402,7 @@ config_load(const char *key)
              config->helper.local.image = eina_stringshare_add("xdg-open");
              config->helper.inline_please = EINA_TRUE;
              config->scrollback = 2000;
+             config->tab_zoom = 0.5;
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;
              config->translucent = EINA_FALSE;
@@ -453,6 +458,7 @@ config_fork(Config *config)
    SCPY(background);
    SCPY(wordsep);
    CPY(scrollback);
+   CPY(tab_zoom);
    CPY(vidmod);
    CPY(jump_on_change);
    CPY(jump_on_keypress);
