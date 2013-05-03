@@ -174,7 +174,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    Termpty *ty = data;
    char buf[4097];
    Eina_Unicode codepoint[4097];
-   int len, i, j, reads;
+   int len, i, j, k, reads;
 
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
@@ -220,16 +220,17 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                {
 #if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
                   g = eina_unicode_utf8_next_get(buf, &i);
-                  if (0xdc80 <= g && g <= 0xdcff &&
+                  if ((0xdc80 <= g) && (g <= 0xdcff) &&
+                      (len - prev_i) <= (int)sizeof(ty->oldbuf))
 #else
                   i = evas_string_char_next_get(buf, i, &g);
                   if (i < 0 &&
+                      (len - prev_i) <= (int)sizeof(ty->oldbuf))
 #endif
-                  (len - prev_i) <= (int) sizeof(ty->oldbuf))
                     {
-                       int k;
                        for (k = 0;
-                            k < (int)sizeof(ty->oldbuf) && k < (len - prev_i);
+                            (k < (int)sizeof(ty->oldbuf)) && 
+                            (k < (len - prev_i));
                             k++)
                          {
                             ty->oldbuf[k] = buf[prev_i+k];
@@ -489,7 +490,7 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
    *wret = ts->w;
    return ts->cell;
 }
-
+   
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
@@ -497,7 +498,8 @@ termpty_write(Termpty *ty, const char *input, int len)
    if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
 }
 
-ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells)
+ssize_t
+termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
    ssize_t len = nb_cells;
 
@@ -514,7 +516,7 @@ ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 }
 
 #define OLD_SCREEN(_X, _Y) \
-  old_screen[_X + (((_Y + old_circular_offset) % old_h) * old_w)]
+   old_screen[_X + (((_Y + old_circular_offset) % old_h) * old_w)]
 
 static void
 _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
