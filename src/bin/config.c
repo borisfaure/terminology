@@ -205,6 +205,8 @@ config_load(const char *key)
                {
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 200000);
+                  if (config->tab_zoom == 0)
+                    config->tab_zoom = 0.5;
                   LIM(config->tab_zoom, 0.1, 1.0);
                   LIM(config->vidmod, 0, 3)
                }
