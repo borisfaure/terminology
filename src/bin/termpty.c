@@ -3,6 +3,7 @@
 #include "termpty.h"
 #include "termptyesc.h"
 #include "termptyops.h"
+#include "termptysave.h"
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -395,6 +396,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
    close(ty->slavefd);
    ty->slavefd = -1;
    _pty_size(ty);
+   termpty_save_register(ty);
    return ty;
 err:
    if (ty->screen) free(ty->screen);
@@ -409,7 +411,8 @@ void
 termpty_free(Termpty *ty)
 {
    Termexp *ex;
-   
+
+   termpty_save_unregister(ty);
    EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
    if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
@@ -461,7 +464,7 @@ termpty_free(Termpty *ty)
 
         for (i = 0; i < ty->backmax; i++)
           {
-             if (ty->back[i]) free(ty->back[i]);
+             if (ty->back[i]) termpty_save_free(ty->back[i]);
           }
         free(ty->back);
      }
@@ -472,10 +475,22 @@ termpty_free(Termpty *ty)
    free(ty);
 }
 
+void
+termpty_cellcomp_freeze(Termpty *ty __UNUSED__)
+{
+   termpty_save_freeze();
+}
+
+void
+termpty_cellcomp_thaw(Termpty *ty __UNUSED__)
+{
+   termpty_save_thaw();
+}
+
 Termcell *
 termpty_cellrow_get(Termpty *ty, int y, int *wret)
 {
-   Termsave *ts;
+   Termsave *ts, **tssrc;
 
    if (y >= 0)
      {
@@ -485,8 +500,10 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
         return &(TERMPTY_SCREEN(ty, 0, y));
      }
    if (y < -ty->backmax) return NULL;
-   ts = ty->back[(ty->backmax + ty->backpos + y) % ty->backmax];
+   tssrc = &(ty->back[(ty->backmax + ty->backpos + y) % ty->backmax]);
+   ts = termpty_save_extract(*tssrc);
    if (!ts) return NULL;
+   *tssrc = ts;
    *wret = ts->w;
    return ts->cell;
 }
@@ -529,26 +546,24 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
        old_circular_offset = ty->circular_offset,
        x = 0,
        y = 0;
-
-   Termsave **new_back,
-            *new_ts = NULL;
+   Termsave **new_back, *new_ts = NULL;
    Eina_Bool rewrapping = EINA_FALSE;
 
-   if (!ty->backmax || !ty->back)
-     goto expand_screen;
+   if ((!ty->backmax) || (!ty->back)) goto expand_screen;
 
-   new_back = calloc(sizeof(Termsave*), ty->backmax);
-
+   new_back = calloc(sizeof(Termsave *), ty->backmax);
+   if (!new_back) return;
+   
+   termpty_save_freeze();
    for (i = 0; i < ty->backmax; i++)
      {
         Termsave *ts;
 
         if (ty->backscroll_num == ty->backmax - 1)
-          ts = ty->back[(ty->backpos + i) % ty->backmax];
+          ts = termpty_save_extract(ty->back[(ty->backpos + i) % ty->backmax]);
         else
-          ts = ty->back[i];
-        if (!ts)
-          break;
+          ts = termpty_save_extract(ty->back[i]);
+        if (!ts) break;
 
         if (!ts->w)
           {
@@ -581,8 +596,7 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                   len -= remaining_width;
                   cells += remaining_width;
 
-                  new_ts = calloc(1, sizeof(Termsave) +
-                                  (ty->w - 1) * sizeof(Termcell));
+                  new_ts = termpty_save_new(ty->w);
                   new_ts->w = 0;
                   new_back[new_back_pos++] = new_ts;
                }
@@ -593,31 +607,22 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                }
 
              rewrapping = ts->cell[ts->w - 1].att.autowrapped;
-             if (!rewrapping)
-               {
-                  new_ts = NULL;
-               }
-
-             free(ts);
+             if (!rewrapping) new_ts = NULL;
+             termpty_save_free(ts);
           }
         else
           {
              if (ts->cell[ts->w - 1].att.autowrapped)
                {
                   rewrapping = EINA_TRUE;
-                  new_ts = calloc(1, sizeof(Termsave) +
-                                  (ty->w - 1) * sizeof(Termcell));
-                  new_ts->w = ts->w;
+                  new_ts = termpty_save_new(ty->w);
                   termpty_cell_copy(ty, ts->cell, new_ts->cell, ts->w);
                   new_ts->cell[ts->w - 1].att.autowrapped = 0;
-
                   new_back[new_back_pos++] = new_ts;
-                  free(ts);
+                  termpty_save_free(ts);
                }
              else
-               {
-                  new_back[new_back_pos++] = ts;
-               }
+               new_back[new_back_pos++] = ts;
           }
      }
 
@@ -638,12 +643,13 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
 expand_screen:
 
    if (ty->altbuf)
-     return;
+     {
+        termpty_save_thaw();
+        return;
+     }
 
    ty->circular_offset = 0;
-
    /* TODO double-width :) */
-
    for (old_y = 0; old_y < old_h; old_y++)
      {
         ssize_t cur_line_length;
@@ -666,7 +672,7 @@ expand_screen:
                        new_ts = NULL;
                        len = cur_line_length - remaining_width;
                        termpty_cell_copy(ty, cells, ty->screen + (y * ty->w),
-                              len);
+                                         len);
                        x += len;
                     }
 
@@ -683,7 +689,6 @@ expand_screen:
                       len = cur_line_length;
 
                   old_x = 0;
-
                   if (cur_line_length >= remaining_width)
                     {
                        termpty_cell_copy(ty,
@@ -706,8 +711,7 @@ expand_screen:
                        TERMPTY_SCREEN(ty, x - 1, y).att.autowrapped = 0;
                     }
                   rewrapping = OLD_SCREEN(old_w - 1, old_y).att.autowrapped;
-                  if (!rewrapping)
-                    y++;
+                  if (!rewrapping) y++;
                }
           }
         else
@@ -722,10 +726,7 @@ expand_screen:
                   TERMPTY_SCREEN(ty, old_w - 1, old_y).att.autowrapped = 0;
                   x = cur_line_length;
                }
-             else
-               {
-                  y++;
-               }
+             else y++;
           }
      }
    if (y < old_h)
@@ -733,19 +734,19 @@ expand_screen:
         ty->state.cy -= old_h - y;
         if (ty->state.cy < 0) ty->state.cy = 0;
      }
-   ty->circular_offset = 0;
+   termpty_save_thaw();
 }
 
 static void
 _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
-   int from_history = 0,
-       y;
-
+   int from_history = 0, y;
+   
+   termpty_save_freeze();
+   
    if (ty->backmax > 0)
      from_history = MIN(ty->h - old_h, ty->backscroll_num);
-
    if (old_screen)
      {
         int old_circular_offset = ty->circular_offset;
@@ -762,8 +763,11 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
           }
      }
 
-   if (from_history <= 0 || !ty->back)
-     return;
+   if ((from_history <= 0) || (!ty->back))
+     {
+        termpty_save_thaw();
+        return;
+     }
 
    /* display content from backlog */
    for (y = from_history - 1; y >= 0; y--)
@@ -774,13 +778,13 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
         ty->backpos--;
         if (ty->backpos < 0)
           ty->backpos = ty->backscroll_num - 1;
-        ts = ty->back[ty->backpos];
+        ts = termpty_save_extract(ty->back[ty->backpos]);
 
         src = ts->cell;
         dst = &(TERMPTY_SCREEN(ty, 0, ty->h - from_history + y));
         termpty_cell_copy(ty, src, dst, ts->w);
 
-        free(ts);
+        termpty_save_free(ts);
         ty->back[ty->backpos] = NULL;
         ty->backscroll_num--;
      }
@@ -788,6 +792,7 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
    ty->circular_offset = (ty->circular_offset + ty->h - from_history) % ty->h;
 
    ty->state.cy += from_history;
+   termpty_save_thaw();
 }
 
 
@@ -801,17 +806,15 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
        y;
    Termcell *src, *dst;
 
+   termpty_save_freeze();
+   
    old_circular_offset = ty->circular_offset;
-
-
    for (y = old_h - 1; y >= 0; y--)
      {
         ssize_t screen_length = termpty_line_length(&OLD_SCREEN(0, y), old_w);
 
-        if (screen_length)
-          break;
-        else
-          real_h--;
+        if (screen_length) break;
+        else real_h--;
      }
 
    to_history = real_h - ty->h;
@@ -842,11 +845,11 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
         /* in place */
         int len, pos, offset;
 
-        if (to_history <= 0)
-          return;
-
-        if (ty->circular_offset == 0)
-          return;
+        if ((to_history <= 0) || (ty->circular_offset == 0))
+          {
+             termpty_save_thaw();
+             return;
+          }
 
         ty->circular_offset = (ty->circular_offset + to_history) % old_h;
         len = real_h - to_history;
@@ -876,12 +879,11 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
 
         len = ty->h - len;
         if (len)
-          {
-             termpty_cell_fill(ty, NULL,
-                               &old_screen[(old_h - len) * old_w],
-                               len * old_w);
-          }
+          termpty_cell_fill(ty, NULL,
+                            &old_screen[(old_h - len) * old_w],
+                            len * old_w);
      }
+   termpty_save_thaw();
 }
 
 
@@ -907,6 +909,8 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
              done = EINA_FALSE,
              cy_pushed_back = EINA_FALSE;
 
+   termpty_save_freeze();
+   
    if (!ty->backmax || !ty->back)
      goto shrink_screen;
 
@@ -919,15 +923,15 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
         int remaining_width;
 
         if (ty->backscroll_num == ty->backmax - 1)
-          ts = ty->back[(ty->backpos + i) % ty->backmax];
+          ts = termpty_save_extract(ty->back[(ty->backpos + i) % ty->backmax]);
         else
-          ts = ty->back[i];
+          ts = termpty_save_extract(ty->back[i]);
         if (!ts)
           break;
 
 #define PUSH_BACK_TS(_ts) do {           \
         if (new_back[new_back_pos])      \
-          free(new_back[new_back_pos]);  \
+          termpty_save_free(new_back[new_back_pos]); \
         new_back[new_back_pos++] = _ts;  \
         new_back_scroll_num++;           \
         if (new_back_pos >= ty->backmax) \
@@ -939,16 +943,12 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
              if (rewrapping)
                {
                   rewrapping = EINA_FALSE;
-                  new_ts = calloc(1, sizeof(Termsave) +
-                                  (old_ts->w - 1) * sizeof(Termcell));
-                  new_ts->w = old_ts->w;
+                  new_ts = termpty_save_new(old_ts->w);
                   termpty_cell_copy(ty, old_cells, new_ts->cell, old_ts->w);
-
                   PUSH_BACK_TS(new_ts);
-
-                  free(old_ts);
+                  termpty_save_free(old_ts);
                   old_ts = NULL;
-                  free(ts);
+                  termpty_save_free(ts);
                }
              else
                PUSH_BACK_TS(ts);
@@ -967,9 +967,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
           {
              int len = MIN(old_ts->w + ts->w, ty->w);
 
-             new_ts = calloc(1, sizeof(Termsave) +
-                             (len - 1) * sizeof(Termcell));
-             new_ts->w = len;
+             new_ts = termpty_save_new(len);
              termpty_cell_copy(ty, old_cells, new_ts->cell, old_ts->w);
 
              remaining_width = len - old_ts->w;
@@ -983,8 +981,8 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
 
              new_ts->cell[new_ts->w - 1].att.autowrapped =
                 rewrapping || ts->w > 0;
-
-             free(old_ts);
+             
+             termpty_save_free(old_ts);
              old_ts = NULL;
 
              PUSH_BACK_TS(new_ts);
@@ -992,9 +990,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
 
         while (ts->w >= ty->w)
           {
-             new_ts = calloc(1, sizeof(Termsave) +
-                             (ty->w - 1) * sizeof(Termcell));
-             new_ts->w = ty->w;
+             new_ts = termpty_save_new(ty->w);
              termpty_cell_copy(ty, cells, new_ts->cell, ty->w);
              rewrapping = ts->cell[ts->w - 1].att.autowrapped;
 
@@ -1011,7 +1007,7 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
         if (!ts->w)
           {
              old_cells = 0;
-             free(old_ts);
+             termpty_save_free(old_ts);
              old_ts = NULL;
              rewrapping = EINA_FALSE;
              continue;
@@ -1024,13 +1020,10 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
           }
         else
           {
-             new_ts = calloc(1, sizeof(Termsave) +
-                             (ts->w - 1) * sizeof(Termcell));
-             new_ts->w = ts->w;
+             new_ts = termpty_save_new(ts->w);
              termpty_cell_copy(ty, cells, new_ts->cell, ts->w);
-
              PUSH_BACK_TS(new_ts);
-             free(ts);
+             termpty_save_free(ts);
           }
      }
 #undef PUSH_BACK_TS
@@ -1039,14 +1032,16 @@ _termpty_horizontally_shrink(Termpty *ty, int old_w, int old_h,
    ty->backscroll_num = new_back_scroll_num;
    if (ty->backscroll_num >= ty->backmax)
      ty->backscroll_num = ty->backmax - 1;
-
    free(ty->back);
    ty->back = new_back;
 
 shrink_screen:
 
    if (ty->altbuf)
-     return;
+     {
+        termpty_save_thaw();
+        return;
+     }
 
    ty->circular_offset = 0;
 
@@ -1058,9 +1053,8 @@ shrink_screen:
      {
         termpty_cell_copy(ty, old_cells, ty->screen, old_ts->w);
         x = old_ts->w;
-        if (!rewrapping)
-          y++;
-        free(old_ts);
+        if (!rewrapping) y++;
+        termpty_save_free(old_ts);
         old_ts = NULL;
         old_cells = NULL;
      }
@@ -1079,8 +1073,7 @@ shrink_screen:
    for (old_y = 0; old_y < screen_height_used; old_y++)
      {
         ssize_t cur_line_length;
-        int remaining_width,
-            len;
+        int remaining_width, len;
 
         cur_line_length = screen_lengths[old_y];
 
@@ -1151,12 +1144,14 @@ shrink_screen:
           }
         while (cur_line_length > 0);
      }
-   if (ty->state.cy >= ty->h)
-     ty->state.cy = ty->h - 1;
-   else if (ty->state.cy < 0)
-     ty->state.cy = 0;
+   if (ty->state.cy >= ty->h) ty->state.cy = ty->h - 1;
+   else if (ty->state.cy < 0) ty->state.cy = 0;
+   
+   termpty_save_thaw();
 
    free(screen_lengths);
+
+   termpty_save_thaw();
 }
 #undef OLD_SCREEN
 
@@ -1230,12 +1225,14 @@ termpty_backscroll_set(Termpty *ty, int size)
    int i;
 
    if (ty->backmax == size) return;
+   
+   termpty_save_freeze();
 
    if (ty->back)
      {
         for (i = 0; i < ty->backmax; i++)
           {
-             if (ty->back[i]) free(ty->back[i]);
+             if (ty->back[i]) termpty_save_free(ty->back[i]);
           }
         free(ty->back);
      }
@@ -1246,6 +1243,7 @@ termpty_backscroll_set(Termpty *ty, int size)
    ty->backscroll_num = 0;
    ty->backpos = 0;
    ty->backmax = size;
+   termpty_save_thaw();
 }
 
 pid_t

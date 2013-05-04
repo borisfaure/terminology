@@ -123,9 +123,9 @@ struct _Termpty
    Termstate state, save, swap;
    int exit_code;
    pid_t pid;
-   unsigned int altbuf : 1;
+   unsigned int altbuf     : 1;
    unsigned int mouse_mode : 3;
-   unsigned int mouse_ext : 2;
+   unsigned int mouse_ext  : 2;
 };
 
 struct _Termcell
@@ -136,7 +136,7 @@ struct _Termcell
 
 struct _Termsave
 {
-   int w;
+   int      w;
    Termcell cell[1];
 };
 
@@ -173,6 +173,8 @@ void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll);
 void       termpty_free(Termpty *ty);
+void       termpty_cellcomp_freeze(Termpty *ty);
+void       termpty_cellcomp_thaw(Termpty *ty);
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int w, int h);

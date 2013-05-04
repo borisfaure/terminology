@@ -1230,25 +1230,25 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            case 0x07: // BEL '\a' (bell)
-             if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
              ty->state.had_cr = 0;
+             if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
              return 1;
            case 0x08: // BS  '\b' (backspace)
              DBG("->BS");
+             ty->state.had_cr = 0;
              ty->state.wrapnext = 0;
              ty->state.cx--;
              if (ty->state.cx < 0) ty->state.cx = 0;
-             ty->state.had_cr = 0;
              return 1;
            case 0x09: // HT  '\t' (horizontal tab)
              DBG("->HT");
+             ty->state.had_cr = 0;
 	     TERMPTY_SCREEN(ty, ty->state.cx, ty->state.cy).att.tab = 1;
              ty->state.wrapnext = 0;
              ty->state.cx += 8;
              ty->state.cx = (ty->state.cx / 8) * 8;
              if (ty->state.cx >= ty->w)
                ty->state.cx = ty->w - 1;
-             ty->state.had_cr = 0;
              return 1;
            case 0x0a: // LF  '\n' (new line)
            case 0x0b: // VT  '\v' (vertical tab)
@@ -1256,11 +1256,11 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              DBG("->LF");
              if (ty->state.had_cr)
                TERMPTY_SCREEN(ty, ty->state.had_cr_x, ty->state.had_cr_y).att.newline = 1;
+             ty->state.had_cr = 0;
              ty->state.wrapnext = 0;
              if (ty->state.crlf) ty->state.cx = 0;
              ty->state.cy++;
              _termpty_text_scroll_test(ty);
-             ty->state.had_cr = 0;
              return 1;
            case 0x0d: // CR  '\r' (carriage ret)
              DBG("->CR");
@@ -1271,15 +1271,17 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
                }
              ty->state.wrapnext = 0;
              ty->state.cx = 0;
-             ty->state.had_cr = 1;
+//             ty->state.had_cr = 1;
              return 1;
 
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
+             ty->state.had_cr = 0;
              ty->state.charset = 1;
              ty->state.charsetch = ty->state.chset[1];
              return 1;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
              ty->state.charset = 0;
+             ty->state.had_cr = 0;
              ty->state.charsetch = ty->state.chset[0];
              return 1;
 /*
@@ -1322,21 +1324,21 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            default:
-             //ERR("unhandled char 0x%02x", c[0]);
              ty->state.had_cr = 0;
+             //ERR("unhandled char 0x%02x", c[0]);
              return 1;
           }
      }
    else if (c[0] == 0x7f) // DEL
      {
-        ERR("unhandled char 0x%02x [DEL]", c[0]);
         ty->state.had_cr = 0;
+        ERR("unhandled char 0x%02x [DEL]", c[0]);
         return 1;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
-        DBG("ANSI CSI!!!!!");
         ty->state.had_cr = 0;
+        DBG("ANSI CSI!!!!!");
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0) return 0;
         return 1 + len;
@@ -1346,6 +1348,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
         Termexp *ex;
         Eina_List *l;
         
+        ty->state.had_cr = 0;
         EINA_LIST_FOREACH(ty->block.expecting, l, ex)
           {
              if (c[0] == ex->ch)
@@ -1375,8 +1378,11 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
                }
           }
         _termpty_text_append(ty, c, 1);
-        ty->state.had_cr = 0;
         return 1;
+     }
+   else
+     {
+        ty->state.had_cr = 0;
      }
    cc = (int *)c;
    DBG("txt: [");

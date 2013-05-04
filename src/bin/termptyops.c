@@ -4,6 +4,7 @@
 #include "termptydbl.h"
 #include "termptyops.h"
 #include "termptygfx.h"
+#include "termptysave.h"
 
 #undef CRITICAL
 #undef ERR
@@ -36,22 +37,23 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 
    if (ty->backmax <= 0) return;
 
+   termpty_save_freeze();
    w = termpty_line_length(cells, w_max);
-   ts = calloc(1, sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
-   ts->w = w;
+   ts = termpty_save_new(w);
    termpty_cell_copy(ty, cells, ts->cell, w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos])
      {
         termpty_cell_fill(ty, NULL, ty->back[ty->backpos]->cell,
                           ty->back[ty->backpos]->w);
-        free(ty->back[ty->backpos]);
+        termpty_save_free(ty->back[ty->backpos]);
      }
    ty->back[ty->backpos] = ts;
    ty->backpos++;
    if (ty->backpos >= ty->backmax) ty->backpos = 0;
    ty->backscroll_num++;
    if (ty->backscroll_num >= ty->backmax) ty->backscroll_num = ty->backmax - 1;
+   termpty_save_thaw();
 }
 
 void

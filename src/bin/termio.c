@@ -90,6 +90,7 @@ struct _Termio
    Eina_Bool top_left : 1;
    Eina_Bool boxsel : 1;
    Eina_Bool reset_sel : 1;
+   Eina_Bool debugwhite : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -1158,6 +1159,7 @@ _smart_apply(Evas_Object *obj)
         blk->active = EINA_FALSE;
      }
    inv = sd->pty->state.reverse;
+   termpty_cellcomp_freeze(sd->pty);
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;
@@ -1301,15 +1303,41 @@ _smart_apply(Evas_Object *obj)
                            (tc[x].fg_extended != fgext) ||
                            (tc[x].bg_extended != bgext) ||
                            (tc[x].underline != cells[j].att.underline) ||
-                           (tc[x].strikethrough != cells[j].att.strike))
+                           (tc[x].strikethrough != cells[j].att.strike) ||
+                           (sd->debugwhite))
                          {
                             if (ch1 < 0) ch1 = x;
                             ch2 = x;
                          }
                        tc[x].fg_extended = fgext;
                        tc[x].bg_extended = bgext;
-                       tc[x].underline = cells[j].att.underline;
-                       tc[x].strikethrough = cells[j].att.strike;
+                       if (sd->debugwhite)
+                         {
+                            if (cells[j].att.newline)
+                              tc[x].strikethrough = 1;
+                            else
+                              tc[x].strikethrough = 0;
+                            if (cells[j].att.autowrapped)
+                              tc[x].underline = 1;
+                            else
+                              tc[x].underline = 0;
+//                            if (cells[j].att.tab)
+//                              tc[x].underline = 1;
+//                            else
+//                              tc[x].underline = 0;
+                            if ((cells[j].att.newline) ||
+                                (cells[j].att.autowrapped))
+                              {
+                                 fg = 8;
+                                 bg = 4;
+                                 codepoint = '!';
+                              }
+                         }
+                       else
+                         {
+                            tc[x].underline = cells[j].att.underline;
+                            tc[x].strikethrough = cells[j].att.strike;
+                         }
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
@@ -1333,6 +1361,7 @@ _smart_apply(Evas_Object *obj)
           evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
                                           ch2 - ch1 + 1, 1);
      }
+   termpty_cellcomp_thaw(sd->pty);
    
    EINA_LIST_FOREACH_SAFE(sd->pty->block.active, l, ln, blk)
      {
@@ -2210,8 +2239,13 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    int x, w = 0;
    if (!sd) return;
 
+   termpty_cellcomp_freeze(sd->pty);
    cells = termpty_cellrow_get(sd->pty, cy, &w);
-   if (!cells) return;
+   if (!cells)
+     {
+        termpty_cellcomp_thaw(sd->pty);
+        return;
+     }
    sd->cur.sel = 1;
    sd->cur.makesel = 0;
    sd->cur.sel1.x = cx;
@@ -2243,6 +2277,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
         if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
         sd->cur.sel2.x = x;
      }
+   termpty_cellcomp_thaw(sd->pty);
 }
 
 static void
@@ -2253,8 +2288,13 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
    int x, w = 0;
    if (!sd) return;
 
+   termpty_cellcomp_freeze(sd->pty);
    cells = termpty_cellrow_get(sd->pty, cy, &w);
-   if (!cells) return;
+   if (!cells)
+     {
+        termpty_cellcomp_thaw(sd->pty);
+        return;
+     }
    if (sd->cur.sel1.x > cx || sd->cur.sel1.y > cy)
      {
         sd->cur.sel1.x = cx;
@@ -2290,6 +2330,7 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
              sd->cur.sel2.x = x;
           }
      }
+   termpty_cellcomp_thaw(sd->pty);
 }
 
 static Eina_Bool
@@ -2596,6 +2637,7 @@ _selection_dbl_fix(Evas_Object *obj)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   termpty_cellcomp_freeze(sd->pty);
    cells = termpty_cellrow_get(sd->pty, sd->cur.sel2.y - sd->scroll, &w);
    if (cells)
      {
@@ -2648,6 +2690,7 @@ _selection_dbl_fix(Evas_Object *obj)
                }
           }
      }
+   termpty_cellcomp_thaw(sd->pty);
 }
 #endif
 
@@ -2750,6 +2793,12 @@ _smart_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Control"))
      {
         evas_object_smart_callback_call(data, "options", NULL);
+        return;
+     }
+   if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Shift"))
+     {
+        termio_debugwhite_set(data, !sd->debugwhite);
+        printf("debugwhite %i\n",  sd->debugwhite);
         return;
      }
    if (_rep_mouse_down(sd, ev, cx, cy)) return;
@@ -4009,6 +4058,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
 
    if (!sd) return NULL;
    sb = eina_strbuf_new();
+   termpty_cellcomp_freeze(sd->pty);
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
@@ -4130,6 +4180,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
              else eina_strbuf_append_char(sb, '\n');
           }
      }
+   termpty_cellcomp_thaw(sd->pty);
 
    s = eina_strbuf_string_steal(sb);
    eina_strbuf_free(sb);
@@ -4324,4 +4375,13 @@ termio_icon_name_get(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;
    return sd->pty->prop.icon;
+}
+
+void
+termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   sd->debugwhite = dbg;
+   _smart_apply(obj);
 }
