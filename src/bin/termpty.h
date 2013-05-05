@@ -1,10 +1,11 @@
-typedef struct _Termpty   Termpty;
-typedef struct _Termcell  Termcell;
-typedef struct _Termatt   Termatt;
-typedef struct _Termstate Termstate;
-typedef struct _Termsave  Termsave;
-typedef struct _Termblock Termblock;
-typedef struct _Termexp   Termexp;
+typedef struct _Termpty       Termpty;
+typedef struct _Termcell      Termcell;
+typedef struct _Termatt       Termatt;
+typedef struct _Termstate     Termstate;
+typedef struct _Termsave      Termsave;
+typedef struct _Termsavecomp  Termsavecomp;
+typedef struct _Termblock     Termblock;
+typedef struct _Termexp       Termexp;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -136,8 +137,20 @@ struct _Termcell
 
 struct _Termsave
 {
-   int      w;
-   Termcell cell[1];
+   unsigned int   comp : 1;
+   unsigned int   z    : 1;
+   unsigned int   gen  : 8;
+   unsigned int   w    : 22;
+   Termcell       cell[1];
+};
+
+struct _Termsavecomp
+{
+   unsigned int   comp : 1;
+   unsigned int   z    : 1;
+   unsigned int   gen  : 8;
+   unsigned int   w    : 22; // compressed size in bytes
+   unsigned int   wout; // output width in Termcells
 };
 
 struct _Termblock

@@ -464,9 +464,14 @@ termpty_free(Termpty *ty)
 
         for (i = 0; i < ty->backmax; i++)
           {
-             if (ty->back[i]) termpty_save_free(ty->back[i]);
+             if (ty->back[i])
+               {
+                  termpty_save_free(ty->back[i]);
+                  ty->back[i] = NULL;
+               }
           }
         free(ty->back);
+        ty->back = NULL;
      }
    if (ty->screen) free(ty->screen);
    if (ty->screen2) free(ty->screen2);

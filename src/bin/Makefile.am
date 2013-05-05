@@ -37,6 +37,7 @@ termptyops.c termptyops.h \
 termptygfx.c termptygfx.h \
 termptyext.c termptyext.h \
 termptysave.c termptysave.h \
+lz4/lz4.c lz4/lz4.h \
 utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h \
