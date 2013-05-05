@@ -3,7 +3,6 @@
 #include "termpty.h"
 #include "termptysave.h"
 
-static int ts_comp = 0;
 static int ts_uncomp = 0;
 static int freeze = 0;
 static Eina_List *ptys = NULL;
