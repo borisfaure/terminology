@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = images
+SUBDIRS = images sounds
 
 EDJE_CC = @edje_cc@
 EDJE_FLAGS_VERBOSE_ =
