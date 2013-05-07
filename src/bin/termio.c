@@ -1931,64 +1931,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              evas_object_smart_callback_call(data, "next", NULL);
              goto end;
           }
-     }
-   if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Shift")))
-     {
-        if (!strcmp(ev->keyname, "Prior"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "split,h", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "Next"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "split,v", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "t"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "new", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "Home"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "select", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "c"))
-          {
-             _compose_seq_reset(sd);
-             _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "v"))
-          {
-             _compose_seq_reset(sd);
-             _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-             goto end;
-          }
-     }
-   if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Control")))
-     {
-        if (!strcmp(ev->keyname, "Home"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "cmdbox", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "Return"))
-          {
-             _compose_seq_reset(sd);
-             _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
-             goto end;
-          }
         else if (!strcmp(ev->keyname, "1"))
           {
              _compose_seq_reset(sd);
@@ -2047,6 +1989,64 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,0", NULL);
+             goto end;
+          }
+     }
+   if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
+       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
+       (evas_key_modifier_is_set(ev->modifiers, "Shift")))
+     {
+        if (!strcmp(ev->keyname, "Prior"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "split,h", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "Next"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "split,v", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "t"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "new", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "Home"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "select", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "c"))
+          {
+             _compose_seq_reset(sd);
+             _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "v"))
+          {
+             _compose_seq_reset(sd);
+             _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+             goto end;
+          }
+     }
+   if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
+       (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+       (!evas_key_modifier_is_set(ev->modifiers, "Control")))
+     {
+        if (!strcmp(ev->keyname, "Home"))
+          {
+             _compose_seq_reset(sd);
+             evas_object_smart_callback_call(data, "cmdbox", NULL);
+             goto end;
+          }
+        else if (!strcmp(ev->keyname, "Return"))
+          {
+             _compose_seq_reset(sd);
+             _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
              goto end;
           }
      }
