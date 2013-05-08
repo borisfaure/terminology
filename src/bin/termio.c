@@ -1899,24 +1899,6 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   if (sd->imf)
-     {
-        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
-        // and jed (alt+shift+5 for search/replace for example)
-        // Don't filter modifiers alt, is used by shells
-        if (!evas_key_modifier_is_set(ev->modifiers, "Alt"))
-          {
-             Ecore_IMF_Event_Key_Down imf_ev;
-             
-             ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
-             if (!sd->composing)
-               {
-                  if (ecore_imf_context_filter_event
-                      (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-                    goto end;
-               }
-          }
-     }
    if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
@@ -2058,6 +2040,24 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           {
              _compose_seq_reset(sd);
              goto end;
+          }
+     }
+   if (sd->imf)
+     {
+        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
+        // and jed (alt+shift+5 for search/replace for example)
+        // Don't filter modifiers alt, is used by shells
+        if (!evas_key_modifier_is_set(ev->modifiers, "Alt"))
+          {
+             Ecore_IMF_Event_Key_Down imf_ev;
+
+             ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
+             if (!sd->composing)
+               {
+                  if (ecore_imf_context_filter_event
+                      (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
+                    goto end;
+               }
           }
      }
    if ((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
