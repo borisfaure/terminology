@@ -1142,7 +1142,24 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
    switch (buf[0])
      {
       case '+':
-         /* TODO: Set request termcap/terminfo */
+         if (len < 4)
+           goto end;
+         switch (buf[1])
+           {
+            case 'q':
+              ERR("unhandled dsc request to get termcap/terminfo");
+              /* TODO */
+              goto end;
+               break;
+            case 'p':
+              ERR("unhandled dsc request to set termcap/terminfo");
+              /* TODO */
+              goto end;
+               break;
+            default:
+              ERR("invalid dsc request about termcap/terminfo");
+              goto end;
+           }
          break;
       case '$':
          /* Request status string */
@@ -1164,7 +1181,8 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
                  }
                else if (buf[3] == 'q') /* DECSCA */
                  {
-                    /* TODO: */
+                    ERR("unhandled DECSCA '$qq'");
+                    goto end;
                  }
                else
                  {
