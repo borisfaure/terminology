@@ -1130,7 +1130,6 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
         b++;
         cc++;
      }
-   len = cc - c;
    if (b == be)
      {
         ERR("dcs parsing overflowed (binary data?)");
@@ -1139,6 +1138,7 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
    else return 0;
+   len = cc - c;
    switch (buf[0])
      {
       case '+':
