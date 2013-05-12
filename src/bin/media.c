@@ -40,6 +40,7 @@ struct _Media
    } down;
    Eina_Bool nosmooth : 1;
    Eina_Bool downloading : 1;
+   Eina_Bool queued : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -66,8 +67,10 @@ _is_fmt(const char *f, const char **extn)
 
 static Ethumb_Client *et_client = NULL;
 static Eina_Bool et_connected = EINA_FALSE;
+static Eina_List *et_queue = NULL;
 
 static void _et_init(void);
+static void _type_thumb_init2(Evas_Object *obj);
 
 static void
 _et_disconnect(void *data __UNUSED__, Ethumb_Client *c)
@@ -84,9 +87,13 @@ _et_connect(void *data __UNUSED__, Ethumb_Client *c, Eina_Bool ok)
 {
    if (ok)
      {
+        Evas_Object *o;
+        
         et_connected = EINA_TRUE;
         ethumb_client_on_server_die_callback_set(c, _et_disconnect,
                                                  NULL, NULL);
+        EINA_LIST_FREE(et_queue, o)
+          _type_thumb_init2(o);
      }
    else
      et_client = NULL;
@@ -179,19 +186,11 @@ _et_error(Ethumb_Client *c, void *data)
 }
 
 static void
-_type_thumb_init(Evas_Object *obj)
+_type_thumb_init2(Evas_Object *obj)
 {
-   Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_THUMB;
-   _et_init();
-   o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
-   evas_object_smart_member_add(o, obj);
-   evas_object_clip_set(o, sd->clip);
-   evas_object_raise(sd->o_event);
-   sd->iw = 64;
-   sd->ih = 64;
+
    if ((sd->realf) && (sd->realf[0] != '/'))
      {
         /* TODO: Listen for theme cache changes */
@@ -225,6 +224,30 @@ _type_thumb_init(Evas_Object *obj)
      ethumb_client_file_set(et_client, sd->realf, NULL);
    sd->et_req = ethumb_client_thumb_async_get(et_client, _et_done,
                                               _et_error, obj);
+   sd->queued = EINA_FALSE;
+}
+
+static void
+_type_thumb_init(Evas_Object *obj)
+{
+   Evas_Object *o;
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   sd->type = TYPE_THUMB;
+   _et_init();
+   o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(o, obj);
+   evas_object_clip_set(o, sd->clip);
+   evas_object_raise(sd->o_event);
+   sd->iw = 64;
+   sd->ih = 64;
+   if (!et_connected)
+     {
+        et_queue = eina_list_append(et_queue, obj);
+        sd->queued = EINA_TRUE;
+        return;
+     }
+   _type_thumb_init2(obj);
 }
 
 //////////////////////// img
@@ -819,6 +842,7 @@ _smart_del(Evas_Object *obj)
    if (sd->restart_job) ecore_job_del(sd->restart_job);
    if ((et_client) && (sd->et_req))
      ethumb_client_thumb_async_cancel(et_client, sd->et_req);
+   if (sd->queued) et_queue = eina_list_remove(et_queue, obj);
    sd->et_req = NULL;
 
    _parent_sc.del(obj);
