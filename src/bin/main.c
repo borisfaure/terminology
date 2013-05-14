@@ -2918,6 +2918,8 @@ remote:
    
    main_trans_update(config);
    main_media_update(config);
+   main_win_sizing_handle(wn);
+   evas_object_show(wn->win);
    if (pos_set)
      {
         int screen_w, screen_h;
@@ -2927,11 +2929,9 @@ remote:
         if (pos_y < 0) pos_y = screen_h + pos_y;
         evas_object_move(wn->win, pos_x, pos_y);
      }
-   main_win_sizing_handle(wn);
-   evas_object_show(wn->win);
    if (nowm)
-     ecore_evas_focus_set
-     (ecore_evas_ecore_evas_get(evas_object_evas_get(wn->win)), 1);
+      ecore_evas_focus_set(ecore_evas_ecore_evas_get(
+            evas_object_evas_get(wn->win)), 1);
    elm_run();
  end:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
