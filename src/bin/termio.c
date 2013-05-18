@@ -4182,6 +4182,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
      }
    termpty_cellcomp_thaw(sd->pty);
 
+   if (eina_strbuf_length_get(sb) == 0)
+     {
+        eina_strbuf_free(sb);
+        return NULL;
+     }
    s = eina_strbuf_string_steal(sb);
    eina_strbuf_free(sb);
    return s;
