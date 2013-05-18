@@ -28,8 +28,8 @@ _alloc_new(int size, unsigned char gen)
 {
    Alloc *al;
    unsigned char *ptr;
-   int newsize, i, firstnull = -1;
-   
+   int newsize, sz, i, firstnull = -1;
+
    // allocations sized up to nearest size alloc alignment
    newsize = MEM_ALLOC_ALIGN * ((size + MEM_ALLOC_ALIGN - 1) / MEM_ALLOC_ALIGN);
    for (i = 0; i < MEM_BLOCKS; i++)
@@ -55,28 +55,28 @@ _alloc_new(int size, unsigned char gen)
      }
    // out of slots for new blocks - no null blocks
    if (firstnull < 0) return NULL;
-   
+
    // so allocate a new block
    size = MEM_BLOCK_PAGES * MEM_PAGE_SIZE;
    // size up to page size
-   newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE);
+   sz = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE);
    // get mmaped anonymous memory so when freed it goes away from the system
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+   ptr = mmap(NULL, sz, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
    if (ptr == MAP_FAILED) return NULL;
-   
-   // note - we SHOLD memset to 0, but we are assuming mmap anon give 0 pages
+
+   // note - we SHOULD memset to 0, but we are assuming mmap anon give 0 pages
    //memset(ptr, 0, newsize);
-   
+
    al = (Alloc *)ptr;
-   al->size = newsize;
-   al->last = sizeof(Alloc);
+   al->size = sz;
+   al->last = sizeof(Alloc) + newsize;
    al->count = 1;
    al->slot = firstnull;
    al->gen = gen;
    alloc[al->slot] = al;
    ptr = (unsigned char *)al;
-   ptr += al->last;
+   ptr += sizeof(Alloc);
    return ptr;
 }
 
