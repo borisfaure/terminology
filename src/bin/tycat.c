@@ -22,7 +22,7 @@ Ecore_Evas *ee = NULL;
 Evas *evas = NULL;
 Evas_Object *o = NULL;
 struct termios told, tnew;
-int tw = 0, th = 0, cw = 0, ch = 0;
+int tw = 0, th = 0, cw = 0, ch = 0, maxw = 0, maxh = 0;
 
 #include "extns.h"
 
@@ -45,15 +45,21 @@ echo_on(void)
 static void
 scaleterm(int w, int h, int *iw, int *ih)
 {
-   if (w > (tw * cw))
+   int width = maxw ? maxw : tw;
+   if (w > (width * cw))
      {
-        *iw = tw;
-        *ih = ((h * (tw * cw) / w) + (ch - 1)) / ch;
+        *iw = width;
+        *ih = ((h * (width * cw) / w) + (ch - 1)) / ch;
      }
    else
      {
         *iw = (w + (cw - 1)) / cw;
         *ih = (h + (ch - 1)) / ch;
+     }
+   if (maxh && *ih > maxh)
+     {
+        *ih = maxh;
+        *iw = ((w * (maxh * ch) / h) + (cw - 1)) / cw;
      }
 }
 
@@ -108,22 +114,30 @@ prnt(const char *path, int w, int h, int mode)
    free(line);
 }
 
+static void
+print_usage(const char *argv0)
+{
+   printf("Usage: %s [-s|-f|-c] [-g <width>x<height>] FILE1 [FILE2 ...]\n"
+          "\n"
+          "  -s  Stretch file to fill nearest character cell size\n"
+          "  -f  Fill file to totally cover character cells with no gaps\n"
+          "  -c  Center file in nearest character cells but only scale down (default)\n"
+          "  -g <width>x<height>  Set maximum geometry for the image (cell count)\n",
+         argv0);
+}
+
 int
 main(int argc, char **argv)
 {
    char buf[64];
    int w = 0, h = 0;
    int iw = 0, ih = 0;
+   int ret = 0;
    
    if (!getenv("TERMINOLOGY")) return 0;
    if (argc <= 1)
      {
-        printf("Usage: %s [-s|-f|-c] FILE1 [FILE2 ...]\n"
-               "\n"
-               "  -s  Stretch file to fill nearest character cell size\n"
-               "  -f  Fill file to totally cover character cells with no gaps\n"
-               "  -c  Center file in nearest character cells but only scale down (default)\n",
-              argv[0]);
+        print_usage(argv[0]);
         return 0;
      }
    eina_init();
@@ -175,7 +189,30 @@ main(int argc, char **argv)
                   i++;
                   if (i >= argc) return 0;
                }
-             
+
+             if (!strcmp(argv[i], "-g"))
+               {
+                  unsigned int width = 0, height = 0;
+                  int cnt;
+
+                  if (i + 2 >= argc)
+                    {
+                       print_usage(argv[0]);
+                       ret = 1;
+                       goto shutdown;
+                    }
+                  i++;
+                  cnt = sscanf(argv[i], "%ux%u", &width, &height);
+                  if (cnt != 2)
+                    {
+                       print_usage(argv[0]);
+                       ret = 1;
+                       goto shutdown;
+                    }
+                  if (!width || tw > width) maxw = width;
+                  maxh = height;
+               }
+
              path = argv[i];
              rp = ecore_file_realpath(path);
              if (rp)
@@ -270,6 +307,7 @@ done:
 //        ecore_main_loop_begin();
         ecore_evas_free(ee);
      }
+shutdown:
    emotion_shutdown();
    edje_shutdown();
    ecore_evas_shutdown();
