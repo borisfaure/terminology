@@ -1630,6 +1630,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    Termio *sd = evas_object_smart_data_get(obj);
    int start_x, start_y, end_x, end_y;
    char *s;
+   size_t len;
 
    if (!sd) return;
    start_x = sd->cur.sel1.x;
@@ -1650,14 +1651,15 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
         sb = eina_strbuf_new();
         for (i = start_y; i <= end_y; i++)
           {
-             char *tmp = termio_selection_get(obj, start_x, i, end_x, i);
-             size_t len = strlen(tmp);
+             char *tmp = termio_selection_get(obj, start_x, i, end_x, i,
+                                              &len);
 
              eina_strbuf_append_length(sb, tmp, len);
              if (len && tmp[len - 1] != '\n')
                eina_strbuf_append_char(sb, '\n');
              free(tmp);
           }
+        len = eina_strbuf_length_get(sb);
         s = eina_strbuf_string_steal(sb);
         eina_strbuf_free(sb);
      }
@@ -1668,7 +1670,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
              INT_SWAP(start_y, end_y);
              INT_SWAP(start_x, end_x);
           }
-        s = termio_selection_get(obj, start_x, start_y, end_x, end_y);
+        s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len);
      }
 
    if (s)
@@ -1680,7 +1682,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
              sd->set_sel_at = ecore_time_get(); // hack
              sd->sel_type = type;
              elm_cnp_selection_set(sd->win, type,
-                                   ELM_SEL_FORMAT_TEXT, s, strlen(s));
+                                   ELM_SEL_FORMAT_TEXT, s, len);
              elm_cnp_selection_loss_callback_set(sd->win, type,
                                                  _lost_selection, obj);
              sd->have_sel = EINA_TRUE;
@@ -2708,16 +2710,15 @@ _selection_newline_extend_fix(Evas_Object *obj)
           {
              char *lastline;
              int x1, y1, x2, y2;
-             
+             size_t len;
+
              if (sd->cur.sel1.y == sd->cur.sel2.y) x1 = sd->cur.sel1.x;
              else x1 = 0;
              x2 = sd->cur.sel2.x;
              y1 = y2 = sd->cur.sel2.y;
-             lastline = termio_selection_get(obj, x1, y1, x2, y2);
+             lastline = termio_selection_get(obj, x1, y1, x2, y2, &len);
              if (lastline)
                {
-                  int len = strlen(lastline);
-                  
                   if ((len > 0) && (lastline[len - 1] == '\n'))
                     {
                        sd->cur.sel2.x = sd->grid.w - 1;
@@ -4049,12 +4050,14 @@ termio_theme_get(Evas_Object *obj)
 }
 
 char *
-termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
+termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
+                     size_t *len)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Eina_Strbuf *sb;
    char *s;
    int x, y;
+   size_t len_backup;
 
    if (!sd) return NULL;
    sb = eina_strbuf_new();
@@ -4139,7 +4142,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
              if (y == c2y)
                {
                   Eina_Bool have_more = EINA_FALSE;
-                  
+
                   for (x = end_x + 1; x < w; x++)
                     {
 #if defined(SUPPORT_DBLWIDTH)
@@ -4182,7 +4185,9 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y)
      }
    termpty_cellcomp_thaw(sd->pty);
 
-   if (eina_strbuf_length_get(sb) == 0)
+   if (!len) len = &len_backup;
+   *len = eina_strbuf_length_get(sb);
+   if (!*len)
      {
         eina_strbuf_free(sb);
         return NULL;

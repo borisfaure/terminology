@@ -95,13 +95,15 @@ _is_file(const char *str)
 }
 
 char *
-_termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r, int *y2r)
+_termio_link_find(Evas_Object *obj, int cx, int cy,
+                  int *x1r, int *y1r, int *x2r, int *y2r)
 {
    char *s;
    char endmatch = 0;
-   int x1, x2, y1, y2, len, w = 0, h = 0, sc;
-   Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, extend = EINA_FALSE;
-   
+   int x1, x2, y1, y2, w = 0, h = 0, sc;
+   size_t len;
+   Eina_Bool goback = EINA_TRUE, goforward = EINA_TRUE, extend = EINA_FALSE;
+
    x1 = x2 = cx;
    y1 = y2 = cy;
    termio_size_get(obj, &w, &h);
@@ -110,7 +112,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
    if (!coord_back(&x1, &y1, w, h)) goback = EINA_FALSE;
    for (;;)
      {
-        s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc);
+        s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
         if (!s) break;
         if (goback)
           {
@@ -119,14 +121,16 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                   goback = EINA_FALSE;
                   coord_back(&x1, &y1, w, h);
                   free(s);
-                  s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc);
+                  s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
+                                           &len);
                   if (!s) break;
                   if (s[0] == '"') endmatch = '"';
                   else if (s[0] == '\'') endmatch = '\'';
                   else if (s[0] == '<') endmatch = '>';
                   coord_forward(&x1, &y1, w, h);
                   free(s);
-                  s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc);
+                  s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
+                                           &len);
                   if (!s) break;
                }
              else if ((isspace(s[0])) ||
@@ -147,7 +151,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
                     }
-                  else if (strchr((s + 2), '@'))
+                  else if (len > 2 && strchr((s + 2), '@'))
                     {
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
@@ -165,7 +169,6 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
           }
         if (goforward)
           {
-             len = strlen(s);
              if (len > 1)
                {
                   if (((endmatch) && (s[len - 1] == endmatch)) ||
@@ -195,7 +198,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
         if ((!goback) && (!goforward))
           {
              free(s);
-             s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc);
+             s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
              break;
           }
         free(s);
@@ -203,7 +206,6 @@ _termio_link_find(Evas_Object *obj, int cx, int cy, int *x1r, int *y1r, int *x2r
      }
    if (s)
      {
-        len = strlen(s);
         while (len > 1)
           {
              if (isspace(s[len - 1]))
