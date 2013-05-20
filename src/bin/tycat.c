@@ -287,9 +287,21 @@ main(int argc, char **argv)
                                            scaleterm(w, h, &iw, &ih);
                                            prnt(rp, iw, ih, mode);
                                         }
+                                      else ok = EINA_FALSE;
                                    }
-                                 else
-                                   prnt(rp, tw, 3, NOIMG);
+                                 else ok = EINA_FALSE;
+
+                                 if (!ok)
+                                   {
+                                      double ar = emotion_object_ratio_get(o);
+                                      if (ar > 0.0)
+                                        {
+                                           scaleterm(tw * cw, (int) ((tw * cw) / ar), &iw, &ih);
+                                           prnt(rp, iw, ih, mode);
+                                        }
+                                      else
+                                        prnt(rp, tw, 3, NOIMG);
+                                   }
                                  goto done;
                               }
                          }
