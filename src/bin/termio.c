@@ -4073,9 +4073,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
         if (!cells) continue;
         if (w > sd->grid.w) w = sd->grid.w;
         if (c1x >= w) continue;
-        if (c2x >= w) c2x = w - 1;
         start_x = c1x;
-        end_x = c2x;
+        end_x = (c2x >= w) ? w - 1 : c2x;
         if (c1y != c2y)
           {
              if (y == c1y) end_x = w - 1;
@@ -4103,7 +4102,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
              else if (cells[x].att.newline)
                {
                   last0 = -1;
-                  eina_strbuf_append_char(sb, '\n');
+                  if ((y != c2y) || (x != end_x))
+                    eina_strbuf_append_char(sb, '\n');
                   break;
                }
              else if (cells[x].att.tab)
@@ -4130,7 +4130,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                   txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
                     eina_strbuf_append_length(sb, txt, txtlen);
-                  if (x == (w - 1))
+                  if ((x == (w - 1)) && (x != c2x))
                     {
                        if (!cells[x].att.autowrapped)
                          eina_strbuf_append_char(sb, '\n');

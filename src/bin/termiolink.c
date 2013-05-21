@@ -109,7 +109,6 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    termio_size_get(obj, &w, &h);
    sc = termio_scroll_get(obj);
    if ((w <= 0) || (h <= 0)) return NULL;
-   if (!coord_back(&x1, &y1, w, h)) goback = EINA_FALSE;
    for (;;)
      {
         s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
@@ -172,7 +171,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
              if (len > 1)
                {
                   if (((endmatch) && (s[len - 1] == endmatch)) ||
-                      ((!endmatch) && 
+                      ((!endmatch) &&
                           ((isspace(s[len - 1])) || (s[len - 1] == '>'))
                       ))
                     {
