@@ -686,7 +686,6 @@ expand_screen:
                   if (!rewrapping)
                     {
                        new_ts = NULL;
-                       y++;
                     }
                }
              else
