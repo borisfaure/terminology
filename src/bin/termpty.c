@@ -621,6 +621,7 @@ _termpty_horizontally_expand(Termpty *ty, int old_w, int old_h,
                {
                   rewrapping = EINA_TRUE;
                   new_ts = termpty_save_new(ty->w);
+                  new_ts->w = ts->w;
                   termpty_cell_copy(ty, ts->cell, new_ts->cell, ts->w);
                   new_ts->cell[ts->w - 1].att.autowrapped = 0;
                   new_back[new_back_pos++] = new_ts;
