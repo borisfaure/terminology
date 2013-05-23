@@ -163,6 +163,30 @@ _button_add(Evas_Object *win, const char *label, const char *icon, Evas_Smart_Cb
    return bt;
 }
 
+static Evas_Object *
+_sep_add_v(Evas_Object *win)
+{
+   Evas_Object *o = elm_separator_add(win);
+   
+   evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, 0.5, EVAS_HINT_FILL);
+   elm_separator_horizontal_set(o, EINA_FALSE);
+   evas_object_show(o);
+   return o;
+}
+
+static Evas_Object *
+_sep_add_h(Evas_Object *win)
+{
+   Evas_Object *o = elm_separator_add(win);
+   
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   evas_object_show(o);
+   return o;
+}
+
 void
 controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                 void (*donecb) (void *data), void *donedata)
@@ -200,19 +224,23 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         
         o = _button_add(win, "New", "new", _cb_ct_new, term);
         elm_box_pack_end(ct_box2, o);
+
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box2, o);
+        
         o = _button_add(win, "Split V", "split-h", _cb_ct_split_v, term);
         elm_box_pack_end(ct_box2, o);
         o = _button_add(win, "Split H", "split-v", _cb_ct_split_h, term);
         elm_box_pack_end(ct_box2, o);
+        
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box2, o);
+        
         o = _button_add(win, "Close", "close", _cb_ct_close, term);
         elm_box_pack_end(ct_box2, o);
         
-        o = elm_separator_add(win);
-        evas_object_size_hint_weight_set(o, 0.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(o, 0.5, EVAS_HINT_FILL);
-        elm_separator_horizontal_set(o, EINA_FALSE);
+        o = _sep_add_v(win);
         elm_box_pack_end(ct_boxh, o);
-        evas_object_show(o);
         
         ct_box = o = elm_box_add(win);
         elm_box_pack_end(ct_boxh, o);
@@ -223,25 +251,18 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         o = _button_add(win, "Paste", "paste", _cb_ct_paste, term);
         elm_box_pack_end(ct_box, o);
         
-        o = elm_separator_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-        elm_separator_horizontal_set(o, EINA_TRUE);
+        o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
-                
+        
         o = _button_add(win, "Settings", "settings", _cb_ct_options, term);
         elm_box_pack_end(ct_box, o);
         
-        o = elm_separator_add(win);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-        elm_separator_horizontal_set(o, EINA_TRUE);
+        o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
-        evas_object_show(o);
         
         o = _button_add(win, "About", "about", _cb_ct_about, term);
         elm_box_pack_end(ct_box, o);
+
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
                                        _cb_frame_del, NULL);
      }
