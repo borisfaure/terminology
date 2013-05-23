@@ -131,6 +131,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    switch (*cc)
      {
       case 'm': // color set
+         if (b && (*b == '>'))
+           { // key resources used by xterm
+              ERR("TODO: set/reset key resources used by xterm");
+              break;
+           }
         while (b)
           {
              arg = _csi_arg_get(&b);
