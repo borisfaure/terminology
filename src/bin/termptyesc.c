@@ -490,13 +490,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("scroll up N lines");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        for (i = 0; i < arg; i++) _termpty_text_scroll(ty, EINA_FALSE);
+        for (i = 0; i < arg; i++) _termpty_text_scroll(ty, EINA_TRUE);
         break;
       case 'T': // scroll down N lines
         DBG("scroll down N lines");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        for (i = 0; i < arg; i++) _termpty_text_scroll_rev(ty, EINA_FALSE);
+        for (i = 0; i < arg; i++) _termpty_text_scroll_rev(ty, EINA_TRUE);
         break;
       case 'M': // delete N lines - cy
       case 'L': // insert N lines - cy

@@ -82,14 +82,12 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
      }
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
 
-   if (!clear)
-     return;
-
    if (start_y == 0 && end_y == ty->h - 1)
      {
        // screen is a circular buffer now
        cells2 = &(ty->screen[ty->circular_offset * ty->w]);
-       _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
+       if (clear)
+          _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
 
        ty->circular_offset++;
        if (ty->circular_offset >= ty->h)
@@ -104,7 +102,8 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
             cells2 = &(ty->screen[(y + 1) * ty->w]);
             termpty_cell_copy(ty, cells2, cells, ty->w);
          }
-       _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
+       if (clear)
+          _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
      }
 }
 
@@ -121,9 +120,6 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
 
-   if (!clear)
-     return;
-
    if (start_y == 0 && end_y == ty->h - 1)
      {
        // screen is a circular buffer now
@@ -132,7 +128,8 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
          ty->circular_offset = ty->h - 1;
 
        cells = &(ty->screen[ty->circular_offset * ty->w]);
-       _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+       if (clear)
+          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
    else
      {
@@ -144,7 +141,8 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
             termpty_cell_copy(ty, cells, cells2, ty->w);
          }
        y = start_y;
-       _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+       if (clear)
+          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
 }
 
