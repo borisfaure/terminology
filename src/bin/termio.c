@@ -3057,7 +3057,6 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    else
      {
        char buf[64];
-       int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
        int cx, cy;
 
        _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
@@ -3067,6 +3066,8 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
           case MOUSE_EXT_NONE:
             if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
               {
+                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
+
                  buf[0] = 0x1b;
                  buf[1] = '[';
                  buf[2] = 'M';
@@ -3080,11 +3081,12 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
           case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
               {
                  int v, i;
+                 int btn = (ev->z >= 0) ? 'a' : '`';
 
                  buf[0] = 0x1b;
                  buf[1] = '[';
                  buf[2] = 'M';
-                 buf[3] = btn + ' ';
+                 buf[3] = btn;
                  i = 4;
                  v = cx + 1 + ' ';
                  if (v <= 127) buf[i++] = v;
@@ -3106,6 +3108,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
             break;
           case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
               {
+                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
                  snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                           btn, cx + 1, cy + 1);
                  termpty_write(sd->pty, buf, strlen(buf));
@@ -3113,6 +3116,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
             break;
           case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
               {
+                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
                  snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                           btn + ' ',
                           cx + 1, cy + 1);
