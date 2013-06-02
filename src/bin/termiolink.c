@@ -150,19 +150,10 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
                     }
-                  else if (len > 2 && strchr((s + 2), '@'))
+                  else
                     {
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
-                    }
-                  else if (s[0] == '=')
-                    {
-                    }
-                  else
-                    {
-                       free(s);
-                       s = NULL;
-                       break;
                     }
                }
           }
