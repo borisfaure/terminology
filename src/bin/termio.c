@@ -4072,7 +4072,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells) continue;
         if (w > sd->grid.w) w = sd->grid.w;
-        if (c1x >= w) continue;
+        if (y == c1y && c1x >= w) continue;
         start_x = c1x;
         end_x = (c2x >= w) ? w - 1 : c2x;
         if (c1y != c2y)
