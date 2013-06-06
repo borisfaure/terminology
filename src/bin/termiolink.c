@@ -102,7 +102,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    char endmatch = 0;
    int x1, x2, y1, y2, w = 0, h = 0, sc;
    size_t len;
-   Eina_Bool goback = EINA_TRUE, goforward = EINA_TRUE, extend = EINA_FALSE;
+   Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, escaped = EINA_FALSE;
 
    x1 = x2 = cx;
    y1 = y2 = cy;
@@ -118,72 +118,76 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
              if (link_is_protocol(s))
                {
                   goback = EINA_FALSE;
+                  goforward = EINA_TRUE;
+
+                  /* Check if the previous char is a delimiter */
                   coord_back(&x1, &y1, w, h);
                   free(s);
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
                                            &len);
                   if (!s) break;
-                  if (s[0] == '"') endmatch = '"';
-                  else if (s[0] == '\'') endmatch = '\'';
-                  else if (s[0] == '<') endmatch = '>';
+                  switch (s[0])
+                    {
+                     case '"': endmatch = '"'; break;
+                     case '\'': endmatch = '\''; break;
+                     case '`': endmatch = '\''; break;
+                     case '<': endmatch = '>'; break;
+                     case '[': endmatch = ']'; break;
+                     case '{': endmatch = '}'; break;
+                     case '(': endmatch = ')'; break;
+                    }
                   coord_forward(&x1, &y1, w, h);
+
                   free(s);
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
                                            &len);
                   if (!s) break;
                }
-             else if ((isspace(s[0])) ||
-                      (s[0] == '"') ||
-                      (s[0] == '`') ||
-                      (s[0] == '\'') ||
-                      (s[0] == '<') ||
-                      (s[0] == '='))
+             else
                {
-                  if (s[0] == '"') endmatch = '"';
-                  else if (s[0] == '\'') endmatch = '\'';
-                  else if (s[0] == '`') endmatch = '\'';
-                  else if (s[0] == '<') endmatch = '>';
-                  if ((casestartswith((s + 1), "www.")) ||
-                      (casestartswith((s + 1), "ftp.")) ||
-                      (_is_file(s + 1)))
+                  switch (s[0])
+                    {
+                     case '"': endmatch = '"'; break;
+                     case '\'': endmatch = '\''; break;
+                     case '`': endmatch = '\''; break;
+                     case '<': endmatch = '>'; break;
+                     case '[': endmatch = ']'; break;
+                     case '{': endmatch = '}'; break;
+                     case '(': endmatch = ')'; break;
+                    }
+                  if ((endmatch) || (isspace(s[0])))
                     {
                        goback = EINA_FALSE;
                        coord_forward(&x1, &y1, w, h);
-                    }
-                  else
-                    {
-                       goback = EINA_FALSE;
-                       coord_forward(&x1, &y1, w, h);
+                       goforward = EINA_TRUE;
+                       free(s);
+                       s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
+                                                &len);
+                       if (!s) break;
                     }
                }
           }
-        if (goforward)
+        if ((goforward) && (len >= 1))
           {
-             if (len > 1)
+             char end = s[len - 1];
+
+             if (((endmatch) && (end == endmatch)) ||
+                 ((!endmatch) && (!escaped) && (isspace(end))))
                {
-                  if (((endmatch) && (s[len - 1] == endmatch)) ||
-                      ((!endmatch) &&
-                          ((isspace(s[len - 1])) || (s[len - 1] == '>'))
-                      ))
-                    {
-                       goforward = EINA_FALSE;
-                       coord_back(&x2, &y2, w, h);
-                    }
+                  goforward = EINA_FALSE;
+                  coord_back(&x2, &y2, w, h);
+                  endmatch = 0;
                }
+             escaped = (end == '\\');
           }
-        
-        if (goforward)
+        if ((goback) && (!coord_back(&x1, &y1, w, h)))
           {
-             if (!coord_forward(&x2, &y2, w, h)) goforward = EINA_FALSE;
-          }
-        if (goback)
-          {
-             if (!coord_back(&x1, &y1, w, h)) goback = EINA_FALSE;
-          }
-        if ((!extend) && (!goback))
-          {
+             goback = EINA_FALSE;
              goforward = EINA_TRUE;
-             extend = EINA_TRUE;
+          }
+        if ((goforward) && (!coord_forward(&x2, &y2, w, h)))
+          {
+             goforward = EINA_FALSE;
           }
         if ((!goback) && (!goforward))
           {
@@ -196,16 +200,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
      }
    if (s)
      {
-        while (len > 1)
-          {
-             if (isspace(s[len - 1]))
-               {
-                  s[len - 1] = 0;
-                  len--;
-               }
-             else break;
-          }
-        if ((!isspace(s[0])) && (len > 1))
+        if ((len > 1) && (!endmatch))
           {
              Eina_Bool is_file = _is_file(s);
              if (is_file ||
