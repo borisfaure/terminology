@@ -180,9 +180,9 @@ is[CW;H;FULL-PATH-OR-URL]
     example:
     
       printf("\033}is#5;3;%s\000"
-             "\033}ib#####\033}ie\n"
-             "\033}ib#####\033}ie\n"
-             "\033}ib#####\033}ie\n", "/tmp/icon.png");
+             "\033}ib\000#####\033}ie\000\n"
+             "\033}ib\000#####\033}ie\000\n"
+             "\033}ib\000#####\033}ie\000\n", "/tmp/icon.png");
     
     note that '#' is the replace character, and later '#' chars if inside
     begin/end escapes, will be replaced by the given media indicated
