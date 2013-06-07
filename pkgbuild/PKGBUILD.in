@@ -1,0 +1,35 @@
+# Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>
+pkgname=('terminology')
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc="Terminal emulator for Enlightenment - GIT development snapshot"
+arch=('i686' 'x86_64' 'arm')
+url="http://www.enlightenment.org"
+license=('BSD')
+depends=('elementary' 'efl')
+optdepends=('efl_x11')
+options=('strip' 'zipman' '!libtool' 'debug')
+buildflags="-O2 -g -fvisibility=hidden -fomit-frame-pointer"
+build() {
+  cd "../.."
+  make clean distclean
+  ./configure --prefix=/usr
+  make
+}
+
+#check() {
+#  cd "../.."
+#  make -k check
+#}
+
+package() {
+  cd "../.."
+  rm -rf $pkgdir/usr
+  make -j1 DESTDIR="$pkgdir/" install
+  install -Dm644 README $pkgdir/usr/share/$pkgname/README
+  install -Dm644 NEWS $pkgdir/usr/share/$pkgname/NEWS
+  install -Dm644 ChangeLog $pkgdir/usr/share/$pkgname/ChangeLog
+  install -Dm644 AUTHORS $pkgdir/usr/share/$pkgname/AUTHORS
+  install -Dm644 COPYING $pkgdir/usr/share/licenses/$pkgname/COPYING
+  ln -s ../licenses/$pkgname/COPYING $pkgdir/usr/share/$pkgname/COPYING
+}

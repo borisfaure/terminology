@@ -61,3 +61,7 @@
 /src/bin/*_generated.h
 /man/Makefile
 /man/Makefile.in
+pkgbuild/PKGBUILD
+pkgbuild/pkg
+pkgbuild/src
+pkgbuild/*.tar.xz

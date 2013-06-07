@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-AC_INIT([terminology], [0.3.0], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([terminology], [0.3.50], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -73,6 +73,7 @@ data/themes/Makefile
 data/themes/images/Makefile
 data/themes/sounds/Makefile
 man/Makefile
+pkgbuild/PKGBUILD
 ])
 
 AC_OUTPUT
@@ -86,9 +87,6 @@ echo
 echo "------------------------------------------------------------------------"
 echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
-echo
-echo "Configuration Options Summary:"
-echo "  Ecore IMF................: $have_ecore_imf"
 echo
 echo "Compilation................: make (or gmake)"
 echo "  CPPFLAGS.................: $CPPFLAGS"
