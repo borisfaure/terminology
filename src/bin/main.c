@@ -891,7 +891,11 @@ _cb_options_done(void *data)
    if (!wn->focused) return;
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
-        if (term->focused) elm_object_focus_set(term->term, EINA_TRUE);
+        if (term->focused)
+          {
+             elm_object_focus_set(term->term, EINA_TRUE);
+             termio_event_feed_mouse_in(term->term);
+          }
      }
 }
 
