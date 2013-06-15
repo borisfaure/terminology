@@ -527,8 +527,13 @@ _smart_mouseover_apply(Evas_Object *obj)
                          &x1, &y1, &x2, &y2);
    if (!s)
      {
-        if (sd->link.string) free(sd->link.string);
-        sd->link.string = NULL;
+        if (sd->link.string)
+          {
+             if (link_is_url(sd->link.string))
+                ty_dbus_link_mouseout(sd->link.string);
+             free(sd->link.string);
+             sd->link.string = NULL;
+           }
         sd->link.x1 = -1;
         sd->link.y1 = -1;
         sd->link.x2 = -1;
@@ -536,11 +541,17 @@ _smart_mouseover_apply(Evas_Object *obj)
         _update_link(obj, same_link, same_geom);
         return;
      }
-   
+
    if ((sd->link.string) && (!strcmp(sd->link.string, s)))
      same_link = EINA_TRUE;
    if (sd->link.string) free(sd->link.string);
    sd->link.string = s;
+
+   if ((!same_link) && (link_is_url(s)))
+     {
+        ty_dbus_link_mousein(s);
+     }
+
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
      same_geom = EINA_TRUE;
