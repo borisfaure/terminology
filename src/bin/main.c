@@ -13,6 +13,7 @@
 #include "utils.h"
 #include "ipc.h"
 #include "sel.h"
+#include "dbus.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"
@@ -2936,12 +2937,16 @@ remote:
    if (nowm)
       ecore_evas_focus_set(ecore_evas_ecore_evas_get(
             evas_object_evas_get(wn->win)), 1);
+
+   ty_dbus_init();
+
    elm_run();
  end:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    free(cmd);
 #endif
 
+   ty_dbus_shutdown();
    ipc_shutdown();
 
    while (wins)

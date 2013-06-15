@@ -6,7 +6,7 @@ terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
-terminology_LDADD = @TERMINOLOGY_LIBS@
+terminology_LDADD = @TERMINOLOGY_LIBS@ @ELDBUS_LIBS@
 
 terminology_SOURCES = \
 private.h \
@@ -41,6 +41,7 @@ lz4/lz4.c lz4/lz4.h \
 utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h \
+dbus.c dbus.h \
 extns.h
 
 tybg_SOURCES = \

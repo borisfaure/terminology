@@ -2,6 +2,7 @@
 #include <Elementary.h>
 #include "termio.h"
 #include "utils.h"
+#include "dbus.h"
 
 static Eina_Bool
 coord_back(int *x, int *y, int w, int h __UNUSED__)
@@ -204,9 +205,10 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
         if ((len > 1) && (!endmatch))
           {
              Eina_Bool is_file = _is_file(s);
+             Eina_Bool is_url = link_is_url(s);
              if (is_file ||
                  link_is_email(s) ||
-                 link_is_url(s))
+                 is_url)
                {
                   if (x1r) *x1r = x1;
                   if (y1r) *y1r = y1;
@@ -218,6 +220,10 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                        char *ret = _local_path_get(obj, s);
                        free(s);
                        return ret;
+                    }
+                  else if (is_url)
+                    {
+                       ty_dbus_link_detect(s);
                     }
 
                   return s;

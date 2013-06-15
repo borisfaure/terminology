@@ -38,6 +38,15 @@ requirements="\
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
+PKG_CHECK_MODULES([ELDBUS],
+                  [eldbus],
+                  [
+                   AC_DEFINE(HAVE_ELDBUS, 1, [DBUS support])
+                   have_eldbus="yes"
+                   ],
+                   [have_eldbus="no"]
+                   )
+
 AC_CHECK_FUNCS(mkstemps)
 
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
@@ -95,4 +104,7 @@ echo "  LDFLAGS..................: $LDFLAGS"
 echo
 echo "Installation...............: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...................: $prefix"
+echo
+echo "Features:"
+echo "  dbus................: $have_eldbus"
 echo
