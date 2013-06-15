@@ -13,6 +13,7 @@
 #include "config.h"
 #include "utils.h"
 #include "media.h"
+#include "dbus.h"
 
 typedef struct _Termio Termio;
 
@@ -530,7 +531,11 @@ _smart_mouseover_apply(Evas_Object *obj)
         if (sd->link.string)
           {
              if (link_is_url(sd->link.string))
-                ty_dbus_link_mouseout(sd->link.string);
+               {
+                  ty_dbus_link_mouseout(sd->link.string,
+                                        sd->mouse.cx,
+                                        sd->mouse.cy);
+               }
              free(sd->link.string);
              sd->link.string = NULL;
            }
@@ -549,7 +554,9 @@ _smart_mouseover_apply(Evas_Object *obj)
 
    if ((!same_link) && (link_is_url(s)))
      {
-        ty_dbus_link_mousein(s);
+        ty_dbus_link_mousein(s,
+                             sd->mouse.cx,
+                             sd->mouse.cy);
      }
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
