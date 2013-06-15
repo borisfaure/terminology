@@ -532,9 +532,15 @@ _smart_mouseover_apply(Evas_Object *obj)
           {
              if (link_is_url(sd->link.string))
                {
-                  ty_dbus_link_mouseout(sd->link.string,
-                                        sd->mouse.cx,
-                                        sd->mouse.cy);
+                  Evas_Coord ox, oy;
+                  int x, y;
+
+                  evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+
+                  elm_win_screen_position_get(sd->win, &x, &y);
+                  x += ox + sd->mouse.cx * sd->font.chw;
+                  y += ox + sd->mouse.cy * sd->font.chh;
+                  ty_dbus_link_mouseout(sd->link.string, x, y);
                }
              free(sd->link.string);
              sd->link.string = NULL;
@@ -554,9 +560,15 @@ _smart_mouseover_apply(Evas_Object *obj)
 
    if ((!same_link) && (link_is_url(s)))
      {
-        ty_dbus_link_mousein(s,
-                             sd->mouse.cx,
-                             sd->mouse.cy);
+        Evas_Coord ox, oy;
+        int x, y;
+
+        evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+
+        elm_win_screen_position_get(sd->win, &x, &y);
+        x += ox + sd->mouse.cx * sd->font.chw;
+        y += ox + sd->mouse.cy * sd->font.chh;
+        ty_dbus_link_mousein(s, x, y);
      }
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
