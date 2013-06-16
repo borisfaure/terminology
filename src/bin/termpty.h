@@ -191,7 +191,8 @@ struct _Termexp
 void       termpty_init(void);
 void       termpty_shutdown(void);
 
-Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll);
+Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
+                      int w, int h, int backscroll, Eina_Bool xterm_256color);
 void       termpty_free(Termpty *ty);
 void       termpty_cellcomp_freeze(Termpty *ty);
 void       termpty_cellcomp_thaw(Termpty *ty);

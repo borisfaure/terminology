@@ -4172,7 +4172,8 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
                        _smart_cb_drop, obj);
 #endif
    
-   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
+   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
+                         config->xterm_256color);
    if (!sd->pty)
      {
         ERR("Cannot allocate termpty");

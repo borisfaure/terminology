@@ -267,7 +267,8 @@ _limit_coord(Termpty *ty, Termstate *state)
 }
 
 Termpty *
-termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, int backscroll)
+termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
+            int w, int h, int backscroll, Eina_Bool xterm_256color)
 {
    Termpty *ty;
    const char *pty;
@@ -399,9 +400,15 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
         
         /* TODO: should we reset signals here? */
 
-        // pretend to be xterm
-        putenv("TERM=xterm");
-//        putenv("TERM=xterm-256color");
+        /* pretend to be xterm */
+        if (xterm_256color)
+          {
+             putenv("TERM=xterm-256color");
+          }
+        else
+          {
+             putenv("TERM=xterm");
+          }
         putenv("XTERM_256_COLORS=1");
         if (!login_shell)
           execvp(args[0], (char *const *)args);

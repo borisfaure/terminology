@@ -42,6 +42,7 @@ struct _Config
    Eina_Bool         multi_instance;
    Eina_Bool         application_server;
    Eina_Bool         application_server_restore_views;
+   Eina_Bool         xterm_256color;
    Eina_Bool         custom_geometry;
    Eina_Bool         drag_links;
    int               cg_width;
