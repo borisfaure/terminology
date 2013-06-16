@@ -2257,6 +2257,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->maximized) nargc += 1;
    if (inst->hold) nargc += 1;
    if (inst->nowm) nargc += 1;
+   if (inst->xterm_256color) nargc += 1;
    if (inst->cmd) nargc += 2;
    
    nargv = calloc(nargc + 1, sizeof(char *));
@@ -2377,6 +2378,10 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->nowm)
      {
         nargv[i++] = "-W";
+     }
+   if (inst->xterm_256color)
+     {
+        nargv[i++] = "-2";
      }
    if (inst->cmd)
      {
@@ -2560,7 +2565,9 @@ static const Ecore_Getopt options = {
                               "Don't exit when the command process exits."),
       ECORE_GETOPT_STORE_TRUE('s', "single",
                               "Force single executable if multi-instance is enabled.."),
-        
+      ECORE_GETOPT_STORE_TRUE('2', "256color",
+                              "Set TERM to 'xterm-256color' instead of 'xterm'."),
+
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
       ECORE_GETOPT_LICENSE   ('L', "license"),
@@ -2598,7 +2605,8 @@ elm_main(int argc, char **argv)
    Eina_Bool single = EINA_FALSE;
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool cmd_options = EINA_FALSE;
-#endif   
+#endif
+   Eina_Bool xterm_256color = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
@@ -2628,7 +2636,8 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(nowm),
      ECORE_GETOPT_VALUE_BOOL(hold),
      ECORE_GETOPT_VALUE_BOOL(single),
-      
+     ECORE_GETOPT_VALUE_BOOL(xterm_256color),
+
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -2808,7 +2817,13 @@ elm_main(int argc, char **argv)
         config->disable_visual_bell = !visual_bell;
         config->temporary = EINA_TRUE;
      }
-   
+
+   if (xterm_256color)
+     {
+        config->xterm_256color = EINA_TRUE;
+        config->temporary = EINA_TRUE;
+     }
+
    if (geometry)
      {
         if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)

@@ -26,6 +26,7 @@ struct _Ipc_Instance
    int maximized;
    int hold;
    int nowm;
+   int xterm_256color;
 };
 
 void ipc_init(void);
