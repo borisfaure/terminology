@@ -530,7 +530,7 @@ _smart_mouseover_apply(Evas_Object *obj)
      {
         if (sd->link.string)
           {
-             if (link_is_url(sd->link.string))
+             if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                {
                   Evas_Coord ox, oy;
                   int x, y;
@@ -558,7 +558,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    if (sd->link.string) free(sd->link.string);
    sd->link.string = s;
 
-   if ((!same_link) && (link_is_url(s)))
+   if ((!same_link) && ((s[0] == '/') || (link_is_url(s))))
      {
         Evas_Coord ox, oy;
         int x, y;
