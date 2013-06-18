@@ -84,8 +84,8 @@ static const Keyout alt_keyout[] =
 
 static const Keyout keyout[] =
 {
-   KEY("BackSpace",    "\177"),
-//   KEY("BackSpace",    "\b"),
+//   KEY("BackSpace",    "\177"),
+   KEY("BackSpace",    "\b"),
    KEY("Left",         "\033[D"),
    KEY("Right",        "\033[C"),
    KEY("Up",           "\033[A"),
