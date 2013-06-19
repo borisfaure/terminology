@@ -1138,7 +1138,7 @@ _handle_esc_dcs(Termpty *ty __UNUSED__, const Eina_Unicode *c, const Eina_Unicod
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
-   int len;
+   int len = 0;
 
    cc = c;
    b = buf;
