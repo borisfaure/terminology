@@ -467,6 +467,18 @@ _update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
                }
              if (sd->link.string)
                {
+                  if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
+                    {
+                       Evas_Coord ox, oy;
+                       Ecore_X_Window xwin;
+
+                       evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+
+                       ox += sd->mouse.cx * sd->font.chw;
+                       oy += sd->mouse.cy * sd->font.chh;
+                       xwin = elm_win_xwindow_get(sd->win);
+                       ty_dbus_link_mousein(xwin, sd->link.string, ox, oy);
+                    }
                   for (y = sd->link.y1; y <= sd->link.y2; y++)
                     {
                        o = edje_object_add(evas_object_evas_get(obj));
@@ -533,14 +545,14 @@ _smart_mouseover_apply(Evas_Object *obj)
              if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                {
                   Evas_Coord ox, oy;
-                  int x, y;
+                  Ecore_Window xwin;
 
                   evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
 
-                  elm_win_screen_position_get(sd->win, &x, &y);
-                  x += ox + sd->mouse.cx * sd->font.chw;
-                  y += ox + sd->mouse.cy * sd->font.chh;
-                  ty_dbus_link_mouseout(sd->link.string, x, y);
+                  ox += sd->mouse.cx * sd->font.chw;
+                  oy += sd->mouse.cy * sd->font.chh;
+                  xwin = elm_win_xwindow_get(sd->win);
+                  ty_dbus_link_mouseout(xwin, sd->link.string, ox, oy);
                }
              free(sd->link.string);
              sd->link.string = NULL;
@@ -557,19 +569,6 @@ _smart_mouseover_apply(Evas_Object *obj)
      same_link = EINA_TRUE;
    if (sd->link.string) free(sd->link.string);
    sd->link.string = s;
-
-   if ((!same_link) && ((s[0] == '/') || (link_is_url(s))))
-     {
-        Evas_Coord ox, oy;
-        int x, y;
-
-        evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
-
-        elm_win_screen_position_get(sd->win, &x, &y);
-        x += ox + sd->mouse.cx * sd->font.chw;
-        y += ox + sd->mouse.cy * sd->font.chh;
-        ty_dbus_link_mousein(s, x, y);
-     }
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
@@ -3058,8 +3057,20 @@ _smart_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
-_smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
+   Evas_Object *o;
+   Evas_Event_Mouse_Out *ev = event;
+   Termio *sd;
+
+   sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   if (!sd->link.down.dnd)
+     {
+        EINA_LIST_FREE(sd->link.objs, o)
+          evas_object_del(o);
+     }
+   ty_dbus_link_hide();
    termio_mouseover_suspend_pushpop(data, 1);
 }
 

@@ -9,7 +9,7 @@ static Eldbus_Object *ty_e_object = NULL;
 static Eina_Stringshare *_current_url = NULL;
 
 void
-_cleanup_current_url(void)
+ty_dbus_link_hide(void)
 {
    Eldbus_Message *msg;
 
@@ -18,62 +18,54 @@ _cleanup_current_url(void)
    msg = eldbus_message_method_call_new("org.enlightenment.wm.service",
                                         "/org/enlightenment/wm/RemoteObject",
                                         "org.enlightenment.wm.Teamwork",
-                                        "LinkMouseOut");
+                                        "LinkHide");
 
-   eldbus_message_arguments_append(msg, "suii",
-                                   _current_url, time(NULL), 0, 0);
+   eldbus_message_arguments_append(msg, "s", _current_url);
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
 
-   eina_stringshare_del(_current_url);
-   _current_url = NULL;
+   eina_stringshare_replace(&_current_url, NULL);
 }
 
 void
-ty_dbus_link_mouseout(const char *url, int x, int y)
+ty_dbus_link_mouseout(int64_t win, const char *url, int x, int y)
 {
    Eldbus_Message *msg;
 
    if (!ty_e_object) return;
-
-   if ((!url) ||
-       ((_current_url) && (!strcmp(url, _current_url))))
-     {
-        _cleanup_current_url();
-        return;
-     }
-
-   _cleanup_current_url();
 
    msg = eldbus_message_method_call_new("org.enlightenment.wm.service",
                                         "/org/enlightenment/wm/RemoteObject",
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseOut");
 
-   eldbus_message_arguments_append(msg, "suii", url, time(NULL), x, y);
+   eldbus_message_arguments_append(msg, "suxii", url, time(NULL), win, x, y);
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
+   eina_stringshare_replace(&_current_url, NULL);
 }
 
 
 void
-ty_dbus_link_mousein(const char *url, int x, int y)
+ty_dbus_link_mousein(int64_t win, const char *url, int x, int y)
 {
    Eldbus_Message *msg;
+   Eina_Stringshare *u;
 
    if (!ty_e_object) return;
 
-   if ((_current_url) && (!strcmp(url, _current_url))) return;
+   u = eina_stringshare_add(url);
+   /* if previous link exists, do MouseOut now */
+   if (_current_url && (u != _current_url))
+     ty_dbus_link_mouseout(win, _current_url, x, y);
+   eina_stringshare_del(_current_url);
+   _current_url = u;
 
    msg = eldbus_message_method_call_new("org.enlightenment.wm.service",
                                         "/org/enlightenment/wm/RemoteObject",
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseIn");
 
-   _cleanup_current_url();
-
-   _current_url = eina_stringshare_add(url);
-
-   eldbus_message_arguments_append(msg, "suii",
-                                   _current_url, time(NULL), x, y);
+   eldbus_message_arguments_append(msg, "suxii",
+                                   _current_url, time(NULL), win, x, y);
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
 }
 
@@ -93,7 +85,7 @@ ty_dbus_init(void)
 void
 ty_dbus_shutdown(void)
 {
-   _cleanup_current_url();
+   ty_dbus_link_hide();
    if (ty_dbus_conn) eldbus_connection_unref(ty_dbus_conn);
    ty_dbus_conn = NULL;
    ty_e_object = NULL;
