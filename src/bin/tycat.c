@@ -209,7 +209,7 @@ main(int argc, char **argv)
                        ret = 1;
                        goto shutdown;
                     }
-                  if (!width || tw > width) maxw = width;
+                  if (!width || tw > (int)width) maxw = width;
                   maxh = height;
                }
 
