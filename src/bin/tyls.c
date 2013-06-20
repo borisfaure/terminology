@@ -832,7 +832,7 @@ main(int argc, char **argv)
                {
                   mode = LARGE;
                   i++;
-                  if (i >= argc) break;;
+                  if (i >= argc) break;
                }
              path = argv[i];
              rp = ecore_file_realpath(path);
