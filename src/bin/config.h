@@ -60,6 +60,7 @@ struct _Config
    int               cg_height;
    Eina_Bool         colors_use;
    Config_Color      colors[(4 * 12)];
+   Eina_Bool         miniview;
 
    Eina_Bool         temporary; /* not in EET */
    const char       *config_key; /* not in EET, the key that config was loaded */

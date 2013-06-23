@@ -4,6 +4,7 @@
 #include <Elementary.h>
 #include "main.h"
 #include "win.h"
+#include "scrolio.h"
 #include "termio.h"
 #include "termpty.h"
 #include "termcmd.h"
@@ -50,6 +51,7 @@ struct _Term
    Evas_Object *term;
    Evas_Object *media;
    Evas_Object *popmedia;
+   Evas_Object *miniview;
    Evas_Object *sel;
    Evas_Object *tabcount_spacer;
    Eina_List   *popmedia_queue;
@@ -1092,6 +1094,36 @@ _popmedia_show(Term *term, const char *src)
 }
 
 static void
+_cb_scrolio_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Term *term = data;
+   Config *config = termio_config_get(term->term);
+   if (!config->miniview)
+     {
+        config->miniview = EINA_TRUE;
+        config_save(config, NULL);
+
+        Evas_Object *o;
+        Evas_Coord ox, oy, ow, oh;
+        evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
+
+        term->miniview = (Evas_Object *) termio_miniview_show(term->term, ox, oy, ow, oh);
+        //edje_object_part_swallow(term->term, "terminology.content", term->miniview);
+        evas_object_show(term->miniview);
+     }
+   else
+     {
+        evas_object_hide(term->miniview);
+        //edje_object_part_unswallow(term->term, term->miniview);
+        termio_miniview_hide(term->term);
+        term->miniview = NULL;
+
+        config->miniview = EINA_FALSE;
+        config_save(config, NULL);
+     }
+}
+
+static void
 _popmedia_queue_process(Term *term)
 {
    const char *src;
@@ -1991,6 +2023,13 @@ main_term_free(Term *term)
      }
    term->media = NULL;
    if (term->popmedia) evas_object_del(term->popmedia);
+   if (term->miniview)
+     {
+        evas_object_hide(term->miniview);
+        //edje_object_part_unswallow(term->term, term->miniview);
+        termio_miniview_hide(term->term);
+        term->miniview = NULL;
+     }
    term->popmedia = NULL;
    evas_object_del(term->term);
    term->term = NULL;
@@ -2226,8 +2265,9 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "tab,8", _cb_tab_8, term);
    evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
    evas_object_smart_callback_add(o, "tab,0", _cb_tab_10, term);
+   evas_object_smart_callback_add(o, "miniview,toggle", _cb_scrolio_toggle, term);
    evas_object_show(o);
-   
+
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_term_mouse_down, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
@@ -2239,7 +2279,20 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    wn->terms = eina_list_append(wn->terms, term);
    app_server_term_add(term);
-   
+
+   if (term->config->miniview && !term->miniview)
+     {
+        Evas_Object *o;
+        Evas_Coord ox, oy, ow, oh;
+        evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
+
+        //term->miniview = (Evas_Object *) termio_miniview_show(term->term,
+        //                                                          ox, oy, ow, oh);
+        edje_object_part_swallow(term->term, "terminology.content",
+                                 term->miniview);
+        evas_object_show(term->miniview);
+     }
+
    return term;
 }
 

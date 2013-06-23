@@ -3437,4 +3437,28 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
+
+   group { name: "terminology/miniview";
+      parts {
+         part { name: "miniview"; type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               color: 25 50 30 100;
+	       rel1.relative: 0.85 0.0;
+            }
+         }
+         part { name: "miniview_screen"; type: RECT;
+            mouse_events: 1;
+            dragable {
+               confine: "miniview";
+               x: 0 0 0;
+               y: 1 1 0;
+            }
+            description { state: "default" 0.0;
+               color: 255 255 255 30;
+               fixed:1 1;
+            }
+         }
+      }
+   }
 }

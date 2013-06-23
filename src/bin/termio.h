@@ -37,4 +37,5 @@ void         termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg);
 void         termio_config_set(Evas_Object *obj, Config *config);
 Config      *termio_config_get(const Evas_Object *obj);
 
+void         termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg);
 #endif
