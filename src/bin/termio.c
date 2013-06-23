@@ -3064,13 +3064,8 @@ _smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   if (!sd->link.down.dnd)
-     {
-        EINA_LIST_FREE(sd->link.objs, o)
-          evas_object_del(o);
-     }
-   ty_dbus_link_hide();
    termio_mouseover_suspend_pushpop(data, 1);
+   ty_dbus_link_hide();
 }
 
 static void
