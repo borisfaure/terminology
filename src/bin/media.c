@@ -79,7 +79,7 @@ _et_disconnect(void *data __UNUSED__, Ethumb_Client *c)
    ethumb_client_disconnect(et_client);
    et_connected = EINA_FALSE;
    et_client = NULL;
-   _et_init();
+   if (et_queue) _et_init();
 }
 
 static void
