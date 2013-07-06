@@ -31,7 +31,7 @@ struct _Media
    int w, h;
    int iw, ih;
    int sw, sh;
-   int fr, frnum;
+   int fr, frnum, loops;
    int mode, type;
    int resizes;
    struct {
@@ -269,6 +269,27 @@ _cb_img_frame(void *data)
    if (!sd) return EINA_FALSE;
    sd->fr++;
    fr = ((sd->fr - 1) % (sd->frnum)) + 1;
+   if ((sd->fr >= sd->frnum) && (fr == 1))
+     {
+        int loops;
+        
+        if (evas_object_image_animated_loop_type_get(sd->o_img) ==
+            EVAS_IMAGE_ANIMATED_HINT_NONE)
+          {
+             sd->anim = NULL;
+             return EINA_FALSE;
+          }
+        sd->loops++;
+        loops = evas_object_image_animated_loop_count_get(sd->o_img);
+        if (loops != 0) // loop == 0 -> loop forever
+          {
+             if (loops < sd->loops)
+               {
+                  sd->anim = NULL;
+                  return EINA_FALSE;
+               }
+          }
+     }
    evas_object_image_animated_frame_set(sd->o_img, fr);
    t = evas_object_image_animated_frame_duration_get(sd->o_img, fr, 0);
    ecore_timer_interval_set(sd->anim, t);
