@@ -680,7 +680,7 @@ _type_mov_init(Evas_Object *obj)
         NULL,
         "gstreamer",
         "xine",
-        "generic"
+        "vlc"
      };
    char *mod = NULL;
         
