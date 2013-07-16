@@ -27,8 +27,6 @@ Evas_Object *o = NULL;
 struct termios told, tnew;
 int tw = 0, th = 0, cw = 0, ch = 0;
 
-#include "extns.h"
-
 static int
 echo_off(void)
 {
@@ -43,36 +41,6 @@ static int
 echo_on(void)
 {
    return tcsetattr(0, TCSAFLUSH, &told);
-}
-
-static void
-scaleterm(int w, int h, int *iw, int *ih)
-{
-   if (w > (tw * cw))
-     {
-        *iw = tw;
-        *ih = ((h * (tw * cw) / w) + (ch - 1)) / ch;
-     }
-   else
-     {
-        *iw = (w + (cw - 1)) / cw;
-        *ih = (h + (ch - 1)) / ch;
-     }
-}
-
-static const char *
-is_fmt(const char *f, const char **extn)
-{
-   int i, len, l;
-   
-   len = strlen(f);
-   for (i = 0; extn[i]; i++)
-     {
-        l = strlen(extn[i]);
-        if (len < l) continue;
-        if (!strcasecmp(extn[i], f + len - l)) return extn[i];
-     }
-   return NULL;
 }
 
 static void

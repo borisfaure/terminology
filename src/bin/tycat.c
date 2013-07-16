@@ -327,5 +327,5 @@ shutdown:
    ecore_file_shutdown();
    ecore_shutdown();
    eina_shutdown();
-   return 0;
+   return ret;
 }

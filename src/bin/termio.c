@@ -3059,7 +3059,6 @@ _smart_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 static void
 _smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   Evas_Object *o;
    Termio *sd;
 
    sd = evas_object_smart_data_get(data);

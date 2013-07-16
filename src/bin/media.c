@@ -1034,6 +1034,9 @@ _url_compl_cb(void *data, int type __UNUSED__, void *event_info)
      _type_scale_init(obj);
    else if (_is_fmt(sd->src, extn_edj))
      _type_edje_init(obj);
+   // FIXME: handle audio specially
+   else if (_is_fmt(sd->src, extn_aud))
+     _type_mov_init(obj);
    else if (_is_fmt(sd->src, extn_mov))
      _type_mov_init(obj);
    evas_object_raise(sd->o_busy);
