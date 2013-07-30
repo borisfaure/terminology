@@ -2942,12 +2942,13 @@ remote:
    ty_dbus_init();
 
    elm_run();
+
+   ty_dbus_shutdown();
  end:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    free(cmd);
 #endif
 
-   ty_dbus_shutdown();
    ipc_shutdown();
 
    while (wins)
