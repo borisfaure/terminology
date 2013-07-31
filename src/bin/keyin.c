@@ -201,12 +201,12 @@ _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 {
    int i, inlen;
    
-   if (!ev->keyname) return EINA_FALSE;
+   if (!ev->key) return EINA_FALSE;
 
-   inlen = strlen(ev->keyname);
+   inlen = strlen(ev->key);
    for (i = 0; map[i].in; i++)
      {
-        if ((inlen == map[i].inlen) && (!memcmp(ev->keyname, map[i].in, inlen)))
+        if ((inlen == map[i].inlen) && (!memcmp(ev->key, map[i].in, inlen)))
           {
              termpty_write(ty, map[i].out, map[i].outlen);
              return EINA_TRUE;
@@ -244,12 +244,12 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      }
    if (evas_key_modifier_is_set(ev->modifiers, "Control"))
      {
-        if (!strcmp(ev->keyname, "Minus"))
+        if (!strcmp(ev->key, "Minus"))
           {
              termpty_write(ty, "\037", 1); // generate US (unit separator)
              return;
           }
-        else if (!strcmp(ev->keyname, "space"))
+        else if (!strcmp(ev->key, "space"))
           {
              termpty_write(ty, "\0", 1); // generate 0 byte for ctrl+space
              return;
@@ -274,7 +274,7 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
 
-   if ((ty->state.send_bs) && (!strcmp(ev->keyname, "BackSpace")))
+   if ((ty->state.send_bs) && (!strcmp(ev->key, "BackSpace")))
      {
         termpty_write(ty, "\b", 1);
         return;

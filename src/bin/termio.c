@@ -1882,45 +1882,45 @@ _handle_alt_ctrl(const char *keyname, Evas_Object *term)
 static Eina_Bool
 _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
 {
-   if (!strcmp(ev->keyname, "Prior"))
+   if (!strcmp(ev->key, "Prior"))
      {
         sd->scroll += by;
         if (sd->scroll > sd->pty->backscroll_num)
           sd->scroll = sd->pty->backscroll_num;
         _smart_update_queue(term, sd);
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if (!strcmp(ev->key, "Next"))
      {
         sd->scroll -= by;
         if (sd->scroll < 0) sd->scroll = 0;
         _smart_update_queue(term, sd);
      }
-   else if (!strcmp(ev->keyname, "Insert"))
+   else if (!strcmp(ev->key, "Insert"))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Control"))
           _paste_selection(term, ELM_SEL_TYPE_PRIMARY);
         else
           _paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
      }
-   else if (!strcmp(ev->keyname, "KP_Add"))
+   else if (!strcmp(ev->key, "KP_Add"))
      {
         Config *config = termio_config_get(term);
         
         if (config) _font_size_set(term, config->font.size + 1);
      }
-   else if (!strcmp(ev->keyname, "KP_Subtract"))
+   else if (!strcmp(ev->key, "KP_Subtract"))
      {
         Config *config = termio_config_get(term);
         
         if (config) _font_size_set(term, config->font.size - 1);
      }
-   else if (!strcmp(ev->keyname, "KP_Multiply"))
+   else if (!strcmp(ev->key, "KP_Multiply"))
      {
         Config *config = termio_config_get(term);
         
         if (config) _font_size_set(term, 10);
      }
-   else if (!strcmp(ev->keyname, "KP_Divide"))
+   else if (!strcmp(ev->key, "KP_Divide"))
      _take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
    else
      return EINA_FALSE;
@@ -1942,71 +1942,71 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
      {
-        if (!strcmp(ev->keyname, "Prior"))
+        if (!strcmp(ev->key, "Prior"))
           {
              evas_object_smart_callback_call(data, "prev", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "Next"))
+        else if (!strcmp(ev->key, "Next"))
           {
              evas_object_smart_callback_call(data, "next", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "1"))
+        else if (!strcmp(ev->key, "1"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,1", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "2"))
+        else if (!strcmp(ev->key, "2"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,2", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "3"))
+        else if (!strcmp(ev->key, "3"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,3", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "4"))
+        else if (!strcmp(ev->key, "4"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,4", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "5"))
+        else if (!strcmp(ev->key, "5"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,5", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "6"))
+        else if (!strcmp(ev->key, "6"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,6", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "7"))
+        else if (!strcmp(ev->key, "7"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,7", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "8"))
+        else if (!strcmp(ev->key, "8"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,8", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "9"))
+        else if (!strcmp(ev->key, "9"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,9", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "0"))
+        else if (!strcmp(ev->key, "0"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "tab,0", NULL);
@@ -2017,37 +2017,37 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (evas_key_modifier_is_set(ev->modifiers, "Shift")))
      {
-        if (!strcmp(ev->keyname, "Prior"))
+        if (!strcmp(ev->key, "Prior"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "split,h", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "Next"))
+        else if (!strcmp(ev->key, "Next"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "split,v", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "t"))
+        else if (!strcmp(ev->key, "t"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "new", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "Home"))
+        else if (!strcmp(ev->key, "Home"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "select", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "c"))
+        else if (!strcmp(ev->key, "c"))
           {
              _compose_seq_reset(sd);
              _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "v"))
+        else if (!strcmp(ev->key, "v"))
           {
              _compose_seq_reset(sd);
              _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
@@ -2058,13 +2058,13 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Control")))
      {
-        if (!strcmp(ev->keyname, "Home"))
+        if (!strcmp(ev->key, "Home"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "cmdbox", NULL);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "Return"))
+        else if (!strcmp(ev->key, "Return"))
           {
              _compose_seq_reset(sd);
              _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
@@ -2075,7 +2075,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
        (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
        (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
      {
-        if (_handle_alt_ctrl(ev->keyname, data))
+        if (_handle_alt_ctrl(ev->key, data))
           {
              _compose_seq_reset(sd);
              goto end;
@@ -2100,7 +2100,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           }
      }
    if ((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-       (ev->keyname))
+       (ev->key))
      {
         int by = sd->grid.h - 2;
 

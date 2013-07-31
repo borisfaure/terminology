@@ -177,8 +177,8 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    Eina_List *l;
    Entry *en;
    if (!sd) return;
-   if ((!strcmp(ev->keyname, "Next")) ||
-       (!strcmp(ev->keyname, "Right")))
+   if ((!strcmp(ev->key, "Next")) ||
+       (!strcmp(ev->key, "Right")))
      {
         EINA_LIST_FOREACH(sd->items, l, en)
           {
@@ -195,8 +195,8 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         sd->exit_now = EINA_FALSE;
         _autozoom(data);
      }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            (!strcmp(ev->keyname, "Left")))
+   else if ((!strcmp(ev->key, "Prior")) ||
+            (!strcmp(ev->key, "Left")))
      {
         EINA_LIST_FOREACH(sd->items, l, en)
           {
@@ -213,7 +213,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         sd->exit_now = EINA_FALSE;
         _autozoom(data);
      }
-   else if (!strcmp(ev->keyname, "Up"))
+   else if (!strcmp(ev->key, "Up"))
      {
         EINA_LIST_FOREACH(sd->items, l, en)
           {
@@ -239,7 +239,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         sd->exit_now = EINA_FALSE;
         _autozoom(data);
      }
-   else if (!strcmp(ev->keyname, "Down"))
+   else if (!strcmp(ev->key, "Down"))
      {
         EINA_LIST_FOREACH(sd->items, l, en)
           {
@@ -265,9 +265,9 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         sd->exit_now = EINA_FALSE;
         _autozoom(data);
      }
-   else if ((!strcmp(ev->keyname, "Return")) ||
-            (!strcmp(ev->keyname, "KP_Enter")) ||
-            (!strcmp(ev->keyname, "space")))
+   else if ((!strcmp(ev->key, "Return")) ||
+            (!strcmp(ev->key, "KP_Enter")) ||
+            (!strcmp(ev->key, "space")))
      {
         sd->select_me = EINA_TRUE;
         sd->exit_me = EINA_FALSE;
@@ -279,7 +279,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
         evas_object_smart_callback_call(data, "ending", NULL);
         sel_zoom(data, 1.0);
      }
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      {
         Evas_Object *entry = NULL;
         
