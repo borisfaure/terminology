@@ -2029,7 +2029,7 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              evas_object_smart_callback_call(data, "split,v", NULL);
              goto end;
           }
-        else if (!strcmp(ev->key, "t"))
+        else if (!strcasecmp(ev->key, "t"))
           {
              _compose_seq_reset(sd);
              evas_object_smart_callback_call(data, "new", NULL);
@@ -2041,13 +2041,13 @@ _smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              evas_object_smart_callback_call(data, "select", NULL);
              goto end;
           }
-        else if (!strcmp(ev->key, "c"))
+        else if (!strcasecmp(ev->key, "c"))
           {
              _compose_seq_reset(sd);
              _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
              goto end;
           }
-        else if (!strcmp(ev->key, "v"))
+        else if (!strcasecmp(ev->key, "v"))
           {
              _compose_seq_reset(sd);
              _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
