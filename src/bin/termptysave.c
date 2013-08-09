@@ -5,6 +5,12 @@
 #include "lz4/lz4.h"
 #include <sys/mman.h>
 
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+# ifndef MAP_ANONYMOUS
+#  define MAP_ANONYMOUS MAP_ANON
+# endif
+#endif
+
 #define MEM_PAGE_SIZE    4096
 #define MEM_ALLOC_ALIGN  16
 #define MEM_BLOCK_PAGES  32
