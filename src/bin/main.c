@@ -920,8 +920,8 @@ _cb_flush(void *data __UNUSED__)
 static void
 _cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   if (!flush_timer) flush_timer = ecore_timer_add(0.25, _cb_flush, NULL);
-   else ecore_timer_delay(flush_timer, 0.25);
+   if (!flush_timer) flush_timer = ecore_timer_add(5.0, _cb_flush, NULL);
+   else ecore_timer_delay(flush_timer, 5.0);
 }
 
 static void
@@ -2142,7 +2142,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    edje_object_part_swallow(term->base, "terminology.content", o);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
-   evas_object_smart_callback_add(o, "change", _cb_change, term);
+   evas_object_smart_callback_add(o, "changed", _cb_change, term);
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
