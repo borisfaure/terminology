@@ -1936,8 +1936,9 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
    return EINA_TRUE;
 }
 
-void
-_smart_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+static void
+_smart_cb_key_down(void *data, Evas *e __UNUSED__,
+                   Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Termio *sd;
@@ -2182,8 +2183,9 @@ _imf_cursor_set(Termio *sd)
     */
 }
 
-void
-_smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+static void
+_smart_cb_focus_in(void *data, Evas *e __UNUSED__,
+                   Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -2204,7 +2206,7 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
      }
 }
 
-void
+static void
 _smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj,
                     void *event __UNUSED__)
 {
