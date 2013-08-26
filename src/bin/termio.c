@@ -434,10 +434,9 @@ _cb_link_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event)
 }
 
 static void
-_update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
+_update_link(Evas_Object *obj, Termio *sd,
+             Eina_Bool same_link, Eina_Bool same_geom)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
-   
    if (!sd) return;
    
    if (!same_link)
@@ -527,6 +526,36 @@ _update_link(Evas_Object *obj, Eina_Bool same_link, Eina_Bool same_geom)
 }
 
 static void
+_remove_links(Termio *sd, Evas_Object *obj)
+{
+   Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
+
+   if (sd->link.string)
+     {
+        if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
+          {
+             Evas_Coord ox, oy;
+             Ecore_Window xwin;
+
+             evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+
+             ox += sd->mouse.cx * sd->font.chw;
+             oy += sd->mouse.cy * sd->font.chh;
+             xwin = elm_win_xwindow_get(sd->win);
+             ty_dbus_link_mouseout(xwin, sd->link.string, ox, oy);
+          }
+        free(sd->link.string);
+        sd->link.string = NULL;
+     }
+   sd->link.x1 = -1;
+   sd->link.y1 = -1;
+   sd->link.x2 = -1;
+   sd->link.y2 = -1;
+   sd->link.suspend = EINA_FALSE;
+   _update_link(obj, sd, same_link, same_geom);
+}
+
+static void
 _smart_mouseover_apply(Evas_Object *obj)
 {
    char *s;
@@ -534,34 +563,13 @@ _smart_mouseover_apply(Evas_Object *obj)
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
 
-   if (!sd) return;
+   if (!sd || (sd->mouse.cx < 0) || (sd->mouse.cy < 0)) return;
 
    s = _termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
                          &x1, &y1, &x2, &y2);
    if (!s)
      {
-        if (sd->link.string)
-          {
-             if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
-               {
-                  Evas_Coord ox, oy;
-                  Ecore_Window xwin;
-
-                  evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
-
-                  ox += sd->mouse.cx * sd->font.chw;
-                  oy += sd->mouse.cy * sd->font.chh;
-                  xwin = elm_win_xwindow_get(sd->win);
-                  ty_dbus_link_mouseout(xwin, sd->link.string, ox, oy);
-               }
-             free(sd->link.string);
-             sd->link.string = NULL;
-           }
-        sd->link.x1 = -1;
-        sd->link.y1 = -1;
-        sd->link.x2 = -1;
-        sd->link.y2 = -1;
-        _update_link(obj, same_link, same_geom);
+        _remove_links(sd, obj);
         return;
      }
 
@@ -580,7 +588,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    sd->link.y1 = y1;
    sd->link.x2 = x2;
    sd->link.y2 = y2;
-   _update_link(obj, same_link, same_geom);
+   _update_link(obj, sd, same_link, same_geom);
 }
 
 static Eina_Bool
@@ -2197,7 +2205,8 @@ _smart_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 void
-_smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj,
+                    void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -2213,6 +2222,7 @@ _smart_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
         ecore_imf_context_focus_out(sd->imf);
         ecore_imf_context_input_panel_hide(sd->imf);
      }
+   _remove_links(sd, obj);
 }
 
 static void
@@ -3057,7 +3067,8 @@ _smart_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
-_smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj,
+                    void *event __UNUSED__)
 {
    Termio *sd;
 
@@ -3065,6 +3076,9 @@ _smart_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if (!sd) return;
    termio_mouseover_suspend_pushpop(data, 1);
    ty_dbus_link_hide();
+   sd->mouse.cx = -1;
+   sd->mouse.cy = -1;
+   _remove_links(sd, obj);
 }
 
 static void
