@@ -2286,47 +2286,103 @@ _sel_word(Evas_Object *obj, int cx, int cy)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Termcell *cells;
-   int x, w = 0;
+   int x, y, w = 0;
+   Eina_Bool done = EINA_FALSE;
+
    if (!sd) return;
 
    termpty_cellcomp_freeze(sd->pty);
-   cells = termpty_cellrow_get(sd->pty, cy, &w);
-   if (!cells)
-     {
-        termpty_cellcomp_thaw(sd->pty);
-        return;
-     }
+
    sd->cur.sel = 1;
    sd->cur.makesel = 0;
    sd->cur.sel1.x = cx;
    sd->cur.sel1.y = cy;
-   for (x = sd->cur.sel1.x; x >= 0; x--)
-     {
-#if defined(SUPPORT_DBLWIDTH)
-        if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
-            (x > 0))
-          x--;
-#endif
-        if (x >= w) break;
-        if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-        sd->cur.sel1.x = x;
-     }
    sd->cur.sel2.x = cx;
    sd->cur.sel2.y = cy;
-   for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
+   x = sd->cur.sel1.x;
+   y = cy;
+   cells = termpty_cellrow_get(sd->pty, y, &w);
+   if (!cells) goto end;
+   if (x >= w) x = w - 1;
+
+   do
      {
-#if defined(SUPPORT_DBLWIDTH)
-        if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
-            (x < (sd->grid.w - 1)))
+        for (; x >= 0; x--)
           {
-             sd->cur.sel2.x = x;
-             x++;
-          }
+#if defined(SUPPORT_DBLWIDTH)
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+                 (x > 0))
+               x--;
 #endif
-        if (x >= w) break;
-        if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-        sd->cur.sel2.x = x;
+             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint))
+               {
+                  done = EINA_TRUE;
+                  break;
+               }
+             sd->cur.sel1.x = x;
+             sd->cur.sel1.y = y;
+          }
+        if (!done)
+          {
+             Termcell *old_cells = cells;
+
+             cells = termpty_cellrow_get(sd->pty, y - 1, &w);
+             if (!cells || !cells[w-1].att.autowrapped)
+               {
+                  x = 0;
+                  cells = old_cells;
+                  done = EINA_TRUE;
+               }
+             else
+               {
+                  y--;
+                  x = w - 1;
+               }
+          }
      }
+   while (!done);
+
+   done = EINA_FALSE;
+   if (cy != y)
+     {
+        y = cy;
+        cells = termpty_cellrow_get(sd->pty, y, &w);
+        if (!cells) goto end;
+     }
+   x = sd->cur.sel2.x;
+
+   do
+     {
+        for (; x < w; x++)
+          {
+#if defined(SUPPORT_DBLWIDTH)
+             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
+                 (x < (w - 1)))
+               {
+                  sd->cur.sel2.x = x;
+                  x++;
+               }
+#endif
+             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint))
+               {
+                  done = EINA_TRUE;
+                  break;
+               }
+             sd->cur.sel2.x = x;
+             sd->cur.sel2.y = y;
+          }
+        if (!done)
+          {
+             if (!cells[w - 1].att.autowrapped) goto end;
+             y++;
+             x = 0;
+             cells = termpty_cellrow_get(sd->pty, y, &w);
+             if (!cells) goto end;
+          }
+     }
+   while (!done);
+
+  end:
    termpty_cellcomp_thaw(sd->pty);
 }
 

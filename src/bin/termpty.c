@@ -504,7 +504,7 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
 	/* fprintf(stderr, "getting: %i (%i, %i)\n", y, ty->circular_offset, ty->h); */
         return &(TERMPTY_SCREEN(ty, 0, y));
      }
-   if (y < -ty->backmax) return NULL;
+   if ((y < -ty->backmax) || !ty->back) return NULL;
    tssrc = &(ty->back[(ty->backmax + ty->backpos + y) % ty->backmax]);
    ts = termpty_save_extract(*tssrc);
    if (!ts) return NULL;
