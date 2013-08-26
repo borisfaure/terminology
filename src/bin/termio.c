@@ -468,14 +468,13 @@ _update_link(Evas_Object *obj, Termio *sd,
                {
                   if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                     {
+                       Evas_Coord _x = ox, _y = oy;
                        Ecore_X_Window xwin;
 
-                       evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
-
-                       ox += sd->mouse.cx * sd->font.chw;
-                       oy += sd->mouse.cy * sd->font.chh;
+                       _x += sd->mouse.cx * sd->font.chw;
+                       _y += sd->mouse.cy * sd->font.chh;
                        xwin = elm_win_xwindow_get(sd->win);
-                       ty_dbus_link_mousein(xwin, sd->link.string, ox, oy);
+                       ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
                     }
                   for (y = sd->link.y1; y <= sd->link.y2; y++)
                     {
