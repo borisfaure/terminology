@@ -468,7 +468,6 @@ _update_link(Evas_Object *obj, Termio *sd,
                {
                   if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                     {
-                       Evas_Coord ox, oy;
                        Ecore_X_Window xwin;
 
                        evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
