@@ -1025,14 +1025,21 @@ _popmedia_show(Term *term, const char *src)
    edje_object_part_swallow(term->bg, "terminology.popmedia", o);
    evas_object_show(o);
    term->poptype = type;
-   if (type == TYPE_IMG)
-     edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
-   else if (type == TYPE_SCALE)
-     edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
-   else if (type == TYPE_EDJE)
-     edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
-   else if (type == TYPE_MOV)
-     edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+   switch (type)
+     {
+      case TYPE_IMG:
+         edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
+         break;
+      case TYPE_SCALE:
+         edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
+         break;
+      case TYPE_EDJE:
+         edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
+         break;
+      case TYPE_MOV:
+         edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+         break;
+     }
 }
 
 static void
