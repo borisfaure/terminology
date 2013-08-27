@@ -165,7 +165,7 @@ _et_done(Ethumb_Client *c, const char *file, const char *key, void *data)
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    
-   if (c != et_client) return;
+//   if (c != et_client) return;
    sd->et_req = NULL;
    evas_object_event_callback_add(sd->o_img, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _cb_thumb_preloaded, obj);
@@ -181,7 +181,7 @@ _et_error(Ethumb_Client *c, void *data)
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
-   if (c != et_client) return;
+//   if (c != et_client) return;
    sd->et_req = NULL;
 }
 
