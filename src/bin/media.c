@@ -159,7 +159,7 @@ _cb_thumb_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_et_done(Ethumb_Client *c, const char *file, const char *key, void *data)
+_et_done(Ethumb_Client *c __UNUSED__, const char *file, const char *key, void *data)
 {
    Evas_Object *obj = data;
    Media *sd = evas_object_smart_data_get(obj);
@@ -175,7 +175,7 @@ _et_done(Ethumb_Client *c, const char *file, const char *key, void *data)
 }
 
 static void
-_et_error(Ethumb_Client *c, void *data)
+_et_error(Ethumb_Client *c __UNUSED__, void *data)
 {
    Evas_Object *obj = data;
    Media *sd = evas_object_smart_data_get(obj);

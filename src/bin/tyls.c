@@ -25,7 +25,7 @@ Ecore_Evas *ee = NULL;
 Evas *evas = NULL;
 Evas_Object *o = NULL;
 struct termios told, tnew;
-int tw = 0, th = 0, cw = 0, ch = 0;
+int tw = 0, th = 0;
 
 static int
 echo_off(void)
@@ -762,7 +762,7 @@ main(int argc, char **argv)
    ee = ecore_evas_buffer_new(1, 1);
    if (ee)
      {
-        int i, mode = SMALL;
+        int i, cw, ch, mode = SMALL;
         char *rp;
         
         evas = ecore_evas_get(ee);
