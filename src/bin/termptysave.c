@@ -262,7 +262,7 @@ _walk_pty(Termpty *ty)
 }
 
 static Eina_Bool
-_idler(void *data __UNUSED__)
+_idler(void *data EINA_UNUSED)
 {
    Eina_List *l;
    Termpty *ty;
@@ -290,7 +290,7 @@ _idler(void *data __UNUSED__)
 }
 
 static Eina_Bool
-_timer(void *data __UNUSED__)
+_timer(void *data EINA_UNUSED)
 {
    if (!idler) idler = ecore_idler_add(_idler, NULL);
    timer = NULL;

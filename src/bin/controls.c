@@ -16,7 +16,7 @@ static void (*ct_donecb) (void *data) = NULL;
 static void *ct_donedata = NULL;
 
 static Eina_Bool
-_cb_ct_del_delay(void *data __UNUSED__)
+_cb_ct_del_delay(void *data EINA_UNUSED)
 {
    if (ct_over)
      {
@@ -34,77 +34,77 @@ _cb_ct_del_delay(void *data __UNUSED__)
 }
 
 static void
-_cb_ct_copy(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_copy(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    termio_copy_clipboard(data);
 }
 
 static void
-_cb_ct_paste(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_paste(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    termio_paste_clipboard(data);
 }
 
 static void
-_cb_ct_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_new(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    main_new(ct_win, ct_term);
 }
 
 static void
-_cb_ct_split_v(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_split_v(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    main_split_v(ct_win, ct_term);
 }
 
 static void
-_cb_ct_split_h(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_split_h(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    main_split_h(ct_win, ct_term);
 }
 
 static void
-_cb_ct_close(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_close(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    main_close(ct_win, ct_term);
 }
 
 static void
-_cb_ct_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    options_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
-_cb_ct_about(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_ct_about(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
    about_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
-_cb_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
 static void
-_cb_frame_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_cb_frame_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    ct_frame = NULL;
 }
 
 static void
-_cb_over_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_cb_over_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    ct_over = NULL;
 }
 
 static void
-_cb_saved_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_cb_saved_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
    if ((obj == ct_win) || (obj == ct_term))
      {

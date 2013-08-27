@@ -7,7 +7,7 @@
 #include "options_colors.h"
 
 void
-options_colors(Evas_Object *opbox, Evas_Object *term __UNUSED__)
+options_colors(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
 {
    Evas_Object *o;
 

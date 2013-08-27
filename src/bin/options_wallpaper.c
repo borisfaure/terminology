@@ -7,7 +7,7 @@
 #include "options_wallpaper.h"
 
 void
-options_wallpaper(Evas_Object *opbox, Evas_Object *term __UNUSED__)
+options_wallpaper(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
 {
    Evas_Object *o;
 

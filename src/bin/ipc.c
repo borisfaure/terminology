@@ -11,7 +11,7 @@ static void (*func_new_inst) (Ipc_Instance *inst) = NULL;
 static Eet_Data_Descriptor *new_inst_edd = NULL;
 
 static Eina_Bool
-_ipc_cb_client_data(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ipc_cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Ipc_Event_Client_Data *e = event;
    

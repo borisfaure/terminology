@@ -10,7 +10,7 @@
 static Evas_Object *op_w, *op_h;
 
 static void
-_cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -20,7 +20,7 @@ _cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event __UN
 }
 
 static void
-_cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -30,7 +30,7 @@ _cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_op_behavior_cursor_blink_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_cursor_blink_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -40,7 +40,7 @@ _cb_op_behavior_cursor_blink_chg(void *data, Evas_Object *obj, void *event __UNU
 }
 
 static void
-_cb_op_behavior_visual_bell_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_visual_bell_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -49,7 +49,7 @@ _cb_op_behavior_visual_bell_chg(void *data, Evas_Object *obj, void *event __UNUS
 }
 
 static void
-_cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -59,7 +59,7 @@ _cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event __UNUSED__
 }
 
 static void
-_cb_op_behavior_urg_bell_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_urg_bell_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -68,7 +68,7 @@ _cb_op_behavior_urg_bell_chg(void *data, Evas_Object *obj, void *event __UNUSED_
 }
 
 static void
-_cb_op_behavior_multi_instance_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_multi_instance_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -77,7 +77,7 @@ _cb_op_behavior_multi_instance_chg(void *data, Evas_Object *obj, void *event __U
 }
 
 static void
-_cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -99,7 +99,7 @@ _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -111,7 +111,7 @@ _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 
 static void
 _cb_op_behavior_tab_zoom_slider_chg(void *data, Evas_Object *obj,
-                                    void *event __UNUSED__)
+                                    void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -122,7 +122,7 @@ _cb_op_behavior_tab_zoom_slider_chg(void *data, Evas_Object *obj,
 }
 
 static void
-_cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -140,7 +140,7 @@ _cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event __UNUS
 }
 
 static void
-_cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -153,7 +153,7 @@ _cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_op_behavior_cg_height(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_behavior_cg_height(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);

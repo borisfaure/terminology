@@ -4,7 +4,7 @@
 #include "utils.h"
 
 static Eina_Bool
-coord_back(int *x, int *y, int w, int h __UNUSED__)
+coord_back(int *x, int *y, int w, int h EINA_UNUSED)
 {
    (*x)--;
    if ((*x) < 0)
@@ -50,7 +50,7 @@ _cwd_path_get(const Evas_Object *obj, const char *relpath)
 }
 
 static char *
-_home_path_get(const Evas_Object *obj __UNUSED__, const char *relpath)
+_home_path_get(const Evas_Object *obj EINA_UNUSED, const char *relpath)
 {
    char tmppath[PATH_MAX], homepath[PATH_MAX];
 

@@ -194,7 +194,7 @@ _split_find(Evas_Object *win, Evas_Object *term)
 }
 
 static void
-_cb_size_track(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_size_track(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Split *sp = data;
    Eina_List *l;
@@ -651,7 +651,7 @@ main_win_focused_term_get(Win *wn)
 }
 
 static void
-_cb_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
 
@@ -661,7 +661,7 @@ _cb_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static void
-_cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
@@ -687,7 +687,7 @@ _cb_focus_in(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
@@ -704,7 +704,7 @@ _cb_focus_out(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_term_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event )
+_cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event )
 {
    Evas_Event_Mouse_Down *ev = event;
    Term *term = data;
@@ -721,7 +721,7 @@ _cb_term_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_cb_term_mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_term_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
 /*   
    Evas_Event_Mouse_Up *ev = event;
@@ -860,7 +860,7 @@ main_win_sizing_handle(Win *wn)
 }
 
 static void
-_cb_size_hint(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_cb_size_hint(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Term *term = data;
    Evas_Coord mw, mh, rw, rh, w = 0, h = 0;
@@ -901,7 +901,7 @@ _cb_options_done(void *data)
 }
 
 static void
-_cb_options(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_options(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
 
@@ -910,7 +910,7 @@ _cb_options(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static Eina_Bool
-_cb_flush(void *data __UNUSED__)
+_cb_flush(void *data EINA_UNUSED)
 {
    flush_timer = NULL;
    elm_cache_all_flush();
@@ -918,14 +918,14 @@ _cb_flush(void *data __UNUSED__)
 }
 
 static void
-_cb_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_change(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    if (!flush_timer) flush_timer = ecore_timer_add(5.0, _cb_flush, NULL);
    else ecore_timer_delay(flush_timer, 5.0);
 }
 
 static void
-_cb_exited(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_exited(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    
@@ -933,7 +933,7 @@ _cb_exited(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Config *config = termio_config_get(term->term);
@@ -962,7 +962,7 @@ _cb_bell(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_popmedia_del(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_cb_popmedia_del(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Term *term = data;
    
@@ -970,7 +970,7 @@ _cb_popmedia_del(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void
 }
 
 static void
-_cb_popmedia_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+_cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Term *term = data;
    
@@ -986,7 +986,7 @@ _cb_popmedia_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNU
 }
 
 static void
-_cb_media_loop(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_cb_media_loop(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Term *term = data;
    
@@ -1058,7 +1058,7 @@ _popmedia_queue_add(Term *term, const char *src)
 }
 
 static void
-_cb_popup(void *data, Evas_Object *obj __UNUSED__, void *event)
+_cb_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Term *term = data;
    const char *src = event;
@@ -1068,7 +1068,7 @@ _cb_popup(void *data, Evas_Object *obj __UNUSED__, void *event)
 }
 
 static void
-_cb_popup_queue(void *data, Evas_Object *obj __UNUSED__, void *event)
+_cb_popup_queue(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Term *term = data;
    const char *src = event;
@@ -1078,7 +1078,7 @@ _cb_popup_queue(void *data, Evas_Object *obj __UNUSED__, void *event)
 }
 
 static void
-_cb_command(void *data, Evas_Object *obj __UNUSED__, void *event)
+_cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Term *term = data;
    const char *cmd = event;
@@ -1192,7 +1192,7 @@ _sel_restore(Split *sp)
 }
 
 static void
-_sel_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *info)
+_sel_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *info)
 {
    Split *sp = data;
    Eina_List *l;
@@ -1214,7 +1214,7 @@ _sel_cb_selected(void *data, Evas_Object *obj __UNUSED__, void *info)
 }
 
 static void
-_sel_cb_exit(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_sel_cb_exit(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Split *sp = data;
    _sel_restore(sp);
@@ -1223,7 +1223,7 @@ _sel_cb_exit(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
 }
 
 static void
-_sel_cb_ending(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_sel_cb_ending(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Split *sp = data;
    edje_object_signal_emit(sp->sel_bg, "end", "terminology");
@@ -1309,7 +1309,7 @@ _sel_go(Split *sp, Term *term)
 }
 
 static void
-_cb_tabcount_go(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+_cb_tabcount_go(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Term *term = data;
    Split *sp;
@@ -1319,7 +1319,7 @@ _cb_tabcount_go(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSE
 }
 
 static void
-_cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
@@ -1342,7 +1342,7 @@ _cb_prev(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
@@ -1365,7 +1365,7 @@ _cb_next(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_new(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    
@@ -1373,7 +1373,7 @@ _cb_new(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED
 }
 
 static void
-_cb_select(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Split *sp;
@@ -1384,7 +1384,7 @@ _cb_select(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 
 
 static void
-_cb_split_h(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
 
@@ -1392,7 +1392,7 @@ _cb_split_h(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_split_v(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    
@@ -1400,7 +1400,7 @@ _cb_split_v(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_title(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_title(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    if (term->focused)
@@ -1408,7 +1408,7 @@ _cb_title(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_icon(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_icon(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    if (term->focused)
@@ -1428,61 +1428,61 @@ _tab_go(Term *term, int tnum)
 }
 
 static void
-_cb_tab_1(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_1(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 0);
 }
 
 static void
-_cb_tab_2(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_2(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 1);
 }
 
 static void
-_cb_tab_3(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_3(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 2);
 }
 
 static void
-_cb_tab_4(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_4(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 3);
 }
 
 static void
-_cb_tab_5(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_5(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 4);
 }
 
 static void
-_cb_tab_6(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_6(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 5);
 }
 
 static void
-_cb_tab_7(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_7(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 6);
 }
 
 static void
-_cb_tab_8(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_8(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 7);
 }
 
 static void
-_cb_tab_9(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_9(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 8);
 }
 
 static void
-_cb_tab_0(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_tab_0(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    _tab_go(data, 9);
 }
@@ -1515,7 +1515,7 @@ _cb_cmd_del(void *data)
 }
 
 static void
-_cb_cmd_activated(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_cmd_activated(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    char *cmd = NULL;
@@ -1546,7 +1546,7 @@ _cb_cmd_activated(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED_
 }
 
 static void
-_cb_cmd_aborted(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_cmd_aborted(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
@@ -1566,7 +1566,7 @@ _cb_cmd_aborted(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_cmd_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    char *cmd = NULL;
@@ -1587,7 +1587,7 @@ _cb_cmd_changed(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_cmd_hints_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Win *wn = data;
    
@@ -1599,7 +1599,7 @@ _cb_cmd_hints_changed(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 static void
-_cb_cmdbox(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_cmdbox(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    
@@ -1703,7 +1703,7 @@ main_trans_update(const Config *config)
 }
 
 static void
-_cb_media_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Term *term = data;
    Config *config = NULL;

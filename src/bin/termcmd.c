@@ -11,7 +11,7 @@
 #include "termcmd.h"
 
 static Eina_Bool
-_termcmd_search(Evas_Object *obj __UNUSED__, Evas_Object *win __UNUSED__, Evas_Object *bg __UNUSED__, const char *cmd)
+_termcmd_search(Evas_Object *obj EINA_UNUSED, Evas_Object *win EINA_UNUSED, Evas_Object *bg EINA_UNUSED, const char *cmd)
 {
    if (cmd[0] == 0) // clear search
      {
@@ -23,7 +23,7 @@ _termcmd_search(Evas_Object *obj __UNUSED__, Evas_Object *win __UNUSED__, Evas_O
 }
 
 static Eina_Bool
-_termcmd_font_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *bg __UNUSED__, const char *cmd)
+_termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *bg EINA_UNUSED, const char *cmd)
 {
    Config *config = termio_config_get(obj);
 
@@ -69,7 +69,7 @@ _termcmd_font_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
 }
 
 static Eina_Bool
-_termcmd_grid_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *bg __UNUSED__, const char *cmd)
+_termcmd_grid_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *bg EINA_UNUSED, const char *cmd)
 {
    int w = -1, h = -1;
    int r = sscanf(cmd, "%ix%i", &w, &h);
@@ -96,7 +96,7 @@ _termcmd_grid_size(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *b
 }
 
 static Eina_Bool
-_termcmd_background(Evas_Object *obj, Evas_Object *win __UNUSED__, Evas_Object *bg __UNUSED__, const char *cmd)
+_termcmd_background(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *bg EINA_UNUSED, const char *cmd)
 {
    Config *config = termio_config_get(obj);
 

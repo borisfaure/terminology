@@ -55,7 +55,7 @@ static void _smart_calculate(Evas_Object *obj);
 static void _transit(Evas_Object *obj, double tim);
 
 static void
-_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -69,7 +69,7 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -112,7 +112,7 @@ _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -170,7 +170,7 @@ _autozoom(Evas_Object *obj)
 }
 
 void
-_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -470,26 +470,26 @@ _label_redo(Entry *en)
 }
 
 static void
-_title_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_title_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    _label_redo(data);
 }
 
 static void
-_icon_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_icon_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    _label_redo(data);
 }
 
 static void
-_bell_cb(void *data, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_bell_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Entry *en = data;
    edje_object_signal_emit(en->bg, "bell", "terminology");
 }
 
 static void
-_entry_termio_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_entry_termio_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Entry *en = data;
    if (en->termio) evas_object_event_callback_add
@@ -498,7 +498,7 @@ _entry_termio_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static void
-_entry_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *info __UNUSED__)
+_entry_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Entry *en = data;
    if (en->obj) evas_object_event_callback_del_full
@@ -597,7 +597,7 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
+_smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    if (!sd) return;

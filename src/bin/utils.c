@@ -41,7 +41,7 @@ theme_reload(Evas_Object *edje)
 }
 
 static void
-theme_reload_cb(void *data __UNUSED__, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+theme_reload_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    theme_reload(obj);
 }

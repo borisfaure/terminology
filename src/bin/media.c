@@ -73,7 +73,7 @@ static void _et_init(void);
 static void _type_thumb_init2(Evas_Object *obj);
 
 static void
-_et_disconnect(void *data __UNUSED__, Ethumb_Client *c)
+_et_disconnect(void *data EINA_UNUSED, Ethumb_Client *c)
 {
    if (c != et_client) return;
    ethumb_client_disconnect(et_client);
@@ -83,7 +83,7 @@ _et_disconnect(void *data __UNUSED__, Ethumb_Client *c)
 }
 
 static void
-_et_connect(void *data __UNUSED__, Ethumb_Client *c, Eina_Bool ok)
+_et_connect(void *data EINA_UNUSED, Ethumb_Client *c, Eina_Bool ok)
 {
    if (ok)
      {
@@ -146,7 +146,7 @@ _type_thumb_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
 }
 
 static void
-_cb_thumb_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_thumb_preloaded(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord ox, oy, ow, oh;
@@ -159,7 +159,7 @@ _cb_thumb_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_et_done(Ethumb_Client *c __UNUSED__, const char *file, const char *key, void *data)
+_et_done(Ethumb_Client *c EINA_UNUSED, const char *file, const char *key, void *data)
 {
    Evas_Object *obj = data;
    Media *sd = evas_object_smart_data_get(obj);
@@ -175,7 +175,7 @@ _et_done(Ethumb_Client *c __UNUSED__, const char *file, const char *key, void *d
 }
 
 static void
-_et_error(Ethumb_Client *c __UNUSED__, void *data)
+_et_error(Ethumb_Client *c EINA_UNUSED, void *data)
 {
    Evas_Object *obj = data;
    Media *sd = evas_object_smart_data_get(obj);
@@ -252,7 +252,7 @@ _type_thumb_init(Evas_Object *obj)
 
 //////////////////////// img
 static void
-_cb_img_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_img_preloaded(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -386,7 +386,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
 
 //////////////////////// scalable img
 static void
-_cb_scale_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_scale_preloaded(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -504,7 +504,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
 
 //////////////////////// edj
 static void
-_cb_edje_preloaded(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+_cb_edje_preloaded(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -556,7 +556,7 @@ _type_edje_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
 static void _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
 static void
-_cb_mov_frame_decode(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_frame_decode(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord ox, oy, ow, oh;
@@ -575,7 +575,7 @@ _cb_mov_frame_decode(void *data, Evas_Object *obj __UNUSED__, void *event __UNUS
 }
 
 static void
-_cb_mov_frame_resize(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_frame_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord ox, oy, ow, oh;
@@ -586,7 +586,7 @@ _cb_mov_frame_resize(void *data, Evas_Object *obj __UNUSED__, void *event __UNUS
 }
 
 static void
-_cb_mov_len_change(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_len_change(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -603,7 +603,7 @@ _cb_mov_restart(void *data)
 }
 
 static void
-_cb_mov_decode_stop(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_decode_stop(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -613,7 +613,7 @@ _cb_mov_decode_stop(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSE
 }
 
 static void
-_cb_mov_progress(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_progress(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -623,7 +623,7 @@ _cb_mov_progress(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__
 }
 
 static void
-_cb_mov_ref(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_mov_ref(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -633,25 +633,25 @@ _cb_mov_ref(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 }
 
 static void
-_cb_media_play(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_media_play(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    media_play_set(data, EINA_TRUE);
 }
 
 static void
-_cb_media_pause(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_media_pause(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    media_play_set(data, EINA_FALSE);
 }
 
 static void
-_cb_media_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_media_stop(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    media_stop(data);
 }
 
 static void
-_cb_media_vol(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_media_vol(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
@@ -661,7 +661,7 @@ _cb_media_vol(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 }
 
 static void
-_cb_media_pos(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_media_pos(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    double vx, vy;
    Media *sd = evas_object_smart_data_get(data);
@@ -974,7 +974,7 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
+_smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -982,7 +982,7 @@ _smart_move(Evas_Object *obj, Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__)
 }
 
 static Eina_Bool
-_url_prog_cb(void *data, int type __UNUSED__, void *event_info)
+_url_prog_cb(void *data, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Con_Event_Url_Progress *ev = event_info;
    Evas_Object *obj = data;
@@ -1010,7 +1010,7 @@ _url_prog_cb(void *data, int type __UNUSED__, void *event_info)
 }
 
 static Eina_Bool
-_url_compl_cb(void *data, int type __UNUSED__, void *event_info)
+_url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Con_Event_Url_Complete *ev = event_info;
    Evas_Object *obj = data;
@@ -1046,7 +1046,7 @@ _url_compl_cb(void *data, int type __UNUSED__, void *event_info)
 }
 
 static void
-_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Media *sd = evas_object_smart_data_get(data);
@@ -1060,7 +1060,7 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 }
 
 static void
-_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Media *sd = evas_object_smart_data_get(data);

@@ -145,7 +145,7 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_cb_exe_exit(void *data, int type __UNUSED__, void *event)
+_cb_exe_exit(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
    Termpty *ty = data;
@@ -170,7 +170,7 @@ _cb_exe_exit(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
+_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 {
    Termpty *ty = data;
    char buf[4097];
@@ -481,13 +481,13 @@ termpty_free(Termpty *ty)
 }
 
 void
-termpty_cellcomp_freeze(Termpty *ty __UNUSED__)
+termpty_cellcomp_freeze(Termpty *ty EINA_UNUSED)
 {
    termpty_save_freeze();
 }
 
 void
-termpty_cellcomp_thaw(Termpty *ty __UNUSED__)
+termpty_cellcomp_thaw(Termpty *ty EINA_UNUSED)
 {
    termpty_save_thaw();
 }
@@ -1407,7 +1407,7 @@ termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n)
 }
 
 void
-termpty_cell_swap(Termpty *ty __UNUSED__, Termcell *src, Termcell *dst, int n)
+termpty_cell_swap(Termpty *ty EINA_UNUSED, Termcell *src, Termcell *dst, int n)
 {
    int i;
    Termcell t;

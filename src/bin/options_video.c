@@ -10,7 +10,7 @@
 static Evas_Object *op_trans, *op_mute, *op_vidmod;
 
 static void
-_cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -20,7 +20,7 @@ _cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -30,7 +30,7 @@ _cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
