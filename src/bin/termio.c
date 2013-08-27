@@ -2250,8 +2250,13 @@ _smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *cx, int *
 static void
 _sel_line(Evas_Object *obj, int cx __UNUSED__, int cy)
 {
+   int y, w = 0;
    Termio *sd = evas_object_smart_data_get(obj);
+   Termcell *cells;
+
    if (!sd) return;
+
+   termpty_cellcomp_freeze(sd->pty);
 
    sd->cur.sel = 1;
    sd->cur.makesel = 0;
@@ -2259,6 +2264,29 @@ _sel_line(Evas_Object *obj, int cx __UNUSED__, int cy)
    sd->cur.sel1.y = cy;
    sd->cur.sel2.x = sd->grid.w - 1;
    sd->cur.sel2.y = cy;
+
+   y = cy;
+   for (;;)
+     {
+        cells = termpty_cellrow_get(sd->pty, y - 1, &w);
+        if (!cells || !cells[w-1].att.autowrapped) break;
+
+        y--;
+     }
+   sd->cur.sel1.y = y;
+   y = cy;
+
+   for (;;)
+     {
+        cells = termpty_cellrow_get(sd->pty, y, &w);
+        if (!cells || !cells[w-1].att.autowrapped) break;
+
+        sd->cur.sel2.x = w - 1;
+        y++;
+     }
+   sd->cur.sel2.y = y;
+
+   termpty_cellcomp_thaw(sd->pty);
 }
 
 static Eina_Bool
