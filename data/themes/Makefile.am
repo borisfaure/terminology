@@ -34,15 +34,16 @@ black.edj: Makefile black.edc mild.edc
 	$(top_srcdir)/data/themes/black.edc \
 	$(top_builddir)/data/themes/black.edj
 
-solarized.edj: Makefile solarized.edc
+solarized.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
-	$(top_srcdir)/data/themes/solarized.edc \
+	-DSOLARIZED=1 \
+	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized.edj
 
-solarized_light.edj: Makefile solarized.edc
+solarized_light.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	-DSOLARIZED_LIGHT=1 \
-	$(top_srcdir)/data/themes/solarized.edc \
+	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized_light.edj
 
 mustang.edj: Makefile mustang.edc
