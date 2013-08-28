@@ -493,8 +493,10 @@ _split_merge(Split *spp, Split *sp, const char *slot)
         spp->s2->parent = spp;
         spp->horizontal = sp->horizontal;
         o = sp->panes;
+        /* slot is the empty part. the part that needs to be unset is the
+         * other one */
         elm_object_part_content_unset(sp->parent->panes,
-                       (strcmp(slot, PANES_TOP)) ? PANES_TOP : PANES_BOTTOM);
+                       (!strcmp(slot, PANES_TOP)) ? PANES_BOTTOM : PANES_TOP);
         if (spp->parent)
           {
              elm_object_part_content_unset(spp->parent->panes, slot);
