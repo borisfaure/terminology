@@ -414,7 +414,7 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
              /* faint */
              evas_object_textgrid_palette_set(
                  textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-                 r/2, g/2, b/2, a/2);
+                 color.r/2, color.g/2, color.b/2, color.a/2);
           }
      }
    for (c = 0; c < 256; c++)
