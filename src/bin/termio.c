@@ -318,20 +318,21 @@ _cb_link_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Evas_Coord dx, dy;
-   
    if (!sd) return;
-   dx = abs(ev->canvas.x - sd->link.down.x);
-   dy = abs(ev->canvas.y - sd->link.down.y);
-   if ((ev->button == 1) && (sd->link.down.down) &&
-       ((dx <= elm_config_finger_size_get()) &&
-           (dy <= elm_config_finger_size_get())))
-     {
-        if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
-        sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
-     }
+
    if ((ev->button == 1) && (sd->link.down.down))
      {
+        Evas_Coord dx, dy, finger_size;
+
+        dx = abs(ev->canvas.x - sd->link.down.x);
+        dy = abs(ev->canvas.y - sd->link.down.y);
+        finger_size = elm_config_finger_size_get();
+
+        if ((dx <= finger_size) && (dy <= finger_size))
+          {
+             if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
+             sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
+          }
         sd->link.down.down = EINA_FALSE;
      }
 }
@@ -3137,7 +3138,8 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static void
-_smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED, void *event)
 {
    int cx, cy;
    Evas_Event_Mouse_In *ev = event;
@@ -3152,17 +3154,30 @@ _smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
 static void
 _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
-                    void *event EINA_UNUSED)
+                    void *event)
 {
    Termio *sd;
+   Evas_Event_Mouse_Out *ev = event;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    termio_mouseover_suspend_pushpop(data, 1);
    ty_dbus_link_hide();
-   sd->mouse.cx = -1;
-   sd->mouse.cy = -1;
-   _remove_links(sd, obj);
+   if ((ev->canvas.x == 0) || (ev->canvas.y == 0))
+     {
+        sd->mouse.cx = -1;
+        sd->mouse.cy = -1;
+        sd->link.suspend = EINA_FALSE;
+        _remove_links(sd, obj);
+     }
+   else
+     {
+        int cx, cy;
+
+        _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+        sd->mouse.cx = cx;
+        sd->mouse.cy = cy;
+     }
 }
 
 static void
