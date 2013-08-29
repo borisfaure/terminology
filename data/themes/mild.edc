@@ -1210,7 +1210,7 @@ collections {
             program {
                signal: "key,down"; source: "terminology";
                script {
-#if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 8)
                   new buf[32];
                   snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
                   run_program(get_program_id(buf));
