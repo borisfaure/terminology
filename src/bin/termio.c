@@ -2966,21 +2966,22 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else
           {
-            if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
-                evas_key_modifier_is_set(ev->modifiers, "Control") ||
-                evas_key_modifier_is_set(ev->modifiers, "Alt"))
-              {
-                 sd->cur.sel1.x = cx;
-                 sd->cur.sel1.y = cy - sd->scroll;
-                 sd->cur.sel2.x = cx;
-                 sd->cur.sel2.y = cy - sd->scroll;
-                 sd->cur.sel = EINA_TRUE;
-                 sd->cur.makesel = EINA_TRUE;
-                 sd->boxsel = EINA_TRUE;
+             /* SINGLE CLICK */
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+                 evas_key_modifier_is_set(ev->modifiers, "Control") ||
+                 evas_key_modifier_is_set(ev->modifiers, "Alt"))
+               {
+                  sd->cur.sel1.x = cx;
+                  sd->cur.sel1.y = cy - sd->scroll;
+                  sd->cur.sel2.x = cx;
+                  sd->cur.sel2.y = cy - sd->scroll;
+                  sd->cur.sel = EINA_TRUE;
+                  sd->cur.makesel = EINA_TRUE;
+                  sd->boxsel = EINA_TRUE;
 #if defined(SUPPORT_DBLWIDTH)
-                 _selection_dbl_fix(data);
+                  _selection_dbl_fix(data);
 #endif
-              }
+               }
              if (sd->top_left || sd->bottom_right)
                {
                   sd->cur.makesel = 1;
@@ -3001,11 +3002,6 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                }
              else
                {
-                  sd->backup.sel = sd->cur.sel;
-                  sd->backup.sel1.x = sd->cur.sel1.x;
-                  sd->backup.sel1.y = sd->cur.sel1.y;
-                  sd->backup.sel2.x = sd->cur.sel2.x;
-                  sd->backup.sel2.y = sd->cur.sel2.y;
                   if (sd->cur.sel)
                     {
                        sd->cur.sel = 0;
@@ -3078,6 +3074,11 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                  _smart_update_queue(data, sd);
                  _take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
+            sd->backup.sel = sd->cur.sel;
+            sd->backup.sel1.x = sd->cur.sel1.x;
+            sd->backup.sel1.y = sd->cur.sel1.y;
+            sd->backup.sel2.x = sd->cur.sel2.x;
+            sd->backup.sel2.y = sd->cur.sel2.y;
           }
      }
 }
