@@ -285,13 +285,13 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
      {
-        ERR("Allocation of term screen %ix%i", ty->wm ty->h);
+        ERR("Allocation of term screen %ix%i", ty->w, ty->h);
         goto err;
      }
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen2)
      {
-        ERR("Allocation of term screen2 %ix%i", ty->wm ty->h);
+        ERR("Allocation of term screen2 %ix%i", ty->w, ty->h);
         goto err;
      }
 
