@@ -297,14 +297,15 @@ _timer(void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
-static void
-_check_compressor(void)
+static inline void
+_check_compressor(Eina_Bool frozen)
 {
+   if (freeze) return;
    if (idler) return;
    if ((ts_uncomp > 256) || (ts_freeops > 256))
      {
-        if (timer) ecore_timer_reset(timer);
-        else timer = ecore_timer_add(0.2, _timer, NULL);
+        if (timer && !frozen) ecore_timer_reset(timer);
+        else if (!timer) timer = ecore_timer_add(0.2, _timer, NULL);
      }
 }
 
@@ -313,16 +314,14 @@ termpty_save_freeze(void)
 {
    // XXX: suspend compressor - this probably should be in a thread but right
    // now it'll be fine here 
-   freeze++;
+   if (!freeze++)
+     {
+        if (timer) ecore_timer_freeze(timer);
+     }
    if (idler)
      {
         ecore_idler_del(idler);
         idler = NULL;
-     }
-   if (timer)
-     {
-        ecore_timer_del(timer);
-        timer = NULL;
      }
 }
 
@@ -331,7 +330,11 @@ termpty_save_thaw(void)
 {
    // XXX: resume compressor
    freeze--;
-   if (freeze <= 0) _check_compressor();
+   if (freeze <= 0)
+     {
+        if (timer) ecore_timer_thaw(timer);
+        _check_compressor(EINA_TRUE);
+     }
 }
 
 void
@@ -380,10 +383,10 @@ termpty_save_extract(Termsave *ts)
         ts_compfreeze++;
         _mem_free(ts);
         ts_compfreeze--;
-        _check_compressor();
+        _check_compressor(EINA_FALSE);
         return ts2;
      }
-   _check_compressor();
+   _check_compressor(EINA_FALSE);
    return ts;
 }
 
@@ -395,7 +398,7 @@ termpty_save_new(int w)
    ts->gen = _mem_gen_get();
    ts->w = w;
    if (!ts_compfreeze) ts_uncomp++;
-   _check_compressor();
+   _check_compressor(EINA_FALSE);
    return ts;
 }
 
@@ -410,5 +413,5 @@ termpty_save_free(Termsave *ts)
         ts_freeops++;
      }
    _mem_free(ts);
-   _check_compressor();
+   _check_compressor(EINA_FALSE);
 }
