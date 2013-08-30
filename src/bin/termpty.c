@@ -1391,7 +1391,7 @@ termpty_block_chid_get(Termpty *ty, const char *chid)
 
 
 
-static void
+static inline void
 _handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
 {
    Termblock *tb;
