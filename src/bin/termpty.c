@@ -283,23 +283,52 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
    ty->swap = ty->state;
 
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
-   if (!ty->screen) goto err;
+   if (!ty->screen)
+     {
+        ERR("Allocation of term screen %ix%i", ty->wm ty->h);
+        goto err;
+     }
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
-   if (!ty->screen2) goto err;
+   if (!ty->screen2)
+     {
+        ERR("Allocation of term screen2 %ix%i", ty->wm ty->h);
+        goto err;
+     }
 
    ty->circular_offset = 0;
 
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
-   if (ty->fd < 0) goto err;
-   if (grantpt(ty->fd) != 0) goto err;
-   if (unlockpt(ty->fd) != 0) goto err;
+   if (ty->fd < 0)
+     {
+        ERR("posix_openpt failed: %s", strerror(errno));
+        goto err;
+     }
+   if (grantpt(ty->fd) != 0)
+     {
+        ERR("grantpt failed: %s", strerror(errno));
+        goto err;
+     }
+   if (unlockpt(ty->fd) != 0)
+     {
+        ERR("unlockpt failed: %s", strerror(errno));
+        goto err;
+     }
    pty = ptsname(ty->fd);
    ty->slavefd = open(pty, O_RDWR | O_NOCTTY);
-   if (ty->slavefd < 0) goto err;
+   if (ty->slavefd < 0)
+     {
+        ERR("open of pty '%s' failed: %s", pty, strerror(errno));
+        goto err;
+     }
    fcntl(ty->fd, F_SETFL, O_NDELAY);
 
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
+   if (!ty->hand_exe_exit)
+     {
+        ERR("event handler add failed");
+        goto err;
+     }
    ty->pid = fork();
    if (!ty->pid)
      {

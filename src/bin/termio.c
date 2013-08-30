@@ -4161,6 +4161,12 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
 #endif
    
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback);
+   if (!sd->pty)
+     {
+        ERR("Cannot allocate termpty");
+        evas_object_del(obj);
+        return NULL;
+     }
    sd->pty->obj = obj;
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
