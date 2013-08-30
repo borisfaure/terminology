@@ -305,8 +305,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h
      }
    if (grantpt(ty->fd) != 0)
      {
-        ERR("grantpt failed: %s", strerror(errno));
-        goto err;
+        WRN("grantpt failed: %s", strerror(errno));
      }
    if (unlockpt(ty->fd) != 0)
      {
