@@ -610,7 +610,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   priv = 1;
                   b++;
                }
-             if (priv)
+             if (priv) /* DEC Private Mode Reset (DECRST) */
                {
                   while (b)
                     {
@@ -861,37 +861,39 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //                                 INF("XXX: enable mouse wheel -> cursor key xlation %i", mode);
                                  break;
                                default:
-                                 ERR("unhandled screen mode arg %i", arg);
+                                 ERR("unhandled DEC Private Reset Mode arg %i", arg);
                                  break;
                               }
                          }
                     }
                }
-             else
+             else /* Reset Mode (RM) */
                {
                   while (b)
                     {
                        arg = _csi_arg_get(&b);
                        if (b)
                          {
-                            if (arg == 1)
+                            switch (arg)
                               {
+                               case 1:
                                  handled = 1;
                                  ty->state.appcursor = mode;
-                              }
-                            else if (arg == 4)
-                              {
+                                 break;
+                               case 4:
                                  handled = 1;
                                  DBG("DDD: set insert mode to %i", mode);
                                  ty->state.insert = mode;
-                              }
+                                 break;
 //                            else if (arg == 24)
 //                              {
 //                                 ERR("unhandled #24 arg %i", arg);
 //                                  // ???
 //                              }
-                            else
-                              ERR("unhandled screen non-priv mode arg %i, mode %i, ch '%c'", arg, mode, *cc);
+                               default:
+                                 handled = 1;
+                                 ERR("unhandled ANSI Reset Mode arg %i", arg);
+                              }
                          }
                     }
                }
