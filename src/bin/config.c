@@ -91,6 +91,11 @@ config_init(void)
      (edd_base, Config, "cg_height", cg_height, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "drag_links", drag_links, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "application_server", application_server, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "application_server_restore_views",
+      application_server_restore_views, EET_T_UCHAR);
 }
 
 void
@@ -169,6 +174,8 @@ config_sync(const Config *config_src, Config *config)
    config->mute = config_src->mute;
    config->urg_bell = config_src->urg_bell;
    config->multi_instance = config_src->multi_instance;
+   config->application_server = config_src->application_server;
+   config->application_server_restore_views = config_src->application_server_restore_views;
    config->temporary = config_src->temporary;
    config->custom_geometry = config_src->custom_geometry;
    config->cg_width = config_src->cg_width;
@@ -425,6 +432,8 @@ config_load(const char *key)
              config->mute = EINA_FALSE;
              config->urg_bell = EINA_TRUE;
              config->multi_instance = EINA_FALSE;
+             config->application_server = EINA_FALSE;
+             config->application_server_restore_views = EINA_FALSE;
              config->custom_geometry = EINA_FALSE;
              config->cg_width = 80;
              config->cg_height = 24;
@@ -473,6 +482,8 @@ config_fork(Config *config)
    CPY(mute);
    CPY(urg_bell);
    CPY(multi_instance);
+   CPY(application_server);
+   CPY(application_server_restore_views);
    CPY(custom_geometry);
    CPY(cg_width);
    CPY(cg_height);

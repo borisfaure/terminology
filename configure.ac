@@ -36,6 +36,9 @@ requirements="\
    ethumb_client >= 1.7.0 \
    "
 
+EFL_ENABLE_EO_API_SUPPORT
+EFL_ENABLE_BETA_API_SUPPORT
+
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
 PKG_CHECK_MODULES([ELDBUS],

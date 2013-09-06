@@ -592,6 +592,8 @@ main_close(Evas_Object *win, Evas_Object *term)
    Eina_List *l;
    const char *slot = PANES_TOP;
 
+   app_server_term_del(term);
+
    if (!sp) return;
    if (!sp->term) return;
    if (sp->sel) _sel_restore(sp);
@@ -2194,6 +2196,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 //        edje_object_signal_emit(term->base, "focus,in", "terminology");
      }
    wn->terms = eina_list_append(wn->terms, term);
+   app_server_term_add(term);
    
    return term;
 }
@@ -2935,6 +2938,10 @@ remote:
      }
 
    config = config_fork(config);
+
+   if (config->application_server)
+     app_server_init(&wins, config->application_server_restore_views);
+
    term = main_term_new(wn, config, cmd, login_shell, cd,
                         size_w, size_h, hold);
    if (!term)
@@ -2947,7 +2954,7 @@ remote:
         edje_object_part_swallow(wn->base, "terminology.content", term->bg);
         _cb_size_hint(term, evas_object_evas_get(wn->win), term->term, NULL);
      }
-   
+
    sp = wn->split = calloc(1, sizeof(Split));
    sp->wn = wn;
    sp->term = term;
@@ -2975,6 +2982,8 @@ remote:
    ty_dbus_init();
 
    elm_run();
+
+   app_server_shutdown();
 
    ty_dbus_shutdown();
  end:

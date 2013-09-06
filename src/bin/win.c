@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "win.h"
 #include "config.h"
+#include "main.h"
+#include "app_server.h"
 
 Evas_Object *
 tg_win_add(const char *name, const char *role, const char *title, const char *icon_name)
@@ -17,6 +19,9 @@ tg_win_add(const char *name, const char *role, const char *title, const char *ic
    elm_win_icon_name_set(win, icon_name);
    if (role) elm_win_role_set(win, role);
    
+   evas_object_smart_callback_add(win, "delete,request",
+                                  _app_server_win_del_request_cb, win);
+
    elm_win_autodel_set(win, EINA_TRUE);
    
    o = evas_object_image_add(evas_object_evas_get(win));
