@@ -38,7 +38,8 @@ _ipc_hash_get(void)
 {
    char buf[1024], hash[64];
    const char *disp, *session, *xdg_session, *xdg_id, *xdg_seat, *xdg_vt;
-   char *s, i;
+   char *s;
+   unsigned int i;
    unsigned char c1, c2;
    
    /* dumb stoopid hash - i'm feeling lazy */
