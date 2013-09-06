@@ -354,19 +354,17 @@ _term_focus_show(Split *sp, Term *term)
 }
 
 void
-main_new(Evas_Object *win, Evas_Object *term)
+main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir)
 {
    Split *sp = _split_find(win, term);
    Config *config;
    int w, h;
-   char buf[PATH_MAX], *wdir = NULL;
-   
+
    if (!sp) return;
    _term_resize_track_stop(sp);
    evas_object_hide(sp->term->bg);
    config = config_fork(sp->term->config);
    termio_size_get(sp->term->term, &w, &h);
-   if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
    sp->term = main_term_new(sp->wn, config,
                             NULL, EINA_FALSE, wdir,
                             w, h, EINA_FALSE);
@@ -377,6 +375,16 @@ main_new(Evas_Object *win, Evas_Object *term)
    evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
    _term_focus_show(sp, sp->term);
    _split_tabcount_update(sp, sp->term);
+}
+
+void
+main_new(Evas_Object *win, Evas_Object *term)
+{
+   Split *sp = _split_find(win, term);
+   char buf[PATH_MAX], *wdir = NULL;
+
+   if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
+   main_new_with_dir(win, term, wdir);
 }
 
 void
