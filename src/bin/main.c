@@ -23,10 +23,6 @@
   #define PANES_BOTTOM "bottom"
 #endif
 
-typedef struct _Win   Win;
-typedef struct _Term  Term;
-typedef struct _Split Split;
-
 struct _Win
 {
    Evas_Object *win;
@@ -1416,16 +1412,21 @@ _cb_new(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_U
    main_new(term->wn->win, term->term);
 }
 
-static void
-_cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+void
+main_term_focus(Term *term)
 {
-   Term *term = data;
    Split *sp;
-        
+
    sp = _split_find(term->wn->win, term->term);
    _sel_go(sp, term);
 }
 
+static void
+_cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Term *term = data;
+   main_term_focus(term);
+}
 
 static void
 _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
@@ -2187,6 +2188,26 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    wn->terms = eina_list_append(wn->terms, term);
    
    return term;
+}
+
+Win *main_term_win_get(Term *term)
+{
+   return term->wn;
+}
+
+Evas_Object *main_win_evas_object_get(Win *wn)
+{
+   return wn->win;
+}
+
+Eina_List *main_win_terms_get(Win *wn)
+{
+   return wn->terms;
+}
+
+Evas_Object *main_term_evas_object_get(Term *term)
+{
+   return term->term;
 }
 
 static void
