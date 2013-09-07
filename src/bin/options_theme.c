@@ -70,6 +70,7 @@ _cb_op_theme_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
    if (!theme_apply(edje, config, "terminology/background"))
      ERR("Couldn't find terminology theme!");
    colors_term_init(termio_textgrid_get(t->term), edje);
+   termio_config_set(t->term, config);
 }
 
 static int

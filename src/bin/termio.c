@@ -3291,8 +3291,8 @@ _win_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA
      }
 }
 
-static void
-_termio_config_set(Evas_Object *obj, Config *config)
+void
+termio_config_set(Evas_Object *obj, Config *config)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord w = 2, h = 2;
@@ -3315,7 +3315,10 @@ _termio_config_set(Evas_Object *obj, Config *config)
 
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
-   evas_object_textgrid_size_set(sd->grid.obj, 1, 1);
+   evas_object_textgrid_size_get(sd->grid.obj, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   evas_object_textgrid_size_set(sd->grid.obj, w, h);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -4129,7 +4132,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
    sd = evas_object_smart_data_get(obj);
    if (!sd) return obj;
 
-   _termio_config_set(obj, config);
+   termio_config_set(obj, config);
 
    sd->glayer = g = elm_gesture_layer_add(parent);
    elm_gesture_layer_attach(g, sd->event);
