@@ -96,6 +96,39 @@ static Term *main_term_new(Win *wn, Config *config, const char *cmd, Eina_Bool l
 static void _term_focus(Term *term);
 static void _sel_restore(Split *sp);
 
+static Win *
+_win_find(Evas_Object *win)
+{
+   Win *wn;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(wins, l, wn)
+     {
+        if (wn->win == win) return wn;
+     }
+   return NULL;
+}
+
+void change_theme(Evas_Object *win, Config *config)
+{
+   Win *wn;
+   Eina_List *l;
+   Term *term;
+
+   wn = _win_find(win);
+   if (!wn) return;
+
+   EINA_LIST_FOREACH(wn->terms, l, term)
+     {
+        Evas_Object *edje = termio_theme_get(term->term);
+
+        if (!theme_apply(edje, config, "terminology/background"))
+          ERR("Couldn't find terminology theme!");
+        colors_term_init(termio_textgrid_get(term->term), edje);
+        termio_config_set(term->term, config);
+     }
+}
+
 static void
 _split_free(Split *sp)
 {

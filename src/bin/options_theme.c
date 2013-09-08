@@ -6,6 +6,7 @@
 #include "options.h"
 #include "options_theme.h"
 #include "utils.h"
+#include "main.h"
 
 static Evas_Object *op_themelist;
 
@@ -71,6 +72,7 @@ _cb_op_theme_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
      ERR("Couldn't find terminology theme!");
    colors_term_init(termio_textgrid_get(t->term), edje);
    termio_config_set(t->term, config);
+   change_theme(termio_win_get(t->term), config);
 }
 
 static int

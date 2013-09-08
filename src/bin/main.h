@@ -13,4 +13,6 @@ void main_media_update(const Config *config);
 void main_media_mute_update(const Config *config);
 void main_config_sync(const Config *config);
 
+void change_theme(Evas_Object *win, Config *config);
+
 #endif
