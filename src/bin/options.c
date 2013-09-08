@@ -235,14 +235,15 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         edje_object_signal_callback_del(bg, "optdetails,hide,done",
                                         "terminology",
                                         _cb_opdt_hide_done);
+        elm_object_focus_set(op_frame, EINA_FALSE);
+        elm_object_focus_set(op_opbox, EINA_FALSE);
+        elm_object_focus_set(op_toolbar, EINA_FALSE);
+        if (op_donecb) op_donecb(op_donedata);
         evas_object_del(op_over);
         op_over = NULL;
         edje_object_signal_emit(bg, "options,hide", "terminology");
         edje_object_signal_emit(bg, "optdetails,hide", "terminology");
         op_out = EINA_FALSE;
-        elm_object_focus_set(op_frame, EINA_FALSE);
-        if (op_donecb) op_donecb(op_donedata);
-//        elm_object_focus_set(term, EINA_TRUE);
         if (op_del_timer) ecore_timer_del(op_del_timer);
         op_del_timer = ecore_timer_add(10.0, _cb_op_del_delay, NULL);
      }
