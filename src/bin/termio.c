@@ -470,11 +470,15 @@ _update_link(Evas_Object *obj, Termio *sd,
                   if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                     {
                        Evas_Coord _x = ox, _y = oy;
-                       Ecore_X_Window xwin;
+                       Ecore_Window xwin;
 
                        _x += sd->mouse.cx * sd->font.chw;
                        _y += sd->mouse.cy * sd->font.chh;
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
+                       xwin = elm_win_window_id_get(sd->win);
+#else
                        xwin = elm_win_xwindow_get(sd->win);
+#endif
                        ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
                     }
                   for (y = sd->link.y1; y <= sd->link.y2; y++)
@@ -540,7 +544,11 @@ _remove_links(Termio *sd, Evas_Object *obj)
 
              ox += sd->mouse.cx * sd->font.chw;
              oy += sd->mouse.cy * sd->font.chh;
-             xwin = elm_win_xwindow_get(sd->win);
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
+                       xwin = elm_win_window_id_get(sd->win);
+#else
+                       xwin = elm_win_xwindow_get(sd->win);
+#endif
              ty_dbus_link_mouseout(xwin, sd->link.string, ox, oy);
           }
         free(sd->link.string);
