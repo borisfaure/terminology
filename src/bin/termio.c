@@ -400,11 +400,12 @@ _cb_link_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
    Termio *sd = evas_object_smart_data_get(data);
    Evas_Coord dx, dy;
    if (!sd) return;
-   
+
    if (!sd->link.down.down) return;
    dx = abs(ev->cur.canvas.x - sd->link.down.x);
    dy = abs(ev->cur.canvas.y - sd->link.down.y);
-   if ((sd->link.string) &&
+   if ((sd->config->drag_links) &&
+       (sd->link.string) &&
        ((dx > elm_config_finger_size_get()) ||
            (dy > elm_config_finger_size_get())))
      {

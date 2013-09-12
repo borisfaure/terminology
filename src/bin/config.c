@@ -89,6 +89,8 @@ config_init(void)
      (edd_base, Config, "cg_width", cg_width, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "cg_height", cg_height, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "drag_links", drag_links, EET_T_UCHAR);
 }
 
 void

@@ -41,6 +41,7 @@ struct _Config
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;
    Eina_Bool         custom_geometry;
+   Eina_Bool         drag_links;
    int               cg_width;
    int               cg_height;
 

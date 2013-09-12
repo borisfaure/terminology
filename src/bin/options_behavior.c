@@ -10,6 +10,15 @@
 static Evas_Object *op_w, *op_h;
 
 static void
+_cb_op_behavior_drag_links_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->drag_links = elm_check_state_get(obj);
+   config_save(config, NULL);
+}
+
+static void
 _cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
@@ -274,6 +283,16 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_custom_geometry, term);
+
+   o = elm_check_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Drag & drop links");
+   elm_check_state_set(o, config->drag_links);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_drag_links_chg, term);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
