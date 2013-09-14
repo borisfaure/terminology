@@ -350,9 +350,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         break;
       case '@': // insert N blank chars
-        DBG("insert N blank chars");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("insert %d blank chars", arg);
           {
              int pi = ty->state.insert;
              int blank[1] = { ' ' };
@@ -368,9 +368,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'A': // cursor up N
       case 'e': // cursor up N
-        DBG("cursor up N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("cursor up %d", arg);
         ty->state.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
@@ -379,9 +379,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         break;
       case 'B': // cursor down N
-        DBG("cursor down N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("cursor down %d", arg);
         ty->state.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
@@ -390,9 +390,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         break;
       case 'D': // cursor left N
-        DBG("cursor left N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("cursor left %d", arg);
         ty->state.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
@@ -402,9 +402,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'C': // cursor right N
       case 'a': // cursor right N
-        DBG("cursor right N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("cursor right %d", arg);
         ty->state.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
@@ -443,27 +443,27 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->state.cy += ty->state.margin_top;
        break;
       case 'G': // to column N
-        DBG("to column N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("to column %d", arg);
         ty->state.wrapnext = 0;
         ty->state.cx = arg - 1;
         if (ty->state.cx < 0) ty->state.cx = 0;
         else if (ty->state.cx >= ty->w) ty->state.cx = ty->w - 1;
         break;
       case 'd': // to row N
-        DBG("to row N");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("to row %d", arg);
         ty->state.wrapnext = 0;
         ty->state.cy = arg - 1;
         if (ty->state.cy < 0) ty->state.cy = 0;
         else if (ty->state.cy >= ty->h) ty->state.cy = ty->h - 1;
         break;
       case 'E': // down relative N rows, and to col 0
-        DBG("down relative N rows, and to col 0");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("down relative %d rows, and to col 0", arg);
         ty->state.wrapnext = 0;
         ty->state.cy += arg;
         if (ty->state.cy < 0) ty->state.cy = 0;
@@ -471,9 +471,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->state.cx = 0;
         break;
       case 'F': // up relative N rows, and to col 0
-        DBG("up relative N rows, and to col 0");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("up relative %d rows, and to col 0", arg);
         ty->state.wrapnext = 0;
         ty->state.cy -= arg;
         if (ty->state.cy < 0) ty->state.cy = 0;
@@ -481,27 +481,28 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->state.cx = 0;
         break;
       case 'X': // erase N chars
-        DBG("erase N chars");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("erase %d chars", arg);
         _termpty_clear_line(ty, TERMPTY_CLR_END, arg);
         break;
       case 'S': // scroll up N lines
-        DBG("scroll up N lines");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("scroll up %d lines", arg);
         for (i = 0; i < arg; i++) _termpty_text_scroll(ty, EINA_TRUE);
         break;
       case 'T': // scroll down N lines
-        DBG("scroll down N lines");
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        DBG("scroll down %d lines", arg);
         for (i = 0; i < arg; i++) _termpty_text_scroll_rev(ty, EINA_TRUE);
         break;
       case 'M': // delete N lines - cy
       case 'L': // insert N lines - cy
-        DBG("delete/insert N lines");
         arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 1;
+        DBG("delete/insert %d lines", arg);
           {
              int sy1, sy2;
 
@@ -518,7 +519,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   if (ty->state.scroll_y2 <= ty->state.scroll_y1)
                     ty->state.scroll_y2 = ty->state.scroll_y1 + 1;
                }
-             if (arg < 1) arg = 1;
              for (i = 0; i < arg; i++)
                {
                   if (*cc == 'M') _termpty_text_scroll(ty, EINA_TRUE);
@@ -529,13 +529,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         break;
       case 'P': // erase and scrollback N chars
-        DBG("erase and scrollback N chars");
         arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 1;
+        DBG("erase and scrollback %d chars", arg);
           {
              Termcell *cells;
              int x, lim;
 
-             if (arg < 1) arg = 1;
              cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
              lim = ty->w - arg;
              for (x = ty->state.cx; x < (ty->w); x++)
