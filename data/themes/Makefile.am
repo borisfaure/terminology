@@ -42,7 +42,7 @@ solarized.edj: Makefile default.edc
 
 solarized_light.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
-	-DSOLARIZED_LIGHT=1 \
+	-DSOLARIZED=1 -DSOLARIZED_LIGHT=1 \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized_light.edj
 
