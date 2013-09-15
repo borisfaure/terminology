@@ -66,6 +66,7 @@ static const Keyout shift_keyout[] =
    KEY("Up",           "\033[1;2A"),
    KEY("Down",         "\033[1;2B"),
    KEY("Tab",          "\033[Z"),
+   KEY("ISO_Left_Tab", "\033[Z"),
    
    KEY(NULL, "END")
 };
