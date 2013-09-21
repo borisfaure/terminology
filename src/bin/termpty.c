@@ -272,6 +272,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 {
    Termpty *ty;
    const char *pty;
+   int mode;
 
    ty = calloc(1, sizeof(Termpty));
    if (!ty) return NULL;
@@ -320,7 +321,18 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         ERR("open of pty '%s' failed: %s", pty, strerror(errno));
         goto err;
      }
-   fcntl(ty->fd, F_SETFL, O_NDELAY);
+   mode = fcntl(ty->fd, F_GETFL, 0);
+   if (mode < 0)
+     {
+        ERR("fcntl on pty '%s' failed: %s", pty, strerror(errno));
+        goto err;
+     }
+   if (!(mode & O_NDELAY))
+      if (fcntl(ty->fd, F_SETFL, mode | O_NDELAY))
+        {
+           ERR("fcntl on pty '%s' failed: %s", pty, strerror(errno));
+           goto err;
+        }
 
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
