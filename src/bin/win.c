@@ -20,7 +20,7 @@ tg_win_add(const char *name, const char *role, const char *title, const char *ic
    if (role) elm_win_role_set(win, role);
    
    evas_object_smart_callback_add(win, "delete,request",
-                                  _app_server_win_del_request_cb, win);
+                                  app_server_win_del_request_cb, win);
 
    elm_win_autodel_set(win, EINA_TRUE);
    

@@ -14,6 +14,7 @@
 #include "ipc.h"
 #include "sel.h"
 #include "dbus.h"
+#include "app_server.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"

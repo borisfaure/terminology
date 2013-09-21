@@ -6,7 +6,9 @@
 #include "termio.h"
 #include "app_server_eet.h"
 
-static Elm_App_Server *server = NULL;
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
+
+static Elm_App_Server *_server = NULL;
 static Eina_Bool _ignore_term_add = EINA_FALSE;
 static Terminology_Item *views_eet = NULL;
 
@@ -48,7 +50,6 @@ _view_closed_cb(void *data, Eo *view,
 {
    Term *term = data;
    const char *id;
-   char eet_dir[PATH_MAX];
 
    if (term)
      {
@@ -84,11 +85,11 @@ _term_icon_changed_cb(void *data, Evas_Object *obj,
 }
 
 static Eina_Bool
-_view_save_cb(void *data, Eo *view,
+_view_save_cb(void *data EINA_UNUSED,
+              Eo *view,
               const Eo_Event_Description *desc EINA_UNUSED,
               void *event_info EINA_UNUSED)
 {
-   Term *term = data;
    char dir[PATH_MAX];
    Evas_Object *term_object;
    const char *id;
@@ -137,7 +138,7 @@ _view_resumed_cb(void *data, Eo *view,
         return EINA_TRUE;
      }
 
-   eo_do(server, eo_base_data_get("wins", (void **)&wins));
+   eo_do(_server, eo_base_data_get("wins", (void **)&wins));
    wn = eina_list_data_get(*wins);
    if (!wn)
      {
@@ -198,7 +199,7 @@ _view_resumed_cb(void *data, Eo *view,
 }
 
 static Eina_Bool
-_server_terminate_cb(void *data, Eo *obj,
+_server_terminate_cb(void *data, Eo *obj EINA_UNUSED,
                      const Eo_Event_Description *desc EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
@@ -216,13 +217,13 @@ app_server_shutdown(void)
 {
    char lock_file[PATH_MAX];
 
-   if (!server)
+   if (!_server)
      return;
 
    _user_config_file_path_build(lock_file, sizeof(lock_file), ".lock");
    ecore_file_remove(lock_file);
 
-   eo_do(server, elm_app_server_save());
+   eo_do(_server, elm_app_server_save());
 
    if (views_eet)
      {
@@ -235,19 +236,21 @@ app_server_shutdown(void)
      }
    app_server_eet_shutdown();
 
-   eo_unref(server);
-   server = NULL;
+   eo_unref(_server);
+   _server = NULL;
 }
 
 void
-_app_server_win_del_request_cb(void *data, Evas_Object *obj, void *event_info)
+app_server_win_del_request_cb(void *data EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED,
+                              void *event_info EINA_UNUSED)
 {
    Eina_List **wins;
 
-   if (!server)
+   if (!_server)
      return;
 
-   eo_do(server, eo_base_data_get("wins", (void **)&wins));
+   eo_do(_server, eo_base_data_get("wins", (void **)&wins));
 
    if (eina_list_count(*wins) > 1)
      return;
@@ -269,7 +272,7 @@ _app_server_term_add(Term *term)
    if (_ignore_term_add)
      return NULL;
 
-   view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, server,
+   view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, _server,
                         elm_app_server_view_constructor(NULL));
 
    term_object = main_term_evas_object_get(term);
@@ -301,13 +304,14 @@ app_server_term_add(Term *term)
 {
    Elm_App_Server_View *view;
 
-   if (!server)
+   if (!_server)
      return;
 
    view = _app_server_term_add(term);
    if (!view)
      return;
-   eo_do(server, elm_app_server_view_add(view));
+
+   eo_do(_server, elm_app_server_view_add(view));
 }
 
 static Elm_App_Server_View *
@@ -317,7 +321,6 @@ _app_server_create_view_cb(Elm_App_Server *server, const Eina_Value *args EINA_U
 {
    Win *wn;
    Term *term;
-   Elm_App_Server_View *view;
    Eina_List **wins;
 
    eo_do(server, eo_base_data_get("wins", (void **)&wins));
@@ -383,12 +386,12 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
    title = elm_win_title_get(main_win_evas_object_get(wn));
 
 
-   server = eo_add_custom(ELM_APP_SERVER_CLASS, NULL,
-                          elm_app_server_constructor(
-                                   "org.enlightenment.Terminology",
-                                   _app_server_create_view_cb));
+   _server = eo_add_custom(ELM_APP_SERVER_CLASS, NULL,
+                           elm_app_server_constructor(
+                              "org.enlightenment.Terminology",
+                              _app_server_create_view_cb));
 
-   eo_do(server, elm_app_server_title_set(title),
+   eo_do(_server, elm_app_server_title_set(title),
          eo_base_data_set("wins", wins, NULL),
          elm_app_server_views_get(&views),
          eo_event_callback_add(ELM_APP_SERVER_EV_TERMINATE,
@@ -406,3 +409,17 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
      }
    eina_iterator_free(views);
 }
+
+
+#else
+
+void app_server_init(Eina_List **wins EINA_UNUSED,
+                     Eina_Bool restore_views EINA_UNUSED) {}
+void app_server_shutdown(void) {}
+void app_server_term_add(Term *term EINA_UNUSED) {}
+void app_server_term_del(Evas_Object *term EINA_UNUSED) {}
+void app_server_win_del_request_cb(void *data EINA_UNUSED,
+                                   Evas_Object *obj EINA_UNUSED,
+                                   void *event_info EINA_UNUSED) {}
+
+#endif
