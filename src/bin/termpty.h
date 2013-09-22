@@ -1,3 +1,8 @@
+#ifndef _TERMPTY_H__
+#define _TERMPTY_H__ 1
+
+#include "config.h"
+
 typedef struct _Termpty       Termpty;
 typedef struct _Termcell      Termcell;
 typedef struct _Termatt       Termatt;
@@ -192,7 +197,8 @@ void       termpty_init(void);
 void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-                      int w, int h, int backscroll, Eina_Bool xterm_256color);
+                      int w, int h, int backscroll, Eina_Bool xterm_256color,
+                      Eina_Bool erase_is_del);
 void       termpty_free(Termpty *ty);
 void       termpty_cellcomp_freeze(Termpty *ty);
 void       termpty_cellcomp_thaw(Termpty *ty);
@@ -217,9 +223,13 @@ void       termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt a
 
 ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
 
+Config *termpty_config_get(const Termpty *ty);
+
 extern int _termpty_log_dom;
 
 #define TERMPTY_SCREEN(Tpty, X, Y) \
   Tpty->screen[X + (((Y + Tpty->circular_offset) % Tpty->h) * Tpty->w)]
 #define TERMPTY_FMTCLR(Tatt) \
    (Tatt).autowrapped = (Tatt).newline = (Tatt).tab = 0
+
+#endif

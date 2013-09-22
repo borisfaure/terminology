@@ -4,6 +4,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptysave.h"
+#include "termio.h"
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -13,6 +14,8 @@
 #include <sys/ioctl.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
+#include <termios.h>
 
 /* specific log domain to help debug only terminal code parser */
 int _termpty_log_dom = -1;
@@ -268,7 +271,8 @@ _limit_coord(Termpty *ty, Termstate *state)
 
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-            int w, int h, int backscroll, Eina_Bool xterm_256color)
+            int w, int h, int backscroll, Eina_Bool xterm_256color,
+            Eina_Bool erase_is_del)
 {
    Termpty *ty;
    const char *pty;
@@ -333,6 +337,23 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
            ERR("fcntl on pty '%s' failed: %s", pty, strerror(errno));
            goto err;
         }
+
+   if (erase_is_del)
+     {
+        struct termios t;
+
+        tcgetattr(ty->fd, &t);
+        t.c_cc[VERASE] = 0x7f;
+        tcsetattr(ty->fd, TCSANOW, &t);
+     }
+   else
+     {
+        struct termios t;
+
+        tcgetattr(ty->fd, &t);
+        t.c_cc[VERASE] = 0x8;
+        tcsetattr(ty->fd, TCSANOW, &t);
+     }
 
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
@@ -1501,4 +1522,10 @@ termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcel
         dst[i].codepoint = codepoint;
         dst[i].att = att;
      }
+}
+
+Config *
+termpty_config_get(const Termpty *ty)
+{
+   return termio_config_get(ty->obj);
 }

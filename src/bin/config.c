@@ -86,6 +86,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "xterm_256color", xterm_256color, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "erase_is_del", erase_is_del, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "custom_geometry", custom_geometry, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "cg_width", cg_width, EET_T_INT);
@@ -179,6 +181,7 @@ config_sync(const Config *config_src, Config *config)
    config->application_server = config_src->application_server;
    config->application_server_restore_views = config_src->application_server_restore_views;
    config->xterm_256color = config_src->xterm_256color;
+   config->erase_is_del = config_src->erase_is_del;
    config->temporary = config_src->temporary;
    config->custom_geometry = config_src->custom_geometry;
    config->cg_width = config_src->cg_width;
@@ -438,6 +441,7 @@ config_load(const char *key)
              config->application_server = EINA_FALSE;
              config->application_server_restore_views = EINA_FALSE;
              config->xterm_256color = EINA_FALSE;
+             config->erase_is_del = EINA_FALSE;
              config->custom_geometry = EINA_FALSE;
              config->cg_width = 80;
              config->cg_height = 24;
@@ -489,6 +493,7 @@ config_fork(Config *config)
    CPY(application_server);
    CPY(application_server_restore_views);
    CPY(xterm_256color);
+   CPY(erase_is_del);
    CPY(custom_geometry);
    CPY(cg_width);
    CPY(cg_height);

@@ -154,6 +154,16 @@ _cb_op_behavior_xterm_256color_chg(void *data, Evas_Object *obj,
 }
 
 static void
+_cb_op_behavior_erase_is_del_chg(void *data, Evas_Object *obj,
+                                 void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->erase_is_del = elm_check_state_get(obj);
+   config_save(config, NULL);
+}
+
+static void
 _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
@@ -365,6 +375,16 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_xterm_256color_chg, term);
+
+   o = elm_check_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "BackArrow sends Del (instead of BackSpace)");
+   elm_check_state_set(o, config->erase_is_del);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_erase_is_del_chg, term);
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);

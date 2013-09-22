@@ -275,10 +275,27 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
         if (_key_try(ty, appcur_keyout, ev)) return;
      }
 
-   if ((ty->state.send_bs) && (!strcmp(ev->key, "BackSpace")))
+   if (!strcmp(ev->key, "BackSpace"))
      {
-        termpty_write(ty, "\b", 1);
-        return;
+        if (ty->state.send_bs)
+          {
+             termpty_write(ty, "\b", 1);
+             return;
+          }
+        else
+          {
+             Config *cfg = termpty_config_get(ty);
+
+             if (cfg->erase_is_del)
+               {
+                  termpty_write(ty, "\177", sizeof("\177") - 1);
+               }
+             else
+               {
+                  termpty_write(ty, "\b", sizeof("\b") - 1);
+               }
+             return;
+        }
      }
    if (_key_try(ty, keyout, ev)) return;
    if (ev->string)
