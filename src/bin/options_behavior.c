@@ -389,22 +389,22 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Always open at size:");
-   elm_check_state_set(o, config->custom_geometry);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_custom_geometry, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, "Drag & drop links");
    elm_check_state_set(o, config->drag_links);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_drag_links_chg, term);
+
+   o = elm_check_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Always open at size:");
+   elm_check_state_set(o, config->custom_geometry);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_custom_geometry, term);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
