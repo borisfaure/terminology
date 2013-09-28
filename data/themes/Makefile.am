@@ -17,7 +17,7 @@ solarized.edj \
 solarized_light.edj \
 mustang.edj
 
-EXTRA_DIST = default.edc mild.edc black.edc solarized.edc mustang.edc default_colors.in.edc
+EXTRA_DIST = default.edc mild.edc black.edc mustang.edc default_colors.in.edc
 
 default.edj: Makefile default.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
