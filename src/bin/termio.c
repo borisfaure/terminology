@@ -2678,7 +2678,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx EINA_UNUSED, int cy EINA_UNUSED, Eina_Bool change)
+_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
@@ -2691,8 +2691,6 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx EINA_UNUSED, int c
 
    if ((!sd->mouse.button) && (sd->pty->mouse_mode == MOUSE_NORMAL_BTN_MOVE))
      return EINA_FALSE;
-
-   if (!change) return EINA_TRUE;
 
    btn = sd->mouse.button - 1;
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
@@ -3098,15 +3096,17 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd;
    int cx, cy;
-   Eina_Bool mc_change = EINA_FALSE;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
+
    _smart_xy_to_cursor(data, ev->cur.canvas.x, ev->cur.canvas.y, &cx, &cy);
-   if ((sd->mouse.cx != cx) || (sd->mouse.cy != cy)) mc_change = EINA_TRUE;
+
+   if ((sd->mouse.cx == cx) && (sd->mouse.cy == cy)) return;
+
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
-   if (_rep_mouse_move(sd, ev, cx, cy, mc_change)) return;
+   if (_rep_mouse_move(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd)
      {
         sd->cur.makesel = 0;
@@ -3139,11 +3139,9 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           _selection_newline_extend_fix(data);
         _smart_update_queue(data, sd);
      }
-   if (mc_change)
-     {
-        if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
-        sd->mouse_move_job = ecore_job_add(_smart_cb_mouse_move_job, data);
-     }
+   /* TODO: make the following useless */
+   if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
+   sd->mouse_move_job = ecore_job_add(_smart_cb_mouse_move_job, data);
 }
 
 static void
