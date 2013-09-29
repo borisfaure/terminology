@@ -30,14 +30,12 @@ struct _Termio
       Evas_Object *obj;
    } grid;
    struct {
-      Evas_Object *obj, *selo_top, *selo_bottom, *selo_theme;
+        Evas_Object *top, *bottom, *theme;
+   } sel;
+   struct {
+      Evas_Object *obj;
       int x, y;
-      struct {
-         int x, y;
-      } sel1, sel2;
-      Eina_Bool sel : 1;
-      Eina_Bool makesel : 1;
-   } cur;
+   } cursor;
    struct {
       int cx, cy;
       int button;
@@ -45,9 +43,9 @@ struct _Termio
    struct {
       struct {
          int x, y;
-      } sel1, sel2;
-      Eina_Bool sel : 1;
-   } backup;
+      } start, end;
+      Eina_Bool available : 1;
+   } backup_sel;
    struct {
       char *string;
       int x1, y1, x2, y2;
@@ -91,7 +89,6 @@ struct _Termio
    Eina_Bool didclick : 1;
    Eina_Bool bottom_right : 1;
    Eina_Bool top_left : 1;
-   Eina_Bool boxsel : 1;
    Eina_Bool reset_sel : 1;
    Eina_Bool debugwhite : 1;
 };
@@ -110,8 +107,8 @@ static void
 _sel_set(Evas_Object *obj, Eina_Bool enable)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   if (sd->cur.sel == enable) return;
-   sd->cur.sel = enable;
+   if (sd->pty->selection.is_active == enable) return;
+   sd->pty->selection.is_active = enable;
    if (enable)
      evas_object_smart_callback_call(obj, "selection,on", NULL);
    else
@@ -1529,25 +1526,25 @@ _smart_apply(Evas_Object *obj)
      }
    
    if ((sd->scroll != 0) || (sd->pty->state.hidecursor))
-     evas_object_hide(sd->cur.obj);
+     evas_object_hide(sd->cursor.obj);
    else
-     evas_object_show(sd->cur.obj);
-   sd->cur.x = sd->pty->state.cx;
-   sd->cur.y = sd->pty->state.cy;
-   evas_object_move(sd->cur.obj,
-                    ox + (sd->cur.x * sd->font.chw),
-                    oy + (sd->cur.y * sd->font.chh));
-   if (sd->cur.sel)
+     evas_object_show(sd->cursor.obj);
+   sd->cursor.x = sd->pty->state.cx;
+   sd->cursor.y = sd->pty->state.cy;
+   evas_object_move(sd->cursor.obj,
+                    ox + (sd->cursor.x * sd->font.chw),
+                    oy + (sd->cursor.y * sd->font.chh));
+   if (sd->pty->selection.is_active)
      {
         int start_x, start_y, end_x, end_y;
         int size_top, size_bottom;
 
-        start_x = sd->cur.sel1.x;
-        start_y = sd->cur.sel1.y;
-        end_x = sd->cur.sel2.x;
-        end_y = sd->cur.sel2.y;
+        start_x = sd->pty->selection.start.x;
+        start_y = sd->pty->selection.start.y;
+        end_x = sd->pty->selection.end.x;
+        end_y = sd->pty->selection.end.y;
 
-        if (sd->boxsel)
+        if (sd->pty->selection.is_box)
           {
              if (start_y > end_y)
                INT_SWAP(start_y, end_y);
@@ -1566,10 +1563,10 @@ _smart_apply(Evas_Object *obj)
                      {
                         sd->top_left = EINA_FALSE;
                         sd->bottom_right = EINA_TRUE;
-                        edje_object_signal_emit(sd->cur.selo_theme,
+                        edje_object_signal_emit(sd->sel.theme,
                                                 "mouse,out",
                                                 "zone.top_left");
-                        edje_object_signal_emit(sd->cur.selo_theme,
+                        edje_object_signal_emit(sd->sel.theme,
                                                 "mouse,in",
                                                 "zone.bottom_right");
                      }
@@ -1577,10 +1574,10 @@ _smart_apply(Evas_Object *obj)
                      {
                         sd->top_left = EINA_TRUE;
                         sd->bottom_right = EINA_FALSE;
-                        edje_object_signal_emit(sd->cur.selo_theme,
+                        edje_object_signal_emit(sd->sel.theme,
                                                 "mouse,out",
                                                 "zone.bottom_right");
-                        edje_object_signal_emit(sd->cur.selo_theme,
+                        edje_object_signal_emit(sd->sel.theme,
                                                 "mouse,in",
                                                 "zone.top_left");
                      }
@@ -1590,28 +1587,28 @@ _smart_apply(Evas_Object *obj)
 
         size_bottom = (sd->grid.w - end_x - 1) * sd->font.chw;
 
-        evas_object_size_hint_min_set(sd->cur.selo_top,
+        evas_object_size_hint_min_set(sd->sel.top,
                                       size_top,
                                       sd->font.chh);
-        evas_object_size_hint_max_set(sd->cur.selo_top,
+        evas_object_size_hint_max_set(sd->sel.top,
                                       size_top,
                                       sd->font.chh);
-        evas_object_size_hint_min_set(sd->cur.selo_bottom,
+        evas_object_size_hint_min_set(sd->sel.bottom,
                                       size_bottom,
                                       sd->font.chh);
-        evas_object_size_hint_max_set(sd->cur.selo_bottom,
+        evas_object_size_hint_max_set(sd->sel.bottom,
                                       size_bottom,
                                       sd->font.chh);
-        evas_object_move(sd->cur.selo_theme,
+        evas_object_move(sd->sel.theme,
                          ox,
                          oy + ((start_y + sd->scroll) * sd->font.chh));
-        evas_object_resize(sd->cur.selo_theme,
+        evas_object_resize(sd->sel.theme,
                            sd->grid.w * sd->font.chw,
                            (end_y + 1 - start_y) * sd->font.chh);
 
-        if (sd->boxsel)
+        if (sd->pty->selection.is_box)
           {
-             edje_object_signal_emit(sd->cur.selo_theme,
+             edje_object_signal_emit(sd->sel.theme,
                                   "mode,oneline", "terminology");
           }
         else
@@ -1619,35 +1616,35 @@ _smart_apply(Evas_Object *obj)
              if ((start_y == end_y) ||
                  ((start_x == 0) && (end_x == (sd->grid.w - 1))))
                {
-                  edje_object_signal_emit(sd->cur.selo_theme,
+                  edje_object_signal_emit(sd->sel.theme,
                                           "mode,oneline", "terminology");
                }
              else if ((start_y == (end_y - 1)) &&
                       (start_x > end_x))
                {
-                  edje_object_signal_emit(sd->cur.selo_theme,
+                  edje_object_signal_emit(sd->sel.theme,
                                           "mode,disjoint", "terminology");
                }
              else if (start_x == 0)
                {
-                  edje_object_signal_emit(sd->cur.selo_theme,
+                  edje_object_signal_emit(sd->sel.theme,
                                           "mode,topfull", "terminology");
                }
              else if (end_x == (sd->grid.w - 1))
                {
-                  edje_object_signal_emit(sd->cur.selo_theme,
+                  edje_object_signal_emit(sd->sel.theme,
                                           "mode,bottomfull", "terminology");
                }
              else
                {
-                  edje_object_signal_emit(sd->cur.selo_theme,
+                  edje_object_signal_emit(sd->sel.theme,
                                           "mode,multiline", "terminology");
                }
           }
-        evas_object_show(sd->cur.selo_theme);
+        evas_object_show(sd->sel.theme);
      }
    else
-     evas_object_hide(sd->cur.selo_theme);
+     evas_object_hide(sd->sel.theme);
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
 }
@@ -1669,7 +1666,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    evas_object_textgrid_size_set(sd->grid.obj, w, h);
    sd->grid.w = w;
    sd->grid.h = h;
-   evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
+   evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
    evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
    if (!sd->noreqsize)
      evas_object_size_hint_request_set(obj,
@@ -1800,15 +1797,15 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    size_t len = 0;
 
    if (!sd) return;
-   if (sd->cur.sel)
+   if (sd->pty->selection.is_active)
      {
-        start_x = sd->cur.sel1.x;
-        start_y = sd->cur.sel1.y;
-        end_x = sd->cur.sel2.x;
-        end_y = sd->cur.sel2.y;
+        start_x = sd->pty->selection.start.x;
+        start_y = sd->pty->selection.start.y;
+        end_x = sd->pty->selection.end.x;
+        end_y = sd->pty->selection.end.y;
      }
 
-   if (sd->boxsel)
+   if (sd->pty->selection.is_box)
      {
         int i;
         Eina_Strbuf *sb;
@@ -2288,7 +2285,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
    keyin_handle(sd->pty, ev);
 end:
    if (sd->config->flicker_on_key)
-     edje_object_signal_emit(sd->cur.obj, "key,down", "terminology");
+     edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
 }
 
 static void
@@ -2296,7 +2293,7 @@ _imf_cursor_set(Termio *sd)
 {
    /* TODO */
    Evas_Coord cx, cy, cw, ch;
-   evas_object_geometry_get(sd->cur.obj, &cx, &cy, &cw, &ch);
+   evas_object_geometry_get(sd->cursor.obj, &cx, &cy, &cw, &ch);
    if (sd->imf)
      ecore_imf_context_cursor_location_set(sd->imf, cx, cy, cw, ch);
    /*
@@ -2313,9 +2310,9 @@ _smart_cb_focus_in(void *data, Evas *e EINA_UNUSED,
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    if (sd->config->disable_cursor_blink)
-     edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
+     edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
    else
-     edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
+     edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
    if (sd->imf)
@@ -2338,7 +2335,7 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    if (sd->link.ctxpopup) return; /* ctxp triggers focus out we should ignore */
 
-   edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
+   edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
    if (sd->imf)
@@ -2385,11 +2382,11 @@ _sel_line(Evas_Object *obj, int cx EINA_UNUSED, int cy)
    termpty_cellcomp_freeze(sd->pty);
 
    _sel_set(obj, EINA_TRUE);
-   sd->cur.makesel = 0;
-   sd->cur.sel1.x = 0;
-   sd->cur.sel1.y = cy;
-   sd->cur.sel2.x = sd->grid.w - 1;
-   sd->cur.sel2.y = cy;
+   sd->pty->selection.makesel = EINA_FALSE;
+   sd->pty->selection.start.x = 0;
+   sd->pty->selection.start.y = cy;
+   sd->pty->selection.end.x = sd->grid.w - 1;
+   sd->pty->selection.end.y = cy;
 
    y = cy;
    for (;;)
@@ -2399,7 +2396,7 @@ _sel_line(Evas_Object *obj, int cx EINA_UNUSED, int cy)
 
         y--;
      }
-   sd->cur.sel1.y = y;
+   sd->pty->selection.start.y = y;
    y = cy;
 
    for (;;)
@@ -2407,10 +2404,10 @@ _sel_line(Evas_Object *obj, int cx EINA_UNUSED, int cy)
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells || !cells[w-1].att.autowrapped) break;
 
-        sd->cur.sel2.x = w - 1;
+        sd->pty->selection.end.x = w - 1;
         y++;
      }
-   sd->cur.sel2.y = y;
+   sd->pty->selection.end.y = y;
 
    termpty_cellcomp_thaw(sd->pty);
 }
@@ -2447,12 +2444,12 @@ _sel_word(Evas_Object *obj, int cx, int cy)
    termpty_cellcomp_freeze(sd->pty);
 
    _sel_set(obj, EINA_TRUE);
-   sd->cur.makesel = 0;
-   sd->cur.sel1.x = cx;
-   sd->cur.sel1.y = cy;
-   sd->cur.sel2.x = cx;
-   sd->cur.sel2.y = cy;
-   x = sd->cur.sel1.x;
+   sd->pty->selection.makesel = EINA_FALSE;
+   sd->pty->selection.start.x = cx;
+   sd->pty->selection.start.y = cy;
+   sd->pty->selection.end.x = cx;
+   sd->pty->selection.end.y = cy;
+   x = cx;
    y = cy;
    cells = termpty_cellrow_get(sd->pty, y, &w);
    if (!cells) goto end;
@@ -2472,8 +2469,8 @@ _sel_word(Evas_Object *obj, int cx, int cy)
                   done = EINA_TRUE;
                   break;
                }
-             sd->cur.sel1.x = x;
-             sd->cur.sel1.y = y;
+             sd->pty->selection.start.x = x;
+             sd->pty->selection.start.y = y;
           }
         if (!done)
           {
@@ -2502,7 +2499,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells) goto end;
      }
-   x = sd->cur.sel2.x;
+   x = sd->pty->selection.end.x;
 
    do
      {
@@ -2512,7 +2509,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x < (w - 1)))
                {
-                  sd->cur.sel2.x = x;
+                  sd->pty->selection.end.x = x;
                   x++;
                }
 #endif
@@ -2521,8 +2518,8 @@ _sel_word(Evas_Object *obj, int cx, int cy)
                   done = EINA_TRUE;
                   break;
                }
-             sd->cur.sel2.x = x;
-             sd->cur.sel2.y = y;
+             sd->pty->selection.end.x = x;
+             sd->pty->selection.end.y = y;
           }
         if (!done)
           {
@@ -2554,11 +2551,11 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         termpty_cellcomp_thaw(sd->pty);
         return;
      }
-   if (sd->cur.sel1.x > cx || sd->cur.sel1.y > cy)
+   if (sd->pty->selection.start.x > cx || sd->pty->selection.start.y > cy)
      {
-        sd->cur.sel1.x = cx;
-        sd->cur.sel1.y = cy;
-        for (x = sd->cur.sel1.x; x >= 0; x--)
+        sd->pty->selection.start.x = cx;
+        sd->pty->selection.start.y = cy;
+        for (x = sd->pty->selection.start.x; x >= 0; x--)
           {
 #if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
@@ -2567,26 +2564,26 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
 #endif
              if (x >= w) break;
              if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-             sd->cur.sel1.x = x;
+             sd->pty->selection.start.x = x;
           }
      }
-   else if (sd->cur.sel2.x < cx || sd->cur.sel2.y < cy)
+   else if (sd->pty->selection.end.x < cx || sd->pty->selection.end.y < cy)
      {
-        sd->cur.sel2.x = cx;
-        sd->cur.sel2.y = cy;
-        for (x = sd->cur.sel2.x; x < sd->grid.w; x++)
+        sd->pty->selection.end.x = cx;
+        sd->pty->selection.end.y = cy;
+        for (x = sd->pty->selection.end.x; x < sd->grid.w; x++)
           {
 #if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x < (sd->grid.w - 1)))
                {
-                  sd->cur.sel2.x = x;
+                  sd->pty->selection.end.x = x;
                   x++;
                }
 #endif
              if (x >= w) break;
              if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-             sd->cur.sel2.x = x;
+             sd->pty->selection.end.x = x;
           }
      }
    termpty_cellcomp_thaw(sd->pty);
@@ -2895,55 +2892,55 @@ _selection_dbl_fix(Evas_Object *obj)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    termpty_cellcomp_freeze(sd->pty);
-   cells = termpty_cellrow_get(sd->pty, sd->cur.sel2.y - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, sd->pty->selection.end.y - sd->scroll, &w);
    if (cells)
      {
         // if sel2 after sel1
-        if ((sd->cur.sel2.y > sd->cur.sel1.y) ||
-            ((sd->cur.sel2.y == sd->cur.sel1.y) &&
-                (sd->cur.sel2.x >= sd->cur.sel1.x)))
+        if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
+            ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
+                (sd->pty->selection.end.x >= sd->pty->selection.start.x)))
           {
-             if (sd->cur.sel2.x < (w - 1))
+             if (sd->pty->selection.end.x < (w - 1))
                {
-                  if ((cells[sd->cur.sel2.x].codepoint != 0) &&
-                      (cells[sd->cur.sel2.x].att.dblwidth))
-                    sd->cur.sel2.x++;
+                  if ((cells[sd->pty->selection.end.x].codepoint != 0) &&
+                      (cells[sd->pty->selection.end.x].att.dblwidth))
+                    sd->pty->selection.end.x++;
                }
           }
         // else sel1 after sel 2
         else
           {
-             if (sd->cur.sel2.x > 0)
+             if (sd->pty->selection.end.x > 0)
                {
-                  if ((cells[sd->cur.sel2.x].codepoint == 0) &&
-                      (cells[sd->cur.sel2.x].att.dblwidth))
-                    sd->cur.sel2.x--;
+                  if ((cells[sd->pty->selection.end.x].codepoint == 0) &&
+                      (cells[sd->pty->selection.end.x].att.dblwidth))
+                    sd->pty->selection.end.x--;
                }
           }
      }
-   cells = termpty_cellrow_get(sd->pty, sd->cur.sel1.y - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, sd->pty->selection.start.y - sd->scroll, &w);
    if (cells)
      {
         // if sel2 after sel1
-        if ((sd->cur.sel2.y > sd->cur.sel1.y) ||
-            ((sd->cur.sel2.y == sd->cur.sel1.y) &&
-                (sd->cur.sel2.x >= sd->cur.sel1.x)))
+        if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
+            ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
+                (sd->pty->selection.end.x >= sd->pty->selection.start.x)))
           {
-             if (sd->cur.sel1.x > 0)
+             if (sd->pty->selection.start.x > 0)
                {
-                  if ((cells[sd->cur.sel1.x].codepoint == 0) &&
-                      (cells[sd->cur.sel1.x].att.dblwidth))
-                    sd->cur.sel1.x--;
+                  if ((cells[sd->pty->selection.start.x].codepoint == 0) &&
+                      (cells[sd->pty->selection.start.x].att.dblwidth))
+                    sd->pty->selection.start.x--;
                }
           }
         // else sel1 after sel 2
         else
           {
-             if (sd->cur.sel1.x < (w - 1))
+             if (sd->pty->selection.start.x < (w - 1))
                {
-                  if ((cells[sd->cur.sel1.x].codepoint != 0) &&
-                      (cells[sd->cur.sel1.x].att.dblwidth))
-                    sd->cur.sel1.x++;
+                  if ((cells[sd->pty->selection.start.x].codepoint != 0) &&
+                      (cells[sd->pty->selection.start.x].att.dblwidth))
+                    sd->pty->selection.start.x++;
                }
           }
      }
@@ -2957,26 +2954,26 @@ _selection_newline_extend_fix(Evas_Object *obj)
    Termio *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if ((!sd->top_left) && (sd->cur.sel2.y >= sd->cur.sel1.y))
+   if ((!sd->top_left) && (sd->pty->selection.end.y >= sd->pty->selection.start.y))
      {
-        if (((sd->cur.sel1.y == sd->cur.sel2.y) && 
-             (sd->cur.sel1.x <= sd->cur.sel2.x)) ||
-            (sd->cur.sel1.y < sd->cur.sel2.y))
+        if (((sd->pty->selection.start.y == sd->pty->selection.end.y) &&
+             (sd->pty->selection.start.x <= sd->pty->selection.end.x)) ||
+            (sd->pty->selection.start.y < sd->pty->selection.end.y))
           {
              char *lastline;
              int x1, y1, x2, y2;
              size_t len;
 
-             if (sd->cur.sel1.y == sd->cur.sel2.y) x1 = sd->cur.sel1.x;
+             if (sd->pty->selection.start.y == sd->pty->selection.end.y) x1 = sd->pty->selection.start.x;
              else x1 = 0;
-             x2 = sd->cur.sel2.x;
-             y1 = y2 = sd->cur.sel2.y;
+             x2 = sd->pty->selection.end.x;
+             y1 = y2 = sd->pty->selection.end.y;
              lastline = termio_selection_get(obj, x1, y1, x2, y2, &len);
              if (lastline)
                {
                   if ((len > 0) && (lastline[len - 1] == '\n'))
                     {
-                       sd->cur.sel2.x = sd->grid.w - 1;
+                       sd->pty->selection.end.x = sd->grid.w - 1;
 #if defined(SUPPORT_DBLWIDTH)
                        _selection_dbl_fix(obj);
 #endif
@@ -3060,22 +3057,25 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
      {
-        sd->boxsel = EINA_FALSE;
+        sd->pty->selection.is_box = EINA_FALSE;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              _sel_line(data, cx, cy - sd->scroll);
-             if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             if (sd->pty->selection.is_active)
+               _take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift") && sd->backup.sel)
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+                 sd->backup_sel.available)
                {
                   _sel_set(data, EINA_TRUE);
-                  sd->cur.sel1.x = sd->backup.sel1.x;
-                  sd->cur.sel1.y = sd->backup.sel1.y;
-                  sd->cur.sel2.x = sd->backup.sel2.x;
-                  sd->cur.sel2.y = sd->backup.sel2.y;
+                  sd->pty->selection.is_active = EINA_TRUE;
+                  sd->pty->selection.start.x = sd->backup_sel.start.x;
+                  sd->pty->selection.start.y = sd->backup_sel.start.y;
+                  sd->pty->selection.end.x   = sd->backup_sel.end.x;
+                  sd->pty->selection.end.y   = sd->backup_sel.end.y;
 #if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
 #endif
@@ -3085,7 +3085,8 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                {
                   _sel_word(data, cx, cy - sd->scroll);
                }
-             if (sd->cur.sel) _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             if (sd->pty->selection.is_active)
+               _take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
           }
         else
@@ -3095,30 +3096,30 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                  evas_key_modifier_is_set(ev->modifiers, "Control") ||
                  evas_key_modifier_is_set(ev->modifiers, "Alt"))
                {
-                  sd->cur.sel1.x = cx;
-                  sd->cur.sel1.y = cy - sd->scroll;
-                  sd->cur.sel2.x = cx;
-                  sd->cur.sel2.y = cy - sd->scroll;
+                  sd->pty->selection.start.x = cx;
+                  sd->pty->selection.start.y = cy - sd->scroll;
+                  sd->pty->selection.end.x = cx;
+                  sd->pty->selection.end.y = cy - sd->scroll;
                   _sel_set(data, EINA_TRUE);
-                  sd->cur.makesel = EINA_TRUE;
-                  sd->boxsel = EINA_TRUE;
+                  sd->pty->selection.makesel = EINA_TRUE;
+                  sd->pty->selection.is_box = EINA_TRUE;
 #if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
 #endif
                }
              if (sd->top_left || sd->bottom_right)
                {
-                  sd->cur.makesel = 1;
                   _sel_set(data, EINA_TRUE);
+                  sd->pty->selection.makesel = EINA_TRUE;
                   if (sd->top_left)
                     {
-                       sd->cur.sel1.x = cx;
-                       sd->cur.sel1.y = cy - sd->scroll;
+                       sd->pty->selection.start.x = cx;
+                       sd->pty->selection.start.y = cy - sd->scroll;
                     }
                   else
                     {
-                       sd->cur.sel2.x = cx;
-                       sd->cur.sel2.y = cy - sd->scroll;
+                       sd->pty->selection.end.x = cx;
+                       sd->pty->selection.end.y = cy - sd->scroll;
                     }
 #if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
@@ -3126,16 +3127,16 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                }
              else
                {
-                  if (sd->cur.sel)
+                  if (sd->pty->selection.is_active)
                     {
                        _sel_set(data, EINA_FALSE);
                        sd->didclick = EINA_TRUE;
                     }
-                  sd->cur.makesel = 1;
-                  sd->cur.sel1.x = cx;
-                  sd->cur.sel1.y = cy - sd->scroll;
-                  sd->cur.sel2.x = cx;
-                  sd->cur.sel2.y = cy - sd->scroll;
+                  sd->pty->selection.makesel = EINA_TRUE;
+                  sd->pty->selection.start.x = cx;
+                  sd->pty->selection.start.y = cy - sd->scroll;
+                  sd->pty->selection.end.x = cx;
+                  sd->pty->selection.end.y = cy - sd->scroll;
 #if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
 #endif
@@ -3167,37 +3168,37 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    if (_rep_mouse_up(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd) return;
-   if (sd->cur.makesel)
+   if (sd->pty->selection.makesel)
      {
-        sd->cur.makesel = 0;
 
-        if ((sd->cur.sel1.x == sd->cur.sel2.x) &&
-            (sd->cur.sel1.y == sd->cur.sel2.y))
+        if ((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
+            (sd->pty->selection.start.y == sd->pty->selection.end.y))
           {
              _sel_set(data, EINA_FALSE);
              sd->didclick = EINA_FALSE;
           }
 
-        if (sd->cur.sel)
+        sd->pty->selection.makesel = EINA_FALSE;
+        if (sd->pty->selection.is_active)
           {
              sd->didclick = EINA_TRUE;
              if (sd->top_left)
                {
-                  sd->cur.sel1.x = cx;
-                  sd->cur.sel1.y = cy - sd->scroll;
+                  sd->pty->selection.start.x = cx;
+                  sd->pty->selection.start.y = cy - sd->scroll;
                }
              else
                {
-                  sd->cur.sel2.x = cx;
-                  sd->cur.sel2.y = cy - sd->scroll;
+                  sd->pty->selection.end.x = cx;
+                  sd->pty->selection.end.y = cy - sd->scroll;
                }
 #if defined(SUPPORT_DBLWIDTH)
              _selection_dbl_fix(data);
 #endif
-             if (sd->boxsel)
+             if (sd->pty->selection.is_box)
               {
-                 sd->cur.sel2.x = cx;
-                 sd->cur.sel2.y = cy - sd->scroll;
+                 sd->pty->selection.end.x = cx;
+                 sd->pty->selection.end.y = cy - sd->scroll;
                  _smart_update_queue(data, sd);
                  _take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
@@ -3207,11 +3208,11 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                  _smart_update_queue(data, sd);
                  _take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
-            sd->backup.sel = sd->cur.sel;
-            sd->backup.sel1.x = sd->cur.sel1.x;
-            sd->backup.sel1.y = sd->cur.sel1.y;
-            sd->backup.sel2.x = sd->cur.sel2.x;
-            sd->backup.sel2.y = sd->cur.sel2.y;
+            sd->backup_sel.available = sd->pty->selection.is_active;
+            sd->backup_sel.start.x = sd->pty->selection.start.x;
+            sd->backup_sel.start.y = sd->pty->selection.start.y;
+            sd->backup_sel.end.x = sd->pty->selection.end.x;
+            sd->backup_sel.end.y = sd->pty->selection.end.y;
           }
      }
 }
@@ -3235,33 +3236,33 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (_rep_mouse_move(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd)
      {
-        sd->cur.makesel = 0;
+        sd->pty->selection.makesel = EINA_FALSE;
         _sel_set(data, EINA_FALSE);
         _smart_update_queue(data, sd);
         return;
      }
-   if (sd->cur.makesel)
+   if (sd->pty->selection.makesel)
      {
-        if (!sd->cur.sel)
+        if (!sd->pty->selection.is_active)
           {
-             if ((cx != sd->cur.sel1.x) ||
-                 ((cy - sd->scroll) != sd->cur.sel1.y))
+             if ((cx != sd->pty->selection.start.x) ||
+                 ((cy - sd->scroll) != sd->pty->selection.start.y))
                _sel_set(data, EINA_TRUE);
           }
         if (sd->top_left)
           {
-             sd->cur.sel1.x = cx;
-             sd->cur.sel1.y = cy - sd->scroll;
+             sd->pty->selection.start.x = cx;
+             sd->pty->selection.start.y = cy - sd->scroll;
           }
         else
           {
-             sd->cur.sel2.x = cx;
-             sd->cur.sel2.y = cy - sd->scroll;
+             sd->pty->selection.end.x = cx;
+             sd->pty->selection.end.y = cy - sd->scroll;
           }
 #if defined(SUPPORT_DBLWIDTH)
         _selection_dbl_fix(data);
 #endif
-        if (!sd->boxsel)
+        if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
         _smart_update_queue(data, sd);
      }
@@ -3464,15 +3465,15 @@ termio_config_set(Evas_Object *obj, Config *config)
    sd->font.chw = w;
    sd->font.chh = h;
 
-   theme_apply(sd->cur.obj, config, "terminology/cursor");
-   theme_auto_reload_enable(sd->cur.obj);
-   evas_object_resize(sd->cur.obj, sd->font.chw, sd->font.chh);
-   evas_object_show(sd->cur.obj);
+   theme_apply(sd->cursor.obj, config, "terminology/cursor");
+   theme_auto_reload_enable(sd->cursor.obj);
+   evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
+   evas_object_show(sd->cursor.obj);
 
-   theme_apply(sd->cur.selo_theme, config, "terminology/selection");
-   theme_auto_reload_enable(sd->cur.selo_theme);
-   edje_object_part_swallow(sd->cur.selo_theme, "terminology.top_left", sd->cur.selo_top);
-   edje_object_part_swallow(sd->cur.selo_theme, "terminology.bottom_right", sd->cur.selo_bottom);
+   theme_apply(sd->sel.theme, config, "terminology/selection");
+   theme_auto_reload_enable(sd->sel.theme);
+   edje_object_part_swallow(sd->sel.theme, "terminology.top_left", sd->sel.top);
+   edje_object_part_swallow(sd->sel.theme, "terminology.bottom_right", sd->sel.bottom);
 }
 
 static void
@@ -3606,7 +3607,7 @@ _smart_add(Evas_Object *obj)
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_smart_member_add(o, obj);
-   sd->cur.obj = o;
+   sd->cursor.obj = o;
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cursor_cb_move, obj);
 
@@ -3614,14 +3615,14 @@ _smart_add(Evas_Object *obj)
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
-   sd->cur.selo_top = o;
+   sd->sel.top = o;
    o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_pass_events_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
-   sd->cur.selo_bottom = o;
+   sd->sel.bottom = o;
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
-   sd->cur.selo_theme = o;
+   sd->sel.theme = o;
    edje_object_signal_callback_add(o, "mouse,in", "zone.bottom_right", _edje_cb_bottom_right_in, sd);
    edje_object_signal_callback_add(o, "mouse,in", "zone.top_left", _edje_cb_top_left_in, sd);
    edje_object_signal_callback_add(o, "mouse,out", "zone.bottom_right", _edje_cb_bottom_right_out, sd);
@@ -3733,11 +3734,11 @@ _smart_del(Evas_Object *obj)
           (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
         ecore_imf_context_del(sd->imf);
      }
-   if (sd->cur.obj) evas_object_del(sd->cur.obj);
+   if (sd->cursor.obj) evas_object_del(sd->cursor.obj);
    if (sd->event) evas_object_del(sd->event);
-   if (sd->cur.selo_top) evas_object_del(sd->cur.selo_top);
-   if (sd->cur.selo_bottom) evas_object_del(sd->cur.selo_bottom);
-   if (sd->cur.selo_theme) evas_object_del(sd->cur.selo_theme);
+   if (sd->sel.top) evas_object_del(sd->sel.top);
+   if (sd->sel.bottom) evas_object_del(sd->sel.bottom);
+   if (sd->sel.theme) evas_object_del(sd->sel.theme);
    if (sd->anim) ecore_animator_del(sd->anim);
    if (sd->delayed_size_timer) ecore_timer_del(sd->delayed_size_timer);
    if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
@@ -3763,11 +3764,11 @@ _smart_del(Evas_Object *obj)
    sd->sel_str = NULL;
    sd->sel_reset_job = NULL;
    sd->link.down.dndobj = NULL;
-   sd->cur.obj = NULL;
+   sd->cursor.obj = NULL;
    sd->event = NULL;
-   sd->cur.selo_top = NULL;
-   sd->cur.selo_bottom = NULL;
-   sd->cur.selo_theme = NULL;
+   sd->sel.top = NULL;
+   sd->sel.bottom = NULL;
+   sd->sel.theme = NULL;
    sd->anim = NULL;
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;
@@ -3808,9 +3809,9 @@ _smart_calculate(Evas_Object *obj)
    evas_object_resize(sd->grid.obj,
                       sd->grid.w * sd->font.chw,
                       sd->grid.h * sd->font.chh);
-   evas_object_move(sd->cur.obj,
-                    ox + (sd->cur.x * sd->font.chw),
-                    oy + (sd->cur.y * sd->font.chh));
+   evas_object_move(sd->cursor.obj,
+                    ox + (sd->cursor.x * sd->font.chw),
+                    oy + (sd->cursor.y * sd->font.chh));
    evas_object_move(sd->event, ox, oy);
    evas_object_resize(sd->event, ow, oh);
 }
@@ -3871,10 +3872,10 @@ _smart_pty_scroll(void *data)
           sd->scroll = sd->pty->backscroll_num;
         changed = 1;
      }
-   if (sd->cur.sel)
+   if (sd->pty->selection.is_active)
      {
-        sd->cur.sel1.y--;
-        sd->cur.sel2.y--;
+        sd->pty->selection.start.y--;
+        sd->pty->selection.end.y--;
         changed = 1;
      }
    if (changed) _smart_update_queue(data, sd);
@@ -3911,10 +3912,10 @@ _smart_pty_cancel_sel(void *data)
    Termio *sd;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   if (sd->cur.sel)
+   if (sd->pty->selection.is_active)
      {
         _sel_set(obj, EINA_FALSE);
-        sd->cur.makesel = 0;
+        sd->pty->selection.makesel = EINA_FALSE;
         _smart_update_queue(data, sd);
      }
 }
@@ -3931,7 +3932,7 @@ _smart_pty_bell(void *data)
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return;
    evas_object_smart_callback_call(data, "bell", NULL);
-   edje_object_signal_emit(sd->cur.obj, "bell", "terminology");
+   edje_object_signal_emit(sd->cursor.obj, "bell", "terminology");
 }
 
 static void
@@ -4549,11 +4550,11 @@ termio_config_update(Evas_Object *obj)
 
    if (evas_object_focus_get(obj))
      {
-        edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
+        edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
         if (sd->config->disable_cursor_blink)
-          edje_object_signal_emit(sd->cur.obj, "focus,in,noblink", "terminology");
+          edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
         else
-          edje_object_signal_emit(sd->cur.obj, "focus,in", "terminology");
+          edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
      }
    
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
@@ -4751,5 +4752,5 @@ termio_selection_exists(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
-   return sd->cur.sel;
+   return sd->pty->selection.is_active;
 }

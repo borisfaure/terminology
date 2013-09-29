@@ -133,6 +133,14 @@ struct _Termpty
       Eina_List *expecting;
       Eina_Bool on : 1;
    } block;
+   struct {
+      struct {
+         int x, y;
+      } start, end, start_backup, end_backup;
+      Eina_Bool is_active : 1;
+      Eina_Bool is_box    : 1;
+      Eina_Bool makesel   : 1;
+   } selection;
    Termstate state, save, swap;
    int exit_code;
    pid_t pid;
