@@ -1394,10 +1394,8 @@ collections {
    // bottomfull:
    // |        ######|
    // |##############|
-#define PATCOL   51 153 255 128
-#define PATCOL2  51 153 255 144
+#define PATCOL   255 255 255 25
 #define OUTCOL   51 153 255 128
-#define OUTCOL2  51 153 255 255
    
    group { name: "terminology/selection";
       images {
@@ -1419,11 +1417,7 @@ collections {
                color: PATCOL;
                image.normal: "sl_stripe.png";
                fill.size.relative: 0.0 0.0;
-               fill.size.offset: 40 40;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: PATCOL2;
+               fill.size.offset: 240 240;
             }
          }
          part { name: "background_middle";
@@ -1433,11 +1427,7 @@ collections {
                color: PATCOL;
                image.normal: "sl_stripe.png";
                fill.size.relative: 0.0 0.0;
-               fill.size.offset: 40 40;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: PATCOL2;
+               fill.size.offset: 240 240;
             }
          }
          part { name: "background_bottom";
@@ -1447,11 +1437,7 @@ collections {
                color: PATCOL;
                image.normal: "sl_stripe.png";
                fill.size.relative: 0.0 0.0;
-               fill.size.offset: 40 40;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: PATCOL2;
+               fill.size.offset: 240 240;
             }
          }
          
@@ -1564,10 +1550,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "0.right";
             mouse_events: 0;
@@ -1588,10 +1570,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "0.top";
             mouse_events: 0;
@@ -1611,10 +1589,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "0.bottom";
             mouse_events: 0;
@@ -1633,10 +1607,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          program { name: "oneline";
@@ -1668,10 +1638,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "1.right";
             mouse_events: 0;
@@ -1692,10 +1658,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "1.top";
             mouse_events: 0;
@@ -1714,10 +1676,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_htop.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "1.bottom";
@@ -1738,10 +1696,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "1.left2";
             mouse_events: 0;
@@ -1760,10 +1714,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_left.png";
                image.border: 0 0 4 4;
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "1.right2";
@@ -1785,10 +1735,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "1.top2";
             mouse_events: 0;
@@ -1808,10 +1754,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "1.bottom2";
             mouse_events: 0;
@@ -1830,10 +1772,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          program { name: "disjoint";
@@ -1864,10 +1802,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_top.png";
                image.border: 0 0 4 7;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "2.bottomkink";
             mouse_events: 0;
@@ -1886,10 +1820,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_bottom.png";
                image.border: 0 0 7 4;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "2.left";
@@ -1910,10 +1840,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "2.right";
             mouse_events: 0;
@@ -1932,10 +1858,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_right.png";
                image.border: 0 0 4 4;
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "2.top";
@@ -1956,10 +1878,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "2.top2";
             mouse_events: 0;
@@ -1978,10 +1896,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_htop.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "2.bottom";
@@ -2002,10 +1916,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "2.bottom2";
             mouse_events: 0;
@@ -2024,10 +1934,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          program { name: "multiline";
@@ -2058,10 +1964,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_bottom.png";
                image.border: 0 0 7 4;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "3.left";
             mouse_events: 0;
@@ -2080,10 +1982,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_left.png";
                image.border: 0 0 4 4;
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "3.right";
@@ -2104,10 +2002,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "3.top";
             mouse_events: 0;
@@ -2126,10 +2020,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_htop.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "3.bottom";
@@ -2150,10 +2040,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "3.bottom2";
             mouse_events: 0;
@@ -2172,10 +2058,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          program { name: "topfull";
@@ -2206,10 +2088,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_top.png";
                image.border: 0 0 4 7;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "4.left";
             mouse_events: 0;
@@ -2229,10 +2107,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.border: 0 0 4 4;
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "4.right";
             mouse_events: 0;
@@ -2250,10 +2124,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_right.png";
                image.border: 0 0 4 4;
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "4.top";
@@ -2274,10 +2144,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_htop.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          part { name: "4.top2";
             mouse_events: 0;
@@ -2296,10 +2162,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: OUTCOL;
                image.normal: "sl_htop.png";
                fill.smooth: 0;
-            }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
             }
          }
          part { name: "4.bottom";
@@ -2320,10 +2182,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                image.normal: "sl_hbottom.png";
                fill.smooth: 0;
             }
-            description { state: "pulse" 0.0;
-               inherit: "default" 0.0;
-               color: OUTCOL2;
-            }
          }
          program {
             signal: "mode,bottomfull"; source: "terminology";
@@ -2331,57 +2189,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             TARGETS;
          }
 
-#define SELPULSE \
-target: "background_top"; \
-target: "background_middle"; \
-target: "background_bottom"; \
-target: "0.left"; \
-target: "0.right"; \
-target: "0.top"; \
-target: "0.bottom"; \
-target: "1.left"; \
-target: "1.right"; \
-target: "1.top"; \
-target: "1.bottom"; \
-target: "1.left2"; \
-target: "1.right2"; \
-target: "1.top2"; \
-target: "1.bottom2"; \
-target: "2.topkink"; \
-target: "2.bottomkink"; \
-target: "2.left"; \
-target: "2.right"; \
-target: "2.top2"; \
-target: "2.top"; \
-target: "2.bottom"; \
-target: "2.bottom2"; \
-target: "3.bottomkink"; \
-target: "3.left"; \
-target: "3.right"; \
-target: "3.top"; \
-target: "3.bottom"; \
-target: "3.bottom2"; \
-target: "4.topkink"; \
-target: "4.left"; \
-target: "4.right"; \
-target: "4.top2"; \
-target: "4.top"; \
-target: "4.bottom"
-         
-         program { name: "selpulse";
-            signal: "show"; source: "";
-            action: STATE_SET "pulse" 0.0;
-            transition: SINUSOIDAL 0.5;
-            SELPULSE;
-            after: "selpulse2";
-         }
-         program { name: "selpulse2";
-            action: STATE_SET "default" 0.0;
-            transition: SINUSOIDAL 1.0;
-            SELPULSE;
-            after: "selpulse";
-         }
-         
          // top and bottom swallows used to coimmunicate via min/max size the
          // size of the top and bottom lines
          part { name: "terminology.top_left"; type: SWALLOW;
