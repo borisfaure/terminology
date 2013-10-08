@@ -570,7 +570,13 @@ _smart_mouseover_apply(Evas_Object *obj)
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
 
-   if (!sd || (sd->mouse.cx < 0) || (sd->mouse.cy < 0)) return;
+   if (!sd) return;
+   if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0))
+     {
+        _remove_links(sd, obj);
+        return;
+     }
+
 
    s = _termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
                          &x1, &y1, &x2, &y2);
