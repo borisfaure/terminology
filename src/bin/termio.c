@@ -559,6 +559,7 @@ _remove_links(Termio *sd, Evas_Object *obj)
    sd->link.y1 = -1;
    sd->link.x2 = -1;
    sd->link.y2 = -1;
+   sd->link.suspend = EINA_FALSE;
    _update_link(obj, sd, same_link, same_geom);
 }
 
