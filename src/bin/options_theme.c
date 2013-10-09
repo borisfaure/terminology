@@ -87,6 +87,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    Eina_List *files;
    char buf[4096], *file;
    Theme *t;
+   Config *config = termio_config_get(term);
 
    options_theme_clear();
 
@@ -123,13 +124,30 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
 
    EINA_LIST_FREE(files, file)
      {
-        t = calloc(1, sizeof(Theme));
-        t->name = eina_stringshare_add(file);
-        t->term = term;
-        t->item = elm_genlist_item_append(o, it_class, t, NULL,
-					  ELM_GENLIST_ITEM_NONE,
-					  _cb_op_theme_sel, t);
-        themes = eina_list_append(themes, t);
+        const char *ext = strchr(file, '.');
+        
+        if ((config) && (!file[0] != '.') &&
+            ((ext) && (!strcasecmp(".edj", ext))))
+          {
+             t = calloc(1, sizeof(Theme));
+             t->name = eina_stringshare_add(file);
+             t->term = term;
+             t->item = elm_genlist_item_append(o, it_class, t, NULL,
+                                               ELM_GENLIST_ITEM_NONE,
+                                               _cb_op_theme_sel, t);
+             if (t->item)
+               {
+                  themes = eina_list_append(themes, t);
+                  if ((config->theme) &&
+                      (!strcmp(config->theme, t->name)))
+                    elm_genlist_item_selected_set(t->item, EINA_TRUE);
+               }
+             else
+               {
+                  eina_stringshare_del(t->name);
+                  free(t);
+               }
+          }
         free(file);
      }
 
