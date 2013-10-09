@@ -25,6 +25,7 @@ options_font.c options_font.h \
 options_helpers.c options_helpers.h \
 options_video.c options_video.h \
 options_theme.c options_theme.h \
+options_themepv.c options_themepv.h \
 options_wallpaper.c options_wallpaper.h \
 sel.c sel.h \
 termio.c termio.h \

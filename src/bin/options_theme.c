@@ -5,6 +5,7 @@
 #include "termio.h"
 #include "options.h"
 #include "options_theme.h"
+#include "options_themepv.h"
 #include "utils.h"
 #include "main.h"
 
@@ -37,19 +38,21 @@ static Evas_Object *
 _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Theme *t = data;
-   char buf[4096];
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-	snprintf(buf, sizeof(buf), "%s/themes/%s", elm_app_data_dir_get(), t->name);
-        o = edje_object_add(evas_object_evas_get(obj));
-	if (!edje_object_file_set(o, buf, "terminology/background"))
-	    return NULL;
-
-        evas_object_size_hint_min_set(o,
-                                      96 * elm_config_scale_get(),
-                                      40 * elm_config_scale_get());
+        char buf[4096];
+        Config *config = termio_config_get(t->term);
+        
+        if (config)
+          {
+             snprintf(buf, sizeof(buf), "%s/themes/%s",
+                      elm_app_data_dir_get(), t->name);
+             o = options_theme_preview_add(obj, config, buf,
+                                           128 * elm_config_scale_get(),
+                                           64 * elm_config_scale_get());
+          }
         return o;
      }
 
