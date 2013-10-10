@@ -2881,10 +2881,14 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
    return ret;
 }
 
-#if defined(SUPPORT_DBLWIDTH)
 static void
-_selection_dbl_fix(Evas_Object *obj)
+_selection_dbl_fix(Evas_Object *obj
+#if defined(SUPPORT_DBLWIDTH)
+                   EINA_UNUSED
+#endif
+                   )
 {
+#if defined(SUPPORT_DBLWIDTH)
    Termio *sd;
    int w = 0;
    Termcell *cells;
@@ -2945,8 +2949,8 @@ _selection_dbl_fix(Evas_Object *obj)
           }
      }
    termpty_cellcomp_thaw(sd->pty);
-}
 #endif
+}
 
 static void
 _selection_newline_extend_fix(Evas_Object *obj)
@@ -2974,9 +2978,7 @@ _selection_newline_extend_fix(Evas_Object *obj)
                   if ((len > 0) && (lastline[len - 1] == '\n'))
                     {
                        sd->pty->selection.end.x = sd->grid.w - 1;
-#if defined(SUPPORT_DBLWIDTH)
                        _selection_dbl_fix(obj);
-#endif
                     }
                   free(lastline);
                }
@@ -3076,9 +3078,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.start.y = sd->backup_sel.start.y;
                   sd->pty->selection.end.x   = sd->backup_sel.end.x;
                   sd->pty->selection.end.y   = sd->backup_sel.end.y;
-#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
-#endif
                   _sel_word_to(data, cx, cy - sd->scroll);
                }
              else
@@ -3103,9 +3103,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   _sel_set(data, EINA_TRUE);
                   sd->pty->selection.makesel = EINA_TRUE;
                   sd->pty->selection.is_box = EINA_TRUE;
-#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
-#endif
                }
              if (sd->top_left || sd->bottom_right)
                {
@@ -3121,9 +3119,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                        sd->pty->selection.end.x = cx;
                        sd->pty->selection.end.y = cy - sd->scroll;
                     }
-#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
-#endif
                }
              else
                {
@@ -3137,9 +3133,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.start.y = cy - sd->scroll;
                   sd->pty->selection.end.x = cx;
                   sd->pty->selection.end.y = cy - sd->scroll;
-#if defined(SUPPORT_DBLWIDTH)
                   _selection_dbl_fix(data);
-#endif
                }
           }
         _smart_update_queue(data, sd);
@@ -3192,9 +3186,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                   sd->pty->selection.end.x = cx;
                   sd->pty->selection.end.y = cy - sd->scroll;
                }
-#if defined(SUPPORT_DBLWIDTH)
              _selection_dbl_fix(data);
-#endif
              if (sd->pty->selection.is_box)
               {
                  sd->pty->selection.end.x = cx;
@@ -3298,9 +3290,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.end.y = cy;
              }
           }
-#if defined(SUPPORT_DBLWIDTH)
         _selection_dbl_fix(data);
-#endif
         if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
         _smart_update_queue(data, sd);
