@@ -50,24 +50,25 @@ color_class { name: "color-45";      color:   0   0   0   0; } // COL_INVIS
 color_class { name: "color-46";      color:   0   0   0 255; } // COL_INVERSE
 color_class { name: "color-47";      color: 255 255 255 255; } // COL_INVERSEBG
 
-color_class { name: "256color-0";    color:   0   0   0 255; } // COL_BLACK
-color_class { name: "256color-1";    color: 192   0   0 255; } // COL_RED
-color_class { name: "256color-2";    color:   0 192   0 255; } // COL_GREEN
-color_class { name: "256color-3";    color: 192 192   0 255; } // COL_YELLOW
-color_class { name: "256color-4";    color:   0   0 192 255; } // COL_BLUE
-color_class { name: "256color-5";    color: 192   0 192 255; } // COL_MAGENTA
-color_class { name: "256color-6";    color:   0 192 192 255; } // COL_CYAN
-color_class { name: "256color-7";    color: 192 192 192 255; } // COL_WHITE
+color_class { name: "256color-0";   color:   0   0   0 255; } // COL_BLACK
+color_class { name: "256color-1";   color: 204  51  51 255; } // COL_RED
+color_class { name: "256color-2";   color:  51 204  51 255; } // COL_GREEN
+color_class { name: "256color-3";   color: 204 136  51 255; } // COL_YELLOW
+color_class { name: "256color-4";   color:  51  51 204 255; } // COL_BLUE
+color_class { name: "256color-5";   color: 204  51 204 255; } // COL_MAGENTA
+color_class { name: "256color-6";   color:  51 204 204 255; } // COL_CYAN
+color_class { name: "256color-7";   color: 204 204 204 255; } // COL_WHITE
 
-color_class { name: "256color-8";    color: 128 128 128 255; } // COL_BLACK
-color_class { name: "256color-9";    color: 255 128 128 255; } // COL_RED
-color_class { name: "256color-10";   color: 128 255 128 255; } // COL_GREEN
-color_class { name: "256color-11";   color: 255 255 128 255; } // COL_YELLOW
-color_class { name: "256color-12";   color: 128 128 255 255; } // COL_BLUE
-color_class { name: "256color-13";   color: 255 128 255 255; } // COL_MAGENTA
-color_class { name: "256color-14";   color: 128 255 255 255; } // COL_CYAN
-color_class { name: "256color-15";   color: 255 255 255 255; } // COL_WHITE
+color_class { name: "256color-8";   color: 102 102 102 255; } // COL_BLACK
+color_class { name: "256color-9";   color: 255 102 102 255; } // COL_RED
+color_class { name: "256color-10";  color: 102 255 102 255; } // COL_GREEN
+color_class { name: "256color-11";  color: 255 255 102 255; } // COL_YELLOW
+color_class { name: "256color-12";  color: 102 102 255 255; } // COL_BLUE
+color_class { name: "256color-13";  color: 255 102 255 255; } // COL_MAGENTA
+color_class { name: "256color-14";  color: 102 255 255 255; } // COL_CYAN
+color_class { name: "256color-15";  color: 255 255 255 255; } // COL_WHITE
 
+#if 0 // disabled, use defaults.
 // pure 6x6x6 colorcube
 color_class { name: "256color-16";   color:   0   0   0 255; }
 color_class { name: "256color-17";   color:   0   0  42 255; }
@@ -346,3 +347,5 @@ color_class { name: "256color-252";  color: 210 210 210 255; }
 color_class { name: "256color-253";  color: 218 218 218 255; }
 color_class { name: "256color-254";  color: 228 228 228 255; }
 color_class { name: "256color-255";  color: 238 238 238 255; }
+
+#endif

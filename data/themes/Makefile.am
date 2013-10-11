@@ -19,17 +19,17 @@ mustang.edj
 
 EXTRA_DIST = default.edc mild.edc black.edc mustang.edc default_colors.in.edc
 
-default.edj: Makefile default.edc
+default.edj: Makefile default.edc default_colors.in.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/default.edj
 
-mild.edj: Makefile mild.edc
+mild.edj: Makefile mild.edc default_colors.in.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/mild.edc \
 	$(top_builddir)/data/themes/mild.edj
 
-black.edj: Makefile black.edc mild.edc
+black.edj: Makefile black.edc mild.edc default_colors.in.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/black.edc \
 	$(top_builddir)/data/themes/black.edj
@@ -46,7 +46,7 @@ solarized_light.edj: Makefile default.edc
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized_light.edj
 
-mustang.edj: Makefile mustang.edc
+mustang.edj: Makefile mustang.edc mild.edc default_colors.in.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/mustang.edc \
 	$(top_builddir)/data/themes/mustang.edj
