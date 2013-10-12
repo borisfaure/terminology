@@ -43,7 +43,14 @@ theme_reload(Evas_Object *edje)
 static void
 theme_reload_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
+   void (*func) (void *d);
+   void *func_data;
+   
    theme_reload(obj);
+   func = evas_object_data_get(obj, "theme_reload_func");
+   func_data = evas_object_data_get(obj, "theme_reload_func_data");
+   printf("%p %p\n", func, func_data);
+   if (func) func(func_data);
 }
 
 void

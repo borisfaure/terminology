@@ -1998,32 +1998,8 @@ main_term_free(Term *term)
 }
 
 static void
-main_term_bg_redo(Term *term)
+main_term_bg_config(Term *term)
 {
-   Evas_Object *o;
-
-   if (term->tabcount_spacer)
-     {
-        evas_object_del(term->tabcount_spacer);
-        term->tabcount_spacer = NULL;
-     }
-   evas_object_del(term->base);
-   evas_object_del(term->bg);
-   
-   term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
-   theme_apply(o, term->config, "terminology/core");
-
-   theme_auto_reload_enable(o);
-   evas_object_show(o);
-
-   term->bg = o = edje_object_add(evas_object_evas_get(term->wn->win));
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   theme_apply(o, term->config, "terminology/background");
-
-   theme_auto_reload_enable(o);
-   evas_object_show(o);
-
    if (term->config->translucent)
      {
         edje_object_signal_emit(term->bg, "translucent,on", "terminology");
@@ -2089,6 +2065,39 @@ main_term_bg_redo(Term *term)
      }
 }
 
+static void
+main_term_bg_redo(Term *term)
+{
+   Evas_Object *o;
+
+   if (term->tabcount_spacer)
+     {
+        evas_object_del(term->tabcount_spacer);
+        term->tabcount_spacer = NULL;
+     }
+   evas_object_del(term->base);
+   evas_object_del(term->bg);
+   
+   term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
+   theme_apply(o, term->config, "terminology/core");
+
+   theme_auto_reload_enable(o);
+   evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
+   evas_object_data_set(o, "theme_reload_func_data", term);
+   evas_object_show(o);
+
+   term->bg = o = edje_object_add(evas_object_evas_get(term->wn->win));
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   theme_apply(o, term->config, "terminology/background");
+
+   theme_auto_reload_enable(o);
+   evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
+   evas_object_data_set(o, "theme_reload_func_data", term);
+   evas_object_show(o);
+   main_term_bg_config(term);
+}
+
 static Term *
 main_term_new(Win *wn, Config *config, const char *cmd,
               Eina_Bool login_shell, const char *cd,
@@ -2112,6 +2121,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    theme_apply(o, term->config, "terminology/core");
 
    theme_auto_reload_enable(o);
+   evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
+   evas_object_data_set(o, "theme_reload_func_data", term);
    evas_object_show(o);
 
    term->bg = o = edje_object_add(evas_object_evas_get(wn->win));
@@ -2126,6 +2137,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
      }
 
    theme_auto_reload_enable(o);
+   evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
+   evas_object_data_set(o, "theme_reload_func_data", term);
    evas_object_show(o);
 
    if (term->config->translucent)
