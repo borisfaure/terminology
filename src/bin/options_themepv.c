@@ -97,7 +97,6 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
 {
    Evas_Object *o, *oo, *obase, *oe, *obg;
    Evas *evas;
-   int tw, th;
    Evas_Coord ww, hh, y;
 
    obase = elm_grid_add(parent);
