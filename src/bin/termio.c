@@ -572,12 +572,12 @@ _smart_mouseover_apply(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
 
    if (!sd) return;
-   if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0))
+   if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
+       (sd->link.suspend) || (!evas_object_focus_get(obj)))
      {
         _remove_links(sd, obj);
         return;
      }
-
 
    s = _termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
                          &x1, &y1, &x2, &y2);
@@ -3182,7 +3182,6 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         sd->mouse.cx = -1;
         sd->mouse.cy = -1;
         sd->link.suspend = EINA_FALSE;
-        _remove_links(sd, obj);
      }
    else
      {
@@ -3192,6 +3191,7 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         sd->mouse.cx = cx;
         sd->mouse.cy = cy;
      }
+   _remove_links(sd, obj);
 }
 
 static void
