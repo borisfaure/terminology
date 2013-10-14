@@ -3182,6 +3182,7 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         sd->mouse.cx = -1;
         sd->mouse.cy = -1;
         sd->link.suspend = EINA_FALSE;
+        _remove_links(sd, obj);
      }
    else
      {
@@ -3191,7 +3192,8 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         sd->mouse.cx = cx;
         sd->mouse.cy = cy;
      }
-   _remove_links(sd, obj);
+   if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0))
+     _remove_links(sd, obj);
 }
 
 static void
