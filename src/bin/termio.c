@@ -1240,6 +1240,8 @@ _smart_apply(Evas_Object *obj)
                   else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
                   tc[x].double_width = 0;
+                  tc[x].underline = 0;
+                  tc[x].strikethrough = 0;
                }
              else
                {
@@ -1287,6 +1289,8 @@ _smart_apply(Evas_Object *obj)
                        if (inv) tc[x].bg = COL_INVERSEBG;
                        else tc[x].bg = COL_INVIS;
                        tc[x].bg_extended = 0;
+                       tc[x].underline = 0;
+                       tc[x].strikethrough = 0;
 #if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[j].att.dblwidth;
 #endif
