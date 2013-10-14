@@ -126,7 +126,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
      {
         const char *ext = strchr(file, '.');
         
-        if ((config) && (!file[0] != '.') &&
+        if ((config) && (file[0] != '.') &&
             ((ext) && (!strcasecmp(".edj", ext))))
           {
              t = calloc(1, sizeof(Theme));
