@@ -1688,7 +1688,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    Termio *sd = evas_object_smart_data_get(obj);
    int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
    char *s = NULL;
-   size_t len;
+   size_t len = 0;
 
    if (!sd) return;
    if (sd->cur.sel)
@@ -1725,7 +1725,10 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
         eina_strbuf_free(sb);
      }
    else if (!start_y && !end_y && !start_x && !end_x && sd->link.string)
-     s = strdup(sd->link.string);
+     {
+        len = strlen(sd->link.string);
+        s = strndup(sd->link.string, len);
+     }
    else if ((start_x != end_x) || (start_y != end_y))
      {
         if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
@@ -1738,7 +1741,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
 
    if (s)
      {
-        if (sd->win)
+        if ((sd->win) && (len > 0))
           {
              sd->have_sel = EINA_FALSE;
              sd->reset_sel = EINA_FALSE;
