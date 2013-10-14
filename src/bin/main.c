@@ -629,6 +629,7 @@ main_close(Evas_Object *win, Evas_Object *term)
         if (!sp->term)
           {
              _split_free(sp);
+             sp = NULL;
              if ((spp->parent) && (spp->parent->s2 == spp))
                slot = PANES_BOTTOM;
              _split_merge(spp, spkeep, slot);
@@ -650,7 +651,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              _term_focus(sp->term);
              _term_focus_show(sp, sp->term);
           }
-        _split_tabcount_update(sp, sp->term);
+        if (sp) _split_tabcount_update(sp, sp->term);
      }
    else
      {
