@@ -1,351 +1,351 @@
-color_class { name: "color-0";       color: 170 170 170 255; } // COL_DEF
-color_class { name: "color-1";       color:   0   0   0 255; } // COL_BLACK
-color_class { name: "color-2";       color: 204  51  51 255; } // COL_RED
-color_class { name: "color-3";       color:  51 204  51 255; } // COL_GREEN
-color_class { name: "color-4";       color: 204 136  51 255; } // COL_YELLOW
-color_class { name: "color-5";       color:  51  51 204 255; } // COL_BLUE
-color_class { name: "color-6";       color: 204  51 204 255; } // COL_MAGENTA
-color_class { name: "color-7";       color:  51 204 204 255; } // COL_CYAN
-color_class { name: "color-8";       color: 204 204 204 255; } // COL_WHITE
-color_class { name: "color-9";       color:   0   0   0   0; } // COL_INVIS
-color_class { name: "color-10";      color:  34  34  34 255; } // COL_INVERSE
-color_class { name: "color-11";      color: 170 170 170 255; } // COL_INVERSEBG
+color_class { name: "c0";       color: 170 170 170 255; } // COL_DEF
+color_class { name: "c1";       color:   0   0   0 255; } // COL_BLACK
+color_class { name: "c2";       color: 204  51  51 255; } // COL_RED
+color_class { name: "c3";       color:  51 204  51 255; } // COL_GREEN
+color_class { name: "c4";       color: 204 136  51 255; } // COL_YELLOW
+color_class { name: "c5";       color:  51  51 204 255; } // COL_BLUE
+color_class { name: "c6";       color: 204  51 204 255; } // COL_MAGENTA
+color_class { name: "c7";       color:  51 204 204 255; } // COL_CYAN
+color_class { name: "c8";       color: 204 204 204 255; } // COL_WHITE
+color_class { name: "c9";       color:   0   0   0   0; } // COL_INVIS
+color_class { name: "c10";      color:  34  34  34 255; } // COL_INVERSE
+color_class { name: "c11";      color: 170 170 170 255; } // COL_INVERSEBG
 
-color_class { name: "color-12";      color: 238 238 238 255; } // COL_DEF
-color_class { name: "color-13";      color: 102 102 102 255; } // COL_BLACK
-color_class { name: "color-14";      color: 255 102 102 255; } // COL_RED
-color_class { name: "color-15";      color: 102 255 102 255; } // COL_GREEN
-color_class { name: "color-16";      color: 255 255 102 255; } // COL_YELLOW
-color_class { name: "color-17";      color: 102 102 255 255; } // COL_BLUE
-color_class { name: "color-18";      color: 255 102 255 255; } // COL_MAGENTA
-color_class { name: "color-19";      color: 102 255 255 255; } // COL_CYAN
-color_class { name: "color-20";      color: 255 255 255 255; } // COL_WHITE
-color_class { name: "color-21";      color:   0   0   0   0; } // COL_INVIS
-color_class { name: "color-22";      color:  17  17  17 255; } // COL_INVERSE
-color_class { name: "color-23";      color: 238 238 238 255; } // COL_INVERSEBG
+color_class { name: "c12";      color: 238 238 238 255; } // COL_DEF
+color_class { name: "c13";      color: 102 102 102 255; } // COL_BLACK
+color_class { name: "c14";      color: 255 102 102 255; } // COL_RED
+color_class { name: "c15";      color: 102 255 102 255; } // COL_GREEN
+color_class { name: "c16";      color: 255 255 102 255; } // COL_YELLOW
+color_class { name: "c17";      color: 102 102 255 255; } // COL_BLUE
+color_class { name: "c18";      color: 255 102 255 255; } // COL_MAGENTA
+color_class { name: "c19";      color: 102 255 255 255; } // COL_CYAN
+color_class { name: "c20";      color: 255 255 255 255; } // COL_WHITE
+color_class { name: "c21";      color:   0   0   0   0; } // COL_INVIS
+color_class { name: "c22";      color:  17  17  17 255; } // COL_INVERSE
+color_class { name: "c23";      color: 238 238 238 255; } // COL_INVERSEBG
 
-color_class { name: "color-24";      color: 221 221 221 255; } // COL_DEF
-color_class { name: "color-25";      color:   0   0   0 255; } // COL_BLACK
-color_class { name: "color-26";      color: 204 136 136 255; } // COL_RED
-color_class { name: "color-27";      color: 136 204 136 255; } // COL_GREEN
-color_class { name: "color-28";      color: 204 170 136 255; } // COL_YELLOW
-color_class { name: "color-29";      color: 136 136 204 255; } // COL_BLUE
-color_class { name: "color-30";      color: 204 136 204 255; } // COL_MAGENTA
-color_class { name: "color-31";      color: 136 204 204 255; } // COL_CYAN
-color_class { name: "color-32";      color: 204 204 204 255; } // COL_WHITE
-color_class { name: "color-33";      color:   0   0   0   0; } // COL_INVIS
-color_class { name: "color-34";      color:  17  17  17 255; } // COL_INVERSE
-color_class { name: "color-35";      color: 204 204 204 255; } // COL_INVERSEBG
+color_class { name: "c24";      color: 221 221 221 255; } // COL_DEF
+color_class { name: "c25";      color:   0   0   0 255; } // COL_BLACK
+color_class { name: "c26";      color: 204 136 136 255; } // COL_RED
+color_class { name: "c27";      color: 136 204 136 255; } // COL_GREEN
+color_class { name: "c28";      color: 204 170 136 255; } // COL_YELLOW
+color_class { name: "c29";      color: 136 136 204 255; } // COL_BLUE
+color_class { name: "c30";      color: 204 136 204 255; } // COL_MAGENTA
+color_class { name: "c31";      color: 136 204 204 255; } // COL_CYAN
+color_class { name: "c32";      color: 204 204 204 255; } // COL_WHITE
+color_class { name: "c33";      color:   0   0   0   0; } // COL_INVIS
+color_class { name: "c34";      color:  17  17  17 255; } // COL_INVERSE
+color_class { name: "c35";      color: 204 204 204 255; } // COL_INVERSEBG
 
-color_class { name: "color-36";      color: 255 255 255 255; } // COL_DEF
-color_class { name: "color-37";      color: 204 204 204 255; } // COL_BLACK
-color_class { name: "color-38";      color: 255 204 204 255; } // COL_RED
-color_class { name: "color-39";      color: 204 255 204 255; } // COL_GREEN
-color_class { name: "color-40";      color: 255 255 204 255; } // COL_YELLOW
-color_class { name: "color-41";      color: 204 204 255 255; } // COL_BLUE
-color_class { name: "color-42";      color: 255 204 255 255; } // COL_MAGENTA
-color_class { name: "color-43";      color: 204 255 255 255; } // COL_CYAN
-color_class { name: "color-44";      color: 255 255 255 255; } // COL_WHITE
-color_class { name: "color-45";      color:   0   0   0   0; } // COL_INVIS
-color_class { name: "color-46";      color:   0   0   0 255; } // COL_INVERSE
-color_class { name: "color-47";      color: 255 255 255 255; } // COL_INVERSEBG
+color_class { name: "c36";      color: 255 255 255 255; } // COL_DEF
+color_class { name: "c37";      color: 204 204 204 255; } // COL_BLACK
+color_class { name: "c38";      color: 255 204 204 255; } // COL_RED
+color_class { name: "c39";      color: 204 255 204 255; } // COL_GREEN
+color_class { name: "c40";      color: 255 255 204 255; } // COL_YELLOW
+color_class { name: "c41";      color: 204 204 255 255; } // COL_BLUE
+color_class { name: "c42";      color: 255 204 255 255; } // COL_MAGENTA
+color_class { name: "c43";      color: 204 255 255 255; } // COL_CYAN
+color_class { name: "c44";      color: 255 255 255 255; } // COL_WHITE
+color_class { name: "c45";      color:   0   0   0   0; } // COL_INVIS
+color_class { name: "c46";      color:   0   0   0 255; } // COL_INVERSE
+color_class { name: "c47";      color: 255 255 255 255; } // COL_INVERSEBG
 
-color_class { name: "256color-0";   color:   0   0   0 255; } // COL_BLACK
-color_class { name: "256color-1";   color: 204  51  51 255; } // COL_RED
-color_class { name: "256color-2";   color:  51 204  51 255; } // COL_GREEN
-color_class { name: "256color-3";   color: 204 136  51 255; } // COL_YELLOW
-color_class { name: "256color-4";   color:  51  51 204 255; } // COL_BLUE
-color_class { name: "256color-5";   color: 204  51 204 255; } // COL_MAGENTA
-color_class { name: "256color-6";   color:  51 204 204 255; } // COL_CYAN
-color_class { name: "256color-7";   color: 204 204 204 255; } // COL_WHITE
+color_class { name: "C0";   color:   0   0   0 255; } // COL_BLACK
+color_class { name: "C1";   color: 204  51  51 255; } // COL_RED
+color_class { name: "C2";   color:  51 204  51 255; } // COL_GREEN
+color_class { name: "C3";   color: 204 136  51 255; } // COL_YELLOW
+color_class { name: "C4";   color:  51  51 204 255; } // COL_BLUE
+color_class { name: "C5";   color: 204  51 204 255; } // COL_MAGENTA
+color_class { name: "C6";   color:  51 204 204 255; } // COL_CYAN
+color_class { name: "C7";   color: 204 204 204 255; } // COL_WHITE
 
-color_class { name: "256color-8";   color: 102 102 102 255; } // COL_BLACK
-color_class { name: "256color-9";   color: 255 102 102 255; } // COL_RED
-color_class { name: "256color-10";  color: 102 255 102 255; } // COL_GREEN
-color_class { name: "256color-11";  color: 255 255 102 255; } // COL_YELLOW
-color_class { name: "256color-12";  color: 102 102 255 255; } // COL_BLUE
-color_class { name: "256color-13";  color: 255 102 255 255; } // COL_MAGENTA
-color_class { name: "256color-14";  color: 102 255 255 255; } // COL_CYAN
-color_class { name: "256color-15";  color: 255 255 255 255; } // COL_WHITE
+color_class { name: "C8";   color: 102 102 102 255; } // COL_BLACK
+color_class { name: "C9";   color: 255 102 102 255; } // COL_RED
+color_class { name: "C10";  color: 102 255 102 255; } // COL_GREEN
+color_class { name: "C11";  color: 255 255 102 255; } // COL_YELLOW
+color_class { name: "C12";  color: 102 102 255 255; } // COL_BLUE
+color_class { name: "C13";  color: 255 102 255 255; } // COL_MAGENTA
+color_class { name: "C14";  color: 102 255 255 255; } // COL_CYAN
+color_class { name: "C15";  color: 255 255 255 255; } // COL_WHITE
 
 #if 0 // disabled, use defaults.
 // pure 6x6x6 colorcube
-color_class { name: "256color-16";   color:   0   0   0 255; }
-color_class { name: "256color-17";   color:   0   0  42 255; }
-color_class { name: "256color-18";   color:   0   0  85 255; }
-color_class { name: "256color-19";   color:   0   0 127 255; }
-color_class { name: "256color-20";   color:   0   0 170 255; }
-color_class { name: "256color-21";   color:   0   0 212 255; }
+color_class { name: "C16";   color:   0   0   0 255; }
+color_class { name: "C17";   color:   0   0  42 255; }
+color_class { name: "C18";   color:   0   0  85 255; }
+color_class { name: "C19";   color:   0   0 127 255; }
+color_class { name: "C20";   color:   0   0 170 255; }
+color_class { name: "C21";   color:   0   0 212 255; }
 
-color_class { name: "256color-22";   color:   0  42   0 255; }
-color_class { name: "256color-23";   color:   0  42  42 255; }
-color_class { name: "256color-24";   color:   0  42  85 255; }
-color_class { name: "256color-25";   color:   0  42 127 255; }
-color_class { name: "256color-26";   color:   0  42 170 255; }
-color_class { name: "256color-27";   color:   0  42 212 255; }
+color_class { name: "C22";   color:   0  42   0 255; }
+color_class { name: "C23";   color:   0  42  42 255; }
+color_class { name: "C24";   color:   0  42  85 255; }
+color_class { name: "C25";   color:   0  42 127 255; }
+color_class { name: "C26";   color:   0  42 170 255; }
+color_class { name: "C27";   color:   0  42 212 255; }
 
-color_class { name: "256color-28";   color:   0  85   0 255; }
-color_class { name: "256color-29";   color:   0  85  42 255; }
-color_class { name: "256color-30";   color:   0  85  85 255; }
-color_class { name: "256color-31";   color:   0  85 127 255; }
-color_class { name: "256color-32";   color:   0  85 170 255; }
-color_class { name: "256color-33";   color:   0  85 212 255; }
+color_class { name: "C28";   color:   0  85   0 255; }
+color_class { name: "C29";   color:   0  85  42 255; }
+color_class { name: "C30";   color:   0  85  85 255; }
+color_class { name: "C31";   color:   0  85 127 255; }
+color_class { name: "C32";   color:   0  85 170 255; }
+color_class { name: "C33";   color:   0  85 212 255; }
 
-color_class { name: "256color-34";   color:   0 127   0 255; }
-color_class { name: "256color-35";   color:   0 127  42 255; }
-color_class { name: "256color-36";   color:   0 127  85 255; }
-color_class { name: "256color-37";   color:   0 127 127 255; }
-color_class { name: "256color-38";   color:   0 127 170 255; }
-color_class { name: "256color-39";   color:   0 127 212 255; }
+color_class { name: "C34";   color:   0 127   0 255; }
+color_class { name: "C35";   color:   0 127  42 255; }
+color_class { name: "C36";   color:   0 127  85 255; }
+color_class { name: "C37";   color:   0 127 127 255; }
+color_class { name: "C38";   color:   0 127 170 255; }
+color_class { name: "C39";   color:   0 127 212 255; }
 
-color_class { name: "256color-40";   color:   0 170   0 255; }
-color_class { name: "256color-41";   color:   0 170  42 255; }
-color_class { name: "256color-42";   color:   0 170  85 255; }
-color_class { name: "256color-43";   color:   0 170 127 255; }
-color_class { name: "256color-44";   color:   0 170 170 255; }
-color_class { name: "256color-45";   color:   0 170 212 255; }
+color_class { name: "C40";   color:   0 170   0 255; }
+color_class { name: "C41";   color:   0 170  42 255; }
+color_class { name: "C42";   color:   0 170  85 255; }
+color_class { name: "C43";   color:   0 170 127 255; }
+color_class { name: "C44";   color:   0 170 170 255; }
+color_class { name: "C45";   color:   0 170 212 255; }
 
-color_class { name: "256color-46";   color:   0 212   0 255; }
-color_class { name: "256color-47";   color:   0 212  42 255; }
-color_class { name: "256color-48";   color:   0 212  85 255; }
-color_class { name: "256color-49";   color:   0 212 127 255; }
-color_class { name: "256color-50";   color:   0 212 170 255; }
-color_class { name: "256color-51";   color:   0 212 212 255; }
+color_class { name: "C46";   color:   0 212   0 255; }
+color_class { name: "C47";   color:   0 212  42 255; }
+color_class { name: "C48";   color:   0 212  85 255; }
+color_class { name: "C49";   color:   0 212 127 255; }
+color_class { name: "C50";   color:   0 212 170 255; }
+color_class { name: "C51";   color:   0 212 212 255; }
 
-color_class { name: "256color-52";   color:  42   0   0 255; }
-color_class { name: "256color-53";   color:  42   0  42 255; }
-color_class { name: "256color-54";   color:  42   0  85 255; }
-color_class { name: "256color-55";   color:  42   0 127 255; }
-color_class { name: "256color-56";   color:  42   0 170 255; }
-color_class { name: "256color-57";   color:  42   0 212 255; }
+color_class { name: "C52";   color:  42   0   0 255; }
+color_class { name: "C53";   color:  42   0  42 255; }
+color_class { name: "C54";   color:  42   0  85 255; }
+color_class { name: "C55";   color:  42   0 127 255; }
+color_class { name: "C56";   color:  42   0 170 255; }
+color_class { name: "C57";   color:  42   0 212 255; }
 
-color_class { name: "256color-58";   color:  42  42   0 255; }
-color_class { name: "256color-59";   color:  42  42  42 255; }
-color_class { name: "256color-60";   color:  42  42  85 255; }
-color_class { name: "256color-61";   color:  42  42 127 255; }
-color_class { name: "256color-62";   color:  42  42 170 255; }
-color_class { name: "256color-63";   color:  42  42 212 255; }
+color_class { name: "C58";   color:  42  42   0 255; }
+color_class { name: "C59";   color:  42  42  42 255; }
+color_class { name: "C60";   color:  42  42  85 255; }
+color_class { name: "C61";   color:  42  42 127 255; }
+color_class { name: "C62";   color:  42  42 170 255; }
+color_class { name: "C63";   color:  42  42 212 255; }
 
-color_class { name: "256color-64";   color:  42  85   0 255; }
-color_class { name: "256color-65";   color:  42  85  42 255; }
-color_class { name: "256color-66";   color:  42  85  85 255; }
-color_class { name: "256color-67";   color:  42  85 127 255; }
-color_class { name: "256color-68";   color:  42  85 170 255; }
-color_class { name: "256color-69";   color:  42  85 212 255; }
+color_class { name: "C64";   color:  42  85   0 255; }
+color_class { name: "C65";   color:  42  85  42 255; }
+color_class { name: "C66";   color:  42  85  85 255; }
+color_class { name: "C67";   color:  42  85 127 255; }
+color_class { name: "C68";   color:  42  85 170 255; }
+color_class { name: "C69";   color:  42  85 212 255; }
 
-color_class { name: "256color-70";   color:  42 127   0 255; }
-color_class { name: "256color-71";   color:  42 127  42 255; }
-color_class { name: "256color-72";   color:  42 127  85 255; }
-color_class { name: "256color-73";   color:  42 127 127 255; }
-color_class { name: "256color-74";   color:  42 127 170 255; }
-color_class { name: "256color-75";   color:  42 127 212 255; }
+color_class { name: "C70";   color:  42 127   0 255; }
+color_class { name: "C71";   color:  42 127  42 255; }
+color_class { name: "C72";   color:  42 127  85 255; }
+color_class { name: "C73";   color:  42 127 127 255; }
+color_class { name: "C74";   color:  42 127 170 255; }
+color_class { name: "C75";   color:  42 127 212 255; }
 
-color_class { name: "256color-76";   color:  42 170   0 255; }
-color_class { name: "256color-77";   color:  42 170  42 255; }
-color_class { name: "256color-78";   color:  42 170  85 255; }
-color_class { name: "256color-79";   color:  42 170 127 255; }
-color_class { name: "256color-80";   color:  42 170 170 255; }
-color_class { name: "256color-81";   color:  42 170 212 255; }
+color_class { name: "C76";   color:  42 170   0 255; }
+color_class { name: "C77";   color:  42 170  42 255; }
+color_class { name: "C78";   color:  42 170  85 255; }
+color_class { name: "C79";   color:  42 170 127 255; }
+color_class { name: "C80";   color:  42 170 170 255; }
+color_class { name: "C81";   color:  42 170 212 255; }
 
-color_class { name: "256color-82";   color:  42 212   0 255; }
-color_class { name: "256color-83";   color:  42 212  42 255; }
-color_class { name: "256color-84";   color:  42 212  85 255; }
-color_class { name: "256color-85";   color:  42 212 127 255; }
-color_class { name: "256color-86";   color:  42 212 170 255; }
-color_class { name: "256color-87";   color:  42 212 212 255; }
+color_class { name: "C82";   color:  42 212   0 255; }
+color_class { name: "C83";   color:  42 212  42 255; }
+color_class { name: "C84";   color:  42 212  85 255; }
+color_class { name: "C85";   color:  42 212 127 255; }
+color_class { name: "C86";   color:  42 212 170 255; }
+color_class { name: "C87";   color:  42 212 212 255; }
 
-color_class { name: "256color-88";   color:  85   0   0 255; }
-color_class { name: "256color-89";   color:  85   0  42 255; }
-color_class { name: "256color-90";   color:  85   0  85 255; }
-color_class { name: "256color-91";   color:  85   0 127 255; }
-color_class { name: "256color-92";   color:  85   0 170 255; }
-color_class { name: "256color-93";   color:  85   0 212 255; }
+color_class { name: "C88";   color:  85   0   0 255; }
+color_class { name: "C89";   color:  85   0  42 255; }
+color_class { name: "C90";   color:  85   0  85 255; }
+color_class { name: "C91";   color:  85   0 127 255; }
+color_class { name: "C92";   color:  85   0 170 255; }
+color_class { name: "C93";   color:  85   0 212 255; }
 
-color_class { name: "256color-94";   color:  85 111   0 255; }
-color_class { name: "256color-95";   color:  85  42  42 255; }
-color_class { name: "256color-96";   color:  85  42  85 255; }
-color_class { name: "256color-97";   color:  85  42 127 255; }
-color_class { name: "256color-98";   color:  85  42 170 255; }
-color_class { name: "256color-99";   color:  85  42 212 255; }
+color_class { name: "C94";   color:  85 111   0 255; }
+color_class { name: "C95";   color:  85  42  42 255; }
+color_class { name: "C96";   color:  85  42  85 255; }
+color_class { name: "C97";   color:  85  42 127 255; }
+color_class { name: "C98";   color:  85  42 170 255; }
+color_class { name: "C99";   color:  85  42 212 255; }
 
-color_class { name: "256color-100";  color:  85  85   0 255; }
-color_class { name: "256color-101";  color:  85  85  42 255; }
-color_class { name: "256color-102";  color:  85  85  85 255; }
-color_class { name: "256color-103";  color:  85  85 127 255; }
-color_class { name: "256color-104";  color:  85  85 170 255; }
-color_class { name: "256color-105";  color:  85  85 212 255; }
+color_class { name: "C100";  color:  85  85   0 255; }
+color_class { name: "C101";  color:  85  85  42 255; }
+color_class { name: "C102";  color:  85  85  85 255; }
+color_class { name: "C103";  color:  85  85 127 255; }
+color_class { name: "C104";  color:  85  85 170 255; }
+color_class { name: "C105";  color:  85  85 212 255; }
 
-color_class { name: "256color-106";  color:  85 127   0 255; }
-color_class { name: "256color-107";  color:  85 127  42 255; }
-color_class { name: "256color-108";  color:  85 127  85 255; }
-color_class { name: "256color-109";  color:  85 127 127 255; }
-color_class { name: "256color-110";  color:  85 127 170 255; }
-color_class { name: "256color-111";  color:  85 127 212 255; }
+color_class { name: "C106";  color:  85 127   0 255; }
+color_class { name: "C107";  color:  85 127  42 255; }
+color_class { name: "C108";  color:  85 127  85 255; }
+color_class { name: "C109";  color:  85 127 127 255; }
+color_class { name: "C110";  color:  85 127 170 255; }
+color_class { name: "C111";  color:  85 127 212 255; }
 
-color_class { name: "256color-112";  color:  85 170   0 255; }
-color_class { name: "256color-113";  color:  85 170  42 255; }
-color_class { name: "256color-114";  color:  85 170  85 255; }
-color_class { name: "256color-115";  color:  85 170 127 255; }
-color_class { name: "256color-116";  color:  85 170 170 255; }
-color_class { name: "256color-117";  color:  85 170 212 255; }
+color_class { name: "C112";  color:  85 170   0 255; }
+color_class { name: "C113";  color:  85 170  42 255; }
+color_class { name: "C114";  color:  85 170  85 255; }
+color_class { name: "C115";  color:  85 170 127 255; }
+color_class { name: "C116";  color:  85 170 170 255; }
+color_class { name: "C117";  color:  85 170 212 255; }
 
-color_class { name: "256color-118";  color:  85 212   0 255; }
-color_class { name: "256color-119";  color:  85 212  42 255; }
-color_class { name: "256color-120";  color:  85 212  85 255; }
-color_class { name: "256color-121";  color:  85 212 127 255; }
-color_class { name: "256color-122";  color:  85 212 170 255; }
-color_class { name: "256color-123";  color:  85 212 212 255; }
+color_class { name: "C118";  color:  85 212   0 255; }
+color_class { name: "C119";  color:  85 212  42 255; }
+color_class { name: "C120";  color:  85 212  85 255; }
+color_class { name: "C121";  color:  85 212 127 255; }
+color_class { name: "C122";  color:  85 212 170 255; }
+color_class { name: "C123";  color:  85 212 212 255; }
 
-color_class { name: "256color-124";  color: 127   0   0 255; }
-color_class { name: "256color-125";  color: 127   0  42 255; }
-color_class { name: "256color-126";  color: 127   0  85 255; }
-color_class { name: "256color-127";  color: 127   0 127 255; }
-color_class { name: "256color-128";  color: 127   0 170 255; }
-color_class { name: "256color-129";  color: 127   0 212 255; }
+color_class { name: "C124";  color: 127   0   0 255; }
+color_class { name: "C125";  color: 127   0  42 255; }
+color_class { name: "C126";  color: 127   0  85 255; }
+color_class { name: "C127";  color: 127   0 127 255; }
+color_class { name: "C128";  color: 127   0 170 255; }
+color_class { name: "C129";  color: 127   0 212 255; }
 
-color_class { name: "256color-130";  color: 127  42   0 255; }
-color_class { name: "256color-131";  color: 127  42  42 255; }
-color_class { name: "256color-132";  color: 127  42  85 255; }
-color_class { name: "256color-133";  color: 127  42 127 255; }
-color_class { name: "256color-134";  color: 127  42 170 255; }
-color_class { name: "256color-135";  color: 127  42 212 255; }
+color_class { name: "C130";  color: 127  42   0 255; }
+color_class { name: "C131";  color: 127  42  42 255; }
+color_class { name: "C132";  color: 127  42  85 255; }
+color_class { name: "C133";  color: 127  42 127 255; }
+color_class { name: "C134";  color: 127  42 170 255; }
+color_class { name: "C135";  color: 127  42 212 255; }
 
-color_class { name: "256color-136";  color: 127  85   0 255; }
-color_class { name: "256color-137";  color: 127  85  42 255; }
-color_class { name: "256color-138";  color: 127  85  85 255; }
-color_class { name: "256color-139";  color: 127  85 127 255; }
-color_class { name: "256color-140";  color: 127  85 170 255; }
-color_class { name: "256color-141";  color: 127  85 212 255; }
+color_class { name: "C136";  color: 127  85   0 255; }
+color_class { name: "C137";  color: 127  85  42 255; }
+color_class { name: "C138";  color: 127  85  85 255; }
+color_class { name: "C139";  color: 127  85 127 255; }
+color_class { name: "C140";  color: 127  85 170 255; }
+color_class { name: "C141";  color: 127  85 212 255; }
 
-color_class { name: "256color-142";  color: 127 127   0 255; }
-color_class { name: "256color-143";  color: 127 127  42 255; }
-color_class { name: "256color-144";  color: 127 127  85 255; }
-color_class { name: "256color-145";  color: 127 127 127 255; }
-color_class { name: "256color-146";  color: 127 127 170 255; }
-color_class { name: "256color-147";  color: 127 127 212 255; }
+color_class { name: "C142";  color: 127 127   0 255; }
+color_class { name: "C143";  color: 127 127  42 255; }
+color_class { name: "C144";  color: 127 127  85 255; }
+color_class { name: "C145";  color: 127 127 127 255; }
+color_class { name: "C146";  color: 127 127 170 255; }
+color_class { name: "C147";  color: 127 127 212 255; }
 
-color_class { name: "256color-148";  color: 127 170   0 255; }
-color_class { name: "256color-149";  color: 127 170  42 255; }
-color_class { name: "256color-150";  color: 127 170  85 255; }
-color_class { name: "256color-151";  color: 127 170 127 255; }
-color_class { name: "256color-152";  color: 127 170 170 255; }
-color_class { name: "256color-153";  color: 127 170 212 255; }
+color_class { name: "C148";  color: 127 170   0 255; }
+color_class { name: "C149";  color: 127 170  42 255; }
+color_class { name: "C150";  color: 127 170  85 255; }
+color_class { name: "C151";  color: 127 170 127 255; }
+color_class { name: "C152";  color: 127 170 170 255; }
+color_class { name: "C153";  color: 127 170 212 255; }
 
-color_class { name: "256color-154";  color: 127 212   0 255; }
-color_class { name: "256color-155";  color: 127 212  42 255; }
-color_class { name: "256color-156";  color: 127 212  85 255; }
-color_class { name: "256color-157";  color: 127 212 127 255; }
-color_class { name: "256color-158";  color: 127 212 170 255; }
-color_class { name: "256color-159";  color: 127 212 212 255; }
+color_class { name: "C154";  color: 127 212   0 255; }
+color_class { name: "C155";  color: 127 212  42 255; }
+color_class { name: "C156";  color: 127 212  85 255; }
+color_class { name: "C157";  color: 127 212 127 255; }
+color_class { name: "C158";  color: 127 212 170 255; }
+color_class { name: "C159";  color: 127 212 212 255; }
 
-color_class { name: "256color-160";  color: 170   0   0 255; }
-color_class { name: "256color-161";  color: 170   0  42 255; }
-color_class { name: "256color-162";  color: 170   0  85 255; }
-color_class { name: "256color-163";  color: 170   0 127 255; }
-color_class { name: "256color-164";  color: 170   0 170 255; }
-color_class { name: "256color-165";  color: 170   0 212 255; }
+color_class { name: "C160";  color: 170   0   0 255; }
+color_class { name: "C161";  color: 170   0  42 255; }
+color_class { name: "C162";  color: 170   0  85 255; }
+color_class { name: "C163";  color: 170   0 127 255; }
+color_class { name: "C164";  color: 170   0 170 255; }
+color_class { name: "C165";  color: 170   0 212 255; }
 
-color_class { name: "256color-166";  color: 170  42   0 255; }
-color_class { name: "256color-167";  color: 170  42  42 255; }
-color_class { name: "256color-168";  color: 170  42  85 255; }
-color_class { name: "256color-169";  color: 170  42 127 255; }
-color_class { name: "256color-170";  color: 170  42 170 255; }
-color_class { name: "256color-171";  color: 170  42 212 255; }
+color_class { name: "C166";  color: 170  42   0 255; }
+color_class { name: "C167";  color: 170  42  42 255; }
+color_class { name: "C168";  color: 170  42  85 255; }
+color_class { name: "C169";  color: 170  42 127 255; }
+color_class { name: "C170";  color: 170  42 170 255; }
+color_class { name: "C171";  color: 170  42 212 255; }
 
-color_class { name: "256color-172";  color: 170  85   0 255; }
-color_class { name: "256color-173";  color: 170  85  42 255; }
-color_class { name: "256color-174";  color: 170  85  85 255; }
-color_class { name: "256color-175";  color: 170  85 127 255; }
-color_class { name: "256color-176";  color: 170  85 170 255; }
-color_class { name: "256color-177";  color: 170  85 212 255; }
+color_class { name: "C172";  color: 170  85   0 255; }
+color_class { name: "C173";  color: 170  85  42 255; }
+color_class { name: "C174";  color: 170  85  85 255; }
+color_class { name: "C175";  color: 170  85 127 255; }
+color_class { name: "C176";  color: 170  85 170 255; }
+color_class { name: "C177";  color: 170  85 212 255; }
 
-color_class { name: "256color-178";  color: 170 127   0 255; }
-color_class { name: "256color-179";  color: 170 127  42 255; }
-color_class { name: "256color-180";  color: 170 127  85 255; }
-color_class { name: "256color-181";  color: 170 127 127 255; }
-color_class { name: "256color-182";  color: 170 127 170 255; }
-color_class { name: "256color-183";  color: 170 127 212 255; }
+color_class { name: "C178";  color: 170 127   0 255; }
+color_class { name: "C179";  color: 170 127  42 255; }
+color_class { name: "C180";  color: 170 127  85 255; }
+color_class { name: "C181";  color: 170 127 127 255; }
+color_class { name: "C182";  color: 170 127 170 255; }
+color_class { name: "C183";  color: 170 127 212 255; }
 
-color_class { name: "256color-184";  color: 170 170   0 255; }
-color_class { name: "256color-185";  color: 170 170  42 255; }
-color_class { name: "256color-186";  color: 170 170  85 255; }
-color_class { name: "256color-187";  color: 170 170 127 255; }
-color_class { name: "256color-188";  color: 170 170 170 255; }
-color_class { name: "256color-189";  color: 170 170 212 255; }
+color_class { name: "C184";  color: 170 170   0 255; }
+color_class { name: "C185";  color: 170 170  42 255; }
+color_class { name: "C186";  color: 170 170  85 255; }
+color_class { name: "C187";  color: 170 170 127 255; }
+color_class { name: "C188";  color: 170 170 170 255; }
+color_class { name: "C189";  color: 170 170 212 255; }
 
-color_class { name: "256color-190";  color: 170 212   0 255; }
-color_class { name: "256color-191";  color: 170 212  42 255; }
-color_class { name: "256color-192";  color: 170 212  85 255; }
-color_class { name: "256color-193";  color: 170 212 127 255; }
-color_class { name: "256color-194";  color: 170 212 170 255; }
-color_class { name: "256color-195";  color: 170 212 212 255; }
+color_class { name: "C190";  color: 170 212   0 255; }
+color_class { name: "C191";  color: 170 212  42 255; }
+color_class { name: "C192";  color: 170 212  85 255; }
+color_class { name: "C193";  color: 170 212 127 255; }
+color_class { name: "C194";  color: 170 212 170 255; }
+color_class { name: "C195";  color: 170 212 212 255; }
 
-color_class { name: "256color-196";  color: 212   0   0 255; }
-color_class { name: "256color-197";  color: 212   0  42 255; }
-color_class { name: "256color-198";  color: 212   0  85 255; }
-color_class { name: "256color-199";  color: 212   0 127 255; }
-color_class { name: "256color-200";  color: 212   0 170 255; }
-color_class { name: "256color-201";  color: 212   0 212 255; }
+color_class { name: "C196";  color: 212   0   0 255; }
+color_class { name: "C197";  color: 212   0  42 255; }
+color_class { name: "C198";  color: 212   0  85 255; }
+color_class { name: "C199";  color: 212   0 127 255; }
+color_class { name: "C200";  color: 212   0 170 255; }
+color_class { name: "C201";  color: 212   0 212 255; }
 
-color_class { name: "256color-202";  color: 212  42   0 255; }
-color_class { name: "256color-203";  color: 212  42  42 255; }
-color_class { name: "256color-204";  color: 212  42  85 255; }
-color_class { name: "256color-205";  color: 212  42 127 255; }
-color_class { name: "256color-206";  color: 212  42 170 255; }
-color_class { name: "256color-207";  color: 212  42 212 255; }
+color_class { name: "C202";  color: 212  42   0 255; }
+color_class { name: "C203";  color: 212  42  42 255; }
+color_class { name: "C204";  color: 212  42  85 255; }
+color_class { name: "C205";  color: 212  42 127 255; }
+color_class { name: "C206";  color: 212  42 170 255; }
+color_class { name: "C207";  color: 212  42 212 255; }
 
-color_class { name: "256color-208";  color: 212  85   0 255; }
-color_class { name: "256color-209";  color: 212  85  42 255; }
-color_class { name: "256color-210";  color: 212  85  85 255; }
-color_class { name: "256color-211";  color: 212  85 127 255; }
-color_class { name: "256color-212";  color: 212  85 170 255; }
-color_class { name: "256color-213";  color: 212  85 212 255; }
+color_class { name: "C208";  color: 212  85   0 255; }
+color_class { name: "C209";  color: 212  85  42 255; }
+color_class { name: "C210";  color: 212  85  85 255; }
+color_class { name: "C211";  color: 212  85 127 255; }
+color_class { name: "C212";  color: 212  85 170 255; }
+color_class { name: "C213";  color: 212  85 212 255; }
 
-color_class { name: "256color-214";  color: 212 127   0 255; }
-color_class { name: "256color-215";  color: 212 127  42 255; }
-color_class { name: "256color-216";  color: 212 127  85 255; }
-color_class { name: "256color-217";  color: 212 127 127 255; }
-color_class { name: "256color-218";  color: 212 127 170 255; }
-color_class { name: "256color-219";  color: 212 127 212 255; }
+color_class { name: "C214";  color: 212 127   0 255; }
+color_class { name: "C215";  color: 212 127  42 255; }
+color_class { name: "C216";  color: 212 127  85 255; }
+color_class { name: "C217";  color: 212 127 127 255; }
+color_class { name: "C218";  color: 212 127 170 255; }
+color_class { name: "C219";  color: 212 127 212 255; }
 
-color_class { name: "256color-220";  color: 212 170   0 255; }
-color_class { name: "256color-221";  color: 212 170  42 255; }
-color_class { name: "256color-222";  color: 212 170  85 255; }
-color_class { name: "256color-223";  color: 212 170 127 255; }
-color_class { name: "256color-224";  color: 212 170 170 255; }
-color_class { name: "256color-225";  color: 212 170 212 255; }
+color_class { name: "C220";  color: 212 170   0 255; }
+color_class { name: "C221";  color: 212 170  42 255; }
+color_class { name: "C222";  color: 212 170  85 255; }
+color_class { name: "C223";  color: 212 170 127 255; }
+color_class { name: "C224";  color: 212 170 170 255; }
+color_class { name: "C225";  color: 212 170 212 255; }
 
-color_class { name: "256color-226";  color: 212 212   0 255; }
-color_class { name: "256color-227";  color: 212 212  42 255; }
-color_class { name: "256color-228";  color: 212 212  85 255; }
-color_class { name: "256color-229";  color: 212 212 127 255; }
-color_class { name: "256color-230";  color: 212 212 170 255; }
-color_class { name: "256color-231";  color: 212 212 212 255; }
+color_class { name: "C226";  color: 212 212   0 255; }
+color_class { name: "C227";  color: 212 212  42 255; }
+color_class { name: "C228";  color: 212 212  85 255; }
+color_class { name: "C229";  color: 212 212 127 255; }
+color_class { name: "C230";  color: 212 212 170 255; }
+color_class { name: "C231";  color: 212 212 212 255; }
 
 // greyscale ramp (24 not including black and white, so 26 if included)
-color_class { name: "256color-232";  color:   8   8   8 255; }
-color_class { name: "256color-233";  color:  18  18  18 255; }
-color_class { name: "256color-234";  color:  28  28  28 255; }
-color_class { name: "256color-235";  color:  38  38  38 255; }
-color_class { name: "256color-236";  color:  48  48  48 255; }
-color_class { name: "256color-237";  color:  58  58  58 255; }
-color_class { name: "256color-238";  color:  68  68  68 255; }
-color_class { name: "256color-239";  color:  78  78  78 255; }
-color_class { name: "256color-240";  color:  88  88  88 255; }
-color_class { name: "256color-241";  color:  98  98  98 255; }
-color_class { name: "256color-242";  color: 108 108 108 255; }
-color_class { name: "256color-243";  color: 118 118 118 255; }
-color_class { name: "256color-244";  color: 128 128 128 255; }
-color_class { name: "256color-245";  color: 138 138 138 255; }
-color_class { name: "256color-246";  color: 148 148 148 255; }
-color_class { name: "256color-247";  color: 158 158 158 255; }
-color_class { name: "256color-248";  color: 168 168 168 255; }
-color_class { name: "256color-249";  color: 178 178 178 255; }
-color_class { name: "256color-250";  color: 188 188 188 255; }
-color_class { name: "256color-251";  color: 198 198 198 255; }
-color_class { name: "256color-252";  color: 210 210 210 255; }
-color_class { name: "256color-253";  color: 218 218 218 255; }
-color_class { name: "256color-254";  color: 228 228 228 255; }
-color_class { name: "256color-255";  color: 238 238 238 255; }
+color_class { name: "C232";  color:   8   8   8 255; }
+color_class { name: "C233";  color:  18  18  18 255; }
+color_class { name: "C234";  color:  28  28  28 255; }
+color_class { name: "C235";  color:  38  38  38 255; }
+color_class { name: "C236";  color:  48  48  48 255; }
+color_class { name: "C237";  color:  58  58  58 255; }
+color_class { name: "C238";  color:  68  68  68 255; }
+color_class { name: "C239";  color:  78  78  78 255; }
+color_class { name: "C240";  color:  88  88  88 255; }
+color_class { name: "C241";  color:  98  98  98 255; }
+color_class { name: "C242";  color: 108 108 108 255; }
+color_class { name: "C243";  color: 118 118 118 255; }
+color_class { name: "C244";  color: 128 128 128 255; }
+color_class { name: "C245";  color: 138 138 138 255; }
+color_class { name: "C246";  color: 148 148 148 255; }
+color_class { name: "C247";  color: 158 158 158 255; }
+color_class { name: "C248";  color: 168 168 168 255; }
+color_class { name: "C249";  color: 178 178 178 255; }
+color_class { name: "C250";  color: 188 188 188 255; }
+color_class { name: "C251";  color: 198 198 198 255; }
+color_class { name: "C252";  color: 210 210 210 255; }
+color_class { name: "C253";  color: 218 218 218 255; }
+color_class { name: "C254";  color: 228 228 228 255; }
+color_class { name: "C255";  color: 238 238 238 255; }
 
 #endif

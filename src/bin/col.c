@@ -385,7 +385,7 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
 
    for (c = 0; c < 4 * 12; c++)
      {
-        snprintf(buf, sizeof(buf) - 1, "color-%d", c);
+        snprintf(buf, sizeof(buf) - 1, "c%i", c);
 
         n = c + 24 * ( c / 24);
 
@@ -419,7 +419,7 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
      }
    for (c = 0; c < 256; c++)
      {
-        snprintf(buf, sizeof(buf) - 1, "256color-%d", c);
+        snprintf(buf, sizeof(buf) - 1, "C%i", c);
 
         if (edje_object_color_class_get(bg, buf,
                                         &r, &g, &b, &a,
