@@ -179,7 +179,6 @@ collections {
         image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "bg_glow_in.png" COMP;
-        image: "bg_shadow.png" COMP;
         image: "bg_led_glow.png" COMP;
         image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
@@ -188,6 +187,11 @@ collections {
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
         image: "cr_glow.png" COMP;
+      }
+      set { name: "bg_shadow";
+        image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
+        image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
+        image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
       }
       sounds {
          sample { name: "bell" LOSSY 64;
@@ -200,7 +204,7 @@ collections {
          part { name: "shadow";
             mouse_events: 0;
             description { state: "default" 0.0;
-               image.normal: "bg_shadow.png";
+               image.normal: "bg_shadow";
                fill.smooth: 0;
                visible: 0;
             }
@@ -2482,8 +2486,12 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
       images {
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
-        image: "bg_shadow.png" COMP;
         image: "inset_shadow.png" COMP;
+      }
+      set { name: "bg_shadow";
+        image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
+        image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
+        image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
       }
       parts {
          ////////////////////////////////////////////////////////////////////
@@ -2491,7 +2499,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "shadow";
             mouse_events: 0;
             description { state: "default" 0.0;
-               image.normal: "bg_shadow.png";
+               image.normal: "bg_shadow";
                fill.smooth: 0;
             }
          }
