@@ -187,12 +187,12 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    
 #define F(_x) "\x01"_x
 #define B(_x) "\x01"_x
-#define R "\x01\x01\x02\x10"
-   _row_set(o, 0, " "F("\x04")"$"R" "F("\x19")">"R" test");
-   _row_set(o, 1, F("\x02")"black"R" "F("\x03")"red"R" "F("\x04")"green"R" "F("\x05")"yellow");
-   _row_set(o, 2, F("\x06")"blue"R" "F("\x07")"magenta"R" "F("\x08")"cyan"R" "F("\x09")"white");
-   _row_set(o, 3, F("\x12")"black"R" "F("\x13")"red"R" "F("\x14")"green"R" "F("\x15")"yellow");
-   _row_set(o, 4, F("\x16")"blue"R" "F("\x17")"magenta"R" "F("\x18")"cyan"R" "F("\x19")"white");
+#define X "\x01\x01\x02\x10"
+   _row_set(o, 0, " "F("\x04")"$"X" "F("\x19")">"X" test");
+   _row_set(o, 1, F("\x02")"black"X" "F("\x03")"red"X" "F("\x04")"green"X" "F("\x05")"yellow");
+   _row_set(o, 2, F("\x06")"blue"X" "F("\x07")"magenta"X" "F("\x08")"cyan"X" "F("\x09")"white");
+   _row_set(o, 3, F("\x12")"black"X" "F("\x13")"red"X" "F("\x14")"green"X" "F("\x15")"yellow");
+   _row_set(o, 4, F("\x16")"blue"X" "F("\x17")"magenta"X" "F("\x18")"cyan"X" "F("\x19")"white");
    for (y = 5; y < 24; y++) _row_set(o, y, "");
    
    evas_object_show(o);
