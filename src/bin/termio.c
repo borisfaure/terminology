@@ -3199,6 +3199,9 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         sd->mouse.cy = cy;
      }
    _remove_links(sd, obj);
+
+   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
+   sd->mouseover_delay = NULL;
 }
 
 static void
