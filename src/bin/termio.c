@@ -4485,7 +4485,12 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
    if (!sd) return;
    sd->link.suspend += dir;
    if (sd->link.suspend < 0) sd->link.suspend = 0;
-   if (!sd->link.suspend)
+   if (sd->link.suspend)
+     {
+        if (sd->anim) ecore_animator_del(sd->anim);
+        sd->anim = NULL;
+     }
+   else
      _smart_update_queue(obj, sd);
 }
 
