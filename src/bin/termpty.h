@@ -149,18 +149,18 @@ struct _Termcell
 
 struct _Termsave
 {
+   unsigned int   gen  : 8;
    unsigned int   comp : 1;
    unsigned int   z    : 1;
-   unsigned int   gen  : 8;
    unsigned int   w    : 22;
    Termcell       cell[1];
 };
 
 struct _Termsavecomp
 {
+   unsigned int   gen  : 8;
    unsigned int   comp : 1;
    unsigned int   z    : 1;
-   unsigned int   gen  : 8;
    unsigned int   w    : 22; // compressed size in bytes
    unsigned int   wout; // output width in Termcells
 };

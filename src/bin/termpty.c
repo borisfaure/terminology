@@ -1436,7 +1436,8 @@ _handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
 {
    Termblock *tb;
    int ido = 0, idn = 0;
-   
+
+   if (!((oldc | newc) & 0x80000000)) return;
    if (oldc & 0x80000000) ido = (oldc >> 18) & 0x1fff;
    if (newc & 0x80000000) idn = (newc >> 18) & 0x1fff;
    if (((oldc & 0x80000000) && (newc & 0x80000000)) && (idn == ido)) return;
