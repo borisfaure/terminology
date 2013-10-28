@@ -204,7 +204,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
                                         &(cells[ty->state.cx]), 1);
 #if defined(SUPPORT_DBLWIDTH)
         cells[ty->state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
-        if ((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1)))
+        if (EINA_UNLIKELY((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1))))
           {
              TERMPTY_FMTCLR(cells[ty->state.cx].att);
              termpty_cell_codepoint_att_fill(ty, 0, cells[ty->state.cx].att,
@@ -213,44 +213,32 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 #endif        
         if (ty->state.wrap)
           {
+             unsigned char offset = 1;
+
              ty->state.wrapnext = 0;
 #if defined(SUPPORT_DBLWIDTH)
-             if (cells[ty->state.cx].att.dblwidth)
-               {
-                  if (ty->state.cx >= (ty->w - 2)) ty->state.wrapnext = 1;
-                  else ty->state.cx += 2;
-               }
-             else
-               {
-                  if (ty->state.cx >= (ty->w - 1)) ty->state.wrapnext = 1;
-                  else ty->state.cx++;
-               }
-#else
-             if (ty->state.cx >= (ty->w - 1)) ty->state.wrapnext = 1;
-             else ty->state.cx++;
+	     if (EINA_UNLIKELY(cells[ty->state.cx].att.dblwidth))
+               offset = 2;
 #endif
+             if (EINA_UNLIKELY(ty->state.cx >= (ty->w - offset))) ty->state.wrapnext = 1;
+             else ty->state.cx += offset;
           }
         else
           {
+             unsigned char offset = 1;
+
              ty->state.wrapnext = 0;
              ty->state.cx++;
              if (ty->state.cx >= (ty->w - 1)) return;
 #if defined(SUPPORT_DBLWIDTH)
-             if (cells[ty->state.cx].att.dblwidth)
+             if (EINA_UNLIKELY(cells[ty->state.cx].att.dblwidth))
                {
                   ty->state.cx++;
-                  if (ty->state.cx >= (ty->w - 1))
-                    ty->state.cx = ty->w - 2;
+                  offset = 2;
                }
-             else
-               {
-                  if (ty->state.cx >= ty->w)
-                    ty->state.cx = ty->w - 1;
-               }
-#else
-             if (ty->state.cx >= ty->w)
-               ty->state.cx = ty->w - 1;
 #endif
+             if (ty->state.cx >= (ty->w - (offset - 1)))
+               ty->state.cx = ty->w - offset;
           }
      }
 }
