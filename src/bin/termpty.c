@@ -1429,15 +1429,12 @@ termpty_block_chid_get(Termpty *ty, const char *chid)
    return tb;
 }
 
-
-
-static inline void
-_handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
+static void
+_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
 {
    Termblock *tb;
    int ido = 0, idn = 0;
 
-   if (!((oldc | newc) & 0x80000000)) return;
    if (oldc & 0x80000000) ido = (oldc >> 18) & 0x1fff;
    if (newc & 0x80000000) idn = (newc >> 18) & 0x1fff;
    if (((oldc & 0x80000000) && (newc & 0x80000000)) && (idn == ido)) return;
@@ -1461,6 +1458,14 @@ _handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
         if (!tb) return;
         tb->refs++;
      }
+}
+
+/* Try to trick the compiler into inlining the first test */
+static inline void
+_handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
+{
+   if (!((oldc | newc) & 0x80000000)) return;
+   _handle_block_codepoint_overwrite_heavy(ty, oldc, newc);
 }
 
 void
@@ -1515,13 +1520,13 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
 void
 termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcell *dst, int n)
 {
+   Termcell local = { codepoint, att };
    int i;
    
    for (i = 0; i < n; i++)
      {
         _handle_block_codepoint_overwrite(ty, dst[i].codepoint, codepoint);
-        dst[i].codepoint = codepoint;
-        dst[i].att = att;
+        dst[i] = local;
      }
 }
 
