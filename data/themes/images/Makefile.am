@@ -11,6 +11,8 @@ bg_led_base.png \
 bg_led_glow.png \
 bg_led_strobe.png \
 bg_shadow.png \
+bg_shadow2.png \
+bg_shadow3.png \
 cr_glow.png \
 cr_key.png \
 cr_out.png \
