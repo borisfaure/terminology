@@ -103,6 +103,18 @@ static void _smart_calculate(Evas_Object *obj);
 static void _smart_mirror_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED);
 static void _lost_selection(void *data, Elm_Sel_Type selection);
 
+static void
+_sel_set(Evas_Object *obj, Eina_Bool enable)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   if (sd->cur.sel == enable) return;
+   sd->cur.sel = enable;
+   if (enable)
+     evas_object_smart_callback_call(obj, "selection,on", NULL);
+   else
+     evas_object_smart_callback_call(obj, "selection,off", NULL);
+}
+
 static inline Eina_Bool
 _should_inline(const Evas_Object *obj)
 {
@@ -1674,7 +1686,7 @@ _lost_selection(void *data, Elm_Sel_Type selection)
                   eina_stringshare_del(sd->sel_str);
                   sd->sel_str = NULL;
                }
-             sd->cur.sel = 0;
+             _sel_set(obj, EINA_FALSE);
              elm_object_cnp_selection_clear(sd->win, selection);
              _smart_update_queue(obj, sd);
              sd->have_sel = EINA_FALSE;
@@ -2281,7 +2293,7 @@ _sel_line(Evas_Object *obj, int cx EINA_UNUSED, int cy)
 
    termpty_cellcomp_freeze(sd->pty);
 
-   sd->cur.sel = 1;
+   _sel_set(obj, EINA_TRUE);
    sd->cur.makesel = 0;
    sd->cur.sel1.x = 0;
    sd->cur.sel1.y = cy;
@@ -2343,7 +2355,7 @@ _sel_word(Evas_Object *obj, int cx, int cy)
 
    termpty_cellcomp_freeze(sd->pty);
 
-   sd->cur.sel = 1;
+   _sel_set(obj, EINA_TRUE);
    sd->cur.makesel = 0;
    sd->cur.sel1.x = cx;
    sd->cur.sel1.y = cy;
@@ -2968,7 +2980,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift") && sd->backup.sel)
                {
-                  sd->cur.sel = 1;
+                  _sel_set(data, EINA_TRUE);
                   sd->cur.sel1.x = sd->backup.sel1.x;
                   sd->cur.sel1.y = sd->backup.sel1.y;
                   sd->cur.sel2.x = sd->backup.sel2.x;
@@ -2996,7 +3008,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->cur.sel1.y = cy - sd->scroll;
                   sd->cur.sel2.x = cx;
                   sd->cur.sel2.y = cy - sd->scroll;
-                  sd->cur.sel = EINA_TRUE;
+                  _sel_set(data, EINA_TRUE);
                   sd->cur.makesel = EINA_TRUE;
                   sd->boxsel = EINA_TRUE;
 #if defined(SUPPORT_DBLWIDTH)
@@ -3006,7 +3018,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              if (sd->top_left || sd->bottom_right)
                {
                   sd->cur.makesel = 1;
-                  sd->cur.sel = 1;
+                  _sel_set(data, EINA_TRUE);
                   if (sd->top_left)
                     {
                        sd->cur.sel1.x = cx;
@@ -3025,7 +3037,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                {
                   if (sd->cur.sel)
                     {
-                       sd->cur.sel = 0;
+                       _sel_set(data, EINA_FALSE);
                        sd->didclick = EINA_TRUE;
                     }
                   sd->cur.makesel = 1;
@@ -3124,7 +3136,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (sd->link.down.dnd)
      {
         sd->cur.makesel = 0;
-        sd->cur.sel = 0;
+        _sel_set(data, EINA_FALSE);
         _smart_update_queue(data, sd);
         return;
      }
@@ -3134,7 +3146,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           {
              if ((cx != sd->cur.sel1.x) ||
                  ((cy - sd->scroll) != sd->cur.sel1.y))
-               sd->cur.sel = 1;
+               _sel_set(data, EINA_TRUE);
           }
         if (sd->top_left)
           {
@@ -3797,7 +3809,7 @@ _smart_pty_cancel_sel(void *data)
    if (!sd) return;
    if (sd->cur.sel)
      {
-        sd->cur.sel = 0;
+        _sel_set(obj, EINA_FALSE);
         sd->cur.makesel = 0;
         _smart_update_queue(data, sd);
      }
@@ -4628,4 +4640,12 @@ termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg)
    if (!sd) return;
    sd->debugwhite = dbg;
    _smart_apply(obj);
+}
+
+Eina_Bool
+termio_selection_exists(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+   return sd->cur.sel;
 }
