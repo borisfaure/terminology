@@ -53,6 +53,7 @@ struct _Termio
       int x1, y1, x2, y2;
       int suspend;
       Eina_List *objs;
+      Evas_Object *ctxpopup;
       struct {
          Evas_Object *dndobj;
          Evas_Coord x, y;
@@ -66,6 +67,7 @@ struct _Termio
    unsigned int last_keyup;
    Eina_List *mirrors;
    Eina_List *seq;
+   Evas_Object *self;
    Evas_Object *event;
    Termpty *pty;
    Ecore_Animator *anim;
@@ -102,6 +104,7 @@ static Eina_List *terms = NULL;
 static void _smart_calculate(Evas_Object *obj);
 static void _smart_mirror_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED);
 static void _lost_selection(void *data, Elm_Sel_Type selection);
+static void _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text);
 
 static void
 _sel_set(Evas_Object *obj, Eina_Bool enable)
@@ -133,7 +136,7 @@ _should_inline(const Evas_Object *obj)
 }
 
 static void
-_activate_link(Evas_Object *obj)
+_activate_link(Evas_Object *obj, Eina_Bool may_inline)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config = termio_config_get(obj);
@@ -196,7 +199,7 @@ _activate_link(Evas_Object *obj)
         if (escaped)
           {
              type = media_src_type_get(sd->link.string);
-             if (_should_inline(obj))
+             if (may_inline && _should_inline(obj))
                {
                   if ((type == TYPE_IMG) ||
                       (type == TYPE_SCALE) ||
@@ -247,7 +250,7 @@ _activate_link(Evas_Object *obj)
         if (escaped)
           {
              type = media_src_type_get(sd->link.string);
-             if (_should_inline(obj))
+             if (may_inline && _should_inline(obj))
                {
                   if ((type == TYPE_IMG) ||
                       (type == TYPE_SCALE) ||
@@ -301,16 +304,86 @@ _activate_link(Evas_Object *obj)
 }
 
 static void
+_cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Termio *sd = data;
+   sd->link.ctxpopup = NULL;
+   elm_object_focus_set(sd->self, EINA_TRUE);
+}
+
+static void
+_cb_ctxp_dismissed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxp_link_preview(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   _activate_link(term, EINA_TRUE);
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxp_link_open(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   _activate_link(term, EINA_FALSE);
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxp_link_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN(sd->link.string);
+   _take_selection_text(term, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
+   evas_object_del(obj);
+}
+
+static void
 _cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
    if (!sd) return;
    
-   if (ev->button != 1) return;
-   sd->link.down.down = EINA_TRUE;
-   sd->link.down.x = ev->canvas.x;
-   sd->link.down.y = ev->canvas.y;
+   if (ev->button == 1)
+     {
+        sd->link.down.down = EINA_TRUE;
+        sd->link.down.x = ev->canvas.x;
+        sd->link.down.y = ev->canvas.y;
+     }
+   else if (ev->button == 3)
+     {
+        Evas_Object *ctxp = elm_ctxpopup_add(sd->win);
+        sd->link.ctxpopup = ctxp;
+
+        if (sd->config->helper.inline_please)
+          {
+             int type = media_src_type_get(sd->link.string);
+
+             if ((type == TYPE_IMG) ||
+                 (type == TYPE_SCALE) ||
+                 (type == TYPE_EDJE) ||
+                 (type == TYPE_MOV))
+               elm_ctxpopup_item_append(ctxp, "Preview", NULL,
+                                        _cb_ctxp_link_preview, sd->self);
+          }
+        elm_ctxpopup_item_append(ctxp, "Open", NULL, _cb_ctxp_link_open,
+                                 sd->self);
+        elm_ctxpopup_item_append(ctxp, "Copy", NULL, _cb_ctxp_link_copy,
+                                 sd->self);
+        evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
+        evas_object_show(ctxp);
+        evas_object_smart_callback_add(ctxp, "dismissed",
+                                       _cb_ctxp_dismissed, sd);
+        evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
+                                       _cb_ctxp_del, sd);
+     }
 }
 
 static Eina_Bool
@@ -320,7 +393,7 @@ _cb_link_up_delay(void *data)
    if (!sd) return EINA_FALSE;
    
    sd->link_do_timer = NULL;
-   if (!sd->didclick) _activate_link(data);
+   if (!sd->didclick) _activate_link(data, EINA_TRUE);
    sd->didclick = EINA_FALSE;
    return EINA_FALSE;
 }
@@ -1695,6 +1768,28 @@ _lost_selection(void *data, Elm_Sel_Type selection)
 }
 
 static void
+_take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   text = eina_stringshare_add(text);
+
+   sd->have_sel = EINA_FALSE;
+   sd->reset_sel = EINA_FALSE;
+   sd->set_sel_at = ecore_time_get(); // hack
+   sd->sel_type = type;
+   elm_cnp_selection_set(sd->win, type,
+                         ELM_SEL_FORMAT_TEXT,
+                         text,
+                         eina_stringshare_strlen(text));
+   elm_cnp_selection_loss_callback_set(sd->win, type,
+                                       _lost_selection, obj);
+   sd->have_sel = EINA_TRUE;
+   if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+   sd->sel_str = text;
+}
+
+static void
 _take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -1754,19 +1849,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    if (s)
      {
         if ((sd->win) && (len > 0))
-          {
-             sd->have_sel = EINA_FALSE;
-             sd->reset_sel = EINA_FALSE;
-             sd->set_sel_at = ecore_time_get(); // hack
-             sd->sel_type = type;
-             elm_cnp_selection_set(sd->win, type,
-                                   ELM_SEL_FORMAT_TEXT, s, len);
-             elm_cnp_selection_loss_callback_set(sd->win, type,
-                                                 _lost_selection, obj);
-             sd->have_sel = EINA_TRUE;
-             if (sd->sel_str) eina_stringshare_del(sd->sel_str);
-             sd->sel_str = eina_stringshare_add(s);
-          }
+          _take_selection_text(obj, type, s);
         free(s);
      }
 }
@@ -2247,6 +2330,9 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
+
+   if (sd->link.ctxpopup) return; /* ctxp triggers focus out we should ignore */
+
    edje_object_signal_emit(sd->cur.obj, "focus,out", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
@@ -3059,7 +3145,8 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    else if (ev->button == 3)
      {
         elm_object_focus_set(data, EINA_TRUE);
-        evas_object_smart_callback_call(data, "options", NULL);
+        if (!sd->link.string)
+          evas_object_smart_callback_call(data, "options", NULL);
      }
 }
 
@@ -3202,6 +3289,9 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
+
+   if (sd->link.ctxpopup) return; /* ctxp triggers mouse out we should ignore */
+
    termio_mouseover_suspend_pushpop(data, 1);
    ty_dbus_link_hide();
    if ((ev->canvas.x == 0) || (ev->canvas.y == 0))
@@ -3496,6 +3586,7 @@ _smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, sd);
 
    _parent_sc.add(obj);
+   sd->self = obj;
 
    /* Terminal output widget */
    o = evas_object_textgrid_add(evas_object_evas_get(obj));
