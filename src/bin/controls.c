@@ -15,6 +15,22 @@ static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
 static void (*ct_donecb) (void *data) = NULL;
 static void *ct_donedata = NULL;
 
+static void
+_cb_sel_on(void *data EINA_UNUSED, Evas_Object *term EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Evas_Object *bt_copy = evas_object_data_get(ct_frame, "bt_copy");
+   if (bt_copy)
+     elm_object_disabled_set(bt_copy, EINA_FALSE);
+}
+
+static void
+_cb_sel_off(void *data EINA_UNUSED, Evas_Object *term EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   Evas_Object *bt_copy = evas_object_data_get(ct_frame, "bt_copy");
+   if (bt_copy)
+     elm_object_disabled_set(bt_copy, EINA_TRUE);
+}
+
 static Eina_Bool
 _cb_ct_del_delay(void *data EINA_UNUSED)
 {
@@ -94,6 +110,11 @@ _cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 static void
 _cb_frame_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
+   if (ct_term)
+     {
+        evas_object_smart_callback_del(ct_term, "selection,on", _cb_sel_on);
+        evas_object_smart_callback_del(ct_term, "selection,off", _cb_sel_off);
+     }
    ct_frame = NULL;
 }
 
@@ -247,6 +268,9 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_show(o);
         
         o = _button_add(win, "Copy", "copy", _cb_ct_copy, term);
+        evas_object_data_set(ct_frame, "bt_copy", o);
+        if (!termio_selection_exists(term))
+          elm_object_disabled_set(o, EINA_TRUE);
         elm_box_pack_end(ct_box, o);
         o = _button_add(win, "Paste", "paste", _cb_ct_paste, term);
         elm_box_pack_end(ct_box, o);
@@ -265,6 +289,11 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
 
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
                                        _cb_frame_del, NULL);
+
+        evas_object_smart_callback_add(term, "selection,on", _cb_sel_on,
+                                       NULL);
+        evas_object_smart_callback_add(term, "selection,off", _cb_sel_off,
+                                       NULL);
      }
    if (!ct_out)
      {
