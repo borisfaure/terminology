@@ -3072,8 +3072,55 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              if (sd->pty->selection.is_active &&
                  (sd->top_left || sd->bottom_right))
                {
+                  /* stretch selection */
+                  int start_x, start_y, end_x, end_y;
+
+                  start_x = sd->pty->selection.start.x;
+                  start_y = sd->pty->selection.start.y;
+                  end_x   = sd->pty->selection.end.x;
+                  end_y   = sd->pty->selection.end.y;
                   _sel_set(data, EINA_TRUE);
                   sd->pty->selection.makesel = EINA_TRUE;
+                  if (sd->pty->selection.is_box)
+                    {
+                       if (sd->top_left)
+                         {
+                            if (start_y < end_y)
+                              INT_SWAP(start_y, end_y);
+                            if (start_x < end_x)
+                              INT_SWAP(start_x, end_x);
+                         }
+                       else
+                         {
+                            if (start_y > end_y)
+                              INT_SWAP(start_y, end_y);
+                            if (start_x > end_x)
+                              INT_SWAP(start_x, end_x);
+                         }
+                    }
+                  else
+                    {
+                       if (sd->top_left)
+                         {
+                            if ((start_y < end_y) ||
+                                ((start_y == end_y) && (end_x > start_x)))
+                              {
+                                 INT_SWAP(start_y, end_y);
+                                 INT_SWAP(start_x, end_x);
+                              }
+                         }
+                       else
+                         {
+                            if ((start_y > end_y) ||
+                                ((start_y == end_y) && (end_x < start_x)))
+                              {
+                                 INT_SWAP(start_y, end_y);
+                                 INT_SWAP(start_x, end_x);
+                              }
+                         }
+                    }
+                  sd->pty->selection.start.x = start_x;
+                  sd->pty->selection.start.y = start_y;
                   sd->pty->selection.end.x = cx;
                   sd->pty->selection.end.y = cy - sd->scroll;
                   _selection_dbl_fix(data);
