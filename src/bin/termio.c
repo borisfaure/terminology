@@ -2349,7 +2349,8 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *cx, int *cy)
+_smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
+                    int *cx, int *cy)
 {
    Termio *sd;
    Evas_Coord ox, oy;
@@ -2357,17 +2358,17 @@ _smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *cx, int *
    sd = evas_object_smart_data_get(obj);
    if (!sd)
      {
-        *cx = -1;
-        *cy = -1;
+        *cx = 0;
+        *cy = 0;
         return;
      }
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
    *cx = (x - ox) / sd->font.chw;
    *cy = (y - oy) / sd->font.chh;
-   if (*cx < 0) *cx = -1;
-   else if (*cx >= sd->grid.w) *cx = -1;
+   if (*cx < 0) *cx = 0;
+   else if (*cx >= sd->grid.w) *cx = sd->grid.w - 1;
    if (*cy < 0) *cy = 0;
-   else if (*cy >= sd->grid.h) *cy = -1;
+   else if (*cy >= sd->grid.h) *cy = sd->grid.h - 1;
 }
 
 static void
