@@ -3037,7 +3037,6 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
      {
-        sd->pty->selection.is_box = EINA_FALSE;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              _sel_line(data, cx, cy - sd->scroll);
@@ -3070,33 +3069,13 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         else
           {
              /* SINGLE CLICK */
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
-                 evas_key_modifier_is_set(ev->modifiers, "Control") ||
-                 evas_key_modifier_is_set(ev->modifiers, "Alt"))
+             if (sd->pty->selection.is_active &&
+                 (sd->top_left || sd->bottom_right))
                {
-                  sd->pty->selection.start.x = cx;
-                  sd->pty->selection.start.y = cy - sd->scroll;
+                  _sel_set(data, EINA_TRUE);
+                  sd->pty->selection.makesel = EINA_TRUE;
                   sd->pty->selection.end.x = cx;
                   sd->pty->selection.end.y = cy - sd->scroll;
-                  _sel_set(data, EINA_TRUE);
-                  sd->pty->selection.makesel = EINA_TRUE;
-                  sd->pty->selection.is_box = EINA_TRUE;
-                  _selection_dbl_fix(data);
-               }
-             if (sd->top_left || sd->bottom_right)
-               {
-                  _sel_set(data, EINA_TRUE);
-                  sd->pty->selection.makesel = EINA_TRUE;
-                  if (sd->top_left)
-                    {
-                       sd->pty->selection.start.x = cx;
-                       sd->pty->selection.start.y = cy - sd->scroll;
-                    }
-                  else
-                    {
-                       sd->pty->selection.end.x = cx;
-                       sd->pty->selection.end.y = cy - sd->scroll;
-                    }
                   _selection_dbl_fix(data);
                }
              else
@@ -3105,13 +3084,34 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                     {
                        _sel_set(data, EINA_FALSE);
                        sd->didclick = EINA_TRUE;
+                       sd->pty->selection.makesel = EINA_FALSE;
                     }
-                  sd->pty->selection.makesel = EINA_TRUE;
-                  sd->pty->selection.start.x = cx;
-                  sd->pty->selection.start.y = cy - sd->scroll;
-                  sd->pty->selection.end.x = cx;
-                  sd->pty->selection.end.y = cy - sd->scroll;
-                  _selection_dbl_fix(data);
+                  else
+                    {
+                       _sel_set(data, EINA_TRUE);
+                       if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+                           evas_key_modifier_is_set(ev->modifiers, "Control") ||
+                           evas_key_modifier_is_set(ev->modifiers, "Alt"))
+                         {
+                            sd->pty->selection.start.x = cx;
+                            sd->pty->selection.start.y = cy - sd->scroll;
+                            sd->pty->selection.end.x = cx;
+                            sd->pty->selection.end.y = cy - sd->scroll;
+                            sd->pty->selection.makesel = EINA_TRUE;
+                            sd->pty->selection.is_box = EINA_TRUE;
+                            _selection_dbl_fix(data);
+                         }
+                       else
+                         {
+                            sd->pty->selection.makesel = EINA_TRUE;
+                            sd->pty->selection.start.x = cx;
+                            sd->pty->selection.start.y = cy - sd->scroll;
+                            sd->pty->selection.end.x = cx;
+                            sd->pty->selection.end.y = cy - sd->scroll;
+                            sd->pty->selection.is_box = EINA_FALSE;
+                            _selection_dbl_fix(data);
+                         }
+                    }
                }
           }
         _smart_update_queue(data, sd);
@@ -3222,6 +3222,8 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              INT_SWAP(start_x, end_x);
           }
         cy -= sd->scroll;
+        sd->top_left = EINA_FALSE;
+        sd->bottom_right = EINA_FALSE;
         if (cy < start_y || (cy == start_y && cx <= start_x)) {
              sd->top_left = EINA_TRUE;
         } else if (cy > end_y || (cy == end_y && cx > end_x)) {
