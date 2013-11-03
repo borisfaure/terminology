@@ -71,6 +71,7 @@ struct _Termio
    Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
    Ecore_Timer *link_do_timer;
+   Ecore_Timer *mouse_selection_scroll;
    Ecore_Job *mouse_move_job;
    Ecore_Timer *mouseover_delay;
    Evas_Object *win, *theme, *glayer;
@@ -3189,6 +3190,11 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    if (sd->link.down.dnd) return;
    if (sd->pty->selection.makesel)
      {
+        if (sd->mouse_selection_scroll)
+          {
+             ecore_timer_del(sd->mouse_selection_scroll);
+             sd->mouse_selection_scroll = NULL;
+          }
 
         if ((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
             (sd->pty->selection.start.y == sd->pty->selection.end.y))
@@ -3226,17 +3232,81 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
      }
 }
 
+static Eina_Bool
+_mouse_selection_scroll(void *data)
+{
+   Evas_Object *obj = data;
+   Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Coord oy, my;
+   int cy;
+
+   if (!sd->pty->selection.makesel) return EINA_FALSE;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), NULL, &my);
+   evas_object_geometry_get(data, NULL, &oy, NULL, NULL);
+   cy = (my - oy) / sd->font.chh;
+   if (cy < 0)
+     {
+        sd->scroll -= cy;
+        if (sd->scroll > sd->pty->backscroll_num)
+          sd->scroll = sd->pty->backscroll_num;
+        sd->pty->selection.end.y = -sd->scroll;
+        _smart_update_queue(data, sd);
+     }
+   else if (cy >= sd->grid.h)
+     {
+        sd->scroll -= cy - sd->grid.h;
+        if (sd->scroll < 0) sd->scroll = 0;
+        sd->pty->selection.end.y = sd->scroll + sd->grid.h - 1;
+        _smart_update_queue(data, sd);
+     }
+
+   return EINA_TRUE;
+}
+
 static void
 _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd;
    int cx, cy;
+   Evas_Coord ox, oy;
+   Eina_Bool scroll = EINA_FALSE;
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
 
-   _smart_xy_to_cursor(data, ev->cur.canvas.x, ev->cur.canvas.y, &cx, &cy);
+   DBG("(%d; %d)", ev->cur.canvas.y, ev->cur.canvas.x);
+   evas_object_geometry_get(data, &ox, &oy, NULL, NULL);
+   cx = (ev->cur.canvas.x - ox) / sd->font.chw;
+   cy = (ev->cur.canvas.y - oy) / sd->font.chh;
+   if (cx < 0) cx = 0;
+   else if (cx >= sd->grid.w) cx = sd->grid.w - 1;
+   if (cy < 0)
+     {
+        cy = 0;
+        if (sd->pty->selection.makesel)
+             scroll = EINA_TRUE;
+     }
+   else if (cy >= sd->grid.h)
+     {
+        cy = sd->grid.h - 1;
+        if (sd->pty->selection.makesel)
+             scroll = EINA_TRUE;
+     }
+   if (scroll == EINA_TRUE)
+     {
+        if (!sd->mouse_selection_scroll) {
+             sd->mouse_selection_scroll
+                = ecore_timer_add(0.05, _mouse_selection_scroll, data);
+        }
+        return;
+     }
+   else if (sd->mouse_selection_scroll)
+     {
+        ecore_timer_del(sd->mouse_selection_scroll);
+        sd->mouse_selection_scroll = NULL;
+     }
 
    if ((sd->mouse.cx == cx) && (sd->mouse.cy == cy)) return;
 
@@ -3352,7 +3422,6 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    if (sd->pty->mouse_mode == MOUSE_OFF)
      {
-
         sd->scroll -= (ev->z * 4);
         if (sd->scroll > sd->pty->backscroll_num)
           sd->scroll = sd->pty->backscroll_num;
