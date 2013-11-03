@@ -1558,29 +1558,6 @@ _smart_apply(Evas_Object *obj)
                 {
                    INT_SWAP(start_y, end_y);
                    INT_SWAP(start_x, end_x);
-
-                   if (sd->top_left)
-                     {
-                        sd->top_left = EINA_FALSE;
-                        sd->bottom_right = EINA_TRUE;
-                        edje_object_signal_emit(sd->sel.theme,
-                                                "mouse,out",
-                                                "zone.top_left");
-                        edje_object_signal_emit(sd->sel.theme,
-                                                "mouse,in",
-                                                "zone.bottom_right");
-                     }
-                   else if (sd->bottom_right)
-                     {
-                        sd->top_left = EINA_TRUE;
-                        sd->bottom_right = EINA_FALSE;
-                        edje_object_signal_emit(sd->sel.theme,
-                                                "mouse,out",
-                                                "zone.bottom_right");
-                        edje_object_signal_emit(sd->sel.theme,
-                                                "mouse,in",
-                                                "zone.top_left");
-                     }
                 }
            }
         size_top = start_x * sd->font.chw;
@@ -3177,16 +3154,8 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
         if (sd->pty->selection.is_active)
           {
              sd->didclick = EINA_TRUE;
-             if (sd->top_left)
-               {
-                  sd->pty->selection.start.x = cx;
-                  sd->pty->selection.start.y = cy - sd->scroll;
-               }
-             else
-               {
-                  sd->pty->selection.end.x = cx;
-                  sd->pty->selection.end.y = cy - sd->scroll;
-               }
+             sd->pty->selection.end.x = cx;
+             sd->pty->selection.end.y = cy - sd->scroll;
              _selection_dbl_fix(data);
              if (sd->pty->selection.is_box)
               {
@@ -3236,61 +3205,31 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      }
    if (sd->pty->selection.makesel)
      {
+        int start_x, start_y, end_x, end_y;
         if (!sd->pty->selection.is_active)
           {
              if ((cx != sd->pty->selection.start.x) ||
                  ((cy - sd->scroll) != sd->pty->selection.start.y))
                _sel_set(data, EINA_TRUE);
           }
-        if (sd->top_left)
+        start_x = sd->pty->selection.start.x;
+        start_y = sd->pty->selection.start.y;
+        end_x   = sd->pty->selection.end.x;
+        end_y   = sd->pty->selection.end.y;
+        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
           {
-             sd->pty->selection.start.x = cx;
-             sd->pty->selection.start.y = cy - sd->scroll;
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
           }
-        else if (sd->bottom_right)
-          {
-             sd->pty->selection.end.x = cx;
-             sd->pty->selection.end.y = cy - sd->scroll;
-          }
-        else
-          {
-             int start_x, start_y, end_x, end_y;
+        cy -= sd->scroll;
+        if (cy < start_y || (cy == start_y && cx <= start_x)) {
+             sd->top_left = EINA_TRUE;
+        } else if (cy > end_y || (cy == end_y && cx > end_x)) {
+             sd->bottom_right = EINA_TRUE;
+        }
+        sd->pty->selection.end.x = cx;
+        sd->pty->selection.end.y = cy;
 
-             start_x = sd->pty->selection.start.x;
-             start_y = sd->pty->selection.start.y;
-             end_x   = sd->pty->selection.end.x;
-             end_y   = sd->pty->selection.end.y;
-
-             if (sd->pty->selection.is_box)
-               {
-                  if (start_y > end_y)
-                    {
-                       INT_SWAP(start_y, end_y);
-                    }
-                  if (start_x > end_x)
-                    INT_SWAP(start_x, end_x);
-               }
-             else
-               {
-                  if ((start_y > end_y) ||
-                      ((start_y == end_y) && (end_x < start_x)))
-                    {
-                       INT_SWAP(start_y, end_y);
-                       INT_SWAP(start_x, end_x);
-                    }
-               }
-             cy -= sd->scroll;
-
-             if (cy < start_y || (cy == start_y && cx <= start_x)) {
-                  sd->top_left = EINA_TRUE;
-                  sd->pty->selection.start.x = cx;
-                  sd->pty->selection.start.y = cy;
-             } else if (cy > end_y || (cy == end_y && cx > end_x)) {
-                  sd->bottom_right = EINA_TRUE;
-                  sd->pty->selection.end.x = cx;
-                  sd->pty->selection.end.y = cy;
-             }
-          }
         _selection_dbl_fix(data);
         if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
