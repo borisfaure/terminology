@@ -18,22 +18,25 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_C___ATTRIBUTE__
 
+efl_version="1.8.0"
+AC_SUBST(efl_version)
+
 requirements="\
-   elementary >= 1.7.0 \
-   eina >= 1.7.0 \
-   eet >= 1.7.0 \
-   evas >= 1.7.0 \
-   ecore >= 1.7.0 \
-   ecore-evas >= 1.7.0 \
-   ecore-file >= 1.7.0 \
-   edje >= 1.7.0 \
-   emotion >= 1.7.0 \
-   ecore-input >= 1.7.0 \
-   ecore-imf >= 1.7.0 \
-   ecore-imf-evas >= 1.7.0 \
-   ecore-ipc >= 1.7.0 \
-   efreet >= 1.7.0 \
-   ethumb_client >= 1.7.0 \
+   elementary >= ${efl_version} \
+   eina >= ${efl_version} \
+   eet >= ${efl_version} \
+   evas >= ${efl_version} \
+   ecore >= ${efl_version} \
+   ecore-evas >= ${efl_version} \
+   ecore-file >= ${efl_version} \
+   edje >= ${efl_version} \
+   emotion >= ${efl_version} \
+   ecore-input >= ${efl_version} \
+   ecore-imf >= ${efl_version} \
+   ecore-imf-evas >= ${efl_version} \
+   ecore-ipc >= ${efl_version} \
+   efreet >= ${efl_version} \
+   ethumb_client >= ${efl_version} \
    "
 
 EFL_ENABLE_EO_API_SUPPORT
