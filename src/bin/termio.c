@@ -304,7 +304,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
 }
 
 static void
-_cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+             void *event EINA_UNUSED)
 {
    Termio *sd = data;
    sd->link.ctxpopup = NULL;
@@ -312,7 +313,8 @@ _cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_cb_ctxp_dismissed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_dismissed(void *data EINA_UNUSED, Evas_Object *obj,
+                   void *event EINA_UNUSED)
 {
    evas_object_del(obj);
 }
