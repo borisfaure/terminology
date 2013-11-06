@@ -3167,7 +3167,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
         sd->cur.makesel = 0;
 
         if ((sd->cur.sel1.x == sd->cur.sel2.x) &&
-            (sd->cur.sel2.y == sd->cur.sel2.y))
+            (sd->cur.sel1.y == sd->cur.sel2.y))
           {
              _sel_set(data, EINA_FALSE);
              sd->didclick = EINA_FALSE;
