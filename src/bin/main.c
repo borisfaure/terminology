@@ -499,6 +499,7 @@ static void
 _split_merge(Split *spp, Split *sp, const char *slot)
 {
    Evas_Object *o = NULL;
+   if (!sp) return;
    
    if (sp->term)
      {
@@ -1512,8 +1513,11 @@ _cb_cmd_focus(void *data)
    
    wn->cmdbox_focus_timer = NULL;
    term = main_win_focused_term_get(wn);
-   if (term) elm_object_focus_set(term->term, EINA_FALSE);
-   if (term->wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_TRUE);
+   if (term)
+     {
+        elm_object_focus_set(term->term, EINA_FALSE);
+        if (term->wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_TRUE);
+     }
    return EINA_FALSE;
 }
 
