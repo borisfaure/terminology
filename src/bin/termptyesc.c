@@ -1041,7 +1041,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
         if (ty->prop.title) eina_stringshare_del(ty->prop.title);
         if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-        if (b)
+        if (s)
           {
              ty->prop.title = eina_stringshare_add(s);
              ty->prop.icon = eina_stringshare_add(s);
