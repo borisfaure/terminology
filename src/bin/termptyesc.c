@@ -1139,7 +1139,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
         if (ty->cb.command.func) ty->cb.command.func(ty->cb.command.data);
      }
    ty->cur_cmd = NULL;
-   if (s) free(s);
+   free(s);
    if (buf != bufsmall) free(buf);
    return cc - c;
 }
