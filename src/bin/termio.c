@@ -1824,10 +1824,13 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
              char *tmp = termio_selection_get(obj, start_x, i, end_x, i,
                                               &len);
 
-             eina_strbuf_append_length(sb, tmp, len);
-             if (len && tmp[len - 1] != '\n')
-               eina_strbuf_append_char(sb, '\n');
-             free(tmp);
+             if (tmp)
+               {
+                  eina_strbuf_append_length(sb, tmp, len);
+                  if (len && tmp[len - 1] != '\n')
+                    eina_strbuf_append_char(sb, '\n');
+                  free(tmp);
+               }
           }
         len = eina_strbuf_length_get(sb);
         s = eina_strbuf_string_steal(sb);
