@@ -448,7 +448,8 @@ config_load(const char *key)
           }
      }
 
-   config->config_key = eina_stringshare_add(key); /* not in eet */
+   if (config)
+     config->config_key = eina_stringshare_add(key); /* not in eet */
 
    return config;
 }
