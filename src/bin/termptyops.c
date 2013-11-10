@@ -1,5 +1,6 @@
 #include "private.h"
 #include <Elementary.h>
+#include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"
 #include "termptyops.h"
@@ -70,24 +71,18 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
         end_y = ty->state.scroll_y2 - 1;
      }
    else
-     {
-        if (!ty->altbuf)
-          {
-             termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
-             if (ty->cb.scroll.func) ty->cb.scroll.func(ty->cb.scroll.data);
-          }
-        else
-          if (ty->cb.cancel_sel.func)
-            ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
-     }
+     if (!ty->altbuf)
+       termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
+
+   termio_scroll(ty->obj, -1);
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
 
    if (start_y == 0 && end_y == ty->h - 1)
      {
        // screen is a circular buffer now
-       cells2 = &(ty->screen[ty->circular_offset * ty->w]);
+       cells = &(ty->screen[ty->circular_offset * ty->w]);
        if (clear)
-          _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
+          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
 
        ty->circular_offset++;
        if (ty->circular_offset >= ty->h)
@@ -95,15 +90,15 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
      }
    else
      {
-       cells2 = &(ty->screen[end_y * ty->w]);
+       cells = &(ty->screen[end_y * ty->w]);
        for (y = start_y; y < end_y; y++)
          {
-            cells = &(ty->screen[y * ty->w]);
-            cells2 = &(ty->screen[(y + 1) * ty->w]);
-            termpty_cell_copy(ty, cells2, cells, ty->w);
+            cells = &(ty->screen[(y + 1) * ty->w]);
+            cells2 = &(ty->screen[y * ty->w]);
+            termpty_cell_copy(ty, cells, cells2, ty->w);
          }
        if (clear)
-          _text_clear(ty, cells2, ty->w, 0, EINA_TRUE);
+          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
 }
 
@@ -119,6 +114,7 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
         end_y = ty->state.scroll_y2 - 1;
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
+   termio_scroll(ty->obj, 1);
 
    if (start_y == 0 && end_y == ty->h - 1)
      {
@@ -292,29 +288,29 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
         break;
       case TERMPTY_CLR_BEGIN:
         if (ty->state.cy > 0)
-	  {
-	    // First clear from circular > height, then from 0 to circular
-	    int y = ty->state.cy + ty->circular_offset;
+          {
+             // First clear from circular > height, then from 0 to circular
+             int y = ty->state.cy + ty->circular_offset;
 
-            cells = &(TERMPTY_SCREEN(ty, 0, 0));
+             cells = &(TERMPTY_SCREEN(ty, 0, 0));
 
-	    if (y < ty->h)
-	      {
-		_text_clear(ty, cells, ty->w * ty->state.cy, 0, EINA_TRUE);
-	      }
-	    else
-	      {
-		int yt = y % ty->w;
-		int yb = ty->h - ty->circular_offset;
+             if (y < ty->h)
+               {
+                  _text_clear(ty, cells, ty->w * ty->state.cy, 0, EINA_TRUE);
+               }
+             else
+               {
+                  int yt = y % ty->w;
+                  int yb = ty->h - ty->circular_offset;
 
-		_text_clear(ty, cells, ty->w * yb, 0, EINA_TRUE);
-		_text_clear(ty, ty->screen, ty->w * yt, 0, EINA_TRUE);
-	      }
-	  }
+                  _text_clear(ty, cells, ty->w * yb, 0, EINA_TRUE);
+                  _text_clear(ty, ty->screen, ty->w * yt, 0, EINA_TRUE);
+               }
+          }
         _termpty_clear_line(ty, mode, ty->w);
         break;
       case TERMPTY_CLR_ALL:
-	ty->circular_offset = 0;
+        ty->circular_offset = 0;
         _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
         ty->state.scroll_y2 = 0;
         break;

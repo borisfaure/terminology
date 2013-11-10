@@ -12,6 +12,7 @@ char        *termio_selection_get(Evas_Object *obj,
                                   int c1x, int c1y, int c2x, int c2y,
                                   size_t *len);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);
+void termio_scroll(Evas_Object *obj, int direction);
 
 void         termio_config_update(Evas_Object *obj);
 Config      *termio_config_get(const Evas_Object *obj);

@@ -109,7 +109,7 @@ struct _Termpty
       struct {
          void (*func) (void *data);
          void *data;
-      } change, scroll, set_title, set_icon, cancel_sel, exited, bell, command;
+      } change, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
       const char *title, *icon;

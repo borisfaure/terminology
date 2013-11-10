@@ -3941,12 +3941,13 @@ _smart_pty_change(void *data)
    _smart_update_queue(data, sd);
 }
 
-static void
-_smart_pty_scroll(void *data)
+void
+termio_scroll(Evas_Object *obj, int direction)
 {
-   Evas_Object *obj = data;
    Termio *sd;
+   Termpty *ty;
    int changed = 0;
+
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
@@ -3959,13 +3960,14 @@ _smart_pty_scroll(void *data)
           sd->scroll = sd->pty->backscroll_num;
         changed = 1;
      }
-   if (sd->pty->selection.is_active)
+   ty = sd->pty;
+   if (ty->selection.is_active)
      {
-        sd->pty->selection.start.y--;
-        sd->pty->selection.end.y--;
+        ty->selection.start.y += direction;
+        ty->selection.end.y += direction;
         changed = 1;
      }
-   if (changed) _smart_update_queue(data, sd);
+   if (changed) _smart_update_queue(obj, sd);
 }
 
 static void
@@ -4402,8 +4404,6 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
    sd->pty->obj = obj;
    sd->pty->cb.change.func = _smart_pty_change;
    sd->pty->cb.change.data = obj;
-   sd->pty->cb.scroll.func = _smart_pty_scroll;
-   sd->pty->cb.scroll.data = obj;
    sd->pty->cb.set_title.func = _smart_pty_title;
    sd->pty->cb.set_title.data = obj;
    sd->pty->cb.set_icon.func = _smart_pty_icon;
