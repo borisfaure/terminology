@@ -913,7 +913,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         arg = _csi_arg_get(&b);
         if (!b)
           {
-             INF("no region args reset region");
+             WRN("no region args reset region");
              ty->state.scroll_y1 = 0;
              ty->state.scroll_y2 = 0;
           }
@@ -924,7 +924,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              arg2 = _csi_arg_get(&b);
              if (!b)
                {
-                  INF("failed to give 2 region args reset region");
+                  WRN("failed to give 2 regions args reset region");
                   ty->state.scroll_y1 = 0;
                   ty->state.scroll_y2 = 0;
                }
@@ -932,13 +932,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                {
                   if (arg > arg2)
                     {
-                       ERR("scroll region beginning > end [%i %i]", arg, arg2);
+                       DBG("scroll region beginning > end [%i %i]", arg, arg2);
                        ty->state.scroll_y1 = 0;
                        ty->state.scroll_y2 = 0;
                     }
                   else
                     {
-                       INF("2 region args: %i %i", arg, arg2);
+                       DBG("2 regions args: %i %i", arg, arg2);
                        if (arg >= ty->h) arg = ty->h - 1;
                        if (arg2 > ty->h) arg2 = ty->h;
                        arg2++;
