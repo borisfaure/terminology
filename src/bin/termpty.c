@@ -815,9 +815,11 @@ _termpty_vertically_expand(Termpty *ty, int old_w, int old_h,
                            Termcell *old_screen)
 {
    int from_history = 0, y;
-   
+
+   if (ty->altbuf) return;
+
    termpty_save_freeze();
-   
+
    if (ty->backmax > 0)
      from_history = MIN(ty->h - old_h, ty->backscroll_num);
    if (old_screen)
@@ -878,6 +880,8 @@ _termpty_vertically_shrink(Termpty *ty, int old_w, int old_h,
        old_circular_offset,
        y;
    Termcell *src, *dst;
+
+   if (ty->altbuf) return;
 
    termpty_save_freeze();
    
