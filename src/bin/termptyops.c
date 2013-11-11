@@ -174,6 +174,8 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    Termcell *cells;
    int i, j;
 
+   termio_content_change(ty->obj, ty->state.cx, ty->state.cy, len);
+
    cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
    for (i = 0; i < len; i++)
      {
@@ -244,13 +246,13 @@ _termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
 {
    Termcell *cells;
    int n = 0;
+   Evas_Coord x = 0, y = ty->state.cy;
 
-   cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
    switch (mode)
      {
       case TERMPTY_CLR_END:
         n = ty->w - ty->state.cx;
-        cells = &(cells[ty->state.cx]);
+        x = ty->state.cx;
         break;
       case TERMPTY_CLR_BEGIN:
         n = ty->state.cx + 1;
@@ -261,7 +263,9 @@ _termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
       default:
         return;
      }
+   cells = &(TERMPTY_SCREEN(ty, x, y));
    if (n > limit) n = limit;
+   termio_content_change(ty->obj, x, y, n);
    _text_clear(ty, cells, n, 0, EINA_TRUE);
 }
 
@@ -278,6 +282,8 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
           {
              int l = ty->h - (ty->state.cy + 1);
 
+             termio_content_change(ty->obj, 0, ty->state.cy, l * ty->w);
+
              while (l)
                {
                   cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + l)));
@@ -291,6 +297,8 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
           {
              // First clear from circular > height, then from 0 to circular
              int y = ty->state.cy + ty->circular_offset;
+
+             termio_content_change(ty->obj, 0, 0, ty->state.cy * ty->w);
 
              cells = &(TERMPTY_SCREEN(ty, 0, 0));
 
@@ -313,12 +321,13 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
         ty->circular_offset = 0;
         _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
         ty->state.scroll_y2 = 0;
+        ERR("foo");
+        if (ty->cb.cancel_sel.func)
+          ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         break;
       default:
         break;
      }
-   if (ty->cb.cancel_sel.func)
-     ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
 }
 
 void

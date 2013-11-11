@@ -108,6 +108,7 @@ static void
 _sel_set(Evas_Object *obj, Eina_Bool enable)
 {
    Termio *sd = evas_object_smart_data_get(obj);
+
    if (sd->pty->selection.is_active == enable) return;
    sd->pty->selection.is_active = enable;
    if (enable)
@@ -3276,7 +3277,6 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
 
-   DBG("(%d; %d)", ev->cur.canvas.y, ev->cur.canvas.x);
    evas_object_geometry_get(data, &ox, &oy, NULL, NULL);
    cx = (ev->cur.canvas.x - ox) / sd->font.chw;
    cy = (ev->cur.canvas.y - oy) / sd->font.chh;
@@ -3946,7 +3946,6 @@ termio_scroll(Evas_Object *obj, int direction)
 {
    Termio *sd;
    Termpty *ty;
-   int changed = 0;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -3958,16 +3957,76 @@ termio_scroll(Evas_Object *obj, int direction)
         sd->scroll++;
         if (sd->scroll > sd->pty->backscroll_num)
           sd->scroll = sd->pty->backscroll_num;
-        changed = 1;
      }
    ty = sd->pty;
    if (ty->selection.is_active)
      {
         ty->selection.start.y += direction;
         ty->selection.end.y += direction;
-        changed = 1;
      }
-   if (changed) _smart_update_queue(obj, sd);
+}
+
+void
+termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
+                      int n)
+{
+   Termio *sd;
+   Termpty *ty;
+   int start_x, start_y, end_x, end_y;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+   ty = sd->pty;
+   if (!ty->selection.is_active) return;
+
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x   = sd->pty->selection.end.x;
+   end_y   = sd->pty->selection.end.y;
+   if (ty->selection.is_box)
+     {
+        int _y = y + (x + n) / ty->w;
+
+        if (start_y > end_y)
+          INT_SWAP(start_y, end_y);
+        if (start_x > end_x)
+          INT_SWAP(start_x, end_x);
+
+        y = MAX(y, start_y);
+        for (; y <= MIN(_y, end_y); y++)
+          {
+             int d = MIN(n, ty->w - x);
+             if (!((x > end_x) || (x + d < start_x)))
+               {
+                  _sel_set(obj, EINA_FALSE);
+                  break;
+               }
+             n -= d;
+             x = 0;
+          }
+     }
+   else
+     {
+        int sel_len;
+        Termcell *cells_changed, *cells_selection;
+
+        /* probably doing that way too much… */
+        if ((start_y > end_y) ||
+            ((start_y == end_y) && (end_x < start_x)))
+          {
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
+
+        sel_len = end_x - start_y + ty->w * (end_y - start_y);
+        cells_changed = &(TERMPTY_SCREEN(ty, x, y));
+        cells_selection = &(TERMPTY_SCREEN(ty, start_x, start_y));
+
+        if (!((cells_changed > (cells_selection + sel_len)) ||
+             (cells_selection > (cells_changed + n))))
+          _sel_set(obj, EINA_FALSE);
+
+     }
 }
 
 static void
