@@ -1652,6 +1652,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
      evas_object_size_hint_request_set(obj,
                                        sd->font.chw * sd->grid.w,
                                        sd->font.chh * sd->grid.h);
+   _sel_set(obj, EINA_FALSE);
    termpty_resize(sd->pty, w, h);
    _smart_calculate(obj);
    _smart_apply(obj);
