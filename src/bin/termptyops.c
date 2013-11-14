@@ -321,7 +321,6 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
         ty->circular_offset = 0;
         _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
         ty->state.scroll_y2 = 0;
-        ERR("foo");
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         break;
