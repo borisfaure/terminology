@@ -88,6 +88,7 @@ struct _Termio
    Eina_Bool noreqsize : 1;
    Eina_Bool composing : 1;
    Eina_Bool didclick : 1;
+   Eina_Bool moved : 1;
    Eina_Bool bottom_right : 1;
    Eina_Bool top_left : 1;
    Eina_Bool reset_sel : 1;
@@ -3137,6 +3138,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                     }
                   else
                     {
+                       sd->moved = EINA_FALSE;
                        _sel_set(data, EINA_TRUE);
                        if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
                            evas_key_modifier_is_set(ev->modifiers, "Control") ||
@@ -3196,15 +3198,18 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
              ecore_timer_del(sd->mouse_selection_scroll);
              sd->mouse_selection_scroll = NULL;
           }
+        sd->pty->selection.makesel = EINA_FALSE;
 
-        if ((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
-            (sd->pty->selection.start.y == sd->pty->selection.end.y))
+        if (((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
+            (sd->pty->selection.start.y == sd->pty->selection.end.y)) ||
+            (!sd->moved))
           {
              _sel_set(data, EINA_FALSE);
              sd->didclick = EINA_FALSE;
+             _smart_update_queue(data, sd);
+             return;
           }
 
-        sd->pty->selection.makesel = EINA_FALSE;
         if (sd->pty->selection.is_active)
           {
              sd->didclick = EINA_TRUE;
@@ -3323,6 +3328,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (sd->pty->selection.makesel)
      {
         int start_x, start_y, end_x, end_y;
+
         if (!sd->pty->selection.is_active)
           {
              if ((cx != sd->pty->selection.start.x) ||
@@ -3353,6 +3359,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
         _smart_update_queue(data, sd);
+        sd->moved = EINA_TRUE;
      }
    /* TODO: make the following useless */
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
