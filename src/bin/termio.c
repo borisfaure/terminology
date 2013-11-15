@@ -3335,11 +3335,6 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         cy -= sd->scroll;
         sd->top_left = EINA_FALSE;
         sd->bottom_right = EINA_FALSE;
-        if (cy < start_y || (cy == start_y && cx <= start_x)) {
-             sd->top_left = EINA_TRUE;
-        } else if (cy > end_y || (cy == end_y && cx > end_x)) {
-             sd->bottom_right = EINA_TRUE;
-        }
         sd->pty->selection.end.x = cx;
         sd->pty->selection.end.y = cy;
 
