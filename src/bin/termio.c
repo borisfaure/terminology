@@ -3083,7 +3083,6 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   start_y = sd->pty->selection.start.y;
                   end_x   = sd->pty->selection.end.x;
                   end_y   = sd->pty->selection.end.y;
-                  _sel_set(data, EINA_TRUE);
                   sd->pty->selection.makesel = EINA_TRUE;
                   if (sd->pty->selection.is_box)
                     {
@@ -3140,29 +3139,16 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   else
                     {
                        sd->moved = EINA_FALSE;
-                       _sel_set(data, EINA_TRUE);
-                       if (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+                       sd->pty->selection.is_box =
+                          (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
                            evas_key_modifier_is_set(ev->modifiers, "Control") ||
-                           evas_key_modifier_is_set(ev->modifiers, "Alt"))
-                         {
-                            sd->pty->selection.start.x = cx;
-                            sd->pty->selection.start.y = cy - sd->scroll;
-                            sd->pty->selection.end.x = cx;
-                            sd->pty->selection.end.y = cy - sd->scroll;
-                            sd->pty->selection.makesel = EINA_TRUE;
-                            sd->pty->selection.is_box = EINA_TRUE;
-                            _selection_dbl_fix(data);
-                         }
-                       else
-                         {
-                            sd->pty->selection.makesel = EINA_TRUE;
-                            sd->pty->selection.start.x = cx;
-                            sd->pty->selection.start.y = cy - sd->scroll;
-                            sd->pty->selection.end.x = cx;
-                            sd->pty->selection.end.y = cy - sd->scroll;
-                            sd->pty->selection.is_box = EINA_FALSE;
-                            _selection_dbl_fix(data);
-                         }
+                           evas_key_modifier_is_set(ev->modifiers, "Alt"));
+                       sd->pty->selection.start.x = cx;
+                       sd->pty->selection.start.y = cy - sd->scroll;
+                       sd->pty->selection.end.x = cx;
+                       sd->pty->selection.end.y = cy - sd->scroll;
+                       sd->pty->selection.makesel = EINA_TRUE;
+                       _selection_dbl_fix(data);
                     }
                }
           }
@@ -3329,6 +3315,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (sd->pty->selection.makesel)
      {
         int start_x, start_y, end_x, end_y;
+        _sel_set(data, EINA_TRUE);
 
         if (!sd->pty->selection.is_active)
           {
