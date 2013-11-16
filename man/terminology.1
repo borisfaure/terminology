@@ -1,16 +1,13 @@
 .\" Manpage for Terminology
-.TH man 1 "18 Apr 2013" "0.3" "Terminology man page"
+.TH man 1 "18 Nov 2013" "0.4" "Terminology man page"
 .SH NAME
 Terminology \- Terminal Emulator written with EFL (Enligthenment Foundation Libraries).
 .SH SYNOPSIS
 .B terminology [options]
 .SH DESCRIPTION
 This is an EFL terminal emulator with some extra bells and whistles.
-It's brand new and was only started near the begining of June 2012, so
-expecting it to do everything a mature terminal emulator does is a bit
-premature, but considering it's young age, it does a lot.
 It has many features including split terminal support, support for tabs, preview
-icons for files 
+icons for files and so on...
 .SH OPTIONS
 .
 .TP
@@ -39,12 +36,12 @@ Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.).
 Type: STR.
 .
 .TP
-.B \-n=NAME, \-\-name=NAME    
-Set window name. 
+.B \-n=NAME, \-\-name=NAME
+Set window name.
 Type: STR.
 .
 .TP
-.B \-r=ROLE, \-\-role=ROLE    
+.B \-r=ROLE, \-\-role=ROLE
 Set window role.
 Type: STR.
 .
@@ -59,7 +56,7 @@ Set icon name.
 Type: STR.
 .
 .TP
-.B \-f=FONT, \-\-font=FONT    
+.B \-f=FONT, \-\-font=FONT
 Set font (NAME/SIZE for scalable, NAME for bitmap.
 Type: STR.
 .
@@ -88,15 +85,15 @@ Set visual bell mode.
 Type: BOOL.
 .
 .TP
-.B \-F, \-\-fullscreen        
+.B \-F, \-\-fullscreen
 Go into the fullscreen mode from start.
 .
 .TP
-.B \-I, \-\-iconic            
+.B \-I, \-\-iconic
 Go into an iconic state from the start.
 .
 .TP
-.B \-B, \-\-borderless        
+.B \-B, \-\-borderless
 Become a borderless managed window.
 .
 .TP
@@ -104,15 +101,15 @@ Become a borderless managed window.
 Become an override-redirect window.
 .
 .TP
-.B \-M, \-\-maximized        
+.B \-M, \-\-maximized
 Become maximized from the start.
 .
 .TP
-.B \-W, \-\-nowm  
+.B \-W, \-\-nowm
 Terminology is run without a wm.
 .
 .TP
-.B \-H, \-\-hold  
+.B \-H, \-\-hold
 Don't exit when the command process exits.
 .
 .TP
@@ -128,7 +125,7 @@ Set TERM to \fBxterm-256color\fP instead of \fBxterm\fP.
 Show program version.
 .
 .TP
-.B \-C, \-\-copyright  
+.B \-C, \-\-copyright
 Show copyright.
 .
 .TP
@@ -142,75 +139,75 @@ Show this message.
 .SH CONTROLS / SHORTCUTS
 .
 .TP
-.B Shift+PgUp  
+.B Shift+PgUp
 Scroll terminology one page up
 .
 .TP
-.B Shift+PgDn 
+.B Shift+PgDn
 Scroll terminology one page down
 .
 .TP
-.B Shift+Insert 
+.B Shift+Insert
 Paste Clipboard (ctrl+v/c) selection
 .
 .TP
-.B Shift+Ctrl+Insert 
+.B Shift+Ctrl+Insert
 Paste Primary (highlight) selection
 .
 .TP
-.B Shift+Keypad\-Plus 
+.B Shift+Keypad\-Plus
 Font size up by one unit.
 .
 .TP
-.B Shift+Keypad\-Minus 
+.B Shift+Keypad\-Minus
 Font size down by one unit.
 .
 .TP
-.B Shift+Keypad\-Multiply 
+.B Shift+Keypad\-Multiply
 Reset font size to 10.
 .
 .TP
-.B Shift+Keypad\-Divide 
+.B Shift+Keypad\-Divide
 Copy highlight to Clipboard (same as ctrl+c in gui apps).
 .
 .TP
-.B Ctrl+PgUp 
+.B Ctrl+PgUp
 Switch focus to previous terminal inside a window (when using splits).
 .
 .TP
-.B Ctrl+PgDn 
+.B Ctrl+PgDn
 Switch focus to next terminal inside a window (when using splits).
 .
 .TP
-.B Ctrl+Shift+t 
+.B Ctrl+Shift+t
 Create a new terminal on top of current inside window (tabs).
 .
 .TP
-.B Ctrl+Shift+Home 
+.B Ctrl+Shift+Home
 Bring up "tab" switcher.
 .
 .TP
-.B Ctrl+Shift+PgUp 
+.B Ctrl+Shift+PgUp
 Split terminal horizontally (one terminal above the other).
 .
 .TP
-.B Ctrl+Shift+PgDn 
+.B Ctrl+Shift+PgDn
 Split terminal vertically (one terminal to the left of the other).
 .
 .TP
-.B Alt+Home 
+.B Alt+Home
 Enter command mode (enter commands to control terminology itself)
 .
 .TP
-.B Alt+Return 
+.B Alt+Return
 Paste primary selection.
 .
 .TP
-.B Ctrl+Shift+c 
+.B Ctrl+Shift+c
 Copy current selection to clipboard.
 .
 .TP
-.B Ctrl+Shift+v 
+.B Ctrl+Shift+v
 Paste current clipboard selection.
 .
 .TP
@@ -264,18 +261,18 @@ Decrease font size. Note that it works on scalable fonts only.
 Display big font size (10x20 bitmap, or size 20 with scalable).
 .
 .TP
-.B gNxM 
+.B gNxM
 Make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
 If just one number is provided, it will use the following shortcuts:
 g0=80x24; g1=80x40; g2=80x60; g3=80x80; g4=120x24; g5=120x40; g6=120x60;
 g7=120x80; g8=120x120
 .
 .TP
-.B b 
+.B b
 Reset the background (no media)
 .
 .TP
-.B bPATH 
+.B bPATH
 Set the background media to an absolute file PATH
 
 .SH EXTENDED ESCAPES FOR TERMINOLOGY:
@@ -289,7 +286,7 @@ i.e.
   4    \\000 char (nul byte or 0x00 to indicate end of sequence)
 e.g.
   echo \-n '\\033}Hello world\000'
-  
+
 .B Commands:
 
 any values inside square brackets [] are to be replaced by some
@@ -337,33 +334,33 @@ is[CW;H;FULL\-PATH\-OR\-URL]
     where C is the replace character to be identified in later text
     where W is the width in character cells (up to 511).
     where H is the height in character cells (up to 511).
-    
+
     note that this escape alone has no effect. it indicates a future
     intention of inserting media into the terminal. the terminal will
     EXPECT a grid of WxH "replace characters" to follow, with each
     sequence of such replace characters bebung with a 'ib' escape command
     and ending with an 'ie' escape command.
-    
+
     the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may
     be of the form:
-    
+
       /full/path/to/file.png
-    
+
     OR
-    
+
       /full/path/to/link\n/full/path/to/file.png
-      
+
       where a newline character separates a URI for a link and a full
       path to a file to display in the region. the link is the
       destination URI when a user may clikc on the given media image.
-    
+
     example:
-    
+
       printf("\\\033}is#5;3;%s\000"
              "\\\033}ib#####\\\033}ie\\\n"
              "\\\033}ib#####\\\033}ie\\\n"
              "\\\033}ib#####\\\033}ie\\\n", "/tmp/icon.png");
-    
+
     note that '#' is the replace character, and later '#' chars if inside
     begin/end escapes, will be replaced by the given media indicated
     in the insert media escape.
@@ -391,9 +388,9 @@ ie
   = end media replace sequence run
 
 .SH BUGS
-If you find a bug or for known issues/bugs/feature requests please email 
+If you find a bug or for known issues/bugs/feature requests please email
 enlightenment-devel@lists.sourceforge.net or visit the place where all the hard
-work is done http://phab.enlightenment.org/ 
+work is done http://phab.enlightenment.org/
 
 .SH AUTHOR
 Terminology was writtern by Carsten Haitzler <raster@rasterman.com> and others. See
