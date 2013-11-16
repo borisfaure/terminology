@@ -511,7 +511,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'L': // insert N lines - cy
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        DBG("delete/insert %d lines", arg);
+        DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
           {
              int sy1, sy2;
 
@@ -703,7 +703,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 12: // ignore
                                  handled = 1;
-//                                 DBG("XXX: set blinking cursor to (stop?) %i or local echo", mode);
+                                 DBG("set blinking cursor to (stop?) %i or local echo (ignored)", mode);
                                  break;
                                case 19: // never seen this - what to do?
                                  handled = 1;
@@ -716,6 +716,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                case 25:
                                  handled = 1;
                                  ty->state.hidecursor = !mode;
+                                 DBG("hide cursor: %d", !mode);
                                  break;
                                case 30: // ignore
                                  handled = 1;
