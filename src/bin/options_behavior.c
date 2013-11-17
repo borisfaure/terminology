@@ -369,7 +369,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "set TERM to xterm-256color");
+   elm_object_text_set(o, "Set TERM to xterm-256color");
    elm_check_state_set(o, config->xterm_256color);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
