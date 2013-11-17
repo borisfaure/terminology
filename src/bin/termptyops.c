@@ -90,11 +90,11 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
      }
    else
      {
-       cells = &(ty->screen[end_y * ty->w]);
+       cells = &(TERMPTY_SCREEN(ty, 0, end_y));
        for (y = start_y; y < end_y; y++)
          {
-            cells = &(ty->screen[(y + 1) * ty->w]);
-            cells2 = &(ty->screen[y * ty->w]);
+            cells = &(TERMPTY_SCREEN(ty, 0, (y + 1)));
+            cells2 = &(TERMPTY_SCREEN(ty, 0, y));
             termpty_cell_copy(ty, cells, cells2, ty->w);
          }
        if (clear)

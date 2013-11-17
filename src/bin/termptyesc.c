@@ -944,6 +944,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                        if (arg2 > ty->h) arg2 = ty->h;
                        ty->state.scroll_y1 = arg - 1;
                        ty->state.scroll_y2 = arg2;
+                       if ((arg == 1) && (arg2 == ty->h))
+                          ty->state.scroll_y2 = 0;
                     }
                }
           }
