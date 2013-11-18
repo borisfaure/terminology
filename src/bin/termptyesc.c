@@ -626,8 +626,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                        arg = _csi_arg_get(&b);
                        if (b)
                          {
-                            int size;
-
                             // complete-ish list here:
                             // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
                             switch (arg)
@@ -830,7 +828,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                    {
                                       // if we are looking at alt buf now,
                                       // clear main buf before we swap it back
-                                      // into the sreen2 save (so save is
+                                      // into the screen2 save (so save is
                                       // clear)
                                       _termpty_clear_all(ty);
 //                                      _termpty_cursor_copy(&(ty->swap), &(ty->state));
@@ -841,16 +839,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //                                      _termpty_cursor_copy(&(ty->state), &(ty->swap));
                                       ty->swap = ty->state;
                                    }
-                                 size = ty->w * ty->h;
                                  // swap screen content now
-                                 for (i = 0; i < size; i++)
-                                   termpty_cell_swap(ty, 
-                                                     &(ty->screen[(i + ty->circular_offset * ty->w) % size]),
-                                                     &(ty->screen2[i]),
-                                                     1);
-                                 ty->altbuf = !ty->altbuf;
-                                 if (ty->cb.cancel_sel.func)
-                                   ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
+                                 termpty_screen_swap(ty);
                                  break;
                                case 1048:
                                  if (mode)

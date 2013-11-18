@@ -1484,18 +1484,36 @@ termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n)
      }
 }
 
-void
-termpty_cell_swap(Termpty *ty EINA_UNUSED, Termcell *src, Termcell *dst, int n)
+static void
+_swap_line(Termpty *ty, Termcell *cells, Termcell *cells2)
 {
-   int i;
-   Termcell t;
-   
-   for (i = 0; i < n; i++)
+   int x;
+   Termcell c;
+
+   for (x = 0; x < ty->w; x++)
      {
-        t = dst[i];
-        dst[i] = src[i];
-        src[i] = t;
+        c = cells[x];
+        cells[x] = cells2[x];
+        cells2[x] = c;
      }
+}
+
+void
+termpty_screen_swap(Termpty *ty)
+{
+   int y;
+
+   for (y = 0; y < ty->h; y++)
+     {
+        _swap_line(ty,
+                   &(TERMPTY_SCREEN(ty, 0, y)),
+                   &ty->screen2[y * ty->w]);
+     }
+   ty->circular_offset = 0;
+   ty->altbuf = !ty->altbuf;
+
+   if (ty->cb.cancel_sel.func)
+     ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
 }
 
 void
