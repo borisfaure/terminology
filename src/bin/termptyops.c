@@ -74,7 +74,7 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
      if (!ty->altbuf)
        termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
 
-   termio_scroll(ty->obj, -1);
+   termio_scroll(ty->obj, -1, start_y, end_y);
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
 
    if (start_y == 0 && end_y == ty->h - 1)
@@ -114,7 +114,7 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
         end_y = ty->state.scroll_y2 - 1;
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
-   termio_scroll(ty->obj, 1);
+   termio_scroll(ty->obj, 1, start_y, end_y);
 
    if (start_y == 0 && end_y == ty->h - 1)
      {

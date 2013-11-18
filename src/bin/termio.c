@@ -3932,7 +3932,7 @@ _smart_pty_change(void *data)
 }
 
 void
-termio_scroll(Evas_Object *obj, int direction)
+termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
 {
    Termio *sd;
    Termpty *ty;
@@ -3951,8 +3951,19 @@ termio_scroll(Evas_Object *obj, int direction)
    ty = sd->pty;
    if (ty->selection.is_active)
      {
-        ty->selection.start.y += direction;
-        ty->selection.end.y += direction;
+        if (start_y <= ty->selection.start.y &&
+            end_y >= ty->selection.end.y)
+          {
+             ty->selection.start.y += direction;
+             ty->selection.end.y += direction;
+             if (!(start_y <= ty->selection.start.y &&
+                 end_y >= ty->selection.end.y))
+               _sel_set(obj, EINA_FALSE);
+          }
+        else
+          if (!((start_y > ty->selection.end.y) ||
+                (end_y < ty->selection.start.y)))
+            _sel_set(obj, EINA_FALSE);
      }
 }
 
