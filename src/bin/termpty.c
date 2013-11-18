@@ -1494,7 +1494,7 @@ termpty_cell_swap(Termpty *ty EINA_UNUSED, Termcell *src, Termcell *dst, int n)
      {
         t = dst[i];
         dst[i] = src[i];
-        dst[i] = t;
+        src[i] = t;
      }
 }
 

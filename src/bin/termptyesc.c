@@ -845,7 +845,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  // swap screen content now
                                  for (i = 0; i < size; i++)
                                    termpty_cell_swap(ty, 
-                                                     &(ty->screen[(i + ty->circular_offset) % ty->h]),
+                                                     &(ty->screen[(i + ty->circular_offset * ty->w) % size]),
                                                      &(ty->screen2[i]),
                                                      1);
                                  ty->altbuf = !ty->altbuf;
