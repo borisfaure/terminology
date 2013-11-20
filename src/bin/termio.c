@@ -41,12 +41,6 @@ struct _Termio
       int button;
    } mouse;
    struct {
-      struct {
-         int x, y;
-      } start, end;
-      Eina_Bool available : 1;
-   } backup_sel;
-   struct {
       char *string;
       int x1, y1, x2, y2;
       int suspend;
@@ -3043,22 +3037,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             if (shift &&
-                 sd->backup_sel.available)
-               {
-                  _sel_set(data, EINA_TRUE);
-                  sd->pty->selection.is_active = EINA_TRUE;
-                  sd->pty->selection.start.x = sd->backup_sel.start.x;
-                  sd->pty->selection.start.y = sd->backup_sel.start.y;
-                  sd->pty->selection.end.x   = sd->backup_sel.end.x;
-                  sd->pty->selection.end.y   = sd->backup_sel.end.y;
-                  _selection_dbl_fix(data);
+             if (shift)
                   _sel_word_to(data, cx, cy - sd->scroll);
-               }
              else
-               {
                   _sel_word(data, cx, cy - sd->scroll);
-               }
              if (sd->pty->selection.is_active)
                _take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
@@ -3213,11 +3195,6 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                  _smart_update_queue(data, sd);
                  _take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
-            sd->backup_sel.available = sd->pty->selection.is_active;
-            sd->backup_sel.start.x = sd->pty->selection.start.x;
-            sd->backup_sel.start.y = sd->pty->selection.start.y;
-            sd->backup_sel.end.x = sd->pty->selection.end.x;
-            sd->backup_sel.end.y = sd->pty->selection.end.y;
           }
      }
 }
