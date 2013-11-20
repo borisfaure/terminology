@@ -2608,15 +2608,13 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
                }
              else
                {
-                  int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
                   int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-                  int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
 
                   if (btn > 2) btn = 0;
                   buf[0] = 0x1b;
                   buf[1] = '[';
                   buf[2] = 'M';
-                  buf[3] = (btn | shift | meta | ctrl) + ' ';
+                  buf[3] = (btn | meta) + ' ';
                   buf[4] = cx + 1 + ' ';
                   buf[5] = cy + 1 + ' ';
                   buf[6] = 0;
@@ -2627,16 +2625,14 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
           {
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
              int v, i;
 
              if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl) + ' ';
+             buf[3] = (btn | meta) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -2659,25 +2655,21 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
 
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl), cx + 1, cy + 1);
+                      (btn | meta), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
         break;
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             int shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-             int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
 
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl) + ' ',
+                      (btn | meta) + ' ',
                       cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -2694,7 +2686,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   int shift, meta, ctrl;
+   int meta;
 
    if ((sd->pty->mouse_mode == MOUSE_OFF) ||
        (sd->pty->mouse_mode == MOUSE_X10))
@@ -2702,9 +2694,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
    if (sd->mouse.button == ev->button)
      sd->mouse.button = 0;
 
-   shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
    meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
 
    switch (sd->pty->mouse_ext)
      {
@@ -2714,7 +2704,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (3 | shift | meta | ctrl) + ' ';
+             buf[3] = (3 | meta) + ' ';
              buf[4] = cx + 1 + ' ';
              buf[5] = cy + 1 + ' ';
              buf[6] = 0;
@@ -2729,7 +2719,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (3 | shift | meta | ctrl) + ' ';
+             buf[3] = (3 | meta) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -2753,7 +2743,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.m
           {
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%im", 0x1b,
-                      (3 | shift | meta | ctrl), cx + 1, cy + 1);
+                      (3 | meta), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -2761,7 +2751,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      (3 | shift | meta | ctrl) + ' ',
+                      (3 | meta) + ' ',
                       cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -2778,7 +2768,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   int btn, shift, meta, ctrl;
+   int btn, meta;
 
    if ((sd->pty->mouse_mode == MOUSE_OFF) ||
        (sd->pty->mouse_mode == MOUSE_X10) ||
@@ -2789,9 +2779,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
      return EINA_FALSE;
 
    btn = sd->mouse.button - 1;
-   shift = evas_key_modifier_is_set(ev->modifiers, "Shift") ? 4 : 0;
    meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
-   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control") ? 16 : 0;
 
    switch (sd->pty->mouse_ext)
      {
@@ -2802,7 +2790,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl | 32) + ' ';
+             buf[3] = (btn | meta | 32) + ' ';
              buf[4] = cx + 1 + ' ';
              buf[5] = cy + 1 + ' ';
              buf[6] = 0;
@@ -2818,7 +2806,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | shift | meta | ctrl | 32) + ' ';
+             buf[3] = (btn | meta | 32) + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -2842,7 +2830,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl | 32), cx + 1, cy + 1);
+                      (btn | meta | 32), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -2851,7 +2839,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
           {
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      (btn | shift | meta | ctrl | 32) + ' ',
+                      (btn | meta | 32) + ' ',
                       cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -3022,23 +3010,28 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd;
    int cx, cy;
+   int shift, ctrl;
+
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    sd->didclick = EINA_FALSE;
-   if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Control"))
+   if ((ev->button == 3) && ctrl)
      {
         evas_object_smart_callback_call(data, "options", NULL);
         return;
      }
-   if ((ev->button == 3) && evas_key_modifier_is_set(ev->modifiers, "Shift"))
+   if ((ev->button == 3) && shift)
      {
         termio_debugwhite_set(data, !sd->debugwhite);
         printf("debugwhite %i\n",  sd->debugwhite);
         return;
      }
-   if (_rep_mouse_down(sd, ev, cx, cy)) return;
+   if (!shift && !ctrl)
+     if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
      {
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
@@ -3050,7 +3043,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+             if (shift &&
                  sd->backup_sel.available)
                {
                   _sel_set(data, EINA_TRUE);
@@ -3140,8 +3133,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                     {
                        sd->moved = EINA_FALSE;
                        sd->pty->selection.is_box =
-                          (evas_key_modifier_is_set(ev->modifiers, "Shift") ||
-                           evas_key_modifier_is_set(ev->modifiers, "Control") ||
+                          (ctrl ||
                            evas_key_modifier_is_set(ev->modifiers, "Alt"));
                        sd->pty->selection.start.x = cx;
                        sd->pty->selection.start.y = cy - sd->scroll;
@@ -3172,11 +3164,16 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd;
    int cx, cy;
+   int shift, ctrl;
+
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   if (_rep_mouse_up(sd, ev, cx, cy)) return;
+   if (!shift && !ctrl)
+      if (_rep_mouse_up(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd) return;
    if (sd->pty->selection.makesel)
      {
@@ -3265,6 +3262,10 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    int cx, cy;
    Evas_Coord ox, oy;
    Eina_Bool scroll = EINA_FALSE;
+   int shift, ctrl;
+
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    sd = evas_object_smart_data_get(data);
    if (!sd) return;
@@ -3304,7 +3305,8 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
-   if (_rep_mouse_move(sd, ev, cx, cy)) return;
+   if (!shift && !ctrl)
+     if (_rep_mouse_move(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd)
      {
         sd->pty->selection.makesel = EINA_FALSE;
