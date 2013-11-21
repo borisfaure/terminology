@@ -3128,18 +3128,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                }
              else
                {
-                  if (sd->pty->selection.is_active)
+                  sd->pty->selection.is_active = EINA_FALSE;
+                  sd->moved = EINA_FALSE;
+                  if (!shift)
                     {
-                       if (!shift)
-                         {
-                            _sel_set(data, EINA_FALSE);
-                            sd->didclick = EINA_TRUE;
-                            sd->pty->selection.makesel = EINA_FALSE;
-                         }
-                    }
-                  else
-                    {
-                       sd->moved = EINA_FALSE;
                        sd->pty->selection.is_box =
                           (ctrl ||
                            evas_key_modifier_is_set(ev->modifiers, "Alt"));
