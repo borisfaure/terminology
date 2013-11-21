@@ -2516,53 +2516,76 @@ static void
 _sel_word_to(Evas_Object *obj, int cx, int cy)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Termcell *cells;
-   int x, w = 0;
+   int start_x, start_y, end_x, end_y;
+
    if (!sd) return;
 
-   termpty_cellcomp_freeze(sd->pty);
-   cells = termpty_cellrow_get(sd->pty, cy, &w);
-   if (!cells)
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x   = sd->pty->selection.end.x;
+   end_y   = sd->pty->selection.end.y;
+
+   if (sd->pty->selection.is_box)
      {
-        termpty_cellcomp_thaw(sd->pty);
-        return;
-     }
-   if (sd->pty->selection.start.x > cx || sd->pty->selection.start.y > cy)
-     {
-        sd->pty->selection.start.x = cx;
-        sd->pty->selection.start.y = cy;
-        for (x = sd->pty->selection.start.x; x >= 0; x--)
+        if (start_y > end_y)
+          INT_SWAP(start_y, end_y);
+        if (start_x > end_x)
+          INT_SWAP(start_x, end_x);
+        if ((cy >= start_y && cy <= end_y) &&
+            (cx >= start_x && cx <= end_x))
           {
-#if defined(SUPPORT_DBLWIDTH)
-             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
-                 (x > 0))
-               x--;
-#endif
-             if (x >= w) break;
-             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-             sd->pty->selection.start.x = x;
+             _sel_set(obj, EINA_FALSE);
+             return;
           }
      }
-   else if (sd->pty->selection.end.x < cx || sd->pty->selection.end.y < cy)
+   else
      {
-        sd->pty->selection.end.x = cx;
-        sd->pty->selection.end.y = cy;
-        for (x = sd->pty->selection.end.x; x < sd->grid.w; x++)
+        if ((start_y > end_y) ||
+            ((start_y == end_y) && (end_x < start_x)))
           {
-#if defined(SUPPORT_DBLWIDTH)
-             if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
-                 (x < (sd->grid.w - 1)))
-               {
-                  sd->pty->selection.end.x = x;
-                  x++;
-               }
-#endif
-             if (x >= w) break;
-             if (_codepoint_is_wordsep(sd->config, cells[x].codepoint)) break;
-             sd->pty->selection.end.x = x;
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
+        if ((cy > start_y || (cy == start_y && cx >= start_x)) &&
+             (cy < end_y  || (cy == end_y && cx <= end_x)))
+          {
+             _sel_set(obj, EINA_FALSE);
+             return;
           }
      }
-   termpty_cellcomp_thaw(sd->pty);
+
+   _sel_word(obj, cx, cy);
+
+   if (sd->pty->selection.is_box)
+     {
+        start_y = MIN(start_y, sd->pty->selection.start.y);
+        start_x = MIN(start_x, sd->pty->selection.start.x);
+        end_y = MAX(end_y, sd->pty->selection.end.y);
+        end_x = MAX(end_x, sd->pty->selection.end.x);
+     }
+   else
+     {
+        if (sd->pty->selection.start.y < start_y ||
+           (sd->pty->selection.start.y == start_y &&
+            sd->pty->selection.start.x < start_x))
+          {
+             start_x = sd->pty->selection.start.x;
+             start_y = sd->pty->selection.start.y;
+          }
+        else
+        if (sd->pty->selection.end.y > end_y ||
+           (sd->pty->selection.end.y == end_y &&
+            sd->pty->selection.end.x > end_x))
+          {
+             end_x = sd->pty->selection.end.x;
+             end_y = sd->pty->selection.end.y;
+          }
+     }
+
+   sd->pty->selection.start.x = start_x;
+   sd->pty->selection.start.y = start_y;
+   sd->pty->selection.end.x = end_x;
+   sd->pty->selection.end.y = end_y;
 }
 
 static Eina_Bool
@@ -3037,7 +3060,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             if (shift)
+             if (shift && sd->pty->selection.is_active)
                   _sel_word_to(data, cx, cy - sd->scroll);
              else
                   _sel_word(data, cx, cy - sd->scroll);
@@ -3107,9 +3130,12 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                {
                   if (sd->pty->selection.is_active)
                     {
-                       _sel_set(data, EINA_FALSE);
-                       sd->didclick = EINA_TRUE;
-                       sd->pty->selection.makesel = EINA_FALSE;
+                       if (!shift)
+                         {
+                            _sel_set(data, EINA_FALSE);
+                            sd->didclick = EINA_TRUE;
+                            sd->pty->selection.makesel = EINA_FALSE;
+                         }
                     }
                   else
                     {
