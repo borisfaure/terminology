@@ -1509,7 +1509,6 @@ termpty_screen_swap(Termpty *ty)
                    &(TERMPTY_SCREEN(ty, 0, y)),
                    &ty->screen2[y * ty->w]);
      }
-   ty->circular_offset = 0;
    ty->altbuf = !ty->altbuf;
 
    if (ty->cb.cancel_sel.func)
