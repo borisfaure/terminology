@@ -552,7 +552,17 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   if (x < lim)
                     termpty_cell_copy(ty, &(cells[x + arg]), &(cells[x]), 1);
                   else
-                    termpty_cell_fill(ty, NULL, &(cells[x]), 1);
+                    {
+                       cells[x].codepoint = ' ';
+                       cells[x].att.underline = 0;
+                       cells[x].att.blink = 0;
+                       cells[x].att.blink2 = 0;
+                       cells[x].att.inverse = 0;
+                       cells[x].att.strike = 0;
+#if defined(SUPPORT_DBLWIDTH)
+                       cells[x].att.dblwidth = 0;
+#endif
+                    }
                }
           }
         break;
