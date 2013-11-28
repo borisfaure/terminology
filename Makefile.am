@@ -28,3 +28,7 @@ m4/ltversion.m4
 
 EXTRA_DIST = README AUTHORS COPYING autogen.sh terminology.spec pkgbuild/PKGBUILD
 
+.PHONY: doc
+
+doc:
+	@echo "Empty doc target until we have real documentation."
