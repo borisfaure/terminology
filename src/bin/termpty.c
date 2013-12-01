@@ -634,7 +634,7 @@ termpty_line_find_top(Termpty *ty, int y_end)
 static int
 termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
                     Termcell *screen2, Termsave **back2,
-                    int w2, int h2, int y2_end)
+                    int w2, int y2_end)
 {
    int x, x2, y, y2, y2_start;
    int len, len_last, len_remaining, copy_width, ts2_width;
@@ -776,7 +776,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
      {
         y_start = termpty_line_find_top(ty, y_end);
         new_y_start = termpty_line_rewrap(ty, y_start, y_end, new_screen,
-                                        new_back, new_w, new_h, new_y_end);
+                                        new_back, new_w, new_y_end);
         y_end = y_start - 1;
         new_y_end = new_y_start - 1;
      }
