@@ -4002,7 +4002,7 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
              INT_SWAP(start_x, end_x);
           }
 
-        sel_len = end_x - start_y + ty->w * (end_y - start_y);
+        sel_len = end_x - start_x + ty->w * (end_y - start_y);
         cells_changed = &(TERMPTY_SCREEN(ty, x, y));
         cells_selection = &(TERMPTY_SCREEN(ty, start_x, start_y));
 
