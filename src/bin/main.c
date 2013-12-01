@@ -758,12 +758,9 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    term2 = main_win_focused_term_get(term->wn);
    if (term == term2) return;
-   if (ev->button == 1)
-     {  
-        term->down.x = ev->canvas.x;
-        term->down.y = ev->canvas.y;
-        _term_focus(term);
-     }
+   term->down.x = ev->canvas.x;
+   term->down.y = ev->canvas.y;
+   _term_focus(term);
 }
 
 static void
