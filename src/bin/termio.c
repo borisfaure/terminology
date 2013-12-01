@@ -3391,6 +3391,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   char buf[64];
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -3400,15 +3401,26 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    if (sd->pty->mouse_mode == MOUSE_OFF)
      {
-        sd->scroll -= (ev->z * 4);
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
-        else if (sd->scroll < 0) sd->scroll = 0;
-        _smart_update_queue(data, sd);
+        if (sd->pty->altbuf)
+          {
+             /* Emulate cursors */
+             buf[0] = 0x1b;
+             buf[1] = 'O';
+             buf[2] = (ev->z < 0) ? 'A' : 'B';
+             buf[3] = 0;
+             termpty_write(sd->pty, buf, strlen(buf));
+          }
+        else
+          {
+             sd->scroll -= (ev->z * 4);
+             if (sd->scroll > sd->pty->backscroll_num)
+               sd->scroll = sd->pty->backscroll_num;
+             else if (sd->scroll < 0) sd->scroll = 0;
+             _smart_update_queue(data, sd);
+          }
      }
    else
      {
-       char buf[64];
        int cx, cy;
 
        _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
