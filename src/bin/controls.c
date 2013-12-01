@@ -110,10 +110,10 @@ _cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 static void
 _cb_frame_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   if (ct_term)
+   if (ct_win)
      {
-        evas_object_smart_callback_del(ct_term, "selection,on", _cb_sel_on);
-        evas_object_smart_callback_del(ct_term, "selection,off", _cb_sel_off);
+        evas_object_smart_callback_del(ct_win, "selection,on", _cb_sel_on);
+        evas_object_smart_callback_del(ct_win, "selection,off", _cb_sel_off);
      }
    ct_frame = NULL;
 }
@@ -226,6 +226,8 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
      {
         evas_object_del(ct_frame);
         ct_frame = NULL;
+        ct_win = NULL;
+        ct_term = NULL;
      }
    if (!ct_frame)
      {
@@ -290,9 +292,9 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
                                        _cb_frame_del, NULL);
 
-        evas_object_smart_callback_add(term, "selection,on", _cb_sel_on,
+        evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
                                        NULL);
-        evas_object_smart_callback_add(term, "selection,off", _cb_sel_off,
+        evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
                                        NULL);
      }
    if (!ct_out)

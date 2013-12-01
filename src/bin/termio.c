@@ -107,9 +107,9 @@ _sel_set(Evas_Object *obj, Eina_Bool enable)
    if (sd->pty->selection.is_active == enable) return;
    sd->pty->selection.is_active = enable;
    if (enable)
-     evas_object_smart_callback_call(obj, "selection,on", NULL);
+     evas_object_smart_callback_call(sd->win, "selection,on", NULL);
    else
-     evas_object_smart_callback_call(obj, "selection,off", NULL);
+     evas_object_smart_callback_call(sd->win, "selection,off", NULL);
 }
 
 static inline Eina_Bool
@@ -3128,8 +3128,8 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                }
              else
                {
-                  sd->pty->selection.is_active = EINA_FALSE;
                   sd->moved = EINA_FALSE;
+                  _sel_set(data, EINA_FALSE);
                   if (!shift)
                     {
                        sd->pty->selection.is_box =
@@ -3312,7 +3312,6 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (sd->pty->selection.makesel)
      {
         int start_x, start_y, end_x, end_y;
-        _sel_set(data, EINA_TRUE);
 
         if (!sd->pty->selection.is_active)
           {
