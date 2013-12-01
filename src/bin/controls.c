@@ -50,17 +50,21 @@ _cb_ct_del_delay(void *data EINA_UNUSED)
 }
 
 static void
-_cb_ct_copy(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_ct_copy(void *data EINA_UNUSED,
+            Evas_Object *obj EINA_UNUSED,
+            void *event EINA_UNUSED)
 {
+   termio_copy_clipboard(ct_term);
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
-   termio_copy_clipboard(data);
 }
 
 static void
-_cb_ct_paste(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_ct_paste(void *data EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event EINA_UNUSED)
 {
+   termio_paste_clipboard(ct_term);
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
-   termio_paste_clipboard(data);
 }
 
 static void
@@ -245,21 +249,21 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
         
-        o = _button_add(win, "New", "new", _cb_ct_new, term);
+        o = _button_add(win, "New", "new", _cb_ct_new, NULL);
         elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
         
-        o = _button_add(win, "Split V", "split-h", _cb_ct_split_v, term);
+        o = _button_add(win, "Split V", "split-h", _cb_ct_split_v, NULL);
         elm_box_pack_end(ct_box2, o);
-        o = _button_add(win, "Split H", "split-v", _cb_ct_split_h, term);
+        o = _button_add(win, "Split H", "split-v", _cb_ct_split_h, NULL);
         elm_box_pack_end(ct_box2, o);
         
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
         
-        o = _button_add(win, "Close", "close", _cb_ct_close, term);
+        o = _button_add(win, "Close", "close", _cb_ct_close, NULL);
         elm_box_pack_end(ct_box2, o);
         
         o = _sep_add_v(win);
@@ -269,24 +273,24 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
         
-        o = _button_add(win, "Copy", "copy", _cb_ct_copy, term);
+        o = _button_add(win, "Copy", "copy", _cb_ct_copy, NULL);
         evas_object_data_set(ct_frame, "bt_copy", o);
         if (!termio_selection_exists(term))
           elm_object_disabled_set(o, EINA_TRUE);
         elm_box_pack_end(ct_box, o);
-        o = _button_add(win, "Paste", "paste", _cb_ct_paste, term);
+        o = _button_add(win, "Paste", "paste", _cb_ct_paste, NULL);
         elm_box_pack_end(ct_box, o);
         
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
         
-        o = _button_add(win, "Settings", "settings", _cb_ct_options, term);
+        o = _button_add(win, "Settings", "settings", _cb_ct_options, NULL);
         elm_box_pack_end(ct_box, o);
         
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
         
-        o = _button_add(win, "About", "about", _cb_ct_about, term);
+        o = _button_add(win, "About", "about", _cb_ct_about, NULL);
         elm_box_pack_end(ct_box, o);
 
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
@@ -306,7 +310,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         edje_object_part_swallow(bg, "terminology.dismiss", o);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _cb_mouse_down, term);
+                                       _cb_mouse_down, NULL);
         evas_object_event_callback_add(ct_over, EVAS_CALLBACK_DEL,
                                        _cb_over_del, NULL);
         

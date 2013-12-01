@@ -103,6 +103,7 @@ static void
 _sel_set(Evas_Object *obj, Eina_Bool enable)
 {
    Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->pty->selection.is_active == enable) return;
    sd->pty->selection.is_active = enable;
@@ -139,7 +140,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
    int type;
    
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!config) return;
    if (!sd->link.string) return;
    if (link_is_url(sd->link.string))
@@ -302,6 +303,7 @@ _cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              void *event EINA_UNUSED)
 {
    Termio *sd = data;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->link.ctxpopup = NULL;
    elm_object_focus_set(sd->self, EINA_TRUE);
 }
@@ -345,7 +347,7 @@ _cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    
    if (ev->button == 1)
      {
@@ -386,7 +388,7 @@ static Eina_Bool
 _cb_link_up_delay(void *data)
 {
    Termio *sd = evas_object_smart_data_get(data);
-   if (!sd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    
    sd->link_do_timer = NULL;
    if (!sd->didclick) _activate_link(data, EINA_TRUE);
@@ -1746,6 +1748,8 @@ _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text)
 {
    Termio *sd = evas_object_smart_data_get(obj);
 
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
    text = eina_stringshare_add(text);
 
    sd->have_sel = EINA_FALSE;
@@ -1771,7 +1775,7 @@ _take_selection(Evas_Object *obj, Elm_Sel_Type type)
    char *s = NULL;
    size_t len = 0;
 
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    if (sd->pty->selection.is_active)
      {
         start_x = sd->pty->selection.start.x;
@@ -1866,7 +1870,7 @@ static void
 _paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!sd->win) return;
    elm_cnp_selection_get(sd->win, type, ELM_SEL_FORMAT_TEXT,
                          _getsel_cb, obj);
@@ -4022,7 +4026,6 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
         if (!((cells_changed > (cells_selection + sel_len)) ||
              (cells_selection > (cells_changed + n))))
           _sel_set(obj, EINA_FALSE);
-
      }
 }
 
