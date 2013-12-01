@@ -55,7 +55,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    ty->backpos++;
    if (ty->backpos >= ty->backmax) ty->backpos = 0;
    ty->backscroll_num++;
-   if (ty->backscroll_num >= ty->backmax) ty->backscroll_num = ty->backmax - 1;
+   if (ty->backscroll_num >= ty->backmax) ty->backscroll_num = ty->backmax;
    termpty_save_thaw();
 }
 

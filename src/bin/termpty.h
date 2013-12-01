@@ -123,6 +123,7 @@ struct _Termpty
    int w, h;
    int fd, slavefd;
    int circular_offset;
+   int circular_offset2;
    int backmax, backpos;
    int backscroll_num;
    struct {

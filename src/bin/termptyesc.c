@@ -835,20 +835,12 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  handled = 1;
                                  DBG("DDD: switch buf");
                                  if (ty->altbuf)
-                                   {
-                                      // if we are looking at alt buf now,
-                                      // clear main buf before we swap it back
-                                      // into the screen2 save (so save is
-                                      // clear)
-                                      _termpty_clear_all(ty);
-//                                      _termpty_cursor_copy(&(ty->swap), &(ty->state));
-                                      ty->state = ty->swap;
-                                   }
-                                 else
-                                   {
-//                                      _termpty_cursor_copy(&(ty->state), &(ty->swap));
-                                      ty->swap = ty->state;
-                                   }
+                                   // if we are looking at alt buf now,
+                                   // clear main buf before we swap it back
+                                   // into the screen2 save (so save is
+                                   // clear)
+                                   _termpty_clear_all(ty);
+
                                  // swap screen content now
                                  termpty_screen_swap(ty);
                                  break;
