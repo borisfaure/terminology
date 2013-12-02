@@ -1,0 +1,25 @@
+2013-12-03
+
+        * Release v0.4.0
+        * compress backscroll
+        * add audio keyboard
+        * text reflow
+        * full 256-colors support
+        * improve terminal compatibility
+        * improve selection
+        * add a man page
+        * add option to set geometry on start
+        * be able to inline edje objects
+        * bug fixes
+
+2013-03-24
+
+        Release v0.3.0
+
+2012-12-15
+
+        Release v0.2.0
+
+2012-08-25
+
+        Initial release v0.1.0
