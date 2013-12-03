@@ -9,10 +9,6 @@
 #include "utils.h"
 #include "main.h"
 
-static Evas_Object *op_themelist;
-
-static Eina_List *themes = NULL;
-
 typedef struct _Theme Theme;
 struct _Theme
 {
@@ -20,6 +16,10 @@ struct _Theme
    const char *name;
    Evas_Object *term;
 };
+
+static Evas_Object *op_themelist;
+static Eina_List *themes = NULL;
+static Ecore_Timer *seltimer = NULL;
 
 static char *
 _cb_op_theme_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
@@ -79,11 +79,25 @@ _cb_op_theme_sort(const void *d1, const void *d2)
    return strcasecmp(d1, d2);
 }
 
+static Eina_Bool
+_cb_sel_item(void *data)
+{
+   Theme *t = data;
+
+   if (t)
+     {
+        elm_gengrid_item_selected_set(t->item, EINA_TRUE);
+        elm_gengrid_item_bring_in(t->item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+     }
+   seltimer = NULL;
+   return EINA_FALSE;
+}
+
 void
 options_theme(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o, *box, *fr;
-   Elm_Genlist_Item_Class *it_class;
+   Elm_Gengrid_Item_Class *it_class;
    Eina_List *files;
    char buf[4096], *file;
    Theme *t;
@@ -105,16 +119,17 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(fr, o);
    evas_object_show(o);
 
-   it_class = elm_genlist_item_class_new();
-   it_class->item_style = "end_icon";
+   it_class = elm_gengrid_item_class_new();
+   it_class->item_style = "thumb";
    it_class->func.text_get = _cb_op_theme_text_get;
    it_class->func.content_get = _cb_op_theme_content_get;
 
-   op_themelist = o = elm_genlist_add(opbox);
+   op_themelist = o = elm_gengrid_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_genlist_mode_set(o, ELM_LIST_COMPRESS);
-   elm_genlist_homogeneous_set(o, EINA_TRUE);
+   elm_gengrid_item_size_set(o,
+                             elm_config_scale_get() * 160,
+                             elm_config_scale_get() * 180);
 
    snprintf(buf, sizeof(buf), "%s/themes", elm_app_data_dir_get());
    files = ecore_file_ls(buf);
@@ -122,6 +137,11 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
      files = eina_list_sort(files, eina_list_count(files),
                             _cb_op_theme_sort);
 
+   if (seltimer)
+     {
+        ecore_timer_del(seltimer);
+        seltimer = NULL;
+     }
    EINA_LIST_FREE(files, file)
      {
         const char *ext = strchr(file, '.');
@@ -132,15 +152,17 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
              t = calloc(1, sizeof(Theme));
              t->name = eina_stringshare_add(file);
              t->term = term;
-             t->item = elm_genlist_item_append(o, it_class, t, NULL,
-                                               ELM_GENLIST_ITEM_NONE,
+             t->item = elm_gengrid_item_append(o, it_class, t,
                                                _cb_op_theme_sel, t);
              if (t->item)
                {
                   themes = eina_list_append(themes, t);
                   if ((config->theme) &&
                       (!strcmp(config->theme, t->name)))
-                    elm_genlist_item_selected_set(t->item, EINA_TRUE);
+                    {
+                       if (seltimer) ecore_timer_del(seltimer);
+                       seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
+                    }
                }
              else
                {
@@ -151,7 +173,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
         free(file);
      }
 
-   elm_genlist_item_class_free(it_class);
+   elm_gengrid_item_class_free(it_class);
 
    elm_box_pack_end(box, o);
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -166,6 +188,11 @@ options_theme_clear(void)
 
    op_themelist = NULL;
 
+   if (seltimer)
+     {
+        ecore_timer_del(seltimer);
+        seltimer = NULL;
+     }
    EINA_LIST_FREE(themes, t)
      {
         eina_stringshare_del(t->name);
