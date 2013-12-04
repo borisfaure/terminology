@@ -3,12 +3,13 @@
 #include <Elementary.h>
 #include "options.h"
 #include "options_font.h"
-#include "options_helpers.h"
-#include "options_behavior.h"
-#include "options_video.h"
 #include "options_theme.h"
 #include "options_wallpaper.h"
 #include "options_colors.h"
+#include "options_video.h"
+#include "options_behavior.h"
+#include "options_keys.h"
+#include "options_helpers.h"
 #include "config.h"
 #include "termio.h"
 
@@ -30,6 +31,7 @@ static enum option_mode {
      OPTION_COLORS,
      OPTION_VIDEO,
      OPTION_BEHAVIOR,
+     OPTION_KEYS,
      OPTION_HELPERS
 } _mode = 0;
 
@@ -83,6 +85,7 @@ _cb_opdt_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EIN
       case OPTION_COLORS:    options_colors(op_opbox, data); break;
       case OPTION_VIDEO:     options_video(op_opbox, data); break;
       case OPTION_BEHAVIOR:  options_behavior(op_opbox, data); break;
+      case OPTION_KEYS:      options_keys(op_opbox, data); break;
       case OPTION_HELPERS:   options_helpers(op_opbox, data); break;
      }
    edje_object_signal_emit(saved_bg, "optdetails,show", "terminology");
@@ -148,6 +151,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ITEM_APPEND("preferences-color", "Colors", COLORS);
         ITEM_APPEND("preferences-desktop-multimedia", "Video", VIDEO);
         ITEM_APPEND("system-run", "Behavior", BEHAVIOR);
+        ITEM_APPEND("preferences-desktop-keyboard-shortcuts", "Keys", KEYS);
         ITEM_APPEND("document-open", "Helpers", HELPERS);
 #undef ITEM_APPEND
 
