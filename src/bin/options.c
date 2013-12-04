@@ -21,61 +21,25 @@ static Evas_Object *saved_win = NULL;
 static Evas_Object *saved_bg = NULL;
 static void (*op_donecb) (void *data) = NULL;
 static void *op_donedata = NULL;
-static int mode = -1;
+
+static enum option_mode {
+     OPTION_NONE = 0,
+     OPTION_FONT,
+     OPTION_THEME,
+     OPTION_WALLPAPER,
+     OPTION_COLORS,
+     OPTION_VIDEO,
+     OPTION_BEHAVIOR,
+     OPTION_HELPERS
+} _mode = 0;
 
 static void
-_cb_op_font(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_op(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   if (mode == 1) return;
-   mode = 1;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
+   enum option_mode mode = (intptr_t) data;
 
-static void
-_cb_op_theme(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 2) return;
-   mode = 2;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
-
-static void
-_cb_op_wallpaper(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 3) return;
-   mode = 3;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
-
-static void
-_cb_op_colors(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 4) return;
-   mode = 4;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
-
-static void
-_cb_op_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 5) return;
-   mode = 5;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
-
-static void
-_cb_op_behavior(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 6) return;
-   mode = 6;
-   edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
-}
-
-static void
-_cb_op_helpers(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (mode == 7) return;
-   mode = 7;
+   if (_mode == mode) return;
+   _mode = mode;
    edje_object_signal_emit(saved_bg, "optdetails,hide", "terminology");
 }
 
@@ -110,16 +74,16 @@ static void
 _cb_opdt_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    elm_box_clear(op_opbox);
-   switch (mode)
+   switch (_mode)
      {
-      case 1: options_font(op_opbox, data); break;
-      case 2: options_theme(op_opbox, data); break;
-      case 3: options_wallpaper(op_opbox, data); break;
-      case 4: options_colors(op_opbox, data); break;
-      case 5: options_video(op_opbox, data); break;
-      case 6: options_behavior(op_opbox, data); break;
-      case 7: options_helpers(op_opbox, data); break;
-      default: break;
+      case OPTION_NONE:      break;
+      case OPTION_FONT:      options_font(op_opbox, data); break;
+      case OPTION_THEME:     options_theme(op_opbox, data); break;
+      case OPTION_WALLPAPER: options_wallpaper(op_opbox, data); break;
+      case OPTION_COLORS:    options_colors(op_opbox, data); break;
+      case OPTION_VIDEO:     options_video(op_opbox, data); break;
+      case OPTION_BEHAVIOR:  options_behavior(op_opbox, data); break;
+      case OPTION_HELPERS:   options_helpers(op_opbox, data); break;
      }
    edje_object_signal_emit(saved_bg, "optdetails,show", "terminology");
 }
@@ -130,7 +94,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
 {
    Evas_Object *o;
 
-   mode = -1;
+   _mode = OPTION_NONE;
    if (!op_frame)
      {
         Elm_Object_Item *it_fn;
@@ -173,14 +137,19 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_toolbar_menu_parent_set(o, win);
         elm_toolbar_homogeneous_set(o, EINA_FALSE);
 
-        it_fn = 
-        elm_toolbar_item_append(o, "preferences-desktop-font",       "Font",      _cb_op_font,      term);
-        elm_toolbar_item_append(o, "preferences-desktop-theme",      "Theme",     _cb_op_theme,     term);
-        elm_toolbar_item_append(o, "preferences-desktop-wallpaper",  "Wallpaper", _cb_op_wallpaper, term);
-        elm_toolbar_item_append(o, "preferences-color",              "Colors",    _cb_op_colors,    term);
-        elm_toolbar_item_append(o, "preferences-desktop-multimedia", "Video",     _cb_op_video,     term);
-        elm_toolbar_item_append(o, "system-run",                     "Behavior",  _cb_op_behavior,  term);
-        elm_toolbar_item_append(o, "document-open",                  "Helpers",   _cb_op_helpers,   term);
+#define ITEM_APPEND(_icon_name, _name, _option_mode) \
+        elm_toolbar_item_append(o, _icon_name, _name, _cb_op, \
+                                (void*) OPTION_##_option_mode)
+
+        it_fn =
+        ITEM_APPEND("preferences-desktop-font", "Font", FONT);
+        ITEM_APPEND("preferences-desktop-theme", "Theme", THEME);
+        ITEM_APPEND("preferences-desktop-wallpaper", "Wallpaper", WALLPAPER);
+        ITEM_APPEND("preferences-color", "Colors", COLORS);
+        ITEM_APPEND("preferences-desktop-multimedia", "Video", VIDEO);
+        ITEM_APPEND("system-run", "Behavior", BEHAVIOR);
+        ITEM_APPEND("document-open", "Helpers", HELPERS);
+#undef ITEM_APPEND
 
         elm_box_pack_end(op_tbox, o);
         evas_object_show(o);
