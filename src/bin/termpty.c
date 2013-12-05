@@ -1013,16 +1013,16 @@ void
 termpty_screen_swap(Termpty *ty)
 {
    Termcell *tmp_screen;
-   Termstate tmp_state;
    int tmp_circular_offset;
 
    tmp_screen = ty->screen;
    ty->screen = ty->screen2;
    ty->screen2 = tmp_screen;
 
-   tmp_state = ty->state;
-   ty->state = ty->swap;
-   ty->swap = tmp_state;
+   if (ty->altbuf)
+      ty->state = ty->swap;
+   else
+      ty->swap = ty->state;
 
    tmp_circular_offset = ty->circular_offset;
    ty->circular_offset = ty->circular_offset2;
