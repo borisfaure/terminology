@@ -639,7 +639,7 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
    int x, x2, y, y2, y2_start;
    int len, len_last, len_remaining, copy_width, ts2_width;
    Termsave *ts, *ts2;
-   Termcell *line, *line2;
+   Termcell *line, *line2 = NULL;
 
    if (y_end >= 0)
      {
@@ -714,15 +714,18 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
                        back2[y2 + ty->backmax] = ts2;
                     }
                }
-             termpty_cell_copy(ty, line + x, line2 + x2, copy_width);
-             x += copy_width;
-             x2 += copy_width;
-             len_remaining -= copy_width;
-             if ((x2 == w2) && (y2 != y2_end))
+             if (line2)
                {
-                  line2[x2 - 1].att.autowrapped = 1;
-                  x2 = 0;
-                  y2++;
+                  termpty_cell_copy(ty, line + x, line2 + x2, copy_width);
+                  x += copy_width;
+                  x2 += copy_width;
+                  len_remaining -= copy_width;
+                  if ((x2 == w2) && (y2 != y2_end))
+                    {
+                       line2[x2 - 1].att.autowrapped = 1;
+                       x2 = 0;
+                       y2++;
+                    }
                }
           }
         x = 0;
