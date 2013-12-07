@@ -1,0 +1,49 @@
+# This cleans up all kind of different spellings, typos and different email
+# addresses for commit authors. It makes git shortlog statistics more meaningful.
+#
+# More people can be added following this scheme:
+# Proper Name <proper@email.xx> Commit Name <commit@email.xx>
+#
+# Please keep this file in sync between efl, elementary, e and terminology.
+
+Carsten Haitzler <raster@rasterman.com> Carsten Haitzler (Rasterman) <raster@rasterman.com>
+Cedric BAIL <cedric.bail@free.fr> Cedric Bail <cedric.bail@samsung.com>
+Cedric BAIL <cedric.bail@free.fr> Cedric BAIL <cedric.bail@samsung.com>
+Cedric BAIL <cedric.bail@free.fr> Cedric Bail <cedric.bail@free.fr>
+Cedric BAIL <cedric.bail@free.fr> Cedric BAIL <cedric@efl.so>
+Vincent Torri <vincent.torri@gmail.com> Vincent Torri <vtorri@univ-evry.fr>
+Tom Hacohen <tom@stosb.com> Tom 'TAsn' Hacohen <tom@stosb.com>
+Tom Hacohen <tom@stosb.com> Tom <tom@stosb.com>
+Gustavo Sverzut Barbieri <barbieri@gmail.com> Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <cpmichael1@comcast.net>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <cp.michael@samsung.com>
+Christopher Michael <devilhorns@comcast.net> Chris Michael <cp.michael@samsung.com>
+Christopher Michael <devilhorns@comcast.net> Chris Michael <devilhorns@comcast.net>
+Sebastian Dransfeld <sd@tango.flipp.net> Sebastian Dransfeld <sebastian.dransfeld@sintef.no>
+Sebastian Dransfeld <sd@tango.flipp.net> sebastid <sebastid>
+Mike Blumenkrantz <michael.blumenkrantz@gmail.com> Mike Blumenkrantz <m.blumenkran@samsung.com>
+Mike Blumenkrantz <michael.blumenkrantz@gmail.com> discomfitor <michael.blumenkrantz@gmail.com>
+ChunEon Park <hermet@hermet.pe.kr> ChunEon Park <chuneon.park@samsung.com>
+David Walter Seikel <onefang@gmail.com> David Walter Seikel <won_fang@yahoo.com.au>
+Rafael Antognolli <antognolli@gmail.com> Rafael Antognolli <rafael.antognolli@intel.com>
+Rafael Antognolli <antognolli@gmail.com> Rafael Antognolli <rafael.antognolli@linux.intel.com>
+Iván Briano <sachieru@gmail.com> Ivan Briano <ivan.briano@intel.com>
+Iván Briano <sachieru@gmail.com> Ivan Briano <sachieru@gmail.com>
+Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.de.marchi@gmail.com>
+Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.demarchi@intel.com>
+Jihoon Kim <imfine98@gmail.com> Jihoon Kim <jihoon48.kim@samsung.com>
+Stefan Schmidt <stefan@datenfreihafen.org> Stefan Schmidt <s.schmidt@samsung.com>
+Jonas M. Gastal <jgastal@profusion.mobi> Jonas Gastal <jgastal@profusion.mobi>
+Daniel Juyung Seo <seojuyung2@gmail.com> Daniel Juyung Seo <juyung.seo@samsung.com>
+Daniel Juyung Seo <seojuyung2@gmail.com> Daniel Juyung Seo <seojuyung@gmail.com>
+Daniel Willmann <daniel@totalueberwachung.de> Daniel Willmann <d.willmann@samsung.com>
+Gustavo Lima Chaves <glima@profusion.mobi> Gustavo Lima Chaves <gustavo.lima.chaves@intel.com>
+José Roberto de Souza <zehortigoza@profusion.mobi> José Roberto de Souza <jose.souza@intel.com>
+José Roberto de Souza <zehortigoza@profusion.mobi> José Roberto de Souza <zezsouza@gmail.com>
+José Roberto de Souza <zehortigoza@profusion.mobi> José Roberto de Souza <zehortigoza@gmail.com>
+Mike McCormack <mike@atratus.org> Mike McCormack <mj.mccormack@ring3k.org>
+Mike McCormack <mike@atratus.org> Mike McCormack <mj.mccormack@samsung.com>
+Mike McCormack <mike@atratus.org> Mike McCormack <mikem@ring3k.org>
+Mike McCormack <mike@atratus.org> Mike McCormack <mikem@atratus.org>
+Boris Faure <billiob@gmail.com> Boris 'billiob' Faure <billiob@gmail.com>
+Eduardo Lima <eduardo.lima@intel.com> Eduardo Lima (Etrunko) <eduardo.lima@intel.com>
