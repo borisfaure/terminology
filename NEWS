@@ -1,0 +1,22 @@
+=================
+Terminology 0.4.0
+=================
+
+Changes since 0.3.0:
+--------------------
+
+Additions:
+    * Add a man page
+    * Text reflow
+    * Add option to set geometry on start
+    * Audio keyboard
+    * Inline edje objects
+
+Improvements:
+    * Compress backscroll
+    * Improve terminal compatibility
+    * 256-colors support
+    * Selection handling
+
+Fixes:
+    * Many bugs fixes
