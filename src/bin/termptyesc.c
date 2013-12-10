@@ -840,9 +840,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                    // into the screen2 save (so save is
                                    // clear)
                                    _termpty_clear_all(ty);
-
                                  // swap screen content now
-                                 termpty_screen_swap(ty);
+                                 if (mode != ty->altbuf)
+                                   termpty_screen_swap(ty);
                                  break;
                                case 1048:
                                  if (mode)
