@@ -741,7 +741,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    Termcell *new_screen;
    Termsave **new_back;
    int y_start, y_end, new_y_start, new_y_end;
-   int i;
+   int i, altbuf = 0;
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;
 
@@ -750,7 +750,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if (ty->altbuf)
      {
         termpty_screen_swap(ty);
-        ty->altbuf = 1;
+        altbuf = 1;
      }
 
    new_screen = calloc(1, sizeof(Termcell) * new_w * new_h);
@@ -809,11 +809,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->screen = new_screen;
    ty->back = new_back;
 
-   if (ty->altbuf)
-     {
-        termpty_screen_swap(ty);
-        ty->altbuf = 1;
-     }
+   if (altbuf) termpty_screen_swap(ty);
 
    _limit_coord(ty, &(ty->state));
    _limit_coord(ty, &(ty->swap));
@@ -1017,6 +1013,7 @@ termpty_screen_swap(Termpty *ty)
 {
    Termcell *tmp_screen;
    int tmp_circular_offset;
+   int tmp_appcursor = ty->state.appcursor;
 
    tmp_screen = ty->screen;
    ty->screen = ty->screen2;
@@ -1030,6 +1027,8 @@ termpty_screen_swap(Termpty *ty)
    tmp_circular_offset = ty->circular_offset;
    ty->circular_offset = ty->circular_offset2;
    ty->circular_offset2 = tmp_circular_offset;
+
+   ty->state.appcursor = tmp_appcursor;
 
    ty->altbuf = !ty->altbuf;
 
