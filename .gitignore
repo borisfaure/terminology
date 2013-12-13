@@ -59,6 +59,8 @@
 /src/bin/tyq
 /src/bin/*_generated.c
 /src/bin/*_generated.h
+/src/bin/lz4/.deps/
+/src/bin/lz4/.dirstamp
 /man/Makefile
 /man/Makefile.in
 pkgbuild/PKGBUILD
