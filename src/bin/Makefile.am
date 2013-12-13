@@ -1,3 +1,4 @@
+AUTOMAKE_OPTIONS = subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS = terminology tybg tyalpha typop tyq tycat tyls
