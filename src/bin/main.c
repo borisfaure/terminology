@@ -2000,6 +2000,18 @@ main_term_free(Term *term)
 }
 
 static void
+_cb_tabcount_prev(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   _cb_prev(data, NULL, NULL);
+}
+
+static void
+_cb_tabcount_next(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   _cb_next(data, NULL, NULL);
+}
+
+static void
 main_term_bg_config(Term *term)
 {
    if (term->config->translucent)
@@ -2012,12 +2024,16 @@ main_term_bg_config(Term *term)
         edje_object_signal_emit(term->bg, "translucent,off", "terminology");
         edje_object_signal_emit(term->base, "translucent,off", "terminology");
      }
-   
+
    termio_theme_set(term->term, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term); 
    edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
                                    _cb_tabcount_go, term);
+   edje_object_signal_callback_add(term->bg, "tabcount,prev", "terminology",
+                                   _cb_tabcount_prev, term);
+   edje_object_signal_callback_add(term->bg, "tabcount,next", "terminology",
+                                   _cb_tabcount_next, term);
    edje_object_part_swallow(term->base, "terminology.content", term->term);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    if (term->popmedia)
@@ -2165,6 +2181,10 @@ main_term_new(Win *wn, Config *config, const char *cmd,
                                    _cb_popmedia_done, term);
    edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
                                    _cb_tabcount_go, term);
+   edje_object_signal_callback_add(term->bg, "tabcount,prev", "terminology",
+                                   _cb_tabcount_prev, term);
+   edje_object_signal_callback_add(term->bg, "tabcount,next", "terminology",
+                                   _cb_tabcount_next, term);
 
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
