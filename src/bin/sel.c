@@ -572,9 +572,9 @@ static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    Sel *sd = evas_object_smart_data_get(obj);
-   Evas_Coord ox, oy, ow, oh;
+   Evas_Coord ow, oh;
    if (!sd) return;
-   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
 }
