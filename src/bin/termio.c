@@ -3480,7 +3480,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
             break;
           case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
               {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
+                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
                  snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                           btn + ' ',
                           cx + 1, cy + 1);
