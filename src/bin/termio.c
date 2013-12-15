@@ -3430,7 +3430,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
           case MOUSE_EXT_NONE:
             if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
               {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
+                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
 
                  buf[0] = 0x1b;
                  buf[1] = '[';
@@ -3472,7 +3472,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
             break;
           case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
               {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 2 + 64;
+                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
                  snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                           btn, cx + 1, cy + 1);
                  termpty_write(sd->pty, buf, strlen(buf));
