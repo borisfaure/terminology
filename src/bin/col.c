@@ -1,6 +1,7 @@
 #include "private.h"
+#include <Elementary.h>
+#include "config.h"
 #include "col.h"
-#include <Edje.h>
 
 typedef struct _Color Color;
 
@@ -377,7 +378,7 @@ static const Color colors256[256] =
 };
 
 void
-colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
+colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
 {
    int c, n;
    int r, g, b, a;
@@ -385,36 +386,56 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
 
    for (c = 0; c < 4 * 12; c++)
      {
-        snprintf(buf, sizeof(buf) - 1, "c%i", c);
-
-        n = c + 24 * ( c / 24);
-
-        if (edje_object_color_class_get(bg, buf,
-                                        &r, &g, &b, &a,
-                                        NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL, NULL))
+        if (config->colors_use)
           {
+             n = c + (24 * (c / 24));
+             
+             r = config->colors[c].r;
+             g = config->colors[c].g;
+             b = config->colors[c].b;
+             a = config->colors[c].a;
              /* normal */
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                 r, g, b, a);
+             evas_object_textgrid_palette_set
+             (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+              r, g, b, a);
              /* faint */
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-                 r/2, g/2, b/2, a/2);
+             evas_object_textgrid_palette_set
+             (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+              r / 2, g / 2, b / 2, a / 2);
           }
         else
           {
-             Color color = colors[c/24][(c%24)/12][c%12];
-
-             /* normal */
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                 color.r, color.g, color.b, color.a);
-             /* faint */
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-                 color.r/2, color.g/2, color.b/2, color.a/2);
+             snprintf(buf, sizeof(buf) - 1, "c%i", c);
+             
+             n = c + (24 * (c / 24));
+             
+             if (edje_object_color_class_get(bg, buf,
+                                             &r, &g, &b, &a,
+                                             NULL, NULL, NULL, NULL,
+                                             NULL, NULL, NULL, NULL))
+               {
+                  /* normal */
+                  evas_object_textgrid_palette_set
+                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+                   r, g, b, a);
+                  /* faint */
+                  evas_object_textgrid_palette_set
+                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+                   r / 2, g / 2, b / 2, a / 2);
+               }
+             else
+               {
+                  Color color = colors[c / 24][(c % 24) / 12][c % 12];
+                  
+                  /* normal */
+                  evas_object_textgrid_palette_set
+                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+                   color.r, color.g, color.b, color.a);
+                  /* faint */
+                  evas_object_textgrid_palette_set
+                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+                   color.r / 2, color.g / 2, color.b / 2, color.a / 2);
+               }
           }
      }
    for (c = 0; c < 256; c++)
@@ -439,4 +460,25 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg)
                  color.r, color.g, color.b, color.a);
           }
      }
+}
+
+void
+colors_standard_get(int set, int col, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+{
+   if ((set >= 0) && (set < 4))
+     {
+        int s1, s2;
+        
+        s1 = set / 2;
+        s2 = set % 2;
+        *r = colors[s1][s2][col].r;
+        *g = colors[s1][s2][col].g;
+        *b = colors[s1][s2][col].b;
+        *a = colors[s1][s2][col].a;
+        return;
+     }
+   *r = 0;
+   *g = 0;
+   *b = 0;
+   *a = 0;
 }

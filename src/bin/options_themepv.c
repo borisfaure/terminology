@@ -149,7 +149,7 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    
    // create a texgrid and swallow pack into grid
    o = evas_object_textgrid_add(evas);
-   colors_term_init(o, obg);
+   colors_term_init(o, obg, config);
    evas_object_scale_set(o, elm_config_scale_get());
    if (config->font.bitmap)
      {

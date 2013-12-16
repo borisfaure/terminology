@@ -2,8 +2,14 @@
 #define _CONFIG_H__ 1
 
 typedef struct _Config Config;
+typedef struct _Config_Color Config_Color;
 
 /* TODO: separate config per terminal (tab, window) and global. */
+
+struct _Config_Color
+{
+   unsigned char r, g, b, a;
+};
 
 struct _Config
 {
@@ -48,6 +54,8 @@ struct _Config
    Eina_Bool         drag_links;
    int               cg_width;
    int               cg_height;
+   Eina_Bool         colors_use;
+   Config_Color      colors[(4 * 12)];
 
    Eina_Bool         temporary; /* not in EET */
    const char       *config_key; /* not in EET, the key that config was loaded */

@@ -4701,6 +4701,8 @@ termio_config_update(Evas_Object *obj)
           edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
      }
    
+   colors_term_init(sd->grid.obj, sd->theme, sd->config);
+   
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);

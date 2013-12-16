@@ -4,12 +4,14 @@
 #include <Efreet.h>
 #include "config.h"
 #include "main.h"
+#include "col.h"
 
-#define CONF_VER 1
+#define CONF_VER 2
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
 static Eet_Data_Descriptor *edd_base = NULL;
+static Eet_Data_Descriptor *edd_color = NULL;
 
 static const char *
 _config_home_get(void)
@@ -28,6 +30,19 @@ config_init(void)
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
    edd_base = eet_data_descriptor_stream_new(&eddc);
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddc, sizeof(eddc), "Config_Color", sizeof(Config_Color));
+   edd_color = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Config_Color, "r", r, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Config_Color, "g", g, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Config_Color, "b", b, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Config_Color, "a", a, EET_T_UCHAR);
    
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "version", version, EET_T_INT);
@@ -100,6 +115,10 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "application_server_restore_views",
       application_server_restore_views, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "colors_use", colors_use, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_ARRAY
+     (edd_base, Config, "colors", colors, edd_color);
 }
 
 void
@@ -109,6 +128,11 @@ config_shutdown(void)
      {
         eet_data_descriptor_free(edd_base);
         edd_base = NULL;
+     }
+   if (edd_color)
+     {
+        eet_data_descriptor_free(edd_color);
+        edd_color = NULL;
      }
    efreet_shutdown();
 }
@@ -186,6 +210,8 @@ config_sync(const Config *config_src, Config *config)
    config->custom_geometry = config_src->custom_geometry;
    config->cg_width = config_src->cg_width;
    config->cg_height = config_src->cg_height;
+   config->colors_use = config_src->colors_use;
+   memcpy(config->colors, config_src->colors, sizeof(config->colors));
 }
 
 Config *
@@ -406,6 +432,8 @@ config_load(const char *key)
         config = calloc(1, sizeof(Config));
         if (config)
           {
+             int i, j;
+             
              config->version = CONF_VER;
              config->font.bitmap = EINA_TRUE;
              config->font.name = eina_stringshare_add("nexus.pcf");
@@ -445,6 +473,20 @@ config_load(const char *key)
              config->custom_geometry = EINA_FALSE;
              config->cg_width = 80;
              config->cg_height = 24;
+             config->colors_use = EINA_FALSE;
+             for (j = 0; j < 4; j++)
+               {
+                  for (i = 0; i < 12; i++)
+                    {
+                       unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
+                       
+                       colors_standard_get(j, i, &rr, &gg, &bb, &aa);
+                       config->colors[(j * 12) + i].r = rr;
+                       config->colors[(j * 12) + i].g = gg;
+                       config->colors[(j * 12) + i].b = bb;
+                       config->colors[(j * 12) + i].a = aa;
+                    }
+               }
           }
      }
 
@@ -498,6 +540,8 @@ config_fork(Config *config)
    CPY(custom_geometry);
    CPY(cg_width);
    CPY(cg_height);
+   CPY(colors_use);
+   memcpy(config2->colors, config->colors, sizeof(config->colors));
    
    CPY(temporary);
    SCPY(config_key);
