@@ -378,25 +378,19 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'A': // cursor up N
       case 'e': // cursor up N
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
         ty->state.wrapnext = 0;
-        for (i = 0; i < arg; i++)
-          {
-             ty->state.cy--;
-             _termpty_text_scroll_rev_test(ty, EINA_FALSE);
-          }
+        ty->state.cy -= arg;
+        ty->state.cy = MAX(0, ty->state.cy);
+        ty->state.cy = MIN(ty->h - 1, ty->state.cy);
         break;
       case 'B': // cursor down N
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
         DBG("cursor down %d", arg);
         ty->state.wrapnext = 0;
-        for (i = 0; i < arg; i++)
-          {
-             ty->state.cy++;
-             _termpty_text_scroll_test(ty, EINA_FALSE);
-          }
+        ty->state.cy += arg;
+        ty->state.cy = MAX(0, ty->state.cy);
+        ty->state.cy = MIN(ty->h - 1, ty->state.cy);
         break;
       case 'D': // cursor left N
         arg = _csi_arg_get(&b);
