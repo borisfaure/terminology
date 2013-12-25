@@ -21,8 +21,14 @@ AM_V_EDJ = $(am__v_EDJ_$(V))
 am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
 am__v_EDJ_0 = @echo "  EDJ   " $@;
 
-
-EXTRA_DIST = default.edc mild.edc black.edc mustang.edc default_colors.in.edc
+EXTRA_DIST = \
+default.edc \
+mild.edc \
+black.edc \
+mustang.edc \
+solarized.edc \
+solarized_light.edc \
+default_colors.in.edc
 
 default.edj: Makefile default.edc default_colors.in.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
@@ -39,15 +45,13 @@ black.edj: Makefile black.edc mild.edc default_colors.in.edc
 	$(top_srcdir)/data/themes/black.edc \
 	$(top_builddir)/data/themes/black.edj
 
-solarized.edj: Makefile default.edc
+solarized.edj: Makefile solarized.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
-	-DSOLARIZED=1 \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized.edj
 
-solarized_light.edj: Makefile default.edc
+solarized_light.edj: Makefile solarized_light.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
-	-DSOLARIZED=1 -DSOLARIZED_LIGHT=1 \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/solarized_light.edj
 
