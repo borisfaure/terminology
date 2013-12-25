@@ -654,11 +654,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                       wn = termio_win_get(ty->obj);
                                       elm_win_size_step_get(wn, &w, &h);
                                       evas_object_resize(wn,
-                                                         4 + (mode ? 132 : 80) * w,
-                                                         4 + 24 * h);
-                                      termpty_resize(ty, mode ? 132 : 80, 24);
+                                                         4 +
+                                                         (mode ? 132 : 80) * w,
+                                                         4 + ty->h * h);
+                                      termpty_resize(ty, mode ? 132 : 80,
+                                                     ty->h);
                                       _termpty_reset_state(ty);
-                                      _termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                                      _termpty_clear_screen(ty,
+                                                            TERMPTY_CLR_ALL);
                                    }
 #endif
                                  break;
