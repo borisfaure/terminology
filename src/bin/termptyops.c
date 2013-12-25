@@ -226,17 +226,16 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              unsigned char offset = 1;
 
              ty->state.wrapnext = 0;
-             ty->state.cx++;
-             if (ty->state.cx >= (ty->w - 1)) return;
 #if defined(SUPPORT_DBLWIDTH)
              if (EINA_UNLIKELY(cells[ty->state.cx].att.dblwidth))
-               {
-                  ty->state.cx++;
-                  offset = 2;
-               }
+               offset = 2;
 #endif
-             if (ty->state.cx >= (ty->w - (offset - 1)))
-               ty->state.cx = ty->w - offset;
+             ty->state.cx += offset;
+             if (ty->state.cx > (ty->w - offset))
+               {
+                  ty->state.cx = ty->w - offset;
+                  return;
+               }
           }
      }
 }
