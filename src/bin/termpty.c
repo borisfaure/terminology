@@ -744,6 +744,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    int i, altbuf = 0;
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;
+   if ((new_w == new_h) && (new_w == 1)) return; // FIXME: something weird is
+                                                 // going on at term init
 
    termpty_save_freeze();
 
