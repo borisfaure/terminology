@@ -6,14 +6,14 @@
 #define S_blue     38 139 210 255
 #define S_cyan     42 161 152 255
 #define S_green   133 153   0 255
-#define S_base03  253 246 227 255
-#define S_base02  238 232 213 255
-#define S_base01  147 161 161 255
-#define S_base00  131 148 150 255
-#define S_base0   101 123 131 255
-#define S_base1    88 110 117 255
-#define S_base2     7  54  66 255
-#define S_base3     0  43  54 255
+#define S_base03   0  43  54 255
+#define S_base02   7  54  66 255
+#define S_base01  88 110 117 255
+#define S_base00 101 123 131 255
+#define S_base0  131 148 150 255
+#define S_base1  147 161 161 255
+#define S_base2  238 232 213 255
+#define S_base3  253 246 227 255
 
 #define BG_COL    S_base03
 #define NO_COLORS 1
