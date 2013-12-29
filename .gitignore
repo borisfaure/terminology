@@ -26,6 +26,8 @@
 /data/fonts/Makefile.in
 /data/icons/Makefile
 /data/icons/Makefile.in
+/data/backgrounds/Makefile
+/data/backgrounds/Makefile.in
 /data/images/Makefile
 /data/images/Makefile.in
 /data/themes/Makefile

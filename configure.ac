@@ -82,6 +82,7 @@ src/bin/Makefile
 data/Makefile
 data/desktop/Makefile
 data/icons/Makefile
+data/backgrounds/Makefile
 data/images/Makefile
 data/fonts/Makefile
 data/themes/Makefile

@@ -58,6 +58,7 @@ _cb_op_del_delay(void *data EINA_UNUSED)
    evas_object_del(op_opbox);
    evas_object_del(op_frame);
    options_font_clear();
+   options_wallpaper_clear();
    options_theme_clear();
    op_opbox = NULL;
    op_frame = NULL;

@@ -32,7 +32,8 @@ struct _Config
       Eina_Bool      inline_please;
    } helper;
    const char       *theme;
-   const char       *background;
+   const char       *background; 
+   Eina_List        *wallpaper_paths;
    const char       *wordsep;
    int               scrollback;
    double            tab_zoom;
