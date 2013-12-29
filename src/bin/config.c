@@ -227,6 +227,29 @@ config_sync(const Config *config_src, Config *config)
    memcpy(config->colors, config_src->colors, sizeof(config->colors));
 }
 
+static void
+_config_upgrade_to_v2(Config *config)
+{
+   int i, j;
+
+   /* Colors */
+   config->colors_use = EINA_FALSE;
+   for (j = 0; j < 4; j++)
+     {
+        for (i = 0; i < 12; i++)
+          {
+             unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
+
+             colors_standard_get(j, i, &rr, &gg, &bb, &aa);
+             config->colors[(j * 12) + i].r = rr;
+             config->colors[(j * 12) + i].g = gg;
+             config->colors[(j * 12) + i].b = bb;
+             config->colors[(j * 12) + i].a = aa;
+          }
+     }
+   config->version = 2;
+}
+
 Config *
 config_load(const char *key)
 {
@@ -249,18 +272,27 @@ config_load(const char *key)
              config->font.orig_size = config->font.size;
              if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
              config->font.orig_bitmap = config->font.bitmap;
-             if (config->version < CONF_VER)
+             switch (config->version)
                {
-                  // currently no upgrade path so reset config.
-                  config_del(config);
-                  config = NULL;
-               }
-             else
-               {
+                case 0:
+                case 1:
+                   _config_upgrade_to_v2(config);
+                  /*pass through*/
+                case CONF_VER: /* 2 */
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 200000);
                   LIM(config->tab_zoom, 0.0, 1.0);
                   LIM(config->vidmod, 0, 3)
+                  break;
+                default:
+                  if (config->version < CONF_VER)
+                    {
+                       // currently no upgrade path so reset config.
+                       config_del(config);
+                       config = NULL;
+                    }
+                  /* do no thing in case the config is from a newer
+                   * terminology, we don't want to remove it. */
                }
           }
      }
