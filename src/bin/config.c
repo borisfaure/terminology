@@ -514,17 +514,16 @@ Config *
 config_fork(Config *config)
 {
    Config *config2;
-   Eina_List *node;
-   char *path;
+
    config2 = calloc(1, sizeof(Config));
    if (!config2) return NULL;
 #define CPY(fld) config2->fld = config->fld;   
 #define SCPY(fld) if (config->fld) config2->fld = eina_stringshare_add(config->fld)
 #define SLSTCPY(fld) \
    do { Eina_List *__l; const char *__s; \
-      EINA_LIST_FOREACH(config->fld, __l, __s) \
-        config2->fld = eina_list_append \
-        (config2->fld, eina_stringshare_add(__s)); } while (0)
+     EINA_LIST_FOREACH(config->fld, __l, __s) \
+       config2->fld = eina_list_append \
+         (config2->fld, eina_stringshare_add(__s)); } while (0)
    
    CPY(version);
    SCPY(font.name);   
@@ -575,8 +574,8 @@ config_del(Config *config)
    const char *path;
    if (!config) return;
    
-   EINA_LIST_FREE(config->wallpaper_paths,path)
-      eina_stringshare_del(path);
+   EINA_LIST_FREE(config->wallpaper_paths, path)
+     eina_stringshare_del(path);
    
    eina_stringshare_del(config->font.name);
    eina_stringshare_del(config->font.orig_name);

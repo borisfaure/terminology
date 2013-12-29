@@ -7,6 +7,8 @@
 #include "options.h"
 #include "options_wallpaper.h"
 #include "extns.h"
+#include "media.h"
+#include "main.h"
 #include <sys/stat.h>
 
 typedef struct _Background_Item 
@@ -32,7 +34,7 @@ static Eina_List *backgroundlist = NULL;
 static Eina_List *pathlist = NULL;
 
 static char *
-_grid_text_get(void *data, Evas_Object *obj, const char *part)
+_grid_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    Background_Item *item = data;
    const char *s;
@@ -73,7 +75,7 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static void 
-_item_selected(void *data, Evas_Object *obj, void *event)
+_item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Background_Item *item = data;
    Config *config = termio_config_get(item->term);   
@@ -98,7 +100,7 @@ _item_selected(void *data, Evas_Object *obj, void *event)
  * Method to open the in windows
  */
 static void
-_done_click(void *data, Evas_Object *obj, void *event)
+_done_click(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    evas_object_del(inwin);
    inwin = NULL;
@@ -107,21 +109,10 @@ _done_click(void *data, Evas_Object *obj, void *event)
  * Methods for the genlist
  */
 static char *
-_item_label_get(void *data, Evas_Object *obj, const char *part)
+_item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    Wallpaper_Path_Item *item = data;
    return strdup(item->path);
-}
-
-static Evas_Object *
-_item_content_get(void *data, Evas_Object *obj, const char *part)
-{
-   return NULL;
-}
-
-static void
-_item_sel_cb(void *data, Evas_Object *obj, void *event)
-{
 }
 
 static void 
@@ -135,7 +126,7 @@ _fill_path_list(Eina_List *paths, Evas_Object *list)
    itc = elm_genlist_item_class_new();
    itc->item_style = "default";
    itc->func.text_get = _item_label_get;
-   itc->func.content_get = _item_content_get;
+   itc->func.content_get = NULL;
    itc->func.state_get = NULL;
    itc->func.del = NULL;
    EINA_LIST_FOREACH(paths, node, path)
@@ -146,7 +137,7 @@ _fill_path_list(Eina_List *paths, Evas_Object *list)
              wpi->path = eina_stringshare_add(path);
              elm_genlist_item_append(list, itc, wpi, NULL, 
                                      ELM_GENLIST_ITEM_NONE, 
-                                     _item_sel_cb, NULL);  
+                                     NULL, NULL);
              pathlist = eina_list_append(pathlist, wpi); 
           }
      }
@@ -156,7 +147,7 @@ _fill_path_list(Eina_List *paths, Evas_Object *list)
 }
 
 static void
-_file_is_chosen(void *data, Evas_Object *obj, void *event)
+_file_is_chosen(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Eina_List *node;
    char *saved_path;
@@ -184,7 +175,7 @@ _file_is_chosen(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_delete_path_click(void *data, Evas_Object *obj, void *event)
+_delete_path_click(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Elm_Object_Item *selected = elm_genlist_selected_item_get(list);
    Config *config = termio_config_get(data);
@@ -215,7 +206,7 @@ _delete_path_click(void *data, Evas_Object *obj, void *event)
 }
 
 static void
-_path_edit_click(void *data, Evas_Object *obj, void *event)
+_path_edit_click(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Config *config = termio_config_get(data);
    Evas_Object *parent = elm_object_top_widget_get(obj);
@@ -427,9 +418,7 @@ _renew_gengrid_backgrounds(Evas_Object *term)
 void
 options_wallpaper(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
 {
-   Evas_Object *frame, *o, *o2;
-   Config *config = termio_config_get(term); 
-   Background_Item *item;
+   Evas_Object *frame, *o;
 
    bg_grid = NULL;
    parent = opbox;
