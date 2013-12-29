@@ -57,7 +57,18 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
      {
         if (item->path)
           {
-             return media_add(obj, item->path, config, MEDIA_THUMB, TYPE_IMG);
+             int len0, len = strlen(item->path);
+             int i, ret = 0;
+             
+             for (i = 0; extn_edj[i]; i++)
+               {
+                  len0 = strlen(extn_edj[i]);
+                  if ((len > len0) &&
+                      (!strcasecmp(&(item->path[len - len0]), extn_edj[i])))
+                    return media_add(obj, item->path, config,
+                                     MEDIA_BG, &ret);
+               }
+             return media_add(obj, item->path, config, MEDIA_THUMB, &ret);
           }
         else
           {
@@ -83,7 +94,7 @@ _item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED
    if (!config) return;
    if (!item->path)
      {
-        //no background
+        // no background
         eina_stringshare_del(config->background);
         config->background = NULL;
         config_save(config, NULL);
@@ -272,8 +283,8 @@ static Eina_List*
 _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
 {
    Eina_List *childs = ecore_file_ls(root_path);
-   char *file_name, *ext;
-   int i;
+   char *file_name;
+   int i, j, len, len0;
    char path[PATH_MAX];
    Background_Item *item;
 
@@ -281,20 +292,32 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
    EINA_LIST_FREE(childs, file_name)
      {
         snprintf(path, PATH_MAX, "%s/%s", root_path, file_name);
-        ext = strchr(file_name, '.');
-        if ((!ecore_file_is_dir(path)) && (file_name[0] != '.') && (ext))
+        len = strlen(file_name);
+        if ((!ecore_file_is_dir(path)) && (file_name[0] != '.'))
           {
-             for (i = 0; extn_img[i]; i++)
+             const char **extns[5] = 
+               { extn_img, extn_scale, extn_edj, extn_mov, NULL };
+
+             for (j = 0; extns[j]; j++)
                {
-                  if (strcasecmp(extn_img[i], ext)) continue;
-                  item = calloc(1, sizeof(Background_Item));
-                  if (item)
+                  const char **ex = extns[j];
+
+                  for (i = 0; ex[i]; i++)
                     {
-                       item->path = eina_stringshare_add(path);
-                       item->term = term;
-                       list = eina_list_append(list, item);
+                       len0 = strlen(ex[i]);
+                       if ((len > len0) &&
+                           (!strcasecmp(&(file_name[len - len0]), ex[i])))
+                         {
+                            item = calloc(1, sizeof(Background_Item));
+                            if (item)
+                              {
+                                 item->path = eina_stringshare_add(path);
+                                 item->term = term;
+                                 list = eina_list_append(list, item);
+                              }
+                            break;
+                         }
                     }
-                  break;
                }
           }
         else
@@ -324,22 +347,22 @@ _read_directorys(Evas_Object *term)
              free(item);
           }
      }
-   //first of all append the None !!
+   // first of all append the None !!
    item = calloc(1, sizeof(Background_Item));
    item->path = NULL;
    item->term = term; 
    backgroundlist = eina_list_append(backgroundlist, item); 
-   //append the standart directory
-   snprintf(path, sizeof(path), "%s/backgrounds/", elm_app_data_dir_get());
+   // append the standard directory
+   snprintf(path, sizeof(path), "%s/backgrounds", elm_app_data_dir_get());
    backgroundlist = _rec_read_directorys(backgroundlist, path, term);
-   //append the Home background directory if this directory exists
+   // append the Home background directory if this directory exists
    home_dir = getenv("HOME");
-   if(home_dir)
+   if (home_dir)
      {
-        snprintf(path, sizeof(path), "%s/.e/e/backgrounds/", home_dir);
+        snprintf(path, sizeof(path), "%s/.e/e/backgrounds", home_dir);
         backgroundlist = _rec_read_directorys(backgroundlist, path, term);
      }
-   //Now append all the directorys which are stored
+   // Now append all the directorys which are stored
    EINA_LIST_FOREACH(config->wallpaper_paths, node, path_iterate)
      {
         backgroundlist = _rec_read_directorys(backgroundlist, path_iterate, term); 

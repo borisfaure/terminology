@@ -45,7 +45,7 @@ utf8.c utf8.h \
 win.c win.h \
 utils.c utils.h \
 dbus.c dbus.h \
-extns.h \
+extns.c extns.h \
 app_server.c app_server.h \
 app_server_eet.c app_server_eet.h
 
@@ -87,7 +87,7 @@ tyq_LDADD =
 
 tycat_SOURCES = \
 tycat.c \
-extns.h
+extns.c extns.h
 
 tycat_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
