@@ -57,14 +57,12 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
      {
         if (item->path)
           {
-             int len0, len = strlen(item->path);
+             int len0;
              int i, ret = 0;
-             
+
              for (i = 0; extn_edj[i]; i++)
                {
-                  len0 = strlen(extn_edj[i]);
-                  if ((len > len0) &&
-                      (!strcasecmp(&(item->path[len - len0]), extn_edj[i])))
+                  if (eina_str_has_extension(item->path, extn_edj[i]))
                     return media_add(obj, item->path, config,
                                      MEDIA_BG, &ret);
                }
@@ -284,7 +282,7 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
 {
    Eina_List *childs = ecore_file_ls(root_path);
    char *file_name;
-   int i, j, len, len0;
+   int i, j, len0;
    char path[PATH_MAX];
    Background_Item *item;
 
@@ -292,10 +290,9 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
    EINA_LIST_FREE(childs, file_name)
      {
         snprintf(path, PATH_MAX, "%s/%s", root_path, file_name);
-        len = strlen(file_name);
         if ((!ecore_file_is_dir(path)) && (file_name[0] != '.'))
           {
-             const char **extns[5] = 
+             const char **extns[5] =
                { extn_img, extn_scale, extn_edj, extn_mov, NULL };
 
              for (j = 0; extns[j]; j++)
@@ -304,9 +301,7 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
 
                   for (i = 0; ex[i]; i++)
                     {
-                       len0 = strlen(ex[i]);
-                       if ((len > len0) &&
-                           (!strcasecmp(&(file_name[len - len0]), ex[i])))
+                       if (eina_str_has_extension(file_name, ex[i]))
                          {
                             item = calloc(1, sizeof(Background_Item));
                             if (item)
