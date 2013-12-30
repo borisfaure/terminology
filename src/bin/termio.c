@@ -561,7 +561,8 @@ _update_link(Evas_Object *obj, Termio *sd,
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
                        xwin = elm_win_window_id_get(sd->win);
 # if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
-                       xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
+                       if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
+                         xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
 # endif
 #else
                        xwin = elm_win_xwindow_get(sd->win);
@@ -634,7 +635,8 @@ _remove_links(Termio *sd, Evas_Object *obj)
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
                        xwin = elm_win_window_id_get(sd->win);
 # if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
-                       xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
+                       if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
+                         xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
 # endif
 #else
                        xwin = elm_win_xwindow_get(sd->win);
