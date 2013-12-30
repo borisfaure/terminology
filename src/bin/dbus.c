@@ -27,7 +27,7 @@ ty_dbus_link_hide(void)
 }
 
 void
-ty_dbus_link_mouseout(int64_t win, const char *url, int x, int y)
+ty_dbus_link_mouseout(uint64_t win, const char *url, int x, int y)
 {
    Eldbus_Message *msg;
 
@@ -38,14 +38,14 @@ ty_dbus_link_mouseout(int64_t win, const char *url, int x, int y)
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseOut");
 
-   eldbus_message_arguments_append(msg, "suxii", url, time(NULL), win, x, y);
+   eldbus_message_arguments_append(msg, "sutii", url, time(NULL), win, x, y);
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
    eina_stringshare_replace(&_current_url, NULL);
 }
 
 
 void
-ty_dbus_link_mousein(int64_t win, const char *url, int x, int y)
+ty_dbus_link_mousein(uint64_t win, const char *url, int x, int y)
 {
    Eldbus_Message *msg;
    Eina_Stringshare *u;
@@ -64,7 +64,7 @@ ty_dbus_link_mousein(int64_t win, const char *url, int x, int y)
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseIn");
 
-   eldbus_message_arguments_append(msg, "suxii",
+   eldbus_message_arguments_append(msg, "sutii",
                                    _current_url, time(NULL), win, x, y);
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
 }

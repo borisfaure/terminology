@@ -554,12 +554,15 @@ _update_link(Evas_Object *obj, Termio *sd,
                   if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
                     {
                        Evas_Coord _x = ox, _y = oy;
-                       Ecore_Window xwin;
+                       uint64_t xwin;
 
                        _x += sd->mouse.cx * sd->font.chw;
                        _y += sd->mouse.cy * sd->font.chh;
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
                        xwin = elm_win_window_id_get(sd->win);
+# if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
+                       xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
+# endif
 #else
                        xwin = elm_win_xwindow_get(sd->win);
 #endif
@@ -622,7 +625,7 @@ _remove_links(Termio *sd, Evas_Object *obj)
         if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
           {
              Evas_Coord ox, oy;
-             Ecore_Window xwin;
+             uint64_t xwin;
 
              evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
 
@@ -630,6 +633,9 @@ _remove_links(Termio *sd, Evas_Object *obj)
              oy += sd->mouse.cy * sd->font.chh;
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
                        xwin = elm_win_window_id_get(sd->win);
+# if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
+                       xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
+# endif
 #else
                        xwin = elm_win_xwindow_get(sd->win);
 #endif
