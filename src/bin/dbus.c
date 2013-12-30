@@ -37,8 +37,11 @@ ty_dbus_link_mouseout(uint64_t win, const char *url, int x, int y)
                                         "/org/enlightenment/wm/RemoteObject",
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseOut");
-
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
    eldbus_message_arguments_append(msg, "sutii", url, time(NULL), win, x, y);
+#else
+   eldbus_message_arguments_append(msg, "suxii", url, time(NULL), (int64_t)win, x, y);
+#endif
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
    eina_stringshare_replace(&_current_url, NULL);
 }
@@ -64,8 +67,11 @@ ty_dbus_link_mousein(uint64_t win, const char *url, int x, int y)
                                         "org.enlightenment.wm.Teamwork",
                                         "LinkMouseIn");
 
-   eldbus_message_arguments_append(msg, "sutii",
-                                   _current_url, time(NULL), win, x, y);
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR > 8) // not a typo
+   eldbus_message_arguments_append(msg, "sutii", _current_url, time(NULL), win, x, y);
+#else
+   eldbus_message_arguments_append(msg, "suxii", _current_url, time(NULL), (int64_t)win, x, y);
+#endif
    eldbus_object_send(ty_e_object, msg, NULL, NULL, -1);
 }
 
