@@ -1900,7 +1900,7 @@ _font_size_set(Evas_Object *obj, int size)
      {
         Evas_Coord mw = 1, mh = 1;
         int gw, gh;
-        
+
         config->temporary = EINA_TRUE;
         config->font.size = size;
         gw = sd->grid.w;
