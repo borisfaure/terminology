@@ -492,7 +492,7 @@ static void
 _entry_termio_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Entry *en = data;
-   if (en->termio) evas_object_event_callback_add
+   if (en->termio) evas_object_event_callback_del_full
      (en->termio, EVAS_CALLBACK_DEL, _entry_termio_del_cb, en);
    en->termio = NULL;
 }
