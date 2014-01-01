@@ -57,7 +57,6 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
      {
         if (item->path)
           {
-             int len0;
              int i, ret = 0;
 
              for (i = 0; extn_edj[i]; i++)
@@ -121,6 +120,7 @@ static char *
 _item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    Wallpaper_Path_Item *item = data;
+   if (!item->path) return NULL;
    return strdup(item->path);
 }
 
@@ -140,14 +140,19 @@ _fill_path_list(Eina_List *paths, Evas_Object *list)
    itc->func.del = NULL;
    EINA_LIST_FOREACH(paths, node, path)
      {
+        if (!path) continue;
         wpi = calloc(1, sizeof(Wallpaper_Path_Item));
         if (wpi)
           {
              wpi->path = eina_stringshare_add(path);
-             elm_genlist_item_append(list, itc, wpi, NULL, 
-                                     ELM_GENLIST_ITEM_NONE, 
-                                     NULL, NULL);
-             pathlist = eina_list_append(pathlist, wpi); 
+             if (wpi->path)
+               {
+                  elm_genlist_item_append(list, itc, wpi, NULL, 
+                                          ELM_GENLIST_ITEM_NONE, 
+                                          NULL, NULL);
+                  pathlist = eina_list_append(pathlist, wpi);
+               }
+             else free(wpi);
           }
      }
    elm_gengrid_item_class_free(itc);
@@ -173,7 +178,7 @@ _file_is_chosen(void *data, Evas_Object *obj EINA_UNUSED, void *event)
    evas_object_del(list);
    EINA_LIST_FREE(pathlist, item)
      {
-        eina_stringshare_del(item->path);
+        if (item->path) eina_stringshare_del(item->path);
         free(item);
      }
    list = elm_genlist_add(inwin);
@@ -202,7 +207,7 @@ _delete_path_click(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UN
              evas_object_del(list);
              EINA_LIST_FREE(pathlist, item)
                {
-                  eina_stringshare_del(item->path);
+                  if (item->path) eina_stringshare_del(item->path);
                   free(item);
                }
              list = elm_genlist_add(inwin);
@@ -281,9 +286,8 @@ static Eina_List*
 _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
 {
    Eina_List *childs = ecore_file_ls(root_path);
-   char *file_name;
-   int i, j, len0;
-   char path[PATH_MAX];
+   char *file_name, path[PATH_MAX];
+   int i, j;
    Background_Item *item;
 
    if (!childs) return list;
@@ -476,13 +480,10 @@ options_wallpaper_clear(void)
         free(item);
      } 
    backgroundlist = NULL; 
-   if (pathlist)
+   EINA_LIST_FREE(pathlist, wpi)
      {
-        EINA_LIST_FREE(pathlist, wpi)
-          {
-             eina_stringshare_del(wpi->path);
-             free(wpi);
-          }
-        pathlist = NULL;
+        if (wpi->path) eina_stringshare_del(wpi->path);
+        free(wpi);
      }
+   pathlist = NULL;
 }
