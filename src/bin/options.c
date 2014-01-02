@@ -92,6 +92,20 @@ _cb_opdt_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EIN
    edje_object_signal_emit(saved_bg, "optdetails,show", "terminology");
 }
 
+static void
+_cb_opdt_hide_done2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   if (op_del_timer)
+     {
+        ecore_timer_del(op_del_timer);
+        op_del_timer = NULL;
+     }
+   _cb_op_del_delay(NULL);
+   edje_object_signal_callback_del(saved_bg, "optdetails,hide,done",
+                                   "terminology",
+                                   _cb_opdt_hide_done2);
+}
+
 void
 options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                void (*donecb) (void *data), void *donedata)
@@ -209,6 +223,9 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         edje_object_signal_callback_del(bg, "optdetails,hide,done",
                                         "terminology",
                                         _cb_opdt_hide_done);
+        edje_object_signal_callback_add(bg, "optdetails,hide,done",
+                                        "terminology",
+                                        _cb_opdt_hide_done2, term);
         elm_object_focus_set(op_frame, EINA_FALSE);
         elm_object_focus_set(op_opbox, EINA_FALSE);
         elm_object_focus_set(op_toolbar, EINA_FALSE);

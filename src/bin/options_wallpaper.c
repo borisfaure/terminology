@@ -438,7 +438,7 @@ _renew_gengrid_backgrounds(Evas_Object *term)
 }
 
 void
-options_wallpaper(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
+options_wallpaper(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *frame, *o;
 
