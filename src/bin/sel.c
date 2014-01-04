@@ -170,7 +170,7 @@ _autozoom(Evas_Object *obj)
 }
 
 void
-_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
