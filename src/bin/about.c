@@ -59,7 +59,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "and otherwise push the boundaries of what a modern terminal "
               "emulator should be. We hope you enjoy it.<br>"
               "<br>"
-              "Copyright © 2012-2013 by:<br>"
+              "Copyright © 2012-2014 by:<br>"
               "<br>"
               "Carsten Haitzler<br>"
               "Anisse Astier<br>"
