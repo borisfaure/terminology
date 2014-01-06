@@ -2000,10 +2000,13 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
 {
    if (!strcmp(ev->key, "Prior"))
      {
-        sd->scroll += by;
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
-        _smart_update_queue(term, sd);
+        if (!(sd->pty->altbuf))
+          {
+             sd->scroll += by;
+             if (sd->scroll > sd->pty->backscroll_num)
+               sd->scroll = sd->pty->backscroll_num;
+             _smart_update_queue(term, sd);
+          }
      }
    else if (!strcmp(ev->key, "Next"))
      {
