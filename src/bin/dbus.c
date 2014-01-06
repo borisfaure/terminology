@@ -101,8 +101,8 @@ ty_dbus_shutdown(void)
 #else
 
 void ty_dbus_link_hide(void) {}
-void ty_dbus_link_mousein (int64_t win EINA_UNUSED, const char *url EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED) {}
-void ty_dbus_link_mouseout(int64_t win EINA_UNUSED, const char *url EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED) {}
+void ty_dbus_link_mousein (uint64_t win EINA_UNUSED, const char *url EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED) {}
+void ty_dbus_link_mouseout(uint64_t win EINA_UNUSED, const char *url EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED) {}
 void ty_dbus_init(void) {}
 void ty_dbus_shutdown(void) {}
 
