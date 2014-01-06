@@ -1,3 +1,6 @@
+#ifndef _TERMPTY_OPS_H__
+#define _TERMPTY_OPS_H__ 1
+
 typedef enum _Termpty_Clear
 {
    TERMPTY_CLR_END,
@@ -20,3 +23,5 @@ void _termpty_reset_state(Termpty *ty);
 void _termpty_cursor_copy(Termstate *state, Termstate *dest);
 
 #define _term_txt_write(ty, txt) termpty_write(ty, txt, sizeof(txt) - 1)
+
+#endif

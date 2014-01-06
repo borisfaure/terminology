@@ -1,3 +1,6 @@
+#ifndef _TERMPTY_DBL_H__
+#define _TERMPTY_DBL_H__ 1
+
 Eina_Bool _termpty_is_dblwidth_slow_get(Termpty *ty, int g);
 
 static inline Eina_Bool
@@ -23,3 +26,4 @@ _termpty_is_dblwidth_get(Termpty *ty, int g)
 #endif
 }
 
+#endif
