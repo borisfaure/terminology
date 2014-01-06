@@ -1869,7 +1869,17 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
                        tmp[i] = s[i];
                        if (tmp[i] == '\n') tmp[i] = '\r';
                     }
+
+                  if (sd->pty->state.bracketed_paste)
+                      termpty_write(sd->pty, "\x1b[200~",
+                                    sizeof("\x1b[200~") - 1);
+
                   termpty_write(sd->pty, tmp, ev->len - 1);
+
+                  if (sd->pty->state.bracketed_paste)
+                      termpty_write(sd->pty, "\x1b[201~",
+                                    sizeof("\x1b[201~") - 1);
+
                   free(tmp);
                }
           }

@@ -845,9 +845,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  else
                                    _termpty_cursor_copy(&(ty->save), &(ty->state));
                                  break;
-                               case 2004: // ignore
+                               case 2004:
                                  handled = 1;
-//                                 INF("XXX: enable bracketed paste mode %i", mode);
+                                 ty->state.bracketed_paste = mode;
                                  break;
                                case 7727: // ignore
                                  handled = 1;

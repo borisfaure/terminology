@@ -98,6 +98,7 @@ struct _Termstate
    unsigned int  reverse : 1;
    unsigned int  no_autorepeat : 1;
    unsigned int  cjk_ambiguous_wide : 1;
+   unsigned int  bracketed_paste : 1;
 };
 
 struct _Termpty

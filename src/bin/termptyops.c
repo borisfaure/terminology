@@ -387,6 +387,7 @@ _termpty_reset_state(Termpty *ty)
    ty->state.hidecursor = 0;
    ty->state.crlf = 0;
    ty->state.had_cr = 0;
+   ty->state.bracketed_paste = 0;
 }
 
 void
