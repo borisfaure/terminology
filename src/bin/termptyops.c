@@ -183,7 +183,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
         if (ty->state.wrapnext)
           {
-             cells[ty->state.cx].att.autowrapped = 1;
+             cells[ty->w - 1].att.autowrapped = 1;
              ty->state.wrapnext = 0;
              ty->state.cx = 0;
              ty->state.cy++;
