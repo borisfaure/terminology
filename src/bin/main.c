@@ -144,7 +144,7 @@ _split_tabcount_update(Split *sp, Term *tm)
    int cnt = 0, term_cnt = 0;
    Eina_List *l;
    Term *term;
-   
+
    EINA_LIST_FOREACH(sp->terms, l, term)
      {
         if (term->missed_bell) missed++;
@@ -158,7 +158,7 @@ _split_tabcount_update(Split *sp, Term *tm)
    EINA_LIST_FOREACH(sp->terms, l, term)
      {
         Evas_Coord w = 0, h = 0;
-             
+
         if (!term->tabcount_spacer)
           {
              term->tabcount_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
@@ -188,7 +188,7 @@ _split_split_find(Split *sp, Evas_Object *term)
    Split *sp2;
    Eina_List *l;
    Term *tm;
-   
+
    if (sp->term)
      {
         if (sp->term->term == term) return sp;
@@ -215,7 +215,7 @@ _split_find(Evas_Object *win, Evas_Object *term)
 {
    Win *wn;
    Eina_List *l;
-   
+
    EINA_LIST_FOREACH(wins, l, wn)
      {
         if (wn->win == win) return _split_split_find(wn->split, term);
@@ -265,14 +265,14 @@ _split_split(Split *sp, Eina_Bool horizontal)
    char buf[PATH_MAX], *wdir = NULL;
 
    if (!sp->term) return;
-   
+
    o = sp->panes = elm_panes_add(sp->wn->win);
    elm_object_style_set(o, "flush");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    sp->horizontal = horizontal;
    elm_panes_horizontal_set(o, sp->horizontal);
-   
+
    _term_resize_track_stop(sp);
    sp2 = sp->s1 = calloc(1, sizeof(Split));
    sp2->parent = sp;
@@ -281,12 +281,12 @@ _split_split(Split *sp, Eina_Bool horizontal)
    sp2->terms = sp->terms;
    _term_resize_track_start(sp2);
 
-   sp->terms = NULL;   
-   
+   sp->terms = NULL;
+
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
    main_term_bg_redo(sp2->term);
    _split_tabcount_update(sp2, sp2->term);
-   
+
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
    sp2->wn = sp->wn;
@@ -392,7 +392,7 @@ void
 main_split_h(Evas_Object *win, Evas_Object *term)
 {
    Split *sp = _split_find(win, term);
-   
+
    if (!sp) return;
    _split_split(sp, EINA_TRUE);
 }
@@ -401,7 +401,7 @@ void
 main_split_v(Evas_Object *win, Evas_Object *term)
 {
    Split *sp = _split_find(win, term);
-   
+
    if (!sp) return;
    _split_split(sp, EINA_FALSE);
 }
@@ -422,7 +422,7 @@ static Eina_List *
 _split_flatten(Split *sp)
 {
    Eina_List *flat = NULL;
-   
+
    _split_append(sp, &flat);
    return flat;
 }
@@ -432,7 +432,7 @@ _term_next_get(Term *termin)
 {
    Split *sp;
    Eina_List *flat, *l;
-   
+
    sp = _split_find(termin->wn->win, termin->term);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->next)) return l->next->data;
@@ -463,7 +463,7 @@ _term_prev_get(Term *termin)
 {
    Split *sp;
    Eina_List *flat, *l;
-   
+
    sp = _split_find(termin->wn->win, termin->term);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->prev)) return l->prev->data;
@@ -486,9 +486,9 @@ _term_prev_get(Term *termin)
      }
 #if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
    sp = eina_list_last_data_get(flat);
-#else   
+#else
    sp = eina_list_data_get(eina_list_last(flat));
-#endif                           
+#endif
    eina_list_free(flat);
    l = eina_list_last(sp->terms);
    if (l) return l->data;
@@ -500,7 +500,7 @@ _split_merge(Split *spp, Split *sp, const char *slot)
 {
    Evas_Object *o = NULL;
    if (!sp) return;
-   
+
    if (sp->term)
      {
         main_term_bg_redo(sp->term);
@@ -688,7 +688,7 @@ main_win_focused_term_get(Win *wn)
 {
    Term *term;
    Eina_List *l;
-   
+
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
         if (term->focused) return term;
@@ -712,7 +712,7 @@ _cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Win *wn = data;
    Term *term;
    Split *sp;
-   
+
    if (!wn->focused) elm_win_urgent_set(wn->win, EINA_FALSE);
    wn->focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
@@ -737,7 +737,7 @@ _cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
-   
+
    wn->focused = EINA_FALSE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_FALSE);
@@ -766,17 +766,17 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 static void
 _cb_term_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-/*   
+/*
    Evas_Event_Mouse_Up *ev = event;
    Term *term = data;
    Term *term2;
-   
+
    term2 = main_win_focused_term_get(term->wn);
    if (term == term2) return;
    if (ev->button == 1)
      {
         int dx, dy, f;
-        
+
         dx = term->down.x - ev->canvas.x;
         dy = term->down.y - ev->canvas.y;
         f = elm_config_finger_size_get();
@@ -802,7 +802,7 @@ static void
 _split_size_walk(Split *sp, Sizeinfo *info)
 {
    Sizeinfo inforet = { 0, 0, 0, 0, 0, 0, 0 };
-   
+
    if (sp->term)
      {
         info->min_w = sp->term->min_w;
@@ -821,7 +821,7 @@ _split_size_walk(Split *sp, Sizeinfo *info)
    else
      {
         Evas_Coord mw = 0, mh = 0;
-        
+
         info->min_w = 0;
         info->min_h = 0;
         info->req_w = 0;
@@ -837,7 +837,7 @@ _split_size_walk(Split *sp, Sizeinfo *info)
                   info->req_w += inforet.req_w;
                   info->req_h = inforet.req_h;
                }
-             
+
              _split_size_walk(sp->s2, &inforet);
              info->req |= inforet.req;
              mw -= inforet.min_w;
@@ -859,7 +859,7 @@ _split_size_walk(Split *sp, Sizeinfo *info)
                   info->req_h += inforet.req_h;
                   info->req_w = inforet.req_w;
                }
-             
+
              _split_size_walk(sp->s2, &inforet);
              info->req |= inforet.req;
              mh -= inforet.min_h;
@@ -882,7 +882,7 @@ _size_job(void *data)
    Win *wn = data;
    Sizeinfo info = { 0, 0, 0, 0, 0, 0, 0 };
    Evas_Coord mw = 0, mh = 0;
-   
+
    wn->size_job = NULL;
    _split_size_walk(wn->split, &info);
    if (wn->split->panes)
@@ -931,7 +931,7 @@ _cb_options_done(void *data)
    Win *wn = data;
    Eina_List *l;
    Term *term;
-   
+
    if (!wn->focused) return;
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
@@ -971,7 +971,7 @@ static void
 _cb_exited(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   
+
    if (!term->hold) main_close(term->wn->win, term->term);
 }
 
@@ -985,7 +985,7 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    if (!config->disable_visual_bell)
      {
         Split *sp;
-        
+
         edje_object_signal_emit(term->bg, "bell", "terminology");
         edje_object_signal_emit(term->base, "bell", "terminology");
         sp = _split_find(term->wn->win, term->term);
@@ -1008,7 +1008,7 @@ static void
 _cb_popmedia_del(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Term *term = data;
-   
+
    edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
 }
 
@@ -1016,7 +1016,7 @@ static void
 _cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Term *term = data;
-   
+
    if (term->popmedia)
      {
         evas_object_event_callback_del(term->popmedia, EVAS_CALLBACK_DEL,
@@ -1032,7 +1032,7 @@ static void
 _cb_media_loop(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 {
    Term *term = data;
-   
+
    if (term->popmedia_queue)
      {
         if (term->popmedia) media_play_set(term->popmedia, EINA_FALSE);
@@ -1051,7 +1051,7 @@ _popmedia_show(Term *term, const char *src)
    if (term->popmedia)
      {
         const char *s;
-        
+
         EINA_LIST_FREE(term->popmedia_queue, s)
           {
              eina_stringshare_del(s);
@@ -1089,10 +1089,10 @@ static void
 _popmedia_queue_process(Term *term)
 {
    const char *src;
-   
+
    if (!term->popmedia_queue) return;
    src = term->popmedia_queue->data;
-   term->popmedia_queue = eina_list_remove_list(term->popmedia_queue, 
+   term->popmedia_queue = eina_list_remove_list(term->popmedia_queue,
                                                 term->popmedia_queue);
    if (!src) return;
    _popmedia_show(term, src);
@@ -1247,7 +1247,7 @@ _sel_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *info)
    Split *sp = data;
    Eina_List *l;
    Term *tm;
-   
+
    EINA_LIST_FOREACH(sp->terms, l, tm)
      {
         if (tm->sel == info)
@@ -1299,7 +1299,7 @@ _sel_go(Split *sp, Term *term)
      {
         Evas_Object *img;
         Evas_Coord w, h;
-        
+
         edje_object_part_unswallow(tm->bg, tm->base);
         evas_object_lower(tm->base);
         evas_object_move(tm->base, -9999, -9999);
@@ -1316,7 +1316,7 @@ _sel_go(Split *sp, Term *term)
         evas_object_resize(img, w, h);
         evas_object_data_set(img, "termio", tm->term);
         tm->sel = img;
-        
+
         sel_entry_add(sp->sel, tm->sel, (tm == sp->term),
                       tm->missed_bell, tm->config);
      }
@@ -1363,7 +1363,7 @@ _cb_tabcount_go(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_U
 {
    Term *term = data;
    Split *sp;
-   
+
    sp = _split_find(term->wn->win, term->term);
    _sel_go(sp, term);
 }
@@ -1378,7 +1378,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    if (term2)
      {
         Split *sp, *sp0;
-        
+
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
         if (sp == sp0)
@@ -1396,12 +1396,12 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
-   
+
    if (term->focused) term2 = _term_next_get(term);
    if (term2)
      {
         Split *sp, *sp0;
-        
+
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
         if (sp == sp0)
@@ -1418,7 +1418,7 @@ static void
 _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   
+
    main_new(term->wn->win, term->term);
 }
 
@@ -1450,7 +1450,7 @@ static void
 _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   
+
    main_split_v(term->wn->win, term->term);
 }
 
@@ -1476,7 +1476,7 @@ _tab_go(Term *term, int tnum)
    Term *term2;
    Split *sp = _split_find(term->wn->win, term->term);;
    if (!sp) return;
-   
+
    term2 = eina_list_nth(sp->terms, tnum);
    if ((!term2) || (term2 == term)) return;
    _sel_go(sp, term2);
@@ -1507,7 +1507,7 @@ _cb_cmd_focus(void *data)
 {
    Win *wn = data;
    Term *term;
-   
+
    wn->cmdbox_focus_timer = NULL;
    term = main_win_focused_term_get(wn);
    if (term)
@@ -1522,7 +1522,7 @@ static Eina_Bool
 _cb_cmd_del(void *data)
 {
    Win *wn = data;
-   
+
    wn->cmdbox_del_timer = NULL;
    if (wn->cmdbox)
      {
@@ -1538,7 +1538,7 @@ _cb_cmd_activated(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNU
    Win *wn = data;
    char *cmd = NULL;
    Term *term;
-   
+
    if (wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
    term = main_win_focused_term_get(wn);
@@ -1568,7 +1568,7 @@ _cb_cmd_aborted(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
 {
    Win *wn = data;
    Term *term;
-   
+
    if (wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
    term = main_win_focused_term_get(wn);
@@ -1589,7 +1589,7 @@ _cb_cmd_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
    Win *wn = data;
    char *cmd = NULL;
    Term *term;
-   
+
    term = main_win_focused_term_get(wn);
    if (!term) return;
    if (wn->cmdbox) cmd = (char *)elm_entry_entry_get(wn->cmdbox);
@@ -1608,7 +1608,7 @@ static void
 _cb_cmd_hints_changed(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Win *wn = data;
-   
+
    if (wn->cmdbox)
      {
         evas_object_show(wn->cmdbox);
@@ -1620,13 +1620,13 @@ static void
 _cb_cmdbox(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   
+
    term->wn->cmdbox_up = EINA_TRUE;
    if (!term->wn->cmdbox)
      {
         Evas_Object *o;
         Win *wn = term->wn;
-        
+
         wn->cmdbox = o = elm_entry_add(wn->win);
         elm_entry_single_line_set(o, EINA_TRUE);
         elm_entry_scrollable_set(o, EINA_FALSE);
@@ -1691,7 +1691,7 @@ main_trans_update(const Config *config)
    Win *wn;
    Term *term, *term2;
    Eina_List *l, *ll;
-   
+
    EINA_LIST_FOREACH(wins, l, wn)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
@@ -1703,7 +1703,7 @@ main_trans_update(const Config *config)
                   else
                     {
                        Eina_Bool trans_exists = EINA_FALSE;
-                       
+
                        EINA_LIST_FOREACH(wn->terms, ll, term2)
                          {
                             if (term2->config->translucent)
@@ -1725,7 +1725,7 @@ _cb_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 {
    Term *term = data;
    Config *config = NULL;
-   
+
    if (term->term) config = termio_config_get(term->term);
    term->media = NULL;
    if (term->bg)
@@ -1745,7 +1745,7 @@ _term_media_update(Term *term, const Config *config)
      {
         Evas_Object *o;
         int type = 0;
-        
+
         if (term->media)
           {
              evas_object_event_callback_del(term->media,
@@ -1821,7 +1821,7 @@ main_media_mute_update(const Config *config)
    Win *wn;
    Term *term;
    Eina_List *l, *ll;
-   
+
   EINA_LIST_FOREACH(wins, l, wn)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
@@ -1848,7 +1848,7 @@ main_config_sync(const Config *config)
              if (term->config != config)
                {
                   Evas_Coord mw = 1, mh = 1, w, h, tsize_w = 0, tsize_h = 0;
-                  
+
                   config_sync(config, term->config);
                   evas_object_geometry_get(term->term, NULL, NULL,
                                            &tsize_w, &tsize_h);
@@ -1916,7 +1916,7 @@ main_win_new(const char *name, const char *role, const char *title,
 {
    Win *wn;
    Evas_Object *o;
-   
+
    wn = calloc(1, sizeof(Win));
    if (!wn) return NULL;
 
@@ -1928,9 +1928,9 @@ main_win_new(const char *name, const char *role, const char *title,
      }
 
    wn->config = config;
-   
+
    evas_object_event_callback_add(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
-   
+
    if (fullscreen) elm_win_fullscreen_set(wn->win, EINA_TRUE);
    if (iconic) elm_win_iconified_set(wn->win, EINA_TRUE);
    if (borderless) elm_win_borderless_set(wn->win, EINA_TRUE);
@@ -1959,7 +1959,7 @@ main_win_new(const char *name, const char *role, const char *title,
 
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_focus_out, wn);
-   
+
    wins = eina_list_append(wins, wn);
    return wn;
 }
@@ -1968,7 +1968,7 @@ static void
 main_term_free(Term *term)
 {
    const char *s;
-   
+
    EINA_LIST_FREE(term->popmedia_queue, s)
      {
         eina_stringshare_del(s);
@@ -2027,7 +2027,7 @@ main_term_bg_config(Term *term)
 
    termio_theme_set(term->term, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
-                                   _cb_popmedia_done, term); 
+                                   _cb_popmedia_done, term);
    edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
                                    _cb_tabcount_go, term);
    edje_object_signal_callback_add(term->bg, "tabcount,prev", "terminology",
@@ -2072,7 +2072,7 @@ main_term_bg_config(Term *term)
              edje_object_signal_emit(term->base, "media,movie", "terminology");
           }
      }
-   
+
    if ((term->focused) && (term->wn->focused))
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
@@ -2095,7 +2095,7 @@ main_term_bg_redo(Term *term)
      }
    evas_object_del(term->base);
    evas_object_del(term->bg);
-   
+
    term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
    theme_apply(o, term->config, "terminology/core");
 
@@ -2123,7 +2123,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 {
    Term *term;
    Evas_Object *o;
-   
+
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
 
@@ -2134,7 +2134,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    term->wn = wn;
    term->hold = hold;
    term->config = config;
-   
+
    term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
    theme_apply(o, term->config, "terminology/core");
 
@@ -2169,14 +2169,14 @@ main_term_new(Win *wn, Config *config, const char *cmd,
         edje_object_signal_emit(term->bg, "translucent,off", "terminology");
         edje_object_signal_emit(term->base, "translucent,off", "terminology");
      }
-   
+
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                size_w, size_h);
    colors_term_init(termio_textgrid_get(term->term), term->bg, config);
 
    termio_win_set(o, wn->win);
    termio_theme_set(o, term->bg);
-   
+
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
    edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
@@ -2219,12 +2219,12 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
    evas_object_smart_callback_add(o, "tab,0", _cb_tab_10, term);
    evas_object_show(o);
-   
+
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_term_mouse_down, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
                                   _cb_term_mouse_up, term);
-   
+
    if (!wn->terms)
      {
         term->focused = EINA_TRUE;
@@ -2233,7 +2233,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
      }
    wn->terms = eina_list_append(wn->terms, term);
    app_server_term_add(term);
-   
+
    return term;
 }
 
@@ -2270,7 +2270,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->startup_id)
      {
         char buf[4096];
-        
+
         snprintf(buf, sizeof(buf), "DESKTOP_STARTUP_ID=%s", inst->startup_id);
         putenv(buf);
      }
@@ -2294,10 +2294,10 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->nowm) nargc += 1;
    if (inst->xterm_256color) nargc += 1;
    if (inst->cmd) nargc += 2;
-   
+
    nargv = calloc(nargc + 1, sizeof(char *));
    if (!nargv) return;
-   
+
    i = 0;
    nargv[i++] = pargv[0];
    if (inst->cd)
@@ -2435,9 +2435,9 @@ main_ipc_new(Ipc_Instance *inst)
         config_del(config);
         return;
      }
-   
+
    config = config_fork(config);
-   
+
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
@@ -2451,13 +2451,13 @@ main_ipc_new(Ipc_Instance *inst)
           {
              char *fname = alloca(strlen(inst->font) + 1);
              char *p;
-             
+
              strcpy(fname, inst->font);
              p = strrchr(fname, '/');
              if (p)
                {
                   int sz;
-                  
+
                   *p = 0;
                   p++;
                   sz = atoi(p);
@@ -2471,7 +2471,7 @@ main_ipc_new(Ipc_Instance *inst)
              char buf[4096], *file;
              Eina_List *files;
              int n = strlen(inst->font);
-             
+
              snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
              files = ecore_file_ls(buf);
              EINA_LIST_FREE(files, file)
@@ -2507,20 +2507,20 @@ main_ipc_new(Ipc_Instance *inst)
         edje_object_part_swallow(wn->base, "terminology.content", term->bg);
         _cb_size_hint(term, evas_object_evas_get(wn->win), term->term, NULL);
      }
-   
+
    sp = wn->split = calloc(1, sizeof(Split));
    sp->wn = wn;
    sp->term = term;
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
    _split_tabcount_update(sp, sp->term);
-   
+
    main_trans_update(config);
    main_media_update(config);
    if (inst->pos)
      {
         int screen_w, screen_h;
-        
+
         elm_win_screen_size_get(wn->win, NULL, NULL, &screen_w, &screen_h);
         if (inst->x < 0) inst->x = screen_w + inst->x;
         if (inst->y < 0) inst->y = screen_h + inst->y;
@@ -2647,7 +2647,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
 #else
      ECORE_GETOPT_VALUE_STR(cmd),
-#endif      
+#endif
      ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
@@ -2658,7 +2658,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(icon_name),
      ECORE_GETOPT_VALUE_STR(font),
      ECORE_GETOPT_VALUE_STR(video_module),
-      
+
      ECORE_GETOPT_VALUE_BOOL(login_shell),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(cursor_blink),
@@ -2677,7 +2677,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
-      
+
      ECORE_GETOPT_VALUE_NONE
    };
    Win *wn;
@@ -2706,12 +2706,12 @@ elm_main(int argc, char **argv)
    config_init();
 
    main_config = config_load("config");
-   
+
 //   elm_theme_extension_add(NULL, config_theme_path_get(main_config));
 //   elm_theme_extension_add(NULL, config_theme_path_default_get(main_config));
    elm_theme_overlay_add(NULL, config_theme_path_get(main_config));
    elm_theme_overlay_add(NULL, config_theme_path_default_get(main_config));
-   
+
    ipc_init();
 
    config = config_fork(main_config);
@@ -2738,7 +2738,7 @@ elm_main(int argc, char **argv)
              fprintf(stdout, "ERROR: invalid options found. See --help.\n");
              goto end;
           }
-        
+
         strb = eina_strbuf_new();
         for(i = args; i < argc; i++)
           {
@@ -2749,7 +2749,7 @@ elm_main(int argc, char **argv)
         eina_strbuf_free(strb);
      }
 #endif
-   
+
    if (theme)
      {
         char path[PATH_MAX];
@@ -2782,13 +2782,13 @@ elm_main(int argc, char **argv)
           {
              char *fname = alloca(strlen(font) + 1);
              char *p;
-             
+
              strcpy(fname, font);
              p = strrchr(fname, '/');
              if (p)
                {
                   int sz;
-                  
+
                   *p = 0;
                   p++;
                   sz = atoi(p);
@@ -2802,7 +2802,7 @@ elm_main(int argc, char **argv)
              char buf[4096], *file;
              Eina_List *files;
              int n = strlen(font);
-             
+
              snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
              files = ecore_file_ls(buf);
              EINA_LIST_FREE(files, file)
@@ -2910,7 +2910,7 @@ elm_main(int argc, char **argv)
              pos_set = 1;
           }
      }
-   
+
    if (!size_set)
      {
         if (config->custom_geometry)
@@ -2924,18 +2924,18 @@ elm_main(int argc, char **argv)
              size_h = 24;
           }
      }
-   
-   // for now if not set - dont do login shell - later from config
-   if (login_shell == 0xff) login_shell = EINA_FALSE;
+
+   // if not set, look at the config. defaults to EINA_FALSE
+   if (login_shell == 0xff) login_shell = config->login_shell;
 
 remote:
    if ((!single) && (config->multi_instance))
      {
         Ipc_Instance inst;
         char cwdbuf[4096];
-        
+
         memset(&inst, 0, sizeof(Ipc_Instance));
-        
+
         inst.cmd = cmd;
         if (cd) inst.cd = cd;
         else inst.cd = getcwd(cwdbuf, sizeof(cwdbuf));
@@ -3012,7 +3012,7 @@ remote:
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
    _split_tabcount_update(sp, sp->term);
-   
+
    main_trans_update(config);
    main_media_update(config);
    main_win_sizing_handle(wn);
