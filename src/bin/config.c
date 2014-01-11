@@ -26,7 +26,7 @@ config_init(void)
 
    elm_need_efreet();
    efreet_init();
-   
+
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
    edd_base = eet_data_descriptor_stream_new(&eddc);
@@ -43,7 +43,7 @@ config_init(void)
      (edd_color, Config_Color, "b", b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_color, Config_Color, "a", a, EET_T_UCHAR);
-   
+
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -111,6 +111,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "drag_links", drag_links, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "login_shell", login_shell, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "application_server", application_server, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "application_server_restore_views",
@@ -158,7 +160,7 @@ config_save(Config *config, const char *key)
    config->font.orig_name = NULL;
    if (config->font.name) config->font.orig_name = eina_stringshare_add(config->font.name);
    config->font.orig_bitmap = config->font.bitmap;
-   
+
    cfgdir = _config_home_get();
    snprintf(buf, sizeof(buf), "%s/terminology/config/standard", cfgdir);
    ecore_file_mkpath(buf);
@@ -208,6 +210,7 @@ config_sync(const Config *config_src, Config *config)
    config->erase_is_del = config_src->erase_is_del;
    config->temporary = config_src->temporary;
    config->custom_geometry = config_src->custom_geometry;
+   config->login_shell = config_src->login_shell;
    config->cg_width = config_src->cg_width;
    config->cg_height = config_src->cg_height;
    config->colors_use = config_src->colors_use;
@@ -422,18 +425,18 @@ config_load(const char *key)
              0x1367,
              0xa60f,
              0x2cfa,
-             
+
              '`',
              0
           };
         char *s;
         int slen = 0;
-        
+
         config = calloc(1, sizeof(Config));
         if (config)
           {
              int i, j;
-             
+
              config->version = CONF_VER;
              config->font.bitmap = EINA_TRUE;
              config->font.name = eina_stringshare_add("nexus.pcf");
@@ -471,6 +474,7 @@ config_load(const char *key)
              config->xterm_256color = EINA_FALSE;
              config->erase_is_del = EINA_FALSE;
              config->custom_geometry = EINA_FALSE;
+             config->login_shell = EINA_FALSE;
              config->cg_width = 80;
              config->cg_height = 24;
              config->colors_use = EINA_FALSE;
@@ -479,7 +483,7 @@ config_load(const char *key)
                   for (i = 0; i < 12; i++)
                     {
                        unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
-                       
+
                        colors_standard_get(j, i, &rr, &gg, &bb, &aa);
                        config->colors[(j * 12) + i].r = rr;
                        config->colors[(j * 12) + i].g = gg;
@@ -500,17 +504,17 @@ Config *
 config_fork(Config *config)
 {
    Config *config2;
-   
+
    config2 = calloc(1, sizeof(Config));
    if (!config2) return NULL;
-#define CPY(fld) config2->fld = config->fld;   
+#define CPY(fld) config2->fld = config->fld;
 #define SCPY(fld) if (config->fld) config2->fld = eina_stringshare_add(config->fld)
 
    CPY(version);
-   SCPY(font.name);   
+   SCPY(font.name);
    CPY(font.size);
    CPY(font.bitmap);
-   SCPY(helper.email);   
+   SCPY(helper.email);
    SCPY(helper.url.general);
    SCPY(helper.url.video);
    SCPY(helper.url.image);
@@ -538,11 +542,12 @@ config_fork(Config *config)
    CPY(xterm_256color);
    CPY(erase_is_del);
    CPY(custom_geometry);
+   CPY(login_shell);
    CPY(cg_width);
    CPY(cg_height);
    CPY(colors_use);
    memcpy(config2->colors, config->colors, sizeof(config->colors));
-   
+
    CPY(temporary);
    SCPY(config_key);
    return config2;
