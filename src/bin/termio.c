@@ -1294,7 +1294,7 @@ _smart_apply(Evas_Object *obj)
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l, *ln;
    Termblock *blk;
-   int j, x, y, w, ch1 = 0, ch2 = 0, inv = 0;
+   int x, y, w, ch1 = 0, ch2 = 0, inv = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
@@ -1311,7 +1311,7 @@ _smart_apply(Evas_Object *obj)
         Termcell *cells;
         Evas_Textgrid_Cell *tc;
 
-        w = 0; j = 0;
+        w = 0;
         cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
         if (!tc) continue;
@@ -1339,7 +1339,7 @@ _smart_apply(Evas_Object *obj)
                {
                   int bid, bx = 0, by = 0;
                   
-                  bid = termpty_block_id_get(&(cells[j]), &bx, &by);
+                  bid = termpty_block_id_get(&(cells[x]), &bx, &by);
                   if (bid >= 0)
                     {
                        if (ch1 < 0) ch1 = x;
@@ -1368,7 +1368,7 @@ _smart_apply(Evas_Object *obj)
                                                blk->h * sd->font.chh);
                          }
                     }
-                  else if (cells[j].att.invisible)
+                  else if (cells[x].att.invisible)
                     {
                        if ((tc[x].codepoint != 0) ||
                            (tc[x].bg != COL_INVIS) ||
@@ -1384,7 +1384,7 @@ _smart_apply(Evas_Object *obj)
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
 #if defined(SUPPORT_DBLWIDTH)
-                       tc[x].double_width = cells[j].att.dblwidth;
+                       tc[x].double_width = cells[x].att.dblwidth;
 #endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
@@ -1395,65 +1395,39 @@ _smart_apply(Evas_Object *obj)
                        int bold, fg, bg, fgext, bgext, codepoint;
                        
                        // colors
-                       bold = cells[j].att.bold;
-                       fgext = cells[j].att.fg256;
-                       bgext = cells[j].att.bg256;
-                       codepoint = cells[j].codepoint;
-                       
-                       if (cells[j].att.inverse ^ inv)
+                       bold = cells[x].att.bold;
+                       fg = cells[x].att.fg;
+                       bg = cells[x].att.bg;
+                       fgext = cells[x].att.fg256;
+                       bgext = cells[x].att.bg256;
+                       codepoint = cells[x].codepoint;
+
+                       if ((fg == COL_DEF) && (cells[x].att.inverse ^ inv))
+                         fg = COL_INVERSEBG;
+                       if (bg == COL_DEF)
                          {
-                            fgext = 0;
-                            bgext = 0;
-                            fg = cells[j].att.fg;
-                            bg = cells[j].att.bg;
-                            if (fg == COL_DEF) fg = COL_INVERSEBG;
-                            if (bg == COL_DEF) bg = COL_INVERSE;
-                            INT_SWAP(bg, fg);
-                            if (bold)
-                              {
-                                 fg += 12;
-                                 bg += 12;
-                              }
-                            if (cells[j].att.faint)
-                              {
-                                 fg += 24;
-                                 bg += 24;
-                              }
-                            if (cells[j].att.fgintense) fg += 48;
-                            if (cells[j].att.bgintense) bg += 48;
+                            if (cells[x].att.inverse ^ inv)
+                              bg = COL_INVERSE;
+                            else
+                              bg = COL_INVIS;
                          }
-                       else
+                       if (cells[x].att.fgintense) fg += 48;
+                       if (cells[x].att.bgintense) bg += 48;
+                       if (cells[x].att.inverse ^ inv)
                          {
-                            fg = cells[j].att.fg;
-                            bg = cells[j].att.bg;
-                            
-                            if (!fgext)
-                              {
-                                 if (bold) fg += 12;
-                              }
-                            if (!bgext)
-                              {
-                                 if (bg == COL_DEF) bg = COL_INVIS;
-                              }
-                            if (cells[j].att.faint)
-                              {
-                                 if (!fgext) fg += 24;
-                                 if (!bgext) bg += 24;
-                              }
-                            if (cells[j].att.fgintense) fg += 48;
-                            if (cells[j].att.bgintense) bg += 48;
-                            if (((codepoint == ' ') || (codepoint == 0)) &&
-                                (!cells[j].att.strike) &&
-                                (!cells[j].att.underline))
-                              fg = COL_INVIS;
+                            int t;
+                            t = fgext; fgext = bgext; bgext = t;
+                            t = fg; fg = bg; bg = t;
                          }
+                       if (cells[x].att.bold) fg += 12;
+                       if (cells[x].att.faint) fg += 24;
                        if ((tc[x].codepoint != codepoint) ||
                            (tc[x].fg != fg) ||
                            (tc[x].bg != bg) ||
                            (tc[x].fg_extended != fgext) ||
                            (tc[x].bg_extended != bgext) ||
-                           (tc[x].underline != cells[j].att.underline) ||
-                           (tc[x].strikethrough != cells[j].att.strike) ||
+                           (tc[x].underline != cells[x].att.underline) ||
+                           (tc[x].strikethrough != cells[x].att.strike) ||
                            (sd->debugwhite))
                          {
                             if (ch1 < 0) ch1 = x;
@@ -1463,20 +1437,20 @@ _smart_apply(Evas_Object *obj)
                        tc[x].bg_extended = bgext;
                        if (sd->debugwhite)
                          {
-                            if (cells[j].att.newline)
+                            if (cells[x].att.newline)
                               tc[x].strikethrough = 1;
                             else
                               tc[x].strikethrough = 0;
-                            if (cells[j].att.autowrapped)
+                            if (cells[x].att.autowrapped)
                               tc[x].underline = 1;
                             else
                               tc[x].underline = 0;
-//                            if (cells[j].att.tab)
+//                            if (cells[x].att.tab)
 //                              tc[x].underline = 1;
 //                            else
 //                              tc[x].underline = 0;
-                            if ((cells[j].att.newline) ||
-                                (cells[j].att.autowrapped))
+                            if ((cells[x].att.newline) ||
+                                (cells[x].att.autowrapped))
                               {
                                  fg = 8;
                                  bg = 4;
@@ -1485,24 +1459,23 @@ _smart_apply(Evas_Object *obj)
                          }
                        else
                          {
-                            tc[x].underline = cells[j].att.underline;
-                            tc[x].strikethrough = cells[j].att.strike;
+                            tc[x].underline = cells[x].att.underline;
+                            tc[x].strikethrough = cells[x].att.strike;
                          }
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
 #if defined(SUPPORT_DBLWIDTH)
-                       tc[x].double_width = cells[j].att.dblwidth;
+                       tc[x].double_width = cells[x].att.dblwidth;
 #endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
-                       // cells[j].att.italic // never going 2 support
-                       // cells[j].att.blink
-                       // cells[j].att.blink2
+                       // cells[x].att.italic // never going 2 support
+                       // cells[x].att.blink
+                       // cells[x].att.blink2
                     }
                }
-             j++;
           }
         evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
         /* only bothering to keep 1 change span per row - not worth doing
