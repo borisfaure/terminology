@@ -1392,10 +1392,9 @@ _smart_apply(Evas_Object *obj)
                     }
                   else
                     {
-                       int bold, fg, bg, fgext, bgext, codepoint;
-                       
+                       int fg, bg, fgext, bgext, codepoint;
+
                        // colors
-                       bold = cells[x].att.bold;
                        fg = cells[x].att.fg;
                        bg = cells[x].att.bg;
                        fgext = cells[x].att.fg256;
