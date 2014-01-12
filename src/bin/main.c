@@ -2924,9 +2924,13 @@ elm_main(int argc, char **argv)
              size_h = 24;
           }
      }
-   
-   // for now if not set - dont do login shell - later from config
-   if (login_shell == 0xff) login_shell = EINA_FALSE;
+
+   if (login_shell != 0xff)
+     {
+        config->login_shell = login_shell;
+        config->temporary = EINA_TRUE;
+     }
+   login_shell = config->login_shell;
 
 remote:
    if ((!single) && (config->multi_instance))
