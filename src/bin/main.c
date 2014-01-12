@@ -2925,10 +2925,12 @@ elm_main(int argc, char **argv)
           }
      }
 
-   // if not set, look at the config. defaults to EINA_FALSE
-   if (login_shell == 0xff) login_shell = config->login_shell;
-   // otherwise set it into our config for new tabs and splits
-   else config->login_shell = EINA_FALSE;
+   if (login_shell != 0xff)
+     {
+        config->login_shell = login_shell;
+        config->temporary = EINA_TRUE;
+     }
+   login_shell = config->login_shell;
 
 remote:
    if ((!single) && (config->multi_instance))
