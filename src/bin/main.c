@@ -293,7 +293,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    config = config_fork(sp->term->config);
    if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
    sp2->term = main_term_new(sp->wn, config,
-                             NULL, EINA_FALSE, wdir,
+                             NULL, config->login_shell, wdir,
                              80, 24, EINA_FALSE);
    sp2->terms = eina_list_append(sp2->terms, sp2->term);
    _term_resize_track_start(sp2);
@@ -367,7 +367,7 @@ main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir)
    config = config_fork(sp->term->config);
    termio_size_get(sp->term->term, &w, &h);
    sp->term = main_term_new(sp->wn, config,
-                            NULL, EINA_FALSE, wdir,
+                            NULL, config->login_shell, wdir,
                             w, h, EINA_FALSE);
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
@@ -2924,9 +2924,13 @@ elm_main(int argc, char **argv)
              size_h = 24;
           }
      }
-   
-   // for now if not set - dont do login shell - later from config
-   if (login_shell == 0xff) login_shell = EINA_FALSE;
+
+   if (login_shell != 0xff)
+     {
+        config->login_shell = login_shell;
+        config->temporary = EINA_TRUE;
+     }
+   login_shell = config->login_shell;
 
 remote:
    if ((!single) && (config->multi_instance))
