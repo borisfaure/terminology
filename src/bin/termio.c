@@ -1407,7 +1407,7 @@ _smart_apply(Evas_Object *obj)
                          {
                             if (cells[x].att.inverse ^ inv)
                               bg = COL_INVERSE;
-                            else
+                            else if (!bgext)
                               bg = COL_INVIS;
                          }
                        if (cells[x].att.fgintense) fg += 48;
