@@ -3388,6 +3388,9 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   /* do not handle horizontal scrolling */
+   if (ev->direction) return;
+
    if (evas_key_modifier_is_set(ev->modifiers, "Control")) return;
    if (evas_key_modifier_is_set(ev->modifiers, "Alt")) return;
    if (evas_key_modifier_is_set(ev->modifiers, "Shift")) return;
