@@ -1418,7 +1418,7 @@ _smart_apply(Evas_Object *obj)
                             t = fgext; fgext = bgext; bgext = t;
                             t = fg; fg = bg; bg = t;
                          }
-                       if (cells[x].att.bold) fg += 12;
+                       if ((cells[x].att.bold) && (!fgext)) fg += 12;
                        if (cells[x].att.faint) fg += 24;
                        if ((tc[x].codepoint != codepoint) ||
                            (tc[x].fg != fg) ||
