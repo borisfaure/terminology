@@ -325,7 +325,12 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
           }
         else
           {
-             list = _rec_read_directorys(list, path, term);
+             char *link = ecore_file_readlink(path);
+             if (!link)
+               {
+                  list = _rec_read_directorys(list, path, term);
+               }
+             free(link);
           }
         free(file_name);
      }
