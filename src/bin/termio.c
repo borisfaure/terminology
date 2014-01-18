@@ -2664,6 +2664,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
           {
              int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
 
+             if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                       (btn | meta), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
@@ -2749,8 +2750,10 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
         break;
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.m
           {
+             int btn = ev->button - 1;
+             if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%im", 0x1b,
-                      (3 | meta), cx + 1, cy + 1);
+                      (btn | meta), cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
