@@ -1410,8 +1410,8 @@ _smart_apply(Evas_Object *obj)
                             else if (!bgext)
                               bg = COL_INVIS;
                          }
-                       if (cells[x].att.fgintense) fg += 48;
-                       if (cells[x].att.bgintense) bg += 48;
+                       if ((cells[x].att.fgintense) && (!fgext)) fg += 48;
+                       if ((cells[x].att.bgintense) && (!bgext)) bg += 48;
                        if (cells[x].att.inverse ^ inv)
                          {
                             int t;
@@ -1419,7 +1419,7 @@ _smart_apply(Evas_Object *obj)
                             t = fg; fg = bg; bg = t;
                          }
                        if ((cells[x].att.bold) && (!fgext)) fg += 12;
-                       if (cells[x].att.faint) fg += 24;
+                       if ((cells[x].att.faint) && (!fgext)) fg += 12;
                        if ((tc[x].codepoint != codepoint) ||
                            (tc[x].fg != fg) ||
                            (tc[x].bg != bg) ||
