@@ -163,11 +163,11 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ITEM_APPEND("preferences-desktop-font", "Font", FONT);
         ITEM_APPEND("preferences-desktop-theme", "Theme", THEME);
         ITEM_APPEND("preferences-desktop-wallpaper", "Wallpaper", WALLPAPER);
-        ITEM_APPEND("preferences-color", "Colors", COLORS);
-        ITEM_APPEND("preferences-desktop-multimedia", "Video", VIDEO);
-        ITEM_APPEND("system-run", "Behavior", BEHAVIOR);
+        ITEM_APPEND("video-display", "Video", VIDEO);
+        ITEM_APPEND("preferences-desktop-theme", "Colors", COLORS);
+        ITEM_APPEND("preferences-system", "Behavior", BEHAVIOR);
         ITEM_APPEND("preferences-desktop-keyboard-shortcuts", "Keys", KEYS);
-        ITEM_APPEND("document-open", "Helpers", HELPERS);
+        ITEM_APPEND("system-run", "Helpers", HELPERS);
 #undef ITEM_APPEND
 
         elm_box_pack_end(op_tbox, o);
