@@ -1856,6 +1856,21 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
                }
           }
      }
+   else
+     {
+        const char *fmt = "UNKNOWN";
+        switch (ev->format)
+          {
+           case ELM_SEL_FORMAT_TARGETS: fmt = "TARGETS"; break; /* shouldn't happen */
+           case ELM_SEL_FORMAT_NONE: fmt = "NONE"; break;
+           case ELM_SEL_FORMAT_TEXT: fmt = "TEXT"; break;
+           case ELM_SEL_FORMAT_MARKUP: fmt = "MARKUP"; break;
+           case ELM_SEL_FORMAT_IMAGE: fmt = "IMAGE"; break;
+           case ELM_SEL_FORMAT_VCARD: fmt = "VCARD"; break;
+           case ELM_SEL_FORMAT_HTML: fmt = "HTML"; break;
+          }
+        WRN("unsupported selection format '%s'", fmt);
+     }
    return EINA_TRUE;
 }
 
