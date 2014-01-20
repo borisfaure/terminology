@@ -2937,7 +2937,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                after: "show2";
             }
             program { name: "show2";
-               action: STATE_SET "default" 0.0;
                action: STATE_SET "out2" 0.0;
                transition: LINEAR 0.3;
                target: "l";
