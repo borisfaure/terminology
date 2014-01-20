@@ -1828,14 +1828,16 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
      {
         if (ev->len > 0)
           {
-             char *tmp, *s;
-             size_t i;
+             char *tmp;
 
              // apparently we have to convert \n into \r in terminal land.
-             tmp = malloc(ev->len);
+             tmp = malloc(ev->len + 1);
              if (tmp)
                {
-                  s = ev->data;
+                  char *s = ev->data;
+                  size_t i;
+
+                  tmp[ev->len] = '\0';
                   for (i = 0; i < ev->len; i++)
                     {
                        tmp[i] = s[i];
@@ -1846,7 +1848,7 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
                       termpty_write(sd->pty, "\x1b[200~",
                                     sizeof("\x1b[200~") - 1);
 
-                  termpty_write(sd->pty, tmp, ev->len - 1);
+                  termpty_write(sd->pty, tmp, ev->len);
 
                   if (sd->pty->state.bracketed_paste)
                       termpty_write(sd->pty, "\x1b[201~",
