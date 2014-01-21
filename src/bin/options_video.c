@@ -142,6 +142,17 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_vidmod_chg, term);
+
+   o = elm_radio_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Gstreamer 1.0");
+   elm_radio_state_value_set(o, 4);
+   elm_radio_group_add(o, op_vidmod);
+   elm_box_pack_end(bx0, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_video_vidmod_chg, term);
    
    elm_radio_value_set(o, config->vidmod);
 

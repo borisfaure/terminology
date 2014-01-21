@@ -2536,7 +2536,7 @@ main_ipc_new(Ipc_Instance *inst)
 }
 
 static const char *emotion_choices[] = {
-  "auto", "gstreamer", "xine", "generic",
+  "auto", "gstreamer", "xine", "generic", "gstreamer1",
   NULL
 };
 
