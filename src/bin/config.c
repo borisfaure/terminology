@@ -72,8 +72,6 @@ config_init(void)
      (edd_base, Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "background", background, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_LIST_STRING
-     (edd_base, Config, "wallpaper_paths", wallpaper_paths);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -181,9 +179,6 @@ config_save(Config *config, const char *key)
 void
 config_sync(const Config *config_src, Config *config)
 {
-   Eina_List *l; 
-   const char *path;
-
    // SOME fields have to be consistent between configs
    config->font.size = config_src->font.size;
    eina_stringshare_replace(&(config->font.name), config_src->font.name);
@@ -199,14 +194,6 @@ config_sync(const Config *config_src, Config *config)
    eina_stringshare_replace(&(config->theme), config_src->theme);
    eina_stringshare_replace(&(config->wordsep), config_src->wordsep);
    config->scrollback = config_src->scrollback;
-   if (config->wallpaper_paths)
-      EINA_LIST_FREE(config->wallpaper_paths, path)
-         eina_stringshare_del(path);
-   
-   config->wallpaper_paths = NULL;
-   EINA_LIST_FOREACH(config_src->wallpaper_paths, l, path)
-      config->wallpaper_paths = eina_list_append(config->wallpaper_paths, eina_stringshare_add(path));
-   
    config->tab_zoom = config_src->tab_zoom;
    config->vidmod = config_src->vidmod;
    config->jump_on_keypress = config_src->jump_on_keypress;
@@ -496,7 +483,6 @@ config_load(const char *key)
              config->tab_zoom = 0.5;
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;
-             config->wallpaper_paths = NULL;
              config->translucent = EINA_FALSE;
              config->jump_on_change = EINA_TRUE;
              config->jump_on_keypress = EINA_TRUE;
@@ -573,7 +559,6 @@ config_fork(Config *config)
    CPY(helper.inline_please);
    SCPY(theme);
    SCPY(background);
-   SLSTCPY(wallpaper_paths);
    SCPY(wordsep);
    CPY(scrollback);
    CPY(tab_zoom);
@@ -606,11 +591,7 @@ config_fork(Config *config)
 void
 config_del(Config *config)
 {
-   const char *path;
    if (!config) return;
-   
-   EINA_LIST_FREE(config->wallpaper_paths, path)
-     eina_stringshare_del(path);
    
    eina_stringshare_del(config->font.name);
    eina_stringshare_del(config->font.orig_name);

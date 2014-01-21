@@ -33,7 +33,6 @@ struct _Config
    } helper;
    const char       *theme;
    const char       *background; 
-   Eina_List        *wallpaper_paths;
    const char       *wordsep;
    int               scrollback;
    double            tab_zoom;

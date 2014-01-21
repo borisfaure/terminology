@@ -16,26 +16,81 @@ typedef struct _Background_Item
    const char *path;
    Eina_Bool selected;
    Elm_Object_Item *item;
-   Evas_Object *term;
 }
 Background_Item;
 
-typedef struct _Wallpaper_Path_Item
+typedef struct _Insert_Gen_Grid_Item_Notify
 {
-   const char *path;
+   Elm_Gengrid_Item_Class *class;
+   Background_Item *item;
 }
-Wallpaper_Path_Item;
+Insert_Gen_Grid_Item_Notify;
 
-static void _renew_gengrid_backgrounds(Evas_Object *term);
 
-static Evas_Object *_inwin = NULL,
-                   *_list = NULL,
-                   *_bg_grid = NULL,
-                   *_parent = NULL,
-                   *_bx = NULL;
-static Ecore_Timer *_seltimer = NULL;
-static Eina_List *_backgroundlist = NULL,
-                 *_pathlist = NULL;
+static const char *_system_path, 
+                  *_user_path;
+
+static Evas_Object *_bg_grid = NULL, 
+                   *_term = NULL, 
+                   *_entry = NULL, 
+                   *_flip = NULL, 
+                   *_bubble = NULL;
+
+static Eina_List *_backgroundlist = NULL;
+
+static Ecore_Timer *_bubble_disappear;
+
+static Ecore_Thread *_thread;
+
+static void
+_cb_fileselector(void *data EINA_UNUSED, Evas_Object *obj, void* event)
+{
+
+  if (event) 
+    {
+      elm_object_text_set(_entry, elm_fileselector_path_get(obj));
+      elm_flip_go_to(_flip, EINA_TRUE, ELM_FLIP_PAGE_LEFT);
+    }
+  else
+    {
+       elm_flip_go_to(_flip, EINA_TRUE, ELM_FLIP_PAGE_LEFT);
+    }
+}
+
+static Eina_Bool
+_cb_timer_bubble_disappear(void *data EINA_UNUSED)
+{
+   evas_object_del(_bubble);
+   _bubble_disappear = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_bubble_show(char *text)
+{
+   Evas_Object *opbox = elm_object_top_widget_get(_bg_grid);
+   Evas_Object *o;
+   int x = 0, y = 0, w , h;
+
+   evas_object_geometry_get(_bg_grid, &x, &y, &w ,&h);
+   if (_bubble_disappear)
+     {
+        ecore_timer_del(_bubble_disappear);
+        _cb_timer_bubble_disappear(NULL);
+     }
+ 
+   _bubble = elm_bubble_add(opbox);
+   elm_bubble_pos_set(_bubble, ELM_BUBBLE_POS_BOTTOM_RIGHT);
+   evas_object_resize(_bubble, 200, 50);
+   evas_object_move(_bubble, (x + w - 200), (y + h - 50));
+   evas_object_show(_bubble);
+
+   o = elm_label_add(_bubble);
+   elm_object_text_set(o, text);
+   elm_object_content_set(_bubble, o);
+
+  _bubble_disappear = ecore_timer_add(2.0, _cb_timer_bubble_disappear, NULL);
+}
 
 static char *
 _grid_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
@@ -54,7 +109,7 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Background_Item *item = data;
    Evas_Object *o, *oe;
-   Config *config = termio_config_get(item->term);
+   Config *config = termio_config_get(_term);
    char path[PATH_MAX];
 
    if (!strcmp(part, "elm.swallow.icon"))
@@ -62,7 +117,6 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
         if (item->path)
           {
              int i, ret = 0;
-
              for (i = 0; extn_edj[i]; i++)
                {
                   if (eina_str_has_extension(item->path, extn_edj[i]))
@@ -90,7 +144,7 @@ static void
 _item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Background_Item *item = data;
-   Config *config = termio_config_get(item->term);
+   Config *config = termio_config_get(_term);
 
    if (!config) return;
    if (!item->path)
@@ -108,191 +162,51 @@ _item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED
         main_media_update(config);
      }
 }
-/*
- * Method to open the in windows
- */
-static void
-_done_click(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   evas_object_del(_inwin);
-   _inwin = NULL;
-}
-/*
- * Methods for the genlist
- */
-static char *
-_item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
-{
-   Wallpaper_Path_Item *item = data;
-   if (!item->path) return NULL;
-   return strdup(item->path);
-}
 
-static void
-_fill_path_list(Eina_List *paths, Evas_Object *list)
+static void 
+_insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
 {
-   Eina_List *node = NULL;
-   char *path;
-   Wallpaper_Path_Item *wpi = NULL;
-   Elm_Genlist_Item_Class *itc;
+   Insert_Gen_Grid_Item_Notify *insert_msg = msg_data;
+   Background_Item *item = insert_msg->item;
+   Elm_Gengrid_Item_Class *item_class = insert_msg->class;
+   Config *config = termio_config_get(_term);
 
-   itc = elm_genlist_item_class_new();
-   itc->item_style = "default";
-   itc->func.text_get = _item_label_get;
-   itc->func.content_get = NULL;
-   itc->func.state_get = NULL;
-   itc->func.del = NULL;
-   EINA_LIST_FOREACH(paths, node, path)
+   if (insert_msg && item && item_class && config)
      {
-        if (!path) continue;
-        wpi = calloc(1, sizeof(Wallpaper_Path_Item));
-        if (wpi)
+        item->item = elm_gengrid_item_append(_bg_grid, item_class, item,
+                                        _item_selected, item);
+        if ((!item->path) && (!config->background))
           {
-             wpi->path = eina_stringshare_add(path);
-             if (wpi->path)
+             elm_gengrid_item_selected_set(item->item, EINA_TRUE);
+             elm_gengrid_item_bring_in(item->item, 
+                                       ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+          }
+        else if ((item->path) && (config->background))
+          {
+             if (strcmp(item->path, config->background) == 0)
                {
-                  elm_genlist_item_append(list, itc, wpi, NULL,
-                                          ELM_GENLIST_ITEM_NONE,
-                                          NULL, NULL);
-                  _pathlist = eina_list_append(_pathlist, wpi);
+                  elm_gengrid_item_selected_set(item->item, EINA_TRUE);
+                  elm_gengrid_item_bring_in(item->item, 
+                                            ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
                }
-             else free(wpi);
           }
      }
-   elm_gengrid_item_class_free(itc);
-   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-}
-
-static void
-_file_is_chosen(void *data, Evas_Object *obj EINA_UNUSED, void *event)
-{
-   Eina_List *node;
-   char *saved_path;
-   Config *config = termio_config_get(data);
-   Wallpaper_Path_Item *item;
-
-   EINA_LIST_FOREACH(config->wallpaper_paths, node, saved_path)
-     if (!strcmp(event, saved_path)) return;
-
-   config->wallpaper_paths = eina_list_append(config->wallpaper_paths,
-                                              eina_stringshare_add(event));
-   config_save(config, NULL);
-   main_media_update(config);
-   evas_object_del(_list);
-   EINA_LIST_FREE(_pathlist, item)
-     {
-        if (item->path) eina_stringshare_del(item->path);
-        free(item);
-     }
-   _list = elm_genlist_add(_inwin);
-   _fill_path_list(config->wallpaper_paths, _list);
-   elm_box_pack_start(elm_win_inwin_content_get(_inwin), _list);
-   evas_object_show(_list);
-   _renew_gengrid_backgrounds(data);
-}
-
-static void
-_delete_path_click(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Elm_Object_Item *selected = elm_genlist_selected_item_get(_list);
-   Config *config = termio_config_get(data);
-   Wallpaper_Path_Item *item;
-
-   if (selected)
-     {
-        item = elm_object_item_data_get(selected);
-        if (item)
-          {
-             config->wallpaper_paths = eina_list_remove(config->wallpaper_paths,
-                                                        item->path);
-             config_save(config, NULL);
-             main_media_update(config);
-             evas_object_del(_list);
-             EINA_LIST_FREE(_pathlist, item)
-               {
-                  if (item->path) eina_stringshare_del(item->path);
-                  free(item);
-               }
-             _list = elm_genlist_add(_inwin);
-             _fill_path_list(config->wallpaper_paths, _list);
-             elm_box_pack_start(elm_win_inwin_content_get(_inwin), _list);
-             evas_object_show(_list);
-             _renew_gengrid_backgrounds(data);
-          }
-     }
-}
-
-static void
-_path_edit_click(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Config *config = termio_config_get(data);
-   Evas_Object *parent = elm_object_top_widget_get(obj);
-   Evas_Object *o, *bx, *bx2;
-
-   _inwin = o = elm_win_inwin_add(parent);
-   evas_object_show(o);
-
-   bx = elm_box_add(_inwin);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.0);
-   elm_win_inwin_content_set(o, bx);
-   evas_object_show(bx);
-
-   _list = o = elm_genlist_add(_inwin);
-   _fill_path_list(config->wallpaper_paths, o);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   o = elm_box_add(_inwin);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   bx2 = o;
-
-   bx = o = elm_box_add(_inwin);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.0);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx2, o);
-   evas_object_show(o);
-
-   o = elm_fileselector_button_add(_inwin);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.0);
-   elm_fileselector_button_inwin_mode_set(o, EINA_TRUE);
-   elm_fileselector_button_folder_only_set(o, EINA_TRUE);
-   elm_object_text_set(o, "Add path");
-   evas_object_smart_callback_add(o, "file,chosen", _file_is_chosen, data);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   o = elm_button_add(_inwin);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.0);
-   elm_object_text_set(o, "Delete path");
-   elm_box_pack_end(bx, o);
-   evas_object_smart_callback_add(o, "clicked", _delete_path_click, data);
-   evas_object_show(o);
-
-   o = elm_button_add(_inwin);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.0);
-   elm_object_text_set(o, "Done");
-   elm_box_pack_end(bx2, o);
-   evas_object_smart_callback_add(o, "clicked", _done_click, _inwin);
-   evas_object_show(o);
+   free(msg_data);
 }
 
 static Eina_List*
-_rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
+_rec_read_directorys(Eina_List *list, const char *root_path, 
+                     Elm_Gengrid_Item_Class *class)
 {
    Eina_List *childs = ecore_file_ls(root_path);
    char *file_name, path[PATH_MAX];
    int i, j;
    Background_Item *item;
+   const char **extns[5] =
+   { extn_img, extn_scale, extn_edj, extn_mov, NULL };
+   const char **ex;
+   Insert_Gen_Grid_Item_Notify *notify; 
+
 
    if (!childs) return list;
    EINA_LIST_FREE(childs, file_name)
@@ -300,36 +214,32 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
         snprintf(path, PATH_MAX, "%s/%s", root_path, file_name);
         if ((!ecore_file_is_dir(path)) && (file_name[0] != '.'))
           {
-             const char **extns[5] =
-               { extn_img, extn_scale, extn_edj, extn_mov, NULL };
-
+             //file is found, search for correct file endings ! 
              for (j = 0; extns[j]; j++)
                {
-                  const char **ex = extns[j];
-
+                  ex = extns[j];
                   for (i = 0; ex[i]; i++)
                     {
                        if (eina_str_has_extension(file_name, ex[i]))
                          {
+                            //File is found and valid
                             item = calloc(1, sizeof(Background_Item));
                             if (item)
                               {
+                                 notify = calloc(1, 
+                                          sizeof(Insert_Gen_Grid_Item_Notify));
                                  item->path = eina_stringshare_add(path);
-                                 item->term = term;
                                  list = eina_list_append(list, item);
+                                 //insert item to gengrid
+                                 notify->class = class;
+                                 notify->item = item;
+                                 //ecore_thread_feedback(th, notify);
+                                 _insert_gengrid_item(notify);
                               }
                             break;
                          }
                     }
                }
-          }
-        else
-          {
-             char *link = ecore_file_readlink(path);
-             if (link)
-               free(link);
-             else
-               list = _rec_read_directorys(list, path, term);
           }
         free(file_name);
      }
@@ -337,117 +247,171 @@ _rec_read_directorys(Eina_List *list, char *root_path, Evas_Object *term)
 }
 
 static void
-_read_directorys(Evas_Object *term)
-{
-   Config *config = termio_config_get(term);
-   char path[PATH_MAX];
-   Background_Item *item;
-   Eina_List *node;
-   char *path_iterate;
-   char *home_dir;
-
-   EINA_LIST_FREE(_backgroundlist, item)
-     {
-        if (item->path) eina_stringshare_del(item->path);
-        free(item);
-     }
-   // first of all append the None !!
-   item = calloc(1, sizeof(Background_Item));
-   item->path = NULL;
-   item->term = term;
-   _backgroundlist = eina_list_append(_backgroundlist, item);
-   // append the standard directory
-   snprintf(path, sizeof(path), "%s/backgrounds", elm_app_data_dir_get());
-   _backgroundlist = _rec_read_directorys(_backgroundlist, path, term);
-   // append the Home background directory if this directory exists
-   home_dir = getenv("HOME");
-   if (home_dir)
-     {
-        snprintf(path, sizeof(path), "%s/.e/e/backgrounds", home_dir);
-        _backgroundlist = _rec_read_directorys(_backgroundlist, path, term);
-     }
-   // Now append all the directorys which are stored
-   EINA_LIST_FOREACH(config->wallpaper_paths, node, path_iterate)
-     {
-        _backgroundlist = _rec_read_directorys(_backgroundlist, path_iterate, term);
-     }
-}
-
-static int
-_cb_path_sort(const void *d1, const void *d2)
-{
-   const Background_Item *item1 = d1;
-   const Background_Item *item2 = d2;
-
-   if (!item1->path) return -1;
-   if (!item2->path) return 1;
-   return strcasecmp(item1->path, item2->path);
-}
-
-static Eina_Bool
-_cb_selection_timer(void *data)
-{
-   Elm_Object_Item *item = data;
-
-   elm_gengrid_item_selected_set(item, EINA_TRUE);
-   elm_gengrid_item_bring_in(item, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-   _seltimer = NULL;
-   return EINA_FALSE;
-}
-
-static void
-_renew_gengrid_backgrounds(Evas_Object *term)
+_refresh_directory(const char* data)
 {
    Background_Item *item;
-   Eina_List *node;
-   Config *config = termio_config_get(term);
-   Evas_Object *o;
    Elm_Gengrid_Item_Class *item_class;
 
+   // This will run elm_gengrid_clear 
+   elm_gengrid_clear(_bg_grid);
+
+   if (_backgroundlist)
+     {
+        EINA_LIST_FREE(_backgroundlist, item)
+          {
+             if (item->path)
+               eina_stringshare_del(item->path);
+             free(item);
+
+          }
+        _backgroundlist = NULL;
+     }
    item_class = elm_gengrid_item_class_new();
    item_class->func.text_get = _grid_text_get;
    item_class->func.content_get = _grid_content_get;
 
-   if (_bg_grid) evas_object_del(_bg_grid);
+   item = calloc(1, sizeof(Background_Item));
+   _backgroundlist = eina_list_append(_backgroundlist, item); 
 
-   _bg_grid = o = elm_gengrid_add(_parent);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_gengrid_item_size_set(o, elm_config_scale_get() * 100,
-                                elm_config_scale_get() * 80);
-   _read_directorys(term);
-   _backgroundlist = eina_list_sort(_backgroundlist,
-                                   eina_list_count(_backgroundlist),
-                                   _cb_path_sort);
-   EINA_LIST_FOREACH(_backgroundlist, node, item)
-     {
-        item->item = elm_gengrid_item_append(_bg_grid, item_class, item,
-                                             _item_selected, item);
-        if ((!item->path) && (!config->background))
-          {
-             if (!_seltimer) ecore_timer_del(_seltimer);
-             _seltimer = ecore_timer_add(0.2, _cb_selection_timer, item->item);
-          }
-        else if ((item->path) && (config->background))
-          {
-             if (strcmp(item->path, config->background) == 0)
-               {
-                  if (!_seltimer) ecore_timer_del(_seltimer);
-                  _seltimer = ecore_timer_add(0.2, _cb_selection_timer, item->item);
-               }
-          }
-     }
-   elm_box_pack_start(_bx, o);
-   evas_object_show(o);
+   //Insert None Item
+   Insert_Gen_Grid_Item_Notify *notify = calloc(1, 
+                                         sizeof(Insert_Gen_Grid_Item_Notify));
+   notify->class = item_class;
+   notify->item = item;
+
+   _insert_gengrid_item(notify);
+
+   _backgroundlist = _rec_read_directorys(_backgroundlist, data,
+                                          item_class);
+
    elm_gengrid_item_class_free(item_class);
+   _thread = NULL;
+}
+
+static void
+_gengrid_refresh_samples(const char *path)
+{
+   if(!ecore_file_exists(path))
+      return;
+   _refresh_directory(path);
+}
+
+static void
+_cb_entry_changed(void *data EINA_UNUSED, Evas_Object *parent,
+                  void *event EINA_UNUSED)
+{
+   const char *path = elm_object_text_get(parent);
+   _gengrid_refresh_samples(path);
+}
+
+static void
+_cb_hoversel_select(void *data, Evas_Object *hoversel EINA_UNUSED, 
+                    void *event EINA_UNUSED)
+{
+   Evas_Object *o;
+   char *path = data;
+   if (path)
+     {
+        elm_object_text_set(_entry, path);
+     }
+   else
+     {
+        o = elm_object_part_content_get(_flip, "back");
+        elm_fileselector_path_set(o, elm_object_text_get(_entry));
+        elm_flip_go_to(_flip, EINA_FALSE, ELM_FLIP_PAGE_RIGHT);
+     } 
+}
+
+static const char*
+_system_background_dir_init(void)
+{ 
+   char path[PATH_MAX];
+
+   snprintf(path, PATH_MAX, "%s/backgrounds/", elm_app_data_dir_get());
+   if (_system_path)
+     eina_stringshare_replace(&_system_path, path);
+   else
+     _system_path = eina_stringshare_add(path);
+   return _system_path;
+}
+
+static const char*
+_user_background_dir_init(void){
+   char path[PATH_MAX], *user;
+
+   user = getenv("HOME");
+   if(!user)
+      return NULL;
+   snprintf(path, PATH_MAX, "%s/.config/terminology/background/", user);
+   if (!ecore_file_exists(path))
+     ecore_file_mkpath(path);
+   if (!_user_path)
+     _user_path = eina_stringshare_add(path);
+   else
+     eina_stringshare_replace(&_user_path, path);
+   return _user_path; 
+}
+
+static const char*
+_import_background(const char* background)
+{
+   char path[PATH_MAX];
+   const char *filename = ecore_file_file_get(background);
+
+   if (!filename)
+     return NULL;
+   if (!_user_background_dir_init())
+     return NULL;
+   snprintf(path, PATH_MAX, "%s/%s", _user_path, filename);
+   if (!ecore_file_cp(background, path))
+     return NULL;
+   return eina_stringshare_add(path);
+}
+
+static void
+_cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
+                     void *event EINA_UNUSED)
+{
+   Config *config = termio_config_get(_term);
+   char *config_background_dir = ecore_file_dir_get(config->background);
+   if (!_user_path)
+     _user_background_dir_init();
+   if (!config->background) 
+     return;
+   if (strncmp(config_background_dir, _user_path, 
+               strlen(config_background_dir)) == 0)
+     {
+        _bubble_show("Source file is target file!");
+        free(config_background_dir);
+        return;
+     }
+
+   const char *newfile = _import_background(config->background);
+
+   if (newfile)
+     {
+        eina_stringshare_replace(&(config->background), newfile);
+        config_save(config, NULL);
+        main_media_update(config);
+        eina_stringshare_del(newfile);
+        _bubble_show("Picture imported!");
+        elm_object_text_set(_entry, config_background_dir);
+     }
+   else
+     {
+       _bubble_show("Failed!");
+     }
+   free(config_background_dir);
 }
 
 void
 options_wallpaper(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *frame, *o;
+   Evas_Object *frame, *o, *bx, *bx2;
+   Config *config = termio_config_get(term);
+   char path[PATH_MAX], *config_background_dir;
 
-   _parent = opbox;
+   _term = term;
 
    frame = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -456,36 +420,102 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    elm_box_pack_end(opbox, o);
 
-   _bx = o = elm_box_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   _flip = o = elm_flip_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(frame, o);
    evas_object_show(o);
-   _renew_gengrid_backgrounds(term);
 
-   o = elm_button_add(opbox);
+   o = elm_fileselector_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_part_content_set(_flip, "back", o);
+   elm_fileselector_folder_only_set(o, EINA_TRUE);
+   evas_object_smart_callback_add(o, "done", _cb_fileselector, NULL);
+   evas_object_show(o);
+
+   bx = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_part_content_set(_flip, "front", bx);
+   evas_object_show(o);
+
+   bx2 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(o, "Edit paths");
-   elm_box_pack_end(_bx, o);
+   elm_box_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_start(bx, o);
    evas_object_show(o);
-   evas_object_smart_callback_add(o, "clicked", _path_edit_click, term);
 
+   _entry = o = elm_entry_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_TRUE);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_smart_callback_add(_entry, "changed", _cb_entry_changed, NULL);
+   elm_box_pack_start(bx2, o);
+   evas_object_show(o); 
+
+   o = elm_hoversel_add(opbox);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(o,"Select Path");
+   elm_box_pack_end(bx2, o);
+   evas_object_show(o);
+
+   snprintf(path, PATH_MAX, "%s/backgrounds/", elm_app_data_dir_get());
+   _system_background_dir_init();
+   elm_hoversel_item_add(o, "System", NULL, ELM_ICON_NONE, _cb_hoversel_select ,
+                         _system_path);
+   if (_user_background_dir_init())
+     elm_hoversel_item_add(o, "User", NULL, ELM_ICON_NONE, _cb_hoversel_select ,
+                           _user_path);
+   //In the other case it has failed, so dont show the user item
+   elm_hoversel_item_add(o, "Other", NULL, ELM_ICON_NONE, _cb_hoversel_select , 
+                         NULL);
+
+   _bg_grid = o = elm_gengrid_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(o, "clicked,double", _cb_grid_doubleclick, NULL);
+   elm_gengrid_item_size_set(o, elm_config_scale_get() * 100,
+                                elm_config_scale_get() * 80);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_label_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(o, "Double click on a picture to import it!");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   if (config->background)
+     {
+        config_background_dir = ecore_file_dir_get(config->background);
+        elm_object_text_set(_entry, config_background_dir);
+        free(config_background_dir); 
+     }
+   else
+     {
+        elm_object_text_set(_entry, _system_path);
+     }
 }
 void
 options_wallpaper_clear(void)
 {
    Background_Item *item;
-   Wallpaper_Path_Item *wpi;
 
    EINA_LIST_FREE(_backgroundlist, item)
      {
         if (item->path) eina_stringshare_del(item->path);
         free(item);
      }
-   EINA_LIST_FREE(_pathlist, wpi)
-     {
-        if (wpi->path) eina_stringshare_del(wpi->path);
-        free(wpi);
-     }
+   if (_user_path)
+     eina_stringshare_del(_user_path);
+   _user_path = NULL;
+   if (_system_path)
+     eina_stringshare_del(_system_path);
+   _user_path = NULL;
 }
