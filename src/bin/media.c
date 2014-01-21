@@ -680,8 +680,9 @@ _type_mov_init(Evas_Object *obj)
         NULL,
         "gstreamer",
         "xine",
-        "vlc"
-     };
+        "vlc",
+        "gstreamer1"
+    };
    char *mod = NULL;
         
    Media *sd = evas_object_smart_data_get(obj);
@@ -1315,11 +1316,25 @@ media_src_type_get(const char *src)
         query = strchr(src, '?');
         if (query)
           {
-             if (strchr(query + 1, '=') && strchr(query + 1, '&'))
+             if (strchr(query + 1, '=') && !strchr(query + 1, '&'))
                {
-                  const char *p = strstr(src, ".youtube.com/");
+                  const char *p = strstr(src, "www.youtube.com/watch");
+                  
                   if (p && (p < query))
                     type = TYPE_MOV;
+               }
+             else if (strchr(query + 1, '=') && strchr(query + 1, '&'))
+               {
+                  const char *p = strstr(src, ".youtube.com/");
+                  
+                  if (p && (p < query))
+                    type = TYPE_MOV;
+                  else
+                    {
+                       p = strstr(src, ".googlevideo.com/");
+                       if (p && (p < query))
+                         type = TYPE_MOV;
+                    }
                }
           }
      }
