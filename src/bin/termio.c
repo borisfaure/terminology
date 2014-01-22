@@ -1831,36 +1831,37 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
 
    if (ev->format == ELM_SEL_FORMAT_TEXT)
      {
-        if (ev->len > 0)
+        char *tmp;
+
+        if (ev->len <= 0) return EINA_TRUE;
+
+        tmp = malloc(ev->len);
+        if (tmp)
           {
-             char *tmp;
+             char *s = ev->data;
+             size_t i;
 
              // apparently we have to convert \n into \r in terminal land.
-             tmp = malloc(ev->len + 1);
-             if (tmp)
+             for (i = 0; i < ev->len && s[i]; i++)
                {
-                  char *s = ev->data;
-                  size_t i;
-
-                  tmp[ev->len] = '\0';
-                  for (i = 0; i < ev->len; i++)
-                    {
-                       tmp[i] = s[i];
-                       if (tmp[i] == '\n') tmp[i] = '\r';
-                    }
-
-                  if (sd->pty->state.bracketed_paste)
-                      termpty_write(sd->pty, "\x1b[200~",
-                                    sizeof("\x1b[200~") - 1);
-
-                  termpty_write(sd->pty, tmp, ev->len);
-
-                  if (sd->pty->state.bracketed_paste)
-                      termpty_write(sd->pty, "\x1b[201~",
-                                    sizeof("\x1b[201~") - 1);
-
-                  free(tmp);
+                  tmp[i] = s[i];
+                  if (tmp[i] == '\n') tmp[i] = '\r';
                }
+             if (i)
+               {
+
+                if (sd->pty->state.bracketed_paste)
+                  termpty_write(sd->pty, "\x1b[200~",
+                                sizeof("\x1b[200~") - 1);
+
+                termpty_write(sd->pty, tmp, i);
+
+                if (sd->pty->state.bracketed_paste)
+                  termpty_write(sd->pty, "\x1b[201~",
+                                sizeof("\x1b[201~") - 1);
+               }
+
+             free(tmp);
           }
      }
    else
