@@ -4430,7 +4430,16 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
    Evas *e;
    Evas_Object *obj, *g;
    Termio *sd;
-
+   char *modules[] =
+     {
+        NULL,
+        "gstreamer",
+        "xine",
+        "vlc",
+        "gstreamer1"
+     };
+   char *mod = NULL;
+   
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
    if (!e) return NULL;
@@ -4439,6 +4448,10 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, obj);
+
+   if ((config->vidmod >= 0) &&
+       (config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
+     mod = modules[config->vidmod];
 
    termio_config_set(obj, config);
 
@@ -4470,9 +4483,9 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
                        _smart_cb_drag_pos, obj,
                        _smart_cb_drop, obj);
 #endif
-   
+
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
-                         config->xterm_256color, config->erase_is_del);
+                         config->xterm_256color, config->erase_is_del, mod);
    if (!sd->pty)
      {
         ERR("Cannot allocate termpty");

@@ -272,7 +272,7 @@ _limit_coord(Termpty *ty, Termstate *state)
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
             int w, int h, int backscroll, Eina_Bool xterm_256color,
-            Eina_Bool erase_is_del)
+            Eina_Bool erase_is_del, const char *emotion_mod)
 {
    Termpty *ty;
    const char *pty;
@@ -369,6 +369,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         const char *args[4] = {NULL, NULL, NULL, NULL};
         Eina_Bool needs_shell;
         int i;
+        char buf[256];
 
         if (cd)
           {
@@ -443,6 +444,11 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
              putenv("TERM=xterm");
           }
         putenv("XTERM_256_COLORS=1");
+        if (emotion_mod)
+          {
+             snprintf(buf, sizeof(buf), "EMOTION_ENGINE=%s", emotion_mod);
+             putenv(buf);
+          }
         if (!login_shell)
           execvp(args[0], (char *const *)args);
         else

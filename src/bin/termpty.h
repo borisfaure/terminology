@@ -208,7 +208,7 @@ void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                       int w, int h, int backscroll, Eina_Bool xterm_256color,
-                      Eina_Bool erase_is_del);
+                      Eina_Bool erase_is_del, const char *emotion_mod);
 void       termpty_free(Termpty *ty);
 void       termpty_cellcomp_freeze(Termpty *ty);
 void       termpty_cellcomp_thaw(Termpty *ty);
