@@ -427,7 +427,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              arg = _csi_arg_get(&b);
              if (arg < 1) arg = 1;
              arg--;
-             if (arg < 0) arg = 0;
              else if (arg >= ty->h) arg = ty->h - 1;
              if (b)
                {
