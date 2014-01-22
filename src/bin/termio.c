@@ -740,10 +740,15 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *info EINA_UNUSED)
                          cmd = config->helper.local.general;
                        if (cmd)
                          {
-                            char buf[PATH_MAX];
+                            char buf[PATH_MAX], *escaped;
                             
-                            snprintf(buf, sizeof(buf), "%s %s", cmd, file);
-                            ecore_exe_run(buf, NULL);
+                            escaped = ecore_file_escape_name(file);
+                            if (escaped)
+                              {
+                                 snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+                                 ecore_exe_run(buf, NULL);
+                                 free(escaped);
+                              }
                             return;
                          }
                     }
