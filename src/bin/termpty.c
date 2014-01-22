@@ -56,7 +56,7 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
    Eina_Unicode *c, *ce, *b;
    int n, bytes;
 
-   c = (int *)codepoints;
+   c = (Eina_Unicode *)codepoints;
    ce = &(c[len]);
 
    if (ty->buf)
