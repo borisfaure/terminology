@@ -163,22 +163,23 @@ _item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED
      }
 }
 
-static void 
+static void
 _insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
 {
    Insert_Gen_Grid_Item_Notify *insert_msg = msg_data;
-   Background_Item *item = insert_msg->item;
-   Elm_Gengrid_Item_Class *item_class = insert_msg->class;
    Config *config = termio_config_get(_term);
 
-   if (insert_msg && item && item_class && config)
+   if (insert_msg && insert_msg->item && insert_msg->class && config)
      {
+        Background_Item *item = insert_msg->item;
+        Elm_Gengrid_Item_Class *item_class = insert_msg->class;
+
         item->item = elm_gengrid_item_append(_bg_grid, item_class, item,
                                         _item_selected, item);
         if ((!item->path) && (!config->background))
           {
              elm_gengrid_item_selected_set(item->item, EINA_TRUE);
-             elm_gengrid_item_bring_in(item->item, 
+             elm_gengrid_item_bring_in(item->item,
                                        ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
           }
         else if ((item->path) && (config->background))
@@ -186,7 +187,7 @@ _insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
              if (strcmp(item->path, config->background) == 0)
                {
                   elm_gengrid_item_selected_set(item->item, EINA_TRUE);
-                  elm_gengrid_item_bring_in(item->item, 
+                  elm_gengrid_item_bring_in(item->item,
                                             ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
                }
           }
