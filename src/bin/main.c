@@ -2988,6 +2988,7 @@ remote:
    if (!wn)
      {
         config_del(config);
+        config = NULL;
         retval = EXIT_FAILURE;
         goto end;
      }
