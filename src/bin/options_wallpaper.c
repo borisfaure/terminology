@@ -180,7 +180,7 @@ _insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
           {
              elm_gengrid_item_selected_set(item->item, EINA_TRUE);
              elm_gengrid_item_bring_in(item->item,
-                                       ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+                                       ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
           }
         else if ((item->path) && (config->background))
           {
@@ -188,7 +188,7 @@ _insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
                {
                   elm_gengrid_item_selected_set(item->item, EINA_TRUE);
                   elm_gengrid_item_bring_in(item->item,
-                                            ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+                                            ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
                }
           }
      }
