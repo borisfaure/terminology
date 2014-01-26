@@ -15,6 +15,11 @@
 #include "media.h"
 #include "dbus.h"
 
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+# include <sys/proc_info.h>
+# include <libproc.h>
+#endif
+
 typedef struct _Termio Termio;
 
 struct _Termio
@@ -4832,14 +4837,30 @@ termio_pid_get(const Evas_Object *obj)
 Eina_Bool
 termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
 {
-   char procpath[PATH_MAX];
    Termio *sd = evas_object_smart_data_get(obj);
    pid_t pid;
-   ssize_t siz;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
 
    pid = termpty_pid_get(sd->pty);
+
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+
+   struct proc_vnodepathinfo vpi;
+
+   if (proc_pidinfo(pid, PROC_PIDVNODEPATHINFO, 0, &vpi, sizeof(vpi)) <= 0)
+     {
+        ERR("Cannot get working directory of pid %i (%s)",
+            pid, strerror(errno));
+        return EINA_FALSE;
+     }
+   memcpy(buf, vpi.pvi_cdir.vip_path, size);
+
+#else
+
+   char procpath[PATH_MAX];
+   ssize_t siz;
+
    snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
    if ((siz = readlink(procpath, buf, size)) < 1)
      {
@@ -4848,6 +4869,9 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
         return EINA_FALSE;
      }
    buf[siz] = 0;
+
+#endif
+
    return EINA_TRUE;
 }
 
