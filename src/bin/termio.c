@@ -3144,22 +3144,19 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.end.y = cy - sd->scroll;
                   _selection_dbl_fix(data);
                }
-             else
+             else if (!(shift && sd->pty->selection.is_active))
                {
                   sd->moved = EINA_FALSE;
                   _sel_set(data, EINA_FALSE);
-                  if (!shift)
-                    {
-                       sd->pty->selection.is_box =
-                          (ctrl ||
-                           evas_key_modifier_is_set(ev->modifiers, "Alt"));
-                       sd->pty->selection.start.x = cx;
-                       sd->pty->selection.start.y = cy - sd->scroll;
-                       sd->pty->selection.end.x = cx;
-                       sd->pty->selection.end.y = cy - sd->scroll;
-                       sd->pty->selection.makesel = EINA_TRUE;
-                       _selection_dbl_fix(data);
-                    }
+                  sd->pty->selection.is_box =
+                     (ctrl ||
+                      evas_key_modifier_is_set(ev->modifiers, "Alt"));
+                  sd->pty->selection.start.x = cx;
+                  sd->pty->selection.start.y = cy - sd->scroll;
+                  sd->pty->selection.end.x = cx;
+                  sd->pty->selection.end.y = cy - sd->scroll;
+                  sd->pty->selection.makesel = EINA_TRUE;
+                  _selection_dbl_fix(data);
                }
           }
         _smart_update_queue(data, sd);
