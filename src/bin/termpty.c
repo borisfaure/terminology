@@ -277,6 +277,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    Termpty *ty;
    const char *pty;
    int mode;
+   struct termios t;
 
    ty = calloc(1, sizeof(Termpty));
    if (!ty) return NULL;
@@ -338,22 +339,13 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
            goto err;
         }
 
-   if (erase_is_del)
-     {
-        struct termios t;
 
-        tcgetattr(ty->fd, &t);
-        t.c_cc[VERASE] = 0x7f;
-        tcsetattr(ty->fd, TCSANOW, &t);
-     }
-   else
-     {
-        struct termios t;
-
-        tcgetattr(ty->fd, &t);
-        t.c_cc[VERASE] = 0x8;
-        tcsetattr(ty->fd, TCSANOW, &t);
-     }
+   tcgetattr(ty->fd, &t);
+   t.c_cc[VERASE] =  (erase_is_del) ? 0x7f : 0x8;
+#ifdef IUTF8
+   t.c_iflag |= IUTF8;
+#endif
+   tcsetattr(ty->fd, TCSANOW, &t);
 
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
