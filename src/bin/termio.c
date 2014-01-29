@@ -3187,7 +3187,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   if (!shift && !ctrl)
+   if (!shift && !ctrl && !sd->pty->selection.makesel)
       if (_rep_mouse_up(sd, ev, cx, cy)) return;
    if (sd->link.down.dnd) return;
    if (sd->pty->selection.makesel)
@@ -3228,6 +3228,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                  _smart_update_queue(data, sd);
                  _take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
+            sd->pty->selection.makesel = EINA_FALSE;
           }
      }
 }
