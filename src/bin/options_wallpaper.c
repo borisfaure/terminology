@@ -132,7 +132,11 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
                                                       config->theme);
              o = elm_layout_add(obj);
              oe = elm_layout_edje_get(o);
-             edje_object_file_set(oe, path, "terminology/background");
+             if (!edje_object_file_set(oe, path, "terminology/background"))
+               {
+                  evas_object_del(o);
+                  return NULL;
+               }
              evas_object_show(o);
              return o;
          }
