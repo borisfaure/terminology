@@ -640,6 +640,7 @@ list_dir(const char *dir, int mode)
              stuff--;
           }
         if (cols > num) cols = num;
+        if (cols == 0) cols = 1;
         rows = ((num + (cols - 1)) / cols);
         for (i = 0; i < rows; i++)
           {
