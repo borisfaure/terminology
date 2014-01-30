@@ -37,7 +37,7 @@ theme_reload(Evas_Object *edje)
 
    edje_object_file_get(edje, &file, &group);
    INF("file=%s, group=%s", file, group);
-   edje_object_file_set(edje, file, group);
+   if (!edje_object_file_set(edje, file, group)) return;
 }
 
 static void
