@@ -3053,7 +3053,6 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
-   sd->didclick = EINA_FALSE;
    if ((ev->button == 3) && ctrl)
      {
         evas_object_smart_callback_call(data, "options", NULL);
@@ -3078,6 +3077,8 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
+             if (!sd->pty->selection.is_active && sd->didclick)
+               sd->pty->selection.is_active = EINA_TRUE;
              if (shift && sd->pty->selection.is_active)
                   _sel_word_to(data, cx, cy - sd->scroll);
              else
@@ -3088,6 +3089,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else
           {
+             sd->didclick = EINA_FALSE;
              /* SINGLE CLICK */
              if (sd->pty->selection.is_active &&
                  (sd->top_left || sd->bottom_right))
@@ -3144,8 +3146,9 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.end.y = cy - sd->scroll;
                   _selection_dbl_fix(data);
                }
-             else if (!(shift && sd->pty->selection.is_active))
+             else if (!shift || !sd->pty->selection.is_active)
                {
+                  /* New selection */
                   sd->moved = EINA_FALSE;
                   _sel_set(data, EINA_FALSE);
                   sd->pty->selection.is_box =
@@ -3157,6 +3160,12 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.end.y = cy - sd->scroll;
                   sd->pty->selection.makesel = EINA_TRUE;
                   _selection_dbl_fix(data);
+               }
+             else
+               {
+                  sd->pty->selection.makesel = EINA_FALSE;
+                  sd->pty->selection.is_active = EINA_FALSE;
+                  sd->didclick = EINA_TRUE;
                }
           }
         _smart_update_queue(data, sd);
