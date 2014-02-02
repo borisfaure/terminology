@@ -2425,16 +2425,6 @@ main_ipc_new(Ipc_Instance *inst)
      }
    config = config_fork(main_config);
    ecore_app_args_set(nargc, (const char **)nargv);
-   wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
-                     config, inst->fullscreen, inst->iconic,
-                     inst->borderless, inst->override, inst->maximized);
-   if (!wn)
-     {
-        ecore_app_args_set(pargc, (const char **)pargv);
-        free(nargv);
-        config_del(config);
-        return;
-     }
    
    config = config_fork(config);
    
@@ -2493,6 +2483,18 @@ main_ipc_new(Ipc_Instance *inst)
 
    if (inst->w <= 0) inst->w = 80;
    if (inst->h <= 0) inst->h = 24;
+
+   wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
+                     config, inst->fullscreen, inst->iconic,
+                     inst->borderless, inst->override, inst->maximized);
+   if (!wn)
+     {
+        ecore_app_args_set(pargc, (const char **)pargv);
+        free(nargv);
+        config_del(config);
+        return;
+     }
+
    term = main_term_new(wn, config, inst->cmd, inst->login_shell,
                         inst->cd, inst->w, inst->h, inst->hold);
    if (!term)
