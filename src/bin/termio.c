@@ -3899,9 +3899,8 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
-   if (!sd->delayed_size_timer)
-     sd->delayed_size_timer = ecore_timer_add(0.0, _smart_cb_delayed_size,
-                                              obj);
+   if (!sd->delayed_size_timer) sd->delayed_size_timer = 
+     ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
    else ecore_timer_delay(sd->delayed_size_timer, 0.0);
    evas_object_resize(sd->event, ow, oh);
 }
@@ -3916,17 +3915,14 @@ _smart_calculate(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_object_move(sd->grid.obj, ox, oy);
-   evas_object_move(sd->event, ox, oy);
-   evas_object_resize(sd->event, ow, oh);
-   evas_object_resize(obj,
-                      sd->grid.w * sd->font.chw,
-                      sd->grid.h * sd->font.chh);
    evas_object_resize(sd->grid.obj,
                       sd->grid.w * sd->font.chw,
                       sd->grid.h * sd->font.chh);
    evas_object_move(sd->cursor.obj,
                     ox + (sd->cursor.x * sd->font.chw),
                     oy + (sd->cursor.y * sd->font.chh));
+   evas_object_move(sd->event, ox, oy);
+   evas_object_resize(sd->event, ow, oh);
 }
 
 static void
