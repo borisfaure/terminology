@@ -285,74 +285,69 @@ i.e.
   3... sequence of UTF8 chars other than nul (\\000 or 0x00).
   4    \\000 char (nul byte or 0x00 to indicate end of sequence)
 e.g.
-  echo \-n '\\033}Hello world\000'
+  echo \-n '\\033}Hello world\\000'
 
 .B Commands:
 
-any values inside square brackets [] are to be replaced by some
-content (numbers, strings, paths, url's etc.). example:
+any values inside square brackets [] are to be replaced by some content (numbers, strings, paths, url's etc.). example:
 
 aa[PATH\-OF\-FILE] should be come something like:
-  aa/tmp/file.png
+  aa/tmp/file.png\n
 or aa[true/false] should become something like:
-  aatrue
+  aatrue\n
 or
-  aafalse
+  aafalse\n
 
 \-\-\-
 
 pn[FULL\-PATH\-OR\-URL]
-  = popup the given media file/url now
+  popup the given media file/url now
 
 pq[FULL\-PATH\-OR\-URL]
-  = quque a popup for the given media file/url
+  quque a popup for the given media file/url
 
 bt[FULL\-PATH\-OR\-URL]
-  = set the terminal background media file/url temporarily
+  set the terminal background media file/url temporarily
 
 bp[FULL\-PATH\-OR\-URL]
-  = set the terminal background media file/url permanently
+  set the terminal background media file/url permanently
 
 at[on/true/yes/off/false/no]
-  = set the terminal alpha state to be on, or off temporarily
+  set the terminal alpha state to be on, or off temporarily
 
 ap[on/true/yes/off/false/no]
-  = set the terminal alpha state to be on, or off permanently
+  set the terminal alpha state to be on, or off permanently
 
 qs
-  = query grid and font size. stdin will have written to it:
+  query grid and font size. stdin will have written to it:
     W;H;FW;FH\n
-    where W is the width of the terminal grid in characters
-    where H is the height of the terminal grid in characters
-    where FW is the width of 1 character cell in pixels
-    where FH is the height of 1 character cell in pixels
+  where W is the width of the terminal grid in characters\n
+  where H is the height of the terminal grid in characters\n
+  where FW is the width of 1 character cell in pixels\n
+  where FH is the height of 1 character cell in pixels\n
 
 is[CW;H;FULL\-PATH\-OR\-URL]
-  = insert STRETCHED media (where image will stretch to fill the cell area)
-    and define expected cell area to be W cells wide and H cells high,
-    with the image/media/url.
-    where C is the replace character to be identified in later text
-    where W is the width in character cells (up to 511).
-    where H is the height in character cells (up to 511).
+  insert STRETCHED media (where image will stretch to fill the
+    cell area) and define expected cell area to be W cells
+    wide and H cells high, with the image/media/url.\n
+  where C is the replace character to be identified in later
+    text where W is the width in character cells (up to 511).\n
+  where H is the height in character cells (up to 511).\n
 
-    note that this escape alone has no effect. it indicates a future
-    intention of inserting media into the terminal. the terminal will
-    EXPECT a grid of WxH "replace characters" to follow, with each
-    sequence of such replace characters bebung with a 'ib' escape command
-    and ending with an 'ie' escape command.
+  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of WxH "replace characters" to follow, with each sequence of such replace characters bebung with a 'ib' escape command and ending with an 'ie' escape command.\n
 
-    the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may
-    be of the form:
+  the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may be of the form:
 
-      /full/path/to/file.png
+    /full/path/to/file.png
 
-    OR
+  OR
 
-      /full/path/to/link\n/full/path/to/file.png
+    /full/path/to/link\n/full/path/to/file.png
 
-      where a newline character separates a URI for a link and a full
-      path to a file to display in the region. the link is the
-      destination URI when a user may clikc on the given media image.
+    where a newline character separates a URI for a link and
+      a full path to a file to display in the region. the link
+      is the destination URI when a user may clikc on the given
+      media image.
 
     example:
 
@@ -361,37 +356,33 @@ is[CW;H;FULL\-PATH\-OR\-URL]
              "\\\033}ib#####\\\033}ie\\\n"
              "\\\033}ib#####\\\033}ie\\\n", "/tmp/icon.png");
 
-    note that '#' is the replace character, and later '#' chars if inside
-    begin/end escapes, will be replaced by the given media indicated
-    in the insert media escape.
+    note that '#' is the replace character, and later '#' chars if inside begin/end escapes, will be replaced by the given media indicated in the insert media escape.
 
 ic[CW;H;FULL\-PATH\-OR\-URL]
-  = insert CENTERED media (centered in cell area). otherwise paramaters are
-    identical to the "is" command, but retains aspect and is padded by
-    blank space.
+  insert CENTERED media (centered in cell area). otherwise
+    paramaters are identical to the "is" command, but
+    retains aspect and is padded by blank space.
 
 if[CW;H;FULL\-PATH\-OR\-URL]
-  = insert FILLED media (fill in cell area). otherwise paramaters are
-    identical to the "is" command but ensures the entire area is
-    filled like a background even if media goes beyond cell bounds and is
-    clipped.
+  insert FILLED media (fill in cell area). otherwise paramaters
+    are identical to the "is" command but ensures the entire
+    area is filled like a background even if media goes beyond
+    cell bounds and is clipped.
 
 it[CW;H;FULL\-PATH\-OR\-URL]
-  = insert THUMB media (thumbnail cell area). otherwise paramaters are
-    identical to the "is" command, but uses thumbnail generation to
-    make a fast to load but low resolution version (cached) of the media.
+  insert THUMB media (thumbnail cell area). otherwise paramaters
+    are identical to the "is" command, but uses thumbnail
+    generation to make a fast to load but low resolution version
+    (cached) of the media.
 
 ib
-  = begin media replace sequence run
+  begin media replace sequence run
 
 ie
-  = end media replace sequence run
+  end media replace sequence run
 
 .SH BUGS
-If you find a bug or for known issues/bugs/feature requests please email
-enlightenment-devel@lists.sourceforge.net or visit the place where all the hard
-work is done http://phab.enlightenment.org/
+If you find a bug or for known issues/bugs/feature requests please email enlightenment-devel@lists.sourceforge.net or visit the place where all the hard work is done http://phab.enlightenment.org/
 
 .SH AUTHOR
-Terminology was written by Carsten Haitzler <raster@rasterman.com> and others. See
-AUTHORS file for other contributors.
+Terminology was written by Carsten Haitzler <raster@rasterman.com> and others. See AUTHORS file for other contributors.
