@@ -1155,7 +1155,8 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
      }
    if (b == be)
      {
-        ERR("dcs parsing overflowed (binary data?)");
+        ERR("dcs parsing overflowed, skipping the whole buffer (binary data?)");
+        len = cc - c;
         goto end;
      }
    *b = 0;
