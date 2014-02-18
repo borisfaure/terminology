@@ -15,7 +15,8 @@ mild.edj \
 black.edj \
 solarized.edj \
 solarized_light.edj \
-mustang.edj
+mustang.edj \
+base16_ocean_dark.edj
 
 AM_V_EDJ = $(am__v_EDJ_$(V))
 am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
@@ -26,6 +27,7 @@ default.edc \
 mild.edc \
 black.edc \
 mustang.edc \
+base16_ocean_dark.edc \
 solarized.edc \
 solarized_light.edc \
 default_colors.in.edc
@@ -59,6 +61,11 @@ mustang.edj: Makefile mustang.edc mild.edc default_colors.in.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/mustang.edc \
 	$(top_builddir)/data/themes/mustang.edj
+
+base16_ocean_dark.edj: Makefile base16_ocean_dark.edc mild.edc default_colors.in.edc
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/base16_ocean_dark.edc \
+	$(top_builddir)/data/themes/base16_ocean_dark.edj
 
 clean-local:
 	rm -f *.edj

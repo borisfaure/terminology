@@ -1,0 +1,31 @@
+// Adapted from "base16/ocean" by Chris Kempson
+// See https://github.com/chriskempson/base16-builder/blob/master/schemes/ocean.yml
+
+#define BG_COLOR 43 48 59 255
+#define BG_COLOR_TRANSLUCENT 43 48 59 200
+#define BELL_OVERLAY_COLOR 43 48 59 32
+#define INHERIT_PROVIDE_OWN_COLORS 1
+
+collections {
+    color_classes {
+        color_class { name: "c0";  color: 192 197 206 255; }
+        color_class { name: "C0";  color: 43 48 59 255; }
+        color_class { name: "C1";  color: 191 97 106 255; }
+        color_class { name: "C10";  color: 52 61 70 255; }
+        color_class { name: "C11";  color: 79 91 102 255; }
+        color_class { name: "C12";  color: 167 173 186 255; }
+        color_class { name: "C13";  color: 223 225 232 255; }
+        color_class { name: "C14";  color: 171 121 103 255; }
+        color_class { name: "C15";  color: 239 241 245 255; }
+        color_class { name: "C2";  color: 163 190 140 255; }
+        color_class { name: "C3";  color: 235 203 139 255; }
+        color_class { name: "C4";  color: 143 161 179 255; }
+        color_class { name: "C5";  color: 180 142 173 255; }
+        color_class { name: "C6";  color: 150 181 180 255; }
+        color_class { name: "C7";  color: 192 197 206 255; }
+        color_class { name: "C8";  color: 101 115 126 255; }
+        color_class { name: "C9";  color: 208 135 112 255; }
+    }
+}
+
+#include "mild.edc"
