@@ -217,7 +217,8 @@ _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 }
 
 void
-keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
+keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev,
+             int alt, int shift, int ctrl)
 {
    if (ty->state.crlf)
      {
@@ -228,10 +229,9 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
         if (_key_try(ty, nocrlf_keyout, ev)) return;
      }
    if (
-       ((ty->state.alt_kp) &&
-           (evas_key_modifier_is_set(ev->modifiers, "Shift")))
+       ((ty->state.alt_kp) && (shift))
 //       || ((!ty->state.alt_kp) &&
-//           (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
+//           (!shift))
       )
      {
         if (_key_try(ty, kps_keyout, ev)) return;
@@ -243,9 +243,9 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
              if (_key_try(ty, kp_keyout, ev)) return;
           }
      }
-   if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+   if (ctrl)
      {
-        if (!strcmp(ev->key, "Minus"))
+        if (!strcmp(ev->key, "minus"))
           {
              termpty_write(ty, "\037", 1); // generate US (unit separator)
              return;
@@ -255,17 +255,17 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
              termpty_write(ty, "\0", 1); // generate 0 byte for ctrl+space
              return;
           }
-        else if (!evas_key_modifier_is_set(ev->modifiers, "Shift"))
+        else if (!shift)
           {
              if (_key_try(ty, ctrl_keyout, ev)) return;
           }
      }
-   else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+   else if (shift)
      {
         if (_key_try(ty, shift_keyout, ev)) return;
      }
 
-   else if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
+   else if (alt)
      {
         if (_key_try(ty, alt_keyout, ev)) return;
      }
@@ -302,7 +302,7 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev)
      {
         if ((ev->string[0]) && (!ev->string[1]))
           {
-             if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
+             if (alt)
                termpty_write(ty, "\033", 1);
           }
         termpty_write(ty, ev->string, strlen(ev->string));

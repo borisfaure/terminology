@@ -2065,11 +2065,12 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
    Termio *sd = evas_object_smart_data_get(data);
    Ecore_Compose_State state;
    char *compres = NULL;
+   int alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   int shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
+   if ((!alt) && (ctrl) && (!shift))
      {
         if (!strcmp(ev->key, "Prior"))
           {
@@ -2142,9 +2143,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
              goto end;
           }
      }
-   if ((!evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Shift")))
+   if ((!alt) && (ctrl) && (shift))
      {
         if (!strcmp(ev->key, "Prior"))
           {
@@ -2183,9 +2182,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
              goto end;
           }
      }
-   if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Control")))
+   if ((alt) && (!shift) && (!ctrl))
      {
         if (!strcmp(ev->key, "Home"))
           {
@@ -2200,9 +2197,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
              goto end;
           }
      }
-   if ((evas_key_modifier_is_set(ev->modifiers, "Alt")) &&
-       (evas_key_modifier_is_set(ev->modifiers, "Control")) &&
-       (!evas_key_modifier_is_set(ev->modifiers, "Shift")))
+   if ((alt) && (ctrl) && (!shift))
      {
         if (_handle_alt_ctrl(ev->key, data))
           {
@@ -2215,7 +2210,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
         // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
         // and jed (alt+shift+5 for search/replace for example)
         // Don't filter modifiers alt, is used by shells
-        if (!evas_key_modifier_is_set(ev->modifiers, "Alt"))
+        if ((!alt) && (!ctrl))
           {
              Ecore_IMF_Event_Key_Down imf_ev;
 
@@ -2228,8 +2223,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
                }
           }
      }
-   if ((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-       (ev->key))
+   if ((shift) && (ev->key))
      {
         int by = sd->grid.h - 2;
 
@@ -2284,7 +2278,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
           }
         else goto end;
      }
-   keyin_handle(sd->pty, ev);
+   keyin_handle(sd->pty, ev, alt, shift, ctrl);
 end:
    if (sd->config->flicker_on_key)
      edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
