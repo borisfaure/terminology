@@ -5,6 +5,7 @@
 #include "config.h"
 #include "main.h"
 #include "col.h"
+#include "utils.h"
 
 #define CONF_VER 2
 
@@ -23,9 +24,14 @@ void
 config_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
+   char path[PATH_MAX] = {};
 
    elm_need_efreet();
    efreet_init();
+
+   snprintf(path, sizeof(path) -1, "%s/terminology/themes",
+            _config_home_get());
+   ecore_file_mkpath(path);
 
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Config", sizeof(Config));
@@ -613,17 +619,13 @@ config_del(Config *config)
 const char *
 config_theme_path_get(const Config *config)
 {
-   static char path[PATH_MAX];
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(config->theme, NULL);
 
    if (strchr(config->theme, '/'))
      return config->theme;
 
-   snprintf(path, sizeof(path), "%s/themes/%s",
-            elm_app_data_dir_get(), config->theme);
-   return path;
+   return theme_path_get(config->theme);
 }
 
 const char *

@@ -2753,20 +2753,20 @@ elm_main(int argc, char **argv)
    if (theme)
      {
         char path[PATH_MAX];
-        char nom[PATH_MAX];
+        char theme_name[PATH_MAX];
+        const char *theme_path = (const char *)&path;
 
         if (eina_str_has_suffix(theme, ".edj"))
-          eina_strlcpy(nom, theme, sizeof(nom));
+          eina_strlcpy(theme_name, theme, sizeof(theme_name));
         else
-          snprintf(nom, sizeof(nom), "%s.edj", theme);
+          snprintf(theme_name, sizeof(theme_name), "%s.edj", theme);
 
-        if (strchr(nom, '/'))
-          eina_strlcpy(path, nom, sizeof(path));
+        if (strchr(theme_name, '/'))
+          eina_strlcpy(path, theme_name, sizeof(path));
         else
-          snprintf(path, sizeof(path), "%s/themes/%s",
-                   elm_app_data_dir_get(), nom);
+          theme_path = theme_path_get(theme_name);
 
-        eina_stringshare_replace(&(config->theme), path);
+        eina_stringshare_replace(&(config->theme), theme_path);
         config->temporary = EINA_TRUE;
      }
 

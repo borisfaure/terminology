@@ -122,6 +122,10 @@ or aa[true/false] should become something like:
 or
   aafalse
 
+Themes:
+
+Themes can be stored in ~/.config/terminology/themes/ .
+
 ---
 
 pn[FULL-PATH-OR-URL]

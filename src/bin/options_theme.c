@@ -42,14 +42,12 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-        char buf[4096];
         Config *config = termio_config_get(t->term);
-        
+
         if (config)
           {
-             snprintf(buf, sizeof(buf), "%s/themes/%s",
-                      elm_app_data_dir_get(), t->name);
-             o = options_theme_preview_add(obj, config, buf,
+             o = options_theme_preview_add(obj, config,
+                                           theme_path_get(t->name),
                                            128 * elm_config_scale_get(),
                                            64 * elm_config_scale_get());
              return o;
@@ -98,10 +96,13 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o, *box, *fr;
    Elm_Gengrid_Item_Class *it_class;
-   Eina_List *files;
+   Eina_List *files, *userfiles, *l, *l_next;
    char buf[4096], *file;
-   Theme *t;
+   const char *config_dir = efreet_config_home_get(),
+              *data_dir = elm_app_data_dir_get();
    Config *config = termio_config_get(term);
+   Eina_Bool to_skip = EINA_FALSE;
+   double scale = elm_config_scale_get();
 
    options_theme_clear();
 
@@ -127,49 +128,79 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    op_themelist = o = elm_gengrid_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_gengrid_item_size_set(o,
-                             elm_config_scale_get() * 160,
-                             elm_config_scale_get() * 180);
+   elm_gengrid_item_size_set(o, scale * 160, scale * 180);
 
-   snprintf(buf, sizeof(buf), "%s/themes", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/themes", data_dir);
    files = ecore_file_ls(buf);
    if (files)
      files = eina_list_sort(files, eina_list_count(files),
                             _cb_op_theme_sort);
+
+   snprintf(buf, sizeof(buf), "%s/terminology/themes", config_dir);
+   userfiles = ecore_file_ls(buf);
+   if (userfiles)
+     userfiles = eina_list_sort(userfiles, eina_list_count(userfiles),
+                            _cb_op_theme_sort);
+
+   if (files && userfiles)
+     files = eina_list_sorted_merge(files, userfiles, _cb_op_theme_sort);
+   else if (userfiles)
+     files = userfiles;
 
    if (seltimer)
      {
         ecore_timer_del(seltimer);
         seltimer = NULL;
      }
-   EINA_LIST_FREE(files, file)
+
+   EINA_LIST_FOREACH_SAFE(files, l, l_next, file)
      {
         const char *ext = strchr(file, '.');
-        
-        if ((config) && (file[0] != '.') &&
-            ((ext) && (!strcasecmp(".edj", ext))))
+
+        if (!((config) && (file[0] != '.') &&
+              ((ext) && (!strcasecmp(".edj", ext)))))
           {
-             t = calloc(1, sizeof(Theme));
-             t->name = eina_stringshare_add(file);
-             t->term = term;
-             t->item = elm_gengrid_item_append(o, it_class, t,
-                                               _cb_op_theme_sel, t);
-             if (t->item)
+             free(file);
+             files = eina_list_remove_list(files, l);
+          }
+     }
+
+   EINA_LIST_FOREACH_SAFE(files, l, l_next, file)
+     {
+        Theme *t;
+        if (to_skip == EINA_TRUE)
+          {
+             to_skip = EINA_FALSE;
+             goto end_loop;
+          }
+
+        if (l_next && l_next->data && !strcmp(file, l_next->data))
+          {
+             to_skip = EINA_TRUE;
+          }
+
+        t = calloc(1, sizeof(Theme));
+        t->name = eina_stringshare_add(file);
+        t->term = term;
+        t->item = elm_gengrid_item_append(o, it_class, t,
+                                          _cb_op_theme_sel, t);
+        if (t->item)
+          {
+             themes = eina_list_append(themes, t);
+             if ((config->theme) &&
+                 (!strcmp(config->theme, t->name)))
                {
-                  themes = eina_list_append(themes, t);
-                  if ((config->theme) &&
-                      (!strcmp(config->theme, t->name)))
-                    {
-                       if (seltimer) ecore_timer_del(seltimer);
-                       seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
-                    }
-               }
-             else
-               {
-                  eina_stringshare_del(t->name);
-                  free(t);
+                  if (seltimer) ecore_timer_del(seltimer);
+                  seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
                }
           }
+        else
+          {
+             eina_stringshare_del(t->name);
+             free(t);
+          }
+     end_loop:
+        files = eina_list_remove_list(files, l);
         free(file);
      }
 
