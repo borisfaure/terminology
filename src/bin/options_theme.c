@@ -187,7 +187,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
         if (t->item)
           {
              themes = eina_list_append(themes, t);
-             if ((config->theme) &&
+             if ((config) && (config->theme) &&
                  (!strcmp(config->theme, t->name)))
                {
                   if (seltimer) ecore_timer_del(seltimer);
