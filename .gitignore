@@ -32,6 +32,7 @@
 /data/images/Makefile.in
 /data/themes/Makefile
 /data/themes/Makefile.in
+/data/themes/base16_ocean_dark.edj
 /data/themes/default.edj
 /data/themes/mild.edj
 /data/themes/black.edj
@@ -65,7 +66,7 @@
 /src/bin/lz4/.dirstamp
 /man/Makefile
 /man/Makefile.in
-pkgbuild/PKGBUILD
-pkgbuild/pkg
-pkgbuild/src
-pkgbuild/*.tar.xz
+/pkgbuild/PKGBUILD
+/pkgbuild/pkg
+/pkgbuild/src
+/pkgbuild/*.tar.xz
