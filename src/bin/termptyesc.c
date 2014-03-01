@@ -665,7 +665,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 4:
                                  handled = 1;
-                                 ERR("TODO: set insert mode to %i", mode);
+                                 ERR("TODO: scrolling mode (DECSCLM): %i", mode);
                                  break;
                                case 5:
                                  handled = 1;
