@@ -3611,7 +3611,7 @@ _smart_cb_gest_zoom_start(void *data, void *event)
    if (config)
      {
         int sz;
-        
+
         sd->zoom_fontsize_start = config->font.size;
         sz = (double)sd->zoom_fontsize_start * p->zoom;
         if (sz != config->font.size) _font_size_set(data, sz);
@@ -3630,8 +3630,7 @@ _smart_cb_gest_zoom_move(void *data, void *event)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
    if (config)
      {
-        int sz = (double)sd->zoom_fontsize_start *
-          (1.0 + ((p->zoom - 1.0) / 30.0));
+        int sz = (double)sd->zoom_fontsize_start * p->zoom;
         if (sz != config->font.size) _font_size_set(data, sz);
      }
    sd->didclick = EINA_TRUE;
@@ -3648,8 +3647,7 @@ _smart_cb_gest_zoom_end(void *data, void *event)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
    if (config)
      {
-        int sz = (double)sd->zoom_fontsize_start *
-          (1.0 + ((p->zoom - 1.0) / 30.0));
+        int sz = (double)sd->zoom_fontsize_start * p->zoom;
         if (sz != config->font.size) _font_size_set(data, sz);
      }
    sd->didclick = EINA_TRUE;
@@ -4468,7 +4466,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
                             ELM_GESTURE_STATE_MOVE, _smart_cb_gest_long_move,
                             obj);
-   
+
    elm_gesture_layer_cb_set(g, ELM_GESTURE_ZOOM,
                             ELM_GESTURE_STATE_START, _smart_cb_gest_zoom_start,
                             obj);
