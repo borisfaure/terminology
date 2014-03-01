@@ -943,6 +943,17 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'u': // restore cursor pos
         _termpty_cursor_copy(&(ty->save), &(ty->state));
         break;
+      case 'p': // define key assignments based on keycode
+        if (b && *b == '!')
+          {
+             DBG("soft reset (DECSTR)");
+             _termpty_reset_state(ty);
+          }
+        else
+          {
+             goto unhandled;
+          }
+        break;
 /*
       case 'R': // report cursor
         break;
@@ -951,8 +962,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 's':
         break;
       case 't':
-        break;
-      case 'p': // define key assignments based on keycode
         break;
       case 'q': // set/clear led's
         break;
