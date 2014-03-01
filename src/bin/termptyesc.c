@@ -337,8 +337,9 @@ static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
-   int arg, i;
+   int arg, i, j;
    Eina_Unicode buf[4096], *b;
+   char *pos;
 
    cc = (Eina_Unicode *)c;
    b = buf;
@@ -893,7 +894,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                          }
                     }
                }
-             if (!handled) ERR("unhandled '%c'", *cc);
+             if (!handled) goto unhandled;
           }
         break;
       case 'r':
@@ -991,9 +992,23 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
        }
        break;
       default:
-        ERR("unhandled CSI '%c' (0x%02x)", *cc, *cc);
-        break;
+       goto unhandled;
      }
+   cc++;
+   return cc - c;
+unhandled:
+   pos = (char *)buf;
+
+   for (j = 0; c + j <= cc && j < 100; j++)
+     {
+        if ((pos - (char*)buf) > 4096 - 15) break;
+        if ((c[j] < ' ') || (c[j] >= 0x7f))
+          pos += sprintf(pos, "\033[35m%08x\033[0m", c[j]);
+        else
+          pos += sprintf(pos, "%c", c[j]);
+     }
+   *pos = '\0';
+   ERR("unhandled CSI '%c': %s", *cc, (char*)buf);
    cc++;
    return cc - c;
 }
