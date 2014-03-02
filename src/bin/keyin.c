@@ -77,8 +77,57 @@ static const Keyout alt_keyout[] =
    KEY("Right",        "\033[1;3C"),
    KEY("Up",           "\033[1;3A"),
    KEY("Down",         "\033[1;3B"),
+   KEY("End",          "\033[1;3F"),
    KEY("BackSpace",    "\033\177"),
-   
+   KEY("Return",       "\033\015"),
+   KEY("space",        "\033\040"),
+   KEY("Home",         "\033[1;3H"),
+   KEY("End",          "\033[1;3F"),
+   KEY("Prior",        "\033[5;3~"),
+   KEY("Next",         "\033[6;3~"),
+   KEY("Insert",       "\033[2;3~"),
+   KEY("Delete",       "\033[3;3~"),
+   KEY("Menu",         "\033[29;3~"),
+   KEY("Find",         "\033[1;3~"),
+   KEY("Help",         "\033[28;3~"),
+   KEY("Execute",      "\033[3;3~"),
+   KEY("Select",       "\033[4;3~"),
+   KEY("F1",           "\033[11;3~"), // \033OP
+   KEY("F2",           "\033[12;3~"), // \033OQ
+   KEY("F3",           "\033[13;3~"), // \033OR
+   KEY("F4",           "\033[14;3~"), // \033OR
+   KEY("F5",           "\033[15;3~"),
+   KEY("F6",           "\033[17;3~"),
+   KEY("F7",           "\033[18;3~"),
+   KEY("F8",           "\033[19;3~"),
+   KEY("F9",           "\033[20;3~"),
+   KEY("F10",          "\033[21;3~"),
+   KEY("F11",          "\033[23;3~"),
+   KEY("F12",          "\033[24;3~"),
+   KEY("F13",          "\033[25;3~"),
+   KEY("F14",          "\033[26;3~"),
+   KEY("F15",          "\033[28;3~"),
+   KEY("F16",          "\033[29;3~"),
+   KEY("F17",          "\033[31;3~"),
+   KEY("F18",          "\033[32;3~"),
+   KEY("F19",          "\033[33;3~"),
+   KEY("F20",          "\033[34;3~"),
+   KEY("F21",          "\033[35;3~"),
+   KEY("F22",          "\033[36;3~"),
+   KEY("F23",          "\033[37;3~"),
+   KEY("F24",          "\033[38;3~"),
+   KEY("F25",          "\033[39;3~"),
+   KEY("F26",          "\033[40;3~"),
+   KEY("F27",          "\033[41;3~"),
+   KEY("F28",          "\033[42;3~"),
+   KEY("F29",          "\033[43;3~"),
+   KEY("F30",          "\033[44;3~"),
+   KEY("F31",          "\033[45;3~"),
+   KEY("F32",          "\033[46;3~"),
+   KEY("F33",          "\033[47;3~"),
+   KEY("F34",          "\033[48;3~"),
+   KEY("F35",          "\033[49;3~"),
+
    KEY(NULL, "END")
 };
 
@@ -220,13 +269,16 @@ void
 keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev,
              int alt, int shift, int ctrl)
 {
-   if (ty->state.crlf)
+   if (!alt)
      {
-        if (_key_try(ty, crlf_keyout, ev)) return;
-     }
-   else
-     {
-        if (_key_try(ty, nocrlf_keyout, ev)) return;
+      if (ty->state.crlf)
+        {
+           if (_key_try(ty, crlf_keyout, ev)) return;
+        }
+      else
+        {
+           if (_key_try(ty, nocrlf_keyout, ev)) return;
+        }
      }
    if (
        ((ty->state.alt_kp) && (shift))
@@ -268,6 +320,22 @@ keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev,
    else if (alt)
      {
         if (_key_try(ty, alt_keyout, ev)) return;
+        if (ev->key[0] > 0 && ev->key[1] == '\0')
+          {
+             char echo[2];
+             /* xterm and rxvt differ here about their default options: */
+             /* xterm, altSendsEscape off
+
+             echo[0] = ev->key[0] | 0x80;
+             termpty_write(ty, echo, 1);
+             */
+
+             /* rxvt, with meta8 off, chose it because of utf-8 */
+             echo[0] = 033;
+             echo[1] = ev->key[0];
+             termpty_write(ty, echo, 2);
+             return;
+          }
      }
 
    if (ty->state.appcursor)

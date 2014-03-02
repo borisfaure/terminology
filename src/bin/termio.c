@@ -2190,12 +2190,6 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
              evas_object_smart_callback_call(data, "cmdbox", NULL);
              goto end;
           }
-        else if (!strcmp(ev->key, "Return"))
-          {
-             _compose_seq_reset(sd);
-             _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
-             goto end;
-          }
      }
    if ((alt) && (ctrl) && (!shift))
      {
@@ -2278,6 +2272,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
           }
         else goto end;
      }
+
    keyin_handle(sd->pty, ev, alt, shift, ctrl);
 end:
    if (sd->config->flicker_on_key)
