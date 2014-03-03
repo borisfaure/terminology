@@ -165,7 +165,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 21: // no bold/bright
                    ty->state.att.bold = 0;
                    break;
-                case 22: // no faint
+                case 22: // no bold/bright, no faint
+                   ty->state.att.bold = 0;
                    ty->state.att.faint = 0;
                    break;
                 case 23: // no italic
