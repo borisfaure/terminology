@@ -52,7 +52,7 @@ _csi_arg_get(Eina_Unicode **ptr)
 }
 
 static void
-_handle_cursor_control(Termpty *ty, Eina_Unicode *cc)
+_handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 {
    switch (*cc)
      {
@@ -337,18 +337,24 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   Eina_Unicode *cc;
    int arg, i;
+   const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
 
    cc = (Eina_Unicode *)c;
    b = buf;
-   while ((cc < ce) && (*cc <= '?'))
+   be = buf + sizeof(buf) / sizeof(buf[0]);
+   while ((cc < ce) && (*cc <= '?') && (b < be))
      {
         _handle_cursor_control(ty, cc);
         *b = *cc;
         b++;
         cc++;
+     }
+   if (b == be)
+     {
+        ERR("csi parsing overflowed, skipping the whole buffer (binary data?)");
+        return cc - c;
      }
    if (cc == ce) return 0;
    *b = 0;
@@ -1026,14 +1032,15 @@ unhandled:
 static int
 _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
-   const Eina_Unicode *cc;
+   const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
    char *s;
    int len = 0;
-   
+
    cc = c;
    b = buf;
-   while ((cc < ce) && (*cc != ST) && (*cc != BEL))
+   be = buf + sizeof(buf) / sizeof(buf[0]);
+   while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (b < be))
      {
         if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
           {
@@ -1043,6 +1050,11 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         *b = *cc;
         b++;
         cc++;
+     }
+   if (b == be)
+     {
+        ERR("xterm parsing overflowed, skipping the whole buffer (binary data?)");
+        return cc - c;
      }
    *b = 0;
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
@@ -1167,7 +1179,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
    cc = c;
    b = buf;
    be = buf + sizeof(buf) / sizeof(buf[0]);
-   while ((cc < ce) && (*cc != ST) && b != be)
+   while ((cc < ce) && (*cc != ST) && (b < be))
      {
         if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
           {
