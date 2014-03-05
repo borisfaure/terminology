@@ -338,9 +338,8 @@ static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
-   int arg, i, j;
+   int arg, i;
    Eina_Unicode buf[4096], *b;
-   char *pos;
 
    cc = (Eina_Unicode *)c;
    b = buf;
@@ -1007,18 +1006,19 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    cc++;
    return cc - c;
 unhandled:
-   pos = (char *)buf;
-
-   for (j = 0; c + j <= cc && j < 100; j++)
      {
-        if ((pos - (char*)buf) > 4096 - 15) break;
-        if ((c[j] < ' ') || (c[j] >= 0x7f))
-          pos += sprintf(pos, "\033[35m%08x\033[0m", c[j]);
-        else
-          pos += sprintf(pos, "%c", c[j]);
+        Eina_Strbuf *bf = eina_strbuf_new();
+
+        for (i = 0; c + i <= cc && i < 100; i++)
+          {
+             if ((c[i] < ' ') || (c[i] >= 0x7f))
+               eina_strbuf_append_printf(bf, "\033[35m%08x\033[0m", c[i]);
+             else
+               eina_strbuf_append_char(bf, c[i]);
+          }
+        ERR("unhandled CSI '%c': %s", *cc, eina_strbuf_string_get(bf));
+        eina_strbuf_free(bf);
      }
-   *pos = '\0';
-   ERR("unhandled CSI '%c': %s", *cc, (char*)buf);
    cc++;
    return cc - c;
 }
