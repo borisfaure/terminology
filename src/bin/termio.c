@@ -2027,9 +2027,9 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
    else if (!strcmp(ev->key, "Insert"))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Control"))
-          _paste_selection(term, ELM_SEL_TYPE_PRIMARY);
-        else
           _paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
+        else
+          _paste_selection(term, ELM_SEL_TYPE_PRIMARY);
      }
    else if (!strcmp(ev->key, "KP_Add"))
      {
