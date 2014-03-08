@@ -1,6 +1,23 @@
 =================
-Terminology 0.4.0
+Terminology 0.5.0
 =================
+
+Changes since 0.4.0:
+--------------------
+
+Additions:
+    * Color settings panel
+    * Wallpaper settings panel
+    * Load themes from ~/.config/terminology/themes/
+    * Add a new theme: base16_ocean_dark
+
+Improvements:
+    * Better default configuration
+    * Improve terminal compatibility
+
+Fixes:
+    * Many bugs fixes
+
 
 Changes since 0.3.0:
 --------------------

@@ -1,3 +1,13 @@
+2014-03-08
+
+        * Release v0.4.0
+        * color settings panel
+        * wallpaper settings panel
+        * load themes from ~/.config/terminology/themes/
+        * better default configuration
+        * improve terminal compatibility
+        * bug fixes
+
 2013-12-07
 
         * Release v0.4.0
