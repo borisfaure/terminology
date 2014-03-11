@@ -629,7 +629,11 @@ collections {
          }
          program {
             signal: "bell"; source: "terminology";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             action: PLAY_SAMPLE "bell" 1.0 ALERT;
+#else
+            action: PLAY_SAMPLE "bell" 1.0;
+#endif
          }
          program {
             signal: "bell"; source: "terminology";
@@ -2410,19 +2414,39 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                }
             }
             program { name: "key-down1";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
+#else
+               action: PLAY_SAMPLE "key-tap1" 1.0;
+#endif
             }
             program { name: "key-down2";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
+#else
+               action: PLAY_SAMPLE "key-tap2" 1.0;
+#endif
             }
             program { name: "key-down3";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
+#else
+               action: PLAY_SAMPLE "key-tap3" 1.0;
+#endif
             }
             program { name: "key-down4";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
+#else
+               action: PLAY_SAMPLE "key-tap4" 1.0;
+#endif
             }
             program { name: "key-down5";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
+#else
+               action: PLAY_SAMPLE "key-tap5" 1.0;
+#endif
             }
             program {
                signal: "key,down"; source: "terminology";
