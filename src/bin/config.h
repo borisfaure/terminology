@@ -42,6 +42,9 @@ struct _Config
    Eina_Bool         flicker_on_key;
    Eina_Bool         disable_cursor_blink;
    Eina_Bool         disable_visual_bell;
+   Eina_Bool         disable_switch_anim; /* disable terminal switch
+                                           * animations when issued by
+                                           * key binds */
    Eina_Bool         translucent;
    Eina_Bool         mute;
    Eina_Bool         urg_bell;

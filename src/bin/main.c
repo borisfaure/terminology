@@ -1373,6 +1373,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
+   Config *config = termio_config_get(term->term);
 
    if (term->focused) term2 = _term_prev_get(term);
    if (term2)
@@ -1381,7 +1382,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
         
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp == sp0)
+        if (sp == sp0 && !config->disable_switch_anim)
           _sel_go(sp, term2);
         else
           {
@@ -1396,7 +1397,8 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
-   
+   Config *config = termio_config_get(term->term);
+
    if (term->focused) term2 = _term_next_get(term);
    if (term2)
      {
@@ -1404,7 +1406,7 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
         
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp == sp0)
+        if (sp == sp0 && !config->disable_switch_anim)
           _sel_go(sp, term2);
         else
           {
@@ -2584,6 +2586,8 @@ static const Ecore_Getopt options = {
                               "Set cursor blink mode."),
       ECORE_GETOPT_STORE_BOOL('G', "visual-bell",
                               "Set visual bell mode."),
+      ECORE_GETOPT_STORE_BOOL('A', "switch-anim",
+                              "Set terminal switch animations mode."),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
                               "Go into the fullscreen mode from start."),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
@@ -2629,6 +2633,7 @@ elm_main(int argc, char **argv)
    Eina_Bool video_mute = 0xff; /* unset */
    Eina_Bool cursor_blink = 0xff; /* unset */
    Eina_Bool visual_bell = 0xff; /* unset */
+   Eina_Bool switch_anim = 0xff; /* unset */
    Eina_Bool fullscreen = EINA_FALSE;
    Eina_Bool iconic = EINA_FALSE;
    Eina_Bool borderless = EINA_FALSE;
@@ -2663,6 +2668,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(cursor_blink),
      ECORE_GETOPT_VALUE_BOOL(visual_bell),
+     ECORE_GETOPT_VALUE_BOOL(switch_anim),
      ECORE_GETOPT_VALUE_BOOL(fullscreen),
      ECORE_GETOPT_VALUE_BOOL(iconic),
      ECORE_GETOPT_VALUE_BOOL(borderless),
@@ -2850,6 +2856,11 @@ elm_main(int argc, char **argv)
    if (visual_bell != 0xff)
      {
         config->disable_visual_bell = !visual_bell;
+        config->temporary = EINA_TRUE;
+     }
+   if (switch_anim != 0xff)
+     {
+        config->disable_switch_anim = !switch_anim;
         config->temporary = EINA_TRUE;
      }
 
