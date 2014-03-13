@@ -97,8 +97,6 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "disable_switch_anim", disable_switch_anim, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
@@ -209,7 +207,6 @@ config_sync(const Config *config_src, Config *config)
    config->flicker_on_key = config_src->flicker_on_key;
    config->disable_cursor_blink = config_src->disable_cursor_blink;
    config->disable_visual_bell = config_src->disable_visual_bell;
-   config->disable_switch_anim = config_src->disable_switch_anim;
    config->mute = config_src->mute;
    config->urg_bell = config_src->urg_bell;
    config->multi_instance = config_src->multi_instance;
@@ -498,7 +495,6 @@ config_load(const char *key)
              config->flicker_on_key = EINA_FALSE;
              config->disable_cursor_blink = EINA_FALSE;
              config->disable_visual_bell = EINA_FALSE;
-             config->disable_switch_anim = EINA_FALSE;
              s = eina_unicode_unicode_to_utf8(sep, &slen);
              if (s)
                {
@@ -578,7 +574,6 @@ config_fork(Config *config)
    CPY(flicker_on_key);
    CPY(disable_cursor_blink);
    CPY(disable_visual_bell);
-   CPY(disable_switch_anim);
    CPY(translucent);
    CPY(mute);
    CPY(urg_bell);

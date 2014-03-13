@@ -58,15 +58,6 @@ _cb_op_behavior_visual_bell_chg(void *data, Evas_Object *obj, void *event EINA_U
 }
 
 static void
-_cb_op_behavior_switch_anim_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->disable_switch_anim = !elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
 _cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
@@ -349,18 +340,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_visual_bell_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Terminal switch animation");
-   elm_object_tooltip_text_set
-      (o, "By turning this off, terminal switch actions won't be animated");
-   elm_check_state_set(o, !config->disable_switch_anim);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_switch_anim_chg, term);
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
