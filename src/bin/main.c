@@ -1373,6 +1373,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
+   Config *config = termio_config_get(term->term);
 
    if (term->focused) term2 = _term_prev_get(term);
    if (term2)
@@ -1381,7 +1382,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
         
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp == sp0)
+        if (sp == sp0 && config->tab_zoom >= 0.01)
           _sel_go(sp, term2);
         else
           {
@@ -1396,7 +1397,8 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    Term *term2 = NULL;
-   
+   Config *config = termio_config_get(term->term);
+
    if (term->focused) term2 = _term_next_get(term);
    if (term2)
      {
@@ -1404,7 +1406,7 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
         
         sp0 = _split_find(term->wn->win, term->term);
         sp = _split_find(term2->wn->win, term2->term);
-        if (sp == sp0)
+        if (sp == sp0 && config->tab_zoom >= 0.01)
           _sel_go(sp, term2);
         else
           {

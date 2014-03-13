@@ -524,11 +524,21 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Tab Zoom Animation:");
+   elm_object_text_set(o, "Tab zoom/switch animation time:");
+   elm_object_tooltip_text_set
+      (o, "Set the time of the animation that<br>"
+       "takes places on tab switches,<br>"
+       "be them by key binding, mouse<br>"
+       "wheel or tabs panel mouse move");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
    o = elm_slider_add(bx);
+   elm_object_tooltip_text_set
+      (o, "Set the time of the animation that<br>"
+       "takes places on tab switches,<br>"
+       "be them by key binding, mouse<br>"
+       "wheel or tabs panel mouse move");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
