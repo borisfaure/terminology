@@ -768,23 +768,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    new_back = calloc(sizeof(Termsave *), ty->backmax);
 
    y_end = ty->state.cy;
-   y_start = termpty_line_find_top(ty, y_end);
-   if (ty->w == 1)
-     {
-        new_y_start = new_h - 1;
-        new_y_end = new_y_start - 1;
-     }
-   else
-     {
-        new_y_start = new_h - 1 - (y_end - y_start);
-        new_y_end = new_y_start - 1;
-        if (new_y_end < 0)
-          {
-             new_y_start = 0;
-             new_y_end = -1;
-          }
-     }
-   y_end = y_start - 1;
+   new_y_end = new_h - 1;
    while ((y_end >= -ty->backscroll_num) && (new_y_end >= -ty->backmax))
      {
         y_start = termpty_line_find_top(ty, y_end);
@@ -802,6 +786,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->w = new_w;
    ty->h = new_h;
    ty->state.cy = MIN((new_h - 1) - new_y_start, new_h - 1);
+   ty->state.cx = termpty_line_length(new_screen + ((new_h - 1) * new_w),
+                                      new_w);
    ty->circular_offset = MAX(new_y_start, 0);
    ty->backpos = 0;
    ty->backscroll_num = MAX(-new_y_start, 0);
