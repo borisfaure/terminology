@@ -888,6 +888,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  DBG("DDD: set insert mode to %i", mode);
                                  ty->state.insert = mode;
                                  break;
+                               case 34:
+                                 handled = 1;
+                                 DBG("TODO: hebrew keyboard mapping: %i", mode);
+                                 break;
+                               case 36:
+                                 handled = 1;
+                                 DBG("TODO: hebrew encoding mode: %i", mode);
+                                 break;
 //                            else if (arg == 24)
 //                              {
 //                                 ERR("unhandled #24 arg %i", arg);
