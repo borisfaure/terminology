@@ -397,4 +397,5 @@ _termpty_cursor_copy(Termstate *state, Termstate *dest)
 {
    dest->cx = state->cx;
    dest->cy = state->cy;
+   dest->wrapnext = state->wrapnext;
 }

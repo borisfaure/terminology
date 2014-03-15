@@ -604,8 +604,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         else _termpty_clear_screen(ty, TERMPTY_CLR_END);
         break;
       case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
-        DBG("0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line");
         arg = _csi_arg_get(&b);
+        DBG("0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line: %d", arg);
         if (b)
           {
              if ((arg >= TERMPTY_CLR_END) && (arg <= TERMPTY_CLR_ALL))
