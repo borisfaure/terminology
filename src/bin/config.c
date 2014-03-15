@@ -124,6 +124,9 @@ config_init(void)
      (edd_base, Config, "application_server_restore_views",
       application_server_restore_views, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "mouse_over_focus",
+      mouse_over_focus, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "colors_use", colors_use, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_ARRAY
      (edd_base, Config, "colors", colors, edd_color);
@@ -221,6 +224,7 @@ config_sync(const Config *config_src, Config *config)
    config->cg_height = config_src->cg_height;
    config->colors_use = config_src->colors_use;
    memcpy(config->colors, config_src->colors, sizeof(config->colors));
+   config->mouse_over_focus = config_src->mouse_over_focus;
 }
 
 static void
@@ -527,6 +531,7 @@ config_load(const char *key)
                        config->colors[(j * 12) + i].a = aa;
                     }
                }
+             config->mouse_over_focus = EINA_TRUE;
           }
      }
 
@@ -588,6 +593,7 @@ config_fork(Config *config)
    CPY(cg_height);
    CPY(colors_use);
    memcpy(config2->colors, config->colors, sizeof(config->colors));
+   CPY(mouse_over_focus);
 
    CPY(temporary);
    SCPY(config_key);

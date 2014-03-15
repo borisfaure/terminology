@@ -53,6 +53,7 @@ struct _Config
    Eina_Bool         custom_geometry;
    Eina_Bool         drag_links;
    Eina_Bool         login_shell;
+   Eina_Bool         mouse_over_focus;
    int               cg_width;
    int               cg_height;
    Eina_Bool         colors_use;

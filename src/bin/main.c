@@ -750,6 +750,24 @@ _cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
+_cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Term *term = data;
+   Config *config;
+
+   if ((!term) || (!term->term)) return;
+
+   config = termio_config_get(term->term);
+
+   if ((!config) || (!config->mouse_over_focus)) return;
+
+   term->focused = EINA_TRUE;
+
+   _term_focus(term);
+}
+
+static void
 _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event )
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -1962,7 +1980,7 @@ main_win_new(const char *name, const char *role, const char *title,
 
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_focus_out, wn);
-   
+
    wins = eina_list_append(wins, wn);
    return wn;
 }
@@ -2227,6 +2245,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
                                   _cb_term_mouse_down, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
                                   _cb_term_mouse_up, term);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
+                                  _cb_term_mouse_in, term);
    
    if (!wn->terms)
      {
