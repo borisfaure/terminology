@@ -6,8 +6,6 @@ make it a first-class terminal:
 [ ] vt100-compatibility: pass all of http://invisible-island.net/vttest/ tests!
 [ ] general input mode handling improvements (keypad, other key
     input, etc.)
-[ ] apparently there are problems with mutt, screen and tmux? vim
-    mousewheel scroll suport doesnt work
 [ ] tyls code is just horrible. fix it.
 [ ] better info in tyls -m
 [ ] need help screen/page/info with keybindings
@@ -17,21 +15,13 @@ make it a first-class terminal:
 [ ] selection of background "wallpapers" (and support them at all -
     doesn't right now - should support regular images, animated gifs,
     and edje files)
-[ ] theme selector could be a whole lot better (decent large preview
-    maybe with cursor, selections and bell?)
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
     - gives us fingerscroll - layer on top of term smart, stick
     invisible rect inside to track for scrolling etc.)
 [ ] selection off edge scrolls in that direction (as per selection
     mode too if it gets NEAR an edge)
-[ ] selection should have nice visible handles on the start/end so u can
-    drag and change its size once there (theme thing - red blinky
-    things now)
 [ ] selection mode mirrors entry style for touch displays (handle
     on_hold flags, etc.)
-[ ] improve selection text extraction logic so its reliable (seems to
-    be a bug where we keep the newline etc. bit flags set when they should
-    be reset in the pty array)
 [ ] fast text/regex searching similar to urxvt
 [ ] search in terminal (and keep highlighting until search cleared)
 [ ] logging of terminal to file
