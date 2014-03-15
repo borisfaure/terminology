@@ -433,6 +433,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
 
    op_w = o = elm_spinner_add(bx);
+   elm_spinner_editable_set(o, EINA_TRUE);
    elm_spinner_min_max_set(o, 2.0, 350.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -452,6 +453,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
 
    op_h = o = elm_spinner_add(bx);
+   elm_spinner_editable_set(o, EINA_TRUE);
    elm_spinner_min_max_set(o, 1.0, 150.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
