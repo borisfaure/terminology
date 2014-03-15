@@ -1363,7 +1363,7 @@ _cb_tabcount_go(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_U
 {
    Term *term = data;
    Split *sp;
-   
+
    sp = _split_find(term->wn->win, term->term);
    _sel_go(sp, term);
 }
@@ -1430,7 +1430,8 @@ main_term_focus(Term *term)
    Split *sp;
 
    sp = _split_find(term->wn->win, term->term);
-   _sel_go(sp, term);
+   if (sp->terms->next != NULL)
+     _sel_go(sp, term);
 }
 
 static void
