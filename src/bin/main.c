@@ -436,7 +436,7 @@ _term_next_get(Term *termin)
    sp = _split_find(termin->wn->win, termin->term);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->next)) return l->next->data;
-   if (!sp->parent) return NULL;
+   if (!sp->parent) return sp->terms->data;
    flat = _split_flatten(termin->wn->split);
    if (!flat) return NULL;
    l = eina_list_data_find_list(flat, sp);
@@ -467,7 +467,7 @@ _term_prev_get(Term *termin)
    sp = _split_find(termin->wn->win, termin->term);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->prev)) return l->prev->data;
-   if (!sp->parent) return NULL;
+   if (!sp->parent) return eina_list_data_get(eina_list_last(sp->terms));
    flat = _split_flatten(termin->wn->split);
    if (!flat) return NULL;
    l = eina_list_data_find_list(flat, sp);
