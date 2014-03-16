@@ -8,13 +8,9 @@ make it a first-class terminal:
     input, etc.)
 [ ] tyls code is just horrible. fix it.
 [ ] better info in tyls -m
-[ ] need help screen/page/info with keybindings
 [ ] tabs: reordering should be possible
 [ ] splits need to size only by steps in font size (elm feature)
 [ ] blink and blink2 attributes need to be supported
-[ ] selection of background "wallpapers" (and support them at all -
-    doesn't right now - should support regular images, animated gifs,
-    and edje files)
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
     - gives us fingerscroll - layer on top of term smart, stick
     invisible rect inside to track for scrolling etc.)
