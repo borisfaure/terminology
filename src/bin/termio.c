@@ -1,9 +1,10 @@
 #include "private.h"
+
 #include <Ecore_IMF.h>
 #include <Ecore_IMF_Evas.h>
 #include <Elementary.h>
 #include <Ecore_Input.h>
-#include "scrolio.h"
+
 #include "termio.h"
 #include "termiolink.h"
 #include "termpty.h"
@@ -15,6 +16,7 @@
 #include "utils.h"
 #include "media.h"
 #include "dbus.h"
+#include "miniview.h"
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
 # include <sys/proc_info.h>
@@ -61,7 +63,7 @@ struct _Termio
          Eina_Bool dndobjdel : 1;
       } down;
    } link;
-   Evas_Object *scrolio;
+   Evas_Object *miniview;
    int zoom_fontsize_start;
    int scroll;
    Eina_List *mirrors;
@@ -1253,7 +1255,7 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
    if (ok)
      {
         _block_edje_cmds(sd->pty, blk, blk->cmds, EINA_TRUE);
-        //scrolio_pty_update(sd->scrolio, sd->pty);
+        //scrolio_pty_update(sd->miniview, sd->pty);
      }
 }
 
@@ -1653,9 +1655,10 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
 
    _smart_calculate(obj);
    _smart_apply(obj);
-   if (sd->scrolio)
+   if (sd->miniview)
      {
-        scrolio_miniview_resize(sd->scrolio, sd->pty, w * sd->font.chw, h * sd->font.chh);
+        miniview_resize(sd->miniview, sd->pty,
+                        w * sd->font.chw, h * sd->font.chh);
         evas_object_smart_callback_call(obj, "miniview,show", NULL);
      }
    evas_event_thaw(evas_object_evas_get(obj));
@@ -1690,8 +1693,8 @@ _smart_cb_change(void *data)
    sd->anim = NULL;
    _smart_apply(obj);
    evas_object_smart_callback_call(obj, "changed", NULL);
-   if (sd->scrolio)
-     scrolio_miniview_update_scroll(sd->scrolio, termio_scroll_get(obj));
+   if (sd->miniview)
+     miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
    return EINA_FALSE;
 }
 
@@ -1700,8 +1703,8 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 {
    if (sd->anim) return;
    sd->anim = ecore_animator_add(_smart_cb_change, obj);
-   if (sd->scrolio)
-     scrolio_miniview_update_scroll(sd->scrolio, termio_scroll_get(obj));
+   if (sd->miniview)
+     miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
 }
 
 static void
@@ -2081,22 +2084,21 @@ void
 termio_miniview_hide(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   scrolio_miniview_hide(sd->scrolio);
-   sd->scrolio = NULL;
+   miniview_hide(sd->miniview);
+   sd->miniview = NULL;
 }
 
 Evas_Object *
 termio_miniview_show(Evas_Object *obj, int x, int y, int w, int h)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
 
-   sd->scrolio = (Evas_Object *) scrolio_miniview_add(obj, sd->font.chw, sd->font.chh,
-                                sd->pty, sd->pty->backscroll_num,
-                                termio_scroll_get(obj), x, y, w, h);
-   return sd->scrolio;
+   sd->miniview = miniview_add(obj, sd->font.chw, sd->font.chh,
+                               sd->pty, termio_scroll_get(obj), x, y, w, h);
+   return sd->miniview;
 }
 
 static void
@@ -3561,8 +3563,8 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
           default:
             break;
          }
-        if (sd->scrolio)
-          scrolio_miniview_update_scroll(sd->scrolio, termio_scroll_get(obj));
+        if (sd->miniview)
+          miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
      }
 }
 
@@ -3947,7 +3949,6 @@ static void
 _smart_calculate(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Evas_Object *scr_obj;
    Evas_Coord ox, oy, ow, oh;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -3961,12 +3962,12 @@ _smart_calculate(Evas_Object *obj)
                     ox + (sd->cursor.x * sd->font.chw),
                     oy + (sd->cursor.y * sd->font.chh));
 
-   //evas_object_move(sd->scrolio.grid.obj, ox, oy);
-   //evas_object_resize(sd->scrolio.grid.obj,
+   //evas_object_move(sd->miniview.grid.obj, ox, oy);
+   //evas_object_resize(sd->miniview.grid.obj,
    //                   sd->grid.w * sd->font.chw,
    //                   sd->grid.h * sd->font.chh);
 
-   //scr_obj = scrolio_grid_object_get(sd->scrolio);
+   //scr_obj = scrolio_grid_object_get(sd->miniview);
    //evas_object_move(scr_obj, ox, oy);
    //evas_object_resize(scr_obj,
    //                   sd->grid.w * sd->font.chw,
@@ -3983,8 +3984,8 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_changed(obj);
-   if (sd->scrolio)
-     scrolio_miniview_move(sd->scrolio, x, y);
+   if (sd->miniview)
+     miniview_move(sd->miniview, x, y);
 }
 
 static void
@@ -4812,9 +4813,9 @@ termio_config_update(Evas_Object *obj)
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
 
-   //evas_object_scale_set(sd->scrolio.grid.obj, elm_config_scale_get());
-   //evas_object_textgrid_font_set(sd->scrolio.grid.obj, sd->font.name, sd->font.size);
-   //evas_object_textgrid_cell_size_get(sd->scrolio.grid.obj, &w, &h);
+   //evas_object_scale_set(sd->miniview.grid.obj, elm_config_scale_get());
+   //evas_object_textgrid_font_set(sd->miniview.grid.obj, sd->font.name, sd->font.size);
+   //evas_object_textgrid_cell_size_get(sd->miniview.grid.obj, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    sd->font.chw = w;
@@ -4901,6 +4902,7 @@ void
 termio_scroll_set(Evas_Object *obj, int scroll)
 {
    Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = scroll;
    _smart_apply(obj);
 }

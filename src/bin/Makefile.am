@@ -30,7 +30,7 @@ options_keys.c options_keys.h \
 options_helpers.c options_helpers.h \
 options_video.c options_video.h \
 sel.c sel.h \
-scrolio.c scrolio.h \
+miniview.c miniview.h \
 termio.c termio.h \
 termcmd.c termcmd.h \
 termiolink.c termiolink.h \

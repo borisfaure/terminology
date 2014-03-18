@@ -12,6 +12,7 @@ char        *termio_selection_get(Evas_Object *obj,
                                   int c1x, int c1y, int c2x, int c2y,
                                   size_t *len);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);
+void termio_scroll_set(Evas_Object *obj, int scroll);
 void termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y);
 void termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int n);
 
@@ -38,4 +39,8 @@ void         termio_config_set(Evas_Object *obj, Config *config);
 Config      *termio_config_get(const Evas_Object *obj);
 
 void         termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg);
+
+void termio_miniview_hide(Evas_Object *obj);
+Evas_Object *termio_miniview_show(Evas_Object *obj, int x, int y, int w, int h);
+
 #endif

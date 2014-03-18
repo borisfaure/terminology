@@ -4,7 +4,6 @@
 #include <Elementary.h>
 #include "main.h"
 #include "win.h"
-#include "scrolio.h"
 #include "termio.h"
 #include "termpty.h"
 #include "termcmd.h"
@@ -16,6 +15,7 @@
 #include "sel.h"
 #include "dbus.h"
 #include "app_server.h"
+#include "miniview.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"
@@ -1094,20 +1094,19 @@ _popmedia_show(Term *term, const char *src)
 }
 
 static void
-_cb_scrolio_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+_cb_miniview_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
    Config *config = termio_config_get(term->term);
    if (!config->miniview)
      {
+        Evas_Coord ox, oy, ow, oh;
         config->miniview = EINA_TRUE;
         config_save(config, NULL);
 
-        Evas_Object *o;
-        Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
 
-        term->miniview = (Evas_Object *) termio_miniview_show(term->term, ox, oy, ow, oh);
+        term->miniview = termio_miniview_show(term->term, ox, oy, ow, oh);
         //edje_object_part_swallow(term->term, "terminology.content", term->miniview);
         evas_object_show(term->miniview);
      }
@@ -2265,7 +2264,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "tab,8", _cb_tab_8, term);
    evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
    evas_object_smart_callback_add(o, "tab,0", _cb_tab_10, term);
-   evas_object_smart_callback_add(o, "miniview,toggle", _cb_scrolio_toggle, term);
+   evas_object_smart_callback_add(o, "miniview,toggle", _cb_miniview_toggle, term);
    evas_object_show(o);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
@@ -2282,7 +2281,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    if (term->config->miniview && !term->miniview)
      {
-        Evas_Object *o;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
 
