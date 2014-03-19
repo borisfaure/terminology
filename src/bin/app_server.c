@@ -179,15 +179,15 @@ _view_resumed_cb(void *data, Eo *view,
    eo_do(view, elm_app_server_view_title_set(title),
          elm_app_server_view_window_set(
                   main_win_evas_object_get(main_term_win_get(term))),
-         eo_event_callback_del(ELM_APP_SERVER_VIEW_EV_CLOSED, _view_closed_cb,
+         eo_event_callback_del(ELM_APP_SERVER_VIEW_EVENT_CLOSED, _view_closed_cb,
                                NULL),
-         eo_event_callback_del(ELM_APP_SERVER_VIEW_EV_RESUMED, _view_resumed_cb,
+         eo_event_callback_del(ELM_APP_SERVER_VIEW_EVENT_RESUMED, _view_resumed_cb,
                                NULL),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_CLOSED, _view_closed_cb,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_CLOSED, _view_closed_cb,
                                term),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_RESUMED, _view_resumed_cb,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_RESUMED, _view_resumed_cb,
                                term),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_SAVE, _view_save_cb,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_SAVE, _view_save_cb,
                                term));
 
    evas_object_smart_callback_add(term_object, "title,change",
@@ -283,11 +283,11 @@ _app_server_term_add(Term *term)
          elm_app_server_view_window_set(
                   main_win_evas_object_get(main_term_win_get(term))),
          elm_app_server_view_resume(),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_CLOSED,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_CLOSED,
                                _view_closed_cb, term),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_RESUMED,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_RESUMED,
                                _view_resumed_cb, term),
-         eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_SAVE,
+         eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_SAVE,
                                _view_save_cb, term));
 
    evas_object_smart_callback_add(term_object, "title,change",
@@ -394,7 +394,7 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
    eo_do(_server, elm_app_server_title_set(title),
          eo_base_data_set("wins", wins, NULL),
          elm_app_server_views_get(&views),
-         eo_event_callback_add(ELM_APP_SERVER_EV_TERMINATE,
+         eo_event_callback_add(ELM_APP_SERVER_EVENT_TERMINATE,
                                _server_terminate_cb, wins));
    //views saved
    EINA_ITERATOR_FOREACH(views, view)
@@ -402,9 +402,9 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
         if (restore_views)
           ecore_idler_add(_restore_view_cb, view);
         eo_do(view,
-              eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_CLOSED,
+              eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_CLOSED,
                                     _view_closed_cb, NULL),
-              eo_event_callback_add(ELM_APP_SERVER_VIEW_EV_RESUMED,
+              eo_event_callback_add(ELM_APP_SERVER_VIEW_EVENT_RESUMED,
                                     _view_resumed_cb, NULL));
      }
    eina_iterator_free(views);
