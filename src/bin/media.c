@@ -1308,35 +1308,5 @@ media_src_type_get(const char *src)
    else if (_is_fmt(src, extn_scale)) type = TYPE_SCALE;
    else if (_is_fmt(src, extn_edj))   type = TYPE_EDJE;
    else if (_is_fmt(src, extn_mov))   type = TYPE_MOV;
-   else if (!strncasecmp(src, "http://", sizeof("http://") - 1))
-     {
-        const char *query;
-
-        src += sizeof("http://") - 1;
-        query = strchr(src, '?');
-        if (query)
-          {
-             if (strchr(query + 1, '=') && !strchr(query + 1, '&'))
-               {
-                  const char *p = strstr(src, "www.youtube.com/watch");
-                  
-                  if (p && (p < query))
-                    type = TYPE_MOV;
-               }
-             else if (strchr(query + 1, '=') && strchr(query + 1, '&'))
-               {
-                  const char *p = strstr(src, ".youtube.com/");
-                  
-                  if (p && (p < query))
-                    type = TYPE_MOV;
-                  else
-                    {
-                       p = strstr(src, ".googlevideo.com/");
-                       if (p && (p < query))
-                         type = TYPE_MOV;
-                    }
-               }
-          }
-     }
    return type;
 }
