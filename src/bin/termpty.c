@@ -754,10 +754,10 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
      }
 
    new_screen = calloc(1, sizeof(Termcell) * new_w * new_h);
-   if (!ty->screen)
+   if (!new_screen)
      {
-        ty->screen2 = NULL;
         ERR("memerr");
+        return;
      }
    free(ty->screen2);
    ty->screen2 = calloc(1, sizeof(Termcell) * new_w * new_h);
