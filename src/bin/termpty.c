@@ -66,6 +66,7 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
         if (!b)
           {
              ERR("memerr");
+             return;
           }
         INF("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
         bytes = len * sizeof(Eina_Unicode);
