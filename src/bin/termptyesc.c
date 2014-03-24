@@ -443,8 +443,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   arg--;
                }
              else arg = 0;
-             if (arg < 0) arg = 0;
-             else if (arg >= ty->w) arg = ty->w - 1;
+
+             if (arg >= ty->w) arg = ty->w - 1;
              if (b) ty->state.cx = arg;
           }
         ty->state.cy += ty->state.margin_top;
