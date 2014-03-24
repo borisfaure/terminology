@@ -123,10 +123,13 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                     {
                        ERR("memerr");
                     }
-                  bytes = (char *)ce - (char *)c;
-                  memcpy(ty->buf, c, bytes);
-                  ty->buflen = bytes / sizeof(Eina_Unicode);
-                  ty->buf[ty->buflen] = 0;
+                  else
+                    {
+                       bytes = (char *)ce - (char *)c;
+                       memcpy(ty->buf, c, bytes);
+                       ty->buflen = bytes / sizeof(Eina_Unicode);
+                       ty->buf[ty->buflen] = 0;
+                    }
                   break;
                }
              c += n;
