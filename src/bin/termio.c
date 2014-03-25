@@ -1966,7 +1966,8 @@ _smart_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 static Eina_Bool
 _is_modifier(const char *key)
 {
-   if ((!strncmp(key, "Shift", 5)) ||
+   if ((key != NULL) && (
+       (!strncmp(key, "Shift", 5)) ||
        (!strncmp(key, "Control", 7)) ||
        (!strncmp(key, "Alt", 3)) ||
        (!strncmp(key, "Meta", 4)) ||
@@ -1974,7 +1975,7 @@ _is_modifier(const char *key)
        (!strncmp(key, "Hyper", 5)) ||
        (!strcmp(key, "Scroll_Lock")) ||
        (!strcmp(key, "Num_Lock")) ||
-       (!strcmp(key, "Caps_Lock")))
+       (!strcmp(key, "Caps_Lock"))))
      return EINA_TRUE;
    return EINA_FALSE;
 }

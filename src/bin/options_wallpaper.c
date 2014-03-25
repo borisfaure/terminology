@@ -379,8 +379,11 @@ _cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Config *config = termio_config_get(_term);
    char *config_background_dir = ecore_file_dir_get(config->background);
-   if (!_user_path)
-     _user_background_dir_init();
+
+   if (!_user_path) {
+     if (!_user_background_dir_init())
+       return;
+   }
    if (!config->background) 
      return;
    if (strncmp(config_background_dir, _user_path, 
