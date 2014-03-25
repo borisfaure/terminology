@@ -980,7 +980,7 @@ _handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
 
 /* Try to trick the compiler into inlining the first test */
 static inline void
-_handle_block_codepoint_overwrite(Termpty *ty, int oldc, int newc)
+_handle_block_codepoint_overwrite(Termpty *ty, Eina_Unicode oldc, Eina_Unicode newc)
 {
    if (!((oldc | newc) & 0x80000000)) return;
    _handle_block_codepoint_overwrite_heavy(ty, oldc, newc);
@@ -1050,7 +1050,8 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
 }
 
 void
-termpty_cell_codepoint_att_fill(Termpty *ty, int codepoint, Termatt att, Termcell *dst, int n)
+termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
+                                Termatt att, Termcell *dst, int n)
 {
    Termcell local = { codepoint, att };
    int i;

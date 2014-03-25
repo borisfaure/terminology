@@ -1,7 +1,7 @@
 #include "utf8.h"
 
 int
-codepoint_to_utf8(int g, char *txt)
+codepoint_to_utf8(Eina_Unicode g, char *txt)
 {
    if (g < (1 << (7)))
      { // 0xxxxxxx
