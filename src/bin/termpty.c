@@ -90,6 +90,7 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                   if (!ty->buf)
                     {
                        ERR("memerr");
+                       return;
                     }
                   bytes = (char *)ce - (char *)c;
                   memcpy(ty->buf, c, bytes);
@@ -768,6 +769,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if (!ty->screen2)
      {
         ERR("memerr");
+        free(new_screen);
+        return;
      }
    new_back = calloc(sizeof(Termsave *), ty->backmax);
 
