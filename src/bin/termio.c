@@ -4393,7 +4393,7 @@ _smart_cb_drop(void *data, Evas_Object *o EINA_UNUSED, Elm_Selection_Data *ev)
                          {
                             if (p3 < p2) p2 = p3;
                          }
-                       else if (!p2) p3 = p2;
+                       else if (!p2) p2 = p3;
                        if (p2)
                          {
                             strncpy(tb, p, p2 - p);
