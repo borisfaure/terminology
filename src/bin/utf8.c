@@ -43,7 +43,7 @@ codepoint_to_utf8(Eina_Unicode g, char *txt)
         txt[5] = 0;
         return 5;
      }
-   else if (g < (unsigned int)(1 << (1 + 6 + 6 + 6 + 6 + 6)))
+   else if ((unsigned int)g < (unsigned int)(1 << (1 + 6 + 6 + 6 + 6 + 6)))
      { // 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
         txt[0] = 0xfc | ((g >> 30) & 0x01);
         txt[1] = 0x80 | ((g >> 24) & 0x3f);
