@@ -743,7 +743,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 {
    Termcell *new_screen;
    Termsave **new_back;
-   int y_start, y_end, new_y_start, new_y_end;
+   int y_start, y_end, new_y_start = 0, new_y_end;
    int i, altbuf = 0;
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;

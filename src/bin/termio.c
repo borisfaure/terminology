@@ -3035,7 +3035,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   int cx, cy;
+   int cx = 0, cy = 0;
    int shift, ctrl;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -3363,7 +3363,7 @@ static void
 _smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED, void *event)
 {
-   int cx, cy;
+   int cx = 0, cy = 0;
    Evas_Event_Mouse_In *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
 
@@ -3395,7 +3395,7 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
      }
    else
      {
-        int cx, cy;
+        int cx = 0, cy = 0;
 
         _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
         sd->mouse.cx = cx;
@@ -3445,7 +3445,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
      }
    else
      {
-       int cx, cy;
+       int cx = 0, cy = 0;
 
        _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
