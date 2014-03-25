@@ -3176,7 +3176,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   int cx, cy;
+   int cx = 0, cy = 0;
    int shift, ctrl;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
