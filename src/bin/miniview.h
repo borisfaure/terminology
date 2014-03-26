@@ -7,4 +7,7 @@ void miniview_update_scroll(Evas_Object *obj, int scroll_position);
 Evas_Object * miniview_add(Evas_Object *parent, int fontw, int fonth, Termpty *pty,
                            int scroll_position, int x, int y, int w, int h);
 void miniview_hide(Evas_Object *obj);
+
+void miniview_init(void);
+void miniview_shutdown(void);
 #endif
