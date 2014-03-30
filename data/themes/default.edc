@@ -6,8 +6,8 @@ color_classes {
 #endif
 
 collections {
-   
-//////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////////////////////////////////////////
    //// the background and general container for the terminal
    group { name: "terminology/core";
       parts {
@@ -82,6 +82,7 @@ collections {
                rel2.offset: -2 -2;
             }
          }
+
       }
    }
          
@@ -148,7 +149,7 @@ collections {
             target: "base";
             target: "shadow";
          }
-         
+
          ////////////////////////////////////////////////////////////////////
          // actual text grid for chars, cursors, selectiond etc. goes here
          // and has a background layered behind it inside the swallowed
@@ -157,7 +158,7 @@ collections {
             description { state: "default" 0.0;
             }
          }
-         
+
          ////////////////////////////////////////////////////////////////////
          // indicator of other tabs and control
          part { name: "tabcount_clip"; type: RECT;
@@ -373,6 +374,14 @@ collections {
                color: 0 0 0 0;
             }
          }
+
+         ////////////////////////////////////////////////////////////////////
+         // miniview
+         part { name: "terminology.miniview"; type: SWALLOW;
+            description { state: "default" 0.0;
+            }
+         }
+
          program {
             signal: "mouse,in"; source: "tabcount_ev";
             action: STATE_SET "over" 0.0;
@@ -1275,8 +1284,8 @@ collections {
          }
       }
    }
-   
-//////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////////////////////////////////////////
    //// the selection
    // selections come in 5 modes:
    // 
@@ -2228,9 +2237,8 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-   
-   
-//////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////////////////////////////////////////
    //// the cursor to show where text is typed
    group { name: "terminology/cursor";
       images {
@@ -2401,7 +2409,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-//////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////
    //// an object to contain the selection tool used for selecting tabs (with
    //// a glow grid of terms
    group { name: "terminology/sel/base";
@@ -2847,8 +2855,8 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-   
-//////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////////////////////////////////////////
    //// an object overlayd on text that is a link
    group { name: "terminology/link";
       images {
@@ -2958,31 +2966,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
       }
    }
 
-   group { name: "terminology/miniview";
-      parts {
-         part { name: "miniview"; type: SWALLOW;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               color: 25 50 30 100;
-	       rel1.relative: 0.85 0.0;
-            }
-         }
-         part { name: "miniview_screen"; type: RECT;
-            mouse_events: 1;
-            dragable {
-               confine: "miniview";
-               x: 0 0 0;
-               y: 1 1 0;
-            }
-            description { state: "default" 0.0;
-               color: 255 255 255 30;
-               fixed:1 1;
-            }
-         }
-      }
-   }
-
-//////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////
    //// the multimedia controls
    group { name: "terminology/mediabusy";
       images {
@@ -3106,7 +3090,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-//////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////
    //// the multimedia controls
    group { name: "terminology/mediactrl";
       images {
@@ -3304,9 +3288,9 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
    ICON("paste",    "icon_paste.png");
    ICON("settings", "icon_settings.png");
    ICON("about",    "icon_about.png");
-#undef ICON   
+#undef ICON
 
-//////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////
    //// the about box content image
    group { name: "terminology/about";
       images {
@@ -3404,8 +3388,8 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-   
-//////////////////////////////////////////////////////////////////////////////
+
+   ///////////////////////////////////////////////////////////////////////////
    //// used in the font selection dialog to give a base for black text
    //// previews so they are always visible
    group { name: "terminology/fontpreview";

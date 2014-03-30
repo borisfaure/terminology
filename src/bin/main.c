@@ -64,6 +64,7 @@ struct _Term
    Eina_Bool    hold : 1;
    Eina_Bool    unswallowed : 1;
    Eina_Bool    missed_bell : 1;
+   Eina_Bool    miniview_shown : 1;
 };
 
 struct _Split
@@ -1097,28 +1098,21 @@ static void
 _cb_miniview_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    Term *term = data;
-   Config *config = termio_config_get(term->term);
-   if (!config->miniview)
+
+   EINA_SAFETY_ON_NULL_RETURN(term);
+   EINA_SAFETY_ON_NULL_RETURN(term->miniview);
+
+   ERR("MINIVIEW TOGGLE");
+
+   if (term->miniview_shown)
      {
-        Evas_Coord ox, oy, ow, oh;
-        config->miniview = EINA_TRUE;
-        config_save(config, NULL);
-
-        evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
-
-        term->miniview = termio_miniview_show(term->term, ox, oy, ow, oh);
-        //edje_object_part_swallow(term->term, "terminology.content", term->miniview);
-        evas_object_show(term->miniview);
+        evas_object_hide(term->miniview);
+        term->miniview_shown = EINA_FALSE;
      }
    else
      {
-        evas_object_hide(term->miniview);
-        //edje_object_part_unswallow(term->term, term->miniview);
-        termio_miniview_hide(term->term);
-        term->miniview = NULL;
-
-        config->miniview = EINA_FALSE;
-        config_save(config, NULL);
+        evas_object_show(term->miniview);
+        term->miniview_shown = EINA_TRUE;
      }
 }
 
@@ -2024,9 +2018,7 @@ main_term_free(Term *term)
    if (term->popmedia) evas_object_del(term->popmedia);
    if (term->miniview)
      {
-        evas_object_hide(term->miniview);
-        //edje_object_part_unswallow(term->term, term->miniview);
-        termio_miniview_hide(term->term);
+        evas_object_del(term->miniview);
         term->miniview = NULL;
      }
    term->popmedia = NULL;
@@ -2170,6 +2162,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 {
    Term *term;
    Evas_Object *o;
+   Evas *canvas = evas_object_evas_get(wn->win);
    
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
@@ -2177,12 +2170,13 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    if (!config) abort();
 
    termpty_init();
+   miniview_init();
 
    term->wn = wn;
    term->hold = hold;
    term->config = config;
    
-   term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
+   term->base = o = edje_object_add(canvas);
    theme_apply(o, term->config, "terminology/core");
 
    theme_auto_reload_enable(o);
@@ -2190,7 +2184,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_data_set(o, "theme_reload_func_data", term);
    evas_object_show(o);
 
-   term->bg = o = edje_object_add(evas_object_evas_get(wn->win));
+   term->bg = o = edje_object_add(canvas);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!theme_apply(o, config, "terminology/background"))
@@ -2223,7 +2217,14 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    termio_win_set(o, wn->win);
    termio_theme_set(o, term->bg);
-   
+
+   term->miniview = o = miniview_add(wn->win, term->term);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(o);
+
+   o = term->term;
+
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
    edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
@@ -2233,12 +2234,13 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    edje_object_signal_callback_add(term->bg, "tabcount,next", "terminology",
                                    _cb_tabcount_next, term);
 
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(o, 0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, 0, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _cb_size_hint, term);
    edje_object_part_swallow(term->base, "terminology.content", o);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
+   edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
@@ -2278,18 +2280,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    wn->terms = eina_list_append(wn->terms, term);
    app_server_term_add(term);
-
-   if (term->config->miniview && !term->miniview)
-     {
-        Evas_Coord ox, oy, ow, oh;
-        evas_object_geometry_get(term->term, &ox, &oy, &ow, &oh);
-
-        //term->miniview = (Evas_Object *) termio_miniview_show(term->term,
-        //                                                          ox, oy, ow, oh);
-        edje_object_part_swallow(term->term, "terminology.content",
-                                 term->miniview);
-        evas_object_show(term->miniview);
-     }
 
    return term;
 }
@@ -3109,12 +3099,7 @@ remote:
 
    ty_dbus_init();
 
-
-   miniview_init();
-
    elm_run();
-
-   miniview_shutdown();
 
    app_server_shutdown();
 
@@ -3133,6 +3118,8 @@ remote:
      }
 
    termpty_shutdown();
+   miniview_shutdown();
+
 
    config_del(main_config);
    config_shutdown();

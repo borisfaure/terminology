@@ -1655,12 +1655,6 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
 
    _smart_calculate(obj);
    _smart_apply(obj);
-   if (sd->miniview)
-     {
-        miniview_resize(sd->miniview, sd->pty,
-                        w * sd->font.chw, h * sd->font.chh);
-        evas_object_smart_callback_call(obj, "miniview,show", NULL);
-     }
    evas_event_thaw(evas_object_evas_get(obj));
 }
 
@@ -2078,27 +2072,6 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
      return EINA_FALSE;
 
    return EINA_TRUE;
-}
-
-void
-termio_miniview_hide(Evas_Object *obj)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-
-   miniview_hide(sd->miniview);
-   sd->miniview = NULL;
-}
-
-Evas_Object *
-termio_miniview_show(Evas_Object *obj, int x, int y, int w, int h)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-
-   sd->miniview = miniview_add(obj, sd->font.chw, sd->font.chh,
-                               sd->pty, termio_scroll_get(obj), x, y, w, h);
-   return sd->miniview;
 }
 
 static void
@@ -3962,17 +3935,6 @@ _smart_calculate(Evas_Object *obj)
                     ox + (sd->cursor.x * sd->font.chw),
                     oy + (sd->cursor.y * sd->font.chh));
 
-   //evas_object_move(sd->miniview.grid.obj, ox, oy);
-   //evas_object_resize(sd->miniview.grid.obj,
-   //                   sd->grid.w * sd->font.chw,
-   //                   sd->grid.h * sd->font.chh);
-
-   //scr_obj = scrolio_grid_object_get(sd->miniview);
-   //evas_object_move(scr_obj, ox, oy);
-   //evas_object_resize(scr_obj,
-   //                   sd->grid.w * sd->font.chw,
-   //                   sd->grid.h * sd->font.chh);
-
    evas_object_move(sd->event, ox, oy);
    evas_object_resize(sd->event, ow, oh);
 }
@@ -3984,8 +3946,6 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_changed(obj);
-   if (sd->miniview)
-     miniview_move(sd->miniview, x, y);
 }
 
 static void
