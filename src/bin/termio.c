@@ -5036,3 +5036,12 @@ termio_selection_exists(const Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    return sd->pty->selection.is_active;
 }
+
+Termpty *
+termio_pty_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+
+   return sd->pty;
+}

@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "col.h"
+#include "termpty.h"
 
 Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
@@ -42,5 +43,7 @@ void         termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg);
 
 void termio_miniview_hide(Evas_Object *obj);
 Evas_Object *termio_miniview_show(Evas_Object *obj, int x, int y, int w, int h);
+
+Termpty *termio_pty_get(Evas_Object *obj);
 
 #endif
