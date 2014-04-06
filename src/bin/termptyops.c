@@ -196,8 +196,8 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
                termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
-        g = _termpty_charset_trans(codepoints[i], ty->state.charsetch);
-        
+        g = _termpty_charset_trans(codepoints[i], &ty->state);
+
         termpty_cell_codepoint_att_fill(ty, g, ty->state.att,
                                         &(cells[ty->state.cx]), 1);
 #if defined(SUPPORT_DBLWIDTH)
@@ -360,6 +360,7 @@ _termpty_reset_att(Termatt *att)
    att->autowrapped = 0;
    att->newline = 0;
    att->tab = 0;
+   att->fraktur = 0;
 }
 
 void

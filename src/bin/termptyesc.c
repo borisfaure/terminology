@@ -162,6 +162,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 9: // strikethrough
                    ty->state.att.strike = 1;
                    break;
+                case 20: // fraktur!
+                   ty->state.att.fraktur = 1;
+                   break;
                 case 21: // no bold/bright
                    ty->state.att.bold = 0;
                    break;
@@ -169,10 +172,11 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->state.att.bold = 0;
                    ty->state.att.faint = 0;
                    break;
-                case 23: // no italic
+                case 23: // no italic, not fraktur
 #if defined(SUPPORT_ITALIC)
                    ty->state.att.italic = 0;
 #endif
+                   ty->state.att.fraktur = 0;
                    break;
                 case 24: // no underline
                    ty->state.att.underline = 0;

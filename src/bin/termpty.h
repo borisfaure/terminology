@@ -69,6 +69,7 @@ struct _Termatt
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
    unsigned short tab : 1;
+   unsigned short fraktur : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
 #endif

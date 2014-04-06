@@ -34,9 +34,9 @@ static const unsigned short vt100_to_unicode[62] =
 };
 
 Eina_Unicode
-_termpty_charset_trans(Eina_Unicode g, int chset)
+_termpty_charset_trans(Eina_Unicode g, Termstate *state)
 {
-   switch (chset)
+   switch (state->charsetch)
      {
       case '0': /* DEC Special Character & Line Drawing Set */
         if ((g >= 0x41) && (g <= 0x7e) &&
@@ -48,6 +48,17 @@ _termpty_charset_trans(Eina_Unicode g, int chset)
         break;
       default:
         break;
+     }
+   if (state->att.fraktur)
+     {
+        if (g >= 'a' && g <= 'z')
+          {
+             g += 0x1d51e - 'a';
+          }
+        else if (g >= 'A' && g <= 'Z')
+          {
+             g += 0x1d504 - 'A';
+          }
      }
    return g;
 }
