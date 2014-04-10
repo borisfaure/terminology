@@ -47,13 +47,13 @@ void
 app_server_term_del(Evas_Object *term)
 {
    Elm_App_Server_View *view;
-   const char *id;
+   const char *id = NULL;
 
    view = evas_object_data_del(term, "app_view");
    if (!view)
      return;
 
-   eo_do(view, elm_app_server_view_id_get(&id));
+   eo_do(view, id = elm_app_server_view_id_get());
    terminology_item_term_entries_del(views_eet, id);
 
    eo_del(view);
@@ -65,7 +65,7 @@ _view_closed_cb(void *data, Eo *view,
                 void *event_info EINA_UNUSED)
 {
    Term *term = data;
-   const char *id;
+   const char *id = NULL;
 
    if (term)
      {
@@ -77,7 +77,7 @@ _view_closed_cb(void *data, Eo *view,
                    term_object);
      }
 
-   eo_do(view, elm_app_server_view_id_get(&id));
+   eo_do(view, id = elm_app_server_view_id_get());
    terminology_item_term_entries_del(views_eet, id);
 
    eo_del(view);
@@ -108,7 +108,7 @@ _view_save_cb(void *data EINA_UNUSED,
 {
    char dir[PATH_MAX];
    Evas_Object *term_object;
-   const char *id;
+   const char *id = NULL;
    Term_Item *term_eet;
 
    term_object = main_term_evas_object_get(data);
@@ -120,7 +120,7 @@ _view_save_cb(void *data EINA_UNUSED,
    evas_object_data_del(term_object, "app_view");
 
    termio_cwd_get(term_object, dir, sizeof(dir));
-   eo_do(view, elm_app_server_view_id_get(&id));
+   eo_do(view, id = elm_app_server_view_id_get());
 
    term_eet = terminology_item_term_entries_get(views_eet, id);
    if (term_eet)
@@ -142,8 +142,8 @@ _view_resumed_cb(void *data, Eo *view,
 {
    Term *term = data;
    Win *wn;
-   Eina_List **wins;
-   const char *title, *id;
+   Eina_List **wins = NULL;
+   const char *title, *id = NULL;
    Evas_Object *term_object;
    const char *dir = NULL;
    Term_Item *term_eet;
@@ -154,7 +154,7 @@ _view_resumed_cb(void *data, Eo *view,
         return EINA_TRUE;
      }
 
-   eo_do(_server, eo_base_data_get("wins", (void **)&wins));
+   eo_do(_server, wins = eo_key_data_get("wins"));
    wn = eina_list_data_get(*wins);
    if (!wn)
      {
@@ -164,7 +164,7 @@ _view_resumed_cb(void *data, Eo *view,
 
    term = eina_list_data_get(main_win_terms_get(wn));
 
-   eo_do(view, elm_app_server_view_id_get(&id));
+   eo_do(view, id = elm_app_server_view_id_get());
    term_eet = terminology_item_term_entries_get(views_eet, id);
    if (term_eet)
      {
@@ -261,12 +261,12 @@ app_server_win_del_request_cb(void *data EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED,
                               void *event_info EINA_UNUSED)
 {
-   Eina_List **wins;
+   Eina_List **wins = NULL;
 
    if (!_server)
      return;
 
-   eo_do(_server, eo_base_data_get("wins", (void **)&wins));
+   eo_do(_server, wins = eo_key_data_get("wins"));
 
    if (eina_list_count(*wins) > 1)
      return;
@@ -337,9 +337,9 @@ _app_server_create_view_cb(Elm_App_Server *server, const Eina_Value *args EINA_U
 {
    Win *wn;
    Term *term;
-   Eina_List **wins;
+   Eina_List **wins = NULL;
 
-   eo_do(server, eo_base_data_get("wins", (void **)&wins));
+   eo_do(server, wins = eo_key_data_get("wins"));
    wn = eina_list_data_get(*wins);
    if (!wn)
      {
@@ -371,7 +371,7 @@ void
 app_server_init(Eina_List **wins, Eina_Bool restore_views)
 {
    Win *wn;
-   Eina_Iterator *views;
+   Eina_Iterator *views = NULL;
    Elm_App_Server_View *view;
    const char *title;
    char lock_file[PATH_MAX], eet_dir[PATH_MAX];
@@ -408,8 +408,8 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
                               _app_server_create_view_cb));
 
    eo_do(_server, elm_app_server_title_set(title),
-         eo_base_data_set("wins", wins, NULL),
-         elm_app_server_views_get(&views),
+         eo_key_data_set("wins", wins, NULL),
+         views = elm_app_server_views_get(),
          eo_event_callback_add(ELM_APP_SERVER_EVENT_TERMINATE,
                                _server_terminate_cb, wins));
    //views saved
