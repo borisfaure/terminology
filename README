@@ -79,7 +79,7 @@ Ctrl+0 = switch to terminal tab 10
 
 Command mode commands currently understood:
 
-f = Reset font to default settign saved in config
+f = Reset font to default setting saved in config
 f+ = Increase fontsize
 f- = Decreate fontsize
 fb = Display big font size (10x20 bitmap, or size 20 with scalable).
