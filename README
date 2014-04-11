@@ -81,7 +81,7 @@ Command mode commands currently understood:
 
 f = Reset font to default setting saved in config
 f+ = Increase fontsize
-f- = Decreate fontsize
+f- = Decrease fontsize
 fb = Display big font size (10x20 bitmap, or size 20 with scalable).
 gNxM = make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
        If just one number is provided, it will use the following shortcuts:
@@ -115,7 +115,7 @@ Commands:
 any values inside square brackets [] are to be replaced by some
 content (numbers, strings, paths, url's etc.). example:
 
-aa[PATH-OF-FILE] should be come something like:
+aa[PATH-OF-FILE] should become something like:
   aa/tmp/file.png
 or aa[true/false] should become something like:
   aatrue
@@ -132,7 +132,7 @@ pn[FULL-PATH-OR-URL]
   = popup the given media file/url now
 
 pq[FULL-PATH-OR-URL]
-  = quque a popup for the given media file/url
+  = queue a popup for the given media file/url
 
 bt[FULL-PATH-OR-URL]
   = set the terminal background media file/url temporarily
@@ -165,7 +165,7 @@ is[CW;H;FULL-PATH-OR-URL]
     note that this escape alone has no effect. it indicates a future
     intention of inserting media into the terminal. the terminal will
     EXPECT a grid of WxH "replace characters" to follow, with each
-    sequence of such replace characters bebung with a 'ib' escape command
+    sequence of such replace characters beginning with a 'ib' escape command
     and ending with an 'ie' escape command.
     
     the FULL-PATH-OR-URL for all  the i commands (is, ic, if, it) may
@@ -179,7 +179,7 @@ is[CW;H;FULL-PATH-OR-URL]
       
       where a newline character separates a URI for a link and a full
       path to a file to display in the region. the link is the
-      destination URI when a user may clikc on the given media image.
+      destination URI when a user may click on the given media image.
     
     example:
     
@@ -193,23 +193,23 @@ is[CW;H;FULL-PATH-OR-URL]
     in the insert media escape.
 
 ic[CW;H;FULL-PATH-OR-URL]
-  = insert CENTERED media (centered in cell area). otherwise paramaters are
+  = insert CENTERED media (centered in cell area). otherwise parameters are
     identical to the "is" command, but retains aspect and is padded by
     blank space.
 
 if[CW;H;FULL-PATH-OR-URL]
-  = insert FILLED media (fill in cell area). otherwise paramaters are
+  = insert FILLED media (fill in cell area). otherwise parameters are
     identical to the "is" command but ensures the entire area is
     filled like a background even if media goes beyond cell bounds and is
     clipped.
 
 it[CW;H;FULL-PATH-OR-URL]
-  = insert THUMB media (thumbnail cell area). otherwise paramaters are
+  = insert THUMB media (thumbnail cell area). otherwise parameters are
     identical to the "is" command, but uses thumbnail generation to
     make a fast to load but low resolution version (cached) of the media.
 
 it[CW;H;LINK\nFULL-PATH-OR-URL]
-  = insert THUMB media (thumbnail cell area). otherwise paramaters are
+  = insert THUMB media (thumbnail cell area). otherwise parameters are
     identical to the "is" command, but uses thumbnail generation to
     make a fast to load but low resolution version (cached) of the media.
     LINK is a path (or url) to open WHEN the thumb is clicked on by the
