@@ -2652,6 +2652,7 @@ elm_main(int argc, char **argv)
    Eina_Bool video_mute = 0xff; /* unset */
    Eina_Bool cursor_blink = 0xff; /* unset */
    Eina_Bool visual_bell = 0xff; /* unset */
+   Eina_Bool active_links = 0xff; /* unset */
    Eina_Bool fullscreen = EINA_FALSE;
    Eina_Bool iconic = EINA_FALSE;
    Eina_Bool borderless = EINA_FALSE;

@@ -147,6 +147,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!config) return;
+   if (!config->active_links) return;
    if (!sd->link.string) return;
    if (link_is_url(sd->link.string))
      {
@@ -666,8 +667,11 @@ _smart_mouseover_apply(Evas_Object *obj)
    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
+   Config *config = termio_config_get(obj);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!config->active_links) return;
+
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
        (sd->link.suspend) || (!evas_object_focus_get(obj)))
      {
