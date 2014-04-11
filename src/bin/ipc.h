@@ -27,6 +27,7 @@ struct _Ipc_Instance
    int hold;
    int nowm;
    int xterm_256color;
+   int active_links;
 };
 
 void ipc_init(void);

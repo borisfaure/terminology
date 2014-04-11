@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 2
+#define CONF_VER 3
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -281,11 +281,17 @@ config_load(const char *key)
                 case 1:
                    _config_upgrade_to_v2(config);
                   /*pass through*/
-                case CONF_VER: /* 2 */
+                case 2:
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 200000);
                   LIM(config->tab_zoom, 0.0, 1.0);
                   LIM(config->vidmod, 0, 3)
+
+                  /* upgrade to v3 */
+                  config->active_links = EINA_TRUE;
+                  config->version = 3;
+                  /*pass through*/
+                case CONF_VER: /* 3*/
                   break;
                 default:
                   if (config->version < CONF_VER)

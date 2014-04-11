@@ -2316,6 +2316,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->hold) nargc += 1;
    if (inst->nowm) nargc += 1;
    if (inst->xterm_256color) nargc += 1;
+   if (inst->active_links) nargc += 1;
    if (inst->cmd) nargc += 2;
    
    nargv = calloc(nargc + 1, sizeof(char *));
@@ -2440,6 +2441,10 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->xterm_256color)
      {
         nargv[i++] = "-2";
+     }
+   if (inst->active_links)
+     {
+        nargv[i++] = "--active-links";
      }
    if (inst->cmd)
      {
@@ -2599,6 +2604,7 @@ static const Ecore_Getopt options = {
                               "Set font (NAME/SIZE for scalable, NAME for bitmap."),
       ECORE_GETOPT_CHOICE    ('v', "video-module",
                               "Set emotion module to use.", emotion_choices),
+
       ECORE_GETOPT_STORE_BOOL('l', "login",
                               "Run the shell as a login shell."),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
@@ -2625,6 +2631,8 @@ static const Ecore_Getopt options = {
                               "Force single executable if multi-instance is enabled.."),
       ECORE_GETOPT_STORE_TRUE('2', "256color",
                               "Set TERM to 'xterm-256color' instead of 'xterm'."),
+      ECORE_GETOPT_STORE_BOOL('\0', "active-links",
+                              "Whether to highlight links."),
 
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
@@ -2671,7 +2679,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
 #else
      ECORE_GETOPT_VALUE_STR(cmd),
-#endif      
+#endif
      ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
@@ -2682,7 +2690,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(icon_name),
      ECORE_GETOPT_VALUE_STR(font),
      ECORE_GETOPT_VALUE_STR(video_module),
-      
+
      ECORE_GETOPT_VALUE_BOOL(login_shell),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(cursor_blink),
@@ -2696,12 +2704,13 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(hold),
      ECORE_GETOPT_VALUE_BOOL(single),
      ECORE_GETOPT_VALUE_BOOL(xterm_256color),
+     ECORE_GETOPT_VALUE_BOOL(active_links),
 
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
-      
+
      ECORE_GETOPT_VALUE_NONE
    };
    Win *wn;
@@ -2874,6 +2883,11 @@ elm_main(int argc, char **argv)
    if (visual_bell != 0xff)
      {
         config->disable_visual_bell = !visual_bell;
+        config->temporary = EINA_TRUE;
+     }
+   if (active_links != 0xff)
+     {
+        config->active_links = !!active_links;
         config->temporary = EINA_TRUE;
      }
 
