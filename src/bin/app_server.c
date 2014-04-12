@@ -339,8 +339,7 @@ _app_server_create_view_cb(Elm_App_Server *server, const Eina_Value *args EINA_U
    Eina_List **wins = NULL;
 
    eo_do(server, wins = eo_key_data_get("wins"));
-   wn = eina_list_data_get(*wins);
-   if (!wn)
+   if (!wins || !(wn = eina_list_data_get(*wins)))
      {
         ERR("There is no window open");
         *error_name = eina_stringshare_add("There is no window open");
