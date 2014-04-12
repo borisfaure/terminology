@@ -2075,6 +2075,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
    int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN(ev->key);
    if ((!alt) && (ctrl) && (!shift))
      {
         if (!strcmp(ev->key, "Prior"))
@@ -2222,7 +2223,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
                }
           }
      }
-   if ((shift) && (ev->key))
+   if (shift)
      {
         int by = sd->grid.h - 2;
 
