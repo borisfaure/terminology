@@ -155,8 +155,7 @@ _view_resumed_cb(void *data, Eo *view,
      }
 
    eo_do(_server, wins = eo_key_data_get("wins"));
-   wn = eina_list_data_get(*wins);
-   if (!wn)
+   if (!wins || !(wn = eina_list_data_get(*wins)))
      {
         ERR("There is no window open");
         return EINA_TRUE;
