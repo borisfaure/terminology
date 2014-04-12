@@ -268,7 +268,7 @@ app_server_win_del_request_cb(void *data EINA_UNUSED,
 
    eo_do(_server, wins = eo_key_data_get("wins"));
 
-   if (eina_list_count(*wins) > 1)
+   if (wins && eina_list_count(*wins) > 1)
      return;
 
    /*
