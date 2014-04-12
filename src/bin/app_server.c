@@ -375,6 +375,8 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
    char lock_file[PATH_MAX], eet_dir[PATH_MAX];
    FILE *f;
 
+   if (!wins)
+     return;
    wn = eina_list_data_get(*wins);
    if (!wn)
      return;
