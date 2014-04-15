@@ -132,13 +132,73 @@ _smart_hide(Evas_Object *obj)
    evas_object_hide(mv->image_obj);
 }
 
+
+static void
+_miniview_draw(Miniview *mv, int columns, int oh)
+{
+   unsigned int *pixels;
+   int x, y;
+
+   pixels = evas_object_image_data_get(mv->image_obj, EINA_TRUE);
+   memset(pixels, 0, sizeof(*pixels) * columns * oh);
+
+
+   DBG("DRAW");
+   for (y = 0; y < oh; y++)
+     {
+        Termcell *cells;
+        int wret;
+
+        cells = termpty_cellrow_get(mv->pty, -y, &wret);
+        if (cells == NULL)
+          break;
+        for (x = 0 ; x < wret; x++)
+          {
+             int r, g, b;
+
+             if (cells[x].codepoint > 0 && !isspace(cells[x].codepoint) &&
+                 !cells[x].att.newline && !cells[x].att.tab &&
+                 !cells[x].att.invisible && cells[x].att.bg != COL_INVIS)
+               {
+                  switch (cells[x].att.fg)
+                    {
+                       // TODO: get pixel colors from current themee...
+                     case 0:
+                        r = 180; g = 180; b = 180;
+                        break;
+                     case 2:
+                        r = 204; g = 51; b = 51;
+                        break;
+                     case 3:
+                        r = 51; g = 204; b = 51;
+                        break;
+                     case 4:
+                        r = 204; g = 136; b = 51;
+                        break;
+                     case 5:
+                        r = 51; g = 51; b = 204;
+                        break;
+                     case 6:
+                        r = 204; g = 51; b = 204;
+                        break;
+                     case 7:
+                        r = 51; g = 204; b = 204;
+                        break;
+                     default:
+                        r = 180; g = 180; b = 180;
+                    }
+                  pixels[x + y * columns] = (r << 16) | (g << 8) | (b);
+               }
+          }
+     }
+}
+
 static void
 _smart_size(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
    Evas_Coord ox, oy, ow, oh, font_w;
-   int columns, x, y;
-   unsigned int *pixels;
+   int columns;
 
    if (!mv) return;
 
@@ -161,18 +221,14 @@ _smart_size(Evas_Object *obj)
 
    evas_object_image_fill_set(mv->image_obj, 0, 0, columns,
                               oh);
-   pixels = evas_object_image_data_get(mv->image_obj, EINA_TRUE);
-   for (y = 0; y < oh; y++)
-     {
-        for (x = 0; x < columns; x++)
-          {
-             *pixels = (128 << 24 ) |(128 << 16) | (1 << 8) | (1);
-             pixels++;
-          }
-     }
 
+   _miniview_draw(mv, columns, oh);
    evas_object_show(mv->image_obj);
 }
+
+
+
+
 
 static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
