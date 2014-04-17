@@ -130,7 +130,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                     {
                      case '"': endmatch = '"'; break;
                      case '\'': endmatch = '\''; break;
-                     case '`': endmatch = '\''; break;
+                     case '`': endmatch = '`'; break;
                      case '<': endmatch = '>'; break;
                      case '[': endmatch = ']'; break;
                      case '{': endmatch = '}'; break;
@@ -149,7 +149,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                     {
                      case '"': endmatch = '"'; break;
                      case '\'': endmatch = '\''; break;
-                     case '`': endmatch = '\''; break;
+                     case '`': endmatch = '`'; break;
                      case '<': endmatch = '>'; break;
                      case '[': endmatch = ']'; break;
                      case '{': endmatch = '}'; break;
