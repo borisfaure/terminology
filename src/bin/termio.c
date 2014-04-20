@@ -16,7 +16,6 @@
 #include "utils.h"
 #include "media.h"
 #include "dbus.h"
-#include "miniview.h"
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
 # include <sys/proc_info.h>
@@ -63,7 +62,6 @@ struct _Termio
          Eina_Bool dndobjdel : 1;
       } down;
    } link;
-   Evas_Object *miniview;
    int zoom_fontsize_start;
    int scroll;
    Eina_List *mirrors;
@@ -1255,7 +1253,6 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
    if (ok)
      {
         _block_edje_cmds(sd->pty, blk, blk->cmds, EINA_TRUE);
-        //scrolio_pty_update(sd->miniview, sd->pty);
      }
 }
 
@@ -1687,8 +1684,6 @@ _smart_cb_change(void *data)
    sd->anim = NULL;
    _smart_apply(obj);
    evas_object_smart_callback_call(obj, "changed", NULL);
-   if (sd->miniview)
-     miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
    return EINA_FALSE;
 }
 
@@ -1697,8 +1692,6 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 {
    if (sd->anim) return;
    sd->anim = ecore_animator_add(_smart_cb_change, obj);
-   if (sd->miniview)
-     miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
 }
 
 static void
@@ -2199,7 +2192,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
              _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
              goto end;
           }
-        else if (!strcmp(ev->keyname, "f"))
+        else if (!strcmp(ev->keyname, "h"))
           {
              evas_object_smart_callback_call(data, "miniview,toggle", NULL);
              goto end;
@@ -3536,8 +3529,6 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
           default:
             break;
          }
-        if (sd->miniview)
-          miniview_update_scroll(sd->miniview, termio_scroll_get(obj));
      }
 }
 
@@ -4773,9 +4764,6 @@ termio_config_update(Evas_Object *obj)
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
 
-   //evas_object_scale_set(sd->miniview.grid.obj, elm_config_scale_get());
-   //evas_object_textgrid_font_set(sd->miniview.grid.obj, sd->font.name, sd->font.size);
-   //evas_object_textgrid_cell_size_get(sd->miniview.grid.obj, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    sd->font.chw = w;

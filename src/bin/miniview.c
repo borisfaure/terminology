@@ -1,5 +1,7 @@
 #include <Elementary.h>
 #include <stdio.h>
+#include <assert.h>
+
 #include "col.h"
 #include "termpty.h"
 #include "termio.h"
@@ -28,15 +30,12 @@ miniview_init(void)
    _miniview_log_dom = eina_log_domain_register("miniview", NULL);
    if (_miniview_log_dom < 0)
      EINA_LOG_CRIT("could not create log domain 'miniview'.");
-
-   ERR("INIT");
 }
 
 void
 miniview_shutdown(void)
 {
    if (_miniview_log_dom < 0) return;
-   ERR("SHUTDOWN");
    eina_log_domain_unregister(_miniview_log_dom);
    _miniview_log_dom = -1;
 }
@@ -72,11 +71,9 @@ _smart_add(Evas_Object *obj)
    /* miniview output widget  */
    o = evas_object_image_add(canvas);
    evas_object_image_alpha_set(o, EINA_TRUE);
-   evas_object_color_set(o, 128, 0, 0, 128);
 
    evas_object_smart_member_add(o, obj);
    mv->image_obj = o;
-   evas_object_show(o);
 }
 
 static void
@@ -102,46 +99,18 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
 }
 
 static void
-_smart_show(Evas_Object *obj)
+_miniview_draw(Miniview *mv)
 {
-   Miniview *mv = evas_object_smart_data_get(obj);
-
-   DBG("%p", obj);
-   if (!mv) return;
-
-   Evas_Coord ox, oy, ow, oh;
-   evas_object_geometry_get(mv->image_obj, &ox, &oy, &ow, &oh);
-   DBG("ox:%d oy:%d ow:%d oh:%d visible:%d|%d %d %d %d",
-       ox, oy, ow, oh,
-       evas_object_visible_get(obj),
-       evas_object_visible_get(mv->image_obj),
-       evas_object_layer_get(mv->image_obj),
-       evas_object_layer_get(obj),
-       evas_object_layer_get(mv->termio));
-   evas_object_show(mv->image_obj);
-}
-
-static void
-_smart_hide(Evas_Object *obj)
-{
-   Miniview *mv = evas_object_smart_data_get(obj);
-
-   DBG("%p", obj);
-   if (!mv) return;
-
-   evas_object_hide(mv->image_obj);
-}
-
-
-static void
-_miniview_draw(Miniview *mv, int columns, int oh)
-{
+   Evas_Coord columns, oh;
    unsigned int *pixels;
    int x, y;
 
-   pixels = evas_object_image_data_get(mv->image_obj, EINA_TRUE);
-   memset(pixels, 0, sizeof(*pixels) * columns * oh);
+   evas_object_geometry_get(mv->image_obj, NULL, NULL, &columns, &oh);
+   if (!columns || !oh) return;
 
+   pixels = evas_object_image_data_get(mv->image_obj, EINA_TRUE);
+   assert (pixels != NULL);
+   memset(pixels, 0, sizeof(*pixels) * columns * oh);
 
    DBG("DRAW");
    for (y = 0; y < oh; y++)
@@ -187,10 +156,44 @@ _miniview_draw(Miniview *mv, int columns, int oh)
                      default:
                         r = 180; g = 180; b = 180;
                     }
-                  pixels[x + y * columns] = (r << 16) | (g << 8) | (b);
+                  pixels[x + y * columns] = (0xff << 24) | (r << 16) | (g << 8) | b;
                }
           }
      }
+}
+
+
+static void
+_smart_show(Evas_Object *obj)
+{
+   Miniview *mv = evas_object_smart_data_get(obj);
+
+   DBG("%p", obj);
+   if (!mv) return;
+
+   Evas_Coord ox, oy, ow, oh;
+   evas_object_geometry_get(mv->image_obj, &ox, &oy, &ow, &oh);
+   DBG("ox:%d oy:%d ow:%d oh:%d visible:%d|%d %d %d %d",
+       ox, oy, ow, oh,
+       evas_object_visible_get(obj),
+       evas_object_visible_get(mv->image_obj),
+       evas_object_layer_get(mv->image_obj),
+       evas_object_layer_get(obj),
+       evas_object_layer_get(mv->termio));
+
+   _miniview_draw(mv);
+   evas_object_show(mv->image_obj);
+}
+
+static void
+_smart_hide(Evas_Object *obj)
+{
+   Miniview *mv = evas_object_smart_data_get(obj);
+
+   DBG("%p", obj);
+   if (!mv) return;
+
+   evas_object_hide(mv->image_obj);
 }
 
 static void
@@ -222,8 +225,7 @@ _smart_size(Evas_Object *obj)
    evas_object_image_fill_set(mv->image_obj, 0, 0, columns,
                               oh);
 
-   _miniview_draw(mv, columns, oh);
-   evas_object_show(mv->image_obj);
+   _miniview_draw(mv);
 }
 
 

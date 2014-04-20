@@ -1106,12 +1106,12 @@ _cb_miniview_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSE
 
    if (term->miniview_shown)
      {
-        evas_object_hide(term->miniview);
+        edje_object_signal_emit(term->bg, "miniview,off", "terminology");
         term->miniview_shown = EINA_FALSE;
      }
    else
      {
-        evas_object_show(term->miniview);
+        edje_object_signal_emit(term->bg, "miniview,on", "terminology");
         term->miniview_shown = EINA_TRUE;
      }
 }
