@@ -1101,23 +1101,6 @@ collections {
         image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
       }
-      sounds {
-         sample { name: "key-tap1" LOSSY 64;
-            source: "kbd-tap.wav";
-         }
-         sample { name: "key-tap2" LOSSY 64;
-            source: "kbd-tap2.wav";
-         }
-         sample { name: "key-tap3" LOSSY 64;
-            source: "kbd-tap3.wav";
-         }
-         sample { name: "key-tap4" LOSSY 64;
-            source: "kbd-tap4.wav";
-         }
-         sample { name: "key-tap5" LOSSY 64;
-            source: "kbd-tap5.wav";
-         }
-      }
       parts {
          part { name: "pulsclip"; type: RECT;
             description { state: "default" 0.0;
@@ -1213,35 +1196,6 @@ collections {
                action: STATE_SET "default" 0.0;
                target: "outline";
                target: "pulsclip";
-            }
-            program {
-               signal: "key,down"; source: "terminology";
-               script {
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 8)
-                  new buf[32];
-                  snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
-                  run_program(get_program_id(buf));
-#else
-                  run_program(PROGRAM:"key-down4"); // chosen by a fair dice roll
-                                                    // guaranteed to be random.
-                                                    // http://xkcd.com/221/
-#endif
-               }
-            }
-            program { name: "key-down1";
-               action: PLAY_SAMPLE "key-tap1" 1.0;
-            }
-            program { name: "key-down2";
-               action: PLAY_SAMPLE "key-tap2" 1.0;
-            }
-            program { name: "key-down3";
-               action: PLAY_SAMPLE "key-tap3" 1.0;
-            }
-            program { name: "key-down4";
-               action: PLAY_SAMPLE "key-tap4" 1.0;
-            }
-            program { name: "key-down5";
-               action: PLAY_SAMPLE "key-tap5" 1.0;
             }
             program { name: "key";
                signal: "key,down";
