@@ -1003,9 +1003,14 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    if (!config->disable_visual_bell)
      {
         Split *sp;
-        
+
         edje_object_signal_emit(term->bg, "bell", "terminology");
         edje_object_signal_emit(term->base, "bell", "terminology");
+        if (config->bell_rings)
+          {
+             edje_object_signal_emit(term->bg, "bell,ring", "terminology");
+             edje_object_signal_emit(term->base, "bell,ring", "terminology");
+          }
         sp = _split_find(term->wn->win, term->term);
         if (sp)
           {

@@ -683,6 +683,9 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Boo
    if (bell)
      {
         edje_object_signal_emit(en->bg, "bell", "terminology");
+        if (!config->bell_rings)
+          edje_object_signal_emit(en->bg, "bell,ring", "terminology");
+
         edje_object_message_signal_process(en->bg);
      }
    sd->interp = 1.0;

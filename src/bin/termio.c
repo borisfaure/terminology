@@ -4104,6 +4104,8 @@ _smart_pty_bell(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_smart_callback_call(data, "bell", NULL);
    edje_object_signal_emit(sd->cursor.obj, "bell", "terminology");
+   if (sd->config->bell_rings)
+     edje_object_signal_emit(sd->cursor.obj, "bell,ring", "terminology");
 }
 
 static void

@@ -203,8 +203,12 @@ collections {
             }
          }
          program {
-            signal: "bell"; source: "terminology";
+            signal: "bell,ring"; source: "terminology";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
+            action: PLAY_SAMPLE "bell" 1.0 ALERT;
+#else
             action: PLAY_SAMPLE "bell" 1.0;
+#endif
          }
          program {
             signal: "bell";

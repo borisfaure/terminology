@@ -97,6 +97,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "bell_rings", bell_rings, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "active_links", active_links, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
@@ -212,6 +214,7 @@ config_sync(const Config *config_src, Config *config)
    config->flicker_on_key = config_src->flicker_on_key;
    config->disable_cursor_blink = config_src->disable_cursor_blink;
    config->disable_visual_bell = config_src->disable_visual_bell;
+   config->bell_rings = config_src->bell_rings;
    config->active_links = config_src->active_links;
    config->mute = config_src->mute;
    config->urg_bell = config_src->urg_bell;
@@ -289,6 +292,7 @@ config_load(const char *key)
 
                   /* upgrade to v3 */
                   config->active_links = EINA_TRUE;
+                  config->bell_rings = EINA_TRUE;
                   config->version = 3;
                   /*pass through*/
                 case CONF_VER: /* 3*/
@@ -508,6 +512,7 @@ config_load(const char *key)
              config->flicker_on_key = EINA_FALSE;
              config->disable_cursor_blink = EINA_FALSE;
              config->disable_visual_bell = EINA_FALSE;
+             config->bell_rings = EINA_TRUE;
              config->active_links = EINA_TRUE;
              s = eina_unicode_unicode_to_utf8(sep, &slen);
              if (s)
@@ -589,6 +594,7 @@ config_fork(Config *config)
    CPY(flicker_on_key);
    CPY(disable_cursor_blink);
    CPY(disable_visual_bell);
+   CPY(bell_rings);
    CPY(active_links);
    CPY(translucent);
    CPY(mute);
