@@ -4708,7 +4708,7 @@ void
 termio_config_update(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Evas_Coord w, h;
+   Evas_Coord w, h, ow = 0, oh = 0;
    char buf[4096];
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -4750,7 +4750,9 @@ termio_config_update(Evas_Object *obj)
    if (h < 1) h = 1;
    sd->font.chw = w;
    sd->font.chh = h;
-   _smart_size(obj, sd->grid.w, sd->grid.h, EINA_TRUE);
+
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   _smart_size(obj, ow / w, oh / h, EINA_TRUE);
 }
 
 Config *
