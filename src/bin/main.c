@@ -80,7 +80,6 @@ struct _Split
 int _log_domain = -1;
 
 static Eina_List   *wins = NULL;
-static Ecore_Timer *flush_timer = NULL;
 
 static Config *main_config = NULL;
 
@@ -746,7 +745,6 @@ _cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    edje_object_signal_emit(term->bg, "focus,out", "terminology");
    edje_object_signal_emit(term->base, "focus,out", "terminology");
    if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_FALSE);
-   elm_cache_all_flush();
 }
 
 static void
@@ -968,21 +966,6 @@ _cb_options(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 
    controls_toggle(term->wn->win, term->wn->base, term->term,
                    _cb_options_done, term->wn);
-}
-
-static Eina_Bool
-_cb_flush(void *data EINA_UNUSED)
-{
-   flush_timer = NULL;
-   elm_cache_all_flush();
-   return EINA_FALSE;
-}
-
-static void
-_cb_change(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   if (!flush_timer) flush_timer = ecore_timer_add(5.0, _cb_flush, NULL);
-   else ecore_timer_delay(flush_timer, 5.0);
 }
 
 static void
@@ -2219,7 +2202,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    edje_object_part_swallow(term->base, "terminology.content", o);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
-   evas_object_smart_callback_add(o, "changed", _cb_change, term);
    evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
@@ -2253,12 +2235,8 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
                                   _cb_term_mouse_in, term);
    
-   if (!wn->terms)
-     {
-        term->focused = EINA_TRUE;
-//        edje_object_signal_emit(term->bg, "focus,in", "terminology");
-//        edje_object_signal_emit(term->base, "focus,in", "terminology");
-     }
+   if (!wn->terms) term->focused = EINA_TRUE;
+
    wn->terms = eina_list_append(wn->terms, term);
    app_server_term_add(term);
    
