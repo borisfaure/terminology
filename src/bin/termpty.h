@@ -196,6 +196,8 @@ struct _Termblock
    Eina_Bool    active : 1;
    Eina_Bool    was_active : 1;
    Eina_Bool    was_active_before : 1;
+
+   Eina_Bool    mov_paused : 1;  // movie paused state marker
 };
 
 struct _Termexp

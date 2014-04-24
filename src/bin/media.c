@@ -716,6 +716,8 @@ _type_mov_init(Evas_Object *obj)
    if (((sd->mode & MEDIA_OPTIONS_MASK) & MEDIA_RECOVER)
        && (sd->type == TYPE_MOV) && (sd->o_img))
      emotion_object_last_position_load(sd->o_img);
+   else
+     media_position_set(obj, 0.0);
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
    evas_object_raise(sd->o_event);
@@ -742,7 +744,6 @@ _type_mov_init(Evas_Object *obj)
     * */
    evas_object_show(o);
 
-   media_position_set(obj, 0.0);
    media_play_set(obj, EINA_TRUE);
    if (sd->config->mute) media_mute_set(obj, EINA_TRUE);
 }
@@ -1262,6 +1263,14 @@ media_play_set(Evas_Object *obj, Eina_Bool play)
       edje_object_signal_emit(sd->o_ctrl, "play,set", "terminology");
    else
       edje_object_signal_emit(sd->o_ctrl, "pause,set", "terminology");
+}
+
+Eina_Bool
+media_play_get(Evas_Object *obj)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return EINA_FALSE;
+   return emotion_object_play_get(sd->o_img);
 }
 
 void

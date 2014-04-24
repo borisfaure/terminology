@@ -25,6 +25,7 @@
 Evas_Object *media_add(Evas_Object *parent, const char *src, const Config *config, int mode, int *type);
 void media_mute_set(Evas_Object *obj, Eina_Bool mute);
 void media_play_set(Evas_Object *obj, Eina_Bool play);
+Eina_Bool media_play_get(Evas_Object *obj);
 void media_position_set(Evas_Object *obj, double pos);
 void media_volume_set(Evas_Object *obj, double vol);
 void media_stop(Evas_Object *obj);

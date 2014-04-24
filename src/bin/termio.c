@@ -1273,6 +1273,7 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
    if (!blk->was_active_before) media |= MEDIA_SAVE;
    else media |= MEDIA_RECOVER | MEDIA_SAVE;
    blk->obj = media_add(obj, blk->path, sd->config, media, &type);
+   if (type == TYPE_MOV) media_play_set(blk->obj, !blk->mov_paused);
    evas_object_event_callback_add
      (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);
    blk->type = type;
@@ -1299,6 +1300,19 @@ _block_activate(Evas_Object *obj, Termblock *blk)
    blk->was_active_before = EINA_TRUE;
    if (!blk->was_active)
      sd->pty->block.active = eina_list_append(sd->pty->block.active, blk);
+}
+
+static void
+_block_obj_del(Termblock *blk)
+{
+   if (!blk->obj) return;
+
+   blk->mov_paused = !media_play_get(blk->obj);
+   evas_object_event_callback_del_full
+      (blk->obj, EVAS_CALLBACK_DEL,
+       _smart_media_del, blk);
+   evas_object_del(blk->obj);
+   blk->obj = NULL;
 }
 
 static void
@@ -1504,16 +1518,7 @@ _smart_apply(Evas_Object *obj)
         if (!blk->active)
           {
              blk->was_active = EINA_FALSE;
-             // XXX: move to func
-             if (blk->obj)
-               {
-                  // XXX: handle if edje not media
-                  evas_object_event_callback_del_full
-                    (blk->obj, EVAS_CALLBACK_DEL,
-                        _smart_media_del, blk);
-                  evas_object_del(blk->obj);
-                  blk->obj = NULL;
-               }
+             _block_obj_del(blk);
              sd->pty->block.active = eina_list_remove_list
                (sd->pty->block.active, l);
           }
