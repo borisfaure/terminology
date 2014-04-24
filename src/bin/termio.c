@@ -773,13 +773,7 @@ _smart_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info E
 {
    Termblock *blk = data;
    
-   if (blk->obj == obj)
-     {
-        evas_object_event_callback_del_full
-          (blk->obj, EVAS_CALLBACK_DEL,
-              _smart_media_del, blk);
-        blk->obj = NULL;
-     }
+   if (blk->obj == obj) blk->obj = NULL;
 }
 
 static void
