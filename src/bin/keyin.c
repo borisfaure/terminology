@@ -211,7 +211,7 @@ static const Keyout alt_keyout[] =
    KEY("Up",           "\033[1;3A"),
    KEY("Down",         "\033[1;3B"),
    KEY("End",          "\033[1;3F"),
-   KEY("BackSpace",    "\210"),
+   KEY("BackSpace",    "\033\177"),
    KEY("Return",       "\033\015"),
    KEY("space",        "\033\040"),
    KEY("Home",         "\033[1;3H"),
