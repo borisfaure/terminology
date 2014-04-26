@@ -22,6 +22,8 @@ int _miniview_log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_miniview_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_miniview_log_dom, __VA_ARGS__)
 
+/*TODO: work with splits */
+
 void
 miniview_init(void)
 {
@@ -45,13 +47,72 @@ typedef struct _Miniview Miniview;
 struct _Miniview
 {
    Evas_Object *self;
-   Evas_Object *image_obj;
+   Evas_Object *img_obj;
    Evas_Object *termio;
    Termpty *pty;
-   int scroll;
+
+   int img_h;
+   int img_hist; /* history rendered is between img_hpos(<0) and
+                    img_pos - image_height */
+   int img_off; /* >0; offset for the visible part */
+   int viewport_h;
 };
 
 static Evas_Smart *_smart = NULL;
+
+static void
+_scroll(Miniview *mv, int z)
+{
+   int history_len = mv->pty->backscroll_num;
+   //int new_offset;
+
+   /* whether to move img_obj or modify it */
+   DBG("history_len:%d z:%d img:h:%d hist:%d off:%d viewport:%d",
+       history_len, z, mv->img_h, mv->img_hist, mv->img_off,mv->viewport_h);
+   //new_offset = mv->img_off + z;
+#if 0
+   if ((mv->image_hpos <= 0  && z < 0) /* top */ ||
+       (mv->image_hpos + mv->viewport_height > history_len && z > 0) /* bottom */
+      )
+     return;
+
+
+   if (new_offset >= 0 && new_offset + mv->viewport_height < mv->image_height)
+     {
+        /* move */
+        DBG("TODO");
+     }
+   else
+     {
+        /* TODO: boris */
+        DBG("TODO");
+     }
+#endif
+}
+
+static void
+_smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
+                      Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Evas_Event_Mouse_Wheel *ev = event;
+   Miniview *mv = evas_object_smart_data_get(data);
+   Evas_Coord ox, oy, ow, oh, pox, poy, pow, poh;
+
+   EINA_SAFETY_ON_NULL_RETURN(mv);
+
+   /* do not handle horizontal scrolling */
+   if (ev->direction) return;
+
+   DBG("ev->z:%d", ev->z);
+
+   _scroll(mv, ev->z * 10);
+
+   evas_object_geometry_get(mv->img_obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(mv->self, &pox, &poy, &pow, &poh);
+   DBG("ox:%d oy:%d ow:%d oh:%d", ox, oy, ow, oh);
+   DBG("pox:%d poy:%d pow:%d poh:%d", pox, poy, pow, poh);
+}
+
 
 static void
 _smart_add(Evas_Object *obj)
@@ -73,7 +134,11 @@ _smart_add(Evas_Object *obj)
    evas_object_image_alpha_set(o, EINA_TRUE);
 
    evas_object_smart_member_add(o, obj);
-   mv->image_obj = o;
+   mv->img_obj = o;
+
+   /* TODO: see if we can use an elm scroller */
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _smart_cb_mouse_wheel, obj);
 }
 
 static void
@@ -95,94 +160,74 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
    if (!mv) return;
    /* TODO */
    DBG("%p x:%d y:%d", obj, x, y);
-   evas_object_move(mv->image_obj, x, y);
+   evas_object_move(mv->img_obj, x, y);
 }
 
 static void
-_miniview_draw(Miniview *mv)
+_draw_line(unsigned int *pixels, Termcell *cells, int length)
 {
-   Evas_Coord columns, oh;
-   unsigned int *pixels;
-   int x, y;
+   int x;
 
-   evas_object_geometry_get(mv->image_obj, NULL, NULL, &columns, &oh);
-   if (!columns || !oh) return;
-
-   pixels = evas_object_image_data_get(mv->image_obj, EINA_TRUE);
-   assert (pixels != NULL);
-   memset(pixels, 0, sizeof(*pixels) * columns * oh);
-
-   DBG("DRAW");
-   for (y = 0; y < oh; y++)
+   for (x = 0 ; x < length; x++)
      {
-        Termcell *cells;
-        int wret;
+        int r, g, b;
 
-        cells = termpty_cellrow_get(mv->pty, -y, &wret);
-        if (cells == NULL)
-          break;
-        for (x = 0 ; x < wret; x++)
+        if (cells[x].codepoint > 0 && !isspace(cells[x].codepoint) &&
+            !cells[x].att.newline && !cells[x].att.tab &&
+            !cells[x].att.invisible && cells[x].att.bg != COL_INVIS)
           {
-             int r, g, b;
-
-             if (cells[x].codepoint > 0 && !isspace(cells[x].codepoint) &&
-                 !cells[x].att.newline && !cells[x].att.tab &&
-                 !cells[x].att.invisible && cells[x].att.bg != COL_INVIS)
+             switch (cells[x].att.fg)
                {
-                  switch (cells[x].att.fg)
-                    {
-                       // TODO: get pixel colors from current themee...
-                     case 0:
-                        r = 180; g = 180; b = 180;
-                        break;
-                     case 2:
-                        r = 204; g = 51; b = 51;
-                        break;
-                     case 3:
-                        r = 51; g = 204; b = 51;
-                        break;
-                     case 4:
-                        r = 204; g = 136; b = 51;
-                        break;
-                     case 5:
-                        r = 51; g = 51; b = 204;
-                        break;
-                     case 6:
-                        r = 204; g = 51; b = 204;
-                        break;
-                     case 7:
-                        r = 51; g = 204; b = 204;
-                        break;
-                     default:
-                        r = 180; g = 180; b = 180;
-                    }
-                  pixels[x + y * columns] = (0xff << 24) | (r << 16) | (g << 8) | b;
+                  // TODO: get pixel colors from current themee...
+                case 0:
+                   r = 180; g = 180; b = 180;
+                   break;
+                case 2:
+                   r = 204; g = 51; b = 51;
+                   break;
+                case 3:
+                   r = 51; g = 204; b = 51;
+                   break;
+                case 4:
+                   r = 204; g = 136; b = 51;
+                   break;
+                case 5:
+                   r = 51; g = 51; b = 204;
+                   break;
+                case 6:
+                   r = 204; g = 51; b = 204;
+                   break;
+                case 7:
+                   r = 51; g = 204; b = 204;
+                   break;
+                default:
+                   r = 180; g = 180; b = 180;
                }
+             pixels[x] = (0xff << 24) | (r << 16) | (g << 8) | b;
           }
      }
 }
-
 
 static void
 _smart_show(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
-   DBG("%p", obj);
    if (!mv) return;
 
+   /*
    Evas_Coord ox, oy, ow, oh;
-   evas_object_geometry_get(mv->image_obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(mv->img_obj, &ox, &oy, &ow, &oh);
    DBG("ox:%d oy:%d ow:%d oh:%d visible:%d|%d %d %d %d",
        ox, oy, ow, oh,
        evas_object_visible_get(obj),
-       evas_object_visible_get(mv->image_obj),
-       evas_object_layer_get(mv->image_obj),
+       evas_object_visible_get(mv->img_obj),
+       evas_object_layer_get(mv->img_obj),
        evas_object_layer_get(obj),
        evas_object_layer_get(mv->termio));
+       */
 
-   _miniview_draw(mv);
-   evas_object_show(mv->image_obj);
+   evas_object_show(mv->img_obj);
 }
 
 static void
@@ -190,18 +235,20 @@ _smart_hide(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
-   DBG("%p", obj);
    if (!mv) return;
 
-   evas_object_hide(mv->image_obj);
+   evas_object_hide(mv->img_obj);
 }
 
 static void
 _smart_size(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
-   Evas_Coord ox, oy, ow, oh, font_w;
-   int columns;
+   Evas_Coord ox, oy, ow, oh, font_w, font_h;
+   int history_len, rows, columns, h, y, wret;
+   unsigned int *pixels;
+   Termcell *cells;
+
 
    if (!mv) return;
 
@@ -209,23 +256,70 @@ _smart_size(Evas_Object *obj)
 
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if (ow == 0 || oh == 0) return;
-   evas_object_size_hint_min_get(mv->termio, &font_w, NULL);
+   evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
 
    if (font_w <= 0) return;
 
    columns = ow / font_w;
+   rows = oh / font_h;
+   mv->img_h = 3 * oh;
 
    DBG("ox:%d oy:%d ow:%d oh:%d font_w:%d columns:%d",
        ox, oy, ow, oh, font_w, columns);
 
-   evas_object_resize(mv->image_obj, columns, oh);
-   evas_object_image_size_set(mv->image_obj, columns, oh);
-   evas_object_move(mv->image_obj, ox + ow - columns, oy);
+   evas_object_resize(mv->img_obj, columns, mv->img_h);
+   evas_object_image_size_set(mv->img_obj, columns, mv->img_h);
 
-   evas_object_image_fill_set(mv->image_obj, 0, 0, columns,
-                              oh);
+   evas_object_image_fill_set(mv->img_obj, 0, 0, columns, mv->img_h);
 
-   _miniview_draw(mv);
+   history_len = mv->pty->backscroll_num;
+
+   pixels = evas_object_image_data_get(mv->img_obj, EINA_TRUE);
+   memset(pixels, 0, sizeof(*pixels) * columns * mv->img_h);
+
+   mv->viewport_h = oh;
+   h = mv->img_h - rows;
+   if (h < history_len)
+     {
+        mv->img_hist = history_len - h;
+     }
+   else
+     {
+        mv->img_hist = history_len;
+     }
+
+   DBG("img_h:%d history_len:%d h:%d img_hist:%d vph:%d",
+       mv->img_h, history_len, h, mv->img_hist, mv->viewport_h);
+
+   for (y = 0; y < h; y++)
+     {
+        cells = termpty_cellrow_get(mv->pty, -(mv->img_hist - y), &wret);
+        if (cells == NULL)
+          {
+             DBG("y:%d get:%d", y, -(mv->img_hist - y));
+          break;
+          }
+
+        _draw_line(&pixels[y*columns], cells, wret);
+     }
+
+
+   if (y > mv->viewport_h)
+     {
+        evas_object_move(mv->img_obj,
+                         ox + ow - columns,
+                         - (y - mv->viewport_h));
+     }
+   else
+     {
+        mv->img_off = 0;
+        evas_object_move(mv->img_obj,
+                         ox + ow - columns,
+                         0);
+     }
+
+   DBG("history_len:%d img:h:%d hist:%d off:%d viewport:%d",
+       history_len, mv->img_h, mv->img_hist, mv->img_off,mv->viewport_h);
 }
 
 
@@ -239,7 +333,7 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (!mv) return;
 
    DBG("smart resize %p w:%d h:%d", obj, w, h);
-   evas_object_resize(mv->image_obj, w, h);
+   evas_object_resize(mv->img_obj, w, h);
    _smart_size(obj);
 }
 
@@ -294,8 +388,6 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
 
    mv->termio = termio;
    mv->pty = termio_pty_get(termio);
-
-   mv->scroll = 0;
 
    _smart_size(obj);
 
