@@ -252,12 +252,17 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 
    EINA_SAFETY_ON_NULL_RETURN(mv);
 
-   /* TODO handle keybinding to hide */
-
    if (!strcmp(ev->key, "Prior"))
         _scroll(mv, -10);
    else if (!strcmp(ev->key, "Next"))
         _scroll(mv, 10);
+   if (!strcmp(ev->keyname, "h") &&
+       !evas_key_modifier_is_set(ev->modifiers, "Alt") &&
+       evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+       evas_key_modifier_is_set(ev->modifiers, "Control"))
+     {
+        evas_object_smart_callback_call(mv->termio, "miniview,toggle", NULL);
+     }
 }
 
 static void
