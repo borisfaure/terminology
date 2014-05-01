@@ -16,6 +16,7 @@
 #include "utils.h"
 #include "media.h"
 #include "dbus.h"
+#include "miniview.h"
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
 # include <sys/proc_info.h>
@@ -68,6 +69,8 @@ struct _Termio
    Eina_List *seq;
    Evas_Object *self;
    Evas_Object *event;
+   Term *term;
+
    Termpty *pty;
    Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
@@ -1649,6 +1652,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
                                        sd->font.chh * sd->grid.h);
    _sel_set(obj, EINA_FALSE);
    termpty_resize(sd->pty, w, h);
+   miniview_redraw(term_miniview_get(sd->term), w, h);
 
    _smart_calculate(obj);
    _smart_apply(obj);
@@ -4448,7 +4452,9 @@ _smart_cb_drop(void *data, Evas_Object *o EINA_UNUSED, Elm_Selection_Data *ev)
 #endif
 
 Evas_Object *
-termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h)
+termio_add(Evas_Object *parent, Config *config,
+           const char *cmd, Eina_Bool login_shell, const char *cd,
+           int w, int h, Term *term)
 {
    Evas *e;
    Evas_Object *obj, *g;
@@ -4477,6 +4483,7 @@ termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login
      mod = modules[config->vidmod];
 
    termio_config_set(obj, config);
+   sd->term = term;
 
    sd->glayer = g = elm_gesture_layer_add(parent);
    elm_gesture_layer_attach(g, sd->event);

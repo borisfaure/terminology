@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "miniview.h"
 #include "col.h"
 #include "termpty.h"
 #include "termio.h"
@@ -58,6 +59,8 @@ struct _Miniview
    int viewport_h;
    int rows;
    int columns;
+
+   int is_shown;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -249,6 +252,8 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 
    EINA_SAFETY_ON_NULL_RETURN(mv);
 
+   /* TODO handle keybinding to hide */
+
    if (!strcmp(ev->key, "Prior"))
         _scroll(mv, -10);
    else if (!strcmp(ev->key, "Next"))
@@ -337,8 +342,15 @@ _smart_show(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
+    DBG("smart show obj:%p mv:%p", obj, mv);
    if (!mv) return;
 
+   if (!mv->is_shown)
+     {
+        mv->is_shown = 1;
+        miniview_redraw(obj, mv->columns, mv->rows);
+        evas_object_show(mv->img);
+     }
    /*
    Evas_Coord ox, oy, ow, oh;
    evas_object_geometry_get(mv->img, &ox, &oy, &ow, &oh);
@@ -351,7 +363,6 @@ _smart_show(Evas_Object *obj)
        evas_object_layer_get(mv->termio));
        */
 
-   evas_object_show(mv->img);
 }
 
 static void
@@ -359,36 +370,41 @@ _smart_hide(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
+    DBG("smart hide obj:%p mv:%p", obj, mv);
    if (!mv) return;
 
-   evas_object_hide(mv->img);
+   if (mv->is_shown)
+     {
+        mv->is_shown = 0;
+        evas_object_hide(mv->img);
+     }
 }
 
-static void
-_smart_size(Evas_Object *obj)
+void
+miniview_redraw(Evas_Object *obj, int columns, int rows)
 {
-   Miniview *mv = evas_object_smart_data_get(obj);
-   Evas_Coord ox, oy, ow, oh, font_w, font_h;
+   Miniview *mv;
+   Evas_Coord ox, oy, ow, oh;
    int history_len, h, y, wret;
    unsigned int *pixels;
    Termcell *cells;
 
+   if (!obj) return;
+   mv = evas_object_smart_data_get(obj);
    if (!mv) return;
 
+   mv->columns = columns;
+   mv->rows = rows;
+   if (!mv->is_shown) return;
    DBG("smart size %p", obj);
 
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if (ow == 0 || oh == 0) return;
-   evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
 
-   if (font_w <= 0) return;
-
-   mv->columns = ow / font_w;
-   mv->rows = oh / font_h;
    mv->img_h = 3 * oh;
 
-   DBG("ox:%d oy:%d ow:%d oh:%d font_w:%d columns:%d rows:%d",
-       ox, oy, ow, oh, font_w, mv->columns, mv->rows);
+   DBG("ox:%d oy:%d ow:%d oh:%d columns:%d rows:%d",
+       ox, oy, ow, oh, mv->columns, mv->rows);
 
    evas_object_resize(mv->img, mv->columns, mv->img_h);
    evas_object_image_size_set(mv->img, mv->columns, mv->img_h);
@@ -396,6 +412,9 @@ _smart_size(Evas_Object *obj)
    evas_object_image_fill_set(mv->img, 0, 0, mv->columns, mv->img_h);
 
    history_len = mv->pty->backscroll_num;
+
+   DBG("backscroll_num:%d backmax:%d backpos:%d",
+       mv->pty->backscroll_num, mv->pty->backmax, mv->pty->backpos);
 
    pixels = evas_object_image_data_get(mv->img, EINA_TRUE);
    memset(pixels, 0, sizeof(*pixels) * mv->columns * mv->img_h);
@@ -447,9 +466,6 @@ _smart_size(Evas_Object *obj)
 }
 
 
-
-
-
 static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
@@ -458,7 +474,6 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    DBG("smart resize %p w:%d h:%d", obj, w, h);
    evas_object_resize(mv->img, w, h);
-   _smart_size(obj);
 }
 
 
@@ -480,22 +495,13 @@ _smart_init(void)
     _smart = evas_smart_class_new(&sc);
 }
 
-
-void
-miniview_update_scroll(Evas_Object *obj, int scroll_position)
-{
-   Miniview *mv = evas_object_smart_data_get(obj);
-   if (!mv) return;
-
-   DBG("obj:%p mv:%p scroll_position:%d", obj, mv, scroll_position);
-}
-
 Evas_Object *
 miniview_add(Evas_Object *parent, Evas_Object *termio)
 {
    Evas *e;
    Evas_Object *obj;
    Miniview *mv;
+   Evas_Coord ow, oh, font_w, font_h;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
@@ -512,7 +518,13 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    mv->termio = termio;
    mv->pty = termio_pty_get(termio);
 
-   _smart_size(obj);
+   evas_object_geometry_get(mv->termio, NULL, NULL, &ow, &oh);
+   if (ow == 0 || oh == 0) return obj;
+   evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
+
+   if (font_w <= 0 || font_h <= 0) return obj;
+
+   miniview_redraw(obj, ow / font_w, oh / font_h);
 
    return obj;
 }

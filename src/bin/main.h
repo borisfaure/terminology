@@ -26,5 +26,6 @@ Win *main_term_win_get(Term *term);
 Evas_Object *main_win_evas_object_get(Win *wn);
 Eina_List *main_win_terms_get(Win *wn);
 Evas_Object *main_term_evas_object_get(Term *term);
+Evas_Object *term_miniview_get(Term *term);
 
 #endif

@@ -2,10 +2,11 @@
 #define _TERMIO_H__ 1
 
 #include "config.h"
+#include "main.h"
 #include "col.h"
 #include "termpty.h"
 
-Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h);
+Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, Term *term);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
 void         termio_theme_set(Evas_Object *obj, Evas_Object *theme);
 Evas_Object *termio_theme_get(Evas_Object *obj);
