@@ -1626,6 +1626,7 @@ _smart_apply(Evas_Object *obj)
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
    //printf("How are you today?\n?");
+   miniview_redraw(term_miniview_get(sd->term));
 }
 
 static void
@@ -1652,7 +1653,6 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
                                        sd->font.chh * sd->grid.h);
    _sel_set(obj, EINA_FALSE);
    termpty_resize(sd->pty, w, h);
-   miniview_redraw(term_miniview_get(sd->term), w, h);
 
    _smart_calculate(obj);
    _smart_apply(obj);
@@ -4999,4 +4999,13 @@ termio_pty_get(Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
 
    return sd->pty;
+}
+
+Evas_Object *
+termio_miniview_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+
+   return term_miniview_get(sd->term);
 }

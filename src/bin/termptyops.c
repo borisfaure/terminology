@@ -6,6 +6,7 @@
 #include "termptyops.h"
 #include "termptygfx.h"
 #include "termptysave.h"
+#include "miniview.h"
 
 #undef CRITICAL
 #undef ERR
@@ -46,7 +47,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    if (ty->back[ty->backpos])
      {
         Termsave *ts2;
-        
+
         ts2 = termpty_save_extract(ty->back[ty->backpos]);
         termpty_save_free(ts2);
         ty->back[ty->backpos] = NULL;

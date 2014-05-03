@@ -43,5 +43,6 @@ Config      *termio_config_get(const Evas_Object *obj);
 void         termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg);
 
 Termpty *termio_pty_get(Evas_Object *obj);
+Evas_Object * termio_miniview_get(Evas_Object *obj);
 
 #endif
