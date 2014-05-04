@@ -58,7 +58,10 @@ struct _Miniview
    unsigned rows;
    unsigned cols;
 
-   int is_shown;
+   Ecore_Timer *deferred_renderer;
+
+   int is_shown : 1;
+   int to_render : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -125,6 +128,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
    DBG("ev->z:%d", ev->z);
 
    mv->img_hist += ev->z * 10;
+   mv->to_render = 1;
 }
 
 static void
@@ -160,7 +164,11 @@ _smart_del(Evas_Object *obj)
 
    DBG("%p", obj);
    if (!mv) return;
-   /* TODO */
+
+   ecore_timer_del(mv->deferred_renderer);
+
+   evas_object_del(mv->img);
+   free(mv);
    DBG("%p", obj);
 }
 
@@ -207,7 +215,7 @@ _smart_show(Evas_Object *obj)
         evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
         evas_object_move(mv->img, ox + ow - mv->cols, oy);
 
-        miniview_redraw(obj);
+        mv->to_render = 1;
         evas_object_show(mv->img);
      }
 }
@@ -230,17 +238,26 @@ void
 miniview_redraw(Evas_Object *obj)
 {
    Miniview *mv;
+   if (!obj) return;
+   mv = evas_object_smart_data_get(obj);
+   if (!mv || !mv->is_shown) return;
+
+   mv->to_render = 1;
+}
+
+static Eina_Bool
+_deferred_renderer(void *data)
+{
+   Miniview *mv = data;
    Evas_Coord ox, oy, ow, oh;
    int history_len, wret;
    unsigned int *pixels, y;
    Termcell *cells;
 
-   if (!obj) return;
-   mv = evas_object_smart_data_get(obj);
-   if (!mv || !mv->is_shown) return;
+   if (!mv || !mv->is_shown || !mv->to_render) return EINA_TRUE;
 
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
-   if (ow == 0 || oh == 0) return;
+   if (ow == 0 || oh == 0) return EINA_TRUE;
 
    history_len = mv->pty->backscroll_num;
 
@@ -270,6 +287,10 @@ miniview_redraw(Evas_Object *obj)
        history_len, mv->img_hist, mv->img_h, mv->rows, mv->cols);
    evas_object_image_data_set(mv->img, pixels);
    evas_object_image_data_update_add(mv->img, 0, 0, mv->cols, mv->img_h);
+
+   mv->to_render = 0;
+
+   return EINA_TRUE;
 }
 
 
@@ -323,6 +344,7 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
 
    mv->termio = termio;
    mv->pty = termio_pty_get(termio);
+   mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
 
    return obj;
 }
