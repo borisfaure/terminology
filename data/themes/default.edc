@@ -392,13 +392,11 @@ collections {
          program {
             signal: "miniview,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
             target: "terminology.miniview";
          }
          program {
             signal: "miniview,on"; source: "terminology";
             action: STATE_SET "on" 0.0;
-            transition: DECELERATE 0.5;
             target: "terminology.miniview";
          }
 

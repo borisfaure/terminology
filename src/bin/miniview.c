@@ -23,8 +23,6 @@ int _miniview_log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_miniview_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_miniview_log_dom, __VA_ARGS__)
 
-/*TODO: work with splits */
-
 void
 miniview_init(void)
 {
@@ -50,7 +48,6 @@ struct _Miniview
    Evas_Object *self;
    Evas_Object *img;
    Evas_Object *termio;
-   Termpty *pty;
 
    int img_hist; /* history rendered is between img_hist (<0) and
                     img_hist + img_h */
@@ -60,8 +57,8 @@ struct _Miniview
 
    Ecore_Timer *deferred_renderer;
 
-   int is_shown : 1;
-   int to_render : 1;
+   unsigned int is_shown : 1;
+   unsigned int to_render : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -171,8 +168,13 @@ _smart_add(Evas_Object *obj)
    o = evas_object_image_add(canvas);
    evas_object_image_alpha_set(o, EINA_TRUE);
 
-   evas_object_smart_member_add(o, obj);
+   //evas_object_smart_member_add(o, obj);
    mv->img = o;
+   mv->is_shown = 0;
+   mv->to_render = 0;
+   mv->img_h = 0;
+   mv->rows = 0;
+   mv->cols = 0;
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _smart_cb_mouse_wheel, obj);
@@ -185,14 +187,14 @@ _smart_del(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
-   DBG("%p", obj);
    if (!mv) return;
+   DBG("del obj:%p mv:%p", obj, mv);
 
    ecore_timer_del(mv->deferred_renderer);
 
+   //evas_object_smart_member_del(mv->img);
    evas_object_del(mv->img);
    free(mv);
-   DBG("%p", obj);
 }
 
 static void
@@ -201,9 +203,9 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
    Miniview *mv = evas_object_smart_data_get(obj);
 
    if (!mv) return;
-   /* TODO */
    DBG("%p x:%d y:%d", obj, x, y);
-   evas_object_move(mv->img, x, y);
+   evas_object_move(mv->img, x + mv->img_h - mv->cols, y);
+   mv->to_render = 1;
 }
 
 static void
@@ -211,11 +213,16 @@ _smart_show(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
+   DBG("mv:%p is_shown:%d", mv, mv != NULL ? mv->is_shown : -1);
+
    if (!mv) return;
 
+   Evas_Coord ox, oy, ow, oh;
+   evas_object_geometry_get(mv->img, &ox, &oy, &ow, &oh);
+   DBG("ox:%d oy:%d ow:%d oh:%d", ox, oy, ow, oh);
    if (!mv->is_shown)
      {
-        Evas_Coord ox, oy, ow, oh, font_w, font_h;
+        Evas_Coord /*ox, oy, ow, oh,*/ font_w, font_h;
 
         mv->is_shown = 1;
         mv->img_hist = 0;
@@ -236,6 +243,8 @@ _smart_show(Evas_Object *obj)
         evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
 
         evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
+
+        DBG("ox:%d ow:%d cols:%d oy:%d", ox, ow, mv->cols, oy);
         evas_object_move(mv->img, ox + ow - mv->cols, oy);
 
         mv->to_render = 1;
@@ -276,16 +285,26 @@ _deferred_renderer(void *data)
    int history_len, wret;
    unsigned int *pixels, y;
    Termcell *cells;
+   Termpty *ty;
 
-   if (!mv || !mv->is_shown || !mv->to_render) return EINA_TRUE;
+   if (!mv || !mv->is_shown || !mv->to_render || mv->img_h == 0)
+     return EINA_TRUE;
 
+   ty = termio_pty_get(mv->termio);
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if (ow == 0 || oh == 0) return EINA_TRUE;
 
-   history_len = mv->pty->backscroll_num;
+   history_len = ty->backscroll_num;
 
+   evas_object_image_size_get(mv->img, &ow, &oh);
+   if (ow != (Evas_Coord)mv->cols || oh != (Evas_Coord)mv->img_h)
+     return EINA_TRUE;
+
+
+   DBG("ow:%d oh:%d cols:%d img_h:%d", ow, oh, mv->cols, mv->img_h);
    pixels = evas_object_image_data_get(mv->img, EINA_TRUE);
-   memset(pixels, 0, sizeof(*pixels) * mv->cols * mv->img_h);
+   memset(pixels, 0, sizeof(*pixels) * ow * oh);
+   mv->img_h = oh;
 
    DBG("history_len:%d hist:%d img_h:%d rows:%d cols:%d",
        history_len, mv->img_hist, mv->img_h, mv->rows, mv->cols);
@@ -297,7 +316,7 @@ _deferred_renderer(void *data)
 
    for (y = 0; y < mv->img_h; y++)
      {
-        cells = termpty_cellrow_get(mv->pty, mv->img_hist + y, &wret);
+        cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
         if (cells == NULL)
           {
              DBG("y:%d get:%d", y, mv->img_hist + y);
@@ -309,7 +328,8 @@ _deferred_renderer(void *data)
    DBG("history_len:%d hist:%d img_h:%d rows:%d cols:%d",
        history_len, mv->img_hist, mv->img_h, mv->rows, mv->cols);
    evas_object_image_data_set(mv->img, pixels);
-   evas_object_image_data_update_add(mv->img, 0, 0, mv->cols, mv->img_h);
+   evas_object_image_pixels_dirty_set(mv->img, EINA_FALSE);
+   evas_object_image_data_update_add(mv->img, 0, 0, ow, oh);
 
    mv->to_render = 0;
 
@@ -320,11 +340,28 @@ _deferred_renderer(void *data)
 static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Coord font_w, font_h, ox, oy;
    Miniview *mv = evas_object_smart_data_get(obj);
    if (!mv) return;
 
    DBG("smart resize %p w:%d h:%d", obj, w, h);
-   evas_object_resize(mv->img, w, h);
+   mv->img_h = h;
+
+   evas_object_geometry_get(mv->termio, &ox, &oy, NULL, NULL);
+   evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
+   if (font_w <= 0 || font_h <= 0) return;
+
+   mv->rows = h / font_h;
+   mv->cols = w / font_w;
+
+   if (mv->rows == 0 || mv->cols == 0) return;
+
+   evas_object_resize(mv->img, mv->cols, mv->img_h);
+   evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
+
+   evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
+   evas_object_move(mv->img, ox + w - mv->cols, oy);
+   mv->to_render = 1;
 }
 
 
@@ -357,16 +394,15 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    e = evas_object_evas_get(parent);
    if (!e) return NULL;
 
-   DBG("ADD parent:%p", parent);
 
    if (!_smart) _smart_init();
 
    obj = evas_object_smart_add(e, _smart);
    mv = evas_object_smart_data_get(obj);
    if (!mv) return obj;
+   DBG("ADD parent:%p mv:%p", parent, mv);
 
    mv->termio = termio;
-   mv->pty = termio_pty_get(termio);
    mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
 
    return obj;

@@ -261,7 +261,7 @@ _term_resize_track_stop(Split *sp)
 static void
 _split_split(Split *sp, Eina_Bool horizontal)
 {
-   Split *sp2;
+   Split *sp2, *sp1;
    Evas_Object *o;
    Config *config;
    char buf[PATH_MAX], *wdir = NULL;
@@ -276,18 +276,18 @@ _split_split(Split *sp, Eina_Bool horizontal)
    elm_panes_horizontal_set(o, sp->horizontal);
    
    _term_resize_track_stop(sp);
-   sp2 = sp->s1 = calloc(1, sizeof(Split));
-   sp2->parent = sp;
-   sp2->wn = sp->wn;
-   sp2->term = sp->term;
-   sp2->terms = sp->terms;
-   _term_resize_track_start(sp2);
+   sp1 = sp->s1 = calloc(1, sizeof(Split));
+   sp1->parent = sp;
+   sp1->wn = sp->wn;
+   sp1->term = sp->term;
+   sp1->terms = sp->terms;
+   _term_resize_track_start(sp1);
 
-   sp->terms = NULL;   
+   sp->terms = NULL;
    
    if (!sp->parent) edje_object_part_unswallow(sp->wn->base, sp->term->bg);
-   main_term_bg_redo(sp2->term);
-   _split_tabcount_update(sp2, sp2->term);
+   main_term_bg_redo(sp1->term);
+   _split_tabcount_update(sp1, sp1->term);
    
    sp2 = sp->s2 = calloc(1, sizeof(Split));
    sp2->parent = sp;
@@ -303,8 +303,8 @@ _split_split(Split *sp, Eina_Bool horizontal)
    _term_media_update(sp2->term, config);
    _split_tabcount_update(sp2, sp2->term);
    evas_object_data_set(sp2->term->term, "sizedone", sp2->term->term);
-   elm_object_part_content_set(sp->panes, PANES_TOP, sp->s1->term->bg);
-   elm_object_part_content_set(sp->panes, PANES_BOTTOM, sp->s2->term->bg);
+   elm_object_part_content_set(sp->panes, PANES_TOP, sp1->term->bg);
+   elm_object_part_content_set(sp->panes, PANES_BOTTOM, sp2->term->bg);
 
    if (!sp->parent)
      edje_object_part_swallow(sp->wn->base, "terminology.content", sp->panes);
@@ -1102,15 +1102,17 @@ _cb_miniview_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSE
    EINA_SAFETY_ON_NULL_RETURN(term);
    EINA_SAFETY_ON_NULL_RETURN(term->miniview);
 
-   ERR("MINIVIEW TOGGLE");
+   ERR("MINIVIEW TOGGLE term:%p", term);
 
    if (term->miniview_shown)
      {
+        ERR("OFF bg:%p", term->bg);
         edje_object_signal_emit(term->bg, "miniview,off", "terminology");
         term->miniview_shown = EINA_FALSE;
      }
    else
      {
+        ERR("ON bg:%p", term->bg);
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
         term->miniview_shown = EINA_TRUE;
      }
@@ -2075,6 +2077,7 @@ main_term_bg_config(Term *term)
                                    _cb_tabcount_next, term);
    edje_object_part_swallow(term->base, "terminology.content", term->term);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
+   edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
    if (term->popmedia)
      {
         edje_object_part_swallow(term->bg, "terminology.popmedia", term->popmedia);
@@ -2120,6 +2123,8 @@ main_term_bg_config(Term *term)
           elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
         elm_object_focus_set(term->term, EINA_TRUE);
      }
+   if (term->miniview_shown)
+        edje_object_signal_emit(term->bg, "miniview,on", "terminology");
 }
 
 static void
@@ -2131,6 +2136,12 @@ main_term_bg_redo(Term *term)
      {
         evas_object_del(term->tabcount_spacer);
         term->tabcount_spacer = NULL;
+     }
+   if (term->miniview)
+     {
+        edje_object_part_unswallow(term->bg, term->miniview);
+        evas_object_del(term->miniview);
+        term->miniview = NULL;
      }
    evas_object_del(term->base);
    evas_object_del(term->bg);
@@ -2148,11 +2159,19 @@ main_term_bg_redo(Term *term)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    theme_apply(o, term->config, "terminology/background");
 
+   term->miniview = o = miniview_add(term->wn->win, term->term);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   o = term->bg;
+
    theme_auto_reload_enable(o);
    evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
    evas_object_data_set(o, "theme_reload_func_data", term);
    evas_object_show(o);
    main_term_bg_config(term);
+   if (term->miniview_shown)
+        edje_object_signal_emit(term->bg, "miniview,on", "terminology");
 }
 
 static Term *
@@ -2307,7 +2326,9 @@ Evas_Object *main_term_evas_object_get(Term *term)
 Evas_Object *
 term_miniview_get(Term *term)
 {
-   return term->miniview;
+   if (term)
+     return term->miniview;
+   return NULL;
 }
 
 

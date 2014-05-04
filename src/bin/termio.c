@@ -1625,7 +1625,6 @@ _smart_apply(Evas_Object *obj)
      evas_object_hide(sd->sel.theme);
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
-   //printf("How are you today?\n?");
    miniview_redraw(term_miniview_get(sd->term));
 }
 
@@ -4819,10 +4818,8 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
      {
         if (sd->anim) ecore_animator_del(sd->anim);
         sd->anim = NULL;
-        _smart_apply(obj);
      }
-   else
-     _smart_update_queue(obj, sd);
+   _smart_update_queue(obj, sd);
 }
 
 void
