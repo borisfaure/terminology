@@ -132,6 +132,27 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
+_smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Evas_Event_Mouse_Down *ev = event;
+   Miniview *mv= evas_object_smart_data_get(data);
+   int pos;
+   Evas_Coord oy;
+
+   EINA_SAFETY_ON_NULL_RETURN(mv);
+
+   evas_object_geometry_get(mv->img, NULL, &oy, NULL, NULL);
+   pos = oy - ev->canvas.y;
+   pos -= mv->img_hist;
+   if (pos < 0)
+     pos = 0;
+   else
+     pos += mv->rows / 2;
+   termio_scroll_set(mv->termio, pos);
+}
+
+static void
 _smart_add(Evas_Object *obj)
 {
    Miniview *mv;
@@ -155,6 +176,8 @@ _smart_add(Evas_Object *obj)
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _smart_cb_mouse_wheel, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _smart_cb_mouse_down, obj);
 }
 
 static void
