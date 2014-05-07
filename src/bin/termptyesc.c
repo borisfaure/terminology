@@ -857,7 +857,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                                  break;
                                case 2004:
                                  handled = 1;
-                                 ty->state.bracketed_paste = mode;
+                                 ty->bracketed_paste = mode;
                                  break;
                                case 7727: // ignore
                                  handled = 1;

@@ -1858,13 +1858,13 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
              if (i)
                {
 
-                if (sd->pty->state.bracketed_paste)
+                if (sd->pty->bracketed_paste)
                   termpty_write(sd->pty, "\x1b[200~",
                                 sizeof("\x1b[200~") - 1);
 
                 termpty_write(sd->pty, tmp, i);
 
-                if (sd->pty->state.bracketed_paste)
+                if (sd->pty->bracketed_paste)
                   termpty_write(sd->pty, "\x1b[201~",
                                 sizeof("\x1b[201~") - 1);
                }

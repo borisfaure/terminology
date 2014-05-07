@@ -388,9 +388,9 @@ _termpty_reset_state(Termpty *ty)
    ty->state.hidecursor = 0;
    ty->state.crlf = 0;
    ty->state.had_cr = 0;
-   ty->state.bracketed_paste = 0;
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
+   ty->bracketed_paste = 0;
 }
 
 void
