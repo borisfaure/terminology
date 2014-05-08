@@ -54,7 +54,9 @@ struct _Termatt
    unsigned short italic : 1;
 #elif defined(SUPPORT_DBLWIDTH)
    unsigned short dblwidth : 1;
-#endif   
+#else
+   unsigned short bit_padding_0 : 1;
+#endif
    unsigned short underline : 1;
    unsigned short blink : 1; // don't intend to support this currently
    unsigned short blink2 : 1; // don't intend to support this currently
@@ -72,6 +74,9 @@ struct _Termatt
    unsigned short fraktur : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
+   unsigned short bit_padding : 14;
+#else
+   unsigned short bit_padding : 15;
 #endif
 };
 
@@ -156,6 +161,7 @@ struct _Termcell
 {
    Eina_Unicode   codepoint;
    Termatt        att;
+   unsigned char padding[2];
 };
 
 struct _Termsave

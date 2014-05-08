@@ -1056,9 +1056,9 @@ void
 termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
                                 Termatt att, Termcell *dst, int n)
 {
-   Termcell local = { codepoint, att };
+   Termcell local = { .codepoint = codepoint, .att = att };
    int i;
-   
+
    for (i = 0; i < n; i++)
      {
         _handle_block_codepoint_overwrite(ty, dst[i].codepoint, codepoint);
