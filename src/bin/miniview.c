@@ -63,50 +63,73 @@ struct _Miniview
 
 static Evas_Smart *_smart = NULL;
 
+static void
+_draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell)
+{
+   int fg, bg, fgext, bgext;
+   int inv = ty->state.reverse;
 
+   if (cell->codepoint == 0 ||
+       cell->att.newline ||
+       cell->att.invisible)
+     {
+        *pixel = 0;
+        return;
+     }
+   // colors
+   fg = cell->att.fg;
+   bg = cell->att.bg;
+   fgext = cell->att.fg256;
+   bgext = cell->att.bg256;
+
+   if ((fg == COL_DEF) && (cell->att.inverse ^ inv))
+     fg = COL_INVERSEBG;
+   if (bg == COL_DEF)
+     {
+        if (cell->att.inverse ^ inv)
+          bg = COL_INVERSE;
+        else if (!bgext)
+          bg = COL_INVIS;
+     }
+   if ((cell->att.fgintense) && (!fgext))
+     fg += 48;
+   if ((cell->att.bgintense) && (!bgext))
+     bg += 48;
+   if (cell->att.inverse ^ inv)
+     {
+        int t;
+        t = fgext; fgext = bgext; bgext = t;
+        t = fg; fg = bg; bg = t;
+     }
+   if ((cell->att.bold) && (!fgext))
+     fg += 12;
+   if ((cell->att.faint) && (!fgext))
+     fg += 24;
+
+   if (bgext)
+        *pixel = color_get(bg + 256);
+   else if (bg && (bg % 12) != COL_INVIS)
+        *pixel = color_get(bg);
+   else if (!isspace(cell->codepoint))
+     {
+        if (fgext)
+          *pixel = color_get(fg + 256);
+        else
+          *pixel = color_get(fg);
+     }
+   else
+     *pixel = 0;
+}
 
 static void
-_draw_line(unsigned int *pixels, Termcell *cells, int length)
+_draw_line(const Termpty *ty, unsigned int *pixels,
+           const Termcell *cells, int length)
 {
    int x;
 
    for (x = 0 ; x < length; x++)
      {
-        int r, g, b;
-
-        if (cells[x].codepoint > 0 && !isspace(cells[x].codepoint) &&
-            !cells[x].att.newline && !cells[x].att.tab &&
-            !cells[x].att.invisible && cells[x].att.bg != COL_INVIS)
-          {
-             switch (cells[x].att.fg)
-               {
-                  // TODO: get pixel colors from current theme...
-                case 0:
-                   r = 180; g = 180; b = 180;
-                   break;
-                case 2:
-                   r = 204; g = 51; b = 51;
-                   break;
-                case 3:
-                   r = 51; g = 204; b = 51;
-                   break;
-                case 4:
-                   r = 204; g = 136; b = 51;
-                   break;
-                case 5:
-                   r = 51; g = 51; b = 204;
-                   break;
-                case 6:
-                   r = 204; g = 51; b = 204;
-                   break;
-                case 7:
-                   r = 51; g = 204; b = 204;
-                   break;
-                default:
-                   r = 180; g = 180; b = 180;
-               }
-             pixels[x] = (0xff << 24) | (r << 16) | (g << 8) | b;
-          }
+        _draw_cell(ty, pixels + x, cells + x);
      }
 }
 
@@ -301,7 +324,6 @@ _deferred_renderer(void *data)
      return EINA_TRUE;
 
 
-   DBG("ow:%d oh:%d cols:%d img_h:%d", ow, oh, mv->cols, mv->img_h);
    pixels = evas_object_image_data_get(mv->img, EINA_TRUE);
    memset(pixels, 0, sizeof(*pixels) * ow * oh);
    mv->img_h = oh;
@@ -318,15 +340,10 @@ _deferred_renderer(void *data)
      {
         cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
         if (cells == NULL)
-          {
-             DBG("y:%d get:%d", y, mv->img_hist + y);
           break;
-          }
 
-        _draw_line(&pixels[y * mv->cols], cells, wret);
+        _draw_line(ty, &pixels[y * mv->cols], cells, wret);
      }
-   DBG("history_len:%d hist:%d img_h:%d rows:%d cols:%d",
-       history_len, mv->img_hist, mv->img_h, mv->rows, mv->cols);
    evas_object_image_data_set(mv->img, pixels);
    evas_object_image_pixels_dirty_set(mv->img, EINA_FALSE);
    evas_object_image_data_update_add(mv->img, 0, 0, ow, oh);

@@ -7,11 +7,14 @@ typedef struct _Color Color;
 
 struct _Color
 {
-   unsigned char r, g, b, a;
+   unsigned char r;
+   unsigned char g;
+   unsigned char b;
+   unsigned char a;
 };
 
-
-static const Color colors[2][2][12] =
+static Color colors[2][2][12];
+static const Color default_colors[2][2][12] =
 {
    { // normal
         { // normal
@@ -75,7 +78,8 @@ static const Color colors[2][2][12] =
    }
 };
 
-static const Color colors256[256] =
+static Color colors256[256];
+static const Color default_colors256[256] =
 {
    // basic 16 repeated
    { 0x00, 0x00, 0x00, 0xff }, // COL_BLACK
@@ -381,84 +385,62 @@ void
 colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
 {
    int c, n;
-   int r, g, b, a;
    char buf[32];
+   Color *color;
 
    for (c = 0; c < 4 * 12; c++)
      {
+        n = c + (24 * (c / 24));
+        color = &colors[c / 24][(c % 24) / 12][c % 12];
         if (config->colors_use)
           {
-             n = c + (24 * (c / 24));
-             
-             r = config->colors[c].r;
-             g = config->colors[c].g;
-             b = config->colors[c].b;
-             a = config->colors[c].a;
-             /* normal */
-             evas_object_textgrid_palette_set
-             (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-              r, g, b, a);
-             /* faint */
-             evas_object_textgrid_palette_set
-             (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-              r / 2, g / 2, b / 2, a / 2);
+             color->r = config->colors[c].r;
+             color->g = config->colors[c].g;
+             color->b = config->colors[c].b;
+             color->a = config->colors[c].a;
           }
         else
           {
              snprintf(buf, sizeof(buf) - 1, "c%i", c);
-             
-             n = c + (24 * (c / 24));
-             
-             if (edje_object_color_class_get(bg, buf,
-                                             &r, &g, &b, &a,
-                                             NULL, NULL, NULL, NULL,
-                                             NULL, NULL, NULL, NULL))
+             if (!edje_object_color_class_get(bg, buf,
+                                              (int*)&color->r,
+                                              (int*)&color->g,
+                                              (int*)&color->b,
+                                              (int*)&color->a,
+                                              NULL, NULL, NULL, NULL,
+                                              NULL, NULL, NULL, NULL))
                {
-                  /* normal */
-                  evas_object_textgrid_palette_set
-                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                   r, g, b, a);
-                  /* faint */
-                  evas_object_textgrid_palette_set
-                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-                   r / 2, g / 2, b / 2, a / 2);
-               }
-             else
-               {
-                  Color color = colors[c / 24][(c % 24) / 12][c % 12];
-                  
-                  /* normal */
-                  evas_object_textgrid_palette_set
-                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-                   color.r, color.g, color.b, color.a);
-                  /* faint */
-                  evas_object_textgrid_palette_set
-                  (textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-                   color.r / 2, color.g / 2, color.b / 2, color.a / 2);
+                  *color = default_colors[c / 24][(c % 24) / 12][c % 12];
                }
           }
+        /* normal */
+        evas_object_textgrid_palette_set(
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+           color->r, color->g, color->b, color->a);
+
+        /* faint */
+        evas_object_textgrid_palette_set(
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
+           color->r / 2, color->g / 2, color->b / 2, color->a / 2);
      }
    for (c = 0; c < 256; c++)
      {
         snprintf(buf, sizeof(buf) - 1, "C%i", c);
+        color = &colors256[c];
 
-        if (edje_object_color_class_get(bg, buf,
-                                        &r, &g, &b, &a,
-                                        NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL, NULL))
+        if (!edje_object_color_class_get(bg, buf,
+                                         (int*)&colors256[c].r,
+                                         (int*)&colors256[c].g,
+                                         (int*)&colors256[c].b,
+                                         (int*)&colors256[c].a,
+                                         NULL, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL))
           {
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
-                 r, g, b, a);
+             *color = default_colors256[c];
           }
-        else
-          {
-             Color color = colors256[c];
-
-             evas_object_textgrid_palette_set(
-                 textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
-                 color.r, color.g, color.b, color.a);
-          }
+        evas_object_textgrid_palette_set(
+           textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
+           color->r, color->g, color->b, color->a);
      }
 }
 
@@ -468,17 +450,48 @@ colors_standard_get(int set, int col, unsigned char *r, unsigned char *g, unsign
    if ((set >= 0) && (set < 4))
      {
         int s1, s2;
-        
+
         s1 = set / 2;
         s2 = set % 2;
-        *r = colors[s1][s2][col].r;
-        *g = colors[s1][s2][col].g;
-        *b = colors[s1][s2][col].b;
-        *a = colors[s1][s2][col].a;
+        *r = default_colors[s1][s2][col].r;
+        *g = default_colors[s1][s2][col].g;
+        *b = default_colors[s1][s2][col].b;
+        *a = default_colors[s1][s2][col].a;
         return;
      }
    *r = 0;
    *g = 0;
    *b = 0;
    *a = 0;
+}
+
+/* if pos >= 256, it's in the 256 colors set */
+unsigned int color_get(unsigned int pos)
+{
+   Color *c;
+
+   if (pos >= 256)
+     {
+        pos -= 256;
+        if (pos >= sizeof(colors256)/sizeof(Color))
+          {
+             ERR("AAAAAA");
+          return 0;
+          }
+        c = &colors256[pos];
+     }
+   else
+     {
+        if (pos >= sizeof(colors)/sizeof(Color))
+          {
+             ERR("AAAAAA");
+          return 0;
+          }
+        c = ((Color *)colors) + pos;
+     }
+
+  return (c->a << 24) |
+         (c->r << 16) |
+         (c->g << 8) |
+         (c->b);
 }
