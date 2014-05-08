@@ -26,8 +26,8 @@ struct _Termio
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    struct {
-      int size;
       const char *name;
+      int size;
       int chw, chh;
    } font;
    struct {
@@ -45,6 +45,7 @@ struct _Termio
       int cx, cy;
       int button;
    } mouse;
+   unsigned int last_keyup;
    struct {
       char *string;
       int x1, y1, x2, y2;
@@ -61,7 +62,6 @@ struct _Termio
    } link;
    int zoom_fontsize_start;
    int scroll;
-   unsigned int last_keyup;
    Eina_List *mirrors;
    Eina_List *seq;
    Evas_Object *self;

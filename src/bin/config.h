@@ -13,7 +13,8 @@ struct _Config_Color
 
 struct _Config
 {
-   int version;
+   int               version;
+   int               scrollback;
    struct {
       const char    *name;
       const char    *orig_name; /* not in EET */
@@ -32,9 +33,8 @@ struct _Config
       Eina_Bool      inline_please;
    } helper;
    const char       *theme;
-   const char       *background; 
+   const char       *background;
    const char       *wordsep;
-   int               scrollback;
    double            tab_zoom;
    int               vidmod;
    Eina_Bool         jump_on_keypress;
