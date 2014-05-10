@@ -1,0 +1,208 @@
+#ifndef __NYANOLOGY_ABOUT
+#define __NYANOLOGY_ABOUT
+
+#include "nyancursor.edc"
+
+/*
+ * Most of the things concerning the about box go in here
+ *
+ */
+collections {
+	group { name: "nyanology/star";
+#define STAR_SIZE 40
+		images {
+			image: "star_1.png" COMP;
+			image: "star_2.png" COMP;
+			image: "star_3.png" COMP;
+			image: "star_4.png" COMP;
+			image: "star_5.png" COMP;
+			image: "star_6.png" COMP;
+		}
+		parts {
+			part { name: "star";
+				description { state: "default" 0.0;
+					min: STAR_SIZE STAR_SIZE;
+					max: STAR_SIZE STAR_SIZE;
+					fixed: 1 1;
+					fill.smooth: 0;
+					image.normal: "star_1.png";
+					aspect: 1 1;
+					aspect_preference: BOTH;
+					align: 0 0.5;
+				}
+#define STAR_FRAME(number) \
+				description { state: "anim"#number 0.0; \
+					inherit: "default"; \
+					image.normal: "star_"#number".png"; \
+					rel1.offset: ((6-(number))*STAR_SIZE*2) 0.0;\
+				}
+				STAR_FRAME(1)
+				STAR_FRAME(2)
+				STAR_FRAME(3)
+				STAR_FRAME(4)
+				STAR_FRAME(5)
+				STAR_FRAME(6)
+#undef STAR_FRAME
+			}
+		}
+		programs {
+#define STAR_PROGRAM(number, next, wait_or_transition) \
+			program { name: "anim"#number ;\
+				wait_or_transition; \
+				action: STATE_SET "anim"#number 0.0; \
+				target: "star"; \
+				after: "anim"#next; \
+			}
+			STAR_PROGRAM(1, 2, in: FRAME_DURATION 0)
+#define STAR_PROGRAM2(number, next) STAR_PROGRAM(number, next, transition: SINUSOIDAL FRAME_DURATION)
+			STAR_PROGRAM2(2, 3)
+			STAR_PROGRAM2(3, 4)
+			STAR_PROGRAM2(4, 5)
+			STAR_PROGRAM2(5, 6)
+			STAR_PROGRAM2(6, 1)
+#undef STAR_PROGRAM2
+#undef STAR_PROGRAM
+		}
+	}
+#define STAR_GROUP(number) \
+	group { name: "nyanology/star"#number; \
+		inherit: "nyanology/star"; \
+		programs { \
+			program { name: "anim"#number; \
+				signal: "show"; \
+			} \
+		} \
+	}
+	STAR_GROUP(1)
+	STAR_GROUP(2)
+	STAR_GROUP(3)
+	STAR_GROUP(4)
+	STAR_GROUP(5)
+	STAR_GROUP(6)
+#undef STAR_GROUP
+	group { name: "nyanology/stars";
+		parts{
+			part { name: "starfield";
+				type: BOX;
+				description { state: "default" 0.0;
+					box { layout: "vertical_homogeneous";
+						padding: 0 STAR_SIZE;
+					}
+				}
+				box { items {
+#define STAR_ITEM(number) \
+						item { name: "star"#number; \
+							align: 0 0.5;\
+							source: "nyanology/star"#number; }
+						STAR_ITEM(3)
+						STAR_ITEM(2)
+						STAR_ITEM(5)
+						STAR_ITEM(4)
+						STAR_ITEM(1)
+						STAR_ITEM(6)
+#undef STAR_ITEM
+				}
+				}
+			}
+		}
+	}
+#undef STAR_SIZE
+
+//////////////////////////////////////////////////////////////////////////////
+   //// the about box content image
+	group { name: "nyanology/nyancat";
+		alias: "terminology/about";
+		styles {
+			style { name: "nyanaboutstyle";
+				base: "font=Nexus font_size=10 color=#fff wrap=word";
+			}
+		}
+		parts {
+			part { name: "bg";
+				type: RECT;
+				description { state: "default" 0.0;
+					color: 0 51 102 255;
+					min: 400 400;
+				}
+			}
+			part { name: "clip";
+				type: RECT;
+				description { state: "default" 0.0;
+					min: 400 400;
+				}
+			}
+			part { name: "starfield";
+				type: GROUP;
+				source: "nyanology/stars";
+				description { state: "default" 0.0;
+				}
+			}
+			part { name: "cat";
+				type: GROUP;
+				source: "nyanology/catcursor";
+				description { state: "default" 0.0;
+					max: 291 121;
+					rel1.relative: -3.5 0 ;
+					map.alpha: 0;
+				}
+			}
+			part { name: "terminology.text";
+				type: TEXTBLOCK;
+				clip_to: "clip";
+				description { state: "default" 0.0;
+					fixed: 1 1;
+					align: 0.5 0.0;
+					max: 10000 10000;
+					rel1 {
+						relative: 0.08 1.0;
+					}
+					rel2 {
+						relative: 0.97 1.0;
+					}
+					text {
+						style: "nyanaboutstyle";
+						text: "Hello. This text shouldn't appear";
+						min: 0 1;
+					}
+				}
+				description { state: "up" 0.0;
+					inherit: "default" 0.0;
+					align: 0.5 1.0;
+					rel1.relative: 0.08 0.0;
+					rel2.relative: 0.97 0.0;
+				}
+			}
+		}
+		programs {
+			program { name: "default";
+				signal: "show";
+				action: SIGNAL_EMIT "focus,in" "terminology";
+			}
+			program { name: "begin";
+				signal: "begin";
+				source: "terminology";
+				action: ACTION_STOP;
+				target: "show";
+				target: "show2";
+				after: "begin2";
+			}
+			program { name: "begin2";
+				action: STATE_SET "default" 0.0;
+				target: "terminology.text";
+				after: "show";
+			}
+			program { name: "show";
+				action: STATE_SET "up" 0.0;
+				transition: LINEAR 15.0;
+				target: "terminology.text";
+				after: "show2";
+			}
+			program { name: "show2";
+				action: STATE_SET "default" 0.0;
+				target: "terminology.text";
+				after: "show";
+			}
+		}
+	}
+}
+#endif /* __NYANOLOGY_ABOUT */

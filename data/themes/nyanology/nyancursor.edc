@@ -1,0 +1,195 @@
+#ifndef __NYANCAT_CURSOR
+#define __NYANCAT_CURSOR
+#define FRAME_DURATION 0.07
+collections {
+	group { name: "nyanology/catcursor";
+		alias: "terminology/cursor";
+		images {
+			image: "cat01.png" COMP;
+			image: "cat02.png" COMP;
+			image: "cat03.png" COMP;
+			image: "cat04.png" COMP;
+			image: "cat05.png" COMP;
+			image: "cat06.png" COMP;
+			image: "cat07.png" COMP;
+			image: "cat08.png" COMP;
+			image: "cat09.png" COMP;
+			image: "cat10.png" COMP;
+			image: "cat11.png" COMP;
+			image: "cat12.png" COMP;
+			image: "cr_key.png" COMP;
+		}
+		parts {
+			part { name: "cat";
+				description { state: "default" 0.0;
+					min: 0 17;
+					max: SOURCE;
+					aspect: 2.4 2.6; // aspect from the source image
+					aspect_preference: VERTICAL;
+					rel1.relative: 4.5 0;
+					image.normal: "cat01.png";
+					map.on: 1;
+				}
+				description { state: "greyed";
+					inherit: "default";
+					color: 120 120 120 255;
+				}
+				description { state: "anim1" 0.0;
+					inherit: "default";
+					image {
+						tween: "cat01.png";
+						tween: "cat02.png";
+						tween: "cat03.png";
+						tween: "cat04.png";
+						tween: "cat05.png";
+						normal: "cat06.png";
+					}
+				}
+				description { state: "anim2" 0.0;
+					inherit: "default";
+					image {
+						tween: "cat07.png";
+						tween: "cat08.png";
+						tween: "cat09.png";
+						tween: "cat10.png";
+						tween: "cat11.png";
+						normal: "cat12.png";
+					}
+				}
+				description { state: "rotation1" 0.0;
+					inherit: "default";
+					image {
+						tween: "cat01.png";
+						tween: "cat02.png";
+						normal: "cat03.png";
+					}
+					map.rotation.z: -35.0;
+				}
+				description { state: "rotation2" 0.0;
+					inherit: "default";
+					image {
+						tween: "cat04.png";
+						tween: "cat05.png";
+						tween: "cat06.png";
+						tween: "cat07.png";
+						tween: "cat08.png";
+						normal: "cat09.png";
+					}
+					map.rotation.z: 35.0;
+				}
+				description { state: "rotation3" 0.0;
+					inherit: "default";
+					image {
+						tween: "cat10.png";
+						tween: "cat11.png";
+						normal: "cat12.png";
+					}
+					map.rotation.z: 0.0;
+				}
+			}
+
+			part { name: "key";
+				mouse_events: 0;
+				description { state: "default" 0.0;
+					rel1 {
+						to: "cat";
+						offset: -5 -5;
+						relative: 0.1 0.0;
+					}
+					rel2 {
+						to: "cat";
+						offset: 4 4;
+						relative: 0.5 1.0;
+					}
+					image {
+						normal: "cr_key.png";
+						border: 4 4 4 4;
+					}
+					color: 255 255 255 0;
+				}
+				description { state: "on" 0.0;
+					inherit: "default" 0.0;
+					color: 255 255 255 255;
+				}
+				description { state: "out" 0.0;
+					inherit: "default" 0.0;
+					color: 160 100 255 0;
+					rel1.relative: -0.2 -0.18;
+					rel2.relative: 0.6 1.18;
+				}
+			}
+
+		}
+		programs {
+			program { name: "anim";
+				signal: "focus,in";
+				source: "terminology";
+				action: STATE_SET "anim1" 0.0;
+				transition: LINEAR FRAME_DURATION*6;
+				target: "cat";
+				after: "loop";
+			}
+			program { name: "loop";
+				action: STATE_SET "anim2" 0.0;
+				transition: LINEAR FRAME_DURATION*6;
+				target: "cat";
+				after: "anim";
+			}
+			program { name: "stop_anim";
+				signal: "focus,out";
+				source: "terminology";
+				action: ACTION_STOP;
+				target: "anim";
+				target: "loop";
+				target: "bellrotate1";
+				target: "bellrotate2";
+				target: "bellrotate3";
+				after: "stop_anim2";
+			}
+			// Is it that important to go back to default state ?
+			program { name: "stop_anim2";
+				action: STATE_SET "greyed" 0.0;
+				transition: LINEAR FRAME_DURATION*6;
+				target: "cat";
+			}
+			program { name: "key";
+				signal: "key,down";
+				source: "terminology";
+				action: STATE_SET "default" 0.0;
+				target: "key";
+				after: "key2";
+			}
+			program { name: "key2";
+				action: STATE_SET "on" 0.0;
+				target: "key";
+				after: "key3";
+			}
+			program { name: "key3";
+				action: STATE_SET "out" 0.0;
+				transition: DECELERATE 0.3;
+				target: "key";
+			}
+			program { name: "bellrotate1";
+				signal: "bell";
+				source: "terminology";
+				action: STATE_SET "rotation1" 0.0;
+				transition: LINEAR 0.12;
+				target: "cat";
+				after: "bellrotate2";
+			}
+			program { name: "bellrotate2";
+				action: STATE_SET "rotation2" 0.0;
+				transition: LINEAR 0.24;
+				target: "cat";
+				after: "bellrotate3";
+			}
+			program { name: "bellrotate3";
+				action: STATE_SET "rotation3" 0.0;
+				transition: LINEAR 0.12;
+				target: "cat";
+				after: "anim";
+			}
+		}
+	}
+}
+#endif /*__NYANCAT_CURSOR*/

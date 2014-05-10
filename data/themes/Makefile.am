@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = images sounds
+SUBDIRS = images sounds nyanology
 
 EDJE_CC = @edje_cc@
 EDJE_FLAGS_VERBOSE_ =
