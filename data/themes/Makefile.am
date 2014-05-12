@@ -20,7 +20,7 @@ base16_ocean_dark.edj
 
 AM_V_EDJ = $(am__v_EDJ_$(V))
 am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
-am__v_EDJ_0 = @echo "  EDJ   " $@;
+am__v_EDJ_0 = @echo "  EDJ     " $@;
 
 EXTRA_DIST = \
 default.edc \
