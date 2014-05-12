@@ -380,6 +380,18 @@ _smart_init(void)
     _smart = evas_smart_class_new(&sc);
 }
 
+static void
+_cb_miniview_close(void *data, Evas_Object *obj EINA_UNUSED,
+                   const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   Miniview *mv = data;
+
+   EINA_SAFETY_ON_NULL_RETURN(mv);
+   EINA_SAFETY_ON_NULL_RETURN(mv->termio);
+   if (mv->is_shown)
+     term_miniview_hide(termio_term_get(mv->termio));
+}
+
 Evas_Object *
 miniview_add(Evas_Object *parent, Evas_Object *termio)
 {
@@ -423,6 +435,7 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
                                   _smart_cb_mouse_wheel, obj);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _smart_cb_mouse_down, obj);
+   edje_object_signal_callback_add(mv->base, "miniview,close", "terminology", _cb_miniview_close, mv);
 
    mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
 

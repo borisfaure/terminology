@@ -2197,7 +2197,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
           }
         else if (!strcmp(ev->keyname, "h"))
           {
-             evas_object_smart_callback_call(data, "miniview,toggle", NULL);
+             term_miniview_toggle(sd->term);
              goto end;
           }
      }
@@ -5005,4 +5005,13 @@ termio_miniview_get(Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
 
    return term_miniview_get(sd->term);
+}
+
+Term*
+termio_term_get(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+
+   return sd->term;
 }

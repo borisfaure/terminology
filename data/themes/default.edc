@@ -8,6 +8,10 @@ color_classes {
 collections {
 
    group { name: "terminology/miniview";
+      images {
+        image: "icon_close.png" COMP;
+        image: "fn_shadow.png" COMP;
+      }
       set { name: "bg_shadow";
         image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
         image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
@@ -38,13 +42,15 @@ collections {
                rel2 {
                   to: "miniview.bg";
                   relative: 1.0 1.0;
-                  offset: 0 0;
+                  offset: -1 -1;
                }
             }
          }
-         part { name: "miniview.close"; type: RECT;
+         part { name: "miniview.close_shadow"; type: IMAGE;
             description { state: "default" 0.0;
-               color: 255 0 0 255;
+               image {
+                  normal: "fn_shadow.png";
+               };
                rel1 {
                   to: "miniview.bg";
                   relative: 0.0 0.0;
@@ -53,9 +59,24 @@ collections {
                rel2 {
                   to: "miniview.bg";
                   relative: 0.0 0.0;
-                  offset: 5 5;
+                  offset: 16 16;
                }
             }
+         }
+         part { name: "miniview.close"; type: IMAGE;
+            description { state: "default" 0.0;
+               image {
+                  normal: "icon_close.png";
+               };
+               rel1.to: "miniview.close_shadow";
+               rel2.to: "miniview.close_shadow";
+            }
+         }
+      };
+      programs {
+         program {
+            signal: "mouse,clicked,1"; source: "miniview.close";
+            action: SIGNAL_EMIT "miniview,close" "terminology";
          }
       };
    };

@@ -1094,25 +1094,33 @@ _popmedia_show(Term *term, const char *src)
      }
 }
 
-static void
-_cb_miniview_toggle(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
-{
-   Term *term = data;
 
+void
+term_miniview_hide(Term *term)
+{
    EINA_SAFETY_ON_NULL_RETURN(term);
    EINA_SAFETY_ON_NULL_RETURN(term->miniview);
 
-   ERR("MINIVIEW TOGGLE term:%p", term);
+   if (term->miniview_shown)
+     {
+        edje_object_signal_emit(term->bg, "miniview,off", "terminology");
+        term->miniview_shown = EINA_FALSE;
+     }
+}
+
+void
+term_miniview_toggle(Term *term)
+{
+   EINA_SAFETY_ON_NULL_RETURN(term);
+   EINA_SAFETY_ON_NULL_RETURN(term->miniview);
 
    if (term->miniview_shown)
      {
-        ERR("OFF bg:%p", term->bg);
         edje_object_signal_emit(term->bg, "miniview,off", "terminology");
         term->miniview_shown = EINA_FALSE;
      }
    else
      {
-        ERR("ON bg:%p", term->bg);
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
         term->miniview_shown = EINA_TRUE;
      }
@@ -2285,7 +2293,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "tab,8", _cb_tab_8, term);
    evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
    evas_object_smart_callback_add(o, "tab,0", _cb_tab_10, term);
-   evas_object_smart_callback_add(o, "miniview,toggle", _cb_miniview_toggle, term);
    evas_object_show(o);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
