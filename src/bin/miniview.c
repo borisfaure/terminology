@@ -6,6 +6,7 @@
 #include "col.h"
 #include "termpty.h"
 #include "termio.h"
+#include "utils.h"
 #include "main.h"
 
 /* specific log domain to help debug only miniview */
@@ -46,6 +47,7 @@ typedef struct _Miniview Miniview;
 struct _Miniview
 {
    Evas_Object *self;
+   Evas_Object *base;
    Evas_Object *img;
    Evas_Object *termio;
 
@@ -176,8 +178,6 @@ static void
 _smart_add(Evas_Object *obj)
 {
    Miniview *mv;
-   Evas_Object *o;
-   Evas *canvas = evas_object_evas_get(obj);
 
    DBG("%p", obj);
 
@@ -186,23 +186,6 @@ _smart_add(Evas_Object *obj)
    evas_object_smart_data_set(obj, mv);
 
    mv->self = obj;
-
-   /* miniview output widget  */
-   o = evas_object_image_add(canvas);
-   evas_object_image_alpha_set(o, EINA_TRUE);
-
-   //evas_object_smart_member_add(o, obj);
-   mv->img = o;
-   mv->is_shown = 0;
-   mv->to_render = 0;
-   mv->img_h = 0;
-   mv->rows = 0;
-   mv->cols = 0;
-
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
-                                  _smart_cb_mouse_wheel, obj);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _smart_cb_mouse_down, obj);
 }
 
 static void
@@ -216,6 +199,7 @@ _smart_del(Evas_Object *obj)
    ecore_timer_del(mv->deferred_renderer);
 
    //evas_object_smart_member_del(mv->img);
+   evas_object_del(mv->base);
    evas_object_del(mv->img);
    free(mv);
 }
@@ -227,7 +211,7 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
 
    if (!mv) return;
    DBG("%p x:%d y:%d", obj, x, y);
-   evas_object_move(mv->img, x + mv->img_h - mv->cols, y);
+   evas_object_move(mv->base, x + mv->img_h - mv->cols, y);
    mv->to_render = 1;
 }
 
@@ -240,12 +224,9 @@ _smart_show(Evas_Object *obj)
 
    if (!mv) return;
 
-   Evas_Coord ox, oy, ow, oh;
-   evas_object_geometry_get(mv->img, &ox, &oy, &ow, &oh);
-   DBG("ox:%d oy:%d ow:%d oh:%d", ox, oy, ow, oh);
    if (!mv->is_shown)
      {
-        Evas_Coord /*ox, oy, ow, oh,*/ font_w, font_h;
+        Evas_Coord ox, oy, ow, oh, font_w, font_h;
 
         mv->is_shown = 1;
         mv->img_hist = 0;
@@ -262,16 +243,15 @@ _smart_show(Evas_Object *obj)
 
         if (mv->rows == 0 || mv->cols == 0) return;
 
-        evas_object_resize(mv->img, mv->cols, mv->img_h);
+        evas_object_resize(mv->base, mv->cols, mv->img_h);
         evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
-
         evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
 
         DBG("ox:%d ow:%d cols:%d oy:%d", ox, ow, mv->cols, oy);
-        evas_object_move(mv->img, ox + ow - mv->cols, oy);
+        evas_object_move(mv->base, ox + ow - mv->cols, oy);
 
         mv->to_render = 1;
-        evas_object_show(mv->img);
+        evas_object_show(mv->base);
      }
 }
 
@@ -285,7 +265,7 @@ _smart_hide(Evas_Object *obj)
    if (mv->is_shown)
      {
         mv->is_shown = 0;
-        evas_object_hide(mv->img);
+        evas_object_hide(mv->base);
      }
 }
 
@@ -373,11 +353,11 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    if (mv->rows == 0 || mv->cols == 0) return;
 
-   evas_object_resize(mv->img, mv->cols, mv->img_h);
+   evas_object_resize(mv->base, mv->cols, mv->img_h);
    evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
 
-   evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
-   evas_object_move(mv->img, ox + w - mv->cols, oy);
+   //evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
+   evas_object_move(mv->base, ox + w - mv->cols, oy);
    mv->to_render = 1;
 }
 
@@ -404,13 +384,13 @@ Evas_Object *
 miniview_add(Evas_Object *parent, Evas_Object *termio)
 {
    Evas *e;
-   Evas_Object *obj;
+   Evas_Object *obj, *o;
    Miniview *mv;
+   Evas *canvas = evas_object_evas_get(parent);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
    if (!e) return NULL;
-
 
    if (!_smart) _smart_init();
 
@@ -420,6 +400,30 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    DBG("ADD parent:%p mv:%p", parent, mv);
 
    mv->termio = termio;
+
+   mv->base = edje_object_add(canvas);
+   theme_apply(mv->base, termio_config_get(termio), "terminology/miniview");
+
+   evas_object_smart_member_add(mv->base, obj);
+
+   /* miniview output widget  */
+   o = evas_object_image_add(canvas);
+   evas_object_image_alpha_set(o, EINA_TRUE);
+   evas_object_image_filled_set(o, EINA_TRUE);
+   edje_object_part_swallow(mv->base, "miniview.img", o);
+
+   mv->img = o;
+   mv->is_shown = 0;
+   mv->to_render = 0;
+   mv->img_h = 0;
+   mv->rows = 0;
+   mv->cols = 0;
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _smart_cb_mouse_wheel, obj);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _smart_cb_mouse_down, obj);
+
    mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
 
    return obj;

@@ -7,6 +7,59 @@ color_classes {
 
 collections {
 
+   group { name: "terminology/miniview";
+      set { name: "bg_shadow";
+        image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
+        image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
+        image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
+      }
+      parts {
+         part { name: "miniview.bg"; type: RECT;
+            //mouse_events: 1;
+            description { state: "default" 0.0;
+               color: BG_COL;
+            }
+         }
+         part { name: "shadow";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               image.normal: "bg_shadow";
+               fill.smooth: 0;
+            }
+         }
+         part { name: "miniview.img"; type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               rel1 {
+                  to: "miniview.bg";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "miniview.bg";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+            }
+         }
+         part { name: "miniview.close"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 0 0 255;
+               rel1 {
+                  to: "miniview.bg";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "miniview.bg";
+                  relative: 0.0 0.0;
+                  offset: 5 5;
+               }
+            }
+         }
+      };
+   };
+
    ///////////////////////////////////////////////////////////////////////////
    //// the background and general container for the terminal
    group { name: "terminology/core";
