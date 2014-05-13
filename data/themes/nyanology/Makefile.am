@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS =
+SUBDIRS = images images-sources
 
 EDJE_CC = @edje_cc@
 EDJE_FLAGS_VERBOSE_ =
@@ -17,6 +17,9 @@ am__v_EDJ_ = $(am__v_EDJ_$(AM_DEFAULT_VERBOSITY))
 am__v_EDJ_0 = @echo "  EDJ     " $@;
 
 EXTRA_DIST = \
+README.md \
+about.edc \
+nyancursor.edc \
 nyanology.edc
 
 nyanology.edj: Makefile nyanology.edc

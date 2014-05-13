@@ -89,6 +89,8 @@ data/themes/Makefile
 data/themes/images/Makefile
 data/themes/sounds/Makefile
 data/themes/nyanology/Makefile
+data/themes/nyanology/images/Makefile
+data/themes/nyanology/images-sources/Makefile
 man/Makefile
 pkgbuild/PKGBUILD
 ])
