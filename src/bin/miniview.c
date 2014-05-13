@@ -147,9 +147,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
    /* do not handle horizontal scrolling */
    if (ev->direction) return;
 
-   DBG("ev->z:%d", ev->z);
-
-   mv->img_hist += ev->z * 10;
+   mv->img_hist += ev->z * 25;
    mv->to_render = 1;
 }
 
@@ -179,8 +177,6 @@ _smart_add(Evas_Object *obj)
 {
    Miniview *mv;
 
-   DBG("%p", obj);
-
    mv = calloc(1, sizeof(Miniview));
    EINA_SAFETY_ON_NULL_RETURN(mv);
    evas_object_smart_data_set(obj, mv);
@@ -194,7 +190,6 @@ _smart_del(Evas_Object *obj)
    Miniview *mv = evas_object_smart_data_get(obj);
 
    if (!mv) return;
-   DBG("del obj:%p mv:%p", obj, mv);
 
    ecore_timer_del(mv->deferred_renderer);
 
@@ -210,7 +205,6 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED
    Miniview *mv = evas_object_smart_data_get(obj);
 
    if (!mv) return;
-   DBG("%p x:%d y:%d", obj, x, y);
    evas_object_move(mv->base, x + mv->img_h - mv->cols, y);
    mv->to_render = 1;
 }
@@ -219,8 +213,6 @@ static void
 _smart_show(Evas_Object *obj)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
-
-   DBG("mv:%p is_shown:%d", mv, mv != NULL ? mv->is_shown : -1);
 
    if (!mv) return;
 
@@ -247,7 +239,6 @@ _smart_show(Evas_Object *obj)
         evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
         evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
 
-        DBG("ox:%d ow:%d cols:%d oy:%d", ox, ow, mv->cols, oy);
         evas_object_move(mv->base, ox + ow - mv->cols, oy);
 
         mv->to_render = 1;
@@ -308,8 +299,6 @@ _deferred_renderer(void *data)
    memset(pixels, 0, sizeof(*pixels) * ow * oh);
    mv->img_h = oh;
 
-   DBG("history_len:%d hist:%d img_h:%d rows:%d cols:%d",
-       history_len, mv->img_hist, mv->img_h, mv->rows, mv->cols);
    /* "current"? */
    if (mv->img_hist >= - ((int)mv->img_h - (int)mv->rows))
      mv->img_hist = -((int)mv->img_h - (int)mv->rows);
@@ -341,7 +330,6 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    Miniview *mv = evas_object_smart_data_get(obj);
    if (!mv) return;
 
-   DBG("smart resize %p w:%d h:%d", obj, w, h);
    mv->img_h = h;
 
    evas_object_geometry_get(mv->termio, &ox, &oy, NULL, NULL);
@@ -366,8 +354,6 @@ static void
 _smart_init(void)
 {
     static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NULL;
-
-    DBG("smart init");
 
     sc.name      = "miniview";
     sc.version   = EVAS_SMART_CLASS_VERSION;
@@ -409,7 +395,6 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    obj = evas_object_smart_add(e, _smart);
    mv = evas_object_smart_data_get(obj);
    if (!mv) return obj;
-   DBG("ADD parent:%p mv:%p", parent, mv);
 
    mv->termio = termio;
 
