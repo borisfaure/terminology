@@ -2084,6 +2084,10 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(ev->key);
+
+   if (miniview_handle_key(term_miniview_get(sd->term), ev))
+     return;
+
    if ((!alt) && (ctrl) && (!shift))
      {
         if (!strcmp(ev->key, "Prior"))

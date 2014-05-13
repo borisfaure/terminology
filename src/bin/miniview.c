@@ -151,6 +151,47 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
    mv->to_render = 1;
 }
 
+
+Eina_Bool
+miniview_handle_key(Evas_Object *obj, Evas_Event_Key_Down *ev)
+{
+   Miniview *mv;
+   Evas_Coord ox, oy, ow, oh, mx, my;
+   int z = 25;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   mv = evas_object_smart_data_get(obj);
+   if (!mv || !mv->is_shown)
+     return EINA_FALSE;
+
+   evas_object_geometry_get(mv->img, &ox, &oy, &ow, &oh);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(mv->base), &mx, &my);
+
+   if ((mx < ox) || (mx > ox + ow) ||
+       (my < oy) || (my > oy + oh))
+     return EINA_FALSE;
+
+   if (evas_key_modifier_is_set(ev->modifiers, "Alt") ||
+       evas_key_modifier_is_set(ev->modifiers, "Shift") ||
+       evas_key_modifier_is_set(ev->modifiers, "Control"))
+     z = mv->img_h;
+
+   if (!strcmp(ev->key, "Prior"))
+     {
+        mv->img_hist -= z;
+        mv->to_render = 1;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->key, "Next"))
+     {
+        mv->img_hist += z;
+        mv->to_render = 1;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
                      Evas_Object *obj EINA_UNUSED, void *event)

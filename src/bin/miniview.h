@@ -6,7 +6,7 @@
 Evas_Object * miniview_add(Evas_Object *parent, Evas_Object *termio);
 
 void miniview_redraw(Evas_Object *obj);
-void miniview_push_history(Evas_Object *obj, Termcell *cells, int cells_len);
+Eina_Bool miniview_handle_key(Evas_Object *obj, Evas_Event_Key_Down *ev);
 
 void miniview_init(void);
 void miniview_shutdown(void);
