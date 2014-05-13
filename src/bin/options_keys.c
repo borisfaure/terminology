@@ -58,5 +58,6 @@ options_keys(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
    KB("Switch to terminal tab 9", "Ctrl + 9");
    KB("Switch to terminal tab 10", "Ctrl + 0");
    KB("Enter command mode", "Alt + Home");
+   KB("Toggle miniview of the history", "Ctrl + Shift + h");
 #undef KB
 }

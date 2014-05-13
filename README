@@ -76,6 +76,7 @@ Ctrl+7 = switch to terminal tab 7
 Ctrl+8 = switch to terminal tab 8
 Ctrl+9 = switch to terminal tab 9
 Ctrl+0 = switch to terminal tab 10
+Ctrl+Shift+h = toggle displaying the miniview of the history
 
 Command mode commands currently understood:
 
