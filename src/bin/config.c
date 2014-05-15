@@ -134,8 +134,6 @@ config_init(void)
      (edd_base, Config, "colors_use", colors_use, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_ARRAY
      (edd_base, Config, "colors", colors, edd_color);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "miniview", miniview, EET_T_UCHAR);
 }
 
 void
@@ -549,7 +547,6 @@ config_load(const char *key)
                     }
                }
              config->mouse_over_focus = EINA_TRUE;
-             config->miniview = EINA_FALSE;
           }
      }
 
@@ -614,7 +611,6 @@ config_fork(Config *config)
    CPY(colors_use);
    memcpy(config2->colors, config->colors, sizeof(config->colors));
    CPY(mouse_over_focus);
-   CPY(miniview);
    CPY(temporary);
    SCPY(config_key);
    return config2;
