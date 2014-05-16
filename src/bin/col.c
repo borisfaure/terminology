@@ -388,7 +388,7 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
    char buf[32];
    Color *color;
 
-   for (c = 0; c < 4 * 12; c++)
+   for (c = 0; c < (4 * 12); c++)
      {
         n = c + (24 * (c / 24));
         color = &colors[c / 24][(c % 24) / 12][c % 12];
@@ -466,26 +466,27 @@ colors_standard_get(int set, int col, unsigned char *r, unsigned char *g, unsign
 }
 
 /* if pos >= 256, it's in the 256 colors set */
-unsigned int color_get(unsigned int pos)
+unsigned int
+color_get(unsigned int pos)
 {
    Color *c;
 
    if (pos >= 256)
      {
         pos -= 256;
-        if (pos >= sizeof(colors256)/sizeof(Color))
+        if (pos >= (sizeof(colors256) / sizeof(Color)))
           {
              ERR("AAAAAA");
-          return 0;
+             return 0;
           }
         c = &colors256[pos];
      }
    else
      {
-        if (pos >= sizeof(colors)/sizeof(Color))
+        if (pos >= (sizeof(colors) / sizeof(Color)))
           {
              ERR("AAAAAA");
-          return 0;
+             return 0;
           }
         c = ((Color *)colors) + pos;
      }

@@ -92,24 +92,24 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell)
      }
    if ((cell->att.fgintense) && (!fgext)) fg += 48;
    if ((cell->att.bgintense) && (!bgext)) bg += 48;
-   if (cell->att.inverse ^ inv)
-     {
-        int t;
-        t = fgext; fgext = bgext; bgext = t;
-        t = fg; fg = bg; bg = t;
-     }
+//   if (cell->att.inverse ^ inv)
+//     {
+//        int t;
+//        t = fgext; fgext = bgext; bgext = t;
+//        t = fg; fg = bg; bg = t;
+//     }
    if ((cell->att.bold) && (!fgext)) fg += 12;
    if ((cell->att.faint) && (!fgext)) fg += 24;
    
-   if (bgext) *pixel = color_get(bg + 256);
-   else if (bg && ((bg % 12) != COL_INVIS)) *pixel = color_get(bg);
+   if (bgext) {*pixel = color_get(bg + 256);printf("a-%c:%08x\n", cell->codepoint, *pixel);}
+   else if (bg && ((bg % 12) != COL_INVIS)) {*pixel = color_get(bg);printf("b-%c:%08x\n", cell->codepoint, *pixel);}
    else if (!isspace(cell->codepoint))
      {
-        if (fgext) *pixel = color_get(fg + 256);
-        else *pixel = color_get(fg);
+        if (fgext) {*pixel = color_get(fg + 256);printf("c-%c:%08x\n", cell->codepoint, *pixel);}
+        else {*pixel = color_get(fg);printf("d-%c:%08x\n", cell->codepoint, *pixel);}
      }
    else
-     *pixel = 0;
+     {*pixel = 0;printf("z\n");}
 }
 
 static void
