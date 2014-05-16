@@ -464,35 +464,3 @@ colors_standard_get(int set, int col, unsigned char *r, unsigned char *g, unsign
    *b = 0;
    *a = 0;
 }
-
-/* if pos >= 256, it's in the 256 colors set */
-unsigned int
-color_get(unsigned int pos)
-{
-   Color *c;
-
-   if (pos >= 256)
-     {
-        pos -= 256;
-        if (pos >= (sizeof(colors256) / sizeof(Color)))
-          {
-             ERR("AAAAAA");
-             return 0;
-          }
-        c = &colors256[pos];
-     }
-   else
-     {
-        if (pos >= (sizeof(colors) / sizeof(Color)))
-          {
-             ERR("AAAAAA");
-             return 0;
-          }
-        c = ((Color *)colors) + pos;
-     }
-
-  return (c->a << 24) |
-         (c->r << 16) |
-         (c->g << 8) |
-         (c->b);
-}

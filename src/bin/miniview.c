@@ -66,7 +66,7 @@ struct _Miniview
 static Evas_Smart *_smart = NULL;
 
 static void
-_draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell)
+_draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigned int *colors)
 {
    int fg, bg, fgext, bgext;
    int inv = ty->state.reverse;
@@ -92,35 +92,35 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell)
      }
    if ((cell->att.fgintense) && (!fgext)) fg += 48;
    if ((cell->att.bgintense) && (!bgext)) bg += 48;
-//   if (cell->att.inverse ^ inv)
-//     {
-//        int t;
-//        t = fgext; fgext = bgext; bgext = t;
-//        t = fg; fg = bg; bg = t;
-//     }
+   if (cell->att.inverse ^ inv)
+     {
+        int t;
+        t = fgext; fgext = bgext; bgext = t;
+        t = fg; fg = bg; bg = t;
+     }
    if ((cell->att.bold) && (!fgext)) fg += 12;
    if ((cell->att.faint) && (!fgext)) fg += 24;
    
-   if (bgext) {*pixel = color_get(bg + 256);printf("a-%c:%08x\n", cell->codepoint, *pixel);}
-   else if (bg && ((bg % 12) != COL_INVIS)) {*pixel = color_get(bg);printf("b-%c:%08x\n", cell->codepoint, *pixel);}
+   if (bgext) *pixel = colors[bg + 256];
+   else if (bg && ((bg % 12) != COL_INVIS)) *pixel = colors[bg];
    else if (!isspace(cell->codepoint))
      {
-        if (fgext) {*pixel = color_get(fg + 256);printf("c-%c:%08x\n", cell->codepoint, *pixel);}
-        else {*pixel = color_get(fg);printf("d-%c:%08x\n", cell->codepoint, *pixel);}
+        if (fgext) *pixel = colors[fg + 256];
+        else *pixel = colors[fg];
      }
    else
-     {*pixel = 0;printf("z\n");}
+     *pixel = 0;
 }
 
 static void
 _draw_line(const Termpty *ty, unsigned int *pixels,
-           const Termcell *cells, int length)
+           const Termcell *cells, int length, unsigned int *colors)
 {
    int x;
 
    for (x = 0 ; x < length; x++)
      {
-        _draw_cell(ty, pixels + x, cells + x);
+        _draw_cell(ty, pixels + x, cells + x, colors);
      }
 }
 
@@ -220,13 +220,34 @@ _smart_del(Evas_Object *obj)
 }
 
 static void
+_do_configure(Evas_Object *obj)
+{
+   Miniview *mv = evas_object_smart_data_get(obj);
+   Evas_Coord ox, oy, ow, oh, font_w, font_h, w;
+
+   if (!mv) return;
+
+   evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
+   evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
+
+   if ((font_w == 0) || (font_h == 0) || (ow == 0) || (oh == 0)) return;
+   
+   if ((mv->rows == 0) || (mv->cols == 0)) return;
+   
+   w = (mv->cols * font_w) / font_h;
+   
+   evas_object_resize(mv->base, w, mv->img_h);
+   evas_object_move(mv->base, ox + ow - w, oy);
+}
+
+static void
 _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED,
             Evas_Coord y EINA_UNUSED)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
    if (!mv) return;
-   evas_object_move(mv->base, x + mv->img_h - mv->cols, y);
+   _do_configure(obj);
    mv->to_render = 1;
 }
 
@@ -238,12 +259,12 @@ _smart_show(Evas_Object *obj)
    if (!mv) return;
    if (!mv->is_shown)
      {
-        Evas_Coord ox, oy, ow, oh, font_w, font_h;
+        Evas_Coord ow, oh, font_w, font_h;
 
         mv->is_shown = 1;
         mv->img_hist = 0;
 
-        evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
+        evas_object_geometry_get(mv->termio, NULL, NULL, &ow, &oh);
         if ((ow == 0) || (oh == 0)) return;
         evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
 
@@ -255,14 +276,9 @@ _smart_show(Evas_Object *obj)
 
         if ((mv->rows == 0) || (mv->cols == 0)) return;
 
-        evas_object_resize(mv->base, mv->cols, mv->img_h);
-        evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
-        evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
-
-        evas_object_move(mv->base, ox + ow - mv->cols, oy);
-
         mv->to_render = 1;
         evas_object_show(mv->base);
+        _do_configure(obj);
      }
 }
 
@@ -290,6 +306,26 @@ miniview_redraw(Evas_Object *obj)
    mv->to_render = 1;
 }
 
+static void
+miniview_colors_get(Miniview *mv, unsigned int *colors)
+{
+   Evas_Object *tg = termio_textgrid_get(mv->termio);
+   int r, g, b, a, c;
+   
+   for (c = 0; c < 256; c++)
+     {
+        evas_object_textgrid_palette_get
+        (tg, EVAS_TEXTGRID_PALETTE_STANDARD, c, &r, &g, &b, &a);
+        colors[c] = (a << 24) | (r << 16) | (g << 8) | b;
+     }
+   for (c = 0; c < 256; c++)
+     {
+        evas_object_textgrid_palette_get
+        (tg, EVAS_TEXTGRID_PALETTE_EXTENDED, c, &r, &g, &b, &a);
+        colors[c + 256] = (a << 24) | (r << 16) | (g << 8) | b;
+     }
+}
+
 static Eina_Bool
 _deferred_renderer(void *data)
 {
@@ -299,19 +335,22 @@ _deferred_renderer(void *data)
    unsigned int *pixels, y;
    Termcell *cells;
    Termpty *ty;
+   unsigned int colors[512];
 
    if ((!mv) || (!mv->is_shown) || (!mv->to_render) || (mv->img_h == 0))
      return EINA_TRUE;
 
+   miniview_colors_get(mv, colors);
+   
    ty = termio_pty_get(mv->termio);
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if ((ow == 0) || (oh == 0)) return EINA_TRUE;
 
    history_len = ty->backscroll_num;
 
-   evas_object_image_size_get(mv->img, &ow, &oh);
-   if ((ow != (Evas_Coord)mv->cols) || (oh != (Evas_Coord)mv->img_h))
-     return EINA_TRUE;
+   evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
+   ow = mv->cols;
+   oh = mv->img_h;
 
    pixels = evas_object_image_data_get(mv->img, EINA_TRUE);
    memset(pixels, 0, sizeof(*pixels) * ow * oh);
@@ -327,7 +366,7 @@ _deferred_renderer(void *data)
      {
         cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
         if (!cells) break;
-        _draw_line(ty, &pixels[y * mv->cols], cells, wret);
+        _draw_line(ty, &pixels[y * mv->cols], cells, wret, colors);
      }
    evas_object_image_data_set(mv->img, pixels);
    evas_object_image_pixels_dirty_set(mv->img, EINA_FALSE);
@@ -357,11 +396,7 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    if ((mv->rows == 0) || (mv->cols == 0)) return;
 
-   evas_object_resize(mv->base, mv->cols, mv->img_h);
-   evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
-
-   //evas_object_image_fill_set(mv->img, 0, 0, mv->cols, mv->img_h);
-   evas_object_move(mv->base, ox + w - mv->cols, oy);
+   _do_configure(obj);
    mv->to_render = 1;
 }
 
@@ -419,17 +454,12 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    evas_object_smart_member_add(mv->base, obj);
 
    /* miniview output widget  */
-   o = evas_object_image_add(canvas);
+   o = evas_object_image_filled_add(canvas);
    evas_object_image_alpha_set(o, EINA_TRUE);
-   evas_object_image_filled_set(o, EINA_TRUE);
    edje_object_part_swallow(mv->base, "miniview.img", o);
+   evas_object_show(o);
 
    mv->img = o;
-   mv->is_shown = 0;
-   mv->to_render = 0;
-   mv->img_h = 0;
-   mv->rows = 0;
-   mv->cols = 0;
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _smart_cb_mouse_wheel, obj);
