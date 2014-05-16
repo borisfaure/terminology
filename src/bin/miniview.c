@@ -70,10 +70,10 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigne
 {
    int fg, bg, fgext, bgext;
    int inv = ty->state.reverse;
+   Eina_Unicode codepoint;
 
-   if ((cell->codepoint == 0) ||
-       (cell->att.newline) ||
-       (cell->att.invisible))
+   codepoint = cell->codepoint;
+   if ((codepoint == 0) || (cell->att.newline) || (cell->att.invisible))
      {
         *pixel = 0;
         return;
@@ -103,7 +103,8 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigne
    
    if (bgext) *pixel = colors[bg + 256];
    else if (bg && ((bg % 12) != COL_INVIS)) *pixel = colors[bg];
-   else if (!isspace(cell->codepoint))
+   else if ((codepoint > 32) && (codepoint < 0x00110000) &&
+            (!isspace(codepoint)))
      {
         if (fgext) *pixel = colors[fg + 256];
         else *pixel = colors[fg];
