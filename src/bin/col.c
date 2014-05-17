@@ -13,7 +13,6 @@ struct _Color
    unsigned char a;
 };
 
-static Color colors[2][2][12];
 static const Color default_colors[2][2][12] =
 {
    { // normal
@@ -78,7 +77,6 @@ static const Color default_colors[2][2][12] =
    }
 };
 
-static Color colors256[256];
 static const Color default_colors256[256] =
 {
    // basic 16 repeated
@@ -386,66 +384,77 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
 {
    int c, n;
    char buf[32];
-   Color *color;
+   int r, g , b, a;
+   const Color *color;
 
    for (c = 0; c < (4 * 12); c++)
      {
         n = c + (24 * (c / 24));
-        color = &colors[c / 24][(c % 24) / 12][c % 12];
         if (config->colors_use)
           {
-             color->r = config->colors[c].r;
-             color->g = config->colors[c].g;
-             color->b = config->colors[c].b;
-             color->a = config->colors[c].a;
+             r = config->colors[c].r;
+             g = config->colors[c].g;
+             b = config->colors[c].b;
+             a = config->colors[c].a;
           }
         else
           {
              snprintf(buf, sizeof(buf) - 1, "c%i", c);
              if (!edje_object_color_class_get(bg, buf,
-                                              (int*)&color->r,
-                                              (int*)&color->g,
-                                              (int*)&color->b,
-                                              (int*)&color->a,
+                                              &r,
+                                              &g,
+                                              &b,
+                                              &a,
                                               NULL, NULL, NULL, NULL,
                                               NULL, NULL, NULL, NULL))
                {
-                  *color = default_colors[c / 24][(c % 24) / 12][c % 12];
+                  color = &default_colors[c / 24][(c % 24) / 12][c % 12];
+                  r = color->r;
+                  g = color->g;
+                  b = color->b;
+                  a = color->a;
                }
           }
         /* normal */
         evas_object_textgrid_palette_set(
            textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
-           color->r, color->g, color->b, color->a);
+           r, g, b, a);
 
         /* faint */
         evas_object_textgrid_palette_set(
            textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-           color->r / 2, color->g / 2, color->b / 2, color->a / 2);
+           r / 2, g / 2, b / 2, a / 2);
      }
    for (c = 0; c < 256; c++)
      {
         snprintf(buf, sizeof(buf) - 1, "C%i", c);
-        color = &colors256[c];
 
         if (!edje_object_color_class_get(bg, buf,
-                                         (int*)&colors256[c].r,
-                                         (int*)&colors256[c].g,
-                                         (int*)&colors256[c].b,
-                                         (int*)&colors256[c].a,
+                                         &r,
+                                         &g,
+                                         &b,
+                                         &a,
                                          NULL, NULL, NULL, NULL,
                                          NULL, NULL, NULL, NULL))
           {
-             *color = default_colors256[c];
+             color = &default_colors256[c];
+             r = color->r;
+             g = color->g;
+             b = color->b;
+             a = color->a;
           }
         evas_object_textgrid_palette_set(
            textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
-           color->r, color->g, color->b, color->a);
+           r, g, b, a);
      }
 }
 
 void
-colors_standard_get(int set, int col, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+colors_standard_get(int set, int col,
+                    unsigned char *r,
+                    unsigned char *g,
+                    unsigned char *b,
+                    unsigned char *a)
 {
    if ((set >= 0) && (set < 4))
      {
