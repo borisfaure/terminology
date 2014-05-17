@@ -97,8 +97,6 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "bell_rings", bell_rings, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "active_links", active_links, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
@@ -134,6 +132,8 @@ config_init(void)
      (edd_base, Config, "colors_use", colors_use, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_ARRAY
      (edd_base, Config, "colors", colors, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "bell_rings", bell_rings, EET_T_UCHAR);
 }
 
 void
