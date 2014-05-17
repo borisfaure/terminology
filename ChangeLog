@@ -1,3 +1,9 @@
+2014-05-17
+
+        * Release v0.5.1
+        * Make terminology compatible with upcoming efl/elm 1.10
+        * Fix disappearing prompt on resize
+
 2014-03-08
 
         * Release v0.5.0
