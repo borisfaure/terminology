@@ -15,6 +15,7 @@ mild.edj \
 black.edj \
 solarized.edj \
 solarized_light.edj \
+smyck.edj \
 mustang.edj \
 base16_ocean_dark.edj
 
@@ -30,6 +31,7 @@ mustang.edc \
 base16_ocean_dark.edc \
 solarized.edc \
 solarized_light.edc \
+smyck.edc \
 default_colors.in.edc
 
 default.edj: Makefile default.edc default_colors.in.edc
@@ -66,6 +68,11 @@ base16_ocean_dark.edj: Makefile base16_ocean_dark.edc mild.edc default_colors.in
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/base16_ocean_dark.edc \
 	$(top_builddir)/data/themes/base16_ocean_dark.edj
+
+smyck.edj: Makefile smyck.edc default_colors.in.edc
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/smyck.edc \
+	$(top_builddir)/data/themes/smyck.edj
 
 clean-local:
 	rm -f *.edj

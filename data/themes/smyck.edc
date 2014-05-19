@@ -1,0 +1,43 @@
+/* Smyck theme: http://color.smyck.org/ */
+
+#define ANSI0 0 0 0 255
+#define ANSI1 183 65 49 255
+#define ANSI2 125 169 0 255
+#define ANSI3 196 164 0 255
+#define ANSI4 98 163 196 255
+#define ANSI5 185 138 204 255
+#define ANSI6 32 115 131 255
+#define ANSI7 160 160 160 255
+
+#define ANSI8 122 122 122 255
+#define ANSI9 214 131 123 255
+#define ANSI10 196 240 54 255
+#define ANSI11 254 225 77 255
+#define ANSI12 141 207 240 255
+#define ANSI13 247 153 255 255
+#define ANSI14 105 217 207 255
+#define ANSI15 247 247 247 255
+
+#define BG_COL    ANSI0
+#define NO_COLORS 1
+
+color_classes {
+   color_class { name: "C0";  color: ANSI0; } // COL_BLACK
+   color_class { name: "C1";  color: ANSI1; } // COL_RED
+   color_class { name: "C2";  color: ANSI2; } // COL_GREEN
+   color_class { name: "C3";  color: ANSI3; } // COL_YELLOW
+   color_class { name: "C4";  color: ANSI4; } // COL_BLUE
+   color_class { name: "C5";  color: ANSI5; } // COL_MAGENTA
+   color_class { name: "C6";  color: ANSI6; } // COL_CYAN
+   color_class { name: "C7";  color: ANSI7; } // COL_WHITE
+
+   color_class { name: "C8";  color: ANSI8; } // COL_BLACK
+   color_class { name: "C9";  color: ANSI9; } // COL_RED
+   color_class { name: "C10"; color: ANSI10; } // COL_GREEN
+   color_class { name: "C11"; color: ANSI11; } // COL_YELLOW
+   color_class { name: "C12"; color: ANSI12; } // COL_BLUE
+   color_class { name: "C13"; color: ANSI13; } // COL_MAGENTA
+   color_class { name: "C14"; color: ANSI14; } // COL_CYAN
+   color_class { name: "C15"; color: ANSI15; } // COL_WHITE
+}
+#include "default.edc"
