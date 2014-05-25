@@ -16,7 +16,8 @@ typedef struct _Font Font;
 struct _Font
 {
    Elm_Object_Item *item;
-   const char *name;
+   const char *pretty_name;
+   const char *full_name;
    Evas_Object *term;
    Eina_Bool bitmap : 1;
 };
@@ -31,16 +32,65 @@ _update_sizing(Evas_Object *term)
 {
    Evas_Coord mw = 1, mh = 1, w, h;
 
-   evas_object_data_del(term, "sizedone");
    termio_config_update(term);
    evas_object_size_hint_min_get(term, &mw, &mh);
    if (mw < 1) mw = 1;
    if (mh < 1) mh = 1;
    w = tsize_w / mw;
    h = tsize_h / mh;
-   evas_object_data_del(term, "sizedone");
    evas_object_size_hint_request_set(term, w * mw, h * mh);
    expecting_resize = 1;
+}
+
+static const char *
+_get_pretty_font_name(const char *full_name)
+{
+   char buf[4096];
+   size_t style_len = 0;
+   size_t font_len = 0;
+   char *style = NULL;
+   char *s;
+
+   s = strchr(full_name, ':');
+   if (s == NULL)
+     {
+        return eina_stringshare_add(full_name);
+     }
+   font_len = s - full_name;
+   s++;
+#define STYLE_STR "style="
+   if (strncmp(s, STYLE_STR, strlen(STYLE_STR)) == 0)
+     {
+        s += strlen(STYLE_STR);
+        style = s;
+        s = strchr(s, ',');
+        style_len = (s == NULL) ? strlen(style) : (size_t)(s - style);
+     }
+#undef STYLE_STR
+   /* unescape the dashes */
+   s = buf;
+   while ( (size_t)(s - buf) < sizeof(buf) &&
+           font_len > 0 )
+     {
+        if (*full_name != '\\')
+          {
+             *s++ = *full_name;
+          }
+        full_name++;
+        font_len--;
+     }
+   /* copy style */
+   if (style_len > 0 && ((sizeof(buf) - (s - buf)) > style_len + 3 ))
+     {
+        *s++ = ' ';
+        *s++ = '(';
+        memcpy(s, style, style_len);
+        s += style_len;
+        *s++ = ')';
+     }
+     *s = '\0';
+
+     return eina_stringshare_add(buf);
 }
 
 static void
@@ -48,16 +98,16 @@ _cb_op_font_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
 {
    Font *f = data;
    Config *config = termio_config_get(f->term);
-   if ((config->font.name) && (!strcmp(f->name, config->font.name)))
+   if ((config->font.name) && (!strcmp(f->full_name, config->font.name)))
      return;
    if (config->font.name) eina_stringshare_del(config->font.name);
-   config->font.name = eina_stringshare_add(f->name);
+   config->font.name = eina_stringshare_add(f->full_name);
    config->font.bitmap = f->bitmap;
    _update_sizing(f->term);
-   config_save(config, NULL);
    elm_object_disabled_set(op_fsml, f->bitmap);
    elm_object_disabled_set(op_fontslider, f->bitmap);
    elm_object_disabled_set(op_fbig, f->bitmap);
+   config_save(config, NULL);
 }
 
 static void
@@ -128,11 +178,11 @@ _cb_op_font_preview_delayed_eval(void *data)
         if (f->bitmap)
           {
              snprintf(buf, sizeof(buf), "%s/fonts/%s",
-                      elm_app_data_dir_get(), f->name);
+                      elm_app_data_dir_get(), f->full_name);
              evas_object_text_font_set(o, buf, config->font.size);
           }
         else
-          evas_object_text_font_set(o, f->name, config->font.size);
+          evas_object_text_font_set(o, f->full_name, config->font.size);
         evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
         evas_object_size_hint_min_set(o, ow, oh);
         edje_object_part_swallow(obj, "terminology.text.preview", o);
@@ -200,13 +250,7 @@ static char *
 _cb_op_font_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    Font *f = data;
-   char buf[4096], *p;
-
-   eina_strlcpy(buf, f->name, sizeof(buf));
-   buf[0] = toupper(buf[0]);
-   p = strrchr(buf, '.');
-   if (p) *p = 0;
-   return strdup(buf);
+   return strdup(f->pretty_name);
 }
 
 static char *
@@ -247,7 +291,8 @@ options_font_clear(void)
    
    EINA_LIST_FREE(fonts, f)
      {
-        eina_stringshare_del(f->name);
+        eina_stringshare_del(f->full_name);
+        eina_stringshare_del(f->pretty_name);
         free(f);
      }
    if (fonthash)
@@ -261,7 +306,7 @@ void
 options_font(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o, *bx, *fr, *bx0;
-   char buf[4096], *file, *fname, *s;
+   char buf[4096], *file, *fname;
    Eina_List *files, *fontlist, *l;
    Font *f;
    Elm_Object_Item *it, *sel_it = NULL, *grp_it = NULL;
@@ -329,10 +374,10 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_genlist_mode_set(o, ELM_LIST_COMPRESS);
    elm_genlist_homogeneous_set(o, EINA_TRUE);
-   
+
+   /* Bitmaps */
    snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
    files = ecore_file_ls(buf);
-   
    if (files)
      {
         grp_it = elm_genlist_item_append(o, it_group, "Bitmap", NULL,
@@ -341,22 +386,25 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         elm_genlist_item_select_mode_set(grp_it,
                                          ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
      }
-   
    EINA_LIST_FREE(files, file)
      {
+        char *s;
         f = calloc(1, sizeof(Font));
-        f->name = eina_stringshare_add(file);
+        f->full_name = eina_stringshare_add(file);
+        s = strchr(file, '.');
+        if (s != NULL) *s = '\0';
+        f->pretty_name = eina_stringshare_add(file);
         f->term = term;
         f->bitmap = EINA_TRUE;
         fonts = eina_list_append(fonts, f);
-        
+
         f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                      ELM_GENLIST_ITEM_NONE,
                                      _cb_op_font_sel, f);
-        if ((config->font.bitmap) && (config->font.name) && 
-            (!strcmp(config->font.name, f->name)))
+        if ((config->font.bitmap) && (config->font.name) &&
+            ((!strcmp(config->font.name, f->full_name)) ||
+             (!strcmp(config->font.name, file))))
           {
-             elm_genlist_item_selected_set(it, EINA_TRUE);
              sel_it = it;
              elm_object_disabled_set(op_fsml, EINA_TRUE);
              elm_object_disabled_set(op_fontslider, EINA_TRUE);
@@ -365,11 +413,11 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         free(file);
      }
 
+   /* Standard fonts */
    fontlist = evas_font_available_list(evas_object_evas_get(opbox));
    fontlist = eina_list_sort(fontlist, eina_list_count(fontlist),
                              _cb_op_font_sort);
    fonthash = eina_hash_string_superfast_new(NULL);
-
    if (fonts)
      {
         grp_it = elm_genlist_item_append(o, it_group, "Standard", NULL,
@@ -380,37 +428,44 @@ options_font(Evas_Object *opbox, Evas_Object *term)
      }
    EINA_LIST_FOREACH(fontlist, l, fname)
      {
-        snprintf(buf, sizeof(buf), "%s", fname);
-        s = strchr(buf, ':');
-        if (s) *s = 0;
-        fname = buf;
         if (!eina_hash_find(fonthash, fname))
           {
              f = calloc(1, sizeof(Font));
-             f->name = eina_stringshare_add(fname);
+             f->full_name = eina_stringshare_add(fname);
+             f->pretty_name = _get_pretty_font_name(fname);
              f->term = term;
              f->bitmap = EINA_FALSE;
-             eina_hash_add(fonthash, fname, f);
+             eina_hash_add(fonthash, eina_stringshare_add(fname), f);
              fonts = eina_list_append(fonts, f);
              f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                           ELM_GENLIST_ITEM_NONE,
                                           _cb_op_font_sel, f);
-             if ((!config->font.bitmap) && (config->font.name) && 
-                 (!strcmp(config->font.name, f->name)))
+             if ((!config->font.bitmap) && (config->font.name))
                {
-                  elm_genlist_item_selected_set(it, EINA_TRUE);
-                  sel_it = it;
+                  char *s = strchr(fname, ':');
+                  size_t len;
+
+                  len = (s == NULL) ? strlen(fname) : (size_t)(s - fname);
+                  if (!strcmp(config->font.name, f->pretty_name) ||
+                      !strncmp(config->font.name, fname, len))
+                    {
+                       sel_it = it;
+                    }
                }
           }
      }
    if (fontlist)
      evas_font_available_list_free(evas_object_evas_get(opbox), fontlist);
-   
-   elm_genlist_item_show(sel_it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-   
+
+   if (sel_it)
+     {
+        elm_genlist_item_selected_set(sel_it, EINA_TRUE);
+        elm_genlist_item_show(sel_it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+     }
+
    elm_genlist_item_class_free(it_class);
    elm_genlist_item_class_free(it_group);
-   
+
    elm_box_pack_end(bx0, o);
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
