@@ -42,33 +42,60 @@ _update_sizing(Evas_Object *term)
    expecting_resize = 1;
 }
 
-static const char *
-_get_pretty_font_name(const char *full_name)
+static int
+_parse_font_name(const char *full_name,
+                 const char **name, const char **pretty_name)
 {
    char buf[4096];
    size_t style_len = 0;
    size_t font_len = 0;
    char *style = NULL;
    char *s;
+   unsigned int len;
 
-   s = strchr(full_name, ':');
-   if (s == NULL)
+   *pretty_name = NULL;
+   *name = NULL;
+
+   font_len = strlen(full_name);
+   if (font_len >= sizeof(buf))
+     return -1;
+   style = strchr(full_name, ':');
+   if (style)
+     font_len = (size_t)(style - full_name);
+
+   s = strchr(full_name, ',');
+   if (s && style && s < style)
+     font_len = s - full_name;
+
+#define STYLE_STR ":style="
+   if (style && strncmp(style, STYLE_STR, strlen(STYLE_STR)) == 0)
      {
-        return eina_stringshare_add(full_name);
-     }
-   font_len = s - full_name;
-   s++;
-#define STYLE_STR "style="
-   if (strncmp(s, STYLE_STR, strlen(STYLE_STR)) == 0)
-     {
-        s += strlen(STYLE_STR);
-        style = s;
-        s = strchr(s, ',');
+        style += strlen(STYLE_STR);
+        s = strchr(style, ',');
         style_len = (s == NULL) ? strlen(style) : (size_t)(s - style);
      }
+
+   s = buf;
+   memcpy(s, full_name, font_len);
+   s += font_len;
+   len = font_len;
+   if (style)
+     {
+        memcpy(s, STYLE_STR, strlen(STYLE_STR));
+        s += strlen(STYLE_STR);
+        len += strlen(STYLE_STR);
+
+        memcpy(s, style, style_len);
+        s += style_len;
+        len += style_len;
+     }
+     *s = '\0';
+   *name = eina_stringshare_add_length(buf, len);
 #undef STYLE_STR
+
    /* unescape the dashes */
    s = buf;
+   len = 0;
    while ( (size_t)(s - buf) < sizeof(buf) &&
            font_len > 0 )
      {
@@ -78,6 +105,7 @@ _get_pretty_font_name(const char *full_name)
           }
         full_name++;
         font_len--;
+        len++;
      }
    /* copy style */
    if (style_len > 0 && ((sizeof(buf) - (s - buf)) > style_len + 3 ))
@@ -87,10 +115,13 @@ _get_pretty_font_name(const char *full_name)
         memcpy(s, style, style_len);
         s += style_len;
         *s++ = ')';
+
+        len += 3 + style_len;
      }
      *s = '\0';
 
-     return eina_stringshare_add(buf);
+     *pretty_name = eina_stringshare_add_length(buf, len);
+     return 0;
 }
 
 static void
@@ -431,8 +462,11 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         if (!eina_hash_find(fonthash, fname))
           {
              f = calloc(1, sizeof(Font));
-             f->full_name = eina_stringshare_add(fname);
-             f->pretty_name = _get_pretty_font_name(fname);
+             if (_parse_font_name(fname, &f->full_name, &f->pretty_name) <0)
+               {
+                  free(f);
+                  continue;
+               }
              f->term = term;
              f->bitmap = EINA_FALSE;
              eina_hash_add(fonthash, eina_stringshare_add(fname), f);
@@ -446,7 +480,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
                   size_t len;
 
                   len = (s == NULL) ? strlen(fname) : (size_t)(s - fname);
-                  if (!strcmp(config->font.name, f->pretty_name) ||
+                  if (!strcmp(config->font.name, f->full_name) ||
                       !strncmp(config->font.name, fname, len))
                     {
                        sel_it = it;
