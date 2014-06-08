@@ -795,4 +795,5 @@ sel_exit(Evas_Object *obj)
    Sel *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    sd->exit_on_sel = EINA_TRUE;
+   sd->exit_now = EINA_TRUE;
 }
