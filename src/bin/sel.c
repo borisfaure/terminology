@@ -223,7 +223,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
              if (en->selected)
                {
                   Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
-                  
+
                   evas_object_geometry_get(en->bg, &x, &y, &w, &h);
                   sgx = x + (w / 2);
                   sgy = y - (h / 2);
@@ -249,7 +249,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
              if (en->selected)
                {
                   Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
-                  
+
                   evas_object_geometry_get(en->bg, &x, &y, &w, &h);
                   sgx = x + (w / 2);
                   sgy = y + h + (h / 2);
@@ -285,7 +285,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
    else if (!strcmp(ev->key, "Escape"))
      {
         Evas_Object *entry = NULL;
-        
+
         EINA_LIST_FOREACH(sd->items, l, en)
           {
              if (en->selected_orig) entry = en->obj;
@@ -356,10 +356,10 @@ _layout(Evas_Object *obj)
 
    sd->px = sd->px0 + ((sd->px1 - sd->px0) * sd->interp);
    sd->py = sd->py0 + ((sd->py1 - sd->py0) * sd->interp);
-   
+
    px = sd->px;
    py = sd->py;
-   
+
    if ((iw > 0) && (w > 0) && (ih > 0) && (h > 0))
      {
         ww = iw * w;
@@ -370,7 +370,7 @@ _layout(Evas_Object *obj)
         else py = py - ((py * (oh - h)) / (hh - h));
      }
    x = y = 0;
-   
+
    EINA_LIST_FOREACH(sd->items, l, en)
      {
         evas_object_move(en->bg, ox + (x * w) - px, oy + (y * h) - py);
@@ -432,7 +432,7 @@ _anim_cb(void *data)
              Eina_List *l;
              Entry *en;
              Evas_Object *entry = NULL;
-             
+
              EINA_LIST_FOREACH(sd->items, l, en)
                {
                   if (en->selected) entry = en->obj;
@@ -464,7 +464,7 @@ static void
 _label_redo(Entry *en)
 {
    const char *s;
-   
+
    if (!en->obj) return;
    if (!en->termio) return;
    s = termio_title_get(en->termio);
@@ -638,7 +638,7 @@ sel_add(Evas_Object *parent)
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
    if (!sd) return obj;
-   
+
    sd->o_event = evas_object_rectangle_add(e);
    evas_object_color_set(sd->o_event, 0, 0, 0, 0);
    evas_object_repeat_events_set(sd->o_event, EINA_TRUE);
@@ -654,7 +654,7 @@ sel_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                   _key_down_cb, obj);
    sd->zoom = 1.0;
-   
+
    return obj;
 }
 
