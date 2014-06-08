@@ -92,7 +92,7 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
    else
      {
        cells = &(TERMPTY_SCREEN(ty, 0, end_y));
-       for (y = start_y; y < end_y; y++)
+       for (y = start_y; y < end_y - 1; y++)
          {
             cells = &(TERMPTY_SCREEN(ty, 0, (y + 1)));
             cells2 = &(TERMPTY_SCREEN(ty, 0, y));

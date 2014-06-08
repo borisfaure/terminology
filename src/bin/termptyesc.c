@@ -946,6 +946,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                     {
                        DBG("2 regions args: %i %i", arg, arg2);
                        if (arg >= ty->h) arg = ty->h - 1;
+                       if (arg == 0) arg = 1;
                        if (arg2 > ty->h) arg2 = ty->h;
                        ty->state.scroll_y1 = arg - 1;
                        ty->state.scroll_y2 = arg2;
