@@ -60,7 +60,8 @@ _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    Evas_Event_Mouse_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   
+
+   if (sd->exit_on_sel) return;
    if (sd->down.down) return;
    if (ev->button != 1) return;
    sd->down.x = ev->canvas.x;
@@ -75,7 +76,8 @@ _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Sel *sd = evas_object_smart_data_get(data);
    Evas_Coord dx, dy;
    if (!sd) return;
-   
+
+   if (sd->exit_on_sel) return;
    if (!sd->down.down) return;
    sd->down.down = EINA_FALSE;
    dx = abs(ev->canvas.x - sd->down.x);
@@ -86,7 +88,7 @@ _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
         Eina_List *l;
         Entry *en;
         Evas_Coord x, y, ox, oy, ow, oh;
-        
+
         x = ev->canvas.x;
         y = ev->canvas.y;
         EINA_LIST_FOREACH(sd->items, l, en)
@@ -119,8 +121,9 @@ _mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    if (!sd) return;
    Evas_Coord x = 0, y = 0, w = 0, h = 0, sw, sh;
    int iw, ih;
-   
-   if ((sd->exit_me) || (sd->exit_now) || (sd->select_me)) return;
+
+   if ((sd->exit_me) || (sd->exit_now) || (sd->select_me) || (sd->exit_on_sel))
+     return;
    iw = sqrt(eina_list_count(sd->items));
    if (iw < 1) iw = 1;
    ih = (eina_list_count(sd->items) + (iw - 1)) / iw;
