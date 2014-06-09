@@ -179,6 +179,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
    Sel *sd = evas_object_smart_data_get(data);
    Eina_List *l;
    Entry *en;
+
    if (!sd) return;
    if ((!strcmp(ev->key, "Next")) ||
        (!strcmp(ev->key, "Right")))
@@ -193,6 +194,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
                        sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
+                  else return;
                }
           }
         sd->exit_now = EINA_FALSE;
@@ -211,6 +213,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
                        sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
+                  else return;
                }
           }
         sd->exit_now = EINA_FALSE;
@@ -223,6 +226,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
              if (en->selected)
                {
                   Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
+                  Eina_Bool found = EINA_FALSE;
 
                   evas_object_geometry_get(en->bg, &x, &y, &w, &h);
                   sgx = x + (w / 2);
@@ -233,9 +237,12 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
                        if (ELM_RECTS_INTERSECT(x, y, w, h, sgx, sgy, 1, 1))
                          {
                             sel_entry_selected_set(obj, en->obj, EINA_FALSE);
+                            found = EINA_TRUE;
                             break;
                          }
                     }
+                  if (found == EINA_FALSE)
+                    return;
                   break;
                }
           }
@@ -249,6 +256,7 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
              if (en->selected)
                {
                   Evas_Coord x = 0, y = 0, w = 0, h = 0, sgx, sgy;
+                  Eina_Bool found = EINA_FALSE;
 
                   evas_object_geometry_get(en->bg, &x, &y, &w, &h);
                   sgx = x + (w / 2);
@@ -259,9 +267,12 @@ _key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
                        if (ELM_RECTS_INTERSECT(x, y, w, h, sgx, sgy, 1, 1))
                          {
                             sel_entry_selected_set(obj, en->obj, EINA_FALSE);
+                            found = EINA_TRUE;
                             break;
                          }
                     }
+                  if (found == EINA_FALSE)
+                    return;
                   break;
                }
           }
