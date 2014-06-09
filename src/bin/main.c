@@ -185,42 +185,50 @@ _split_tabcount_update(Split *sp, Term *tm)
 }
 
 static Split *
-_split_split_find(Split *sp, Evas_Object *term)
+_split_split_find(Split *sp, Evas_Object *term, Term **ptm)
 {
    Split *sp2;
    Eina_List *l;
    Term *tm;
-   
+
    if (sp->term)
      {
-        if (sp->term->term == term) return sp;
+        if (sp->term->term == term)
+          {
+             if (ptm) *ptm = sp->term;
+             return sp;
+          }
         EINA_LIST_FOREACH(sp->terms, l, tm)
           {
-             if (tm->term == term) return sp;
+             if (tm->term == term)
+               {
+                  if (ptm) *ptm = tm;
+                  return sp;
+               }
           }
      }
    if (sp->s1)
      {
-        sp2 = _split_split_find(sp->s1, term);
+        sp2 = _split_split_find(sp->s1, term, ptm);
         if (sp2) return sp2;
      }
    if (sp->s2)
      {
-        sp2 = _split_split_find(sp->s2, term);
+        sp2 = _split_split_find(sp->s2, term, ptm);
         if (sp2) return sp2;
      }
    return NULL;
 }
 
 static Split *
-_split_find(Evas_Object *win, Evas_Object *term)
+_split_find(Evas_Object *win, Evas_Object *term, Term **ptm)
 {
    Win *wn;
    Eina_List *l;
-   
+
    EINA_LIST_FOREACH(wins, l, wn)
      {
-        if (wn->win == win) return _split_split_find(wn->split, term);
+        if (wn->win == win) return _split_split_find(wn->split, term, ptm);
      }
    return NULL;
 }
@@ -359,7 +367,7 @@ _term_focus_show(Split *sp, Term *term)
 void
 main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir)
 {
-   Split *sp = _split_find(win, term);
+   Split *sp = _split_find(win, term, NULL);
    Config *config;
    int w, h;
 
@@ -383,7 +391,7 @@ main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir)
 void
 main_new(Evas_Object *win, Evas_Object *term)
 {
-   Split *sp = _split_find(win, term);
+   Split *sp = _split_find(win, term, NULL);
    char buf[PATH_MAX], *wdir = NULL;
 
    if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
@@ -393,7 +401,7 @@ main_new(Evas_Object *win, Evas_Object *term)
 void
 main_split_h(Evas_Object *win, Evas_Object *term)
 {
-   Split *sp = _split_find(win, term);
+   Split *sp = _split_find(win, term, NULL);
    
    if (!sp) return;
    _split_split(sp, EINA_TRUE);
@@ -402,7 +410,7 @@ main_split_h(Evas_Object *win, Evas_Object *term)
 void
 main_split_v(Evas_Object *win, Evas_Object *term)
 {
-   Split *sp = _split_find(win, term);
+   Split *sp = _split_find(win, term, NULL);
    
    if (!sp) return;
    _split_split(sp, EINA_FALSE);
@@ -435,7 +443,7 @@ _term_next_get(Term *termin)
    Split *sp;
    Eina_List *flat, *l;
    
-   sp = _split_find(termin->wn->win, termin->term);
+   sp = _split_find(termin->wn->win, termin->term, NULL);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->next)) return l->next->data;
    if (!sp->parent) return sp->terms->data;
@@ -466,7 +474,7 @@ _term_prev_get(Term *termin)
    Split *sp;
    Eina_List *flat, *l;
    
-   sp = _split_find(termin->wn->win, termin->term);
+   sp = _split_find(termin->wn->win, termin->term, NULL);
    l = eina_list_data_find_list(sp->terms, termin);
    if ((l) && (l->prev)) return l->prev->data;
    if (!sp->parent) return eina_list_data_get(eina_list_last(sp->terms));
@@ -583,14 +591,15 @@ _term_focus(Term *term)
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
 
-   sp = _split_find(term->wn->win, term->term);
+   sp = _split_find(term->wn->win, term->term, NULL);
    if (sp) _split_tabcount_update(sp, term);
 }
 
 void
 main_close(Evas_Object *win, Evas_Object *term)
 {
-   Split *sp = _split_find(win, term);
+   Term *tm = NULL;
+   Split *sp = _split_find(win, term, &tm);
    Split *spp, *spkeep = NULL;
    Term *termfoc = NULL;
    Eina_List *l;
@@ -640,7 +649,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              if (termfoc)
                {
                   _term_focus(termfoc);
-                  sp = _split_find(win, termfoc->term);
+                  sp = _split_find(win, termfoc->term, NULL);
                   if (sp) _term_focus_show(sp, termfoc);
                }
           }
@@ -658,10 +667,12 @@ main_close(Evas_Object *win, Evas_Object *term)
      }
    else
      {
+        if (!tm) tm = sp->term;
+
         _term_resize_track_stop(sp);
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
-        l = eina_list_data_find_list(sp->terms, sp->term);
-        main_term_free(sp->term);
+        l = eina_list_data_find_list(sp->terms, tm);
+        main_term_free(tm);
         sp->term = NULL;
         if (l)
           {
@@ -670,15 +681,15 @@ main_close(Evas_Object *win, Evas_Object *term)
              else if (l->prev)
                sp->term = l->prev->data;
              sp->terms = eina_list_remove_list(sp->terms, l);
-          }
-        if (sp->term)
-          {
-             _term_resize_track_start(sp);
-             edje_object_part_swallow(sp->wn->base, "terminology.content",
-                                      sp->term->bg);
-             evas_object_show(sp->term->bg);
-             _term_focus(sp->term);
-             _term_focus_show(sp, sp->term);
+             if (sp->term)
+               {
+                  _term_resize_track_start(sp);
+                  edje_object_part_swallow(sp->wn->base, "terminology.content",
+                                           sp->term->bg);
+                  evas_object_show(sp->term->bg);
+                  _term_focus(sp->term);
+                  _term_focus_show(sp, sp->term);
+               }
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
         else _split_tabcount_update(sp, sp->term);
@@ -721,7 +732,7 @@ _cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
    term = main_win_focused_term_get(wn);
    if (!term) return;
-   sp = _split_find(wn->win, term->term);
+   sp = _split_find(wn->win, term->term, NULL);
    if (sp->sel)
      {
         if (!wn->cmdbox_up) elm_object_focus_set(sp->sel, EINA_TRUE);
@@ -975,7 +986,6 @@ static void
 _cb_exited(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   
    if (!term->hold) main_close(term->wn->win, term->term);
 }
 
@@ -997,7 +1007,7 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
              edje_object_signal_emit(term->bg, "bell,ring", "terminology");
              edje_object_signal_emit(term->base, "bell,ring", "terminology");
           }
-        sp = _split_find(term->wn->win, term->term);
+        sp = _split_find(term->wn->win, term->term, NULL);
         if (sp)
           {
              if (sp->term != term)
@@ -1405,7 +1415,7 @@ _cb_tabcount_go(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_U
    Term *term = data;
    Split *sp;
 
-   sp = _split_find(term->wn->win, term->term);
+   sp = _split_find(term->wn->win, term->term, NULL);
    _sel_go(sp, term);
 }
 
@@ -1421,8 +1431,8 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
      {
         Split *sp, *sp0;
 
-        sp0 = _split_find(term->wn->win, term->term);
-        sp = _split_find(term2->wn->win, term2->term);
+        sp0 = _split_find(term->wn->win, term->term, NULL);
+        sp = _split_find(term2->wn->win, term2->term, NULL);
         if (sp == sp0 && config->tab_zoom >= 0.01)
           _sel_go(sp, term2);
         else
@@ -1445,8 +1455,8 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
      {
         Split *sp, *sp0;
 
-        sp0 = _split_find(term->wn->win, term->term);
-        sp = _split_find(term2->wn->win, term2->term);
+        sp0 = _split_find(term->wn->win, term->term, NULL);
+        sp = _split_find(term2->wn->win, term2->term, NULL);
         if (sp == sp0 && config->tab_zoom >= 0.01)
           _sel_go(sp, term2);
         else
@@ -1470,7 +1480,7 @@ main_term_focus(Term *term)
 {
    Split *sp;
 
-   sp = _split_find(term->wn->win, term->term);
+   sp = _split_find(term->wn->win, term->term, NULL);
    if (sp->terms->next != NULL)
      _sel_go(sp, term);
 }
@@ -1518,7 +1528,7 @@ static void
 _tab_go(Term *term, int tnum)
 {
    Term *term2;
-   Split *sp = _split_find(term->wn->win, term->term);;
+   Split *sp = _split_find(term->wn->win, term->term, NULL);
    if (!sp) return;
    
    term2 = eina_list_nth(sp->terms, tnum);
@@ -2237,7 +2247,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
         edje_object_signal_emit(term->bg, "translucent,off", "terminology");
         edje_object_signal_emit(term->base, "translucent,off", "terminology");
      }
-   
+
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                size_w, size_h, term);
    colors_term_init(termio_textgrid_get(term->term), term->bg, config);
@@ -2352,7 +2362,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->startup_id)
      {
         char buf[4096];
-        
+
         snprintf(buf, sizeof(buf), "DESKTOP_STARTUP_ID=%s", inst->startup_id);
         putenv(buf);
      }
