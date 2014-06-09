@@ -612,7 +612,7 @@ main_close(Evas_Object *win, Evas_Object *term)
    if (sp->sel) _sel_restore(sp);
    spp = sp->parent;
    if ((sp->term->focused) && (spp)) termfoc = _term_next_get(sp->term);
-   sp->wn->terms = eina_list_remove(sp->wn->terms, sp->term);
+   sp->wn->terms = eina_list_remove(sp->wn->terms, tm);
    if (spp)
      {
         if (eina_list_count(sp->terms) <= 1)
