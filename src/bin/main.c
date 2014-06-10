@@ -601,7 +601,6 @@ main_close(Evas_Object *win, Evas_Object *term)
    Term *tm = NULL;
    Split *sp = _split_find(win, term, &tm);
    Split *spp, *spkeep = NULL;
-   Term *termfoc = NULL;
    Eina_List *l;
    const char *slot = PANES_TOP;
 
@@ -611,10 +610,11 @@ main_close(Evas_Object *win, Evas_Object *term)
    if (!sp->term) return;
    if (sp->sel) _sel_restore(sp);
    spp = sp->parent;
-   if ((sp->term->focused) && (spp)) termfoc = _term_next_get(sp->term);
    sp->wn->terms = eina_list_remove(sp->wn->terms, tm);
    if (spp)
      {
+        Eina_Bool term_was_focused = tm->focused;
+
         if (eina_list_count(sp->terms) <= 1)
           {
              if (sp == spp->s2)
@@ -628,9 +628,9 @@ main_close(Evas_Object *win, Evas_Object *term)
                   spp->s1 = NULL;
                }
           }
-        l = eina_list_data_find_list(sp->terms, sp->term);
+        l = eina_list_data_find_list(sp->terms, tm);
         _term_resize_track_stop(sp);
-        main_term_free(sp->term);
+        main_term_free(tm);
         sp->term = NULL;
         if (l)
           {
@@ -646,11 +646,18 @@ main_close(Evas_Object *win, Evas_Object *term)
                slot = PANES_BOTTOM;
              _split_merge(spp, spkeep, slot);
 
-             if (termfoc)
+             if (term_was_focused)
                {
-                  _term_focus(termfoc);
-                  sp = _split_find(win, termfoc->term, NULL);
-                  if (sp) _term_focus_show(sp, termfoc);
+                  tm = spp->term;
+                  sp = spp;
+                  while (tm == NULL)
+                    {
+                       tm = spp->term;
+                       sp = spp;
+                       spp = spp->s1;
+                    }
+                  _term_focus(tm);
+                  _term_focus_show(sp, tm);
                }
           }
         else
@@ -660,8 +667,11 @@ main_close(Evas_Object *win, Evas_Object *term)
              elm_object_part_content_set(sp->parent->panes, slot,
                                          sp->term->bg);
              evas_object_show(sp->term->bg);
-             _term_focus(sp->term);
-             _term_focus_show(sp, sp->term);
+             if (term_was_focused)
+               {
+                  _term_focus(sp->term);
+                  _term_focus_show(sp, sp->term);
+               }
           }
         if (sp) _split_tabcount_update(sp, sp->term);
      }
