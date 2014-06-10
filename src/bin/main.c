@@ -603,18 +603,21 @@ main_close(Evas_Object *win, Evas_Object *term)
    Split *spp, *spkeep = NULL;
    Eina_List *l;
    const char *slot = PANES_TOP;
+   Eina_Bool term_was_focused;
 
    app_server_term_del(term);
 
    if (!sp) return;
    if (!sp->term) return;
+   if (!tm) return;
    if (sp->sel) _sel_restore(sp);
    spp = sp->parent;
    sp->wn->terms = eina_list_remove(sp->wn->terms, tm);
+
+   term_was_focused = tm->focused;
+
    if (spp)
      {
-        Eina_Bool term_was_focused = tm->focused;
-
         if (eina_list_count(sp->terms) <= 1)
           {
              if (sp == spp->s2)
@@ -631,12 +634,19 @@ main_close(Evas_Object *win, Evas_Object *term)
         l = eina_list_data_find_list(sp->terms, tm);
         _term_resize_track_stop(sp);
         main_term_free(tm);
-        sp->term = NULL;
         if (l)
           {
-             if (l->next) sp->term = l->next->data;
-             else if (l->prev) sp->term = l->prev->data;
+             if (tm == sp->term)
+               {
+                  if (l->next) sp->term = l->next->data;
+                  else if (l->prev) sp->term = l->prev->data;
+                  else sp->term = NULL;
+               }
              sp->terms = eina_list_remove_list(sp->terms, l);
+          }
+        else
+          {
+             sp->term = NULL;
           }
         if (!sp->term)
           {
@@ -683,23 +693,28 @@ main_close(Evas_Object *win, Evas_Object *term)
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
         l = eina_list_data_find_list(sp->terms, tm);
         main_term_free(tm);
-        sp->term = NULL;
         if (l)
           {
-             if (l->next)
-               sp->term = l->next->data;
-             else if (l->prev)
-               sp->term = l->prev->data;
-             sp->terms = eina_list_remove_list(sp->terms, l);
-             if (sp->term)
+             if (tm == sp->term)
                {
-                  _term_resize_track_start(sp);
-                  edje_object_part_swallow(sp->wn->base, "terminology.content",
-                                           sp->term->bg);
-                  evas_object_show(sp->term->bg);
-                  _term_focus(sp->term);
-                  _term_focus_show(sp, sp->term);
+                  if (l->next) sp->term = l->next->data;
+                  else if (l->prev) sp->term = l->prev->data;
+                  else sp->term = NULL;
                }
+             sp->terms = eina_list_remove_list(sp->terms, l);
+          }
+        else
+          {
+             sp->term = NULL;
+          }
+        if (sp->term)
+          {
+             _term_resize_track_start(sp);
+             edje_object_part_swallow(sp->wn->base, "terminology.content",
+                                      sp->term->bg);
+             evas_object_show(sp->term->bg);
+             _term_focus(sp->term);
+             _term_focus_show(sp, sp->term);
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
         else _split_tabcount_update(sp, sp->term);
