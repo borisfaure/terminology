@@ -687,8 +687,6 @@ main_close(Evas_Object *win, Evas_Object *term)
      }
    else
      {
-        if (!tm) tm = sp->term;
-
         _term_resize_track_stop(sp);
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
         l = eina_list_data_find_list(sp->terms, tm);
