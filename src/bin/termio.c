@@ -4006,6 +4006,11 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
           if (!((start_y > ty->selection.end.y) ||
                 (end_y < ty->selection.start.y)))
             _sel_set(obj, EINA_FALSE);
+        else
+          {
+             ty->selection.start.y += direction;
+             ty->selection.end.y += direction;
+          }
      }
 }
 
