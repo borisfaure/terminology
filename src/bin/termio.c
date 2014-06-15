@@ -3987,7 +3987,6 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
      {
         // adjust scroll position for added scrollback
         sd->scroll++;
-        ERR("scroll: %d", sd->scroll);
         if (sd->scroll > sd->pty->backscroll_num)
           sd->scroll = sd->pty->backscroll_num;
      }
