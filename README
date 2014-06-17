@@ -10,27 +10,15 @@ Terminology 0.5.0
 Requirements:
 -------------
 
-  * elementary (>= 1.7.0)
-  * eina (>= 1.7.0)
-  * eet (>= 1.7.0)
-  * evas (>= 1.7.0)
-  * ecore (>= 1.7.0)
-  * edje (>= 1.7.0)
-  * emotion (>= 1.7.0)
-  * ecore-imf (>= 1.7.0)
-  * ecore-imf-evas (>= 1.7.0)
-  * ecore-input (>= 1.7.0)
-  * ethumb (>= 1.7.0)
+  * efl (>= 1.8.0)
+  * elementary (>= 1.8.0)
 
 Please note that some features may not quite function correctly or
-completely on EFL 1.7, and 1.8 or newer would be better.
+completely on EFL 1.8. Newer versions would be better.
 
 Please see http://www.enlightenment.org for information on these.
 
 This is an EFL terminal emulator with some extra bells and whistles.
-It's brand new and was only started near the begining of June 2012, so
-expecting it to do everything a mature terminal emulator does is a bit
-premature, but considering it's young age, it does a lot.
 
 Compiling:
 ----------
