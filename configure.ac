@@ -10,7 +10,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_HEADERS([terminology_config.h])
 
-AM_INIT_AUTOMAKE([1.6 dist-bzip2])
+AM_INIT_AUTOMAKE([1.6 dist-xz])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_USE_SYSTEM_EXTENSIONS
