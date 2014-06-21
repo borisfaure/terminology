@@ -2004,7 +2004,7 @@ main_win_new(const char *name, const char *role, const char *title,
         return NULL;
      }
 
-   wn->config = config;
+   wn->config = config_fork(config);
    
    evas_object_event_callback_add(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
    
@@ -3122,8 +3122,6 @@ remote:
         retval = EXIT_FAILURE;
         goto end;
      }
-
-   config = config_fork(config);
 
    if (config->application_server)
      app_server_init(&wins, config->application_server_restore_views);
