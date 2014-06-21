@@ -1974,21 +1974,23 @@ _smart_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
           return;
      }
 }
-
 static Eina_Bool
 _is_modifier(const char *key)
 {
+#define STATIC_STR_EQUAL(STR) (!strncmp(key, STR, strlen(STR)))
    if ((key != NULL) && (
-       (!strncmp(key, "Shift", 5)) ||
-       (!strncmp(key, "Control", 7)) ||
-       (!strncmp(key, "Alt", 3)) ||
-       (!strncmp(key, "Meta", 4)) ||
-       (!strncmp(key, "Super", 5)) ||
-       (!strncmp(key, "Hyper", 5)) ||
-       (!strcmp(key, "Scroll_Lock")) ||
-       (!strcmp(key, "Num_Lock")) ||
-       (!strcmp(key, "Caps_Lock"))))
+       STATIC_STR_EQUAL("Shift") ||
+       STATIC_STR_EQUAL("Control") ||
+       STATIC_STR_EQUAL("Alt") ||
+       STATIC_STR_EQUAL("Meta") ||
+       STATIC_STR_EQUAL("Super") ||
+       STATIC_STR_EQUAL("Hyper") ||
+       STATIC_STR_EQUAL("Scroll_Lock") ||
+       STATIC_STR_EQUAL("Num_Lock") ||
+       STATIC_STR_EQUAL("ISO_Level3_Shift") ||
+       STATIC_STR_EQUAL("Caps_Lock")))
      return EINA_TRUE;
+#undef STATIC_STR_EQUAL
    return EINA_FALSE;
 }
 
