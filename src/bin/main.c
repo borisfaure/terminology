@@ -2664,7 +2664,7 @@ static const Ecore_Getopt options = {
    PACKAGE_NAME,
    "%prog [options]",
    PACKAGE_VERSION,
-   "(C) 2012 Carsten Haitzler and others",
+   "(C) 2012-2014 Carsten Haitzler and others",
    "BSD 2-Clause",
    "Terminal emulator written with Enlightenment Foundation Libraries.",
    EINA_TRUE,
