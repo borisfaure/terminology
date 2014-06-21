@@ -2377,8 +2377,8 @@ main_ipc_new(Ipc_Instance *inst)
 {
    Win *wn;
    Term *term;
-   Config *config;
    Split *sp;
+   Config *config;
    int pargc = 0, nargc, i;
    char **pargv = NULL, **nargv = NULL, geom[256];
 
@@ -2543,21 +2543,18 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
-   config = config_fork(main_config);
    ecore_app_args_set(nargc, (const char **)nargv);
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
-                     config, inst->fullscreen, inst->iconic,
+                     main_config, inst->fullscreen, inst->iconic,
                      inst->borderless, inst->override, inst->maximized);
    if (!wn)
      {
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
-        config_del(config);
         return;
      }
-   
-   config = config_fork(config);
-   
+   config = wn->config;
+
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
