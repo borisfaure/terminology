@@ -2076,8 +2076,6 @@ main_term_free(Term *term)
         evas_object_del(term->tabcount_spacer);
         term->tabcount_spacer = NULL;
      }
-   if (term->config) config_del(term->config);
-   term->config = NULL;
    free(term);
 }
 
@@ -2377,7 +2375,6 @@ main_ipc_new(Ipc_Instance *inst)
 {
    Win *wn;
    Term *term;
-   Config *config;
    Split *sp;
    int pargc = 0, nargc, i;
    char **pargv = NULL, **nargv = NULL, geom[256];
@@ -2543,26 +2540,23 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
-   config = config_fork(main_config);
+
    ecore_app_args_set(nargc, (const char **)nargv);
    wn = main_win_new(inst->name, inst->role, inst->title, inst->icon_name,
-                     config, inst->fullscreen, inst->iconic,
+                     main_config, inst->fullscreen, inst->iconic,
                      inst->borderless, inst->override, inst->maximized);
    if (!wn)
      {
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
-        config_del(config);
         return;
      }
-   
-   config = config_fork(config);
-   
+
    unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
-        eina_stringshare_replace(&(config->background), inst->background);
-        config->temporary = EINA_TRUE;
+        eina_stringshare_replace(&(wn->config->background), inst->background);
+        wn->config->temporary = EINA_TRUE;
      }
 
    if (inst->font)
@@ -2581,10 +2575,10 @@ main_ipc_new(Ipc_Instance *inst)
                   *p = 0;
                   p++;
                   sz = atoi(p);
-                  if (sz > 0) config->font.size = sz;
-                  eina_stringshare_replace(&(config->font.name), fname);
+                  if (sz > 0) wn->config->font.size = sz;
+                  eina_stringshare_replace(&(wn->config->font.name), fname);
                }
-             config->font.bitmap = 0;
+             wn->config->font.bitmap = 0;
           }
         else
           {
@@ -2601,19 +2595,19 @@ main_ipc_new(Ipc_Instance *inst)
                        if (!strncasecmp(file, inst->font, n))
                          {
                             n = -1;
-                            eina_stringshare_replace(&(config->font.name), file);
-                            config->font.bitmap = 1;
+                            eina_stringshare_replace(&(wn->config->font.name), file);
+                            wn->config->font.bitmap = 1;
                          }
                     }
                   free(file);
                }
           }
-        config->temporary = EINA_TRUE;
+        wn->config->temporary = EINA_TRUE;
      }
 
    if (inst->w <= 0) inst->w = 80;
    if (inst->h <= 0) inst->h = 24;
-   term = main_term_new(wn, config, inst->cmd, inst->login_shell,
+   term = main_term_new(wn, wn->config, inst->cmd, inst->login_shell,
                         inst->cd, inst->w, inst->h, inst->hold);
    if (!term)
      {
@@ -2635,8 +2629,8 @@ main_ipc_new(Ipc_Instance *inst)
    _term_resize_track_start(sp);
    _split_tabcount_update(sp, sp->term);
    
-   main_trans_update(config);
-   main_media_update(config);
+   main_trans_update(wn->config);
+   main_media_update(wn->config);
    if (inst->pos)
      {
         int screen_w, screen_h;
@@ -3115,18 +3109,18 @@ remote:
    putenv("TERMINOLOGY=1");
    unsetenv("DESKTOP_STARTUP_ID");
 
+   config_del(config);
+   config = NULL;
    if (!wn)
      {
-        config_del(config);
-        config = NULL;
         retval = EXIT_FAILURE;
         goto end;
      }
 
-   if (config->application_server)
-     app_server_init(&wins, config->application_server_restore_views);
+   if (wn->config->application_server)
+     app_server_init(&wins, wn->config->application_server_restore_views);
 
-   term = main_term_new(wn, config, cmd, login_shell, cd,
+   term = main_term_new(wn, wn->config, cmd, login_shell, cd,
                         size_w, size_h, hold);
    if (!term)
      {
@@ -3145,9 +3139,9 @@ remote:
    sp->terms = eina_list_append(sp->terms, sp->term);
    _term_resize_track_start(sp);
    _split_tabcount_update(sp, sp->term);
-   
-   main_trans_update(config);
-   main_media_update(config);
+
+   main_trans_update(wn->config);
+   main_media_update(wn->config);
    main_win_sizing_handle(wn);
    evas_object_show(wn->win);
    if (pos_set)
