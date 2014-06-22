@@ -972,7 +972,7 @@ _cb_size_hint(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EIN
    term->min_w = w - mw;
    term->min_h = h - mh;
    term->req_w = w - mw + rw;
-   term->req_h = w - mw + rh;
+   term->req_h = h - mw + rh;
 
    if (term->wn->size_job) ecore_job_del(term->wn->size_job);
    term->wn->size_job = ecore_job_add(_size_job, term->wn);
