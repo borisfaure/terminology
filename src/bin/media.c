@@ -323,6 +323,7 @@ _type_img_init(Evas_Object *obj)
    evas_object_raise(sd->o_event);
    evas_object_event_callback_add(o, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _cb_img_preloaded, obj);
+   evas_object_image_load_orientation_set(o, EINA_TRUE);
    evas_object_image_file_set(o, sd->realf, NULL);
    evas_object_image_size_get(o, &(sd->iw), &(sd->ih));
    evas_object_image_preload(o, EINA_FALSE);
