@@ -340,7 +340,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    char buf[4096], *file, *fname;
    Eina_List *files, *fontlist, *l;
    Font *f;
-   Elm_Object_Item *it, *sel_it = NULL, *grp_it = NULL;
+   Elm_Object_Item *it, *sel_it = NULL, *sel_it2 = NULL, *grp_it = NULL;
    Elm_Genlist_Item_Class *it_class, *it_group;
    Config *config = termio_config_get(term);
 
@@ -432,7 +432,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                      ELM_GENLIST_ITEM_NONE,
                                      _cb_op_font_sel, f);
-        if ((config->font.bitmap) && (config->font.name) &&
+        if ((!sel_it) && (config->font.bitmap) && (config->font.name) &&
             ((!strcmp(config->font.name, f->full_name)) ||
              (!strcmp(config->font.name, file))))
           {
@@ -474,23 +474,26 @@ options_font(Evas_Object *opbox, Evas_Object *term)
              f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                           ELM_GENLIST_ITEM_NONE,
                                           _cb_op_font_sel, f);
-             if ((!config->font.bitmap) && (config->font.name))
+             if ((!sel_it) && (!config->font.bitmap) && (config->font.name))
                {
                   char *s = strchr(fname, ':');
                   size_t len;
 
                   len = (s == NULL) ? strlen(fname) : (size_t)(s - fname);
-                  if (!strcmp(config->font.name, f->full_name) ||
-                      !strncmp(config->font.name, fname, len))
-                    {
-                       sel_it = it;
-                    }
+                  if (!strcmp(config->font.name, f->full_name))
+                    sel_it = it;
+                  else if ((!sel_it2) &&
+                           (!strncmp(config->font.name, fname, len)))
+                    sel_it2 = it;
                }
           }
      }
+
    if (fontlist)
      evas_font_available_list_free(evas_object_evas_get(opbox), fontlist);
 
+   if (!sel_it && sel_it2)
+      sel_it = sel_it2;
    if (sel_it)
      {
         elm_genlist_item_selected_set(sel_it, EINA_TRUE);
