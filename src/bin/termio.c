@@ -4670,7 +4670,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                   txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
                     eina_strbuf_append_length(sb, txt, txtlen);
-                  if ((x == (w - 1)) && (x != c2x))
+                  if ((x == (w - 1)) &&
+                      ((x != c2x) || (y != c2y)))
                     {
                        if (!cells[x].att.autowrapped)
                          eina_strbuf_append_char(sb, '\n');
