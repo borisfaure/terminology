@@ -1,6 +1,26 @@
 =================
-Terminology 0.5.1
+Terminology 0.6.0
 =================
+
+Changes since 0.5.1:
+--------------------
+
+Additions:
+    * Make term switching cyclic
+    * Add Mouse-Over focus
+    * Fraktur support
+    * Add option whether to detect links
+    * Add option to disable the sound of the bell
+    * Add new themes: Nyanology and smyck
+    * Add miniview feature
+
+Improvements:
+    * Improve terminal compatibility
+    * Improve font selector to be able to select different font styles
+    * Support rotation metadata on media files
+
+Fixes:
+    * Various bug fixes
 
 Changes since 0.5.0:
 --------------------

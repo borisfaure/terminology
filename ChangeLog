@@ -1,3 +1,18 @@
+2014-06-30
+
+        * Release v0.6.0
+        * Make term switching cyclic
+        * Add Mouse-Over focus
+        * Fraktur support
+        * Add option whether to detect links
+        * Add option to disable the sound of the bell
+        * Add new themes: Nyanology and smyck
+        * Add miniview feature
+        * Improve terminal compatibility
+        * Improve font selector to be able to select different font styles
+        * Support rotation metadata on media files
+        * Various bug fixes
+
 2014-05-17
 
         * Release v0.5.1
