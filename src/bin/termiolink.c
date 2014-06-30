@@ -101,7 +101,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    char *s;
    char endmatch = 0;
    int x1, x2, y1, y2, w = 0, h = 0, sc;
-   size_t len;
+   size_t len, prev_len = 0;
    Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, escaped = EINA_FALSE;
 
    x1 = x2 = cx;
@@ -111,6 +111,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    sc = termio_scroll_get(obj);
    for (;;)
      {
+        prev_len = len;
         s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
         if (!s) break;
         if (goback)
@@ -123,6 +124,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                   /* Check if the previous char is a delimiter */
                   coord_back(&x1, &y1, w, h);
                   free(s);
+                  prev_len = len;
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
                                            &len);
                   if (!s) break;
@@ -139,6 +141,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                   coord_forward(&x1, &y1, w, h);
 
                   free(s);
+                  prev_len = len;
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
                                            &len);
                   if (!s) break;
@@ -170,6 +173,8 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
         if ((goforward) && (len >= 1))
           {
              char end = s[len - 1];
+             if (len - prev_len == 2 && len >= 2)
+               end = s[len - 2];
 
              if ((end == endmatch) ||
                  ((!escaped) && (isspace(end)) &&
