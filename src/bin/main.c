@@ -111,7 +111,7 @@ _win_find(Evas_Object *win)
 void change_theme(Evas_Object *win, Config *config)
 {
    Win *wn;
-   Eina_List *l;
+   const Eina_List *l;
    Term *term;
 
    wn = _win_find(win);
@@ -126,6 +126,11 @@ void change_theme(Evas_Object *win, Config *config)
         colors_term_init(termio_textgrid_get(term->term), edje, config);
         termio_config_set(term->term, config);
      }
+
+   l = elm_theme_overlay_list_get(NULL);
+   if (l) l = eina_list_last(l);
+   if (l) elm_theme_overlay_del(NULL, l->data);
+   elm_theme_overlay_add(NULL, config_theme_path_get(config));
 }
 
 static void
@@ -2825,12 +2830,7 @@ elm_main(int argc, char **argv)
    config_init();
 
    main_config = config_load("config");
-   
-//   elm_theme_extension_add(NULL, config_theme_path_get(main_config));
-//   elm_theme_extension_add(NULL, config_theme_path_default_get(main_config));
-   elm_theme_overlay_add(NULL, config_theme_path_get(main_config));
-   elm_theme_overlay_add(NULL, config_theme_path_default_get(main_config));
-   
+
    ipc_init();
 
    config = config_fork(main_config);
@@ -3055,6 +3055,9 @@ elm_main(int argc, char **argv)
         config->temporary = EINA_TRUE;
      }
    login_shell = config->login_shell;
+
+   elm_theme_overlay_add(NULL, config_theme_path_default_get(config));
+   elm_theme_overlay_add(NULL, config_theme_path_get(config));
 
 remote:
    if ((!single) && (config->multi_instance))
