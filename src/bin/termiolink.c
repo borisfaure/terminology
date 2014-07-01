@@ -101,7 +101,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    char *s;
    char endmatch = 0;
    int x1, x2, y1, y2, w = 0, h = 0, sc;
-   size_t len, prev_len = 0;
+   size_t len = 0, prev_len = 0;
    Eina_Bool goback = EINA_TRUE, goforward = EINA_FALSE, escaped = EINA_FALSE;
 
    x1 = x2 = cx;
