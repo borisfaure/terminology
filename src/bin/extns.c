@@ -13,7 +13,7 @@ const char *extn_img[] =
 
 const char *extn_scale[] =
 {
-   ".svg", ".svgz", ".svg.gz", ".ps", ".ps.gz", ".pdf",
+   ".svg", ".svgz", ".svg.gz", /* ".ps", ".ps.gz", ".pdf", */
    NULL
 };
 
