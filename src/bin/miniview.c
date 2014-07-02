@@ -24,6 +24,8 @@ int _miniview_log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_miniview_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_miniview_log_dom, __VA_ARGS__)
 
+static Eina_Bool _deferred_renderer(void *data);
+
 void
 miniview_init(void)
 {
@@ -126,6 +128,14 @@ _draw_line(const Termpty *ty, unsigned int *pixels,
 }
 
 static void
+_queue_render(Miniview *mv)
+{
+   mv->to_render = 1;
+   if ((!mv->deferred_renderer) && (mv->is_shown))
+     mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
+}
+
+static void
 _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
                       Evas_Object *obj EINA_UNUSED, void *event)
 {
@@ -137,7 +147,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
    /* do not handle horizontal scrolling */
    if (ev->direction) return;
    mv->img_hist += ev->z * 25;
-   mv->to_render = 1;
+   _queue_render(mv);
 }
 
 Eina_Bool
@@ -166,13 +176,13 @@ miniview_handle_key(Evas_Object *obj, Evas_Event_Key_Down *ev)
    if (!strcmp(ev->key, "Prior"))
      {
         mv->img_hist -= z;
-        mv->to_render = 1;
+        _queue_render(mv);
         return EINA_TRUE;
      }
    else if (!strcmp(ev->key, "Next"))
      {
         mv->img_hist += z;
-        mv->to_render = 1;
+        _queue_render(mv);
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -249,7 +259,7 @@ _smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED,
 
    if (!mv) return;
    _do_configure(obj);
-   mv->to_render = 1;
+   _queue_render(mv);
 }
 
 static void
@@ -277,7 +287,7 @@ _smart_show(Evas_Object *obj)
 
         if ((mv->rows == 0) || (mv->cols == 0)) return;
 
-        mv->to_render = 1;
+        _queue_render(mv);
         evas_object_show(mv->base);
         _do_configure(obj);
      }
@@ -304,7 +314,7 @@ miniview_redraw(Evas_Object *obj)
    if (!obj) return;
    mv = evas_object_smart_data_get(obj);
    if ((!mv) || (!mv->is_shown)) return;
-   mv->to_render = 1;
+   _queue_render(mv);
 }
 
 static void
@@ -339,10 +349,13 @@ _deferred_renderer(void *data)
    unsigned int colors[512];
 
    if ((!mv) || (!mv->is_shown) || (!mv->to_render) || (mv->img_h == 0))
-     return EINA_TRUE;
+     {
+        mv->deferred_renderer = NULL;
+        return EINA_TRUE;
+     }
 
    miniview_colors_get(mv, colors);
-   
+
    ty = termio_pty_get(mv->termio);
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if ((ow == 0) || (oh == 0)) return EINA_TRUE;
@@ -374,8 +387,8 @@ _deferred_renderer(void *data)
    evas_object_image_data_update_add(mv->img, 0, 0, ow, oh);
 
    mv->to_render = 0;
-
-   return EINA_TRUE;
+   mv->deferred_renderer = NULL;
+   return EINA_FALSE;
 }
 
 
@@ -398,7 +411,7 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if ((mv->rows == 0) || (mv->cols == 0)) return;
 
    _do_configure(obj);
-   mv->to_render = 1;
+   _queue_render(mv);
 }
 
 
@@ -468,7 +481,6 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
                                   _smart_cb_mouse_down, obj);
    edje_object_signal_callback_add(mv->base, "miniview,close", "terminology",
                                    _cb_miniview_close, mv);
-   mv->deferred_renderer = ecore_timer_add(0.1, _deferred_renderer, mv);
    return obj;
 }
 
