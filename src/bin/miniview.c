@@ -351,7 +351,7 @@ _deferred_renderer(void *data)
    if ((!mv) || (!mv->is_shown) || (!mv->to_render) || (mv->img_h == 0))
      {
         mv->deferred_renderer = NULL;
-        return EINA_TRUE;
+        return EINA_FALSE;
      }
 
    miniview_colors_get(mv, colors);
