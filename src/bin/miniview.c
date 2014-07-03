@@ -348,7 +348,9 @@ _deferred_renderer(void *data)
    Termpty *ty;
    unsigned int colors[512];
 
-   if ((!mv) || (!mv->is_shown) || (!mv->to_render) || (mv->img_h == 0))
+   if (!mv) return EINA_FALSE;
+
+   if ((!mv->is_shown) || (!mv->to_render) || (mv->img_h == 0))
      {
         mv->deferred_renderer = NULL;
         return EINA_FALSE;
