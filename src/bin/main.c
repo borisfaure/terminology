@@ -1095,6 +1095,7 @@ _popmedia_show(Term *term, const char *src)
    int type = 0;
 
    if (!config) return;
+   ty_dbus_link_hide();
    if (term->popmedia)
      {
         const char *s;
