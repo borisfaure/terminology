@@ -562,7 +562,8 @@ _update_link(Evas_Object *obj, Termio *sd,
                }
              if (sd->link.string)
                {
-                  if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
+                  if ((!main_term_popup_exists(sd->term)) &&
+                      ((sd->link.string[0] == '/') || (link_is_url(sd->link.string))))
                     {
                        Evas_Coord _x = ox, _y = oy;
                        uint64_t xwin;

@@ -2347,6 +2347,12 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    return term;
 }
 
+Eina_Bool
+main_term_popup_exists(const Term *term)
+{
+   return term->popmedia || term->popmedia_queue;
+}
+
 Win *main_term_win_get(Term *term)
 {
    return term->wn;

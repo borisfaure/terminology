@@ -20,6 +20,7 @@ void main_config_sync(const Config *config);
 
 void change_theme(Evas_Object *win, Config *config);
 
+Eina_Bool main_term_popup_exists(const Term *term);
 void main_term_focus(Term *term);
 
 Win *main_term_win_get(Term *term);
