@@ -2813,7 +2813,7 @@ elm_main(int argc, char **argv)
    };
    Win *wn;
    Term *term;
-   Config *config;
+   Config *config = NULL;
    Split *sp;
    int args, retval = EXIT_SUCCESS;
    int remote_try = 0;
@@ -3178,6 +3178,11 @@ remote:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    free(cmd);
 #endif
+   if (config)
+     {
+        config_del(config);
+        config = NULL;
+     }
 
    ipc_shutdown();
 
