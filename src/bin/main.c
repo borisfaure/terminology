@@ -131,6 +131,7 @@ void change_theme(Evas_Object *win, Config *config)
    if (l) l = eina_list_last(l);
    if (l) elm_theme_overlay_del(NULL, l->data);
    elm_theme_overlay_add(NULL, config_theme_path_get(config));
+   main_trans_update(config);
 }
 
 static void
