@@ -21,6 +21,36 @@ AC_C___ATTRIBUTE__
 efl_version="1.7.0"
 AC_SUBST(efl_version)
 
+
+m4_ifdef([AM_GNU_GETTEXT_VERSION], [
+AM_GNU_GETTEXT_VERSION([0.18.3])
+])
+
+m4_ifdef([AC_GNU_GETTEXT], [
+AC_GNU_GETTEXT([external], [need-ngettext])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],[
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external], [need-ngettext])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],[
+have_po="no"
+])
+])
+AC_SUBST(LTLIBINTL)
+if test "x$LIBINTL" = "x"; then
+  LIBINTL="$INTLLIBS"
+fi
+
+if test "x${POSUB}" = "x" ; then
+   have_po="no"
+fi
+
+AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
+
+
 requirements="\
    elementary >= ${efl_version} \
    eina >= ${efl_version} \
@@ -75,8 +105,12 @@ AC_ARG_WITH(maximum-log-level,
 AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${with_max_log_level}, [if set, logging is limited to this amount.])
 
 AC_CONFIG_FILES([
-Makefile
 terminology.spec
+pkgbuild/PKGBUILD
+])
+
+AC_OUTPUT([
+Makefile
 src/Makefile
 src/bin/Makefile
 data/Makefile
@@ -92,10 +126,8 @@ data/themes/nyanology/Makefile
 data/themes/nyanology/images/Makefile
 data/themes/nyanology/images-sources/Makefile
 man/Makefile
-pkgbuild/PKGBUILD
+$po_makefile_in
 ])
-
-AC_OUTPUT
 
 #####################################################################
 ## Info
@@ -117,4 +149,5 @@ echo "  prefix...................: $prefix"
 echo
 echo "Features:"
 echo "  dbus................: $have_eldbus"
+echo "  gettext.............: $have_po"
 echo

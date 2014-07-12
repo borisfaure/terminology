@@ -290,7 +290,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
         
-        o = _button_add(win, "About", "about", _cb_ct_about, NULL);
+        o = _button_add(win, _("About"), "about", _cb_ct_about, NULL);
         elm_box_pack_end(ct_box, o);
 
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,

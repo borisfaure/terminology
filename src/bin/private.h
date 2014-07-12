@@ -5,6 +5,12 @@
 #include "terminology_config.h"
 #endif
 
+#ifdef HAVE_GETTEXT
+#define _(string) gettext (string)
+#else
+#define _(string) (string)
+#endif
+
 extern int _log_domain;
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)

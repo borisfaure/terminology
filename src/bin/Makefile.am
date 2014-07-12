@@ -8,6 +8,13 @@ terminology_CPPFLAGS = -I. \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 terminology_LDADD = @TERMINOLOGY_LIBS@ @ELDBUS_LIBS@
+if HAVE_PO
+terminology_CPPFLAGS += -DLOCALEDIR=\"$(localedir)\"
+terminology_LDADD += @LIBINTL@
+endif
+
+
+
 
 terminology_SOURCES = \
 private.h \

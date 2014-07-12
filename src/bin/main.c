@@ -1,3 +1,6 @@
+#ifdef HAVE_PO
+#include <locale.h>
+#endif
 #include "private.h"
 
 #include <Ecore_Getopt.h>
@@ -2794,6 +2797,12 @@ elm_main(int argc, char **argv)
    int pos_set = 0, size_set = 0;
    int pos_x = 0, pos_y = 0;
    int size_w = 1, size_h = 1;
+
+   elm_language_set("");
+#ifdef HAVE_GETTEXT
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
+#endif
 
    _log_domain = eina_log_domain_register("terminology", NULL);
    if (_log_domain < 0)

@@ -1,0 +1,22 @@
+# English translations for terminology package.
+# Copyright (C) 2014 Terminology development team
+# This file is distributed under the same license as the terminology package.
+#  <boris@fau.re>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: terminology 0.6.99\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2014-07-12 16:36+0200\n"
+"PO-Revision-Date: 2014-07-12 16:36+0200\n"
+"Last-Translator:  <boris@fau.re>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/bin/controls.c:293
+msgid "About"
+msgstr "À propos"
