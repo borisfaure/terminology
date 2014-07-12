@@ -822,31 +822,6 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    _term_focus(term);
 }
 
-static void
-_cb_term_mouse_up(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-/*   
-   Evas_Event_Mouse_Up *ev = event;
-   Term *term = data;
-   Term *term2;
-   
-   term2 = main_win_focused_term_get(term->wn);
-   if (term == term2) return;
-   if (ev->button == 1)
-     {
-        int dx, dy, f;
-        
-        dx = term->down.x - ev->canvas.x;
-        dy = term->down.y - ev->canvas.y;
-        f = elm_config_finger_size_get();
-        if ((f * f) > ((dx * dx) + (dy * dy)))
-          {
-             _term_focus(term);
-          }
-     }
- */
-}
-
 typedef struct _Sizeinfo Sizeinfo;
 
 struct _Sizeinfo
@@ -2335,11 +2310,9 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_term_mouse_down, term);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
-                                  _cb_term_mouse_up, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
                                   _cb_term_mouse_in, term);
-   
+
    if (!wn->terms) term->focused = EINA_TRUE;
 
    wn->terms = eina_list_append(wn->terms, term);
