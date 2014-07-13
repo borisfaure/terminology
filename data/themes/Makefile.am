@@ -69,7 +69,7 @@ base16_ocean_dark.edj: Makefile base16_ocean_dark.edc mild.edc default_colors.in
 	$(top_srcdir)/data/themes/base16_ocean_dark.edc \
 	$(top_builddir)/data/themes/base16_ocean_dark.edj
 
-smyck.edj: Makefile smyck.edc default_colors.in.edc
+smyck.edj: Makefile smyck.edc mild.edc default_colors.in.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/smyck.edc \
 	$(top_builddir)/data/themes/smyck.edj
