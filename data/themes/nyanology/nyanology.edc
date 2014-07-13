@@ -12,6 +12,20 @@ collections {
         image: "pm_fill.png" COMP;
         image: "cr_glow.png" COMP;
       }
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"base", "default", 0.0);
+            get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
+            set_state(PART:"base", "custom", 0.0);
+         }
+      }
       parts {
 // other signals sent not handled here
 //            program { name: "focus_in";
@@ -29,10 +43,6 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                color: 0 0 0 255;
-            }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
             }
 	    description { state: "catblue" 0.0;
                color: 0 51 102 255;
@@ -66,18 +76,6 @@ collections {
             description { state: "movie" 0.0;
                inherit: "default" 0.0;
             }
-         }
-         program { name: "trans_on";
-            signal: "translucent,on";
-            source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "base";
-         }
-         program { name: "trans_off";
-            signal: "translucent,off";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "base";
          }
          program { name: "media_off";
             signal: "media,off";

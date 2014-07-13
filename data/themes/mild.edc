@@ -38,6 +38,27 @@ collections {
             source: "bell.wav";
          }
       }
+
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"base", "default", 0.0);
+            get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
+            set_state(PART:"base", "custom", 0.0);
+
+            custom_state(PART:"fade", "default", 0.0);
+            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
+            set_state(PART:"fade", "custom", 0.0);
+         }
+      }
+
       parts {
          ////////////////////////////////////////////////////////////////////
          // background handling
@@ -96,17 +117,9 @@ collections {
             description { state: "default" 0.0;
                color: BG_COLOR;
             }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               color: BG_COLOR_TRANSLUCENT;
-            }
          }
          part { name: "fade"; type: RECT;
             description { state: "default" 0.0;
-            }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 128;
             }
          }
          part { name: "terminology.background"; type: SWALLOW;
@@ -125,20 +138,6 @@ collections {
             description { state: "movie" 0.0;
                inherit: "default" 0.0;
             }
-         }
-         program { name: "trans_on";
-            signal: "translucent,on";
-            source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "base";
-            target: "fade";
-         }
-         program { name: "trans_off";
-            signal: "translucent,off";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "base";
-             target: "fade";
          }
          program { name: "media_off";
             signal: "media,off";
@@ -1275,6 +1274,16 @@ collections {
          images {
            image: "pm_fill.png" COMP;
          }
+         script {
+            public message(Msg_Type:type, id, ...) {
+               if (type != MSG_INT || id != 1) return;
+
+               if (getarg(2) < 100)
+                 set_state(PART:"fill", "translucent", 0.0);
+               else
+                 set_state(PART:"fill", "default", 0.0);
+         }
+      }
          parts {
             ////////////////////////////////////////////////////////////////////
             // background and shadows

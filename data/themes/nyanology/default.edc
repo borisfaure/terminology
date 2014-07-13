@@ -16,6 +16,30 @@ collections {
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
       }
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"shadow", "default", 0.0);
+            get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
+            set_state(PART:"shadow", "custom", 0.0);
+
+            custom_state(PART:"base", "default", 0.0);
+            get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
+            set_state(PART:"base", "custom", 0.0);
+
+            custom_state(PART:"fade", "default", 0.0);
+            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
+            set_state(PART:"base", "custom", 0.0);
+         }
+      }
       parts {
 // other signals sent not handled here         
 //            program { name: "focus_in";
@@ -34,11 +58,6 @@ collections {
             description { state: "default" 0.0;
                image.normal: "bg_shadow.png";
                fill.smooth: 0;
-               visible: 0;
-            }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
             }
          }
          part { name: "base"; type: RECT;
@@ -46,17 +65,9 @@ collections {
             description { state: "default" 0.0;
                color: 48 48 48 255;
             }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
          }
          part { name: "fade"; type: RECT;
             description { state: "default" 0.0;
-            }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 128;
             }
          }
          part { name: "terminology.background"; type: SWALLOW;
@@ -75,22 +86,6 @@ collections {
             description { state: "movie" 0.0;
                inherit: "default" 0.0;
             }
-         }
-         program { name: "trans_on";
-            signal: "translucent,on";
-            source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "base";
-            target: "shadow";
-            target: "fade";
-         }
-         program { name: "trans_off";
-            signal: "translucent,off";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "base";
-            target: "shadow";
-             target: "fade";
          }
          program { name: "media_off";
             signal: "media,off";

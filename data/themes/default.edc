@@ -84,26 +84,26 @@ collections {
    ///////////////////////////////////////////////////////////////////////////
    //// the background and general container for the terminal
    group { name: "terminology/core";
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"fade", "default", 0.0);
+            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
+            set_state(PART:"fade", "custom", 0.0);
+         }
+      }
       parts {
          ////////////////////////////////////////////////////////////////////
          // background handling
          part { name: "fade"; type: RECT;
             description { state: "default" 0.0;
             }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 128;
-            }
-         }
-         program {
-            signal: "translucent,on"; source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "fade";
-         }
-         program {
-            signal: "translucent,off"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "fade";
          }
          part { name: "terminology.background"; type: SWALLOW;
             clip_to: "fade";
@@ -186,6 +186,25 @@ collections {
             source: "bell.wav";
          }
       }
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"shadow", "default", 0.0);
+            get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
+            set_state(PART:"shadow", "custom", 0.0);
+
+            custom_state(PART:"base", "default", 0.0);
+            get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
+            set_state(PART:"base", "custom", 0.0);
+         }
+      }
       parts {
          ////////////////////////////////////////////////////////////////////
          // background handling
@@ -194,11 +213,6 @@ collections {
             description { state: "default" 0.0;
                image.normal: "bg_shadow";
                fill.smooth: 0;
-               visible: 0;
-            }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
             }
          }
          part { name: "base"; type: RECT;
@@ -206,22 +220,6 @@ collections {
             description { state: "default" 0.0;
                color: BG_COL;
             }
-            description { state: "translucent" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
-         program {
-            signal: "translucent,on"; source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "base";
-            target: "shadow";
-         }
-         program {
-            signal: "translucent,off"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "base";
-            target: "shadow";
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -2581,6 +2579,25 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
         image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
         image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
       }
+      script {
+         public message(Msg_Type:type, id, ...) {
+            new r, g, b, a, v;
+
+            if (type != MSG_INT || id != 1) return;
+
+            v = getarg(2) * 255 / 100;
+
+            custom_state(PART:"shadow", "default", 0.0);
+            get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
+            set_state(PART:"shadow", "custom", 0.0);
+
+            if (v < 255)
+              set_state(PART:"fill", "translucent", 0.0);
+            else
+              set_state(PART:"fill", "default", 0.0);
+         }
+      }
       parts {
          ////////////////////////////////////////////////////////////////////
          // background and shadows
@@ -2604,16 +2621,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                inherit: "default" 0.0;
                visible: 0;
             }
-         }
-         program {
-            signal: "translucent,on"; source: "terminology";
-            action: STATE_SET "translucent" 0.0;
-            target: "fill";
-         }
-         program {
-            signal: "translucent,off"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "fill";
          }
          
          ////////////////////////////////////////////////////////////////////

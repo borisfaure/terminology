@@ -45,6 +45,7 @@ struct _Config
    Eina_Bool         bell_rings;
    Eina_Bool         active_links;
    Eina_Bool         translucent;
+   int               opacity;
    Eina_Bool         mute;
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;

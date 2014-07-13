@@ -101,6 +101,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "opacity", opacity, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "urg_bell", urg_bell, EET_T_UCHAR);
@@ -507,6 +509,7 @@ config_load(const char *key)
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;
              config->translucent = EINA_FALSE;
+             config->opacity = 50;
              config->jump_on_change = EINA_TRUE;
              config->jump_on_keypress = EINA_TRUE;
              config->flicker_on_key = EINA_FALSE;
@@ -597,6 +600,7 @@ config_fork(Config *config)
    CPY(bell_rings);
    CPY(active_links);
    CPY(translucent);
+   CPY(opacity);
    CPY(mute);
    CPY(urg_bell);
    CPY(multi_instance);

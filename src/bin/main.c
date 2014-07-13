@@ -1341,14 +1341,16 @@ _sel_go(Split *sp, Term *term)
    Eina_List *l;
    Term *tm;
    double z;
+   Edje_Message_Int msg;
 
    evas_object_hide(sp->term->bg);
    sp->sel_bg = edje_object_add(evas_object_evas_get(sp->wn->win));
    theme_apply(sp->sel_bg, term->config, "terminology/sel/base");
-   if (term->config->translucent)
-     edje_object_signal_emit(sp->sel_bg, "translucent,on", "terminology");
+   if (sp->term->config->translucent)
+     msg.val = term->config->opacity;
    else
-     edje_object_signal_emit(sp->sel_bg, "translucent,off", "terminology");
+     msg.val = 100;
+   edje_object_message_send(sp->sel_bg, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_signal_emit(sp->sel_bg, "begin", "terminology");
    sp->sel = sel_add(sp->wn->win);
    EINA_LIST_FOREACH(sp->terms, l, tm)
@@ -1722,16 +1724,15 @@ _cb_cmdbox(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 static void
 _win_trans(Win *wn, Term *term, Eina_Bool trans)
 {
+   Edje_Message_Int msg;
+
    if (term->config->translucent)
-     {
-        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
-        edje_object_signal_emit(term->base, "translucent,on", "terminology");
-     }
+     msg.val = term->config->opacity;
    else
-     {
-        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-        edje_object_signal_emit(term->base, "translucent,off", "terminology");
-     }
+     msg.val = 100;
+   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
+   edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
+
    if (trans)
      {
         elm_win_alpha_set(wn->win, EINA_TRUE);
@@ -2076,16 +2077,15 @@ _cb_tabcount_next(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA
 static void
 main_term_bg_config(Term *term)
 {
+   Edje_Message_Int msg;
+
    if (term->config->translucent)
-     {
-        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
-        edje_object_signal_emit(term->base, "translucent,on", "terminology");
-     }
+     msg.val = term->config->opacity;
    else
-     {
-        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-        edje_object_signal_emit(term->base, "translucent,off", "terminology");
-     }
+     msg.val = 100;
+
+   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
+   edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
 
    termio_theme_set(term->term, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
@@ -2203,6 +2203,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    Term *term;
    Evas_Object *o;
    Evas *canvas = evas_object_evas_get(wn->win);
+   Edje_Message_Int msg;
    
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
@@ -2241,15 +2242,12 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_show(o);
 
    if (term->config->translucent)
-     {
-        edje_object_signal_emit(term->bg, "translucent,on", "terminology");
-        edje_object_signal_emit(term->base, "translucent,on", "terminology");
-     }
+     msg.val = term->config->opacity;
    else
-     {
-        edje_object_signal_emit(term->bg, "translucent,off", "terminology");
-        edje_object_signal_emit(term->base, "translucent,off", "terminology");
-     }
+     msg.val = 100;
+
+   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
+   edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
 
    term->term = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                size_w, size_h, term);
