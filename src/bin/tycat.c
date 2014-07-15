@@ -22,7 +22,7 @@ enum {
 
 static Evas *evas = NULL;
 static struct termios told, tnew;
-static int tw = 0, th = 0, cw = 0, ch = 0, maxw = 0, maxh = 0, mode = CENTER;
+static int tw = 0, th = 0, cw = 0, ch = 0, maxw = 0, maxh = 0, _mode = CENTER;
 static Ecore_Timer *timeout_t = NULL;
 
 #include "extns.h"
@@ -155,7 +155,7 @@ handle_image(char *rp)
    if ((w >= 0) && (h > 0))
      {
         scaleterm(w, h, &iw, &ih);
-        prnt(rp, iw, ih, mode);
+        prnt(rp, iw, ih, _mode);
         r = 0;
      }
 
@@ -168,7 +168,6 @@ static int
 handle_edje(char *rp)
 {
    Evas_Object *o;
-   int w = 0, h = 0;
    int iw = 0, ih = 0;
    int r = -1;
 
@@ -190,7 +189,7 @@ handle_edje(char *rp)
              mh = (th - 1) * ch;
           }
         scaleterm(mw, mh, &iw, &ih);
-        prnt(rp, iw, ih, mode);
+        prnt(rp, iw, ih, _mode);
         r = 0;
      }
 
@@ -211,7 +210,7 @@ video_decoded(void *data, Evas_Object *o, void *ei EINA_UNUSED)
         if ((w >= 0) && (h > 0))
           {
              scaleterm(w, h, &iw, &ih);
-             prnt(data, iw, ih, mode);
+             prnt(data, iw, ih, _mode);
              goto done;
           }
         else
@@ -220,7 +219,7 @@ video_decoded(void *data, Evas_Object *o, void *ei EINA_UNUSED)
              if (ar > 0.0)
                {
                   scaleterm(tw * cw, (int) ((tw * cw) / ar), &iw, &ih);
-                  prnt(data, iw, ih, mode);
+                  prnt(data, iw, ih, _mode);
                   goto done;
                }
           }
@@ -344,19 +343,19 @@ main(int argc, char **argv)
 
         if (!strcmp(argv[i], "-c"))
           {
-             mode = CENTER;
+             _mode = CENTER;
              i++;
              if (i >= argc) goto done;
           }
         else if (!strcmp(argv[i], "-s"))
           {
-             mode = STRETCH;
+             _mode = STRETCH;
              i++;
              if (i >= argc) goto done;
           }
         else if (!strcmp(argv[i], "-f"))
           {
-             mode = FILL;
+             _mode = FILL;
              i++;
              if (i >= argc) goto done;
           }
