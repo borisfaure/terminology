@@ -2032,6 +2032,7 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
              if (sd->scroll > sd->pty->backscroll_num)
                sd->scroll = sd->pty->backscroll_num;
              _smart_update_queue(term, sd);
+             miniview_position_offset(term_miniview_get(sd->term), -by, EINA_TRUE);
           }
      }
    else if (!strcmp(ev->key, "Next"))
@@ -2039,6 +2040,7 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
         sd->scroll -= by;
         if (sd->scroll < 0) sd->scroll = 0;
         _smart_update_queue(term, sd);
+        miniview_position_offset(term_miniview_get(sd->term), by, EINA_TRUE);
      }
    else if (!strcmp(ev->key, "Insert"))
      {
@@ -3466,6 +3468,8 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
                sd->scroll = sd->pty->backscroll_num;
              else if (sd->scroll < 0) sd->scroll = 0;
              _smart_update_queue(data, sd);
+             miniview_position_offset(term_miniview_get(sd->term),
+                                      ev->z * 4, EINA_TRUE);
           }
      }
    else

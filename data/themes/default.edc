@@ -46,6 +46,22 @@ collections {
                }
             }
          }
+         part { name: "miniview_screen"; type: RECT;
+             mouse_events: 1;
+                dragable {
+                    confine: "miniview.img";
+                    x: 0 0 0;
+                    y: 1 1 0;
+                }
+             description { state: "default" 0.0;
+                color: 255 255 255 40;
+                fixed:1 1;
+             }
+             description { state: "outbounds" 0.0;
+                color: 255 25 35 40;
+                fixed:1 1;
+             }
+         }
          part { name: "miniview.close_shadow"; type: IMAGE;
             description { state: "default" 0.0;
                image {
@@ -77,6 +93,16 @@ collections {
          program {
             signal: "mouse,clicked,1"; source: "miniview.close";
             action: SIGNAL_EMIT "miniview,close" "terminology";
+         }
+         program {
+            signal: "miniview_screen,inbounds"; source: "miniview";
+            action: STATE_SET "default" 0.0;
+            target: "miniview_screen";
+         }
+         program {
+            signal: "miniview_screen,outbounds"; source: "miniview";
+            action: STATE_SET "outbounds" 0.0;
+            target: "miniview_screen";
          }
       };
    };

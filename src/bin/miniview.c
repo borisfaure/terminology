@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 #include "miniview.h"
 #include "col.h"
@@ -63,6 +64,13 @@ struct _Miniview
 
    unsigned int is_shown : 1;
    unsigned int to_render : 1;
+
+   Eina_Bool fits_to_img;
+
+   struct _screen {
+      double size;
+      double pos_val;
+   }screen;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -127,6 +135,42 @@ _draw_line(const Termpty *ty, unsigned int *pixels,
      }
 }
 
+Eina_Bool
+_is_top_bottom_reached(Miniview *mv)
+{
+   Termpty *ty;
+   int history_len;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mv, EINA_FALSE);
+   ty = termio_pty_get(mv->termio);
+   history_len = ty->backscroll_num;
+
+   if (( (- mv->img_hist) > (int)(mv->img_h - mv->rows - (mv->rows / 2))) &&
+       ( (- mv->img_hist) < (int)(history_len + (mv->rows / 2))))
+          return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static void
+_screen_visual_bounds(Miniview *mv)
+{
+   if ((mv->screen.pos_val > 1) || (mv->screen.pos_val < 0))
+     {
+        edje_object_part_drag_value_set(mv->base, "miniview_screen",
+                                        0.0, mv->screen.pos_val);
+        edje_object_signal_emit(mv->base, "miniview_screen,outbounds",
+                                "miniview");
+     }
+   else
+     {
+        edje_object_part_drag_value_set(mv->base, "miniview_screen",
+                                        0.0, mv->screen.pos_val);
+        edje_object_signal_emit(mv->base, "miniview_screen,inbounds",
+                                "miniview");
+     }
+}
+
 static void
 _queue_render(Miniview *mv)
 {
@@ -147,7 +191,56 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
    /* do not handle horizontal scrolling */
    if (ev->direction) return;
    mv->img_hist += ev->z * 25;
+
+   if (!mv->fits_to_img && !_is_top_bottom_reached(mv))
+     {
+        mv->screen.pos_val = mv->screen.pos_val -
+                             (double) (ev->z * 25) / (mv->img_h - mv->rows);
+        _screen_visual_bounds(mv);
+     }
    _queue_render(mv);
+}
+
+void
+miniview_position_offset(Evas_Object *obj, int by, Eina_Bool sanitize)
+{
+   Miniview *mv = evas_object_smart_data_get(obj);
+   int remain = 0;
+
+   termio_scroll_get(mv->termio);
+   EINA_SAFETY_ON_NULL_RETURN(mv);
+   if ((mv->screen.pos_val <= 1.0) && (mv->screen.pos_val >= 0.0))
+     edje_object_signal_emit(mv->base, "miniview_screen,inbounds", "miniview");
+
+   if (!mv->fits_to_img)
+     {
+        mv->screen.pos_val += (double) by / (mv->img_h - mv->rows);
+        edje_object_part_drag_value_set(mv->base, "miniview_screen",
+                                        0.0, mv->screen.pos_val);
+        if ((mv->screen.pos_val <= 0) && (sanitize))
+          {
+             /* This is what remains when screen pos has to
+                go negative by some portion "by" */
+             remain = (int) round(mv->screen.pos_val * (mv->img_h - mv->rows));
+             mv->img_hist += remain;
+             mv->screen.pos_val = 0;
+          }
+        if ((mv->screen.pos_val > 1) && (sanitize))
+          {
+             remain = (int) round((1 - mv->screen.pos_val) *
+                      (mv->img_h - mv->rows));
+             mv->img_hist -= remain;
+             mv->screen.pos_val = 1;
+          }
+     }
+   else
+     {
+        mv->screen.pos_val += (double) by / (mv->img_h - mv->rows);
+        edje_object_part_drag_value_set(mv->base, "miniview_screen",
+                                        0.0, mv->screen.pos_val);
+        if (mv->screen.pos_val < 0 && sanitize) mv->screen.pos_val = 0;
+        if (mv->screen.pos_val > 1 && sanitize) mv->screen.pos_val = 1;
+     }
 }
 
 Eina_Bool
@@ -175,13 +268,31 @@ miniview_handle_key(Evas_Object *obj, Evas_Event_Key_Down *ev)
 
    if (!strcmp(ev->key, "Prior"))
      {
-        mv->img_hist -= z;
+        if (!mv->fits_to_img)
+          {
+             mv->img_hist -= z;
+             if (_is_top_bottom_reached(mv))
+               {
+                  miniview_position_offset(obj, -z, EINA_FALSE);
+               }
+             miniview_position_offset(obj, z, EINA_FALSE);
+             _screen_visual_bounds(mv);
+          }
         _queue_render(mv);
         return EINA_TRUE;
      }
    else if (!strcmp(ev->key, "Next"))
      {
-        mv->img_hist += z;
+        if (!mv->fits_to_img)
+          {
+             mv->img_hist += z;
+             if (_is_top_bottom_reached(mv))
+               {
+                  miniview_position_offset(obj, z, EINA_FALSE);
+               }
+             miniview_position_offset(obj, -z, EINA_FALSE);
+             _screen_visual_bounds(mv);
+          }
         _queue_render(mv);
         return EINA_TRUE;
      }
@@ -194,7 +305,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
 {
    Evas_Event_Mouse_Down *ev = event;
    Miniview *mv= evas_object_smart_data_get(data);
-   int pos;
+   int pos, pos2;
    Evas_Coord oy;
 
    EINA_SAFETY_ON_NULL_RETURN(mv);
@@ -205,6 +316,56 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
    if (pos < 0) pos = 0;
    else pos += mv->rows / 2;
    termio_scroll_set(mv->termio, pos);
+
+   pos2 = ev->canvas.y - oy - (mv->rows / 2);
+   if (pos2 < 0) pos2 = 0;
+   if (pos2 > -mv->img_hist) pos2 = -mv->img_hist;
+   mv->screen.pos_val = (double) pos2 / (mv->img_h - mv->rows);
+   edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0, mv->screen.pos_val);
+   edje_object_signal_emit(mv->base, "miniview_screen,inbounds", "miniview");
+
+}
+
+static void
+_on_screen_stoped(void *data, Evas_Object *o EINA_UNUSED,
+                  const char *emission EINA_UNUSED,
+                  const char *source EINA_UNUSED)
+{
+   Miniview *mv= evas_object_smart_data_get(data);
+
+   EINA_SAFETY_ON_NULL_RETURN(mv);
+
+   edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0,
+                                   mv->screen.pos_val);
+}
+
+static void
+_on_screen_moved(void *data, Evas_Object *o, const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
+{
+   Miniview *mv = evas_object_smart_data_get(data);
+   double val = 0.0, pos = 0.0, bottom_bound = 0.0;
+
+   edje_object_part_drag_value_get(o, "miniview_screen", NULL, &val);
+   bottom_bound = ((double) (-mv->img_hist )) / (mv->img_h - mv->rows);
+   if (!mv->fits_to_img)
+     {
+        pos = (bottom_bound - val) * (mv->img_h - mv->rows);
+        mv->screen.pos_val = val;
+     }
+   else
+     {
+        bottom_bound = ((double) (-mv->img_hist )) / (mv->img_h - mv->rows);
+        pos = (bottom_bound - val) * (mv->img_h - mv->rows);
+        if (val < bottom_bound)
+          mv->screen.pos_val = val;
+        if (val > bottom_bound)
+          {
+             mv->screen.pos_val = bottom_bound;
+             pos = 0;
+          }
+     }
+   termio_scroll_set(mv->termio, (int) pos);
 }
 
 static void
@@ -284,6 +445,9 @@ _smart_show(Evas_Object *obj)
         mv->img_h = oh;
         mv->rows = oh / font_h;
         mv->cols = ow / font_w;
+
+        mv->screen.size = (double) mv->rows / (double) mv->img_h;
+        edje_object_part_drag_size_set(mv->base, "miniview_screen", 1.0, mv->screen.size);
 
         if ((mv->rows == 0) || (mv->cols == 0)) return;
 
@@ -388,6 +552,15 @@ _deferred_renderer(void *data)
    evas_object_image_pixels_dirty_set(mv->img, EINA_FALSE);
    evas_object_image_data_update_add(mv->img, 0, 0, ow, oh);
 
+   if (history_len > (int)(mv->img_h - mv->rows)) mv->fits_to_img = EINA_FALSE;
+   else mv->fits_to_img = EINA_TRUE;
+
+   if ((termio_scroll_get(mv->termio) == 0))
+     {
+        mv->screen.pos_val = (double) -mv->img_hist / (mv->img_h - mv->rows);
+        edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0, mv->screen.pos_val);
+     }
+
    mv->to_render = 0;
    mv->deferred_renderer = NULL;
    return EINA_FALSE;
@@ -483,6 +656,10 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
                                   _smart_cb_mouse_down, obj);
    edje_object_signal_callback_add(mv->base, "miniview,close", "terminology",
                                    _cb_miniview_close, mv);
+   edje_object_signal_callback_add(mv->base, "drag", "miniview_screen",
+                                   _on_screen_moved, obj);
+   edje_object_signal_callback_add(mv->base, "drag,stop", "miniview_screen",
+                                   _on_screen_stoped, obj);
    return obj;
 }
 
