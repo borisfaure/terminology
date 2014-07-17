@@ -8,11 +8,11 @@ int
 main(int argc, char **argv)
 {
    int i, perm = 0;
-   
+
    if (!getenv("TERMINOLOGY")) return 0;
    if (argc <= 1)
      {
-        printf("Usage: %s [-p] on|off\n"
+        printf("Usage: %s [-p] on|off|<opacity level>\n"
                "  Change the terminal transparency on or off\n"
                "  -p  Make change permanent (stored in config)\n"
                "\n",
@@ -22,7 +22,7 @@ main(int argc, char **argv)
    for (i = 1; i < argc; i++)
      {
         char tbuf[PATH_MAX];
-        
+
         if (!strcmp(argv[i], "-p"))
           {
              perm = 1;

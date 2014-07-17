@@ -1184,6 +1184,40 @@ _cb_popup_queue(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 }
 
 static void
+_set_alpha(Config *config, const char *val, Eina_Bool save)
+{
+   int opacity;
+
+   if (!config || !val) return;
+
+   config->temporary = !save;
+
+   if (isdigit(*val))
+     {
+        opacity = atoi(val);
+        if (opacity >= 100)
+          {
+             config->translucent = EINA_FALSE;
+             config->opacity = 100;
+          }
+        else if (opacity >= 0)
+          {
+             config->translucent = EINA_TRUE;
+             config->opacity = opacity;
+          }
+     }
+   else if ((!strcasecmp(val, "on")) ||
+            (!strcasecmp(val, "true")) ||
+            (!strcasecmp(val, "yes")))
+     config->translucent = EINA_TRUE;
+   else
+     config->translucent = EINA_FALSE;
+   main_trans_update(config);
+
+   if (save) config_save(config, NULL);
+}
+
+static void
 _cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Term *term = data;
@@ -1235,40 +1269,9 @@ _cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
    else if (cmd[0] == 'a') // set alpha
      {
         if (cmd[1] == 't') // temporary
-          {
-             Config *config = termio_config_get(term->term);
-
-             if (config)
-               {
-                  config->temporary = EINA_TRUE;
-                  if ((cmd[2] == '1') ||
-                      (!strcasecmp(cmd + 2, "on")) ||
-                      (!strcasecmp(cmd + 2, "true")) ||
-                      (!strcasecmp(cmd + 2, "yes")))
-                    config->translucent = EINA_TRUE;
-                  else
-                    config->translucent = EINA_FALSE;
-                  main_trans_update(config);
-               }
-          }
+          _set_alpha(termio_config_get(term->term), cmd + 2, EINA_FALSE);
         else if (cmd[1] == 'p') // permanent
-          {
-             Config *config = termio_config_get(term->term);
-
-             if (config)
-               {
-                  config->temporary = EINA_FALSE;
-                  if ((cmd[2] == '1') ||
-                      (!strcasecmp(cmd + 2, "on")) ||
-                      (!strcasecmp(cmd + 2, "true")) ||
-                      (!strcasecmp(cmd + 2, "yes")))
-                    config->translucent = EINA_TRUE;
-                  else
-                    config->translucent = EINA_FALSE;
-                  main_trans_update(config);
-                  config_save(config, NULL);
-               }
-          }
+          _set_alpha(termio_config_get(term->term), cmd + 2, EINA_TRUE);
      }
 }
 
