@@ -238,7 +238,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ct_frame = o = elm_frame_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "Controls");
+        elm_object_text_set(o, _("Controls"));
 
         ct_boxh = o = elm_box_add(win);
         elm_box_horizontal_set(o, EINA_TRUE);
@@ -248,48 +248,48 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ct_box2 = o = elm_box_add(win);
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
-        
-        o = _button_add(win, "New", "new", _cb_ct_new, NULL);
+
+        o = _button_add(win, _("New"), "new", _cb_ct_new, NULL);
         elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
-        
-        o = _button_add(win, "Split V", "split-h", _cb_ct_split_v, NULL);
+
+        o = _button_add(win, _("Split V"), "split-h", _cb_ct_split_v, NULL);
         elm_box_pack_end(ct_box2, o);
-        o = _button_add(win, "Split H", "split-v", _cb_ct_split_h, NULL);
+        o = _button_add(win, _("Split H"), "split-v", _cb_ct_split_h, NULL);
         elm_box_pack_end(ct_box2, o);
-        
+
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
-        
-        o = _button_add(win, "Close", "close", _cb_ct_close, NULL);
+
+        o = _button_add(win, _("Close"), "close", _cb_ct_close, NULL);
         elm_box_pack_end(ct_box2, o);
-        
+
         o = _sep_add_v(win);
         elm_box_pack_end(ct_boxh, o);
-        
+
         ct_box = o = elm_box_add(win);
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
-        
-        o = _button_add(win, "Copy", "copy", _cb_ct_copy, NULL);
+
+        o = _button_add(win, _("Copy"), "copy", _cb_ct_copy, NULL);
         evas_object_data_set(ct_frame, "bt_copy", o);
         if (!termio_selection_exists(term))
           elm_object_disabled_set(o, EINA_TRUE);
         elm_box_pack_end(ct_box, o);
-        o = _button_add(win, "Paste", "paste", _cb_ct_paste, NULL);
+        o = _button_add(win, _("Paste"), "paste", _cb_ct_paste, NULL);
         elm_box_pack_end(ct_box, o);
-        
+
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
-        
-        o = _button_add(win, "Settings", "settings", _cb_ct_options, NULL);
+
+        o = _button_add(win, _("Settings"), "settings", _cb_ct_options, NULL);
         elm_box_pack_end(ct_box, o);
-        
+
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
-        
+
         o = _button_add(win, _("About"), "about", _cb_ct_about, NULL);
         elm_box_pack_end(ct_box, o);
 

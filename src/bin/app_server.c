@@ -341,8 +341,8 @@ _app_server_create_view_cb(Elm_App_Server *server, const Eina_Value *args EINA_U
    eo_do(server, wins = eo_key_data_get("wins"));
    if (!wins || !(wn = eina_list_data_get(*wins)))
      {
-        ERR("There is no window open");
-        *error_name = eina_stringshare_add("There is no window open");
+        *error_name = eina_stringshare_add(_("There is no window open"));
+        ERR("%s", *error_name);
         return NULL;
      }
    term = eina_list_data_get(main_win_terms_get(wn));

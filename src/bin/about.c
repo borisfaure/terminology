@@ -50,6 +50,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                       elm_app_data_dir_get());
              elm_layout_file_set(o, buf, "terminology/about");
           }
+        /* TODO i18n */
         elm_object_part_text_set
           (o, "terminology.text",
               "<b>Terminology "PACKAGE_VERSION"</b><br>"
