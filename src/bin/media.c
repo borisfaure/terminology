@@ -723,7 +723,7 @@ _type_mov_init(Evas_Object *obj)
      mod = modules[sd->config->vidmod];
    if (!emotion_object_init(o, mod))
      {
-        ERR("can't init emotion module '%s'", mod);
+        ERR(_("Could not Initialize the emotion module '%s'"), mod);
         evas_object_del(sd->o_img);
         sd->o_img = NULL;
         return;

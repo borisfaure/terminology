@@ -2236,7 +2236,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!theme_apply(o, config, "terminology/background"))
      {
-        CRITICAL("Couldn't find terminology theme! Forgot 'make install'?");
+        CRITICAL(_("Couldn't find terminology theme! Forgot 'make install'?"));
         evas_object_del(term->bg);
         free(term);
         return NULL;
@@ -2643,13 +2643,15 @@ static const char *emotion_choices[] = {
   NULL
 };
 
-static const Ecore_Getopt options = {
+#define gettext_noop(String) String
+
+static Ecore_Getopt options = {
    PACKAGE_NAME,
    "%prog [options]",
    PACKAGE_VERSION,
-   "(C) 2012-2014 Carsten Haitzler and others",
+   gettext_noop("(C) 2012-%d Carsten Haitzler and others"),
    "BSD 2-Clause",
-   "Terminal emulator written with Enlightenment Foundation Libraries.",
+   gettext_noop("Terminal emulator written with Enlightenment Foundation Libraries."),
    EINA_TRUE,
    {
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
@@ -2657,65 +2659,81 @@ static const Ecore_Getopt options = {
 #else
       ECORE_GETOPT_STORE_STR ('e', "exec",
 #endif
-                              "command to execute. "
-                              "Defaults to $SHELL (or passwd shel or /bin/sh)"),
+                              gettext_noop("Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)")),
       ECORE_GETOPT_STORE_STR ('d', "current-directory",
-                              "Change to directory for execution of terminal command."),
+                              gettext_noop("Change to directory for execution of terminal command.")),
       ECORE_GETOPT_STORE_STR ('t', "theme",
-                              "Use the named edje theme or path to theme file."),
+                              gettext_noop("Use the named edje theme or path to theme file.")),
       ECORE_GETOPT_STORE_STR ('b', "background",
-                              "Use the named file as a background wallpaper."),
+                              gettext_noop("Use the named file as a background wallpaper.")),
       ECORE_GETOPT_STORE_STR ('g', "geometry",
-                              "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."),
+                              gettext_noop("Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.).")),
       ECORE_GETOPT_STORE_STR ('n', "name",
-                              "Set window name."),
+                              gettext_noop("Set window name.")),
       ECORE_GETOPT_STORE_STR ('r', "role",
-                              "Set window role."),
+                              gettext_noop("Set window role.")),
       ECORE_GETOPT_STORE_STR ('T', "title",
-                              "Set window title."),
+                              gettext_noop("Set window title.")),
       ECORE_GETOPT_STORE_STR ('i', "icon-name",
-                              "Set icon name."),
+                              gettext_noop("Set icon name.")),
       ECORE_GETOPT_STORE_STR ('f', "font",
-                              "Set font (NAME/SIZE for scalable, NAME for bitmap."),
+                              gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap.")),
       ECORE_GETOPT_CHOICE    ('v', "video-module",
-                              "Set emotion module to use.", emotion_choices),
+                              gettext_noop("Set emotion module to use."), emotion_choices),
 
       ECORE_GETOPT_STORE_BOOL('l', "login",
-                              "Run the shell as a login shell."),
+                              gettext_noop("Run the shell as a login shell.")),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
-                              "Set mute mode for video playback."),
+                              gettext_noop("Set mute mode for video playback.")),
       ECORE_GETOPT_STORE_BOOL('c', "cursor-blink",
-                              "Set cursor blink mode."),
+                              gettext_noop("Set cursor blink mode.")),
       ECORE_GETOPT_STORE_BOOL('G', "visual-bell",
-                              "Set visual bell mode."),
+                              gettext_noop("Set visual bell mode.")),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
-                              "Go into the fullscreen mode from start."),
+                              gettext_noop("Go into the fullscreen mode from start.")),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
-                              "Go into an iconic state from the start."),
+                              gettext_noop("Go into an iconic state from the start.")),
       ECORE_GETOPT_STORE_TRUE('B', "borderless",
-                              "Become a borderless managed window."),
+                              gettext_noop("Become a borderless managed window.")),
       ECORE_GETOPT_STORE_TRUE('O', "override",
-                              "Become an override-redirect window."),
+                              gettext_noop("Become an override-redirect window.")),
       ECORE_GETOPT_STORE_TRUE('M', "maximized",
-                              "Become maximized from the start."),
+                              gettext_noop("Become maximized from the start.")),
       ECORE_GETOPT_STORE_TRUE('W', "nowm",
-                              "Terminology is run without a wm."),
+                              gettext_noop("Terminology is run without a window manager.")),
       ECORE_GETOPT_STORE_TRUE('H', "hold",
-                              "Don't exit when the command process exits."),
+                              gettext_noop("Do not exit when the command process exits.")),
       ECORE_GETOPT_STORE_TRUE('s', "single",
-                              "Force single executable if multi-instance is enabled.."),
+                              gettext_noop("Force single executable if multi-instance is enabled.")),
       ECORE_GETOPT_STORE_TRUE('2', "256color",
-                              "Set TERM to 'xterm-256color' instead of 'xterm'."),
+                              gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'.")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
-                              "Whether to highlight links."),
+                              gettext_noop("Whether to highlight links.")),
 
-      ECORE_GETOPT_VERSION   ('V', "version"),
-      ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
-      ECORE_GETOPT_LICENSE   ('L', "license"),
-      ECORE_GETOPT_HELP      ('h', "help"),
+      ECORE_GETOPT_VERSION   ('V', gettext_noop("version")),
+      ECORE_GETOPT_COPYRIGHT ('C', gettext_noop("copyright")),
+      ECORE_GETOPT_LICENSE   ('L', gettext_noop("license")),
+      ECORE_GETOPT_HELP      ('h', gettext_noop("help")),
       ECORE_GETOPT_SENTINEL
    }
 };
+
+#ifdef HAVE_GETTEXT
+static void
+_translate_options(void)
+{
+   options.copyright = eina_stringshare_printf(gettext(options.copyright),
+                                               2014);
+
+   Ecore_Getopt_Desc *desc = (Ecore_Getopt_Desc *) options.descs;
+   while ((desc->shortname != '\0') || (desc->longname)
+     || (desc->action == ECORE_GETOPT_ACTION_CATEGORY))
+     {
+        desc->help = gettext(desc->help);
+        desc++;
+     }
+}
+#endif
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
@@ -2802,12 +2820,15 @@ elm_main(int argc, char **argv)
 #ifdef HAVE_GETTEXT
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
+   _translate_options();
+#else
+   options.copyright = "(C) 2012-2014 Carsten Haitzler and others";
 #endif
 
    _log_domain = eina_log_domain_register("terminology", NULL);
    if (_log_domain < 0)
      {
-        EINA_LOG_CRIT("could not create log domain 'terminology'.");
+        EINA_LOG_CRIT(_("Could not create logging domain '%s'."), "terminology");
         elm_shutdown();
         return EXIT_FAILURE;
      }
@@ -2828,7 +2849,7 @@ elm_main(int argc, char **argv)
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        ERR("Could not parse command line options.");
+        ERR(_("Could not parse command line options."));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -2843,11 +2864,11 @@ elm_main(int argc, char **argv)
 
         if (args == argc)
           {
-             fprintf(stdout, "ERROR: option %s requires an argument!\n", argv[args-1]);
-             fprintf(stdout, "ERROR: invalid options found. See --help.\n");
+             ERR(_("option %s requires an argument!"), argv[args-1]);
+             ERR(_("invalid options found. See --help."));
              goto end;
           }
-        
+
         strb = eina_strbuf_new();
         for(i = args; i < argc; i++)
           {
@@ -3179,12 +3200,17 @@ remote:
    miniview_shutdown();
 
 
+
    config_del(main_config);
    config_shutdown();
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
 
    elm_shutdown();
+
+#ifdef HAVE_GETTEXT
+   eina_stringshare_del(options.copyright);
+#endif
    return retval;
 }
 ELM_MAIN()
