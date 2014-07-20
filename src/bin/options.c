@@ -131,7 +131,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         op_frame = o = elm_frame_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_object_text_set(o, "Options");
+        elm_object_text_set(o, _("Options"));
 
         op_box = o = elm_box_add(win);
         elm_box_horizontal_set(o, EINA_TRUE);
@@ -160,14 +160,14 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                                 (void*) OPTION_##_option_mode)
 
         it_fn =
-        ITEM_APPEND("preferences-desktop-font", "Font", FONT);
-        ITEM_APPEND("preferences-desktop-theme", "Theme", THEME);
-        ITEM_APPEND("preferences-desktop-wallpaper", "Wallpaper", WALLPAPER);
-        ITEM_APPEND("video-display", "Video", VIDEO);
-        ITEM_APPEND("preferences-desktop-theme", "Colors", COLORS);
-        ITEM_APPEND("preferences-system", "Behavior", BEHAVIOR);
-        ITEM_APPEND("preferences-desktop-keyboard-shortcuts", "Keys", KEYS);
-        ITEM_APPEND("system-run", "Helpers", HELPERS);
+        ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
+        ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
+        ITEM_APPEND("preferences-desktop-wallpaper", _("Wallpaper"), WALLPAPER);
+        ITEM_APPEND("video-display", _("Video"), VIDEO);
+        ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
+        ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
+        ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
+        ITEM_APPEND("system-run", _("Helpers"), HELPERS);
 #undef ITEM_APPEND
 
         elm_box_pack_end(op_tbox, o);
@@ -178,7 +178,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         op_temp = o = elm_check_add(win);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 1.0);
-        elm_object_text_set(o, "Temporary");
+        elm_object_text_set(o, _("Temporary"));
         elm_check_state_set(o, config->temporary);
         elm_box_pack_end(op_tbox, o);
         evas_object_show(o);

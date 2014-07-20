@@ -124,7 +124,7 @@ _behavior_option_restore_opened_views_add(Evas_Object *term,
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Restore opened views");
+   elm_object_text_set(o, _("Restore opened views"));
    elm_check_state_set(o, config->application_server_restore_views);
    elm_box_pack_after(bx, o, check);
    evas_object_show(o);
@@ -295,13 +295,14 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    Evas_Object *o, *bx, *sc, *fr;
    char *txt;
    int w, h;
+   const char *tooltip;
 
    termio_size_get(term, &w, &h);
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Behavior");
+   elm_object_text_set(o, _("Behavior"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 
@@ -321,7 +322,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Jump on change");
+   elm_object_text_set(o, _("Jump on change"));
    elm_check_state_set(o, config->jump_on_change);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -331,7 +332,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Jump on key");
+   elm_object_text_set(o, _("Jump on key"));
    elm_check_state_set(o, config->jump_on_keypress);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -341,7 +342,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "React to key presses");
+   elm_object_text_set(o, _("React to key presses"));
    elm_check_state_set(o, config->flicker_on_key);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -351,7 +352,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Cursor blinking");
+   elm_object_text_set(o, _("Cursor blinking"));
    elm_check_state_set(o, !config->disable_cursor_blink);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -361,7 +362,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Visual Bell");
+   elm_object_text_set(o, _("Visual Bell"));
    elm_check_state_set(o, !config->disable_visual_bell);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -371,7 +372,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Bell rings");
+   elm_object_text_set(o, _("Bell rings"));
    elm_check_state_set(o, config->bell_rings);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -381,7 +382,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Urgent Bell");
+   elm_object_text_set(o, _("Urgent Bell"));
    elm_check_state_set(o, config->urg_bell);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -391,7 +392,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Active Links");
+   elm_object_text_set(o, _("Active Links"));
    elm_check_state_set(o, config->active_links);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -401,7 +402,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Enable application server");
+   elm_object_text_set(o, _("Enable application server"));
    elm_check_state_set(o, config->application_server);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -415,7 +416,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Multiple instances, one process");
+   elm_object_text_set(o, _("Multiple instances, one process"));
    elm_check_state_set(o, config->multi_instance);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -425,7 +426,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Set TERM to xterm-256color");
+   elm_object_text_set(o, _("Set TERM to xterm-256color"));
    elm_check_state_set(o, config->xterm_256color);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -435,7 +436,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "BackArrow sends Del (instead of BackSpace)");
+   elm_object_text_set(o, _("BackArrow sends Del (instead of BackSpace)"));
    elm_check_state_set(o, config->erase_is_del);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -445,7 +446,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Drag & drop links");
+   elm_object_text_set(o, _("Drag & drop links"));
    elm_check_state_set(o, config->drag_links);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -455,7 +456,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Start as login shell");
+   elm_object_text_set(o, _("Start as login shell"));
    elm_check_state_set(o, config->login_shell);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -465,7 +466,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Focus split under the Mouse");
+   elm_object_text_set(o, _("Focus split under the Mouse"));
    elm_check_state_set(o, config->mouse_over_focus);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -475,7 +476,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Always open at size:");
+   elm_object_text_set(o, _("Always open at size:"));
    elm_check_state_set(o, config->custom_geometry);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -485,7 +486,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Width:");
+   elm_object_text_set(o, _("Width:"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -505,7 +506,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Height:");
+   elm_object_text_set(o, _("Height:"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -532,7 +533,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Word separators:");
+   elm_object_text_set(o, _("Word separators:"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -563,7 +564,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Scrollback:");
+   elm_object_text_set(o, _("Scrollback:"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -583,21 +584,17 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Tab zoom/switch animation time:");
-   elm_object_tooltip_text_set
-      (o, "Set the time of the animation that<br>"
+   elm_object_text_set(o, _("Tab zoom/switch animation time:"));
+   tooltip = _("Set the time of the animation that<br>"
        "takes places on tab switches,<br>"
        "be them by key binding, mouse<br>"
        "wheel or tabs panel mouse move");
+   elm_object_tooltip_text_set(o, tooltip);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
    o = elm_slider_add(bx);
-   elm_object_tooltip_text_set
-      (o, "Set the time of the animation that<br>"
-       "takes places on tab switches,<br>"
-       "be them by key binding, mouse<br>"
-       "wheel or tabs panel mouse move");
+   elm_object_tooltip_text_set(o, tooltip);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);

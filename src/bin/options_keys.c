@@ -30,34 +30,34 @@ options_keys(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
    elm_list_item_append(li, _action, NULL, lbl, NULL, NULL);  \
 } while (0)
 
-   KB("Scroll one page up", "Shift + PgUp");
-   KB("Scroll one page down", "Shift + PgDn");
-   KB("Paste Clipboard (ctrl+v/c) selection", "Shift + Insert");
-   KB("Paste Clipboard (ctrl+v/c) selection", "Ctrl + Shift + v");
-   KB("Paste Primary (highlight) selection", "Shift + Ctrl + Insert");
-   KB("Paste Primary (highlight) selection", "Alt + Return");
-   KB("Copy current selection to clipboard", "Ctrl + Shift + c");
-   KB("Copy current selection to clipboard", "Shift+Keypad-Divide");
-   KB("Font size up 1", "Shift+Keypad-Plus");
-   KB("Font size down 1", "Shift+Keypad-Minus");
-   KB("Reset font size to 10", "Shift+Keypad-Multiply");
-   KB("Split horizontally (new below)", "Ctrl + Shift + PgUp");
-   KB("Split vertically (new on right)", "Ctrl + Shift + PgDn");
-   KB("Focus to previous terminal", "Ctrl + PgUp");
-   KB("Focus to next terminal", "Ctrl + PgDn");
-   KB("Create new \"tab\"", "Ctrl + Shift + t");
-   KB("Bring up \"tab\" switcher", "Ctrl + Shift + Home");
-   KB("Switch to terminal tab 1", "Ctrl + 1");
-   KB("Switch to terminal tab 2", "Ctrl + 2");
-   KB("Switch to terminal tab 3", "Ctrl + 3");
-   KB("Switch to terminal tab 4", "Ctrl + 4");
-   KB("Switch to terminal tab 5", "Ctrl + 5");
-   KB("Switch to terminal tab 6", "Ctrl + 6");
-   KB("Switch to terminal tab 7", "Ctrl + 7");
-   KB("Switch to terminal tab 8", "Ctrl + 8");
-   KB("Switch to terminal tab 9", "Ctrl + 9");
-   KB("Switch to terminal tab 10", "Ctrl + 0");
-   KB("Enter command mode", "Alt + Home");
-   KB("Toggle miniview of the history", "Ctrl + Shift + h");
+   KB(_("Scroll one page up"), "Shift + PgUp");
+   KB(_("Scroll one page down"), "Shift + PgDn");
+   KB(_("Paste Clipboard (ctrl+v/c) selection"), "Shift + Insert");
+   KB(_("Paste Clipboard (ctrl+v/c) selection"), "Ctrl + Shift + v");
+   KB(_("Paste Primary (highlight) selection"), "Shift + Ctrl + Insert");
+   KB(_("Paste Primary (highlight) selection"), "Alt + Return");
+   KB(_("Copy current selection to clipboard"), "Ctrl + Shift + c");
+   KB(_("Copy current selection to clipboard"), "Shift+Keypad-Divide");
+   KB(_("Font size up 1"), "Shift+Keypad-Plus");
+   KB(_("Font size down 1"), "Shift+Keypad-Minus");
+   KB(_("Reset font size to 10"), "Shift+Keypad-Multiply");
+   KB(_("Split horizontally (new below)"), "Ctrl + Shift + PgUp");
+   KB(_("Split vertically (new on right)"), "Ctrl + Shift + PgDn");
+   KB(_("Focus to previous terminal"), "Ctrl + PgUp");
+   KB(_("Focus to next terminal"), "Ctrl + PgDn");
+   KB(_("Create new \"tab\""), "Ctrl + Shift + t");
+   KB(_("Bring up \"tab\" switcher"), "Ctrl + Shift + Home");
+   KB(_("Switch to terminal tab 1"), "Ctrl + 1");
+   KB(_("Switch to terminal tab 2"), "Ctrl + 2");
+   KB(_("Switch to terminal tab 3"), "Ctrl + 3");
+   KB(_("Switch to terminal tab 4"), "Ctrl + 4");
+   KB(_("Switch to terminal tab 5"), "Ctrl + 5");
+   KB(_("Switch to terminal tab 6"), "Ctrl + 6");
+   KB(_("Switch to terminal tab 7"), "Ctrl + 7");
+   KB(_("Switch to terminal tab 8"), "Ctrl + 8");
+   KB(_("Switch to terminal tab 9"), "Ctrl + 9");
+   KB(_("Switch to terminal tab 10"), "Ctrl + 0");
+   KB(_("Enter command mode"), "Alt + Home");
+   KB(_("Toggle miniview of the history"), "Ctrl + Shift + h");
 #undef KB
 }

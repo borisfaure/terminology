@@ -2643,8 +2643,6 @@ static const char *emotion_choices[] = {
   NULL
 };
 
-#define gettext_noop(String) String
-
 static Ecore_Getopt options = {
    PACKAGE_NAME,
    "%prog [options]",

@@ -109,7 +109,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Theme");
+   elm_object_text_set(o, _("Theme"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 

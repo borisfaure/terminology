@@ -9,7 +9,9 @@
 #define _(string) gettext (string)
 #else
 #define _(string) (string)
+#define gettext(string) (string)
 #endif
+#define gettext_noop(String) String
 
 extern int _log_domain;
 

@@ -174,7 +174,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Helpers");
+   elm_object_text_set(o, _("Helpers"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    
@@ -187,7 +187,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Inline if possible");
+   elm_object_text_set(o, _("Inline if possible"));
    elm_check_state_set(o, config->helper.inline_please);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -217,7 +217,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "E-mail:");
+   elm_object_text_set(o, _("E-mail:"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -250,7 +250,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "URL (Images):");
+   elm_object_text_set(o, _("URL (Images):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -275,7 +275,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "URL (Video):");
+   elm_object_text_set(o, _("URL (Video):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -300,7 +300,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "URL (All):");
+   elm_object_text_set(o, _("URL (All):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -333,7 +333,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Local (Images):");
+   elm_object_text_set(o, _("Local (Images):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -358,7 +358,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Local (Video):");
+   elm_object_text_set(o, _("Local (Video):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 
@@ -383,7 +383,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Local (All):");
+   elm_object_text_set(o, _("Local (All):"));
    elm_table_pack(tb, o, 0, row, 1, 1);
    evas_object_show(o);
 

@@ -62,7 +62,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Video");
+   elm_object_text_set(o, _("Video"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    
@@ -75,7 +75,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    op_trans = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Translucent");
+   elm_object_text_set(o, _("Translucent"));
    elm_check_state_set(o, config->translucent);
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
@@ -86,8 +86,8 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(o, 40);
-   elm_slider_unit_format_set(o, "%1.0f%%");
-   elm_slider_indicator_format_set(o, "%1.0f%%");
+   elm_slider_unit_format_set(o, _("%1.0f%%"));
+   elm_slider_indicator_format_set(o, _("%1.0f%%"));
    elm_slider_min_max_set(o, 0, 100);
    elm_slider_value_set(o, config->opacity);
    elm_object_disabled_set(o, !config->translucent);
@@ -106,7 +106,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    op_mute = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Audio muted");
+   elm_object_text_set(o, _("Audio muted"));
    elm_check_state_set(o, config->mute);
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
@@ -122,14 +122,14 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Video Engine:");
+   elm_object_text_set(o, _("Video Engine:"));
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
 
    op_vidmod = o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Automatic");
+   elm_object_text_set(o, _("Automatic"));
    elm_radio_state_value_set(o, 0);
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
@@ -161,7 +161,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Generic (VLC)");
+   elm_object_text_set(o, _("VLC"));
    elm_radio_state_value_set(o, 3);
    elm_radio_group_add(o, op_vidmod);
    elm_box_pack_end(bx0, o);

@@ -98,7 +98,7 @@ _grid_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_U
    Background_Item *item = data;
    const char *s;
 
-   if (!item->path) return strdup("None");
+   if (!item->path) return strdup(_("None"));
    s = ecore_file_file_get(item->path);
    if (s) return strdup(s);
    return NULL;
@@ -389,7 +389,7 @@ _cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    if (strncmp(config_background_dir, _user_path, 
                strlen(config_background_dir)) == 0)
      {
-        _bubble_show("Source file is target file!");
+        _bubble_show(_("Source file is target file!"));
         free(config_background_dir);
         return;
      }
@@ -402,12 +402,12 @@ _cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         config_save(config, NULL);
         main_media_update(config);
         eina_stringshare_del(newfile);
-        _bubble_show("Picture imported!");
+        _bubble_show(_("Picture imported"));
         elm_object_text_set(_entry, config_background_dir);
      }
    else
      {
-       _bubble_show("Failed!");
+       _bubble_show(_("Failed!"));
      }
    free(config_background_dir);
 }
@@ -424,7 +424,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    frame = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Background");
+   elm_object_text_set(o, _("Background"));
    evas_object_show(o);
    elm_box_pack_end(opbox, o);
 
@@ -468,19 +468,19 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    o = elm_hoversel_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(o,"Select Path");
+   elm_object_text_set(o, _("Select Path"));
    elm_box_pack_end(bx2, o);
    evas_object_show(o);
 
    snprintf(path, PATH_MAX, "%s/backgrounds/", elm_app_data_dir_get());
    _system_background_dir_init();
-   elm_hoversel_item_add(o, "System", NULL, ELM_ICON_NONE, _cb_hoversel_select ,
+   elm_hoversel_item_add(o, _("System"), NULL, ELM_ICON_NONE, _cb_hoversel_select ,
                          _system_path);
    if (_user_background_dir_init())
-     elm_hoversel_item_add(o, "User", NULL, ELM_ICON_NONE, _cb_hoversel_select ,
+     elm_hoversel_item_add(o, _("User"), NULL, ELM_ICON_NONE, _cb_hoversel_select ,
                            _user_path);
    //In the other case it has failed, so dont show the user item
-   elm_hoversel_item_add(o, "Other", NULL, ELM_ICON_NONE, _cb_hoversel_select , 
+   elm_hoversel_item_add(o, _("Other"), NULL, ELM_ICON_NONE, _cb_hoversel_select , 
                          NULL);
 
    _bg_grid = o = elm_gengrid_add(opbox);
@@ -495,7 +495,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(o, "Double click on a picture to import it!");
+   elm_object_text_set(o, _("Double click on a picture to import it!"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 

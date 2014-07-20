@@ -9,17 +9,17 @@
 static const char mapping[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11 };
 static const char *mapping_names[] =
   {
-     "Default",
-     "Black",
-     "Red",
-     "Green",
-     "Yellow",
-     "Blue",
-     "Magenta",
-     "Cyan",
-     "White",
-     "Inverse",
-     "Inverse Base"
+     gettext_noop("Default"),
+     gettext_noop("Black"),
+     gettext_noop("Red"),
+     gettext_noop("Green"),
+     gettext_noop("Yellow"),
+     gettext_noop("Blue"),
+     gettext_noop("Magenta"),
+     gettext_noop("Cyan"),
+     gettext_noop("White"),
+     gettext_noop("Inverse"),
+     gettext_noop("Inverse Base")
   };
 
 static Elm_Object_Item *colitem[4][11] = { { NULL } };
@@ -60,7 +60,7 @@ _cb_op_color_item_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
         for (i = 0; i < 11; i++)
           {
              if (colitem[j][i] == it)
-               elm_object_text_set(label, mapping_names[i]);
+               elm_object_text_set(label, gettext(mapping_names[i]));
           }
      }
 }
@@ -156,7 +156,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Colors");
+   elm_object_text_set(o, _("Colors"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    
@@ -184,10 +184,10 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    for (j = 0; j < 4; j++)
      {
         o = elm_label_add(opbox);
-        if (j == 0) elm_object_text_set(o, "Normal");
-        else if (j == 1) elm_object_text_set(o, "Bright");
-        else if (j == 2) elm_object_text_set(o, "Normal 2");
-        else if (j == 3) elm_object_text_set(o, "Bright 2");
+        if (j == 0) elm_object_text_set(o, _("Normal"));
+        else if (j == 1) elm_object_text_set(o, _("Bright"));
+        else if (j == 2) elm_object_text_set(o, _("Normal 2"));
+        else if (j == 3) elm_object_text_set(o, _("Bright 2"));
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx3, o);
@@ -233,7 +233,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    
    label = o = elm_label_add(opbox);
-   elm_object_text_set(o, mapping_names[0]);
+   elm_object_text_set(o, gettext(mapping_names[0]));
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx2, o);
@@ -259,7 +259,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, "Use");
+   elm_object_text_set(o, _("Use"));
    elm_check_state_set(o, config->colors_use);
    elm_box_pack_end(bx4, o);
    evas_object_show(o);
@@ -269,9 +269,8 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    elm_object_disabled_set(o, EINA_TRUE);
    evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_align_set(o, 1.0, 0.5);
-   elm_object_text_set(o, "Reset");
+   elm_object_text_set(o, _("Reset"));
    elm_box_pack_end(bx4, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "clicked", _cb_op_reset, term);
-   
 }

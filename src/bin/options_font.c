@@ -349,7 +349,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Font");
+   elm_object_text_set(o, _("Font"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    
@@ -411,7 +411,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    files = ecore_file_ls(buf);
    if (files)
      {
-        grp_it = elm_genlist_item_append(o, it_group, "Bitmap", NULL,
+        grp_it = elm_genlist_item_append(o, it_group, _("Bitmap"), NULL,
                                          ELM_GENLIST_ITEM_GROUP,
                                          NULL, NULL);
         elm_genlist_item_select_mode_set(grp_it,
@@ -451,7 +451,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    fonthash = eina_hash_string_superfast_new(NULL);
    if (fonts)
      {
-        grp_it = elm_genlist_item_append(o, it_group, "Standard", NULL,
+        grp_it = elm_genlist_item_append(o, it_group, _("Standard"), NULL,
                                          ELM_GENLIST_ITEM_GROUP,
                                          NULL, NULL);
         elm_genlist_item_select_mode_set(grp_it,
