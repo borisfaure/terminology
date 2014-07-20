@@ -64,6 +64,7 @@ struct _Miniview
 
    unsigned int is_shown : 1;
    unsigned int to_render : 1;
+   unsigned int initial_pos : 1;
 
    Eina_Bool fits_to_img;
 
@@ -322,8 +323,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
    if (pos2 > -mv->img_hist) pos2 = -mv->img_hist;
    mv->screen.pos_val = (double) pos2 / (mv->img_h - mv->rows);
    edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0, mv->screen.pos_val);
-   edje_object_signal_emit(mv->base, "miniview_screen,inbounds", "miniview");
-
+   _screen_visual_bounds(mv);
 }
 
 static void
@@ -366,6 +366,7 @@ _on_screen_moved(void *data, Evas_Object *o, const char *emission EINA_UNUSED,
           }
      }
    termio_scroll_set(mv->termio, (int) pos);
+   _screen_visual_bounds(mv);
 }
 
 static void
@@ -451,6 +452,7 @@ _smart_show(Evas_Object *obj)
 
         if ((mv->rows == 0) || (mv->cols == 0)) return;
 
+        mv->initial_pos = 1;
         _queue_render(mv);
         evas_object_show(mv->base);
         _do_configure(obj);
@@ -506,11 +508,12 @@ _deferred_renderer(void *data)
 {
    Miniview *mv = data;
    Evas_Coord ox, oy, ow, oh;
-   int history_len, wret;
+   int history_len, wret, pos;
    unsigned int *pixels, y;
    Termcell *cells;
    Termpty *ty;
    unsigned int colors[512];
+   double bottom_bound;
 
    if (!mv) return EINA_FALSE;
 
@@ -555,14 +558,42 @@ _deferred_renderer(void *data)
    if (history_len > (int)(mv->img_h - mv->rows)) mv->fits_to_img = EINA_FALSE;
    else mv->fits_to_img = EINA_TRUE;
 
-   if ((termio_scroll_get(mv->termio) == 0))
+   bottom_bound = ((double) (-mv->img_hist )) / (mv->img_h - mv->rows);
+   pos = termio_scroll_get(mv->termio);
+   if ((pos != 0) && (mv->initial_pos))
      {
-        mv->screen.pos_val = (double) -mv->img_hist / (mv->img_h - mv->rows);
-        edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0, mv->screen.pos_val);
+        double val;
+        val = (double) pos / (mv->img_h - mv->rows);
+        if ((mv->fits_to_img))
+          {
+             mv->screen.pos_val = bottom_bound - val;
+             mv->initial_pos = 0;
+          }
+        else
+          {
+             if (val > 1)
+               {
+                  mv->img_hist += (mv->img_hist * (int)val);
+                  mv->screen.pos_val = (double)(1 - ( val - (int) val));
+                  mv->initial_pos = 0;
+                  mv->to_render = 1;
+                  return EINA_TRUE;
+               }
+             else
+               {
+                  mv->screen.pos_val = bottom_bound - val;
+                  mv->initial_pos = 0;
+               }
+          }
      }
+   if (pos == 0)
+     mv->screen.pos_val = bottom_bound;
+
+   edje_object_part_drag_value_set(mv->base, "miniview_screen", 0.0, mv->screen.pos_val);
 
    mv->to_render = 0;
    mv->deferred_renderer = NULL;
+   _screen_visual_bounds(mv);
    return EINA_FALSE;
 }
 
