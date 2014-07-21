@@ -218,7 +218,6 @@ _save_comp(Termsave *ts)
      }
    else
      {
-        ts2 = ts;
         tsc = (Termsavecomp *)ts;
         ts2 = _mem_new(sizeof(Termsavecomp) + tsc->w);
         if (!ts2)

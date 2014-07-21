@@ -1127,7 +1127,6 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         // XXX: set palette entry. not supported.
         DBG("set palette, not supported");
         if ((cc - c) < 3) return 0;
-        b = &(buf[2]);
         break;
       default:
         // many others

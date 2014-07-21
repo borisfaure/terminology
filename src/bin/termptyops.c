@@ -137,7 +137,6 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
             cells2 = &(TERMPTY_SCREEN(ty, 0, y));
             termpty_cell_copy(ty, cells, cells2, ty->w);
          }
-       y = start_y;
        if (clear)
           _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
      }
