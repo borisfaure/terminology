@@ -403,10 +403,17 @@ _do_configure(Evas_Object *obj)
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
 
-   if ((font_w == 0) || (font_h == 0) || (ow == 0) || (oh == 0)) return;
+   if ((font_w <= 0) || (font_h <= 0) || (ow == 0) || (oh == 0)) return;
+
+   mv->img_h = oh;
+   mv->rows = oh / font_h;
+   mv->cols = ow / font_w;
    
    if ((mv->rows == 0) || (mv->cols == 0)) return;
    
+   mv->screen.size = (double) mv->rows / (double) mv->img_h;
+   edje_object_part_drag_size_set(mv->base, "miniview_screen", 1.0, mv->screen.size);
+
    w = (mv->cols * font_w) / font_h;
    
    evas_object_resize(mv->base, w, mv->img_h);
@@ -432,30 +439,13 @@ _smart_show(Evas_Object *obj)
    if (!mv) return;
    if (!mv->is_shown)
      {
-        Evas_Coord ow, oh, font_w, font_h;
-
         mv->is_shown = 1;
         mv->img_hist = 0;
-
-        evas_object_geometry_get(mv->termio, NULL, NULL, &ow, &oh);
-        if ((ow == 0) || (oh == 0)) return;
-        evas_object_size_hint_min_get(mv->termio, &font_w, &font_h);
-
-        if ((font_w <= 0) || (font_h <= 0)) return;
-
-        mv->img_h = oh;
-        mv->rows = oh / font_h;
-        mv->cols = ow / font_w;
-
-        mv->screen.size = (double) mv->rows / (double) mv->img_h;
-        edje_object_part_drag_size_set(mv->base, "miniview_screen", 1.0, mv->screen.size);
-
-        if ((mv->rows == 0) || (mv->cols == 0)) return;
-
         mv->initial_pos = 1;
+
+        _do_configure(obj);
         _queue_render(mv);
         evas_object_show(mv->base);
-        _do_configure(obj);
      }
 }
 
