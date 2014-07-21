@@ -331,7 +331,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->state.att.bgintense = 1;
                    break;
                 default: //  not handled???
-                   ERR("  color cmd [%i] not handled", arg);
+                   ERR("Unhandled color cmd [%i]", arg);
                    break;
                }
           }
@@ -868,7 +868,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //                                 INF("XXX: enable mouse wheel -> cursor key xlation %i", mode);
                                  break;
                                default:
-                                 ERR("unhandled DEC Private Reset Mode arg %i", arg);
+                                 ERR("Unhandled DEC Private Reset Mode arg %i", arg);
                                  break;
                               }
                          }
@@ -907,7 +907,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 //                              }
                                default:
                                  handled = 1;
-                                 ERR("unhandled ANSI Reset Mode arg %i", arg);
+                                 ERR("Unhandled ANSI Reset Mode arg %i", arg);
                               }
                          }
                     }
@@ -1275,7 +1275,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
          break;
       default:
         // many others
-        ERR("unhandled dcs esc '%c'", buf[0]);
+        ERR("Unhandled DCS escape '%c'", buf[0]);
         break;
      }
 end:
@@ -1410,7 +1410,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 1;
  */
       default:
-        ERR("eek - esc unhandled '%c' (0x%02x)", c[0], c[0]);
+        ERR("Unhandled escape '%c' (0x%02x)", c[0], c[0]);
         return 1;
      }
    return 0;
@@ -1528,7 +1528,7 @@ _termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
    else if (c[0] == 0x7f) // DEL
      {
         ty->state.had_cr = 0;
-        ERR("unhandled char 0x%02x [DEL]", c[0]);
+        ERR("Unhandled char 0x%02x [DEL]", c[0]);
         return 1;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!

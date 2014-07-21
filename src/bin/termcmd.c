@@ -63,7 +63,7 @@ _termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *
              termio_font_size_set(obj, config->font.size - 1);
           }
         else
-          ERR("Unknown font command: %s", cmd);
+          ERR(_("Unknown font command: %s"), cmd);
      }
    return EINA_TRUE;
 }
@@ -90,7 +90,7 @@ _termcmd_grid_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *
    if ((w > 0) && (h > 0))
      termio_grid_size_set(obj, w, h);
    else
-     ERR("Unknown grid size command: %s", cmd);
+     ERR(_("Unknown grid size command: %s"), cmd);
 
    return EINA_TRUE;
 }
@@ -115,7 +115,7 @@ _termcmd_background(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object 
         main_media_update(config);
      }
    else
-     ERR("Background file cannot be read: %s", cmd);
+     ERR(_("Background file cannot be read: %s"), cmd);
 
    return EINA_TRUE;
 }
@@ -144,6 +144,6 @@ termcmd_do(Evas_Object *obj, Evas_Object *win, Evas_Object *bg, const char *cmd)
    if ((cmd[0] == 'b') || (cmd[0] == 'B'))
      return _termcmd_background(obj, win, bg, cmd + 1);
 
-   ERR("Unknown command: %s", cmd);
+   ERR(_("Unknown command: %s"), cmd);
    return EINA_FALSE;
 }

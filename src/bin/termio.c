@@ -379,12 +379,12 @@ _cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
                  (type == TYPE_SCALE) ||
                  (type == TYPE_EDJE) ||
                  (type == TYPE_MOV))
-               elm_ctxpopup_item_append(ctxp, "Preview", NULL,
+               elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
                                         _cb_ctxp_link_preview, sd->self);
           }
-        elm_ctxpopup_item_append(ctxp, "Open", NULL, _cb_ctxp_link_open,
+        elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
                                  sd->self);
-        elm_ctxpopup_item_append(ctxp, "Copy", NULL, _cb_ctxp_link_copy,
+        elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_link_copy,
                                  sd->self);
         evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
         evas_object_show(ctxp);
@@ -439,7 +439,7 @@ _cb_link_drag_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   printf("dnd %i %i act %i\n", x, y, action);
+   DBG("dnd %i %i act %i", x, y, action);
    em = evas_key_modifier_get(evas_object_evas_get(sd->event));
    if (em)
      {
@@ -456,7 +456,7 @@ _cb_link_drag_accept(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccep
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   printf("dnd accept: %i\n", doaccept);
+   DBG("dnd accept: %i", doaccept);
 }
 
 static void
@@ -465,7 +465,7 @@ _cb_link_drag_done(void *data, Evas_Object *obj EINA_UNUSED)
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   printf("dnd done\n");
+   DBG("dnd done");
    sd->link.down.dnd = EINA_FALSE;
    if ((sd->link.down.dndobjdel) && (sd->link.down.dndobj))
      evas_object_del(sd->link.down.dndobj);
@@ -506,7 +506,7 @@ _cb_link_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
         sd->link.down.down = EINA_FALSE;
         sd->link.down.dnd = EINA_TRUE;
 #if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
-        printf("dnd start %s %i %i\n", sd->link.string,
+        DBG("dnd start %s %i %i", sd->link.string,
                evas_key_modifier_is_set(ev->modifiers, "Control"),
                evas_key_modifier_is_set(ev->modifiers, "Shift"));
         if (evas_key_modifier_is_set(ev->modifiers, "Control"))
@@ -1895,7 +1895,7 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
            case ELM_SEL_FORMAT_VCARD: fmt = "VCARD"; break;
            case ELM_SEL_FORMAT_HTML: fmt = "HTML"; break;
           }
-        WRN("unsupported selection format '%s'", fmt);
+        WRN(_("unsupported selection format '%s'"), fmt);
      }
    return EINA_TRUE;
 }
@@ -3078,7 +3078,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if ((ev->button == 3) && shift)
      {
         termio_debugwhite_set(data, !sd->debugwhite);
-        printf("debugwhite %i\n",  sd->debugwhite);
+        DBG("debugwhite %i",  sd->debugwhite);
         return;
      }
    if (!shift && !ctrl)
@@ -3834,7 +3834,7 @@ _smart_add(Evas_Object *obj)
           (sd->imf, ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT);
 imf_done:
         if (sd->imf) DBG("Ecore IMF Setup");
-        else WRN("Ecore IMF failed");
+        else WRN(_("Ecore IMF failed"));
      }
    terms = eina_list_append(terms, obj);
 }
@@ -4394,19 +4394,19 @@ _smart_pty_command(void *data)
 static void
 _smart_cb_drag_enter(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED)
 {
-   printf("dnd enter\n");
+   DBG("dnd enter");
 }
 
 static void
 _smart_cb_drag_leave(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED)
 {
-   printf("dnd leave\n");
+   DBG("dnd leave");
 }
 
 static void
 _smart_cb_drag_pos(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
-   printf("dnd at %i %i act:%i\n", x, y, action);
+   DBG("dnd at %i %i act:%i", x, y, action);
 }
 
 static Eina_Bool
@@ -4532,7 +4532,7 @@ termio_add(Evas_Object *parent, Config *config,
                          config->xterm_256color, config->erase_is_del, mod);
    if (!sd->pty)
      {
-        ERR("Cannot allocate termpty");
+        ERR(_("Cannot allocate termpty"));
         evas_object_del(obj);
         return NULL;
      }
@@ -4899,7 +4899,7 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
 
    if (proc_pidinfo(pid, PROC_PIDVNODEPATHINFO, 0, &vpi, sizeof(vpi)) <= 0)
      {
-        ERR("Cannot get working directory of pid %i (%s)",
+        ERR(_("Could not get working directory of pid %i: %s"),
             pid, strerror(errno));
         return EINA_FALSE;
      }
@@ -4913,7 +4913,7 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
    snprintf(procpath, sizeof(procpath), "/proc/%d/cwd", pid);
    if ((siz = readlink(procpath, buf, size)) < 1)
      {
-        ERR("Could not load working directory %s: %s",
+        ERR(_("Could not load working directory %s: %s"),
             procpath, strerror(errno));
         return EINA_FALSE;
      }

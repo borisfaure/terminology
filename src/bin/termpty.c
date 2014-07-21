@@ -39,7 +39,7 @@ termpty_init(void)
 
    _termpty_log_dom = eina_log_domain_register("termpty", NULL);
    if (_termpty_log_dom < 0)
-     EINA_LOG_CRIT("could not create log domain 'termpty'.");
+     EINA_LOG_CRIT("Could not create logging domain '%s'.", "termpty");
 }
 
 void
@@ -65,10 +65,10 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
         b = realloc(ty->buf, bytes);
         if (!b)
           {
-             ERR("memerr");
+             ERR(_("memerr: %s"), strerror(errno));
              return;
           }
-        INF("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
+        DBG("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
         bytes = len * sizeof(Eina_Unicode);
         memcpy(&(b[ty->buflen]), codepoints, bytes);
         ty->buf = b;
@@ -85,11 +85,11 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                   ty->buf = NULL;
                   ty->buflen = 0;
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
-                  INF("malloc til %i", (int)(bytes - sizeof(Eina_Unicode)));
+                  DBG("malloc till %i", (int)(bytes - sizeof(Eina_Unicode)));
                   ty->buf = malloc(bytes);
                   if (!ty->buf)
                     {
-                       ERR("memerr");
+                       ERR(_("memerr: %s"), strerror(errno));
                        return;
                     }
                   bytes = (char *)ce - (char *)c;
@@ -120,10 +120,10 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                {
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
                   ty->buf = malloc(bytes);
-                  INF("malloc %i", (int)(bytes - sizeof(Eina_Unicode)));
+                  DBG("malloc %i", (int)(bytes - sizeof(Eina_Unicode)));
                   if (!ty->buf)
                     {
-                       ERR("memerr");
+                       ERR(_("memerr: %s"), strerror(errno));
                     }
                   else
                     {
@@ -149,7 +149,7 @@ _pty_size(Termpty *ty)
    sz.ws_xpixel = 0;
    sz.ws_ypixel = 0;
    if (ioctl(ty->fd, TIOCSWINSZ, &sz) < 0)
-     ERR("Size set ioctl failed: %s", strerror(errno));
+     ERR(_("Size set ioctl failed: %s"), strerror(errno));
 }
 
 static Eina_Bool
@@ -297,13 +297,15 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
      {
-        ERR("Allocation of term screen %ix%i", ty->w, ty->h);
+        ERR(_("Allocation of term %s %ix%i: %s"),
+            "screen", ty->w, ty->h, strerror(errno));
         goto err;
      }
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen2)
      {
-        ERR("Allocation of term screen2 %ix%i", ty->w, ty->h);
+        ERR(_("Allocation of term %s %ix%i: %s"),
+            "screen2", ty->w, ty->h, strerror(errno));
         goto err;
      }
 
@@ -312,35 +314,35 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0)
      {
-        ERR("posix_openpt failed: %s", strerror(errno));
+        ERR(_("Function %s failed: %s"), "posix_openpt()", strerror(errno));
         goto err;
      }
    if (grantpt(ty->fd) != 0)
      {
-        WRN("grantpt failed: %s", strerror(errno));
+        WRN(_("Function %s failed: %s"), "grantpt()",  strerror(errno));
      }
    if (unlockpt(ty->fd) != 0)
      {
-        ERR("unlockpt failed: %s", strerror(errno));
+        ERR(_("Function %s failed: %s"), "unlockpt()", strerror(errno));
         goto err;
      }
    pty = ptsname(ty->fd);
    ty->slavefd = open(pty, O_RDWR | O_NOCTTY);
    if (ty->slavefd < 0)
      {
-        ERR("open of pty '%s' failed: %s", pty, strerror(errno));
+        ERR(_("open() of pty '%s' failed: %s"), pty, strerror(errno));
         goto err;
      }
    mode = fcntl(ty->fd, F_GETFL, 0);
    if (mode < 0)
      {
-        ERR("fcntl on pty '%s' failed: %s", pty, strerror(errno));
+        ERR(_("fcntl() on pty '%s' failed: %s"), pty, strerror(errno));
         goto err;
      }
    if (!(mode & O_NDELAY))
       if (fcntl(ty->fd, F_SETFL, mode | O_NDELAY))
         {
-           ERR("fcntl on pty '%s' failed: %s", pty, strerror(errno));
+           ERR(_("fcntl() on pty '%s' failed: %s"), pty, strerror(errno));
            goto err;
         }
 
@@ -356,7 +358,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                                                _cb_exe_exit, ty);
    if (!ty->hand_exe_exit)
      {
-        ERR("event handler add failed");
+        ERR(_("event handler add failed"));
         goto err;
      }
    ty->pid = fork();
@@ -372,8 +374,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
           {
              if (chdir(cd) != 0)
                {
-                  perror("chdir");
-                  ERR("Cannot change to directory '%s'", cd);
+                  ERR(_("Cannot change to directory '%s': %s"),
+                        cd, strerror(errno));
                   exit(127);
                }
           }
@@ -393,7 +395,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                }
              if (!shell)
                {
-                  WRN("Could not find shell, fallback to /bin/sh");
+                  WRN(_("Could not find shell, falling back to %s"), "/bin/sh");
                   shell = "/bin/sh";
                }
           }
@@ -588,7 +590,9 @@ void
 termpty_write(Termpty *ty, const char *input, int len)
 {
    if (ty->fd < 0) return;
-   if (write(ty->fd, input, len) < 0) ERR("write %s", strerror(errno));
+   if (write(ty->fd, input, len) < 0)
+     ERR(_("Could not write to file descriptor %d: %s"),
+         ty->fd, strerror(errno));
 }
 
 ssize_t
