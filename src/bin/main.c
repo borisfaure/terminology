@@ -2262,7 +2262,6 @@ main_term_new(Win *wn, Config *config, const char *cmd,
    term->miniview = o = miniview_add(wn->win, term->term);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(o);
 
    o = term->term;
 
