@@ -2502,7 +2502,7 @@ target: "4.bottom"
             }
          }
          part { name: "posline";
-            mouse_events: 0;
+            mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
             description { state: "default" 0.0;
@@ -2517,7 +2517,7 @@ target: "4.bottom"
             }
          }
          part { name: "terminology.posdrag";
-            mouse_events: 1;
+            mouse_events: 0;
             repeat_events: 1;
             clip_to: "media_clip";
             dragable {
@@ -2535,7 +2535,7 @@ target: "4.bottom"
             }
          }
          part { name: "volline";
-            mouse_events: 0;
+            mouse_events: 1;
             repeat_events: 1;
             clip_to: "media_clip";
             description { state: "default" 0.0;
@@ -2555,7 +2555,7 @@ target: "4.bottom"
             }
          }
          part { name: "terminology.voldrag"; type: IMAGE;
-            mouse_events: 1;
+            mouse_events: 0;
             repeat_events: 1;
             clip_to: "media_clip";
             dragable {
@@ -2628,6 +2628,74 @@ target: "4.bottom"
             source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.voldrag";
+         }
+         program { name: "media_pos_drag_start";
+            signal: "mouse,down,1"; source: "posline";
+            filter: "terminology.posdrag" "default";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               get_geometry(PART:"posline", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.posdrag", pos, 0.0);
+               emit("pos,drag,start", "");
+
+            }
+         }
+         program { name: "media_pos_drag_stop";
+            signal: "mouse,up,1"; source: "posline";
+            action: SIGNAL_EMIT "pos,drag,stop" "";
+         }
+         program { name: "media_pos_drag";
+            signal: "mouse,move"; source: "posline";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               if (!get_mouse_buttons()) return;
+
+               get_geometry(PART:"posline", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.posdrag", pos, 0.0);
+               emit("pos,drag", "");
+            }
+         }
+         program { name: "media_vol_drag_start";
+            signal: "mouse,down,1"; source: "volline";
+            filter: "terminology.voldrag" "default";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               get_geometry(PART:"volline", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.voldrag", pos, 0.0);
+               emit("vol,drag", "");
+
+            }
+         }
+         program { name: "media_vol_drag";
+            signal: "mouse,move"; source: "volline";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               if (!get_mouse_buttons()) return;
+
+               get_geometry(PART:"volline", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.voldrag", pos, 0.0);
+               emit("vol,drag", "");
+            }
          }
       }
    }

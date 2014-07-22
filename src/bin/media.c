@@ -41,6 +41,7 @@ struct _Media
    Eina_Bool nosmooth : 1;
    Eina_Bool downloading : 1;
    Eina_Bool queued : 1;
+   Eina_Bool pos_drag : 1;
 };
 
 static Evas_Smart *_smart = NULL;
@@ -572,6 +573,7 @@ _cb_mov_frame_decode(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_
    evas_object_show(sd->clip);
    _type_mov_calc(data, ox, oy, ow, oh);
 
+   if (sd->pos_drag) return;
    len = emotion_object_play_length_get(sd->o_img);
    pos = emotion_object_position_get(sd->o_img);
    pos /= len;
@@ -665,6 +667,28 @@ _cb_media_vol(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EIN
 }
 
 static void
+_cb_media_pos_drag_start(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   double vx, vy;
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd) return;
+   sd->pos_drag = 1;
+   edje_object_part_drag_value_get(sd->o_ctrl, "terminology.posdrag", &vx, &vy);
+   media_position_set(data, vx + vy);
+}
+static void
+_cb_media_pos_drag_stop(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   double pos, len;
+   Media *sd = evas_object_smart_data_get(data);
+   if (!sd || !sd->pos_drag) return;
+   sd->pos_drag = 0;
+   len = emotion_object_play_length_get(sd->o_img);
+   pos = emotion_object_position_get(sd->o_img);
+   pos /= len;
+   edje_object_part_drag_value_set(sd->o_ctrl, "terminology.posdrag", pos, pos);
+}
+static void
 _cb_media_pos(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    double vx, vy;
@@ -736,9 +760,13 @@ _type_mov_init(Evas_Object *obj)
                                    _cb_media_pause, obj);
    edje_object_signal_callback_add(o, "stop", "",
                                    _cb_media_stop, obj);
-   edje_object_signal_callback_add(o, "drag", "terminology.posdrag",
+   edje_object_signal_callback_add(o, "pos,drag,start", "",
+                                   _cb_media_pos_drag_start, obj);
+   edje_object_signal_callback_add(o, "pos,drag,stop", "",
+                                   _cb_media_pos_drag_stop, obj);
+   edje_object_signal_callback_add(o, "pos,drag", "",
                                    _cb_media_pos, obj);
-   edje_object_signal_callback_add(o, "drag", "terminology.voldrag",
+   edje_object_signal_callback_add(o, "vol,drag", "",
                                    _cb_media_vol, obj);
    /* TODO where to stack the object in the ui? controls cannot be part of
     * the 'media smart obj' becouse controls need to be on top of the term obj.
