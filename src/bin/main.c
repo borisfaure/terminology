@@ -2688,7 +2688,7 @@ static Ecore_Getopt options = {
       ECORE_GETOPT_STORE_BOOL('G', "visual-bell",
                               gettext_noop("Set visual bell mode.")),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
-                              gettext_noop("Go into the fullscreen mode from start.")),
+                              gettext_noop("Go into the fullscreen mode from the start.")),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
                               gettext_noop("Go into an iconic state from the start.")),
       ECORE_GETOPT_STORE_TRUE('B', "borderless",
@@ -2706,12 +2706,12 @@ static Ecore_Getopt options = {
       ECORE_GETOPT_STORE_TRUE('2', "256color",
                               gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'.")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
-                              gettext_noop("Whether to highlight links.")),
+                              gettext_noop("Highlight links.")),
 
-      ECORE_GETOPT_VERSION   ('V', gettext_noop("version")),
-      ECORE_GETOPT_COPYRIGHT ('C', gettext_noop("copyright")),
-      ECORE_GETOPT_LICENSE   ('L', gettext_noop("license")),
-      ECORE_GETOPT_HELP      ('h', gettext_noop("help")),
+      ECORE_GETOPT_VERSION   ('V', "version"),
+      ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
+      ECORE_GETOPT_LICENSE   ('L', "license"),
+      ECORE_GETOPT_HELP      ('h', "help"),
       ECORE_GETOPT_SENTINEL
    }
 };
@@ -2727,7 +2727,26 @@ _translate_options(void)
    while ((desc->shortname != '\0') || (desc->longname)
      || (desc->action == ECORE_GETOPT_ACTION_CATEGORY))
      {
-        desc->help = gettext(desc->help);
+        if (desc->help)
+          {
+             switch (desc->action)
+               {
+                case ECORE_GETOPT_ACTION_VERSION:
+                   desc->help = _("show program version.");
+                   break;
+                case ECORE_GETOPT_ACTION_COPYRIGHT:
+                   desc->help = _("show copyright.");
+                   break;
+                case ECORE_GETOPT_ACTION_LICENSE:
+                   desc->help = _("show license.");
+                   break;
+                case ECORE_GETOPT_ACTION_HELP:
+                   desc->help = _("show this message.");
+                   break;
+                default:
+                   desc->help = gettext(desc->help);
+               }
+          }
         desc++;
      }
 }

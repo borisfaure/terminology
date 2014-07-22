@@ -4532,7 +4532,7 @@ termio_add(Evas_Object *parent, Config *config,
                          config->xterm_256color, config->erase_is_del, mod);
    if (!sd->pty)
      {
-        ERR(_("Cannot allocate termpty"));
+        ERR(_("Could not allocate termpty"));
         evas_object_del(obj);
         return NULL;
      }

@@ -41,7 +41,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
      {
         Config *config = termio_config_get(term);
         char buf[PATH_MAX];
-        
+        const char *txt;
+
         ab_layout = o = elm_layout_add(win);
         if (elm_layout_file_set(o, config_theme_path_get(config),
                                 "terminology/about") == 0)
@@ -50,18 +51,25 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                       elm_app_data_dir_get());
              elm_layout_file_set(o, buf, "terminology/about");
           }
-        /* TODO i18n */
-        elm_object_part_text_set
-          (o, "terminology.text",
-              "<b>Terminology "PACKAGE_VERSION"</b><br>"
+
+        txt = eina_stringshare_printf(_(
+              "<b>Terminology %s</b><br>"
               "Why should terminals be boring?<br>"
               "<br>"
               "This terminal was written for Enlightenment, to use EFL "
               "and otherwise push the boundaries of what a modern terminal "
               "emulator should be. We hope you enjoy it.<br>"
               "<br>"
-              "Copyright © 2012-2014 by:<br>"
+              "Copyright © 2012-%d by:<br>"
               "<br>"
+              "%s" // AUTHORS
+              "<br>"
+              "<br>"
+              "Distributed under the 2-clause BSD license detailed below:<br>"
+              "<br>"
+              "%s" // LICENSE
+              "</b>"),
+              PACKAGE_VERSION, 2014,
               "Carsten Haitzler<br>"
               "Boris Faure<br>"
               "Gustavo Sverzut Barbieri<br>"
@@ -107,11 +115,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "Nicholas Hughart<br>"
               "Rafael Antognolli<br>"
               "Rui Seabra<br>"
-              "Vincent Torri<br>"
-              "<br>"
-              "<br>"
-              "Distributed under the 2-clause BSD license detailed below:<br>"
-              "<br>"
+              "Vincent Torri<br>",
               "All rights reserved.<br>"
               "<br>"
               "Redistribution and use in source and binary forms, with or "
@@ -138,8 +142,9 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING "
               "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF "
               "THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH "
-              "DAMAGE.</b>"
-          );
+              "DAMAGE.");
+        elm_object_part_text_set(o, "terminology.text", txt);
+        eina_stringshare_del(txt);
         evas_object_show(o);
         edje_object_part_swallow(bg, "terminology.about", ab_layout);
      }

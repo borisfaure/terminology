@@ -115,7 +115,7 @@ _termcmd_background(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object 
         main_media_update(config);
      }
    else
-     ERR(_("Background file cannot be read: %s"), cmd);
+     ERR(_("Background file could not be read: %s"), cmd);
 
    return EINA_TRUE;
 }

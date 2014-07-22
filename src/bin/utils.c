@@ -47,7 +47,7 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
      return EINA_TRUE;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   ERR("Could not load any theme for group=%s: %s", group, errmsg);
+   ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
    return EINA_FALSE;
 }
 

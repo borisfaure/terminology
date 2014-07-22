@@ -297,14 +297,14 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
      {
-        ERR(_("Allocation of term %s %ix%i: %s"),
+        ERR("Allocation of term %s %ix%i failed: %s",
             "screen", ty->w, ty->h, strerror(errno));
         goto err;
      }
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen2)
      {
-        ERR(_("Allocation of term %s %ix%i: %s"),
+        ERR("Allocation of term %s %ix%i failed: %s",
             "screen2", ty->w, ty->h, strerror(errno));
         goto err;
      }
@@ -358,7 +358,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                                                _cb_exe_exit, ty);
    if (!ty->hand_exe_exit)
      {
-        ERR(_("event handler add failed"));
+        ERR("event handler add failed");
         goto err;
      }
    ty->pid = fork();
@@ -374,7 +374,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
           {
              if (chdir(cd) != 0)
                {
-                  ERR(_("Cannot change to directory '%s': %s"),
+                  ERR(_("Could not change current directory to '%s': %s"),
                         cd, strerror(errno));
                   exit(127);
                }

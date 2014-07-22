@@ -389,7 +389,7 @@ _cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    if (strncmp(config_background_dir, _user_path, 
                strlen(config_background_dir)) == 0)
      {
-        _bubble_show(_("Source file is target file!"));
+        _bubble_show(_("Source file is target file"));
         free(config_background_dir);
         return;
      }
@@ -407,7 +407,7 @@ _cb_grid_doubleclick(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
      }
    else
      {
-       _bubble_show(_("Failed!"));
+       _bubble_show(_("Failed"));
      }
    free(config_background_dir);
 }
@@ -495,7 +495,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(o, _("Double click on a picture to import it!"));
+   elm_object_text_set(o, _("Double click on a picture to import it"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
