@@ -20,9 +20,9 @@ collections {
          public message(Msg_Type:type, id, ...) {
             new r, g, b, a, v;
 
-            if (type != MSG_INT || id != 1) return;
+            if ((type != MSG_INT) || (id != 1)) return;
 
-            v = getarg(2) * 255 / 100;
+            v = (getarg(2) * 255) / 100;
 
             custom_state(PART:"shadow", "default", 0.0);
             get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
