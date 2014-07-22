@@ -288,6 +288,7 @@ collections {
                text { font: "Sans"; size: 8;
                   align: 1.0 0.5;
                   min: 1 1;
+                  ellipsis: -1;
                }
             }
             description { state: "over" 0.0;
@@ -314,6 +315,7 @@ collections {
                text { font: "Sans"; size: 8;
                   align: 1.0 0.5;
                   min: 1 1;
+                  ellipsis: -1;
                }
             }
             description { state: "over" 0.0;
