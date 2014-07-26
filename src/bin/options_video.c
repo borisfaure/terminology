@@ -161,7 +161,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("VLC"));
+   elm_object_text_set(o, "VLC");
    elm_radio_state_value_set(o, 3);
    elm_radio_group_add(o, op_vidmod);
    elm_box_pack_end(bx0, o);
@@ -172,7 +172,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    o = elm_radio_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, "Gstreamer 1.0");
+   elm_object_text_set(o, "Gstreamer 1.X");
    elm_radio_state_value_set(o, 4);
    elm_radio_group_add(o, op_vidmod);
    elm_box_pack_end(bx0, o);

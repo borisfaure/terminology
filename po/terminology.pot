@@ -586,10 +586,6 @@ msgstr ""
 msgid "Automatic"
 msgstr ""
 
-#: src/bin/options_video.c:164
-msgid "VLC"
-msgstr ""
-
 #: src/bin/options_wallpaper.c:101
 msgid "None"
 msgstr ""
