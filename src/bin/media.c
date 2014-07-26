@@ -774,6 +774,8 @@ _type_mov_init(Evas_Object *obj)
     * I think we need to swallow inside the bg object. but how to
     * retrive the edje bg object from here?
     * */
+   evas_object_smart_member_add(o, obj);
+   evas_object_clip_set(o, sd->clip);
    evas_object_show(o);
 
    media_play_set(obj, EINA_TRUE);
