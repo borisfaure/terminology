@@ -1,10 +1,11 @@
-#include "private.h"
-
 #include <Elementary.h>
+
+#include "private.h"
 #include "config.h"
 #include "termio.h"
 #include "options.h"
 #include "options_colors.h"
+
 
 static const char mapping[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11 };
 static const char *mapping_names[] =

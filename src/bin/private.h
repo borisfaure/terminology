@@ -5,10 +5,11 @@
 #include "terminology_config.h"
 #endif
 
-#ifdef HAVE_GETTEXT
+#if HAVE_GETTEXT && ENABLE_NLS
 #define _(string) gettext (string)
 #else
 #define _(string) (string)
+#undef gettext
 #define gettext(string) (string)
 #endif
 #define gettext_noop(String) String

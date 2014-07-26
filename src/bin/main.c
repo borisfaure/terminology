@@ -2716,7 +2716,7 @@ static Ecore_Getopt options = {
    }
 };
 
-#ifdef HAVE_GETTEXT
+#if HAVE_GETTEXT && ENABLE_NLS
 static void
 _translate_options(void)
 {
@@ -2834,7 +2834,7 @@ elm_main(int argc, char **argv)
    int size_w = 1, size_h = 1;
 
    elm_language_set("");
-#ifdef HAVE_GETTEXT
+#if HAVE_GETTEXT && ENABLE_NLS
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
    _translate_options();
@@ -3225,7 +3225,7 @@ remote:
 
    elm_shutdown();
 
-#ifdef HAVE_GETTEXT
+#if HAVE_GETTEXT && ENABLE_NLS
    eina_stringshare_del(options.copyright);
 #endif
    return retval;
