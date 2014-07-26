@@ -768,12 +768,6 @@ _type_mov_init(Evas_Object *obj)
                                    _cb_media_pos, obj);
    edje_object_signal_callback_add(o, "vol,drag", "",
                                    _cb_media_vol, obj);
-   /* TODO where to stack the object in the ui? controls cannot be part of
-    * the 'media smart obj' becouse controls need to be on top of the term obj.
-    * 
-    * I think we need to swallow inside the bg object. but how to
-    * retrive the edje bg object from here?
-    * */
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
    evas_object_show(o);
