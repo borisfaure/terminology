@@ -3223,11 +3223,12 @@ remote:
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
 
-   elm_shutdown();
-
 #if HAVE_GETTEXT && ENABLE_NLS
    eina_stringshare_del(options.copyright);
 #endif
+
+   elm_shutdown();
+
    return retval;
 }
 ELM_MAIN()
