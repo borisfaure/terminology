@@ -23,7 +23,7 @@ AC_SUBST(efl_version)
 
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.18.3])
+AM_GNU_GETTEXT_VERSION([0.17])
 ])
 
 m4_ifdef([AC_GNU_GETTEXT], [
