@@ -228,11 +228,11 @@ msgid "Behavior"
 msgstr ""
 
 #: src/bin/options_behavior.c:325
-msgid "Jump on change"
+msgid "Scroll to bottom on new content"
 msgstr ""
 
 #: src/bin/options_behavior.c:335
-msgid "Jump on key"
+msgid "Scroll to bottom when a key is pressed"
 msgstr ""
 
 #: src/bin/options_behavior.c:345

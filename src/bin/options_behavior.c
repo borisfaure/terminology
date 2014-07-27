@@ -322,7 +322,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Jump on change"));
+   elm_object_text_set(o, _("Scroll to bottom on new content"));
    elm_check_state_set(o, config->jump_on_change);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
@@ -332,7 +332,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Jump on key"));
+   elm_object_text_set(o, _("Scroll to bottom when a key is pressed"));
    elm_check_state_set(o, config->jump_on_keypress);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
