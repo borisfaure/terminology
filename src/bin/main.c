@@ -1887,12 +1887,11 @@ main_media_mute_update(const Config *config)
    Win *wn;
    Term *term;
    Eina_List *l, *ll;
-   
-  EINA_LIST_FOREACH(wins, l, wn)
+
+   EINA_LIST_FOREACH(wins, l, wn)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
-             if (term->config != config) continue;
              if (term->media) media_mute_set(term->media, config->mute);
              termio_media_mute_set(term->term, config->mute);
           }
