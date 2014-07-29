@@ -1894,6 +1894,7 @@ main_media_mute_update(const Config *config)
           {
              if (term->config != config) continue;
              if (term->media) media_mute_set(term->media, config->mute);
+             termio_media_mute_set(term->term, config->mute);
           }
      }
 }
