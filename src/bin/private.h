@@ -9,8 +9,6 @@
 #define _(string) gettext (string)
 #else
 #define _(string) (string)
-#undef gettext
-#define gettext(string) (string)
 #endif
 #define gettext_noop(String) String
 
