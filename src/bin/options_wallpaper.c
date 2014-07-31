@@ -16,19 +16,17 @@ typedef struct _Background_Item
    const char *path;
    Eina_Bool selected;
    Elm_Object_Item *item;
-}
-Background_Item;
+} Background_Item;
 
 typedef struct _Insert_Gen_Grid_Item_Notify
 {
    Elm_Gengrid_Item_Class *class;
    Background_Item *item;
-}
-Insert_Gen_Grid_Item_Notify;
+} Insert_Gen_Grid_Item_Notify;
 
 
-static const char *_system_path, 
-                  *_user_path;
+static Eina_Stringshare *_system_path,
+                        *_user_path;
 
 static Evas_Object *_bg_grid = NULL, 
                    *_term = NULL, 
@@ -326,7 +324,7 @@ _cb_hoversel_select(void *data, Evas_Object *hoversel EINA_UNUSED,
      } 
 }
 
-static const char*
+static void
 _system_background_dir_init(void)
 { 
    char path[PATH_MAX];
@@ -336,7 +334,6 @@ _system_background_dir_init(void)
      eina_stringshare_replace(&_system_path, path);
    else
      _system_path = eina_stringshare_add(path);
-   return _system_path;
 }
 
 static const char*
@@ -509,6 +506,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(_entry, _system_path);
      }
 }
+
 void
 options_wallpaper_clear(void)
 {
@@ -519,10 +517,15 @@ options_wallpaper_clear(void)
         if (item->path) eina_stringshare_del(item->path);
         free(item);
      }
+   _backgroundlist = NULL;
    if (_user_path)
-     eina_stringshare_del(_user_path);
-   _user_path = NULL;
+     {
+        eina_stringshare_del(_user_path);
+        _user_path = NULL;
+     }
    if (_system_path)
-     eina_stringshare_del(_system_path);
-   _user_path = NULL;
+     {
+        eina_stringshare_del(_system_path);
+        _system_path = NULL;
+     }
 }
