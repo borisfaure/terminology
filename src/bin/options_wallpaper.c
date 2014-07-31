@@ -159,9 +159,8 @@ _item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED
         config_save(config, NULL);
         main_media_update(config);
      }
-   else
+   else if (eina_stringshare_replace(&(config->background), item->path))
      {
-        eina_stringshare_replace(&(config->background), item->path);
         config_save(config, NULL);
         main_media_update(config);
      }
