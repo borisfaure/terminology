@@ -715,7 +715,7 @@ static Eina_Bool
 _smart_mouseover_delay(void *data)
 {
    Termio *sd = evas_object_smart_data_get(data);
-   
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    sd->mouseover_delay = NULL;
    _smart_mouseover_apply(data);
@@ -1624,8 +1624,11 @@ _smart_apply(Evas_Object *obj)
      }
    else
      evas_object_hide(sd->sel.theme);
-   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
-   sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
+   if (sd->mouseover_delay)
+     {
+       ecore_timer_del(sd->mouseover_delay);
+       sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
+     }
    miniview_redraw(term_miniview_get(sd->term));
 }
 
