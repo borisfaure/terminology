@@ -751,18 +751,57 @@ _cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    main_win_free(wn);
 }
 
+static Term *
+_find_term_under_mouse(Win *wn)
+{
+   Evas_Coord mx, my;
+   const Eina_List *l;
+   Term *term;
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(wn->win), &mx, &my);
+
+   EINA_LIST_FOREACH(wn->terms, l, term)
+     {
+        Evas_Coord ox, oy, ow, oh;
+
+        evas_object_geometry_get(term->bg, &ox, &oy, &ow, &oh);
+        if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, mx, my, 1, 1))
+          return term;
+     }
+   return NULL;
+}
+
 static void
-_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
    Split *sp;
-   
+
    if (!wn->focused) elm_win_urgent_set(wn->win, EINA_FALSE);
    wn->focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
+
    term = main_win_focused_term_get(wn);
+
+   if ( wn->config->mouse_over_focus )
+     {
+        Term *term_mouse;
+
+        term_mouse = _find_term_under_mouse(wn);
+        if ((term_mouse) && (term_mouse != term))
+          {
+             if (term)
+               {
+                  edje_object_signal_emit(term->bg, "focus,out", "terminology");
+                  edje_object_signal_emit(term->base, "focus,out", "terminology");
+                  if (!wn->cmdbox_up) elm_object_focus_set(term->term, EINA_FALSE);
+               }
+             term = term_mouse;
+          }
+     }
+
    if (!term) return;
    sp = _split_find(wn->win, term->term, NULL);
    if (sp->sel)
@@ -778,11 +817,12 @@ _cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_win_focus_out(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
-   
+
    wn->focused = EINA_FALSE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_FALSE);
@@ -805,6 +845,7 @@ _cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
    config = termio_config_get(term->term);
 
    if ((!config) || (!config->mouse_over_focus)) return;
+   if ((!term->wn) || (!term->wn->focused)) return;
 
    term->focused = EINA_TRUE;
 
@@ -2023,8 +2064,8 @@ main_win_new(const char *name, const char *role, const char *title,
    elm_object_content_set(wn->conform, o);
    evas_object_show(o);
 
-   evas_object_smart_callback_add(wn->win, "focus,in", _cb_focus_in, wn);
-   evas_object_smart_callback_add(wn->win, "focus,out", _cb_focus_out, wn);
+   evas_object_smart_callback_add(wn->win, "focus,in", _cb_win_focus_in, wn);
+   evas_object_smart_callback_add(wn->win, "focus,out", _cb_win_focus_out, wn);
 
    wins = eina_list_append(wins, wn);
    return wn;
