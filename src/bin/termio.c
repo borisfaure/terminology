@@ -75,7 +75,7 @@ struct _Termio
    Ecore_Animator *anim;
    Ecore_Timer *delayed_size_timer;
    Ecore_Timer *link_do_timer;
-   Ecore_Timer *mouse_selection_scroll;
+   Ecore_Timer *mouse_selection_scroll_timer;
    Ecore_Job *mouse_move_job;
    Ecore_Timer *mouseover_delay;
    Evas_Object *win, *theme, *glayer;
@@ -424,8 +424,10 @@ _cb_link_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
         if ((dx <= finger_size) && (dy <= finger_size))
           {
-             if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
-             sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
+             if (sd->link_do_timer)
+               ecore_timer_reset(sd->link_do_timer);
+             else
+               sd->link_do_timer = ecore_timer_add(0.2, _cb_link_up_delay, data);
           }
         sd->link.down.down = EINA_FALSE;
      }
@@ -1626,8 +1628,7 @@ _smart_apply(Evas_Object *obj)
      evas_object_hide(sd->sel.theme);
    if (sd->mouseover_delay)
      {
-       ecore_timer_del(sd->mouseover_delay);
-       sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, obj);
+       ecore_timer_reset(sd->mouseover_delay);
      }
    miniview_redraw(term_miniview_get(sd->term));
 }
@@ -3020,8 +3021,10 @@ _smart_cb_mouse_move_job(void *data)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->mouse_move_job = NULL;
-   if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
-   sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, data);
+   if (sd->mouseover_delay)
+     ecore_timer_reset(sd->mouseover_delay);
+   else
+     sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, data);
 }
 
 static void
@@ -3221,10 +3224,10 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    if (sd->link.down.dnd) return;
    if (sd->pty->selection.makesel)
      {
-        if (sd->mouse_selection_scroll)
+        if (sd->mouse_selection_scroll_timer)
           {
-             ecore_timer_del(sd->mouse_selection_scroll);
-             sd->mouse_selection_scroll = NULL;
+             ecore_timer_del(sd->mouse_selection_scroll_timer);
+             sd->mouse_selection_scroll_timer = NULL;
           }
         sd->pty->selection.makesel = EINA_FALSE;
 
@@ -3328,16 +3331,17 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      }
    if (scroll == EINA_TRUE)
      {
-        if (!sd->mouse_selection_scroll) {
-             sd->mouse_selection_scroll
+        if (!sd->mouse_selection_scroll_timer)
+          {
+             sd->mouse_selection_scroll_timer
                 = ecore_timer_add(0.05, _mouse_selection_scroll, data);
-        }
+          }
         return;
      }
-   else if (sd->mouse_selection_scroll)
+   else if (sd->mouse_selection_scroll_timer)
      {
-        ecore_timer_del(sd->mouse_selection_scroll);
-        sd->mouse_selection_scroll = NULL;
+        ecore_timer_del(sd->mouse_selection_scroll_timer);
+        sd->mouse_selection_scroll_timer = NULL;
      }
 
    if ((sd->mouse.cx == cx) && (sd->mouse.cy == cy)) return;
@@ -3920,9 +3924,9 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
    evas_object_smart_changed(obj);
-   if (!sd->delayed_size_timer) sd->delayed_size_timer = 
-     ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
-   else ecore_timer_delay(sd->delayed_size_timer, 0.0);
+   if (!sd->delayed_size_timer)
+     sd->delayed_size_timer = ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
+   else ecore_timer_reset(sd->delayed_size_timer);
    evas_object_resize(sd->event, ow, oh);
 }
 
