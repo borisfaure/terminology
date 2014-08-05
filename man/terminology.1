@@ -305,11 +305,11 @@ e.g.
 any values inside square brackets [] are to be replaced by some content (numbers, strings, paths, url's etc.). example:
 
 aa[PATH\-OF\-FILE] should be come something like:
-  aa/tmp/file.png\n
+  aa/tmp/file.png
 or aa[true/false] should become something like:
-  aatrue\n
+  aatrue
 or
-  aafalse\n
+  aafalse
 
 \-\-\-
 
@@ -333,21 +333,21 @@ ap[on/true/yes/off/false/no]
 
 qs
   query grid and font size. stdin will have written to it:
-    W;H;FW;FH\n
-  where W is the width of the terminal grid in characters\n
-  where H is the height of the terminal grid in characters\n
-  where FW is the width of 1 character cell in pixels\n
-  where FH is the height of 1 character cell in pixels\n
+    W;H;FW;FH
+  where W is the width of the terminal grid in characters
+  where H is the height of the terminal grid in characters
+  where FW is the width of 1 character cell in pixels
+  where FH is the height of 1 character cell in pixels
 
 is[CW;H;FULL\-PATH\-OR\-URL]
   insert STRETCHED media (where image will stretch to fill the
     cell area) and define expected cell area to be W cells
-    wide and H cells high, with the image/media/url.\n
+    wide and H cells high, with the image/media/url.
   where C is the replace character to be identified in later
-    text where W is the width in character cells (up to 511).\n
-  where H is the height in character cells (up to 511).\n
+    text where W is the width in character cells (up to 511).
+  where H is the height in character cells (up to 511).
 
-  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of WxH "replace characters" to follow, with each sequence of such replace characters bebung with a 'ib' escape command and ending with an 'ie' escape command.\n
+  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of WxH "replace characters" to follow, with each sequence of such replace characters bebung with a 'ib' escape command and ending with an 'ie' escape command.
 
   the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may be of the form:
 
