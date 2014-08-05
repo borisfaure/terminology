@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-07-22 23:36+0200\n"
-"PO-Revision-Date: 2014-07-26 21:31+0200\n"
+"PO-Revision-Date: 2014-08-04 12:42+0200\n"
 "Last-Translator: Panagiotis Galatsanos <galatsanosp@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: el\n"
@@ -27,12 +27,14 @@ msgid "New"
 msgstr "Νέο"
 
 #: src/bin/controls.c:258
+#, fuzzy
 msgid "Split V"
-msgstr ""
+msgstr "Διαχωρισμός Κ"
 
 #: src/bin/controls.c:260
+#, fuzzy
 msgid "Split H"
-msgstr ""
+msgstr "Διαχορισμός O"
 
 #: src/bin/controls.c:266
 msgid "Close"
@@ -94,22 +96,23 @@ msgstr ""
 #: src/bin/main.c:2661
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
+"Εντολή για εκτέλεση. Η προεπιλογή είναι το $SHELL (ή passwd shell ή /bin/sh)"
 
 #: src/bin/main.c:2663
 msgid "Change to directory for execution of terminal command."
-msgstr ""
+msgstr "Αλλαγή στον κατάλογο για την εκτέλεση της εντολής τερματικού."
 
 #: src/bin/main.c:2665
 msgid "Use the named edje theme or path to theme file."
-msgstr ""
+msgstr "Χρήση του θέματος Edje ή διαδρομή στο αρχείο θέματος."
 
 #: src/bin/main.c:2667
 msgid "Use the named file as a background wallpaper."
-msgstr ""
+msgstr "Χρήση του αρχείου σαν ταπετσαρία φόντου."
 
 #: src/bin/main.c:2669
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
-msgstr ""
+msgstr "Χρήση γεωμετρίας τερματικού (πχ 80x24 ή 80x24+50+20 κλπ.)."
 
 #: src/bin/main.c:2671
 msgid "Set window name."
@@ -135,27 +138,29 @@ msgstr ""
 
 #: src/bin/main.c:2681
 msgid "Set emotion module to use."
-msgstr ""
+msgstr "Ορισμός αρθρώματος emotion προς χρήση."
 
 #: src/bin/main.c:2684
 msgid "Run the shell as a login shell."
-msgstr ""
+msgstr "Εκτέλεση του κελύφους ως κέλυφος εισόδου."
 
 #: src/bin/main.c:2686
 msgid "Set mute mode for video playback."
-msgstr ""
+msgstr "Ορισμός λειτουργίας σίγασης για την αναπαραγωγή βίντεο."
 
 #: src/bin/main.c:2688
+#, fuzzy
 msgid "Set cursor blink mode."
-msgstr ""
+msgstr "Ορισμός λειτουργίας φωτεινότητας κέρσορα."
 
 #: src/bin/main.c:2690
+#, fuzzy
 msgid "Set visual bell mode."
-msgstr ""
+msgstr "Ορισμός λειτουργίας οπτικού κουδουνιού."
 
 #: src/bin/main.c:2692
 msgid "Go into the fullscreen mode from the start."
-msgstr ""
+msgstr "Χρήση λειτουργίας πλήρους οθόνης από την αρχή."
 
 #: src/bin/main.c:2694
 msgid "Go into an iconic state from the start."
@@ -163,23 +168,25 @@ msgstr ""
 
 #: src/bin/main.c:2696
 msgid "Become a borderless managed window."
-msgstr ""
+msgstr "Να γίνει παράθυρο χωρίς πλαίσιο."
 
 #: src/bin/main.c:2698
+#, fuzzy
 msgid "Become an override-redirect window."
-msgstr ""
+msgstr "Να γίνει παράθυρο παράκαμψης ανακατεύθυνσης."
 
 #: src/bin/main.c:2700
 msgid "Become maximized from the start."
-msgstr ""
+msgstr "Να γίνει μεγιστοποίηση από την αρχή."
 
 #: src/bin/main.c:2702
 msgid "Terminology is run without a window manager."
 msgstr "Εκκίνηση του Terminology χωρίς διαχειριστή παραθύρων."
 
 #: src/bin/main.c:2704
+#, fuzzy
 msgid "Do not exit when the command process exits."
-msgstr ""
+msgstr "Να μην κλείνει όταν η διεργασία εντολής κλείνει."
 
 #: src/bin/main.c:2706
 msgid "Force single executable if multi-instance is enabled."
@@ -199,7 +206,7 @@ msgstr "Προβολή έκδοσης του προγράμματος."
 
 #: src/bin/main.c:2739
 msgid "show copyright."
-msgstr "Προβολή πνευματικής ιδιωκτησίας."
+msgstr "Προβολή πνευματικής ιδιοκτησίας."
 
 #: src/bin/main.c:2742
 msgid "show license."
@@ -230,7 +237,7 @@ msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
 #: src/bin/media.c:702
 #, c-format
 msgid "Could not Initialize the emotion module '%s'"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η προετοιμασία του αρθρώματος emotion '%s'"
 
 #: src/bin/options_behavior.c:127
 msgid "Restore opened views"
@@ -241,12 +248,12 @@ msgid "Behavior"
 msgstr "Συμπεριφορά"
 
 #: src/bin/options_behavior.c:325
-msgid "Jump on change"
-msgstr ""
+msgid "Scroll to bottom on new content"
+msgstr "Μετακίνηση προς τα κάτω όταν υπάρχει νέο περιεχόμενο"
 
 #: src/bin/options_behavior.c:335
-msgid "Jump on key"
-msgstr ""
+msgid "Scroll to bottom when a key is pressed"
+msgstr "Μετακίνηση προς τα κάτω όταν πατηθεί κάποιο πλήκτρο"
 
 #: src/bin/options_behavior.c:345
 msgid "React to key presses"
@@ -258,7 +265,7 @@ msgstr "Κέρσορας που αναβοσβήνει"
 
 #: src/bin/options_behavior.c:365
 msgid "Visual Bell"
-msgstr ""
+msgstr "Οπτικό Κουδούνισμα"
 
 #: src/bin/options_behavior.c:375
 msgid "Bell rings"
@@ -273,12 +280,14 @@ msgid "Active Links"
 msgstr "Ενεργοί σύνδεσμοι"
 
 #: src/bin/options_behavior.c:405
+#, fuzzy
 msgid "Enable application server"
-msgstr ""
+msgstr "Ενεργοποίηση διακομιστή εφαρμογής"
 
 #: src/bin/options_behavior.c:419
+#, fuzzy
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "Πολλαπλά instances, μία διεργασία"
 
 #: src/bin/options_behavior.c:429
 msgid "Set TERM to xterm-256color"
@@ -297,8 +306,9 @@ msgid "Start as login shell"
 msgstr ""
 
 #: src/bin/options_behavior.c:469
+#, fuzzy
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "Eστίαση στο διαχωριστικό κάτω από το ποντίκι"
 
 #: src/bin/options_behavior.c:479
 msgid "Always open at size:"
@@ -317,8 +327,9 @@ msgid "Word separators:"
 msgstr "Διαχωριστές λέξεων:"
 
 #: src/bin/options_behavior.c:567
+#, fuzzy
 msgid "Scrollback:"
-msgstr ""
+msgstr "Κύλιση προς τα πίσω:"
 
 #: src/bin/options_behavior.c:587
 msgid "Tab zoom/switch animation time:"
@@ -329,6 +340,9 @@ msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
 msgstr ""
+"Ορισμός χρόνου κίνησης που<br>λαμβάνει μέρος για την αλλαγή καρτέλας,<br>αν "
+"αυτή είναι από συνδιασμό πλήκτρων, ροδέλας<br>ποντικιού ή κίνηση ποντικιού "
+"στο πάνελ καρτελών"
 
 #: src/bin/options.c:134
 msgid "Options"
@@ -444,7 +458,7 @@ msgstr "Τυπικό"
 
 #: src/bin/options_helpers.c:190
 msgid "Inline if possible"
-msgstr ""
+msgstr "Inline αν είναι δυνατόν"
 
 #: src/bin/options_helpers.c:220
 msgid "E-mail:"
@@ -507,12 +521,14 @@ msgid "Reset font size to 10"
 msgstr "Επαναφορά μεγέθος γραμματοσειράς σε 10"
 
 #: src/bin/options_keys.c:44
+#, fuzzy
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "Διαχωριστικό οριζόντια (νέο από κάτω)"
 
 #: src/bin/options_keys.c:45
+#, fuzzy
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "Διαχωριστικό κάθετα (νέο από δεξιά)"
 
 #: src/bin/options_keys.c:46
 msgid "Focus to previous terminal"
@@ -572,11 +588,11 @@ msgstr "Μετάβαση στην καρτέλα 10"
 
 #: src/bin/options_keys.c:60
 msgid "Enter command mode"
-msgstr ""
+msgstr "Είσοδος σε λειτουργία εντολών"
 
 #: src/bin/options_keys.c:61
 msgid "Toggle miniview of the history"
-msgstr ""
+msgstr "Εναλλαγή μικρογραφίας του ιστορικού"
 
 #: src/bin/options_video.c:78
 msgid "Translucent"
@@ -593,7 +609,7 @@ msgstr "Ήχος σε σίγαση"
 
 #: src/bin/options_video.c:125
 msgid "Video Engine:"
-msgstr "Μηχανή Βίντεο"
+msgstr "Μηχανή Βίντεο:"
 
 #: src/bin/options_video.c:132
 msgid "Automatic"
@@ -670,7 +686,7 @@ msgstr "Άνοιγμα"
 #: src/bin/termio.c:1898
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr ""
+msgstr "Μή υποστηριζόμενη μορφή επιλογής '%s'"
 
 #: src/bin/termio.c:3837
 msgid "Ecore IMF failed"
@@ -688,12 +704,12 @@ msgstr "Δεν μπόρεσε να εντοπιστεί κατάλογος με 
 #: src/bin/termio.c:4916
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr ""
+msgstr "Δεν μπόρεσε να φορτωθεί ο κατάλογος εργασίας %s: %s"
 
 #: src/bin/termpty.c:68 src/bin/termpty.c:92 src/bin/termpty.c:126
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "Σφάλμα μνήμης: %s"
 
 #: src/bin/termpty.c:152
 #, c-format
@@ -733,4 +749,4 @@ msgstr ""
 #: src/bin/utils.c:50
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Δεν γίνεται να φορτωθεί οποιοδήποτε θέμα για την ομάδα=%s: %s"
