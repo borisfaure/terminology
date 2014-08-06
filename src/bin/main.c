@@ -755,18 +755,32 @@ static Term *
 _find_term_under_mouse(Win *wn)
 {
    Evas_Coord mx, my;
-   const Eina_List *l;
-   Term *term;
+   Split *sp;
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(wn->win), &mx, &my);
 
-   EINA_LIST_FOREACH(wn->terms, l, term)
+   sp = wn->split;
+   while (sp)
      {
-        Evas_Coord ox, oy, ow, oh;
+        if (sp->term)
+          {
+            return sp->term;
+          }
+        else
+          {
+             Evas_Coord ox, oy, ow, oh;
+             Evas_Object *o1 = sp->s1->panes ? sp->s1->panes : sp->s1->term->base;
 
-        evas_object_geometry_get(term->bg, &ox, &oy, &ow, &oh);
-        if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, mx, my, 1, 1))
-          return term;
+             evas_object_geometry_get(o1, &ox, &oy, &ow, &oh);
+             if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, mx, my, 1, 1))
+               {
+                  sp = sp->s1;
+               }
+             else
+               {
+                  sp = sp->s2;
+               }
+          }
      }
    return NULL;
 }
