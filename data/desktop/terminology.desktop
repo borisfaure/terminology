@@ -13,6 +13,7 @@ Comment[gl]=Emulador de terminal
 Comment[it]=Emulatore di terminale
 Comment[pt]=Emulador de terminal
 Comment[ru]=Эмулятор терминала
+Keywords=shell;prompt;command;commandline;
 Exec=terminology
 Icon=terminology
 Categories=System;TerminalEmulator;
