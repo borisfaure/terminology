@@ -37,7 +37,7 @@ Type: STR.
 .
 .TP
 .B \-g=GEOMETRY, \-\-geometry=GEOMETRY
-Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.).
+Terminal geometry to use (eg \fB80x24\fP or \fB80x24+50+20\fP etc.).
 Type: STR.
 .
 .TP
@@ -97,7 +97,8 @@ Type: STR.
 .
 .TP
 .B \-v=VIDEO\-MODULE, \-\-video-module=VIDEO\-MODULE
-Set emotion module to use. Choices are: auto, gstreamer, xine, generic.
+Set emotion module to use. Choices are: \fBauto\fP, \fBgstreamer\fP,
+\fBxine\fP, \fBgeneric\fP.
 .
 .TP
 .B \-l=LOGIN, \-\-login=LOGIN
@@ -306,10 +307,11 @@ Display big font size (10x20 bitmap, or size 20 with scalable).
 .
 .TP
 .B gNxM
-Make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
+Make terminal NxM chars in size (if possible). e.g. \fBg80x48\fP \fBg40x20\fP.
 If just one number is provided, it will use the following shortcuts:
-g0=80x24; g1=80x40; g2=80x60; g3=80x80; g4=120x24; g5=120x40; g6=120x60;
-g7=120x80; g8=120x120
+\fBg0=80x24\fP; \fBg1=80x40\fP; \fBg2=80x60\fP; \fBg3=80x80\fP;
+\fBg4=120x24\fP; \fBg5=120x40\fP; \fBg6=120x60\fP;
+\fBg7=120x80\fP; \fBg8=120x120\fP
 .
 .TP
 .B b
@@ -320,7 +322,7 @@ Reset the background (no media)
 Set the background media to an absolute file PATH
 
 .SH THEMES:
-Themes can be stored in ~/.config/terminology/themes/ .
+Themes can be stored in \fB~/.config/terminology/themes/\fP .
 
 
 .SH EXTENDED ESCAPES FOR TERMINOLOGY:
@@ -328,69 +330,70 @@ Themes can be stored in ~/.config/terminology/themes/ .
 .TP
 .B [\\\033][}][COMMAND][\\\000]
 i.e.
-  1.   ESC char (\\033 or 0x1b)
-  2.   } char
-  3... sequence of UTF8 chars other than nul (\\000 or 0x00).
-  4    \\000 char (nul byte or 0x00 to indicate end of sequence)
+  1.   ESC char (\fB\\033\fP or \fB0x1b\fP)
+  2.   \fB}\fP char
+  3... sequence of UTF8 chars other than nul (\fB\\000\fP or \fB0x00\fP).
+  4    \fB\\000\fP char (nul byte or \fB0x00\fP to indicate end of sequence)
 e.g.
-  echo \-n '\\033}Hello world\\000'
+  \fBecho \-n '\\033}Hello world\\000'\fP
 
 .B Commands:
 
 any values inside square brackets [] are to be replaced by some content (numbers, strings, paths, url's etc.). example:
 
-aa[PATH\-OF\-FILE] should be come something like:
-  aa/tmp/file.png
-or aa[true/false] should become something like:
-  aatrue
+\fBaa[PATH\-OF\-FILE]\fP should be come something like:
+  \fBaa/tmp/file.png\fP
+or \fBaa[true/false]\fP should become something like:
+  \fBaatrue\fP
 or
-  aafalse
+  \fBaafalse\fP
 
 \-\-\-
 
-pn[FULL\-PATH\-OR\-URL]
+\fBpn[FULL\-PATH\-OR\-URL]\fP
   popup the given media file/url now
 
-pq[FULL\-PATH\-OR\-URL]
+\fBpq[FULL\-PATH\-OR\-URL]\fP
   quque a popup for the given media file/url
 
-bt[FULL\-PATH\-OR\-URL]
+\fBbt[FULL\-PATH\-OR\-URL]\fP
   set the terminal background media file/url temporarily
 
-bp[FULL\-PATH\-OR\-URL]
+\fBbp[FULL\-PATH\-OR\-URL]\fP
   set the terminal background media file/url permanently
 
-at[on/true/yes/off/false/no]
+\fBat[on/true/yes/off/false/no]\fP
   set the terminal alpha state to be on, or off temporarily
 
-ap[on/true/yes/off/false/no]
+\fBap[on/true/yes/off/false/no]\fP
   set the terminal alpha state to be on, or off permanently
 
-qs
+\fBqs\fP
   query grid and font size. stdin will have written to it:
-    W;H;FW;FH
-  where W is the width of the terminal grid in characters
-  where H is the height of the terminal grid in characters
-  where FW is the width of 1 character cell in pixels
-  where FH is the height of 1 character cell in pixels
+    \fBW;H;FW;FH\fP
+  where \fBW\fP is the width of the terminal grid in characters
+  where \fBH\fP is the height of the terminal grid in characters
+  where \fBFW\fP is the width of 1 character cell in pixels
+  where \fBFH\fP is the height of 1 character cell in pixels
 
-is[CW;H;FULL\-PATH\-OR\-URL]
+\fBis[CW;H;FULL\-PATH\-OR\-URL]\fP
   insert STRETCHED media (where image will stretch to fill the
-    cell area) and define expected cell area to be W cells
-    wide and H cells high, with the image/media/url.
-  where C is the replace character to be identified in later
-    text where W is the width in character cells (up to 511).
-  where H is the height in character cells (up to 511).
+    cell area) and define expected cell area to be \fBW\fP cells
+    wide and \fBH\fP cells high, with the image/media/url.
+  where \fBC\fP is the replace character to be identified in later
+    text where \fBW\fP is the width in character cells (up to 511).
+  where \fBH\fP is the height in character cells (up to 511).
 
-  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of WxH "replace characters" to follow, with each sequence of such replace characters bebung with a 'ib' escape command and ending with an 'ie' escape command.
+  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of \fBW\fPx\fBH\fP "replace characters" to follow, with each sequence of such replace characters bebung with a \fBib\fP escape command and ending with an \fBie\fP escape command.
 
-  the FULL\-PATH\-OR\-URL for all  the i commands (is, ic, if, it) may be of the form:
+  the \fBFULL\-PATH\-OR\-URL\fP for all  the \fBi\fP commands (\fBis\fP,
+  \fBic\fP, \fBif\fP, \fBit\fP) may be of the form:
 
-    /full/path/to/file.png
+    \fB/full/path/to/file.png\fP
 
   OR
 
-    /full/path/to/link\n/full/path/to/file.png
+    \fB/full/path/to/link\n/full/path/to/file.png\fP
 
     where a newline character separates a URI for a link and
       a full path to a file to display in the region. the link
@@ -399,34 +402,34 @@ is[CW;H;FULL\-PATH\-OR\-URL]
 
     example:
 
-      printf("\\\033}is#5;3;%s\000"
-             "\\\033}ib#####\\\033}ie\\\n"
-             "\\\033}ib#####\\\033}ie\\\n"
-             "\\\033}ib#####\\\033}ie\\\n", "/tmp/icon.png");
+      \fBprintf("\\\033}is#5;3;%s\000"\fP
+             \fB"\\\033}ib#####\\\033}ie\\\n"\fP
+             \fB"\\\033}ib#####\\\033}ie\\\n"\fP
+             \fB"\\\033}ib#####\\\033}ie\\\n", "/tmp/icon.png");\fP
 
-    note that '#' is the replace character, and later '#' chars if inside begin/end escapes, will be replaced by the given media indicated in the insert media escape.
+    note that \fB#\fP is the replace character, and later \fB#\fP chars if inside begin/end escapes, will be replaced by the given media indicated in the insert media escape.
 
-ic[CW;H;FULL\-PATH\-OR\-URL]
+\fBic[CW;H;FULL\-PATH\-OR\-URL]\fP
   insert CENTERED media (centered in cell area). otherwise
-    paramaters are identical to the "is" command, but
+    paramaters are identical to the \fBis\fP command, but
     retains aspect and is padded by blank space.
 
-if[CW;H;FULL\-PATH\-OR\-URL]
+\fBif[CW;H;FULL\-PATH\-OR\-URL]\fP
   insert FILLED media (fill in cell area). otherwise paramaters
-    are identical to the "is" command but ensures the entire
+    are identical to the \fBis\fP command but ensures the entire
     area is filled like a background even if media goes beyond
     cell bounds and is clipped.
 
-it[CW;H;FULL\-PATH\-OR\-URL]
+\fBit[CW;H;FULL\-PATH\-OR\-URL]\fP
   insert THUMB media (thumbnail cell area). otherwise paramaters
-    are identical to the "is" command, but uses thumbnail
+    are identical to the \fBis\fP command, but uses thumbnail
     generation to make a fast to load but low resolution version
     (cached) of the media.
 
-ib
+\fBib\fP
   begin media replace sequence run
 
-ie
+\fBie\fP
   end media replace sequence run
 
 .SH BUGS
