@@ -2780,7 +2780,10 @@ _translate_options(void)
 
    Ecore_Getopt_Desc *desc = (Ecore_Getopt_Desc *) options.descs;
    while ((desc->shortname != '\0') || (desc->longname)
-     || (desc->action == ECORE_GETOPT_ACTION_CATEGORY))
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+     || (desc->action == ECORE_GETOPT_ACTION_CATEGORY)
+#endif
+     )
      {
         if (desc->help)
           {
