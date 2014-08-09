@@ -445,6 +445,31 @@ collections {
          }
 
          ////////////////////////////////////////////////////////////////////
+         // miniview
+         part { name: "terminology.miniview"; type: SWALLOW;
+            description { state: "default" 0.0;
+               //color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               //color: 255 255 255 255;
+            }
+         }
+
+         program {
+            signal: "miniview,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.miniview";
+         }
+         program {
+            signal: "miniview,on"; source: "terminology";
+            action: STATE_SET "on" 0.0;
+            target: "terminology.miniview";
+         }
+
+         ////////////////////////////////////////////////////////////////////
          // a place terminology will place an entry box for internal commands
          part { name: "cmdclip"; type: RECT;
             description { state: "default" 0.0;
