@@ -10,6 +10,7 @@ Makefile.in
 /autom4te.cache/
 /compile
 /config.cache
+/config.cache-env
 /config.guess
 /config.log
 /config.rpath
