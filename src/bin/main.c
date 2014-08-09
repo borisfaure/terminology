@@ -276,7 +276,7 @@ _term_resize_track_stop(Split *sp)
 }
 
 static void
-_split_split(Split *sp, Eina_Bool horizontal)
+_split_split(Split *sp, Eina_Bool horizontal, char *cmd)
 {
    Split *sp2, *sp1;
    Evas_Object *o;
@@ -312,7 +312,7 @@ _split_split(Split *sp, Eina_Bool horizontal)
    config = config_fork(sp->term->config);
    if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
    sp2->term = main_term_new(sp->wn, config,
-                             NULL, config->login_shell, wdir,
+                             cmd, config->login_shell, wdir,
                              80, 24, EINA_FALSE);
    sp2->terms = eina_list_append(sp2->terms, sp2->term);
    _term_resize_track_start(sp2);
@@ -408,21 +408,21 @@ main_new(Evas_Object *win, Evas_Object *term)
 }
 
 void
-main_split_h(Evas_Object *win, Evas_Object *term)
+main_split_h(Evas_Object *win, Evas_Object *term, char *cmd)
 {
    Split *sp = _split_find(win, term, NULL);
    
    if (!sp) return;
-   _split_split(sp, EINA_TRUE);
+   _split_split(sp, EINA_TRUE, cmd);
 }
 
 void
-main_split_v(Evas_Object *win, Evas_Object *term)
+main_split_v(Evas_Object *win, Evas_Object *term, char *cmd)
 {
    Split *sp = _split_find(win, term, NULL);
    
    if (!sp) return;
-   _split_split(sp, EINA_FALSE);
+   _split_split(sp, EINA_FALSE, cmd);
 }
 
 static void
@@ -1565,7 +1565,7 @@ _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
 
-   main_split_h(term->wn->win, term->term);
+   main_split_h(term->wn->win, term->term, NULL);
 }
 
 static void
@@ -1573,7 +1573,7 @@ _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
    
-   main_split_v(term->wn->win, term->term);
+   main_split_v(term->wn->win, term->term, NULL);
 }
 
 static void
@@ -2439,6 +2439,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->role) nargc += 2;
    if (inst->title) nargc += 2;
    if (inst->font) nargc += 2;
+   if (inst->startup_split) nargc += 2;
    if ((inst->pos) || (inst->w > 0) || (inst->h > 0)) nargc += 2;
    if (inst->login_shell) nargc += 1;
    if (inst->fullscreen) nargc += 1;
@@ -2486,6 +2487,11 @@ main_ipc_new(Ipc_Instance *inst)
      {
         nargv[i++] = "-f";
         nargv[i++] = (char *)inst->font;
+     }
+   if (inst->startup_split)
+     {
+        nargv[i++] = "-S";
+        nargv[i++] = (char *)inst->startup_split;
      }
    if ((inst->pos) || (inst->w > 0) || (inst->h > 0))
      {
@@ -2731,6 +2737,11 @@ static Ecore_Getopt options = {
                               gettext_noop("Set icon name.")),
       ECORE_GETOPT_STORE_STR ('f', "font",
                               gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap.")),
+      ECORE_GETOPT_STORE_STR ('S', "split",
+                              gettext_noop("Split the terminal window."
+                              " 'v' for vertical and 'h' for horizontal."
+                              " Can be used multiple times. eg -S vhvv or --split hv"
+                              " More description available on the man page.")),
       ECORE_GETOPT_CHOICE    ('v', "video-module",
                               gettext_noop("Set emotion module to use."), emotion_choices),
 
@@ -2823,6 +2834,7 @@ elm_main(int argc, char **argv)
    char *title = NULL;
    char *icon_name = NULL;
    char *font = NULL;
+   char *startup_split = NULL;
    char *video_module = NULL;
    Eina_Bool login_shell = 0xff; /* unset */
    Eina_Bool video_mute = 0xff; /* unset */
@@ -2857,6 +2869,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(title),
      ECORE_GETOPT_VALUE_STR(icon_name),
      ECORE_GETOPT_VALUE_STR(font),
+     ECORE_GETOPT_VALUE_STR(startup_split),
      ECORE_GETOPT_VALUE_STR(video_module),
 
      ECORE_GETOPT_VALUE_BOOL(login_shell),
@@ -2890,6 +2903,7 @@ elm_main(int argc, char **argv)
    int pos_set = 0, size_set = 0;
    int pos_x = 0, pos_y = 0;
    int size_w = 1, size_h = 1;
+   Eina_List *cmds_list = NULL;
 
    elm_language_set("");
 #if HAVE_GETTEXT && ENABLE_NLS
@@ -2949,6 +2963,8 @@ elm_main(int argc, char **argv)
           {
              eina_strbuf_append(strb, argv[i]);
              eina_strbuf_append_char(strb, ' ');
+             if (startup_split)
+               cmds_list = eina_list_append(cmds_list, argv[i]);
           }
         cmd = eina_strbuf_string_steal(strb);
         eina_strbuf_free(strb);
@@ -3176,6 +3192,7 @@ remote:
         inst.maximized = maximized;
         inst.hold = hold;
         inst.nowm = nowm;
+        inst.startup_split = startup_split;
         if (ipc_instance_add(&inst))
           goto end;
      }
@@ -3233,6 +3250,36 @@ remote:
    main_media_update(wn->config);
    main_win_sizing_handle(wn);
    evas_object_show(wn->win);
+   if (startup_split)
+     {
+        unsigned int i = 0;
+        void *pch = NULL;
+        Term *next = term;
+
+        for (i=0; i<strlen(startup_split); i++)
+          {
+             if (startup_split[i] == 'v')
+               {
+                  pch = eina_list_nth(cmds_list, 1);
+                  main_split_v(next->wn->win, next->term, pch);
+                  cmds_list = eina_list_remove(cmds_list, pch);
+               }
+             else if (startup_split[i] == 'h')
+               {
+                  pch = eina_list_nth(cmds_list, 1);
+                  main_split_h(next->wn->win, next->term, pch);
+                  cmds_list = eina_list_remove(cmds_list, pch);
+               }
+             else if (startup_split[i] == '-')
+               next = _term_next_get(next);
+             else
+               {
+                  ERR(_("invalid argument found for option -S/--split. See --help."));
+                  goto end;
+               }
+          }
+        if (cmds_list) eina_list_free(cmds_list);
+     }
    if (pos_set)
      {
         int screen_w, screen_h;

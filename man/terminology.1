@@ -1,5 +1,5 @@
 .\" Manpage for Terminology
-.TH man 1 "13 May 2014" "0.6" "Terminology man page"
+.TH man 1 "09 August 2014" "0.7" "Terminology man page"
 .SH NAME
 Terminology \- Terminal Emulator written with EFL (Enlightenment Foundation Libraries).
 .SH SYNOPSIS
@@ -13,7 +13,12 @@ icons for files and so on...
 .TP
 .B \-e, \-\-exec <cmnd>
 Specify command to execute.
-Defaults to $SHELL (or passwd shell or /bin/sh)
+Defaults to \fB$SHELL\fP (or passwd shell or \fB/bin/sh\fP)
+When used along with \fB\-S\fP/\fB\-\-split\fP, each argument is used as a command for a
+split, leaving away the extra arguments.
+With 3 splits, one vertical, a command on the right, an horizontal split on
+the left with only a command on the bottom, the following arguments should be used:
+\fB\-\-split v\-h\-\- \-e command1 $SHELL command2\fP
 .
 .TP
 .B \-d=CURRENT-DIRECTORY, \-\-current\-directory=CURRENT-DIRECTORY
@@ -44,6 +49,36 @@ Type: STR.
 .B \-r=ROLE, \-\-role=ROLE
 Set window role.
 Type: STR.
+.
+.TP
+.B \-s=vh\-, \-\-split=vh\-
+Terminology can start with splits opened as described below.
+The arguments are a string with the following characters:
+ \fB\-s v\fP splits terminal vertically
+ \fB\-s h\fP splits horizontally
+ \fB\-\fP defines a placeholder for a shell or a command when used with
+ \fB\-\-exec\fP/\fB\-e\fP
+ Examples:
+                      ______
+                      |  |  |
+ $ \fBterminology -s v\fP   |__|__|
+
+                      ______
+                      |_____|
+ $ \fBterminology -s h\fP   |_____|
+
+                       ______
+                       |__|  |
+ $ \fBterminology -s vh\fP   |__|__|
+
+                       ______
+                       |  |__|
+ $ \fBterminology -s v-h\fP  |__|__|
+
+                         ______
+ $ \fBterminology -s vh--h\fP  |__|__|
+                  \fBhv--v\fP  |__|__|
+ Type: STR.
 .
 .TP
 .B \-T=TITLE, \-\-title=TITLE

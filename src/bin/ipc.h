@@ -16,6 +16,7 @@ struct _Ipc_Instance
    const char *icon_name;
    const char *font;
    const char *startup_id;
+   const char *startup_split;
    int x, y, w, h;
    int pos;
    int login_shell;
