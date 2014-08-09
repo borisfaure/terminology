@@ -12,7 +12,7 @@ MAINTAINERCLEANFILES = \
 ABOUT-NLS* \
 Makefile.in \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
-$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.xz \
 aclocal.m4 \
 config.guess \
 config.rpath \
