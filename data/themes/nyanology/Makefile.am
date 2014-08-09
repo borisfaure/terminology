@@ -22,7 +22,7 @@ about.edc \
 nyancursor.edc \
 nyanology.edc
 
-nyanology.edj: Makefile nyanology.edc
+nyanology.edj: Makefile nyanology.edc about.edc nyancursor.edc
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/nyanology/nyanology.edc \
 	$(top_builddir)/data/themes/nyanology/nyanology.edj
