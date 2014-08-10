@@ -203,13 +203,34 @@ _cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    config_save(config, NULL);
 }
 
+static unsigned int
+sback_double_to_expo_int(double d)
+{
+    if (d < 1.0)
+        return 0;
+    if (d >= 19.0)
+        d = 19.0;
+    return 1 << (unsigned char) d;
+}
+
+static char *
+sback_indicator_units_format(double d)
+{
+    return (char*)eina_stringshare_printf("%'d", sback_double_to_expo_int(d));
+}
+static char *
+sback_units_format(double d)
+{
+    return (char*)eina_stringshare_printf(_("%'d lines"), sback_double_to_expo_int(d));
+}
+
 static void
 _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
 
-   config->scrollback = elm_slider_value_get(obj) + 0.5;
+   config->scrollback = (double) sback_double_to_expo_int(elm_slider_value_get(obj));
    termio_config_update(term);
    config_save(config, NULL);
 }
@@ -572,10 +593,23 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
-   elm_slider_unit_format_set(o, "%1.0f");
-   elm_slider_indicator_format_set(o, "%1.0f");
+   elm_slider_step_set(o, 1);
+   elm_slider_units_format_function_set(o,
+                                        sback_units_format,
+                                        (void(*)(char*))eina_stringshare_del);
+   elm_slider_indicator_format_function_set(o,
+                                            sback_indicator_units_format,
+                                            (void(*)(char*))eina_stringshare_del);
    elm_slider_min_max_set(o, 0, 10000);
-   elm_slider_value_set(o, config->scrollback);
+   /* http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogFloat */
+   union {
+       float v;
+       int c;
+   } u;
+   u.v = config->scrollback;
+   u.c = (u.c >> 23) - 127;
+   elm_slider_value_set(o, u.c);
+   elm_slider_min_max_set(o, 0.0, 19.0);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
