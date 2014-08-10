@@ -632,8 +632,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
-   elm_slider_unit_format_set(o, "%1.1f");
-   elm_slider_indicator_format_set(o, "%1.1f");
+   elm_slider_unit_format_set(o, _("%1.1f s"));
+   elm_slider_indicator_format_set(o, _("%1.1f s"));
    elm_slider_min_max_set(o, 0.0, 1.0);
    elm_slider_value_set(o, config->tab_zoom);
    elm_box_pack_end(bx, o);
