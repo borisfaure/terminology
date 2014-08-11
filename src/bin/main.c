@@ -2385,22 +2385,26 @@ main_term_popup_exists(const Term *term)
    return term->popmedia || term->popmedia_queue;
 }
 
-Win *main_term_win_get(Term *term)
+Win *
+main_term_win_get(Term *term)
 {
    return term->wn;
 }
 
-Evas_Object *main_win_evas_object_get(Win *wn)
+Evas_Object *
+main_win_evas_object_get(Win *wn)
 {
    return wn->win;
 }
 
-Eina_List *main_win_terms_get(Win *wn)
+Eina_List *
+main_win_terms_get(Win *wn)
 {
    return wn->terms;
 }
 
-Evas_Object *main_term_evas_object_get(Term *term)
+Evas_Object *
+main_term_evas_object_get(Term *term)
 {
    return term->term;
 }
