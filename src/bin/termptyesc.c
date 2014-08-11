@@ -109,6 +109,254 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 }
 
 static void
+_handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
+{
+   int mode = 0, priv = 0, arg;
+
+   if (cc == 'h') mode = 1;
+   if (*b == '?')
+     {
+        priv = 1;
+        b++;
+     }
+   if (priv) /* DEC Private Mode Reset (DECRST) */
+     {
+        while (b)
+          {
+             arg = _csi_arg_get(&b);
+             if (b)
+               {
+                  // complete-ish list here:
+                  // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
+                  switch (arg)
+                    {
+                     case 1:
+                        ty->state.appcursor = mode;
+                        break;
+                     case 2:
+                        ty->state.kbd_lock = mode;
+                        break;
+                     case 3: // 132 column mode… should we handle this?
+#if defined(SUPPORT_80_132_COLUMNS)
+                        if (ty->state.att.is_80_132_mode_allowed)
+                          {
+                             /* ONLY FOR TESTING PURPOSE FTM */
+                             Evas_Object *wn;
+                             int w, h;
+
+                             wn = termio_win_get(ty->obj);
+                             elm_win_size_step_get(wn, &w, &h);
+                             evas_object_resize(wn,
+                                                4 +
+                                                (mode ? 132 : 80) * w,
+                                                4 + ty->h * h);
+                             termpty_resize(ty, mode ? 132 : 80,
+                                            ty->h);
+                             _termpty_reset_state(ty);
+                             _termpty_clear_screen(ty,
+                                                   TERMPTY_CLR_ALL);
+                          }
+#endif
+                        break;
+                     case 4:
+                        WRN("TODO: scrolling mode (DECSCLM): %i", mode);
+                        break;
+                     case 5:
+                        ty->state.reverse = mode;
+                        break;
+                     case 6:
+                        if (mode)
+                          {
+                             ty->state.margin_top = ty->state.cy;
+                             ty->state.cx = 0;
+                          }
+                        else
+                          {
+                             ty->state.cx = 0;
+                             ty->state.margin_top = 0;
+                          }
+                        DBG("origin mode (%d): cursor is at 0,0"
+                            " cursor limited to screen/start point"
+                            " for line #'s depends on top margin",
+                            mode);
+                        break;
+                     case 7:
+                        DBG("set wrap mode to %i", mode);
+                        ty->state.wrap = mode;
+                        break;
+                     case 8:
+                        ty->state.no_autorepeat = !mode;
+                        DBG("auto repeat %i", mode);
+                        break;
+                     case 9:
+                        DBG("set mouse (X10) %i", mode);
+                        if (mode) ty->mouse_mode = MOUSE_X10;
+                        else ty->mouse_mode = MOUSE_OFF;
+                        break;
+                     case 12: // ignore
+                        WRN("TODO: set blinking cursor to (stop?) %i or local echo (ignored)", mode);
+                        break;
+                     case 19: // never seen this - what to do?
+                        WRN("TODO: set print extent to full screen");
+                        break;
+                     case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
+                        ty->state.crlf = mode;
+                        break;
+                     case 25:
+                        ty->state.hidecursor = !mode;
+                        DBG("hide cursor: %d", !mode);
+                        break;
+                     case 30: // ignore
+                        WRN("TODO: set scrollbar mapping %i", mode);
+                        break;
+                     case 33: // ignore
+                        WRN("TODO: Stop cursor blink %i", mode);
+                        break;
+                     case 34: // ignore
+                        WRN("TODO: Underline cursor mode %i", mode);
+                        break;
+                     case 35: // ignore
+                        WRN("TODO: set shift keys %i", mode);
+                        break;
+                     case 38: // ignore
+                        WRN("TODO: switch to tek window %i", mode);
+                        break;
+                     case 40:
+                        DBG("Allow 80 -> 132 Mode %i", mode);
+#if defined(SUPPORT_80_132_COLUMNS)
+                        ty->state.att.is_80_132_mode_allowed = mode;
+#endif
+                        break;
+                     case 45: // ignore
+                        WRN("TODO: Reverse-wraparound Mode");
+                        break;
+                     case 59: // ignore
+                        WRN("TODO: kanji terminal mode %i", mode);
+                        break;
+                     case 66:
+                        WRN("TODO: app keypad mode %i", mode);
+                        break;
+                     case 67:
+                        ty->state.send_bs = mode;
+                        DBG("backspace send bs not del = %i", mode);
+                        break;
+                     case 1000:
+                        if (mode) ty->mouse_mode = MOUSE_NORMAL;
+                        else ty->mouse_mode = MOUSE_OFF;
+                        DBG("set mouse (press+release only) to %i", mode);
+                        break;
+                     case 1001:
+                        WRN("TODO: x11 mouse highlighting %i", mode);
+                        break;
+                     case 1002:
+                        if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
+                        else ty->mouse_mode = MOUSE_OFF;
+                        DBG("set mouse (press+release+motion while pressed) %i", mode);
+                        break;
+                     case 1003:
+                        if (mode) ty->mouse_mode = MOUSE_NORMAL_ALL_MOVE;
+                        else ty->mouse_mode = MOUSE_OFF;
+                        DBG("set mouse (press+release+all motion) %i", mode);
+                        break;
+                     case 1004: // i dont know what focus repporting is?
+                        WRN("TODO: enable focus reporting %i", mode);
+                        break;
+                     case 1005:
+                        if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
+                        else ty->mouse_ext = MOUSE_EXT_NONE;
+                        DBG("set mouse (xterm utf8 style) %i", mode);
+                        break;
+                     case 1006:
+                        if (mode) ty->mouse_ext = MOUSE_EXT_SGR;
+                        else ty->mouse_ext = MOUSE_EXT_NONE;
+                        DBG("set mouse (xterm sgr style) %i", mode);
+                        break;
+                     case 1010: // ignore
+                        WRN("TODO: set home on tty output %i", mode);
+                        break;
+                     case 1012: // ignore
+                        WRN("TODO: set home on tty input %i", mode);
+                        break;
+                     case 1015:
+                        if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
+                        else ty->mouse_ext = MOUSE_EXT_NONE;
+                        DBG("set mouse (rxvt-unicode style) %i", mode);
+                        break;
+                     case 1034: // ignore
+                        /* libreadline6 emits it but it shouldn't.
+                           See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
+                           */
+                        DBG("Ignored screen mode %i", arg);
+                        break;
+                     case 1047:
+                     case 1049:
+                     case 47:
+                        DBG("DDD: switch buf");
+                        if (ty->altbuf)
+                          {
+                             // if we are looking at alt buf now,
+                             // clear main buf before we swap it back
+                             // into the screen2 save (so save is
+                             // clear)
+                             _termpty_clear_all(ty);
+                          }
+                        // swap screen content now
+                        if (mode != ty->altbuf)
+                          termpty_screen_swap(ty);
+                        break;
+                     case 1048:
+                        if (mode)
+                          _termpty_cursor_copy(&(ty->state), &(ty->save));
+                        else
+                          _termpty_cursor_copy(&(ty->save), &(ty->state));
+                        break;
+                     case 2004:
+                        ty->bracketed_paste = mode;
+                        break;
+                     case 7727: // ignore
+                        WRN("TODO: enable application escape mode %i", mode);
+                        break;
+                     case 7786: // ignore
+                        WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
+                        break;
+                     default:
+                        ERR("Unhandled DEC Private Reset Mode arg %i", arg);
+                        break;
+                    }
+               }
+          }
+     }
+   else /* Reset Mode (RM) */
+     {
+        while (b)
+          {
+             arg = _csi_arg_get(&b);
+             if (b)
+               {
+                  switch (arg)
+                    {
+                     case 1:
+                        ty->state.appcursor = mode;
+                        break;
+                     case 4:
+                        DBG("set insert mode to %i", mode);
+                        ty->state.insert = mode;
+                        break;
+                     case 34:
+                        WRN("TODO: hebrew keyboard mapping: %i", mode);
+                        break;
+                     case 36:
+                        WRN("TODO: hebrew encoding mode: %i", mode);
+                        break;
+                     default:
+                        ERR("Unhandled ANSI Reset Mode arg %i", arg);
+                    }
+               }
+          }
+     }
+}
+
+static void
 _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
@@ -619,301 +867,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         else _termpty_clear_line(ty, TERMPTY_CLR_END, ty->w);
         break;
-      case 'h': // list - set screen mode or line wrap ("7h" == turn on line wrap, "7l" disables line wrap , ...)
+      case 'h':
       case 'l':
-          {
-             int mode = 0, priv = 0;
-             int handled = 0;
-
-             if (*cc == 'h') mode = 1;
-             if (*b == '?')
-               {
-                  priv = 1;
-                  b++;
-               }
-             if (priv) /* DEC Private Mode Reset (DECRST) */
-               {
-                  while (b)
-                    {
-                       arg = _csi_arg_get(&b);
-                       if (b)
-                         {
-                            // complete-ish list here:
-                            // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
-                            switch (arg)
-                              {
-                               case 1:
-                                 handled = 1;
-                                 ty->state.appcursor = mode;
-                                 break;
-                               case 2:
-                                 handled = 1;
-                                 ty->state.kbd_lock = mode;
-                                 break;
-                               case 3: // 132 column mode… should we handle this?
-                                 handled = 1;
-#if defined(SUPPORT_80_132_COLUMNS)
-                                 if (ty->state.att.is_80_132_mode_allowed)
-                                   {
-                                      /* ONLY FOR TESTING PURPOSE FTM */
-                                      Evas_Object *wn;
-                                      int w, h;
-
-                                      wn = termio_win_get(ty->obj);
-                                      elm_win_size_step_get(wn, &w, &h);
-                                      evas_object_resize(wn,
-                                                         4 +
-                                                         (mode ? 132 : 80) * w,
-                                                         4 + ty->h * h);
-                                      termpty_resize(ty, mode ? 132 : 80,
-                                                     ty->h);
-                                      _termpty_reset_state(ty);
-                                      _termpty_clear_screen(ty,
-                                                            TERMPTY_CLR_ALL);
-                                   }
-#endif
-                                 break;
-                               case 4:
-                                 handled = 1;
-                                 ERR("TODO: scrolling mode (DECSCLM): %i", mode);
-                                 break;
-                               case 5:
-                                 handled = 1;
-                                 ty->state.reverse = mode;
-                                 break;
-                               case 6:
-                                 handled = 1;
-                                 if (mode)
-                                   {
-                                      ty->state.margin_top = ty->state.cy;
-                                      ty->state.cx = 0;
-                                   }
-                                 else
-                                   {
-                                      ty->state.cx = 0;
-                                      ty->state.margin_top = 0;
-                                   }
-                                 DBG("XXX: origin mode (%d): cursor is at 0,0"
-                                     "cursor limited to screen/start point"
-                                     " for line #'s depends on top margin",
-                                     mode);
-                                 break;
-                               case 7:
-                                 handled = 1;
-                                 DBG("XXX: set wrap mode to %i", mode);
-                                 ty->state.wrap = mode;
-                                 break;
-                               case 8:
-                                 handled = 1;
-                                 ty->state.no_autorepeat = !mode;
-                                 INF("XXX: auto repeat %i", mode);
-                                 break;
-                               case 9:
-                                 handled = 1;
-                                 INF("XXX: set mouse (X10) %i", mode);
-                                 if (mode) ty->mouse_mode = MOUSE_X10;
-                                 else ty->mouse_mode = MOUSE_OFF;
-                                 break;
-                               case 12: // ignore
-                                 handled = 1;
-                                 DBG("set blinking cursor to (stop?) %i or local echo (ignored)", mode);
-                                 break;
-                               case 19: // never seen this - what to do?
-                                 handled = 1;
-//                                 INF("XXX: set print extent to full screen");
-                                 break;
-                               case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
-                                 handled = 1;
-                                 ty->state.crlf = mode;
-                                 break;
-                               case 25:
-                                 handled = 1;
-                                 ty->state.hidecursor = !mode;
-                                 DBG("hide cursor: %d", !mode);
-                                 break;
-                               case 30: // ignore
-                                 handled = 1;
-//                                 DBG("XXX: set scrollbar mapping %i", mode);
-                                 break;
-                               case 33: // ignore
-                                 handled = 1;
-//                                 INF("XXX: Stop cursor blink %i", mode);
-                                 break;
-                               case 34: // ignore
-                                 handled = 1;
-//                                 INF("XXX: Underline cursor mode %i", mode);
-                                 break;
-                               case 35: // ignore
-                                 handled = 1;
-//                                 DBG("XXX: set shift keys %i", mode);
-                                 break;
-                               case 38: // ignore
-                                 handled = 1;
-//                                 INF("XXX: switch to tek window %i", mode);
-                                 break;
-                               case 40:
-                                 handled = 1;
-                                 // INF("XXX: Allow 80 -> 132 Mode %i", mode);
-#if defined(SUPPORT_80_132_COLUMNS)
-                                 ty->state.att.is_80_132_mode_allowed = mode;
-#endif
-                                 break;
-                               case 45: // ignore
-                                 handled = 1;
-                                 INF("TODO: Reverse-wraparound Mode");
-                                 break;
-                               case 59: // ignore
-                                 handled = 1;
-//                                 INF("XXX: kanji terminal mode %i", mode);
-                                 break;
-                               case 66:
-                                 handled = 1;
-                                 ERR("XXX: app keypad mode %i", mode);
-                                 break;
-                               case 67:
-                                 handled = 1;
-                                 ty->state.send_bs = mode;
-                                 INF("XXX: backspace send bs not del = %i", mode);
-                                 break;
-                               case 1000:
-                                 handled = 1;
-                                 if (mode) ty->mouse_mode = MOUSE_NORMAL;
-                                 else ty->mouse_mode = MOUSE_OFF;
-                                 INF("XXX: set mouse (press+release only) to %i", mode);
-                                 break;
-                               case 1001:
-                                 handled = 1;
-                                 ERR("XXX: x11 mouse highlighting %i", mode);
-                                 break;
-                               case 1002:
-                                 handled = 1;
-                                 if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
-                                 else ty->mouse_mode = MOUSE_OFF;
-                                 INF("XXX: set mouse (press+release+motion while pressed) %i", mode);
-                                 break;
-                               case 1003:
-                                 handled = 1;
-                                 if (mode) ty->mouse_mode = MOUSE_NORMAL_ALL_MOVE;
-                                 else ty->mouse_mode = MOUSE_OFF;
-                                 ERR("XXX: set mouse (press+release+all motion) %i", mode);
-                                 break;
-                               case 1004: // i dont know what focus repporting is?
-                                 handled = 1;
-                                 ERR("XXX: enable focus reporting %i", mode);
-                                 break;
-                               case 1005:
-                                 handled = 1;
-                                 if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
-                                 else ty->mouse_ext = MOUSE_EXT_NONE;
-                                 INF("XXX: set mouse (xterm utf8 style) %i", mode);
-                                 break;
-                               case 1006:
-                                 handled = 1;
-                                 if (mode) ty->mouse_ext = MOUSE_EXT_SGR;
-                                 else ty->mouse_ext = MOUSE_EXT_NONE;
-                                 INF("XXX: set mouse (xterm sgr style) %i", mode);
-                                 break;
-                               case 1010: // ignore
-                                 handled = 1;
-//                                 DBG("XXX: set home on tty output %i", mode);
-                                 break;
-                               case 1012: // ignore
-                                 handled = 1;
-//                                 DBG("XXX: set home on tty input %i", mode);
-                                 break;
-                               case 1015:
-                                 handled = 1;
-                                 if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
-                                 else ty->mouse_ext = MOUSE_EXT_NONE;
-                                 INF("XXX: set mouse (rxvt-unicode style) %i", mode);
-                                 break;
-                               case 1034: // ignore
-                                  /* libreadline6 emits it but it shouldn't.
-                                     See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
-                                  */
-                                  handled = 1;
-//                                  DBG("Ignored screen mode %i", arg);
-                                  break;
-                               case 1047:
-                               case 1049:
-                               case 47:
-                                 handled = 1;
-                                 DBG("DDD: switch buf");
-                                 if (ty->altbuf)
-                                   // if we are looking at alt buf now,
-                                   // clear main buf before we swap it back
-                                   // into the screen2 save (so save is
-                                   // clear)
-                                   _termpty_clear_all(ty);
-                                 // swap screen content now
-                                 if (mode != ty->altbuf)
-                                   termpty_screen_swap(ty);
-                                 break;
-                               case 1048:
-                                 if (mode)
-                                   _termpty_cursor_copy(&(ty->state), &(ty->save));
-                                 else
-                                   _termpty_cursor_copy(&(ty->save), &(ty->state));
-                                 break;
-                               case 2004:
-                                 handled = 1;
-                                 ty->bracketed_paste = mode;
-                                 break;
-                               case 7727: // ignore
-                                 handled = 1;
-//                                 INF("XXX: enable application escape mode %i", mode);
-                                 break;
-                               case 7786: // ignore
-                                 handled = 1;
-//                                 INF("XXX: enable mouse wheel -> cursor key xlation %i", mode);
-                                 break;
-                               default:
-                                 ERR("Unhandled DEC Private Reset Mode arg %i", arg);
-                                 break;
-                              }
-                         }
-                    }
-               }
-             else /* Reset Mode (RM) */
-               {
-                  while (b)
-                    {
-                       arg = _csi_arg_get(&b);
-                       if (b)
-                         {
-                            switch (arg)
-                              {
-                               case 1:
-                                 handled = 1;
-                                 ty->state.appcursor = mode;
-                                 break;
-                               case 4:
-                                 handled = 1;
-                                 DBG("DDD: set insert mode to %i", mode);
-                                 ty->state.insert = mode;
-                                 break;
-                               case 34:
-                                 handled = 1;
-                                 DBG("TODO: hebrew keyboard mapping: %i", mode);
-                                 break;
-                               case 36:
-                                 handled = 1;
-                                 DBG("TODO: hebrew encoding mode: %i", mode);
-                                 break;
-//                            else if (arg == 24)
-//                              {
-//                                 ERR("unhandled #24 arg %i", arg);
-//                                  // ???
-//                              }
-                               default:
-                                 handled = 1;
-                                 ERR("Unhandled ANSI Reset Mode arg %i", arg);
-                              }
-                         }
-                    }
-               }
-             if (!handled) goto unhandled;
-          }
+        _handle_esc_csi_reset_mode(ty, *cc, b);
         break;
       case 'r':
         arg = _csi_arg_get(&b);
