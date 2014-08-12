@@ -181,28 +181,6 @@ _cb_op_behavior_erase_is_del_chg(void *data, Evas_Object *obj,
    config_save(config, NULL);
 }
 
-static void
-_cb_op_behavior_wsep_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   char *txt;
-
-   if (config->wordsep)
-     {
-        eina_stringshare_del(config->wordsep);
-        config->wordsep = NULL;
-     }
-   txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));
-   if (txt)
-     {
-        config->wordsep = eina_stringshare_add(txt);
-        free(txt);
-     }
-   termio_config_update(term);
-   config_save(config, NULL);
-}
-
 static unsigned int
 sback_double_to_expo_int(double d)
 {
@@ -314,7 +292,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
    Evas_Object *o, *bx, *sc, *fr;
-   char *txt;
    int w, h;
    const char *tooltip;
 
@@ -543,37 +520,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_cg_height, term);
-
-   o = elm_separator_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   o = elm_label_add(bx);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, _("Word separators:"));
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   o = elm_entry_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_entry_single_line_set(o, EINA_TRUE);
-   elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   txt = elm_entry_utf8_to_markup(config->wordsep);
-   if (txt)
-     {
-        elm_object_text_set(o, txt);
-        free(txt);
-     }
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_wsep_chg, term);
 
    o = elm_separator_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);

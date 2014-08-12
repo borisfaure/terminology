@@ -34,7 +34,6 @@ struct _Config
    } helper;
    const char       *theme;
    const char       *background;
-   const char       *wordsep;
    double            tab_zoom;
    int               vidmod;
    Eina_Bool         jump_on_keypress;

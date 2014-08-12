@@ -79,8 +79,6 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "background", background, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "wordsep", wordsep, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "scrollback", scrollback, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "tab_zoom", tab_zoom, EET_T_DOUBLE);
@@ -207,7 +205,6 @@ config_sync(const Config *config_src, Config *config)
    eina_stringshare_replace(&(config->helper.local.video), config_src->helper.local.video);
    eina_stringshare_replace(&(config->helper.local.image), config_src->helper.local.image);
    eina_stringshare_replace(&(config->theme), config_src->theme);
-   eina_stringshare_replace(&(config->wordsep), config_src->wordsep);
    config->scrollback = config_src->scrollback;
    config->tab_zoom = config_src->tab_zoom;
    config->vidmod = config_src->vidmod;
@@ -313,180 +310,6 @@ config_load(const char *key)
      }
    if (!config)
      {
-        // http://en.wikipedia.org/wiki/Asterisk
-        // http://en.wikipedia.org/wiki/Comma
-        // http://en.wikipedia.org/wiki/Interpunct
-        // http://en.wikipedia.org/wiki/Bracket
-        const Eina_Unicode sep[] =
-          {
-             // invisible spaces
-             ' ',
-             0x00a0,
-             0x1680,
-             0x180e,
-             0x2000,
-             0x2001,
-             0x2002,
-             0x2003,
-             0x2004,
-             0x2005,
-             0x2006,
-             0x2007,
-             0x2008,
-             0x2009,
-             0x200a,
-             0x200b,
-             0x202f,
-             0x205f,
-             0x3000,
-             0xfeff,
-             // visible spaces
-             0x2420,
-             0x2422,
-             0x2423,
-             0x00b7,
-             0x2022,
-             0x2027,
-             0x30fb,
-             0xff65,
-             0x0387,
-             // other chars
-             0x00ab,
-             0x00bb,
-             0x2039,
-             0x203a,
-             0x300c,
-             0x300d,
-             0x300c,
-             0x300d,
-             0x300e,
-             0x300f,
-             0xfe41,
-             0xfe42,
-             0xfe43,
-             0xfe44,
-             0xfe62,
-             0xfe63,
-             '\'',
-             0x2018,
-             0x2019,
-             0x201a,
-             0x201b,
-             0xff07,
-             '"',
-             0x201c,
-             0x201d,
-             0x201e,
-             0x201f,
-             0x301d,
-             0x301e,
-             0x301f,
-             0xff02,
-             '(',
-             ')',
-             '[',
-             ']',
-             '{',
-             '}',
-             0x2308,
-             0x2309,
-             0xff62,
-             0xff63,
-             0x3008,
-             0x3009,
-             0x300a,
-             0x300b,
-             0x3010,
-             0x3011,
-             0xff08,
-             0xff09,
-             0xff3b,
-             0xff3d,
-             0xff1c,
-             0xff1e,
-             0xff5b,
-             0xff5d,
-             '=',
-             '*',
-             0xfe61,
-             0xff0a,
-             0x204e,
-             0x2217,
-             0x2731,
-             0x2732,
-             0x2733,
-             0x273a,
-             0x273b,
-             0x273c,
-             0x273d,
-             0x2722,
-             0x2723,
-             0x2724,
-             0x2725,
-             0x2743,
-             0x2749,
-             0x274a,
-             0x274b,
-             0x066d,
-             0x203b,
-             0xe002a,
-             '!',
-             '#',
-             '$',
-             '^',
-             '\\',
-             ':',
-             0x02d0,
-             ';',
-             ',',
-             0xff1b,
-             0x02bb,
-             0x02bd,
-             0x060c,
-             0x1802,
-             0x3001,
-             0xfe10,
-             0xfe50,
-             0xfe51,
-             0xff0c,
-             0xff64,
-             0x1363,
-             0x0312,
-             0x0313,
-             0x0314,
-             0x0315,
-             0x0326,
-             0x14fe,
-             0x1808,
-             0x07fb,
-             0xa60d,
-             0x055d,
-             0xa6f5,
-             '?',
-             0x055e,
-             0xff1f,
-             0x0294,
-             0x2e2e,
-             0x225f,
-             0x2a7b,
-             0x2a7c,
-             0x2047,
-             0xfe56,
-             0x2048,
-             0x2049,
-             0x203d,
-             0x061f,
-             0x2e2e,
-             0x1367,
-             0xa60f,
-             0x2cfa,
-
-             '`',
-             0
-          };
-        char *s;
-        int slen = 0;
-
         config = calloc(1, sizeof(Config));
         if (config)
           {
@@ -517,12 +340,6 @@ config_load(const char *key)
              config->disable_visual_bell = EINA_FALSE;
              config->bell_rings = EINA_TRUE;
              config->active_links = EINA_TRUE;
-             s = eina_unicode_unicode_to_utf8(sep, &slen);
-             if (s)
-               {
-                  config->wordsep = eina_stringshare_add(s);
-                  free(s);
-               }
              config->vidmod = 0;
              config->mute = EINA_FALSE;
              config->urg_bell = EINA_TRUE;
@@ -588,7 +405,6 @@ config_fork(Config *config)
    CPY(helper.inline_please);
    SCPY(theme);
    SCPY(background);
-   SCPY(wordsep);
    CPY(scrollback);
    CPY(tab_zoom);
    CPY(vidmod);
@@ -629,7 +445,6 @@ config_del(Config *config)
    eina_stringshare_del(config->font.orig_name);
    eina_stringshare_del(config->theme);
    eina_stringshare_del(config->background);
-   eina_stringshare_del(config->wordsep);
    eina_stringshare_del(config->helper.email);
    eina_stringshare_del(config->helper.url.general);
    eina_stringshare_del(config->helper.url.video);
