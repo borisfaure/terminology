@@ -2597,7 +2597,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
        0xff65,
        0xe002a
    };
-   size_t imax = sizeof(wordsep)/sizeof(wordsep[0]),
+   size_t imax = sizeof(wordsep)/sizeof(wordsep[0]) - 1,
           imin = 0;
 
   while (imax >= imin)
