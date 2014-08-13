@@ -108,7 +108,7 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    oe = elm_layout_edje_get(o);
    obg = oe;
    if (!edje_object_file_set(oe, file, "terminology/background"))
-     theme_apply(oe, config, "terminology/background");
+     theme_apply_default(oe, config, "terminology/background");
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -127,7 +127,7 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
    if (!edje_object_file_set(oe, file, "terminology/core"))
-     theme_apply(oe, config, "terminology/core");
+     theme_apply_default(oe, config, "terminology/core");
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -203,7 +203,7 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
    if (!edje_object_file_set(oe, file, "terminology/cursor"))
-     theme_apply(oe, config, "terminology/cursor");
+     theme_apply_default(oe, config, "terminology/cursor");
    edje_object_signal_emit(oe, "focus,in", "terminology");
    evas_object_show(o);
    evas_object_data_set(oo, "cursor", o);
@@ -213,7 +213,7 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
    o = edje_object_add(evas);
    oe = o;
    if (!edje_object_file_set(oe, file, "terminology/selection"))
-     theme_apply(oe, config, "terminology/selection");
+     theme_apply_default(oe, config, "terminology/selection");
    edje_object_signal_emit(oe, "focus,in", "terminology");
    edje_object_signal_emit(oe, "mode,oneline", "terminology");
    evas_object_show(o);

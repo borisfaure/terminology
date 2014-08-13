@@ -51,6 +51,23 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
    return EINA_FALSE;
 }
 
+Eina_Bool
+theme_apply_default(Evas_Object *edje, const Config *config, const char *group)
+{
+   const char *errmsg;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edje, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
+
+   if (edje_object_file_set(edje, config_theme_path_default_get(config), group))
+     return EINA_TRUE;
+
+   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
+   ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
+   return EINA_FALSE;
+}
+
 void
 theme_reload(Evas_Object *edje)
 {
