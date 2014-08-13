@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-08-10 18:08+0200\n"
-"PO-Revision-Date: 2014-08-01 12:05+0200\n"
+"PO-Revision-Date: 2014-08-12 23:53+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -133,7 +133,7 @@ msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page."
-msgstr ""
+msgstr "Divide la finestra del terminale, 'v' in senso verticale e 'h' in orizzontale. Può essere usato più volte, ad esempio -S vhvv oppure --split hv. Maggiori informazioni sono disponibili sulla pagina man."
 
 #: src/bin/main.c:2746
 msgid "Set emotion module to use."
@@ -230,9 +230,8 @@ msgid "invalid options found. See --help."
 msgstr "Trovate opzioni non valide. Vedere --help."
 
 #: src/bin/main.c:3277
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help."
-msgstr "Trovate opzioni non valide. Vedere --help."
+msgstr "Trovato argomento non valido per l'opzione -S/--split. Vedere --help."
 
 #: src/bin/media.c:726
 #, c-format
@@ -246,7 +245,7 @@ msgstr "Ripristina le viste aperte"
 #: src/bin/options_behavior.c:224
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d linee"
 
 #: src/bin/options_behavior.c:326 src/bin/options.c:168
 msgid "Behavior"
@@ -348,7 +347,7 @@ msgstr ""
 #: src/bin/options_behavior.c:635 src/bin/options_behavior.c:636
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:134
 msgid "Options"
