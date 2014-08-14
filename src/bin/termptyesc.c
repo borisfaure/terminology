@@ -26,7 +26,7 @@
 #define ESC 033 // Escape
 
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
- * if not enought bytes could be read
+ * if not enough bytes could be read
  */
 
 static int
@@ -586,6 +586,50 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+static void
+_handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
+{
+   int arg, len;
+   char bf[32];
+
+   if (*b == '>')
+     {
+        ERR("TODO: disable key resources used by xterm");
+        return;
+     }
+   if (*b == '?')
+     {
+        b++;
+        arg = _csi_arg_get(&b);
+        switch (arg)
+          {
+           case 6:
+              len = snprintf(bf, sizeof(bf), "\033[?%d;%d;1R",
+                             ty->state.cy + 1, ty->state.cx + 1);
+              termpty_write(ty, bf, len);
+              break;
+           default:
+              WRN("unhandled DSR (dec specific) %d", arg);
+              break;
+          }
+     }
+   else
+     {
+        arg = _csi_arg_get(&b);
+        switch (arg)
+          {
+           case 6:
+              len = snprintf(bf, sizeof(bf), "\033[%d;%dR",
+                             ty->state.cy + 1, ty->state.cx + 1);
+              termpty_write(ty, bf, len);
+              break;
+           default:
+              WRN("unhandled DSR %d", arg);
+              break;
+          }
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
@@ -929,10 +973,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              goto unhandled;
           }
         break;
+      case 'n':
+        _handle_esc_csi_dsr(ty, b);
+        break;
 /*
       case 'R': // report cursor
-        break;
-      case 'n': // "6n" queires cursor pos, 0n, 3n, 5n too
         break;
       case 's':
         break;
