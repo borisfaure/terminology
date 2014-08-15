@@ -2599,6 +2599,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
    };
    size_t imax = (sizeof(wordsep) / sizeof(wordsep[0])) - 1,
           imin = 0;
+   size_t imaxmax = imax;
 
    while (imax >= imin)
      {
@@ -2607,7 +2608,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
         if (wordsep[imid] == g) return EINA_TRUE;
         else if (wordsep[imid] < g) imin = imid + 1;
         else imax = imid - 1;
-        if ((imax == imin) || (imid == 0)) break;
+        if (imax > imaxmax) break;
      }
    return EINA_FALSE;
 }
