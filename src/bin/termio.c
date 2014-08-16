@@ -2046,6 +2046,21 @@ _handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
         _smart_update_queue(term, sd);
         miniview_position_offset(term_miniview_get(sd->term), by, EINA_TRUE);
      }
+   else if (!strcmp(ev->key, "Up"))
+     {
+        sd->scroll += 1;
+        if (sd->scroll > sd->pty->backscroll_num)
+          sd->scroll = sd->pty->backscroll_num;
+        _smart_update_queue(term, sd);
+        miniview_position_offset(term_miniview_get(sd->term), -1, EINA_TRUE);
+     }
+   else if (!strcmp(ev->key, "Down"))
+     {
+        sd->scroll -= 1;
+        if (sd->scroll < 0) sd->scroll = 0;
+        _smart_update_queue(term, sd);
+        miniview_position_offset(term_miniview_get(sd->term), 1, EINA_TRUE);
+     }
    else if (!strcmp(ev->key, "Insert"))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Control"))
