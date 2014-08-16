@@ -237,11 +237,15 @@ miniview_position_offset(Evas_Object *obj, int by, Eina_Bool sanitize)
      }
    else
      {
-        mv->screen.pos_val += (double) by / (mv->img_h - mv->rows);
-        edje_object_part_drag_value_set(mv->base, "miniview_screen",
-                                        0.0, mv->screen.pos_val);
-        if (mv->screen.pos_val < 0 && sanitize) mv->screen.pos_val = 0;
-        if (mv->screen.pos_val > 1 && sanitize) mv->screen.pos_val = 1;
+        if (sanitize)
+          {
+             mv->screen.pos_val += (double) by / (mv->img_h - mv->rows);
+             edje_object_part_drag_value_set(mv->base, "miniview_screen",
+                                             0.0, mv->screen.pos_val);
+
+             if (mv->screen.pos_val < 0) mv->screen.pos_val = 0;
+             if (mv->screen.pos_val > 1) mv->screen.pos_val = 1;
+          }
      }
 }
 

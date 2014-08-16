@@ -4166,6 +4166,8 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
    if ((!sd->jump_on_change) && // if NOT scroll to bottom on updates
        (sd->scroll > 0))
      {
+        Evas_Object *mv = term_miniview_get(sd->term);
+        if (mv) miniview_position_offset(mv, direction, EINA_FALSE);
         // adjust scroll position for added scrollback
         sd->scroll -= direction;
         if (sd->scroll > sd->pty->backscroll_num)
