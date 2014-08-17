@@ -4210,6 +4210,11 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
              ty->selection.end.y += direction;
           }
      }
+   if (sd->link.string)
+     {
+        if (sd->link.y1 <= end_y && sd->link.y2 >= start_y)
+          _remove_links(sd, obj);
+     }
 }
 
 void
@@ -4222,6 +4227,30 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    ty = sd->pty;
+
+   if (sd->link.string)
+     {
+        int _y = y + (x + n) / ty->w;
+
+        start_x = sd->link.x1;
+        start_y = sd->link.y1;
+        end_x   = sd->link.x2;
+        end_y   = sd->link.y2;
+
+        y = MAX(y, start_y);
+        for (; y <= MIN(_y, end_y); y++)
+          {
+             int d = MIN(n, ty->w - x);
+             if (!((x > end_x) || (x + d < start_x)))
+               {
+                  _remove_links(sd, obj);
+                  break;
+               }
+             n -= d;
+             x = 0;
+          }
+     }
+
    if (!ty->selection.is_active) return;
 
    start_x = sd->pty->selection.start.x;
@@ -5063,6 +5092,7 @@ termio_scroll_set(Evas_Object *obj, int scroll)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = scroll;
+   _remove_links(sd, obj);
    _smart_apply(obj);
 }
 
