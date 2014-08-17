@@ -1167,6 +1167,29 @@ _popmedia_show(Term *term, const char *src)
      }
 }
 
+void
+_term_miniview_check(Term *term)
+{
+   Eina_List *l, *wn_list;
+
+   EINA_SAFETY_ON_NULL_RETURN(term);
+   EINA_SAFETY_ON_NULL_RETURN(term->miniview);
+
+   wn_list = main_win_terms_get(main_term_win_get(term));
+
+   EINA_LIST_FOREACH(wn_list, l, term)
+     {
+        Split *sp = _split_find(term->wn->win, term->term, NULL);
+        if (term->miniview_shown)
+          {
+             if (term->focused)
+               edje_object_signal_emit(term->bg, "miniview,on", "terminology");
+             else if (sp->term != term)
+               edje_object_signal_emit(term->bg, "miniview,off", "terminology");
+          }
+        sp = NULL;
+     }
+}
 
 void
 term_miniview_hide(Term *term)
@@ -1372,12 +1395,14 @@ _sel_cb_selected(void *data, Evas_Object *obj EINA_UNUSED, void *info)
              _term_focus(tm);
              _term_focus_show(sp, tm);
              _sel_restore(sp);
+             _term_miniview_check(tm);
              return;
           }
      }
    _sel_restore(sp);
    _term_focus(sp->term);
    _term_focus_show(sp, sp->term);
+   _term_miniview_check(tm);
 }
 
 static void
@@ -1509,6 +1534,7 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
              if (sp) _term_focus_show(sp, term2);
           }
      }
+   _term_miniview_check(term);
 }
 
 static void
@@ -1533,6 +1559,7 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
              if (sp) _term_focus_show(sp, term2);
           }
      }
+   _term_miniview_check(term);
 }
 
 static void
@@ -1541,6 +1568,7 @@ _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term *term = data;
    
    main_new(term->wn->win, term->term);
+   _term_miniview_check(term);
 }
 
 void
