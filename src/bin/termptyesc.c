@@ -1044,12 +1044,33 @@ unhandled:
 }
 
 static int
+_xterm_arg_get(Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int sum = 0;
+
+   while (isdigit(*b))
+     {
+        sum *= 10;
+        sum += *b - '0';
+        b++;
+     }
+   if (*b != ';')
+     sum = -1;
+   else
+     b++;
+   *ptr = b;
+   return sum;
+}
+
+static int
 _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
    char *s;
    int len = 0;
+   int arg;
 
    cc = c;
    b = buf;
@@ -1071,13 +1092,20 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return cc - c;
      }
    *b = 0;
+   b = buf;
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
    else return 0;
-   switch (buf[0])
+
+   arg = _xterm_arg_get(&b);
+   switch (arg)
      {
-      case '0':
+      case -1:
+         goto err;
+      case 0:
         // XXX: title + name - callback
-        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
+        if (!*b)
+          goto err;
+        s = eina_unicode_unicode_to_utf8(b, &len);
         if (ty->prop.title) eina_stringshare_del(ty->prop.title);
         if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
         if (s)
@@ -1094,9 +1122,11 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
-      case '1':
+      case 1:
+        if (!*b)
+          goto err;
         // XXX: icon name - callback
-        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
+        s = eina_unicode_unicode_to_utf8(b, &len);
         if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
         if (s)
           {
@@ -1109,9 +1139,11 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
-      case '2':
+      case 2:
+        if (!*b)
+          goto err;
         // XXX: title - callback
-        s = eina_unicode_unicode_to_utf8(&(buf[2]), &len);
+        s = eina_unicode_unicode_to_utf8(b, &len);
         if (ty->prop.title) eina_stringshare_del(ty->prop.title);
         if (s)
           {
@@ -1124,16 +1156,21 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
-      case '4':
+      case 4:
+        if (!*b)
+          goto err;
         // XXX: set palette entry. not supported.
-        DBG("set palette, not supported");
+        WRN("set palette, not supported");
         if ((cc - c) < 3) return 0;
         break;
       default:
         // many others
-        ERR("unhandled xterm esc '%c'", buf[0]);
+        ERR("unhandled xterm esc %d", arg);
         break;
      }
+    return cc - c;
+err:
+    ERR("invalid xterm sequence");
     return cc - c;
 }
 
