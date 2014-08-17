@@ -1096,6 +1096,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
    else return 0;
 
+#define TERMPTY_WRITE_STR(_S) \
+   termpty_write(ty, _S, strlen(_S))
+
    arg = _xterm_arg_get(&b);
    switch (arg)
      {
@@ -1105,56 +1108,92 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         // XXX: title + name - callback
         if (!*b)
           goto err;
-        s = eina_unicode_unicode_to_utf8(b, &len);
-        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-        if (s)
+        if (*b == '?')
           {
-             ty->prop.title = eina_stringshare_add(s);
-             ty->prop.icon = eina_stringshare_add(s);
-             free(s);
+             TERMPTY_WRITE_STR("\033]0;");
+             if (ty->prop.title)
+               {
+                  TERMPTY_WRITE_STR(ty->prop.title);
+               }
+             TERMPTY_WRITE_STR("\007");
           }
         else
           {
-             ty->prop.title = NULL;
-             ty->prop.icon = NULL;
+             s = eina_unicode_unicode_to_utf8(b, &len);
+             if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+             if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+             if (s)
+               {
+                  ty->prop.title = eina_stringshare_add(s);
+                  ty->prop.icon = eina_stringshare_add(s);
+                  free(s);
+               }
+             else
+               {
+                  ty->prop.title = NULL;
+                  ty->prop.icon = NULL;
+               }
+             if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
+             if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
           }
-        if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
-        if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
       case 1:
+        // XXX: icon name - callback
         if (!*b)
           goto err;
-        // XXX: icon name - callback
-        s = eina_unicode_unicode_to_utf8(b, &len);
-        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-        if (s)
+        if (*b == '?')
           {
-             ty->prop.icon = eina_stringshare_add(s);
-             free(s);
+             TERMPTY_WRITE_STR("\033]0;");
+             if (ty->prop.icon)
+               {
+                  TERMPTY_WRITE_STR(ty->prop.icon);
+               }
+             TERMPTY_WRITE_STR("\007");
           }
         else
           {
-             ty->prop.icon = NULL;
+             s = eina_unicode_unicode_to_utf8(b, &len);
+             if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+             if (s)
+               {
+                  ty->prop.icon = eina_stringshare_add(s);
+                  free(s);
+               }
+             else
+               {
+                  ty->prop.icon = NULL;
+               }
+             if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
           }
-        if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
       case 2:
+        // XXX: title - callback
         if (!*b)
           goto err;
-        // XXX: title - callback
-        s = eina_unicode_unicode_to_utf8(b, &len);
-        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-        if (s)
+        if (*b == '?')
           {
-             ty->prop.title = eina_stringshare_add(s);
-             free(s);
+             TERMPTY_WRITE_STR("\033]0;");
+             if (ty->prop.title)
+               {
+                  TERMPTY_WRITE_STR(ty->prop.title);
+               }
+             TERMPTY_WRITE_STR("\007");
           }
         else
           {
-             ty->prop.title = NULL;
+             s = eina_unicode_unicode_to_utf8(b, &len);
+             if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+             if (s)
+               {
+                  ty->prop.title = eina_stringshare_add(s);
+                  free(s);
+               }
+             else
+               {
+                  ty->prop.title = NULL;
+               }
+             if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
           }
-        if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
       case 4:
         if (!*b)
@@ -1168,6 +1207,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ERR("unhandled xterm esc %d", arg);
         break;
      }
+
+#undef TERMPTY_WRITE_STR
+
     return cc - c;
 err:
     ERR("invalid xterm sequence");
