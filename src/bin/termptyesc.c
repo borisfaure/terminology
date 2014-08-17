@@ -1,5 +1,6 @@
 #include "private.h"
 #include <Elementary.h>
+#include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"
 #include "termptyesc.h"
@@ -1064,51 +1065,125 @@ _xterm_arg_get(Eina_Unicode **ptr)
 }
 
 static int
+_eina_unicode_to_hex(Eina_Unicode u)
+{
+   if (u >= '0' && u <= '9')
+     return u - '0';
+   if (u >= 'a' && u <= 'f')
+     return 10 + u - 'a';
+   if (u >= 'A' && u <= 'F')
+     return 10 + u - 'A';
+   return -1;
+}
+
+static int
+_xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
+                   unsigned char *b, int len)
+{
+   Eina_Unicode *p = *ptr;
+   int i;
+
+   if (*p != '#')
+     {
+        ERR("unsupported xterm color");
+        return -1;
+     }
+   p++;
+   len--;
+   if (len == 7)
+     {
+        i = _eina_unicode_to_hex(p[0]);
+        if (i < 0) goto err;
+        *r = i;
+        i = _eina_unicode_to_hex(p[1]);
+        if (i < 0) goto err;
+        *r = *r * 16 + i;
+
+        i = _eina_unicode_to_hex(p[2]);
+        if (i < 0) goto err;
+        *g = i;
+        i = _eina_unicode_to_hex(p[3]);
+        if (i < 0) goto err;
+        *g = *g * 16 + i;
+
+        i = _eina_unicode_to_hex(p[4]);
+        if (i < 0) goto err;
+        *b = i;
+        i = _eina_unicode_to_hex(p[5]);
+        if (i < 0) goto err;
+        *b = *b * 16 + i;
+     }
+   else if (len == 4)
+     {
+        i = _eina_unicode_to_hex(p[0]);
+        if (i < 0) goto err;
+        *r = i;
+        i = _eina_unicode_to_hex(p[1]);
+        if (i < 0) goto err;
+        *g = i;
+        i = _eina_unicode_to_hex(p[2]);
+        if (i < 0) goto err;
+        *b = i;
+     }
+   else
+     {
+        goto err;
+     }
+
+   return 0;
+
+err:
+   ERR("invalid xterm color");
+   return -1;
+}
+
+
+static int
 _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
-   Eina_Unicode buf[4096], *b;
+   Eina_Unicode buf[4096], *p;
    char *s;
    int len = 0;
    int arg;
 
    cc = c;
-   b = buf;
+   p = buf;
    be = buf + sizeof(buf) / sizeof(buf[0]);
-   while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (b < be))
+   while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (p < be))
      {
         if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
           {
              cc++;
              break;
           }
-        *b = *cc;
-        b++;
+        *p = *cc;
+        p++;
         cc++;
      }
-   if (b == be)
+   if (p == be)
      {
         ERR("xterm parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
      }
-   *b = 0;
-   b = buf;
+   *p = 0;
+   p = buf;
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
    else return 0;
 
 #define TERMPTY_WRITE_STR(_S) \
    termpty_write(ty, _S, strlen(_S))
 
-   arg = _xterm_arg_get(&b);
+   arg = _xterm_arg_get(&p);
    switch (arg)
      {
       case -1:
          goto err;
       case 0:
         // XXX: title + name - callback
-        if (!*b)
+        if (!*p)
           goto err;
-        if (*b == '?')
+        if (*p == '?')
           {
              TERMPTY_WRITE_STR("\033]0;");
              if (ty->prop.title)
@@ -1119,7 +1194,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(b, &len);
+             s = eina_unicode_unicode_to_utf8(p, &len);
              if (ty->prop.title) eina_stringshare_del(ty->prop.title);
              if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
              if (s)
@@ -1139,9 +1214,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 1:
         // XXX: icon name - callback
-        if (!*b)
+        if (!*p)
           goto err;
-        if (*b == '?')
+        if (*p == '?')
           {
              TERMPTY_WRITE_STR("\033]0;");
              if (ty->prop.icon)
@@ -1152,7 +1227,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(b, &len);
+             s = eina_unicode_unicode_to_utf8(p, &len);
              if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
              if (s)
                {
@@ -1168,9 +1243,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 2:
         // XXX: title - callback
-        if (!*b)
+        if (!*p)
           goto err;
-        if (*b == '?')
+        if (*p == '?')
           {
              TERMPTY_WRITE_STR("\033]0;");
              if (ty->prop.title)
@@ -1181,7 +1256,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(b, &len);
+             s = eina_unicode_unicode_to_utf8(p, &len);
              if (ty->prop.title) eina_stringshare_del(ty->prop.title);
              if (s)
                {
@@ -1196,11 +1271,38 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           }
         break;
       case 4:
-        if (!*b)
+        if (!*p)
           goto err;
         // XXX: set palette entry. not supported.
         WRN("set palette, not supported");
         if ((cc - c) < 3) return 0;
+        break;
+      case 10:
+        if (!*p)
+          goto err;
+        if (*p == '?')
+          {
+             char bf[6];
+             Config *config = termio_config_get(ty->obj);
+             TERMPTY_WRITE_STR("\033]10;#");
+             snprintf(bf, sizeof(bf), "%.2X%.2X%.2X",
+                      config->colors[0].r,
+                      config->colors[0].g,
+                      config->colors[0].b);
+             termpty_write(ty, bf, 6);
+             TERMPTY_WRITE_STR("\007");
+          }
+        else
+          {
+             unsigned char r, g, b;
+             len = cc - c - (p - buf);
+             if (_xterm_parse_color(&p, &r, &g, &b, len) < 0)
+               goto err;
+             evas_object_textgrid_palette_set(
+                termio_textgrid_get(ty->obj),
+                EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+                r, g, b, 0xff);
+          }
         break;
       default:
         // many others
