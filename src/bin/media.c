@@ -768,7 +768,6 @@ _type_mov_init(Evas_Object *obj)
                                    _cb_media_pos, obj);
    edje_object_signal_callback_add(o, "vol,drag", "",
                                    _cb_media_vol, obj);
-   evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
    evas_object_show(o);
 
