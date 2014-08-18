@@ -2463,6 +2463,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
        ')',
        '*',
        ',',
+       ':',
        ';',
        '=',
        '?',
