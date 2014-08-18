@@ -31,5 +31,6 @@ void media_volume_set(Evas_Object *obj, double vol);
 void media_stop(Evas_Object *obj);
 const char *media_get(const Evas_Object *obj);
 int media_src_type_get(const char *src);
+Evas_Object *media_control_get(Evas_Object *obj);
 
 #endif

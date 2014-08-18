@@ -1347,3 +1347,11 @@ media_src_type_get(const char *src)
    else if (_is_fmt(src, extn_mov))   type = TYPE_MOV;
    return type;
 }
+
+Evas_Object *
+media_control_get(Evas_Object *obj)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   return sd->o_ctrl;
+}

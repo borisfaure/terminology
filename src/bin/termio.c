@@ -1268,6 +1268,7 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
    Termio *sd = evas_object_smart_data_get(obj);
    int type = 0;
    int media = MEDIA_STRETCH;
+   Evas_Object *mctrl;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (blk->scale_stretch) media = MEDIA_STRETCH;
@@ -1283,6 +1284,12 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
      (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);
    blk->type = type;
    evas_object_smart_member_add(blk->obj, obj);
+   mctrl = media_control_get(blk->obj);
+   if (mctrl)
+     {
+        evas_object_smart_member_add(mctrl, obj);
+        evas_object_stack_above(mctrl, sd->event);
+     }
    evas_object_stack_above(blk->obj, sd->grid.obj);
    evas_object_show(blk->obj);
    evas_object_data_set(blk->obj, "blk", blk);
