@@ -316,6 +316,7 @@ main(int argc, char **argv)
      }
 
    eina_init();
+   ecore_app_no_system_modules();
    ecore_init();
    ecore_file_init();
    evas_init();
