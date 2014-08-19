@@ -65,7 +65,6 @@ struct _Termio
    } link;
    int zoom_fontsize_start;
    int scroll;
-   Eina_List *mirrors;
    Eina_List *seq;
    Evas_Object *self;
    Evas_Object *event;
@@ -105,7 +104,6 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 static Eina_List *terms = NULL;
 
 static void _smart_calculate(Evas_Object *obj);
-static void _smart_mirror_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED);
 static void _lost_selection(void *data, Elm_Sel_Type selection);
 static void _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text);
 
@@ -4045,12 +4043,6 @@ _smart_del(Evas_Object *obj)
    
    EINA_SAFETY_ON_NULL_RETURN(sd);
    terms = eina_list_remove(terms, obj);
-   EINA_LIST_FREE(sd->mirrors, o)
-     {
-        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
-                                            _smart_mirror_del, obj);
-        evas_object_del(o);
-     }
    if (sd->imf)
      {
         ecore_imf_context_event_callback_del
@@ -5171,35 +5163,6 @@ termio_win_get(Evas_Object *obj)
    return sd->win;
 }
 
-
-static void
-_smart_mirror_del(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
-{
-   Termio *sd = evas_object_smart_data_get(data);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _smart_mirror_del, data);
-   sd->mirrors = eina_list_remove(sd->mirrors, obj);
-}
-
-Evas_Object *
-termio_mirror_add(Evas_Object *obj)
-{
-   Evas_Object *img;
-   Termio *sd = evas_object_smart_data_get(obj);
-   Evas_Coord w = 0, h = 0;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   img = evas_object_image_filled_add(evas_object_evas_get(obj));
-   evas_object_image_source_set(img, obj);
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_resize(img, w, h);
-   sd->mirrors = eina_list_append(sd->mirrors, img);
-   evas_object_data_set(img, "termio", obj);
-   evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
-                                  _smart_mirror_del, obj);
-   return img;
-}
 
 const char *
 termio_title_get(Evas_Object *obj)
