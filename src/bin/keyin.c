@@ -380,7 +380,7 @@ static const Keyout kps_keyout[] =
 };
 
 static Eina_Bool
-_key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
+_key_try(Termpty *ty, const Keyout *map, const Evas_Event_Key_Down *ev)
 {
    int i, inlen;
    
@@ -399,7 +399,7 @@ _key_try(Termpty *ty, const Keyout *map, Evas_Event_Key_Down *ev)
 }
 
 void
-keyin_handle(Termpty *ty, Evas_Event_Key_Down *ev,
+keyin_handle(Termpty *ty, const Evas_Event_Key_Down *ev,
              int alt, int shift, int ctrl)
 {
    if (!alt)

@@ -250,7 +250,7 @@ miniview_position_offset(Evas_Object *obj, int by, Eina_Bool sanitize)
 }
 
 Eina_Bool
-miniview_handle_key(Evas_Object *obj, Evas_Event_Key_Down *ev)
+miniview_handle_key(Evas_Object *obj, const Evas_Event_Key_Down *ev)
 {
    Miniview *mv;
    Evas_Coord ox, oy, ow, oh, mx, my;

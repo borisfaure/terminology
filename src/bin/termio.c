@@ -1863,7 +1863,7 @@ _handle_alt_ctrl(const char *keyname, Evas_Object *term)
 }
 
 static Eina_Bool
-_handle_shift(Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
+_handle_shift(const Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
 {
    if (!strcmp(ev->key, "Prior"))
      {
@@ -1935,7 +1935,7 @@ static void
 _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
                    Evas_Object *obj EINA_UNUSED, void *event)
 {
-   Evas_Event_Key_Down *ev = event;
+   const Evas_Event_Key_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
    Ecore_Compose_State state;
    char *compres = NULL;
@@ -2092,7 +2092,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
           {
              Ecore_IMF_Event_Key_Down imf_ev;
 
-             ecore_imf_evas_event_key_down_wrap(ev, &imf_ev);
+             ecore_imf_evas_event_key_down_wrap((Evas_Event_Key_Down*)ev, &imf_ev);
              if (!sd->composing)
                {
                   if (ecore_imf_context_filter_event
