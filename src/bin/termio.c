@@ -95,7 +95,6 @@ struct _Termio
    Eina_Bool bottom_right : 1;
    Eina_Bool top_left : 1;
    Eina_Bool reset_sel : 1;
-   Eina_Bool debugwhite : 1;
 };
 
 #define INT_SWAP(_a, _b) do {    \
@@ -361,15 +360,6 @@ termio_icon_name_get(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
    return sd->pty->prop.icon;
-}
-
-void
-termio_debugwhite_set(Evas_Object *obj, Eina_Bool dbg)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-   sd->debugwhite = dbg;
-   _smart_apply(obj);
 }
 
 void
@@ -3579,12 +3569,6 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         evas_object_smart_callback_call(data, "options", NULL);
         return;
      }
-   if ((ev->button == 3) && shift)
-     {
-        termio_debugwhite_set(data, !sd->debugwhite);
-        DBG("debugwhite %i",  sd->debugwhite);
-        return;
-     }
    if (!shift && !ctrl)
      if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
@@ -4279,41 +4263,15 @@ _smart_apply(Evas_Object *obj)
                            (tc[x].fg_extended != fgext) ||
                            (tc[x].bg_extended != bgext) ||
                            (tc[x].underline != cells[x].att.underline) ||
-                           (tc[x].strikethrough != cells[x].att.strike) ||
-                           (sd->debugwhite))
+                           (tc[x].strikethrough != cells[x].att.strike))
                          {
                             if (ch1 < 0) ch1 = x;
                             ch2 = x;
                          }
                        tc[x].fg_extended = fgext;
                        tc[x].bg_extended = bgext;
-                       if (sd->debugwhite)
-                         {
-                            if (cells[x].att.newline)
-                              tc[x].strikethrough = 1;
-                            else
-                              tc[x].strikethrough = 0;
-                            if (cells[x].att.autowrapped)
-                              tc[x].underline = 1;
-                            else
-                              tc[x].underline = 0;
-//                            if (cells[x].att.tab)
-//                              tc[x].underline = 1;
-//                            else
-//                              tc[x].underline = 0;
-                            if ((cells[x].att.newline) ||
-                                (cells[x].att.autowrapped))
-                              {
-                                 fg = 8;
-                                 bg = 4;
-                                 codepoint = '!';
-                              }
-                         }
-                       else
-                         {
-                            tc[x].underline = cells[x].att.underline;
-                            tc[x].strikethrough = cells[x].att.strike;
-                         }
+                       tc[x].underline = cells[x].att.underline;
+                       tc[x].strikethrough = cells[x].att.strike;
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
