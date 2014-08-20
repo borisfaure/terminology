@@ -2823,7 +2823,7 @@ _translate_options(void)
 
    Ecore_Getopt_Desc *desc = (Ecore_Getopt_Desc *) options.descs;
    while ((desc->shortname != '\0') || (desc->longname)
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 9)
      || (desc->action == ECORE_GETOPT_ACTION_CATEGORY)
 #endif
      )
