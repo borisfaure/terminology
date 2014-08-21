@@ -46,6 +46,7 @@ struct _Config
    Eina_Bool         translucent;
    int               opacity;
    Eina_Bool         mute;
+   Eina_Bool         visualize;
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;
    Eina_Bool         application_server;

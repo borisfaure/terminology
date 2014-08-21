@@ -103,6 +103,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mute", mute, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "visualize", visualize, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "urg_bell", urg_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "multi_instance", multi_instance, EET_T_UCHAR);
@@ -216,6 +218,7 @@ config_sync(const Config *config_src, Config *config)
    config->bell_rings = config_src->bell_rings;
    config->active_links = config_src->active_links;
    config->mute = config_src->mute;
+   config->visualize = config_src->visualize;
    config->urg_bell = config_src->urg_bell;
    config->multi_instance = config_src->multi_instance;
    config->application_server = config_src->application_server;
@@ -342,6 +345,7 @@ config_load(const char *key)
              config->active_links = EINA_TRUE;
              config->vidmod = 0;
              config->mute = EINA_FALSE;
+             config->visualize = EINA_FALSE;
              config->urg_bell = EINA_TRUE;
              config->multi_instance = EINA_FALSE;
              config->application_server = EINA_FALSE;
@@ -418,6 +422,7 @@ config_fork(Config *config)
    CPY(translucent);
    CPY(opacity);
    CPY(mute);
+   CPY(visualize);
    CPY(urg_bell);
    CPY(multi_instance);
    CPY(application_server);

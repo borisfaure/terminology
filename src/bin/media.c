@@ -773,6 +773,7 @@ _type_mov_init(Evas_Object *obj)
 
    media_play_set(obj, EINA_TRUE);
    if (sd->config->mute) media_mute_set(obj, EINA_TRUE);
+   if (sd->config->visualize) media_visualize_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1278,6 +1279,25 @@ media_mute_set(Evas_Object *obj, Eina_Bool mute)
       edje_object_signal_emit(sd->o_ctrl, "mute,set", "terminology");
    else
       edje_object_signal_emit(sd->o_ctrl, "mute,unset", "terminology");
+}
+
+void
+media_visualize_set(Evas_Object *obj, Eina_Bool visualize)
+{
+   Media *sd = evas_object_smart_data_get(obj);
+   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if (visualize)
+     {
+        /*
+         * FIXME: configure visualizing type, not hard coded one
+         */
+        if (!emotion_object_vis_supported(sd->o_img, EMOTION_VIS_LIBVISUAL_INFINITE))
+          ERR(_("Media visualizing is not supported"));
+        else
+          emotion_object_vis_set(sd->o_img, EMOTION_VIS_LIBVISUAL_INFINITE);
+     }
+   else
+     emotion_object_vis_set(sd->o_img, EMOTION_VIS_NONE);
 }
 
 void

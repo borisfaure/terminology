@@ -377,6 +377,21 @@ termio_media_mute_set(Evas_Object *obj, Eina_Bool mute)
      }
 }
 
+void
+termio_media_visualize_set(Evas_Object *obj, Eina_Bool visualize)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Eina_List *l;
+   Termblock *blk;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_LIST_FOREACH(sd->pty->block.active, l, blk)
+     {
+        if (blk->obj && !blk->edje)
+          media_visualize_set(blk->obj, visualize);
+     }
+}
+
 Eina_Bool
 termio_selection_exists(const Evas_Object *obj)
 {

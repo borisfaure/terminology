@@ -1982,6 +1982,23 @@ main_media_mute_update(const Config *config)
 }
 
 void
+main_media_visualize_update(const Config *config)
+{
+   Win *wn;
+   Term *term;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(wins, l, wn)
+     {
+        EINA_LIST_FOREACH(wn->terms, ll, term)
+          {
+             if (term->media) media_visualize_set(term->media, config->visualize);
+             termio_media_visualize_set(term->term, config->visualize);
+          }
+     }
+}
+
+void
 main_config_sync(const Config *config)
 {
    Win *wn;

@@ -28,6 +28,7 @@ void media_play_set(Evas_Object *obj, Eina_Bool play);
 Eina_Bool media_play_get(Evas_Object *obj);
 void media_position_set(Evas_Object *obj, double pos);
 void media_volume_set(Evas_Object *obj, double vol);
+void media_visualize_set(Evas_Object *obj, Eina_Bool visualize);
 void media_stop(Evas_Object *obj);
 const char *media_get(const Evas_Object *obj);
 int media_src_type_get(const char *src);
