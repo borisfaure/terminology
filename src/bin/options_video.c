@@ -7,7 +7,7 @@
 #include "options_video.h"
 #include "main.h"
 
-static Evas_Object *op_trans, *op_opacity, *op_mute, *op_vidmod;
+static Evas_Object *op_trans, *op_opacity, *op_vidmod;
 
 static void
 _cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
@@ -113,7 +113,7 @@ options_video(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
    
-   op_mute = o = elm_check_add(opbox);
+   o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, _("Audio muted"));
