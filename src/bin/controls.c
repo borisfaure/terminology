@@ -54,7 +54,7 @@ _cb_ct_copy(void *data EINA_UNUSED,
             Evas_Object *obj EINA_UNUSED,
             void *event EINA_UNUSED)
 {
-   termio_take_selection(ct_term, ELM_SEL_TYPE_CLIPBOARD);
+   termio_copy_clipboard(ct_term);
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
@@ -63,7 +63,7 @@ _cb_ct_paste(void *data EINA_UNUSED,
              Evas_Object *obj EINA_UNUSED,
              void *event EINA_UNUSED)
 {
-   termio_paste_selection(ct_term, ELM_SEL_TYPE_CLIPBOARD);
+   termio_paste_clipboard(ct_term);
    controls_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
 }
 
