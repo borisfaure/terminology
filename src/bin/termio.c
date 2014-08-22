@@ -1,7 +1,5 @@
 #include "private.h"
 
-#include <Ecore_IMF.h>
-#include <Ecore_IMF_Evas.h>
 #include <Elementary.h>
 #include <Ecore_Input.h>
 
@@ -48,7 +46,6 @@ struct _Termio
       int cx, cy;
       int button;
    } mouse;
-   unsigned int last_keyup;
    struct {
       char *string;
       int x1, y1, x2, y2;
@@ -65,7 +62,6 @@ struct _Termio
    } link;
    int zoom_fontsize_start;
    int scroll;
-   Eina_List *seq;
    Evas_Object *self;
    Evas_Object *event;
    Term *term;
@@ -79,17 +75,16 @@ struct _Termio
    Ecore_Timer *mouseover_delay;
    Evas_Object *win, *theme, *glayer;
    Config *config;
-   Ecore_IMF_Context *imf;
    const char *sel_str;
    Eina_List *cur_chids;
    Ecore_Job *sel_reset_job;
    double set_sel_at;
    Elm_Sel_Type sel_type;
+   Keys_Handler khdl;
    Eina_Bool jump_on_change : 1;
    Eina_Bool jump_on_keypress : 1;
    Eina_Bool have_sel : 1;
    Eina_Bool noreqsize : 1;
-   Eina_Bool composing : 1;
    Eina_Bool didclick : 1;
    Eina_Bool moved : 1;
    Eina_Bool bottom_right : 1;
@@ -114,8 +109,6 @@ static void _smart_apply(Evas_Object *obj);
 static void _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force);
 static void _smart_calculate(Evas_Object *obj);
 static void _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text);
-static void _take_selection(Evas_Object *obj, Elm_Sel_Type type);
-static void _paste_selection(Evas_Object *obj, Elm_Sel_Type type);
 
 
 /* {{{ Helpers */
@@ -333,6 +326,32 @@ termio_scroll_get(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, 0);
    return sd->scroll;
+}
+
+
+void termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   if (by_page)
+     {
+        int by = sd->grid.h - 2;
+        if (by > 1)
+          delta *= by;
+     }
+   sd->scroll += delta;
+   if (delta > 0)
+     {
+        if (sd->scroll > sd->pty->backscroll_num)
+          sd->scroll = sd->pty->backscroll_num;
+     }
+   else
+     {
+        if (sd->scroll < 0) sd->scroll = 0;
+     }
+   _smart_update_queue(obj, sd);
+   miniview_position_offset(term_miniview_get(sd->term), delta, EINA_TRUE);
 }
 
 void
@@ -1821,129 +1840,8 @@ _smart_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    Termio *sd = evas_object_smart_data_get(data);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   sd->last_keyup = ev->timestamp;
-   if (sd->imf)
-     {
-        Ecore_IMF_Event_Key_Up imf_ev;
-        ecore_imf_evas_event_key_up_wrap(ev, &imf_ev);
-        if (ecore_imf_context_filter_event
-            (sd->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev))
-          return;
-     }
-}
-static Eina_Bool
-_is_modifier(const char *key)
-{
-#define STATIC_STR_EQUAL(STR) (!strncmp(key, STR, strlen(STR)))
-   if ((key != NULL) && (
-       STATIC_STR_EQUAL("Shift") ||
-       STATIC_STR_EQUAL("Control") ||
-       STATIC_STR_EQUAL("Alt") ||
-       STATIC_STR_EQUAL("Meta") ||
-       STATIC_STR_EQUAL("Super") ||
-       STATIC_STR_EQUAL("Hyper") ||
-       STATIC_STR_EQUAL("Scroll_Lock") ||
-       STATIC_STR_EQUAL("Num_Lock") ||
-       STATIC_STR_EQUAL("ISO_Level3_Shift") ||
-       STATIC_STR_EQUAL("Caps_Lock")))
-     return EINA_TRUE;
-#undef STATIC_STR_EQUAL
-   return EINA_FALSE;
-}
 
-static void
-_compose_seq_reset(Termio *sd)
-{
-   char *str;
-
-   EINA_LIST_FREE(sd->seq, str) eina_stringshare_del(str);
-   sd->composing = EINA_FALSE;
-}
-
-static Eina_Bool
-_handle_alt_ctrl(const char *keyname, Evas_Object *term)
-{
-   if (!strcmp(keyname, "equal"))
-     termcmd_do(term, NULL, NULL, "f+");
-   else if (!strcmp(keyname, "minus"))
-     termcmd_do(term, NULL, NULL, "f-");
-   else if (!strcmp(keyname, "0"))
-     termcmd_do(term, NULL, NULL, "f");
-   else if (!strcmp(keyname, "9"))
-     termcmd_do(term, NULL, NULL, "fb");
-   else
-     return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_handle_shift(const Evas_Event_Key_Down *ev, int by, Evas_Object *term, Termio *sd)
-{
-   if (!strcmp(ev->key, "Prior"))
-     {
-        if (!(sd->pty->altbuf))
-          {
-             sd->scroll += by;
-             if (sd->scroll > sd->pty->backscroll_num)
-               sd->scroll = sd->pty->backscroll_num;
-             _smart_update_queue(term, sd);
-             miniview_position_offset(term_miniview_get(sd->term), -by, EINA_TRUE);
-          }
-     }
-   else if (!strcmp(ev->key, "Next"))
-     {
-        sd->scroll -= by;
-        if (sd->scroll < 0) sd->scroll = 0;
-        _smart_update_queue(term, sd);
-        miniview_position_offset(term_miniview_get(sd->term), by, EINA_TRUE);
-     }
-   else if (!strcmp(ev->key, "Up"))
-     {
-        sd->scroll += 1;
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
-        _smart_update_queue(term, sd);
-        miniview_position_offset(term_miniview_get(sd->term), -1, EINA_TRUE);
-     }
-   else if (!strcmp(ev->key, "Down"))
-     {
-        sd->scroll -= 1;
-        if (sd->scroll < 0) sd->scroll = 0;
-        _smart_update_queue(term, sd);
-        miniview_position_offset(term_miniview_get(sd->term), 1, EINA_TRUE);
-     }
-   else if (!strcmp(ev->key, "Insert"))
-     {
-        if (evas_key_modifier_is_set(ev->modifiers, "Control"))
-          _paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
-        else
-          _paste_selection(term, ELM_SEL_TYPE_PRIMARY);
-     }
-   else if (!strcmp(ev->key, "KP_Add"))
-     {
-        Config *config = termio_config_get(term);
-
-        if (config) _font_size_set(term, config->font.size + 1);
-     }
-   else if (!strcmp(ev->key, "KP_Subtract"))
-     {
-        Config *config = termio_config_get(term);
-
-        if (config) _font_size_set(term, config->font.size - 1);
-     }
-   else if (!strcmp(ev->key, "KP_Multiply"))
-     {
-        Config *config = termio_config_get(term);
-
-        if (config) _font_size_set(term, 10);
-     }
-   else if (!strcmp(ev->key, "KP_Divide"))
-     _take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
-   else
-     return EINA_FALSE;
-
-   return EINA_TRUE;
+   keyin_handle_up(&sd->khdl, ev);
 }
 
 static void
@@ -1952,8 +1850,6 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 {
    const Evas_Event_Key_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Ecore_Compose_State state;
-   char *compres = NULL;
    int alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    int shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
@@ -1964,215 +1860,18 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
    if (miniview_handle_key(term_miniview_get(sd->term), ev))
      return;
 
-   if ((!alt) && (ctrl) && (!shift))
-     {
-        if (!strcmp(ev->key, "Prior"))
-          {
-             evas_object_smart_callback_call(data, "prev", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "Next"))
-          {
-             evas_object_smart_callback_call(data, "next", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "1"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,1", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "2"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,2", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "3"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,3", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "4"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,4", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "5"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,5", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "6"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,6", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "7"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,7", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "8"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,8", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "9"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,9", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "0"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "tab,0", NULL);
-             goto end;
-          }
-     }
-   if ((!alt) && (ctrl) && (shift))
-     {
-        if (!strcmp(ev->key, "Prior"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "split,h", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "Next"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "split,v", NULL);
-             goto end;
-          }
-        else if (!strcasecmp(ev->key, "t"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "new", NULL);
-             goto end;
-          }
-        else if (!strcmp(ev->key, "Home"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "select", NULL);
-             goto end;
-          }
-        else if (!strcasecmp(ev->key, "c"))
-          {
-             _compose_seq_reset(sd);
-             _take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-             goto end;
-          }
-        else if (!strcasecmp(ev->key, "v"))
-          {
-             _compose_seq_reset(sd);
-             _paste_selection(data, ELM_SEL_TYPE_CLIPBOARD);
-             goto end;
-          }
-        else if (!strcmp(ev->keyname, "h"))
-          {
-             term_miniview_toggle(sd->term);
-             goto end;
-          }
-     }
-   if ((alt) && (!shift) && (!ctrl))
-     {
-        if (!strcmp(ev->key, "Home"))
-          {
-             _compose_seq_reset(sd);
-             evas_object_smart_callback_call(data, "cmdbox", NULL);
-             goto end;
-          }
-     }
-   if ((alt) && (ctrl) && (!shift))
-     {
-        if (_handle_alt_ctrl(ev->key, data))
-          {
-             _compose_seq_reset(sd);
-             goto end;
-          }
-     }
-   if (sd->imf)
-     {
-        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
-        // and jed (alt+shift+5 for search/replace for example)
-        // Don't filter modifiers alt, is used by shells
-        if ((!alt) && (!ctrl))
-          {
-             Ecore_IMF_Event_Key_Down imf_ev;
 
-             ecore_imf_evas_event_key_down_wrap((Evas_Event_Key_Down*)ev, &imf_ev);
-             if (!sd->composing)
-               {
-                  if (ecore_imf_context_filter_event
-                      (sd->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-                    goto end;
-               }
-          }
-     }
-   if (shift)
-     {
-        int by = sd->grid.h - 2;
+   if (keyin_handle(&sd->khdl, sd->pty, ev, alt, shift, ctrl))
+     goto end;
 
-        if (by < 1) by = 1;
-
-        if (_handle_shift(ev, by, data, sd))
-          {
-             _compose_seq_reset(sd);
-             goto end;
-          }
-     }
    if (sd->jump_on_keypress)
      {
-        if (!_is_modifier(ev->key))
+        if (!key_is_modifier(ev->key))
           {
              sd->scroll = 0;
              _smart_update_queue(data, sd);
           }
      }
-   // if term app asked fro kbd lock - dont handle here
-   if (sd->pty->state.kbd_lock) return;
-   // if app asked us to not do autorepeat - ignore pree is it is the same
-   // timestamp as last one
-   if ((sd->pty->state.no_autorepeat) &&
-       (ev->timestamp == sd->last_keyup)) return;
-   if (!sd->composing)
-     {
-        _compose_seq_reset(sd);
-        sd->seq = eina_list_append(sd->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(sd->seq, &compres);
-        if (state == ECORE_COMPOSE_MIDDLE) sd->composing = EINA_TRUE;
-        else sd->composing = EINA_FALSE;
-        if (!sd->composing) _compose_seq_reset(sd);
-        else goto end;
-     }
-   else
-     {
-        if (_is_modifier(ev->key)) goto end;
-        sd->seq = eina_list_append(sd->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(sd->seq, &compres);
-        if (state == ECORE_COMPOSE_NONE) _compose_seq_reset(sd);
-        else if (state == ECORE_COMPOSE_DONE)
-          {
-             _compose_seq_reset(sd);
-             if (compres)
-               {
-                  termpty_write(sd->pty, compres, strlen(compres));
-                  free(compres);
-                  compres = NULL;
-               }
-             goto end;
-          }
-        else goto end;
-     }
-
-   keyin_handle(sd->pty, ev, alt, shift, ctrl);
 end:
    if (sd->config->flicker_on_key)
      edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
@@ -2180,18 +1879,6 @@ end:
 
 /* }}} */
 /* {{{ Selection */
-
-void
-termio_copy_clipboard(Evas_Object *obj)
-{
-   _take_selection(obj, ELM_SEL_TYPE_CLIPBOARD);
-}
-
-void
-termio_paste_clipboard(Evas_Object *obj)
-{
-   _paste_selection(obj, ELM_SEL_TYPE_CLIPBOARD);
-}
 
 char *
 termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
@@ -2437,8 +2124,8 @@ _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text)
    sd->sel_str = text;
 }
 
-static void
-_take_selection(Evas_Object *obj, Elm_Sel_Type type)
+void
+termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
@@ -2565,8 +2252,8 @@ _getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
    return EINA_TRUE;
 }
 
-static void
-_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
+void
+termio_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -3109,8 +2796,8 @@ _imf_cursor_set(Termio *sd)
    /* TODO */
    Evas_Coord cx, cy, cw, ch;
    evas_object_geometry_get(sd->cursor.obj, &cx, &cy, &cw, &ch);
-   if (sd->imf)
-     ecore_imf_context_cursor_location_set(sd->imf, cx, cy, cw, ch);
+   if (sd->khdl.imf)
+     ecore_imf_context_cursor_location_set(sd->khdl.imf, cx, cy, cw, ch);
    /*
     ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
     */
@@ -3129,11 +2816,11 @@ _smart_cb_focus_in(void *data, Evas *e EINA_UNUSED,
      edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_TERMINAL);
-   if (sd->imf)
+   if (sd->khdl.imf)
      {
-        ecore_imf_context_input_panel_show(sd->imf);
-        ecore_imf_context_reset(sd->imf);
-        ecore_imf_context_focus_in(sd->imf);
+        ecore_imf_context_input_panel_show(sd->khdl.imf);
+        ecore_imf_context_reset(sd->khdl.imf);
+        ecore_imf_context_focus_in(sd->khdl.imf);
         _imf_cursor_set(sd);
      }
 }
@@ -3150,12 +2837,12 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
-   if (sd->imf)
+   if (sd->khdl.imf)
      {
-        ecore_imf_context_reset(sd->imf);
+        ecore_imf_context_reset(sd->khdl.imf);
         _imf_cursor_set(sd);
-        ecore_imf_context_focus_out(sd->imf);
-        ecore_imf_context_input_panel_hide(sd->imf);
+        ecore_imf_context_focus_out(sd->khdl.imf);
+        ecore_imf_context_input_panel_hide(sd->khdl.imf);
      }
    _remove_links(sd, obj);
 }
@@ -3592,7 +3279,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           {
              _sel_line(data, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
-               _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+               termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
@@ -3604,7 +3291,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              else
                   _sel_word(data, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
-               _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+               termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
           }
         else
@@ -3692,7 +3379,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      }
    else if (ev->button == 2)
      {
-        _paste_selection(data, ELM_SEL_TYPE_PRIMARY);
+        termio_paste_selection(data, ELM_SEL_TYPE_PRIMARY);
      }
    else if (ev->button == 3)
      {
@@ -3749,13 +3436,13 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                  sd->pty->selection.end.x = cx;
                  sd->pty->selection.end.y = cy - sd->scroll;
                  _smart_update_queue(data, sd);
-                 _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+                 termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
             else
               {
                  _selection_newline_extend_fix(data);
                  _smart_update_queue(data, sd);
-                 _take_selection(data, ELM_SEL_TYPE_PRIMARY);
+                 termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
               }
             sd->pty->selection.makesel = EINA_FALSE;
           }
@@ -4598,7 +4285,7 @@ _smart_add(Evas_Object *obj)
         const char *imf_id = ecore_imf_context_default_id_get();
         Evas *e;
 
-        if (!imf_id) sd->imf = NULL;
+        if (!imf_id) sd->khdl.imf = NULL;
         else
           {
              const Ecore_IMF_Context_Info *imf_info;
@@ -4606,41 +4293,41 @@ _smart_add(Evas_Object *obj)
              imf_info = ecore_imf_context_info_by_id_get(imf_id);
              if ((!imf_info->canvas_type) ||
                  (strcmp(imf_info->canvas_type, "evas") == 0))
-               sd->imf = ecore_imf_context_add(imf_id);
+               sd->khdl.imf = ecore_imf_context_add(imf_id);
              else
                {
                   imf_id = ecore_imf_context_default_id_by_canvas_type_get("evas");
-                  if (imf_id) sd->imf = ecore_imf_context_add(imf_id);
+                  if (imf_id) sd->khdl.imf = ecore_imf_context_add(imf_id);
                }
           }
 
-        if (!sd->imf) goto imf_done;
+        if (!sd->khdl.imf) goto imf_done;
 
         e = evas_object_evas_get(o);
         ecore_imf_context_client_window_set
-          (sd->imf, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(e)));
-        ecore_imf_context_client_canvas_set(sd->imf, e);
+          (sd->khdl.imf, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(e)));
+        ecore_imf_context_client_canvas_set(sd->khdl.imf, e);
 
         ecore_imf_context_event_callback_add
-          (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb, sd);
+          (sd->khdl.imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb, sd);
 
         /* make IMF usable by a terminal - no preedit, prediction... */
         ecore_imf_context_use_preedit_set
-          (sd->imf, EINA_FALSE);
+          (sd->khdl.imf, EINA_FALSE);
         ecore_imf_context_prediction_allow_set
-          (sd->imf, EINA_FALSE);
+          (sd->khdl.imf, EINA_FALSE);
         ecore_imf_context_autocapital_type_set
-          (sd->imf, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
+          (sd->khdl.imf, ECORE_IMF_AUTOCAPITAL_TYPE_NONE);
         ecore_imf_context_input_panel_layout_set
-          (sd->imf, ECORE_IMF_INPUT_PANEL_LAYOUT_TERMINAL);
+          (sd->khdl.imf, ECORE_IMF_INPUT_PANEL_LAYOUT_TERMINAL);
         ecore_imf_context_input_mode_set
-          (sd->imf, ECORE_IMF_INPUT_MODE_FULL);
+          (sd->khdl.imf, ECORE_IMF_INPUT_MODE_FULL);
         ecore_imf_context_input_panel_language_set
-          (sd->imf, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
+          (sd->khdl.imf, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
         ecore_imf_context_input_panel_return_key_type_set
-          (sd->imf, ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT);
+          (sd->khdl.imf, ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT);
 imf_done:
-        if (sd->imf) DBG("Ecore IMF Setup");
+        if (sd->khdl.imf) DBG("Ecore IMF Setup");
         else WRN(_("Ecore IMF failed"));
      }
    terms = eina_list_append(terms, obj);
@@ -4655,11 +4342,11 @@ _smart_del(Evas_Object *obj)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    terms = eina_list_remove(terms, obj);
-   if (sd->imf)
+   if (sd->khdl.imf)
      {
         ecore_imf_context_event_callback_del
-          (sd->imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
-        ecore_imf_context_del(sd->imf);
+          (sd->khdl.imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
+        ecore_imf_context_del(sd->khdl.imf);
      }
    if (sd->cursor.obj) evas_object_del(sd->cursor.obj);
    if (sd->event) evas_object_del(sd->event);
@@ -4684,7 +4371,7 @@ _smart_del(Evas_Object *obj)
         evas_object_del(o);
      }
    if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);
-   _compose_seq_reset(sd);
+   keyin_compose_seq_reset(&sd->khdl);
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
    EINA_LIST_FREE(sd->cur_chids, chid) eina_stringshare_del(chid);
@@ -4700,7 +4387,7 @@ _smart_del(Evas_Object *obj)
    sd->delayed_size_timer = NULL;
    sd->font.name = NULL;
    sd->pty = NULL;
-   sd->imf = NULL;
+   sd->khdl.imf = NULL;
    sd->win = NULL;
    sd->glayer = NULL;
    ecore_imf_shutdown();

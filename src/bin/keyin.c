@@ -1,5 +1,11 @@
 #include <Elementary.h>
+#include <Ecore_Input.h>
+#include <Ecore_IMF.h>
+#include <Ecore_IMF_Evas.h>
+#include "private.h"
 #include "termpty.h"
+#include "termio.h"
+#include "termcmd.h"
 #include "keyin.h"
 
 typedef struct _Keyout Keyout;
@@ -11,6 +17,8 @@ struct _Keyout
    int         inlen;
    int         outlen;
 };
+
+
 
 #define KEY(in, out) {in, out, sizeof(in) - 1, sizeof(out) - 1}
 
@@ -399,7 +407,107 @@ _key_try(Termpty *ty, const Keyout *map, const Evas_Event_Key_Down *ev)
 }
 
 void
-keyin_handle(Termpty *ty, const Evas_Event_Key_Down *ev,
+keyin_compose_seq_reset(Keys_Handler *khdl)
+{
+   char *str;
+
+   EINA_LIST_FREE(khdl->seq, str) eina_stringshare_del(str);
+   khdl->composing = EINA_FALSE;
+}
+
+static Eina_Bool
+_handle_alt_ctrl(const char *keyname, Evas_Object *term)
+{
+   if (!strcmp(keyname, "equal"))
+     termcmd_do(term, NULL, NULL, "f+");
+   else if (!strcmp(keyname, "minus"))
+     termcmd_do(term, NULL, NULL, "f-");
+   else if (!strcmp(keyname, "0"))
+     termcmd_do(term, NULL, NULL, "f");
+   else if (!strcmp(keyname, "9"))
+     termcmd_do(term, NULL, NULL, "fb");
+   else
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_handle_shift(const Evas_Event_Key_Down *ev, Termpty *ty)
+{
+   if (!strcmp(ev->key, "Prior"))
+     {
+        if (!ty->altbuf)
+          {
+             termio_scroll_delta(ty->obj, 1, 1);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   else if (!strcmp(ev->key, "Next"))
+     {
+        if (!ty->altbuf)
+          {
+             termio_scroll_delta(ty->obj, -1, 1);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   else if (!strcmp(ev->key, "Up"))
+     {
+        if (!ty->altbuf)
+          {
+             termio_scroll_delta(ty->obj, 1, 0);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   else if (!strcmp(ev->key, "Down"))
+     {
+        if (!ty->altbuf)
+          {
+             termio_scroll_delta(ty->obj, -1, 0);
+             return EINA_TRUE;
+          }
+        return EINA_FALSE;
+     }
+   else if (!strcmp(ev->key, "Insert"))
+     {
+        /*XXX CTRL*/
+        if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+          termio_paste_selection(ty->obj, ELM_SEL_TYPE_CLIPBOARD);
+        else
+          termio_paste_selection(ty->obj, ELM_SEL_TYPE_PRIMARY);
+     }
+   else if (!strcmp(ev->key, "KP_Add"))
+     {
+        Config *config = termpty_config_get(ty);
+
+        if (config) termio_font_size_set(ty->obj, config->font.size + 1);
+     }
+   else if (!strcmp(ev->key, "KP_Subtract"))
+     {
+        Config *config = termpty_config_get(ty);
+
+        if (config) termio_font_size_set(ty->obj, config->font.size - 1);
+     }
+   else if (!strcmp(ev->key, "KP_Multiply"))
+     {
+        Config *config = termpty_config_get(ty);
+
+        if (config) termio_font_size_set(ty->obj, 10);
+     }
+   else if (!strcmp(ev->key, "KP_Divide"))
+     termio_take_selection(ty->obj, ELM_SEL_TYPE_CLIPBOARD);
+   else
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+
+static void
+_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
              int alt, int shift, int ctrl)
 {
    if (!alt)
@@ -511,5 +619,261 @@ keyin_handle(Termpty *ty, const Evas_Event_Key_Down *ev,
                termpty_write(ty, "\033", 1);
           }
         termpty_write(ty, ev->string, strlen(ev->string));
+     }
+}
+
+Eina_Bool
+keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
+             int alt, int shift, int ctrl)
+{
+   if ((!alt) && (ctrl) && (!shift))
+     {
+        if (!strcmp(ev->key, "Prior"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "prev", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "Next"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "next", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "1"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,1", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "2"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,2", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "3"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,3", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "4"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,4", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "5"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,5", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "6"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,6", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "7"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,7", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "8"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,8", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "9"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,9", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "0"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "tab,0", NULL);
+             return EINA_TRUE;
+          }
+     }
+   if ((!alt) && (ctrl) && (shift))
+     {
+        if (!strcmp(ev->key, "Prior"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "split,h", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "Next"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "split,v", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcasecmp(ev->key, "t"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "new", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->key, "Home"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "select", NULL);
+             return EINA_TRUE;
+          }
+        else if (!strcasecmp(ev->key, "c"))
+          {
+             keyin_compose_seq_reset(khdl);
+             termio_take_selection(ty->obj, ELM_SEL_TYPE_CLIPBOARD);
+             return EINA_TRUE;
+          }
+        else if (!strcasecmp(ev->key, "v"))
+          {
+             keyin_compose_seq_reset(khdl);
+             termio_paste_selection(ty->obj, ELM_SEL_TYPE_CLIPBOARD);
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->keyname, "h"))
+          {
+             term_miniview_toggle(termio_term_get(ty->obj));
+             return EINA_TRUE;
+          }
+     }
+   if ((alt) && (!shift) && (!ctrl))
+     {
+        if (!strcmp(ev->key, "Home"))
+          {
+             keyin_compose_seq_reset(khdl);
+             evas_object_smart_callback_call(ty->obj, "cmdbox", NULL);
+             return EINA_TRUE;
+          }
+     }
+   if ((alt) && (ctrl) && (!shift))
+     {
+        if (_handle_alt_ctrl(ev->key, ty->obj))
+          {
+             keyin_compose_seq_reset(khdl);
+             return EINA_TRUE;
+          }
+     }
+   if (shift)
+     {
+        if (_handle_shift(ev, ty))
+          {
+             keyin_compose_seq_reset(khdl);
+             return EINA_TRUE;
+          }
+     }
+
+
+   /* actions  => return Eina_True */
+
+   /* composing */
+   if (khdl->imf)
+     {
+        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
+        // and jed (alt+shift+5 for search/replace for example)
+        // Don't filter modifiers alt, is used by shells
+        if ((!alt) && (!ctrl))
+          {
+             Ecore_IMF_Event_Key_Down imf_ev;
+
+             ecore_imf_evas_event_key_down_wrap((Evas_Event_Key_Down*)ev, &imf_ev);
+             if (!khdl->composing)
+               {
+                  if (ecore_imf_context_filter_event
+                      (khdl->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
+                    goto end;
+               }
+          }
+     }
+
+   // if term app asked for kbd lock - dont handle here
+   if (ty->state.kbd_lock) return EINA_TRUE;
+   // if app asked us to not do autorepeat - ignore press if is it is the same
+   // timestamp as last one
+   if ((ty->state.no_autorepeat) &&
+       (ev->timestamp == khdl->last_keyup)) return EINA_TRUE;
+   if (!khdl->composing)
+     {
+        Ecore_Compose_State state;
+        char *compres = NULL;
+
+        keyin_compose_seq_reset(khdl);
+        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
+        state = ecore_compose_get(khdl->seq, &compres);
+        if (state == ECORE_COMPOSE_MIDDLE) khdl->composing = EINA_TRUE;
+        else khdl->composing = EINA_FALSE;
+        if (!khdl->composing) keyin_compose_seq_reset(khdl);
+        else goto end;
+     }
+   else
+     {
+        Ecore_Compose_State state;
+        char *compres = NULL;
+
+        if (key_is_modifier(ev->key)) goto end;
+        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
+        state = ecore_compose_get(khdl->seq, &compres);
+        if (state == ECORE_COMPOSE_NONE) keyin_compose_seq_reset(khdl);
+        else if (state == ECORE_COMPOSE_DONE)
+          {
+             keyin_compose_seq_reset(khdl);
+             if (compres)
+               {
+                  termpty_write(ty, compres, strlen(compres));
+                  free(compres);
+                  compres = NULL;
+               }
+             goto end;
+          }
+        else goto end;
+     }
+
+
+   _handle_key_to_pty(ty, ev, alt, shift, ctrl);
+
+
+end:
+   return EINA_FALSE;
+}
+
+Eina_Bool
+key_is_modifier(const char *key)
+{
+#define STATIC_STR_EQUAL(STR) (!strncmp(key, STR, strlen(STR)))
+   if ((key != NULL) && (
+       STATIC_STR_EQUAL("Shift") ||
+       STATIC_STR_EQUAL("Control") ||
+       STATIC_STR_EQUAL("Alt") ||
+       STATIC_STR_EQUAL("Meta") ||
+       STATIC_STR_EQUAL("Super") ||
+       STATIC_STR_EQUAL("Hyper") ||
+       STATIC_STR_EQUAL("Scroll_Lock") ||
+       STATIC_STR_EQUAL("Num_Lock") ||
+       STATIC_STR_EQUAL("ISO_Level3_Shift") ||
+       STATIC_STR_EQUAL("Caps_Lock")))
+     return EINA_TRUE;
+#undef STATIC_STR_EQUAL
+   return EINA_FALSE;
+}
+
+void
+keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev)
+{
+   khdl->last_keyup = ev->timestamp;
+   if (khdl->imf)
+     {
+        Ecore_IMF_Event_Key_Up imf_ev;
+        ecore_imf_evas_event_key_up_wrap(ev, &imf_ev);
+        if (ecore_imf_context_filter_event
+            (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev))
+          return;
      }
 }
