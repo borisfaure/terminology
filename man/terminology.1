@@ -1,5 +1,5 @@
 .\" Manpage for Terminology
-.TH man 1 "09 August 2014" "0.7" "Terminology man page"
+.TH man 1 "23 August 2014" "0.7" "Terminology man page"
 .SH NAME
 Terminology \- Terminal Emulator written with EFL (Enlightenment Foundation Libraries).
 .SH SYNOPSIS
@@ -188,6 +188,14 @@ Scroll terminology one page up
 Scroll terminology one page down
 .
 .TP
+.B Shift+Up
+Scroll terminology one line up
+.
+.TP
+.B Shift+Down
+Scroll terminology one line down
+.
+.TP
 .B Shift+Insert
 Paste Clipboard (ctrl+v/c) selection
 .
@@ -205,7 +213,7 @@ Font size down by one unit.
 .
 .TP
 .B Shift+Keypad\-Multiply
-Reset font size to 10.
+Reset font size.
 .
 .TP
 .B Shift+Keypad\-Divide
@@ -218,6 +226,10 @@ Switch focus to previous terminal inside a window (when using splits).
 .TP
 .B Ctrl+PgDn
 Switch focus to next terminal inside a window (when using splits).
+.
+.TP
+.B Ctrl+Shift+h
+Toggle displaying the miniview of the history.
 .
 .TP
 .B Ctrl+Shift+t
@@ -244,6 +256,10 @@ Enter command mode (enter commands to control terminology itself)
 Paste primary selection.
 .
 .TP
+.B Alt+w
+Copy selection to primary.
+.
+.TP
 .B Ctrl+Shift+c
 Copy current selection to clipboard.
 .
@@ -256,8 +272,20 @@ Paste current clipboard selection.
 Switch to terminal tab 1 through 10
 .
 .TP
-.B Ctrl+Shift+h
-Toggle displaying the miniview of the history.
+.B Ctrl+Alt+Equal
+Increase font size. Note that it works on scalable fonts only.
+.
+.TP
+.B Ctrl+Alt+Minus
+Decrease font size. Note that it works on scalable fonts only.
+.
+.TP
+.B Ctrl+Alt+0
+Reset font to default setting saved in config.
+.
+.TP
+.B Ctrl+Alt+9
+Display big font size (10x20 bitmap, or size 20 with scalable).
 
 .SH MOUSE CONTROLS
 .

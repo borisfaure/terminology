@@ -34,26 +34,34 @@ Note: to make terminology work with input methods in general you need:
 export ECORE_IMF_MODULE="xim"
 export XMODIFIERS="@im=none"
 
-Special key controls:
+Default key controls:
 
 Shift+PgUp = Scroll 1 page up
 Shift+PgDn = Scroll 1 page down
+Shift+Up = Scroll 1 line up
+Shift+Down = Scroll 1 line down
 Shift+Insert = Paste Clipboard (ctrl+v/c) selection
 Shift+Ctrl+Insert = Paste Primary (highlight) selection
 Shift+Keypad-Plus = Font size up 1
 Shift+Keypad-Minus = Font size down 1
-Shift+Keypad-Multiply = Reset font size to 10
+Shift+Keypad-Multiply = Reset font size
 Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
 Ctrl+PgUp = switch focus to previous terminal inside a window
 Ctrl+PgDn = switch focus to next terminal inside a window
 Ctrl+Shift+t = create new terminal on top of current inside window (tabs)
+Ctrl+Shift+h = toggle displaying the miniview of the history
 Ctrl+Shift+Home = bring up "tab" switcher
 Ctrl+Shift+PgUp = split terminal horizontally (1 term above the other)
 Ctrl+Shift+PgDn = split terminal vertically (1 term to the left of the other)
-Alt+Home = Enter command mode (enter commands to control terminology itself)
-Alt+Return = paste primary selection
 Ctrl+Shift+c = copy current selection to clipboard
 Ctrl+Shift+v = paste current clipboard selection
+Alt+Home = Enter command mode (enter commands to control terminology itself)
+Alt+Return = Paste primary selection
+Alt+w = Copy selection to primary
+Ctrl+Alt+Equal = Font size up 1
+Ctrl+Alt+Minus = Font size down 1
+Ctrl+Alt+0 = Reset font size
+Ctrl+Alt+9 = Big font size
 Ctrl+1 = switch to terminal tab 1
 Ctrl+2 = switch to terminal tab 2
 Ctrl+3 = switch to terminal tab 3
@@ -64,7 +72,6 @@ Ctrl+7 = switch to terminal tab 7
 Ctrl+8 = switch to terminal tab 8
 Ctrl+9 = switch to terminal tab 9
 Ctrl+0 = switch to terminal tab 10
-Ctrl+Shift+h = toggle displaying the miniview of the history
 
 Command mode commands currently understood:
 
