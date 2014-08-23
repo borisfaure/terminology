@@ -18,6 +18,8 @@ struct _Keyout
    int         outlen;
 };
 
+static Eina_Hash *_key_bindings = NULL;
+
 
 
 #define KEY(in, out) {in, out, sizeof(in) - 1, sizeof(out) - 1}
@@ -622,19 +624,43 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      }
 }
 
+static Key_Binding *
+key_binding_lookup(const Evas_Event_Key_Down *ev,
+                   Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift)
+{
+   Key_Binding *kb;
+   size_t len = strlen(ev->keyname);
+
+   if (len > UINT16_MAX) return NULL;
+
+   kb = alloca(sizeof(Key_Binding) + len + 1);
+   if (!kb) return NULL;
+   kb->ctrl = ctrl;
+   kb->alt = alt;
+   kb->shift = shift;
+   kb->len = len;
+   strncpy(kb->keyname, ev->keyname, kb->len + 1);
+
+   return eina_hash_find(_key_bindings, kb);
+}
+
 Eina_Bool
 keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-             int alt, int shift, int ctrl)
+             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift)
 {
+   Key_Binding *kb;
+
+   kb = key_binding_lookup(ev, ctrl, alt, shift);
+   if (kb)
+     {
+        if (kb->cb(ty->obj))
+          goto end;
+     }
+
+
    if ((!alt) && (ctrl) && (!shift))
      {
-        if (!strcmp(ev->key, "Prior"))
-          {
-             keyin_compose_seq_reset(khdl);
-             evas_object_smart_callback_call(ty->obj, "prev", NULL);
-             return EINA_TRUE;
-          }
-        else if (!strcmp(ev->key, "Next"))
+        if (!strcmp(ev->key, "Next"))
           {
              keyin_compose_seq_reset(khdl);
              evas_object_smart_callback_call(ty->obj, "next", NULL);
@@ -876,4 +902,102 @@ keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev)
             (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev))
           return;
      }
+}
+
+static Eina_Bool
+cb_term_prev(Evas_Object *term)
+{
+   evas_object_smart_callback_call(term, "prev", NULL);
+   return EINA_TRUE;
+}
+
+static unsigned int
+key_binding_key_length(EINA_UNUSED const void *key)
+{
+   return 0;
+}
+
+static int
+key_binding_key_cmp(const void *key1, int key1_length,
+                    const void *key2, int key2_length)
+{
+   const Key_Binding *kb1 = key1,
+                     *kb2 = key2;
+
+   if (key1_length < key2_length)
+     return -1;
+   else if (key1_length > key2_length)
+     return 1;
+   else
+     {
+        unsigned int m1 = (kb1->ctrl << 2) | (kb1->alt << 1) | kb1->shift,
+                     m2 = (kb2->ctrl << 2) | (kb2->alt << 1) | kb2->shift;
+        if (m1 < m2)
+          return -1;
+        else if (m1 > m2)
+          return 1;
+        else
+          return strncmp(kb1->keyname, kb2->keyname, kb1->len);
+     }
+}
+
+static int
+key_binding_key_hash(const void *key, int key_length)
+{
+   const Key_Binding *kb = key;
+   int hash;
+
+   hash = eina_hash_djb2(key, key_length);
+   hash &= 0x1fffffff;
+   hash |= (kb->ctrl << 31) | (kb->alt << 30) | (kb->shift << 29);
+   return hash;
+}
+
+
+Key_Binding *
+key_binding_new(const char *keyname,
+                Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                Key_Binding_Cb cb)
+{
+   Key_Binding *kb;
+   size_t len = strlen(keyname);
+
+   if (len > UINT16_MAX) return NULL;
+
+   kb = malloc(sizeof(Key_Binding) + len + 1);
+   if (!kb) return NULL;
+   kb->ctrl = ctrl;
+   kb->alt = alt;
+   kb->shift = shift;
+   kb->len = len;
+   strncpy(kb->keyname, keyname, kb->len + 1);
+   kb->cb = cb;
+
+   return kb;
+}
+
+int key_bindings_init(void)
+{
+   Key_Binding *kb;
+
+   _key_bindings = eina_hash_new(key_binding_key_length,
+                                 key_binding_key_cmp,
+                                 key_binding_key_hash,
+                                 free,
+                                 5);
+   if (!_key_bindings) return -1;
+
+   kb = key_binding_new("Prior", 1, 0, 0, cb_term_prev);
+   if (!kb) return -1;
+   if (!eina_hash_direct_add(_key_bindings, kb, kb)) return -1;
+
+
+   return 0;
+}
+
+void key_bindings_shutdown(void)
+{
+   if (_key_bindings)
+     eina_hash_free(_key_bindings);
+   _key_bindings = NULL;
 }

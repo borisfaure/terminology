@@ -1850,9 +1850,9 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 {
    const Evas_Event_Key_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    int alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    int shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
-   int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(ev->key);
@@ -1861,7 +1861,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
      return;
 
 
-   if (keyin_handle(&sd->khdl, sd->pty, ev, alt, shift, ctrl))
+   if (keyin_handle(&sd->khdl, sd->pty, ev, ctrl, alt, shift))
      goto end;
 
    if (sd->jump_on_keypress)

@@ -19,6 +19,7 @@
 #include "dbus.h"
 #include "app_server.h"
 #include "miniview.h"
+#include "keyin.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"
@@ -2977,6 +2978,12 @@ elm_main(int argc, char **argv)
    elm_app_info_set(elm_main, "terminology", "themes/default.edj");
 
    config_init();
+   if (key_bindings_init() < 0)
+     {
+        ERR(_("Could not Initialize key bindings."));
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    main_config = config_load("config");
 
@@ -3373,6 +3380,7 @@ remote:
 
 
    config_del(main_config);
+   key_bindings_shutdown();
    config_shutdown();
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
