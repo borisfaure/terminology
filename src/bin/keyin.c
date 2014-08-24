@@ -551,11 +551,11 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
 }
 
 static Key_Binding *
-key_binding_lookup(const Evas_Event_Key_Down *ev,
+key_binding_lookup(const char *keyname,
                    Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift)
 {
    Key_Binding *kb;
-   size_t len = strlen(ev->keyname);
+   size_t len = strlen(keyname);
 
    if (len > UINT16_MAX) return NULL;
 
@@ -566,7 +566,7 @@ key_binding_lookup(const Evas_Event_Key_Down *ev,
    kb->shift = shift;
    kb->len = len;
    kb->keyname = alloca(sizeof(char) * len + 1);
-   strncpy((char *)kb->keyname, ev->keyname, kb->len + 1);
+   strncpy((char *)kb->keyname, keyname, kb->len + 1);
 
    return eina_hash_find(_key_bindings, kb);
 }
@@ -577,7 +577,7 @@ keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
 {
    Key_Binding *kb;
 
-   kb = key_binding_lookup(ev, ctrl, alt, shift);
+   kb = key_binding_lookup(ev->keyname, ctrl, alt, shift);
    if (kb)
      {
         if (kb->cb(ty->obj))
@@ -1006,9 +1006,45 @@ _key_binding_free(void *data)
    free(kb);
 }
 
-int key_bindings_load(Config *config)
+int
+keyin_add_config(Config_Keys *key)
+{
+   Shortcut_Action *action = _actions;
+
+   while (action->action && strcmp(action->action, key->cb))
+     action++;
+
+   if (action->action)
+     {
+        Key_Binding *kb;
+        kb = _key_binding_new(key->keyname, key->ctrl, key->alt,
+                              key->shift, action->cb);
+        if (!kb) return -1;
+        if (eina_hash_find(_key_bindings, kb) ||
+            (!eina_hash_direct_add(_key_bindings, kb, kb)))
+          {
+             _key_binding_free(kb);
+             return -1;
+          }
+        return 0;
+     }
+   return -1;
+}
+
+int
+keyin_remove_config(Config_Keys *key)
 {
    Key_Binding *kb;
+
+
+   kb = key_binding_lookup(key->keyname, key->ctrl, key->alt, key->shift);
+   if (kb)
+     eina_hash_del_by_key(_key_bindings, kb);
+   return 0;
+}
+
+int key_bindings_load(Config *config)
+{
    Shortcut_Action *action = _actions;
    Config_Keys *key;
    Eina_List *l;
@@ -1036,17 +1072,9 @@ int key_bindings_load(Config *config)
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {
-        action = _actions;
-        while (action->action && strcmp(action->action, key->cb))
-          action++;
-
-        if (action->action)
-          {
-             kb = _key_binding_new(key->keyname, key->ctrl, key->alt,
-                                   key->shift, action->cb);
-             if (!kb) return -1;
-             if (!eina_hash_direct_add(_key_bindings, kb, kb)) return -1;
-          }
+        int res = keyin_add_config(key);
+        if (res != 0)
+          return res;
      }
 
    return 0;

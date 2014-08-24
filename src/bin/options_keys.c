@@ -4,62 +4,350 @@
 #include "config.h"
 #include "termio.h"
 #include "options.h"
-#include "options_wallpaper.h"
+#include "options_keys.h"
+#include "keyin.h"
+
+/*XXX: can have only one widget at a time… */
+static Config *_config;
+static Evas_Object *_fr;
+static Evas_Object *_rect, *_bg, *_lbl;
+
+static void _hover_del(Evas_Object *o);
+
+static void
+_shortcut_delete(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Evas_Object *hs, *bx;
+   Config_Keys *cfg_key;
+   Evas_Coord w, min_w, min_h;
+
+   hs = data;
+   bx = evas_object_data_get(hs, "bx");
+   cfg_key = evas_object_data_get(hs, "cfg");
+
+   _config->keys = eina_list_remove(_config->keys, cfg_key);
+   evas_object_size_hint_min_get(hs, &w, NULL);
+   evas_object_size_hint_min_get(bx, &min_w, &min_h);
+   min_w -= w;
+   evas_object_size_hint_min_set(bx, min_w, min_h);
+
+   evas_object_del(hs);
+   keyin_remove_config(cfg_key);
+
+   eina_stringshare_del(cfg_key->keyname);
+   eina_stringshare_del(cfg_key->cb);
+   free(cfg_key);
+
+   config_save(_config, NULL);
+}
+
+static Evas_Object *
+_shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
+{
+   const char *txt;
+   Evas_Object *hs;
+
+   txt = eina_stringshare_printf("%s%s%s%s",
+                                 key->ctrl ? _("Ctrl+") : "",
+                                 key->alt ? _("Alt+") : "",
+                                 key->shift ? _("Shift+") : "",
+                                 key->keyname);
+   hs = elm_hoversel_add(bx);
+   elm_hoversel_hover_parent_set(hs, _fr);
+
+   evas_object_data_set(hs, "bx", bx);
+   evas_object_data_set(hs, "cfg", key);
+   elm_layout_text_set(hs, NULL, txt);
+
+   elm_hoversel_item_add(hs, _("Delete"), "delete", ELM_ICON_STANDARD,
+                         _shortcut_delete, hs);
+
+   eina_stringshare_del(txt);
+   return hs;
+}
+
+static void
+_cb_key_up(void *data, Evas *e EINA_UNUSED,
+           Evas_Object *obj, void *event)
+{
+   Evas_Event_Key_Up *ev = event;
+   int ctrl, alt, shift, res;
+   Config_Keys *cfg_key;
+   Shortcut_Action *action;
+   Evas_Object *bx = data;
+
+   if (key_is_modifier(ev->keyname))
+     return;
+
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+
+   _hover_del(obj);
+
+   action = evas_object_data_get(bx, "action");
+
+   cfg_key = calloc(1, sizeof(Config_Keys));
+   if (!cfg_key)
+     return;
+   cfg_key->keyname = eina_stringshare_add(ev->keyname);
+   cfg_key->ctrl = ctrl;
+   cfg_key->alt = alt;
+   cfg_key->shift = shift;
+   cfg_key->cb = eina_stringshare_add(action->action);
+
+   res = keyin_add_config(cfg_key);
+   if (res == 0)
+     {
+        Evas_Object *bt, *last;
+        Evas_Coord w, h, min_w, min_h;
+
+        last = evas_object_data_get(bx, "last");
+        _config->keys = eina_list_append(_config->keys, cfg_key);
+        bt = _shortcut_button_add(bx, cfg_key);
+        evas_object_show(bt);
+        evas_object_size_hint_min_get(bt, &w, &h);
+        evas_object_size_hint_min_get(bx, &min_w, &min_h);
+        min_w += w;
+        if (h > min_h) min_h = h;
+        evas_object_size_hint_min_set(bx, min_w, min_h);
+        elm_box_pack_before(bx, bt, last);
+
+        config_save(_config, NULL);
+     }
+   else
+     {
+        eina_stringshare_del(cfg_key->keyname);
+        eina_stringshare_del(cfg_key->cb);
+        free(cfg_key);
+     }
+}
+
+static void
+_cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
+               Evas_Object *obj, void *event EINA_UNUSED)
+{
+   _hover_del(obj);
+}
+
+
+static void
+_hover_sizing_eval(void)
+{
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, min_w, min_h, new_x, new_y;
+   evas_object_geometry_get(_fr, &x, &y, &w, &h);
+   evas_object_geometry_set(_rect, x, y, w, h);
+   evas_object_size_hint_min_get(_lbl, &min_w, &min_h);
+   new_x = x + w/2 - min_w/2;
+   new_y = y + h/2 - min_h/2;
+   evas_object_geometry_set(_lbl, new_x, new_y, min_w, min_h);
+   evas_object_geometry_set(_bg, new_x - 1, new_y - 1, min_w + 2, min_h + 2);
+}
+static void
+_parent_move_cb(void *data EINA_UNUSED,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   _hover_sizing_eval();
+}
+static void
+_parent_resize_cb(void *data EINA_UNUSED,
+                  Evas *e EINA_UNUSED,
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   _hover_sizing_eval();
+}
+
+static void
+_parent_hide_cb(void *data,
+                Evas *e EINA_UNUSED,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   _hover_del(data);
+}
+static void
+_parent_del_cb(void *data,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info EINA_UNUSED)
+{
+   _hover_del(data);
+}
+
+static void
+_hover_del(Evas_Object *o)
+{
+   elm_object_focus_set(o, EINA_FALSE);
+   evas_object_event_callback_del(o, EVAS_CALLBACK_KEY_UP,
+                                  _cb_key_up);
+   evas_object_event_callback_del(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_mouse_down);
+   evas_object_event_callback_del(_fr, EVAS_CALLBACK_MOVE,
+                                  _parent_move_cb);
+   evas_object_event_callback_del(_fr, EVAS_CALLBACK_RESIZE,
+                                  _parent_resize_cb);
+   evas_object_event_callback_del(_fr, EVAS_CALLBACK_HIDE,
+                                  _parent_hide_cb);
+   evas_object_event_callback_del(_fr, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb);
+   evas_object_del(o);
+   _rect = NULL;
+   evas_object_del(_bg);
+   _bg = NULL;
+   evas_object_del(_lbl);
+   _lbl = NULL;
+}
+
+static void
+on_shortcut_add(void *data,
+                Evas_Object *obj,
+                void *event_info EINA_UNUSED)
+{
+   Evas_Object *o, *bx;
+
+   bx = data;
+
+   _rect = o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_repeat_events_set(o, EINA_TRUE);
+   evas_object_color_set(o, 0, 0, 0, 127);
+   elm_object_focus_set(o, EINA_TRUE);
+   evas_object_show(o);
+
+   _bg = elm_bg_add(obj);
+   evas_object_show(_bg);
+   _lbl = elm_label_add(obj);
+   elm_layout_text_set(_lbl, NULL, _("Please press key sequence"));
+   evas_object_show(_lbl);
+
+   _hover_sizing_eval();
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_UP,
+                                  _cb_key_up, bx);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_mouse_down, o);
+   evas_object_event_callback_add(_fr, EVAS_CALLBACK_MOVE,
+                                  _parent_move_cb, o);
+   evas_object_event_callback_add(_fr, EVAS_CALLBACK_RESIZE,
+                                  _parent_resize_cb, o);
+   evas_object_event_callback_add(_fr, EVAS_CALLBACK_HIDE,
+                                  _parent_hide_cb, o);
+   evas_object_event_callback_add(_fr, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, o);
+}
+
+static Evas_Object *
+gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
+{
+   Evas_Coord min_w = 0, w = 0, min_h = 0, h = 0;
+   const Shortcut_Action *action = data;
+   Evas_Object *bx, *bt, *lbl;
+   Config_Keys *key;
+   Eina_List *l;
+
+   bx = elm_box_add(obj);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_homogeneous_set(bx, EINA_FALSE);
+   evas_object_size_hint_align_set(bx, 0, 0);
+
+   lbl = elm_label_add(obj);
+   elm_layout_text_set(lbl, NULL, action->description);
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+   evas_object_size_hint_min_get(lbl, &w, &h);
+   evas_object_size_hint_min_get(lbl, &w, &h);
+   min_w += w;
+   if (h > min_h) min_h = h;
+
+   // TODO: have a better data structure
+   EINA_LIST_FOREACH(_config->keys, l, key)
+     {
+        if (!strcmp(key->cb, action->action))
+          {
+             bt = _shortcut_button_add(bx, key);
+             evas_object_show(bt);
+             evas_object_size_hint_min_get(bt, &w, &h);
+             min_w += w;
+             if (h > min_h) min_h = h;
+             elm_box_pack_end(bx, bt);
+          }
+     }
+
+   bt = elm_button_add(obj);
+   evas_object_smart_callback_add(bt, "clicked", on_shortcut_add, bx);
+   evas_object_propagate_events_set(bt, EINA_FALSE);
+   elm_layout_text_set(bt, NULL, "+");
+   evas_object_size_hint_min_get(bt, &w, &h);
+   min_w += w;
+   if (h > min_h) min_h = h;
+   evas_object_show(bt);
+   elm_box_pack_end(bx, bt);
+
+   evas_object_data_set(bx, "last", bt);
+   evas_object_data_set(bx, "action", action);
+
+   evas_object_show(bx);
+   evas_object_size_hint_min_set(bx, min_w, min_h);
+
+   return bx;
+}
+
+
+
 
 void
-options_keys(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
+options_keys(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *fr, *li, *lbl;
+   Evas_Object *o, *gl, *bx;
+   const Shortcut_Action *action;
+   Elm_Genlist_Item_Class *itc;
+   //Elm_Object_Item *gli;
 
-   fr = o = elm_frame_add(opbox);
+   _config = termio_config_get(term);
+
+   _fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Key Bindings"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 
-   li = elm_list_add(o);
-   elm_list_mode_set(li, ELM_LIST_LIMIT);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(fr, li);
+   bx = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, 0.0, 0.0);
+   elm_object_content_set(_fr, bx);
+   evas_object_show(bx);
 
-#define KB(_action, _keys) do {                               \
-   lbl = elm_label_add(li);                                   \
-   elm_object_text_set(lbl, _keys);                           \
-   elm_list_item_append(li, _action, NULL, lbl, NULL, NULL);  \
-} while (0)
+   gl = elm_genlist_add(opbox);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
+   elm_genlist_mode_set(gl, ELM_LIST_SCROLL);
+   elm_genlist_homogeneous_set(gl, EINA_FALSE);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
 
-   KB(_("Scroll one page up"), "Shift + PgUp");
-   KB(_("Scroll one page down"), "Shift + PgDn");
-   KB(_("Scroll one line up"), "Shift + Up");
-   KB(_("Scroll one line down"), "Shift + Down");
-   KB(_("Paste Clipboard (ctrl+v/c) selection"), "Shift + Insert");
-   KB(_("Paste Clipboard (ctrl+v/c) selection"), "Ctrl + Shift + v");
-   KB(_("Paste Primary (highlight) selection"), "Shift + Ctrl + Insert");
-   KB(_("Paste Primary (highlight) selection"), "Alt + Return");
-   KB(_("Copy current selection to clipboard"), "Ctrl + Shift + c");
-   KB(_("Copy current selection to clipboard"), "Shift+Keypad-Divide");
-   KB(_("Font size up 1"), "Shift+Keypad-Plus");
-   KB(_("Font size down 1"), "Shift+Keypad-Minus");
-   KB(_("Reset font size to 10"), "Shift+Keypad-Multiply");
-   KB(_("Split horizontally (new below)"), "Ctrl + Shift + PgUp");
-   KB(_("Split vertically (new on right)"), "Ctrl + Shift + PgDn");
-   KB(_("Focus to previous terminal"), "Ctrl + PgUp");
-   KB(_("Focus to next terminal"), "Ctrl + PgDn");
-   KB(_("Create new \"tab\""), "Ctrl + Shift + t");
-   KB(_("Bring up \"tab\" switcher"), "Ctrl + Shift + Home");
-   KB(_("Switch to terminal tab 1"), "Ctrl + 1");
-   KB(_("Switch to terminal tab 2"), "Ctrl + 2");
-   KB(_("Switch to terminal tab 3"), "Ctrl + 3");
-   KB(_("Switch to terminal tab 4"), "Ctrl + 4");
-   KB(_("Switch to terminal tab 5"), "Ctrl + 5");
-   KB(_("Switch to terminal tab 6"), "Ctrl + 6");
-   KB(_("Switch to terminal tab 7"), "Ctrl + 7");
-   KB(_("Switch to terminal tab 8"), "Ctrl + 8");
-   KB(_("Switch to terminal tab 9"), "Ctrl + 9");
-   KB(_("Switch to terminal tab 10"), "Ctrl + 0");
-   KB(_("Enter command mode"), "Alt + Home");
-   KB(_("Toggle miniview of the history"), "Ctrl + Shift + h");
-#undef KB
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "one_icon";
+   itc->func.text_get = NULL;
+   itc->func.content_get = gl_content_get;
+   itc->func.state_get = NULL;
+   itc->func.del = NULL;
+
+   action = shortcut_actions_get();
+   while (action->action)
+     {
+        elm_genlist_item_append(gl, itc,
+                                (void *)action/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                NULL/* func */,
+                                NULL/* func data */);
+        action++;
+     }
+
+   /* TODO: reset button ? */
 }

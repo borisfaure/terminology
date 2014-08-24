@@ -32,6 +32,8 @@ struct _Shortcut_Action
 const Shortcut_Action *shortcut_actions_get(void);
 
 int key_bindings_load(Config *config);
+int keyin_add_config(Config_Keys *cfg_key);
+int keyin_remove_config(Config_Keys *cfg_key);
 void key_bindings_shutdown(void);
 
 
