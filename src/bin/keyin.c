@@ -18,6 +18,20 @@ struct _Keyout
    int         outlen;
 };
 
+typedef struct _Key_Binding Key_Binding;
+
+struct _Key_Binding
+{
+   uint16_t ctrl  : 1;
+   uint16_t alt   : 1;
+   uint16_t shift : 1;
+
+   uint16_t len;
+
+   Key_Binding_Cb cb;
+   const char *keyname;
+};
+
 static Eina_Hash *_key_bindings = NULL;
 
 /* {{{ Keys to TTY */
@@ -545,13 +559,14 @@ key_binding_lookup(const Evas_Event_Key_Down *ev,
 
    if (len > UINT16_MAX) return NULL;
 
-   kb = alloca(sizeof(Key_Binding) + len + 1);
+   kb = alloca(sizeof(Key_Binding));
    if (!kb) return NULL;
    kb->ctrl = ctrl;
    kb->alt = alt;
    kb->shift = shift;
    kb->len = len;
-   strncpy(kb->keyname, ev->keyname, kb->len + 1);
+   kb->keyname = alloca(sizeof(char) * len + 1);
+   strncpy((char *)kb->keyname, ev->keyname, kb->len + 1);
 
    return eina_hash_find(_key_bindings, kb);
 }
@@ -867,18 +882,65 @@ cb_scroll_down_line(Evas_Object *term)
    return EINA_TRUE;
 }
 
+
+static Shortcut_Action _actions[] =
+{
+     {"one_page_up", gettext_noop("Scroll one page up"), cb_scroll_up_page},
+     {"one_page_down", gettext_noop("Scroll one page down"), cb_scroll_down_page},
+     {"one_line_up", gettext_noop("Scroll one line up"), cb_scroll_up_line},
+     {"one_line_down", gettext_noop("Scroll one line down"), cb_scroll_down_line},
+
+     {"paste_primary", gettext_noop("Paste Primary buffer (highlight)"), cb_paste_primary},
+     {"paste_clipboard", gettext_noop("Paste Clipboard buffer (ctrl+c/v)"), cb_paste_clipboard},
+     {"copy_primary", gettext_noop("Copy selection to Primary buffer"), cb_copy_primary},
+     {"copy_clipboard", gettext_noop("Copy selection to Clipboard buffer"), cb_copy_clipboard},
+
+     {"term_prev", gettext_noop("Focus to the previous terminal"), cb_term_prev},
+     {"term_next", gettext_noop("Focus to the next terminal"), cb_term_next},
+     {"split_h", gettext_noop("Split horizontally (new below)"), cb_split_h},
+     {"split_v", gettext_noop("Split vertically (new on right)"), cb_split_v},
+     {"tab_new", gettext_noop("Create a new \"tab\""), cb_tab_new},
+     {"tab_select", gettext_noop("Bring up \"tab\" switcher"), cb_tab_select},
+     {"tab_1", gettext_noop("Switch to terminal tab 1"), cb_tab_1},
+     {"tab_2", gettext_noop("Switch to terminal tab 2"), cb_tab_2},
+     {"tab_3", gettext_noop("Switch to terminal tab 3"), cb_tab_3},
+     {"tab_4", gettext_noop("Switch to terminal tab 4"), cb_tab_4},
+     {"tab_5", gettext_noop("Switch to terminal tab 5"), cb_tab_5},
+     {"tab_6", gettext_noop("Switch to terminal tab 6"), cb_tab_6},
+     {"tab_7", gettext_noop("Switch to terminal tab 7"), cb_tab_7},
+     {"tab_8", gettext_noop("Switch to terminal tab 8"), cb_tab_8},
+     {"tab_9", gettext_noop("Switch to terminal tab 9"), cb_tab_9},
+     {"tab_10", gettext_noop("Switch to terminal tab 10"), cb_tab_0},
+
+     {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},
+     {"decrease_font_size", gettext_noop("Font size down 1"), cb_decrease_font_size},
+     {"big_font_size", gettext_noop("Diplay big font size"), cb_big_font_size},
+     {"reset_font_size", gettext_noop("Reset font size"), cb_reset_font_size},
+
+     {"miniview", gettext_noop("Display the history miniview"), cb_miniview},
+     {"cmd_box", gettext_noop("Display the command box"), cb_cmd_box},
+
+     {NULL, NULL, NULL}
+};
+
+const Shortcut_Action *
+shortcut_actions_get(void)
+{
+   return _actions;
+}
+
 /* }}} */
 /* {{{ Key bindings */
 
 static unsigned int
-key_binding_key_length(EINA_UNUSED const void *key)
+_key_binding_key_length(EINA_UNUSED const void *key)
 {
    return 0;
 }
 
 static int
-key_binding_key_cmp(const void *key1, int key1_length,
-                    const void *key2, int key2_length)
+_key_binding_key_cmp(const void *key1, int key1_length,
+                     const void *key2, int key2_length)
 {
    const Key_Binding *kb1 = key1,
                      *kb2 = key2;
@@ -901,7 +963,7 @@ key_binding_key_cmp(const void *key1, int key1_length,
 }
 
 static int
-key_binding_key_hash(const void *key, int key_length)
+_key_binding_key_hash(const void *key, int key_length)
 {
    const Key_Binding *kb = key;
    int hash;
@@ -913,10 +975,10 @@ key_binding_key_hash(const void *key, int key_length)
 }
 
 
-Key_Binding *
-key_binding_new(const char *keyname,
-                Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
-                Key_Binding_Cb cb)
+static Key_Binding *
+_key_binding_new(const char *keyname,
+                 Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                 Key_Binding_Cb cb)
 {
    Key_Binding *kb;
    size_t len = strlen(keyname);
@@ -929,75 +991,64 @@ key_binding_new(const char *keyname,
    kb->alt = alt;
    kb->shift = shift;
    kb->len = len;
-   strncpy(kb->keyname, keyname, kb->len + 1);
+   kb->keyname = eina_stringshare_add(keyname);
    kb->cb = cb;
 
    return kb;
 }
 
-int key_bindings_init(void)
+static void
+_key_binding_free(void *data)
+{
+   Key_Binding *kb = data;
+   if (!kb) return;
+   eina_stringshare_del(kb->keyname);
+   free(kb);
+}
+
+int key_bindings_load(Config *config)
 {
    Key_Binding *kb;
+   Shortcut_Action *action = _actions;
+   Config_Keys *key;
+   Eina_List *l;
 
-   _key_bindings = eina_hash_new(key_binding_key_length,
-                                 key_binding_key_cmp,
-                                 key_binding_key_hash,
-                                 free,
-                                 5);
-   if (!_key_bindings) return -1;
+   if (!_key_bindings)
+     {
+#if HAVE_GETTEXT && ENABLE_NLS
+        while (action->action)
+          {
+             action->description = gettext(action->description);
+             action++;
+          }
+#endif
+        _key_bindings = eina_hash_new(_key_binding_key_length,
+                                      _key_binding_key_cmp,
+                                      _key_binding_key_hash,
+                                      _key_binding_free,
+                                      5);
+        if (!_key_bindings) return -1;
+     }
+   else
+     {
+        eina_hash_free_buckets(_key_bindings);
+     }
 
-#define ADD_KB(Name, Ctrl, Alt, Shift, Cb)           \
-   kb = key_binding_new(Name, Ctrl, Alt, Shift, Cb); \
-   if (!kb) return -1;                               \
-   if (!eina_hash_direct_add(_key_bindings, kb, kb)) return -1;
+   EINA_LIST_FOREACH(config->keys, l, key)
+     {
+        action = _actions;
+        while (action->action && strcmp(action->action, key->cb))
+          action++;
 
-   /* Ctrl- */
-   ADD_KB("Prior", 1, 0, 0, cb_term_prev);
-   ADD_KB("Next", 1, 0, 0, cb_term_next);
-   ADD_KB("0", 1, 0, 0, cb_tab_0);
-   ADD_KB("1", 1, 0, 0, cb_tab_1);
-   ADD_KB("2", 1, 0, 0, cb_tab_2);
-   ADD_KB("3", 1, 0, 0, cb_tab_3);
-   ADD_KB("4", 1, 0, 0, cb_tab_4);
-   ADD_KB("5", 1, 0, 0, cb_tab_5);
-   ADD_KB("6", 1, 0, 0, cb_tab_6);
-   ADD_KB("7", 1, 0, 0, cb_tab_7);
-   ADD_KB("8", 1, 0, 0, cb_tab_8);
-   ADD_KB("9", 1, 0, 0, cb_tab_9);
+        if (action->action)
+          {
+             kb = _key_binding_new(key->keyname, key->ctrl, key->alt,
+                                   key->shift, action->cb);
+             if (!kb) return -1;
+             if (!eina_hash_direct_add(_key_bindings, kb, kb)) return -1;
+          }
+     }
 
-   /* Alt- */
-   ADD_KB("Home", 0, 1, 0, cb_cmd_box);
-   ADD_KB("w", 0, 1, 0, cb_copy_primary);
-   ADD_KB("Return", 0, 1, 0, cb_paste_primary);
-
-   /* Ctrl-Shift- */
-   ADD_KB("Prior", 1, 0, 1, cb_split_h);
-   ADD_KB("Next", 1, 0, 1, cb_split_v);
-   ADD_KB("t", 1, 0, 1, cb_tab_new);
-   ADD_KB("Home", 1, 0, 1, cb_tab_select);
-   ADD_KB("c", 1, 0, 1, cb_copy_clipboard);
-   ADD_KB("v", 1, 0, 1, cb_paste_clipboard);
-   ADD_KB("h", 1, 0, 1, cb_miniview);
-   ADD_KB("Insert", 1, 0, 1, cb_paste_clipboard);
-
-   /* Ctrl-Alt- */
-   ADD_KB("equal", 1, 1, 0, cb_increase_font_size);
-   ADD_KB("minus", 1, 1, 0, cb_decrease_font_size);
-   ADD_KB("0", 1, 1, 0, cb_reset_font_size);
-   ADD_KB("9", 1, 1, 0, cb_big_font_size);
-
-   /* Shift- */
-   ADD_KB("Prior", 0, 0, 1, cb_scroll_up_page);
-   ADD_KB("Next", 0, 0, 1, cb_scroll_down_page);
-   ADD_KB("Up", 0, 0, 1, cb_scroll_up_line);
-   ADD_KB("Down", 0, 0, 1, cb_scroll_down_line);
-   ADD_KB("Insert", 0, 0, 1, cb_paste_primary);
-   ADD_KB("KP_Add", 0, 0, 1, cb_increase_font_size);
-   ADD_KB("KP_Subtract", 0, 0, 1, cb_decrease_font_size);
-   ADD_KB("KP_Multiply", 0, 0, 1, cb_reset_font_size);
-   ADD_KB("KP_Divide", 0, 0, 1, cb_copy_clipboard);
-
-#undef ADD_KB
    return 0;
 }
 

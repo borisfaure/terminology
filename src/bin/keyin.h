@@ -18,26 +18,20 @@ Eina_Bool keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Dow
 
 void keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev);
 
-typedef struct _Key_Binding Key_Binding;
-
 typedef Eina_Bool (*Key_Binding_Cb)(Evas_Object *term);
-struct _Key_Binding
+
+typedef struct _Shortcut_Action Shortcut_Action;
+
+struct _Shortcut_Action
 {
-   uint16_t ctrl  : 1;
-   uint16_t alt   : 1;
-   uint16_t shift : 1;
-
-   uint16_t len;
-
+   const char *action;
+   const char *description;
    Key_Binding_Cb cb;
-   char keyname[];
 };
 
-Key_Binding *
-key_binding_new(const char *keyname,
-                Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
-                Key_Binding_Cb cb);
-int key_bindings_init(void);
+const Shortcut_Action *shortcut_actions_get(void);
+
+int key_bindings_load(Config *config);
 void key_bindings_shutdown(void);
 
 

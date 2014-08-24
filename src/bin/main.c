@@ -2978,14 +2978,14 @@ elm_main(int argc, char **argv)
    elm_app_info_set(elm_main, "terminology", "themes/default.edj");
 
    config_init();
-   if (key_bindings_init() < 0)
+
+   main_config = config_load("config");
+   if (key_bindings_load(main_config) < 0)
      {
-        ERR(_("Could not Initialize key bindings."));
+        ERR(_("Could not initialize key bindings."));
         retval = EXIT_FAILURE;
         goto end;
      }
-
-   main_config = config_load("config");
 
    ipc_init();
 

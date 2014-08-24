@@ -3,7 +3,16 @@
 
 typedef struct _Config Config;
 typedef struct _Config_Color Config_Color;
+typedef struct _Config_Keys Config_Keys;
 
+struct _Config_Keys
+{
+   const char *keyname;
+   Eina_Bool ctrl;
+   Eina_Bool alt;
+   Eina_Bool shift;
+   const char *cb;
+};
 /* TODO: separate config per terminal (tab, window) and global. */
 
 struct _Config_Color
@@ -62,6 +71,7 @@ struct _Config
    Eina_Bool         colors_use;
    Config_Color      colors[(4 * 12)];
    Eina_Bool         miniview;
+   Eina_List        *keys;
 
    Eina_Bool         temporary; /* not in EET */
    const char       *config_key; /* not in EET, the key that config was loaded */

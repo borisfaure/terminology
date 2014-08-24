@@ -13,6 +13,7 @@
 
 static Eet_Data_Descriptor *edd_base = NULL;
 static Eet_Data_Descriptor *edd_color = NULL;
+static Eet_Data_Descriptor *edd_keys = NULL;
 
 static const char *
 _config_home_get(void)
@@ -24,6 +25,7 @@ void
 config_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor_Class eddkc;
    char path[PATH_MAX] = {};
 
    elm_need_efreet();
@@ -49,6 +51,22 @@ config_init(void)
      (edd_color, Config_Color, "b", b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_color, Config_Color, "a", a, EET_T_UCHAR);
+
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddkc, sizeof(eddkc), "Config_Keys", sizeof(Config_Keys));
+   edd_keys = eet_data_descriptor_stream_new(&eddkc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "keyname", keyname, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "ctrl", ctrl, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "alt", alt, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "shift", shift, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "cb", cb, EET_T_STRING);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "version", version, EET_T_INT);
@@ -136,6 +154,8 @@ config_init(void)
      (edd_base, Config, "colors", colors, edd_color);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "bell_rings", bell_rings, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_LIST
+     (edd_base, Config, "keys", keys, edd_keys);
 }
 
 void
@@ -258,6 +278,68 @@ _config_upgrade_to_v2(Config *config)
    config->version = 2;
 }
 
+static void
+_add_default_keys(Config *config)
+{
+   Config_Keys *kb;
+#define ADD_KB(Name, Ctrl, Alt, Shift, Cb)                        \
+   kb = calloc(1, sizeof(Config_Keys));                           \
+   if (!kb) return;                                               \
+   kb->keyname = eina_stringshare_add_length(Name, strlen(Name)); \
+   kb->ctrl = Ctrl;                                               \
+   kb->alt = Alt;                                                 \
+   kb->shift = Shift;                                             \
+   kb->cb = eina_stringshare_add_length(Cb, strlen(Cb));          \
+   config->keys = eina_list_append(config->keys, kb)
+
+   ADD_KB("Prior", 1, 0, 0, "term_prev");
+   ADD_KB("Next", 1, 0, 0, "term_next");
+   ADD_KB("0", 1, 0, 0, "tab_10");
+   ADD_KB("1", 1, 0, 0, "tab_1");
+   ADD_KB("2", 1, 0, 0, "tab_2");
+   ADD_KB("3", 1, 0, 0, "tab_3");
+   ADD_KB("4", 1, 0, 0, "tab_4");
+   ADD_KB("5", 1, 0, 0, "tab_5");
+   ADD_KB("6", 1, 0, 0, "tab_6");
+   ADD_KB("7", 1, 0, 0, "tab_7");
+   ADD_KB("8", 1, 0, 0, "tab_8");
+   ADD_KB("9", 1, 0, 0, "tab_9");
+
+   /* Alt- */
+   ADD_KB("Home", 0, 1, 0, "cmd_box");
+   ADD_KB("w", 0, 1, 0, "copy_primary");
+   ADD_KB("Return", 0, 1, 0, "paste_primary");
+
+   /* Ctrl-Shift- */
+   ADD_KB("Prior", 1, 0, 1, "split_h");
+   ADD_KB("Next", 1, 0, 1, "split_v");
+   ADD_KB("t", 1, 0, 1, "tab_new");
+   ADD_KB("Home", 1, 0, 1, "tab_select");
+   ADD_KB("c", 1, 0, 1, "copy_clipboard");
+   ADD_KB("v", 1, 0, 1, "paste_clipboard");
+   ADD_KB("h", 1, 0, 1, "miniview");
+   ADD_KB("Insert", 1, 0, 1, "paste_clipboard");
+
+   /* Ctrl-Alt- */
+   ADD_KB("equal", 1, 1, 0, "increase_font_size");
+   ADD_KB("minus", 1, 1, 0, "decrease_font_size");
+   ADD_KB("0", 1, 1, 0, "reset_font_size");
+   ADD_KB("9", 1, 1, 0, "big_font_size");
+
+   /* Shift- */
+   ADD_KB("Prior", 0, 0, 1, "one_page_up");
+   ADD_KB("Next", 0, 0, 1, "one_page_down");
+   ADD_KB("Up", 0, 0, 1, "one_line_up");
+   ADD_KB("Down", 0, 0, 1, "one_line_down");
+   ADD_KB("Insert", 0, 0, 1, "paste_primary");
+   ADD_KB("KP_Add", 0, 0, 1, "increase_font_size");
+   ADD_KB("KP_Subtract", 0, 0, 1, "decrease_font_size");
+   ADD_KB("KP_Multiply", 0, 0, 1, "reset_font_size");
+   ADD_KB("KP_Divide", 0, 0, 1, "copy_clipboard");
+
+#undef ADD_KB
+}
+
 Config *
 config_load(const char *key)
 {
@@ -297,7 +379,11 @@ config_load(const char *key)
                   config->bell_rings = EINA_TRUE;
                   config->version = 3;
                   /*pass through*/
-                case CONF_VER: /* 3*/
+                case CONF_VER: /* 3 */
+                  if (eina_list_count(config->keys) == 0)
+                    {
+                       _add_default_keys(config);
+                    }
                   break;
                 default:
                   if (config->version < CONF_VER)
@@ -371,6 +457,7 @@ config_load(const char *key)
                     }
                }
              config->mouse_over_focus = EINA_TRUE;
+             _add_default_keys(config);
           }
      }
 
@@ -383,6 +470,8 @@ config_load(const char *key)
 Config *
 config_fork(Config *config)
 {
+   Config_Keys *key;
+   Eina_List *l;
    Config *config2;
 
    config2 = calloc(1, sizeof(Config));
@@ -438,14 +527,29 @@ config_fork(Config *config)
    CPY(mouse_over_focus);
    CPY(temporary);
    SCPY(config_key);
+
+   EINA_LIST_FOREACH(config->keys, l, key)
+     {
+        Config_Keys *key2 = calloc(1, sizeof(Config_Keys));
+        key2->keyname = key->keyname;
+        eina_stringshare_ref(key->keyname);
+        key2->ctrl = key->ctrl;
+        key2->alt = key->alt;
+        key2->shift = key->shift;
+        key2->cb = key->cb;
+        eina_stringshare_ref(key->cb);
+        config2->keys = eina_list_append(config2->keys, key2);
+     }
    return config2;
 }
 
 void
 config_del(Config *config)
 {
+   Config_Keys *key;
+
    if (!config) return;
-   
+
    eina_stringshare_del(config->font.name);
    eina_stringshare_del(config->font.orig_name);
    eina_stringshare_del(config->theme);
@@ -457,8 +561,15 @@ config_del(Config *config)
    eina_stringshare_del(config->helper.local.general);
    eina_stringshare_del(config->helper.local.video);
    eina_stringshare_del(config->helper.local.image);
-   
+
    eina_stringshare_del(config->config_key); /* not in eet */
+
+   EINA_LIST_FREE(config->keys, key)
+     {
+        eina_stringshare_del(key->keyname);
+        eina_stringshare_del(key->cb);
+        free(key);
+     }
    free(config);
 }
 
