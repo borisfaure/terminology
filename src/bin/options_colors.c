@@ -25,6 +25,7 @@ static const char *mapping_names[] =
 
 static Elm_Object_Item *colitem[4][11] = { { NULL } };
 static Evas_Object *colorsel = NULL;
+static Evas_Object *colorpicker = NULL;
 static Elm_Object_Item *curitem = NULL;
 static Evas_Object *colpal[4] = { NULL };
 static Evas_Object *label = NULL, *reset = NULL;
@@ -39,6 +40,7 @@ _cb_op_use_custom_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA
      
    state = elm_check_state_get(obj);
    elm_object_disabled_set(colorsel, !state);
+   elm_object_disabled_set(colorpicker, !state);
    for (i = 0; i < 4; i++) elm_object_disabled_set(colpal[i], !state);
    elm_object_disabled_set(label, !state);
    config->colors_use = state;
@@ -56,6 +58,7 @@ _cb_op_color_item_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    curitem = it;
    elm_colorselector_palette_item_color_get(it, &r, &g, &b, &a);
    elm_colorselector_color_set(colorsel, r, g, b, a);
+   elm_colorselector_color_set(colorpicker, r, g, b, a);
    for (j = 0; j < 4; j++)
      {
         for (i = 0; i < 11; i++)
@@ -76,6 +79,10 @@ _cb_op_color_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUS
 
    elm_colorselector_palette_item_color_get(curitem, &rr, &gg, &bb, &aa);
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
+   if (obj == colorsel)
+     elm_colorselector_color_set(colorpicker, r, g, b, a);
+   else
+     elm_colorselector_color_set(colorsel, r, g, b, a);
    if ((r != rr) || (g != gg) || (b != bb) || (a != aa))
      {
         if (curitem)
@@ -133,6 +140,7 @@ _cb_op_reset(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event E
    elm_object_disabled_set(reset, EINA_TRUE);
    elm_colorselector_palette_item_color_get(curitem, &r, &g, &b, &a);
    elm_colorselector_color_set(colorsel, r, g, b, a);
+   elm_colorselector_color_set(colorpicker, r, g, b, a);
    termio_config_update(term);
    config_save(config, NULL);
 }
@@ -244,6 +252,15 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    elm_colorselector_palette_item_color_get(colitem[0][0], &r, &g, &b, &a);
    elm_colorselector_color_set(o, r, g, b, a);
    elm_colorselector_mode_set(o, ELM_COLORSELECTOR_COMPONENTS);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx2, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _cb_op_color_chg, term);
+
+   colorpicker = o = elm_colorselector_add(opbox);
+   elm_colorselector_color_set(o, r, g, b, a);
+   elm_colorselector_mode_set(o, ELM_COLORSELECTOR_PICKER);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx2, o);
