@@ -345,7 +345,7 @@ config_load(const char *key)
              config->active_links = EINA_TRUE;
              config->vidmod = 0;
              config->mute = EINA_FALSE;
-             config->visualize = EINA_FALSE;
+             config->visualize = EINA_TRUE;
              config->urg_bell = EINA_TRUE;
              config->multi_instance = EINA_FALSE;
              config->application_server = EINA_FALSE;
