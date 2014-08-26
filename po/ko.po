@@ -20,7 +20,7 @@ msgstr ""
 
 #: src/bin/controls.c:241
 msgid "Controls"
-msgstr "컨트롤"
+msgstr "제어판"
 
 #: src/bin/controls.c:252
 msgid "New"
@@ -242,91 +242,91 @@ msgstr ""
 
 #: src/bin/options_behavior.c:326 src/bin/options.c:168
 msgid "Behavior"
-msgstr ""
+msgstr "동작 효과"
 
 #: src/bin/options_behavior.c:346
 msgid "Scroll to bottom on new content"
-msgstr ""
+msgstr "새 내용이 있으면 바닥으로 스크롤"
 
 #: src/bin/options_behavior.c:356
 msgid "Scroll to bottom when a key is pressed"
-msgstr ""
+msgstr "키를 입력하면 바닥으로 스크롤"
 
 #: src/bin/options_behavior.c:366
 msgid "React to key presses"
-msgstr ""
+msgstr "키 입력에 반응"
 
 #: src/bin/options_behavior.c:376
 msgid "Cursor blinking"
-msgstr ""
+msgstr "커서 깜박이기"
 
 #: src/bin/options_behavior.c:386
 msgid "Visual Bell"
-msgstr ""
+msgstr "경고 시각 효과"
 
 #: src/bin/options_behavior.c:396
 msgid "Bell rings"
-msgstr ""
+msgstr "벨 울리기"
 
 #: src/bin/options_behavior.c:406
 msgid "Urgent Bell"
-msgstr ""
+msgstr "긴급 벨"
 
 #: src/bin/options_behavior.c:416
 msgid "Active Links"
-msgstr ""
+msgstr "링크 활성화"
 
 #: src/bin/options_behavior.c:426
 msgid "Enable application server"
-msgstr ""
+msgstr "응용 프로그램 서버 사용"
 
 #: src/bin/options_behavior.c:440
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "한 프로세스로 다중 인스턴스 처리"
 
 #: src/bin/options_behavior.c:450
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "xterm-256color로 TERM 설정"
 
 #: src/bin/options_behavior.c:460
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "왼쪽 화살표로 백스페이스 기능 대체"
 
 #: src/bin/options_behavior.c:470
 msgid "Drag & drop links"
-msgstr ""
+msgstr "링크 끌어다 놓기 활성화"
 
 #: src/bin/options_behavior.c:480
 msgid "Start as login shell"
-msgstr ""
+msgstr "로그인 쉘로 시작"
 
 #: src/bin/options_behavior.c:490
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "마우스 아래 창 활성화"
 
 #: src/bin/options_behavior.c:500
 msgid "Always open at size:"
-msgstr ""
+msgstr "항상 아래 크기로 열기:"
 
 #: src/bin/options_behavior.c:510
 msgid "Width:"
-msgstr ""
+msgstr "너비:"
 
 #: src/bin/options_behavior.c:530
 msgid "Height:"
-msgstr ""
+msgstr "높이:"
 
 #: src/bin/options_behavior.c:557
 msgid "Word separators:"
-msgstr ""
+msgstr "구분자:"
 
 #: src/bin/options_behavior.c:588
 msgid "Scrollback:"
-msgstr ""
+msgstr "스크롤백:"
 
 #: src/bin/options_behavior.c:621
 msgid "Tab zoom/switch animation time:"
-msgstr ""
+msgstr "탭 확대 / 스위치 움직임 시간:"
 
 #: src/bin/options_behavior.c:622
 msgid ""
@@ -345,7 +345,7 @@ msgstr "옵션"
 
 #: src/bin/options.c:163 src/bin/options_font.c:352
 msgid "Font"
-msgstr "폰트"
+msgstr "글꼴"
 
 #: src/bin/options.c:164 src/bin/options_theme.c:112
 msgid "Theme"
@@ -361,7 +361,7 @@ msgstr "비디오"
 
 #: src/bin/options.c:167 src/bin/options_colors.c:160
 msgid "Colors"
-msgstr "색"
+msgstr "색상"
 
 #: src/bin/options.c:169
 msgid "Keys"
@@ -369,47 +369,47 @@ msgstr "단축키"
 
 #: src/bin/options.c:170 src/bin/options_helpers.c:177
 msgid "Helpers"
-msgstr ""
+msgstr "헬퍼"
 
 #: src/bin/options.c:181
 msgid "Temporary"
-msgstr ""
+msgstr "임시"
 
 #: src/bin/options_colors.c:13
 msgid "Default"
-msgstr ""
+msgstr "기본값"
 
 #: src/bin/options_colors.c:14
 msgid "Black"
-msgstr ""
+msgstr "검정색"
 
 #: src/bin/options_colors.c:15
 msgid "Red"
-msgstr ""
+msgstr "빨강색"
 
 #: src/bin/options_colors.c:16
 msgid "Green"
-msgstr ""
+msgstr "초록색"
 
 #: src/bin/options_colors.c:17
 msgid "Yellow"
-msgstr ""
+msgstr "노랑색"
 
 #: src/bin/options_colors.c:18
 msgid "Blue"
-msgstr ""
+msgstr "파랑색"
 
 #: src/bin/options_colors.c:19
 msgid "Magenta"
-msgstr ""
+msgstr "자홍색"
 
 #: src/bin/options_colors.c:20
 msgid "Cyan"
-msgstr ""
+msgstr "청록색"
 
 #: src/bin/options_colors.c:21
 msgid "White"
-msgstr ""
+msgstr "하얀색"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
@@ -421,175 +421,175 @@ msgstr ""
 
 #: src/bin/options_colors.c:188
 msgid "Normal"
-msgstr ""
+msgstr "기본 색상"
 
 #: src/bin/options_colors.c:189
 msgid "Bright"
-msgstr ""
+msgstr "밝은 색상"
 
 #: src/bin/options_colors.c:190
 msgid "Normal 2"
-msgstr ""
+msgstr "기본 색상 2"
 
 #: src/bin/options_colors.c:191
 msgid "Bright 2"
-msgstr ""
+msgstr "밝은 색상 2"
 
 #: src/bin/options_colors.c:263
 msgid "Use"
-msgstr ""
+msgstr "사용"
 
 #: src/bin/options_colors.c:273
 msgid "Reset"
-msgstr ""
+msgstr "재설정"
 
 #: src/bin/options_font.c:414
 msgid "Bitmap"
-msgstr ""
+msgstr "비트맵"
 
 #: src/bin/options_font.c:454
 msgid "Standard"
-msgstr ""
+msgstr "일반"
 
 #: src/bin/options_helpers.c:190
 msgid "Inline if possible"
-msgstr ""
+msgstr "인라인 가능한 경우"
 
 #: src/bin/options_helpers.c:220
 msgid "E-mail:"
-msgstr ""
+msgstr "이메일:"
 
 #: src/bin/options_helpers.c:253
 msgid "URL (Images):"
-msgstr ""
+msgstr "URL(이미지):"
 
 #: src/bin/options_helpers.c:278
 msgid "URL (Video):"
-msgstr ""
+msgstr "URL (비디오):"
 
 #: src/bin/options_helpers.c:303
 msgid "URL (All):"
-msgstr ""
+msgstr "URL (전체):"
 
 #: src/bin/options_helpers.c:336
 msgid "Local (Images):"
-msgstr ""
+msgstr "로컬 (이미지):"
 
 #: src/bin/options_helpers.c:361
 msgid "Local (Video):"
-msgstr ""
+msgstr "로컬 (비디오):"
 
 #: src/bin/options_helpers.c:386
 msgid "Local (All):"
-msgstr ""
+msgstr "로컬 (전체):"
 
 #: src/bin/options_keys.c:33
 msgid "Scroll one page up"
-msgstr ""
+msgstr "한 페이지 위로 스크롤"
 
 #: src/bin/options_keys.c:34
 msgid "Scroll one page down"
-msgstr ""
+msgstr "한 페이지 아래로 스크롤"
 
 #: src/bin/options_keys.c:35 src/bin/options_keys.c:36
 msgid "Paste Clipboard (ctrl+v/c) selection"
-msgstr ""
+msgstr "클립보드 내용 붙여넣기 (ctrl+v/c)"
 
 #: src/bin/options_keys.c:37 src/bin/options_keys.c:38
 msgid "Paste Primary (highlight) selection"
-msgstr ""
+msgstr "기본 (강조) 선택 붙여넣기"
 
 #: src/bin/options_keys.c:39 src/bin/options_keys.c:40
 msgid "Copy current selection to clipboard"
-msgstr ""
+msgstr "현재 선택된 부분을 클립보드로 복사"
 
 #: src/bin/options_keys.c:41
 msgid "Font size up 1"
-msgstr ""
+msgstr "글꼴 크기 1 증가"
 
 #: src/bin/options_keys.c:42
 msgid "Font size down 1"
-msgstr ""
+msgstr "글꼴 크기 1 감소"
 
 #: src/bin/options_keys.c:43
 msgid "Reset font size to 10"
-msgstr ""
+msgstr "글꼴 크기 재설정 (Size 10)"
 
 #: src/bin/options_keys.c:44
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "수평 분할 (하단에 새 창)"
 
 #: src/bin/options_keys.c:45
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "수직 분할 (우측에 새 창)"
 
 #: src/bin/options_keys.c:46
 msgid "Focus to previous terminal"
-msgstr ""
+msgstr "이전 터미널 활성화"
 
 #: src/bin/options_keys.c:47
 msgid "Focus to next terminal"
-msgstr ""
+msgstr "다음 터미널 활성화"
 
 #: src/bin/options_keys.c:48
 msgid "Create new \"tab\""
-msgstr ""
+msgstr "새 터미널"
 
 #: src/bin/options_keys.c:49
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "탭 스위치 보이기"
 
 #: src/bin/options_keys.c:50
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "1번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:51
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "2번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:52
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "3번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:53
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "4번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:54
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "5번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:55
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "6번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:56
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "7번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:57
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "8번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:58
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "9번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:59
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "10번 탭 터미널로 전환"
 
 #: src/bin/options_keys.c:60
 msgid "Enter command mode"
-msgstr ""
+msgstr "명령 모드로 전환"
 
 #: src/bin/options_keys.c:61
 msgid "Toggle miniview of the history"
-msgstr ""
+msgstr "미니뷰 토글"
 
 #: src/bin/options_video.c:78
 msgid "Translucent"
-msgstr ""
+msgstr "투명도"
 
 #: src/bin/options_video.c:89 src/bin/options_video.c:90
 #, c-format
@@ -598,19 +598,19 @@ msgstr ""
 
 #: src/bin/options_video.c:109
 msgid "Audio muted"
-msgstr ""
+msgstr "음소거"
 
 #: src/bin/options_video.c:125
 msgid "Video Engine:"
-msgstr ""
+msgstr "비디오 엔진:"
 
 #: src/bin/options_video.c:132
 msgid "Automatic"
-msgstr ""
+msgstr "자동"
 
 #: src/bin/options_wallpaper.c:99
 msgid "None"
-msgstr ""
+msgstr "배경 없음"
 
 #: src/bin/options_wallpaper.c:388
 msgid "Source file is target file"
@@ -618,7 +618,7 @@ msgstr ""
 
 #: src/bin/options_wallpaper.c:401
 msgid "Picture imported"
-msgstr ""
+msgstr "사진이 추가되었습니다."
 
 #: src/bin/options_wallpaper.c:406
 msgid "Failed"
@@ -626,37 +626,37 @@ msgstr ""
 
 #: src/bin/options_wallpaper.c:423
 msgid "Background"
-msgstr ""
+msgstr "배경"
 
 #: src/bin/options_wallpaper.c:467
 msgid "Select Path"
-msgstr ""
+msgstr "경로 선택"
 
 #: src/bin/options_wallpaper.c:473
 msgid "System"
-msgstr ""
+msgstr "시스템"
 
 #: src/bin/options_wallpaper.c:476
 msgid "User"
-msgstr ""
+msgstr "사용자"
 
 #: src/bin/options_wallpaper.c:479
 msgid "Other"
-msgstr ""
+msgstr "기타"
 
 #: src/bin/options_wallpaper.c:494
 msgid "Double click on a picture to import it"
-msgstr ""
+msgstr "더블 클릭하면 이미지를 가져옵니다."
 
 #: src/bin/termcmd.c:66
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "알 수 없는 글꼴 명령: %s"
 
 #: src/bin/termcmd.c:93
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr ""
+msgstr "알 수 없는 격자 크기 명령: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
@@ -666,7 +666,7 @@ msgstr ""
 #: src/bin/termcmd.c:147
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "알 수 없는 명령: %s"
 
 #: src/bin/termio.c:382
 msgid "Preview"
@@ -674,12 +674,12 @@ msgstr ""
 
 #: src/bin/termio.c:385
 msgid "Open"
-msgstr ""
+msgstr "열기"
 
 #: src/bin/termio.c:1902
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr ""
+msgstr "'%s' 는 지원하지 않는 포맷입니다."
 
 #: src/bin/termio.c:3844
 msgid "Ecore IMF failed"
@@ -743,3 +743,4 @@ msgstr ""
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
 msgstr ""
+
