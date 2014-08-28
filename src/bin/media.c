@@ -36,12 +36,12 @@ struct _Media
    int resizes;
    struct {
       Evas_Coord x, y;
-      Eina_Bool down : 1;
+      unsigned char down : 1;
    } down;
-   Eina_Bool nosmooth : 1;
-   Eina_Bool downloading : 1;
-   Eina_Bool queued : 1;
-   Eina_Bool pos_drag : 1;
+   unsigned char nosmooth : 1;
+   unsigned char downloading : 1;
+   unsigned char queued : 1;
+   unsigned char pos_drag : 1;
 };
 
 static Evas_Smart *_smart = NULL;

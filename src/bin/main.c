@@ -41,8 +41,8 @@ struct _Win
    Evas_Object *cmdbox;
    Ecore_Timer *cmdbox_del_timer;
    Ecore_Timer *cmdbox_focus_timer;
-   Eina_Bool    focused : 1;
-   Eina_Bool    cmdbox_up : 1;
+   unsigned char focused : 1;
+   unsigned char cmdbox_up : 1;
 };
 
 struct _Term
@@ -63,11 +63,11 @@ struct _Term
    struct {
       int       x, y;
    } down;
-   Eina_Bool    focused : 1;
-   Eina_Bool    hold : 1;
-   Eina_Bool    unswallowed : 1;
-   Eina_Bool    missed_bell : 1;
-   Eina_Bool    miniview_shown : 1;
+   unsigned char focused : 1;
+   unsigned char hold : 1;
+   unsigned char unswallowed : 1;
+   unsigned char missed_bell : 1;
+   unsigned char miniview_shown : 1;
 };
 
 struct _Split
@@ -80,7 +80,7 @@ struct _Split
    Evas_Object *panes; // null if a leaf node
    Evas_Object *sel; // multi "tab" selector is active
    Evas_Object *sel_bg; // multi "tab" selector wrapper edje obj for styling
-   Eina_Bool    horizontal : 1;
+   unsigned char horizontal : 1;
 };
 
 int _log_domain = -1;

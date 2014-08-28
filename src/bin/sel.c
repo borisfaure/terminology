@@ -28,24 +28,24 @@ struct _Sel
    int w, h;
    struct {
       Evas_Coord x, y;
-      Eina_Bool down : 1;
+      unsigned char down : 1;
    } down;
    Config *config;
-   Eina_Bool select_me : 1;
-   Eina_Bool exit_me : 1;
-   Eina_Bool exit_on_sel : 1;
-   Eina_Bool exit_now : 1;
-   Eina_Bool pending_sel : 1;
-   Eina_Bool use_px : 1;
+   unsigned char select_me : 1;
+   unsigned char exit_me : 1;
+   unsigned char exit_on_sel : 1;
+   unsigned char exit_now : 1;
+   unsigned char pending_sel : 1;
+   unsigned char use_px : 1;
 };
 
 struct _Entry
 {
    Evas_Object *obj, *bg, *termio;
-   Eina_Bool selected : 1;
-   Eina_Bool selected_before : 1;
-   Eina_Bool selected_orig : 1;
-   Eina_Bool was_selected : 1;
+   unsigned char selected : 1;
+   unsigned char selected_before : 1;
+   unsigned char selected_orig : 1;
+   unsigned char was_selected : 1;
 };
 
 static Evas_Smart *_smart = NULL;

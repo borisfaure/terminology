@@ -138,15 +138,15 @@ struct _Termpty
       Eina_Hash *chid_map;
       Eina_List *active;
       Eina_List *expecting;
-      Eina_Bool on : 1;
+      unsigned char on : 1;
    } block;
    struct {
       struct {
          int x, y;
       } start, end, start_backup, end_backup;
-      Eina_Bool is_active : 1;
-      Eina_Bool is_box    : 1;
-      Eina_Bool makesel   : 1;
+      unsigned char is_active : 1;
+      unsigned char is_box    : 1;
+      unsigned char makesel   : 1;
    } selection;
    Termstate state, save, swap;
    int exit_code;
@@ -193,17 +193,17 @@ struct _Termblock
    int          refs;
    short        w, h;
    short        x, y;
-   Eina_Bool    scale_stretch : 1;
-   Eina_Bool    scale_center : 1;
-   Eina_Bool    scale_fill : 1;
-   Eina_Bool    thumb : 1;
-   Eina_Bool    edje : 1;
-   
-   Eina_Bool    active : 1;
-   Eina_Bool    was_active : 1;
-   Eina_Bool    was_active_before : 1;
+   unsigned char scale_stretch : 1;
+   unsigned char scale_center : 1;
+   unsigned char scale_fill : 1;
+   unsigned char thumb : 1;
+   unsigned char edje : 1;
 
-   Eina_Bool    mov_paused : 1;  // movie paused state marker
+   unsigned char active : 1;
+   unsigned char was_active : 1;
+   unsigned char was_active_before : 1;
+
+   unsigned char mov_paused : 1;  // movie paused state marker
 };
 
 struct _Termexp

@@ -8,7 +8,7 @@ struct _Keys_Handler
    Ecore_IMF_Context *imf;
    unsigned int last_keyup;
    Eina_List *seq;
-   Eina_Bool composing : 1;
+   unsigned char composing : 1;
 };
 
 void keyin_compose_seq_reset(Keys_Handler *khdl);

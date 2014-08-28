@@ -19,7 +19,7 @@ struct _Font
    const char *pretty_name;
    const char *full_name;
    Evas_Object *term;
-   Eina_Bool bitmap : 1;
+   unsigned char bitmap : 1;
 };
 
 static Eina_List *fonts = NULL;

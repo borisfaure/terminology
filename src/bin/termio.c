@@ -55,9 +55,9 @@ struct _Termio
       struct {
          Evas_Object *dndobj;
          Evas_Coord x, y;
-         Eina_Bool down : 1;
-         Eina_Bool dnd : 1;
-         Eina_Bool dndobjdel : 1;
+         unsigned char down : 1;
+         unsigned char dnd : 1;
+         unsigned char dndobjdel : 1;
       } down;
    } link;
    int zoom_fontsize_start;
@@ -81,15 +81,15 @@ struct _Termio
    double set_sel_at;
    Elm_Sel_Type sel_type;
    Keys_Handler khdl;
-   Eina_Bool jump_on_change : 1;
-   Eina_Bool jump_on_keypress : 1;
-   Eina_Bool have_sel : 1;
-   Eina_Bool noreqsize : 1;
-   Eina_Bool didclick : 1;
-   Eina_Bool moved : 1;
-   Eina_Bool bottom_right : 1;
-   Eina_Bool top_left : 1;
-   Eina_Bool reset_sel : 1;
+   unsigned char jump_on_change : 1;
+   unsigned char jump_on_keypress : 1;
+   unsigned char have_sel : 1;
+   unsigned char noreqsize : 1;
+   unsigned char didclick : 1;
+   unsigned char moved : 1;
+   unsigned char bottom_right : 1;
+   unsigned char top_left : 1;
+   unsigned char reset_sel : 1;
 };
 
 #define INT_SWAP(_a, _b) do {    \
