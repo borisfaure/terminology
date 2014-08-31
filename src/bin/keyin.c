@@ -885,16 +885,19 @@ cb_scroll_down_line(Evas_Object *term)
 
 static Shortcut_Action _actions[] =
 {
+     {"group", gettext_noop("Scrolling"), NULL},
      {"one_page_up", gettext_noop("Scroll one page up"), cb_scroll_up_page},
      {"one_page_down", gettext_noop("Scroll one page down"), cb_scroll_down_page},
      {"one_line_up", gettext_noop("Scroll one line up"), cb_scroll_up_line},
      {"one_line_down", gettext_noop("Scroll one line down"), cb_scroll_down_line},
 
-     {"paste_primary", gettext_noop("Paste Primary buffer (highlight)"), cb_paste_primary},
-     {"paste_clipboard", gettext_noop("Paste Clipboard buffer (ctrl+c/v)"), cb_paste_clipboard},
+     {"group", gettext_noop("Copy/Paste"), NULL},
      {"copy_primary", gettext_noop("Copy selection to Primary buffer"), cb_copy_primary},
      {"copy_clipboard", gettext_noop("Copy selection to Clipboard buffer"), cb_copy_clipboard},
+     {"paste_primary", gettext_noop("Paste Primary buffer (highlight)"), cb_paste_primary},
+     {"paste_clipboard", gettext_noop("Paste Clipboard buffer (ctrl+c/v)"), cb_paste_clipboard},
 
+     {"group", gettext_noop("Splits/Tabs"), NULL},
      {"term_prev", gettext_noop("Focus to the previous terminal"), cb_term_prev},
      {"term_next", gettext_noop("Focus to the next terminal"), cb_term_next},
      {"split_h", gettext_noop("Split horizontally (new below)"), cb_split_h},
@@ -912,11 +915,13 @@ static Shortcut_Action _actions[] =
      {"tab_9", gettext_noop("Switch to terminal tab 9"), cb_tab_9},
      {"tab_10", gettext_noop("Switch to terminal tab 10"), cb_tab_0},
 
+     {"group", gettext_noop("Font size"), NULL},
      {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},
      {"decrease_font_size", gettext_noop("Font size down 1"), cb_decrease_font_size},
      {"big_font_size", gettext_noop("Diplay big font size"), cb_big_font_size},
      {"reset_font_size", gettext_noop("Reset font size"), cb_reset_font_size},
 
+     {"group", gettext_noop("Actions"), NULL},
      {"miniview", gettext_noop("Display the history miniview"), cb_miniview},
      {"cmd_box", gettext_noop("Display the command box"), cb_cmd_box},
 

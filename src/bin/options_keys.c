@@ -244,7 +244,7 @@ gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 {
    Evas_Coord min_w = 0, w = 0, min_h = 0, h = 0;
    const Shortcut_Action *action = data;
-   Evas_Object *bx, *bt, *lbl;
+   Evas_Object *bx, *bt, *lbl, *sep;
    Config_Keys *key;
    Eina_List *l;
 
@@ -258,7 +258,13 @@ gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
    evas_object_size_hint_min_get(lbl, &w, &h);
-   evas_object_size_hint_min_get(lbl, &w, &h);
+   min_w += w;
+   if (h > min_h) min_h = h;
+
+   sep = elm_separator_add(obj);
+   elm_box_pack_end(bx, sep);
+   evas_object_show(sep);
+   evas_object_size_hint_min_get(sep, &w, &h);
    min_w += w;
    if (h > min_h) min_h = h;
 
@@ -297,14 +303,20 @@ gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 
 
 
+char *gl_group_text_get(void *data, Evas_Object *obj EINA_UNUSED,
+                        const char *part EINA_UNUSED)
+{
+   Shortcut_Action *action = data;
+   return strdup(action->description);
+}
 
 void
 options_keys(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o, *gl, *bx;
    const Shortcut_Action *action;
-   Elm_Genlist_Item_Class *itc;
-   //Elm_Object_Item *gli;
+   Elm_Genlist_Item_Class *itc, *itc_group;
+   Elm_Object_Item *git = NULL;
 
    _config = termio_config_get(term);
 
@@ -337,15 +349,36 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
    itc->func.state_get = NULL;
    itc->func.del = NULL;
 
+   itc_group = elm_genlist_item_class_new();
+   itc_group->item_style = "group_index";
+   itc_group->func.text_get = gl_group_text_get;
+   itc_group->func.content_get = NULL;
+   itc_group->func.state_get = NULL;
+   itc_group->func.del = NULL;
+
    action = shortcut_actions_get();
    while (action->action)
      {
-        elm_genlist_item_append(gl, itc,
-                                (void *)action/* item data */,
-                                NULL/* parent */,
-                                ELM_GENLIST_ITEM_NONE,
-                                NULL/* func */,
-                                NULL/* func data */);
+        Elm_Object_Item *gli;
+        if (action->cb)
+          {
+             gli = elm_genlist_item_append(gl, itc,
+                                           (void *)action/* item data */,
+                                           git /* parent */,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           NULL/* func */,
+                                           NULL/* func data */);
+          }
+        else
+          {
+             git = gli = elm_genlist_item_append(gl, itc_group,
+                                                 (void *)action/* item data */,
+                                                 NULL/* parent */,
+                                                 ELM_GENLIST_ITEM_NONE,
+                                                 NULL/* func */,
+                                                 NULL/* func data */);
+          }
+        elm_genlist_item_select_mode_set(gli, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
         action++;
      }
 
