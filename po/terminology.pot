@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-10 18:08+0200\n"
+"POT-Creation-Date: 2014-08-28 06:30+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -482,6 +482,10 @@ msgstr ""
 msgid "Local (All):"
 msgstr ""
 
+#: src/bin/options_keys.c:17
+msgid "Key Bindings"
+msgstr ""
+
 #: src/bin/options_keys.c:33
 msgid "Scroll one page up"
 msgstr ""
@@ -490,99 +494,107 @@ msgstr ""
 msgid "Scroll one page down"
 msgstr ""
 
-#: src/bin/options_keys.c:35 src/bin/options_keys.c:36
-msgid "Paste Clipboard (ctrl+v/c) selection"
+#: src/bin/options_keys.c:35
+msgid "Scroll one line up"
+msgstr ""
+
+#: src/bin/options_keys.c:36
+msgid "Scroll one line down"
 msgstr ""
 
 #: src/bin/options_keys.c:37 src/bin/options_keys.c:38
-msgid "Paste Primary (highlight) selection"
+msgid "Paste Clipboard (ctrl+v/c) selection"
 msgstr ""
 
 #: src/bin/options_keys.c:39 src/bin/options_keys.c:40
+msgid "Paste Primary (highlight) selection"
+msgstr ""
+
+#: src/bin/options_keys.c:41 src/bin/options_keys.c:42
 msgid "Copy current selection to clipboard"
 msgstr ""
 
-#: src/bin/options_keys.c:41
+#: src/bin/options_keys.c:43
 msgid "Font size up 1"
 msgstr ""
 
-#: src/bin/options_keys.c:42
+#: src/bin/options_keys.c:44
 msgid "Font size down 1"
 msgstr ""
 
-#: src/bin/options_keys.c:43
+#: src/bin/options_keys.c:45
 msgid "Reset font size to 10"
 msgstr ""
 
-#: src/bin/options_keys.c:44
+#: src/bin/options_keys.c:46
 msgid "Split horizontally (new below)"
 msgstr ""
 
-#: src/bin/options_keys.c:45
+#: src/bin/options_keys.c:47
 msgid "Split vertically (new on right)"
 msgstr ""
 
-#: src/bin/options_keys.c:46
+#: src/bin/options_keys.c:48
 msgid "Focus to previous terminal"
 msgstr ""
 
-#: src/bin/options_keys.c:47
+#: src/bin/options_keys.c:49
 msgid "Focus to next terminal"
 msgstr ""
 
-#: src/bin/options_keys.c:48
+#: src/bin/options_keys.c:50
 msgid "Create new \"tab\""
 msgstr ""
 
-#: src/bin/options_keys.c:49
+#: src/bin/options_keys.c:51
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
-#: src/bin/options_keys.c:50
+#: src/bin/options_keys.c:52
 msgid "Switch to terminal tab 1"
 msgstr ""
 
-#: src/bin/options_keys.c:51
+#: src/bin/options_keys.c:53
 msgid "Switch to terminal tab 2"
 msgstr ""
 
-#: src/bin/options_keys.c:52
+#: src/bin/options_keys.c:54
 msgid "Switch to terminal tab 3"
 msgstr ""
 
-#: src/bin/options_keys.c:53
+#: src/bin/options_keys.c:55
 msgid "Switch to terminal tab 4"
 msgstr ""
 
-#: src/bin/options_keys.c:54
+#: src/bin/options_keys.c:56
 msgid "Switch to terminal tab 5"
 msgstr ""
 
-#: src/bin/options_keys.c:55
+#: src/bin/options_keys.c:57
 msgid "Switch to terminal tab 6"
 msgstr ""
 
-#: src/bin/options_keys.c:56
+#: src/bin/options_keys.c:58
 msgid "Switch to terminal tab 7"
 msgstr ""
 
-#: src/bin/options_keys.c:57
+#: src/bin/options_keys.c:59
 msgid "Switch to terminal tab 8"
 msgstr ""
 
-#: src/bin/options_keys.c:58
+#: src/bin/options_keys.c:60
 msgid "Switch to terminal tab 9"
 msgstr ""
 
-#: src/bin/options_keys.c:59
+#: src/bin/options_keys.c:61
 msgid "Switch to terminal tab 10"
 msgstr ""
 
-#: src/bin/options_keys.c:60
+#: src/bin/options_keys.c:62
 msgid "Enter command mode"
 msgstr ""
 
-#: src/bin/options_keys.c:61
+#: src/bin/options_keys.c:63
 msgid "Toggle miniview of the history"
 msgstr ""
 

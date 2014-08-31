@@ -14,7 +14,7 @@ options_keys(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, "Key Bindings");
+   elm_object_text_set(o, _("Key Bindings"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 

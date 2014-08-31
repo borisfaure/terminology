@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-08-10 18:08+0200\n"
-"PO-Revision-Date: 2014-07-28 01:06+0900\n"
-"Last-Translator: huchi <wonguk.jeong@samsung.com>\n"
+"PO-Revision-Date: 2014-08-28 06:30+0900\n"
+"Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -242,7 +242,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:326 src/bin/options.c:168
 msgid "Behavior"
-msgstr "동작 효과"
+msgstr "동작"
 
 #: src/bin/options_behavior.c:346
 msgid "Scroll to bottom on new content"
@@ -483,6 +483,10 @@ msgstr "로컬 (비디오):"
 msgid "Local (All):"
 msgstr "로컬 (전체):"
 
+#: src/bin/options_keys.c:17
+msgid "Key Bindings"
+msgstr "단축키"
+
 #: src/bin/options_keys.c:33
 msgid "Scroll one page up"
 msgstr "한 페이지 위로 스크롤"
@@ -491,99 +495,107 @@ msgstr "한 페이지 위로 스크롤"
 msgid "Scroll one page down"
 msgstr "한 페이지 아래로 스크롤"
 
-#: src/bin/options_keys.c:35 src/bin/options_keys.c:36
+#: src/bin/options_keys.c:35
+msgid "Scroll one line up"
+msgstr "한 줄 위로 스크롤"
+
+#: src/bin/options_keys.c:36
+msgid "Scroll one line down"
+msgstr "한 줄 아래로 스크롤"
+
+#: src/bin/options_keys.c:37 src/bin/options_keys.c:38
 msgid "Paste Clipboard (ctrl+v/c) selection"
 msgstr "클립보드 내용 붙여넣기 (ctrl+v/c)"
 
-#: src/bin/options_keys.c:37 src/bin/options_keys.c:38
+#: src/bin/options_keys.c:39 src/bin/options_keys.c:40
 msgid "Paste Primary (highlight) selection"
 msgstr "기본 (강조) 선택 붙여넣기"
 
-#: src/bin/options_keys.c:39 src/bin/options_keys.c:40
+#: src/bin/options_keys.c:41 src/bin/options_keys.c:42
 msgid "Copy current selection to clipboard"
 msgstr "현재 선택된 부분을 클립보드로 복사"
 
-#: src/bin/options_keys.c:41
+#: src/bin/options_keys.c:43
 msgid "Font size up 1"
 msgstr "글꼴 크기 1 증가"
 
-#: src/bin/options_keys.c:42
+#: src/bin/options_keys.c:44
 msgid "Font size down 1"
 msgstr "글꼴 크기 1 감소"
 
-#: src/bin/options_keys.c:43
+#: src/bin/options_keys.c:45
 msgid "Reset font size to 10"
 msgstr "글꼴 크기 재설정 (Size 10)"
 
-#: src/bin/options_keys.c:44
+#: src/bin/options_keys.c:46
 msgid "Split horizontally (new below)"
 msgstr "수평 분할 (하단에 새 창)"
 
-#: src/bin/options_keys.c:45
+#: src/bin/options_keys.c:47
 msgid "Split vertically (new on right)"
 msgstr "수직 분할 (우측에 새 창)"
 
-#: src/bin/options_keys.c:46
+#: src/bin/options_keys.c:48
 msgid "Focus to previous terminal"
 msgstr "이전 터미널 활성화"
 
-#: src/bin/options_keys.c:47
+#: src/bin/options_keys.c:49
 msgid "Focus to next terminal"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/options_keys.c:48
+#: src/bin/options_keys.c:50
 msgid "Create new \"tab\""
 msgstr "새 터미널"
 
-#: src/bin/options_keys.c:49
+#: src/bin/options_keys.c:51
 msgid "Bring up \"tab\" switcher"
 msgstr "탭 스위치 보이기"
 
-#: src/bin/options_keys.c:50
+#: src/bin/options_keys.c:52
 msgid "Switch to terminal tab 1"
 msgstr "1번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:51
+#: src/bin/options_keys.c:53
 msgid "Switch to terminal tab 2"
 msgstr "2번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:52
+#: src/bin/options_keys.c:54
 msgid "Switch to terminal tab 3"
 msgstr "3번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:53
+#: src/bin/options_keys.c:55
 msgid "Switch to terminal tab 4"
 msgstr "4번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:54
+#: src/bin/options_keys.c:56
 msgid "Switch to terminal tab 5"
 msgstr "5번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:55
+#: src/bin/options_keys.c:57
 msgid "Switch to terminal tab 6"
 msgstr "6번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:56
+#: src/bin/options_keys.c:58
 msgid "Switch to terminal tab 7"
 msgstr "7번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:57
+#: src/bin/options_keys.c:59
 msgid "Switch to terminal tab 8"
 msgstr "8번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:58
+#: src/bin/options_keys.c:60
 msgid "Switch to terminal tab 9"
 msgstr "9번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:59
+#: src/bin/options_keys.c:61
 msgid "Switch to terminal tab 10"
 msgstr "10번 탭 터미널로 전환"
 
-#: src/bin/options_keys.c:60
+#: src/bin/options_keys.c:62
 msgid "Enter command mode"
 msgstr "명령 모드로 전환"
 
-#: src/bin/options_keys.c:61
+#: src/bin/options_keys.c:63
 msgid "Toggle miniview of the history"
 msgstr "미니뷰 토글"
 
