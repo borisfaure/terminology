@@ -739,7 +739,7 @@ keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
              termio_paste_selection(ty->obj, ELM_SEL_TYPE_CLIPBOARD);
              return EINA_TRUE;
           }
-        else if (!strcmp(ev->keyname, "h"))
+        else if (!strcasecmp(ev->keyname, "h"))
           {
              term_miniview_toggle(termio_term_get(ty->obj));
              return EINA_TRUE;
