@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-08-10 18:08+0200\n"
+"POT-Creation-Date: 2014-08-28 06:30+0900\n"
 "PO-Revision-Date: 2014-08-12 23:53+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -133,7 +133,10 @@ msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page."
-msgstr "Divide la finestra del terminale, 'v' in senso verticale e 'h' in orizzontale. Può essere usato più volte, ad esempio -S vhvv oppure --split hv. Maggiori informazioni sono disponibili sulla pagina man."
+msgstr ""
+"Divide la finestra del terminale, 'v' in senso verticale e 'h' in "
+"orizzontale. Può essere usato più volte, ad esempio -S vhvv oppure --split "
+"hv. Maggiori informazioni sono disponibili sulla pagina man."
 
 #: src/bin/main.c:2746
 msgid "Set emotion module to use."
@@ -493,6 +496,10 @@ msgstr "Locale (Video):"
 msgid "Local (All):"
 msgstr "Locale (Tutto):"
 
+#: src/bin/options_keys.c:17
+msgid "Key Bindings"
+msgstr ""
+
 #: src/bin/options_keys.c:33
 msgid "Scroll one page up"
 msgstr "Scrolling di una pagina su"
@@ -501,99 +508,109 @@ msgstr "Scrolling di una pagina su"
 msgid "Scroll one page down"
 msgstr "Scrolling di una pagina giù"
 
-#: src/bin/options_keys.c:35 src/bin/options_keys.c:36
+#: src/bin/options_keys.c:35
+#, fuzzy
+msgid "Scroll one line up"
+msgstr "Scrolling di una pagina su"
+
+#: src/bin/options_keys.c:36
+#, fuzzy
+msgid "Scroll one line down"
+msgstr "Scrolling di una pagina giù"
+
+#: src/bin/options_keys.c:37 src/bin/options_keys.c:38
 msgid "Paste Clipboard (ctrl+v/c) selection"
 msgstr "Incolla selezione appunti (ctrl+v/c)"
 
-#: src/bin/options_keys.c:37 src/bin/options_keys.c:38
+#: src/bin/options_keys.c:39 src/bin/options_keys.c:40
 msgid "Paste Primary (highlight) selection"
 msgstr "Incolla selezione primaria (evidenziata col mouse)"
 
-#: src/bin/options_keys.c:39 src/bin/options_keys.c:40
+#: src/bin/options_keys.c:41 src/bin/options_keys.c:42
 msgid "Copy current selection to clipboard"
 msgstr "Copia la selezione corrente negli appunti"
 
-#: src/bin/options_keys.c:41
+#: src/bin/options_keys.c:43
 msgid "Font size up 1"
 msgstr "Incrementa dimensione font di 1"
 
-#: src/bin/options_keys.c:42
+#: src/bin/options_keys.c:44
 msgid "Font size down 1"
 msgstr "Decrementa dimensione font di 1"
 
-#: src/bin/options_keys.c:43
+#: src/bin/options_keys.c:45
 msgid "Reset font size to 10"
 msgstr "Reimposta dimensione font a 10"
 
-#: src/bin/options_keys.c:44
+#: src/bin/options_keys.c:46
 msgid "Split horizontally (new below)"
 msgstr "Dividi orizzontalmente (nuovo sotto)"
 
-#: src/bin/options_keys.c:45
+#: src/bin/options_keys.c:47
 msgid "Split vertically (new on right)"
 msgstr "Dividi verticalmente (nuovo a destra)"
 
-#: src/bin/options_keys.c:46
+#: src/bin/options_keys.c:48
 msgid "Focus to previous terminal"
 msgstr "Fuoco al terminale precedente"
 
-#: src/bin/options_keys.c:47
+#: src/bin/options_keys.c:49
 msgid "Focus to next terminal"
 msgstr "Fuoco al terminale successivo"
 
-#: src/bin/options_keys.c:48
+#: src/bin/options_keys.c:50
 msgid "Create new \"tab\""
 msgstr "Crea nuovo tab"
 
-#: src/bin/options_keys.c:49
+#: src/bin/options_keys.c:51
 msgid "Bring up \"tab\" switcher"
 msgstr "Apri commutatore tab"
 
-#: src/bin/options_keys.c:50
+#: src/bin/options_keys.c:52
 msgid "Switch to terminal tab 1"
 msgstr "Passa al tab 1"
 
-#: src/bin/options_keys.c:51
+#: src/bin/options_keys.c:53
 msgid "Switch to terminal tab 2"
 msgstr "Passa al tab 2"
 
-#: src/bin/options_keys.c:52
+#: src/bin/options_keys.c:54
 msgid "Switch to terminal tab 3"
 msgstr "Passa al tab 3"
 
-#: src/bin/options_keys.c:53
+#: src/bin/options_keys.c:55
 msgid "Switch to terminal tab 4"
 msgstr "Passa al tab 4"
 
-#: src/bin/options_keys.c:54
+#: src/bin/options_keys.c:56
 msgid "Switch to terminal tab 5"
 msgstr "Passa al tab 5"
 
-#: src/bin/options_keys.c:55
+#: src/bin/options_keys.c:57
 msgid "Switch to terminal tab 6"
 msgstr "Passa al tab 6"
 
-#: src/bin/options_keys.c:56
+#: src/bin/options_keys.c:58
 msgid "Switch to terminal tab 7"
 msgstr "Passa al tab 7"
 
-#: src/bin/options_keys.c:57
+#: src/bin/options_keys.c:59
 msgid "Switch to terminal tab 8"
 msgstr "Passa al tab 8"
 
-#: src/bin/options_keys.c:58
+#: src/bin/options_keys.c:60
 msgid "Switch to terminal tab 9"
 msgstr "Passa al tab 9"
 
-#: src/bin/options_keys.c:59
+#: src/bin/options_keys.c:61
 msgid "Switch to terminal tab 10"
 msgstr "Passa al tab 10"
 
-#: src/bin/options_keys.c:60
+#: src/bin/options_keys.c:62
 msgid "Enter command mode"
 msgstr "Entra in modo comando"
 
-#: src/bin/options_keys.c:61
+#: src/bin/options_keys.c:63
 msgid "Toggle miniview of the history"
 msgstr "Attiva/disattiva vista storico"
 
