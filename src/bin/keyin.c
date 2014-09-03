@@ -583,7 +583,7 @@ keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
         if (kb->cb(ty->obj))
           {
              keyin_compose_seq_reset(khdl);
-             goto end;
+             return EINA_TRUE;
           }
      }
 
