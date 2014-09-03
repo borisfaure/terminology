@@ -67,7 +67,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "<br>"
               "Distributed under the 2-clause BSD license detailed below:<br>"
               "<br>"
-              "%s" // LICENSE),
+              "%s" // LICENSE
+              ),
               PACKAGE_VERSION, 2014,
               "Carsten Haitzler<br>"
               "Boris Faure<br>"
