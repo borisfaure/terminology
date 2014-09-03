@@ -67,8 +67,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "<br>"
               "Distributed under the 2-clause BSD license detailed below:<br>"
               "<br>"
-              "%s" // LICENSE
-              "</b>"),
+              "%s" // LICENSE),
               PACKAGE_VERSION, 2014,
               "Carsten Haitzler<br>"
               "Boris Faure<br>"
@@ -142,7 +141,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING "
               "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF "
               "THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH "
-              "DAMAGE.");
+              "DAMAGE.</b>");
         elm_object_part_text_set(o, "terminology.text", txt);
         eina_stringshare_del(txt);
         evas_object_show(o);
