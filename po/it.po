@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-02 20:43+0200\n"
+"POT-Creation-Date: 2014-09-03 20:59+0200\n"
 "PO-Revision-Date: 2014-08-12 23:53+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -53,20 +53,20 @@ msgid "About"
 msgstr "Informazioni"
 
 #: src/bin/about.c:56
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
 "terminal was written for Enlightenment, to use EFL and otherwise push the "
 "boundaries of what a modern terminal emulator should be. We hope you enjoy "
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s</b>"
+"clause BSD license detailed below:<br><br>%s"
 msgstr ""
 "<b>Terminology %s</b><br>Perché i terminali dovrebbero essere noiosi?"
 "<br><br>Questo terminale è stato scritto per Enlightenment, per usare le EFL "
 "e per cambiare il concetto di cosa un emulatore di terminale dovrebbe "
 "essere. Noi speriamo che ve lo godiate.<br><br>Copyright © 2012-%d by:"
 "<br><br>%s<br><br>Distribuito nei termini della licenza '2-clause BSD' "
-"descritta sotto:<br><br>%s</b>"
+"descritta sotto:<br><br>%s"
 
 #: src/bin/app_server.c:344
 msgid "There is no window open"
@@ -401,7 +401,7 @@ msgstr "Trovato argomento non valido per l'opzione -S/--split. Vedere --help."
 msgid "Could not Initialize the emotion module '%s'"
 msgstr "Non ho potuto inizializzare il modulo '%s' di emotion"
 
-#: src/bin/media.c:1295
+#: src/bin/media.c:1314
 msgid "Media visualizing is not supported"
 msgstr ""
 

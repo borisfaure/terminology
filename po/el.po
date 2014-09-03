@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-02 20:43+0200\n"
+"POT-Creation-Date: 2014-09-03 20:59+0200\n"
 "PO-Revision-Date: 2014-08-04 12:42+0200\n"
 "Last-Translator: Panagiotis Galatsanos <galatsanosp@gmail.com>\n"
 "Language-Team: Greek\n"
@@ -57,20 +57,20 @@ msgid "About"
 msgstr "Σχετικά"
 
 #: src/bin/about.c:56
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
 "terminal was written for Enlightenment, to use EFL and otherwise push the "
 "boundaries of what a modern terminal emulator should be. We hope you enjoy "
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s</b>"
+"clause BSD license detailed below:<br><br>%s"
 msgstr ""
 "<b>Terminology %s</b><br>Γιατί πρέπει τα τερματικά να είναι βαρετά;"
 "<br><br>Αυτό το τερματικό είναι γραμμένο για το Enlightenment, για να "
 "χρησιμοποιεί τις EFL αλλα και να διευρύνει τα όρια για το πώς πρέπει να "
 "είναι ένας σύγχρονος εξομοιωτής τερματικού. Ελπίζουμε να το απολαύσετε."
 "<br><br>Πνευματική Ιδιοκτησία © 2012-%d :<br><br>%s<br><br>Διανέμεται "
-"σύμφωνα με την άδεια BSD 2-clause, λεπτομερώς παρακάτω:<br><br>%s</b>"
+"σύμφωνα με την άδεια BSD 2-clause, λεπτομερώς παρακάτω:<br><br>%s"
 
 #: src/bin/app_server.c:344
 msgid "There is no window open"
@@ -412,7 +412,7 @@ msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
 msgid "Could not Initialize the emotion module '%s'"
 msgstr "Δεν ήταν δυνατή η προετοιμασία του αρθρώματος emotion '%s'"
 
-#: src/bin/media.c:1295
+#: src/bin/media.c:1314
 msgid "Media visualizing is not supported"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-02 20:43+0200\n"
+"POT-Creation-Date: 2014-09-03 20:59+0200\n"
 "PO-Revision-Date: 2014-07-12 16:36+0200\n"
 "Last-Translator:  <boris@fau.re>\n"
 "Language-Team: French\n"
@@ -60,7 +60,7 @@ msgid ""
 "terminal was written for Enlightenment, to use EFL and otherwise push the "
 "boundaries of what a modern terminal emulator should be. We hope you enjoy "
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s</b>"
+"clause BSD license detailed below:<br><br>%s"
 msgstr ""
 
 #: src/bin/app_server.c:344
@@ -374,7 +374,7 @@ msgstr ""
 msgid "Could not Initialize the emotion module '%s'"
 msgstr ""
 
-#: src/bin/media.c:1295
+#: src/bin/media.c:1314
 msgid "Media visualizing is not supported"
 msgstr ""
 
