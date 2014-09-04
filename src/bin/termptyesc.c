@@ -1050,7 +1050,7 @@ _xterm_arg_get(Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int sum = 0;
 
-   while (isdigit(*b))
+   while (*b && isdigit(*b))
      {
         sum *= 10;
         sum += *b - '0';
