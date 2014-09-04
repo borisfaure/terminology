@@ -314,6 +314,7 @@ _add_default_keys(Config *config)
    ADD_KB("Prior", 1, 0, 1, "split_h");
    ADD_KB("Next", 1, 0, 1, "split_v");
    ADD_KB("t", 1, 0, 1, "tab_new");
+   ADD_KB("End", 1, 0, 1, "exited");
    ADD_KB("Home", 1, 0, 1, "tab_select");
    ADD_KB("c", 1, 0, 1, "copy_clipboard");
    ADD_KB("v", 1, 0, 1, "paste_clipboard");

@@ -49,6 +49,7 @@ Shift+Keypad-Divide = Copy highlight to Clipboard (same as ctrl+c in gui apps)
 Ctrl+PgUp = switch focus to previous terminal inside a window
 Ctrl+PgDn = switch focus to next terminal inside a window
 Ctrl+Shift+t = create new terminal on top of current inside window (tabs)
+Ctrl+Shift+End = close the focused terminal.
 Ctrl+Shift+h = toggle displaying the miniview of the history
 Ctrl+Shift+Home = bring up "tab" switcher
 Ctrl+Shift+PgUp = split terminal horizontally (1 term above the other)
