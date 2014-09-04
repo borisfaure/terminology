@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-03 20:59+0200\n"
+"POT-Creation-Date: 2014-09-05 00:10+0900\n"
 "PO-Revision-Date: 2014-08-12 23:53+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -72,158 +72,162 @@ msgstr ""
 msgid "There is no window open"
 msgstr "Non c'è nessuna finestra aperta"
 
-#: src/bin/keyin.c:888
+#: src/bin/keyin.c:895
 #, fuzzy
 msgid "Scrolling"
 msgstr "Scrolling all'indietro:"
 
-#: src/bin/keyin.c:889
+#: src/bin/keyin.c:896
 msgid "Scroll one page up"
 msgstr "Scrolling di una pagina su"
 
-#: src/bin/keyin.c:890
+#: src/bin/keyin.c:897
 msgid "Scroll one page down"
 msgstr "Scrolling di una pagina giù"
 
-#: src/bin/keyin.c:891
+#: src/bin/keyin.c:898
 #, fuzzy
 msgid "Scroll one line up"
 msgstr "Scrolling di una pagina su"
 
-#: src/bin/keyin.c:892
+#: src/bin/keyin.c:899
 #, fuzzy
 msgid "Scroll one line down"
 msgstr "Scrolling di una pagina giù"
 
-#: src/bin/keyin.c:894
+#: src/bin/keyin.c:901
 #, fuzzy
 msgid "Copy/Paste"
 msgstr "Incolla"
 
-#: src/bin/keyin.c:895
+#: src/bin/keyin.c:902
 #, fuzzy
 msgid "Copy selection to Primary buffer"
 msgstr "Copia la selezione corrente negli appunti"
 
-#: src/bin/keyin.c:896
+#: src/bin/keyin.c:903
 #, fuzzy
 msgid "Copy selection to Clipboard buffer"
 msgstr "Copia la selezione corrente negli appunti"
 
-#: src/bin/keyin.c:897
+#: src/bin/keyin.c:904
 #, fuzzy
 msgid "Paste Primary buffer (highlight)"
 msgstr "Incolla selezione primaria (evidenziata col mouse)"
 
-#: src/bin/keyin.c:898
+#: src/bin/keyin.c:905
 #, fuzzy
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Incolla selezione appunti (ctrl+v/c)"
 
-#: src/bin/keyin.c:900
+#: src/bin/keyin.c:907
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:901
+#: src/bin/keyin.c:908
 #, fuzzy
 msgid "Focus to the previous terminal"
 msgstr "Fuoco al terminale precedente"
 
-#: src/bin/keyin.c:902
+#: src/bin/keyin.c:909
 #, fuzzy
 msgid "Focus to the next terminal"
 msgstr "Fuoco al terminale successivo"
 
-#: src/bin/keyin.c:903
+#: src/bin/keyin.c:910
 msgid "Split horizontally (new below)"
 msgstr "Dividi orizzontalmente (nuovo sotto)"
 
-#: src/bin/keyin.c:904
+#: src/bin/keyin.c:911
 msgid "Split vertically (new on right)"
 msgstr "Dividi verticalmente (nuovo a destra)"
 
-#: src/bin/keyin.c:905
+#: src/bin/keyin.c:912
 #, fuzzy
 msgid "Create a new \"tab\""
 msgstr "Crea nuovo tab"
 
-#: src/bin/keyin.c:906
+#: src/bin/keyin.c:913
+msgid "Close the focused terminal"
+msgstr ""
+
+#: src/bin/keyin.c:914
 msgid "Bring up \"tab\" switcher"
 msgstr "Apri commutatore tab"
 
-#: src/bin/keyin.c:907
+#: src/bin/keyin.c:915
 msgid "Switch to terminal tab 1"
 msgstr "Passa al tab 1"
 
-#: src/bin/keyin.c:908
+#: src/bin/keyin.c:916
 msgid "Switch to terminal tab 2"
 msgstr "Passa al tab 2"
 
-#: src/bin/keyin.c:909
+#: src/bin/keyin.c:917
 msgid "Switch to terminal tab 3"
 msgstr "Passa al tab 3"
 
-#: src/bin/keyin.c:910
+#: src/bin/keyin.c:918
 msgid "Switch to terminal tab 4"
 msgstr "Passa al tab 4"
 
-#: src/bin/keyin.c:911
+#: src/bin/keyin.c:919
 msgid "Switch to terminal tab 5"
 msgstr "Passa al tab 5"
 
-#: src/bin/keyin.c:912
+#: src/bin/keyin.c:920
 msgid "Switch to terminal tab 6"
 msgstr "Passa al tab 6"
 
-#: src/bin/keyin.c:913
+#: src/bin/keyin.c:921
 msgid "Switch to terminal tab 7"
 msgstr "Passa al tab 7"
 
-#: src/bin/keyin.c:914
+#: src/bin/keyin.c:922
 msgid "Switch to terminal tab 8"
 msgstr "Passa al tab 8"
 
-#: src/bin/keyin.c:915
+#: src/bin/keyin.c:923
 msgid "Switch to terminal tab 9"
 msgstr "Passa al tab 9"
 
-#: src/bin/keyin.c:916
+#: src/bin/keyin.c:924
 msgid "Switch to terminal tab 10"
 msgstr "Passa al tab 10"
 
-#: src/bin/keyin.c:918
+#: src/bin/keyin.c:926
 #, fuzzy
 msgid "Font size"
 msgstr "Incrementa dimensione font di 1"
 
-#: src/bin/keyin.c:919
+#: src/bin/keyin.c:927
 msgid "Font size up 1"
 msgstr "Incrementa dimensione font di 1"
 
-#: src/bin/keyin.c:920
+#: src/bin/keyin.c:928
 msgid "Font size down 1"
 msgstr "Decrementa dimensione font di 1"
 
-#: src/bin/keyin.c:921
+#: src/bin/keyin.c:929
 #, fuzzy
-msgid "Diplay big font size"
+msgid "Display big font size"
 msgstr "Avvia sempre con queste dimensioni:"
 
-#: src/bin/keyin.c:922
+#: src/bin/keyin.c:930
 #, fuzzy
 msgid "Reset font size"
 msgstr "Reimposta dimensione font a 10"
 
-#: src/bin/keyin.c:924
+#: src/bin/keyin.c:932
 #, fuzzy
 msgid "Actions"
 msgstr "Opzioni"
 
-#: src/bin/keyin.c:925
+#: src/bin/keyin.c:933
 msgid "Display the history miniview"
 msgstr ""
 
-#: src/bin/keyin.c:926
+#: src/bin/keyin.c:934
 msgid "Display the command box"
 msgstr ""
 

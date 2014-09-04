@@ -926,7 +926,7 @@ static Shortcut_Action _actions[] =
      {"group", gettext_noop("Font size"), NULL},
      {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},
      {"decrease_font_size", gettext_noop("Font size down 1"), cb_decrease_font_size},
-     {"big_font_size", gettext_noop("Diplay big font size"), cb_big_font_size},
+     {"big_font_size", gettext_noop("Display big font size"), cb_big_font_size},
      {"reset_font_size", gettext_noop("Reset font size"), cb_reset_font_size},
 
      {"group", gettext_noop("Actions"), NULL},

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-03 20:59+0200\n"
+"POT-Creation-Date: 2014-09-05 00:10+0900\n"
 "PO-Revision-Date: 2014-08-04 12:42+0200\n"
 "Last-Translator: Panagiotis Galatsanos <galatsanosp@gmail.com>\n"
 "Language-Team: Greek\n"
@@ -76,159 +76,163 @@ msgstr ""
 msgid "There is no window open"
 msgstr "Δεν υπάρχει ανοιχτό παράθυρο"
 
-#: src/bin/keyin.c:888
+#: src/bin/keyin.c:895
 #, fuzzy
 msgid "Scrolling"
 msgstr "Κύλιση προς τα πίσω:"
 
-#: src/bin/keyin.c:889
+#: src/bin/keyin.c:896
 msgid "Scroll one page up"
 msgstr "Κύλιση μία σελίδα πάνω"
 
-#: src/bin/keyin.c:890
+#: src/bin/keyin.c:897
 msgid "Scroll one page down"
 msgstr "Κύλιση μία σελίδα κατω"
 
-#: src/bin/keyin.c:891
+#: src/bin/keyin.c:898
 #, fuzzy
 msgid "Scroll one line up"
 msgstr "Κύλιση μία σελίδα πάνω"
 
-#: src/bin/keyin.c:892
+#: src/bin/keyin.c:899
 #, fuzzy
 msgid "Scroll one line down"
 msgstr "Κύλιση μία σελίδα κατω"
 
-#: src/bin/keyin.c:894
+#: src/bin/keyin.c:901
 #, fuzzy
 msgid "Copy/Paste"
 msgstr "Επικόλληση"
 
-#: src/bin/keyin.c:895
+#: src/bin/keyin.c:902
 #, fuzzy
 msgid "Copy selection to Primary buffer"
 msgstr "Αντιγραφή τρέχουσας επιλογής στο πρόχειρο"
 
-#: src/bin/keyin.c:896
+#: src/bin/keyin.c:903
 #, fuzzy
 msgid "Copy selection to Clipboard buffer"
 msgstr "Αντιγραφή τρέχουσας επιλογής στο πρόχειρο"
 
-#: src/bin/keyin.c:897
+#: src/bin/keyin.c:904
 #, fuzzy
 msgid "Paste Primary buffer (highlight)"
 msgstr "Επικόλληση κύριας επιλογής (επισήμανση)"
 
-#: src/bin/keyin.c:898
+#: src/bin/keyin.c:905
 #, fuzzy
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Επικόλληση επιλογής προχείρου (ctrl+v/c) "
 
-#: src/bin/keyin.c:900
+#: src/bin/keyin.c:907
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:901
+#: src/bin/keyin.c:908
 #, fuzzy
 msgid "Focus to the previous terminal"
 msgstr "Εστίαση στο προηγούμενο τερματικό"
 
-#: src/bin/keyin.c:902
+#: src/bin/keyin.c:909
 #, fuzzy
 msgid "Focus to the next terminal"
 msgstr "Εστίαση στο επόμενο τερματικό"
 
-#: src/bin/keyin.c:903
+#: src/bin/keyin.c:910
 #, fuzzy
 msgid "Split horizontally (new below)"
 msgstr "Διαχωριστικό οριζόντια (νέο από κάτω)"
 
-#: src/bin/keyin.c:904
+#: src/bin/keyin.c:911
 #, fuzzy
 msgid "Split vertically (new on right)"
 msgstr "Διαχωριστικό κάθετα (νέο από δεξιά)"
 
-#: src/bin/keyin.c:905
+#: src/bin/keyin.c:912
 msgid "Create a new \"tab\""
 msgstr ""
 
-#: src/bin/keyin.c:906
+#: src/bin/keyin.c:913
+msgid "Close the focused terminal"
+msgstr ""
+
+#: src/bin/keyin.c:914
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
-#: src/bin/keyin.c:907
+#: src/bin/keyin.c:915
 msgid "Switch to terminal tab 1"
 msgstr "Μετάβαση στην καρτέλα 1"
 
-#: src/bin/keyin.c:908
+#: src/bin/keyin.c:916
 msgid "Switch to terminal tab 2"
 msgstr "Μετάβαση στην καρτέλα 2"
 
-#: src/bin/keyin.c:909
+#: src/bin/keyin.c:917
 msgid "Switch to terminal tab 3"
 msgstr "Μετάβαση στην καρτέλα 3"
 
-#: src/bin/keyin.c:910
+#: src/bin/keyin.c:918
 msgid "Switch to terminal tab 4"
 msgstr "Μετάβαση στην καρτέλα 4"
 
-#: src/bin/keyin.c:911
+#: src/bin/keyin.c:919
 msgid "Switch to terminal tab 5"
 msgstr "Μετάβαση στην καρτέλα 5"
 
-#: src/bin/keyin.c:912
+#: src/bin/keyin.c:920
 msgid "Switch to terminal tab 6"
 msgstr "Μετάβαση στην καρτέλα 6"
 
-#: src/bin/keyin.c:913
+#: src/bin/keyin.c:921
 msgid "Switch to terminal tab 7"
 msgstr "Μετάβαση στην καρτέλα 7"
 
-#: src/bin/keyin.c:914
+#: src/bin/keyin.c:922
 msgid "Switch to terminal tab 8"
 msgstr "Μετάβαση στην καρτέλα 8"
 
-#: src/bin/keyin.c:915
+#: src/bin/keyin.c:923
 msgid "Switch to terminal tab 9"
 msgstr "Μετάβαση στην καρτέλα 9"
 
-#: src/bin/keyin.c:916
+#: src/bin/keyin.c:924
 msgid "Switch to terminal tab 10"
 msgstr "Μετάβαση στην καρτέλα 10"
 
-#: src/bin/keyin.c:918
+#: src/bin/keyin.c:926
 #, fuzzy
 msgid "Font size"
 msgstr "Άυξηση μεγέθους γραμματοσειράς κατα 1"
 
-#: src/bin/keyin.c:919
+#: src/bin/keyin.c:927
 msgid "Font size up 1"
 msgstr "Άυξηση μεγέθους γραμματοσειράς κατα 1"
 
-#: src/bin/keyin.c:920
+#: src/bin/keyin.c:928
 msgid "Font size down 1"
 msgstr "Μείωση μεγέθους γραμματοσειράς κατα 1"
 
-#: src/bin/keyin.c:921
+#: src/bin/keyin.c:929
 #, fuzzy
-msgid "Diplay big font size"
+msgid "Display big font size"
 msgstr "Άνοιγμα πάντα σε μέγεθος:"
 
-#: src/bin/keyin.c:922
+#: src/bin/keyin.c:930
 #, fuzzy
 msgid "Reset font size"
 msgstr "Επαναφορά μεγέθος γραμματοσειράς σε 10"
 
-#: src/bin/keyin.c:924
+#: src/bin/keyin.c:932
 #, fuzzy
 msgid "Actions"
 msgstr "Επιλογές"
 
-#: src/bin/keyin.c:925
+#: src/bin/keyin.c:933
 msgid "Display the history miniview"
 msgstr ""
 
-#: src/bin/keyin.c:926
+#: src/bin/keyin.c:934
 msgid "Display the command box"
 msgstr ""
 

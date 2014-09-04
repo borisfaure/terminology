@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-03 20:59+0200\n"
+"POT-Creation-Date: 2014-09-04 18:40+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,143 +67,147 @@ msgstr ""
 msgid "There is no window open"
 msgstr ""
 
-#: src/bin/keyin.c:888
+#: src/bin/keyin.c:895
 msgid "Scrolling"
 msgstr ""
 
-#: src/bin/keyin.c:889
+#: src/bin/keyin.c:896
 msgid "Scroll one page up"
 msgstr ""
 
-#: src/bin/keyin.c:890
+#: src/bin/keyin.c:897
 msgid "Scroll one page down"
 msgstr ""
 
-#: src/bin/keyin.c:891
+#: src/bin/keyin.c:898
 msgid "Scroll one line up"
 msgstr ""
 
-#: src/bin/keyin.c:892
+#: src/bin/keyin.c:899
 msgid "Scroll one line down"
 msgstr ""
 
-#: src/bin/keyin.c:894
+#: src/bin/keyin.c:901
 msgid "Copy/Paste"
 msgstr ""
 
-#: src/bin/keyin.c:895
+#: src/bin/keyin.c:902
 msgid "Copy selection to Primary buffer"
 msgstr ""
 
-#: src/bin/keyin.c:896
+#: src/bin/keyin.c:903
 msgid "Copy selection to Clipboard buffer"
 msgstr ""
 
-#: src/bin/keyin.c:897
+#: src/bin/keyin.c:904
 msgid "Paste Primary buffer (highlight)"
 msgstr ""
 
-#: src/bin/keyin.c:898
+#: src/bin/keyin.c:905
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr ""
 
-#: src/bin/keyin.c:900
+#: src/bin/keyin.c:907
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:901
+#: src/bin/keyin.c:908
 msgid "Focus to the previous terminal"
 msgstr ""
 
-#: src/bin/keyin.c:902
+#: src/bin/keyin.c:909
 msgid "Focus to the next terminal"
 msgstr ""
 
-#: src/bin/keyin.c:903
+#: src/bin/keyin.c:910
 msgid "Split horizontally (new below)"
 msgstr ""
 
-#: src/bin/keyin.c:904
+#: src/bin/keyin.c:911
 msgid "Split vertically (new on right)"
 msgstr ""
 
-#: src/bin/keyin.c:905
+#: src/bin/keyin.c:912
 msgid "Create a new \"tab\""
 msgstr ""
 
-#: src/bin/keyin.c:906
-msgid "Bring up \"tab\" switcher"
-msgstr ""
-
-#: src/bin/keyin.c:907
-msgid "Switch to terminal tab 1"
-msgstr ""
-
-#: src/bin/keyin.c:908
-msgid "Switch to terminal tab 2"
-msgstr ""
-
-#: src/bin/keyin.c:909
-msgid "Switch to terminal tab 3"
-msgstr ""
-
-#: src/bin/keyin.c:910
-msgid "Switch to terminal tab 4"
-msgstr ""
-
-#: src/bin/keyin.c:911
-msgid "Switch to terminal tab 5"
-msgstr ""
-
-#: src/bin/keyin.c:912
-msgid "Switch to terminal tab 6"
-msgstr ""
-
 #: src/bin/keyin.c:913
-msgid "Switch to terminal tab 7"
+msgid "Close the focused terminal"
 msgstr ""
 
 #: src/bin/keyin.c:914
-msgid "Switch to terminal tab 8"
+msgid "Bring up \"tab\" switcher"
 msgstr ""
 
 #: src/bin/keyin.c:915
-msgid "Switch to terminal tab 9"
+msgid "Switch to terminal tab 1"
 msgstr ""
 
 #: src/bin/keyin.c:916
-msgid "Switch to terminal tab 10"
+msgid "Switch to terminal tab 2"
+msgstr ""
+
+#: src/bin/keyin.c:917
+msgid "Switch to terminal tab 3"
 msgstr ""
 
 #: src/bin/keyin.c:918
-msgid "Font size"
+msgid "Switch to terminal tab 4"
 msgstr ""
 
 #: src/bin/keyin.c:919
-msgid "Font size up 1"
+msgid "Switch to terminal tab 5"
 msgstr ""
 
 #: src/bin/keyin.c:920
-msgid "Font size down 1"
+msgid "Switch to terminal tab 6"
 msgstr ""
 
 #: src/bin/keyin.c:921
-msgid "Diplay big font size"
+msgid "Switch to terminal tab 7"
 msgstr ""
 
 #: src/bin/keyin.c:922
-msgid "Reset font size"
+msgid "Switch to terminal tab 8"
+msgstr ""
+
+#: src/bin/keyin.c:923
+msgid "Switch to terminal tab 9"
 msgstr ""
 
 #: src/bin/keyin.c:924
-msgid "Actions"
-msgstr ""
-
-#: src/bin/keyin.c:925
-msgid "Display the history miniview"
+msgid "Switch to terminal tab 10"
 msgstr ""
 
 #: src/bin/keyin.c:926
+msgid "Font size"
+msgstr ""
+
+#: src/bin/keyin.c:927
+msgid "Font size up 1"
+msgstr ""
+
+#: src/bin/keyin.c:928
+msgid "Font size down 1"
+msgstr ""
+
+#: src/bin/keyin.c:929
+msgid "Display big font size"
+msgstr ""
+
+#: src/bin/keyin.c:930
+msgid "Reset font size"
+msgstr ""
+
+#: src/bin/keyin.c:932
+msgid "Actions"
+msgstr ""
+
+#: src/bin/keyin.c:933
+msgid "Display the history miniview"
+msgstr ""
+
+#: src/bin/keyin.c:934
 msgid "Display the command box"
 msgstr ""
 
