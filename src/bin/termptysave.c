@@ -60,7 +60,10 @@ _alloc_new(int size, unsigned char gen)
           }
      }
    // out of slots for new blocks - no null blocks
-   if (firstnull < 0) return NULL;
+   if (firstnull < 0) {
+	   ERR("Cannot find new null blocks");
+	   return NULL;
+   }
 
    // so allocate a new block
    size = MEM_BLOCK_PAGES * MEM_PAGE_SIZE;
@@ -69,7 +72,10 @@ _alloc_new(int size, unsigned char gen)
    // get mmaped anonymous memory so when freed it goes away from the system
    ptr = mmap(NULL, sz, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-   if (ptr == MAP_FAILED) return NULL;
+   if (ptr == MAP_FAILED) {
+	   ERR("Cannot allocate more memory with mmap MAP_ANONYMOUS");
+	   return NULL;
+   }
 
    // note - we SHOULD memset to 0, but we are assuming mmap anon give 0 pages
    //memset(ptr, 0, newsize);

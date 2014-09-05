@@ -548,7 +548,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_slider_indicator_format_function_set(o,
                                             sback_indicator_units_format,
                                             (void(*)(char*))eina_stringshare_del);
-   elm_slider_min_max_set(o, 0, 10000);
    /* http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogFloat */
    union {
        float v;
