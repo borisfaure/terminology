@@ -555,8 +555,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    } u;
    u.v = config->scrollback;
    u.c = (u.c >> 23) - 127;
-   elm_slider_value_set(o, u.c);
    elm_slider_min_max_set(o, 0.0, 19.0);
+   elm_slider_value_set(o, u.c);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
