@@ -11,33 +11,62 @@
 # endif
 #endif
 
-#define MEM_PAGE_SIZE    4096
 #define MEM_ALLOC_ALIGN  16
-#define MEM_BLOCK_PAGES  32
 #define MEM_BLOCKS       1024
+
+#define TS_MMAP_SIZE 131072
+#define TS_ALLOC_MASK (TS_MMAP_SIZE - 1)
 
 typedef struct _Alloc Alloc;
 
 struct _Alloc
 {
-   int size, last, count;
+   unsigned int size, last, count, allocated;
    short slot;
    unsigned char gen;
    unsigned char __pad;
 };
 
+static int _blocks = 0;
+static uint64_t _allocated = 0;
 static unsigned char cur_gen = 0;
 static Alloc *alloc[MEM_BLOCKS] =  { 0 };
+
+static int
+roundup_block_size(int sz)
+{
+   return MEM_ALLOC_ALIGN * ((sz + MEM_ALLOC_ALIGN - 1) / MEM_ALLOC_ALIGN);
+}
+
+static Alloc *
+_alloc_find(void *mem)
+{
+   unsigned char *memptr = mem;
+   int i;
+
+   for (i = 0; i < MEM_BLOCKS; i++)
+     {
+        unsigned char *al;
+
+        al = (unsigned char *)alloc[i];
+        if (!al) continue;
+        if (memptr < al) continue;
+        if ((al + TS_MMAP_SIZE) <= memptr) continue;
+        return alloc[i];
+     }
+   return NULL;
+}
 
 static void *
 _alloc_new(int size, unsigned char gen)
 {
    Alloc *al;
    unsigned char *ptr;
-   int newsize, sz, i, firstnull = -1;
+   unsigned int newsize, sz;
+   int i, firstnull = -1;
 
    // allocations sized up to nearest size alloc alignment
-   newsize = MEM_ALLOC_ALIGN * ((size + MEM_ALLOC_ALIGN - 1) / MEM_ALLOC_ALIGN);
+   newsize = roundup_block_size(size);
    for (i = 0; i < MEM_BLOCKS; i++)
      {
         if (!alloc[i])
@@ -55,26 +84,26 @@ _alloc_new(int size, unsigned char gen)
                   ptr += alloc[i]->last;
                   alloc[i]->last += newsize;
                   alloc[i]->count++;
+                  alloc[i]->allocated += newsize;
+                  _allocated += newsize;
                   return ptr;
                }
           }
      }
    // out of slots for new blocks - no null blocks
    if (firstnull < 0) {
-	   ERR("Cannot find new null blocks");
-	   return NULL;
+        ERR("Cannot find new null blocks");
+        return NULL;
    }
 
    // so allocate a new block
-   size = MEM_BLOCK_PAGES * MEM_PAGE_SIZE;
-   // size up to page size
-   sz = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) / MEM_PAGE_SIZE);
+   sz = TS_MMAP_SIZE;
    // get mmaped anonymous memory so when freed it goes away from the system
    ptr = mmap(NULL, sz, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
    if (ptr == MAP_FAILED) {
-	   ERR("Cannot allocate more memory with mmap MAP_ANONYMOUS");
-	   return NULL;
+        ERR("Cannot allocate more memory with mmap MAP_ANONYMOUS");
+        return NULL;
    }
 
    // note - we SHOULD memset to 0, but we are assuming mmap anon give 0 pages
@@ -84,66 +113,54 @@ _alloc_new(int size, unsigned char gen)
    al->size = sz;
    al->last = sizeof(Alloc) + newsize;
    al->count = 1;
+   al->allocated = newsize;
    al->slot = firstnull;
    al->gen = gen;
+   _allocated += newsize;
    alloc[al->slot] = al;
    ptr = (unsigned char *)al;
    ptr += sizeof(Alloc);
    return ptr;
 }
 
-static void
-_alloc_free(Alloc *al)
-{
-   al->count--;
-   if (al->count > 0) return;
-   alloc[al->slot] = NULL;
-   munmap(al, al->size);
-}
-
-static Alloc *
-_alloc_find(void *mem)
-{
-   unsigned char *memptr = mem;
-   int i;
-   
-   for (i = 0; i < MEM_BLOCKS; i++)
-     {
-        unsigned char *ptr;
-        
-        ptr = (unsigned char *)alloc[i];
-        if (!ptr) continue;
-        if (memptr < ptr) continue;
-        if ((memptr - ptr) > 0x0fffffff) continue;
-        if (((size_t)memptr - (size_t)ptr) < (size_t)(alloc[i]->size))
-          return alloc[i];
-     }
-   return NULL;
-}
-
 static void *
-_mem_new(int size)
+_ts_new(int size)
 {
    void *ptr;
-   
+
    if (!size) return NULL;
    ptr = _alloc_new(size, cur_gen);
+
    return ptr;
 }
 
 static void
-_mem_free(void *ptr)
+_ts_free(void *ptr)
 {
    Alloc *al;
-   
+   unsigned int sz;
+   Termsavecomp *ts = ptr;
+
    if (!ptr) return;
+
+   if (ts->comp)
+     sz = sizeof(Termsavecomp) + ts->w;
+   else
+     sz = sizeof(Termsave) + ((ts->w - 1) * sizeof(Termcell));
+   sz = roundup_block_size(sz);
+   _allocated -= sz;
+
    al = _alloc_find(ptr);
    if (!al)
      {
         ERR("Cannot find %p in alloc blocks", ptr);
         return;
      }
-   _alloc_free(al);
+   al->count--;
+   al->allocated -= sz;
+   if (al->count > 0) return;
+   alloc[al->slot] = NULL;
+   munmap(al, al->size);
 }
 
 static void
@@ -151,12 +168,12 @@ _mem_defrag(void)
 {
    int i, j = 0;
    Alloc *alloc2[MEM_BLOCKS];
-   
+
    for (i = 0; i < MEM_BLOCKS; i++)
      {
         if (alloc[i])
           {
-//             printf("block %i @ %i [%i/%i] # %i\n", 
+//             printf("block %i @ %i [%i/%i] # %i\n",
 //                    j, alloc[i]->gen, alloc[i]->last, alloc[i]->size, alloc[i]->count);
              alloc2[j] = alloc[i];
              alloc2[j]->slot = j;
@@ -203,11 +220,11 @@ _save_comp(Termsave *ts)
      {
         int bytes;
         char *buf;
-        
+
         buf = alloca(LZ4_compressBound(ts->w * sizeof(Termcell)));
         bytes = LZ4_compress((char *)(&(ts->cell[0])), buf,
                              ts->w * sizeof(Termcell));
-        tsc = _mem_new(sizeof(Termsavecomp) + bytes);
+        tsc = _ts_new(sizeof(Termsavecomp) + bytes);
         if (!tsc)
           {
              ERR("Big problem. Can't allocate backscroll compress buffer");
@@ -225,7 +242,7 @@ _save_comp(Termsave *ts)
    else
      {
         tsc = (Termsavecomp *)ts;
-        ts2 = _mem_new(sizeof(Termsavecomp) + tsc->w);
+        ts2 = _ts_new(sizeof(Termsavecomp) + tsc->w);
         if (!ts2)
           {
              ERR("Big problem. Can't allocate backscroll compress/copy buffer");
@@ -272,7 +289,7 @@ _idler(void *data EINA_UNUSED)
    Eina_List *l;
    Termpty *ty;
 //   double t0, t;
-   
+
    _mem_gen_next();
 
 //   t0 = ecore_time_get();
@@ -287,9 +304,9 @@ _idler(void *data EINA_UNUSED)
 //   printf("comp/uncomp %i/%i time spent %1.5f\n", ts_comp, ts_uncomp, t - t0);
    _mem_defrag();
    ts_freeops = 0;
-   
+
    _mem_gen_next();
-   
+
    idler = NULL;
    return EINA_FALSE;
 }
@@ -318,7 +335,7 @@ void
 termpty_save_freeze(void)
 {
    // XXX: suspend compressor - this probably should be in a thread but right
-   // now it'll be fine here 
+   // now it'll be fine here
    if (!freeze++)
      {
         if (timer) ecore_timer_freeze(timer);
@@ -368,8 +385,8 @@ termpty_save_extract(Termsave *ts)
         Termsave *ts2;
         char *buf;
         int bytes;
-        
-        ts2 = _mem_new(sizeof(Termsave) + ((tsc->wout - 1) * sizeof(Termcell)));
+
+        ts2 = _ts_new(sizeof(Termsave) + ((tsc->wout - 1) * sizeof(Termcell)));
         if (!ts2) return NULL;
         ts2->gen = _mem_gen_get();
         ts2->w = tsc->wout;
@@ -386,7 +403,7 @@ termpty_save_extract(Termsave *ts)
         ts_uncomp++;
         ts_freeops++;
         ts_compfreeze++;
-        _mem_free(ts);
+        _ts_free(ts);
         ts_compfreeze--;
         _check_compressor(EINA_FALSE);
         return ts2;
@@ -398,7 +415,7 @@ termpty_save_extract(Termsave *ts)
 Termsave *
 termpty_save_new(int w)
 {
-   Termsave *ts = _mem_new(sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
+   Termsave *ts = _ts_new(sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
    if (!ts) return NULL;
    ts->gen = _mem_gen_get();
    ts->w = w;
@@ -417,6 +434,6 @@ termpty_save_free(Termsave *ts)
         else ts_uncomp--;
         ts_freeops++;
      }
-   _mem_free(ts);
+   _ts_free(ts);
    _check_compressor(EINA_FALSE);
 }

@@ -46,10 +46,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos])
      {
-        Termsave *ts2;
-
-        ts2 = termpty_save_extract(ty->back[ty->backpos]);
-        termpty_save_free(ts2);
+        termpty_save_free(ty->back[ty->backpos]);
         ty->back[ty->backpos] = NULL;
      }
    ty->back[ty->backpos] = ts;
