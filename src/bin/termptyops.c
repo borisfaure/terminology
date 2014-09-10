@@ -42,8 +42,6 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    termpty_save_freeze();
    w = termpty_line_length(cells, w_max);
    ts = termpty_save_new(w);
-   if (!ts)
-     return;
    termpty_cell_copy(ty, cells, ts->cell, w);
    if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
    if (ty->back[ty->backpos])
