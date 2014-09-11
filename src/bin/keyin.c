@@ -1058,7 +1058,6 @@ keyin_remove_config(Config_Keys *key)
 
 int key_bindings_load(Config *config)
 {
-   Shortcut_Action *action = _actions;
    Config_Keys *key;
    Eina_List *l;
 
