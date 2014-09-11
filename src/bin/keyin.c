@@ -1049,7 +1049,6 @@ keyin_remove_config(Config_Keys *key)
 {
    Key_Binding *kb;
 
-
    kb = key_binding_lookup(key->keyname, key->ctrl, key->alt, key->shift);
    if (kb)
      eina_hash_del_by_key(_key_bindings, kb);
