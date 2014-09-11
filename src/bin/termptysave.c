@@ -27,7 +27,6 @@ struct _Alloc
    unsigned char __pad;
 };
 
-static int _blocks = 0;
 static uint64_t _allocated = 0;
 static unsigned char cur_gen = 0;
 static Alloc *alloc[MEM_BLOCKS] =  { 0 };
