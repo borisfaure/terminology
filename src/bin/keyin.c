@@ -1055,7 +1055,8 @@ keyin_remove_config(Config_Keys *key)
    return 0;
 }
 
-int key_bindings_load(Config *config)
+int 
+key_bindings_load(Config *config)
 {
    Config_Keys *key;
    Eina_List *l;
@@ -1093,7 +1094,8 @@ int key_bindings_load(Config *config)
    return 0;
 }
 
-void key_bindings_shutdown(void)
+void 
+key_bindings_shutdown(void)
 {
    if (_key_bindings)
      eina_hash_free(_key_bindings);
