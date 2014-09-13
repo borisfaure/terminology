@@ -186,8 +186,8 @@ sback_double_to_expo_int(double d)
 {
     if (d < 1.0)
         return 0;
-    if (d >= 19.0)
-        d = 19.0;
+    if (d >= 17.0)
+        d = 17.0;
     return 1 << (unsigned char) d;
 }
 
@@ -555,7 +555,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    } u;
    u.v = config->scrollback;
    u.c = (u.c >> 23) - 127;
-   elm_slider_min_max_set(o, 0.0, 19.0);
+   elm_slider_min_max_set(o, 0.0, 17.0);
    elm_slider_value_set(o, u.c);
    elm_box_pack_end(bx, o);
    evas_object_show(o);

@@ -371,7 +371,7 @@ config_load(const char *key)
                   /*pass through*/
                 case 2:
                   LIM(config->font.size, 3, 400);
-                  LIM(config->scrollback, 0, 524288);
+                  LIM(config->scrollback, 0, 131072);
                   LIM(config->tab_zoom, 0.0, 1.0);
                   LIM(config->vidmod, 0, 3)
 
