@@ -602,6 +602,7 @@ config_fork(Config *config)
    CPY(mouse_over_focus);
    CPY(temporary);
    SCPY(config_key);
+   CPY(font_set);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {
