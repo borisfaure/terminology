@@ -36,6 +36,7 @@ options_behavior.c options_behavior.h \
 options_keys.c options_keys.h \
 options_helpers.c options_helpers.h \
 options_video.c options_video.h \
+options_elm.c options_elm.h \
 sel.c sel.h \
 miniview.c miniview.h \
 termio.c termio.h \

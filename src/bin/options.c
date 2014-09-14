@@ -10,6 +10,7 @@
 #include "options_behavior.h"
 #include "options_keys.h"
 #include "options_helpers.h"
+#include "options_elm.h"
 #include "config.h"
 #include "termio.h"
 
@@ -32,7 +33,8 @@ static enum option_mode {
      OPTION_VIDEO,
      OPTION_BEHAVIOR,
      OPTION_KEYS,
-     OPTION_HELPERS
+     OPTION_HELPERS,
+     OPTION_ELM
 } _mode = 0;
 
 static void
@@ -88,6 +90,7 @@ _cb_opdt_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EIN
       case OPTION_BEHAVIOR:  options_behavior(op_opbox, data); break;
       case OPTION_KEYS:      options_keys(op_opbox, data); break;
       case OPTION_HELPERS:   options_helpers(op_opbox, data); break;
+      case OPTION_ELM:       options_elm(op_opbox, data); break;
      }
    edje_object_signal_emit(saved_bg, "optdetails,show", "terminology");
 }
@@ -168,6 +171,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
         ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
         ITEM_APPEND("system-run", _("Helpers"), HELPERS);
+        ITEM_APPEND("apps", _("Toolkit"), ELM);
 #undef ITEM_APPEND
 
         elm_box_pack_end(op_tbox, o);
