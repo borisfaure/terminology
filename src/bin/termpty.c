@@ -362,6 +362,11 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         goto err;
      }
    ty->pid = fork();
+   if (ty->pid < 0)
+     {
+        ERR("unable to fork: %s", strerror(errno));
+        goto err;
+     }
    if (!ty->pid)
      {
         const char *shell = NULL;
