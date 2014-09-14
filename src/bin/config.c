@@ -341,6 +341,76 @@ _add_default_keys(Config *config)
 #undef ADD_KB
 }
 
+
+void
+config_default_font_set(Config *config, Evas *evas)
+{
+   Eina_List *fontlist, *l;
+   const char *fname;
+   Eina_Bool dejavu_found = EINA_FALSE,
+             bitstream_found = EINA_FALSE,
+             droid_found = EINA_FALSE,
+             liberation_found = EINA_FALSE;
+
+   if (config->font_set) return;
+
+#define FONT_DEJAVU     "DejaVu Sans Mono:style=Book"
+#define FONT_LIBERATION "Liberation Mono:style=Regular"
+#define FONT_DROID      "Droid Sans Mono:style=Regular"
+#define FONT_BITSTREAM  "Bitstream Vera Sans Mono:style=Roman"
+
+   fontlist = evas_font_available_list(evas);
+   if (!fontlist) return;
+
+   EINA_LIST_FOREACH(fontlist, l, fname)
+     {
+        if (strncmp(fname, FONT_DEJAVU, strlen(FONT_DEJAVU)) == 0)
+          dejavu_found = EINA_TRUE;
+        else if (strncmp(fname, FONT_LIBERATION, strlen(FONT_LIBERATION)) == 0)
+          liberation_found = EINA_TRUE;
+        else if (strncmp(fname, FONT_DROID, strlen(FONT_DROID)) == 0)
+          droid_found = EINA_TRUE;
+        else if (strncmp(fname, FONT_BITSTREAM, strlen(FONT_BITSTREAM)) == 0)
+          bitstream_found = EINA_TRUE;
+     }
+
+   evas_font_available_list_free(evas, fontlist);
+
+   fname = config->font.name;
+   config->font_set = EINA_TRUE;
+   if (dejavu_found)
+     {
+        config->font.name = eina_stringshare_add(FONT_DEJAVU);
+     }
+   else if (liberation_found)
+     {
+        config->font.name = eina_stringshare_add(FONT_LIBERATION);
+     }
+   else if (droid_found)
+     {
+        config->font.name = eina_stringshare_add(FONT_DROID);
+     }
+   else if (bitstream_found)
+     {
+        config->font.name = eina_stringshare_add(FONT_BITSTREAM);
+     }
+   else
+     {
+        config->font_set = EINA_FALSE;
+     }
+
+   if (config->font_set)
+     {
+        config->font.bitmap = EINA_FALSE;
+        config->font.size = 12;
+        eina_stringshare_del(fname);
+     }
+#undef FONT_DEJAVU
+#undef FONT_LIBERATION
+#undef FONT_DROID
+#undef FONT_BITSTREAM
+}
+
 Config *
 config_load(const char *key)
 {
@@ -460,6 +530,10 @@ config_load(const char *key)
              config->mouse_over_focus = EINA_TRUE;
              _add_default_keys(config);
           }
+     }
+   else
+     {
+        config->font_set = 1;
      }
 
    if (config)

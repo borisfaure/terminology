@@ -1,6 +1,8 @@
 #ifndef _CONFIG_H__
 #define _CONFIG_H__ 1
 
+#include <Evas.h>
+
 typedef struct _Config Config;
 typedef struct _Config_Color Config_Color;
 typedef struct _Config_Keys Config_Keys;
@@ -74,6 +76,7 @@ struct _Config
    Eina_List        *keys;
 
    Eina_Bool         temporary; /* not in EET */
+   Eina_Bool         font_set; /* not in EET */
    const char       *config_key; /* not in EET, the key that config was loaded */
 };
 
@@ -84,6 +87,7 @@ void config_save(Config *config, const char *key);
 Config *config_load(const char *key);
 Config *config_fork(Config *config);
 void config_del(Config *config);
+void config_default_font_set(Config *config, Evas *evas);
 
 const char *config_theme_path_get(const Config *config);
 const char *config_theme_path_default_get(const Config *config);

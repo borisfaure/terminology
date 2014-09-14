@@ -2094,6 +2094,8 @@ main_win_new(const char *name, const char *role, const char *title,
         return NULL;
      }
 
+   config_default_font_set(config, evas_object_evas_get(wn->win));
+
    wn->config = config_fork(config);
    
    evas_object_event_callback_add(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
@@ -2702,6 +2704,7 @@ main_ipc_new(Ipc_Instance *inst)
                   free(file);
                }
           }
+        wn->config->font_set = EINA_TRUE;
         wn->config->temporary = EINA_TRUE;
      }
 
