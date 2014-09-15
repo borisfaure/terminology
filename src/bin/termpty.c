@@ -739,6 +739,8 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
                     {
                        ts2_width = MIN(len_remaining, w2);
                        ts2 = termpty_save_new(ts2_width);
+                       if (!ts2)
+                         return -1;
                        line2 = ts2->cell;
                        back2[y2 + ty->backmax] = ts2;
                     }
