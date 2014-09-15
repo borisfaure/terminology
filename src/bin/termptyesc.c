@@ -36,13 +36,13 @@ _csi_arg_get(Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int sum = 0;
 
-   while ((*b) && (!isdigit(*b))) b++;
+   while ((*b) && (*b < '0' || *b > '9')) b++;
    if (!*b)
      {
         *ptr = NULL;
         return 0;
      }
-   while (isdigit(*b))
+   while ((*b >= '0') && (*b <= '9'))
      {
         sum *= 10;
         sum += *b - '0';
@@ -1050,7 +1050,7 @@ _xterm_arg_get(Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int sum = 0;
 
-   while (*b && isdigit(*b))
+   while (*b >= '0' && *b <= '9')
      {
         sum *= 10;
         sum += *b - '0';
@@ -1598,8 +1598,9 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    return 0;
 }
 
+/* XXX: ce is excluded */
 int
-_termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
+termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
    int len = 0;
