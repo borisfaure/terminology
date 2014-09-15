@@ -78,7 +78,7 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
         ce = c + ty->buflen;
         while (c < ce)
           {
-             n = _termpty_handle_seq(ty, c, ce);
+             n = termpty_handle_seq(ty, c, ce);
              if (n == 0)
                {
                   Eina_Unicode *tmp = ty->buf;
@@ -115,7 +115,7 @@ _handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
      {
         while (c < ce)
           {
-             n = _termpty_handle_seq(ty, c, ce);
+             n = termpty_handle_seq(ty, c, ce);
              if (n == 0)
                {
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
