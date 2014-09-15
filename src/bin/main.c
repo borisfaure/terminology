@@ -69,6 +69,7 @@ struct _Term
    unsigned char unswallowed : 1;
    unsigned char missed_bell : 1;
    unsigned char miniview_shown : 1;
+   unsigned char popmedia_deleted : 1;
 };
 
 struct _Split
@@ -1091,6 +1092,8 @@ _cb_popmedia_del(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, vo
 {
    Term *term = data;
    
+   term->popmedia = NULL;
+   term->popmedia_deleted = EINA_TRUE;
    edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
 }
 
@@ -1099,12 +1102,16 @@ _cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA
 {
    Term *term = data;
    
-   if (term->popmedia)
+   if (term->popmedia || term->popmedia_deleted)
      {
-        evas_object_event_callback_del(term->popmedia, EVAS_CALLBACK_DEL,
-                                       _cb_popmedia_del);
-        evas_object_del(term->popmedia);
-        term->popmedia = NULL;
+        if (term->popmedia)
+          {
+             evas_object_event_callback_del(term->popmedia, EVAS_CALLBACK_DEL,
+                                            _cb_popmedia_del);
+             evas_object_del(term->popmedia);
+             term->popmedia = NULL;
+          }
+        term->popmedia_deleted = EINA_FALSE;
         termio_mouseover_suspend_pushpop(term->term, -1);
         _popmedia_queue_process(term);
      }
@@ -1146,6 +1153,7 @@ _popmedia_show(Term *term, const char *src)
      }
    termio_mouseover_suspend_pushpop(term->term, 1);
    term->popmedia = o = media_add(term->wn->win, src, config, MEDIA_POP, &type);
+   term->popmedia_deleted = EINA_FALSE;
    evas_object_smart_callback_add(o, "loop", _cb_media_loop, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, term);
    edje_object_part_swallow(term->bg, "terminology.popmedia", o);
@@ -2157,6 +2165,7 @@ main_term_free(Term *term)
         term->miniview = NULL;
      }
    term->popmedia = NULL;
+   term->popmedia_deleted = EINA_FALSE;
    evas_object_del(term->term);
    term->term = NULL;
    evas_object_del(term->base);
