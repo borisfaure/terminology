@@ -639,9 +639,9 @@ termpty_line_find_top(Termpty *ty, int y_end, int *top)
         if (ts)
           {
              ts = termpty_save_extract(ts);
-             if (!ts)
-               return -1;
           }
+        if (!ts)
+          return -1;
         ty->back[(y_start + ty->backpos - 1 + ty->backmax) % ty->backmax] = ts;
         if (ts->cell[ts->w - 1].att.autowrapped)
           y_start--;
