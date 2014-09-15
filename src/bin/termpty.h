@@ -45,6 +45,10 @@ typedef struct _Termexp       Termexp;
 // Only for testing purpose
 //#define SUPPORT_80_132_COLUMNS 1
 
+#define MOVIE_STATE_PLAY   0
+#define MOVIE_STATE_PAUSE  1
+#define MOVIE_STATE_STOP   2
+
 struct _Termatt
 {
    unsigned char fg, bg;
@@ -203,7 +207,7 @@ struct _Termblock
    unsigned char was_active : 1;
    unsigned char was_active_before : 1;
 
-   unsigned char mov_paused : 1;  // movie paused state marker
+   unsigned char mov_state : 2;  // movie state marker
 };
 
 struct _Termexp

@@ -1288,6 +1288,36 @@ _smart_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info E
 }
 
 static void
+_smart_media_play(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Termblock *blk = data;
+
+   if (blk->obj != obj) return;
+
+   blk->mov_state = MOVIE_STATE_PLAY;
+}
+
+static void
+_smart_media_pause(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Termblock *blk = data;
+
+   if (blk->obj != obj) return;
+
+   blk->mov_state = MOVIE_STATE_PAUSE;
+}
+
+static void
+_smart_media_stop(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Termblock *blk = data;
+
+   if (blk->obj != obj) return;
+
+   blk->mov_state = MOVIE_STATE_STOP;
+}
+
+static void
 _block_edje_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, const char *src)
 {
    Termblock *blk = data;
@@ -1779,12 +1809,18 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
    else if (blk->scale_fill) media = MEDIA_BG;
    else if (blk->thumb) media = MEDIA_THUMB;
 //   media = MEDIA_POP;
-   if (!blk->was_active_before) media |= MEDIA_SAVE;
-   else media |= MEDIA_RECOVER | MEDIA_SAVE;
+   if (!blk->was_active_before || blk->mov_state == MOVIE_STATE_STOP)
+     media |= MEDIA_SAVE;
+   else
+     media |= MEDIA_RECOVER | MEDIA_SAVE;
    blk->obj = media_add(obj, blk->path, sd->config, media, &type);
-   if (type == TYPE_MOV) media_play_set(blk->obj, !blk->mov_paused);
+   if (type == TYPE_MOV)
+     media_play_set(blk->obj, blk->mov_state == MOVIE_STATE_PLAY);
    evas_object_event_callback_add
      (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);
+   evas_object_smart_callback_add(blk->obj, "play", _smart_media_play, blk);
+   evas_object_smart_callback_add(blk->obj, "pause", _smart_media_pause, blk);
+   evas_object_smart_callback_add(blk->obj, "stop", _smart_media_stop, blk);
    blk->type = type;
    evas_object_smart_member_add(blk->obj, obj);
    mctrl = media_control_get(blk->obj);
@@ -1822,7 +1858,6 @@ _block_obj_del(Termblock *blk)
 {
    if (!blk->obj) return;
 
-   blk->mov_paused = !media_play_get(blk->obj);
    evas_object_event_callback_del_full
       (blk->obj, EVAS_CALLBACK_DEL,
        _smart_media_del, blk);
