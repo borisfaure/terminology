@@ -2968,8 +2968,15 @@ elm_main(int argc, char **argv)
    Eina_List *cmds_list = NULL;
 
    elm_language_set("");
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+   elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
+   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
+   elm_app_compile_locale_set(LOCALEDIR);
+   elm_app_info_set(elm_main, "terminology", "themes/default.edj");
+
 #if HAVE_GETTEXT && ENABLE_NLS
-   bindtextdomain(PACKAGE, LOCALEDIR);
+   bindtextdomain(PACKAGE, elm_app_locale_dir_get());
    textdomain(PACKAGE);
    _translate_options();
 #else
@@ -2983,13 +2990,6 @@ elm_main(int argc, char **argv)
         elm_shutdown();
         return EXIT_FAILURE;
      }
-
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
-   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   elm_app_compile_locale_set(LOCALEDIR);
-   elm_app_info_set(elm_main, "terminology", "themes/default.edj");
 
    config_init();
 
