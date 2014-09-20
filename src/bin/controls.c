@@ -7,8 +7,8 @@
 #include "termio.h"
 #include "main.h"
 
-static Evas_Object *ct_frame = NULL, *ct_boxh = NULL, *ct_box = NULL;
-static Evas_Object *ct_box2 = NULL, *ct_over = NULL;
+static Evas_Object *ct_frame = NULL, *ct_boxh = NULL, *ct_boxv = NULL;
+static Evas_Object *ct_box = NULL, *ct_box2 = NULL, *ct_box3 = NULL, *ct_over = NULL;
 static Eina_Bool ct_out = EINA_FALSE;
 static Ecore_Timer *ct_del_timer = NULL;
 static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
@@ -83,6 +83,12 @@ static void
 _cb_ct_split_h(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    main_split_h(ct_win, ct_term, NULL);
+}
+
+static void
+_cb_ct_miniview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   term_miniview_toggle(termio_term_get(ct_term));
 }
 
 static void
@@ -240,36 +246,41 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_object_text_set(o, _("Controls"));
 
-        ct_boxh = o = elm_box_add(win);
-        elm_box_horizontal_set(o, EINA_TRUE);
+        ct_boxv = o = elm_box_add(win);
+        elm_box_horizontal_set(o, EINA_FALSE);
         elm_object_content_set(ct_frame, o);
         evas_object_show(o);
 
-        ct_box2 = o = elm_box_add(win);
+        ct_boxh = o = elm_box_add(win);
+        elm_box_pack_end(ct_boxv, o);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        evas_object_show(o);
+
+        ct_box = o = elm_box_add(win);
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
 
         o = _button_add(win, _("New"), "new", _cb_ct_new, NULL);
-        elm_box_pack_end(ct_box2, o);
+        elm_box_pack_end(ct_box, o);
 
         o = _sep_add_h(win);
-        elm_box_pack_end(ct_box2, o);
+        elm_box_pack_end(ct_box, o);
 
         o = _button_add(win, _("Split V"), "split-h", _cb_ct_split_v, NULL);
-        elm_box_pack_end(ct_box2, o);
+        elm_box_pack_end(ct_box, o);
         o = _button_add(win, _("Split H"), "split-v", _cb_ct_split_h, NULL);
-        elm_box_pack_end(ct_box2, o);
+        elm_box_pack_end(ct_box, o);
 
         o = _sep_add_h(win);
-        elm_box_pack_end(ct_box2, o);
+        elm_box_pack_end(ct_box, o);
 
-        o = _button_add(win, _("Close"), "close", _cb_ct_close, NULL);
-        elm_box_pack_end(ct_box2, o);
+        o = _button_add(win, _("Miniview"), "mini-view", _cb_ct_miniview, NULL);
+        elm_box_pack_end(ct_box, o);
 
         o = _sep_add_v(win);
         elm_box_pack_end(ct_boxh, o);
 
-        ct_box = o = elm_box_add(win);
+        ct_box2 = o = elm_box_add(win);
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
 
@@ -277,21 +288,32 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_data_set(ct_frame, "bt_copy", o);
         if (!termio_selection_exists(term))
           elm_object_disabled_set(o, EINA_TRUE);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
+
         o = _button_add(win, _("Paste"), "paste", _cb_ct_paste, NULL);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
 
         o = _button_add(win, _("Settings"), "settings", _cb_ct_options, NULL);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
 
         o = _button_add(win, _("About"), "about", _cb_ct_about, NULL);
-        elm_box_pack_end(ct_box, o);
+        elm_box_pack_end(ct_box2, o);
+
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_boxv, o);
+
+        ct_box3 = o = elm_box_add(win);
+        elm_box_pack_end(ct_boxv, o);
+        evas_object_show(o);
+
+        o = _button_add(win, _("Close Terminal"), "close", _cb_ct_close, NULL);
+        elm_box_pack_end(ct_box3, o);
 
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
                                        _cb_frame_del, NULL);
