@@ -36,5 +36,4 @@ int keyin_add_config(Config_Keys *cfg_key);
 int keyin_remove_config(Config_Keys *cfg_key);
 void key_bindings_shutdown(void);
 
-
 #endif

@@ -56,7 +56,8 @@ utils.c utils.h \
 dbus.c dbus.h \
 extns.c extns.h \
 app_server.c app_server.h \
-app_server_eet.c app_server_eet.h
+app_server_eet.c app_server_eet.h \
+tty_keys.h
 
 tybg_SOURCES = \
 tybg.c
