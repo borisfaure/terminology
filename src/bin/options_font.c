@@ -8,6 +8,9 @@
 #include "utils.h"
 
 #define TEST_STRING "oislOIS.015!|,"
+#define FONT_MIN 5
+#define FONT_MAX 45
+#define FONT_STEP (1.0 / (FONT_MAX - FONT_MIN))
 
 static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
 
@@ -375,7 +378,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_slider_span_size_set(o, 40);
    elm_slider_unit_format_set(o, "%1.0f");
    elm_slider_indicator_format_set(o, "%1.0f");
-   elm_slider_min_max_set(o, 5, 45);
+   elm_slider_min_max_set(o, FONT_MIN, FONT_MAX);
+   elm_slider_step_set(o, FONT_STEP);
    elm_slider_value_set(o, config->font.size);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
