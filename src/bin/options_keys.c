@@ -137,13 +137,26 @@ _hover_sizing_eval(void)
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0, min_w, min_h, new_x, new_y;
    evas_object_geometry_get(_fr, &x, &y, &w, &h);
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    evas_object_geometry_set(_rect, x, y, w, h);
+#else
+   evas_object_move(_rect, x, y);
+   evas_object_resize(_rect, w, h);
+#endif
    evas_object_size_hint_min_get(_lbl, &min_w, &min_h);
    new_x = x + w/2 - min_w/2;
    new_y = y + h/2 - min_h/2;
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    evas_object_geometry_set(_lbl, new_x, new_y, min_w, min_h);
    evas_object_geometry_set(_bg, new_x - 1, new_y - 1, min_w + 2, min_h + 2);
+#else
+   evas_object_move(_lbl, new_x, new_y);
+   evas_object_resize(_lbl, min_w, min_h);
+   evas_object_move(_bg, new_x - 1, new_y - 1);
+   evas_object_resize(_bg, min_w + 2, min_h + 2);
+#endif
 }
+
 static void
 _parent_move_cb(void *data EINA_UNUSED,
                 Evas *e EINA_UNUSED,
