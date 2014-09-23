@@ -351,7 +351,7 @@ void termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
         if (sd->scroll < 0) sd->scroll = 0;
      }
    _smart_update_queue(obj, sd);
-   miniview_position_offset(term_miniview_get(sd->term), delta, EINA_TRUE);
+   miniview_position_offset(term_miniview_get(sd->term), -delta, EINA_TRUE);
 }
 
 void
