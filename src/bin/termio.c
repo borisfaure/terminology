@@ -2370,6 +2370,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
        '^',
        '`',
        '{',
+       '|',
        '}',
        0x00a0,
        0x00ab,
