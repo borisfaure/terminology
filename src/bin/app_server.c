@@ -287,8 +287,8 @@ _app_server_term_add(Term *term)
    if (_ignore_term_add)
      return NULL;
 
-   view = eo_add_custom(ELM_APP_SERVER_VIEW_CLASS, _server,
-                        elm_app_server_view_constructor(NULL));
+   view = eo_add(ELM_APP_SERVER_VIEW_CLASS, _server,
+                 elm_app_server_view_constructor(NULL));
 
    term_object = main_term_evas_object_get(term);
 
@@ -402,10 +402,10 @@ app_server_init(Eina_List **wins, Eina_Bool restore_views)
    title = elm_win_title_get(main_win_evas_object_get(wn));
 
 
-   _server = eo_add_custom(ELM_APP_SERVER_CLASS, NULL,
-                           elm_app_server_constructor(
-                              "org.enlightenment.Terminology",
-                              _app_server_create_view_cb));
+   _server = eo_add(ELM_APP_SERVER_CLASS, NULL,
+                    elm_app_server_constructor(
+                                               "org.enlightenment.Terminology",
+                                               _app_server_create_view_cb));
 
    eo_do(_server, elm_app_server_title_set(title),
          eo_key_data_set("wins", wins, NULL),
