@@ -6,7 +6,8 @@
 #include "termio.h"
 #include "app_server_eet.h"
 
-#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 10)
+#if 0
+//#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 10)
 
 #ifndef ELM_APP_SERVER_VIEW_EVENT_CLOSED
 #define ELM_APP_SERVER_VIEW_EVENT_CLOSED    ELM_APP_SERVER_VIEW_EV_CLOSED

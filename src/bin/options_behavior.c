@@ -103,6 +103,7 @@ _cb_op_behavior_multi_instance_chg(void *data, Evas_Object *obj, void *event EIN
    config_save(config, NULL);
 }
 
+/*
 static void
 _cb_op_behavior_application_server_restore_views_chg(void *data, Evas_Object *obj,
                                                      void *event EINA_UNUSED)
@@ -160,6 +161,7 @@ _cb_op_behavior_application_server_chg(void *data, Evas_Object *obj, void *event
      _behavior_option_restore_opened_views_add(term, obj);
    config_save(config, NULL);
 }
+*/
 
 static void
 _cb_op_behavior_xterm_256color_chg(void *data, Evas_Object *obj,
@@ -396,7 +398,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_active_links_chg, term);
-
+/*
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -410,6 +412,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_data_set(o, "box", bx);
    if (config->application_server)
      _behavior_option_restore_opened_views_add(term, o);
+ */
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
