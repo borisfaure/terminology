@@ -1,0 +1,178 @@
+# XXX: add...
+#PROJCOVER: data/images/terminology-cover.png
+#CHANGELOG: file1 file2 file3..
+
+PROJ: Terminology
+PROJICON: data/icons/terminology.png
+BRIEF: A beautiful terminal emulator for the commandline emulator
+VERSION: 0.6.99
+LICENSE: BSD-2
+COPYING: COPYING AUTHORS
+NEEDS: 1.11
+DOMAIN: terminology
+REPO: http://git.enlightenment.org/apps/terminology.git
+DEVREPO: git+ssh://git@git.enlightenment.org/apps/terminology.git
+CONTACT: Carsten Haitzler <raster@rasterman.com>
+CATEGORY: system terminal developer
+TAGS: terminal xterm emulator system tool
+
+BIN: bin/terminology
+SRC:
+terminology_config.h
+src/bin/about.c
+src/bin/about.h
+src/bin/app_server.c
+src/bin/app_server_eet.c
+src/bin/app_server_eet.h
+src/bin/app_server.h
+src/bin/col.c
+src/bin/col.h
+src/bin/config.c
+src/bin/config.h
+src/bin/controls.c
+src/bin/controls.h
+src/bin/dbus.c
+src/bin/dbus.h
+src/bin/extns.c
+src/bin/extns.h
+src/bin/ipc.c
+src/bin/ipc.h
+src/bin/keyin.c
+src/bin/keyin.h
+src/bin/main.c
+src/bin/main.h
+src/bin/media.c
+src/bin/media.h
+src/bin/miniview.c
+src/bin/miniview.h
+src/bin/options_behavior.c
+src/bin/options_behavior.h
+src/bin/options.c
+src/bin/options_colors.c
+src/bin/options_colors.h
+src/bin/options_elm.c
+src/bin/options_elm.h
+src/bin/options_font.c
+src/bin/options_font.h
+src/bin/options.h
+src/bin/options_helpers.c
+src/bin/options_helpers.h
+src/bin/options_keys.c
+src/bin/options_keys.h
+src/bin/options_theme.c
+src/bin/options_theme.h
+src/bin/options_themepv.c
+src/bin/options_themepv.h
+src/bin/options_video.c
+src/bin/options_video.h
+src/bin/options_wallpaper.c
+src/bin/options_wallpaper.h
+src/bin/private.h
+src/bin/sel.c
+src/bin/sel.h
+src/bin/termcmd.c
+src/bin/termcmd.h
+src/bin/termio.c
+src/bin/termio.h
+src/bin/termiolink.c
+src/bin/termiolink.h
+src/bin/termpty.c
+src/bin/termptydbl.c
+src/bin/termptydbl.h
+src/bin/termptyesc.c
+src/bin/termptyesc.h
+src/bin/termptyext.c
+src/bin/termptyext.h
+src/bin/termptygfx.c
+src/bin/termptygfx.h
+src/bin/termpty.h
+src/bin/termptyops.c
+src/bin/termptyops.h
+src/bin/termptysave.c
+src/bin/termptysave.h
+src/bin/tty_keys.h
+src/bin/utf8.c
+src/bin/utf8.h
+src/bin/utils.c
+src/bin/utils.h
+src/bin/win.c
+src/bin/win.h
+src/bin/lz4/lz4.c
+src/bin/lz4/lz4.h
+DEPS:
+elementary eina eet evas ecore ecore-evas ecore-file edje emotion
+ecore-input ecore-imf ecore-imf-evas ecore-ipc efreet ethumb_client eldbus
+INC: src/bin
+
+BIN: bin/tyalpha
+SRC: src/bin/tyalpha.c
+INC: src/bin
+
+BIN: bin/tybg
+SRC: src/bin/tybg.c
+INC: src/bin
+
+BIN: bin/tycat
+SRC: src/bin/tycat.c src/bin/extns.c src/bin/extns.h
+DEPS: elementary eina eet evas ecore ecore-evas ecore-file edje emotion
+ecore-input ecore-imf ecore-imf-evas ecore-ipc efreet ethumb_client eldbus
+INC: src/bin
+
+BIN: bin/tyls
+SRC: src/bin/tyls.c src/bin/extns.h
+DEPS:
+elementary eina eet evas ecore ecore-evas ecore-file edje emotion
+ecore-input ecore-imf ecore-imf-evas ecore-ipc efreet ethumb_client eldbus
+INC: src/bin
+
+BIN: bin/typop
+SRC: src/bin/typop.c
+INC: src/bin
+
+BIN: bin/tyq
+SRC: src/bin/tyq.c
+INC: src/bin
+
+DATA:
+data/themes/default.edj > share/terminology/themes/default.edj
+data/themes/base16_ocean_dark.edj > share/terminology/themes/base16_ocean_dark.edj
+data/themes/black.edj > share/terminology/themes/black.edj
+data/themes/mild.edj > share/terminology/themes/mild.edj
+data/themes/mustang.edj > share/terminology/themes/mustang.edj
+data/themes/smyck.edj > share/terminology/themes/smyck.edj
+data/themes/solarized.edj > share/terminology/themes/solarized.edj
+data/themes/solarized_light.edj > share/terminology/themes/solarized_light.edj
+data/backgrounds/mystic.png > share/terminology/backgrounds/mystic.png
+data/backgrounds/texture_background.png > share/terminology/backgrounds/texture_background.png
+data/fonts/10x20.pcf > share/terminology/fonts/10x20.pcf
+data/fonts/4x6.pcf > share/terminology/fonts/4x6.pcf
+data/fonts/5x7.pcf > share/terminology/fonts/5x7.pcf
+data/fonts/5x8.pcf > share/terminology/fonts/5x8.pcf
+data/fonts/6x10.pcf > share/terminology/fonts/6x10.pcf
+data/fonts/6x12.pcf > share/terminology/fonts/6x12.pcf
+data/fonts/6x13.pcf > share/terminology/fonts/6x13.pcf
+data/fonts/6x9.pcf > share/terminology/fonts/6x9.pcf
+data/fonts/7x13.pcf > share/terminology/fonts/7x13.pcf
+data/fonts/7x14.pcf > share/terminology/fonts/7x14.pcf
+data/fonts/8x13.pcf > share/terminology/fonts/8x13.pcf
+data/fonts/9x15.pcf > share/terminology/fonts/9x15.pcf
+data/fonts/9x18.pcf > share/terminology/fonts/9x18.pcf
+data/fonts/nexus.pcf > share/terminology/fonts/nexus.pcf
+data/fonts/terminus-12.pcf > share/terminology/fonts/terminus-12.pcf
+data/fonts/terminus-14-bold.pcf > share/terminology/fonts/terminus-14-bold.pcf
+data/fonts/terminus-14.pcf > share/terminology/fonts/terminus-14.pcf
+data/fonts/terminus-16-bold.pcf > share/terminology/fonts/terminus-16-bold.pcf
+data/fonts/terminus-16.pcf > share/terminology/fonts/terminus-16.pcf
+data/fonts/terminus-18-bold.pcf > share/terminology/fonts/terminus-18-bold.pcf
+data/fonts/terminus-18.pcf > share/terminology/fonts/terminus-18.pcf
+data/fonts/terminus-20-bold.pcf > share/terminology/fonts/terminus-20-bold.pcf
+data/fonts/terminus-20.pcf > share/terminology/fonts/terminus-20.pcf
+data/images/terminology.png > share/terminology/fonts/images/terminology.png
+data/fonts/TERMINUS.txt > share/terminology/fonts/TERMINUS.txt
+data/fonts/XFONT.txt > share/terminology/fonts/XFONT.txt
+
+DESKTOP: data/desktop/terminology.desktop
+
+ICON: data/icons/terminology.png
+
+PO: el fi fr it ko
