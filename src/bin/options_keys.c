@@ -53,7 +53,7 @@ _shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
                                  key->alt ? _("Alt+") : "",
                                  key->shift ? _("Shift+") : "",
                                  key->keyname);
-   hs = elm_hoversel_add(bx);
+   hs = elm_hoversel_add(_fr);
    elm_hoversel_hover_parent_set(hs, _fr);
 
    evas_object_data_set(hs, "bx", bx);
@@ -87,6 +87,11 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
    _hover_del(obj);
 
    action = evas_object_data_get(bx, "action");
+   if (!action)
+     {
+        ERR("can't find any action to associate with");
+        return;
+     }
 
    cfg_key = calloc(1, sizeof(Config_Keys));
    if (!cfg_key)
@@ -207,12 +212,12 @@ _hover_del(Evas_Object *o)
                                   _parent_hide_cb);
    evas_object_event_callback_del(_fr, EVAS_CALLBACK_DEL,
                                   _parent_del_cb);
-   evas_object_del(o);
-   _rect = NULL;
    evas_object_del(_bg);
    _bg = NULL;
    evas_object_del(_lbl);
    _lbl = NULL;
+   evas_object_del(o);
+   _rect = NULL;
 }
 
 static void
@@ -230,13 +235,12 @@ on_shortcut_add(void *data,
    elm_object_focus_set(o, EINA_TRUE);
    evas_object_show(o);
 
-   _bg = elm_bg_add(obj);
-   evas_object_show(_bg);
-   _lbl = elm_label_add(obj);
+   _bg = elm_bg_add(_fr);
+   _lbl = elm_label_add(_fr);
    elm_layout_text_set(_lbl, NULL, _("Please press key sequence"));
-   evas_object_show(_lbl);
-
    _hover_sizing_eval();
+   evas_object_show(_bg);
+   evas_object_show(_lbl);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_UP,
                                   _cb_key_up, bx);
@@ -297,7 +301,6 @@ gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 
    bt = elm_button_add(obj);
    evas_object_smart_callback_add(bt, "clicked", on_shortcut_add, bx);
-   evas_object_propagate_events_set(bt, EINA_FALSE);
    elm_layout_text_set(bt, NULL, "+");
    evas_object_size_hint_min_get(bt, &w, &h);
    min_w += w;
@@ -391,7 +394,7 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
                                                  NULL/* func */,
                                                  NULL/* func data */);
           }
-        elm_genlist_item_select_mode_set(gli, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+        elm_genlist_item_select_mode_set(gli, ELM_OBJECT_SELECT_MODE_DEFAULT);
         action++;
      }
 
