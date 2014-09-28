@@ -387,7 +387,7 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
              git = gli = elm_genlist_item_append(gl, itc_group,
                                                  (void *)action/* item data */,
                                                  NULL/* parent */,
-                                                 ELM_GENLIST_ITEM_NONE,
+                                                 ELM_GENLIST_ITEM_GROUP,
                                                  NULL/* func */,
                                                  NULL/* func data */);
           }
