@@ -178,44 +178,6 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      if (_key_try(ty, tty_keys, sizeof(tty_keys)/sizeof(tty_keys[0]), ev,
                   alt, shift, ctrl))
        return;
-#if 0
-   if (
-       ((ty->state.alt_kp) && (shift))
-//       || ((!ty->state.alt_kp) &&
-//           (!shift))
-      )
-     {
-        if (_key_try(ty, kps_keyout, ev)) return;
-     }
-   else
-     {
-        if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
-          {
-             if (_key_try(ty, kp_keyout, ev)) return;
-          }
-     }
-   if (ctrl)
-     {
-        if (!strcmp(ev->key, "minus"))
-          {
-             termpty_write(ty, "\037", 1); // generate US (unit separator)
-             return;
-          }
-        else if (!strcmp(ev->key, "space"))
-          {
-             termpty_write(ty, "\0", 1); // generate 0 byte for ctrl+space
-             return;
-          }
-        else if (!shift)
-          {
-             if (_key_try(ty, ctrl_keyout, ev)) return;
-          }
-        else
-          {
-             if (_key_try(ty, ctrl_shift_keyout, ev)) return;
-          }
-     }
-#endif
 
    if (ev->string)
      {
