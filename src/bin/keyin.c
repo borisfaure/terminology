@@ -131,7 +131,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           {
              Config *cfg = termpty_config_get(ty);
 
-             if (cfg->erase_is_del)
+             if (cfg->erase_is_del && !ctrl)
                {
                   termpty_write(ty, "\177", sizeof("\177") - 1);
                }
