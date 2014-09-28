@@ -500,11 +500,11 @@ termpty_free(Termpty *ty)
    if (ty->pid >= 0)
      {
         int i;
-        
+
         // in case someone stopped the child - cont it
         kill(ty->pid, SIGCONT);
-        // signpipe for shells
-        kill(ty->pid, SIGPIPE);
+        // sighup the shell
+        kill(ty->pid, SIGHUP);
         // try 400 time (sleeping for 1ms) to check for death of child
         for (i = 0; i < 400; i++)
           {
