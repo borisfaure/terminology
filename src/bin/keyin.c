@@ -121,10 +121,11 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
 
    if (!strcmp(ev->key, "BackSpace"))
      {
+        if (alt)
+          termpty_write(ty, "\033", 1);
         if (ty->state.send_bs)
           {
              termpty_write(ty, "\b", 1);
-             return;
           }
         else
           {
@@ -138,8 +139,8 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
                {
                   termpty_write(ty, "\b", sizeof("\b") - 1);
                }
-             return;
-        }
+          }
+        return;
      }
    if (!strcmp(ev->key, "Return"))
      {
