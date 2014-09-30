@@ -13,6 +13,7 @@ struct _Config_Keys
    Eina_Bool ctrl;
    Eina_Bool alt;
    Eina_Bool shift;
+   Eina_Bool win;
    const char *cb;
 };
 /* TODO: separate config per terminal (tab, window) and global. */
