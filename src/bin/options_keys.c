@@ -88,10 +88,18 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
 
    _hover_del(obj);
 
+   if (evas_key_modifier_is_set(ev->modifiers, "Meta") ||
+       evas_key_modifier_is_set(ev->modifiers, "Hyper") ||
+       evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
+     {
+        ERR("Modifiers Meta/Hyper/ISO_Level3_Shift are not supported in keybindings");
+        return;
+     }
+
    action = evas_object_data_get(bx, "action");
    if (!action)
      {
-        ERR("can't find any action to associate with");
+        ERR("can't find any action to associate with.");
         return;
      }
 

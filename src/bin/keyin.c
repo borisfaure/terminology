@@ -218,15 +218,20 @@ Eina_Bool
 keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
              Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win)
 {
-   Key_Binding *kb;
 
-   kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win);
-   if (kb)
+   if (!evas_key_modifier_is_set(ev->modifiers, "Meta") &&
+       !evas_key_modifier_is_set(ev->modifiers, "Hyper") &&
+       !evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
      {
-        if (kb->cb(ty->obj))
+        Key_Binding *kb;
+        kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win);
+        if (kb)
           {
-             keyin_compose_seq_reset(khdl);
-             return EINA_TRUE;
+             if (kb->cb(ty->obj))
+               {
+                  keyin_compose_seq_reset(khdl);
+                  return EINA_TRUE;
+               }
           }
      }
 
