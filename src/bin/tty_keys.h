@@ -530,6 +530,30 @@ static const Tty_Key tty_keys[] = {
   },
 },
 {
+  "ISO_Left_Tab",
+  sizeof("ISO_Left_Tab") - 1,
+  {
+    KH("\t"), // default Tab
+    KH("\x89"), // default Alt+Tab
+    KH("\t"), // default Ctrl+Tab
+    KH("\x89"), // default Ctrl+Alt+Tab
+    KH("\033[Z"), // default Shift+Tab
+    KH("\033[Z"), // default Shift+Alt+Tab
+    KH("\033[Z"), // default Shift+Ctrl+Tab
+    KH("\033[Z"), // default Shift+Ctrl+Alt+Tab
+  },
+  {
+    KH("\t"), // cursor Tab
+    KH("\x89"), // cursor Alt+Tab
+    KH("\t"), // cursor Ctrl+Tab
+    KH("\x89"), // cursor Ctrl+Alt+Tab
+    KH("\033[Z"), // cursor Shift+Tab
+    KH("\033[Z"), // cursor Shift+Alt+Tab
+    KH("\033[Z"), // cursor Shift+Ctrl+Tab
+    KH("\033[Z"), // cursor Shift+Ctrl+Alt+Tab
+  },
+},
+{
   "Tab",
   sizeof("Tab") - 1,
   {
