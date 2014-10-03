@@ -221,6 +221,7 @@ keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
 
    if (!evas_key_modifier_is_set(ev->modifiers, "Meta") &&
        !evas_key_modifier_is_set(ev->modifiers, "Hyper") &&
+       !evas_key_modifier_is_set(ev->modifiers, "AltGr") &&
        !evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
      {
         Key_Binding *kb;
@@ -313,6 +314,7 @@ key_is_modifier(const char *key)
        STATIC_STR_EQUAL("Shift") ||
        STATIC_STR_EQUAL("Control") ||
        STATIC_STR_EQUAL("Alt") ||
+       STATIC_STR_EQUAL("AltGr") ||
        STATIC_STR_EQUAL("Meta") ||
        STATIC_STR_EQUAL("Super") ||
        STATIC_STR_EQUAL("Hyper") ||

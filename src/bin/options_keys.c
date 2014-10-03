@@ -90,9 +90,10 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
 
    if (evas_key_modifier_is_set(ev->modifiers, "Meta") ||
        evas_key_modifier_is_set(ev->modifiers, "Hyper") ||
+       evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
        evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
      {
-        ERR("Modifiers Meta/Hyper/ISO_Level3_Shift are not supported in keybindings");
+        ERR("Modifiers Meta/Hyper/ISO_Level3_Shift/AltGr are not supported in keybindings");
         return;
      }
 
