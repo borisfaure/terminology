@@ -2,21 +2,23 @@
 # Copyright (C) 2014 Terminology development team
 # This file is distributed under the same license as the terminology package.
 #  <boris@fau.re>, 2014.
+# Efstathios Iosifidis <iosifidis@opensuse.org>, 2014.
+# Panagiotis Galatsanos <galatsanosp@gmail.com>, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-09-05 00:10+0900\n"
-"PO-Revision-Date: 2014-08-04 12:42+0200\n"
-"Last-Translator: Panagiotis Galatsanos <galatsanosp@gmail.com>\n"
-"Language-Team: Greek\n"
+"PO-Revision-Date: 2014-10-01 12:04+0200\n"
+"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
+"Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: src/bin/controls.c:241
 msgid "Controls"
@@ -27,14 +29,12 @@ msgid "New"
 msgstr "Νέο"
 
 #: src/bin/controls.c:258
-#, fuzzy
 msgid "Split V"
-msgstr "Διαχωρισμός Κ"
+msgstr "Διαίρεση Κ"
 
 #: src/bin/controls.c:260
-#, fuzzy
 msgid "Split H"
-msgstr "Διαχορισμός O"
+msgstr "Διαίρεση Ο"
 
 #: src/bin/controls.c:266
 msgid "Close"
@@ -57,7 +57,7 @@ msgid "About"
 msgstr "Σχετικά"
 
 #: src/bin/about.c:56
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
 "terminal was written for Enlightenment, to use EFL and otherwise push the "
@@ -67,7 +67,7 @@ msgid ""
 msgstr ""
 "<b>Terminology %s</b><br>Γιατί πρέπει τα τερματικά να είναι βαρετά;"
 "<br><br>Αυτό το τερματικό είναι γραμμένο για το Enlightenment, για να "
-"χρησιμοποιεί τις EFL αλλα και να διευρύνει τα όρια για το πώς πρέπει να "
+"χρησιμοποιεί τις EFL αλλά και να διευρύνει τα όρια για το πώς πρέπει να "
 "είναι ένας σύγχρονος εξομοιωτής τερματικού. Ελπίζουμε να το απολαύσετε."
 "<br><br>Πνευματική Ιδιοκτησία © 2012-%d :<br><br>%s<br><br>Διανέμεται "
 "σύμφωνα με την άδεια BSD 2-clause, λεπτομερώς παρακάτω:<br><br>%s"
@@ -77,9 +77,8 @@ msgid "There is no window open"
 msgstr "Δεν υπάρχει ανοιχτό παράθυρο"
 
 #: src/bin/keyin.c:895
-#, fuzzy
 msgid "Scrolling"
-msgstr "Κύλιση προς τα πίσω:"
+msgstr "Κύλιση"
 
 #: src/bin/keyin.c:896
 msgid "Scroll one page up"
@@ -90,22 +89,18 @@ msgid "Scroll one page down"
 msgstr "Κύλιση μία σελίδα κατω"
 
 #: src/bin/keyin.c:898
-#, fuzzy
 msgid "Scroll one line up"
-msgstr "Κύλιση μία σελίδα πάνω"
+msgstr "Κύλιση μία γραμμή πάνω"
 
 #: src/bin/keyin.c:899
-#, fuzzy
 msgid "Scroll one line down"
-msgstr "Κύλιση μία σελίδα κατω"
+msgstr "Κύλιση μία γραμμή κάτω"
 
 #: src/bin/keyin.c:901
-#, fuzzy
 msgid "Copy/Paste"
-msgstr "Επικόλληση"
+msgstr "Αντιγραφή/Επικόλληση"
 
 #: src/bin/keyin.c:902
-#, fuzzy
 msgid "Copy selection to Primary buffer"
 msgstr "Αντιγραφή τρέχουσας επιλογής στο πρόχειρο"
 
@@ -126,35 +121,31 @@ msgstr "Επικόλληση επιλογής προχείρου (ctrl+v/c) "
 
 #: src/bin/keyin.c:907
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "Διαίρεση/Καρτέλες"
 
 #: src/bin/keyin.c:908
-#, fuzzy
 msgid "Focus to the previous terminal"
 msgstr "Εστίαση στο προηγούμενο τερματικό"
 
 #: src/bin/keyin.c:909
-#, fuzzy
 msgid "Focus to the next terminal"
 msgstr "Εστίαση στο επόμενο τερματικό"
 
 #: src/bin/keyin.c:910
-#, fuzzy
 msgid "Split horizontally (new below)"
-msgstr "Διαχωριστικό οριζόντια (νέο από κάτω)"
+msgstr "Διαίρεση οριζόντια (νέο από κάτω)"
 
 #: src/bin/keyin.c:911
-#, fuzzy
 msgid "Split vertically (new on right)"
-msgstr "Διαχωριστικό κάθετα (νέο από δεξιά)"
+msgstr "Διαίρεση κάθετα (νέο στα δεξιά)"
 
 #: src/bin/keyin.c:912
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "Δημιουργία νέας \"καρτέλας\""
 
 #: src/bin/keyin.c:913
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "Κλείσιμο εστιασμένου τερματικού"
 
 #: src/bin/keyin.c:914
 msgid "Bring up \"tab\" switcher"
@@ -201,9 +192,8 @@ msgid "Switch to terminal tab 10"
 msgstr "Μετάβαση στην καρτέλα 10"
 
 #: src/bin/keyin.c:926
-#, fuzzy
 msgid "Font size"
-msgstr "Άυξηση μεγέθους γραμματοσειράς κατα 1"
+msgstr "Μέγεθος γραμματοσειράς"
 
 #: src/bin/keyin.c:927
 msgid "Font size up 1"
@@ -214,27 +204,24 @@ msgid "Font size down 1"
 msgstr "Μείωση μεγέθους γραμματοσειράς κατα 1"
 
 #: src/bin/keyin.c:929
-#, fuzzy
 msgid "Display big font size"
-msgstr "Άνοιγμα πάντα σε μέγεθος:"
+msgstr "Εμφάνιση μεγάλου μεγέθους γραμματοσειρά"
 
 #: src/bin/keyin.c:930
-#, fuzzy
 msgid "Reset font size"
-msgstr "Επαναφορά μεγέθος γραμματοσειράς σε 10"
+msgstr "Επαναφορά μεγέθους γραμματοσειράς"
 
 #: src/bin/keyin.c:932
-#, fuzzy
 msgid "Actions"
-msgstr "Επιλογές"
+msgstr "Ενέργειες"
 
 #: src/bin/keyin.c:933
 msgid "Display the history miniview"
-msgstr ""
+msgstr "Εμφάνιση ιστορικού μικροπροβολής"
 
 #: src/bin/keyin.c:934
 msgid "Display the command box"
-msgstr ""
+msgstr "Εμφάνιση πλαισίου εντολών"
 
 #: src/bin/main.c:2340
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
@@ -302,6 +289,9 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page."
 msgstr ""
+"Διαίρεση παραθύρου τερματικού. Το 'v' είναι για κάθετα και το 'h' για "
+"οριζόντια. Μπορούν να χρησιμοποιηθούν πολλές φορές. πχ -S vhvv ή --split hv "
+"Για περισσότερες λεπτομέρειες μπορείτε να δείτε την σελίδα οδηγιών (man)."
 
 #: src/bin/main.c:2796
 msgid "Set emotion module to use."
@@ -316,12 +306,10 @@ msgid "Set mute mode for video playback."
 msgstr "Ορισμός λειτουργίας σίγασης για την αναπαραγωγή βίντεο."
 
 #: src/bin/main.c:2803
-#, fuzzy
 msgid "Set cursor blink mode."
-msgstr "Ορισμός λειτουργίας φωτεινότητας κέρσορα."
+msgstr "Ορισμός λειτουργίας παλλόμενου κέρσορα."
 
 #: src/bin/main.c:2805
-#, fuzzy
 msgid "Set visual bell mode."
 msgstr "Ορισμός λειτουργίας οπτικού κουδουνιού."
 
@@ -351,9 +339,8 @@ msgid "Terminology is run without a window manager."
 msgstr "Εκκίνηση του Terminology χωρίς διαχειριστή παραθύρων."
 
 #: src/bin/main.c:2819
-#, fuzzy
 msgid "Do not exit when the command process exits."
-msgstr "Να μην κλείνει όταν η διεργασία εντολής κλείνει."
+msgstr "Να μην γίνει έξοδος όταν η διεργασία εντολής κλείνει."
 
 #: src/bin/main.c:2821
 msgid "Force single executable if multi-instance is enabled."
@@ -361,7 +348,7 @@ msgstr ""
 
 #: src/bin/main.c:2823
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
-msgstr ""
+msgstr "Ορισμός TERM σε 'xterm-256color' αντί για 'xterm'."
 
 #: src/bin/main.c:2825
 msgid "Highlight links."
@@ -369,19 +356,19 @@ msgstr "Υπογράμμιση συνδέσμων."
 
 #: src/bin/main.c:2854
 msgid "show program version."
-msgstr "Προβολή έκδοσης του προγράμματος."
+msgstr "προβολή έκδοσης του προγράμματος."
 
 #: src/bin/main.c:2857
 msgid "show copyright."
-msgstr "Προβολή πνευματικής ιδιοκτησίας."
+msgstr "προβολή πνευματικής ιδιοκτησίας."
 
 #: src/bin/main.c:2860
 msgid "show license."
-msgstr "Προβολή άδειας."
+msgstr "προβολή άδειας."
 
 #: src/bin/main.c:2863
 msgid "show this message."
-msgstr "Προβολή αυτού του μηνύματος."
+msgstr "προβολή αυτού του μηνύματος."
 
 #: src/bin/main.c:2970 src/bin/miniview.c:38
 #, c-format
@@ -389,27 +376,25 @@ msgid "Could not create logging domain '%s'."
 msgstr ""
 
 #: src/bin/main.c:2985
-#, fuzzy
 msgid "Could not initialize key bindings."
 msgstr "Δεν ήταν δυνατή η προετοιμασία του αρθρώματος emotion '%s'"
 
 #: src/bin/main.c:2997
 msgid "Could not parse command line options."
-msgstr ""
+msgstr "Αδυναμία ανάλυσης επιλογών γραμμής εντολών."
 
 #: src/bin/main.c:3012
 #, c-format
 msgid "option %s requires an argument!"
-msgstr "Η επιλογή %s χρειάζεται ένα όρισμα!"
+msgstr "η επιλογή %s χρειάζεται ένα όρισμα!"
 
 #: src/bin/main.c:3013
 msgid "invalid options found. See --help."
 msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
 
 #: src/bin/main.c:3333
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help."
-msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
+msgstr "βρέθηκαν μη έγκυρα ορίσματα για την επιλογή -S/--split. Δείτε --help"
 
 #: src/bin/media.c:726
 #, c-format
@@ -422,12 +407,12 @@ msgstr ""
 
 #: src/bin/options_behavior.c:127
 msgid "Restore opened views"
-msgstr ""
+msgstr "Επαναφορά ανοικτών προβολών"
 
 #: src/bin/options_behavior.c:202
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d γραμμές"
 
 #: src/bin/options_behavior.c:303 src/bin/options.c:168
 msgid "Behavior"
@@ -443,7 +428,7 @@ msgstr "Μετακίνηση προς τα κάτω όταν πατηθεί κά
 
 #: src/bin/options_behavior.c:343
 msgid "React to key presses"
-msgstr ""
+msgstr "Αντίδραση στα πατήματα πλήκτρων"
 
 #: src/bin/options_behavior.c:353
 msgid "Cursor blinking"
@@ -466,7 +451,6 @@ msgid "Active Links"
 msgstr "Ενεργοί σύνδεσμοι"
 
 #: src/bin/options_behavior.c:403
-#, fuzzy
 msgid "Enable application server"
 msgstr "Ενεργοποίηση διακομιστή εφαρμογής"
 
@@ -477,7 +461,7 @@ msgstr "Πολλαπλά instances, μία διεργασία"
 
 #: src/bin/options_behavior.c:427
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "Ορισμός TERM σε xterm-256color"
 
 #: src/bin/options_behavior.c:437
 msgid "BackArrow sends Del (instead of BackSpace)"
@@ -494,7 +478,7 @@ msgstr ""
 #: src/bin/options_behavior.c:467
 #, fuzzy
 msgid "Focus split under the Mouse"
-msgstr "Eστίαση στο διαχωριστικό κάτω από το ποντίκι"
+msgstr "Eστίαση διαιρούμενου κάτω από το ποντίκι"
 
 #: src/bin/options_behavior.c:477
 msgid "Always open at size:"
@@ -529,7 +513,7 @@ msgstr ""
 #: src/bin/options_behavior.c:583 src/bin/options_behavior.c:584
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:134
 msgid "Options"
@@ -677,27 +661,27 @@ msgstr "Τοπικά (Όλα):"
 
 #: src/bin/options_keys.c:52
 msgid "Ctrl+"
-msgstr ""
+msgstr "Ctrl+"
 
 #: src/bin/options_keys.c:53
 msgid "Alt+"
-msgstr ""
+msgstr "Alt+"
 
 #: src/bin/options_keys.c:54
 msgid "Shift+"
-msgstr ""
+msgstr "Shift+"
 
 #: src/bin/options_keys.c:63
 msgid "Delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: src/bin/options_keys.c:223
 msgid "Please press key sequence"
-msgstr ""
+msgstr "Παρακαλώ πιέστε την αλληλουχία πλήκτρων"
 
 #: src/bin/options_keys.c:326
 msgid "Key Bindings"
-msgstr ""
+msgstr "Συνδυασμοί Πλήκτρων"
 
 #: src/bin/options_video.c:88
 msgid "Translucent"
@@ -713,9 +697,8 @@ msgid "Audio muted"
 msgstr "Ήχος σε σίγαση"
 
 #: src/bin/options_video.c:132
-#, fuzzy
 msgid "Audio visualized"
-msgstr "Ήχος σε σίγαση"
+msgstr "Αναπαράσταση ήχου"
 
 #: src/bin/options_video.c:149
 msgid "Video Engine:"
@@ -731,7 +714,7 @@ msgstr "Κανένα"
 
 #: src/bin/options_wallpaper.c:388
 msgid "Source file is target file"
-msgstr ""
+msgstr "Το πηγαίο αρχείο είναι το αρχείο προορισμού"
 
 #: src/bin/options_wallpaper.c:401
 msgid "Picture imported"
@@ -778,7 +761,7 @@ msgstr "Άγνωστο εντολή μεγέθους πλέγματος: %s"
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr "Δεν μπορεί να διαβαστεί το αρχείο φόντου: %s"
+msgstr "Αδυναμία ανάγνωσης αρχείου φόντου: %s"
 
 #: src/bin/termcmd.c:147
 #, c-format
@@ -824,27 +807,27 @@ msgstr "Σφάλμα μνήμης: %s"
 #: src/bin/termpty.c:152
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "Αποτυχία ορισμού μεγέθους ioctl: %s"
 
 #: src/bin/termpty.c:317 src/bin/termpty.c:322 src/bin/termpty.c:326
 #, c-format
 msgid "Function %s failed: %s"
-msgstr ""
+msgstr "Αποτυχία λειτουργίας %s: %s"
 
 #: src/bin/termpty.c:333
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "αποτυχία open() στο pty '%s': %s"
 
 #: src/bin/termpty.c:339 src/bin/termpty.c:345
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "αποτυχία fcntl() στο pty '%s': %s"
 
 #: src/bin/termpty.c:377
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr ""
+msgstr "Αδυναμία αλλαγής τρέχοντος καταλόγου σε '%s': %s"
 
 #: src/bin/termpty.c:398
 #, c-format
@@ -854,7 +837,7 @@ msgstr ""
 #: src/bin/termpty.c:594
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "Αδυναμία εγγραφής στον περιγραφέα αρχείου %d: %s"
 
 #: src/bin/utils.c:50
 #, c-format
@@ -862,9 +845,9 @@ msgid "Could not load any theme for group=%s: %s"
 msgstr "Δεν γίνεται να φορτωθεί οποιοδήποτε θέμα για την ομάδα=%s: %s"
 
 #: src/bin/utils.c:67
-#, fuzzy, c-format
+#, c-format
 msgid "Could not load default theme for group=%s: %s"
-msgstr "Δεν γίνεται να φορτωθεί οποιοδήποτε θέμα για την ομάδα=%s: %s"
+msgstr "Αδυναμία φόρτωσης προεπιλεγμένου θέματος για την ομάδα=%s: %s"
 
 #~ msgid "Word separators:"
 #~ msgstr "Διαχωριστές λέξεων:"
