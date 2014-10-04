@@ -14,8 +14,6 @@ make it a first-class terminal:
 [ ] scrollbar (elm scroller that mirrors the term smart size/position
     - gives us fingerscroll - layer on top of term smart, stick
     invisible rect inside to track for scrolling etc.)
-[ ] selection off edge scrolls in that direction (as per selection
-    mode too if it gets NEAR an edge)
 [ ] selection mode mirrors entry style for touch displays (handle
     on_hold flags, etc.)
 [ ] fast text/regex searching similar to urxvt
