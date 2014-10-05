@@ -1095,6 +1095,11 @@ static void
 _update_link(Evas_Object *obj, Termio *sd,
              Eina_Bool same_link, Eina_Bool same_geom)
 {
+   Evas_Coord ox, oy, ow, oh;
+   Evas_Object *o;
+   Eina_Bool popup_exists;
+   int y;
+
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (!same_link)
@@ -1102,91 +1107,86 @@ _update_link(Evas_Object *obj, Termio *sd,
         // check link and re-probe/fetch create popup preview
      }
 
-   if (!same_geom)
+   if (same_geom)
+     return;
+
+   if (sd->link.suspend)
+     return;
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   EINA_LIST_FREE(sd->link.objs, o)
      {
-        Evas_Coord ox, oy, ow, oh;
-        Evas_Object *o;
-        // fix up edje objects "underlining" the link
-        int y;
-
-        evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        if (!sd->link.suspend)
+        if (sd->link.down.dndobj == o)
           {
-             EINA_LIST_FREE(sd->link.objs, o)
-               {
-                  if (sd->link.down.dndobj == o)
-                    {
-                       sd->link.down.dndobjdel = EINA_TRUE;
-                       evas_object_hide(o);
-                    }
-                  else
-                    evas_object_del(o);
-               }
-             if (sd->link.string)
-               {
-                  if ((!main_term_popup_exists(sd->term)) &&
-                      ((sd->link.string[0] == '/') || (link_is_url(sd->link.string))))
-                    {
-                       Evas_Coord _x = ox, _y = oy;
-                       uint64_t xwin;
+             sd->link.down.dndobjdel = EINA_TRUE;
+             evas_object_hide(o);
+          }
+        else
+          evas_object_del(o);
+     }
+   if (!sd->link.string)
+     return;
 
-                       _x += sd->mouse.cx * sd->font.chw;
-                       _y += sd->mouse.cy * sd->font.chh;
+   popup_exists = main_term_popup_exists(sd->term);
+   if ((!popup_exists) &&
+       ((sd->link.string[0] == '/') || (link_is_url(sd->link.string))))
+     {
+        Evas_Coord _x = ox, _y = oy;
+        uint64_t xwin;
+
+        _x += sd->mouse.cx * sd->font.chw;
+        _y += sd->mouse.cy * sd->font.chh;
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
-                       xwin = elm_win_window_id_get(sd->win);
+        xwin = elm_win_window_id_get(sd->win);
 # if (ELM_VERSION_MAJOR > 1) || ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR > 8)) // not a typo
-                       if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
-                         xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
+        if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
+          xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
 # endif
 #else
-                       xwin = elm_win_xwindow_get(sd->win);
+        xwin = elm_win_xwindow_get(sd->win);
 #endif
-                       ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
-                    }
-                  for (y = sd->link.y1; y <= sd->link.y2; y++)
-                    {
-                       o = edje_object_add(evas_object_evas_get(obj));
-                       evas_object_smart_member_add(o, obj);
-                       theme_apply(o, sd->config, "terminology/link");
+        ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
+     }
+   for (y = sd->link.y1; y <= sd->link.y2; y++)
+     {
+        o = edje_object_add(evas_object_evas_get(obj));
+        evas_object_smart_member_add(o, obj);
+        theme_apply(o, sd->config, "terminology/link");
 
-                       if (y == sd->link.y1)
-                         {
-                            evas_object_move(o, ox + (sd->link.x1 * sd->font.chw),
-                                             oy + (y * sd->font.chh));
-                            if (sd->link.y1 == sd->link.y2)
-                              evas_object_resize(o,
-                                                 ((sd->link.x2 - sd->link.x1 + 1) * sd->font.chw),
-                                                 sd->font.chh);
-                            else
-                              evas_object_resize(o,
-                                                 ((sd->grid.w - sd->link.x1) * sd->font.chw),
-                                                 sd->font.chh);
-                         }
-                       else if (y == sd->link.y2)
-                         {
-                            evas_object_move(o, ox, oy + (y * sd->font.chh));
-                            evas_object_resize(o,
-                                               ((sd->link.x2 + 1) * sd->font.chw),
-                                               sd->font.chh);
-                         }
-                       else
-                         {
-                            evas_object_move(o, ox, oy + (y * sd->font.chh));
-                            evas_object_resize(o, (sd->grid.w * sd->font.chw),
-                                               sd->font.chh);
-                         }
-
-                       sd->link.objs = eina_list_append(sd->link.objs, o);
-                       evas_object_show(o);
-                       evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                                      _cb_link_down, obj);
-                       evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
-                                                      _cb_link_up, obj);
-                       evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
-                                                      _cb_link_move, obj);
-                    }
-               }
+        if (y == sd->link.y1)
+          {
+             evas_object_move(o, ox + (sd->link.x1 * sd->font.chw),
+                              oy + (y * sd->font.chh));
+             if (sd->link.y1 == sd->link.y2)
+               evas_object_resize(o,
+                                  ((sd->link.x2 - sd->link.x1 + 1) * sd->font.chw),
+                                  sd->font.chh);
+             else
+               evas_object_resize(o,
+                                  ((sd->grid.w - sd->link.x1) * sd->font.chw),
+                                  sd->font.chh);
           }
+        else if (y == sd->link.y2)
+          {
+             evas_object_move(o, ox, oy + (y * sd->font.chh));
+             evas_object_resize(o,
+                                ((sd->link.x2 + 1) * sd->font.chw),
+                                sd->font.chh);
+          }
+        else
+          {
+             evas_object_move(o, ox, oy + (y * sd->font.chh));
+             evas_object_resize(o, (sd->grid.w * sd->font.chw),
+                                sd->font.chh);
+          }
+
+        sd->link.objs = eina_list_append(sd->link.objs, o);
+        evas_object_show(o);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cb_link_down, obj);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                       _cb_link_up, obj);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _cb_link_move, obj);
      }
 }
 
@@ -4032,7 +4032,6 @@ _smart_apply(Evas_Object *obj)
         if (ch1 >= 0)
           evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
                                           ch2 - ch1 + 1, 1);
-          //printf("I'm fine thanx\n");
      }
    termpty_cellcomp_thaw(sd->pty);
 
