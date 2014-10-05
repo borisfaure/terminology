@@ -1,38 +1,38 @@
-# English translations for terminology package.
-# Copyright (C) 2014 Terminology development team
-# This file is distributed under the same license as the terminology package.
-#  <boris@fau.re>, 2014.
+# Catalan translation for enlightenment
+# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# This file is distributed under the same license as the enlightenment package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: terminology 0.6.99\n"
+"Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-10-05 14:40+0200\n"
-"PO-Revision-Date: 2014-09-25 21:46+0000\n"
-"Last-Translator: Eliovir <Unknown>\n"
-"Language-Team: French\n"
-"Language: fr\n"
+"PO-Revision-Date: 2014-09-28 17:15+0000\n"
+"Last-Translator: JoanColl <Unknown>\n"
+"Language-Team: Catalan <ca@li.org>\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
+"X-Launchpad-Export-Date: 2014-10-05 12:12+0000\n"
 "X-Generator: Launchpad (build 17196)\n"
 
 #: src/bin/controls.c:247
 msgid "Controls"
-msgstr "Contrôles"
+msgstr "Controls"
 
 #: src/bin/controls.c:263
 msgid "New"
-msgstr "Nouveau"
+msgstr "Nou"
 
 #: src/bin/controls.c:269
 msgid "Split V"
-msgstr "Fractionner v"
+msgstr "Divideix V"
 
 #: src/bin/controls.c:271
 msgid "Split H"
-msgstr "Fractionner H"
+msgstr "Divideix H"
 
 #: src/bin/controls.c:277
 msgid "Miniview"
@@ -40,23 +40,24 @@ msgstr ""
 
 #: src/bin/controls.c:287 src/bin/termio.c:947
 msgid "Copy"
-msgstr "Copier"
+msgstr "Còpia"
 
 #: src/bin/controls.c:293
 msgid "Paste"
-msgstr "Coller"
+msgstr "Enganxa"
 
 #: src/bin/controls.c:299
 msgid "Settings"
-msgstr "Configuration"
+msgstr "Paràmetres"
 
 #: src/bin/controls.c:305
 msgid "About"
-msgstr "À propos"
+msgstr "Quant a"
 
 #: src/bin/controls.c:315
+#, fuzzy
 msgid "Close Terminal"
-msgstr ""
+msgstr "Tanca el terminal que tingui el focus"
 
 #: src/bin/about.c:56
 #, c-format
@@ -67,173 +68,171 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Pourquoi les terminaux devraient être ennuyeux ?"
-"<br><br>Ce terminal a été écrit pour Enlightenment, pour utiliser EFL et "
-"repousser les limites de ce que devrait être un terminal moderne. Nous "
-"espérons que vous l'apprécierez.<br><br>Copyright © 2012-%d par :<br><br>"
-"%s<br><br>Distribué sous licence BSD 2-clauses détaillée ci-dessous :<br><br>"
-"%s"
 
 #: src/bin/app_server.c:345
 msgid "There is no window open"
-msgstr "Il n'y a aucune fenêtre ouverte"
+msgstr "No hi ha cap finestra oberta"
 
 #: src/bin/keyin.c:545
 msgid "Scrolling"
-msgstr "Défilement"
+msgstr "Desplaçament"
 
 #: src/bin/keyin.c:546
 msgid "Scroll one page up"
-msgstr "Défilement d'une page vers le haut"
+msgstr "Desplaça una pàgina amunt"
 
 #: src/bin/keyin.c:547
 msgid "Scroll one page down"
-msgstr "Défilement d'une page vers le bas"
+msgstr "Desplaça una pàgina avall"
 
 #: src/bin/keyin.c:548
 msgid "Scroll one line up"
-msgstr "Défilement d'une ligne vers le haut"
+msgstr "Desplaça una línia amunt"
 
 #: src/bin/keyin.c:549
 msgid "Scroll one line down"
-msgstr "Défilement d'une ligne vers le bas"
+msgstr "Desplaça una línia avall"
 
 #: src/bin/keyin.c:551
 msgid "Copy/Paste"
-msgstr "Copier/coller"
+msgstr "Copia/Enganxa"
 
 #: src/bin/keyin.c:552
 msgid "Copy selection to Primary buffer"
-msgstr "Copier la sélection vers le tampon primaire"
+msgstr "Copia la selecció a la memòria intermèdia primària"
 
 #: src/bin/keyin.c:553
 msgid "Copy selection to Clipboard buffer"
-msgstr "Copier la sélection vers le tampon du presse-papier"
+msgstr "Copia la selecció al porta-retalls"
 
 #: src/bin/keyin.c:554
 msgid "Paste Primary buffer (highlight)"
-msgstr "Coller le tampon primaire (surligné)"
+msgstr "Enganxa la memòria intermèdia primària (ressaltat)"
 
 #: src/bin/keyin.c:555
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Coller le tampon du presse-papier (CTRL+c/v)"
+msgstr "Enganxa el porta-retalls (ctrl+c/v)"
 
 #: src/bin/keyin.c:557
 msgid "Splits/Tabs"
-msgstr "Partitions/Onglets"
+msgstr "Divisions/Pestanyes"
 
 #: src/bin/keyin.c:558
 msgid "Focus to the previous terminal"
-msgstr ""
+msgstr "Focus al terminal previ"
 
 #: src/bin/keyin.c:559
 msgid "Focus to the next terminal"
-msgstr ""
+msgstr "Focus al terminal següent"
 
 #: src/bin/keyin.c:560
 msgid "Split horizontally (new below)"
-msgstr "Partitionner horizontalement (nouveau en-dessous)"
+msgstr "Divideix horitzontalment (nou a sota)"
 
 #: src/bin/keyin.c:561
 msgid "Split vertically (new on right)"
-msgstr "Partitionner verticalement (nouveau à droite)"
+msgstr "Divideix verticalment (nou a la dreta)"
 
 #: src/bin/keyin.c:562
 msgid "Create a new \"tab\""
-msgstr "Créer une nouvel onglet"
+msgstr "Crea una nova \"pestanya\""
 
 #: src/bin/keyin.c:563
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "Tanca el terminal que tingui el focus"
 
 #: src/bin/keyin.c:564
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "Mostra el commutador de \"pestanyes\""
 
 #: src/bin/keyin.c:565
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 1"
 
 #: src/bin/keyin.c:566
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 2"
 
 #: src/bin/keyin.c:567
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 3"
 
 #: src/bin/keyin.c:568
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 4"
 
 #: src/bin/keyin.c:569
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 5"
 
 #: src/bin/keyin.c:570
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 6"
 
 #: src/bin/keyin.c:571
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 7"
 
 #: src/bin/keyin.c:572
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 8"
 
 #: src/bin/keyin.c:573
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 9"
 
 #: src/bin/keyin.c:574
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "Commuta al terminal de la pestanya 10"
 
 #: src/bin/keyin.c:576
 msgid "Font size"
-msgstr "Taille de police"
+msgstr "Mida del tipus de lletra"
 
 #: src/bin/keyin.c:577
 msgid "Font size up 1"
-msgstr ""
+msgstr "Augmenta en 1 la mida del tipus de lletra"
 
 #: src/bin/keyin.c:578
 msgid "Font size down 1"
-msgstr ""
+msgstr "Disminueix en 1 la mida del tipus de lletra"
 
 #: src/bin/keyin.c:579
 msgid "Display big font size"
-msgstr ""
+msgstr "Mostra mida de tipus de lletra grossa"
 
 #: src/bin/keyin.c:580
 msgid "Reset font size"
-msgstr ""
+msgstr "Reinicia la mida del tipus de lletra"
 
 #: src/bin/keyin.c:582
 msgid "Actions"
-msgstr "Actions"
+msgstr "Accions"
 
 #: src/bin/keyin.c:583
 msgid "Display the history miniview"
-msgstr ""
+msgstr "Mostra la vista petita de l'historial"
 
 #: src/bin/keyin.c:584
 msgid "Display the command box"
-msgstr ""
+msgstr "Mostra el quadre de comandes"
 
 #: src/bin/main.c:2351
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr ""
+"No es pot trobar el tema de terminology! Potser heu oblidat fer un 'make "
+"install'."
 
 #: src/bin/main.c:2773
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "© 2012-%d Carsten Haitzler et al."
+msgstr "(C) 2012-%d Carsten Haitzler i altres"
 
 #: src/bin/main.c:2775
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
 msgstr ""
+"L'emulador de terminal ha estat escrit amb les les biblioteques "
+"d'Enlightenment Foundation."
 
 #: src/bin/main.c:2783
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -400,7 +399,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:305 src/bin/options.c:171
 msgid "Behavior"
-msgstr "Comportement"
+msgstr "Comportament"
 
 #: src/bin/options_behavior.c:325
 msgid "Scroll to bottom on new content"
@@ -416,11 +415,11 @@ msgstr ""
 
 #: src/bin/options_behavior.c:355
 msgid "Cursor blinking"
-msgstr "Clignotement du curseur"
+msgstr ""
 
 #: src/bin/options_behavior.c:365
 msgid "Visual Bell"
-msgstr "Cloche visuelle"
+msgstr "Campana visual"
 
 #: src/bin/options_behavior.c:375
 msgid "Bell rings"
@@ -464,15 +463,15 @@ msgstr ""
 
 #: src/bin/options_behavior.c:490
 msgid "Width:"
-msgstr "Largeur :"
+msgstr "Amplada:"
 
 #: src/bin/options_behavior.c:510
 msgid "Height:"
-msgstr "Hauteur :"
+msgstr "Alçada:"
 
 #: src/bin/options_behavior.c:537
 msgid "Scrollback:"
-msgstr "Capacité de défilement  :"
+msgstr ""
 
 #: src/bin/options_behavior.c:571
 msgid "Tab zoom/switch animation time:"
@@ -487,39 +486,39 @@ msgstr ""
 #: src/bin/options_behavior.c:585 src/bin/options_behavior.c:586
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:137
 msgid "Options"
-msgstr "Options"
+msgstr "Opcions"
 
 #: src/bin/options.c:166 src/bin/options_font.c:355
 msgid "Font"
-msgstr "Police"
+msgstr "Tipus de lletra"
 
 #: src/bin/options.c:167 src/bin/options_theme.c:112
 msgid "Theme"
-msgstr "Thème"
+msgstr "Tema"
 
 #: src/bin/options.c:168
 msgid "Wallpaper"
-msgstr "Papier peint"
+msgstr "Fons de pantalla"
 
 #: src/bin/options.c:169 src/bin/options_video.c:75
 msgid "Video"
-msgstr "Vidéo"
+msgstr "Vídeo"
 
 #: src/bin/options.c:170 src/bin/options_colors.c:160
 msgid "Colors"
-msgstr "Couleurs"
+msgstr "Colors"
 
 #: src/bin/options.c:172
 msgid "Keys"
-msgstr "Touches"
+msgstr "Tecles"
 
 #: src/bin/options.c:173 src/bin/options_helpers.c:177
 msgid "Helpers"
-msgstr "Assistants"
+msgstr "Ajudants"
 
 #: src/bin/options.c:174
 msgid "Toolkit"
@@ -527,31 +526,31 @@ msgstr ""
 
 #: src/bin/options.c:185
 msgid "Temporary"
-msgstr "Temporaire"
+msgstr "Temporal"
 
 #: src/bin/options_colors.c:13
 msgid "Default"
-msgstr "Par défaut"
+msgstr "Predeterminat"
 
 #: src/bin/options_colors.c:14
 msgid "Black"
-msgstr "Noir"
+msgstr "Negre"
 
 #: src/bin/options_colors.c:15
 msgid "Red"
-msgstr "Rouge"
+msgstr "Vermell"
 
 #: src/bin/options_colors.c:16
 msgid "Green"
-msgstr "Vert"
+msgstr "Verd"
 
 #: src/bin/options_colors.c:17
 msgid "Yellow"
-msgstr "Jaune"
+msgstr "Groc"
 
 #: src/bin/options_colors.c:18
 msgid "Blue"
-msgstr "Bleu"
+msgstr "Blau"
 
 #: src/bin/options_colors.c:19
 msgid "Magenta"
@@ -559,7 +558,7 @@ msgstr "Magenta"
 
 #: src/bin/options_colors.c:20
 msgid "Cyan"
-msgstr "Cyan"
+msgstr "Cian"
 
 #: src/bin/options_colors.c:21
 msgid "White"
@@ -567,11 +566,11 @@ msgstr "Blanc"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
-msgstr "Inverse"
+msgstr "Invers"
 
 #: src/bin/options_colors.c:23
 msgid "Inverse Base"
-msgstr ""
+msgstr "Base inversa"
 
 #: src/bin/options_colors.c:188
 msgid "Normal"
@@ -579,7 +578,7 @@ msgstr "Normal"
 
 #: src/bin/options_colors.c:189
 msgid "Bright"
-msgstr "Lumineux"
+msgstr ""
 
 #: src/bin/options_colors.c:190
 msgid "Normal 2"
@@ -587,23 +586,23 @@ msgstr "Normal 2"
 
 #: src/bin/options_colors.c:191
 msgid "Bright 2"
-msgstr "Lumineux 2"
+msgstr "Brillant 2"
 
 #: src/bin/options_colors.c:263
 msgid "Use"
-msgstr "Utiliser"
+msgstr "Ús"
 
 #: src/bin/options_colors.c:273
 msgid "Reset"
-msgstr "Réinitialiser"
+msgstr "Reinicia"
 
 #: src/bin/options_font.c:420
 msgid "Bitmap"
-msgstr ""
+msgstr "Mapa de bits"
 
 #: src/bin/options_font.c:460
 msgid "Standard"
-msgstr "Standard"
+msgstr "Estàndard"
 
 #: src/bin/options_helpers.c:190
 msgid "Inline if possible"
@@ -611,43 +610,43 @@ msgstr ""
 
 #: src/bin/options_helpers.c:220
 msgid "E-mail:"
-msgstr "Courriel :"
+msgstr "Correu electrònic:"
 
 #: src/bin/options_helpers.c:253
 msgid "URL (Images):"
-msgstr "URL (Images) :"
+msgstr "URL (Imatges):"
 
 #: src/bin/options_helpers.c:278
 msgid "URL (Video):"
-msgstr "URL (Vidéo):"
+msgstr "URL (Vídeo):"
 
 #: src/bin/options_helpers.c:303
 msgid "URL (All):"
-msgstr "URL (Tous) :"
+msgstr "URL (Tot):"
 
 #: src/bin/options_helpers.c:336
 msgid "Local (Images):"
-msgstr "Local (Images) :"
+msgstr "Local (Imatges):"
 
 #: src/bin/options_helpers.c:361
 msgid "Local (Video):"
-msgstr "Local (Vidéo) :"
+msgstr "Local (Vídeo):"
 
 #: src/bin/options_helpers.c:386
 msgid "Local (All):"
-msgstr "Local (Tous) :"
+msgstr "Local (Tot):"
 
 #: src/bin/options_keys.c:52
 msgid "Ctrl+"
-msgstr "Ctrl+"
+msgstr ""
 
 #: src/bin/options_keys.c:53
 msgid "Alt+"
-msgstr "Alt+"
+msgstr ""
 
 #: src/bin/options_keys.c:54
 msgid "Shift+"
-msgstr "Majuscule+"
+msgstr ""
 
 #: src/bin/options_keys.c:55
 msgid "Win+"
@@ -655,7 +654,7 @@ msgstr ""
 
 #: src/bin/options_keys.c:64
 msgid "Delete"
-msgstr "Supprimer"
+msgstr ""
 
 #: src/bin/options_keys.c:252
 msgid "Please press key sequence"
@@ -663,16 +662,16 @@ msgstr ""
 
 #: src/bin/options_keys.c:354
 msgid "Key Bindings"
-msgstr "Assignation des touches"
+msgstr ""
 
 #: src/bin/options_video.c:88
 msgid "Translucent"
-msgstr "Transparence"
+msgstr "Translúcid"
 
 #: src/bin/options_video.c:99 src/bin/options_video.c:100
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_video.c:119
 msgid "Audio muted"
@@ -688,11 +687,11 @@ msgstr ""
 
 #: src/bin/options_video.c:156
 msgid "Automatic"
-msgstr "Automatique"
+msgstr "Automàtic"
 
 #: src/bin/options_wallpaper.c:99
 msgid "None"
-msgstr "Aucun"
+msgstr "Cap"
 
 #: src/bin/options_wallpaper.c:388
 msgid "Source file is target file"
@@ -704,27 +703,27 @@ msgstr ""
 
 #: src/bin/options_wallpaper.c:406
 msgid "Failed"
-msgstr "Échec"
+msgstr "Ha fallat"
 
 #: src/bin/options_wallpaper.c:423
 msgid "Background"
-msgstr "Arrière plan"
+msgstr "Fons"
 
 #: src/bin/options_wallpaper.c:467
 msgid "Select Path"
-msgstr "Sélectionner le chemin"
+msgstr "Seleccioneu un camí"
 
 #: src/bin/options_wallpaper.c:473
 msgid "System"
-msgstr "Système"
+msgstr "Sistema"
 
 #: src/bin/options_wallpaper.c:476
 msgid "User"
-msgstr "Utilisateur"
+msgstr "Usuari"
 
 #: src/bin/options_wallpaper.c:479
 msgid "Other"
-msgstr "Autre"
+msgstr "Altres"
 
 #: src/bin/options_wallpaper.c:494
 msgid "Double click on a picture to import it"
@@ -748,7 +747,7 @@ msgstr ""
 #: src/bin/termcmd.c:147
 #, c-format
 msgid "Unknown command: %s"
-msgstr "Commande inconnue : %s"
+msgstr "Ordre desconeguda: %s"
 
 #: src/bin/termio.c:521
 #, c-format
@@ -762,11 +761,11 @@ msgstr ""
 
 #: src/bin/termio.c:942
 msgid "Preview"
-msgstr "Aperçu"
+msgstr "Previsualitza"
 
 #: src/bin/termio.c:945
 msgid "Open"
-msgstr "Ouvrir"
+msgstr "Obre"
 
 #: src/bin/termio.c:2286
 #, c-format
@@ -832,4 +831,4 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
 #~ msgid "Close"
-#~ msgstr "Fermer"
+#~ msgstr "Tanca"

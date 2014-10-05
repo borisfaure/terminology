@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-25 22:07+0200\n"
+"POT-Creation-Date: 2014-10-05 14:40+0200\n"
 "PO-Revision-Date: 2014-09-25 22:28+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -76,147 +76,147 @@ msgstr ""
 msgid "There is no window open"
 msgstr "Non c'è nessuna finestra aperta"
 
-#: src/bin/keyin.c:573
+#: src/bin/keyin.c:545
 msgid "Scrolling"
 msgstr "Scrolling"
 
-#: src/bin/keyin.c:574
+#: src/bin/keyin.c:546
 msgid "Scroll one page up"
 msgstr "Scrolling di una pagina in su"
 
-#: src/bin/keyin.c:575
+#: src/bin/keyin.c:547
 msgid "Scroll one page down"
 msgstr "Scrolling di una pagina in giù"
 
-#: src/bin/keyin.c:576
+#: src/bin/keyin.c:548
 msgid "Scroll one line up"
 msgstr "Scrolling di una riga in su"
 
-#: src/bin/keyin.c:577
+#: src/bin/keyin.c:549
 msgid "Scroll one line down"
 msgstr "Scrolling di una riga in giù"
 
-#: src/bin/keyin.c:579
+#: src/bin/keyin.c:551
 msgid "Copy/Paste"
 msgstr "Copia/Incolla"
 
-#: src/bin/keyin.c:580
+#: src/bin/keyin.c:552
 msgid "Copy selection to Primary buffer"
 msgstr "Copia la selezione nel buffer primario"
 
-#: src/bin/keyin.c:581
+#: src/bin/keyin.c:553
 msgid "Copy selection to Clipboard buffer"
 msgstr "Copia la selezione nel buffer degli appunti"
 
-#: src/bin/keyin.c:582
+#: src/bin/keyin.c:554
 msgid "Paste Primary buffer (highlight)"
 msgstr "Incolla il buffer primario (evidenziato)"
 
-#: src/bin/keyin.c:583
+#: src/bin/keyin.c:555
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Incolla il buffer degli appunti (ctrl+c/v)"
 
-#: src/bin/keyin.c:585
+#: src/bin/keyin.c:557
 msgid "Splits/Tabs"
 msgstr "Suddivisioni/Schede"
 
-#: src/bin/keyin.c:586
+#: src/bin/keyin.c:558
 msgid "Focus to the previous terminal"
 msgstr "Fuoco al terminale precedente"
 
-#: src/bin/keyin.c:587
+#: src/bin/keyin.c:559
 msgid "Focus to the next terminal"
 msgstr "Fuoco al terminale successivo"
 
-#: src/bin/keyin.c:588
+#: src/bin/keyin.c:560
 msgid "Split horizontally (new below)"
 msgstr "Dividi orizzontalmente (nuovo sotto)"
 
-#: src/bin/keyin.c:589
+#: src/bin/keyin.c:561
 msgid "Split vertically (new on right)"
 msgstr "Dividi verticalmente (nuovo a destra)"
 
-#: src/bin/keyin.c:590
+#: src/bin/keyin.c:562
 msgid "Create a new \"tab\""
 msgstr "Crea nuova scheda"
 
-#: src/bin/keyin.c:591
+#: src/bin/keyin.c:563
 msgid "Close the focused terminal"
 msgstr "Chiudi terminale a fuoco"
 
-#: src/bin/keyin.c:592
+#: src/bin/keyin.c:564
 msgid "Bring up \"tab\" switcher"
 msgstr "Apri commutatore schede"
 
-#: src/bin/keyin.c:593
+#: src/bin/keyin.c:565
 msgid "Switch to terminal tab 1"
 msgstr "Passa alla scheda 1"
 
-#: src/bin/keyin.c:594
+#: src/bin/keyin.c:566
 msgid "Switch to terminal tab 2"
 msgstr "Passa alla scheda 2"
 
-#: src/bin/keyin.c:595
+#: src/bin/keyin.c:567
 msgid "Switch to terminal tab 3"
 msgstr "Passa alla scheda 3"
 
-#: src/bin/keyin.c:596
+#: src/bin/keyin.c:568
 msgid "Switch to terminal tab 4"
 msgstr "Passa alla scheda 4"
 
-#: src/bin/keyin.c:597
+#: src/bin/keyin.c:569
 msgid "Switch to terminal tab 5"
 msgstr "Passa alla scheda 5"
 
-#: src/bin/keyin.c:598
+#: src/bin/keyin.c:570
 msgid "Switch to terminal tab 6"
 msgstr "Passa alla scheda 6"
 
-#: src/bin/keyin.c:599
+#: src/bin/keyin.c:571
 msgid "Switch to terminal tab 7"
 msgstr "Passa alla scheda 7"
 
-#: src/bin/keyin.c:600
+#: src/bin/keyin.c:572
 msgid "Switch to terminal tab 8"
 msgstr "Passa alla scheda 8"
 
-#: src/bin/keyin.c:601
+#: src/bin/keyin.c:573
 msgid "Switch to terminal tab 9"
 msgstr "Passa alla scheda 9"
 
-#: src/bin/keyin.c:602
+#: src/bin/keyin.c:574
 msgid "Switch to terminal tab 10"
 msgstr "Passa alla scheda 10"
 
-#: src/bin/keyin.c:604
+#: src/bin/keyin.c:576
 msgid "Font size"
 msgstr "Dimensione carattere"
 
-#: src/bin/keyin.c:605
+#: src/bin/keyin.c:577
 msgid "Font size up 1"
 msgstr "Incrementa dimensione carattere di 1"
 
-#: src/bin/keyin.c:606
+#: src/bin/keyin.c:578
 msgid "Font size down 1"
 msgstr "Decrementa dimensione carattere di 1"
 
-#: src/bin/keyin.c:607
+#: src/bin/keyin.c:579
 msgid "Display big font size"
 msgstr "Visualizza dimensione carattere grande"
 
-#: src/bin/keyin.c:608
+#: src/bin/keyin.c:580
 msgid "Reset font size"
 msgstr "Reimposta dimensione carattere"
 
-#: src/bin/keyin.c:610
+#: src/bin/keyin.c:582
 msgid "Actions"
 msgstr "Azioni"
 
-#: src/bin/keyin.c:611
+#: src/bin/keyin.c:583
 msgid "Display the history miniview"
 msgstr "Visualizza lo storico"
 
-#: src/bin/keyin.c:612
+#: src/bin/keyin.c:584
 msgid "Display the command box"
 msgstr "Visualizza il box comandi"
 
@@ -274,7 +274,8 @@ msgstr "Imposta il nome dell'icona"
 
 #: src/bin/main.c:2801
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
-msgstr "Imposta il carattere (NOME/DIMENSIONE per gli scalabili, NOME per i bitmap)"
+msgstr ""
+"Imposta il carattere (NOME/DIMENSIONE per gli scalabili, NOME per i bitmap)"
 
 #: src/bin/main.c:2803
 msgid ""
@@ -486,7 +487,10 @@ msgstr "Durata animazione zoom/cambio scheda"
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
-msgstr "Imposta la durata dell'animazione che<br>avviene quando si cambia scheda, sia che<br>lo si faccia da tastiera, rotella del<br>mouse o spostamento del mouse nel<br>pannello delle schede."
+msgstr ""
+"Imposta la durata dell'animazione che<br>avviene quando si cambia scheda, "
+"sia che<br>lo si faccia da tastiera, rotella del<br>mouse o spostamento del "
+"mouse nel<br>pannello delle schede."
 
 #: src/bin/options_behavior.c:585 src/bin/options_behavior.c:586
 #, c-format
@@ -653,15 +657,19 @@ msgstr "Alt+"
 msgid "Shift+"
 msgstr "Maiusc+"
 
-#: src/bin/options_keys.c:63
+#: src/bin/options_keys.c:55
+msgid "Win+"
+msgstr ""
+
+#: src/bin/options_keys.c:64
 msgid "Delete"
 msgstr "Canc"
 
-#: src/bin/options_keys.c:236
+#: src/bin/options_keys.c:252
 msgid "Please press key sequence"
 msgstr "Premere la sequenza di tasti"
 
-#: src/bin/options_keys.c:339
+#: src/bin/options_keys.c:354
 msgid "Key Bindings"
 msgstr "Combinazioni di tasti"
 
@@ -768,16 +776,16 @@ msgstr "Anteprima"
 msgid "Open"
 msgstr "Apri"
 
-#: src/bin/termio.c:2285
+#: src/bin/termio.c:2286
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Formato selezione non supportato '%s'"
 
-#: src/bin/termio.c:4367
+#: src/bin/termio.c:4368
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF fallito"
 
-#: src/bin/termio.c:4961
+#: src/bin/termio.c:4962
 msgid "Could not allocate termpty"
 msgstr "Non ho potuto allocare termpty"
 

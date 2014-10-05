@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-05 00:10+0900\n"
+"POT-Creation-Date: 2014-10-05 14:40+0200\n"
 "PO-Revision-Date: 2014-09-04 11:10+0900\n"
 "Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
@@ -18,41 +18,46 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/controls.c:241
+#: src/bin/controls.c:247
 msgid "Controls"
 msgstr "제어판"
 
-#: src/bin/controls.c:252
+#: src/bin/controls.c:263
 msgid "New"
 msgstr "새 터미널"
 
-#: src/bin/controls.c:258
+#: src/bin/controls.c:269
 msgid "Split V"
 msgstr "수직 분할"
 
-#: src/bin/controls.c:260
+#: src/bin/controls.c:271
 msgid "Split H"
 msgstr "수평 분할"
 
-#: src/bin/controls.c:266
-msgid "Close"
-msgstr "닫기"
+#: src/bin/controls.c:277
+msgid "Miniview"
+msgstr ""
 
-#: src/bin/controls.c:276 src/bin/termio.c:947
+#: src/bin/controls.c:287 src/bin/termio.c:947
 msgid "Copy"
 msgstr "복사"
 
-#: src/bin/controls.c:281
+#: src/bin/controls.c:293
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: src/bin/controls.c:287
+#: src/bin/controls.c:299
 msgid "Settings"
 msgstr "설정"
 
-#: src/bin/controls.c:293
+#: src/bin/controls.c:305
 msgid "About"
 msgstr "정보"
+
+#: src/bin/controls.c:315
+#, fuzzy
+msgid "Close Terminal"
+msgstr "탭 닫기"
 
 #: src/bin/about.c:56
 #, c-format
@@ -64,314 +69,313 @@ msgid ""
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
 
-#: src/bin/app_server.c:344
+#: src/bin/app_server.c:345
 msgid "There is no window open"
 msgstr "열려있는 창이 없습니다."
 
-#: src/bin/keyin.c:895
+#: src/bin/keyin.c:545
 msgid "Scrolling"
 msgstr "스크롤링"
 
-#: src/bin/keyin.c:896
+#: src/bin/keyin.c:546
 msgid "Scroll one page up"
 msgstr "한 페이지 위로 스크롤"
 
-#: src/bin/keyin.c:897
+#: src/bin/keyin.c:547
 msgid "Scroll one page down"
 msgstr "한 페이지 아래로 스크롤"
 
-#: src/bin/keyin.c:898
+#: src/bin/keyin.c:548
 msgid "Scroll one line up"
 msgstr "한 줄 위로 스크롤"
 
-#: src/bin/keyin.c:899
+#: src/bin/keyin.c:549
 msgid "Scroll one line down"
 msgstr "한 줄 아래로 스크롤"
 
-#: src/bin/keyin.c:901
+#: src/bin/keyin.c:551
 msgid "Copy/Paste"
 msgstr "복사/붙여넣기"
 
-#: src/bin/keyin.c:902
+#: src/bin/keyin.c:552
 msgid "Copy selection to Primary buffer"
 msgstr "현재 선택된 부분을 전면 버퍼에 복사"
 
-#: src/bin/keyin.c:903
+#: src/bin/keyin.c:553
 msgid "Copy selection to Clipboard buffer"
 msgstr "현재 선택된 부분을 클립보드에 복사"
 
-#: src/bin/keyin.c:904
+#: src/bin/keyin.c:554
 msgid "Paste Primary buffer (highlight)"
 msgstr "전면 버퍼 (강조) 붙여넣기"
 
-#: src/bin/keyin.c:905
+#: src/bin/keyin.c:555
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "클립보드 내용 붙여넣기 (ctrl+v/c)"
 
-#: src/bin/keyin.c:907
+#: src/bin/keyin.c:557
 msgid "Splits/Tabs"
 msgstr "분할/탭"
 
-#: src/bin/keyin.c:908
+#: src/bin/keyin.c:558
 msgid "Focus to the previous terminal"
 msgstr "이전 터미널 활성화"
 
-#: src/bin/keyin.c:909
+#: src/bin/keyin.c:559
 msgid "Focus to the next terminal"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:910
+#: src/bin/keyin.c:560
 msgid "Split horizontally (new below)"
 msgstr "수평 분할 (하단에 새 창)"
 
-#: src/bin/keyin.c:911
+#: src/bin/keyin.c:561
 msgid "Split vertically (new on right)"
 msgstr "수직 분할 (우측에 새 창)"
 
-#: src/bin/keyin.c:912
+#: src/bin/keyin.c:562
 msgid "Create a new \"tab\""
 msgstr "새 터미널 탭"
 
-#: src/bin/keyin.c:913
+#: src/bin/keyin.c:563
 msgid "Close the focused terminal"
 msgstr "탭 닫기"
 
-#: src/bin/keyin.c:914
+#: src/bin/keyin.c:564
 msgid "Bring up \"tab\" switcher"
 msgstr "탭 스위치 보이기"
 
-#: src/bin/keyin.c:915
+#: src/bin/keyin.c:565
 msgid "Switch to terminal tab 1"
 msgstr "1번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:916
+#: src/bin/keyin.c:566
 msgid "Switch to terminal tab 2"
 msgstr "2번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:917
+#: src/bin/keyin.c:567
 msgid "Switch to terminal tab 3"
 msgstr "3번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:918
+#: src/bin/keyin.c:568
 msgid "Switch to terminal tab 4"
 msgstr "4번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:919
+#: src/bin/keyin.c:569
 msgid "Switch to terminal tab 5"
 msgstr "5번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:920
+#: src/bin/keyin.c:570
 msgid "Switch to terminal tab 6"
 msgstr "6번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:921
+#: src/bin/keyin.c:571
 msgid "Switch to terminal tab 7"
 msgstr "7번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:922
+#: src/bin/keyin.c:572
 msgid "Switch to terminal tab 8"
 msgstr "8번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:923
+#: src/bin/keyin.c:573
 msgid "Switch to terminal tab 9"
 msgstr "9번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:924
+#: src/bin/keyin.c:574
 msgid "Switch to terminal tab 10"
 msgstr "10번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:926
+#: src/bin/keyin.c:576
 msgid "Font size"
 msgstr "글꼴 크기"
 
-#: src/bin/keyin.c:927
+#: src/bin/keyin.c:577
 msgid "Font size up 1"
 msgstr "글꼴 크기 1 증가"
 
-#: src/bin/keyin.c:928
+#: src/bin/keyin.c:578
 msgid "Font size down 1"
 msgstr "글꼴 크기 1 감소"
 
-#: src/bin/keyin.c:929
-
+#: src/bin/keyin.c:579
 msgid "Display big font size"
 msgstr "글꼴 크게 출력"
 
-#: src/bin/keyin.c:930
+#: src/bin/keyin.c:580
 msgid "Reset font size"
 msgstr "글꼴 크기 초기화"
 
-#: src/bin/keyin.c:932
+#: src/bin/keyin.c:582
 msgid "Actions"
 msgstr "동작"
 
-#: src/bin/keyin.c:933
+#: src/bin/keyin.c:583
 msgid "Display the history miniview"
 msgstr "미니뷰 출력"
 
-#: src/bin/keyin.c:934
+#: src/bin/keyin.c:584
 msgid "Display the command box"
 msgstr "명령 상자 출력"
 
-#: src/bin/main.c:2340
+#: src/bin/main.c:2351
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr "터미놀로지의 테마를 찾을 수 없습니다!"
 
-#: src/bin/main.c:2761
+#: src/bin/main.c:2773
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr ""
 
-#: src/bin/main.c:2763
+#: src/bin/main.c:2775
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
 msgstr ""
 
-#: src/bin/main.c:2771
+#: src/bin/main.c:2783
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 
-#: src/bin/main.c:2773
+#: src/bin/main.c:2785
 msgid "Change to directory for execution of terminal command."
 msgstr ""
 
-#: src/bin/main.c:2775
+#: src/bin/main.c:2787
 msgid "Use the named edje theme or path to theme file."
 msgstr ""
 
-#: src/bin/main.c:2777
+#: src/bin/main.c:2789
 msgid "Use the named file as a background wallpaper."
 msgstr ""
 
-#: src/bin/main.c:2779
+#: src/bin/main.c:2791
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
 msgstr ""
 
-#: src/bin/main.c:2781
+#: src/bin/main.c:2793
 msgid "Set window name."
 msgstr "창 이름 설정"
 
-#: src/bin/main.c:2783
+#: src/bin/main.c:2795
 msgid "Set window role."
 msgstr "창 역할 설정"
 
-#: src/bin/main.c:2785
+#: src/bin/main.c:2797
 msgid "Set window title."
 msgstr "창 제목 설정"
 
-#: src/bin/main.c:2787
+#: src/bin/main.c:2799
 msgid "Set icon name."
 msgstr "아이콘 이름 설정"
 
-#: src/bin/main.c:2789
+#: src/bin/main.c:2801
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
 msgstr ""
 
-#: src/bin/main.c:2791
+#: src/bin/main.c:2803
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page."
 msgstr ""
 
-#: src/bin/main.c:2796
+#: src/bin/main.c:2808
 msgid "Set emotion module to use."
 msgstr ""
 
-#: src/bin/main.c:2799
+#: src/bin/main.c:2811
 msgid "Run the shell as a login shell."
 msgstr ""
 
-#: src/bin/main.c:2801
+#: src/bin/main.c:2813
 msgid "Set mute mode for video playback."
 msgstr ""
 
-#: src/bin/main.c:2803
+#: src/bin/main.c:2815
 msgid "Set cursor blink mode."
 msgstr ""
 
-#: src/bin/main.c:2805
+#: src/bin/main.c:2817
 msgid "Set visual bell mode."
 msgstr ""
 
-#: src/bin/main.c:2807
+#: src/bin/main.c:2819
 msgid "Go into the fullscreen mode from the start."
 msgstr ""
 
-#: src/bin/main.c:2809
+#: src/bin/main.c:2821
 msgid "Go into an iconic state from the start."
 msgstr ""
 
-#: src/bin/main.c:2811
+#: src/bin/main.c:2823
 msgid "Become a borderless managed window."
 msgstr ""
 
-#: src/bin/main.c:2813
+#: src/bin/main.c:2825
 msgid "Become an override-redirect window."
 msgstr ""
 
-#: src/bin/main.c:2815
+#: src/bin/main.c:2827
 msgid "Become maximized from the start."
 msgstr ""
 
-#: src/bin/main.c:2817
+#: src/bin/main.c:2829
 msgid "Terminology is run without a window manager."
 msgstr ""
 
-#: src/bin/main.c:2819
+#: src/bin/main.c:2831
 msgid "Do not exit when the command process exits."
 msgstr ""
 
-#: src/bin/main.c:2821
+#: src/bin/main.c:2833
 msgid "Force single executable if multi-instance is enabled."
 msgstr ""
 
-#: src/bin/main.c:2823
+#: src/bin/main.c:2835
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
 msgstr ""
 
-#: src/bin/main.c:2825
+#: src/bin/main.c:2837
 msgid "Highlight links."
 msgstr ""
 
-#: src/bin/main.c:2854
+#: src/bin/main.c:2866
 msgid "show program version."
 msgstr ""
 
-#: src/bin/main.c:2857
+#: src/bin/main.c:2869
 msgid "show copyright."
 msgstr ""
 
-#: src/bin/main.c:2860
+#: src/bin/main.c:2872
 msgid "show license."
 msgstr ""
 
-#: src/bin/main.c:2863
+#: src/bin/main.c:2875
 msgid "show this message."
 msgstr ""
 
-#: src/bin/main.c:2970 src/bin/miniview.c:38
+#: src/bin/main.c:2991 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr ""
 
-#: src/bin/main.c:2985
+#: src/bin/main.c:3001
 msgid "Could not initialize key bindings."
 msgstr ""
 
-#: src/bin/main.c:2997
+#: src/bin/main.c:3013
 msgid "Could not parse command line options."
 msgstr ""
 
-#: src/bin/main.c:3012
+#: src/bin/main.c:3028
 #, c-format
 msgid "option %s requires an argument!"
 msgstr ""
 
-#: src/bin/main.c:3013
+#: src/bin/main.c:3029
 msgid "invalid options found. See --help."
 msgstr ""
 
-#: src/bin/main.c:3333
+#: src/bin/main.c:3349
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr ""
 
@@ -384,143 +388,139 @@ msgstr ""
 msgid "Media visualizing is not supported"
 msgstr ""
 
-#: src/bin/options_behavior.c:127
-msgid "Restore opened views"
-msgstr ""
-
-#: src/bin/options_behavior.c:202
+#: src/bin/options_behavior.c:204
 #, c-format
 msgid "%'d lines"
 msgstr "%'d 줄"
 
-#: src/bin/options_behavior.c:303 src/bin/options.c:168
+#: src/bin/options_behavior.c:305 src/bin/options.c:171
 msgid "Behavior"
 msgstr "동작"
 
-#: src/bin/options_behavior.c:323
+#: src/bin/options_behavior.c:325
 msgid "Scroll to bottom on new content"
 msgstr "새 내용이 있으면 바닥으로 스크롤"
 
-#: src/bin/options_behavior.c:333
+#: src/bin/options_behavior.c:335
 msgid "Scroll to bottom when a key is pressed"
 msgstr "키를 입력하면 바닥으로 스크롤"
 
-#: src/bin/options_behavior.c:343
+#: src/bin/options_behavior.c:345
 msgid "React to key presses"
 msgstr "키 입력에 반응"
 
-#: src/bin/options_behavior.c:353
+#: src/bin/options_behavior.c:355
 msgid "Cursor blinking"
 msgstr "커서 깜박이기"
 
-#: src/bin/options_behavior.c:363
+#: src/bin/options_behavior.c:365
 msgid "Visual Bell"
 msgstr "경고 시각 효과"
 
-#: src/bin/options_behavior.c:373
+#: src/bin/options_behavior.c:375
 msgid "Bell rings"
 msgstr "벨 울리기"
 
-#: src/bin/options_behavior.c:383
+#: src/bin/options_behavior.c:385
 msgid "Urgent Bell"
 msgstr "긴급 벨"
 
-#: src/bin/options_behavior.c:393
+#: src/bin/options_behavior.c:395
 msgid "Active Links"
 msgstr "링크 활성화"
 
-#: src/bin/options_behavior.c:403
-msgid "Enable application server"
-msgstr "응용 프로그램 서버 사용"
-
-#: src/bin/options_behavior.c:417
+#: src/bin/options_behavior.c:420
 msgid "Multiple instances, one process"
 msgstr "한 프로세스로 다중 인스턴스 처리"
 
-#: src/bin/options_behavior.c:427
+#: src/bin/options_behavior.c:430
 msgid "Set TERM to xterm-256color"
 msgstr "xterm-256color로 TERM 설정"
 
-#: src/bin/options_behavior.c:437
+#: src/bin/options_behavior.c:440
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "왼쪽 화살표로 백스페이스 기능 대체"
 
-#: src/bin/options_behavior.c:447
+#: src/bin/options_behavior.c:450
 msgid "Drag & drop links"
 msgstr "링크 끌어다 놓기 활성화"
 
-#: src/bin/options_behavior.c:457
+#: src/bin/options_behavior.c:460
 msgid "Start as login shell"
 msgstr "로그인 쉘로 시작"
 
-#: src/bin/options_behavior.c:467
+#: src/bin/options_behavior.c:470
 msgid "Focus split under the Mouse"
 msgstr "마우스 아래 창 활성화"
 
-#: src/bin/options_behavior.c:477
+#: src/bin/options_behavior.c:480
 msgid "Always open at size:"
 msgstr "항상 아래 크기로 열기:"
 
-#: src/bin/options_behavior.c:487
+#: src/bin/options_behavior.c:490
 msgid "Width:"
 msgstr "너비:"
 
-#: src/bin/options_behavior.c:507
+#: src/bin/options_behavior.c:510
 msgid "Height:"
 msgstr "높이:"
 
-#: src/bin/options_behavior.c:534
+#: src/bin/options_behavior.c:537
 msgid "Scrollback:"
 msgstr "스크롤백:"
 
-#: src/bin/options_behavior.c:569
+#: src/bin/options_behavior.c:571
 msgid "Tab zoom/switch animation time:"
 msgstr "탭 확대 / 스위치 움직임 시간:"
 
-#: src/bin/options_behavior.c:570
+#: src/bin/options_behavior.c:572
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
 msgstr ""
 
-#: src/bin/options_behavior.c:583 src/bin/options_behavior.c:584
+#: src/bin/options_behavior.c:585 src/bin/options_behavior.c:586
 #, c-format
 msgid "%1.1f s"
 msgstr ""
 
-#: src/bin/options.c:134
+#: src/bin/options.c:137
 msgid "Options"
 msgstr "옵션"
 
-#: src/bin/options.c:163 src/bin/options_font.c:352
+#: src/bin/options.c:166 src/bin/options_font.c:355
 msgid "Font"
 msgstr "글꼴"
 
-#: src/bin/options.c:164 src/bin/options_theme.c:112
+#: src/bin/options.c:167 src/bin/options_theme.c:112
 msgid "Theme"
 msgstr "테마"
 
-#: src/bin/options.c:165
+#: src/bin/options.c:168
 msgid "Wallpaper"
 msgstr "배경"
 
-#: src/bin/options.c:166 src/bin/options_video.c:75
+#: src/bin/options.c:169 src/bin/options_video.c:75
 msgid "Video"
 msgstr "비디오"
 
-#: src/bin/options.c:167 src/bin/options_colors.c:160
+#: src/bin/options.c:170 src/bin/options_colors.c:160
 msgid "Colors"
 msgstr "색상"
 
-#: src/bin/options.c:169
+#: src/bin/options.c:172
 msgid "Keys"
 msgstr "단축키"
 
-#: src/bin/options.c:170 src/bin/options_helpers.c:177
+#: src/bin/options.c:173 src/bin/options_helpers.c:177
 msgid "Helpers"
 msgstr "헬퍼"
 
-#: src/bin/options.c:181
+#: src/bin/options.c:174
+msgid "Toolkit"
+msgstr ""
+
+#: src/bin/options.c:185
 msgid "Temporary"
 msgstr "임시"
 
@@ -592,11 +592,11 @@ msgstr "사용"
 msgid "Reset"
 msgstr "재설정"
 
-#: src/bin/options_font.c:414
+#: src/bin/options_font.c:420
 msgid "Bitmap"
 msgstr "비트맵"
 
-#: src/bin/options_font.c:454
+#: src/bin/options_font.c:460
 msgid "Standard"
 msgstr "일반"
 
@@ -644,15 +644,19 @@ msgstr ""
 msgid "Shift+"
 msgstr ""
 
-#: src/bin/options_keys.c:63
+#: src/bin/options_keys.c:55
+msgid "Win+"
+msgstr ""
+
+#: src/bin/options_keys.c:64
 msgid "Delete"
 msgstr ""
 
-#: src/bin/options_keys.c:223
+#: src/bin/options_keys.c:252
 msgid "Please press key sequence"
 msgstr "단축키를 지정하세요."
 
-#: src/bin/options_keys.c:326
+#: src/bin/options_keys.c:354
 msgid "Key Bindings"
 msgstr "단축키"
 
@@ -759,16 +763,16 @@ msgstr "미리보기"
 msgid "Open"
 msgstr "열기"
 
-#: src/bin/termio.c:2250
+#: src/bin/termio.c:2286
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "'%s' 는 지원하지 않는 포맷입니다."
 
-#: src/bin/termio.c:4331
+#: src/bin/termio.c:4368
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:4925
+#: src/bin/termio.c:4962
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -797,17 +801,17 @@ msgstr ""
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:377
+#: src/bin/termpty.c:382
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""
 
-#: src/bin/termpty.c:398
+#: src/bin/termpty.c:403
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:594
+#: src/bin/termpty.c:599
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
@@ -821,6 +825,12 @@ msgstr ""
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
 msgstr ""
+
+#~ msgid "Close"
+#~ msgstr "닫기"
+
+#~ msgid "Enable application server"
+#~ msgstr "응용 프로그램 서버 사용"
 
 #~ msgid "Word separators:"
 #~ msgstr "구분자:"
