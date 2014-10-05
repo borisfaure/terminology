@@ -162,14 +162,14 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           {
              if (ty->state.alt_kp)
                {
-                  if (_key_try(ty, tty_keys,
+                  if (_key_try(ty, tty_keys_kp_app,
                                sizeof(tty_keys_kp_app)/sizeof(tty_keys_kp_app[0]),
                                ev, alt, shift, ctrl))
                     return;
                }
              else
                {
-                  if (_key_try(ty, tty_keys,
+                  if (_key_try(ty, tty_keys_kp_plain,
                                sizeof(tty_keys_kp_plain)/sizeof(tty_keys_kp_plain[0]),
                                ev, alt, shift, ctrl))
                     return;
