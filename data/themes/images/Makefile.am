@@ -26,6 +26,7 @@ icon_paste.png \
 icon_settings.png \
 icon_split_h.png \
 icon_split_v.png \
+icon_miniview.png \
 inset_shadow.png \
 media_bg.png \
 media_line.png \
