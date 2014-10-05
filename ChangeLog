@@ -1,3 +1,18 @@
+2014-10-06
+
+        * Release v0.7.0
+        * Internationalization and Localization support
+        * Options -s/--split to start terminology with multiple splits
+        * Configurable key bindings
+        * Add a panel to launch elementary_config
+        * Opacity level can be configured in translucent mode
+        * Miniview: add position indicator
+        * Improve media controls
+        * Use a scalable font on default configuration
+        * Usual round of improvements on terminal compatibility
+        * Fix issue with mute option
+        * Various bug fixes
+
 2014-07-02
 
         * Release v0.6.1

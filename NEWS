@@ -1,6 +1,26 @@
 =================
-Terminology 0.6.1
+Terminology 0.7.0
 =================
+
+Changes since 0.6.1:
+--------------------
+
+Additions:
+    * Internationalization and Localization support
+    * Options -s/--split to start terminology with multiple splits
+    * Configurable key bindings
+    * Add a panel to launch elementary_config
+
+Improvements:
+    * Opacity level can be configured in translucent mode
+    * Miniview: add position indicator
+    * Improve media controls
+    * Use a scalable font on default configuration
+    * Usual round of improvements on terminal compatibility
+
+Fixes:
+    * Fix issue with mute option
+    * Various bug fixes
 
 
 Changes since 0.6.0:
