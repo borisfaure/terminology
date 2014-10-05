@@ -19,6 +19,7 @@
 #include "dbus.h"
 #include "app_server.h"
 #include "miniview.h"
+#include "gravatar.h"
 #include "keyin.h"
 
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
@@ -2330,6 +2331,7 @@ main_term_new(Win *wn, Config *config, const char *cmd,
 
    termpty_init();
    miniview_init();
+   gravatar_init();
 
    term->wn = wn;
    term->hold = hold;
@@ -3392,6 +3394,7 @@ remote:
 
    termpty_shutdown();
    miniview_shutdown();
+   gravatar_shutdown();
 
 
 

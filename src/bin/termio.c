@@ -15,6 +15,7 @@
 #include "media.h"
 #include "dbus.h"
 #include "miniview.h"
+#include "gravatar.h"
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
 # include <sys/proc_info.h>
@@ -1145,6 +1146,10 @@ _update_link(Evas_Object *obj, Termio *sd,
         xwin = elm_win_xwindow_get(sd->win);
 #endif
         ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
+     }
+   if ((!popup_exists) && link_is_email(sd->link.string))
+     {
+        gravatar_tooltip(sd->link.string);
      }
    for (y = sd->link.y1; y <= sd->link.y2; y++)
      {
