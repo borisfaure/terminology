@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-10-05 14:40+0200\n"
-"PO-Revision-Date: 2014-09-25 22:28+0200\n"
+"PO-Revision-Date: 2014-10-07 22:11+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -659,7 +659,7 @@ msgstr "Maiusc+"
 
 #: src/bin/options_keys.c:55
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:64
 msgid "Delete"
