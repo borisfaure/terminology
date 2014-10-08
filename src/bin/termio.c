@@ -451,8 +451,10 @@ static void
 _font_size_set(Evas_Object *obj, int size)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Config *config = termio_config_get(obj);
+   Config *config;
    EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   config = sd->config;
 
    if (size < 5) size = 5;
    else if (size > 100) size = 100;
@@ -705,13 +707,14 @@ static void
 _activate_link(Evas_Object *obj, Eina_Bool may_inline)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Config *config = termio_config_get(obj);
+   Config *config;
    char buf[PATH_MAX], *s, *escaped;
    const char *path = NULL, *cmd = NULL;
    Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
    int type;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   config = sd->config;
    if (!config) return;
    if (!config->active_links) return;
    if (!sd->link.string) return;
@@ -2896,9 +2899,10 @@ _smart_mouseover_apply(Evas_Object *obj)
    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
-   Config *config = termio_config_get(obj);
+   Config *config;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   config = sd->config;
    if (!config->active_links) return;
 
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
@@ -3799,9 +3803,10 @@ _smart_cb_gest_zoom_start(void *data, void *event)
 {
    Elm_Gesture_Zoom_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Config *config = termio_config_get(data);
+   Config *config;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
+   config = sd->config;
    if (config)
      {
         int sz;
@@ -3819,9 +3824,10 @@ _smart_cb_gest_zoom_move(void *data, void *event)
 {
    Elm_Gesture_Zoom_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Config *config = termio_config_get(data);
+   Config *config;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
+   config = sd->config;
    if (config)
      {
         int sz = (double)sd->zoom_fontsize_start * p->zoom;
@@ -3836,9 +3842,10 @@ _smart_cb_gest_zoom_end(void *data, void *event)
 {
    Elm_Gesture_Zoom_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Config *config = termio_config_get(data);
+   Config *config;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
+   config = sd->config;
    if (config)
      {
         int sz = (double)sd->zoom_fontsize_start * p->zoom;
@@ -3853,9 +3860,10 @@ _smart_cb_gest_zoom_abort(void *data, void *event EINA_UNUSED)
 {
 //   Elm_Gesture_Zoom_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
-   Config *config = termio_config_get(data);
+   Config *config;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EVAS_EVENT_FLAG_ON_HOLD);
+   config = sd->config;
    if (config)
      {
         if (sd->zoom_fontsize_start != config->font.size)
