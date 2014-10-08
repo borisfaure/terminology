@@ -60,7 +60,7 @@ struct _Term
    Evas_Object *sel;
    Evas_Object *tabcount_spacer;
    Eina_List   *popmedia_queue;
-   int          poptype, mediatype;
+   Media_Type   poptype, mediatype;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
    struct {
       int       x, y;
@@ -1135,7 +1135,7 @@ _popmedia_show(Term *term, const char *src)
 {
    Evas_Object *o;
    Config *config = termio_config_get(term->term);
-   int type = 0;
+   Media_Type type;
 
    if (!config) return;
    ty_dbus_link_hide();
@@ -1153,7 +1153,8 @@ _popmedia_show(Term *term, const char *src)
         return;
      }
    termio_mouseover_suspend_pushpop(term->term, 1);
-   term->popmedia = o = media_add(term->wn->win, src, config, MEDIA_POP, &type);
+   type = media_src_type_get(src);
+   term->popmedia = o = media_add(term->wn->win, src, config, MEDIA_POP, type);
    term->popmedia_deleted = EINA_FALSE;
    evas_object_smart_callback_add(o, "loop", _cb_media_loop, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _cb_popmedia_del, term);
@@ -1162,17 +1163,20 @@ _popmedia_show(Term *term, const char *src)
    term->poptype = type;
    switch (type)
      {
-      case TYPE_IMG:
+      case MEDIA_TYPE_IMG:
          edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
          break;
-      case TYPE_SCALE:
+      case MEDIA_TYPE_SCALE:
          edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
          break;
-      case TYPE_EDJE:
+      case MEDIA_TYPE_EDJE:
          edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
          break;
-      case TYPE_MOV:
+      case MEDIA_TYPE_MOV:
          edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+         break;
+      case MEDIA_TYPE_UNKNOWN:
+      default:
          break;
      }
 }
@@ -1903,8 +1907,8 @@ _term_media_update(Term *term, const Config *config)
    if ((config->background) && (config->background[0]))
      {
         Evas_Object *o;
-        int type = 0;
-        
+        Media_Type type;
+
         if (term->media)
           {
              evas_object_event_callback_del(term->media,
@@ -1912,33 +1916,36 @@ _term_media_update(Term *term, const Config *config)
                                             _cb_media_del);
              evas_object_del(term->media);
           }
+        type = media_src_type_get(config->background);
         term->media = o = media_add(term->wn->win,
                                     config->background, config,
-                                    MEDIA_BG, &type);
+                                    MEDIA_BG, type);
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_media_del, term);
         edje_object_part_swallow(term->base, "terminology.background", o);
         evas_object_show(o);
         term->mediatype = type;
-        if (type == TYPE_IMG)
+        switch (type)
           {
-             edje_object_signal_emit(term->bg, "media,image", "terminology");
-             edje_object_signal_emit(term->base, "media,image", "terminology");
-          }
-        else if (type == TYPE_SCALE)
-          {
-             edje_object_signal_emit(term->bg, "media,scale", "terminology");
-             edje_object_signal_emit(term->base, "media,scale", "terminology");
-          }
-        else if (type == TYPE_EDJE)
-          {
-             edje_object_signal_emit(term->bg, "media,edje", "terminology");
-             edje_object_signal_emit(term->base, "media,edje", "terminology");
-          }
-        else if (type == TYPE_MOV)
-          {
-             edje_object_signal_emit(term->bg, "media,movie", "terminology");
-             edje_object_signal_emit(term->base, "media,movie", "terminology");
+           case MEDIA_TYPE_IMG:
+              edje_object_signal_emit(term->bg, "media,image", "terminology");
+              edje_object_signal_emit(term->base, "media,image", "terminology");
+              break;
+           case MEDIA_TYPE_SCALE:
+              edje_object_signal_emit(term->bg, "media,scale", "terminology");
+              edje_object_signal_emit(term->base, "media,scale", "terminology");
+              break;
+           case MEDIA_TYPE_EDJE:
+              edje_object_signal_emit(term->bg, "media,edje", "terminology");
+              edje_object_signal_emit(term->base, "media,edje", "terminology");
+              break;
+           case MEDIA_TYPE_MOV:
+              edje_object_signal_emit(term->bg, "media,movie", "terminology");
+              edje_object_signal_emit(term->base, "media,movie", "terminology");
+              break;
+           case MEDIA_TYPE_UNKNOWN:
+           default:
+              break;
           }
      }
    else
@@ -2221,40 +2228,51 @@ main_term_bg_config(Term *term)
    if (term->popmedia)
      {
         edje_object_part_swallow(term->bg, "terminology.popmedia", term->popmedia);
-        if (term->poptype == TYPE_IMG)
-          edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
-        else if (term->poptype == TYPE_SCALE)
-          edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
-        else if (term->poptype == TYPE_EDJE)
-          edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
-        else if (term->poptype == TYPE_MOV)
-          edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+        switch (term->poptype)
+          {
+           case MEDIA_TYPE_IMG:
+              edje_object_signal_emit(term->bg, "popmedia,image", "terminology");
+              break;
+           case MEDIA_TYPE_SCALE:
+              edje_object_signal_emit(term->bg, "popmedia,scale", "terminology");
+              break;
+           case MEDIA_TYPE_EDJE:
+              edje_object_signal_emit(term->bg, "popmedia,edje", "terminology");
+              break;
+           case MEDIA_TYPE_MOV:
+              edje_object_signal_emit(term->bg, "popmedia,movie", "terminology");
+              break;
+           default:
+              break;
+          }
      }
    if (term->media)
      {
         edje_object_part_swallow(term->base, "terminology.background", term->media);
-        if (term->mediatype == TYPE_IMG)
+        switch (term->mediatype)
           {
-             edje_object_signal_emit(term->bg, "media,image", "terminology");
-             edje_object_signal_emit(term->base, "media,image", "terminology");
-          }
-        else if (term->mediatype == TYPE_SCALE)
-          {
-             edje_object_signal_emit(term->bg, "media,scale", "terminology");
-             edje_object_signal_emit(term->base, "media,scale", "terminology");
-          }
-        else if (term->mediatype == TYPE_EDJE)
-          {
+           case MEDIA_TYPE_IMG:
+              edje_object_signal_emit(term->bg, "media,image", "terminology");
+              edje_object_signal_emit(term->base, "media,image", "terminology");
+              break;
+           case MEDIA_TYPE_SCALE:
+              edje_object_signal_emit(term->bg, "media,scale", "terminology");
+              edje_object_signal_emit(term->base, "media,scale", "terminology");
+              break;
+           case MEDIA_TYPE_EDJE:
              edje_object_signal_emit(term->bg, "media,edje", "terminology");
              edje_object_signal_emit(term->base, "media,edje", "terminology");
-          }
-        else if (term->mediatype == TYPE_MOV)
-          {
+             break;
+           case MEDIA_TYPE_MOV:
              edje_object_signal_emit(term->bg, "media,movie", "terminology");
              edje_object_signal_emit(term->base, "media,movie", "terminology");
+             break;
+           case MEDIA_TYPE_UNKNOWN:
+           default:
+             break;
           }
      }
-   
+
    if ((term->focused) && (term->wn->focused))
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");

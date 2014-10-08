@@ -114,14 +114,16 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
      {
         if (item->path)
           {
-             int i, ret = 0;
+             int i;
+             Media_Type type;
              for (i = 0; extn_edj[i]; i++)
                {
                   if (eina_str_has_extension(item->path, extn_edj[i]))
                     return media_add(obj, item->path, config,
-                                     MEDIA_BG, &ret);
+                                     MEDIA_BG, MEDIA_TYPE_EDJE);
                }
-             return media_add(obj, item->path, config, MEDIA_THUMB, &ret);
+             type = media_src_type_get(item->path);
+             return media_add(obj, item->path, config, MEDIA_THUMB, type);
           }
         else
           {

@@ -26,20 +26,27 @@ int _gravatar_log_dom = -1;
 #define GRAVATAR_URL_START "http://www.gravatar.com/avatar/"
 #define GRAVATAR_URL_END ""
 
+typedef struct _Gravatar {
+     const char *url;
+     Config *config;
+} Gravatar;
+
 static Evas_Object *
 _tooltip_content(void *data,
                  Evas_Object *obj,
                  Evas_Object *tt EINA_UNUSED)
 {
-   const char *url = data;
+   Gravatar *g = data;
    Evas_Object *o;
+   int type;
 
-   o = elm_label_add(obj);
-   elm_object_text_set(o, url);
-   DBG("url:%s", url);
+   //o = elm_label_add(obj);
+   //elm_object_text_set(o, url);
+   DBG("url:%s", g->url);
    /* TODO */
-   //o = media_add(obj, url, config, MEDIA_TOOLTIP, &type);
+   o = media_add(obj, g->url, g->config, MEDIA_TOOLTIP, &type);
 
+   /* TODO: handle Gravatar leak */
    return o;
 }
 
@@ -48,13 +55,14 @@ _tooltip_del(void            *data,
              Evas_Object *obj EINA_UNUSED,
              void            *event_info EINA_UNUSED)
 {
-   const char *url = data;
-   DBG("url:%s", url);
-   eina_stringshare_del(data);
+   Gravatar *g = data;
+   DBG("url:%s", g->url);
+   eina_stringshare_del(g->url);
+   free(g);
 }
 
 void
-gravatar_tooltip(Evas_Object *obj, char *email)
+gravatar_tooltip(Evas_Object *obj, Config *config, char *email)
 {
    int n;
    MD5_CTX ctx;
@@ -62,8 +70,11 @@ gravatar_tooltip(Evas_Object *obj, char *email)
    unsigned char hash[MD5_HASHBYTES];
    static const char hex[] = "0123456789abcdef";
    const char *url;
-   //int type;
-   //Config *config = termio_config_get(obj);
+   Gravatar *g;
+
+   g = calloc(sizeof(Gravatar), 1);
+   if (!g) return;
+   g->config = config;
 
    DBG("need to show tooltip for email:%s", email);
    eina_str_tolower(&email);
@@ -87,8 +98,9 @@ gravatar_tooltip(Evas_Object *obj, char *email)
 
    DBG("url:%s", url);
 
+   g->url = url;
    elm_object_tooltip_content_cb_set(obj, _tooltip_content,
-                                     (void *) url,
+                                     g,
                                      _tooltip_del);
 }
 

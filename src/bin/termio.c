@@ -771,14 +771,14 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
              type = media_src_type_get(sd->link.string);
              if (may_inline && _should_inline(obj))
                {
-                  if ((type == TYPE_IMG) ||
-                      (type == TYPE_SCALE) ||
-                      (type == TYPE_EDJE))
+                  if ((type == MEDIA_TYPE_IMG) ||
+                      (type == MEDIA_TYPE_SCALE) ||
+                      (type == MEDIA_TYPE_EDJE))
                     {
                        evas_object_smart_callback_call(obj, "popup", NULL);
                        handled = EINA_TRUE;
                     }
-                  else if (type == TYPE_MOV)
+                  else if (type == MEDIA_TYPE_MOV)
                     {
                        evas_object_smart_callback_call(obj, "popup", NULL);
                        handled = EINA_TRUE;
@@ -786,15 +786,15 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                }
              if (!handled)
                {
-                  if ((type == TYPE_IMG) ||
-                      (type == TYPE_SCALE) ||
-                      (type == TYPE_EDJE))
+                  if ((type == MEDIA_TYPE_IMG) ||
+                      (type == MEDIA_TYPE_SCALE) ||
+                      (type == MEDIA_TYPE_EDJE))
                     {
                        if ((config->helper.local.image) &&
                            (config->helper.local.image[0]))
                          cmd = config->helper.local.image;
                     }
-                  else if (type == TYPE_MOV)
+                  else if (type == MEDIA_TYPE_MOV)
                     {
                        if ((config->helper.local.video) &&
                            (config->helper.local.video[0]))
@@ -822,15 +822,15 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
              type = media_src_type_get(sd->link.string);
              if (may_inline && _should_inline(obj))
                {
-                  if ((type == TYPE_IMG) ||
-                      (type == TYPE_SCALE) ||
-                      (type == TYPE_EDJE))
+                  if ((type == MEDIA_TYPE_IMG) ||
+                      (type == MEDIA_TYPE_SCALE) ||
+                      (type == MEDIA_TYPE_EDJE))
                     {
                        // XXX: begin fetch of url, once done, show
                        evas_object_smart_callback_call(obj, "popup", NULL);
                        handled = EINA_TRUE;
                     }
-                  else if (type == TYPE_MOV)
+                  else if (type == MEDIA_TYPE_MOV)
                     {
                        // XXX: if no http:// add
                        evas_object_smart_callback_call(obj, "popup", NULL);
@@ -839,15 +839,15 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                }
              if (!handled)
                {
-                  if ((type == TYPE_IMG) ||
-                      (type == TYPE_SCALE) ||
-                      (type == TYPE_EDJE))
+                  if ((type == MEDIA_TYPE_IMG) ||
+                      (type == MEDIA_TYPE_SCALE) ||
+                      (type == MEDIA_TYPE_EDJE))
                     {
                        if ((config->helper.url.image) &&
                            (config->helper.url.image[0]))
                          cmd = config->helper.url.image;
                     }
-                  else if (type == TYPE_MOV)
+                  else if (type == MEDIA_TYPE_MOV)
                     {
                        if ((config->helper.url.video) &&
                            (config->helper.url.video[0]))
@@ -939,10 +939,10 @@ _cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
           {
              int type = media_src_type_get(sd->link.string);
 
-             if ((type == TYPE_IMG) ||
-                 (type == TYPE_SCALE) ||
-                 (type == TYPE_EDJE) ||
-                 (type == TYPE_MOV))
+             if ((type == MEDIA_TYPE_IMG) ||
+                 (type == MEDIA_TYPE_SCALE) ||
+                 (type == MEDIA_TYPE_EDJE) ||
+                 (type == MEDIA_TYPE_MOV))
                elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
                                         _cb_ctxp_link_preview, sd->self);
           }
@@ -1193,7 +1193,7 @@ _update_link(Evas_Object *obj, Termio *sd,
                                        _cb_link_move, obj);
         if ((!popup_exists) && link_is_email(sd->link.string))
           {
-             gravatar_tooltip(o, sd->link.string);
+             gravatar_tooltip(o, sd->config, sd->link.string);
           }
      }
 }
@@ -1257,8 +1257,8 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *info EINA_UNUSED)
              if (config)
                {
                   if ((!config->helper.inline_please) ||
-                      (!((type == TYPE_IMG) || (type == TYPE_SCALE) ||
-                         (type == TYPE_EDJE) || (type == TYPE_MOV))))
+                      (!((type == MEDIA_TYPE_IMG)  || (type == MEDIA_TYPE_SCALE) ||
+                         (type == MEDIA_TYPE_EDJE) || (type == MEDIA_TYPE_MOV))))
                     {
                        const char *cmd = NULL;
 
@@ -1807,7 +1807,7 @@ static void
 _block_media_activate(Evas_Object *obj, Termblock *blk)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   int type = 0;
+   Media_Type type;
    int media = MEDIA_STRETCH;
    Evas_Object *mctrl;
 
@@ -1821,8 +1821,9 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
      media |= MEDIA_SAVE;
    else
      media |= MEDIA_RECOVER | MEDIA_SAVE;
-   blk->obj = media_add(obj, blk->path, sd->config, media, &type);
-   if (type == TYPE_MOV)
+   type = media_src_type_get(blk->path);
+   blk->obj = media_add(obj, blk->path, sd->config, media, type);
+   if (type == MEDIA_TYPE_MOV)
      media_play_set(blk->obj, blk->mov_state == MOVIE_STATE_PLAY);
    evas_object_event_callback_add
      (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);

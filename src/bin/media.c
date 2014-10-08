@@ -32,7 +32,8 @@ struct _Media
    int iw, ih;
    int sw, sh;
    int fr, frnum, loops;
-   int mode, type;
+   int mode;
+   Media_Type type;
    int resizes;
    struct {
       Evas_Coord x, y;
@@ -53,7 +54,7 @@ static const char *
 _is_fmt(const char *f, const char **extn)
 {
    int i, len, l;
-   
+
    len = strlen(f);
    for (i = 0; extn[i]; i++)
      {
@@ -89,7 +90,7 @@ _et_connect(void *data EINA_UNUSED, Ethumb_Client *c, Eina_Bool ok)
    if (ok)
      {
         Evas_Object *o;
-        
+
         et_connected = EINA_TRUE;
         ethumb_client_on_server_die_callback_set(c, _et_disconnect,
                                                  NULL, NULL);
@@ -123,7 +124,7 @@ _type_thumb_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
    else
      {
         int iw = 1, ih = 1;
-        
+
         iw = w;
         ih = (sd->ih * w) / sd->iw;
         if (ih > h)
@@ -165,7 +166,7 @@ _et_done(Ethumb_Client *c EINA_UNUSED, const char *file, const char *key, void *
    Evas_Object *obj = data;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   
+
 //   if (c != et_client) return;
    sd->et_req = NULL;
    evas_object_event_callback_add(sd->o_img, EVAS_CALLBACK_IMAGE_PRELOADED,
@@ -234,7 +235,7 @@ _type_thumb_init(Evas_Object *obj)
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_THUMB;
+   sd->type = MEDIA_TYPE_THUMB;
    _et_init();
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_image_load_orientation_set(o, EINA_TRUE);
@@ -274,7 +275,7 @@ _cb_img_frame(void *data)
    if ((sd->fr >= sd->frnum) && (fr == 1))
      {
         int loops;
-        
+
         if (evas_object_image_animated_loop_type_get(sd->o_img) ==
             EVAS_IMAGE_ANIMATED_HINT_NONE)
           {
@@ -318,7 +319,6 @@ _type_img_init(Evas_Object *obj)
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_IMG;
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -345,7 +345,7 @@ _type_img_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
    else
      {
         int iw = 1, ih = 1;
-        
+
         if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_BG)
           {
              iw = w;
@@ -414,7 +414,6 @@ _type_scale_init(Evas_Object *obj)
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_SCALE;
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -441,7 +440,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
    else
      {
         int iw = 1, ih = 1;
-        
+
         if ((sd->mode & MEDIA_SIZE_MASK) == MEDIA_BG)
           {
              iw = w;
@@ -477,7 +476,7 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
    if (!sd->nosmooth)
      {
         Evas_Coord lw, lh;
-        
+
         lw = w;
         lh = h;
         if (lw < 256) lw = 256;
@@ -530,7 +529,6 @@ _type_edje_init(Evas_Object *obj)
      };
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_EDJE;
    o = sd->o_img = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -712,13 +710,12 @@ _type_mov_init(Evas_Object *obj)
         "gstreamer1"
     };
    char *mod = NULL;
-        
+
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   sd->type = TYPE_MOV;
    emotion_init();
    o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
-   if ((sd->config->vidmod >= 0) && 
+   if ((sd->config->vidmod >= 0) &&
        (sd->config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
      mod = modules[sd->config->vidmod];
    if (!emotion_object_init(o, mod))
@@ -742,7 +739,7 @@ _type_mov_init(Evas_Object *obj)
                                   _cb_mov_ref, obj);
    emotion_object_file_set(o, sd->realf);
    if (((sd->mode & MEDIA_OPTIONS_MASK) & MEDIA_RECOVER)
-       && (sd->type == TYPE_MOV) && (sd->o_img))
+       && (sd->type == MEDIA_TYPE_MOV) && (sd->o_img))
      emotion_object_last_position_load(sd->o_img);
    else
      media_position_set(obj, 0.0);
@@ -795,7 +792,7 @@ _type_mov_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_
      {
         int iw = 1, ih = 1;
         double ratio;
-        
+
         ratio = emotion_object_ratio_get(sd->o_img);
         if (ratio > 0.0) sd->iw = (sd->ih * ratio) + 0.5;
         else ratio = (double)sd->iw / (double)sd->ih;
@@ -862,7 +859,7 @@ _smart_del(Evas_Object *obj)
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (((sd->mode & MEDIA_OPTIONS_MASK) & MEDIA_SAVE)
-       && (sd->type == TYPE_MOV) && (sd->o_img))
+       && (sd->type == MEDIA_TYPE_MOV) && (sd->o_img))
      emotion_object_last_position_save(sd->o_img);
    if (sd->url)
      {
@@ -921,14 +918,14 @@ _unsmooth_timeout(void *data)
    evas_object_geometry_get(data, &ox, &oy, &ow, &oh);
    sd->smooth_timer = NULL;
    sd->nosmooth = EINA_FALSE;
-   if ((sd->type == TYPE_IMG) || (sd->type == TYPE_SCALE))
+   if ((sd->type == MEDIA_TYPE_IMG) || (sd->type == MEDIA_TYPE_SCALE))
      {
         evas_object_image_smooth_scale_set(sd->o_img, !sd->nosmooth);
         if (sd->o_tmp)
           evas_object_image_smooth_scale_set(sd->o_tmp, !sd->nosmooth);
-        if (sd->type == TYPE_SCALE) _type_scale_calc(data, ox, oy, ow, oh);
+        if (sd->type == MEDIA_TYPE_SCALE) _type_scale_calc(data, ox, oy, ow, oh);
      }
-   else if (sd->type == TYPE_MOV)
+   else if (sd->type == MEDIA_TYPE_MOV)
      emotion_object_smooth_scale_set(sd->o_img, !sd->nosmooth);
    return EINA_FALSE;
 }
@@ -938,7 +935,7 @@ _smooth_handler(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
    double interval;
-   
+
    if (!sd) return;
    interval = ecore_animator_frametime_get();
    if (interval <= 0.0) interval = 1.0/60.0;
@@ -948,13 +945,13 @@ _smooth_handler(Evas_Object *obj)
           {
              sd->nosmooth = EINA_TRUE;
              sd->resizes = 0;
-             if ((sd->type == TYPE_IMG) || (sd->type == TYPE_SCALE))
+             if ((sd->type == MEDIA_TYPE_IMG) || (sd->type == MEDIA_TYPE_SCALE))
                {
                   evas_object_image_smooth_scale_set(sd->o_img, !sd->nosmooth);
                   if (sd->o_tmp)
                     evas_object_image_smooth_scale_set(sd->o_tmp, !sd->nosmooth);
                }
-             else if (sd->type == TYPE_MOV)
+             else if (sd->type == MEDIA_TYPE_MOV)
                emotion_object_smooth_scale_set(sd->o_img, !sd->nosmooth);
              if (sd->smooth_timer)
                sd->smooth_timer = ecore_timer_del(sd->smooth_timer);
@@ -984,11 +981,16 @@ _smart_calculate(Evas_Object *obj)
    _smooth_handler(obj);
    sd->w = ow;
    sd->h = oh;
-   if (sd->type == TYPE_IMG) _type_img_calc(obj, ox, oy, ow, oh);
-   else if (sd->type == TYPE_SCALE) _type_scale_calc(obj, ox, oy, ow, oh);
-   else if (sd->type == TYPE_EDJE) _type_edje_calc(obj, ox, oy, ow, oh);
-   else if (sd->type == TYPE_MOV) _type_mov_calc(obj, ox, oy, ow, oh);
-   else if (sd->type == TYPE_THUMB) _type_thumb_calc(obj, ox, oy, ow, oh);
+   switch (sd->type)
+     {
+      case MEDIA_TYPE_IMG: _type_img_calc(obj, ox, oy, ow, oh); break;
+      case MEDIA_TYPE_SCALE: _type_scale_calc(obj, ox, oy, ow, oh); break;
+      case MEDIA_TYPE_EDJE: _type_edje_calc(obj, ox, oy, ow, oh); break;
+      case MEDIA_TYPE_MOV: _type_mov_calc(obj, ox, oy, ow, oh); break;
+      case MEDIA_TYPE_THUMB: _type_thumb_calc(obj, ox, oy, ow, oh); break;
+      case MEDIA_TYPE_UNKNOWN:
+         return;
+     }
    evas_object_move(sd->clip, ox, oy);
    evas_object_resize(sd->clip, ow, oh);
    if (sd->o_busy)
@@ -1022,7 +1024,7 @@ _url_prog_cb(void *data, int type EINA_UNUSED, void *event_info)
    if (ev->down.total > 0.0)
      {
         double perc;
-        
+
         if (!sd->downloading)
           edje_object_signal_emit(sd->o_busy, "downloading", "terminology");
         sd->downloading = EINA_TRUE;
@@ -1030,7 +1032,7 @@ _url_prog_cb(void *data, int type EINA_UNUSED, void *event_info)
         if (perc != sd->download_perc)
           {
              Edje_Message_Float msg;
-             
+
              sd->download_perc = perc;
              msg.val = perc;
              edje_object_message_send(sd->o_busy, EDJE_MESSAGE_FLOAT, 1, &msg);
@@ -1047,7 +1049,8 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_TRUE;
    if (ev->url_con != sd->url) return EINA_TRUE;
-   
+
+
    edje_object_signal_emit(sd->o_busy, "done", "terminology");
    ecore_event_handler_del(sd->url_prog_hand);
    ecore_event_handler_del(sd->url_compl_hand);
@@ -1057,18 +1060,24 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    sd->url = NULL;
    sd->url_prog_hand = NULL;
    sd->url_compl_hand = NULL;
-   
-   if      (_is_fmt(sd->src, extn_img))
-     _type_img_init(obj);
-   else if (_is_fmt(sd->src, extn_scale))
-     _type_scale_init(obj);
-   else if (_is_fmt(sd->src, extn_edj))
-     _type_edje_init(obj);
-   // FIXME: handle audio specially
-   else if (_is_fmt(sd->src, extn_aud))
-     _type_mov_init(obj);
-   else if (_is_fmt(sd->src, extn_mov))
-     _type_mov_init(obj);
+
+   switch (sd->type)
+     {
+      case MEDIA_TYPE_IMG:
+         _type_img_init(obj);
+         break;
+      case MEDIA_TYPE_SCALE:
+         _type_scale_init(obj);
+         break;
+      case MEDIA_TYPE_EDJE:
+         _type_edje_init(obj);
+         break;
+      case MEDIA_TYPE_MOV:
+         _type_mov_init(obj);
+         break;
+      default:
+         break;
+     }
    evas_object_raise(sd->o_busy);
    evas_object_raise(sd->o_event);
    _smart_calculate(obj);
@@ -1081,7 +1090,7 @@ _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    Evas_Event_Mouse_Down *ev = event;
    Media *sd = evas_object_smart_data_get(data);
    if (!sd) return;
-   
+
    if (sd->down.down) return;
    if (ev->button != 1) return;
    sd->down.x = ev->canvas.x;
@@ -1096,7 +1105,7 @@ _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Media *sd = evas_object_smart_data_get(data);
    Evas_Coord dx, dy;
    if (!sd) return;
-   
+
    if (!sd->down.down) return;
    sd->down.down = EINA_FALSE;
    dx = abs(ev->canvas.x - sd->down.x);
@@ -1124,12 +1133,12 @@ _smart_init(void)
 }
 
 Evas_Object *
-media_add(Evas_Object *parent, const char *src, const Config *config, int mode, int *type)
+media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
+          Media_Type type)
 {
    Evas *e;
    Evas_Object *obj = NULL;
    Media *sd = NULL;
-   int t;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
@@ -1144,11 +1153,10 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
    sd->config = config;
    sd->mode = mode;
    sd->tmpfd = -1;
+   sd->type = type;
 
-   t = media_src_type_get(sd->src);
-   
 #if HAVE_MKSTEMPS
-   if (link_is_url(sd->src) && (t != TYPE_MOV))
+   if (link_is_url(sd->src) && (type != MEDIA_TYPE_MOV))
      {
         const char *ext = NULL;
         char *tbuf;
@@ -1175,10 +1183,31 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
           sd->ext = ext;
         else if ((ext = _is_fmt(src, extn_mov)))
           sd->ext = ext;
+        else
+          {
+             switch (type)
+               {
+                case MEDIA_TYPE_IMG:
+                   sd->ext = ".png";
+                   break;
+                case MEDIA_TYPE_SCALE:
+                   sd->ext = ".svg";
+                   break;
+                case MEDIA_TYPE_EDJE:
+                   sd->ext = ".edj";
+                   break;
+                case MEDIA_TYPE_MOV:
+                   sd->ext = ".avi";
+                   break;
+                case MEDIA_TYPE_UNKNOWN:
+                case MEDIA_TYPE_THUMB:
+                   break;
+               }
+          }
         if (sd->ext)
           {
              char buf[4096];
-             
+
              snprintf(buf, sizeof(buf), "/tmp/tmngyXXXXXX%s", sd->ext);
              sd->tmpfd = mkstemps(buf, strlen(sd->ext));
              if (sd->tmpfd >= 0)
@@ -1207,13 +1236,13 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
                        else
                          {
                             Evas_Object *o;
-                            
+
                             o = sd->o_busy = edje_object_add(evas_object_evas_get(obj));
                             evas_object_smart_member_add(o, obj);
                             theme_apply(o, sd->config, "terminology/mediabusy");
                             evas_object_show(o);
                             edje_object_signal_emit(o, "busy", "terminology");
-                            
+
                             sd->realf = eina_stringshare_add(buf);
                             sd->url_prog_hand = ecore_event_handler_add
                               (ECORE_CON_EVENT_URL_PROGRESS, _url_prog_cb, obj);
@@ -1221,6 +1250,10 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
                               (ECORE_CON_EVENT_URL_COMPLETE, _url_compl_cb, obj);
                          }
                     }
+               }
+             else
+               {
+                  ERR(_("Function %s failed: %s"), "mkstemps()", strerror(errno));
                }
           }
      }
@@ -1249,25 +1282,25 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
      }
    else
      {
-        switch (t)
+        switch (type)
           {
-           case TYPE_IMG:
+           case MEDIA_TYPE_IMG:
              if (!sd->url) _type_img_init(obj);
              break;
-           case TYPE_SCALE:
+           case MEDIA_TYPE_SCALE:
              if (!sd->url) _type_scale_init(obj);
              break;
-           case TYPE_EDJE:
+           case MEDIA_TYPE_EDJE:
              if (!sd->url) _type_edje_init(obj);
              break;
-           case TYPE_MOV:
+           case MEDIA_TYPE_MOV:
              if (!sd->url) _type_mov_init(obj);
              break;
            default:
              break;
           }
      }
-   
+
    sd->o_event = evas_object_rectangle_add(e);
    evas_object_color_set(sd->o_event, 0, 0, 0, 0);
    evas_object_repeat_events_set(sd->o_event, EINA_TRUE);
@@ -1278,8 +1311,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode, 
                                   _mouse_down_cb, obj);
    evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up_cb, obj);
-   
-   if (type) *type = t;
+
    return obj;
 
 err:
@@ -1292,7 +1324,7 @@ void
 media_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    emotion_object_audio_mute_set(sd->o_img, mute);
    if (mute)
       edje_object_signal_emit(sd->o_ctrl, "mute,set", "terminology");
@@ -1304,7 +1336,7 @@ void
 media_visualize_set(Evas_Object *obj, Eina_Bool visualize)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    if (visualize)
      {
         /*
@@ -1323,7 +1355,7 @@ void
 media_play_set(Evas_Object *obj, Eina_Bool play)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    emotion_object_play_set(sd->o_img, play);
    if (play)
      {
@@ -1341,7 +1373,7 @@ Eina_Bool
 media_play_get(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return EINA_FALSE;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return EINA_FALSE;
    return emotion_object_play_get(sd->o_img);
 }
 
@@ -1349,7 +1381,7 @@ void
 media_stop(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    evas_object_smart_callback_call(obj, "stop", NULL);
    evas_object_del(obj);
 }
@@ -1359,7 +1391,7 @@ media_position_set(Evas_Object *obj, double pos)
 {
    double len;
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    len = emotion_object_play_length_get(sd->o_img);
    emotion_object_position_set(sd->o_img, len * pos);
 }
@@ -1368,7 +1400,7 @@ void
 media_volume_set(Evas_Object *obj, double vol)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if ((!sd) || (sd->type != TYPE_MOV)) return;
+   if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return;
    emotion_object_audio_volume_set(sd->o_img, vol);
    edje_object_part_drag_value_set(sd->o_ctrl, "terminology.voldrag", vol, vol);
 }
@@ -1381,15 +1413,15 @@ media_get(const Evas_Object *obj)
    return sd->realf;
 }
 
-int
+Media_Type
 media_src_type_get(const char *src)
 {
-   int type = TYPE_UNKNOWN;
+   Media_Type type = MEDIA_TYPE_UNKNOWN;
 
-   if      (_is_fmt(src, extn_img))   type = TYPE_IMG;
-   else if (_is_fmt(src, extn_scale)) type = TYPE_SCALE;
-   else if (_is_fmt(src, extn_edj))   type = TYPE_EDJE;
-   else if (_is_fmt(src, extn_mov))   type = TYPE_MOV;
+   if      (_is_fmt(src, extn_img))   type = MEDIA_TYPE_IMG;
+   else if (_is_fmt(src, extn_scale)) type = MEDIA_TYPE_SCALE;
+   else if (_is_fmt(src, extn_edj))   type = MEDIA_TYPE_EDJE;
+   else if (_is_fmt(src, extn_mov))   type = MEDIA_TYPE_MOV;
    return type;
 }
 
