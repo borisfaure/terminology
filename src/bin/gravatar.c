@@ -38,15 +38,10 @@ _tooltip_content(void *data,
 {
    Gravatar *g = data;
    Evas_Object *o;
-   int type;
 
-   //o = elm_label_add(obj);
-   //elm_object_text_set(o, url);
-   DBG("url:%s", g->url);
-   /* TODO */
-   o = media_add(obj, g->url, g->config, MEDIA_TOOLTIP, &type);
+   o = media_add(obj, g->url, g->config, MEDIA_STRETCH, MEDIA_TYPE_IMG);
+   evas_object_size_hint_min_set(o, 80, 80);
 
-   /* TODO: handle Gravatar leak */
    return o;
 }
 
@@ -56,7 +51,6 @@ _tooltip_del(void            *data,
              void            *event_info EINA_UNUSED)
 {
    Gravatar *g = data;
-   DBG("url:%s", g->url);
    eina_stringshare_del(g->url);
    free(g);
 }
@@ -76,9 +70,7 @@ gravatar_tooltip(Evas_Object *obj, Config *config, char *email)
    if (!g) return;
    g->config = config;
 
-   DBG("need to show tooltip for email:%s", email);
    eina_str_tolower(&email);
-   DBG("lower:%s", email);
 
    MD5Init(&ctx);
    MD5Update(&ctx, (unsigned char const*)email, (unsigned)strlen(email));
@@ -91,12 +83,8 @@ gravatar_tooltip(Evas_Object *obj, Config *config, char *email)
      }
    md5out[2 * MD5_HASHBYTES] = '\0';
 
-   DBG("md5:%s", md5out);
-
    url = eina_stringshare_printf(GRAVATAR_URL_START"%s"GRAVATAR_URL_END,
                                  md5out);
-
-   DBG("url:%s", url);
 
    g->url = url;
    elm_object_tooltip_content_cb_set(obj, _tooltip_content,
