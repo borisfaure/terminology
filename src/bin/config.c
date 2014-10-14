@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 3
+#define CONF_VER 4
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -158,6 +158,8 @@ config_init(void)
      (edd_base, Config, "bell_rings", bell_rings, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_LIST
      (edd_base, Config, "keys", keys, edd_keys);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "gravatar", gravatar, EET_T_UCHAR);
 }
 
 void
@@ -255,6 +257,8 @@ config_sync(const Config *config_src, Config *config)
    config->colors_use = config_src->colors_use;
    memcpy(config->colors, config_src->colors, sizeof(config->colors));
    config->mouse_over_focus = config_src->mouse_over_focus;
+   /* TODO: config->keys */
+   config->gravatar = config_src->gravatar;
 }
 
 static void
@@ -451,13 +455,16 @@ config_load(const char *key)
                   /* upgrade to v3 */
                   config->active_links = EINA_TRUE;
                   config->bell_rings = EINA_TRUE;
-                  config->version = 3;
                   /*pass through*/
-                case CONF_VER: /* 3 */
+                case 3:
                   if (eina_list_count(config->keys) == 0)
                     {
                        _add_default_keys(config);
                     }
+                  /*pass through*/
+                case CONF_VER: /* 4 */
+                  config->version = CONF_VER;
+                  config->gravatar = EINA_TRUE;
                   break;
                 default:
                   if (config->version < CONF_VER)
@@ -491,11 +498,13 @@ config_load(const char *key)
              config->helper.local.image = eina_stringshare_add("xdg-open");
              config->helper.inline_please = EINA_TRUE;
              config->scrollback = 2000;
-             config->tab_zoom = 0.5;
              config->theme = eina_stringshare_add("default.edj");
              config->background = NULL;
-             config->translucent = EINA_FALSE;
+             config->tab_zoom = 0.5;
+             config->vidmod = 0;
              config->opacity = 50;
+             config->cg_width = 80;
+             config->cg_height = 24;
              config->jump_on_change = EINA_TRUE;
              config->jump_on_keypress = EINA_TRUE;
              config->flicker_on_key = EINA_FALSE;
@@ -503,7 +512,7 @@ config_load(const char *key)
              config->disable_visual_bell = EINA_FALSE;
              config->bell_rings = EINA_TRUE;
              config->active_links = EINA_TRUE;
-             config->vidmod = 0;
+             config->translucent = EINA_FALSE;
              config->mute = EINA_FALSE;
              config->visualize = EINA_TRUE;
              config->urg_bell = EINA_TRUE;
@@ -513,10 +522,11 @@ config_load(const char *key)
              config->xterm_256color = EINA_FALSE;
              config->erase_is_del = EINA_FALSE;
              config->custom_geometry = EINA_FALSE;
+             config->drag_links = EINA_FALSE;
              config->login_shell = EINA_FALSE;
-             config->cg_width = 80;
-             config->cg_height = 24;
+             config->mouse_over_focus = EINA_TRUE;
              config->colors_use = EINA_FALSE;
+             config->gravatar = EINA_TRUE;
              for (j = 0; j < 4; j++)
                {
                   for (i = 0; i < 12; i++)
@@ -530,7 +540,6 @@ config_load(const char *key)
                        config->colors[(j * 12) + i].a = aa;
                     }
                }
-             config->mouse_over_focus = EINA_TRUE;
              _add_default_keys(config);
           }
      }
@@ -606,6 +615,7 @@ config_fork(Config *config)
    CPY(temporary);
    SCPY(config_key);
    CPY(font_set);
+   CPY(gravatar);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {
@@ -620,6 +630,9 @@ config_fork(Config *config)
         eina_stringshare_ref(key->cb);
         config2->keys = eina_list_append(config2->keys, key2);
      }
+
+   CPY(gravatar);
+
    return config2;
 }
 

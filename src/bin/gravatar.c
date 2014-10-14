@@ -66,6 +66,9 @@ gravatar_tooltip(Evas_Object *obj, Config *config, char *email)
    const char *url;
    Gravatar *g;
 
+   if (!config->gravatar)
+     return;
+
    g = calloc(sizeof(Gravatar), 1);
    if (!g) return;
    g->config = config;

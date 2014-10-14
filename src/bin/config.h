@@ -48,6 +48,9 @@ struct _Config
    const char       *background;
    double            tab_zoom;
    int               vidmod;
+   int               opacity;
+   int               cg_width;
+   int               cg_height;
    Eina_Bool         jump_on_keypress;
    Eina_Bool         jump_on_change;
    Eina_Bool         flicker_on_key;
@@ -56,7 +59,6 @@ struct _Config
    Eina_Bool         bell_rings;
    Eina_Bool         active_links;
    Eina_Bool         translucent;
-   int               opacity;
    Eina_Bool         mute;
    Eina_Bool         visualize;
    Eina_Bool         urg_bell;
@@ -69,11 +71,9 @@ struct _Config
    Eina_Bool         drag_links;
    Eina_Bool         login_shell;
    Eina_Bool         mouse_over_focus;
-   int               cg_width;
-   int               cg_height;
    Eina_Bool         colors_use;
+   Eina_Bool         gravatar;
    Config_Color      colors[(4 * 12)];
-   Eina_Bool         miniview;
    Eina_List        *keys;
 
    Eina_Bool         temporary; /* not in EET */

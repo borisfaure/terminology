@@ -289,6 +289,15 @@ _cb_op_behavior_mouse_over_focus_chg(void *data, Evas_Object *obj, void *event E
    config_save(config, NULL);
 }
 
+static void
+_cb_op_behavior_gravatar_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->gravatar = elm_check_state_get(obj);
+   config_save(config, NULL);
+}
+
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
@@ -473,6 +482,16 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_mouse_over_focus_chg, term);
+
+   o = elm_check_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Gravatar integration"));
+   elm_check_state_set(o, config->gravatar);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_behavior_gravatar_chg, term);
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
