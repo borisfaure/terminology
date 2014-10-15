@@ -9,99 +9,39 @@
 
 static Evas_Object *op_w, *op_h;
 
-static void
-_cb_op_behavior_drag_links_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->drag_links = elm_check_state_get(obj);
-   config_save(config, NULL);
+#define CB(_cfg_name, _inv)                                     \
+static void                                                     \
+_cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
+                            void *event EINA_UNUSED)            \
+{                                                               \
+   Evas_Object *term = data;                                    \
+   Config *config = termio_config_get(term);                    \
+   if (_inv)                                                    \
+     config->_cfg_name = !elm_check_state_get(obj);             \
+   else                                                         \
+     config->_cfg_name = elm_check_state_get(obj);              \
+   termio_config_update(term);                                  \
+   config_save(config, NULL);                                   \
 }
 
-static void
-_cb_op_behavior_jump_keypress_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->jump_on_keypress = elm_check_state_get(obj);
-   termio_config_update(term);
-   config_save(config, NULL);
-}
+CB(jump_on_change, 0);
+CB(jump_on_keypress, 0);
+CB(disable_cursor_blink, 1);
+CB(disable_visual_bell, 1);
+CB(bell_rings, 0);
+CB(flicker_on_key, 0);
+CB(urg_bell, 0);
+CB(active_links, 0);
+CB(multi_instance, 0);
+CB(xterm_256color, 0);
+CB(erase_is_del, 0);
+CB(drag_links, 0);
+CB(login_shell, 0);
+CB(mouse_over_focus, 0);
+CB(gravatar,  0);
 
-static void
-_cb_op_behavior_jump_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->jump_on_change = elm_check_state_get(obj);
-   termio_config_update(term);
-   config_save(config, NULL);
-}
+#undef CB
 
-static void
-_cb_op_behavior_cursor_blink_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->disable_cursor_blink = !elm_check_state_get(obj);
-   termio_config_update(term);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_visual_bell_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->disable_visual_bell = !elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_bell_rings_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->bell_rings = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_flicker_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->flicker_on_key = elm_check_state_get(obj);
-   termio_config_update(term);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_urg_bell_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->urg_bell = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_active_links_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->active_links = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_multi_instance_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->multi_instance = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
 
 /*
 static void
@@ -145,7 +85,7 @@ _behavior_option_restore_opened_views_del(Evas_Object *check)
 }
 
 static void
-_cb_op_behavior_application_server_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_behavior_application_server(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -162,26 +102,6 @@ _cb_op_behavior_application_server_chg(void *data, Evas_Object *obj, void *event
    config_save(config, NULL);
 }
 */
-
-static void
-_cb_op_behavior_xterm_256color_chg(void *data, Evas_Object *obj,
-                                   void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->xterm_256color = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_erase_is_del_chg(void *data, Evas_Object *obj,
-                                 void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->erase_is_del = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
 
 static unsigned int
 sback_double_to_expo_int(double d)
@@ -271,33 +191,6 @@ _cb_op_behavior_cg_height(void *data, Evas_Object *obj, void *event EINA_UNUSED)
      }
 }
 
-static void
-_cb_op_behavior_login_shell_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->login_shell = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_mouse_over_focus_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->mouse_over_focus = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_cb_op_behavior_gravatar_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->gravatar = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
@@ -328,170 +221,42 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(sc, o);
    evas_object_show(o);
 
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Scroll to bottom on new content"));
-   elm_check_state_set(o, config->jump_on_change);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_jump_chg, term);
+#define CX(_lbl, _cfg_name, _inv)                                         \
+   o = elm_check_add(bx);                                                 \
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);            \
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);               \
+   elm_object_text_set(o, _lbl);                                          \
+   elm_check_state_set(o, _inv ? !config->_cfg_name : config->_cfg_name); \
+   elm_box_pack_end(bx, o);                                               \
+   evas_object_show(o);                                                   \
+   evas_object_smart_callback_add(o, "changed",                           \
+                                  _cb_op_behavior_##_cfg_name, term)
 
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Scroll to bottom when a key is pressed"));
-   elm_check_state_set(o, config->jump_on_keypress);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_jump_keypress_chg, term);
+   CX(_("Scroll to bottom on new content"), jump_on_change, 0);
+   CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
+   CX(_("React to key presses"), flicker_on_key, 0);
+   CX(_("Cursor blinking"), disable_cursor_blink, 1);
+   CX(_("Visual Bell"), disable_visual_bell, 1);
+   CX(_("Bell rings"), bell_rings, 0);
+   CX(_("Urgent Bell"), urg_bell, 0);
+   CX(_("Active Links"), active_links, 0);
+   CX(_("Multiple instances, one process"), multi_instance, 0);
+   CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
+   CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
+   CX(_("Drag & drop links"), drag_links, 0);
+   CX(_("Start as login shell"), login_shell, 0);
+   CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
+   CX(_("Gravatar integration"), gravatar, 0);
 
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("React to key presses"));
-   elm_check_state_set(o, config->flicker_on_key);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_flicker_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Cursor blinking"));
-   elm_check_state_set(o, !config->disable_cursor_blink);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_cursor_blink_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Visual Bell"));
-   elm_check_state_set(o, !config->disable_visual_bell);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_visual_bell_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Bell rings"));
-   elm_check_state_set(o, config->bell_rings);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_bell_rings_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Urgent Bell"));
-   elm_check_state_set(o, config->urg_bell);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_urg_bell_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Active Links"));
-   elm_check_state_set(o, config->active_links);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_active_links_chg, term);
 /*
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Enable application server"));
-   elm_check_state_set(o, config->application_server);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_application_server_chg, term);
+   CX(_("Enable application server"), application_server, 0);
 
    evas_object_data_set(o, "box", bx);
    if (config->application_server)
      _behavior_option_restore_opened_views_add(term, o);
  */
+#undef CX
 
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Multiple instances, one process"));
-   elm_check_state_set(o, config->multi_instance);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_multi_instance_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Set TERM to xterm-256color"));
-   elm_check_state_set(o, config->xterm_256color);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_xterm_256color_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("BackArrow sends Del (instead of BackSpace)"));
-   elm_check_state_set(o, config->erase_is_del);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_erase_is_del_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Drag & drop links"));
-   elm_check_state_set(o, config->drag_links);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_drag_links_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Start as login shell"));
-   elm_check_state_set(o, config->login_shell);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_login_shell_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Focus split under the Mouse"));
-   elm_check_state_set(o, config->mouse_over_focus);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_mouse_over_focus_chg, term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Gravatar integration"));
-   elm_check_state_set(o, config->gravatar);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_gravatar_chg, term);
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
