@@ -80,6 +80,8 @@ Makefile.in
 /src/bin/.deps/
 /src/bin/lz4/.deps/
 /src/bin/lz4/.dirstamp
+/src/bin/md5/.deps/
+/src/bin/md5/.dirstamp
 /src/bin/terminology
 /src/bin/tyalpha
 /src/bin/tybg
