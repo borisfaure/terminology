@@ -448,7 +448,6 @@ _smart_show(Evas_Object *obj)
         mv->img_hist = 0;
         mv->initial_pos = 1;
 
-        _do_configure(obj);
         _queue_render(mv);
         evas_object_show(mv->base);
      }
