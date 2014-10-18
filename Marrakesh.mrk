@@ -99,6 +99,10 @@ src/bin/win.c
 src/bin/win.h
 src/bin/lz4/lz4.c
 src/bin/lz4/lz4.h
+src/bin/md5/md5.c
+src/bin/md5/md5.h
+src/bin/gravatar.c
+src/bin/gravatar.h
 DEPS:
 elementary eina eet evas ecore ecore-evas ecore-file edje emotion
 ecore-input ecore-imf ecore-imf-evas ecore-ipc efreet ethumb_client eldbus
