@@ -3,13 +3,14 @@
 # Copyright (C) 2014 Terminology development team
 # This file is distributed under the same license as the terminology package.
 # huchi <wonguk.jeong@samsung.com>, 2014.
-#
+# maeryo <maeryo@live.co.kr>, 2014.
+
 msgid ""
 msgstr ""
-"Project-Id-Version: terminology 0.6.99\n"
+"Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-10-05 14:40+0200\n"
-"PO-Revision-Date: 2014-09-04 11:10+0900\n"
+"POT-Creation-Date: 2014-10-14 08:20+0900\n"
+"PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -36,7 +37,7 @@ msgstr "수평 분할"
 
 #: src/bin/controls.c:277
 msgid "Miniview"
-msgstr ""
+msgstr "미니뷰"
 
 #: src/bin/controls.c:287 src/bin/termio.c:947
 msgid "Copy"
@@ -55,9 +56,8 @@ msgid "About"
 msgstr "정보"
 
 #: src/bin/controls.c:315
-#, fuzzy
 msgid "Close Terminal"
-msgstr "탭 닫기"
+msgstr "터미널 닫기"
 
 #: src/bin/about.c:56
 #, c-format
@@ -502,7 +502,7 @@ msgstr "배경"
 
 #: src/bin/options.c:169 src/bin/options_video.c:75
 msgid "Video"
-msgstr "비디오"
+msgstr "영상"
 
 #: src/bin/options.c:170 src/bin/options_colors.c:160
 msgid "Colors"
@@ -518,7 +518,7 @@ msgstr "헬퍼"
 
 #: src/bin/options.c:174
 msgid "Toolkit"
-msgstr ""
+msgstr "툴킷"
 
 #: src/bin/options.c:185
 msgid "Temporary"
@@ -725,6 +725,18 @@ msgstr "기타"
 msgid "Double click on a picture to import it"
 msgstr "더블 클릭하면 이미지를 가져옵니다."
 
+#: src/bin/options_elm.c:46
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>"
+"The toolkit configuration settings can be accessed by running <keyword>elementary_config</keyword>."
+msgstr ""
+"<em>터미놀로지</em>는 <hilight>elementary</hilight> 툴킷을 사용합니다.<br>"
+"툴킷 환경설정은 <keyword>elementary_config</keyword>를 실행하여 접근할 수 있습니다."
+
+#: src/bin/options_elm.c:56
+msgid "Launch elementary_config"
+msgstr "elementary_config 실행"
+
 #: src/bin/termcmd.c:66
 #, c-format
 msgid "Unknown font command: %s"
@@ -825,18 +837,3 @@ msgstr ""
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
 msgstr ""
-
-#~ msgid "Close"
-#~ msgstr "닫기"
-
-#~ msgid "Enable application server"
-#~ msgstr "응용 프로그램 서버 사용"
-
-#~ msgid "Word separators:"
-#~ msgstr "구분자:"
-
-#~ msgid "Enter command mode"
-#~ msgstr "명령 모드로 전환"
-
-#~ msgid "Toggle miniview of the history"
-#~ msgstr "미니뷰 토글"
