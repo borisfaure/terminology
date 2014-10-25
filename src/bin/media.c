@@ -1197,8 +1197,6 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
                    sd->ext = ".edj";
                    break;
                 case MEDIA_TYPE_MOV:
-                   sd->ext = ".avi";
-                   break;
                 case MEDIA_TYPE_UNKNOWN:
                 case MEDIA_TYPE_THUMB:
                    break;
