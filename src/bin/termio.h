@@ -5,6 +5,7 @@
 #include "main.h"
 #include "col.h"
 #include "termpty.h"
+#include "win.h"
 
 Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int w, int h, Term *term);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
