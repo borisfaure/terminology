@@ -51,32 +51,32 @@ Set window role.
 Type: STR.
 .
 .TP
-.B \-s=vh\-, \-\-split=vh\-
+.B \-S=vh\-, \-\-split=vh\-
 Terminology can start with splits opened as described below.
 The arguments are a string with the following characters:
- \fB\-s v\fP splits terminal vertically
- \fB\-s h\fP splits horizontally
+ \fB\-S v\fP splits terminal vertically
+ \fB\-S h\fP splits horizontally
  \fB\-\fP defines a placeholder for a shell or a command when used with
  \fB\-\-exec\fP/\fB\-e\fP
  Examples:
                       ______
                       |  |  |
- $ \fBterminology \-s v\fP   |__|__|
+ $ \fBterminology \-S v\fP   |__|__|
 
                       ______
                       |_____|
- $ \fBterminology \-s h\fP   |_____|
+ $ \fBterminology \-S h\fP   |_____|
 
                        ______
                        |__|  |
- $ \fBterminology \-s vh\fP   |__|__|
+ $ \fBterminology \-S vh\fP   |__|__|
 
                        ______
                        |  |__|
- $ \fBterminology \-s v-h\fP  |__|__|
+ $ \fBterminology \-S v-h\fP  |__|__|
 
                          ______
- $ \fBterminology \-s vh--h\fP  |__|__|
+ $ \fBterminology \-S vh--h\fP  |__|__|
                   \fBhv--v\fP  |__|__|
  Type: STR.
 .
