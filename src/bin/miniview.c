@@ -115,8 +115,7 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigne
    
    if (bgext) *pixel = colors[bg + 256];
    else if (bg && ((bg % 12) != COL_INVIS)) *pixel = colors[bg];
-   else if ((codepoint > 32) && (codepoint < 0x00110000) &&
-            (!isspace(codepoint)))
+   else if ((codepoint > 32) && (codepoint < 0x00110000))
      {
         if (fgext) *pixel = colors[fg + 256];
         else *pixel = colors[fg];
