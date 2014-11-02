@@ -35,8 +35,7 @@ Evas_Object *win_base_get(Win *wn);
 Evas_Object *win_evas_object_get(Win *win);
 Eina_List * win_terms_get(Win *wn);
 Config *win_config_get(Win *wn);
-void win_term_swallow(Win *wn, Term *term);
-void win_add_split(Win *wn, Term *term);
+int win_solo_term_set(Win *wn, Term *term);
 void win_sizing_handle(Win *wn);
 
 void term_next(Term *term);

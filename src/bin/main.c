@@ -290,12 +290,9 @@ main_ipc_new(Ipc_Instance *inst)
         free(nargv);
         return;
      }
-   else
-     {
-        win_term_swallow(wn, term);
-     }
 
-   win_add_split(wn, term);
+   if (win_solo_term_set(wn, term) < 0)
+     return;
 
    main_trans_update(config);
    main_media_update(config);
@@ -864,12 +861,12 @@ remote:
         retval = EXIT_FAILURE;
         goto end;
      }
-   else
-     {
-        win_term_swallow(wn, term);
-     }
 
-   win_add_split(wn, term);
+   if (win_solo_term_set(wn, term) < 0)
+     {
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    main_trans_update(config);
    main_media_update(config);
