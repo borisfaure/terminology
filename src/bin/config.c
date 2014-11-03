@@ -461,10 +461,10 @@ config_load(const char *key)
                     {
                        _add_default_keys(config);
                     }
+                  config->gravatar = EINA_TRUE;
                   /*pass through*/
                 case CONF_VER: /* 4 */
                   config->version = CONF_VER;
-                  config->gravatar = EINA_TRUE;
                   break;
                 default:
                   if (config->version < CONF_VER)
@@ -630,8 +630,6 @@ config_fork(Config *config)
         eina_stringshare_ref(key->cb);
         config2->keys = eina_list_append(config2->keys, key2);
      }
-
-   CPY(gravatar);
 
    return config2;
 }
