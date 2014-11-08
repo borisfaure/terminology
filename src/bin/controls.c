@@ -76,13 +76,13 @@ _cb_ct_new(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EIN
 static void
 _cb_ct_split_v(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   main_split_v(ct_win, ct_term, NULL);
+   split_vertically(ct_win, ct_term, NULL);
 }
 
 static void
 _cb_ct_split_h(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   main_split_h(ct_win, ct_term, NULL);
+   split_horizontally(ct_win, ct_term, NULL);
 }
 
 static void

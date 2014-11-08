@@ -291,7 +291,7 @@ main_ipc_new(Ipc_Instance *inst)
         return;
      }
 
-   if (win_solo_term_set(wn, term) < 0)
+   if (win_term_set(wn, term) < 0)
      return;
 
    main_trans_update(config);
@@ -862,7 +862,7 @@ remote:
         goto end;
      }
 
-   if (win_solo_term_set(wn, term) < 0)
+   if (win_term_set(wn, term) < 0)
      {
         retval = EXIT_FAILURE;
         goto end;

@@ -16,6 +16,8 @@ Evas_Object *term_miniview_get(Term *term);
 void term_miniview_toggle(Term *term);
 void term_miniview_hide(Term *term);
 
+void split_horizontally(Evas_Object *win, Evas_Object *term, const char *cmd);
+void split_vertically(Evas_Object *win, Evas_Object *term, const char *cmd);
 
 Win *
 win_new(const char *name, const char *role, const char *title,
@@ -35,7 +37,7 @@ Evas_Object *win_base_get(Win *wn);
 Evas_Object *win_evas_object_get(Win *win);
 Eina_List * win_terms_get(Win *wn);
 Config *win_config_get(Win *wn);
-int win_solo_term_set(Win *wn, Term *term);
+int win_term_set(Win *wn, Term *term);
 void win_sizing_handle(Win *wn);
 
 void term_next(Term *term);
