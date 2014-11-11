@@ -75,7 +75,8 @@ typedef enum _Term_Container_Type
 {
    TERM_CONTAINER_TYPE_SOLO,
    TERM_CONTAINER_TYPE_SPLIT,
-   TERM_CONTAINER_TYPE_TAB
+   TERM_CONTAINER_TYPE_TAB,
+   TERM_CONTAINER_TYPE_WIN
 } Term_Container_Type;
 
 typedef struct _Term_Container Term_Container;
@@ -102,7 +103,6 @@ struct _Term_Container {
 
 struct _Solo {
      Term_Container tc;
-     /* TODO */
      Term *term;
 };
 
@@ -122,13 +122,15 @@ struct _Split
 
 struct _Win
 {
+   Term_Container tc;
+
+   Term_Container *child;
    Evas_Object *win;
    Evas_Object *conform;
    Evas_Object *backbg;
    Evas_Object *base;
    Config      *config;
    Eina_List   *terms;
-   Term_Container *container;
    Ecore_Job   *size_job;
    Evas_Object *cmdbox;
    Ecore_Timer *cmdbox_del_timer;
@@ -141,7 +143,7 @@ struct _Win
 static Eina_List   *wins = NULL;
 
 
-static Term_Container *_solo_new(Term *term);
+static Term_Container *_solo_new(Term *term, Win *wn);
 static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
 //static void _term_resize_track_start(Term *term);
 static void _split_tabcount_update(Split *sp, Term *tm);
@@ -214,10 +216,12 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
    if ( wn->config->mouse_over_focus )
      {
         Term *term_mouse;
+        Term_Container *tc_win;
         Evas_Coord mx, my;
 
+        tc_win = (Term_Container*) wn;
         evas_pointer_canvas_xy_get(evas_object_evas_get(wn->win), &mx, &my);
-        term_mouse = wn->container->find_term_at_coords(wn->container, mx, my);
+        term_mouse = tc_win->find_term_at_coords(tc_win, mx, my);
         if ((term_mouse) && (term_mouse != term))
           {
              if (term)
@@ -354,19 +358,7 @@ static void
 _solo_close(Term_Container *tc, Term_Container *child EINA_UNUSED,
             Eina_Bool refocus)
 {
-   Term_Container *parent;
-
-   parent = tc->parent;
-   if (parent)
-     {
-        parent->close(parent, tc, refocus);
-     }
-   else
-     {
-        assert(tc == tc->wn->container);
-        tc->wn->container = NULL;
-        win_free(tc->wn);
-     }
+   tc->parent->close(tc->parent, tc, refocus);
 
    free(tc);
 }
@@ -388,41 +380,27 @@ _solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
 
    tc_parent = tc->parent;
 
-   DBG("solo split tc:%p cmd:%s is_horizontal:%d", tc, cmd, is_horizontal);
-   /* TODO: boris _split_split */
-
    if (termio_cwd_get(tm->term, buf, sizeof(buf)))
      wdir = buf;
    tm_new = term_new(wn, wn->config,
                      cmd, wn->config->login_shell, wdir,
                      80, 24, EINA_FALSE);
-   tc_new = _solo_new(tm_new);
-   tc_new->wn = wn;
+   tc_new = _solo_new(tm_new, wn);
+   evas_object_data_set(tm_new->term, "sizedone", tm_new->term);
+
+   /* TODO: focus */
 
    tc_split = _split_new(tc, tc_new, is_horizontal);
 
    obj_split = tc_split->get_evas_object(tc_split);
-   tc_split->parent = tc_parent;
 
-   /* TODO: have a window container for that case? */
-   if (!tc_parent)
-     {
-        Evas_Object *base = win_base_get(wn);
-
-        edje_object_part_unswallow(base, tm->bg);
-
-        edje_object_part_swallow(base, "terminology.content", obj_split);
-     }
-   else
-     {
-        tc_parent->swallow(tc_parent, tc, tc_split);
-     }
+   tc_parent->swallow(tc_parent, tc, tc_split);
 
    evas_object_show(obj_split);
 }
 
 static Term_Container *
-_solo_new(Term *term)
+_solo_new(Term *term, Win *wn)
 {
    Term_Container *tc = NULL;
    Solo *solo = NULL;
@@ -442,7 +420,7 @@ _solo_new(Term *term)
    tc->close= _solo_close;
 
    tc->parent = NULL;
-   tc->wn = NULL;
+   tc->wn = wn;
 
    solo->term = term;
    tc->type = TERM_CONTAINER_TYPE_SOLO;
@@ -458,20 +436,22 @@ _solo_new(Term *term)
 
 int win_term_set(Win *wn, Term *term)
 {
+   Term_Container *tc_win, *tc_child;
    Evas_Object *base = win_base_get(wn);
    Evas *evas = evas_object_evas_get(base);
 
    /* TODO: boris tab */
 
-   wn->container = _solo_new(term);
-   if (!wn->container) return -1;
-   wn->container->wn = wn;
+   tc_child = _solo_new(term, wn);
+   if (!tc_child) return -1;
+
+   tc_win = (Term_Container*) wn;
 
    /* TODO: resize track */
    //_term_resize_track_start(sp);
 
-   DBG("win:%p term:%p", wn, term);
-   edje_object_part_swallow(base, "terminology.content", term->bg);
+   tc_win->swallow(tc_win, NULL, tc_child);
+
    _cb_size_hint(term, evas, term->term, NULL);
 
    return 0;
@@ -660,6 +640,74 @@ tg_win_add(const char *name, const char *role, const char *title, const char *ic
    return win;
 }
 
+static Evas_Object *
+_win_get_evas_object(Term_Container *tc)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+
+   return wn->win;
+}
+
+static Term *
+_win_find_term_at_coords(Term_Container *tc,
+                         Evas_Coord mx, Evas_Coord my)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+
+   return wn->child->find_term_at_coords(wn->child, mx, my);
+}
+
+static void
+_win_size_eval(Term_Container *tc, Sizeinfo *info)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+
+   wn->child->size_eval(wn->child, info);
+}
+
+static void
+_win_swallow(Term_Container *tc, Term_Container *orig,
+             Term_Container *child)
+{
+   Win *wn;
+   Evas_Object *base;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+   base = win_base_get(wn);
+
+   if (orig)
+     {
+        edje_object_part_unswallow(base,
+                                   orig->get_evas_object(orig));
+     }
+   edje_object_part_swallow(base, "terminology.content",
+                            child->get_evas_object(child));
+   child->parent = tc;
+   wn->child = child;
+}
+
+static void
+_win_close(Term_Container *tc, Term_Container *child EINA_UNUSED,
+           Eina_Bool refocus EINA_UNUSED)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+
+   win_free(wn);
+}
+
 Win *
 win_new(const char *name, const char *role, const char *title,
         const char *icon_name, Config *config,
@@ -669,6 +717,7 @@ win_new(const char *name, const char *role, const char *title,
 {
    Win *wn;
    Evas_Object *o;
+   Term_Container *tc;
 
    wn = calloc(1, sizeof(Win));
    if (!wn) return NULL;
@@ -679,6 +728,15 @@ win_new(const char *name, const char *role, const char *title,
         free(wn);
         return NULL;
      }
+
+   tc = (Term_Container*) wn;
+   tc->get_evas_object = _win_get_evas_object;
+   tc->find_term_at_coords = _win_find_term_at_coords;
+   tc->size_eval = _win_size_eval;
+   tc->split = NULL;
+   tc->swallow = _win_swallow;
+   tc->close = _win_close;
+   tc->type = TERM_CONTAINER_TYPE_WIN;
 
    config_default_font_set(config, evas_object_evas_get(wn->win));
 
@@ -888,7 +946,7 @@ _split_size_eval(Term_Container *tc, Sizeinfo *info)
 {
    Evas_Coord mw = 0, mh = 0;
    Term_Container *tc1, *tc2;
-   Sizeinfo inforet;
+   Sizeinfo inforet = {0, 0, 0, 0, 0, 0, 0, 0, 0};
    Split *split;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
@@ -962,9 +1020,14 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
 {
    Split *split;
    Evas_Object *o;
+   Evas_Coord x, y, w, h;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
+
+   /* TODO: shouldn't have to do that… */
+   o = orig->get_evas_object(orig);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
 
    o = new_child->get_evas_object(new_child);
    if (split->tc1 == orig)
@@ -980,7 +1043,9 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
         split->tc2 = new_child;
      }
    new_child->parent = tc;
+   evas_object_geometry_set(o, x, y, w, h);
    evas_object_show(o);
+   evas_object_show(split->panes);
 }
 
 static Term *
@@ -1024,42 +1089,17 @@ _split_close(Term_Container *tc, Term_Container *child,
    elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
    parent = tc->parent;
-   if (parent)
+   if (child == split->tc1)
      {
-        if (child == split->tc1)
-          {
-             parent->swallow(parent, tc, split->tc2);
-          }
-        else
-          {
-             parent->swallow(parent, tc, split->tc1);
-          }
+        parent->swallow(parent, tc, split->tc2);
      }
    else
      {
-        Evas_Object *base = win_base_get(tc->wn);
-
-        if (child == split->tc1)
-          {
-             edje_object_part_unswallow(base,
-                                        split->panes);
-             edje_object_part_swallow(base, "terminology.content",
-                                      split->tc2->get_evas_object(split->tc2));
-             split->tc2->parent = NULL;
-             tc->wn->container = split->tc2;
-          }
-        else
-          {
-             edje_object_part_unswallow(base,
-                                        split->panes);
-             edje_object_part_swallow(base, "terminology.content",
-                                      split->tc1->get_evas_object(split->tc1));
-             split->tc1->parent = NULL;
-             tc->wn->container = split->tc1;
-          }
+        parent->swallow(parent, tc, split->tc1);
      }
 
    evas_object_del(split->panes);
+
    free(tc);
 }
 
@@ -1195,10 +1235,9 @@ _size_job(void *data)
 {
    Win *wn = data;
    Sizeinfo info = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-   Term_Container *tc = wn->container;
+   Term_Container *tc = (Term_Container*) wn;
 
    wn->size_job = NULL;
-   DBG("size job");
    tc->size_eval(tc, &info);
 
    elm_win_size_base_set(wn->win,
