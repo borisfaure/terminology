@@ -73,6 +73,7 @@ struct _Sizeinfo
 
 typedef enum _Term_Container_Type
 {
+   TERM_CONTAINER_TYPE_UNKNOWN,
    TERM_CONTAINER_TYPE_SOLO,
    TERM_CONTAINER_TYPE_SPLIT,
    TERM_CONTAINER_TYPE_TAB,
@@ -88,6 +89,10 @@ struct _Term_Container {
      Term_Container *parent;
      Win *wn;
 
+     Term *(*term_next)(Term_Container *tc, Term_Container *child);
+     Term *(*term_prev)(Term_Container *tc, Term_Container *child);
+     Term *(*term_first)(Term_Container *tc);
+     Term *(*term_last)(Term_Container *tc);
      Evas_Object* (*get_evas_object)(Term_Container *container);
      Term *(*find_term_at_coords)(Term_Container *container,
                                   Evas_Coord mx, Evas_Coord my);
@@ -98,7 +103,6 @@ struct _Term_Container {
                      Term_Container *new_child);
      void (*close)(Term_Container *container, Term_Container *child,
                    Eina_Bool refocus);
-     /* TODO: prev/next/focus */
 };
 
 struct _Solo {
@@ -147,7 +151,7 @@ static Term_Container *_solo_new(Term *term, Win *wn);
 static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
 //static void _term_resize_track_start(Term *term);
 static void _split_tabcount_update(Split *sp, Term *tm);
-static Term * win_focused_term_get(Win *wn);
+static Term * _win_focused_term_get(Win *wn);
 static Split * _split_find(Evas_Object *win, Evas_Object *term, Term **ptm);
 static void _term_focus(Term *term);
 static void term_free(Term *term);
@@ -211,7 +215,7 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
 
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
 
    if ( wn->config->mouse_over_focus )
      {
@@ -262,7 +266,7 @@ _cb_win_focus_out(void *data, Evas_Object *obj EINA_UNUSED,
    wn->focused = EINA_FALSE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_FALSE);
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
    if (!term) return;
    edje_object_signal_emit(term->bg, "focus,out", "terminology");
    edje_object_signal_emit(term->base, "focus,out", "terminology");
@@ -295,7 +299,7 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    Term *term = data;
    Term *term2;
 
-   term2 = win_focused_term_get(term->wn);
+   term2 = _win_focused_term_get(term->wn);
    if (term == term2) return;
    term->down.x = ev->canvas.x;
    term->down.y = ev->canvas.y;
@@ -399,6 +403,36 @@ _solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
    evas_object_show(obj_split);
 }
 
+static Term *
+_solo_term_next(Term_Container *tc, Term_Container *child EINA_UNUSED)
+{
+   return tc->parent->term_next(tc->parent, tc);
+}
+
+static Term *
+_solo_term_prev(Term_Container *tc, Term_Container *child EINA_UNUSED)
+{
+   return tc->parent->term_prev(tc->parent, tc);
+}
+
+static Term *
+_solo_term_first(Term_Container *tc)
+{
+   Solo *solo;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   return solo->term;
+}
+
+static Term *
+_solo_term_last(Term_Container *tc)
+{
+   Solo *solo;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   return solo->term;
+}
+
 static Term_Container *
 _solo_new(Term *term, Win *wn)
 {
@@ -412,6 +446,10 @@ _solo_new(Term *term, Win *wn)
      }
 
    tc = (Term_Container*)solo;
+   tc->term_next = _solo_term_next;
+   tc->term_prev = _solo_term_prev;
+   tc->term_first = _solo_term_first;
+   tc->term_last = _solo_term_last;
    tc->get_evas_object = _solo_get_evas_object;
    tc->find_term_at_coords = _solo_find_term_at_coords;
    tc->size_eval = _solo_size_eval;
@@ -652,6 +690,38 @@ _win_get_evas_object(Term_Container *tc)
 }
 
 static Term *
+_win_term_next(Term_Container *tc, Term_Container *child)
+{
+   return child->term_first(child);
+}
+
+static Term *
+_win_term_prev(Term_Container *tc, Term_Container *child)
+{
+   return child->term_last(child);
+}
+
+static Term *
+_win_term_first(Term_Container *tc)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+   return wn->child->term_first(wn->child);
+}
+
+static Term *
+_win_term_last(Term_Container *tc)
+{
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+   return wn->child->term_last(wn->child);
+}
+
+static Term *
 _win_find_term_at_coords(Term_Container *tc,
                          Evas_Coord mx, Evas_Coord my)
 {
@@ -730,6 +800,10 @@ win_new(const char *name, const char *role, const char *title,
      }
 
    tc = (Term_Container*) wn;
+   tc->term_next = _win_term_next;
+   tc->term_prev = _win_term_prev;
+   tc->term_first = _win_term_first;
+   tc->term_last = _win_term_last;
    tc->get_evas_object = _win_get_evas_object;
    tc->find_term_at_coords = _win_find_term_at_coords;
    tc->size_eval = _win_size_eval;
@@ -914,10 +988,11 @@ main_close(Evas_Object *win, Evas_Object *term)
 }
 
 static Term *
-win_focused_term_get(Win *wn)
+_win_focused_term_get(Win *wn)
 {
    Term *term;
    Eina_List *l;
+   /* TODO: have that property in Win */
 
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
@@ -929,6 +1004,57 @@ win_focused_term_get(Win *wn)
 
 /* }}} */
 /* {{{ Splits */
+
+static Term *
+_split_term_next(Term_Container *tc, Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc1)
+     return split->tc2->term_first(split->tc2);
+   else
+     return tc->parent->term_next(tc->parent, tc);
+}
+
+static Term *
+_split_term_prev(Term_Container *tc, Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc2)
+     return split->tc1->term_last(split->tc1);
+   else
+     return tc->parent->term_prev(tc->parent, tc);
+}
+
+static Term *
+_split_term_first(Term_Container *tc)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   return split->tc1->term_first(split->tc1);
+}
+
+static Term *
+_split_term_last(Term_Container *tc)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   return split->tc2->term_last(split->tc2);
+}
+
 
 static Evas_Object *
 _split_get_evas_object(Term_Container *tc)
@@ -1117,6 +1243,10 @@ _split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal)
      }
 
    tc = (Term_Container*)split;
+   tc->term_next = _split_term_next;
+   tc->term_prev = _split_term_prev;
+   tc->term_first = _split_term_first;
+   tc->term_last = _split_term_last;
    tc->get_evas_object = _split_get_evas_object;
    tc->find_term_at_coords = _split_find_term_at_coords;
    tc->size_eval = _split_size_eval;
@@ -1794,7 +1924,6 @@ _term_focus(Term *term)
 {
    Eina_List *l;
    Term *term2;
-   Split *sp = NULL;
 
    EINA_LIST_FOREACH(term->wn->terms, l, term2)
      {
@@ -1818,19 +1947,33 @@ _term_focus(Term *term)
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
 
+   /* TODO: tabs ? */
+/* TODO: why ? */
+#if 0
+   Split *sp = NULL;
    sp = _split_find(term->wn->win, term->term, NULL);
    if (sp) _split_tabcount_update(sp, term);
+#endif
 }
 
 void term_prev(Term *term)
 {
-   Term *term2 = NULL;
+   Term *new_term, *focused_term;
+   Win *wn = term->wn;
+   Term_Container *tc;
 
+   focused_term = _win_focused_term_get(wn);
+   if (!focused_term)
+     focused_term = term;
+   tc = focused_term->container;
+   new_term = tc->term_prev(tc, tc);
+   if (new_term && new_term != focused_term)
+     _term_focus(new_term);
+
+#if 0
    if (term->focused) term2 = _term_prev_get(term);
    if ((term2 != NULL) && (term2 != term))
      {
-        /* TODO */
-#if 0
         Config *config = termio_config_get(term->term);
         Split *sp, *sp0;
 
@@ -1843,20 +1986,30 @@ void term_prev(Term *term)
              _term_focus(term2);
              if (sp) _term_focus_show(sp, term2);
           }
-#endif
      }
+#endif
+   /* TODO: get rid of it? */
    _term_miniview_check(term);
 }
 
 void term_next(Term *term)
 {
-   Term *term2 = NULL;
+   Term *new_term, *focused_term;
+   Win *wn = term->wn;
+   Term_Container *tc;
 
+   focused_term = _win_focused_term_get(wn);
+   if (!focused_term)
+     focused_term = term;
+   tc = focused_term->container;
+   new_term = tc->term_next(tc, tc);
+   if (new_term && new_term != focused_term)
+     _term_focus(new_term);
+
+#if 0
    if (term->focused) term2 = _term_next_get(term);
    if ((term2 != NULL) && (term2 != term))
      {
-        /* TODO */
-#if 0
         Config *config = termio_config_get(term->term);
         Split *sp, *sp0;
 
@@ -1869,8 +2022,9 @@ void term_next(Term *term)
              _term_focus(term2);
              if (sp) _term_focus_show(sp, term2);
           }
-#endif
      }
+#endif
+   /* TODO: get rid of it? */
    _term_miniview_check(term);
 }
 
@@ -1972,6 +2126,7 @@ static void
 _term_miniview_check(Term *term)
 {
    Eina_List *l, *wn_list;
+   DBG("TODO");
 
    EINA_SAFETY_ON_NULL_RETURN(term);
    EINA_SAFETY_ON_NULL_RETURN(term->miniview);
@@ -2197,6 +2352,7 @@ _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 void
 main_term_focus(Term *term EINA_UNUSED)
 {
+DBG("TODO");
 #if 0
    Split *sp;
 
@@ -2290,7 +2446,7 @@ _cb_cmd_focus(void *data)
    Term *term;
    
    wn->cmdbox_focus_timer = NULL;
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
    if (term)
      {
         elm_object_focus_set(term->term, EINA_FALSE);
@@ -2322,7 +2478,7 @@ _cb_cmd_activated(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNU
    
    if (wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
    if (term) elm_object_focus_set(term->term, EINA_TRUE);
    if (wn->cmdbox) cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
@@ -2352,7 +2508,7 @@ _cb_cmd_aborted(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
    
    if (wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
    if (term) elm_object_focus_set(term->term, EINA_TRUE);
    if (wn->cmdbox_focus_timer)
      {
@@ -2371,7 +2527,7 @@ _cb_cmd_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
    char *cmd = NULL;
    Term *term;
    
-   term = win_focused_term_get(wn);
+   term = _win_focused_term_get(wn);
    if (!term) return;
    if (wn->cmdbox) cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
