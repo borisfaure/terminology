@@ -2593,6 +2593,93 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
+
+   group { name: "terminology/tabbar";
+      parts {
+         //part { name: "tabs";
+         //   type: SWALLOW;
+         //   description { state: "default" 0.0;
+         //      visible: 1;
+         //   }
+         //}
+         part { name: "new_tab";
+            effect: GLOW;
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 51 153 255 255;
+               color2: 51 153 255 24;
+               color3: 51 153 255 18;
+               min: 16 16;
+               text { font: "Sans"; size: 10;
+                  text: "+";
+                  //align: 0.5 1.0;
+                  //min: 0 1;
+               }
+               rel1 {
+                  relative: 1.0 0.0;
+                  offset: -16 0;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+            }
+         }
+      }
+   }
+
+   group { name: "terminology/tabs";
+      parts {
+         part { name: "terminology.tabbar";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;// TODO: boris
+               align: 0 0;
+               min: 16 16;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
+            }
+            description { state: "visible" 0.0;
+               visible: 1;
+            }
+         }
+         program {
+            signal: "tabbar,show"; source: "terminology";
+            action: STATE_SET "visible" 0.0;
+            transition: DECELERATE 0.4;
+            target: "terminology.tabbar";
+         }
+         program {
+            signal: "tabbar,hide"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.6;
+            target: "terminology.tabbar";
+         }
+         part { name: "content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               align: 0.5 1;
+               rel1 {
+                  relative: 0.0 1.0;
+                  to: "terminology.tabbar";
+                  offset: 0 0;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+            }
+         }
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////
    //// an object to contain the selection tool used for selecting tabs (with
    //// a glow grid of terms
@@ -2706,7 +2793,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
       }
    }
-   
+
    group { name: "terminology/sel/item";
       images {
         image: "bg_bevel.png" COMP;

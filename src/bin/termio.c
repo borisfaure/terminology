@@ -4528,7 +4528,6 @@ _smart_pty_title(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!sd->win) return;
    evas_object_smart_callback_call(obj, "title,change", NULL);
-//   elm_win_title_set(sd->win, sd->pty->prop.title);
 }
 
 static void
@@ -4540,7 +4539,6 @@ _smart_pty_icon(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!sd->win) return;
    evas_object_smart_callback_call(obj, "icon,change", NULL);
-//   elm_win_icon_name_set(sd->win, sd->pty->prop.icon);
 }
 
 static void
