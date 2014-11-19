@@ -1260,7 +1260,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
    if (!sd->url)
      {
         Efreet_Uri *uri;
-        const char *file_path = eina_stringshare_printf("file:%s", sd->src);
+        const char *file_path = eina_stringshare_printf("file://%s", sd->src);
         uri = efreet_uri_decode(file_path);
         eina_stringshare_del(file_path);
         if (!uri)
