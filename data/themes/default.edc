@@ -3590,6 +3590,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "terminology.text"; type: TEXTBLOCK;
             clip_to: "baseclip";
             mouse_events: 1;
+            scale: 1;
             description { state: "default" 0.0;
                fixed: 1 1;
                align: 0.5 0.0;
@@ -3616,6 +3617,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             }
          }
          part { name: "shell";
+            scale: 1;
             description { state: "default" 0.0;
                max: 198 198;
                aspect: 1.0 1.0;
