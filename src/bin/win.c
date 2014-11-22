@@ -123,7 +123,10 @@ struct _Tabs {
      Term_Container tc;
      Evas_Object *base;
      Evas_Object *tabbar;
+     Evas_Object *tabbar_spacer;
+     Evas_Object *selector_spacer;
      Elm_Object_Item *tb_item_add;
+     Elm_Object_Item *tb_item_hide;
      Eina_List *tabs;
      Tab_Item *current;
 };
@@ -2066,6 +2069,9 @@ _tabs_close(Term_Container *tc, Term_Container *child,
      {
         tc->parent->close(tc->parent, tc, refocus);
         evas_object_del(tabs->base);
+        evas_object_del(tabs->tabbar);
+        evas_object_del(tabs->tabbar_spacer);
+        evas_object_del(tabs->selector_spacer);
         free(tc);
      }
    else
@@ -2270,7 +2276,7 @@ tab_item_new(Tabs *tabs, Term_Container *child)
 
 
 static void
-_tab_new_cb(void *data EINA_UNUSED,
+_tab_new_cb(void *data,
             Evas_Object *obj EINA_UNUSED,
             void *event_info EINA_UNUSED)
 {
@@ -2295,6 +2301,66 @@ _tab_new_cb(void *data EINA_UNUSED,
    tc_new->parent = tc_parent;
 
    tab_item_new(tabs, tc_new);
+}
+
+static void
+_cb_tabbar_show(void *data, Evas_Object *obj EINA_UNUSED,
+                const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   Tabs *tabs = data;
+
+   DBG("show");
+
+   edje_object_signal_emit(tabs->base, "tabbar,on", "terminology");
+   edje_object_signal_emit(tabs->base, "tabcontrols,off", "terminology");
+   edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->tabbar);
+   evas_object_show(tabs->tabbar);
+}
+
+static void
+_tab_hide_cb(void *data,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
+{
+   Evas_Coord w = 0, h = 0;
+   Tabs *tabs = data;
+
+   DBG("hide");
+   elm_toolbar_item_selected_set(tabs->tb_item_hide, EINA_FALSE);
+   elm_object_item_focus_set(tabs->tb_item_hide, EINA_FALSE);
+
+   elm_coords_finger_size_adjust(1, &w, 1, &h);
+
+   if (!tabs->tabbar_spacer)
+     {
+        tabs->tabbar_spacer =
+           evas_object_rectangle_add(evas_object_evas_get(tabs->base));
+        evas_object_color_set(tabs->tabbar_spacer, 0, 0, 0, 0);
+        evas_object_size_hint_min_set(tabs->tabbar_spacer, w, h);
+        evas_object_show(tabs->tabbar_spacer);
+        edje_object_part_swallow(tabs->base, "terminology.tabbar.spacer",
+                                 tabs->tabbar_spacer);
+     }
+
+   if (!tabs->selector_spacer)
+     {
+        tabs->selector_spacer =
+           evas_object_rectangle_add(evas_object_evas_get(tabs->base));
+        evas_object_color_set(tabs->selector_spacer, 0, 0, 0, 0);
+        evas_object_size_hint_min_set(tabs->selector_spacer, w, h);
+        evas_object_show(tabs->selector_spacer);
+        edje_object_part_swallow(tabs->base, "terminology.tabselector.spacer",
+                                 tabs->selector_spacer);
+     }
+
+   /* TODO */
+   edje_object_part_text_set(tabs->base, "terminology.tabcount.label", "1337");
+   edje_object_part_text_set(tabs->base, "terminology.tabmissed.label", "42");
+
+   edje_object_signal_emit(tabs->base, "tabbar,off", "terminology");
+   edje_object_signal_emit(tabs->base, "tabcontrols,on", "terminology");
+   edje_object_part_unswallow(tabs->base, tabs->tabbar);
+   evas_object_hide(tabs->tabbar);
 }
 
 static void
@@ -2353,6 +2419,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    Term_Container *tc;
    Tabs *tabs;
    Evas_Object *o;
+   Elm_Object_Item *tb_item, *sep;
 
    tabs = calloc(1, sizeof(Tabs));
    if (!tabs)
@@ -2398,6 +2465,11 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 
    tabs->tb_item_add = elm_toolbar_item_append(o, NULL, "+", _tab_new_cb, tabs);
    elm_toolbar_item_priority_set(tabs->tb_item_add, 100);
+   sep = elm_toolbar_item_append(tabs->tabbar, NULL, NULL, NULL, NULL);
+   elm_toolbar_item_priority_set(sep, 1);
+   elm_toolbar_item_separator_set(sep, EINA_TRUE);
+   tabs->tb_item_hide = elm_toolbar_item_append(o, NULL, "v", _tab_hide_cb, tabs);
+   elm_toolbar_item_priority_set(tabs->tb_item_hide, 100);
 
    child->parent = tc;
    tab_item_new(tabs, child);
@@ -2406,6 +2478,10 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    o = child->get_evas_object(child);
    DBG("swallow:%p", o);
    edje_object_part_swallow(tabs->base, "content", o);
+
+   edje_object_signal_callback_add(tabs->base, "tabbar,show", "terminology",
+                                   _cb_tabbar_show, tabs);
+
 
    return tc;
 }

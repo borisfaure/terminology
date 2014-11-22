@@ -258,298 +258,6 @@ collections {
          }
 
          ////////////////////////////////////////////////////////////////////
-         // indicator of other tabs and control
-         part { name: "tabcount_clip"; type: RECT;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-               visible: 0;
-            }
-            description { state: "on" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "terminology.tabmissed.label"; type: TEXT; mouse_events: 0;
-            effect: GLOW;
-            scale: 1;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               rel1.to: "terminology.tabcount.label";
-               rel2.to: "terminology.tabcount.label";
-               rel1.offset: -4 0;
-               rel2.relative: 0.0 1.0;
-               rel2.offset: -5 -1;
-               color: 255 153 51 64;
-               color2: 255 51 0 18;
-               color3: 255 0 0 8;
-               align: 1.0 0.5;
-               text { font: "Sans"; size: 8;
-                  align: 1.0 0.5;
-                  min: 1 1;
-                  ellipsis: 0;
-               }
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 64 255;
-               color2: 255 153 51 128;
-               color3: 255 0 0 20;
-            }
-         }
-         part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;
-            effect: GLOW;
-            scale: 1;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               rel1.relative: -0.2 0.0;
-               rel2.relative: -0.2 1.0;
-               color: 51 153 255 64;
-               color2: 51 153 255 18;
-               color3: 51 153 255 8;
-               align: 1.0 0.5;
-               text { font: "Sans"; size: 8;
-                  align: 1.0 0.5;
-                  min: 1 1;
-                  ellipsis: 0;
-               }
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-               color2: 51 153 255 128;
-               color3: 51 153 255 20;
-            }
-         }
-         part { name: "tabcount_glow_r0";
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "tabcount_r0";
-               rel2.to: "tabcount_r0";
-               rel1.offset: -4 -4;
-               rel2.offset: 3 3;
-               image {
-                  normal: "cr_glow.png";
-                  border: 9 9 9 9;
-               }
-               color: 51 153 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 51 153 255 255;
-            }
-         }
-         part { name: "tabcount_glow_r1";
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "tabcount_r1";
-               rel2.to: "tabcount_r1";
-               rel1.offset: -4 -4;
-               rel2.offset: 3 3;
-               image {
-                  normal: "cr_glow.png";
-                  border: 9 9 9 9;
-               }
-               color: 51 153 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 51 153 255 255;
-            }
-         }
-         part { name: "tabcount_glow_r2";
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "tabcount_r2";
-               rel2.to: "tabcount_r2";
-               rel1.offset: -4 -4;
-               rel2.offset: 3 3;
-               image {
-                  normal: "cr_glow.png";
-                  border: 9 9 9 9;
-               }
-               color: 51 153 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 51 153 255 255;
-            }
-         }
-         part { name: "tabcount_glow_r3";
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "tabcount_r3";
-               rel2.to: "tabcount_r3";
-               rel1.offset: -4 -4;
-               rel2.offset: 3 3;
-               image {
-                  normal: "cr_glow.png";
-                  border: 9 9 9 9;
-               }
-               color: 51 153 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 51 153 255 255;
-            }
-         }
-         part { name: "tabcount_r0"; type: RECT;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               rel1.relative: 0.05 0.05;
-               rel2.relative: 0.45 0.45;
-               color: 255 255 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "tabcount_r1"; type: RECT;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               rel1.relative: 0.55 0.05;
-               rel2.relative: 0.95 0.45;
-               color: 255 255 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "tabcount_r2"; type: RECT;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               rel1.relative: 0.05 0.55;
-               rel2.relative: 0.45 0.95;
-               color: 255 255 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "tabcount_r3"; type: RECT;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               rel1.relative: 0.55 0.55;
-               rel2.relative: 0.95 0.95;
-               color: 255 255 255 32;
-            }
-            description { state: "over" 0.0;
-               inherit: "default" 0.0;
-               color: 255 255 255 255;
-            }
-         }
-         part { name: "terminology.tabcount.control"; type: SWALLOW;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               rel1.relative: 1.0 0.0;
-               rel1.offset: -3 2;
-               rel2.relative: 1.0 0.0;
-               rel2.offset: -3 2;
-               align: 1.0 0.0;
-               min: 16 16;
-            }
-         }
-         part { name: "tabcount_ev"; type: RECT; repeat_events: 1;
-            clip_to: "tabcount_clip";
-            description { state: "default" 0.0;
-               fixed: 1 1;
-               rel1.to: "terminology.tabcount.control";
-               rel2.to: "terminology.tabcount.control";
-               color: 0 0 0 0;
-            }
-         }
-
-         program {
-            signal: "mouse,in"; source: "tabcount_ev";
-            action: STATE_SET "over" 0.0;
-            transition: DECELERATE 0.5;
-            target: "tabcount_r0";
-            target: "tabcount_r1";
-            target: "tabcount_r2";
-            target: "tabcount_r3";
-            target: "tabcount_glow_r0";
-            target: "tabcount_glow_r1";
-            target: "tabcount_glow_r2";
-            target: "tabcount_glow_r3";
-            target: "terminology.tabcount.label";
-            target: "terminology.tabmissed.label";
-         }
-         program {
-            signal: "mouse,out"; source: "tabcount_ev";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 2.0;
-            target: "tabcount_r0";
-            target: "tabcount_r1";
-            target: "tabcount_r2";
-            target: "tabcount_r3";
-            target: "tabcount_glow_r0";
-            target: "tabcount_glow_r1";
-            target: "tabcount_glow_r2";
-            target: "tabcount_glow_r3";
-            target: "terminology.tabcount.label";
-            target: "terminology.tabmissed.label";
-         }
-         program {
-            signal: "mouse,clicked,1"; source: "tabcount_ev";
-            action: SIGNAL_EMIT "tabcount,go" "terminology";
-         }
-	 program {
-	    signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
-	    action: SIGNAL_EMIT "tabcount,prev" "terminology";
-	 }
-	 program {
-	    signal: "mouse,wheel,0,1"; source: "tabcount_ev";
-	    action: SIGNAL_EMIT "tabcount,next" "terminology";
-	 }
-         program {
-            signal: "tabcount,off"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
-            target: "tabcount_clip";
-         }
-         program {
-            signal: "tabcount,on"; source: "terminology";
-            action: STATE_SET "on" 0.0;
-            transition: DECELERATE 0.5;
-            target: "tabcount_clip";
-         }
-         program {
-            signal: "tabmissed,off"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.5;
-            target: "terminology.tabmissed.label";
-         }
-         program {
-            signal: "tabmissed,on"; source: "terminology";
-            action: STATE_SET "over" 0.0;
-            transition: DECELERATE 0.2;
-            target: "terminology.tabmissed.label";
-            after: "tabmissed2";
-         }
-         program { name: "tabmissed2";
-            signal: "tabmissed,on"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 3.0;
-            target: "terminology.tabmissed.label";
-         }
-
-         ////////////////////////////////////////////////////////////////////
          // miniview
          part { name: "terminology.miniview"; type: SWALLOW;
             description { state: "default" 0.0;
@@ -2594,46 +2302,12 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
       }
    }
 
-   group { name: "terminology/tabbar";
-      parts {
-         //part { name: "tabs";
-         //   type: SWALLOW;
-         //   description { state: "default" 0.0;
-         //      visible: 1;
-         //   }
-         //}
-         part { name: "new_tab";
-            effect: GLOW;
-            type: TEXT;
-            description { state: "default" 0.0;
-               color: 51 153 255 255;
-               color2: 51 153 255 24;
-               color3: 51 153 255 18;
-               min: 16 16;
-               text { font: "Sans"; size: 10;
-                  text: "+";
-                  //align: 0.5 1.0;
-                  //min: 0 1;
-               }
-               rel1 {
-                  relative: 1.0 0.0;
-                  offset: -16 0;
-               }
-               rel2 {
-                  relative: 1.0 1.0;
-                  offset: 0 0;
-               }
-            }
-         }
-      }
-   }
-
    group { name: "terminology/tabs";
       parts {
          part { name: "terminology.tabbar";
             type: SWALLOW;
             description { state: "default" 0.0;
-               visible: 1;// TODO: boris
+               visible: 1;
                align: 0 0;
                min: 16 16;
                rel1 {
@@ -2645,20 +2319,29 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                   offset: 0 0;
                }
             }
-            description { state: "visible" 0.0;
-               visible: 1;
+            description { state: "hidden" 0.0;
+               visible: 0;
+               min: 0 0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: 0 0;
+               }
             }
          }
          program {
-            signal: "tabbar,show"; source: "terminology";
-            action: STATE_SET "visible" 0.0;
-            transition: DECELERATE 0.4;
+            signal: "tabbar,off"; source: "terminology";
+            action: STATE_SET "hidden" 0.0;
+            transition: DECELERATE 0.6;
             target: "terminology.tabbar";
          }
          program {
-            signal: "tabbar,hide"; source: "terminology";
+            signal: "tabbar,on"; source: "terminology";
             action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.6;
+            transition: DECELERATE 0.4;
             target: "terminology.tabbar";
          }
          part { name: "content";
@@ -2677,6 +2360,458 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                }
             }
          }
+         ////////////////////////////////////////////////////////////////////
+         // indicator of other tabs and control
+         part { name: "tabcontrols_clip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+               rel1.to: "content";
+               rel2.to: "content";
+            }
+         }
+         part { name: "terminology.tabmissed.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabcount.label";
+               rel2.to: "terminology.tabcount.label";
+               rel1.offset: -4 0;
+               rel2.relative: 0.0 1.0;
+               rel2.offset: -5 -1;
+               color: 255 153 51 64;
+               color2: 255 51 0 18;
+               color3: 255 0 0 8;
+               align: 1.0 0.5;
+               text { font: "Sans"; size: 8;
+                  align: 1.0 0.5;
+                  min: 1 1;
+                  ellipsis: 0;
+               }
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 64 255;
+               color2: 255 153 51 128;
+               color3: 255 0 0 20;
+            }
+         }
+         part { name: "terminology.tabmissed.ev"; type: RECT; repeat_events: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabmissed.label";
+               rel2.to: "terminology.tabmissed.label";
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               rel1.relative: -0.2 0.0;
+               rel2.relative: -0.2 1.0;
+               color: 51 153 255 64;
+               color2: 51 153 255 18;
+               color3: 51 153 255 8;
+               align: 1.0 0.5;
+               text { font: "Sans"; size: 8;
+                  align: 1.0 0.5;
+                  min: 1 1;
+                  ellipsis: 0;
+               }
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+               color2: 51 153 255 128;
+               color3: 51 153 255 20;
+            }
+         }
+         part { name: "terminology.tabcount.ev"; type: RECT; repeat_events: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabcount.label";
+               rel2.to: "terminology.tabcount.label";
+               color: 0 0 0 0;
+            }
+         }
+         part { name: "tabselector_glow_r0";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabselector_r0";
+               rel2.to: "tabselector_r0";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabselector_glow_r1";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabselector_r1";
+               rel2.to: "tabselector_r1";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabselector_glow_r2";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabselector_r2";
+               rel2.to: "tabselector_r2";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabselector_glow_r3";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabselector_r3";
+               rel2.to: "tabselector_r3";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabselector_r0"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               rel1.relative: 0.05 0.05;
+               rel2.relative: 0.45 0.45;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabselector_r1"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               rel1.relative: 0.55 0.05;
+               rel2.relative: 0.95 0.45;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabselector_r2"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               rel1.relative: 0.05 0.55;
+               rel2.relative: 0.45 0.95;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabselector_r3"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               rel1.relative: 0.55 0.55;
+               rel2.relative: 0.95 0.95;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "terminology.tabselector.spacer"; type: SWALLOW;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabbar.spacer";
+               rel2.to: "terminology.tabbar.spacer";
+               rel1.relative: -0.2 0.0;
+               rel2.relative: -0.2 1.0;
+               align: 1.0 0.0;
+               min: 16 16;
+            }
+         }
+         part { name: "tabselector_ev"; type: RECT; repeat_events: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabselector.spacer";
+               rel2.to: "terminology.tabselector.spacer";
+               color: 0 0 0 0;
+            }
+         }
+
+         part { name: "terminology.tabbar.spacer"; type: SWALLOW;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.relative: 1.0 0.0;
+               rel1.offset: -3 2;
+               rel2.relative: 1.0 0.0;
+               rel2.offset: -3 2;
+               align: 1.0 0.0;
+               min: 16 16;
+            }
+         }
+         part { name: "tabbar_glow_t0";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabbar_t0";
+               rel2.to: "tabbar_t0";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabbar_t0"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabbar.spacer";
+               rel2.to: "terminology.tabbar.spacer";
+               rel1.relative: 0.05 0.05;
+               rel2.relative: 0.45 0.35;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabbar_glow_t1";
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "tabbar_t1";
+               rel2.to: "tabbar_t1";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tabbar_t1"; type: RECT;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabbar.spacer";
+               rel2.to: "terminology.tabbar.spacer";
+               rel1.relative: 0.55 0.05;
+               rel2.relative: 0.95 0.35;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "terminology.tabbar.ev"; type: RECT; repeat_events: 1;
+            clip_to: "tabcontrols_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabbar.spacer";
+               rel2.to: "terminology.tabbar.spacer";
+               color: 0 0 0 0;
+            }
+         }
+
+         program {
+            signal: "mouse,in"; source: "terminology.tabcount.ev";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,out"; source: "terminology.tabcount.ev";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 2.0;
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,in"; source: "terminology.tabmissed.ev";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,out"; source: "terminology.tabmissed.ev";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 2.0;
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,in"; source: "tabselector_ev";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.5;
+            target: "tabselector_r0";
+            target: "tabselector_r1";
+            target: "tabselector_r2";
+            target: "tabselector_r3";
+            target: "tabselector_glow_r0";
+            target: "tabselector_glow_r1";
+            target: "tabselector_glow_r2";
+            target: "tabselector_glow_r3";
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,out"; source: "tabselector_ev";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 2.0;
+            target: "tabselector_r0";
+            target: "tabselector_r1";
+            target: "tabselector_r2";
+            target: "tabselector_r3";
+            target: "tabselector_glow_r0";
+            target: "tabselector_glow_r1";
+            target: "tabselector_glow_r2";
+            target: "tabselector_glow_r3";
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,in"; source: "terminology.tabbar.ev";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.5;
+            target: "tabbar_t0";
+            target: "tabbar_t1";
+            target: "tabbar_glow_t0";
+            target: "tabbar_glow_t1";
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,out"; source: "terminology.tabbar.ev";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 2.0;
+            target: "tabbar_t0";
+            target: "tabbar_t1";
+            target: "tabbar_glow_t0";
+            target: "tabbar_glow_t1";
+            target: "terminology.tabcount.label";
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "terminology.tabbar.ev";
+            action: SIGNAL_EMIT "tabbar,show" "terminology";
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "tabselector_ev";
+            action: SIGNAL_EMIT "tabselector,go" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,-1"; source: "tabselector_ev";
+            action: SIGNAL_EMIT "tabselector,prev" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,1"; source: "tabselector_ev";
+            action: SIGNAL_EMIT "tabselector,next" "terminology";
+         }
+         program {
+            signal: "tabcontrols,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "tabcontrols_clip";
+         }
+         program {
+            signal: "tabcontrols,on"; source: "terminology";
+            action: STATE_SET "on" 0.0;
+            transition: DECELERATE 0.5;
+            target: "tabcontrols_clip";
+         }
+         program {
+            signal: "tabmissed,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "terminology.tabmissed.label";
+         }
+         program {
+            signal: "tabmissed,on"; source: "terminology";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.2;
+            target: "terminology.tabmissed.label";
+            after: "tabmissed2";
+         }
+         program { name: "tabmissed2";
+            signal: "tabmissed,on"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 3.0;
+            target: "terminology.tabmissed.label";
+         }
+
       }
    }
 
