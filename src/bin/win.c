@@ -264,17 +264,6 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
    edje_object_signal_emit(term->base, "focus,in", "terminology");
    if (!wn->cmdbox_up)
      elm_object_focus_set(term->termio, EINA_TRUE);
-   /* TODO */
-#if 0
-   sp = _split_find(wn->win, term->term, NULL);
-   if (sp->sel)
-     {
-        if (!wn->cmdbox_up) elm_object_focus_set(sp->sel, EINA_TRUE);
-     }
-   else
-     {
-     }
-#endif
 }
 
 static void
@@ -844,6 +833,13 @@ static void
 _win_focus(Term_Container *tc, Term_Container *child EINA_UNUSED)
 {
    DBG("focus");
+   Win *wn;
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+
+   wn = (Win*) tc;
+
+   if (!wn->focused) elm_win_urgent_set(wn->win, EINA_FALSE);
+   wn->focused = EINA_TRUE;
    /* TODO: go down? */
 }
 
@@ -1329,6 +1325,7 @@ _split_focus(Term_Container *tc, Term_Container *relative)
    else
      {
         split->last_focus = relative;
+        tc->parent->focus(tc->parent, tc);
      }
 }
 
@@ -2384,7 +2381,9 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
         assert(l);
 
         tab_item = l->data;
-        elm_toolbar_item_selected_set(tab_item->elm_item, EINA_FALSE);
+        elm_toolbar_item_selected_set(tabs->current->elm_item, EINA_FALSE);
+        elm_toolbar_item_selected_set(tab_item->elm_item, EINA_TRUE);
+        tc->parent->focus(tc->parent, tc);
      }
 }
 
@@ -2419,7 +2418,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    Term_Container *tc;
    Tabs *tabs;
    Evas_Object *o;
-   Elm_Object_Item *tb_item, *sep;
+   Elm_Object_Item *sep;
 
    tabs = calloc(1, sizeof(Tabs));
    if (!tabs)
@@ -2575,22 +2574,15 @@ _term_focus(Term *term)
    elm_object_focus_set(term->termio, EINA_TRUE);
 
    tc = term->container;
+
+   tc->focus(tc, tc);
+
    title = termio_title_get(term->termio);
    if (title)
       tc->set_title(tc, tc, title);
 
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
-
-
-
-   /* TODO: tabs ? */
-/* TODO: why ? */
-#if 0
-   Split *sp = NULL;
-   sp = _split_find(term->wn->win, term->term, NULL);
-   if (sp) _split_tabcount_update(sp, term);
-#endif
 }
 
 void term_prev(Term *term)
