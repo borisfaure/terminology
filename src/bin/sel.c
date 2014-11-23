@@ -6,7 +6,7 @@
 #include "sel.h"
 #include "config.h"
 #include "utils.h"
-#include "termio.h"
+#include "term_container.h"
 
 typedef struct _Sel Sel;
 typedef struct _Entry Entry;
@@ -41,7 +41,8 @@ struct _Sel
 
 struct _Entry
 {
-   Evas_Object *obj, *bg, *termio;
+   Evas_Object *obj, *bg;
+   Term_Container *tc;
    unsigned char selected : 1;
    unsigned char selected_before : 1;
    unsigned char selected_orig : 1;
@@ -476,39 +477,40 @@ _label_redo(Entry *en)
 {
    const char *s;
 
-   if (!en->obj) return;
-   if (!en->termio) return;
-   s = termio_title_get(en->termio);
-   if (!s) s = termio_icon_name_get(en->termio);
-   if (s) edje_object_part_text_set(en->bg, "terminology.label", s);
+   if (!en->obj || !en->tc)
+     return;
+   s = en->tc->title;
+   if (!s)
+     s = "Terminology";
+   edje_object_part_text_set(en->bg, "terminology.label", s);
 }
 
-static void
-_title_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+void
+sel_entry_title_set(void *entry, const char *title)
 {
-   _label_redo(data);
+   Entry *en = entry;
+
+   edje_object_part_text_set(en->bg, "terminology.label", title);
 }
 
-static void
-_icon_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
-{
-   _label_redo(data);
-}
-
-static void
-_bell_cb(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+void
+sel_entry_close(void *data)
 {
    Entry *en = data;
-   edje_object_signal_emit(en->bg, "bell", "terminology");
+
+   en->tc = NULL;
 }
 
-static void
-_entry_termio_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+void
+sel_entry_update(void *data)
 {
    Entry *en = data;
-   if (en->termio) evas_object_event_callback_del_full
-     (en->termio, EVAS_CALLBACK_DEL, _entry_termio_del_cb, en);
-   en->termio = NULL;
+
+   en->tc = evas_object_data_get(en->obj, "tc");
+   if (en->tc)
+     {
+        _label_redo(en);
+     }
 }
 
 static void
@@ -518,10 +520,9 @@ _entry_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    if (en->obj) evas_object_event_callback_del_full
      (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
    en->obj = NULL;
+   /*
    if (en->termio)
      {
-        evas_object_event_callback_del_full(en->termio, EVAS_CALLBACK_DEL,
-                                            _entry_termio_del_cb, en);
         evas_object_smart_callback_del_full(en->termio, "title,change",
                                             _title_cb, en);
         evas_object_smart_callback_del_full(en->termio, "icon,change",
@@ -530,6 +531,7 @@ _entry_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
                                             _bell_cb, en);
         en->termio = NULL;
      }
+   */
 }
 
 static void
@@ -562,17 +564,6 @@ _smart_del(Evas_Object *obj)
    if (sd->autozoom_timeout) ecore_timer_del(sd->autozoom_timeout);
    EINA_LIST_FREE(sd->items, en)
      {
-        if (en->termio)
-          {
-             evas_object_event_callback_del_full(en->termio, EVAS_CALLBACK_DEL,
-                                                 _entry_termio_del_cb, en);
-             evas_object_smart_callback_del_full(en->termio, "title,change",
-                                                 _title_cb, en);
-             evas_object_smart_callback_del_full(en->termio, "icon,change",
-                                                 _icon_cb, en);
-             evas_object_smart_callback_del_full(en->termio, "bell",
-                                                 _bell_cb, en);
-          }
         if (en->obj) evas_object_event_callback_del_full
           (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
         if (en->obj) evas_object_del(en->obj);
@@ -669,12 +660,13 @@ sel_add(Evas_Object *parent)
    return obj;
 }
 
-void
-sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Bool bell, Config *config)
+void *
+sel_entry_add(Evas_Object *obj, Evas_Object *entry,
+              Eina_Bool selected, Eina_Bool bell, Config *config)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    Entry *en = calloc(1, sizeof(Entry));
-   if (!en) return;
+   if (!en) return NULL;
    sd->items = eina_list_append(sd->items, en);
    sd->config = config;
    en->obj = entry;
@@ -703,21 +695,15 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Boo
         edje_object_message_signal_process(en->bg);
      }
    sd->interp = 1.0;
-   en->termio = evas_object_data_get(en->obj, "termio");
-   if (en->termio)
+   en->tc = evas_object_data_get(en->obj, "tc");
+   if (en->tc)
      {
-        evas_object_smart_callback_add(en->termio, "title,change",
-                                       _title_cb, en);
-        evas_object_smart_callback_add(en->termio, "icon,change",
-                                       _icon_cb, en);
-        evas_object_smart_callback_add(en->termio, "bell",
-                                       _bell_cb, en);
         _label_redo(en);
-        evas_object_event_callback_add(en->termio, EVAS_CALLBACK_DEL,
-                                       _entry_termio_del_cb, en);
      }
    evas_object_event_callback_add(en->obj, EVAS_CALLBACK_DEL,
                                   _entry_del_cb, en);
+
+   return en;
 }
 
 void

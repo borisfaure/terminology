@@ -2770,7 +2770,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          }
          program {
             signal: "mouse,clicked,1"; source: "tabselector_ev";
-            action: SIGNAL_EMIT "tabselector,go" "terminology";
+            action: SIGNAL_EMIT "tabselector,show" "terminology";
          }
          program {
             signal: "mouse,wheel,0,-1"; source: "tabselector_ev";

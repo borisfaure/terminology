@@ -2,11 +2,7 @@
 #define _WIN_H__ 1
 
 #include "config.h"
-
-typedef struct _Win   Win;
-typedef struct _Term  Term;
-
-
+#include "term_container.h"
 
 Eina_Bool main_term_popup_exists(const Term *term);
 void main_term_focus(Term *term);
