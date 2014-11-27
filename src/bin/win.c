@@ -76,11 +76,13 @@ struct _Tabs {
      Evas_Object *base;
      Evas_Object *selector;
      Evas_Object *selector_bg;
+     Evas_Object *box;
+     Evas_Object *bg;
+     Evas_Object *btn_add;
+     Evas_Object *btn_hide;
      Evas_Object *tabbar;
      Evas_Object *tabbar_spacer;
      Evas_Object *selector_spacer;
-     Elm_Object_Item *tb_item_add;
-     Elm_Object_Item *tb_item_hide;
      Eina_List *tabs;
      Tab_Item *current;
 };
@@ -2264,7 +2266,11 @@ _tabs_close(Term_Container *tc, Term_Container *child,
 
         tc->parent->close(tc->parent, tc, refocus);
         evas_object_del(tabs->base);
+        evas_object_del(tabs->box);
+        evas_object_del(tabs->btn_add);
+        evas_object_del(tabs->btn_hide);
         evas_object_del(tabs->tabbar);
+        evas_object_del(tabs->bg);
         evas_object_del(tabs->tabbar_spacer);
         evas_object_del(tabs->selector_spacer);
         eina_stringshare_del(tc->title);
@@ -2463,22 +2469,16 @@ _tab_selected(void *data,
 static Tab_Item*
 tab_item_new(Tabs *tabs, Term_Container *child)
 {
-   Elm_Object_Item *toolbar_item, *sep;
+   Elm_Object_Item *toolbar_item;
    Tab_Item *tab_item;
 
    tab_item = calloc(1, sizeof(Tab_Item));
    tab_item->tc = child;
    assert(child != NULL);
 
-   sep = elm_toolbar_item_insert_before(tabs->tabbar,
-                                        tabs->tb_item_add,
-                                        NULL, NULL, NULL, NULL);
-   elm_toolbar_item_priority_set(sep, 1);
-   elm_toolbar_item_separator_set(sep, EINA_TRUE);
-   tab_item->separator = sep;
-   toolbar_item = elm_toolbar_item_insert_before(tabs->tabbar, sep,
-                                                 NULL, "Terminology",
-                                                 _tab_selected, tab_item);
+   toolbar_item = elm_toolbar_item_append(tabs->tabbar,
+                                          NULL, "Terminology",
+                                          _tab_selected, tab_item);
    elm_toolbar_item_priority_set(toolbar_item, 1);
    tab_item->elm_item = toolbar_item;
 
@@ -2504,16 +2504,11 @@ _tab_new_cb(void *data,
    Win *wn = tc_parent->wn;
    DBG("new");
 
-   elm_toolbar_item_selected_set(tabs->tb_item_add, EINA_FALSE);
-   elm_object_item_focus_set(tabs->tb_item_add, EINA_FALSE);
-
    tm_new = term_new(wn, wn->config,
                      NULL, wn->config->login_shell, NULL,
                      80, 24, EINA_FALSE);
    tc_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
-
-   elm_toolbar_item_selected_set(tabs->tb_item_add, EINA_FALSE);
 
    tc_new->parent = tc_parent;
 
@@ -2530,8 +2525,8 @@ _cb_tabbar_show(void *data, Evas_Object *obj EINA_UNUSED,
 
    edje_object_signal_emit(tabs->base, "tabbar,on", "terminology");
    edje_object_signal_emit(tabs->base, "tabcontrols,off", "terminology");
-   edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->tabbar);
-   evas_object_show(tabs->tabbar);
+   edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->box);
+   evas_object_show(tabs->box);
 }
 
 static void
@@ -2543,8 +2538,6 @@ _tab_hide_cb(void *data,
    Tabs *tabs = data;
 
    DBG("hide");
-   elm_toolbar_item_selected_set(tabs->tb_item_hide, EINA_FALSE);
-   elm_object_item_focus_set(tabs->tb_item_hide, EINA_FALSE);
 
    elm_coords_finger_size_adjust(1, &w, 1, &h);
 
@@ -2576,8 +2569,8 @@ _tab_hide_cb(void *data,
 
    edje_object_signal_emit(tabs->base, "tabbar,off", "terminology");
    edje_object_signal_emit(tabs->base, "tabcontrols,on", "terminology");
-   edje_object_part_unswallow(tabs->base, tabs->tabbar);
-   evas_object_hide(tabs->tabbar);
+   edje_object_part_unswallow(tabs->base, tabs->box);
+   evas_object_hide(tabs->box);
 }
 
 static void
@@ -2649,8 +2642,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    Win *wn;
    Term_Container *tc;
    Tabs *tabs;
-   Evas_Object *o;
-   Elm_Object_Item *sep;
+   Evas_Object *o, *ic;
 
    tabs = calloc(1, sizeof(Tabs));
    if (!tabs)
@@ -2685,27 +2677,44 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 
+   tabs->box = o = elm_box_add(wn->win);
+   elm_box_horizontal_set(o, EINA_TRUE);
+
    tabs->tabbar = o = elm_toolbar_add(wn->win);
+   DBG("style:%s", elm_object_style_get(o));
+   elm_object_style_set(o, "transparent");
+   DBG("style:%s", elm_object_style_get(o));
    elm_toolbar_homogeneous_set(o, EINA_FALSE);
    elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_EXPAND);
    elm_toolbar_transverse_expanded_set(o, EINA_TRUE);
    elm_toolbar_standard_priority_set(o, 0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(tabs->box, o);
    evas_object_show(o);
 
-   tabs->tb_item_add = elm_toolbar_item_append(o, NULL, "+", _tab_new_cb, tabs);
-   elm_toolbar_item_priority_set(tabs->tb_item_add, 100);
-   sep = elm_toolbar_item_append(tabs->tabbar, NULL, NULL, NULL, NULL);
-   elm_toolbar_item_priority_set(sep, 1);
-   elm_toolbar_item_separator_set(sep, EINA_TRUE);
-   tabs->tb_item_hide = elm_toolbar_item_append(o, NULL, "v", _tab_hide_cb, tabs);
-   elm_toolbar_item_priority_set(tabs->tb_item_hide, 100);
+   tabs->btn_add = o = elm_button_add(wn->win);
+   elm_object_text_set(o, "+");
+   elm_box_pack_end(tabs->box, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "clicked", _tab_new_cb, tabs);
+
+   ic = elm_icon_add(wn->win);
+   elm_icon_standard_set(ic, "menu/arrow_down");
+   tabs->btn_hide = o = elm_button_add(wn->win);
+   elm_object_part_content_set(o, "icon", ic);
+   elm_box_pack_end(tabs->box, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "clicked", _tab_hide_cb, tabs);
 
    child->parent = tc;
    tab_item_new(tabs, child);
 
-   edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->tabbar);
+   tabs->bg = o = elm_bg_add(wn->win);
+   edje_object_part_swallow(tabs->base, "terminology.bg", tabs->bg);
+   evas_object_show(o);
+
+   edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->box);
    o = child->get_evas_object(child);
    DBG("swallow:%p", o);
    edje_object_part_swallow(tabs->base, "content", o);

@@ -2304,6 +2304,37 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
 
    group { name: "terminology/tabs";
       parts {
+         part { name: "terminology.bg";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               visible: 1;
+               align: 0 0;
+               rel1 {
+                  to: "terminology.tabbar";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "terminology.tabbar";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               visible: 0;
+               min: 0 0;
+               rel1 {
+                  to: "terminology.tabbar";
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+               }
+               rel2 {
+                  to: "terminology.tabbar";
+                  relative: 1.0 1.0;
+                  offset: 0 0;
+               }
+            }
+         }
          part { name: "terminology.tabbar";
             type: SWALLOW;
             description { state: "default" 0.0;
@@ -2337,12 +2368,14 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             action: STATE_SET "hidden" 0.0;
             transition: DECELERATE 0.6;
             target: "terminology.tabbar";
+            target: "terminology.bg";
          }
          program {
             signal: "tabbar,on"; source: "terminology";
             action: STATE_SET "default" 0.0;
             transition: DECELERATE 0.4;
             target: "terminology.tabbar";
+            target: "terminology.bg";
          }
          part { name: "content";
             type: SWALLOW;
