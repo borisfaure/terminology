@@ -67,30 +67,17 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const Evas_Event_Key_Down *ev
              const struct _s *s;
              const Key_Values *kv;
 
-             if (!ty->state.appcursor)
-               {
-                  kv = &map[i].default_mode;
-               }
-             else
-               {
-                  kv = &map[i].cursor;
-               }
-             if (!alt && !ctrl && !shift)
-                  s = &kv->plain;
-             else if (alt && !ctrl && !shift)
-                  s = &kv->alt;
-             else if (!alt && ctrl && !shift)
-                  s = &kv->ctrl;
-             else if (alt && ctrl && !shift)
-                  s = &kv->ctrl_alt;
-             else if (!alt && !ctrl && shift)
-                  s = &kv->shift;
-             else if (alt && !ctrl && shift)
-                  s = &kv->shift_alt;
-             else if (!alt && ctrl && shift)
-                  s = &kv->shift_ctrl;
-             else if (alt && ctrl && shift)
-                  s = &kv->shift_ctrl_alt;
+             if (!ty->state.appcursor) kv = &map[i].default_mode;
+             else                      kv = &map[i].cursor;
+             if (!alt && !ctrl && !shift)     s = &kv->plain;
+             else if (alt && !ctrl && !shift) s = &kv->alt;
+             else if (!alt && ctrl && !shift) s = &kv->ctrl;
+             else if (alt && ctrl && !shift)  s = &kv->ctrl_alt;
+             else if (!alt && !ctrl && shift) s = &kv->shift;
+             else if (alt && !ctrl && shift)  s = &kv->shift_alt;
+             else if (!alt && ctrl && shift)  s = &kv->shift_ctrl;
+             else if (alt && ctrl && shift)   s = &kv->shift_ctrl_alt;
+             else continue;
 
              termpty_write(ty, s->s, s->len);
              return EINA_TRUE;
