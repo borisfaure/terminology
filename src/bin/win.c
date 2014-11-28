@@ -453,7 +453,6 @@ _solo_new(Term *term, Win *wn)
    tc->get_evas_object = _solo_get_evas_object;
    tc->find_term_at_coords = _solo_find_term_at_coords;
    tc->size_eval = _solo_size_eval;
-   tc->split = _solo_split;
    tc->swallow = NULL;
    tc->focus = _solo_focus;
    tc->set_title = _solo_set_title;
@@ -855,7 +854,6 @@ win_new(const char *name, const char *role, const char *title,
    tc->get_evas_object = _win_get_evas_object;
    tc->find_term_at_coords = _win_find_term_at_coords;
    tc->size_eval = _win_size_eval;
-   tc->split = NULL;
    tc->swallow = _win_swallow;
    tc->focus = _win_focus;
    tc->set_title = _win_set_title;
@@ -1342,7 +1340,6 @@ _split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal)
    tc->get_evas_object = _split_get_evas_object;
    tc->find_term_at_coords = _split_find_term_at_coords;
    tc->size_eval = _split_size_eval;
-   tc->split = NULL;
    tc->swallow = _split_swallow;
    tc->focus = _split_focus;
    tc->set_title = _split_set_title;
@@ -1768,7 +1765,7 @@ split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
    if (!tm) return;
 
    tc = tm->container;
-   tc->split(tc, cmd, EINA_TRUE);
+   _solo_split(tc, cmd, EINA_TRUE);
 }
 
 void
@@ -1782,7 +1779,7 @@ split_vertically(Evas_Object *win EINA_UNUSED, Evas_Object *term,
    if (!tm) return;
 
    tc = tm->container;
-   tc->split(tc, cmd, EINA_FALSE);
+   _solo_split(tc, cmd, EINA_FALSE);
 }
 
 #if 0
@@ -2661,7 +2658,6 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc->get_evas_object = _tabs_get_evas_object;
    tc->find_term_at_coords = _tabs_find_term_at_coords;
    tc->size_eval = _tabs_size_eval;
-   tc->split = NULL;
    tc->swallow = _tabs_swallow;
    tc->focus = _tabs_focus;
    tc->set_title = _tabs_set_title;
@@ -3240,7 +3236,7 @@ _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term_Container *tc = term->container;
 
    assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, NULL, EINA_TRUE);
+   _solo_split(tc, NULL, EINA_TRUE);
 }
 
 static void
@@ -3250,7 +3246,7 @@ _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term_Container *tc = term->container;
 
    assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, NULL, EINA_FALSE);
+   _solo_split(tc, NULL, EINA_FALSE);
 }
 
 static void

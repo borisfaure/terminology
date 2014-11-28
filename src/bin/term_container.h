@@ -44,8 +44,6 @@ struct _Term_Container {
      Term *(*find_term_at_coords)(Term_Container *container,
                                   Evas_Coord mx, Evas_Coord my);
      void (*size_eval)(Term_Container *container, Sizeinfo *info);
-     void (*split)(Term_Container *container, const char *cmd,
-                   Eina_Bool is_horizontal); /* TODO: only for solo, move out ? */
      void (*swallow)(Term_Container *container, Term_Container *orig,
                      Term_Container *new_child);
      void (*focus)(Term_Container *tc, Term_Container *relative);
