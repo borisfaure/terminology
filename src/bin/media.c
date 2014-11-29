@@ -1257,21 +1257,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
      }
 #endif
 
-   if (!sd->url)
-     {
-        Efreet_Uri *uri;
-        const char *file_path = eina_stringshare_printf("file://%s", sd->src);
-        uri = efreet_uri_decode(file_path);
-        eina_stringshare_del(file_path);
-        if (!uri)
-          {
-             ERR("can not decode '%s'", sd->src);
-             goto err;
-          }
-        sd->realf = uri->path;
-        eina_stringshare_ref(sd->realf);
-        efreet_uri_free(uri);
-     }
+   if (!sd->url) sd->realf = eina_stringshare_add(sd->src);
 
    if ((mode & MEDIA_SIZE_MASK) == MEDIA_THUMB)
      {
@@ -1311,11 +1297,6 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
                                   _mouse_up_cb, obj);
 
    return obj;
-
-err:
-   if (obj)
-     evas_object_del(obj);
-   return NULL;
 }
 
 void
