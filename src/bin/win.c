@@ -84,6 +84,7 @@ struct _Tabs {
      Evas_Object *selector_spacer;
      Eina_List *tabs;
      Tab_Item *current;
+     unsigned char tabbar_shown : 1;
 };
 
 struct _Split
@@ -2429,6 +2430,9 @@ _tabs_close(Term_Container *tc, Term_Container *child,
         count--;
         snprintf(buf, sizeof(buf), "%i", count);
         edje_object_part_text_set(tabs->base, "terminology.tabcount.label", buf);
+
+        if (eina_list_count(tabs->tabs) == 1 && !tabs->tabbar_shown)
+          edje_object_signal_emit(tabs->base, "tabcount,off", "terminology");
      }
 }
 
@@ -2634,6 +2638,9 @@ _tab_new_cb(void *data,
    tab_item_new(tabs, tc_new);
 
    tc_new->focus(tc_new, tc_parent);
+
+   if (!tabs->tabbar_shown)
+     edje_object_signal_emit(tabs->base, "tabcount,on", "terminology");
 }
 
 static void
@@ -2643,9 +2650,11 @@ _cb_tabbar_show(void *data, Evas_Object *obj EINA_UNUSED,
    Tabs *tabs = data;
 
    DBG("show");
+   tabs->tabbar_shown = EINA_TRUE;
 
    edje_object_signal_emit(tabs->base, "tabbar,on", "terminology");
    edje_object_signal_emit(tabs->base, "tabcontrols,off", "terminology");
+   edje_object_signal_emit(tabs->base, "tabcount,off", "terminology");
    edje_object_part_swallow(tabs->base, "terminology.tabbar", tabs->box);
    evas_object_show(tabs->box);
 }
@@ -2697,8 +2706,14 @@ _tabs_hide_cb(void *data,
 
    edje_object_signal_emit(tabs->base, "tabbar,off", "terminology");
    edje_object_signal_emit(tabs->base, "tabcontrols,on", "terminology");
+   if (eina_list_count(tabs->tabs) > 1)
+     edje_object_signal_emit(tabs->base, "tabcount,on", "terminology");
+   else
+     edje_object_signal_emit(tabs->base, "tabcount,off", "terminology");
    edje_object_part_unswallow(tabs->base, tabs->box);
    evas_object_hide(tabs->box);
+
+   tabs->tabbar_shown = EINA_FALSE;
 }
 
 static void
@@ -2912,6 +2927,8 @@ _tabs_new(Term_Container *child, Term_Container *parent)
                                    _cb_tabbar_show, tabs);
    edje_object_signal_callback_add(tabs->base, "tabselector,show", "terminology",
                                    _cb_tab_selector_show, tabs);
+
+   tabs->tabbar_shown = EINA_TRUE;
 
    if (((parent->type == TERM_CONTAINER_TYPE_WIN) &&
         wn->config->hide_top_tabbar) ||
