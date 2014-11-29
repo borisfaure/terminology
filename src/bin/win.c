@@ -130,7 +130,7 @@ static Term_Container *_tabs_new(Term_Container *child, Term_Container *parent);
 //static void _split_tabcount_update(Split *sp, Term *tm);
 static Term * _win_focused_term_get(Win *wn);
 //static Split * _split_find(Evas_Object *win, Evas_Object *term, Term **ptm);
-static void _term_focus(Term *term);
+static void _term_focus(Term *term, Eina_Bool force);
 static void term_free(Term *term);
 //static void _split_free(Split *sp);
 //static void _sel_restore(Split *sp);
@@ -187,6 +187,8 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
    Term_Container *tc = (Term_Container*) wn;
    Term *term;
 
+   DBG("win focus in");
+
    if (!tc->is_focused) elm_win_urgent_set(wn->win, EINA_FALSE);
    tc->is_focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
@@ -217,7 +219,7 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
      }
 
    if (term)
-     _term_focus(term);
+     _term_focus(term, EINA_TRUE);
 }
 
 static void
@@ -261,7 +263,8 @@ _cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
    if (!_win_is_focused(term->wn))
      return;
 
-   _term_focus(term);
+   DBG("term mouse in");
+   _term_focus(term, EINA_TRUE);
 }
 
 static void
@@ -275,7 +278,8 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    if (term == term2) return;
    term->down.x = ev->canvas.x;
    term->down.y = ev->canvas.y;
-   _term_focus(term);
+   DBG("term mouse down");
+   _term_focus(term, EINA_TRUE);
 }
 
 
@@ -373,7 +377,8 @@ _solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
    tc_parent->swallow(tc_parent, tc, tc_split);
 
    evas_object_show(obj_split);
-   _term_focus(tm_new);
+   DBG("split");
+   _term_focus(tm_new, EINA_FALSE);
 }
 
 static Term *
@@ -462,7 +467,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative EINA_UNUSED)
    if (tc->parent == relative)
      {
         DBG("focus from parent");
-        _term_focus(solo->term);
+        _term_focus(solo->term, EINA_FALSE);
      }
    else
      {
@@ -1795,9 +1800,7 @@ _split_split(Split *sp, Eina_Bool horizontal, char *cmd)
    evas_object_show(sp->panes);
    sp->term = NULL;
 }
-#endif
 
-#if 0
 static void
 _term_focus_show(Split *sp, Term *term)
 {
@@ -2585,6 +2588,7 @@ _tab_selected(void *data,
         elm_toolbar_item_selected_set(tabs->current->elm_item, EINA_FALSE);
      }
    tabs->current = tab_item;
+   tab_item->tc->focus(tab_item->tc, tc);
 }
 
 static Tab_Item*
@@ -3014,15 +3018,15 @@ void change_theme(Evas_Object *win, Config *config)
 }
 
 static void
-_term_focus(Term *term)
+_term_focus(Term *term, Eina_Bool force)
 {
    Term_Container *tc;
    Eina_List *l;
    Term *term2;
    const char *title;
 
-   DBG("term focus: %d", _term_is_focused(term));
-   if (_term_is_focused(term))
+   DBG("term focus: %p %d", term, _term_is_focused(term));
+   if (!force && (_term_is_focused(term) || !_win_is_focused(term->wn)))
      return;
 
    EINA_LIST_FOREACH(term->wn->terms, l, term2)
@@ -3068,26 +3072,8 @@ void term_prev(Term *term)
    tc = focused_term->container;
    new_term = tc->term_prev(tc, tc);
    if (new_term && new_term != focused_term)
-     _term_focus(new_term);
+     _term_focus(new_term, EINA_FALSE);
 
-#if 0
-   if (term->focused) term2 = _term_prev_get(term);
-   if ((term2 != NULL) && (term2 != term))
-     {
-        Config *config = termio_config_get(term->term);
-        Split *sp, *sp0;
-
-        sp0 = _split_find(term->wn->win, term->term, NULL);
-        sp = _split_find(term2->wn->win, term2->term, NULL);
-        if (sp == sp0 && config->tab_zoom >= 0.01)
-          _sel_go(sp, term2);
-        else
-          {
-             _term_focus(term2);
-             if (sp) _term_focus_show(sp, term2);
-          }
-     }
-#endif
    /* TODO: get rid of it? */
    _term_miniview_check(term);
 }
@@ -3104,26 +3090,8 @@ void term_next(Term *term)
    tc = focused_term->container;
    new_term = tc->term_next(tc, tc);
    if (new_term && new_term != focused_term)
-     _term_focus(new_term);
+     _term_focus(new_term, EINA_FALSE);
 
-#if 0
-   if (term->focused) term2 = _term_next_get(term);
-   if ((term2 != NULL) && (term2 != term))
-     {
-        Config *config = termio_config_get(term->term);
-        Split *sp, *sp0;
-
-        sp0 = _split_find(term->wn->win, term->term, NULL);
-        sp = _split_find(term2->wn->win, term2->term, NULL);
-        if (sp == sp0 && config->tab_zoom >= 0.01)
-          _sel_go(sp, term2);
-        else
-          {
-             _term_focus(term2);
-             if (sp) _term_focus_show(sp, term2);
-          }
-     }
-#endif
    /* TODO: get rid of it? */
    _term_miniview_check(term);
 }
