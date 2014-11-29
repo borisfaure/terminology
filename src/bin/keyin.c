@@ -77,7 +77,6 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const Evas_Event_Key_Down *ev
              else if (alt && !ctrl && shift)  s = &kv->shift_alt;
              else if (!alt && ctrl && shift)  s = &kv->shift_ctrl;
              else if (alt && ctrl && shift)   s = &kv->shift_ctrl_alt;
-             else continue;
 
              termpty_write(ty, s->s, s->len);
              return EINA_TRUE;
