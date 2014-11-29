@@ -2302,6 +2302,45 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
       }
    }
 
+   group { name: "terminology/tab";
+      parts {
+         part { name: "terminology.tabmissed.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               color: 255 255 64 255;
+               color2: 255 153 51 128;
+               color3: 255 0 0 20;
+               align: 0 0.5;
+               text { font: "Sans"; size: 10;
+                  align: 0 0.5;
+                  min: 1 1;
+                  ellipsis: 0;
+               }
+            }
+         }
+         part { name: "terminology.tabtitle.label"; type: TEXT; mouse_events: 0;
+            effect: GLOW;
+            scale: 1;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabmissed.label";
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+               color: 255 255 255 255;
+               color2: 51 153 255 128;
+               color3: 51 153 255 20;
+               align: 0.5 0.5;
+               text { font: "Sans"; size: 10;
+                  align: 0.5 0.5;
+                  min: 1 1;
+                  ellipsis: 1;
+               }
+            }
+         }
+      }
+   }
    group { name: "terminology/tabs";
       parts {
          part { name: "terminology.bg";
