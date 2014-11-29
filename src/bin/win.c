@@ -2696,7 +2696,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    evas_object_smart_callback_add(o, "clicked", _tab_new_cb, tabs);
 
    ic = elm_icon_add(wn->win);
-   elm_icon_standard_set(ic, "menu/arrow_down");
+   elm_icon_standard_set(ic, "menu/arrow_up");
    tabs->btn_hide = o = elm_button_add(wn->win);
    elm_object_part_content_set(o, "icon", ic);
    elm_box_pack_end(tabs->box, o);
