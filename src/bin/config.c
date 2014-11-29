@@ -160,6 +160,8 @@ config_init(void)
      (edd_base, Config, "keys", keys, edd_keys);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "gravatar", gravatar, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "hide_top_tabbar", hide_top_tabbar, EET_T_UCHAR);
 }
 
 void
@@ -259,6 +261,7 @@ config_sync(const Config *config_src, Config *config)
    config->mouse_over_focus = config_src->mouse_over_focus;
    /* TODO: config->keys */
    config->gravatar = config_src->gravatar;
+   config->hide_top_tabbar = config_src->hide_top_tabbar;
 }
 
 static void
@@ -527,6 +530,7 @@ config_load(const char *key)
              config->mouse_over_focus = EINA_TRUE;
              config->colors_use = EINA_FALSE;
              config->gravatar = EINA_TRUE;
+             config->hide_top_tabbar = EINA_FALSE;
              for (j = 0; j < 4; j++)
                {
                   for (i = 0; i < 12; i++)
@@ -616,6 +620,7 @@ config_fork(Config *config)
    SCPY(config_key);
    CPY(font_set);
    CPY(gravatar);
+   CPY(hide_top_tabbar);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {
