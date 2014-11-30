@@ -349,8 +349,9 @@ static void
 _solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
 {
    Solo *solo;
+   Split *split;
    Term *tm_new, *tm;
-   Term_Container *tc_split, *tc_new, *tc_parent;
+   Term_Container *tc_split, *tc_solo_new, *tc_parent;
    Win *wn;
    Evas_Object *obj_split;
    char buf[PATH_MAX], *wdir = NULL;
@@ -367,16 +368,22 @@ _solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
    tm_new = term_new(wn, wn->config,
                      cmd, wn->config->login_shell, wdir,
                      80, 24, EINA_FALSE);
-   tc_new = _solo_new(tm_new, wn);
+   tc_solo_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
-   tc_split = _split_new(tc, tc_new, is_horizontal);
+   tc_split = _split_new(tc, tc_solo_new, is_horizontal);
 
    obj_split = tc_split->get_evas_object(tc_split);
 
    tc_parent->swallow(tc_parent, tc, tc_split);
 
    evas_object_show(obj_split);
+
+   split = (Split*) tc_split;
+
+   tc_split->swallow(tc_split, split->tc1, _tabs_new(split->tc1, tc_split));
+   tc_split->swallow(tc_split, split->tc2, _tabs_new(split->tc2, tc_split));
+
    DBG("split");
    _term_focus(tm_new, EINA_FALSE);
 }
@@ -821,6 +828,9 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
 {
    Win *wn;
    Evas_Object *base;
+   Evas_Object *o;
+   Eina_Bool refocus = EINA_FALSE;
+
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
@@ -828,16 +838,18 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
 
    if (orig)
      {
-        Evas_Object *o;
-
         o = edje_object_part_swallow_get(base, "terminology.content");
         edje_object_part_unswallow(base, o);
-        /* TODO: hide */
+        evas_object_hide(o);
+        refocus = tc->is_focused;
      }
-   edje_object_part_swallow(base, "terminology.content",
-                            child->get_evas_object(child));
+   o = child->get_evas_object(child);
+   edje_object_part_swallow(base, "terminology.content", o);
+   evas_object_show(o);
    child->parent = tc;
    wn->child = child;
+   if (refocus)
+     child->focus(child, tc);
 }
 
 static void
@@ -1280,6 +1292,7 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
    Split *split;
    Evas_Object *o;
    Evas_Coord x, y, w, h;
+   Eina_Bool refocus;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
@@ -1290,6 +1303,8 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
 
    if (orig == split->last_focus)
      split->last_focus = new_child;
+
+   refocus = orig->is_focused;
 
    o = new_child->get_evas_object(new_child);
    if (split->tc1 == orig)
@@ -1312,6 +1327,9 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
    tc->missed_bell = EINA_FALSE;
    if (split->tc1->missed_bell || split->tc2->missed_bell)
      tc->missed_bell = EINA_TRUE;
+
+   if (refocus)
+     new_child->focus(new_child, tc);
 }
 
 static Term *
@@ -2524,6 +2542,7 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
    Tabs *tabs;
    Tab_Item *tab_item;
    Eina_List *l;
+   Eina_Bool refocus;
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
@@ -2533,6 +2552,8 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
    tab_item->tc = new_child;
 
    new_child->parent = tc;
+
+   refocus = orig->is_focused;
 
    if (tabs->selector)
      {
@@ -2548,12 +2569,15 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
 
         o = edje_object_part_swallow_get(tabs->base, "content");
         edje_object_part_unswallow(tabs->base, o);
-        /* TODO: hide */
+        evas_object_hide(o);
         edje_object_part_swallow(tabs->base, "content",
                                  new_child->get_evas_object(new_child));
      }
 
    _tabs_bells_check(tabs);
+
+   if (refocus)
+     new_child->focus(new_child, tc);
 }
 
 
