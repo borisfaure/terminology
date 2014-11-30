@@ -1183,7 +1183,7 @@ collections {
                rel1 {
                   relative: 0.0 1.0;
                   to: "terminology.tabbar";
-                  offset: 0 0;
+                  offset: 0 -1;
                }
                rel2 {
                   relative: 1.0 1.0;
