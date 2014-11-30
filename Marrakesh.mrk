@@ -21,10 +21,6 @@ SRC:
 terminology_config.h
 src/bin/about.c
 src/bin/about.h
-src/bin/app_server.c
-src/bin/app_server_eet.c
-src/bin/app_server_eet.h
-src/bin/app_server.h
 src/bin/col.c
 src/bin/col.h
 src/bin/config.c

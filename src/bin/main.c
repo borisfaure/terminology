@@ -15,7 +15,6 @@
 #include "utils.h"
 #include "ipc.h"
 #include "sel.h"
-#include "app_server.h"
 #include "dbus.h"
 #include "miniview.h"
 #include "gravatar.h"
@@ -849,10 +848,6 @@ remote:
      }
 
    config = win_config_get(wn);
-#if 0
-   if (config->application_server)
-     app_server_init(&wins, config->application_server_restore_views);
-#endif
 
    term = term_new(wn, config, cmd, login_shell, cd,
                    size_w, size_h, hold);
@@ -922,8 +917,6 @@ remote:
    ty_dbus_init();
 
    elm_run();
-
-   app_server_shutdown();
 
    ty_dbus_shutdown();
    config = NULL;
