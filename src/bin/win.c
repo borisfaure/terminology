@@ -1599,6 +1599,34 @@ _cb_tab_selector_show(void *data,
    elm_object_focus_set(tabs->selector, EINA_TRUE);
 }
 
+static void
+_cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Term *term = data;
+   Term_Container *tc = term->container;
+
+   while (tc)
+     {
+        Tabs *tabs;
+
+        if (tc->type != TERM_CONTAINER_TYPE_TABS)
+          {
+             tc = tc->parent;
+             continue;
+          }
+        tabs = (Tabs*) tc;
+        if (eina_list_count(tabs->tabs) < 2)
+          {
+             tc = tc->parent;
+             continue;
+          }
+
+        _cb_tab_selector_show(tabs, NULL, NULL, NULL);
+        return;
+     }
+}
+
+
 
 static Evas_Object *
 _tabs_get_evas_object(Term_Container *container)
@@ -2786,13 +2814,6 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term *term = data;
 
    term_next(term);
-}
-
-static void
-_cb_select(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   //Term *term = data;
-   /* TODO: bring the tab selector up */
 }
 
 static void
