@@ -5,7 +5,6 @@
 #include "term_container.h"
 
 Eina_Bool main_term_popup_exists(const Term *term);
-void main_term_focus(Term *term);
 
 Evas_Object *main_term_evas_object_get(Term *term);
 Evas_Object *term_miniview_get(Term *term);

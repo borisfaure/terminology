@@ -870,7 +870,7 @@ remote:
    evas_object_show(win);
    if (startup_split)
      {
-        /* TODO: boris */
+        /* TODO: make that option work again */
 #if 0
         unsigned int i = 0;
         void *pch = NULL;
