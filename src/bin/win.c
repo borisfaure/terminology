@@ -1446,6 +1446,14 @@ CB_TAB(9)
 CB_TAB(10)
 #undef CB_TAB
 
+static void
+_tabs_selector_cb_selected(void *data,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *info);
+static void
+_tabs_selector_cb_exit(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *info EINA_UNUSED);
 
 static void
 _tabs_restore(Tabs *tabs)
@@ -1467,10 +1475,19 @@ _tabs_restore(Tabs *tabs)
    o = tabs->current->tc->get_evas_object(tabs->current->tc);
    edje_object_part_swallow(tabs->base, "content", o);
    evas_object_show(o);
+   evas_object_show(tabs->base);
+   evas_object_smart_callback_del_full(tabs->selector, "selected",
+                                  _tabs_selector_cb_selected, tabs);
+   evas_object_smart_callback_del_full(tabs->selector, "exit",
+                                  _tabs_selector_cb_exit, tabs);
    evas_object_del(tabs->selector);
    evas_object_del(tabs->selector_bg);
    tabs->selector = NULL;
    tabs->selector_bg = NULL;
+
+   /* XXX: reswallow in parent */
+   tc->parent->swallow(tc->parent, tc, tc);
+
    tc->focus(tc, tc->parent);
 
    elm_toolbar_item_selected_set(tabs->current->elm_item, EINA_TRUE);
