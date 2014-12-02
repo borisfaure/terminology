@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <Elementary.h>
 #include "win.h"
 #include "termcmd.h"
@@ -25,18 +24,15 @@
 
 /* {{{ Structs */
 
-typedef struct _Term_Container Term_Container;
 typedef struct _Split Split;
 
 struct _Term
 {
    Win         *wn;
    Config      *config;
-
-   Term_Container *container;
    Evas_Object *bg;
    Evas_Object *base;
-   Evas_Object *term; // TODO: boris: rename into termio
+   Evas_Object *term;
    Evas_Object *media;
    Evas_Object *popmedia;
    Evas_Object *miniview;
@@ -79,46 +75,54 @@ typedef enum _Term_Container_Type
 } Term_Container_Type;
 
 typedef struct _Term_Container Term_Container;
+typedef struct _Term_Container_Api Term_Container_Api;
 typedef struct _Solo Solo;
 typedef struct _Tab Tab;
 
-struct _Term_Container {
-     Term_Container_Type type;
-     Term_Container *parent;
-     Win *wn;
-
-     Evas_Object* (*get_evas_object)(Term_Container *container);
-     Term *(*find_term_at_coords)(Term_Container *container,
-                                  Evas_Coord mx, Evas_Coord my);
+struct _Term_Container_Api {
+     Term *(*find_term_at_coords)(Term_Container *container, Evas_Coord mx, Evas_Coord my);
      void (*size_eval)(Term_Container *container, Sizeinfo *info);
-     void (*split)(Term_Container *container, const char *cmd,
-                   Eina_Bool is_horizontal);
-     void (*swallow)(Term_Container *container, Term_Container *orig,
-                     Term_Container *new_child);
-     void (*close)(Term_Container *container, Term_Container *child,
-                   Eina_Bool refocus);
-     /* TODO: prev/next/focus */
+     void (*free)(Term_Container *container);
 };
 
 struct _Solo {
-     Term_Container tc;
+     Term_Container_Api api;
      /* TODO */
      Term *term;
 };
 
 struct _Tab {
-     Term_Container tc;
+     Term_Container_Api api;
      /* TODO */
+     Term *term;
 };
 
 struct _Split
 {
-   Term_Container tc;
-   Term_Container *tc1, *tc2; // left/right or top/bottom child splits, null if leaf
+   Term_Container_Api api;
+   Win         *wn; // win this split belongs to
+   Split       *parent; // the parent split or null if toplevel
+   Split       *s1, *s2; // left/right or top/bottom child splits, null if leaf
+   Term        *term; // if leaf node this is not null - the CURRENT term from terms list
+   Eina_List   *terms; // list of terms in the "tabs"
    Evas_Object *panes; // null if a leaf node
-   unsigned char is_horizontal : 1;
+   Evas_Object *sel; // multi "tab" selector is active
+   Evas_Object *sel_bg; // multi "tab" selector wrapper edje obj for styling
+   unsigned char horizontal : 1;
 };
 
+
+
+struct _Term_Container
+{
+   union {
+      Term_Container_Api *api;
+      Split *split;
+      Solo  *solo;
+      Tab   *tab;
+   } u;
+   Term_Container_Type type;
+};
 
 struct _Win
 {
@@ -141,9 +145,7 @@ struct _Win
 static Eina_List   *wins = NULL;
 
 
-static Term_Container *_solo_new(Term *term);
-static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
-//static void _term_resize_track_start(Term *term);
+static void _term_resize_track_start(Term *term);
 static void _split_tabcount_update(Split *sp, Term *tm);
 static Term * win_focused_term_get(Win *wn);
 static Split * _split_find(Evas_Object *win, Evas_Object *term, Term **ptm);
@@ -152,10 +154,10 @@ static void term_free(Term *term);
 //static void _split_free(Split *sp);
 //static void _sel_restore(Split *sp);
 static void _sel_go(Split *sp, Term *term);
-//static void _term_resize_track_stop(Term *term);
+static void _term_resize_track_stop(Term *term);
 //static void _split_merge(Split *spp, Split *sp, const char *slot);
 //static void _term_focus_show(Split *sp, Term *term);
-//static void _main_term_bg_redo(Term *term);
+static void _main_term_bg_redo(Term *term);
 static void _term_media_update(Term *term, const Config *config);
 static void _term_miniview_check(Term *term);
 static void _popmedia_queue_process(Term *term);
@@ -217,7 +219,7 @@ _cb_win_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUS
         Evas_Coord mx, my;
 
         evas_pointer_canvas_xy_get(evas_object_evas_get(wn->win), &mx, &my);
-        term_mouse = wn->container->find_term_at_coords(wn->container, mx, my);
+        term_mouse = wn->container->u.api->find_term_at_coords(wn->container, mx, my);
         if ((term_mouse) && (term_mouse != term))
           {
              if (term)
@@ -301,38 +303,21 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
 /* {{{ Solo */
 
-static Evas_Object *
-_solo_get_evas_object(Term_Container *container)
-{
-   Solo *solo;
-   assert (container->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)container;
-
-   return solo->term->bg;
-}
-
 static Term *
 _solo_find_term_at_coords(Term_Container *container,
                           Evas_Coord mx EINA_UNUSED,
                           Evas_Coord my EINA_UNUSED)
 {
-   Solo *solo;
-   assert (container->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)container;
-
+   Solo *solo = container->u.solo;
    return solo->term;
 }
 
 static void
 _solo_size_eval(Term_Container *container, Sizeinfo *info)
 {
-   Term *term;
+   Solo *solo = container->u.solo;
+   Term *term = solo->term;
    int mw = 0, mh = 0;
-   Solo *solo;
-   assert (container->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)container;
-
-   term = solo->term;
 
    info->min_w = term->min_w;
    info->min_h = term->min_h;
@@ -351,121 +336,49 @@ _solo_size_eval(Term_Container *container, Sizeinfo *info)
 }
 
 static void
-_solo_close(Term_Container *tc, Term_Container *child EINA_UNUSED,
-            Eina_Bool refocus)
+_solo_free(Term_Container *container EINA_UNUSED)
 {
-   Term_Container *parent;
-
-   parent = tc->parent;
-   if (parent)
-     {
-        parent->close(parent, tc, refocus);
-     }
-   else
-     {
-        assert(tc == tc->wn->container);
-        tc->wn->container = NULL;
-        win_free(tc->wn);
-     }
-
-   free(tc);
-}
-
-static void
-_solo_split(Term_Container *tc, const char *cmd, Eina_Bool is_horizontal)
-{
-   Solo *solo;
-   Term *tm_new, *tm;
-   Term_Container *tc_split, *tc_new, *tc_parent;
-   Win *wn;
-   Evas_Object *obj_split;
-   char buf[PATH_MAX], *wdir = NULL;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*) tc;
-   tm = solo->term;
-   wn = tc->wn;
-
-   tc_parent = tc->parent;
-
-   DBG("solo split tc:%p cmd:%s is_horizontal:%d", tc, cmd, is_horizontal);
-   /* TODO: boris _split_split */
-
-   if (termio_cwd_get(tm->term, buf, sizeof(buf)))
-     wdir = buf;
-   tm_new = term_new(wn, wn->config,
-                     cmd, wn->config->login_shell, wdir,
-                     80, 24, EINA_FALSE);
-   tc_new = _solo_new(tm_new);
-   tc_new->wn = wn;
-
-   tc_split = _split_new(tc, tc_new, is_horizontal);
-
-   obj_split = tc_split->get_evas_object(tc_split);
-   tc_split->parent = tc_parent;
-
-   /* TODO: have a window container for that case? */
-   if (!tc_parent)
-     {
-        Evas_Object *base = win_base_get(wn);
-
-        edje_object_part_unswallow(base, tm->bg);
-
-        edje_object_part_swallow(base, "terminology.content", obj_split);
-     }
-   else
-     {
-        tc_parent->swallow(tc_parent, tc, tc_split);
-     }
-
-   evas_object_show(obj_split);
+   /* TODO */
 }
 
 static Term_Container *
-_solo_new(Term *term)
+solo_new(Term *term)
 {
-   Term_Container *tc = NULL;
+   Term_Container *container = NULL;
    Solo *solo = NULL;
+   Term_Container_Api *api;
+   container = calloc(1, sizeof(Term_Container));
    solo = calloc(1, sizeof(Solo));
-   if (!solo)
+   if (!solo || !container)
      {
+        free(container);
         free(solo);
         return NULL;
      }
 
-   tc = (Term_Container*)solo;
-   tc->get_evas_object = _solo_get_evas_object;
-   tc->find_term_at_coords = _solo_find_term_at_coords;
-   tc->size_eval = _solo_size_eval;
-   tc->split = _solo_split;
-   tc->swallow = NULL;
-   tc->close= _solo_close;
-
-   tc->parent = NULL;
-   tc->wn = NULL;
-
+   api = (Term_Container_Api*)solo;
+   api->find_term_at_coords = _solo_find_term_at_coords;
+   api->size_eval = _solo_size_eval;
+   api->free = _solo_free;
    solo->term = term;
-   tc->type = TERM_CONTAINER_TYPE_SOLO;
+   container->u.solo = solo;
+   container->type = TERM_CONTAINER_TYPE_SOLO;
 
-   term->container = tc;
-
-   return tc;
+   return container;
 }
 
 /* }}} */
 /* {{{ Win */
 
 
-int win_term_set(Win *wn, Term *term)
+int win_solo_term_set(Win *wn, Term *term)
 {
    Evas_Object *base = win_base_get(wn);
    Evas *evas = evas_object_evas_get(base);
 
-   /* TODO: boris tab */
 
-   wn->container = _solo_new(term);
+   wn->container = solo_new(term);
    if (!wn->container) return -1;
-   wn->container->wn = wn;
 
    /* TODO: resize track */
    //_term_resize_track_start(sp);
@@ -595,6 +508,11 @@ win_free(Win *wn)
         evas_object_del(wn->cmdbox);
         wn->cmdbox = NULL;
      }
+   if (wn->container)
+     {
+        wn->container->u.api->free(wn->container);
+        wn->container = NULL;
+     }
    if (wn->win)
      {
         evas_object_event_callback_del_full(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
@@ -720,13 +638,14 @@ win_new(const char *name, const char *role, const char *title,
 }
 
 void
-main_close(Evas_Object *win, Evas_Object *term)
+main_close(Evas_Object *win EINA_UNUSED, Evas_Object *term EINA_UNUSED)
 {
+   /* TODO boris */
    Term *tm;
-   Term_Container *tc;
    Win *wn = _win_find(win);
+   Eina_Bool term_was_focused;
 
-   if (!wn) return;
+   if (!wm) return;
 
    app_server_term_del(term);
 
@@ -734,10 +653,7 @@ main_close(Evas_Object *win, Evas_Object *term)
    if (!tm) return;
 
    wn->terms = eina_list_remove(wn->terms, tm);
-   tc = tm->container;
-   tc->close(tc, tc, tm->focused);
-
-   term_free(tm);
+   term_was_focused = tm->focused;
 
 #if 0
    Split *sp = _split_find(win, term, &tm);
@@ -872,244 +788,6 @@ win_focused_term_get(Win *wn)
 /* }}} */
 /* {{{ Splits */
 
-static Evas_Object *
-_split_get_evas_object(Term_Container *tc)
-{
-   Split *split;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
-   split = (Split*) tc;
-
-   return split->panes;
-}
-
-static void
-_split_size_eval(Term_Container *tc, Sizeinfo *info)
-{
-   Evas_Coord mw = 0, mh = 0;
-   Term_Container *tc1, *tc2;
-   Sizeinfo inforet;
-   Split *split;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
-   split = (Split*) tc;
-
-   tc1 = split->tc1;
-   tc2 = split->tc2;
-
-   info->min_w = 0;
-   info->min_h = 0;
-   info->req_w = 0;
-   info->req_h = 0;
-
-   evas_object_size_hint_min_get(split->panes, &mw, &mh);
-   info->bg_min_w = mw;
-   info->bg_min_h = mh;
-
-   if (split->is_horizontal)
-     {
-        tc1->size_eval(tc1, &inforet);
-        info->req |= inforet.req;
-        mh -= inforet.min_h;
-        if (info->req)
-          {
-             info->req_h += inforet.req_h;
-             info->req_w = inforet.req_w;
-          }
-
-        tc2->size_eval(tc2, &inforet);
-        info->req |= inforet.req;
-        mh -= inforet.min_h;
-        if (info->req)
-          {
-             info->req_h += inforet.req_h;
-             info->req_w = inforet.req_w;
-          }
-        info->req_h += mh;
-        if (info->req)
-          info->req_w += mw - inforet.min_w - inforet.step_x;
-     }
-   else
-     {
-        tc1->size_eval(tc1, &inforet);
-        info->req |= inforet.req;
-        mw -= inforet.min_w;
-        if (info->req)
-          {
-             info->req_w += inforet.req_w;
-             info->req_h = inforet.req_h;
-          }
-
-        tc2->size_eval(tc2, &inforet);
-        info->req |= inforet.req;
-        mw -= inforet.min_w;
-        if (info->req)
-          {
-             info->req_w += inforet.req_w;
-             info->req_h = inforet.req_h;
-          }
-        info->req_w += mw;
-        if (info->req)
-          info->req_h += mh - inforet.min_h - inforet.step_y;
-     }
-   info->step_x = inforet.step_x;
-   info->step_y = inforet.step_y;
-}
-
-static void
-_split_swallow(Term_Container *tc, Term_Container *orig,
-               Term_Container *new_child)
-{
-   Split *split;
-   Evas_Object *o;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
-   split = (Split*) tc;
-
-   o = new_child->get_evas_object(new_child);
-   if (split->tc1 == orig)
-     {
-        elm_object_part_content_unset(split->panes, PANES_TOP);
-        elm_object_part_content_set(split->panes, PANES_TOP, o);
-        split->tc1 = new_child;
-     }
-   else
-     {
-        elm_object_part_content_unset(split->panes, PANES_BOTTOM);
-        elm_object_part_content_set(split->panes, PANES_BOTTOM, o);
-        split->tc2 = new_child;
-     }
-   new_child->parent = tc;
-   evas_object_show(o);
-}
-
-static Term *
-_split_find_term_at_coords(Term_Container *tc,
-                           Evas_Coord mx, Evas_Coord my)
-{
-   Split *split;
-   Evas_Coord ox, oy, ow, oh;
-   Evas_Object *o;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
-   split = (Split*) tc;
-
-   o = split->tc1->get_evas_object(split->tc1);
-
-   evas_object_geometry_get(o, &ox, &oy, &ow, &oh);
-   if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, mx, my, 1, 1))
-     {
-        tc = split->tc1;
-     }
-   else
-     {
-        tc = split->tc2;
-     }
-
-   return tc->find_term_at_coords(tc, mx, my);
-}
-
-static void
-_split_close(Term_Container *tc, Term_Container *child,
-             Eina_Bool refocus EINA_UNUSED)
-{
-   Split *split;
-   Term_Container *parent;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
-   split = (Split*) tc;
-
-   /* TODO: refocus */
-   elm_object_part_content_unset(split->panes, PANES_TOP);
-   elm_object_part_content_unset(split->panes, PANES_BOTTOM);
-
-   parent = tc->parent;
-   if (parent)
-     {
-        if (child == split->tc1)
-          {
-             parent->swallow(parent, tc, split->tc2);
-          }
-        else
-          {
-             parent->swallow(parent, tc, split->tc1);
-          }
-     }
-   else
-     {
-        Evas_Object *base = win_base_get(tc->wn);
-
-        if (child == split->tc1)
-          {
-             edje_object_part_unswallow(base,
-                                        split->panes);
-             edje_object_part_swallow(base, "terminology.content",
-                                      split->tc2->get_evas_object(split->tc2));
-             split->tc2->parent = NULL;
-             tc->wn->container = split->tc2;
-          }
-        else
-          {
-             edje_object_part_unswallow(base,
-                                        split->panes);
-             edje_object_part_swallow(base, "terminology.content",
-                                      split->tc1->get_evas_object(split->tc1));
-             split->tc1->parent = NULL;
-             tc->wn->container = split->tc1;
-          }
-     }
-
-   evas_object_del(split->panes);
-   free(tc);
-}
-
-static Term_Container *
-_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal)
-{
-   Evas_Object *o;
-   Term_Container *tc = NULL;
-   Split *split = NULL;
-   split = calloc(1, sizeof(Split));
-   if (!split)
-     {
-        free(split);
-        return NULL;
-     }
-
-   tc = (Term_Container*)split;
-   tc->get_evas_object = _split_get_evas_object;
-   tc->find_term_at_coords = _split_find_term_at_coords;
-   tc->size_eval = _split_size_eval;
-   tc->split = NULL;
-   tc->swallow = _split_swallow;
-   tc->close = _split_close;
-
-   tc->parent = NULL;
-   tc->wn = tc1->wn;
-
-   tc->type = TERM_CONTAINER_TYPE_SPLIT;
-
-   tc1->parent = tc2->parent = tc;
-
-   split->tc1 = tc1;
-   split->tc2 = tc2;
-
-   o = split->panes = elm_panes_add(tc1->wn->win);
-   elm_object_style_set(o, "flush");
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   split->is_horizontal = is_horizontal;
-   elm_panes_horizontal_set(o, split->is_horizontal);
-
-   elm_object_part_content_set(o, PANES_TOP,
-                               tc1->get_evas_object(tc1));
-   elm_object_part_content_set(o, PANES_BOTTOM,
-                               tc2->get_evas_object(tc2));
-
-   return tc;
-}
-
 #if 0
 static void
 _split_size_walk(Split *sp, Sizeinfo *info)
@@ -1199,7 +877,14 @@ _size_job(void *data)
 
    wn->size_job = NULL;
    DBG("size job");
-   tc->size_eval(tc, &info);
+   tc->u.api->size_eval(tc, &info);
+#if 0
+   _split_size_walk(wn->split, &info);
+   if (wn->split->panes)
+     evas_object_size_hint_min_get(wn->split->panes, &mw, &mh);
+   else
+     evas_object_size_hint_min_get(wn->split->term->bg, &mw, &mh);
+#endif
 
    elm_win_size_base_set(wn->win,
                          info.bg_min_w - info.step_x,
@@ -1307,10 +992,8 @@ _split_free(Split *sp)
 #endif
 
 static void
-_split_tabcount_update(Split *sp EINA_UNUSED, Term *tm EINA_UNUSED)
+_split_tabcount_update(Split *sp, Term *tm)
 {
-   /* TODO */
-#if 0
    char buf[32], bufm[32];
    int n = eina_list_count(sp->terms);
    int missed = 0;
@@ -1353,14 +1036,11 @@ _split_tabcount_update(Split *sp EINA_UNUSED, Term *tm EINA_UNUSED)
         else
           edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
      }
-#endif
 }
 
-#if 0
 static void
 _split_split(Split *sp, Eina_Bool horizontal, char *cmd)
 {
-   /* TODO: boris */
    Split *sp2, *sp1;
    Evas_Object *o;
    Config *config;
@@ -1424,7 +1104,6 @@ _split_split(Split *sp, Eina_Bool horizontal, char *cmd)
    evas_object_show(sp->panes);
    sp->term = NULL;
 }
-#endif
 
 #if 0
 static void
@@ -1460,12 +1139,9 @@ _term_focus_show(Split *sp, Term *term)
 #endif
 
 void
-main_new_with_dir(Evas_Object *win EINA_UNUSED,
-                  Evas_Object *term EINA_UNUSED,
-                  const char *wdir EINA_UNUSED)
+main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir)
 {
    /* TODO */
-#if 0
    Split *sp = _split_find(win, term, NULL);
    Config *config;
    int w, h;
@@ -1485,7 +1161,6 @@ main_new_with_dir(Evas_Object *win EINA_UNUSED,
    evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
    //_term_focus_show(sp, sp->term);
    _split_tabcount_update(sp, sp->term);
-#endif
 }
 
 void
@@ -1503,31 +1178,21 @@ main_new(Evas_Object *win EINA_UNUSED, Evas_Object *term EINA_UNUSED)
 }
 
 void
-split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
-                   const char *cmd)
+main_split_h(Evas_Object *win, Evas_Object *term, char *cmd)
 {
-   Term *tm;
-   Term_Container *tc;
+   Split *sp = _split_find(win, term, NULL);
 
-   tm = evas_object_data_get(term, "term");
-   if (!tm) return;
-
-   tc = tm->container;
-   tc->split(tc, cmd, EINA_TRUE);
+   if (!sp) return;
+   _split_split(sp, EINA_TRUE, cmd);
 }
 
 void
-split_vertically(Evas_Object *win EINA_UNUSED, Evas_Object *term,
-                 const char *cmd)
+main_split_v(Evas_Object *win, Evas_Object *term, char *cmd)
 {
-   Term *tm;
-   Term_Container *tc;
+   Split *sp = _split_find(win, term, NULL);
 
-   tm = evas_object_data_get(term, "term");
-   if (!tm) return;
-
-   tc = tm->container;
-   tc->split(tc, cmd, EINA_FALSE);
+   if (!sp) return;
+   _split_split(sp, EINA_FALSE, cmd);
 }
 
 #if 0
@@ -1693,7 +1358,6 @@ _split_merge(Split *spp, Split *sp, const char *slot)
 /* }}} */
 /* {{{ Term */
 
-#if 0
 static void
 _cb_size_track(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
 {
@@ -1722,7 +1386,6 @@ _term_resize_track_stop(Term *term)
    evas_object_event_callback_del_full(term->bg, EVAS_CALLBACK_RESIZE,
                                        _cb_size_track, term);
 }
-#endif
 
 
 void change_theme(Evas_Object *win, Config *config)
@@ -1941,17 +1604,15 @@ _term_miniview_check(Term *term)
 
    EINA_LIST_FOREACH(wn_list, l, term)
      {
-        //Split *sp = _split_find(term->wn->win, term->term, NULL);
+        Split *sp = _split_find(term->wn->win, term->term, NULL);
         if (term->miniview_shown)
           {
              if (term->focused)
                edje_object_signal_emit(term->bg, "miniview,on", "terminology");
-#if 0
              else if (sp->term != term)
                edje_object_signal_emit(term->bg, "miniview,off", "terminology");
-#endif
           }
-        //sp = NULL;
+        sp = NULL;
      }
 }
 
@@ -2158,13 +1819,11 @@ _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 void
 main_term_focus(Term *term EINA_UNUSED)
 {
-#if 0
    Split *sp;
 
    sp = _split_find(term->wn->win, term->term, NULL);
    if (sp->terms->next != NULL)
      _sel_go(sp, term);
-#endif
 }
 
 static void
@@ -2178,20 +1837,16 @@ static void
 _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   Term_Container *tc = term->container;
 
-   assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, NULL, EINA_TRUE);
+   main_split_h(term->wn->win, term->term, NULL);
 }
 
 static void
 _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
-   Term_Container *tc = term->container;
-
-   assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, NULL, EINA_FALSE);
+   
+   main_split_v(term->wn->win, term->term, NULL);
 }
 
 static void
@@ -2211,17 +1866,15 @@ _cb_icon(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_tab_go(Term *term EINA_UNUSED, int tnum EINA_UNUSED)
+_tab_go(Term *term, int tnum)
 {
-#if 0
    Term *term2;
    Split *sp = _split_find(term->wn->win, term->term, NULL);
    if (!sp) return;
-
+   
    term2 = eina_list_nth(sp->terms, tnum);
    if ((!term2) || (term2 == term)) return;
    _sel_go(sp, term2);
-#endif
 }
 
 #define CB_TAB(TAB) \
@@ -2707,7 +2360,6 @@ main_term_bg_config(Term *term)
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
 }
 
-#if 0
 static void
 _main_term_bg_redo(Term *term)
 {
@@ -2754,7 +2406,6 @@ _main_term_bg_redo(Term *term)
    if (term->miniview_shown)
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
 }
-#endif
 
 Eina_Bool
 main_term_popup_exists(const Term *term)
@@ -2793,7 +2444,6 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    if (!config) return;
    if (!config->disable_visual_bell)
      {
-#if 0
         Split *sp;
 
         edje_object_signal_emit(term->bg, "bell", "terminology");
@@ -2812,7 +2462,6 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
                   _split_tabcount_update(sp, sp->term);
                }
           }
-#endif
      }
    if (config->urg_bell)
      {
