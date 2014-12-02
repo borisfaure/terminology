@@ -64,7 +64,7 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const Evas_Event_Key_Down *ev
      {
         if ((inlen == map[i].key_len) && (!memcmp(ev->key, map[i].key, inlen)))
           {
-             const struct _s *s;
+             const struct _s *s = NULL;
              const Key_Values *kv;
 
              if (!ty->state.appcursor) kv = &map[i].default_mode;
@@ -78,7 +78,7 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const Evas_Event_Key_Down *ev
              else if (!alt && ctrl && shift)  s = &kv->shift_ctrl;
              else if (alt && ctrl && shift)   s = &kv->shift_ctrl_alt;
 
-             termpty_write(ty, s->s, s->len);
+             if (s) termpty_write(ty, s->s, s->len);
              return EINA_TRUE;
           }
      }
