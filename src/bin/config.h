@@ -63,6 +63,8 @@ struct _Config
    Eina_Bool         visualize;
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;
+   Eina_Bool         application_server;
+   Eina_Bool         application_server_restore_views;
    Eina_Bool         xterm_256color;
    Eina_Bool         erase_is_del;
    Eina_Bool         custom_geometry;
