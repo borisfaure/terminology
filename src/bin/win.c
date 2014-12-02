@@ -1851,6 +1851,48 @@ _term_focus_show(Split *sp, Term *term)
 }
 #endif
 
+void
+main_new_with_dir(Evas_Object *win EINA_UNUSED,
+                  Evas_Object *term EINA_UNUSED,
+                  const char *wdir EINA_UNUSED)
+{
+   /* TODO */
+#if 0
+   Split *sp = _split_find(win, term, NULL);
+   Config *config;
+   int w, h;
+
+   if (!sp) return;
+   _term_resize_track_stop(sp->term);
+   evas_object_hide(sp->term->bg);
+   config = config_fork(sp->term->config);
+   termio_size_get(sp->term->term, &w, &h);
+   sp->term = term_new(sp->wn, config,
+                            NULL, config->login_shell, wdir,
+                            w, h, EINA_FALSE);
+   sp->terms = eina_list_append(sp->terms, sp->term);
+   _term_resize_track_start(sp->term);
+   _term_focus(sp->term);
+   _term_media_update(sp->term, config);
+   evas_object_data_set(sp->term->term, "sizedone", sp->term->term);
+   //_term_focus_show(sp, sp->term);
+   _split_tabcount_update(sp, sp->term);
+#endif
+}
+
+void
+main_new(Evas_Object *win EINA_UNUSED, Evas_Object *term EINA_UNUSED)
+{
+   DBG("TODO");
+   /* TODO → tabs */
+#if 0
+   Split *sp = _split_find(win, term, NULL);
+   char buf[PATH_MAX], *wdir = NULL;
+
+   if (termio_cwd_get(sp->term->term, buf, sizeof(buf))) wdir = buf;
+   main_new_with_dir(win, term, wdir);
+#endif
+}
 
 void
 split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
@@ -2063,57 +2105,6 @@ _sel_restore(Split *sp EINA_UNUSED)
 
 /* }}} */
 /* {{{ Tabs */
-
-static void
-_tab_go(Term *term, int tnum)
-{
-   Term_Container *tc = term->container;
-
-   while (tc)
-     {
-        Tabs *tabs;
-        Tab_Item *tab_item;
-
-        if (tc->type != TERM_CONTAINER_TYPE_TABS)
-          {
-             tc = tc->parent;
-             continue;
-          }
-        tabs = (Tabs*) tc;
-        tab_item = eina_list_nth(tabs->tabs, tnum);
-        if (!tab_item)
-          {
-             tc = tc->parent;
-             continue;
-          }
-        if (tab_item == tabs->current)
-          return;
-        elm_toolbar_item_selected_set(tabs->current->elm_item, EINA_FALSE);
-        elm_toolbar_item_selected_set(tab_item->elm_item, EINA_TRUE);
-        return;
-     }
-}
-
-#define CB_TAB(TAB) \
-static void                                             \
-_cb_tab_##TAB(void *data, Evas_Object *obj EINA_UNUSED, \
-             void *event EINA_UNUSED)                   \
-{                                                       \
-   _tab_go(data, TAB - 1);                              \
-}
-
-CB_TAB(1)
-CB_TAB(2)
-CB_TAB(3)
-CB_TAB(4)
-CB_TAB(5)
-CB_TAB(6)
-CB_TAB(7)
-CB_TAB(8)
-CB_TAB(9)
-CB_TAB(10)
-#undef CB_TAB
-
 
 static void
 _tabs_restore(Tabs *tabs)
@@ -2651,6 +2642,7 @@ tab_item_new(Tabs *tabs, Term_Container *child)
    return tab_item;
 }
 
+
 static void
 _tab_new_cb(void *data,
             Evas_Object *obj EINA_UNUSED,
@@ -2677,44 +2669,6 @@ _tab_new_cb(void *data,
 
    if (!tabs->tabbar_shown)
      edje_object_signal_emit(tabs->base, "tabcount,on", "terminology");
-}
-
-static void
-_cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Term *term = data;
-   Term_Container *tc = term->container;
-
-   while (tc)
-     {
-        Tabs *tabs;
-
-        if (tc->type != TERM_CONTAINER_TYPE_TABS)
-          {
-             tc = tc->parent;
-             continue;
-          }
-        tabs = (Tabs*) tc;
-        if ((eina_list_count(tabs->tabs) < 2) &&
-            (tc->parent != (Term_Container*)tc->wn))
-          {
-             tc = tc->parent;
-             continue;
-          }
-        _tab_new_cb(tabs, NULL, NULL);
-        return;
-     }
-}
-
-void
-main_new(Evas_Object *win EINA_UNUSED, Evas_Object *term)
-{
-   Term *tm;
-
-   tm = evas_object_data_get(term, "term");
-   if (!tm) return;
-
-   _cb_new(tm, term, NULL);
 }
 
 static void
@@ -3468,6 +3422,15 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    term_next(term);
 }
 
+static void
+_cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Term *term = data;
+
+   main_new(term->wn->win, term->termio);
+   _term_miniview_check(term);
+}
+
 void
 main_term_focus(Term *term EINA_UNUSED)
 {
@@ -3526,6 +3489,40 @@ _cb_icon(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    if (_term_is_focused(term))
      elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->termio));
 }
+
+static void
+_tab_go(Term *term EINA_UNUSED, int tnum EINA_UNUSED)
+{
+#if 0
+   Term *term2;
+   Split *sp = _split_find(term->wn->win, term->term, NULL);
+   if (!sp) return;
+
+   term2 = eina_list_nth(sp->terms, tnum);
+   if ((!term2) || (term2 == term)) return;
+   _sel_go(sp, term2);
+#endif
+}
+
+#define CB_TAB(TAB) \
+static void                                             \
+_cb_tab_##TAB(void *data, Evas_Object *obj EINA_UNUSED, \
+             void *event EINA_UNUSED)                   \
+{                                                       \
+   _tab_go(data, TAB - 1);                              \
+}
+
+CB_TAB(1)
+CB_TAB(2)
+CB_TAB(3)
+CB_TAB(4)
+CB_TAB(5)
+CB_TAB(6)
+CB_TAB(7)
+CB_TAB(8)
+CB_TAB(9)
+CB_TAB(10)
+#undef CB_TAB
 
 static Eina_Bool
 _cb_cmd_focus(void *data)
