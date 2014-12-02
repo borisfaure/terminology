@@ -38,8 +38,7 @@ CB(erase_is_del, 0);
 CB(drag_links, 0);
 CB(login_shell, 0);
 CB(mouse_over_focus, 0);
-CB(gravatar, 0);
-CB(hide_top_tabbar, 0);
+CB(gravatar,  0);
 
 #undef CB
 
@@ -248,7 +247,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Start as login shell"), login_shell, 0);
    CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
    CX(_("Gravatar integration"), gravatar, 0);
-   CX(_("Hide top tab bar on launch"), hide_top_tabbar, 0);
 
 /*
    CX(_("Enable application server"), application_server, 0);

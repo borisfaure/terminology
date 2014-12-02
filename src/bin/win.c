@@ -2651,9 +2651,9 @@ _cb_tabbar_show(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_tabs_hide_cb(void *data,
-              Evas_Object *obj EINA_UNUSED,
-              void *event_info EINA_UNUSED)
+_tab_hide_cb(void *data,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    Evas_Coord w = 0, h = 0;
    Tabs *tabs = data;
@@ -2873,6 +2873,9 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    elm_box_horizontal_set(o, EINA_TRUE);
 
    tabs->tabbar = o = elm_toolbar_add(wn->win);
+   DBG("style:%s", elm_object_style_get(o));
+   elm_object_style_set(o, "transparent");
+   DBG("style:%s", elm_object_style_get(o));
    elm_toolbar_homogeneous_set(o, EINA_FALSE);
    elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_EXPAND);
    elm_toolbar_transverse_expanded_set(o, EINA_TRUE);
@@ -2894,7 +2897,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    elm_object_part_content_set(o, "icon", ic);
    elm_box_pack_end(tabs->box, o);
    evas_object_show(o);
-   evas_object_smart_callback_add(o, "clicked", _tabs_hide_cb, tabs);
+   evas_object_smart_callback_add(o, "clicked", _tab_hide_cb, tabs);
 
    child->parent = tc;
    tab_item_new(tabs, child);
@@ -2913,12 +2916,6 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    edje_object_signal_callback_add(tabs->base, "tabselector,show", "terminology",
                                    _cb_tab_selector_show, tabs);
 
-   if (((parent->type == TERM_CONTAINER_TYPE_WIN) &&
-        wn->config->hide_top_tabbar) ||
-       (parent->type != TERM_CONTAINER_TYPE_WIN))
-     {
-        _tabs_hide_cb(tabs, NULL, NULL);
-     }
 
    return tc;
 }
