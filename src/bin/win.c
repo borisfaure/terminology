@@ -1975,12 +1975,11 @@ tab_item_new(Tabs *tabs, Term_Container *child)
 {
    Elm_Object_Item *toolbar_item;
    Tab_Item *tab_item;
-   char buf[32];
-   int n;
 
    tab_item = calloc(1, sizeof(Tab_Item));
    tab_item->tc = child;
    assert(child != NULL);
+
 
    toolbar_item = elm_toolbar_item_append(tabs->tabbar,
                                           NULL, "Terminology",
@@ -1994,10 +1993,6 @@ tab_item_new(Tabs *tabs, Term_Container *child)
    elm_toolbar_item_selected_set(toolbar_item, EINA_TRUE);
 
    tabs->current = tab_item;
-
-   n = eina_list_count(tabs->tabs);
-   snprintf(buf, sizeof(buf), "%i", n);
-   edje_object_part_text_set(tabs->base, "terminology.tabcount.label", buf);
 
    return tab_item;
 }
