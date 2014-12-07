@@ -657,13 +657,15 @@ termpty_line_find_top(Termpty *ty, int y_end, int *top)
 
 static int
 termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
-                    Termcell *screen2, Termsave **back2,
-                    int w2, int y2_end, int *new_y2_start)
+                    Termcell *new_screen, Termsave **new_back,
+                    int new_w, int new_y_end, int *new_y_startp,
+                    int *new_cyp)
 {
-   int x, x2, y, y2, y2_start;
-   int len, len_last, len_remaining, copy_width, ts2_width;
-   Termsave *ts, *ts2;
-   Termcell *line, *line2 = NULL;
+   /* variables prefixed by new_ are about the resized term being built up */
+   int x, y, new_x, new_y, new_y_start;
+   int len, len_last, len_remaining, copy_width, new_ts_width;
+   Termsave *ts, *new_ts;
+   Termcell *line, *new_line = NULL;
 
    if (y_end >= 0)
      {
@@ -679,32 +681,32 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
         len_last = ts->w;
      }
    len_remaining = len_last + (y_end - y_start) * ty->w;
-   y2_start = y2_end;
+   new_y_start = new_y_end;
    if (len_remaining)
      {
-        y2_start -= (len_remaining + w2 - 1) / w2 - 1;
+        new_y_start -= (len_remaining + new_w - 1) / new_w - 1;
      }
    else
      {
-        if (y2_start < 0)
-          back2[y2_start + ty->backmax] = termpty_save_new(0);
-        *new_y2_start = y2_start;
+        if (new_y_start < 0)
+          new_back[new_y_start + ty->backmax] = termpty_save_new(0);
+        *new_y_startp = new_y_start;
         return 0;
      }
-   if (-y2_start > ty->backmax)
+   if (-new_y_start > ty->backmax)
      {
-        y_start += ((-y2_start - ty->backmax) * w2) / ty->w;
-        x = ((-y2_start - ty->backmax) * w2) % ty->w;
-        len_remaining -= (-y2_start - ty->backmax) * w2;
-        y2_start = -ty->backmax;
+        y_start += ((-new_y_start - ty->backmax) * new_w) / ty->w;
+        x = ((-new_y_start - ty->backmax) * new_w) % ty->w;
+        len_remaining -= (-new_y_start - ty->backmax) * new_w;
+        new_y_start = -ty->backmax;
      }
    else
      {
         x = 0;
      }
    y = y_start;
-   x2 = 0;
-   y2 = y2_start;
+   new_x = 0;
+   new_y = new_y_start;
 
    while (y <= y_end)
      {
@@ -728,41 +730,45 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
         line[len - 1].att.autowrapped = 0;
         while (x < len)
           {
-             copy_width = MIN(len - x, w2 - x2);
-             if (x2 == 0)
+             copy_width = MIN(len - x, new_w - new_x);
+             if (new_x == 0)
                {
-                  if (y2 >= 0)
+                  if (new_y >= 0)
                     {
-                       line2 = screen2 + (y2 * w2);
+                       new_line = new_screen + (new_y * new_w);
                     }
                   else
                     {
-                       ts2_width = MIN(len_remaining, w2);
-                       ts2 = termpty_save_new(ts2_width);
-                       if (!ts2)
+                       new_ts_width = MIN(len_remaining, new_w);
+                       new_ts = termpty_save_new(new_ts_width);
+                       if (!new_ts)
                          return -1;
-                       line2 = ts2->cell;
-                       back2[y2 + ty->backmax] = ts2;
+                       new_line = new_ts->cell;
+                       new_back[new_y + ty->backmax] = new_ts;
                     }
                }
-             if (line2)
+             if (y == ty->state.cy)
                {
-                  termpty_cell_copy(ty, line + x, line2 + x2, copy_width);
+                  *new_cyp = new_y_start;
+               }
+             if (new_line)
+               {
+                  termpty_cell_copy(ty, line + x, new_line + new_x, copy_width);
                   x += copy_width;
-                  x2 += copy_width;
+                  new_x += copy_width;
                   len_remaining -= copy_width;
-                  if ((x2 == w2) && (y2 != y2_end))
+                  if ((new_x == new_w) && (new_y != new_y_end))
                     {
-                       line2[x2 - 1].att.autowrapped = 1;
-                       x2 = 0;
-                       y2++;
+                       new_line[new_x - 1].att.autowrapped = 1;
+                       new_x = 0;
+                       new_y++;
                     }
                }
           }
         x = 0;
         y++;
      }
-   *new_y2_start = y2_start;
+   *new_y_startp = new_y_start;
    return 0;
 }
 
@@ -772,7 +778,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 {
    Termcell *new_screen = NULL;
    Termsave **new_back = NULL;
-   int y_start, y_end, new_y_start = 0, new_y_end;
+   int y_start = 0, y_end = 0, new_y_start = 0, new_y_end,
+       new_cy = ty->state.cy;
    int i, altbuf = 0;
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;
@@ -798,14 +805,18 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    y_end = ty->state.cy;
    new_y_end = new_h - 1;
+   /* For each "full line" in old buffers, revrap.
+    * From most recent to oldest */
    while ((y_end >= -ty->backscroll_num) && (new_y_end >= -ty->backmax))
      {
         if (termpty_line_find_top(ty, y_end, &y_start) < 0)
           goto bad;
-        if (termpty_line_rewrap(ty, y_start, y_end, new_screen,
-                                new_back, new_w, new_y_end,
-                                &new_y_start) < 0)
+        if (termpty_line_rewrap(ty, y_start, y_end,
+                                new_screen, new_back,
+                                new_w, new_y_end,
+                                &new_y_start, &new_cy) < 0)
           goto bad;
+
         y_end = y_start - 1;
         new_y_end = new_y_start - 1;
      }
@@ -819,13 +830,12 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    ty->w = new_w;
    ty->h = new_h;
-   ty->state.cy = MIN((new_h - 1) - new_y_start, new_h - 1);
-   ty->state.cx = termpty_line_length(new_screen + ((new_h - 1) * new_w),
-                                      new_w);
    ty->circular_offset = MAX(new_y_start, 0);
    ty->backpos = 0;
    ty->backscroll_num = MAX(-new_y_start, 0);
    ty->state.had_cr = 0;
+
+   ty->state.cy = (new_cy + new_h - ty->circular_offset) % new_h;
 
    if (altbuf) termpty_screen_swap(ty);
 

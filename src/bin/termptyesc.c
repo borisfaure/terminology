@@ -99,8 +99,8 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
            {
               ty->state.had_cr_x = ty->state.cx;
               ty->state.had_cr_y = ty->state.cy;
+              ty->state.wrapnext = 0;
            }
-         ty->state.wrapnext = 0;
          ty->state.cx = 0;
 //         ty->state.had_cr = 1;
          return;
