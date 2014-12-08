@@ -390,6 +390,23 @@ _termpty_reset_state(Termpty *ty)
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
+
+   termpty_save_freeze();
+   if (ty->back)
+     {
+        int i;
+        for (i = 0; i < ty->backmax; i++)
+          {
+             if (ty->back[i]) termpty_save_free(ty->back[i]);
+          }
+        free(ty->back);
+        ty->back = NULL;
+     }
+   ty->backscroll_num = 0;
+   ty->backpos = 0;
+   if (ty->backmax)
+     ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
+   termpty_save_thaw();
 }
 
 void
