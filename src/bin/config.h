@@ -73,6 +73,7 @@ struct _Config
    Eina_Bool         mouse_over_focus;
    Eina_Bool         colors_use;
    Eina_Bool         gravatar;
+   Eina_Bool         notabs;
    Config_Color      colors[(4 * 12)];
    Eina_List        *keys;
 

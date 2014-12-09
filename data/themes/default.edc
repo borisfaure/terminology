@@ -173,19 +173,29 @@ collections {
             action: STATE_SET "movie" 0.0;
             target: "terminology.background";
          }
-         
+
+         part { name: "terminology.tabregion"; type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel2.relative: 1.0 0.0;
+               min: 1 1;
+               align: 0.0 0.0;
+            }
+         }
          ////////////////////////////////////////////////////////////////////
          // actual text grid for chars, cursors, selectiond etc. goes here
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
-               rel1.offset: 1 1;
+               rel1.offset: 1 0;
+               rel1.relative: 0.0 1.0;
+               rel1.to_y: "terminology.tabregion";
                rel2.offset: -2 -2;
             }
          }
 
       }
    }
-         
+
    //// the background and general container for the terminal
    group { name: "terminology/background";
       images {
@@ -201,6 +211,20 @@ collections {
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
         image: "cr_glow.png" COMP;
+        image: "tab_base_bottom.png" COMP;
+        image: "tab_base_l0.png" COMP;
+        image: "tab_base_l1.png" COMP;
+        image: "tab_base_m.png" COMP;
+        image: "tab_base_r0.png" COMP;
+        image: "tab_base_r1.png" COMP;
+        image: "tab_bg_l0.png" COMP;
+        image: "tab_bg_l1.png" COMP;
+        image: "tab_bg_r0.png" COMP;
+        image: "tab_bg_r1.png" COMP;
+        image: "tab_shad_l0.png" COMP;
+        image: "tab_shad_l1.png" COMP;
+        image: "tab_shad_r0.png" COMP;
+        image: "tab_shad_r1.png" COMP;
       }
       set { name: "bg_shadow";
         image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
@@ -254,6 +278,11 @@ collections {
          // child edje
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+//               rel1.to_y: "tabmiddle";
+//               rel1.relative: 0.0 1.0;
             }
          }
 
@@ -459,8 +488,10 @@ collections {
                fixed: 1 1;
                rel1.relative: 1.0 0.0;
                rel1.offset: -3 2;
+               rel1.to: "viewregion";
                rel2.relative: 1.0 0.0;
                rel2.offset: -3 2;
+               rel2.to: "viewregion";
                align: 1.0 0.0;
                min: 16 16;
             }
@@ -472,6 +503,27 @@ collections {
                rel1.to: "terminology.tabcount.control";
                rel2.to: "terminology.tabcount.control";
                color: 0 0 0 0;
+            }
+         }
+
+         part { name: "terminology.tabregion"; type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "viewregion";
+               rel2.relative: 1.0 0.0;
+            }
+         }
+         part { name: "viewregion"; type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.content";
+               rel2.to: "terminology.content";
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               rel1.to_y: "tabmiddle";
+               rel1.relative: 0.0 1.0;
             }
          }
 
@@ -509,14 +561,14 @@ collections {
             signal: "mouse,clicked,1"; source: "tabcount_ev";
             action: SIGNAL_EMIT "tabcount,go" "terminology";
          }
-	 program {
-	    signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
-	    action: SIGNAL_EMIT "tabcount,prev" "terminology";
-	 }
-	 program {
-	    signal: "mouse,wheel,0,1"; source: "tabcount_ev";
-	    action: SIGNAL_EMIT "tabcount,next" "terminology";
-	 }
+         program {
+            signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tabcount,prev" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,1"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tabcount,next" "terminology";
+         }
          program {
             signal: "tabcount,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
@@ -553,8 +605,12 @@ collections {
          // miniview
          part { name: "terminology.miniview"; type: SWALLOW;
             description { state: "default" 0.0;
+               rel1.to_x: "terminology.content";
+               rel1.to_y: "viewregion";
+               rel2.to: "terminology.content";
                //color: 255 255 255 0;
                visible: 0;
+               fixed: 1 1;
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
@@ -602,9 +658,33 @@ collections {
                image.middle: 0;
                fill.smooth: 0;
             }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "shine";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 0 0;
+               rel2.offset: -1 -1;
+               image.normal: "bg_shine.png";
+               fill.smooth: 0;
+               align: 0.5 0.0;
+               aspect: (255/120) (255/120);
+               aspect_preference: HORIZONTAL;
+               color: 255 255 255 64;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
          }
          part { name: "glintclip"; type: RECT;
             description { state: "default" 0.0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
             }
          }
          part { name: "glint";
@@ -630,21 +710,260 @@ collections {
                color: 255 255 255 255;
             }
          }
-         part { name: "shine";
+
+         part { name: "tab_bevel_bottom";
             mouse_events: 0;
             description { state: "default" 0.0;
-               rel1.offset: 0 0;
-               rel2.offset: -1 -1;
-               image.normal: "bg_shine.png";
+               rel1.to_y: "tabmiddle";
+               rel1.relative: 0.0 1.0;
+               image.normal: "tab_base_bottom.png";
+               image.border: 2 2 0 2;
+               image.middle: 0;
                fill.smooth: 0;
-               align: 0.5 0.0;
-               aspect: (255/120) (255/120);
-               aspect_preference: HORIZONTAL;
-               color: 255 255 255 64;
+               visible: 0;
+               fixed: 1 1;
             }
-            description { state: "focused" 0.0;
+            description { state: "tab" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_top0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tableft";
+               rel2.to_y: "tableft";
+               rel2.to_x: "tab_bevel_top1";
+               rel2.relative: 0.0 1.0;
+               image.normal: "tab_base_l0.png";
+               image.border: 0 0 0 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_top1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tabmiddle";
+               rel1.offset: -4 0;
+               rel2.to: "tabmiddle";
+               align: 0.0 0.0;
+               max: 12 99999;
+               min: 12 0;
+               image.normal: "tab_base_l1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_top2";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "tab_bevel_top3";
+               rel2.relative: 0.0 1.0;
+               image.normal: "tab_base_m.png";
+               image.border: 0 0 4 0;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_top3";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tabmiddle";
+               rel2.to: "tabmiddle";
+               rel2.offset: 3 -1;
+               align: 1.0 0.0;
+               max: 12 99999;
+               min: 12 0;
+               image.normal: "tab_base_r1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_top4";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to_y: "tabright";
+               rel1.to_x: "tab_bevel_top3";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "tabright";
+               image.normal: "tab_base_r0.png";
+               image.border: 0 0 0 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_bg0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top0";
+               rel2.to: "tab_bevel_top0";
+               image.normal: "tab_bg_l0.png";
+               image.border: 2 0 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_bg1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel2.to: "tab_bevel_top1";
+               image.normal: "tab_bg_l1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_bg3";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top3";
+               rel2.to: "tab_bevel_top3";
+               image.normal: "tab_bg_r1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_bg4";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top4";
+               rel2.to: "tab_bevel_top4";
+               image.normal: "tab_bg_r0.png";
+               image.border: 0 2 4 4;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+
+         part { name: "terminology.tabl.content"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.to: "tableft";
+               rel2.to: "tableft";
+               fixed: 1 1;
+            }
+         }
+         part { name: "terminology.tabr.content"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.to: "tabright";
+               rel2.to: "tabright";
+               fixed: 1 1;
+            }
+         }
+
+         part { name: "tab_bevel_shad0";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top0";
+               rel2.to: "tab_bevel_top0";
+               image.normal: "tab_shad_l0.png";
+               image.border: 0 0 0 10;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_shad1";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel2.to: "tab_bevel_top1";
+               image.normal: "tab_shad_l1.png";
+               image.border: 0 0 10 10;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_shad3";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top3";
+               rel2.to: "tab_bevel_top3";
+               image.normal: "tab_shad_r1.png";
+               image.border: 0 0 10 10;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tab_bevel_shad4";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top4";
+               rel2.to: "tab_bevel_top4";
+               image.normal: "tab_shad_r0.png";
+               image.border: 0 0 0 10;
+               fill.smooth: 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
             }
          }
          program {
@@ -666,6 +985,202 @@ collections {
             target: "glint";
             target: "glow";
             target: "shine";
+         }
+
+         ////////////////////////////////////////////////////////////////////
+         // a swallow to hold a finger size rect for min tab size
+         program {
+            signal: "tabbar,on"; source: "terminology";
+            action: STATE_SET "tab" 0.0;
+            target: "viewregion";
+            target: "tableft";
+            target: "tabmiddle";
+            target: "tabright";
+            target: "bevel";
+            target: "glintclip";
+            target: "tab_bevel_bottom";
+            target: "tab_bevel_top0";
+            target: "tab_bevel_top1";
+            target: "tab_bevel_top2";
+            target: "tab_bevel_top3";
+            target: "tab_bevel_top4";
+            target: "tab_bevel_bg0";
+            target: "tab_bevel_bg1";
+            target: "tab_bevel_bg3";
+            target: "tab_bevel_bg4";
+            target: "tab_bevel_shad0";
+            target: "tab_bevel_shad1";
+            target: "tab_bevel_shad3";
+            target: "tab_bevel_shad4";
+            target: "tabtitle";
+         }
+         program {
+            signal: "tabbar,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "viewregion";
+            target: "tableft";
+            target: "tabmiddle";
+            target: "tabright";
+            target: "bevel";
+            target: "glintclip";
+            target: "tab_bevel_bottom";
+            target: "tab_bevel_top0";
+            target: "tab_bevel_top1";
+            target: "tab_bevel_top2";
+            target: "tab_bevel_top3";
+            target: "tab_bevel_top4";
+            target: "tab_bevel_bg0";
+            target: "tab_bevel_bg1";
+            target: "tab_bevel_bg3";
+            target: "tab_bevel_bg4";
+            target: "tab_bevel_shad0";
+            target: "tab_bevel_shad1";
+            target: "tab_bevel_shad3";
+            target: "tab_bevel_shad4";
+            target: "tabtitle";
+         }
+
+         part { name: "terminology.tab"; type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.relative: 1.0 0.0;
+               rel1.to_x: "terminology.tabl";
+               rel2.relative: 0.0 0.0;
+               rel2.to_x: "terminology.tabr";
+               align: 0.5 0.0;
+               visible: 0;
+               fixed: 1 1;
+            }
+         }
+         // some slot for dragable parts to stayt in along top edge of bg
+         part { name: "tabdrag"; type: SPACER;
+            description { state: "default" 0.0;
+               rel2.relative: 1.0 0.0;
+               fixed: 1 1;
+            }
+         }
+         // left boundary of the active tab (ragable 0.0 -> 1.0)
+         part { name: "terminology.tabl"; type: SPACER;
+            dragable.x: 1 1 0;
+            dragable.confine: "tabdrag";
+            description { state: "default" 0.0;
+               rel2.relative: 1.0 0.0;
+               max: 1 1;
+               fixed: 1 1;
+            }
+         }
+         // right boundary of the active tab (ragable 0.0 -> 1.0)
+         part { name: "terminology.tabr"; type: SPACER;
+            dragable.x: 1 1 0;
+            dragable.confine: "tabdrag";
+            description { state: "default" 0.0;
+               rel2.relative: 1.0 0.0;
+               max: 1 1;
+               fixed: 1 1;
+            }
+         }
+
+         part { name: "terminology.tab.title"; type: TEXT; mouse_events: 0;
+            scale: 1;
+            effect: SOFT_SHADOW BOTTOM;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               color3: 0 0 0 18;
+               text { font: "Sans:style=Bold"; size: 10;
+                  align: 0.5 0.0;
+                  min: 0 1;
+               }
+               align: 0.5 0.0;
+               rel1.to_x: "tab_bevel_top2";
+               rel1.offset: 0 2;
+               rel2.to_x: "tab_bevel_top2";
+               rel2.offset: -1 2;
+               rel2.relative: 1.0 0.0;
+               visible: 0;
+               fixed: 1 1;
+            }
+         }
+         part { name: "tabtitle"; type: TEXT; mouse_events: 0;
+            scale: 1;
+            effect: SOFT_SHADOW BOTTOM;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               color3: 0 0 0 18;
+               text { font: "Sans:style=Bold"; size: 10;
+                  align: 0.5 0.5;
+                  min: 0 1;
+                  text_source: "terminology.tab.title";
+               }
+               align: 0.5 0.5;
+               rel1.to_x: "tab_bevel_top2";
+               rel1.to_y: "tabmiddle";
+               rel2.to_x: "tab_bevel_top2";
+               rel2.to_y: "tabmiddle";
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tablimit0"; type: SPACER;
+            description { state: "default" 0.0;
+               rel1.to_y: "terminology.tab";
+               rel1.relative: 0.0 1.0;
+               rel2.to_y: "terminology.tab.title";
+               align: 0.0 0.0;
+               fixed: 1 1;
+            }
+         }
+
+         part { name: "tableft"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel2.to_x: "terminology.tab";
+               rel2.to_y: "tabmiddle";
+               rel2.relative: 0.0 1.0;
+               color: 0 0 0 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tabright"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tab";
+               rel1.relative: 1.0 0.0;
+               rel2.to_y: "tabmiddle";
+               color: 0 0 0 0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "tabmiddle"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tab";
+               rel2.to_x: "terminology.tab";
+               rel2.to_y: "tablimit0";
+               rel2.offset: -1 0;
+               color: 0 0 0 0;
+               align: 0.0 0.0;
+               visible: 0;
+               fixed: 1 1;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -813,7 +1328,7 @@ collections {
             transition: LINEAR 0.9;
             target: "bell_strobe";
          }
-         
+
          ////////////////////////////////////////////////////////////////////
          // popup media over the terminal (until dismissed)
          part { name: "popmedia_clip"; type: RECT;
@@ -1107,6 +1622,146 @@ collections {
             target: "popmedia_glint";
             target: "popmedia_glintclip";
             target: "popmedia_shine";
+         }
+      }
+   }
+
+   group { name: "terminology/tabbar_back";
+      images {
+        image: "tab_base_l1.png" COMP;
+        image: "tab_base_m.png" COMP;
+        image: "tab_base_r1.png" COMP;
+        image: "tab_other_l.png" COMP;
+        image: "tab_other_m.png" COMP;
+        image: "tab_other_r.png" COMP;
+        image: "tab_shad_l2.png" COMP;
+        image: "tab_shad_r2.png" COMP;
+      }
+      parts {
+         part { name: "tab_bevel_shad1";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel2.to: "tab_bevel_top1";
+               image.normal: "tab_shad_l2.png";
+               image.border: 0 0 10 10;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_bevel_shad3";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top3";
+               rel2.to: "tab_bevel_top3";
+               image.normal: "tab_shad_r2.png";
+               image.border: 0 0 10 10;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_base_top1";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel2.to: "tab_bevel_top1";
+               image.normal: "tab_other_l.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_base_top2";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top2";
+               rel2.to: "tab_bevel_top2";
+               image.normal: "tab_other_m.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_base_top3";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top3";
+               rel2.to: "tab_bevel_top3";
+               image.normal: "tab_other_r.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_bevel_top1";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               rel1.offset: -4 0;
+               max: 12 99999;
+               min: 12 0;
+               image.normal: "tab_base_l1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               fixed: 1 0;
+            }
+         }
+         part { name: "tab_bevel_top2";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1.to: "tab_bevel_top1";
+               rel1.relative: 1.0 0.0;
+               rel2.to: "tab_bevel_top3";
+               rel2.relative: 0.0 1.0;
+               image.normal: "tab_base_m.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "tab_bevel_top3";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               rel2.offset: 3 -1;
+               max: 12 99999;
+               min: 12 0;
+               image.normal: "tab_base_r1.png";
+               image.border: 0 0 4 4;
+               fill.smooth: 0;
+               fixed: 1 0;
+            }
+         }
+         part { name: "terminology.title"; type: TEXT; mouse_events: 0;
+            scale: 1;
+            effect: SHADOW BOTTOM;
+            description { state: "default" 0.0;
+               text { font: "Sans:style=Bold"; size: 10;
+                  align: 0.5 0.5;
+                  min: 0 1;
+               }
+               align: 0.5 0.5;
+               color: 0 0 0 255;
+               color3: 255 255 255 25;
+               rel1.to: "tab_bevel_top2";
+               rel2.to: "tab_bevel_top2";
+            }
+         }
+         part { name: "clip"; type: RECT;
+            description { state: "default" 0.0;
+               rel2.offset: -1 -2;
+            }
+         }
+         part { name: "event"; type: RECT;
+            description { state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "event";
+            action: SIGNAL_EMIT "tab,activate" "terminology";
          }
       }
    }

@@ -25,6 +25,15 @@
 /* {{{ Structs */
 
 typedef struct _Split Split;
+typedef struct _Tabbar Tabbar;
+
+struct _Tabbar
+{
+   struct {
+      Evas_Object *box;
+      Eina_List *tabs;
+   } l, r;
+};
 
 struct _Term
 {
@@ -38,8 +47,12 @@ struct _Term
    Evas_Object *miniview;
    Evas_Object *sel;
    Evas_Object *tabcount_spacer;
+   Evas_Object *tab_spacer;
+   Evas_Object *tab_region_base;
+   Evas_Object *tab_region_bg;
    Eina_List   *popmedia_queue;
    Media_Type   poptype, mediatype;
+   Tabbar       tabbar;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
    struct {
       int       x, y;
@@ -570,6 +583,7 @@ main_close(Evas_Object *win, Evas_Object *term)
                     }
                   _term_focus(tm);
                   _term_focus_show(sp, tm);
+                  _split_tabcount_update(sp, tm);
                }
           }
         else
@@ -583,6 +597,7 @@ main_close(Evas_Object *win, Evas_Object *term)
                {
                   _term_focus(sp->term);
                   _term_focus_show(sp, sp->term);
+                  _split_tabcount_update(sp, sp->term);
                }
           }
         if (sp) _split_tabcount_update(sp, sp->term);
@@ -615,6 +630,7 @@ main_close(Evas_Object *win, Evas_Object *term)
              evas_object_show(sp->term->bg);
              _term_focus(sp->term);
              _term_focus_show(sp, sp->term);
+             _split_tabcount_update(sp, sp->term);
           }
         if (!sp->wn->terms) evas_object_del(sp->wn->win);
         else _split_tabcount_update(sp, sp->term);
@@ -834,12 +850,114 @@ _split_free(Split *sp)
 }
 
 static void
+_tabbar_clear(Term *tm)
+{
+   Evas_Object *o;
+
+   if (tm->tabbar.l.box)
+     {
+        EINA_LIST_FREE(tm->tabbar.l.tabs, o) evas_object_del(o);
+        evas_object_del(tm->tabbar.l.box);
+        tm->tabbar.l.box = NULL;
+     }
+   if (tm->tabbar.r.box)
+     {
+        EINA_LIST_FREE(tm->tabbar.r.tabs, o) evas_object_del(o);
+        evas_object_del(tm->tabbar.r.box);
+        tm->tabbar.r.box = NULL;
+     }
+}
+
+static void
+_cb_tab_activate(void *data, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   Split *sp = data;
+   Term *term = evas_object_data_get(obj, "term");
+   if (term)
+     {
+        _term_focus(term);
+        if (sp)
+          {
+             _term_focus_show(sp, term);
+             _split_tabcount_update(sp, term);
+          }
+     }
+}
+
+static void
+_split_tabbar_fill(Split *sp, Term *tm)
+{
+   Eina_List *l;
+   Term *term;
+   Evas_Object *o;
+   int n = eina_list_count(sp->terms);
+   int i = 0, j = 0;
+
+   EINA_LIST_FOREACH(sp->terms, l, term)
+     {
+        if (term == tm) break;
+        i++;
+     }
+   if (i > 0)
+     {
+        tm->tabbar.l.box = o = elm_box_add(sp->wn->win);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        edje_object_part_swallow(term->bg, "terminology.tabl.content", o);
+        evas_object_show(o);
+     }
+   if (i < (n - 1))
+     {
+        tm->tabbar.r.box = o = elm_box_add(sp->wn->win);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        edje_object_part_swallow(term->bg, "terminology.tabr.content", o);
+        evas_object_show(o);
+     }
+   EINA_LIST_FOREACH(sp->terms, l, term)
+     {
+        if (term != tm)
+          {
+             Evas_Coord w, h;
+
+             o = edje_object_add(evas_object_evas_get(sp->wn->win));
+             theme_apply(o, term->config, "terminology/tabbar_back");
+             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+             edje_object_part_text_set(o, "terminology.title", termio_title_get(term->term));
+             edje_object_size_min_calc(o, &w, &h);
+             evas_object_size_hint_min_set(o, w, h);
+             if (j < i)
+               {
+                  tm->tabbar.l.tabs = eina_list_append(tm->tabbar.l.tabs, o);
+                  elm_box_pack_end(tm->tabbar.l.box, o);
+               }
+             else if (j > i)
+               {
+                  tm->tabbar.r.tabs = eina_list_append(tm->tabbar.r.tabs, o);
+                  elm_box_pack_end(tm->tabbar.r.box, o);
+               }
+             evas_object_data_set(o, "term", term);
+             evas_object_show(o);
+             edje_object_signal_callback_add(o, "tab,activate", "terminology",
+                                             _cb_tab_activate, sp);
+          }
+        j++;
+     }
+}
+
+static void
 _split_tabcount_update(Split *sp, Term *tm)
 {
    char buf[32], bufm[32];
    int n = eina_list_count(sp->terms);
    int missed = 0;
    int cnt = 0, term_cnt = 0;
+   int i = 0;
    Eina_List *l;
    Term *term;
 
@@ -870,13 +988,64 @@ _split_tabcount_update(Split *sp, Term *tm)
              edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
              edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufm);
              edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
+             // this is all below just for tab bar at the top
+             if (!term->config->notabs)
+               {
+                  double v1, v2;
+
+                  v1 = (double)i / (double)n;
+                  v2 = (double)(i + 1) / (double)n;
+                  if (!term->tab_spacer)
+                    {
+                       term->tab_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+                       evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+                       elm_coords_finger_size_adjust(1, &w, 1, &h);
+                       evas_object_size_hint_min_set(term->tab_spacer, w, h);
+                       edje_object_part_swallow(term->bg, "terminology.tab", term->tab_spacer);
+                       edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
+                       edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
+                       edje_object_part_text_set(term->bg, "terminology.tab.title", termio_title_get(term->term));
+                       edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
+                       edje_object_message_signal_process(term->bg);
+                    }
+                  else
+                    {
+                       edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
+                       edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
+                       edje_object_message_signal_process(term->bg);
+                    }
+                  _tabbar_clear(term);
+                  if (sp->term == term) _split_tabbar_fill(sp, term);
+               }
+             else
+               {
+                  _tabbar_clear(term);
+                  if (term->tab_spacer)
+                    {
+                       edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
+                       evas_object_del(term->tab_spacer);
+                       term->tab_spacer = NULL;
+                       edje_object_message_signal_process(term->bg);
+                    }
+               }
           }
         else
-          edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+          {
+             _tabbar_clear(term);
+             edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+             if (term->tab_spacer)
+               {
+                  edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
+                  evas_object_del(term->tab_spacer);
+                  term->tab_spacer = NULL;
+                  edje_object_message_signal_process(term->bg);
+               }
+          }
         if (missed > 0)
           edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
         else
           edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
+        i++;
      }
 }
 
@@ -1279,7 +1448,8 @@ _term_focus(Term *term)
    if (sp) _split_tabcount_update(sp, term);
 }
 
-void term_prev(Term *term)
+void
+term_prev(Term *term)
 {
    Term *term2 = NULL;
    Config *config = termio_config_get(term->term);
@@ -1291,18 +1461,23 @@ void term_prev(Term *term)
 
         sp0 = _split_find(term->wn->win, term->term, NULL);
         sp = _split_find(term2->wn->win, term2->term, NULL);
-        if (sp == sp0 && config->tab_zoom >= 0.01)
+        if ((sp == sp0) && (config->tab_zoom >= 0.01) && (config->notabs))
           _sel_go(sp, term2);
         else
           {
              _term_focus(term2);
-             if (sp) _term_focus_show(sp, term2);
+             if (sp)
+               {
+                  _term_focus_show(sp, term2);
+                  _split_tabcount_update(sp, term2);
+               }
           }
      }
    _term_miniview_check(term);
 }
 
-void term_next(Term *term)
+void
+term_next(Term *term)
 {
    Term *term2 = NULL;
    Config *config = termio_config_get(term->term);
@@ -1314,12 +1489,16 @@ void term_next(Term *term)
 
         sp0 = _split_find(term->wn->win, term->term, NULL);
         sp = _split_find(term2->wn->win, term2->term, NULL);
-        if (sp == sp0 && config->tab_zoom >= 0.01)
+        if ((sp == sp0) && (config->tab_zoom >= 0.01) && (config->notabs))
           _sel_go(sp, term2);
         else
           {
              _term_focus(term2);
-             if (sp) _term_focus_show(sp, term2);
+             if (sp)
+               {
+                  _term_focus_show(sp, term2);
+                  _split_tabcount_update(sp, term2);
+               }
           }
      }
    _term_miniview_check(term);
@@ -1682,6 +1861,33 @@ _cb_title(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term *term = data;
    if (term->focused)
      elm_win_title_set(term->wn->win, termio_title_get(term->term));
+   edje_object_part_text_set(term->bg, "terminology.tab.title", termio_title_get(term->term));
+   if (term->config->notabs)
+     {
+        Split *sp = _split_find(term->wn->win, term->term, NULL);
+        if (sp)
+          {
+             Eina_List *l, *ll;
+             Evas_Object *o;
+             Term *term2;
+
+             EINA_LIST_FOREACH(sp->terms, l, term)
+               {
+                  EINA_LIST_FOREACH(term->tabbar.l.tabs, ll, o)
+                    {
+                       term2 = evas_object_data_get(o, "term");
+                       if (term2)
+                         edje_object_part_text_set(o, "terminology.title", termio_title_get(term2->term));
+                    }
+                  EINA_LIST_FOREACH(term->tabbar.r.tabs, ll, o)
+                    {
+                       term2 = evas_object_data_get(o, "term");
+                       if (term2)
+                         edje_object_part_text_set(o, "terminology.title", termio_title_get(term2->term));
+                    }
+               }
+          }
+     }
 }
 
 static void
@@ -2060,33 +2266,52 @@ term_free(Term *term)
      {
         eina_stringshare_del(s);
      }
+   _tabbar_clear(term);
    if (term->media)
      {
         evas_object_event_callback_del(term->media,
                                        EVAS_CALLBACK_DEL,
                                        _cb_media_del);
         evas_object_del(term->media);
+        term->media = NULL;
      }
-   term->media = NULL;
-   if (term->popmedia) evas_object_del(term->popmedia);
+   if (term->popmedia)
+     {
+        evas_object_del(term->popmedia);
+        term->popmedia = NULL;
+     }
+        term->popmedia_deleted = EINA_FALSE;
    if (term->miniview)
      {
         evas_object_del(term->miniview);
         term->miniview = NULL;
      }
-   term->popmedia = NULL;
-   term->popmedia_deleted = EINA_FALSE;
+   if (term->tabcount_spacer)
+     {
+        evas_object_del(term->tabcount_spacer);
+        term->tabcount_spacer = NULL;
+     }
+   if (term->tab_spacer)
+     {
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
+     }
+   if (term->tab_region_bg)
+     {
+        evas_object_del(term->tab_region_bg);
+        term->tab_region_bg = NULL;
+     }
+   if (term->tab_region_base)
+     {
+        evas_object_del(term->tab_region_base);
+        term->tab_region_base = NULL;
+     }
    evas_object_del(term->term);
    term->term = NULL;
    evas_object_del(term->base);
    term->base = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
-   if (term->tabcount_spacer)
-     {
-        evas_object_del(term->tabcount_spacer);
-        term->tabcount_spacer = NULL;
-     }
    free(term);
 }
 
@@ -2188,14 +2413,58 @@ main_term_bg_config(Term *term)
 }
 
 static void
+_cb_tabregion_change(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Term *term = data;
+   Evas_Coord w, h;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_size_hint_min_set(term->tab_region_base, w, h);
+   edje_object_part_swallow(term->base, "terminology.tabregion", term->tab_region_base);
+}
+
+static void
+_term_tabregion_setup(Term *term)
+{
+   Evas_Object *o;
+
+   if (term->tab_region_bg) return;
+   term->tab_region_bg = o = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+   evas_object_color_set(o, 0, 0, 0, 0);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cb_tabregion_change, term);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _cb_tabregion_change, term);
+   edje_object_part_swallow(term->bg, "terminology.tabregion", o);
+
+   term->tab_region_base = o = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+   evas_object_color_set(o, 0, 0, 0, 0);
+   edje_object_part_swallow(term->base, "terminology.tabregion", o);
+}
+
+static void
 _main_term_bg_redo(Term *term)
 {
    Evas_Object *o;
 
+   _tabbar_clear(term);
    if (term->tabcount_spacer)
      {
         evas_object_del(term->tabcount_spacer);
         term->tabcount_spacer = NULL;
+     }
+   if (term->tab_spacer)
+     {
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
+     }
+   if (term->tab_region_bg)
+     {
+        evas_object_del(term->tab_region_bg);
+        term->tab_region_bg = NULL;
+     }
+   if (term->tab_region_base)
+     {
+        evas_object_del(term->tab_region_base);
+        term->tab_region_base = NULL;
      }
    if (term->miniview)
      {
@@ -2205,7 +2474,7 @@ _main_term_bg_redo(Term *term)
      }
    evas_object_del(term->base);
    evas_object_del(term->bg);
-   
+
    term->base = o = edje_object_add(evas_object_evas_get(term->wn->win));
    theme_apply(o, term->config, "terminology/core");
 
@@ -2219,6 +2488,8 @@ _main_term_bg_redo(Term *term)
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    theme_apply(o, term->config, "terminology/background");
 
+   _term_tabregion_setup(term);
+
    term->miniview = o = miniview_add(term->wn->win, term->term);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -2231,7 +2502,7 @@ _main_term_bg_redo(Term *term)
    evas_object_show(o);
    main_term_bg_config(term);
    if (term->miniview_shown)
-        edje_object_signal_emit(term->bg, "miniview,on", "terminology");
+     edje_object_signal_emit(term->bg, "miniview,on", "terminology");
 }
 
 Eina_Bool
@@ -2294,6 +2565,7 @@ _cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
      {
         if (!term->wn->focused) elm_win_urgent_set(term->wn->win, EINA_TRUE);
      }
+   // XXX: update tabbars to have bell status in them
 }
 
 
@@ -2383,6 +2655,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_data_set(o, "theme_reload_func", main_term_bg_config);
    evas_object_data_set(o, "theme_reload_func_data", term);
    evas_object_show(o);
+
+   _term_tabregion_setup(term);
 
    if (term->config->translucent)
      msg.val = term->config->opacity;
@@ -2505,6 +2779,7 @@ _sel_cb_selected(void *data,
           {
              _term_focus(tm);
              _term_focus_show(sp, tm);
+             _split_tabcount_update(sp, tm);
              _sel_restore(sp);
              _term_miniview_check(tm);
              return;
@@ -2513,6 +2788,7 @@ _sel_cb_selected(void *data,
    _sel_restore(sp);
    _term_focus(sp->term);
    _term_focus_show(sp, sp->term);
+   _split_tabcount_update(sp, sp->term);
    _term_miniview_check(tm);
 }
 
@@ -2525,6 +2801,7 @@ _sel_cb_exit(void *data,
    _sel_restore(sp);
    _term_focus(sp->term);
    _term_focus_show(sp, sp->term);
+   _split_tabcount_update(sp, sp->term);
 }
 
 static void
@@ -2628,3 +2905,25 @@ windows_free(void)
      }
 }
 
+static void
+_split_update(Split *sp)
+{
+   Eina_List *l;
+   Term *tm;
+
+   EINA_LIST_FOREACH(sp->terms, l, tm)
+     {
+        _split_tabcount_update(sp, tm);
+     }
+   if (sp->s1) _split_update(sp->s1);
+   if (sp->s2) _split_update(sp->s2);
+}
+
+void
+windows_update(void)
+{
+   Eina_List *l;
+   Win *wn;
+
+   EINA_LIST_FOREACH(wins, l, wn) _split_update(wn->split);
+}

@@ -21,6 +21,7 @@ _cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
    else                                                         \
      config->_cfg_name = elm_check_state_get(obj);              \
    termio_config_update(term);                                  \
+   windows_update();                                            \
    config_save(config, NULL);                                   \
 }
 
@@ -39,6 +40,7 @@ CB(drag_links, 0);
 CB(login_shell, 0);
 CB(mouse_over_focus, 0);
 CB(gravatar,  0);
+CB(notabs,  1);
 
 #undef CB
 
@@ -247,6 +249,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Start as login shell"), login_shell, 0);
    CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
    CX(_("Gravatar integration"), gravatar, 0);
+   CX(_("Show tabs"), notabs, 1);
 
 /*
    CX(_("Enable application server"), application_server, 0);
