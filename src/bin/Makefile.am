@@ -56,8 +56,6 @@ win.c win.h \
 utils.c utils.h \
 dbus.c dbus.h \
 extns.c extns.h \
-app_server.c app_server.h \
-app_server_eet.c app_server_eet.h \
 gravatar.c gravatar.h \
 tty_keys.h
 

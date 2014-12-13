@@ -44,67 +44,6 @@ CB(notabs,  1);
 
 #undef CB
 
-
-/*
-static void
-_cb_op_behavior_application_server_restore_views_chg(void *data, Evas_Object *obj,
-                                                     void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   config->application_server_restore_views = elm_check_state_get(obj);
-   config_save(config, NULL);
-}
-
-static void
-_behavior_option_restore_opened_views_add(Evas_Object *term,
-                                                      Evas_Object *check)
-{
-   Evas_Object *bx = evas_object_data_get(check, "box");
-   Evas_Object *o;
-   Config *config = termio_config_get(term);
-
-   o = elm_check_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Restore opened views"));
-   elm_check_state_set(o, config->application_server_restore_views);
-   elm_box_pack_after(bx, o, check);
-   evas_object_show(o);
-   evas_object_data_set(check, "restore_views", o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_application_server_restore_views_chg,
-                                  term);
-}
-
-
-static void
-_behavior_option_restore_opened_views_del(Evas_Object *check)
-{
-   Evas_Object *o = evas_object_data_del(check, "restore_views");
-   if (o)
-     evas_object_del(o);
-}
-
-static void
-_cb_op_behavior_application_server(void *data, Evas_Object *obj, void *event EINA_UNUSED)
-{
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
-   Eina_Bool old = config->application_server;
-   config->application_server = elm_check_state_get(obj);
-
-   if (old == config->application_server)
-     return;
-
-   if (!config->application_server)
-     _behavior_option_restore_opened_views_del(obj);
-   else
-     _behavior_option_restore_opened_views_add(term, obj);
-   config_save(config, NULL);
-}
-*/
-
 static unsigned int
 sback_double_to_expo_int(double d)
 {
@@ -251,13 +190,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Gravatar integration"), gravatar, 0);
    CX(_("Show tabs"), notabs, 1);
 
-/*
-   CX(_("Enable application server"), application_server, 0);
-
-   evas_object_data_set(o, "box", bx);
-   if (config->application_server)
-     _behavior_option_restore_opened_views_add(term, o);
- */
 #undef CX
 
 

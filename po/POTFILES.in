@@ -1,7 +1,5 @@
 src/bin/controls.c
 src/bin/about.c
-src/bin/app_server.c
-src/bin/app_server_eet.c
 src/bin/col.c
 src/bin/config.c
 src/bin/controls.c
