@@ -169,11 +169,8 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
 
    if (ev->string)
      {
-        if ((ev->string[0]) && (!ev->string[1]))
-          {
-             if (alt)
-               termpty_write(ty, "\033", 1);
-          }
+        if (alt)
+          termpty_write(ty, "\033", 1);
         termpty_write(ty, ev->string, strlen(ev->string));
      }
 }
