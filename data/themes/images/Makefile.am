@@ -50,5 +50,23 @@ sl_left.png \
 sl_top.png \
 sl_bottom.png \
 sl_stripe.png \
-sl_right.png
-
+sl_right.png \
+tab_base_bottom.png \
+tab_base_l0.png \
+tab_base_l1.png \
+tab_base_m.png \
+tab_base_r0.png \
+tab_base_r1.png \
+tab_bg_l0.png \
+tab_bg_l1.png \
+tab_bg_r0.png \
+tab_bg_r1.png \
+tab_other_l.png \
+tab_other_m.png \
+tab_other_r.png \
+tab_shad_l0.png \
+tab_shad_l1.png \
+tab_shad_l2.png \
+tab_shad_r0.png \
+tab_shad_r1.png \
+tab_shad_r2.png
