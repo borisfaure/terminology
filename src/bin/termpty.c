@@ -283,6 +283,10 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    const char *pty;
    int mode;
    struct termios t;
+   Eina_Bool needs_shell;
+   const char *shell = NULL;
+   const char *args[4] = {NULL, NULL, NULL, NULL};
+   const char *arg0;
 
    ty = calloc(1, sizeof(Termpty));
    if (!ty) return NULL;
@@ -310,6 +314,42 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
      }
 
    ty->circular_offset = 0;
+
+   needs_shell = ((!cmd) ||
+                  (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
+   DBG("cmd='%s' needs_shell=%u", cmd ? cmd : "", needs_shell);
+
+   if (needs_shell)
+     {
+        shell = getenv("SHELL");
+        if (!shell)
+          {
+             uid_t uid = getuid();
+             struct passwd *pw = getpwuid(uid);
+             if (pw) shell = pw->pw_shell;
+          }
+        if (!shell)
+          {
+             WRN(_("Could not find shell, falling back to %s"), "/bin/sh");
+             shell = "/bin/sh";
+          }
+     }
+
+   if (!needs_shell)
+     args[0] = cmd;
+   else
+     {
+        args[0] = shell;
+        if (cmd)
+          {
+             args[1] = "-c";
+             args[2] = cmd;
+          }
+     }
+   arg0 = strrchr(args[0], '/');
+   if (!arg0) arg0 = args[0];
+   else arg0++;
+   ty->prop.title = eina_stringshare_add(arg0);
 
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0)
@@ -369,9 +409,6 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
      }
    if (!ty->pid)
      {
-        const char *shell = NULL;
-        const char *args[4] = {NULL, NULL, NULL, NULL};
-        Eina_Bool needs_shell;
         int i;
         char buf[256];
 
@@ -384,38 +421,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                   exit(127);
                }
           }
-        
-        needs_shell = ((!cmd) ||
-                       (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
-        DBG("cmd='%s' needs_shell=%u", cmd ? cmd : "", needs_shell);
 
-        if (needs_shell)
-          {
-             shell = getenv("SHELL");
-             if (!shell)
-               {
-                  uid_t uid = getuid();
-                  struct passwd *pw = getpwuid(uid);
-                  if (pw) shell = pw->pw_shell;
-               }
-             if (!shell)
-               {
-                  WRN(_("Could not find shell, falling back to %s"), "/bin/sh");
-                  shell = "/bin/sh";
-               }
-          }
-
-        if (!needs_shell)
-          args[0] = cmd;
-        else
-          {
-             args[0] = shell;
-             if (cmd)
-               {
-                  args[1] = "-c";
-                  args[2] = cmd;
-               }
-          }
 
 #define NC(x) (args[x] != NULL ? args[x] : "")
         DBG("exec %s %s %s %s", NC(0), NC(1), NC(2), NC(3));
