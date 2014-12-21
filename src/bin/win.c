@@ -2617,7 +2617,7 @@ term_new(Win *wn, Config *config, const char *cmd,
 
    if (!config) abort();
 
-   /* TODO: boris: clean up that */
+   /* TODO: clean up that */
    termpty_init();
    miniview_init();
    gravatar_init();
