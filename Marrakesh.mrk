@@ -9,6 +9,8 @@ VERSION: 0.7.99
 LICENSE: BSD-2
 COPYING: COPYING AUTHORS
 NEEDS: 1.11
+DEV: raster
+KEY: default
 DOMAIN: terminology
 REPO: http://git.enlightenment.org/apps/terminology.git
 DEVREPO: git+ssh://git@git.enlightenment.org/apps/terminology.git
