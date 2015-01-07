@@ -7,6 +7,7 @@
 #include "termiolink.h"
 #include "termpty.h"
 #include "termcmd.h"
+#include "termptydbl.h"
 #include "utf8.h"
 #include "col.h"
 #include "keyin.h"
@@ -77,6 +78,7 @@ struct _Termio
    Evas_Object *win, *theme, *glayer;
    Config *config;
    const char *sel_str;
+   const char *preedit_str;
    Eina_List *cur_chids;
    Ecore_Job *sel_reset_job;
    double set_sel_at;
@@ -2844,6 +2846,8 @@ _imf_cursor_set(Termio *sd)
    evas_object_geometry_get(sd->cursor.obj, &cx, &cy, &cw, &ch);
    if (sd->khdl.imf)
      ecore_imf_context_cursor_location_set(sd->khdl.imf, cx, cy, cw, ch);
+   if (sd->khdl.imf) ecore_imf_context_cursor_position_set
+     (sd->khdl.imf, (sd->cursor.y * sd->grid.w) + sd->cursor.x);
    /*
     ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
     */
@@ -3884,7 +3888,7 @@ _smart_apply(Evas_Object *obj)
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l, *ln;
    Termblock *blk;
-   int x, y, w, ch1 = 0, ch2 = 0, inv = 0;
+   int x, y, w, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
@@ -4047,6 +4051,82 @@ _smart_apply(Evas_Object *obj)
           evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
                                           ch2 - ch1 + 1, 1);
      }
+   if (sd->preedit_str)
+     {
+        int x = sd->cursor.x, y = sd->cursor.y;
+        Eina_Unicode *uni, g;
+        int len = 0, i, jump, xx, backx;
+        Eina_Bool dbl;
+        Evas_Textgrid_Cell *tc;
+
+        uni = eina_unicode_utf8_to_unicode(sd->preedit_str, &len);
+        if (uni)
+          {
+             for (i = 0; i < len; i++)
+               {
+                  jump = 1;
+                  g = uni[i];
+#if defined(SUPPORT_DBLWIDTH)
+                  dbl = _termpty_is_dblwidth_get(sd->pty, g);
+                  if (dbl) jump = 2;
+#endif
+                  backx = 0;
+                  if ((x + jump) > sd->grid.w)
+                    {
+                       if (y < (sd->grid.h - 1))
+                         {
+                            x = jump;
+                            backx = jump;
+                            y++;
+                         }
+                    }
+                  else
+                    {
+                       x += jump;
+                       backx = jump;
+                    }
+                  tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
+                  xx = x - backx;
+                  tc[xx].bold = 1;
+                  tc[xx].bg = COL_BLACK;
+                  tc[xx].fg = COL_WHITE;
+                  tc[xx].fg_extended = 0;
+                  tc[xx].bg_extended = 0;
+                  tc[xx].underline = 1;
+                  tc[xx].strikethrough = 0;
+                  tc[xx].double_width = dbl;
+                  tc[xx].codepoint = g;
+#if defined(SUPPORT_DBLWIDTH)
+                  if (dbl)
+                    {
+                       xx = x - backx + 1;
+                       tc[xx].bold = 1;
+                       tc[xx].bg = COL_BLACK;
+                       tc[xx].fg = COL_WHITE;
+                       tc[xx].fg_extended = 0;
+                       tc[xx].bg_extended = 0;
+                       tc[xx].underline = 1;
+                       tc[xx].strikethrough = 0;
+                       tc[xx].double_width = 0;
+                       tc[xx].codepoint = 0;
+                    }
+#endif
+                  evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
+                  if (x >= sd->grid.w)
+                    {
+                       if (y < (sd->grid.h - 1))
+                         {
+                            x = 0;
+                            y++;
+                         }
+                    }
+               }
+             evas_object_textgrid_update_add(sd->grid.obj, 0, sd->cursor.y,
+                                             sd->grid.w, y - sd->cursor.y + 1);
+          }
+        preedit_x = x - sd->cursor.x;
+        preedit_y = y - sd->cursor.y;
+     }
    termpty_cellcomp_thaw(sd->pty);
 
    EINA_LIST_FOREACH_SAFE(sd->pty->block.active, l, ln, blk)
@@ -4066,8 +4146,8 @@ _smart_apply(Evas_Object *obj)
    sd->cursor.x = sd->pty->state.cx;
    sd->cursor.y = sd->pty->state.cy;
    evas_object_move(sd->cursor.obj,
-                    ox + (sd->cursor.x * sd->font.chw),
-                    oy + (sd->cursor.y * sd->font.chh));
+                    ox + ((sd->cursor.x + preedit_x) * sd->font.chw),
+                    oy + ((sd->cursor.y + preedit_y) * sd->font.chh));
    if (sd->pty->selection.is_active)
      {
         int start_x, start_y, end_x, end_y;
@@ -4248,6 +4328,43 @@ _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event
    DBG("IMF committed '%s'", str);
    if (!str) return;
    termpty_write(sd->pty, str, strlen(str));
+   if (sd->preedit_str)
+     {
+        eina_stringshare_del(sd->preedit_str);
+        sd->preedit_str = NULL;
+     }
+   _smart_update_queue(sd->self, sd);
+}
+
+static void
+_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event)
+{
+   Termio *sd = data;
+   Ecore_IMF_Event_Delete_Surrounding *ev = event;
+   DBG("IMF del surrounding %p %i %i", sd, ev->offset, ev->n_chars);
+}
+
+static void
+_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event EINA_UNUSED)
+{
+   Termio *sd = data;
+   char *preedit_string;
+   int cursor_pos;
+   ecore_imf_context_preedit_string_get(ctx, &preedit_string, &cursor_pos);
+   if (!preedit_string) return;
+   DBG("IMF preedit str '%s'", preedit_string);
+   if (sd->preedit_str) eina_stringshare_del(sd->preedit_str);
+   sd->preedit_str = eina_stringshare_add(preedit_string);
+   _smart_update_queue(sd->self, sd);
+   free(preedit_string);
+}
+
+static void
+_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event)
+{
+   Termio *sd = data;
+   Ecore_IMF_Event_Selection *ev = event;
+   DBG("IMF selection set %p %i %i", sd, ev->start, ev->end);
 }
 
 
@@ -4360,10 +4477,13 @@ _smart_add(Evas_Object *obj)
 
         ecore_imf_context_event_callback_add
           (sd->khdl.imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb, sd);
-
+        ecore_imf_context_event_callback_add
+          (sd->khdl.imf, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _imf_event_delete_surrounding_cb, sd);
+        ecore_imf_context_event_callback_add
+          (sd->khdl.imf, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _imf_event_preedit_changed_cb, sd);
+        ecore_imf_context_event_callback_add
+          (sd->khdl.imf, ECORE_IMF_CALLBACK_SELECTION_SET, _imf_event_selection_set_cb, sd);
         /* make IMF usable by a terminal - no preedit, prediction... */
-        ecore_imf_context_use_preedit_set
-          (sd->khdl.imf, EINA_FALSE);
         ecore_imf_context_prediction_allow_set
           (sd->khdl.imf, EINA_FALSE);
         ecore_imf_context_autocapital_type_set
@@ -4423,9 +4543,11 @@ _smart_del(Evas_Object *obj)
    if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);
    keyin_compose_seq_reset(&sd->khdl);
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+   if (sd->preedit_str) eina_stringshare_del(sd->preedit_str);
    if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
    EINA_LIST_FREE(sd->cur_chids, chid) eina_stringshare_del(chid);
    sd->sel_str = NULL;
+   sd->preedit_str = NULL;
    sd->sel_reset_job = NULL;
    sd->link.down.dndobj = NULL;
    sd->cursor.obj = NULL;
