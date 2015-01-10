@@ -392,7 +392,11 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 #ifdef IUTF8
    t.c_iflag |= IUTF8;
 #endif
-   tcsetattr(ty->fd, TCSANOW, &t);
+   if (tcsetattr(ty->fd, TCSANOW, &t) < 0)
+     {
+        ERR("unable to tcsetattr: %s", strerror(errno));
+        goto err;
+     }
 
    ty->hand_exe_exit = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                _cb_exe_exit, ty);
