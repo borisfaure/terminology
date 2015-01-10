@@ -992,9 +992,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'y': // invoke confidence test
         break;
-      case 'g': // clear tabulation
-        break;
  */
+      case 'g': // clear tabulation
+        arg = _csi_arg_get(&b);
+        DBG("Tabulation Clear (TBC): %d", arg);
+        break;
        case 'Z': // Cursor Back Tab
        {
           int idx, size, cx = ty->state.cx, cy = ty->state.cy;
