@@ -1583,11 +1583,12 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case '8': // restore cursor pos
         _termpty_cursor_copy(&(ty->save), &(ty->state));
         return 1;
+      case 'H': // set tab at current column
+        DBG("Character Tabulation Set (HTS)");
+        return 1;
 /*
       case 'G': // query gfx mode
         return 2;
-      case 'H': // set tab at current column
-        return 1;
       case 'n': // single shift 2
         return 1;
       case 'o': // single shift 3
