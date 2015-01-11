@@ -4053,11 +4053,11 @@ _smart_apply(Evas_Object *obj)
      }
    if (sd->preedit_str)
      {
-        int x = sd->cursor.x, y = sd->cursor.y;
         Eina_Unicode *uni, g;
         int len = 0, i, jump, xx, backx;
         Eina_Bool dbl;
         Evas_Textgrid_Cell *tc;
+        x = sd->cursor.x, y = sd->cursor.y;
 
         uni = eina_unicode_utf8_to_unicode(sd->preedit_str, &len);
         if (uni)
