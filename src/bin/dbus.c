@@ -82,6 +82,11 @@ ty_dbus_init(void)
 
    eldbus_init();
 
+   if (!elm_need_sys_notify())
+     {
+        WRN("no elementary system notification support");
+     }
+
    ty_dbus_conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ty_e_object = eldbus_object_get(ty_dbus_conn,
                                    "org.enlightenment.wm.service",

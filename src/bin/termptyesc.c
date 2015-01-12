@@ -1140,6 +1140,49 @@ err:
 }
 
 
+static void
+_handle_xterm_777_command(Termpty *ty EINA_UNUSED,
+                          char *s, int len EINA_UNUSED)
+{
+#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
+   char *cmd_end = NULL,
+        *title = NULL,
+        *title_end = NULL,
+        *message = NULL;
+
+   if (strncmp(s, "notify;", strlen("notify;")))
+     {
+        ERR("unrecognized xterm 777 command %s", s);
+        return;
+     }
+
+   if (!elm_need_sys_notify())
+     {
+        ERR("no elementary system notification support");
+        return;
+     }
+   cmd_end = s + strlen("notify");
+   if (*cmd_end != ';')
+     return;
+   *cmd_end = '\0';
+   title = cmd_end + 1;
+   title_end = strchr(title, ';');
+   if (!title_end)
+     {
+        *cmd_end = ';';
+        return;
+     }
+   *title_end = '\0';
+   message = title_end + 1;
+
+   elm_sys_notify_send(0, "dialog-information", title, message,
+                       ELM_SYS_NOTIFY_URGENCY_NORMAL, -1,
+                       NULL, NULL);
+   *cmd_end = ';';
+   *title_end = ';';
+#endif
+}
+
 static int
 _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
@@ -1304,6 +1347,15 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                 termio_textgrid_get(ty->obj),
                 EVAS_TEXTGRID_PALETTE_STANDARD, 0,
                 r, g, b, 0xff);
+          }
+        break;
+      case 777:
+        DBG("xterm notification support");
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (s)
+          {
+             _handle_xterm_777_command(ty, s, len);
+             free(s);
           }
         break;
       default:
