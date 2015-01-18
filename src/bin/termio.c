@@ -2345,6 +2345,65 @@ _sel_line(Termio *sd, int cy)
    termpty_cellcomp_thaw(sd->pty);
 }
 
+static void
+_sel_line_to(Termio *sd, int cy)
+{
+   int start_y, end_y;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   start_y = sd->pty->selection.start.y;
+   end_y   = sd->pty->selection.end.y;
+
+   if (sd->pty->selection.is_box)
+     {
+        if (start_y > end_y)
+          INT_SWAP(start_y, end_y);
+        if (cy > start_y && cy < end_y)
+          {
+             _sel_set(sd, EINA_FALSE);
+             return;
+          }
+     }
+   else
+     {
+        if (start_y >= end_y)
+          {
+             INT_SWAP(start_y, end_y);
+          }
+        if ((cy > start_y) && (cy < end_y))
+          {
+             _sel_set(sd, EINA_FALSE);
+             return;
+          }
+     }
+
+   _sel_line(sd, cy);
+
+   if (sd->pty->selection.is_box)
+     {
+        start_y = MIN(start_y, sd->pty->selection.start.y);
+        end_y = MAX(end_y, sd->pty->selection.end.y);
+     }
+   else
+     {
+        if (sd->pty->selection.start.y <= start_y)
+          {
+             start_y = sd->pty->selection.start.y;
+          }
+        else
+        if (sd->pty->selection.end.y >= end_y)
+          {
+             end_y = sd->pty->selection.end.y;
+          }
+     }
+
+   sd->pty->selection.start.x = 0;
+   sd->pty->selection.end.x = sd->grid.w - 1;
+   sd->pty->selection.start.y = start_y;
+   sd->pty->selection.end.y = end_y;
+}
+
 static Eina_Bool
 _codepoint_is_wordsep(const Eina_Unicode g)
 {
@@ -3323,7 +3382,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      {
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
-             _sel_line(sd, cy - sd->scroll);
+             if (shift && sd->pty->selection.is_active)
+               _sel_line_to(sd, cy - sd->scroll);
+             else
+               _sel_line(sd, cy - sd->scroll);
              if (sd->pty->selection.is_active)
                termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
