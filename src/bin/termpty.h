@@ -226,6 +226,7 @@ void       termpty_free(Termpty *ty);
 void       termpty_cellcomp_freeze(Termpty *ty);
 void       termpty_cellcomp_thaw(Termpty *ty);
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
+ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int w, int h);
 void       termpty_backscroll_set(Termpty *ty, int size);

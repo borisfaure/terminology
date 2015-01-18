@@ -2794,34 +2794,39 @@ static void
 _selection_newline_extend_fix(Evas_Object *obj)
 {
    Termio *sd;
+   ssize_t w;
 
    sd = evas_object_smart_data_get(obj);
-   if ((!sd->top_left) && (sd->pty->selection.end.y >= sd->pty->selection.start.y))
-     {
-        if (((sd->pty->selection.start.y == sd->pty->selection.end.y) &&
-             (sd->pty->selection.start.x <= sd->pty->selection.end.x)) ||
-            (sd->pty->selection.start.y < sd->pty->selection.end.y))
-          {
-             char *lastline;
-             int x1, y1, x2, y2;
-             size_t len;
 
-             if (sd->pty->selection.start.y == sd->pty->selection.end.y) x1 = sd->pty->selection.start.x;
-             else x1 = 0;
-             x2 = sd->pty->selection.end.x;
-             y1 = y2 = sd->pty->selection.end.y;
-             lastline = termio_selection_get(obj, x1, y1, x2, y2, &len);
-             if (lastline)
-               {
-                  if ((len > 0) && (lastline[len - 1] == '\n'))
-                    {
-                       sd->pty->selection.end.x = sd->grid.w - 1;
-                       _selection_dbl_fix(obj);
-                    }
-                  free(lastline);
-               }
-          }
+   if ((sd->top_left) || (sd->bottom_right))
+     return;
+
+   termpty_cellcomp_freeze(sd->pty);
+
+   if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
+       ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
+        (sd->pty->selection.end.x > sd->pty->selection.start.x)))
+     {
+        /* going down/right */
+        w = termpty_row_length(sd->pty, sd->pty->selection.start.y);
+        if (w < sd->pty->selection.start.x)
+          sd->pty->selection.start.x = w;
+        w = termpty_row_length(sd->pty, sd->pty->selection.end.y);
+        if (w <= sd->pty->selection.end.x)
+          sd->pty->selection.end.x = sd->pty->w;
      }
+   else
+     {
+        /* going up/left */
+        w = termpty_row_length(sd->pty, sd->pty->selection.end.y);
+        if (w < sd->pty->selection.end.x)
+          sd->pty->selection.end.x = w;
+        w = termpty_row_length(sd->pty, sd->pty->selection.start.y);
+        if (w <= sd->pty->selection.start.x)
+          sd->pty->selection.start.x = sd->pty->w;
+     }
+
+   termpty_cellcomp_thaw(sd->pty);
 }
 
 /* }}} */

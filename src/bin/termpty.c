@@ -580,6 +580,50 @@ termpty_cellcomp_thaw(Termpty *ty EINA_UNUSED)
    termpty_save_thaw();
 }
 
+ssize_t
+termpty_line_length(const Termcell *cells, ssize_t nb_cells)
+{
+   ssize_t len = nb_cells;
+
+   for (len = nb_cells - 1; len >= 0; len--)
+     {
+        const Termcell *cell = cells + len;
+
+        if ((cell->codepoint != 0) &&
+            (cell->att.bg != COL_INVIS))
+          return len + 1;
+     }
+
+   return 0;
+}
+
+ssize_t
+termpty_row_length(Termpty *ty, int y)
+{
+   Termsave *ts;
+
+   if (y >= 0)
+     {
+        Termcell *cells;
+        if (y >= ty->h)
+          {
+             ERR("invalid row given");
+             return 0;
+          }
+        cells = &(TERMPTY_SCREEN(ty, 0, y));
+        return termpty_line_length(cells, ty->w);
+     }
+   if ((y < -ty->backmax) || !ty->back)
+     {
+        ERR("invalid row given");
+        return 0;
+     }
+   ts = ty->back[(ty->backmax + ty->backpos + y) % ty->backmax];
+   if (!ts) return 0;
+
+   return ts->comp ? ((Termsavecomp*)ts)->wout : ts->w;
+}
+
 Termcell *
 termpty_cellrow_get(Termpty *ty, int y, int *wret)
 {
@@ -587,10 +631,11 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
 
    if (y >= 0)
      {
+        Termcell *cells;
         if (y >= ty->h) return NULL;
-        *wret = ty->w;
-	/* fprintf(stderr, "getting: %i (%i, %i)\n", y, ty->circular_offset, ty->h); */
-        return &(TERMPTY_SCREEN(ty, 0, y));
+        cells = &(TERMPTY_SCREEN(ty, 0, y));
+        *wret = termpty_line_length(cells, ty->w);
+        return cells;
      }
    if ((y < -ty->backmax) || !ty->back) return NULL;
    tssrc = &(ty->back[(ty->backmax + ty->backpos + y) % ty->backmax]);
@@ -608,23 +653,6 @@ termpty_write(Termpty *ty, const char *input, int len)
    if (write(ty->fd, input, len) < 0)
      ERR(_("Could not write to file descriptor %d: %s"),
          ty->fd, strerror(errno));
-}
-
-ssize_t
-termpty_line_length(const Termcell *cells, ssize_t nb_cells)
-{
-   ssize_t len = nb_cells;
-
-   for (len = nb_cells - 1; len >= 0; len--)
-     {
-        const Termcell *cell = cells + len;
-
-        if ((cell->codepoint != 0) &&
-            (cell->att.bg != COL_INVIS))
-          return len + 1;
-     }
-
-   return 0;
 }
 
 static int
