@@ -105,7 +105,7 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static Eina_List *terms = NULL;
 
-static void _sel_set(Evas_Object *obj, Eina_Bool enable);
+static void _sel_set(Termio *sd, Eina_Bool enable);
 static void _remove_links(Termio *sd, Evas_Object *obj);
 static void _smart_update_queue(Evas_Object *obj, Termio *sd);
 static void _smart_apply(Evas_Object *obj);
@@ -144,12 +144,12 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
              ty->selection.end.y += direction;
              if (!(start_y <= ty->selection.start.y &&
                  end_y >= ty->selection.end.y))
-               _sel_set(obj, EINA_FALSE);
+               _sel_set(sd, EINA_FALSE);
           }
         else
           if (!((start_y > ty->selection.end.y) ||
                 (end_y < ty->selection.start.y)))
-            _sel_set(obj, EINA_FALSE);
+            _sel_set(sd, EINA_FALSE);
         else
           {
              ty->selection.start.y += direction;
@@ -218,7 +218,7 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
              int d = MIN(n, ty->w - x);
              if (!((x > end_x) || (x + d < start_x)))
                {
-                  _sel_set(obj, EINA_FALSE);
+                  _sel_set(sd, EINA_FALSE);
                   break;
                }
              n -= d;
@@ -244,7 +244,7 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
 
         if (!((cells_changed > (cells_selection + sel_len)) ||
              (cells_selection > (cells_changed + n))))
-          _sel_set(obj, EINA_FALSE);
+          _sel_set(sd, EINA_FALSE);
      }
 }
 
@@ -2082,11 +2082,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
 
 
 static void
-_sel_set(Evas_Object *obj, Eina_Bool enable)
+_sel_set(Termio *sd, Eina_Bool enable)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-
    if (sd->pty->selection.is_active == enable) return;
    sd->pty->selection.is_active = enable;
    if (enable)
@@ -2139,7 +2136,7 @@ _lost_selection(void *data, Elm_Sel_Type selection)
                   eina_stringshare_del(sd->sel_str);
                   sd->sel_str = NULL;
                }
-             _sel_set(obj, EINA_FALSE);
+             _sel_set(sd, EINA_FALSE);
              elm_object_cnp_selection_clear(sd->win, selection);
              _smart_update_queue(obj, sd);
              sd->have_sel = EINA_FALSE;
@@ -2310,17 +2307,14 @@ termio_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 }
 
 static void
-_sel_line(Evas_Object *obj, int cx EINA_UNUSED, int cy)
+_sel_line(Termio *sd, int cy)
 {
    int y, w = 0;
-   Termio *sd = evas_object_smart_data_get(obj);
    Termcell *cells;
-
-   EINA_SAFETY_ON_NULL_RETURN(sd);
 
    termpty_cellcomp_freeze(sd->pty);
 
-   _sel_set(obj, EINA_TRUE);
+   _sel_set(sd, EINA_TRUE);
    sd->pty->selection.makesel = EINA_FALSE;
    sd->pty->selection.start.x = 0;
    sd->pty->selection.start.y = cy;
@@ -2540,18 +2534,15 @@ _codepoint_is_wordsep(const Eina_Unicode g)
 }
 
 static void
-_sel_word(Evas_Object *obj, int cx, int cy)
+_sel_word(Termio *sd, int cx, int cy)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
    Termcell *cells;
    int x, y, w = 0;
    Eina_Bool done = EINA_FALSE;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-
    termpty_cellcomp_freeze(sd->pty);
 
-   _sel_set(obj, EINA_TRUE);
+   _sel_set(sd, EINA_TRUE);
    sd->pty->selection.makesel = EINA_FALSE;
    sd->pty->selection.start.x = cx;
    sd->pty->selection.start.y = cy;
@@ -2645,9 +2636,8 @@ _sel_word(Evas_Object *obj, int cx, int cy)
 }
 
 static void
-_sel_word_to(Evas_Object *obj, int cx, int cy)
+_sel_word_to(Termio *sd, int cx, int cy)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
    int start_x, start_y, end_x, end_y;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -2666,7 +2656,7 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         if ((cy >= start_y && cy <= end_y) &&
             (cx >= start_x && cx <= end_x))
           {
-             _sel_set(obj, EINA_FALSE);
+             _sel_set(sd, EINA_FALSE);
              return;
           }
      }
@@ -2681,12 +2671,12 @@ _sel_word_to(Evas_Object *obj, int cx, int cy)
         if ((cy > start_y || (cy == start_y && cx >= start_x)) &&
              (cy < end_y  || (cy == end_y && cx <= end_x)))
           {
-             _sel_set(obj, EINA_FALSE);
+             _sel_set(sd, EINA_FALSE);
              return;
           }
      }
 
-   _sel_word(obj, cx, cy);
+   _sel_word(sd, cx, cy);
 
    if (sd->pty->selection.is_box)
      {
@@ -3333,7 +3323,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      {
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
-             _sel_line(data, cx, cy - sd->scroll);
+             _sel_line(sd, cy - sd->scroll);
              if (sd->pty->selection.is_active)
                termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
@@ -3343,9 +3333,9 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              if (!sd->pty->selection.is_active && sd->didclick)
                sd->pty->selection.is_active = EINA_TRUE;
              if (shift && sd->pty->selection.is_active)
-                  _sel_word_to(data, cx, cy - sd->scroll);
+                  _sel_word_to(sd, cx, cy - sd->scroll);
              else
-                  _sel_word(data, cx, cy - sd->scroll);
+                  _sel_word(sd, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
                termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
@@ -3413,7 +3403,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                {
                   /* New selection */
                   sd->moved = EINA_FALSE;
-                  _sel_set(data, EINA_FALSE);
+                  _sel_set(sd, EINA_FALSE);
                   sd->pty->selection.is_box =
                      (ctrl ||
                       evas_key_modifier_is_set(ev->modifiers, "Alt"));
@@ -3475,7 +3465,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
             (sd->pty->selection.start.y == sd->pty->selection.end.y)) ||
             (!sd->moved))
           {
-             _sel_set(data, EINA_FALSE);
+             _sel_set(sd, EINA_FALSE);
              sd->didclick = EINA_FALSE;
              _smart_update_queue(data, sd);
              return;
@@ -3593,7 +3583,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    if (sd->link.down.dnd)
      {
         sd->pty->selection.makesel = EINA_FALSE;
-        _sel_set(data, EINA_FALSE);
+        _sel_set(sd, EINA_FALSE);
         _smart_update_queue(data, sd);
         return;
      }
@@ -3605,7 +3595,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           {
              if ((cx != sd->pty->selection.start.x) ||
                  ((cy - sd->scroll) != sd->pty->selection.start.y))
-               _sel_set(data, EINA_TRUE);
+               _sel_set(sd, EINA_TRUE);
           }
         start_x = sd->pty->selection.start.x;
         start_y = sd->pty->selection.start.y;
@@ -4270,7 +4260,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
      evas_object_size_hint_request_set(obj,
                                        sd->font.chw * sd->grid.w,
                                        sd->font.chh * sd->grid.h);
-   _sel_set(obj, EINA_FALSE);
+   _sel_set(sd, EINA_FALSE);
    termpty_resize(sd->pty, w, h);
 
    _smart_calculate(obj);
@@ -4679,7 +4669,7 @@ _smart_pty_cancel_sel(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (sd->pty->selection.is_active)
      {
-        _sel_set(obj, EINA_FALSE);
+        _sel_set(sd, EINA_FALSE);
         sd->pty->selection.makesel = EINA_FALSE;
         _smart_update_queue(data, sd);
      }
