@@ -148,6 +148,7 @@ struct _Termpty
       struct {
          int x, y;
       } start, end, start_backup, end_backup;
+      time_t last_click;
       unsigned char is_active : 1;
       unsigned char is_box    : 1;
       unsigned char makesel   : 1;

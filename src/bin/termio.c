@@ -3461,7 +3461,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.end.y = cy - sd->scroll;
                   _selection_dbl_fix(data);
                }
-             else if (!shift || !sd->pty->selection.is_active)
+             else if (!shift && !sd->pty->selection.is_active)
                {
                   /* New selection */
                   sd->moved = EINA_FALSE;
@@ -3476,11 +3476,78 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
                   sd->pty->selection.makesel = EINA_TRUE;
                   _selection_dbl_fix(data);
                }
+             else if (shift &&
+                      (time(NULL) - sd->pty->selection.last_click) <= 60)
+               {
+                  int start_x, start_y, end_x, end_y, cy_rel;
+
+                  if (!sd->pty->selection.is_active)
+                    sd->pty->selection.is_box = ctrl;
+
+                  start_x = sd->pty->selection.start.x;
+                  start_y = sd->pty->selection.start.y;
+                  end_x   = sd->pty->selection.end.x;
+                  end_y   = sd->pty->selection.end.y;
+
+                  cy_rel = cy - sd->scroll;
+
+                  if (sd->pty->selection.is_box)
+                    {
+                       if (start_y > end_y)
+                         INT_SWAP(start_y, end_y);
+                       if (start_x > end_x)
+                         INT_SWAP(start_x, end_x);
+                       if (cy_rel < start_y)
+                         start_y = cy;
+                       else if (cy_rel > end_y)
+                         end_y = cy;
+                       if (cx < start_x)
+                         start_x = cx;
+                       else if (cx > end_x)
+                         end_x = cx;
+                    }
+                  else
+                    {
+                       if ((start_y > end_y) ||
+                           ((start_y == end_y) && (end_x < start_x)))
+                         {
+                            INT_SWAP(start_y, end_y);
+                            INT_SWAP(start_x, end_x);
+                         }
+                       if ((cy_rel < start_y) ||
+                           (cy_rel == start_y && cx <= start_x))
+                         {
+                            start_y = cy_rel;
+                            start_x = cx;
+                         }
+                       else if ((cy_rel > end_y) ||
+                                (cy_rel == end_y && cx >= end_x))
+                         {
+                            end_y = cy_rel;
+                            end_x = cx;
+                         }
+                       else
+                         {
+                            sd->pty->selection.makesel = EINA_FALSE;
+                            _sel_set(sd, EINA_FALSE);
+                            _smart_update_queue(data, sd);
+                            return;
+                         }
+                    }
+                  sd->pty->selection.start.x = start_x;
+                  sd->pty->selection.start.y = start_y;
+                  sd->pty->selection.end.x = end_x;
+                  sd->pty->selection.end.y = end_y;
+                  sd->pty->selection.is_active = EINA_TRUE;
+                  _selection_dbl_fix(data);
+               }
              else
                {
+                  sd->pty->selection.start.x = sd->pty->selection.end.x = cx;
+                  sd->pty->selection.start.y = sd->pty->selection.end.y = cy - sd->scroll;
                   sd->pty->selection.makesel = EINA_FALSE;
+                  sd->didclick = !sd->pty->selection.is_active;
                   sd->pty->selection.is_active = EINA_FALSE;
-                  sd->didclick = EINA_TRUE;
                }
           }
         _smart_update_queue(data, sd);
@@ -3529,6 +3596,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
           {
              _sel_set(sd, EINA_FALSE);
              sd->didclick = EINA_FALSE;
+             sd->pty->selection.last_click = time(NULL);
              _smart_update_queue(data, sd);
              return;
           }
