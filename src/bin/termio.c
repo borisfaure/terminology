@@ -137,19 +137,32 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
    ty = sd->pty;
    if (ty->selection.is_active)
      {
-        if (start_y <= ty->selection.start.y &&
-            end_y >= ty->selection.end.y)
+        int sel_start_y, sel_end_y;
+
+        sel_start_y = ty->selection.start.y;
+        sel_end_y = ty->selection.end.y;
+
+        if (!ty->selection.is_top_to_bottom)
+             INT_SWAP(sel_start_y, sel_end_y);
+        if (start_y <= sel_start_y &&
+            end_y >= sel_end_y)
           {
              ty->selection.start.y += direction;
              ty->selection.end.y += direction;
-             if (!(start_y <= ty->selection.start.y &&
-                 end_y >= ty->selection.end.y))
-               _sel_set(sd, EINA_FALSE);
+             sel_start_y += direction;
+             sel_end_y += direction;
+             if (!(start_y <= sel_start_y &&
+                 end_y >= sel_end_y))
+               {
+                  _sel_set(sd, EINA_FALSE);
+               }
           }
         else
-          if (!((start_y > ty->selection.end.y) ||
-                (end_y < ty->selection.start.y)))
-            _sel_set(sd, EINA_FALSE);
+          if (!((start_y > sel_end_y) ||
+                (end_y < sel_start_y)))
+            {
+               _sel_set(sd, EINA_FALSE);
+            }
         else
           {
              ty->selection.start.y += direction;
@@ -203,14 +216,15 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
    start_y = sd->pty->selection.start.y;
    end_x   = sd->pty->selection.end.x;
    end_y   = sd->pty->selection.end.y;
+
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
    if (ty->selection.is_box)
      {
         int _y = y + (x + n) / ty->w;
-
-        if (start_y > end_y)
-          INT_SWAP(start_y, end_y);
-        if (start_x > end_x)
-          INT_SWAP(start_x, end_x);
 
         y = MAX(y, start_y);
         for (; y <= MIN(_y, end_y); y++)
@@ -230,21 +244,15 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
         int sel_len;
         Termcell *cells_changed, *cells_selection;
 
-        /* probably doing that way too much… */
-        if ((start_y > end_y) ||
-            ((start_y == end_y) && (end_x < start_x)))
-          {
-             INT_SWAP(start_y, end_y);
-             INT_SWAP(start_x, end_x);
-          }
-
         sel_len = end_x - start_x + ty->w * (end_y - start_y);
         cells_changed = &(TERMPTY_SCREEN(ty, x, y));
         cells_selection = &(TERMPTY_SCREEN(ty, start_x, start_y));
 
         if (!((cells_changed > (cells_selection + sel_len)) ||
              (cells_selection > (cells_changed + n))))
-          _sel_set(sd, EINA_FALSE);
+          {
+             _sel_set(sd, EINA_FALSE);
+          }
      }
 }
 
@@ -2089,7 +2097,11 @@ _sel_set(Termio *sd, Eina_Bool enable)
    if (enable)
      evas_object_smart_callback_call(sd->win, "selection,on", NULL);
    else
-     evas_object_smart_callback_call(sd->win, "selection,off", NULL);
+     {
+        evas_object_smart_callback_call(sd->win, "selection,off", NULL);
+        sd->pty->selection.by_word = EINA_FALSE;
+        sd->pty->selection.by_line = EINA_FALSE;
+     }
 }
 
 static void _lost_selection(void *data, Elm_Sel_Type selection);
@@ -2183,17 +2195,18 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         start_y = sd->pty->selection.start.y;
         end_x = sd->pty->selection.end.x;
         end_y = sd->pty->selection.end.y;
+
+        if (!sd->pty->selection.is_top_to_bottom)
+          {
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
      }
 
    if (sd->pty->selection.is_box)
      {
         int i;
         Eina_Strbuf *sb;
-
-        if (start_y > end_y)
-          INT_SWAP(start_y, end_y);
-        if (start_x > end_x)
-          INT_SWAP(start_x, end_x);
 
         sb = eina_strbuf_new();
         for (i = start_y; i <= end_y; i++)
@@ -2220,11 +2233,6 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
      }
    else if ((start_x != end_x) || (start_y != end_y))
      {
-        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
-          {
-             INT_SWAP(start_y, end_y);
-             INT_SWAP(start_x, end_x);
-          }
         s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len);
      }
 
@@ -2316,6 +2324,7 @@ _sel_line(Termio *sd, int cy)
 
    _sel_set(sd, EINA_TRUE);
    sd->pty->selection.makesel = EINA_FALSE;
+
    sd->pty->selection.start.x = 0;
    sd->pty->selection.start.y = cy;
    sd->pty->selection.end.x = sd->grid.w - 1;
@@ -2342,66 +2351,120 @@ _sel_line(Termio *sd, int cy)
      }
    sd->pty->selection.end.y = y;
 
+   sd->pty->selection.by_line = EINA_TRUE;
+   sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+
    termpty_cellcomp_thaw(sd->pty);
 }
 
 static void
-_sel_line_to(Termio *sd, int cy)
+_sel_line_to(Termio *sd, int cy, Eina_Bool extend)
 {
-   int start_y, end_y;
+   int start_y, end_y, c_start_y, c_end_y,
+       orig_y, orig_start_y, orig_end_y;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   /* Only change the end position */
+   orig_y = sd->pty->selection.orig.y;
    start_y = sd->pty->selection.start.y;
    end_y   = sd->pty->selection.end.y;
 
-   if (sd->pty->selection.is_box)
-     {
-        if (start_y > end_y)
-          INT_SWAP(start_y, end_y);
-        if (cy > start_y && cy < end_y)
-          {
-             _sel_set(sd, EINA_FALSE);
-             return;
-          }
-     }
-   else
-     {
-        if (start_y >= end_y)
-          {
-             INT_SWAP(start_y, end_y);
-          }
-        if ((cy > start_y) && (cy < end_y))
-          {
-             _sel_set(sd, EINA_FALSE);
-             return;
-          }
-     }
+   if (!sd->pty->selection.is_top_to_bottom)
+     INT_SWAP(start_y, end_y);
 
    _sel_line(sd, cy);
+   c_start_y = sd->pty->selection.start.y;
+   c_end_y   = sd->pty->selection.end.y;
+
+   _sel_line(sd, orig_y);
+   orig_start_y = sd->pty->selection.start.y;
+   orig_end_y   = sd->pty->selection.end.y;
 
    if (sd->pty->selection.is_box)
      {
-        start_y = MIN(start_y, sd->pty->selection.start.y);
-        end_y = MAX(end_y, sd->pty->selection.end.y);
+        if (extend)
+          {
+             if (start_y <= cy && cy <= end_y )
+               {
+                  start_y = MIN(c_start_y, orig_start_y);
+                  end_y = MAX(c_end_y, orig_end_y);
+               }
+             else
+               {
+                  if (c_end_y > end_y)
+                    {
+                       orig_y = start_y;
+                       end_y = c_end_y;
+                    }
+                  if (c_start_y < start_y)
+                    {
+                       orig_y = end_y;
+                       start_y = c_start_y;
+                    }
+               }
+             goto end;
+          }
+        else
+          {
+             start_y = MIN(c_start_y, orig_start_y);
+             end_y = MAX(c_end_y, orig_end_y);
+             goto end;
+          }
      }
    else
      {
-        if (sd->pty->selection.start.y <= start_y)
+        if (c_start_y < start_y)
           {
-             start_y = sd->pty->selection.start.y;
+             /* orig is at bottom */
+             if (extend)
+               {
+                  orig_y = end_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+             end_y = c_start_y;
+             start_y = orig_end_y;
+          }
+        else if (c_end_y > end_y)
+          {
+             if (extend)
+               {
+                  orig_y = start_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+             start_y = orig_start_y;
+             end_y = c_end_y;
           }
         else
-        if (sd->pty->selection.end.y >= end_y)
           {
-             end_y = sd->pty->selection.end.y;
+             if (c_start_y < orig_start_y)
+               {
+                  sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+                  start_y = orig_end_y;
+                  end_y = c_start_y;
+               }
+             else
+               {
+                  sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+                  start_y = orig_start_y;
+                  end_y = c_end_y;
+               }
           }
      }
-
-   sd->pty->selection.start.x = 0;
-   sd->pty->selection.end.x = sd->grid.w - 1;
+end:
+   sd->pty->selection.orig.y = orig_y;
    sd->pty->selection.start.y = start_y;
    sd->pty->selection.end.y = end_y;
+   if (sd->pty->selection.is_top_to_bottom)
+     {
+        sd->pty->selection.start.x = 0;
+        sd->pty->selection.end.x = sd->grid.w - 1;
+     }
+   else
+     {
+        sd->pty->selection.end.x = 0;
+        sd->pty->selection.start.x = sd->grid.w - 1;
+     }
 }
 
 static Eina_Bool
@@ -2602,7 +2665,9 @@ _sel_word(Termio *sd, int cx, int cy)
    termpty_cellcomp_freeze(sd->pty);
 
    _sel_set(sd, EINA_TRUE);
-   sd->pty->selection.makesel = EINA_FALSE;
+   sd->pty->selection.makesel = EINA_TRUE;
+   sd->pty->selection.orig.x = cx;
+   sd->pty->selection.orig.y = cy;
    sd->pty->selection.start.x = cx;
    sd->pty->selection.start.y = cy;
    sd->pty->selection.end.x = cx;
@@ -2657,7 +2722,7 @@ _sel_word(Termio *sd, int cx, int cy)
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells) goto end;
      }
-   x = sd->pty->selection.end.x;
+   x = cx;
 
    do
      {
@@ -2691,78 +2756,186 @@ _sel_word(Termio *sd, int cx, int cy)
    while (!done);
 
   end:
+
+   sd->pty->selection.by_word = EINA_TRUE;
+   sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+
    termpty_cellcomp_thaw(sd->pty);
 }
 
 static void
-_sel_word_to(Termio *sd, int cx, int cy)
+_sel_word_to(Termio *sd, int cx, int cy, Eina_Bool extend)
 {
-   int start_x, start_y, end_x, end_y;
+   int start_x, start_y, end_x, end_y, orig_x, orig_y,
+       c_start_x, c_start_y, c_end_x, c_end_y,
+       orig_start_x, orig_start_y, orig_end_x, orig_end_y;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   orig_x = sd->pty->selection.orig.x;
+   orig_y = sd->pty->selection.orig.y;
    start_x = sd->pty->selection.start.x;
    start_y = sd->pty->selection.start.y;
    end_x   = sd->pty->selection.end.x;
    end_y   = sd->pty->selection.end.y;
 
-   if (sd->pty->selection.is_box)
+   if (!sd->pty->selection.is_top_to_bottom)
      {
-        if (start_y > end_y)
-          INT_SWAP(start_y, end_y);
-        if (start_x > end_x)
-          INT_SWAP(start_x, end_x);
-        if ((cy >= start_y && cy <= end_y) &&
-            (cx >= start_x && cx <= end_x))
-          {
-             _sel_set(sd, EINA_FALSE);
-             return;
-          }
-     }
-   else
-     {
-        if ((start_y > end_y) ||
-            ((start_y == end_y) && (end_x < start_x)))
-          {
-             INT_SWAP(start_y, end_y);
-             INT_SWAP(start_x, end_x);
-          }
-        if ((cy > start_y || (cy == start_y && cx >= start_x)) &&
-             (cy < end_y  || (cy == end_y && cx <= end_x)))
-          {
-             _sel_set(sd, EINA_FALSE);
-             return;
-          }
+        INT_SWAP(start_x, end_x);
+        INT_SWAP(start_y, end_y);
      }
 
    _sel_word(sd, cx, cy);
+   c_start_x = sd->pty->selection.start.x;
+   c_start_y = sd->pty->selection.start.y;
+   c_end_x   = sd->pty->selection.end.x;
+   c_end_y   = sd->pty->selection.end.y;
+
+   _sel_word(sd, orig_x, orig_y);
+   orig_start_x = sd->pty->selection.start.x;
+   orig_start_y = sd->pty->selection.start.y;
+   orig_end_x   = sd->pty->selection.end.x;
+   orig_end_y   = sd->pty->selection.end.y;
 
    if (sd->pty->selection.is_box)
      {
-        start_y = MIN(start_y, sd->pty->selection.start.y);
-        start_x = MIN(start_x, sd->pty->selection.start.x);
-        end_y = MAX(end_y, sd->pty->selection.end.y);
-        end_x = MAX(end_x, sd->pty->selection.end.x);
+        if (extend)
+          {
+             /* special case: kind of line selection */
+             if (c_start_y != c_end_y)
+               {
+                  start_x = 0;
+                  end_x = sd->grid.w - 1;
+                  if (start_y <= cy && cy <= end_y )
+                    {
+                       start_y = MIN(c_start_y, orig_start_y);
+                       end_y = MAX(c_end_y, orig_end_y);
+                    }
+                  else
+                    {
+                       if (c_end_y > end_y)
+                         {
+                            orig_y = start_y;
+                            end_y = c_end_y;
+                         }
+                       if (c_start_y < start_y)
+                         {
+                            orig_y = end_y;
+                            start_y = c_start_y;
+                         }
+                    }
+                  goto end;
+               }
+             if ((start_y <= cy && cy <= end_y ) &&
+                 (start_x <= cx && cx <= end_x ))
+               {
+                  start_x = MIN(c_start_x, orig_start_x);
+                  end_x = MAX(c_end_x, orig_end_x);
+                  start_y = MIN(c_start_y, orig_start_y);
+                  end_y = MAX(c_end_y, orig_end_y);
+               }
+             else
+               {
+                  if (c_end_x > end_x)
+                    {
+                       orig_x = start_x;
+                       end_x = c_end_x;
+                    }
+                  if (c_start_x < start_x)
+                    {
+                       orig_x = end_x;
+                       start_x = c_start_x;
+                    }
+                  if (c_end_y > end_y)
+                    {
+                       orig_y = start_y;
+                       end_y = c_end_y;
+                    }
+                  if (c_start_y < start_y)
+                    {
+                       orig_y = end_y;
+                       start_y = c_start_y;
+                    }
+                  end_x = MAX(c_end_x, end_x);
+                  start_y = MIN(c_start_y, start_y);
+                  end_y = MAX(c_end_y, end_y);
+               }
+          }
+        else
+          {
+             /* special case: kind of line selection */
+             if (c_start_y != c_end_y || orig_start_y != orig_end_y)
+               {
+                  start_x = 0;
+                  end_x = sd->grid.w - 1;
+                  start_y = MIN(c_start_y, orig_start_y);
+                  end_y = MAX(c_end_y, orig_end_y);
+                  goto end;
+               }
+
+             start_x = MIN(c_start_x, orig_start_x);
+             end_x = MAX(c_end_x, orig_end_x);
+             start_y = MIN(c_start_y, orig_start_y);
+             end_y = MAX(c_end_y, orig_end_y);
+          }
      }
    else
      {
-        if (sd->pty->selection.start.y < start_y ||
-           (sd->pty->selection.start.y == start_y &&
-            sd->pty->selection.start.x < start_x))
+        if (c_start_y < start_y ||
+            (c_start_y == start_y &&
+             c_start_x < start_x))
           {
-             start_x = sd->pty->selection.start.x;
-             start_y = sd->pty->selection.start.y;
+             /* orig is at bottom */
+             if (extend)
+               {
+                  orig_x = end_x;
+                  orig_y = end_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+             end_x = c_start_x;
+             end_y = c_start_y;
+             start_x = orig_end_x;
+             start_y = orig_end_y;
+          }
+        else if (c_end_y > end_y ||
+                 (c_end_y == end_y && c_end_x >= end_x))
+          {
+             if (extend)
+               {
+                  orig_x = start_x;
+                  orig_y = start_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+             start_x = orig_start_x;
+             start_y = orig_start_y;
+             end_x = c_end_x;
+             end_y = c_end_y;
           }
         else
-        if (sd->pty->selection.end.y > end_y ||
-           (sd->pty->selection.end.y == end_y &&
-            sd->pty->selection.end.x > end_x))
           {
-             end_x = sd->pty->selection.end.x;
-             end_y = sd->pty->selection.end.y;
+             if (c_start_y < orig_start_y ||
+                 (c_start_y == orig_start_y && c_start_x <= orig_start_x))
+               {
+                  sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+                  start_x = orig_end_x;
+                  start_y = orig_end_y;
+                  end_x = c_start_x;
+                  end_y = c_start_y;
+               }
+             else
+               {
+                  sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+                  start_x = orig_start_x;
+                  start_y = orig_start_y;
+                  end_x = c_end_x;
+                  end_y = c_end_y;
+               }
           }
      }
 
+end:
+   sd->pty->selection.orig.x = orig_x;
+   sd->pty->selection.orig.y = orig_y;
    sd->pty->selection.start.x = start_x;
    sd->pty->selection.start.y = start_y;
    sd->pty->selection.end.x = end_x;
@@ -2770,78 +2943,210 @@ _sel_word_to(Termio *sd, int cx, int cy)
 }
 
 static void
-_selection_dbl_fix(Evas_Object *obj
+_sel_to(Termio *sd, int cx, int cy, Eina_Bool extend)
+{
+   int start_x, start_y, end_x, end_y, orig_x, orig_y;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   orig_x = sd->pty->selection.orig.x;
+   orig_y = sd->pty->selection.orig.y;
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x   = sd->pty->selection.end.x;
+   end_y   = sd->pty->selection.end.y;
+
+   if (sd->pty->selection.is_box)
+     {
+        if (!sd->pty->selection.is_top_to_bottom)
+          INT_SWAP(start_y, end_y);
+        if (start_x > end_x)
+          INT_SWAP(start_x, end_x);
+
+        if (cy < start_y)
+          {
+             start_y = cy;
+          }
+        else if (cy > end_y)
+          {
+             end_y = cy;
+          }
+        else
+          {
+             start_y = orig_y;
+             end_y = cy;
+          }
+
+        if (cx < start_x)
+          {
+             start_x = cx;
+          }
+        else if (cx > end_x)
+          {
+             end_x = cx;
+          }
+        else
+          {
+             start_x = orig_x;
+             end_x = cx;
+          }
+        sd->pty->selection.is_top_to_bottom = (end_y > start_y);
+        if (sd->pty->selection.is_top_to_bottom)
+          {
+             if (start_x > end_x)
+               INT_SWAP(start_x, end_x);
+          }
+        else
+          {
+             if (start_x < end_x)
+               INT_SWAP(start_x, end_x);
+          }
+     }
+   else
+     {
+        if (!sd->pty->selection.is_top_to_bottom)
+          {
+             INT_SWAP(start_x, end_x);
+             INT_SWAP(start_y, end_y);
+          }
+        if (cy < start_y ||
+            (cy == start_y &&
+             cx < start_x))
+          {
+             /* orig is at bottom */
+             if (sd->pty->selection.is_top_to_bottom && extend)
+               {
+                  orig_x = end_x;
+                  orig_y = end_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+          }
+        else if (cy > end_y ||
+                 (cy == end_y && cx >= end_x))
+          {
+             if (!sd->pty->selection.is_top_to_bottom && extend)
+               {
+                  orig_x = start_x;
+                  orig_y = start_y;
+               }
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+          }
+        else
+          {
+             sd->pty->selection.is_top_to_bottom =
+                (cy > orig_y) || (cy == orig_y && cx > orig_x);
+          }
+        start_x = orig_x;
+        start_y = orig_y;
+        end_x = cx;
+        end_y = cy;
+     }
+
+   sd->pty->selection.orig.x = orig_x;
+   sd->pty->selection.orig.y = orig_y;
+   sd->pty->selection.start.x = start_x;
+   sd->pty->selection.start.y = start_y;
+   sd->pty->selection.end.x = end_x;
+   sd->pty->selection.end.y = end_y;
+}
+
+static void
+_selection_dbl_fix(Termio *sd
 #if defined(SUPPORT_DBLWIDTH)
                    EINA_UNUSED
 #endif
                    )
 {
 #if defined(SUPPORT_DBLWIDTH)
-   Termio *sd = evas_object_smart_data_get(obj);
+   int start_x, start_y, end_x, end_y;
    int w = 0;
    Termcell *cells;
+   /* Only change the end position */
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x   = sd->pty->selection.end.x;
+   end_y   = sd->pty->selection.end.y;
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+
    termpty_cellcomp_freeze(sd->pty);
-   cells = termpty_cellrow_get(sd->pty, sd->pty->selection.end.y - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, end_y - sd->scroll, &w);
    if (cells)
      {
         // if sel2 after sel1
-        if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
-            ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
-                (sd->pty->selection.end.x >= sd->pty->selection.start.x)))
+        if ((end_y > start_y) ||
+            ((end_y == start_y) &&
+                (end_x >= start_x)))
           {
-             if (sd->pty->selection.end.x < (w - 1))
+             if (end_x < (w - 1))
                {
-                  if ((cells[sd->pty->selection.end.x].codepoint != 0) &&
-                      (cells[sd->pty->selection.end.x].att.dblwidth))
-                    sd->pty->selection.end.x++;
+                  if ((cells[end_x].codepoint != 0) &&
+                      (cells[end_x].att.dblwidth))
+                    end_x++;
                }
           }
         // else sel1 after sel 2
         else
           {
-             if (sd->pty->selection.end.x > 0)
+             if (end_x > 0)
                {
-                  if ((cells[sd->pty->selection.end.x].codepoint == 0) &&
-                      (cells[sd->pty->selection.end.x].att.dblwidth))
-                    sd->pty->selection.end.x--;
+                  if ((cells[end_x].codepoint == 0) &&
+                      (cells[end_x].att.dblwidth))
+                    end_x--;
                }
           }
      }
-   cells = termpty_cellrow_get(sd->pty, sd->pty->selection.start.y - sd->scroll, &w);
+   cells = termpty_cellrow_get(sd->pty, start_y - sd->scroll, &w);
    if (cells)
      {
         // if sel2 after sel1
-        if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
-            ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
-                (sd->pty->selection.end.x >= sd->pty->selection.start.x)))
+        if ((end_y > start_y) ||
+            ((end_y == start_y) &&
+                (end_x >= start_x)))
           {
-             if (sd->pty->selection.start.x > 0)
+             if (start_x > 0)
                {
-                  if ((cells[sd->pty->selection.start.x].codepoint == 0) &&
-                      (cells[sd->pty->selection.start.x].att.dblwidth))
-                    sd->pty->selection.start.x--;
+                  if ((cells[start_x].codepoint == 0) &&
+                      (cells[start_x].att.dblwidth))
+                    start_x--;
                }
           }
         // else sel1 after sel 2
         else
           {
-             if (sd->pty->selection.start.x < (w - 1))
+             if (start_x < (w - 1))
                {
-                  if ((cells[sd->pty->selection.start.x].codepoint != 0) &&
-                      (cells[sd->pty->selection.start.x].att.dblwidth))
-                    sd->pty->selection.start.x++;
+                  if ((cells[start_x].codepoint != 0) &&
+                      (cells[start_x].att.dblwidth))
+                    start_x++;
                }
           }
      }
    termpty_cellcomp_thaw(sd->pty);
+
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+   sd->pty->selection.start.x = start_x;
+   sd->pty->selection.start.y = start_y;
+   sd->pty->selection.end.x = end_x;
+   sd->pty->selection.end.y = end_y;
+
 #endif
 }
 
 static void
 _selection_newline_extend_fix(Evas_Object *obj)
 {
+   int start_x, start_y, end_x, end_y;
    Termio *sd;
    ssize_t w;
 
@@ -2852,28 +3157,48 @@ _selection_newline_extend_fix(Evas_Object *obj)
 
    termpty_cellcomp_freeze(sd->pty);
 
-   if ((sd->pty->selection.end.y > sd->pty->selection.start.y) ||
-       ((sd->pty->selection.end.y == sd->pty->selection.start.y) &&
-        (sd->pty->selection.end.x > sd->pty->selection.start.x)))
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x   = sd->pty->selection.end.x;
+   end_y   = sd->pty->selection.end.y;
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+
+   if ((end_y > start_y) ||
+       ((end_y == start_y) &&
+        (end_x > start_x)))
      {
         /* going down/right */
-        w = termpty_row_length(sd->pty, sd->pty->selection.start.y);
-        if (w < sd->pty->selection.start.x)
-          sd->pty->selection.start.x = w;
-        w = termpty_row_length(sd->pty, sd->pty->selection.end.y);
-        if (w <= sd->pty->selection.end.x)
-          sd->pty->selection.end.x = sd->pty->w;
+        w = termpty_row_length(sd->pty, start_y);
+        if (w < start_x)
+          start_x = w;
+        w = termpty_row_length(sd->pty, end_y);
+        if (w <= end_x)
+          end_x = sd->pty->w;
      }
    else
      {
         /* going up/left */
-        w = termpty_row_length(sd->pty, sd->pty->selection.end.y);
-        if (w < sd->pty->selection.end.x)
-          sd->pty->selection.end.x = w;
-        w = termpty_row_length(sd->pty, sd->pty->selection.start.y);
-        if (w <= sd->pty->selection.start.x)
-          sd->pty->selection.start.x = sd->pty->w;
+        w = termpty_row_length(sd->pty, end_y);
+        if (w < end_x)
+          end_x = w;
+        w = termpty_row_length(sd->pty, start_y);
+        if (w <= start_x)
+          start_x = sd->pty->w;
      }
+
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+   sd->pty->selection.start.x = start_x;
+   sd->pty->selection.start.y = start_y;
+   sd->pty->selection.end.x = end_x;
+   sd->pty->selection.end.y = end_y;
 
    termpty_cellcomp_thaw(sd->pty);
 }
@@ -3359,17 +3684,114 @@ _edje_cb_top_left_out(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_handle_mouse_down_single_click(Termio *sd,
+                                int cx, int cy,
+                                int ctrl, int alt, int shift)
+{
+   sd->didclick = EINA_FALSE;
+   /* SINGLE CLICK */
+   if (sd->pty->selection.is_active &&
+       (sd->top_left || sd->bottom_right))
+     {
+        /* stretch selection */
+        int start_x, start_y, end_x, end_y;
+
+        start_x = sd->pty->selection.start.x;
+        start_y = sd->pty->selection.start.y;
+        end_x   = sd->pty->selection.end.x;
+        end_y   = sd->pty->selection.end.y;
+
+        if (!sd->pty->selection.is_top_to_bottom)
+          {
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
+
+        cy -= sd->scroll;
+
+        sd->pty->selection.makesel = EINA_TRUE;
+
+        if (sd->pty->selection.is_box)
+          {
+             if (end_x < start_x)
+               INT_SWAP(end_x, start_x);
+          }
+        if (sd->top_left)
+          {
+             sd->pty->selection.orig.x = end_x;
+             sd->pty->selection.orig.y = end_y;
+             sd->pty->selection.is_top_to_bottom = EINA_FALSE;
+          }
+        else
+          {
+             /* sd->bottom_right */
+             sd->pty->selection.orig.x = start_x;
+             sd->pty->selection.orig.y = start_y;
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+          }
+
+        sd->pty->selection.start.x = sd->pty->selection.orig.x;
+        sd->pty->selection.start.y = sd->pty->selection.orig.y;
+        sd->pty->selection.end.x = cx;
+        sd->pty->selection.end.y = cy;
+        _selection_dbl_fix(sd);
+     }
+   else if (!shift && !sd->pty->selection.is_active)
+     {
+        /* New selection */
+        sd->moved = EINA_FALSE;
+        _sel_set(sd, EINA_FALSE);
+        sd->pty->selection.is_box = (ctrl || alt);
+        sd->pty->selection.start.x = cx;
+        sd->pty->selection.start.y = cy - sd->scroll;
+        sd->pty->selection.orig.x = sd->pty->selection.start.x;
+        sd->pty->selection.orig.y = sd->pty->selection.start.y;
+        sd->pty->selection.end.x = cx;
+        sd->pty->selection.end.y = cy - sd->scroll;
+        sd->pty->selection.makesel = EINA_TRUE;
+        sd->pty->selection.by_line = EINA_FALSE;
+        sd->pty->selection.by_word = EINA_FALSE;
+        _selection_dbl_fix(sd);
+     }
+   else if (shift && sd->pty->selection.is_active)
+     {
+        /* let cb_up handle it */
+        /* do nothing */
+        return;
+     }
+   else if (shift &&
+            (time(NULL) - sd->pty->selection.last_click) <= 60)
+     {
+        sd->pty->selection.is_box = ctrl;
+        _sel_to(sd, cx, cy - sd->scroll, EINA_FALSE);
+        sd->pty->selection.is_active = EINA_TRUE;
+        _selection_dbl_fix(sd);
+     }
+   else
+     {
+        sd->pty->selection.start.x = sd->pty->selection.end.x = cx;
+        sd->pty->selection.orig.x = cx;
+        sd->pty->selection.start.y = sd->pty->selection.end.y = cy - sd->scroll;
+        sd->pty->selection.orig.y = cy - sd->scroll;
+        sd->pty->selection.makesel = EINA_TRUE;
+        sd->didclick = !sd->pty->selection.is_active;
+        sd->pty->selection.is_active = EINA_FALSE;
+     }
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
    int cx = 0, cy = 0;
-   int shift, ctrl;
+   int shift, ctrl, alt;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    if ((ev->button == 3) && ctrl)
      {
@@ -3380,10 +3802,11 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      if (_rep_mouse_down(sd, ev, cx, cy)) return;
    if (ev->button == 1)
      {
+        sd->pty->selection.makesel = EINA_TRUE;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
              if (shift && sd->pty->selection.is_active)
-               _sel_line_to(sd, cy - sd->scroll);
+               _sel_line_to(sd, cy - sd->scroll, EINA_TRUE);
              else
                _sel_line(sd, cy - sd->scroll);
              if (sd->pty->selection.is_active)
@@ -3395,7 +3818,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              if (!sd->pty->selection.is_active && sd->didclick)
                sd->pty->selection.is_active = EINA_TRUE;
              if (shift && sd->pty->selection.is_active)
-                  _sel_word_to(sd, cx, cy - sd->scroll);
+                  _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
              else
                   _sel_word(sd, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
@@ -3404,151 +3827,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
         else
           {
-             sd->didclick = EINA_FALSE;
-             /* SINGLE CLICK */
-             if (sd->pty->selection.is_active &&
-                 (sd->top_left || sd->bottom_right))
-               {
-                  /* stretch selection */
-                  int start_x, start_y, end_x, end_y;
-
-                  start_x = sd->pty->selection.start.x;
-                  start_y = sd->pty->selection.start.y;
-                  end_x   = sd->pty->selection.end.x;
-                  end_y   = sd->pty->selection.end.y;
-                  sd->pty->selection.makesel = EINA_TRUE;
-                  if (sd->pty->selection.is_box)
-                    {
-                       if (sd->top_left)
-                         {
-                            if (start_y < end_y)
-                              INT_SWAP(start_y, end_y);
-                            if (start_x < end_x)
-                              INT_SWAP(start_x, end_x);
-                         }
-                       else
-                         {
-                            if (start_y > end_y)
-                              INT_SWAP(start_y, end_y);
-                            if (start_x > end_x)
-                              INT_SWAP(start_x, end_x);
-                         }
-                    }
-                  else
-                    {
-                       if (sd->top_left)
-                         {
-                            if ((start_y < end_y) ||
-                                ((start_y == end_y) && (end_x > start_x)))
-                              {
-                                 INT_SWAP(start_y, end_y);
-                                 INT_SWAP(start_x, end_x);
-                              }
-                         }
-                       else
-                         {
-                            if ((start_y > end_y) ||
-                                ((start_y == end_y) && (end_x < start_x)))
-                              {
-                                 INT_SWAP(start_y, end_y);
-                                 INT_SWAP(start_x, end_x);
-                              }
-                         }
-                    }
-                  sd->pty->selection.start.x = start_x;
-                  sd->pty->selection.start.y = start_y;
-                  sd->pty->selection.end.x = cx;
-                  sd->pty->selection.end.y = cy - sd->scroll;
-                  _selection_dbl_fix(data);
-               }
-             else if (!shift && !sd->pty->selection.is_active)
-               {
-                  /* New selection */
-                  sd->moved = EINA_FALSE;
-                  _sel_set(sd, EINA_FALSE);
-                  sd->pty->selection.is_box =
-                     (ctrl ||
-                      evas_key_modifier_is_set(ev->modifiers, "Alt"));
-                  sd->pty->selection.start.x = cx;
-                  sd->pty->selection.start.y = cy - sd->scroll;
-                  sd->pty->selection.end.x = cx;
-                  sd->pty->selection.end.y = cy - sd->scroll;
-                  sd->pty->selection.makesel = EINA_TRUE;
-                  _selection_dbl_fix(data);
-               }
-             else if (shift &&
-                      (time(NULL) - sd->pty->selection.last_click) <= 60)
-               {
-                  int start_x, start_y, end_x, end_y, cy_rel;
-
-                  if (!sd->pty->selection.is_active)
-                    sd->pty->selection.is_box = ctrl;
-
-                  start_x = sd->pty->selection.start.x;
-                  start_y = sd->pty->selection.start.y;
-                  end_x   = sd->pty->selection.end.x;
-                  end_y   = sd->pty->selection.end.y;
-
-                  cy_rel = cy - sd->scroll;
-
-                  if (sd->pty->selection.is_box)
-                    {
-                       if (start_y > end_y)
-                         INT_SWAP(start_y, end_y);
-                       if (start_x > end_x)
-                         INT_SWAP(start_x, end_x);
-                       if (cy_rel < start_y)
-                         start_y = cy;
-                       else if (cy_rel > end_y)
-                         end_y = cy;
-                       if (cx < start_x)
-                         start_x = cx;
-                       else if (cx > end_x)
-                         end_x = cx;
-                    }
-                  else
-                    {
-                       if ((start_y > end_y) ||
-                           ((start_y == end_y) && (end_x < start_x)))
-                         {
-                            INT_SWAP(start_y, end_y);
-                            INT_SWAP(start_x, end_x);
-                         }
-                       if ((cy_rel < start_y) ||
-                           (cy_rel == start_y && cx <= start_x))
-                         {
-                            start_y = cy_rel;
-                            start_x = cx;
-                         }
-                       else if ((cy_rel > end_y) ||
-                                (cy_rel == end_y && cx >= end_x))
-                         {
-                            end_y = cy_rel;
-                            end_x = cx;
-                         }
-                       else
-                         {
-                            sd->pty->selection.makesel = EINA_FALSE;
-                            _sel_set(sd, EINA_FALSE);
-                            _smart_update_queue(data, sd);
-                            return;
-                         }
-                    }
-                  sd->pty->selection.start.x = start_x;
-                  sd->pty->selection.start.y = start_y;
-                  sd->pty->selection.end.x = end_x;
-                  sd->pty->selection.end.y = end_y;
-                  sd->pty->selection.is_active = EINA_TRUE;
-                  _selection_dbl_fix(data);
-               }
-             else
-               {
-                  sd->pty->selection.start.x = sd->pty->selection.end.x = cx;
-                  sd->pty->selection.start.y = sd->pty->selection.end.y = cy - sd->scroll;
-                  sd->pty->selection.makesel = EINA_FALSE;
-                  sd->didclick = !sd->pty->selection.is_active;
-                  sd->pty->selection.is_active = EINA_FALSE;
-               }
+             _handle_mouse_down_single_click(sd, cx, cy, ctrl, alt, shift);
           }
         _smart_update_queue(data, sd);
      }
@@ -3590,37 +3869,49 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
           }
         sd->pty->selection.makesel = EINA_FALSE;
 
+        /* Only change the end position */
         if (((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
-            (sd->pty->selection.start.y == sd->pty->selection.end.y)) ||
+            (sd->pty->selection.start.y == sd->pty->selection.end.y)) &&
             (!sd->moved))
           {
              _sel_set(sd, EINA_FALSE);
              sd->didclick = EINA_FALSE;
              sd->pty->selection.last_click = time(NULL);
+             sd->pty->selection.by_line = EINA_FALSE;
+             sd->pty->selection.by_word = EINA_FALSE;
              _smart_update_queue(data, sd);
              return;
           }
 
         if (sd->pty->selection.is_active)
           {
-             sd->didclick = EINA_TRUE;
-             sd->pty->selection.end.x = cx;
-             sd->pty->selection.end.y = cy - sd->scroll;
-             _selection_dbl_fix(data);
-             if (sd->pty->selection.is_box)
-              {
-                 sd->pty->selection.end.x = cx;
-                 sd->pty->selection.end.y = cy - sd->scroll;
-                 _smart_update_queue(data, sd);
-                 termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
-              }
-            else
-              {
-                 _selection_newline_extend_fix(data);
-                 _smart_update_queue(data, sd);
-                 termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
-              }
-            sd->pty->selection.makesel = EINA_FALSE;
+             if (sd->pty->selection.by_line)
+               {
+                  _sel_line_to(sd, cy - sd->scroll, shift);
+               }
+             else if (sd->pty->selection.by_word)
+               {
+                  _sel_word_to(sd, cx, cy - sd->scroll, shift);
+               }
+             else
+               {
+                  if (shift)
+                    {
+                       /* extend selection */
+                       _sel_to(sd, cx, cy - sd->scroll, EINA_TRUE);
+                    }
+                  else
+                    {
+                       sd->didclick = EINA_TRUE;
+                       sd->pty->selection.end.x = cx;
+                       sd->pty->selection.end.y = cy - sd->scroll;
+                    }
+               }
+             _selection_dbl_fix(sd);
+             _selection_newline_extend_fix(data);
+             _smart_update_queue(data, sd);
+             termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             sd->pty->selection.makesel = EINA_FALSE;
           }
      }
 }
@@ -3719,30 +4010,33 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      }
    if (sd->pty->selection.makesel)
      {
-        int start_x, start_y, end_x, end_y;
+        int start_x, start_y;
+
+        /* Only change the end position */
+        start_x = sd->pty->selection.start.x;
+        start_y = sd->pty->selection.start.y;
 
         if (!sd->pty->selection.is_active)
           {
-             if ((cx != sd->pty->selection.start.x) ||
-                 ((cy - sd->scroll) != sd->pty->selection.start.y))
+             if ((cx != start_x) ||
+                 ((cy - sd->scroll) != start_y))
                _sel_set(sd, EINA_TRUE);
           }
-        start_x = sd->pty->selection.start.x;
-        start_y = sd->pty->selection.start.y;
-        end_x   = sd->pty->selection.end.x;
-        end_y   = sd->pty->selection.end.y;
-        if ((start_y > end_y) || ((start_y == end_y) && (end_x < start_x)))
-          {
-             INT_SWAP(start_y, end_y);
-             INT_SWAP(start_x, end_x);
-          }
-        cy -= sd->scroll;
-        sd->top_left = EINA_FALSE;
-        sd->bottom_right = EINA_FALSE;
-        sd->pty->selection.end.x = cx;
-        sd->pty->selection.end.y = cy;
 
-        _selection_dbl_fix(data);
+        if (sd->pty->selection.by_line)
+          {
+             _sel_line_to(sd, cy - sd->scroll, EINA_FALSE);
+          }
+        else if (sd->pty->selection.by_word)
+          {
+             _sel_word_to(sd, cx, cy - sd->scroll, EINA_FALSE);
+          }
+        else
+          {
+             _sel_to(sd, cx, cy - sd->scroll, EINA_FALSE);
+          }
+
+        _selection_dbl_fix(sd);
         if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
         _smart_update_queue(data, sd);
@@ -4283,22 +4577,11 @@ _smart_apply(Evas_Object *obj)
         end_x   = sd->pty->selection.end.x;
         end_y   = sd->pty->selection.end.y;
 
-        if (sd->pty->selection.is_box)
+        if (!sd->pty->selection.is_top_to_bottom)
           {
-             if (start_y > end_y)
-               INT_SWAP(start_y, end_y);
-             if (start_x > end_x)
-               INT_SWAP(start_x, end_x);
-           }
-         else
-           {
-              if ((start_y > end_y) ||
-                  ((start_y == end_y) && (end_x < start_x)))
-                {
-                   INT_SWAP(start_y, end_y);
-                   INT_SWAP(start_x, end_x);
-                }
-           }
+             INT_SWAP(start_y, end_y);
+             INT_SWAP(start_x, end_x);
+          }
         size_top = start_x * sd->font.chw;
 
         size_bottom = (sd->grid.w - end_x - 1) * sd->font.chw;
