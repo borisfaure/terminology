@@ -61,7 +61,13 @@ _cb_op_color_item_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
         for (i = 0; i < 11; i++)
           {
              if (colitem[j][i] == it)
-               elm_object_text_set(label, gettext(mapping_names[i]));
+               elm_object_text_set(label,
+#if HAVE_GETTEXT && ENABLE_NLS
+                                   gettext(mapping_names[i])
+#else
+                                   mapping_names[i]
+#endif
+                                   );
           }
      }
 }
@@ -234,7 +240,13 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    
    label = o = elm_label_add(opbox);
-   elm_object_text_set(o, gettext(mapping_names[0]));
+   elm_object_text_set(o,
+#if HAVE_GETTEXT && ENABLE_NLS
+                       gettext(mapping_names[0])
+#else
+                       mapping_names[0]
+#endif
+                       );
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx2, o);
