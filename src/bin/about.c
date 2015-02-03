@@ -69,7 +69,7 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "<br>"
               "%s" // LICENSE
               ),
-              PACKAGE_VERSION, 2014,
+              PACKAGE_VERSION, 2015,
               "Carsten Haitzler<br>"
               "Boris Faure<br>"
               "Gustavo Sverzut Barbieri<br>"
