@@ -631,11 +631,10 @@ termpty_cellrow_get(Termpty *ty, int y, int *wret)
 
    if (y >= 0)
      {
-        Termcell *cells;
         if (y >= ty->h) return NULL;
-        cells = &(TERMPTY_SCREEN(ty, 0, y));
-        *wret = termpty_line_length(cells, ty->w);
-        return cells;
+        *wret = ty->w;
+        /* fprintf(stderr, "getting: %i (%i, %i)\n", y, ty->circular_offset, ty->h); */
+        return &(TERMPTY_SCREEN(ty, 0, y));
      }
    if ((y < -ty->backmax) || !ty->back) return NULL;
    tssrc = &(ty->back[(ty->backmax + ty->backpos + y) % ty->backmax]);
