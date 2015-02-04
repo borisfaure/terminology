@@ -35,10 +35,7 @@ main(int argc, char **argv)
           snprintf(tbuf, sizeof(tbuf), "%c}bp%s", 0x1b, path);
         else
           snprintf(tbuf, sizeof(tbuf), "%c}bt%s", 0x1b, path);
-        if (write(0, tbuf, strlen(tbuf)) < 1) perror("write");
-        tbuf[0] = 0;
-        if (write(0, tbuf, 1) < 1) perror("write");
+        if (write(0, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1)) perror("write");
      }
-   exit(0);
    return 0;
 }

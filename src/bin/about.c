@@ -116,7 +116,8 @@ about_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               "Nicholas Hughart<br>"
               "Rafael Antognolli<br>"
               "Rui Seabra<br>"
-              "Vincent Torri<br>",
+              "Vincent Torri<br>"
+              "Thibaut Broggi<br>",
               "All rights reserved.<br>"
               "<br>"
               "Redistribution and use in source and binary forms, with or "
