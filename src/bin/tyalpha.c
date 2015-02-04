@@ -33,10 +33,7 @@ main(int argc, char **argv)
           snprintf(tbuf, sizeof(tbuf), "%c}ap%s", 0x1b, argv[i]);
         else
           snprintf(tbuf, sizeof(tbuf), "%c}at%s", 0x1b, argv[i]);
-        if (write(0, tbuf, strlen(tbuf)) < 1) perror("write");
-        tbuf[0] = 0;
-        if (write(0, tbuf, 1) < 1) perror("write");
+        if (write(0, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1)) perror("write");
      }
-   exit(0);
    return 0;
 }

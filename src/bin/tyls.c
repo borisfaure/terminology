@@ -789,25 +789,18 @@ main(int argc, char **argv)
         for (i = 1; i < argc; i++)
           {
              char *path;
+             char *cmp[] = {"-c", "-m", "-l"};
+             int j;
 
-             if (!strcmp(argv[i], "-c"))
+             for (j = 0; j < 3; j++)
                {
-                  mode = SMALL;
-                  i++;
-                  if (i >= argc) break;
+                 if (!strcmp(argv[i], cmp[j]))
+                   {
+                     mode = j;
+                     if (++i >= argc) break;
+                   }
                }
-             else if (!strcmp(argv[i], "-m"))
-               {
-                  mode = MEDIUM;
-                  i++;
-                  if (i >= argc) break;
-               }
-             else if (!strcmp(argv[i], "-l"))
-               {
-                  mode = LARGE;
-                  i++;
-                  if (i >= argc) break;
-               }
+             if (i >= argc) break;
              path = argv[i];
              rp = ecore_file_realpath(path);
              if (rp)
