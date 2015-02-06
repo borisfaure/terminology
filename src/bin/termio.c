@@ -3937,22 +3937,28 @@ _mouse_selection_scroll(void *data)
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord oy, my;
    int cy;
+   float fcy;
 
    if (!sd->pty->selection.makesel) return EINA_FALSE;
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), NULL, &my);
    evas_object_geometry_get(data, NULL, &oy, NULL, NULL);
-   cy = (my - oy) / sd->font.chh;
-   if (cy < 0)
+   fcy = (my - oy) / (float)sd->font.chh;
+   cy = fcy;
+   if (fcy < 0.3)
      {
+        if (cy == 0)
+          cy = -1;
         sd->scroll -= cy;
         if (sd->scroll > sd->pty->backscroll_num)
           sd->scroll = sd->pty->backscroll_num;
         sd->pty->selection.end.y = -sd->scroll;
         _smart_update_queue(data, sd);
      }
-   else if (cy >= sd->grid.h)
+   else if (fcy >= (sd->grid.h - 0.3))
      {
+        if (cy <= sd->grid.h)
+          cy = sd->grid.h + 1;
         sd->scroll -= cy - sd->grid.h;
         if (sd->scroll < 0) sd->scroll = 0;
         sd->pty->selection.end.y = sd->scroll + sd->grid.h - 1;
@@ -3968,6 +3974,7 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
    int cx, cy;
+   float fcy;
    Evas_Coord ox, oy;
    Eina_Bool scroll = EINA_FALSE;
    int shift, ctrl;
@@ -3979,16 +3986,17 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 
    evas_object_geometry_get(data, &ox, &oy, NULL, NULL);
    cx = (ev->cur.canvas.x - ox) / sd->font.chw;
-   cy = (ev->cur.canvas.y - oy) / sd->font.chh;
+   fcy = (ev->cur.canvas.y - oy) / (float)sd->font.chh;
+   cy = fcy;
    if (cx < 0) cx = 0;
    else if (cx >= sd->grid.w) cx = sd->grid.w - 1;
-   if (cy < 0)
+   if (fcy < 0.3)
      {
         cy = 0;
         if (sd->pty->selection.makesel)
              scroll = EINA_TRUE;
      }
-   else if (cy >= sd->grid.h)
+   else if (fcy >= (sd->grid.h - 0.3))
      {
         cy = sd->grid.h - 1;
         if (sd->pty->selection.makesel)
