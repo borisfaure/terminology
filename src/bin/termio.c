@@ -2674,6 +2674,17 @@ _sel_word(Termio *sd, int cx, int cy)
    sd->pty->selection.end.y = cy;
    x = cx;
    y = cy;
+
+   if (sd->link.string &&
+       (sd->link.x1 <= cx) && (cx <= sd->link.x2) &&
+       (sd->link.y1 <= cy) && (cy <= sd->link.y2))
+     {
+        sd->pty->selection.start.x = sd->link.x1;
+        sd->pty->selection.start.y = sd->link.y1;
+        sd->pty->selection.end.x = sd->link.x2;
+        sd->pty->selection.end.y = sd->link.y2;
+        goto end;
+     }
    cells = termpty_cellrow_get(sd->pty, y, &w);
    if (!cells) goto end;
    if (x >= w) x = w - 1;
