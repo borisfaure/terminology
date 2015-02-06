@@ -3152,7 +3152,7 @@ _selection_newline_extend_fix(Evas_Object *obj)
 
    sd = evas_object_smart_data_get(obj);
 
-   if ((sd->top_left) || (sd->bottom_right))
+   if ((sd->top_left) || (sd->bottom_right) || (sd->pty->selection.is_box))
      return;
 
    termpty_cellcomp_freeze(sd->pty);
