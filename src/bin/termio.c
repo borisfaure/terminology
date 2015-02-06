@@ -2643,6 +2643,9 @@ _codepoint_is_wordsep(const Eina_Unicode g)
           imin = 0;
    size_t imaxmax = imax;
 
+   if (g & 0x80000000)
+     return EINA_TRUE;
+
    while (imax >= imin)
      {
         size_t imid = (imin + imax) / 2;
