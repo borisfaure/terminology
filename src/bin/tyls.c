@@ -101,6 +101,8 @@ size_print(char *buf, int bufsz, char *sz, unsigned long long size)
 #define WHITE   7
 #define BRIGHT  8
 
+#define COUNT_OF(arr) (sizeof(arr) / sizeof(*arr))
+
 // #3399ff
 // 51 153 355
 // as 6x6x6
@@ -790,13 +792,14 @@ main(int argc, char **argv)
           {
              char *path;
              char *cmp[] = {"-c", "-m", "-l"};
+             int modes[] = {SMALL, MEDIUM, LARGE};
              int j;
 
-             for (j = 0; j < 3; j++)
+             for (j = 0; j < COUNT_OF(cmp) ; j++)
                {
                  if (!strcmp(argv[i], cmp[j]))
                    {
-                     mode = j;
+                     mode = modes[j];
                      if (++i >= argc) break;
                    }
                }
