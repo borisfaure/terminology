@@ -131,16 +131,18 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      }
    if (!strcmp(ev->key, "Return"))
      {
-      if (ty->state.crlf)
-        {
-           termpty_write(ty, "\r\n", sizeof("\r\n") - 1);
-           return;
-        }
-      else
-        {
-           termpty_write(ty, "\r", sizeof("\r") - 1);
-           return;
-        }
+        if (alt)
+          termpty_write(ty, "\033", 1);
+        if (ty->state.crlf)
+          {
+             termpty_write(ty, "\r\n", sizeof("\r\n") - 1);
+             return;
+          }
+        else
+          {
+             termpty_write(ty, "\r", sizeof("\r") - 1);
+             return;
+          }
      }
    if (ev->key && ev->key[0] == 'K' && ev->key[1] == 'k')
      {
