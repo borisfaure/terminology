@@ -25,10 +25,7 @@ main(int argc, char **argv)
         path = argv[i];
         if (realpath(path, buf)) path = buf;
         snprintf(tbuf, sizeof(tbuf), "%c}pq%s", 0x1b, path);
-        if (write(0, tbuf, strlen(tbuf)) < 1) perror("write");
-        tbuf[0] = 0;
-        if (write(0, tbuf, 1) < 1) perror("write");
+        if (write(0, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1)) perror("write");
      }
-   exit(0);
    return 0;
 }

@@ -101,6 +101,8 @@ size_print(char *buf, int bufsz, char *sz, unsigned long long size)
 #define WHITE   7
 #define BRIGHT  8
 
+#define COUNT_OF(arr) (sizeof(arr) / sizeof(*arr))
+
 // #3399ff
 // 51 153 355
 // as 6x6x6
@@ -789,25 +791,19 @@ main(int argc, char **argv)
         for (i = 1; i < argc; i++)
           {
              char *path;
+             char *cmp[] = {"-c", "-m", "-l"};
+             int modes[] = {SMALL, MEDIUM, LARGE};
+             int j;
 
-             if (!strcmp(argv[i], "-c"))
+             for (j = 0; j < COUNT_OF(cmp) ; j++)
                {
-                  mode = SMALL;
-                  i++;
-                  if (i >= argc) break;
+                 if (!strcmp(argv[i], cmp[j]))
+                   {
+                     mode = modes[j];
+                     if (++i >= argc) break;
+                   }
                }
-             else if (!strcmp(argv[i], "-m"))
-               {
-                  mode = MEDIUM;
-                  i++;
-                  if (i >= argc) break;
-               }
-             else if (!strcmp(argv[i], "-l"))
-               {
-                  mode = LARGE;
-                  i++;
-                  if (i >= argc) break;
-               }
+             if (i >= argc) break;
              path = argv[i];
              rp = ecore_file_realpath(path);
              if (rp)
