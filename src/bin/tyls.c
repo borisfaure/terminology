@@ -793,7 +793,7 @@ main(int argc, char **argv)
              char *path;
              char *cmp[] = {"-c", "-m", "-l"};
              int modes[] = {SMALL, MEDIUM, LARGE};
-             int j;
+             unsigned int j;
 
              for (j = 0; j < COUNT_OF(cmp) ; j++)
                {
