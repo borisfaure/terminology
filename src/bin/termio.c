@@ -3279,6 +3279,7 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
+   sd->pty->selection.last_click = 0;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);
    if (sd->khdl.imf)
      {
@@ -3790,6 +3791,7 @@ _handle_mouse_down_single_click(Termio *sd,
         sd->pty->selection.makesel = EINA_TRUE;
         sd->didclick = !sd->pty->selection.is_active;
         sd->pty->selection.is_active = EINA_FALSE;
+        _sel_set(sd, EINA_FALSE);
      }
 }
 
@@ -3813,7 +3815,15 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
         return;
      }
    if (!shift && !ctrl)
-     if (_rep_mouse_down(sd, ev, cx, cy)) return;
+     if (_rep_mouse_down(sd, ev, cx, cy))
+       {
+           if (sd->pty->selection.is_active)
+             {
+                _sel_set(sd, EINA_FALSE);
+                _smart_update_queue(data, sd);
+             }
+          return;
+       }
    if (ev->button == 1)
      {
         sd->pty->selection.makesel = EINA_TRUE;
@@ -3872,7 +3882,15 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
    _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
    if (!shift && !ctrl && !sd->pty->selection.makesel)
-      if (_rep_mouse_up(sd, ev, cx, cy)) return;
+      if (_rep_mouse_up(sd, ev, cx, cy))
+        {
+           if (sd->pty->selection.is_active)
+             {
+                _sel_set(sd, EINA_FALSE);
+                _smart_update_queue(data, sd);
+             }
+           return;
+        }
    if (sd->link.down.dnd) return;
    if (sd->pty->selection.makesel)
      {
