@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-10-05 14:40+0200\n"
+"POT-Creation-Date: 2015-02-09 21:29+0100\n"
 "PO-Revision-Date: 2014-10-01 12:04+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
@@ -40,7 +40,7 @@ msgstr "Διαίρεση Ο"
 msgid "Miniview"
 msgstr ""
 
-#: src/bin/controls.c:287 src/bin/termio.c:947
+#: src/bin/controls.c:287 src/bin/termio.c:961
 msgid "Copy"
 msgstr "Αντιγραφή"
 
@@ -77,218 +77,208 @@ msgstr ""
 "<br><br>Πνευματική Ιδιοκτησία © 2012-%d :<br><br>%s<br><br>Διανέμεται "
 "σύμφωνα με την άδεια BSD 2-clause, λεπτομερώς παρακάτω:<br><br>%s"
 
-#: src/bin/app_server.c:345
-msgid "There is no window open"
-msgstr "Δεν υπάρχει ανοιχτό παράθυρο"
-
-#: src/bin/keyin.c:545
+#: src/bin/keyin.c:530
 msgid "Scrolling"
 msgstr "Κύλιση"
 
-#: src/bin/keyin.c:546
+#: src/bin/keyin.c:531
 msgid "Scroll one page up"
 msgstr "Κύλιση μία σελίδα πάνω"
 
-#: src/bin/keyin.c:547
+#: src/bin/keyin.c:532
 msgid "Scroll one page down"
 msgstr "Κύλιση μία σελίδα κατω"
 
-#: src/bin/keyin.c:548
+#: src/bin/keyin.c:533
 msgid "Scroll one line up"
 msgstr "Κύλιση μία γραμμή πάνω"
 
-#: src/bin/keyin.c:549
+#: src/bin/keyin.c:534
 msgid "Scroll one line down"
 msgstr "Κύλιση μία γραμμή κάτω"
 
-#: src/bin/keyin.c:551
+#: src/bin/keyin.c:536
 msgid "Copy/Paste"
 msgstr "Αντιγραφή/Επικόλληση"
 
-#: src/bin/keyin.c:552
+#: src/bin/keyin.c:537
 msgid "Copy selection to Primary buffer"
 msgstr "Αντιγραφή τρέχουσας επιλογής στο πρόχειρο"
 
-#: src/bin/keyin.c:553
+#: src/bin/keyin.c:538
 #, fuzzy
 msgid "Copy selection to Clipboard buffer"
 msgstr "Αντιγραφή τρέχουσας επιλογής στο πρόχειρο"
 
-#: src/bin/keyin.c:554
+#: src/bin/keyin.c:539
 #, fuzzy
 msgid "Paste Primary buffer (highlight)"
 msgstr "Επικόλληση κύριας επιλογής (επισήμανση)"
 
-#: src/bin/keyin.c:555
+#: src/bin/keyin.c:540
 #, fuzzy
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Επικόλληση επιλογής προχείρου (ctrl+v/c) "
 
-#: src/bin/keyin.c:557
+#: src/bin/keyin.c:542
 msgid "Splits/Tabs"
 msgstr "Διαίρεση/Καρτέλες"
 
-#: src/bin/keyin.c:558
+#: src/bin/keyin.c:543
 msgid "Focus to the previous terminal"
 msgstr "Εστίαση στο προηγούμενο τερματικό"
 
-#: src/bin/keyin.c:559
+#: src/bin/keyin.c:544
 msgid "Focus to the next terminal"
 msgstr "Εστίαση στο επόμενο τερματικό"
 
-#: src/bin/keyin.c:560
+#: src/bin/keyin.c:545
 msgid "Split horizontally (new below)"
 msgstr "Διαίρεση οριζόντια (νέο από κάτω)"
 
-#: src/bin/keyin.c:561
+#: src/bin/keyin.c:546
 msgid "Split vertically (new on right)"
 msgstr "Διαίρεση κάθετα (νέο στα δεξιά)"
 
-#: src/bin/keyin.c:562
+#: src/bin/keyin.c:547
 msgid "Create a new \"tab\""
 msgstr "Δημιουργία νέας \"καρτέλας\""
 
-#: src/bin/keyin.c:563
+#: src/bin/keyin.c:548
 msgid "Close the focused terminal"
 msgstr "Κλείσιμο εστιασμένου τερματικού"
 
-#: src/bin/keyin.c:564
+#: src/bin/keyin.c:549
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
-#: src/bin/keyin.c:565
+#: src/bin/keyin.c:550
 msgid "Switch to terminal tab 1"
 msgstr "Μετάβαση στην καρτέλα 1"
 
-#: src/bin/keyin.c:566
+#: src/bin/keyin.c:551
 msgid "Switch to terminal tab 2"
 msgstr "Μετάβαση στην καρτέλα 2"
 
-#: src/bin/keyin.c:567
+#: src/bin/keyin.c:552
 msgid "Switch to terminal tab 3"
 msgstr "Μετάβαση στην καρτέλα 3"
 
-#: src/bin/keyin.c:568
+#: src/bin/keyin.c:553
 msgid "Switch to terminal tab 4"
 msgstr "Μετάβαση στην καρτέλα 4"
 
-#: src/bin/keyin.c:569
+#: src/bin/keyin.c:554
 msgid "Switch to terminal tab 5"
 msgstr "Μετάβαση στην καρτέλα 5"
 
-#: src/bin/keyin.c:570
+#: src/bin/keyin.c:555
 msgid "Switch to terminal tab 6"
 msgstr "Μετάβαση στην καρτέλα 6"
 
-#: src/bin/keyin.c:571
+#: src/bin/keyin.c:556
 msgid "Switch to terminal tab 7"
 msgstr "Μετάβαση στην καρτέλα 7"
 
-#: src/bin/keyin.c:572
+#: src/bin/keyin.c:557
 msgid "Switch to terminal tab 8"
 msgstr "Μετάβαση στην καρτέλα 8"
 
-#: src/bin/keyin.c:573
+#: src/bin/keyin.c:558
 msgid "Switch to terminal tab 9"
 msgstr "Μετάβαση στην καρτέλα 9"
 
-#: src/bin/keyin.c:574
+#: src/bin/keyin.c:559
 msgid "Switch to terminal tab 10"
 msgstr "Μετάβαση στην καρτέλα 10"
 
-#: src/bin/keyin.c:576
+#: src/bin/keyin.c:561
 msgid "Font size"
 msgstr "Μέγεθος γραμματοσειράς"
 
-#: src/bin/keyin.c:577
+#: src/bin/keyin.c:562
 msgid "Font size up 1"
 msgstr "Άυξηση μεγέθους γραμματοσειράς κατα 1"
 
-#: src/bin/keyin.c:578
+#: src/bin/keyin.c:563
 msgid "Font size down 1"
 msgstr "Μείωση μεγέθους γραμματοσειράς κατα 1"
 
-#: src/bin/keyin.c:579
+#: src/bin/keyin.c:564
 msgid "Display big font size"
 msgstr "Εμφάνιση μεγάλου μεγέθους γραμματοσειρά"
 
-#: src/bin/keyin.c:580
+#: src/bin/keyin.c:565
 msgid "Reset font size"
 msgstr "Επαναφορά μεγέθους γραμματοσειράς"
 
-#: src/bin/keyin.c:582
+#: src/bin/keyin.c:567
 msgid "Actions"
 msgstr "Ενέργειες"
 
-#: src/bin/keyin.c:583
+#: src/bin/keyin.c:568
 msgid "Display the history miniview"
 msgstr "Εμφάνιση ιστορικού μικροπροβολής"
 
-#: src/bin/keyin.c:584
+#: src/bin/keyin.c:569
 msgid "Display the command box"
 msgstr "Εμφάνιση πλαισίου εντολών"
 
-#: src/bin/main.c:2351
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr ""
-"Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'make "
-"install';"
-
-#: src/bin/main.c:2773
+#: src/bin/main.c:328
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler και λοιποί"
 
-#: src/bin/main.c:2775
+#: src/bin/main.c:330
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
 msgstr ""
 "Προσομοιωτής τερματικού γραμμένος με τις βιβλιοθήκες Enlightenment "
 "Foundation Libraries."
 
-#: src/bin/main.c:2783
+#: src/bin/main.c:338
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Εντολή για εκτέλεση. Η προεπιλογή είναι το $SHELL (ή passwd shell ή /bin/sh)"
 
-#: src/bin/main.c:2785
+#: src/bin/main.c:340
 msgid "Change to directory for execution of terminal command."
 msgstr "Αλλαγή στον κατάλογο για την εκτέλεση της εντολής τερματικού."
 
-#: src/bin/main.c:2787
+#: src/bin/main.c:342
 msgid "Use the named edje theme or path to theme file."
 msgstr "Χρήση του θέματος Edje ή διαδρομή στο αρχείο θέματος."
 
-#: src/bin/main.c:2789
+#: src/bin/main.c:344
 msgid "Use the named file as a background wallpaper."
 msgstr "Χρήση του αρχείου σαν ταπετσαρία φόντου."
 
-#: src/bin/main.c:2791
+#: src/bin/main.c:346
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
 msgstr "Χρήση γεωμετρίας τερματικού (πχ 80x24 ή 80x24+50+20 κλπ.)."
 
-#: src/bin/main.c:2793
+#: src/bin/main.c:348
 msgid "Set window name."
 msgstr "Ορισμός ονόματος παραθύρου."
 
-#: src/bin/main.c:2795
+#: src/bin/main.c:350
 msgid "Set window role."
 msgstr "Ορισμός ρόλου παραθύρου."
 
-#: src/bin/main.c:2797
+#: src/bin/main.c:352
 msgid "Set window title."
 msgstr "Ορισμός τίτλου παραθύρου."
 
-#: src/bin/main.c:2799
+#: src/bin/main.c:354
 msgid "Set icon name."
 msgstr "Ορισμός ονόματος εικονιδίου."
 
-#: src/bin/main.c:2801
+#: src/bin/main.c:356
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
 msgstr ""
 "Ορισμός γραμματοσειράς (ΟΝΟΜΑ/ΜΕΓΕΘΟΣ για κλιμακούμενη εικόνα, ΟΝΟΜΑ για "
 "εικόνα bitmap)."
 
-#: src/bin/main.c:2803
+#: src/bin/main.c:358
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -298,207 +288,221 @@ msgstr ""
 "οριζόντια. Μπορούν να χρησιμοποιηθούν πολλές φορές. πχ -S vhvv ή --split hv "
 "Για περισσότερες λεπτομέρειες μπορείτε να δείτε την σελίδα οδηγιών (man)."
 
-#: src/bin/main.c:2808
+#: src/bin/main.c:363
 msgid "Set emotion module to use."
 msgstr "Ορισμός αρθρώματος emotion προς χρήση."
 
-#: src/bin/main.c:2811
+#: src/bin/main.c:366
 msgid "Run the shell as a login shell."
 msgstr "Εκτέλεση του κελύφους ως κέλυφος εισόδου."
 
-#: src/bin/main.c:2813
+#: src/bin/main.c:368
 msgid "Set mute mode for video playback."
 msgstr "Ορισμός λειτουργίας σίγασης για την αναπαραγωγή βίντεο."
 
-#: src/bin/main.c:2815
+#: src/bin/main.c:370
 msgid "Set cursor blink mode."
 msgstr "Ορισμός λειτουργίας παλλόμενου κέρσορα."
 
-#: src/bin/main.c:2817
+#: src/bin/main.c:372
 msgid "Set visual bell mode."
 msgstr "Ορισμός λειτουργίας οπτικού κουδουνιού."
 
-#: src/bin/main.c:2819
+#: src/bin/main.c:374
 msgid "Go into the fullscreen mode from the start."
 msgstr "Χρήση λειτουργίας πλήρους οθόνης από την αρχή."
 
-#: src/bin/main.c:2821
+#: src/bin/main.c:376
 msgid "Go into an iconic state from the start."
 msgstr ""
 
-#: src/bin/main.c:2823
+#: src/bin/main.c:378
 msgid "Become a borderless managed window."
 msgstr "Να γίνει παράθυρο χωρίς πλαίσιο."
 
-#: src/bin/main.c:2825
+#: src/bin/main.c:380
 #, fuzzy
 msgid "Become an override-redirect window."
 msgstr "Να γίνει παράθυρο παράκαμψης ανακατεύθυνσης."
 
-#: src/bin/main.c:2827
+#: src/bin/main.c:382
 msgid "Become maximized from the start."
 msgstr "Να γίνει μεγιστοποίηση από την αρχή."
 
-#: src/bin/main.c:2829
+#: src/bin/main.c:384
 msgid "Terminology is run without a window manager."
 msgstr "Εκκίνηση του Terminology χωρίς διαχειριστή παραθύρων."
 
-#: src/bin/main.c:2831
+#: src/bin/main.c:386
 msgid "Do not exit when the command process exits."
 msgstr "Να μην γίνει έξοδος όταν η διεργασία εντολής κλείνει."
 
-#: src/bin/main.c:2833
+#: src/bin/main.c:388
 msgid "Force single executable if multi-instance is enabled."
 msgstr ""
 
-#: src/bin/main.c:2835
+#: src/bin/main.c:390
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
 msgstr "Ορισμός TERM σε 'xterm-256color' αντί για 'xterm'."
 
-#: src/bin/main.c:2837
+#: src/bin/main.c:392
 msgid "Highlight links."
 msgstr "Υπογράμμιση συνδέσμων."
 
-#: src/bin/main.c:2866
+#: src/bin/main.c:421
 msgid "show program version."
 msgstr "προβολή έκδοσης του προγράμματος."
 
-#: src/bin/main.c:2869
+#: src/bin/main.c:424
 msgid "show copyright."
 msgstr "προβολή πνευματικής ιδιοκτησίας."
 
-#: src/bin/main.c:2872
+#: src/bin/main.c:427
 msgid "show license."
 msgstr "προβολή άδειας."
 
-#: src/bin/main.c:2875
+#: src/bin/main.c:430
 msgid "show this message."
 msgstr "προβολή αυτού του μηνύματος."
 
-#: src/bin/main.c:2991 src/bin/miniview.c:38
+#: src/bin/main.c:546 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr ""
 
-#: src/bin/main.c:3001
+#: src/bin/main.c:556
 msgid "Could not initialize key bindings."
 msgstr "Δεν ήταν δυνατή η προετοιμασία του αρθρώματος emotion '%s'"
 
-#: src/bin/main.c:3013
+#: src/bin/main.c:568
 msgid "Could not parse command line options."
 msgstr "Αδυναμία ανάλυσης επιλογών γραμμής εντολών."
 
-#: src/bin/main.c:3028
+#: src/bin/main.c:583
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "η επιλογή %s χρειάζεται ένα όρισμα!"
 
-#: src/bin/main.c:3029
+#: src/bin/main.c:584
 msgid "invalid options found. See --help."
 msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
 
-#: src/bin/main.c:3349
+#: src/bin/main.c:900
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr "βρέθηκαν μη έγκυρα ορίσματα για την επιλογή -S/--split. Δείτε --help"
 
-#: src/bin/media.c:726
+#: src/bin/media.c:723
 #, c-format
 msgid "Could not Initialize the emotion module '%s'"
 msgstr "Δεν ήταν δυνατή η προετοιμασία του αρθρώματος emotion '%s'"
 
-#: src/bin/media.c:1314
+#: src/bin/media.c:1254 src/bin/termpty.c:357 src/bin/termpty.c:362
+#: src/bin/termpty.c:366
+#, c-format
+msgid "Function %s failed: %s"
+msgstr "Αποτυχία λειτουργίας %s: %s"
+
+#: src/bin/media.c:1350
 msgid "Media visualizing is not supported"
 msgstr ""
 
-#: src/bin/options_behavior.c:204
+#: src/bin/options_behavior.c:65
 #, c-format
 msgid "%'d lines"
 msgstr "%'d γραμμές"
 
-#: src/bin/options_behavior.c:305 src/bin/options.c:171
+#: src/bin/options_behavior.c:148 src/bin/options.c:171
 msgid "Behavior"
 msgstr "Συμπεριφορά"
 
-#: src/bin/options_behavior.c:325
+#: src/bin/options_behavior.c:176
 msgid "Scroll to bottom on new content"
 msgstr "Μετακίνηση προς τα κάτω όταν υπάρχει νέο περιεχόμενο"
 
-#: src/bin/options_behavior.c:335
+#: src/bin/options_behavior.c:177
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Μετακίνηση προς τα κάτω όταν πατηθεί κάποιο πλήκτρο"
 
-#: src/bin/options_behavior.c:345
+#: src/bin/options_behavior.c:178
 msgid "React to key presses"
 msgstr "Αντίδραση στα πατήματα πλήκτρων"
 
-#: src/bin/options_behavior.c:355
+#: src/bin/options_behavior.c:179
 msgid "Cursor blinking"
 msgstr "Κέρσορας που αναβοσβήνει"
 
-#: src/bin/options_behavior.c:365
+#: src/bin/options_behavior.c:180
 msgid "Visual Bell"
 msgstr "Οπτικό Κουδούνισμα"
 
-#: src/bin/options_behavior.c:375
+#: src/bin/options_behavior.c:181
 msgid "Bell rings"
 msgstr "Ήχος κουδουνίσματος"
 
-#: src/bin/options_behavior.c:385
+#: src/bin/options_behavior.c:182
 msgid "Urgent Bell"
 msgstr "Επείγων κουδούνισμα"
 
-#: src/bin/options_behavior.c:395
+#: src/bin/options_behavior.c:183
 msgid "Active Links"
 msgstr "Ενεργοί σύνδεσμοι"
 
-#: src/bin/options_behavior.c:420
+#: src/bin/options_behavior.c:184
 #, fuzzy
 msgid "Multiple instances, one process"
 msgstr "Πολλαπλά instances, μία διεργασία"
 
-#: src/bin/options_behavior.c:430
+#: src/bin/options_behavior.c:185
 msgid "Set TERM to xterm-256color"
 msgstr "Ορισμός TERM σε xterm-256color"
 
-#: src/bin/options_behavior.c:440
+#: src/bin/options_behavior.c:186
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr ""
 
-#: src/bin/options_behavior.c:450
+#: src/bin/options_behavior.c:187
 msgid "Drag & drop links"
 msgstr "Μεταφορά και απόθεση συνδέσμων"
 
-#: src/bin/options_behavior.c:460
+#: src/bin/options_behavior.c:188
 msgid "Start as login shell"
 msgstr ""
 
-#: src/bin/options_behavior.c:470
+#: src/bin/options_behavior.c:189
 #, fuzzy
 msgid "Focus split under the Mouse"
 msgstr "Eστίαση διαιρούμενου κάτω από το ποντίκι"
 
-#: src/bin/options_behavior.c:480
+#: src/bin/options_behavior.c:190
+msgid "Gravatar integration"
+msgstr ""
+
+#: src/bin/options_behavior.c:191
+msgid "Show tabs"
+msgstr ""
+
+#: src/bin/options_behavior.c:199
 msgid "Always open at size:"
 msgstr "Άνοιγμα πάντα σε μέγεθος:"
 
-#: src/bin/options_behavior.c:490
+#: src/bin/options_behavior.c:209
 msgid "Width:"
 msgstr "Πλάτος:"
 
-#: src/bin/options_behavior.c:510
+#: src/bin/options_behavior.c:229
 msgid "Height:"
 msgstr "Ύψος:"
 
-#: src/bin/options_behavior.c:537
+#: src/bin/options_behavior.c:256
 #, fuzzy
 msgid "Scrollback:"
 msgstr "Κύλιση προς τα πίσω:"
 
-#: src/bin/options_behavior.c:571
+#: src/bin/options_behavior.c:290
 msgid "Tab zoom/switch animation time:"
 msgstr ""
 
-#: src/bin/options_behavior.c:572
+#: src/bin/options_behavior.c:291
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
@@ -507,7 +511,7 @@ msgstr ""
 "αυτή είναι από συνδιασμό πλήκτρων, ροδέλας<br>ποντικιού ή κίνηση ποντικιού "
 "στο πάνελ καρτελών"
 
-#: src/bin/options_behavior.c:585 src/bin/options_behavior.c:586
+#: src/bin/options_behavior.c:304 src/bin/options_behavior.c:305
 #, c-format
 msgid "%1.1f s"
 msgstr "%1.1f s"
@@ -532,7 +536,7 @@ msgstr "Ταπετσαρία"
 msgid "Video"
 msgstr "Βίντεο"
 
-#: src/bin/options.c:170 src/bin/options_colors.c:160
+#: src/bin/options.c:170 src/bin/options_colors.c:166
 msgid "Colors"
 msgstr "Χρώματα"
 
@@ -596,27 +600,27 @@ msgstr "Αντιστροφή"
 msgid "Inverse Base"
 msgstr "Αντιστροφή Βάσης"
 
-#: src/bin/options_colors.c:188
+#: src/bin/options_colors.c:194
 msgid "Normal"
 msgstr "Κανονικό"
 
-#: src/bin/options_colors.c:189
+#: src/bin/options_colors.c:195
 msgid "Bright"
 msgstr "Φωτεινό"
 
-#: src/bin/options_colors.c:190
+#: src/bin/options_colors.c:196
 msgid "Normal 2"
 msgstr "Κανονικό 2"
 
-#: src/bin/options_colors.c:191
+#: src/bin/options_colors.c:197
 msgid "Bright 2"
 msgstr "Φωτεινό 2"
 
-#: src/bin/options_colors.c:263
+#: src/bin/options_colors.c:275
 msgid "Use"
 msgstr "Χρήση"
 
-#: src/bin/options_colors.c:273
+#: src/bin/options_colors.c:285
 msgid "Reset"
 msgstr "Επαναφορά"
 
@@ -717,39 +721,39 @@ msgstr "Αυτόματο"
 msgid "None"
 msgstr "Κανένα"
 
-#: src/bin/options_wallpaper.c:388
+#: src/bin/options_wallpaper.c:390
 msgid "Source file is target file"
 msgstr "Το πηγαίο αρχείο είναι το αρχείο προορισμού"
 
-#: src/bin/options_wallpaper.c:401
+#: src/bin/options_wallpaper.c:403
 msgid "Picture imported"
 msgstr "Εικόνα εισήχθει"
 
-#: src/bin/options_wallpaper.c:406
+#: src/bin/options_wallpaper.c:408
 msgid "Failed"
 msgstr "Απέτυχε"
 
-#: src/bin/options_wallpaper.c:423
+#: src/bin/options_wallpaper.c:425
 msgid "Background"
 msgstr "Φόντο"
 
-#: src/bin/options_wallpaper.c:467
+#: src/bin/options_wallpaper.c:469
 msgid "Select Path"
 msgstr "Επιλογή Διαδρομής"
 
-#: src/bin/options_wallpaper.c:473
+#: src/bin/options_wallpaper.c:475
 msgid "System"
 msgstr "Σύστημα"
 
-#: src/bin/options_wallpaper.c:476
+#: src/bin/options_wallpaper.c:478
 msgid "User"
 msgstr "Χρήστης"
 
-#: src/bin/options_wallpaper.c:479
+#: src/bin/options_wallpaper.c:481
 msgid "Other"
 msgstr "Άλλο"
 
-#: src/bin/options_wallpaper.c:494
+#: src/bin/options_wallpaper.c:496
 msgid "Double click on a picture to import it"
 msgstr "Διπλό κλίκ στην εικόνα για εισαγωγή"
 
@@ -773,34 +777,34 @@ msgstr "Αδυναμία ανάγνωσης αρχείου φόντου: %s"
 msgid "Unknown command: %s"
 msgstr "Άγνωστη εντολή: %s"
 
-#: src/bin/termio.c:521
+#: src/bin/termio.c:534
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Δεν μπόρεσε να εντοπιστεί κατάλογος με pid %i: %s"
 
-#: src/bin/termio.c:535
+#: src/bin/termio.c:548
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Δεν μπόρεσε να φορτωθεί ο κατάλογος εργασίας %s: %s"
 
-#: src/bin/termio.c:942
+#: src/bin/termio.c:956
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: src/bin/termio.c:945
+#: src/bin/termio.c:959
 msgid "Open"
 msgstr "Άνοιγμα"
 
-#: src/bin/termio.c:2286
+#: src/bin/termio.c:2302
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Μή υποστηριζόμενη μορφή επιλογής '%s'"
 
-#: src/bin/termio.c:4368
+#: src/bin/termio.c:4931
 msgid "Ecore IMF failed"
 msgstr "Το Ecore IMF απέτυχε"
 
-#: src/bin/termio.c:4962
+#: src/bin/termio.c:5527
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -814,32 +818,27 @@ msgstr "Σφάλμα μνήμης: %s"
 msgid "Size set ioctl failed: %s"
 msgstr "Αποτυχία ορισμού μεγέθους ioctl: %s"
 
-#: src/bin/termpty.c:317 src/bin/termpty.c:322 src/bin/termpty.c:326
-#, c-format
-msgid "Function %s failed: %s"
-msgstr "Αποτυχία λειτουργίας %s: %s"
-
 #: src/bin/termpty.c:333
-#, c-format
-msgid "open() of pty '%s' failed: %s"
-msgstr "αποτυχία open() στο pty '%s': %s"
-
-#: src/bin/termpty.c:339 src/bin/termpty.c:345
-#, c-format
-msgid "fcntl() on pty '%s' failed: %s"
-msgstr "αποτυχία fcntl() στο pty '%s': %s"
-
-#: src/bin/termpty.c:382
-#, c-format
-msgid "Could not change current directory to '%s': %s"
-msgstr "Αδυναμία αλλαγής τρέχοντος καταλόγου σε '%s': %s"
-
-#: src/bin/termpty.c:403
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:599
+#: src/bin/termpty.c:373
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr "αποτυχία open() στο pty '%s': %s"
+
+#: src/bin/termpty.c:379 src/bin/termpty.c:385
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr "αποτυχία fcntl() στο pty '%s': %s"
+
+#: src/bin/termpty.c:423
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr "Αδυναμία αλλαγής τρέχοντος καταλόγου σε '%s': %s"
+
+#: src/bin/termpty.c:653
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Αδυναμία εγγραφής στον περιγραφέα αρχείου %d: %s"
@@ -853,6 +852,15 @@ msgstr "Δεν γίνεται να φορτωθεί οποιοδήποτε θέ�
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
 msgstr "Αδυναμία φόρτωσης προεπιλεγμένου θέματος για την ομάδα=%s: %s"
+
+#: src/bin/win.c:2642
+msgid "Couldn't find terminology theme! Forgot 'make install'?"
+msgstr ""
+"Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'make "
+"install';"
+
+#~ msgid "There is no window open"
+#~ msgstr "Δεν υπάρχει ανοιχτό παράθυρο"
 
 #~ msgid "Close"
 #~ msgstr "Κλείσιμο"
