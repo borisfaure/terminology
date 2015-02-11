@@ -124,7 +124,6 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                   /* Check if the previous char is a delimiter */
                   coord_back(&x1, &y1, w, h);
                   free(s);
-                  prev_len = len;
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
                                            &len);
                   if (!s) break;
