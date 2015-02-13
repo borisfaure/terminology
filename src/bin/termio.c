@@ -145,14 +145,14 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
         if (!ty->selection.is_top_to_bottom)
              INT_SWAP(sel_start_y, sel_end_y);
         if (start_y <= sel_start_y &&
-            end_y >= sel_end_y)
+            sel_end_y <= end_y)
           {
              ty->selection.start.y += direction;
              ty->selection.end.y += direction;
              sel_start_y += direction;
              sel_end_y += direction;
              if (!(start_y <= sel_start_y &&
-                 end_y >= sel_end_y))
+                 sel_end_y <= end_y))
                {
                   _sel_set(sd, EINA_FALSE);
                }
@@ -163,11 +163,6 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
             {
                _sel_set(sd, EINA_FALSE);
             }
-        else
-          {
-             ty->selection.start.y += direction;
-             ty->selection.end.y += direction;
-          }
      }
    if (sd->link.string)
      {
