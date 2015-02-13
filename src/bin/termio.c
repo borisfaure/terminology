@@ -4171,6 +4171,8 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
              _smart_update_queue(data, sd);
              miniview_position_offset(term_miniview_get(sd->term),
                                       ev->z * 4, EINA_TRUE);
+
+             _smart_cb_mouse_move_job(data);
           }
      }
    else
