@@ -6,17 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-09 21:29+0100\n"
-"PO-Revision-Date: 2014-09-25 20:12+0000\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2015-01-09 20:48+0100\n"
+"PO-Revision-Date: 2015-02-11 17:43+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
-"Language: eo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"X-Launchpad-Export-Date: 2015-02-14 12:28+0000\n"
+"X-Generator: Launchpad (build 17341)\n"
+"Language: eo\n"
 
 #: src/bin/controls.c:247
 msgid "Controls"
@@ -38,7 +38,7 @@ msgstr "Dividi horizontale"
 msgid "Miniview"
 msgstr ""
 
-#: src/bin/controls.c:287 src/bin/termio.c:961
+#: src/bin/controls.c:287 src/bin/termio.c:953
 msgid "Copy"
 msgstr "Kopii"
 
@@ -56,7 +56,7 @@ msgstr "Pri"
 
 #: src/bin/controls.c:315
 msgid "Close Terminal"
-msgstr ""
+msgstr "Fermi la terminalon"
 
 #: src/bin/about.c:56
 #, c-format
@@ -73,147 +73,147 @@ msgstr ""
 "de:<br><br>%s<br><br>Distribuita laŭ la 2-klaŭza BSD licenso priskribata "
 "sube:<br><br>%s"
 
-#: src/bin/keyin.c:530
+#: src/bin/keyin.c:528
 msgid "Scrolling"
 msgstr "Rulumado"
 
-#: src/bin/keyin.c:531
+#: src/bin/keyin.c:529
 msgid "Scroll one page up"
 msgstr ""
 
-#: src/bin/keyin.c:532
+#: src/bin/keyin.c:530
 msgid "Scroll one page down"
 msgstr ""
 
-#: src/bin/keyin.c:533
+#: src/bin/keyin.c:531
 msgid "Scroll one line up"
 msgstr ""
 
-#: src/bin/keyin.c:534
+#: src/bin/keyin.c:532
 msgid "Scroll one line down"
 msgstr ""
 
-#: src/bin/keyin.c:536
+#: src/bin/keyin.c:534
 msgid "Copy/Paste"
 msgstr "Kopii/Alglui"
 
-#: src/bin/keyin.c:537
+#: src/bin/keyin.c:535
 msgid "Copy selection to Primary buffer"
 msgstr ""
 
-#: src/bin/keyin.c:538
+#: src/bin/keyin.c:536
 msgid "Copy selection to Clipboard buffer"
 msgstr ""
 
-#: src/bin/keyin.c:539
+#: src/bin/keyin.c:537
 msgid "Paste Primary buffer (highlight)"
 msgstr ""
 
-#: src/bin/keyin.c:540
+#: src/bin/keyin.c:538
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr ""
 
-#: src/bin/keyin.c:542
+#: src/bin/keyin.c:540
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:543
+#: src/bin/keyin.c:541
 msgid "Focus to the previous terminal"
 msgstr ""
 
-#: src/bin/keyin.c:544
+#: src/bin/keyin.c:542
 msgid "Focus to the next terminal"
 msgstr ""
 
-#: src/bin/keyin.c:545
+#: src/bin/keyin.c:543
 msgid "Split horizontally (new below)"
 msgstr ""
 
-#: src/bin/keyin.c:546
+#: src/bin/keyin.c:544
 msgid "Split vertically (new on right)"
 msgstr ""
 
-#: src/bin/keyin.c:547
+#: src/bin/keyin.c:545
 msgid "Create a new \"tab\""
 msgstr ""
 
-#: src/bin/keyin.c:548
+#: src/bin/keyin.c:546
 msgid "Close the focused terminal"
 msgstr ""
 
-#: src/bin/keyin.c:549
+#: src/bin/keyin.c:547
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
-#: src/bin/keyin.c:550
+#: src/bin/keyin.c:548
 msgid "Switch to terminal tab 1"
 msgstr ""
 
-#: src/bin/keyin.c:551
+#: src/bin/keyin.c:549
 msgid "Switch to terminal tab 2"
 msgstr ""
 
-#: src/bin/keyin.c:552
+#: src/bin/keyin.c:550
 msgid "Switch to terminal tab 3"
 msgstr ""
 
-#: src/bin/keyin.c:553
+#: src/bin/keyin.c:551
 msgid "Switch to terminal tab 4"
 msgstr ""
 
-#: src/bin/keyin.c:554
+#: src/bin/keyin.c:552
 msgid "Switch to terminal tab 5"
 msgstr ""
 
-#: src/bin/keyin.c:555
+#: src/bin/keyin.c:553
 msgid "Switch to terminal tab 6"
 msgstr ""
 
-#: src/bin/keyin.c:556
+#: src/bin/keyin.c:554
 msgid "Switch to terminal tab 7"
 msgstr ""
 
-#: src/bin/keyin.c:557
+#: src/bin/keyin.c:555
 msgid "Switch to terminal tab 8"
 msgstr ""
 
-#: src/bin/keyin.c:558
+#: src/bin/keyin.c:556
 msgid "Switch to terminal tab 9"
 msgstr ""
 
-#: src/bin/keyin.c:559
+#: src/bin/keyin.c:557
 msgid "Switch to terminal tab 10"
 msgstr ""
 
-#: src/bin/keyin.c:561
+#: src/bin/keyin.c:559
 msgid "Font size"
 msgstr "Tipara grando"
 
-#: src/bin/keyin.c:562
+#: src/bin/keyin.c:560
 msgid "Font size up 1"
 msgstr ""
 
-#: src/bin/keyin.c:563
+#: src/bin/keyin.c:561
 msgid "Font size down 1"
 msgstr ""
 
-#: src/bin/keyin.c:564
+#: src/bin/keyin.c:562
 msgid "Display big font size"
 msgstr ""
 
-#: src/bin/keyin.c:565
+#: src/bin/keyin.c:563
 msgid "Reset font size"
 msgstr "Reŝargi tiparan gradon"
 
-#: src/bin/keyin.c:567
+#: src/bin/keyin.c:565
 msgid "Actions"
 msgstr "Agoj"
 
-#: src/bin/keyin.c:568
+#: src/bin/keyin.c:566
 msgid "Display the history miniview"
 msgstr ""
 
-#: src/bin/keyin.c:569
+#: src/bin/keyin.c:567
 msgid "Display the command box"
 msgstr ""
 
@@ -514,7 +514,7 @@ msgstr "Ekranfono"
 msgid "Video"
 msgstr "Video"
 
-#: src/bin/options.c:170 src/bin/options_colors.c:166
+#: src/bin/options.c:170 src/bin/options_colors.c:160
 msgid "Colors"
 msgstr "Koloroj"
 
@@ -578,27 +578,27 @@ msgstr "Inversa"
 msgid "Inverse Base"
 msgstr ""
 
-#: src/bin/options_colors.c:194
+#: src/bin/options_colors.c:188
 msgid "Normal"
 msgstr "Normala"
 
-#: src/bin/options_colors.c:195
+#: src/bin/options_colors.c:189
 msgid "Bright"
 msgstr "Hela"
 
-#: src/bin/options_colors.c:196
+#: src/bin/options_colors.c:190
 msgid "Normal 2"
 msgstr "Normala 2"
 
-#: src/bin/options_colors.c:197
+#: src/bin/options_colors.c:191
 msgid "Bright 2"
 msgstr "Hela 2"
 
-#: src/bin/options_colors.c:275
+#: src/bin/options_colors.c:263
 msgid "Use"
 msgstr "Uzi"
 
-#: src/bin/options_colors.c:285
+#: src/bin/options_colors.c:273
 msgid "Reset"
 msgstr "Reŝargi"
 
@@ -755,34 +755,34 @@ msgstr ""
 msgid "Unknown command: %s"
 msgstr "Nekonata komando: %s"
 
-#: src/bin/termio.c:534
+#: src/bin/termio.c:526
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:548
+#: src/bin/termio.c:540
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:956
+#: src/bin/termio.c:948
 msgid "Preview"
 msgstr "Antaŭrigardo"
 
-#: src/bin/termio.c:959
+#: src/bin/termio.c:951
 msgid "Open"
 msgstr "Malfermi"
 
-#: src/bin/termio.c:2302
+#: src/bin/termio.c:2297
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:4931
+#: src/bin/termio.c:4501
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:5527
+#: src/bin/termio.c:5097
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -811,12 +811,12 @@ msgstr ""
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:423
+#: src/bin/termpty.c:419
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""
 
-#: src/bin/termpty.c:653
+#: src/bin/termpty.c:605
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
@@ -834,9 +834,3 @@ msgstr ""
 #: src/bin/win.c:2642
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr ""
-
-#~ msgid "There is no window open"
-#~ msgstr "Estas neniu malferma fenestro"
-
-#~ msgid "Close"
-#~ msgstr "Fermi"
