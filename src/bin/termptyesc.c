@@ -1142,7 +1142,11 @@ err:
 
 static void
 _handle_xterm_777_command(Termpty *ty EINA_UNUSED,
-                          char *s, int len EINA_UNUSED)
+                          char *s
+#if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
+              EINA_UNUSED
+#endif
+                          , int len EINA_UNUSED)
 {
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
    char *cmd_end = NULL,

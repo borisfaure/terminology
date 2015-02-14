@@ -1059,7 +1059,12 @@ _cb_link_icon_new(void *data, Evas_Object *par, Evas_Coord *xoff, Evas_Coord *yo
 #endif
 
 static void
-_cb_link_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
+_cb_link_move(void *data, Evas *e EINA_UNUSED,
+              Evas_Object *obj
+#if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
+              EINA_UNUSED
+#endif
+              , void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4804,14 +4809,6 @@ _imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event EI
    free(preedit_string);
 }
 
-static void
-_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event)
-{
-   Termio *sd = data;
-   Ecore_IMF_Event_Selection *ev = event;
-   DBG("IMF selection set %p %i %i", sd, ev->start, ev->end);
-}
-
 
 static void
 _smart_add(Evas_Object *obj)
@@ -4926,8 +4923,6 @@ _smart_add(Evas_Object *obj)
           (sd->khdl.imf, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _imf_event_delete_surrounding_cb, sd);
         ecore_imf_context_event_callback_add
           (sd->khdl.imf, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _imf_event_preedit_changed_cb, sd);
-        ecore_imf_context_event_callback_add
-          (sd->khdl.imf, ECORE_IMF_CALLBACK_SELECTION_SET, _imf_event_selection_set_cb, sd);
         /* make IMF usable by a terminal - no preedit, prediction... */
         ecore_imf_context_prediction_allow_set
           (sd->khdl.imf, EINA_FALSE);

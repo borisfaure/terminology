@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Efreet.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"

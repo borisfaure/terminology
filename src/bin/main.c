@@ -520,7 +520,9 @@ elm_main(int argc, char **argv)
    int pos_set = 0, size_set = 0;
    int pos_x = 0, pos_y = 0;
    int size_w = 1, size_h = 1;
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_List *cmds_list = NULL;
+#endif
 
    elm_language_set("");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
