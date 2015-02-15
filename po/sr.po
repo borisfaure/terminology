@@ -7,11 +7,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2015-01-09 20:48+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2015-02-09 21:29+0100\n"
 "PO-Revision-Date: 2014-11-14 00:00+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <salepetronije@gmail.com>\n"
+"Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,7 +39,7 @@ msgstr "Подели В"
 msgid "Miniview"
 msgstr ""
 
-#: src/bin/controls.c:287 src/bin/termio.c:953
+#: src/bin/controls.c:287 src/bin/termio.c:961
 msgid "Copy"
 msgstr "Умножи"
 
@@ -68,147 +69,147 @@ msgid ""
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
 
-#: src/bin/keyin.c:528
+#: src/bin/keyin.c:530
 msgid "Scrolling"
 msgstr "Клизање"
 
-#: src/bin/keyin.c:529
+#: src/bin/keyin.c:531
 msgid "Scroll one page up"
 msgstr "Клизај једну страну навише"
 
-#: src/bin/keyin.c:530
+#: src/bin/keyin.c:532
 msgid "Scroll one page down"
 msgstr "Клизај једну страну наниже"
 
-#: src/bin/keyin.c:531
+#: src/bin/keyin.c:533
 msgid "Scroll one line up"
 msgstr "Клизај за једну линију навише"
 
-#: src/bin/keyin.c:532
+#: src/bin/keyin.c:534
 msgid "Scroll one line down"
 msgstr "Клизај за једну линију наниже"
 
-#: src/bin/keyin.c:534
+#: src/bin/keyin.c:536
 msgid "Copy/Paste"
 msgstr "Умножи путању у главну међуоставу"
 
-#: src/bin/keyin.c:535
+#: src/bin/keyin.c:537
 msgid "Copy selection to Primary buffer"
 msgstr "Умножи изабрано као текући исечак"
 
-#: src/bin/keyin.c:536
+#: src/bin/keyin.c:538
 msgid "Copy selection to Clipboard buffer"
 msgstr "Умножи избор у оставу исечака"
 
-#: src/bin/keyin.c:537
+#: src/bin/keyin.c:539
 msgid "Paste Primary buffer (highlight)"
 msgstr "Налепи главни исечак"
 
-#: src/bin/keyin.c:538
+#: src/bin/keyin.c:540
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Налепи исечак из оставе (ctrl+c/v)"
 
-#: src/bin/keyin.c:540
+#: src/bin/keyin.c:542
 msgid "Splits/Tabs"
 msgstr "Поделе/листови"
 
-#: src/bin/keyin.c:541
+#: src/bin/keyin.c:543
 msgid "Focus to the previous terminal"
 msgstr "Пређи на претходни терминал"
 
-#: src/bin/keyin.c:542
+#: src/bin/keyin.c:544
 msgid "Focus to the next terminal"
 msgstr "Пређи на следећи терминал"
 
-#: src/bin/keyin.c:543
+#: src/bin/keyin.c:545
 msgid "Split horizontally (new below)"
 msgstr "Подели водоравно (нови испод)"
 
-#: src/bin/keyin.c:544
+#: src/bin/keyin.c:546
 msgid "Split vertically (new on right)"
 msgstr "Подели усправно (нови  с’ десна"
 
-#: src/bin/keyin.c:545
+#: src/bin/keyin.c:547
 msgid "Create a new \"tab\""
 msgstr "Направи нови „лист“"
 
-#: src/bin/keyin.c:546
+#: src/bin/keyin.c:548
 msgid "Close the focused terminal"
 msgstr "Затвори терминал у жижи"
 
-#: src/bin/keyin.c:547
+#: src/bin/keyin.c:549
 msgid "Bring up \"tab\" switcher"
 msgstr "Позови измењивача „језичака“"
 
-#: src/bin/keyin.c:548
+#: src/bin/keyin.c:550
 msgid "Switch to terminal tab 1"
 msgstr "Пређи на Пређи на лист терминалалист терминала 1"
 
-#: src/bin/keyin.c:549
+#: src/bin/keyin.c:551
 msgid "Switch to terminal tab 2"
 msgstr "Пређи на лист терминала 2"
 
-#: src/bin/keyin.c:550
+#: src/bin/keyin.c:552
 msgid "Switch to terminal tab 3"
 msgstr "Пређи на лист терминала 3"
 
-#: src/bin/keyin.c:551
+#: src/bin/keyin.c:553
 msgid "Switch to terminal tab 4"
 msgstr "Пређи на лист терминала 4"
 
-#: src/bin/keyin.c:552
+#: src/bin/keyin.c:554
 msgid "Switch to terminal tab 5"
 msgstr "Пређи на лист терминала 5"
 
-#: src/bin/keyin.c:553
+#: src/bin/keyin.c:555
 msgid "Switch to terminal tab 6"
 msgstr "Пређи на лист терминала 6"
 
-#: src/bin/keyin.c:554
+#: src/bin/keyin.c:556
 msgid "Switch to terminal tab 7"
 msgstr "Пређи на лист терминала 7"
 
-#: src/bin/keyin.c:555
+#: src/bin/keyin.c:557
 msgid "Switch to terminal tab 8"
 msgstr "Пређи на лист терминала 8"
 
-#: src/bin/keyin.c:556
+#: src/bin/keyin.c:558
 msgid "Switch to terminal tab 9"
 msgstr "Пређи на лист терминала 9"
 
-#: src/bin/keyin.c:557
+#: src/bin/keyin.c:559
 msgid "Switch to terminal tab 10"
 msgstr "Пређи на лист терминала 10"
 
-#: src/bin/keyin.c:559
+#: src/bin/keyin.c:561
 msgid "Font size"
 msgstr "Величина словног лика"
 
-#: src/bin/keyin.c:560
+#: src/bin/keyin.c:562
 msgid "Font size up 1"
 msgstr "Повећај словни лик за 1"
 
-#: src/bin/keyin.c:561
+#: src/bin/keyin.c:563
 msgid "Font size down 1"
 msgstr "Смањи величину словног лика за 1"
 
-#: src/bin/keyin.c:562
+#: src/bin/keyin.c:564
 msgid "Display big font size"
 msgstr "Приказуј велики словни лик"
 
-#: src/bin/keyin.c:563
+#: src/bin/keyin.c:565
 msgid "Reset font size"
 msgstr "_Врати величину словног лика"
 
-#: src/bin/keyin.c:565
+#: src/bin/keyin.c:567
 msgid "Actions"
 msgstr "Радње"
 
-#: src/bin/keyin.c:566
+#: src/bin/keyin.c:568
 msgid "Display the history miniview"
 msgstr "Прикажи мали преглед скорашњих"
 
-#: src/bin/keyin.c:567
+#: src/bin/keyin.c:569
 msgid "Display the command box"
 msgstr "Прикажи наредбену кућицу"
 
@@ -513,7 +514,7 @@ msgstr "Слика за позадину"
 msgid "Video"
 msgstr "Видео"
 
-#: src/bin/options.c:170 src/bin/options_colors.c:160
+#: src/bin/options.c:170 src/bin/options_colors.c:166
 msgid "Colors"
 msgstr "Боје"
 
@@ -577,27 +578,27 @@ msgstr "Изврнуто"
 msgid "Inverse Base"
 msgstr ""
 
-#: src/bin/options_colors.c:188
+#: src/bin/options_colors.c:194
 msgid "Normal"
 msgstr "Уобичајено"
 
-#: src/bin/options_colors.c:189
+#: src/bin/options_colors.c:195
 msgid "Bright"
 msgstr "Светло"
 
-#: src/bin/options_colors.c:190
+#: src/bin/options_colors.c:196
 msgid "Normal 2"
 msgstr ""
 
-#: src/bin/options_colors.c:191
+#: src/bin/options_colors.c:197
 msgid "Bright 2"
 msgstr "Светло 2"
 
-#: src/bin/options_colors.c:263
+#: src/bin/options_colors.c:275
 msgid "Use"
 msgstr "Користи"
 
-#: src/bin/options_colors.c:273
+#: src/bin/options_colors.c:285
 msgid "Reset"
 msgstr "Врати на подразумевано"
 
@@ -754,34 +755,34 @@ msgstr ""
 msgid "Unknown command: %s"
 msgstr ""
 
-#: src/bin/termio.c:526
+#: src/bin/termio.c:534
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:540
+#: src/bin/termio.c:548
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:948
+#: src/bin/termio.c:956
 msgid "Preview"
 msgstr "Преглед"
 
-#: src/bin/termio.c:951
+#: src/bin/termio.c:959
 msgid "Open"
 msgstr "Отвори"
 
-#: src/bin/termio.c:2297
+#: src/bin/termio.c:2302
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:4501
+#: src/bin/termio.c:4931
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:5097
+#: src/bin/termio.c:5527
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -810,12 +811,12 @@ msgstr ""
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:419
+#: src/bin/termpty.c:423
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""
 
-#: src/bin/termpty.c:605
+#: src/bin/termpty.c:653
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
