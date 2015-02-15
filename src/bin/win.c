@@ -1247,8 +1247,8 @@ _split_flatten(Split *sp)
    return flat;
 }
 
-static Term *
-_term_next_get(Term *termin)
+Term *
+term_next_get(Term *termin)
 {
    Split *sp;
    Eina_List *flat, *l;
@@ -1278,8 +1278,8 @@ _term_next_get(Term *termin)
    return sp->term;
 }
 
-static Term *
-_term_prev_get(Term *termin)
+Term *
+term_prev_get(Term *termin)
 {
    Split *sp;
    Eina_List *flat, *l;
@@ -1448,7 +1448,7 @@ term_prev(Term *term)
    Term *term2 = NULL;
    Config *config = termio_config_get(term->term);
 
-   if (term->focused) term2 = _term_prev_get(term);
+   if (term->focused) term2 = term_prev_get(term);
    if ((term2 != NULL) && (term2 != term))
      {
         Split *sp, *sp0;
@@ -1476,7 +1476,7 @@ term_next(Term *term)
    Term *term2 = NULL;
    Config *config = termio_config_get(term->term);
 
-   if (term->focused) term2 = _term_next_get(term);
+   if (term->focused) term2 = term_next_get(term);
    if ((term2 != NULL) && (term2 != term))
      {
         Split *sp, *sp0;

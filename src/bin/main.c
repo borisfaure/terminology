@@ -875,28 +875,28 @@ remote:
    evas_object_show(win);
    if (startup_split)
      {
-        /* TODO: bring it back to life */
-#if 0
         unsigned int i = 0;
         void *pch = NULL;
         Term *next = term;
 
-        for (i=0; i<strlen(startup_split); i++)
+        for (i = 0; i < strlen(startup_split); i++)
           {
              if (startup_split[i] == 'v')
                {
                   pch = eina_list_nth(cmds_list, 1);
-                  main_split_v(next->wn->win, next->term, pch);
+                  main_split_v(win_evas_object_get(term_win_get(next)),
+                               main_term_evas_object_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
              else if (startup_split[i] == 'h')
                {
                   pch = eina_list_nth(cmds_list, 1);
-                  main_split_h(next->wn->win, next->term, pch);
+                  main_split_h(win_evas_object_get(term_win_get(next)),
+                               main_term_evas_object_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
              else if (startup_split[i] == '-')
-               next = _term_next_get(next);
+               next = term_next_get(next);
              else
                {
                   ERR(_("invalid argument found for option -S/--split. See --help."));
@@ -904,7 +904,6 @@ remote:
                }
           }
         if (cmds_list) eina_list_free(cmds_list);
-#endif
      }
    if (pos_set)
      {
