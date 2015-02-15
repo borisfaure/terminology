@@ -875,6 +875,7 @@ remote:
    evas_object_show(win);
    if (startup_split)
      {
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
         unsigned int i = 0;
         void *pch = NULL;
         Term *next = term;
@@ -904,6 +905,7 @@ remote:
                }
           }
         if (cmds_list) eina_list_free(cmds_list);
+#endif
      }
    if (pos_set)
      {
