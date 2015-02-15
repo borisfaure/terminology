@@ -866,8 +866,6 @@ _smart_del(Evas_Object *obj)
         ecore_event_handler_del(sd->url_prog_hand);
         ecore_event_handler_del(sd->url_compl_hand);
         ecore_con_url_free(sd->url);
-        ecore_con_url_shutdown();
-        ecore_con_shutdown();
      }
    sd->url = NULL;
    sd->url_prog_hand = NULL;
@@ -1055,8 +1053,6 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    ecore_event_handler_del(sd->url_prog_hand);
    ecore_event_handler_del(sd->url_compl_hand);
    ecore_con_url_free(sd->url);
-   ecore_con_url_shutdown();
-   ecore_con_shutdown();
    sd->url = NULL;
    sd->url_prog_hand = NULL;
    sd->url_compl_hand = NULL;
@@ -1210,15 +1206,11 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
              sd->tmpfd = mkstemps(buf, strlen(sd->ext));
              if (sd->tmpfd >= 0)
                {
-                  ecore_con_init();
-                  ecore_con_url_init();
                   sd->url = ecore_con_url_new(tbuf);
                   if (!sd->url)
                     {
                        unlink(buf);
                        close(sd->tmpfd);
-                       ecore_con_url_shutdown();
-                       ecore_con_shutdown();
                     }
                   else
                     {
@@ -1227,8 +1219,6 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
                          {
                             unlink(buf);
                             close(sd->tmpfd);
-                            ecore_con_url_shutdown();
-                            ecore_con_shutdown();
                             sd->url = NULL;
                          }
                        else

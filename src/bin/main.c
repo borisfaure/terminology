@@ -922,7 +922,13 @@ remote:
 
    ty_dbus_init();
 
+   ecore_con_init();
+   ecore_con_url_init();
+
    elm_run();
+
+   ecore_con_url_shutdown();
+   ecore_con_shutdown();
 
    ty_dbus_shutdown();
    config = NULL;
