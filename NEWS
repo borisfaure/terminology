@@ -1,13 +1,29 @@
 =================
-Terminology 0.7.0
+Terminology 0.8.0
 =================
+
+Changes since 0.7.0:
+--------------------
+
+Additions:
+    * Gravatar support
+    * Visual tab bar
+    * xterm "notification" support
+
+Improvements:
+    * Display pre-edit text when composing
+    * Selection improvements
+
+Fixes:
+    * Various bug fixes
+
 
 Changes since 0.6.1:
 --------------------
 
 Additions:
     * Internationalization and Localization support
-    * Options -s/--split to start terminology with multiple splits
+    * Options -S/--split to start terminology with multiple splits
     * Configurable key bindings
     * Add a panel to launch elementary_config
 

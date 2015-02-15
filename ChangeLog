@@ -1,8 +1,18 @@
+2015-02-15
+
+        * Release v0.8.0
+        * Gravatar support
+        * Add a visual tab bar
+        * Add xterm "notification" support
+        * Display pre-edit text when composing
+        * Selection improvements
+        * Various bug fixes
+
 2014-10-06
 
         * Release v0.7.0
         * Internationalization and Localization support
-        * Options -s/--split to start terminology with multiple splits
+        * Options -S/--split to start terminology with multiple splits
         * Configurable key bindings
         * Add a panel to launch elementary_config
         * Opacity level can be configured in translucent mode
