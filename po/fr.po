@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-09 21:29+0100\n"
+"POT-Creation-Date: 2015-02-15 14:12+0100\n"
 "PO-Revision-Date: 2015-02-11 17:42+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French\n"
@@ -38,7 +38,7 @@ msgstr "Fractionner H"
 msgid "Miniview"
 msgstr "Mini-vue"
 
-#: src/bin/controls.c:287 src/bin/termio.c:961
+#: src/bin/controls.c:287 src/bin/termio.c:956
 msgid "Copy"
 msgstr "Copier"
 
@@ -350,29 +350,29 @@ msgstr "afficher la license."
 msgid "show this message."
 msgstr "afficher le message."
 
-#: src/bin/main.c:546 src/bin/miniview.c:38
+#: src/bin/main.c:548 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr ""
 
-#: src/bin/main.c:556
+#: src/bin/main.c:558
 msgid "Could not initialize key bindings."
 msgstr ""
 
-#: src/bin/main.c:568
+#: src/bin/main.c:570
 msgid "Could not parse command line options."
 msgstr ""
 
-#: src/bin/main.c:583
+#: src/bin/main.c:585
 #, c-format
 msgid "option %s requires an argument!"
 msgstr ""
 
-#: src/bin/main.c:584
+#: src/bin/main.c:586
 msgid "invalid options found. See --help."
 msgstr ""
 
-#: src/bin/main.c:900
+#: src/bin/main.c:902
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr ""
 
@@ -503,7 +503,7 @@ msgstr "Options"
 msgid "Font"
 msgstr "Police"
 
-#: src/bin/options.c:167 src/bin/options_theme.c:112
+#: src/bin/options.c:167 src/bin/options_theme.c:113
 msgid "Theme"
 msgstr "Thème"
 
@@ -756,21 +756,21 @@ msgstr ""
 msgid "Unknown command: %s"
 msgstr "Commande inconnue : %s"
 
-#: src/bin/termio.c:534
+#: src/bin/termio.c:529
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:548
+#: src/bin/termio.c:543
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:956
+#: src/bin/termio.c:951
 msgid "Preview"
 msgstr "Aperçu"
 
-#: src/bin/termio.c:959
+#: src/bin/termio.c:954
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -779,11 +779,11 @@ msgstr "Ouvrir"
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:4931
+#: src/bin/termio.c:4941
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:5527
+#: src/bin/termio.c:5537
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -822,12 +822,12 @@ msgstr ""
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
 
-#: src/bin/utils.c:50
+#: src/bin/utils.c:51
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
 msgstr ""
 
-#: src/bin/utils.c:67
+#: src/bin/utils.c:68
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
 msgstr ""

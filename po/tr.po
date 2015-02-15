@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2015-01-09 20:48+0100\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2015-02-15 14:12+0100\n"
 "PO-Revision-Date: 2014-10-23 00:17+0000\n"
 "Last-Translator: Volkan Gezer <Unknown>\n"
 "Language-Team: Turkish <tr@li.org>\n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -37,7 +38,7 @@ msgstr "Y Ayır"
 msgid "Miniview"
 msgstr ""
 
-#: src/bin/controls.c:287 src/bin/termio.c:953
+#: src/bin/controls.c:287 src/bin/termio.c:956
 msgid "Copy"
 msgstr "Kopyala"
 
@@ -69,151 +70,151 @@ msgstr ""
 "<b>Terminoloji %s</b><br>Niçin uçbirimler sıkıcı olmalı ki?<br><br>Bu "
 "uçbirim Enlightenment için yazıldı. EFL kullanmak ve diğer durumlarda çağdaş "
 "bir uçbirim öykünücüsünün olması gerektiği sınırları zorlamaktadır. Umarız "
-"eğlenirsiniz.<br><br>Telif Hakkı © 2012-%d "
-"Yazarlar:<br><br>%s<br><br>Ayrıntıları aşağıda yazan 2-şartlı BSD lisanslı "
-"ile yayınlanmaktadır:<br><br>%s"
+"eğlenirsiniz.<br><br>Telif Hakkı © 2012-%d Yazarlar:<br><br>"
+"%s<br><br>Ayrıntıları aşağıda yazan 2-şartlı BSD lisanslı ile "
+"yayınlanmaktadır:<br><br>%s"
 
-#: src/bin/keyin.c:528
+#: src/bin/keyin.c:530
 msgid "Scrolling"
 msgstr "Kaydırma"
 
-#: src/bin/keyin.c:529
+#: src/bin/keyin.c:531
 msgid "Scroll one page up"
 msgstr "Bir sayfa yukarı kaydır"
 
-#: src/bin/keyin.c:530
+#: src/bin/keyin.c:532
 msgid "Scroll one page down"
 msgstr "Bir sayfa aşağı kaydır"
 
-#: src/bin/keyin.c:531
+#: src/bin/keyin.c:533
 msgid "Scroll one line up"
 msgstr "Bir satır yukarı kaydır"
 
-#: src/bin/keyin.c:532
+#: src/bin/keyin.c:534
 msgid "Scroll one line down"
 msgstr "Bir satır aşağı kaydır"
 
-#: src/bin/keyin.c:534
+#: src/bin/keyin.c:536
 msgid "Copy/Paste"
 msgstr ""
 
-#: src/bin/keyin.c:535
+#: src/bin/keyin.c:537
 msgid "Copy selection to Primary buffer"
 msgstr ""
 
-#: src/bin/keyin.c:536
+#: src/bin/keyin.c:538
 msgid "Copy selection to Clipboard buffer"
 msgstr ""
 
-#: src/bin/keyin.c:537
+#: src/bin/keyin.c:539
 msgid "Paste Primary buffer (highlight)"
 msgstr ""
 
-#: src/bin/keyin.c:538
+#: src/bin/keyin.c:540
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr ""
 
-#: src/bin/keyin.c:540
+#: src/bin/keyin.c:542
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:541
+#: src/bin/keyin.c:543
 msgid "Focus to the previous terminal"
 msgstr ""
 
-#: src/bin/keyin.c:542
+#: src/bin/keyin.c:544
 msgid "Focus to the next terminal"
 msgstr ""
 
-#: src/bin/keyin.c:543
+#: src/bin/keyin.c:545
 msgid "Split horizontally (new below)"
 msgstr ""
 
-#: src/bin/keyin.c:544
+#: src/bin/keyin.c:546
 msgid "Split vertically (new on right)"
 msgstr ""
 
-#: src/bin/keyin.c:545
+#: src/bin/keyin.c:547
 msgid "Create a new \"tab\""
 msgstr ""
 
-#: src/bin/keyin.c:546
+#: src/bin/keyin.c:548
 msgid "Close the focused terminal"
 msgstr ""
 
-#: src/bin/keyin.c:547
+#: src/bin/keyin.c:549
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
-#: src/bin/keyin.c:548
+#: src/bin/keyin.c:550
 msgid "Switch to terminal tab 1"
 msgstr ""
 
-#: src/bin/keyin.c:549
+#: src/bin/keyin.c:551
 msgid "Switch to terminal tab 2"
 msgstr ""
 
-#: src/bin/keyin.c:550
+#: src/bin/keyin.c:552
 msgid "Switch to terminal tab 3"
 msgstr ""
 
-#: src/bin/keyin.c:551
+#: src/bin/keyin.c:553
 msgid "Switch to terminal tab 4"
 msgstr ""
 
-#: src/bin/keyin.c:552
+#: src/bin/keyin.c:554
 msgid "Switch to terminal tab 5"
 msgstr ""
 
-#: src/bin/keyin.c:553
+#: src/bin/keyin.c:555
 msgid "Switch to terminal tab 6"
 msgstr ""
 
-#: src/bin/keyin.c:554
+#: src/bin/keyin.c:556
 msgid "Switch to terminal tab 7"
 msgstr ""
 
-#: src/bin/keyin.c:555
+#: src/bin/keyin.c:557
 msgid "Switch to terminal tab 8"
 msgstr ""
 
-#: src/bin/keyin.c:556
+#: src/bin/keyin.c:558
 msgid "Switch to terminal tab 9"
 msgstr ""
 
-#: src/bin/keyin.c:557
+#: src/bin/keyin.c:559
 msgid "Switch to terminal tab 10"
 msgstr ""
 
-#: src/bin/keyin.c:559
+#: src/bin/keyin.c:561
 msgid "Font size"
 msgstr ""
 
-#: src/bin/keyin.c:560
+#: src/bin/keyin.c:562
 msgid "Font size up 1"
 msgstr ""
 
-#: src/bin/keyin.c:561
+#: src/bin/keyin.c:563
 msgid "Font size down 1"
 msgstr ""
 
-#: src/bin/keyin.c:562
+#: src/bin/keyin.c:564
 msgid "Display big font size"
 msgstr ""
 
-#: src/bin/keyin.c:563
+#: src/bin/keyin.c:565
 msgid "Reset font size"
 msgstr ""
 
-#: src/bin/keyin.c:565
+#: src/bin/keyin.c:567
 msgid "Actions"
 msgstr ""
 
-#: src/bin/keyin.c:566
+#: src/bin/keyin.c:568
 msgid "Display the history miniview"
 msgstr ""
 
-#: src/bin/keyin.c:567
+#: src/bin/keyin.c:569
 msgid "Display the command box"
 msgstr ""
 
@@ -349,29 +350,29 @@ msgstr ""
 msgid "show this message."
 msgstr ""
 
-#: src/bin/main.c:546 src/bin/miniview.c:38
+#: src/bin/main.c:548 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr ""
 
-#: src/bin/main.c:556
+#: src/bin/main.c:558
 msgid "Could not initialize key bindings."
 msgstr ""
 
-#: src/bin/main.c:568
+#: src/bin/main.c:570
 msgid "Could not parse command line options."
 msgstr ""
 
-#: src/bin/main.c:583
+#: src/bin/main.c:585
 #, c-format
 msgid "option %s requires an argument!"
 msgstr ""
 
-#: src/bin/main.c:584
+#: src/bin/main.c:586
 msgid "invalid options found. See --help."
 msgstr ""
 
-#: src/bin/main.c:900
+#: src/bin/main.c:902
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr ""
 
@@ -502,7 +503,7 @@ msgstr ""
 msgid "Font"
 msgstr ""
 
-#: src/bin/options.c:167 src/bin/options_theme.c:112
+#: src/bin/options.c:167 src/bin/options_theme.c:113
 msgid "Theme"
 msgstr ""
 
@@ -514,7 +515,7 @@ msgstr ""
 msgid "Video"
 msgstr ""
 
-#: src/bin/options.c:170 src/bin/options_colors.c:160
+#: src/bin/options.c:170 src/bin/options_colors.c:166
 msgid "Colors"
 msgstr ""
 
@@ -578,27 +579,27 @@ msgstr ""
 msgid "Inverse Base"
 msgstr ""
 
-#: src/bin/options_colors.c:188
+#: src/bin/options_colors.c:194
 msgid "Normal"
 msgstr ""
 
-#: src/bin/options_colors.c:189
+#: src/bin/options_colors.c:195
 msgid "Bright"
 msgstr ""
 
-#: src/bin/options_colors.c:190
+#: src/bin/options_colors.c:196
 msgid "Normal 2"
 msgstr ""
 
-#: src/bin/options_colors.c:191
+#: src/bin/options_colors.c:197
 msgid "Bright 2"
 msgstr ""
 
-#: src/bin/options_colors.c:263
+#: src/bin/options_colors.c:275
 msgid "Use"
 msgstr ""
 
-#: src/bin/options_colors.c:273
+#: src/bin/options_colors.c:285
 msgid "Reset"
 msgstr ""
 
@@ -755,34 +756,34 @@ msgstr ""
 msgid "Unknown command: %s"
 msgstr ""
 
-#: src/bin/termio.c:526
+#: src/bin/termio.c:529
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:540
+#: src/bin/termio.c:543
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:948
+#: src/bin/termio.c:951
 msgid "Preview"
 msgstr ""
 
-#: src/bin/termio.c:951
+#: src/bin/termio.c:954
 msgid "Open"
 msgstr ""
 
-#: src/bin/termio.c:2297
+#: src/bin/termio.c:2302
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:4501
+#: src/bin/termio.c:4941
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:5097
+#: src/bin/termio.c:5537
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -811,22 +812,22 @@ msgstr ""
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:419
+#: src/bin/termpty.c:423
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""
 
-#: src/bin/termpty.c:605
+#: src/bin/termpty.c:653
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
 
-#: src/bin/utils.c:50
+#: src/bin/utils.c:51
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
 msgstr ""
 
-#: src/bin/utils.c:67
+#: src/bin/utils.c:68
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
 msgstr ""
