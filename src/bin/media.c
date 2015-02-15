@@ -1426,3 +1426,22 @@ media_control_get(Evas_Object *obj)
    if (!sd) return NULL;
    return sd->o_ctrl;
 }
+
+void
+media_unknown_handle(const char *handler, const char *src)
+{
+   const char *cmd;
+   char buf[PATH_MAX];
+   char *escaped;
+
+   cmd = "xdg-open";
+   escaped = ecore_file_escape_name(src);
+   if (!escaped)
+     return;
+   if (handler && *handler)
+     cmd = handler;
+   snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+   free(escaped);
+
+   ecore_exe_run(buf, NULL);
+}

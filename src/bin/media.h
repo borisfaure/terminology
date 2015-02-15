@@ -38,5 +38,6 @@ void media_stop(Evas_Object *obj);
 const char *media_get(const Evas_Object *obj);
 Media_Type media_src_type_get(const char *src);
 Evas_Object *media_control_get(Evas_Object *obj);
+void media_unknown_handle(const char *handler, const char *src);
 
 #endif

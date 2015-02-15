@@ -40,6 +40,8 @@ void win_term_swallow(Win *wn, Term *term);
 void win_add_split(Win *wn, Term *term);
 void win_sizing_handle(Win *wn);
 
+void term_ref(Term *term);
+void term_unref(Term *term);
 Term *term_next_get(Term *term);
 Term *term_prev_get(Term *term);
 void term_next(Term *term);

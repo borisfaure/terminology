@@ -833,20 +833,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
              type = media_src_type_get(sd->link.string);
              if (may_inline && _should_inline(obj))
                {
-                  if ((type == MEDIA_TYPE_IMG) ||
-                      (type == MEDIA_TYPE_SCALE) ||
-                      (type == MEDIA_TYPE_EDJE))
-                    {
-                       // XXX: begin fetch of url, once done, show
-                       evas_object_smart_callback_call(obj, "popup", NULL);
-                       handled = EINA_TRUE;
-                    }
-                  else if (type == MEDIA_TYPE_MOV)
-                    {
-                       // XXX: if no http:// add
-                       evas_object_smart_callback_call(obj, "popup", NULL);
-                       handled = EINA_TRUE;
-                    }
+                  evas_object_smart_callback_call(obj, "popup", NULL);
+                  handled = EINA_TRUE;
                }
              if (!handled)
                {

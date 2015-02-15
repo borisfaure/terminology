@@ -56,6 +56,7 @@ struct _Term
    struct {
       int       x, y;
    } down;
+   int refcnt;
    unsigned char focused : 1;
    unsigned char hold : 1;
    unsigned char unswallowed : 1;
@@ -363,7 +364,7 @@ win_free(Win *wn)
    wins = eina_list_remove(wins, wn);
    EINA_LIST_FREE(wn->terms, term)
      {
-        term_free(term);
+        term_unref(term);
      }
    if (wn->cmdbox_del_timer)
      {
@@ -542,7 +543,7 @@ main_close(Evas_Object *win, Evas_Object *term)
           }
         l = eina_list_data_find_list(sp->terms, tm);
         _term_resize_track_stop(sp);
-        term_free(tm);
+        term_unref(tm);
         if (l)
           {
              if (tm == sp->term)
@@ -601,7 +602,7 @@ main_close(Evas_Object *win, Evas_Object *term)
         _term_resize_track_stop(sp);
         edje_object_part_unswallow(sp->wn->base, sp->term->bg);
         l = eina_list_data_find_list(sp->terms, tm);
-        term_free(tm);
+        term_unref(tm);
         if (l)
           {
              if (tm == sp->term)
@@ -1541,18 +1542,17 @@ _cb_media_loop(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
 }
 
 static void
-_popmedia_show(Term *term, const char *src)
+_popmedia_show(Term *term, const char *src, Media_Type type)
 {
    Evas_Object *o;
    Config *config = termio_config_get(term->term);
-   Media_Type type;
 
-   if (!config) return;
+   EINA_SAFETY_ON_NULL_RETURN(config);
    ty_dbus_link_hide();
    if (term->popmedia)
      {
         const char *s;
-        
+
         EINA_LIST_FREE(term->popmedia_queue, s)
           {
              eina_stringshare_del(s);
@@ -1563,7 +1563,6 @@ _popmedia_show(Term *term, const char *src)
         return;
      }
    termio_mouseover_suspend_pushpop(term->term, 1);
-   type = media_src_type_get(src);
    term->popmedia = o = media_add(win_evas_object_get(term->wn),
                                   src, config, MEDIA_POP, type);
    term->popmedia_deleted = EINA_FALSE;
@@ -1591,6 +1590,142 @@ _popmedia_show(Term *term, const char *src)
          break;
      }
 }
+
+/* TODO: XXX: should be s/13/14 */
+#define HAVE_ECORE_CON_URL_HTTP_HEAD \
+   ((ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 13))
+
+#if HAVE_ECORE_CON_URL_HTTP_HEAD
+typedef struct _Ty_Http_Head {
+     const char *handler;
+     const char *src;
+     Ecore_Con_Url *url;
+     Ecore_Event_Handler *url_complete;
+     Term *term;
+} Ty_Http_Head;
+
+static void
+_ty_http_head_delete(Ty_Http_Head *ty_head)
+{
+   eina_stringshare_del(ty_head->handler);
+   eina_stringshare_del(ty_head->src);
+   ecore_con_url_free(ty_head->url);
+   ecore_event_handler_del(ty_head->url_complete);
+   edje_object_signal_emit(ty_head->term->bg, "done", "terminology");
+   term_unref(ty_head->term);
+
+   free(ty_head);
+}
+
+static Eina_Bool
+_media_http_head_complete(void *data, int kind EINA_UNUSED, void *event_info)
+{
+   Ecore_Con_Event_Url_Complete *ev = event_info;
+   Ty_Http_Head *ty_head = data;
+   const Eina_List *headers, *l;
+   Media_Type type = MEDIA_TYPE_UNKNOWN;
+   char *str;
+
+   if (ev->status != 200)
+     goto error;
+   headers = ecore_con_url_response_headers_get(ev->url_con);
+   EINA_LIST_FOREACH(headers, l, str)
+     {
+#define  _CONTENT_TYPE_HDR "Content-Type: "
+#define  _LOCATION_HDR "Location: "
+        if (!strncmp(str, _LOCATION_HDR, strlen(_LOCATION_HDR)))
+          {
+             unsigned int len;
+
+             str += strlen(_LOCATION_HDR);
+             eina_stringshare_del(ty_head->src);
+
+             /* skip the crlf */
+             len = strlen(str);
+             if (len <= 2)
+               goto error;
+
+             ty_head->src = eina_stringshare_add_length(str, len - 2);
+             if (!ty_head->src)
+               goto error;
+          }
+        else if (!strncmp(str, _CONTENT_TYPE_HDR, strlen(_CONTENT_TYPE_HDR)))
+          {
+             str += strlen(_CONTENT_TYPE_HDR);
+             if (!strncmp(str, "image/", strlen("image/")))
+               {
+                  type = MEDIA_TYPE_IMG;
+               }
+             else if (!strncmp(str, "video/", strlen("video/")))
+               {
+                  type = MEDIA_TYPE_MOV;
+               }
+             if (type != MEDIA_TYPE_UNKNOWN)
+               {
+                  _popmedia_show(ty_head->term, ty_head->src, type);
+                  break;
+               }
+          }
+#undef _CONTENT_TYPE_HDR
+#undef _LOCATION_HDR
+     }
+
+   _ty_http_head_delete(ty_head);
+   return EINA_TRUE;
+error:
+   media_unknown_handle(ty_head->handler, ty_head->src);
+   _ty_http_head_delete(ty_head);
+   return EINA_TRUE;
+}
+#endif
+
+static void
+_popmedia(Term *term, const char *src)
+{
+   Media_Type type;
+   Config *config = termio_config_get(term->term);
+
+#if HAVE_ECORE_CON_URL_HTTP_HEAD
+   Ty_Http_Head *ty_head = calloc(1, sizeof(Ty_Http_Head));
+   if (!ty_head)
+     return;
+
+   if (config->helper.local.general && config->helper.local.general[0])
+     {
+        ty_head->handler = eina_stringshare_add(config->helper.local.general);
+        if (!ty_head->handler)
+          goto error;
+     }
+   ty_head->src = eina_stringshare_add(src);
+   if (!ty_head->src)
+     goto error;
+   ty_head->url = ecore_con_url_new(src);
+   if (!ty_head->url)
+     goto error;
+   if (!ecore_con_url_head(ty_head->url))
+     goto error;
+   ty_head->url_complete = ecore_event_handler_add
+      (ECORE_CON_EVENT_URL_COMPLETE, _media_http_head_complete, ty_head);
+   if (!ty_head->url_complete)
+     goto error;
+   ty_head->term = term;
+   edje_object_signal_emit(term->bg, "busy", "terminology");
+   term_ref(term);
+
+   return;
+
+error:
+   _ty_http_head_delete(ty_head);
+#endif
+
+   type = media_src_type_get(src);
+   if (type == MEDIA_TYPE_UNKNOWN) {
+        media_unknown_handle(config->helper.local.general, src);
+   } else {
+        _popmedia_show(term, src, type);
+   }
+}
+
 
 static void
 _term_miniview_check(Term *term)
@@ -1657,7 +1792,7 @@ _popmedia_queue_process(Term *term)
    term->popmedia_queue = eina_list_remove_list(term->popmedia_queue, 
                                                 term->popmedia_queue);
    if (!src) return;
-   _popmedia_show(term, src);
+   _popmedia(term, src);
    eina_stringshare_del(src);
 }
 
@@ -1676,7 +1811,7 @@ _cb_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event)
    const char *src = event;
    if (!src) src = termio_link_get(term->term);
    if (!src) return;
-   _popmedia_show(term, src);
+   _popmedia(term, src);
 }
 
 static void
@@ -1733,7 +1868,7 @@ _cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
      {
         if (cmd[1] == 'n') // now
           {
-             _popmedia_show(term, cmd + 2);
+             _popmedia(term, cmd + 2);
           }
         else if (cmd[1] == 'q') // queue it to display after current one
           {
@@ -2601,6 +2736,22 @@ _cb_exited(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
      }
 }
 
+void
+term_ref(Term *term)
+{
+   term->refcnt++;
+}
+
+void term_unref(Term *term)
+{
+   EINA_SAFETY_ON_NULL_RETURN(term);
+
+   term->refcnt--;
+   if (term->refcnt <= 0)
+     {
+        term_free(term);
+     }
+}
 
 Term *
 term_new(Win *wn, Config *config, const char *cmd,
@@ -2611,9 +2762,10 @@ term_new(Win *wn, Config *config, const char *cmd,
    Evas_Object *o;
    Evas *canvas = evas_object_evas_get(wn->win);
    Edje_Message_Int msg;
-   
+
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
+   term_ref(term);
 
    if (!config) abort();
 
