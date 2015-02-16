@@ -51,9 +51,9 @@ size_print(char *buf, int bufsz, char *sz, unsigned long long size)
 
    while (prefixes[i])
      {
-        if (size < (unsigned long long)pow(1024LL, i + 1) || !prefixes[i + 1])
+        if (size < (1024LL << 10 * i) || !prefixes[i])
           {
-             snprintf(buf, bufsz, "%4lld", size / (unsigned long long)pow(1024LL, i));
+             snprintf(buf, bufsz, "%4lld", size / (1024 << 10 * (i - 1)));
              *sz = prefixes[i];
              return;
           }
@@ -728,6 +728,7 @@ int
 main(int argc, char **argv)
 {
    char buf[64];
+   char *path;
    Eina_List *dirs = NULL, *l;
    Tyls_Options options = {SMALL, EINA_FALSE};
    
@@ -757,13 +758,15 @@ main(int argc, char **argv)
    if (ee)
      {
         int i, cw, ch;
+        int len;
         char *rp;
         
         evas = ecore_evas_get(ee);
         echo_off();
         snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
-        if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
-        if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4
+        len = strlen(buf);
+        if (write(0, buf, len + 1) < (signed)len + 1) perror("write");
+        if ((scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
             || (tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
           {
              echo_on();
@@ -796,8 +799,7 @@ main(int argc, char **argv)
           {
              dirs = eina_list_append(dirs, "./");
           }
-        char *path;
-        EINA_LIST_FOREACH(dirs, l, path)
+        EINA_LIST_FREE(dirs, path)
           {
             if ((rp = ecore_file_realpath(path))
                  && ecore_file_is_dir(rp))
@@ -806,9 +808,7 @@ main(int argc, char **argv)
                   free(rp);
                }
           }
-        eina_list_free(dirs);
         fflush(stdout);
-        return 0;
 //        ecore_main_loop_begin();
         ecore_evas_free(ee);
      }
