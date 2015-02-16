@@ -3935,8 +3935,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                   else
                     {
                        sd->didclick = EINA_TRUE;
-                       sd->pty->selection.end.x = cx;
-                       sd->pty->selection.end.y = cy - sd->scroll;
+                       _sel_to(sd, cx, cy - sd->scroll, EINA_FALSE);
                     }
                }
              _selection_dbl_fix(sd);
