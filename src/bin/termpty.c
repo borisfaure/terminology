@@ -387,12 +387,12 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         }
 
 
-   tcgetattr(ty->fd, &t);
+   tcgetattr(ty->slavefd, &t);
    t.c_cc[VERASE] =  (erase_is_del) ? 0x7f : 0x8;
 #ifdef IUTF8
    t.c_iflag |= IUTF8;
 #endif
-   if (tcsetattr(ty->fd, TCSANOW, &t) < 0)
+   if (tcsetattr(ty->slavefd, TCSANOW, &t) < 0)
      {
         ERR("unable to tcsetattr: %s", strerror(errno));
         goto err;
