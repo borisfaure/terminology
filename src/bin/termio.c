@@ -3790,6 +3790,7 @@ _handle_mouse_down_single_click(Termio *sd,
      }
    else
      {
+        sd->pty->selection.is_box = ctrl;
         sd->pty->selection.start.x = sd->pty->selection.end.x = cx;
         sd->pty->selection.orig.x = cx;
         sd->pty->selection.start.y = sd->pty->selection.end.y = cy - sd->scroll;
