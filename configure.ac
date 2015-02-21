@@ -80,6 +80,29 @@ PKG_CHECK_MODULES([ELDBUS],
 
 AC_CHECK_FUNCS(mkstemps)
 
+AC_MSG_CHECKING([for ecore_con_url_head])
+orig_cflags=$CFLAGS
+CFLAGS+=" $TERMINOLOGY_CFLAGS "
+AC_COMPILE_IFELSE(
+   [
+    AC_LANG_PROGRAM(
+      [[
+       #include <Ecore_Con.h>
+      ]],
+     [[
+        ecore_con_url_head(NULL);
+     ]])
+   ],
+   [
+     AC_MSG_RESULT([yes])
+     AC_DEFINE([HAVE_ECORE_CON_URL_HEAD], [1], [define to 1 if ecore_con_url_head is available])
+   ],
+   [
+     AC_MSG_RESULT([no])
+   ]
+)
+CFLAGS=$orig_cflags
+
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
 with_max_log_level="EINA_LOG_LEVEL_ERR"

@@ -1591,11 +1591,7 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
      }
 }
 
-/* TODO: XXX: should be s/13/14 */
-#define HAVE_ECORE_CON_URL_HTTP_HEAD \
-   ((ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 13))
-
-#if HAVE_ECORE_CON_URL_HTTP_HEAD
+#ifdef HAVE_ECORE_CON_URL_HEAD
 typedef struct _Ty_Http_Head {
      const char *handler;
      const char *src;
@@ -1685,7 +1681,7 @@ _popmedia(Term *term, const char *src)
    Media_Type type;
    Config *config = termio_config_get(term->term);
 
-#if HAVE_ECORE_CON_URL_HTTP_HEAD
+#ifdef HAVE_ECORE_CON_URL_HEAD
    Ty_Http_Head *ty_head = calloc(1, sizeof(Ty_Http_Head));
    if (!ty_head)
      return;
