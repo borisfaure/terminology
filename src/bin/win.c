@@ -1509,11 +1509,25 @@ _cb_popmedia_del(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, vo
    edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
 }
 
+Eina_Bool
+term_has_popmedia(const Term *term)
+{
+   return !!term->popmedia;
+}
+
+void
+term_popmedia_close(Term *term)
+{
+   if (term->popmedia)
+     edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
+}
+
+
 static void
 _cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    Term *term = data;
-   
+
    if (term->popmedia || term->popmedia_deleted)
      {
         if (term->popmedia)

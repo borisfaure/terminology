@@ -48,4 +48,10 @@ void term_next(Term *term);
 void term_prev(Term *term);
 Win * term_win_get(Term *term);
 
+
+Eina_Bool
+term_has_popmedia(const Term *term);
+void
+term_popmedia_close(Term *term);
+
 #endif

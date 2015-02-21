@@ -1909,6 +1909,12 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
    if (miniview_handle_key(term_miniview_get(sd->term), ev))
      return;
 
+   if (term_has_popmedia(sd->term) && !strcmp(ev->key, "Escape"))
+     {
+        term_popmedia_close(sd->term);
+        return;
+     }
+
 
    if (keyin_handle(&sd->khdl, sd->pty, ev, ctrl, alt, shift, win))
      goto end;
