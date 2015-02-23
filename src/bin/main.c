@@ -216,6 +216,7 @@ main_ipc_new(Ipc_Instance *inst)
                 inst->borderless, inst->override, inst->maximized);
    if (!wn)
      {
+        CRITICAL(_("Could not create window."));
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
         return;
@@ -284,6 +285,7 @@ main_ipc_new(Ipc_Instance *inst)
                    inst->cd, inst->w, inst->h, inst->hold);
    if (!term)
      {
+        CRITICAL(_("Could not create terminal widget."));
         win_free(wn);
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
@@ -555,7 +557,7 @@ elm_main(int argc, char **argv)
    _main_config = config_load("config");
    if (key_bindings_load(_main_config) < 0)
      {
-        ERR(_("Could not initialize key bindings."));
+        CRITICAL(_("Could not initialize key bindings."));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -567,7 +569,7 @@ elm_main(int argc, char **argv)
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        ERR(_("Could not parse command line options."));
+        CRITICAL(_("Could not parse command line options."));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -582,8 +584,8 @@ elm_main(int argc, char **argv)
 
         if (args == argc)
           {
-             ERR(_("option %s requires an argument!"), argv[args-1]);
-             ERR(_("invalid options found. See --help."));
+             CRITICAL(_("option %s requires an argument!"), argv[args-1]);
+             CRITICAL(_("invalid options found. See --help."));
              goto end;
           }
 
@@ -848,6 +850,7 @@ remote:
    config = NULL;
    if (!wn)
      {
+        CRITICAL(_("Could not create window."));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -858,6 +861,7 @@ remote:
                    size_w, size_h, hold);
    if (!term)
      {
+        CRITICAL(_("Could not create terminal widget."));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -900,7 +904,8 @@ remote:
                next = term_next_get(next);
              else
                {
-                  ERR(_("invalid argument found for option -S/--split. See --help."));
+                  CRITICAL(_("invalid argument found for option -S/--split."
+                             " See --help."));
                   goto end;
                }
           }
