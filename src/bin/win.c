@@ -1679,6 +1679,8 @@ _media_http_head_complete(void *data, int kind EINA_UNUSED, void *event_info)
 #undef _CONTENT_TYPE_HDR
 #undef _LOCATION_HDR
      }
+   if (type == MEDIA_TYPE_UNKNOWN)
+     goto error;
 
    _ty_http_head_delete(ty_head);
    return EINA_TRUE;
