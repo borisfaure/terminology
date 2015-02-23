@@ -98,7 +98,7 @@ _alloc_new(int size, unsigned char gen)
    // so allocate a new block
    sz = TS_MMAP_SIZE;
    // get mmaped anonymous memory so when freed it goes away from the system
-   ptr = mmap(NULL, sz, PROT_READ | PROT_WRITE,
+   ptr = (unsigned char*) mmap(NULL, sz, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
    if (ptr == MAP_FAILED) {
         ERR("Cannot allocate more memory with mmap MAP_ANONYMOUS");
@@ -159,7 +159,11 @@ _ts_free(void *ptr)
    al->allocated -= sz;
    if (al->count > 0) return;
    alloc[al->slot] = NULL;
+#if defined (__sun) || defined (__sun__)
+   munmap((caddr_t)al, al->size);
+#else
    munmap(al, al->size);
+#endif
 }
 
 static void

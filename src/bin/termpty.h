@@ -128,8 +128,8 @@ struct _Termpty
    Termcell *screen, *screen2;
    Termsave **back;
    unsigned char oldbuf[4];
-   int *buf;
-   int buflen;
+   Eina_Unicode *buf;
+   size_t buflen;
    int w, h;
    int fd, slavefd;
    int circular_offset;

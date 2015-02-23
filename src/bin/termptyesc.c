@@ -656,7 +656,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    if (cc == ce) return 0;
    *b = 0;
    b = buf;
-   DBG(" CSI: '%c' args '%s'", *cc, (char *) buf);
+   DBG(" CSI: '%c' args '%s'", (int) *cc, (char *) buf);
    switch (*cc)
      {
       case 'm': // color set
@@ -668,7 +668,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("insert %d blank chars", arg);
           {
              int pi = ty->state.insert;
-             int blank[1] = { ' ' };
+             Eina_Unicode blank[1] = { ' ' };
              int cx = ty->state.cx;
 
              ty->state.wrapnext = 0;
@@ -1035,11 +1035,12 @@ unhandled:
         for (i = 0; c + i <= cc && i < 100; i++)
           {
              if ((c[i] < ' ') || (c[i] >= 0x7f))
-               eina_strbuf_append_printf(bf, "\033[35m%08x\033[0m", c[i]);
+               eina_strbuf_append_printf(bf, "\033[35m%08x\033[0m",
+                                         (unsigned int) c[i]);
              else
                eina_strbuf_append_char(bf, c[i]);
           }
-        ERR("unhandled CSI '%c': %s", *cc, eina_strbuf_string_get(bf));
+        ERR("unhandled CSI '%c': %s", (int) *cc, eina_strbuf_string_get(bf));
         eina_strbuf_free(bf);
      }
    cc++;
@@ -1478,7 +1479,8 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
          /* Request status string */
          if (len > 1 && buf[1] != 'q')
            {
-              ERR("invalid/unhandled dsc esc '$%c' (expected '$q')", buf[1]);
+              ERR("invalid/unhandled dsc esc '$%c' (expected '$q')",
+                  (int) buf[1]);
               goto end;
            }
          if (len < 4)
@@ -1499,7 +1501,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
                  }
                else
                  {
-                    ERR("invalid/unhandled dsc esc '$q\"%c'", buf[3]);
+                    ERR("invalid/unhandled dsc esc '$q\"%c'", (int) buf[3]);
                     goto end;
                  }
                break;
@@ -1508,14 +1510,15 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
             case 'r': /* DECSTBM */
                /* TODO: */
             default:
-               ERR("unhandled dsc request status string '$q%c'", buf[2]);
+               ERR("unhandled dsc request status string '$q%c'",
+                   (int) buf[2]);
                goto end;
            }
          /* TODO */
          break;
       default:
         // many others
-        ERR("Unhandled DCS escape '%c'", buf[0]);
+        ERR("Unhandled DCS escape '%c'", (int) buf[0]);
         break;
      }
 end:
@@ -1528,7 +1531,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    int len = ce - c;
 
    if (len < 1) return 0;
-   DBG("ESC: '%c'", c[0]);
+   DBG("ESC: '%c'", (int) c[0]);
    switch (c[0])
      {
       case '[':
@@ -1651,7 +1654,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 1;
  */
       default:
-        ERR("Unhandled escape '%c' (0x%02x)", c[0], c[0]);
+        ERR("Unhandled escape '%c' (0x%02x)", (int) c[0], (unsigned int) c[0]);
         return 1;
      }
    return 0;
@@ -1770,7 +1773,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
    else if (c[0] == 0x7f) // DEL
      {
         ty->state.had_cr = 0;
-        ERR("Unhandled char 0x%02x [DEL]", c[0]);
+        ERR("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
         return 1;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
@@ -1822,11 +1825,11 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
      {
         ty->state.had_cr = 0;
      }
-   cc = (int *)c;
+   cc = (Eina_Unicode *)c;
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f))
      {
-        DBG("%c", *cc);
+        DBG("%c", (int) *cc);
         cc++;
         len++;
      }
