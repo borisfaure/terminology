@@ -20,4 +20,11 @@ extern int _log_domain;
 #define INF(...)      EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
 
+#ifndef MIN
+# define MIN(x, y) (((x) > (y)) ? (y) : (x))
+#endif
+#ifndef MAX
+# define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#endif
+
 #endif
