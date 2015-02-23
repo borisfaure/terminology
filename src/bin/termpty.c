@@ -16,6 +16,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <termios.h>
+#if defined (__sun) || defined (__sun__)
+# include <stropts.h>
+#endif
 
 /* specific log domain to help debug only terminal code parser */
 int _termpty_log_dom = -1;
@@ -386,6 +389,15 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
            goto err;
         }
 
+#if defined (__sun) || defined (__sun__)
+   if (ioctl(ty->slavefd, I_PUSH, "ptem") < 0
+       || ioctl(ty->slavefd, I_PUSH, "ldterm") < 0
+       || ioctl(ty->slavefd, I_PUSH, "ttcompat") < 0)
+   {
+       ERR(_("ioctl() on pty '%s' failed: %s"), pty, strerror(errno));
+       goto err;
+   }
+# endif
 
    if (tcgetattr(ty->slavefd, &t) < 0)
      {
