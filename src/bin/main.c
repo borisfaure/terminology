@@ -862,6 +862,7 @@ remote:
    if (!term)
      {
         CRITICAL(_("Could not create terminal widget."));
+        config = NULL;
         retval = EXIT_FAILURE;
         goto end;
      }
