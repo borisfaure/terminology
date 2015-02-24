@@ -46,40 +46,18 @@ echo_on(void)
 static void
 size_print(char *buf, int bufsz, char *sz, unsigned long long size)
 {
-   if (size < 1024LL)
+   char prefixes[] = " KMGTPEZY";
+   int i = 0;
+
+   while (prefixes[i])
      {
-        snprintf(buf, bufsz, "%4lld", size);
-        *sz = ' ';
-     }
-   else if (size < (1024LL * 1024LL))
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL));
-        *sz = 'K';
-     }
-   else if (size < (1024LL * 1024LL * 1024LL))
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL * 1024LL));
-        *sz = 'M';
-     }
-   else if (size < (1024LL * 1024LL * 1024LL * 1024LL))
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL * 1024 * 1024LL));
-        *sz = 'G';
-     }
-   else if (size < (1024LL * 1024LL * 1024LL * 1024LL * 1024LL))
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL * 1024LL * 1024LL * 1024LL));
-        *sz = 'T';
-     }
-   else if (size < (1024LL * 1024LL * 1024LL * 1024LL * 1024LL * 1024LL))
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL * 1024LL * 1024LL * 1024LL * 1024LL));
-        *sz = 'P';
-     }
-   else
-     {
-        snprintf(buf, bufsz, "%4lld", size / (1024LL * 1024LL * 1024LL * 1024LL * 1024LL * 1024LL));
-        *sz = 'E';
+        if (size < (1024LL << 10 * i) || !prefixes[i])
+          {
+             snprintf(buf, bufsz, "%4lld", size / (1024 << 10 * (i - 1)));
+             *sz = prefixes[i];
+             return;
+          }
+        ++i;
      }
 }
 
@@ -166,6 +144,12 @@ typedef struct _Cmatch
    short br, bg, bb;
    const char *match, *icon;
 } Cmatch;
+
+typedef struct _Tyls_Options
+{
+  int mode;
+  Eina_Bool hidden;
+} Tyls_Options;
 
 // for regular files
 const Cmatch fmatch[] =
@@ -604,7 +588,7 @@ fileprint(char *path, char *name, Eina_Bool type)
 }
 
 static void
-list_dir(const char *dir, int mode)
+list_dir(const char *dir, Tyls_Options *options)
 {
    Eina_List *files, *l;
    char *s, **names;
@@ -619,15 +603,15 @@ list_dir(const char *dir, int mode)
      {
         int len = eina_unicode_utf8_get_len(s);
         
-        if (s[0] == '.') continue;
+        if (s[0] == '.' && options->hidden == EINA_FALSE) continue;
         if (len > maxlen) maxlen = len;
         names[i] = s;
         i++;
      }
    num = i;
    stuff = 0;
-   if (mode == SMALL) stuff += 2;
-   else if (mode == MEDIUM) stuff += 4;
+   if (options->mode == SMALL) stuff += 2;
+   else if (options->mode == MEDIUM) stuff += 4;
    stuff += 5; // xxxx[ /K/M/G/T/P...]
    stuff += 1; // spacer at start
    // name
@@ -651,7 +635,7 @@ list_dir(const char *dir, int mode)
              char buf[4096];
              const char *icon;
              
-             if (mode == SMALL)
+             if (options->mode == SMALL)
                {
                   for (c = 0; c < cols; c++)
                     {
@@ -681,7 +665,7 @@ list_dir(const char *dir, int mode)
                     }
                   printf("\n");
                }
-             else if (mode == MEDIUM)
+             else if (options->mode == MEDIUM)
                {
                   for (c = 0; c < cols; c++)
                     {
@@ -744,13 +728,16 @@ int
 main(int argc, char **argv)
 {
    char buf[64];
-   Eina_Bool listed = EINA_FALSE;
+   char *path;
+   Eina_List *dirs = NULL, *l;
+   Tyls_Options options = {SMALL, EINA_FALSE};
    
    if (!getenv("TERMINOLOGY")) return 0;
    if ((argc == 2) && (!strcmp(argv[1], "-h")))
      {
-        printf("Usage: %s [-s|-m] FILE1 [FILE2 ...]\n"
+        printf("Usage: %s [-a] [-s|-m] FILE1 [FILE2 ...]\n"
                "\n"
+               "  -a  Show hidden files\n"
                "  -s  Small list mode\n"
                "  -m  Medium list mode\n",
                /*"  -l  Large list mode\n", Enable again once we support it */
@@ -770,19 +757,17 @@ main(int argc, char **argv)
    ee = ecore_evas_buffer_new(1, 1);
    if (ee)
      {
-        int i, cw, ch, mode = SMALL;
+        int i, cw, ch;
+        int len;
         char *rp;
         
         evas = ecore_evas_get(ee);
         echo_off();
         snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
-        if (write(0, buf, strlen(buf) + 1) < 0) perror("write");
-        if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
-          {
-             echo_on();
-             return 0;
-          }
-        if ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
+        len = strlen(buf);
+        if (write(0, buf, len + 1) < (signed)len + 1) perror("write");
+        if ((scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
+            || (tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
           {
              echo_on();
              return 0;
@@ -790,8 +775,7 @@ main(int argc, char **argv)
         echo_on();
         for (i = 1; i < argc; i++)
           {
-             char *path;
-             char *cmp[] = {"-c", "-m", "-l"};
+             char *cmp[] = {"-s", "-m", "-l"};
              int modes[] = {SMALL, MEDIUM, LARGE};
              unsigned int j;
 
@@ -799,34 +783,32 @@ main(int argc, char **argv)
                {
                  if (!strcmp(argv[i], cmp[j]))
                    {
-                     mode = modes[j];
-                     if (++i >= argc) break;
+                      options.mode = modes[j];
                    }
                }
-             if (i >= argc) break;
-             path = argv[i];
-             rp = ecore_file_realpath(path);
-             if (rp)
+             if (!strcmp(argv[i], "-a"))
                {
-                  if (ecore_file_is_dir(rp))
-                    {
-                       list_dir(rp, mode);
-                       listed = EINA_TRUE;
-                    }
-                  free(rp);
+                  options.hidden = EINA_TRUE;
+               }
+             if (argv[i][0] != '-')
+               {
+                  dirs = eina_list_append(dirs, argv[i]);
                }
           }
-        if (!listed)
+        if (!eina_list_count(dirs))
           {
-             rp = ecore_file_realpath("./");
-             if (rp)
+             dirs = eina_list_append(dirs, "./");
+          }
+        EINA_LIST_FREE(dirs, path)
+          {
+            if ((rp = ecore_file_realpath(path))
+                 && ecore_file_is_dir(rp))
                {
-                  list_dir(rp, mode);
+                  list_dir(rp, &options);
                   free(rp);
                }
           }
         fflush(stdout);
-        exit(0);
 //        ecore_main_loop_begin();
         ecore_evas_free(ee);
      }
