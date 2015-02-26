@@ -44,20 +44,20 @@ echo_on(void)
 }
 
 static void
-size_print(char *buf, int bufsz, char *sz, unsigned long long size)
+size_print(char *buf, int bufsz, char *sz, long long size)
 {
-   char prefixes[] = " KMGTPEZY";
-   int i = 0;
+   char *prefix = " KMGTPEZY";
 
-   while (prefixes[i])
+   while (*prefix)
      {
-        if (size < (1024ULL << 10 * i) || !prefixes[i])
+        if ((size < 1024) || (*prefix == 'Y'))
           {
-             snprintf(buf, bufsz, "%4lld", size / (1024 << 10 * (i - 1)));
-             *sz = prefixes[i];
+             snprintf(buf, bufsz, "%4lld", size);
+             *sz = *prefix;
              return;
           }
-        ++i;
+        size >>= 10;
+        prefix++;
      }
 }
 
