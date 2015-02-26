@@ -51,7 +51,7 @@ size_print(char *buf, int bufsz, char *sz, unsigned long long size)
 
    while (prefixes[i])
      {
-        if (size < (1024LL << 10 * i) || !prefixes[i])
+        if (size < (1024ULL << 10 * i) || !prefixes[i])
           {
              snprintf(buf, bufsz, "%4lld", size / (1024 << 10 * (i - 1)));
              *sz = prefixes[i];
@@ -729,7 +729,7 @@ main(int argc, char **argv)
 {
    char buf[64];
    char *path;
-   Eina_List *dirs = NULL, *l;
+   Eina_List *dirs = NULL;
    Tyls_Options options = {SMALL, EINA_FALSE};
    
    if (!getenv("TERMINOLOGY")) return 0;
