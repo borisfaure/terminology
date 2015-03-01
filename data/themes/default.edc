@@ -4404,7 +4404,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: 255 255 255 255;
+               color: BG_COL;
                rel1.offset: 2 2;
                rel2.offset: -3 -3;
             }
@@ -4415,7 +4415,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                rel2.to: "base";
                color: 255 255 255 255;
             }
-         }                                              
+         }
          part { name: "terminology.text.preview"; type: SWALLOW;
             clip_to: "clip";
             description { state: "default" 0.0;

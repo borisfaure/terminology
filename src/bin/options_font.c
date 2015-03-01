@@ -204,9 +204,15 @@ _cb_op_font_preview_delayed_eval(void *data)
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
         char buf[4096];
-        
-        o = evas_object_text_add(evas_object_evas_get(obj));
-        evas_object_color_set(o, 0, 0, 0, 255);
+        int r, g, b, a;
+        Evas *evas = evas_object_evas_get(obj);
+        Evas_Object *textgrid = termio_textgrid_get(f->term);
+
+        evas_object_textgrid_palette_get(textgrid, EVAS_TEXTGRID_PALETTE_STANDARD,
+                                         0, &r, &g, &b, &a);
+
+        o = evas_object_text_add(evas);
+        evas_object_color_set(o, r, g, b, a);
         evas_object_text_text_set(o, TEST_STRING);
         evas_object_scale_set(o, elm_config_scale_get());
         if (f->bitmap)
