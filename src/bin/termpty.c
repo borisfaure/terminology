@@ -1101,7 +1101,6 @@ termpty_screen_swap(Termpty *ty)
 {
    Termcell *tmp_screen;
    int tmp_circular_offset;
-   int tmp_appcursor = ty->state.appcursor;
 
    tmp_screen = ty->screen;
    ty->screen = ty->screen2;
@@ -1115,8 +1114,6 @@ termpty_screen_swap(Termpty *ty)
    tmp_circular_offset = ty->circular_offset;
    ty->circular_offset = ty->circular_offset2;
    ty->circular_offset2 = tmp_circular_offset;
-
-   ty->state.appcursor = tmp_appcursor;
 
    ty->altbuf = !ty->altbuf;
 

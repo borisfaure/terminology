@@ -110,6 +110,23 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 }
 
 static void
+_switch_to_alternative_screen(Termpty *ty, int mode)
+{
+   DBG("switch to alternative screen, mode:%d", mode);
+   if (ty->altbuf)
+     {
+        // if we are looking at alt buf now,
+        // clear main buf before we swap it back
+        // into the screen2 save (so save is
+        // clear)
+        _termpty_clear_all(ty);
+     }
+   // swap screen content now
+   if (mode != ty->altbuf)
+     termpty_screen_swap(ty);
+}
+
+static void
 _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
 {
    int mode = 0, priv = 0, arg;
@@ -290,26 +307,17 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         DBG("Ignored screen mode %i", arg);
                         break;
                      case 1047:
-                     case 1049:
                      case 47:
-                        DBG("DDD: switch buf");
-                        if (ty->altbuf)
-                          {
-                             // if we are looking at alt buf now,
-                             // clear main buf before we swap it back
-                             // into the screen2 save (so save is
-                             // clear)
-                             _termpty_clear_all(ty);
-                          }
-                        // swap screen content now
-                        if (mode != ty->altbuf)
-                          termpty_screen_swap(ty);
+                        _switch_to_alternative_screen(ty, mode);
                         break;
                      case 1048:
+                     case 1049:
                         if (mode)
                           _termpty_cursor_copy(&(ty->state), &(ty->save));
                         else
                           _termpty_cursor_copy(&(ty->save), &(ty->state));
+                        if (arg == 1049)
+                          _switch_to_alternative_screen(ty, mode);
                         break;
                      case 2004:
                         ty->bracketed_paste = mode;
