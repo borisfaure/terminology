@@ -112,7 +112,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
    for (;;)
      {
         prev_len = len;
-        s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
+        s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len, EINA_FALSE);
         if (!s) break;
         if (goback)
           {
@@ -125,7 +125,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                   coord_back(&x1, &y1, w, h);
                   free(s);
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
-                                           &len);
+                                           &len, EINA_FALSE);
                   if (!s) break;
                   switch (s[0])
                     {
@@ -142,7 +142,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                   free(s);
                   prev_len = len;
                   s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
-                                           &len);
+                                           &len, EINA_FALSE);
                   if (!s) break;
                }
              else
@@ -164,7 +164,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                        goforward = EINA_TRUE;
                        free(s);
                        s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
-                                                &len);
+                                                &len, EINA_FALSE);
                        if (!s) break;
                     }
                }
@@ -197,7 +197,8 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
         if ((!goback) && (!goforward))
           {
              free(s);
-             s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len);
+             s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc, &len,
+                                      EINA_FALSE);
              break;
           }
         free(s);

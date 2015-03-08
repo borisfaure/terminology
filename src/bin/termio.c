@@ -1935,18 +1935,62 @@ end:
 /* }}} */
 /* {{{ Selection */
 
+struct termio_sb {
+   char *buf;
+   size_t len;
+   size_t alloc;
+};
+
+static int
+_sb_add(struct termio_sb *sb, const char *s, size_t len)
+{
+   size_t new_len = sb->len + len;
+
+   if (new_len >= sb->alloc)
+     {
+        size_t new_alloc = ((new_len + 15) / 16) * 24;
+        char *new_buf;
+
+        new_buf = realloc(sb->buf, new_alloc);
+        if (new_buf == NULL)
+          return -1;
+        sb->buf = new_buf;
+        sb->alloc = new_alloc;
+     }
+   memcpy(sb->buf + sb->len, s, len);
+   sb->len += len;
+   sb->buf[sb->len] = '\0';
+   return 0;
+}
+
+/* unlike eina_strbuf_rtrim, only trims \t, \f, ' ' */
+void
+_sb_spaces_rtrim(struct termio_sb *sb)
+{
+   if (!sb->buf)
+     return;
+
+   while (sb->len > 0)
+     {
+        char c = sb->buf[sb->len - 1];
+        if ((c != ' ') && (c != '\t') && (c != '\f'))
+            break;
+        sb->len--;
+     }
+   sb->buf[sb->len] = '\0';
+}
+
+
 char *
 termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
-                     size_t *len)
+                     size_t *lenp,
+                     Eina_Bool rtrim)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Eina_Strbuf *sb;
-   char *s;
+   struct termio_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
    int x, y;
-   size_t len_backup;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   sb = eina_strbuf_new();
    termpty_cellcomp_freeze(sd->pty);
    for (y = c1y; y <= c2y; y++)
      {
@@ -1960,7 +2004,9 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
         if (w > sd->grid.w) w = sd->grid.w;
         if (y == c1y && c1x >= w)
           {
-             eina_strbuf_append_char(sb, '\n');
+             if (rtrim)
+               _sb_spaces_rtrim(&sb);
+             if (_sb_add(&sb, "\n", 1) < 0) goto err;
              continue;
           }
         start_x = c1x;
@@ -1993,12 +2039,16 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                {
                   last0 = -1;
                   if ((y != c2y) || (x != end_x))
-                    eina_strbuf_append_char(sb, '\n');
+                    {
+                       if (rtrim)
+                         _sb_spaces_rtrim(&sb);
+                       if (_sb_add(&sb, "\n", 1) < 0) goto err;
+                    }
                   break;
                }
              else if (cells[x].att.tab)
                {
-                  eina_strbuf_append_char(sb, '\t');
+                  if (_sb_add(&sb, "\t", 1) < 0) goto err;
                   x = ((x + 8) / 8) * 8;
                   x--;
                }
@@ -2013,18 +2063,22 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                        last0 = -1;
                        while (v >= 0)
                          {
-                            eina_strbuf_append_char(sb, ' ');
+                            if (_sb_add(&sb, " ", 1) < 0) goto err;
                             v--;
                          }
                     }
                   txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
-                    eina_strbuf_append_length(sb, txt, txtlen);
+                    if (_sb_add(&sb, txt, txtlen) < 0) goto err;
                   if ((x == (w - 1)) &&
                       ((x != c2x) || (y != c2y)))
                     {
                        if (!cells[x].att.autowrapped)
-                         eina_strbuf_append_char(sb, '\n');
+                         {
+                            if (rtrim)
+                              _sb_spaces_rtrim(&sb);
+                            if (_sb_add(&sb, "\n", 1) < 0) goto err;
+                         }
                     }
                }
           }
@@ -2053,7 +2107,12 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                             break;
                          }
                     }
-                  if (!have_more) eina_strbuf_append_char(sb, '\n');
+                  if (!have_more)
+                    {
+                       if (rtrim)
+                         _sb_spaces_rtrim(&sb);
+                       if (_sb_add(&sb, "\n", 1) < 0) goto err;
+                    }
                   else
                     {
                        for (x = last0; x <= end_x; x++)
@@ -2067,25 +2126,30 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                               }
 #endif
                             if (x >= w) break;
-                            eina_strbuf_append_char(sb, ' ');
+                            if (_sb_add(&sb, " ", 1) < 0) goto err;
                          }
                     }
                }
-             else eina_strbuf_append_char(sb, '\n');
+             else
+               {
+                  if (rtrim)
+                    _sb_spaces_rtrim(&sb);
+                  if (_sb_add(&sb, "\n", 1) < 0) goto err;
+               }
           }
      }
    termpty_cellcomp_thaw(sd->pty);
 
-   if (!len) len = &len_backup;
-   *len = eina_strbuf_length_get(sb);
-   if (!*len)
-     {
-        eina_strbuf_free(sb);
-        return NULL;
-     }
-   s = eina_strbuf_string_steal(sb);
-   eina_strbuf_free(sb);
-   return s;
+   if (rtrim)
+     _sb_spaces_rtrim(&sb);
+
+   if (lenp)
+     *lenp = sb.len;
+
+   return sb.buf;
+err:
+   free(sb.buf);
+   return NULL;
 }
 
 
@@ -2212,7 +2276,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         for (i = start_y; i <= end_y; i++)
           {
              char *tmp = termio_selection_get(obj, start_x, i, end_x, i,
-                                              &len);
+                                              &len, EINA_TRUE);
 
              if (tmp)
                {
@@ -2233,7 +2297,8 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
      }
    else if ((start_x != end_x) || (start_y != end_y))
      {
-        s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len);
+        s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len,
+                                 EINA_TRUE);
      }
 
    if (s)
