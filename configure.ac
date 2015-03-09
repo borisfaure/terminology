@@ -83,7 +83,7 @@ AC_CHECK_FUNCS(mkstemps)
 AC_MSG_CHECKING([for ecore_con_url_head])
 orig_cflags=$CFLAGS
 CFLAGS+=" $TERMINOLOGY_CFLAGS "
-AC_COMPILE_IFELSE(
+AC_LINK_IFELSE(
    [
     AC_LANG_PROGRAM(
       [[
