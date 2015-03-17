@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 4
+#define CONF_VER 5
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -280,10 +280,6 @@ _config_upgrade_to_v2(Config *config)
    config->version = 2;
 }
 
-static void
-_add_default_keys(Config *config)
-{
-   Config_Keys *kb;
 #define ADD_KB(Name, Ctrl, Alt, Shift, Win, Cb)                   \
    kb = calloc(1, sizeof(Config_Keys));                           \
    if (!kb) return;                                               \
@@ -295,6 +291,24 @@ _add_default_keys(Config *config)
    kb->cb = eina_stringshare_add_length(Cb, strlen(Cb));          \
    config->keys = eina_list_append(config->keys, kb)
 
+static void
+_config_upgrade_to_v4(Config *config)
+{
+   Config_Keys *kb;
+
+   ADD_KB("F11", 0, 0, 0, 0, "win_fullscreen");
+
+   config->version = 4;
+}
+
+static void
+_add_default_keys(Config *config)
+{
+   Config_Keys *kb;
+
+   ADD_KB("F11", 0, 0, 0, 0, "win_fullscreen");
+
+   /* Ctrl- */
    ADD_KB("Prior", 1, 0, 0, 0, "term_prev");
    ADD_KB("Next", 1, 0, 0, 0, "term_next");
    ADD_KB("0", 1, 0, 0, 0, "tab_10");
@@ -340,9 +354,9 @@ _add_default_keys(Config *config)
    ADD_KB("KP_Subtract", 0, 0, 1, 0, "decrease_font_size");
    ADD_KB("KP_Multiply", 0, 0, 1, 0, "reset_font_size");
    ADD_KB("KP_Divide", 0, 0, 1, 0, "copy_clipboard");
+}
 
 #undef ADD_KB
-}
 
 
 void
@@ -459,7 +473,10 @@ config_load(const char *key)
                     }
                   config->gravatar = EINA_TRUE;
                   /*pass through*/
-                case CONF_VER: /* 4 */
+                case 4:
+                  _config_upgrade_to_v4(config);
+                  /*pass through*/
+                case CONF_VER: /* 5 */
                   config->version = CONF_VER;
                   break;
                 default:

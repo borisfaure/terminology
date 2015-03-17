@@ -449,6 +449,19 @@ cb_miniview(Evas_Object *term)
 }
 
 static Eina_Bool
+cb_win_fullscreen(Evas_Object *term)
+{
+   Evas_Object *win = termio_win_get(term);
+   Eina_Bool fullscreen;
+
+   if (!win)
+     return EINA_FALSE;
+   fullscreen = elm_win_fullscreen_get(win);
+   elm_win_fullscreen_set(win, !fullscreen);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 cb_increase_font_size(Evas_Object *term)
 {
    termcmd_do(term, NULL, NULL, "f+");
@@ -565,6 +578,7 @@ static Shortcut_Action _actions[] =
      {"reset_font_size", gettext_noop("Reset font size"), cb_reset_font_size},
 
      {"group", gettext_noop("Actions"), NULL},
+     {"win_fullscreen", gettext_noop("Toggle Fullscreen of the window"), cb_win_fullscreen},
      {"miniview", gettext_noop("Display the history miniview"), cb_miniview},
      {"cmd_box", gettext_noop("Display the command box"), cb_cmd_box},
 
