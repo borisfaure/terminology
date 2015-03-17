@@ -292,13 +292,13 @@ _config_upgrade_to_v2(Config *config)
    config->keys = eina_list_append(config->keys, kb)
 
 static void
-_config_upgrade_to_v4(Config *config)
+_config_upgrade_to_v5(Config *config)
 {
    Config_Keys *kb;
 
    ADD_KB("F11", 0, 0, 0, 0, "win_fullscreen");
 
-   config->version = 4;
+   config->version = 5;
 }
 
 static void
@@ -474,7 +474,7 @@ config_load(const char *key)
                   config->gravatar = EINA_TRUE;
                   /*pass through*/
                 case 4:
-                  _config_upgrade_to_v4(config);
+                  _config_upgrade_to_v5(config);
                   /*pass through*/
                 case CONF_VER: /* 5 */
                   config->version = CONF_VER;
