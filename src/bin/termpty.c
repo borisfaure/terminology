@@ -858,7 +858,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    y_end = ty->state.cy;
    new_y_end = new_h - 1;
-   /* For each "full line" in old buffers, revrap.
+   /* For each "full line" in old buffers, rewrap.
     * From most recent to oldest */
    while ((y_end >= -ty->backscroll_num) && (new_y_end >= -ty->backmax))
      {
