@@ -1156,9 +1156,9 @@ _update_link(Evas_Object *obj, Termio *sd,
      }
    for (y = sd->link.y1; y <= sd->link.y2; y++)
      {
-        o = edje_object_add(evas_object_evas_get(obj));
+        o = elm_layout_add(obj);
         evas_object_smart_member_add(o, obj);
-        theme_apply(o, sd->config, "terminology/link");
+        theme_apply(elm_layout_edje_get(o), sd->config, "terminology/link");
 
         if (y == sd->link.y1)
           {
@@ -1188,6 +1188,7 @@ _update_link(Evas_Object *obj, Termio *sd,
           }
 
         sd->link.objs = eina_list_append(sd->link.objs, o);
+        elm_object_cursor_set(o, "hand2");
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_link_down, obj);

@@ -3783,6 +3783,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "bottom";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                image.normal: "lk_bottom.png";
                image.border: 9 9 0 0;
                align: 0.5 1.0;
@@ -3797,6 +3798,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "l";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                image.normal: "lk_left.png";
                align: 0.0 1.0;
                min: 4 4;
@@ -3807,6 +3809,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: 51 153 255 0;
             }
             description { state: "out" 0.0;
+               fixed: 1 1;
                inherit: "default" 0.0;
                min: 16 16;
                rel1.offset: -10 -1;
@@ -3814,6 +3817,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: 51 153 255 255;
             }
             description { state: "out2" 0.0;
+               fixed: 1 1;
                inherit: "default" 0.0;
                min: 32 32;
                rel1.offset: -26 -1;
@@ -3824,6 +3828,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "r";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                image.normal: "lk_right.png";
                align: 1.0 1.0;
                min: 4 4;
@@ -3834,6 +3839,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: 51 153 255 0;
             }
             description { state: "out" 0.0;
+               fixed: 1 1;
                inherit: "default" 0.0;
                min: 16 16;
                rel1.offset: 9 -1;
@@ -3841,6 +3847,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                color: 51 153 255 255;
             }
             description { state: "out2" 0.0;
+               fixed: 1 1;
                inherit: "default" 0.0;
                min: 32 32;
                rel1.offset: 25 -1;
