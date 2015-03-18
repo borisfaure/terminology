@@ -5343,7 +5343,7 @@ _smart_pty_command(void *data)
                             termpty_block_insert(sd->pty, repch, blk);
                          }
                     }
-                  if (link) free(link);
+                  free(link);
                   EINA_LIST_FREE(strs, pp) free(pp);
                }
              return;

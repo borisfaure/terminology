@@ -483,16 +483,10 @@ fileicon(const char *path)
    name = ecore_file_file_get(path);
    if (name)
      {
-        char *ts;
-             
         if (ecore_file_is_dir(path)) isdir = EINA_TRUE;
-        ts = ecore_file_readlink(path);
-        if (ts)
-          {
-             free(ts);
-          }
+        free(ecore_file_readlink(path));
         if (ecore_file_can_exec(path)) isexec = EINA_TRUE;
-        
+
         if (isdir) return filematch(name, dmatch);
         else if (isexec) return filematch(name, xmatch);
         else return filematch(name, fmatch);

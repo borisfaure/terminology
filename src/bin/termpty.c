@@ -503,8 +503,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    termpty_save_register(ty);
    return ty;
 err:
-   if (ty->screen) free(ty->screen);
-   if (ty->screen2) free(ty->screen2);
+   free(ty->screen);
+   free(ty->screen2);
    if (ty->fd >= 0) close(ty->fd);
    if (ty->slavefd >= 0) close(ty->slavefd);
    free(ty);
@@ -577,10 +577,9 @@ termpty_free(Termpty *ty)
         free(ty->back);
         ty->back = NULL;
      }
-   if (ty->screen) free(ty->screen);
-   if (ty->screen2) free(ty->screen2);
-   if (ty->buf) free(ty->buf);
-   memset(ty, 0, sizeof(Termpty));
+   free(ty->screen);
+   free(ty->screen2);
+   free(ty->buf);
    free(ty);
 }
 
