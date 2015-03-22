@@ -291,12 +291,9 @@ main_ipc_new(Ipc_Instance *inst)
         free(nargv);
         return;
      }
-   else
-     {
-        win_term_swallow(wn, term);
-     }
 
-   win_add_split(wn, term);
+   if (win_term_set(wn, term) < 0)
+     return;
 
    main_trans_update(config);
    main_media_update(config);
@@ -866,12 +863,12 @@ remote:
         retval = EXIT_FAILURE;
         goto end;
      }
-   else
-     {
-        win_term_swallow(wn, term);
-     }
 
-   win_add_split(wn, term);
+   if (win_term_set(wn, term) < 0)
+     {
+        retval = EXIT_FAILURE;
+        goto end;
+     }
 
    main_trans_update(config);
    main_media_update(config);
@@ -890,14 +887,14 @@ remote:
              if (startup_split[i] == 'v')
                {
                   pch = eina_list_nth(cmds_list, 1);
-                  main_split_v(win_evas_object_get(term_win_get(next)),
+                  split_vertically(win_evas_object_get(term_win_get(next)),
                                main_term_evas_object_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
              else if (startup_split[i] == 'h')
                {
                   pch = eina_list_nth(cmds_list, 1);
-                  main_split_h(win_evas_object_get(term_win_get(next)),
+                  split_horizontally(win_evas_object_get(term_win_get(next)),
                                main_term_evas_object_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
