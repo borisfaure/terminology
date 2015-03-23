@@ -4,6 +4,10 @@ ab_base.png \
 ab_shell.png \
 bg_bevel.png \
 bg_shine.png \
+bg_shine2.png \
+bg_shine3.png \
+bg_shine4.png \
+bg_shine5.png \
 bg_glint.png \
 bg_glow_in.png \
 bg_led.png \

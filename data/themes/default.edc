@@ -200,7 +200,6 @@ collections {
    group { name: "terminology/background";
       images {
         image: "bg_bevel.png" COMP;
-        image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "bg_glow_in.png" COMP;
         image: "bg_led_glow.png" COMP;
@@ -232,6 +231,13 @@ collections {
         image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
         image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
         image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
+      }
+      set { name: "bg_shine";
+        image { image: "bg_shine5.png" COMP; size: 0 0 256 120; }
+        image { image: "bg_shine4.png" COMP; size: 256 120 512 240; }
+        image { image: "bg_shine3.png" COMP; size: 512 240 1024 480; }
+        image { image: "bg_shine2.png" COMP; size: 1024 480 2048 960; }
+        image { image: "bg_shine.png"  COMP; size: 2048 960 99999 99999; }
       }
       sounds {
          sample { name: "bell" LOSSY 64;
@@ -665,10 +671,10 @@ collections {
             description { state: "default" 0.0;
                rel1.offset: 0 0;
                rel2.offset: -1 -1;
-               image.normal: "bg_shine.png";
+               image.normal: "bg_shine";
                fill.smooth: 0;
                align: 0.5 0.0;
-               aspect: (255/120) (255/120);
+               aspect: (256/120) (256/120);
                aspect_preference: HORIZONTAL;
                color: 255 255 255 64;
             }
@@ -1481,10 +1487,10 @@ collections {
                fixed: 1 1;
                rel1.to: "terminology.popmedia";
                rel2.to: "terminology.popmedia";
-               image.normal: "bg_shine.png";
+               image.normal: "bg_shine";
                fill.smooth: 0;
                align: 0.5 0.0;
-               aspect: (255/120) (255/120);
+               aspect: (256/120) (256/120);
                aspect_preference: HORIZONTAL;
                visible: 0;
             }
@@ -3432,7 +3438,6 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
    group { name: "terminology/sel/item";
       images {
         image: "bg_bevel.png" COMP;
-        image: "bg_shine.png" COMP;
         image: "bg_glint.png" COMP;
         image: "pm_shadow.png" COMP;
         image: "cr_glow.png" COMP;
@@ -3440,6 +3445,13 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
         image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
         image: "bg_led_strobe.png" COMP;
+      }
+      set { name: "bg_shine";
+        image { image: "bg_shine5.png" COMP; size: 0 0 256 120; }
+        image { image: "bg_shine4.png" COMP; size: 256 120 512 240; }
+        image { image: "bg_shine3.png" COMP; size: 512 240 1024 480; }
+        image { image: "bg_shine2.png" COMP; size: 1024 480 2048 960; }
+        image { image: "bg_shine.png"  COMP; size: 2048 960 99999 99999; }
       }
       parts {
          ////////////////////////////////////////////////////////////////////
@@ -3630,10 +3642,10 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                fixed: 1 1;
                rel1.to: "terminology.content";
                rel2.to: "terminology.content";
-               image.normal: "bg_shine.png";
+               image.normal: "bg_shine";
                fill.smooth: 0;
                align: 0.5 0.0;
-               aspect: (255/120) (255/120);
+               aspect: (256/120) (256/120);
                aspect_preference: HORIZONTAL;
             }
          }
