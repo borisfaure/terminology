@@ -389,7 +389,7 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
 
    for (c = 0; c < (4 * 12); c++)
      {
-        n = c + (24 * (c / 24));
+        n = c;
         if (config->colors_use)
           {
              r = config->colors[c].r;
@@ -421,9 +421,19 @@ colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
            r, g, b, a);
 
         /* faint */
-        evas_object_textgrid_palette_set(
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-           r / 2, g / 2, b / 2, a / 2);
+        if ((n == 1) && (r == 0) && (g == 0) && (b == 0))
+          {
+             /* dark gray */
+             evas_object_textgrid_palette_set(
+                textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 48,
+                127, 127, 127, 127);
+          }
+        else
+          {
+             evas_object_textgrid_palette_set(
+                textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 48,
+                r / 2, g / 2, b / 2, a / 2);
+          }
      }
    for (c = 0; c < 256; c++)
      {
