@@ -1947,7 +1947,7 @@ _sb_add(struct termio_sb *sb, const char *s, size_t len)
 {
    size_t new_len = sb->len + len;
 
-   if (new_len >= sb->alloc)
+   if ((new_len >= sb->alloc) || !sb->buf)
      {
         size_t new_alloc = ((new_len + 15) / 16) * 24;
         char *new_buf;
