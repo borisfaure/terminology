@@ -682,7 +682,8 @@ keyin_add_config(Config_Keys *key)
         Key_Binding *kb;
         kb = _key_binding_new(key->keyname, key->ctrl, key->alt,
                               key->shift, key->win, action->cb);
-        if (!kb) return -1;
+        if (!kb)
+          return -1;
         if (eina_hash_find(_key_bindings, kb) ||
             (!eina_hash_direct_add(_key_bindings, kb, kb)))
           {
@@ -691,7 +692,8 @@ keyin_add_config(Config_Keys *key)
           }
         return 0;
      }
-   return -1;
+   WRN("no callback for key binding doing '%s'", key->cb);
+   return 0;
 }
 
 int
