@@ -1698,45 +1698,41 @@ _popmedia(Term *term, const char *src)
    Media_Type type;
    Config *config = termio_config_get(term->termio);
 
-#ifdef HAVE_ECORE_CON_URL_HEAD
-   Ty_Http_Head *ty_head = calloc(1, sizeof(Ty_Http_Head));
-   if (!ty_head)
-     return;
-
-   if (config->helper.local.general && config->helper.local.general[0])
+   type = media_src_type_get(src);
+   if (type == MEDIA_TYPE_UNKNOWN)
      {
-        ty_head->handler = eina_stringshare_add(config->helper.local.general);
-        if (!ty_head->handler)
-          goto error;
-     }
-   ty_head->src = eina_stringshare_add(src);
-   if (!ty_head->src)
-     goto error;
-   ty_head->url = ecore_con_url_new(src);
-   if (!ty_head->url)
-     goto error;
-   if (!ecore_con_url_head(ty_head->url))
-     goto error;
-   ty_head->url_complete = ecore_event_handler_add
-      (ECORE_CON_EVENT_URL_COMPLETE, _media_http_head_complete, ty_head);
-   if (!ty_head->url_complete)
-     goto error;
-   ty_head->term = term;
-   edje_object_signal_emit(term->bg, "busy", "terminology");
-   term_ref(term);
+#ifdef HAVE_ECORE_CON_URL_HEAD
+        Ty_Http_Head *ty_head = calloc(1, sizeof(Ty_Http_Head));
+        if (!ty_head) return;
 
-   return;
+        if (config->helper.local.general && config->helper.local.general[0])
+          {
+             ty_head->handler = eina_stringshare_add(config->helper.local.general);
+             if (!ty_head->handler) goto error;
+          }
+        ty_head->src = eina_stringshare_add(src);
+        if (!ty_head->src) goto error;
+        ty_head->url = ecore_con_url_new(src);
+        if (!ty_head->url) goto error;
+        if (!ecore_con_url_head(ty_head->url)) goto error;
+        ty_head->url_complete = ecore_event_handler_add
+          (ECORE_CON_EVENT_URL_COMPLETE, _media_http_head_complete, ty_head);
+        if (!ty_head->url_complete) goto error;
+        ty_head->term = term;
+        edje_object_signal_emit(term->bg, "busy", "terminology");
+        term_ref(term);
+        return;
 
 error:
-   _ty_http_head_delete(ty_head);
+        _ty_http_head_delete(ty_head);
 #endif
 
-   type = media_src_type_get(src);
-   if (type == MEDIA_TYPE_UNKNOWN) {
         media_unknown_handle(config->helper.local.general, src);
-   } else {
+     }
+   else
+     {
         _popmedia_show(term, src, type);
-   }
+     }
 }
 
 
