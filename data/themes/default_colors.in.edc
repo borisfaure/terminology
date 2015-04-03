@@ -25,7 +25,7 @@ color_class { name: "c22";      color:  17  17  17 255; } // COL_INVERSE
 color_class { name: "c23";      color: 238 238 238 255; } // COL_INVERSEBG
 
 color_class { name: "c24";      color: 221 221 221 255; } // COL_DEF
-color_class { name: "c25";      color:   0   0   0 255; } // COL_BLACK
+color_class { name: "c25";      color: 128 128 128 255; } // COL_BLACK
 color_class { name: "c26";      color: 204 136 136 255; } // COL_RED
 color_class { name: "c27";      color: 136 204 136 255; } // COL_GREEN
 color_class { name: "c28";      color: 204 170 136 255; } // COL_YELLOW
