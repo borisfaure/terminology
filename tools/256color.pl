@@ -61,7 +61,17 @@ for ($color = 90; $color < 98; $color++) {
 }
 print "\x1b[0m\n\n";
 
-print "Bright colors:\n";
+print "Bright colors: background\n";
+for ($color = 40; $color < 48; $color++) {
+    print "\x1b[1;${color}m  ";
+}
+print "\x1b[0m\n";
+for ($color = 100; $color < 108; $color++) {
+    print "\x1b[1;${color}m  ";
+}
+print "\x1b[0m\n\n";
+
+print "Bright colors: foreground\n";
 for ($color = 30; $color < 38; $color++) {
     print "\x1b[1;${color}m██";
 }
@@ -71,7 +81,17 @@ for ($color = 90; $color < 98; $color++) {
 }
 print "\x1b[0m\n\n";
 
-print "Dim/Faint colors:\n";
+print "Dim/Faint colors: background\n";
+for ($color = 40; $color < 48; $color++) {
+    print "\x1b[2;${color}m  ";
+}
+print "\x1b[0m\n";
+for ($color = 100; $color < 108; $color++) {
+    print "\x1b[2;${color}m  ";
+}
+print "\x1b[0m\n\n";
+
+print "Dim/Faint colors: foreground\n";
 for ($color = 30; $color < 38; $color++) {
     print "\x1b[2;${color}m██";
 }
