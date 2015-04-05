@@ -53,7 +53,6 @@ struct _Termio
       int x1, y1, x2, y2;
       int suspend;
       Eina_List *objs;
-      Evas_Object *ctxpopup;
       struct {
          Evas_Object *dndobj;
          Evas_Coord x, y;
@@ -62,6 +61,7 @@ struct _Termio
          unsigned char dndobjdel : 1;
       } down;
    } link;
+   Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;
    Evas_Object *self;
@@ -111,7 +111,9 @@ static void _smart_update_queue(Evas_Object *obj, Termio *sd);
 static void _smart_apply(Evas_Object *obj);
 static void _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force);
 static void _smart_calculate(Evas_Object *obj);
-static void _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text);
+static void _take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text);
+static void _smart_xy_to_cursor(Termio *sd, Evas_Coord x, Evas_Coord y, int *cx, int *cy);
+static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
 
 
 /* {{{ Helpers */
@@ -689,7 +691,7 @@ termio_config_set(Evas_Object *obj, Config *config)
 /* }}} */
 /* {{{ Links */
 
-static inline Eina_Bool
+static Eina_Bool
 _should_inline(const Evas_Object *obj)
 {
    const Config *config = termio_config_get(obj);
@@ -878,7 +880,7 @@ _cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 {
    Termio *sd = data;
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   sd->link.ctxpopup = NULL;
+   sd->ctxpopup = NULL;
    elm_object_focus_set(sd->self, EINA_TRUE);
 }
 
@@ -912,7 +914,7 @@ _cb_ctxp_link_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    Termio *sd = evas_object_smart_data_get(term);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(sd->link.string);
-   _take_selection_text(term, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
+   _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
    evas_object_del(obj);
 }
 
@@ -931,8 +933,19 @@ _cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
      }
    else if (ev->button == 3)
      {
-        Evas_Object *ctxp = elm_ctxpopup_add(sd->win);
-        sd->link.ctxpopup = ctxp;
+        Evas_Object *ctxp;
+
+        if (sd->pty->selection.is_active)
+          {
+             int cx = 0, cy = 0;
+
+             _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
+             if (_mouse_in_selection(sd, cx, cy))
+               return;
+          }
+
+        ctxp = elm_ctxpopup_add(sd->win);
+        sd->ctxpopup = ctxp;
 
         if (sd->config->helper.inline_please)
           {
@@ -1936,6 +1949,42 @@ end:
 /* }}} */
 /* {{{ Selection */
 
+static Eina_Bool
+_mouse_in_selection(Termio *sd, int cx, int cy)
+{
+   int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
+
+   if (!sd->pty->selection.is_active)
+     return EINA_FALSE;
+
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x = sd->pty->selection.end.x;
+   end_y = sd->pty->selection.end.y;
+
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+   if (sd->pty->selection.is_box)
+     {
+        if ((start_y <= cy) && (cy <= end_y) &&
+            (start_x <= cx) && (cx <= end_x) )
+          return EINA_TRUE;
+     }
+   else
+     {
+        if ((cy < start_y) || (cy > end_y))
+          return EINA_FALSE;
+        if (((cy == start_y) && (cx < start_x)) ||
+            ((cy == end_y) && (cx > end_x)))
+          return EINA_FALSE;
+        return EINA_TRUE;
+     }
+     return EINA_FALSE;
+}
+
 struct termio_sb {
    char *buf;
    size_t len;
@@ -1965,7 +2014,7 @@ _sb_add(struct termio_sb *sb, const char *s, size_t len)
 }
 
 /* unlike eina_strbuf_rtrim, only trims \t, \f, ' ' */
-void
+static void
 _sb_spaces_rtrim(struct termio_sb *sb)
 {
    if (!sb->buf)
@@ -2222,10 +2271,8 @@ _lost_selection(void *data, Elm_Sel_Type selection)
 }
 
 static void
-_take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text)
+_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
-
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    text = eina_stringshare_add(text);
@@ -2239,7 +2286,7 @@ _take_selection_text(Evas_Object *obj, Elm_Sel_Type type, const char *text)
                          text,
                          eina_stringshare_strlen(text));
    elm_cnp_selection_loss_callback_set(sd->win, type,
-                                       _lost_selection, obj);
+                                       _lost_selection, sd->self);
    sd->have_sel = EINA_TRUE;
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    sd->sel_str = text;
@@ -2305,7 +2352,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
    if (s)
      {
         if ((sd->win) && (len > 0))
-          _take_selection_text(obj, type, s);
+          _take_selection_text(sd, type, s);
         free(s);
      }
 }
@@ -3341,7 +3388,7 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->link.ctxpopup) return; /* ctxp triggers focus out we should ignore */
+   if (sd->ctxpopup) return; /* ctxp triggers focus out we should ignore */
 
    edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
@@ -3404,14 +3451,13 @@ _smart_mouseover_apply(Evas_Object *obj)
 }
 
 static void
-_smart_xy_to_cursor(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
+_smart_xy_to_cursor(Termio *sd, Evas_Coord x, Evas_Coord y,
                     int *cx, int *cy)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
    Evas_Coord ox, oy;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+   evas_object_geometry_get(sd->self, &ox, &oy, NULL, NULL);
    *cx = (x - ox) / sd->font.chw;
    *cy = (y - oy) / sd->font.chh;
    if (*cx < 0) *cx = 0;
@@ -3863,6 +3909,38 @@ _handle_mouse_down_single_click(Termio *sd,
 }
 
 static void
+_cb_ctxp_sel_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   termio_take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+   evas_object_del(obj);
+}
+
+static void
+_handle_right_click(Evas_Object *obj, Evas_Event_Mouse_Down *ev, Termio *sd,
+                    int cx, int cy)
+{
+   elm_object_focus_set(obj, EINA_TRUE);
+   if (_mouse_in_selection(sd, cx, cy))
+     {
+        Evas_Object *ctxp;
+        ctxp = elm_ctxpopup_add(sd->win);
+        sd->ctxpopup = ctxp;
+
+        elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_sel_copy,
+                                 sd->self);
+        evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
+        evas_object_show(ctxp);
+        evas_object_smart_callback_add(ctxp, "dismissed",
+                                       _cb_ctxp_dismissed, sd);
+        evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
+                                       _cb_ctxp_del, sd);
+        return;
+     }
+   if (!sd->link.string)
+     evas_object_smart_callback_call(obj, "options", NULL);
+}
+
+static void
 _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
@@ -3875,10 +3953,11 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
-   _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
+
    if ((ev->button == 3) && ctrl)
      {
-        evas_object_smart_callback_call(data, "options", NULL);
+        _handle_right_click(data, ev, sd, cx, cy);
         return;
      }
    if (!shift && !ctrl)
@@ -3928,9 +4007,7 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
      }
    else if (ev->button == 3)
      {
-        elm_object_focus_set(data, EINA_TRUE);
-        if (!sd->link.string)
-          evas_object_smart_callback_call(data, "options", NULL);
+        _handle_right_click(data, ev, sd, cx, cy);
      }
 }
 
@@ -3947,7 +4024,7 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
 
-   _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
    if (!shift && !ctrl && !sd->pty->selection.makesel)
       if (_rep_mouse_up(sd, ev, cx, cy))
         {
@@ -4162,7 +4239,7 @@ _smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED,
    Termio *sd = evas_object_smart_data_get(data);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
    termio_mouseover_suspend_pushpop(data, -1);
@@ -4177,7 +4254,7 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->link.ctxpopup) return; /* ctxp triggers mouse out we should ignore */
+   if (sd->ctxpopup) return; /* ctxp triggers mouse out we should ignore */
 
    termio_mouseover_suspend_pushpop(data, 1);
    ty_dbus_link_hide();
@@ -4191,7 +4268,7 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
      {
         int cx = 0, cy = 0;
 
-        _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+        _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
         sd->mouse.cx = cx;
         sd->mouse.cy = cy;
      }
@@ -4245,7 +4322,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
      {
        int cx = 0, cy = 0;
 
-       _smart_xy_to_cursor(data, ev->canvas.x, ev->canvas.y, &cx, &cy);
+       _smart_xy_to_cursor(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
        switch (sd->pty->mouse_ext)
          {
