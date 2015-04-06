@@ -139,12 +139,12 @@ _draw_line(const Termpty *ty, unsigned int *pixels,
 Eina_Bool
 _is_top_bottom_reached(Miniview *mv)
 {
-   Termpty *ty;
    int history_len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(mv, EINA_FALSE);
-   ty = termio_pty_get(mv->termio);
-   history_len = ty->backscroll_num;
+
+   /* TODO: RESIZE */
+   history_len = 42; //termpty_backscroll_len_get(ty);
 
    if (( (- mv->img_hist) > (int)(mv->img_h - mv->rows - (mv->rows / 2))) &&
        ( (- mv->img_hist) < (int)(history_len + (mv->rows / 2))))
@@ -522,7 +522,8 @@ _deferred_renderer(void *data)
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if ((ow == 0) || (oh == 0)) return EINA_TRUE;
 
-   history_len = ty->backscroll_num;
+   /* TODO: RESIZE */
+   history_len = 42; //termpty_backscroll_len_get(ty);
 
    evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
    ow = mv->cols;

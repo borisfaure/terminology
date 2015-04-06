@@ -133,8 +133,6 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
         if (mv) miniview_position_offset(mv, direction, EINA_FALSE);
         // adjust scroll position for added scrollback
         sd->scroll -= direction;
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
      }
    ty = sd->pty;
    if (ty->selection.is_active)
@@ -347,15 +345,8 @@ termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
           delta *= by;
      }
    sd->scroll += delta;
-   if (delta > 0)
-     {
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
-     }
-   else
-     {
-        if (sd->scroll < 0) sd->scroll = 0;
-     }
+   if (delta <= 0 && sd->scroll < 0)
+       sd->scroll = 0;
    _smart_update_queue(obj, sd);
    miniview_position_offset(term_miniview_get(sd->term), -delta, EINA_TRUE);
 }
@@ -2050,6 +2041,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
    termpty_cellcomp_freeze(sd->pty);
+   /* TODO: RESIZE use/save the reference point */
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
@@ -4127,8 +4119,6 @@ _mouse_selection_scroll(void *data)
         if (cy == 0)
           cy = -1;
         sd->scroll -= cy;
-        if (sd->scroll > sd->pty->backscroll_num)
-          sd->scroll = sd->pty->backscroll_num;
         sd->pty->selection.end.y = -sd->scroll;
         _smart_update_queue(data, sd);
      }
@@ -4324,9 +4314,8 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
         else
           {
              sd->scroll -= (ev->z * 4);
-             if (sd->scroll > sd->pty->backscroll_num)
-               sd->scroll = sd->pty->backscroll_num;
-             else if (sd->scroll < 0) sd->scroll = 0;
+             if (sd->scroll < 0)
+               sd->scroll = 0;
              _smart_update_queue(data, sd);
              miniview_position_offset(term_miniview_get(sd->term),
                                       ev->z * 4, EINA_TRUE);
@@ -4520,6 +4509,7 @@ _smart_apply(Evas_Object *obj)
      }
    inv = sd->pty->termstate.reverse;
    termpty_cellcomp_freeze(sd->pty);
+   termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;

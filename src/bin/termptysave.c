@@ -27,10 +27,13 @@ struct _Alloc
    unsigned char __pad;
 };
 
+#if 0
 static uint64_t _allocated = 0;
+#endif
 static unsigned char cur_gen = 0;
 static Alloc *alloc[MEM_BLOCKS] =  { 0 };
 
+#if 0
 static int
 roundup_block_size(int sz)
 {
@@ -122,21 +125,25 @@ _alloc_new(int size, unsigned char gen)
    ptr += sizeof(Alloc);
    return ptr;
 }
+#endif
 
 static void *
 _ts_new(int size)
 {
-   void *ptr;
+   /* TODO: RESIZE rewrite that stuff */
+   //void *ptr;
 
    if (!size) return NULL;
-   ptr = _alloc_new(size, cur_gen);
+   //ptr = _alloc_new(size, cur_gen);
 
-   return ptr;
+   return calloc(1, size);
 }
 
 static void
 _ts_free(void *ptr)
 {
+   free(ptr);
+#if 0
    Alloc *al;
    unsigned int sz;
    Termsavecomp *ts = ptr;
@@ -164,6 +171,7 @@ _ts_free(void *ptr)
    munmap((caddr_t)al, al->size);
 #else
    munmap(al, al->size);
+#endif
 #endif
 }
 
@@ -210,11 +218,14 @@ static Eina_List *ptys = NULL;
 static Ecore_Idler *idler = NULL;
 static Ecore_Timer *timer = NULL;
 
+#if 0
 static Termsave *
 _save_comp(Termsave *ts)
 {
    Termsave *ts2;
    Termsavecomp *tsc;
+
+   ERR("save comp");
 
    // already compacted
    if (ts->comp) return ts;
@@ -226,7 +237,7 @@ _save_comp(Termsave *ts)
         char *buf;
 
         buf = alloca(LZ4_compressBound(ts->w * sizeof(Termcell)));
-        bytes = LZ4_compress((char *)(&(ts->cell[0])), buf,
+        bytes = LZ4_compress((char *)(&(ts->cells[0])), buf,
                              ts->w * sizeof(Termcell));
         tsc = _ts_new(sizeof(Termsavecomp) + bytes);
         if (!tsc)
@@ -262,6 +273,7 @@ done:
    ts_compfreeze--;
    return ts2;
 }
+#endif
 
 static void
 _walk_pty(Termpty *ty)
@@ -270,18 +282,20 @@ _walk_pty(Termpty *ty)
 //   int c0 = 0, c1 = 0;
 
    if (!ty->back) return;
-   for (i = 0; i < ty->backmax; i++)
+   for (i = 0; i < ty->backsize; i++)
      {
-        Termsavecomp *tsc = (Termsavecomp *)ty->back[i];
+        Termsavecomp *tsc = (Termsavecomp *)&ty->back[i];
 
         if (tsc)
           {
-             ty->back[i] = _save_comp(ty->back[i]);
+#if 0
+             ty->back[i] = _save_comp(tsc);
              tsc = (Termsavecomp *)ty->back[i];
              if (tsc->comp) ts_comp++;
              else ts_uncomp++;
 //             c0 += tsc->w;
 //             c1 += tsc->wout * sizeof(Termcell);
+#endif
           }
      }
 //   printf("compress ratio: %1.3f\n", (double)c0 / (double)c1);
@@ -290,9 +304,13 @@ _walk_pty(Termpty *ty)
 static Eina_Bool
 _idler(void *data EINA_UNUSED)
 {
+   /* TODO: RESIZE : re-enable compression */
+   return EINA_FALSE;
+
    Eina_List *l;
    Termpty *ty;
 //   double t0, t;
+
 
    _mem_gen_next();
 
@@ -326,6 +344,8 @@ _timer(void *data EINA_UNUSED)
 static inline void
 _check_compressor(Eina_Bool frozen)
 {
+   /* TODO: RESIZE re-enable compressor */
+   return;
    if (freeze) return;
    if (idler) return;
    if ((ts_uncomp > 256) || (ts_freeops > 256))
@@ -395,11 +415,11 @@ termpty_save_extract(Termsave *ts)
         ts2->gen = _mem_gen_get();
         ts2->w = tsc->wout;
         buf = ((char *)tsc) + sizeof(Termsavecomp);
-        bytes = LZ4_uncompress(buf, (char *)(&(ts2->cell[0])),
+        bytes = LZ4_uncompress(buf, (char *)(&(ts2->cells[0])),
                                tsc->wout * sizeof(Termcell));
         if (bytes < 0)
           {
-             memset(&(ts2->cell[0]), 0, tsc->wout * sizeof(Termcell));
+             memset(&(ts2->cells[0]), 0, tsc->wout * sizeof(Termcell));
 //             ERR("Decompress problem in row at byte %i", -bytes);
           }
         if (ts->comp) ts_comp--;
@@ -417,14 +437,32 @@ termpty_save_extract(Termsave *ts)
 }
 
 Termsave *
-termpty_save_new(int w)
+termpty_save_new(Termsave *ts, int w)
 {
-   Termsave *ts = _ts_new(sizeof(Termsave) + ((w - 1) * sizeof(Termcell)));
-   if (!ts) return NULL;
+   termpty_save_free(ts);
+
+   Termcell *cells = calloc(1, w * sizeof(Termcell));
+   if (!cells ) return NULL;
+   ts->cells = cells;
    ts->gen = _mem_gen_get();
    ts->w = w;
    if (!ts_compfreeze) ts_uncomp++;
    _check_compressor(EINA_FALSE);
+   return ts;
+}
+
+Termsave *
+termpty_save_expand(Termsave *ts, Termcell *cells, ssize_t delta)
+{
+   Termcell *newcells;
+
+   newcells = realloc(ts->cells, (ts->w + delta) * sizeof(Termcell));
+   if (!newcells)
+     return NULL;
+   newcells[ts->w - 1].att.autowrapped = 0;
+   memcpy(&newcells[ts->w], cells, delta * sizeof(Termcell));
+   ts->w += delta;
+   ts->cells = newcells;
    return ts;
 }
 
@@ -438,6 +476,8 @@ termpty_save_free(Termsave *ts)
         else ts_uncomp--;
         ts_freeops++;
      }
-   _ts_free(ts);
+   _ts_free(ts->cells);
+   ts->cells = NULL;
+   ts->w = 0;
    _check_compressor(EINA_FALSE);
 }

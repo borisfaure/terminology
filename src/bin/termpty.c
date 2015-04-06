@@ -19,6 +19,7 @@
 #if defined (__sun) || defined (__sun__)
 # include <stropts.h>
 #endif
+#include <assert.h>
 
 /* specific log domain to help debug only terminal code parser */
 int _termpty_log_dom = -1;
@@ -298,7 +299,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    if (!ty) return NULL;
    ty->w = w;
    ty->h = h;
-   ty->backmax = backscroll;
+   ty->backsize = backscroll;
 
    termpty_reset_state(ty);
 
@@ -567,16 +568,9 @@ termpty_free(Termpty *ty)
      {
         int i;
 
-        for (i = 0; i < ty->backmax; i++)
-          {
-             if (ty->back[i])
-               {
-                  termpty_save_free(ty->back[i]);
-                  ty->back[i] = NULL;
-               }
-          }
+        for (i = 0; i < ty->backsize; i++)
+          termpty_save_free(&ty->back[i]);
         free(ty->back);
-        ty->back = NULL;
      }
    free(ty->screen);
    free(ty->screen2);
@@ -596,6 +590,24 @@ termpty_cellcomp_thaw(Termpty *ty EINA_UNUSED)
    termpty_save_thaw();
 }
 
+static Eina_Bool
+termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
+{
+   ssize_t len = nb_cells;
+
+   for (len = nb_cells - 1; len >= 0; len--)
+     {
+        const Termcell *cell = cells + len;
+
+        if ((cell->codepoint != 0) &&
+            (cell->att.bg != COL_INVIS))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+
 ssize_t
 termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
@@ -613,6 +625,48 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
    return 0;
 }
 
+#define BACKLOG_ROW_GET(Ty, Y) \
+   (&Ty->back[(Ty->backsize + ty->backpos - (Y)) % Ty->backsize])
+
+void
+termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
+{
+   Termsave *ts;
+   ssize_t w;
+
+   if (ty->backsize <= 0)
+     return;
+   assert(ty->back);
+
+   termpty_save_freeze();
+
+   w = termpty_line_length(cells, w_max);
+   if (ty->backsize >= 1)
+     {
+        ts = BACKLOG_ROW_GET(ty, 0);
+        if (!ts->cells)
+          goto add_new_ts;
+        /* TODO: RESIZE uncompress ? */
+        if (ts->w && ts->cells[ts->w - 1].att.autowrapped)
+          {
+             termpty_save_expand(ts, cells, w);
+             return;
+          }
+     }
+
+add_new_ts:
+   ts = BACKLOG_ROW_GET(ty, -1);
+   ts = termpty_save_new(ts, w);
+   if (!ts)
+     return;
+   termpty_cell_copy(ty, cells, ts->cells, w);
+   ty->backpos++;
+   if (ty->backpos >= ty->backsize)
+     ty->backpos = 0;
+   termpty_save_thaw();
+}
+
+
 ssize_t
 termpty_row_length(Termpty *ty, int y)
 {
@@ -629,38 +683,114 @@ termpty_row_length(Termpty *ty, int y)
         cells = &(TERMPTY_SCREEN(ty, 0, y));
         return termpty_line_length(cells, ty->w);
      }
-   if ((y < -ty->backmax) || !ty->back)
+   if ((y < -ty->backsize) || !ty->back)
      {
         ERR("invalid row given");
         return 0;
      }
-   ts = ty->back[(ty->backmax + ty->backpos + y) % ty->backmax];
-   if (!ts) return 0;
+   ts = BACKLOG_ROW_GET(ty, y);
 
-   return ts->comp ? ((Termsavecomp*)ts)->wout : ts->w;
+   return ts->cells ? ts->w : 0;
 }
+
+/* TODO: RESIZE reference point */
+
+void
+termpty_backscroll_adjust(Termpty *ty, int *scroll)
+{
+   Termsave *ts;
+   int y;
+   int screen_y;
+
+   if (!ty->backsize || *scroll <= 0)
+     {
+        *scroll = 0;
+        return;
+     }
+   ERR("ty->backsize:%d ty->backpos:%d *scroll:%d",
+       ty->backsize, ty->backpos, *scroll);
+   /* TODO: RESIZE have a reference point? */
+   y = ty->backsize;
+   do
+     {
+        y--;
+        ts = BACKLOG_ROW_GET(ty, y);
+     }
+   while (!ts->cells);
+   ERR("y:%d", y);
+   if (*scroll <= y)
+     return;
+   screen_y = 0;
+   while (y >= 0)
+     {
+        int nb_lines;
+
+        ts = BACKLOG_ROW_GET(ty, y);
+        assert(ts != NULL);
+
+        nb_lines = (ts->w + ty->w) / ty->w;
+        ERR("[%d] ts->w:%d ty->w:%d, nb_lines:%d",
+            y, ts->w, ty->w, nb_lines);
+        screen_y += nb_lines;
+        y--;
+     }
+
+   ERR("screen_y:%d", screen_y);
+   *scroll = screen_y;
+}
+
 
 Termcell *
-termpty_cellrow_get(Termpty *ty, int y, int *wret)
+termpty_cellrow_get(Termpty *ty, int y_requested, int *wret)
 {
-   Termsave *ts, **tssrc;
+   int screen_y = 0;
+   int backlog_y = 0;
 
-   if (y >= 0)
+   //ERR("y_requested:%d", y_requested);
+   if (y_requested >= 0)
      {
-        if (y >= ty->h) return NULL;
+        if (y_requested >= ty->h)
+          return NULL;
         *wret = ty->w;
-        /* fprintf(stderr, "getting: %i (%i, %i)\n", y, ty->circular_offset, ty->h); */
-        return &(TERMPTY_SCREEN(ty, 0, y));
+        return &(TERMPTY_SCREEN(ty, 0, y_requested));
      }
-   if ((y < -ty->backmax) || !ty->back) return NULL;
-   tssrc = &(ty->back[(ty->backmax + ty->backpos + y) % ty->backmax]);
-   ts = termpty_save_extract(*tssrc);
-   if (!ts) return NULL;
-   *tssrc = ts;
-   *wret = ts->w;
-   return ts->cell;
+   if (!ty->back)
+     return NULL;
+
+   y_requested = -y_requested;
+   while (backlog_y <= ty->backsize)
+     {
+        Termsave *ts;
+        int nb_lines;
+
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells)
+          {
+             //ERR("went too far: y_requested:%d screen_y:%d backlog_y:%d",
+             //    y_requested, screen_y, backlog_y);
+             return NULL;
+          }
+        nb_lines = (ts->w + ty->w) / ty->w;
+
+        /* TODO: uncompress */
+        /* TODO: optimize */
+
+        //ERR("y_requested:%d screen_y:%d nb_lines:%d backlog_y:%d",
+        //    y_requested, screen_y, nb_lines, backlog_y);
+        if (screen_y + nb_lines >= y_requested)
+          {
+             int delta = screen_y + nb_lines - y_requested;
+             *wret = ts->w - delta * ty->w;
+             if (*wret > ts->w)
+               *wret = ts->w;
+             return &ts->cells[delta * ty->w];
+          }
+        screen_y += nb_lines;
+        backlog_y++;
+     }
+   return NULL;
 }
-   
+
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
@@ -670,170 +800,113 @@ termpty_write(Termpty *ty, const char *input, int len)
          ty->fd, strerror(errno));
 }
 
-static int
-termpty_line_find_top(Termpty *ty, int y_end, int *top)
+struct screen_info
 {
-   int y_start = y_end;
+   Termcell *screen;
+   int w;
+   int h;
+   int x;
+   int y;
+   int cy;
+   int cx;
+   int circular_offset;
+};
 
-   while (y_start > 0)
+#define SCREEN_INFO_GET_CELLS(Tsi, X, Y) \
+  Tsi->screen[X + (((Y + Tsi->circular_offset) % Tsi->h) * Tsi->w)]
+
+static void
+_check_screen_info(Termpty *ty, struct screen_info *si)
+{
+   if (si->y >= si->h)
      {
-        if (TERMPTY_SCREEN(ty, ty->w - 1, y_start - 1).att.autowrapped)
-          y_start--;
-        else
-          {
-             *top = y_start;
-             return 0;
-          }
+        Termcell *cells = &SCREEN_INFO_GET_CELLS(si, 0, 0);
+
+        ERR("adjusting");
+
+        si->y--;
+        termpty_text_save_top(ty, cells, si->w);
+        termpty_cells_clear(ty, cells, si->w);
+
+        si->circular_offset++;
+        if (si->circular_offset >= si->h)
+          si->circular_offset = 0;
+
+        si->cy--;
      }
-   while (-y_start < ty->backscroll_num)
-     {
-        Termsave *ts = ty->back[(y_start + ty->backpos - 1 +
-                                 ty->backmax) % ty->backmax];
-        if (ts)
-          {
-             ts = termpty_save_extract(ts);
-          }
-        if (!ts)
-          return -1;
-        ty->back[(y_start + ty->backpos - 1 + ty->backmax) % ty->backmax] = ts;
-        if (ts->cell[ts->w - 1].att.autowrapped)
-          y_start--;
-        else
-          {
-             *top = y_start;
-             return 0;
-          }
-     }
-   *top = y_start;
-   return 0;
 }
 
-static int
-termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
-                    Termcell *new_screen, Termsave **new_back,
-                    int new_w, int new_y_end, int *new_y_startp,
-                    int *new_cyp)
+static void
+_termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
+                     struct screen_info *si,
+                     Eina_Bool set_cursor)
 {
-   /* variables prefixed by new_ are about the resized term being built up */
-   int x, y, new_x, new_y, new_y_start;
-   int len, len_last, len_remaining, copy_width, new_ts_width;
-   Termsave *ts, *new_ts;
-   Termcell *line, *new_line = NULL;
+   int autowrapped = cells[len-1].att.autowrapped;
 
-   if (y_end >= 0)
+   ERR("si->x:%d si->y:%d si->cx:%d si->cy:%d",
+       si->x, si->y, si->cx, si->cy);
+   if (len == 0)
      {
-        len_last = termpty_line_length(&TERMPTY_SCREEN(ty, 0, y_end), ty->w);
+        if (set_cursor)
+          {
+             si->cy = si->y;
+             si->cx = 0;
+          }
+        si->y++;
+        si->x = 0;
+        _check_screen_info(ty, si);
+        return;
      }
-   else
+   while (len > 0)
      {
-        ts = termpty_save_extract(ty->back[(y_end + ty->backpos +
-                                            ty->backmax) % ty->backmax]);
-        if (!ts)
-          return -1;
-        ty->back[(y_end + ty->backpos + ty->backmax) % ty->backmax] = ts;
-        len_last = ts->w;
-     }
-   len_remaining = len_last + (y_end - y_start) * ty->w;
-   new_y_start = new_y_end;
-   if (len_remaining)
-     {
-        new_y_start -= (len_remaining + new_w - 1) / new_w - 1;
-     }
-   else
-     {
-        if (new_y_start < 0)
-          new_back[new_y_start + ty->backmax] = termpty_save_new(0);
-        *new_y_startp = new_y_start;
-        return 0;
-     }
-   if (-new_y_start > ty->backmax)
-     {
-        y_start += ((-new_y_start - ty->backmax) * new_w) / ty->w;
-        x = ((-new_y_start - ty->backmax) * new_w) % ty->w;
-        len_remaining -= (-new_y_start - ty->backmax) * new_w;
-        new_y_start = -ty->backmax;
-     }
-   else
-     {
-        x = 0;
-     }
-   y = y_start;
-   new_x = 0;
-   new_y = new_y_start;
+        int copy_width = MIN(len, si->w - si->x);
 
-   while (y <= y_end)
-     {
-        if (y >= 0)
+        ERR("len:%d copy_width:%d", len, copy_width);
+        termpty_cell_copy(ty,
+                          /*src*/ cells,
+                          /*dst*/&SCREEN_INFO_GET_CELLS(si, si->x, si->y),
+                          copy_width);
+        if (set_cursor)
           {
-             line = &TERMPTY_SCREEN(ty, 0, y);
-          }
-        else
-          {
-             ts = termpty_save_extract(ty->back[(y + ty->backpos +
-                                                 ty->backmax) % ty->backmax]);
-             if (!ts)
-               return -1;
-             ty->back[(y + ty->backpos + ty->backmax) % ty->backmax] = ts;
-             line = ts->cell;
-          }
-        if (y == y_end)
-          len = len_last;
-        else
-          len = ty->w;
-        line[len - 1].att.autowrapped = 0;
-        while (x < len)
-          {
-             copy_width = MIN(len - x, new_w - new_x);
-             if (new_x == 0)
+             if (ty->cursor_state.cx <= copy_width)
                {
-                  if (new_y >= 0)
-                    {
-                       new_line = new_screen + (new_y * new_w);
-                    }
-                  else
-                    {
-                       new_ts_width = MIN(len_remaining, new_w);
-                       new_ts = termpty_save_new(new_ts_width);
-                       if (!new_ts)
-                         return -1;
-                       new_line = new_ts->cell;
-                       new_back[new_y + ty->backmax] = new_ts;
-                    }
+                  si->cx = ty->cursor_state.cx;
+                  si->cy = si->y;
                }
-             if (y == ty->cursor_state.cy)
+             else
                {
-                  *new_cyp = new_y_start;
-               }
-             if (new_line)
-               {
-                  termpty_cell_copy(ty, line + x, new_line + new_x, copy_width);
-                  x += copy_width;
-                  new_x += copy_width;
-                  len_remaining -= copy_width;
-                  if ((new_x == new_w) && (new_y != new_y_end))
-                    {
-                       new_line[new_x - 1].att.autowrapped = 1;
-                       new_x = 0;
-                       new_y++;
-                    }
+                  ty->cursor_state.cx -= copy_width;
                }
           }
-        x = 0;
-        y++;
+        len -= copy_width;
+        si->x += copy_width;
+        ERR("si->x:%d si->w:%d", si->x, si->w);
+        if (si->x >= si->w)
+          {
+             si->y++;
+             si->x = 0;
+          }
+        _check_screen_info(ty, si);
      }
-   *new_y_startp = new_y_start;
-   return 0;
+   ERR("autowrapped:%d", autowrapped);
+   if (!autowrapped)
+     {
+        si->y++;
+        si->x = 0;
+        _check_screen_info(ty, si);
+     }
 }
-
 
 void
 termpty_resize(Termpty *ty, int new_w, int new_h)
 {
    Termcell *new_screen = NULL;
-   Termsave **new_back = NULL;
-   int y_start = 0, y_end = 0, new_y_start = 0, new_y_end,
-       new_cy = ty->cursor_state.cy;
-   int i, altbuf = 0;
+   int old_y = 0,
+       old_w = ty->w,
+       old_h = ty->h,
+       effective_old_h;
+   int altbuf = 0;
+   struct screen_info new_si = {.screen = NULL};
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;
    if ((new_w == new_h) && (new_w == 1)) return; // FIXME: something weird is
@@ -854,46 +927,49 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->screen2 = calloc(1, sizeof(Termcell) * new_w * new_h);
    if (!ty->screen2)
      goto bad;
-   new_back = calloc(sizeof(Termsave *), ty->backmax);
 
-   y_end = ty->cursor_state.cy;
-   new_y_end = new_h - 1;
-   /* For each "full line" in old buffers, rewrap.
-    * From most recent to oldest */
-   while ((y_end >= -ty->backscroll_num) && (new_y_end >= -ty->backmax))
+   new_si.screen = new_screen;
+   new_si.w = new_w;
+   new_si.h = new_h;
+
+   /* compute the effective height on the old screen */
+   effective_old_h = old_h;
+   for (old_y = old_h -1; old_y >= 0; old_y--)
      {
-        if (termpty_line_find_top(ty, y_end, &y_start) < 0)
-          goto bad;
-        if (termpty_line_rewrap(ty, y_start, y_end,
-                                new_screen, new_back,
-                                new_w, new_y_end,
-                                &new_y_start, &new_cy) < 0)
-          goto bad;
+        Termcell *cells = &TERMPTY_SCREEN(ty, 0, old_y);
+        if (!termpty_line_is_empty(cells, old_w))
+          {
+             effective_old_h = old_y + 1;
+             break;
+          }
+     }
 
-        y_end = y_start - 1;
-        new_y_end = new_y_start - 1;
+   for (old_y = 0; old_y < effective_old_h; old_y++)
+     {
+        /* for each line in the old screen, append it to the new screen */
+        Termcell *cells = &TERMPTY_SCREEN(ty, 0, old_y);
+        int len;
+
+        len = termpty_line_length(cells, old_w);
+        ERR("[%d] len:%d", old_y, len);
+        _termpty_line_rewrap(ty, cells, len, &new_si,
+                             old_y == ty->cursor_state.cy);
      }
 
    free(ty->screen);
    ty->screen = new_screen;
-   for (i = 1; i <= ty->backscroll_num; i++)
-     termpty_save_free(ty->back[(ty->backpos - i + ty->backmax) % ty->backmax]);
-   free(ty->back);
-   ty->back = new_back;
+
+   ty->cursor_state.cy = (new_si.cy >= 0) ? new_si.cy : 0;
+   ty->cursor_state.cx = (new_si.cx >= 0) ? new_si.cx : 0;
+   ty->circular_offset = new_si.circular_offset;
 
    ty->w = new_w;
    ty->h = new_h;
-   ty->circular_offset = MAX(new_y_start, 0);
-   ty->backpos = 0;
-   ty->backscroll_num = MAX(-new_y_start, 0);
    ty->termstate.had_cr = 0;
-
-   ty->cursor_state.cy = (new_cy + new_h - ty->circular_offset) % new_h;
+   ty->termstate.wrapnext = 0;
 
    if (altbuf)
      termpty_screen_swap(ty);
-
-   ty->termstate.wrapnext = 0;
 
    _limit_coord(ty);
 
@@ -905,8 +981,6 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 bad:
    termpty_save_thaw();
    free(new_screen);
-   free(new_back);
-
 }
 
 void
@@ -914,25 +988,24 @@ termpty_backscroll_set(Termpty *ty, int size)
 {
    int i;
 
-   if (ty->backmax == size) return;
-   
+   if (ty->backsize == size)
+     return;
+
+   /* TODO: RESIZE: handle that case better: changing backscroll size */
    termpty_save_freeze();
 
    if (ty->back)
      {
-        for (i = 0; i < ty->backmax; i++)
-          {
-             if (ty->back[i]) termpty_save_free(ty->back[i]);
-          }
+        for (i = 0; i < ty->backsize; i++)
+          termpty_save_free(&ty->back[i]);
         free(ty->back);
      }
    if (size > 0)
-     ty->back = calloc(1, sizeof(Termsave *) * size);
+     ty->back = calloc(1, sizeof(Termsave) * size);
    else
      ty->back = NULL;
-   ty->backscroll_num = 0;
    ty->backpos = 0;
-   ty->backmax = size;
+   ty->backsize = size;
    termpty_save_thaw();
 }
 
@@ -1089,7 +1162,7 @@ void
 termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n)
 {
    int i;
-   
+
    for (i = 0; i < n; i++)
      {
         _handle_block_codepoint_overwrite(ty, dst[i].codepoint, src[i].codepoint);

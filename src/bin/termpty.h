@@ -99,7 +99,7 @@ struct _Termpty
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;
-   Termsave **back;
+   Termsave *back;
    unsigned char oldbuf[4];
    Eina_Unicode *buf;
    size_t buflen;
@@ -107,8 +107,7 @@ struct _Termpty
    int fd, slavefd;
    int circular_offset;
    int circular_offset2;
-   int backmax, backpos;
-   int backscroll_num;
+   int backsize, backpos;
    struct {
       int curid;
       Eina_Hash *blocks;
@@ -178,9 +177,11 @@ struct _Termsave
    unsigned int   comp : 1;
    unsigned int   z    : 1;
    unsigned int   w    : 22;
-   Termcell       cell[1];
+   /* TODO: union ? */
+   Termcell       *cells;
 };
 
+/* TODO: RESIZE rewrite Termsavecomp */
 struct _Termsavecomp
 {
    unsigned int   gen  : 8;
@@ -232,8 +233,9 @@ void       termpty_cellcomp_thaw(Termpty *ty);
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
-void       termpty_resize(Termpty *ty, int w, int h);
+void       termpty_resize(Termpty *ty, int new_w, int new_h);
 void       termpty_backscroll_set(Termpty *ty, int size);
+void       termpty_backscroll_adjust(Termpty *ty, int *scroll);
 
 pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);

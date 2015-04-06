@@ -33,34 +33,6 @@ termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
 }
 
 void
-termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
-{
-   Termsave *ts;
-   ssize_t w;
-
-   if (ty->backmax <= 0) return;
-
-   termpty_save_freeze();
-   w = termpty_line_length(cells, w_max);
-   ts = termpty_save_new(w);
-   if (!ts)
-     return;
-   termpty_cell_copy(ty, cells, ts->cell, w);
-   if (!ty->back) ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
-   if (ty->back[ty->backpos])
-     {
-        termpty_save_free(ty->back[ty->backpos]);
-        ty->back[ty->backpos] = NULL;
-     }
-   ty->back[ty->backpos] = ts;
-   ty->backpos++;
-   if (ty->backpos >= ty->backmax) ty->backpos = 0;
-   ty->backscroll_num++;
-   if (ty->backscroll_num >= ty->backmax) ty->backscroll_num = ty->backmax;
-   termpty_save_thaw();
-}
-
-void
 termpty_text_scroll(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells = NULL, *cells2;
@@ -377,6 +349,8 @@ termpty_reset_att(Termatt *att)
 void
 termpty_reset_state(Termpty *ty)
 {
+   int backsize;
+
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
    ty->termstate.scroll_y1 = 0;
@@ -411,17 +385,15 @@ termpty_reset_state(Termpty *ty)
    if (ty->back)
      {
         int i;
-        for (i = 0; i < ty->backmax; i++)
-          {
-             if (ty->back[i]) termpty_save_free(ty->back[i]);
-          }
+        for (i = 0; i < ty->backsize; i++)
+          termpty_save_free(&ty->back[i]);
         free(ty->back);
         ty->back = NULL;
      }
-   ty->backscroll_num = 0;
    ty->backpos = 0;
-   if (ty->backmax)
-     ty->back = calloc(1, sizeof(Termsave *) * ty->backmax);
+   backsize = ty->backsize;
+   ty->backsize = 0;
+   termpty_backscroll_set(ty, backsize);
    termpty_save_thaw();
 }
 
