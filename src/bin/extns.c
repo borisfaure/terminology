@@ -7,7 +7,7 @@ const char *extn_img[] =
    ".cur", ".xcf", ".xcf.gz", ".arw", ".cr2", ".crw", ".dcr", ".dng", ".k25",
    ".kdc", ".erf", ".mrw", ".nef", ".nrf", ".nrw", ".orf", ".raw", ".rw2",
    ".pef", ".raf", ".sr2", ".srf", ".x3f", ".webp", ".ppt", ".pptx", ".odp",
-   ".tgv", ".tga",
+   ".tgv", ".tga", ".dds",
    NULL
 };
 
