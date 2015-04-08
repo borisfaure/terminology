@@ -1612,6 +1612,7 @@ typedef struct _Ty_Http_Head {
      const char *src;
      Ecore_Con_Url *url;
      Ecore_Event_Handler *url_complete;
+     Ecore_Timer *timeout;
      Term *term;
 } Ty_Http_Head;
 
@@ -1624,8 +1625,20 @@ _ty_http_head_delete(Ty_Http_Head *ty_head)
    ecore_event_handler_del(ty_head->url_complete);
    edje_object_signal_emit(ty_head->term->bg, "done", "terminology");
    term_unref(ty_head->term);
+   ecore_timer_del(ty_head->timeout);
 
    free(ty_head);
+}
+
+
+static Eina_Bool
+_media_http_head_timeout(void *data)
+{
+   Ty_Http_Head *ty_head = data;
+   media_unknown_handle(ty_head->handler, ty_head->src);
+   ty_head->timeout = NULL;
+   _ty_http_head_delete(ty_head);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
@@ -1717,6 +1730,7 @@ _popmedia(Term *term, const char *src)
         if (!ecore_con_url_head(ty_head->url)) goto error;
         ty_head->url_complete = ecore_event_handler_add
           (ECORE_CON_EVENT_URL_COMPLETE, _media_http_head_complete, ty_head);
+        ty_head->timeout = ecore_timer_add(2.5, _media_http_head_timeout, ty_head);
         if (!ty_head->url_complete) goto error;
         ty_head->term = term;
         edje_object_signal_emit(term->bg, "busy", "terminology");
