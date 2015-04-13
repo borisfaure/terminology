@@ -1912,10 +1912,7 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
 {
    const Evas_Event_Key_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   int ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
-   int alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
-   int shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
-   int win = evas_key_modifier_is_set(ev->modifiers, "Super");
+   int ctrl, alt, shift, win, meta, hyper;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(ev->key);
@@ -1929,8 +1926,16 @@ _smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
         return;
      }
 
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   win = evas_key_modifier_is_set(ev->modifiers, "Super");
+   meta = evas_key_modifier_is_set(ev->modifiers, "Meta") ||
+      evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
+      evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
 
-   if (keyin_handle(&sd->khdl, sd->pty, ev, ctrl, alt, shift, win))
+   if (keyin_handle(&sd->khdl, sd->pty, ev, ctrl, alt, shift, win, meta, hyper))
      goto end;
 
    if (sd->jump_on_keypress)

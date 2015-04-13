@@ -13,8 +13,10 @@ struct _Keys_Handler
 
 void keyin_compose_seq_reset(Keys_Handler *khdl);
 Eina_Bool key_is_modifier(const char *key);
-Eina_Bool keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-                       Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win);
+Eina_Bool
+keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
+             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
+             Eina_Bool meta, Eina_Bool hyper);
 
 void keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev);
 

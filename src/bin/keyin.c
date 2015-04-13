@@ -42,6 +42,8 @@ struct _Key_Binding
    uint16_t alt   : 1;
    uint16_t shift : 1;
    uint16_t win   : 1;
+   uint16_t meta  : 1;
+   uint16_t hyper : 1;
 
    uint16_t len;
 
@@ -179,7 +181,8 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
 
 static Key_Binding *
 key_binding_lookup(const char *keyname,
-                   Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win)
+                   Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                   Eina_Bool win, Eina_Bool meta, Eina_Bool hyper)
 {
    Key_Binding *kb;
    size_t len = strlen(keyname);
@@ -192,6 +195,8 @@ key_binding_lookup(const char *keyname,
    kb->alt = alt;
    kb->shift = shift;
    kb->win = win;
+   kb->meta = meta;
+   kb->hyper = hyper;
    kb->len = len;
    kb->keyname = alloca(sizeof(char) * len + 1);
    strncpy((char *)kb->keyname, keyname, kb->len + 1);
@@ -201,23 +206,18 @@ key_binding_lookup(const char *keyname,
 
 Eina_Bool
 keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win)
+             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
+             Eina_Bool meta, Eina_Bool hyper)
 {
 
-   if (!evas_key_modifier_is_set(ev->modifiers, "Meta") &&
-       !evas_key_modifier_is_set(ev->modifiers, "Hyper") &&
-       !evas_key_modifier_is_set(ev->modifiers, "AltGr") &&
-       !evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
+   Key_Binding *kb;
+   kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win, meta, hyper);
+   if (kb)
      {
-        Key_Binding *kb;
-        kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win);
-        if (kb)
+        if (kb->cb(ty->obj))
           {
-             if (kb->cb(ty->obj))
-               {
-                  keyin_compose_seq_reset(khdl);
-                  return EINA_TRUE;
-               }
+             keyin_compose_seq_reset(khdl);
+             return EINA_TRUE;
           }
      }
 
@@ -613,8 +613,10 @@ _key_binding_key_cmp(const void *key1, int key1_length,
      return 1;
    else
      {
-        unsigned int m1 = (kb1->win << 3) | (kb1->ctrl << 2) | (kb1->alt << 1) | kb1->shift,
-                     m2 = (kb2->win << 3) | (kb2->ctrl << 2) | (kb2->alt << 1) | kb2->shift;
+        unsigned int m1 = (kb1->hyper << 5) | (kb1->meta << 4) |
+           (kb1->win << 3) | (kb1->ctrl << 2) | (kb1->alt << 1) | kb1->shift,
+                     m2 = (kb2->hyper << 5) | (kb2->meta << 4) |
+           (kb2->win << 3) | (kb2->ctrl << 2) | (kb2->alt << 1) | kb2->shift;
         if (m1 < m2)
           return -1;
         else if (m1 > m2)
@@ -631,8 +633,13 @@ _key_binding_key_hash(const void *key, int key_length)
    int hash;
 
    hash = eina_hash_djb2(key, key_length);
-   hash &= 0x0fffffff;
-   hash |= (kb->win << 31) | (kb->ctrl << 30) | (kb->alt << 29) | (kb->shift << 28);
+   hash &= 0x3ffffff;
+   hash |= (kb->hyper << 31);
+   hash |= (kb->meta << 30);
+   hash |= (kb->win << 29);
+   hash |= (kb->ctrl << 28);
+   hash |= (kb->alt << 27);
+   hash |= (kb->shift << 26);
    return hash;
 }
 
@@ -640,6 +647,7 @@ _key_binding_key_hash(const void *key, int key_length)
 static Key_Binding *
 _key_binding_new(const char *keyname,
                  Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
+                 Eina_Bool meta, Eina_Bool hyper,
                  Key_Binding_Cb cb)
 {
    Key_Binding *kb;
@@ -653,6 +661,8 @@ _key_binding_new(const char *keyname,
    kb->alt = alt;
    kb->shift = shift;
    kb->win = win;
+   kb->meta = meta;
+   kb->hyper = hyper;
    kb->len = len;
    kb->keyname = eina_stringshare_add(keyname);
    kb->cb = cb;
@@ -681,7 +691,8 @@ keyin_add_config(Config_Keys *key)
      {
         Key_Binding *kb;
         kb = _key_binding_new(key->keyname, key->ctrl, key->alt,
-                              key->shift, key->win, action->cb);
+                              key->shift, key->win, key->meta, key->hyper,
+                              action->cb);
         if (!kb)
           return -1;
         if (eina_hash_find(_key_bindings, kb) ||
@@ -701,7 +712,8 @@ keyin_remove_config(Config_Keys *key)
 {
    Key_Binding *kb;
 
-   kb = key_binding_lookup(key->keyname, key->ctrl, key->alt, key->shift, key->win);
+   kb = key_binding_lookup(key->keyname, key->ctrl, key->alt, key->shift,
+                           key->win, key->meta, key->hyper);
    if (kb)
      eina_hash_del_by_key(_key_bindings, kb);
    return 0;

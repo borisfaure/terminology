@@ -68,6 +68,10 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_keys, Config_Keys, "win", win, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "meta", meta, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_keys, Config_Keys, "hyper", hyper, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_keys, Config_Keys, "cb", cb, EET_T_STRING);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC

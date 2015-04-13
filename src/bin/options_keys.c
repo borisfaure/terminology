@@ -48,11 +48,13 @@ _shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
    const char *txt;
    Evas_Object *hs;
 
-   txt = eina_stringshare_printf("%s%s%s%s%s",
+   txt = eina_stringshare_printf("%s%s%s%s%s%s%s",
                                  key->ctrl ? _("Ctrl+") : "",
                                  key->alt ? _("Alt+") : "",
                                  key->shift ? _("Shift+") : "",
                                  key->win ? _("Win+") : "",
+                                 key->meta ? _("Meta+") : "",
+                                 key->hyper ? _("Hyper+") : "",
                                  key->keyname);
    hs = elm_hoversel_add(_fr);
    elm_hoversel_hover_parent_set(hs, _fr);
@@ -73,7 +75,7 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
            Evas_Object *obj, void *event)
 {
    Evas_Event_Key_Up *ev = event;
-   int ctrl, alt, shift, win, res;
+   int ctrl, alt, shift, win, meta, hyper, res;
    Config_Keys *cfg_key;
    Shortcut_Action *action;
    Evas_Object *bx = data;
@@ -85,17 +87,12 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    win = evas_key_modifier_is_set(ev->modifiers, "Super");
+   meta = evas_key_modifier_is_set(ev->modifiers, "Meta") ||
+          evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
+          evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
 
    _hover_del(obj);
-
-   if (evas_key_modifier_is_set(ev->modifiers, "Meta") ||
-       evas_key_modifier_is_set(ev->modifiers, "Hyper") ||
-       evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
-       evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift"))
-     {
-        ERR("Modifiers Meta/Hyper/ISO_Level3_Shift/AltGr are not supported in keybindings");
-        return;
-     }
 
    action = evas_object_data_get(bx, "action");
    if (!action)
@@ -112,6 +109,8 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
    cfg_key->alt = alt;
    cfg_key->shift = shift;
    cfg_key->win = win;
+   cfg_key->meta = meta;
+   cfg_key->hyper = hyper;
    cfg_key->cb = eina_stringshare_add(action->action);
 
    res = keyin_add_config(cfg_key);
