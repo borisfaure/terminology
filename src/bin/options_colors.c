@@ -192,9 +192,9 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
      {
         o = elm_label_add(opbox);
         if (j == 0) elm_object_text_set(o, _("Normal"));
-        else if (j == 1) elm_object_text_set(o, _("Bright"));
-        else if (j == 2) elm_object_text_set(o, _("Normal 2"));
-        else if (j == 3) elm_object_text_set(o, _("Bright 2"));
+        else if (j == 1) elm_object_text_set(o, _("Bright/Bold"));
+        else if (j == 2) elm_object_text_set(o, _("Intense"));
+        else if (j == 3) elm_object_text_set(o, _("Intense Bright/Bold"));
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx3, o);
