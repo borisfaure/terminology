@@ -7,16 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-15 14:12+0100\n"
-"PO-Revision-Date: 2014-09-05 15:58+0000\n"
+"POT-Creation-Date: 2015-04-14 19:06+0300\n"
+"PO-Revision-Date: 2015-04-14 19:08+0300\n"
 "Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
 
 #: src/bin/controls.c:247
 msgid "Controls"
@@ -36,9 +34,9 @@ msgstr "Jaa vaaka"
 
 #: src/bin/controls.c:277
 msgid "Miniview"
-msgstr ""
+msgstr "Pienoisnäkymä"
 
-#: src/bin/controls.c:287 src/bin/termio.c:956
+#: src/bin/controls.c:287 src/bin/termio.c:963 src/bin/termio.c:3934
 msgid "Copy"
 msgstr "Kopioi"
 
@@ -55,9 +53,8 @@ msgid "About"
 msgstr "Tietoja"
 
 #: src/bin/controls.c:315
-#, fuzzy
 msgid "Close Terminal"
-msgstr "Sulje kohdistettu pääte"
+msgstr "Sulje pääte"
 
 #: src/bin/about.c:56
 #, c-format
@@ -75,201 +72,213 @@ msgstr ""
 "%s<br><br>Jaetaan kahden ehdon BSD-lisenssin alaisuudessa joka on "
 "kokonaisuudessaan seuraava:<br><br>%s"
 
-#: src/bin/keyin.c:530
+#: src/bin/keyin.c:543
 msgid "Scrolling"
 msgstr "Vieritys"
 
-#: src/bin/keyin.c:531
+#: src/bin/keyin.c:544
 msgid "Scroll one page up"
 msgstr "Vieritä yksi sivu ylöspäin"
 
-#: src/bin/keyin.c:532
+#: src/bin/keyin.c:545
 msgid "Scroll one page down"
 msgstr "Vieritä yksi sivu alaspäin"
 
-#: src/bin/keyin.c:533
+#: src/bin/keyin.c:546
 msgid "Scroll one line up"
 msgstr "Vieritä yksi rivi ylöspäin"
 
-#: src/bin/keyin.c:534
+#: src/bin/keyin.c:547
 msgid "Scroll one line down"
 msgstr "Vieritä yksi rivi alaspäin"
 
-#: src/bin/keyin.c:536
+#: src/bin/keyin.c:549
 msgid "Copy/Paste"
 msgstr "Kopioi/Liitä"
 
-#: src/bin/keyin.c:537
+#: src/bin/keyin.c:550
 msgid "Copy selection to Primary buffer"
 msgstr "Kopioi valinta primääripuskuriin"
 
-#: src/bin/keyin.c:538
+#: src/bin/keyin.c:551
 msgid "Copy selection to Clipboard buffer"
 msgstr "Kopioi valinta leikepöydän puskuriin"
 
-#: src/bin/keyin.c:539
+#: src/bin/keyin.c:552
 msgid "Paste Primary buffer (highlight)"
 msgstr "Liitä primääripuskuri (korostettu)"
 
-#: src/bin/keyin.c:540
+#: src/bin/keyin.c:553
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Liitä leikepöydän puskuri (ctrl+c/v)"
 
-#: src/bin/keyin.c:542
+#: src/bin/keyin.c:555
 msgid "Splits/Tabs"
 msgstr "Jaot/välilehdet"
 
-#: src/bin/keyin.c:543
+#: src/bin/keyin.c:556
 msgid "Focus to the previous terminal"
 msgstr "Kohdista edelliseen päätteeseen"
 
-#: src/bin/keyin.c:544
+#: src/bin/keyin.c:557
 msgid "Focus to the next terminal"
 msgstr "Kohdista seuraavaan päätteeseen"
 
-#: src/bin/keyin.c:545
+#: src/bin/keyin.c:558
 msgid "Split horizontally (new below)"
 msgstr "Jaa vaakatasossa (uusi alla)"
 
-#: src/bin/keyin.c:546
+#: src/bin/keyin.c:559
 msgid "Split vertically (new on right)"
 msgstr "Jaa pystytasossa (uusi oikealla)"
 
-#: src/bin/keyin.c:547
+#: src/bin/keyin.c:560
 msgid "Create a new \"tab\""
 msgstr "Luo uusi välilehti"
 
-#: src/bin/keyin.c:548
+#: src/bin/keyin.c:561
 msgid "Close the focused terminal"
 msgstr "Sulje kohdistettu pääte"
 
-#: src/bin/keyin.c:549
+#: src/bin/keyin.c:562
 msgid "Bring up \"tab\" switcher"
 msgstr "Tuo esiin välilehtivalitsin"
 
-#: src/bin/keyin.c:550
+#: src/bin/keyin.c:563
 msgid "Switch to terminal tab 1"
 msgstr "Siirry päätevälilehdelle yksi"
 
-#: src/bin/keyin.c:551
+#: src/bin/keyin.c:564
 msgid "Switch to terminal tab 2"
 msgstr "Siirry päätevälilehdelle kaksi"
 
-#: src/bin/keyin.c:552
+#: src/bin/keyin.c:565
 msgid "Switch to terminal tab 3"
 msgstr "Siirry päätevälilehdelle kolme"
 
-#: src/bin/keyin.c:553
+#: src/bin/keyin.c:566
 msgid "Switch to terminal tab 4"
 msgstr "Siirry päätevälilehdelle neljä"
 
-#: src/bin/keyin.c:554
+#: src/bin/keyin.c:567
 msgid "Switch to terminal tab 5"
 msgstr "Siirry päätevälilehdelle viisi"
 
-#: src/bin/keyin.c:555
+#: src/bin/keyin.c:568
 msgid "Switch to terminal tab 6"
 msgstr "Siirry päätevälilehdelle kuusi"
 
-#: src/bin/keyin.c:556
+#: src/bin/keyin.c:569
 msgid "Switch to terminal tab 7"
 msgstr "Siirry päätevälilehdelle seitsemän"
 
-#: src/bin/keyin.c:557
+#: src/bin/keyin.c:570
 msgid "Switch to terminal tab 8"
 msgstr "Siirry päätevälilehdelle kahdeksan"
 
-#: src/bin/keyin.c:558
+#: src/bin/keyin.c:571
 msgid "Switch to terminal tab 9"
 msgstr "Siirry päätevälilehdelle yhdeksän"
 
-#: src/bin/keyin.c:559
+#: src/bin/keyin.c:572
 msgid "Switch to terminal tab 10"
 msgstr "Siirry päätevälilehdelle kymmenen"
 
-#: src/bin/keyin.c:561
+#: src/bin/keyin.c:574
 msgid "Font size"
 msgstr "Fonttikoko"
 
-#: src/bin/keyin.c:562
+#: src/bin/keyin.c:575
 msgid "Font size up 1"
-msgstr "Fontin koko ylös 1"
+msgstr "Fonttikoko isommaksi"
 
-#: src/bin/keyin.c:563
+#: src/bin/keyin.c:576
 msgid "Font size down 1"
-msgstr "Fontin koko alas 1"
+msgstr "Fonttikoko pienemmäksi"
 
-#: src/bin/keyin.c:564
+#: src/bin/keyin.c:577
 msgid "Display big font size"
-msgstr ""
+msgstr "Näytä iso fonttikoko"
 
-#: src/bin/keyin.c:565
+#: src/bin/keyin.c:578
 msgid "Reset font size"
-msgstr ""
+msgstr "Aseta fonttikoko oletukseksi"
 
-#: src/bin/keyin.c:567
+#: src/bin/keyin.c:580
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: src/bin/keyin.c:568
+#: src/bin/keyin.c:581
+msgid "Toggle Fullscreen of the window"
+msgstr "Kytke ikkunan täysruututila"
+
+#: src/bin/keyin.c:582
 msgid "Display the history miniview"
 msgstr "Näytä historian pienoisnäyttö"
 
-#: src/bin/keyin.c:569
+#: src/bin/keyin.c:583
 msgid "Display the command box"
 msgstr "Näytä komentolaatikko"
 
-#: src/bin/main.c:328
+#: src/bin/main.c:219 src/bin/main.c:853
+msgid "Could not create window."
+msgstr "Ikkunaa ei pystytty luomaan."
+
+#: src/bin/main.c:288 src/bin/main.c:864
+msgid "Could not create terminal widget."
+msgstr "Terminaali-vekotinta ei pystytty luomaan."
+
+#: src/bin/main.c:330
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler ja muut"
 
-#: src/bin/main.c:330
+#: src/bin/main.c:332
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
 msgstr ""
 "Pääte-emulaattori, kirjoitettu käyttäen Enlightenment Foundation Libraries."
 
-#: src/bin/main.c:338
+#: src/bin/main.c:340
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr "Ajettava komento. Oletuksena $SHELL (tai passwd shell tai /bin/sh)"
 
-#: src/bin/main.c:340
+#: src/bin/main.c:342
 msgid "Change to directory for execution of terminal command."
 msgstr "Vaihda hakemistoon päätekomennon ajon ajaksi"
 
-#: src/bin/main.c:342
+#: src/bin/main.c:344
 msgid "Use the named edje theme or path to theme file."
 msgstr "Käytä nimettyä edje-teemaa tai polkua teematiedostoon"
 
-#: src/bin/main.c:344
+#: src/bin/main.c:346
 msgid "Use the named file as a background wallpaper."
 msgstr "Käytä nimettyä tiedostoa taustakuvana"
 
-#: src/bin/main.c:346
+#: src/bin/main.c:348
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
 msgstr "Käytettävä päätteen geometria (esim. 80x24 tai 80x24+50+20 jne.)."
 
-#: src/bin/main.c:348
+#: src/bin/main.c:350
 msgid "Set window name."
 msgstr "Aseta ikkunan nimi"
 
-#: src/bin/main.c:350
+#: src/bin/main.c:352
 msgid "Set window role."
 msgstr "Aseta ikkunan rooli"
 
-#: src/bin/main.c:352
+#: src/bin/main.c:354
 msgid "Set window title."
 msgstr "Aseta ikkunan otsikko"
 
-#: src/bin/main.c:354
+#: src/bin/main.c:356
 msgid "Set icon name."
 msgstr "Aseta ikonin nimi"
 
-#: src/bin/main.c:356
+#: src/bin/main.c:358
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
 msgstr "Aseta fontti (NIMI/KOKO skaalattavalle, NIMI kuvakartalle)"
 
-#: src/bin/main.c:358
+#: src/bin/main.c:360
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -279,105 +288,105 @@ msgstr ""
 "käyttää useaan kertaan. esim. -S vhvv tai --split hv  Lisätietoja löydät man-"
 "sivulta."
 
-#: src/bin/main.c:363
+#: src/bin/main.c:365
 msgid "Set emotion module to use."
 msgstr "Aseta käytettävä Emotion-moduuli"
 
-#: src/bin/main.c:366
+#: src/bin/main.c:368
 msgid "Run the shell as a login shell."
 msgstr "Aja komentotulkki kirjautuvana"
 
-#: src/bin/main.c:368
+#: src/bin/main.c:370
 msgid "Set mute mode for video playback."
 msgstr "Aseta mykistystila videotoistolle"
 
-#: src/bin/main.c:370
+#: src/bin/main.c:372
 msgid "Set cursor blink mode."
 msgstr "Aseta kohdistimen vilkkumistila"
 
-#: src/bin/main.c:372
+#: src/bin/main.c:374
 msgid "Set visual bell mode."
 msgstr "Aseta visuaalisen kellon tila"
 
-#: src/bin/main.c:374
+#: src/bin/main.c:376
 msgid "Go into the fullscreen mode from the start."
 msgstr "Siirry täysruututilaan käynnistettäessä."
 
-#: src/bin/main.c:376
+#: src/bin/main.c:378
 msgid "Go into an iconic state from the start."
 msgstr "Siirry ikonisoituun tilaan käynnistettäessä."
 
-#: src/bin/main.c:378
+#: src/bin/main.c:380
 msgid "Become a borderless managed window."
 msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi."
 
-#: src/bin/main.c:380
+#: src/bin/main.c:382
 msgid "Become an override-redirect window."
 msgstr ""
 
-#: src/bin/main.c:382
+#: src/bin/main.c:384
 msgid "Become maximized from the start."
 msgstr "Muuntaudu maksimoiduksi käynnistäessä."
 
-#: src/bin/main.c:384
+#: src/bin/main.c:386
 msgid "Terminology is run without a window manager."
 msgstr "Terminology ajetaan ilman ikkunoinnin hallintaa"
 
-#: src/bin/main.c:386
+#: src/bin/main.c:388
 msgid "Do not exit when the command process exits."
 msgstr "Älä poistu kun komennon prosessi loppuu."
 
-#: src/bin/main.c:388
+#: src/bin/main.c:390
 msgid "Force single executable if multi-instance is enabled."
 msgstr "Pakota yksi ajoprosessi mikäli usean instanssin asetus on päällä"
 
-#: src/bin/main.c:390
+#: src/bin/main.c:392
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
 msgstr "Aseta TERM-komennoksi 'xterm-256color' komennon 'xterm' sijaan."
 
-#: src/bin/main.c:392
+#: src/bin/main.c:394
 msgid "Highlight links."
 msgstr "Korosta linkit."
 
-#: src/bin/main.c:421
+#: src/bin/main.c:423
 msgid "show program version."
 msgstr "näytä ohjelman versio."
 
-#: src/bin/main.c:424
+#: src/bin/main.c:426
 msgid "show copyright."
 msgstr "näytä tekijänoikeustiedot."
 
-#: src/bin/main.c:427
+#: src/bin/main.c:429
 msgid "show license."
 msgstr "näytä lisenssi."
 
-#: src/bin/main.c:430
+#: src/bin/main.c:432
 msgid "show this message."
 msgstr "näytä tämä viesti."
 
-#: src/bin/main.c:548 src/bin/miniview.c:38
+#: src/bin/main.c:550 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr ""
 
-#: src/bin/main.c:558
+#: src/bin/main.c:560
 msgid "Could not initialize key bindings."
 msgstr "Ei voitu alustaa näppäimistön toimintosidoksia."
 
-#: src/bin/main.c:570
+#: src/bin/main.c:572
 msgid "Could not parse command line options."
 msgstr "Komentorivioptioita ei pystytty jäsentämään."
 
-#: src/bin/main.c:585
+#: src/bin/main.c:587
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "optio %s tarvitsee argumentin!"
 
-#: src/bin/main.c:586
+#: src/bin/main.c:588
 msgid "invalid options found. See --help."
 msgstr "virheellisiä optioita löydetty. Katso --help."
 
-#: src/bin/main.c:902
+#: src/bin/main.c:908
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr "virheellinen argumentti löydetty optiolle -S/--split. Katso --help."
 
@@ -386,20 +395,20 @@ msgstr "virheellinen argumentti löydetty optiolle -S/--split. Katso --help."
 msgid "Could not Initialize the emotion module '%s'"
 msgstr "Ei voitu alustaa Emotion-moduulia '%s'"
 
-#: src/bin/media.c:1254 src/bin/termpty.c:357 src/bin/termpty.c:362
-#: src/bin/termpty.c:366
+#: src/bin/media.c:1244 src/bin/termpty.c:360 src/bin/termpty.c:365
+#: src/bin/termpty.c:369
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktion %s suoritus epäonnistui: %s"
 
-#: src/bin/media.c:1350
+#: src/bin/media.c:1340
 msgid "Media visualizing is not supported"
 msgstr "Mediavisualisointia ei tueta"
 
 #: src/bin/options_behavior.c:65
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d riviä"
 
 #: src/bin/options_behavior.c:148 src/bin/options.c:171
 msgid "Behavior"
@@ -463,11 +472,11 @@ msgstr "Kohdista jako hiiriosoittimen kohdalle"
 
 #: src/bin/options_behavior.c:190
 msgid "Gravatar integration"
-msgstr ""
+msgstr "Gravatar-integraatio"
 
 #: src/bin/options_behavior.c:191
 msgid "Show tabs"
-msgstr ""
+msgstr "Näytä välilehdet"
 
 #: src/bin/options_behavior.c:199
 msgid "Always open at size:"
@@ -507,7 +516,7 @@ msgstr "%1.1f s"
 msgid "Options"
 msgstr "Optiot"
 
-#: src/bin/options.c:166 src/bin/options_font.c:355
+#: src/bin/options.c:166 src/bin/options_font.c:361
 msgid "Font"
 msgstr "Fontti"
 
@@ -537,7 +546,7 @@ msgstr "Apuohjelmat"
 
 #: src/bin/options.c:174
 msgid "Toolkit"
-msgstr ""
+msgstr "Työkalut"
 
 #: src/bin/options.c:185
 msgid "Temporary"
@@ -611,11 +620,11 @@ msgstr "Käytä"
 msgid "Reset"
 msgstr "Palauta"
 
-#: src/bin/options_font.c:420
+#: src/bin/options_font.c:426
 msgid "Bitmap"
 msgstr "Bittikartta"
 
-#: src/bin/options_font.c:460
+#: src/bin/options_font.c:466
 msgid "Standard"
 msgstr "Vakio"
 
@@ -665,17 +674,25 @@ msgstr "Shift+"
 
 #: src/bin/options_keys.c:55
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
-#: src/bin/options_keys.c:64
+#: src/bin/options_keys.c:56
+msgid "Meta+"
+msgstr "Meta+"
+
+#: src/bin/options_keys.c:57
+msgid "Hyper+"
+msgstr "Hyper+"
+
+#: src/bin/options_keys.c:66
 msgid "Delete"
 msgstr "Delete"
 
-#: src/bin/options_keys.c:252
+#: src/bin/options_keys.c:251
 msgid "Please press key sequence"
 msgstr "Ole hyvä ja syötä näppäinyhdistelmä"
 
-#: src/bin/options_keys.c:354
+#: src/bin/options_keys.c:353
 msgid "Key Bindings"
 msgstr "Näppäimistön toimintosidokset"
 
@@ -764,68 +781,73 @@ msgstr "Taustakuvatiedostoa ei voi lukea: %s"
 msgid "Unknown command: %s"
 msgstr "Tuntematon komento: %s"
 
-#: src/bin/termio.c:529
+#: src/bin/termio.c:537
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Ei voitu hakea työhakemistoa prosessille %i: %s"
 
-#: src/bin/termio.c:543
+#: src/bin/termio.c:551
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Ei voitu hakea työhakemistoa %s: %s"
 
-#: src/bin/termio.c:951
+#: src/bin/termio.c:958
 msgid "Preview"
 msgstr "Esikatsele"
 
-#: src/bin/termio.c:954
+#: src/bin/termio.c:961
 msgid "Open"
 msgstr "Avaa"
 
-#: src/bin/termio.c:2302
+#: src/bin/termio.c:2420
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "valintamuotoa '%s' ei tueta"
 
-#: src/bin/termio.c:4941
+#: src/bin/termio.c:5089
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/termio.c:5537
+#: src/bin/termio.c:5685
 msgid "Could not allocate termpty"
 msgstr ""
 
-#: src/bin/termpty.c:68 src/bin/termpty.c:92 src/bin/termpty.c:126
+#: src/bin/termpty.c:71 src/bin/termpty.c:95 src/bin/termpty.c:129
 #, c-format
 msgid "memerr: %s"
 msgstr ""
 
-#: src/bin/termpty.c:152
+#: src/bin/termpty.c:155
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:333
+#: src/bin/termpty.c:336
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:373
+#: src/bin/termpty.c:376
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:379 src/bin/termpty.c:385
+#: src/bin/termpty.c:382 src/bin/termpty.c:388
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:423
+#: src/bin/termpty.c:397
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:439
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Ei voitu vaihtaa nykyistä hakemistoa kohteeseen '%s': %s"
 
-#: src/bin/termpty.c:653
+#: src/bin/termpty.c:668
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Ei voitu kirjoittaa tiedostokahvaa %d: %s"
@@ -840,18 +862,10 @@ msgstr ""
 msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
-#: src/bin/win.c:2642
+#: src/bin/win.c:2820
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'make install'?"
 
-#~ msgid "There is no window open"
-#~ msgstr "Yhtään ikkunaa ei ole auki"
-
-#~ msgid "Close"
-#~ msgstr "Sulje"
-
-#~ msgid "Restore opened views"
-#~ msgstr "Palauta avatut näkymät"
-
-#~ msgid "Enable application server"
-#~ msgstr "Ota käyttöön sovelluspalvelin"
+#: src/bin/win.c:2845
+msgid "Could not create termio widget."
+msgstr ""
