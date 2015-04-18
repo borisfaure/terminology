@@ -2055,7 +2055,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
         w = 0;
         last0 = -1;
         cells = termpty_cellrow_get(sd->pty, y, &w);
-        if (!cells) continue;
+        if (!cells || !w)
+          {
+             if (_sb_add(&sb, "\n", 1) < 0) goto err;
+             continue;
+          }
         if (w > sd->grid.w) w = sd->grid.w;
         if (y == c1y && c1x >= w)
           {
