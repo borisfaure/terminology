@@ -2090,11 +2090,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                }
 #endif
              if (x >= w) break;
-             if (cells[x].codepoint == 0)
-               {
-                  if (last0 < 0) last0 = x;
-               }
-             else if (cells[x].att.newline)
+             if (cells[x].att.newline)
                {
                   last0 = -1;
                   if ((y != c2y) || (x != end_x))
@@ -2109,7 +2105,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                {
                   if (_sb_add(&sb, "\t", 1) < 0) goto err;
                   x = ((x + 8) / 8) * 8;
-                  x--;
+                  x--; /* counter the ++ of the for loop */
+               }
+             else if (cells[x].codepoint == 0)
+               {
+                  if (last0 < 0) last0 = x;
                }
              else
                {
@@ -2332,6 +2332,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         sb = eina_strbuf_new();
         for (i = start_y; i <= end_y; i++)
           {
+             /* TODO: use our own strbuf implementation */
              char *tmp = termio_selection_get(obj, start_x, i, end_x, i,
                                               &len, EINA_TRUE);
 
