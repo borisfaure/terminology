@@ -81,7 +81,7 @@ static void
 _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigned int *colors)
 {
    int fg, bg, fgext, bgext;
-   int inv = ty->state.reverse;
+   int inv = ty->termstate.reverse;
    Eina_Unicode codepoint;
 
    codepoint = cell->codepoint;

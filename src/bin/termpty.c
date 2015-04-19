@@ -268,13 +268,23 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 }
 
 static void
-_limit_coord(Termpty *ty, Termstate *state)
+_limit_coord(Termpty *ty)
 {
-   state->wrapnext = 0;
-   if (state->cx >= ty->w) state->cx = ty->w - 1;
-   if (state->cy >= ty->h) state->cy = ty->h - 1;
-   if (state->had_cr_x >= ty->w) state->had_cr_x = ty->w - 1;
-   if (state->had_cr_y >= ty->h) state->had_cr_y = ty->h - 1;
+   ty->termstate.wrapnext = 0;
+   if (ty->termstate.had_cr_x >= ty->w)
+     ty->termstate.had_cr_x = ty->w - 1;
+   if (ty->termstate.had_cr_y >= ty->h)
+     ty->termstate.had_cr_y = ty->h - 1;
+
+   if (ty->cursor_state.cx >= ty->w)
+     ty->cursor_state.cx = ty->w - 1;
+   if (ty->cursor_state.cy >= ty->h)
+     ty->cursor_state.cy = ty->h - 1;
+
+   if (ty->cursor_save.cx >= ty->w)
+     ty->cursor_save.cx = ty->w - 1;
+   if (ty->cursor_save.cy >= ty->h)
+     ty->cursor_save.cy = ty->h - 1;
 }
 
 Termpty *
@@ -298,8 +308,6 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->backmax = backscroll;
 
    _termpty_reset_state(ty);
-   ty->save = ty->state;
-   ty->swap = ty->state;
 
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
@@ -799,7 +807,7 @@ termpty_line_rewrap(Termpty *ty, int y_start, int y_end,
                        new_back[new_y + ty->backmax] = new_ts;
                     }
                }
-             if (y == ty->state.cy)
+             if (y == ty->cursor_state.cy)
                {
                   *new_cyp = new_y_start;
                }
@@ -831,7 +839,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    Termcell *new_screen = NULL;
    Termsave **new_back = NULL;
    int y_start = 0, y_end = 0, new_y_start = 0, new_y_end,
-       new_cy = ty->state.cy;
+       new_cy = ty->cursor_state.cy;
    int i, altbuf = 0;
 
    if ((ty->w == new_w) && (ty->h == new_h)) return;
@@ -855,7 +863,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
      goto bad;
    new_back = calloc(sizeof(Termsave *), ty->backmax);
 
-   y_end = ty->state.cy;
+   y_end = ty->cursor_state.cy;
    new_y_end = new_h - 1;
    /* For each "full line" in old buffers, rewrap.
     * From most recent to oldest */
@@ -885,15 +893,13 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->circular_offset = MAX(new_y_start, 0);
    ty->backpos = 0;
    ty->backscroll_num = MAX(-new_y_start, 0);
-   ty->state.had_cr = 0;
+   ty->termstate.had_cr = 0;
 
-   ty->state.cy = (new_cy + new_h - ty->circular_offset) % new_h;
+   ty->cursor_state.cy = (new_cy + new_h - ty->circular_offset) % new_h;
 
    if (altbuf) termpty_screen_swap(ty);
 
-   _limit_coord(ty, &(ty->state));
-   _limit_coord(ty, &(ty->swap));
-   _limit_coord(ty, &(ty->save));
+   _limit_coord(ty);
 
    _pty_size(ty);
 
@@ -1100,24 +1106,10 @@ termpty_screen_swap(Termpty *ty)
 {
    Termcell *tmp_screen;
    int tmp_circular_offset;
-   Termstate tmp;
 
    tmp_screen = ty->screen;
    ty->screen = ty->screen2;
    ty->screen2 = tmp_screen;
-
-   if (ty->altbuf)
-     {
-        tmp = ty->state;
-        ty->state = ty->swap;
-        ty->swap = tmp;
-     }
-   else
-     {
-        tmp = ty->swap;
-        ty->swap = ty->state;
-        ty->state = tmp;
-     }
 
    tmp_circular_offset = ty->circular_offset;
    ty->circular_offset = ty->circular_offset2;

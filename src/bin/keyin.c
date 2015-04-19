@@ -69,8 +69,8 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const Evas_Event_Key_Down *ev
              const struct _s *s = NULL;
              const Key_Values *kv;
 
-             if (!ty->state.appcursor) kv = &map[i].default_mode;
-             else                      kv = &map[i].cursor;
+             if (!ty->termstate.appcursor) kv = &map[i].default_mode;
+             else                          kv = &map[i].cursor;
              if (!alt && !ctrl && !shift)     s = &kv->plain;
              else if (alt && !ctrl && !shift) s = &kv->alt;
              else if (!alt && ctrl && !shift) s = &kv->ctrl;
@@ -112,7 +112,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      {
         if (alt)
           termpty_write(ty, "\033", 1);
-        if (ty->state.send_bs)
+        if (ty->termstate.send_bs)
           {
              termpty_write(ty, "\b", 1);
           }
@@ -135,7 +135,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      {
         if (alt)
           termpty_write(ty, "\033", 1);
-        if (ty->state.crlf)
+        if (ty->termstate.crlf)
           {
              termpty_write(ty, "\r\n", sizeof("\r\n") - 1);
              return;
@@ -150,7 +150,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      {
         if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
           {
-             if (ty->state.alt_kp)
+             if (ty->termstate.alt_kp)
                {
                   if (_key_try(ty, tty_keys_kp_app,
                                sizeof(tty_keys_kp_app)/sizeof(tty_keys_kp_app[0]),
@@ -242,10 +242,10 @@ keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
      }
 
    // if term app asked for kbd lock - dont handle here
-   if (ty->state.kbd_lock) return EINA_TRUE;
+   if (ty->termstate.kbd_lock) return EINA_TRUE;
    // if app asked us to not do autorepeat - ignore press if is it is the same
    // timestamp as last one
-   if ((ty->state.no_autorepeat) &&
+   if ((ty->termstate.no_autorepeat) &&
        (ev->timestamp == khdl->last_keyup)) return EINA_TRUE;
    if (!khdl->composing)
      {

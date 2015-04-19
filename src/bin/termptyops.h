@@ -20,7 +20,7 @@ void _termpty_clear_screen(Termpty *ty, Termpty_Clear mode);
 void _termpty_clear_all(Termpty *ty);
 void _termpty_reset_att(Termatt *att);
 void _termpty_reset_state(Termpty *ty);
-void _termpty_cursor_copy(Termstate *state, Termstate *dest);
+void _termpty_cursor_copy(Termpty *ty, Eina_Bool save);
 
 #define _term_txt_write(ty, txt) termpty_write(ty, txt, sizeof(txt) - 1)
 

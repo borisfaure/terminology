@@ -6,7 +6,6 @@
 typedef struct _Termpty       Termpty;
 typedef struct _Termcell      Termcell;
 typedef struct _Termatt       Termatt;
-typedef struct _Termstate     Termstate;
 typedef struct _Termsave      Termsave;
 typedef struct _Termsavecomp  Termsavecomp;
 typedef struct _Termblock     Termblock;
@@ -84,32 +83,6 @@ struct _Termatt
 #endif
 };
 
-struct _Termstate
-{
-   int           cx, cy;
-   Termatt       att;
-   unsigned char charset;
-   unsigned char charsetch;
-   unsigned char chset[4];
-   int           scroll_y1, scroll_y2;
-   int           had_cr_x, had_cr_y;
-   int           margin_top; // soon, more to come...
-   unsigned int  multibyte : 1;
-   unsigned int  alt_kp : 1;
-   unsigned int  insert : 1;
-   unsigned int  appcursor : 1;
-   unsigned int  wrap : 1;
-   unsigned int  wrapnext : 1;
-   unsigned int  hidecursor : 1;
-   unsigned int  crlf : 1;
-   unsigned int  had_cr : 1;
-   unsigned int  send_bs : 1;
-   unsigned int  kbd_lock : 1;
-   unsigned int  reverse : 1;
-   unsigned int  no_autorepeat : 1;
-   unsigned int  cjk_ambiguous_wide : 1;
-};
-
 struct _Termpty
 {
    Evas_Object *obj;
@@ -158,7 +131,32 @@ struct _Termpty
       unsigned char by_line   : 1;
       unsigned char is_top_to_bottom : 1;
    } selection;
-   Termstate state, save, swap;
+   struct {
+        Termatt       att;
+        unsigned char charset;
+        unsigned char charsetch;
+        unsigned char chset[4];
+        int           scroll_y1, scroll_y2;
+        int           had_cr_x, had_cr_y;
+        int           margin_top; // soon, more to come...
+        unsigned int  multibyte : 1;
+        unsigned int  alt_kp : 1;
+        unsigned int  insert : 1;
+        unsigned int  appcursor : 1;
+        unsigned int  wrap : 1;
+        unsigned int  wrapnext : 1;
+        unsigned int  crlf : 1;
+        unsigned int  had_cr : 1;
+        unsigned int  send_bs : 1;
+        unsigned int  kbd_lock : 1;
+        unsigned int  reverse : 1;
+        unsigned int  no_autorepeat : 1;
+        unsigned int  cjk_ambiguous_wide : 1;
+        unsigned int  hide_cursor : 1;
+   } termstate;
+   struct {
+        int           cx, cy;
+   } cursor_state, cursor_save;
    int exit_code;
    pid_t pid;
    unsigned int altbuf     : 1;

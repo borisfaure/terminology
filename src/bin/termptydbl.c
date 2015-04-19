@@ -41,7 +41,7 @@ _termpty_is_dblwidth_slow_get(Termpty *ty, int g)
      return EINA_TRUE;
    // FIXME: can optimize by breaking into tree and ranges
    // (A)
-   if (ty->state.cjk_ambiguous_wide)
+   if (ty->termstate.cjk_ambiguous_wide)
      {
         // grep ';A #' EastAsianWidth.txt | wc -l
         // :(

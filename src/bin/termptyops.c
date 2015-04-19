@@ -27,7 +27,7 @@ _text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_
 
    memset(&src, 0, sizeof(src));
    src.codepoint = val;
-   if (inherit_att) src.att = ty->state.att;
+   if (inherit_att) src.att = ty->termstate.att;
    termpty_cell_fill(ty, &src, cells, count);
 }
 
@@ -65,10 +65,10 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
    Termcell *cells = NULL, *cells2;
    int y, start_y = 0, end_y = ty->h - 1;
 
-   if (ty->state.scroll_y2 != 0)
+   if (ty->termstate.scroll_y2 != 0)
      {
-        start_y = ty->state.scroll_y1;
-        end_y = ty->state.scroll_y2 - 1;
+        start_y = ty->termstate.scroll_y1;
+        end_y = ty->termstate.scroll_y2 - 1;
      }
    else
      if (!ty->altbuf)
@@ -108,10 +108,10 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
    Termcell *cells, *cells2 = NULL;
    int y, start_y = 0, end_y = ty->h - 1;
 
-   if (ty->state.scroll_y2 != 0)
+   if (ty->termstate.scroll_y2 != 0)
      {
-        start_y = ty->state.scroll_y1;
-        end_y = ty->state.scroll_y2 - 1;
+        start_y = ty->termstate.scroll_y1;
+        end_y = ty->termstate.scroll_y2 - 1;
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
    termio_scroll(ty->obj, 1, start_y, end_y);
@@ -146,11 +146,11 @@ _termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {
    int e = ty->h;
 
-   if (ty->state.scroll_y2 != 0) e = ty->state.scroll_y2;
-   if (ty->state.cy >= e)
+   if (ty->termstate.scroll_y2 != 0) e = ty->termstate.scroll_y2;
+   if (ty->cursor_state.cy >= e)
      {
         _termpty_text_scroll(ty, clear);
-        ty->state.cy = e - 1;
+        ty->cursor_state.cy = e - 1;
      }
 }
 
@@ -159,11 +159,11 @@ _termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
 {
    int b = 0;
 
-   if (ty->state.scroll_y1 != 0) b = ty->state.scroll_y1;
-   if (ty->state.cy < b)
+   if (ty->termstate.scroll_y1 != 0) b = ty->termstate.scroll_y1;
+   if (ty->cursor_state.cy < b)
      {
         _termpty_text_scroll_rev(ty, clear);
-        ty->state.cy = b;
+        ty->cursor_state.cy = b;
      }
 }
 
@@ -173,66 +173,68 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    Termcell *cells;
    int i, j;
 
-   termio_content_change(ty->obj, ty->state.cx, ty->state.cy, len);
+   termio_content_change(ty->obj, ty->cursor_state.cx, ty->cursor_state.cy, len);
 
-   cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
+   cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
    for (i = 0; i < len; i++)
      {
         Eina_Unicode g;
 
-        if (ty->state.wrapnext)
+        if (ty->termstate.wrapnext)
           {
              cells[ty->w - 1].att.autowrapped = 1;
-             ty->state.wrapnext = 0;
-             ty->state.cx = 0;
-             ty->state.cy++;
+             ty->termstate.wrapnext = 0;
+             ty->cursor_state.cx = 0;
+             ty->cursor_state.cy++;
              _termpty_text_scroll_test(ty, EINA_TRUE);
-             cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
+             cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
           }
-        if (ty->state.insert)
+        if (ty->termstate.insert)
           {
-             for (j = ty->w - 1; j > ty->state.cx; j--)
+             for (j = ty->w - 1; j > ty->cursor_state.cx; j--)
                termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
-        g = _termpty_charset_trans(codepoints[i], &ty->state);
+        g = _termpty_charset_trans(codepoints[i], ty);
 
-        termpty_cell_codepoint_att_fill(ty, g, ty->state.att,
-                                        &(cells[ty->state.cx]), 1);
+        termpty_cell_codepoint_att_fill(ty, g, ty->termstate.att,
+                                        &(cells[ty->cursor_state.cx]), 1);
 #if defined(SUPPORT_DBLWIDTH)
-        cells[ty->state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
-        if (EINA_UNLIKELY((cells[ty->state.cx].att.dblwidth) && (ty->state.cx < (ty->w - 1))))
+        cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
+        if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (ty->w - 1))))
           {
-             TERMPTY_FMTCLR(cells[ty->state.cx].att);
-             termpty_cell_codepoint_att_fill(ty, 0, cells[ty->state.cx].att,
-                                             &(cells[ty->state.cx + 1]), 1);
+             TERMPTY_FMTCLR(cells[ty->cursor_state.cx].att);
+             termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
+                                             &(cells[ty->cursor_state.cx + 1]), 1);
           }
-#endif        
-        if (ty->state.wrap)
+#endif
+        if (ty->termstate.wrap)
           {
              unsigned char offset = 1;
 
-             ty->state.wrapnext = 0;
+             ty->termstate.wrapnext = 0;
 #if defined(SUPPORT_DBLWIDTH)
-	     if (EINA_UNLIKELY(cells[ty->state.cx].att.dblwidth))
+             if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
 #endif
-             if (EINA_UNLIKELY(ty->state.cx >= (ty->w - offset))) ty->state.wrapnext = 1;
-             else ty->state.cx += offset;
+             if (EINA_UNLIKELY(ty->cursor_state.cx >= (ty->w - offset)))
+               ty->termstate.wrapnext = 1;
+             else
+               ty->cursor_state.cx += offset;
           }
         else
           {
              unsigned char offset = 1;
 
-             ty->state.wrapnext = 0;
+             ty->termstate.wrapnext = 0;
 #if defined(SUPPORT_DBLWIDTH)
-             if (EINA_UNLIKELY(cells[ty->state.cx].att.dblwidth))
+             if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
 #endif
-             ty->state.cx += offset;
-             if (ty->state.cx > (ty->w - offset))
+             ty->cursor_state.cx += offset;
+             if (ty->cursor_state.cx > (ty->w - offset))
                {
-                  ty->state.cx = ty->w - offset;
+                  ty->cursor_state.cx = ty->w - offset;
                   return;
                }
           }
@@ -244,16 +246,16 @@ _termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
 {
    Termcell *cells;
    int n = 0;
-   Evas_Coord x = 0, y = ty->state.cy;
+   Evas_Coord x = 0, y = ty->cursor_state.cy;
 
    switch (mode)
      {
       case TERMPTY_CLR_END:
-        n = ty->w - ty->state.cx;
-        x = ty->state.cx;
+        n = ty->w - ty->cursor_state.cx;
+        x = ty->cursor_state.cx;
         break;
       case TERMPTY_CLR_BEGIN:
-        n = ty->state.cx + 1;
+        n = ty->cursor_state.cx + 1;
         break;
       case TERMPTY_CLR_ALL:
         n = ty->w;
@@ -276,33 +278,33 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
      {
       case TERMPTY_CLR_END:
         _termpty_clear_line(ty, mode, ty->w);
-        if (ty->state.cy < (ty->h - 1))
+        if (ty->cursor_state.cy < (ty->h - 1))
           {
-             int l = ty->h - (ty->state.cy + 1);
+             int l = ty->h - (ty->cursor_state.cy + 1);
 
-             termio_content_change(ty->obj, 0, ty->state.cy, l * ty->w);
+             termio_content_change(ty->obj, 0, ty->cursor_state.cy, l * ty->w);
 
              while (l)
                {
-                  cells = &(TERMPTY_SCREEN(ty, 0, (ty->state.cy + l)));
+                  cells = &(TERMPTY_SCREEN(ty, 0, (ty->cursor_state.cy + l)));
                   _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
                   l--;
                }
           }
         break;
       case TERMPTY_CLR_BEGIN:
-        if (ty->state.cy > 0)
+        if (ty->cursor_state.cy > 0)
           {
              // First clear from circular > height, then from 0 to circular
-             int y = ty->state.cy + ty->circular_offset;
+             int y = ty->cursor_state.cy + ty->circular_offset;
 
-             termio_content_change(ty->obj, 0, 0, ty->state.cy * ty->w);
+             termio_content_change(ty->obj, 0, 0, ty->cursor_state.cy * ty->w);
 
              cells = &(TERMPTY_SCREEN(ty, 0, 0));
 
              if (y < ty->h)
                {
-                  _text_clear(ty, cells, ty->w * ty->state.cy, 0, EINA_TRUE);
+                  _text_clear(ty, cells, ty->w * ty->cursor_state.cy, 0, EINA_TRUE);
                }
              else
                {
@@ -318,7 +320,7 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
       case TERMPTY_CLR_ALL:
         ty->circular_offset = 0;
         _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
-        ty->state.scroll_y2 = 0;
+        ty->termstate.scroll_y2 = 0;
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         break;
@@ -365,28 +367,32 @@ _termpty_reset_att(Termatt *att)
 void
 _termpty_reset_state(Termpty *ty)
 {
-   ty->state.cx = 0;
-   ty->state.cy = 0;
-   ty->state.scroll_y1 = 0;
-   ty->state.scroll_y2 = 0;
-   ty->state.had_cr_x = 0;
-   ty->state.had_cr_y = 0;
-   _termpty_reset_att(&(ty->state.att));
-   ty->state.charset = 0;
-   ty->state.charsetch = 'B';
-   ty->state.chset[0] = 'B';
-   ty->state.chset[1] = 'B';
-   ty->state.chset[2] = 'B';
-   ty->state.chset[3] = 'B';
-   ty->state.multibyte = 0;
-   ty->state.alt_kp = 0;
-   ty->state.insert = 0;
-   ty->state.appcursor = 0;
-   ty->state.wrap = 1;
-   ty->state.wrapnext = 0;
-   ty->state.hidecursor = 0;
-   ty->state.crlf = 0;
-   ty->state.had_cr = 0;
+   ty->cursor_state.cx = 0;
+   ty->cursor_state.cy = 0;
+   ty->termstate.scroll_y1 = 0;
+   ty->termstate.scroll_y2 = 0;
+   ty->termstate.had_cr_x = 0;
+   ty->termstate.had_cr_y = 0;
+   _termpty_reset_att(&(ty->termstate.att));
+   ty->termstate.charset = 0;
+   ty->termstate.charsetch = 'B';
+   ty->termstate.chset[0] = 'B';
+   ty->termstate.chset[1] = 'B';
+   ty->termstate.chset[2] = 'B';
+   ty->termstate.chset[3] = 'B';
+   ty->termstate.multibyte = 0;
+   ty->termstate.alt_kp = 0;
+   ty->termstate.insert = 0;
+   ty->termstate.appcursor = 0;
+   ty->termstate.wrap = 1;
+   ty->termstate.wrapnext = 0;
+   ty->termstate.crlf = 0;
+   ty->termstate.had_cr = 0;
+   ty->termstate.send_bs = 0;
+   ty->termstate.reverse = 0;
+   ty->termstate.no_autorepeat = 0;
+   ty->termstate.cjk_ambiguous_wide = 0;
+   ty->termstate.hide_cursor = 0;
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
@@ -410,9 +416,16 @@ _termpty_reset_state(Termpty *ty)
 }
 
 void
-_termpty_cursor_copy(Termstate *state, Termstate *dest)
+_termpty_cursor_copy(Termpty *ty, Eina_Bool save)
 {
-   dest->cx = state->cx;
-   dest->cy = state->cy;
-   dest->wrapnext = state->wrapnext;
+   if (save)
+     {
+        ty->cursor_save.cx = ty->cursor_state.cx;
+        ty->cursor_save.cy = ty->cursor_state.cy;
+     }
+   else
+     {
+        ty->cursor_state.cx = ty->cursor_save.cx;
+        ty->cursor_state.cy = ty->cursor_save.cy;
+     }
 }

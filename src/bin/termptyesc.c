@@ -58,51 +58,51 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
    switch (*cc)
      {
       case 0x07: // BEL '\a' (bell)
-         ty->state.had_cr = 0;
+         ty->termstate.had_cr = 0;
          if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
          return;
       case 0x08: // BS  '\b' (backspace)
          DBG("->BS");
-         ty->state.had_cr = 0;
-         ty->state.wrapnext = 0;
-         ty->state.cx--;
-         if (ty->state.cx < 0) ty->state.cx = 0;
+         ty->termstate.had_cr = 0;
+         ty->termstate.wrapnext = 0;
+         ty->cursor_state.cx--;
+         if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
          return;
       case 0x09: // HT  '\t' (horizontal tab)
          DBG("->HT");
-         ty->state.had_cr = 0;
-         TERMPTY_SCREEN(ty, ty->state.cx, ty->state.cy).att.tab = 1;
-         ty->state.wrapnext = 0;
-         ty->state.cx += 8;
-         ty->state.cx = (ty->state.cx / 8) * 8;
-         if (ty->state.cx >= ty->w)
-           ty->state.cx = ty->w - 1;
+         ty->termstate.had_cr = 0;
+         TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
+         ty->termstate.wrapnext = 0;
+         ty->cursor_state.cx += 8;
+         ty->cursor_state.cx = (ty->cursor_state.cx / 8) * 8;
+         if (ty->cursor_state.cx >= ty->w)
+           ty->cursor_state.cx = ty->w - 1;
          return;
       case 0x0a: // LF  '\n' (new line)
       case 0x0b: // VT  '\v' (vertical tab)
       case 0x0c: // FF  '\f' (form feed)
          DBG("->LF");
-         if (ty->state.had_cr)
+         if (ty->termstate.had_cr)
            {
-              TERMPTY_SCREEN(ty, ty->state.had_cr_x,
-                                 ty->state.had_cr_y).att.newline = 1;
+              TERMPTY_SCREEN(ty, ty->termstate.had_cr_x,
+                                 ty->termstate.had_cr_y).att.newline = 1;
            }
-         ty->state.had_cr = 0;
-         ty->state.wrapnext = 0;
-         if (ty->state.crlf) ty->state.cx = 0;
-         ty->state.cy++;
+         ty->termstate.had_cr = 0;
+         ty->termstate.wrapnext = 0;
+         if (ty->termstate.crlf) ty->cursor_state.cx = 0;
+         ty->cursor_state.cy++;
          _termpty_text_scroll_test(ty, EINA_TRUE);
          return;
       case 0x0d: // CR  '\r' (carriage ret)
          DBG("->CR");
-         if (ty->state.cx != 0)
+         if (ty->cursor_state.cx != 0)
            {
-              ty->state.had_cr_x = ty->state.cx;
-              ty->state.had_cr_y = ty->state.cy;
-              ty->state.wrapnext = 0;
+              ty->termstate.had_cr_x = ty->cursor_state.cx;
+              ty->termstate.had_cr_y = ty->cursor_state.cy;
+              ty->termstate.wrapnext = 0;
            }
-         ty->state.cx = 0;
-//         ty->state.had_cr = 1;
+         ty->cursor_state.cx = 0;
+//         ty->termstate.had_cr = 1;
          return;
       default:
          return;
@@ -149,14 +149,14 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                   switch (arg)
                     {
                      case 1:
-                        ty->state.appcursor = mode;
+                        ty->termstate.appcursor = mode;
                         break;
                      case 2:
-                        ty->state.kbd_lock = mode;
+                        ty->termstate.kbd_lock = mode;
                         break;
                      case 3: // 132 column mode… should we handle this?
 #if defined(SUPPORT_80_132_COLUMNS)
-                        if (ty->state.att.is_80_132_mode_allowed)
+                        if (ty->termstate.att.is_80_132_mode_allowed)
                           {
                              /* ONLY FOR TESTING PURPOSE FTM */
                              Evas_Object *wn;
@@ -180,18 +180,18 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         WRN("TODO: scrolling mode (DECSCLM): %i", mode);
                         break;
                      case 5:
-                        ty->state.reverse = mode;
+                        ty->termstate.reverse = mode;
                         break;
                      case 6:
                         if (mode)
                           {
-                             ty->state.margin_top = ty->state.cy;
-                             ty->state.cx = 0;
+                             ty->termstate.margin_top = ty->cursor_state.cy;
+                             ty->cursor_state.cx = 0;
                           }
                         else
                           {
-                             ty->state.cx = 0;
-                             ty->state.margin_top = 0;
+                             ty->cursor_state.cx = 0;
+                             ty->termstate.margin_top = 0;
                           }
                         DBG("origin mode (%d): cursor is at 0,0"
                             " cursor limited to screen/start point"
@@ -200,10 +200,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 7:
                         DBG("set wrap mode to %i", mode);
-                        ty->state.wrap = mode;
+                        ty->termstate.wrap = mode;
                         break;
                      case 8:
-                        ty->state.no_autorepeat = !mode;
+                        ty->termstate.no_autorepeat = !mode;
                         DBG("auto repeat %i", mode);
                         break;
                      case 9:
@@ -218,10 +218,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         WRN("TODO: set print extent to full screen");
                         break;
                      case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
-                        ty->state.crlf = mode;
+                        ty->termstate.crlf = mode;
                         break;
                      case 25:
-                        ty->state.hidecursor = !mode;
+                        ty->termstate.hide_cursor = !mode;
                         DBG("hide cursor: %d", !mode);
                         break;
                      case 30: // ignore
@@ -242,7 +242,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                      case 40:
                         DBG("Allow 80 -> 132 Mode %i", mode);
 #if defined(SUPPORT_80_132_COLUMNS)
-                        ty->state.att.is_80_132_mode_allowed = mode;
+                        ty->termstate.att.is_80_132_mode_allowed = mode;
 #endif
                         break;
                      case 45: // ignore
@@ -255,7 +255,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         WRN("TODO: app keypad mode %i", mode);
                         break;
                      case 67:
-                        ty->state.send_bs = mode;
+                        ty->termstate.send_bs = mode;
                         DBG("backspace send bs not del = %i", mode);
                         break;
                      case 1000:
@@ -312,10 +312,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 1048:
                      case 1049:
-                        if (mode)
-                          _termpty_cursor_copy(&(ty->state), &(ty->save));
-                        else
-                          _termpty_cursor_copy(&(ty->save), &(ty->state));
+                        _termpty_cursor_copy(ty, mode);
                         if (arg == 1049)
                           _switch_to_alternative_screen(ty, mode);
                         break;
@@ -345,11 +342,11 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                   switch (arg)
                     {
                      case 1:
-                        ty->state.appcursor = mode;
+                        ty->termstate.appcursor = mode;
                         break;
                      case 4:
                         DBG("set insert mode to %i", mode);
-                        ty->state.insert = mode;
+                        ty->termstate.insert = mode;
                         break;
                      case 34:
                         WRN("TODO: hebrew keyboard mapping: %i", mode);
@@ -381,75 +378,75 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
      {
         int arg = _csi_arg_get(&b);
         if ((first) && (!b))
-          _termpty_reset_att(&(ty->state.att));
+          _termpty_reset_att(&(ty->termstate.att));
         else if (b)
           {
              first = 0;
              switch (arg)
                {
                 case 0: // reset to normal
-                   _termpty_reset_att(&(ty->state.att));
+                   _termpty_reset_att(&(ty->termstate.att));
                    break;
                 case 1: // bold/bright
-                   ty->state.att.bold = 1;
+                   ty->termstate.att.bold = 1;
                    break;
                 case 2: // faint
-                   ty->state.att.faint = 1;
+                   ty->termstate.att.faint = 1;
                    break;
                 case 3: // italic
 #if defined(SUPPORT_ITALIC)
-                   ty->state.att.italic = 1;
+                   ty->termstate.att.italic = 1;
 #endif
                    break;
                 case 4: // underline
-                   ty->state.att.underline = 1;
+                   ty->termstate.att.underline = 1;
                    break;
                 case 5: // blink
-                   ty->state.att.blink = 1;
+                   ty->termstate.att.blink = 1;
                    break;
                 case 6: // blink rapid
-                   ty->state.att.blink2 = 1;
+                   ty->termstate.att.blink2 = 1;
                    break;
                 case 7: // reverse
-                   ty->state.att.inverse = 1;
+                   ty->termstate.att.inverse = 1;
                    break;
                 case 8: // invisible
-                   ty->state.att.invisible = 1;
+                   ty->termstate.att.invisible = 1;
                    break;
                 case 9: // strikethrough
-                   ty->state.att.strike = 1;
+                   ty->termstate.att.strike = 1;
                    break;
                 case 20: // fraktur!
-                   ty->state.att.fraktur = 1;
+                   ty->termstate.att.fraktur = 1;
                    break;
                 case 21: // no bold/bright
-                   ty->state.att.bold = 0;
+                   ty->termstate.att.bold = 0;
                    break;
                 case 22: // no bold/bright, no faint
-                   ty->state.att.bold = 0;
-                   ty->state.att.faint = 0;
+                   ty->termstate.att.bold = 0;
+                   ty->termstate.att.faint = 0;
                    break;
                 case 23: // no italic, not fraktur
 #if defined(SUPPORT_ITALIC)
-                   ty->state.att.italic = 0;
+                   ty->termstate.att.italic = 0;
 #endif
-                   ty->state.att.fraktur = 0;
+                   ty->termstate.att.fraktur = 0;
                    break;
                 case 24: // no underline
-                   ty->state.att.underline = 0;
+                   ty->termstate.att.underline = 0;
                    break;
                 case 25: // no blink
-                   ty->state.att.blink = 0;
-                   ty->state.att.blink2 = 0;
+                   ty->termstate.att.blink = 0;
+                   ty->termstate.att.blink2 = 0;
                    break;
                 case 27: // no reverse
-                   ty->state.att.inverse = 0;
+                   ty->termstate.att.inverse = 0;
                    break;
                 case 28: // no invisible
-                   ty->state.att.invisible = 0;
+                   ty->termstate.att.invisible = 0;
                    break;
                 case 29: // no strikethrough
-                   ty->state.att.strike = 0;
+                   ty->termstate.att.strike = 0;
                    break;
                 case 30: // fg
                 case 31:
@@ -459,9 +456,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 35:
                 case 36:
                 case 37:
-                   ty->state.att.fg256 = 0;
-                   ty->state.att.fg = (arg - 30) + COL_BLACK;
-                   ty->state.att.fgintense = 0;
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = (arg - 30) + COL_BLACK;
+                   ty->termstate.att.fgintense = 0;
                    break;
                 case 38: // xterm 256 fg color ???
                    // now check if next arg is 5
@@ -474,16 +471,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         if (!b) ERR("Failed xterm 256 color fg esc val");
                         else
                           {
-                             ty->state.att.fg256 = 1;
-                             ty->state.att.fg = arg;
+                             ty->termstate.att.fg256 = 1;
+                             ty->termstate.att.fg = arg;
                           }
                      }
-                   ty->state.att.fgintense = 0;
+                   ty->termstate.att.fgintense = 0;
                    break;
                 case 39: // default fg color
-                   ty->state.att.fg256 = 0;
-                   ty->state.att.fg = COL_DEF;
-                   ty->state.att.fgintense = 0;
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = COL_DEF;
+                   ty->termstate.att.fgintense = 0;
                    break;
                 case 40: // bg
                 case 41:
@@ -493,9 +490,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 45:
                 case 46:
                 case 47:
-                   ty->state.att.bg256 = 0;
-                   ty->state.att.bg = (arg - 40) + COL_BLACK;
-                   ty->state.att.bgintense = 0;
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = (arg - 40) + COL_BLACK;
+                   ty->termstate.att.bgintense = 0;
                    break;
                 case 48: // xterm 256 bg color ???
                    // now check if next arg is 5
@@ -508,16 +505,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         if (!b) ERR("Failed xterm 256 color bg esc val");
                         else
                           {
-                             ty->state.att.bg256 = 1;
-                             ty->state.att.bg = arg;
+                             ty->termstate.att.bg256 = 1;
+                             ty->termstate.att.bg = arg;
                           }
                      }
-                   ty->state.att.bgintense = 0;
+                   ty->termstate.att.bgintense = 0;
                    break;
                 case 49: // default bg color
-                   ty->state.att.bg256 = 0;
-                   ty->state.att.bg = COL_DEF;
-                   ty->state.att.bgintense = 0;
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = COL_DEF;
+                   ty->termstate.att.bgintense = 0;
                    break;
                 case 90: // fg
                 case 91:
@@ -527,9 +524,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 95:
                 case 96:
                 case 97:
-                   ty->state.att.fg256 = 0;
-                   ty->state.att.fg = (arg - 90) + COL_BLACK;
-                   ty->state.att.fgintense = 1;
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = (arg - 90) + COL_BLACK;
+                   ty->termstate.att.fgintense = 1;
                    break;
                 case 98: // xterm 256 fg color ???
                    // now check if next arg is 5
@@ -542,16 +539,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         if (!b) ERR("Failed xterm 256 color fg esc val");
                         else
                           {
-                             ty->state.att.fg256 = 1;
-                             ty->state.att.fg = arg;
+                             ty->termstate.att.fg256 = 1;
+                             ty->termstate.att.fg = arg;
                           }
                      }
-                   ty->state.att.fgintense = 1;
+                   ty->termstate.att.fgintense = 1;
                    break;
                 case 99: // default fg color
-                   ty->state.att.fg256 = 0;
-                   ty->state.att.fg = COL_DEF;
-                   ty->state.att.fgintense = 1;
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = COL_DEF;
+                   ty->termstate.att.fgintense = 1;
                    break;
                 case 100: // bg
                 case 101:
@@ -561,9 +558,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 105:
                 case 106:
                 case 107:
-                   ty->state.att.bg256 = 0;
-                   ty->state.att.bg = (arg - 100) + COL_BLACK;
-                   ty->state.att.bgintense = 1;
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = (arg - 100) + COL_BLACK;
+                   ty->termstate.att.bgintense = 1;
                    break;
                 case 108: // xterm 256 bg color ???
                    // now check if next arg is 5
@@ -576,16 +573,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         if (!b) ERR("Failed xterm 256 color bg esc val");
                         else
                           {
-                             ty->state.att.bg256 = 1;
-                             ty->state.att.bg = arg;
+                             ty->termstate.att.bg256 = 1;
+                             ty->termstate.att.bg = arg;
                           }
                      }
-                   ty->state.att.bgintense = 1;
+                   ty->termstate.att.bgintense = 1;
                    break;
                 case 109: // default bg color
-                   ty->state.att.bg256 = 0;
-                   ty->state.att.bg = COL_DEF;
-                   ty->state.att.bgintense = 1;
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = COL_DEF;
+                   ty->termstate.att.bgintense = 1;
                    break;
                 default: //  not handled???
                    ERR("Unhandled color cmd [%i]", arg);
@@ -614,7 +611,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
           {
            case 6:
               len = snprintf(bf, sizeof(bf), "\033[?%d;%d;1R",
-                             ty->state.cy + 1, ty->state.cx + 1);
+                             ty->cursor_state.cy + 1, ty->cursor_state.cx + 1);
               termpty_write(ty, bf, len);
               break;
            default:
@@ -629,7 +626,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
           {
            case 6:
               len = snprintf(bf, sizeof(bf), "\033[%d;%dR",
-                             ty->state.cy + 1, ty->state.cx + 1);
+                             ty->cursor_state.cy + 1, ty->cursor_state.cx + 1);
               termpty_write(ty, bf, len);
               break;
            default:
@@ -675,16 +672,16 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (arg < 1) arg = 1;
         DBG("insert %d blank chars", arg);
           {
-             int pi = ty->state.insert;
+             int pi = ty->termstate.insert;
              Eina_Unicode blank[1] = { ' ' };
-             int cx = ty->state.cx;
+             int cx = ty->cursor_state.cx;
 
-             ty->state.wrapnext = 0;
-             ty->state.insert = 1;
+             ty->termstate.wrapnext = 0;
+             ty->termstate.insert = 1;
              for (i = 0; i < arg; i++)
                _termpty_text_append(ty, blank, 1);
-             ty->state.insert = pi;
-             ty->state.cx = cx;
+             ty->termstate.insert = pi;
+             ty->cursor_state.cx = cx;
           }
         break;
       case 'A': // cursor up N
@@ -692,25 +689,25 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cy = MAX(0, ty->state.cy - arg);
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
         break;
       case 'B': // cursor down N
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor down %d", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cy = MIN(ty->h - 1, ty->state.cy + arg);
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
         break;
       case 'D': // cursor left N
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor left %d", arg);
-        ty->state.wrapnext = 0;
+        ty->termstate.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
-             ty->state.cx--;
-             if (ty->state.cx < 0) ty->state.cx = 0;
+             ty->cursor_state.cx--;
+             if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
           }
         break;
       case 'C': // cursor right N
@@ -718,21 +715,21 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor right %d", arg);
-        ty->state.wrapnext = 0;
+        ty->termstate.wrapnext = 0;
         for (i = 0; i < arg; i++)
           {
-             ty->state.cx++;
-             if (ty->state.cx >= ty->w) ty->state.cx = ty->w - 1;
+             ty->cursor_state.cx++;
+             if (ty->cursor_state.cx >= ty->w) ty->cursor_state.cx = ty->w - 1;
           }
         break;
       case 'H': // cursor pos set
       case 'f': // cursor pos set
         DBG("cursor pos set");
-        ty->state.wrapnext = 0;
+        ty->termstate.wrapnext = 0;
         if (!*b)
           {
-             ty->state.cx = 0;
-             ty->state.cy = 0;
+             ty->cursor_state.cx = 0;
+             ty->cursor_state.cy = 0;
           }
         else
           {
@@ -742,7 +739,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (arg >= ty->h) arg = ty->h - 1;
              if (b)
                {
-                  ty->state.cy = arg;
+                  ty->cursor_state.cy = arg;
                   arg = _csi_arg_get(&b);
                   if (arg < 1) arg = 1;
                   arg--;
@@ -750,47 +747,47 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              else arg = 0;
 
              if (arg >= ty->w) arg = ty->w - 1;
-             if (b) ty->state.cx = arg;
+             if (b) ty->cursor_state.cx = arg;
           }
-        ty->state.cy += ty->state.margin_top;
+        ty->cursor_state.cy += ty->termstate.margin_top;
        break;
       case 'G': // to column N
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("to column %d", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cx = arg - 1;
-        if (ty->state.cx < 0) ty->state.cx = 0;
-        else if (ty->state.cx >= ty->w) ty->state.cx = ty->w - 1;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cx = arg - 1;
+        if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
+        else if (ty->cursor_state.cx >= ty->w) ty->cursor_state.cx = ty->w - 1;
         break;
       case 'd': // to row N
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("to row %d", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cy = arg - 1;
-        if (ty->state.cy < 0) ty->state.cy = 0;
-        else if (ty->state.cy >= ty->h) ty->state.cy = ty->h - 1;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy = arg - 1;
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
         break;
       case 'E': // down relative N rows, and to col 0
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("down relative %d rows, and to col 0", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cy += arg;
-        if (ty->state.cy < 0) ty->state.cy = 0;
-        else if (ty->state.cy >= ty->h) ty->state.cy = ty->h - 1;
-        ty->state.cx = 0;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy += arg;
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
+        ty->cursor_state.cx = 0;
         break;
       case 'F': // up relative N rows, and to col 0
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("up relative %d rows, and to col 0", arg);
-        ty->state.wrapnext = 0;
-        ty->state.cy -= arg;
-        if (ty->state.cy < 0) ty->state.cy = 0;
-        else if (ty->state.cy >= ty->h) ty->state.cy = ty->h - 1;
-        ty->state.cx = 0;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy -= arg;
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
+        ty->cursor_state.cx = 0;
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(&b);
@@ -818,26 +815,26 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           {
              int sy1, sy2;
 
-             sy1 = ty->state.scroll_y1;
-             sy2 = ty->state.scroll_y2;
-             if (ty->state.scroll_y2 == 0)
+             sy1 = ty->termstate.scroll_y1;
+             sy2 = ty->termstate.scroll_y2;
+             if (ty->termstate.scroll_y2 == 0)
                {
-                  ty->state.scroll_y1 = ty->state.cy;
-                  ty->state.scroll_y2 = ty->h;
+                  ty->termstate.scroll_y1 = ty->cursor_state.cy;
+                  ty->termstate.scroll_y2 = ty->h;
                }
              else
                {
-                  ty->state.scroll_y1 = ty->state.cy;
-                  if (ty->state.scroll_y2 <= ty->state.scroll_y1)
-                    ty->state.scroll_y2 = ty->state.scroll_y1 + 1;
+                  ty->termstate.scroll_y1 = ty->cursor_state.cy;
+                  if (ty->termstate.scroll_y2 <= ty->termstate.scroll_y1)
+                    ty->termstate.scroll_y2 = ty->termstate.scroll_y1 + 1;
                }
              for (i = 0; i < arg; i++)
                {
                   if (*cc == 'M') _termpty_text_scroll(ty, EINA_TRUE);
                   else _termpty_text_scroll_rev(ty, EINA_TRUE);
                }
-             ty->state.scroll_y1 = sy1;
-             ty->state.scroll_y2 = sy2;
+             ty->termstate.scroll_y1 = sy1;
+             ty->termstate.scroll_y2 = sy2;
           }
         break;
       case 'P': // erase and scrollback N chars
@@ -848,9 +845,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              Termcell *cells;
              int x, lim;
 
-             cells = &(TERMPTY_SCREEN(ty, 0, ty->state.cy));
+             cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
              lim = ty->w - arg;
-             for (x = ty->state.cx; x < (ty->w); x++)
+             for (x = ty->cursor_state.cx; x < (ty->w); x++)
                {
                   if (x < lim)
                     termpty_cell_copy(ty, &(cells[x + arg]), &(cells[x]), 1);
@@ -929,8 +926,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (!b)
           {
              WRN("no region args reset region");
-             ty->state.scroll_y1 = 0;
-             ty->state.scroll_y2 = 0;
+             ty->termstate.scroll_y1 = 0;
+             ty->termstate.scroll_y2 = 0;
           }
         else
           {
@@ -940,16 +937,16 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (!b)
                {
                   WRN("failed to give 2 regions args reset region");
-                  ty->state.scroll_y1 = 0;
-                  ty->state.scroll_y2 = 0;
+                  ty->termstate.scroll_y1 = 0;
+                  ty->termstate.scroll_y2 = 0;
                }
              else
                {
                   if (arg > arg2)
                     {
                        DBG("scroll region beginning > end [%i %i]", arg, arg2);
-                       ty->state.scroll_y1 = 0;
-                       ty->state.scroll_y2 = 0;
+                       ty->termstate.scroll_y1 = 0;
+                       ty->termstate.scroll_y2 = 0;
                     }
                   else
                     {
@@ -957,19 +954,19 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                        if (arg >= ty->h) arg = ty->h - 1;
                        if (arg == 0) arg = 1;
                        if (arg2 > ty->h) arg2 = ty->h;
-                       ty->state.scroll_y1 = arg - 1;
-                       ty->state.scroll_y2 = arg2;
+                       ty->termstate.scroll_y1 = arg - 1;
+                       ty->termstate.scroll_y2 = arg2;
                        if ((arg == 1) && (arg2 == ty->h))
-                          ty->state.scroll_y2 = 0;
+                          ty->termstate.scroll_y2 = 0;
                     }
                }
           }
         break;
       case 's': // store cursor pos
-        _termpty_cursor_copy(&(ty->state), &(ty->save));
+        _termpty_cursor_copy(ty, EINA_TRUE);
         break;
       case 'u': // restore cursor pos
-        _termpty_cursor_copy(&(ty->save), &(ty->state));
+        _termpty_cursor_copy(ty, EINA_FALSE);
         break;
       case 'p': // define key assignments based on keycode
         if (b && *b == '!')
@@ -1007,7 +1004,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
        case 'Z': // Cursor Back Tab
        {
-          int idx, size, cx = ty->state.cx, cy = ty->state.cy;
+          int idx, size, cx = ty->cursor_state.cx, cy = ty->cursor_state.cy;
 
           arg = _csi_arg_get(&b);
           if (arg < 1) arg = 1;
@@ -1026,8 +1023,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
             }
           if (!arg)
             {
-               ty->state.cx = cx;
-               ty->state.cy = cy;
+               ty->cursor_state.cx = cx;
+               ty->cursor_state.cy = cy;
             }
        }
        break;
@@ -1559,25 +1556,25 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (len == 0) return 0;
         return 1 + len;
       case '=': // set alternate keypad mode
-        ty->state.alt_kp = 1;
+        ty->termstate.alt_kp = 1;
         return 1;
       case '>': // set numeric keypad mode
-        ty->state.alt_kp = 0;
+        ty->termstate.alt_kp = 0;
         return 1;
       case 'M': // move to prev line
-        ty->state.wrapnext = 0;
-        ty->state.cy--;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy--;
         _termpty_text_scroll_rev_test(ty, EINA_TRUE);
         return 1;
       case 'D': // move to next line
-        ty->state.wrapnext = 0;
-        ty->state.cy++;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy++;
         _termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'E': // add \n\r
-        ty->state.wrapnext = 0;
-        ty->state.cx = 0;
-        ty->state.cy++;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cx = 0;
+        ty->cursor_state.cy++;
         _termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'Z': // same a 'ESC [ Pn c'
@@ -1592,29 +1589,29 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 1;
       case '(': // charset 0
         if (len < 2) return 0;
-        ty->state.chset[0] = c[1];
-        ty->state.multibyte = 0;
-        ty->state.charsetch = c[1];
+        ty->termstate.chset[0] = c[1];
+        ty->termstate.multibyte = 0;
+        ty->termstate.charsetch = c[1];
         return 2;
       case ')': // charset 1
         if (len < 2) return 0;
-        ty->state.chset[1] = c[1];
-        ty->state.multibyte = 0;
+        ty->termstate.chset[1] = c[1];
+        ty->termstate.multibyte = 0;
         return 2;
       case '*': // charset 2
         if (len < 2) return 0;
-        ty->state.chset[2] = c[1];
-        ty->state.multibyte = 0;
+        ty->termstate.chset[2] = c[1];
+        ty->termstate.multibyte = 0;
         return 2;
       case '+': // charset 3
         if (len < 2) return 0;
-        ty->state.chset[3] = c[1];
-        ty->state.multibyte = 0;
+        ty->termstate.chset[3] = c[1];
+        ty->termstate.multibyte = 0;
         return 2;
       case '$': // charset -2
         if (len < 2) return 0;
-        ty->state.chset[2] = c[1];
-        ty->state.multibyte = 1;
+        ty->termstate.chset[2] = c[1];
+        ty->termstate.multibyte = 1;
         return 2;
       case '#': // #8 == test mode -> fill screen with "E";
         if (len < 2) return 0;
@@ -1625,8 +1622,6 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 
              DBG("reset to init mode and clear then fill with E");
              _termpty_reset_state(ty);
-             ty->save = ty->state;
-             ty->swap = ty->state;
              _termpty_clear_screen(ty, TERMPTY_CLR_ALL);
              if (ty->cb.cancel_sel.func)
                ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
@@ -1635,7 +1630,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (cells)
                {
                   Termatt att;
-                  
+
                   memset((&att), 0, sizeof(att));
                   termpty_cell_codepoint_att_fill(ty, 'E', att, cells, size);
                }
@@ -1645,10 +1640,10 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (len < 2) return 0;
         return 2;
       case '7': // save cursor pos
-        _termpty_cursor_copy(&(ty->state), &(ty->save));
+        _termpty_cursor_copy(ty, EINA_TRUE);
         return 1;
       case '8': // restore cursor pos
-        _termpty_cursor_copy(&(ty->save), &(ty->state));
+        _termpty_cursor_copy(ty, EINA_FALSE);
         return 1;
       case 'H': // set tab at current column
         DBG("Character Tabulation Set (HTS)");
@@ -1706,7 +1701,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
 /*
            case 0x05: // ENQ (enquiry)
              _term_txt_write(ty, "ABC\r\n");
-             ty->state.had_cr = 0;
+             ty->termstate.had_cr = 0;
              return 1;
  */
 /*
@@ -1724,14 +1719,14 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
 
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
-             ty->state.had_cr = 0;
-             ty->state.charset = 1;
-             ty->state.charsetch = ty->state.chset[1];
+             ty->termstate.had_cr = 0;
+             ty->termstate.charset = 1;
+             ty->termstate.charsetch = ty->termstate.chset[1];
              return 1;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
-             ty->state.charset = 0;
-             ty->state.had_cr = 0;
-             ty->state.charsetch = ty->state.chset[0];
+             ty->termstate.charset = 0;
+             ty->termstate.had_cr = 0;
+             ty->termstate.charsetch = ty->termstate.chset[0];
              return 1;
 /*
            case 0x10: // DLE (data link escape)
@@ -1758,7 +1753,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            case 0x1b: // ESC (escape)
-             ty->state.had_cr = 0;
+             ty->termstate.had_cr = 0;
              len = _handle_esc(ty, c + 1, ce);
              if (len == 0) return 0;
              return 1 + len;
@@ -1773,20 +1768,20 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
              return 1;
  */
            default:
-             ty->state.had_cr = 0;
+             ty->termstate.had_cr = 0;
              //ERR("unhandled char 0x%02x", c[0]);
              return 1;
           }
      }
    else if (c[0] == 0x7f) // DEL
      {
-        ty->state.had_cr = 0;
+        ty->termstate.had_cr = 0;
         ERR("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
         return 1;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
-        ty->state.had_cr = 0;
+        ty->termstate.had_cr = 0;
         DBG("ANSI CSI!!!!!");
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0) return 0;
@@ -1797,7 +1792,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
         Termexp *ex;
         Eina_List *l;
         
-        ty->state.had_cr = 0;
+        ty->termstate.had_cr = 0;
         EINA_LIST_FOREACH(ty->block.expecting, l, ex)
           {
              if (c[0] == ex->ch)
@@ -1831,7 +1826,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
      }
    else
      {
-        ty->state.had_cr = 0;
+        ty->termstate.had_cr = 0;
      }
    cc = (Eina_Unicode *)c;
    DBG("txt: [");
@@ -1843,6 +1838,6 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
      }
    DBG("]");
    _termpty_text_append(ty, c, len);
-   ty->state.had_cr = 0;
+   ty->termstate.had_cr = 0;
    return len;
 }

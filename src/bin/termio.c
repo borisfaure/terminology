@@ -4512,7 +4512,7 @@ _smart_apply(Evas_Object *obj)
         blk->was_active = blk->active;
         blk->active = EINA_FALSE;
      }
-   inv = sd->pty->state.reverse;
+   inv = sd->pty->termstate.reverse;
    termpty_cellcomp_freeze(sd->pty);
    for (y = 0; y < sd->grid.h; y++)
      {
@@ -4753,12 +4753,12 @@ _smart_apply(Evas_Object *obj)
                (sd->pty->block.active, l);
           }
      }
-   if ((sd->scroll != 0) || (sd->pty->state.hidecursor))
+   if ((sd->scroll != 0) || (sd->pty->termstate.hide_cursor))
      evas_object_hide(sd->cursor.obj);
    else
      evas_object_show(sd->cursor.obj);
-   sd->cursor.x = sd->pty->state.cx;
-   sd->cursor.y = sd->pty->state.cy;
+   sd->cursor.x = sd->pty->cursor_state.cx;
+   sd->cursor.y = sd->pty->cursor_state.cy;
    evas_object_move(sd->cursor.obj,
                     ox + ((sd->cursor.x + preedit_x) * sd->font.chw),
                     oy + ((sd->cursor.y + preedit_y) * sd->font.chh));
