@@ -454,7 +454,7 @@ config_load(const char *key)
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 131072);
                   LIM(config->tab_zoom, 0.0, 1.0);
-                  LIM(config->vidmod, 0, 3)
+                  LIM(config->vidmod, 0, 4)
 
                   /* upgrade to v3 */
                   config->active_links = EINA_TRUE;
