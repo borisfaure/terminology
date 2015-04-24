@@ -41,6 +41,7 @@ sel.c sel.h \
 miniview.c miniview.h \
 termio.c termio.h \
 termcmd.c termcmd.h \
+term_container.h \
 termiolink.c termiolink.h \
 termpty.c termpty.h \
 termptydbl.c termptydbl.h \
