@@ -2363,6 +2363,9 @@ _tabs_refresh(Tabs *tabs)
    int i = 1;
    int n = eina_list_count(tabs->tabs);
 
+   if (n <= 0)
+     return;
+
    buf[0] = '\0';
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
