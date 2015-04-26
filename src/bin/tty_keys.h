@@ -602,6 +602,30 @@ static const Tty_Key tty_keys[] = {
   },
 },
 {
+  "underscore",
+  sizeof("underscore") - 1,
+  {
+    KH("_"), // default underscore
+    KH("\033_"), // default Alt+underscore
+    KH("\x1f"), // default Ctrl+underscore
+    KH("\x9f"), // default Ctrl+Alt+underscore
+    KH("_"), // default Shift+underscore
+    KH("\033_"), // default Shift+Alt+underscore
+    KH("\x1f"), // default Shift+Ctrl+underscore
+    KH("\x9f"), // default Shift+Ctrl+Alt+underscore
+  },
+  {
+    KH("_"), // cursor underscore
+    KH("\033_"), // cursor Alt+underscore
+    KH("\x1f"), // cursor Ctrl+underscore
+    KH("\x9f"), // cursor Ctrl+Alt+underscore
+    KH("_"), // cursor Shift+underscore
+    KH("\033_"), // cursor Shift+Alt+underscore
+    KH("\x1f"), // cursor Shift+Ctrl+underscore
+    KH("\x9f"), // cursor Shift+Ctrl+Alt+underscore
+  },
+},
+{
   "space",
   sizeof("space") - 1,
   {
