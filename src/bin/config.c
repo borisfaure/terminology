@@ -581,6 +581,9 @@ config_fork(Config *config)
    SCPY(font.name);
    CPY(font.size);
    CPY(font.bitmap);
+   SCPY(font.orig_name);
+   CPY(font.orig_size);
+   CPY(font.orig_bitmap);
    SCPY(helper.email);
    SCPY(helper.url.general);
    SCPY(helper.url.video);
