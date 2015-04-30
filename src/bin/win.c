@@ -132,7 +132,7 @@ static Eina_Bool _term_is_focused(Term *term);
 static Term_Container *_solo_new(Term *term, Win *wn);
 static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
 static Term_Container *_tabs_new(Term_Container *child, Term_Container *parent);
-static void _term_focus(Term *term, Eina_Bool force);
+static void _term_focus(Term *term);
 static void _term_free(Term *term);
 static void _term_media_update(Term *term, const Config *config);
 static void _term_miniview_check(Term *term);
@@ -441,7 +441,7 @@ _cb_win_focus_in(void *data,
      }
 
    if (term)
-     _term_focus(term, EINA_TRUE);
+     _term_focus(term);
    else
      tc->focus(tc, tc);
 }
@@ -1525,7 +1525,7 @@ _cb_tab_activate(void *data, Evas_Object *obj EINA_UNUSED,
    assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*)tab_item->tc;
    term = solo->term;
-   _term_focus(term, EINA_TRUE);
+   _term_focus(term);
 }
 
 static void
@@ -2565,7 +2565,7 @@ _cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
    if (!_win_is_focused(term->wn))
      return;
 
-   _term_focus(term, EINA_TRUE);
+   _term_focus(term);
 }
 
 static void
@@ -2582,7 +2582,7 @@ _cb_term_mouse_down(void *data, Evas *e EINA_UNUSED,
    if (term == term2) return;
    term->down.x = ev->canvas.x;
    term->down.y = ev->canvas.y;
-   _term_focus(term, EINA_TRUE);
+   _term_focus(term);
 }
 
 static Eina_Bool
@@ -2626,11 +2626,11 @@ void change_theme(Evas_Object *win, Config *config)
 }
 
 static void
-_term_focus(Term *term, Eina_Bool force)
+_term_focus(Term *term)
 {
    Term_Container *tc;
 
-   if (!force && (_term_is_focused(term) || !_win_is_focused(term->wn)))
+   if (_term_is_focused(term) || !_win_is_focused(term->wn))
      return;
 
    tc = term->container;
@@ -2659,7 +2659,7 @@ void term_prev(Term *term)
    tc = focused_term->container;
    new_term = tc->term_prev(tc, tc);
    if (new_term && new_term != focused_term)
-     _term_focus(new_term, EINA_FALSE);
+     _term_focus(new_term);
 
    /* TODO: get rid of it? */
    _term_miniview_check(term);
@@ -2687,7 +2687,7 @@ void term_next(Term *term)
    tc = focused_term->container;
    new_term = tc->term_next(tc, tc);
    if (new_term && new_term != focused_term)
-     _term_focus(new_term, EINA_FALSE);
+     _term_focus(new_term);
 
    /* TODO: get rid of it? */
    _term_miniview_check(term);
