@@ -3656,6 +3656,8 @@ _term_bg_config(Term *term)
      }
    if (term->miniview_shown)
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
+
+   _term_media_update(term, term->config);
 }
 
 static void
