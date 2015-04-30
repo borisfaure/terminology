@@ -2184,11 +2184,15 @@ _tab_new_cb(void *data,
    Evas_Coord x, y, w, h;
    Term_Container *tc = (Term_Container*) tabs,
                   *tc_new, *tc_parent, *tc_old;
-   Term *tm_new;
+   Term *tm, *tm_new;
    Win *wn = tc->wn;
+   char buf[PATH_MAX], *wdir = NULL;
 
+   tm = tc->focused_term_get(tc);
+   if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+     wdir = buf;
    tm_new = term_new(wn, wn->config,
-                     NULL, wn->config->login_shell, NULL,
+                     NULL, wn->config->login_shell, wdir,
                      80, 24, EINA_FALSE);
    tc_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
