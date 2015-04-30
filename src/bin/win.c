@@ -1665,6 +1665,11 @@ _tabs_selector_cb_exit(void *data,
                        void *info EINA_UNUSED);
 
 static void
+_tabs_selector_cb_ending(void *data,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *info EINA_UNUSED);
+
+static void
 _tabs_restore(Tabs *tabs)
 {
    Eina_List *l;
@@ -1698,6 +1703,8 @@ _tabs_restore(Tabs *tabs)
                                   _tabs_selector_cb_selected, tabs);
    evas_object_smart_callback_del_full(tabs->selector, "exit",
                                   _tabs_selector_cb_exit, tabs);
+   evas_object_smart_callback_del_full(tabs->selector, "ending",
+                                  _tabs_selector_cb_ending, tabs);
    evas_object_del(tabs->selector);
    evas_object_del(tabs->selector_bg);
    tabs->selector = NULL;
@@ -1715,6 +1722,15 @@ _tabs_restore(Tabs *tabs)
 
    _tabs_refresh(tabs);
    tabs->current->tc->focus(tabs->current->tc, tabs->current->tc);
+}
+
+static void
+_tabs_selector_cb_ending(void *data,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *info EINA_UNUSED)
+{
+   Tabs *tabs = data;
+   edje_object_signal_emit(tabs->selector_bg, "end", "terminology");
 }
 
 static void
@@ -1750,7 +1766,7 @@ _tabs_selector_cb_exit(void *data,
 }
 
 static void
-_cb_tab_selector_show(Tabs *tabs)
+_cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
 {
    Term_Container *tc = (Term_Container *)tabs;
    Eina_List *l;
@@ -1824,10 +1840,13 @@ _cb_tab_selector_show(Tabs *tabs)
    /* XXX: refresh */
    tc->parent->swallow(tc->parent, tc, tc);
 
+   evas_object_show(tabs->selector_bg);
    evas_object_smart_callback_add(tabs->selector, "selected",
                                   _tabs_selector_cb_selected, tabs);
    evas_object_smart_callback_add(tabs->selector, "exit",
                                   _tabs_selector_cb_exit, tabs);
+   evas_object_smart_callback_add(tabs->selector, "ending",
+                                  _tabs_selector_cb_ending, tabs);
    z = 1.0;
    sel_go(tabs->selector);
    count = eina_list_count(tabs->tabs);
@@ -1836,6 +1855,12 @@ _cb_tab_selector_show(Tabs *tabs)
    if (z > 1.0) z = 1.0;
    sel_orig_zoom_set(tabs->selector, z);
    sel_zoom(tabs->selector, z);
+   if (to_item)
+     {
+        sel_entry_selected_set(tabs->selector, to_item->tc->selector_img,
+                               EINA_TRUE);
+        sel_exit(tabs->selector);
+     }
    elm_object_focus_set(tabs->selector, EINA_TRUE);
 }
 
@@ -1861,7 +1886,7 @@ _cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
              continue;
           }
 
-        _cb_tab_selector_show(tabs);
+        _cb_tab_selector_show(tabs, NULL);
         return;
      }
 }
@@ -2267,7 +2292,15 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
         tab_item = l->data;
         if (tab_item != tabs->current)
           {
+             Config *config = tc->wn->config;
              tabs->current->tc->unfocus(tabs->current->tc, tc);
+
+             if (config->tab_zoom >= 0.01 && config->notabs)
+               {
+                  _cb_tab_selector_show(tabs, tab_item);
+                  return;
+               }
+
              tc->swallow(tc, tabs->current->tc, relative);
           }
         tc->parent->focus(tc->parent, tc);
