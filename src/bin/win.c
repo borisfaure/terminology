@@ -413,7 +413,8 @@ _cb_win_focus_in(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term *term;
 
-   if (!tc->is_focused) elm_win_urgent_set(wn->win, EINA_FALSE);
+   if (!tc->is_focused)
+     elm_win_urgent_set(wn->win, EINA_FALSE);
    tc->is_focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
@@ -2277,7 +2278,10 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
    if (tc->parent == relative)
      {
         if (!tc->is_focused)
-          tabs->current->tc->focus(tabs->current->tc, tc);
+          {
+             tc->is_focused = EINA_TRUE;
+             tabs->current->tc->focus(tabs->current->tc, tc);
+          }
      }
    else
      {
@@ -2305,7 +2309,6 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
           }
         tc->parent->focus(tc->parent, tc);
      }
-   tc->is_focused = EINA_TRUE;
 }
 
 static void
