@@ -278,8 +278,6 @@ _solo_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
    solo = (Solo*) tc;
    term = solo->term;
 
-   if (tc->is_focused)
-     return;
    term->missed_bell = EINA_TRUE;
 
    if (!tc->wn->config->disable_visual_bell)
