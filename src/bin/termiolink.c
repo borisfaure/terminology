@@ -137,13 +137,16 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                      case '{': endmatch = '}'; break;
                      case '(': endmatch = ')'; break;
                     }
-                  coord_forward(&x1, &y1, w, h);
+                  if (!(x1 == 0 && y1 == 0))
+                    {
+                       coord_forward(&x1, &y1, w, h);
 
-                  free(s);
-                  prev_len = len;
-                  s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
-                                           &len, EINA_FALSE);
-                  if (!s) break;
+                       free(s);
+                       prev_len = len;
+                       s = termio_selection_get(obj, x1, y1 - sc, x2, y2 - sc,
+                                                &len, EINA_FALSE);
+                       if (!s) break;
+                    }
                }
              else
                {
