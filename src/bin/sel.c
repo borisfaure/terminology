@@ -73,7 +73,7 @@ _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 static void
 _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   Evas_Event_Mouse_Down *ev = event;
+   Evas_Event_Mouse_Up *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
    Evas_Coord dx, dy;
    if (!sd) return;
