@@ -881,13 +881,15 @@ _cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    Termio *sd = data;
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->ctxpopup = NULL;
-   elm_object_focus_set(sd->self, EINA_TRUE);
 }
 
 static void
 _cb_ctxp_dismissed(void *data EINA_UNUSED, Evas_Object *obj,
                    void *event EINA_UNUSED)
 {
+   Termio *sd = data;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
 
@@ -895,7 +897,12 @@ static void
 _cb_ctxp_link_preview(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
    _activate_link(term, EINA_TRUE);
+
+   sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
 
@@ -903,7 +910,11 @@ static void
 _cb_ctxp_link_open(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    _activate_link(term, EINA_FALSE);
+
+   sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
 
@@ -915,6 +926,8 @@ _cb_ctxp_link_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(sd->link.string);
    _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
+
+   sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
 
@@ -3398,8 +3411,6 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->ctxpopup) return; /* ctxp triggers focus out we should ignore */
-
    edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
@@ -3412,6 +3423,7 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         ecore_imf_context_input_panel_hide(sd->khdl.imf);
      }
    _remove_links(sd, obj);
+   term_unfocus(sd->term);
 }
 
 static void
@@ -3921,7 +3933,11 @@ _handle_mouse_down_single_click(Termio *sd,
 static void
 _cb_ctxp_sel_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
+   Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+
    termio_take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+   sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
 
@@ -3929,7 +3945,6 @@ static void
 _handle_right_click(Evas_Object *obj, Evas_Event_Mouse_Down *ev, Termio *sd,
                     int cx, int cy)
 {
-   elm_object_focus_set(obj, EINA_TRUE);
    if (_mouse_in_selection(sd, cx, cy))
      {
         Evas_Object *ctxp;

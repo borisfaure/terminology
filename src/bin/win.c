@@ -459,6 +459,7 @@ static Eina_Bool
 _win_is_focused(Win *wn)
 {
    Term_Container *tc;
+
    if (!wn)
      return EINA_FALSE;
 
@@ -2669,6 +2670,18 @@ _term_focus(Term *term)
 
    tc = term->container;
    tc->focus(tc, tc);
+}
+
+void
+term_unfocus(Term *term)
+{
+   Term_Container *tc;
+
+   if (!_term_is_focused(term))
+     return;
+
+   tc = term->container;
+   tc->unfocus(tc, tc);
 }
 
 Term *
