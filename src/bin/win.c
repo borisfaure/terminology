@@ -816,12 +816,14 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
 
    wn = (Win*) tc;
 
-   tc->is_focused = EINA_FALSE;
    if (relative != wn->child)
-     wn->child->unfocus(wn->child, tc);
+     {
+        tc->is_focused = EINA_FALSE;
+        wn->child->unfocus(wn->child, tc);
 
-   if ((wn->cmdbox_up) && (wn->cmdbox))
-     elm_object_focus_set(wn->cmdbox, EINA_FALSE);
+        if ((wn->cmdbox_up) && (wn->cmdbox))
+          elm_object_focus_set(wn->cmdbox, EINA_FALSE);
+     }
 }
 
 static void
@@ -3781,6 +3783,7 @@ static void
 _cb_options_done(void *data)
 {
    Win *wn = data;
+   Term_Container *tc = (Term_Container*) wn;
    Eina_List *l;
    Term *term;
 
@@ -3791,8 +3794,10 @@ _cb_options_done(void *data)
           {
              elm_object_focus_set(term->termio, EINA_TRUE);
              termio_event_feed_mouse_in(term->termio);
+             return;
           }
      }
+   tc->focus(tc, tc);
 }
 
 static void
