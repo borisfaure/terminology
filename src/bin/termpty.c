@@ -307,7 +307,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->h = h;
    ty->backmax = backscroll;
 
-   _termpty_reset_state(ty);
+   termpty_reset_state(ty);
 
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)

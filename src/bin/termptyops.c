@@ -20,14 +20,14 @@
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
 
-static void
-_text_clear(Termpty *ty, Termcell *cells, int count, int val, Eina_Bool inherit_att)
+void
+termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
 {
    Termcell src;
 
    memset(&src, 0, sizeof(src));
-   src.codepoint = val;
-   if (inherit_att) src.att = ty->termstate.att;
+   src.codepoint = 0;
+   src.att = ty->termstate.att;
    termpty_cell_fill(ty, &src, cells, count);
 }
 
@@ -60,7 +60,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 }
 
 void
-_termpty_text_scroll(Termpty *ty, Eina_Bool clear)
+termpty_text_scroll(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells = NULL, *cells2;
    int y, start_y = 0, end_y = ty->h - 1;
@@ -82,7 +82,7 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
        // screen is a circular buffer now
        cells = &(ty->screen[ty->circular_offset * ty->w]);
        if (clear)
-          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+          termpty_cells_clear(ty, cells, ty->w);
 
        ty->circular_offset++;
        if (ty->circular_offset >= ty->h)
@@ -98,12 +98,12 @@ _termpty_text_scroll(Termpty *ty, Eina_Bool clear)
             termpty_cell_copy(ty, cells, cells2, ty->w);
          }
        if (clear)
-          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+          termpty_cells_clear(ty, cells, ty->w);
      }
 }
 
 void
-_termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
+termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells, *cells2 = NULL;
    int y, start_y = 0, end_y = ty->h - 1;
@@ -125,7 +125,7 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
 
        cells = &(ty->screen[ty->circular_offset * ty->w]);
        if (clear)
-          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+          termpty_cells_clear(ty, cells, ty->w);
      }
    else
      {
@@ -137,38 +137,38 @@ _termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
             termpty_cell_copy(ty, cells, cells2, ty->w);
          }
        if (clear)
-          _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+          termpty_cells_clear(ty, cells, ty->w);
      }
 }
 
 void
-_termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
+termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {
    int e = ty->h;
 
    if (ty->termstate.scroll_y2 != 0) e = ty->termstate.scroll_y2;
    if (ty->cursor_state.cy >= e)
      {
-        _termpty_text_scroll(ty, clear);
+        termpty_text_scroll(ty, clear);
         ty->cursor_state.cy = e - 1;
      }
 }
 
 void
-_termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
+termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
 {
    int b = 0;
 
    if (ty->termstate.scroll_y1 != 0) b = ty->termstate.scroll_y1;
    if (ty->cursor_state.cy < b)
      {
-        _termpty_text_scroll_rev(ty, clear);
+        termpty_text_scroll_rev(ty, clear);
         ty->cursor_state.cy = b;
      }
 }
 
 void
-_termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
+termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
    Termcell *cells;
    int i, j;
@@ -186,7 +186,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->termstate.wrapnext = 0;
              ty->cursor_state.cx = 0;
              ty->cursor_state.cy++;
-             _termpty_text_scroll_test(ty, EINA_TRUE);
+             termpty_text_scroll_test(ty, EINA_TRUE);
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
           }
         if (ty->termstate.insert)
@@ -242,7 +242,7 @@ _termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 }
 
 void
-_termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
+termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
 {
    Termcell *cells;
    int n = 0;
@@ -266,18 +266,18 @@ _termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
    cells = &(TERMPTY_SCREEN(ty, x, y));
    if (n > limit) n = limit;
    termio_content_change(ty->obj, x, y, n);
-   _text_clear(ty, cells, n, 0, EINA_TRUE);
+   termpty_cells_clear(ty, cells, n);
 }
 
 void
-_termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
+termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 {
    Termcell *cells;
 
    switch (mode)
      {
       case TERMPTY_CLR_END:
-        _termpty_clear_line(ty, mode, ty->w);
+        termpty_clear_line(ty, mode, ty->w);
         if (ty->cursor_state.cy < (ty->h - 1))
           {
              int l = ty->h - (ty->cursor_state.cy + 1);
@@ -287,7 +287,7 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
              while (l)
                {
                   cells = &(TERMPTY_SCREEN(ty, 0, (ty->cursor_state.cy + l)));
-                  _text_clear(ty, cells, ty->w, 0, EINA_TRUE);
+                  termpty_cells_clear(ty, cells, ty->w);
                   l--;
                }
           }
@@ -304,22 +304,22 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 
              if (y < ty->h)
                {
-                  _text_clear(ty, cells, ty->w * ty->cursor_state.cy, 0, EINA_TRUE);
+                  termpty_cells_clear(ty, cells, ty->w * ty->cursor_state.cy);
                }
              else
                {
                   int yt = y % ty->w;
                   int yb = ty->h - ty->circular_offset;
 
-                  _text_clear(ty, cells, ty->w * yb, 0, EINA_TRUE);
-                  _text_clear(ty, ty->screen, ty->w * yt, 0, EINA_TRUE);
+                  termpty_cells_clear(ty, cells, ty->w * yb);
+                  termpty_cells_clear(ty, ty->screen, ty->w * yt);
                }
           }
-        _termpty_clear_line(ty, mode, ty->w);
+        termpty_clear_line(ty, mode, ty->w);
         break;
       case TERMPTY_CLR_ALL:
         ty->circular_offset = 0;
-        _text_clear(ty, ty->screen, ty->w * ty->h, 0, EINA_TRUE);
+        termpty_cells_clear(ty, ty->screen, ty->w * ty->h);
         ty->termstate.scroll_y2 = 0;
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
@@ -330,14 +330,14 @@ _termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 }
 
 void
-_termpty_clear_all(Termpty *ty)
+termpty_clear_all(Termpty *ty)
 {
    if (!ty->screen) return;
    termpty_cell_fill(ty, NULL, ty->screen, ty->w * ty->h);
 }
 
 void
-_termpty_reset_att(Termatt *att)
+termpty_reset_att(Termatt *att)
 {
    att->fg = COL_DEF;
    att->bg = COL_DEF;
@@ -365,7 +365,7 @@ _termpty_reset_att(Termatt *att)
 }
 
 void
-_termpty_reset_state(Termpty *ty)
+termpty_reset_state(Termpty *ty)
 {
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
@@ -373,7 +373,7 @@ _termpty_reset_state(Termpty *ty)
    ty->termstate.scroll_y2 = 0;
    ty->termstate.had_cr_x = 0;
    ty->termstate.had_cr_y = 0;
-   _termpty_reset_att(&(ty->termstate.att));
+   termpty_reset_att(&(ty->termstate.att));
    ty->termstate.charset = 0;
    ty->termstate.charsetch = 'B';
    ty->termstate.chset[0] = 'B';
@@ -416,7 +416,7 @@ _termpty_reset_state(Termpty *ty)
 }
 
 void
-_termpty_cursor_copy(Termpty *ty, Eina_Bool save)
+termpty_cursor_copy(Termpty *ty, Eina_Bool save)
 {
    if (save)
      {
