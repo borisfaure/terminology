@@ -260,4 +260,12 @@ extern int _termpty_log_dom;
 #define TERMPTY_FMTCLR(Tatt) \
    (Tatt).autowrapped = (Tatt).newline = (Tatt).tab = 0
 
+#define TERMPTY_RESTRICT_FIELD(Field, Min, Max) \
+   do {                                         \
+   if (Field >= Max)                            \
+     Field = Max - 1;                           \
+   else if (Field < Min)                        \
+     Field = Min;                               \
+   } while (0)
+
 #endif
