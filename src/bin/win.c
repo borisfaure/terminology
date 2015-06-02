@@ -15,6 +15,21 @@
 #include "controls.h"
 #include "term_container.h"
 
+/* specific log domain to help debug only terminal code parser */
+int _win_log_dom = -1;
+
+#undef CRITICAL
+#undef ERR
+#undef WRN
+#undef INF
+#undef DBG
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_win_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(_win_log_dom, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(_win_log_dom, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(_win_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_win_log_dom, __VA_ARGS__)
+
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
   #define PANES_TOP "left"
   #define PANES_BOTTOM "right"
@@ -303,6 +318,8 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
    solo = (Solo*) tc;
    term = solo->term;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (!tc->is_focused)
      return;
 
@@ -329,6 +346,8 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    solo = (Solo*) tc;
    term = solo->term;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (tc->is_focused)
      return;
 
@@ -411,6 +430,8 @@ _cb_win_focus_in(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term *term;
 
+   DBG("tc:%p tc->is_focused:%d",
+       tc, tc->is_focused);
    if (!tc->is_focused)
      elm_win_urgent_set(wn->win, EINA_FALSE);
    tc->is_focused = EINA_TRUE;
@@ -452,6 +473,8 @@ _cb_win_focus_out(void *data, Evas_Object *obj EINA_UNUSED,
    Win *wn = data;
    Term_Container *tc = (Term_Container*) wn;
 
+   DBG("tc:%p tc->is_focused:%d",
+       tc, tc->is_focused);
    tc->unfocus(tc, NULL);
 }
 
@@ -465,6 +488,8 @@ _win_is_focused(Win *wn)
 
    tc = (Term_Container*) wn;
 
+   DBG("tc:%p tc->is_focused:%d",
+       tc, tc->is_focused);
    return tc->is_focused;
 }
 
@@ -795,13 +820,15 @@ _win_close(Term_Container *tc, Term_Container *child EINA_UNUSED)
 }
 
 static void
-_win_focus(Term_Container *tc, Term_Container *child)
+_win_focus(Term_Container *tc, Term_Container *relative)
 {
    Win *wn;
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
-   if (child != wn->child)
+   DBG("tc:%p tc->is_focused:%d from_child:%d",
+       tc, tc->is_focused, wn->child == relative);
+   if (relative != wn->child)
      wn->child->focus(wn->child, tc);
 
    if (!tc->is_focused) elm_win_urgent_set(wn->win, EINA_FALSE);
@@ -816,6 +843,8 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
 
    wn = (Win*) tc;
 
+   DBG("tc:%p tc->is_focused:%d from_child:%d",
+       tc, tc->is_focused, wn->child == relative);
    if (relative != wn->child)
      {
         tc->is_focused = EINA_FALSE;
@@ -1260,6 +1289,8 @@ _split_focus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (tc->parent == relative)
      {
         tc->is_focused = EINA_TRUE;
@@ -1283,6 +1314,8 @@ _split_unfocus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (!tc->is_focused)
      return;
 
@@ -2276,6 +2309,8 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (tc->parent == relative)
      {
         if (!tc->is_focused)
@@ -2317,6 +2352,8 @@ _tabs_unfocus(Term_Container *tc, Term_Container *relative)
 {
    Tabs *tabs;
 
+   DBG("tc:%p tc->is_focused:%d from_parent:%d",
+       tc, tc->is_focused, tc->parent == relative);
    if (!tc->is_focused)
      return;
 
@@ -2634,6 +2671,7 @@ _term_is_focused(Term *term)
    if (!tc)
      return EINA_FALSE;
 
+   DBG("tc:%p tc->is_focused:%d", tc, tc->is_focused);
    return tc->is_focused;
 }
 
@@ -2671,6 +2709,7 @@ _term_focus(Term *term)
      return;
 
    tc = term->container;
+   DBG("tc:%p", tc);
    tc->focus(tc, tc);
 }
 
@@ -2683,6 +2722,7 @@ term_unfocus(Term *term)
      return;
 
    tc = term->container;
+   DBG("tc:%p", tc);
    tc->unfocus(tc, tc);
 }
 
@@ -3797,6 +3837,7 @@ _cb_options_done(void *data)
              return;
           }
      }
+   DBG("tc:%p", tc);
    tc->focus(tc, tc);
 }
 
@@ -3859,6 +3900,12 @@ term_new(Win *wn, Config *config, const char *cmd,
    if (!config) abort();
 
    /* TODO: clean up that */
+   if (_win_log_dom < 0)
+     {
+        _win_log_dom = eina_log_domain_register("win", NULL);
+        if (_win_log_dom < 0)
+          EINA_LOG_CRIT("Could not create logging domain '%s'.", "win");
+     }
    termpty_init();
    miniview_init();
    gravatar_init();
@@ -3983,6 +4030,11 @@ windows_free(void)
         wn = eina_list_data_get(wins);
         win_free(wn);
      }
+
+   /* TODO: ugly */
+   if (_win_log_dom < 0) return;
+   eina_log_domain_unregister(_win_log_dom);
+   _win_log_dom = -1;
 }
 
 void
