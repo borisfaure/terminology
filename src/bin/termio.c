@@ -5127,7 +5127,34 @@ _smart_del(Evas_Object *obj)
         ecore_imf_context_del(sd->khdl.imf);
      }
    if (sd->cursor.obj) evas_object_del(sd->cursor.obj);
-   if (sd->event) evas_object_del(sd->event);
+   if (sd->event)
+     {
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _smart_cb_mouse_down);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_UP,
+                                       _smart_cb_mouse_up);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _smart_cb_mouse_move);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_IN,
+                                       _smart_cb_mouse_in);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_OUT,
+                                       _smart_cb_mouse_out);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_WHEEL,
+                                       _smart_cb_mouse_wheel);
+
+        evas_object_del(sd->event);
+     }
+   if (sd->self)
+     {
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_DOWN,
+                                       _smart_cb_key_down);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_UP,
+                                       _smart_cb_key_up);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_IN,
+                                       _smart_cb_focus_in);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_OUT,
+                                       _smart_cb_focus_out);
+     }
    if (sd->sel.top) evas_object_del(sd->sel.top);
    if (sd->sel.bottom) evas_object_del(sd->sel.bottom);
    if (sd->sel.theme) evas_object_del(sd->sel.theme);
