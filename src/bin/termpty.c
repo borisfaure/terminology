@@ -270,14 +270,21 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
 static void
 _limit_coord(Termpty *ty)
 {
-   TERMPTY_RESTRICT_FIELD(ty->termstate.had_cr_x, 0, ty->w);
-   TERMPTY_RESTRICT_FIELD(ty->termstate.had_cr_y, 0, ty->h);
+   ty->termstate.wrapnext = 0;
+   if (ty->termstate.had_cr_x >= ty->w)
+     ty->termstate.had_cr_x = ty->w - 1;
+   if (ty->termstate.had_cr_y >= ty->h)
+     ty->termstate.had_cr_y = ty->h - 1;
 
-   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+   if (ty->cursor_state.cx >= ty->w)
+     ty->cursor_state.cx = ty->w - 1;
+   if (ty->cursor_state.cy >= ty->h)
+     ty->cursor_state.cy = ty->h - 1;
 
-   TERMPTY_RESTRICT_FIELD(ty->cursor_save.cx, 0, ty->w);
-   TERMPTY_RESTRICT_FIELD(ty->cursor_save.cy, 0, ty->h);
+   if (ty->cursor_save.cx >= ty->w)
+     ty->cursor_save.cx = ty->w - 1;
+   if (ty->cursor_save.cy >= ty->h)
+     ty->cursor_save.cy = ty->h - 1;
 }
 
 Termpty *
@@ -890,10 +897,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    ty->cursor_state.cy = (new_cy + new_h - ty->circular_offset) % new_h;
 
-   if (altbuf)
-     termpty_screen_swap(ty);
-
-   ty->termstate.wrapnext = 0;
+   if (altbuf) termpty_screen_swap(ty);
 
    _limit_coord(ty);
 

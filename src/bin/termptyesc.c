@@ -66,7 +66,7 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          ty->termstate.had_cr = 0;
          ty->termstate.wrapnext = 0;
          ty->cursor_state.cx--;
-         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+         if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
          return;
       case 0x09: // HT  '\t' (horizontal tab)
          DBG("->HT");
@@ -75,7 +75,8 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          ty->termstate.wrapnext = 0;
          ty->cursor_state.cx += 8;
          ty->cursor_state.cx = (ty->cursor_state.cx / 8) * 8;
-         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+         if (ty->cursor_state.cx >= ty->w)
+           ty->cursor_state.cx = ty->w - 1;
          return;
       case 0x0a: // LF  '\n' (new line)
       case 0x0b: // VT  '\v' (vertical tab)
@@ -90,7 +91,6 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          ty->termstate.wrapnext = 0;
          if (ty->termstate.crlf) ty->cursor_state.cx = 0;
          ty->cursor_state.cy++;
-         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
          termpty_text_scroll_test(ty, EINA_TRUE);
          return;
       case 0x0d: // CR  '\r' (carriage ret)
@@ -682,7 +682,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                termpty_text_append(ty, blank, 1);
              ty->termstate.insert = pi;
              ty->cursor_state.cx = cx;
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
         break;
       case 'A': // cursor up N
@@ -692,7 +691,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("cursor up %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         break;
       case 'B': // cursor down N
         arg = _csi_arg_get(&b);
@@ -700,7 +698,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("cursor down %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         break;
       case 'D': // cursor left N
         arg = _csi_arg_get(&b);
@@ -708,8 +705,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("cursor left %d", arg);
         ty->termstate.wrapnext = 0;
         for (i = 0; i < arg; i++)
-          ty->cursor_state.cx--;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+          {
+             ty->cursor_state.cx--;
+             if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
+          }
         break;
       case 'C': // cursor right N
       case 'a': // cursor right N
@@ -718,8 +717,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("cursor right %d", arg);
         ty->termstate.wrapnext = 0;
         for (i = 0; i < arg; i++)
-          ty->cursor_state.cx++;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+          {
+             ty->cursor_state.cx++;
+             if (ty->cursor_state.cx >= ty->w) ty->cursor_state.cx = ty->w - 1;
+          }
         break;
       case 'H': // cursor pos set
       case 'f': // cursor pos set
@@ -739,7 +740,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (b)
                {
                   ty->cursor_state.cy = arg;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
                   arg = _csi_arg_get(&b);
                   if (arg < 1) arg = 1;
                   arg--;
@@ -747,14 +747,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              else arg = 0;
 
              if (arg >= ty->w) arg = ty->w - 1;
-             if (b)
-               {
-                  ty->cursor_state.cx = arg;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-               }
+             if (b) ty->cursor_state.cx = arg;
           }
         ty->cursor_state.cy += ty->termstate.margin_top;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
        break;
       case 'G': // to column N
         arg = _csi_arg_get(&b);
@@ -762,7 +757,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("to column %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx = arg - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+        if (ty->cursor_state.cx < 0) ty->cursor_state.cx = 0;
+        else if (ty->cursor_state.cx >= ty->w) ty->cursor_state.cx = ty->w - 1;
         break;
       case 'd': // to row N
         arg = _csi_arg_get(&b);
@@ -770,7 +766,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("to row %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = arg - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
         break;
       case 'E': // down relative N rows, and to col 0
         arg = _csi_arg_get(&b);
@@ -778,7 +775,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("down relative %d rows, and to col 0", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy += arg;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
         ty->cursor_state.cx = 0;
         break;
       case 'F': // up relative N rows, and to col 0
@@ -787,7 +785,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         DBG("up relative %d rows, and to col 0", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy -= arg;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->cursor_state.cy < 0) ty->cursor_state.cy = 0;
+        else if (ty->cursor_state.cy >= ty->h) ty->cursor_state.cy = ty->h - 1;
         ty->cursor_state.cx = 0;
         break;
       case 'X': // erase N chars
@@ -1030,9 +1029,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           if (!arg)
             {
                ty->cursor_state.cx = cx;
-               TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
                ty->cursor_state.cy = cy;
-               TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
             }
        }
        break;
@@ -1572,20 +1569,17 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'M': // move to prev line
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy--;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         termpty_text_scroll_rev_test(ty, EINA_TRUE);
         return 1;
       case 'D': // move to next line
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy++;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'E': // add \n\r
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx = 0;
         ty->cursor_state.cy++;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'Z': // same a 'ESC [ Pn c'

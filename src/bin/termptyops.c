@@ -7,7 +7,6 @@
 #include "termptygfx.h"
 #include "termptysave.h"
 #include "miniview.h"
-#include <assert.h>
 
 #undef CRITICAL
 #undef ERR
@@ -152,7 +151,6 @@ termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
      {
         termpty_text_scroll(ty, clear);
         ty->cursor_state.cy = e - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
      }
 }
 
@@ -166,7 +164,6 @@ termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
      {
         termpty_text_scroll_rev(ty, clear);
         ty->cursor_state.cy = b;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
      }
 }
 
@@ -189,7 +186,6 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->termstate.wrapnext = 0;
              ty->cursor_state.cx = 0;
              ty->cursor_state.cy++;
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
              termpty_text_scroll_test(ty, EINA_TRUE);
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
           }
@@ -224,10 +220,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              if (EINA_UNLIKELY(ty->cursor_state.cx >= (ty->w - offset)))
                ty->termstate.wrapnext = 1;
              else
-               {
-                  ty->cursor_state.cx += offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-               }
+               ty->cursor_state.cx += offset;
           }
         else
           {
@@ -242,10 +235,8 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              if (ty->cursor_state.cx > (ty->w - offset))
                {
                   ty->cursor_state.cx = ty->w - offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
                   return;
                }
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
      }
 }
@@ -256,8 +247,6 @@ termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
    Termcell *cells;
    int n = 0;
    Evas_Coord x = 0, y = ty->cursor_state.cy;
-
-   assert (y >= 0 && y < ty->h);
 
    switch (mode)
      {
