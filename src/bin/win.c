@@ -2933,16 +2933,19 @@ _media_http_head_complete(void *data, int kind EINA_UNUSED, void *event_info)
              unsigned int len;
 
              str += strlen(_LOCATION_HDR);
-             eina_stringshare_del(ty_head->src);
+             if (*str != '/')
+               {
+                  eina_stringshare_del(ty_head->src);
 
-             /* skip the crlf */
-             len = strlen(str);
-             if (len <= 2)
-               goto error;
+                  /* skip the crlf */
+                  len = strlen(str);
+                  if (len <= 2)
+                    goto error;
 
-             ty_head->src = eina_stringshare_add_length(str, len - 2);
-             if (!ty_head->src)
-               goto error;
+                  ty_head->src = eina_stringshare_add_length(str, len - 2);
+                  if (!ty_head->src)
+                    goto error;
+               }
           }
         else if (!strncmp(str, _CONTENT_TYPE_HDR, strlen(_CONTENT_TYPE_HDR)))
           {
