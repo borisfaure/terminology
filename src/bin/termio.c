@@ -3422,7 +3422,8 @@ _smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         ecore_imf_context_focus_out(sd->khdl.imf);
         ecore_imf_context_input_panel_hide(sd->khdl.imf);
      }
-   _remove_links(sd, obj);
+   if (!sd->ctxpopup)
+     _remove_links(sd, obj);
    term_unfocus(sd->term);
 }
 
