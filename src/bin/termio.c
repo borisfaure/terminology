@@ -302,14 +302,6 @@ termio_theme_set(Evas_Object *obj, Evas_Object *theme)
    if (theme) sd->theme = theme;
 }
 
-Evas_Object *
-termio_theme_get(Evas_Object *obj)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   return sd->theme;
-}
-
 void
 termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
 {
