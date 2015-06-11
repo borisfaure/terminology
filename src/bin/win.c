@@ -161,11 +161,11 @@ static void _tabs_refresh(Tabs *tabs);
 /* {{{ Solo */
 
 static Evas_Object *
-_solo_get_evas_object(Term_Container *container)
+_solo_get_evas_object(Term_Container *tc)
 {
    Solo *solo;
-   assert (container->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)container;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
 
    return solo->term->bg;
 }
@@ -782,7 +782,6 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    Win *wn;
    Evas_Object *base;
    Evas_Object *o;
-   Evas_Coord x, y, w, h;
 
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
@@ -791,16 +790,13 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
 
    if (orig)
      {
-        o = edje_object_part_swallow_get(base, "terminology.content");
-        edje_object_part_unswallow(base, o);
-        evas_object_hide(o);
         o = orig->get_evas_object(orig);
-        evas_object_geometry_get(o, &x, &y, &w, &h);
+        edje_object_part_unswallow(base, o);
      }
+
    o = new_child->get_evas_object(new_child);
    edje_object_part_swallow(base, "terminology.content", o);
-   if (orig)
-     evas_object_geometry_set(o, x, y, w, h);
+
    evas_object_show(o);
    new_child->parent = tc;
    wn->child = new_child;
@@ -893,8 +889,9 @@ _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
    Term *tm_new, *tm;
    Term_Container *tc_split, *tc_solo_new;
    Win *wn;
-   Evas_Object *obj_split;
    char buf[PATH_MAX], *wdir = NULL;
+   Evas_Object *base;
+   Evas_Object *o;
 
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
    wn = (Win*) tc;
@@ -908,14 +905,14 @@ _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
    tc_solo_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
+   base = win_base_get(wn);
+   o = child->get_evas_object(child);
+   edje_object_part_unswallow(base, o);
+
    tc_split = _split_new(child, tc_solo_new, is_horizontal);
 
-   obj_split = tc_split->get_evas_object(tc_split);
-
    tc_split->is_focused = tc->is_focused;
-   tc->swallow(tc, child, tc_split);
-
-   evas_object_show(obj_split);
+   tc->swallow(tc, NULL, tc_split);
 }
 
 static void
@@ -1173,7 +1170,6 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
 {
    Split *split;
    Evas_Object *o;
-   Evas_Coord x, y, w, h;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
@@ -1181,7 +1177,6 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
    assert (orig && (orig == split->tc1 || orig == split->tc2));
 
    o = orig->get_evas_object(orig);
-   evas_object_geometry_get(o, &x, &y, &w, &h);
    evas_object_hide(o);
 
    if (orig == split->last_focus)
@@ -1201,7 +1196,6 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
         split->tc2 = new_child;
      }
    new_child->parent = tc;
-   evas_object_geometry_set(o, x, y, w, h);
    evas_object_show(o);
    evas_object_show(split->panes);
 
@@ -1253,12 +1247,15 @@ _split_close(Term_Container *tc, Term_Container *child)
 {
    Split *split;
    Term_Container *parent, *other_child;
+   Evas_Object *top, *bottom;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
 
-   elm_object_part_content_unset(split->panes, PANES_TOP);
-   elm_object_part_content_unset(split->panes, PANES_BOTTOM);
+   top = elm_object_part_content_unset(split->panes, PANES_TOP);
+   bottom = elm_object_part_content_unset(split->panes, PANES_BOTTOM);
+   evas_object_hide(top);
+   evas_object_hide(bottom);
 
    parent = tc->parent;
    other_child = (child == split->tc1) ? split->tc2 : split->tc1;
@@ -1360,11 +1357,13 @@ _split_split(Term_Container *tc, Term_Container *child,
 {
    Term *tm_new, *tm;
    Term_Container *tc_split, *tc_solo_new;
+   Split *split;
    Win *wn;
    Evas_Object *obj_split;
    char buf[PATH_MAX], *wdir = NULL;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split *)tc;
    wn = tc->wn;
 
    tm = child->focused_term_get(child);
@@ -1375,6 +1374,11 @@ _split_split(Term_Container *tc, Term_Container *child,
                      80, 24, EINA_FALSE);
    tc_solo_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
+
+   if (child == split->tc1)
+        elm_object_part_content_unset(split->panes, PANES_TOP);
+   else
+        elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
    tc_split = _split_new(child, tc_solo_new, is_horizontal);
 
@@ -3639,6 +3643,8 @@ _term_free(Term *term)
    term->popmedia_deleted = EINA_FALSE;
    evas_object_del(term->termio);
    term->termio = NULL;
+
+   edje_object_part_unswallow(term->bg, term->base);
    evas_object_del(term->base);
    term->base = NULL;
    evas_object_del(term->bg);
