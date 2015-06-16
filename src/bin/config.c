@@ -556,8 +556,8 @@ config_load(const char *key)
 
    if (config)
      config->config_key = eina_stringshare_add(key); /* not in eet */
-   
-	return config;
+
+   return config;
 }
 
 Config *
@@ -576,7 +576,7 @@ config_fork(Config *config)
      EINA_LIST_FOREACH(config->fld, __l, __s) \
        config2->fld = eina_list_append \
          (config2->fld, eina_stringshare_add(__s)); } while (0)
-   
+
    CPY(version);
    SCPY(font.name);
    CPY(font.size);
