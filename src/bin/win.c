@@ -2709,7 +2709,7 @@ _term_focus(Term *term)
 {
    Term_Container *tc;
 
-   if (_term_is_focused(term) || !_win_is_focused(term->wn))
+   if (_term_is_focused(term))
      return;
 
    tc = term->container;
