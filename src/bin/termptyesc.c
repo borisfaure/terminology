@@ -25,10 +25,66 @@
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
 #define ESC 033 // Escape
+#define DEL 127
 
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
  * if not enough bytes could be read
  */
+
+static const char *ASCII_CHARS_TABLE[] =
+{
+   "NUL", // '\0'
+   "SOH", // '\001'
+   "STX", // '\002'
+   "ETX", // '\003'
+   "EOT", // '\004'
+   "ENQ", // '\005'
+   "ACK", // '\006'
+   "BEL", // '\007'
+   "BS",  // '\010'
+   "HT",  // '\011'
+   "LF",  // '\012'
+   "VT",  // '\013'
+   "FF",  // '\014'
+   "CR" , // '\015'
+   "SO",  // '\016'
+   "SI",  // '\017'
+   "DLE", // '\020'
+   "DC1", // '\021'
+   "DC2", // '\022'
+   "DC3", // '\023'
+   "DC4", // '\024'
+   "NAK", // '\025'
+   "SYN", // '\026'
+   "ETB", // '\027'
+   "CAN", // '\030'
+   "EM",  // '\031'
+   "SUB", // '\032'
+   "ESC", // '\033'
+   "FS",  // '\034'
+   "GS",  // '\035'
+   "RS",  // '\036'
+   "US"   // '\037'
+};
+
+static const char *
+_safechar(unsigned int c)
+{
+   static char _str[9];
+
+   // This should avoid 'BEL' and 'ESC' in particular, which would
+   // have side effects in the parent terminal (esp. ESC).
+   if (c < (sizeof(ASCII_CHARS_TABLE) / sizeof(ASCII_CHARS_TABLE[0])))
+     return ASCII_CHARS_TABLE[c];
+
+   if (c == DEL)
+     return "DEL";
+
+   // The rest should be safe (?)
+   snprintf(_str, 9, "%c", c);
+   _str[8] = '\0';
+   return _str;
+}
 
 static int
 _csi_arg_get(Eina_Unicode **ptr)
@@ -660,7 +716,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    if (cc == ce) return 0;
    *b = 0;
    b = buf;
-   DBG(" CSI: '%c' args '%s'", (int) *cc, (char *) buf);
+   DBG(" CSI: '%s' args '%s'", _safechar(*cc), (char *) buf);
    switch (*cc)
      {
       case 'm': // color set
@@ -1052,7 +1108,7 @@ unhandled:
              else
                eina_strbuf_append_char(bf, c[i]);
           }
-        ERR("unhandled CSI '%c': %s", (int) *cc, eina_strbuf_string_get(bf));
+        ERR("unhandled CSI '%s': %s", _safechar(*cc), eina_strbuf_string_get(bf));
         eina_strbuf_free(bf);
      }
    cc++;
@@ -1491,8 +1547,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
          /* Request status string */
          if (len > 1 && buf[1] != 'q')
            {
-              ERR("invalid/unhandled dsc esc '$%c' (expected '$q')",
-                  (int) buf[1]);
+              ERR("invalid/unhandled dsc esc '$%s' (expected '$q')", _safechar(buf[1]));
               goto end;
            }
          if (len < 4)
@@ -1513,7 +1568,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
                  }
                else
                  {
-                    ERR("invalid/unhandled dsc esc '$q\"%c'", (int) buf[3]);
+                    ERR("invalid/unhandled dsc esc '$q\"%s'", _safechar(buf[3]));
                     goto end;
                  }
                break;
@@ -1522,15 +1577,14 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
             case 'r': /* DECSTBM */
                /* TODO: */
             default:
-               ERR("unhandled dsc request status string '$q%c'",
-                   (int) buf[2]);
+               ERR("unhandled dsc request status string '$q%s'", _safechar(buf[2]));
                goto end;
            }
          /* TODO */
          break;
       default:
         // many others
-        ERR("Unhandled DCS escape '%c'", (int) buf[0]);
+        ERR("Unhandled DCS escape '%s'", _safechar(buf[0]));
         break;
      }
 end:
@@ -1543,7 +1597,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    int len = ce - c;
 
    if (len < 1) return 0;
-   DBG("ESC: '%c'", (int) c[0]);
+   DBG("ESC: '%s'", _safechar(c[0]));
    switch (c[0])
      {
       case '[':
@@ -1664,7 +1718,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 1;
  */
       default:
-        ERR("Unhandled escape '%c' (0x%02x)", (int) c[0], (unsigned int) c[0]);
+        ERR("Unhandled escape '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
         return 1;
      }
    return 0;
@@ -1685,7 +1739,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
         if ((c[j] < ' ') || (c[j] >= 0x7f))
           printf("\033[35m%08x\033[0m", c[j]);
         else
-          printf("%c", c[j]);
+          printf("%s", _safechar(c[j]));
      }
    printf("\n");
  */
@@ -1839,7 +1893,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f))
      {
-        DBG("%c", (int) *cc);
+        DBG("%s", _safechar(*cc));
         cc++;
         len++;
      }
