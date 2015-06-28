@@ -99,15 +99,19 @@ struct _Termpty
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;
-   Termsave *back;
-   unsigned char oldbuf[4];
-   Eina_Unicode *buf;
-   size_t buflen;
-   int w, h;
-   int fd, slavefd;
    int circular_offset;
    int circular_offset2;
+   Eina_Unicode *buf;
+   size_t buflen;
+   unsigned char oldbuf[4];
+   Termsave *back;
    int backsize, backpos;
+   struct {
+        int screen_y;
+        int backlog_y;
+   } backlog_beacon;
+   int w, h;
+   int fd, slavefd;
    struct {
       int curid;
       Eina_Hash *blocks;
@@ -230,12 +234,14 @@ Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 void       termpty_free(Termpty *ty);
 void       termpty_cellcomp_freeze(Termpty *ty);
 void       termpty_cellcomp_thaw(Termpty *ty);
+
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int new_w, int new_h);
 void       termpty_backscroll_set(Termpty *ty, int size);
 void       termpty_backscroll_adjust(Termpty *ty, int *scroll);
+ssize_t    termpty_backscroll_length(Termpty *ty);
 
 pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);

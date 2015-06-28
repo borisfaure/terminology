@@ -626,7 +626,49 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 }
 
 #define BACKLOG_ROW_GET(Ty, Y) \
-   (&Ty->back[(Ty->backsize + ty->backpos - (Y)) % Ty->backsize])
+   (&Ty->back[(Ty->backsize + ty->backpos - ((Y) - 1 )) % Ty->backsize])
+
+
+#if 0
+static void
+verify_beacon(Termpty *ty)
+{
+   Termsave *ts;
+   int nb_lines;
+   int backlog_y = ty->backlog_beacon.backlog_y;
+   int screen_y = ty->backlog_beacon.screen_y;
+
+   assert(ty->backlog_beacon.screen_y >= 0);
+   assert(ty->backlog_beacon.backlog_y >= 0);
+   assert(ty->backlog_beacon.screen_y >= ty->backlog_beacon.backlog_y);
+
+   //ERR("FROM screen_y:%d backlog_y:%d",
+   //    screen_y, backlog_y);
+   while (backlog_y > 0)
+     {
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells)
+          {
+             ERR("went too far: screen_y:%d backlog_y:%d",
+                 screen_y, backlog_y);
+             return;
+          }
+
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        screen_y -= nb_lines;
+        backlog_y--;
+        //ERR("nb_lines:%d screen_y:%d backlog_y:%d ts->w:%d ty->w:%d",
+        //    nb_lines, screen_y, backlog_y, ts->w, ty->w);
+        assert(screen_y >= backlog_y);
+
+     }
+   //ERR("TO screen_y:%d backlog_y:%d",
+   //    screen_y, backlog_y);
+   assert (backlog_y == 0);
+   assert (screen_y == 0);
+}
+#endif
+
 
 void
 termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
@@ -643,19 +685,22 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    w = termpty_line_length(cells, w_max);
    if (ty->backsize >= 1)
      {
-        ts = BACKLOG_ROW_GET(ty, 0);
+        ts = BACKLOG_ROW_GET(ty, 1);
         if (!ts->cells)
           goto add_new_ts;
         /* TODO: RESIZE uncompress ? */
         if (ts->w && ts->cells[ts->w - 1].att.autowrapped)
           {
+             int old_len = ts->w;
              termpty_save_expand(ts, cells, w);
+             ty->backlog_beacon.screen_y += (ts->w + ty->w - 1) / ty->w
+                                          - (old_len + ty->w - 1) / ty->w;
              return;
           }
      }
 
 add_new_ts:
-   ts = BACKLOG_ROW_GET(ty, -1);
+   ts = BACKLOG_ROW_GET(ty, 0);
    ts = termpty_save_new(ts, w);
    if (!ts)
      return;
@@ -664,6 +709,14 @@ add_new_ts:
    if (ty->backpos >= ty->backsize)
      ty->backpos = 0;
    termpty_save_thaw();
+
+   ty->backlog_beacon.screen_y++;
+   ty->backlog_beacon.backlog_y++;
+   if (ty->backlog_beacon.backlog_y >= ty->backsize)
+     {
+        ty->backlog_beacon.screen_y = 0;
+        ty->backlog_beacon.backlog_y = 0;
+     }
 }
 
 
@@ -677,7 +730,7 @@ termpty_row_length(Termpty *ty, int y)
         Termcell *cells;
         if (y >= ty->h)
           {
-             ERR("invalid row given");
+             ERR("invalid row given: %d while ty->h=%d", y, ty->h);
              return 0;
           }
         cells = &(TERMPTY_SCREEN(ty, 0, y));
@@ -685,7 +738,8 @@ termpty_row_length(Termpty *ty, int y)
      }
    if ((y < -ty->backsize) || !ty->back)
      {
-        ERR("invalid row given");
+        ERR("invalid row given: %d; ty->back:%p ty->backsize:%d",
+            y, ty->back, ty->backsize);
         return 0;
      }
    ts = BACKLOG_ROW_GET(ty, y);
@@ -693,60 +747,119 @@ termpty_row_length(Termpty *ty, int y)
    return ts->cells ? ts->w : 0;
 }
 
-/* TODO: RESIZE reference point */
+ssize_t
+termpty_backscroll_length(Termpty *ty)
+{
+   int backlog_y = ty->backlog_beacon.backlog_y;
+   int screen_y = ty->backlog_beacon.screen_y;
+
+   if (!ty->backsize)
+     return 0;
+
+   while (42)
+     {
+        int nb_lines;
+        Termsave *ts;
+
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells || backlog_y >= ty->backsize)
+          return ty->backlog_beacon.screen_y;
+
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        ty->backlog_beacon.screen_y = screen_y;
+        ty->backlog_beacon.backlog_y = backlog_y;
+        screen_y += nb_lines;
+        backlog_y++;
+     }
+}
 
 void
 termpty_backscroll_adjust(Termpty *ty, int *scroll)
 {
-   Termsave *ts;
-   int y;
-   int screen_y;
+   int backlog_y = ty->backlog_beacon.backlog_y;
+   int screen_y = ty->backlog_beacon.screen_y;
 
    if (!ty->backsize || *scroll <= 0)
      {
         *scroll = 0;
         return;
      }
-   ERR("ty->backsize:%d ty->backpos:%d *scroll:%d",
-       ty->backsize, ty->backpos, *scroll);
-   /* TODO: RESIZE have a reference point? */
-   y = ty->backsize;
-   do
-     {
-        y--;
-        ts = BACKLOG_ROW_GET(ty, y);
-     }
-   while (!ts->cells);
-   ERR("y:%d", y);
-   if (*scroll <= y)
+   if (*scroll < screen_y)
      return;
-   screen_y = 0;
-   while (y >= 0)
+
+   while (42)
      {
         int nb_lines;
+        Termsave *ts;
 
-        ts = BACKLOG_ROW_GET(ty, y);
-        assert(ts != NULL);
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells || backlog_y >= ty->backsize)
+          {
+             *scroll = ty->backlog_beacon.screen_y;
+             return;
+          }
 
-        nb_lines = (ts->w + ty->w) / ty->w;
-        ERR("[%d] ts->w:%d ty->w:%d, nb_lines:%d",
-            y, ts->w, ty->w, nb_lines);
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        ty->backlog_beacon.screen_y = screen_y;
+        ty->backlog_beacon.backlog_y = backlog_y;
         screen_y += nb_lines;
-        y--;
+        backlog_y++;
      }
-
-   ERR("screen_y:%d", screen_y);
-   *scroll = screen_y;
 }
 
+static Termcell*
+_termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, int *wret)
+{
+   int backlog_y = ty->backlog_beacon.backlog_y;
+   int screen_y = ty->backlog_beacon.screen_y;
+   Eina_Bool going_forward = EINA_TRUE;
+
+   requested_y = -requested_y;
+
+   while (42) {
+        Termsave *ts;
+        int nb_lines;
+
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        assert (ts->cells);
+        if (!ts->cells)
+          {
+             ERR("went too far: requested_y:%d screen_y:%d backlog_y:%d",
+                 requested_y, screen_y, backlog_y);
+             return NULL;
+          }
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        if (!going_forward) {
+             screen_y -= nb_lines;
+        }
+
+        if ((screen_y <= requested_y) && (requested_y < screen_y + nb_lines))
+          {
+             int delta = screen_y + nb_lines - 1 - requested_y;
+             *wret = ts->w - delta * ty->w;
+             if (*wret > ts->w)
+               *wret = ts->w;
+             return &ts->cells[delta * ty->w];
+          }
+
+        if (requested_y > screen_y)
+          {
+             screen_y += nb_lines;
+             backlog_y++;
+          }
+        else
+          {
+             backlog_y--;
+             going_forward = EINA_FALSE;
+          }
+   }
+
+   return NULL;
+}
 
 Termcell *
 termpty_cellrow_get(Termpty *ty, int y_requested, int *wret)
 {
-   int screen_y = 0;
-   int backlog_y = 0;
-
-   //ERR("y_requested:%d", y_requested);
    if (y_requested >= 0)
      {
         if (y_requested >= ty->h)
@@ -757,38 +870,8 @@ termpty_cellrow_get(Termpty *ty, int y_requested, int *wret)
    if (!ty->back)
      return NULL;
 
-   y_requested = -y_requested;
-   while (backlog_y <= ty->backsize)
-     {
-        Termsave *ts;
-        int nb_lines;
+   return _termpty_cellrow_from_beacon_get(ty, y_requested, wret);
 
-        ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (!ts->cells)
-          {
-             //ERR("went too far: y_requested:%d screen_y:%d backlog_y:%d",
-             //    y_requested, screen_y, backlog_y);
-             return NULL;
-          }
-        nb_lines = (ts->w + ty->w) / ty->w;
-
-        /* TODO: uncompress */
-        /* TODO: optimize */
-
-        //ERR("y_requested:%d screen_y:%d nb_lines:%d backlog_y:%d",
-        //    y_requested, screen_y, nb_lines, backlog_y);
-        if (screen_y + nb_lines >= y_requested)
-          {
-             int delta = screen_y + nb_lines - y_requested;
-             *wret = ts->w - delta * ty->w;
-             if (*wret > ts->w)
-               *wret = ts->w;
-             return &ts->cells[delta * ty->w];
-          }
-        screen_y += nb_lines;
-        backlog_y++;
-     }
-   return NULL;
 }
 
 void
@@ -822,8 +905,6 @@ _check_screen_info(Termpty *ty, struct screen_info *si)
      {
         Termcell *cells = &SCREEN_INFO_GET_CELLS(si, 0, 0);
 
-        ERR("adjusting");
-
         si->y--;
         termpty_text_save_top(ty, cells, si->w);
         termpty_cells_clear(ty, cells, si->w);
@@ -843,8 +924,6 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
 {
    int autowrapped = cells[len-1].att.autowrapped;
 
-   ERR("si->x:%d si->y:%d si->cx:%d si->cy:%d",
-       si->x, si->y, si->cx, si->cy);
    if (len == 0)
      {
         if (set_cursor)
@@ -861,7 +940,6 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
      {
         int copy_width = MIN(len, si->w - si->x);
 
-        ERR("len:%d copy_width:%d", len, copy_width);
         termpty_cell_copy(ty,
                           /*src*/ cells,
                           /*dst*/&SCREEN_INFO_GET_CELLS(si, si->x, si->y),
@@ -880,7 +958,6 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
           }
         len -= copy_width;
         si->x += copy_width;
-        ERR("si->x:%d si->w:%d", si->x, si->w);
         if (si->x >= si->w)
           {
              si->y++;
@@ -888,7 +965,6 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
           }
         _check_screen_info(ty, si);
      }
-   ERR("autowrapped:%d", autowrapped);
    if (!autowrapped)
      {
         si->y++;
@@ -951,7 +1027,6 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
         int len;
 
         len = termpty_line_length(cells, old_w);
-        ERR("[%d] len:%d", old_y, len);
         _termpty_line_rewrap(ty, cells, len, &new_si,
                              old_y == ty->cursor_state.cy);
      }
@@ -976,6 +1051,10 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    _pty_size(ty);
 
    termpty_save_thaw();
+
+   ty->backlog_beacon.backlog_y = 0;
+   ty->backlog_beacon.screen_y = 0;
+
    return;
 
 bad:

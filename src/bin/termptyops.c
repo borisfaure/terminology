@@ -381,6 +381,9 @@ termpty_reset_state(Termpty *ty)
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
 
+   ty->backlog_beacon.screen_y = 0;
+   ty->backlog_beacon.backlog_y = 0;
+
    termpty_save_freeze();
    if (ty->back)
      {

@@ -2041,7 +2041,6 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
    termpty_cellcomp_freeze(sd->pty);
-   /* TODO: RESIZE use/save the reference point */
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
