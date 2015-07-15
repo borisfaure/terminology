@@ -346,6 +346,9 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    solo = (Solo*) tc;
    term = solo->term;
 
+   if (!tc->parent)
+     return;
+
    DBG("tc:%p tc->is_focused:%d from_parent:%d",
        tc, tc->is_focused, tc->parent == relative);
    if (tc->is_focused)
@@ -1288,6 +1291,10 @@ _split_focus(Term_Container *tc, Term_Container *relative)
 
    DBG("tc:%p tc->is_focused:%d from_parent:%d",
        tc, tc->is_focused, tc->parent == relative);
+
+   if (!tc->parent)
+     return;
+
    if (tc->parent == relative)
      {
         tc->is_focused = EINA_TRUE;
@@ -1391,7 +1398,8 @@ _split_split(Term_Container *tc, Term_Container *child,
 }
 
 static Term_Container *
-_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal)
+_split_new(Term_Container *tc1, Term_Container *tc2,
+           Eina_Bool is_horizontal)
 {
    Evas_Object *o;
    Term_Container *tc = NULL;
@@ -2313,6 +2321,9 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
 
+   if (!tc->parent)
+     return;
+
    DBG("tc:%p tc->is_focused:%d from_parent:%d",
        tc, tc->is_focused, tc->parent == relative);
    if (tc->parent == relative)
@@ -2359,6 +2370,8 @@ _tabs_unfocus(Term_Container *tc, Term_Container *relative)
    DBG("tc:%p tc->is_focused:%d from_parent:%d",
        tc, tc->is_focused, tc->parent == relative);
    if (!tc->is_focused)
+     return;
+   if (!tc->parent)
      return;
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
