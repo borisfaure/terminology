@@ -360,6 +360,32 @@ void termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
    miniview_position_offset(term_miniview_get(sd->term), -delta, EINA_TRUE);
 }
 
+void termio_scroll_reset(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   // TODO Reset scroll, and miniview
+   termpty_save_freeze();
+   if (sd->pty->back)
+     {
+       int i;
+       for (i = 0; i < sd->pty->backmax; i++)
+         {
+           if (sd->pty->back[i]) termpty_save_free(sd->pty->back[i]);
+         }
+       free(sd->pty->back);
+       sd->pty->back = NULL;
+       if (sd->pty->backmax)
+         sd->pty->back = calloc(1, sizeof(Termsave *) * sd->pty->backmax);
+     }
+   sd->scroll = sd->pty->backscroll_num = sd->pty->backpos = 0;
+   termpty_save_thaw();
+
+   _smart_update_queue(obj, sd);
+   miniview_position_offset(term_miniview_get(sd->term), -sd->pty->backmax, EINA_TRUE);
+}
+
 void
 termio_scroll_set(Evas_Object *obj, int scroll)
 {

@@ -537,6 +537,18 @@ cb_scroll_down_line(Evas_Object *term)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+cb_scroll_reset(Evas_Object *term)
+{
+   Termpty *ty = termio_pty_get(term);
+
+   if (!ty || ty->altbuf)
+     return EINA_FALSE;
+
+   termio_scroll_reset(term);
+   return EINA_TRUE;
+}
+
 
 static Shortcut_Action _actions[] =
 {
@@ -545,6 +557,7 @@ static Shortcut_Action _actions[] =
      {"one_page_down", gettext_noop("Scroll one page down"), cb_scroll_down_page},
      {"one_line_up", gettext_noop("Scroll one line up"), cb_scroll_up_line},
      {"one_line_down", gettext_noop("Scroll one line down"), cb_scroll_down_line},
+     {"scroll_reset", gettext_noop("Reset scroll"), cb_scroll_reset},
 
      {"group", gettext_noop("Copy/Paste"), NULL},
      {"copy_primary", gettext_noop("Copy selection to Primary buffer"), cb_copy_primary},

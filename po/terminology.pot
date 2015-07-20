@@ -87,6 +87,9 @@ msgstr ""
 msgid "Scroll one line down"
 msgstr ""
 
+msgid "Scroll reset"
+msgstr ""
+
 #: src/bin/keyin.c:536
 msgid "Copy/Paste"
 msgstr ""
