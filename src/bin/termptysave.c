@@ -100,10 +100,11 @@ _alloc_new(int size, unsigned char gen)
    // get mmaped anonymous memory so when freed it goes away from the system
    ptr = (unsigned char*) mmap(NULL, sz, PROT_READ | PROT_WRITE,
               MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-   if (ptr == MAP_FAILED) {
+   if (ptr == MAP_FAILED)
+     {
         ERR("Cannot allocate more memory with mmap MAP_ANONYMOUS");
         return NULL;
-   }
+     }
 
    // note - we SHOULD memset to 0, but we are assuming mmap anon give 0 pages
    //memset(ptr, 0, newsize);

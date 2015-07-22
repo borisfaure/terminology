@@ -370,7 +370,6 @@ termio_scroll_set(Evas_Object *obj, int scroll)
    _smart_apply(obj);
 }
 
-
 const char *
 termio_title_get(Evas_Object *obj)
 {
@@ -624,7 +623,6 @@ termio_config_update(Evas_Object *obj)
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    _smart_size(obj, ow / w, oh / h, EINA_TRUE);
 }
-
 
 Config *
 termio_config_get(const Evas_Object *obj)
