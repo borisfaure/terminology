@@ -334,8 +334,8 @@ termio_scroll_get(Evas_Object *obj)
    return sd->scroll;
 }
 
-
-void termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
+void
+termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
