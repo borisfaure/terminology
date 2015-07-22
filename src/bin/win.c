@@ -15,6 +15,31 @@
 #include "controls.h"
 #include "term_container.h"
 
+
+/**
+ * Design:
+ * A terminal widget is Term. It hosts various Evas_Object, like a `termio`
+ * handling the textgrid.
+ * It is hosted in a Term_Container of type Solo.
+ * On Term_Container:
+ *   It is a generic structure with a set of function pointers. It is a simple
+ *   way to objectify and have genericity between a Window, a Split or Tabs.
+ * Solo, Win, Split, Tabs have a Term_Container as their first field and thus
+ * can be casted to Term_Container to have access to those APIs.
+ *
+ * Solo is the simplest container, hosting just a Term.
+ * Win is a window and has only one container child.
+ * Split is a widget to separate an area of the screen in 2 and thus has 2
+ * children that can be either Solo or Tabs.
+ * Tabs is a Term_Container containing many containers (at the moment, only
+ * Solo ones) and have a system of tabs.
+ *
+ * All the windows are in the `wins` list.
+ */
+
+
+
+
 /* specific log domain to help debug only terminal code parser */
 int _win_log_dom = -1;
 
