@@ -177,7 +177,7 @@ handle_edje(char *rp)
    if (edje_object_file_set
        (o, rp, "terminology/backgroud") == EINA_TRUE ||
        !edje_object_file_set
-       (o, rp, "e/desktop/background") == EINA_TRUE)
+       (o, rp, "e/desktop/background"))
      {
         Evas_Coord mw = 0, mh = 0;
         edje_object_size_min_get(o, &mw, &mh);
