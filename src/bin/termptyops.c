@@ -384,10 +384,10 @@ termpty_reset_state(Termpty *ty)
    ty->backlog_beacon.screen_y = 0;
    ty->backlog_beacon.backlog_y = 0;
 
-   termpty_save_freeze();
+   termpty_backlog_lock();
    if (ty->back)
      {
-        int i;
+        size_t i;
         for (i = 0; i < ty->backsize; i++)
           termpty_save_free(&ty->back[i]);
         free(ty->back);
@@ -396,8 +396,8 @@ termpty_reset_state(Termpty *ty)
    ty->backpos = 0;
    backsize = ty->backsize;
    ty->backsize = 0;
-   termpty_backscroll_set(ty, backsize);
-   termpty_save_thaw();
+   termpty_backlog_size_set(ty, backsize);
+   termpty_backlog_unlock();
 }
 
 void

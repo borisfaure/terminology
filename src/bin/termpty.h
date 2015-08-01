@@ -105,7 +105,7 @@ struct _Termpty
    size_t buflen;
    unsigned char oldbuf[4];
    Termsave *back;
-   int backsize, backpos;
+   size_t backsize, backpos;
    struct {
         int screen_y;
         int backlog_y;
@@ -232,16 +232,17 @@ Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                       int w, int h, int backscroll, Eina_Bool xterm_256color,
                       Eina_Bool erase_is_del, const char *emotion_mod);
 void       termpty_free(Termpty *ty);
-void       termpty_cellcomp_freeze(Termpty *ty);
-void       termpty_cellcomp_thaw(Termpty *ty);
+
+void       termpty_backlog_lock(void);
+void       termpty_backlog_unlock(void);
 
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
 ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int new_w, int new_h);
-void       termpty_backscroll_set(Termpty *ty, int size);
+void       termpty_backlog_size_set(Termpty *ty, size_t size);
+ssize_t    termpty_backlog_length(Termpty *ty);
 void       termpty_backscroll_adjust(Termpty *ty, int *scroll);
-ssize_t    termpty_backscroll_length(Termpty *ty);
 
 pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);

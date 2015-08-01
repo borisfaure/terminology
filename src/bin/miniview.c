@@ -145,7 +145,7 @@ _is_top_bottom_reached(Miniview *mv)
    EINA_SAFETY_ON_NULL_RETURN_VAL(mv, EINA_FALSE);
 
    ty = termio_pty_get(mv->termio);
-   history_len = termpty_backscroll_length(ty);
+   history_len = termpty_backlog_length(ty);
 
    if (( (- mv->img_hist) > (int)(mv->img_h - mv->rows - (mv->rows / 2))) &&
        ( (- mv->img_hist) < (int)(history_len + (mv->rows / 2))))
@@ -523,7 +523,7 @@ _deferred_renderer(void *data)
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if ((ow == 0) || (oh == 0)) return EINA_TRUE;
 
-   history_len = termpty_backscroll_length(ty);
+   history_len = termpty_backlog_length(ty);
 
    evas_object_image_size_set(mv->img, mv->cols, mv->img_h);
    ow = mv->cols;

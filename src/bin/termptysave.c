@@ -278,7 +278,7 @@ done:
 static void
 _walk_pty(Termpty *ty)
 {
-   int i;
+   size_t i;
 //   int c0 = 0, c1 = 0;
 
    if (!ty->back) return;
@@ -355,6 +355,7 @@ _check_compressor(Eina_Bool frozen)
      }
 }
 
+#if 0
 void
 termpty_save_freeze(void)
 {
@@ -382,21 +383,24 @@ termpty_save_thaw(void)
         _check_compressor(EINA_TRUE);
      }
 }
+#endif
+
+
 
 void
 termpty_save_register(Termpty *ty)
 {
-   termpty_save_freeze();
+   termpty_backlog_lock();
    ptys = eina_list_append(ptys, ty);
-   termpty_save_thaw();
+   termpty_backlog_unlock();
 }
 
 void
 termpty_save_unregister(Termpty *ty)
 {
-   termpty_save_freeze();
+   termpty_backlog_lock();
    ptys = eina_list_remove(ptys, ty);
-   termpty_save_thaw();
+   termpty_backlog_unlock();
 }
 
 Termsave *
@@ -452,7 +456,7 @@ termpty_save_new(Termsave *ts, int w)
 }
 
 Termsave *
-termpty_save_expand(Termsave *ts, Termcell *cells, ssize_t delta)
+termpty_save_expand(Termsave *ts, Termcell *cells, size_t delta)
 {
    Termcell *newcells;
 
@@ -480,4 +484,14 @@ termpty_save_free(Termsave *ts)
    ts->cells = NULL;
    ts->w = 0;
    _check_compressor(EINA_FALSE);
+}
+
+void
+termpty_backlog_lock(void)
+{
+}
+
+void
+termpty_backlog_unlock(void)
+{
 }

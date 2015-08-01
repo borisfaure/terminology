@@ -588,7 +588,7 @@ termio_config_update(Evas_Object *obj)
    sd->jump_on_change = sd->config->jump_on_change;
    sd->jump_on_keypress = sd->config->jump_on_keypress;
 
-   termpty_backscroll_set(sd->pty, sd->config->scrollback);
+   termpty_backlog_size_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
 
    if (evas_object_focus_get(obj))
@@ -2040,7 +2040,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
    int x, y;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
@@ -2191,7 +2191,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                }
           }
      }
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 
    if (rtrim)
      _sb_spaces_rtrim(&sb);
@@ -2437,7 +2437,7 @@ _sel_line(Termio *sd, int cy)
    int y, w = 0;
    Termcell *cells;
 
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
 
    _sel_set(sd, EINA_TRUE);
    sd->pty->selection.makesel = EINA_FALSE;
@@ -2471,7 +2471,7 @@ _sel_line(Termio *sd, int cy)
    sd->pty->selection.by_line = EINA_TRUE;
    sd->pty->selection.is_top_to_bottom = EINA_TRUE;
 
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 }
 
 static void
@@ -2782,7 +2782,7 @@ _sel_word(Termio *sd, int cx, int cy)
    int x, y, w = 0;
    Eina_Bool done = EINA_FALSE;
 
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
 
    _sel_set(sd, EINA_TRUE);
    sd->pty->selection.makesel = EINA_TRUE;
@@ -2891,7 +2891,7 @@ _sel_word(Termio *sd, int cx, int cy)
    sd->pty->selection.by_word = EINA_TRUE;
    sd->pty->selection.is_top_to_bottom = EINA_TRUE;
 
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 }
 
 static void
@@ -3206,7 +3206,7 @@ _selection_dbl_fix(Termio *sd
         INT_SWAP(start_x, end_x);
      }
 
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
    cells = termpty_cellrow_get(sd->pty, end_y - sd->scroll, &w);
    if (cells)
      {
@@ -3259,7 +3259,7 @@ _selection_dbl_fix(Termio *sd
                }
           }
      }
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 
    if (!sd->pty->selection.is_top_to_bottom)
      {
@@ -3286,7 +3286,7 @@ _selection_newline_extend_fix(Evas_Object *obj)
    if ((sd->top_left) || (sd->bottom_right) || (sd->pty->selection.is_box))
      return;
 
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
 
    start_x = sd->pty->selection.start.x;
    start_y = sd->pty->selection.start.y;
@@ -3331,7 +3331,7 @@ _selection_newline_extend_fix(Evas_Object *obj)
    sd->pty->selection.end.x = end_x;
    sd->pty->selection.end.y = end_y;
 
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 }
 
 /* }}} */
@@ -4507,7 +4507,7 @@ _smart_apply(Evas_Object *obj)
         blk->active = EINA_FALSE;
      }
    inv = sd->pty->termstate.reverse;
-   termpty_cellcomp_freeze(sd->pty);
+   termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
      {
@@ -4736,7 +4736,7 @@ _smart_apply(Evas_Object *obj)
         preedit_x = x - sd->cursor.x;
         preedit_y = y - sd->cursor.y;
      }
-   termpty_cellcomp_thaw(sd->pty);
+   termpty_backlog_unlock();
 
    EINA_LIST_FOREACH_SAFE(sd->pty->block.active, l, ln, blk)
      {

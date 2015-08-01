@@ -566,7 +566,7 @@ termpty_free(Termpty *ty)
    if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
    if (ty->back)
      {
-        int i;
+        size_t i;
 
         for (i = 0; i < ty->backsize; i++)
           termpty_save_free(&ty->back[i]);
@@ -576,18 +576,6 @@ termpty_free(Termpty *ty)
    free(ty->screen2);
    free(ty->buf);
    free(ty);
-}
-
-void
-termpty_cellcomp_freeze(Termpty *ty EINA_UNUSED)
-{
-   termpty_save_freeze();
-}
-
-void
-termpty_cellcomp_thaw(Termpty *ty EINA_UNUSED)
-{
-   termpty_save_thaw();
 }
 
 static Eina_Bool
@@ -680,7 +668,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
      return;
    assert(ty->back);
 
-   termpty_save_freeze();
+   termpty_backlog_lock();
 
    w = termpty_line_length(cells, w_max);
    if (ty->backsize >= 1)
@@ -708,11 +696,11 @@ add_new_ts:
    ty->backpos++;
    if (ty->backpos >= ty->backsize)
      ty->backpos = 0;
-   termpty_save_thaw();
+   termpty_backlog_unlock();
 
    ty->backlog_beacon.screen_y++;
    ty->backlog_beacon.backlog_y++;
-   if (ty->backlog_beacon.backlog_y >= ty->backsize)
+   if (ty->backlog_beacon.backlog_y >= (int)ty->backsize)
      {
         ty->backlog_beacon.screen_y = 0;
         ty->backlog_beacon.backlog_y = 0;
@@ -736,9 +724,9 @@ termpty_row_length(Termpty *ty, int y)
         cells = &(TERMPTY_SCREEN(ty, 0, y));
         return termpty_line_length(cells, ty->w);
      }
-   if ((y < -ty->backsize) || !ty->back)
+   if ((y < -(int)ty->backsize) || !ty->back)
      {
-        ERR("invalid row given: %d; ty->back:%p ty->backsize:%d",
+        ERR("invalid row given: %d; ty->back:%p ty->backsize:%zd",
             y, ty->back, ty->backsize);
         return 0;
      }
@@ -748,7 +736,7 @@ termpty_row_length(Termpty *ty, int y)
 }
 
 ssize_t
-termpty_backscroll_length(Termpty *ty)
+termpty_backlog_length(Termpty *ty)
 {
    int backlog_y = ty->backlog_beacon.backlog_y;
    int screen_y = ty->backlog_beacon.screen_y;
@@ -762,7 +750,7 @@ termpty_backscroll_length(Termpty *ty)
         Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (!ts->cells || backlog_y >= ty->backsize)
+        if (!ts->cells || backlog_y >= (int)ty->backsize)
           return ty->backlog_beacon.screen_y;
 
         nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
@@ -793,7 +781,7 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
         Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (!ts->cells || backlog_y >= ty->backsize)
+        if (!ts->cells || backlog_y >= (int)ty->backsize)
           {
              *scroll = ty->backlog_beacon.screen_y;
              return;
@@ -988,7 +976,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if ((new_w == new_h) && (new_w == 1)) return; // FIXME: something weird is
                                                  // going on at term init
 
-   termpty_save_freeze();
+   termpty_backlog_unlock();
 
    if (ty->altbuf)
      {
@@ -1050,7 +1038,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    _pty_size(ty);
 
-   termpty_save_thaw();
+   termpty_backlog_unlock();
 
    ty->backlog_beacon.backlog_y = 0;
    ty->backlog_beacon.screen_y = 0;
@@ -1058,23 +1046,23 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    return;
 
 bad:
-   termpty_save_thaw();
+   termpty_backlog_unlock();
    free(new_screen);
 }
 
 void
-termpty_backscroll_set(Termpty *ty, int size)
+termpty_backlog_size_set(Termpty *ty, size_t size)
 {
-   int i;
-
    if (ty->backsize == size)
      return;
 
    /* TODO: RESIZE: handle that case better: changing backscroll size */
-   termpty_save_freeze();
+   termpty_backlog_lock();
 
    if (ty->back)
      {
+        size_t i;
+
         for (i = 0; i < ty->backsize; i++)
           termpty_save_free(&ty->back[i]);
         free(ty->back);
@@ -1085,7 +1073,7 @@ termpty_backscroll_set(Termpty *ty, int size)
      ty->back = NULL;
    ty->backpos = 0;
    ty->backsize = size;
-   termpty_save_thaw();
+   termpty_backlog_unlock();
 }
 
 pid_t
