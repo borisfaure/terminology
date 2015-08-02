@@ -161,6 +161,8 @@ config_init(void)
      (edd_base, Config, "gravatar", gravatar, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "notabs", notabs, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "mv_always_show", mv_always_show, EET_T_UCHAR);
 }
 
 void
@@ -533,6 +535,7 @@ config_load(const char *key)
              config->colors_use = EINA_FALSE;
              config->gravatar = EINA_TRUE;
              config->notabs = EINA_FALSE;
+             config->mv_always_show = EINA_FALSE;
              for (j = 0; j < 4; j++)
                {
                   for (i = 0; i < 12; i++)
@@ -624,6 +627,7 @@ config_fork(Config *config)
    CPY(font_set);
    CPY(gravatar);
    CPY(notabs);
+   CPY(mv_always_show);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {

@@ -3994,6 +3994,9 @@ term_new(Win *wn, Config *config, const char *cmd,
    else
      msg.val = 100;
 
+   if (term->config->mv_always_show)
+     term->miniview_shown = EINA_TRUE;
+
    edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
 

@@ -41,6 +41,7 @@ CB(login_shell, 0);
 CB(mouse_over_focus, 0);
 CB(gravatar,  0);
 CB(notabs,  1);
+CB(mv_always_show, 0);
 
 #undef CB
 
@@ -189,6 +190,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
    CX(_("Gravatar integration"), gravatar, 0);
    CX(_("Show tabs"), notabs, 1);
+   CX(_("Always show miniview"), mv_always_show, 0);
 
 #undef CX
 

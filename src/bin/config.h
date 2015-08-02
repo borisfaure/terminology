@@ -74,6 +74,7 @@ struct _Config
    Eina_Bool         colors_use;
    Eina_Bool         gravatar;
    Eina_Bool         notabs;
+   Eina_Bool         mv_always_show;
    Config_Color      colors[(4 * 12)];
    Eina_List        *keys;
 
