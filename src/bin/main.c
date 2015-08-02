@@ -627,31 +627,27 @@ elm_main(int argc, char **argv)
 
    if (font)
      {
-        if (strchr(font, '/'))
+        char *p = strchr(font, '/');
+        if (p)
           {
-             char *fname = alloca(strlen(font) + 1);
-             char *p;
-             
-             strcpy(fname, font);
-             p = strrchr(fname, '/');
-             if (p)
-               {
-                  int sz;
-                  
-                  *p = 0;
-                  p++;
-                  sz = atoi(p);
-                  if (sz > 0) config->font.size = sz;
-                  eina_stringshare_replace(&(config->font.name), fname);
-               }
+             int sz;
+             char *fname = alloca(p - font + 1);
+
+             strncpy(fname, font, p - font);
+             fname[p - font] = '\0';
+             sz = atoi(p+1);
+             if (sz > 0) config->font.size = sz;
+             eina_stringshare_replace(&(config->font.name), fname);
              config->font.bitmap = 0;
+             config->font_set = 1;
           }
         else
           {
              char buf[4096], *file;
              Eina_List *files;
              int n = strlen(font);
-             
+             Eina_Bool found = EINA_FALSE;
+
              snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
              files = ecore_file_ls(buf);
              EINA_LIST_FREE(files, file)
@@ -663,9 +659,15 @@ elm_main(int argc, char **argv)
                             n = -1;
                             eina_stringshare_replace(&(config->font.name), file);
                             config->font.bitmap = 1;
+                            config->font_set = 1;
+                            found = EINA_TRUE;
                          }
                     }
                   free(file);
+               }
+             if (!found)
+               {
+                  ERR("font '%s' not found in %s", font, buf);
                }
           }
         config->temporary = EINA_TRUE;
