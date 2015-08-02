@@ -890,14 +890,14 @@ remote:
                {
                   pch = eina_list_nth(cmds_list, 1);
                   split_vertically(win_evas_object_get(term_win_get(next)),
-                               main_term_evas_object_get(next), pch);
+                                   term_termio_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
              else if (startup_split[i] == 'h')
                {
                   pch = eina_list_nth(cmds_list, 1);
                   split_horizontally(win_evas_object_get(term_win_get(next)),
-                               main_term_evas_object_get(next), pch);
+                                     term_termio_get(next), pch);
                   cmds_list = eina_list_remove(cmds_list, pch);
                }
              else if (startup_split[i] == '-')

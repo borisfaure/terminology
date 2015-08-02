@@ -3840,7 +3840,7 @@ term_win_get(Term *term)
 
 
 Evas_Object *
-main_term_evas_object_get(Term *term)
+term_termio_get(Term *term)
 {
    return term->termio;
 }
