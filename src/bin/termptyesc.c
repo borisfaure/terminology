@@ -1477,7 +1477,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
         return 0;
      }
    *b = 0;
-   // commands are stored in the buffer, 0 bytes not allowd (end marker)
+   // commands are stored in the buffer, 0 bytes not allowed (end marker)
    s = eina_unicode_unicode_to_utf8(buf, &slen);
    ty->cur_cmd = s;
    if (!_termpty_ext_handle(ty, s, buf))
