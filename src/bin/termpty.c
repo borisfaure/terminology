@@ -809,13 +809,8 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, int *wret)
         int nb_lines;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        assert (ts->cells);
         if (!ts->cells)
-          {
-             ERR("went too far: requested_y:%d screen_y:%d backlog_y:%d",
-                 requested_y, screen_y, backlog_y);
-             return NULL;
-          }
+          return NULL;
         nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
         if (!going_forward) {
              screen_y -= nb_lines;
