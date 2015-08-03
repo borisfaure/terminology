@@ -2651,6 +2651,18 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 /* }}} */
 /* {{{ Term */
 
+static void
+_term_config_set(Term *term, Config *config)
+{
+   Config *old_config = term->config;
+
+   term->config = config;
+   termio_config_set(term->termio, config);
+   _term_media_update(term, term->config);
+   if (old_config != term->wn->config)
+     config_del(old_config);
+}
+
 Eina_Bool
 term_has_popmedia(const Term *term)
 {
@@ -3218,12 +3230,14 @@ _cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 
              if (config)
                {
-                  config->temporary = EINA_TRUE;
+                  Config *new_config = config_fork(config);
+
+                  new_config->temporary = EINA_TRUE;
                   if (cmd[2])
-                    eina_stringshare_replace(&(config->background), cmd + 2);
+                    eina_stringshare_replace(&(new_config->background), cmd + 2);
                   else
-                    eina_stringshare_replace(&(config->background), NULL);
-                  main_media_update(config);
+                    eina_stringshare_replace(&(new_config->background), NULL);
+                  _term_config_set(term, new_config);
                }
           }
         else if (cmd[1] == 'p') // permanent
