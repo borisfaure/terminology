@@ -910,6 +910,26 @@ _win_set_title(Term_Container *tc, Term_Container *child EINA_UNUSED,
    elm_win_title_set(wn->win, title);
 }
 
+Eina_Bool
+_win_term_is_splittable(Term *tm, Eina_Bool is_horizontal)
+{
+   int grid_w = 0, grid_h = 0, c_w = 0, c_h = 0;
+   evas_object_geometry_get(tm->bg, NULL, NULL, &grid_w, &grid_h);
+   evas_object_textgrid_cell_size_get(termio_textgrid_get(tm->termio),
+                                      &c_w, &c_h);
+   if (is_horizontal)
+     {
+        if (c_h * 2 > grid_h)
+           return EINA_FALSE;
+     }
+   else
+     {
+        if (c_w * 2 > grid_w)
+           return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static void
 _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
            Eina_Bool is_horizontal)
@@ -925,22 +945,25 @@ _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
    wn = (Win*) tc;
 
    tm = tc->focused_term_get(tc);
-   if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-     wdir = buf;
-   tm_new = term_new(wn, wn->config,
-                     cmd, wn->config->login_shell, wdir,
-                     80, 24, EINA_FALSE);
-   tc_solo_new = _solo_new(tm_new, wn);
-   evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
+   if (_win_term_is_splittable(tm, is_horizontal))
+     {
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+          wdir = buf;
+        tm_new = term_new(wn, wn->config,
+                          cmd, wn->config->login_shell, wdir,
+                          80, 24, EINA_FALSE);
+        tc_solo_new = _solo_new(tm_new, wn);
+        evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
-   base = win_base_get(wn);
-   o = child->get_evas_object(child);
-   edje_object_part_unswallow(base, o);
+        base = win_base_get(wn);
+        o = child->get_evas_object(child);
+        edje_object_part_unswallow(base, o);
 
-   tc_split = _split_new(child, tc_solo_new, is_horizontal);
+        tc_split = _split_new(child, tc_solo_new, is_horizontal);
 
-   tc_split->is_focused = tc->is_focused;
-   tc->swallow(tc, NULL, tc_split);
+        tc_split->is_focused = tc->is_focused;
+        tc->swallow(tc, NULL, tc_split);
+     }
 }
 
 static void
@@ -1399,27 +1422,30 @@ _split_split(Term_Container *tc, Term_Container *child,
    wn = tc->wn;
 
    tm = child->focused_term_get(child);
-   if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-     wdir = buf;
-   tm_new = term_new(wn, wn->config,
-                     cmd, wn->config->login_shell, wdir,
-                     80, 24, EINA_FALSE);
-   tc_solo_new = _solo_new(tm_new, wn);
-   evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
+   if (_win_term_is_splittable(tm, is_horizontal))
+     {
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+          wdir = buf;
+        tm_new = term_new(wn, wn->config,
+                          cmd, wn->config->login_shell, wdir,
+                          80, 24, EINA_FALSE);
+        tc_solo_new = _solo_new(tm_new, wn);
+        evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
-   if (child == split->tc1)
-        elm_object_part_content_unset(split->panes, PANES_TOP);
-   else
-        elm_object_part_content_unset(split->panes, PANES_BOTTOM);
+        if (child == split->tc1)
+             elm_object_part_content_unset(split->panes, PANES_TOP);
+        else
+             elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
-   tc_split = _split_new(child, tc_solo_new, is_horizontal);
+        tc_split = _split_new(child, tc_solo_new, is_horizontal);
 
-   obj_split = tc_split->get_evas_object(tc_split);
+        obj_split = tc_split->get_evas_object(tc_split);
 
-   tc_split->is_focused = tc->is_focused;
-   tc->swallow(tc, child, tc_split);
+        tc_split->is_focused = tc->is_focused;
+        tc->swallow(tc, child, tc_split);
 
-   evas_object_show(obj_split);
+        evas_object_show(obj_split);
+     }
 }
 
 static Term_Container *
