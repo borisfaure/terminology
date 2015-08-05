@@ -996,7 +996,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    for (old_y = old_h -1; old_y >= 0; old_y--)
      {
         Termcell *cells = &TERMPTY_SCREEN(ty, 0, old_y);
-        if (!termpty_line_is_empty(cells, old_w))
+        if (!termpty_line_is_empty(cells, old_w) &&
+            ty->cursor_state.cy < old_y)
           {
              effective_old_h = old_y + 1;
              break;
