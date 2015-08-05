@@ -521,7 +521,7 @@ _deferred_renderer(void *data)
 
    ty = termio_pty_get(mv->termio);
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
-   if ((ow == 0) || (oh == 0)) return EINA_TRUE;
+   if ((ow == 0) || (oh == 0) || (mv->cols == 1)) return EINA_TRUE;
 
    history_len = termpty_backlog_length(ty);
 
