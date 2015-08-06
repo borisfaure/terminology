@@ -911,20 +911,25 @@ _win_set_title(Term_Container *tc, Term_Container *child EINA_UNUSED,
 }
 
 Eina_Bool
-_win_term_is_splittable(Term *tm, Eina_Bool is_horizontal)
+_term_container_is_splittable(Term_Container *tc, Eina_Bool is_horizontal)
 {
-   int grid_w = 0, grid_h = 0, c_w = 0, c_h = 0;
-   evas_object_geometry_get(tm->bg, NULL, NULL, &grid_w, &grid_h);
+   int w = 0, h = 0, c_w = 0, c_h = 0;
+   Term *tm;
+   Evas_Object *o;
+
+   o = tc->get_evas_object(tc);
+   evas_object_geometry_get(o, NULL, NULL, &w, &h);
+   tm = tc->term_first(tc);
    evas_object_textgrid_cell_size_get(termio_textgrid_get(tm->termio),
                                       &c_w, &c_h);
    if (is_horizontal)
      {
-        if (c_h * 2 > grid_h)
+        if (c_h * 2 > h)
            return EINA_FALSE;
      }
    else
      {
-        if (c_w * 2 > grid_w)
+        if (c_w * 2 > w)
            return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -934,20 +939,21 @@ static void
 _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
            Eina_Bool is_horizontal)
 {
-   Term *tm_new, *tm;
-   Term_Container *tc_split, *tc_solo_new;
    Win *wn;
-   char buf[PATH_MAX], *wdir = NULL;
-   Evas_Object *base;
-   Evas_Object *o;
 
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
    wn = (Win*) tc;
 
-   tm = tc->focused_term_get(tc);
-   if (_win_term_is_splittable(tm, is_horizontal))
+   if (_term_container_is_splittable(tc, is_horizontal))
      {
-        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+        Term *tm_new, *tm;
+        Term_Container *tc_split, *tc_solo_new;
+        char buf[PATH_MAX], *wdir = NULL;
+        Evas_Object *base;
+        Evas_Object *o;
+
+        tm = tc->focused_term_get(tc);
+        if (termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
@@ -1410,21 +1416,22 @@ static void
 _split_split(Term_Container *tc, Term_Container *child,
              const char *cmd, Eina_Bool is_horizontal)
 {
-   Term *tm_new, *tm;
-   Term_Container *tc_split, *tc_solo_new;
    Split *split;
    Win *wn;
-   Evas_Object *obj_split;
-   char buf[PATH_MAX], *wdir = NULL;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split *)tc;
    wn = tc->wn;
 
-   tm = child->focused_term_get(child);
-   if (_win_term_is_splittable(tm, is_horizontal))
+   if (_term_container_is_splittable(tc, is_horizontal))
      {
-        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+        Term *tm_new, *tm;
+        char buf[PATH_MAX], *wdir = NULL;
+        Term_Container *tc_split, *tc_solo_new;
+        Evas_Object *obj_split;
+
+        tm = child->focused_term_get(child);
+        if (termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
