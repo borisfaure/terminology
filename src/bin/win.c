@@ -4117,6 +4117,24 @@ term_new(Win *wn, Config *config, const char *cmd,
 
 /* }}} */
 
+
+
+static Eina_Bool
+_font_size_set(Term *term, void *data)
+{
+   int fontsize = (intptr_t) data;
+
+   termio_font_size_set(term->termio, fontsize);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+void
+win_font_size_set(Win *wn, int new_size)
+{
+   for_each_term_do(wn, &_font_size_set, (void*)(intptr_t)new_size);
+}
+
 void
 windows_free(void)
 {
@@ -4145,4 +4163,20 @@ windows_update(void)
         Term_Container *tc = (Term_Container *) wn;
         tc->update(tc);
      }
+}
+
+Eina_Bool
+for_each_term_do(Win *wn, For_Each_Term cb, void *data)
+{
+   Eina_List *l;
+   Term *term;
+   Eina_Bool res = ECORE_CALLBACK_DONE;
+
+   EINA_LIST_FOREACH(wn->terms, l, term)
+     {
+        res = cb(term, data);
+        if (res == ECORE_CALLBACK_CANCEL)
+          return res;
+     }
+   return res;
 }

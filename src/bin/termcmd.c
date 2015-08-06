@@ -23,12 +23,17 @@ _termcmd_search(Evas_Object *obj EINA_UNUSED, Evas_Object *win EINA_UNUSED, Evas
 }
 
 static Eina_Bool
-_termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *bg EINA_UNUSED, const char *cmd)
+_termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED,
+                   Evas_Object *bg EINA_UNUSED, const char *cmd)
 {
    Config *config = termio_config_get(obj);
 
    if (config)
      {
+        Term *term = termio_term_get(obj);
+        Win *wn = term_win_get(term);
+        int new_size;
+
         if (cmd[0] == 0) // back to default
           {
              config->font.bitmap = config->font.orig_bitmap;
@@ -37,8 +42,7 @@ _termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *
                   eina_stringshare_del(config->font.name);
                   config->font.name = eina_stringshare_add(config->font.orig_name);
                }
-             termio_font_size_set(obj, config->font.orig_size);
-             return EINA_TRUE;
+             new_size = config->font.orig_size;
           }
         else if (cmd[0] == 'b') // big font size
           {
@@ -47,23 +51,24 @@ _termcmd_font_size(Evas_Object *obj, Evas_Object *win EINA_UNUSED, Evas_Object *
                   config->font.bitmap = 1;
                   eina_stringshare_del(config->font.name);
                   config->font.name = eina_stringshare_add("10x20.pcf");
-                  termio_font_size_set(obj, 20);
                }
-             else
-               {
-                  termio_font_size_set(obj, 20);
-               }
+             new_size = 20;
           }
         else if (cmd[0] == '+') // size up
           {
-             termio_font_size_set(obj, config->font.size + 1);
+             new_size = config->font.size + 1;
           }
         else if (cmd[0] == '-') // size down
           {
-             termio_font_size_set(obj, config->font.size - 1);
+             new_size = config->font.size - 1;
           }
         else
-          ERR(_("Unknown font command: %s"), cmd);
+          {
+             ERR(_("Unknown font command: %s"), cmd);
+             return EINA_TRUE;
+          }
+
+        win_font_size_set(wn, new_size);
      }
    return EINA_TRUE;
 }

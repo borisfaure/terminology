@@ -4422,11 +4422,10 @@ _smart_cb_gest_zoom_start(void *data, void *event)
    config = sd->config;
    if (config)
      {
-        int sz;
-
+        int sz = (double)config->font.size * p->zoom;
         sd->zoom_fontsize_start = config->font.size;
-        sz = (double)sd->zoom_fontsize_start * p->zoom;
-        if (sz != config->font.size) _font_size_set(data, sz);
+        if (sz != config->font.size)
+          win_font_size_set(term_win_get(sd->term), sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -4443,8 +4442,9 @@ _smart_cb_gest_zoom_move(void *data, void *event)
    config = sd->config;
    if (config)
      {
-        int sz = (double)sd->zoom_fontsize_start * p->zoom;
-        if (sz != config->font.size) _font_size_set(data, sz);
+        int sz = (double)config->font.size * p->zoom;
+        if (sz != config->font.size)
+          win_font_size_set(term_win_get(sd->term), sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -4461,8 +4461,9 @@ _smart_cb_gest_zoom_end(void *data, void *event)
    config = sd->config;
    if (config)
      {
-        int sz = (double)sd->zoom_fontsize_start * p->zoom;
-        if (sz != config->font.size) _font_size_set(data, sz);
+        int sz = (double)config->font.size * p->zoom;
+        if (sz != config->font.size)
+          win_font_size_set(term_win_get(sd->term), sz);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;
@@ -4471,7 +4472,6 @@ _smart_cb_gest_zoom_end(void *data, void *event)
 static Evas_Event_Flags
 _smart_cb_gest_zoom_abort(void *data, void *event EINA_UNUSED)
 {
-//   Elm_Gesture_Zoom_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
    Config *config;
 
@@ -4480,7 +4480,7 @@ _smart_cb_gest_zoom_abort(void *data, void *event EINA_UNUSED)
    if (config)
      {
         if (sd->zoom_fontsize_start != config->font.size)
-          _font_size_set(data, sd->zoom_fontsize_start);
+          win_font_size_set(term_win_get(sd->term), sd->zoom_fontsize_start);
      }
    sd->didclick = EINA_TRUE;
    return EVAS_EVENT_FLAG_ON_HOLD;

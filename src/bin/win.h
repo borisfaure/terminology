@@ -52,10 +52,18 @@ void term_next(Term *term);
 void term_prev(Term *term);
 Win * term_win_get(Term *term);
 
+void
+win_font_size_set(Win *wn, int new_size);
 
 Eina_Bool
 term_has_popmedia(const Term *term);
 void
 term_popmedia_close(Term *term);
+
+typedef Eina_Bool (*For_Each_Term)(Term *term, void *data);
+
+Eina_Bool
+for_each_term_do(Win *wn, For_Each_Term cb, void *data);
+
 
 #endif
