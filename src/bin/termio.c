@@ -455,19 +455,12 @@ _font_size_set(Evas_Object *obj, int size)
    else if (size > 100) size = 100;
    if (config)
      {
-        Evas_Coord mw = 1, mh = 1;
-        int gw, gh;
-
         config->temporary = EINA_TRUE;
         config->font.size = size;
-        gw = sd->grid.w;
-        gh = sd->grid.h;
         sd->noreqsize = 1;
         termio_config_update(obj);
         sd->noreqsize = 0;
-        evas_object_size_hint_min_get(obj, &mw, &mh);
         evas_object_data_del(obj, "sizedone");
-        evas_object_size_hint_request_set(obj, mw * gw, mh * gh);
      }
 }
 
