@@ -781,6 +781,10 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
         Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (*scroll <= screen_y)
+          {
+             return;
+          }
         if (!ts->cells || backlog_y >= (int)ty->backsize)
           {
              *scroll = ty->backlog_beacon.screen_y;
@@ -1036,8 +1040,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    termpty_backlog_unlock();
 
-   ty->backlog_beacon.backlog_y = 0;
-   ty->backlog_beacon.screen_y = 0;
+   ty->backlog_beacon.backlog_y = 1;
+   ty->backlog_beacon.screen_y = 1;
 
    return;
 
