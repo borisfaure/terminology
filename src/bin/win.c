@@ -915,11 +915,9 @@ _term_container_is_splittable(Term_Container *tc, Eina_Bool is_horizontal)
 {
    int w = 0, h = 0, c_w = 0, c_h = 0;
    Term *tm;
-   Evas_Object *o;
 
-   o = tc->get_evas_object(tc);
-   evas_object_geometry_get(o, NULL, NULL, &w, &h);
    tm = tc->term_first(tc);
+   evas_object_geometry_get(tm->bg, NULL, NULL, &w, &h);
    evas_object_textgrid_cell_size_get(termio_textgrid_get(tm->termio),
                                       &c_w, &c_h);
    if (is_horizontal)
