@@ -236,7 +236,7 @@ void       termpty_free(Termpty *ty);
 void       termpty_backlog_lock(void);
 void       termpty_backlog_unlock(void);
 
-Termcell  *termpty_cellrow_get(Termpty *ty, int y, int *wret);
+Termcell  *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
 ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int new_w, int new_h);

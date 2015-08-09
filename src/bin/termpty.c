@@ -711,28 +711,12 @@ add_new_ts:
 ssize_t
 termpty_row_length(Termpty *ty, int y)
 {
-   Termsave *ts;
+   ssize_t wret;
+   Termcell *cells = termpty_cellrow_get(ty, y, &wret);
 
    if (y >= 0)
-     {
-        Termcell *cells;
-        if (y >= ty->h)
-          {
-             ERR("invalid row given: %d while ty->h=%d", y, ty->h);
-             return 0;
-          }
-        cells = &(TERMPTY_SCREEN(ty, 0, y));
-        return termpty_line_length(cells, ty->w);
-     }
-   if ((y < -(int)ty->backsize) || !ty->back)
-     {
-        ERR("invalid row given: %d; ty->back:%p ty->backsize:%zd",
-            y, ty->back, ty->backsize);
-        return 0;
-     }
-   ts = BACKLOG_ROW_GET(ty, y);
-
-   return ts->cells ? ts->w : 0;
+     return termpty_line_length(cells, ty->w);
+   return cells ? wret : 0;
 }
 
 ssize_t
@@ -800,7 +784,7 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
 }
 
 static Termcell*
-_termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, int *wret)
+_termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
 {
    int backlog_y = ty->backlog_beacon.backlog_y;
    int screen_y = ty->backlog_beacon.screen_y;
@@ -845,7 +829,7 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, int *wret)
 }
 
 Termcell *
-termpty_cellrow_get(Termpty *ty, int y_requested, int *wret)
+termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
    if (y_requested >= 0)
      {

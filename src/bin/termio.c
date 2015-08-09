@@ -2037,7 +2037,8 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
    for (y = c1y; y <= c2y; y++)
      {
         Termcell *cells;
-        int w, last0, v, start_x, end_x;
+        ssize_t w;
+        int last0, v, start_x, end_x;
 
         w = 0;
         last0 = -1;
@@ -2427,7 +2428,8 @@ termio_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
 static void
 _sel_line(Termio *sd, int cy)
 {
-   int y, w = 0;
+   int y;
+   ssize_t w = 0;
    Termcell *cells;
 
    termpty_backlog_lock();
@@ -2772,7 +2774,8 @@ static void
 _sel_word(Termio *sd, int cx, int cy)
 {
    Termcell *cells;
-   int x, y, w = 0;
+   int x, y;
+   ssize_t w = 0;
    Eina_Bool done = EINA_FALSE;
 
    termpty_backlog_lock();
@@ -3183,7 +3186,7 @@ _selection_dbl_fix(Termio *sd
 {
 #if defined(SUPPORT_DBLWIDTH)
    int start_x, start_y, end_x, end_y;
-   int w = 0;
+   ssize_t w = 0;
    Termcell *cells;
    /* Only change the end position */
 
@@ -4489,7 +4492,8 @@ _smart_apply(Evas_Object *obj)
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l, *ln;
    Termblock *blk;
-   int x, y, w, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
+   int x, y, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
+   ssize_t w;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);

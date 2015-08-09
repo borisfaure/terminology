@@ -502,7 +502,8 @@ _deferred_renderer(void *data)
 {
    Miniview *mv = data;
    Evas_Coord ox, oy, ow, oh;
-   int history_len, wret, pos;
+   int history_len, pos;
+   ssize_t wret;
    unsigned int *pixels, y;
    Termcell *cells;
    Termpty *ty;
