@@ -179,8 +179,7 @@ _termio_link_find(Evas_Object *obj, int cx, int cy,
                end = s[len - 2];
 
              if ((end == endmatch) ||
-                 ((!escaped) && (isspace(end)) &&
-                  ((end != '\n') && (end != '\r'))))
+                 ((!escaped) && (isspace(end))))
                {
                   goforward = EINA_FALSE;
                   coord_back(&x2, &y2, w, h);
