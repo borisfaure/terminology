@@ -810,6 +810,8 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
              *wret = ts->w - delta * ty->w;
              if (*wret > ts->w)
                *wret = ts->w;
+             ty->backlog_beacon.screen_y = screen_y;
+             ty->backlog_beacon.backlog_y = backlog_y;
              return &ts->cells[delta * ty->w];
           }
 
