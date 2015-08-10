@@ -951,7 +951,7 @@ _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
         Evas_Object *o;
 
         tm = tc->focused_term_get(tc);
-        if (termio_cwd_get(tm->termio, buf, sizeof(buf)))
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
@@ -1429,7 +1429,7 @@ _split_split(Term_Container *tc, Term_Container *child,
         Evas_Object *obj_split;
 
         tm = child->focused_term_get(child);
-        if (termio_cwd_get(tm->termio, buf, sizeof(buf)))
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
