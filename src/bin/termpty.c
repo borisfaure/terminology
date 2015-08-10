@@ -792,6 +792,12 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
 
    requested_y = -requested_y;
 
+   /* check if going from 0,0 is faster than using the beacon */
+   if (screen_y - requested_y > requested_y)
+     {
+        backlog_y = 1;
+        screen_y = 1;
+     }
    while (42) {
         Termsave *ts;
         int nb_lines;
