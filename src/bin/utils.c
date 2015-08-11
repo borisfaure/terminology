@@ -14,18 +14,15 @@ theme_path_get(const char *name)
    static char path2[PATH_MAX] = "";
 
    /* use the newer file */
-   struct stat s1, s2;
+   struct stat s2;
 
-   snprintf(path1, sizeof(path1) - 1, "%s/themes/%s",
-            elm_app_data_dir_get(), name);
    snprintf(path2, sizeof(path2) - 1, "%s/terminology/themes/%s",
             efreet_config_home_get(), name);
 
-   if (stat(path1, &s1) < 0) return path2;
-   if (stat(path2, &s2) < 0) return path1;
-
-   if (s1.st_mtime > s2.st_mtime) return path1;
-   return path2;
+   if (stat(path2, &s2) == 0) return path2;
+   snprintf(path1, sizeof(path1) - 1, "%s/themes/%s",
+            elm_app_data_dir_get(), name);
+   return path1;
 }
 
 Eina_Bool
