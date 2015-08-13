@@ -5664,7 +5664,7 @@ _smart_cb_drop(void *data, Evas_Object *o EINA_UNUSED, Elm_Selection_Data *ev)
           evas_object_smart_callback_call(obj, "popup", ev->data);
      }
    else
-     termpty_write(sd->pty, ev->data, strlen(ev->data));
+     termpty_write(sd->pty, ev->data, ev->len);
    return EINA_TRUE;
 }
 #endif
