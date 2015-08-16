@@ -2600,7 +2600,6 @@ _codepoint_is_wordsep(const Eina_Unicode g)
        ')',
        '*',
        ',',
-       ':',
        ';',
        '=',
        '?',
@@ -2770,6 +2769,95 @@ _codepoint_is_wordsep(const Eina_Unicode g)
    return EINA_FALSE;
 }
 
+Eina_Bool
+_to_trim(Eina_Unicode codepoint)
+{
+   static const Eina_Unicode trim_chars[] =
+     {
+       ':',
+       '<',
+       '>',
+       '.'
+     };
+   int i = 0;
+   size_t len;
+   len = sizeof(trim_chars)/sizeof((trim_chars)[0]);
+
+   for (i == 0; i < len; i++)
+     if (codepoint == trim_chars[i])
+       return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static void
+_trim_sel_word(Termio *sd, int w)
+{
+   Termcell *cells;
+   int start = 0, end = 0, line = 0, k = 0;
+   if (sd->pty->selection.start.y != sd->pty->selection.end.y)
+     {
+        start = sd->pty->selection.start.x;
+        end = sd->pty->selection.end.x;
+        k = sd->pty->selection.end.y - sd->pty->selection.start.y;
+        for (; k >= 0; k--)
+          {
+             line = sd->pty->selection.start.y;
+             cells = termpty_cellrow_get(sd->pty, line, &w); 
+
+             while (_to_trim(cells[start].codepoint)) start++;
+
+             if (start >= w)
+               {
+                  start = 0;
+                  sd->pty->selection.start.y += 1;
+               }
+             
+             if (sd->pty->selection.start.y == sd->pty->selection.end.y)
+               {
+                  start = 0; 
+                  line = sd->pty->selection.start.y;
+                  cells = termpty_cellrow_get(sd->pty, line, &w); 
+                  while (_to_trim(cells[start].codepoint)) start++;
+                  while (_to_trim(cells[end].codepoint)) end--;
+                  break;
+               }
+          }
+        sd->pty->selection.start.x = start;
+
+        start = sd->pty->selection.start.x;
+        end = sd->pty->selection.end.x;
+        k = sd->pty->selection.end.y;
+        for (; k >= sd->pty->selection.start.y; k--)
+          {
+             line = sd->pty->selection.end.y;
+             cells = termpty_cellrow_get(sd->pty, line, &w); 
+
+             while (_to_trim(cells[end].codepoint)) end--;
+
+             if (end <= 0)
+               {
+                  end = w;
+                  sd->pty->selection.end.y -= 1;
+               }
+          }
+        sd->pty->selection.end.x = end;
+     }
+   else
+     {
+        line = sd->pty->selection.start.y;
+        start = sd->pty->selection.start.x;
+        end = sd->pty->selection.end.x;
+
+        cells = termpty_cellrow_get(sd->pty, line, &w);
+
+        while (_to_trim(cells[start].codepoint)) start++;
+        while (_to_trim(cells[end].codepoint)) end--;
+
+        sd->pty->selection.start.x = start;
+        sd->pty->selection.end.x = end;
+     }
+}
+
 static void
 _sel_word(Termio *sd, int cx, int cy)
 {
@@ -2884,6 +2972,7 @@ _sel_word(Termio *sd, int cx, int cy)
 
   end:
 
+   _trim_sel_word(sd, w);
    sd->pty->selection.by_word = EINA_TRUE;
    sd->pty->selection.is_top_to_bottom = EINA_TRUE;
 
@@ -3991,9 +4080,9 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              if (!sd->pty->selection.is_active && sd->didclick)
                sd->pty->selection.is_active = EINA_TRUE;
              if (shift && sd->pty->selection.is_active)
-                  _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
+               _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
              else
-                  _sel_word(sd, cx, cy - sd->scroll);
+               _sel_word(sd, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
                termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              sd->didclick = EINA_TRUE;
