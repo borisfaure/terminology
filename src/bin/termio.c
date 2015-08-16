@@ -2769,7 +2769,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
    return EINA_FALSE;
 }
 
-Eina_Bool
+static Eina_Bool
 _to_trim(Eina_Unicode codepoint)
 {
    static const Eina_Unicode trim_chars[] =
@@ -2779,83 +2779,78 @@ _to_trim(Eina_Unicode codepoint)
        '>',
        '.'
      };
-   int i = 0;
-   size_t len;
+   size_t i = 0, len;
    len = sizeof(trim_chars)/sizeof((trim_chars)[0]);
 
-   for (i == 0; i < len; i++)
+   for (i = 0; i < len; i++)
      if (codepoint == trim_chars[i])
        return EINA_TRUE;
    return EINA_FALSE;
 }
 
 static void
-_trim_sel_word(Termio *sd, int w)
+_trim_sel_word(Termio *sd)
 {
+   Termpty *pty = sd->pty;
    Termcell *cells;
-   int start = 0, end = 0, line = 0, k = 0;
-   if (sd->pty->selection.start.y != sd->pty->selection.end.y)
+   int start = 0, end = 0, y = 0;
+   ssize_t w;
+
+   /* 1st step: trim from the start */
+   start = pty->selection.start.x;
+   for (y = pty->selection.start.y;
+        y <= pty->selection.end.y;
+        y++)
      {
-        start = sd->pty->selection.start.x;
-        end = sd->pty->selection.end.x;
-        k = sd->pty->selection.end.y - sd->pty->selection.start.y;
-        for (; k >= 0; k--)
-          {
-             line = sd->pty->selection.start.y;
-             cells = termpty_cellrow_get(sd->pty, line, &w); 
+        cells = termpty_cellrow_get(pty, y, &w);
 
-             while (_to_trim(cells[start].codepoint)) start++;
+        while (start < w && _to_trim(cells[start].codepoint))
+          start++;
 
-             if (start >= w)
-               {
-                  start = 0;
-                  sd->pty->selection.start.y += 1;
-               }
-             
-             if (sd->pty->selection.start.y == sd->pty->selection.end.y)
-               {
-                  start = 0; 
-                  line = sd->pty->selection.start.y;
-                  cells = termpty_cellrow_get(sd->pty, line, &w); 
-                  while (_to_trim(cells[start].codepoint)) start++;
-                  while (_to_trim(cells[end].codepoint)) end--;
-                  break;
-               }
-          }
-        sd->pty->selection.start.x = start;
+        if (start < w)
+          break;
 
-        start = sd->pty->selection.start.x;
-        end = sd->pty->selection.end.x;
-        k = sd->pty->selection.end.y;
-        for (; k >= sd->pty->selection.start.y; k--)
-          {
-             line = sd->pty->selection.end.y;
-             cells = termpty_cellrow_get(sd->pty, line, &w); 
-
-             while (_to_trim(cells[end].codepoint)) end--;
-
-             if (end <= 0)
-               {
-                  end = w;
-                  sd->pty->selection.end.y -= 1;
-               }
-          }
-        sd->pty->selection.end.x = end;
+        start = 0;
      }
-   else
+   /* check validy of the selection */
+   if ((y > pty->selection.end.y) ||
+       ((y == pty->selection.end.y) &&
+        (start >= pty->selection.end.x)))
      {
-        line = sd->pty->selection.start.y;
-        start = sd->pty->selection.start.x;
-        end = sd->pty->selection.end.x;
-
-        cells = termpty_cellrow_get(sd->pty, line, &w);
-
-        while (_to_trim(cells[start].codepoint)) start++;
-        while (_to_trim(cells[end].codepoint)) end--;
-
-        sd->pty->selection.start.x = start;
-        sd->pty->selection.end.x = end;
+        pty->selection.start.y = pty->selection.start.y;
+        pty->selection.start.x = pty->selection.end.x;
+        return;
      }
+   pty->selection.start.y = y;
+   pty->selection.start.x = start;
+
+   /* 2nd step: trim from the end */
+   end = pty->selection.end.x;
+   for (y = pty->selection.end.y;
+        y >= pty->selection.start.y;
+        y--)
+     {
+        cells = termpty_cellrow_get(pty, y, &w);
+
+        while (end >= 0 && _to_trim(cells[end].codepoint))
+          end--;
+
+        if (end >= 0)
+          break;
+     }
+   if (end < 0)
+     return;
+   /* check validy of the selection */
+   if ((y < pty->selection.start.y) ||
+       ((y == pty->selection.start.y) &&
+        (end < pty->selection.start.x)))
+     {
+        pty->selection.end.x = pty->selection.end.x;
+        pty->selection.end.y = pty->selection.start.y;
+        return;
+     }
+   pty->selection.end.x = end;
+   pty->selection.end.y = y;
 }
 
 static void
@@ -2972,9 +2967,9 @@ _sel_word(Termio *sd, int cx, int cy)
 
   end:
 
-   _trim_sel_word(sd, w);
    sd->pty->selection.by_word = EINA_TRUE;
    sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+   _trim_sel_word(sd);
 
    termpty_backlog_unlock();
 }
