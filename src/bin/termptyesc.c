@@ -1026,6 +1026,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 's': // store cursor pos
         termpty_cursor_copy(ty, EINA_TRUE);
         break;
+      case 't': // store cursor pos
+        arg = _csi_arg_get(&b);
+        WRN("TODO: window operation %d not supported", arg);
+        break;
       case 'u': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);
         break;
