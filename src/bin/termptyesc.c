@@ -1303,12 +1303,8 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           goto err;
         if (*p == '?')
           {
-             TERMPTY_WRITE_STR("\033]0;");
-             if (ty->prop.title)
-               {
-                  TERMPTY_WRITE_STR(ty->prop.title);
-               }
-             TERMPTY_WRITE_STR("\007");
+             /* returns empty string. See CVE-2003-0063 */
+             TERMPTY_WRITE_STR("\033]0;Terminology\007");
           }
         else
           {
@@ -1336,12 +1332,8 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           goto err;
         if (*p == '?')
           {
-             TERMPTY_WRITE_STR("\033]0;");
-             if (ty->prop.icon)
-               {
-                  TERMPTY_WRITE_STR(ty->prop.icon);
-               }
-             TERMPTY_WRITE_STR("\007");
+             /* returns empty string. See CVE-2003-0063 */
+             TERMPTY_WRITE_STR("\033]1;Terminology\007");
           }
         else
           {
@@ -1365,12 +1357,8 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           goto err;
         if (*p == '?')
           {
-             TERMPTY_WRITE_STR("\033]0;");
-             if (ty->prop.title)
-               {
-                  TERMPTY_WRITE_STR(ty->prop.title);
-               }
-             TERMPTY_WRITE_STR("\007");
+             /* returns empty string. See CVE-2003-0063 */
+             TERMPTY_WRITE_STR("\033]2;Terminology\007");
           }
         else
           {
