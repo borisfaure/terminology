@@ -2848,7 +2848,7 @@ _trim_sel_word(Termio *sd)
        ((y == pty->selection.start.y) &&
         (end < pty->selection.start.x)))
      {
-        pty->selection.end.x = pty->selection.end.x;
+        pty->selection.end.x = pty->selection.start.x;
         pty->selection.end.y = pty->selection.start.y;
         return;
      }
