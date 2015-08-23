@@ -1774,12 +1774,16 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
    if ((!blk->path) || (!blk->link)) return;
    blk->obj = edje_object_add(evas_object_evas_get(obj));
    if (blk->path[0] == '/')
-     ok = edje_object_file_set(blk->obj, blk->path, blk->link);
+     {
+        ok = edje_object_file_set(blk->obj, blk->path, blk->link);
+     }
    else if (!strcmp(blk->path, "THEME"))
-     ok = edje_object_file_set(blk->obj,
-                               config_theme_path_default_get
-                               (sd->config),
-                               blk->link);
+     {
+        ok = edje_object_file_set(blk->obj,
+                                  config_theme_path_default_get
+                                  (sd->config),
+                                  blk->link);
+     }
    else
      {
         char path[PATH_MAX], home[PATH_MAX];
@@ -1806,6 +1810,10 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
      {
         _block_edje_cmds(sd->pty, blk, blk->cmds, EINA_TRUE);
      }
+   else
+     {
+        ERR("failed to activate textblock of id %d", blk->id);
+     }
 }
 
 static void
@@ -1817,38 +1825,52 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
    Evas_Object *mctrl;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   if (blk->scale_stretch) media = MEDIA_STRETCH;
-   else if (blk->scale_center) media = MEDIA_POP;
-   else if (blk->scale_fill) media = MEDIA_BG;
-   else if (blk->thumb) media = MEDIA_THUMB;
-//   media = MEDIA_POP;
+
+   if (blk->scale_stretch)
+     media = MEDIA_STRETCH;
+   else if (blk->scale_center)
+     media = MEDIA_POP;
+   else if (blk->scale_fill)
+     media = MEDIA_BG;
+   else if (blk->thumb)
+     media = MEDIA_THUMB;
+
    if (!blk->was_active_before || blk->mov_state == MOVIE_STATE_STOP)
      media |= MEDIA_SAVE;
    else
      media |= MEDIA_RECOVER | MEDIA_SAVE;
+
    type = media_src_type_get(blk->path);
    blk->obj = media_add(obj, blk->path, sd->config, media, type);
+
    if (type == MEDIA_TYPE_MOV)
      media_play_set(blk->obj, blk->mov_state == MOVIE_STATE_PLAY);
+
    evas_object_event_callback_add
      (blk->obj, EVAS_CALLBACK_DEL, _smart_media_del, blk);
    evas_object_smart_callback_add(blk->obj, "play", _smart_media_play, blk);
    evas_object_smart_callback_add(blk->obj, "pause", _smart_media_pause, blk);
    evas_object_smart_callback_add(blk->obj, "stop", _smart_media_stop, blk);
+
    blk->type = type;
    evas_object_smart_member_add(blk->obj, obj);
+
    mctrl = media_control_get(blk->obj);
    if (mctrl)
      {
         evas_object_smart_member_add(mctrl, obj);
         evas_object_stack_above(mctrl, sd->event);
      }
+
    evas_object_stack_above(blk->obj, sd->grid.obj);
    evas_object_show(blk->obj);
    evas_object_data_set(blk->obj, "blk", blk);
+
    if (blk->thumb)
-     evas_object_smart_callback_add
-     (blk->obj, "clicked", _smart_media_clicked, obj);
+     {
+        evas_object_smart_callback_add(blk->obj, "clicked",
+                                       _smart_media_clicked, obj);
+     }
 }
 
 static void
@@ -1857,11 +1879,17 @@ _block_activate(Evas_Object *obj, Termblock *blk)
    Termio *sd = evas_object_smart_data_get(obj);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   if (blk->active) return;
+
+   if (blk->active)
+     return;
    blk->active = EINA_TRUE;
-   if (blk->obj) return;
-   if (blk->edje) _block_edje_activate(obj, blk);
-   else _block_media_activate(obj, blk);
+   if (blk->obj)
+     return;
+   if (blk->edje)
+     _block_edje_activate(obj, blk);
+   else
+     _block_media_activate(obj, blk);
+
    blk->was_active_before = EINA_TRUE;
    if (!blk->was_active)
      sd->pty->block.active = eina_list_append(sd->pty->block.active, blk);

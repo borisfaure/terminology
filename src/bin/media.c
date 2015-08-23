@@ -72,7 +72,7 @@ static Eina_Bool et_connected = EINA_FALSE;
 static Eina_List *et_queue = NULL;
 
 static void _et_init(void);
-static void _type_thumb_init2(Evas_Object *obj);
+static int _type_thumb_init2(Evas_Object *obj);
 
 static void
 _et_disconnect(void *data EINA_UNUSED, Ethumb_Client *c)
@@ -187,11 +187,13 @@ _et_error(Ethumb_Client *c EINA_UNUSED, void *data)
    sd->et_req = NULL;
 }
 
-static void
+static int
 _type_thumb_init2(Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   Eina_Bool ok;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
 
    if ((sd->realf) && (sd->realf[0] != '/'))
      {
@@ -220,21 +222,31 @@ _type_thumb_init2(Evas_Object *obj)
                icon_theme = eina_stringshare_add(theme->name.internal);
           }
         fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
-        ethumb_client_file_set(et_client, fl, NULL);
+        ok = ethumb_client_file_set(et_client, fl, NULL);
+        if (!ok)
+          return -1;
      }
    else
-     ethumb_client_file_set(et_client, sd->realf, NULL);
+     {
+        ok = ethumb_client_file_set(et_client, sd->realf, NULL);
+        if (!ok)
+          return -1;
+     }
+
    sd->et_req = ethumb_client_thumb_async_get(et_client, _et_done,
                                               _et_error, obj);
    sd->queued = EINA_FALSE;
+   return 0;
 }
 
-static void
+static int
 _type_thumb_init(Evas_Object *obj)
 {
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
    sd->type = MEDIA_TYPE_THUMB;
    _et_init();
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
@@ -248,9 +260,9 @@ _type_thumb_init(Evas_Object *obj)
      {
         et_queue = eina_list_append(et_queue, obj);
         sd->queued = EINA_TRUE;
-        return;
+        return 0;
      }
-   _type_thumb_init2(obj);
+   return _type_thumb_init2(obj);
 }
 
 //////////////////////// img
@@ -299,26 +311,35 @@ _cb_img_frame(void *data)
    return EINA_TRUE;
 }
 
-static void
+static int
 _type_img_anim_handle(Evas_Object *obj)
 {
    double t;
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-   if (!evas_object_image_animated_get(sd->o_img)) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
+   if (!evas_object_image_animated_get(sd->o_img))
+     return -1;
+
    sd->fr = 1;
    sd->frnum = evas_object_image_animated_frame_count_get(sd->o_img);
-   if (sd->frnum < 2) return;
+   if (sd->frnum < 2)
+     return 0;
+
    t = evas_object_image_animated_frame_duration_get(sd->o_img, sd->fr, 0);
    sd->anim = ecore_timer_add(t, _cb_img_frame, obj);
+   return 0;
 }
 
-static void
+static int
 _type_img_init(Evas_Object *obj)
 {
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -329,7 +350,7 @@ _type_img_init(Evas_Object *obj)
    evas_object_image_file_set(o, sd->realf, NULL);
    evas_object_image_size_get(o, &(sd->iw), &(sd->ih));
    evas_object_image_preload(o, EINA_FALSE);
-   _type_img_anim_handle(obj);
+   return _type_img_anim_handle(obj);
 }
 
 static void
@@ -408,12 +429,14 @@ _cb_scale_preloaded(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSE
      }
 }
 
-static void
+static int
 _type_scale_init(Evas_Object *obj)
 {
    Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
    o = sd->o_img = evas_object_image_filled_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -424,6 +447,8 @@ _type_scale_init(Evas_Object *obj)
    evas_object_image_file_set(o, sd->realf, NULL);
    evas_object_image_size_get(o, &(sd->iw), &(sd->ih));
    evas_object_image_preload(o, EINA_FALSE);
+
+   return 0;
 }
 
 static void
@@ -516,7 +541,7 @@ _cb_edje_preloaded(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EIN
    evas_object_show(sd->clip);
 }
 
-static void
+static int
 _type_edje_init(Evas_Object *obj)
 {
    Evas_Object *o;
@@ -528,7 +553,9 @@ _type_edje_init(Evas_Object *obj)
         NULL
      };
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
    o = sd->o_img = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(o, obj);
    evas_object_clip_set(o, sd->clip);
@@ -541,9 +568,10 @@ _type_edje_init(Evas_Object *obj)
                                              _cb_edje_preloaded, obj);
              edje_object_preload(o, EINA_FALSE);
              theme_auto_reload_enable(o);
-             return;
+             return 0;
           }
      }
+   return 0;
 }
 
 static void
@@ -696,7 +724,7 @@ _cb_media_pos(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EIN
    media_position_set(data, vx + vy);
 }
 
-static void
+static int
 _type_mov_init(Evas_Object *obj)
 {
    Evas_Object *o;
@@ -710,9 +738,10 @@ _type_mov_init(Evas_Object *obj)
         "gstreamer1"
     };
    char *mod = NULL;
-
    Media *sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
+
    emotion_init();
    o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
    if ((sd->config->vidmod >= 0) &&
@@ -723,7 +752,7 @@ _type_mov_init(Evas_Object *obj)
         ERR(_("Could not Initialize the emotion module '%s'"), mod);
         evas_object_del(sd->o_img);
         sd->o_img = NULL;
-        return;
+        return -1;
      }
    evas_object_smart_callback_add(o, "frame_decode",
                                   _cb_mov_frame_decode, obj);
@@ -769,8 +798,12 @@ _type_mov_init(Evas_Object *obj)
    evas_object_show(o);
 
    media_play_set(obj, EINA_TRUE);
-   if (sd->config->mute) media_mute_set(obj, EINA_TRUE);
-   if (sd->config->visualize) media_visualize_set(obj, EINA_TRUE);
+   if (sd->config->mute)
+     media_mute_set(obj, EINA_TRUE);
+   if (sd->config->visualize)
+     media_visualize_set(obj, EINA_TRUE);
+
+   return 0;
 }
 
 static void
@@ -1270,23 +1303,28 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
    if ((mode & MEDIA_SIZE_MASK) == MEDIA_THUMB)
      {
         // XXX: handle sd->url being true?
-        _type_thumb_init(obj);
+        if (_type_thumb_init(obj) < 0)
+          goto err;
      }
    else
      {
         switch (type)
           {
            case MEDIA_TYPE_IMG:
-             if (!sd->url) _type_img_init(obj);
+             if (!sd->url && (_type_img_init(obj) < 0))
+                 goto err;
              break;
            case MEDIA_TYPE_SCALE:
-             if (!sd->url) _type_scale_init(obj);
+             if (!sd->url && (_type_scale_init(obj) < 0))
+               goto err;
              break;
            case MEDIA_TYPE_EDJE:
-             if (!sd->url) _type_edje_init(obj);
+             if (!sd->url && (_type_edje_init(obj) < 0))
+               goto err;
              break;
            case MEDIA_TYPE_MOV:
-             if (!sd->url) _type_mov_init(obj);
+             if (!sd->url && (_type_mov_init(obj) < 0))
+               goto err;
              break;
            default:
              break;
@@ -1306,12 +1344,10 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
 
    return obj;
 
-#if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 13)
 err:
    if (obj)
      evas_object_del(obj);
    return NULL;
-#endif
 }
 
 void
