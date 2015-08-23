@@ -5463,16 +5463,72 @@ _smart_pty_command(void *data)
 {
    Evas_Object *obj = data;
    Termio *sd = evas_object_smart_data_get(obj);
+   Config *config;
+   Termpty *ty;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   if (!sd->pty->cur_cmd) return;
-   if (sd->pty->cur_cmd[0] == 'i')
+
+   config = sd->config;
+   ty = sd->pty;
+   if (!ty->cur_cmd)
+     return;
+   if (ty->cur_cmd[0] == 'q')
      {
-        if ((sd->pty->cur_cmd[1] == 's') ||
-            (sd->pty->cur_cmd[1] == 'c') ||
-            (sd->pty->cur_cmd[1] == 'f') ||
-            (sd->pty->cur_cmd[1] == 't') ||
-            (sd->pty->cur_cmd[1] == 'j'))
+        if (ty->cur_cmd[1] == 's')
+          {
+             char buf[256];
+
+             snprintf(buf, sizeof(buf), "%i;%i;%i;%i\n",
+                      sd->grid.w, sd->grid.h, sd->font.chw, sd->font.chh);
+             termpty_write(ty, buf, strlen(buf));
+             return;
+          }
+        else if (ty->cur_cmd[1] == 'j')
+          {
+             const char *chid = &(ty->cur_cmd[3]);
+
+             if (ty->cur_cmd[2])
+               {
+                  if (ty->cur_cmd[2] == '+')
+                    {
+                       sd->cur_chids = eina_list_append
+                          (sd->cur_chids, eina_stringshare_add(chid));
+                    }
+                  else if (ty->cur_cmd[2] == '-')
+                    {
+                       Eina_List *l;
+                       char *chid2;
+
+                       EINA_LIST_FOREACH(sd->cur_chids, l, chid2)
+                         {
+                            if (!(!strcmp(chid, chid2)))
+                              {
+                                 sd->cur_chids =
+                                    eina_list_remove_list(sd->cur_chids, l);
+                                 eina_stringshare_del(chid2);
+                                 break;
+                              }
+                         }
+                    }
+               }
+             else
+               {
+                  EINA_LIST_FREE(sd->cur_chids, chid)
+                     eina_stringshare_del(chid);
+               }
+             return;
+          }
+        return;
+     }
+   if (!config->ty_escapes)
+     return;
+   if (ty->cur_cmd[0] == 'i')
+     {
+        if ((ty->cur_cmd[1] == 's') ||
+            (ty->cur_cmd[1] == 'c') ||
+            (ty->cur_cmd[1] == 'f') ||
+            (ty->cur_cmd[1] == 't') ||
+            (ty->cur_cmd[1] == 'j'))
           {
              const char *p, *p0, *p1, *path = NULL;
              char *pp;
@@ -5491,12 +5547,12 @@ _smart_pty_command(void *data)
              // \nCMD\nP1[\nP2][\nP3][[\nCMD2\nP21[\nP22]]...
              //  CMD is the command, P1, P2, P3 etc. are parameters (P2 and
              //  on are optional depending on CMD)
-             repch = sd->pty->cur_cmd[2];
+             repch = ty->cur_cmd[2];
              if (repch)
                {
                   char *link = NULL;
 
-                  for (p0 = p = &(sd->pty->cur_cmd[3]); *p; p++)
+                  for (p0 = p = &(ty->cur_cmd[3]); *p; p++)
                     {
                        if (*p == ';')
                          {
@@ -5514,7 +5570,7 @@ _smart_pty_command(void *data)
                             break;
                          }
                     }
-                  if (sd->pty->cur_cmd[1] == 'j')
+                  if (ty->cur_cmd[1] == 'j')
                     {
                        // parse from p until end of string - one newline
                        // per list item in strs
@@ -5572,7 +5628,7 @@ _smart_pty_command(void *data)
                             file = eina_list_nth(strs, 0);
                             group = eina_list_nth(strs, 1);
                             l = eina_list_nth_list(strs, 2);
-                            blk = termpty_block_new(sd->pty, ww, hh, file, group);
+                            blk = termpty_block_new(ty, ww, hh, file, group);
                             for (;l; l = l->next)
                               {
                                  pp = l->data;
@@ -5582,20 +5638,20 @@ _smart_pty_command(void *data)
                               }
                          }
                        else
-                         blk = termpty_block_new(sd->pty, ww, hh, path, link);
+                         blk = termpty_block_new(ty, ww, hh, path, link);
                        if (blk)
                          {
-                            if (sd->pty->cur_cmd[1] == 's')
+                            if (ty->cur_cmd[1] == 's')
                               blk->scale_stretch = EINA_TRUE;
-                            else if (sd->pty->cur_cmd[1] == 'c')
+                            else if (ty->cur_cmd[1] == 'c')
                               blk->scale_center = EINA_TRUE;
-                            else if (sd->pty->cur_cmd[1] == 'f')
+                            else if (ty->cur_cmd[1] == 'f')
                               blk->scale_fill = EINA_TRUE;
-                            else if (sd->pty->cur_cmd[1] == 't')
+                            else if (ty->cur_cmd[1] == 't')
                               blk->thumb = EINA_TRUE;
-                            else if (sd->pty->cur_cmd[1] == 'j')
+                            else if (ty->cur_cmd[1] == 'j')
                               blk->edje = EINA_TRUE;
-                            termpty_block_insert(sd->pty, repch, blk);
+                            termpty_block_insert(ty, repch, blk);
                          }
                     }
                   free(link);
@@ -5603,14 +5659,14 @@ _smart_pty_command(void *data)
                }
              return;
           }
-        else if (sd->pty->cur_cmd[1] == 'C')
+        else if (ty->cur_cmd[1] == 'C')
           {
              Termblock *blk = NULL;
              const char *p, *p0, *p1;
              char *pp;
              Eina_List *strs = NULL;
 
-             p = &(sd->pty->cur_cmd[2]);
+             p = &(ty->cur_cmd[2]);
              // parse from p until end of string - one newline
              // per list item in strs
              p0 = p1 = p;
@@ -5642,46 +5698,46 @@ _smart_pty_command(void *data)
              if (strs)
                {
                   char *chid = strs->data;
-                  blk = termpty_block_chid_get(sd->pty, chid);
+                  blk = termpty_block_chid_get(ty, chid);
                   if (blk)
                     {
-                       _block_edje_cmds(sd->pty, blk, strs->next, EINA_FALSE);
+                       _block_edje_cmds(ty, blk, strs->next, EINA_FALSE);
                     }
                }
              EINA_LIST_FREE(strs, pp) free(pp);
           }
-        else if (sd->pty->cur_cmd[1] == 'b')
+        else if (ty->cur_cmd[1] == 'b')
           {
-             sd->pty->block.on = EINA_TRUE;
+             ty->block.on = EINA_TRUE;
           }
-        else if (sd->pty->cur_cmd[1] == 'e')
+        else if (ty->cur_cmd[1] == 'e')
           {
-             sd->pty->block.on = EINA_FALSE;
+             ty->block.on = EINA_FALSE;
           }
      }
-   else if (sd->pty->cur_cmd[0] == 'q')
+   else if (ty->cur_cmd[0] == 'q')
      {
-        if (sd->pty->cur_cmd[1] == 's')
+        if (ty->cur_cmd[1] == 's')
           {
              char buf[256];
 
              snprintf(buf, sizeof(buf), "%i;%i;%i;%i\n",
                       sd->grid.w, sd->grid.h, sd->font.chw, sd->font.chh);
-             termpty_write(sd->pty, buf, strlen(buf));
+             termpty_write(ty, buf, strlen(buf));
              return;
           }
-        else if (sd->pty->cur_cmd[1] == 'j')
+        else if (ty->cur_cmd[1] == 'j')
           {
-             const char *chid = &(sd->pty->cur_cmd[3]);
+             const char *chid = &(ty->cur_cmd[3]);
 
-             if (sd->pty->cur_cmd[2])
+             if (ty->cur_cmd[2])
                {
-                  if (sd->pty->cur_cmd[2] == '+')
+                  if (ty->cur_cmd[2] == '+')
                     {
                        sd->cur_chids = eina_list_append
                          (sd->cur_chids, eina_stringshare_add(chid));
                     }
-                  else if (sd->pty->cur_cmd[2] == '-')
+                  else if (ty->cur_cmd[2] == '-')
                     {
                        Eina_List *l;
                        char *chid2;
@@ -5706,7 +5762,7 @@ _smart_pty_command(void *data)
              return;
           }
      }
-   evas_object_smart_callback_call(obj, "command", (void *)sd->pty->cur_cmd);
+   evas_object_smart_callback_call(obj, "command", (void *)ty->cur_cmd);
 }
 
 #if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))

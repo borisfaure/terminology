@@ -1442,8 +1442,11 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
 {
    Eina_Unicode *cc;
    Eina_Unicode *buf, bufsmall[1024], *b;
-   char *s;
-   int blen = 0, slen =  0;
+   char *cmd;
+   int blen = 0;
+   Config *config;
+
+   config = termio_config_get(ty->obj);
 
    cc = (Eina_Unicode *)c;
    while ((cc < ce) && (*cc != 0x0))
@@ -1469,15 +1472,17 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
         return 0;
      }
    *b = 0;
+
    // commands are stored in the buffer, 0 bytes not allowed (end marker)
-   s = eina_unicode_unicode_to_utf8(buf, &slen);
-   ty->cur_cmd = s;
-   if (!_termpty_ext_handle(ty, s, buf))
+   cmd = eina_unicode_unicode_to_utf8(buf, NULL);
+   ty->cur_cmd = cmd;
+   if ((!config->ty_escapes) || (!_termpty_ext_handle(ty, cmd, buf)))
      {
         if (ty->cb.command.func) ty->cb.command.func(ty->cb.command.data);
      }
    ty->cur_cmd = NULL;
-   free(s);
+   free(cmd);
+
    if (buf != bufsmall) free(buf);
    return cc - c;
 }
