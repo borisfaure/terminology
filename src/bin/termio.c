@@ -4043,10 +4043,11 @@ _cb_ctxp_sel_open_as_url(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
-   char buf[PATH_MAX], *s, *escaped;
+   char buf[PATH_MAX], *s = NULL, *escaped = NULL;
    const char *cmd;
    const char *prefix = "http://";
    Config *config;
+   Eina_Strbuf *sb = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
@@ -4061,7 +4062,13 @@ _cb_ctxp_sel_open_as_url(void *data, Evas_Object *obj, void *event EINA_UNUSED)
      goto end;
    cmd = config->helper.url.general;
 
-   s = eina_str_escape(sd->sel_str);
+   sb = eina_strbuf_new();
+   if (!sb)
+     goto end;
+   eina_strbuf_append(sb, sd->sel_str);
+   eina_strbuf_trim(sb);
+
+   s = eina_str_escape(eina_strbuf_string_get(sb));
    if (!s)
      goto end;
    if (casestartswith(s, "http://") ||
@@ -4075,12 +4082,14 @@ _cb_ctxp_sel_open_as_url(void *data, Evas_Object *obj, void *event EINA_UNUSED)
      goto end;
 
    snprintf(buf, sizeof(buf), "%s %s%s", cmd, prefix, escaped);
-   free(escaped);
 
    WRN("trying to launch '%s'", buf);
    ecore_exe_run(buf, NULL);
 
 end:
+   eina_strbuf_free(sb);
+   free(escaped);
+   free(s);
    sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
