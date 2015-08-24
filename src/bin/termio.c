@@ -2306,6 +2306,7 @@ _take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    sd->reset_sel = EINA_FALSE;
    sd->set_sel_at = ecore_time_get(); // hack
    sd->sel_type = type;
+
    elm_cnp_selection_set(sd->win, type,
                          ELM_SEL_FORMAT_TEXT,
                          text,
@@ -4029,10 +4030,61 @@ _cb_ctxp_sel_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
 
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
    termio_take_selection(data, ELM_SEL_TYPE_CLIPBOARD);
+
    sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
+
+static void
+_cb_ctxp_sel_open_as_url(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+   char buf[PATH_MAX], *s, *escaped;
+   const char *cmd;
+   const char *prefix = "http://";
+   Config *config;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   config = sd->config;
+
+   termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+
+   if (!sd->have_sel || !sd->sel_str)
+     goto end;
+
+   if (!(config->helper.url.general) ||
+       !(config->helper.url.general[0]))
+     goto end;
+   cmd = config->helper.url.general;
+
+   s = eina_str_escape(sd->sel_str);
+   if (!s)
+     goto end;
+   if (casestartswith(s, "http://") ||
+        casestartswith(s, "https://") ||
+        casestartswith(s, "ftp://") ||
+        casestartswith(s, "mailto:"))
+     prefix = "";
+
+   escaped = ecore_file_escape_name(s);
+   if (!escaped)
+     goto end;
+
+   snprintf(buf, sizeof(buf), "%s %s%s", cmd, prefix, escaped);
+   free(escaped);
+
+   WRN("trying to launch '%s'", buf);
+   ecore_exe_run(buf, NULL);
+
+end:
+   sd->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
 
 static void
 _handle_right_click(Evas_Object *obj, Evas_Event_Mouse_Down *ev, Termio *sd,
@@ -4044,8 +4096,10 @@ _handle_right_click(Evas_Object *obj, Evas_Event_Mouse_Down *ev, Termio *sd,
         ctxp = elm_ctxpopup_add(sd->win);
         sd->ctxpopup = ctxp;
 
-        elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_sel_copy,
-                                 sd->self);
+        elm_ctxpopup_item_append(ctxp, _("Copy"), NULL,
+                                 _cb_ctxp_sel_copy, sd->self);
+        elm_ctxpopup_item_append(ctxp, _("Open as URL"), NULL,
+                                 _cb_ctxp_sel_open_as_url, sd->self);
         evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
         evas_object_show(ctxp);
         evas_object_smart_callback_add(ctxp, "dismissed",
