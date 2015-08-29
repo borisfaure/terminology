@@ -1931,6 +1931,7 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
 
         is_selected = (tab_item == tabs->current);
         missed_bell = term->missed_bell;
+        tab_item->selector_entry = NULL;
         tab_item->selector_entry = sel_entry_add(tabs->selector, img,
                                                  is_selected,
                                                  missed_bell, wn->config);
@@ -2275,7 +2276,8 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
         evas_object_image_source_set(img,
                                      new_child->get_evas_object(new_child));
         evas_object_data_set(img, "tc", new_child);
-        sel_entry_update(tab_item->selector_entry);
+        if (tab_item->selector_entry)
+          sel_entry_update(tab_item->selector_entry);
      }
    else if (tab_item != tabs->current)
      {
@@ -2471,7 +2473,7 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
    assert(l);
    tab_item = l->data;
 
-   if (tabs->selector)
+   if (tabs->selector && tab_item->selector_entry)
      {
         sel_entry_title_set(tab_item->selector_entry, title);
      }
