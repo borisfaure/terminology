@@ -666,6 +666,8 @@ win_free(Win *wn)
      }
    if (wn->win)
      {
+        evas_object_smart_callback_del_full(wn->win, "focus,in", _cb_win_focus_in, wn);
+        evas_object_smart_callback_del_full(wn->win, "focus,out", _cb_win_focus_out, wn);
         evas_object_event_callback_del_full(wn->win, EVAS_CALLBACK_DEL, _cb_del, wn);
         evas_object_del(wn->win);
      }
