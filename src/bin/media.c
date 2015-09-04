@@ -320,7 +320,7 @@ _type_img_anim_handle(Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
 
    if (!evas_object_image_animated_get(sd->o_img))
-     return -1;
+     return 0;
 
    sd->fr = 1;
    sd->frnum = evas_object_image_animated_frame_count_get(sd->o_img);
@@ -1171,7 +1171,11 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    e = evas_object_evas_get(parent);
-   if (!e) return NULL;
+   if (!e)
+     {
+        ERR("can not get evas");
+        return NULL;
+     }
 
    if (!_smart) _smart_init();
    obj = evas_object_smart_add(e, _smart);
@@ -1304,7 +1308,10 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
      {
         // XXX: handle sd->url being true?
         if (_type_thumb_init(obj) < 0)
-          goto err;
+          {
+             ERR("failed to init '%s'", src);
+             goto err;
+          }
      }
    else
      {
@@ -1312,19 +1319,31 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
           {
            case MEDIA_TYPE_IMG:
              if (!sd->url && (_type_img_init(obj) < 0))
-                 goto err;
+               {
+                  ERR("failed to init '%s'", src);
+                  goto err;
+               }
              break;
            case MEDIA_TYPE_SCALE:
              if (!sd->url && (_type_scale_init(obj) < 0))
-               goto err;
+               {
+                  ERR("failed to init '%s'", src);
+                  goto err;
+               }
              break;
            case MEDIA_TYPE_EDJE:
              if (!sd->url && (_type_edje_init(obj) < 0))
-               goto err;
+               {
+                  ERR("failed to init '%s'", src);
+                  goto err;
+               }
              break;
            case MEDIA_TYPE_MOV:
              if (!sd->url && (_type_mov_init(obj) < 0))
-               goto err;
+               {
+                  ERR("failed to init '%s'", src);
+                  goto err;
+               }
              break;
            default:
              break;
