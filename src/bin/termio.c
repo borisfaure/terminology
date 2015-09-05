@@ -4709,9 +4709,14 @@ _smart_apply(Evas_Object *obj)
                   if (inv) tc[x].bg = COL_INVERSEBG;
                   else tc[x].bg = COL_INVIS;
                   tc[x].bg_extended = 0;
-                  tc[x].double_width = 0;
                   tc[x].underline = 0;
                   tc[x].strikethrough = 0;
+                  tc[x].bold = 0;
+#if defined(SUPPORT_ITALIC)
+                  tc[x].italic = 0;
+#elif defined(SUPPORT_DBLWIDTH)
+                  tc[x].double_width = 0;
+#endif
                }
              else
                {
@@ -4727,11 +4732,14 @@ _smart_apply(Evas_Object *obj)
                        tc[x].bg_extended = 0;
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
-                       tc[x].fg = COL_INVIS;
-                       tc[x].bg = COL_INVIS;
-#if defined(SUPPORT_DBLWIDTH)
+                       tc[x].bold = 0;
+#if defined(SUPPORT_ITALIC)
+                       tc[x].italic = 0;
+#elif defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = 0;
 #endif
+                       tc[x].fg = COL_INVIS;
+                       tc[x].bg = COL_INVIS;
                        blk = termpty_block_get(sd->pty, bid);
                        if (blk)
                          {
@@ -4761,7 +4769,10 @@ _smart_apply(Evas_Object *obj)
                        tc[x].bg_extended = 0;
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
-#if defined(SUPPORT_DBLWIDTH)
+                       tc[x].bold = 0;
+#if defined(SUPPORT_ITALIC)
+                       tc[x].italic = 0;
+#elif defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[x].att.dblwidth;
 #endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
@@ -4813,16 +4824,18 @@ _smart_apply(Evas_Object *obj)
                        tc[x].bg_extended = bgext;
                        tc[x].underline = cells[x].att.underline;
                        tc[x].strikethrough = cells[x].att.strike;
+                       tc[x].bold = cells[x].att.bold;
+#if defined(SUPPORT_ITALIC)
+                       tc[x].italic = cells[x].att.italic;
+#elif defined(SUPPORT_DBLWIDTH)
+                       tc[x].double_width = cells[x].att.dblwidth;
+#endif
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
-#if defined(SUPPORT_DBLWIDTH)
-                       tc[x].double_width = cells[x].att.dblwidth;
-#endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
-                       // cells[x].att.italic // never going 2 support
                        // cells[x].att.blink
                        // cells[x].att.blink2
                     }
