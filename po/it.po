@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-08-25 20:15+0200\n"
+"POT-Creation-Date: 2015-09-05 14:06+0200\n"
 "PO-Revision-Date: 2015-08-26 10:34+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -397,13 +397,13 @@ msgstr "Trovato argomento non valido per l'opzione -S/--split. Vedere --help."
 msgid "Could not Initialize the emotion module '%s'"
 msgstr "Non ho potuto inizializzare il modulo '%s' di emotion"
 
-#: src/bin/media.c:1277 src/bin/termpty.c:362 src/bin/termpty.c:367
+#: src/bin/media.c:1281 src/bin/termpty.c:362 src/bin/termpty.c:367
 #: src/bin/termpty.c:371
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funzione %s fallita: %s"
 
-#: src/bin/media.c:1376
+#: src/bin/media.c:1395
 msgid "Media visualizing is not supported"
 msgstr "La visualizzazione multimediale non è supportata"
 
@@ -876,7 +876,7 @@ msgstr "Non ho potuto caricare un tema per group=%s: %s"
 msgid "Could not load default theme for group=%s: %s"
 msgstr "Non ho potuto caricare il tema predefinito per il gruppo=%s: %s"
 
-#: src/bin/win.c:4024
+#: src/bin/win.c:4028
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr ""
 "Non trovo il tema di terminology! Avete dato il comando 'make install'?"
