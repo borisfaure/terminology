@@ -1,3 +1,22 @@
+2015-09-06
+
+        * Release v0.9.0
+        * Add keybing to fullscreen Terminology
+        * Right click on selection to be able to copy/open it
+        * Add meta/hyper to key bindings
+        * Add option to always show miniview
+        * Add option to disable terminology escape codes
+        * Add -a option to tyls to display hidden files
+        * tybg without arguments restores the default wallpaper
+        * Escape closes media popup
+        * Terminology works on solaris
+        * Font selector now displays previews with current theme colors
+        * Try to get mime type when displaying URLs
+        * Do not use ':' as word separator but trim it from word selections
+        * Improved resizing handling
+        * Various bug fixes
+
+
 2015-02-15
 
         * Release v0.8.0
@@ -7,6 +26,7 @@
         * Display pre-edit text when composing
         * Selection improvements
         * Various bug fixes
+
 
 2014-10-06
 
@@ -22,6 +42,7 @@
         * Usual round of improvements on terminal compatibility
         * Fix issue with mute option
         * Various bug fixes
+
 
 2014-07-02
 
@@ -46,11 +67,13 @@
         * Support rotation metadata on media files
         * Various bug fixes
 
+
 2014-05-17
 
         * Release v0.5.1
         * Make terminology compatible with upcoming efl/elm 1.10
         * Fix disappearing prompt on resize
+
 
 2014-03-08
 
@@ -61,6 +84,7 @@
         * better default configuration
         * improve terminal compatibility
         * bug fixes
+
 
 2013-12-07
 
@@ -76,14 +100,17 @@
         * be able to inline edje objects
         * bug fixes
 
+
 2013-03-24
 
-        Release v0.3.0
+        * Release v0.3.0
+
 
 2012-12-15
 
-        Release v0.2.0
+        * Release v0.2.0
+
 
 2012-08-25
 
-        Initial release v0.1.0
+        * Initial release v0.1.0

@@ -1,6 +1,30 @@
 =================
-Terminology 0.8.0
+Terminology 0.9.0
 =================
+
+Changes since 0.8.0:
+--------------------
+
+Additions:
+    * Add keybing to fullscreen Terminology
+    * Right click on selection to be able to copy/open it
+    * Add meta/hyper to key bindings
+    * Add option to always show miniview
+    * Add option to disable terminology escape codes
+
+Improvements:
+    * Add -a option to tyls to display hidden files
+    * tybg without arguments restores the default wallpaper
+    * Escape closes media popup
+    * Terminology works on solaris
+    * Font selector now displays previews with current theme colors
+    * Try to get mime type when displaying URLs
+    * Do not use ':' as word separator but trim it from word selections
+    * Improved resizing handling
+
+Fixes:
+    * Various bug fixes
+
 
 Changes since 0.7.0:
 --------------------
