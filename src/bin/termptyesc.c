@@ -381,7 +381,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
                         break;
                      default:
-                        ERR("Unhandled DEC Private Reset Mode arg %i", arg);
+                        WRN("Unhandled DEC Private Reset Mode arg %i", arg);
                         break;
                     }
                }
@@ -410,7 +410,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         WRN("TODO: hebrew encoding mode: %i", mode);
                         break;
                      default:
-                        ERR("Unhandled ANSI Reset Mode arg %i", arg);
+                        WRN("Unhandled ANSI Reset Mode arg %i", arg);
                     }
                }
           }
@@ -425,7 +425,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
 
    if (b && (*b == '>'))
      { // key resources used by xterm
-        ERR("TODO: set/reset key resources used by xterm");
+        WRN("TODO: set/reset key resources used by xterm");
         return;
      }
    DBG("color set");
@@ -640,7 +640,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.bgintense = 1;
                    break;
                 default: //  not handled???
-                   ERR("Unhandled color cmd [%i]", arg);
+                   WRN("Unhandled color cmd [%i]", arg);
                    break;
                }
           }
@@ -655,7 +655,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
 
    if (*b == '>')
      {
-        ERR("TODO: disable key resources used by xterm");
+        WRN("TODO: disable key resources used by xterm");
         return;
      }
    if (*b == '?')
@@ -961,7 +961,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if ((arg >= TERMPTY_CLR_END) && (arg <= TERMPTY_CLR_ALL))
                termpty_clear_screen(ty, arg);
              else
-               ERR("invalid clr scr %i", arg);
+               WRN("invalid clr scr %i", arg);
           }
         else
           termpty_clear_screen(ty, TERMPTY_CLR_END);
@@ -974,7 +974,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if ((arg >= TERMPTY_CLR_END) && (arg <= TERMPTY_CLR_ALL))
                termpty_clear_line(ty, arg, ty->w);
              else
-               ERR("invalid clr lin %i", arg);
+               WRN("invalid clr lin %i", arg);
           }
         else termpty_clear_line(ty, TERMPTY_CLR_END, ty->w);
         break;
@@ -1112,7 +1112,7 @@ unhandled:
              else
                eina_strbuf_append_char(bf, c[i]);
           }
-        ERR("unhandled CSI '%s': %s", _safechar(*cc), eina_strbuf_string_get(bf));
+        WRN("unhandled CSI '%s': %s", _safechar(*cc), eina_strbuf_string_get(bf));
         eina_strbuf_free(bf);
      }
    cc++;
@@ -1160,7 +1160,7 @@ _xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
 
    if (*p != '#')
      {
-        ERR("unsupported xterm color");
+        WRN("unsupported xterm color");
         return -1;
      }
    p++;
@@ -1208,7 +1208,7 @@ _xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
    return 0;
 
 err:
-   ERR("invalid xterm color");
+   WRN("invalid xterm color");
    return -1;
 }
 
@@ -1229,13 +1229,13 @@ _handle_xterm_777_command(Termpty *ty EINA_UNUSED,
 
    if (strncmp(s, "notify;", strlen("notify;")))
      {
-        ERR("unrecognized xterm 777 command %s", s);
+        WRN("unrecognized xterm 777 command %s", s);
         return;
      }
 
    if (!elm_need_sys_notify())
      {
-        ERR("no elementary system notification support");
+        WRN("no elementary system notification support");
         return;
      }
    cmd_end = s + strlen("notify");
@@ -1425,7 +1425,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       default:
         // many others
-        ERR("unhandled xterm esc %d", arg);
+        WRN("unhandled xterm esc %d", arg);
         break;
      }
 
@@ -1433,7 +1433,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 
     return cc - c;
 err:
-    ERR("invalid xterm sequence");
+    WRN("invalid xterm sequence");
     return cc - c;
 }
 
@@ -1526,12 +1526,12 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
          switch (buf[1])
            {
             case 'q':
-              ERR("unhandled dsc request to get termcap/terminfo");
+              WRN("unhandled dsc request to get termcap/terminfo");
               /* TODO */
               goto end;
                break;
             case 'p':
-              ERR("unhandled dsc request to set termcap/terminfo");
+              WRN("unhandled dsc request to set termcap/terminfo");
               /* TODO */
               goto end;
                break;
@@ -1544,7 +1544,7 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
          /* Request status string */
          if (len > 1 && buf[1] != 'q')
            {
-              ERR("invalid/unhandled dsc esc '$%s' (expected '$q')", _safechar(buf[1]));
+              WRN("invalid/unhandled dsc esc '$%s' (expected '$q')", _safechar(buf[1]));
               goto end;
            }
          if (len < 4)
@@ -1560,12 +1560,12 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
                  }
                else if (buf[3] == 'q') /* DECSCA */
                  {
-                    ERR("unhandled DECSCA '$qq'");
+                    WRN("unhandled DECSCA '$qq'");
                     goto end;
                  }
                else
                  {
-                    ERR("invalid/unhandled dsc esc '$q\"%s'", _safechar(buf[3]));
+                    WRN("invalid/unhandled dsc esc '$q\"%s'", _safechar(buf[3]));
                     goto end;
                  }
                break;
@@ -1574,14 +1574,14 @@ _handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unico
             case 'r': /* DECSTBM */
                /* TODO: */
             default:
-               ERR("unhandled dsc request status string '$q%s'", _safechar(buf[2]));
+               WRN("unhandled dsc request status string '$q%s'", _safechar(buf[2]));
                goto end;
            }
          /* TODO */
          break;
       default:
         // many others
-        ERR("Unhandled DCS escape '%s'", _safechar(buf[0]));
+        WRN("Unhandled DCS escape '%s'", _safechar(buf[0]));
         break;
      }
 end:
@@ -1715,7 +1715,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         return 1;
  */
       default:
-        ERR("Unhandled escape '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
+        WRN("Unhandled escape '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
         return 1;
      }
    return 0;
@@ -1834,7 +1834,7 @@ termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
    else if (c[0] == 0x7f) // DEL
      {
         ty->termstate.had_cr = 0;
-        ERR("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
+        WRN("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
         return 1;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
