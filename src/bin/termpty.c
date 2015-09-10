@@ -579,16 +579,27 @@ termpty_free(Termpty *ty)
 }
 
 static Eina_Bool
-termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
+_termpty_cell_is_empty(const Termcell *cell)
 {
-   ssize_t len = nb_cells;
+   if ((cell->codepoint != 0) &&
+       (!cell->att.invisible) &&
+       (cell->att.fg != COL_INVIS))
+     {
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
+{
+   ssize_t len;
 
    for (len = nb_cells - 1; len >= 0; len--)
      {
         const Termcell *cell = cells + len;
 
-        if ((cell->codepoint != 0) &&
-            (cell->att.bg != COL_INVIS))
+        if (!_termpty_cell_is_empty(cell))
           return EINA_FALSE;
      }
 
@@ -605,8 +616,7 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
      {
         const Termcell *cell = cells + len;
 
-        if ((cell->codepoint != 0) &&
-            (cell->att.bg != COL_INVIS))
+        if (!_termpty_cell_is_empty(cell))
           return len + 1;
      }
 
@@ -988,22 +998,24 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    new_si.h = new_h;
 
    /* compute the effective height on the old screen */
-   effective_old_h = old_h;
+   effective_old_h = 0;
    for (old_y = old_h -1; old_y >= 0; old_y--)
      {
-        Termcell *cells = &TERMPTY_SCREEN(ty, 0, old_y);
-        if (!termpty_line_is_empty(cells, old_w) &&
-            ty->cursor_state.cy < old_y)
+        Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y));
+        if (!_termpty_line_is_empty(cells, old_w))
           {
              effective_old_h = old_y + 1;
              break;
           }
      }
 
+   if (effective_old_h <= ty->cursor_state.cy)
+     effective_old_h = ty->cursor_state.cy + 1;
+
    for (old_y = 0; old_y < effective_old_h; old_y++)
      {
         /* for each line in the old screen, append it to the new screen */
-        Termcell *cells = &TERMPTY_SCREEN(ty, 0, old_y);
+        Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y));
         int len;
 
         len = termpty_line_length(cells, old_w);
