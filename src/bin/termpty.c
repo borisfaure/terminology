@@ -977,7 +977,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if ((new_w == new_h) && (new_w == 1)) return; // FIXME: something weird is
                                                  // going on at term init
 
-   termpty_backlog_unlock();
+   termpty_backlog_lock();
 
    if (ty->altbuf)
      {
