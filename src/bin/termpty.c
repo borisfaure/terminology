@@ -947,6 +947,7 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
           }
         len -= copy_width;
         si->x += copy_width;
+        cells += copy_width;
         if (si->x >= si->w)
           {
              si->y++;
@@ -954,7 +955,7 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
           }
         _check_screen_info(ty, si);
      }
-   if (!autowrapped)
+   if (!autowrapped && si->x != 0)
      {
         si->y++;
         si->x = 0;
