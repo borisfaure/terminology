@@ -146,7 +146,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
              return;
           }
      }
-   if (ev->key && ev->key[0] == 'K' && ev->key[1] == 'k')
+   if (ev->key[0] == 'K' && ev->key[1] == 'k')
      {
         if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
           {
@@ -170,6 +170,28 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
      if (_key_try(ty, tty_keys, sizeof(tty_keys)/sizeof(tty_keys[0]), ev,
                   alt, shift, ctrl))
        return;
+
+   if (ctrl)
+     {
+#define CTRL_NUM(Num, Code)                        \
+        if (!strcmp(ev->key, Num))                 \
+          {                                        \
+             if (alt)                              \
+               termpty_write(ty, "\033"Code, 2);   \
+             else                                  \
+               termpty_write(ty, Code, 1);         \
+             return;                               \
+          }
+        CTRL_NUM("2", "\0")
+        CTRL_NUM("3", "\x1b")
+        CTRL_NUM("4", "\x1c")
+        CTRL_NUM("5", "\x1d")
+        CTRL_NUM("6", "\x1e")
+        CTRL_NUM("7", "\x1f")
+        CTRL_NUM("8", "\x7f")
+
+#undef CTRL_NUM
+     }
 
    if (ev->string)
      {
