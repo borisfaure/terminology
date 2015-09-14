@@ -1708,8 +1708,8 @@ _tabbar_fill(Tabs *tabs)
      }
 }
 
-static void
-_tab_go(Term *term, int tnum)
+Eina_Bool
+term_tab_go(Term *term, int tnum)
 {
    Term_Container *tc = term->container,
                   *child = tc;
@@ -1733,32 +1733,12 @@ _tab_go(Term *term, int tnum)
              tc = tc->parent;
              continue;
           }
-        if (tab_item == tabs->current)
-          return;
-        tab_item->tc->focus(tab_item->tc, child);
-        return;
+        if (tab_item != tabs->current)
+           tab_item->tc->focus(tab_item->tc, child);
+        return EINA_TRUE;
      }
+   return EINA_FALSE;
 }
-
-#define CB_TAB(TAB) \
-static void                                             \
-_cb_tab_##TAB(void *data, Evas_Object *obj EINA_UNUSED, \
-             void *event EINA_UNUSED)                   \
-{                                                       \
-   _tab_go(data, TAB - 1);                              \
-}
-
-CB_TAB(1)
-CB_TAB(2)
-CB_TAB(3)
-CB_TAB(4)
-CB_TAB(5)
-CB_TAB(6)
-CB_TAB(7)
-CB_TAB(8)
-CB_TAB(9)
-CB_TAB(10)
-#undef CB_TAB
 
 static void
 _tabs_selector_cb_selected(void *data,
@@ -4092,16 +4072,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
    evas_object_smart_callback_add(o, "title,change", _cb_title, term);
    evas_object_smart_callback_add(o, "icon,change", _cb_icon, term);
-   evas_object_smart_callback_add(o, "tab,1", _cb_tab_1, term);
-   evas_object_smart_callback_add(o, "tab,2", _cb_tab_2, term);
-   evas_object_smart_callback_add(o, "tab,3", _cb_tab_3, term);
-   evas_object_smart_callback_add(o, "tab,4", _cb_tab_4, term);
-   evas_object_smart_callback_add(o, "tab,5", _cb_tab_5, term);
-   evas_object_smart_callback_add(o, "tab,6", _cb_tab_6, term);
-   evas_object_smart_callback_add(o, "tab,7", _cb_tab_7, term);
-   evas_object_smart_callback_add(o, "tab,8", _cb_tab_8, term);
-   evas_object_smart_callback_add(o, "tab,9", _cb_tab_9, term);
-   evas_object_smart_callback_add(o, "tab,0", _cb_tab_10, term);
    evas_object_show(o);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,

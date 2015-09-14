@@ -7,6 +7,7 @@
 #include "termio.h"
 #include "termcmd.h"
 #include "keyin.h"
+#include "win.h"
 
 typedef struct _Tty_Key Tty_Key;
 typedef struct _Key_Values Key_Values;
@@ -352,25 +353,28 @@ keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev)
 /* {{{ Callbacks */
 
 static Eina_Bool
-cb_term_prev(Evas_Object *term)
+cb_term_prev(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "prev", NULL);
+   evas_object_smart_callback_call(termio_obj, "prev", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_term_next(Evas_Object *term)
+cb_term_next(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "next", NULL);
+   evas_object_smart_callback_call(termio_obj, "next", NULL);
    return EINA_TRUE;
 }
 
-#define CB_TAB(N)\
-static Eina_Bool \
-cb_tab_##N(Evas_Object *term) \
-{                            \
-   evas_object_smart_callback_call(term, "tab,"#N, NULL); \
-   return EINA_TRUE; \
+#define CB_TAB(N)                              \
+static Eina_Bool                               \
+cb_tab_##N(Evas_Object *termio_obj)            \
+{                                              \
+   int n = (N == 0) ? 9 : N - 1;               \
+   Term *term = termio_term_get(termio_obj);   \
+   if (!term)                                  \
+     return EINA_FALSE;                        \
+   return term_tab_go(term, n);                \
 }
 
 CB_TAB(0)
@@ -386,94 +390,94 @@ CB_TAB(9)
 #undef CB_TAB
 
 static Eina_Bool
-cb_cmd_box(Evas_Object *term)
+cb_cmd_box(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "cmdbox", NULL);
+   evas_object_smart_callback_call(termio_obj, "cmdbox", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_split_h(Evas_Object *term)
+cb_split_h(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "split,h", NULL);
+   evas_object_smart_callback_call(termio_obj, "split,h", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_split_v(Evas_Object *term)
+cb_split_v(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "split,v", NULL);
+   evas_object_smart_callback_call(termio_obj, "split,v", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_tab_new(Evas_Object *term)
+cb_tab_new(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "new", NULL);
+   evas_object_smart_callback_call(termio_obj, "new", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_exited(Evas_Object *term)
+cb_exited(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "exited", NULL);
+   evas_object_smart_callback_call(termio_obj, "exited", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_tab_select(Evas_Object *term)
+cb_tab_select(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(term, "select", NULL);
+   evas_object_smart_callback_call(termio_obj, "select", NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_copy_clipboard(Evas_Object *term)
+cb_copy_clipboard(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || !ty->selection.is_active)
      return EINA_FALSE;
-   termio_take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
+   termio_take_selection(termio_obj, ELM_SEL_TYPE_CLIPBOARD);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_paste_clipboard(Evas_Object *term)
+cb_paste_clipboard(Evas_Object *termio_obj)
 {
-   termio_paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
+   termio_paste_selection(termio_obj, ELM_SEL_TYPE_CLIPBOARD);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_paste_primary(Evas_Object *term)
+cb_paste_primary(Evas_Object *termio_obj)
 {
-   termio_paste_selection(term, ELM_SEL_TYPE_PRIMARY);
+   termio_paste_selection(termio_obj, ELM_SEL_TYPE_PRIMARY);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_copy_primary(Evas_Object *term)
+cb_copy_primary(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || !ty->selection.is_active)
      return EINA_FALSE;
-   termio_take_selection(term, ELM_SEL_TYPE_PRIMARY);
+   termio_take_selection(termio_obj, ELM_SEL_TYPE_PRIMARY);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_miniview(Evas_Object *term)
+cb_miniview(Evas_Object *termio_obj)
 {
-   term_miniview_toggle(termio_term_get(term));
+   term_miniview_toggle(termio_term_get(termio_obj));
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_win_fullscreen(Evas_Object *term)
+cb_win_fullscreen(Evas_Object *termio_obj)
 {
-   Evas_Object *win = termio_win_get(term);
+   Evas_Object *win = termio_win_get(termio_obj);
    Eina_Bool fullscreen;
 
    if (!win)
@@ -484,78 +488,78 @@ cb_win_fullscreen(Evas_Object *term)
 }
 
 static Eina_Bool
-cb_increase_font_size(Evas_Object *term)
+cb_increase_font_size(Evas_Object *termio_obj)
 {
-   termcmd_do(term, NULL, NULL, "f+");
+   termcmd_do(termio_obj, NULL, NULL, "f+");
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_decrease_font_size(Evas_Object *term)
+cb_decrease_font_size(Evas_Object *termio_obj)
 {
-   termcmd_do(term, NULL, NULL, "f-");
+   termcmd_do(termio_obj, NULL, NULL, "f-");
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_reset_font_size(Evas_Object *term)
+cb_reset_font_size(Evas_Object *termio_obj)
 {
-   termcmd_do(term, NULL, NULL, "f");
+   termcmd_do(termio_obj, NULL, NULL, "f");
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_big_font_size(Evas_Object *term)
+cb_big_font_size(Evas_Object *termio_obj)
 {
-   termcmd_do(term, NULL, NULL, "fb");
+   termcmd_do(termio_obj, NULL, NULL, "fb");
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_scroll_up_page(Evas_Object *term)
+cb_scroll_up_page(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || ty->altbuf)
      return EINA_FALSE;
 
-   termio_scroll_delta(term, 1, 1);
+   termio_scroll_delta(termio_obj, 1, 1);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_scroll_down_page(Evas_Object *term)
+cb_scroll_down_page(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || ty->altbuf)
      return EINA_FALSE;
 
-   termio_scroll_delta(term, -1, 1);
+   termio_scroll_delta(termio_obj, -1, 1);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_scroll_up_line(Evas_Object *term)
+cb_scroll_up_line(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || ty->altbuf)
      return EINA_FALSE;
 
-   termio_scroll_delta(term, 1, 0);
+   termio_scroll_delta(termio_obj, 1, 0);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-cb_scroll_down_line(Evas_Object *term)
+cb_scroll_down_line(Evas_Object *termio_obj)
 {
-   Termpty *ty = termio_pty_get(term);
+   Termpty *ty = termio_pty_get(termio_obj);
 
    if (!ty || ty->altbuf)
      return EINA_FALSE;
 
-   termio_scroll_delta(term, -1, 0);
+   termio_scroll_delta(termio_obj, -1, 0);
    return EINA_TRUE;
 }
 
