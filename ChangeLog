@@ -1,3 +1,10 @@
+2015-09-17
+        * Release v0.9.1
+        * Fix resizing issue
+        * Fix solarized theme
+        * Handle Ctrl-[2-8] when tab key bindings are removed
+
+
 2015-09-06
 
         * Release v0.9.0
