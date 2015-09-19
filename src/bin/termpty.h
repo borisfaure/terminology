@@ -36,9 +36,6 @@ typedef struct _Termexp       Termexp;
 #define MOUSE_EXT_SGR          2
 #define MOUSE_EXT_URXVT        3
 
-// choose - italic OR double-width support
-
-//#define SUPPORT_ITALIC   1
 #define SUPPORT_DBLWIDTH 1
 
 // Only for testing purpose
@@ -53,9 +50,8 @@ struct _Termatt
    unsigned char fg, bg;
    unsigned short bold : 1;
    unsigned short faint : 1;
-#if defined(SUPPORT_ITALIC)
    unsigned short italic : 1;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
    unsigned short dblwidth : 1;
 #else
    unsigned short bit_padding_0 : 1;
@@ -77,9 +73,9 @@ struct _Termatt
    unsigned short fraktur : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
-   unsigned short bit_padding : 14;
+   unsigned short bit_padding : 13;
 #else
-   unsigned short bit_padding : 15;
+   unsigned short bit_padding : 14;
 #endif
 };
 

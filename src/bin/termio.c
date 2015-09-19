@@ -4712,9 +4712,8 @@ _smart_apply(Evas_Object *obj)
                   tc[x].underline = 0;
                   tc[x].strikethrough = 0;
                   tc[x].bold = 0;
-#if defined(SUPPORT_ITALIC)
                   tc[x].italic = 0;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
                   tc[x].double_width = 0;
 #endif
                }
@@ -4733,9 +4732,8 @@ _smart_apply(Evas_Object *obj)
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
                        tc[x].bold = 0;
-#if defined(SUPPORT_ITALIC)
                        tc[x].italic = 0;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = 0;
 #endif
                        tc[x].fg = COL_INVIS;
@@ -4770,9 +4768,8 @@ _smart_apply(Evas_Object *obj)
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
                        tc[x].bold = 0;
-#if defined(SUPPORT_ITALIC)
                        tc[x].italic = 0;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[x].att.dblwidth;
 #endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
@@ -4825,9 +4822,8 @@ _smart_apply(Evas_Object *obj)
                        tc[x].underline = cells[x].att.underline;
                        tc[x].strikethrough = cells[x].att.strike;
                        tc[x].bold = cells[x].att.bold;
-#if defined(SUPPORT_ITALIC)
                        tc[x].italic = cells[x].att.italic;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[x].att.dblwidth;
 #endif
                        tc[x].fg = fg;

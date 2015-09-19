@@ -449,9 +449,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.faint = 1;
                    break;
                 case 3: // italic
-#if defined(SUPPORT_ITALIC)
                    ty->termstate.att.italic = 1;
-#endif
                    break;
                 case 4: // underline
                    ty->termstate.att.underline = 1;
@@ -482,9 +480,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.faint = 0;
                    break;
                 case 23: // no italic, not fraktur
-#if defined(SUPPORT_ITALIC)
                    ty->termstate.att.italic = 0;
-#endif
                    ty->termstate.att.fraktur = 0;
                    break;
                 case 24: // no underline

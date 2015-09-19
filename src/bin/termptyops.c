@@ -325,9 +325,8 @@ termpty_reset_att(Termatt *att)
    att->bg = COL_DEF;
    att->bold = 0;
    att->faint = 0;
-#if defined(SUPPORT_ITALIC)
    att->italic = 0;
-#elif defined(SUPPORT_DBLWIDTH)
+#if defined(SUPPORT_DBLWIDTH)
    att->dblwidth = 0;
 #endif
    att->underline = 0;
