@@ -46,7 +46,7 @@ struct _Term_Container {
      Term *(*find_term_at_coords)(Term_Container *container,
                                   Evas_Coord mx, Evas_Coord my);
      void (*split)(Term_Container *tc, Term_Container *child,
-                   const char *cmd, Eina_Bool is_horizontal);
+                   Term *from, const char *cmd, Eina_Bool is_horizontal);
      void (*size_eval)(Term_Container *container, Sizeinfo *info);
      void (*swallow)(Term_Container *container, Term_Container *orig,
                      Term_Container *new_child);

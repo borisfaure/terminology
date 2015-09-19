@@ -264,9 +264,10 @@ _solo_tabs_new(Term_Container *tc)
 
 static void
 _solo_split(Term_Container *tc, Term_Container *child EINA_UNUSED,
+            Term *from,
             const char *cmd, Eina_Bool is_horizontal)
 {
-   tc->parent->split(tc->parent, tc, cmd, is_horizontal);
+   tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
 static Term *
@@ -936,8 +937,8 @@ _term_container_is_splittable(Term_Container *tc, Eina_Bool is_horizontal)
 }
 
 static void
-_win_split(Term_Container *tc, Term_Container *child, const char *cmd,
-           Eina_Bool is_horizontal)
+_win_split(Term_Container *tc, Term_Container *child,
+           Term *from, const char *cmd, Eina_Bool is_horizontal)
 {
    Win *wn;
 
@@ -952,7 +953,10 @@ _win_split(Term_Container *tc, Term_Container *child, const char *cmd,
         Evas_Object *base;
         Evas_Object *o;
 
-        tm = tc->focused_term_get(tc);
+        if (from)
+          tm = from;
+        else
+          tm = tc->focused_term_get(tc);
         if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
@@ -1414,6 +1418,7 @@ _split_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
 
 static void
 _split_split(Term_Container *tc, Term_Container *child,
+             Term *from,
              const char *cmd, Eina_Bool is_horizontal)
 {
    Split *split;
@@ -1430,7 +1435,10 @@ _split_split(Term_Container *tc, Term_Container *child,
         Term_Container *tc_split, *tc_solo_new;
         Evas_Object *obj_split;
 
-        tm = child->focused_term_get(child);
+        if (from)
+          tm = from;
+        else
+          tm = child->focused_term_get(child);
         if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
         tm_new = term_new(wn, wn->config,
@@ -1580,7 +1588,7 @@ split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
    if (!tm) return;
 
    tc = tm->container;
-   tc->split(tc, tc, cmd, EINA_TRUE);
+   tc->split(tc, tc, tm, cmd, EINA_TRUE);
 }
 
 void
@@ -1594,7 +1602,7 @@ split_vertically(Evas_Object *win EINA_UNUSED, Evas_Object *term,
    if (!tm) return;
 
    tc = tm->container;
-   tc->split(tc, tc, cmd, EINA_FALSE);
+   tc->split(tc, tc, tm, cmd, EINA_FALSE);
 }
 
 /* }}} */
@@ -2625,9 +2633,10 @@ tab_item_new(Tabs *tabs, Term_Container *child)
 
 static void
 _tabs_split(Term_Container *tc, Term_Container *child EINA_UNUSED,
+            Term *from,
             const char *cmd, Eina_Bool is_horizontal)
 {
-   tc->parent->split(tc->parent, tc, cmd, is_horizontal);
+   tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
 static Term_Container *
@@ -3330,7 +3339,7 @@ _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term_Container *tc = term->container;
 
    assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, tc, NULL, EINA_TRUE);
+   tc->split(tc, tc, term, NULL, EINA_TRUE);
 }
 
 static void
@@ -3340,7 +3349,7 @@ _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    Term_Container *tc = term->container;
 
    assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   tc->split(tc, tc, NULL, EINA_FALSE);
+   tc->split(tc, tc, term, NULL, EINA_FALSE);
 }
 
 static void
