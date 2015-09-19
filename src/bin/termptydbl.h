@@ -6,7 +6,6 @@ Eina_Bool _termpty_is_dblwidth_slow_get(Termpty *ty, int g);
 static inline Eina_Bool
 _termpty_is_dblwidth_get(Termpty *ty, int g)
 {
-#if defined(SUPPORT_DBLWIDTH)
    // check for east asian full-width (F), half-width (H), wide (W),
    // narrow (Na) or ambiguous (A) codepoints
    // ftp://ftp.unicode.org/Public/UNIDATA/EastAsianWidth.txt
@@ -21,9 +20,6 @@ _termpty_is_dblwidth_get(Termpty *ty, int g)
      return EINA_TRUE;
 
    return _termpty_is_dblwidth_slow_get(ty, g);
-#else
-   return EINA_FALSE;
-#endif
 }
 
 #endif

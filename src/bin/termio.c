@@ -2098,13 +2098,11 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
           }
         for (x = start_x; x <= end_x; x++)
           {
-#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth))
                {
                   if (x < end_x) x++;
                   else break;
                }
-#endif
              if (x >= w) break;
              if (cells[x].att.newline)
                {
@@ -2165,14 +2163,12 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
 
                   for (x = end_x + 1; x < w; x++)
                     {
-#if defined(SUPPORT_DBLWIDTH)
                        if ((cells[x].codepoint == 0) &&
                            (cells[x].att.dblwidth))
                          {
                             if (x < (w - 1)) x++;
                             else break;
                          }
-#endif
                        if (((cells[x].codepoint != 0) &&
                             (cells[x].codepoint != ' ')) ||
                            (cells[x].att.newline) ||
@@ -2192,14 +2188,12 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                     {
                        for (x = last0; x <= end_x; x++)
                          {
-#if defined(SUPPORT_DBLWIDTH)
                             if ((cells[x].codepoint == 0) &&
                                 (cells[x].att.dblwidth))
                               {
                                  if (x < (w - 1)) x++;
                                  else break;
                               }
-#endif
                             if (x >= w) break;
                             if (_sb_add(&sb, " ", 1) < 0) goto err;
                          }
@@ -2924,11 +2918,9 @@ _sel_word(Termio *sd, int cx, int cy)
      {
         for (; x >= 0; x--)
           {
-#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x > 0))
                x--;
-#endif
              if (_codepoint_is_wordsep(cells[x].codepoint))
                {
                   done = EINA_TRUE;
@@ -2970,14 +2962,12 @@ _sel_word(Termio *sd, int cx, int cy)
      {
         for (; x < w; x++)
           {
-#if defined(SUPPORT_DBLWIDTH)
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x < (w - 1)))
                {
                   sd->pty->selection.end.x = x;
                   x++;
                }
-#endif
              if (_codepoint_is_wordsep(cells[x].codepoint))
                {
                   done = EINA_TRUE;
@@ -3294,13 +3284,8 @@ _sel_to(Termio *sd, int cx, int cy, Eina_Bool extend)
 }
 
 static void
-_selection_dbl_fix(Termio *sd
-#if defined(SUPPORT_DBLWIDTH)
-                   EINA_UNUSED
-#endif
-                   )
+_selection_dbl_fix(Termio *sd)
 {
-#if defined(SUPPORT_DBLWIDTH)
    int start_x, start_y, end_x, end_y;
    ssize_t w = 0;
    Termcell *cells;
@@ -3382,8 +3367,6 @@ _selection_dbl_fix(Termio *sd
    sd->pty->selection.start.y = start_y;
    sd->pty->selection.end.x = end_x;
    sd->pty->selection.end.y = end_y;
-
-#endif
 }
 
 static void
@@ -4713,9 +4696,7 @@ _smart_apply(Evas_Object *obj)
                   tc[x].strikethrough = 0;
                   tc[x].bold = 0;
                   tc[x].italic = 0;
-#if defined(SUPPORT_DBLWIDTH)
                   tc[x].double_width = 0;
-#endif
                }
              else
                {
@@ -4733,9 +4714,7 @@ _smart_apply(Evas_Object *obj)
                        tc[x].strikethrough = 0;
                        tc[x].bold = 0;
                        tc[x].italic = 0;
-#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = 0;
-#endif
                        tc[x].fg = COL_INVIS;
                        tc[x].bg = COL_INVIS;
                        blk = termpty_block_get(sd->pty, bid);
@@ -4769,9 +4748,7 @@ _smart_apply(Evas_Object *obj)
                        tc[x].strikethrough = 0;
                        tc[x].bold = 0;
                        tc[x].italic = 0;
-#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[x].att.dblwidth;
-#endif
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
@@ -4823,9 +4800,7 @@ _smart_apply(Evas_Object *obj)
                        tc[x].strikethrough = cells[x].att.strike;
                        tc[x].bold = cells[x].att.bold;
                        tc[x].italic = cells[x].att.italic;
-#if defined(SUPPORT_DBLWIDTH)
                        tc[x].double_width = cells[x].att.dblwidth;
-#endif
                        tc[x].fg = fg;
                        tc[x].bg = bg;
                        tc[x].codepoint = codepoint;
@@ -4859,10 +4834,8 @@ _smart_apply(Evas_Object *obj)
                {
                   jump = 1;
                   g = uni[i];
-#if defined(SUPPORT_DBLWIDTH)
                   dbl = _termpty_is_dblwidth_get(sd->pty, g);
                   if (dbl) jump = 2;
-#endif
                   backx = 0;
                   if ((x + jump) > sd->grid.w)
                     {
@@ -4889,7 +4862,6 @@ _smart_apply(Evas_Object *obj)
                   tc[xx].strikethrough = 0;
                   tc[xx].double_width = dbl;
                   tc[xx].codepoint = g;
-#if defined(SUPPORT_DBLWIDTH)
                   if (dbl)
                     {
                        xx = x - backx + 1;
@@ -4903,7 +4875,6 @@ _smart_apply(Evas_Object *obj)
                        tc[xx].double_width = 0;
                        tc[xx].codepoint = 0;
                     }
-#endif
                   evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
                   if (x >= sd->grid.w)
                     {

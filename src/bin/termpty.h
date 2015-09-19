@@ -36,8 +36,6 @@ typedef struct _Termexp       Termexp;
 #define MOUSE_EXT_SGR          2
 #define MOUSE_EXT_URXVT        3
 
-#define SUPPORT_DBLWIDTH 1
-
 // Only for testing purpose
 //#define SUPPORT_80_132_COLUMNS 1
 
@@ -51,11 +49,7 @@ struct _Termatt
    unsigned short bold : 1;
    unsigned short faint : 1;
    unsigned short italic : 1;
-#if defined(SUPPORT_DBLWIDTH)
    unsigned short dblwidth : 1;
-#else
-   unsigned short bit_padding_0 : 1;
-#endif
    unsigned short underline : 1;
    unsigned short blink : 1; // don't intend to support this currently
    unsigned short blink2 : 1; // don't intend to support this currently

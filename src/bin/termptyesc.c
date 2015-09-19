@@ -915,9 +915,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                        cells[x].att.blink2 = 0;
                        cells[x].att.inverse = 0;
                        cells[x].att.strike = 0;
-#if defined(SUPPORT_DBLWIDTH)
                        cells[x].att.dblwidth = 0;
-#endif
                     }
                }
           }

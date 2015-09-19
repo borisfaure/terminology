@@ -54,17 +54,15 @@ _row_set(Evas_Object *o, int y, const char *txt)
              if (*s != 0) codepoint = *s;
              else s = NULL;
           }
-        
+
         tc[x].fg_extended = 0;
         tc[x].bg_extended = 0;
         tc[x].underline = 0;
         tc[x].strikethrough = 0;
-#if defined(SUPPORT_DBLWIDTH)
         tc[x].double_width = 0;
-#endif
         tc[x].fg_extended = 0;
         tc[x].bg_extended = 0;
-        
+
         tc[x].fg = fg;
         tc[x].bg = bg;
         tc[x].codepoint = codepoint;

@@ -174,7 +174,6 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
         termpty_cell_codepoint_att_fill(ty, g, ty->termstate.att,
                                         &(cells[ty->cursor_state.cx]), 1);
-#if defined(SUPPORT_DBLWIDTH)
         cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (ty->w - 1))))
           {
@@ -182,16 +181,13 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
                                              &(cells[ty->cursor_state.cx + 1]), 1);
           }
-#endif
         if (ty->termstate.wrap)
           {
              unsigned char offset = 1;
 
              ty->termstate.wrapnext = 0;
-#if defined(SUPPORT_DBLWIDTH)
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
-#endif
              if (EINA_UNLIKELY(ty->cursor_state.cx >= (ty->w - offset)))
                ty->termstate.wrapnext = 1;
              else
@@ -205,10 +201,8 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              unsigned char offset = 1;
 
              ty->termstate.wrapnext = 0;
-#if defined(SUPPORT_DBLWIDTH)
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
-#endif
              ty->cursor_state.cx += offset;
              if (ty->cursor_state.cx > (ty->w - offset))
                {
@@ -326,9 +320,7 @@ termpty_reset_att(Termatt *att)
    att->bold = 0;
    att->faint = 0;
    att->italic = 0;
-#if defined(SUPPORT_DBLWIDTH)
    att->dblwidth = 0;
-#endif
    att->underline = 0;
    att->blink = 0;
    att->blink2 = 0;
