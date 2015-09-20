@@ -349,6 +349,8 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
    if (!tc->is_focused)
      return;
 
+   tc->is_focused = EINA_FALSE;
+
    if (tc->parent != relative)
      tc->parent->unfocus(tc->parent, tc);
 
@@ -357,8 +359,6 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
 
    if (!tc->wn->cmdbox_up)
      elm_object_focus_set(term->termio, EINA_FALSE);
-
-   tc->is_focused = EINA_FALSE;
 }
 
 static void
