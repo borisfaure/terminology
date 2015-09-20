@@ -182,12 +182,18 @@ _cb_exe_exit(void *data, int type EINA_UNUSED, void *event)
 }
 
 static Eina_Bool
-_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
+_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Termpty *ty = data;
    char buf[4097];
    Eina_Unicode codepoint[4097];
    int len, i, j, k, reads;
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+     {
+        ERR("error while reading from tty slave fd");
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
@@ -202,6 +208,11 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
              len--;
           }
         len = read(ty->fd, rbuf, len);
+        if (len < 0 && errno != EAGAIN)
+          {
+             ERR("error while reading from tty slave fd");
+             break;
+          }
         if (len <= 0) break;
 
 
@@ -265,6 +276,25 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
         _handle_buf(ty, codepoint, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
+   if (len <= 0)
+     {
+        if (42)
+          {
+             ty->exit_code = 0;
+             ty->pid = -1;
+
+             if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+             ty->hand_exe_exit = NULL;
+             if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+             ty->hand_fd = NULL;
+             ty->fd = -1;
+             ty->slavefd = -1;
+             if (ty->cb.exited.func)
+               ty->cb.exited.func(ty->cb.exited.data);
+          }
+        return ECORE_CALLBACK_CANCEL;
+     }
+
    return EINA_TRUE;
 }
 
@@ -319,6 +349,19 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
      }
 
    ty->circular_offset = 0;
+
+   /* TODO: boris */
+   if (42)
+     {
+        ty->fd = STDIN_FILENO;
+        ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
+                                                ECORE_FD_READ | ECORE_FD_ERROR,
+                                                _cb_fd_read, ty,
+                                                NULL, NULL);
+        _pty_size(ty);
+        termpty_save_register(ty);
+        return ty;
+     }
 
    needs_shell = ((!cmd) ||
                   (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
@@ -385,20 +428,20 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         goto err;
      }
    if (!(mode & O_NDELAY))
-      if (fcntl(ty->fd, F_SETFL, mode | O_NDELAY))
-        {
-           ERR(_("fcntl() on pty '%s' failed: %s"), pty, strerror(errno));
-           goto err;
-        }
+     if (fcntl(ty->fd, F_SETFL, mode | O_NDELAY))
+       {
+          ERR(_("fcntl() on pty '%s' failed: %s"), pty, strerror(errno));
+          goto err;
+       }
 
 #if defined (__sun) || defined (__sun__)
    if (ioctl(ty->slavefd, I_PUSH, "ptem") < 0
        || ioctl(ty->slavefd, I_PUSH, "ldterm") < 0
        || ioctl(ty->slavefd, I_PUSH, "ttcompat") < 0)
-   {
-       ERR(_("ioctl() on pty '%s' failed: %s"), pty, strerror(errno));
-       goto err;
-   }
+     {
+        ERR(_("ioctl() on pty '%s' failed: %s"), pty, strerror(errno));
+        goto err;
+     }
 # endif
 
    if (tcgetattr(ty->slavefd, &t) < 0)
@@ -460,10 +503,10 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         dup2(ty->slavefd, 2);
 
         if (ioctl(ty->slavefd, TIOCSCTTY, NULL) < 0) exit(1);
-        
+
         close(ty->fd);
         close(ty->slavefd);
-        
+
         /* TODO: should we reset signals here? */
 
         /* pretend to be xterm */
@@ -866,10 +909,14 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
-   if (ty->fd < 0) return;
-   if (write(ty->fd, input, len) < 0)
+   int fd = ty->fd;
+
+   /* TODO: boris */
+   fd = STDOUT_FILENO;
+   if (fd < 0) return;
+   if (write(fd, input, len) < 0)
      ERR(_("Could not write to file descriptor %d: %s"),
-         ty->fd, strerror(errno));
+         fd, strerror(errno));
 }
 
 struct screen_info
