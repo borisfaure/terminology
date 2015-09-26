@@ -919,6 +919,9 @@ _term_container_is_splittable(Term_Container *tc, Eina_Bool is_horizontal)
    int w = 0, h = 0, c_w = 0, c_h = 0;
    Term *tm;
 
+   if (terminology_starting_up)
+     return EINA_TRUE;
+
    tm = tc->term_first(tc);
    evas_object_geometry_get(tm->bg, NULL, NULL, &w, &h);
    evas_object_textgrid_cell_size_get(termio_textgrid_get(tm->termio),
@@ -973,6 +976,10 @@ _win_split(Term_Container *tc, Term_Container *child,
 
         tc_split->is_focused = tc->is_focused;
         tc->swallow(tc, NULL, tc_split);
+     }
+   else
+     {
+        DBG("term is not splittable");
      }
 }
 

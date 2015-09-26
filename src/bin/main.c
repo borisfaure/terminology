@@ -20,7 +20,7 @@
 #include "gravatar.h"
 #include "keyin.h"
 
-
+int terminology_starting_up;
 int _log_domain = -1;
 
 static Config *_main_config = NULL;
@@ -523,6 +523,8 @@ elm_main(int argc, char **argv)
    Eina_List *cmds_list = NULL;
 #endif
 
+   terminology_starting_up = EINA_TRUE;
+
    elm_language_set("");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
@@ -929,6 +931,8 @@ remote:
 
    ecore_con_init();
    ecore_con_url_init();
+
+   terminology_starting_up = EINA_FALSE;
 
    elm_run();
 

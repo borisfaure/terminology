@@ -12,6 +12,7 @@
 #endif
 #define gettext_noop(String) String
 
+extern int terminology_starting_up;
 extern int _log_domain;
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
