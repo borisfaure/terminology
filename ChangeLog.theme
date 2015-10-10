@@ -1,0 +1,11 @@
+=================
+Terminology 0.9.1
+=================
+
+Changes since 0.9.1:
+--------------------
+
+  * In group "terminology/background", add signal "tab,close" with emitter set
+    to "terminology" to close the current tab
+  * In group "terminology/tabbar_back", add signal "tab,close" with emitter
+    set to "terminology" to close a tab in the background

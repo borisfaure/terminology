@@ -226,6 +226,7 @@ collections {
         image: "tab_shad_r1.png" COMP;
         image: "media_busy_knob.png" COMP;
         image: "media_busy_spinner.png" COMP;
+        image: "tab_close.png" COMP;
       }
       set { name: "bg_shadow";
         image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
@@ -1016,6 +1017,7 @@ collections {
             target: "tab_bevel_shad3";
             target: "tab_bevel_shad4";
             target: "tabtitle";
+            target: "tabclose";
          }
          program {
             signal: "tabbar,off"; source: "terminology";
@@ -1041,6 +1043,7 @@ collections {
             target: "tab_bevel_shad3";
             target: "tab_bevel_shad4";
             target: "tabtitle";
+            target: "tabclose";
          }
 
          part { name: "terminology.tab"; type: SWALLOW;
@@ -1055,7 +1058,7 @@ collections {
                fixed: 1 1;
             }
          }
-         // some slot for dragable parts to stayt in along top edge of bg
+         // some slot for dragable parts to stay in along top edge of bg
          part { name: "tabdrag"; type: SPACER;
             description { state: "default" 0.0;
                rel2.relative: 1.0 0.0;
@@ -1184,6 +1187,32 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+         }
+         part { name: "tabclose"; type: IMAGE;
+            description { state: "default" 0.0;
+               image {
+                  normal: "tab_close.png";
+               };
+               rel1 {
+                  to: "tabmiddle";
+                  relative: 1.0 0.5;
+                  offset: -20 -8;
+               }
+               rel2 {
+                  to: "tabmiddle";
+                  relative: 1.0 0.5;
+                  offset: -2 8;
+               }
+               visible: 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "tabclose";
+            action: SIGNAL_EMIT "tab,close" "terminology";
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -1709,6 +1738,7 @@ collections {
         image: "tab_other_r.png" COMP;
         image: "tab_shad_l2.png" COMP;
         image: "tab_shad_r2.png" COMP;
+        image: "tab_close.png" COMP;
       }
       parts {
          part { name: "tab_bevel_shad1";
@@ -1821,6 +1851,27 @@ collections {
                rel1.to: "tab_bevel_top2";
                rel2.to: "tab_bevel_top2";
             }
+         }
+         part { name: "tabclose"; type: IMAGE;
+            description { state: "default" 0.0;
+               image {
+                  normal: "tab_close.png";
+               };
+               rel1 {
+                  to: "tab_bevel_top2";
+                  relative: 1.0 0.5;
+                  offset: -20 -8;
+               }
+               rel2 {
+                  to: "tab_bevel_top2";
+                  relative: 1.0 0.5;
+                  offset: -2 8;
+               }
+            }
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "tabclose";
+            action: SIGNAL_EMIT "tab,close" "terminology";
          }
          part { name: "clip"; type: RECT;
             description { state: "default" 0.0;
