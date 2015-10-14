@@ -35,7 +35,7 @@ color_classes {
    color_class { name: "C9";  color: ANSI9; } // COL_RED
    color_class { name: "C10"; color: ANSI10; } // COL_GREEN
    color_class { name: "C11"; color: ANSI11; } // COL_YELLOW
-   color_class { name: "C12"; color: COL_DEF; } // COL_BLUE
+   color_class { name: "C12"; color: ANSI12; } // COL_BLUE
    color_class { name: "C13"; color: ANSI13; } // COL_MAGENTA
    color_class { name: "C14"; color: ANSI14; } // COL_CYAN
    color_class { name: "C15"; color: ANSI15; } // COL_WHITE
@@ -49,9 +49,10 @@ color_classes {
    color_class { name: "c6";  color: ANSI5; }
    color_class { name: "c7";  color: ANSI6; }
    color_class { name: "c8";  color: ANSI7; }
-   color_class { name: "c11"; color: COL_DEF; }
-   color_class { name: "c12"; color: ANSI11; }
 
+   color_class { name: "c11"; color: COL_DEF; }
+
+   color_class { name: "c12"; color: ANSI15; }
    color_class { name: "c13"; color: ANSI8; }
    color_class { name: "c14"; color: ANSI9; }
    color_class { name: "c15"; color: ANSI10; }
