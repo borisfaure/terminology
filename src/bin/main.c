@@ -437,6 +437,42 @@ _translate_options(void)
 }
 #endif
 
+#ifdef ENABLE_FUZZING
+#include <syslog.h>
+static void
+_log_to_syslog(const Eina_Log_Domain *d EINA_UNUSED,
+               Eina_Log_Level level,
+               const char *file EINA_UNUSED,
+               const char *fnc EINA_UNUSED,
+               int line EINA_UNUSED,
+               const char *fmt,
+               void *data EINA_UNUSED,
+               va_list args)
+{
+    int priority;
+    switch (level) {
+     case EINA_LOG_LEVEL_CRITICAL:
+        priority = LOG_CRIT;
+        break;
+     case EINA_LOG_LEVEL_ERR:
+        priority = LOG_ERR;
+        break;
+     case EINA_LOG_LEVEL_WARN:
+        priority = LOG_WARNING;
+        break;
+     case EINA_LOG_LEVEL_INFO:
+        priority = LOG_INFO;
+        break;
+     case EINA_LOG_LEVEL_DBG:
+        priority = LOG_DEBUG;
+        break;
+     default:
+        priority = level + LOG_CRIT;
+    }
+    vsyslog(priority, fmt, args);
+}
+#endif
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -524,6 +560,10 @@ elm_main(int argc, char **argv)
 #endif
 
    terminology_starting_up = EINA_TRUE;
+
+#ifdef ENABLE_FUZZING
+   eina_log_print_cb_set(_log_to_syslog, NULL);
+#endif
 
    elm_language_set("");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
