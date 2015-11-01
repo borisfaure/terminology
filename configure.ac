@@ -67,6 +67,24 @@ requirements="\
 EFL_ENABLE_EO_API_SUPPORT
 EFL_ENABLE_BETA_API_SUPPORT
 
+# check for fuzzing
+want_fuzzing="fuzzing"
+AC_ARG_ENABLE([fuzzing],
+   [AS_HELP_STRING([--enable-fuzzing],[Enable fuzzing on terminology. Binaries
+    are not suited for production. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_fuzzing="yes"
+       AC_DEFINE([ENABLE_FUZZING], [1], [Fuzzing enabled])
+       AC_SUBST([want_fuzzing])
+    else
+       want_fuzzing="no"
+    fi
+   ],
+   [want_fuzzing="no"])
+
+AM_CONDITIONAL([ENABLE_FUZZING], [test "${want_fuzzing}" = "yes"])
+
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
 PKG_CHECK_MODULES([ELDBUS],
@@ -169,4 +187,5 @@ echo
 echo "Features:"
 echo "  dbus................: $have_eldbus"
 echo "  gettext.............: $have_po"
+echo "  fuzzing.............: $want_fuzzing"
 echo

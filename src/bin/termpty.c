@@ -278,20 +278,19 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
    if (len <= 0)
      {
-        if (42)
-          {
-             ty->exit_code = 0;
-             ty->pid = -1;
+#ifdef ENABLE_FUZZING
+        ty->exit_code = 0;
+        ty->pid = -1;
 
-             if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
-             ty->hand_exe_exit = NULL;
-             if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
-             ty->hand_fd = NULL;
-             ty->fd = -1;
-             ty->slavefd = -1;
-             if (ty->cb.exited.func)
-               ty->cb.exited.func(ty->cb.exited.data);
-          }
+        if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+        ty->hand_exe_exit = NULL;
+        if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+        ty->hand_fd = NULL;
+        ty->fd = -1;
+        ty->slavefd = -1;
+        if (ty->cb.exited.func)
+          ty->cb.exited.func(ty->cb.exited.data);
+#endif
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -350,18 +349,16 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 
    ty->circular_offset = 0;
 
-   /* TODO: boris */
-   if (42)
-     {
-        ty->fd = STDIN_FILENO;
-        ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
-                                                ECORE_FD_READ | ECORE_FD_ERROR,
-                                                _cb_fd_read, ty,
-                                                NULL, NULL);
-        _pty_size(ty);
-        termpty_save_register(ty);
-        return ty;
-     }
+#ifdef ENABLE_FUZZING
+   ty->fd = STDIN_FILENO;
+   ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
+                                           ECORE_FD_READ | ECORE_FD_ERROR,
+                                           _cb_fd_read, ty,
+                                           NULL, NULL);
+   _pty_size(ty);
+   termpty_save_register(ty);
+   return ty;
+#endif
 
    needs_shell = ((!cmd) ||
                   (strpbrk(cmd, " |&;<>()$`\\\"'*?#") != NULL));
@@ -911,8 +908,9 @@ termpty_write(Termpty *ty, const char *input, int len)
 {
    int fd = ty->fd;
 
-   /* TODO: boris */
+#ifdef ENABLE_FUZZING
    fd = STDOUT_FILENO;
+#endif
    if (fd < 0) return;
    if (write(fd, input, len) < 0)
      ERR(_("Could not write to file descriptor %d: %s"),
