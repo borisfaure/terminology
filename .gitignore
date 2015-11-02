@@ -86,6 +86,7 @@ Makefile.in
 /src/bin/tyalpha
 /src/bin/tybg
 /src/bin/tycat
+/src/bin/tyfuzz
 /src/bin/tyls
 /src/bin/typop
 /src/bin/tyq

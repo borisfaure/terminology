@@ -2,6 +2,9 @@ AUTOMAKE_OPTIONS = subdir-objects
 MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS = terminology tybg tyalpha typop tyq tycat tyls
+if ENABLE_FUZZING
+bin_PROGRAMS += tyfuzz
+endif
 
 terminology_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -115,3 +118,23 @@ tyls_CPPFLAGS = -I. \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 tyls_LDADD = @TERMINOLOGY_LIBS@
+
+if ENABLE_FUZZING
+tyfuzz_SOURCES = \
+termptyesc.c \
+termptysave.c \
+termptyops.c \
+termptydbl.c \
+termptyext.c \
+termptygfx.c \
+termpty.c \
+config.c \
+col.c \
+tyfuzz.c
+
+tyfuzz_CPPFLAGS = -I. \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
+
+tyfuzz_LDADD = @TERMINOLOGY_LIBS@
+endif
