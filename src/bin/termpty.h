@@ -251,6 +251,7 @@ void       termpty_screen_swap(Termpty *ty);
 ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
 
 Config *termpty_config_get(const Termpty *ty);
+void termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len);
 
 extern int _termpty_log_dom;
 

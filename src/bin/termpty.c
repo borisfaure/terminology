@@ -54,8 +54,8 @@ termpty_shutdown(void)
    _termpty_log_dom = -1;
 }
 
-static void
-_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
+void
+termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
    Eina_Unicode *c, *ce, *b;
    int n, bytes;
@@ -273,7 +273,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
           }
         codepoint[j] = 0;
 //        DBG("---------------- handle buf %i", j);
-        _handle_buf(ty, codepoint, j);
+        termpty_handle_buf(ty, codepoint, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
    if (len <= 0)
