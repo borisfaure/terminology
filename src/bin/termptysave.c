@@ -28,6 +28,7 @@ struct _Alloc
 };
 
 
+#if 0
 static void *
 _ts_new(int size)
 {
@@ -39,6 +40,7 @@ _ts_new(int size)
 
    return calloc(1, size);
 }
+#endif
 
 static void
 _ts_free(void *ptr)
@@ -72,6 +74,7 @@ Termsave *
 termpty_save_extract(Termsave *ts)
 {
    if (!ts) return NULL;
+#if 0
    if (ts->z) //TODO: unused
      {
         Termsavecomp *tsc = (Termsavecomp *)ts;
@@ -92,6 +95,7 @@ termpty_save_extract(Termsave *ts)
           }
         return ts2;
      }
+#endif
    return ts;
 }
 
