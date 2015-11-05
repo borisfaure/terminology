@@ -90,6 +90,7 @@ void config_sync(const Config *config_src, Config *config);
 void config_save(Config *config, const char *key);
 Config *config_load(const char *key);
 Config *config_fork(Config *config);
+Config *config_new();
 void config_del(Config *config);
 void config_default_font_set(Config *config, Evas *evas);
 

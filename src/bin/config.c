@@ -429,6 +429,76 @@ config_default_font_set(Config *config, Evas *evas)
 }
 
 Config *
+config_new(void)
+{
+   Config *config;
+   config = calloc(1, sizeof(Config));
+   if (config)
+     {
+        int i, j;
+
+        config->version = CONF_VER;
+        config->font.bitmap = EINA_TRUE;
+        config->font.name = eina_stringshare_add("nexus.pcf");
+        config->font.size = 10;
+        config->helper.email = eina_stringshare_add("xdg-email");;
+        config->helper.url.general = eina_stringshare_add("xdg-open");
+        config->helper.url.video = eina_stringshare_add("xdg-open");
+        config->helper.url.image = eina_stringshare_add("xdg-open");
+        config->helper.local.general = eina_stringshare_add("xdg-open");
+        config->helper.local.video = eina_stringshare_add("xdg-open");
+        config->helper.local.image = eina_stringshare_add("xdg-open");
+        config->helper.inline_please = EINA_TRUE;
+        config->scrollback = 2000;
+        config->theme = eina_stringshare_add("default.edj");
+        config->background = NULL;
+        config->tab_zoom = 0.5;
+        config->vidmod = 0;
+        config->opacity = 50;
+        config->cg_width = 80;
+        config->cg_height = 24;
+        config->jump_on_change = EINA_TRUE;
+        config->jump_on_keypress = EINA_TRUE;
+        config->flicker_on_key = EINA_FALSE;
+        config->disable_cursor_blink = EINA_FALSE;
+        config->disable_visual_bell = EINA_FALSE;
+        config->bell_rings = EINA_TRUE;
+        config->active_links = EINA_TRUE;
+        config->translucent = EINA_FALSE;
+        config->mute = EINA_FALSE;
+        config->visualize = EINA_TRUE;
+        config->urg_bell = EINA_TRUE;
+        config->multi_instance = EINA_FALSE;
+        config->xterm_256color = EINA_FALSE;
+        config->erase_is_del = EINA_FALSE;
+        config->custom_geometry = EINA_FALSE;
+        config->drag_links = EINA_FALSE;
+        config->login_shell = EINA_FALSE;
+        config->mouse_over_focus = EINA_TRUE;
+        config->colors_use = EINA_FALSE;
+        config->gravatar = EINA_TRUE;
+        config->notabs = EINA_FALSE;
+        config->mv_always_show = EINA_FALSE;
+        config->ty_escapes = EINA_TRUE;
+        for (j = 0; j < 4; j++)
+          {
+             for (i = 0; i < 12; i++)
+               {
+                  unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
+
+                  colors_standard_get(j, i, &rr, &gg, &bb, &aa);
+                  config->colors[(j * 12) + i].r = rr;
+                  config->colors[(j * 12) + i].g = gg;
+                  config->colors[(j * 12) + i].b = bb;
+                  config->colors[(j * 12) + i].a = aa;
+               }
+          }
+        _add_default_keys(config);
+     }
+   return config;
+}
+
+Config *
 config_load(const char *key)
 {
    Eet_File *ef;
@@ -496,69 +566,7 @@ config_load(const char *key)
      }
    if (!config)
      {
-        config = calloc(1, sizeof(Config));
-        if (config)
-          {
-             int i, j;
-
-             config->version = CONF_VER;
-             config->font.bitmap = EINA_TRUE;
-             config->font.name = eina_stringshare_add("nexus.pcf");
-             config->font.size = 10;
-             config->helper.email = eina_stringshare_add("xdg-email");;
-             config->helper.url.general = eina_stringshare_add("xdg-open");
-             config->helper.url.video = eina_stringshare_add("xdg-open");
-             config->helper.url.image = eina_stringshare_add("xdg-open");
-             config->helper.local.general = eina_stringshare_add("xdg-open");
-             config->helper.local.video = eina_stringshare_add("xdg-open");
-             config->helper.local.image = eina_stringshare_add("xdg-open");
-             config->helper.inline_please = EINA_TRUE;
-             config->scrollback = 2000;
-             config->theme = eina_stringshare_add("default.edj");
-             config->background = NULL;
-             config->tab_zoom = 0.5;
-             config->vidmod = 0;
-             config->opacity = 50;
-             config->cg_width = 80;
-             config->cg_height = 24;
-             config->jump_on_change = EINA_TRUE;
-             config->jump_on_keypress = EINA_TRUE;
-             config->flicker_on_key = EINA_FALSE;
-             config->disable_cursor_blink = EINA_FALSE;
-             config->disable_visual_bell = EINA_FALSE;
-             config->bell_rings = EINA_TRUE;
-             config->active_links = EINA_TRUE;
-             config->translucent = EINA_FALSE;
-             config->mute = EINA_FALSE;
-             config->visualize = EINA_TRUE;
-             config->urg_bell = EINA_TRUE;
-             config->multi_instance = EINA_FALSE;
-             config->xterm_256color = EINA_FALSE;
-             config->erase_is_del = EINA_FALSE;
-             config->custom_geometry = EINA_FALSE;
-             config->drag_links = EINA_FALSE;
-             config->login_shell = EINA_FALSE;
-             config->mouse_over_focus = EINA_TRUE;
-             config->colors_use = EINA_FALSE;
-             config->gravatar = EINA_TRUE;
-             config->notabs = EINA_FALSE;
-             config->mv_always_show = EINA_FALSE;
-             config->ty_escapes = EINA_TRUE;
-             for (j = 0; j < 4; j++)
-               {
-                  for (i = 0; i < 12; i++)
-                    {
-                       unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
-
-                       colors_standard_get(j, i, &rr, &gg, &bb, &aa);
-                       config->colors[(j * 12) + i].r = rr;
-                       config->colors[(j * 12) + i].g = gg;
-                       config->colors[(j * 12) + i].b = bb;
-                       config->colors[(j * 12) + i].a = aa;
-                    }
-               }
-             _add_default_keys(config);
-          }
+        config = config_new();
      }
    else
      {
