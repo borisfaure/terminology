@@ -284,7 +284,7 @@ termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
                }
              else
                {
-                  int yt = y % ty->w;
+                  int yt = y % ty->h;
                   int yb = ty->h - ty->circular_offset;
 
                   termpty_cells_clear(ty, cells, ty->w * yb);
