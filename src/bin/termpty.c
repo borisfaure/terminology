@@ -909,7 +909,7 @@ termpty_write(Termpty *ty, const char *input, int len)
    int fd = ty->fd;
 
 #ifdef ENABLE_FUZZING
-   fd = STDOUT_FILENO;
+   fd = ty->fd_dev_null;
 #endif
    if (fd < 0) return;
    if (write(fd, input, len) < 0)

@@ -3,11 +3,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "string.h"
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "private.h"
 #include <Elementary.h>
 #include "termpty.h"
+#include "termptyops.h"
 #include <assert.h>
+
 
 /* {{{ stub */
 int _log_domain = -1;
@@ -20,7 +23,7 @@ theme_path_get(void)
 }
 
 void
-main_config_sync(const Config *config)
+main_config_sync(const Config *config EINA_UNUSED)
 {
 }
 
@@ -58,8 +61,9 @@ termio_textgrid_get(Evas_Object *obj EINA_UNUSED)
 
 
 static void
-_init_termpty(Termpty *ty)
+_termpty_init(Termpty *ty)
 {
+   memset(ty, '\0', sizeof(*ty));
    ty->w = 80;
    ty->h = 25;
    ty->backsize = 50;
@@ -70,15 +74,23 @@ _init_termpty(Termpty *ty)
    assert(ty->screen2);
    ty->circular_offset = 0;
    ty->fd = STDIN_FILENO;
+   ty->fd_dev_null = open("/dev/null", O_WRONLY|O_APPEND);
+   assert(ty->fd_dev_null >= 0);
+}
+
+static void
+_termpty_shutdown(Termpty *ty)
+{
+   close(ty->fd_dev_null);
 }
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   Termpty ty = {};
+   Termpty ty;
    char buf[4097];
    Eina_Unicode codepoint[4097];
-   int len, i, j, k, reads;
+   int len, i, j, k;
 
    eina_init();
 
@@ -86,7 +98,7 @@ main(int argc, char **argv)
 
    _config = config_new();
 
-   _init_termpty(&ty);
+   _termpty_init(&ty);
 
    do
      {
@@ -154,6 +166,8 @@ main(int argc, char **argv)
         termpty_handle_buf(&ty, codepoint, j);
      }
    while (1);
+
+   _termpty_shutdown(&ty);
 
    eina_shutdown();
    free(_config);

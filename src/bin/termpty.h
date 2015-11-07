@@ -102,6 +102,9 @@ struct _Termpty
    } backlog_beacon;
    int w, h;
    int fd, slavefd;
+#ifdef ENABLE_FUZZING
+   int fd_dev_null;
+#endif
    struct {
       int curid;
       Eina_Hash *blocks;
