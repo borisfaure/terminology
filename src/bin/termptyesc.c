@@ -1,5 +1,6 @@
 #include "private.h"
 #include <Elementary.h>
+#include <stdint.h>
 #include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"
@@ -100,6 +101,11 @@ _csi_arg_get(Eina_Unicode **ptr)
      }
    while ((*b >= '0') && (*b <= '9'))
      {
+        if (sum > INT32_MAX/10 )
+          {
+             *ptr = NULL;
+             return 0;
+          }
         sum *= 10;
         sum += *b - '0';
         b++;
