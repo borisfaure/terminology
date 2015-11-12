@@ -276,9 +276,9 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         termpty_handle_buf(ty, codepoint, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
+#ifdef ENABLE_FUZZING
    if (len <= 0)
      {
-#ifdef ENABLE_FUZZING
         ty->exit_code = 0;
         ty->pid = -1;
 
@@ -290,9 +290,9 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         ty->slavefd = -1;
         if (ty->cb.exited.func)
           ty->cb.exited.func(ty->cb.exited.data);
-#endif
         return ECORE_CALLBACK_CANCEL;
      }
+#endif
 
    return EINA_TRUE;
 }
