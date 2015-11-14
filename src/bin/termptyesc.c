@@ -1408,10 +1408,12 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              len = cc - c - (p - buf);
              if (_xterm_parse_color(&p, &r, &g, &b, len) < 0)
                goto err;
+#ifndef ENABLE_FUZZING
              evas_object_textgrid_palette_set(
                 termio_textgrid_get(ty->obj),
                 EVAS_TEXTGRID_PALETTE_STANDARD, 0,
                 r, g, b, 0xff);
+#endif
           }
         break;
       case 777:

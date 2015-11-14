@@ -49,13 +49,6 @@ termio_scroll(Evas_Object *obj EINA_UNUSED,
 {
 }
 
-/* used to set argument to evas_object_textgrid_palette_set()
- */
-Evas_Object *
-termio_textgrid_get(Evas_Object *obj EINA_UNUSED)
-{
-   return NULL;
-}
 /* }}} */
 
 
