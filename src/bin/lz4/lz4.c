@@ -1078,6 +1078,7 @@ typedef struct
 void* LZ4_createStreamDecode()
 {
     void* lz4s = ALLOCATOR(sizeof(U32), LZ4_STREAMDECODESIZE_U32);
+    if (!lz4s) return NULL;
     MEM_INIT(lz4s, 0, LZ4_STREAMDECODESIZE);
     return lz4s;
 }
