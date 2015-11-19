@@ -2622,6 +2622,7 @@ tab_item_new(Tabs *tabs, Term_Container *child)
    Tab_Item *tab_item;
 
    tab_item = calloc(1, sizeof(Tab_Item));
+   if (!tab_item) return NULL;
    tab_item->tc = child;
    assert(child != NULL);
    assert(child->type == TERM_CONTAINER_TYPE_SOLO);
