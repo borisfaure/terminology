@@ -181,6 +181,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
           }
 
         t = calloc(1, sizeof(Theme));
+        if (!t) break;
         t->name = eina_stringshare_add(file);
         t->term = term;
         t->item = elm_gengrid_item_append(o, it_class, t,
