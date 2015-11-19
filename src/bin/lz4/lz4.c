@@ -687,6 +687,7 @@ int LZ4_compress_limitedOutput(const char* source, char* dest, int inputSize, in
 void* LZ4_createStream()
 {
     void* lz4s = ALLOCATOR(4, LZ4_STREAMSIZE_U32);
+    if (!lz4s) return NULL;
     MEM_INIT(lz4s, 0, LZ4_STREAMSIZE);
     return lz4s;
 }
