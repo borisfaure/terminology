@@ -283,10 +283,13 @@ _refresh_directory(const char* data)
    //Insert None Item
    Insert_Gen_Grid_Item_Notify *notify = calloc(1, 
                                          sizeof(Insert_Gen_Grid_Item_Notify));
-   notify->class = item_class;
-   notify->item = item;
+   if (notify)
+     {
+        notify->class = item_class;
+        notify->item = item;
 
-   _insert_gengrid_item(notify);
+        _insert_gengrid_item(notify);
+     }
 
    _backgroundlist = _rec_read_directorys(_backgroundlist, data,
                                           item_class);
