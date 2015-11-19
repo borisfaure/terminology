@@ -230,15 +230,18 @@ _rec_read_directorys(Eina_List *list, const char *root_path,
                             item = calloc(1, sizeof(Background_Item));
                             if (item)
                               {
-                                 notify = calloc(1, 
+                                 notify = calloc(1,
                                           sizeof(Insert_Gen_Grid_Item_Notify));
                                  item->path = eina_stringshare_add(path);
                                  list = eina_list_append(list, item);
-                                 //insert item to gengrid
-                                 notify->class = class;
-                                 notify->item = item;
-                                 //ecore_thread_feedback(th, notify);
-                                 _insert_gengrid_item(notify);
+                                 if (notify)
+                                   {
+                                      //insert item to gengrid
+                                      notify->class = class;
+                                      notify->item = item;
+                                      //ecore_thread_feedback(th, notify);
+                                      _insert_gengrid_item(notify);
+                                   }
                               }
                             break;
                          }
