@@ -649,6 +649,7 @@ config_fork(Config *config)
    EINA_LIST_FOREACH(config->keys, l, key)
      {
         Config_Keys *key2 = calloc(1, sizeof(Config_Keys));
+        if (!key2) break;
         key2->keyname = key->keyname;
         eina_stringshare_ref(key->keyname);
         key2->ctrl = key->ctrl;
