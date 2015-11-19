@@ -433,6 +433,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
      {
         char *s;
         f = calloc(1, sizeof(Font));
+        if (!f) break;
         f->full_name = eina_stringshare_add(file);
         s = strchr(file, '.');
         if (s != NULL) *s = '\0';
@@ -474,6 +475,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         if (!eina_hash_find(fonthash, fname))
           {
              f = calloc(1, sizeof(Font));
+             if (!f) break;
              if (_parse_font_name(fname, &f->full_name, &f->pretty_name) <0)
                {
                   free(f);
