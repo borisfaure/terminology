@@ -619,7 +619,6 @@ elm_main(int argc, char **argv)
    if (cmd_options)
      {
         int i;
-        Eina_Strbuf *strb;
 
         if (args == argc)
           {
@@ -628,16 +627,24 @@ elm_main(int argc, char **argv)
              goto end;
           }
 
-        strb = eina_strbuf_new();
-        for(i = args; i < argc; i++)
+        if (startup_split)
           {
-             eina_strbuf_append(strb, argv[i]);
-             eina_strbuf_append_char(strb, ' ');
-             if (startup_split)
+             for(i = args+1; i < argc; i++)
                cmds_list = eina_list_append(cmds_list, argv[i]);
+             cmd = argv[args];
           }
-        cmd = eina_strbuf_string_steal(strb);
-        eina_strbuf_free(strb);
+        else
+          {
+             Eina_Strbuf *strb;
+             strb = eina_strbuf_new();
+             for(i = args; i < argc; i++)
+               {
+                  eina_strbuf_append(strb, argv[i]);
+                  eina_strbuf_append_char(strb, ' ');
+               }
+             cmd = eina_strbuf_string_steal(strb);
+             eina_strbuf_free(strb);
+          }
      }
 #endif
    
@@ -923,24 +930,23 @@ remote:
      {
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
         unsigned int i = 0;
-        void *pch = NULL;
         Term *next = term;
 
         for (i = 0; i < strlen(startup_split); i++)
           {
              if (startup_split[i] == 'v')
                {
-                  pch = eina_list_nth(cmds_list, 1);
+                  cmd = cmds_list ? cmds_list->data : NULL;
                   split_vertically(win_evas_object_get(term_win_get(next)),
-                                   term_termio_get(next), pch);
-                  cmds_list = eina_list_remove(cmds_list, pch);
+                                   term_termio_get(next), cmd);
+                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
                }
              else if (startup_split[i] == 'h')
                {
-                  pch = eina_list_nth(cmds_list, 1);
+                  cmd = cmds_list ? cmds_list->data : NULL;
                   split_horizontally(win_evas_object_get(term_win_get(next)),
-                                     term_termio_get(next), pch);
-                  cmds_list = eina_list_remove(cmds_list, pch);
+                                     term_termio_get(next), cmd);
+                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
                }
              else if (startup_split[i] == '-')
                next = term_next_get(next);
@@ -951,7 +957,8 @@ remote:
                   goto end;
                }
           }
-        if (cmds_list) eina_list_free(cmds_list);
+        if (cmds_list)
+          eina_list_free(cmds_list);
 #endif
      }
    if (pos_set)
@@ -983,7 +990,8 @@ remote:
    config = NULL;
  end:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-   free(cmd);
+   if (!startup_split)
+     free(cmd);
 #endif
    if (config)
      {
