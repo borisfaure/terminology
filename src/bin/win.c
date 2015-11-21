@@ -2408,7 +2408,8 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
         Tab_Item *tab_item;
 
         l = _tab_item_find(tabs, relative);
-        assert(l);
+        if (!l)
+          return;
 
         tc->is_focused = EINA_TRUE;
 
@@ -2480,7 +2481,8 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
    tabs = (Tabs*) tc;
 
    l = _tab_item_find(tabs, child);
-   assert(l);
+   if (!l)
+     return;
    tab_item = l->data;
 
    if (tabs->selector && tab_item->selector_entry)
