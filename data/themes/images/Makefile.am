@@ -65,6 +65,7 @@ tab_bg_l0.png \
 tab_bg_l1.png \
 tab_bg_r0.png \
 tab_bg_r1.png \
+tab_close.png \
 tab_other_l.png \
 tab_other_m.png \
 tab_other_r.png \
