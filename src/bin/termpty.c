@@ -952,11 +952,11 @@ _check_screen_info(Termpty *ty, struct screen_info *si)
 }
 
 static void
-_termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
+_termpty_line_rewrap(Termpty *ty, Termcell *src_cells, int len,
                      struct screen_info *si,
                      Eina_Bool set_cursor)
 {
-   int autowrapped = cells[len-1].att.autowrapped;
+   int autowrapped;
 
    if (len == 0)
      {
@@ -970,13 +970,17 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
         _check_screen_info(ty, si);
         return;
      }
+
+   autowrapped = src_cells[len-1].att.autowrapped;
+   src_cells[len-1].att.autowrapped = 0;
    while (len > 0)
      {
         int copy_width = MIN(len, si->w - si->x);
+        Termcell *dst_cells = &SCREEN_INFO_GET_CELLS(si, si->x, si->y);
 
         termpty_cell_copy(ty,
-                          /*src*/ cells,
-                          /*dst*/&SCREEN_INFO_GET_CELLS(si, si->x, si->y),
+                          /*src*/ src_cells,
+                          /*dst*/ dst_cells,
                           copy_width);
         if (set_cursor)
           {
@@ -992,9 +996,11 @@ _termpty_line_rewrap(Termpty *ty, Termcell *cells, int len,
           }
         len -= copy_width;
         si->x += copy_width;
-        cells += copy_width;
+        src_cells += copy_width;
         if (si->x >= si->w)
           {
+             dst_cells = &SCREEN_INFO_GET_CELLS(si, 0, si->y);
+             dst_cells[si->w - 1].att.autowrapped = 1;
              si->y++;
              si->x = 0;
           }
