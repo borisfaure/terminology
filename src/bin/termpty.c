@@ -707,6 +707,26 @@ verify_beacon(Termpty *ty)
 }
 #endif
 
+static void
+_backlog_remove_latest_nolock(Termpty *ty)
+{
+   Termsave *ts;
+   if (ty->backsize <= 0)
+     return;
+   ts = BACKLOG_ROW_GET(ty, 1);
+
+   if (ty->backpos == 0)
+     ty->backpos = ty->backsize - 1;
+   else
+     ty->backpos--;
+
+   /* reset beacon */
+   ty->backlog_beacon.screen_y = 0;
+   ty->backlog_beacon.backlog_y = 0;
+
+   termpty_save_free(ts);
+}
+
 
 void
 termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
@@ -973,6 +993,7 @@ _termpty_line_rewrap(Termpty *ty, Termcell *src_cells, int len,
 
    autowrapped = src_cells[len-1].att.autowrapped;
    src_cells[len-1].att.autowrapped = 0;
+
    while (len > 0)
      {
         int copy_width = MIN(len, si->w - si->x);
@@ -999,8 +1020,11 @@ _termpty_line_rewrap(Termpty *ty, Termcell *src_cells, int len,
         src_cells += copy_width;
         if (si->x >= si->w)
           {
-             dst_cells = &SCREEN_INFO_GET_CELLS(si, 0, si->y);
-             dst_cells[si->w - 1].att.autowrapped = 1;
+             if ((len > 0) || (len == 0 && autowrapped))
+               {
+                  dst_cells = &SCREEN_INFO_GET_CELLS(si, 0, si->y);
+                  dst_cells[si->w - 1].att.autowrapped = 1;
+               }
              si->y++;
              si->x = 0;
           }
@@ -1064,7 +1088,42 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if (effective_old_h <= ty->cursor_state.cy)
      effective_old_h = ty->cursor_state.cy + 1;
 
-   for (old_y = 0; old_y < effective_old_h; old_y++)
+   old_y = 0;
+   /* Rewrap the first line from the history if needed */
+   if (ty->backsize >= 1)
+     {
+        Termsave *ts;
+        ts = BACKLOG_ROW_GET(ty, 1);
+        ts = termpty_save_extract(ts);
+        if (ts->cells && ts->w && ts->cells[ts->w - 1].att.autowrapped)
+          {
+             Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y)),
+                      *new_cells;
+             int len;
+
+             ts->cells[ts->w - 1].att.autowrapped = 0;
+
+             len = termpty_line_length(cells, old_w);
+
+             new_cells = malloc((ts->w + len) * sizeof(Termcell));
+             if (!new_cells)
+               goto bad;
+             memcpy(new_cells, ts->cells, ts->w * sizeof(Termcell));
+             memcpy(new_cells + ts->w, cells, len * sizeof(Termcell));
+
+             len+= ts->w;
+
+             _backlog_remove_latest_nolock(ty);
+
+             _termpty_line_rewrap(ty, new_cells, len, &new_si,
+                                  old_y == ty->cursor_state.cy);
+
+             free(new_cells);
+             old_y = 1;
+          }
+     }
+   /* For all the other lines, do not care about the history */
+   for (old_y; old_y < effective_old_h; old_y++)
      {
         /* for each line in the old screen, append it to the new screen */
         Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y));
