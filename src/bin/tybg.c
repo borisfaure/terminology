@@ -8,7 +8,7 @@ int
 main(int argc, char **argv)
 {
    int i, perm = 0;
-   
+
    if (!getenv("TERMINOLOGY")) return 0;
    if (argc > 1 &&
        (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")))
@@ -23,7 +23,7 @@ main(int argc, char **argv)
    if (argc <= 1)
      {
         char tbuf[32];
-          snprintf(tbuf, sizeof(tbuf), "%c}bt", 0x1b);
+        snprintf(tbuf, sizeof(tbuf), "%c}bt", 0x1b);
         if (write(0, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1)) perror("write");
         return 0;
      }
