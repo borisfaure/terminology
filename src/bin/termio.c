@@ -4821,7 +4821,7 @@ _smart_apply(Evas_Object *obj)
           evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
                                           ch2 - ch1 + 1, 1);
      }
-   if (sd->preedit_str)
+   if (sd->preedit_str && sd->preedit_str[0])
      {
         Eina_Unicode *uni, g;
         int len = 0, i, jump, xx, backx;
