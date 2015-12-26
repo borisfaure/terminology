@@ -43,6 +43,7 @@ CB(gravatar,  0);
 CB(notabs,  1);
 CB(mv_always_show, 0);
 CB(ty_escapes, 0);
+CB(changedir_to_current, 0);
 
 #undef CB
 
@@ -193,6 +194,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Show tabs"), notabs, 1);
    CX(_("Always show miniview"), mv_always_show, 0);
    CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
+   CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
 
 #undef CX
 

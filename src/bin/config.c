@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 6
+#define CONF_VER 7
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -165,6 +165,8 @@ config_init(void)
      (edd_base, Config, "mv_always_show", mv_always_show, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "ty_escapes", ty_escapes, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
 }
 
 void
@@ -265,6 +267,7 @@ config_sync(const Config *config_src, Config *config)
    config->notabs = config_src->notabs;
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
+   config->changedir_to_current = config_src->changedir_to_current;
 }
 
 static void
@@ -480,6 +483,7 @@ config_new(void)
         config->notabs = EINA_FALSE;
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
+        config->changedir_to_current = EINA_TRUE;
         for (j = 0; j < 4; j++)
           {
              for (i = 0; i < 12; i++)
@@ -549,7 +553,10 @@ config_load(const char *key)
                 case 5:
                   config->ty_escapes = EINA_TRUE;
                   /*pass through*/
-                case CONF_VER: /* 6 */
+                case 6:
+                  config->changedir_to_current = EINA_TRUE;
+                  /*pass through*/
+                case CONF_VER: /* 7 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -645,6 +652,7 @@ config_fork(Config *config)
    CPY(notabs);
    CPY(mv_always_show);
    CPY(ty_escapes);
+   CPY(changedir_to_current);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {

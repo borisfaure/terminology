@@ -952,16 +952,22 @@ _win_split(Term_Container *tc, Term_Container *child,
      {
         Term *tm_new, *tm;
         Term_Container *tc_split, *tc_solo_new;
-        char buf[PATH_MAX], *wdir = NULL;
+        char *wdir = NULL;
         Evas_Object *base;
         Evas_Object *o;
 
-        if (from)
-          tm = from;
-        else
-          tm = tc->focused_term_get(tc);
-        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-          wdir = buf;
+        // copy the current path to wdir if we should change the directory,
+        // passing wdir NULL otherwise:
+        if (wn->config->changedir_to_current)
+          {
+             if (from)
+               tm = from;
+             else
+               tm = tc->focused_term_get(tc);
+             char buf[PATH_MAX];
+             if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+               wdir = buf;
+          }
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
                           80, 24, EINA_FALSE);
@@ -1438,16 +1444,22 @@ _split_split(Term_Container *tc, Term_Container *child,
    if (_term_container_is_splittable(tc, is_horizontal))
      {
         Term *tm_new, *tm;
-        char buf[PATH_MAX], *wdir = NULL;
+        char *wdir = NULL;
         Term_Container *tc_split, *tc_solo_new;
         Evas_Object *obj_split;
 
-        if (from)
-          tm = from;
-        else
-          tm = child->focused_term_get(child);
-        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-          wdir = buf;
+        // copy the current path to wdir if we should change the directory,
+        // passing wdir NULL otherwise:
+        if (wn->config->changedir_to_current)
+          {
+             if (from)
+               tm = from;
+             else
+               tm = child->focused_term_get(child);
+             char buf[PATH_MAX];
+             if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+               wdir = buf;
+          }
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
                           80, 24, EINA_FALSE);
@@ -2326,11 +2338,18 @@ _tab_new_cb(void *data,
                   *tc_new, *tc_parent, *tc_old;
    Term *tm, *tm_new;
    Win *wn = tc->wn;
-   char buf[PATH_MAX], *wdir = NULL;
+   char *wdir = NULL;
 
-   tm = tc->focused_term_get(tc);
-   if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-     wdir = buf;
+   // copy the current path to wdir if we should change the directory,
+   // passing wdir NULL otherwise:
+   if (wn->config->changedir_to_current)
+     {
+        char buf[PATH_MAX];
+        tm = tc->focused_term_get(tc);
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+          wdir = buf;
+     }
+
    tm_new = term_new(wn, wn->config,
                      NULL, wn->config->login_shell, wdir,
                      80, 24, EINA_FALSE);
