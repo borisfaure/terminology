@@ -147,7 +147,7 @@ _handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
              return;
           }
      }
-   if (ev->key[0] == 'K' && ev->key[1] == 'k')
+   if (ev->key[0] == 'K' && (ev->key[1] == 'k' || ev->key[1] == 'P'))
      {
         if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
           {
