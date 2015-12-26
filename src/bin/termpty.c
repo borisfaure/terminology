@@ -1123,7 +1123,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
           }
      }
    /* For all the other lines, do not care about the history */
-   for (old_y; old_y < effective_old_h; old_y++)
+   for (; old_y < effective_old_h; old_y++)
      {
         /* for each line in the old screen, append it to the new screen */
         Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y));
