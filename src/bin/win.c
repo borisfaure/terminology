@@ -1445,6 +1445,7 @@ _split_split(Term_Container *tc, Term_Container *child,
      {
         Term *tm_new, *tm;
         char *wdir = NULL;
+        char buf[PATH_MAX];
         Term_Container *tc_split, *tc_solo_new;
         Evas_Object *obj_split;
 
@@ -1456,7 +1457,6 @@ _split_split(Term_Container *tc, Term_Container *child,
                tm = from;
              else
                tm = child->focused_term_get(child);
-             char buf[PATH_MAX];
              if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
                wdir = buf;
           }
