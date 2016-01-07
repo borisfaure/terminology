@@ -953,6 +953,7 @@ _win_split(Term_Container *tc, Term_Container *child,
         Term *tm_new, *tm;
         Term_Container *tc_split, *tc_solo_new;
         char *wdir = NULL;
+        char buf[PATH_MAX];
         Evas_Object *base;
         Evas_Object *o;
 
@@ -964,7 +965,6 @@ _win_split(Term_Container *tc, Term_Container *child,
                tm = from;
              else
                tm = tc->focused_term_get(tc);
-             char buf[PATH_MAX];
              if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
                wdir = buf;
           }
