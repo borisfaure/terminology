@@ -2339,12 +2339,12 @@ _tab_new_cb(void *data,
    Term *tm, *tm_new;
    Win *wn = tc->wn;
    char *wdir = NULL;
+   char buf[PATH_MAX];
 
    // copy the current path to wdir if we should change the directory,
    // passing wdir NULL otherwise:
    if (wn->config->changedir_to_current)
      {
-        char buf[PATH_MAX];
         tm = tc->focused_term_get(tc);
         if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
