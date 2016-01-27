@@ -2334,6 +2334,13 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
              INT_SWAP(start_x, end_x);
           }
      }
+   else
+     if (sd->link.string)
+       {
+          len = strlen(sd->link.string);
+          s = strndup(sd->link.string, len);
+       }
+     return;
 
    if (sd->pty->selection.is_box)
      {
@@ -2359,12 +2366,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         s = eina_strbuf_string_steal(sb);
         eina_strbuf_free(sb);
      }
-   else if (!start_y && !end_y && !start_x && !end_x && sd->link.string)
-     {
-        len = strlen(sd->link.string);
-        s = strndup(sd->link.string, len);
-     }
-   else if ((start_x != end_x) || (start_y != end_y))
+   else
      {
         s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len,
                                  EINA_TRUE);
