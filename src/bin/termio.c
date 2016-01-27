@@ -2335,12 +2335,14 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
           }
      }
    else
-     if (sd->link.string)
-       {
-          len = strlen(sd->link.string);
-          s = strndup(sd->link.string, len);
-       }
-     return;
+     {
+        if (sd->link.string)
+          {
+             len = strlen(sd->link.string);
+             s = strndup(sd->link.string, len);
+          }
+        return;
+     }
 
    if (sd->pty->selection.is_box)
      {
