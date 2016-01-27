@@ -2312,7 +2312,7 @@ _take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    sd->sel_str = text;
 }
 
-void
+Eina_Bool
 termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -2320,7 +2320,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
    char *s = NULL;
    size_t len = 0;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    if (sd->pty->selection.is_active)
      {
         start_x = sd->pty->selection.start.x;
@@ -2341,7 +2341,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
              len = strlen(sd->link.string);
              s = strndup(sd->link.string, len);
           }
-        return;
+        return EINA_FALSE;
      }
 
    if (sd->pty->selection.is_box)
@@ -2379,7 +2379,9 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         if ((sd->win) && (len > 0))
           _take_selection_text(sd, type, s);
         free(s);
+        return EINA_TRUE;
      }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -2847,7 +2849,7 @@ _trim_sel_word(Termio *sd)
    /* check validy of the selection */
    if ((y > pty->selection.end.y) ||
        ((y == pty->selection.end.y) &&
-        (start >= pty->selection.end.x)))
+        (start > pty->selection.end.x)))
      {
         pty->selection.start.y = pty->selection.end.y;
         pty->selection.start.x = pty->selection.end.x;
@@ -2871,7 +2873,9 @@ _trim_sel_word(Termio *sd)
           break;
      }
    if (end < 0)
-     return;
+     {
+        return;
+     }
    /* check validy of the selection */
    if ((y < pty->selection.start.y) ||
        ((y == pty->selection.start.y) &&
@@ -3401,7 +3405,7 @@ _selection_newline_extend_fix(Evas_Object *obj)
 
    if ((end_y > start_y) ||
        ((end_y == start_y) &&
-        (end_x > start_x)))
+        (end_x >= start_x)))
      {
         /* going down/right */
         w = termpty_row_length(sd->pty, start_y);
@@ -4150,7 +4154,9 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              else
                _sel_line(sd, cy - sd->scroll);
              if (sd->pty->selection.is_active)
-               termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+               {
+                  termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+               }
              sd->didclick = EINA_TRUE;
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
@@ -4162,7 +4168,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
              else
                _sel_word(sd, cx, cy - sd->scroll);
              if (sd->pty->selection.is_active)
-               termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+               {
+                  if (!termio_take_selection(data, ELM_SEL_TYPE_PRIMARY))
+                    _sel_set(sd, EINA_FALSE);
+               }
              sd->didclick = EINA_TRUE;
           }
         else
@@ -4215,21 +4224,22 @@ _smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED
           }
         sd->pty->selection.makesel = EINA_FALSE;
 
-        /* Only change the end position */
-        if (((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
-            (sd->pty->selection.start.y == sd->pty->selection.end.y)) &&
-            (!sd->moved))
+        if (!sd->pty->selection.is_active)
           {
-             _sel_set(sd, EINA_FALSE);
-             sd->didclick = EINA_FALSE;
-             sd->pty->selection.last_click = time(NULL);
-             sd->pty->selection.by_line = EINA_FALSE;
-             sd->pty->selection.by_word = EINA_FALSE;
-             _smart_update_queue(data, sd);
-             return;
+             /* Only change the end position */
+             if (((sd->pty->selection.start.x == sd->pty->selection.end.x) &&
+                  (sd->pty->selection.start.y == sd->pty->selection.end.y)))
+               {
+                  _sel_set(sd, EINA_FALSE);
+                  sd->didclick = EINA_FALSE;
+                  sd->pty->selection.last_click = time(NULL);
+                  sd->pty->selection.by_line = EINA_FALSE;
+                  sd->pty->selection.by_word = EINA_FALSE;
+                  _smart_update_queue(data, sd);
+                  return;
+               }
           }
-
-        if (sd->pty->selection.is_active)
+        else
           {
              if (sd->pty->selection.by_line)
                {
