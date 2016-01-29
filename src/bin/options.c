@@ -152,7 +152,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_size_hint_align_set(o, 0.5, EVAS_HINT_FILL);
         elm_toolbar_horizontal_set(o, EINA_FALSE);
         elm_object_style_set(o, "item_horizontal");
-        elm_toolbar_icon_size_set(o, 16);
+        elm_toolbar_icon_size_set(o, 16 * elm_config_scale_get());
         elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_SCROLL);
         elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_ALWAYS);
         elm_toolbar_menu_parent_set(o, win);
