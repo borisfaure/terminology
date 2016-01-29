@@ -93,6 +93,7 @@ struct _Termio
    unsigned char bottom_right : 1;
    unsigned char top_left : 1;
    unsigned char reset_sel : 1;
+   double gesture_zoom_start_size;
 };
 
 #define INT_SWAP(_a, _b) do {    \
@@ -4595,6 +4596,7 @@ _smart_cb_gest_zoom_start(void *data, void *event)
    config = sd->config;
    if (config)
      {
+        sd->gesture_zoom_start_size = (double)config->font.size;
         int sz = (double)config->font.size * p->zoom;
         sd->zoom_fontsize_start = config->font.size;
         if (sz != config->font.size)
@@ -4615,7 +4617,7 @@ _smart_cb_gest_zoom_move(void *data, void *event)
    config = sd->config;
    if (config)
      {
-        int sz = (double)config->font.size * p->zoom;
+        int sz = sd->gesture_zoom_start_size * p->zoom;
         if (sz != config->font.size)
           win_font_size_set(term_win_get(sd->term), sz);
      }
@@ -4634,7 +4636,8 @@ _smart_cb_gest_zoom_end(void *data, void *event)
    config = sd->config;
    if (config)
      {
-        int sz = (double)config->font.size * p->zoom;
+        int sz = sd->gesture_zoom_start_size * p->zoom;
+        sd->gesture_zoom_start_size = 0.0;
         if (sz != config->font.size)
           win_font_size_set(term_win_get(sd->term), sz);
      }
