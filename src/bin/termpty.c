@@ -652,6 +652,9 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
    ssize_t len = nb_cells;
 
+   if (!cells)
+     return 0;
+
    for (len = nb_cells - 1; len >= 0; len--)
      {
         const Termcell *cell = cells + len;
@@ -784,9 +787,11 @@ termpty_row_length(Termpty *ty, int y)
    ssize_t wret;
    Termcell *cells = termpty_cellrow_get(ty, y, &wret);
 
+   if (cells)
+     return 0;
    if (y >= 0)
      return termpty_line_length(cells, ty->w);
-   return cells ? wret : 0;
+   return wret;
 }
 
 ssize_t
