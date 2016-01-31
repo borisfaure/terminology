@@ -831,8 +831,6 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    evas_object_show(o);
    new_child->parent = tc;
    wn->child = new_child;
-   if (tc->is_focused)
-     new_child->focus(new_child, tc);
 }
 
 static void
@@ -1253,9 +1251,6 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
    o = orig->get_evas_object(orig);
    evas_object_hide(o);
 
-   if (orig == split->last_focus)
-     split->last_focus = new_child;
-
    o = new_child->get_evas_object(new_child);
    if (split->tc1 == orig)
      {
@@ -1272,9 +1267,6 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
    new_child->parent = tc;
    evas_object_show(o);
    evas_object_show(split->panes);
-
-   if (tc->is_focused)
-     new_child->focus(new_child, tc);
 }
 
 static Term *
@@ -1644,6 +1636,14 @@ _tabbar_clear(Term *tm)
         evas_object_del(tm->tabbar.r.box);
         tm->tabbar.r.box = NULL;
      }
+   if (tm->tab_spacer)
+     {
+        edje_object_signal_emit(tm->bg, "tabbar,off", "terminology");
+        edje_object_message_signal_process(tm->bg);
+        edje_object_part_unswallow(tm->bg, tm->tab_spacer);
+        evas_object_del(tm->tab_spacer);
+        tm->tab_spacer = NULL;
+     }
 }
 
 static void
@@ -1693,6 +1693,10 @@ _tabbar_fill(Tabs *tabs)
    solo = (Solo*)tab_item->tc;
    term = solo->term;
 
+   assert(term->tabbar.l.box == NULL);
+   assert(term->tabbar.r.box == NULL);
+   assert(term->tab_spacer != NULL);
+
    if (i > 0)
      {
         term->tabbar.l.box = o = elm_box_add(tabs->tc.wn->win);
@@ -1719,6 +1723,9 @@ _tabbar_fill(Tabs *tabs)
           {
              Evas_Coord w, h;
 
+             solo = (Solo*)tab_item->tc;
+             _tabbar_clear(solo->term);
+
              o = edje_object_add(evas_object_evas_get(tabs->tc.wn->win));
              theme_apply(o, term->config, "terminology/tabbar_back");
              evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1727,6 +1734,7 @@ _tabbar_fill(Tabs *tabs)
                                        tab_item->tc->title);
              edje_object_size_min_calc(o, &w, &h);
              evas_object_size_hint_min_set(o, w, h);
+             assert(i != j);
              if (j < i)
                {
                   term->tabbar.l.tabs = eina_list_append(term->tabbar.l.tabs, o);
@@ -1840,10 +1848,6 @@ _tabs_restore(Tabs *tabs)
    solo = (Solo*)tabs->current->tc;
    term = solo->term;
    _tabbar_clear(term);
-   if (!term->config->notabs)
-     {
-        _tabbar_fill(tabs);
-     }
 
    _tabs_refresh(tabs);
    tabs->current->tc->focus(tabs->current->tc, tabs->current->tc);
@@ -2123,16 +2127,10 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    assert (child->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*)child;
    term = solo->term;
+   child->unfocus(child, tc);
    _tabbar_clear(term);
 
    edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
-   if (term->tab_spacer)
-     {
-        edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
-        evas_object_del(term->tab_spacer);
-        term->tab_spacer = NULL;
-        edje_object_message_signal_process(term->bg);
-     }
 
 
    count = eina_list_count(tabs->tabs);
@@ -2144,19 +2142,12 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         _tabbar_clear(term);
 
         edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
-        if (term->tab_spacer)
-          {
-             edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
-             evas_object_del(term->tab_spacer);
-             term->tab_spacer = NULL;
-             edje_object_message_signal_process(term->bg);
-          }
         if (tabs->selector)
           _tabs_restore(tabs);
         eina_stringshare_del(tc->title);
         tc_parent->swallow(tc_parent, tc, next_child);
         if (tc->is_focused)
-          next_child->focus(next_child, tc_parent);
+          next_child->focus(next_child, tc);
 
         free(next_item);
         free(tc);
@@ -2168,9 +2159,13 @@ _tabs_close(Term_Container *tc, Term_Container *child)
           {
              tabs->current = next_item;
              /* XXX: refresh */
+             tc->swallow(tc, child, next_child);
              tc_parent->swallow(tc_parent, tc, tc);
-             if (tc->is_focused)
-               next_child->focus(next_child, tc);
+          }
+        else
+          {
+             next_item = tabs->current;
+             next_child = next_item->tc;
           }
 
         if (item->tc->selector_img)
@@ -2181,9 +2176,10 @@ _tabs_close(Term_Container *tc, Term_Container *child)
              evas_object_del(o);
           }
 
-
         free(item);
         count--;
+        if (tc->is_focused)
+          next_child->focus(next_child, tc);
         _tabs_refresh(tabs);
      }
 }
@@ -2466,10 +2462,24 @@ _tabs_unfocus(Term_Container *tc, Term_Container *relative)
    tabs = (Tabs*) tc;
 
    if (tc->parent == relative)
-     tabs->current->tc->unfocus(tabs->current->tc, tc);
+     {
+        tabs->current->tc->unfocus(tabs->current->tc, tc);
+        tc->is_focused = EINA_FALSE;
+     }
    else
-     tc->parent->unfocus(tc->parent, tc);
-   tc->is_focused = EINA_FALSE;
+     {
+        Tab_Item *tab_item;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+          {
+             if (relative == tab_item->tc) {
+                  tc->parent->unfocus(tc->parent, tc);
+                  tc->is_focused = EINA_FALSE;
+                  return;
+             }
+          }
+     }
 }
 
 static void
@@ -2577,6 +2587,8 @@ _tabs_refresh(Tabs *tabs)
    solo = (Solo*)tab_item->tc;
    term = solo->term;
 
+   _tabbar_clear(term);
+
    if (!term->tabcount_spacer)
      {
         term->tabcount_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
@@ -2617,19 +2629,11 @@ _tabs_refresh(Tabs *tabs)
              edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
              edje_object_message_signal_process(term->bg);
           }
-        _tabbar_clear(term);
         _tabbar_fill(tabs);
      }
    else
      {
         _tabbar_clear(term);
-        if (term->tab_spacer)
-          {
-             edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
-             evas_object_del(term->tab_spacer);
-             term->tab_spacer = NULL;
-             edje_object_message_signal_process(term->bg);
-          }
      }
    if (missed > 0)
      edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
