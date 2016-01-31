@@ -787,7 +787,7 @@ termpty_row_length(Termpty *ty, int y)
    ssize_t wret;
    Termcell *cells = termpty_cellrow_get(ty, y, &wret);
 
-   if (cells)
+   if (!cells)
      return 0;
    if (y >= 0)
      return termpty_line_length(cells, ty->w);
