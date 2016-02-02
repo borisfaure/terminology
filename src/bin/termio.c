@@ -5278,6 +5278,7 @@ _smart_del(Evas_Object *obj)
                                        _smart_cb_mouse_wheel);
 
         evas_object_del(sd->event);
+        sd->event = NULL;
      }
    if (sd->self)
      {
@@ -5456,6 +5457,37 @@ _smart_pty_exited(void *data)
    Termio *sd = evas_object_smart_data_get(data);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   if (sd->event)
+     {
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _smart_cb_mouse_down);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_UP,
+                                       _smart_cb_mouse_up);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_MOVE,
+                                       _smart_cb_mouse_move);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_IN,
+                                       _smart_cb_mouse_in);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_OUT,
+                                       _smart_cb_mouse_out);
+        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_WHEEL,
+                                       _smart_cb_mouse_wheel);
+
+        evas_object_del(sd->event);
+        sd->event = NULL;
+     }
+   if (sd->self)
+     {
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_DOWN,
+                                       _smart_cb_key_down);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_UP,
+                                       _smart_cb_key_up);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_IN,
+                                       _smart_cb_focus_in);
+        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_OUT,
+                                       _smart_cb_focus_out);
+     }
+
    term_close(sd->win, sd->self, EINA_TRUE);
 }
 
