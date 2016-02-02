@@ -275,25 +275,6 @@ _win_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA
 
 
 void
-termio_win_set(Evas_Object *obj, Evas_Object *win)
-{
-   Termio *sd = evas_object_smart_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-   if (sd->win)
-     {
-        evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
-                                            _win_obj_del, obj);
-        sd->win = NULL;
-     }
-   if (win)
-     {
-        sd->win = win;
-        evas_object_event_callback_add(sd->win, EVAS_CALLBACK_DEL,
-                                       _win_obj_del, obj);
-     }
-}
-
-void
 termio_theme_set(Evas_Object *obj, Evas_Object *theme)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -5474,38 +5455,8 @@ _smart_pty_exited(void *data)
 {
    Termio *sd = evas_object_smart_data_get(data);
 
-   if (sd->event)
-     {
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _smart_cb_mouse_down);
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_UP,
-                                       _smart_cb_mouse_up);
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_MOVE,
-                                       _smart_cb_mouse_move);
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_IN,
-                                       _smart_cb_mouse_in);
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_OUT,
-                                       _smart_cb_mouse_out);
-        evas_object_event_callback_del(sd->event, EVAS_CALLBACK_MOUSE_WHEEL,
-                                       _smart_cb_mouse_wheel);
-
-        evas_object_del(sd->event);
-        sd->event = NULL;
-     }
-   if (sd->self)
-     {
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_DOWN,
-                                       _smart_cb_key_down);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_UP,
-                                       _smart_cb_key_up);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_IN,
-                                       _smart_cb_focus_in);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_OUT,
-                                       _smart_cb_focus_out);
-        sd->self = NULL;
-     }
-
-   evas_object_smart_callback_call(data, "exited", NULL);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   term_close(sd->win, sd->self, EINA_TRUE);
 }
 
 static void
@@ -5906,7 +5857,7 @@ _smart_cb_drop(void *data, Evas_Object *o EINA_UNUSED, Elm_Selection_Data *ev)
 
 
 Evas_Object *
-termio_add(Evas_Object *parent, Config *config,
+termio_add(Evas_Object *win, Config *config,
            const char *cmd, Eina_Bool login_shell, const char *cd,
            int w, int h, Term *term)
 {
@@ -5923,8 +5874,8 @@ termio_add(Evas_Object *parent, Config *config,
      };
    char *mod = NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   e = evas_object_evas_get(parent);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   e = evas_object_evas_get(win);
    if (!e) return NULL;
 
    if (!_smart) _smart_init();
@@ -5938,8 +5889,9 @@ termio_add(Evas_Object *parent, Config *config,
 
    termio_config_set(obj, config);
    sd->term = term;
+   sd->win = win;
 
-   sd->glayer = g = elm_gesture_layer_add(parent);
+   sd->glayer = g = elm_gesture_layer_add(win);
    elm_gesture_layer_attach(g, sd->event);
 
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,

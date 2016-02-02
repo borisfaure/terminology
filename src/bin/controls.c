@@ -94,7 +94,7 @@ _cb_ct_miniview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 static void
 _cb_ct_close(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
-   main_close(ct_win, ct_term);
+   term_close(ct_win, ct_term, EINA_FALSE);
 }
 
 static void

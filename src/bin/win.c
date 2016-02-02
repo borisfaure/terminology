@@ -391,6 +391,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    if (term->wn->cmdbox)
      elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
    elm_object_focus_set(term->termio, EINA_TRUE);
+   termio_event_feed_mouse_in(term->termio);
 
    title = termio_title_get(term->termio);
    if (title)
@@ -1080,16 +1081,21 @@ win_new(const char *name, const char *role, const char *title,
 }
 
 void
-main_close(Evas_Object *win, Evas_Object *term)
+term_close(Evas_Object *win, Evas_Object *term, Eina_Bool hold_if_requested)
 {
    Term *tm;
    Term_Container *tc;
    Win *wn = _win_find(win);
 
-   if (!wn) return;
+   if (!wn)
+     return;
 
    tm = evas_object_data_get(term, "term");
-   if (!tm) return;
+   if (!tm)
+     return;
+
+   if (tm->hold && hold_if_requested)
+     return;
 
    wn->terms = eina_list_remove(wn->terms, tm);
    tc = tm->container;
@@ -1668,7 +1674,7 @@ _cb_tab_close(void *data, Evas_Object *obj EINA_UNUSED,
    Win *wn = term->wn;
    Evas_Object *win = win_evas_object_get(wn);
 
-   main_close(win, term->termio);
+   term_close(win, term->termio, EINA_FALSE);
 }
 
 static void
@@ -2132,13 +2138,10 @@ _tabs_close(Term_Container *tc, Term_Container *child)
 
    edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
 
-
    count = eina_list_count(tabs->tabs);
    if (count == 1)
      {
         assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
-        solo = (Solo*)next_child;
-        term = solo->term;
         _tabbar_clear(term);
 
         edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
@@ -2159,13 +2162,15 @@ _tabs_close(Term_Container *tc, Term_Container *child)
           {
              tabs->current = next_item;
              /* XXX: refresh */
-             tc->swallow(tc, child, next_child);
              tc_parent->swallow(tc_parent, tc, tc);
+             tc->swallow(tc, child, next_child);
           }
         else
           {
              next_item = tabs->current;
              next_child = next_item->tc;
+             if (tc->is_focused)
+               next_child->focus(next_child, tc);
           }
 
         if (item->tc->selector_img)
@@ -2178,9 +2183,11 @@ _tabs_close(Term_Container *tc, Term_Container *child)
 
         free(item);
         count--;
-        if (tc->is_focused)
-          next_child->focus(next_child, tc);
         _tabs_refresh(tabs);
+        if (tc->is_focused)
+          {
+             next_child->focus(next_child, tc);
+          }
      }
 }
 
@@ -2829,6 +2836,7 @@ _term_focus(Term *term)
 {
    Term_Container *tc;
 
+   DBG("is focused? tc:%p", term->container);
    if (_term_is_focused(term))
      return;
 
@@ -2842,6 +2850,7 @@ term_unfocus(Term *term)
 {
    Term_Container *tc;
 
+   DBG("is focused? tc:%p", term->container);
    if (!_term_is_focused(term))
      return;
 
@@ -3161,6 +3170,7 @@ _term_miniview_check(Term *term)
      {
         if (term->miniview_shown)
           {
+             DBG("is focused? tc:%p", term->container);
              if (_term_is_focused(term))
                edje_object_signal_emit(term->bg, "miniview,on", "terminology");
           }
@@ -3393,6 +3403,7 @@ static void
 _cb_icon(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    Term *term = data;
+   DBG("is focused? tc:%p", term->container);
    if (_term_is_focused(term))
      elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->termio));
 }
@@ -3868,6 +3879,7 @@ _term_bg_config(Term *term)
           }
      }
 
+   DBG("is focused? tc:%p", term->container);
    if (_term_is_focused(term) && (_win_is_focused(term->wn)))
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
@@ -3963,6 +3975,7 @@ _cb_options_done(void *data)
    if (!_win_is_focused(wn)) return;
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
+        DBG("is focused? tc:%p", term->container);
         if (_term_is_focused(term))
           {
              elm_object_focus_set(term->termio, EINA_TRUE);
@@ -3982,19 +3995,6 @@ _cb_options(void *data, Evas_Object *obj EINA_UNUSED,
 
    controls_toggle(term->wn->win, term->wn->base, term->termio,
                    _cb_options_done, term->wn);
-}
-
-static void
-_cb_exited(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Term *term = data;
-
-   if (!term->hold)
-     {
-        Win *wn = term->wn;
-        Evas_Object *win = win_evas_object_get(wn);
-        main_close(win, term->termio);
-     }
 }
 
 void
@@ -4091,7 +4091,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_data_set(o, "term", term);
    colors_term_init(termio_textgrid_get(term->termio), term->bg, config);
 
-   termio_win_set(o, wn->win);
    termio_theme_set(o, term->bg);
 
    term->miniview = o = miniview_add(wn->win, term->termio);
@@ -4115,7 +4114,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
-   evas_object_smart_callback_add(o, "exited", _cb_exited, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
    evas_object_smart_callback_add(o, "popup,queue", _cb_popup_queue, term);
