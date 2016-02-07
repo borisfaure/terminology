@@ -2341,7 +2341,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
              if (tmp)
                {
                   eina_strbuf_append_length(sb, tmp, len);
-                  if (len && tmp[len - 1] != '\n')
+                  if (len && tmp[len - 1] != '\n' && i != end_y)
                     eina_strbuf_append_char(sb, '\n');
                   free(tmp);
                }
