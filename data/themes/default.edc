@@ -1852,27 +1852,6 @@ collections {
                rel2.to: "tab_bevel_top2";
             }
          }
-         part { name: "tabclose"; type: IMAGE;
-            description { state: "default" 0.0;
-               image {
-                  normal: "tab_close.png";
-               };
-               rel1 {
-                  to: "tab_bevel_top2";
-                  relative: 1.0 0.5;
-                  offset: -20 -8;
-               }
-               rel2 {
-                  to: "tab_bevel_top2";
-                  relative: 1.0 0.5;
-                  offset: -2 8;
-               }
-            }
-         }
-         program {
-            signal: "mouse,clicked,1"; source: "tabclose";
-            action: SIGNAL_EMIT "tab,close" "terminology";
-         }
          part { name: "clip"; type: RECT;
             description { state: "default" 0.0;
                rel2.offset: -1 -2;
