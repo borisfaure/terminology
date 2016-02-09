@@ -705,7 +705,8 @@ terms_from_win_object(Evas_Object *win)
 
 
 static Evas_Object *
-tg_win_add(const char *name, const char *role, const char *title, const char *icon_name)
+win_add(const char *name, const char *role,
+        const char *title, const char *icon_name)
 {
    Evas_Object *win, *o;
    char buf[4096];
@@ -1013,7 +1014,7 @@ win_new(const char *name, const char *role, const char *title,
    wn = calloc(1, sizeof(Win));
    if (!wn) return NULL;
 
-   wn->win = tg_win_add(name, role, title, icon_name);
+   wn->win = win_add(name, role, title, icon_name);
    if (!wn->win)
      {
         free(wn);
