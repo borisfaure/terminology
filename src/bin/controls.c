@@ -92,6 +92,12 @@ _cb_ct_miniview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 }
 
 static void
+_cb_ct_set_title(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+    term_set_title(termio_term_get(ct_term));
+}
+
+static void
 _cb_ct_close(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    term_close(ct_win, ct_term, EINA_FALSE);
@@ -275,6 +281,12 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_box, o);
 
         o = _button_add(win, _("Miniview"), "mini-view", _cb_ct_miniview, NULL);
+        elm_box_pack_end(ct_box, o);
+
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box, o);
+
+        o = _button_add(win, _("Set title"), "document-edit", _cb_ct_set_title, NULL);
         elm_box_pack_end(ct_box, o);
 
         o = _sep_add_v(win);

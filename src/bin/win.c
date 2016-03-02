@@ -3220,6 +3220,60 @@ term_miniview_toggle(Term *term)
 }
 
 static void
+_set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+    Evas_Object *popup = data;
+    Term *term = evas_object_data_get(popup, "term");
+    Evas_Object *entry = elm_object_content_get(popup);
+    const char *title = elm_entry_entry_get(entry);
+
+    if (!title || !strlen(title))
+      title = NULL;
+
+    termio_user_title_set(term->termio, title);
+    evas_object_del(popup);
+}
+
+static void
+_set_title_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+    evas_object_del(data);
+}
+
+void
+term_set_title(Term *term)
+{
+    Evas_Object *o;
+    Evas_Object *popup;
+
+    EINA_SAFETY_ON_NULL_RETURN(term);
+
+    popup = elm_popup_add(term->wn->win);
+    evas_object_data_set(popup, "term", term);
+    elm_object_part_text_set(popup, "title,text", _("Set title"));
+
+    o = elm_button_add(popup);
+    evas_object_smart_callback_add(o, "clicked", _set_title_ok_cb, popup);
+    elm_object_text_set(o, _("Ok"));
+    elm_object_part_content_set(popup, "button1", o);
+
+    o = elm_button_add(popup);
+    evas_object_smart_callback_add(o, "clicked", _set_title_cancel_cb, popup);
+    elm_object_text_set(o, _("Cancel"));
+    elm_object_part_content_set(popup, "button2", o);
+
+    o = elm_entry_add(popup);
+    elm_entry_single_line_set(o, EINA_TRUE);
+    evas_object_smart_callback_add(o, "activated", _set_title_ok_cb, popup);
+    evas_object_smart_callback_add(o, "aborted", _set_title_cancel_cb, popup);
+    elm_object_content_set(popup, o);
+    evas_object_show(o);
+    elm_object_focus_set(o, EINA_TRUE);
+
+    evas_object_show(popup);
+}
+
+static void
 _popmedia_queue_process(Term *term)
 {
    const char *src;

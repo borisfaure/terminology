@@ -1326,7 +1326,8 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   ty->prop.title = NULL;
                   ty->prop.icon = NULL;
                }
-             if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
+             if (ty->cb.set_title.func && !ty->prop.user_title)
+               ty->cb.set_title.func(ty->cb.set_title.data);
              if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
           }
         break;

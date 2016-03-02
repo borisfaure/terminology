@@ -603,6 +603,7 @@ termpty_free(Termpty *ty)
    if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
    if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+   if (ty->prop.user_title) eina_stringshare_del(ty->prop.user_title);
    if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
    if (ty->back)
      {
