@@ -247,6 +247,7 @@ _solo_size_eval(Term_Container *container, Sizeinfo *info)
 static void
 _solo_close(Term_Container *tc, Term_Container *child EINA_UNUSED)
 {
+   DBG("close");
    tc->parent->close(tc->parent, tc);
 
    eina_stringshare_del(tc->title);
@@ -821,6 +822,8 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    wn = (Win*) tc;
    base = win_base_get(wn);
 
+   DBG("orig:%p", orig);
+
    if (orig)
      {
         o = orig->get_evas_object(orig);
@@ -1325,6 +1328,8 @@ _split_close(Term_Container *tc, Term_Container *child)
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
 
+   DBG("close");
+
    top = elm_object_part_content_unset(split->panes, PANES_TOP);
    bottom = elm_object_part_content_unset(split->panes, PANES_BOTTOM);
    evas_object_hide(top);
@@ -1333,6 +1338,11 @@ _split_close(Term_Container *tc, Term_Container *child)
    parent = tc->parent;
    other_child = (child == split->tc1) ? split->tc2 : split->tc1;
    parent->swallow(parent, tc, other_child);
+
+   if (tc->is_focused)
+     {
+        other_child->focus(other_child, parent);
+     }
 
    evas_object_del(split->panes);
 
