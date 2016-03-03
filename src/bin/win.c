@@ -1659,7 +1659,8 @@ _tabbar_clear(Term *tm)
         edje_object_message_signal_process(tm->bg);
         edje_object_part_unswallow(tm->bg, tm->tab_spacer);
         evas_object_del(tm->tab_spacer);
-        o = edje_object_part_swallow_get(tm->bg, "terminology.tab.title");
+        Evas_Object *o;
+        o = edje_object_part_swallow_get(term->bg, "terminology.tab.title");
         evas_object_del(o);
         tm->tab_spacer = NULL;
      }
@@ -2632,7 +2633,6 @@ _tabs_refresh(Tabs *tabs)
         if (!term->tab_spacer)
           {
              Evas_Object *o;
-             Evas_Coord ow, oh;
              term->tab_spacer = evas_object_rectangle_add(
                 evas_object_evas_get(term->bg));
              evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
@@ -2642,16 +2642,8 @@ _tabs_refresh(Tabs *tabs)
              edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
              edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
              /* TODO: boris */
-             //edje_object_part_text_set(term->bg, "terminology.tab.title",
-             //                          solo->tc.title);
-             o = evas_object_text_add(evas_object_evas_get(term->bg));
-             /* TODO boris: style */
-             evas_object_text_text_set(o, solo->tc.title);
-             evas_object_scale_set(o, elm_config_scale_get());
-             evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
-             evas_object_size_hint_min_set(o, ow, oh);
-             edje_object_part_swallow(term->bg, "terminology.tab.title", o);
-
+             edje_object_part_text_set(term->bg, "terminology.tab.title",
+                                       solo->tc.title);
              edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
              edje_object_message_signal_process(term->bg);
           }
