@@ -387,6 +387,16 @@ cb_term_new(Evas_Object *termio_obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+cb_tab_set_title(Evas_Object *termio_obj)
+{
+   Term *term = termio_term_get(termio_obj);
+   if (!term)
+     return EINA_FALSE;
+   term_set_title(term);
+   return EINA_TRUE;
+}
+
 #define CB_TAB(N)                              \
 static Eina_Bool                               \
 cb_tab_##N(Evas_Object *termio_obj)            \
@@ -617,6 +627,7 @@ static Shortcut_Action _actions[] =
      {"tab_8", gettext_noop("Switch to terminal tab 8"), cb_tab_8},
      {"tab_9", gettext_noop("Switch to terminal tab 9"), cb_tab_9},
      {"tab_10", gettext_noop("Switch to terminal tab 10"), cb_tab_0},
+     {"tab_title", gettext_noop("Change title"), cb_tab_set_title},
 
      {"group", gettext_noop("Font size"), NULL},
      {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},

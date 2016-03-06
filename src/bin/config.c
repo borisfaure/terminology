@@ -324,6 +324,7 @@ _add_default_keys(Config *config)
    ADD_KB("7", 1, 0, 0, 0, "tab_7");
    ADD_KB("8", 1, 0, 0, 0, "tab_8");
    ADD_KB("9", 1, 0, 0, 0, "tab_9");
+   ADD_KB("t", 1, 0, 0, 0, "tab_title");
 
    /* Alt- */
    ADD_KB("Home", 0, 1, 0, 0, "cmd_box");
