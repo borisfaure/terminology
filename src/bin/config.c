@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 8
+#define CONF_VER 9
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -568,10 +568,12 @@ config_load(const char *key)
                   config->changedir_to_current = EINA_TRUE;
                   /*pass through*/
                 case 7:
-                  config->version = CONF_VER;
-                  /*pass through*/
-                case CONF_VER: /* 8 */
                   _add_key(config, "n", 1, 0, 1, 0, "term_new");
+                  /*pass through*/
+                case 8:
+                  _add_key(config, "t", 1, 0, 0, 0, "tab_title");
+                  /*pass through*/
+                case CONF_VER: /* 9 */
                   break;
                 default:
                   if (config->version < CONF_VER)
