@@ -875,7 +875,7 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
 
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
-   if (relative != wn->child)
+   if (relative != wn->child && wn->child)
      {
         tc->is_focused = EINA_FALSE;
         wn->child->unfocus(wn->child, tc);
