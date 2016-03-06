@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 7
+#define CONF_VER 8
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -340,6 +340,7 @@ _add_default_keys(Config *config)
    ADD_KB("v", 1, 0, 1, 0, "paste_clipboard");
    ADD_KB("h", 1, 0, 1, 0, "miniview");
    ADD_KB("Insert", 1, 0, 1, 0, "paste_clipboard");
+   ADD_KB("n", 1, 0, 1, 0, "term_new");
 
    /* Ctrl-Alt- */
    ADD_KB("equal", 1, 1, 0, 0, "increase_font_size");
@@ -357,6 +358,15 @@ _add_default_keys(Config *config)
    ADD_KB("KP_Subtract", 0, 0, 1, 0, "decrease_font_size");
    ADD_KB("KP_Multiply", 0, 0, 1, 0, "reset_font_size");
    ADD_KB("KP_Divide", 0, 0, 1, 0, "copy_clipboard");
+}
+
+static void
+_add_key(Config *config, const char *name, int ctrl, int alt, int shift,
+         int win, const char *cb_name)
+{
+   Config_Keys *kb;
+
+   ADD_KB(name, ctrl, alt, shift, win, cb_name);
 }
 
 #undef ADD_KB
@@ -556,8 +566,11 @@ config_load(const char *key)
                 case 6:
                   config->changedir_to_current = EINA_TRUE;
                   /*pass through*/
-                case CONF_VER: /* 7 */
+                case 7:
                   config->version = CONF_VER;
+                  /*pass through*/
+                case CONF_VER: /* 8 */
+                  _add_key(config, "n", 1, 0, 1, 0, "term_new");
                   break;
                 default:
                   if (config->version < CONF_VER)

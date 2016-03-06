@@ -366,6 +366,27 @@ cb_term_next(Evas_Object *termio_obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+cb_term_new(Evas_Object *termio_obj)
+{
+   char path[PATH_MAX], cwd[PATH_MAX], *cmd;
+   const char *template = "%s -d %s";
+   int length;
+
+   eina_file_path_join(path, sizeof(path), elm_app_bin_dir_get(),
+                       "terminology");
+   termio_cwd_get(termio_obj, cwd, sizeof(cwd));
+
+   length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
+   cmd = malloc(sizeof(char) * length);
+   snprintf(cmd, length, template, path, cwd);
+
+   ecore_exe_run(cmd, NULL);
+   free(cmd);
+
+   return EINA_TRUE;
+}
+
 #define CB_TAB(N)                              \
 static Eina_Bool                               \
 cb_tab_##N(Evas_Object *termio_obj)            \
@@ -604,6 +625,7 @@ static Shortcut_Action _actions[] =
      {"reset_font_size", gettext_noop("Reset font size"), cb_reset_font_size},
 
      {"group", gettext_noop("Actions"), NULL},
+     {"term_new", gettext_noop("Open a new terminal window"), cb_term_new},
      {"win_fullscreen", gettext_noop("Toggle Fullscreen of the window"), cb_win_fullscreen},
      {"miniview", gettext_noop("Display the history miniview"), cb_miniview},
      {"cmd_box", gettext_noop("Display the command box"), cb_cmd_box},
