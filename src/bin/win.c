@@ -1258,6 +1258,9 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
 
    assert (orig && (orig == split->tc1 || orig == split->tc2));
 
+   if (split->last_focus == orig)
+     split->last_focus = new_child;
+
    o = orig->get_evas_object(orig);
    evas_object_hide(o);
 
