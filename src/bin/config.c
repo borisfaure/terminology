@@ -433,7 +433,7 @@ config_default_font_set(Config *config, Evas *evas)
    if (config->font_set)
      {
         config->font.bitmap = EINA_FALSE;
-        config->font.size = 14;
+        config->font.size = 12;
         eina_stringshare_del(fname);
      }
 #undef FONT_DEJAVU
