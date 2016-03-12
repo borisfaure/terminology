@@ -758,6 +758,7 @@ keyin_add_config(Config_Keys *key)
             (!eina_hash_direct_add(_key_bindings, kb, kb)))
           {
              _key_binding_free(kb);
+             ERR("duplicate key '%s'", key->keyname);
              return -1;
           }
         return 0;
