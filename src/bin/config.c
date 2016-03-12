@@ -324,7 +324,6 @@ _add_default_keys(Config *config)
    ADD_KB("7", 1, 0, 0, 0, "tab_7");
    ADD_KB("8", 1, 0, 0, 0, "tab_8");
    ADD_KB("9", 1, 0, 0, 0, "tab_9");
-   ADD_KB("t", 1, 0, 0, 0, "tab_title");
 
    /* Alt- */
    ADD_KB("Home", 0, 1, 0, 0, "cmd_box");
@@ -348,6 +347,7 @@ _add_default_keys(Config *config)
    ADD_KB("minus", 1, 1, 0, 0, "decrease_font_size");
    ADD_KB("0", 1, 1, 0, 0, "reset_font_size");
    ADD_KB("9", 1, 1, 0, 0, "big_font_size");
+   ADD_KB("t", 1, 1, 0, 0, "tab_title");
 
    /* Shift- */
    ADD_KB("Prior", 0, 0, 1, 0, "one_page_up");
@@ -571,7 +571,7 @@ config_load(const char *key)
                   _add_key(config, "n", 1, 0, 1, 0, "term_new");
                   /*pass through*/
                 case 8:
-                  _add_key(config, "t", 1, 0, 0, 0, "tab_title");
+                  _add_key(config, "t", 1, 1, 0, 0, "tab_title");
                   /*pass through*/
                 case CONF_VER: /* 9 */
                   break;
