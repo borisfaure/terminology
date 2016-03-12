@@ -3223,7 +3223,8 @@ term_miniview_toggle(Term *term)
 }
 
 static void
-_set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
     Evas_Object *popup = data;
     Term *term = evas_object_data_get(popup, "term");
@@ -3235,12 +3236,18 @@ _set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
 
     termio_user_title_set(term->termio, title);
     evas_object_del(popup);
+    term_unref(term);
 }
 
 static void
-_set_title_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_set_title_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
+    Evas_Object *popup = data;
+    Term *term = evas_object_data_get(popup, "term");
+
     evas_object_del(data);
+    term_unref(term);
 }
 
 void
@@ -3250,6 +3257,8 @@ term_set_title(Term *term)
     Evas_Object *popup;
 
     EINA_SAFETY_ON_NULL_RETURN(term);
+
+    term_ref(term);
 
     popup = elm_popup_add(term->wn->win);
     evas_object_data_set(popup, "term", term);
