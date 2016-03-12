@@ -525,9 +525,11 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
             procpath, strerror(errno));
         return EINA_FALSE;
      }
-   buf[siz] = 0;
+   buf[siz] = '\0';
 
 #endif
+
+   buf[size -1] = '\0';
 
    return EINA_TRUE;
 }
