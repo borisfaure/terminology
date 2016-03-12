@@ -2837,6 +2837,8 @@ _trim_sel_word(Termio *sd)
         y++)
      {
         cells = termpty_cellrow_get(pty, y, &w);
+        if (!cells)
+          return;
 
         while (start < w && _to_trim(cells[start].codepoint, EINA_TRUE))
           start++;
@@ -2865,6 +2867,8 @@ _trim_sel_word(Termio *sd)
         y--)
      {
         cells = termpty_cellrow_get(pty, y, &w);
+        if (!cells)
+          return;
 
         while (end >= 0 && _to_trim(cells[end].codepoint, EINA_FALSE))
           end--;
@@ -4692,6 +4696,7 @@ _smart_apply(Evas_Object *obj)
 
         w = 0;
         cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
+        if (!cells) continue;
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
         if (!tc) continue;
         ch1 = -1;
