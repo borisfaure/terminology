@@ -375,14 +375,18 @@ cb_term_new(Evas_Object *termio_obj)
 
    eina_file_path_join(path, sizeof(path), elm_app_bin_dir_get(),
                        "terminology");
-   termio_cwd_get(termio_obj, cwd, sizeof(cwd));
-
-   length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
-   cmd = malloc(sizeof(char) * length);
-   snprintf(cmd, length, template, path, cwd);
-
-   ecore_exe_run(cmd, NULL);
-   free(cmd);
+   if (termio_cwd_get(termio_obj, cwd, sizeof(cwd)))
+     {
+        length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
+        cmd = malloc(sizeof(char) * length);
+        snprintf(cmd, length, template, path, cwd);
+        ecore_exe_run(cmd, NULL);
+        free(cmd);
+     }
+   else
+     {
+        ecore_exe_run(path, NULL);
+     }
 
    return EINA_TRUE;
 }
