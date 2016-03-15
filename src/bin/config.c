@@ -372,24 +372,6 @@ _add_key(Config *config, const char *name, int ctrl, int alt, int shift,
 
 #undef ADD_KB
 
-static void
-_remove_duplicate_keys(Config *config)
-{
-   Eina_Hash * keys = eina_hash_string_superfast_new(NULL);
-   Eina_List *l, *l_next;
-   Config_Keys *kb;
-
-   EINA_LIST_FOREACH_SAFE(config->keys, l, l_next, kb) {
-        if (eina_hash_add(keys, kb->cb, NULL) != EINA_TRUE) {
-             config->keys = eina_list_remove_list(config->keys, l);
-             eina_stringshare_del(kb->keyname);
-             eina_stringshare_del(kb->cb);
-             free(kb);
-        }
-   }
-   eina_hash_free(keys);
-}
-
 void
 config_default_font_set(Config *config, Evas *evas)
 {
@@ -590,7 +572,7 @@ config_load(const char *key)
                   _add_key(config, "t", 1, 1, 0, 0, "tab_title");
                   /*pass through*/
                 case 9:
-                  _remove_duplicate_keys(config);
+                  /* actually do nothing */
                   /*pass through*/
                 case CONF_VER: /* 10 */
                   config->version = CONF_VER;

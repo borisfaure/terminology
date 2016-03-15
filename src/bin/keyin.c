@@ -742,6 +742,7 @@ _key_binding_free(void *data)
    free(kb);
 }
 
+/* Returns -2 for duplicate key, 0 on success, -1 otherwise */
 int
 keyin_add_config(Config_Keys *key)
 {
@@ -763,7 +764,7 @@ keyin_add_config(Config_Keys *key)
           {
              _key_binding_free(kb);
              ERR("duplicate key '%s'", key->keyname);
-             return -1;
+             return -2;
           }
         return 0;
      }
@@ -783,11 +784,11 @@ keyin_remove_config(Config_Keys *key)
    return 0;
 }
 
-int 
+int
 key_bindings_load(Config *config)
 {
    Config_Keys *key;
-   Eina_List *l;
+   Eina_List *l, *l_next;
 
    if (!_key_bindings)
      {
@@ -812,17 +813,22 @@ key_bindings_load(Config *config)
         eina_hash_free_buckets(_key_bindings);
      }
 
-   EINA_LIST_FOREACH(config->keys, l, key)
+   EINA_LIST_FOREACH_SAFE(config->keys, l, l_next, key)
      {
         int res = keyin_add_config(key);
-        if (res != 0)
-          return res;
+        if (res == -2)
+          {
+             config->keys = eina_list_remove_list(config->keys, l);
+             eina_stringshare_del(key->keyname);
+             eina_stringshare_del(key->cb);
+             free(key);
+          }
      }
 
    return 0;
 }
 
-void 
+void
 key_bindings_shutdown(void)
 {
    if (_key_bindings)
