@@ -94,6 +94,7 @@ Config *config_fork(Config *config);
 Config *config_new();
 void config_del(Config *config);
 void config_default_font_set(Config *config, Evas *evas);
+void config_reset_keys(Config *config);
 
 const char *config_theme_path_get(const Config *config);
 const char *config_theme_path_default_get(const Config *config);

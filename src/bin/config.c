@@ -361,6 +361,21 @@ _add_default_keys(Config *config)
    ADD_KB("KP_Divide", 0, 0, 1, 0, "copy_clipboard");
 }
 
+void
+config_reset_keys(Config *config)
+{
+   Config_Keys *key;
+
+   EINA_LIST_FREE(config->keys, key)
+     {
+        eina_stringshare_del(key->keyname);
+        eina_stringshare_del(key->cb);
+        free(key);
+     }
+   _add_default_keys(config);
+}
+
+
 static void
 _add_key(Config *config, const char *name, int ctrl, int alt, int shift,
          int win, const char *cb_name)

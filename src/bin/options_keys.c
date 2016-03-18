@@ -337,6 +337,16 @@ char *gl_group_text_get(void *data, Evas_Object *obj EINA_UNUSED,
    return strdup(action->description);
 }
 
+static void
+_cb_reset_keys(void *data, Evas_Object *obj EINA_UNUSED,
+               void *event EINA_UNUSED)
+{
+   Evas_Object *gl = data;
+
+   config_reset_keys(_config);
+   elm_genlist_realized_items_update(gl);
+}
+
 void
 options_keys(Evas_Object *opbox, Evas_Object *term)
 {
@@ -409,5 +419,11 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
         action++;
      }
 
-   /* TODO: reset button ? */
+   o = elm_button_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(o, _("Reset bindings"));
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "clicked", _cb_reset_keys, gl);
 }
