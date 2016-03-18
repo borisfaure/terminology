@@ -36,6 +36,7 @@ struct _Config
       int            orig_size; /* not in EET */
       unsigned char  bitmap;
       unsigned char  orig_bitmap; /* not in EET */
+      unsigned char  bolditalic;
    } font;
    struct {
       const char    *email;

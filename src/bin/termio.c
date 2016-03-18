@@ -4778,7 +4778,7 @@ _smart_apply(Evas_Object *obj)
                     }
                   else
                     {
-                       int fg, bg, fgext, bgext, codepoint;
+                       int fg, bg, fgext, bgext, codepoint, bold, italic;
 
                        // colors
                        fg = cells[x].att.fg;
@@ -4786,6 +4786,16 @@ _smart_apply(Evas_Object *obj)
                        fgext = cells[x].att.fg256;
                        bgext = cells[x].att.bg256;
                        codepoint = cells[x].codepoint;
+                       if (sd->config->font.bolditalic)
+                         {
+                            bold = cells[x].att.bold;
+                            italic = cells[x].att.italic;
+                         }
+                       else
+                         {
+                            bold = 0;
+                            italic = 0;
+                         }
 
                        if ((fg == COL_DEF) && (cells[x].att.inverse ^ inv))
                          fg = COL_INVERSEBG;
@@ -4807,6 +4817,8 @@ _smart_apply(Evas_Object *obj)
                        if ((cells[x].att.bold) && (!fgext)) fg += 12;
                        if ((cells[x].att.faint) && (!fgext)) fg += 24;
                        if ((tc[x].codepoint != codepoint) ||
+                           (tc[x].bold != bold) ||
+                           (tc[x].italic != italic) ||
                            (tc[x].fg != fg) ||
                            (tc[x].bg != bg) ||
                            (tc[x].fg_extended != fgext) ||
@@ -4821,8 +4833,16 @@ _smart_apply(Evas_Object *obj)
                        tc[x].bg_extended = bgext;
                        tc[x].underline = cells[x].att.underline;
                        tc[x].strikethrough = cells[x].att.strike;
-                       tc[x].bold = cells[x].att.bold;
-                       tc[x].italic = cells[x].att.italic;
+                       if (sd->config->font.bolditalic)
+                         {
+                            tc[x].bold = cells[x].att.bold;
+                            tc[x].italic = cells[x].att.italic;
+                         }
+                       else
+                         {
+                            tc[x].bold = 0;
+                            tc[x].italic = 0;
+                         }
                        tc[x].double_width = cells[x].att.dblwidth;
                        tc[x].fg = fg;
                        tc[x].bg = bg;

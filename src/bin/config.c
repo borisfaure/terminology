@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 10
+#define CONF_VER 11
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -82,6 +82,8 @@ config_init(void)
      (edd_base, Config, "font.size", font.size, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.bitmap", font.bitmap, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "font.bolditalic", font.bitmap, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "helper.email", helper.email, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -229,6 +231,7 @@ config_sync(const Config *config_src, Config *config)
    config->font.size = config_src->font.size;
    eina_stringshare_replace(&(config->font.name), config_src->font.name);
    config->font.bitmap = config_src->font.bitmap;
+   config->font.bolditalic = config_src->font.bolditalic;
    config->helper.inline_please = config_src->helper.inline_please;
    eina_stringshare_replace(&(config->helper.email), config_src->helper.email);
    eina_stringshare_replace(&(config->helper.url.general), config_src->helper.url.general);
@@ -448,6 +451,7 @@ config_default_font_set(Config *config, Evas *evas)
      {
         config->font.bitmap = EINA_FALSE;
         config->font.size = 12;
+        config->font.bolditalic = EINA_TRUE;
         eina_stringshare_del(fname);
      }
 #undef FONT_DEJAVU
@@ -469,6 +473,7 @@ config_new(void)
         config->font.bitmap = EINA_TRUE;
         config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
+        config->font.bolditalic = EINA_TRUE;
         config->helper.email = eina_stringshare_add("xdg-email");;
         config->helper.url.general = eina_stringshare_add("xdg-open");
         config->helper.url.video = eina_stringshare_add("xdg-open");
@@ -589,7 +594,10 @@ config_load(const char *key)
                 case 9:
                   /* actually do nothing */
                   /*pass through*/
-                case CONF_VER: /* 10 */
+                case 10:
+                  config->font.bolditalic = EINA_TRUE;
+                  /*pass through*/
+                case CONF_VER: /* 11 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -643,6 +651,7 @@ config_fork(Config *config)
    SCPY(font.orig_name);
    CPY(font.orig_size);
    CPY(font.orig_bitmap);
+   CPY(font.bolditalic);
    SCPY(helper.email);
    SCPY(helper.url.general);
    SCPY(helper.url.video);
