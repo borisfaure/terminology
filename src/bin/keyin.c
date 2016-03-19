@@ -373,8 +373,13 @@ cb_term_new(Evas_Object *termio_obj)
    const char *template = "%s -d %s";
    int length;
 
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
    eina_file_path_join(path, sizeof(path), elm_app_bin_dir_get(),
                        "terminology");
+#else
+   snprintf(path, sizeof(path), "%s/%s", elm_app_bin_dir_get(),
+            "terminology");
+#endif
    if (termio_cwd_get(termio_obj, cwd, sizeof(cwd)))
      {
         length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
