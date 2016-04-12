@@ -1,5 +1,5 @@
 .\" Manpage for Terminology
-.TH man 1 "12 March 2016" "0.9.1" "Terminology man page"
+.TH man 1 "12 April 2016" "0.9.1" "Terminology man page"
 .SH NAME
 Terminology \- Terminal Emulator written with EFL (Enlightenment Foundation Libraries).
 .SH SYNOPSIS
@@ -196,6 +196,16 @@ Scroll terminology one line up
 Scroll terminology one line down
 .
 .TP
+.B Shift+Left
+Switch focus to previous terminal inside a window when using splits, or the
+previous tab.
+.
+.TP
+.B Shift+Right
+Switch focus to next terminal inside a window when using splits, or the next
+tab.
+.
+.TP
 .B Shift+Insert
 Paste Clipboard (ctrl+v/c) selection
 .
@@ -221,11 +231,13 @@ Copy highlight to Clipboard (same as ctrl+c in gui apps).
 .
 .TP
 .B Ctrl+PgUp
-Switch focus to previous terminal inside a window (when using splits).
+Switch focus to previous terminal inside a window when using splits, or the
+previous tab.
 .
 .TP
 .B Ctrl+PgDn
-Switch focus to next terminal inside a window (when using splits).
+Switch focus to next terminal inside a window when using splits, or the next
+tab.
 .
 .TP
 .B Ctrl+Shift+h

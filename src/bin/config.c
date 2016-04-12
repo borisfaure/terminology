@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 11
+#define CONF_VER 12
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -362,6 +362,8 @@ _add_default_keys(Config *config)
    ADD_KB("KP_Subtract", 0, 0, 1, 0, "decrease_font_size");
    ADD_KB("KP_Multiply", 0, 0, 1, 0, "reset_font_size");
    ADD_KB("KP_Divide", 0, 0, 1, 0, "copy_clipboard");
+   ADD_KB("Left", 0, 0, 1, 0, "term_prev");
+   ADD_KB("Right", 0, 0, 1, 0, "term_next");
 }
 
 void
@@ -597,7 +599,11 @@ config_load(const char *key)
                 case 10:
                   config->font.bolditalic = EINA_TRUE;
                   /*pass through*/
-                case CONF_VER: /* 11 */
+                case 11:
+                  _add_key(config, "Left", 0, 0, 1, 0, "term_prev");
+                  _add_key(config, "Right", 0, 0, 1, 0, "term_next");
+                  /*pass through*/
+                case CONF_VER: /* 12 */
                   config->version = CONF_VER;
                   break;
                 default:
