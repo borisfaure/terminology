@@ -10,7 +10,6 @@
 #include "termio.h"
 #include "utils.h"
 #include "private.h"
-#include "dbus.h"
 #include "sel.h"
 #include "controls.h"
 #include "term_container.h"
@@ -2981,7 +2980,9 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
    Config *config = termio_config_get(term->termio);
 
    EINA_SAFETY_ON_NULL_RETURN(config);
-   ty_dbus_link_hide();
+#ifdef EFL_VERSION_1_18
+   elm_win_teamwork_uri_hide(term->wn->win);
+#endif
    if (term->popmedia)
      {
         const char *s;

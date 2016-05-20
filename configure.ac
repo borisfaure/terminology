@@ -87,15 +87,6 @@ AM_CONDITIONAL([ENABLE_FUZZING], [test "${want_fuzzing}" = "yes"])
 
 PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
-PKG_CHECK_MODULES([ELDBUS],
-                  [eldbus],
-                  [
-                   AC_DEFINE(HAVE_ELDBUS, 1, [DBUS support])
-                   have_eldbus="yes"
-                   ],
-                   [have_eldbus="no"]
-                   )
-
 AC_CHECK_FUNCS(mkstemps)
 
 AC_MSG_CHECKING([for ecore_con_url_head])
@@ -185,7 +176,6 @@ echo "Installation...............: make install (as root if needed, with 'su' or
 echo "  prefix...................: $prefix"
 echo
 echo "Features:"
-echo "  dbus................: $have_eldbus"
 echo "  gettext.............: $have_po"
 echo "  fuzzing.............: $want_fuzzing"
 echo

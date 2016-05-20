@@ -15,7 +15,6 @@
 #include "utils.h"
 #include "ipc.h"
 #include "sel.h"
-#include "dbus.h"
 #include "miniview.h"
 #include "gravatar.h"
 #include "keyin.h"
@@ -974,8 +973,6 @@ remote:
       ecore_evas_focus_set(ecore_evas_ecore_evas_get(
             evas_object_evas_get(win)), 1);
 
-   ty_dbus_init();
-
    ecore_con_init();
    ecore_con_url_init();
 
@@ -986,7 +983,6 @@ remote:
    ecore_con_url_shutdown();
    ecore_con_shutdown();
 
-   ty_dbus_shutdown();
    config = NULL;
  end:
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)

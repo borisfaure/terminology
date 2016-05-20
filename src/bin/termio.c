@@ -14,7 +14,6 @@
 #include "config.h"
 #include "utils.h"
 #include "media.h"
-#include "dbus.h"
 #include "miniview.h"
 #include "gravatar.h"
 
@@ -1138,21 +1137,9 @@ _update_link(Evas_Object *obj, Termio *sd,
    if ((!popup_exists) &&
        ((sd->link.string[0] == '/') || (link_is_url(sd->link.string))))
      {
-        Evas_Coord _x = ox, _y = oy;
-        uint64_t xwin;
-
-        _x += sd->mouse.cx * sd->font.chw;
-        _y += sd->mouse.cy * sd->font.chh;
-#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
-        xwin = elm_win_window_id_get(sd->win);
-# if (ELM_VERSION_MAJOR > 1) || ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR > 8)) // not a typo
-        if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
-          xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
-# endif
-#else
-        xwin = elm_win_xwindow_get(sd->win);
+#ifdef EFL_VERSION_1_18
+        elm_win_teamwork_uri_show(win_evas_object_get(term_win_get(sd->term)), sd->link.string);
 #endif
-        ty_dbus_link_mousein(xwin, sd->link.string, _x, _y);
      }
    for (y = sd->link.y1; y <= sd->link.y2; y++)
      {
@@ -1210,26 +1197,9 @@ _remove_links(Termio *sd, Evas_Object *obj)
 
    if (sd->link.string)
      {
-        if ((sd->link.string[0] == '/') || (link_is_url(sd->link.string)))
-          {
-             Evas_Coord ox, oy;
-             uint64_t xwin;
-
-             evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
-
-             ox += sd->mouse.cx * sd->font.chw;
-             oy += sd->mouse.cy * sd->font.chh;
-#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
-                       xwin = elm_win_window_id_get(sd->win);
-# if (ELM_VERSION_MAJOR > 1) || ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR > 8)) // not a typo
-                       if (strstr(ecore_evas_engine_name_get(ecore_evas_ecore_evas_get(evas_object_evas_get(sd->win))), "wayland"))
-                         xwin = ((uint64_t)xwin << 32) + (uint64_t)getpid();
-# endif
-#else
-                       xwin = elm_win_xwindow_get(sd->win);
+#ifdef EFL_VERSION_1_18
+        elm_win_teamwork_uri_hide(win_evas_object_get(term_win_get(sd->term)));
 #endif
-             ty_dbus_link_mouseout(xwin, sd->link.string, ox, oy);
-          }
         free(sd->link.string);
         sd->link.string = NULL;
      }
@@ -4439,7 +4409,9 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    if (sd->ctxpopup) return; /* ctxp triggers mouse out we should ignore */
 
    termio_mouseover_suspend_pushpop(data, 1);
-   ty_dbus_link_hide();
+#ifdef EFL_VERSION_1_18
+   elm_win_teamwork_uri_hide(win_evas_object_get(term_win_get(sd->term)));
+#endif
    if ((ev->canvas.x == 0) || (ev->canvas.y == 0))
      {
         sd->mouse.cx = -1;
