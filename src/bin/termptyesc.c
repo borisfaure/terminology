@@ -1217,9 +1217,9 @@ _handle_xterm_50_command(Termpty *ty,
                          char *s,
                          int len)
 {
-  int i;
+  size_t i;
   int size;
-  for (i = 0; i < len - strlen(":size="); i++)
+  for (i = 0; i < (size_t)len - strlen(":size="); i++)
     {
        if (strncmp(s + i, ":size=", strlen(":size=")) == 0)
          {
