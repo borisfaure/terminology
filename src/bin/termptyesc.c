@@ -1212,6 +1212,22 @@ err:
    return -1;
 }
 
+static void
+_handle_xterm_50_command(Termpty *ty,
+                         char *s,
+                         int len)
+{
+  int i;
+  int size;
+  for (i = 0; i < len - strlen(":size="); i++)
+    {
+       if (strncmp(s + i, ":size=", strlen(":size=")) == 0)
+         {
+            size = strtol(s + i + strlen(":size="), s + len, 10);
+            termio_font_size_set(ty->obj, size);
+         }
+    }
+}
 
 static void
 _handle_xterm_777_command(Termpty *ty EINA_UNUSED,
@@ -1415,6 +1431,17 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                 EVAS_TEXTGRID_PALETTE_STANDARD, 0,
                 r, g, b, 0xff);
 #endif
+          }
+        break;
+      case 50:
+        DBG("xterm font support");
+        if (!*p)
+          goto err;
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (s)
+          {
+             _handle_xterm_50_command(ty, s, len);
+             free(s);
           }
         break;
       case 777:
