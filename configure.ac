@@ -89,10 +89,10 @@ PKG_CHECK_MODULES([TERMINOLOGY], [${requirements}])
 
 AC_CHECK_FUNCS(mkstemps)
 
-AC_MSG_CHECKING([for ecore_con_url_head])
 orig_cflags=$CFLAGS
 CFLAGS+=" $TERMINOLOGY_CFLAGS "
 LDFLAGS+=" $TERMINOLOGY_LDFLAGS $TERMINOLOGY_LIBS "
+AC_MSG_CHECKING([for ecore_con_url_head])
 AC_LINK_IFELSE(
    [
     AC_LANG_PROGRAM(
@@ -106,6 +106,26 @@ AC_LINK_IFELSE(
    [
      AC_MSG_RESULT([yes])
      AC_DEFINE([HAVE_ECORE_CON_URL_HEAD], [1], [define to 1 if ecore_con_url_head is available])
+   ],
+   [
+     AC_MSG_RESULT([no])
+   ]
+)
+AC_MSG_CHECKING([for elm_win_teamwork])
+AC_LINK_IFELSE(
+   [
+    AC_LANG_PROGRAM(
+      [[
+       #include <Elementary.h>
+      ]],
+     [[
+        elm_win_teamwork_uri_show(NULL);
+     ]])
+   ],
+   [
+     AC_MSG_RESULT([yes])
+     AC_DEFINE([HAVE_ELM_WIN_TEAMWORK], [1], [define to 1 if
+                elm_win_teamwork_uri_show is available])
    ],
    [
      AC_MSG_RESULT([no])
