@@ -2405,6 +2405,15 @@ _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
    _solo_tabs_new(tc);
 }
 
+static void
+_cb_close(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Term *term = data;
+   Term_Container *tc = term->container;
+
+   term_close(tc->wn->win, term->termio, EINA_FALSE);
+}
+
 void
 main_new(Evas_Object *win EINA_UNUSED, Evas_Object *term)
 {
@@ -4200,6 +4209,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "prev", _cb_prev, term);
    evas_object_smart_callback_add(o, "next", _cb_next, term);
    evas_object_smart_callback_add(o, "new", _cb_new, term);
+   evas_object_smart_callback_add(o, "close", _cb_close, term);
    evas_object_smart_callback_add(o, "select", _cb_select, term);
    evas_object_smart_callback_add(o, "split,h", _cb_split_h, term);
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);

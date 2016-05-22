@@ -458,9 +458,9 @@ cb_tab_new(Evas_Object *termio_obj)
 }
 
 static Eina_Bool
-cb_exited(Evas_Object *termio_obj)
+cb_close(Evas_Object *termio_obj)
 {
-   evas_object_smart_callback_call(termio_obj, "exited", NULL);
+   evas_object_smart_callback_call(termio_obj, "close", NULL);
    return EINA_TRUE;
 }
 
@@ -624,7 +624,7 @@ static Shortcut_Action _actions[] =
      {"split_h", gettext_noop("Split horizontally (new below)"), cb_split_h},
      {"split_v", gettext_noop("Split vertically (new on right)"), cb_split_v},
      {"tab_new", gettext_noop("Create a new \"tab\""), cb_tab_new},
-     {"exited", gettext_noop("Close the focused terminal"), cb_exited},
+     {"exited", gettext_noop("Close the focused terminal"), cb_close},
      {"tab_select", gettext_noop("Bring up \"tab\" switcher"), cb_tab_select},
      {"tab_1", gettext_noop("Switch to terminal tab 1"), cb_tab_1},
      {"tab_2", gettext_noop("Switch to terminal tab 2"), cb_tab_2},
