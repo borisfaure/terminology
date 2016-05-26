@@ -450,7 +450,7 @@ _font_size_set(Evas_Object *obj, int size)
 
    if (size < 5) size = 5;
    else if (size > 100) size = 100;
-   if (config)
+   if (config && config->font.size != size)
      {
         config->temporary = EINA_TRUE;
         config->font.size = size;
