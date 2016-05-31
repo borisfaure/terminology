@@ -171,6 +171,11 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           }
 
         g = _termpty_charset_trans(codepoints[i], ty);
+        /* Skip 0-width space */
+        if (EINA_UNLIKELY(g == 0x200b))
+          {
+             continue;
+          }
 
         termpty_cell_codepoint_att_fill(ty, g, ty->termstate.att,
                                         &(cells[ty->cursor_state.cx]), 1);
