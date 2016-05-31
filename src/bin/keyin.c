@@ -603,6 +603,18 @@ cb_scroll_down_line(Evas_Object *termio_obj)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+cb_scroll_top_backlog(Evas_Object *termio_obj)
+{
+   Termpty *ty = termio_pty_get(termio_obj);
+
+   if (!ty || ty->altbuf)
+     return EINA_FALSE;
+
+   termio_scroll_top_backlog(termio_obj);
+   return EINA_TRUE;
+}
+
 
 static Shortcut_Action _actions[] =
 {
@@ -611,6 +623,7 @@ static Shortcut_Action _actions[] =
      {"one_page_down", gettext_noop("Scroll one page down"), cb_scroll_down_page},
      {"one_line_up", gettext_noop("Scroll one line up"), cb_scroll_up_line},
      {"one_line_down", gettext_noop("Scroll one line down"), cb_scroll_down_line},
+     {"top_backlog", gettext_noop("Go to the top of the backlog"), cb_scroll_top_backlog},
 
      {"group", gettext_noop("Copy/Paste"), NULL},
      {"copy_primary", gettext_noop("Copy selection to Primary buffer"), cb_copy_primary},

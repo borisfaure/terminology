@@ -342,6 +342,16 @@ termio_scroll_set(Evas_Object *obj, int scroll)
    _smart_apply(obj);
 }
 
+void
+termio_scroll_top_backlog(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   sd->scroll = INT32_MAX;
+   _remove_links(sd, obj);
+   _smart_apply(obj);
+}
+
 const char *
 termio_title_get(Evas_Object *obj)
 {

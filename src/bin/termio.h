@@ -14,6 +14,7 @@ char        *termio_selection_get(Evas_Object *obj,
                                   int c1x, int c1y, int c2x, int c2y,
                                   size_t *len, Eina_Bool right_trim);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);
+void termio_scroll_top_backlog(Evas_Object *obj);
 void termio_scroll_delta(Evas_Object *obj, int delta, int by_page);
 void termio_scroll_set(Evas_Object *obj, int scroll);
 void termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y);

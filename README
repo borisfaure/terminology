@@ -40,6 +40,7 @@ Shift+PgUp = Scroll 1 page up
 Shift+PgDn = Scroll 1 page down
 Shift+Up = Scroll 1 line up
 Shift+Down = Scroll 1 line down
+Shift+Home = Scroll to the top of the backlog
 Shift+Left = switch focus to previous terminal inside a window
 Shift+Right = switch focus to next terminal inside a window
 Shift+Insert = Paste Clipboard (ctrl+v/c) selection
