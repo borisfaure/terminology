@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 13
+#define CONF_VER 14
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -365,6 +365,7 @@ _add_default_keys(Config *config)
    ADD_KB("Left", 0, 0, 1, 0, "term_prev");
    ADD_KB("Right", 0, 0, 1, 0, "term_next");
    ADD_KB("Home", 0, 0, 1, 0, "top_backlog");
+   ADD_KB("End", 0, 0, 1, 0, "reset_scroll");
 }
 
 void
@@ -606,6 +607,9 @@ config_load(const char *key)
                   /*pass through*/
                 case 12:
                   _add_key(config, "Home", 0, 0, 1, 0, "top_backlog");
+                  /*pass through*/
+                case 13:
+                  _add_key(config, "End", 0, 0, 1, 0, "reset_scroll");
                   /*pass through*/
                 case CONF_VER: /* 13 */
                   config->version = CONF_VER;
