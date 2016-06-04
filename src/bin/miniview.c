@@ -145,6 +145,7 @@ _is_top_bottom_reached(Miniview *mv)
    EINA_SAFETY_ON_NULL_RETURN_VAL(mv, EINA_FALSE);
 
    ty = termio_pty_get(mv->termio);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ty, EINA_FALSE);
    history_len = termpty_backlog_length(ty);
 
    if (( (- mv->img_hist) > (int)(mv->img_h - mv->rows - (mv->rows / 2))) &&
@@ -521,6 +522,7 @@ _deferred_renderer(void *data)
    miniview_colors_get(mv, colors);
 
    ty = termio_pty_get(mv->termio);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ty, EINA_FALSE);
    evas_object_geometry_get(mv->termio, &ox, &oy, &ow, &oh);
    if ((ow == 0) || (oh == 0) || (mv->cols == 1)) return EINA_TRUE;
 
