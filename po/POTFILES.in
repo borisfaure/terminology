@@ -3,7 +3,6 @@ src/bin/about.c
 src/bin/col.c
 src/bin/config.c
 src/bin/controls.c
-src/bin/dbus.c
 src/bin/extns.c
 src/bin/ipc.c
 src/bin/keyin.c
