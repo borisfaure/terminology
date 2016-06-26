@@ -67,7 +67,6 @@ Ctrl+Alt+Equal = Font size up 1
 Ctrl+Alt+Minus = Font size down 1
 Ctrl+Alt+0 = Reset font size
 Ctrl+Alt+9 = Big font size
-Ctrl+Alt+t = Open new terminal tab
 Ctrl+t = Set terminal title
 Ctrl+1 = switch to terminal tab 1
 Ctrl+2 = switch to terminal tab 2
