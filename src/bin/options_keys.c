@@ -6,6 +6,7 @@
 #include "options.h"
 #include "options_keys.h"
 #include "keyin.h"
+#include "utils.h"
 
 /*XXX: can have only one widget at a time… */
 static Config *_config;
@@ -151,7 +152,7 @@ _cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
 static void
 _hover_sizing_eval(void)
 {
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, min_w, min_h, new_x, new_y;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
    evas_object_geometry_get(_fr, &x, &y, &w, &h);
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    evas_object_geometry_set(_layout, x, y, w, h);
