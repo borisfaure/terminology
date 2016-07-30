@@ -63,43 +63,48 @@ gravatar.c gravatar.h \
 tty_keys.h
 
 tybg_SOURCES = \
+tycommon.c \
 tybg.c
 
 tybg_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 tybg_LDADD =
 
 tyalpha_SOURCES = \
+tycommon.c \
 tyalpha.c
 
 tyalpha_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 tyalpha_LDADD =
 
 typop_SOURCES = \
+tycommon.c \
 typop.c
 
 typop_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 typop_LDADD =
 
 tyq_SOURCES = \
+tycommon.c \
 tyq.c
 
 tyq_CPPFLAGS = -I. \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" @TERMINOLOGY_CFLAGS@
 
 tyq_LDADD =
 
 tycat_SOURCES = \
 tycat.c \
+tycommon.c \
 extns.c extns.h
 
 tycat_CPPFLAGS = -I. \
@@ -110,6 +115,7 @@ tycat_LDADD = @TERMINOLOGY_LIBS@
 
 tyls_SOURCES = \
 tyls.c \
+tycommon.c \
 extns.h
 
 tyls_CPPFLAGS = -I. \

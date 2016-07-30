@@ -4,12 +4,17 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <Eina.h>
+#include "tycommon.h"
+
+
 int
 main(int argc, char **argv)
 {
    int i, perm = 0;
 
-   if (!getenv("TERMINOLOGY")) return 0;
+   ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
+
    if (argc > 1 &&
        (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")))
      {

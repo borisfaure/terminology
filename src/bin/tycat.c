@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "tycommon.h"
+
 enum {
   CENTER,
   FILL,
@@ -308,7 +310,8 @@ main(int argc, char **argv)
    char *rp;
    Eina_List *file_q = NULL;
 
-   if (!getenv("TERMINOLOGY")) return 0;
+   ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
+
    if (argc <= 1)
      {
         print_usage(argv[0]);

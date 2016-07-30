@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fnmatch.h>
+#include "tycommon.h"
 
 // this code sucks. just letting you know... in advance... in case you
 // might be tempted to think otherwise... :)
@@ -725,8 +726,9 @@ main(int argc, char **argv)
    char *path;
    Eina_List *dirs = NULL;
    Tyls_Options options = {SMALL, EINA_FALSE};
-   
-   if (!getenv("TERMINOLOGY")) return 0;
+
+   ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
+
    if ((argc == 2) && (!strcmp(argv[1], "-h")))
      {
         printf("Usage: %s [-a] [-s|-m] FILE1 [FILE2 ...]\n"
