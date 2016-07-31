@@ -2134,6 +2134,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
      next = tabs->tabs;
    next_item = next->data;
    next_child = next_item->tc;
+   assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
    tabs->tabs = eina_list_remove_list(tabs->tabs, l);
 
    assert (child->type == TERM_CONTAINER_TYPE_SOLO);
@@ -2147,13 +2148,24 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    count = eina_list_count(tabs->tabs);
    if (count == 1)
      {
-        assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
-        _tabbar_clear(term);
+        Term *next_term;
+        Solo *next_solo;
 
-        edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+        assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
+        next_solo = (Solo*)next_child;
+        next_term = next_solo->term;
+
+        edje_object_signal_emit(next_term->bg, "tabcount,off", "terminology");
+        if (next_term->tabcount_spacer)
+          {
+             evas_object_del(next_term->tabcount_spacer);
+             next_term->tabcount_spacer = NULL;
+          }
+
         if (tabs->selector)
           _tabs_restore(tabs);
         eina_stringshare_del(tc->title);
+
         tc_parent->swallow(tc_parent, tc, next_child);
         if (tc->is_focused)
           next_child->focus(next_child, tc);
@@ -2312,10 +2324,22 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
      }
    else if (tab_item != tabs->current)
      {
+        Term *term;
+        Solo *solo;
         Term_Container *tc_parent = tc->parent;
         if (tc->is_focused)
           tabs->current->tc->unfocus(tabs->current->tc, tc);
         tabs->current = tab_item;
+
+        assert (orig->type == TERM_CONTAINER_TYPE_SOLO);
+        solo = (Solo*)orig;
+        term = solo->term;
+        edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+        if (term->tabcount_spacer)
+          {
+             evas_object_del(term->tabcount_spacer);
+             term->tabcount_spacer = NULL;
+          }
 
         o = orig->get_evas_object(orig);
         evas_object_geometry_get(o, &x, &y, &w, &h);
