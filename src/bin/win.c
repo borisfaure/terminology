@@ -246,10 +246,18 @@ _solo_size_eval(Term_Container *container, Sizeinfo *info)
 static void
 _solo_close(Term_Container *tc, Term_Container *child EINA_UNUSED)
 {
+   Solo *solo;
+   Term *term;
+
    DBG("close");
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
    tc->parent->close(tc->parent, tc);
 
    eina_stringshare_del(tc->title);
+
+   term = solo->term;
+   term->container = NULL;
 
    free(tc);
 }
