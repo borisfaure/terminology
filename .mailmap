@@ -4,7 +4,7 @@
 # More people can be added following this scheme:
 # Proper Name <proper@email.xx> Commit Name <commit@email.xx>
 #
-# Please keep this file in sync between efl, elementary, e and terminology.
+# Please keep this file in sync between efl, e and terminology.
 
 Carsten Haitzler <raster@rasterman.com> Carsten Haitzler (Rasterman) <raster@rasterman.com>
 Cedric BAIL <cedric.bail@free.fr> Cedric Bail <cedric.bail@samsung.com>
@@ -14,13 +14,20 @@ Cedric BAIL <cedric.bail@free.fr> Cedric BAIL <cedric@efl.so>
 Cedric BAIL <cedric.bail@free.fr> Cedric BAIL <c.bail@partner.samsung.com>
 Cedric BAIL <cedric.bail@free.fr> Cedric BAIL <cedric@osg.samsung.com>
 Vincent Torri <vincent.torri@gmail.com> Vincent Torri <vtorri@univ-evry.fr>
+Vincent Torri <vincent.torri@gmail.com> Vincent Torri <vincent dot torri at gmail dot com>
+Vincent Torri <vincent.torri@gmail.com> Vincent Torri <vincent.torri@univ-evry.fr>
 Tom Hacohen <tom@stosb.com> Tom 'TAsn' Hacohen <tom@stosb.com>
 Tom Hacohen <tom@stosb.com> Tom <tom@stosb.com>
 Gustavo Sverzut Barbieri <barbieri@gmail.com> Gustavo Sverzut Barbieri <barbieri@profusion.mobi>
-Christopher Michael <devilhorns@comcast.net> Christopher Michael <cpmichael1@comcast.net>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <cpmichael@comcast.net>
 Christopher Michael <devilhorns@comcast.net> Christopher Michael <cp.michael@samsung.com>
-Christopher Michael <devilhorns@comcast.net> Chris Michael <cp.michael@samsung.com>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <cpmichael1@comcast.net>
 Christopher Michael <devilhorns@comcast.net> Chris Michael <devilhorns@comcast.net>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <devilhorns@comcast.net>
+Christopher Michael <devilhorns@comcast.net> Christopher <devilhorns@comcast.net>
+Christopher Michael <devilhorns@comcast.net> Chris Michael <cp.michael@samsung.com>
+Christopher Michael <devilhorns@comcast.net> Christopher Michael <cpmichael@osg.samsung.com>
+Christopher Michael <devilhorns@comcast.net> Chris Michael <cpmichael@osg.samsung.com>
 Sebastian Dransfeld <sd@tango.flipp.net> Sebastian Dransfeld <sebastian.dransfeld@sintef.no>
 Sebastian Dransfeld <sd@tango.flipp.net> sebastid <sebastid>
 Mike Blumenkrantz <michael.blumenkrantz@gmail.com> Mike Blumenkrantz <m.blumenkran@samsung.com>
@@ -29,6 +36,7 @@ Mike Blumenkrantz <michael.blumenkrantz@gmail.com> zmike <michael.blumenkrantz@g
 Mike Blumenkrantz <michael.blumenkrantz@gmail.com> Mike Blumenkrantz <zmike@samsung.com>
 Mike Blumenkrantz <michael.blumenkrantz@gmail.com> Mike Blumenkrantz <zmike@osg.samsung.com>
 ChunEon Park <hermet@hermet.pe.kr> ChunEon Park <chuneon.park@samsung.com>
+ChunEon Park <hermet@hermet.pe.kr> Hermet Park <hermet@hermet.pe.kr>
 David Walter Seikel <onefang@gmail.com> David Walter Seikel <won_fang@yahoo.com.au>
 Rafael Antognolli <antognolli@gmail.com> Rafael Antognolli <rafael.antognolli@intel.com>
 Rafael Antognolli <antognolli@gmail.com> Rafael Antognolli <rafael.antognolli@linux.intel.com>
@@ -38,6 +46,7 @@ Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.de.marchi
 Lucas De Marchi <lucas.demarchi@profusion.mobi> Lucas De Marchi <lucas.demarchi@intel.com>
 Jihoon Kim <imfine98@gmail.com> Jihoon Kim <jihoon48.kim@samsung.com>
 Stefan Schmidt <stefan@datenfreihafen.org> Stefan Schmidt <s.schmidt@samsung.com>
+Stefan Schmidt <stefan@datenfreihafen.org> Stefan Schmidt <stefan@osg.samsung.com>
 Jonas M. Gastal <jgastal@profusion.mobi> Jonas Gastal <jgastal@profusion.mobi>
 Daniel Juyung Seo <seojuyung2@gmail.com> Daniel Juyung Seo <juyung.seo@samsung.com>
 Daniel Juyung Seo <seojuyung2@gmail.com> Daniel Juyung Seo <seojuyung@gmail.com>
@@ -79,4 +88,8 @@ Massimo Maiurana <maiurana@gmail.com> maxerba <maiurana@gmail.com>
 Lee Gwang-O <maeryo@live.co.kr> Gwang O Lee <pu8046@gmail.com>
 Thibaut Broggi <broggi_t@epitech.eu> broggi_t <broggi_t@epitech.eu>
 Daniel Zaoui <daniel.zaoui@samsung.com> Daniel Zaoui <daniel.zaoui@yahoo.com>
+Daniel Zaoui <daniel.zaoui@samsung.com> daniel.zaoui@samsung.com <daniel.zaoui@samsung.com>
 Jérémy Anger <angerj.dev@gmail.com> kidanger <angerj.dev@gmail.com>
+Andy Williams <andy@andywilliams.me> handyande <handyande>
+Davide Andreoli <dave@gurumeditation.it> Dave Andreoli <dave@gurumeditation.it>
+Davide Andreoli <dave@gurumeditation.it> davemds <dave@gurumeditation.it>
