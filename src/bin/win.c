@@ -180,6 +180,7 @@ static void _cb_size_hint(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, voi
 static void _tab_new_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_refresh(Tabs *tabs);
+static void _term_tabregion_free(Term *term);
 
 
 /* {{{ Solo */
@@ -3894,6 +3895,9 @@ _term_free(Term *term)
    term->base = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
+
+   _term_tabregion_free(term);
+
    if (term->tabcount_spacer)
      {
         evas_object_del(term->tabcount_spacer);
@@ -4034,6 +4038,16 @@ _term_tabregion_setup(Term *term)
    term->tab_region_base = o = evas_object_rectangle_add(evas_object_evas_get(term->bg));
    evas_object_color_set(o, 0, 0, 0, 0);
    edje_object_part_swallow(term->base, "terminology.tabregion", o);
+}
+
+static void
+_term_tabregion_free(Term *term)
+{
+   evas_object_del(term->tab_region_bg);
+   term->tab_region_bg = NULL;
+
+   evas_object_del(term->tab_region_base);
+   term->tab_region_base = NULL;
 }
 
 Eina_Bool
