@@ -83,7 +83,7 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.bitmap", font.bitmap, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "font.bolditalic", font.bitmap, EET_T_UCHAR);
+     (edd_base, Config, "font.bolditalic", font.bolditalic, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "helper.email", helper.email, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
