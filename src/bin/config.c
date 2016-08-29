@@ -494,7 +494,7 @@ config_new(void)
         config->opacity = 50;
         config->cg_width = 80;
         config->cg_height = 24;
-        config->jump_on_change = EINA_TRUE;
+        config->jump_on_change = EINA_FALSE;
         config->jump_on_keypress = EINA_TRUE;
         config->flicker_on_key = EINA_FALSE;
         config->disable_cursor_blink = EINA_FALSE;
