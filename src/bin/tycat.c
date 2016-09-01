@@ -120,12 +120,13 @@ prnt(const char *path, int w, int h, int mode)
 static void
 print_usage(const char *argv0)
 {
-   printf("Usage: %s [-s|-f|-c] [-g <width>x<height>] FILE1 [FILE2 ...]\n"
+   printf("Usage: %s "HELP_ARGUMENT_SHORT" [-s|-f|-c] [-g <width>x<height>] FILE1 [FILE2 ...]\n"
           "\n"
           "  -s  Stretch file to fill nearest character cell size\n"
           "  -f  Fill file to totally cover character cells with no gaps\n"
           "  -c  Center file in nearest character cells but only scale down (default)\n"
-          "  -g <width>x<height>  Set maximum geometry for the image (cell count)\n",
+          "  -g <width>x<height>  Set maximum geometry for the image (cell count)\n"
+          HELP_ARGUMENT_DOC"\n",
          argv0);
 }
 
@@ -311,7 +312,7 @@ main(int argc, char **argv)
    Eina_List *file_q = NULL;
 
    ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
-
+   ARGUMENT_ENTRY_CHECK(argc, argv, print_usage);
    if (argc <= 1)
      {
         print_usage(argv[0]);

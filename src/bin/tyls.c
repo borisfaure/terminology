@@ -719,6 +719,19 @@ list_dir(const char *dir, Tyls_Options *options)
    EINA_LIST_FREE(files, s) free(s);
 }
 
+static void
+print_usage(const char *argv0)
+{
+   printf("Usage: %s "HELP_ARGUMENT_SHORT" [-a] [-s|-m] FILE1 [FILE2 ...]\n"
+          "\n"
+          "  -a  Show hidden files\n"
+          "  -s  Small list mode\n"
+          "  -m  Medium list mode\n"
+          HELP_ARGUMENT_DOC"\n",
+          /*"  -l  Large list mode\n", Enable again once we support it */
+          argv0);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -728,18 +741,8 @@ main(int argc, char **argv)
    Tyls_Options options = {SMALL, EINA_FALSE};
 
    ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
+   ARGUMENT_ENTRY_CHECK(argc, argv, print_usage);
 
-   if ((argc == 2) && (!strcmp(argv[1], "-h")))
-     {
-        printf("Usage: %s [-a] [-s|-m] FILE1 [FILE2 ...]\n"
-               "\n"
-               "  -a  Show hidden files\n"
-               "  -s  Small list mode\n"
-               "  -m  Medium list mode\n",
-               /*"  -l  Large list mode\n", Enable again once we support it */
-              argv[0]);
-        return 0;
-     }
    eina_init();
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    ecore_app_no_system_modules();

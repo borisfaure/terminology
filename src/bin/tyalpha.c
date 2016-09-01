@@ -7,20 +7,28 @@
 #include <Eina.h>
 #include "tycommon.h"
 
+static void
+print_usage(const char *argv0)
+{
+   printf("Usage: %s "HELP_ARGUMENT_SHORT"[-p] on|off|<opacity level>\n"
+          "  Change the terminal transparency on or off\n"
+          "  -p  Make change permanent (stored in config)\n"
+          HELP_ARGUMENT_DOC"\n"
+          "\n",
+          argv0);
+}
+
 int
 main(int argc, char **argv)
 {
    int i, perm = 0;
 
    ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
+   ARGUMENT_ENTRY_CHECK(argc, argv, print_usage);
 
    if (argc <= 1)
      {
-        printf("Usage: %s [-p] on|off|<opacity level>\n"
-               "  Change the terminal transparency on or off\n"
-               "  -p  Make change permanent (stored in config)\n"
-               "\n",
-               argv[0]);
+        print_usage(argv[0]);
         return 0;
      }
    for (i = 1; i < argc; i++)
