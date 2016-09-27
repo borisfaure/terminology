@@ -171,7 +171,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
         ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
         ITEM_APPEND("system-run", _("Helpers"), HELPERS);
-        ITEM_APPEND("apps", _("Toolkit"), ELM);
+        ITEM_APPEND("preferences-color", _("Toolkit"), ELM);
 #undef ITEM_APPEND
 
         elm_box_pack_end(op_tbox, o);

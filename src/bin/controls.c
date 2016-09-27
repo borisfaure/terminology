@@ -266,27 +266,27 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
 
-        o = _button_add(win, _("New"), "new", _cb_ct_new, NULL);
+        o = _button_add(win, _("New"), "window-new", _cb_ct_new, NULL);
         elm_box_pack_end(ct_box, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
 
-        o = _button_add(win, _("Split V"), "split-h", _cb_ct_split_v, NULL);
+        o = _button_add(win, _("Split V"), "object-flip-vertical", _cb_ct_split_v, NULL);
         elm_box_pack_end(ct_box, o);
-        o = _button_add(win, _("Split H"), "split-v", _cb_ct_split_h, NULL);
-        elm_box_pack_end(ct_box, o);
-
-        o = _sep_add_h(win);
-        elm_box_pack_end(ct_box, o);
-
-        o = _button_add(win, _("Miniview"), "mini-view", _cb_ct_miniview, NULL);
+        o = _button_add(win, _("Split H"), "object-flip-horizontal", _cb_ct_split_h, NULL);
         elm_box_pack_end(ct_box, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box, o);
 
-        o = _button_add(win, _("Set title"), "document-edit", _cb_ct_set_title, NULL);
+        o = _button_add(win, _("Miniview"), "view-restore", _cb_ct_miniview, NULL);
+        elm_box_pack_end(ct_box, o);
+
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box, o);
+
+        o = _button_add(win, _("Set title"), "format-text-underline", _cb_ct_set_title, NULL);
         elm_box_pack_end(ct_box, o);
 
         o = _sep_add_v(win);
@@ -296,25 +296,25 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_boxh, o);
         evas_object_show(o);
 
-        o = _button_add(win, _("Copy"), "copy", _cb_ct_copy, NULL);
+        o = _button_add(win, _("Copy"), "edit-copy", _cb_ct_copy, NULL);
         evas_object_data_set(ct_frame, "bt_copy", o);
         if (!termio_selection_exists(term))
           elm_object_disabled_set(o, EINA_TRUE);
         elm_box_pack_end(ct_box2, o);
 
-        o = _button_add(win, _("Paste"), "paste", _cb_ct_paste, NULL);
+        o = _button_add(win, _("Paste"), "edit-paste", _cb_ct_paste, NULL);
         elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
 
-        o = _button_add(win, _("Settings"), "settings", _cb_ct_options, NULL);
+        o = _button_add(win, _("Settings"), "preferences-desktop", _cb_ct_options, NULL);
         elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
         elm_box_pack_end(ct_box2, o);
 
-        o = _button_add(win, _("About"), "about", _cb_ct_about, NULL);
+        o = _button_add(win, _("About"), "help-about", _cb_ct_about, NULL);
         elm_box_pack_end(ct_box2, o);
 
         o = _sep_add_h(win);
@@ -324,7 +324,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         elm_box_pack_end(ct_boxv, o);
         evas_object_show(o);
 
-        o = _button_add(win, _("Close Terminal"), "close", _cb_ct_close, NULL);
+        o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, NULL);
         elm_box_pack_end(ct_box3, o);
 
         evas_object_event_callback_add(ct_frame, EVAS_CALLBACK_DEL,
