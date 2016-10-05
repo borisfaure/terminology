@@ -20,10 +20,10 @@ Eina_Bool is_running_in_terminology(void);
 #define ARGUMENT_ENTRY_CHECK(argc, argv, help_func) \
     do \
       { \
-         int i = 0; \
-         for(i = 0; i < argc; i++) \
+         int _i = 0; \
+         for(_i = 0; _i < argc; _i++) \
            { \
-             if (!strcmp(argv[i], "--help") || !strcmp(argv[i],"-h")) \
+             if (!strcmp(argv[_i], "--help") || !strcmp(argv[_i],"-h")) \
                { \
                   help_func(argv[0]); \
                   return EXIT_SUCCESS; \
