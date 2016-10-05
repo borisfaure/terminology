@@ -10,7 +10,9 @@
 static Evas_Object *op_trans, *op_opacity, *op_vidmod;
 
 static void
-_cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_video_trans_chg(void *data,
+                       Evas_Object *obj,
+                       void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -21,7 +23,9 @@ _cb_op_video_trans_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_video_opacity_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_video_opacity_chg(void *data,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -32,7 +36,9 @@ _cb_op_video_opacity_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_video_mute_chg(void *data,
+                      Evas_Object *obj,
+                      void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -42,7 +48,9 @@ _cb_op_video_mute_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_video_visualize_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_video_visualize_chg(void *data,
+                           Evas_Object *obj,
+                           void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -52,7 +60,9 @@ _cb_op_video_visualize_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED
 }
 
 static void
-_cb_op_video_vidmod_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_video_vidmod_chg(void *data,
+                        Evas_Object *obj,
+                        void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);

@@ -1230,12 +1230,12 @@ _handle_xterm_50_command(Termpty *ty,
 }
 
 static void
-_handle_xterm_777_command(Termpty *ty EINA_UNUSED,
+_handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
                           char *s
 #if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
               EINA_UNUSED
 #endif
-                          , int len EINA_UNUSED)
+                          , int _len EINA_UNUSED)
 {
 #if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
    char *cmd_end = NULL,
@@ -1518,7 +1518,9 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
 }
 
 static int
-_handle_esc_dcs(Termpty *ty EINA_UNUSED, const Eina_Unicode *c, const Eina_Unicode *ce)
+_handle_esc_dcs(Termpty *ty,
+                const Eina_Unicode *c,
+                const Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;

@@ -14,7 +14,7 @@ static void (*ab_donecb) (void *data) = NULL;
 static void *ab_donedata = NULL;
 
 static Eina_Bool
-_cb_ab_del_delay(void *data EINA_UNUSED)
+_cb_ab_del_delay(void *_data EINA_UNUSED)
 {
    evas_object_del(ab_layout);
    ab_layout = NULL;
@@ -24,7 +24,10 @@ _cb_ab_del_delay(void *data EINA_UNUSED)
 }
 
 static void
-_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+_cb_mouse_down(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_ev EINA_UNUSED)
 {
    about_toggle(saved_win, saved_bg, data, ab_donecb, ab_donedata);
 }

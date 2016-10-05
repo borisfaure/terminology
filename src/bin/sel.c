@@ -56,7 +56,10 @@ static void _smart_calculate(Evas_Object *obj);
 static void _transit(Evas_Object *obj, double tim);
 
 static void
-_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_mouse_down_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -71,7 +74,10 @@ _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 }
 
 static void
-_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_mouse_up_cb(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *_obj EINA_UNUSED,
+             void *event)
 {
    Evas_Event_Mouse_Up *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -115,7 +121,10 @@ _mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_mouse_move_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -174,7 +183,10 @@ _autozoom(Evas_Object *obj)
 }
 
 void
-_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event)
+_key_down_cb(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *obj,
+             void *event)
 {
    Evas_Event_Key_Down *ev = event;
    Sel *sd = evas_object_smart_data_get(data);
@@ -514,7 +526,10 @@ sel_entry_update(void *data)
 }
 
 static void
-_entry_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+_entry_del_cb(void *data,
+              Evas *_e EINA_UNUSED,
+              Evas_Object *_obj EINA_UNUSED,
+              void *_info EINA_UNUSED)
 {
    Entry *en = data;
    if (en->obj) evas_object_event_callback_del_full
@@ -602,7 +617,9 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_smart_move(Evas_Object *obj,
+            Evas_Coord _x EINA_UNUSED,
+            Evas_Coord _y EINA_UNUSED)
 {
    Sel *sd = evas_object_smart_data_get(obj);
    if (!sd) return;

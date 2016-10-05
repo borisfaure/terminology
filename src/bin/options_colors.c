@@ -30,7 +30,9 @@ static Evas_Object *colpal[4] = { NULL };
 static Evas_Object *label = NULL, *reset = NULL;
 
 static void
-_cb_op_use_custom_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_use_custom_chg(void *data,
+                      Evas_Object *obj,
+                      void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -47,7 +49,9 @@ _cb_op_use_custom_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA
 }
 
 static void
-_cb_op_color_item_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_op_color_item_sel(void *_data EINA_UNUSED,
+                      Evas_Object *_obj EINA_UNUSED,
+                      void *event)
 {
    Elm_Object_Item *it = event;
    int r = 0, g = 0, b = 0, a = 0;
@@ -73,7 +77,9 @@ _cb_op_color_item_sel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_cb_op_color_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_color_chg(void *data,
+                 Evas_Object *obj,
+                 void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -107,7 +113,9 @@ _cb_op_color_chg(void *data EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUS
 }
 
 static void
-_cb_op_reset(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_op_reset(void *data,
+             Evas_Object *_obj EINA_UNUSED,
+             void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -144,7 +152,10 @@ _cb_op_reset(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event E
 }
 
 static void
-_cb_op_scroller_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_op_scroller_resize(void *_data EINA_UNUSED,
+                       Evas *_e EINA_UNUSED,
+                       Evas_Object *_obj EINA_UNUSED,
+                       void *_event EINA_UNUSED)
 {
    // make color palettes wrap back. :) works with elm git.
    int i;

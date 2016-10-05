@@ -183,8 +183,10 @@ _queue_render(Miniview *mv)
 }
 
 static void
-_smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED,
-                      Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_wheel(void *data,
+                      Evas *_e EINA_UNUSED,
+                      Evas_Object *_obj EINA_UNUSED,
+                      void *event)
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Miniview *mv = evas_object_smart_data_get(data);
@@ -307,8 +309,10 @@ miniview_handle_key(Evas_Object *obj, const Evas_Event_Key_Down *ev)
 }
 
 static void
-_smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
-                     Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_down(void *data,
+                     Evas *_e EINA_UNUSED,
+                     Evas_Object *_obj EINA_UNUSED,
+                     void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Miniview *mv= evas_object_smart_data_get(data);
@@ -333,9 +337,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_on_screen_stoped(void *data, Evas_Object *o EINA_UNUSED,
-                  const char *emission EINA_UNUSED,
-                  const char *source EINA_UNUSED)
+_on_screen_stoped(void *data,
+                  Evas_Object *_o EINA_UNUSED,
+                  const char *_emission EINA_UNUSED,
+                  const char *_source EINA_UNUSED)
 {
    Miniview *mv= evas_object_smart_data_get(data);
 
@@ -346,8 +351,10 @@ _on_screen_stoped(void *data, Evas_Object *o EINA_UNUSED,
 }
 
 static void
-_on_screen_moved(void *data, Evas_Object *o, const char *emission EINA_UNUSED,
-                 const char *source EINA_UNUSED)
+_on_screen_moved(void *data,
+                 Evas_Object *o,
+                 const char *_emission EINA_UNUSED,
+                 const char *_source EINA_UNUSED)
 {
    Miniview *mv = evas_object_smart_data_get(data);
    double val = 0.0, pos = 0.0, bottom_bound = 0.0;
@@ -427,8 +434,9 @@ _do_configure(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED,
-            Evas_Coord y EINA_UNUSED)
+_smart_move(Evas_Object *obj,
+            Evas_Coord _x EINA_UNUSED,
+            Evas_Coord _y EINA_UNUSED)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
 
@@ -635,8 +643,10 @@ _smart_init(void)
 }
 
 static void
-_cb_miniview_close(void *data, Evas_Object *obj EINA_UNUSED,
-                   const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_miniview_close(void *data,
+                   Evas_Object *_obj EINA_UNUSED,
+                   const char *_sig EINA_UNUSED,
+                   const char *_src EINA_UNUSED)
 {
    Miniview *mv = data;
 

@@ -259,7 +259,10 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
 
 
 static void
-_win_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+_win_obj_del(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *obj,
+             void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
 
@@ -858,8 +861,10 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
 }
 
 static void
-_cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-             void *event EINA_UNUSED)
+_cb_ctxp_del(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *_obj EINA_UNUSED,
+             void *_event EINA_UNUSED)
 {
    Termio *sd = data;
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -867,8 +872,9 @@ _cb_ctxp_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_cb_ctxp_dismissed(void *data EINA_UNUSED, Evas_Object *obj,
-                   void *event EINA_UNUSED)
+_cb_ctxp_dismissed(void *data,
+                   Evas_Object *obj,
+                   void *_event EINA_UNUSED)
 {
    Termio *sd = data;
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -877,7 +883,9 @@ _cb_ctxp_dismissed(void *data EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_cb_ctxp_link_preview(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_link_preview(void *data,
+                      Evas_Object *obj,
+                      void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
@@ -890,7 +898,9 @@ _cb_ctxp_link_preview(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_ctxp_link_open(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_link_open(void *data,
+                   Evas_Object *obj,
+                   void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
@@ -902,7 +912,9 @@ _cb_ctxp_link_open(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_ctxp_link_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_link_copy(void *data,
+                   Evas_Object *obj,
+                   void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
@@ -915,7 +927,10 @@ _cb_ctxp_link_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_link_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_link_down(void *data,
+              Evas *_e EINA_UNUSED,
+              Evas_Object *_obj EINA_UNUSED,
+              void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -980,7 +995,10 @@ _cb_link_up_delay(void *data)
 }
 
 static void
-_cb_link_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_link_up(void *data,
+            Evas *_e EINA_UNUSED,
+            Evas_Object *_obj EINA_UNUSED,
+            void *event)
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -1025,7 +1043,9 @@ _cb_link_drag_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm
 }
 
 static void
-_cb_link_drag_accept(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccept)
+_cb_link_drag_accept(void *data,
+                     Evas_Object *_obj EINA_UNUSED,
+                     Eina_Bool doaccept)
 {
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -1034,7 +1054,7 @@ _cb_link_drag_accept(void *data, Evas_Object *obj EINA_UNUSED, Eina_Bool doaccep
 }
 
 static void
-_cb_link_drag_done(void *data, Evas_Object *obj EINA_UNUSED)
+_cb_link_drag_done(void *data, Evas_Object *_obj EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -1062,7 +1082,8 @@ _cb_link_icon_new(void *data, Evas_Object *par, Evas_Coord *xoff, Evas_Coord *yo
 #endif
 
 static void
-_cb_link_move(void *data, Evas *e EINA_UNUSED,
+_cb_link_move(void *data,
+              Evas *_e EINA_UNUSED,
               Evas_Object *obj
 #if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
               EINA_UNUSED
@@ -1225,7 +1246,7 @@ _remove_links(Termio *sd, Evas_Object *obj)
 /* {{{ Blocks */
 
 static void
-_smart_media_clicked(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+_smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
 {
 //   Termio *sd = evas_object_smart_data_get(data);
    Termblock *blk;
@@ -1273,7 +1294,10 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 }
 
 static void
-_smart_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+_smart_media_del(void *data,
+                 Evas *_e EINA_UNUSED,
+                 Evas_Object *obj,
+                 void *_info EINA_UNUSED)
 {
    Termblock *blk = data;
 
@@ -1281,7 +1305,9 @@ _smart_media_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *info E
 }
 
 static void
-_smart_media_play(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+_smart_media_play(void *data,
+                  Evas_Object *obj,
+                  void *_info EINA_UNUSED)
 {
    Termblock *blk = data;
 
@@ -1291,7 +1317,9 @@ _smart_media_play(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 }
 
 static void
-_smart_media_pause(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+_smart_media_pause(void *data,
+                   Evas_Object *obj,
+                   void *_info EINA_UNUSED)
 {
    Termblock *blk = data;
 
@@ -1301,7 +1329,9 @@ _smart_media_pause(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 }
 
 static void
-_smart_media_stop(void *data, Evas_Object *obj, void *info EINA_UNUSED)
+_smart_media_stop(void *data,
+                  Evas_Object *obj,
+                  void *_info EINA_UNUSED)
 {
    Termblock *blk = data;
 
@@ -1311,7 +1341,10 @@ _smart_media_stop(void *data, Evas_Object *obj, void *info EINA_UNUSED)
 }
 
 static void
-_block_edje_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig, const char *src)
+_block_edje_signal_cb(void *data,
+                      Evas_Object *_obj EINA_UNUSED,
+                      const char *sig,
+                      const char *src)
 {
    Termblock *blk = data;
    Termio *sd = evas_object_smart_data_get(blk->pty->obj);
@@ -1354,7 +1387,9 @@ _block_edje_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig,
 }
 
 static void
-_block_edje_message_cb(void *data, Evas_Object *obj EINA_UNUSED, Edje_Message_Type type, int id, void *msg)
+_block_edje_message_cb(void *data,
+                       Evas_Object *_obj EINA_UNUSED,
+                       Edje_Message_Type type, int id, void *msg)
 {
    Termblock *blk = data;
    Termio *sd = evas_object_smart_data_get(blk->pty->obj);
@@ -1891,7 +1926,10 @@ _block_obj_del(Termblock *blk)
 /* {{{ Keys */
 
 static void
-_smart_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_key_up(void *data,
+                 Evas *_e EINA_UNUSED,
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *event)
 {
    Evas_Event_Key_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -1902,8 +1940,10 @@ _smart_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 }
 
 static void
-_smart_cb_key_down(void *data, Evas *e EINA_UNUSED,
-                   Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_key_down(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *event)
 {
    const Evas_Event_Key_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -2365,7 +2405,9 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 }
 
 static Eina_Bool
-_getsel_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
+_getsel_cb(void *data,
+           Evas_Object *_obj EINA_UNUSED,
+           Elm_Selection_Data *ev)
 {
    Termio *sd = evas_object_smart_data_get(data);
 
@@ -3453,8 +3495,10 @@ _imf_cursor_set(Termio *sd)
 }
 
 static void
-_smart_cb_focus_in(void *data, Evas *e EINA_UNUSED,
-                   Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_smart_cb_focus_in(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -3475,8 +3519,10 @@ _smart_cb_focus_in(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_smart_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
-                    void *event EINA_UNUSED)
+_smart_cb_focus_out(void *data,
+                    Evas *_e EINA_UNUSED,
+                    Evas_Object *obj,
+                    void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -3868,8 +3914,10 @@ _smart_cb_mouse_move_job(void *data)
 }
 
 static void
-_edje_cb_bottom_right_in(void *data, Evas_Object *obj EINA_UNUSED,
-                         const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_edje_cb_bottom_right_in(void *data,
+                         Evas_Object *_obj EINA_UNUSED,
+                         const char *_emission EINA_UNUSED,
+                         const char *_source EINA_UNUSED)
 {
    Termio *sd = data;
 
@@ -3877,8 +3925,10 @@ _edje_cb_bottom_right_in(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_edje_cb_top_left_in(void *data, Evas_Object *obj EINA_UNUSED,
-                     const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_edje_cb_top_left_in(void *data,
+                     Evas_Object *_obj EINA_UNUSED,
+                     const char *_emission EINA_UNUSED,
+                     const char *_source EINA_UNUSED)
 {
    Termio *sd = data;
 
@@ -3886,8 +3936,10 @@ _edje_cb_top_left_in(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_edje_cb_bottom_right_out(void *data, Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_edje_cb_bottom_right_out(void *data,
+                          Evas_Object *_obj EINA_UNUSED,
+                          const char *_emission EINA_UNUSED,
+                          const char *_source EINA_UNUSED)
 {
    Termio *sd = data;
 
@@ -3895,8 +3947,10 @@ _edje_cb_bottom_right_out(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_edje_cb_top_left_out(void *data, Evas_Object *obj EINA_UNUSED,
-                      const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_edje_cb_top_left_out(void *data,
+                      Evas_Object *_obj EINA_UNUSED,
+                      const char *_emission EINA_UNUSED,
+                      const char *_source EINA_UNUSED)
 {
    Termio *sd = data;
 
@@ -4002,7 +4056,9 @@ _handle_mouse_down_single_click(Termio *sd,
 }
 
 static void
-_cb_ctxp_sel_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_sel_copy(void *data,
+                  Evas_Object *obj,
+                  void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
@@ -4016,7 +4072,9 @@ _cb_ctxp_sel_copy(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_ctxp_sel_open_as_url(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_ctxp_sel_open_as_url(void *data,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
@@ -4099,7 +4157,10 @@ _handle_right_click(Evas_Object *obj, Evas_Event_Mouse_Down *ev, Termio *sd,
 }
 
 static void
-_smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_down(void *data,
+                     Evas *_e EINA_UNUSED,
+                     Evas_Object *_obj EINA_UNUSED,
+                     void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4175,7 +4236,10 @@ _smart_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static void
-_smart_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_up(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *event)
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4292,7 +4356,10 @@ _mouse_selection_scroll(void *data)
 }
 
 static void
-_smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_move(void *data,
+                     Evas *_e EINA_UNUSED,
+                     Evas_Object *_obj EINA_UNUSED,
+                     void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4393,8 +4460,10 @@ _smart_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static void
-_smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED,
-                   Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_in(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *event)
 {
    int cx = 0, cy = 0;
    Evas_Event_Mouse_In *ev = event;
@@ -4408,7 +4477,9 @@ _smart_cb_mouse_in(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+_smart_cb_mouse_out(void *data,
+                    Evas *_e EINA_UNUSED,
+                    Evas_Object *obj,
                     void *event)
 {
    Termio *sd = evas_object_smart_data_get(data);
@@ -4443,7 +4514,10 @@ _smart_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 static void
-_smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+_smart_cb_mouse_wheel(void *data,
+                      Evas *_e EINA_UNUSED,
+                      Evas_Object *_obj EINA_UNUSED,
+                      void *event)
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4559,7 +4633,7 @@ _smart_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 /* {{{ Gestures */
 
 static Evas_Event_Flags
-_smart_cb_gest_long_move(void *data, void *event EINA_UNUSED)
+_smart_cb_gest_long_move(void *data, void *_event EINA_UNUSED)
 {
 //   Elm_Gesture_Taps_Info *p = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -4631,7 +4705,7 @@ _smart_cb_gest_zoom_end(void *data, void *event)
 }
 
 static Evas_Event_Flags
-_smart_cb_gest_zoom_abort(void *data, void *event EINA_UNUSED)
+_smart_cb_gest_zoom_abort(void *data, void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
    Config *config;
@@ -5091,7 +5165,10 @@ _smart_update_queue(Evas_Object *obj, Termio *sd)
 }
 
 static void
-_cursor_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cursor_cb_move(void *data,
+                Evas *_e EINA_UNUSED,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -5099,7 +5176,9 @@ _cursor_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 }
 
 static void
-_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event)
+_imf_event_commit_cb(void *data,
+                     Ecore_IMF_Context *_ctx EINA_UNUSED,
+                     void *event)
 {
    Termio *sd = data;
    char *str = event;
@@ -5115,7 +5194,9 @@ _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event
 }
 
 static void
-_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void *event)
+_imf_event_delete_surrounding_cb(void *data,
+                                 Ecore_IMF_Context *_ctx EINA_UNUSED,
+                                 void *event)
 {
    Termio *sd = data;
    Ecore_IMF_Event_Delete_Surrounding *ev = event;
@@ -5123,7 +5204,9 @@ _imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED,
 }
 
 static void
-_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event EINA_UNUSED)
+_imf_event_preedit_changed_cb(void *data,
+                              Ecore_IMF_Context *ctx,
+                              void *_event EINA_UNUSED)
 {
    Termio *sd = data;
    char *preedit_string;
@@ -5401,7 +5484,9 @@ _smart_calculate(Evas_Object *obj)
 }
 
 static void
-_smart_move(Evas_Object *obj, Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED)
+_smart_move(Evas_Object *obj,
+            Evas_Coord _x EINA_UNUSED,
+            Evas_Coord _y EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(obj);
 
@@ -5837,25 +5922,29 @@ _smart_pty_command(void *data)
 
 #if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
 static void
-_smart_cb_drag_enter(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED)
+_smart_cb_drag_enter(void *_data EINA_UNUSED, Evas_Object *_o EINA_UNUSED)
 {
    DBG("dnd enter");
 }
 
 static void
-_smart_cb_drag_leave(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED)
+_smart_cb_drag_leave(void *_data EINA_UNUSED, Evas_Object *_o EINA_UNUSED)
 {
    DBG("dnd leave");
 }
 
 static void
-_smart_cb_drag_pos(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
+_smart_cb_drag_pos(void *_data EINA_UNUSED,
+                   Evas_Object *_o EINA_UNUSED,
+                   Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
    DBG("dnd at %i %i act:%i", x, y, action);
 }
 
 static Eina_Bool
-_smart_cb_drop(void *data, Evas_Object *o EINA_UNUSED, Elm_Selection_Data *ev)
+_smart_cb_drop(void *data,
+               Evas_Object *_o EINA_UNUSED,
+               Elm_Selection_Data *ev)
 {
    Evas_Object *obj = data;
    Termio *sd = evas_object_smart_data_get(obj);

@@ -8,7 +8,9 @@
 #include "main.h"
 
 static void
-_cb_op_helper_inline_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_inline_chg(void *data,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -17,7 +19,9 @@ _cb_op_helper_inline_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_helper_email_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_email_chg(void *data,
+                        Evas_Object *obj,
+                        void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -38,7 +42,9 @@ _cb_op_helper_email_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_helper_url_image_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_url_image_chg(void *data,
+                            Evas_Object *obj,
+                            void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -59,7 +65,9 @@ _cb_op_helper_url_image_chg(void *data, Evas_Object *obj, void *event EINA_UNUSE
 }
 
 static void
-_cb_op_helper_url_video_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_url_video_chg(void *data,
+                            Evas_Object *obj,
+                            void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -80,7 +88,9 @@ _cb_op_helper_url_video_chg(void *data, Evas_Object *obj, void *event EINA_UNUSE
 }
 
 static void
-_cb_op_helper_url_general_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_url_general_chg(void *data,
+                              Evas_Object *obj,
+                              void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -101,7 +111,9 @@ _cb_op_helper_url_general_chg(void *data, Evas_Object *obj, void *event EINA_UNU
 }
 
 static void
-_cb_op_helper_local_image_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_local_image_chg(void *data,
+                              Evas_Object *obj,
+                              void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -122,7 +134,9 @@ _cb_op_helper_local_image_chg(void *data, Evas_Object *obj, void *event EINA_UNU
 }
 
 static void
-_cb_op_helper_local_video_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_local_video_chg(void *data,
+                              Evas_Object *obj,
+                              void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -143,7 +157,9 @@ _cb_op_helper_local_video_chg(void *data, Evas_Object *obj, void *event EINA_UNU
 }
 
 static void
-_cb_op_helper_local_general_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_helper_local_general_chg(void *data,
+                                Evas_Object *obj,
+                                void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);

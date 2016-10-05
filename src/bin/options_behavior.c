@@ -12,7 +12,7 @@ static Evas_Object *op_w, *op_h;
 #define CB(_cfg_name, _inv)                                     \
 static void                                                     \
 _cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
-                            void *event EINA_UNUSED)            \
+                            void *_event EINA_UNUSED)           \
 {                                                               \
    Evas_Object *term = data;                                    \
    Config *config = termio_config_get(term);                    \
@@ -69,7 +69,9 @@ sback_units_format(double d)
 }
 
 static void
-_cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_behavior_sback_chg(void *data,
+                          Evas_Object *obj,
+                          void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -80,8 +82,9 @@ _cb_op_behavior_sback_chg(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_behavior_tab_zoom_slider_chg(void *data, Evas_Object *obj,
-                                    void *event EINA_UNUSED)
+_cb_op_behavior_tab_zoom_slider_chg(void *data,
+                                    Evas_Object *obj,
+                                    void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -92,7 +95,9 @@ _cb_op_behavior_tab_zoom_slider_chg(void *data, Evas_Object *obj,
 }
 
 static void
-_cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_behavior_custom_geometry(void *data,
+                                Evas_Object *obj,
+                                void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -110,7 +115,9 @@ _cb_op_behavior_custom_geometry(void *data, Evas_Object *obj, void *event EINA_U
 }
 
 static void
-_cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_behavior_cg_width(void *data,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -123,7 +130,9 @@ _cb_op_behavior_cg_width(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 }
 
 static void
-_cb_op_behavior_cg_height(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_behavior_cg_height(void *data,
+                          Evas_Object *obj,
+                          void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);

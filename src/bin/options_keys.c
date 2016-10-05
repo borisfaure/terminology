@@ -16,8 +16,9 @@ static Evas_Object *_layout;
 static void _hover_del(Evas_Object *o);
 
 static void
-_shortcut_delete(void *data, Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_shortcut_delete(void *data,
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *_event_info EINA_UNUSED)
 {
    Evas_Object *hs, *bx;
    Config_Keys *cfg_key;
@@ -72,7 +73,8 @@ _shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
 }
 
 static void
-_cb_key_up(void *data, Evas *e EINA_UNUSED,
+_cb_key_up(void *data,
+           Evas *_e EINA_UNUSED,
            Evas_Object *obj, void *event)
 {
    Evas_Event_Key_Up *ev = event;
@@ -142,8 +144,10 @@ _cb_key_up(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_cb_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-               Evas_Object *obj, void *event EINA_UNUSED)
+_cb_mouse_down(void *_data EINA_UNUSED,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *obj,
+               void *_event EINA_UNUSED)
 {
    _hover_del(obj);
 }
@@ -163,35 +167,36 @@ _hover_sizing_eval(void)
 }
 
 static void
-_parent_move_cb(void *data EINA_UNUSED,
-                Evas *e EINA_UNUSED,
-                Evas_Object *obj EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+_parent_move_cb(void *_data EINA_UNUSED,
+                Evas *_e EINA_UNUSED,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event_info EINA_UNUSED)
 {
    _hover_sizing_eval();
 }
+
 static void
-_parent_resize_cb(void *data EINA_UNUSED,
-                  Evas *e EINA_UNUSED,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+_parent_resize_cb(void *_data EINA_UNUSED,
+                  Evas *_e EINA_UNUSED,
+                  Evas_Object *_obj EINA_UNUSED,
+                  void *_event_info EINA_UNUSED)
 {
    _hover_sizing_eval();
 }
 
 static void
 _parent_hide_cb(void *data,
-                Evas *e EINA_UNUSED,
-                Evas_Object *obj EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+                Evas *_e EINA_UNUSED,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event_info EINA_UNUSED)
 {
    _hover_del(data);
 }
 static void
 _parent_del_cb(void *data,
-               Evas *e EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED,
-               void *event_info EINA_UNUSED)
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event_info EINA_UNUSED)
 {
    _hover_del(data);
 }
@@ -216,16 +221,16 @@ _hover_del(Evas_Object *o)
 }
 
 static void
-_cb_focused(void *data EINA_UNUSED,
-            Evas_Object *obj EINA_UNUSED,
-            void *event EINA_UNUSED)
+_cb_focused(void *_data EINA_UNUSED,
+            Evas_Object *_obj EINA_UNUSED,
+            void *_event EINA_UNUSED)
 {
     DBG("focused");
 }
 static void
-_cb_unfocused(void *data EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED,
-              void *event EINA_UNUSED)
+_cb_unfocused(void *_data EINA_UNUSED,
+              Evas_Object *_obj EINA_UNUSED,
+              void *_event EINA_UNUSED)
 {
     DBG("unfocused");
     if (_layout)
@@ -235,7 +240,7 @@ _cb_unfocused(void *data EINA_UNUSED,
 static void
 on_shortcut_add(void *data,
                 Evas_Object *bt,
-                void *event_info EINA_UNUSED)
+                void *_event_info EINA_UNUSED)
 {
    Evas_Object *o, *oe;
    Evas_Object *bx = data;
@@ -270,7 +275,7 @@ on_shortcut_add(void *data,
 }
 
 static Evas_Object *
-gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
+gl_content_get(void *data, Evas_Object *obj, const char *_part EINA_UNUSED)
 {
    Evas_Coord min_w = 0, w = 0, min_h = 0, h = 0;
    const Shortcut_Action *action = data;
@@ -332,16 +337,18 @@ gl_content_get(void *data, Evas_Object *obj, const char *part EINA_UNUSED)
 
 
 
-char *gl_group_text_get(void *data, Evas_Object *obj EINA_UNUSED,
-                        const char *part EINA_UNUSED)
+char *gl_group_text_get(void *data,
+                        Evas_Object *_obj EINA_UNUSED,
+                        const char *_part EINA_UNUSED)
 {
    Shortcut_Action *action = data;
    return strdup(action->description);
 }
 
 static void
-_cb_reset_keys(void *data, Evas_Object *obj EINA_UNUSED,
-               void *event EINA_UNUSED)
+_cb_reset_keys(void *data,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event EINA_UNUSED)
 {
    Evas_Object *gl = data;
 

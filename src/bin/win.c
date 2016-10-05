@@ -176,8 +176,8 @@ static void _term_free(Term *term);
 static void _term_media_update(Term *term, const Config *config);
 static void _term_miniview_check(Term *term);
 static void _popmedia_queue_process(Term *term);
-static void _cb_size_hint(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED);
-static void _tab_new_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _cb_size_hint(void *data, Evas *_e EINA_UNUSED, Evas_Object *obj, void *_event EINA_UNUSED);
+static void _tab_new_cb(void *data, Evas_Object *_obj EINA_UNUSED, void *_event_info EINA_UNUSED);
 static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_refresh(Tabs *tabs);
 static void _term_tabregion_free(Term *term);
@@ -207,8 +207,8 @@ _solo_focused_term_get(Term_Container *container)
 
 static Term *
 _solo_find_term_at_coords(Term_Container *tc,
-                          Evas_Coord mx EINA_UNUSED,
-                          Evas_Coord my EINA_UNUSED)
+                          Evas_Coord _mx EINA_UNUSED,
+                          Evas_Coord _my EINA_UNUSED)
 {
    Solo *solo;
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -245,7 +245,8 @@ _solo_size_eval(Term_Container *container, Sizeinfo *info)
 }
 
 static void
-_solo_close(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_solo_close(Term_Container *tc,
+            Term_Container *_child EINA_UNUSED)
 {
    Solo *solo;
    Term *term;
@@ -272,21 +273,25 @@ _solo_tabs_new(Term_Container *tc)
 }
 
 static void
-_solo_split(Term_Container *tc, Term_Container *child EINA_UNUSED,
+_solo_split(Term_Container *tc,
+            Term_Container *_child EINA_UNUSED,
             Term *from,
-            const char *cmd, Eina_Bool is_horizontal)
+            const char *cmd,
+            Eina_Bool is_horizontal)
 {
    tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
 static Term *
-_solo_term_next(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_solo_term_next(Term_Container *tc,
+                Term_Container *_child EINA_UNUSED)
 {
    return tc->parent->term_next(tc->parent, tc);
 }
 
 static Term *
-_solo_term_prev(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_solo_term_prev(Term_Container *tc,
+                Term_Container *_child EINA_UNUSED)
 {
    return tc->parent->term_prev(tc->parent, tc);
 }
@@ -310,7 +315,8 @@ _solo_term_last(Term_Container *tc)
 }
 
 static void
-_solo_set_title(Term_Container *tc, Term_Container *child EINA_UNUSED,
+_solo_set_title(Term_Container *tc,
+                Term_Container *_child EINA_UNUSED,
                 const char *title)
 {
    eina_stringshare_del(tc->title);
@@ -319,7 +325,8 @@ _solo_set_title(Term_Container *tc, Term_Container *child EINA_UNUSED,
 }
 
 static void
-_solo_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_solo_bell(Term_Container *tc,
+           Term_Container *_child EINA_UNUSED)
 {
    Solo *solo;
    Term *term;
@@ -463,7 +470,8 @@ _solo_new(Term *term, Win *wn)
 
 static void
 _cb_win_focus_in(void *data,
-                 Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *_event EINA_UNUSED)
 {
    Win *wn = data;
    Term_Container *tc = (Term_Container*) wn;
@@ -506,8 +514,9 @@ _cb_win_focus_in(void *data,
 }
 
 static void
-_cb_win_focus_out(void *data, Evas_Object *obj EINA_UNUSED,
-                  void *event EINA_UNUSED)
+_cb_win_focus_out(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  void *_event EINA_UNUSED)
 {
    Win *wn = data;
    Term_Container *tc = (Term_Container*) wn;
@@ -640,8 +649,10 @@ main_trans_update(const Config *config)
 
 
 static void
-_cb_del(void *data, Evas *e EINA_UNUSED,
-        Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_del(void *data,
+        Evas *_e EINA_UNUSED,
+        Evas_Object *_obj EINA_UNUSED,
+        void *_event EINA_UNUSED)
 {
    Win *wn = data;
 
@@ -745,13 +756,15 @@ _win_get_evas_object(Term_Container *tc)
 }
 
 static Term *
-_win_term_next(Term_Container *tc EINA_UNUSED, Term_Container *child)
+_win_term_next(Term_Container *_tc EINA_UNUSED,
+               Term_Container *child)
 {
    return child->term_first(child);
 }
 
 static Term *
-_win_term_prev(Term_Container *tc EINA_UNUSED, Term_Container *child)
+_win_term_prev(Term_Container *_tc EINA_UNUSED,
+               Term_Container *child)
 {
    return child->term_last(child);
 }
@@ -840,7 +853,8 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
 }
 
 static void
-_win_close(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_win_close(Term_Container *tc,
+           Term_Container *_child EINA_UNUSED)
 {
    Win *wn;
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
@@ -887,7 +901,8 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
 }
 
 static void
-_win_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_win_bell(Term_Container *tc,
+          Term_Container *_child EINA_UNUSED)
 {
    Win *wn;
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
@@ -903,7 +918,8 @@ _win_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
 }
 
 static void
-_win_set_title(Term_Container *tc, Term_Container *child EINA_UNUSED,
+_win_set_title(Term_Container *tc,
+               Term_Container *_child EINA_UNUSED,
                const char *title)
 {
    Win *wn;
@@ -1432,7 +1448,8 @@ _split_set_title(Term_Container *tc, Term_Container *child,
 }
 
 static void
-_split_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_split_bell(Term_Container *tc,
+            Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
 
@@ -1587,7 +1604,9 @@ win_sizing_handle(Win *wn)
 
 static void
 _cb_size_hint(void *data,
-              Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+              Evas *_e EINA_UNUSED,
+              Evas_Object *obj,
+              void *_event EINA_UNUSED)
 {
    Term *term = data;
    Evas_Coord mw, mh, rw, rh, w = 0, h = 0;
@@ -1610,7 +1629,8 @@ _cb_size_hint(void *data,
 }
 
 void
-split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
+split_horizontally(Evas_Object *_win EINA_UNUSED,
+                   Evas_Object *term,
                    const char *cmd)
 {
    Term *tm;
@@ -1624,7 +1644,8 @@ split_horizontally(Evas_Object *win EINA_UNUSED, Evas_Object *term,
 }
 
 void
-split_vertically(Evas_Object *win EINA_UNUSED, Evas_Object *term,
+split_vertically(Evas_Object *_win EINA_UNUSED,
+                 Evas_Object *term,
                  const char *cmd)
 {
    Term *tm;
@@ -1668,8 +1689,10 @@ _tabbar_clear(Term *tm)
 }
 
 static void
-_cb_tab_activate(void *data, Evas_Object *obj EINA_UNUSED,
-                 const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_tab_activate(void *data,
+                 Evas_Object *_obj EINA_UNUSED,
+                 const char *_sig EINA_UNUSED,
+                 const char *_src EINA_UNUSED)
 {
    Tab_Item *tab_item = data;
    Solo *solo;
@@ -1682,8 +1705,10 @@ _cb_tab_activate(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_cb_tab_close(void *data, Evas_Object *obj EINA_UNUSED,
-              const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_tab_close(void *data,
+              Evas_Object *_obj EINA_UNUSED,
+              const char *_sig EINA_UNUSED,
+              const char *_src EINA_UNUSED)
 {
    Term *term = data;
    Win *wn = term->wn;
@@ -1811,17 +1836,17 @@ term_tab_go(Term *term, int tnum)
 
 static void
 _tabs_selector_cb_selected(void *data,
-                           Evas_Object *obj EINA_UNUSED,
+                           Evas_Object *_obj EINA_UNUSED,
                            void *info);
 static void
 _tabs_selector_cb_exit(void *data,
-                       Evas_Object *obj EINA_UNUSED,
-                       void *info EINA_UNUSED);
+                       Evas_Object *_obj EINA_UNUSED,
+                       void *_info EINA_UNUSED);
 
 static void
 _tabs_selector_cb_ending(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *info EINA_UNUSED);
+                         Evas_Object *_obj EINA_UNUSED,
+                         void *_info EINA_UNUSED);
 
 static void
 _tabs_restore(Tabs *tabs)
@@ -1876,8 +1901,8 @@ _tabs_restore(Tabs *tabs)
 
 static void
 _tabs_selector_cb_ending(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *info EINA_UNUSED)
+                         Evas_Object *_obj EINA_UNUSED,
+                         void *_info EINA_UNUSED)
 {
    Tabs *tabs = data;
    edje_object_signal_emit(tabs->selector_bg, "end", "terminology");
@@ -1885,7 +1910,7 @@ _tabs_selector_cb_ending(void *data,
 
 static void
 _tabs_selector_cb_selected(void *data,
-                           Evas_Object *obj EINA_UNUSED,
+                           Evas_Object *_obj EINA_UNUSED,
                            void *info)
 {
    Tabs *tabs = data;
@@ -1907,8 +1932,8 @@ _tabs_selector_cb_selected(void *data,
 
 static void
 _tabs_selector_cb_exit(void *data,
-                       Evas_Object *obj EINA_UNUSED,
-                       void *info EINA_UNUSED)
+                       Evas_Object *_obj EINA_UNUSED,
+                       void *_info EINA_UNUSED)
 {
    Tabs *tabs = data;
 
@@ -2016,7 +2041,9 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
 }
 
 static void
-_cb_select(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_select(void *data,
+           Evas_Object *_obj EINA_UNUSED,
+           void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -2369,8 +2396,8 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
 
 static void
 _tab_new_cb(void *data,
-            Evas_Object *obj EINA_UNUSED,
-            void *event_info EINA_UNUSED)
+            Evas_Object *_obj EINA_UNUSED,
+            void *_event_info EINA_UNUSED)
 {
    Tabs *tabs = data;
    Tab_Item *tab_item;
@@ -2421,7 +2448,9 @@ _tab_new_cb(void *data,
 }
 
 static void
-_cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_new(void *data,
+        Evas_Object *_obj EINA_UNUSED,
+        void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -2432,7 +2461,9 @@ _cb_new(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_close(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_close(void *data,
+          Evas_Object *_obj EINA_UNUSED,
+          void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -2441,7 +2472,8 @@ _cb_close(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 void
-main_new(Evas_Object *win EINA_UNUSED, Evas_Object *term)
+main_new(Evas_Object *_win EINA_UNUSED,
+         Evas_Object *term)
 {
    Term *tm;
 
@@ -2538,7 +2570,8 @@ _tabs_unfocus(Term_Container *tc, Term_Container *relative)
 }
 
 static void
-_tabs_bell(Term_Container *tc, Term_Container *child EINA_UNUSED)
+_tabs_bell(Term_Container *tc,
+           Term_Container *_child EINA_UNUSED)
 {
    Tabs *tabs;
 
@@ -2713,9 +2746,11 @@ tab_item_new(Tabs *tabs, Term_Container *child)
 }
 
 static void
-_tabs_split(Term_Container *tc, Term_Container *child EINA_UNUSED,
+_tabs_split(Term_Container *tc,
+            Term_Container *_child EINA_UNUSED,
             Term *from,
-            const char *cmd, Eina_Bool is_horizontal)
+            const char *cmd,
+            Eina_Bool is_horizontal)
 {
    tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
@@ -2803,8 +2838,10 @@ term_popmedia_close(Term *term)
 
 
 static void
-_cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
-                  Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_term_mouse_in(void *data,
+                  Evas *_e EINA_UNUSED,
+                  Evas_Object *_obj EINA_UNUSED,
+                  void *_event EINA_UNUSED)
 {
    Term *term = data;
    Config *config;
@@ -2822,8 +2859,10 @@ _cb_term_mouse_in(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_cb_term_mouse_down(void *data, Evas *e EINA_UNUSED,
-                    Evas_Object *obj EINA_UNUSED, void *event)
+_cb_term_mouse_down(void *data,
+                    Evas *_e EINA_UNUSED,
+                    Evas_Object *_obj EINA_UNUSED,
+                    void *event)
 {
    Evas_Event_Mouse_Down *ev = event;
    Term *term = data;
@@ -2964,8 +3003,10 @@ void term_next(Term *term)
 }
 
 static void
-_cb_popmedia_del(void *data, Evas *e EINA_UNUSED,
-                 Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_popmedia_del(void *data,
+                 Evas *_e EINA_UNUSED,
+                 Evas_Object *_o EINA_UNUSED,
+                 void *_event_info EINA_UNUSED)
 {
    Term *term = data;
 
@@ -2975,8 +3016,10 @@ _cb_popmedia_del(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED,
-                  const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_popmedia_done(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  const char *_sig EINA_UNUSED,
+                  const char *_src EINA_UNUSED)
 {
    Term *term = data;
 
@@ -2997,7 +3040,8 @@ _cb_popmedia_done(void *data, Evas_Object *obj EINA_UNUSED,
 
 static void
 _cb_media_loop(void *data,
-               Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+               Evas_Object *_obj EINA_UNUSED,
+               void *_info EINA_UNUSED)
 {
    Term *term = data;
 
@@ -3096,7 +3140,9 @@ _media_http_head_timeout(void *data)
 }
 
 static Eina_Bool
-_media_http_head_complete(void *data, int kind EINA_UNUSED, void *event_info)
+_media_http_head_complete(void *data,
+                          int _kind EINA_UNUSED,
+                          void *event_info)
 {
    Ecore_Con_Event_Url_Complete *ev = event_info;
    Ty_Http_Head *ty_head = data;
@@ -3259,8 +3305,9 @@ term_miniview_toggle(Term *term)
 }
 
 static void
-_set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+_set_title_ok_cb(void *data,
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *_event_info EINA_UNUSED)
 {
     Evas_Object *popup = data;
     Term *term = evas_object_data_get(popup, "term");
@@ -3276,8 +3323,9 @@ _set_title_ok_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
-_set_title_cancel_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                     void *event_info EINA_UNUSED)
+_set_title_cancel_cb(void *data,
+                     Evas_Object *_obj EINA_UNUSED,
+                     void *_event_info EINA_UNUSED)
 {
     Evas_Object *popup = data;
     Term *term = evas_object_data_get(popup, "term");
@@ -3344,7 +3392,9 @@ _popmedia_queue_add(Term *term, const char *src)
 }
 
 static void
-_cb_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_popup(void *data,
+          Evas_Object *_obj EINA_UNUSED,
+          void *event)
 {
    Term *term = data;
    const char *src = event;
@@ -3355,7 +3405,9 @@ _cb_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 }
 
 static void
-_cb_popup_queue(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_popup_queue(void *data,
+                Evas_Object *_obj EINA_UNUSED,
+                void *event)
 {
    Term *term = data;
    const char *src = event;
@@ -3399,7 +3451,9 @@ _set_alpha(Config *config, const char *val, Eina_Bool save)
 }
 
 static void
-_cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+_cb_command(void *data,
+            Evas_Object *_obj EINA_UNUSED,
+            void *event)
 {
    Term *term = data;
    const char *cmd = event;
@@ -3459,14 +3513,18 @@ _cb_command(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 }
 
 static void
-_cb_tabcount_go(void *data, Evas_Object *obj EINA_UNUSED,
-                const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_tabcount_go(void *data,
+                Evas_Object *_obj EINA_UNUSED,
+                const char *_sig EINA_UNUSED,
+                const char *_src EINA_UNUSED)
 {
    _cb_select(data, NULL, NULL);
 }
 
 static void
-_cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_prev(void *data,
+         Evas_Object *_obj EINA_UNUSED,
+         void *_event EINA_UNUSED)
 {
    Term *term = data;
 
@@ -3474,7 +3532,9 @@ _cb_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_next(void *data,
+         Evas_Object *_obj EINA_UNUSED,
+         void *_event EINA_UNUSED)
 {
    Term *term = data;
 
@@ -3482,7 +3542,9 @@ _cb_next(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_split_h(void *data,
+            Evas_Object *_obj EINA_UNUSED,
+            void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -3492,7 +3554,9 @@ _cb_split_h(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_split_v(void *data,
+            Evas_Object *_obj EINA_UNUSED,
+            void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -3502,7 +3566,9 @@ _cb_split_v(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_title(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_title(void *data,
+          Evas_Object *_obj EINA_UNUSED,
+          void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc = term->container;
@@ -3513,7 +3579,9 @@ _cb_title(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 }
 
 static void
-_cb_icon(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_icon(void *data,
+         Evas_Object *_obj EINA_UNUSED,
+         void *_event EINA_UNUSED)
 {
    Term *term = data;
    DBG("is focused? tc:%p", term->container);
@@ -3554,7 +3622,9 @@ _cb_cmd_del(void *data)
 }
 
 static void
-_cb_cmd_activated(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_cmd_activated(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  void *_event EINA_UNUSED)
 {
    Win *wn = data;
    char *cmd = NULL;
@@ -3588,7 +3658,8 @@ _cb_cmd_activated(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNU
 
 static void
 _cb_cmd_aborted(void *data,
-                Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event EINA_UNUSED)
 {
    Win *wn = data;
    Term *term;
@@ -3611,7 +3682,8 @@ _cb_cmd_aborted(void *data,
 
 static void
 _cb_cmd_changed(void *data,
-                Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event EINA_UNUSED)
 {
    Win *wn = data;
    char *cmd = NULL;
@@ -3634,8 +3706,10 @@ _cb_cmd_changed(void *data,
 }
 
 static void
-_cb_cmd_hints_changed(void *data, Evas *e EINA_UNUSED,
-                      Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_cmd_hints_changed(void *data,
+                      Evas *_e EINA_UNUSED,
+                      Evas_Object *_obj EINA_UNUSED,
+                      void *_event_info EINA_UNUSED)
 {
    Win *wn = data;
 
@@ -3648,7 +3722,8 @@ _cb_cmd_hints_changed(void *data, Evas *e EINA_UNUSED,
 
 static void
 _cb_cmdbox(void *data,
-           Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+           Evas_Object *_obj EINA_UNUSED,
+           void *_event EINA_UNUSED)
 {
    Term *term = data;
 
@@ -3693,8 +3768,10 @@ _cb_cmdbox(void *data,
 
 
 static void
-_cb_media_del(void *data, Evas *e EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_cb_media_del(void *data,
+              Evas *_e EINA_UNUSED,
+              Evas_Object *_obj EINA_UNUSED,
+              void *_event_info EINA_UNUSED)
 {
    Term *term = data;
    Config *config = NULL;
@@ -3907,15 +3984,19 @@ _term_free(Term *term)
 }
 
 static void
-_cb_tabcount_prev(void *data, Evas_Object *obj EINA_UNUSED,
-                  const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_tabcount_prev(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  const char *_sig EINA_UNUSED,
+                  const char *_src EINA_UNUSED)
 {
    _cb_prev(data, NULL, NULL);
 }
 
 static void
-_cb_tabcount_next(void *data, Evas_Object *obj EINA_UNUSED,
-                  const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_cb_tabcount_next(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  const char *_sig EINA_UNUSED,
+                  const char *_src EINA_UNUSED)
 {
    _cb_next(data, NULL, NULL);
 }
@@ -4011,8 +4092,10 @@ _term_bg_config(Term *term)
 }
 
 static void
-_cb_tabregion_change(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
-                     void *info EINA_UNUSED)
+_cb_tabregion_change(void *data,
+                     Evas *_e EINA_UNUSED,
+                     Evas_Object *obj,
+                     void *_info EINA_UNUSED)
 {
    Term *term = data;
    Evas_Coord w, h;
@@ -4079,7 +4162,9 @@ term_miniview_get(Term *term)
 
 
 static void
-_cb_bell(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_bell(void *data,
+         Evas_Object *_obj EINA_UNUSED,
+         void *_event EINA_UNUSED)
 {
    Term *term = data;
    Term_Container *tc;
@@ -4114,8 +4199,9 @@ _cb_options_done(void *data)
 }
 
 static void
-_cb_options(void *data, Evas_Object *obj EINA_UNUSED,
-            void *event EINA_UNUSED)
+_cb_options(void *data,
+            Evas_Object *_obj EINA_UNUSED,
+            void *_event EINA_UNUSED)
 {
    Term *term = data;
 

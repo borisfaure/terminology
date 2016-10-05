@@ -128,7 +128,9 @@ _parse_font_name(const char *full_name,
 }
 
 static void
-_cb_op_font_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_op_font_sel(void *data,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event EINA_UNUSED)
 {
    Font *f = data;
    Config *config = termio_config_get(f->term);
@@ -145,7 +147,9 @@ _cb_op_font_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
 }
 
 static void
-_cb_op_fontsize_sel(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_fontsize_sel(void *data,
+                    Evas_Object *obj,
+                    void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
@@ -165,7 +169,10 @@ _cb_op_font_sort(const void *d1, const void *d2)
 }
 
 static void
-_cb_op_font_preview_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_font_preview_del(void *_data EINA_UNUSED,
+                        Evas *_e EINA_UNUSED,
+                        Evas_Object *obj,
+                        void *_event EINA_UNUSED)
 {
    Evas_Object *o;
    Ecore_Timer *timer = evas_object_data_get(obj, "delay");
@@ -233,7 +240,10 @@ done:
 }
 
 static void
-_cb_op_font_preview_eval(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED)
+_cb_op_font_preview_eval(void *data,
+                         Evas *_e EINA_UNUSED,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
 {
    Font *f = data;
    Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
@@ -287,20 +297,27 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
 }
 
 static char *
-_cb_op_font_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+_cb_op_font_text_get(void *data,
+                     Evas_Object *_obj EINA_UNUSED,
+                     const char *_part EINA_UNUSED)
 {
    Font *f = data;
    return strdup(f->pretty_name);
 }
 
 static char *
-_cb_op_font_group_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
+_cb_op_font_group_text_get(void *data,
+                           Evas_Object *_obj EINA_UNUSED,
+                           const char *_part EINA_UNUSED)
 {
    return strdup(data);
 }
 
 static void
-_cb_term_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_term_resize(void *data,
+                Evas *_e EINA_UNUSED,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    if (expecting_resize)
@@ -312,7 +329,10 @@ _cb_term_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 }
 
 static void
-_cb_font_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_cb_font_del(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *_obj EINA_UNUSED,
+             void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    evas_object_event_callback_del_full(term, EVAS_CALLBACK_RESIZE, 
@@ -343,8 +363,9 @@ options_font_clear(void)
 }
 
 static void
-_cb_font_bolditalic(void *data, Evas_Object *obj,
-                            void *event EINA_UNUSED)
+_cb_font_bolditalic(void *data,
+                    Evas_Object *obj,
+                    void *_event EINA_UNUSED)
 {
    Evas_Object *term = data;
    Config *config = termio_config_get(term);

@@ -439,13 +439,13 @@ _translate_options(void)
 #ifdef ENABLE_FUZZING
 #include <syslog.h>
 static void
-_log_to_syslog(const Eina_Log_Domain *d EINA_UNUSED,
+_log_to_syslog(const Eina_Log_Domain *_d EINA_UNUSED,
                Eina_Log_Level level,
-               const char *file EINA_UNUSED,
-               const char *fnc EINA_UNUSED,
-               int line EINA_UNUSED,
+               const char *_file EINA_UNUSED,
+               const char *_fnc EINA_UNUSED,
+               int _line EINA_UNUSED,
                const char *fmt,
-               void *data EINA_UNUSED,
+               void *_data EINA_UNUSED,
                va_list args)
 {
     int priority;

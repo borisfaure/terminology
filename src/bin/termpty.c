@@ -157,7 +157,9 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_cb_exe_exit(void *data, int type EINA_UNUSED, void *event)
+_cb_exe_exit(void *data,
+             int _type EINA_UNUSED,
+             void *event)
 {
    Ecore_Exe_Event_Del *ev = event;
    Termpty *ty = data;

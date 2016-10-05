@@ -5,9 +5,9 @@
 #include "options_elm.h"
 
 static void
-launch_elm_config(void *data EINA_UNUSED,
-                Evas_Object *obj EINA_UNUSED,
-                void *event_info EINA_UNUSED)
+launch_elm_config(void *_data EINA_UNUSED,
+                Evas_Object *_obj EINA_UNUSED,
+                void *_event_info EINA_UNUSED)
 {
    int pid;
 
@@ -24,7 +24,7 @@ launch_elm_config(void *data EINA_UNUSED,
 }
 
 void
-options_elm(Evas_Object *opbox, Evas_Object *term EINA_UNUSED)
+options_elm(Evas_Object *opbox, Evas_Object *_term EINA_UNUSED)
 {
    Evas_Object *o, *fr, *bx, *bt, *en;
 

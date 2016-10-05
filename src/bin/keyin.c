@@ -689,7 +689,7 @@ shortcut_actions_get(void)
 /* {{{ Key bindings */
 
 static unsigned int
-_key_binding_key_length(EINA_UNUSED const void *key)
+_key_binding_key_length(const void *_key EINA_UNUSED)
 {
    return 0;
 }

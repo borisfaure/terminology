@@ -32,7 +32,9 @@
 // and 'BLAHBLAH' is an optional data payload string
 
 static Eina_Bool
-_handle_op_a(Termpty *ty EINA_UNUSED, const char *txt, Eina_Unicode *utxt EINA_UNUSED)
+_handle_op_a(Termpty *_ty EINA_UNUSED,
+             const char *txt,
+             Eina_Unicode *_utxt EINA_UNUSED)
 {
    switch (txt[1])
      {

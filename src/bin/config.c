@@ -771,7 +771,7 @@ config_theme_path_get(const Config *config)
 }
 
 const char *
-config_theme_path_default_get(const Config *config EINA_UNUSED)
+config_theme_path_default_get(const Config *config)
 {
    static char path[PATH_MAX] = "";
 

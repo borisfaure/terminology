@@ -34,7 +34,7 @@ typedef struct _Gravatar {
 static Evas_Object *
 _tooltip_content(void *data,
                  Evas_Object *obj,
-                 Evas_Object *tt EINA_UNUSED)
+                 Evas_Object *_tt EINA_UNUSED)
 {
    Gravatar *g = data;
    Evas_Object *o;
@@ -47,8 +47,8 @@ _tooltip_content(void *data,
 
 static void
 _tooltip_del(void            *data,
-             Evas_Object *obj EINA_UNUSED,
-             void            *event_info EINA_UNUSED)
+             Evas_Object     *_obj EINA_UNUSED,
+             void            *_event_info EINA_UNUSED)
 {
    Gravatar *g = data;
    eina_stringshare_del(g->url);
