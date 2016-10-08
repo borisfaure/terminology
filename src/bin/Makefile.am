@@ -63,7 +63,7 @@ gravatar.c gravatar.h \
 tty_keys.h
 
 tybg_SOURCES = \
-tycommon.c \
+tycommon.c tycommon.h \
 tybg.c
 
 tybg_CPPFLAGS = -I. \
