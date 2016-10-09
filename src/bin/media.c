@@ -223,7 +223,7 @@ _type_thumb_init2(Evas_Object *obj)
                        //try to fetch the icon, if we dont find it, continue at other themes
                        icon_theme = eina_stringshare_add(theme->name.internal);
                        fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
-                       if (!fl) break;
+                       if (fl) break;
                     }
                }
              else
