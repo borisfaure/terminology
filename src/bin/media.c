@@ -203,7 +203,7 @@ _type_thumb_init2(Evas_Object *obj)
      {
         /* TODO: Listen for theme cache changes */
         static const char *icon_theme = NULL;
-        const char *fl;
+        const char *fl = NULL;
 
         if (!icon_theme)
           {
@@ -219,13 +219,20 @@ _type_thumb_init2(Evas_Object *obj)
                   for (itr = themes; *itr; itr++)
                     {
                        theme = efreet_icon_theme_find(*itr);
-                       if (theme) break;
+                       if (!theme) continue;
+                       //try to fetch the icon, if we dont find it, continue at other themes
+                       icon_theme = eina_stringshare_add(theme->name.internal);
+                       fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
+                       if (!fl) break;
                     }
                }
-             if (theme)
-               icon_theme = eina_stringshare_add(theme->name.internal);
+             else
+               {
+                  icon_theme = eina_stringshare_add(theme->name.internal);
+               }
           }
-        fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
+        if (!fl)
+          fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
         ok = ethumb_client_file_set(et_client, fl, NULL);
         if (!ok)
           return -1;
