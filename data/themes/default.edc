@@ -1577,7 +1577,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -1596,7 +1595,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -1635,7 +1633,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -1649,7 +1646,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -1663,7 +1659,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -1677,7 +1672,6 @@ collections {
             target: "popmedia_clip";
             target: "popmedia_dismiss";
             target: "popmedia_shadow";
-            target: "popmedia_fill";
             target: "popmedia_overlay";
             target: "popmedia_bevel";
             target: "popmedia_glint";
@@ -2270,7 +2264,17 @@ collections {
                rel2.relative: 1.0 1.0;
             }
             description { state: "oneline" 0.0;
+               inherit: "default" 0.0;
                visible: 0;
+            }
+            description { state: "disjoint" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "topfull" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "bottomfull" 0.0;
+               inherit: "default" 0.0;
             }
          }
          part { name: "middle_clip"; type: RECT;
@@ -2287,6 +2291,15 @@ collections {
                rel2.to: "terminology.bottom_right";
                rel2.relative: 0.0 1.0;
             }
+            description { state: "disjoint" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "topfull" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "bottomfull" 0.0;
+               inherit: "default" 0.0;
+            }
          }
          part { name: "bottom_clip"; type: RECT;
             mouse_events: 0;
@@ -2298,6 +2311,15 @@ collections {
             }
             description { state: "oneline" 0.0;
                visible: 0;
+            }
+            description { state: "disjoint" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "topfull" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "bottomfull" 0.0;
+               inherit: "default" 0.0;
             }
          }
          
