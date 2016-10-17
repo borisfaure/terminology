@@ -152,7 +152,7 @@ struct _Termpty
    } termstate;
    struct {
         int           cx, cy;
-   } cursor_state, cursor_save;
+   } cursor_state, cursor_save[2];
    int exit_code;
    pid_t pid;
    unsigned int altbuf     : 1;

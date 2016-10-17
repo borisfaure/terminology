@@ -173,15 +173,6 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 static void
 _switch_to_alternative_screen(Termpty *ty, int mode)
 {
-   DBG("switch to alternative screen, mode:%d", mode);
-   if (ty->altbuf)
-     {
-        // if we are looking at alt buf now,
-        // clear main buf before we swap it back
-        // into the screen2 save (so save is
-        // clear)
-        termpty_clear_all(ty);
-     }
    // swap screen content now
    if (mode != ty->altbuf)
      termpty_screen_swap(ty);
@@ -309,6 +300,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                      case 45: // ignore
                         WRN("TODO: Reverse-wraparound Mode");
                         break;
+                     case 47:
+                        _switch_to_alternative_screen(ty, mode);
+                        break;
                      case 59: // ignore
                         WRN("TODO: kanji terminal mode %i", mode);
                         break;
@@ -368,14 +362,31 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         DBG("Ignored screen mode %i", arg);
                         break;
                      case 1047:
-                     case 47:
+                        if (!mode && ty->altbuf)
+                            /* clear screen before switching back to normal */
+                            termpty_clear_screen(ty, TERMPTY_CLR_ALL);
                         _switch_to_alternative_screen(ty, mode);
-                        break;
                      case 1048:
-                     case 1049:
                         termpty_cursor_copy(ty, mode);
-                        if (arg == 1049)
-                          _switch_to_alternative_screen(ty, mode);
+                        break;
+                     case 1049:
+                        if (mode)
+                          {
+                             // switch to altbuf
+                             termpty_cursor_copy(ty, mode);
+                             _switch_to_alternative_screen(ty, mode);
+                             if (ty->altbuf)
+                               /* clear screen before switching back to normal */
+                               termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                          }
+                        else
+                          {
+                             if (ty->altbuf)
+                               /* clear screen before switching back to normal */
+                               termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                             _switch_to_alternative_screen(ty, mode);
+                             termpty_cursor_copy(ty, mode);
+                          }
                         break;
                      case 2004:
                         ty->bracketed_paste = mode;
@@ -668,7 +679,8 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
           {
            case 6:
               len = snprintf(bf, sizeof(bf), "\033[?%d;%d;1R",
-                             ty->cursor_state.cy + 1, ty->cursor_state.cx + 1);
+                             ty->cursor_state.cy + 1,
+                             ty->cursor_state.cx + 1);
               termpty_write(ty, bf, len);
               break;
            default:

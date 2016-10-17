@@ -308,8 +308,10 @@ _limit_coord(Termpty *ty)
    TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
    TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
 
-   TERMPTY_RESTRICT_FIELD(ty->cursor_save.cx, 0, ty->w);
-   TERMPTY_RESTRICT_FIELD(ty->cursor_save.cy, 0, ty->h);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_save[0].cx, 0, ty->w);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_save[0].cy, 0, ty->h);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_save[1].cx, 0, ty->w);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_save[1].cy, 0, ty->h);
 }
 
 Termpty *

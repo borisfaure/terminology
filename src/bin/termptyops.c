@@ -401,12 +401,12 @@ termpty_cursor_copy(Termpty *ty, Eina_Bool save)
 {
    if (save)
      {
-        ty->cursor_save.cx = ty->cursor_state.cx;
-        ty->cursor_save.cy = ty->cursor_state.cy;
+        ty->cursor_save[ty->altbuf].cx = ty->cursor_state.cx;
+        ty->cursor_save[ty->altbuf].cy = ty->cursor_state.cy;
      }
    else
      {
-        ty->cursor_state.cx = ty->cursor_save.cx;
-        ty->cursor_state.cy = ty->cursor_save.cy;
+        ty->cursor_state.cx = ty->cursor_save[ty->altbuf].cx;
+        ty->cursor_state.cy = ty->cursor_save[ty->altbuf].cy;
      }
 }
