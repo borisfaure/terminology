@@ -39,7 +39,7 @@
 
 
 
-/* specific log domain to help debug only terminal code parser */
+/* specific log domain to help debug code in that file */
 int _win_log_dom = -1;
 
 #undef CRITICAL
