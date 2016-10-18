@@ -1,3 +1,4 @@
+#include "private.h"
 #include "utf8.h"
 
 int

@@ -1,3 +1,4 @@
+#include "private.h"
 #include <Eina.h>
 #include <Ecore.h>
 #include <Evas.h>

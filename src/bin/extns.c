@@ -1,3 +1,4 @@
+#include "private.h"
 #include <stdio.h>
 
 const char *extn_img[] =
