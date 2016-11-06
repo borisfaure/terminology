@@ -3520,8 +3520,8 @@ _smart_mouseover_apply(Evas_Object *obj)
         return;
      }
 
-   s = _termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
-                         &x1, &y1, &x2, &y2);
+   s = termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
+                        &x1, &y1, &x2, &y2);
    if (!s)
      {
         _remove_links(sd, obj);
