@@ -2192,9 +2192,10 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
    if (lenp)
      *lenp = sb.len;
 
-   return sb.buf;
+   return ty_sb_steal_buf(&sb);
+
 err:
-   free(sb.buf);
+   ty_sb_free(&sb);
    return NULL;
 }
 
