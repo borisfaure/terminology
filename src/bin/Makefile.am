@@ -60,7 +60,8 @@ win.c win.h \
 utils.c utils.h \
 extns.c extns.h \
 gravatar.c gravatar.h \
-tty_keys.h
+tty_keys.h \
+sb.c sb.h
 
 tybg_SOURCES = \
 tycommon.c tycommon.h \

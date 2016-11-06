@@ -66,6 +66,8 @@ src/bin/options_video.h
 src/bin/options_wallpaper.c
 src/bin/options_wallpaper.h
 src/bin/private.h
+src/bin/sb.c
+src/bin/sb.h
 src/bin/sel.c
 src/bin/sel.h
 src/bin/termcmd.c
