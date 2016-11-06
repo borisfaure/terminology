@@ -121,13 +121,27 @@ homedir_get(char *buf, size_t size)
 Eina_Bool
 link_is_protocol(const char *str)
 {
-   if (casestartswith(str, "http://") ||
-       casestartswith(str, "https://") ||
-       casestartswith(str, "ftp://") ||
-       casestartswith(str, "file://") ||
-       casestartswith(str, "mailto:"))
-     return EINA_TRUE;
-   return EINA_FALSE;
+   const char *p = str;
+   int c = *p;
+
+   if (!isalpha(c))
+     return EINA_FALSE;
+
+   /* Try to follow RFC3986 a bit
+    * URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    * hier-part   = "//" authority path-abempty
+    *             [...] other stuff not taken into account
+    * scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    */
+
+   do
+     {
+        p++;
+        c = *p;
+     }
+   while (isalpha(c) || (c == '.') || (c == '-') || (c == '+'));
+
+   return (p[0] == ':') && (p[1] == '/') && (p[2] == '/');
 }
 
 Eina_Bool
