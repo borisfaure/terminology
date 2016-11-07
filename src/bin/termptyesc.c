@@ -366,6 +366,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                             /* clear screen before switching back to normal */
                             termpty_clear_screen(ty, TERMPTY_CLR_ALL);
                         _switch_to_alternative_screen(ty, mode);
+                        break;
                      case 1048:
                         termpty_cursor_copy(ty, mode);
                         break;
