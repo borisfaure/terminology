@@ -226,7 +226,8 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
 
    res = _txt_at(ty, &x1, &y1, txt, &txtlen);
    if ((res != 0) || (txtlen == 0)) goto end;
-   ty_sb_add(&sb, txt, txtlen);
+   res = ty_sb_add(&sb, txt, txtlen);
+   if (res < 0) goto end;
 
    while (goback)
      {
@@ -327,7 +328,8 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
              break;
           }
 
-        ty_sb_add(&sb, txt, txtlen);
+        res = ty_sb_add(&sb, txt, txtlen);
+        if (res < 0) goto end;
 
         if (!link_is_protocol(sb.buf))
           {
