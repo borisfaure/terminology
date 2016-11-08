@@ -212,6 +212,8 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
    int txtlen = 0;
    Eina_Bool was_protocol = EINA_FALSE;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ty, NULL);
+
    x1 = x2 = cx;
    y1 = y2 = cy;
    termio_size_get(obj, &w, &h);
