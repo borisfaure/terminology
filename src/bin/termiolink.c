@@ -240,6 +240,7 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
           {
              goback = EINA_FALSE;
              goforward = EINA_TRUE;
+             break;
           }
         res = ty_sb_prepend(&sb, txt, txtlen);
         if (res < 0) goto end;
