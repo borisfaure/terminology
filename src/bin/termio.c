@@ -1175,7 +1175,7 @@ _update_link(Evas_Object *obj, Termio *sd,
      }
    for (y = sd->link.y1; y <= sd->link.y2; y++)
      {
-        o = elm_layout_add(obj);
+        o = elm_layout_add(sd->win);
         evas_object_smart_member_add(o, obj);
         theme_apply(elm_layout_edje_get(o), sd->config, "terminology/link");
 
