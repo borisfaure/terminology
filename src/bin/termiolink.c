@@ -73,6 +73,8 @@ _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
    cells = termpty_cellrow_get(ty, *y, &w);
    if (!cells || !w)
      goto bad;
+   if ((*x >= w))
+     *x = w-1;
    cell = cells[*x];
    if ((cell.codepoint == 0) && (cell.att.dblwidth))
      {
@@ -113,7 +115,7 @@ _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
    cells = termpty_cellrow_get(ty, *y, &w);
    if (!cells || !w)
      goto bad;
-   if ((*x) < 0)
+   if (((*x) < 0) || ((*x) >= w))
      *x = w-1;
 
    cell = cells[*x];
