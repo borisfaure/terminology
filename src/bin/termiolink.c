@@ -74,7 +74,7 @@ _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
    if (!cells || !w)
      goto bad;
    if ((*x >= w))
-     *x = w-1;
+     goto empty;
    cell = cells[*x];
    if ((cell.codepoint == 0) && (cell.att.dblwidth))
      {
@@ -85,15 +85,15 @@ _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
      }
 
    if (cell.codepoint == 0)
-     {
+     goto empty;
+
+   *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+
+   return 0;
+
+empty:
         txt[0] = '\0';
         *txtlenp = 0;
-     }
-   else
-     {
-        *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
-     }
-
    return 0;
 
 bad:
@@ -111,14 +111,32 @@ _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
 
    (*x)--;
    if ((*x) < 0)
+     {
         (*y)--;
-   cells = termpty_cellrow_get(ty, *y, &w);
-   if (!cells || !w)
-     goto bad;
-   if (((*x) < 0) || ((*x) >= w))
-     *x = w-1;
+        *x = ty->w-1;
+        cells = termpty_cellrow_get(ty, *y, &w);
+        if (!cells || !w)
+          goto bad;
+        if ((*x) >= w)
+          goto empty;
+        cell = cells[*x];
+        /* Either the cell is in the normal screen and needs to have
+         * autowrapped flag or is in the backlog and its length is larger than
+         * the screen, spanning multiple lines */
+        if (((!cell.att.autowrapped) && (*y) >= 0)
+            || (w < ty->w))
+          goto empty;
+     }
+   else
+     {
+        cells = termpty_cellrow_get(ty, *y, &w);
+        if (!cells || !w)
+          goto bad;
+        if ((*x) >= w)
+          goto empty;
 
-   cell = cells[*x];
+        cell = cells[*x];
+     }
    if ((cell.codepoint == 0) && (cell.att.dblwidth))
      {
         (*x)--;
@@ -128,15 +146,15 @@ _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
      }
 
    if (cell.codepoint == 0)
-     {
-        txt[0] = '\0';
-        *txtlenp = 0;
-     }
-   else
-     {
-        *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
-     }
+     goto empty;
 
+   *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+
+   return 0;
+
+empty:
+   txt[0] = '\0';
+   *txtlenp = 0;
    return 0;
 
 bad:
@@ -156,9 +174,16 @@ _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
    cells = termpty_cellrow_get(ty, *y, &w);
    if (!cells || !w)
      goto bad;
-   if (*x >= w)
+   if ((*x) >= w)
      {
         (*y)++;
+        if ((*x) <= ty->w)
+          {
+             cell = cells[w-1];
+             if (!cell.att.autowrapped)
+               goto empty;
+          }
+
         *x = 0;
         cells = termpty_cellrow_get(ty, *y, &w);
         if (!cells || !w)
@@ -171,6 +196,9 @@ _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
         (*x)++;
         if (*x >= w)
           {
+             cell = cells[w-1];
+             if (!cell.att.autowrapped && w == ty->w)
+               goto empty;
              (*y)++;
              *x = 0;
              cells = termpty_cellrow_get(ty, *y, &w);
@@ -182,15 +210,15 @@ _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
 
    cell = cells[*x];
    if (cell.codepoint == 0)
-     {
-        txt[0] = '\0';
-        *txtlenp = 0;
-     }
-   else
-     {
-        *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
-     }
+     goto empty;
 
+   *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+
+   return 0;
+
+empty:
+   txt[0] = '\0';
+   *txtlenp = 0;
    return 0;
 
 bad:
