@@ -913,6 +913,25 @@ _cb_ctxp_link_open(void *data,
 }
 
 static void
+_cb_ctxp_link_content_copy(void *data,
+                           Evas_Object *obj,
+                           void *event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Termio *sd = evas_object_smart_data_get(term);
+   const char *raw_link;
+   size_t len;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   raw_link = termio_selection_get(term, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+
+   _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
+
+   sd->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+static void
 _cb_ctxp_link_copy(void *data,
                    Evas_Object *obj,
                    void *_event EINA_UNUSED)
@@ -946,6 +965,9 @@ _cb_link_down(void *data,
    else if (ev->button == 3)
      {
         Evas_Object *ctxp;
+        Eina_Bool absolut = EINA_FALSE;
+        const char *raw_link;
+        size_t len;
 
         if (sd->pty->selection.is_active)
           {
@@ -972,8 +994,22 @@ _cb_link_down(void *data,
           }
         elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
                                  sd->self);
-        elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_link_copy,
-                                 sd->self);
+        raw_link = termio_selection_get(sd->self, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+
+        if (len > 0 && raw_link[0] == '/')
+          absolut = EINA_TRUE;
+
+        if (!absolut && !link_is_url(raw_link))
+          {
+             elm_ctxpopup_item_append(ctxp, _("Copy relative path"), NULL, _cb_ctxp_link_content_copy,
+                                      sd->self);
+             elm_ctxpopup_item_append(ctxp, _("Copy full path"), NULL, _cb_ctxp_link_copy,
+                                      sd->self);
+          }
+        else
+          {
+              elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_link_copy, sd->self);
+          }
         evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
         evas_object_show(ctxp);
         evas_object_smart_callback_add(ctxp, "dismissed",
