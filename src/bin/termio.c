@@ -966,7 +966,7 @@ _cb_link_down(void *data,
      {
         Evas_Object *ctxp;
         Eina_Bool absolut = EINA_FALSE;
-        const char *raw_link;
+        char *raw_link;
         size_t len;
 
         if (sd->pty->selection.is_active)
@@ -1016,6 +1016,7 @@ _cb_link_down(void *data,
                                        _cb_ctxp_dismissed, sd);
         evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
                                        _cb_ctxp_del, sd);
+        free(raw_link);
      }
 }
 
