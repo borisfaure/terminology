@@ -596,11 +596,11 @@ collections {
             action: SIGNAL_EMIT "tabcount,go" "terminology";
          }
          program {
-            signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
+            signal: "mouse,wheel,0,1"; source: "tabcount_ev";
             action: SIGNAL_EMIT "tabcount,prev" "terminology";
          }
          program {
-            signal: "mouse,wheel,0,1"; source: "tabcount_ev";
+            signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
             action: SIGNAL_EMIT "tabcount,next" "terminology";
          }
          program {

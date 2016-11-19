@@ -4311,13 +4311,6 @@ term_new(Win *wn, Config *config, const char *cmd,
 
    o = term->termio;
 
-   edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
-                                   _cb_popmedia_done, term);
-   edje_object_signal_callback_add(term->bg, "tabcount,prev", "terminology",
-                                   _cb_tabcount_prev, term);
-   edje_object_signal_callback_add(term->bg, "tabcount,next", "terminology",
-                                   _cb_tabcount_next, term);
-
    evas_object_size_hint_weight_set(o, 0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, 0, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
