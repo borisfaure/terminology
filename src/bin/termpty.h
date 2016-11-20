@@ -96,6 +96,8 @@ struct _Termpty
    unsigned char oldbuf[4];
    Termsave *back;
    size_t backsize, backpos;
+   /* this beacon in the backlog tells about the top line in screen
+    * coordinates that maps to a line in the backlog */
    struct {
         int screen_y;
         int backlog_y;

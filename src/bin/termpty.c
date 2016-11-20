@@ -845,21 +845,18 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
         Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (*scroll <= screen_y)
-          {
-             return;
-          }
         if (!ts->cells || backlog_y >= (int)ty->backsize)
           {
              *scroll = ty->backlog_beacon.screen_y;
              return;
           }
-
         nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
         ty->backlog_beacon.screen_y = screen_y;
         ty->backlog_beacon.backlog_y = backlog_y;
         screen_y += nb_lines;
         backlog_y++;
+        if (*scroll <= screen_y)
+          return;
      }
 }
 
@@ -868,50 +865,69 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
 {
    int backlog_y = ty->backlog_beacon.backlog_y;
    int screen_y = ty->backlog_beacon.screen_y;
-   Eina_Bool going_forward = EINA_TRUE;
+   Termsave *ts;
+   int nb_lines;
 
    requested_y = -requested_y;
 
    /* check if going from 0,0 is faster than using the beacon */
    if (screen_y - requested_y > requested_y)
      {
-        backlog_y = 1;
-        screen_y = 1;
+        ty->backlog_beacon.backlog_y = 0;
+        ty->backlog_beacon.screen_y = 0;
      }
-   while (42) {
-        Termsave *ts;
-        int nb_lines;
 
+   /* going upward */
+   while (requested_y >= screen_y)
+     {
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (!ts->cells)
-          return NULL;
-        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
-        if (!going_forward) {
-             screen_y -= nb_lines;
-        }
-
-        if ((screen_y <= requested_y) && (requested_y < screen_y + nb_lines))
+        if (!ts->cells || backlog_y >= (int)ty->backsize)
           {
-             int delta = screen_y + nb_lines - 1 - requested_y;
+             return NULL;
+          }
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+
+        ty->backlog_beacon.screen_y = screen_y;
+        ty->backlog_beacon.backlog_y = backlog_y;
+
+        if ((screen_y - nb_lines < requested_y) && (requested_y <= screen_y))
+          {
+             /* found the line */
+             int delta = screen_y - requested_y;
              *wret = ts->w - delta * ty->w;
              if (*wret > ts->w)
                *wret = ts->w;
-             ty->backlog_beacon.screen_y = screen_y;
-             ty->backlog_beacon.backlog_y = backlog_y;
              return &ts->cells[delta * ty->w];
           }
+        screen_y += nb_lines;
+        backlog_y++;
+     }
+   /* else, going downward */
+   while (requested_y <= screen_y)
+     {
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells)
+          {
+             return NULL;
+          }
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
 
-        if (requested_y > screen_y)
+        ty->backlog_beacon.screen_y = screen_y;
+        ty->backlog_beacon.backlog_y = backlog_y;
+
+
+        if ((screen_y - nb_lines < requested_y) && (requested_y <= screen_y))
           {
-             screen_y += nb_lines;
-             backlog_y++;
+             /* found the line */
+             int delta = screen_y - requested_y;
+             *wret = ts->w - delta * ty->w;
+             if (*wret > ts->w)
+               *wret = ts->w;
+             return &ts->cells[delta * ty->w];
           }
-        else
-          {
-             backlog_y--;
-             going_forward = EINA_FALSE;
-          }
-   }
+        screen_y -= nb_lines;
+        backlog_y--;
+     }
 
    return NULL;
 }
@@ -1165,8 +1181,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    termpty_backlog_unlock();
 
-   ty->backlog_beacon.backlog_y = 1;
-   ty->backlog_beacon.screen_y = 1;
+   ty->backlog_beacon.backlog_y = 0;
+   ty->backlog_beacon.screen_y = 0;
 
    return;
 
