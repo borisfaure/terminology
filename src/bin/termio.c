@@ -999,7 +999,9 @@ _cb_link_down(void *data,
         if (len > 0 && raw_link[0] == '/')
           absolut = EINA_TRUE;
 
-        if (!absolut && !link_is_url(raw_link))
+        if (!absolut &&
+            !link_is_url(raw_link) &&
+            !link_is_email(raw_link))
           {
              elm_ctxpopup_item_append(ctxp, _("Copy relative path"), NULL, _cb_ctxp_link_content_copy,
                                       sd->self);
