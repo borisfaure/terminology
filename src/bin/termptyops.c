@@ -176,9 +176,23 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              continue;
           }
+        if (EINA_UNLIKELY(g >= 0x300 && g <=0x36f))
+          {
+             /* combining chars */
+             if (EINA_UNLIKELY(g == 0x336))
+               {
+                  ty->termstate.combining_strike = 1;
+               }
+             continue;
+          }
 
         termpty_cell_codepoint_att_fill(ty, g, ty->termstate.att,
                                         &(cells[ty->cursor_state.cx]), 1);
+        if (EINA_UNLIKELY(ty->termstate.combining_strike))
+          {
+             ty->termstate.combining_strike = 0;
+             cells[ty->cursor_state.cx].att.strike = 1;
+          }
         cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (ty->w - 1))))
           {

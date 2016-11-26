@@ -151,6 +151,7 @@ struct _Termpty
         unsigned int  no_autorepeat : 1;
         unsigned int  cjk_ambiguous_wide : 1;
         unsigned int  hide_cursor : 1;
+        unsigned int  combining_strike : 1;
    } termstate;
    struct {
         int           cx, cy;
