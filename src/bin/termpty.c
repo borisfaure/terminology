@@ -500,10 +500,13 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 
         if (ioctl(ty->slavefd, TIOCSCTTY, NULL) < 0) exit(1);
 
-        close(ty->fd);
         close(ty->slavefd);
+        close(ty->fd);
 
-        /* TODO: should we reset signals here? */
+        /* Unset env variables that no longer apply */
+        unsetenv("TERMCAP");
+        unsetenv("COLUMNS");
+        unsetenv("LINES");
 
         /* pretend to be xterm */
         if (xterm_256color)
