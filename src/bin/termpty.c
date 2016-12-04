@@ -212,7 +212,7 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         len = read(ty->fd, rbuf, len);
         if (len < 0 && errno != EAGAIN)
           {
-             ERR("error while reading from tty slave fd");
+             ERR("error while reading from tty slave fd: %s", strerror(errno));
              break;
           }
         if (len <= 0) break;
