@@ -157,33 +157,6 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_cb_exe_exit(void *data,
-             int _type EINA_UNUSED,
-             void *event)
-{
-   Ecore_Exe_Event_Del *ev = event;
-   Termpty *ty = data;
-
-   if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
-   ty->exit_code = ev->exit_code;
-   
-   ty->pid = -1;
-
-   if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
-   ty->hand_exe_exit = NULL;
-   if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
-   ty->hand_fd = NULL;
-   if (ty->fd >= 0) close(ty->fd);
-   ty->fd = -1;
-   if (ty->slavefd >= 0) close(ty->slavefd);
-   ty->slavefd = -1;
-
-   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
-   
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
 _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Termpty *ty = data;
@@ -212,11 +185,14 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         len = read(ty->fd, rbuf, len);
         if (len < 0 && errno != EAGAIN)
           {
-             ERR("error while reading from tty slave fd: %s", strerror(errno));
-             break;
+             /* Do not print error if the child has exited */
+             if (ty->pid != -1)
+               {
+                  ERR("error while reading from tty slave fd: %s", strerror(errno));
+               }
+             return ECORE_CALLBACK_CANCEL;
           }
         if (len <= 0) break;
-
 
         for (i = 0; i < (int)sizeof(ty->oldbuf); i++)
           ty->oldbuf[i] = 0;
@@ -298,6 +274,43 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+_cb_exe_exit(void *data,
+             int _type EINA_UNUSED,
+             void *event)
+{
+   Ecore_Exe_Event_Del *ev = event;
+   Termpty *ty = data;
+   Eina_Bool res;
+
+   if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
+   ty->exit_code = ev->exit_code;
+
+   ty->pid = -1;
+
+   if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+   ty->hand_exe_exit = NULL;
+
+   /* Read everything till the end */
+   do
+     {
+        res = _cb_fd_read(ty, ty->hand_fd);
+     }
+   while (res != ECORE_CALLBACK_CANCEL);
+
+   if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+   ty->hand_fd = NULL;
+   if (ty->fd >= 0) close(ty->fd);
+   ty->fd = -1;
+   if (ty->slavefd >= 0) close(ty->slavefd);
+   ty->slavefd = -1;
+
+   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 
 static void
 _limit_coord(Termpty *ty)
@@ -422,6 +435,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         ERR(_("open() of pty '%s' failed: %s"), pty, strerror(errno));
         goto err;
      }
+
    mode = fcntl(ty->fd, F_GETFL, 0);
    if (mode < 0)
      {
@@ -467,6 +481,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         ERR("event handler add failed");
         goto err;
      }
+
    ty->pid = fork();
    if (ty->pid < 0)
      {
@@ -538,11 +553,15 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
           }
         exit(127); /* same as system() for failed commands */
      }
+   close(ty->slavefd);
+   ty->slavefd = -1;
+
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd, ECORE_FD_READ,
                                            _cb_fd_read, ty,
                                            NULL, NULL);
-   close(ty->slavefd);
-   ty->slavefd = -1;
+   /* ensure we're not missing a read */
+   _cb_fd_read(ty, ty->hand_fd);
+
    _pty_size(ty);
    termpty_save_register(ty);
    return ty;
