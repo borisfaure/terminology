@@ -475,7 +475,6 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
      }
    if (!ty->pid)
      {
-        int i;
         char buf[256];
 
         if (cd)
@@ -493,10 +492,6 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         DBG("exec %s %s %s %s", NC(0), NC(1), NC(2), NC(3));
 #undef NC
 
-        for (i = 0; i < 100; i++)
-          {
-             if (i != ty->slavefd) close(i);
-          }
         setsid();
 
         dup2(ty->slavefd, 0);
