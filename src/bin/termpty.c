@@ -955,11 +955,7 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
              return &ts->cells[delta * ty->w];
           }
         backlog_y++;
-     }
-     {
-        ty->backlog_beacon.screen_y = screen_y;
-        ty->backlog_beacon.backlog_y = backlog_y;
-        verify_beacon(ty, 1);
+        first_loop = EINA_FALSE;
      }
    /* else, going downward */
    while (requested_y <= screen_y)
