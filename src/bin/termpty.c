@@ -293,11 +293,11 @@ _cb_exe_exit(void *data,
    ty->hand_exe_exit = NULL;
 
    /* Read everything till the end */
-   do
+   res = ECORE_CALLBACK_PASS_ON;
+   while (ty->hand_fd && res != ECORE_CALLBACK_CANCEL)
      {
         res = _cb_fd_read(ty, ty->hand_fd);
      }
-   while (res != ECORE_CALLBACK_CANCEL);
 
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
    ty->hand_fd = NULL;
