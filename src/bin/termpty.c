@@ -169,6 +169,8 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         ERR("error while reading from tty slave fd");
         return ECORE_CALLBACK_CANCEL;
      }
+   if (ty->fd == -1)
+     return ECORE_CALLBACK_CANCEL;
 
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
@@ -190,6 +192,10 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
                {
                   ERR("error while reading from tty slave fd: %s", strerror(errno));
                }
+             close(ty->fd);
+             ty->fd = -1;
+             if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+             ty->hand_fd = NULL;
              return ECORE_CALLBACK_CANCEL;
           }
         if (len <= 0) break;
@@ -584,7 +590,11 @@ termpty_free(Termpty *ty)
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
    if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
    if (ty->block.active) eina_list_free(ty->block.active);
-   if (ty->fd >= 0) close(ty->fd);
+   if (ty->fd >= 0)
+     {
+        close(ty->fd);
+        ty->fd = -1;
+     }
    if (ty->slavefd >= 0) close(ty->slavefd);
    if (ty->pid >= 0)
      {
