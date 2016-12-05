@@ -184,8 +184,10 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
              rbuf++;
              len--;
           }
+        errno = 0;
         len = read(ty->fd, rbuf, len);
-        if (len < 0 && errno != EAGAIN)
+        if ((len < 0 && errno != EAGAIN) ||
+            (len == 0 && errno != 0))
           {
              /* Do not print error if the child has exited */
              if (ty->pid != -1)
