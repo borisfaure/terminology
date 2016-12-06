@@ -172,6 +172,13 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
    if (ty->fd == -1)
      return ECORE_CALLBACK_CANCEL;
 
+/* it seems the BSDs can not read from this side of the pair if the other side
+ * is closed */
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+   if (ty->pid == -1)
+       return ECORE_CALLBACK_CANCEL;
+#endif
+
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
      {
