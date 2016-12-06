@@ -1148,10 +1148,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
        effective_old_h;
    int altbuf = 0;
    struct screen_info new_si = {.screen = NULL};
-
    if ((ty->w == new_w) && (ty->h == new_h)) return;
-   if ((new_w == new_h) && (new_w == 1)) return; // FIXME: something weird is
-                                                 // going on at term init
 
    termpty_backlog_lock();
 
