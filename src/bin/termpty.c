@@ -157,9 +157,8 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
+_fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
 {
-   Termpty *ty = data;
    char buf[4097];
    Eina_Unicode codepoint[4097];
    int len, i, j, k, reads;
@@ -286,8 +285,14 @@ _cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
         return ECORE_CALLBACK_CANCEL;
      }
 #endif
-
+   if ((false_on_empty) && (len <= 0)) return ECORE_CALLBACK_CANCEL;
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   return _fd_read_do(data, fd_handler, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -311,7 +316,7 @@ _cb_exe_exit(void *data,
    res = ECORE_CALLBACK_PASS_ON;
    while (ty->hand_fd && res != ECORE_CALLBACK_CANCEL)
      {
-        res = _cb_fd_read(ty, ty->hand_fd);
+        res = _fd_read_do(ty, ty->hand_fd, EINA_TRUE);
      }
 
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
