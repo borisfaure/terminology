@@ -2131,12 +2131,6 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                     }
                   break;
                }
-             else if (cells[x].att.tab)
-               {
-                  if (ty_sb_add(&sb, "\t", 1) < 0) goto err;
-                  x = ((x + 8) / 8) * 8;
-                  x--; /* counter the ++ of the for loop */
-               }
              else if (cells[x].codepoint == 0)
                {
                   if (last0 < 0) last0 = x;
