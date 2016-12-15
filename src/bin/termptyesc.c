@@ -1077,35 +1077,30 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
  */
       case 'g': // clear tabulation
+        /* TODO: handle correctly */
         arg = _csi_arg_get(&b);
         DBG("Tabulation Clear (TBC): %d", arg);
         break;
-       case 'Z': // Cursor Back Tab
+       case 'Z':
        {
-          int idx, size, cx = ty->cursor_state.cx, cy = ty->cursor_state.cy;
+          int cx = ty->cursor_state.cx, cy = ty->cursor_state.cy;
 
           arg = _csi_arg_get(&b);
+          DBG("Cursor Backward Tabulation (CBT): %d", arg);
           if (arg < 1) arg = 1;
 
-          size = ty->w * cy + cx + 1;
-          for (idx = size - 1; idx >= 0; idx--)
+          for (; arg > 0; arg--)
             {
-               if (TERMPTY_SCREEN(ty, cx, cy).att.tab) arg--;
-               cx--;
-               if (cx < 0)
+               do
                  {
-                    cx = ty->w - 1;
-                    cy--;
+                    cx--;
                  }
-               if (!arg) break;
+               while ((cx >= 0) &&
+                      ((!TERMPTY_SCREEN(ty, cx, cy).att.tab) && (cx % 8 != 0)));
             }
-          if (!arg)
-            {
-               ty->cursor_state.cx = cx;
-               TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-               ty->cursor_state.cy = cy;
-               TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-            }
+
+          ty->cursor_state.cx = cx;
+          TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
        }
        break;
       default:

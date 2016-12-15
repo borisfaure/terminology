@@ -1507,8 +1507,10 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
 
    for (i = 0; i < n; i++)
      {
+        int had_tabmarker = dst[i].att.tab;
         _handle_block_codepoint_overwrite(ty, dst[i].codepoint, codepoint);
         dst[i] = local;
+        dst[i].att.tab = had_tabmarker;
      }
 }
 
