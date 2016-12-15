@@ -1660,16 +1660,19 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->termstate.alt_kp = 0;
         return 1;
       case 'M': // move to prev line
+        DBG("move to prev line");
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy--;
         termpty_text_scroll_rev_test(ty, EINA_TRUE);
         return 1;
       case 'D': // move to next line
+        DBG("move to next line");
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy++;
         termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
       case 'E': // add \n\r
+        DBG("add \\n\\r");
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx = 0;
         ty->cursor_state.cy++;
