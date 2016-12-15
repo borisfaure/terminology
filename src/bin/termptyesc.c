@@ -1747,7 +1747,9 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         termpty_cursor_copy(ty, EINA_FALSE);
         return 1;
       case 'H': // set tab at current column
-        DBG("Character Tabulation Set (HTS)");
+        DBG("Character Tabulation Set (HTS) at x:%d y:%d",
+            ty->cursor_state.cx, ty->cursor_state.cy);
+        TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
         return 1;
 /*
       case 'G': // query gfx mode
