@@ -115,6 +115,24 @@ _csi_arg_get(Eina_Unicode **ptr)
 }
 
 static void
+_tab_forward(Termpty *ty, int n)
+{
+   int cx = ty->cursor_state.cx;
+
+   for (; n > 0; n--)
+     {
+        do
+          {
+             cx++;
+          }
+        while ((cx < ty->w) && (!TAB_TEST(ty, cx)));
+     }
+
+   ty->cursor_state.cx = cx;
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+}
+
+static void
 _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 {
    switch (*cc)
@@ -132,12 +150,8 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          return;
       case 0x09: // HT  '\t' (horizontal tab)
          DBG("->HT");
+         _tab_forward(ty, 1);
          ty->termstate.had_cr = 0;
-         //TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
-         ty->termstate.wrapnext = 0;
-         ty->cursor_state.cx += 8;
-         ty->cursor_state.cx = (ty->cursor_state.cx / 8) * 8;
-         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
          return;
       case 0x0a: // LF  '\n' (new line)
       case 0x0b: // VT  '\v' (vertical tab)
@@ -1093,29 +1107,35 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
           }
         break;
-       case 'Z':
-       {
-          int cx = ty->cursor_state.cx;
+      case 'Z':
+          {
+             int cx = ty->cursor_state.cx;
 
-          arg = _csi_arg_get(&b);
-          DBG("Cursor Backward Tabulation (CBT): %d", arg);
-          if (arg < 1) arg = 1;
+             arg = _csi_arg_get(&b);
+             DBG("Cursor Backward Tabulation (CBT): %d", arg);
+             if (arg < 1) arg = 1;
 
-          for (; arg > 0; arg--)
-            {
-               do
-                 {
-                    cx--;
-                 }
-               while ((cx >= 0) && (!TAB_TEST(ty, cx)));
-            }
+             for (; arg > 0; arg--)
+               {
+                  do
+                    {
+                       cx--;
+                    }
+                  while ((cx >= 0) && (!TAB_TEST(ty, cx)));
+               }
 
-          ty->cursor_state.cx = cx;
-          TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-       }
-       break;
+             ty->cursor_state.cx = cx;
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+          }
+        break;
+      case 'I':
+        arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 1;
+        DBG("Cursor Forward Tabulation (CHT): %d", arg);
+        _tab_forward(ty, arg);
+        break;
       default:
-       goto unhandled;
+        goto unhandled;
      }
    cc++;
    return cc - c;
