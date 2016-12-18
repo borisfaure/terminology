@@ -28,4 +28,14 @@ extern int _log_domain;
 # define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
 
+#ifndef DIV_ROUND_UP
+# define DIV_ROUND_UP(_v, _n) \
+     (((_v) + (_n) - 1) / (_n))
+#endif
+
+#ifndef ROUND_UP
+# define ROUND_UP(_v, _n) \
+     (DIV_ROUND_UP((_v), (_n)) * (_n))
+#endif
+
 #endif
