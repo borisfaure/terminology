@@ -265,6 +265,15 @@ termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
 }
 
 void
+termpty_clear_tabs_on_screen(Termpty *ty)
+{
+   memset(ty->tabs, 0,
+          DIV_ROUND_UP(ty->w, sizeof(unsigned int) * 8u)
+          * sizeof(unsigned int));
+}
+
+
+void
 termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 {
    Termcell *cells;
@@ -352,7 +361,6 @@ termpty_reset_att(Termatt *att)
    att->bgintense = 0;
    att->autowrapped = 0;
    att->newline = 0;
-   att->tab = 0;
    att->fraktur = 0;
 }
 
@@ -360,6 +368,7 @@ void
 termpty_reset_state(Termpty *ty)
 {
    int backsize;
+   int i;
 
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
@@ -397,9 +406,9 @@ termpty_reset_state(Termpty *ty)
    termpty_backlog_lock();
    if (ty->back)
      {
-        size_t i;
-        for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(&ty->back[i]);
+        size_t j;
+        for (j = 0; j < ty->backsize; j++)
+          termpty_save_free(&ty->back[j]);
         free(ty->back);
         ty->back = NULL;
      }
@@ -408,6 +417,12 @@ termpty_reset_state(Termpty *ty)
    ty->backsize = 0;
    termpty_backlog_size_set(ty, backsize);
    termpty_backlog_unlock();
+
+   termpty_clear_tabs_on_screen(ty);
+   for (i = 0; i < ty->w; i += TAB_WIDTH)
+     {
+        TAB_SET(ty, i);
+     }
 }
 
 void

@@ -133,7 +133,7 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
       case 0x09: // HT  '\t' (horizontal tab)
          DBG("->HT");
          ty->termstate.had_cr = 0;
-         TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
+         //TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
          ty->termstate.wrapnext = 0;
          ty->cursor_state.cx += 8;
          ty->cursor_state.cx = (ty->cursor_state.cx / 8) * 8;
@@ -1077,13 +1077,25 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
  */
       case 'g': // clear tabulation
-        /* TODO: handle correctly */
         arg = _csi_arg_get(&b);
-        DBG("Tabulation Clear (TBC): %d", arg);
+        if (arg < 0) arg = 0;
+        if (arg == 0)
+          {
+             int cx = ty->cursor_state.cx;
+             TAB_UNSET(ty, cx);
+          }
+        else if (arg == 3)
+          {
+             termpty_clear_tabs_on_screen(ty);
+          }
+        else
+          {
+             ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
+          }
         break;
        case 'Z':
        {
-          int cx = ty->cursor_state.cx, cy = ty->cursor_state.cy;
+          int cx = ty->cursor_state.cx;
 
           arg = _csi_arg_get(&b);
           DBG("Cursor Backward Tabulation (CBT): %d", arg);
@@ -1095,8 +1107,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                  {
                     cx--;
                  }
-               while ((cx >= 0) &&
-                      ((!TERMPTY_SCREEN(ty, cx, cy).att.tab) && (cx % 8 != 0)));
+               while ((cx >= 0) && (!TAB_TEST(ty, cx)));
             }
 
           ty->cursor_state.cx = cx;
@@ -1747,9 +1758,8 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         termpty_cursor_copy(ty, EINA_FALSE);
         return 1;
       case 'H': // set tab at current column
-        DBG("Character Tabulation Set (HTS) at x:%d y:%d",
-            ty->cursor_state.cx, ty->cursor_state.cy);
-        TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy).att.tab = 1;
+        DBG("Character Tabulation Set (HTS) at x:%d", ty->cursor_state.cx);
+        TAB_SET(ty, ty->cursor_state.cx);
         return 1;
 /*
       case 'G': // query gfx mode

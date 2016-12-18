@@ -63,13 +63,12 @@ struct _Termatt
    // below used for working out text from selections
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
-   unsigned short tab : 1;
    unsigned short fraktur : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
-   unsigned short bit_padding : 13;
-#else
    unsigned short bit_padding : 14;
+#else
+   unsigned short bit_padding : 15;
 #endif
 };
 
@@ -89,6 +88,7 @@ struct _Termpty
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;
+   unsigned int *tabs;
    int circular_offset;
    int circular_offset2;
    Eina_Unicode *buf;
@@ -264,7 +264,7 @@ extern int _termpty_log_dom;
 #define TERMPTY_SCREEN(Tpty, X, Y) \
   Tpty->screen[X + (((Y + Tpty->circular_offset) % Tpty->h) * Tpty->w)]
 #define TERMPTY_FMTCLR(Tatt) \
-   (Tatt).autowrapped = (Tatt).newline = (Tatt).tab = 0
+   (Tatt).autowrapped = (Tatt).newline = 0
 
 #define TERMPTY_RESTRICT_FIELD(Field, Min, Max) \
    do {                                         \

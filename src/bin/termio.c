@@ -2181,8 +2181,7 @@ termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
                          }
                        if (((cells[x].codepoint != 0) &&
                             (cells[x].codepoint != ' ')) ||
-                           (cells[x].att.newline) ||
-                           (cells[x].att.tab))
+                           (cells[x].att.newline))
                          {
                             have_more = EINA_TRUE;
                             break;

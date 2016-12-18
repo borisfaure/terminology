@@ -22,7 +22,26 @@ void termpty_clear_all(Termpty *ty);
 void termpty_reset_att(Termatt *att);
 void termpty_reset_state(Termpty *ty);
 void termpty_cursor_copy(Termpty *ty, Eina_Bool save);
+void termpty_clear_tabs_on_screen(Termpty *ty);
 
 #define _term_txt_write(ty, txt) termpty_write(ty, txt, sizeof(txt) - 1)
+
+#define TAB_WIDTH 8u
+
+#define  TAB_SET(ty, col) \
+   do { \
+        ty->tabs[col / sizeof(unsigned int) / 8] |= \
+            1u << (col % (sizeof(unsigned int) * 8)); \
+   } while (0)
+
+#define  TAB_UNSET(ty, col) \
+   do { \
+        ty->tabs[col / sizeof(unsigned int) / 8] &= \
+            ~(1u << (col % (sizeof(unsigned int) * 8))); \
+   } while (0)
+
+#define  TAB_TEST(ty, col) \
+   (ty->tabs[col / sizeof(unsigned int) / 8] & \
+    (1u << (col % (sizeof(unsigned int) * 8))))
 
 #endif
