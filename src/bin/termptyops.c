@@ -267,9 +267,12 @@ termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
 void
 termpty_clear_tabs_on_screen(Termpty *ty)
 {
-   memset(ty->tabs, 0,
-          DIV_ROUND_UP(ty->w, sizeof(unsigned int) * 8u)
-          * sizeof(unsigned int));
+   if (ty->tabs)
+     {
+        memset(ty->tabs, 0,
+               DIV_ROUND_UP(ty->w, sizeof(unsigned int) * 8u)
+               * sizeof(unsigned int));
+     }
 }
 
 
