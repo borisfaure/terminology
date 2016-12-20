@@ -980,30 +980,56 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              termpty_write(ty, bf, strlen(bf));
           }
         break;
-      case 'J': // "2j" erases the screen, 1j erase from screen start to curs, 0j erase cursor to end of screen
-        DBG("2j erases the screen, 1j erase from screen start to curs, 0j erase cursor to end of screen");
-        arg = _csi_arg_get(&b);
-        if (b)
+      case 'J':
+        if (*b == '?')
           {
-             if ((arg >= TERMPTY_CLR_END) && (arg <= TERMPTY_CLR_ALL))
-               termpty_clear_screen(ty, arg);
-             else
-               WRN("invalid clr scr %i", arg);
+             b++;
+             arg = _csi_arg_get(&b);
+             WRN("Unsupported selected erase in display %d", arg);
           }
         else
-          termpty_clear_screen(ty, TERMPTY_CLR_END);
+          arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 0;
+        /* 3J erases the backlog,
+         * 2J erases the screen,
+         * 1J erase from screen start to cursor,
+         * 0J erase form cursor to end of screen
+         */
+        DBG("ED/DECSED %d: erase in display", arg);
+        switch (arg)
+          {
+           case TERMPTY_CLR_END:
+           case TERMPTY_CLR_BEGIN:
+           case TERMPTY_CLR_ALL:
+              termpty_clear_screen(ty, arg);
+              break;
+           case 3:
+              termpty_clear_backlog(ty);
+              break;
+           default:
+              ERR("invalid EL/DECSEL argument %d", arg);
+          }
         break;
       case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
-        arg = _csi_arg_get(&b);
-        DBG("0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line: %d", arg);
-        if (b)
+        if (*b == '?')
           {
-             if ((arg >= TERMPTY_CLR_END) && (arg <= TERMPTY_CLR_ALL))
-               termpty_clear_line(ty, arg, ty->w);
-             else
-               WRN("invalid clr lin %i", arg);
+             b++;
+             arg = _csi_arg_get(&b);
+             WRN("Unsupported selected erase in line %d", arg);
           }
-        else termpty_clear_line(ty, TERMPTY_CLR_END, ty->w);
+        arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 0;
+        DBG("EL/DECSEL %d: erase in line", arg);
+        switch (arg)
+          {
+           case TERMPTY_CLR_END:
+           case TERMPTY_CLR_BEGIN:
+           case TERMPTY_CLR_ALL:
+              termpty_clear_line(ty, arg, ty->w);
+              break;
+           default:
+              ERR("invalid EL/DECSEL argument %d", arg);
+          }
         break;
       case 'h':
       case 'l':
