@@ -2351,7 +2351,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
              len = strlen(sd->link.string);
              s = strndup(sd->link.string, len);
           }
-        return EINA_FALSE;
+        goto end;
      }
 
    if (sd->pty->selection.is_box)
@@ -2384,6 +2384,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
                                  EINA_TRUE);
      }
 
+end:
    if (s)
      {
         if ((sd->win) && (len > 0))
