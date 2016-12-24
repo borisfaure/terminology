@@ -375,6 +375,38 @@ _termpty_resize_tabs(Termpty *ty, int new_w)
       }
 }
 
+static Eina_Bool
+_is_shell_valid(const char *cmd)
+{
+    struct stat st;
+
+   if (!cmd)
+     return EINA_FALSE;
+   if (cmd[0] == '\0')
+     return EINA_FALSE;
+   if (cmd[0] != '/')
+     {
+        ERR("shell command '%s' is not an absolute path", cmd);
+        return EINA_FALSE;
+     }
+   if (stat(cmd, &st) != 0)
+     {
+        ERR("shell command '%s' can not be stat(): %s", cmd, strerror(errno));
+        return EINA_FALSE;
+     }
+   if ((st.st_mode & S_IFMT) != S_IFREG)
+     {
+        ERR("shell command '%s' is not a regular file", cmd);
+        return EINA_FALSE;
+     }
+   if ((st.st_mode & S_IXOTH) == 0)
+     {
+        ERR("shell command '%s' is not executable", cmd);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
             int w, int h, int backscroll, Eina_Bool xterm_256color,
@@ -435,6 +467,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    if (needs_shell)
      {
         shell = getenv("SHELL");
+        if (!_is_shell_valid(shell))
+          shell = NULL;
         if (!shell)
           {
              uid_t uid = getuid();
