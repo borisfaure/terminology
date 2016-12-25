@@ -361,6 +361,20 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
              goforward = EINA_FALSE;
              break;
           }
+        switch (txt[0])
+          {
+           case '"':
+           case '\'':
+           case '`':
+           case '<':
+           case '>':
+           case '[':
+           case ']':
+           case '{':
+           case '}':
+           case '|':
+             goto out;
+          }
 
         res = ty_sb_add(&sb, txt, txtlen);
         if (res < 0) goto end;
@@ -381,6 +395,7 @@ termio_link_find(Evas_Object *obj, int cx, int cy,
         y2 = new_y2;
      }
 
+out:
    if (sb.len)
      {
         Eina_Bool is_file = _is_file(sb.buf);
