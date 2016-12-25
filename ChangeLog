@@ -1,3 +1,19 @@
+2016-12-31
+        * Release v1.0.0
+        * Bold/Italic support (on by default)
+        * Add keybinding shift+home to go to the top of the backlog
+        * Add keybinding shift+end to reset scroll
+        * Add keybinding shift+left/right to switch between tabs
+        * Add keybinding ctrl+alt+t to change terminal's title
+        * Add ability to copy links on right-click menu
+        * Font size can be changed by escape sequence
+        * Rewrite link detection to be more efficient
+        * Sanitize SHELL environment variable when using it
+        * Fix selections
+        * Fixes about escape sequences managing tabs
+        * Many fixes
+
+
 2015-09-17
         * Release v0.9.1
         * Fix resizing issue
