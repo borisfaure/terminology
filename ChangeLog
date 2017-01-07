@@ -1,4 +1,5 @@
-2016-12-31
+2017-01-07
+
         * Release v1.0.0
         * Bold/Italic support (on by default)
         * Add keybinding shift+home to go to the top of the backlog
@@ -15,6 +16,7 @@
 
 
 2015-09-17
+
         * Release v0.9.1
         * Fix resizing issue
         * Fix solarized theme
