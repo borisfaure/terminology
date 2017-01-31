@@ -348,23 +348,23 @@ _limit_coord(Termpty *ty)
 }
 
 static void
-_termpty_resize_tabs(Termpty *ty, int new_w)
+_termpty_resize_tabs(Termpty *ty, int old_w, int new_w)
 {
     unsigned int *new_tabs;
     int i;
-    size_t nb_elems;
+    size_t nb_elems, n;
 
-    if (new_w == ty->w && ty->tabs)
-        return;
+    if ((new_w == old_w) && ty->tabs) return;
 
-    nb_elems = DIV_ROUND_UP(new_w, sizeof(unsigned int) * 8);
+    nb_elems = ROUND_UP(new_w, 8);
     new_tabs = calloc(nb_elems, sizeof(unsigned int));
-    if (!new_tabs)
-        return;
+    if (!new_tabs) return;
 
     if (ty->tabs)
       {
-         memcpy(new_tabs, ty->tabs, nb_elems * sizeof(unsigned int));
+         n = old_w;
+         if (nb_elems < n) n = nb_elems;
+         if (n > 0) memcpy(new_tabs, ty->tabs, n * sizeof(unsigned int));
          free(ty->tabs);
       }
 
@@ -442,8 +442,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         goto err;
      }
 
-   ty->tabs = NULL;
-   _termpty_resize_tabs(ty, w);
+   _termpty_resize_tabs(ty, 0, w);
 
    termpty_reset_state(ty);
 
@@ -1253,7 +1252,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
           }
      }
 
-   _termpty_resize_tabs(ty, new_w);
+   _termpty_resize_tabs(ty, old_w, new_w);
 
    if (effective_old_h <= ty->cursor_state.cy)
      effective_old_h = ty->cursor_state.cy + 1;
