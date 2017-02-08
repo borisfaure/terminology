@@ -377,9 +377,9 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down, NULL);
-        evas_object_event_callback_add(ct_over, EVAS_CALLBACK_DEL,
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_over_del, NULL);
-        
+
         ct_win = win;
         ct_bg = bg;
         ct_term = term;
