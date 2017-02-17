@@ -575,14 +575,34 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    if (!ty->pid)
      {
         char buf[256];
+        int ret;
 
         if (cd)
           {
-             if (chdir(cd) != 0)
+             ret = chdir(cd);
+             if (ret != 0)
                {
                   ERR(_("Could not change current directory to '%s': %s"),
                         cd, strerror(errno));
-                  exit(127);
+                  cd = getenv("HOME");
+                  if (cd)
+                    {
+                       ret = chdir(cd);
+                       if (ret != 0)
+                         {
+                            ERR(_("Could not change current directory to '%s': %s"),
+                                cd, strerror(errno));
+                         }
+                    }
+                  if (ret != 0)
+                    {
+                       cd = "/";
+                       if (chdir(cd) != 0)
+                         {
+                            ERR(_("Could not change current directory to '%s': %s"),
+                                cd, strerror(errno));
+                         }
+                    }
                }
           }
 
