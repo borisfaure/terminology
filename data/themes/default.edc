@@ -1137,7 +1137,10 @@ collections {
                fixed: 1 1;
             }
          }
-         part { name: "tabtitle"; type: TEXT; mouse_events: 0;
+         part {
+            name: "tabtitle";
+            type: TEXT;
+            mouse_events: 0;
             scale: 1;
             effect: SOFT_SHADOW BOTTOM;
             description { state: "default" 0.0;
@@ -1238,6 +1241,10 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+         }
+         program {
+            signal: "mouse,down,1,double"; source: "tabmiddle";
+            action: SIGNAL_EMIT "tab,title" "terminology";
          }
          program {
             signal: "mouse,clicked,1"; source: "tabclose";

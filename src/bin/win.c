@@ -1718,6 +1718,17 @@ _cb_tab_close(void *data,
 }
 
 static void
+_cb_tab_title(void *data,
+              Evas_Object *_obj EINA_UNUSED,
+              const char *_sig EINA_UNUSED,
+              const char *_src EINA_UNUSED)
+{
+   Term *term = data;
+
+   term_set_title(term);
+}
+
+static void
 _tabbar_fill(Tabs *tabs)
 {
    Eina_List *l;
@@ -1797,6 +1808,8 @@ _tabbar_fill(Tabs *tabs)
                                              _cb_tab_activate, tab_item);
              edje_object_signal_callback_add(o, "tab,close", "terminology",
                                              _cb_tab_close, term);
+             edje_object_signal_callback_add(o, "tab,title", "terminology",
+                                             _cb_tab_title, term);
           }
         j++;
      }
@@ -4025,6 +4038,8 @@ _term_bg_config(Term *term)
                                    _cb_tabcount_next, term);
    edje_object_signal_callback_add(term->bg, "tab,close", "terminology",
                                    _cb_tab_close, term);
+   edje_object_signal_callback_add(term->bg, "tab,title", "terminology",
+                                   _cb_tab_title, term);
    edje_object_part_swallow(term->base, "terminology.content", term->termio);
    edje_object_part_swallow(term->bg, "terminology.content", term->base);
    edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
