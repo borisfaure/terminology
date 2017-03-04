@@ -3792,11 +3792,11 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
 }
 
 static Eina_Bool
-_rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
+_rep_mouse_move(Termio *sd, int cx, int cy)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   int btn, meta;
+   int btn;
 
    if ((sd->pty->mouse_mode == MOUSE_OFF) ||
        (sd->pty->mouse_mode == MOUSE_X10) ||
@@ -3806,8 +3806,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
    if ((!sd->mouse.button) && (sd->pty->mouse_mode == MOUSE_NORMAL_BTN_MOVE))
      return EINA_FALSE;
 
-   btn = sd->mouse.button - 1;
-   meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+   btn = - 1;
 
    switch (sd->pty->mouse_ext)
      {
@@ -3818,7 +3817,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | meta | 32) + ' ';
+             buf[3] = btn + 32 + ' ';
              buf[4] = cx + 1 + ' ';
              buf[5] = cy + 1 + ' ';
              buf[6] = 0;
@@ -3834,7 +3833,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = (btn | meta | 32) + ' ';
+             buf[3] = btn + 32 + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -3858,7 +3857,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      (btn | meta | 32), cx + 1, cy + 1);
+                      btn + 32, cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -3867,7 +3866,7 @@ _rep_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev, int cx, int cy)
           {
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      (btn | meta | 32) + ' ',
+                      btn + 32  + ' ',
                       cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -4403,7 +4402,7 @@ _smart_cb_mouse_move(void *data,
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
    if (!shift && !ctrl)
-     if (_rep_mouse_move(sd, ev, cx, cy)) return;
+     if (_rep_mouse_move(sd, cx, cy)) return;
    if (sd->link.down.dnd)
      {
         sd->pty->selection.makesel = EINA_FALSE;
