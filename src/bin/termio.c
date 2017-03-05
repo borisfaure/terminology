@@ -3813,7 +3813,6 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
       case MOUSE_EXT_NONE:
         if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
-             if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
@@ -3829,7 +3828,6 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
           {
              int v, i;
 
-             if (btn > 2) btn = 0;
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
@@ -3864,7 +3862,6 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
         break;
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                       btn + 32  + ' ',
                       cx + 1, cy + 1);
