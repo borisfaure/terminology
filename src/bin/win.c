@@ -370,8 +370,11 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
    if (tc->parent != relative)
      tc->parent->unfocus(tc->parent, tc);
 
-   edje_object_signal_emit(term->bg, "focus,out", "terminology");
-   edje_object_signal_emit(term->base, "focus,out", "terminology");
+   if (!term->config->disable_focus_visuals)
+     {
+        edje_object_signal_emit(term->bg, "focus,out", "terminology");
+        edje_object_signal_emit(term->base, "focus,out", "terminology");
+     }
 
    if (!tc->wn->cmdbox_up)
      elm_object_focus_set(term->termio, EINA_FALSE);
@@ -402,8 +405,16 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
      tc->parent->focus(tc->parent, tc);
 
    tc->is_focused = EINA_TRUE;
-   edje_object_signal_emit(term->bg, "focus,in", "terminology");
-   edje_object_signal_emit(term->base, "focus,in", "terminology");
+   if (term->config->disable_focus_visuals)
+     {
+        edje_object_signal_emit(term->bg, "focused,set", "terminology");
+        edje_object_signal_emit(term->base, "focused,set", "terminology");
+     }
+   else
+     {
+        edje_object_signal_emit(term->bg, "focus,in", "terminology");
+        edje_object_signal_emit(term->base, "focus,in", "terminology");
+     }
    if (term->wn->cmdbox)
      elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
    elm_object_focus_set(term->termio, EINA_TRUE);
@@ -498,8 +509,11 @@ _cb_win_focus_in(void *data,
           {
              if (term)
                {
-                  edje_object_signal_emit(term->bg, "focus,out", "terminology");
-                  edje_object_signal_emit(term->base, "focus,out", "terminology");
+                  if (!term->config->disable_focus_visuals)
+                    {
+                       edje_object_signal_emit(term->bg, "focus,out", "terminology");
+                       edje_object_signal_emit(term->base, "focus,out", "terminology");
+                    }
                   if (!wn->cmdbox_up)
                     elm_object_focus_set(term->termio, EINA_FALSE);
                }
@@ -4094,8 +4108,16 @@ _term_bg_config(Term *term)
    DBG("is focused? tc:%p", term->container);
    if (_term_is_focused(term) && (_win_is_focused(term->wn)))
      {
-        edje_object_signal_emit(term->bg, "focus,in", "terminology");
-        edje_object_signal_emit(term->base, "focus,in", "terminology");
+        if (term->config->disable_focus_visuals)
+          {
+             edje_object_signal_emit(term->bg, "focused,set", "terminology");
+             edje_object_signal_emit(term->base, "focused,set", "terminology");
+          }
+        else
+          {
+             edje_object_signal_emit(term->bg, "focus,in", "terminology");
+             edje_object_signal_emit(term->base, "focus,in", "terminology");
+          }
         if (term->wn->cmdbox)
           elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
         elm_object_focus_set(term->termio, EINA_TRUE);

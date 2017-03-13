@@ -72,6 +72,7 @@ struct _Config
    Eina_Bool         drag_links;
    Eina_Bool         login_shell;
    Eina_Bool         mouse_over_focus;
+   Eina_Bool         disable_focus_visuals;
    Eina_Bool         colors_use;
    Eina_Bool         gravatar;
    Eina_Bool         notabs;

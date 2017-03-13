@@ -39,6 +39,7 @@ CB(erase_is_del, 0);
 CB(drag_links, 0);
 CB(login_shell, 0);
 CB(mouse_over_focus, 0);
+CB(disable_focus_visuals, 0);
 CB(gravatar,  0);
 CB(notabs,  1);
 CB(mv_always_show, 0);
@@ -199,6 +200,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Drag & drop links"), drag_links, 0);
    CX(_("Start as login shell"), login_shell, 0);
    CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
+   CX(_("Disable focus-out visuals"), disable_focus_visuals, 0);
    CX(_("Gravatar integration"), gravatar, 0);
    CX(_("Show tabs"), notabs, 1);
    CX(_("Always show miniview"), mv_always_show, 0);

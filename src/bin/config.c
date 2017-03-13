@@ -152,6 +152,9 @@ config_init(void)
      (edd_base, Config, "mouse_over_focus",
       mouse_over_focus, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "disable_focus_visuals",
+      disable_focus_visuals, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "colors_use", colors_use, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_ARRAY
      (edd_base, Config, "colors", colors, edd_color);
@@ -265,6 +268,7 @@ config_sync(const Config *config_src, Config *config)
    config->colors_use = config_src->colors_use;
    memcpy(config->colors, config_src->colors, sizeof(config->colors));
    config->mouse_over_focus = config_src->mouse_over_focus;
+   config->disable_focus_visuals = config_src->disable_focus_visuals;
    /* TODO: config->keys */
    config->gravatar = config_src->gravatar;
    config->notabs = config_src->notabs;
@@ -512,6 +516,7 @@ config_new(void)
         config->drag_links = EINA_FALSE;
         config->login_shell = EINA_FALSE;
         config->mouse_over_focus = EINA_TRUE;
+        config->disable_focus_visuals = EINA_FALSE;
         config->colors_use = EINA_FALSE;
         config->gravatar = EINA_TRUE;
         config->notabs = EINA_FALSE;
@@ -701,6 +706,7 @@ config_fork(Config *config)
    CPY(colors_use);
    memcpy(config2->colors, config->colors, sizeof(config->colors));
    CPY(mouse_over_focus);
+   CPY(disable_focus_visuals);
    CPY(temporary);
    SCPY(config_key);
    CPY(font_set);

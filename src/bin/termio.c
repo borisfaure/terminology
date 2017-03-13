@@ -3518,7 +3518,8 @@ _smart_cb_focus_out(void *data,
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
+   if (!sd->config->disable_focus_visuals)
+     edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
    elm_win_keyboard_mode_set(sd->win, ELM_WIN_KEYBOARD_OFF);

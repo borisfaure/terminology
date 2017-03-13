@@ -1008,6 +1008,16 @@ collections {
             target: "shine";
             after: "focus_in2";
          }
+         program {
+            signal: "focused,set"; source: "terminology";
+            action: STATE_SET "focused" 0.0;
+            target: "glint";
+            target: "shine";
+            sequence {
+               action: STATE_SET "focused2" 0.0;
+               target: "glow";
+            }
+         }
          program { name: "focus_in2";
             action: STATE_SET "focused2" 0.0;
             transition: DECELERATE 0.5;

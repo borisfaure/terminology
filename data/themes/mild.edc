@@ -87,6 +87,12 @@ collections {
             target: "focusclip";
          }
          program {
+            signal: "focused,set";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "focusclip";
+         }
+         program {
             signal: "focus,out";
             source: "terminology";
             action: STATE_SET "unfocused" 0.0;
