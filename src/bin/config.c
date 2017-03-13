@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 14
+#define CONF_VER 15
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -616,7 +616,10 @@ config_load(const char *key)
                 case 13:
                   _add_key(config, "End", 0, 0, 1, 0, "reset_scroll");
                   /*pass through*/
-                case CONF_VER: /* 13 */
+                case 14:
+                  config->disable_focus_visuals = EINA_FALSE;
+                  /*pass through*/
+                case CONF_VER: /* 15 */
                   config->version = CONF_VER;
                   break;
                 default:
