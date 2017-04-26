@@ -7,7 +7,7 @@
 #include "options_behavior.h"
 #include "main.h"
 
-static Evas_Object *op_w, *op_h;
+static Evas_Object *op_w, *op_h, *op_wh_current;
 
 #define CB(_cfg_name, _inv)                                     \
 static void                                                     \
@@ -96,6 +96,22 @@ _cb_op_behavior_tab_zoom_slider_chg(void *data,
 }
 
 static void
+_cb_op_behavior_custom_geometry_current_set(void *data,
+                                Evas_Object *obj EINA_UNUSED,
+                                void *_event EINA_UNUSED)
+{
+    Evas_Object *term = data;
+    Config *config = termio_config_get(term);
+    if (config->custom_geometry)
+      {
+         termio_size_get(term, &config->cg_width, &config->cg_height);
+         elm_spinner_value_set(op_w, config->cg_width);
+         elm_spinner_value_set(op_h, config->cg_height);
+      }
+    config_save(config, NULL);
+}
+
+static void
 _cb_op_behavior_custom_geometry(void *data,
                                 Evas_Object *obj,
                                 void *_event EINA_UNUSED)
@@ -113,6 +129,7 @@ _cb_op_behavior_custom_geometry(void *data,
 
    elm_object_disabled_set(op_w, !config->custom_geometry);
    elm_object_disabled_set(op_h, !config->custom_geometry);
+   elm_object_disabled_set(op_wh_current, !config->custom_geometry);
 }
 
 static void
@@ -219,6 +236,16 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_custom_geometry, term);
+
+   op_wh_current = o = elm_button_add(bx);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   elm_object_text_set(o, _("Set Current:"));
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   elm_object_disabled_set(o, !config->custom_geometry);
+   evas_object_smart_callback_add(o, "clicked",
+                                  _cb_op_behavior_custom_geometry_current_set, term);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);

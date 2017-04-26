@@ -506,6 +506,10 @@ msgstr ""
 msgid "Always open at size:"
 msgstr "Άνοιγμα πάντα σε μέγεθος:"
 
+#: src/bin/options_behavior.c:360
+msgid "Set Current:"
+msgstr ""
+
 #: src/bin/options_behavior.c:213
 msgid "Width:"
 msgstr "Πλάτος:"

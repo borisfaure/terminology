@@ -497,6 +497,10 @@ msgstr ""
 msgid "Always open at size:"
 msgstr "Siempre abrir con tamaño:"
 
+#: src/bin/options_behavior.c:360
+msgid "Set Current:"
+msgstr ""
+
 #: src/bin/options_behavior.c:213
 msgid "Width:"
 msgstr "Anchura:"

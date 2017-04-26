@@ -492,6 +492,10 @@ msgstr "Abilita codici escape speciali di Terminology"
 msgid "Always open at size:"
 msgstr "Avvia sempre con queste dimensioni:"
 
+#: src/bin/options_behavior.c:360
+msgid "Set Current:"
+msgstr ""
+
 #: src/bin/options_behavior.c:213
 msgid "Width:"
 msgstr "Larghezza:"

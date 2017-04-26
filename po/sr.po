@@ -498,6 +498,10 @@ msgstr ""
 msgid "Always open at size:"
 msgstr "Увек отвори у величини:"
 
+#: src/bin/options_behavior.c:360
+msgid "Set Current:"
+msgstr ""
+
 #: src/bin/options_behavior.c:213
 msgid "Width:"
 msgstr "Ширина:"

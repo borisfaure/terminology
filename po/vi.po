@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-10-05 02:19+0900\n"
+"POT-Creation-Date: 2015-09-05 14:06+0200\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: \n"
@@ -39,7 +39,7 @@ msgstr "Chia Ngang"
 msgid "Miniview"
 msgstr "Miniview"
 
-#: src/bin/controls.c:287 src/bin/termio.c:950 src/bin/termio.c:4093
+#: src/bin/controls.c:287 src/bin/termio.c:950 src/bin/termio.c:4108
 msgid "Copy"
 msgstr "Sao Chép"
 
@@ -69,164 +69,164 @@ msgid ""
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
 "<b>Terminology %s</b><br>Tại sao các terminal lại nhàm chán?<br><br>Terminal "
-"này được viết cho Enlightenment, để dùng EFL và mặt khác là để thể hiện những "
-"ranh giới mà các terminal hiện đại khác không có. Chúng tôi hy vọng bạn thích nó."
-"<br><br>Bản quyền © 2012-%d bởi:<br><br>%s<br><br>Phân phối theo giấy phép 2-"
-"clause BSD license với thông tin cụ thể bên dưới:<br><br>%s"
+"này được viết cho Enlightenment, để dùng EFL và mặt khác là để thể hiện "
+"những ranh giới mà các terminal hiện đại khác không có. Chúng tôi hy vọng "
+"bạn thích nó.<br><br>Bản quyền © 2012-%d bởi:<br><br>%s<br><br>Phân phối "
+"theo giấy phép 2-clause BSD license với thông tin cụ thể bên dưới:<br><br>%s"
 
-#: src/bin/keyin.c:569
+#: src/bin/keyin.c:543
 msgid "Scrolling"
 msgstr "Cuộn"
 
-#: src/bin/keyin.c:570
+#: src/bin/keyin.c:544
 msgid "Scroll one page up"
 msgstr "Cuộn lên trên một trang"
 
-#: src/bin/keyin.c:571
+#: src/bin/keyin.c:545
 msgid "Scroll one page down"
 msgstr "Cuộn xuống dưới một trang"
 
-#: src/bin/keyin.c:572
+#: src/bin/keyin.c:546
 msgid "Scroll one line up"
 msgstr "Cuộn lên trên một dòng"
 
-#: src/bin/keyin.c:573
+#: src/bin/keyin.c:547
 msgid "Scroll one line down"
 msgstr "Cuộn xuống dưới một dòng"
 
-#: src/bin/keyin.c:575
+#: src/bin/keyin.c:549
 msgid "Copy/Paste"
 msgstr "Sao Chép/Dán"
 
-#: src/bin/keyin.c:576
+#: src/bin/keyin.c:550
 msgid "Copy selection to Primary buffer"
 msgstr "Sao chép phần được chọn đến bộ đệm Chính"
 
-#: src/bin/keyin.c:577
+#: src/bin/keyin.c:551
 msgid "Copy selection to Clipboard buffer"
 msgstr "Sao chép phần được chọn đến bộ đệm Clipboard"
 
-#: src/bin/keyin.c:578
+#: src/bin/keyin.c:552
 msgid "Paste Primary buffer (highlight)"
 msgstr "Dán từ bộ đệm Chính (phần nổi bật)"
 
-#: src/bin/keyin.c:579
+#: src/bin/keyin.c:553
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Dán từ bộ đệm Clipboard (ctrl+c/v)"
 
-#: src/bin/keyin.c:581
+#: src/bin/keyin.c:555
 msgid "Splits/Tabs"
 msgstr "Chia/Thẻ"
 
-#: src/bin/keyin.c:582
+#: src/bin/keyin.c:556
 msgid "Focus to the previous terminal"
 msgstr "Tập trung vào terminal phía trước"
 
-#: src/bin/keyin.c:583
+#: src/bin/keyin.c:557
 msgid "Focus to the next terminal"
 msgstr "Tập trung vào terminal kế tiếp"
 
-#: src/bin/keyin.c:584
+#: src/bin/keyin.c:558
 msgid "Split horizontally (new below)"
 msgstr "Chia ngang (cái mới phía dưới)"
 
-#: src/bin/keyin.c:585
+#: src/bin/keyin.c:559
 msgid "Split vertically (new on right)"
 msgstr "Chia dọc (cái mới bên phải)"
 
-#: src/bin/keyin.c:586
+#: src/bin/keyin.c:560
 msgid "Create a new \"tab\""
 msgstr "Tạo \"thẻ\" mới"
 
-#: src/bin/keyin.c:587
+#: src/bin/keyin.c:561
 msgid "Close the focused terminal"
 msgstr "Đóng terminal đang được tập trung"
 
-#: src/bin/keyin.c:588
+#: src/bin/keyin.c:562
 msgid "Bring up \"tab\" switcher"
 msgstr "Đưa ra bộ chuyển đổi \"\thẻ\""
 
-#: src/bin/keyin.c:589
+#: src/bin/keyin.c:563
 msgid "Switch to terminal tab 1"
 msgstr "Chuyển đến terminal ở thẻ 1"
 
-#: src/bin/keyin.c:590
+#: src/bin/keyin.c:564
 msgid "Switch to terminal tab 2"
 msgstr "Chuyển đến terminal ở thẻ 2"
 
-#: src/bin/keyin.c:591
+#: src/bin/keyin.c:565
 msgid "Switch to terminal tab 3"
 msgstr "Chuyển đến terminal ở thẻ 3"
 
-#: src/bin/keyin.c:592
+#: src/bin/keyin.c:566
 msgid "Switch to terminal tab 4"
 msgstr "Chuyển đến terminal ở thẻ 4"
 
-#: src/bin/keyin.c:593
+#: src/bin/keyin.c:567
 msgid "Switch to terminal tab 5"
 msgstr "Chuyển đến terminal ở thẻ 5"
 
-#: src/bin/keyin.c:594
+#: src/bin/keyin.c:568
 msgid "Switch to terminal tab 6"
 msgstr "Chuyển đến terminal ở thẻ 6"
 
-#: src/bin/keyin.c:595
+#: src/bin/keyin.c:569
 msgid "Switch to terminal tab 7"
 msgstr "Chuyển đến terminal ở thẻ 7"
 
-#: src/bin/keyin.c:596
+#: src/bin/keyin.c:570
 msgid "Switch to terminal tab 8"
 msgstr "Chuyển đến terminal ở thẻ 8"
 
-#: src/bin/keyin.c:597
+#: src/bin/keyin.c:571
 msgid "Switch to terminal tab 9"
 msgstr "Chuyển đến terminal ở thẻ 9"
 
-#: src/bin/keyin.c:598
+#: src/bin/keyin.c:572
 msgid "Switch to terminal tab 10"
 msgstr "Chuyển đến terminal ở thẻ 10"
 
-#: src/bin/keyin.c:600
+#: src/bin/keyin.c:574
 msgid "Font size"
 msgstr "Kích thước phông"
 
-#: src/bin/keyin.c:601
+#: src/bin/keyin.c:575
 msgid "Font size up 1"
 msgstr "Tăng kích thước phông lên 1"
 
-#: src/bin/keyin.c:602
+#: src/bin/keyin.c:576
 msgid "Font size down 1"
 msgstr "Giảm kích thước phông đi 1"
 
-#: src/bin/keyin.c:603
+#: src/bin/keyin.c:577
 msgid "Display big font size"
 msgstr "Biểu diễn kích thước phông lớn nhất"
 
-#: src/bin/keyin.c:604
+#: src/bin/keyin.c:578
 msgid "Reset font size"
 msgstr "Điều chỉnh kích thước phông"
 
-#: src/bin/keyin.c:606
+#: src/bin/keyin.c:580
 msgid "Actions"
 msgstr "Hành Động"
 
-#: src/bin/keyin.c:607
+#: src/bin/keyin.c:581
 msgid "Toggle Fullscreen of the window"
 msgstr "Bật Tắt cửa sổ toàn màn hình"
 
-#: src/bin/keyin.c:608
+#: src/bin/keyin.c:582
 msgid "Display the history miniview"
 msgstr "Biểu diễn lịch sử miniview"
 
-#: src/bin/keyin.c:609
+#: src/bin/keyin.c:583
 msgid "Display the command box"
 msgstr "Biểu diễn hộp mệnh lệnh"
 
-#: src/bin/main.c:219 src/bin/main.c:854
+#: src/bin/main.c:219 src/bin/main.c:852
 msgid "Could not create window."
 msgstr "Không thể tạo cửa sổ mới."
 
-#: src/bin/main.c:288 src/bin/main.c:865
+#: src/bin/main.c:288 src/bin/main.c:863
 msgid "Could not create terminal widget."
 msgstr "Không thể tạo terminal widget."
 
@@ -367,29 +367,29 @@ msgstr "Hiển thị giấy phép."
 msgid "show this message."
 msgstr "Hiển thị thông điệp này."
 
-#: src/bin/main.c:549 src/bin/miniview.c:38
+#: src/bin/main.c:547 src/bin/miniview.c:38
 #, c-format
 msgid "Could not create logging domain '%s'."
 msgstr "Không thể tạo miền nhật ký '%s'."
 
-#: src/bin/main.c:559
+#: src/bin/main.c:557
 msgid "Could not initialize key bindings."
 msgstr "Không thể khởi tạo phép gán phím."
 
-#: src/bin/main.c:571
+#: src/bin/main.c:569
 msgid "Could not parse command line options."
 msgstr "Không thể phân tích các tùy chọn dòng lệnh."
 
-#: src/bin/main.c:586
+#: src/bin/main.c:584
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "Tùy chọn %s yêu cầu một đối số!"
 
-#: src/bin/main.c:587
+#: src/bin/main.c:585
 msgid "invalid options found. See --help."
 msgstr "Tìm thấy các tùy chọn không hợp lệ. Xem --help."
 
-#: src/bin/main.c:909
+#: src/bin/main.c:907
 msgid "invalid argument found for option -S/--split. See --help."
 msgstr "phát hiện đối số không hợp lệ cho tùy chọn -S/--split. Xem --help."
 
@@ -492,6 +492,10 @@ msgstr "Bật các mã thoát đặc biệt của Terminology"
 #: src/bin/options_behavior.c:203
 msgid "Always open at size:"
 msgstr "Luôn mở với kích thước:"
+
+#: src/bin/options_behavior.c:360
+msgid "Set Current:"
+msgstr ""
 
 #: src/bin/options_behavior.c:213
 msgid "Width:"
@@ -809,20 +813,20 @@ msgstr "Xem Trước"
 msgid "Open"
 msgstr "Mở"
 
-#: src/bin/termio.c:2436
+#: src/bin/termio.c:2442
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "không hỗ trợ định dạng chọn '%s'"
 
-#: src/bin/termio.c:4095
+#: src/bin/termio.c:4110
 msgid "Open as URL"
 msgstr "Mở như là URL"
 
-#: src/bin/termio.c:5246
+#: src/bin/termio.c:5264
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF thất bại"
 
-#: src/bin/termio.c:5958
+#: src/bin/termio.c:5976
 msgid "Could not allocate termpty"
 msgstr "Không thể cấp phát termpty"
 
@@ -861,7 +865,7 @@ msgstr "ioctl() trên pty '%s' thất bại: %s"
 msgid "Could not change current directory to '%s': %s"
 msgstr "Không thể thay đổi thư mục hiện hành đến '%s': %s"
 
-#: src/bin/termpty.c:871
+#: src/bin/termpty.c:861
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Không thể viết vào mô tả tập tin %d: %s"
@@ -876,6 +880,6 @@ msgstr "Không thể tải theme nào cho nhóm=%s: %s"
 msgid "Could not load default theme for group=%s: %s"
 msgstr "Không thể tải theme mặc định cho nhóm=%s: %s"
 
-#: src/bin/win.c:4024
+#: src/bin/win.c:4028
 msgid "Couldn't find terminology theme! Forgot 'make install'?"
 msgstr "Không thể tìm thấy terminology theme! Quên 'make install'?"
