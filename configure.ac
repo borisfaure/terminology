@@ -18,7 +18,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_C___ATTRIBUTE__
 
-efl_version="1.7.0"
+efl_version="1.8.0"
 AC_SUBST(efl_version)
 
 
