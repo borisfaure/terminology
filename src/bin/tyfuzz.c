@@ -49,6 +49,11 @@ termio_scroll(Evas_Object *obj EINA_UNUSED,
 {
 }
 
+void
+termio_font_size_set(Evas_Object *obj EINA_UNUSED,
+                     int size EINA_UNUSED)
+{
+}
 /* }}} */
 
 
