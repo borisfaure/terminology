@@ -762,6 +762,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case '@': // insert N blank chars
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
+        if (arg > ty->w * ty->h) arg = ty->w * ty->h;
         DBG("insert %d blank chars", arg);
           {
              int pi = ty->termstate.insert;
@@ -799,8 +800,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (arg < 1) arg = 1;
         DBG("cursor left %d", arg);
         ty->termstate.wrapnext = 0;
-        for (i = 0; i < arg; i++)
-          ty->cursor_state.cx--;
+        ty->cursor_state.cx -= arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         break;
       case 'C': // cursor right N
@@ -809,8 +809,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (arg < 1) arg = 1;
         DBG("cursor right %d", arg);
         ty->termstate.wrapnext = 0;
-        for (i = 0; i < arg; i++)
-          ty->cursor_state.cx++;
+        ty->cursor_state.cx += arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         break;
       case 'H': // cursor pos set
@@ -875,7 +874,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'F': // up relative N rows, and to col 0
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("up relative %d rows, and to col 0", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy -= arg;
@@ -884,20 +883,20 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("erase %d chars", arg);
         termpty_clear_line(ty, TERMPTY_CLR_END, arg);
         break;
       case 'S': // scroll up N lines
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("scroll up %d lines", arg);
         for (i = 0; i < arg; i++)
           termpty_text_scroll(ty, EINA_TRUE);
         break;
       case 'T': // scroll down N lines
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("scroll down %d lines", arg);
         for (i = 0; i < arg; i++)
           termpty_text_scroll_rev(ty, EINA_TRUE);
@@ -905,7 +904,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'M': // delete N lines - cy
       case 'L': // insert N lines - cy
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
           {
              int sy1, sy2;
@@ -936,7 +935,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'P': // erase and scrollback N chars
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("erase and scrollback %d chars", arg);
           {
              Termcell *cells;
@@ -1147,8 +1146,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 
              arg = _csi_arg_get(&b);
              DBG("Cursor Backward Tabulation (CBT): %d", arg);
-             if (arg < 1) arg = 1;
-
+             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
              for (; arg > 0; arg--)
                {
                   do
@@ -1164,7 +1162,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'I':
         arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("Cursor Forward Tabulation (CHT): %d", arg);
         _tab_forward(ty, arg);
         break;
