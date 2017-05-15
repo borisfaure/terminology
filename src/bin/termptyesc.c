@@ -1172,6 +1172,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    cc++;
    return cc - c;
 unhandled:
+   if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
         Eina_Strbuf *bf = eina_strbuf_new();
 
