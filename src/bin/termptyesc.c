@@ -552,6 +552,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
                         if (!b) ERR("Failed xterm 256 color fg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid fg color %d", arg);
                         else
                           {
                              ty->termstate.att.fg256 = 1;
@@ -586,6 +588,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
                         if (!b) ERR("Failed xterm 256 color bg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid bg color %d", arg);
                         else
                           {
                              ty->termstate.att.bg256 = 1;
@@ -620,6 +624,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
                         if (!b) ERR("Failed xterm 256 color fg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid fg color %d", arg);
                         else
                           {
                              ty->termstate.att.fg256 = 1;
@@ -654,6 +660,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
                         if (!b) ERR("Failed xterm 256 color bg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid bg color %d", arg);
                         else
                           {
                              ty->termstate.att.bg256 = 1;
