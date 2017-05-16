@@ -13,6 +13,10 @@
 #define gettext_noop(String) String
 
 extern int terminology_starting_up;
+
+#ifdef ENABLE_FUZZING
+#define EINA_LOG_LEVEL_MAXIMUM (-1)
+#endif
 extern int _log_domain;
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
