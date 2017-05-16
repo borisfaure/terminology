@@ -347,8 +347,8 @@ _limit_coord(Termpty *ty)
    TERMPTY_RESTRICT_FIELD(ty->cursor_save[1].cy, 0, ty->h);
 }
 
-static void
-_termpty_resize_tabs(Termpty *ty, int old_w, int new_w)
+void
+termpty_resize_tabs(Termpty *ty, int old_w, int new_w)
 {
     unsigned int *new_tabs;
     int i;
@@ -442,7 +442,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         goto err;
      }
 
-   _termpty_resize_tabs(ty, 0, w);
+   termpty_resize_tabs(ty, 0, w);
 
    termpty_reset_state(ty);
 
@@ -1272,7 +1272,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
           }
      }
 
-   _termpty_resize_tabs(ty, old_w, new_w);
+   termpty_resize_tabs(ty, old_w, new_w);
 
    if (effective_old_h <= ty->cursor_state.cy)
      effective_old_h = ty->cursor_state.cy + 1;

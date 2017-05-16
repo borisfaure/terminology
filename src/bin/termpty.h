@@ -236,6 +236,7 @@ Termcell  *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
 ssize_t termpty_row_length(Termpty *ty, int y);
 void       termpty_write(Termpty *ty, const char *input, int len);
 void       termpty_resize(Termpty *ty, int new_w, int new_h);
+void       termpty_resize_tabs(Termpty *ty, int old_w, int new_w);
 void       termpty_backlog_size_set(Termpty *ty, size_t size);
 ssize_t    termpty_backlog_length(Termpty *ty);
 void       termpty_backscroll_adjust(Termpty *ty, int *scroll);

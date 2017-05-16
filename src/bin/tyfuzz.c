@@ -65,6 +65,7 @@ _termpty_init(Termpty *ty)
    ty->w = 80;
    ty->h = 25;
    ty->backsize = 50;
+   termpty_resize_tabs(ty, 0, ty->w);
    termpty_reset_state(ty);
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    ty->screen2 = calloc(1, sizeof(Termcell) * ty->w * ty->h);
