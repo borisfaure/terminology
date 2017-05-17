@@ -1073,7 +1073,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                     {
                        DBG("2 regions args: %i %i", arg, arg2);
                        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-                       TERMPTY_RESTRICT_FIELD(arg2, 1, ty->h);
+                       TERMPTY_RESTRICT_FIELD(arg2, 1, ty->h+1);
                        ty->termstate.scroll_y1 = arg - 1;
                        ty->termstate.scroll_y2 = arg2;
                        if ((arg == 1) && (arg2 == ty->h))
