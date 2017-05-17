@@ -1171,6 +1171,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
    cc++;
    return cc - c;
 unhandled:
+#ifndef ENABLE_FUZZING
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
         Eina_Strbuf *bf = eina_strbuf_new();
@@ -1186,6 +1187,7 @@ unhandled:
         WRN("unhandled CSI '%s': %s", _safechar(*cc), eina_strbuf_string_get(bf));
         eina_strbuf_free(bf);
      }
+#endif
    cc++;
    return cc - c;
 }
