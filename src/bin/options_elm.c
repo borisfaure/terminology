@@ -9,18 +9,10 @@ launch_elm_config(void *_data EINA_UNUSED,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event_info EINA_UNUSED)
 {
-   int pid;
+   Ecore_Exe *exe;
 
-   pid = fork();
-   if (pid < 0)
-     {
-        ERR("unable to fork: %s", strerror(errno));
-        return;
-     }
-   if (pid == 0)
-     {
-        execl("/bin/sh", "sh", "-c", "elementary_config", NULL);
-     }
+   exe = ecore_exe_pipe_run("elementary_config", ECORE_EXE_NONE, NULL);
+   ecore_exe_free(exe);
 }
 
 void
