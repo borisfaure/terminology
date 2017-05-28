@@ -1294,15 +1294,22 @@ _handle_xterm_50_command(Termpty *ty,
                          char *s,
                          int len)
 {
-  size_t i;
-  int size;
-  for (i = 0; i < (size_t)len - strlen(":size="); i++)
+  int pattern_len = strlen(":size=");
+  while (len > pattern_len)
     {
-       if (strncmp(s + i, ":size=", strlen(":size=")) == 0)
+       if (strncmp(s, ":size=", pattern_len) == 0)
          {
-            size = strtol(s + i + strlen(":size="), NULL, 10);
-            termio_font_size_set(ty->obj, size);
+            char *endptr = NULL;
+            int size;
+
+            s += pattern_len;
+            errno = 0;
+            size = strtol(s, &endptr, 10);
+            if (endptr != s && errno == 0)
+               termio_font_size_set(ty->obj, size);
          }
+       len--;
+       s++;
     }
 }
 
