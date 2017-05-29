@@ -99,6 +99,12 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    _termpty_init(&ty);
 
+   if (argc > 1)
+     {
+       ty.fd = open(argv[1], O_RDONLY);
+       assert(ty.fd >= 0);
+     }
+
    do
      {
         char *rbuf = buf;
