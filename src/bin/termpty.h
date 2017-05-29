@@ -134,7 +134,7 @@ struct _Termpty
         unsigned char charset;
         unsigned char charsetch;
         unsigned char chset[4];
-        int           scroll_y1, scroll_y2;
+        int           top_margin, bottom_margin;
         int           had_cr_x, had_cr_y;
         int           margin_top; // soon, more to come...
         unsigned int  multibyte : 1;

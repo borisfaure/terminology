@@ -38,10 +38,10 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
    Termcell *cells = NULL, *cells2;
    int y, start_y = 0, end_y = ty->h - 1;
 
-   if (ty->termstate.scroll_y2 != 0)
+   if (ty->termstate.bottom_margin != 0)
      {
-        start_y = ty->termstate.scroll_y1;
-        end_y = ty->termstate.scroll_y2 - 1;
+        start_y = ty->termstate.top_margin;
+        end_y = ty->termstate.bottom_margin - 1;
      }
    else
      if (!ty->altbuf)
@@ -81,10 +81,10 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
    Termcell *cells, *cells2 = NULL;
    int y, start_y = 0, end_y = ty->h - 1;
 
-   if (ty->termstate.scroll_y2 != 0)
+   if (ty->termstate.bottom_margin != 0)
      {
-        start_y = ty->termstate.scroll_y1;
-        end_y = ty->termstate.scroll_y2 - 1;
+        start_y = ty->termstate.top_margin;
+        end_y = ty->termstate.bottom_margin - 1;
      }
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
    termio_scroll(ty->obj, 1, start_y, end_y);
@@ -119,7 +119,7 @@ termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {
    int e = ty->h;
 
-   if (ty->termstate.scroll_y2 != 0) e = ty->termstate.scroll_y2;
+   if (ty->termstate.bottom_margin != 0) e = ty->termstate.bottom_margin;
    if (ty->cursor_state.cy >= e)
      {
         termpty_text_scroll(ty, clear);
@@ -133,7 +133,7 @@ termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
 {
    int b = 0;
 
-   if (ty->termstate.scroll_y1 != 0) b = ty->termstate.scroll_y1;
+   if (ty->termstate.top_margin != 0) b = ty->termstate.top_margin;
    if (ty->cursor_state.cy < b)
      {
         termpty_text_scroll_rev(ty, clear);
@@ -350,7 +350,7 @@ termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
       case TERMPTY_CLR_ALL:
         ty->circular_offset = 0;
         termpty_cells_clear(ty, ty->screen, ty->w * ty->h);
-        ty->termstate.scroll_y2 = 0;
+        ty->termstate.bottom_margin = 0;
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         break;
@@ -397,8 +397,8 @@ termpty_reset_state(Termpty *ty)
 
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
-   ty->termstate.scroll_y1 = 0;
-   ty->termstate.scroll_y2 = 0;
+   ty->termstate.top_margin = 0;
+   ty->termstate.bottom_margin = 0;
    ty->termstate.had_cr_x = 0;
    ty->termstate.had_cr_y = 0;
    termpty_reset_att(&(ty->termstate.att));

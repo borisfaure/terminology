@@ -913,18 +913,18 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
           {
              int sy1, sy2;
 
-             sy1 = ty->termstate.scroll_y1;
-             sy2 = ty->termstate.scroll_y2;
-             if (ty->termstate.scroll_y2 == 0)
+             sy1 = ty->termstate.top_margin;
+             sy2 = ty->termstate.bottom_margin;
+             if (ty->termstate.bottom_margin == 0)
                {
-                  ty->termstate.scroll_y1 = ty->cursor_state.cy;
-                  ty->termstate.scroll_y2 = ty->h;
+                  ty->termstate.top_margin = ty->cursor_state.cy;
+                  ty->termstate.bottom_margin = ty->h;
                }
              else
                {
-                  ty->termstate.scroll_y1 = ty->cursor_state.cy;
-                  if (ty->termstate.scroll_y2 <= ty->termstate.scroll_y1)
-                    ty->termstate.scroll_y2 = ty->termstate.scroll_y1 + 1;
+                  ty->termstate.top_margin = ty->cursor_state.cy;
+                  if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
+                    ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
                }
              for (i = 0; i < arg; i++)
                {
@@ -933,8 +933,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                   else
                     termpty_text_scroll_rev(ty, EINA_TRUE);
                }
-             ty->termstate.scroll_y1 = sy1;
-             ty->termstate.scroll_y2 = sy2;
+             ty->termstate.top_margin = sy1;
+             ty->termstate.bottom_margin = sy2;
           }
         break;
       case 'P': // erase and scrollback N chars
@@ -1051,8 +1051,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         if (!b)
           {
              WRN("no region args reset region");
-             ty->termstate.scroll_y1 = 0;
-             ty->termstate.scroll_y2 = 0;
+             ty->termstate.top_margin = 0;
+             ty->termstate.bottom_margin = 0;
           }
         else
           {
@@ -1062,26 +1062,26 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (!b)
                {
                   WRN("failed to give 2 regions args reset region");
-                  ty->termstate.scroll_y1 = 0;
-                  ty->termstate.scroll_y2 = 0;
+                  ty->termstate.top_margin = 0;
+                  ty->termstate.bottom_margin = 0;
                }
              else
                {
                   if (arg > arg2)
                     {
                        DBG("scroll region beginning > end [%i %i]", arg, arg2);
-                       ty->termstate.scroll_y1 = 0;
-                       ty->termstate.scroll_y2 = 0;
+                       ty->termstate.top_margin = 0;
+                       ty->termstate.bottom_margin = 0;
                     }
                   else
                     {
                        DBG("2 regions args: %i %i", arg, arg2);
                        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
                        TERMPTY_RESTRICT_FIELD(arg2, 1, ty->h+1);
-                       ty->termstate.scroll_y1 = arg - 1;
-                       ty->termstate.scroll_y2 = arg2;
+                       ty->termstate.top_margin = arg - 1;
+                       ty->termstate.bottom_margin = arg2;
                        if ((arg == 1) && (arg2 == ty->h))
-                          ty->termstate.scroll_y2 = 0;
+                          ty->termstate.bottom_margin = 0;
                     }
                }
           }
