@@ -254,15 +254,19 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         ty->termstate.reverse = mode;
                         break;
                      case 6:
+                        /* DECOM */
                         if (mode)
                           {
-                             ty->termstate.margin_top = ty->cursor_state.cy;
+                             /* set, within margins */
+                             ty->termstate.restrict_cursor = 1;
                              ty->cursor_state.cx = 0;
+                             ty->cursor_state.cy = ty->termstate.top_margin;
                           }
                         else
                           {
+                             ty->termstate.restrict_cursor = 0;
                              ty->cursor_state.cx = 0;
-                             ty->termstate.margin_top = 0;
+                             ty->cursor_state.cy = 0;
                           }
                         DBG("origin mode (%d): cursor is at 0,0"
                             " cursor limited to screen/start point"
@@ -782,14 +786,19 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
         break;
-      case 'A': // cursor up N
-      case 'e': // cursor up N
+      case 'A': // cursor up N CUU
+      case 'e': // cursor up N, VPR
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->termstate.restrict_cursor && (ty->termstate.top_margin != 0)
+            && (ty->cursor_state.cy < ty->termstate.top_margin))
+          {
+             ty->cursor_state.cy = ty->termstate.top_margin;
+          }
         break;
       case 'B': // cursor down N
         arg = _csi_arg_get(&b);
@@ -798,6 +807,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin != 0)
+            && (ty->cursor_state.cy > ty->termstate.bottom_margin))
+          {
+             ty->cursor_state.cy = ty->termstate.bottom_margin;
+          }
         break;
       case 'D': // cursor left N
         arg = _csi_arg_get(&b);
@@ -834,7 +848,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (b)
                {
                   ty->cursor_state.cy = arg;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
                   arg = _csi_arg_get(&b);
                   if (arg < 1) arg = 1;
                   arg--;
@@ -845,10 +858,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (b)
                {
                   ty->cursor_state.cx = arg;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
                }
           }
-        ty->cursor_state.cy += ty->termstate.margin_top;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+        ty->cursor_state.cy += ty->termstate.top_margin;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
        break;
       case 'G': // to column N
@@ -1061,8 +1074,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              arg2 = _csi_arg_get(&b);
              if (!b)
                {
-                  WRN("failed to give 2 regions args reset region");
-                  ty->termstate.top_margin = 0;
+                  TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+                  ty->termstate.top_margin = arg - 1;
                   ty->termstate.bottom_margin = 0;
                }
              else
@@ -1084,6 +1097,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                           ty->termstate.bottom_margin = 0;
                     }
                }
+             ty->cursor_state.cx = 0;
+             ty->cursor_state.cy = (ty->termstate.restrict_cursor) ?
+                ty->termstate.top_margin : 0;
           }
         break;
       case 's': // store cursor pos

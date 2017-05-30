@@ -136,7 +136,7 @@ struct _Termpty
         unsigned char chset[4];
         int           top_margin, bottom_margin;
         int           had_cr_x, had_cr_y;
-        int           margin_top; // soon, more to come...
+        unsigned int  restrict_cursor : 1;
         unsigned int  multibyte : 1;
         unsigned int  alt_kp : 1;
         unsigned int  insert : 1;
