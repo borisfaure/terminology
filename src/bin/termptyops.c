@@ -401,6 +401,7 @@ termpty_reset_state(Termpty *ty)
    ty->termstate.bottom_margin = 0;
    ty->termstate.had_cr_x = 0;
    ty->termstate.had_cr_y = 0;
+   ty->termstate.restrict_cursor = 0;
    termpty_reset_att(&(ty->termstate.att));
    ty->termstate.charset = 0;
    ty->termstate.charsetch = 'B';
