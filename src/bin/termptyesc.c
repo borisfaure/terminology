@@ -96,8 +96,16 @@ _csi_arg_get(Eina_Unicode **ptr)
    if (!b)
      goto error;
 
-   while ((*b) && (*b < '0' || *b > '9'))
+   /* Skip potential '?', '>'.... */
+   while ((*b) && ( (*b) != ';' && ((*b) < '0' || (*b) > '9')))
      b++;
+
+   if (*b == ';')
+     {
+        b++;
+        *ptr = b;
+        return -1;
+     }
 
    if (!*b)
      goto error;
@@ -108,6 +116,11 @@ _csi_arg_get(Eina_Unicode **ptr)
           goto error;
         sum *= 10;
         sum += *b - '0';
+        b++;
+     }
+
+   if (*b == ';')
+     {
         b++;
      }
 
