@@ -858,20 +858,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              if (arg < 1) arg = 1;
              arg--;
              if (arg >= ty->h) arg = ty->h - 1;
-             if (b)
-               {
-                  ty->cursor_state.cy = arg;
-                  arg = _csi_arg_get(&b);
-                  if (arg < 1) arg = 1;
-                  arg--;
-               }
-             else arg = 0;
+             ty->cursor_state.cy = arg;
 
+             arg = _csi_arg_get(&b);
+             if (arg < 1) arg = 1;
+             arg--;
              if (arg >= ty->w) arg = ty->w - 1;
-             if (b)
-               {
-                  ty->cursor_state.cx = arg;
-               }
+             ty->cursor_state.cx = arg;
           }
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         if (ty->termstate.restrict_cursor)
