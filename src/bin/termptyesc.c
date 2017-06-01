@@ -268,7 +268,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                              ty->cursor_state.cx = 0;
                              ty->cursor_state.cy = 0;
                           }
-                        DBG("origin mode (%d): cursor is at 0,0"
+                        DBG("DECOM: mode (%d): cursor is at 0,0"
                             " cursor limited to screen/start point"
                             " for line #'s depends on top margin",
                             mode);
