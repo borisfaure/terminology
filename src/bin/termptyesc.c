@@ -830,9 +830,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->cursor_state.cx += arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         break;
-      case 'H': // cursor pos set
-      case 'f': // cursor pos set
-        DBG("cursor pos set");
+      case 'H': // cursor pos set (CUP)
+      case 'f': // cursor pos set (HVP)
+        DBG("cursor pos set (%s)", (*cc == 'H') ? "CUP" : "HVP");
         ty->termstate.wrapnext = 0;
         if (!*b)
           {
@@ -861,7 +861,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                }
           }
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        ty->cursor_state.cy += ty->termstate.top_margin;
+        if (ty->termstate.restrict_cursor)
+          ty->cursor_state.cy += ty->termstate.top_margin;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
        break;
       case 'G': // to column N
