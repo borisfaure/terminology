@@ -924,6 +924,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
+        if ((ty->cursor_state.cy >= ty->termstate.top_margin) &&
+            ((ty->termstate.bottom_margin == 0) ||
+             (ty->cursor_state.cy < ty->termstate.bottom_margin)))
           {
              int sy1, sy2;
 
