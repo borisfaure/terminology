@@ -775,14 +775,54 @@ _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
 {
   int left = _csi_arg_get(b);
   int right = _csi_arg_get(b);
+
   DBG("DECSLRM (%d;%d) Set Left and Right Margins", left, right);
-  if (left < 1) left = 0;
-  if (right < 1) right = 0;
-  if (left >= right) return;
-  if (right - left < 2) return;
-  ty->termstate.left_margin = left;
-  ty->termstate.right_margin = right;
+
+  TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+  TERMPTY_RESTRICT_FIELD(right, 3, ty->w+1);
+
+  if (left >= right) goto bad;
+  if (right - left < 2) goto bad;
+
+  if (right == ty->w)
+    right = 0;
+
+  ty->termstate.left_margin = left  - 1;
+  ty->termstate.right_margin = right - 1;
   _move_cursor_to_origin(ty);
+
+  return;
+
+bad:
+  ty->termstate.left_margin = 0;
+  ty->termstate.right_margin = 0;
+}
+
+static void
+_handle_esc_csi_decstbm(Termpty *ty, Eina_Unicode **b)
+{
+  int top = _csi_arg_get(b);
+  int bottom = _csi_arg_get(b);
+
+  DBG("DECSTBM (%d;%d) Set Top and Bottom Margins", top, bottom);
+
+  TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+  TERMPTY_RESTRICT_FIELD(bottom, 1, ty->h+1);
+
+  if (top >= bottom) goto bad;
+
+  if (bottom == ty->h)
+    bottom = 0;
+
+  ty->termstate.top_margin = top - 1;
+  ty->termstate.bottom_margin = bottom;
+
+  _move_cursor_to_origin(ty);
+  return;
+
+bad:
+  ty->termstate.top_margin = 0;
+  ty->termstate.bottom_margin = 0;
 }
 
 static int
@@ -1105,45 +1145,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         _handle_esc_csi_reset_mode(ty, *cc, b);
         break;
       case 'r':
-        arg = _csi_arg_get(&b);
-        if (!b)
-          {
-             WRN("no region args reset region");
-             ty->termstate.top_margin = 0;
-             ty->termstate.bottom_margin = 0;
-          }
-        else
-          {
-             int arg2;
-
-             arg2 = _csi_arg_get(&b);
-             if (!b)
-               {
-                  TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-                  ty->termstate.top_margin = arg - 1;
-                  ty->termstate.bottom_margin = 0;
-               }
-             else
-               {
-                  if (arg > arg2)
-                    {
-                       DBG("scroll region beginning > end [%i %i]", arg, arg2);
-                       ty->termstate.top_margin = 0;
-                       ty->termstate.bottom_margin = 0;
-                    }
-                  else
-                    {
-                       DBG("2 regions args: %i %i", arg, arg2);
-                       TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-                       TERMPTY_RESTRICT_FIELD(arg2, 1, ty->h+1);
-                       ty->termstate.top_margin = arg - 1;
-                       ty->termstate.bottom_margin = arg2;
-                       if ((arg == 1) && (arg2 == ty->h))
-                          ty->termstate.bottom_margin = 0;
-                    }
-               }
-             _move_cursor_to_origin(ty);
-          }
+        _handle_esc_csi_decstbm(ty, &b);
         break;
       case 's':
         if (ty->termstate.lr_margins)
