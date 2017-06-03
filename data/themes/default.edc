@@ -1013,10 +1013,12 @@ collections {
             action: STATE_SET "focused" 0.0;
             target: "glint";
             target: "shine";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             sequence {
                action: STATE_SET "focused2" 0.0;
                target: "glow";
             }
+#endif
          }
          program { name: "focus_in2";
             action: STATE_SET "focused2" 0.0;
