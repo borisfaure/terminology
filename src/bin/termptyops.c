@@ -399,6 +399,9 @@ termpty_reset_state(Termpty *ty)
    ty->cursor_state.cy = 0;
    ty->termstate.top_margin = 0;
    ty->termstate.bottom_margin = 0;
+   ty->termstate.left_margin = 0;
+   ty->termstate.right_margin = 0;
+   ty->termstate.lr_margins = 0;
    ty->termstate.had_cr_x = 0;
    ty->termstate.had_cr_y = 0;
    ty->termstate.restrict_cursor = 0;

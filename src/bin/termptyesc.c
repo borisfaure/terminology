@@ -211,6 +211,22 @@ _switch_to_alternative_screen(Termpty *ty, int mode)
 }
 
 static void
+_move_cursor_to_origin(Termpty *ty)
+{
+  if (ty->termstate.restrict_cursor)
+    {
+      ty->cursor_state.cx = ty->termstate.left_margin;
+      ty->cursor_state.cy = ty->termstate.top_margin;
+    }
+  else
+    {
+      ty->cursor_state.cx = 0;
+      ty->cursor_state.cy = 0;
+    }
+}
+
+
+static void
 _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
 {
    int mode = 0, priv = 0, arg;
@@ -272,15 +288,12 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                           {
                              /* set, within margins */
                              ty->termstate.restrict_cursor = 1;
-                             ty->cursor_state.cx = 0;
-                             ty->cursor_state.cy = ty->termstate.top_margin;
                           }
                         else
                           {
                              ty->termstate.restrict_cursor = 0;
-                             ty->cursor_state.cx = 0;
-                             ty->cursor_state.cy = 0;
                           }
+                        _move_cursor_to_origin(ty);
                         DBG("DECOM: mode (%d): cursor is at 0,0"
                             " cursor limited to screen/start point"
                             " for line #'s depends on top margin",
@@ -349,6 +362,13 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         ty->termstate.send_bs = mode;
                         DBG("backspace send bs not del = %i", mode);
                         break;
+                     case 69:
+                        ty->termstate.lr_margins = mode;
+                        if (!mode)
+                          {
+                             ty->termstate.left_margin = 0;
+                             ty->termstate.right_margin = 0;
+                          }
                      case 1000:
                         if (mode) ty->mouse_mode = MOUSE_NORMAL;
                         else ty->mouse_mode = MOUSE_OFF;
@@ -750,6 +770,21 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
      }
 }
 
+static void
+_handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
+{
+  int left = _csi_arg_get(b);
+  int right = _csi_arg_get(b);
+  DBG("DECSLRM (%d;%d) Set Left and Right Margins", left, right);
+  if (left < 1) left = 0;
+  if (right < 1) right = 0;
+  if (left >= right) return;
+  if (right - left < 2) return;
+  ty->termstate.left_margin = left;
+  ty->termstate.right_margin = right;
+  _move_cursor_to_origin(ty);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
@@ -1107,13 +1142,19 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
                           ty->termstate.bottom_margin = 0;
                     }
                }
-             ty->cursor_state.cx = 0;
-             ty->cursor_state.cy = (ty->termstate.restrict_cursor) ?
-                ty->termstate.top_margin : 0;
+             _move_cursor_to_origin(ty);
           }
         break;
-      case 's': // store cursor pos
-        termpty_cursor_copy(ty, EINA_TRUE);
+      case 's':
+        if (ty->termstate.lr_margins)
+          {
+            _handle_esc_csi_decslrm(ty, &b);
+          }
+        else
+          {
+            DBG("SCOSC: Save Current Cursor Position");
+            termpty_cursor_copy(ty, EINA_TRUE);
+          }
         break;
       case 't': // window manipulation
         arg = _csi_arg_get(&b);
@@ -1139,15 +1180,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 /*
       case 'R': // report cursor
         break;
-      case 's':
-        break;
-      case 't':
-        break;
       case 'q': // set/clear led's
         break;
       case 'x': // request terminal parameters
-        break;
-      case 'r': // set top and bottom margins
         break;
       case 'y': // invoke confidence test
         break;
