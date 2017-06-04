@@ -32,7 +32,7 @@
  * if not enough bytes could be read
  */
 
-static const char *ASCII_CHARS_TABLE[] =
+static const char *const ASCII_CHARS_TABLE[] =
 {
    "NUL", // '\0'
    "SOH", // '\001'
