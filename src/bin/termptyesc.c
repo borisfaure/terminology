@@ -825,6 +825,28 @@ bad:
   ty->termstate.bottom_margin = 0;
 }
 
+static void
+_handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
+                               const Eina_Unicode *cc)
+{
+   int cx = 0, cy = 0;
+   ty->termstate.wrapnext = 0;
+   cy = _csi_arg_get(b);
+   cx = _csi_arg_get(b);
+
+   DBG("cursor pos set (%s) (%d;%d)", (*cc == 'H') ? "CUP" : "HVP",
+       cx, cy);
+   cx--;
+   cy--;
+   TERMPTY_RESTRICT_FIELD(cx, 0, ty->w);
+   if (ty->termstate.restrict_cursor)
+     cy += ty->termstate.top_margin;
+   TERMPTY_RESTRICT_FIELD(cy, 0, ty->h);
+
+   ty->cursor_state.cx = cx;
+   ty->cursor_state.cy = cy;
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 {
@@ -920,31 +942,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'H': // cursor pos set (CUP)
       case 'f': // cursor pos set (HVP)
-        DBG("cursor pos set (%s)", (*cc == 'H') ? "CUP" : "HVP");
-        ty->termstate.wrapnext = 0;
-        if (!*b)
-          {
-             ty->cursor_state.cx = 0;
-             ty->cursor_state.cy = 0;
-          }
-        else
-          {
-             arg = _csi_arg_get(&b);
-             if (arg < 1) arg = 1;
-             arg--;
-             if (arg >= ty->h) arg = ty->h - 1;
-             ty->cursor_state.cy = arg;
-
-             arg = _csi_arg_get(&b);
-             if (arg < 1) arg = 1;
-             arg--;
-             if (arg >= ty->w) arg = ty->w - 1;
-             ty->cursor_state.cx = arg;
-          }
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        if (ty->termstate.restrict_cursor)
-          ty->cursor_state.cy += ty->termstate.top_margin;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        _handle_esc_csi_cursor_pos_set(ty, &b, cc);
        break;
       case 'G': // to column N
         arg = _csi_arg_get(&b);
@@ -983,7 +981,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
       case 'X': // erase N chars
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("erase %d chars", arg);
+        DBG("ECH: erase %d chars", arg);
         termpty_clear_line(ty, TERMPTY_CLR_END, arg);
         break;
       case 'S': // scroll up N lines
