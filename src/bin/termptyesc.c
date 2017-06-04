@@ -982,7 +982,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(&b);
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("erase %d chars", arg);
         termpty_clear_line(ty, TERMPTY_CLR_END, arg);
         break;
