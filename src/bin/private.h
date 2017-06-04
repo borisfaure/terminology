@@ -6,6 +6,7 @@
 #endif
 
 #if HAVE_GETTEXT && ENABLE_NLS
+#include <libintl.h>
 #define _(string) gettext (string)
 #else
 #define _(string) (string)
