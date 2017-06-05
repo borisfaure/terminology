@@ -73,7 +73,7 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
    else
      {
         int x = ty->termstate.left_margin;
-        int w = ty->w;
+        int w = ty->w - x;
 
         if (ty->termstate.right_margin)
           w = ty->termstate.right_margin - x;
