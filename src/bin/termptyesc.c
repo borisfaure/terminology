@@ -779,6 +779,8 @@ _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
   DBG("DECSLRM (%d;%d) Set Left and Right Margins", left, right);
 
   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+  if (right < 1)
+    right = ty->w;
   TERMPTY_RESTRICT_FIELD(right, 3, ty->w+1);
 
   if (left >= right) goto bad;
