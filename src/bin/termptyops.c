@@ -38,40 +38,47 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
    Termcell *cells = NULL, *cells2;
    int y, start_y = 0, end_y = ty->h - 1;
 
+   start_y = ty->termstate.top_margin;
    if (ty->termstate.bottom_margin != 0)
-     {
-        start_y = ty->termstate.top_margin;
-        end_y = ty->termstate.bottom_margin - 1;
-     }
-   else
-     if (!ty->altbuf)
-       termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
+     end_y = ty->termstate.bottom_margin - 1;
+   if (!(ty->termstate.top_margin || ty->termstate.bottom_margin ||
+         ty->termstate.left_margin || ty->termstate.right_margin) &&
+       (!ty->altbuf))
+     termpty_text_save_top(ty, &(TERMPTY_SCREEN(ty, 0, 0)), ty->w);
 
    termio_scroll(ty->obj, -1, start_y, end_y);
    DBG("... scroll!!!!! [%i->%i]", start_y, end_y);
 
-   if (start_y == 0 && end_y == ty->h - 1)
+   if ((start_y == 0 && end_y == ty->h - 1) &&
+       (ty->termstate.left_margin == 0) &&
+       (ty->termstate.right_margin == 0))
      {
-       // screen is a circular buffer now
-       cells = &(ty->screen[ty->circular_offset * ty->w]);
-       if (clear)
+        // screen is a circular buffer now
+        cells = &(ty->screen[ty->circular_offset * ty->w]);
+        if (clear)
           termpty_cells_clear(ty, cells, ty->w);
 
-       ty->circular_offset++;
-       if (ty->circular_offset >= ty->h)
-         ty->circular_offset = 0;
+        ty->circular_offset++;
+        if (ty->circular_offset >= ty->h)
+          ty->circular_offset = 0;
      }
    else
      {
-       cells = &(TERMPTY_SCREEN(ty, 0, end_y));
-       for (y = start_y; y < end_y; y++)
-         {
-            cells = &(TERMPTY_SCREEN(ty, 0, (y + 1)));
-            cells2 = &(TERMPTY_SCREEN(ty, 0, y));
-            termpty_cell_copy(ty, cells, cells2, ty->w);
-         }
-       if (clear)
-          termpty_cells_clear(ty, cells, ty->w);
+        int x = ty->termstate.left_margin;
+        int w = ty->w;
+
+        if (ty->termstate.right_margin)
+          w = ty->termstate.right_margin - x;
+
+        cells = &(TERMPTY_SCREEN(ty, x, end_y));
+        for (y = start_y; y < end_y; y++)
+          {
+             cells = &(TERMPTY_SCREEN(ty, x, (y + 1)));
+             cells2 = &(TERMPTY_SCREEN(ty, x, y));
+             termpty_cell_copy(ty, cells, cells2, w);
+          }
+        if (clear)
+          termpty_cells_clear(ty, cells + x, w);
      }
 }
 
@@ -147,7 +154,13 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
    Termcell *cells;
    int i, j;
+   int origin = ty->termstate.left_margin;
+   int max_right = ty->w;
 
+   if (ty->termstate.right_margin)
+     max_right = ty->termstate.right_margin;
+
+   /* TODO: have content_change_box*/
    termio_content_change(ty->obj, ty->cursor_state.cx, ty->cursor_state.cy, len);
 
    cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
@@ -157,16 +170,16 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
         if (ty->termstate.wrapnext)
           {
-             cells[ty->w - 1].att.autowrapped = 1;
+             cells[max_right-1].att.autowrapped = 1;
              ty->termstate.wrapnext = 0;
-             ty->cursor_state.cx = 0;
+             ty->cursor_state.cx = origin;
              ty->cursor_state.cy++;
              termpty_text_scroll_test(ty, EINA_TRUE);
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
           }
         if (ty->termstate.insert)
           {
-             for (j = ty->w - 1; j > ty->cursor_state.cx; j--)
+             for (j = max_right-1; j > ty->cursor_state.cx; j--)
                termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
@@ -194,7 +207,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              cells[ty->cursor_state.cx].att.strike = 1;
           }
         cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
-        if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (ty->w - 1))))
+        if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (max_right - 1))))
           {
              TERMPTY_FMTCLR(cells[ty->cursor_state.cx].att);
              termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
@@ -207,12 +220,12 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->termstate.wrapnext = 0;
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
-             if (EINA_UNLIKELY(ty->cursor_state.cx >= (ty->w - offset)))
+             if (EINA_UNLIKELY(ty->cursor_state.cx >= (max_right - offset)))
                ty->termstate.wrapnext = 1;
              else
                {
                   ty->cursor_state.cx += offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
                }
           }
         else
@@ -223,13 +236,13 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
              ty->cursor_state.cx += offset;
-             if (ty->cursor_state.cx > (ty->w - offset))
+             if (ty->cursor_state.cx > (max_right - offset))
                {
-                  ty->cursor_state.cx = ty->w - offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+                  ty->cursor_state.cx = max_right - offset;
+                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
                   return;
                }
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
           }
      }
 }
