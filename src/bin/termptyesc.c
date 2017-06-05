@@ -788,7 +788,7 @@ _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
     right = 0;
 
   ty->termstate.left_margin = left  - 1;
-  ty->termstate.right_margin = right - 1;
+  ty->termstate.right_margin = right;
   _move_cursor_to_origin(ty);
 
   return;
@@ -838,6 +838,8 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
        cx, cy);
    cx--;
    cy--;
+   if (ty->termstate.restrict_cursor)
+     cx += ty->termstate.left_margin;
    TERMPTY_RESTRICT_FIELD(cx, 0, ty->w);
    if (ty->termstate.restrict_cursor)
      cy += ty->termstate.top_margin;
@@ -918,9 +920,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin != 0)
-            && (ty->cursor_state.cy > ty->termstate.bottom_margin))
+            && (ty->cursor_state.cy >= ty->termstate.bottom_margin))
           {
-             ty->cursor_state.cy = ty->termstate.bottom_margin;
+             ty->cursor_state.cy = ty->termstate.bottom_margin - 1;
           }
         break;
       case 'D': // cursor left N
@@ -930,6 +932,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx -= arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+        if (ty->termstate.restrict_cursor && (ty->termstate.left_margin != 0)
+            && (ty->cursor_state.cx < ty->termstate.left_margin))
+          {
+             ty->cursor_state.cx = ty->termstate.left_margin;
+          }
         break;
       case 'C': // cursor right N
       case 'a': // cursor right N
@@ -939,6 +946,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx += arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+        if (ty->termstate.restrict_cursor && (ty->termstate.right_margin != 0)
+            && (ty->cursor_state.cx >= ty->termstate.right_margin))
+          {
+             ty->cursor_state.cx = ty->termstate.right_margin - 1;
+          }
         break;
       case 'H': // cursor pos set (CUP)
       case 'f': // cursor pos set (HVP)
