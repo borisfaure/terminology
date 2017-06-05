@@ -10,6 +10,7 @@ typedef enum _Termpty_Clear
 
 void termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max);
 void termpty_cells_copy(Termpty *ty, Termcell *cells, Termcell *dest, int count);
+void termpty_cells_fill(Termpty *ty, Eina_Unicode codepoint, Termcell *cells, int count);
 void termpty_cells_clear(Termpty *ty, Termcell *cells, int count);
 void termpty_text_scroll(Termpty *ty, Eina_Bool clear);
 void termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear);

@@ -826,6 +826,63 @@ bad:
 }
 
 static void
+_handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
+{
+   int c = _csi_arg_get(b);
+
+   int top = _csi_arg_get(b);
+   int left = _csi_arg_get(b);
+   int bottom = _csi_arg_get(b);
+   int right = _csi_arg_get(b);
+   int len;
+
+   DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
+       c, top, left, bottom, right);
+   if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
+     return;
+
+   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+   top--;
+   if (ty->termstate.restrict_cursor)
+     top += ty->termstate.top_margin;
+
+   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+   left--;
+   if (ty->termstate.restrict_cursor)
+     left += ty->termstate.left_margin;
+
+   if (right < 1)
+     right = ty->w;
+   if (ty->termstate.restrict_cursor)
+     {
+        right += ty->termstate.left_margin;
+        if (ty->termstate.right_margin && right >= ty->termstate.right_margin)
+          right = ty->termstate.right_margin;
+     }
+
+   if (bottom < 1)
+     bottom = ty->h;
+   if (ty->termstate.restrict_cursor)
+     {
+        bottom += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin && bottom >= ty->termstate.bottom_margin)
+          bottom = ty->termstate.bottom_margin - 1;
+     }
+   bottom--;
+
+   if ((bottom < top) || (right < left))
+     return;
+
+   len = right - left;
+
+   for (; top <= bottom; top++)
+     {
+        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
+        termpty_cells_fill(ty, c, cells, len);
+     }
+}
+
+static void
 _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
                                const Eina_Unicode *cc)
 {
@@ -989,6 +1046,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
         ty->cursor_state.cy -= arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         ty->cursor_state.cx = 0;
+        break;
+      case 'x':
+        _handle_esc_csi_decfra(ty, &b);
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(&b);
