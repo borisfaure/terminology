@@ -825,21 +825,17 @@ bad:
   ty->termstate.bottom_margin = 0;
 }
 
-static void
-_handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
+static int
+_clean_up_rect_coordinates(Termpty *ty,
+                           int *top_ptr,
+                           int *left_ptr,
+                           int *bottom_ptr,
+                           int *right_ptr)
 {
-   int c = _csi_arg_get(b);
-
-   int top = _csi_arg_get(b);
-   int left = _csi_arg_get(b);
-   int bottom = _csi_arg_get(b);
-   int right = _csi_arg_get(b);
-   int len;
-
-   DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
-       c, top, left, bottom, right);
-   if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
-     return;
+   int top = *top_ptr;
+   int left = *left_ptr;
+   int bottom = *bottom_ptr;
+   int right = *right_ptr;
 
    TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
    top--;
@@ -871,6 +867,33 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
    bottom--;
 
    if ((bottom < top) || (right < left))
+     return -1;
+
+   *top_ptr = top;
+   *left_ptr = left;
+   *bottom_ptr = bottom;
+   *right_ptr = right;
+
+   return 0;
+}
+
+static void
+_handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
+{
+   int c = _csi_arg_get(b);
+
+   int top = _csi_arg_get(b);
+   int left = _csi_arg_get(b);
+   int bottom = _csi_arg_get(b);
+   int right = _csi_arg_get(b);
+   int len;
+
+   DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
+       c, top, left, bottom, right);
+   if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
+     return;
+
+   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
      return;
 
    len = right - left;
@@ -879,6 +902,29 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
      {
         Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
         termpty_cells_fill(ty, c, cells, len);
+     }
+}
+
+static void
+_handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
+{
+   int top = _csi_arg_get(b);
+   int left = _csi_arg_get(b);
+   int bottom = _csi_arg_get(b);
+   int right = _csi_arg_get(b);
+   int len;
+
+   DBG("DECERA (%d;%d;%d;%d) Erase Rectangular Area",
+       top, left, bottom, right);
+
+   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+     return;
+
+   len = right - left;
+   for (; top <= bottom; top++)
+     {
+        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
+        termpty_cells_clear(ty, cells, len);
      }
 }
 
@@ -1295,6 +1341,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
              ty->cursor_state.cx = cx;
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
+        break;
+      case 'z':
+        _handle_esc_csi_decera(ty, &b);
         break;
       case 'I':
         arg = _csi_arg_get(&b);
