@@ -942,15 +942,30 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    DBG("cursor pos set (%s) (%d;%d)", (*cc == 'H') ? "CUP" : "HVP",
        cx, cy);
    cx--;
-   cy--;
+   if (cx < 0)
+     cx = 0;
    if (ty->termstate.restrict_cursor)
-     cx += ty->termstate.left_margin;
-   TERMPTY_RESTRICT_FIELD(cx, 0, ty->w);
-   if (ty->termstate.restrict_cursor)
-     cy += ty->termstate.top_margin;
-   TERMPTY_RESTRICT_FIELD(cy, 0, ty->h);
-
+     {
+        cx += ty->termstate.left_margin;
+        if (ty->termstate.right_margin && cx >= ty->termstate.right_margin)
+          cx = ty->termstate.right_margin - 1;
+     }
+   if (cx >= ty->w)
+     cx = ty->w -1;
    ty->cursor_state.cx = cx;
+
+
+   cy--;
+   if (cy < 0)
+     cy = 0;
+   if (ty->termstate.restrict_cursor)
+     {
+        cy += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin && cy >= ty->termstate.bottom_margin)
+          cy = ty->termstate.bottom_margin - 1;
+     }
+   if (cy >= ty->h)
+     cy = ty->h - 1;
    ty->cursor_state.cy = cy;
 }
 
