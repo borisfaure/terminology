@@ -86,7 +86,7 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
              termpty_cell_copy(ty, cells, cells2, w);
           }
         if (clear)
-          termpty_cells_clear(ty, cells + x, w);
+          termpty_cells_clear(ty, cells, w);
      }
 }
 
