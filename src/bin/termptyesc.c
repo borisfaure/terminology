@@ -857,6 +857,8 @@ _clean_up_rect_coordinates(Termpty *ty,
         if (ty->termstate.right_margin && right >= ty->termstate.right_margin)
           right = ty->termstate.right_margin;
      }
+   if (right > ty->w)
+     right = ty->w;
 
    if (bottom < 1)
      bottom = ty->h;
@@ -867,6 +869,8 @@ _clean_up_rect_coordinates(Termpty *ty,
           bottom = ty->termstate.bottom_margin - 1;
      }
    bottom--;
+   if (bottom > ty->h)
+     bottom = ty->h;
 
    if ((bottom < top) || (right < left))
      return -1;
