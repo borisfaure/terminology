@@ -930,7 +930,7 @@ _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
    for (; top <= bottom; top++)
      {
         Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
-        termpty_cells_clear(ty, cells, len);
+        termpty_cells_set_content(ty, cells, ' ', len);
      }
 }
 

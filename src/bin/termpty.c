@@ -1586,6 +1586,19 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
 }
 
 void
+termpty_cells_set_content(Termpty *ty, Termcell *cells,
+                          Eina_Unicode codepoint, int count)
+{
+   int i;
+   for (i = 0; i < count; i++)
+     {
+        _handle_block_codepoint_overwrite(ty, cells[i].codepoint, codepoint);
+        cells[i].codepoint = codepoint;
+     }
+}
+
+
+void
 termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
                                 Termatt att, Termcell *dst, int n)
 {

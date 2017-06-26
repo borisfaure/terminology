@@ -255,6 +255,8 @@ Termblock *termpty_block_chid_get(Termpty *ty, const char *chid);
 void       termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint, Termatt att, Termcell *dst, int n);
+void       termpty_cells_set_content(Termpty *ty, Termcell *cells,
+                          Eina_Unicode codepoint, int count);
 void       termpty_screen_swap(Termpty *ty);
 
 ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
