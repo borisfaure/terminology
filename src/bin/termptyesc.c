@@ -907,7 +907,7 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
    for (; top <= bottom; top++)
      {
         Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
-        termpty_cells_fill(ty, c, cells, len);
+        termpty_cells_att_fill_preserve_colors(ty, cells, c, len);
      }
 }
 

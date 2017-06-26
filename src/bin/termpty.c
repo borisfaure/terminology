@@ -1597,6 +1597,31 @@ termpty_cells_set_content(Termpty *ty, Termcell *cells,
      }
 }
 
+void
+termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
+                                       Eina_Unicode codepoint, int count)
+{
+   int i;
+   Termcell local = { .codepoint = codepoint, .att = ty->termstate.att};
+
+   for (i = 0; i < count; i++)
+     {
+        Termatt att = cells[i].att;
+        _handle_block_codepoint_overwrite(ty, cells[i].codepoint, codepoint);
+        cells[i] = local;
+        if (ty->termstate.att.fg == 0 && ty->termstate.att.bg == 0)
+          {
+             cells[i].att.fg = att.fg;
+             cells[i].att.fg256 = att.fg256;
+             cells[i].att.fgintense = att.fgintense;
+
+             cells[i].att.bg = att.bg;
+             cells[i].att.bg256 = att.bg256;
+             cells[i].att.bgintense = att.bgintense;
+          }
+     }
+}
+
 
 void
 termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
