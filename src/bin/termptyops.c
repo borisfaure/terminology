@@ -472,3 +472,29 @@ termpty_cursor_copy(Termpty *ty, Eina_Bool save)
         ty->cursor_state.cy = ty->cursor_save[ty->altbuf].cy;
      }
 }
+
+
+void
+termpty_move_cursor(Termpty *ty, int cx, int cy)
+{
+   int vect;
+
+   /* right/left */
+   vect = cx - ty->cursor_state.cx;
+   /* left */
+   for (; vect < 0; vect++)
+     termpty_write(ty, "\033[D", strlen("\033[D"));
+   /* right */
+   for (; vect > 0; vect--)
+     termpty_write(ty, "\033[C", strlen("\033[C"));
+
+   /* up/down */
+   vect = cy - ty->cursor_state.cy;
+   /* up */
+   for (; vect < 0; vect++)
+     termpty_write(ty, "\033[A", strlen("\033[A"));
+   /* down*/
+   for (; vect > 0; vect--)
+     termpty_write(ty, "\033[B", strlen("\033[B"));
+
+}

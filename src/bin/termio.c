@@ -6,6 +6,7 @@
 #include "termio.h"
 #include "termiolink.h"
 #include "termpty.h"
+#include "termptyops.h"
 #include "termcmd.h"
 #include "termptydbl.h"
 #include "utf8.h"
@@ -3997,6 +3998,12 @@ _handle_mouse_down_single_click(Termio *sd,
         sd->pty->selection.end.x = cx;
         sd->pty->selection.end.y = cy;
         _selection_dbl_fix(sd);
+     }
+   else if (!shift && alt && !sd->pty->selection.is_active
+            && (sd->pty->mouse_mode == MOUSE_OFF))
+     {
+        /* move cursor to position */
+        termpty_move_cursor(sd->pty, cx, cy);
      }
    else if (!shift && !sd->pty->selection.is_active)
      {

@@ -28,6 +28,8 @@ void termpty_cursor_copy(Termpty *ty, Eina_Bool save);
 void termpty_clear_tabs_on_screen(Termpty *ty);
 void termpty_clear_backlog(Termpty *ty);
 
+void termpty_move_cursor(Termpty *ty, int cx, int cy);
+
 #define _term_txt_write(ty, txt) termpty_write(ty, txt, sizeof(txt) - 1)
 
 #define TAB_WIDTH 8u
