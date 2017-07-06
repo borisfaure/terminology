@@ -477,24 +477,62 @@ termpty_cursor_copy(Termpty *ty, Eina_Bool save)
 void
 termpty_move_cursor(Termpty *ty, int cx, int cy)
 {
-   int vect;
+   int cur_cx = ty->cursor_state.cx;
+   int cur_cy = ty->cursor_state.cy;
+   Termcell *cells;
+   ssize_t wlen;
+   int n_to_down = 0;
+   int n_to_right = 0;
 
-   /* right/left */
-   vect = cx - ty->cursor_state.cx;
-   /* left */
-   for (; vect < 0; vect++)
-     termpty_write(ty, "\033[D", strlen("\033[D"));
+   /* move Up or Down */
+   while (cur_cy != cy)
+     {
+        if (cur_cy < cy)
+          {
+             /* go down */
+             cells = termpty_cellrow_get(ty, cur_cy, &wlen);
+             assert(cells);
+             if (cells[wlen-1].att.autowrapped)
+               {
+                  n_to_right += ty->w;
+               }
+             else
+               {
+                  n_to_down++;
+               }
+             cur_cy++;
+          }
+        else
+          {
+             /* go up */
+             cells = termpty_cellrow_get(ty, cur_cy - 1, &wlen);
+             assert(cells);
+             if (cells[wlen-1].att.autowrapped)
+               {
+                  n_to_right -= ty->w;
+               }
+             else
+               {
+                  n_to_down--;
+               }
+             cur_cy--;
+          }
+     }
+
+   n_to_right += cx - cur_cx;
+
    /* right */
-   for (; vect > 0; vect--)
+   for (; n_to_right > 0; n_to_right--)
      termpty_write(ty, "\033[C", strlen("\033[C"));
+   /* left */
+   for (; n_to_right < 0; n_to_right++)
+     termpty_write(ty, "\033[D", strlen("\033[D"));
 
-   /* up/down */
-   vect = cy - ty->cursor_state.cy;
-   /* up */
-   for (; vect < 0; vect++)
-     termpty_write(ty, "\033[A", strlen("\033[A"));
    /* down*/
-   for (; vect > 0; vect--)
+   for (; n_to_down > 0; n_to_down--)
      termpty_write(ty, "\033[B", strlen("\033[B"));
+   /* up */
+   for (; n_to_down < 0; n_to_down++)
+     termpty_write(ty, "\033[A", strlen("\033[A"));
 
 }
