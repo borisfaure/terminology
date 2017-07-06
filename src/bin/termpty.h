@@ -247,10 +247,10 @@ pid_t      termpty_pid_get(const Termpty *ty);
 void       termpty_block_free(Termblock *tb);
 Termblock *termpty_block_new(Termpty *ty, int w, int h, const char *path, const char *link);
 void       termpty_block_insert(Termpty *ty, int ch, Termblock *blk);
-int        termpty_block_id_get(Termcell *cell, int *x, int *y);
-Termblock *termpty_block_get(Termpty *ty, int id);
+int        termpty_block_id_get(const Termcell *cell, int *x, int *y);
+Termblock *termpty_block_get(const Termpty *ty, int id);
 void       termpty_block_chid_update(Termpty *ty, Termblock *blk);
-Termblock *termpty_block_chid_get(Termpty *ty, const char *chid);
+Termblock *termpty_block_chid_get(const Termpty *ty, const char *chid);
 
 void       termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);

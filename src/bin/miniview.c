@@ -207,7 +207,7 @@ _smart_cb_mouse_wheel(void *data,
 }
 
 void
-miniview_position_offset(Evas_Object *obj, int by, Eina_Bool sanitize)
+miniview_position_offset(const Evas_Object *obj, int by, Eina_Bool sanitize)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
    int remain = 0;
@@ -476,7 +476,7 @@ _smart_hide(Evas_Object *obj)
 }
 
 void
-miniview_redraw(Evas_Object *obj)
+miniview_redraw(const Evas_Object *obj)
 {
    Miniview *mv;
 

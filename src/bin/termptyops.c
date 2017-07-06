@@ -191,7 +191,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
                termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
-        g = _termpty_charset_trans(codepoints[i], ty);
+        g = _termpty_charset_trans(ty, codepoints[i]);
         /* Skip 0-width space */
         if (EINA_UNLIKELY(g == 0x200b))
           {

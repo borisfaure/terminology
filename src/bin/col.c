@@ -380,7 +380,9 @@ static const Color default_colors256[256] =
 };
 
 void
-colors_term_init(Evas_Object *textgrid, Evas_Object *bg, Config *config)
+colors_term_init(Evas_Object *textgrid,
+                 const Evas_Object *bg,
+                 const Config *config)
 {
    int c, n;
    char buf[32];

@@ -974,7 +974,7 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
 }
 
 static int
-_handle_esc_csi(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    int arg, i;
    const Eina_Unicode *cc, *be;
@@ -1564,7 +1564,7 @@ _handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
 }
 
 static int
-_handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *p;
@@ -1908,7 +1908,7 @@ end:
 }
 
 static int
-_handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
+_handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    int len = ce - c;
 
@@ -2046,7 +2046,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, Eina_Unicode *ce)
 
 /* XXX: ce is excluded */
 int
-termpty_handle_seq(Termpty *ty, Eina_Unicode *c, Eina_Unicode *ce)
+termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
    int len = 0;

@@ -37,13 +37,13 @@ struct _Term_Container {
      Eina_Bool is_focused;
      const char *title;
 
-     Term *(*term_next)(Term_Container *tc, Term_Container *child);
-     Term *(*term_prev)(Term_Container *tc, Term_Container *child);
-     Term *(*term_first)(Term_Container *tc);
-     Term *(*term_last)(Term_Container *tc);
-     Term *(*focused_term_get)(Term_Container *tc);
-     Evas_Object* (*get_evas_object)(Term_Container *container);
-     Term *(*find_term_at_coords)(Term_Container *container,
+     Term *(*term_next)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_prev)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_first)(const Term_Container *tc);
+     Term *(*term_last)(const Term_Container *tc);
+     Term *(*focused_term_get)(const Term_Container *tc);
+     Evas_Object* (*get_evas_object)(const Term_Container *container);
+     Term *(*find_term_at_coords)(const Term_Container *container,
                                   Evas_Coord mx, Evas_Coord my);
      void (*split)(Term_Container *tc, Term_Container *child,
                    Term *from, const char *cmd, Eina_Bool is_horizontal);

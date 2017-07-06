@@ -28,7 +28,7 @@ int _gravatar_log_dom = -1;
 
 typedef struct _Gravatar {
      const char *url;
-     Config *config;
+     const Config *config;
 } Gravatar;
 
 static Evas_Object *
@@ -56,7 +56,7 @@ _tooltip_del(void            *data,
 }
 
 void
-gravatar_tooltip(Evas_Object *obj, Config *config, char *email)
+gravatar_tooltip(Evas_Object *obj, const Config *config, char *email)
 {
    int n;
    MD5_CTX ctx;

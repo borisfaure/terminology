@@ -650,7 +650,7 @@ config_load(const char *key)
 }
 
 Config *
-config_fork(Config *config)
+config_fork(const Config *config)
 {
    Config_Keys *key;
    Eina_List *l;

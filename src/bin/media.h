@@ -30,14 +30,14 @@ enum _Media_Type {
 Evas_Object *media_add(Evas_Object *parent, const char *src, const Config *config, int mode, Media_Type type);
 void media_mute_set(Evas_Object *obj, Eina_Bool mute);
 void media_play_set(Evas_Object *obj, Eina_Bool play);
-Eina_Bool media_play_get(Evas_Object *obj);
+Eina_Bool media_play_get(const Evas_Object *obj);
 void media_position_set(Evas_Object *obj, double pos);
 void media_volume_set(Evas_Object *obj, double vol);
 void media_visualize_set(Evas_Object *obj, Eina_Bool visualize);
 void media_stop(Evas_Object *obj);
 const char *media_get(const Evas_Object *obj);
 Media_Type media_src_type_get(const char *src);
-Evas_Object *media_control_get(Evas_Object *obj);
+Evas_Object *media_control_get(const Evas_Object *obj);
 void media_unknown_handle(const char *handler, const char *src);
 
 #endif

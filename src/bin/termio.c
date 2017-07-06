@@ -302,7 +302,7 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
 }
 
 void
-termio_size_get(Evas_Object *obj, int *w, int *h)
+termio_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -311,7 +311,7 @@ termio_size_get(Evas_Object *obj, int *w, int *h)
 }
 
 int
-termio_scroll_get(Evas_Object *obj)
+termio_scroll_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, 0);
@@ -358,7 +358,7 @@ termio_scroll_top_backlog(Evas_Object *obj)
 }
 
 const char *
-termio_title_get(Evas_Object *obj)
+termio_title_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -382,7 +382,7 @@ termio_user_title_set(Evas_Object *obj, const char *title)
 }
 
 const char *
-termio_icon_name_get(Evas_Object *obj)
+termio_icon_name_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -428,7 +428,7 @@ termio_selection_exists(const Evas_Object *obj)
 }
 
 Termpty *
-termio_pty_get(Evas_Object *obj)
+termio_pty_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -437,7 +437,7 @@ termio_pty_get(Evas_Object *obj)
 }
 
 Evas_Object *
-termio_miniview_get(Evas_Object *obj)
+termio_miniview_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -446,7 +446,7 @@ termio_miniview_get(Evas_Object *obj)
 }
 
 Term*
-termio_term_get(Evas_Object *obj)
+termio_term_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -549,7 +549,7 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
 }
 
 Evas_Object *
-termio_textgrid_get(Evas_Object *obj)
+termio_textgrid_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -558,7 +558,7 @@ termio_textgrid_get(Evas_Object *obj)
 }
 
 Evas_Object *
-termio_win_get(Evas_Object *obj)
+termio_win_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -2069,7 +2069,8 @@ _mouse_in_selection(Termio *sd, int cx, int cy)
 
 
 char *
-termio_selection_get(Evas_Object *obj, int c1x, int c1y, int c2x, int c2y,
+termio_selection_get(const Evas_Object *obj,
+                     int c1x, int c1y, int c2x, int c2y,
                      size_t *lenp,
                      Eina_Bool rtrim)
 {

@@ -34,7 +34,7 @@ static const unsigned short vt100_to_unicode[62] =
 };
 
 Eina_Unicode
-_termpty_charset_trans(Eina_Unicode g, Termpty *ty)
+_termpty_charset_trans(const Termpty *ty, Eina_Unicode g)
 {
    switch (ty->termstate.charsetch)
      {

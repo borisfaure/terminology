@@ -802,7 +802,7 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 
 
 static inline void
-verify_beacon(Termpty *ty EINA_UNUSED, int verbose EINA_UNUSED)
+verify_beacon(const Termpty *ty EINA_UNUSED, int verbose EINA_UNUSED)
 {
 #if 0
    Termsave *ts;
@@ -955,7 +955,7 @@ termpty_backlog_length(Termpty *ty)
    while (42)
      {
         int nb_lines;
-        Termsave *ts;
+        const Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
         if (!ts->cells || backlog_y >= (int)ty->backsize)
@@ -1454,7 +1454,7 @@ termpty_block_insert(Termpty *ty, int ch, Termblock *blk)
 }
 
 int
-termpty_block_id_get(Termcell *cell, int *x, int *y)
+termpty_block_id_get(const Termcell *cell, int *x, int *y)
 {
    int id;
    
@@ -1466,7 +1466,7 @@ termpty_block_id_get(Termcell *cell, int *x, int *y)
 }
 
 Termblock *
-termpty_block_get(Termpty *ty, int id)
+termpty_block_get(const Termpty *ty, int id)
 {
    if (!ty->block.blocks) return NULL;
    return eina_hash_find(ty->block.blocks, &id);
@@ -1483,7 +1483,7 @@ termpty_block_chid_update(Termpty *ty, Termblock *blk)
 }
 
 Termblock *
-termpty_block_chid_get(Termpty *ty, const char *chid)
+termpty_block_chid_get(const Termpty *ty, const char *chid)
 {
    Termblock *tb;
    

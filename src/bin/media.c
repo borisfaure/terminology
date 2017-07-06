@@ -1486,7 +1486,7 @@ media_play_set(Evas_Object *obj, Eina_Bool play)
 }
 
 Eina_Bool
-media_play_get(Evas_Object *obj)
+media_play_get(const Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if ((!sd) || (sd->type != MEDIA_TYPE_MOV)) return EINA_FALSE;
@@ -1542,7 +1542,7 @@ media_src_type_get(const char *src)
 }
 
 Evas_Object *
-media_control_get(Evas_Object *obj)
+media_control_get(const Evas_Object *obj)
 {
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;

@@ -5,7 +5,7 @@
 #include "termptydbl.h"
 
 Eina_Bool
-_termpty_is_dblwidth_slow_get(Termpty *ty, int g)
+_termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
 {
    // check for east asian full-width (F), half-width (H), wide (W),
    // narrow (Na) or ambiguous (A) codepoints

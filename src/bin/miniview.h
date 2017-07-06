@@ -5,8 +5,8 @@
 
 Evas_Object * miniview_add(Evas_Object *parent, Evas_Object *termio);
 
-void miniview_redraw(Evas_Object *obj);
-void miniview_position_offset(Evas_Object *obj, int by, Eina_Bool sanitize);
+void miniview_redraw(const Evas_Object *obj);
+void miniview_position_offset(const Evas_Object *obj, int by, Eina_Bool sanitize);
 Eina_Bool miniview_handle_key(Evas_Object *obj, const Evas_Event_Key_Down *ev);
 
 void miniview_init(void);

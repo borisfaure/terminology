@@ -775,7 +775,7 @@ _key_binding_free(void *data)
 
 /* Returns -2 for duplicate key, 0 on success, -1 otherwise */
 int
-keyin_add_config(Config_Keys *key)
+keyin_add_config(const Config_Keys *key)
 {
    Shortcut_Action *action = _actions;
 
@@ -804,7 +804,7 @@ keyin_add_config(Config_Keys *key)
 }
 
 int
-keyin_remove_config(Config_Keys *key)
+keyin_remove_config(const Config_Keys *key)
 {
    Key_Binding *kb;
 

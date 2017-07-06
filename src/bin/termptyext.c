@@ -34,7 +34,7 @@
 static Eina_Bool
 _handle_op_a(Termpty *_ty EINA_UNUSED,
              const char *txt,
-             Eina_Unicode *_utxt EINA_UNUSED)
+             const Eina_Unicode *_utxt EINA_UNUSED)
 {
    switch (txt[1])
      {
@@ -48,7 +48,7 @@ _handle_op_a(Termpty *_ty EINA_UNUSED,
 }
 
 Eina_Bool
-_termpty_ext_handle(Termpty *ty, const char *txt, Eina_Unicode *utxt)
+_termpty_ext_handle(Termpty *ty, const char *txt, const Eina_Unicode *utxt)
 {
    switch (txt[0]) // major opcode
      {
