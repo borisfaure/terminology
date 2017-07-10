@@ -54,6 +54,11 @@ void term_next(Term *term);
 void term_prev(Term *term);
 Win * term_win_get(const Term *term);
 
+void term_up(Term *term);
+void term_down(Term *term);
+void term_left(Term *term);
+void term_right(Term *term);
+
 void
 win_font_size_set(Win *wn, int new_size);
 

@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 15
+#define CONF_VER 16
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -336,6 +336,10 @@ _add_default_keys(Config *config)
    ADD_KB("Home", 0, 1, 0, 0, "cmd_box");
    ADD_KB("w", 0, 1, 0, 0, "copy_primary");
    ADD_KB("Return", 0, 1, 0, 0, "paste_primary");
+   ADD_KB("Up", 0, 1, 0, 0, "term_up");
+   ADD_KB("Down", 0, 1, 0, 0, "term_down");
+   ADD_KB("Left", 0, 1, 0, 0, "term_left");
+   ADD_KB("Right", 0, 1, 0, 0, "term_right");
 
    /* Ctrl-Shift- */
    ADD_KB("Prior", 1, 0, 1, 0, "split_h");
@@ -619,7 +623,13 @@ config_load(const char *key)
                 case 14:
                   config->disable_focus_visuals = EINA_FALSE;
                   /*pass through*/
-                case CONF_VER: /* 15 */
+                case 15:
+                  _add_key(config, "Up",    0, 1, 0, 0, "term_up");
+                  _add_key(config, "Down",  0, 1, 0, 0, "term_down");
+                  _add_key(config, "Left",  0, 1, 0, 0, "term_left");
+                  _add_key(config, "Right", 0, 1, 0, 0, "term_right");
+                  /*pass through*/
+                case CONF_VER: /* 16 */
                   config->version = CONF_VER;
                   break;
                 default:

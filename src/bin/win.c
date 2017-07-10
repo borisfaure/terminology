@@ -297,6 +297,34 @@ _solo_term_prev(const Term_Container *tc,
 }
 
 static Term *
+_solo_term_up(const Term_Container *tc,
+              const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_up(tc->parent, tc);
+}
+
+static Term *
+_solo_term_down(const Term_Container *tc,
+                const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_down(tc->parent, tc);
+}
+
+static Term *
+_solo_term_left(const Term_Container *tc,
+                const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_left(tc->parent, tc);
+}
+
+static Term *
+_solo_term_right(const Term_Container *tc,
+                 const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_right(tc->parent, tc);
+}
+
+static Term *
 _solo_term_first(const Term_Container *tc)
 {
    Solo *solo;
@@ -449,6 +477,10 @@ _solo_new(Term *term, Win *wn)
    tc = (Term_Container*)solo;
    tc->term_next = _solo_term_next;
    tc->term_prev = _solo_term_prev;
+   tc->term_up = _solo_term_up;
+   tc->term_down = _solo_term_down;
+   tc->term_left = _solo_term_left;
+   tc->term_right = _solo_term_right;
    tc->term_first = _solo_term_first;
    tc->term_last = _solo_term_last;
    tc->focused_term_get = _solo_focused_term_get;
@@ -786,6 +818,34 @@ _win_term_prev(const Term_Container *_tc EINA_UNUSED,
 }
 
 static Term *
+_win_term_up(const Term_Container *_tc EINA_UNUSED,
+             const Term_Container *child EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Term *
+_win_term_down(const Term_Container *_tc EINA_UNUSED,
+               const Term_Container *child EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Term *
+_win_term_left(const Term_Container *_tc EINA_UNUSED,
+               const Term_Container *child EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Term *
+_win_term_right(const Term_Container *_tc EINA_UNUSED,
+                const Term_Container *child EINA_UNUSED)
+{
+   return NULL;
+}
+
+static Term *
 _win_term_first(const Term_Container *tc)
 {
    Win *wn;
@@ -1060,6 +1120,10 @@ win_new(const char *name, const char *role, const char *title,
    tc = (Term_Container*) wn;
    tc->term_next = _win_term_next;
    tc->term_prev = _win_term_prev;
+   tc->term_up = _win_term_up;
+   tc->term_down = _win_term_down;
+   tc->term_left = _win_term_left;
+   tc->term_right = _win_term_right;
    tc->term_first = _win_term_first;
    tc->term_last = _win_term_last;
    tc->focused_term_get = _win_focused_term_get;
@@ -1171,6 +1235,66 @@ _split_term_prev(const Term_Container *tc, const Term_Container *child)
      return split->tc1->term_last(split->tc1);
    else
      return tc->parent->term_prev(tc->parent, tc);
+}
+
+static Term *
+_split_term_up(const Term_Container *tc,
+               const Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc2 && split->is_horizontal)
+     return split->tc1->term_last(split->tc1);
+   else
+     return tc->parent->term_up(tc->parent, tc);
+}
+
+static Term *
+_split_term_down(const Term_Container *tc,
+                 const Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc1 && split->is_horizontal)
+     return split->tc2->term_first(split->tc2);
+   else
+     return tc->parent->term_down(tc->parent, tc);
+}
+
+static Term *
+_split_term_left(const Term_Container *tc,
+                 const Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc2 && !split->is_horizontal)
+     return split->tc1->term_last(split->tc1);
+   else
+     return tc->parent->term_left(tc->parent, tc);
+}
+
+static Term *
+_split_term_right(const Term_Container *tc,
+                  const Term_Container *child)
+{
+   Split *split;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split*) tc;
+
+   if (child == split->tc1 && !split->is_horizontal)
+     return split->tc2->term_first(split->tc2);
+   else
+     return tc->parent->term_right(tc->parent, tc);
 }
 
 static Term *
@@ -1545,6 +1669,10 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    tc = (Term_Container*)split;
    tc->term_next = _split_term_next;
    tc->term_prev = _split_term_prev;
+   tc->term_up = _split_term_up;
+   tc->term_down = _split_term_down;
+   tc->term_left = _split_term_left;
+   tc->term_right = _split_term_right;
    tc->term_first = _split_term_first;
    tc->term_last = _split_term_last;
    tc->focused_term_get = _split_focused_term_get;
@@ -2331,6 +2459,34 @@ _tabs_term_prev(const Term_Container *tc, const Term_Container *child)
 }
 
 static Term *
+_tabs_term_up(const Term_Container *tc,
+              const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_up(tc->parent, tc);
+}
+
+static Term *
+_tabs_term_down(const Term_Container *tc,
+                const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_down(tc->parent, tc);
+}
+
+static Term *
+_tabs_term_left(const Term_Container *tc,
+                const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_left(tc->parent, tc);
+}
+
+static Term *
+_tabs_term_right(const Term_Container *tc,
+                 const Term_Container *_child EINA_UNUSED)
+{
+   return tc->parent->term_right(tc->parent, tc);
+}
+
+static Term *
 _tabs_term_first(const Term_Container *tc)
 {
    Tabs *tabs;
@@ -2804,6 +2960,10 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc = (Term_Container*)tabs;
    tc->term_next = _tabs_term_next;
    tc->term_prev = _tabs_term_prev;
+   tc->term_up = _tabs_term_up;
+   tc->term_down = _tabs_term_down;
+   tc->term_left = _tabs_term_left;
+   tc->term_right = _tabs_term_right;
    tc->term_first = _tabs_term_first;
    tc->term_last = _tabs_term_last;
    tc->focused_term_get = _tabs_focused_term_get;
@@ -2975,32 +3135,100 @@ term_unfocus(Term *term)
    tc->unfocus(tc, tc);
 }
 
-Term *
-term_prev_get(const Term *term)
-{
-   Term_Container *tc = term->container;
+enum term_to_direction {
+     TERM_TO_PREV,
+     TERM_TO_NEXT,
+     TERM_TO_UP,
+     TERM_TO_DOWN,
+     TERM_TO_LEFT,
+     TERM_TO_RIGHT,
+};
 
-   return tc->term_prev(tc, tc);
-}
-
-void term_prev(Term *term)
+static void
+term_go_to(Term *from, enum term_to_direction dir)
 {
    Term *new_term, *focused_term;
-   Win *wn = term->wn;
+   Win *wn = from->wn;
    Term_Container *tc;
 
    tc = (Term_Container *) wn;
 
    focused_term = tc->focused_term_get(tc);
    if (!focused_term)
-     focused_term = term;
+     focused_term = from;
    tc = focused_term->container;
-   new_term = tc->term_prev(tc, tc);
+
+   switch (dir)
+     {
+      case TERM_TO_PREV:
+         new_term = tc->term_prev(tc, tc);
+         break;
+      case TERM_TO_NEXT:
+         new_term = tc->term_next(tc, tc);
+         break;
+      case TERM_TO_UP:
+         new_term = tc->term_up(tc, tc);
+         break;
+      case TERM_TO_DOWN:
+         new_term = tc->term_down(tc, tc);
+         break;
+      case TERM_TO_LEFT:
+         new_term = tc->term_left(tc, tc);
+         break;
+      case TERM_TO_RIGHT:
+         new_term = tc->term_right(tc, tc);
+         break;
+     }
+
    if (new_term && new_term != focused_term)
      _term_focus(new_term);
 
    /* TODO: get rid of it? */
-   _term_miniview_check(term);
+   _term_miniview_check(from);
+}
+
+void
+term_prev(Term *term)
+{
+   term_go_to(term, TERM_TO_PREV);
+}
+
+void
+term_next(Term *term)
+{
+   term_go_to(term, TERM_TO_NEXT);
+}
+
+void
+term_up(Term *term)
+{
+   term_go_to(term, TERM_TO_UP);
+}
+
+void
+term_down(Term *term)
+{
+   term_go_to(term, TERM_TO_DOWN);
+}
+
+void
+term_left(Term *term)
+{
+   term_go_to(term, TERM_TO_LEFT);
+}
+
+void
+term_right(Term *term)
+{
+   term_go_to(term, TERM_TO_RIGHT);
+}
+
+Term *
+term_prev_get(const Term *term)
+{
+   Term_Container *tc = term->container;
+
+   return tc->term_prev(tc, tc);
 }
 
 Term *
@@ -3011,25 +3239,6 @@ term_next_get(const Term *term)
    return tc->term_next(tc, tc);
 }
 
-void term_next(Term *term)
-{
-   Term *new_term, *focused_term;
-   Win *wn = term->wn;
-   Term_Container *tc;
-
-   tc = (Term_Container*) wn;
-
-   focused_term = tc->focused_term_get(tc);
-   if (!focused_term)
-     focused_term = term;
-   tc = focused_term->container;
-   new_term = tc->term_next(tc, tc);
-   if (new_term && new_term != focused_term)
-     _term_focus(new_term);
-
-   /* TODO: get rid of it? */
-   _term_miniview_check(term);
-}
 
 static void
 _cb_popmedia_del(void *data,

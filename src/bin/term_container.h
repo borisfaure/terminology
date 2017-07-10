@@ -39,6 +39,10 @@ struct _Term_Container {
 
      Term *(*term_next)(const Term_Container *tc, const Term_Container *child);
      Term *(*term_prev)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_up)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_down)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_left)(const Term_Container *tc, const Term_Container *child);
+     Term *(*term_right)(const Term_Container *tc, const Term_Container *child);
      Term *(*term_first)(const Term_Container *tc);
      Term *(*term_last)(const Term_Container *tc);
      Term *(*focused_term_get)(const Term_Container *tc);

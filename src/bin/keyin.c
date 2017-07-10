@@ -367,6 +367,46 @@ cb_term_next(Evas_Object *termio_obj)
 }
 
 static Eina_Bool
+cb_term_up(Evas_Object *termio_obj)
+{
+   Term *term = termio_term_get(termio_obj);
+   if (!term)
+     return EINA_FALSE;
+   term_up(term);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_term_down(Evas_Object *termio_obj)
+{
+   Term *term = termio_term_get(termio_obj);
+   if (!term)
+     return EINA_FALSE;
+   term_down(term);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_term_left(Evas_Object *termio_obj)
+{
+   Term *term = termio_term_get(termio_obj);
+   if (!term)
+     return EINA_FALSE;
+   term_left(term);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_term_right(Evas_Object *termio_obj)
+{
+   Term *term = termio_term_get(termio_obj);
+   if (!term)
+     return EINA_FALSE;
+   term_right(term);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 cb_term_new(Evas_Object *termio_obj)
 {
    char path[PATH_MAX], cwd[PATH_MAX], *cmd;
@@ -645,8 +685,12 @@ static Shortcut_Action _actions[] =
      {"paste_clipboard", gettext_noop("Paste Clipboard buffer (ctrl+c/v)"), cb_paste_clipboard},
 
      {"group", gettext_noop("Splits/Tabs"), NULL},
-     {"term_prev", gettext_noop("Focus to the previous terminal"), cb_term_prev},
-     {"term_next", gettext_noop("Focus to the next terminal"), cb_term_next},
+     {"term_prev", gettext_noop("Focus the previous terminal"), cb_term_prev},
+     {"term_next", gettext_noop("Focus the next terminal"), cb_term_next},
+     {"term_up", gettext_noop("Focus the terminal above"), cb_term_up},
+     {"term_down", gettext_noop("Focus the terminal below"), cb_term_down},
+     {"term_left", gettext_noop("Focus the terminal on the left"), cb_term_left},
+     {"term_right", gettext_noop("Focus the terminal on the right"), cb_term_right},
      {"split_h", gettext_noop("Split horizontally (new below)"), cb_split_h},
      {"split_v", gettext_noop("Split vertically (new on right)"), cb_split_v},
      {"tab_new", gettext_noop("Create a new \"tab\""), cb_tab_new},
