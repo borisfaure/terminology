@@ -369,6 +369,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                              ty->termstate.left_margin = 0;
                              ty->termstate.right_margin = 0;
                           }
+                        break;
                      case 1000:
                         if (mode) ty->mouse_mode = MOUSE_NORMAL;
                         else ty->mouse_mode = MOUSE_OFF;
