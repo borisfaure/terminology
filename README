@@ -29,6 +29,13 @@ Once you have met requirements, compiling and installing is simple:
   make
   make install
 
+To build using meson:
+
+  meson build
+  cd build
+  ninja
+  ninja install
+
 Note: to make terminology work with input methods in general you need:
 
 export ECORE_IMF_MODULE="xim"
