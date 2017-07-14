@@ -465,10 +465,28 @@ _font_size_set(Evas_Object *obj, int size)
 
    if (size < 5) size = 5;
    else if (size > 100) size = 100;
-   if (config && config->font.size != size)
+   if (config)
      {
         config->temporary = EINA_TRUE;
         config->font.size = size;
+        sd->noreqsize = 1;
+        termio_config_update(obj);
+        sd->noreqsize = 0;
+        evas_object_data_del(obj, "sizedone");
+     }
+}
+
+void
+termio_font_update(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Config *config;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   config = sd->config;
+
+   if (config)
+     {
         sd->noreqsize = 1;
         termio_config_update(obj);
         sd->noreqsize = 0;

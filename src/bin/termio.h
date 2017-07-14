@@ -21,6 +21,7 @@ void termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y);
 void termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y, int n);
 
 void         termio_config_update(Evas_Object *obj);
+void         termio_font_update(Evas_Object *obj);
 Config      *termio_config_get(const Evas_Object *obj);
 Eina_Bool    termio_take_selection(Evas_Object *obj, Elm_Sel_Type);
 void         termio_paste_selection(Evas_Object *obj, Elm_Sel_Type);

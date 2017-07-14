@@ -59,8 +59,8 @@ void term_down(Term *term);
 void term_left(Term *term);
 void term_right(Term *term);
 
-void
-win_font_size_set(Win *wn, int new_size);
+void win_font_size_set(Win *wn, int new_size);
+void win_font_update(Term *term);
 
 Eina_Bool
 term_has_popmedia(const Term *term);

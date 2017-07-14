@@ -4616,6 +4616,21 @@ win_font_size_set(Win *wn, int new_size)
    for_each_term_do(wn, &_font_size_set, (void*)(intptr_t)new_size);
 }
 
+static Eina_Bool
+_font_update(Term *term, void *_data EINA_UNUSED)
+{
+   termio_font_update(term->termio);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+void
+win_font_update(Term *term)
+{
+   Win *wn = term->wn;
+   for_each_term_do(wn, &_font_update, NULL);
+}
+
 void
 windows_free(void)
 {

@@ -134,6 +134,8 @@ _cb_op_font_sel(void *data,
 {
    Font *f = data;
    Config *config = termio_config_get(f->term);
+   Term *term = termio_term_get(f->term);
+
    if ((config->font.name) && (!strcmp(f->full_name, config->font.name)))
      return;
    if (config->font.name) eina_stringshare_del(config->font.name);
@@ -144,6 +146,7 @@ _cb_op_font_sel(void *data,
    elm_object_disabled_set(op_fontslider, f->bitmap);
    elm_object_disabled_set(op_fbig, f->bitmap);
    config_save(config, NULL);
+   win_font_update(term);
 }
 
 static void
@@ -151,15 +154,17 @@ _cb_op_fontsize_sel(void *data,
                     Evas_Object *obj,
                     void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Evas_Object *termio_obj = data;
+   Config *config = termio_config_get(termio_obj);
+   Term *term = termio_term_get(termio_obj);
    int size = elm_slider_value_get(obj) + 0.5;
 
    if (config->font.size == size) return;
    config->font.size = size;
-   _update_sizing(term);
+   _update_sizing(termio_obj);
    elm_genlist_realized_items_update(op_fontlist);
    config_save(config, NULL);
+   win_font_update(term);
 }
 
 static int
