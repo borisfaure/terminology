@@ -8,7 +8,7 @@ Eina_Bool is_running_in_terminology(void);
     {                                                                      \
        if (!is_running_in_terminology())                                   \
          {                                                                 \
-            fprintf(stderr, "not running in terminology\n");               \
+            fprintf(stderr, "not directly running in terminology\n");      \
             exit(1);                                                       \
          }                                                                 \
     }                                                                      \
