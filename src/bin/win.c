@@ -2280,12 +2280,20 @@ _tabs_size_eval(Term_Container *container, Sizeinfo *info)
 {
    Tabs *tabs;
    Term_Container *tc;
+   Config *config;
 
    assert (container->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*)container;
 
    tc = tabs->current->tc;
+   config = tc->wn->config;
    tc->size_eval(tc, info);
+   /* Current sizing code does not take the tab area correctly into account */
+   if (!config->notabs)
+     {
+        info->step_x = 1;
+        info->step_y = 1;
+     }
 }
 
 static Eina_List *
