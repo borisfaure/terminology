@@ -1224,13 +1224,6 @@ _update_link(Evas_Object *obj, Termio *sd,
      return;
 
    popup_exists = main_term_popup_exists(sd->term);
-   if ((!popup_exists) &&
-       ((sd->link.string[0] == '/') || (link_is_url(sd->link.string))))
-     {
-#ifdef HAVE_ELM_WIN_TEAMWORK
-        elm_win_teamwork_uri_show(win_evas_object_get(term_win_get(sd->term)), sd->link.string);
-#endif
-     }
    for (y = sd->link.y1; y <= sd->link.y2; y++)
      {
         o = elm_layout_add(sd->win);
@@ -1287,9 +1280,6 @@ _remove_links(Termio *sd, Evas_Object *obj)
 
    if (sd->link.string)
      {
-#ifdef HAVE_ELM_WIN_TEAMWORK
-        elm_win_teamwork_uri_hide(win_evas_object_get(term_win_get(sd->term)));
-#endif
         free(sd->link.string);
         sd->link.string = NULL;
      }
@@ -4504,9 +4494,6 @@ _smart_cb_mouse_out(void *data,
    if (sd->ctxpopup) return; /* ctxp triggers mouse out we should ignore */
 
    termio_mouseover_suspend_pushpop(data, 1);
-#ifdef HAVE_ELM_WIN_TEAMWORK
-   elm_win_teamwork_uri_hide(win_evas_object_get(term_win_get(sd->term)));
-#endif
    if ((ev->canvas.x == 0) || (ev->canvas.y == 0))
      {
         sd->mouse.cx = -1;

@@ -111,26 +111,6 @@ AC_LINK_IFELSE(
      AC_MSG_RESULT([no])
    ]
 )
-AC_MSG_CHECKING([for elm_win_teamwork])
-AC_LINK_IFELSE(
-   [
-    AC_LANG_PROGRAM(
-      [[
-       #include <Elementary.h>
-      ]],
-     [[
-        elm_win_teamwork_uri_show(NULL);
-     ]])
-   ],
-   [
-     AC_MSG_RESULT([yes])
-     AC_DEFINE([HAVE_ELM_WIN_TEAMWORK], [1], [define to 1 if
-                elm_win_teamwork_uri_show is available])
-   ],
-   [
-     AC_MSG_RESULT([no])
-   ]
-)
 CFLAGS=$orig_cflags
 
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])

@@ -3305,9 +3305,6 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
    Config *config = termio_config_get(term->termio);
 
    EINA_SAFETY_ON_NULL_RETURN(config);
-#ifdef HAVE_ELM_WIN_TEAMWORK
-   elm_win_teamwork_uri_hide(term->wn->win);
-#endif
    if (term->popmedia)
      {
         const char *s;
