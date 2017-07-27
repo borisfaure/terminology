@@ -1007,7 +1007,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case '@': // insert N blank chars
         arg = _csi_arg_get(&b);
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 1, ty->w * ty->h);
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
         DBG("insert %d blank chars", arg);
           {
              int pi = ty->termstate.insert;
