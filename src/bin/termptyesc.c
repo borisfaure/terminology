@@ -1697,7 +1697,7 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           goto err;
         if (*p == '?')
           {
-             char bf[6];
+             char bf[7];
              Config *config = termio_config_get(ty->obj);
              TERMPTY_WRITE_STR("\033]10;#");
              snprintf(bf, sizeof(bf), "%.2X%.2X%.2X",
