@@ -572,6 +572,7 @@ config_load(const char *key)
                 case 0:
                 case 1:
                    _config_upgrade_to_v2(config);
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 2:
                   LIM(config->font.size, 3, 400);
@@ -582,6 +583,7 @@ config_load(const char *key)
                   /* upgrade to v3 */
                   config->active_links = EINA_TRUE;
                   config->bell_rings = EINA_TRUE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 3:
                   if (eina_list_count(config->keys) == 0)
@@ -589,45 +591,58 @@ config_load(const char *key)
                        _add_default_keys(config);
                     }
                   config->gravatar = EINA_TRUE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 4:
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 5:
                   config->ty_escapes = EINA_TRUE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 6:
                   config->changedir_to_current = EINA_TRUE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 7:
                   _add_key(config, "n", 1, 0, 1, 0, "term_new");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 8:
                   _add_key(config, "t", 1, 1, 0, 0, "tab_title");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 9:
                   /* actually do nothing */
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 10:
                   config->font.bolditalic = EINA_TRUE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 11:
                   _add_key(config, "Left", 0, 0, 1, 0, "term_prev");
                   _add_key(config, "Right", 0, 0, 1, 0, "term_next");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 12:
                   _add_key(config, "Home", 0, 0, 1, 0, "top_backlog");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 13:
                   _add_key(config, "End", 0, 0, 1, 0, "reset_scroll");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 14:
                   config->disable_focus_visuals = EINA_FALSE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case 15:
                   _add_key(config, "Up",    0, 1, 0, 0, "term_up");
                   _add_key(config, "Down",  0, 1, 0, 0, "term_down");
                   _add_key(config, "Left",  0, 1, 0, 0, "term_left");
                   _add_key(config, "Right", 0, 1, 0, 0, "term_right");
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case CONF_VER: /* 16 */
                   config->version = CONF_VER;
