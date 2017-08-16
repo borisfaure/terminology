@@ -1,6 +1,32 @@
 =================
-Terminology 1.0.0
+Terminology 1.1.0
 =================
+
+Changes since 1.0.0:
+--------------------
+
+Additions:
+    * Double-click on tab title to change it
+    * Add option to disable focus-in/out animations and visuals
+    * Add option to set current window size as default.
+    * Support Right/Left Margins
+    * Support for the DECERA/DECFRA escape codes
+    * Move cursor to position on Click+Alt
+    * Add binding (Alt+Up/Down/Left/Right) to move around panes
+
+Improvement:
+    * Fallback to ~ or / when creating new term if current dir is not available
+    * Support only efl >= 1.8.0
+    * Harden escape codes decoding
+    * Update all terms of a window when changing font (name or size)
+    * Remove teamwork feature
+
+Fixes:
+    * Correctly handle the DECOM, DECSTBM, DECSLRM escape codes
+    * Fix crash when resizing and there are tabs in content
+    * Fix mouse motion and mouse button reporting
+    * Set window sizing to 1xp step when having visible tabs
+
 
 Changes since 0.9.1:
 --------------------
