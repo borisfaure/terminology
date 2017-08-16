@@ -545,6 +545,10 @@ config_new(void)
    return config;
 }
 
+#ifndef EINA_FALLTHROUGH
+#define EINA_FALLTHROUGH
+#endif
+
 Config *
 config_load(const char *key)
 {
