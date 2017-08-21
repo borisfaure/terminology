@@ -1245,9 +1245,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         DBG("ED/DECSED %d: erase in display", arg);
         switch (arg)
           {
-           case TERMPTY_CLR_END:
-           case TERMPTY_CLR_BEGIN:
-           case TERMPTY_CLR_ALL:
+           case TERMPTY_CLR_END /* 0 */:
+           case TERMPTY_CLR_BEGIN /* 1 */:
+           case TERMPTY_CLR_ALL /* 2 */:
               termpty_clear_screen(ty, arg);
               break;
            case 3:
