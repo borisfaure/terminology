@@ -371,7 +371,6 @@ termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
       case TERMPTY_CLR_ALL:
         ty->circular_offset = 0;
         termpty_cells_clear(ty, ty->screen, ty->w * ty->h);
-        ty->termstate.bottom_margin = 0;
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         break;
