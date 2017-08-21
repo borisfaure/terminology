@@ -146,7 +146,6 @@ struct _Termpty
         unsigned int  wrap : 1;
         unsigned int  wrapnext : 1;
         unsigned int  crlf : 1;
-        unsigned int  had_cr : 1;
         unsigned int  send_bs : 1;
         unsigned int  kbd_lock : 1;
         unsigned int  reverse : 1;

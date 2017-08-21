@@ -439,7 +439,6 @@ termpty_reset_state(Termpty *ty)
    ty->termstate.wrap = 1;
    ty->termstate.wrapnext = 0;
    ty->termstate.crlf = 0;
-   ty->termstate.had_cr = 0;
    ty->termstate.send_bs = 0;
    ty->termstate.reverse = 0;
    ty->termstate.no_autorepeat = 0;
