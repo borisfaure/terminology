@@ -1332,7 +1332,6 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    ty->w = new_w;
    ty->h = new_h;
-   ty->termstate.had_cr = 0;
    ty->termstate.wrapnext = 0;
 
    if (altbuf)

@@ -134,8 +134,17 @@ termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {
    int e = ty->h;
 
-   if (ty->termstate.bottom_margin != 0) e = ty->termstate.bottom_margin;
-   if (ty->cursor_state.cy >= e)
+   if (ty->termstate.bottom_margin != 0)
+     {
+        e = ty->termstate.bottom_margin;
+        if (ty->cursor_state.cy == e)
+          {
+             termpty_text_scroll(ty, clear);
+             ty->cursor_state.cy = e - 1;
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+          }
+     }
+   else if (ty->cursor_state.cy >= ty->h)
      {
         termpty_text_scroll(ty, clear);
         ty->cursor_state.cy = e - 1;
@@ -439,7 +448,6 @@ termpty_reset_state(Termpty *ty)
    ty->termstate.wrap = 1;
    ty->termstate.wrapnext = 0;
    ty->termstate.crlf = 0;
-   ty->termstate.had_cr = 0;
    ty->termstate.send_bs = 0;
    ty->termstate.reverse = 0;
    ty->termstate.no_autorepeat = 0;
