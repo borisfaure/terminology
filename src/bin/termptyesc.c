@@ -151,6 +151,12 @@ _tab_forward(Termpty *ty, int n)
 }
 
 static void
+_cursor_to_start_of_line(Termpty *ty)
+{
+   ty->cursor_state.cx = ty->termstate.left_margin;
+}
+
+static void
 _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 {
    switch (*cc)
@@ -173,7 +179,8 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
       case 0x0c: // FF  '\f' (form feed)
          DBG("->LF");
          ty->termstate.wrapnext = 0;
-         if (ty->termstate.crlf) ty->cursor_state.cx = 0;
+         if (ty->termstate.crlf)
+           _cursor_to_start_of_line(ty);
          ty->cursor_state.cy++;
          termpty_text_scroll_test(ty, EINA_TRUE);
          return;
@@ -185,7 +192,7 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
               ty->termstate.had_cr_y = ty->cursor_state.cy;
               ty->termstate.wrapnext = 0;
            }
-         ty->cursor_state.cx = 0;
+         _cursor_to_start_of_line(ty);
          return;
       default:
          return;
