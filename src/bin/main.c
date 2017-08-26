@@ -98,7 +98,7 @@ main_ipc_new(Ipc_Instance *inst)
      }
    if (inst->title)
      {
-        nargv[i++] = "-t";
+        nargv[i++] = "-T";
         nargv[i++] = (char *)inst->title;
      }
    if (inst->font)
@@ -636,10 +636,11 @@ elm_main(int argc, char **argv)
           {
              Eina_Strbuf *strb;
              strb = eina_strbuf_new();
-             for(i = args; i < argc; i++)
+             eina_strbuf_append(strb, argv[args]);
+             for(i = args+1; i < argc -1; i++)
                {
-                  eina_strbuf_append(strb, argv[i]);
                   eina_strbuf_append_char(strb, ' ');
+                  eina_strbuf_append(strb, argv[i]);
                }
              cmd = eina_strbuf_string_steal(strb);
              eina_strbuf_free(strb);
