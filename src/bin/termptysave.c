@@ -119,7 +119,7 @@ termpty_save_expand(Termsave *ts, Termcell *cells, size_t delta)
    newcells = realloc(ts->cells, (ts->w + delta) * sizeof(Termcell));
    if (!newcells)
      return NULL;
-   newcells[ts->w - 1].att.autowrapped = 0;
+
    memcpy(&newcells[ts->w], cells, delta * sizeof(Termcell));
    ts->w += delta;
    ts->cells = newcells;

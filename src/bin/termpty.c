@@ -879,7 +879,7 @@ void
 termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 {
    Termsave *ts;
-   ssize_t w;
+   ssize_t w, i;
 
    if (ty->backsize <= 0)
      return;
@@ -889,6 +889,10 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    termpty_backlog_lock();
 
    w = termpty_line_length(cells, w_max);
+   for (i = 0; i < w - 1; i++)
+     {
+        cells[i].att.autowrapped = 1;
+     }
    if (ty->backsize >= 1)
      {
         ts = BACKLOG_ROW_GET(ty, 1);
@@ -1015,6 +1019,7 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
      }
 }
 
+/* @requested_y unit is in visual lines on the screen */
 static Termcell*
 _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
 {
@@ -1059,8 +1064,8 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
              /* found the line */
              int delta = screen_y - requested_y;
              *wret = ts->w - delta * ty->w;
-             if (*wret > ts->w)
-               *wret = ts->w;
+             if (*wret > ty->w)
+               *wret = ty->w;
              return &ts->cells[delta * ty->w];
           }
         backlog_y++;
@@ -1085,8 +1090,8 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
              /* found the line */
              int delta = screen_y - requested_y;
              *wret = ts->w - delta * ty->w;
-             if (*wret > ts->w)
-               *wret = ts->w;
+             if (*wret > ty->w)
+               *wret = ty->w;
              return &ts->cells[delta * ty->w];
           }
         screen_y -= nb_lines;
@@ -1096,6 +1101,7 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
    return NULL;
 }
 
+/* @requested_y unit is in visual lines on the screen */
 Termcell *
 termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
@@ -1110,7 +1116,6 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
      return NULL;
 
    return _termpty_cellrow_from_beacon_get(ty, y_requested, wret);
-
 }
 
 void
@@ -1182,7 +1187,6 @@ _termpty_line_rewrap(Termpty *ty, Termcell *src_cells, int len,
      }
 
    autowrapped = src_cells[len-1].att.autowrapped;
-   src_cells[len-1].att.autowrapped = 0;
 
    while (len > 0)
      {
@@ -1289,8 +1293,6 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
              Termcell *cells = &(TERMPTY_SCREEN(ty, 0, old_y)),
                       *new_cells;
              int len;
-
-             ts->cells[ts->w - 1].att.autowrapped = 0;
 
              len = termpty_line_length(cells, old_w);
 

@@ -226,7 +226,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
         cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (max_right - 1))))
           {
-             TERMPTY_FMTCLR(cells[ty->cursor_state.cx].att);
+             cells[ty->cursor_state.cx].att.newline = 0;
              termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
                                              &(cells[ty->cursor_state.cx + 1]), 1);
           }

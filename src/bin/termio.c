@@ -2494,6 +2494,7 @@ _sel_line(Termio *sd, int cy)
    sd->pty->selection.end.x = sd->grid.w - 1;
    sd->pty->selection.end.y = cy;
 
+   /* check lines above */
    y = cy;
    for (;;)
      {
@@ -2505,6 +2506,7 @@ _sel_line(Termio *sd, int cy)
    sd->pty->selection.start.y = y;
    y = cy;
 
+   /* check lines below */
    for (;;)
      {
         cells = termpty_cellrow_get(sd->pty, y, &w);

@@ -267,8 +267,6 @@ extern int _termpty_log_dom;
 
 #define TERMPTY_SCREEN(Tpty, X, Y) \
   Tpty->screen[X + (((Y + Tpty->circular_offset) % Tpty->h) * Tpty->w)]
-#define TERMPTY_FMTCLR(Tatt) \
-   (Tatt).autowrapped = (Tatt).newline = 0
 
 #define TERMPTY_RESTRICT_FIELD(Field, Min, Max) \
    do {                                         \
