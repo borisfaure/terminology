@@ -371,12 +371,18 @@ void
 termio_user_title_set(Evas_Object *obj, const char *title)
 {
     Termio *sd = evas_object_smart_data_get(obj);
+    size_t len;
     EINA_SAFETY_ON_NULL_RETURN(sd);
 
     if (sd->pty->prop.user_title)
       eina_stringshare_del(sd->pty->prop.user_title);
+    sd->pty->prop.user_title = NULL;
 
-    sd->pty->prop.user_title = eina_stringshare_add(title);
+    len = strlen(title);
+    if (len)
+      {
+         sd->pty->prop.user_title = eina_stringshare_add_length(title, len);
+      }
     if (sd->pty->cb.set_title.func)
       sd->pty->cb.set_title.func(sd->pty->cb.set_title.data);
 }
