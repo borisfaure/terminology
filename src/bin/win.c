@@ -161,6 +161,7 @@ struct _Win
    Ecore_Timer *cmdbox_focus_timer;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
+   unsigned char forced_title : 1;
 };
 
 /* }}} */
@@ -1003,6 +1004,9 @@ _win_set_title(Term_Container *tc,
 
    wn = (Win*) tc;
 
+   if (wn->forced_title)
+     return;
+
    eina_stringshare_del(tc->title);
    tc->title =  eina_stringshare_ref(title);
 
@@ -1138,9 +1142,11 @@ win_new(const char *name, const char *role, const char *title,
    tc->bell = _win_bell;
    tc->close = _win_close;
    tc->update = _win_update;
-   tc->title = eina_stringshare_add("Terminology");
+   tc->title = eina_stringshare_add(title? title : "Terminology");
    tc->type = TERM_CONTAINER_TYPE_WIN;
    tc->wn = wn;
+
+   wn->forced_title = (title != NULL);
 
    config_default_font_set(config, evas_object_evas_get(wn->win));
 

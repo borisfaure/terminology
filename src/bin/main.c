@@ -98,7 +98,7 @@ main_ipc_new(Ipc_Instance *inst)
      }
    if (inst->title)
      {
-        nargv[i++] = "-t";
+        nargv[i++] = "-T";
         nargv[i++] = (char *)inst->title;
      }
    if (inst->font)
