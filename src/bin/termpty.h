@@ -84,7 +84,7 @@ struct _Termpty
       } change, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
-      const char *title, *icon, *user_title;
+      const char *title, *icon;
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;
@@ -227,7 +227,8 @@ void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                       int w, int h, int backscroll, Eina_Bool xterm_256color,
-                      Eina_Bool erase_is_del, const char *emotion_mod);
+                      Eina_Bool erase_is_del, const char *emotion_mod,
+                      const char *title);
 void       termpty_free(Termpty *ty);
 
 void       termpty_backlog_lock(void);

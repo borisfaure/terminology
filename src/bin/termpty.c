@@ -410,7 +410,8 @@ _is_shell_valid(const char *cmd)
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
             int w, int h, int backscroll, Eina_Bool xterm_256color,
-            Eina_Bool erase_is_del, const char *emotion_mod)
+            Eina_Bool erase_is_del, const char *emotion_mod,
+            const char *title)
 {
    Termpty *ty;
    const char *pty;
@@ -495,7 +496,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    arg0 = strrchr(args[0], '/');
    if (!arg0) arg0 = args[0];
    else arg0++;
-   ty->prop.title = eina_stringshare_add(arg0);
+   ty->prop.title = eina_stringshare_add(title? title : arg0);
 
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0)
@@ -732,7 +733,6 @@ termpty_free(Termpty *ty)
    if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
    if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-   if (ty->prop.user_title) eina_stringshare_del(ty->prop.user_title);
    if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
    if (ty->back)
      {
