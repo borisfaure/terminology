@@ -84,7 +84,7 @@ struct _Termpty
       } change, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
-      const char *title, *icon, *user_title;
+      const char *title, *icon;
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;

@@ -3560,7 +3560,7 @@ _set_title_ok_cb(void *data,
     if (!title || !strlen(title))
       title = NULL;
 
-    termio_user_title_set(term->termio, title);
+    termio_title_set(term->termio, title);
     evas_object_del(popup);
     term_unref(term);
 }

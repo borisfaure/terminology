@@ -362,27 +362,24 @@ termio_title_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   if (sd->pty->prop.user_title)
-     return sd->pty->prop.user_title;
    return sd->pty->prop.title;
 }
 
 void
-termio_user_title_set(Evas_Object *obj, const char *title)
+termio_title_set(Evas_Object *obj, const char *title)
 {
     Termio *sd = evas_object_smart_data_get(obj);
     size_t len = 0;
     EINA_SAFETY_ON_NULL_RETURN(sd);
 
-    if (sd->pty->prop.user_title)
-      eina_stringshare_del(sd->pty->prop.user_title);
-    sd->pty->prop.user_title = NULL;
+    if (sd->pty->prop.title)
+      eina_stringshare_del(sd->pty->prop.title);
 
     if (title)
       len = strlen(title);
     if (len)
       {
-         sd->pty->prop.user_title = eina_stringshare_add_length(title, len);
+         sd->pty->prop.title = eina_stringshare_add_length(title, len);
       }
     if (sd->pty->cb.set_title.func)
       sd->pty->cb.set_title.func(sd->pty->cb.set_title.data);
