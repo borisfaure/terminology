@@ -32,7 +32,9 @@ void win_free(Win *wn);
 void windows_free(void);
 void windows_update(void);
 
-Term *term_new(Win *wn, Config *config, const char *cmd, Eina_Bool login_shell, const char *cd, int size_w, int size_h, Eina_Bool hold);
+Term *term_new(Win *wn, Config *config, const char *cmd,
+               Eina_Bool login_shell, const char *cd, int size_w, int size_h,
+               Eina_Bool hold, const char *title);
 int win_term_set(Win *wn, Term *term);
 
 Eina_List *

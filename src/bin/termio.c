@@ -371,14 +371,15 @@ void
 termio_user_title_set(Evas_Object *obj, const char *title)
 {
     Termio *sd = evas_object_smart_data_get(obj);
-    size_t len;
+    size_t len = 0;
     EINA_SAFETY_ON_NULL_RETURN(sd);
 
     if (sd->pty->prop.user_title)
       eina_stringshare_del(sd->pty->prop.user_title);
     sd->pty->prop.user_title = NULL;
 
-    len = strlen(title);
+    if (title)
+      len = strlen(title);
     if (len)
       {
          sd->pty->prop.user_title = eina_stringshare_add_length(title, len);
@@ -5544,7 +5545,6 @@ _smart_pty_title(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (!sd->win) return;
    evas_object_smart_callback_call(obj, "title,change", NULL);
-//   elm_win_title_set(sd->win, sd->pty->prop.title);
 }
 
 static void
@@ -6018,7 +6018,7 @@ _smart_cb_drop(void *data,
 Evas_Object *
 termio_add(Evas_Object *win, Config *config,
            const char *cmd, Eina_Bool login_shell, const char *cd,
-           int w, int h, Term *term)
+           int w, int h, Term *term, const char *title)
 {
    Evas *e;
    Evas_Object *obj, *g;
@@ -6080,7 +6080,8 @@ termio_add(Evas_Object *win, Config *config,
 #endif
 
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
-                         config->xterm_256color, config->erase_is_del, mod);
+                         config->xterm_256color, config->erase_is_del, mod,
+                         title);
    if (!sd->pty)
      {
         ERR(_("Could not allocate termpty"));

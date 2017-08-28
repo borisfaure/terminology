@@ -410,7 +410,8 @@ _is_shell_valid(const char *cmd)
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
             int w, int h, int backscroll, Eina_Bool xterm_256color,
-            Eina_Bool erase_is_del, const char *emotion_mod)
+            Eina_Bool erase_is_del, const char *emotion_mod,
+            const char *title)
 {
    Termpty *ty;
    const char *pty;
@@ -496,6 +497,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    if (!arg0) arg0 = args[0];
    else arg0++;
    ty->prop.title = eina_stringshare_add(arg0);
+   if (title)
+     ty->prop.user_title = eina_stringshare_add(title);
 
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0)

@@ -281,7 +281,8 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->w <= 0) inst->w = 80;
    if (inst->h <= 0) inst->h = 24;
    term = term_new(wn, config, inst->cmd, inst->login_shell,
-                   inst->cd, inst->w, inst->h, inst->hold);
+                   inst->cd, inst->w, inst->h, inst->hold,
+                   inst->title);
    if (!term)
      {
         CRITICAL(_("Could not create terminal widget."));
@@ -906,7 +907,7 @@ remote:
    config = win_config_get(wn);
 
    term = term_new(wn, config, cmd, login_shell, cd,
-                   size_w, size_h, hold);
+                   size_w, size_h, hold, title);
    if (!term)
      {
         CRITICAL(_("Could not create terminal widget."));

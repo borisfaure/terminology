@@ -161,7 +161,6 @@ struct _Win
    Ecore_Timer *cmdbox_focus_timer;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
-   unsigned char forced_title : 1;
 };
 
 /* }}} */
@@ -1004,9 +1003,6 @@ _win_set_title(Term_Container *tc,
 
    wn = (Win*) tc;
 
-   if (wn->forced_title)
-     return;
-
    eina_stringshare_del(tc->title);
    tc->title =  eina_stringshare_ref(title);
 
@@ -1070,7 +1066,7 @@ _win_split(Term_Container *tc, Term_Container *child,
           }
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
-                          80, 24, EINA_FALSE);
+                          80, 24, EINA_FALSE, NULL);
         tc_solo_new = _solo_new(tm_new, wn);
         evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
@@ -1145,8 +1141,6 @@ win_new(const char *name, const char *role, const char *title,
    tc->title = eina_stringshare_add(title? title : "Terminology");
    tc->type = TERM_CONTAINER_TYPE_WIN;
    tc->wn = wn;
-
-   wn->forced_title = (title != NULL);
 
    config_default_font_set(config, evas_object_evas_get(wn->win));
 
@@ -1638,7 +1632,7 @@ _split_split(Term_Container *tc, Term_Container *child,
           }
         tm_new = term_new(wn, wn->config,
                           cmd, wn->config->login_shell, wdir,
-                          80, 24, EINA_FALSE);
+                          80, 24, EINA_FALSE, NULL);
         tc_solo_new = _solo_new(tm_new, wn);
         evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
@@ -2620,7 +2614,7 @@ _tab_new_cb(void *data,
 
    tm_new = term_new(wn, wn->config,
                      NULL, wn->config->login_shell, wdir,
-                     80, 24, EINA_FALSE);
+                     80, 24, EINA_FALSE, NULL);
    tc_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
@@ -4490,7 +4484,8 @@ term_unref(Term *term)
 Term *
 term_new(Win *wn, Config *config, const char *cmd,
          Eina_Bool login_shell, const char *cd,
-         int size_w, int size_h, Eina_Bool hold)
+         int size_w, int size_h, Eina_Bool hold,
+         const char *title)
 {
    Term *term;
    Evas_Object *o;
@@ -4558,7 +4553,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
-                                 size_w, size_h, term);
+                                 size_w, size_h, term, title);
    evas_object_data_set(o, "term", term);
    colors_term_init(termio_textgrid_get(term->termio), term->bg, config);
 
