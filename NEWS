@@ -1,6 +1,19 @@
 =================
-Terminology 1.1.0
+Terminology 1.1.1
 =================
+
+Changes since 1.1.0:
+--------------------
+
+Additions:
+    * Danish translation
+
+Fixes:
+    * Fix issues with bottom margins
+    * No longer add spurious newlines in selections in the backlog
+    * No longer add space when running command from -e option
+    * Fix -T option to set the title of the window
+
 
 Changes since 1.0.0:
 --------------------

@@ -1,5 +1,16 @@
+2017-09-02
+
+        * Release v1.1.1
+        * Add Danish translation
+        * Fix issues with bottom margins
+        * No longer add spurious newlines in selections in the backlog
+        * No longer add space when running command from -e option
+        * Fix -T option to set the title of the window
+
+
 2017-08-19
 
+        * Release v1.1.0
         * Double-click on tab title to change it
         * Add option to disable focus-in/out animations and visuals
         * Add option to set current window size as default.

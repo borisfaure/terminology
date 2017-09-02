@@ -5,7 +5,7 @@
 PROJ: Terminology
 PROJICON: data/icons/terminology.png
 BRIEF: A beautiful terminal emulator for the commandline emulator
-VERSION: 1.1.0
+VERSION: 1.1.1
 LICENSE: BSD-2
 COPYING: COPYING AUTHORS
 NEEDS: 1.11
