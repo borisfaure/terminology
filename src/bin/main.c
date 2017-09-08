@@ -431,6 +431,18 @@ _translate_options(void)
 #endif
 
 #ifdef ENABLE_FUZZING
+static void
+_log_void(const Eina_Log_Domain *_d EINA_UNUSED,
+          Eina_Log_Level level EINA_UNUSED,
+          const char *_file EINA_UNUSED,
+          const char *_fnc EINA_UNUSED,
+          int _line EINA_UNUSED,
+          const char *fmt EINA_UNUSED,
+          void *_data EINA_UNUSED,
+          va_list args EINA_UNUSED)
+{
+}
+#else
 #include <syslog.h>
 static void
 _log_to_syslog(const Eina_Log_Domain *_d EINA_UNUSED,
@@ -547,6 +559,8 @@ elm_main(int argc, char **argv)
    terminology_starting_up = EINA_TRUE;
 
 #ifdef ENABLE_FUZZING
+   eina_log_print_cb_set(_log_void, NULL);
+#else
    eina_log_print_cb_set(_log_to_syslog, NULL);
 #endif
 
