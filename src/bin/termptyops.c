@@ -142,9 +142,10 @@ termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
              termpty_text_scroll(ty, clear);
              ty->cursor_state.cy = e - 1;
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+             return;
           }
      }
-   else if (ty->cursor_state.cy >= ty->h)
+   if (ty->cursor_state.cy >= ty->h)
      {
         termpty_text_scroll(ty, clear);
         ty->cursor_state.cy = e - 1;
@@ -476,7 +477,9 @@ termpty_cursor_copy(Termpty *ty, Eina_Bool save)
    else
      {
         ty->cursor_state.cx = ty->cursor_save[ty->altbuf].cx;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         ty->cursor_state.cy = ty->cursor_save[ty->altbuf].cy;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
      }
 }
 
