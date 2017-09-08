@@ -983,7 +983,7 @@ add_new_ts:
    ts = termpty_save_new(ts, w);
    if (!ts)
      return;
-   termpty_cell_copy(ty, cells, ts->cells, w);
+   TERMPTY_CELL_COPY(ty, cells, ts->cells, w);
    ty->backpos++;
    if (ty->backpos >= ty->backsize)
      ty->backpos = 0;
@@ -1261,7 +1261,7 @@ _termpty_line_rewrap(Termpty *ty, Termcell *src_cells, int len,
         int copy_width = MIN(len, si->w - si->x);
         Termcell *dst_cells = &SCREEN_INFO_GET_CELLS(si, si->x, si->y);
 
-        termpty_cell_copy(ty,
+        TERMPTY_CELL_COPY(ty,
                           /*src*/ src_cells,
                           /*dst*/ dst_cells,
                           copy_width);
@@ -1560,8 +1560,8 @@ termpty_block_chid_get(const Termpty *ty, const char *chid)
    return tb;
 }
 
-static void
-_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
+void
+termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
 {
    Termblock *tb;
    int ido = 0, idn = 0;
@@ -1588,26 +1588,6 @@ _handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
         tb = termpty_block_get(ty, idn);
         if (!tb) return;
         tb->refs++;
-     }
-}
-
-/* Try to trick the compiler into inlining the first test */
-static inline void
-_handle_block_codepoint_overwrite(Termpty *ty, Eina_Unicode oldc, Eina_Unicode newc)
-{
-   if (!((oldc | newc) & 0x80000000)) return;
-   _handle_block_codepoint_overwrite_heavy(ty, oldc, newc);
-}
-
-void
-termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n)
-{
-   int i;
-
-   for (i = 0; i < n; i++)
-     {
-        _handle_block_codepoint_overwrite(ty, dst[i].codepoint, src[i].codepoint);
-        dst[i] = src[i];
      }
 }
 
@@ -1640,7 +1620,7 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
      {
         for (i = 0; i < n; i++)
           {
-             _handle_block_codepoint_overwrite(ty, dst[i].codepoint, src[0].codepoint);
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[0].codepoint);
              dst[i] = src[0];
           }
      }
@@ -1648,7 +1628,7 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
      {
         for (i = 0; i < n; i++)
           {
-             _handle_block_codepoint_overwrite(ty, dst[i].codepoint, 0);
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, 0);
              memset(&(dst[i]), 0, sizeof(*dst));
           }
      }
@@ -1661,7 +1641,7 @@ termpty_cells_set_content(Termpty *ty, Termcell *cells,
    int i;
    for (i = 0; i < count; i++)
      {
-        _handle_block_codepoint_overwrite(ty, cells[i].codepoint, codepoint);
+        HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
         cells[i].codepoint = codepoint;
      }
 }
@@ -1676,7 +1656,7 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
    for (i = 0; i < count; i++)
      {
         Termatt att = cells[i].att;
-        _handle_block_codepoint_overwrite(ty, cells[i].codepoint, codepoint);
+        HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
         cells[i] = local;
         if (ty->termstate.att.fg == 0 && ty->termstate.att.bg == 0)
           {
@@ -1701,7 +1681,7 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
 
    for (i = 0; i < n; i++)
      {
-        _handle_block_codepoint_overwrite(ty, dst[i].codepoint, codepoint);
+        HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, codepoint);
         dst[i] = local;
      }
 }

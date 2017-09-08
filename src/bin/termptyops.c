@@ -83,7 +83,7 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
           {
              cells = &(TERMPTY_SCREEN(ty, x, (y + 1)));
              cells2 = &(TERMPTY_SCREEN(ty, x, y));
-             termpty_cell_copy(ty, cells, cells2, w);
+             TERMPTY_CELL_COPY(ty, cells, cells2, w);
           }
         if (clear)
           termpty_cells_clear(ty, cells, w);
@@ -122,7 +122,7 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
          {
             cells = &(TERMPTY_SCREEN(ty, 0, (y - 1)));
             cells2 = &(TERMPTY_SCREEN(ty, 0, y));
-            termpty_cell_copy(ty, cells, cells2, ty->w);
+            TERMPTY_CELL_COPY(ty, cells, cells2, ty->w);
          }
        if (clear)
           termpty_cells_clear(ty, cells, ty->w);
@@ -198,7 +198,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
         if (ty->termstate.insert)
           {
              for (j = max_right-1; j > ty->cursor_state.cx; j--)
-               termpty_cell_copy(ty, &(cells[j - 1]), &(cells[j]), 1);
+               TERMPTY_CELL_COPY(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
         g = _termpty_charset_trans(ty, codepoints[i]);

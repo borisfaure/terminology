@@ -1464,7 +1464,7 @@ CUF:
              for (x = ty->cursor_state.cx; x < (ty->w); x++)
                {
                   if (x < lim)
-                    termpty_cell_copy(ty, &(cells[x + arg]), &(cells[x]), 1);
+                    TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
                   else
                     {
                        cells[x].codepoint = ' ';

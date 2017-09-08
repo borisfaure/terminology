@@ -263,7 +263,6 @@ Termblock *termpty_block_get(const Termpty *ty, int id);
 void       termpty_block_chid_update(Termpty *ty, Termblock *blk);
 Termblock *termpty_block_chid_get(const Termpty *ty, const char *chid);
 
-void       termpty_cell_copy(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint, Termatt att, Termcell *dst, int n);
 void       termpty_cells_set_content(Termpty *ty, Termcell *cells,
@@ -274,6 +273,7 @@ ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
 
 Config *termpty_config_get(const Termpty *ty);
 void termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len);
+void termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc);
 
 extern int _termpty_log_dom;
 
@@ -287,5 +287,26 @@ extern int _termpty_log_dom;
    else if (Field < Min)                        \
      Field = Min;                               \
    } while (0)
+
+/* Try to trick the compiler into inlining the first test */
+#define HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty, OLDC, NEWC)                   \
+do {                                                                         \
+   if (EINA_UNLIKELY((OLDC | NEWC) & 0x80000000))                            \
+       termpty_handle_block_codepoint_overwrite_heavy(Tpty, OLDC, NEWC);     \
+} while (0)
+
+#define TERMPTY_CELL_COPY(Tpty, Tsrc, Tdst, N)                               \
+do {                                                                         \
+   int __i;                                                                  \
+                                                                             \
+   for (__i = 0; __i < N; __i++)                                             \
+     {                                                                       \
+        HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                               \
+                                         (Tdst)[__i].codepoint,              \
+                                         (Tsrc)[__i].codepoint);             \
+     }                                                                       \
+   memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
+} while (0)
+
 
 #endif
