@@ -213,7 +213,9 @@ _move_cursor_to_origin(Termpty *ty)
   if (ty->termstate.restrict_cursor)
     {
       ty->cursor_state.cx = ty->termstate.left_margin;
+      TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
       ty->cursor_state.cy = ty->termstate.top_margin;
+      TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
     }
   else
     {
@@ -949,7 +951,7 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    if (ty->termstate.restrict_cursor)
      {
         cx += ty->termstate.left_margin;
-        if (ty->termstate.right_margin && cx >= ty->termstate.right_margin)
+        if (ty->termstate.right_margin > 0 && cx >= ty->termstate.right_margin)
           cx = ty->termstate.right_margin - 1;
      }
    if (cx >= ty->w)
@@ -963,7 +965,7 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    if (ty->termstate.restrict_cursor)
      {
         cy += ty->termstate.top_margin;
-        if (ty->termstate.bottom_margin && cy >= ty->termstate.bottom_margin)
+        if (ty->termstate.bottom_margin > 0 && cy >= ty->termstate.bottom_margin)
           cy = ty->termstate.bottom_margin - 1;
      }
    if (cy >= ty->h)
@@ -1028,7 +1030,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-        if (ty->termstate.restrict_cursor && (ty->termstate.top_margin != 0)
+        if (ty->termstate.restrict_cursor && (ty->termstate.top_margin > 0)
             && (ty->cursor_state.cy < ty->termstate.top_margin))
           {
              ty->cursor_state.cy = ty->termstate.top_margin;
@@ -1041,7 +1043,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-        if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin != 0)
+        if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin > 0)
             && (ty->cursor_state.cy >= ty->termstate.bottom_margin))
           {
              ty->cursor_state.cy = ty->termstate.bottom_margin - 1;
@@ -2065,27 +2067,6 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      {
         switch (c[0])
           {
-/*
-           case 0x00: // NUL
-             return 1;
-           case 0x01: // SOH (start of heading)
-             return 1;
-           case 0x02: // STX (start of text)
-             return 1;
-           case 0x03: // ETX (end of text)
-             return 1;
-           case 0x04: // EOT (end of transmission)
-             return 1;
- */
-/*
-           case 0x05: // ENQ (enquiry)
-             _term_txt_write(ty, "ABC\r\n");
-             return 1;
- */
-/*
-           case 0x06: // ACK (acknowledge)
-             return 1;
- */
            case 0x07: // BEL '\a' (bell)
            case 0x08: // BS  '\b' (backspace)
            case 0x09: // HT  '\t' (horizontal tab)
@@ -2094,70 +2075,45 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
            case 0x0c: // FF  '\f' (form feed)
            case 0x0d: // CR  '\r' (carriage ret)
              _handle_cursor_control(ty, c);
-             return 1;
+             len = 1;
+             goto end;
 
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
              ty->termstate.charset = 1;
              ty->termstate.charsetch = ty->termstate.chset[1];
-             return 1;
+             len = 1;
+             goto end;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
              ty->termstate.charset = 0;
              ty->termstate.charsetch = ty->termstate.chset[0];
-             return 1;
-/*
-           case 0x10: // DLE (data link escape)
-             return 1;
-           case 0x11: // DC1 (device control 1)
-             return 1;
-           case 0x12: // DC2 (device control 2)
-             return 1;
-           case 0x13: // DC3 (device control 3)
-             return 1;
-           case 0x14: // DC4 (device control 4)
-             return 1;
-           case 0x15: // NAK (negative ack.)
-             return 1;
-           case 0x16: // SYN (synchronous idle)
-             return 1;
-           case 0x17: // ETB (end of trans. blk)
-             return 1;
-           case 0x18: // CAN (cancel)
-             return 1;
-           case 0x19: // EM  (end of medium)
-             return 1;
-           case 0x1a: // SUB (substitute)
-             return 1;
- */
+             len = 1;
+             goto end;
            case 0x1b: // ESC (escape)
              len = _handle_esc(ty, c + 1, ce);
-             if (len == 0) return 0;
-             return 1 + len;
-/*
-           case 0x1c: // FS  (file separator)
-             return 1;
-           case 0x1d: // GS  (group separator)
-             return 1;
-           case 0x1e: // RS  (record separator)
-             return 1;
-           case 0x1f: // US  (unit separator)
-             return 1;
- */
+             if (len == 0)
+               goto end;
+             len++;
+             goto end;
            default:
              //ERR("unhandled char 0x%02x", c[0]);
-             return 1;
+             len = 1;
+             goto end;
           }
      }
    else if (c[0] == 0x7f) // DEL
      {
         WRN("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
-        return 1;
+        len = 1;
+        goto end;
      }
    else if (c[0] == 0x9b) // ANSI ESC!!!
      {
         DBG("ANSI CSI!!!!!");
         len = _handle_esc_csi(ty, c + 1, ce);
-        if (len == 0) return 0;
-        return 1 + len;
+        if (len == 0)
+          goto end;
+        len++;
+        goto end;
      }
    else if ((ty->block.expecting) && (ty->block.on))
      {
@@ -2169,7 +2125,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              if (c[0] == ex->ch)
                {
                   Eina_Unicode cp;
-             
+
                   cp = (1 << 31) | ((ex->id & 0x1fff) << 18) |
                     ((ex->x & 0x1ff) << 9) | (ex->y & 0x1ff);
                   ex->x++;
@@ -2182,18 +2138,20 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
                   termpty_text_append(ty, &cp, 1);
                   if (ex->left <= 0)
                     {
-                       ty->block.expecting = 
+                       ty->block.expecting =
                          eina_list_remove_list(ty->block.expecting, l);
                        free(ex);
                     }
                   else
                     ty->block.expecting =
                     eina_list_promote_list(ty->block.expecting, l);
-                  return 1;
+                  len = 1;
+                  goto end;
                }
           }
         termpty_text_append(ty, c, 1);
-        return 1;
+        len = 1;
+        goto end;
      }
    cc = (Eina_Unicode *)c;
    DBG("txt: [");
@@ -2205,5 +2163,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    DBG("]");
    termpty_text_append(ty, c, len);
+
+end:
    return len;
 }
