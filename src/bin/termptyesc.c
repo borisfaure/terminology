@@ -1004,6 +1004,16 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'm': // color set
         _handle_esc_csi_color_set(ty, &b);
         break;
+      case 'b': // repeat last char
+        if (ty->last_char)
+          {
+             arg = _csi_arg_get(&b);
+             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
+             DBG("REP: repeat %d times last char %x", arg, ty->last_char);
+             for (i = 0; i < arg; i++)
+               termpty_text_append(ty, &ty->last_char, 1);
+          }
+        break;
       case '@': // insert N blank chars
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
@@ -2049,6 +2059,7 @@ int
 termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    Eina_Unicode *cc;
+   Eina_Unicode last_char = 0;
    int len = 0;
 
 /*   
@@ -2163,7 +2174,10 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    DBG("]");
    termpty_text_append(ty, c, len);
+   if (len > 0)
+       last_char = c[len-1];
 
 end:
+   ty->last_char = last_char;
    return len;
 }
