@@ -93,6 +93,7 @@ struct _Termpty
    int circular_offset2;
    Eina_Unicode *buf;
    size_t buflen;
+   Eina_Unicode last_char;
    unsigned char oldbuf[4];
    Termsave *back;
    size_t backsize, backpos;
