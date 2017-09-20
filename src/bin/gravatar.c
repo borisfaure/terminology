@@ -23,7 +23,7 @@ int _gravatar_log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_gravatar_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG (_gravatar_log_dom, __VA_ARGS__)
 
-#define GRAVATAR_URL_START "http://www.gravatar.com/avatar/"
+#define GRAVATAR_URL_START "https://www.gravatar.com/avatar/"
 #define GRAVATAR_URL_END ""
 
 typedef struct _Gravatar {
