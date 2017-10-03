@@ -1,0 +1,6 @@
+subdir('desktop')
+subdir('icons')
+subdir('images')
+subdir('fonts')
+subdir('themes')
+subdir('backgrounds')

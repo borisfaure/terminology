@@ -1,0 +1,7 @@
+option('edje-cc',
+       type: 'string',
+       description: 'A path to a edje_cc. Defaults to system\'s edje_cc')
+option('fuzzing',
+       type: 'boolean',
+       value: false,
+       description: 'Enable fuzzing on terminology. Binaries are not suited for production.')
