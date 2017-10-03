@@ -131,7 +131,7 @@ if fuzzing
   config_data.set('ENABLE_FUZZING', 1)
   message('Fuzzing is enabled')
 else
-  message('Fuzzing is disbled')
+  message('Fuzzing is disabled')
 endif
 
 message('edje_cc set to:' + edje_cc)
