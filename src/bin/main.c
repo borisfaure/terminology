@@ -638,7 +638,7 @@ elm_main(int argc, char **argv)
              Eina_Strbuf *strb;
              strb = eina_strbuf_new();
              eina_strbuf_append(strb, argv[args]);
-             for(i = args+1; i < argc -1; i++)
+             for(i = args+1; i < argc; i++)
                {
                   eina_strbuf_append_char(strb, ' ');
                   eina_strbuf_append(strb, argv[i]);
