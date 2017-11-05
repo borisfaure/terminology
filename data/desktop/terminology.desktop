@@ -9,6 +9,7 @@ Name[ko]=터미놀로지
 #GenericName[ru]=Терминал
 #GenericName[ko]=터미널
 Comment=Terminal emulator
+Comment[da]=Terminalemulator
 Comment[eo]=Terminalimitilo
 Comment[es]=Emulador de terminal
 Comment[gl]=Emulador de terminal
