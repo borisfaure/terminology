@@ -111,7 +111,7 @@ endif
 message('Checking for ecore_con_url_head: ' + found)
 
 if cc.links(elementary_teamwork_code, dependencies: terminology_dependencies)
-  config_dat.set('HAVE_ELM_WIN_TEAMWORK', 1)
+  config_data.set('HAVE_ELM_WIN_TEAMWORK', 1)
   found = 'Found'
 else
   found = 'Not Found'
