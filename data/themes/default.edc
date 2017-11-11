@@ -142,16 +142,18 @@ collections {
    group { name: "terminology/core";
       script {
          public message(Msg_Type:type, id, ...) {
-            new r, g, b, a, v;
 
-            if ((type != MSG_INT) || (id != 1)) return;
+            if (type != MSG_INT)
+                return;
+            if (id == 1) { // fade
+                new r, g, b, a, v;
+                v = (getarg(2) * 255) / 100;
 
-            v = (getarg(2) * 255) / 100;
-
-            custom_state(PART:"fade", "default", 0.0);
-            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
-            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
-            set_state(PART:"fade", "custom", 0.0);
+                custom_state(PART:"fade", "default", 0.0);
+                get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
+                set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
+                set_state(PART:"fade", "custom", 0.0);
+            }
          }
       }
       parts {
@@ -279,19 +281,33 @@ collections {
          public message(Msg_Type:type, id, ...) {
             new r, g, b, a, v;
 
-            if ((type != MSG_INT) || (id != 1)) return;
+            if (type != MSG_INT)
+              return;
+            if (id == 1) {
+                v = (getarg(2) * 255) / 100;
 
-            v = (getarg(2) * 255) / 100;
+                custom_state(PART:"shadow", "default", 0.0);
+                get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
+                set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
+                set_state(PART:"shadow", "custom", 0.0);
 
-            custom_state(PART:"shadow", "default", 0.0);
-            get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
-            set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
-            set_state(PART:"shadow", "custom", 0.0);
+                custom_state(PART:"base", "default", 0.0);
+                get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+                set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
+                set_state(PART:"base", "custom", 0.0);
+            } else if (id == 2) {
+                v = getarg(2);
 
-            custom_state(PART:"base", "default", 0.0);
-            get_state_val(PART:"base", STATE_COLOR, r, g, b, a);
-            set_state_val(PART:"base", STATE_COLOR, r, g, b, v);
-            set_state(PART:"base", "custom", 0.0);
+                custom_state(PART:"shine_focused", "focused", 0.0);
+                get_state_val(PART:"shine_focused", STATE_COLOR, r, g, b, a);
+                set_state_val(PART:"shine_focused", STATE_COLOR, r, g, b, v);
+                set_state(PART:"shine_focused", "custom", 0.0);
+
+                custom_state(PART:"shine_unfocused", "default", 0.0);
+                get_state_val(PART:"shine_unfocused", STATE_COLOR, r, g, b, a);
+                set_state_val(PART:"shine_unfocused", STATE_COLOR, r, g, b, v/8);
+                set_state(PART:"shine_unfocused", "custom", 0.0);
+            }
          }
       }
       parts {
@@ -697,7 +713,24 @@ collections {
                visible: 0;
             }
          }
-         part { name: "shine";
+         part { name: "shine_focused";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 0 0;
+               rel2.offset: -1 -1;
+               image.normal: "bg_shine";
+               fill.smooth: 0;
+               align: 0.5 0.0;
+               aspect: (256/120) (256/120);
+               aspect_preference: HORIZONTAL;
+               color: 255 255 255 0;
+            }
+            description { state: "focused" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "shine_unfocused";
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.offset: 0 0;
@@ -711,7 +744,7 @@ collections {
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
+               color: 255 255 255 0;
             }
          }
          part { name: "glintclip"; type: RECT;
@@ -1005,18 +1038,30 @@ collections {
             action: STATE_SET "focused" 0.0;
             target: "glint";
             target: "glow";
-            target: "shine";
+            target: "shine_unfocused";
+            target: "shine_focused";
             after: "focus_in2";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
+            sequence {
+               action: STATE_SET "custom" 0.0;
+               target: "shine_focused";
+            }
+#endif
          }
          program {
             signal: "focused,set"; source: "terminology";
             action: STATE_SET "focused" 0.0;
             target: "glint";
-            target: "shine";
+            target: "shine_focused";
+            target: "shine_unfocused";
 #if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             sequence {
                action: STATE_SET "focused2" 0.0;
                target: "glow";
+            }
+            sequence {
+               action: STATE_SET "custom" 0.0;
+               target: "shine_focused";
             }
 #endif
          }
@@ -1030,7 +1075,18 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "glint";
             target: "glow";
-            target: "shine";
+            target: "shine_focused";
+            target: "shine_unfocused";
+#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
+            sequence {
+               action: STATE_SET "focused2" 0.0;
+               target: "glow";
+            }
+            sequence {
+               action: STATE_SET "custom" 0.0;
+               target: "shine_unfocused";
+            }
+#endif
          }
 
          ////////////////////////////////////////////////////////////////////

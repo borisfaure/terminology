@@ -181,6 +181,8 @@ static void _tab_new_cb(void *data, Evas_Object *_obj EINA_UNUSED, void *_event_
 static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_refresh(Tabs *tabs);
 static void _term_tabregion_free(Term *term);
+static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
+static void _set_shine(Config *config, Evas_Object *bg);
 
 
 /* {{{ Solo */
@@ -2104,7 +2106,6 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    Eina_List *l;
    int count;
    double z;
-   Edje_Message_Int msg;
    Win *wn = tc->wn;
    Tab_Item *tab_item;
    Evas_Object *o;
@@ -2122,12 +2123,8 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    evas_object_geometry_set(tabs->selector_bg, x, y, w, h);
    evas_object_hide(o);
 
-   if (wn->config->translucent)
-     msg.val = wn->config->opacity;
-   else
-     msg.val = 100;
-
-   edje_object_message_send(tabs->selector_bg, EDJE_MESSAGE_INT, 1, &msg);
+    _set_trans(wn->config, tabs->selector_bg, NULL);
+    _set_shine(wn->config, tabs->selector_bg);
    edje_object_signal_emit(tabs->selector_bg, "begin", "terminology");
 
    tab_item = tabs->current;
@@ -3007,6 +3004,50 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 
 /* }}} */
 /* {{{ Term */
+
+static void
+_set_shine(Config *config, Evas_Object *bg)
+{
+   Edje_Message_Int msg;
+
+   if (config)
+     msg.val = config->shine;
+   else
+     msg.val = 255;
+
+   if (bg)
+       edje_object_message_send(bg, EDJE_MESSAGE_INT, 2, &msg);
+}
+
+void
+term_apply_shine(Term *term, int shine)
+{
+   Config *config = term->config;
+
+   if (config->shine != shine)
+     {
+        config->shine = shine;
+        _set_shine(config, term->bg);
+        config_save(config, NULL);
+     }
+}
+
+
+static void
+_set_trans(Config *config, Evas_Object *bg, Evas_Object *base)
+{
+   Edje_Message_Int msg;
+
+   if (config && config->translucent)
+     msg.val = config->opacity;
+   else
+     msg.val = 100;
+
+   if (bg)
+       edje_object_message_send(bg, EDJE_MESSAGE_INT, 1, &msg);
+   if (base)
+       edje_object_message_send(base, EDJE_MESSAGE_INT, 1, &msg);
+}
 
 static void
 _term_config_set(Term *term, Config *config)
@@ -4244,18 +4285,12 @@ _cb_tabcount_next(void *data,
    _cb_next(data, NULL, NULL);
 }
 
+
 static void
 _term_bg_config(Term *term)
 {
-   Edje_Message_Int msg;
-
-   if (term->config->translucent)
-     msg.val = term->config->opacity;
-   else
-     msg.val = 100;
-
-   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
-   edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
+    _set_trans(term->config, term->bg, term->base);
+    _set_shine(term->config, term->bg);
 
    termio_theme_set(term->termio, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
@@ -4490,7 +4525,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    Term *term;
    Evas_Object *o;
    Evas *canvas = evas_object_evas_get(wn->win);
-   Edje_Message_Int msg;
 
    term = calloc(1, sizeof(Term));
    if (!term) return NULL;
@@ -4541,16 +4575,12 @@ term_new(Win *wn, Config *config, const char *cmd,
 
    _term_tabregion_setup(term);
 
-   if (term->config->translucent)
-     msg.val = term->config->opacity;
-   else
-     msg.val = 100;
 
    if (term->config->mv_always_show)
      term->miniview_shown = EINA_TRUE;
 
-   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
-   edje_object_message_send(term->base, EDJE_MESSAGE_INT, 1, &msg);
+    _set_trans(term->config, term->bg, term->base);
+    _set_shine(term->config, term->bg);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                  size_w, size_h, term, title);

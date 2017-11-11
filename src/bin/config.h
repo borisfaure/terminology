@@ -52,6 +52,7 @@ struct _Config
    double            tab_zoom;
    int               vidmod;
    int               opacity;
+   int               shine;
    int               cg_width;
    int               cg_height;
    Eina_Bool         jump_on_keypress;

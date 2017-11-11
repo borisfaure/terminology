@@ -1,6 +1,12 @@
 =================
-Terminology 0.9.1
+Terminology 1.2.0
 =================
+
+Changes since 1.1.1:
+--------------------
+
+  * In group "terminology/background", "message" with id 2 requires an INT to
+  specify the amount of shine
 
 Changes since 0.9.1:
 --------------------

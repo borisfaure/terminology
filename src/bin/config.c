@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 16
+#define CONF_VER 17
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -172,6 +172,8 @@ config_init(void)
      (edd_base, Config, "ty_escapes", ty_escapes, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "shine", shine, EET_T_INT);
 }
 
 void
@@ -275,6 +277,7 @@ config_sync(const Config *config_src, Config *config)
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
    config->changedir_to_current = config_src->changedir_to_current;
+   config->shine = config_src->shine;
 }
 
 static void
@@ -541,6 +544,7 @@ config_new(void)
                }
           }
         _add_default_keys(config);
+        config->shine = 255;
      }
    return config;
 }
@@ -648,7 +652,10 @@ config_load(const char *key)
                   _add_key(config, "Right", 0, 1, 0, 0, "term_right");
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 16 */
+                case 16:
+                  config->shine = 255;
+                  /*pass through*/
+                case CONF_VER: /* 17 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -747,6 +754,7 @@ config_fork(const Config *config)
    CPY(mv_always_show);
    CPY(ty_escapes);
    CPY(changedir_to_current);
+   CPY(shine);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {
