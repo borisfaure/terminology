@@ -881,5 +881,5 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr "Không thể tải theme mặc định cho nhóm=%s: %s"
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr "Không thể tìm thấy terminology theme! Quên 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"

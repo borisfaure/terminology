@@ -897,9 +897,9 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr "Αδυναμία φόρτωσης προεπιλεγμένου θέματος για την ομάδα=%s: %s"
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
-"Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'make "
+"Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'ninja "
 "install';"
 
 #~ msgid "Normal 2"

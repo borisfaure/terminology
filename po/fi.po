@@ -881,8 +881,8 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'ninja install'?"
 
 #~ msgid "Normal 2"
 #~ msgstr "Normaali 2"

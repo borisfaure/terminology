@@ -949,5 +949,5 @@ msgid "Cancel"
 msgstr "Annuller"
 
 #: src/bin/win.c:4530
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr "Kunne ikke finde terminology-tema! Glemte du 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Kunne ikke finde terminology-tema! Glemte du 'ninja install'?"

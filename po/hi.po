@@ -873,8 +873,8 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'make install' भूल गए ?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
 
 #~ msgid "Normal 2"
 #~ msgstr "साधारण 2"

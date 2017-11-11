@@ -868,7 +868,7 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 
 #~ msgid "Close"

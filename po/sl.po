@@ -882,8 +882,8 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr "Ni bilo mogoče naložiti privzete teme za skupino=%s: %s"
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
-msgstr "Ni bilo mogoče najti teme za terminology! Pozabljen 'make install?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Ni bilo mogoče najti teme za terminology! Pozabljen 'ninja install?"
 
 #~ msgid "Set title"
 #~ msgstr "Nastavi ime"

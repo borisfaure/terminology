@@ -870,7 +870,7 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr ""
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "터미놀로지의 테마를 찾을 수 없습니다!"
 
 #~ msgid "Normal 2"

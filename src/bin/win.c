@@ -4561,7 +4561,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!theme_apply(o, config, "terminology/background"))
      {
-        CRITICAL(_("Couldn't find terminology theme! Forgot 'make install'?"));
+        CRITICAL(_("Couldn't find terminology theme! Forgot 'ninja install'?"));
         evas_object_del(term->bg);
         free(term);
         return NULL;

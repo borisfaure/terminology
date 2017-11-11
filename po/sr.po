@@ -888,10 +888,10 @@ msgid "Could not load default theme for group=%s: %s"
 msgstr "Нисам успео да учитам било коју тему скупа=%s: %s"
 
 #: src/bin/win.c:4028
-msgid "Couldn't find terminology theme! Forgot 'make install'?"
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Нисам успео да пронађем тему Терминологије! Да нисте заборавили да урадите "
-"„make install“?"
+"„ninja install“?"
 
 #~ msgid "Normal 2"
 #~ msgstr "Уобичајена 2"
