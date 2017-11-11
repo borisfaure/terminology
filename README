@@ -25,12 +25,6 @@ Compiling:
 
 Once you have met requirements, compiling and installing is simple:
 
-  ./configure
-  make
-  make install
-
-To build using meson:
-
   meson build
   cd build
   ninja
