@@ -4,7 +4,7 @@
 #include "options.h"
 #include "options_font.h"
 #include "options_theme.h"
-#include "options_wallpaper.h"
+#include "options_background.h"
 #include "options_colors.h"
 #include "options_video.h"
 #include "options_behavior.h"
@@ -28,7 +28,7 @@ static enum option_mode {
      OPTION_NONE = 0,
      OPTION_FONT,
      OPTION_THEME,
-     OPTION_WALLPAPER,
+     OPTION_BACKGROUND,
      OPTION_COLORS,
      OPTION_VIDEO,
      OPTION_BEHAVIOR,
@@ -62,7 +62,7 @@ _cb_op_del_delay(void *_data EINA_UNUSED)
    evas_object_del(op_opbox);
    evas_object_del(op_frame);
    options_font_clear();
-   options_wallpaper_clear();
+   options_background_clear();
    options_theme_clear();
    op_opbox = NULL;
    op_frame = NULL;
@@ -92,7 +92,7 @@ _cb_opdt_hide_done(void *data,
       case OPTION_NONE:      break;
       case OPTION_FONT:      options_font(op_opbox, data); break;
       case OPTION_THEME:     options_theme(op_opbox, data); break;
-      case OPTION_WALLPAPER: options_wallpaper(op_opbox, data); break;
+      case OPTION_BACKGROUND: options_background(op_opbox, data); break;
       case OPTION_COLORS:    options_colors(op_opbox, data); break;
       case OPTION_VIDEO:     options_video(op_opbox, data); break;
       case OPTION_BEHAVIOR:  options_behavior(op_opbox, data); break;
@@ -176,7 +176,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         it_fn =
         ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
         ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
-        ITEM_APPEND("preferences-desktop-wallpaper", _("Wallpaper"), WALLPAPER);
+        ITEM_APPEND("preferences-desktop-background", _("Background"), BACKGROUND);
         ITEM_APPEND("video-display", _("Video"), VIDEO);
         ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
         ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);

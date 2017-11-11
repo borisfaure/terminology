@@ -5,7 +5,7 @@
 #include "termio.h"
 #include "media.h"
 #include "options.h"
-#include "options_wallpaper.h"
+#include "options_background.h"
 #include "extns.h"
 #include "media.h"
 #include "main.h"
@@ -453,7 +453,7 @@ _cb_grid_doubleclick(void *_data EINA_UNUSED,
 }
 
 void
-options_wallpaper(Evas_Object *opbox, Evas_Object *term)
+options_background(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *frame, *o, *bx, *bx2;
    Config *config = termio_config_get(term);
@@ -584,7 +584,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
 }
 
 void
-options_wallpaper_clear(void)
+options_background_clear(void)
 {
    Background_Item *item;
 
