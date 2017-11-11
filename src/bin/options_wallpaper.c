@@ -28,10 +28,10 @@ typedef struct _Insert_Gen_Grid_Item_Notify
 static Eina_Stringshare *_system_path,
                         *_user_path;
 
-static Evas_Object *_bg_grid = NULL, 
-                   *_term = NULL, 
-                   *_entry = NULL, 
-                   *_flip = NULL, 
+static Evas_Object *_bg_grid = NULL,
+                   *_term = NULL,
+                   *_entry = NULL,
+                   *_flip = NULL,
                    *_bubble = NULL;
 
 static Eina_List *_backgroundlist = NULL;
@@ -39,6 +39,33 @@ static Eina_List *_backgroundlist = NULL;
 static Ecore_Timer *_bubble_disappear;
 
 static Ecore_Thread *_thread;
+static Evas_Object *op_trans, *op_opacity;
+
+static void
+_cb_op_video_trans_chg(void *data,
+                       Evas_Object *obj,
+                       void *_event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->translucent = elm_check_state_get(obj);
+   elm_object_disabled_set(op_opacity, !config->translucent);
+   main_trans_update(config);
+   config_save(config, NULL);
+}
+
+static void
+_cb_op_video_opacity_chg(void *data,
+                         Evas_Object *obj,
+                         void *_event EINA_UNUSED)
+{
+   Evas_Object *term = data;
+   Config *config = termio_config_get(term);
+   config->opacity = elm_slider_value_get(obj);
+   if (!config->translucent) return;
+   main_trans_update(config);
+   config_save(config, NULL);
+}
 
 static void
 _cb_fileselector(void *_data EINA_UNUSED,
@@ -46,7 +73,7 @@ _cb_fileselector(void *_data EINA_UNUSED,
                  void *event)
 {
 
-  if (event) 
+  if (event)
     {
       elm_object_text_set(_entry, elm_fileselector_path_get(obj));
       elm_flip_go_to(_flip, EINA_TRUE, ELM_FLIP_PAGE_LEFT);
@@ -78,7 +105,7 @@ _bubble_show(char *text)
         ecore_timer_del(_bubble_disappear);
         _cb_timer_bubble_disappear(NULL);
      }
- 
+
    _bubble = elm_bubble_add(opbox);
    elm_bubble_pos_set(_bubble, ELM_BUBBLE_POS_BOTTOM_RIGHT);
    evas_object_resize(_bubble, 200, 50);
@@ -205,7 +232,7 @@ _insert_gengrid_item(Insert_Gen_Grid_Item_Notify *msg_data)
 }
 
 static Eina_List*
-_rec_read_directorys(Eina_List *list, const char *root_path, 
+_rec_read_directorys(Eina_List *list, const char *root_path,
                      Elm_Gengrid_Item_Class *class)
 {
    Eina_List *childs = ecore_file_ls(root_path);
@@ -215,7 +242,7 @@ _rec_read_directorys(Eina_List *list, const char *root_path,
    const char **extns[5] =
    { extn_img, extn_scale, extn_edj, extn_mov, NULL };
    const char **ex;
-   Insert_Gen_Grid_Item_Notify *notify; 
+   Insert_Gen_Grid_Item_Notify *notify;
 
 
    if (!childs) return list;
@@ -224,7 +251,7 @@ _rec_read_directorys(Eina_List *list, const char *root_path,
         snprintf(path, PATH_MAX, "%s/%s", root_path, file_name);
         if ((!ecore_file_is_dir(path)) && (file_name[0] != '.'))
           {
-             //file is found, search for correct file endings ! 
+             //file is found, search for correct file endings !
              for (j = 0; extns[j]; j++)
                {
                   ex = extns[j];
@@ -265,7 +292,7 @@ _refresh_directory(const char* data)
    Background_Item *item;
    Elm_Gengrid_Item_Class *item_class;
 
-   // This will run elm_gengrid_clear 
+   // This will run elm_gengrid_clear
    elm_gengrid_clear(_bg_grid);
 
    if (_backgroundlist)
@@ -284,10 +311,10 @@ _refresh_directory(const char* data)
    item_class->func.content_get = _grid_content_get;
 
    item = calloc(1, sizeof(Background_Item));
-   _backgroundlist = eina_list_append(_backgroundlist, item); 
+   _backgroundlist = eina_list_append(_backgroundlist, item);
 
    //Insert None Item
-   Insert_Gen_Grid_Item_Notify *notify = calloc(1, 
+   Insert_Gen_Grid_Item_Notify *notify = calloc(1,
                                          sizeof(Insert_Gen_Grid_Item_Notify));
    if (notify)
      {
@@ -337,12 +364,12 @@ _cb_hoversel_select(void *data,
         o = elm_object_part_content_get(_flip, "back");
         elm_fileselector_path_set(o, elm_object_text_get(_entry));
         elm_flip_go_to(_flip, EINA_FALSE, ELM_FLIP_PAGE_RIGHT);
-     } 
+     }
 }
 
 static void
 _system_background_dir_init(void)
-{ 
+{
    char path[PATH_MAX];
 
    snprintf(path, PATH_MAX, "%s/backgrounds/", elm_app_data_dir_get());
@@ -366,7 +393,7 @@ _user_background_dir_init(void){
      _user_path = eina_stringshare_add(path);
    else
      eina_stringshare_replace(&_user_path, path);
-   return _user_path; 
+   return _user_path;
 }
 
 static const char*
@@ -397,9 +424,9 @@ _cb_grid_doubleclick(void *_data EINA_UNUSED,
      if (!_user_background_dir_init())
        return;
    }
-   if (!config->background) 
+   if (!config->background)
      return;
-   if (strncmp(config_background_dir, _user_path, 
+   if (strncmp(config_background_dir, _user_path,
                strlen(config_background_dir)) == 0)
      {
         _bubble_show(_("Source file is target file"));
@@ -461,12 +488,44 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    elm_object_part_content_set(_flip, "front", bx);
    evas_object_show(o);
 
+   op_trans = o = elm_check_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Translucent"));
+   elm_check_state_set(o, config->translucent);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_video_trans_chg, term);
+
+   op_opacity = o = elm_slider_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(o, 40);
+   elm_slider_unit_format_set(o, _("%1.0f%%"));
+   elm_slider_indicator_format_set(o, _("%1.0f%%"));
+   elm_slider_min_max_set(o, 0, 100);
+   elm_slider_value_set(o, config->opacity);
+   elm_object_disabled_set(o, !config->translucent);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_video_opacity_chg, term);
+
+   o = elm_separator_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
    bx2 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_start(bx, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
+
 
    _entry = o = elm_entry_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -476,7 +535,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
    elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_smart_callback_add(_entry, "changed", _cb_entry_changed, NULL);
    elm_box_pack_start(bx2, o);
-   evas_object_show(o); 
+   evas_object_show(o);
 
    o = elm_hoversel_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -493,7 +552,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
      elm_hoversel_item_add(o, _("User"), NULL, ELM_ICON_NONE, _cb_hoversel_select ,
                            _user_path);
    //In the other case it has failed, so dont show the user item
-   elm_hoversel_item_add(o, _("Other"), NULL, ELM_ICON_NONE, _cb_hoversel_select , 
+   elm_hoversel_item_add(o, _("Other"), NULL, ELM_ICON_NONE, _cb_hoversel_select ,
                          NULL);
 
    _bg_grid = o = elm_gengrid_add(opbox);
@@ -516,7 +575,7 @@ options_wallpaper(Evas_Object *opbox, Evas_Object *term)
      {
         config_background_dir = ecore_file_dir_get(config->background);
         elm_object_text_set(_entry, config_background_dir);
-        free(config_background_dir); 
+        free(config_background_dir);
      }
    else
      {
