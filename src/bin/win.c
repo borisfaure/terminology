@@ -182,7 +182,6 @@ static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_refresh(Tabs *tabs);
 static void _term_tabregion_free(Term *term);
 static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
-static void _set_shine(Config *config, Evas_Object *bg);
 
 
 /* {{{ Solo */
@@ -2123,8 +2122,8 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    evas_object_geometry_set(tabs->selector_bg, x, y, w, h);
    evas_object_hide(o);
 
-    _set_trans(wn->config, tabs->selector_bg, NULL);
-    _set_shine(wn->config, tabs->selector_bg);
+   _set_trans(wn->config, tabs->selector_bg, NULL);
+   background_set_shine(wn->config, tabs->selector_bg);
    edje_object_signal_emit(tabs->selector_bg, "begin", "terminology");
 
    tab_item = tabs->current;
@@ -3005,8 +3004,8 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 /* }}} */
 /* {{{ Term */
 
-static void
-_set_shine(Config *config, Evas_Object *bg)
+void
+background_set_shine(Config *config, Evas_Object *bg)
 {
    Edje_Message_Int msg;
 
@@ -3027,7 +3026,7 @@ term_apply_shine(Term *term, int shine)
    if (config->shine != shine)
      {
         config->shine = shine;
-        _set_shine(config, term->bg);
+        background_set_shine(config, term->bg);
         config_save(config, NULL);
      }
 }
@@ -4289,8 +4288,8 @@ _cb_tabcount_next(void *data,
 static void
 _term_bg_config(Term *term)
 {
-    _set_trans(term->config, term->bg, term->base);
-    _set_shine(term->config, term->bg);
+   _set_trans(term->config, term->bg, term->base);
+   background_set_shine(term->config, term->bg);
 
    termio_theme_set(term->termio, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
@@ -4579,8 +4578,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    if (term->config->mv_always_show)
      term->miniview_shown = EINA_TRUE;
 
-    _set_trans(term->config, term->bg, term->base);
-    _set_shine(term->config, term->bg);
+   _set_trans(term->config, term->bg, term->base);
+   background_set_shine(term->config, term->bg);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                  size_w, size_h, term, title);

@@ -114,6 +114,9 @@ options_theme_preview_add(Evas_Object *parent, Config *config, const char *file,
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
      edje_object_signal_emit(oe, "translucent,off", "terminology");
+
+   background_set_shine(config, oe);
+
    edje_object_signal_emit(oe, "focus,in", "terminology");
    edje_object_signal_emit(oe, "tabcount,on", "terminology");
    edje_object_signal_emit(oe, "tabmissed,on", "terminology");
