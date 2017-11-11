@@ -549,9 +549,6 @@ config_new(void)
    return config;
 }
 
-#ifndef EINA_FALLTHROUGH
-#define EINA_FALLTHROUGH
-#endif
 
 Config *
 config_load(const char *key)
@@ -654,6 +651,7 @@ config_load(const char *key)
                   /*pass through*/
                 case 16:
                   config->shine = 255;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
                 case CONF_VER: /* 17 */
                   config->version = CONF_VER;

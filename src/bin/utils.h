@@ -19,4 +19,16 @@ Eina_Bool link_is_email(const char *str);
 #define casestartswith(str, constref) \
   (!strncasecmp(str, constref, sizeof(constref) - 1))
 
+#if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 20)
+#   if __GNUC__ >= 7
+#    define EINA_FALLTHROUGH __attribute__ ((fallthrough));
+#   else
+#    define EINA_FALLTHROUGH
+#   endif
+#else
+#  ifndef EINA_FALLTHROUGH
+#    define EINA_FALLTHROUGH
+#   endif
+#endif
+
 #endif
