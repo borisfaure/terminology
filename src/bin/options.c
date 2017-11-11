@@ -177,8 +177,8 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
         ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
         ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
         ITEM_APPEND("preferences-desktop-background", _("Background"), BACKGROUND);
-        ITEM_APPEND("video-display", _("Video"), VIDEO);
         ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
+        ITEM_APPEND("video-display", _("Video"), VIDEO);
         ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
         ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
         ITEM_APPEND("system-run", _("Helpers"), HELPERS);
