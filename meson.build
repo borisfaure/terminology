@@ -97,10 +97,6 @@ url_head_code = '''#include <Ecore_Con.h>
 int main(int argc, char *argv[]) { ecore_con_url_head(NULL); return 0; }
 '''
 
-elementary_teamwork_code = '''#include <Elementary.h>
-int main(int argc, char *argv[]) { elm_win_teamwork_uri_show(NULL); return 0; }
-'''
-
 found = 'Not found'
 
 if cc.links(url_head_code, dependencies: terminology_dependencies)
@@ -109,15 +105,6 @@ if cc.links(url_head_code, dependencies: terminology_dependencies)
 endif
 
 message('Checking for ecore_con_url_head: ' + found)
-
-if cc.links(elementary_teamwork_code, dependencies: terminology_dependencies)
-  config_data.set('HAVE_ELM_WIN_TEAMWORK', 1)
-  found = 'Found'
-else
-  found = 'Not Found'
-endif
-
-message('Checking for elm_win_teamwork_uri_show: ' + found)
 
 edje_cc = get_option('edje-cc')
 
