@@ -101,6 +101,7 @@ struct _Termio
    unsigned char bottom_right : 1;
    unsigned char top_left : 1;
    unsigned char reset_sel : 1;
+   unsigned char cb_added : 1;
    double gesture_zoom_start_size;
 };
 
@@ -2029,6 +2030,8 @@ _smart_cb_key_down(void *data,
       evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
       evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
    hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   ERR("ctrl:%d alt:%d shift:%d win:%d meta:%d hyper:%d",
+       ctrl, alt, shift, win, meta, hyper);
 
    if (keyin_handle(&sd->khdl, sd->pty, ev, ctrl, alt, shift, win, meta, hyper))
      goto end;
@@ -3508,13 +3511,10 @@ _imf_cursor_set(Termio *sd)
     */
 }
 
-static void
-_smart_cb_focus_in(void *data,
-                   Evas *_e EINA_UNUSED,
-                   Evas_Object *_obj EINA_UNUSED,
-                   void *_event EINA_UNUSED)
+void
+termio_focus_in(Evas_Object *termio)
 {
-   Termio *sd = evas_object_smart_data_get(data);
+   Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->config->disable_cursor_blink)
@@ -3532,13 +3532,10 @@ _smart_cb_focus_in(void *data,
      }
 }
 
-static void
-_smart_cb_focus_out(void *data,
-                    Evas *_e EINA_UNUSED,
-                    Evas_Object *obj,
-                    void *_event EINA_UNUSED)
+void
+termio_focus_out(Evas_Object *termio)
 {
-   Termio *sd = evas_object_smart_data_get(data);
+   Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (!sd->config->disable_focus_visuals)
@@ -3554,7 +3551,7 @@ _smart_cb_focus_out(void *data,
         ecore_imf_context_input_panel_hide(sd->khdl.imf);
      }
    if (!sd->ctxpopup)
-     _remove_links(sd, obj);
+     _remove_links(sd, termio);
    term_unfocus(sd->term);
 }
 
@@ -5371,15 +5368,6 @@ _smart_add(Evas_Object *obj)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL,
                                   _smart_cb_mouse_wheel, obj);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
-                                  _smart_cb_key_down, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
-                                  _smart_cb_key_up, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN,
-                                  _smart_cb_focus_in, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT,
-                                  _smart_cb_focus_out, obj);
-
    sd->link.suspend = 1;
 
    if (ecore_imf_init())
@@ -5432,6 +5420,7 @@ _smart_add(Evas_Object *obj)
 imf_done:
         if (sd->khdl.imf) DBG("Ecore IMF Setup");
         else WRN(_("Ecore IMF failed"));
+
      }
    terms = eina_list_append(terms, obj);
 }
@@ -5469,17 +5458,6 @@ _smart_del(Evas_Object *obj)
 
         evas_object_del(sd->event);
         sd->event = NULL;
-     }
-   if (sd->self)
-     {
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_DOWN,
-                                       _smart_cb_key_down);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_UP,
-                                       _smart_cb_key_up);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_IN,
-                                       _smart_cb_focus_in);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_OUT,
-                                       _smart_cb_focus_out);
      }
    if (sd->sel.top) evas_object_del(sd->sel.top);
    if (sd->sel.bottom) evas_object_del(sd->sel.bottom);
@@ -5681,17 +5659,6 @@ _smart_pty_exited(void *data)
 
         evas_object_del(sd->event);
         sd->event = NULL;
-     }
-   if (sd->self)
-     {
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_DOWN,
-                                       _smart_cb_key_down);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_KEY_UP,
-                                       _smart_cb_key_up);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_IN,
-                                       _smart_cb_focus_in);
-        evas_object_event_callback_del(sd->self, EVAS_CALLBACK_FOCUS_OUT,
-                                       _smart_cb_focus_out);
      }
 
    term_close(sd->win, sd->self, EINA_TRUE);
@@ -6304,4 +6271,16 @@ termio_add(Evas_Object *win, Config *config,
    sd->pty->cb.command.data = obj;
    _smart_size(obj, w, h, EINA_FALSE);
    return obj;
+}
+
+void
+termio_key_down(Evas_Object *termio, void *event)
+{
+   _smart_cb_key_down(termio, NULL, NULL, event);
+}
+
+void
+termio_key_up(Evas_Object *termio, void *event)
+{
+   _smart_cb_key_up(termio, NULL, NULL, event);
 }

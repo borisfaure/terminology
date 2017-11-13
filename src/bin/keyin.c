@@ -343,18 +343,62 @@ keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev)
      {
         Ecore_IMF_Event_Key_Up imf_ev;
         ecore_imf_evas_event_key_up_wrap(ev, &imf_ev);
-        if (ecore_imf_context_filter_event
-            (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev))
-          return;
+        ecore_imf_context_filter_event
+            (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev);
      }
 }
 
 /* }}} */
 /* {{{ Callbacks */
+#define RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED \
+   Win *wn;                                          \
+   Term *term = termio_term_get(termio_obj);         \
+   if (!term)                                        \
+     return EINA_FALSE;                              \
+   wn = term_win_get(term);                          \
+   if (!wn)                                          \
+     return EINA_FALSE;                              \
+   if (win_is_group_action_handled(wn))              \
+     return EINA_FALSE;                              \
+
+#define RETURN_FALSE_ON_GROUP_INPUT                  \
+   Win *wn;                                          \
+   Term *term = termio_term_get(termio_obj);         \
+   if (!term)                                        \
+     return EINA_FALSE;                              \
+   wn = term_win_get(term);                          \
+   if (!wn)                                          \
+     return EINA_FALSE;                              \
+   if (win_is_group_input(wn))                       \
+     return EINA_FALSE;                              \
+
+static Eina_Bool
+cb_all_group(Evas_Object *termio_obj)
+{
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
+   win_toggle_all_group(wn);
+
+   ERR("ALL GROUP");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_visible_group(Evas_Object *termio_obj)
+{
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
+   win_toggle_visible_group(wn);
+
+   ERR("VISIBLE GROUP");
+   return EINA_TRUE;
+}
 
 static Eina_Bool
 cb_term_prev(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    evas_object_smart_callback_call(termio_obj, "prev", NULL);
    return EINA_TRUE;
 }
@@ -362,6 +406,8 @@ cb_term_prev(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_next(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    evas_object_smart_callback_call(termio_obj, "next", NULL);
    return EINA_TRUE;
 }
@@ -369,9 +415,8 @@ cb_term_next(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_up(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_up(term);
    return EINA_TRUE;
 }
@@ -379,9 +424,8 @@ cb_term_up(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_down(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_down(term);
    return EINA_TRUE;
 }
@@ -389,9 +433,8 @@ cb_term_down(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_left(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_left(term);
    return EINA_TRUE;
 }
@@ -399,9 +442,8 @@ cb_term_left(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_right(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_right(term);
    return EINA_TRUE;
 }
@@ -409,6 +451,8 @@ cb_term_right(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_new(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
    char path[PATH_MAX], cwd[PATH_MAX], *cmd;
    const char *template = "%s -d %s";
    int length;
@@ -450,10 +494,8 @@ cb_tab_set_title(Evas_Object *termio_obj)
 static Eina_Bool                               \
 cb_tab_##N(Evas_Object *termio_obj)            \
 {                                              \
+   RETURN_FALSE_ON_GROUP_INPUT;                \
    int n = (N == 0) ? 9 : N - 1;               \
-   Term *term = termio_term_get(termio_obj);   \
-   if (!term)                                  \
-     return EINA_FALSE;                        \
    return term_tab_go(term, n);                \
 }
 
@@ -472,6 +514,7 @@ CB_TAB(9)
 static Eina_Bool
 cb_cmd_box(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
    evas_object_smart_callback_call(termio_obj, "cmdbox", NULL);
    return EINA_TRUE;
 }
@@ -479,6 +522,7 @@ cb_cmd_box(Evas_Object *termio_obj)
 static Eina_Bool
 cb_split_h(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "split,h", NULL);
    return EINA_TRUE;
 }
@@ -486,6 +530,7 @@ cb_split_h(Evas_Object *termio_obj)
 static Eina_Bool
 cb_split_v(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "split,v", NULL);
    return EINA_TRUE;
 }
@@ -493,6 +538,7 @@ cb_split_v(Evas_Object *termio_obj)
 static Eina_Bool
 cb_tab_new(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "new", NULL);
    return EINA_TRUE;
 }
@@ -500,6 +546,7 @@ cb_tab_new(Evas_Object *termio_obj)
 static Eina_Bool
 cb_close(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "close", NULL);
    return EINA_TRUE;
 }
@@ -507,6 +554,7 @@ cb_close(Evas_Object *termio_obj)
 static Eina_Bool
 cb_tab_select(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "select", NULL);
    return EINA_TRUE;
 }
@@ -557,6 +605,7 @@ cb_miniview(Evas_Object *termio_obj)
 static Eina_Bool
 cb_win_fullscreen(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
    Evas_Object *win = termio_win_get(termio_obj);
    Eina_Bool fullscreen;
 
@@ -707,6 +756,9 @@ static Shortcut_Action _actions[] =
      {"tab_9", gettext_noop("Switch to terminal tab 9"), cb_tab_9},
      {"tab_10", gettext_noop("Switch to terminal tab 10"), cb_tab_0},
      {"tab_title", gettext_noop("Change title"), cb_tab_set_title},
+     {"visible_group", gettext_noop("Toggle whether input goes to all visible terminals"), cb_visible_group},
+     {"all_group", gettext_noop("Toggle whether input goes to all visible terminals"), cb_all_group},
+
 
      {"group", gettext_noop("Font size"), NULL},
      {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},

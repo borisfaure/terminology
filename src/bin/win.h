@@ -47,6 +47,11 @@ Config *win_config_get(const Win *wn);
 void win_term_swallow(Win *wn, Term *term);
 void win_add_split(Win *wn, Term *term);
 void win_sizing_handle(Win *wn);
+void win_toggle_visible_group(Win *wn);
+void win_toggle_all_group(Win *wn);
+Eina_Bool win_is_group_action_handled(Win *wn);
+Eina_Bool win_is_group_input(Win *wn);
+
 
 void term_ref(Term *term);
 void term_unref(Term *term);

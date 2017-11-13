@@ -170,6 +170,9 @@ struct _Win
    Ecore_Timer *cmdbox_focus_timer;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
+   unsigned char group_input : 1;
+   unsigned char group_only_visible : 1;
+   unsigned char group_once_handled : 1;
 };
 
 /* }}} */
@@ -404,6 +407,7 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
      return;
 
    tc->is_focused = EINA_FALSE;
+   termio_focus_out(term->termio);
 
    if (tc->parent != relative)
      tc->parent->unfocus(tc->parent, tc);
@@ -453,10 +457,11 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
         edje_object_signal_emit(term->base, "focus,in", "terminology");
      }
+   termio_focus_in(term->termio);
    if (term->wn->cmdbox)
      elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
-   elm_object_focus_set(term->termio, EINA_TRUE);
-   termio_event_feed_mouse_in(term->termio);
+   //elm_object_focus_set(term->termio, EINA_TRUE);
+   //termio_event_feed_mouse_in(term->termio);
 
    title = termio_title_get(term->termio);
    if (title)
@@ -530,7 +535,7 @@ _cb_win_focus_in(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term *term;
 
-   DBG("tc:%p tc->is_focused:%d",
+   DBG("FOCUS_IN tc:%p tc->is_focused:%d",
        tc, tc->is_focused);
    if (!tc->is_focused)
      elm_win_urgent_set(wn->win, EINA_FALSE);
@@ -577,7 +582,7 @@ _cb_win_focus_out(void *data,
    Win *wn = data;
    Term_Container *tc = (Term_Container*) wn;
 
-   DBG("tc:%p tc->is_focused:%d",
+   DBG("FOCUS OUT tc:%p tc->is_focused:%d",
        tc, tc->is_focused);
    tc->unfocus(tc, NULL);
 }
@@ -1106,6 +1111,154 @@ _win_update(Term_Container *tc)
    wn->child->update(wn->child);
 }
 
+static void
+_cb_win_key_up(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *event_info)
+{
+   Win *wn = data;
+   Eina_List *l;
+   Term *term;
+   const Evas_Event_Key_Up *ev = event_info;
+
+   DBG("GROUP key up (%p) (ctrl:%d)",
+       wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
+   if (wn->group_input)
+     {
+        wn->group_once_handled = EINA_FALSE;
+        EINA_LIST_FOREACH(wn->terms, l, term)
+          {
+             termio_key_up(term->termio, event_info);
+             if (!wn->group_input)
+               return;
+          }
+     }
+   else
+     {
+        Term_Container *tc = (Term_Container*) wn;
+
+        term = tc->focused_term_get(tc);
+        if (term)
+          termio_key_up(term->termio, event_info);
+     }
+}
+
+static void
+_cb_win_key_down(void *data,
+                 Evas *_e EINA_UNUSED,
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *event_info)
+{
+   Win *wn = data;
+   Eina_List *l;
+   Term *term;
+   const Evas_Event_Key_Down *ev = event_info;
+
+   DBG("GROUP key down (%p) (ctrl:%d)",
+       wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
+
+   int ctrl, alt, shift, win, meta, hyper;
+   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   win = evas_key_modifier_is_set(ev->modifiers, "Super");
+   meta = evas_key_modifier_is_set(ev->modifiers, "Meta") ||
+      evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
+      evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   DBG("ctrl:%d alt:%d shift:%d win:%d meta:%d hyper:%d",
+       ctrl, alt, shift, win, meta, hyper);
+
+
+   if (wn->group_input)
+     {
+        wn->group_once_handled = EINA_FALSE;
+        EINA_LIST_FOREACH(wn->terms, l, term)
+          {
+             termio_key_down(term->termio, event_info);
+             if (!wn->group_input)
+               return;
+          }
+     }
+   else
+     {
+        Term_Container *tc = (Term_Container*) wn;
+
+        term = tc->focused_term_get(tc);
+        if (term)
+          termio_key_down(term->termio, event_info);
+     }
+}
+
+static void
+_cb_win_mouse_down(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *event)
+{
+   Win *wn = data;
+   Evas_Event_Mouse_Down *ev = event;
+   Term *term, *term_mouse;
+   Term_Container *tc = (Term_Container*) wn;
+   Term_Container *tc_child;
+
+   DBG("mouse down");
+   if (wn->group_input)
+     return;
+
+   term_mouse = tc->find_term_at_coords(tc, ev->canvas.x, ev->canvas.y);
+   term = tc->focused_term_get(tc);
+   if (term_mouse == term)
+     return;
+
+   if (term)
+     {
+        tc_child = term->container;
+        tc_child->unfocus(tc_child, tc);
+     }
+
+   tc_child = term_mouse->container;
+   tc_child->focus(tc_child, tc);
+}
+
+static void
+_cb_win_mouse_move(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *obj EINA_UNUSED,
+                   void *event)
+{
+   Win *wn = data;
+   Evas_Event_Mouse_Move *ev = event;
+   Term *term, *term_mouse;
+   Term_Container *tc = (Term_Container*) wn;
+   Term_Container *tc_child;
+
+   if (wn->group_input)
+     return;
+
+   if (!wn->config->mouse_over_focus)
+     return;
+
+   term_mouse = tc->find_term_at_coords(tc,
+                                        ev->cur.canvas.x, ev->cur.canvas.y);
+   term = tc->focused_term_get(tc);
+   if (term_mouse == term)
+     return;
+
+   DBG("mouse move");
+   if (term)
+     {
+        tc_child = term->container;
+        tc_child->unfocus(tc_child, tc);
+     }
+
+   tc_child = term_mouse->container;
+   DBG("need to focus");
+   tc_child->focus(tc_child, tc);
+}
+
+
 Win *
 win_new(const char *name, const char *role, const char *title,
         const char *icon_name, Config *config,
@@ -1187,6 +1340,23 @@ win_new(const char *name, const char *role, const char *title,
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_win_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_win_focus_out, wn);
 
+   evas_object_event_callback_add(wn->win,
+                                  EVAS_CALLBACK_KEY_DOWN,
+                                  _cb_win_key_down,
+                                  wn);
+   evas_object_event_callback_add(wn->win,
+                                  EVAS_CALLBACK_KEY_UP,
+                                  _cb_win_key_up,
+                                  wn);
+   evas_object_event_callback_add(wn->win,
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_win_mouse_down,
+                                  wn);
+   evas_object_event_callback_add(wn->win,
+                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                  _cb_win_mouse_move,
+                                  wn);
+
    wins = eina_list_append(wins, wn);
    return wn;
 }
@@ -1214,6 +1384,71 @@ term_close(Evas_Object *win, Evas_Object *term, Eina_Bool hold_if_requested)
    tc->close(tc, tc);
 
    term_unref(tm);
+}
+
+/* Returns True if action is permitted */
+Eina_Bool
+win_is_group_action_handled(Win *wn)
+{
+   DBG("wn->group_input:%d wn->group_once_handled:%d wn:%p",
+       wn->group_input, wn->group_once_handled, wn);
+   if (!wn->group_input)
+     return EINA_FALSE;
+   if (wn->group_once_handled)
+     return EINA_TRUE;
+   wn->group_once_handled = EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+win_is_group_input(Win *wn)
+{
+   return wn->group_input;
+}
+
+
+
+static void
+_win_toggle_group(Win *wn)
+{
+   Eina_List *l;
+   Term *term;
+
+   DBG("WIN TOGGLE");
+   if (!wn->group_input)
+     {
+        EINA_LIST_FOREACH(wn->terms, l, term)
+          {
+             edje_object_signal_emit(term->bg, "focus,in", "terminology");
+          }
+        wn->group_input = EINA_TRUE;
+        DBG("GROUP INPUT is now TRUE");
+     }
+   else
+     {
+        wn->group_input = EINA_TRUE;
+        DBG("GROUP INPUT is now FALSE");
+        EINA_LIST_FOREACH(wn->terms, l, term)
+          {
+             edje_object_signal_emit(term->bg, "focus,out", "terminology");
+          }
+        term = wn->child->term_first(wn->child);
+        wn->child->focus(wn->child, &wn->tc);
+     }
+}
+
+
+void
+win_toggle_all_group(Win *wn)
+{
+   wn->group_only_visible = EINA_FALSE;
+   _win_toggle_group(wn);
+}
+void
+win_toggle_visible_group(Win *wn)
+{
+   wn->group_only_visible = EINA_TRUE;
+   _win_toggle_group(wn);
 }
 
 /* }}} */
@@ -4799,7 +5034,7 @@ _cb_options_done(void *data)
              return;
           }
      }
-   DBG("tc:%p", tc);
+   DBG("focus tc:%p", tc);
    tc->focus(tc, tc);
 }
 
