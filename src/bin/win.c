@@ -3647,9 +3647,9 @@ term_set_title(Term *term)
     evas_object_smart_callback_add(o, "aborted", _set_title_cancel_cb, popup);
     elm_object_content_set(popup, o);
     evas_object_show(o);
-    elm_object_focus_set(o, EINA_TRUE);
-
     evas_object_show(popup);
+
+    elm_object_focus_set(o, EINA_TRUE);
 }
 
 static void
