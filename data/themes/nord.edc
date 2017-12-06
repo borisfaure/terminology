@@ -1,0 +1,104 @@
+// An arctic, north-bluish color palette. https://git.io/nord
+// Copyright (c) 2016-2017 Arctic Ice Studio <development@arcticicestudio.com>
+//
+// License: MIT
+
+#define nord0      46  52  64 255 /* #2E3440 */
+#define nord1      59  66  82 255 /* #3B4252 */
+#define nord2      67  76  94 255 /* #434C5E */
+#define nord3      76  86 106 255 /* #4C566A */
+#define nord4     216 222 233 255 /* #D8DEE9 */
+#define nord5     229 233 240 255 /* #E5E9F0 */
+#define nord6     236 239 244 255 /* #ECEFF4 */
+#define nord7     143 188 187 255 /* #8FBCBB */
+#define nord8     136 192 208 255 /* #88C0D0 */
+#define nord9     129 161 193 255 /* #81A1C1 */
+#define nord10     94 129 172 255 /* #5E81AC */
+#define nord11    191  97 106 255 /* #BF616A */
+#define nord12    208 135 112 255 /* #D08770 */
+#define nord13    235 203 139 255 /* #EBCB8B */
+#define nord14    163 190 140 255 /* #A3BE8C */
+#define nord15    180 142 173 255 /* #B48EAD */
+
+
+#define ANSI0     nord1
+#define ANSI1     nord11
+#define ANSI2     nord14
+#define ANSI3     nord13
+#define ANSI4     nord9
+#define ANSI5     nord15
+#define ANSI6     nord8
+#define ANSI7     nord5
+#define ANSI8     nord3
+#define ANSI9     nord11
+#define ANSI10    nord14
+#define ANSI11    nord13
+#define ANSI12    nord9
+#define ANSI13    nord15
+#define ANSI14    nord7
+#define ANSI15    nord6
+
+#define COL_DEF   nord4
+#define BG_COL    nord0
+#define NO_COLORS 1
+
+color_classes {
+   color_class { name: "C0";  color: ANSI0; } // COL_BLACK
+   color_class { name: "C1";  color: ANSI1; } // COL_RED
+   color_class { name: "C2";  color: ANSI2; } // COL_GREEN
+   color_class { name: "C3";  color: ANSI3; } // COL_YELLOW
+   color_class { name: "C4";  color: ANSI4; } // COL_BLUE
+   color_class { name: "C5";  color: ANSI5; } // COL_MAGENTA
+   color_class { name: "C6";  color: ANSI6; } // COL_CYAN
+   color_class { name: "C7";  color: ANSI7; } // COL_WHITE
+
+   color_class { name: "C8";  color: ANSI8; } // COL_BLACK
+   color_class { name: "C9";  color: ANSI9; } // COL_RED
+   color_class { name: "C10"; color: ANSI10; } // COL_GREEN
+   color_class { name: "C11"; color: ANSI11; } // COL_YELLOW
+   color_class { name: "C12"; color: ANSI12; } // COL_BLUE
+   color_class { name: "C13"; color: ANSI13; } // COL_MAGENTA
+   color_class { name: "C14"; color: ANSI14; } // COL_CYAN
+   color_class { name: "C15"; color: ANSI15; } // COL_WHITE
+
+   color_class { name: "c0";  color: COL_DEF; }
+   color_class { name: "c1";  color: ANSI0; }
+   color_class { name: "c2";  color: ANSI1; }
+   color_class { name: "c3";  color: ANSI2; }
+   color_class { name: "c4";  color: ANSI3; }
+   color_class { name: "c5";  color: ANSI4; }
+   color_class { name: "c6";  color: ANSI5; }
+   color_class { name: "c7";  color: ANSI6; }
+   color_class { name: "c8";  color: ANSI7; }
+
+   color_class { name: "c11"; color: COL_DEF; }
+
+   color_class { name: "c12"; color: ANSI15; }
+   color_class { name: "c13"; color: ANSI8; }
+   color_class { name: "c14"; color: ANSI9; }
+   color_class { name: "c15"; color: ANSI10; }
+   color_class { name: "c16"; color: ANSI11; }
+   color_class { name: "c17"; color: ANSI12; }
+   color_class { name: "c18"; color: ANSI13; }
+   color_class { name: "c19"; color: ANSI14; }
+   color_class { name: "c20"; color: ANSI15; }
+
+   color_class { name: "c25"; color: ANSI8; }
+   color_class { name: "c26"; color: ANSI9; }
+   color_class { name: "c27"; color: ANSI10; }
+   color_class { name: "c28"; color: ANSI11; }
+   color_class { name: "c29"; color: ANSI12; }
+   color_class { name: "c30"; color: ANSI13; }
+   color_class { name: "c31"; color: ANSI14; }
+   color_class { name: "c32"; color: ANSI15; }
+
+   color_class { name: "c37"; color: ANSI8; }
+   color_class { name: "c38"; color: ANSI9; }
+   color_class { name: "c39"; color: ANSI10; }
+   color_class { name: "c40"; color: ANSI11; }
+   color_class { name: "c41"; color: ANSI12; }
+   color_class { name: "c42"; color: ANSI13; }
+   color_class { name: "c43"; color: ANSI14; }
+   color_class { name: "c44"; color: ANSI15; }
+}
+#include "default.edc"
