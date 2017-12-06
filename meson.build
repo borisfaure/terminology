@@ -59,26 +59,9 @@ terminology_dependencies = []
 edje_cc_path = ''
 edj_targets = []
 edj_files = []
-use_translations = false
-intl_lib = cc.find_library('intl', required: false)
-if intl_lib.found()
-  config_data.set('HAVE_GETTEXT', 1)
-  config_data.set('ENABLE_NLS', 1)
-  terminology_dependencies += [intl_lib]
-  use_translations = true
-else
-  gettext_code = '''
-  #include <libintl.h>
-  int main(int argc, char *argv[]) {
-      (void)ngettext("", "", 0);
-      return 0;
-  }
-  '''
-  if cc.links(gettext_code)
-    config_data.set('HAVE_GETTEXT', 1)
-    config_data.set('ENABLE_NLS', 1)
-    use_translations = true
-  endif
+
+if get_option('nls') == true
+  subdir('po')
 endif
 
 foreach efl_dep: efl_deps
@@ -137,9 +120,6 @@ configure_file(input: join_paths('pkgbuild', 'PKGBUILD.in'),
 config_dir = include_directories('.')
 subdir('data')
 subdir('man')
-if use_translations
-  subdir('po')
-endif
 subdir('src/bin')
 
 meson.add_install_script('meson_install_themes.sh', edj_files)
