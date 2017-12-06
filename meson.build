@@ -3,10 +3,6 @@ project('terminology', 'c',
         default_options: ['c_std=gnu99'],
         license: 'BSD')
 
-spec_data = configuration_data()
-spec_data.set('PACKAGE', meson.project_name())
-spec_data.set('VERSION', meson.project_version())
-
 cc = meson.get_compiler('c')
 
 prefix = get_option('prefix')
@@ -108,14 +104,6 @@ message('edje_cc set to:' + edje_cc)
 
 configure_file(output: 'terminology_config.h',
                configuration: config_data)
-
-configure_file(input: 'terminology.spec.in',
-               output: 'terminology.spec',
-               configuration: spec_data)
-
-configure_file(input: join_paths('pkgbuild', 'PKGBUILD.in'),
-               output: 'PKGBUILD',
-               configuration: spec_data)
 
 config_dir = include_directories('.')
 subdir('data')
