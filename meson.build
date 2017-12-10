@@ -73,7 +73,7 @@ if cc.has_function('mkstemps')
 endif
 
 url_head_code = '''#include <Ecore_Con.h>
-int main(int argc, char *argv[]) { ecore_con_url_head(NULL); return 0; }
+int main(void) { ecore_con_url_head(NULL); return 0; }
 '''
 
 found = 'Not found'
