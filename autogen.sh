@@ -2,4 +2,4 @@
 
 rm -rf build
 meson $@ . build
-mesonconf build
+meson configure build
