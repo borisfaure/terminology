@@ -3322,46 +3322,6 @@ term_popmedia_close(Term *term)
 }
 
 
-static void
-_cb_term_mouse_in(void *data,
-                  Evas *_e EINA_UNUSED,
-                  Evas_Object *_obj EINA_UNUSED,
-                  void *_event EINA_UNUSED)
-{
-   Term *term = data;
-   Config *config;
-
-   if ((!term) || (!term->termio))
-     return;
-
-   config = termio_config_get(term->termio);
-   if ((!config) || (!config->mouse_over_focus))
-     return;
-   if (!_win_is_focused(term->wn))
-     return;
-
-   _term_focus(term);
-}
-
-static void
-_cb_term_mouse_down(void *data,
-                    Evas *_e EINA_UNUSED,
-                    Evas_Object *_obj EINA_UNUSED,
-                    void *event)
-{
-   Evas_Event_Mouse_Down *ev = event;
-   Term *term = data;
-   Term *term2;
-   Term_Container *tc;
-
-   tc = (Term_Container*) term->wn;
-   term2 = tc->focused_term_get(tc);
-   if (term == term2) return;
-   term->down.x = ev->canvas.x;
-   term->down.y = ev->canvas.y;
-   _term_focus(term);
-}
-
 static Eina_Bool
 _term_is_focused(Term *term)
 {
@@ -5176,11 +5136,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "send,progress", _cb_send_progress, term);
    evas_object_smart_callback_add(o, "send,end", _cb_send_end, term);
    evas_object_show(o);
-
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cb_term_mouse_down, term);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
-                                  _cb_term_mouse_in, term);
 
    wn->terms = eina_list_append(wn->terms, term);
 
