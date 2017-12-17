@@ -1232,7 +1232,7 @@ _cb_win_mouse_move(void *data,
    Evas_Event_Mouse_Move *ev = event;
    Term *term, *term_mouse;
    Term_Container *tc = (Term_Container*) wn;
-   Term_Container *tc_child;
+   Term_Container *tc_child = NULL;
 
    if (wn->group_input)
      return;
@@ -1851,50 +1851,50 @@ _split_split(Term_Container *tc, Term_Container *child,
 {
    Split *split;
    Win *wn;
+   Term *tm_new, *tm;
+   char *wdir = NULL;
+   char buf[PATH_MAX];
+   Term_Container *tc_split, *tc_solo_new;
+   Evas_Object *obj_split;
 
+   DBG(" ");
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split *)tc;
    wn = tc->wn;
 
-   if (_term_container_is_splittable(tc, is_horizontal))
+   if (!_term_container_is_splittable(tc, is_horizontal))
+     return;
+
+   // copy the current path to wdir if we should change the directory,
+   // passing wdir NULL otherwise:
+   if (wn->config->changedir_to_current)
      {
-        Term *tm_new, *tm;
-        char *wdir = NULL;
-        char buf[PATH_MAX];
-        Term_Container *tc_split, *tc_solo_new;
-        Evas_Object *obj_split;
-
-        // copy the current path to wdir if we should change the directory,
-        // passing wdir NULL otherwise:
-        if (wn->config->changedir_to_current)
-          {
-             if (from)
-               tm = from;
-             else
-               tm = child->focused_term_get(child);
-             if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
-               wdir = buf;
-          }
-        tm_new = term_new(wn, wn->config,
-                          cmd, wn->config->login_shell, wdir,
-                          80, 24, EINA_FALSE, NULL);
-        tc_solo_new = _solo_new(tm_new, wn);
-        evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
-
-        if (child == split->tc1)
-             elm_object_part_content_unset(split->panes, PANES_TOP);
+        if (from)
+          tm = from;
         else
-             elm_object_part_content_unset(split->panes, PANES_BOTTOM);
-
-        tc_split = _split_new(child, tc_solo_new, is_horizontal);
-
-        obj_split = tc_split->get_evas_object(tc_split);
-
-        tc_split->is_focused = tc->is_focused;
-        tc->swallow(tc, child, tc_split);
-
-        evas_object_show(obj_split);
+          tm = child->focused_term_get(child);
+        if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
+          wdir = buf;
      }
+   tm_new = term_new(wn, wn->config,
+                     cmd, wn->config->login_shell, wdir,
+                     80, 24, EINA_FALSE, NULL);
+   tc_solo_new = _solo_new(tm_new, wn);
+   evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
+
+   if (child == split->tc1)
+     elm_object_part_content_unset(split->panes, PANES_TOP);
+   else
+     elm_object_part_content_unset(split->panes, PANES_BOTTOM);
+
+   tc_split = _split_new(child, tc_solo_new, is_horizontal);
+
+   obj_split = tc_split->get_evas_object(tc_split);
+
+   tc_split->is_focused = tc->is_focused;
+   tc->swallow(tc, child, tc_split);
+
+   evas_object_show(obj_split);
 }
 
 static Term_Container *
@@ -1944,9 +1944,13 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    split->tc1 = tc1;
    split->tc2 = tc2;
    if (tc1->is_focused)
-     tc1->unfocus(tc1, tc);
-   tc2->focus(tc2, tc);
-   split->last_focus = tc2;
+     {
+        tc1->unfocus(tc1, tc);
+        tc2->focus(tc2, tc);
+        split->last_focus = tc2;
+     }
+   else
+     split->last_focus = tc1;
 
    o = split->panes = elm_panes_add(tc1->wn->win);
    elm_object_style_set(o, "flush");
