@@ -28,7 +28,7 @@ To set 1 or more project specific options:
 
 To display current configuration:
 
-    mesonconf build
+    meson configure build
 
 The above will only work after at least the following is done:
 
