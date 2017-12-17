@@ -6037,7 +6037,6 @@ _smart_pty_command(void *data)
                {
                   Eina_Binbuf *bb = eina_binbuf_new();
                   unsigned char v;
-                  int inp = 0;
 
                   if (bb)
                     {
@@ -6047,17 +6046,12 @@ _smart_pty_command(void *data)
                          {
                             v = (unsigned char)(*p);
                             sum += v;
-                            inp++;
-                            if ((v == 0x1b) || (v == 0x07))
-                              {
-                                 p++;
-                                 v = *p;
-                                 inp++;
-                                 sum += (unsigned char)(*p);
-                                 if      (*p == 0x01) v = 0x00;
-                                 else if (*p == 0x02) v = 0xff;
-                                 else valid = EINA_FALSE;
-                              }
+
+                            v = ((v - '@') & 0xf) << 4;
+                            p++;
+                            sum += *p;
+                            v |= ((*p - '@') & 0xf);
+                            if (!*p) valid = EINA_FALSE;
                             eina_binbuf_append_char(bb, v);
                          }
                        if ((valid) && (sum == pksum) && (sd->sendfile.active))

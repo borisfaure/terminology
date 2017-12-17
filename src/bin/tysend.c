@@ -87,27 +87,15 @@ main(int argc, char **argv)
                     {
                        if (buf[0] == 'k')
                          {
-                            pksize = read(file_fd, rawbuf, 8192);
+                            pksize = read(file_fd, rawbuf, 4096);
 
                             if (pksize > 0)
                               {
                                  bout = 0;
                                  for (bin = 0; bin < pksize; bin++)
                                    {
-                                      if (rawbuf[bin] == 0x00)
-                                        {
-                                           rawbuf2[bout++] = 0xff;
-                                           rawbuf2[bout++] = 0x01;
-                                        }
-                                      else if (rawbuf[bin] == 0xff)
-                                        {
-                                           rawbuf2[bout++] = 0xff;
-                                           rawbuf2[bout++] = 0x02;
-                                        }
-                                      else
-                                        {
-                                           rawbuf2[bout++] = rawbuf[bin];
-                                        }
+                                      rawbuf2[bout++] = (rawbuf[bin] >> 4 ) + '@';
+                                      rawbuf2[bout++] = (rawbuf[bin] & 0xf) + '@';
                                    }
                                  rawbuf2[bout] = 0;
                                  pksum = 0;

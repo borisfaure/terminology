@@ -310,10 +310,12 @@ fd[CHECKSUM DATA]
   = block of data for the current file transfer with checksum as a
     string decimal which is the sum of every byte when taken as an
     unsigned char per byte. the checksum is a signed 32bit integer.
-    the checksum is the sum of the data after escaping. data will be
-    escaped using a 0xff byte as the escape header. the escape sequence
-    of 0xff 0x01 represents a 0x00 (nul) bytes, and 0xff 0x02 represents
-    a 0xff byte. all other bytes are transitted as-is.
+    the checksum is the sum of the data after escaping. 4 bits at a
+    time per data byte, encoded with high bits in one byte then low
+    bits, with the bits ecnoded as 4 bit value being 0x40 + 4 bit value
+    per byte. (@ == 0x0, A == 0x1, B == 0x2, ... N == 0xe, O == 0xf).
+    so to rebuild a byte will be (((bytes[0] - 0x40) & 0xf) << 4) |
+    ((bytes[1] - 0x40) & 0xf) per byte pair in the data block.
 
 fx
   = exit file send mode (normally at the end of the file or when it's
