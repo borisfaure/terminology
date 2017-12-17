@@ -62,6 +62,13 @@ struct _Termio
          unsigned char dndobjdel : 1;
       } down;
    } link;
+   struct {
+      const char *file;
+      FILE *f;
+      double progress;
+      unsigned long long total, size;
+      Eina_Bool active : 1;
+   } sendfile;
    Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;
@@ -4729,6 +4736,70 @@ _smart_cb_gest_zoom_abort(void *data, void *_event EINA_UNUSED)
 }
 
 /* }}} */
+
+Eina_Bool
+termio_file_send_ok(const Evas_Object *obj, const char *file)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Termpty *ty;
+
+   if (!sd) return EINA_FALSE;
+   if (!file) return EINA_FALSE;
+   ty = sd->pty;
+   sd->sendfile.f = fopen(file, "w");
+   if (sd->sendfile.f)
+     {
+        if (sd->sendfile.file) eina_stringshare_del(sd->sendfile.file);
+        sd->sendfile.file = eina_stringshare_add(file);
+        sd->sendfile.active = EINA_TRUE;
+        termpty_write(ty, "k\n", 2);
+        return EINA_TRUE;
+     }
+   if (sd->sendfile.file) eina_stringshare_del(sd->sendfile.file);
+   sd->sendfile.file = NULL;
+   sd->sendfile.active = EINA_FALSE;
+   termpty_write(ty, "n\n", 2);
+   return EINA_FALSE;
+}
+
+void
+termio_file_send_cancel(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Termpty *ty;
+
+   if (!sd) return;
+   ty = sd->pty;
+   if (!sd->sendfile.active) goto done;
+   sd->sendfile.progress = 0.0;
+   sd->sendfile.total = 0;
+   sd->sendfile.size = 0;
+   if (sd->sendfile.file)
+     {
+        ecore_file_unlink(sd->sendfile.file);
+        eina_stringshare_del(sd->sendfile.file);
+        sd->sendfile.file = NULL;
+     }
+   if (sd->sendfile.f)
+     {
+        fclose(sd->sendfile.f);
+        sd->sendfile.f = NULL;
+     }
+   sd->sendfile.active = EINA_FALSE;
+done:
+   termpty_write(ty, "n\n", 2);
+}
+
+double
+termio_file_send_progress_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   if (!sd) return 0.0;
+   if (!sd->sendfile.active) return 0.0;
+   return sd->sendfile.progress;
+}
+
 /* {{{ Smart */
 
 static void
@@ -5431,6 +5502,21 @@ _smart_del(Evas_Object *obj)
         evas_object_del(o);
      }
    if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);
+   if (sd->sendfile.active)
+     {
+        if (sd->sendfile.file)
+          {
+             ecore_file_unlink(sd->sendfile.file);
+             eina_stringshare_del(sd->sendfile.file);
+             sd->sendfile.file = NULL;
+          }
+        if (sd->sendfile.f)
+          {
+             fclose(sd->sendfile.f);
+             sd->sendfile.f = NULL;
+          }
+        sd->sendfile.active = EINA_FALSE;
+     }
    keyin_compose_seq_reset(&sd->khdl);
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    if (sd->preedit_str) eina_stringshare_del(sd->preedit_str);
@@ -5925,6 +6011,116 @@ _smart_pty_command(void *data)
                     eina_stringshare_del(chid);
                }
              return;
+          }
+     }
+   else if (ty->cur_cmd[0] == 'f') // file...
+     {
+        if (ty->cur_cmd[1] == 'r') // receive
+          {
+             sd->sendfile.progress = 0.0;
+             sd->sendfile.total = 0;
+             sd->sendfile.size = 0;
+          }
+        else if (ty->cur_cmd[1] == 's') // file size
+          {
+             sd->sendfile.total = 0;
+             sd->sendfile.size = atoll(&(ty->cur_cmd[2]));
+          }
+        else if (ty->cur_cmd[1] == 'd') // data packet
+          {
+             int pksum = atoi(&(ty->cur_cmd[2]));
+             int sum;
+             char *p = strchr(ty->cur_cmd, ' ');
+             Eina_Bool valid = EINA_TRUE;
+
+             if (p)
+               {
+                  Eina_Binbuf *bb = eina_binbuf_new();
+                  unsigned char v;
+                  int inp = 0;
+
+                  if (bb)
+                    {
+                       p++;
+                       sum = 0;
+                       for (; *p; p++)
+                         {
+                            v = (unsigned char)(*p);
+                            sum += v;
+                            inp++;
+                            if ((v == 0x1b) || (v == 0x07))
+                              {
+                                 p++;
+                                 v = *p;
+                                 inp++;
+                                 sum += (unsigned char)(*p);
+                                 if      (*p == 0x01) v = 0x00;
+                                 else if (*p == 0x02) v = 0xff;
+                                 else valid = EINA_FALSE;
+                              }
+                            eina_binbuf_append_char(bb, v);
+                         }
+                       if ((valid) && (sum == pksum) && (sd->sendfile.active))
+                         {
+                            // write "ok" (k) to term
+                            size_t size = eina_binbuf_length_get(bb);
+
+                            sd->sendfile.total += size;
+                            if (sd->sendfile.size > 0.0)
+                              {
+                                 sd->sendfile.progress =
+                                   (double)sd->sendfile.total /
+                                   (double)sd->sendfile.size;
+                                 evas_object_smart_callback_call
+                                   (obj, "send,progress", NULL);
+                              }
+                            fwrite(eina_binbuf_string_get(bb), size, 1,
+                                   sd->sendfile.f);
+                            termpty_write(ty, "k\n", 2);
+                         }
+                       else
+                         {
+                            // write "not valid" (n) to term
+                            if (sd->sendfile.file)
+                              {
+                                 ecore_file_unlink(sd->sendfile.file);
+                                 eina_stringshare_del(sd->sendfile.file);
+                                 sd->sendfile.file = NULL;
+                              }
+                            if (sd->sendfile.f)
+                              {
+                                 fclose(sd->sendfile.f);
+                                 sd->sendfile.f = NULL;
+                              }
+                            sd->sendfile.active = EINA_FALSE;
+                            termpty_write(ty, "n\n", 2);
+                            evas_object_smart_callback_call
+                              (obj, "send,end", NULL);
+                         }
+                       eina_binbuf_free(bb);
+                    }
+               }
+          }
+        else if (ty->cur_cmd[1] == 'x') // exit data stream
+          {
+             if (sd->sendfile.active)
+               {
+                  sd->sendfile.progress = 0.0;
+                  sd->sendfile.size = 0;
+                  if (sd->sendfile.file)
+                    {
+                       eina_stringshare_del(sd->sendfile.file);
+                       sd->sendfile.file = NULL;
+                    }
+                  if (sd->sendfile.f)
+                    {
+                       fclose(sd->sendfile.f);
+                       sd->sendfile.f = NULL;
+                    }
+                  sd->sendfile.active = EINA_FALSE;
+                  evas_object_smart_callback_call
+                    (obj, "send,end", NULL);
+               }
           }
      }
    evas_object_smart_callback_call(obj, "command", (void *)ty->cur_cmd);

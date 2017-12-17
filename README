@@ -299,3 +299,22 @@ ib
 
 ie
   = end media replace sequence run
+
+fr[PATH/FILE]
+  = begin file send for a file named PATH/FILE
+
+fs[SIZE_BYTES]
+  = set the size in bytes of a file send started with the above fr escape
+
+fd[CHECKSUM DATA]
+  = block of data for the current file transfer with checksum as a
+    string decimal which is the sum of every byte when taken as an
+    unsigned char per byte. the checksum is a signed 32bit integer.
+    the checksum is the sum of the data after escaping. data will be
+    escaped using a 0xff byte as the escape header. the escape sequence
+    of 0xff 0x01 represents a 0x00 (nul) bytes, and 0xff 0x02 represents
+    a 0xff byte. all other bytes are transitted as-is.
+
+fx
+  = exit file send mode (normally at the end of the file or when it's
+    complete)

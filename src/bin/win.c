@@ -88,11 +88,17 @@ struct _Term
    Evas_Object *popmedia;
    Evas_Object *miniview;
    Evas_Object *sel;
+   Evas_Object *sendfile_request;
+   Evas_Object *sendfile_progress;
+   Evas_Object *sendfile_progress_bar;
    Evas_Object *tabcount_spacer;
    Evas_Object *tab_spacer;
    Evas_Object *tab_region_base;
    Evas_Object *tab_region_bg;
    Eina_List   *popmedia_queue;
+   Ecore_Timer *sendfile_request_hide_timer;
+   Ecore_Timer *sendfile_progress_hide_timer;
+   const char  *sendfile_dir;
    Media_Type   poptype, mediatype;
    Tabbar       tabbar;
    int          step_x, step_y, min_w, min_h, req_w, req_h;
@@ -105,6 +111,9 @@ struct _Term
    unsigned char missed_bell : 1;
    unsigned char miniview_shown : 1;
    unsigned char popmedia_deleted : 1;
+
+   Eina_Bool sendfile_request_enabled : 1;
+   Eina_Bool sendfile_progress_enabled : 1;
 };
 
 typedef struct _Solo Solo;
@@ -3734,6 +3743,247 @@ _set_alpha(Config *config, const char *val, Eina_Bool save)
 }
 
 static void
+_sendfile_progress_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Evas_Object *o = obj;
+   Term *term = evas_object_data_get(o, "sendfile-progress-term");
+   Ecore_Timer *t;
+
+   evas_object_data_del(o, "sendfile-progress-term");
+   if (term)
+     {
+        term->sendfile_progress = NULL;
+        term->sendfile_progress_bar = NULL;
+     }
+   t = evas_object_data_get(o, "sendfile-progress-timer");
+   evas_object_data_del(o, "sendfile-progress-term");
+   if (t) ecore_timer_del(t);
+}
+
+static Eina_Bool
+_sendfile_progress_reset(void *data)
+{
+   Evas_Object *o = data;
+   Term *term = evas_object_data_get(o, "sendfile-progress-term");
+
+   if (term)
+     {
+        term->sendfile_progress = NULL;
+        term->sendfile_progress_bar = NULL;
+     }
+   evas_object_data_del(o, "sendfile-progress-timer");
+   evas_object_data_del(o, "sendfile-progress-term");
+   evas_object_del(o);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_sendfile_progress_hide_delay(void *data)
+{
+   Term *term = data;
+   Ecore_Timer *t;
+
+   term->sendfile_progress_hide_timer = NULL;
+   if (!term->sendfile_progress_enabled) return EINA_FALSE;
+   term->sendfile_progress_enabled = EINA_FALSE;
+   edje_object_signal_emit(term->bg, "sendfile,progress,off", "terminology");
+   t = evas_object_data_get(term->sendfile_progress, "sendfile-progress-timer");
+   if (t) ecore_timer_del(t);
+   t = ecore_timer_add(10.0, _sendfile_progress_reset, term->sendfile_progress);
+   evas_object_data_set(term->sendfile_progress, "sendfile-progress-timer", t);
+   return EINA_FALSE;
+}
+
+static void
+_sendfile_progress_hide(Term *term)
+{
+   if (!term->sendfile_progress_enabled) return;
+   if (term->sendfile_progress_hide_timer)
+     ecore_timer_del(term->sendfile_progress_hide_timer);
+   term->sendfile_progress_hide_timer =
+     ecore_timer_add(0.5, _sendfile_progress_hide_delay, term);
+}
+
+static void
+_sendfile_progress_cancel(void *data, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+{
+   Term *term = data;
+
+   if (!term->sendfile_progress) return;
+   termio_file_send_cancel(term->termio);
+   _sendfile_progress_hide(term);
+}
+
+static void
+_sendfile_progress(Term *term)
+{
+   Evas_Object *o, *base;
+
+   if (term->sendfile_progress)
+     {
+        evas_object_del(term->sendfile_progress);
+        term->sendfile_progress = NULL;
+     }
+   if (!edje_object_part_exists(term->bg, "terminology.sendfile.progress"))
+     {
+        return;
+     }
+   if (term->sendfile_progress_hide_timer)
+     {
+        ecore_timer_del(term->sendfile_progress_hide_timer);
+        term->sendfile_progress_hide_timer = NULL;
+     }
+   o = elm_box_add(term->wn->win);
+   evas_object_data_set(o, "sendfile-progress-term", term);
+   base = o;
+   term->sendfile_progress = o;
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _sendfile_progress_del, NULL);
+   elm_box_horizontal_set(o, EINA_TRUE);
+
+   o = elm_button_add(term->wn->win);
+   elm_object_text_set(o, "Cancel");
+   evas_object_smart_callback_add(o, "clicked", _sendfile_progress_cancel, term);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(base, o);
+   evas_object_show(o);
+
+   o = elm_progressbar_add(term->wn->win);
+   term->sendfile_progress_bar = o;
+   elm_progressbar_unit_format_set(o, "%1.0f%%");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(base, o);
+   evas_object_show(o);
+
+   term->sendfile_progress_enabled = EINA_TRUE;
+   edje_object_part_swallow(term->bg, "terminology.sendfile.progress", base);
+   evas_object_show(base);
+   edje_object_signal_emit(term->bg, "sendfile,progress,on", "terminology");
+}
+
+static void
+_sendfile_request_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   Evas_Object *o = obj;
+   Term *term = evas_object_data_get(o, "sendfile-request-term");
+   Ecore_Timer *t;
+
+   evas_object_data_del(o, "sendfile-request-term");
+   if (term) term->sendfile_request = NULL;
+   t = evas_object_data_get(o, "sendfile-request-timer");
+   evas_object_data_del(o, "sendfile-request-term");
+   if (t) ecore_timer_del(t);
+}
+
+static Eina_Bool
+_sendfile_request_reset(void *data)
+{
+   Evas_Object *o = data;
+   Term *term = evas_object_data_get(o, "sendfile-request-term");
+
+   if (term) term->sendfile_request = NULL;
+   evas_object_data_del(o, "sendfile-request-timer");
+   evas_object_data_del(o, "sendfile-request-term");
+   evas_object_del(o);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_sendfile_request_hide_delay(void *data)
+{
+   Term *term = data;
+   Ecore_Timer *t;
+
+   term->sendfile_request_hide_timer = NULL;
+   if (!term->sendfile_request_enabled) return EINA_FALSE;
+   term->sendfile_request_enabled = EINA_FALSE;
+   edje_object_signal_emit(term->bg, "sendfile,request,off", "terminology");
+   t = evas_object_data_get(term->sendfile_request, "sendfile-request-timer");
+   if (t) ecore_timer_del(t);
+   t = ecore_timer_add(10.0, _sendfile_request_reset, term->sendfile_request);
+   evas_object_data_set(term->sendfile_request, "sendfile-request-timer", t);
+   elm_object_focus_set(term->sendfile_request, EINA_FALSE);
+   _term_focus(term);
+   return EINA_FALSE;
+}
+
+static void
+_sendfile_request_hide(Term *term)
+{
+   if (!term->sendfile_request_enabled) return;
+   if (term->sendfile_request_hide_timer)
+     ecore_timer_del(term->sendfile_request_hide_timer);
+   term->sendfile_request_hide_timer =
+     ecore_timer_add(0.2, _sendfile_request_hide_delay, term);
+}
+
+static void
+_sendfile_request_done(void *data, Evas_Object *obj EINA_UNUSED, void *info)
+{
+   Term *term = data;
+   const char *path, *selpath = info;
+
+   if (!term->sendfile_request) return;
+
+   path = elm_fileselector_path_get(term->sendfile_request);
+   eina_stringshare_replace(&term->sendfile_dir, path);
+
+   if (selpath)
+     {
+        _sendfile_progress(term);
+        termio_file_send_ok(term->termio, selpath);
+     }
+   else  termio_file_send_cancel(term->termio);
+   _sendfile_request_hide(term);
+}
+
+static void
+_sendfile_request(Term *term, const char *path)
+{
+   Evas_Object *o;
+   const char *p;
+
+   if (term->sendfile_request)
+     {
+        evas_object_del(term->sendfile_request);
+        term->sendfile_request = NULL;
+     }
+   if (!edje_object_part_exists(term->bg, "terminology.sendfile.request"))
+     {
+        termio_file_send_cancel(term->termio);
+        return;
+     }
+   if (term->sendfile_request_hide_timer)
+     {
+        ecore_timer_del(term->sendfile_request_hide_timer);
+        term->sendfile_request_hide_timer = NULL;
+     }
+   o = elm_fileselector_add(term->wn->win);
+   evas_object_data_set(o, "sendfile-request-term", term);
+   term->sendfile_request = o;
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _sendfile_request_del, NULL);
+   elm_fileselector_is_save_set(o, EINA_TRUE);
+   elm_fileselector_expandable_set(o, EINA_FALSE);
+   if (!term->sendfile_dir)
+     {
+        const char *dir = eina_environment_home_get();
+
+        if (dir) term->sendfile_dir = eina_stringshare_add(dir);
+     }
+   if (term->sendfile_dir) elm_fileselector_path_set(o, term->sendfile_dir);
+   p = strrchr(path, '/');
+   if (p) elm_fileselector_current_name_set(o, p + 1);
+   else elm_fileselector_current_name_set(o, path);
+   evas_object_smart_callback_add(o, "done", _sendfile_request_done, term);
+   term->sendfile_request_enabled = EINA_TRUE;
+   edje_object_part_swallow(term->bg, "terminology.sendfile.request", o);
+   evas_object_show(o);
+   edje_object_signal_emit(term->bg, "sendfile,request,on", "terminology");
+   elm_object_focus_set(term->termio, EINA_FALSE);
+   elm_object_focus_set(o, EINA_TRUE);
+}
+
+static void
 _cb_command(void *data,
             Evas_Object *_obj EINA_UNUSED,
             void *event)
@@ -3749,7 +3999,7 @@ _cb_command(void *data,
           }
         else if (cmd[1] == 'q') // queue it to display after current one
           {
-              _popmedia_queue_add(term, cmd + 2);
+             _popmedia_queue_add(term, cmd + 2);
           }
      }
    else if (cmd[0] == 'b') // set background
@@ -3792,6 +4042,19 @@ _cb_command(void *data,
           _set_alpha(termio_config_get(term->termio), cmd + 2, EINA_FALSE);
         else if (cmd[1] == 'p') // permanent
           _set_alpha(termio_config_get(term->termio), cmd + 2, EINA_TRUE);
+     }
+   else if (cmd[0] == 'f') // file...
+     {
+        if (cmd[1] == 'r') // receive
+          {
+             _sendfile_request(term, cmd + 2);
+          }
+        else if (cmd[1] == 'd') // data packet
+          {
+          }
+        else if (cmd[1] == 'x') // exit data stream
+          {
+          }
      }
 }
 
@@ -3870,6 +4133,28 @@ _cb_icon(void *data,
    DBG("is focused? tc:%p", term->container);
    if (_term_is_focused(term))
      elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->termio));
+}
+
+static void
+_cb_send_progress(void *data,
+                  Evas_Object *_obj EINA_UNUSED,
+                  void *_event EINA_UNUSED)
+{
+   Term *term = data;
+
+   elm_progressbar_value_set(term->sendfile_progress_bar,
+                             termio_file_send_progress_get(term->termio));
+}
+
+static void
+_cb_send_end(void *data,
+             Evas_Object *_obj EINA_UNUSED,
+             void *_event EINA_UNUSED)
+{
+   Term *term = data;
+   if (!term->sendfile_progress) return;
+   _sendfile_request_hide(term);
+   _sendfile_progress_hide(term);
 }
 
 static Eina_Bool
@@ -4227,6 +4512,31 @@ _term_free(Term *term)
 {
    const char *s;
 
+   if (term->sendfile_request)
+     {
+        evas_object_del(term->sendfile_request);
+        term->sendfile_request = NULL;
+     }
+   if (term->sendfile_progress)
+     {
+        evas_object_del(term->sendfile_progress);
+        term->sendfile_progress = NULL;
+     }
+   if (term->sendfile_request_hide_timer)
+     {
+        ecore_timer_del(term->sendfile_request_hide_timer);
+        term->sendfile_request_hide_timer = NULL;
+     }
+   if (term->sendfile_progress_hide_timer)
+     {
+        ecore_timer_del(term->sendfile_progress_hide_timer);
+        term->sendfile_progress_hide_timer = NULL;
+     }
+   if (term->sendfile_dir)
+     {
+        eina_stringshare_del(term->sendfile_dir);
+        term->sendfile_dir = NULL;
+     }
    EINA_LIST_FREE(term->popmedia_queue, s)
      {
         eina_stringshare_del(s);
@@ -4616,6 +4926,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "split,v", _cb_split_v, term);
    evas_object_smart_callback_add(o, "title,change", _cb_title, term);
    evas_object_smart_callback_add(o, "icon,change", _cb_icon, term);
+   evas_object_smart_callback_add(o, "send,progress", _cb_send_progress, term);
+   evas_object_smart_callback_add(o, "send,end", _cb_send_end, term);
    evas_object_show(o);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,

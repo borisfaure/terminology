@@ -47,6 +47,7 @@ typop_sources = ['tycommon.c', 'tycommon.h', 'typop.c']
 tyq_sources = ['tycommon.c', 'tycommon.h', 'tyq.c']
 tycat_sources = ['tycommon.c', 'tycommon.h', 'tycat.c', 'extns.c', 'extns.h']
 tyls_sources = ['extns.c', 'extns.h', 'tyls.c', 'tycommon.c', 'tycommon.h']
+tysend_sources = ['tycommon.c', 'tycommon.h', 'tysend.c']
 tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'termptysave.c', 'termptysave.h',
                   'termptyops.c', 'termptyops.h',
@@ -91,6 +92,11 @@ executable('tycat',
            dependencies: terminology_dependencies)
 executable('tyls',
            tyls_sources,
+           install: true,
+           include_directories: config_dir,
+           dependencies: terminology_dependencies)
+executable('tysend',
+           tysend_sources,
            install: true,
            include_directories: config_dir,
            dependencies: terminology_dependencies)

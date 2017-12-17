@@ -652,6 +652,171 @@ collections {
          }
 
          ////////////////////////////////////////////////////////////////////
+         // sendfile request
+         part { name: "sendfile_request_clip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "sendfile_request_shadow";
+            mouse_events: 0;
+            clip_to: "sendfile_request_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel.to: "sendfile_request_bg";
+               rel1.offset: -32 -32;
+               rel2.offset: 31 31;
+               image.normal: "pm_shadow.png";
+               image.border: 64 64 64 64;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "sendfile_request_bg"; type: RECT;
+            clip_to: "sendfile_request_clip";
+            description { state: "default" 0.0;
+               color: 64 64 64 255;
+               rel1.relative: 0.0 -1.0;
+               rel2.relative: 1.0 0.0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         part { name: "terminology.sendfile.request"; type: SWALLOW;
+            clip_to: "sendfile_request_clip";
+            scale: 1;
+            description { state: "default" 0.0;
+               rel.to: "sendfile_request_bg";
+               rel1.offset: 4 4;
+               rel2.offset: -5 -5;
+               offscale;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         program {
+            signal: "sendfile,request,on"; source: "terminology";
+            action: ACTION_STOP;
+            target: "sendfile_request_on";
+            target: "sendfile_request_off";
+         }
+         program {
+            signal: "sendfile,request,off"; source: "terminology";
+            action: ACTION_STOP;
+            target: "sendfile_request_on";
+            target: "sendfile_request_off";
+         }
+         program { name: "sendfile_request_on";
+            signal: "sendfile,request,on"; source: "terminology";
+            in: 0.5 0.0;
+            action: STATE_SET "on" 0.0;
+            transition: DECELERATE 0.5;
+            target: "sendfile_request_clip";
+            target: "sendfile_request_bg";
+         }
+         program { name: "sendfile_request_off";
+            signal: "sendfile,request,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "sendfile_request_clip";
+            target: "sendfile_request_bg";
+         }
+
+         ////////////////////////////////////////////////////////////////////
+         // sendfile progress
+         part { name: "sendfile_progress_clip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "sendfile_progress_shadow";
+            mouse_events: 0;
+            clip_to: "sendfile_progress_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel.to: "sendfile_progress_bg";
+               rel1.offset: -32 -32;
+               rel2.offset: 31 31;
+               image.normal: "pm_shadow.png";
+               image.border: 64 64 64 64;
+               fill.smooth: 0;
+            }
+         }
+         part { name: "sendfile_progress_bg"; type: RECT;
+            clip_to: "sendfile_progress_clip";
+            scale : 1;
+            description { state: "default" 0.0;
+               color: 64 64 64 255;
+               rel.to: "terminology.sendfile.progress";
+               rel1.offset: -4 -4;
+               rel2.offset: 4 4;
+               offscale;
+            }
+         }
+         part { name: "terminology.sendfile.progress"; type: SWALLOW;
+            clip_to: "sendfile_progress_clip";
+            scale : 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel1.offset: 4 -5;
+               rel2.relative: 1.0 0.0;
+               rel2.offset: -5 -5;
+               align: 0.5 1.0;
+               offscale;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               rel1.offset: 4 4;
+               rel2.offset: -5 4;
+               align: 0.5 0.0;
+            }
+         }
+         program {
+            signal: "sendfile,progress,on"; source: "terminology";
+            action: ACTION_STOP;
+            target: "sendfile_progress_on";
+            target: "sendfile_progress_off";
+         }
+         program {
+            signal: "sendfile,progress,off"; source: "terminology";
+            action: ACTION_STOP;
+            target: "sendfile_progress_on";
+            target: "sendfile_progress_off";
+         }
+         program { name: "sendfile_progress_on";
+            signal: "sendfile,progress,on"; source: "terminology";
+            in: 0.5 0.0;
+            action: STATE_SET "on" 0.0;
+            transition: DECELERATE 0.5;
+            target: "sendfile_progress_clip";
+            target: "terminology.sendfile.progress";
+         }
+         program { name: "sendfile_progress_off";
+            signal: "sendfile,progress,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.5;
+            target: "sendfile_progress_clip";
+            target: "terminology.sendfile.progress";
+         }
+
+         ////////////////////////////////////////////////////////////////////
          // miniview
          part { name: "terminology.miniview"; type: SWALLOW;
             description { state: "default" 0.0;
