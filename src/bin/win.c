@@ -3802,6 +3802,11 @@ _sendfile_progress_hide(Term *term)
      ecore_timer_del(term->sendfile_progress_hide_timer);
    term->sendfile_progress_hide_timer =
      ecore_timer_add(0.5, _sendfile_progress_hide_delay, term);
+   if (elm_object_focus_get(term->sendfile_progress))
+     {
+        elm_object_focus_set(term->sendfile_progress, EINA_FALSE);
+        _term_focus(term);
+     }
 }
 
 static void
@@ -3902,8 +3907,11 @@ _sendfile_request_hide_delay(void *data)
    if (t) ecore_timer_del(t);
    t = ecore_timer_add(10.0, _sendfile_request_reset, term->sendfile_request);
    evas_object_data_set(term->sendfile_request, "sendfile-request-timer", t);
-   elm_object_focus_set(term->sendfile_request, EINA_FALSE);
-   _term_focus(term);
+   if (elm_object_focus_get(term->sendfile_request))
+     {
+        elm_object_focus_set(term->sendfile_request, EINA_FALSE);
+        _term_focus(term);
+     }
    return EINA_FALSE;
 }
 
