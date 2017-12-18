@@ -51,7 +51,6 @@ main(int argc, char **argv)
 {
    int i;
 
-   ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
    ARGUMENT_ENTRY_CHECK(argc, argv, print_usage);
 
    if (argc <= 1)
