@@ -57,7 +57,7 @@ termpty_shutdown(void)
 void
 termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
-   Eina_Unicode *c, *ce, *b;
+   Eina_Unicode *c, *ce, *c2, *b, *d;
    int n, bytes;
 
    c = (Eina_Unicode *)codepoints;
@@ -65,6 +65,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
    if (ty->buf)
      {
+        if (!ty->buf) ty->buf_have_zero = EINA_FALSE;
         bytes = (ty->buflen + len + 1) * sizeof(int);
         b = realloc(ty->buf, bytes);
         if (!b)
@@ -73,8 +74,26 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
              return;
           }
         DBG("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
-        bytes = len * sizeof(Eina_Unicode);
-        memcpy(&(b[ty->buflen]), codepoints, bytes);
+        if (!ty->buf_have_zero)
+          {
+             d = &(b[ty->buflen]);
+             ce = (Eina_Unicode *)codepoints + len;
+             for (c = (Eina_Unicode *)codepoints; c < ce; c++, d++)
+               {
+                  *d = *c;
+                  if (*c == 0x0)
+                    {
+                       ty->buf_have_zero = EINA_TRUE;
+                       break;
+                    }
+               }
+             for (; c < ce; c++, d++) *d = *c;
+          }
+        else
+          {
+             bytes = len * sizeof(Eina_Unicode);
+             memcpy(&(b[ty->buflen]), codepoints, bytes);
+          }
         ty->buf = b;
         ty->buflen += len;
         ty->buf[ty->buflen] = 0;
@@ -96,8 +115,18 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                        ERR(_("memerr: %s"), strerror(errno));
                        return;
                     }
+                  ty->buf_have_zero = EINA_FALSE;
+                  for (d = ty->buf, c2 = c; c2 < ce; c2++, d++)
+                    {
+                       *d = *c2;
+                       if (*c2 == 0x0)
+                         {
+                            ty->buf_have_zero = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  for (; c2 < ce; c2++, d++) *d = *c2;
                   bytes = (char *)ce - (char *)c;
-                  memcpy(ty->buf, c, bytes);
                   ty->buflen = bytes / sizeof(Eina_Unicode);
                   ty->buf[ty->buflen] = 0;
                   free(tmp);
@@ -109,6 +138,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              if (ty->buf)
                {
+                  ty->buf_have_zero = EINA_FALSE;
                   free(ty->buf);
                   ty->buf = NULL;
                }
@@ -117,12 +147,14 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
      }
    else
      {
+        ty->buf_have_zero = EINA_TRUE;
         while (c < ce)
           {
              n = termpty_handle_seq(ty, c, ce);
              if (n == 0)
                {
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
+                  ty->buf_have_zero = EINA_FALSE;
                   ty->buf = malloc(bytes);
                   DBG("malloc %i", (int)(bytes - sizeof(Eina_Unicode)));
                   if (!ty->buf)
@@ -131,8 +163,18 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                     }
                   else
                     {
+                       ty->buf_have_zero = EINA_FALSE;
+                       for (d = ty->buf, c2 = c; c2 < ce; c2++, d++)
+                         {
+                            *d = *c2;
+                            if (*c2 == 0x0)
+                              {
+                                 ty->buf_have_zero = EINA_TRUE;
+                                 break;
+                              }
+                         }
+                       for (; c2 < ce; c2++, d++) *d = *c2;
                        bytes = (char *)ce - (char *)c;
-                       memcpy(ty->buf, c, bytes);
                        ty->buflen = bytes / sizeof(Eina_Unicode);
                        ty->buf[ty->buflen] = 0;
                     }

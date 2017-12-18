@@ -1767,38 +1767,27 @@ err:
 static int
 _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   Eina_Unicode *cc;
-   Eina_Unicode *buf, bufsmall[1024], *b;
+   Eina_Unicode *cc, *cc_zero = NULL;
+   const Eina_Unicode *buf;
    char *cmd;
    int blen = 0;
    Config *config;
 
+   if (!ty->buf_have_zero) return 0;
+
    config = termio_config_get(ty->obj);
 
    cc = (Eina_Unicode *)c;
+   if ((cc < ce) && (*cc == 0x0)) cc_zero = cc;
    while ((cc < ce) && (*cc != 0x0))
      {
         blen++;
         cc++;
      }
-   buf = bufsmall;
-   if (blen > (int)((sizeof(bufsmall) / sizeof(Eina_Unicode)) - 40))
-     buf = malloc((blen * sizeof(Eina_Unicode)) + 40);
-   cc = (Eina_Unicode *)c;
-   b = buf;
-   while ((cc < ce) && (*cc != 0x0))
-     {
-        *b = *cc;
-        b++;
-        cc++;
-     }
-   if ((cc < ce) && (*cc == 0x0)) cc++;
-   else
-     {
-        if (buf != bufsmall) free(buf);
-        return 0;
-     }
-   *b = 0;
+   if ((cc < ce) && (*cc == 0x0)) cc_zero = cc;
+   if (!cc_zero) return 0;
+   buf = (Eina_Unicode *)c;
+   cc = cc_zero;
 
    // commands are stored in the buffer, 0 bytes not allowed (end marker)
    cmd = eina_unicode_unicode_to_utf8(buf, NULL);
@@ -1810,7 +1799,6 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
    ty->cur_cmd = NULL;
    free(cmd);
 
-   if (buf != bufsmall) free(buf);
    return cc - c;
 }
 

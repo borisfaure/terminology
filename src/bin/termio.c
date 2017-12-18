@@ -6040,20 +6040,32 @@ _smart_pty_command(void *data)
 
                   if (bb)
                     {
-                       p++;
+                       unsigned char localbuf[128];
+                       unsigned char localbufpos = 0;
+
+                       eina_binbuf_expand(bb, 32 * 1024);
                        sum = 0;
-                       for (; *p; p++)
+                       for (sum = 0, p++; *p; p++)
                          {
+                            // high nibble
                             v = (unsigned char)(*p);
                             sum += v;
-
                             v = ((v - '@') & 0xf) << 4;
+                            // low nibble
                             p++;
                             sum += *p;
                             v |= ((*p - '@') & 0xf);
+                            localbuf[localbufpos++] = v;
+                            if (localbufpos >= sizeof(localbuf))
+                              {
+                                 eina_binbuf_append_length(bb, localbuf, localbufpos);
+                                 localbufpos = 0;
+                              }
                             if (!*p) valid = EINA_FALSE;
-                            eina_binbuf_append_char(bb, v);
                          }
+                       if (localbufpos > 0)
+                         eina_binbuf_append_length(bb, localbuf, localbufpos);
+
                        if ((valid) && (sum == pksum) && (sd->sendfile.active))
                          {
                             // write "ok" (k) to term

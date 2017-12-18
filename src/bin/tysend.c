@@ -63,8 +63,10 @@ main(int argc, char **argv)
    echo_off();
    for (i = 1; i < argc; i++)
      {
-        char *path, buf[8192], tbuf[PATH_MAX * 3];
-        unsigned char rawbuf[8192 + 128], rawbuf2[8192 + 128];
+#define BUFSZ 37268
+        char *path, tbuf[PATH_MAX * 3];
+        unsigned char rawbuf[(BUFSZ * 2) + 128], rawbuf2[(BUFSZ * 2) + 128];
+        char buf[4];
         int file_fd, pksize, pksum, bin, bout;
 
         path = argv[i];
@@ -87,7 +89,7 @@ main(int argc, char **argv)
                     {
                        if (buf[0] == 'k')
                          {
-                            pksize = read(file_fd, rawbuf, 4096);
+                            pksize = read(file_fd, rawbuf, BUFSZ);
 
                             if (pksize > 0)
                               {

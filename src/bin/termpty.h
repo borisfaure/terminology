@@ -94,6 +94,7 @@ struct _Termpty
    Eina_Unicode *buf;
    size_t buflen;
    Eina_Unicode last_char;
+   Eina_Bool buf_have_zero;
    unsigned char oldbuf[4];
    Termsave *back;
    size_t backsize, backpos;
