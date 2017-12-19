@@ -26,13 +26,18 @@ config_data.set_quoted('PACKAGE_DATA_DIR',
 config_data.set_quoted('PACKAGE_LIB_DIR',
                        join_paths(prefix, get_option('libdir')))
 config_data.set_quoted('LOCALEDIR', join_paths(prefix, get_option('localedir')))
-config_data.set('_GNU_SOURCE', 1)
-config_data.set('__EXTENSIONS__', 1)
-config_data.set('_POSIX_PTHREAD_SEMANTICS', 1)
-config_data.set('_TANDEM_SOURCE', 1)
-config_data.set('_ALL_SOURCE', 1)
-config_data.set('_POSIX_SOURCE', 1)
-config_data.set('_POSIX_1_SOURCE', 1)
+
+host_os = host_machine.system()
+
+if host_os == 'linux'
+   config_data.set('_GNU_SOURCE', 1)
+   config_data.set('__EXTENSIONS__', 1)
+   config_data.set('_POSIX_PTHREAD_SEMANTICS', 1)
+   config_data.set('_TANDEM_SOURCE', 1)
+   config_data.set('_ALL_SOURCE', 1)
+   config_data.set('_POSIX_SOURCE', 1)
+   config_data.set('_POSIX_1_SOURCE', 1)
+endif
 
 efl_version = '1.8.0'
 efl_deps = ['edje',
@@ -58,6 +63,7 @@ edj_files = []
 
 if get_option('nls') == true
   subdir('po')
+  terminology_dependencies += cc.find_library('intl', required: false)
 endif
 
 foreach efl_dep: efl_deps
