@@ -1,4 +1,3 @@
-#include "private.h"
 #include <Eina.h>
 #include <Ecore.h>
 #include <Evas.h>
@@ -12,6 +11,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fnmatch.h>
+#include "private.h"
 #include "tycommon.h"
 
 // this code sucks. just letting you know... in advance... in case you

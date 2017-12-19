@@ -1,10 +1,10 @@
-#include "private.h"
 #include <stdio.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
+#include "private.h"
 #include "tycommon.h"
 
 static void

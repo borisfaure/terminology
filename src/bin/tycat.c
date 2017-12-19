@@ -1,4 +1,3 @@
-#include "private.h"
 #include <Eina.h>
 #include <Ecore.h>
 #include <Evas.h>
@@ -11,7 +10,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-
+#include "private.h"
 #include "tycommon.h"
 
 enum {
