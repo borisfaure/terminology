@@ -4,19 +4,14 @@
 #include "tycommon.h"
 
 
-Eina_Bool
+int
 is_running_in_terminology(void)
 {
-   if (!getenv("TERMINOLOGY"))
-     return EINA_FALSE;
-
+   if (!getenv("TERMINOLOGY")) return 0;
    // Terminology's escape codes do not got through tmux
-   if (getenv("TMUX"))
-     return EINA_FALSE;
-
+   if (getenv("TMUX")) return 0;
    // Terminology's escape codes do not got through screen
-   if (getenv("STY"))
-     return EINA_FALSE;
+   if (getenv("STY")) return 0;
 
-   return EINA_TRUE;
+   return 1;
 }

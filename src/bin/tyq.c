@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <string.h>
 
-#include <Eina.h>
 #include "tycommon.h"
 
 static void

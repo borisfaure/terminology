@@ -1,7 +1,7 @@
 #ifndef _TY_COMMON_H__
 #define _TY_COMMON_H__ 1
 
-Eina_Bool is_running_in_terminology(void);
+int is_running_in_terminology(void);
 
 #define ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1()                             \
   do                                                                       \

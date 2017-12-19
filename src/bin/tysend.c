@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <termios.h>
 
-#include <Eina.h>
 #include "tycommon.h"
 
 static void
