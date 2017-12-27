@@ -264,7 +264,7 @@ controls_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
 
    if (!ct_out)
      {
-        if (options_active_get())
+        if (options_is_active())
           {
              options_toggle(win, bg, term, ct_donecb, ct_donedata);
              return;
