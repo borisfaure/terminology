@@ -8,31 +8,42 @@
 #include "termio.h"
 #include "main.h"
 
-static Evas_Object *ct_frame = NULL, *ct_boxh = NULL, *ct_boxv = NULL;
-static Evas_Object *ct_box = NULL, *ct_box2 = NULL, *ct_box3 = NULL, *ct_over = NULL;
-static Evas_Object *ct_win = NULL, *ct_bg = NULL, *ct_term = NULL;
-static void (*ct_donecb) (void *data) = NULL;
-static void *ct_donedata = NULL;
+static Eina_Hash *controls = NULL;
+
+struct controls_ctx {
+     Evas_Object *frame;
+     Evas_Object *over;
+     Evas_Object *win;
+     Evas_Object *bg;
+     Evas_Object *term;
+     void (*donecb) (void *data);
+     void *donedata;
+};
+
 
 static void
-controls_hide(Eina_Bool call_cb);
+controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb);
+
+
 
 static void
-_cb_sel_on(void *_data EINA_UNUSED,
+_cb_sel_on(void *data,
            Evas_Object *_term EINA_UNUSED,
            void *_ev EINA_UNUSED)
 {
-   Evas_Object *bt_copy = evas_object_data_get(ct_frame, "bt_copy");
+   struct controls_ctx *ctx = data;
+   Evas_Object *bt_copy = evas_object_data_get(ctx->frame, "bt_copy");
    if (bt_copy)
      elm_object_disabled_set(bt_copy, EINA_FALSE);
 }
 
 static void
-_cb_sel_off(void *_data EINA_UNUSED,
+_cb_sel_off(void *data,
             Evas_Object *_term EINA_UNUSED,
             void *_ev EINA_UNUSED)
 {
-   Evas_Object *bt_copy = evas_object_data_get(ct_frame, "bt_copy");
+   struct controls_ctx *ctx = data;
+   Evas_Object *bt_copy = evas_object_data_get(ctx->frame, "bt_copy");
    if (bt_copy)
      elm_object_disabled_set(bt_copy, EINA_TRUE);
 }
@@ -47,112 +58,136 @@ _cb_ct_del_delay(void *data)
 }
 
 static void
-_cb_ct_copy(void *_data EINA_UNUSED,
+_cb_ct_copy(void *data,
             Evas_Object *_obj EINA_UNUSED,
             void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_TRUE);
-   termio_take_selection(ct_term, ELM_SEL_TYPE_CLIPBOARD);
+   struct controls_ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+
+   controls_hide(ctx, EINA_TRUE);
+   termio_take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
 
 static void
-_cb_ct_paste(void *_data EINA_UNUSED,
+_cb_ct_paste(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_TRUE);
-   termio_paste_selection(ct_term, ELM_SEL_TYPE_CLIPBOARD);
+   struct controls_ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+
+   controls_hide(ctx, EINA_TRUE);
+   termio_paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
 
 static void
-_cb_ct_new(void *_data EINA_UNUSED,
+_cb_ct_new(void *data,
            Evas_Object *_obj EINA_UNUSED,
            void *_event EINA_UNUSED)
 {
-   main_new(ct_win, ct_term);
+   struct controls_ctx *ctx = data;
+   main_new(ctx->win, ctx->term);
 }
 
 static void
-_cb_ct_split_v(void *_data EINA_UNUSED,
+_cb_ct_split_v(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   split_vertically(ct_win, ct_term, NULL);
+   struct controls_ctx *ctx = data;
+   split_vertically(ctx->win, ctx->term, NULL);
 }
 
 static void
-_cb_ct_split_h(void *_data EINA_UNUSED,
+_cb_ct_split_h(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   split_horizontally(ct_win, ct_term, NULL);
+   struct controls_ctx *ctx = data;
+   split_horizontally(ctx->win, ctx->term, NULL);
 }
 
 static void
-_cb_ct_miniview(void *_data EINA_UNUSED,
+_cb_ct_miniview(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event EINA_UNUSED)
 {
-   term_miniview_toggle(termio_term_get(ct_term));
+   struct controls_ctx *ctx = data;
+   term_miniview_toggle(termio_term_get(ctx->term));
 }
 
 static void
-_cb_ct_set_title(void *_data EINA_UNUSED,
+_cb_ct_set_title(void *data,
                  Evas_Object *_obj EINA_UNUSED,
                  void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_TRUE);
-   term_set_title(termio_term_get(ct_term));
+   struct controls_ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+   controls_hide(ctx, EINA_TRUE);
+   term_set_title(termio_term_get(term));
 }
 
 static void
-_cb_ct_close(void *_data EINA_UNUSED,
+_cb_ct_close(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_TRUE);
-   term_close(ct_win, ct_term, EINA_FALSE);
+   struct controls_ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+   Evas_Object *win = ctx->win;
+
+   controls_hide(ctx, EINA_TRUE);
+   term_close(win, term, EINA_FALSE);
 }
 
 static void
-_cb_ct_options(void *_data EINA_UNUSED,
+_cb_ct_options(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_FALSE);
-   options_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
+   struct controls_ctx *ctx = data;
+
+   options_toggle(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   controls_hide(ctx, EINA_FALSE);
 }
 
 static void
-_cb_ct_about(void *_data EINA_UNUSED,
+_cb_ct_about(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   controls_hide(EINA_FALSE);
-   about_toggle(ct_win, ct_bg, ct_term, ct_donecb, ct_donedata);
+   struct controls_ctx *ctx = data;
+
+   about_toggle(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   controls_hide(ctx, EINA_FALSE);
 }
 
 static void
-_cb_mouse_down(void *_data EINA_UNUSED,
+_cb_mouse_down(void *data,
                Evas *_e EINA_UNUSED,
                Evas_Object *_obj EINA_UNUSED,
                void *_ev EINA_UNUSED)
 {
-   controls_hide(EINA_TRUE);
+   struct controls_ctx *ctx = data;
+
+   controls_hide(ctx, EINA_TRUE);
 }
 
 static void
 _cb_saved_del(void *data,
               Evas *_e EINA_UNUSED,
-              Evas_Object *obj EINA_UNUSED,
+              Evas_Object *obj,
               void *_ev EINA_UNUSED)
 {
-   if (data == ct_win)
-     ct_win = NULL;
-   else if (data == ct_term)
-     ct_term = NULL;
+   struct controls_ctx *ctx = data;
 
-   controls_hide(EINA_FALSE);
+   if (obj == ctx->win)
+     ctx->win = NULL;
+   else if (obj == ctx->term)
+     ctx->term = NULL;
+
+   controls_hide(ctx, EINA_FALSE);
 }
 
 static Evas_Object *
@@ -204,61 +239,71 @@ _sep_add_h(Evas_Object *win)
 }
 
 static void
-controls_hide(Eina_Bool call_cb)
+controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb)
 {
-   if (!ct_frame)
-     return;
-
-   if (ct_win)
+   if (ctx->win)
      {
-        evas_object_event_callback_del(ct_win, EVAS_CALLBACK_DEL, _cb_saved_del);
-        evas_object_smart_callback_del(ct_win, "selection,on", _cb_sel_on);
-        evas_object_smart_callback_del(ct_win, "selection,off", _cb_sel_off);
+        evas_object_event_callback_del(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del);
+        evas_object_smart_callback_del(ctx->win, "selection,on", _cb_sel_on);
+        evas_object_smart_callback_del(ctx->win, "selection,off", _cb_sel_off);
      }
-   if (ct_term)
+   if (ctx->term)
      {
-        evas_object_event_callback_del(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del);
+        evas_object_event_callback_del(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del);
+        edje_object_signal_emit(ctx->bg, "controls,hide", "terminology");
      }
 
-   if (ct_over)
+   if (ctx->over)
      {
-        evas_object_del(ct_over);
+        evas_object_del(ctx->over);
      }
-   ct_over = NULL;
-   edje_object_signal_emit(ct_bg, "controls,hide", "terminology");
-   elm_object_focus_set(ct_frame, EINA_FALSE);
+   elm_object_focus_set(ctx->frame, EINA_FALSE);
 
-   ecore_timer_add(10.0, _cb_ct_del_delay, ct_frame);
-   ct_frame = NULL;
+   ecore_timer_add(10.0, _cb_ct_del_delay, ctx->frame);
+   ctx->frame = NULL;
 
-   ct_win = NULL;
+   if (call_cb && ctx->donecb)
+     ctx->donecb(ctx->donedata);
 
-   if (call_cb && ct_donecb)
-     ct_donecb(ct_donedata);
-   ct_donecb = NULL;
-   ct_donedata = NULL;
+   eina_hash_del(controls, &ctx->win, ctx);
+
+   free(ctx);
 }
+
 
 void
 controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
               void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
+   Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2, *ct_box3;
+   struct controls_ctx *ctx;
 
-   if ((options_is_active()) || (ct_win && win != ct_win) || (ct_frame))
+   if (eina_hash_find(controls, &win))
      {
         donecb(donedata);
         return;
      }
 
-   ct_frame = o = elm_frame_add(win);
+
+   ctx = malloc(sizeof(*ctx));
+   assert(ctx);
+   ctx->win = win;
+   ctx->bg = bg;
+   ctx->term = term;
+   ctx->donecb = donecb;
+   ctx->donedata = donedata;
+
+   eina_hash_add(controls, &win, ctx);
+
+   ctx->frame = o = elm_frame_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Controls"));
 
    ct_boxv = o = elm_box_add(win);
    elm_box_horizontal_set(o, EINA_FALSE);
-   elm_object_content_set(ct_frame, o);
+   elm_object_content_set(ctx->frame, o);
    evas_object_show(o);
 
    ct_boxh = o = elm_box_add(win);
@@ -270,27 +315,32 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    elm_box_pack_end(ct_boxh, o);
    evas_object_show(o);
 
-   o = _button_add(win, _("New"), "window-new", _cb_ct_new, NULL);
+   o = _button_add(win, _("New"), "window-new",
+                   _cb_ct_new, ctx);
    elm_box_pack_end(ct_box, o);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Split V"), "object-flip-vertical", _cb_ct_split_v, NULL);
+   o = _button_add(win, _("Split V"), "object-flip-vertical",
+                   _cb_ct_split_v, ctx);
    elm_box_pack_end(ct_box, o);
-   o = _button_add(win, _("Split H"), "object-flip-horizontal", _cb_ct_split_h, NULL);
-   elm_box_pack_end(ct_box, o);
-
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box, o);
-
-   o = _button_add(win, _("Miniview"), "view-restore", _cb_ct_miniview, NULL);
+   o = _button_add(win, _("Split H"), "object-flip-horizontal",
+                   _cb_ct_split_h, ctx);
    elm_box_pack_end(ct_box, o);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Set title"), "format-text-underline", _cb_ct_set_title, NULL);
+   o = _button_add(win, _("Miniview"), "view-restore",
+                   _cb_ct_miniview, ctx);
+   elm_box_pack_end(ct_box, o);
+
+   o = _sep_add_h(win);
+   elm_box_pack_end(ct_box, o);
+
+   o = _button_add(win, _("Set title"), "format-text-underline",
+                   _cb_ct_set_title, ctx);
    elm_box_pack_end(ct_box, o);
 
    o = _sep_add_v(win);
@@ -300,25 +350,25 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    elm_box_pack_end(ct_boxh, o);
    evas_object_show(o);
 
-   o = _button_add(win, _("Copy"), "edit-copy", _cb_ct_copy, NULL);
-   evas_object_data_set(ct_frame, "bt_copy", o);
+   o = _button_add(win, _("Copy"), "edit-copy", _cb_ct_copy, ctx);
+   evas_object_data_set(ctx->frame, "bt_copy", o);
    if (!termio_selection_exists(term))
      elm_object_disabled_set(o, EINA_TRUE);
    elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("Paste"), "edit-paste", _cb_ct_paste, NULL);
+   o = _button_add(win, _("Paste"), "edit-paste", _cb_ct_paste, ctx);
    elm_box_pack_end(ct_box2, o);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("Settings"), "preferences-desktop", _cb_ct_options, NULL);
+   o = _button_add(win, _("Settings"), "preferences-desktop", _cb_ct_options, ctx);
    elm_box_pack_end(ct_box2, o);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("About"), "help-about", _cb_ct_about, NULL);
+   o = _button_add(win, _("About"), "help-about", _cb_ct_about, ctx);
    elm_box_pack_end(ct_box2, o);
 
    o = _sep_add_h(win);
@@ -332,26 +382,34 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    elm_box_pack_end(ct_box3, o);
 
    evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
-                                  NULL);
+                                  ctx);
    evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
-                                  NULL);
+                                  ctx);
 
-   edje_object_part_swallow(bg, "terminology.controls", ct_frame);
-   evas_object_show(ct_frame);
-   ct_over = o = evas_object_rectangle_add(evas_object_evas_get(win));
+   edje_object_part_swallow(bg, "terminology.controls", ctx->frame);
+   evas_object_show(ctx->frame);
+   ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
    edje_object_part_swallow(bg, "terminology.dismiss", o);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cb_mouse_down, NULL);
+                                  _cb_mouse_down, ctx);
 
-   ct_win = win;
-   ct_bg = bg;
-   ct_term = term;
-   ct_donecb = donecb;
-   ct_donedata = donedata;
    edje_object_signal_emit(bg, "controls,show", "terminology");
-   elm_object_focus_set(ct_frame, EINA_TRUE);
-   evas_object_event_callback_add(ct_win, EVAS_CALLBACK_DEL, _cb_saved_del, ct_win);
-   evas_object_event_callback_add(ct_term, EVAS_CALLBACK_DEL, _cb_saved_del, ct_term);
+   elm_object_focus_set(ctx->frame, EINA_TRUE);
+   evas_object_event_callback_add(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
+   evas_object_event_callback_add(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
+}
+
+void
+controls_init(void)
+{
+   controls = eina_hash_pointer_new(NULL);
+}
+
+void
+controls_shutdown(void)
+{
+   eina_hash_free(controls);
+   controls = NULL;
 }

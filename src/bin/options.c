@@ -256,7 +256,7 @@ options_toggle(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
 }
 
 Eina_Bool
-options_is_active(void)
+options_is_active(Evas_Object *win EINA_UNUSED)
 {
    return op_out;
 }
