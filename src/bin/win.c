@@ -5009,8 +5009,8 @@ _cb_options(void *data,
 {
    Term *term = data;
 
-   controls_toggle(term->wn->win, term->wn->base, term->termio,
-                   _cb_options_done, term->wn);
+   controls_show(term->wn->win, term->wn->base, term->termio,
+                 _cb_options_done, term->wn);
 }
 
 void
