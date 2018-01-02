@@ -49,7 +49,7 @@ _cb_sel_off(void *data,
 }
 
 static Eina_Bool
-_cb_ct_del_delay(void *data)
+_cb_del_delay(void *data)
 {
    Evas_Object *frame = data;
    evas_object_del(frame);
@@ -159,7 +159,7 @@ _cb_ct_about(void *data,
 {
    struct controls_ctx *ctx = data;
 
-   about_toggle(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   about_show(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
    controls_hide(ctx, EINA_FALSE);
 }
 
@@ -259,7 +259,7 @@ controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb)
      }
    elm_object_focus_set(ctx->frame, EINA_FALSE);
 
-   ecore_timer_add(10.0, _cb_ct_del_delay, ctx->frame);
+   ecore_timer_add(10.0, _cb_del_delay, ctx->frame);
    ctx->frame = NULL;
 
    if (call_cb && ctx->donecb)
