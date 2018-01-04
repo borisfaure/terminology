@@ -148,7 +148,7 @@ _cb_ct_options(void *data,
 {
    struct controls_ctx *ctx = data;
 
-   options_toggle(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   options_show(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
    controls_hide(ctx, EINA_FALSE);
 }
 
