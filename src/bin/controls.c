@@ -142,15 +142,32 @@ _cb_ct_close(void *data,
 }
 
 static void
+_on_sub_done(void *data)
+{
+   struct controls_ctx *ctx = data;
+
+   ecore_timer_add(10.0, _cb_del_delay, ctx->frame);
+   ctx->frame = NULL;
+
+   if (ctx->donecb)
+     ctx->donecb(ctx->donedata);
+
+   eina_hash_del(controls, &ctx->win, ctx);
+
+   free(ctx);
+}
+
+static void
 _cb_ct_options(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
    struct controls_ctx *ctx = data;
 
-   options_show(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   options_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
 }
+
 
 static void
 _cb_ct_about(void *data,
@@ -159,7 +176,7 @@ _cb_ct_about(void *data,
 {
    struct controls_ctx *ctx = data;
 
-   about_show(ctx->win, ctx->bg, ctx->term, ctx->donecb, ctx->donedata);
+   about_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
 }
 
@@ -259,15 +276,18 @@ controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb)
      }
    elm_object_focus_set(ctx->frame, EINA_FALSE);
 
-   ecore_timer_add(10.0, _cb_del_delay, ctx->frame);
-   ctx->frame = NULL;
+   if (call_cb)
+     {
+        ecore_timer_add(10.0, _cb_del_delay, ctx->frame);
+        ctx->frame = NULL;
 
-   if (call_cb && ctx->donecb)
-     ctx->donecb(ctx->donedata);
+        if (ctx->donecb)
+          ctx->donecb(ctx->donedata);
 
-   eina_hash_del(controls, &ctx->win, ctx);
+        eina_hash_del(controls, &ctx->win, ctx);
 
-   free(ctx);
+        free(ctx);
+     }
 }
 
 

@@ -273,9 +273,3 @@ options_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    edje_object_signal_emit(ctx->bg, "options,show", "terminology");
    elm_object_focus_set(ctx->toolbar, EINA_TRUE);
 }
-
-Eina_Bool
-options_is_active(Evas_Object *win EINA_UNUSED)
-{
-   return EINA_FALSE;
-}
