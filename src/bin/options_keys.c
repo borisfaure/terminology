@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <assert.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"
@@ -8,12 +9,14 @@
 #include "keyin.h"
 #include "utils.h"
 
-/*XXX: can have only one widget at a time… */
-static Config *_config;
-static Evas_Object *_fr;
-static Evas_Object *_layout;
+struct keys_ctx {
+     Config *config;
+     Evas_Object *frame;
+     Evas_Object *gl;
+     Evas_Object *layout;
+};
 
-static void _hover_del(Evas_Object *o);
+static void _hover_del(struct keys_ctx *ctx);
 
 static void
 _shortcut_delete(void *data,
@@ -23,12 +26,17 @@ _shortcut_delete(void *data,
    Evas_Object *hs, *bx;
    Config_Keys *cfg_key;
    Evas_Coord w, min_w, min_h;
+   struct keys_ctx *ctx;
 
    hs = data;
    bx = evas_object_data_get(hs, "bx");
+   assert(bx);
    cfg_key = evas_object_data_get(hs, "cfg");
+   assert(cfg_key);
+   ctx = evas_object_data_get(hs, "ctx");
+   assert(ctx);
 
-   _config->keys = eina_list_remove(_config->keys, cfg_key);
+   ctx->config->keys = eina_list_remove(ctx->config->keys, cfg_key);
    evas_object_size_hint_min_get(hs, &w, NULL);
    evas_object_size_hint_min_get(bx, &min_w, &min_h);
    min_w -= w;
@@ -41,11 +49,13 @@ _shortcut_delete(void *data,
    eina_stringshare_del(cfg_key->cb);
    free(cfg_key);
 
-   config_save(_config, NULL);
+   config_save(ctx->config, NULL);
 }
 
 static Evas_Object *
-_shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
+_shortcut_button_add(struct keys_ctx *ctx,
+                     Evas_Object *bx,
+                     const Config_Keys *key)
 {
    const char *txt;
    Evas_Object *hs;
@@ -58,11 +68,13 @@ _shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
                                  key->meta ? _("Meta+") : "",
                                  key->hyper ? _("Hyper+") : "",
                                  key->keyname);
-   hs = elm_hoversel_add(_fr);
-   elm_hoversel_hover_parent_set(hs, _fr);
+   hs = elm_hoversel_add(ctx->frame);
+   elm_hoversel_hover_parent_set(hs, ctx->frame);
 
    evas_object_data_set(hs, "bx", bx);
    evas_object_data_set(hs, "cfg", key);
+   evas_object_data_set(hs, "ctx", ctx);
+
    elm_layout_text_set(hs, NULL, txt);
 
    elm_hoversel_item_add(hs, _("Delete"), "delete", ELM_ICON_STANDARD,
@@ -75,16 +87,21 @@ _shortcut_button_add(Evas_Object *bx, const Config_Keys *key)
 static void
 _cb_key_up(void *data,
            Evas *_e EINA_UNUSED,
-           Evas_Object *obj, void *event)
+           Evas_Object *obj EINA_UNUSED,
+           void *event)
 {
    Evas_Event_Key_Up *ev = event;
    int ctrl, alt, shift, win, meta, hyper, res;
    Config_Keys *cfg_key;
    Shortcut_Action *action;
    Evas_Object *bx = data;
+   struct keys_ctx *ctx;
 
    if (key_is_modifier(ev->keyname))
      return;
+
+   ctx = evas_object_data_get(bx, "ctx");
+   assert(ctx);
 
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
@@ -95,7 +112,7 @@ _cb_key_up(void *data,
           evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
    hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
 
-   _hover_del(obj);
+   _hover_del(ctx);
 
    action = evas_object_data_get(bx, "action");
    if (!action)
@@ -123,8 +140,8 @@ _cb_key_up(void *data,
         Evas_Coord w, h, min_w, min_h;
 
         last = evas_object_data_get(bx, "last");
-        _config->keys = eina_list_append(_config->keys, cfg_key);
-        bt = _shortcut_button_add(bx, cfg_key);
+        ctx->config->keys = eina_list_append(ctx->config->keys, cfg_key);
+        bt = _shortcut_button_add(ctx, bx, cfg_key);
         evas_object_show(bt);
         evas_object_size_hint_min_get(bt, &w, &h);
         evas_object_size_hint_min_get(bx, &min_w, &min_h);
@@ -133,7 +150,7 @@ _cb_key_up(void *data,
         evas_object_size_hint_min_set(bx, min_w, min_h);
         elm_box_pack_before(bx, bt, last);
 
-        config_save(_config, NULL);
+        config_save(ctx->config, NULL);
      }
    else
      {
@@ -144,44 +161,49 @@ _cb_key_up(void *data,
 }
 
 static void
-_cb_mouse_down(void *_data EINA_UNUSED,
+_cb_mouse_down(void *data,
                Evas *_e EINA_UNUSED,
-               Evas_Object *obj,
+               Evas_Object *obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   _hover_del(obj);
+   struct keys_ctx *ctx = data;
+
+   _hover_del(ctx);
 }
 
 
 static void
-_hover_sizing_eval(void)
+_hover_sizing_eval(struct keys_ctx *ctx)
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
-   evas_object_geometry_get(_fr, &x, &y, &w, &h);
+
+   evas_object_geometry_get(ctx->frame, &x, &y, &w, &h);
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-   evas_object_geometry_set(_layout, x, y, w, h);
+   evas_object_geometry_set(ctx->layout, x, y, w, h);
 #else
-   evas_object_move(_layout, x, y);
-   evas_object_resize(_layout, w, h);
+   evas_object_move(ctx->layout, x, y);
+   evas_object_resize(ctx->layout, w, h);
 #endif
 }
 
 static void
-_parent_move_cb(void *_data EINA_UNUSED,
+_parent_move_cb(void *data,
                 Evas *_e EINA_UNUSED,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event_info EINA_UNUSED)
 {
-   _hover_sizing_eval();
+   struct keys_ctx *ctx = data;
+   _hover_sizing_eval(ctx);
 }
 
 static void
-_parent_resize_cb(void *_data EINA_UNUSED,
+_parent_resize_cb(void *data,
                   Evas *_e EINA_UNUSED,
                   Evas_Object *_obj EINA_UNUSED,
                   void *_event_info EINA_UNUSED)
 {
-   _hover_sizing_eval();
+   struct keys_ctx *ctx = data;
+   _hover_sizing_eval(ctx);
 }
 
 static void
@@ -190,88 +212,74 @@ _parent_hide_cb(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event_info EINA_UNUSED)
 {
-   _hover_del(data);
+   struct keys_ctx *ctx = data;
+   _hover_del(ctx);
 }
+
 static void
 _parent_del_cb(void *data,
                Evas *_e EINA_UNUSED,
                Evas_Object *_obj EINA_UNUSED,
                void *_event_info EINA_UNUSED)
 {
-   _hover_del(data);
-}
+   struct keys_ctx *ctx = data;
+   _hover_del(ctx);
 
-static void
-_hover_del(Evas_Object *o)
-{
-   evas_object_event_callback_del(o, EVAS_CALLBACK_KEY_UP,
-                                  _cb_key_up);
-   evas_object_event_callback_del(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cb_mouse_down);
-   evas_object_event_callback_del(_fr, EVAS_CALLBACK_MOVE,
-                                  _parent_move_cb);
-   evas_object_event_callback_del(_fr, EVAS_CALLBACK_RESIZE,
-                                  _parent_resize_cb);
-   evas_object_event_callback_del(_fr, EVAS_CALLBACK_HIDE,
-                                  _parent_hide_cb);
-   evas_object_event_callback_del(_fr, EVAS_CALLBACK_DEL,
+   evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_DEL,
                                   _parent_del_cb);
-   evas_object_del(o);
-   _layout = NULL;
+   evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_HIDE,
+                                  _parent_hide_cb);
+   free(ctx);
 }
 
 static void
-_cb_focused(void *_data EINA_UNUSED,
-            Evas_Object *_obj EINA_UNUSED,
-            void *_event EINA_UNUSED)
+_hover_del(struct keys_ctx *ctx)
 {
-    DBG("focused");
-}
-static void
-_cb_unfocused(void *_data EINA_UNUSED,
-              Evas_Object *_obj EINA_UNUSED,
-              void *_event EINA_UNUSED)
-{
-    DBG("unfocused");
-    if (_layout)
-        elm_object_focus_set(_layout, EINA_TRUE);
+   if (ctx->layout)
+     {
+        evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_KEY_UP,
+                                       _cb_key_up);
+        evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cb_mouse_down);
+        evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_MOVE,
+                                       _parent_move_cb);
+        evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_RESIZE,
+                                       _parent_resize_cb);
+        evas_object_del(ctx->layout);
+     }
+   ctx->layout = NULL;
 }
 
 static void
-on_shortcut_add(void *data,
-                Evas_Object *bt,
-                void *_event_info EINA_UNUSED)
+_on_shortcut_add(void *data,
+                 Evas_Object *bt,
+                 void *_event_info EINA_UNUSED)
 {
    Evas_Object *o, *oe;
    Evas_Object *bx = data;
+   struct keys_ctx *ctx;
 
-   _layout = o = elm_layout_add(bt);
+   ctx = evas_object_data_get(bx, "ctx");
+   assert(ctx);
+
+   assert(ctx->layout == NULL);
+   ctx->layout = o = elm_layout_add(bt);
+   evas_object_data_set(ctx->layout, "ctx", ctx);
    oe = elm_layout_edje_get(o);
-   theme_apply(oe, _config, "terminology/keybinding");
+   theme_apply(oe, ctx->config, "terminology/keybinding");
    theme_auto_reload_enable(oe);
    elm_layout_text_set(o, "label", _("Please press key sequence"));
    evas_object_show(o);
-   elm_object_focus_allow_set(o, EINA_TRUE);
-   evas_object_smart_callback_add(o, "focused",
-                                  _cb_focused, NULL);
-   evas_object_smart_callback_add(o, "unfocused",
-                                  _cb_unfocused, NULL);
-   elm_object_focus_set(o, EINA_TRUE);
 
-   _hover_sizing_eval();
-
-   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_UP,
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_KEY_UP,
                                   _cb_key_up, bx);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cb_mouse_down, o);
-   evas_object_event_callback_add(_fr, EVAS_CALLBACK_MOVE,
-                                  _parent_move_cb, o);
-   evas_object_event_callback_add(_fr, EVAS_CALLBACK_RESIZE,
-                                  _parent_resize_cb, o);
-   evas_object_event_callback_add(_fr, EVAS_CALLBACK_HIDE,
-                                  _parent_hide_cb, o);
-   evas_object_event_callback_add(_fr, EVAS_CALLBACK_DEL,
-                                  _parent_del_cb, o);
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_mouse_down, ctx);
+   elm_object_focus_set(ctx->frame, EINA_TRUE);
+   elm_object_focus_allow_set(ctx->frame, EINA_TRUE);
+
+   _hover_sizing_eval(ctx);
+
 }
 
 static Evas_Object *
@@ -282,11 +290,16 @@ gl_content_get(void *data, Evas_Object *obj, const char *_part EINA_UNUSED)
    Evas_Object *bx, *bt, *lbl, *sep;
    Config_Keys *key;
    Eina_List *l;
+   struct keys_ctx *ctx;
+
+   ctx = evas_object_data_get(obj, "ctx");
+   assert(ctx);
 
    bx = elm_box_add(obj);
    elm_box_horizontal_set(bx, EINA_TRUE);
    elm_box_homogeneous_set(bx, EINA_FALSE);
    evas_object_size_hint_align_set(bx, 0, 0);
+   evas_object_data_set(bx, "ctx", ctx);
 
    lbl = elm_label_add(obj);
    elm_layout_text_set(lbl, NULL, action->description);
@@ -304,11 +317,11 @@ gl_content_get(void *data, Evas_Object *obj, const char *_part EINA_UNUSED)
    if (h > min_h) min_h = h;
 
    // TODO: have a better data structure
-   EINA_LIST_FOREACH(_config->keys, l, key)
+   EINA_LIST_FOREACH(ctx->config->keys, l, key)
      {
         if (!strcmp(key->cb, action->action))
           {
-             bt = _shortcut_button_add(bx, key);
+             bt = _shortcut_button_add(ctx, bx, key);
              evas_object_show(bt);
              evas_object_size_hint_min_get(bt, &w, &h);
              min_w += w;
@@ -318,7 +331,7 @@ gl_content_get(void *data, Evas_Object *obj, const char *_part EINA_UNUSED)
      }
 
    bt = elm_button_add(obj);
-   evas_object_smart_callback_add(bt, "clicked", on_shortcut_add, bx);
+   evas_object_smart_callback_add(bt, "clicked", _on_shortcut_add, bx);
    elm_layout_text_set(bt, NULL, "+");
    evas_object_size_hint_min_get(bt, &w, &h);
    min_w += w;
@@ -350,10 +363,10 @@ _cb_reset_keys(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   Evas_Object *gl = data;
+   struct keys_ctx *ctx = data;
 
-   config_reset_keys(_config);
-   elm_genlist_realized_items_update(gl);
+   config_reset_keys(ctx->config);
+   elm_genlist_realized_items_update(ctx->gl);
 }
 
 void
@@ -363,23 +376,33 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
    const Shortcut_Action *action;
    Elm_Genlist_Item_Class *itc, *itc_group;
    Elm_Object_Item *git = NULL;
+   Config *config = termio_config_get(term);
+   struct keys_ctx *ctx;
 
-   _config = termio_config_get(term);
+   ctx = calloc(1, sizeof(*ctx));
+   assert(ctx);
 
-   _fr = o = elm_frame_add(opbox);
+   ctx->config = config;
+
+   ctx->frame = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Key Bindings"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, ctx);
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
+                                  _parent_hide_cb, ctx);
+
    bx = elm_box_add(opbox);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, 0.0, 0.0);
-   elm_object_content_set(_fr, bx);
+   elm_object_content_set(ctx->frame, bx);
    evas_object_show(bx);
 
-   gl = elm_genlist_add(opbox);
+   ctx->gl = gl = elm_genlist_add(opbox);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
@@ -387,6 +410,7 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
    elm_genlist_homogeneous_set(gl, EINA_FALSE);
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
+   evas_object_data_set(gl, "ctx", ctx);
 
    itc = elm_genlist_item_class_new();
    itc->item_style = "one_icon";
@@ -434,5 +458,5 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, _("Reset bindings"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
-   evas_object_smart_callback_add(o, "clicked", _cb_reset_keys, gl);
+   evas_object_smart_callback_add(o, "clicked", _cb_reset_keys, ctx);
 }
