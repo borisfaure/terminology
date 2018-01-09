@@ -31,7 +31,7 @@ enum option_mode {
      OPTIONS_MODE_NB
 };
 
-struct options_ctx {
+typedef struct _Options_Ctx {
      enum option_mode mode;
      Evas_Object *frame;
      Evas_Object *toolbar;
@@ -43,16 +43,16 @@ struct options_ctx {
      Config *config;
      void (*donecb) (void *data);
      void *donedata;
-     struct options_ctx *modes[OPTIONS_MODE_NB];
-};
+     struct _Options_Ctx *modes[OPTIONS_MODE_NB];
+} Options_Ctx;
 
 static void
 _cb_op(void *data,
        Evas_Object *_obj EINA_UNUSED,
        void *_event EINA_UNUSED)
 {
-   struct options_ctx **pctx = data;
-   struct options_ctx *ctx = *pctx;
+   Options_Ctx **pctx = data;
+   Options_Ctx *ctx = *pctx;
    enum option_mode mode = pctx - ctx->modes;
 
    if (mode == ctx->mode)
@@ -66,7 +66,7 @@ _cb_op(void *data,
 static void
 _cb_op_tmp_chg(void *data, Evas_Object *obj, void *_event EINA_UNUSED)
 {
-   struct options_ctx *ctx = data;
+   Options_Ctx *ctx = data;
    Config *config = ctx->config;
 
    config->temporary = elm_check_state_get(obj);
@@ -75,7 +75,7 @@ _cb_op_tmp_chg(void *data, Evas_Object *obj, void *_event EINA_UNUSED)
 static Eina_Bool
 _cb_op_del_delay(void *data)
 {
-   struct options_ctx *ctx = data;
+   Options_Ctx *ctx = data;
 
    evas_object_del(ctx->opbox);
    evas_object_del(ctx->frame);
@@ -93,7 +93,7 @@ _cb_opdt_hide_done(void *data,
                    const char *_sig EINA_UNUSED,
                    const char *_src EINA_UNUSED)
 {
-   struct options_ctx *ctx = data;
+   Options_Ctx *ctx = data;
 
    elm_box_clear(ctx->opbox);
    switch (ctx->mode)
@@ -119,7 +119,7 @@ _cb_opdt_hide_done2(void *data,
                     const char *_sig EINA_UNUSED,
                     const char *_src EINA_UNUSED)
 {
-   struct options_ctx *ctx = data;
+   Options_Ctx *ctx = data;
 
    edje_object_signal_callback_del(ctx->bg, "optdetails,hide,done",
                                    "terminology",
@@ -128,7 +128,7 @@ _cb_opdt_hide_done2(void *data,
 }
 
 static void
-options_hide(struct options_ctx *ctx)
+options_hide(Options_Ctx *ctx)
 {
    edje_object_part_swallow(ctx->bg, "terminology.optdetails", ctx->opbox);
    edje_object_part_swallow(ctx->bg, "terminology.options", ctx->frame);
@@ -161,7 +161,7 @@ _cb_mouse_down(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_ev EINA_UNUSED)
 {
-   struct options_ctx *ctx = data;
+   Options_Ctx *ctx = data;
 
    options_hide(ctx);
 }
@@ -172,7 +172,7 @@ options_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
                void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o, *op_box, *op_tbox;
-   struct options_ctx *ctx;
+   Options_Ctx *ctx;
    int i = 0;
 
    Elm_Object_Item *it_fn;

@@ -7,7 +7,7 @@
 #include "termio.h"
 
 
-struct about_ctx {
+typedef struct _about_ctx {
      Evas_Object *layout;
      Evas_Object *over;
      Evas_Object *win;
@@ -15,7 +15,7 @@ struct about_ctx {
      Evas_Object *term;
      void (*donecb) (void *data);
      void *donedata;
-};
+} About_Ctx;
 
 
 static Eina_Bool
@@ -33,7 +33,7 @@ _cb_mouse_down(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_ev EINA_UNUSED)
 {
-   struct about_ctx *ctx = data;
+   About_Ctx *ctx = data;
 
    if (ctx->over)
      {
@@ -56,7 +56,7 @@ about_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
              void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
-   struct about_ctx *ctx;
+   About_Ctx *ctx;
    Config *config = termio_config_get(term);
    char buf[PATH_MAX];
    const char *txt;

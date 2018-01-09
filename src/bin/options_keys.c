@@ -9,14 +9,14 @@
 #include "keyin.h"
 #include "utils.h"
 
-struct keys_ctx {
+typedef struct _Keys_Ctx {
      Config *config;
      Evas_Object *frame;
      Evas_Object *gl;
      Evas_Object *layout;
-};
+} Keys_Ctx;
 
-static void _hover_del(struct keys_ctx *ctx);
+static void _hover_del(Keys_Ctx *ctx);
 
 static void
 _shortcut_delete(void *data,
@@ -26,7 +26,7 @@ _shortcut_delete(void *data,
    Evas_Object *hs, *bx;
    Config_Keys *cfg_key;
    Evas_Coord w, min_w, min_h;
-   struct keys_ctx *ctx;
+   Keys_Ctx *ctx;
 
    hs = data;
    bx = evas_object_data_get(hs, "bx");
@@ -53,7 +53,7 @@ _shortcut_delete(void *data,
 }
 
 static Evas_Object *
-_shortcut_button_add(struct keys_ctx *ctx,
+_shortcut_button_add(Keys_Ctx *ctx,
                      Evas_Object *bx,
                      const Config_Keys *key)
 {
@@ -95,7 +95,7 @@ _cb_key_up(void *data,
    Config_Keys *cfg_key;
    Shortcut_Action *action;
    Evas_Object *bx = data;
-   struct keys_ctx *ctx;
+   Keys_Ctx *ctx;
 
    if (key_is_modifier(ev->keyname))
      return;
@@ -166,14 +166,14 @@ _cb_mouse_down(void *data,
                Evas_Object *obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
 
    _hover_del(ctx);
 }
 
 
 static void
-_hover_sizing_eval(struct keys_ctx *ctx)
+_hover_sizing_eval(Keys_Ctx *ctx)
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
@@ -192,7 +192,7 @@ _parent_move_cb(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event_info EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
    _hover_sizing_eval(ctx);
 }
 
@@ -202,7 +202,7 @@ _parent_resize_cb(void *data,
                   Evas_Object *_obj EINA_UNUSED,
                   void *_event_info EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
    _hover_sizing_eval(ctx);
 }
 
@@ -212,7 +212,7 @@ _parent_hide_cb(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event_info EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
    _hover_del(ctx);
 }
 
@@ -222,7 +222,7 @@ _parent_del_cb(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event_info EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
    _hover_del(ctx);
 
    evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_DEL,
@@ -233,7 +233,7 @@ _parent_del_cb(void *data,
 }
 
 static void
-_hover_del(struct keys_ctx *ctx)
+_hover_del(Keys_Ctx *ctx)
 {
    if (ctx->layout)
      {
@@ -257,7 +257,7 @@ _on_shortcut_add(void *data,
 {
    Evas_Object *o, *oe;
    Evas_Object *bx = data;
-   struct keys_ctx *ctx;
+   Keys_Ctx *ctx;
 
    ctx = evas_object_data_get(bx, "ctx");
    assert(ctx);
@@ -290,7 +290,7 @@ gl_content_get(void *data, Evas_Object *obj, const char *_part EINA_UNUSED)
    Evas_Object *bx, *bt, *lbl, *sep;
    Config_Keys *key;
    Eina_List *l;
-   struct keys_ctx *ctx;
+   Keys_Ctx *ctx;
 
    ctx = evas_object_data_get(obj, "ctx");
    assert(ctx);
@@ -363,7 +363,7 @@ _cb_reset_keys(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   struct keys_ctx *ctx = data;
+   Keys_Ctx *ctx = data;
 
    config_reset_keys(ctx->config);
    elm_genlist_realized_items_update(ctx->gl);
@@ -377,7 +377,7 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
    Elm_Genlist_Item_Class *itc, *itc_group;
    Elm_Object_Item *git = NULL;
    Config *config = termio_config_get(term);
-   struct keys_ctx *ctx;
+   Keys_Ctx *ctx;
 
    ctx = calloc(1, sizeof(*ctx));
    assert(ctx);

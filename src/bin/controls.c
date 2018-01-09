@@ -10,7 +10,7 @@
 
 static Eina_Hash *controls = NULL;
 
-struct controls_ctx {
+typedef struct _Controls_Ctx {
      Evas_Object *frame;
      Evas_Object *over;
      Evas_Object *win;
@@ -18,11 +18,11 @@ struct controls_ctx {
      Evas_Object *term;
      void (*donecb) (void *data);
      void *donedata;
-};
+} Controls_Ctx;
 
 
 static void
-controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb);
+controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb);
 
 
 
@@ -31,7 +31,7 @@ _cb_sel_on(void *data,
            Evas_Object *_term EINA_UNUSED,
            void *_ev EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *bt_copy = evas_object_data_get(ctx->frame, "bt_copy");
    if (bt_copy)
      elm_object_disabled_set(bt_copy, EINA_FALSE);
@@ -42,7 +42,7 @@ _cb_sel_off(void *data,
             Evas_Object *_term EINA_UNUSED,
             void *_ev EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *bt_copy = evas_object_data_get(ctx->frame, "bt_copy");
    if (bt_copy)
      elm_object_disabled_set(bt_copy, EINA_TRUE);
@@ -62,7 +62,7 @@ _cb_ct_copy(void *data,
             Evas_Object *_obj EINA_UNUSED,
             void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
@@ -74,7 +74,7 @@ _cb_ct_paste(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
@@ -86,7 +86,7 @@ _cb_ct_new(void *data,
            Evas_Object *_obj EINA_UNUSED,
            void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    main_new(ctx->win, ctx->term);
 }
 
@@ -95,7 +95,7 @@ _cb_ct_split_v(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    split_vertically(ctx->win, ctx->term, NULL);
 }
 
@@ -104,7 +104,7 @@ _cb_ct_split_h(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    split_horizontally(ctx->win, ctx->term, NULL);
 }
 
@@ -113,7 +113,7 @@ _cb_ct_miniview(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    term_miniview_toggle(termio_term_get(ctx->term));
 }
 
@@ -122,7 +122,7 @@ _cb_ct_set_title(void *data,
                  Evas_Object *_obj EINA_UNUSED,
                  void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *term = ctx->term;
    controls_hide(ctx, EINA_TRUE);
    term_set_title(termio_term_get(term));
@@ -133,7 +133,7 @@ _cb_ct_close(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
    Evas_Object *term = ctx->term;
    Evas_Object *win = ctx->win;
 
@@ -144,7 +144,7 @@ _cb_ct_close(void *data,
 static void
 _on_sub_done(void *data)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
 
    ecore_timer_add(10.0, _cb_del_delay, ctx->frame);
    ctx->frame = NULL;
@@ -162,7 +162,7 @@ _cb_ct_options(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
 
    options_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
@@ -174,7 +174,7 @@ _cb_ct_about(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
 
    about_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
@@ -186,7 +186,7 @@ _cb_mouse_down(void *data,
                Evas_Object *_obj EINA_UNUSED,
                void *_ev EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
 
    controls_hide(ctx, EINA_TRUE);
 }
@@ -197,7 +197,7 @@ _cb_saved_del(void *data,
               Evas_Object *obj,
               void *_ev EINA_UNUSED)
 {
-   struct controls_ctx *ctx = data;
+   Controls_Ctx *ctx = data;
 
    if (obj == ctx->win)
      ctx->win = NULL;
@@ -256,7 +256,7 @@ _sep_add_h(Evas_Object *win)
 }
 
 static void
-controls_hide(struct controls_ctx *ctx, Eina_Bool call_cb)
+controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
 {
    if (ctx->win)
      {
@@ -297,7 +297,7 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
 {
    Evas_Object *o;
    Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2, *ct_box3;
-   struct controls_ctx *ctx;
+   Controls_Ctx *ctx;
 
    if (eina_hash_find(controls, &win))
      {
