@@ -550,7 +550,7 @@ _parent_del_cb(void *data,
 void
 options_background(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *bx, *bx2;
+   Evas_Object *o, *bx, *bx_front;
    Config *config = termio_config_get(term);
    char path[PATH_MAX], *config_background_dir;
    Background_Ctx *ctx;
@@ -571,24 +571,10 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_DEL,
                                   _parent_del_cb, ctx);
 
-   ctx->flip = o = elm_flip_add(opbox);
+   bx = o = elm_box_add(ctx->frame);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(ctx->frame, o);
-   evas_object_show(o);
-
-   o = elm_fileselector_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_part_content_set(ctx->flip, "back", o);
-   elm_fileselector_folder_only_set(o, EINA_TRUE);
-   evas_object_smart_callback_add(o, "done", _cb_fileselector, ctx);
-   evas_object_show(o);
-
-   bx = o = elm_box_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_part_content_set(ctx->flip, "front", bx);
+   elm_object_content_set(ctx->frame, bx);
    evas_object_show(o);
 
    o = elm_label_add(opbox);
@@ -648,31 +634,11 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   bx2 = o = elm_box_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-
-   ctx->entry = o = elm_entry_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_entry_single_line_set(o, EINA_TRUE);
-   elm_entry_scrollable_set(o, EINA_TRUE);
-   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF,
-                           ELM_SCROLLER_POLICY_OFF);
-   evas_object_smart_callback_add(ctx->entry, "changed",
-                                  _cb_entry_changed, ctx);
-   elm_box_pack_start(bx2, o);
-   evas_object_show(o);
-
    o = elm_hoversel_add(opbox);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(o, _("Select Path"));
-   elm_box_pack_end(bx2, o);
+   elm_box_pack_end(bx, o);
    evas_object_show(o);
 
    snprintf(path, PATH_MAX, "%s/backgrounds/", elm_app_data_dir_get());
@@ -686,6 +652,31 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    elm_hoversel_item_add(o, _("Other"), NULL, ELM_ICON_NONE,
                          _cb_hoversel_select_none, ctx);
 
+   ctx->flip = o = elm_flip_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   bx_front = o = elm_box_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_box_horizontal_set(o, EINA_FALSE);
+   elm_object_part_content_set(ctx->flip, "front", o);
+   evas_object_show(o);
+
+   ctx->entry = o = elm_entry_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_TRUE);
+   elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF,
+                           ELM_SCROLLER_POLICY_OFF);
+   evas_object_smart_callback_add(ctx->entry, "changed",
+                                  _cb_entry_changed, ctx);
+   elm_box_pack_end(bx_front, o);
+   evas_object_show(o);
+
    ctx->bg_grid = o = elm_gengrid_add(opbox);
    evas_object_data_set(ctx->bg_grid, "ctx", ctx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -694,14 +685,24 @@ options_background(Evas_Object *opbox, Evas_Object *term)
                                   _cb_grid_doubleclick, ctx);
    elm_gengrid_item_size_set(o, elm_config_scale_get() * 100,
                                 elm_config_scale_get() * 80);
-   elm_box_pack_end(bx, o);
+   elm_box_pack_end(bx_front, o);
    evas_object_show(o);
 
    o = elm_label_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_object_text_set(o, _("Double click on a picture to import it"));
-   elm_box_pack_end(bx, o);
+   elm_object_text_set(o, _("Click on a picture to use it as background"));
+   elm_box_pack_end(bx_front, o);
+   evas_object_show(o);
+
+
+
+   o = elm_fileselector_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_part_content_set(ctx->flip, "back", o);
+   elm_fileselector_folder_only_set(o, EINA_TRUE);
+   evas_object_smart_callback_add(o, "done", _cb_fileselector, ctx);
    evas_object_show(o);
 
    if (config->background)
