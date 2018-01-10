@@ -8,8 +8,6 @@
 #include "main.h"
 
 
-static Evas_Object *op_vidmod;
-
 static void
 _cb_op_video_mute_chg(void *data,
                       Evas_Object *obj,
@@ -51,7 +49,7 @@ _cb_op_video_vidmod_chg(void *data,
 void
 options_video(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *fr, *bx0;
+   Evas_Object *o, *fr, *bx0, *op_vidmod;
    Config *config = termio_config_get(term);
 
    fr = o = elm_frame_add(opbox);
