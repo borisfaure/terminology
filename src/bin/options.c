@@ -79,7 +79,6 @@ _cb_op_del_delay(void *data)
 
    evas_object_del(ctx->opbox);
    evas_object_del(ctx->frame);
-   options_font_clear();
    options_theme_clear();
 
    free(ctx);
