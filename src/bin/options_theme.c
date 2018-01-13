@@ -2,6 +2,7 @@
 
 #include <Elementary.h>
 #include <Efreet.h>
+#include <assert.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"
@@ -10,17 +11,22 @@
 #include "utils.h"
 #include "main.h"
 
+typedef struct _Theme_Ctx
+{
+   Evas_Object *term;
+   Config *config;
+   Evas_Object *op_themelist;
+   Eina_List *themes;
+   Ecore_Timer *seltimer;
+} Theme_Ctx;
+
 typedef struct _Theme Theme;
 struct _Theme
 {
    Elm_Object_Item *item;
    const char *name;
-   Evas_Object *term;
+   Theme_Ctx *ctx;
 };
-
-static Evas_Object *op_themelist;
-static Eina_List *themes = NULL;
-static Ecore_Timer *seltimer = NULL;
 
 static char *
 _cb_op_theme_text_get(void *data,
@@ -32,7 +38,8 @@ _cb_op_theme_text_get(void *data,
 
    eina_strlcpy(buf, t->name, sizeof(buf));
    p = strrchr(buf, '.');
-   if (p) *p = 0;
+   if (p)
+     *p = 0;
 
    return strdup(buf);
 }
@@ -45,7 +52,7 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-        Config *config = termio_config_get(t->term);
+        Config *config = t->ctx->config;
 
         if (config)
           {
@@ -66,14 +73,14 @@ _cb_op_theme_sel(void *data,
                  void *_event EINA_UNUSED)
 {
    Theme *t = data;
-   Config *config = termio_config_get(t->term);
+   Config *config = t->ctx->config;
 
    if ((config->theme) && (!strcmp(t->name, config->theme)))
      return;
 
    eina_stringshare_replace(&(config->theme), t->name);
    config_save(config, NULL);
-   change_theme(termio_win_get(t->term), config);
+   change_theme(termio_win_get(t->ctx->term), config);
 }
 
 static int
@@ -92,8 +99,33 @@ _cb_sel_item(void *data)
         elm_gengrid_item_selected_set(t->item, EINA_TRUE);
         elm_gengrid_item_bring_in(t->item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
      }
-   seltimer = NULL;
+   t->ctx->seltimer = NULL;
    return EINA_FALSE;
+}
+
+static void
+_parent_del_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event_info EINA_UNUSED)
+{
+   Theme_Ctx *ctx = data;
+   Theme *t;
+
+   ctx->op_themelist = NULL;
+
+   if (ctx->seltimer)
+     {
+        ecore_timer_del(ctx->seltimer);
+        ctx->seltimer = NULL;
+     }
+   EINA_LIST_FREE(ctx->themes, t)
+     {
+        eina_stringshare_del(t->name);
+        free(t);
+     }
+
+   free(ctx);
 }
 
 void
@@ -108,8 +140,13 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    Config *config = termio_config_get(term);
    Eina_Bool to_skip = EINA_FALSE;
    double scale = elm_config_scale_get();
+   Theme_Ctx *ctx;
 
-   options_theme_clear();
+   ctx = calloc(1, sizeof(*ctx));
+   assert(ctx);
+
+   ctx->config = config;
+   ctx->term = term;
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -117,6 +154,9 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, _("Theme"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
+
+   evas_object_event_callback_add(fr, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, ctx);
 
    box = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -130,7 +170,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    it_class->func.text_get = _cb_op_theme_text_get;
    it_class->func.content_get = _cb_op_theme_content_get;
 
-   op_themelist = o = elm_gengrid_add(opbox);
+   ctx->op_themelist = o = elm_gengrid_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_gengrid_item_size_set(o, scale * 160, scale * 180);
@@ -152,10 +192,10 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    else if (userfiles)
      files = userfiles;
 
-   if (seltimer)
+   if (ctx->seltimer)
      {
-        ecore_timer_del(seltimer);
-        seltimer = NULL;
+        ecore_timer_del(ctx->seltimer);
+        ctx->seltimer = NULL;
      }
 
    EINA_LIST_FOREACH_SAFE(files, l, l_next, file)
@@ -185,19 +225,21 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
           }
 
         t = calloc(1, sizeof(Theme));
-        if (!t) break;
+        if (!t)
+          break;
         t->name = eina_stringshare_add(file);
-        t->term = term;
+        t->ctx = ctx;
         t->item = elm_gengrid_item_append(o, it_class, t,
                                           _cb_op_theme_sel, t);
         if (t->item)
           {
-             themes = eina_list_append(themes, t);
+             ctx->themes = eina_list_append(ctx->themes, t);
              if ((config) && (config->theme) &&
                  (!strcmp(config->theme, t->name)))
                {
-                  if (seltimer) ecore_timer_del(seltimer);
-                  seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
+                  if (ctx->seltimer)
+                    ecore_timer_del(ctx->seltimer);
+                  ctx->seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
                }
           }
         else
@@ -216,23 +258,4 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
-}
-
-void
-options_theme_clear(void)
-{
-   Theme *t;
-
-   op_themelist = NULL;
-
-   if (seltimer)
-     {
-        ecore_timer_del(seltimer);
-        seltimer = NULL;
-     }
-   EINA_LIST_FREE(themes, t)
-     {
-        eina_stringshare_del(t->name);
-        free(t);
-     }
 }
