@@ -392,6 +392,7 @@ _cb_hoversel_select(Background_Ctx *ctx, const Eina_Stringshare *path)
    Evas_Object *o;
    if (path)
      {
+        elm_flip_go_to(ctx->flip, EINA_TRUE, ELM_FLIP_PAGE_LEFT);
         elm_object_text_set(ctx->entry, path);
      }
    else
