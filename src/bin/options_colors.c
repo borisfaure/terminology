@@ -45,6 +45,10 @@ _cb_op_color_item_sel(void *data,
    int r = 0, g = 0, b = 0, a = 0;
    int i, j;
 
+   if (ctx->curitem == it)
+     return;
+   if (ctx->curitem)
+     elm_colorselector_palette_item_selected_set(ctx->curitem, EINA_FALSE);
    ctx->curitem = it;
    elm_colorselector_palette_item_color_get(it, &r, &g, &b, &a);
    elm_colorselector_color_set(ctx->colorsel, r, g, b, a);
@@ -146,6 +150,7 @@ _reset_config_colors(Colors_Ctx *ctx)
           }
      }
 }
+
 
 static void
 _cb_op_reset(void *data,
@@ -292,6 +297,11 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
                 config->colors[(j * 12) + i].b,
                 config->colors[(j * 12) + i].a);
              ctx->colitem[j][i] = it;
+             if (i == 0 && j == 0)
+               {
+                  ctx->curitem = ctx->colitem[0][0];
+                  elm_colorselector_palette_item_selected_set(ctx->curitem, EINA_TRUE);
+               }
           }
         elm_box_pack_end(bx3, o);
         evas_object_show(o);
@@ -307,8 +317,6 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
              evas_object_show(o);
           }
      }
-
-   ctx->curitem = ctx->colitem[0][0];
 
    bx2 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -330,7 +338,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
    evas_object_show(o);
 
    ctx->colorsel = o = elm_colorselector_add(opbox);
-   elm_colorselector_palette_item_color_get(ctx->colitem[0][0], &r, &g, &b, &a);
+   elm_colorselector_palette_item_color_get(ctx->curitem, &r, &g, &b, &a);
    elm_colorselector_color_set(o, r, g, b, a);
    elm_colorselector_mode_set(o, ELM_COLORSELECTOR_COMPONENTS);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
