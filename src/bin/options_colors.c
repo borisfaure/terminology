@@ -92,9 +92,9 @@ _cb_op_color_chg(void *data,
                     continue;
                   if (ctx->colitem[j][i] == ctx->curitem)
                     {
-                       config->colors[(j * 12) + i].r = r;
-                       config->colors[(j * 12) + i].g = g;
-                       config->colors[(j * 12) + i].b = b;
+                       config->colors[(j * 12) + i].r = r * a / 256;
+                       config->colors[(j * 12) + i].g = g * a / 256;
+                       config->colors[(j * 12) + i].b = b * a / 256;
                        config->colors[(j * 12) + i].a = a;
                        termio_config_update(ctx->term);
                        config_save(config, NULL);
