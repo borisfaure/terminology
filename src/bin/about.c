@@ -11,7 +11,7 @@ typedef struct _about_ctx {
      Evas_Object *layout;
      Evas_Object *over;
      Evas_Object *win;
-     Evas_Object *bg;
+     Evas_Object *base;
      Evas_Object *term;
      void (*donecb) (void *data);
      void *donedata;
@@ -40,7 +40,7 @@ _cb_mouse_down(void *data,
         evas_object_del(ctx->over);
      }
    elm_object_focus_set(ctx->layout, EINA_FALSE);
-   edje_object_signal_emit(ctx->bg, "about,hide", "terminology");
+   edje_object_signal_emit(ctx->base, "about,hide", "terminology");
 
    ecore_timer_add(10.0, _cb_del_delay, ctx->layout);
    ctx->layout = NULL;
@@ -52,7 +52,7 @@ _cb_mouse_down(void *data,
 }
 
 void
-about_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
+about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
              void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
@@ -65,7 +65,7 @@ about_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    assert(ctx);
 
    ctx->win = win;
-   ctx->bg = bg;
+   ctx->base = base;
    ctx->term = term;
    ctx->donecb = donecb;
    ctx->donedata = donedata;
@@ -183,16 +183,16 @@ about_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    elm_object_part_text_set(o, "terminology.text", txt);
    eina_stringshare_del(txt);
    evas_object_show(o);
-   edje_object_part_swallow(bg, "terminology.about", ctx->layout);
+   edje_object_part_swallow(base, "terminology.about", ctx->layout);
 
    ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
-   edje_object_part_swallow(bg, "terminology.dismiss", o);
+   edje_object_part_swallow(base, "terminology.dismiss", o);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
 
-   edje_object_signal_emit(bg, "about,show", "terminology");
+   edje_object_signal_emit(base, "about,show", "terminology");
    elm_object_signal_emit(ctx->layout, "begin" ,"terminology");
    elm_object_focus_set(ctx->layout, EINA_TRUE);
 }

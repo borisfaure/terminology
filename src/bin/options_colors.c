@@ -189,7 +189,7 @@ _parent_del_cb(void *data,
 }
 
 void
-options_colors(Evas_Object *opbox, Evas_Object *term)
+options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
 {
    Config *config = termio_config_get(term);
    Evas_Object *o, *fr, *bx, *sc, *bx2, *bx3, *bx4;
@@ -202,6 +202,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
 
    ctx->config = config;
    ctx->term = term;
+   ctx->bg = bg;
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

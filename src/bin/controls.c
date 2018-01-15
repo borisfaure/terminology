@@ -14,6 +14,7 @@ typedef struct _Controls_Ctx {
      Evas_Object *frame;
      Evas_Object *over;
      Evas_Object *win;
+     Evas_Object *base;
      Evas_Object *bg;
      Evas_Object *term;
      void (*donecb) (void *data);
@@ -164,7 +165,7 @@ _cb_ct_options(void *data,
 {
    Controls_Ctx *ctx = data;
 
-   options_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
+   options_show(ctx->win, ctx->base, ctx->bg, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
 }
 
@@ -176,7 +177,7 @@ _cb_ct_about(void *data,
 {
    Controls_Ctx *ctx = data;
 
-   about_show(ctx->win, ctx->bg, ctx->term, _on_sub_done, ctx);
+   about_show(ctx->win, ctx->base, ctx->term, _on_sub_done, ctx);
    controls_hide(ctx, EINA_FALSE);
 }
 
@@ -267,7 +268,7 @@ controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
    if (ctx->term)
      {
         evas_object_event_callback_del(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del);
-        edje_object_signal_emit(ctx->bg, "controls,hide", "terminology");
+        edje_object_signal_emit(ctx->base, "controls,hide", "terminology");
      }
 
    if (ctx->over)
@@ -292,8 +293,8 @@ controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
 
 
 void
-controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
-              void (*donecb) (void *data), void *donedata)
+controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
+              Evas_Object *term, void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
    Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2, *ct_box3;
@@ -309,6 +310,7 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    ctx = malloc(sizeof(*ctx));
    assert(ctx);
    ctx->win = win;
+   ctx->base = base;
    ctx->bg = bg;
    ctx->term = term;
    ctx->donecb = donecb;
@@ -406,16 +408,16 @@ controls_show(Evas_Object *win, Evas_Object *bg, Evas_Object *term,
    evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
                                   ctx);
 
-   edje_object_part_swallow(bg, "terminology.controls", ctx->frame);
+   edje_object_part_swallow(base, "terminology.controls", ctx->frame);
    evas_object_show(ctx->frame);
    ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
-   edje_object_part_swallow(bg, "terminology.dismiss", o);
+   edje_object_part_swallow(base, "terminology.dismiss", o);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
 
-   edje_object_signal_emit(bg, "controls,show", "terminology");
+   edje_object_signal_emit(base, "controls,show", "terminology");
    elm_object_focus_set(ctx->frame, EINA_TRUE);
    evas_object_event_callback_add(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
    evas_object_event_callback_add(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
