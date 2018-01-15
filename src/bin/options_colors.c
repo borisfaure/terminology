@@ -7,8 +7,6 @@
 #include "options.h"
 #include "options_colors.h"
 
-
-static const char mapping[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11 };
 static const char *mapping_names[] =
   {
      gettext_noop("Default"),
@@ -20,12 +18,13 @@ static const char *mapping_names[] =
      gettext_noop("Magenta"),
      gettext_noop("Cyan"),
      gettext_noop("White"),
+     gettext_noop("Invisible"),
      gettext_noop("Inverse"),
-     gettext_noop("Inverse Base")
+     gettext_noop("Inverse Background")
   };
 
 typedef struct _Colors_Ctx {
-     Elm_Object_Item *colitem[4][11];
+     Elm_Object_Item *colitem[4][12];
      Evas_Object *colorsel;
      Elm_Object_Item *curitem;
      Evas_Object *colpal[4];
@@ -33,30 +32,8 @@ typedef struct _Colors_Ctx {
      Evas_Object *reset;
      Config *config;
      Evas_Object *term;
+     Evas_Object *bg;
 } Colors_Ctx;
-
-static void
-_cb_op_use_custom_chg(void *data,
-                      Evas_Object *obj,
-                      void *_event EINA_UNUSED)
-{
-   Colors_Ctx *ctx = data;
-   Evas_Object *term = ctx->term;
-   Config *config = ctx->config;
-   Eina_Bool state = EINA_FALSE;
-   int i;
-
-   state = elm_check_state_get(obj);
-   elm_object_disabled_set(ctx->colorsel, !state);
-
-   for (i = 0; i < 4; i++)
-     elm_object_disabled_set(ctx->colpal[i], !state);
-
-   elm_object_disabled_set(ctx->label, !state);
-   config->colors_use = state;
-   termio_config_update(term);
-   config_save(config, NULL);
-}
 
 static void
 _cb_op_color_item_sel(void *data,
@@ -73,8 +50,10 @@ _cb_op_color_item_sel(void *data,
    elm_colorselector_color_set(ctx->colorsel, r, g, b, a);
    for (j = 0; j < 4; j++)
      {
-        for (i = 0; i < 11; i++)
+        for (i = 0; i < 12; i++)
           {
+             if (i == COL_INVIS)
+               continue;
              if (ctx->colitem[j][i] == it)
                elm_object_text_set(ctx->label,
 #if HAVE_GETTEXT && ENABLE_NLS
@@ -104,21 +83,66 @@ _cb_op_color_chg(void *data,
         if (ctx->curitem)
           elm_colorselector_palette_item_color_set(ctx->curitem, r, g, b, a);
         elm_object_disabled_set(ctx->reset, EINA_FALSE);
+        config->colors_use = EINA_TRUE;
         for (j = 0; j < 4; j++)
           {
-             for (i = 0; i < 11; i++)
+             for (i = 0; i < 12; i++)
                {
+                  if (i == COL_INVIS)
+                    continue;
                   if (ctx->colitem[j][i] == ctx->curitem)
                     {
-                       config->colors[(j * 12) + mapping[i]].r = r;
-                       config->colors[(j * 12) + mapping[i]].g = g;
-                       config->colors[(j * 12) + mapping[i]].b = b;
-                       config->colors[(j * 12) + mapping[i]].a = a;
+                       config->colors[(j * 12) + i].r = r;
+                       config->colors[(j * 12) + i].g = g;
+                       config->colors[(j * 12) + i].b = b;
+                       config->colors[(j * 12) + i].a = a;
                        termio_config_update(ctx->term);
                        config_save(config, NULL);
                        return;
                     }
                }
+          }
+     }
+}
+
+static void
+_reset_config_colors(Colors_Ctx *ctx)
+{
+   int i, j;
+
+   for (j = 0; j < 4; j++)
+     {
+        for (i = 0; i < 12; i++)
+          {
+             int r, g, b, a;
+             unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
+             char buf[32];
+
+             if (i == COL_INVIS)
+               continue;
+
+             snprintf(buf, sizeof(buf) - 1, "c%i", j * 12 + i);
+             if (!edje_object_color_class_get(ctx->bg, buf,
+                                              &r,
+                                              &g,
+                                              &b,
+                                              &a,
+                                              NULL, NULL, NULL, NULL,
+                                              NULL, NULL, NULL, NULL))
+               {
+                  colors_standard_get(j, i, &rr, &gg, &bb, &aa);
+               }
+             else
+               {
+                  rr = r;
+                  gg = g;
+                  bb = b;
+                  aa = a;
+               }
+             ctx->config->colors[(j * 12) + i].r = rr;
+             ctx->config->colors[(j * 12) + i].g = gg;
+             ctx->config->colors[(j * 12) + i].b = bb;
+             ctx->config->colors[(j * 12) + i].a = aa;
           }
      }
 }
@@ -134,29 +158,24 @@ _cb_op_reset(void *data,
    int r = 0, g = 0, b = 0, a = 0;
    int i, j;
 
+   _reset_config_colors(ctx);
    for (j = 0; j < 4; j++)
      {
         for (i = 0; i < 12; i++)
           {
-             unsigned char rr = 0, gg = 0, bb = 0, aa = 0;
+             if (i == COL_INVIS)
+               continue;
 
-             colors_standard_get(j, i, &rr, &gg, &bb, &aa);
-             config->colors[(j * 12) + i].r = rr;
-             config->colors[(j * 12) + i].g = gg;
-             config->colors[(j * 12) + i].b = bb;
-             config->colors[(j * 12) + i].a = aa;
-          }
-        for (i = 0; i < 11; i++)
-          {
              elm_colorselector_palette_item_color_set
                (ctx->colitem[j][i],
-                config->colors[(j * 12) + mapping[i]].r,
-                config->colors[(j * 12) + mapping[i]].g,
-                config->colors[(j * 12) + mapping[i]].b,
-                config->colors[(j * 12) + mapping[i]].a);
+                config->colors[(j * 12) + i].r,
+                config->colors[(j * 12) + i].g,
+                config->colors[(j * 12) + i].b,
+                config->colors[(j * 12) + i].a);
           }
      }
    elm_object_disabled_set(ctx->reset, EINA_TRUE);
+   config->colors_use = EINA_FALSE;
    elm_colorselector_palette_item_color_get(ctx->curitem, &r, &g, &b, &a);
    elm_colorselector_color_set(ctx->colorsel, r, g, b, a);
    termio_config_update(term);
@@ -222,12 +241,12 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
    evas_object_show(o);
 
    sc = o = elm_scroller_add(opbox);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
-                                  _cb_op_scroller_resize, ctx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
+                                  _cb_op_scroller_resize, ctx);
 
    bx3 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -235,13 +254,21 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
    elm_object_content_set(sc, o);
    evas_object_show(o);
 
+   if (!config->colors_use)
+     {
+        _reset_config_colors(ctx);
+     }
    for (j = 0; j < 4; j++)
      {
         o = elm_label_add(opbox);
-        if (j == 0) elm_object_text_set(o, _("Normal"));
-        else if (j == 1) elm_object_text_set(o, _("Bright/Bold"));
-        else if (j == 2) elm_object_text_set(o, _("Intense"));
-        else if (j == 3) elm_object_text_set(o, _("Intense Bright/Bold"));
+        if (j == 0)
+          elm_object_text_set(o, _("Normal"));
+        else if (j == 1)
+          elm_object_text_set(o, _("Bright/Bold"));
+        else if (j == 2)
+          elm_object_text_set(o, _("Intense"));
+        else if (j == 3)
+          elm_object_text_set(o, _("Intense Bright/Bold"));
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
         elm_box_pack_end(bx3, o);
@@ -251,22 +278,25 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
         elm_colorselector_mode_set(o, ELM_COLORSELECTOR_PALETTE);
-        for (i = 0; i < 11; i++)
+        for (i = 0; i < 12; i++)
           {
              Elm_Object_Item *it;
 
+             if (i == COL_INVIS)
+               continue;
+
              it = elm_colorselector_palette_color_add
                (o,
-                config->colors[(j * 12) + mapping[i]].r,
-                config->colors[(j * 12) + mapping[i]].g,
-                config->colors[(j * 12) + mapping[i]].b,
-                config->colors[(j * 12) + mapping[i]].a);
+                config->colors[(j * 12) + i].r,
+                config->colors[(j * 12) + i].g,
+                config->colors[(j * 12) + i].b,
+                config->colors[(j * 12) + i].a);
              ctx->colitem[j][i] = it;
           }
-        evas_object_smart_callback_add(o, "color,item,selected",
-                                       _cb_op_color_item_sel, ctx);
         elm_box_pack_end(bx3, o);
         evas_object_show(o);
+        evas_object_smart_callback_add(o, "color,item,selected",
+                                       _cb_op_color_item_sel, ctx);
         if (j == 1)
           {
              o = elm_separator_add(opbox);
@@ -316,20 +346,11 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
    elm_box_pack_end(bx2, o);
    evas_object_show(o);
 
-   o = elm_check_add(opbox);
-   evas_object_size_hint_weight_set(o, 1.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, _("Use"));
-   elm_check_state_set(o, config->colors_use);
-   elm_box_pack_end(bx4, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed", _cb_op_use_custom_chg, ctx);
-
    ctx->reset = o = elm_button_add(opbox);
-   elm_object_disabled_set(o, EINA_TRUE);
+   elm_object_disabled_set(o, !config->colors_use);
    evas_object_size_hint_weight_set(o, 1.0, 0.0);
    evas_object_size_hint_align_set(o, 1.0, 0.5);
-   elm_object_text_set(o, _("Reset"));
+   elm_object_text_set(o, _("Reset all the colors"));
    elm_box_pack_end(bx4, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "clicked", _cb_op_reset, ctx);
