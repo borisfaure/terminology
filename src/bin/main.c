@@ -403,7 +403,7 @@ static void
 _translate_options(void)
 {
    options.copyright = eina_stringshare_printf(gettext(options.copyright),
-                                               2017);
+                                               2018);
 
    Ecore_Getopt_Desc *desc = (Ecore_Getopt_Desc *) options.descs;
    while ((desc->shortname != '\0') || (desc->longname)
@@ -580,7 +580,7 @@ elm_main(int argc, char **argv)
    textdomain(PACKAGE);
    _translate_options();
 #else
-   options.copyright = "(C) 2012-2017 Carsten Haitzler and others";
+   options.copyright = "(C) 2012-2018 Carsten Haitzler and others";
 #endif
 
    _log_domain = eina_log_domain_register("terminology", NULL);
