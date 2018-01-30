@@ -418,9 +418,6 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
         edje_object_signal_emit(term->bg, "focus,out", "terminology");
         edje_object_signal_emit(term->base, "focus,out", "terminology");
      }
-
-   if (!tc->wn->cmdbox_up)
-     elm_object_focus_set(term->termio, EINA_FALSE);
 }
 
 static void
@@ -458,11 +455,8 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
         edje_object_signal_emit(term->base, "focus,in", "terminology");
      }
-   termio_focus_in(term->termio);
    if (term->wn->cmdbox)
      elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
-   //elm_object_focus_set(term->termio, EINA_TRUE);
-   //termio_event_feed_mouse_in(term->termio);
 
    title = termio_title_get(term->termio);
    if (title)
@@ -562,8 +556,6 @@ _cb_win_focus_in(void *data,
                        edje_object_signal_emit(term->bg, "focus,out", "terminology");
                        edje_object_signal_emit(term->base, "focus,out", "terminology");
                     }
-                  if (!wn->cmdbox_up)
-                    elm_object_focus_set(term->termio, EINA_FALSE);
                }
              term = term_mouse;
           }
@@ -4201,7 +4193,6 @@ _sendfile_request(Term *term, const char *path)
    edje_object_part_swallow(term->bg, "terminology.sendfile.request", o);
    evas_object_show(o);
    edje_object_signal_emit(term->bg, "sendfile,request,on", "terminology");
-   elm_object_focus_set(term->termio, EINA_FALSE);
    elm_object_focus_set(o, EINA_TRUE);
 }
 
@@ -4389,11 +4380,8 @@ _cb_cmd_focus(void *data)
    wn->cmdbox_focus_timer = NULL;
    tc = (Term_Container*) wn;
    term = tc->focused_term_get(tc);
-   if (term)
-     {
-        elm_object_focus_set(term->termio, EINA_FALSE);
-        if (term->wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_TRUE);
-     }
+   if (term && term->wn->cmdbox)
+     elm_object_focus_set(wn->cmdbox, EINA_TRUE);
    return EINA_FALSE;
 }
 
@@ -4425,7 +4413,6 @@ _cb_cmd_activated(void *data,
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
    tc = (Term_Container *) wn;
    term = tc->focused_term_get(tc);
-   if (term) elm_object_focus_set(term->termio, EINA_TRUE);
    if (wn->cmdbox) cmd = (char *)elm_entry_entry_get(wn->cmdbox);
    if (cmd)
      {
@@ -4452,14 +4439,9 @@ _cb_cmd_aborted(void *data,
                 void *_event EINA_UNUSED)
 {
    Win *wn = data;
-   Term *term;
-   Term_Container *tc;
 
    if (wn->cmdbox) elm_object_focus_set(wn->cmdbox, EINA_FALSE);
    edje_object_signal_emit(wn->base, "cmdbox,hide", "terminology");
-   tc = (Term_Container*) wn;
-   term = tc->focused_term_get(tc);
-   if (term) elm_object_focus_set(term->termio, EINA_TRUE);
    if (wn->cmdbox_focus_timer)
      {
         ecore_timer_del(wn->cmdbox_focus_timer);
@@ -4542,7 +4524,6 @@ _cb_cmdbox(void *data,
         edje_object_part_swallow(wn->base, "terminology.cmdbox", o);
      }
    edje_object_signal_emit(term->wn->base, "cmdbox,show", "terminology");
-   elm_object_focus_set(term->termio, EINA_FALSE);
    elm_entry_entry_set(term->wn->cmdbox, "");
    evas_object_show(term->wn->cmdbox);
    if (term->wn->cmdbox_focus_timer)
@@ -4902,7 +4883,6 @@ _term_bg_config(Term *term)
           }
         if (term->wn->cmdbox)
           elm_object_focus_set(term->wn->cmdbox, EINA_FALSE);
-        elm_object_focus_set(term->termio, EINA_TRUE);
      }
    if (term->miniview_shown)
         edje_object_signal_emit(term->bg, "miniview,on", "terminology");
