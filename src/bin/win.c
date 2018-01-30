@@ -173,6 +173,7 @@ struct _Win
    unsigned char group_input : 1;
    unsigned char group_only_visible : 1;
    unsigned char group_once_handled : 1;
+   unsigned char on_options : 1;
 };
 
 /* }}} */
@@ -1122,6 +1123,9 @@ _cb_win_key_up(void *data,
    Term *term;
    const Evas_Event_Key_Up *ev = event_info;
 
+   if (wn->on_options)
+       return;
+
    DBG("GROUP key up (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
    if (wn->group_input)
@@ -1157,6 +1161,9 @@ _cb_win_key_down(void *data,
 
    DBG("GROUP key down (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
+
+   if (wn->on_options)
+       return;
 
    int ctrl, alt, shift, win, meta, hyper;
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
@@ -1203,6 +1210,10 @@ _cb_win_mouse_down(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child;
 
+   if (wn->on_options)
+       return;
+
+   /* TODO: boris: maybe not so strict */
    DBG("mouse down");
    if (wn->group_input)
      return;
@@ -1234,6 +1245,10 @@ _cb_win_mouse_move(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child = NULL;
 
+   if (wn->on_options)
+       return;
+
+   /* TODO: boris: maybe not so strict */
    if (wn->group_input)
      return;
 
@@ -4982,24 +4997,29 @@ _cb_bell(void *data,
 static void
 _cb_options_done(void *data)
 {
-   Win *wn = data;
+   Term *orig_term = data;
+   Win *wn = orig_term->wn;
    Term_Container *tc = (Term_Container*) wn;
    Eina_List *l;
    Term *term;
 
-   if (!_win_is_focused(wn)) return;
+   wn->on_options = EINA_FALSE;
+
+   if (!_win_is_focused(wn))
+     goto end;
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
         DBG("is focused? tc:%p", term->container);
         if (_term_is_focused(term))
           {
-             elm_object_focus_set(term->termio, EINA_TRUE);
-             termio_event_feed_mouse_in(term->termio);
-             return;
+             goto end;
           }
      }
    DBG("focus tc:%p", tc);
    tc->focus(tc, tc);
+
+end:
+   term_unref(orig_term);
 }
 
 static void
@@ -5008,9 +5028,15 @@ _cb_options(void *data,
             void *_event EINA_UNUSED)
 {
    Term *term = data;
+   Term_Container *tc = term->container;
+
+   term->wn->on_options = EINA_TRUE;
+
+   term_ref(term);
+   tc->unfocus(tc, NULL);
 
    controls_show(term->wn->win, term->wn->base, term->bg, term->termio,
-                 _cb_options_done, term->wn);
+                 _cb_options_done, term);
 }
 
 void
