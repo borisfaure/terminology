@@ -11,12 +11,19 @@ struct _Keys_Handler
    unsigned char composing : 1;
 };
 
+void
+keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
+                        const int alt, const int shift, const int ctrl);
+Eina_Bool
+termpty_can_handle_key(const Termpty *ty,
+                       const Keys_Handler *khdl,
+                       const Evas_Event_Key_Down *ev);
 void keyin_compose_seq_reset(Keys_Handler *khdl);
 Eina_Bool key_is_modifier(const char *key);
 Eina_Bool
-keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
-             Eina_Bool meta, Eina_Bool hyper);
+keyin_handle_key_binding(Evas_Object *termio, const Evas_Event_Key_Down *ev,
+                         Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                         Eina_Bool win, Eina_Bool meta, Eina_Bool hyper);
 
 void keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev);
 

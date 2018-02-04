@@ -66,6 +66,9 @@ void term_down(Term *term);
 void term_left(Term *term);
 void term_right(Term *term);
 
+char *
+term_preedit_str_get(Term *term);
+
 void win_font_size_set(Win *wn, int new_size);
 void win_font_update(Term *term);
 

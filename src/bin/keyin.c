@@ -102,9 +102,9 @@ keyin_compose_seq_reset(Keys_Handler *khdl)
 
 #include "tty_keys.h"
 
-static void
-_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                   int alt, int shift, int ctrl)
+void
+keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
+                        const int alt, const int shift, const int ctrl)
 {
    if (!ev->key)
      return;
@@ -228,91 +228,23 @@ key_binding_lookup(const char *keyname,
 }
 
 Eina_Bool
-keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
-             Eina_Bool meta, Eina_Bool hyper)
+keyin_handle_key_binding(Evas_Object *termio, const Evas_Event_Key_Down *ev,
+                         Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                         Eina_Bool win, Eina_Bool meta, Eina_Bool hyper)
 {
 
    Key_Binding *kb;
    kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win, meta, hyper);
    if (kb)
      {
-        if (kb->cb(ty->obj))
+        if (kb->cb(termio))
           {
-             keyin_compose_seq_reset(khdl);
              return EINA_TRUE;
           }
      }
-
-   /* composing */
-   if (khdl->imf)
-     {
-        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
-        // and jed (alt+shift+5 for search/replace for example)
-        // Don't filter modifiers alt, is used by shells
-        if ((!alt) && (!ctrl))
-          {
-             Ecore_IMF_Event_Key_Down imf_ev;
-
-             ecore_imf_evas_event_key_down_wrap((Evas_Event_Key_Down*)ev, &imf_ev);
-             if (!khdl->composing)
-               {
-                  if (ecore_imf_context_filter_event
-                      (khdl->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-                    goto end;
-               }
-          }
-     }
-
-   // if term app asked for kbd lock - dont handle here
-   if (ty->termstate.kbd_lock) return EINA_TRUE;
-   // if app asked us to not do autorepeat - ignore press if is it is the same
-   // timestamp as last one
-   if ((ty->termstate.no_autorepeat) &&
-       (ev->timestamp == khdl->last_keyup)) return EINA_TRUE;
-   if (!khdl->composing)
-     {
-        Ecore_Compose_State state;
-        char *compres = NULL;
-
-        keyin_compose_seq_reset(khdl);
-        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(khdl->seq, &compres);
-        if (state == ECORE_COMPOSE_MIDDLE) khdl->composing = EINA_TRUE;
-        else khdl->composing = EINA_FALSE;
-        if (!khdl->composing) keyin_compose_seq_reset(khdl);
-        else goto end;
-     }
-   else
-     {
-        Ecore_Compose_State state;
-        char *compres = NULL;
-
-        if (key_is_modifier(ev->key)) goto end;
-        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(khdl->seq, &compres);
-        if (state == ECORE_COMPOSE_NONE) keyin_compose_seq_reset(khdl);
-        else if (state == ECORE_COMPOSE_DONE)
-          {
-             keyin_compose_seq_reset(khdl);
-             if (compres)
-               {
-                  termpty_write(ty, compres, strlen(compres));
-                  free(compres);
-                  compres = NULL;
-               }
-             goto end;
-          }
-        else goto end;
-     }
-
-
-   _handle_key_to_pty(ty, ev, alt, shift, ctrl);
-
-
-end:
    return EINA_FALSE;
 }
+
 
 Eina_Bool
 key_is_modifier(const char *key)
