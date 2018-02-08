@@ -1165,7 +1165,7 @@ _cb_win_key_up(void *data,
    keyin_handle_up(&wn->khdl, ev);
 }
 
-char *
+const char *
 term_preedit_str_get(Term *term)
 {
    Win *wn = term->wn;
