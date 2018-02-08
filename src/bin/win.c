@@ -1797,7 +1797,7 @@ _win_toggle_group(Win *wn)
      }
    else
      {
-        wn->group_input = EINA_TRUE;
+        wn->group_input = EINA_FALSE;
         DBG("GROUP INPUT is now FALSE");
         EINA_LIST_FOREACH(wn->terms, l, term)
           {
