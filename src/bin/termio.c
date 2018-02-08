@@ -4726,7 +4726,7 @@ _smart_apply(Evas_Object *obj)
    Eina_List *l, *ln;
    Termblock *blk;
    int x, y, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
-   char *preedit_str;
+   const char *preedit_str;
    ssize_t w;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
