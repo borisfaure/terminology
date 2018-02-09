@@ -467,6 +467,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
 
    elm_object_focus_set(term->termio, EINA_TRUE);
    termio_event_feed_mouse_in(term->termio);
+   termio_focus_in(term->termio);
 
    title = termio_title_get(term->termio);
    if (title)
@@ -1510,7 +1511,6 @@ _cb_win_mouse_down(void *data,
        return;
 
    /* TODO: boris: maybe not so strict */
-   DBG("mouse down");
    if (wn->group_input)
      return;
 
@@ -1795,6 +1795,7 @@ _win_toggle_group(Win *wn)
           {
              edje_object_signal_emit(term->bg, "focus,in", "terminology");
              termio_event_feed_mouse_in(term->termio);
+             termio_focus_in(term->termio);
           }
         wn->group_input = EINA_TRUE;
         DBG("GROUP INPUT is now TRUE");
@@ -1806,6 +1807,7 @@ _win_toggle_group(Win *wn)
         EINA_LIST_FOREACH(wn->terms, l, term)
           {
              edje_object_signal_emit(term->bg, "focus,out", "terminology");
+             termio_focus_out(term->termio);
           }
         term = wn->child->term_first(wn->child);
         wn->child->focus(wn->child, &wn->tc);
