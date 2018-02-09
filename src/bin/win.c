@@ -1186,6 +1186,20 @@ term_preedit_str_get(Term *term)
    return NULL;
 }
 
+Ecore_IMF_Context *
+term_imf_context_get(Term *term)
+{
+   Win *wn = term->wn;
+   Term_Container *tc = (Term_Container*) wn;
+   Term *focused;
+
+   tc = (Term_Container*) wn;
+   focused = tc->focused_term_get(tc);
+   if (term == focused)
+     return wn->khdl.imf;
+   return NULL;
+}
+
 static void
 _imf_event_commit_cb(void *data,
                      Ecore_IMF_Context *_ctx EINA_UNUSED,

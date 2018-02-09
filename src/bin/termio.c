@@ -3441,9 +3441,6 @@ termio_imf_cursor_set(Evas_Object *obj, Ecore_IMF_Context *imf)
    evas_object_geometry_get(sd->cursor.obj, &cx, &cy, &cw, &ch);
    ecore_imf_context_cursor_location_set(imf, cx, cy, cw, ch);
    ecore_imf_context_cursor_position_set(imf, (sd->cursor.y * sd->grid.w) + sd->cursor.x);
-   /*
-    ecore_imf_context_cursor_position_set(sd->imf, 0); // how to get it?
-    */
 }
 
 void
@@ -5172,9 +5169,12 @@ _cursor_cb_move(void *data,
                 void *_event EINA_UNUSED)
 {
    Termio *sd = evas_object_smart_data_get(data);
+   Ecore_IMF_Context *imf;
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   /* TODO: boris */
-   //_imf_cursor_set(sd);
+
+   imf = term_imf_context_get(sd->term);
+   if (imf)
+     termio_imf_cursor_set(sd->self, imf);
 }
 
 
