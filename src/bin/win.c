@@ -1521,11 +1521,7 @@ _cb_win_mouse_down(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child;
 
-   if (wn->on_options)
-       return;
-
-   /* TODO: boris: maybe not so strict */
-   if (wn->group_input)
+   if (wn->on_options || wn->group_input)
      return;
 
    term_mouse = tc->find_term_at_coords(tc, ev->canvas.x, ev->canvas.y);
@@ -1555,11 +1551,7 @@ _cb_win_mouse_move(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child = NULL;
 
-   if (wn->on_options)
-       return;
-
-   /* TODO: boris: maybe not so strict */
-   if (wn->group_input)
+   if (wn->on_options || wn->group_input)
      return;
 
    if (!wn->config->mouse_over_focus)
