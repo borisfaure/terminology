@@ -4250,6 +4250,7 @@ _set_title_ok_cb(void *data,
 
     termio_title_set(term->termio, title);
     evas_object_del(popup);
+    elm_object_focus_set(term->termio, EINA_TRUE);
     term_unref(term);
 }
 
@@ -4262,6 +4263,7 @@ _set_title_cancel_cb(void *data,
     Term *term = evas_object_data_get(popup, "term");
 
     evas_object_del(data);
+    elm_object_focus_set(term->termio, EINA_TRUE);
     term_unref(term);
 }
 
