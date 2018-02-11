@@ -1,26 +1,34 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <assert.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"
 #include "options_behavior.h"
 #include "main.h"
 
-static Evas_Object *op_w, *op_h, *op_wh_current;
+typedef struct _Behavior_Ctx {
+     Evas_Object *op_w;
+     Evas_Object *op_h;
+     Evas_Object *op_wh_current;
+     Evas_Object *term;
+     Config *config;
+} Behavior_Ctx;
+
 
 #define CB(_cfg_name, _inv)                                     \
 static void                                                     \
 _cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
                             void *_event EINA_UNUSED)           \
 {                                                               \
-   Evas_Object *term = data;                                    \
-   Config *config = termio_config_get(term);                    \
+   Behavior_Ctx *ctx = data;                                    \
+   Config *config = ctx->config;                                \
    if (_inv)                                                    \
      config->_cfg_name = !elm_check_state_get(obj);             \
    else                                                         \
      config->_cfg_name = elm_check_state_get(obj);              \
-   termio_config_update(term);                                  \
+   termio_config_update(ctx->term);                             \
    windows_update();                                            \
    config_save(config, NULL);                                   \
 }
@@ -74,11 +82,11 @@ _cb_op_behavior_sback_chg(void *data,
                           Evas_Object *obj,
                           void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    config->scrollback = (double) sback_double_to_expo_int(elm_slider_value_get(obj));
-   termio_config_update(term);
+   termio_config_update(ctx->term);
    config_save(config, NULL);
 }
 
@@ -87,11 +95,11 @@ _cb_op_behavior_tab_zoom_slider_chg(void *data,
                                     Evas_Object *obj,
                                     void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    config->tab_zoom = (double)(int)round(elm_slider_value_get(obj) * 10.0) / 10.0;
-   termio_config_update(term);
+   termio_config_update(ctx->term);
    config_save(config, NULL);
 }
 
@@ -100,15 +108,16 @@ _cb_op_behavior_custom_geometry_current_set(void *data,
                                 Evas_Object *obj EINA_UNUSED,
                                 void *_event EINA_UNUSED)
 {
-    Evas_Object *term = data;
-    Config *config = termio_config_get(term);
-    if (config->custom_geometry)
-      {
-         termio_size_get(term, &config->cg_width, &config->cg_height);
-         elm_spinner_value_set(op_w, config->cg_width);
-         elm_spinner_value_set(op_h, config->cg_height);
-      }
-    config_save(config, NULL);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   if (config->custom_geometry)
+     {
+        termio_size_get(ctx->term, &config->cg_width, &config->cg_height);
+        elm_spinner_value_set(ctx->op_w, config->cg_width);
+        elm_spinner_value_set(ctx->op_h, config->cg_height);
+     }
+   config_save(config, NULL);
 }
 
 static void
@@ -116,20 +125,20 @@ _cb_op_behavior_custom_geometry(void *data,
                                 Evas_Object *obj,
                                 void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    config->custom_geometry = elm_check_state_get(obj);
    if (config->custom_geometry)
      {
-        config->cg_width = (int) elm_spinner_value_get(op_w);
-        config->cg_height = (int) elm_spinner_value_get(op_h);
+        config->cg_width = (int) elm_spinner_value_get(ctx->op_w);
+        config->cg_height = (int) elm_spinner_value_get(ctx->op_h);
      }
    config_save(config, NULL);
 
-   elm_object_disabled_set(op_w, !config->custom_geometry);
-   elm_object_disabled_set(op_h, !config->custom_geometry);
-   elm_object_disabled_set(op_wh_current, !config->custom_geometry);
+   elm_object_disabled_set(ctx->op_w, !config->custom_geometry);
+   elm_object_disabled_set(ctx->op_h, !config->custom_geometry);
+   elm_object_disabled_set(ctx->op_wh_current, !config->custom_geometry);
 }
 
 static void
@@ -137,8 +146,8 @@ _cb_op_behavior_cg_width(void *data,
                          Evas_Object *obj,
                          void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    if (config->custom_geometry)
      {
@@ -152,8 +161,8 @@ _cb_op_behavior_cg_height(void *data,
                           Evas_Object *obj,
                           void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    if (config->custom_geometry)
      {
@@ -162,28 +171,49 @@ _cb_op_behavior_cg_height(void *data,
      }
 }
 
+static void
+_parent_del_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event_info EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+
+   free(ctx);
+}
+
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o, *bx, *sc, *fr;
+   Evas_Object *o, *bx, *sc, *frame;
    int w, h;
    const char *tooltip;
+   Behavior_Ctx *ctx;
 
    termio_size_get(term, &w, &h);
 
-   fr = o = elm_frame_add(opbox);
+   ctx = calloc(1, sizeof(*ctx));
+   assert(ctx);
+
+   ctx->config = config;
+   ctx->term = term;
+
+   frame = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Behavior"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, ctx);
+
    sc = o = elm_scroller_add(opbox);
    elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(fr, o);
+   elm_object_content_set(frame, o);
    evas_object_show(o);
 
    bx = o = elm_box_add(opbox);
@@ -201,7 +231,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);                                               \
    evas_object_show(o);                                                   \
    evas_object_smart_callback_add(o, "changed",                           \
-                                  _cb_op_behavior_##_cfg_name, term)
+                                  _cb_op_behavior_##_cfg_name, ctx)
 
    CX(_("Scroll to bottom on new content"), jump_on_change, 0);
    CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
@@ -235,9 +265,9 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_custom_geometry, term);
+                                  _cb_op_behavior_custom_geometry, ctx);
 
-   op_wh_current = o = elm_button_add(bx);
+   ctx->op_wh_current = o = elm_button_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, _("Set Current:"));
@@ -245,7 +275,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    elm_object_disabled_set(o, !config->custom_geometry);
    evas_object_smart_callback_add(o, "clicked",
-                                  _cb_op_behavior_custom_geometry_current_set, term);
+                                  _cb_op_behavior_custom_geometry_current_set,
+                                  ctx);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -254,18 +285,20 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   op_w = o = elm_spinner_add(bx);
+   ctx->op_w = o = elm_spinner_add(bx);
    elm_spinner_editable_set(o, EINA_TRUE);
    elm_spinner_min_max_set(o, 2.0, 350.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   if (config->custom_geometry) elm_spinner_value_set(o, config->cg_width);
-   else elm_spinner_value_set(o, w);
+   if (config->custom_geometry)
+     elm_spinner_value_set(o, config->cg_width);
+   else
+     elm_spinner_value_set(o, w);
    elm_object_disabled_set(o, !config->custom_geometry);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_cg_width, term);
+                                  _cb_op_behavior_cg_width, ctx);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -274,18 +307,20 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   op_h = o = elm_spinner_add(bx);
+   ctx->op_h = o = elm_spinner_add(bx);
    elm_spinner_editable_set(o, EINA_TRUE);
    elm_spinner_min_max_set(o, 1.0, 150.0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   if (config->custom_geometry) elm_spinner_value_set(o, config->cg_height);
-   else elm_spinner_value_set(o, h);
+   if (config->custom_geometry)
+     elm_spinner_value_set(o, config->cg_height);
+   else
+     elm_spinner_value_set(o, h);
    elm_object_disabled_set(o, !config->custom_geometry);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_behavior_cg_height, term);
+                                  _cb_op_behavior_cg_height, ctx);
 
    o = elm_separator_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -326,7 +361,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_op_behavior_sback_chg, term);
+                                  _cb_op_behavior_sback_chg, ctx);
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -352,7 +387,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_op_behavior_tab_zoom_slider_chg, term);
+                                  _cb_op_behavior_tab_zoom_slider_chg, ctx);
 
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);

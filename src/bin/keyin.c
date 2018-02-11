@@ -102,9 +102,9 @@ keyin_compose_seq_reset(Keys_Handler *khdl)
 
 #include "tty_keys.h"
 
-static void
-_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                   int alt, int shift, int ctrl)
+void
+keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
+                        const int alt, const int shift, const int ctrl)
 {
    if (!ev->key)
      return;
@@ -228,91 +228,23 @@ key_binding_lookup(const char *keyname,
 }
 
 Eina_Bool
-keyin_handle(Keys_Handler *khdl, Termpty *ty, const Evas_Event_Key_Down *ev,
-             Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift, Eina_Bool win,
-             Eina_Bool meta, Eina_Bool hyper)
+keyin_handle_key_binding(Evas_Object *termio, const Evas_Event_Key_Down *ev,
+                         Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,
+                         Eina_Bool win, Eina_Bool meta, Eina_Bool hyper)
 {
 
    Key_Binding *kb;
    kb = key_binding_lookup(ev->keyname, ctrl, alt, shift, win, meta, hyper);
    if (kb)
      {
-        if (kb->cb(ty->obj))
+        if (kb->cb(termio))
           {
-             keyin_compose_seq_reset(khdl);
              return EINA_TRUE;
           }
      }
-
-   /* composing */
-   if (khdl->imf)
-     {
-        // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
-        // and jed (alt+shift+5 for search/replace for example)
-        // Don't filter modifiers alt, is used by shells
-        if ((!alt) && (!ctrl))
-          {
-             Ecore_IMF_Event_Key_Down imf_ev;
-
-             ecore_imf_evas_event_key_down_wrap((Evas_Event_Key_Down*)ev, &imf_ev);
-             if (!khdl->composing)
-               {
-                  if (ecore_imf_context_filter_event
-                      (khdl->imf, ECORE_IMF_EVENT_KEY_DOWN, (Ecore_IMF_Event *)&imf_ev))
-                    goto end;
-               }
-          }
-     }
-
-   // if term app asked for kbd lock - dont handle here
-   if (ty->termstate.kbd_lock) return EINA_TRUE;
-   // if app asked us to not do autorepeat - ignore press if is it is the same
-   // timestamp as last one
-   if ((ty->termstate.no_autorepeat) &&
-       (ev->timestamp == khdl->last_keyup)) return EINA_TRUE;
-   if (!khdl->composing)
-     {
-        Ecore_Compose_State state;
-        char *compres = NULL;
-
-        keyin_compose_seq_reset(khdl);
-        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(khdl->seq, &compres);
-        if (state == ECORE_COMPOSE_MIDDLE) khdl->composing = EINA_TRUE;
-        else khdl->composing = EINA_FALSE;
-        if (!khdl->composing) keyin_compose_seq_reset(khdl);
-        else goto end;
-     }
-   else
-     {
-        Ecore_Compose_State state;
-        char *compres = NULL;
-
-        if (key_is_modifier(ev->key)) goto end;
-        khdl->seq = eina_list_append(khdl->seq, eina_stringshare_add(ev->key));
-        state = ecore_compose_get(khdl->seq, &compres);
-        if (state == ECORE_COMPOSE_NONE) keyin_compose_seq_reset(khdl);
-        else if (state == ECORE_COMPOSE_DONE)
-          {
-             keyin_compose_seq_reset(khdl);
-             if (compres)
-               {
-                  termpty_write(ty, compres, strlen(compres));
-                  free(compres);
-                  compres = NULL;
-               }
-             goto end;
-          }
-        else goto end;
-     }
-
-
-   _handle_key_to_pty(ty, ev, alt, shift, ctrl);
-
-
-end:
    return EINA_FALSE;
 }
+
 
 Eina_Bool
 key_is_modifier(const char *key)
@@ -343,18 +275,62 @@ keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev)
      {
         Ecore_IMF_Event_Key_Up imf_ev;
         ecore_imf_evas_event_key_up_wrap(ev, &imf_ev);
-        if (ecore_imf_context_filter_event
-            (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev))
-          return;
+        ecore_imf_context_filter_event
+            (khdl->imf, ECORE_IMF_EVENT_KEY_UP, (Ecore_IMF_Event *)&imf_ev);
      }
 }
 
 /* }}} */
 /* {{{ Callbacks */
+#define RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED \
+   Win *wn;                                          \
+   Term *term = termio_term_get(termio_obj);         \
+   if (!term)                                        \
+     return EINA_FALSE;                              \
+   wn = term_win_get(term);                          \
+   if (!wn)                                          \
+     return EINA_FALSE;                              \
+   if (win_is_group_action_handled(wn))              \
+     return EINA_FALSE;                              \
+
+#define RETURN_FALSE_ON_GROUP_INPUT                  \
+   Win *wn;                                          \
+   Term *term = termio_term_get(termio_obj);         \
+   if (!term)                                        \
+     return EINA_FALSE;                              \
+   wn = term_win_get(term);                          \
+   if (!wn)                                          \
+     return EINA_FALSE;                              \
+   if (win_is_group_input(wn))                       \
+     return EINA_FALSE;                              \
+
+static Eina_Bool
+cb_all_group(Evas_Object *termio_obj)
+{
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
+   win_toggle_all_group(wn);
+
+   ERR("ALL GROUP");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+cb_visible_group(Evas_Object *termio_obj)
+{
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
+   win_toggle_visible_group(wn);
+
+   ERR("VISIBLE GROUP");
+   return EINA_TRUE;
+}
 
 static Eina_Bool
 cb_term_prev(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    evas_object_smart_callback_call(termio_obj, "prev", NULL);
    return EINA_TRUE;
 }
@@ -362,6 +338,8 @@ cb_term_prev(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_next(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    evas_object_smart_callback_call(termio_obj, "next", NULL);
    return EINA_TRUE;
 }
@@ -369,9 +347,8 @@ cb_term_next(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_up(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_up(term);
    return EINA_TRUE;
 }
@@ -379,9 +356,8 @@ cb_term_up(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_down(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_down(term);
    return EINA_TRUE;
 }
@@ -389,9 +365,8 @@ cb_term_down(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_left(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_left(term);
    return EINA_TRUE;
 }
@@ -399,9 +374,8 @@ cb_term_left(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_right(Evas_Object *termio_obj)
 {
-   Term *term = termio_term_get(termio_obj);
-   if (!term)
-     return EINA_FALSE;
+   RETURN_FALSE_ON_GROUP_INPUT;
+
    term_right(term);
    return EINA_TRUE;
 }
@@ -409,6 +383,8 @@ cb_term_right(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_new(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+
    char path[PATH_MAX], cwd[PATH_MAX], *cmd;
    const char *template = "%s -d %s";
    int length;
@@ -450,10 +426,8 @@ cb_tab_set_title(Evas_Object *termio_obj)
 static Eina_Bool                               \
 cb_tab_##N(Evas_Object *termio_obj)            \
 {                                              \
+   RETURN_FALSE_ON_GROUP_INPUT;                \
    int n = (N == 0) ? 9 : N - 1;               \
-   Term *term = termio_term_get(termio_obj);   \
-   if (!term)                                  \
-     return EINA_FALSE;                        \
    return term_tab_go(term, n);                \
 }
 
@@ -472,6 +446,7 @@ CB_TAB(9)
 static Eina_Bool
 cb_cmd_box(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
    evas_object_smart_callback_call(termio_obj, "cmdbox", NULL);
    return EINA_TRUE;
 }
@@ -479,6 +454,7 @@ cb_cmd_box(Evas_Object *termio_obj)
 static Eina_Bool
 cb_split_h(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "split,h", NULL);
    return EINA_TRUE;
 }
@@ -486,6 +462,7 @@ cb_split_h(Evas_Object *termio_obj)
 static Eina_Bool
 cb_split_v(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "split,v", NULL);
    return EINA_TRUE;
 }
@@ -493,6 +470,7 @@ cb_split_v(Evas_Object *termio_obj)
 static Eina_Bool
 cb_tab_new(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "new", NULL);
    return EINA_TRUE;
 }
@@ -500,6 +478,7 @@ cb_tab_new(Evas_Object *termio_obj)
 static Eina_Bool
 cb_close(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "close", NULL);
    return EINA_TRUE;
 }
@@ -507,6 +486,7 @@ cb_close(Evas_Object *termio_obj)
 static Eina_Bool
 cb_tab_select(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_INPUT;
    evas_object_smart_callback_call(termio_obj, "select", NULL);
    return EINA_TRUE;
 }
@@ -557,6 +537,7 @@ cb_miniview(Evas_Object *termio_obj)
 static Eina_Bool
 cb_win_fullscreen(Evas_Object *termio_obj)
 {
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
    Evas_Object *win = termio_win_get(termio_obj);
    Eina_Bool fullscreen;
 
@@ -707,6 +688,9 @@ static Shortcut_Action _actions[] =
      {"tab_9", gettext_noop("Switch to terminal tab 9"), cb_tab_9},
      {"tab_10", gettext_noop("Switch to terminal tab 10"), cb_tab_0},
      {"tab_title", gettext_noop("Change title"), cb_tab_set_title},
+     {"visible_group", gettext_noop("Toggle whether input goes to all visible terminals"), cb_visible_group},
+     {"all_group", gettext_noop("Toggle whether input goes to all visible terminals"), cb_all_group},
+
 
      {"group", gettext_noop("Font size"), NULL},
      {"increase_font_size", gettext_noop("Font size up 1"), cb_increase_font_size},

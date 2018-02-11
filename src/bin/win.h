@@ -47,6 +47,11 @@ Config *win_config_get(const Win *wn);
 void win_term_swallow(Win *wn, Term *term);
 void win_add_split(Win *wn, Term *term);
 void win_sizing_handle(Win *wn);
+void win_toggle_visible_group(Win *wn);
+void win_toggle_all_group(Win *wn);
+Eina_Bool win_is_group_action_handled(Win *wn);
+Eina_Bool win_is_group_input(Win *wn);
+
 
 void term_ref(Term *term);
 void term_unref(Term *term);
@@ -60,6 +65,13 @@ void term_up(Term *term);
 void term_down(Term *term);
 void term_left(Term *term);
 void term_right(Term *term);
+
+const char *
+term_preedit_str_get(Term *term);
+Ecore_IMF_Context *
+term_imf_context_get(Term *term);
+
+Eina_Bool term_is_visible(Term *term);
 
 void win_font_size_set(Win *wn, int new_size);
 void win_font_update(Term *term);

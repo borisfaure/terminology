@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <assert.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"
@@ -12,37 +13,47 @@
 #define FONT_MAX 45
 #define FONT_STEP (1.0 / (FONT_MAX - FONT_MIN))
 
-static Evas_Object *op_fontslider, *op_fontlist, *op_fsml, *op_fbig;
 
-typedef struct _Font Font;
+typedef struct _Font_Ctx
+{
+   Evas_Object *op_fontslider;
+   Evas_Object *op_fontlist;
+   Evas_Object *op_fsml;
+   Evas_Object *op_fbig;
+   Evas_Object *term;
+   Eina_List *fonts;
+   Eina_Hash *fonthash;
+   Config *config;
+   Evas_Coord tsize_w;
+   Evas_Coord tsize_h;
+   int expecting_resize;
+} Font_Ctx;
 
-struct _Font
+typedef struct _Font
 {
    Elm_Object_Item *item;
    const char *pretty_name;
    const char *full_name;
-   Evas_Object *term;
+   Font_Ctx *ctx;
    unsigned char bitmap : 1;
-};
+} Font;
 
-static Eina_List *fonts = NULL;
-static Eina_Hash *fonthash = NULL;
-static Evas_Coord tsize_w = 0, tsize_h = 0;
-static int expecting_resize = 0;
 
 static void
-_update_sizing(Evas_Object *term)
+_update_sizing(Font_Ctx *ctx)
 {
    Evas_Coord mw = 1, mh = 1, w, h;
 
-   termio_config_update(term);
-   evas_object_size_hint_min_get(term, &mw, &mh);
-   if (mw < 1) mw = 1;
-   if (mh < 1) mh = 1;
-   w = tsize_w / mw;
-   h = tsize_h / mh;
-   evas_object_size_hint_request_set(term, w * mw, h * mh);
-   expecting_resize = 1;
+   termio_config_update(ctx->term);
+   evas_object_size_hint_min_get(ctx->term, &mw, &mh);
+   if (mw < 1)
+     mw = 1;
+   if (mh < 1)
+     mh = 1;
+   w = ctx->tsize_w / mw;
+   h = ctx->tsize_h / mh;
+   evas_object_size_hint_request_set(ctx->term, w * mw, h * mh);
+   ctx->expecting_resize = 1;
 }
 
 static int
@@ -133,18 +144,19 @@ _cb_op_font_sel(void *data,
                 void *_event EINA_UNUSED)
 {
    Font *f = data;
-   Config *config = termio_config_get(f->term);
-   Term *term = termio_term_get(f->term);
+   Font_Ctx *ctx = f->ctx;
+   Config *config = ctx->config;
+   Term *term = termio_term_get(ctx->term);
 
    if ((config->font.name) && (!strcmp(f->full_name, config->font.name)))
      return;
    if (config->font.name) eina_stringshare_del(config->font.name);
    config->font.name = eina_stringshare_add(f->full_name);
    config->font.bitmap = f->bitmap;
-   _update_sizing(f->term);
-   elm_object_disabled_set(op_fsml, f->bitmap);
-   elm_object_disabled_set(op_fontslider, f->bitmap);
-   elm_object_disabled_set(op_fbig, f->bitmap);
+   _update_sizing(ctx);
+   elm_object_disabled_set(ctx->op_fsml, f->bitmap);
+   elm_object_disabled_set(ctx->op_fontslider, f->bitmap);
+   elm_object_disabled_set(ctx->op_fbig, f->bitmap);
    config_save(config, NULL);
    win_font_update(term);
 }
@@ -154,15 +166,16 @@ _cb_op_fontsize_sel(void *data,
                     Evas_Object *obj,
                     void *_event EINA_UNUSED)
 {
-   Evas_Object *termio_obj = data;
-   Config *config = termio_config_get(termio_obj);
-   Term *term = termio_term_get(termio_obj);
+   Font_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Term *term = termio_term_get(ctx->term);
    int size = elm_slider_value_get(obj) + 0.5;
 
-   if (config->font.size == size) return;
+   if (config->font.size == size)
+     return;
    config->font.size = size;
-   _update_sizing(termio_obj);
-   elm_genlist_realized_items_update(op_fontlist);
+   _update_sizing(ctx);
+   elm_genlist_realized_items_update(ctx->op_fontlist);
    config_save(config, NULL);
    win_font_update(term);
 }
@@ -181,7 +194,7 @@ _cb_op_font_preview_del(void *_data EINA_UNUSED,
 {
    Evas_Object *o;
    Ecore_Timer *timer = evas_object_data_get(obj, "delay");
-        
+
    if (timer)
      {
         ecore_timer_del(timer);
@@ -203,22 +216,27 @@ _cb_op_font_preview_delayed_eval(void *data)
    Evas_Object *o;
    Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
    Config *config;
-   
-   if (!evas_object_visible_get(obj)) goto done;
-   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) goto done;
+
+   if (!evas_object_visible_get(obj))
+     goto done;
+   if (edje_object_part_swallow_get(obj, "terminology.text.preview"))
+     goto done;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   if ((ow < 2) || (oh < 2)) goto done;
+   if ((ow < 2) || (oh < 2))
+     goto done;
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
    f = evas_object_data_get(obj, "font");
-   if (!f) goto done;
-   config = termio_config_get(f->term);
-   if (!config) goto done;
+   if (!f)
+     goto done;
+   config = f->ctx->config;
+   if (!config)
+     goto done;
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
         char buf[4096];
         int r, g, b, a;
         Evas *evas = evas_object_evas_get(obj);
-        Evas_Object *textgrid = termio_textgrid_get(f->term);
+        Evas_Object *textgrid = termio_textgrid_get(f->ctx->term);
 
         evas_object_textgrid_palette_get(textgrid, EVAS_TEXTGRID_PALETTE_STANDARD,
                                          0, &r, &g, &b, &a);
@@ -252,11 +270,14 @@ _cb_op_font_preview_eval(void *data,
 {
    Font *f = data;
    Evas_Coord ox, oy, ow, oh, vx, vy, vw, vh;
-   
-   if (!evas_object_visible_get(obj)) return;
-   if (edje_object_part_swallow_get(obj, "terminology.text.preview")) return;
+
+   if (!evas_object_visible_get(obj))
+     return;
+   if (edje_object_part_swallow_get(obj, "terminology.text.preview"))
+     return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   if ((ow < 2) || (oh < 2)) return;
+   if ((ow < 2) || (oh < 2))
+     return;
    evas_output_viewport_get(evas_object_evas_get(obj), &vx, &vy, &vw, &vh);
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
@@ -264,8 +285,10 @@ _cb_op_font_preview_eval(void *data,
         double rnd = 0.2;
 
         timer = evas_object_data_get(obj, "delay");
-        if (timer) return;
-        else evas_object_data_set(obj, "font", f);
+        if (timer)
+          return;
+        else
+          evas_object_data_set(obj, "font", f);
         rnd += (double)(rand() % 100) / 500.0;
         timer = ecore_timer_add(rnd, _cb_op_font_preview_delayed_eval, obj);
         evas_object_data_set(obj, "delay", timer);
@@ -280,8 +303,8 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *o;
-        Config *config = termio_config_get(f->term);
-        
+        Config *config = f->ctx->config;
+
         o = edje_object_add(evas_object_evas_get(obj));
         theme_apply(o, config, "terminology/fontpreview");
         theme_auto_reload_enable(o);
@@ -324,13 +347,14 @@ _cb_term_resize(void *data,
                 Evas_Object *_obj EINA_UNUSED,
                 void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   if (expecting_resize)
+   Font_Ctx *ctx = data;
+
+   if (ctx->expecting_resize)
      {
-        expecting_resize = 0;
+        ctx->expecting_resize = 0;
         return;
      }
-   evas_object_geometry_get(term, NULL, NULL, &tsize_w, &tsize_h);
+   evas_object_geometry_get(ctx->term, NULL, NULL, &ctx->tsize_w, &ctx->tsize_h);
 }
 
 static void
@@ -339,32 +363,29 @@ _cb_font_del(void *data,
              Evas_Object *_obj EINA_UNUSED,
              void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   evas_object_event_callback_del_full(term, EVAS_CALLBACK_RESIZE, 
-                                       _cb_term_resize, term);
+   Font_Ctx *ctx = data;
+   evas_object_event_callback_del_full(ctx->term, EVAS_CALLBACK_RESIZE,
+                                       _cb_term_resize, ctx);
 }
 
-void
-options_font_clear(void)
+static void
+_parent_del_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event_info EINA_UNUSED)
 {
+   Font_Ctx *ctx = data;
    Font *f;
 
-   op_fontslider = NULL;
-   op_fontlist = NULL;
-   op_fsml = NULL;
-   op_fbig = NULL;
-   
-   EINA_LIST_FREE(fonts, f)
+   EINA_LIST_FREE(ctx->fonts, f)
      {
         eina_stringshare_del(f->full_name);
         eina_stringshare_del(f->pretty_name);
         free(f);
      }
-   if (fonthash)
-     {
-        eina_hash_free(fonthash);
-        fonthash = NULL;
-     }
+   eina_hash_free(ctx->fonthash);
+
+   free(ctx);
 }
 
 static void
@@ -372,11 +393,11 @@ _cb_font_bolditalic(void *data,
                     Evas_Object *obj,
                     void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Font_Ctx *ctx = data;
+   Config *config = ctx->config;
 
    config->font.bolditalic = elm_check_state_get(obj);
-   termio_config_update(term);
+   termio_config_update(ctx->term);
    config_save(config, NULL);
 }
 
@@ -390,33 +411,41 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    Elm_Object_Item *it, *sel_it = NULL, *sel_it2 = NULL, *grp_it = NULL;
    Elm_Genlist_Item_Class *it_class, *it_group;
    Config *config = termio_config_get(term);
+   Font_Ctx *ctx;
 
-   options_font_clear();
-   
+   ctx = calloc(1, sizeof(*ctx));
+   assert(ctx);
+
+   ctx->config = config;
+   ctx->term = term;
+
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Font"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
-   
+
+   evas_object_event_callback_add(fr, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, ctx);
+
    bx0 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, o);
    evas_object_show(o);
-   
+
    bx = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
    elm_box_horizontal_set(o, EINA_TRUE);
-   
-   op_fsml = o = elm_label_add(opbox);
+
+   ctx->op_fsml = o = elm_label_add(opbox);
    elm_object_text_set(o, "<font_size=6>A</font_size>");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
-   op_fontslider = o = elm_slider_add(opbox);
+   ctx->op_fontslider = o = elm_slider_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(o, 40);
@@ -429,28 +458,28 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_slider_value_set(o, config->font.size);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
-   
-   evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_op_fontsize_sel, term);
 
-   op_fbig = o = elm_label_add(opbox);
+   evas_object_smart_callback_add(o, "delay,changed",
+                                  _cb_op_fontsize_sel, ctx);
+
+   ctx->op_fbig = o = elm_label_add(opbox);
    elm_object_text_set(o, "<font_size=24>A</font_size>");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
-   
+
    elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
-   
+
    it_class = elm_genlist_item_class_new();
    it_class->item_style = "end_icon";
    it_class->func.text_get = _cb_op_font_text_get;
    it_class->func.content_get = _cb_op_font_content_get;
-   
+
    it_group = elm_genlist_item_class_new();
    it_group->item_style = "group_index";
    it_group->func.text_get = _cb_op_font_group_text_get;
 
-   op_fontlist = o = elm_genlist_add(opbox);
+   ctx->op_fontlist = o = elm_genlist_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_genlist_mode_set(o, ELM_LIST_COMPRESS);
@@ -476,9 +505,9 @@ options_font(Evas_Object *opbox, Evas_Object *term)
         s = strchr(file, '.');
         if (s != NULL) *s = '\0';
         f->pretty_name = eina_stringshare_add(file);
-        f->term = term;
+        f->ctx = ctx;
         f->bitmap = EINA_TRUE;
-        fonts = eina_list_append(fonts, f);
+        ctx->fonts = eina_list_append(ctx->fonts, f);
 
         f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                      ELM_GENLIST_ITEM_NONE,
@@ -488,9 +517,9 @@ options_font(Evas_Object *opbox, Evas_Object *term)
              (!strcmp(config->font.name, file))))
           {
              sel_it = it;
-             elm_object_disabled_set(op_fsml, EINA_TRUE);
-             elm_object_disabled_set(op_fontslider, EINA_TRUE);
-             elm_object_disabled_set(op_fbig, EINA_TRUE);
+             elm_object_disabled_set(ctx->op_fsml, EINA_TRUE);
+             elm_object_disabled_set(ctx->op_fontslider, EINA_TRUE);
+             elm_object_disabled_set(ctx->op_fbig, EINA_TRUE);
           }
         free(file);
      }
@@ -499,8 +528,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    fontlist = evas_font_available_list(evas_object_evas_get(opbox));
    fontlist = eina_list_sort(fontlist, eina_list_count(fontlist),
                              _cb_op_font_sort);
-   fonthash = eina_hash_string_superfast_new(NULL);
-   if (fonts)
+   ctx->fonthash = eina_hash_string_superfast_new(NULL);
+   if (ctx->fonts)
      {
         grp_it = elm_genlist_item_append(o, it_group, _("Standard"), NULL,
                                          ELM_GENLIST_ITEM_GROUP,
@@ -510,19 +539,20 @@ options_font(Evas_Object *opbox, Evas_Object *term)
      }
    EINA_LIST_FOREACH(fontlist, l, fname)
      {
-        if (!eina_hash_find(fonthash, fname))
+        if (!eina_hash_find(ctx->fonthash, fname))
           {
              f = calloc(1, sizeof(Font));
-             if (!f) break;
+             if (!f)
+               break;
              if (_parse_font_name(fname, &f->full_name, &f->pretty_name) <0)
                {
                   free(f);
                   continue;
                }
-             f->term = term;
+             f->ctx = ctx;
              f->bitmap = EINA_FALSE;
-             eina_hash_add(fonthash, eina_stringshare_add(fname), f);
-             fonts = eina_list_append(fonts, f);
+             eina_hash_add(ctx->fonthash, eina_stringshare_add(fname), f);
+             ctx->fonts = eina_list_append(ctx->fonts, f);
              f->item = it = elm_genlist_item_append(o, it_class, f, grp_it,
                                           ELM_GENLIST_ITEM_NONE,
                                           _cb_op_font_sel, f);
@@ -568,12 +598,12 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx0, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_font_bolditalic, term);
+                                  _cb_font_bolditalic, ctx);
 
-   expecting_resize = 0;
-   evas_object_geometry_get(term, NULL, NULL, &tsize_w, &tsize_h);
+   ctx->expecting_resize = 0;
+   evas_object_geometry_get(term, NULL, NULL, &ctx->tsize_w, &ctx->tsize_h);
    evas_object_event_callback_add(term, EVAS_CALLBACK_RESIZE,
-                                  _cb_term_resize, term);
+                                  _cb_term_resize, ctx);
    evas_object_event_callback_add(opbox, EVAS_CALLBACK_DEL,
-                                  _cb_font_del, term);
+                                  _cb_font_del, ctx);
 }

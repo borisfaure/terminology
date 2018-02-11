@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 17
+#define CONF_VER 18
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -343,6 +343,7 @@ _add_default_keys(Config *config)
    ADD_KB("Down", 0, 1, 0, 0, "term_down");
    ADD_KB("Left", 0, 1, 0, 0, "term_left");
    ADD_KB("Right", 0, 1, 0, 0, "term_right");
+   ADD_KB("g", 0, 1, 0, 0, "visible_group");
 
    /* Ctrl-Shift- */
    ADD_KB("Prior", 1, 0, 1, 0, "split_h");
@@ -377,6 +378,9 @@ _add_default_keys(Config *config)
    ADD_KB("Right", 0, 0, 1, 0, "term_next");
    ADD_KB("Home", 0, 0, 1, 0, "top_backlog");
    ADD_KB("End", 0, 0, 1, 0, "reset_scroll");
+
+   /* Alt-Shift */
+   ADD_KB("g", 0, 1, 1, 0, "all_group");
 }
 
 void
@@ -653,7 +657,12 @@ config_load(const char *key)
                   config->shine = 255;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 17 */
+                case 17:
+                  _add_key(config, "g", 0, 1, 0, 0, "visible_group");
+                  _add_key(config, "g", 0, 1, 1, 0, "all_group");
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 18 */
                   config->version = CONF_VER;
                   break;
                 default:

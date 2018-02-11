@@ -1,10 +1,14 @@
 #include "private.h"
 #include <Elementary.h>
+#include <Ecore_Input.h>
+#include <Ecore_IMF.h>
+#include <Ecore_IMF_Evas.h>
 #include "termpty.h"
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptysave.h"
 #include "termio.h"
+#include "keyin.h"
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -53,6 +57,26 @@ termpty_shutdown(void)
    eina_log_domain_unregister(_termpty_log_dom);
    _termpty_log_dom = -1;
 }
+
+
+Eina_Bool
+termpty_can_handle_key(const Termpty *ty,
+                       const Keys_Handler *khdl,
+                       const Evas_Event_Key_Down *ev)
+{
+   // if term app asked for kbd lock - dont handle here
+   if (ty->termstate.kbd_lock)
+     return EINA_FALSE;
+   // if app asked us to not do autorepeat - ignore press if is it is the same
+   // timestamp as last one
+   if ((ty->termstate.no_autorepeat) &&
+       (ev->timestamp == khdl->last_keyup))
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+
+
 
 void
 termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)

@@ -978,6 +978,7 @@ remote:
    ecore_con_init();
    ecore_con_url_init();
 
+   controls_init();
    terminology_starting_up = EINA_FALSE;
 
    elm_run();
@@ -1008,8 +1009,10 @@ remote:
    config_del(_main_config);
    key_bindings_shutdown();
    config_shutdown();
+   controls_shutdown();
    eina_log_domain_unregister(_log_domain);
    _log_domain = -1;
+
 
 #if HAVE_GETTEXT && ENABLE_NLS
    eina_stringshare_del(options.copyright);

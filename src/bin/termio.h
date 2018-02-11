@@ -49,8 +49,15 @@ Eina_Bool    termio_file_send_ok(const Evas_Object *obj, const char *file);
 void         termio_file_send_cancel(const Evas_Object *obj);
 double       termio_file_send_progress_get(const Evas_Object *obj);
 
+void
+termio_imf_cursor_set(Evas_Object *obj, Ecore_IMF_Context *imf);
+
 Termpty *termio_pty_get(const Evas_Object *obj);
 Evas_Object * termio_miniview_get(const Evas_Object *obj);
 Term* termio_term_get(const Evas_Object *obj);
+
+void termio_key_down(Evas_Object *termio, const Evas_Event_Key_Down *ev);
+void termio_focus_in(Evas_Object *termio);
+void termio_focus_out(Evas_Object *termio);
 
 #endif
