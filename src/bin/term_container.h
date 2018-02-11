@@ -60,6 +60,7 @@ struct _Term_Container {
      void (*bell)(Term_Container *tc, Term_Container *child);
      void (*close)(Term_Container *container, Term_Container *child);
      void (*update)(Term_Container *tc);
+     Eina_Bool (*is_visible)(Term_Container *tc, Term_Container *child);
 };
 
 #endif

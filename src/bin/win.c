@@ -483,6 +483,13 @@ _solo_update(Term_Container *tc)
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
 }
 
+static Eina_Bool
+_solo_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   return tc->parent->is_visible(tc->parent, tc);
+}
+
 static Term_Container *
 _solo_new(Term *term, Win *wn)
 {
@@ -517,6 +524,7 @@ _solo_new(Term *term, Win *wn)
    tc->close = _solo_close;
    tc->update = _solo_update;
    tc->title = eina_stringshare_add("Terminology");
+   tc->is_visible = _solo_is_visible;
    tc->type = TERM_CONTAINER_TYPE_SOLO;
 
    tc->parent = NULL;
@@ -1169,6 +1177,11 @@ _cb_win_key_up(void *data,
    keyin_handle_up(&wn->khdl, ev);
 }
 
+#define GROUPED_INPUT_TERM_FOREACH(_wn, _list, _term) \
+   EINA_LIST_FOREACH(_wn->terms, _list, _term) \
+     if (!_wn->group_only_visible || term_is_visible(_term))
+
+
 const char *
 term_preedit_str_get(Term *term)
 {
@@ -1217,7 +1230,7 @@ _imf_event_commit_cb(void *data,
    len = strlen(str);
    if (wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              ty = termio_pty_get(term->termio);
              if (ty)
@@ -1309,7 +1322,7 @@ _cb_win_key_down(void *data,
    /* 1st/ Miniview */
    if (wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              done = miniview_handle_key(term_miniview_get(term), ev);
              if (!wn->group_input)
@@ -1336,7 +1349,7 @@ _cb_win_key_down(void *data,
    done = EINA_FALSE;
    if (wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              if (term_has_popmedia(term) && !strcmp(ev->key, "Escape"))
                {
@@ -1369,7 +1382,7 @@ _cb_win_key_down(void *data,
    if (wn->group_input)
      {
         wn->group_once_handled = EINA_FALSE;
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              done = keyin_handle_key_binding(term->termio, ev, ctrl, alt,
                                              shift, win, meta, hyper);
@@ -1453,7 +1466,7 @@ _cb_win_key_down(void *data,
                   int len = strlen(compres);
                   if (wn->group_input)
                     {
-                       EINA_LIST_FOREACH(wn->terms, l, term)
+                       GROUPED_INPUT_TERM_FOREACH(wn, l, term)
                          {
                             ty = termio_pty_get(term->termio);
                             if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
@@ -1478,7 +1491,7 @@ _cb_win_key_down(void *data,
    /* 5th/ send key to pty */
    if (wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              ty = termio_pty_get(term->termio);
              if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
@@ -1496,7 +1509,7 @@ _cb_win_key_down(void *data,
 end:
    if (wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              if (term)
                termio_key_down(term->termio, ev);
@@ -1575,6 +1588,12 @@ _cb_win_mouse_move(void *data,
    tc_child->focus(tc_child, tc);
 }
 
+static Eina_Bool
+_win_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+   return EINA_TRUE;
+}
 
 Win *
 win_new(const char *name, const char *role, const char *title,
@@ -1618,6 +1637,7 @@ win_new(const char *name, const char *role, const char *title,
    tc->bell = _win_bell;
    tc->close = _win_close;
    tc->update = _win_update;
+   tc->is_visible = _win_is_visible;
    tc->title = eina_stringshare_add(title? title : "Terminology");
    tc->type = TERM_CONTAINER_TYPE_WIN;
    tc->wn = wn;
@@ -1797,7 +1817,7 @@ _win_toggle_group(Win *wn)
    DBG("WIN TOGGLE");
    if (!wn->group_input)
      {
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              edje_object_signal_emit(term->bg, "focus,in", "terminology");
              termio_event_feed_mouse_in(term->termio);
@@ -1810,7 +1830,7 @@ _win_toggle_group(Win *wn)
      {
         wn->group_input = EINA_FALSE;
         DBG("GROUP INPUT is now FALSE");
-        EINA_LIST_FOREACH(wn->terms, l, term)
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              edje_object_signal_emit(term->bg, "focus,out", "terminology");
              termio_focus_out(term->termio);
@@ -2280,6 +2300,15 @@ _split_split(Term_Container *tc, Term_Container *child,
    evas_object_show(obj_split);
 }
 
+static Eina_Bool
+_split_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   /* Could return True with the current design because splits are at a higher
+    * level than tabs */
+   return tc->parent->is_visible(tc->parent, tc);
+}
+
 static Term_Container *
 _split_new(Term_Container *tc1, Term_Container *tc2,
            Eina_Bool is_horizontal)
@@ -2315,6 +2344,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    tc->bell = _split_bell;
    tc->close = _split_close;
    tc->update = _split_update;
+   tc->is_visible = _split_is_visible;
    tc->title = eina_stringshare_add("Terminology");
    tc->type = TERM_CONTAINER_TYPE_SPLIT;
 
@@ -3575,6 +3605,16 @@ _tabs_split(Term_Container *tc,
    tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
+static Eina_Bool
+_tabs_is_visible(Term_Container *tc, Term_Container *child)
+{
+   Tabs *tabs;
+   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
+   tabs = (Tabs*) tc;
+   return child == tabs->current->tc;
+}
+
+
 static Term_Container *
 _tabs_new(Term_Container *child, Term_Container *parent)
 {
@@ -3613,6 +3653,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc->bell = _tabs_bell;
    tc->close = _tabs_close;
    tc->update = _tabs_update;
+   tc->is_visible = _tabs_is_visible;
    tc->title = eina_stringshare_add("Terminology");
    tc->type = TERM_CONTAINER_TYPE_TABS;
 
@@ -3634,6 +3675,22 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 
 /* }}} */
 /* {{{ Term */
+
+Eina_Bool
+term_is_visible(Term *term)
+{
+   /* TODO: boris */
+   Term_Container *tc;
+
+   if (!term)
+     return EINA_FALSE;
+
+   tc = term->container;
+   if (!tc)
+     return EINA_FALSE;
+
+   return tc->is_visible(tc, tc);
+}
 
 void
 background_set_shine(Config *config, Evas_Object *bg)
