@@ -5408,7 +5408,8 @@ _smart_pty_change(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
 // if scroll to bottom on updates
-   if (sd->jump_on_change)  sd->scroll = 0;
+   if (sd->jump_on_change)
+     sd->scroll = 0;
    _smart_update_queue(data, sd);
 }
 
@@ -6090,12 +6091,13 @@ termio_add(Evas_Object *win, Config *config,
 
 void
 termio_key_down(Evas_Object *termio,
-                const Evas_Event_Key_Down *ev)
+                const Evas_Event_Key_Down *ev,
+                Eina_Bool action_handled)
 {
    Termio *sd = evas_object_smart_data_get(termio);
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
-   if (sd->jump_on_keypress)
+   if (sd->jump_on_keypress && !action_handled)
      {
         if (!key_is_modifier(ev->key))
           {

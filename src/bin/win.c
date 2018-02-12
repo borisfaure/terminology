@@ -1512,13 +1512,13 @@ end:
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              if (term)
-               termio_key_down(term->termio, ev);
+               termio_key_down(term->termio, ev, done);
           }
      }
    else
      {
         if (term)
-          termio_key_down(term->termio, ev);
+          termio_key_down(term->termio, ev, done);
      }
 }
 
