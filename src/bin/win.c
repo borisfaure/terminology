@@ -1675,24 +1675,24 @@ win_new(const char *name, const char *role, const char *title,
    evas_object_show(o);
 
    evas_object_show(wn->win);
-   elm_object_focus_set(wn->conform, EINA_TRUE);
+   elm_object_focus_set(wn->base, EINA_TRUE);
 
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_win_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_win_focus_out, wn);
 
-   evas_object_event_callback_add(wn->conform,
+   evas_object_event_callback_add(wn->base,
                                   EVAS_CALLBACK_KEY_DOWN,
                                   _cb_win_key_down,
                                   wn);
-   evas_object_event_callback_add(wn->conform,
+   evas_object_event_callback_add(wn->base,
                                   EVAS_CALLBACK_KEY_UP,
                                   _cb_win_key_up,
                                   wn);
-   evas_object_event_callback_add(wn->conform,
+   evas_object_event_callback_add(wn->base,
                                   EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_win_mouse_down,
                                   wn);
-   evas_object_event_callback_add(wn->conform,
+   evas_object_event_callback_add(wn->base,
                                   EVAS_CALLBACK_MOUSE_MOVE,
                                   _cb_win_mouse_move,
                                   wn);
