@@ -1674,8 +1674,6 @@ win_new(const char *name, const char *role, const char *title,
    elm_object_content_set(wn->conform, o);
    evas_object_show(o);
 
-   elm_object_focus_allow_set(wn->conform, EINA_TRUE);
-   elm_object_tree_focus_allow_set(wn->win, EINA_TRUE);
    evas_object_show(wn->win);
    elm_object_focus_set(wn->conform, EINA_TRUE);
 
