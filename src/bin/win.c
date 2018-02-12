@@ -1674,9 +1674,6 @@ win_new(const char *name, const char *role, const char *title,
    elm_object_content_set(wn->conform, o);
    evas_object_show(o);
 
-   evas_object_show(wn->win);
-   elm_object_focus_set(wn->base, EINA_TRUE);
-
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_win_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_win_focus_out, wn);
 
