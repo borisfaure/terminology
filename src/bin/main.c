@@ -329,11 +329,7 @@ static Ecore_Getopt options = {
    gettext_noop("Terminal emulator written with Enlightenment Foundation Libraries."),
    EINA_TRUE,
    {
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
       ECORE_GETOPT_BREAK_STR ('e', "exec",
-#else
-      ECORE_GETOPT_STORE_STR ('e', "exec",
-#endif
                               gettext_noop("Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)")),
       ECORE_GETOPT_STORE_STR ('d', "current-directory",
                               gettext_noop("Change to directory for execution of terminal command.")),
@@ -406,11 +402,8 @@ _translate_options(void)
                                                2018);
 
    Ecore_Getopt_Desc *desc = (Ecore_Getopt_Desc *) options.descs;
-   while ((desc->shortname != '\0') || (desc->longname)
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 9)
-     || (desc->action == ECORE_GETOPT_ACTION_CATEGORY)
-#endif
-     )
+   while ((desc->shortname != '\0') || (desc->longname) ||
+          (desc->action == ECORE_GETOPT_ACTION_CATEGORY))
      {
         if (desc->help)
           {
@@ -502,16 +495,10 @@ elm_main(int argc, char **argv)
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool hold = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool cmd_options = EINA_FALSE;
-#endif
    Eina_Bool xterm_256color = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
-#else
-     ECORE_GETOPT_VALUE_STR(cmd),
-#endif
      ECORE_GETOPT_VALUE_STR(cd),
      ECORE_GETOPT_VALUE_STR(theme),
      ECORE_GETOPT_VALUE_STR(background),
@@ -555,9 +542,7 @@ elm_main(int argc, char **argv)
    int pos_set = 0, size_set = 0;
    int pos_x = 0, pos_y = 0;
    int size_w = 1, size_h = 1;
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_List *cmds_list = NULL;
-#endif
 
    terminology_starting_up = EINA_TRUE;
 
@@ -615,7 +600,6 @@ elm_main(int argc, char **argv)
 
    if (quit_option) goto end;
 
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    if (cmd_options)
      {
         int i;
@@ -647,8 +631,7 @@ elm_main(int argc, char **argv)
              eina_strbuf_free(strb);
           }
      }
-#endif
-   
+
    if (theme)
      {
         char path[PATH_MAX];
@@ -929,7 +912,6 @@ remote:
    evas_object_show(win);
    if (startup_split)
      {
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
         unsigned int i = 0;
         Term *next = term;
 
@@ -960,7 +942,6 @@ remote:
           }
         if (cmds_list)
           eina_list_free(cmds_list);
-#endif
      }
    if (pos_set)
      {
@@ -988,10 +969,7 @@ remote:
 
    config = NULL;
  end:
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-   if (!startup_split)
-     free(cmd);
-#endif
+   if (!startup_split) free(cmd);
    if (config)
      {
         config_del(config);

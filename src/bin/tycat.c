@@ -320,9 +320,7 @@ main(int argc, char **argv)
      }
 
    eina_init();
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    ecore_app_no_system_modules();
-#endif
    ecore_init();
    ecore_file_init();
    evas_init();

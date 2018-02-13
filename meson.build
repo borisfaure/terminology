@@ -39,7 +39,7 @@ if host_os == 'linux'
    config_data.set('_POSIX_1_SOURCE', 1)
 endif
 
-efl_version = '1.8.0'
+efl_version = '1.20.0'
 efl_deps = ['edje',
             'elementary',
             'eina',

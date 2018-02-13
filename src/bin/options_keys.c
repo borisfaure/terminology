@@ -178,12 +178,7 @@ _hover_sizing_eval(Keys_Ctx *ctx)
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
    evas_object_geometry_get(ctx->frame, &x, &y, &w, &h);
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    evas_object_geometry_set(ctx->layout, x, y, w, h);
-#else
-   evas_object_move(ctx->layout, x, y);
-   evas_object_resize(ctx->layout, w, h);
-#endif
 }
 
 static void

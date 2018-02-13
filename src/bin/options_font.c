@@ -452,9 +452,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_slider_unit_format_set(o, "%1.0f");
    elm_slider_indicator_format_set(o, "%1.0f");
    elm_slider_min_max_set(o, FONT_MIN, FONT_MAX);
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    elm_slider_step_set(o, FONT_STEP);
-#endif
    elm_slider_value_set(o, config->font.size);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
