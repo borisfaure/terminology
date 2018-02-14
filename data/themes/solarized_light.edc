@@ -51,6 +51,11 @@ color_classes {
 
    color_class { name: "c38"; color: S_magenta; }
 
+   color_class { name: "c49"; color: S_base01; }
+   color_class { name: "c61"; color: S_base01; }
+   color_class { name: "c73"; color: S_base01; }
+   color_class { name: "c85"; color: S_base01; }
+
    color_class { name: "C0";  color: S_base02; } // COL_BLACK
    color_class { name: "C1";  color: S_red; } // COL_RED
    color_class { name: "C2";  color: S_green; } // COL_GREEN

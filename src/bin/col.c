@@ -427,6 +427,46 @@ colors_term_init(Evas_Object *textgrid,
            textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
            r / 2, g / 2, b / 2, a / 2);
      }
+   for (c = 48; c < 72; c++)
+     {
+        if (!config->colors_use)
+          {
+             snprintf(buf, sizeof(buf) - 1, "c%i", c);
+             if (edje_object_color_class_get(bg, buf,
+                                             &r,
+                                             &g,
+                                             &b,
+                                             &a,
+                                             NULL, NULL, NULL, NULL,
+                                             NULL, NULL, NULL, NULL))
+               {
+                   /* faint */
+                   evas_object_textgrid_palette_set(
+                       textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
+                       r, g, b, a);
+               }
+          }
+     }
+   for (c = 72; c < 96; c++)
+     {
+        if (!config->colors_use)
+          {
+             snprintf(buf, sizeof(buf) - 1, "c%i", c);
+             if (edje_object_color_class_get(bg, buf,
+                                             &r,
+                                             &g,
+                                             &b,
+                                             &a,
+                                             NULL, NULL, NULL, NULL,
+                                             NULL, NULL, NULL, NULL))
+               {
+                   /* faint */
+                   evas_object_textgrid_palette_set(
+                       textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c - 48,
+                       r, g, b, a);
+               }
+          }
+     }
    for (c = 0; c < 256; c++)
      {
         snprintf(buf, sizeof(buf) - 1, "C%i", c);
