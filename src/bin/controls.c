@@ -400,7 +400,7 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    elm_box_pack_end(ct_boxv, o);
    evas_object_show(o);
 
-   o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, NULL);
+   o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, ctx);
    elm_box_pack_end(ct_box3, o);
 
    evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
