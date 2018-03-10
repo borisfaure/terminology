@@ -179,7 +179,8 @@ struct _Win
    unsigned char group_input : 1;
    unsigned char group_only_visible : 1;
    unsigned char group_once_handled : 1;
-   unsigned char on_options : 1;
+
+   unsigned int  on_popover;
 };
 
 /* }}} */
@@ -556,7 +557,7 @@ _cb_win_focus_in(void *data,
    tc->is_focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
-   if (wn->on_options)
+   if (wn->on_popover)
        return;
 
    term = tc->focused_term_get(tc);
@@ -1190,7 +1191,7 @@ term_preedit_str_get(Term *term)
    Win *wn = term->wn;
    Term_Container *tc = (Term_Container*) wn;
 
-   if (wn->on_options)
+   if (wn->on_popover)
      return NULL;
    tc = (Term_Container*) wn;
    term = tc->focused_term_get(tc);
@@ -1307,7 +1308,7 @@ _cb_win_key_down(void *data,
    DBG("GROUP key down (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
 
-   if (wn->on_options)
+   if (wn->on_popover)
        return;
 
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
@@ -1536,7 +1537,7 @@ _cb_win_mouse_down(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child;
 
-   if (wn->on_options || wn->group_input)
+   if (wn->on_popover || wn->group_input)
      return;
 
    term_mouse = tc->find_term_at_coords(tc, ev->canvas.x, ev->canvas.y);
@@ -1566,7 +1567,7 @@ _cb_win_mouse_move(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child = NULL;
 
-   if (wn->on_options || wn->group_input)
+   if (wn->on_popover || wn->group_input)
      return;
 
    if (!wn->config->mouse_over_focus)
@@ -4233,22 +4234,44 @@ term_miniview_toggle(Term *term)
 }
 
 static void
+_on_popover_done(Win *wn)
+{
+   Term_Container *tc = (Term_Container*) wn;
+   Eina_List *l;
+   Term *term;
+
+   wn->on_popover--;
+   if (wn->on_popover)
+     return;
+
+   if (!_win_is_focused(wn))
+     return;
+   EINA_LIST_FOREACH(wn->terms, l, term)
+     {
+        DBG("is focused? tc:%p", term->container);
+        if (_term_is_focused(term))
+          return;
+     }
+   DBG("focus tc:%p", tc);
+   tc->focus(tc, tc);
+}
+
+static void
 _set_title_ok_cb(void *data,
                  Evas_Object *_obj EINA_UNUSED,
                  void *_event_info EINA_UNUSED)
 {
-    Evas_Object *popup = data;
-    Term *term = evas_object_data_get(popup, "term");
-    Evas_Object *entry = elm_object_content_get(popup);
-    const char *title = elm_entry_entry_get(entry);
+   Evas_Object *popup = data;
+   Term *term = evas_object_data_get(popup, "term");
+   Evas_Object *entry = elm_object_content_get(popup);
+   const char *title = elm_entry_entry_get(entry);
 
-    if (!title || !strlen(title))
-      title = NULL;
+   if (!title || !strlen(title))
+     title = NULL;
 
-    termio_title_set(term->termio, title);
-    evas_object_del(popup);
-    elm_object_focus_set(term->termio, EINA_TRUE);
-    term_unref(term);
+   termio_title_set(term->termio, title);
+   elm_object_focus_set(entry, EINA_FALSE);
+   elm_popup_dismiss(popup);
 }
 
 static void
@@ -4256,47 +4279,68 @@ _set_title_cancel_cb(void *data,
                      Evas_Object *_obj EINA_UNUSED,
                      void *_event_info EINA_UNUSED)
 {
-    Evas_Object *popup = data;
-    Term *term = evas_object_data_get(popup, "term");
+   Evas_Object *popup = data;
+   Evas_Object *entry = elm_object_content_get(popup);
 
-    evas_object_del(data);
-    elm_object_focus_set(term->termio, EINA_TRUE);
-    term_unref(term);
+   elm_object_focus_set(entry, EINA_FALSE);
+   elm_popup_dismiss(popup);
+}
+
+static void
+_cb_title_popup_hide(void *data,
+                     Evas *_e EINA_UNUSED,
+                     Evas_Object *_obj EINA_UNUSED,
+                     void *_event EINA_UNUSED)
+{
+   Term *term = data;
+   Win *wn = term->wn;
+
+   _on_popover_done(wn);
+
+   term_unref(term);
 }
 
 void
 term_set_title(Term *term)
 {
-    Evas_Object *o;
-    Evas_Object *popup;
+   Evas_Object *o;
+   Evas_Object *popup;
+   Term_Container *tc = term->container;
 
-    EINA_SAFETY_ON_NULL_RETURN(term);
+   EINA_SAFETY_ON_NULL_RETURN(term);
+   term->wn->on_popover++;
 
-    term_ref(term);
+   term_ref(term);
+   tc->unfocus(tc, NULL);
 
-    popup = elm_popup_add(term->wn->win);
-    evas_object_data_set(popup, "term", term);
-    elm_object_part_text_set(popup, "title,text", _("Set title"));
+   popup = elm_popup_add(term->wn->win);
+   evas_object_data_set(popup, "term", term);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE,
+                                  _cb_title_popup_hide, term);
 
-    o = elm_button_add(popup);
-    evas_object_smart_callback_add(o, "clicked", _set_title_ok_cb, popup);
-    elm_object_text_set(o, _("Ok"));
-    elm_object_part_content_set(popup, "button1", o);
+   elm_object_part_text_set(popup, "title,text", _("Set title"));
 
-    o = elm_button_add(popup);
-    evas_object_smart_callback_add(o, "clicked", _set_title_cancel_cb, popup);
-    elm_object_text_set(o, _("Cancel"));
-    elm_object_part_content_set(popup, "button2", o);
+   o = elm_button_add(popup);
+   evas_object_smart_callback_add(o, "clicked", _set_title_ok_cb, popup);
+   elm_object_text_set(o, _("Ok"));
+   elm_object_part_content_set(popup, "button1", o);
 
-    o = elm_entry_add(popup);
-    elm_entry_single_line_set(o, EINA_TRUE);
-    evas_object_smart_callback_add(o, "activated", _set_title_ok_cb, popup);
-    evas_object_smart_callback_add(o, "aborted", _set_title_cancel_cb, popup);
-    elm_object_content_set(popup, o);
-    evas_object_show(o);
-    evas_object_show(popup);
+   o = elm_button_add(popup);
+   evas_object_smart_callback_add(o, "clicked", _set_title_cancel_cb, popup);
+   elm_object_text_set(o, _("Cancel"));
+   elm_object_part_content_set(popup, "button2", o);
 
-    elm_object_focus_set(o, EINA_TRUE);
+   o = elm_entry_add(popup);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   evas_object_smart_callback_add(o, "activated", _set_title_ok_cb, popup);
+   evas_object_smart_callback_add(o, "aborted", _set_title_cancel_cb, popup);
+   elm_object_content_set(popup, o);
+
+   evas_object_show(o);
+
+   evas_object_show(popup);
+
+   elm_object_focus_set(o, EINA_TRUE);
 }
 
 static void
@@ -5411,26 +5455,9 @@ _cb_options_done(void *data)
 {
    Term *orig_term = data;
    Win *wn = orig_term->wn;
-   Term_Container *tc = (Term_Container*) wn;
-   Eina_List *l;
-   Term *term;
 
-   wn->on_options = EINA_FALSE;
+   _on_popover_done(wn);
 
-   if (!_win_is_focused(wn))
-     goto end;
-   EINA_LIST_FOREACH(wn->terms, l, term)
-     {
-        DBG("is focused? tc:%p", term->container);
-        if (_term_is_focused(term))
-          {
-             goto end;
-          }
-     }
-   DBG("focus tc:%p", tc);
-   tc->focus(tc, tc);
-
-end:
    term_unref(orig_term);
 }
 
@@ -5442,7 +5469,7 @@ _cb_options(void *data,
    Term *term = data;
    Term_Container *tc = term->container;
 
-   term->wn->on_options = EINA_TRUE;
+   term->wn->on_popover++;
 
    term_ref(term);
    tc->unfocus(tc, NULL);
