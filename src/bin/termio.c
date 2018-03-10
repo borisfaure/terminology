@@ -3964,7 +3964,7 @@ _handle_mouse_down_single_click(Termio *sd,
         return;
      }
    else if (shift &&
-            (time(NULL) - sd->pty->selection.last_click) <= 60)
+            (time(NULL) - sd->pty->selection.last_click) <= 15)
      {
         sd->pty->selection.is_box = ctrl;
         _sel_to(sd, cx, cy - sd->scroll, EINA_FALSE);
