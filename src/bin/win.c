@@ -556,6 +556,8 @@ _cb_win_focus_in(void *data,
    tc->is_focused = EINA_TRUE;
    if ((wn->cmdbox_up) && (wn->cmdbox))
      elm_object_focus_set(wn->cmdbox, EINA_TRUE);
+   if (wn->on_options)
+       return;
 
    term = tc->focused_term_get(tc);
 
