@@ -18,12 +18,12 @@
 
 enum option_mode {
      OPTION_NONE = 0,
+     OPTION_BEHAVIOR,
      OPTION_FONT,
      OPTION_THEME,
      OPTION_BACKGROUND,
      OPTION_COLORS,
      OPTION_VIDEO,
-     OPTION_BEHAVIOR,
      OPTION_KEYS,
      OPTION_HELPERS,
      OPTION_ELM,
@@ -98,12 +98,12 @@ _cb_opdt_hide_done(void *data,
    switch (ctx->mode)
      {
       case OPTION_NONE:      break;
+      case OPTION_BEHAVIOR:  options_behavior(ctx->opbox, ctx->term); break;
       case OPTION_FONT:      options_font(ctx->opbox, ctx->term); break;
       case OPTION_THEME:     options_theme(ctx->opbox, ctx->term); break;
       case OPTION_BACKGROUND: options_background(ctx->opbox, ctx->term); break;
       case OPTION_COLORS:    options_colors(ctx->opbox, ctx->term, ctx->bg); break;
       case OPTION_VIDEO:     options_video(ctx->opbox, ctx->term); break;
-      case OPTION_BEHAVIOR:  options_behavior(ctx->opbox, ctx->term); break;
       case OPTION_KEYS:      options_keys(ctx->opbox, ctx->term); break;
       case OPTION_HELPERS:   options_helpers(ctx->opbox, ctx->term); break;
       case OPTION_ELM:       options_elm(ctx->opbox, ctx->term); break;
@@ -230,13 +230,12 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    elm_toolbar_item_append(o, _icon_name, _name, _cb_op, \
                            (void*) &ctx->modes[OPTION_##_option_mode])
 
-   it_fn =
-      ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
+   it_fn = ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
+   ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
    ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
    ITEM_APPEND("preferences-desktop-background", _("Background"), BACKGROUND);
    ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
    ITEM_APPEND("video-display", _("Video"), VIDEO);
-   ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
    ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
    ITEM_APPEND("system-run", _("Helpers"), HELPERS);
    ITEM_APPEND("preferences-color", _("Toolkit"), ELM);
