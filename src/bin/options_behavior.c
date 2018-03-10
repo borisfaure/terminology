@@ -340,9 +340,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
-#if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
    elm_slider_step_set(o, 1);
-#endif
    elm_slider_units_format_function_set(o,
                                         sback_units_format,
                                         (void(*)(char*))eina_stringshare_del);
