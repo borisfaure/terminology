@@ -5121,6 +5121,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    _smart_calculate(obj);
    _smart_apply(obj);
    evas_event_thaw(evas_object_evas_get(obj));
+   evas_event_thaw_eval(evas_object_evas_get(obj));
 }
 
 static Eina_Bool
