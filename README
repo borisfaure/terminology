@@ -108,6 +108,21 @@ Apart from the ones shipped with Terminology, themes can be stored in
 ~/.config/terminology/themes/ .
 
 
+Companion tools:
+----------------
+
+Terminology ships with a set of tools to help you get the best out of
+Terminology.
+
+  * tyls: list directory contents with bells and whistles
+  * tyalpha: set transparency level of the background
+  * tybg: change the background image
+  * tycat: display inline a media file or a URI
+  * typop: display in a popup a media file or a URI
+  * tyq: queue media files or URI to be popped up
+  * tysend: send files to the terminal (useful through ssh)
+
+
 
 Extended escapes for terminology only:
 --------------------------------------
