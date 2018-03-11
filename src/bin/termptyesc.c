@@ -681,6 +681,10 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    arg = _csi_arg_get(&b);
                    switch (arg)
                      {
+                      case 1:
+                         ty->termstate.att.fg256 = 0;
+                         ty->termstate.att.fg = COL_INVIS;
+                         break;
                       case 2:
                          ty->termstate.att.fg256 = 1;
                          ty->termstate.att.fg =
@@ -732,6 +736,10 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    arg = _csi_arg_get(&b);
                    switch (arg)
                      {
+                      case 1:
+                         ty->termstate.att.bg256 = 0;
+                         ty->termstate.att.bg = COL_INVIS;
+                         break;
                       case 2:
                          ty->termstate.att.bg256 = 1;
                          ty->termstate.att.bg =
