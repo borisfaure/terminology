@@ -497,7 +497,7 @@ or
     text where \fBW\fP is the width in character cells (up to 511).
   where \fBH\fP is the height in character cells (up to 511).
 
-  note that this escape alone has no effect. it indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of \fBW\fPx\fBH\fP "replace characters" to follow, with each sequence of such replace characters bebung with a \fBib\fP escape command and ending with an \fBie\fP escape command.
+  note that this escape alone has no effect. It indicates a future intention of inserting media into the terminal. the terminal will EXPECT a grid of \fBW\fPx\fBH\fP "replace characters" to follow, with each sequence of such replace characters bebung with a \fBib\fP escape command and ending with an \fBie\fP escape command.
 
   the \fBFULL\-PATH\-OR\-URL\fP for all  the \fBi\fP commands (\fBis\fP,
   \fBic\fP, \fBif\fP, \fBit\fP) may be of the form:
@@ -523,27 +523,128 @@ or
     note that \fB#\fP is the replace character, and later \fB#\fP chars if inside begin/end escapes, will be replaced by the given media indicated in the insert media escape.
 
 \fBic[CW;H;FULL\-PATH\-OR\-URL]\fP
-  insert CENTERED media (centered in cell area). otherwise
+  insert CENTERED media (centered in cell area). Otherwise
     paramaters are identical to the \fBis\fP command, but
     retains aspect and is padded by blank space.
 
 \fBif[CW;H;FULL\-PATH\-OR\-URL]\fP
-  insert FILLED media (fill in cell area). otherwise paramaters
+  insert FILLED media (fill in cell area). Otherwise paramaters
     are identical to the \fBis\fP command but ensures the entire
     area is filled like a background even if media goes beyond
     cell bounds and is clipped.
 
 \fBit[CW;H;FULL\-PATH\-OR\-URL]\fP
-  insert THUMB media (thumbnail cell area). otherwise paramaters
+  insert THUMB media (thumbnail cell area). Otherwise paramaters
     are identical to the \fBis\fP command, but uses thumbnail
     generation to make a fast to load but low resolution version
     (cached) of the media.
+
+\fBit[CW;H;LINK\\nFULL-PATH-OR-URL]\fP
+    insert THUMB media with link (thumbnail cell area). Otherwise parameters
+    are identical to the \fBis\fP command, but uses thumbnail generation to
+    make a fast to load but low resolution version (cached) of the media.
+    \fBLINK\fP is a path (or url) to open _when_ the thumb is clicked on by the
+    user.
+
+\fBij[CW;H;FULL-PATH\\nGROUP][\\n][cmd1][\\r\\n][cmd2]...\fP
+    insert EDJE object with file path given, and the group name given.
+    The command list (and the \fB\\n\fP whitespace delimiter before the list)
+    is optional, but is executed/parsed before display of the actual
+    object to do things like initialize its initial state. See `iC`
+    command for more details on the command list.
+
+    Be aware that once you have an object with an assigned channel id,
+    it can send back signals and messages via escapes on stdin. These
+    escapes will follow terminology extended escape format
+    \fB(ESC + } ... \000)\fP, and the content will be one of:
+
+      ;CHID\\ndrag\\nPART NAME\\nVAL1\\nVAL2
+      ;CHID\\ndrag,start\\nPART NAME\\nVAL1\\nVAL2
+      ;CHID\\ndrag,stop\\nPART NAME\\nVAL1\\nVAL2
+      ;CHID\\ndrag,step\\nPART NAME\\nVAL1\\nVAL2
+      ;CHID\\drag,set\\nPART NAME\\nVAL1\\nVAL2
+      signal;CHID\\nSIGNAL STRING\\nSOURCE STRING
+      message;CHID\nOPCODE ID\nstring\\nSTRING1
+      message;CHID\nOPCODE ID\nint\\nINT1
+      message;CHID\nOPCODE ID\nfloat\\nFLOAT1
+      message;CHID\nOPCODE ID\nstring_set\\nSTRING1\\nSTRING2\\nSTRING3...
+      message;CHID\nOPCODE ID\nint_set\\nINT1\\nINT2\\nINT3...
+      message;CHID\nOPCODE ID\nfloat_set\\nFLOAT1\\nFLOAT2\\nFLOAT3...
+      message;CHID\nOPCODE ID\nstring_int\\nSTRING1\\nINT1
+      message;CHID\nOPCODE ID\nstring_float\\nSTRING1\\nFLOAT1
+      message;CHID\nOPCODE ID\nstring_int_set\\nSTRING1\\nINT1\\nINT2\\nINT3...
+      message;CHID\nOPCODE ID\nstring_float_set\\nSTRING1\\nFLOAT1\\nFLOAT2\\nFLOAT3...
+
+\fBiC[CHID]\\n[cmd1][\\r\\n][cmd2][\\r\\n][cmd3]...\fP
+    send a COMMAND (\fBcmd1, cmd2, cmd3\fP etc.) to an existing named
+    channel id \fBCHID\fP. this can be a list of 1 or more command strings,
+    with each string broken by a continuous sequence of 1 or more \fB\\r\fP
+    and/or \fB\\n\fP characters. e.g. "\fB\\n\fP", "\fB\\r\fP", "\fB\\r\\n\fP",
+    "\fB\\n\\r\fP", "\fB\\n\\r\\n\\n\\n\fP", etc.
+
+    commands understood are:
+
+      \fBtext\\nPART NAME\\nTEXT STRING\fP
+        set the text of "\fBPART NAME\fP" to string "\fBTEXT STRING\fP"
+
+      \fBemit\\nSIGNAL STRING\\nSOURCE STRING\fP
+        emit signal "\fBSIGNAL STRING\fP" "\fBSOURCE STRING\fP"
+
+      \fBdrag\\nPART NAME\\n[value|size|step|page]\\nVAL1\\nVAL2\fP
+        manipulate dragable of name "\fBPART NAME\fP" and either set
+        "\fBvalue\fP", "\fBsize\fP", "\fBstep\fP" or "\fBpage\fP" properties
+        to "\fBVAL1\fP" and "\fBVAL2\fP" for \fBx\fP and \fBy\fP, where
+        \fBVAL1\fP and \fBVAL2\fP are floating point values
+
+      \fBchid\\nCHANNEL ID\fP
+        set the channel id of a given edje object (only valid in setup
+        commands for the inline edje object) to "\fBCHANNEL ID\fP" so it can
+        be addressed later.
+
+      \fBmessage\\nOPCODE ID\\n[string|int|float|string_set|int_set|...\fP
+      \fBfloat_set|string|int|string_float|string_int_set|...\fP
+      \fBstring_float_set]\\n[message data]\fP
+        send a message with opcode (integer) id "\fBOPCODE ID\fP" of one of
+        the given types supported ("\fBstring\fP", "\fBint\fP", "\fBfloat\fP",
+        etc.) and then with the given "\fBmessage data\fP" at the end.
+        \fBmessage data\fP format depends on message type:
+        \fBstring\fP:           \fBSTRING1\fP
+        \fBint\fP:              \fBINT1\fP
+        \fBfloat\fP:            \fBFLOAT1\fP
+        \fBstring_set\fP:       \fBSTRING1\nSTRING2\nSTRING3...\fP
+        \fBint_set\fP:          \fBINT1\nINT2\nINT3...\fP
+        \fBfloat_set\fP:        \fBFLOAT1\nFLOAT2\nFLOAT3...\fP
+        \fBstring_int\fP:       \fBSTRING1\nINT1\fP
+        \fBstring_float\fP:     \fBSTRING1\nFLOAT1\fP
+        \fBstring_int_set\fP:   \fBSTRING1\nINT1\nINT2\nINT3...\fP
+        \fBstring_float_set\fP: \fBSTRING1\nFLOAT1\nFLOAT2\nFLOAT3...\fP
 
 \fBib\fP
   begin media replace sequence run.
 
 \fBie\fP
   end media replace sequence run.
+
+\fBfr[PATH/FILE]\fP
+  begin file send for a file named \fBPATH\fP / \fBFILE\fP
+
+\fBfs[SIZE_BYTES]\fP
+  set the size in bytes of a file send started with the above fr escape
+
+\fBfd[CHECKSUM DATA]\fP
+  block of data for the current file transfer with checksum as a
+  string decimal which is the sum of every byte when taken as an
+  unsigned char per byte. the checksum is a signed 32bit integer.
+  the checksum is the sum of the data after escaping. 4 bits at a
+  time per data byte, encoded with high bits in one byte then low
+  bits, with the bits encoded as 4 bit value being \fB0x40\fP + 4 bit value
+  per byte. \fB(@ == 0x0, A == 0x1, B == 0x2, ... N == 0xe, O == 0xf)\fP.
+  so to rebuild a byte will be \fB(((bytes[0] - 0x40) & 0xf) << 4) |
+  ((bytes[1] - 0x40) & 0xf)\fP per byte pair in the data block.
+
+\fBfx\fP
+  exit file send mode (normally at the end of the file or when it's
+  complete)
 
 .SH BUGS
 If you find a bug or for known issues/bugs/feature requests please email enlightenment-devel@lists.sourceforge.net or visit the place where all the hard work is done http://phab.enlightenment.org/
