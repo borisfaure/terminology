@@ -1,6 +1,8 @@
 Terminology 1.1.1
 =================
 
+This is an EFL terminal emulator with some extra bells and whistles.
+
 :warning: :warning: :warning:
 
 > FOR ANY ISSUES, PLEASE CONSULT THEM ON
@@ -8,18 +10,15 @@ Terminology 1.1.1
 
 :warning: :warning: :warning:
 
+
 Requirements
 ------------
 
-  * efl (>= 1.8.0)
-  * elementary (>= 1.8.0)
-
-Please note that some features may not quite function correctly or
-completely on EFL 1.8. Newer versions would be better.
+  * `efl` (>= 1.20.0)
+  * `elementary` (>= 1.20.0)
 
 Please see http://www.enlightenment.org for information on these.
 
-This is an EFL terminal emulator with some extra bells and whistles.
 
 Compiling
 ---------
