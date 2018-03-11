@@ -35,7 +35,20 @@ Note: to make terminology work with input methods in general you need:
 export ECORE_IMF_MODULE="xim"
 export XMODIFIERS="@im=none"
 
+
+Mouse controls:
+---------------
+
+Right mouse button = controls menu
+Middle mouse button = paste highlight selection
+Left mouse button/drag = make highlight
+Wheel = scroll up or down in history
+Ctrl+Wheel = zoom font size up/down
+Ctrl+Left mouse button/drag = make block selection highlight
+
+
 Default key controls:
+---------------------
 
 Shift+PgUp = Scroll 1 page up
 Shift+PgDn = Scroll 1 page down
@@ -86,29 +99,18 @@ Ctrl+8 = switch to terminal tab 8
 Ctrl+9 = switch to terminal tab 9
 Ctrl+0 = switch to terminal tab 10
 
-Command mode commands currently understood:
 
-f = Reset font to default setting saved in config
-f+ = Increase fontsize
-f- = Decrease fontsize
-fb = Display big font size (10x20 bitmap, or size 20 with scalable).
-gNxM = make terminal NxM chars in size (if possible). e.g. g80x48 g40x20.
-       If just one number is provided, it will use the following shortcuts:
-       g0=80x24; g1=80x40; g2=80x60; g3=80x80; g4=120x24; g5=120x40; g6=120x60;
-       g7=120x80; g8=120x120
-b = reset the background (no media)
-bPATH = set the background media to an absolute file PATH
 
-Mouse controls:
+Themes:
+-------
 
-Right mouse button = controls menu
-Middle mouse button = paste highlight selection
-Left mouse button/drag = make highlight
-Wheel = scroll up or down in history
-Ctrl+Wheel = zoom font size up/down
-Ctrl+Left mouse button/drag = make block selection highlight
+Apart from the ones shipped with Terminology, themes can be stored in
+~/.config/terminology/themes/ .
+
+
 
 Extended escapes for terminology only:
+--------------------------------------
 
 [\033][}][COMMAND][\000]
 i.e.
@@ -130,10 +132,6 @@ or aa[true/false] should become something like:
   aatrue
 or
   aafalse
-
-Themes:
-
-Themes can be stored in ~/.config/terminology/themes/ .
 
 ---
 
