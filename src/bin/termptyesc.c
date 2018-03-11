@@ -518,8 +518,7 @@ _csi_truecolor_arg_get(Eina_Unicode **ptr)
         sum += *b - '0';
         b++;
      }
-
-   if ((*b == ';') || (*b == ':'))
+   if ((*b == ';')  || (*b == ':'))
      b++;
 
    *ptr = b;
@@ -532,7 +531,7 @@ error:
 
 
 static int
-_handle_esc_csi_truecolor(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
+_handle_esc_csi_truecolor_rgb(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
 {
    int r0, g0, b0;
    int chosen_color = COL_DEF;
@@ -541,11 +540,15 @@ _handle_esc_csi_truecolor(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
    Evas_Object *textgrid;
 
    r0 = _csi_truecolor_arg_get(ptr);
+   if (*ptr && *(*ptr-1) == ':') /* skip color space id */
+     r0 = _csi_truecolor_arg_get(ptr);
    g0 = _csi_truecolor_arg_get(ptr);
    b0 = _csi_truecolor_arg_get(ptr);
 
    if ((r0 < 0) || (g0 < 0) || (b0 < 0))
      return COL_DEF;
+
+   DBG("approximating r:%d g:%d b:%d", r0, g0, b0);
 
    textgrid = termio_textgrid_get(ty->obj);
    for (c = 0; c < 256; c++)
@@ -681,7 +684,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                       case 2:
                          ty->termstate.att.fg256 = 1;
                          ty->termstate.att.fg =
-                            _handle_esc_csi_truecolor(ty, &b);
+                            _handle_esc_csi_truecolor_rgb(ty, &b);
                          DBG("truecolor fg: approximation got color %d",
                              ty->termstate.att.fg);
                          break;
@@ -732,7 +735,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                       case 2:
                          ty->termstate.att.bg256 = 1;
                          ty->termstate.att.bg =
-                            _handle_esc_csi_truecolor(ty, &b);
+                            _handle_esc_csi_truecolor_rgb(ty, &b);
                          DBG("truecolor bg: approximation got color %d",
                              ty->termstate.att.bg);
                          break;
