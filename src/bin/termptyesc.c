@@ -531,22 +531,12 @@ error:
 
 
 static int
-_handle_esc_csi_truecolor_rgb(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
+_approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
 {
-   int r0, g0, b0;
    int chosen_color = COL_DEF;
    int c;
    int distance_min = INT_MAX;
    Evas_Object *textgrid;
-
-   r0 = _csi_truecolor_arg_get(ptr);
-   if (*ptr && *(*ptr-1) == ':') /* skip color space id */
-     r0 = _csi_truecolor_arg_get(ptr);
-   g0 = _csi_truecolor_arg_get(ptr);
-   b0 = _csi_truecolor_arg_get(ptr);
-
-   if ((r0 < 0) || (g0 < 0) || (b0 < 0))
-     return COL_DEF;
 
    DBG("approximating r:%d g:%d b:%d", r0, g0, b0);
 
@@ -579,8 +569,74 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
              chosen_color = c;
           }
      }
-
    return chosen_color;
+}
+
+static int
+_handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
+{
+   int r0, g0, b0, other;
+
+   r0 = _csi_truecolor_arg_get(ptr);
+   g0 = _csi_truecolor_arg_get(ptr);
+   b0 = _csi_truecolor_arg_get(ptr);
+   other = _csi_truecolor_arg_get(ptr);
+   if (other >= 0)
+     {
+        r0 = g0;
+        g0 = b0;
+        b0 = other;
+     }
+
+   if ((r0 < 0) || (g0 < 0) || (b0 < 0))
+     return COL_DEF;
+
+   return _approximate_truecolor_rgb(ty, r0, g0, b0);
+}
+
+static int
+_handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
+{
+   int r0, g0, b0, c0, m0, y0;
+
+   /* Considering CMY stored as percents */
+   c0 = _csi_truecolor_arg_get(ptr);
+   m0 = _csi_truecolor_arg_get(ptr);
+   y0 = _csi_truecolor_arg_get(ptr);
+
+   if ((c0 < 0) || (m0 < 0) || (y0 < 0))
+     return COL_DEF;
+
+   r0 = 255 - ((c0 * 255) / 100);
+   g0 = 255 - ((m0 * 255) / 100);
+   b0 = 255 - ((y0 * 255) / 100);
+
+   return _approximate_truecolor_rgb(ty, r0, g0, b0);
+}
+
+static int
+_handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
+{
+   int r0, g0, b0, c0, m0, y0, k0;
+
+   /* Considering CMYK stored as percents */
+   c0 = _csi_truecolor_arg_get(ptr);
+   m0 = _csi_truecolor_arg_get(ptr);
+   y0 = _csi_truecolor_arg_get(ptr);
+   k0 = _csi_truecolor_arg_get(ptr);
+
+   if ((c0 < 0) || (m0 < 0) || (y0 < 0) || (k0 < 0))
+     return COL_DEF;
+
+   c0 = c0 * (100 - k0) + k0;
+   m0 = m0 * (100 - k0) + k0;
+   y0 = y0 * (100 - k0) + k0;
+
+   r0 = 255 - ((c0 * 255) / 100);
+   g0 = 255 - ((m0 * 255) / 100);
+   b0 = 255 - ((y0 * 255) / 100);
+
+   return _approximate_truecolor_rgb(ty, r0, g0, b0);
 }
 
 static void
@@ -689,14 +745,22 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                          ty->termstate.att.fg256 = 1;
                          ty->termstate.att.fg =
                             _handle_esc_csi_truecolor_rgb(ty, &b);
-                         DBG("truecolor fg: approximation got color %d",
+                         DBG("truecolor RGB fg: approximation got color %d",
                              ty->termstate.att.fg);
                          break;
                       case 3:
-                         WRN("TODO: support colors in the Cyan-Magenta-Yellow colorspace");
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor_cmy(ty, &b);
+                         DBG("truecolor CMY fg: approximation got color %d",
+                             ty->termstate.att.fg);
                          break;
                       case 4:
-                         WRN("TODO: support colors in the Cyan-Magenta-Yellow-Black colorspace");
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor_cmyk(ty, &b);
+                         DBG("truecolor CMYK fg: approximation got color %d",
+                             ty->termstate.att.fg);
                          break;
                       case 5:
                          // then get next arg - should be color index 0-255
@@ -744,14 +808,22 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                          ty->termstate.att.bg256 = 1;
                          ty->termstate.att.bg =
                             _handle_esc_csi_truecolor_rgb(ty, &b);
-                         DBG("truecolor bg: approximation got color %d",
+                         DBG("truecolor RGB bg: approximation got color %d",
                              ty->termstate.att.bg);
                          break;
                       case 3:
-                         WRN("TODO: support colors in the Cyan-Magenta-Yellow colorspace");
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor_cmy(ty, &b);
+                         DBG("truecolor CMY bg: approximation got color %d",
+                             ty->termstate.att.bg);
                          break;
                       case 4:
-                         WRN("TODO: support colors in the Cyan-Magenta-Yellow-Black colorspace");
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor_cmyk(ty, &b);
+                         DBG("truecolor CMYK bg: approximation got color %d",
+                             ty->termstate.att.bg);
                          break;
                       case 5:
                          // then get next arg - should be color index 0-255
