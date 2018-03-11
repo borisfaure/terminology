@@ -491,6 +491,95 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
      }
 }
 
+static int
+_csi_truecolor_arg_get(Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int sum = 0;
+
+   if (!b)
+     goto error;
+
+   if ((*b == ';')  || (*b == ':'))
+     {
+        b++;
+        *ptr = b;
+        return 0;
+     }
+
+   if (!*b)
+     goto error;
+
+   while ((*b >= '0') && (*b <= '9'))
+     {
+        if (sum > INT32_MAX/10 )
+          goto error;
+        sum *= 10;
+        sum += *b - '0';
+        b++;
+     }
+
+   if ((*b == ';') || (*b == ':'))
+     b++;
+
+   *ptr = b;
+   return sum;
+
+error:
+   *ptr = NULL;
+   return -1;
+}
+
+
+static int
+_handle_esc_csi_truecolor(Termpty *ty EINA_UNUSED, Eina_Unicode **ptr)
+{
+   int r0, g0, b0;
+   int chosen_color = COL_DEF;
+   int c;
+   int distance_min = INT_MAX;
+   Evas_Object *textgrid;
+
+   r0 = _csi_truecolor_arg_get(ptr);
+   g0 = _csi_truecolor_arg_get(ptr);
+   b0 = _csi_truecolor_arg_get(ptr);
+
+   if ((r0 < 0) || (g0 < 0) || (b0 < 0))
+     return COL_DEF;
+
+   textgrid = termio_textgrid_get(ty->obj);
+   for (c = 0; c < 256; c++)
+     {
+        int r1 = 0, g1 = 0, b1 = 0, a1 = 0;
+        int delta_red_sq, delta_green_sq, delta_blue_sq, middle_red;
+        int distance;
+
+        evas_object_textgrid_palette_get(textgrid,
+                                         EVAS_TEXTGRID_PALETTE_EXTENDED,
+                                         c, &r1, &g1, &b1, &a1);
+        /* Compute the color distance
+         * XXX: this is inacurate but should give good enough results.
+         * See * https://en.wikipedia.org/wiki/Color_difference
+         */
+        middle_red = (r0 + r1) / 2;
+        delta_red_sq = (r0 - r1) * (r0 - r1);
+        delta_green_sq = (g0 - g1) * (g0 - g1);
+        delta_blue_sq = (b0 - b1) * (b0 - b1);
+
+        distance = 2 * delta_red_sq
+           + 4 * delta_green_sq
+           + 3 * delta_blue_sq
+           + ((middle_red) * (delta_red_sq - delta_blue_sq) / 256);
+        if (distance < distance_min)
+          {
+             distance_min = distance;
+             chosen_color = c;
+          }
+     }
+
+   return chosen_color;
+}
+
 static void
 _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
 {
@@ -586,21 +675,36 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.fgintense = 0;
                    break;
                 case 38: // xterm 256 fg color ???
-                   // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (arg != 5) ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
-                   else
+                   switch (arg)
                      {
-                        // then get next arg - should be color index 0-255
-                        arg = _csi_arg_get(&b);
-                        if (!b) ERR("Failed xterm 256 color fg esc val");
-                        else if (arg < 0 || arg > 255)
-                          ERR("Invalid fg color %d", arg);
-                        else
-                          {
-                             ty->termstate.att.fg256 = 1;
-                             ty->termstate.att.fg = arg;
-                          }
+                      case 2:
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor(ty, &b);
+                         DBG("truecolor fg: approximation got color %d",
+                             ty->termstate.att.fg);
+                         break;
+                      case 3:
+                         WRN("TODO: support colors in the Cyan-Magenta-Yellow colorspace");
+                         break;
+                      case 4:
+                         WRN("TODO: support colors in the Cyan-Magenta-Yellow-Black colorspace");
+                         break;
+                      case 5:
+                         // then get next arg - should be color index 0-255
+                         arg = _csi_arg_get(&b);
+                         if (!b) ERR("Failed xterm 256 color fg esc val");
+                         else if (arg < 0 || arg > 255)
+                           ERR("Invalid fg color %d", arg);
+                         else
+                           {
+                              ty->termstate.att.fg256 = 1;
+                              ty->termstate.att.fg = arg;
+                           }
+                         break;
+                      default:
+                         ERR("Failed xterm 256 color fg (got %d)", arg);
                      }
                    ty->termstate.att.fgintense = 0;
                    break;
@@ -622,21 +726,36 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.bgintense = 0;
                    break;
                 case 48: // xterm 256 bg color ???
-                   // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (arg != 5) ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
-                   else
+                   switch (arg)
                      {
-                        // then get next arg - should be color index 0-255
-                        arg = _csi_arg_get(&b);
-                        if (!b) ERR("Failed xterm 256 color bg esc val");
-                        else if (arg < 0 || arg > 255)
-                          ERR("Invalid bg color %d", arg);
-                        else
-                          {
-                             ty->termstate.att.bg256 = 1;
-                             ty->termstate.att.bg = arg;
-                          }
+                      case 2:
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor(ty, &b);
+                         DBG("truecolor bg: approximation got color %d",
+                             ty->termstate.att.bg);
+                         break;
+                      case 3:
+                         WRN("TODO: support colors in the Cyan-Magenta-Yellow colorspace");
+                         break;
+                      case 4:
+                         WRN("TODO: support colors in the Cyan-Magenta-Yellow-Black colorspace");
+                         break;
+                      case 5:
+                         // then get next arg - should be color index 0-255
+                         arg = _csi_arg_get(&b);
+                         if (!b) ERR("Failed xterm 256 color bg esc val");
+                         else if (arg < 0 || arg > 255)
+                           ERR("Invalid bg color %d", arg);
+                         else
+                           {
+                              ty->termstate.att.bg256 = 1;
+                              ty->termstate.att.bg = arg;
+                           }
+                         break;
+                      default:
+                         ERR("Failed xterm 256 color bg (got %d)", arg);
                      }
                    ty->termstate.att.bgintense = 0;
                    break;
