@@ -97,6 +97,15 @@ if edje_cc == ''
   edje_cc = edje_cc_path
 endif
 
+res = run_command(edje_cc, meson.current_source_dir() + '/data/test_offscale.edc')
+if res.returncode() == 0
+  message('edje_cc has support for offscale')
+  edje_offscale='-DHAS_OFFSCALE=1'
+else
+  message('edje_cc does not have support for offscale')
+  edje_offscale='-DHAS_OFFSCALE=0'
+endif
+
 fuzzing = get_option('fuzzing')
 
 if fuzzing

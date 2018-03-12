@@ -697,7 +697,9 @@ collections {
                rel.to: "sendfile_request_bg";
                rel1.offset: 4 4;
                rel2.offset: -5 -5;
+#if HAS_OFFSCALE
                offscale;
+#endif
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
@@ -767,7 +769,9 @@ collections {
                rel.to: "terminology.sendfile.progress";
                rel1.offset: -4 -4;
                rel2.offset: 4 4;
+#if HAS_OFFSCALE
                offscale;
+#endif
             }
          }
          part { name: "terminology.sendfile.progress"; type: SWALLOW;
@@ -779,7 +783,9 @@ collections {
                rel2.relative: 1.0 0.0;
                rel2.offset: -5 -5;
                align: 0.5 1.0;
+#if HAS_OFFSCALE
                offscale;
+#endif
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;

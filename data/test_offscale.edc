@@ -1,0 +1,11 @@
+collections {
+  group { name: "offscale_test";
+    parts {
+      part { name: "offscale_part";
+        description { state: "default" 0.0;
+          offscale;
+        }
+      }
+    }
+  }
+}
