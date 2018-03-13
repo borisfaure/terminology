@@ -217,11 +217,7 @@ collections {
          }
          program {
             signal: "bell,ring"; source: "terminology";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             action: PLAY_SAMPLE "bell" 1.0 ALERT;
-#else
-            action: PLAY_SAMPLE "bell" 1.0;
-#endif
          }
          program {
             signal: "bell";
@@ -1658,15 +1654,9 @@ collections {
             program {
                signal: "key,down"; source: "terminology";
                script {
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 8)
                   new buf[32];
                   snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
                   run_program(get_program_id(buf));
-#else
-                  run_program(PROGRAM:"key-down4"); // chosen by a fair dice roll
-                                                    // guaranteed to be random.
-                                                    // http://xkcd.com/221/
-#endif
                }
             }
             program { name: "key-down1";

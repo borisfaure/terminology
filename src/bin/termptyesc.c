@@ -1748,13 +1748,8 @@ _handle_xterm_50_command(Termpty *ty,
 
 static void
 _handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
-                          char *s
-#if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
-              EINA_UNUSED
-#endif
-                          , int _len EINA_UNUSED)
+                          char *s, int _len EINA_UNUSED)
 {
-#if (ELM_VERSION_MAJOR > 1) || (ELM_VERSION_MINOR >= 8)
    char *cmd_end = NULL,
         *title = NULL,
         *title_end = NULL,
@@ -1790,7 +1785,6 @@ _handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
                        NULL, NULL);
    *cmd_end = ';';
    *title_end = ';';
-#endif
 }
 
 static int

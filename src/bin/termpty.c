@@ -300,15 +300,9 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
 
              if (buf[i])
                {
-#if (EINA_VERSION_MAJOR > 1) || (EINA_VERSION_MINOR >= 8)
                   g = eina_unicode_utf8_next_get(buf, &i);
                   if ((0xdc80 <= g) && (g <= 0xdcff) &&
                       (len - prev_i) <= (int)sizeof(ty->oldbuf))
-#else
-                  i = evas_string_char_next_get(buf, i, &g);
-                  if (i < 0 &&
-                      (len - prev_i) <= (int)sizeof(ty->oldbuf))
-#endif
                     {
                        for (k = 0;
                             (k < (int)sizeof(ty->oldbuf)) && 

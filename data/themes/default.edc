@@ -1212,12 +1212,10 @@ collections {
             target: "shine_unfocused";
             target: "shine_focused";
             after: "focus_in2";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             sequence {
                action: STATE_SET "custom" 0.0;
                target: "shine_focused";
             }
-#endif
          }
          program {
             signal: "focused,set"; source: "terminology";
@@ -1225,7 +1223,6 @@ collections {
             target: "glint";
             target: "shine_focused";
             target: "shine_unfocused";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             sequence {
                action: STATE_SET "focused2" 0.0;
                target: "glow";
@@ -1234,7 +1231,6 @@ collections {
                action: STATE_SET "custom" 0.0;
                target: "shine_focused";
             }
-#endif
          }
          program { name: "focus_in2";
             action: STATE_SET "focused2" 0.0;
@@ -1248,7 +1244,6 @@ collections {
             target: "glow";
             target: "shine_focused";
             target: "shine_unfocused";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             sequence {
                action: STATE_SET "focused2" 0.0;
                target: "glow";
@@ -1257,7 +1252,6 @@ collections {
                action: STATE_SET "custom" 0.0;
                target: "shine_unfocused";
             }
-#endif
          }
 
          ////////////////////////////////////////////////////////////////////
@@ -1578,11 +1572,7 @@ collections {
          }
          program {
             signal: "bell,ring"; source: "terminology";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
             action: PLAY_SAMPLE "bell" 1.0 ALERT;
-#else
-            action: PLAY_SAMPLE "bell" 1.0;
-#endif
          }
          program {
             signal: "bell"; source: "terminology";
@@ -3583,51 +3573,25 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
             program {
                signal: "key,down"; source: "terminology";
                script {
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 8)
                   new buf[32];
                   snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
                   run_program(get_program_id(buf));
-#else
-                  run_program(PROGRAM:"key-down4"); // chosen by a fair dice roll
-                                                    // guaranteed to be random.
-                                                    // http://xkcd.com/221/
-#endif
                }
             }
             program { name: "key-down1";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
-#else
-               action: PLAY_SAMPLE "key-tap1" 1.0;
-#endif
             }
             program { name: "key-down2";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
-#else
-               action: PLAY_SAMPLE "key-tap2" 1.0;
-#endif
             }
             program { name: "key-down3";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
-#else
-               action: PLAY_SAMPLE "key-tap3" 1.0;
-#endif
             }
             program { name: "key-down4";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
-#else
-               action: PLAY_SAMPLE "key-tap4" 1.0;
-#endif
             }
             program { name: "key-down5";
-#if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 9)
                action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
-#else
-               action: PLAY_SAMPLE "key-tap5" 1.0;
-#endif
             }
             program {
                signal: "key,down"; source: "terminology";

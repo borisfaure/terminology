@@ -1092,7 +1092,6 @@ _cb_link_up(void *data,
      }
 }
 
-#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
 static void
 _cb_link_drag_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y, Elm_Xdnd_Action action)
 {
@@ -1148,16 +1147,12 @@ _cb_link_icon_new(void *data, Evas_Object *par, Evas_Coord *xoff, Evas_Coord *yo
    *yoff = 0;
    return icon;
 }
-#endif
 
 static void
 _cb_link_move(void *data,
               Evas *_e EINA_UNUSED,
-              Evas_Object *obj
-#if ((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
-              EINA_UNUSED
-#endif
-              , void *event)
+              Evas_Object *obj,
+              void *event)
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
@@ -1174,7 +1169,6 @@ _cb_link_move(void *data,
      {
         sd->link.down.down = EINA_FALSE;
         sd->link.down.dnd = EINA_TRUE;
-#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
         DBG("dnd start %s %i %i", sd->link.string,
                evas_key_modifier_is_set(ev->modifiers, "Control"),
                evas_key_modifier_is_set(ev->modifiers, "Shift"));
@@ -1194,7 +1188,6 @@ _cb_link_move(void *data,
                          _cb_link_drag_done, data);
         sd->link.down.dndobj = obj;
         sd->link.down.dndobjdel = EINA_FALSE;
-#endif
      }
 }
 
@@ -5916,7 +5909,6 @@ _smart_pty_command(void *data)
    evas_object_smart_callback_call(obj, "command", (void *)ty->cur_cmd);
 }
 
-#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
 static void
 _smart_cb_drag_enter(void *_data EINA_UNUSED, Evas_Object *_o EINA_UNUSED)
 {
@@ -5993,7 +5985,6 @@ _smart_cb_drop(void *data,
      termpty_write(sd->pty, ev->data, ev->len);
    return EINA_TRUE;
 }
-#endif
 
 /* }}} */
 
@@ -6053,14 +6044,12 @@ termio_add(Evas_Object *win, Config *config,
                             ELM_GESTURE_STATE_ABORT, _smart_cb_gest_zoom_abort,
                             obj);
 
-#if !((ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8))
    elm_drop_target_add(sd->event,
                        ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_IMAGE,
                        _smart_cb_drag_enter, obj,
                        _smart_cb_drag_leave, obj,
                        _smart_cb_drag_pos, obj,
                        _smart_cb_drop, obj);
-#endif
 
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
                          config->xterm_256color, config->erase_is_del, mod,

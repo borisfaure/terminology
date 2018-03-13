@@ -58,13 +58,8 @@ int _win_log_dom = -1;
 #define INF(...)      EINA_LOG_DOM_INFO(_win_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_win_log_dom, __VA_ARGS__)
 
-#if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 8)
-  #define PANES_TOP "left"
-  #define PANES_BOTTOM "right"
-#else
-  #define PANES_TOP "top"
-  #define PANES_BOTTOM "bottom"
-#endif
+#define PANES_TOP "top"
+#define PANES_BOTTOM "bottom"
 
 /* {{{ Structs */
 
@@ -2689,9 +2684,7 @@ _tabs_restore(Tabs *tabs)
      {
         if (term->unswallowed)
           {
-#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
              evas_object_image_source_visible_set(term->sel, EINA_TRUE);
-#endif
              edje_object_part_swallow(term->bg, "terminology.content", term->base);
              term->unswallowed = EINA_FALSE;
              evas_object_show(term->base);
