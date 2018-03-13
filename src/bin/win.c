@@ -450,7 +450,10 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    term->missed_bell = EINA_FALSE;
 
    if (tc->parent != relative)
-     tc->parent->focus(tc->parent, tc);
+     {
+        DBG("focus tc:%p", tc);
+        tc->parent->focus(tc->parent, tc);
+     }
 
    tc->is_focused = EINA_TRUE;
    if (term->config->disable_focus_visuals)
@@ -584,9 +587,14 @@ _cb_win_focus_in(void *data,
      }
 
    if (term)
-     _term_focus(term);
+     {
+        _term_focus(term);
+     }
    else
-     tc->focus(tc, tc);
+     {
+        DBG("focus tc:%p", tc);
+        tc->focus(tc, tc);
+     }
 }
 
 static void
@@ -2693,6 +2701,8 @@ _tabs_restore(Tabs *tabs)
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
         tab_item->selector_entry = NULL;
+        if (tab_item->tc->is_focused)
+          tab_item->tc->unfocus(tab_item->tc, tc);
      }
 
    evas_object_smart_callback_del_full(tabs->selector, "selected",
@@ -2713,6 +2723,7 @@ _tabs_restore(Tabs *tabs)
    _tabbar_clear(term);
 
    _tabs_refresh(tabs);
+   tabs->current->tc->unfocus(tabs->current->tc, tabs->current->tc);
    tabs->current->tc->focus(tabs->current->tc, tabs->current->tc);
 }
 
@@ -2722,6 +2733,7 @@ _tabs_selector_cb_ending(void *data,
                          void *_info EINA_UNUSED)
 {
    Tabs *tabs = data;
+
    edje_object_signal_emit(tabs->selector_bg, "end", "terminology");
 }
 
@@ -2784,8 +2796,6 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    _set_trans(wn->config, tabs->selector_bg, NULL);
    background_set_shine(wn->config, tabs->selector_bg);
    edje_object_signal_emit(tabs->selector_bg, "begin", "terminology");
-
-   tab_item = tabs->current;
 
    tabs->selector = sel_add(wn->win);
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
