@@ -72,7 +72,7 @@ _termpty_charset_trans(const Termpty *ty, Eina_Unicode g)
           }
         else if (g >= '1' && g <= '9')
           {
-             g += 0x2460 - '0';
+             g += 0x2460 - '1';
           }
         else if (g == '0')
           g = 0x24ea;
