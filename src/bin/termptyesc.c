@@ -847,6 +847,24 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    ty->termstate.att.bg = COL_DEF;
                    ty->termstate.att.bgintense = 0;
                    break;
+                case 51:
+                   WRN("TODO: support SGR 51 - framed attribute");
+                   ty->termstate.att.framed = 1;
+                   break;
+                case 52:
+                   ty->termstate.att.encircled = 1;
+                   break;
+                case 53:
+                   WRN("TODO: support SGR 51 - overlined attribute");
+                   ty->termstate.att.overlined = 1;
+                   break;
+                case 54:
+                   ty->termstate.att.framed = 0;
+                   ty->termstate.att.encircled = 0;
+                   break;
+                case 55:
+                   ty->termstate.att.overlined = 0;
+                   break;
                 case 90: // fg
                 case 91:
                 case 92:

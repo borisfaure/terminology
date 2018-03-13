@@ -64,11 +64,14 @@ struct _Termatt
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
    unsigned short fraktur : 1;
+   unsigned short framed : 1;
+   unsigned short encircled : 1;
+   unsigned short overlined : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
-   unsigned short bit_padding : 14;
+   unsigned short bit_padding : 11;
 #else
-   unsigned short bit_padding : 15;
+   unsigned short bit_padding : 12;
 #endif
 };
 

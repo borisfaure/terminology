@@ -418,6 +418,9 @@ termpty_reset_att(Termatt *att)
    att->autowrapped = 0;
    att->newline = 0;
    att->fraktur = 0;
+   att->framed = 0;
+   att->encircled = 0;
+   att->overlined = 0;
 }
 
 void

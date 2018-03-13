@@ -60,5 +60,22 @@ _termpty_charset_trans(const Termpty *ty, Eina_Unicode g)
              g += 0x1d504 - 'A';
           }
      }
+   else if (ty->termstate.att.encircled)
+     {
+        if (g >= 'a' && g <= 'z')
+          {
+             g += 0x24d0 - 'a';
+          }
+        else if (g >= 'A' && g <= 'Z')
+          {
+             g += 0x24b6 - 'A';
+          }
+        else if (g >= '1' && g <= '9')
+          {
+             g += 0x2460 - '0';
+          }
+        else if (g == '0')
+          g = 0x24ea;
+     }
    return g;
 }
