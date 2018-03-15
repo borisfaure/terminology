@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 18
+#define CONF_VER 19
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -118,6 +118,8 @@ config_init(void)
      (edd_base, Config, "flicker_on_key", flicker_on_key, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_cursor_blink", disable_cursor_blink, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "cursor_shape", cursor_shape, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -253,6 +255,7 @@ config_sync(const Config *config_src, Config *config)
    config->jump_on_change = config_src->jump_on_change;
    config->flicker_on_key = config_src->flicker_on_key;
    config->disable_cursor_blink = config_src->disable_cursor_blink;
+   config->cursor_shape = config_src->cursor_shape;
    config->disable_visual_bell = config_src->disable_visual_bell;
    config->bell_rings = config_src->bell_rings;
    config->active_links = config_src->active_links;
@@ -513,6 +516,7 @@ config_new(void)
         config->jump_on_keypress = EINA_TRUE;
         config->flicker_on_key = EINA_FALSE;
         config->disable_cursor_blink = EINA_FALSE;
+        config->cursor_shape = CURSOR_SHAPE_BLOCK;
         config->disable_visual_bell = EINA_FALSE;
         config->bell_rings = EINA_TRUE;
         config->active_links = EINA_TRUE;
@@ -662,7 +666,11 @@ config_load(const char *key)
                   _add_key(config, "g", 0, 1, 1, 0, "all_group");
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 18 */
+                case 18:
+                  config->cursor_shape = CURSOR_SHAPE_BLOCK;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 19 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -734,6 +742,7 @@ config_fork(const Config *config)
    CPY(jump_on_keypress);
    CPY(flicker_on_key);
    CPY(disable_cursor_blink);
+   CPY(cursor_shape);
    CPY(disable_visual_bell);
    CPY(bell_rings);
    CPY(active_links);

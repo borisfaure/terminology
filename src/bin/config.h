@@ -25,6 +25,13 @@ struct _Config_Color
    unsigned char r, g, b, a;
 };
 
+typedef enum _Cursor_Shape
+{
+   CURSOR_SHAPE_BLOCK = 0,
+   CURSOR_SHAPE_BAR = 1,
+   CURSOR_SHAPE_UNDERLINE = 2
+} Cursor_Shape;
+
 struct _Config
 {
    int               version;
@@ -59,6 +66,7 @@ struct _Config
    Eina_Bool         jump_on_change;
    Eina_Bool         flicker_on_key;
    Eina_Bool         disable_cursor_blink;
+   int               cursor_shape;
    Eina_Bool         disable_visual_bell;
    Eina_Bool         bell_rings;
    Eina_Bool         active_links;
