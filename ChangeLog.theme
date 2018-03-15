@@ -10,6 +10,7 @@ Changes since 1.1.1:
   * Add parts "terminology.sendfile.progress" and
   "terminology.sendfile.request" in "terminology/background". See default.edc
   for more details.
+  * Add groups "terminology/cursor_bar" and "terminology/cursor_underline"
 
 Changes since 0.9.1:
 --------------------
