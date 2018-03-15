@@ -28,8 +28,8 @@ struct _Config_Color
 typedef enum _Cursor_Shape
 {
    CURSOR_SHAPE_BLOCK = 0,
-   CURSOR_SHAPE_BAR = 1,
-   CURSOR_SHAPE_UNDERLINE = 2
+   CURSOR_SHAPE_UNDERLINE = 1,
+   CURSOR_SHAPE_BAR = 2
 } Cursor_Shape;
 
 struct _Config

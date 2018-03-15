@@ -7,6 +7,7 @@
 #include "options.h"
 #include "options_behavior.h"
 #include "main.h"
+#include "utils.h"
 
 typedef struct _Behavior_Ctx {
      Evas_Object *op_w;
@@ -35,7 +36,6 @@ _cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
 
 CB(jump_on_change, 0);
 CB(jump_on_keypress, 0);
-CB(disable_cursor_blink, 1);
 CB(disable_visual_bell, 1);
 CB(bell_rings, 0);
 CB(flicker_on_key, 0);
@@ -182,6 +182,174 @@ _parent_del_cb(void *data,
    free(ctx);
 }
 
+
+static void
+_cursors_changed_cb(void *data, Evas_Object *obj,
+                    void *event_info EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+   int value = elm_radio_value_get(obj) - 1;
+
+   config->disable_cursor_blink = value % 2;
+   config->cursor_shape = value / 2;
+
+   termio_config_update(ctx->term);
+   windows_update();
+   config_save(config, NULL);
+}
+
+static void
+_add_cursors_option(Evas_Object *bx,
+                    Behavior_Ctx *ctx)
+{
+   Evas_Object *o, *lbl, *rd, *rdg, *layout, *oe;
+
+   o = elm_separator_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   lbl = elm_label_add(bx);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
+   elm_layout_text_set(lbl, NULL, _("Default cursor:"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   /* Blinking Block */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   rdg = rd;
+   elm_object_text_set(rd, _("Blinking Block"));
+   elm_radio_state_value_set(rd, 1);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   /* Steady Block */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(rd, _("Steady Block"));
+   elm_radio_state_value_set(rd, 2);
+   elm_radio_group_add(rd, rdg);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   /* Blinking Underline */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(rd, _("Blinking Underline"));
+   elm_radio_state_value_set(rd, 3);
+   elm_radio_group_add(rd, rdg);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor_underline");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   /* Steady Underline */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(rd, _("Steady Underline"));
+   elm_radio_state_value_set(rd, 4);
+   elm_radio_group_add(rd, rdg);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor_underline");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   /* Blinking Bar */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(rd, _("Blinking Bar"));
+   elm_radio_state_value_set(rd, 5);
+   elm_radio_group_add(rd, rdg);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor_bar");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   /* Steady Bar */
+   rd = elm_radio_add(bx);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(rd, _("Steady Bar"));
+   elm_radio_state_value_set(rd, 6);
+   elm_radio_group_add(rd, rdg);
+   layout = elm_layout_add(rd);
+   oe = elm_layout_edje_get(layout);
+   theme_apply(oe, ctx->config, "terminology/cursor_bar");
+   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
+   elm_object_part_content_set(rd, "icon", layout);
+   elm_box_pack_end(bx, rd);
+   evas_object_show(rd);
+   edje_object_signal_emit(oe, "focus,out", "terminology");
+   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
+
+   o = elm_separator_add(bx);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   elm_radio_value_set(rdg,
+     1 +  2 * ctx->config->cursor_shape + (ctx->config->disable_cursor_blink ? 1 : 0));
+}
+
 void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
@@ -235,8 +403,10 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
 
    CX(_("Scroll to bottom on new content"), jump_on_change, 0);
    CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
+
+   _add_cursors_option(bx, ctx);
+
    CX(_("React to key presses"), flicker_on_key, 0);
-   CX(_("Cursor blinking"), disable_cursor_blink, 1);
    CX(_("Visual Bell"), disable_visual_bell, 1);
    CX(_("Bell rings"), bell_rings, 0);
    CX(_("Urgent Bell"), urg_bell, 0);
