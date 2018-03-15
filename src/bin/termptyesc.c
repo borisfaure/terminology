@@ -1193,6 +1193,41 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    ty->cursor_state.cy = cy;
 }
 
+static void
+_handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
+{
+  int arg = _csi_arg_get(b);
+  Cursor_Shape shape = CURSOR_SHAPE_BLOCK;
+
+  DBG("DECSCUSR (%d) Set Cursor Shape", arg);
+
+  switch (arg)
+    {
+     case 0:
+        EINA_FALLTHROUGH;
+     case 1:
+        EINA_FALLTHROUGH;
+     case 2:
+        shape = CURSOR_SHAPE_BLOCK;
+        break;
+     case 3:
+        EINA_FALLTHROUGH;
+     case 4:
+        shape = CURSOR_SHAPE_UNDERLINE;
+        break;
+     case 5:
+        EINA_FALLTHROUGH;
+     case 6:
+        shape = CURSOR_SHAPE_BAR;
+        break;
+     default:
+        WRN("Invalid DECSCUSR %d", shape);
+        return;
+    }
+
+  termio_set_cursor_shape(ty->obj, shape);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -1573,6 +1608,18 @@ HVP:
         else
           {
              goto unhandled;
+          }
+        break;
+      case 'q':
+        if (*(cc-1) == ' ')
+          _handle_esc_csi_decscusr(ty, &b);
+        else if (*(cc-1) == '"')
+          {
+             WRN("TODO: select character protection attribute (DECSCA)");
+          }
+        else
+          {
+             WRN("TODO: Load LEDs (DECLL)");
           }
         break;
       case 'r':

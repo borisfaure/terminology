@@ -427,6 +427,10 @@ void
 termpty_reset_state(Termpty *ty)
 {
    int i;
+   Config *config = NULL;
+
+   if (ty->obj)
+     config = termio_config_get(ty->obj);
 
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
@@ -467,6 +471,8 @@ termpty_reset_state(Termpty *ty)
      {
         TAB_SET(ty, i);
      }
+   if (config && ty->obj)
+     termio_set_cursor_shape(ty->obj, config->cursor_shape);
 }
 
 void

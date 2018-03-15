@@ -44,6 +44,7 @@ const char  *termio_icon_name_get(const Evas_Object *obj);
 void         termio_media_mute_set(Evas_Object *obj, Eina_Bool mute);
 void         termio_media_visualize_set(Evas_Object *obj, Eina_Bool visualize);
 void         termio_config_set(Evas_Object *obj, Config *config);
+void         termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape);
 Config      *termio_config_get(const Evas_Object *obj);
 Eina_Bool    termio_file_send_ok(const Evas_Object *obj, const char *file);
 void         termio_file_send_cancel(const Evas_Object *obj);

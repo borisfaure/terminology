@@ -44,6 +44,7 @@ struct _Termio
    struct {
       Evas_Object *obj;
       int x, y;
+      Cursor_Shape shape;
    } cursor;
    struct {
       int cx, cy;
@@ -626,15 +627,6 @@ termio_config_update(Evas_Object *obj)
    termpty_backlog_size_set(sd->pty, sd->config->scrollback);
    sd->scroll = 0;
 
-   if (evas_object_focus_get(obj))
-     {
-        edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
-        if (sd->config->disable_cursor_blink)
-          edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
-        else
-          edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
-     }
-
    colors_term_init(sd->grid.obj, sd->theme, sd->config);
 
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
@@ -647,6 +639,7 @@ termio_config_update(Evas_Object *obj)
    sd->font.chh = h;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
+   termio_set_cursor_shape(obj, sd->config->cursor_shape);
    _smart_size(obj, ow / w, oh / h, EINA_TRUE);
 }
 
@@ -693,15 +686,49 @@ termio_config_set(Evas_Object *obj, Config *config)
    sd->font.chw = w;
    sd->font.chh = h;
 
-   theme_apply(sd->cursor.obj, config, "terminology/cursor");
-   theme_auto_reload_enable(sd->cursor.obj);
-   evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
-   evas_object_show(sd->cursor.obj);
+   termio_set_cursor_shape(obj, sd->cursor.shape);
 
    theme_apply(sd->sel.theme, config, "terminology/selection");
    theme_auto_reload_enable(sd->sel.theme);
    edje_object_part_swallow(sd->sel.theme, "terminology.top_left", sd->sel.top);
    edje_object_part_swallow(sd->sel.theme, "terminology.bottom_right", sd->sel.bottom);
+}
+
+static const char *
+_cursor_shape_to_group_name(Cursor_Shape shape)
+{
+   switch (shape)
+     {
+      case CURSOR_SHAPE_BLOCK: return "terminology/cursor";
+      case CURSOR_SHAPE_BAR: return "terminology/cursor_bar";
+      case CURSOR_SHAPE_UNDERLINE: return "terminology/cursor_underline";
+     }
+   return NULL;
+}
+
+void
+termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Config *config;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   config = sd->config;
+   theme_apply(sd->cursor.obj, config, _cursor_shape_to_group_name(shape));
+   theme_auto_reload_enable(sd->cursor.obj);
+   evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
+   evas_object_show(sd->cursor.obj);
+   sd->cursor.shape = shape;
+
+   if (evas_object_focus_get(obj))
+     {
+        edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
+        if (sd->config->disable_cursor_blink)
+          edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
+        else
+          edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
+     }
 }
 
 /* }}} */
@@ -6020,6 +6047,7 @@ termio_add(Evas_Object *win, Config *config,
        (config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
      mod = modules[config->vidmod];
 
+   sd->cursor.shape = config->cursor_shape;
    termio_config_set(obj, config);
    sd->term = term;
    sd->win = win;
