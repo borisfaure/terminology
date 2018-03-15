@@ -1217,24 +1217,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    if (cc == ce) return 0;
    *b = 0;
+   be = b;
    b = buf;
    DBG(" CSI: '%s' args '%s'", _safechar(*cc), (char *) buf);
    switch (*cc)
      {
-      case 'm': // color set
-        _handle_esc_csi_color_set(ty, &b);
-        break;
-      case 'b': // repeat last char
-        if (ty->last_char)
-          {
-             arg = _csi_arg_get(&b);
-             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
-             DBG("REP: repeat %d times last char %x", arg, ty->last_char);
-             for (i = 0; i < arg; i++)
-               termpty_text_append(ty, &ty->last_char, 1);
-          }
-        break;
-      case '@': // insert N blank chars
+        /* sorted by ascii value */
+      case '@': // insert N blank chars (ICH)
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
         DBG("insert %d blank chars", arg);
@@ -1252,8 +1241,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
         break;
-      case 'A': // cursor up N CUU
-      case 'e': // cursor up N, VPR
+      case 'A': // cursor up N (CUU)
+CUU:
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
@@ -1279,21 +1268,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              ty->cursor_state.cy = ty->termstate.bottom_margin - 1;
           }
         break;
-      case 'D': // cursor left N
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
-        DBG("cursor left %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cx -= arg;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        if (ty->termstate.restrict_cursor && (ty->termstate.left_margin != 0)
-            && (ty->cursor_state.cx < ty->termstate.left_margin))
-          {
-             ty->cursor_state.cx = ty->termstate.left_margin;
-          }
-        break;
       case 'C': // cursor right N
-      case 'a': // cursor right N
+CUF:
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor right %d", arg);
@@ -1306,25 +1282,18 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              ty->cursor_state.cx = ty->termstate.right_margin - 1;
           }
         break;
-      case 'H': // cursor pos set (CUP)
-      case 'f': // cursor pos set (HVP)
-        _handle_esc_csi_cursor_pos_set(ty, &b, cc);
-       break;
-      case 'G': // to column N
+      case 'D': // cursor left N
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
-        DBG("to column %d", arg);
+        DBG("cursor left %d", arg);
         ty->termstate.wrapnext = 0;
-        ty->cursor_state.cx = arg - 1;
+        ty->cursor_state.cx -= arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        break;
-      case 'd': // to row N
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
-        DBG("to row %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cy = arg - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        if (ty->termstate.restrict_cursor && (ty->termstate.left_margin != 0)
+            && (ty->cursor_state.cx < ty->termstate.left_margin))
+          {
+             ty->cursor_state.cx = ty->termstate.left_margin;
+          }
         break;
       case 'E': // down relative N rows, and to col 0
         arg = _csi_arg_get(&b);
@@ -1344,31 +1313,76 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         ty->cursor_state.cx = 0;
         break;
-      case 'x':
-        _handle_esc_csi_decfra(ty, &b);
+      case 'G': // to column N
+        arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 1;
+        DBG("to column %d", arg);
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cx = arg - 1;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         break;
-      case 'X': // erase N chars
+      case 'H': // cursor pos set (CUP)
+        goto HVP;
+      case 'I':
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("ECH: erase %d chars", arg);
-        termpty_clear_line(ty, TERMPTY_CLR_END, arg);
+        DBG("Cursor Forward Tabulation (CHT): %d", arg);
+        _tab_forward(ty, arg);
         break;
-      case 'S': // scroll up N lines
+      case 'J':
+        if (*b == '?')
+          {
+             b++;
+             arg = _csi_arg_get(&b);
+             WRN("Unsupported selected erase in display %d", arg);
+          }
+        else
+          arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 0;
+        /* 3J erases the backlog,
+         * 2J erases the screen,
+         * 1J erase from screen start to cursor,
+         * 0J erase form cursor to end of screen
+         */
+        DBG("ED/DECSED %d: erase in display", arg);
+        switch (arg)
+          {
+           case TERMPTY_CLR_END /* 0 */:
+           case TERMPTY_CLR_BEGIN /* 1 */:
+           case TERMPTY_CLR_ALL /* 2 */:
+              termpty_clear_screen(ty, arg);
+              break;
+           case 3:
+              termpty_clear_backlog(ty);
+              break;
+           default:
+              ERR("invalid EL/DECSEL argument %d", arg);
+          }
+        break;
+      case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
+        if (*b == '?')
+          {
+             b++;
+             arg = _csi_arg_get(&b);
+             WRN("Unsupported selected erase in line %d", arg);
+          }
         arg = _csi_arg_get(&b);
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("scroll up %d lines", arg);
-        for (i = 0; i < arg; i++)
-          termpty_text_scroll(ty, EINA_TRUE);
+        if (arg < 1) arg = 0;
+        DBG("EL/DECSEL %d: erase in line", arg);
+        switch (arg)
+          {
+           case TERMPTY_CLR_END:
+           case TERMPTY_CLR_BEGIN:
+           case TERMPTY_CLR_ALL:
+              termpty_clear_line(ty, arg, ty->w);
+              break;
+           default:
+              ERR("invalid EL/DECSEL argument %d", arg);
+          }
         break;
-      case 'T': // scroll down N lines
-        arg = _csi_arg_get(&b);
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("scroll down %d lines", arg);
-        for (i = 0; i < arg; i++)
-          termpty_text_scroll_rev(ty, EINA_TRUE);
-        break;
-      case 'M': // delete N lines - cy
       case 'L': // insert N lines - cy
+        EINA_FALLTHROUGH;
+      case 'M': // delete N lines - cy
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
@@ -1429,6 +1443,58 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
                }
           }
         break;
+      case 'S': // scroll up N lines
+        arg = _csi_arg_get(&b);
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+        DBG("scroll up %d lines", arg);
+        for (i = 0; i < arg; i++)
+          termpty_text_scroll(ty, EINA_TRUE);
+        break;
+      case 'T': // scroll down N lines
+        arg = _csi_arg_get(&b);
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+        DBG("scroll down %d lines", arg);
+        for (i = 0; i < arg; i++)
+          termpty_text_scroll_rev(ty, EINA_TRUE);
+        break;
+      case 'X': // erase N chars
+        arg = _csi_arg_get(&b);
+        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+        DBG("ECH: erase %d chars", arg);
+        termpty_clear_line(ty, TERMPTY_CLR_END, arg);
+        break;
+      case 'Z':
+          {
+             int cx = ty->cursor_state.cx;
+
+             arg = _csi_arg_get(&b);
+             DBG("Cursor Backward Tabulation (CBT): %d", arg);
+             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+             for (; arg > 0; arg--)
+               {
+                  do
+                    {
+                       cx--;
+                    }
+                  while ((cx >= 0) && (!TAB_TEST(ty, cx)));
+               }
+
+             ty->cursor_state.cx = cx;
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+          }
+        break;
+      case 'a': // cursor right N
+        goto CUF;
+      case 'b': // repeat last char
+        if (ty->last_char)
+          {
+             arg = _csi_arg_get(&b);
+             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
+             DBG("REP: repeat %d times last char %x", arg, ty->last_char);
+             for (i = 0; i < arg; i++)
+               termpty_text_append(ty, &ty->last_char, 1);
+          }
+        break;
       case 'c': // query device attributes
         DBG("query device attributes");
           {
@@ -1456,60 +1522,58 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              termpty_write(ty, bf, strlen(bf));
           }
         break;
-      case 'J':
-        if (*b == '?')
+      case 'd': // to row N
+        arg = _csi_arg_get(&b);
+        if (arg < 1) arg = 1;
+        DBG("to row %d", arg);
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cy = arg - 1;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+        break;
+      case 'e': // cursor up N (VPR)
+        goto CUU;
+      case 'f': // cursor pos set (HVP)
+HVP:
+        _handle_esc_csi_cursor_pos_set(ty, &b, cc);
+       break;
+      case 'g': // clear tabulation
+        arg = _csi_arg_get(&b);
+        if (arg < 0) arg = 0;
+        if (arg == 0)
           {
-             b++;
-             arg = _csi_arg_get(&b);
-             WRN("Unsupported selected erase in display %d", arg);
+             int cx = ty->cursor_state.cx;
+             TAB_UNSET(ty, cx);
+          }
+        else if (arg == 3)
+          {
+             termpty_clear_tabs_on_screen(ty);
           }
         else
-          arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 0;
-        /* 3J erases the backlog,
-         * 2J erases the screen,
-         * 1J erase from screen start to cursor,
-         * 0J erase form cursor to end of screen
-         */
-        DBG("ED/DECSED %d: erase in display", arg);
-        switch (arg)
           {
-           case TERMPTY_CLR_END /* 0 */:
-           case TERMPTY_CLR_BEGIN /* 1 */:
-           case TERMPTY_CLR_ALL /* 2 */:
-              termpty_clear_screen(ty, arg);
-              break;
-           case 3:
-              termpty_clear_backlog(ty);
-              break;
-           default:
-              ERR("invalid EL/DECSEL argument %d", arg);
-          }
-        break;
-      case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
-        if (*b == '?')
-          {
-             b++;
-             arg = _csi_arg_get(&b);
-             WRN("Unsupported selected erase in line %d", arg);
-          }
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 0;
-        DBG("EL/DECSEL %d: erase in line", arg);
-        switch (arg)
-          {
-           case TERMPTY_CLR_END:
-           case TERMPTY_CLR_BEGIN:
-           case TERMPTY_CLR_ALL:
-              termpty_clear_line(ty, arg, ty->w);
-              break;
-           default:
-              ERR("invalid EL/DECSEL argument %d", arg);
+             ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
           }
         break;
       case 'h':
+       EINA_FALLTHROUGH;
       case 'l':
         _handle_esc_csi_reset_mode(ty, *cc, b);
+        break;
+      case 'm': // color set
+        _handle_esc_csi_color_set(ty, &b);
+        break;
+      case 'n':
+        _handle_esc_csi_dsr(ty, b);
+        break;
+      case 'p': // define key assignments based on keycode
+        if (b && *b == '!')
+          {
+             DBG("soft reset (DECSTR)");
+             termpty_reset_state(ty);
+          }
+        else
+          {
+             goto unhandled;
+          }
         break;
       case 'r':
         _handle_esc_csi_decstbm(ty, &b);
@@ -1532,75 +1596,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'u': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);
         break;
-      case 'p': // define key assignments based on keycode
-        if (b && *b == '!')
-          {
-             DBG("soft reset (DECSTR)");
-             termpty_reset_state(ty);
-          }
-        else
-          {
-             goto unhandled;
-          }
-        break;
-      case 'n':
-        _handle_esc_csi_dsr(ty, b);
-        break;
-/*
-      case 'R': // report cursor
-        break;
-      case 'q': // set/clear led's
-        break;
-      case 'x': // request terminal parameters
-        break;
-      case 'y': // invoke confidence test
-        break;
- */
-      case 'g': // clear tabulation
-        arg = _csi_arg_get(&b);
-        if (arg < 0) arg = 0;
-        if (arg == 0)
-          {
-             int cx = ty->cursor_state.cx;
-             TAB_UNSET(ty, cx);
-          }
-        else if (arg == 3)
-          {
-             termpty_clear_tabs_on_screen(ty);
-          }
-        else
-          {
-             ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
-          }
-        break;
-      case 'Z':
-          {
-             int cx = ty->cursor_state.cx;
-
-             arg = _csi_arg_get(&b);
-             DBG("Cursor Backward Tabulation (CBT): %d", arg);
-             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-             for (; arg > 0; arg--)
-               {
-                  do
-                    {
-                       cx--;
-                    }
-                  while ((cx >= 0) && (!TAB_TEST(ty, cx)));
-               }
-
-             ty->cursor_state.cx = cx;
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-          }
+      case 'x':
+        _handle_esc_csi_decfra(ty, &b);
         break;
       case 'z':
         _handle_esc_csi_decera(ty, &b);
-        break;
-      case 'I':
-        arg = _csi_arg_get(&b);
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("Cursor Forward Tabulation (CHT): %d", arg);
-        _tab_forward(ty, arg);
         break;
       default:
         goto unhandled;
