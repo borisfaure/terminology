@@ -10,6 +10,7 @@ typedef struct _Term  Term;
 
 Eina_Bool main_term_popup_exists(const Term *term);
 void term_unfocus(Term *term);
+void term_focus(Term *term);
 
 Evas_Object *term_termio_get(const Term *term);
 Evas_Object *term_miniview_get(const Term *term);

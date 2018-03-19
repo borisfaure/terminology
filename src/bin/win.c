@@ -186,7 +186,6 @@ static Eina_Bool _term_is_focused(Term *term);
 static Term_Container *_solo_new(Term *term, Win *wn);
 static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
 static Term_Container *_tabs_new(Term_Container *child, Term_Container *parent);
-static void _term_focus(Term *term);
 static void _term_free(Term *term);
 static void _term_media_update(Term *term, const Config *config);
 static void _term_miniview_check(Term *term);
@@ -583,7 +582,7 @@ _cb_win_focus_in(void *data,
 
    if (term)
      {
-        _term_focus(term);
+        term_focus(term);
      }
    else
      {
@@ -2508,7 +2507,7 @@ _cb_tab_activate(void *data,
    assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*)tab_item->tc;
    term = solo->term;
-   _term_focus(term);
+   term_focus(term);
 }
 
 static void
@@ -3804,8 +3803,8 @@ void change_theme(Evas_Object *win, Config *config)
    main_trans_update(config);
 }
 
-static void
-_term_focus(Term *term)
+void
+term_focus(Term *term)
 {
    Term_Container *tc;
 
@@ -3878,7 +3877,7 @@ term_go_to(Term *from, enum term_to_direction dir)
      }
 
    if (new_term && new_term != focused_term)
-     _term_focus(new_term);
+     term_focus(new_term);
 
    /* TODO: get rid of it? */
    _term_miniview_check(from);
@@ -4490,7 +4489,7 @@ _sendfile_progress_hide(Term *term)
    if (elm_object_focus_get(term->sendfile_progress))
      {
         elm_object_focus_set(term->sendfile_progress, EINA_FALSE);
-        _term_focus(term);
+        term_focus(term);
      }
 }
 
@@ -4595,7 +4594,7 @@ _sendfile_request_hide_delay(void *data)
    if (elm_object_focus_get(term->sendfile_request))
      {
         elm_object_focus_set(term->sendfile_request, EINA_FALSE);
-        _term_focus(term);
+        term_focus(term);
      }
    return EINA_FALSE;
 }
