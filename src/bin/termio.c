@@ -926,6 +926,10 @@ _cb_ctxp_del(void *data,
    Termio *sd = data;
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->ctxpopup = NULL;
+
+   /* Force refocus */
+   term_unfocus(sd->term);
+   term_focus(sd->term);
 }
 
 static void
