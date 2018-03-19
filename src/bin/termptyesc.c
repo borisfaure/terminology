@@ -1518,6 +1518,28 @@ CUF:
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
           }
         break;
+      case '`': // HPA
+        arg = _csi_arg_get(&b);
+        DBG("Horizontal Position Absolute (HPA): %d", arg);
+        arg--;
+        if (arg < 0) arg = 0;
+        ty->termstate.wrapnext = 0;
+        ty->cursor_state.cx = arg;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+        if (ty->termstate.restrict_cursor)
+          {
+             if ((ty->termstate.right_margin != 0)
+                 && (ty->cursor_state.cx >= ty->termstate.right_margin))
+               {
+                  ty->cursor_state.cx = ty->termstate.right_margin - 1;
+               }
+             if ((ty->termstate.left_margin != 0)
+                 && (ty->cursor_state.cx < ty->termstate.left_margin))
+               {
+                  ty->cursor_state.cx = ty->termstate.left_margin;
+               }
+          }
+        break;
       case 'a': // cursor right N
         goto CUF;
       case 'b': // repeat last char
