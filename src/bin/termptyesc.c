@@ -1611,7 +1611,11 @@ HVP:
           }
         break;
       case 'h':
-       EINA_FALLTHROUGH;
+        _handle_esc_csi_reset_mode(ty, *cc, b);
+        break;
+      case 'i':
+        WRN("TODO: Media Copy (?:%s)", (*b == '?') ? "yes": "no");
+        break;
       case 'l':
         _handle_esc_csi_reset_mode(ty, *cc, b);
         break;
