@@ -232,16 +232,23 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      {
         ERR("error while reading from tty slave fd");
+        ty->hand_fd = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    if (ty->fd == -1)
-     return ECORE_CALLBACK_CANCEL;
+     {
+        ty->hand_fd = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 
 /* it seems the BSDs can not read from this side of the pair if the other side
  * is closed */
 #if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
    if (ty->pid == -1)
-       return ECORE_CALLBACK_CANCEL;
+     {
+        ty->hand_fd = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
 #endif
 
    // read up to 64 * 4096 bytes
