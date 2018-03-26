@@ -1414,7 +1414,7 @@ _cb_win_key_down(void *data,
 
    /* 4th/ Composing */
    /* composing */
-   if (&wn->khdl.imf)
+   if (wn->khdl.imf)
      {
         // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
         // and jed (alt+shift+5 for search/replace for example)
