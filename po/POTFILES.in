@@ -18,7 +18,6 @@ src/bin/options_keys.c
 src/bin/options_theme.c
 src/bin/options_themepv.c
 src/bin/options_video.c
-src/bin/options_wallpaper.c
 src/bin/sel.c
 src/bin/termcmd.c
 src/bin/termio.c
