@@ -13,6 +13,8 @@
 #endif
 #define gettext_noop(String) String
 
+#include "coverity.h"
+
 extern int terminology_starting_up;
 
 #ifdef ENABLE_FUZZING
