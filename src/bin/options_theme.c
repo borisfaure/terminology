@@ -98,8 +98,8 @@ _cb_sel_item(void *data)
      {
         elm_gengrid_item_selected_set(t->item, EINA_TRUE);
         elm_gengrid_item_bring_in(t->item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+        t->ctx->seltimer = NULL;
      }
-   t->ctx->seltimer = NULL;
    return EINA_FALSE;
 }
 
