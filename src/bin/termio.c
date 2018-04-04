@@ -2236,11 +2236,14 @@ _lost_selection_reset_job(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    sd->sel_reset_job = NULL;
-   elm_cnp_selection_set(sd->win, sd->sel_type,
-                         ELM_SEL_FORMAT_TEXT,
-                         sd->sel_str, strlen(sd->sel_str));
-   elm_cnp_selection_loss_callback_set(sd->win, sd->sel_type,
-                                       _lost_selection, data);
+   if (sd->sel_str)
+     {
+        elm_cnp_selection_set(sd->win, sd->sel_type,
+                              ELM_SEL_FORMAT_TEXT,
+                              sd->sel_str, strlen(sd->sel_str));
+        elm_cnp_selection_loss_callback_set(sd->win, sd->sel_type,
+                                            _lost_selection, data);
+     }
 }
 
 static void
@@ -2249,6 +2252,7 @@ _lost_selection(void *data, Elm_Sel_Type selection)
    Eina_List *l;
    Evas_Object *obj;
    double t = ecore_time_get();
+
    EINA_LIST_FOREACH(terms, l, obj)
      {
         Termio *sd = evas_object_smart_data_get(obj);
