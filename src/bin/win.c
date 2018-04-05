@@ -4052,8 +4052,11 @@ _ty_http_head_delete(Ty_Http_Head *ty_head)
    eina_stringshare_del(ty_head->src);
    ecore_con_url_free(ty_head->url);
    ecore_event_handler_del(ty_head->url_complete);
-   edje_object_signal_emit(ty_head->term->bg, "done", "terminology");
-   term_unref(ty_head->term);
+   if (ty_head->term)
+     {
+        edje_object_signal_emit(ty_head->term->bg, "done", "terminology");
+        term_unref(ty_head->term);
+     }
    ecore_timer_del(ty_head->timeout);
 
    free(ty_head);
