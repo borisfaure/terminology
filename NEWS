@@ -1,6 +1,31 @@
 =================
-Terminology 1.1.1
+Terminology 1.2.0
 =================
+
+Changes since 1.1.1:
+--------------------
+
+Additions:
+    * New build system based on Meson
+    * Add Nord theme
+    * Add tysend tool and support escapes for sending single files
+    * Grouped input support with Alt+g and Alt+Shift+g
+    * Different cursor shapes: block (default), underline and bar
+
+Improvements:
+    * Support REP (Repeat preceding character) escape code
+    * Support HPA (Horizontal Position Absolute) escape code
+    * Support encircled escape code (SGR 52)
+    * Support DECSCUSR (changing cursor shape)
+    * When grabbing images through gravatar, use https
+    * Shine level is configurable
+    * Support EFL 1.20 or newer only
+    * Approximate true-colors
+
+Fixes:
+    * Escape code fixes
+    * More focus fixes
+
 
 Changes since 1.1.0:
 --------------------
@@ -27,7 +52,7 @@ Additions:
     * Move cursor to position on Click+Alt
     * Add binding (Alt+Up/Down/Left/Right) to move around panes
 
-Improvement:
+Improvements:
     * Fallback to ~ or / when creating new term if current dir is not available
     * Support only efl >= 1.8.0
     * Harden escape codes decoding
@@ -47,7 +72,7 @@ Changes since 0.9.1:
 Additions:
     * Bold/Italic support (on by default)
 
-Improvement:
+Improvements:
     * Add keybinding shift+home to go to the top of the backlog
     * Add keybinding shift+end to reset scroll
     * Add keybinding shift+left/right to switch between tabs

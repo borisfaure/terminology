@@ -1,3 +1,22 @@
+2018-04-15
+
+        * Release v1.2.0
+        * New build system based on Meson
+        * Add Nord theme
+        * Add tysend tool and support escapes for sending single files
+        * Grouped input support with Alt+g and Alt+Shift+g
+        * Different cursor shapes: block (default), underline and bar
+        * Support REP (Repeat preceding character) escape code
+        * Support HPA (Horizontal Position Absolute) escape code
+        * Support encircled escape code (SGR 52)
+        * Support DECSCUSR (changing cursor shape)
+        * When grabbing images through gravatar, use https
+        * Shine level is configurable
+        * Support EFL 1.20 or newer only
+        * Approximate true-colors
+        * Escape code fixes
+        * More focus fixes
+
 2017-09-02
 
         * Release v1.1.1
