@@ -3255,7 +3255,7 @@ _tab_new_cb(void *data,
    Evas_Coord x, y, w, h;
    Term_Container *tc = (Term_Container*) tabs,
                   *tc_new, *tc_parent, *tc_old;
-   Term *tm, *tm_new;
+   Term *tm_new;
    Win *wn = tc->wn;
    char *wdir = NULL;
    char buf[PATH_MAX];
@@ -3264,7 +3264,11 @@ _tab_new_cb(void *data,
    // passing wdir NULL otherwise:
    if (wn->config->changedir_to_current)
      {
-        tm = tc->focused_term_get(tc);
+        Term *tm;
+
+        tc_old = tabs->current->tc;
+        tm = tc_old->term_first(tc_old);
+
         if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
           wdir = buf;
      }
