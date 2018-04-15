@@ -54,6 +54,13 @@ termio_font_size_set(Evas_Object *obj EINA_UNUSED,
                      int size EINA_UNUSED)
 {
 }
+
+
+void
+termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
+                        Cursor_Shape shape EINA_UNUSED)
+{
+}
 /* }}} */
 
 

@@ -534,6 +534,12 @@ static int
 _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
 {
    int chosen_color = COL_DEF;
+#ifdef ENABLE_FUZZING
+   (void) ty;
+   (void) r0;
+   (void) g0;
+   (void) b0;
+#else
    int c;
    int distance_min = INT_MAX;
    Evas_Object *textgrid;
@@ -569,6 +575,7 @@ _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
              chosen_color = c;
           }
      }
+#endif
    return chosen_color;
 }
 
