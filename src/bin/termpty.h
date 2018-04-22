@@ -87,7 +87,13 @@ struct _Termpty
       } change, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
-      const char *title, *icon;
+      const char *icon;
+      /* dynamic title set by xterm, keep it in case user don't want a
+       * title any more by setting a empty title
+       */
+      const char *title;
+      /* set by user */
+      const char *user_title;
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;

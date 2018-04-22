@@ -4278,7 +4278,7 @@ _set_title_ok_cb(void *data,
    if (!title || !strlen(title))
      title = NULL;
 
-   termio_title_set(term->termio, title);
+   termio_user_title_set(term->termio, title);
    elm_object_focus_set(entry, EINA_FALSE);
    elm_popup_dismiss(popup);
 }
@@ -4315,6 +4315,7 @@ term_set_title(Term *term)
    Evas_Object *o;
    Evas_Object *popup;
    Term_Container *tc = term->container;
+   const char *prev_title;
 
    EINA_SAFETY_ON_NULL_RETURN(term);
    term->wn->on_popover++;
@@ -4341,6 +4342,13 @@ term_set_title(Term *term)
 
    o = elm_entry_add(popup);
    elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_editable_set(o, EINA_TRUE);
+   prev_title = termio_user_title_get(term->termio);
+   if (prev_title)
+     {
+        elm_entry_entry_set(o, prev_title);
+        elm_entry_cursor_pos_set(o, strlen(prev_title));
+     }
    evas_object_smart_callback_add(o, "activated", _set_title_ok_cb, popup);
    evas_object_smart_callback_add(o, "aborted", _set_title_cancel_cb, popup);
    elm_object_content_set(popup, o);
