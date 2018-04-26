@@ -1245,10 +1245,6 @@ collections {
             target: "shine_focused";
             target: "shine_unfocused";
             sequence {
-               action: STATE_SET "focused2" 0.0;
-               target: "glow";
-            }
-            sequence {
                action: STATE_SET "custom" 0.0;
                target: "shine_unfocused";
             }
