@@ -550,6 +550,8 @@ elm_main(int argc, char **argv)
    eina_log_print_cb_set(_log_to_syslog, NULL);
 #endif
 
+   elm_config_item_select_on_focus_disabled_set(EINA_TRUE);
+
    elm_language_set("");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
