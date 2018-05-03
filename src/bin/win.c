@@ -1569,7 +1569,7 @@ _cb_win_mouse_move(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child = NULL;
 
-   if (wn->on_popover || wn->group_input)
+   if (wn->on_popover || wn->group_input || !tc->is_focused)
      return;
 
    if (!wn->config->mouse_over_focus)
