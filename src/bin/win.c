@@ -995,6 +995,7 @@ _win_focus(Term_Container *tc, Term_Container *relative)
        tc, tc->is_focused, wn->child == relative);
    if (relative != wn->child)
      {
+        DBG("focus tc:%p", tc);
         wn->child->focus(wn->child, tc);
         elm_win_keyboard_mode_set(wn->win, ELM_WIN_KEYBOARD_TERMINAL);
         if (wn->khdl.imf)
@@ -1542,6 +1543,10 @@ _cb_win_mouse_down(void *data,
    if (wn->on_popover || wn->group_input)
      return;
 
+   /* Focus In event will handle that */
+   if (!tc->is_focused)
+     return;
+
    term_mouse = tc->find_term_at_coords(tc, ev->canvas.x, ev->canvas.y);
    term = tc->focused_term_get(tc);
    if (term_mouse == term)
@@ -1554,6 +1559,7 @@ _cb_win_mouse_down(void *data,
      }
 
    tc_child = term_mouse->container;
+   DBG("focus tc_child:%p", tc_child);
    tc_child->focus(tc_child, tc);
 }
 
