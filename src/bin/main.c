@@ -442,40 +442,6 @@ _log_void(const Eina_Log_Domain *_d EINA_UNUSED,
           va_list args EINA_UNUSED)
 {
 }
-#else
-#include <syslog.h>
-static void
-_log_to_syslog(const Eina_Log_Domain *_d EINA_UNUSED,
-               Eina_Log_Level level,
-               const char *_file EINA_UNUSED,
-               const char *_fnc EINA_UNUSED,
-               int _line EINA_UNUSED,
-               const char *fmt,
-               void *_data EINA_UNUSED,
-               va_list args)
-{
-    int priority;
-    switch (level) {
-     case EINA_LOG_LEVEL_CRITICAL:
-        priority = LOG_CRIT;
-        break;
-     case EINA_LOG_LEVEL_ERR:
-        priority = LOG_ERR;
-        break;
-     case EINA_LOG_LEVEL_WARN:
-        priority = LOG_WARNING;
-        break;
-     case EINA_LOG_LEVEL_INFO:
-        priority = LOG_INFO;
-        break;
-     case EINA_LOG_LEVEL_DBG:
-        priority = LOG_DEBUG;
-        break;
-     default:
-        priority = level + LOG_CRIT;
-    }
-    vsyslog(priority, fmt, args);
-}
 #endif
 
 EAPI_MAIN int
@@ -560,8 +526,6 @@ elm_main(int argc, char **argv)
 
 #ifdef ENABLE_FUZZING
    eina_log_print_cb_set(_log_void, NULL);
-#else
-   eina_log_print_cb_set(_log_to_syslog, NULL);
 #endif
 
    elm_config_item_select_on_focus_disabled_set(EINA_TRUE);
