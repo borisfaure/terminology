@@ -1,6 +1,15 @@
 =================
-Terminology 1.2.0
+Terminology 1.2.1
 =================
+
+Changes since 1.2.0:
+--------------------
+
+Fixes:
+    * Fix focus issues when input was not registering
+    * User-defined tab titles stay even when terminal wants change it
+    * Themes no longer have glow when unfocused
+
 
 Changes since 1.1.1:
 --------------------
