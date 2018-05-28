@@ -6034,6 +6034,21 @@ _smart_cb_drop(void *data,
    return EINA_TRUE;
 }
 
+// As we do not control the lifecycle of the Evas_Object *win,
+// the death of the gesture layer can happen before the termio
+// is destroyed. So by NULLing the structure field on gesture
+// death, we make sure to not manipulate dead pointer
+static void
+_gesture_layer_death(void *data,
+                     Evas *e EINA_UNUSED,
+                     Evas_Object *obj EINA_UNUSED,
+                     void *event EINA_UNUSED)
+{
+   Termio *sd = data;
+
+   sd->glayer = NULL;
+}
+
 /* }}} */
 
 
@@ -6074,6 +6089,7 @@ termio_add(Evas_Object *win, Config *config,
    sd->win = win;
 
    sd->glayer = g = elm_gesture_layer_add(win);
+   evas_object_event_callback_add(g, EVAS_CALLBACK_FREE,  _gesture_layer_death);
    elm_gesture_layer_attach(g, sd->event);
 
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
