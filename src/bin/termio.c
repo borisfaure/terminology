@@ -6089,7 +6089,8 @@ termio_add(Evas_Object *win, Config *config,
    sd->win = win;
 
    sd->glayer = g = elm_gesture_layer_add(win);
-   evas_object_event_callback_add(g, EVAS_CALLBACK_FREE,  _gesture_layer_death);
+   evas_object_event_callback_add(g, EVAS_CALLBACK_FREE,
+                                  _gesture_layer_death, sd);
    elm_gesture_layer_attach(g, sd->event);
 
    elm_gesture_layer_cb_set(g, ELM_GESTURE_N_LONG_TAPS,
