@@ -10,6 +10,8 @@ This is an EFL terminal emulator with some extra bells and whistles.
 
 :warning: :warning: :warning:
 
+[![Coverity](https://scan.coverity.com/projects/terminology/badge.svg)](https://scan.coverity.com/projects/terminology)
+
 
 Requirements
 ------------
