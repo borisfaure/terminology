@@ -5,6 +5,8 @@ color_classes {
 }
 #endif
 
+efl_version: 1 20;
+
 collections {
 
    group { name: "terminology/keybinding";
