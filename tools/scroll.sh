@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 I=0
 while [ 1 ]; do
