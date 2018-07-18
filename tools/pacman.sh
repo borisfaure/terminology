@@ -17,7 +17,6 @@ initializeANSI()
   whitef="${esc}[37m"
 
   boldon="${esc}[1m";
-  boldoff="${esc}[22m"
 
   reset="${esc}[0m"
 }
