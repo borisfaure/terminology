@@ -49,13 +49,15 @@ _cb_sel_off(void *data,
      elm_object_disabled_set(bt_copy, EINA_TRUE);
 }
 
-static Eina_Bool
-_cb_del(void *data)
+static void
+_cb_del(void *data,
+        Evas *_e EINA_UNUSED,
+        Evas_Object *_obj EINA_UNUSED,
+        void *_ev EINA_UNUSED)
 {
    Evas_Object *frame = data;
    evas_object_del(frame);
    elm_cache_all_flush();
-   return EINA_FALSE;
 }
 
 static void
