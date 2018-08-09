@@ -38,7 +38,7 @@ _ipc_cb_client_data(void *_data EINA_UNUSED,
 static char *
 _ipc_hash_get(void)
 {
-   char buf[1024], hash[64];
+   char buf[1024], hash[64] = {};
    const char *disp, *session, *xdg_session, *xdg_id, *xdg_seat, *xdg_vt;
    char *s;
    unsigned int i;
@@ -60,9 +60,8 @@ _ipc_hash_get(void)
    snprintf(buf, sizeof(buf), "%s.%s.%s.%s.%s.%s", 
             disp, session, xdg_session, 
             xdg_id, xdg_seat, xdg_vt);
-   memset(hash, 0, sizeof(hash));
-   memset(hash, 'x', 12 + 32);
    memcpy(hash, "terminology-", 12);
+   memset(hash+12, 'x', 32);
    for (i = 0, s = buf; *s; s++)
      {
         c1 = (((unsigned char)*s) >> 4) & 0xf;
