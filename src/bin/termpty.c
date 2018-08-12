@@ -89,7 +89,6 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
    if (ty->buf)
      {
-        if (!ty->buf) ty->buf_have_zero = EINA_FALSE;
         bytes = (ty->buflen + len + 1) * sizeof(int);
         b = realloc(ty->buf, bytes);
         if (!b)
