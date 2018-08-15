@@ -1,4 +1,7 @@
 {
   "project_id" : "terminology",
-  "conduit_uri" : "https://phab.enlightenment.org/"
+  "projects" : "terminology",
+  "conduit_uri" : "https://phab.enlightenment.org/",
+  "phabricator.uri" : "https://phab.enlightenment.org/",
+  "repository.callsign" : "TRM"
 }
