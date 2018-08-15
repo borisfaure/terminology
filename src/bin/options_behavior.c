@@ -17,6 +17,7 @@ typedef struct _Behavior_Ctx {
      Config *config;
 } Behavior_Ctx;
 
+extern Eina_Bool multisense_available;
 
 #define CB(_cfg_name, _inv)                                     \
 static void                                                     \
@@ -407,6 +408,17 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    _add_cursors_option(bx, ctx);
 
    CX(_("React to key presses"), flicker_on_key, 0);
+   if (!multisense_available)
+     {
+        Evas_Object *lbl;
+
+        lbl = elm_label_add(bx);
+        evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(lbl, 0.0, 0.5);
+        elm_box_pack_before(bx, lbl, o);
+        elm_object_text_set(lbl, _("Audio Support for key presses <failure>DISABLED</failure>!"));
+        evas_object_show(lbl);
+     }
    CX(_("Visual Bell"), disable_visual_bell, 1);
    CX(_("Bell rings"), bell_rings, 0);
    CX(_("Urgent Bell"), urg_bell, 0);

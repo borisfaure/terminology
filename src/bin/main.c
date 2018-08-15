@@ -21,8 +21,31 @@
 
 int terminology_starting_up;
 int _log_domain = -1;
+Eina_Bool multisense_available = EINA_TRUE;
 
 static Config *_main_config = NULL;
+
+static void
+_check_multisense(void)
+{
+   int enabled;
+   Eina_Bool setting = edje_audio_channel_mute_get(EDJE_CHANNEL_EFFECT);
+
+   /* older versions of efl have no capability for determining whether multisense support
+    * is available
+    * to check, attempt to set mute on a channel and check the value: if the value has not been
+    * set then the multisense codepath is disabled
+    *
+    * this is a no-op in either case, as the function only sets an internal variable and returns
+    */
+   for (enabled = 0; enabled < 2; enabled++)
+     {
+        edje_audio_channel_mute_set(EDJE_CHANNEL_EFFECT, enabled);
+        if (enabled != edje_audio_channel_mute_get(EDJE_CHANNEL_EFFECT))
+          multisense_available = EINA_FALSE;
+     }
+   edje_audio_channel_mute_set(EDJE_CHANNEL_EFFECT, setting);
+}
 
 Config *
 main_config_get(void)
@@ -611,6 +634,8 @@ elm_main(int argc, char **argv)
              eina_strbuf_free(strb);
           }
      }
+
+   _check_multisense();
 
    if (theme)
      {
