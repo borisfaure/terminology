@@ -17,8 +17,6 @@
 /src/bin/*_generated.c
 /src/bin/*_generated.h
 /src/bin/.deps/
-/src/bin/lz4/.deps/
-/src/bin/lz4/.dirstamp
 /src/bin/md5/.deps/
 /src/bin/md5/.dirstamp
 /src/bin/terminology

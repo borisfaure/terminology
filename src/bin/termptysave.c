@@ -2,7 +2,6 @@
 #include <Elementary.h>
 #include "termpty.h"
 #include "termptysave.h"
-#include "lz4/lz4.h"
 #include <sys/mman.h>
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
