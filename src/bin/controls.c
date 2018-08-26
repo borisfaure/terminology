@@ -50,14 +50,25 @@ _cb_sel_off(void *data,
 }
 
 static void
-_cb_del(void *data,
-        Evas *_e EINA_UNUSED,
-        Evas_Object *_obj EINA_UNUSED,
-        void *_ev EINA_UNUSED)
+_cb_hidden(void *data,
+           Evas *_e EINA_UNUSED,
+           Evas_Object *_obj EINA_UNUSED,
+           void *_ev EINA_UNUSED)
 {
-   Evas_Object *frame = data;
+   Controls_Ctx *ctx = data;
+   Evas_Object *frame = ctx->frame;
+   Evas_Object *o;
+
    evas_object_del(frame);
+
+   o = edje_object_part_swallow_get(ctx->base, "terminology.controls");
+   if (o)
+     {
+        edje_object_part_unswallow(ctx->base, o);
+     }
+
    elm_cache_all_flush();
+   free(ctx);
 }
 
 static void
@@ -149,16 +160,20 @@ _on_sub_done(void *data)
 {
    Controls_Ctx *ctx = data;
 
-   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
-                                  _cb_del, ctx->frame);
-   ctx->frame = NULL;
-
    if (ctx->donecb)
      ctx->donecb(ctx->donedata);
 
    eina_hash_del(controls, &ctx->win, ctx);
 
-   free(ctx);
+   if (evas_object_visible_get(ctx->frame))
+     {
+        evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
+                                       _cb_hidden, ctx);
+     }
+   else
+     {
+        _cb_hidden(ctx, NULL, NULL, NULL);
+     }
 }
 
 static void
