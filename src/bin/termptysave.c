@@ -2,44 +2,6 @@
 #include <Elementary.h>
 #include "termpty.h"
 #include "termptysave.h"
-#include <sys/mman.h>
-
-#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
-# ifndef MAP_ANONYMOUS
-#  define MAP_ANONYMOUS MAP_ANON
-# endif
-#endif
-
-#define MEM_ALLOC_ALIGN  16
-#define MEM_BLOCKS       1024
-
-#define TS_MMAP_SIZE 131072
-#define TS_ALLOC_MASK (TS_MMAP_SIZE - 1)
-
-typedef struct _Alloc Alloc;
-
-struct _Alloc
-{
-   unsigned int size, last, count, allocated;
-   short slot;
-   unsigned char gen;
-   unsigned char __pad;
-};
-
-
-#if 0
-static void *
-_ts_new(int size)
-{
-   /* TODO: RESIZE rewrite that stuff */
-   //void *ptr;
-
-   if (!size) return NULL;
-   //ptr = _alloc_new(size, cur_gen);
-
-   return calloc(1, size);
-}
-#endif
 
 static void
 _ts_free(void *ptr)
@@ -73,28 +35,6 @@ Termsave *
 termpty_save_extract(Termsave *ts)
 {
    if (!ts) return NULL;
-#if 0
-   if (ts->z) //TODO: unused
-     {
-        Termsavecomp *tsc = (Termsavecomp *)ts;
-        Termsave *ts2;
-        char *buf;
-        int bytes;
-
-        ts2 = _ts_new(sizeof(Termsave) + ((tsc->wout - 1) * sizeof(Termcell)));
-        if (!ts2) return NULL;
-        ts2->w = tsc->wout;
-        buf = ((char *)tsc) + sizeof(Termsavecomp);
-        bytes = LZ4_uncompress(buf, (char *)(&(ts2->cells[0])),
-                               tsc->wout * sizeof(Termcell));
-        if (bytes < 0)
-          {
-             memset(&(ts2->cells[0]), 0, tsc->wout * sizeof(Termcell));
-//             ERR("Decompress problem in row at byte %i", -bytes);
-          }
-        return ts2;
-     }
-#endif
    return ts;
 }
 
