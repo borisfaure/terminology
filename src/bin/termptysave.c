@@ -12,7 +12,6 @@ _ts_free(void *ptr)
 static int ts_comp = 0;
 static int ts_uncomp = 0;
 static int ts_freeops = 0;
-static int ts_compfreeze = 0;
 static Eina_List *ptys = NULL;
 
 void
@@ -69,12 +68,9 @@ void
 termpty_save_free(Termsave *ts)
 {
    if (!ts) return;
-   if (!ts_compfreeze)
-     {
-        if (ts->comp) ts_comp--;
-        else ts_uncomp--;
-        ts_freeops++;
-     }
+   if (ts->comp) ts_comp--;
+   else ts_uncomp--;
+   ts_freeops++;
    _ts_free(ts->cells);
    ts->cells = NULL;
    ts->w = 0;
