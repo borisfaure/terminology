@@ -766,7 +766,7 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
              en->was_selected = EINA_FALSE;
              en->selected = EINA_TRUE;
           }
-        else if (en->obj != entry)
+        else
           {
              if (en->selected)
                {
