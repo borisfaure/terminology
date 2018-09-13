@@ -924,7 +924,7 @@ static void
 _backlog_remove_latest_nolock(Termpty *ty)
 {
    Termsave *ts;
-   if (ty->backsize <= 0)
+   if (ty->backsize == 0)
      return;
    ts = BACKLOG_ROW_GET(ty, 1);
 
@@ -948,7 +948,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    Termsave *ts;
    ssize_t w, i;
 
-   if (ty->backsize <= 0)
+   if (ty->backsize == 0)
      return;
    assert(ty->back);
 
@@ -960,7 +960,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
      {
         cells[i].att.autowrapped = 1;
      }
-   if (ty->backsize >= 1)
+   if (ty->backsize > 0)
      {
         ts = BACKLOG_ROW_GET(ty, 1);
         if (!ts->cells)
@@ -1048,7 +1048,7 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
    int screen_y = ty->backlog_beacon.screen_y;
 
    verify_beacon(ty, 0);
-   if (!ty->backsize || *scroll <= 0)
+   if ((ty->backsize == 0) || (*scroll <= 0))
      {
         *scroll = 0;
         return;
@@ -1350,7 +1350,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    old_y = 0;
    /* Rewrap the first line from the history if needed */
-   if (ty->backsize >= 1)
+   if (ty->backsize > 0)
      {
         Termsave *ts;
         ts = BACKLOG_ROW_GET(ty, 1);
