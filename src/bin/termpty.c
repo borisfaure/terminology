@@ -1022,23 +1022,23 @@ termpty_backlog_length(Termpty *ty)
      return 0;
    verify_beacon(ty, 0);
 
-   backlog_y++;
-   while (42)
+   for (backlog_y++; backlog_y < (int)ty->backsize; backlog_y++)
      {
         int nb_lines;
         const Termsave *ts;
 
         ts = BACKLOG_ROW_GET(ty, backlog_y);
-        if (!ts->cells || backlog_y >= (int)ty->backsize)
-          return ty->backlog_beacon.screen_y;
+        if (!ts->cells)
+          goto end;
 
         nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
         screen_y += nb_lines;
         ty->backlog_beacon.screen_y = screen_y;
         ty->backlog_beacon.backlog_y = backlog_y;
         verify_beacon(ty, 0);
-        backlog_y++;
      }
+end:
+     return ty->backlog_beacon.screen_y;
 }
 
 void
