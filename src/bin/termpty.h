@@ -2,6 +2,7 @@
 #define _TERMPTY_H__ 1
 
 #include "config.h"
+#include "media.h"
 
 typedef struct _Termpty       Termpty;
 typedef struct _Termcell      Termcell;
@@ -210,7 +211,7 @@ struct _Termblock
    Evas_Object *obj;
    Eina_List   *cmds;
    int          id;
-   int          type;
+   Media_Type   type;
    int          refs;
    short        w, h;
    short        x, y;
