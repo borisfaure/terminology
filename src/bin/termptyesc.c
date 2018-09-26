@@ -7,9 +7,6 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
-#if defined(SUPPORT_80_132_COLUMNS)
-#include "termio.h"
-#endif
 
 #undef CRITICAL
 #undef ERR
