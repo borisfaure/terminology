@@ -421,6 +421,7 @@ termpty_reset_att(Termatt *att)
    att->framed = 0;
    att->encircled = 0;
    att->overlined = 0;
+   att->link_id = 0;
 }
 
 void

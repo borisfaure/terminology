@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "media.h"
+#include "termiolink.h"
 
 typedef struct _Termpty       Termpty;
 typedef struct _Termcell      Termcell;
@@ -74,6 +75,7 @@ struct _Termatt
 #else
    unsigned short bit_padding : 12;
 #endif
+   uint16_t          link_id;
 };
 
 struct _Termpty
@@ -175,13 +177,17 @@ struct _Termpty
    unsigned int mouse_mode : 3;
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
+   struct {
+       Term_Link *links;
+       uint8_t *bitmap;
+       uint16_t size;
+   } hl;
 };
 
 struct _Termcell
 {
    Eina_Unicode   codepoint;
    Termatt        att;
-   unsigned char padding[2];
 };
 
 struct _Termsave
@@ -309,5 +315,11 @@ do {                                                                         \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
 
+
+Term_Link *
+term_link_new(Termpty *ty);
+
+void
+term_link_free(Term_Link *link, Termpty *ty);
 
 #endif

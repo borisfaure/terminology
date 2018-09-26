@@ -509,6 +509,16 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         goto err;
      }
 
+   ty->hl.bitmap = calloc(1, HL_LINKS_MAX / 8); /* bit map for 1 << 16 elements */
+   if (!ty->hl.bitmap)
+     {
+        ERR("Allocation of %d bytes failed: %s",
+            HL_LINKS_MAX / 8, strerror(errno));
+        goto err;
+     }
+   /* Mark id 0 as set */
+   ty->hl.bitmap[0] = 1;
+
    termpty_resize_tabs(ty, 0, w);
 
    termpty_reset_state(ty);
@@ -739,6 +749,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 err:
    free(ty->screen);
    free(ty->screen2);
+   free(ty->hl.bitmap);
    if (ty->fd >= 0) close(ty->fd);
    if (ty->slavefd >= 0) close(ty->slavefd);
    free(ty);
@@ -811,6 +822,20 @@ termpty_free(Termpty *ty)
      }
    free(ty->screen);
    free(ty->screen2);
+   if (ty->hl.links)
+     {
+        uint16_t i;
+
+        for (i = 0; i < ty->hl.size; i++)
+          {
+             Term_Link *l = ty->hl.links + i;
+
+             free(l->key);
+             free(l->url);
+          }
+       free(ty->hl.links);
+     }
+   free(ty->hl.bitmap);
    free(ty->buf);
    free(ty->tabs);
    free(ty);

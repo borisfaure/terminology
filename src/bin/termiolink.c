@@ -1,5 +1,6 @@
 #include "private.h"
 #include <Elementary.h>
+#include "termiolink.h"
 #include "termio.h"
 #include "sb.h"
 #include "utf8.h"
@@ -428,4 +429,102 @@ end:
    termpty_backlog_unlock();
    ty_sb_free(&sb);
    return s;
+}
+
+/* 0 means error here */
+static uint16_t
+_find_empty_slot(const Termpty *ty)
+{
+   int pos;
+   int max_pos = HL_LINKS_MAX / 8;
+
+   for (pos = 0; pos < max_pos && ty->hl.bitmap[pos] == 0xff; pos++)
+     {
+     }
+
+   if (pos <= max_pos)
+     {
+        int bit;
+        for (bit = 0; bit < 8; bit++)
+          {
+             if (!(ty->hl.bitmap[pos] & (1<<bit)))
+               {
+                  return pos * 8 + bit;
+               }
+          }
+     }
+   return 0;
+}
+
+static void
+hl_bitmap_set_bit(Termpty *ty, uint16_t id)
+{
+   uint8_t *pos = &ty->hl.bitmap[id / 8];
+   uint8_t bit = 1 << (id % 8);
+
+   *pos |= bit;
+}
+
+static void
+hl_bitmap_clear_bit(Termpty *ty, uint16_t id)
+{
+   uint8_t *pos = &ty->hl.bitmap[id / 8];
+   uint8_t bit = 1 << (id % 8);
+
+   *pos &= ~bit;
+}
+
+Term_Link *
+term_link_new(Termpty *ty)
+{
+   uint16_t id;
+   Term_Link *link;
+
+   /* 1st/ Find empty slot in bitmap */
+   id = _find_empty_slot(ty);
+   if (!id)
+     {
+        ERR("hyper links: can't find empty slot");
+        return NULL;
+     }
+
+   /* 2nd/ Do we need to realloc? */
+   if (id >= ty->hl.size)
+     {
+        Term_Link *links;
+        uint16_t old_size = ty->hl.size;
+
+        if (!ty->hl.size)
+          ty->hl.size = 256;
+        links = realloc(ty->hl.links,
+                        ty->hl.size * 2 * sizeof(Term_Link));
+        if (!links)
+          return NULL;
+        ty->hl.size *= 2;
+        ty->hl.links = links;
+        memset(ty->hl.links + old_size,
+               0,
+               (ty->hl.size - old_size) * sizeof(Term_Link));
+     }
+
+   link = ty->hl.links + id;
+   link->key = NULL;
+   link->url = NULL;
+   link->refcount = 0;
+
+   /* Mark in bitmap */
+   hl_bitmap_set_bit(ty, id);
+
+   return link;
+}
+
+void
+term_link_free(Term_Link *link, Termpty *ty)
+{
+    if (!link)
+      return;
+    uint16_t id = (link - ty->hl.links);
+
+   /* Remove from bitmap */
+   hl_bitmap_clear_bit(ty, id);
 }

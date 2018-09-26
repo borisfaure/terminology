@@ -1802,6 +1802,94 @@ err:
 }
 
 static void
+_handle_hyperlink(Termpty *ty,
+                  char *s,
+                  int len)
+{
+    char *url = NULL;
+    char *key = NULL;
+    Term_Link *hl = NULL;
+
+    if (!s || len <= 0)
+      {
+         ERR("invalid hyperlink escape code (len:%d s:%p)",
+             len, s);
+         return;
+      }
+
+    if (len == 1 && *s == ';')
+      {
+         /* Closing escape code */
+         if (ty->termstate.att.link_id)
+           {
+              ty->termstate.att.link_id = 0;
+           }
+         else
+           {
+              ERR("invalid hyperlink escape code: no hyperlink to close"
+                  " (len:%d s:%.*s)", len, len, s);
+           }
+         goto end;
+      }
+
+    if (*s != ';')
+      {
+         /* Parse parameters */
+         char *end;
+
+         /* /!\ we expect ';' and ':' to be escaped in params */
+         end = memchr(s+1, ';', len);
+         *end = '\0';
+         do
+           {
+              char *end_param;
+
+              end_param = strchrnul(s, ':');
+
+              if (len > 3 && strncmp(s, "id=", 3) == 0)
+                {
+                   free(key);
+
+                   s += 3;
+                   len -= 3;
+                   key = strndup(s, end_param - s);
+                }
+              len -= end_param - s;
+              s = end_param;
+              if (*end_param)
+                {
+                   s++;
+                   len--;
+                }
+           }
+         while (s < end);
+         *end = ';';
+      }
+    s++;
+    len--;
+
+    url = strndup(s, len);
+    if (!url)
+      goto end;
+
+    hl = term_link_new(ty);
+    if (!hl)
+      goto end;
+    hl->key = key;
+    hl->url = url;
+    key = NULL;
+    url = NULL;
+
+    ty->termstate.att.link_id = hl - ty->hl.links;
+    hl = NULL;
+
+end:
+    term_link_free(hl, ty);
+    free(url);
+    free(key);
+}
+
+static void
 _handle_xterm_50_command(Termpty *ty,
                          char *s,
                          int len)
@@ -1993,6 +2081,11 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         // XXX: set palette entry. not supported.
         WRN("set palette, not supported");
         if ((cc - c) < 3) return 0;
+        break;
+      case 8:
+        DBG("hyperlink");
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        _handle_hyperlink(ty, s, len);
         break;
       case 10:
         if (!*p)
