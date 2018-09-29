@@ -1674,10 +1674,12 @@ HVP:
         termpty_cursor_copy(ty, EINA_FALSE);
         break;
       case 'x':
-        _handle_esc_csi_decfra(ty, &b);
+        if (*(cc-1) == '$')
+          _handle_esc_csi_decfra(ty, &b);
         break;
       case 'z':
-        _handle_esc_csi_decera(ty, &b);
+        if (*(cc-1) == '$')
+          _handle_esc_csi_decera(ty, &b);
         break;
       default:
         goto unhandled;

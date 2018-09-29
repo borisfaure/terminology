@@ -127,13 +127,100 @@ static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
 
 /* {{{ Helpers */
 
+static void
+_termio_scroll_selection(Termio *sd, Termpty *ty,
+                         int direction, int start_y, int end_y)
+{
+   if (!ty->selection.is_active)
+     return;
+
+   int sel_start_x = ty->selection.start.x;
+   int sel_start_y = ty->selection.start.y;
+   int sel_end_x = ty->selection.end.x;
+   int sel_end_y = ty->selection.end.y;
+
+   int left_margin = ty->termstate.left_margin;
+   int right_margin = ty->termstate.right_margin;
+
+   if (!ty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(sel_start_y, sel_end_y);
+        INT_SWAP(sel_start_x, sel_end_x);
+     }
+
+   if (start_y <= sel_start_y &&
+       sel_end_y <= end_y)
+     {
+        if (ty->termstate.left_margin)
+          {
+             if ((ty->selection.is_box) || (sel_start_y == sel_end_y))
+               {
+                  /* if selection outside scrolling area */
+                  if ((sel_end_x <= left_margin) ||
+                      (sel_start_x >= right_margin))
+                    {
+                       return;
+                    }
+                  /* if selection not within scrolling area */
+                  if (!((sel_start_x >= left_margin) &&
+                        (sel_end_x <= right_margin)))
+                    {
+                       _sel_set(sd, EINA_FALSE);
+                       return;
+                    }
+               }
+             else
+               {
+                  _sel_set(sd, EINA_FALSE);
+                  return;
+               }
+          }
+
+          ty->selection.orig.y += direction;
+          ty->selection.start.y += direction;
+          ty->selection.end.y += direction;
+          sel_start_y += direction;
+          sel_end_y += direction;
+          if (!(start_y <= sel_start_y &&
+                sel_end_y <= end_y))
+            {
+               _sel_set(sd, EINA_FALSE);
+            }
+     }
+   else if (!((start_y > sel_end_y) ||
+              (end_y < sel_start_y)))
+     {
+        if (ty->termstate.left_margin)
+          {
+             if ((ty->selection.is_box) || (sel_start_y == sel_end_y))
+               {
+                  /* if selection outside scrolling area */
+                  if ((sel_end_x <= left_margin) ||
+                      (sel_start_x >= right_margin))
+                    {
+                       return;
+                    }
+               }
+          }
+        _sel_set(sd, EINA_FALSE);
+     }
+   else if (sd->scroll > 0)
+     {
+        ty->selection.orig.y += direction;
+        ty->selection.start.y += direction;
+        ty->selection.end.y += direction;
+     }
+}
+
 void
 termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
 {
-   Termpty *ty;
    Termio *sd = evas_object_smart_data_get(obj);
+   Termpty *ty;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   ty = sd->pty;
 
    if ((!sd->jump_on_change) && // if NOT scroll to bottom on updates
        (sd->scroll > 0))
@@ -143,42 +230,9 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
         // adjust scroll position for added scrollback
         sd->scroll -= direction;
      }
-   ty = sd->pty;
-   if (ty->selection.is_active)
-     {
-        int sel_start_y, sel_end_y;
 
-        sel_start_y = ty->selection.start.y;
-        sel_end_y = ty->selection.end.y;
+   _termio_scroll_selection(sd, ty, direction, start_y, end_y);
 
-        if (!ty->selection.is_top_to_bottom)
-             INT_SWAP(sel_start_y, sel_end_y);
-        if (start_y <= sel_start_y &&
-            sel_end_y <= end_y)
-          {
-             ty->selection.orig.y += direction;
-             ty->selection.start.y += direction;
-             ty->selection.end.y += direction;
-             sel_start_y += direction;
-             sel_end_y += direction;
-             if (!(start_y <= sel_start_y &&
-                 sel_end_y <= end_y))
-               {
-                  _sel_set(sd, EINA_FALSE);
-               }
-          }
-        else if (!((start_y > sel_end_y) ||
-                   (end_y < sel_start_y)))
-          {
-             _sel_set(sd, EINA_FALSE);
-          }
-        else if (sd->scroll > 0)
-          {
-             ty->selection.orig.y += direction;
-             ty->selection.start.y += direction;
-             ty->selection.end.y += direction;
-          }
-     }
    if (sd->link.string)
      {
         if (sd->link.y1 <= end_y && sd->link.y2 >= start_y)
