@@ -1,9 +1,10 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
 
-#include "private.h"
 #include "miniview.h"
 #include "col.h"
 #include "termpty.h"

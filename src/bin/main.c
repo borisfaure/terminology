@@ -1,7 +1,8 @@
+#include "private.h"
+
 #ifdef HAVE_PO
 #include <locale.h>
 #endif
-#include "private.h"
 
 #include <Ecore_Getopt.h>
 #include <Elementary.h>

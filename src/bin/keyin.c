@@ -1,8 +1,9 @@
+#include "private.h"
+
 #include <Elementary.h>
 #include <Ecore_Input.h>
 #include <Ecore_IMF.h>
 #include <Ecore_IMF_Evas.h>
-#include "private.h"
 #include "termpty.h"
 #include "termio.h"
 #include "termcmd.h"

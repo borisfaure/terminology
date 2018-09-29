@@ -1,3 +1,5 @@
+#include "private.h"
+
 #include <assert.h>
 #include <Elementary.h>
 #include <Ecore_Input.h>
@@ -12,7 +14,6 @@
 #include "media.h"
 #include "termio.h"
 #include "utils.h"
-#include "private.h"
 #include "sel.h"
 #include "controls.h"
 #include "keyin.h"

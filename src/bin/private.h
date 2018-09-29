@@ -1,3 +1,5 @@
+#include "coverity.h"
+
 #ifndef _PRIVATE_H__
 #define _PRIVATE_H__ 1
 
@@ -13,7 +15,6 @@
 #endif
 #define gettext_noop(String) String
 
-#include "coverity.h"
 
 extern int terminology_starting_up;
 
