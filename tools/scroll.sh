@@ -15,7 +15,7 @@ printf '\033[5;15s'
 # move to 0,0 with margins:
 printf '\033[H'
 # clean up rect
-printf '\033[1;1;11;11$z'
+printf '\033[1;1;11;11\044z'
 echo '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
 
 I=0
