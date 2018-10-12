@@ -5,7 +5,6 @@
 #include "media.h"
 #include "termiolink.h"
 
-typedef struct _Termpty       Termpty;
 typedef struct _Termcell      Termcell;
 typedef struct _Termatt       Termatt;
 typedef struct _Termsave      Termsave;
@@ -180,7 +179,7 @@ struct _Termpty
    struct {
        Term_Link *links;
        uint8_t *bitmap;
-       uint16_t size;
+       uint32_t size;
    } hl;
 };
 
@@ -240,6 +239,7 @@ struct _Termexp
    int x, y, w, h;
 };
 
+
 void       termpty_init(void);
 void       termpty_shutdown(void);
 
@@ -270,7 +270,6 @@ Termblock *termpty_block_get(const Termpty *ty, int id);
 void       termpty_block_chid_update(Termpty *ty, Termblock *blk);
 Termblock *termpty_block_chid_get(const Termpty *ty, const char *chid);
 
-void       termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n);
 void       termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint, Termatt att, Termcell *dst, int n);
 void       termpty_cells_set_content(Termpty *ty, Termcell *cells,
                           Eina_Unicode codepoint, int count);
@@ -311,15 +310,63 @@ do {                                                                         \
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                               \
                                          (Tdst)[__i].codepoint,              \
                                          (Tsrc)[__i].codepoint);             \
+        if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                          \
+          term_link_refcount_dec(ty, (Tsrc)[__i].att.link_id, 1);            \
+        if (EINA_UNLIKELY((Tdst)[__i].att.link_id))                          \
+          term_link_refcount_inc(ty, (Tdst)[__i].att.link_id, 1);            \
      }                                                                       \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
 
 
-Term_Link *
-term_link_new(Termpty *ty);
+static inline void
+term_link_refcount_inc(Termpty *ty, uint16_t link_id, uint16_t count)
+{
+   Term_Link *link;
 
-void
-term_link_free(Term_Link *link, Termpty *ty);
+   link = &ty->hl.links[link_id];
+   link->refcount += count;
+}
 
+static inline void
+term_link_refcount_dec(Termpty *ty, uint16_t link_id, uint16_t count)
+{
+   Term_Link *link;
+
+   link = &ty->hl.links[link_id];
+   link->refcount -= count;
+   if (EINA_UNLIKELY(link->refcount == 0))
+     term_link_free(ty, link);
+}
+
+static inline void
+termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
+{
+   int i;
+
+   if (src)
+     {
+        for (i = 0; i < n; i++)
+          {
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[0].codepoint);
+             if (EINA_UNLIKELY(dst[i].att.link_id))
+               term_link_refcount_dec(ty, dst[i].att.link_id, 1);
+
+             dst[i] = src[0];
+          }
+        if (src[0].att.link_id)
+          term_link_refcount_inc(ty, dst[i].att.link_id, n);
+     }
+   else
+     {
+        for (i = 0; i < n; i++)
+          {
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, 0);
+             if (EINA_UNLIKELY(dst[i].att.link_id))
+               term_link_refcount_dec(ty, dst[i].att.link_id, 1);
+
+             memset(&(dst[i]), 0, sizeof(*dst));
+          }
+     }
+}
 #endif

@@ -830,8 +830,7 @@ termpty_free(Termpty *ty)
           {
              Term_Link *l = ty->hl.links + i;
 
-             free(l->key);
-             free(l->url);
+             term_link_free(ty, l);
           }
        free(ty->hl.links);
      }
@@ -1636,29 +1635,6 @@ termpty_screen_swap(Termpty *ty)
 }
 
 void
-termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
-{
-   int i;
-
-   if (src)
-     {
-        for (i = 0; i < n; i++)
-          {
-             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[0].codepoint);
-             dst[i] = src[0];
-          }
-     }
-   else
-     {
-        for (i = 0; i < n; i++)
-          {
-             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, 0);
-             memset(&(dst[i]), 0, sizeof(*dst));
-          }
-     }
-}
-
-void
 termpty_cells_set_content(Termpty *ty, Termcell *cells,
                           Eina_Unicode codepoint, int count)
 {
@@ -1681,6 +1657,9 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
      {
         Termatt att = cells[i].att;
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
+        if (EINA_UNLIKELY(cells[i].att.link_id))
+          term_link_refcount_dec(ty, cells[i].att.link_id, 1);
+
         cells[i] = local;
         if (ty->termstate.att.fg == 0 && ty->termstate.att.bg == 0)
           {
@@ -1693,6 +1672,8 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
              cells[i].att.bgintense = att.bgintense;
           }
      }
+   if (EINA_UNLIKELY(local.att.link_id))
+     term_link_refcount_inc(ty, local.att.link_id, count);
 }
 
 
@@ -1706,8 +1687,13 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
    for (i = 0; i < n; i++)
      {
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, codepoint);
+        if (EINA_UNLIKELY(dst[i].att.link_id))
+          term_link_refcount_dec(ty, dst[i].att.link_id, 1);
+
         dst[i] = local;
      }
+   if (EINA_UNLIKELY(local.att.link_id))
+     term_link_refcount_inc(ty, local.att.link_id, n);
 }
 
 Config *

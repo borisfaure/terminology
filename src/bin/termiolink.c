@@ -519,11 +519,16 @@ term_link_new(Termpty *ty)
 }
 
 void
-term_link_free(Term_Link *link, Termpty *ty)
+term_link_free(Termpty *ty, Term_Link *link)
 {
-    if (!link)
-      return;
-    uint16_t id = (link - ty->hl.links);
+   if (!link || !ty)
+     return;
+   uint16_t id = (link - ty->hl.links);
+
+   free(link->key);
+   link->key = NULL;
+   free(link->url);
+   link->url = NULL;
 
    /* Remove from bitmap */
    hl_bitmap_clear_bit(ty, id);

@@ -1884,7 +1884,7 @@ _handle_hyperlink(Termpty *ty,
     hl = NULL;
 
 end:
-    term_link_free(hl, ty);
+    term_link_free(ty, hl);
     free(url);
     free(key);
 }
