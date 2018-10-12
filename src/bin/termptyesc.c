@@ -1629,7 +1629,7 @@ HVP:
         if (b && *b == '!')
           {
              DBG("soft reset (DECSTR)");
-             termpty_reset_state(ty);
+             termpty_soft_reset_state(ty);
           }
         else
           {

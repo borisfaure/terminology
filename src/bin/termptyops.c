@@ -424,7 +424,7 @@ termpty_reset_att(Termatt *att)
 }
 
 void
-termpty_reset_state(Termpty *ty)
+termpty_soft_reset_state(Termpty *ty)
 {
    int i;
    Config *config = NULL;
@@ -432,8 +432,6 @@ termpty_reset_state(Termpty *ty)
    if (ty->obj)
      config = termio_config_get(ty->obj);
 
-   ty->cursor_state.cx = 0;
-   ty->cursor_state.cy = 0;
    ty->termstate.top_margin = 0;
    ty->termstate.bottom_margin = 0;
    ty->termstate.left_margin = 0;
@@ -465,7 +463,6 @@ termpty_reset_state(Termpty *ty)
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
 
-   termpty_clear_backlog(ty);
    termpty_clear_tabs_on_screen(ty);
    for (i = 0; i < ty->w; i += TAB_WIDTH)
      {
@@ -473,6 +470,15 @@ termpty_reset_state(Termpty *ty)
      }
    if (config && ty->obj)
      termio_set_cursor_shape(ty->obj, config->cursor_shape);
+}
+
+void
+termpty_reset_state(Termpty *ty)
+{
+   termpty_soft_reset_state(ty);
+   ty->cursor_state.cx = 0;
+   ty->cursor_state.cy = 0;
+   termpty_clear_backlog(ty);
 }
 
 void
