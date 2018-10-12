@@ -3695,7 +3695,6 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 Eina_Bool
 term_is_visible(Term *term)
 {
-   /* TODO: boris */
    Term_Container *tc;
 
    if (!term)
