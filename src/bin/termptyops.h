@@ -24,6 +24,7 @@ void termpty_clear_screen(Termpty *ty, Termpty_Clear mode);
 void termpty_clear_all(Termpty *ty);
 void termpty_reset_att(Termatt *att);
 void termpty_reset_state(Termpty *ty);
+void termpty_soft_reset_state(Termpty *ty);
 void termpty_cursor_copy(Termpty *ty, Eina_Bool save);
 void termpty_clear_tabs_on_screen(Termpty *ty);
 void termpty_clear_backlog(Termpty *ty);
