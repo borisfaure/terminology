@@ -5588,11 +5588,9 @@ _smart_pty_bell(void *data)
 }
 
 static void
-_handle_query_esc(Evas_Object *obj,
-                  Termio *sd,
-                  Config *config,
-                  Termpty *ty)
+_handle_query_esc(Termio *sd)
 {
+   Termpty *ty = sd->pty;
    if (ty->cur_cmd[1] == 's')
      {
         char buf[256];
@@ -5653,7 +5651,7 @@ _smart_pty_command(void *data)
      return;
    if (ty->cur_cmd[0] == 'q')
      {
-        _handle_query_esc(obj, sd, config, ty);
+        _handle_query_esc(sd);
         return;
      }
 
