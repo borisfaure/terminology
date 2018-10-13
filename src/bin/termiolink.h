@@ -7,8 +7,8 @@ typedef struct _Termlink      Term_Link;
 
 struct _Termlink
 {
-    char *key;
-    char *url;
+    const char *key;
+    const char *url;
     unsigned int refcount;
 };
 

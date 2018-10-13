@@ -56,7 +56,7 @@ _tooltip_del(void            *data,
 }
 
 void
-gravatar_tooltip(Evas_Object *obj, const Config *config, char *email)
+gravatar_tooltip(Evas_Object *obj, const Config *config, const char *email)
 {
    int n;
    MD5_CTX ctx;
@@ -65,18 +65,29 @@ gravatar_tooltip(Evas_Object *obj, const Config *config, char *email)
    static const char hex[] = "0123456789abcdef";
    const char *url;
    Gravatar *g;
+   size_t len;
+   char *str;
 
    if (!config->gravatar)
      return;
 
    g = calloc(sizeof(Gravatar), 1);
-   if (!g) return;
+   if (!g)
+     return;
    g->config = config;
 
-   eina_str_tolower(&email);
+   len = strlen(email);
+   str = strndup(email, len);
+   if (!str)
+     {
+        free(g);
+        return;
+     }
+
+   eina_str_tolower(&str);
 
    MD5Init(&ctx);
-   MD5Update(&ctx, (unsigned char const*)email, (unsigned)strlen(email));
+   MD5Update(&ctx, (unsigned char const*)str, (unsigned)len);
    MD5Final(hash, &ctx);
 
    for (n = 0; n < MD5_HASHBYTES; n++)
@@ -93,6 +104,7 @@ gravatar_tooltip(Evas_Object *obj, const Config *config, char *email)
    elm_object_tooltip_content_cb_set(obj, _tooltip_content,
                                      g,
                                      _tooltip_del);
+   free(str);
 }
 
 void

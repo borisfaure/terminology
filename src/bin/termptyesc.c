@@ -1806,8 +1806,8 @@ _handle_hyperlink(Termpty *ty,
                   char *s,
                   int len)
 {
-    char *url = NULL;
-    char *key = NULL;
+    const char *url = NULL;
+    const char *key = NULL;
     Term_Link *hl = NULL;
 
     if (!s || len <= 0)
@@ -1848,7 +1848,7 @@ _handle_hyperlink(Termpty *ty,
 
               if (len > 3 && strncmp(s, "id=", 3) == 0)
                 {
-                   free(key);
+                   eina_stringshare_del(key);
 
                    s += 3;
                    len -= 3;
