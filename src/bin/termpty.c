@@ -1209,6 +1209,30 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
    return _termpty_cellrow_from_beacon_get(ty, y_requested, wret);
 }
 
+/* @requested_y unit is in visual lines on the screen */
+Termcell *
+termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
+{
+   ssize_t wret = 0;
+   Termcell *cells;
+
+   if (y_requested >= 0)
+     {
+        if (y_requested >= ty->h)
+          return NULL;
+        if (x_requested >= ty->w)
+          return NULL;
+        return &(TERMPTY_SCREEN(ty, 0, y_requested)) + x_requested;
+     }
+   if (!ty->back)
+     return NULL;
+
+   cells = _termpty_cellrow_from_beacon_get(ty, y_requested, &wret);
+   if (!cells || x_requested >= wret)
+     return NULL;
+   return cells + x_requested;
+}
+
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
