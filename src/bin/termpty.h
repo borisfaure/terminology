@@ -74,7 +74,7 @@ struct _Termatt
 #else
    unsigned short bit_padding : 12;
 #endif
-   uint16_t          link_id;
+   uint16_t       link_id;
 };
 
 struct _Termpty
@@ -311,10 +311,10 @@ do {                                                                         \
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                               \
                                          (Tdst)[__i].codepoint,              \
                                          (Tsrc)[__i].codepoint);             \
-        if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                          \
-          term_link_refcount_dec(ty, (Tsrc)[__i].att.link_id, 1);            \
         if (EINA_UNLIKELY((Tdst)[__i].att.link_id))                          \
-          term_link_refcount_inc(ty, (Tdst)[__i].att.link_id, 1);            \
+          term_link_refcount_dec(ty, (Tdst)[__i].att.link_id, 1);            \
+        if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                          \
+          term_link_refcount_inc(ty, (Tsrc)[__i].att.link_id, 1);            \
      }                                                                       \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
@@ -340,6 +340,25 @@ term_link_refcount_dec(Termpty *ty, uint16_t link_id, uint16_t count)
      term_link_free(ty, link);
 }
 
+static inline Eina_Bool
+term_link_eq(Termpty *ty, Term_Link *hl, uint16_t link_id)
+{
+    Term_Link *hl2;
+    uint16_t hl_id;
+
+    if (link_id == 0)
+        return EINA_FALSE;
+
+    hl_id = hl - ty->hl.links;
+    if (hl_id == link_id)
+        return EINA_TRUE;
+    hl2 = &ty->hl.links[link_id];
+    if (!hl->key || !hl2->key ||
+        strcmp(hl->key, hl2->key) != 0)
+        return EINA_FALSE;
+    return EINA_TRUE;
+}
+
 static inline void
 termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
 {
@@ -356,7 +375,7 @@ termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
              dst[i] = src[0];
           }
         if (src[0].att.link_id)
-          term_link_refcount_inc(ty, dst[i].att.link_id, n);
+          term_link_refcount_inc(ty, src[0].att.link_id, n);
      }
    else
      {

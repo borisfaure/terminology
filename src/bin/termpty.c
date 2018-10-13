@@ -817,7 +817,7 @@ termpty_free(Termpty *ty)
         size_t i;
 
         for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(&ty->back[i]);
+          termpty_save_free(ty, &ty->back[i]);
         free(ty->back);
      }
    free(ty->screen);
@@ -962,7 +962,7 @@ _backlog_remove_latest_nolock(Termpty *ty)
    ty->backlog_beacon.backlog_y = 0;
    verify_beacon(ty, 0);
 
-   termpty_save_free(ts);
+   termpty_save_free(ty, ts);
 }
 
 
@@ -993,7 +993,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
         if (ts->w && ts->cells[ts->w - 1].att.autowrapped)
           {
              int old_len = ts->w;
-             termpty_save_expand(ts, cells, w);
+             termpty_save_expand(ty, ts, cells, w);
              ty->backlog_beacon.screen_y += (ts->w + ty->w - 1) / ty->w
                                           - (old_len + ty->w - 1) / ty->w;
              verify_beacon(ty, 0);
@@ -1003,7 +1003,7 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 
 add_new_ts:
    ts = BACKLOG_ROW_GET(ty, 0);
-   ts = termpty_save_new(ts, w);
+   ts = termpty_save_new(ty, ts, w);
    if (!ts)
      return;
    TERMPTY_CELL_COPY(ty, cells, ts->cells, w);
@@ -1485,7 +1485,7 @@ termpty_backlog_size_set(Termpty *ty, size_t size)
         size_t i;
 
         for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(&ty->back[i]);
+          termpty_save_free(ty, &ty->back[i]);
         free(ty->back);
      }
    if (size > 0)
@@ -1677,6 +1677,9 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
    int i;
    Termcell local = { .codepoint = codepoint, .att = ty->termstate.att};
 
+   if (EINA_UNLIKELY(local.att.link_id))
+     term_link_refcount_inc(ty, local.att.link_id, count);
+
    for (i = 0; i < count; i++)
      {
         Termatt att = cells[i].att;
@@ -1696,8 +1699,6 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
              cells[i].att.bgintense = att.bgintense;
           }
      }
-   if (EINA_UNLIKELY(local.att.link_id))
-     term_link_refcount_inc(ty, local.att.link_id, count);
 }
 
 
@@ -1708,6 +1709,9 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
    Termcell local = { .codepoint = codepoint, .att = att };
    int i;
 
+   if (EINA_UNLIKELY(local.att.link_id))
+     term_link_refcount_inc(ty, local.att.link_id, n);
+
    for (i = 0; i < n; i++)
      {
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, codepoint);
@@ -1716,8 +1720,6 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
 
         dst[i] = local;
      }
-   if (EINA_UNLIKELY(local.att.link_id))
-     term_link_refcount_inc(ty, local.att.link_id, n);
 }
 
 Config *

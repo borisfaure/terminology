@@ -3,11 +3,6 @@
 #include "termpty.h"
 #include "termptysave.h"
 
-static void
-_ts_free(void *ptr)
-{
-   free(ptr);
-}
 
 static int ts_comp = 0;
 static int ts_uncomp = 0;
@@ -38,9 +33,9 @@ termpty_save_extract(Termsave *ts)
 }
 
 Termsave *
-termpty_save_new(Termsave *ts, int w)
+termpty_save_new(Termpty *ty, Termsave *ts, int w)
 {
-   termpty_save_free(ts);
+   termpty_save_free(ty, ts);
 
    Termcell *cells = calloc(1, w * sizeof(Termcell));
    if (!cells ) return NULL;
@@ -50,7 +45,7 @@ termpty_save_new(Termsave *ts, int w)
 }
 
 Termsave *
-termpty_save_expand(Termsave *ts, Termcell *cells, size_t delta)
+termpty_save_expand(Termpty *ty, Termsave *ts, Termcell *cells, size_t delta)
 {
    Termcell *newcells;
 
@@ -58,20 +53,29 @@ termpty_save_expand(Termsave *ts, Termcell *cells, size_t delta)
    if (!newcells)
      return NULL;
 
-   memcpy(&newcells[ts->w], cells, delta * sizeof(Termcell));
+   memset(newcells + ts->w,
+          0, delta * sizeof(Termcell));
+   TERMPTY_CELL_COPY(ty, cells, &newcells[ts->w], (int)delta);
+
    ts->w += delta;
    ts->cells = newcells;
    return ts;
 }
 
 void
-termpty_save_free(Termsave *ts)
+termpty_save_free(Termpty *ty, Termsave *ts)
 {
+   unsigned int i;
    if (!ts) return;
    if (ts->comp) ts_comp--;
    else ts_uncomp--;
    ts_freeops++;
-   _ts_free(ts->cells);
+   for (i = 0; i < ts->w; i++)
+     {
+        if (EINA_UNLIKELY(ts->cells[i].att.link_id))
+          term_link_refcount_dec(ty, ts->cells[i].att.link_id, 1);
+     }
+   free(ts->cells);
    ts->cells = NULL;
    ts->w = 0;
 }

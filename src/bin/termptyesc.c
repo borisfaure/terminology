@@ -1852,7 +1852,7 @@ _handle_hyperlink(Termpty *ty,
 
                    s += 3;
                    len -= 3;
-                   key = strndup(s, end_param - s);
+                   key = eina_stringshare_add_length(s, end_param - s);
                 }
               len -= end_param - s;
               s = end_param;
@@ -1868,7 +1868,7 @@ _handle_hyperlink(Termpty *ty,
     s++;
     len--;
 
-    url = strndup(s, len);
+    url = eina_stringshare_add_length(s, len);
     if (!url)
       goto end;
 
@@ -1885,8 +1885,8 @@ _handle_hyperlink(Termpty *ty,
 
 end:
     term_link_free(ty, hl);
-    free(url);
-    free(key);
+    eina_stringshare_del(url);
+    eina_stringshare_del(key);
 }
 
 static void

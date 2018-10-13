@@ -54,6 +54,7 @@ struct _Termio
       char *string;
       int x1, y1, x2, y2;
       int suspend;
+      uint16_t id;
       Eina_List *objs;
       struct {
          Evas_Object *dndobj;
@@ -1389,7 +1390,132 @@ _remove_links(Termio *sd, Evas_Object *obj)
    sd->link.y2 = -1;
    sd->link.suspend = EINA_FALSE;
    _update_link(obj, sd, same_link, same_geom);
+   sd->link.id = 0;
 }
+
+static void
+_hyperlink_end(Termio *sd,
+               Term_Link *hl,
+               Evas_Object *o,
+               Eina_Bool add_tooltip)
+{
+   Eina_Bool popup_exists;
+
+   sd->link.objs = eina_list_append(sd->link.objs, o);
+   elm_object_cursor_set(o, "hand2");
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_link_down, sd->self);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,
+                                  _cb_link_up, sd->self);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _cb_link_move, sd->self);
+   popup_exists = main_term_popup_exists(sd->term);
+   if (!popup_exists && add_tooltip)
+     {
+        if (link_is_email(hl->url))
+          {
+             gravatar_tooltip(o, sd->config, hl->url);
+          }
+        /* display tooltip */
+        elm_object_tooltip_text_set(o, hl->url);
+     }
+}
+
+static void
+_hyperlink_mouseover(Evas_Object *obj, Termio *sd,
+                     uint16_t link_id)
+{
+   Evas_Coord ox, oy, ow, oh;
+   Evas_Object *o;
+   int x, y;
+   Term_Link *hl;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   /* If it's the same link, consider we already have the correct links
+    * displayed */
+   if (sd->link.id == link_id)
+     return;
+
+   if (sd->link.suspend)
+     return;
+
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   EINA_LIST_FREE(sd->link.objs, o)
+     {
+        if (sd->link.down.dndobj == o)
+          {
+             sd->link.down.dndobjdel = EINA_TRUE;
+             evas_object_hide(o);
+          }
+        else
+          evas_object_del(o);
+     }
+   hl = &sd->pty->hl.links[link_id];
+   if (!hl->url)
+     return;
+
+   /* Scan the whole screen and display links as needed */
+   termpty_backlog_lock();
+   termpty_backscroll_adjust(sd->pty, &sd->scroll);
+   for (y = 0; y < sd->grid.h; y++)
+     {
+        ssize_t w = 0;
+        Termcell *cells;
+        int start_x = -1;
+
+        o = NULL;
+
+        cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
+        if (!cells)
+          continue;
+        for (x = 0; x < w; x++)
+          {
+             Termcell *c = cells + x;
+             if (term_link_eq(sd->pty, hl, c->att.link_id))
+               {
+                  if (!o)
+                    {
+                       o = elm_layout_add(sd->win);
+                       evas_object_smart_member_add(o, obj);
+                       theme_apply(elm_layout_edje_get(o), sd->config,
+                                   "terminology/link");
+                       evas_object_move(o,
+                                        ox + (x * sd->font.chw),
+                                        oy + (y * sd->font.chh));
+                       start_x = x;
+                    }
+               }
+             else
+               {
+                  if (o)
+                    {
+                       evas_object_resize(o,
+                                          (x - start_x) * sd->font.chw,
+                                          sd->font.chh);
+                       _hyperlink_end(sd, hl, o,
+                                      (y == sd->mouse.cy) &&
+                                      ((start_x <= sd->mouse.cx) &&
+                                        (sd->mouse.cx <= x)));
+                       o = NULL;
+                    }
+               }
+          }
+        if (o)
+          {
+             evas_object_resize(o,
+                                (x - start_x + 1) * sd->font.chw,
+                                sd->font.chh);
+             _hyperlink_end(sd, hl, o,
+                            (y == sd->mouse.cy) &&
+                            ((start_x <= sd->mouse.cx) &&
+                             (sd->mouse.cx <= x)));
+          }
+     }
+   termpty_backlog_unlock();
+}
+
 
 /* }}} */
 /* {{{ Blocks */
@@ -3573,6 +3699,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config;
+   Termcell *cell = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
@@ -3582,6 +3709,18 @@ _smart_mouseover_apply(Evas_Object *obj)
        (sd->link.suspend) || (!evas_object_focus_get(obj)))
      {
         _remove_links(sd, obj);
+        return;
+     }
+   cell = termpty_cell_get(sd->pty, sd->mouse.cy - sd->scroll, sd->mouse.cx);
+   if (!cell)
+     {
+        _remove_links(sd, obj);
+        return;
+     }
+
+   if (cell->att.link_id)
+     {
+        _hyperlink_mouseover(obj, sd, cell->att.link_id);
         return;
      }
 

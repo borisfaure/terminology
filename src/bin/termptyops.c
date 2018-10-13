@@ -319,7 +319,7 @@ termpty_clear_backlog(Termpty *ty)
      {
         size_t i;
         for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(&ty->back[i]);
+          termpty_save_free(ty, &ty->back[i]);
         free(ty->back);
         ty->back = NULL;
      }
@@ -421,7 +421,6 @@ termpty_reset_att(Termatt *att)
    att->framed = 0;
    att->encircled = 0;
    att->overlined = 0;
-   att->link_id = 0;
 }
 
 void
@@ -442,6 +441,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.had_cr_y = 0;
    ty->termstate.restrict_cursor = 0;
    termpty_reset_att(&(ty->termstate.att));
+   ty->termstate.att.link_id = 0;
    ty->termstate.charset = 0;
    ty->termstate.charsetch = 'B';
    ty->termstate.chset[0] = 'B';
