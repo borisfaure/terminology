@@ -116,7 +116,7 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 static Eina_List *terms = NULL;
 
 static void _sel_set(Termio *sd, Eina_Bool enable);
-static void _remove_links(Termio *sd, Evas_Object *obj);
+static void _remove_links(Termio *sd);
 static void _smart_update_queue(Evas_Object *obj, Termio *sd);
 static void _smart_apply(Evas_Object *obj);
 static void _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force);
@@ -237,7 +237,7 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
    if (sd->link.string)
      {
         if (sd->link.y1 <= end_y && sd->link.y2 >= start_y)
-          _remove_links(sd, obj);
+          _remove_links(sd);
      }
 }
 
@@ -267,7 +267,7 @@ termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
              int d = MIN(n, ty->w - x);
              if (!((x > end_x) || (x + d < start_x)))
                {
-                  _remove_links(sd, obj);
+                  _remove_links(sd);
                   break;
                }
              n -= d;
@@ -405,7 +405,7 @@ termio_scroll_set(Evas_Object *obj, int scroll)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = scroll;
-   _remove_links(sd, obj);
+   _remove_links(sd);
    _smart_apply(obj);
 }
 
@@ -415,7 +415,7 @@ termio_scroll_top_backlog(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = INT32_MAX;
-   _remove_links(sd, obj);
+   _remove_links(sd);
    _smart_apply(obj);
 }
 
@@ -1290,23 +1290,27 @@ _cb_link_move(void *data,
 }
 
 static void
-_update_link(Evas_Object *obj, Termio *sd,
-             Eina_Bool same_link, Eina_Bool same_geom)
+_update_link(Termio *sd, Eina_Bool same_link, Eina_Bool same_geom)
 {
    Evas_Coord ox, oy, ow, oh;
    Evas_Object *o;
+   Evas_Object *obj;
    Eina_Bool popup_exists;
    int y;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   obj = sd->self;
 
-   if (!same_link)
+   if (sd->link.id)
      {
-        // check link and re-probe/fetch create popup preview
+        same_link = EINA_FALSE;
+        same_geom = EINA_FALSE;
      }
 
    if (same_geom)
      return;
+
+   sd->link.id = 0;
 
    if (sd->link.suspend)
      return;
@@ -1375,7 +1379,7 @@ _update_link(Evas_Object *obj, Termio *sd,
 }
 
 static void
-_remove_links(Termio *sd, Evas_Object *obj)
+_remove_links(Termio *sd)
 {
    Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
 
@@ -1389,8 +1393,8 @@ _remove_links(Termio *sd, Evas_Object *obj)
    sd->link.x2 = -1;
    sd->link.y2 = -1;
    sd->link.suspend = EINA_FALSE;
-   _update_link(obj, sd, same_link, same_geom);
    sd->link.id = 0;
+   _update_link(sd, same_link, same_geom);
 }
 
 static void
@@ -1441,22 +1445,15 @@ _hyperlink_mouseover(Evas_Object *obj, Termio *sd,
    if (sd->link.suspend)
      return;
 
-   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   EINA_LIST_FREE(sd->link.objs, o)
-     {
-        if (sd->link.down.dndobj == o)
-          {
-             sd->link.down.dndobjdel = EINA_TRUE;
-             evas_object_hide(o);
-          }
-        else
-          evas_object_del(o);
-     }
+   _remove_links(sd);
+   sd->link.id = link_id;
+
    hl = &sd->pty->hl.links[link_id];
    if (!hl->url)
      return;
 
    /* Scan the whole screen and display links as needed */
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
@@ -3687,7 +3684,7 @@ termio_focus_out(Evas_Object *termio)
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
    if (!sd->ctxpopup)
-     _remove_links(sd, termio);
+     _remove_links(sd);
    term_unfocus(sd->term);
 }
 
@@ -3708,13 +3705,13 @@ _smart_mouseover_apply(Evas_Object *obj)
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
        (sd->link.suspend) || (!evas_object_focus_get(obj)))
      {
-        _remove_links(sd, obj);
+        _remove_links(sd);
         return;
      }
    cell = termpty_cell_get(sd->pty, sd->mouse.cy - sd->scroll, sd->mouse.cx);
    if (!cell)
      {
-        _remove_links(sd, obj);
+        _remove_links(sd);
         return;
      }
 
@@ -3728,13 +3725,14 @@ _smart_mouseover_apply(Evas_Object *obj)
                         &x1, &y1, &x2, &y2);
    if (!s)
      {
-        _remove_links(sd, obj);
+        _remove_links(sd);
         return;
      }
 
    if ((sd->link.string) && (!strcmp(sd->link.string, s)))
      same_link = EINA_TRUE;
-   if (sd->link.string) free(sd->link.string);
+   if (sd->link.string)
+     free(sd->link.string);
    sd->link.string = s;
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
@@ -3747,7 +3745,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    sd->link.y1 = y1;
    sd->link.x2 = x2;
    sd->link.y2 = y2;
-   _update_link(obj, sd, same_link, same_geom);
+   _update_link(sd, same_link, same_geom);
 }
 
 static void
@@ -4667,7 +4665,7 @@ _smart_cb_mouse_out(void *data,
         sd->mouse.cx = cx;
         sd->mouse.cy = cy;
      }
-   _remove_links(sd, obj);
+   _remove_links(sd);
 
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    sd->mouseover_delay = NULL;
