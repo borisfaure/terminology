@@ -7,6 +7,7 @@
 #include "termio.h"
 #include "media.h"
 #include "md5/md5.h"
+#include "utils.h"
 
 /* specific log domain to help debug the gravatar module */
 int _gravatar_log_dom = -1;
@@ -75,6 +76,9 @@ gravatar_tooltip(Evas_Object *obj, const Config *config, const char *email)
    if (!g)
      return;
    g->config = config;
+
+   if (casestartswith(email, "mailto:"))
+     email += strlen("mailto:");
 
    len = strlen(email);
    str = strndup(email, len);

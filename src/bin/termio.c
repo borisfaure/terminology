@@ -1417,12 +1417,13 @@ _hyperlink_end(Termio *sd,
    popup_exists = main_term_popup_exists(sd->term);
    if (!popup_exists && add_tooltip)
      {
+        /* display tooltip */
+        elm_object_tooltip_text_set(o, hl->url);
+
         if (link_is_email(hl->url))
           {
              gravatar_tooltip(o, sd->config, hl->url);
           }
-        /* display tooltip */
-        elm_object_tooltip_text_set(o, hl->url);
      }
 }
 
