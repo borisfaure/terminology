@@ -24,6 +24,7 @@
 #define BEL 0x07 // Bell
 #define ESC 033 // Escape
 #define DEL 127
+#define UTF8CC 0xc2
 
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
  * if not enough bytes could be read
@@ -1709,7 +1710,7 @@ unhandled:
 }
 
 static int
-_xterm_arg_get(Eina_Unicode **ptr)
+_osc_arg_get(Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int sum = 0;
@@ -1955,7 +1956,7 @@ _handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
 }
 
 static int
-_handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+_handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *p;
@@ -1968,7 +1969,9 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (p < be))
      {
-        if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
+        if ((cc < ce - 1) &&
+            (((*cc == ESC) && (*(cc + 1) == '\\')) ||
+             ((*cc == UTF8CC) && (*(cc + 1) == ST))))
           {
              cc++;
              break;
@@ -1979,18 +1982,20 @@ _handle_esc_xterm(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    if (p == be)
      {
-        ERR("xterm parsing overflowed, skipping the whole buffer (binary data?)");
+        ERR("OSC parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
      }
-   *p = 0;
+   *p = '\0';
    p = buf;
-   if ((*cc == ST) || (*cc == BEL) || (*cc == '\\')) cc++;
-   else return 0;
+   if ((*cc == ST) || (*cc == BEL) || (*cc == '\\'))
+     cc++;
+   else
+     return 0;
 
 #define TERMPTY_WRITE_STR(_S) \
    termpty_write(ty, _S, strlen(_S))
 
-   arg = _xterm_arg_get(&p);
+   arg = _osc_arg_get(&p);
    switch (arg)
      {
       case -1:
@@ -2202,7 +2207,9 @@ _handle_esc_dcs(Termpty *ty,
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (b < be))
      {
-        if ((cc < ce - 1) && (*cc == ESC) && (*(cc + 1) == '\\'))
+        if ((cc < ce - 1) &&
+            (((*cc == ESC) && (*(cc + 1) == '\\')) ||
+             ((*cc == UTF8CC) && (*(cc + 1) == ST))))
           {
              cc++;
              break;
@@ -2305,7 +2312,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (len == 0) return 0;
         return 1 + len;
       case ']':
-        len = _handle_esc_xterm(ty, c + 1, ce);
+        len = _handle_esc_osc(ty, c + 1, ce);
         if (len == 0) return 0;
         return 1 + len;
       case '}':
@@ -2428,6 +2435,32 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    return 0;
 }
 
+static int
+_handle_utf8_control_code(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   int len = ce - c;
+
+   if (len < 1)
+     return 0;
+   DBG("c0 utf8: '%s' (0x%02x)", _safechar(c[0]), c[0]);
+   switch (c[0])
+     {
+      case 0x9b:
+        len = _handle_esc_csi(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
+      case 0x9d:
+        len = _handle_esc_osc(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
+      default:
+        WRN("Unhandled utf8 control code '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
+        return 1;
+     }
+   return 0;
+}
+
+
 /* XXX: ce is excluded */
 int
 termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
@@ -2500,6 +2533,14 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len++;
         goto end;
      }
+   else if (c[0] == UTF8CC)
+     {
+        len = _handle_utf8_control_code(ty, c + 1, ce);
+        if (len == 0)
+          goto end;
+        len++;
+        goto end;
+     }
    else if ((ty->block.expecting) && (ty->block.on))
      {
         Termexp *ex;
@@ -2540,7 +2581,8 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    cc = (Eina_Unicode *)c;
    DBG("txt: [");
-   while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f))
+   while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f) && (*cc != 0x9b)
+          && (*cc != UTF8CC))
      {
         DBG("%s", _safechar(*cc));
         cc++;
