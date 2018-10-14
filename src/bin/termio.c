@@ -1290,7 +1290,7 @@ _cb_link_move(void *data,
 }
 
 static void
-_update_link(Termio *sd, Eina_Bool same_link, Eina_Bool same_geom)
+_update_link(Termio *sd, Eina_Bool same_geom)
 {
    Evas_Coord ox, oy, ow, oh;
    Evas_Object *o;
@@ -1303,7 +1303,6 @@ _update_link(Termio *sd, Eina_Bool same_link, Eina_Bool same_geom)
 
    if (sd->link.id)
      {
-        same_link = EINA_FALSE;
         same_geom = EINA_FALSE;
      }
 
@@ -1381,7 +1380,7 @@ _update_link(Termio *sd, Eina_Bool same_link, Eina_Bool same_geom)
 static void
 _remove_links(Termio *sd)
 {
-   Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
+   Eina_Bool same_geom = EINA_FALSE;
 
    if (sd->link.string)
      {
@@ -1394,7 +1393,7 @@ _remove_links(Termio *sd)
    sd->link.y2 = -1;
    sd->link.suspend = EINA_FALSE;
    sd->link.id = 0;
-   _update_link(sd, same_link, same_geom);
+   _update_link(sd, same_geom);
 }
 
 static void
@@ -3694,7 +3693,7 @@ _smart_mouseover_apply(Evas_Object *obj)
 {
    char *s;
    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-   Eina_Bool same_link = EINA_FALSE, same_geom = EINA_FALSE;
+   Eina_Bool same_geom = EINA_FALSE;
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config;
    Termcell *cell = NULL;
@@ -3730,8 +3729,6 @@ _smart_mouseover_apply(Evas_Object *obj)
         return;
      }
 
-   if ((sd->link.string) && (!strcmp(sd->link.string, s)))
-     same_link = EINA_TRUE;
    if (sd->link.string)
      free(sd->link.string);
    sd->link.string = s;
@@ -3746,7 +3743,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    sd->link.y1 = y1;
    sd->link.x2 = x2;
    sd->link.y2 = y2;
-   _update_link(sd, same_link, same_geom);
+   _update_link(sd, same_geom);
 }
 
 static void
