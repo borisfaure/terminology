@@ -4638,7 +4638,7 @@ _smart_cb_mouse_in(void *data,
 static void
 _smart_cb_mouse_out(void *data,
                     Evas *_e EINA_UNUSED,
-                    Evas_Object *obj,
+                    Evas_Object *obj EINA_UNUSED,
                     void *event)
 {
    Termio *sd = evas_object_smart_data_get(data);
