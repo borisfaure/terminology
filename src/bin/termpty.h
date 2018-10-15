@@ -356,7 +356,7 @@ term_link_eq(Termpty *ty, Term_Link *hl, uint16_t link_id)
     if (!hl->key || !hl2->key ||
         strcmp(hl->key, hl2->key) != 0)
         return EINA_FALSE;
-    return EINA_TRUE;
+    return (strcmp(hl->url, hl2->url) == 0);
 }
 
 static inline void
