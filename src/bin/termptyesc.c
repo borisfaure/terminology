@@ -1840,6 +1840,12 @@ _handle_hyperlink(Termpty *ty,
 
          /* /!\ we expect ';' and ':' to be escaped in params */
          end = memchr(s+1, ';', len);
+         if (!end)
+           {
+              ERR("invalid hyperlink escape code: missing ';'"
+                  " (len:%d s:%.*s)", len, len, s);
+              goto end;
+           }
          *end = '\0';
          do
            {
