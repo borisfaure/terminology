@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "media.h"
-#include "termiolink.h"
 
 typedef struct _Termcell      Termcell;
 typedef struct _Termatt       Termatt;
@@ -11,6 +10,8 @@ typedef struct _Termsave      Termsave;
 typedef struct _Termsavecomp  Termsavecomp;
 typedef struct _Termblock     Termblock;
 typedef struct _Termexp       Termexp;
+typedef struct _Termpty       Termpty;
+typedef struct _Termlink      Term_Link;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -43,6 +44,18 @@ typedef struct _Termexp       Termexp;
 #define MOVIE_STATE_PLAY   0
 #define MOVIE_STATE_PAUSE  1
 #define MOVIE_STATE_STOP   2
+
+#define HL_LINKS_MAX  (1 << 16)
+
+struct _Termlink
+{
+    const char *key;
+    const char *url;
+    unsigned int refcount;
+};
+
+
+
 
 struct _Termatt
 {
@@ -281,6 +294,9 @@ ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
 Config *termpty_config_get(const Termpty *ty);
 void termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len);
 void termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc);
+
+Term_Link * term_link_new(Termpty *ty);
+void term_link_free(Termpty *ty, Term_Link *link);
 
 extern int _termpty_log_dom;
 
