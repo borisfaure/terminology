@@ -1,6 +1,21 @@
 =================
-Terminology 1.2.1
+Terminology 1.3.0
 =================
+
+Changes since 1.2.1:
+--------------------
+
+Additions:
+    * Hyperlink escape code support
+
+Improvements:
+    * Optimize escape code parsing by improving cell copies
+
+Fixes:
+    * Fix issues about settings panel
+    * Do not pass input when tab selector is up
+    * Escape code fixes
+
 
 Changes since 1.2.0:
 --------------------

@@ -1,3 +1,13 @@
+2018-11-23
+
+        * Release v1.3.0
+        * Hyperlink escape code support
+        * Optimize escape code parsing by improving cell copies
+        * Fix issues about settings panel
+        * Do not pass input when tab selector is up
+        * Escape code fixes
+
+
 2018-05-14
 
         * Release v1.2.1
