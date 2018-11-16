@@ -223,7 +223,7 @@ key_binding_lookup(const char *keyname,
    kb->hyper = hyper;
    kb->len = len;
    kb->keyname = alloca(sizeof(char) * len + 1);
-   strncpy((char *)kb->keyname, keyname, kb->len + 1);
+   strcpy((char *)kb->keyname, keyname);
 
    return eina_hash_find(_key_bindings, kb);
 }
