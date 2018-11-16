@@ -2077,17 +2077,28 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
 
         if (homedir_get(home, sizeof(home)))
           {
-             snprintf(path, sizeof(path), "%s/.terminology/objlib/%s",
-                      home, blk->path);
+             if ((size_t)snprintf(path, sizeof(path),
+                                  "%s/.terminology/objlib/%s",
+                                  home, blk->path) >= sizeof(path))
+               {
+                  ERR("Not enough space in buffer for path to edje lib file");
+                  goto skip;
+               }
              ok = edje_object_file_set(blk->obj, path, blk->link);
           }
         if (!ok)
           {
-             snprintf(path, sizeof(path), "%s/objlib/%s",
-                      elm_app_data_dir_get(), blk->path);
+             if ((size_t)snprintf(path, sizeof(path), "%s/objlib/%s",
+                                  elm_app_data_dir_get(), blk->path)
+                 >= sizeof(path))
+               {
+                  ERR("Not enough space in buffer for path to edje lib file");
+                  goto skip;
+               }
              ok = edje_object_file_set(blk->obj, path, blk->link);
           }
      }
+skip:
    evas_object_smart_member_add(blk->obj, obj);
    evas_object_stack_above(blk->obj, sd->event);
    evas_object_show(blk->obj);
