@@ -5066,7 +5066,8 @@ _smart_apply(Evas_Object *obj)
                     }
                   else
                     {
-                       int fg, bg, fgext, bgext, codepoint, bold, italic;
+                       int fg, bg, fgext, bgext, bold, italic;
+                       Eina_Unicode codepoint;
 
                        // colors
                        fg = cells[x].att.fg;

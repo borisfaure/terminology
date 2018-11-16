@@ -248,7 +248,8 @@ struct _Termblock
 
 struct _Termexp
 {
-   int ch, left, id;
+   Eina_Unicode ch;
+   int left, id;
    int x, y, w, h;
 };
 
