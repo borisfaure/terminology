@@ -104,11 +104,9 @@ _csi_arg_get(Eina_Unicode **ptr)
         *ptr = b;
         return -1;
      }
-   if (*b == '\0')
-     {
-        *ptr = NULL;
-        return -1;
-     }
+
+   if (!*b)
+     goto error;
 
    while ((*b >= '0') && (*b <= '9'))
      {
@@ -121,21 +119,15 @@ _csi_arg_get(Eina_Unicode **ptr)
 
    if (*b == ';')
      {
-        if (b[1])
-          b++;
-        *ptr = b;
+        b++;
      }
-   else if (*b == '\0')
-     {
-        *ptr = NULL;
-     }
-   else
-     *ptr = b;
+
+   *ptr = b;
    return sum;
 
 error:
    *ptr = NULL;
-   return -2;
+   return -1;
 }
 
 static void
@@ -653,10 +645,10 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 }
 
 static void
-_handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
-                          const Eina_Unicode * const end)
+_handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
+   int first = 1;
 
    if (b && (*b == '>'))
      { // key resources used by xterm
@@ -664,293 +656,296 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
         return;
      }
    DBG("color set");
-   while (b && b <= end)
+   while (b)
      {
         int arg = _csi_arg_get(&b);
-        DBG("arg=%d b:%p", arg, b);
-        switch (arg)
+        if ((first) && (!b))
+          termpty_reset_att(&(ty->termstate.att));
+        else if (b)
           {
-           case -1:
-              EINA_FALLTHROUGH;
-           case 0: // reset to normal
-              termpty_reset_att(&(ty->termstate.att));
-              break;
-           case 1: // bold/bright
-              ty->termstate.att.bold = 1;
-              break;
-           case 2: // faint
-              ty->termstate.att.faint = 1;
-              break;
-           case 3: // italic
-              ty->termstate.att.italic = 1;
-              break;
-           case 4: // underline
-              ty->termstate.att.underline = 1;
-              break;
-           case 5: // blink
-              ty->termstate.att.blink = 1;
-              break;
-           case 6: // blink rapid
-              ty->termstate.att.blink2 = 1;
-              break;
-           case 7: // reverse
-              ty->termstate.att.inverse = 1;
-              break;
-           case 8: // invisible
-              ty->termstate.att.invisible = 1;
-              break;
-           case 9: // strikethrough
-              ty->termstate.att.strike = 1;
-              break;
-           case 20: // fraktur!
-              ty->termstate.att.fraktur = 1;
-              break;
-           case 21: // no bold/bright
-              ty->termstate.att.bold = 0;
-              break;
-           case 22: // no bold/bright, no faint
-              ty->termstate.att.bold = 0;
-              ty->termstate.att.faint = 0;
-              break;
-           case 23: // no italic, not fraktur
-              ty->termstate.att.italic = 0;
-              ty->termstate.att.fraktur = 0;
-              break;
-           case 24: // no underline
-              ty->termstate.att.underline = 0;
-              break;
-           case 25: // no blink
-              ty->termstate.att.blink = 0;
-              ty->termstate.att.blink2 = 0;
-              break;
-           case 27: // no reverse
-              ty->termstate.att.inverse = 0;
-              break;
-           case 28: // no invisible
-              ty->termstate.att.invisible = 0;
-              break;
-           case 29: // no strikethrough
-              ty->termstate.att.strike = 0;
-              break;
-           case 30: // fg
-           case 31:
-           case 32:
-           case 33:
-           case 34:
-           case 35:
-           case 36:
-           case 37:
-              ty->termstate.att.fg256 = 0;
-              ty->termstate.att.fg = (arg - 30) + COL_BLACK;
-              ty->termstate.att.fgintense = 0;
-              break;
-           case 38: // xterm 256 fg color ???
-              arg = _csi_arg_get(&b);
-              switch (arg)
-                {
-                 case 1:
-                    ty->termstate.att.fg256 = 0;
-                    ty->termstate.att.fg = COL_INVIS;
-                    break;
-                 case 2:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_rgb(ty, &b);
-                    DBG("truecolor RGB fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 3:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_cmy(ty, &b);
-                    DBG("truecolor CMY fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 4:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_cmyk(ty, &b);
-                    DBG("truecolor CMYK fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 5:
-                    // then get next arg - should be color index 0-255
-                    arg = _csi_arg_get(&b);
-                    if (!b) ERR("Failed xterm 256 color fg esc val");
-                    else if (arg < 0 || arg > 255)
-                      ERR("Invalid fg color %d", arg);
-                    else
-                      {
+             first = 0;
+             switch (arg)
+               {
+                case 0: // reset to normal
+                   termpty_reset_att(&(ty->termstate.att));
+                   break;
+                case 1: // bold/bright
+                   ty->termstate.att.bold = 1;
+                   break;
+                case 2: // faint
+                   ty->termstate.att.faint = 1;
+                   break;
+                case 3: // italic
+                   ty->termstate.att.italic = 1;
+                   break;
+                case 4: // underline
+                   ty->termstate.att.underline = 1;
+                   break;
+                case 5: // blink
+                   ty->termstate.att.blink = 1;
+                   break;
+                case 6: // blink rapid
+                   ty->termstate.att.blink2 = 1;
+                   break;
+                case 7: // reverse
+                   ty->termstate.att.inverse = 1;
+                   break;
+                case 8: // invisible
+                   ty->termstate.att.invisible = 1;
+                   break;
+                case 9: // strikethrough
+                   ty->termstate.att.strike = 1;
+                   break;
+                case 20: // fraktur!
+                   ty->termstate.att.fraktur = 1;
+                   break;
+                case 21: // no bold/bright
+                   ty->termstate.att.bold = 0;
+                   break;
+                case 22: // no bold/bright, no faint
+                   ty->termstate.att.bold = 0;
+                   ty->termstate.att.faint = 0;
+                   break;
+                case 23: // no italic, not fraktur
+                   ty->termstate.att.italic = 0;
+                   ty->termstate.att.fraktur = 0;
+                   break;
+                case 24: // no underline
+                   ty->termstate.att.underline = 0;
+                   break;
+                case 25: // no blink
+                   ty->termstate.att.blink = 0;
+                   ty->termstate.att.blink2 = 0;
+                   break;
+                case 27: // no reverse
+                   ty->termstate.att.inverse = 0;
+                   break;
+                case 28: // no invisible
+                   ty->termstate.att.invisible = 0;
+                   break;
+                case 29: // no strikethrough
+                   ty->termstate.att.strike = 0;
+                   break;
+                case 30: // fg
+                case 31:
+                case 32:
+                case 33:
+                case 34:
+                case 35:
+                case 36:
+                case 37:
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = (arg - 30) + COL_BLACK;
+                   ty->termstate.att.fgintense = 0;
+                   break;
+                case 38: // xterm 256 fg color ???
+                   arg = _csi_arg_get(&b);
+                   switch (arg)
+                     {
+                      case 1:
+                         ty->termstate.att.fg256 = 0;
+                         ty->termstate.att.fg = COL_INVIS;
+                         break;
+                      case 2:
                          ty->termstate.att.fg256 = 1;
-                         ty->termstate.att.fg = arg;
-                      }
-                    break;
-                 default:
-                    ERR("Failed xterm 256 color fg (got %d)", arg);
-                }
-              ty->termstate.att.fgintense = 0;
-              break;
-           case 39: // default fg color
-              ty->termstate.att.fg256 = 0;
-              ty->termstate.att.fg = COL_DEF;
-              ty->termstate.att.fgintense = 0;
-              break;
-           case 40: // bg
-           case 41:
-           case 42:
-           case 43:
-           case 44:
-           case 45:
-           case 46:
-           case 47:
-              ty->termstate.att.bg256 = 0;
-              ty->termstate.att.bg = (arg - 40) + COL_BLACK;
-              ty->termstate.att.bgintense = 0;
-              break;
-           case 48: // xterm 256 bg color ???
-              arg = _csi_arg_get(&b);
-              switch (arg)
-                {
-                 case 1:
-                    ty->termstate.att.bg256 = 0;
-                    ty->termstate.att.bg = COL_INVIS;
-                    break;
-                 case 2:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_rgb(ty, &b);
-                    DBG("truecolor RGB bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 3:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_cmy(ty, &b);
-                    DBG("truecolor CMY bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 4:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_cmyk(ty, &b);
-                    DBG("truecolor CMYK bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 5:
-                    // then get next arg - should be color index 0-255
-                    arg = _csi_arg_get(&b);
-                    if (!b) ERR("Failed xterm 256 color bg esc val");
-                    else if (arg < 0 || arg > 255)
-                      ERR("Invalid bg color %d", arg);
-                    else
-                      {
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor_rgb(ty, &b);
+                         DBG("truecolor RGB fg: approximation got color %d",
+                             ty->termstate.att.fg);
+                         break;
+                      case 3:
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor_cmy(ty, &b);
+                         DBG("truecolor CMY fg: approximation got color %d",
+                             ty->termstate.att.fg);
+                         break;
+                      case 4:
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg =
+                            _handle_esc_csi_truecolor_cmyk(ty, &b);
+                         DBG("truecolor CMYK fg: approximation got color %d",
+                             ty->termstate.att.fg);
+                         break;
+                      case 5:
+                         // then get next arg - should be color index 0-255
+                         arg = _csi_arg_get(&b);
+                         if (!b) ERR("Failed xterm 256 color fg esc val");
+                         else if (arg < 0 || arg > 255)
+                           ERR("Invalid fg color %d", arg);
+                         else
+                           {
+                              ty->termstate.att.fg256 = 1;
+                              ty->termstate.att.fg = arg;
+                           }
+                         break;
+                      default:
+                         ERR("Failed xterm 256 color fg (got %d)", arg);
+                     }
+                   ty->termstate.att.fgintense = 0;
+                   break;
+                case 39: // default fg color
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = COL_DEF;
+                   ty->termstate.att.fgintense = 0;
+                   break;
+                case 40: // bg
+                case 41:
+                case 42:
+                case 43:
+                case 44:
+                case 45:
+                case 46:
+                case 47:
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = (arg - 40) + COL_BLACK;
+                   ty->termstate.att.bgintense = 0;
+                   break;
+                case 48: // xterm 256 bg color ???
+                   arg = _csi_arg_get(&b);
+                   switch (arg)
+                     {
+                      case 1:
+                         ty->termstate.att.bg256 = 0;
+                         ty->termstate.att.bg = COL_INVIS;
+                         break;
+                      case 2:
                          ty->termstate.att.bg256 = 1;
-                         ty->termstate.att.bg = arg;
-                      }
-                    break;
-                 default:
-                    ERR("Failed xterm 256 color bg (got %d)", arg);
-                }
-              ty->termstate.att.bgintense = 0;
-              break;
-           case 49: // default bg color
-              ty->termstate.att.bg256 = 0;
-              ty->termstate.att.bg = COL_DEF;
-              ty->termstate.att.bgintense = 0;
-              break;
-           case 51:
-              WRN("TODO: support SGR 51 - framed attribute");
-              ty->termstate.att.framed = 1;
-              break;
-           case 52:
-              ty->termstate.att.encircled = 1;
-              break;
-           case 53:
-              WRN("TODO: support SGR 51 - overlined attribute");
-              ty->termstate.att.overlined = 1;
-              break;
-           case 54:
-              ty->termstate.att.framed = 0;
-              ty->termstate.att.encircled = 0;
-              break;
-           case 55:
-              ty->termstate.att.overlined = 0;
-              break;
-           case 90: // fg
-           case 91:
-           case 92:
-           case 93:
-           case 94:
-           case 95:
-           case 96:
-           case 97:
-              ty->termstate.att.fg256 = 0;
-              ty->termstate.att.fg = (arg - 90) + COL_BLACK;
-              ty->termstate.att.fgintense = 1;
-              break;
-           case 98: // xterm 256 fg color ???
-              // now check if next arg is 5
-              arg = _csi_arg_get(&b);
-              if (arg != 5) ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
-              else
-                {
-                   // then get next arg - should be color index 0-255
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor_rgb(ty, &b);
+                         DBG("truecolor RGB bg: approximation got color %d",
+                             ty->termstate.att.bg);
+                         break;
+                      case 3:
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor_cmy(ty, &b);
+                         DBG("truecolor CMY bg: approximation got color %d",
+                             ty->termstate.att.bg);
+                         break;
+                      case 4:
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg =
+                            _handle_esc_csi_truecolor_cmyk(ty, &b);
+                         DBG("truecolor CMYK bg: approximation got color %d",
+                             ty->termstate.att.bg);
+                         break;
+                      case 5:
+                         // then get next arg - should be color index 0-255
+                         arg = _csi_arg_get(&b);
+                         if (!b) ERR("Failed xterm 256 color bg esc val");
+                         else if (arg < 0 || arg > 255)
+                           ERR("Invalid bg color %d", arg);
+                         else
+                           {
+                              ty->termstate.att.bg256 = 1;
+                              ty->termstate.att.bg = arg;
+                           }
+                         break;
+                      default:
+                         ERR("Failed xterm 256 color bg (got %d)", arg);
+                     }
+                   ty->termstate.att.bgintense = 0;
+                   break;
+                case 49: // default bg color
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = COL_DEF;
+                   ty->termstate.att.bgintense = 0;
+                   break;
+                case 51:
+                   WRN("TODO: support SGR 51 - framed attribute");
+                   ty->termstate.att.framed = 1;
+                   break;
+                case 52:
+                   ty->termstate.att.encircled = 1;
+                   break;
+                case 53:
+                   WRN("TODO: support SGR 51 - overlined attribute");
+                   ty->termstate.att.overlined = 1;
+                   break;
+                case 54:
+                   ty->termstate.att.framed = 0;
+                   ty->termstate.att.encircled = 0;
+                   break;
+                case 55:
+                   ty->termstate.att.overlined = 0;
+                   break;
+                case 90: // fg
+                case 91:
+                case 92:
+                case 93:
+                case 94:
+                case 95:
+                case 96:
+                case 97:
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = (arg - 90) + COL_BLACK;
+                   ty->termstate.att.fgintense = 1;
+                   break;
+                case 98: // xterm 256 fg color ???
+                   // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (!b) ERR("Failed xterm 256 color fg esc val");
-                   else if (arg < 0 || arg > 255)
-                     ERR("Invalid fg color %d", arg);
+                   if (arg != 5) ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
                    else
                      {
-                        ty->termstate.att.fg256 = 1;
-                        ty->termstate.att.fg = arg;
+                        // then get next arg - should be color index 0-255
+                        arg = _csi_arg_get(&b);
+                        if (!b) ERR("Failed xterm 256 color fg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid fg color %d", arg);
+                        else
+                          {
+                             ty->termstate.att.fg256 = 1;
+                             ty->termstate.att.fg = arg;
+                          }
                      }
-                }
-              ty->termstate.att.fgintense = 1;
-              break;
-           case 99: // default fg color
-              ty->termstate.att.fg256 = 0;
-              ty->termstate.att.fg = COL_DEF;
-              ty->termstate.att.fgintense = 1;
-              break;
-           case 100: // bg
-           case 101:
-           case 102:
-           case 103:
-           case 104:
-           case 105:
-           case 106:
-           case 107:
-              ty->termstate.att.bg256 = 0;
-              ty->termstate.att.bg = (arg - 100) + COL_BLACK;
-              ty->termstate.att.bgintense = 1;
-              break;
-           case 108: // xterm 256 bg color ???
-              // now check if next arg is 5
-              arg = _csi_arg_get(&b);
-              if (arg != 5) ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
-              else
-                {
-                   // then get next arg - should be color index 0-255
+                   ty->termstate.att.fgintense = 1;
+                   break;
+                case 99: // default fg color
+                   ty->termstate.att.fg256 = 0;
+                   ty->termstate.att.fg = COL_DEF;
+                   ty->termstate.att.fgintense = 1;
+                   break;
+                case 100: // bg
+                case 101:
+                case 102:
+                case 103:
+                case 104:
+                case 105:
+                case 106:
+                case 107:
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = (arg - 100) + COL_BLACK;
+                   ty->termstate.att.bgintense = 1;
+                   break;
+                case 108: // xterm 256 bg color ???
+                   // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (!b) ERR("Failed xterm 256 color bg esc val");
-                   else if (arg < 0 || arg > 255)
-                     ERR("Invalid bg color %d", arg);
+                   if (arg != 5) ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
                    else
                      {
-                        ty->termstate.att.bg256 = 1;
-                        ty->termstate.att.bg = arg;
+                        // then get next arg - should be color index 0-255
+                        arg = _csi_arg_get(&b);
+                        if (!b) ERR("Failed xterm 256 color bg esc val");
+                        else if (arg < 0 || arg > 255)
+                          ERR("Invalid bg color %d", arg);
+                        else
+                          {
+                             ty->termstate.att.bg256 = 1;
+                             ty->termstate.att.bg = arg;
+                          }
                      }
-                }
-              ty->termstate.att.bgintense = 1;
-              break;
-           case 109: // default bg color
-              ty->termstate.att.bg256 = 0;
-              ty->termstate.att.bg = COL_DEF;
-              ty->termstate.att.bgintense = 1;
-              break;
-           default: //  not handled???
-              WRN("Unhandled color cmd [%i]", arg);
-              break;
+                   ty->termstate.att.bgintense = 1;
+                   break;
+                case 109: // default bg color
+                   ty->termstate.att.bg256 = 0;
+                   ty->termstate.att.bg = COL_DEF;
+                   ty->termstate.att.bgintense = 1;
+                   break;
+                default: //  not handled???
+                   WRN("Unhandled color cmd [%i]", arg);
+                   break;
+               }
           }
      }
 }
@@ -1260,9 +1255,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ERR("csi parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
      }
-   if (cc == ce)
-       return 0;
-   *b = '\0';
+   if (cc == ce) return 0;
+   *b = 0;
    be = b;
    b = buf;
    DBG(" CSI: '%s' args '%s'", _safechar(*cc), (char *) buf);
@@ -1290,8 +1284,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'A': // cursor up N (CUU)
 CUU:
         arg = _csi_arg_get(&b);
-        if (arg < 1)
-            arg = 1;
+        if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
@@ -1632,7 +1625,7 @@ HVP:
         _handle_esc_csi_reset_mode(ty, *cc, b);
         break;
       case 'm': // color set
-        _handle_esc_csi_color_set(ty, &b, be);
+        _handle_esc_csi_color_set(ty, &b);
         break;
       case 'n':
         _handle_esc_csi_dsr(ty, b);
