@@ -334,7 +334,7 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
         termpty_handle_buf(ty, codepoint, j);
      }
    if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
-#ifdef ENABLE_FUZZING
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    if (len <= 0)
      {
         ty->exit_code = 0;
@@ -525,7 +525,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 
    ty->circular_offset = 0;
 
-#ifdef ENABLE_FUZZING
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    ty->fd = STDIN_FILENO;
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
                                            ECORE_FD_READ | ECORE_FD_ERROR,
@@ -1243,7 +1243,7 @@ termpty_write(Termpty *ty, const char *input, int len)
 {
    int fd = ty->fd;
 
-#ifdef ENABLE_FUZZING
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    fd = ty->fd_dev_null;
 #endif
    if (fd < 0) return;

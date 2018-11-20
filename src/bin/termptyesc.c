@@ -532,7 +532,8 @@ static int
 _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
 {
    int chosen_color = COL_DEF;
-#ifdef ENABLE_FUZZING
+/* TODO: use the function in tests */
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    (void) ty;
    (void) r0;
    (void) g0;
@@ -1688,7 +1689,7 @@ HVP:
    cc++;
    return cc - c;
 unhandled:
-#ifndef ENABLE_FUZZING
+#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
         Eina_Strbuf *bf = eina_strbuf_new();
@@ -2119,7 +2120,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              len = cc - c - (p - buf);
              if (_xterm_parse_color(&p, &r, &g, &b, len) < 0)
                goto err;
-#ifndef ENABLE_FUZZING
+#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
              evas_object_textgrid_palette_set(
                 termio_textgrid_get(ty->obj),
                 EVAS_TEXTGRID_PALETTE_STANDARD, 0,

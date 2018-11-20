@@ -13,6 +13,14 @@
 #include "termptyops.h"
 #include <assert.h>
 
+#ifdef TYTEST
+#include "md5/md5.h"
+#endif
+
+#define TY_H 25
+#define TY_W 80
+#define TY_BACKSIZE 50
+
 
 /* {{{ stub */
 int _log_domain = -1;
@@ -64,6 +72,91 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
 {
 }
 /* }}} */
+/* {{{ TYTEST */
+#ifdef TYTEST
+typedef struct _Termpty_Tests
+{
+   size_t backsize, backpos;
+   Backlog_Beacon backlog_beacon;
+   Term_State termstate;
+   Term_Cursor cursor_state;
+   Term_Cursor cursor_save[2];
+   int w, h;
+   unsigned int altbuf     : 1;
+   unsigned int mouse_mode : 3;
+   unsigned int mouse_ext  : 2;
+   unsigned int bracketed_paste : 1;
+} Termpty_Tests;
+
+static void
+_termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
+{
+   memset(tt, '\0', sizeof(*tt));
+   tt->backsize = ty->backsize;
+   tt->backpos = ty->backpos;
+   tt->backlog_beacon = ty->backlog_beacon;
+   tt->termstate = ty->termstate;
+   tt->cursor_state = ty->cursor_state;
+   tt->cursor_save[0] = ty->cursor_save[0];
+   tt->cursor_save[1] = ty->cursor_save[1];
+   tt->w = ty->w;
+   tt->h = ty->h;
+   tt->altbuf = ty->altbuf;
+   tt->mouse_mode = ty->mouse_mode;
+   tt->mouse_ext = ty->mouse_ext;
+   tt->bracketed_paste = ty->bracketed_paste;
+}
+
+static void
+_tytest_checksum(Termpty *ty)
+{
+   MD5_CTX ctx;
+   Termpty_Tests tests;
+   char md5out[(2 * MD5_HASHBYTES) + 1];
+   unsigned char hash[MD5_HASHBYTES];
+   static const char hex[] = "0123456789abcdef";
+   int n;
+
+   _termpty_to_termpty_tests(ty, &tests);
+
+   MD5Init(&ctx);
+   /* Termpty */
+   MD5Update(&ctx,
+             (unsigned char const*)&tests,
+             sizeof(tests));
+   /* The screens */
+   MD5Update(&ctx,
+             (unsigned char const*)ty->screen,
+             sizeof(Termcell) * ty->w * ty->h);
+   MD5Update(&ctx,
+             (unsigned char const*)ty->screen2,
+             sizeof(Termcell) * ty->w * ty->h);
+   /* Icon/Title */
+   if (ty->prop.icon)
+     {
+        MD5Update(&ctx,
+                  (unsigned char const*)ty->prop.icon,
+                  strlen(ty->prop.icon));
+     }
+   if (ty->prop.title)
+     {
+        MD5Update(&ctx,
+                  (unsigned char const*)ty->prop.title,
+                  strlen(ty->prop.title));
+     }
+
+   MD5Final(hash, &ctx);
+
+   for (n = 0; n < MD5_HASHBYTES; n++)
+     {
+        md5out[2 * n] = hex[hash[n] >> 4];
+        md5out[2 * n + 1] = hex[hash[n] & 0x0f];
+     }
+   md5out[2 * MD5_HASHBYTES] = '\0';
+   printf("%s", md5out);
+}
+#endif
+/* }}} */
 
 
 
@@ -71,9 +164,9 @@ static void
 _termpty_init(Termpty *ty)
 {
    memset(ty, '\0', sizeof(*ty));
-   ty->w = 80;
-   ty->h = 25;
-   ty->backsize = 50;
+   ty->w = TY_W;
+   ty->h = TY_H;
+   ty->backsize = TY_BACKSIZE;
    termpty_resize_tabs(ty, 0, ty->w);
    termpty_reset_state(ty);
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
@@ -106,7 +199,13 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    eina_init();
 
-   _log_domain = eina_log_domain_register("tyfuzz", NULL);
+   _log_domain = eina_log_domain_register(
+#ifdef TYTEST
+       "tytest",
+#else
+       "tyfuzz",
+#endif
+       NULL);
 
    _config = config_new();
 
@@ -156,7 +255,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
                       (len - prev_i) <= (int)sizeof(ty.oldbuf))
                     {
                        for (k = 0;
-                            (k < (int)sizeof(ty.oldbuf)) && 
+                            (k < (int)sizeof(ty.oldbuf)) &&
                             (k < (len - prev_i));
                             k++)
                          {
@@ -178,6 +277,10 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         termpty_handle_buf(&ty, codepoint, j);
      }
    while (1);
+
+#ifdef TYTEST
+   _tytest_checksum(&ty);
+#endif
 
    _termpty_shutdown(&ty);
 

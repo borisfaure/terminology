@@ -57,6 +57,17 @@ tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'config.c', 'config.h',
                   'col.c', 'col.h',
                   'tyfuzz.c']
+tytest_sources = ['termptyesc.c', 'termptyesc.h',
+                  'termptysave.c', 'termptysave.h',
+                  'termptyops.c', 'termptyops.h',
+                  'termptydbl.c', 'termptydbl.h',
+                  'termptyext.c', 'termptyext.h',
+                  'termptygfx.c', 'termptygfx.h',
+                  'termpty.c', 'termpty.h',
+                  'config.c', 'config.h',
+                  'col.c', 'col.h',
+                  'md5/md5.c', 'md5/md5.h',
+                  'tytest.c']
 
 executable('terminology',
            terminology_sources,
@@ -103,6 +114,13 @@ executable('tysend',
 if fuzzing
   executable('tyfuzz',
              tyfuzz_sources,
+             install: true,
+             include_directories: config_dir,
+             dependencies: terminology_dependencies)
+endif
+if tests
+  executable('tytest',
+             tytest_sources,
              install: true,
              include_directories: config_dir,
              dependencies: terminology_dependencies)

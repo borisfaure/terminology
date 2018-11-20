@@ -454,7 +454,7 @@ _translate_options(void)
 }
 #endif
 
-#ifdef ENABLE_FUZZING
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
 static void
 _log_void(const Eina_Log_Domain *_d EINA_UNUSED,
           Eina_Log_Level level EINA_UNUSED,
@@ -548,7 +548,7 @@ elm_main(int argc, char **argv)
 
    terminology_starting_up = EINA_TRUE;
 
-#ifdef ENABLE_FUZZING
+#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    eina_log_print_cb_set(_log_void, NULL);
 #endif
 

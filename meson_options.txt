@@ -5,6 +5,10 @@ option('fuzzing',
        type: 'boolean',
        value: false,
        description: 'Enable fuzzing on terminology. Binaries are not suited for production. (default=false)')
+option('tests',
+       type: 'boolean',
+       value: false,
+       description: 'Enable generating tytest, used to run tests. (default=false)')
 option('nls',
        type: 'boolean',
        value: true,

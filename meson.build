@@ -115,6 +115,14 @@ else
   message('Fuzzing is disabled')
 endif
 
+tests = get_option('tests')
+if tests
+  config_data.set('ENABLE_TESTS', 1)
+  message('Tests are enabled')
+else
+  message('Tests are disabled')
+endif
+
 message('edje_cc set to:' + edje_cc)
 
 configure_file(output: 'terminology_config.h',
