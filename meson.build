@@ -109,7 +109,6 @@ endif
 fuzzing = get_option('fuzzing')
 
 if fuzzing
-  config_data.set('ENABLE_FUZZING', 1)
   message('Fuzzing is enabled')
 else
   message('Fuzzing is disabled')
@@ -117,7 +116,6 @@ endif
 
 tests = get_option('tests')
 if tests
-  config_data.set('ENABLE_TESTS', 1)
   message('Tests are enabled')
 else
   message('Tests are disabled')

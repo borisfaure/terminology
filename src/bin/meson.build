@@ -116,6 +116,7 @@ if fuzzing
              tyfuzz_sources,
              install: true,
              include_directories: config_dir,
+             c_args: '-DENABLE_FUZZING=1',
              dependencies: terminology_dependencies)
 endif
 if tests
@@ -123,5 +124,6 @@ if tests
              tytest_sources,
              install: true,
              include_directories: config_dir,
+             c_args: '-DENABLE_TESTS=1',
              dependencies: terminology_dependencies)
 endif
