@@ -1066,14 +1066,22 @@ _clean_up_rect_coordinates(Termpty *ty,
    int right = *right_ptr;
 
    TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
-   top--;
    if (ty->termstate.restrict_cursor)
-     top += ty->termstate.top_margin;
+     {
+        top += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin && top >= ty->termstate.bottom_margin)
+          top = ty->termstate.bottom_margin;
+     }
+   top--;
 
    TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
-   left--;
    if (ty->termstate.restrict_cursor)
-     left += ty->termstate.left_margin;
+     {
+        left += ty->termstate.left_margin;
+        if (ty->termstate.right_margin && left >= ty->termstate.right_margin)
+          left = ty->termstate.right_margin;
+     }
+   left--;
 
    if (right < 1)
      right = ty->w;
@@ -1092,7 +1100,7 @@ _clean_up_rect_coordinates(Termpty *ty,
      {
         bottom += ty->termstate.top_margin;
         if (ty->termstate.bottom_margin && bottom >= ty->termstate.bottom_margin)
-          bottom = ty->termstate.bottom_margin - 1;
+          bottom = ty->termstate.bottom_margin;
      }
    bottom--;
    if (bottom > ty->h)
