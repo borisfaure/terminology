@@ -138,11 +138,19 @@ _tytest_checksum(Termpty *ty)
                   (unsigned char const*)ty->prop.icon,
                   strlen(ty->prop.icon));
      }
+   else
+     {
+        MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
+     }
    if (ty->prop.title)
      {
         MD5Update(&ctx,
                   (unsigned char const*)ty->prop.title,
                   strlen(ty->prop.title));
+     }
+   else
+     {
+        MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
      }
 
    MD5Final(hash, &ctx);
