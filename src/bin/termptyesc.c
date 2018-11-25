@@ -1273,6 +1273,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      {
         /* sorted by ascii value */
       case '@': // insert N blank chars (ICH)
+        /* TODO: SL */
         arg = _csi_arg_get(&b);
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
         DBG("insert %d blank chars", arg);
@@ -1291,7 +1292,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         break;
       case 'A': // cursor up N (CUU)
-CUU:
+        /* TODO: SR */
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor up %d", arg);
@@ -1304,7 +1305,8 @@ CUU:
              ty->cursor_state.cy = ty->termstate.top_margin;
           }
         break;
-      case 'B': // cursor down N
+      case 'B': // cursor down N (CUD)
+CUD:
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor down %d", arg);
@@ -1331,7 +1333,7 @@ CUF:
              ty->cursor_state.cx = ty->termstate.right_margin - 1;
           }
         break;
-      case 'D': // cursor left N
+      case 'D': // cursor left N (CUB)
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 1;
         DBG("cursor left %d", arg);
@@ -1554,7 +1556,7 @@ CUF:
                }
           }
         break;
-      case 'a': // cursor right N
+      case 'a': // cursor right N (HPR)
         goto CUF;
       case 'b': // repeat last char
         if (ty->last_char)
@@ -1601,8 +1603,8 @@ CUF:
         ty->cursor_state.cy = arg - 1;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         break;
-      case 'e': // cursor up N (VPR)
-        goto CUU;
+      case 'e': // cursor down N (VPR)
+        goto CUD;
       case 'f': // cursor pos set (HVP)
 HVP:
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
