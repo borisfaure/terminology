@@ -4,3 +4,4 @@ decera-no-restrict-cursor.sh d92d38dfe6fd6b4100e3f0dac0e0a405
 decera-restrict-cursor.sh baae3f0eef7e6f0032ba74f11ee306f6
 decera-decfra-extra.sh 53d28f0d90c30aefd0b9176572c47f63
 cursor-movements.sh 7ebb03610346e8fa56e171c55e7e2ec5
+fonts.sh be86e6ee87f551928a9783fa1a216aea
