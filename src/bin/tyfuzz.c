@@ -65,15 +65,17 @@ termio_font_size_set(Evas_Object *obj EINA_UNUSED,
 {
 }
 
-
+#ifndef TYTEST
 void
 termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
                         Cursor_Shape shape EINA_UNUSED)
 {
 }
+#endif
 /* }}} */
 /* {{{ TYTEST */
 #ifdef TYTEST
+const char *_cursor_shape = "undefined";
 typedef struct _Termpty_Tests
 {
    size_t backsize, backpos;
@@ -87,6 +89,24 @@ typedef struct _Termpty_Tests
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
 } Termpty_Tests;
+
+void
+termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
+                        Cursor_Shape shape EINA_UNUSED)
+{
+   switch (shape)
+     {
+      case CURSOR_SHAPE_UNDERLINE:
+         _cursor_shape = "underline";
+         break;
+      case CURSOR_SHAPE_BAR:
+         _cursor_shape = "bar";
+         break;
+      default:
+      case CURSOR_SHAPE_BLOCK:
+         _cursor_shape = "block";
+     }
+}
 
 static void
 _termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
@@ -152,6 +172,8 @@ _tytest_checksum(Termpty *ty)
      {
         MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
      }
+   MD5Update(&ctx, (unsigned char const*)_cursor_shape,
+             strlen(_cursor_shape));
 
    MD5Final(hash, &ctx);
 
