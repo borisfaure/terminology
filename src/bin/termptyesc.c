@@ -1104,7 +1104,7 @@ _clean_up_rect_coordinates(Termpty *ty,
      }
    bottom--;
    if (bottom > ty->h)
-     bottom = ty->h;
+     bottom = ty->h - 1;
 
    if ((bottom < top) || (right < left))
      return -1;
