@@ -1,5 +1,5 @@
 .\" Manpage for Terminology
-.TH man 1 "23 Nov 2018" "1.3.0" "Terminology man page"
+.TH TERMINOLOGY 1 "23 Nov 2018" "1.3.0" "Terminology man page"
 .SH NAME
 Terminology \- Terminal Emulator written with EFL (Enlightenment Foundation Libraries).
 .SH SYNOPSIS
@@ -524,17 +524,17 @@ or
 
 \fBic[CW;H;FULL\-PATH\-OR\-URL]\fP
   insert CENTERED media (centered in cell area). Otherwise
-    paramaters are identical to the \fBis\fP command, but
+    parameters are identical to the \fBis\fP command, but
     retains aspect and is padded by blank space.
 
 \fBif[CW;H;FULL\-PATH\-OR\-URL]\fP
-  insert FILLED media (fill in cell area). Otherwise paramaters
+  insert FILLED media (fill in cell area). Otherwise parameters
     are identical to the \fBis\fP command but ensures the entire
     area is filled like a background even if media goes beyond
     cell bounds and is clipped.
 
 \fBit[CW;H;FULL\-PATH\-OR\-URL]\fP
-  insert THUMB media (thumbnail cell area). Otherwise paramaters
+  insert THUMB media (thumbnail cell area). Otherwise parameters
     are identical to the \fBis\fP command, but uses thumbnail
     generation to make a fast to load but low resolution version
     (cached) of the media.
@@ -564,16 +564,16 @@ or
       ;CHID\\ndrag,step\\nPART NAME\\nVAL1\\nVAL2
       ;CHID\\drag,set\\nPART NAME\\nVAL1\\nVAL2
       signal;CHID\\nSIGNAL STRING\\nSOURCE STRING
-      message;CHID\nOPCODE ID\nstring\\nSTRING1
-      message;CHID\nOPCODE ID\nint\\nINT1
-      message;CHID\nOPCODE ID\nfloat\\nFLOAT1
-      message;CHID\nOPCODE ID\nstring_set\\nSTRING1\\nSTRING2\\nSTRING3...
-      message;CHID\nOPCODE ID\nint_set\\nINT1\\nINT2\\nINT3...
-      message;CHID\nOPCODE ID\nfloat_set\\nFLOAT1\\nFLOAT2\\nFLOAT3...
-      message;CHID\nOPCODE ID\nstring_int\\nSTRING1\\nINT1
-      message;CHID\nOPCODE ID\nstring_float\\nSTRING1\\nFLOAT1
-      message;CHID\nOPCODE ID\nstring_int_set\\nSTRING1\\nINT1\\nINT2\\nINT3...
-      message;CHID\nOPCODE ID\nstring_float_set\\nSTRING1\\nFLOAT1\\nFLOAT2\\nFLOAT3...
+      message;CHID\\nOPCODE ID\\nstring\\nSTRING1
+      message;CHID\\nOPCODE ID\\nint\\nINT1
+      message;CHID\\nOPCODE ID\\nfloat\\nFLOAT1
+      message;CHID\\nOPCODE ID\\nstring_set\\nSTRING1\\nSTRING2\\nSTRING3...
+      message;CHID\\nOPCODE ID\\nint_set\\nINT1\\nINT2\\nINT3...
+      message;CHID\\nOPCODE ID\\nfloat_set\\nFLOAT1\\nFLOAT2\\nFLOAT3...
+      message;CHID\\nOPCODE ID\\nstring_int\\nSTRING1\\nINT1
+      message;CHID\\nOPCODE ID\\nstring_float\\nSTRING1\\nFLOAT1
+      message;CHID\\nOPCODE ID\\nstring_int_set\\nSTRING1\\nINT1\\nINT2\\nINT3...
+      message;CHID\\nOPCODE ID\\nstring_float_set\\nSTRING1\\nFLOAT1\\nFLOAT2\\nFLOAT3...
 
 \fBiC[CHID]\\n[cmd1][\\r\\n][cmd2][\\r\\n][cmd3]...\fP
     send a COMMAND (\fBcmd1, cmd2, cmd3\fP etc.) to an existing named
@@ -611,13 +611,13 @@ or
         \fBstring\fP:           \fBSTRING1\fP
         \fBint\fP:              \fBINT1\fP
         \fBfloat\fP:            \fBFLOAT1\fP
-        \fBstring_set\fP:       \fBSTRING1\nSTRING2\nSTRING3...\fP
-        \fBint_set\fP:          \fBINT1\nINT2\nINT3...\fP
-        \fBfloat_set\fP:        \fBFLOAT1\nFLOAT2\nFLOAT3...\fP
-        \fBstring_int\fP:       \fBSTRING1\nINT1\fP
-        \fBstring_float\fP:     \fBSTRING1\nFLOAT1\fP
-        \fBstring_int_set\fP:   \fBSTRING1\nINT1\nINT2\nINT3...\fP
-        \fBstring_float_set\fP: \fBSTRING1\nFLOAT1\nFLOAT2\nFLOAT3...\fP
+        \fBstring_set\fP:       \fBSTRING1\\nSTRING2\\nSTRING3...\fP
+        \fBint_set\fP:          \fBINT1\\nINT2\\nINT3...\fP
+        \fBfloat_set\fP:        \fBFLOAT1\\nFLOAT2\\nFLOAT3...\fP
+        \fBstring_int\fP:       \fBSTRING1\\nINT1\fP
+        \fBstring_float\fP:     \fBSTRING1\\nFLOAT1\fP
+        \fBstring_int_set\fP:   \fBSTRING1\\nINT1\\nINT2\\nINT3...\fP
+        \fBstring_float_set\fP: \fBSTRING1\\nFLOAT1\\nFLOAT2\\nFLOAT3...\fP
 
 \fBib\fP
   begin media replace sequence run.

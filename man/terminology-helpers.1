@@ -1,0 +1,49 @@
+.\" Manpage for terminology helpers
+.TH TERMINOLOGY-HELPERS 1 "May  5 2018"
+.SH NAME
+terminiology-helpers \- programs that enhance
+.B terminology(1)
+.SH SYNOPSIS
+.TP
+.B tyls [-h] [-a] [-s|-m] FILE1 [FILE2 ...]
+List directory contents with bells and whistles
+.
+.TP
+.B tyalpha [-h][-p] on|off|<opacity level>
+Set transparency level of the background
+.
+.TP
+.B tybg [-h] [-p] [FILE1 FILE2 ...]
+Change the background image
+.
+.TP
+.B tycat [-h] [-s|-f|-c] [-g <width>x<height>] FILE1 [FILE2 ...]
+Display inline a media file or a URI
+.
+.TP
+.B typop [-h] FILE1 [FILE2 ...]
+Display in a popup a media file or a URI
+.
+.TP
+.B tyq [-h] FILE1 [FILE2 ...]
+Queue media files or URI to be popped up
+.
+.TP
+.B tysend [-h] FILE1 [FILE2 ...]
+Send files to the terminal (useful through ssh)
+
+.SH DESCRIPTION
+.PP
+Terminology provides a number of companion tools to control advanced
+behavior.  They allow in-line and popup display of media files,
+enhanced file listing, and control over visual appearance.
+
+The escape codes used to implement these behaviors are documented in
+.B EXTENDED ESCAPES FOR TERMINOLOGY
+section of
+.BR terminology (1).
+.SH SEE ALSO
+.BR terminology (1),
+
+.SH AUTHOR
+Terminology was written by Carsten Haitzler <raster@rasterman.com> and others.  It is maintained by Boris Faure <boris@fau.re> and others. See AUTHORS file for other contributors.
