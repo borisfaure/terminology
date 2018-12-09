@@ -997,6 +997,18 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
               termpty_write(ty, bf, len);
            }
          break;
+      case 75:
+         if (question_mark)
+           {
+              /* DSR-DIR (Data Integrity Report) */
+              termpty_write(ty, "\033[?70n", strlen("\033[?70n"));
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       default:
          WRN("unhandled DSR (dec specific: %s) %d",
              (question_mark)? "yes": "no", arg);
@@ -2470,7 +2482,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    Eina_Unicode last_char = 0;
    int len = 0;
 
-/*   
+/*
    printf(" B: ");
    int j;
    for (j = 0; c + j < ce && j < 100; j++)
