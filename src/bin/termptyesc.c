@@ -997,6 +997,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
               termpty_write(ty, bf, len);
            }
          break;
+      case 26:
+         if (question_mark)
+           {
+              /* DSR-KBD (Keyboard)
+               * Reply North American */
+              termpty_write(ty, "\033[?27;1;0;0n",
+                            strlen("\033[?27;1;0;0n"));
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       case 75:
          if (question_mark)
            {
