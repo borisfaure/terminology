@@ -1025,6 +1025,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
                   (question_mark)? "yes": "no", arg);
            }
          break;
+      case 25:
+         if (question_mark)
+           {
+              /* DSR-UDK (User-Defined Keys)
+               * Reply Unlocked */
+              termpty_write(ty, "\033[?20n",
+                            strlen("\033[?20n"));
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       case 26:
          if (question_mark)
            {
