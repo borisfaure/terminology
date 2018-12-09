@@ -1011,6 +1011,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
               termpty_write(ty, bf, len);
            }
          break;
+      case 15:
+         if (question_mark)
+           {
+              /* DSR-PP (Printer Port)
+               * Reply None */
+              termpty_write(ty, "\033[?13n",
+                            strlen("\033[?13n"));
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       case 26:
          if (question_mark)
            {
