@@ -1011,6 +1011,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
                   (question_mark)? "yes": "no", arg);
            }
          break;
+      case 62:
+         if (question_mark)
+           {
+              /* DSR-MSR (Macro Space Report)
+               * Reply 0 */
+              termpty_write(ty, "\033[0000*{",
+                            strlen("\033[0000*{"));
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       case 75:
          if (question_mark)
            {

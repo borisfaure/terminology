@@ -20,3 +20,4 @@ xterm-osc-2-title.sh e8485fd460aba2a2ae1d4e63a1143b32
 dsr-cpr.sh a03cfba07a7b76075a4126f452d48ad5
 dsr-dir.sh 28b0d8b4b60f3c61d49cee69895a07b2
 dsr-kbd.sh 1c474c101697080a85563d9b5bc1505c
+dsr-msr.sh 1e695391937cf7235ba96dbeae5227fd
