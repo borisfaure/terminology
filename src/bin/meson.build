@@ -56,6 +56,7 @@ tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'termpty.c', 'termpty.h',
                   'config.c', 'config.h',
                   'col.c', 'col.h',
+                  'sb.c', 'sb.h',
                   'tyfuzz.c']
 tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'termptysave.c', 'termptysave.h',
@@ -66,6 +67,7 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'termpty.c', 'termpty.h',
                   'config.c', 'config.h',
                   'col.c', 'col.h',
+                  'sb.c', 'sb.h',
                   'md5/md5.c', 'md5/md5.h',
                   'tytest.c']
 

@@ -172,8 +172,12 @@ _tytest_checksum(Termpty *ty)
      {
         MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
      }
+   /* Cursor shape */
    MD5Update(&ctx, (unsigned char const*)_cursor_shape,
              strlen(_cursor_shape));
+   /* Write buffer */
+   MD5Update(&ctx, (unsigned char const*)ty->write_buffer.buf,
+             ty->write_buffer.len);
 
    MD5Final(hash, &ctx);
 
@@ -205,8 +209,10 @@ _termpty_init(Termpty *ty)
    assert(ty->screen2);
    ty->circular_offset = 0;
    ty->fd = STDIN_FILENO;
+#if defined(ENABLE_FUZZING)
    ty->fd_dev_null = open("/dev/null", O_WRONLY|O_APPEND);
    assert(ty->fd_dev_null >= 0);
+#endif
    ty->hl.bitmap = calloc(1, HL_LINKS_MAX / 8); /* bit map for 1 << 16 elements */
    assert(ty->hl.bitmap);
    /* Mark id 0 as set */
@@ -216,7 +222,12 @@ _termpty_init(Termpty *ty)
 static void
 _termpty_shutdown(Termpty *ty)
 {
+#if defined(ENABLE_TESTS)
+   ty_sb_free(&ty->write_buffer);
+#endif
+#if defined(ENABLE_FUZZING)
    close(ty->fd_dev_null);
+#endif
 }
 
 int

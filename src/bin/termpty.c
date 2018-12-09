@@ -1241,15 +1241,18 @@ termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
+#if defined(ENABLE_TESTS)
+   ty_sb_add(&ty->write_buffer, input, len);
+#else
    int fd = ty->fd;
-
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(ENABLE_FUZZING)
    fd = ty->fd_dev_null;
 #endif
    if (fd < 0) return;
    if (write(fd, input, len) < 0)
      ERR(_("Could not write to file descriptor %d: %s"),
          fd, strerror(errno));
+#endif
 }
 
 struct screen_info

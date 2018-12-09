@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "media.h"
+#include "sb.h"
 
 typedef struct _Termcell      Termcell;
 typedef struct _Termatt       Termatt;
@@ -163,7 +164,10 @@ struct _Termpty
    Backlog_Beacon backlog_beacon;
    int w, h;
    int fd, slavefd;
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(ENABLE_TESTS)
+   struct ty_sb write_buffer;
+#endif
+#if defined(ENABLE_FUZZING)
    int fd_dev_null;
 #endif
    struct {
