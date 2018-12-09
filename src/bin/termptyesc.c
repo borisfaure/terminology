@@ -1585,7 +1585,7 @@ CUF:
                   // 61 → VT510
                   // 64 → VT520
                   // 65 → VT525
-                  snprintf(bf, sizeof(bf), "\033[>41;285;%ic", 0);
+                  snprintf(bf, sizeof(bf), "\033[>41;337;%ic", 0);
                }
              else
                {
