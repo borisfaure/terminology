@@ -971,6 +971,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
    arg = _csi_arg_get(&b);
    switch (arg)
      {
+      case 5:
+         if (question_mark)
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         else
+           {
+              /* DSR-OS (Operating Status)
+               * Reply Ok */
+              termpty_write(ty, "\033[0n",
+                            strlen("\033[0n"));
+           }
+         break;
       case 6:
            {
               int cx = ty->cursor_state.cx,
