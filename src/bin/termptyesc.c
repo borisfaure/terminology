@@ -956,6 +956,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
 {
    int arg, len;
    char bf[32];
+   Eina_Bool question_mark = EINA_FALSE;
 
    if (*b == '>')
      {
@@ -964,35 +965,42 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
      }
    if (*b == '?')
      {
+        question_mark = EINA_TRUE;
         b++;
-        arg = _csi_arg_get(&b);
-        switch (arg)
-          {
-           case 6:
-              len = snprintf(bf, sizeof(bf), "\033[?%d;%d;1R",
-                             ty->cursor_state.cy + 1,
-                             ty->cursor_state.cx + 1);
-              termpty_write(ty, bf, len);
-              break;
-           default:
-              WRN("unhandled DSR (dec specific) %d", arg);
-              break;
-          }
      }
-   else
+   arg = _csi_arg_get(&b);
+   switch (arg)
      {
-        arg = _csi_arg_get(&b);
-        switch (arg)
-          {
-           case 6:
-              len = snprintf(bf, sizeof(bf), "\033[%d;%dR",
-                             ty->cursor_state.cy + 1, ty->cursor_state.cx + 1);
+      case 6:
+           {
+              int cx = ty->cursor_state.cx,
+                  cy = ty->cursor_state.cy;
+              if (ty->termstate.restrict_cursor)
+                {
+                   if (ty->termstate.top_margin)
+                     cy -= ty->termstate.top_margin;
+                   if (ty->termstate.left_margin)
+                     cx -= ty->termstate.left_margin;
+                }
+              if (question_mark)
+                {
+                   len = snprintf(bf, sizeof(bf), "\033[?%d;%d;1R",
+                                  cy + 1,
+                                  cx + 1);
+                }
+              else
+                {
+                   len = snprintf(bf, sizeof(bf), "\033[%d;%dR",
+                                  cy + 1,
+                                  cx + 1);
+                }
               termpty_write(ty, bf, len);
-              break;
-           default:
-              WRN("unhandled DSR %d", arg);
-              break;
-          }
+           }
+         break;
+      default:
+         WRN("unhandled DSR (dec specific: %s) %d",
+             (question_mark)? "yes": "no", arg);
+         break;
      }
 }
 
