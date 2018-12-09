@@ -2018,84 +2018,60 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case -1:
          goto err;
       case 0:
-        // XXX: title + name - callback
+        // title + icon name
         if (!*p)
           goto err;
-        if (*p == '?')
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+        if (s)
           {
-             /* returns empty string. See CVE-2003-0063 */
-             TERMPTY_WRITE_STR("\033]0;Terminology\007");
+             ty->prop.title = eina_stringshare_add(s);
+             ty->prop.icon = eina_stringshare_add(s);
+             free(s);
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(p, &len);
-             if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-             if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-             if (s)
-               {
-                  ty->prop.title = eina_stringshare_add(s);
-                  ty->prop.icon = eina_stringshare_add(s);
-                  free(s);
-               }
-             else
-               {
-                  ty->prop.title = NULL;
-                  ty->prop.icon = NULL;
-               }
-             if (ty->cb.set_title.func)
-               ty->cb.set_title.func(ty->cb.set_title.data);
-             if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
+             ty->prop.title = NULL;
+             ty->prop.icon = NULL;
           }
+        if (ty->cb.set_title.func)
+          ty->cb.set_title.func(ty->cb.set_title.data);
+        if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
       case 1:
-        // XXX: icon name - callback
+        // icon name
         if (!*p)
           goto err;
-        if (*p == '?')
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+        if (s)
           {
-             /* returns empty string. See CVE-2003-0063 */
-             TERMPTY_WRITE_STR("\033]1;Terminology\007");
+             ty->prop.icon = eina_stringshare_add(s);
+             free(s);
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(p, &len);
-             if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
-             if (s)
-               {
-                  ty->prop.icon = eina_stringshare_add(s);
-                  free(s);
-               }
-             else
-               {
-                  ty->prop.icon = NULL;
-               }
-             if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
+             ty->prop.icon = NULL;
           }
+        if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
       case 2:
-        // XXX: title - callback
+        // Title
         if (!*p)
           goto err;
-        if (*p == '?')
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+        if (s)
           {
-             /* returns empty string. See CVE-2003-0063 */
-             TERMPTY_WRITE_STR("\033]2;Terminology\007");
+             ty->prop.title = eina_stringshare_add(s);
+             free(s);
           }
         else
           {
-             s = eina_unicode_unicode_to_utf8(p, &len);
-             if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-             if (s)
-               {
-                  ty->prop.title = eina_stringshare_add(s);
-                  free(s);
-               }
-             else
-               {
-                  ty->prop.title = NULL;
-               }
-             if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
+             ty->prop.title = NULL;
           }
+        if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
       case 4:
         if (!*p)
