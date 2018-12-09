@@ -1025,6 +1025,20 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
                   (question_mark)? "yes": "no", arg);
            }
          break;
+      case 63:
+         if (question_mark)
+           {
+              /* DSR-DECCKSR (Memory Checksum) */
+              int pid = _csi_arg_get(&b);
+              len = snprintf(bf, sizeof(bf), "\033P%u!~0000\033\\", pid);
+              termpty_write(ty, bf, len);
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+           }
+         break;
       case 75:
          if (question_mark)
            {
