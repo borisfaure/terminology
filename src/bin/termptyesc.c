@@ -275,6 +275,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 4:
                         WRN("TODO: scrolling mode (DECSCLM): %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 5:
                         ty->termstate.reverse = mode;
@@ -314,6 +315,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 19: // never seen this - what to do?
                         WRN("TODO: set print extent to full screen");
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
                         ty->termstate.crlf = mode;
@@ -324,18 +326,22 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 30: // ignore
                         WRN("TODO: set scrollbar mapping %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 33: // ignore
                         WRN("TODO: Stop cursor blink %i", mode);
                         break;
                      case 34: // ignore
                         WRN("TODO: Underline cursor mode %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 35: // ignore
                         WRN("TODO: set shift keys %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 38: // ignore
                         WRN("TODO: switch to tek window %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 40:
                         DBG("Allow 80 -> 132 Mode %i", mode);
@@ -345,15 +351,18 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 45: // ignore
                         WRN("TODO: Reverse-wraparound Mode");
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 47:
                         _switch_to_alternative_screen(ty, mode);
                         break;
                      case 59: // ignore
                         WRN("TODO: kanji terminal mode %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 66:
                         WRN("TODO: app keypad mode %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 67:
                         ty->termstate.send_bs = mode;
@@ -374,6 +383,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 1001:
                         WRN("TODO: x11 mouse highlighting %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 1002:
                         if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
@@ -387,6 +397,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 1004: // i dont know what focus repporting is?
                         WRN("TODO: enable focus reporting %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 1005:
                         if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
@@ -400,9 +411,11 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 1010: // ignore
                         WRN("TODO: set home on tty output %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 1012: // ignore
                         WRN("TODO: set home on tty input %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 1015:
                         if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
@@ -414,6 +427,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                            See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
                            */
                         DBG("Ignored screen mode %i", arg);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 1047:
                         if (!mode && ty->altbuf)
@@ -448,12 +462,15 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 7727: // ignore
                         WRN("TODO: enable application escape mode %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 7786: // ignore
                         WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      default:
                         WRN("Unhandled DEC Private Reset Mode arg %i", arg);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                     }
                }
@@ -477,12 +494,15 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
                         break;
                      case 34:
                         WRN("TODO: hebrew keyboard mapping: %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      case 36:
                         WRN("TODO: hebrew encoding mode: %i", mode);
+                        ty->decoding_error = EINA_TRUE;
                         break;
                      default:
                         WRN("Unhandled ANSI Reset Mode arg %i", arg);
+                        ty->decoding_error = EINA_TRUE;
                     }
                }
           }
@@ -654,6 +674,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
    if (b && (*b == '>'))
      { // key resources used by xterm
         WRN("TODO: set/reset key resources used by xterm");
+        ty->decoding_error = EINA_TRUE;
         return;
      }
    DBG("color set");
@@ -771,9 +792,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                       case 5:
                          // then get next arg - should be color index 0-255
                          arg = _csi_arg_get(&b);
-                         if (!b) ERR("Failed xterm 256 color fg esc val");
+                         if (!b)
+                           {
+                              ERR("Failed xterm 256 color fg esc val");
+                              ty->decoding_error = EINA_TRUE;
+                           }
                          else if (arg < 0 || arg > 255)
-                           ERR("Invalid fg color %d", arg);
+                           {
+                              ERR("Invalid fg color %d", arg);
+                              ty->decoding_error = EINA_TRUE;
+                           }
                          else
                            {
                               ty->termstate.att.fg256 = 1;
@@ -782,6 +810,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                          break;
                       default:
                          ERR("Failed xterm 256 color fg (got %d)", arg);
+                         ty->decoding_error = EINA_TRUE;
                      }
                    ty->termstate.att.fgintense = 0;
                    break;
@@ -834,9 +863,16 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                       case 5:
                          // then get next arg - should be color index 0-255
                          arg = _csi_arg_get(&b);
-                         if (!b) ERR("Failed xterm 256 color bg esc val");
+                         if (!b)
+                           {
+                              ERR("Failed xterm 256 color bg esc val");
+                              ty->decoding_error = EINA_TRUE;
+                           }
                          else if (arg < 0 || arg > 255)
-                           ERR("Invalid bg color %d", arg);
+                           {
+                              ERR("Invalid bg color %d", arg);
+                              ty->decoding_error = EINA_TRUE;
+                           }
                          else
                            {
                               ty->termstate.att.bg256 = 1;
@@ -845,6 +881,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                          break;
                       default:
                          ERR("Failed xterm 256 color bg (got %d)", arg);
+                         ty->decoding_error = EINA_TRUE;
                      }
                    ty->termstate.att.bgintense = 0;
                    break;
@@ -886,14 +923,25 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 98: // xterm 256 fg color ???
                    // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (arg != 5) ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
+                   if (arg != 5)
+                     {
+                        ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
+                        ty->decoding_error = EINA_TRUE;
+                     }
                    else
                      {
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
-                        if (!b) ERR("Failed xterm 256 color fg esc val");
+                        if (!b)
+                          {
+                             ERR("Failed xterm 256 color fg esc val");
+                             ty->decoding_error = EINA_TRUE;
+                          }
                         else if (arg < 0 || arg > 255)
-                          ERR("Invalid fg color %d", arg);
+                          {
+                             ERR("Invalid fg color %d", arg);
+                             ty->decoding_error = EINA_TRUE;
+                          }
                         else
                           {
                              ty->termstate.att.fg256 = 1;
@@ -922,14 +970,25 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                 case 108: // xterm 256 bg color ???
                    // now check if next arg is 5
                    arg = _csi_arg_get(&b);
-                   if (arg != 5) ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
+                   if (arg != 5)
+                     {
+                        ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
+                        ty->decoding_error = EINA_TRUE;
+                     }
                    else
                      {
                         // then get next arg - should be color index 0-255
                         arg = _csi_arg_get(&b);
-                        if (!b) ERR("Failed xterm 256 color bg esc val");
+                        if (!b)
+                          {
+                             ERR("Failed xterm 256 color bg esc val");
+                             ty->decoding_error = EINA_TRUE;
+                          }
                         else if (arg < 0 || arg > 255)
-                          ERR("Invalid bg color %d", arg);
+                          {
+                             ERR("Invalid bg color %d", arg);
+                             ty->decoding_error = EINA_TRUE;
+                          }
                         else
                           {
                              ty->termstate.att.bg256 = 1;
@@ -945,6 +1004,7 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
                    break;
                 default: //  not handled???
                    WRN("Unhandled color cmd [%i]", arg);
+                   ty->decoding_error = EINA_TRUE;
                    break;
                }
           }
@@ -961,6 +1021,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
    if (*b == '>')
      {
         WRN("TODO: disable key resources used by xterm");
+        ty->decoding_error = EINA_TRUE;
         return;
      }
    if (*b == '?')
@@ -976,6 +1037,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          else
            {
@@ -1023,6 +1085,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       case 25:
@@ -1037,6 +1100,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       case 26:
@@ -1051,6 +1115,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       case 62:
@@ -1065,6 +1130,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       case 63:
@@ -1079,6 +1145,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       case 75:
@@ -1091,11 +1158,13 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               WRN("unhandled DSR (dec specific: %s) %d",
                   (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
            }
          break;
       default:
          WRN("unhandled DSR (dec specific: %s) %d",
              (question_mark)? "yes": "no", arg);
+         ty->decoding_error = EINA_TRUE;
          break;
      }
 }
@@ -1340,6 +1409,7 @@ _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
         break;
      default:
         WRN("Invalid DECSCUSR %d", shape);
+        ty->decoding_error = EINA_TRUE;
         return;
     }
 
@@ -1490,6 +1560,7 @@ CUF:
              b++;
              arg = _csi_arg_get(&b);
              WRN("Unsupported selected erase in display %d", arg);
+             ty->decoding_error = EINA_TRUE;
           }
         else
           arg = _csi_arg_get(&b);
@@ -1512,6 +1583,7 @@ CUF:
               break;
            default:
               ERR("invalid EL/DECSEL argument %d", arg);
+              ty->decoding_error = EINA_TRUE;
           }
         break;
       case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
@@ -1520,6 +1592,7 @@ CUF:
              b++;
              arg = _csi_arg_get(&b);
              WRN("Unsupported selected erase in line %d", arg);
+             ty->decoding_error = EINA_TRUE;
           }
         arg = _csi_arg_get(&b);
         if (arg < 1) arg = 0;
@@ -1533,6 +1606,7 @@ CUF:
               break;
            default:
               ERR("invalid EL/DECSEL argument %d", arg);
+              ty->decoding_error = EINA_TRUE;
           }
         break;
       case 'L': // insert N lines - cy
@@ -1728,6 +1802,7 @@ HVP:
         else
           {
              ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
+             ty->decoding_error = EINA_TRUE;
           }
         break;
       case 'h':
@@ -1735,6 +1810,7 @@ HVP:
         break;
       case 'i':
         WRN("TODO: Media Copy (?:%s)", (*b == '?') ? "yes": "no");
+        ty->decoding_error = EINA_TRUE;
         break;
       case 'l':
         _handle_esc_csi_reset_mode(ty, *cc, b);
@@ -1762,10 +1838,12 @@ HVP:
         else if (*(cc-1) == '"')
           {
              WRN("TODO: select character protection attribute (DECSCA)");
+             ty->decoding_error = EINA_TRUE;
           }
         else
           {
              WRN("TODO: Load LEDs (DECLL)");
+             ty->decoding_error = EINA_TRUE;
           }
         break;
       case 'r':
@@ -1785,6 +1863,7 @@ HVP:
       case 't': // window manipulation
         arg = _csi_arg_get(&b);
         WRN("TODO: window operation %d not supported", arg);
+        ty->decoding_error = EINA_TRUE;
         break;
       case 'u': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);
@@ -1820,6 +1899,7 @@ unhandled:
         eina_strbuf_free(bf);
      }
 #endif
+   ty->decoding_error = EINA_TRUE;
    cc++;
    return cc - c;
 }
@@ -1857,8 +1937,9 @@ _eina_unicode_to_hex(Eina_Unicode u)
 }
 
 static int
-_xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
-                   unsigned char *b, int len)
+_xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
+                   unsigned char *r, unsigned char *g, unsigned char *b,
+                   int len)
 {
    Eina_Unicode *p = *ptr;
    int i;
@@ -1866,6 +1947,7 @@ _xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
    if (*p != '#')
      {
         WRN("unsupported xterm color");
+        ty->decoding_error = EINA_TRUE;
         return -1;
      }
    p++;
@@ -1914,6 +1996,7 @@ _xterm_parse_color(Eina_Unicode **ptr, unsigned char *r, unsigned char *g,
 
 err:
    WRN("invalid xterm color");
+   ty->decoding_error = EINA_TRUE;
    return -1;
 }
 
@@ -1930,6 +2013,7 @@ _handle_hyperlink(Termpty *ty,
       {
          ERR("invalid hyperlink escape code (len:%d s:%p)",
              len, s);
+         ty->decoding_error = EINA_TRUE;
          return;
       }
 
@@ -1944,6 +2028,7 @@ _handle_hyperlink(Termpty *ty,
            {
               ERR("invalid hyperlink escape code: no hyperlink to close"
                   " (len:%d s:%.*s)", len, len, s);
+              ty->decoding_error = EINA_TRUE;
            }
          goto end;
       }
@@ -1959,6 +2044,7 @@ _handle_hyperlink(Termpty *ty,
            {
               ERR("invalid hyperlink escape code: missing ';'"
                   " (len:%d s:%.*s)", len, len, s);
+              ty->decoding_error = EINA_TRUE;
               goto end;
            }
          *end = '\0';
@@ -2036,7 +2122,7 @@ _handle_xterm_50_command(Termpty *ty,
 }
 
 static void
-_handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
+_handle_xterm_777_command(Termpty *ty,
                           char *s, int _len EINA_UNUSED)
 {
    char *cmd_end = NULL,
@@ -2047,6 +2133,7 @@ _handle_xterm_777_command(Termpty *_ty EINA_UNUSED,
    if (strncmp(s, "notify;", strlen("notify;")))
      {
         WRN("unrecognized xterm 777 command %s", s);
+        ty->decoding_error = EINA_TRUE;
         return;
      }
 
@@ -2181,6 +2268,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (!*p)
           goto err;
         // XXX: set palette entry. not supported.
+        ty->decoding_error = EINA_TRUE;
         WRN("set palette, not supported");
         if ((cc - c) < 3) return 0;
         break;
@@ -2208,7 +2296,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           {
              unsigned char r, g, b;
              len = cc - c - (p - buf);
-             if (_xterm_parse_color(&p, &r, &g, &b, len) < 0)
+             if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
                goto err;
 #if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
              evas_object_textgrid_palette_set(
@@ -2241,6 +2329,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       default:
         // many others
         WRN("unhandled xterm esc %d", arg);
+        ty->decoding_error = EINA_TRUE;
         break;
      }
 
@@ -2249,6 +2338,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
     return cc - c;
 err:
     WRN("invalid xterm sequence");
+    ty->decoding_error = EINA_TRUE;
     return cc - c;
 }
 
@@ -2334,16 +2424,19 @@ _handle_esc_dcs(Termpty *ty,
            {
             case 'q':
               WRN("unhandled dsc request to get termcap/terminfo");
+              ty->decoding_error = EINA_TRUE;
               /* TODO */
               goto end;
                break;
             case 'p':
               WRN("unhandled dsc request to set termcap/terminfo");
+              ty->decoding_error = EINA_TRUE;
               /* TODO */
               goto end;
                break;
             default:
               ERR("invalid dsc request about termcap/terminfo");
+              ty->decoding_error = EINA_TRUE;
               goto end;
            }
          break;
@@ -2352,6 +2445,7 @@ _handle_esc_dcs(Termpty *ty,
          if (len > 1 && buf[1] != 'q')
            {
               WRN("invalid/unhandled dsc esc '$%s' (expected '$q')", _safechar(buf[1]));
+              ty->decoding_error = EINA_TRUE;
               goto end;
            }
          if (len < 4)
@@ -2368,11 +2462,13 @@ _handle_esc_dcs(Termpty *ty,
                else if (buf[3] == 'q') /* DECSCA */
                  {
                     WRN("unhandled DECSCA '$qq'");
+                    ty->decoding_error = EINA_TRUE;
                     goto end;
                  }
                else
                  {
                     WRN("invalid/unhandled dsc esc '$q\"%s'", _safechar(buf[3]));
+                    ty->decoding_error = EINA_TRUE;
                     goto end;
                  }
                break;
@@ -2381,14 +2477,15 @@ _handle_esc_dcs(Termpty *ty,
             case 'r': /* DECSTBM */
                /* TODO: */
             default:
+               ty->decoding_error = EINA_TRUE;
                WRN("unhandled dsc request status string '$q%s'", _safechar(buf[2]));
                goto end;
            }
-         /* TODO */
          break;
       default:
         // many others
         WRN("Unhandled DCS escape '%s'", _safechar(buf[0]));
+        ty->decoding_error = EINA_TRUE;
         break;
      }
 end:
@@ -2526,6 +2623,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         return 1;
  */
       default:
+        ty->decoding_error = EINA_TRUE;
         WRN("Unhandled escape '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
         return 1;
      }
@@ -2551,6 +2649,7 @@ _handle_utf8_control_code(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode
         if (len == 0) return 0;
         return 1 + len;
       default:
+        ty->decoding_error = EINA_TRUE;
         WRN("Unhandled utf8 control code '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
         return 1;
      }
@@ -2565,19 +2664,8 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    Eina_Unicode *cc;
    Eina_Unicode last_char = 0;
    int len = 0;
+   ty->decoding_error = EINA_FALSE;
 
-/*
-   printf(" B: ");
-   int j;
-   for (j = 0; c + j < ce && j < 100; j++)
-     {
-        if ((c[j] < ' ') || (c[j] >= 0x7f))
-          printf("\033[35m%08x\033[0m", c[j]);
-        else
-          printf("%s", _safechar(c[j]));
-     }
-   printf("\n");
- */
    if (c[0] < 0x20)
      {
         switch (c[0])
@@ -2618,6 +2706,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    else if (c[0] == 0x7f) // DEL
      {
         WRN("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
+        ty->decoding_error = EINA_TRUE;
         len = 1;
         goto end;
      }
@@ -2677,6 +2766,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         goto end;
      }
    cc = (Eina_Unicode *)c;
+
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f) && (*cc != 0x9b)
           && (*cc != UTF8CC))
@@ -2691,6 +2781,21 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
        last_char = c[len-1];
 
 end:
+#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+   if (ty->decoding_error)
+     {
+      int j;
+      for (j = 0; c + j < ce && j < len; j++)
+        {
+           if ((c[j] < ' ') || (c[j] >= 0x7f))
+             printf("\033[35m%08x\033[0m", c[j]);
+           else
+             printf("%s", _safechar(c[j]));
+        }
+      printf("\n");
+     }
+#endif
+   ty->decoding_error = EINA_FALSE;
    ty->last_char = last_char;
    return len;
 }

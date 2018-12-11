@@ -201,6 +201,7 @@ struct _Termpty
    unsigned int mouse_mode : 3;
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
+   unsigned int decoding_error : 1;
    struct {
        Term_Link *links;
        uint8_t *bitmap;
