@@ -51,7 +51,7 @@ struct _Termio
       int button;
    } mouse;
    struct {
-      char *string;
+      const char *string;
       int x1, y1, x2, y2;
       int suspend;
       uint16_t id;
@@ -819,12 +819,40 @@ _should_inline(const Evas_Object *obj)
    return EINA_TRUE;
 }
 
-const char  *
+/* Need to be freed */
+const char *
 termio_link_get(const Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
-   return sd->link.string;
+   const char *link;
+
+   if (!sd->link.string && !sd->link.id)
+     return NULL;
+   link = sd->link.string;
+   if (sd->link.id)
+     {
+        Term_Link *hl = &sd->pty->hl.links[sd->link.id];
+        if (!hl->url)
+          return NULL;
+        link = hl->url;
+     }
+   if (link_is_url(link))
+     {
+        if (casestartswith(link, "file://"))
+          {
+             // TODO: decode string: %XX -> char
+             link = link + sizeof("file://") - 1;
+             /* Handle cases where / is ommitted: file://HOSTNAME/home/ */
+             if (link[0] != '/')
+               {
+                  link = strchr(link, '/');
+                  if (!link)
+                    return NULL;
+               }
+          }
+     }
+   return strdup(link);
 }
 
 static void
@@ -834,33 +862,32 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    Config *config;
    char buf[PATH_MAX], *s, *escaped;
    const char *path = NULL, *cmd = NULL;
+   const char *link = NULL;
    Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
    if (!config) return;
    if (!config->active_links) return;
-   if (!sd->link.string) return;
-   if (link_is_url(sd->link.string))
-     {
-        if (casestartswith(sd->link.string, "file://"))
-          // TODO: decode string: %XX -> char
-          path = sd->link.string + sizeof("file://") - 1;
-        else
-          url = EINA_TRUE;
-     }
-   else if (sd->link.string[0] == '/')
-     path = sd->link.string;
-   else if (link_is_email(sd->link.string))
+
+   link = termio_link_get(obj);
+   if (!link)
+     return;
+
+   if (link_is_url(link))
+     url = EINA_TRUE;
+   else if (link[0] == '/')
+     path = link;
+   else if (link_is_email(link))
      email = EINA_TRUE;
 
-   if (url && casestartswith(sd->link.string, "mailto:"))
+   if (url && casestartswith(link, "mailto:"))
      {
         email = EINA_TRUE;
         url = EINA_FALSE;
      }
 
-   s = eina_str_escape(sd->link.string);
+   s = eina_str_escape(link);
    if (!s) return;
    if (email)
      {
@@ -888,10 +915,10 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         // locally accessible file
         cmd = "xdg-open";
 
-        escaped = ecore_file_escape_name(s);
+        escaped = ecore_file_escape_name(path);
         if (escaped)
           {
-             Media_Type type = media_src_type_get(sd->link.string);
+             Media_Type type = media_src_type_get(path);
              if (may_inline && _should_inline(obj))
                {
                   if ((type == MEDIA_TYPE_IMG) ||
@@ -942,7 +969,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         escaped = ecore_file_escape_name(s);
         if (escaped)
           {
-             Media_Type type = media_src_type_get(sd->link.string);
+             Media_Type type = media_src_type_get(link);
              if (may_inline && _should_inline(obj))
                {
                   evas_object_smart_callback_call(obj, "popup", NULL);
@@ -1050,9 +1077,20 @@ _cb_ctxp_link_content_copy(void *data,
    size_t len;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   raw_link = termio_selection_get(term, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+   if (sd->link.id)
+     {
+        Term_Link *hl = &sd->pty->hl.links[sd->link.id];
 
-   _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
+        if (!hl->url)
+          return;
+        _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, hl->url);
+     }
+   else
+     {
+        raw_link = termio_selection_get(term, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+
+        _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
+     }
 
    sd->ctxpopup = NULL;
    evas_object_del(obj);
@@ -1082,6 +1120,16 @@ _cb_link_down(void *data,
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   Term_Link *hl = NULL;
+
+
+   if (!sd->link.string && sd->link.id)
+     {
+        hl = &sd->pty->hl.links[sd->link.id];
+        if (!hl->url)
+          return;
+        sd->link.string = eina_stringshare_add(hl->url);
+     }
 
    if (ev->button == 1)
      {
@@ -1093,7 +1141,7 @@ _cb_link_down(void *data,
      {
         Evas_Object *ctxp;
         Eina_Bool absolut = EINA_FALSE;
-        char *raw_link;
+        const char *raw_link;
         size_t len;
 
         if (sd->pty->selection.is_active)
@@ -1121,7 +1169,20 @@ _cb_link_down(void *data,
           }
         elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
                                  sd->self);
-        raw_link = termio_selection_get(sd->self, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+        if (hl)
+          {
+             raw_link = hl->url;
+          }
+        else
+          {
+             raw_link = termio_selection_get(sd->self,
+                                             sd->link.x1,
+                                             sd->link.y1,
+                                             sd->link.x2,
+                                             sd->link.y2,
+                                             &len,
+                                             EINA_FALSE);
+          }
 
         if (len > 0 && raw_link[0] == '/')
           absolut = EINA_TRUE;
@@ -1145,7 +1206,8 @@ _cb_link_down(void *data,
                                        _cb_ctxp_dismissed, sd);
         evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
                                        _cb_ctxp_del, sd);
-        free(raw_link);
+        if (!hl)
+          free((void*)raw_link);
      }
 }
 
@@ -1257,7 +1319,8 @@ _cb_link_move(void *data,
    Evas_Coord dx, dy;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (!sd->link.down.down) return;
+   if (!sd->link.down.down)
+     return;
    dx = abs(ev->cur.canvas.x - sd->link.down.x);
    dy = abs(ev->cur.canvas.y - sd->link.down.y);
    if ((sd->config->drag_links) &&
@@ -1384,7 +1447,7 @@ _remove_links(Termio *sd)
 
    if (sd->link.string)
      {
-        free(sd->link.string);
+        eina_stringshare_del(sd->link.string);
         sd->link.string = NULL;
      }
    sd->link.x1 = -1;
@@ -2511,7 +2574,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
-   char *s = NULL;
+   const char *s = NULL;
    size_t len = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
@@ -2533,7 +2596,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
         if (sd->link.string)
           {
              len = strlen(sd->link.string);
-             s = strndup(sd->link.string, len);
+             s = eina_stringshare_add_length(sd->link.string, len);
           }
         goto end;
      }
@@ -2560,12 +2623,14 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
           }
         len = eina_strbuf_length_get(sb);
         s = eina_strbuf_string_steal(sb);
+        s = eina_stringshare_add_length(s, len);
         eina_strbuf_free(sb);
      }
    else
      {
         s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len,
                                  EINA_TRUE);
+        s = eina_stringshare_add_length(s, len);
      }
 
 end:
@@ -2573,7 +2638,7 @@ end:
      {
         if ((sd->win) && (len > 0))
           _take_selection_text(sd, type, s);
-        free(s);
+        eina_stringshare_del(s);
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -3711,7 +3776,8 @@ _smart_mouseover_apply(Evas_Object *obj)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
-   if (!config->active_links) return;
+   if (!config->active_links)
+     return;
 
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
        (sd->link.suspend) || (!evas_object_focus_get(obj)))
@@ -3741,8 +3807,8 @@ _smart_mouseover_apply(Evas_Object *obj)
      }
 
    if (sd->link.string)
-     free(sd->link.string);
-   sd->link.string = s;
+     eina_stringshare_del(sd->link.string);
+   sd->link.string = eina_stringshare_add(s);
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
@@ -5531,7 +5597,8 @@ _smart_del(Evas_Object *obj)
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    if (sd->font.name) eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
-   if (sd->link.string) free(sd->link.string);
+   if (sd->link.string)
+     eina_stringshare_del(sd->link.string);
    if (sd->glayer) evas_object_del(sd->glayer);
    if (sd->win)
      evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,

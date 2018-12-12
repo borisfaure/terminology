@@ -4401,9 +4401,13 @@ _cb_popup(void *data,
    Term *term = data;
    const char *src = event;
 
-   if (!src) src = termio_link_get(term->termio);
-   if (!src) return;
+   if (!src)
+     src = termio_link_get(term->termio);
+   if (!src)
+     return;
    _popmedia(term, src);
+   if (!event)
+     free((void*)src);
 }
 
 static void
@@ -4413,9 +4417,14 @@ _cb_popup_queue(void *data,
 {
    Term *term = data;
    const char *src = event;
-   if (!src) src = termio_link_get(term->termio);
-   if (!src) return;
+
+   if (!src)
+     src = termio_link_get(term->termio);
+   if (!src)
+     return;
    _popmedia_queue_add(term, src);
+   if (!event)
+     free((void*)src);
 }
 
 static void
