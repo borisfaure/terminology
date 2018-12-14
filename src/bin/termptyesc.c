@@ -712,6 +712,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case -CSI_ARG_ERROR:
               return;
              /* TODO: -CSI_ARG_NO_VALUE */
+           case -CSI_ARG_NO_VALUE:
+              EINA_FALLTHROUGH;
            case 0: // reset to normal
               termpty_reset_att(&(ty->termstate.att));
               break;

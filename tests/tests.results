@@ -26,3 +26,4 @@ dsr-os.sh 1645f13652d7ee51d66dc93000247280
 dsr-pp.sh 0f0a7d5beccefbad4f4984fc4611276e
 dsr-udk.sh f3a20968a2f25bfd36875dbc5f64ab16
 colors.sh 532494a2e56c102ee10ab1a9b8f176d7
+sgr-leading-trailing-semicolon.sh d7701f1193bde63412a9b969f17e10ec
