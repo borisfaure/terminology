@@ -85,14 +85,22 @@ _safechar(unsigned int c)
    return _str;
 }
 
+enum csi_arg_error {
+     CSI_ARG_NO_VALUE = 1,
+     CSI_ARG_ERROR = 2
+};
+
 static int
-_csi_arg_get(Eina_Unicode **ptr)
+_csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int sum = 0;
 
    if (!b)
-     goto error;
+     {
+        *ptr = NULL;
+        return -CSI_ARG_NO_VALUE;
+     }
 
    /* Skip potential '?', '>'.... */
    while ((*b) && ( (*b) != ';' && ((*b) < '0' || (*b) > '9')))
@@ -102,16 +110,22 @@ _csi_arg_get(Eina_Unicode **ptr)
      {
         b++;
         *ptr = b;
-        return -1;
+        return -CSI_ARG_NO_VALUE;
      }
 
-   if (!*b)
-     goto error;
+   if (*b == '\0')
+     {
+        *ptr = NULL;
+        return -CSI_ARG_NO_VALUE;
+     }
 
    while ((*b >= '0') && (*b <= '9'))
      {
         if (sum > INT32_MAX/10 )
-          goto error;
+          {
+             ERR("Invalid sequence: argument is too large");
+             goto error;
+          }
         sum *= 10;
         sum += *b - '0';
         b++;
@@ -119,15 +133,24 @@ _csi_arg_get(Eina_Unicode **ptr)
 
    if (*b == ';')
      {
-        b++;
+        if (b[1])
+          b++;
+        *ptr = b;
      }
-
-   *ptr = b;
+   else if (*b == '\0')
+     {
+        *ptr = NULL;
+     }
+   else
+     {
+        *ptr = b;
+     }
    return sum;
 
 error:
+   ty->decoding_error = EINA_TRUE;
    *ptr = NULL;
-   return -1;
+   return -CSI_ARG_ERROR;
 }
 
 static void
@@ -224,11 +247,13 @@ _move_cursor_to_origin(Termpty *ty)
 
 
 static void
-_handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
+_handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
+                           const Eina_Unicode * const end)
 {
    int mode = 0, priv = 0, arg;
 
-   if (cc == 'h') mode = 1;
+   if (cc == 'h')
+     mode = 1;
    if (*b == '?')
      {
         priv = 1;
@@ -236,274 +261,275 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b)
      }
    if (priv) /* DEC Private Mode Reset (DECRST) */
      {
-        while (b)
+        while (b && b <= end)
           {
-             arg = _csi_arg_get(&b);
-             if (b)
+             arg = _csi_arg_get(ty, &b);
+             // complete-ish list here:
+             // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
+             switch (arg)
                {
-                  // complete-ish list here:
-                  // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
-                  switch (arg)
-                    {
-                     case 1:
-                        ty->termstate.appcursor = mode;
-                        break;
-                     case 2:
-                        ty->termstate.kbd_lock = mode;
-                        break;
-                     case 3: // 132 column mode… should we handle this?
+                case -CSI_ARG_ERROR:
+                   return;
+              /* TODO: -CSI_ARG_NO_VALUE */
+                case 1:
+                   ty->termstate.appcursor = mode;
+                   break;
+                case 2:
+                   ty->termstate.kbd_lock = mode;
+                   break;
+                case 3: // 132 column mode… should we handle this?
 #if defined(SUPPORT_80_132_COLUMNS)
-                        if (ty->termstate.att.is_80_132_mode_allowed)
-                          {
-                             /* ONLY FOR TESTING PURPOSE FTM */
-                             Evas_Object *wn;
-                             int w, h;
+                   if (ty->termstate.att.is_80_132_mode_allowed)
+                     {
+                        /* ONLY FOR TESTING PURPOSE FTM */
+                        Evas_Object *wn;
+                        int w, h;
 
-                             wn = termio_win_get(ty->obj);
-                             elm_win_size_step_get(wn, &w, &h);
-                             evas_object_resize(wn,
-                                                4 +
-                                                (mode ? 132 : 80) * w,
-                                                4 + ty->h * h);
-                             termpty_resize(ty, mode ? 132 : 80,
-                                            ty->h);
-                             termpty_reset_state(ty);
-                             termpty_clear_screen(ty,
-                                                   TERMPTY_CLR_ALL);
-                          }
+                        wn = termio_win_get(ty->obj);
+                        elm_win_size_step_get(wn, &w, &h);
+                        evas_object_resize(wn,
+                                           4 +
+                                           (mode ? 132 : 80) * w,
+                                           4 + ty->h * h);
+                        termpty_resize(ty, mode ? 132 : 80,
+                                       ty->h);
+                        termpty_reset_state(ty);
+                        termpty_clear_screen(ty,
+                                             TERMPTY_CLR_ALL);
+                     }
 #endif
-                        break;
-                     case 4:
-                        WRN("TODO: scrolling mode (DECSCLM): %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 5:
-                        ty->termstate.reverse = mode;
-                        break;
-                     case 6:
-                        /* DECOM */
-                        if (mode)
-                          {
-                             /* set, within margins */
-                             ty->termstate.restrict_cursor = 1;
-                          }
-                        else
-                          {
-                             ty->termstate.restrict_cursor = 0;
-                          }
-                        _move_cursor_to_origin(ty);
-                        DBG("DECOM: mode (%d): cursor is at 0,0"
-                            " cursor limited to screen/start point"
-                            " for line #'s depends on top margin",
-                            mode);
-                        break;
-                     case 7:
-                        DBG("set wrap mode to %i", mode);
-                        ty->termstate.wrap = mode;
-                        break;
-                     case 8:
-                        ty->termstate.no_autorepeat = !mode;
-                        DBG("auto repeat %i", mode);
-                        break;
-                     case 9:
-                        DBG("set mouse (X10) %i", mode);
-                        if (mode) ty->mouse_mode = MOUSE_X10;
-                        else ty->mouse_mode = MOUSE_OFF;
-                        break;
-                     case 12: // ignore
-                        WRN("TODO: set blinking cursor to (stop?) %i or local echo (ignored)", mode);
-                        break;
-                     case 19: // never seen this - what to do?
-                        WRN("TODO: set print extent to full screen");
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
-                        ty->termstate.crlf = mode;
-                        break;
-                     case 25:
-                        ty->termstate.hide_cursor = !mode;
-                        DBG("hide cursor: %d", !mode);
-                        break;
-                     case 30: // ignore
-                        WRN("TODO: set scrollbar mapping %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 33: // ignore
-                        WRN("TODO: Stop cursor blink %i", mode);
-                        break;
-                     case 34: // ignore
-                        WRN("TODO: Underline cursor mode %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 35: // ignore
-                        WRN("TODO: set shift keys %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 38: // ignore
-                        WRN("TODO: switch to tek window %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 40:
-                        DBG("Allow 80 -> 132 Mode %i", mode);
+                   break;
+                case 4:
+                   WRN("TODO: scrolling mode (DECSCLM): %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 5:
+                   ty->termstate.reverse = mode;
+                   break;
+                case 6:
+                   /* DECOM */
+                   if (mode)
+                     {
+                        /* set, within margins */
+                        ty->termstate.restrict_cursor = 1;
+                     }
+                   else
+                     {
+                        ty->termstate.restrict_cursor = 0;
+                     }
+                   _move_cursor_to_origin(ty);
+                   DBG("DECOM: mode (%d): cursor is at 0,0"
+                       " cursor limited to screen/start point"
+                       " for line #'s depends on top margin",
+                       mode);
+                   break;
+                case 7:
+                   DBG("set wrap mode to %i", mode);
+                   ty->termstate.wrap = mode;
+                   break;
+                case 8:
+                   ty->termstate.no_autorepeat = !mode;
+                   DBG("auto repeat %i", mode);
+                   break;
+                case 9:
+                   DBG("set mouse (X10) %i", mode);
+                   if (mode) ty->mouse_mode = MOUSE_X10;
+                   else ty->mouse_mode = MOUSE_OFF;
+                   break;
+                case 12: // ignore
+                   WRN("TODO: set blinking cursor to (stop?) %i or local echo (ignored)", mode);
+                   break;
+                case 19: // never seen this - what to do?
+                   WRN("TODO: set print extent to full screen");
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 20: // crfl==1 -> cur moves to col 0 on LF, FF or VT, ==0 -> mode is cr+lf
+                   ty->termstate.crlf = mode;
+                   break;
+                case 25:
+                   ty->termstate.hide_cursor = !mode;
+                   DBG("hide cursor: %d", !mode);
+                   break;
+                case 30: // ignore
+                   WRN("TODO: set scrollbar mapping %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 33: // ignore
+                   WRN("TODO: Stop cursor blink %i", mode);
+                   break;
+                case 34: // ignore
+                   WRN("TODO: Underline cursor mode %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 35: // ignore
+                   WRN("TODO: set shift keys %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 38: // ignore
+                   WRN("TODO: switch to tek window %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 40:
+                   DBG("Allow 80 -> 132 Mode %i", mode);
 #if defined(SUPPORT_80_132_COLUMNS)
-                        ty->termstate.att.is_80_132_mode_allowed = mode;
+                   ty->termstate.att.is_80_132_mode_allowed = mode;
 #endif
-                        break;
-                     case 45: // ignore
-                        WRN("TODO: Reverse-wraparound Mode");
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 47:
-                        _switch_to_alternative_screen(ty, mode);
-                        break;
-                     case 59: // ignore
-                        WRN("TODO: kanji terminal mode %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 66:
-                        WRN("TODO: app keypad mode %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 67:
-                        ty->termstate.send_bs = mode;
-                        DBG("backspace send bs not del = %i", mode);
-                        break;
-                     case 69:
-                        ty->termstate.lr_margins = mode;
-                        if (!mode)
-                          {
-                             ty->termstate.left_margin = 0;
-                             ty->termstate.right_margin = 0;
-                          }
-                        break;
-                     case 1000:
-                        if (mode) ty->mouse_mode = MOUSE_NORMAL;
-                        else ty->mouse_mode = MOUSE_OFF;
-                        DBG("set mouse (press+release only) to %i", mode);
-                        break;
-                     case 1001:
-                        WRN("TODO: x11 mouse highlighting %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 1002:
-                        if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
-                        else ty->mouse_mode = MOUSE_OFF;
-                        DBG("set mouse (press+release+motion while pressed) %i", mode);
-                        break;
-                     case 1003:
-                        if (mode) ty->mouse_mode = MOUSE_NORMAL_ALL_MOVE;
-                        else ty->mouse_mode = MOUSE_OFF;
-                        DBG("set mouse (press+release+all motion) %i", mode);
-                        break;
-                     case 1004: // i dont know what focus repporting is?
-                        WRN("TODO: enable focus reporting %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 1005:
-                        if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
-                        else ty->mouse_ext = MOUSE_EXT_NONE;
-                        DBG("set mouse (xterm utf8 style) %i", mode);
-                        break;
-                     case 1006:
-                        if (mode) ty->mouse_ext = MOUSE_EXT_SGR;
-                        else ty->mouse_ext = MOUSE_EXT_NONE;
-                        DBG("set mouse (xterm sgr style) %i", mode);
-                        break;
-                     case 1010: // ignore
-                        WRN("TODO: set home on tty output %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 1012: // ignore
-                        WRN("TODO: set home on tty input %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 1015:
-                        if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
-                        else ty->mouse_ext = MOUSE_EXT_NONE;
-                        DBG("set mouse (rxvt-unicode style) %i", mode);
-                        break;
-                     case 1034: // ignore
-                        /* libreadline6 emits it but it shouldn't.
-                           See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
-                           */
-                        DBG("Ignored screen mode %i", arg);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 1047:
-                        if (!mode && ty->altbuf)
-                            /* clear screen before switching back to normal */
-                            termpty_clear_screen(ty, TERMPTY_CLR_ALL);
-                        _switch_to_alternative_screen(ty, mode);
-                        break;
-                     case 1048:
+                   break;
+                case 45: // ignore
+                   WRN("TODO: Reverse-wraparound Mode");
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 47:
+                   _switch_to_alternative_screen(ty, mode);
+                   break;
+                case 59: // ignore
+                   WRN("TODO: kanji terminal mode %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 66:
+                   WRN("TODO: app keypad mode %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 67:
+                   ty->termstate.send_bs = mode;
+                   DBG("backspace send bs not del = %i", mode);
+                   break;
+                case 69:
+                   ty->termstate.lr_margins = mode;
+                   if (!mode)
+                     {
+                        ty->termstate.left_margin = 0;
+                        ty->termstate.right_margin = 0;
+                     }
+                   break;
+                case 1000:
+                   if (mode) ty->mouse_mode = MOUSE_NORMAL;
+                   else ty->mouse_mode = MOUSE_OFF;
+                   DBG("set mouse (press+release only) to %i", mode);
+                   break;
+                case 1001:
+                   WRN("TODO: x11 mouse highlighting %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 1002:
+                   if (mode) ty->mouse_mode = MOUSE_NORMAL_BTN_MOVE;
+                   else ty->mouse_mode = MOUSE_OFF;
+                   DBG("set mouse (press+release+motion while pressed) %i", mode);
+                   break;
+                case 1003:
+                   if (mode) ty->mouse_mode = MOUSE_NORMAL_ALL_MOVE;
+                   else ty->mouse_mode = MOUSE_OFF;
+                   DBG("set mouse (press+release+all motion) %i", mode);
+                   break;
+                case 1004: // i dont know what focus repporting is?
+                   WRN("TODO: enable focus reporting %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 1005:
+                   if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;
+                   else ty->mouse_ext = MOUSE_EXT_NONE;
+                   DBG("set mouse (xterm utf8 style) %i", mode);
+                   break;
+                case 1006:
+                   if (mode) ty->mouse_ext = MOUSE_EXT_SGR;
+                   else ty->mouse_ext = MOUSE_EXT_NONE;
+                   DBG("set mouse (xterm sgr style) %i", mode);
+                   break;
+                case 1010: // ignore
+                   WRN("TODO: set home on tty output %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 1012: // ignore
+                   WRN("TODO: set home on tty input %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 1015:
+                   if (mode) ty->mouse_ext = MOUSE_EXT_URXVT;
+                   else ty->mouse_ext = MOUSE_EXT_NONE;
+                   DBG("set mouse (rxvt-unicode style) %i", mode);
+                   break;
+                case 1034: // ignore
+                   /* libreadline6 emits it but it shouldn't.
+                      See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
+                      */
+                   DBG("Ignored screen mode %i", arg);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 1047:
+                   if (!mode && ty->altbuf)
+                     /* clear screen before switching back to normal */
+                     termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                   _switch_to_alternative_screen(ty, mode);
+                   break;
+                case 1048:
+                   termpty_cursor_copy(ty, mode);
+                   break;
+                case 1049:
+                   if (mode)
+                     {
+                        // switch to altbuf
                         termpty_cursor_copy(ty, mode);
-                        break;
-                     case 1049:
-                        if (mode)
-                          {
-                             // switch to altbuf
-                             termpty_cursor_copy(ty, mode);
-                             _switch_to_alternative_screen(ty, mode);
-                             if (ty->altbuf)
-                               /* clear screen before switching back to normal */
-                               termpty_clear_screen(ty, TERMPTY_CLR_ALL);
-                          }
-                        else
-                          {
-                             if (ty->altbuf)
-                               /* clear screen before switching back to normal */
-                               termpty_clear_screen(ty, TERMPTY_CLR_ALL);
-                             _switch_to_alternative_screen(ty, mode);
-                             termpty_cursor_copy(ty, mode);
-                          }
-                        break;
-                     case 2004:
-                        ty->bracketed_paste = mode;
-                        break;
-                     case 7727: // ignore
-                        WRN("TODO: enable application escape mode %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 7786: // ignore
-                        WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     default:
-                        WRN("Unhandled DEC Private Reset Mode arg %i", arg);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                    }
+                        _switch_to_alternative_screen(ty, mode);
+                        if (ty->altbuf)
+                          /* clear screen before switching back to normal */
+                          termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                     }
+                   else
+                     {
+                        if (ty->altbuf)
+                          /* clear screen before switching back to normal */
+                          termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+                        _switch_to_alternative_screen(ty, mode);
+                        termpty_cursor_copy(ty, mode);
+                     }
+                   break;
+                case 2004:
+                   ty->bracketed_paste = mode;
+                   break;
+                case 7727: // ignore
+                   WRN("TODO: enable application escape mode %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 7786: // ignore
+                   WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                default:
+                   WRN("Unhandled DEC Private Reset Mode arg %i", arg);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
                }
           }
      }
    else /* Reset Mode (RM) */
      {
-        while (b)
+        while (b && b <= end)
           {
-             arg = _csi_arg_get(&b);
-             if (b)
+             arg = _csi_arg_get(ty, &b);
+
+             switch (arg)
                {
-                  switch (arg)
-                    {
-                     case 1:
-                        ty->termstate.appcursor = mode;
-                        break;
-                     case 4:
-                        DBG("set insert mode to %i", mode);
-                        ty->termstate.insert = mode;
-                        break;
-                     case 34:
-                        WRN("TODO: hebrew keyboard mapping: %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     case 36:
-                        WRN("TODO: hebrew encoding mode: %i", mode);
-                        ty->decoding_error = EINA_TRUE;
-                        break;
-                     default:
-                        WRN("Unhandled ANSI Reset Mode arg %i", arg);
-                        ty->decoding_error = EINA_TRUE;
-                    }
+                case -CSI_ARG_ERROR:
+                   return;
+              /* TODO: -CSI_ARG_NO_VALUE */
+                case 1:
+                   ty->termstate.appcursor = mode;
+                   break;
+                case 4:
+                   DBG("set insert mode to %i", mode);
+                   ty->termstate.insert = mode;
+                   break;
+                case 34:
+                   WRN("TODO: hebrew keyboard mapping: %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 36:
+                   WRN("TODO: hebrew encoding mode: %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                default:
+                   WRN("Unhandled ANSI Reset Mode arg %i", arg);
+                   ty->decoding_error = EINA_TRUE;
                }
           }
      }
@@ -666,10 +692,10 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 }
 
 static void
-_handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
+_handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
+                          const Eina_Unicode * const end)
 {
    Eina_Unicode *b = *ptr;
-   int first = 1;
 
    if (b && (*b == '>'))
      { // key resources used by xterm
@@ -678,335 +704,329 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr)
         return;
      }
    DBG("color set");
-   while (b)
+   while (b && b <= end)
      {
-        int arg = _csi_arg_get(&b);
-        if ((first) && (!b))
-          termpty_reset_att(&(ty->termstate.att));
-        else if (b)
+        int arg = _csi_arg_get(ty, &b);
+        switch (arg)
           {
-             first = 0;
-             switch (arg)
-               {
-                case 0: // reset to normal
-                   termpty_reset_att(&(ty->termstate.att));
-                   break;
-                case 1: // bold/bright
-                   ty->termstate.att.bold = 1;
-                   break;
-                case 2: // faint
-                   ty->termstate.att.faint = 1;
-                   break;
-                case 3: // italic
-                   ty->termstate.att.italic = 1;
-                   break;
-                case 4: // underline
-                   ty->termstate.att.underline = 1;
-                   break;
-                case 5: // blink
-                   ty->termstate.att.blink = 1;
-                   break;
-                case 6: // blink rapid
-                   ty->termstate.att.blink2 = 1;
-                   break;
-                case 7: // reverse
-                   ty->termstate.att.inverse = 1;
-                   break;
-                case 8: // invisible
-                   ty->termstate.att.invisible = 1;
-                   break;
-                case 9: // strikethrough
-                   ty->termstate.att.strike = 1;
-                   break;
-                case 20: // fraktur!
-                   ty->termstate.att.fraktur = 1;
-                   break;
-                case 21: // no bold/bright
-                   ty->termstate.att.bold = 0;
-                   break;
-                case 22: // no bold/bright, no faint
-                   ty->termstate.att.bold = 0;
-                   ty->termstate.att.faint = 0;
-                   break;
-                case 23: // no italic, not fraktur
-                   ty->termstate.att.italic = 0;
-                   ty->termstate.att.fraktur = 0;
-                   break;
-                case 24: // no underline
-                   ty->termstate.att.underline = 0;
-                   break;
-                case 25: // no blink
-                   ty->termstate.att.blink = 0;
-                   ty->termstate.att.blink2 = 0;
-                   break;
-                case 27: // no reverse
-                   ty->termstate.att.inverse = 0;
-                   break;
-                case 28: // no invisible
-                   ty->termstate.att.invisible = 0;
-                   break;
-                case 29: // no strikethrough
-                   ty->termstate.att.strike = 0;
-                   break;
-                case 30: // fg
-                case 31:
-                case 32:
-                case 33:
-                case 34:
-                case 35:
-                case 36:
-                case 37:
-                   ty->termstate.att.fg256 = 0;
-                   ty->termstate.att.fg = (arg - 30) + COL_BLACK;
-                   ty->termstate.att.fgintense = 0;
-                   break;
-                case 38: // xterm 256 fg color ???
-                   arg = _csi_arg_get(&b);
-                   switch (arg)
-                     {
-                      case 1:
-                         ty->termstate.att.fg256 = 0;
-                         ty->termstate.att.fg = COL_INVIS;
-                         break;
-                      case 2:
-                         ty->termstate.att.fg256 = 1;
-                         ty->termstate.att.fg =
-                            _handle_esc_csi_truecolor_rgb(ty, &b);
-                         DBG("truecolor RGB fg: approximation got color %d",
-                             ty->termstate.att.fg);
-                         break;
-                      case 3:
-                         ty->termstate.att.fg256 = 1;
-                         ty->termstate.att.fg =
-                            _handle_esc_csi_truecolor_cmy(ty, &b);
-                         DBG("truecolor CMY fg: approximation got color %d",
-                             ty->termstate.att.fg);
-                         break;
-                      case 4:
-                         ty->termstate.att.fg256 = 1;
-                         ty->termstate.att.fg =
-                            _handle_esc_csi_truecolor_cmyk(ty, &b);
-                         DBG("truecolor CMYK fg: approximation got color %d",
-                             ty->termstate.att.fg);
-                         break;
-                      case 5:
-                         // then get next arg - should be color index 0-255
-                         arg = _csi_arg_get(&b);
-                         if (!b)
-                           {
-                              ERR("Failed xterm 256 color fg esc val");
-                              ty->decoding_error = EINA_TRUE;
-                           }
-                         else if (arg < 0 || arg > 255)
-                           {
-                              ERR("Invalid fg color %d", arg);
-                              ty->decoding_error = EINA_TRUE;
-                           }
-                         else
-                           {
-                              ty->termstate.att.fg256 = 1;
-                              ty->termstate.att.fg = arg;
-                           }
-                         break;
-                      default:
-                         ERR("Failed xterm 256 color fg (got %d)", arg);
+           case -CSI_ARG_ERROR:
+              return;
+             /* TODO: -CSI_ARG_NO_VALUE */
+           case 0: // reset to normal
+              termpty_reset_att(&(ty->termstate.att));
+              break;
+           case 1: // bold/bright
+              ty->termstate.att.bold = 1;
+              break;
+           case 2: // faint
+              ty->termstate.att.faint = 1;
+              break;
+           case 3: // italic
+              ty->termstate.att.italic = 1;
+              break;
+           case 4: // underline
+              ty->termstate.att.underline = 1;
+              break;
+           case 5: // blink
+              ty->termstate.att.blink = 1;
+              break;
+           case 6: // blink rapid
+              ty->termstate.att.blink2 = 1;
+              break;
+           case 7: // reverse
+              ty->termstate.att.inverse = 1;
+              break;
+           case 8: // invisible
+              ty->termstate.att.invisible = 1;
+              break;
+           case 9: // strikethrough
+              ty->termstate.att.strike = 1;
+              break;
+           case 20: // fraktur!
+              ty->termstate.att.fraktur = 1;
+              break;
+           case 21: // no bold/bright
+              ty->termstate.att.bold = 0;
+              break;
+           case 22: // no bold/bright, no faint
+              ty->termstate.att.bold = 0;
+              ty->termstate.att.faint = 0;
+              break;
+           case 23: // no italic, not fraktur
+              ty->termstate.att.italic = 0;
+              ty->termstate.att.fraktur = 0;
+              break;
+           case 24: // no underline
+              ty->termstate.att.underline = 0;
+              break;
+           case 25: // no blink
+              ty->termstate.att.blink = 0;
+              ty->termstate.att.blink2 = 0;
+              break;
+           case 27: // no reverse
+              ty->termstate.att.inverse = 0;
+              break;
+           case 28: // no invisible
+              ty->termstate.att.invisible = 0;
+              break;
+           case 29: // no strikethrough
+              ty->termstate.att.strike = 0;
+              break;
+           case 30: // fg
+           case 31:
+           case 32:
+           case 33:
+           case 34:
+           case 35:
+           case 36:
+           case 37:
+              ty->termstate.att.fg256 = 0;
+              ty->termstate.att.fg = (arg - 30) + COL_BLACK;
+              ty->termstate.att.fgintense = 0;
+              break;
+           case 38: // xterm 256 fg color ???
+              arg = _csi_arg_get(ty, &b);
+              switch (arg)
+                {
+                 case -CSI_ARG_ERROR:
+                    return;
+                   /* TODO: -CSI_ARG_NO_VALUE */
+                 case 1:
+                    ty->termstate.att.fg256 = 0;
+                    ty->termstate.att.fg = COL_INVIS;
+                    break;
+                 case 2:
+                    ty->termstate.att.fg256 = 1;
+                    ty->termstate.att.fg =
+                       _handle_esc_csi_truecolor_rgb(ty, &b);
+                    DBG("truecolor RGB fg: approximation got color %d",
+                        ty->termstate.att.fg);
+                    break;
+                 case 3:
+                    ty->termstate.att.fg256 = 1;
+                    ty->termstate.att.fg =
+                       _handle_esc_csi_truecolor_cmy(ty, &b);
+                    DBG("truecolor CMY fg: approximation got color %d",
+                        ty->termstate.att.fg);
+                    break;
+                 case 4:
+                    ty->termstate.att.fg256 = 1;
+                    ty->termstate.att.fg =
+                       _handle_esc_csi_truecolor_cmyk(ty, &b);
+                    DBG("truecolor CMYK fg: approximation got color %d",
+                        ty->termstate.att.fg);
+                    break;
+                 case 5:
+                    // then get next arg - should be color index 0-255
+                    arg = _csi_arg_get(ty, &b);
+                    if (arg <= -CSI_ARG_ERROR || arg > 255)
+                      {
+                         ERR("Invalid fg color %d", arg);
                          ty->decoding_error = EINA_TRUE;
-                     }
-                   ty->termstate.att.fgintense = 0;
-                   break;
-                case 39: // default fg color
-                   ty->termstate.att.fg256 = 0;
-                   ty->termstate.att.fg = COL_DEF;
-                   ty->termstate.att.fgintense = 0;
-                   break;
-                case 40: // bg
-                case 41:
-                case 42:
-                case 43:
-                case 44:
-                case 45:
-                case 46:
-                case 47:
-                   ty->termstate.att.bg256 = 0;
-                   ty->termstate.att.bg = (arg - 40) + COL_BLACK;
-                   ty->termstate.att.bgintense = 0;
-                   break;
-                case 48: // xterm 256 bg color ???
-                   arg = _csi_arg_get(&b);
-                   switch (arg)
-                     {
-                      case 1:
-                         ty->termstate.att.bg256 = 0;
-                         ty->termstate.att.bg = COL_INVIS;
-                         break;
-                      case 2:
-                         ty->termstate.att.bg256 = 1;
-                         ty->termstate.att.bg =
-                            _handle_esc_csi_truecolor_rgb(ty, &b);
-                         DBG("truecolor RGB bg: approximation got color %d",
-                             ty->termstate.att.bg);
-                         break;
-                      case 3:
-                         ty->termstate.att.bg256 = 1;
-                         ty->termstate.att.bg =
-                            _handle_esc_csi_truecolor_cmy(ty, &b);
-                         DBG("truecolor CMY bg: approximation got color %d",
-                             ty->termstate.att.bg);
-                         break;
-                      case 4:
-                         ty->termstate.att.bg256 = 1;
-                         ty->termstate.att.bg =
-                            _handle_esc_csi_truecolor_cmyk(ty, &b);
-                         DBG("truecolor CMYK bg: approximation got color %d",
-                             ty->termstate.att.bg);
-                         break;
-                      case 5:
-                         // then get next arg - should be color index 0-255
-                         arg = _csi_arg_get(&b);
-                         if (!b)
-                           {
-                              ERR("Failed xterm 256 color bg esc val");
-                              ty->decoding_error = EINA_TRUE;
-                           }
-                         else if (arg < 0 || arg > 255)
-                           {
-                              ERR("Invalid bg color %d", arg);
-                              ty->decoding_error = EINA_TRUE;
-                           }
-                         else
-                           {
-                              ty->termstate.att.bg256 = 1;
-                              ty->termstate.att.bg = arg;
-                           }
-                         break;
-                      default:
-                         ERR("Failed xterm 256 color bg (got %d)", arg);
+                      }
+                    else
+                      {
+                         if (arg == -CSI_ARG_NO_VALUE)
+                           arg = 0;
+                         ty->termstate.att.fg256 = 1;
+                         ty->termstate.att.fg = arg;
+                      }
+                    break;
+                 default:
+                    ERR("Failed xterm 256 color fg (got %d)", arg);
+                    ty->decoding_error = EINA_TRUE;
+                }
+              ty->termstate.att.fgintense = 0;
+              break;
+           case 39: // default fg color
+              ty->termstate.att.fg256 = 0;
+              ty->termstate.att.fg = COL_DEF;
+              ty->termstate.att.fgintense = 0;
+              break;
+           case 40: // bg
+           case 41:
+           case 42:
+           case 43:
+           case 44:
+           case 45:
+           case 46:
+           case 47:
+              ty->termstate.att.bg256 = 0;
+              ty->termstate.att.bg = (arg - 40) + COL_BLACK;
+              ty->termstate.att.bgintense = 0;
+              break;
+           case 48: // xterm 256 bg color ???
+              arg = _csi_arg_get(ty, &b);
+              switch (arg)
+                {
+                 case -CSI_ARG_ERROR:
+                    return;
+                   /* TODO: -CSI_ARG_NO_VALUE */
+                 case 1:
+                    ty->termstate.att.bg256 = 0;
+                    ty->termstate.att.bg = COL_INVIS;
+                    break;
+                 case 2:
+                    ty->termstate.att.bg256 = 1;
+                    ty->termstate.att.bg =
+                       _handle_esc_csi_truecolor_rgb(ty, &b);
+                    DBG("truecolor RGB bg: approximation got color %d",
+                        ty->termstate.att.bg);
+                    break;
+                 case 3:
+                    ty->termstate.att.bg256 = 1;
+                    ty->termstate.att.bg =
+                       _handle_esc_csi_truecolor_cmy(ty, &b);
+                    DBG("truecolor CMY bg: approximation got color %d",
+                        ty->termstate.att.bg);
+                    break;
+                 case 4:
+                    ty->termstate.att.bg256 = 1;
+                    ty->termstate.att.bg =
+                       _handle_esc_csi_truecolor_cmyk(ty, &b);
+                    DBG("truecolor CMYK bg: approximation got color %d",
+                        ty->termstate.att.bg);
+                    break;
+                 case 5:
+                    // then get next arg - should be color index 0-255
+                    arg = _csi_arg_get(ty, &b);
+                    if (arg <= -CSI_ARG_ERROR || arg > 255)
+                      {
+                         ERR("Invalid bg color %d", arg);
                          ty->decoding_error = EINA_TRUE;
-                     }
-                   ty->termstate.att.bgintense = 0;
-                   break;
-                case 49: // default bg color
-                   ty->termstate.att.bg256 = 0;
-                   ty->termstate.att.bg = COL_DEF;
-                   ty->termstate.att.bgintense = 0;
-                   break;
-                case 51:
-                   WRN("TODO: support SGR 51 - framed attribute");
-                   ty->termstate.att.framed = 1;
-                   break;
-                case 52:
-                   ty->termstate.att.encircled = 1;
-                   break;
-                case 53:
-                   WRN("TODO: support SGR 51 - overlined attribute");
-                   ty->termstate.att.overlined = 1;
-                   break;
-                case 54:
-                   ty->termstate.att.framed = 0;
-                   ty->termstate.att.encircled = 0;
-                   break;
-                case 55:
-                   ty->termstate.att.overlined = 0;
-                   break;
-                case 90: // fg
-                case 91:
-                case 92:
-                case 93:
-                case 94:
-                case 95:
-                case 96:
-                case 97:
-                   ty->termstate.att.fg256 = 0;
-                   ty->termstate.att.fg = (arg - 90) + COL_BLACK;
-                   ty->termstate.att.fgintense = 1;
-                   break;
-                case 98: // xterm 256 fg color ???
-                   // now check if next arg is 5
-                   arg = _csi_arg_get(&b);
-                   if (arg != 5)
-                     {
-                        ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
-                        ty->decoding_error = EINA_TRUE;
-                     }
-                   else
-                     {
-                        // then get next arg - should be color index 0-255
-                        arg = _csi_arg_get(&b);
-                        if (!b)
-                          {
-                             ERR("Failed xterm 256 color fg esc val");
-                             ty->decoding_error = EINA_TRUE;
-                          }
-                        else if (arg < 0 || arg > 255)
-                          {
-                             ERR("Invalid fg color %d", arg);
-                             ty->decoding_error = EINA_TRUE;
-                          }
-                        else
-                          {
-                             ty->termstate.att.fg256 = 1;
-                             ty->termstate.att.fg = arg;
-                          }
-                     }
-                   ty->termstate.att.fgintense = 1;
-                   break;
-                case 99: // default fg color
-                   ty->termstate.att.fg256 = 0;
-                   ty->termstate.att.fg = COL_DEF;
-                   ty->termstate.att.fgintense = 1;
-                   break;
-                case 100: // bg
-                case 101:
-                case 102:
-                case 103:
-                case 104:
-                case 105:
-                case 106:
-                case 107:
-                   ty->termstate.att.bg256 = 0;
-                   ty->termstate.att.bg = (arg - 100) + COL_BLACK;
-                   ty->termstate.att.bgintense = 1;
-                   break;
-                case 108: // xterm 256 bg color ???
-                   // now check if next arg is 5
-                   arg = _csi_arg_get(&b);
-                   if (arg != 5)
-                     {
-                        ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
-                        ty->decoding_error = EINA_TRUE;
-                     }
-                   else
-                     {
-                        // then get next arg - should be color index 0-255
-                        arg = _csi_arg_get(&b);
-                        if (!b)
-                          {
-                             ERR("Failed xterm 256 color bg esc val");
-                             ty->decoding_error = EINA_TRUE;
-                          }
-                        else if (arg < 0 || arg > 255)
-                          {
-                             ERR("Invalid bg color %d", arg);
-                             ty->decoding_error = EINA_TRUE;
-                          }
-                        else
-                          {
-                             ty->termstate.att.bg256 = 1;
-                             ty->termstate.att.bg = arg;
-                          }
-                     }
-                   ty->termstate.att.bgintense = 1;
-                   break;
-                case 109: // default bg color
-                   ty->termstate.att.bg256 = 0;
-                   ty->termstate.att.bg = COL_DEF;
-                   ty->termstate.att.bgintense = 1;
-                   break;
-                default: //  not handled???
-                   WRN("Unhandled color cmd [%i]", arg);
+                      }
+                    else
+                      {
+                         if (arg == -CSI_ARG_NO_VALUE)
+                           arg = 0;
+                         ty->termstate.att.bg256 = 1;
+                         ty->termstate.att.bg = arg;
+                      }
+                    break;
+                 default:
+                    ERR("Failed xterm 256 color bg (got %d)", arg);
+                    ty->decoding_error = EINA_TRUE;
+                }
+              ty->termstate.att.bgintense = 0;
+              break;
+           case 49: // default bg color
+              ty->termstate.att.bg256 = 0;
+              ty->termstate.att.bg = COL_DEF;
+              ty->termstate.att.bgintense = 0;
+              break;
+           case 51:
+              WRN("TODO: support SGR 51 - framed attribute");
+              ty->termstate.att.framed = 1;
+              break;
+           case 52:
+              ty->termstate.att.encircled = 1;
+              break;
+           case 53:
+              WRN("TODO: support SGR 51 - overlined attribute");
+              ty->termstate.att.overlined = 1;
+              break;
+           case 54:
+              ty->termstate.att.framed = 0;
+              ty->termstate.att.encircled = 0;
+              break;
+           case 55:
+              ty->termstate.att.overlined = 0;
+              break;
+           case 90: // fg
+           case 91:
+           case 92:
+           case 93:
+           case 94:
+           case 95:
+           case 96:
+           case 97:
+              ty->termstate.att.fg256 = 0;
+              ty->termstate.att.fg = (arg - 90) + COL_BLACK;
+              ty->termstate.att.fgintense = 1;
+              break;
+           case 98: // xterm 256 fg color ???
+              // now check if next arg is 5
+              /* TODO: shall be like 38 ? */
+              /* TODO: -CSI_ARG_NO_VALUE */
+              arg = _csi_arg_get(ty, &b);
+              if (arg != 5)
+                {
+                   ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
                    ty->decoding_error = EINA_TRUE;
-                   break;
-               }
+                }
+              else
+                {
+                   // then get next arg - should be color index 0-255
+                   arg = _csi_arg_get(ty, &b);
+                   if (arg <= -CSI_ARG_ERROR || arg > 255)
+                     {
+                        ERR("Invalid fg color %d", arg);
+                        ty->decoding_error = EINA_TRUE;
+                     }
+                   else
+                     {
+                        if (arg == -CSI_ARG_NO_VALUE)
+                          arg = 0;
+                        ty->termstate.att.fg256 = 1;
+                        ty->termstate.att.fg = arg;
+                     }
+                }
+              ty->termstate.att.fgintense = 1;
+              break;
+           case 99: // default fg color
+              ty->termstate.att.fg256 = 0;
+              ty->termstate.att.fg = COL_DEF;
+              ty->termstate.att.fgintense = 1;
+              break;
+           case 100: // bg
+           case 101:
+           case 102:
+           case 103:
+           case 104:
+           case 105:
+           case 106:
+           case 107:
+              ty->termstate.att.bg256 = 0;
+              ty->termstate.att.bg = (arg - 100) + COL_BLACK;
+              ty->termstate.att.bgintense = 1;
+              break;
+           case 108: // xterm 256 bg color ???
+              // now check if next arg is 5
+              /* TODO: -CSI_ARG_NO_VALUE */
+              arg = _csi_arg_get(ty, &b);
+              if (arg != 5)
+                {
+                   ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
+                   ty->decoding_error = EINA_TRUE;
+                }
+              else
+                {
+                   // then get next arg - should be color index 0-255
+                   arg = _csi_arg_get(ty, &b);
+                   if (arg <= -CSI_ARG_ERROR || arg > 255)
+                     {
+                        ERR("Invalid bg color %d", arg);
+                        ty->decoding_error = EINA_TRUE;
+                     }
+                   else
+                     {
+                        if (arg == -CSI_ARG_NO_VALUE)
+                          arg = 0;
+                        ty->termstate.att.bg256 = 1;
+                        ty->termstate.att.bg = arg;
+                     }
+                }
+              ty->termstate.att.bgintense = 1;
+              break;
+           case 109: // default bg color
+              ty->termstate.att.bg256 = 0;
+              ty->termstate.att.bg = COL_DEF;
+              ty->termstate.att.bgintense = 1;
+              break;
+           default: //  not handled???
+              WRN("Unhandled color cmd [%i]", arg);
+              ty->decoding_error = EINA_TRUE;
+              break;
           }
      }
 }
@@ -1029,9 +1049,11 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
         question_mark = EINA_TRUE;
         b++;
      }
-   arg = _csi_arg_get(&b);
+   arg = _csi_arg_get(ty, &b);
    switch (arg)
      {
+      case -CSI_ARG_ERROR:
+         return;
       case 5:
          if (question_mark)
            {
@@ -1137,7 +1159,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
          if (question_mark)
            {
               /* DSR-DECCKSR (Memory Checksum) */
-              int pid = _csi_arg_get(&b);
+              int pid = _csi_arg_get(ty, &b);
               len = snprintf(bf, sizeof(bf), "\033P%u!~0000\033\\", pid);
               termpty_write(ty, bf, len);
            }
@@ -1161,6 +1183,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
               ty->decoding_error = EINA_TRUE;
            }
          break;
+      /* TODO: -CSI_ARG_NO_VALUE */
       default:
          WRN("unhandled DSR (dec specific: %s) %d",
              (question_mark)? "yes": "no", arg);
@@ -1172,18 +1195,22 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
 static void
 _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
 {
-  int left = _csi_arg_get(b);
-  int right = _csi_arg_get(b);
+  int left = _csi_arg_get(ty, b);
+  int right = _csi_arg_get(ty, b);
 
   DBG("DECSLRM (%d;%d) Set Left and Right Margins", left, right);
+  if ((left == -CSI_ARG_ERROR) || (right == -CSI_ARG_ERROR))
+    goto bad;
 
   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
   if (right < 1)
     right = ty->w;
   TERMPTY_RESTRICT_FIELD(right, 3, ty->w+1);
 
-  if (left >= right) goto bad;
-  if (right - left < 2) goto bad;
+  if (left >= right)
+    goto bad;
+  if (right - left < 2)
+    goto bad;
 
   if (right == ty->w)
     right = 0;
@@ -1202,10 +1229,12 @@ bad:
 static void
 _handle_esc_csi_decstbm(Termpty *ty, Eina_Unicode **b)
 {
-  int top = _csi_arg_get(b);
-  int bottom = _csi_arg_get(b);
+  int top = _csi_arg_get(ty, b);
+  int bottom = _csi_arg_get(ty, b);
 
   DBG("DECSTBM (%d;%d) Set Top and Bottom Margins", top, bottom);
+  if ((top == -CSI_ARG_ERROR) || (bottom == -CSI_ARG_ERROR))
+    goto bad;
 
   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
   TERMPTY_RESTRICT_FIELD(bottom, 1, ty->h+1);
@@ -1293,16 +1322,25 @@ _clean_up_rect_coordinates(Termpty *ty,
 static void
 _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 {
-   int c = _csi_arg_get(b);
+   int c = _csi_arg_get(ty, b);
 
-   int top = _csi_arg_get(b);
-   int left = _csi_arg_get(b);
-   int bottom = _csi_arg_get(b);
-   int right = _csi_arg_get(b);
+   int top = _csi_arg_get(ty, b);
+   int left = _csi_arg_get(ty, b);
+   int bottom = _csi_arg_get(ty, b);
+   int right = _csi_arg_get(ty, b);
    int len;
 
    DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
        c, top, left, bottom, right);
+   if ((c == -CSI_ARG_ERROR) ||
+       (top == -CSI_ARG_ERROR) ||
+       (left == -CSI_ARG_ERROR) ||
+       (bottom == -CSI_ARG_ERROR) ||
+       (right == -CSI_ARG_ERROR))
+     return;
+
+   /* TODO: -CSI_ARG_NO_VALUE */
+
    if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
      return;
 
@@ -1321,14 +1359,20 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 static void
 _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
 {
-   int top = _csi_arg_get(b);
-   int left = _csi_arg_get(b);
-   int bottom = _csi_arg_get(b);
-   int right = _csi_arg_get(b);
+   int top = _csi_arg_get(ty ,b);
+   int left = _csi_arg_get(ty, b);
+   int bottom = _csi_arg_get(ty, b);
+   int right = _csi_arg_get(ty, b);
    int len;
 
    DBG("DECERA (%d;%d;%d;%d) Erase Rectangular Area",
        top, left, bottom, right);
+
+   if ((top == -CSI_ARG_ERROR) ||
+       (left == -CSI_ARG_ERROR) ||
+       (bottom == -CSI_ARG_ERROR) ||
+       (right == -CSI_ARG_ERROR))
+     return;
 
    if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
      return;
@@ -1347,8 +1391,11 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
 {
    int cx = 0, cy = 0;
    ty->termstate.wrapnext = 0;
-   cy = _csi_arg_get(b);
-   cx = _csi_arg_get(b);
+   cy = _csi_arg_get(ty, b);
+   cx = _csi_arg_get(ty, b);
+
+   if ((cx == -CSI_ARG_ERROR) || (cy == -CSI_ARG_ERROR))
+     return;
 
    DBG("cursor pos set (%s) (%d;%d)", (*cc == 'H') ? "CUP" : "HVP",
        cx, cy);
@@ -1383,13 +1430,17 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
 static void
 _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
 {
-  int arg = _csi_arg_get(b);
+  int arg = _csi_arg_get(ty, b);
   Cursor_Shape shape = CURSOR_SHAPE_BLOCK;
 
   DBG("DECSCUSR (%d) Set Cursor Shape", arg);
 
   switch (arg)
     {
+     case -CSI_ARG_ERROR:
+        return;
+     case -CSI_ARG_NO_VALUE:
+        EINA_FALLTHROUGH;
      case 0:
         EINA_FALLTHROUGH;
      case 1:
@@ -1408,7 +1459,7 @@ _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
         shape = CURSOR_SHAPE_BAR;
         break;
      default:
-        WRN("Invalid DECSCUSR %d", shape);
+        WRN("Invalid DECSCUSR %d", arg);
         ty->decoding_error = EINA_TRUE;
         return;
     }
@@ -1448,7 +1499,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         /* sorted by ascii value */
       case '@': // insert N blank chars (ICH)
         /* TODO: SL */
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
         DBG("insert %d blank chars", arg);
           {
@@ -1467,8 +1520,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 'A': // cursor up N (CUU)
         /* TODO: SR */
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("cursor up %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
@@ -1481,8 +1537,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 'B': // cursor down N (CUD)
 CUD:
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("cursor down %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
@@ -1495,8 +1554,11 @@ CUD:
         break;
       case 'C': // cursor right N
 CUF:
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("cursor right %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx += arg;
@@ -1508,8 +1570,11 @@ CUF:
           }
         break;
       case 'D': // cursor left N (CUB)
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("cursor left %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx -= arg;
@@ -1521,8 +1586,11 @@ CUF:
           }
         break;
       case 'E': // down relative N rows, and to col 0
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("down relative %d rows, and to col 0", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy += arg;
@@ -1530,7 +1598,9 @@ CUF:
         ty->cursor_state.cx = 0;
         break;
       case 'F': // up relative N rows, and to col 0
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("up relative %d rows, and to col 0", arg);
         ty->termstate.wrapnext = 0;
@@ -1539,8 +1609,11 @@ CUF:
         ty->cursor_state.cx = 0;
         break;
       case 'G': // to column N
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("to column %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx = arg - 1;
@@ -1549,7 +1622,9 @@ CUF:
       case 'H': // cursor pos set (CUP)
         goto HVP;
       case 'I':
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("Cursor Forward Tabulation (CHT): %d", arg);
         _tab_forward(ty, arg);
@@ -1558,13 +1633,21 @@ CUF:
         if (*b == '?')
           {
              b++;
-             arg = _csi_arg_get(&b);
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
              WRN("Unsupported selected erase in display %d", arg);
              ty->decoding_error = EINA_TRUE;
+             break;
           }
         else
-          arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 0;
+          {
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
+          }
+        if (arg < 1)
+          arg = 0;
         /* 3J erases the backlog,
          * 2J erases the screen,
          * 1J erase from screen start to cursor,
@@ -1590,12 +1673,18 @@ CUF:
         if (*b == '?')
           {
              b++;
-             arg = _csi_arg_get(&b);
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
              WRN("Unsupported selected erase in line %d", arg);
              ty->decoding_error = EINA_TRUE;
+             break;
           }
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 0;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 0;
         DBG("EL/DECSEL %d: erase in line", arg);
         switch (arg)
           {
@@ -1612,7 +1701,9 @@ CUF:
       case 'L': // insert N lines - cy
         EINA_FALLTHROUGH;
       case 'M': // delete N lines - cy
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
         if ((ty->cursor_state.cy >= ty->termstate.top_margin) &&
@@ -1646,7 +1737,9 @@ CUF:
           }
         break;
       case 'P': // erase and scrollback N chars
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("erase and scrollback %d chars", arg);
           {
@@ -1673,21 +1766,27 @@ CUF:
           }
         break;
       case 'S': // scroll up N lines
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("scroll up %d lines", arg);
         for (i = 0; i < arg; i++)
           termpty_text_scroll(ty, EINA_TRUE);
         break;
       case 'T': // scroll down N lines
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
         DBG("scroll down %d lines", arg);
         for (i = 0; i < arg; i++)
           termpty_text_scroll_rev(ty, EINA_TRUE);
         break;
       case 'X': // erase N chars
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
         DBG("ECH: erase %d chars", arg);
         termpty_clear_line(ty, TERMPTY_CLR_END, arg);
@@ -1696,7 +1795,9 @@ CUF:
           {
              int cx = ty->cursor_state.cx;
 
-             arg = _csi_arg_get(&b);
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
              DBG("Cursor Backward Tabulation (CBT): %d", arg);
              TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
              for (; arg > 0; arg--)
@@ -1713,10 +1814,13 @@ CUF:
           }
         break;
       case '`': // HPA
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         DBG("Horizontal Position Absolute (HPA): %d", arg);
         arg--;
-        if (arg < 0) arg = 0;
+        if (arg < 0)
+          arg = 0;
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cx = arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
@@ -1739,7 +1843,9 @@ CUF:
       case 'b': // repeat last char
         if (ty->last_char)
           {
-             arg = _csi_arg_get(&b);
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
              TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
              DBG("REP: repeat %d times last char %x", arg, ty->last_char);
              for (i = 0; i < arg; i++)
@@ -1774,8 +1880,11 @@ CUF:
           }
         break;
       case 'd': // to row N
-        arg = _csi_arg_get(&b);
-        if (arg < 1) arg = 1;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 1)
+          arg = 1;
         DBG("to row %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy = arg - 1;
@@ -1788,8 +1897,11 @@ HVP:
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
        break;
       case 'g': // clear tabulation
-        arg = _csi_arg_get(&b);
-        if (arg < 0) arg = 0;
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
+        if (arg < 0)
+          arg = 0;
         if (arg == 0)
           {
              int cx = ty->cursor_state.cx;
@@ -1806,17 +1918,17 @@ HVP:
           }
         break;
       case 'h':
-        _handle_esc_csi_reset_mode(ty, *cc, b);
+        _handle_esc_csi_reset_mode(ty, *cc, b, be);
         break;
       case 'i':
         WRN("TODO: Media Copy (?:%s)", (*b == '?') ? "yes": "no");
         ty->decoding_error = EINA_TRUE;
         break;
       case 'l':
-        _handle_esc_csi_reset_mode(ty, *cc, b);
+        _handle_esc_csi_reset_mode(ty, *cc, b, be);
         break;
       case 'm': // color set
-        _handle_esc_csi_color_set(ty, &b);
+        _handle_esc_csi_color_set(ty, &b, be);
         break;
       case 'n':
         _handle_esc_csi_dsr(ty, b);
@@ -1861,7 +1973,9 @@ HVP:
           }
         break;
       case 't': // window manipulation
-        arg = _csi_arg_get(&b);
+        arg = _csi_arg_get(ty, &b);
+        if (arg == -CSI_ARG_ERROR)
+          goto error;
         WRN("TODO: window operation %d not supported", arg);
         ty->decoding_error = EINA_TRUE;
         break;
@@ -1882,6 +1996,7 @@ HVP:
    cc++;
    return cc - c;
 unhandled:
+error:
 #if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
