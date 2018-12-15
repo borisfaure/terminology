@@ -515,3 +515,16 @@ colors_standard_get(int set, int col,
    *b = 0;
    *a = 0;
 }
+
+void
+colors_256_get(int col,
+               unsigned char *r,
+               unsigned char *g,
+               unsigned char *b,
+               unsigned char *a)
+{
+   *r = default_colors256[col].r;
+   *g = default_colors256[col].g;
+   *b = default_colors256[col].b;
+   *a = default_colors256[col].a;
+}

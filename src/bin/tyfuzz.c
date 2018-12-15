@@ -14,6 +14,8 @@
 #include <assert.h>
 
 #ifdef TYTEST
+#include "col.h"
+#include "tytest.h"
 #include "md5/md5.h"
 #endif
 
@@ -89,6 +91,41 @@ typedef struct _Termpty_Tests
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
 } Termpty_Tests;
+
+Evas_Object *
+termio_textgrid_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return NULL;
+}
+
+void
+test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
+                          Evas_Textgrid_Palette pal,
+                          int idx,
+                          int *r,
+                          int *g,
+                          int *b,
+                          int *a)
+{
+   if (pal == EVAS_TEXTGRID_PALETTE_EXTENDED)
+     {
+        colors_256_get(idx,
+                       (unsigned char *)r,
+                       (unsigned char *)g,
+                       (unsigned char *)b,
+                       (unsigned char *)a);
+     }
+   else
+     {
+        int set = idx / 12;
+        int col = idx % 12;
+        colors_standard_get(set, col,
+                            (unsigned char*)r,
+                            (unsigned char*)g,
+                            (unsigned char*)b,
+                            (unsigned char*)a);
+     }
+}
 
 void
 termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,

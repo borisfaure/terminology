@@ -1,12 +1,16 @@
 #include "private.h"
 #include <Elementary.h>
 #include <stdint.h>
+#include "col.h"
 #include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#if defined(ENABLE_TESTS)
+#include "tytest.h"
+#endif
 
 #undef CRITICAL
 #undef ERR
@@ -579,7 +583,7 @@ _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
 {
    int chosen_color = COL_DEF;
 /* TODO: use the function in tests */
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(ENABLE_FUZZING)
    (void) ty;
    (void) r0;
    (void) g0;
