@@ -100,7 +100,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int sum = 0;
 
-   if (!b)
+   if ((b == NULL) || (*b == '\0'))
      {
         *ptr = NULL;
         return -CSI_ARG_NO_VALUE;
@@ -128,6 +128,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
         if (sum > INT32_MAX/10 )
           {
              ERR("Invalid sequence: argument is too large");
+             ty->decoding_error = EINA_TRUE;
              goto error;
           }
         sum *= 10;
@@ -135,7 +136,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
         b++;
      }
 
-   if (*b == ';')
+   if ((*b == ';') || (*b == ':'))
      {
         if (b[1])
           b++;
@@ -540,41 +541,66 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
 }
 
 static int
-_csi_truecolor_arg_get(Eina_Unicode **ptr)
+_csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int sum = 0;
+   char separator;
 
-   if (!b)
-     goto error;
+   if ((b == NULL) || (*b == '\0'))
+     {
+        *ptr = NULL;
+        return -CSI_ARG_NO_VALUE;
+     }
 
-   if ((*b == ';')  || (*b == ':'))
+   /* by construction, shall be the same separator as the following ones */
+   separator = *(b-1);
+   if ((separator != ';') && (separator != ':'))
+     {
+        *ptr = NULL;
+        return -CSI_ARG_NO_VALUE;
+     }
+
+   if (*b == separator)
      {
         b++;
         *ptr = b;
-        return 0;
+        return -CSI_ARG_NO_VALUE;
      }
 
-   if (!*b)
-     goto error;
+   if (*b == '\0')
+     {
+        *ptr = NULL;
+        return -CSI_ARG_NO_VALUE;
+     }
 
    while ((*b >= '0') && (*b <= '9'))
      {
         if (sum > INT32_MAX/10 )
-          goto error;
+          {
+             *ptr = NULL;
+             ERR("Invalid sequence: argument is too large");
+             ty->decoding_error = EINA_TRUE;
+             return -CSI_ARG_ERROR;
+          }
         sum *= 10;
         sum += *b - '0';
         b++;
      }
-   if ((*b == ';')  || (*b == ':'))
-     b++;
-
-   *ptr = b;
+   if (*b == separator)
+     {
+        b++;
+        *ptr = b;
+     }
+   else if (*b == '\0')
+     {
+        *ptr = NULL;
+     }
+   else
+     {
+        *ptr = b;
+     }
    return sum;
-
-error:
-   *ptr = NULL;
-   return -1;
 }
 
 
@@ -631,68 +657,171 @@ _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
 static int
 _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
 {
-   int r0, g0, b0, other;
+   int r, g, b;
+   Eina_Unicode *u = *ptr;
+   char separator;
 
-   r0 = _csi_truecolor_arg_get(ptr);
-   g0 = _csi_truecolor_arg_get(ptr);
-   b0 = _csi_truecolor_arg_get(ptr);
-   other = _csi_truecolor_arg_get(ptr);
-   if (other >= 0)
+   if ((u == NULL) || (*u == '\0'))
      {
-        r0 = g0;
-        g0 = b0;
-        b0 = other;
+        return COL_DEF;
      }
+   separator = *(u-1);
 
-   if ((r0 < 0) || (g0 < 0) || (b0 < 0))
+   r = _csi_truecolor_arg_get(ty, ptr);
+   g = _csi_truecolor_arg_get(ty, ptr);
+   b = _csi_truecolor_arg_get(ty, ptr);
+   if ((r == -CSI_ARG_ERROR) ||
+       (g == -CSI_ARG_ERROR) ||
+       (b == -CSI_ARG_ERROR))
      return COL_DEF;
 
-   return _approximate_truecolor_rgb(ty, r0, g0, b0);
+   if (separator == ':' && *ptr)
+     {
+        if (**ptr != ';')
+          {
+             /* then the first parameter was a color-space-id (ignored) */
+             r = g;
+             g = b;
+             b = _csi_truecolor_arg_get(ty, ptr);
+             /* Skip other parameters */
+             while ((*ptr) && (**ptr != ';'))
+               {
+                  _csi_truecolor_arg_get(ty, ptr);
+               }
+          }
+        if ((*ptr) && (**ptr == ';'))
+          {
+             *ptr = (*ptr) + 1;
+          }
+     }
+
+   if (r == -CSI_ARG_NO_VALUE)
+     r = 0;
+   if (g == -CSI_ARG_NO_VALUE)
+     g = 0;
+   if (b == -CSI_ARG_NO_VALUE)
+     b = 0;
+
+   return _approximate_truecolor_rgb(ty, r, g, b);
 }
 
 static int
 _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
 {
-   int r0, g0, b0, c0, m0, y0;
+   int r, g, b, c, m, y;
+   Eina_Unicode *u = *ptr;
+   char separator;
+
+   if ((u == NULL) || (*u == '\0'))
+     {
+        return COL_DEF;
+     }
+   separator = *(u-1);
 
    /* Considering CMY stored as percents */
-   c0 = _csi_truecolor_arg_get(ptr);
-   m0 = _csi_truecolor_arg_get(ptr);
-   y0 = _csi_truecolor_arg_get(ptr);
+   c = _csi_truecolor_arg_get(ty, ptr);
+   m = _csi_truecolor_arg_get(ty, ptr);
+   y = _csi_truecolor_arg_get(ty, ptr);
 
-   if ((c0 < 0) || (m0 < 0) || (y0 < 0))
+   if ((c == -CSI_ARG_ERROR) ||
+       (m == -CSI_ARG_ERROR) ||
+       (y == -CSI_ARG_ERROR))
      return COL_DEF;
 
-   r0 = 255 - ((c0 * 255) / 100);
-   g0 = 255 - ((m0 * 255) / 100);
-   b0 = 255 - ((y0 * 255) / 100);
+   if (separator == ':' && *ptr)
+     {
+        if (**ptr != ';')
+          {
+             /* then the first parameter was a color-space-id (ignored) */
+             c = m;
+             m = y;
+             y = _csi_truecolor_arg_get(ty, ptr);
+             /* Skip other parameters */
+             while ((*ptr) && (**ptr != ';'))
+               {
+                  _csi_truecolor_arg_get(ty, ptr);
+               }
+          }
+        if ((*ptr) && (**ptr == ';'))
+          {
+             *ptr = (*ptr) + 1;
+          }
+     }
 
-   return _approximate_truecolor_rgb(ty, r0, g0, b0);
+   if (c == -CSI_ARG_NO_VALUE)
+     c = 0;
+   if (m == -CSI_ARG_NO_VALUE)
+     m = 0;
+   if (y == -CSI_ARG_NO_VALUE)
+     y = 0;
+
+   r = 255 - ((c * 255) / 100);
+   g = 255 - ((m * 255) / 100);
+   b = 255 - ((y * 255) / 100);
+
+   return _approximate_truecolor_rgb(ty, r, g, b);
 }
 
 static int
 _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 {
-   int r0, g0, b0, c0, m0, y0, k0;
+   int r, g, b, c, m, y, k;
+   Eina_Unicode *u = *ptr;
+   char separator;
+
+   if ((u == NULL) || (*u == '\0'))
+     {
+        return COL_DEF;
+     }
+   separator = *(u-1);
 
    /* Considering CMYK stored as percents */
-   c0 = _csi_truecolor_arg_get(ptr);
-   m0 = _csi_truecolor_arg_get(ptr);
-   y0 = _csi_truecolor_arg_get(ptr);
-   k0 = _csi_truecolor_arg_get(ptr);
+   c = _csi_truecolor_arg_get(ty, ptr);
+   m = _csi_truecolor_arg_get(ty, ptr);
+   y = _csi_truecolor_arg_get(ty, ptr);
+   k = _csi_truecolor_arg_get(ty, ptr);
 
-   if ((c0 < 0) || (m0 < 0) || (y0 < 0) || (k0 < 0))
+   if ((c == -CSI_ARG_ERROR) ||
+       (m == -CSI_ARG_ERROR) ||
+       (y == -CSI_ARG_ERROR) ||
+       (k == -CSI_ARG_ERROR))
      return COL_DEF;
 
-   c0 = c0 * (100 - k0) + k0;
-   m0 = m0 * (100 - k0) + k0;
-   y0 = y0 * (100 - k0) + k0;
+   if (separator == ':' && *ptr)
+     {
+        if (**ptr != ';')
+          {
+             /* then the first parameter was a color-space-id (ignored) */
+             c = m;
+             m = y;
+             y = k;
+             k = _csi_truecolor_arg_get(ty, ptr);
+             /* Skip other parameters */
+             while ((*ptr) && (**ptr != ';'))
+               {
+                  _csi_truecolor_arg_get(ty, ptr);
+               }
+          }
+        if ((*ptr) && (**ptr == ';'))
+          {
+             *ptr = (*ptr) + 1;
+          }
+     }
 
-   r0 = 255 - ((c0 * 255) / 100);
-   g0 = 255 - ((m0 * 255) / 100);
-   b0 = 255 - ((y0 * 255) / 100);
+   if (c == -CSI_ARG_NO_VALUE)
+     c = 0;
+   if (m == -CSI_ARG_NO_VALUE)
+     m = 0;
+   if (y == -CSI_ARG_NO_VALUE)
+     y = 0;
+   if (k == -CSI_ARG_NO_VALUE)
+     k = 0;
 
-   return _approximate_truecolor_rgb(ty, r0, g0, b0);
+   r = (255 * (100 - c) * (100 - k)) / 100 / 100;
+   g = (255 * (100 - m) * (100 - k)) / 100 / 100;
+   b = (255 * (100 - y) * (100 - k)) / 100 / 100;
+
+   return _approximate_truecolor_rgb(ty, r, g, b);
 }
 
 static void
@@ -715,7 +844,6 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
           {
            case -CSI_ARG_ERROR:
               return;
-             /* TODO: -CSI_ARG_NO_VALUE */
            case -CSI_ARG_NO_VALUE:
               EINA_FALLTHROUGH;
            case 0: // reset to normal
