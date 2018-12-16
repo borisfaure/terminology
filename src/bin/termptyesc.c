@@ -305,8 +305,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
 #endif
                    break;
                 case 4:
-                   WRN("TODO: scrolling mode (DECSCLM): %i", mode);
-                   ty->decoding_error = EINA_TRUE;
+                   DBG("scrolling mode (DECSCLM): %i (always fast mode)", mode);
                    break;
                 case 5:
                    ty->termstate.reverse = mode;

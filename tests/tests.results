@@ -29,3 +29,4 @@ colors.sh 532494a2e56c102ee10ab1a9b8f176d7
 sgr-leading-trailing-semicolon.sh d7701f1193bde63412a9b969f17e10ec
 sgr-truecolors.sh 9db4becc728bb9f1730f3573dc7fc668
 sgr-long.sh ec0425b1daabaa59096c10939e79b105
+decsclm.sh 1ffcea3bfc4704d9091272dc59cbb311
