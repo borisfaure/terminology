@@ -1686,6 +1686,7 @@ CUF:
         break;
       case 'G': // to column N
         arg = _csi_arg_get(ty, &b);
+        DBG("CHA - Cursor Horizontal Absolute: %d", arg);
         if (arg == -CSI_ARG_ERROR)
           goto error;
         if (arg < 1)
