@@ -1078,35 +1078,6 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               ty->termstate.att.fg = (arg - 90) + COL_BLACK;
               ty->termstate.att.fgintense = 1;
               break;
-           case 98: // xterm 256 fg color ???
-              // now check if next arg is 5
-              /* TODO: shall be like 38 ? */
-              /* TODO: -CSI_ARG_NO_VALUE */
-              arg = _csi_arg_get(ty, &b);
-              if (arg != 5)
-                {
-                   ERR("Failed xterm 256 color fg esc 5 (got %d)", arg);
-                   ty->decoding_error = EINA_TRUE;
-                }
-              else
-                {
-                   // then get next arg - should be color index 0-255
-                   arg = _csi_arg_get(ty, &b);
-                   if (arg <= -CSI_ARG_ERROR || arg > 255)
-                     {
-                        ERR("Invalid fg color %d", arg);
-                        ty->decoding_error = EINA_TRUE;
-                     }
-                   else
-                     {
-                        if (arg == -CSI_ARG_NO_VALUE)
-                          arg = 0;
-                        ty->termstate.att.fg256 = 1;
-                        ty->termstate.att.fg = arg;
-                     }
-                }
-              ty->termstate.att.fgintense = 1;
-              break;
            case 99: // default fg color
               ty->termstate.att.fg256 = 0;
               ty->termstate.att.fg = COL_DEF;
@@ -1122,34 +1093,6 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 107:
               ty->termstate.att.bg256 = 0;
               ty->termstate.att.bg = (arg - 100) + COL_BLACK;
-              ty->termstate.att.bgintense = 1;
-              break;
-           case 108: // xterm 256 bg color ???
-              // now check if next arg is 5
-              /* TODO: -CSI_ARG_NO_VALUE */
-              arg = _csi_arg_get(ty, &b);
-              if (arg != 5)
-                {
-                   ERR("Failed xterm 256 color bg esc 5 (got %d)", arg);
-                   ty->decoding_error = EINA_TRUE;
-                }
-              else
-                {
-                   // then get next arg - should be color index 0-255
-                   arg = _csi_arg_get(ty, &b);
-                   if (arg <= -CSI_ARG_ERROR || arg > 255)
-                     {
-                        ERR("Invalid bg color %d", arg);
-                        ty->decoding_error = EINA_TRUE;
-                     }
-                   else
-                     {
-                        if (arg == -CSI_ARG_NO_VALUE)
-                          arg = 0;
-                        ty->termstate.att.bg256 = 1;
-                        ty->termstate.att.bg = arg;
-                     }
-                }
               ty->termstate.att.bgintense = 1;
               break;
            case 109: // default bg color
