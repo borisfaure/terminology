@@ -4082,7 +4082,7 @@ static Eina_Bool
 _media_http_head_timeout(void *data)
 {
    Ty_Http_Head *ty_head = data;
-   media_unknown_handle(ty_head->handler, ty_head->src);
+
    ty_head->timeout = NULL;
    _ty_http_head_delete(ty_head);
    return ECORE_CALLBACK_CANCEL;
@@ -4151,7 +4151,6 @@ _media_http_head_complete(void *data,
    _ty_http_head_delete(ty_head);
    return EINA_TRUE;
 error:
-   media_unknown_handle(ty_head->handler, ty_head->src);
    _ty_http_head_delete(ty_head);
    return EINA_TRUE;
 }
@@ -4192,8 +4191,6 @@ _popmedia(Term *term, const char *src)
 error:
         _ty_http_head_delete(ty_head);
 #endif
-
-        media_unknown_handle(config->helper.local.general, src);
      }
    else
      {
