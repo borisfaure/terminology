@@ -519,6 +519,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                 case 1:
                    ty->termstate.appcursor = mode;
                    break;
+                case 3:
+                   WRN("CRM - Show Control Character Mode: %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
                 case 4:
                    DBG("set insert mode to %i", mode);
                    ty->termstate.insert = mode;
@@ -1146,6 +1150,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            }
          break;
       case 6:
+         DBG("CPR - Cursor Position Report");
            {
               int cx = ty->cursor_state.cx,
                   cy = ty->cursor_state.cy;
@@ -1667,7 +1672,7 @@ CUF:
           goto error;
         if (arg < 1)
           arg = 1;
-        DBG("down relative %d rows, and to col 0", arg);
+        DBG("CNL - Cursor Next Line: %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy += arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
@@ -1678,7 +1683,7 @@ CUF:
         if (arg == -CSI_ARG_ERROR)
           goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("up relative %d rows, and to col 0", arg);
+        DBG("CPL - Cursor Previous Line: %d", arg);
         ty->termstate.wrapnext = 0;
         ty->cursor_state.cy -= arg;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
@@ -1818,7 +1823,7 @@ CUF:
         if (arg == -CSI_ARG_ERROR)
           goto error;
         TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("erase and scrollback %d chars", arg);
+        DBG("DCH - Delete Character: %d chars", arg);
           {
              Termcell *cells;
              int x, lim;
