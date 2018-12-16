@@ -1,3 +1,11 @@
+2018-12-16
+
+        * Release v1.3.1
+        * Add manpages on Terminology's helpers
+        * Do not popup unknown media types (security issue)
+        * Right-click on hyperlinks no longer crashes
+
+
 2018-11-23
 
         * Release v1.3.0
