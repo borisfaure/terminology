@@ -4058,6 +4058,7 @@ typedef struct _Ty_Http_Head {
      Ecore_Event_Handler *url_complete;
      Ecore_Timer *timeout;
      Term *term;
+     Eina_Bool fallback_allowed;
 } Ty_Http_Head;
 
 static void
@@ -4084,6 +4085,10 @@ _media_http_head_timeout(void *data)
    Ty_Http_Head *ty_head = data;
 
    ty_head->timeout = NULL;
+   if (ty_head->fallback_allowed)
+     {
+        media_unknown_handle(ty_head->handler, ty_head->src);
+     }
    _ty_http_head_delete(ty_head);
    return ECORE_CALLBACK_CANCEL;
 }
@@ -4151,13 +4156,17 @@ _media_http_head_complete(void *data,
    _ty_http_head_delete(ty_head);
    return EINA_TRUE;
 error:
+   if (ty_head->fallback_allowed)
+     {
+        media_unknown_handle(ty_head->handler, ty_head->src);
+     }
    _ty_http_head_delete(ty_head);
    return EINA_TRUE;
 }
 #endif
 
 static void
-_popmedia(Term *term, const char *src)
+_popmedia(Term *term, const char *src, Eina_Bool from_user_interaction)
 {
    Media_Type type;
    Config *config = termio_config_get(term->termio);
@@ -4167,22 +4176,34 @@ _popmedia(Term *term, const char *src)
      {
 #ifdef HAVE_ECORE_CON_URL_HEAD
         Ty_Http_Head *ty_head = calloc(1, sizeof(Ty_Http_Head));
-        if (!ty_head) return;
+        if (!ty_head)
+          return;
 
         if (config->helper.local.general && config->helper.local.general[0])
           {
              ty_head->handler = eina_stringshare_add(config->helper.local.general);
-             if (!ty_head->handler) goto error;
+             if (!ty_head->handler)
+               goto error;
           }
+        /* If it comes from a user interaction (click on a link), allow
+         * fallback to "xdg-open"
+         * Otherwise, it's from terminology's escape code. Thus don't allow
+         * fallback and only display content "inline".
+         */
+        ty_head->fallback_allowed = from_user_interaction;
         ty_head->src = eina_stringshare_add(src);
-        if (!ty_head->src) goto error;
+        if (!ty_head->src)
+          goto error;
         ty_head->url = ecore_con_url_new(src);
-        if (!ty_head->url) goto error;
-        if (!ecore_con_url_head(ty_head->url)) goto error;
+        if (!ty_head->url)
+          goto error;
+        if (!ecore_con_url_head(ty_head->url))
+          goto error;
         ty_head->url_complete = ecore_event_handler_add
           (ECORE_CON_EVENT_URL_COMPLETE, _media_http_head_complete, ty_head);
         ty_head->timeout = ecore_timer_add(2.5, _media_http_head_timeout, ty_head);
-        if (!ty_head->url_complete) goto error;
+        if (!ty_head->url_complete)
+          goto error;
         ty_head->term = term;
         edje_object_signal_emit(term->bg, "busy", "terminology");
         term_ref(term);
@@ -4191,6 +4212,10 @@ _popmedia(Term *term, const char *src)
 error:
         _ty_http_head_delete(ty_head);
 #endif
+        if (from_user_interaction)
+          {
+             media_unknown_handle(config->helper.local.general, src);
+          }
      }
    else
      {
@@ -4368,26 +4393,43 @@ term_set_title(Term *term)
    elm_object_focus_set(o, EINA_TRUE);
 }
 
+struct Pop_Media {
+     const char *src;
+     Eina_Bool from_user_interaction;
+};
+
 static void
 _popmedia_queue_process(Term *term)
 {
-   const char *src;
+   struct Pop_Media *pm;
 
-   if (!term->popmedia_queue) return;
-   src = term->popmedia_queue->data;
+   if (!term->popmedia_queue)
+     return;
+   pm = term->popmedia_queue->data;
    term->popmedia_queue = eina_list_remove_list(term->popmedia_queue,
                                                 term->popmedia_queue);
-   if (!src) return;
-   _popmedia(term, src);
-   eina_stringshare_del(src);
+   if (!pm)
+     return;
+   _popmedia(term, pm->src, pm->from_user_interaction);
+   eina_stringshare_del(pm->src);
+   free(pm);
 }
 
 static void
-_popmedia_queue_add(Term *term, const char *src)
+_popmedia_queue_add(Term *term, const char *src,
+                    Eina_Bool from_user_interaction)
 {
-   term->popmedia_queue = eina_list_append(term->popmedia_queue,
-                                           eina_stringshare_add(src));
-   if (!term->popmedia) _popmedia_queue_process(term);
+   struct Pop_Media *pm = calloc(1, sizeof(struct Pop_Media));
+
+   if (!pm)
+     return;
+
+   pm->src = eina_stringshare_add(src);
+   pm->from_user_interaction = from_user_interaction;
+
+   term->popmedia_queue = eina_list_append(term->popmedia_queue, pm);
+   if (!term->popmedia)
+     _popmedia_queue_process(term);
 }
 
 static void
@@ -4397,12 +4439,17 @@ _cb_popup(void *data,
 {
    Term *term = data;
    const char *src = event;
+   Eina_Bool from_user_interaction = EINA_FALSE;
 
    if (!src)
-     src = termio_link_get(term->termio);
+     {
+        /* Popup a link, there was user interaction on it. */
+        from_user_interaction = EINA_TRUE;
+        src = termio_link_get(term->termio);
+     }
    if (!src)
      return;
-   _popmedia(term, src);
+   _popmedia(term, src, from_user_interaction);
    if (!event)
      free((void*)src);
 }
@@ -4414,12 +4461,16 @@ _cb_popup_queue(void *data,
 {
    Term *term = data;
    const char *src = event;
+   Eina_Bool from_user_interaction = EINA_FALSE;
 
    if (!src)
-     src = termio_link_get(term->termio);
+     {
+        from_user_interaction = EINA_TRUE;
+        src = termio_link_get(term->termio);
+     }
    if (!src)
      return;
-   _popmedia_queue_add(term, src);
+   _popmedia_queue_add(term, src, from_user_interaction);
    if (!event)
      free((void*)src);
 }
@@ -4718,11 +4769,11 @@ _cb_command(void *data,
      {
         if (cmd[1] == 'n') // now
           {
-             _popmedia(term, cmd + 2);
+             _popmedia(term, cmd + 2, EINA_FALSE);
           }
         else if (cmd[1] == 'q') // queue it to display after current one
           {
-             _popmedia_queue_add(term, cmd + 2);
+             _popmedia_queue_add(term, cmd + 2, EINA_FALSE);
           }
      }
    else if (cmd[0] == 'b') // set background
