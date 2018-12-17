@@ -1112,6 +1112,52 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
 }
 
 static void
+_handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr,
+                    const Eina_Unicode * const end)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   Termcell *cells;
+   int x, lim, max;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+
+   DBG("DCH - Delete Character: %d chars", arg);
+
+   cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
+   max = ty->w;
+   if (ty->termstate.left_margin)
+     {
+        if (ty->cursor_state.cx < ty->termstate.left_margin)
+          return;
+     }
+   if (ty->termstate.right_margin)
+     {
+        if (ty->cursor_state.cx > ty->termstate.right_margin)
+          return;
+        max = ty->termstate.right_margin;
+     }
+   TERMPTY_RESTRICT_FIELD(arg, 1, max + 1);
+   lim = max - arg;
+   for (x = ty->cursor_state.cx; x < max; x++)
+     {
+        if (x < lim)
+          TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
+        else
+          {
+             cells[x].codepoint = ' ';
+             if (EINA_UNLIKELY(cells[x].att.link_id))
+               term_link_refcount_dec(ty, cells[x].att.link_id, 1);
+             cells[x].att = ty->termstate.att;
+             cells[x].att.link_id = 0;
+             cells[x].att.dblwidth = 0;
+          }
+     }
+}
+
+
+static void
 _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
 {
    int arg, len;
@@ -1819,33 +1865,7 @@ CUF:
           }
         break;
       case 'P': // erase and scrollback N chars
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("DCH - Delete Character: %d chars", arg);
-          {
-             Termcell *cells;
-             int x, lim;
-
-             cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
-             lim = ty->w - arg;
-             for (x = ty->cursor_state.cx; x < (ty->w); x++)
-               {
-                  if (x < lim)
-                    TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
-                  else
-                    {
-                       cells[x].codepoint = ' ';
-                       cells[x].att.underline = 0;
-                       cells[x].att.blink = 0;
-                       cells[x].att.blink2 = 0;
-                       cells[x].att.inverse = 0;
-                       cells[x].att.strike = 0;
-                       cells[x].att.dblwidth = 0;
-                    }
-               }
-          }
+        _handle_esc_csi_dch(ty, &b, be);
         break;
       case 'S': // scroll up N lines
         arg = _csi_arg_get(ty, &b);
