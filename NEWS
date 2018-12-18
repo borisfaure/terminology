@@ -1,6 +1,13 @@
 =================
-Terminology 1.3.1
+Terminology 1.3.2
 =================
+
+Changes since 1.3.1:
+--------------------
+
+Fix:
+    * Clicking on links works again
+
 
 Changes since 1.3.0:
 --------------------
