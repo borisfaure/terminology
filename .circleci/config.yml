@@ -1,8 +1,9 @@
 version: 2
+
 jobs:
-  build:
+  checkout_code:
     docker:
-      - image: borisfaure/terminology-ci:0.1
+      - image: borisfaure/terminology-ci:latest
     steps:
       - run: |
           cd /terminology
@@ -15,6 +16,31 @@ jobs:
           else
             git reset --hard $CIRCLE_SHA1
           fi
+      - save_cache:
+          key: ty-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /terminology
+
+  build_gcc:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: ty-{{ .Environment.CIRCLE_SHA1 }}
+      - run: |
+          cd /terminology
+          meson . build
+          meson configure build
+          cd build
+          ninja
+  build_clang:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+    steps:
+      - restore_cache:
+          key: ty-{{ .Environment.CIRCLE_SHA1 }}
       - run: |
           cd /terminology
           meson . build
@@ -22,3 +48,14 @@ jobs:
           cd build
           ninja
 path: /terminology
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - checkout_code
+      - build_gcc:
+          requires:
+            - checkout_code
+      - build_clang:
+          requires:
+            - checkout_code
