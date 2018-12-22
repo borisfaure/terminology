@@ -1172,6 +1172,7 @@ _cb_link_down(void *data,
         if (hl)
           {
              raw_link = hl->url;
+             len = strlen(hl->url);
           }
         else
           {
