@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: borisfaure/terminology-ci:0.1
+    steps:
+      - run: |
+          cd /terminology
+          git pull --ff-only
+          if [ -n "$CIRCLE_PR_NUMBER" ]; then
+              git fetch origin pull/$CIRCLE_PR_NUMBER/head
+          fi
+          if [ -n "$CIRCLE_SHA1" ]; then
+            git reset --hard origin/master
+          else
+            git reset --hard $CIRCLE_SHA1
+          fi
+      - run: |
+          cd /terminology
+          meson . build
+          meson configure build
+          cd build
+          ninja
+path: /terminology
