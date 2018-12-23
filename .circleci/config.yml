@@ -17,7 +17,7 @@ jobs:
             git reset --hard origin/master
           fi
       - save_cache:
-          key: ty-{{ .Environment.CIRCLE_SHA1 }}
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - /terminology
 
@@ -26,13 +26,26 @@ jobs:
       - image: borisfaure/terminology-ci:latest
     steps:
       - restore_cache:
-          key: ty-{{ .Environment.CIRCLE_SHA1 }}
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run: |
           cd /terminology
-          meson . build
+          meson -Dtests=true -Dfuzzing=true -Db_coverage=true . build
           meson configure build
           cd build
           ninja
+      - save_cache:
+          key: build_gcc-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - /terminology
+  tests_gcc:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: build_gcc-{{ .Environment.CIRCLE_SHA1 }}
+      - run: |
+          cd /terminology
+          tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
   build_clang:
     docker:
       - image: borisfaure/terminology-ci:latest
@@ -40,10 +53,10 @@ jobs:
       - CC: clang
     steps:
       - restore_cache:
-          key: ty-{{ .Environment.CIRCLE_SHA1 }}
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run: |
           cd /terminology
-          meson . build
+          meson -Dtests=true -Dfuzzing=true . build
           meson configure build
           cd build
           ninja
@@ -56,6 +69,9 @@ workflows:
       - build_gcc:
           requires:
             - checkout_code
+      - tests_gcc:
+          requires:
+            - build_gcc
       - build_clang:
           requires:
             - checkout_code
