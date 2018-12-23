@@ -46,6 +46,9 @@ jobs:
       - run: |
           cd /terminology
           tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+      - run: |
+          cd /terminology/build/
+          bash <(curl -s https://codecov.io/bash)
   build_clang:
     docker:
       - image: borisfaure/terminology-ci:latest
