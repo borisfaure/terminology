@@ -1156,19 +1156,6 @@ _cb_link_down(void *data,
         ctxp = elm_ctxpopup_add(sd->win);
         sd->ctxpopup = ctxp;
 
-        if (sd->config->helper.inline_please)
-          {
-             Media_Type type = media_src_type_get(sd->link.string);
-
-             if ((type == MEDIA_TYPE_IMG) ||
-                 (type == MEDIA_TYPE_SCALE) ||
-                 (type == MEDIA_TYPE_EDJE) ||
-                 (type == MEDIA_TYPE_MOV))
-               elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
-                                        _cb_ctxp_link_preview, sd->self);
-          }
-        elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
-                                 sd->self);
         if (hl)
           {
              raw_link = hl->url;
@@ -1186,6 +1173,20 @@ _cb_link_down(void *data,
 
         if (len > 0 && raw_link[0] == '/')
           absolut = EINA_TRUE;
+
+        if (sd->config->helper.inline_please)
+          {
+             Media_Type type = media_src_type_get(raw_link);
+
+             if ((type == MEDIA_TYPE_IMG) ||
+                 (type == MEDIA_TYPE_SCALE) ||
+                 (type == MEDIA_TYPE_EDJE) ||
+                 (type == MEDIA_TYPE_MOV))
+               elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
+                                        _cb_ctxp_link_preview, sd->self);
+          }
+        elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
+                                 sd->self);
 
         if (!absolut &&
             !link_is_url(raw_link) &&
