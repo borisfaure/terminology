@@ -12,9 +12,9 @@ jobs:
               git fetch origin pull/$CIRCLE_PR_NUMBER/head
           fi
           if [ -n "$CIRCLE_SHA1" ]; then
-            git reset --hard origin/master
-          else
             git reset --hard $CIRCLE_SHA1
+          else
+            git reset --hard origin/master
           fi
       - save_cache:
           key: ty-{{ .Environment.CIRCLE_SHA1 }}
