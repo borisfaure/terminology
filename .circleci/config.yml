@@ -48,6 +48,11 @@ jobs:
           tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
       - run: |
           cd /terminology/build/
+          cd src/bin
+          rm -fr *@@terminology@exe *@@tyalpha@exe *@@tybg@exe *@@tycat@exe
+          rm -fr *@@tyfuzz@exe *@@tyls@exe *@@typop@exe *@@tyq@exe
+          rm -fr *@@tysend@exe
+          cd /terminology/build/
           bash <(curl -s https://codecov.io/bash)
   build_clang:
     docker:
