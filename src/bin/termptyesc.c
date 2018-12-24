@@ -1112,6 +1112,31 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
 }
 
 static void
+_handle_esc_csi_cnl(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int max = ty->h;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 1;
+
+   DBG("CNL - Cursor Next Line: %d", arg);
+   ty->termstate.wrapnext = 0;
+   ty->cursor_state.cy += arg;
+   if (ty->termstate.bottom_margin)
+     {
+        max = ty->termstate.bottom_margin;
+     }
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy,
+                          ty->termstate.top_margin,
+                          max);
+   ty->cursor_state.cx = ty->termstate.left_margin;
+}
+
+static void
 _handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr,
                     const Eina_Unicode * const end)
 {
@@ -1712,17 +1737,8 @@ CUF:
              ty->cursor_state.cx = ty->termstate.left_margin;
           }
         break;
-      case 'E': // down relative N rows, and to col 0
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 1;
-        DBG("CNL - Cursor Next Line: %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cy += arg;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-        ty->cursor_state.cx = 0;
+      case 'E':
+        _handle_esc_csi_cnl(ty, &b);
         break;
       case 'F': // up relative N rows, and to col 0
         arg = _csi_arg_get(ty, &b);
