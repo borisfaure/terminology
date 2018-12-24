@@ -6298,6 +6298,7 @@ termio_add(Evas_Object *win, Config *config,
         "gstreamer1"
      };
    char *mod = NULL;
+   Ecore_Window window_id;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
    e = evas_object_evas_get(win);
@@ -6346,9 +6347,10 @@ termio_add(Evas_Object *win, Config *config,
                        _smart_cb_drag_pos, obj,
                        _smart_cb_drop, obj);
 
+   window_id = elm_win_window_id_get(win);
    sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
                          config->xterm_256color, config->erase_is_del, mod,
-                         title);
+                         title, window_id);
    if (!sd->pty)
      {
         ERR(_("Could not allocate termpty"));

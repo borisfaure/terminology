@@ -477,7 +477,7 @@ Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
             int w, int h, int backscroll, Eina_Bool xterm_256color,
             Eina_Bool erase_is_del, const char *emotion_mod,
-            const char *title)
+            const char *title, Ecore_Window window_id)
 {
    Termpty *ty;
    const char *pty;
@@ -717,6 +717,11 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         if (emotion_mod)
           {
              snprintf(buf, sizeof(buf), "EMOTION_ENGINE=%s", emotion_mod);
+             putenv(buf);
+          }
+        if (window_id)
+          {
+             snprintf(buf, sizeof(buf), "WINDOWID=%lu", window_id);
              putenv(buf);
           }
         if (!login_shell)
