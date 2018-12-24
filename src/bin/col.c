@@ -1,4 +1,5 @@
 #include "private.h"
+#include <assert.h>
 #include <Elementary.h>
 #include "config.h"
 #include "col.h"
@@ -88,7 +89,7 @@ static const Color default_colors256[256] =
    { 0xc0, 0x00, 0xc0, 0xff }, // COL_MAGENTA
    { 0x00, 0xc0, 0xc0, 0xff }, // COL_CYAN
    { 0xc0, 0xc0, 0xc0, 0xff }, // COL_WHITE
-   
+
    { 0x80, 0x80, 0x80, 0xff }, // COL_BLACK
    { 0xff, 0x80, 0x80, 0xff }, // COL_RED
    { 0x80, 0xff, 0x80, 0xff }, // COL_GREEN
@@ -498,22 +499,15 @@ colors_standard_get(int set, int col,
                     unsigned char *b,
                     unsigned char *a)
 {
-   if ((set >= 0) && (set < 4))
-     {
-        int s1, s2;
+   int s1, s2;
+   assert((set >= 0) && (set < 4));
 
-        s1 = set / 2;
-        s2 = set % 2;
-        *r = default_colors[s1][s2][col].r;
-        *g = default_colors[s1][s2][col].g;
-        *b = default_colors[s1][s2][col].b;
-        *a = default_colors[s1][s2][col].a;
-        return;
-     }
-   *r = 0;
-   *g = 0;
-   *b = 0;
-   *a = 0;
+   s1 = set / 2;
+   s2 = set % 2;
+   *r = default_colors[s1][s2][col].r;
+   *g = default_colors[s1][s2][col].g;
+   *b = default_colors[s1][s2][col].b;
+   *a = default_colors[s1][s2][col].a;
 }
 
 void
@@ -523,6 +517,7 @@ colors_256_get(int col,
                unsigned char *b,
                unsigned char *a)
 {
+   assert(col < 256);
    *r = default_colors256[col].r;
    *g = default_colors256[col].g;
    *b = default_colors256[col].b;
