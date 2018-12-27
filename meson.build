@@ -125,4 +125,4 @@ subdir('data')
 subdir('man')
 subdir('src/bin')
 
-meson.add_install_script('meson_install_themes.sh', edj_files)
+meson.add_install_script('meson/meson_install_themes.sh', edj_files)
