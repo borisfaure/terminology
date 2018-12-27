@@ -334,7 +334,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    break;
                 case 8:
                    ty->termstate.no_autorepeat = !mode;
-                   DBG("auto repeat %i", mode);
+                   DBG("DECARM - auto repeat %i", mode);
                    break;
                 case 9:
                    DBG("set mouse (X10) %i", mode);
