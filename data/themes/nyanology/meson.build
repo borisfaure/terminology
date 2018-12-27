@@ -12,6 +12,7 @@ edj_targets += [custom_target('nyanology.edj',
                               depend_files: files(['about.edc',
                                                    'nyancursor.edc']),
                               install_dir: edje_install_dir,
+                              install_mode: 'rw-r--r--',
                               command: command,
                               input:'nyanology.edc',
                               output:'nyanology.edj')]

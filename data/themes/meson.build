@@ -27,6 +27,7 @@ foreach to_compile: edje_to_compile
   edj_targets += [custom_target(output,
                                 install:true,
                                 install_dir: edje_install_dir,
+                                install_mode: 'rw-r--r--',
                                 depend_files: files(to_compile[1]),
                                 command: command,
                                 input: input,
