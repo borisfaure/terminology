@@ -407,6 +407,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                         ty->termstate.right_margin = 0;
                      }
                    break;
+                case 98:
+                   DBG("DECARSM Set/Reset Auto Resize Mode: %d", mode);
+                   break;
                 case 100:
                    if (mode)
                      {
