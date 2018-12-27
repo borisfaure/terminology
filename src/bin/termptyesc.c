@@ -280,6 +280,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    ty->termstate.appcursor = mode;
                    break;
                 case 2:
+                   DBG("DECANM - ANSI MODE - VT52");
                    ty->termstate.kbd_lock = mode;
                    break;
                 case 3: // 132 column mode… should we handle this?
