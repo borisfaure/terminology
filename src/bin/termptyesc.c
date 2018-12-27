@@ -406,6 +406,16 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                         ty->termstate.right_margin = 0;
                      }
                    break;
+                case 100:
+                   if (mode)
+                     {
+                        DBG("DECAAM Set Auto Answerback Mode");
+                     }
+                   else
+                     {
+                        DBG("DECAAM Reset Auto Answerback Mode");
+                     }
+                   break;
                 case 1000:
                    if (mode) ty->mouse_mode = MOUSE_NORMAL;
                    else ty->mouse_mode = MOUSE_OFF;
