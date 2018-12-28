@@ -2827,12 +2827,71 @@ _handle_decbi(Termpty *ty)
         ty->cursor_state.cx = old_cx;
         ty->cursor_state.cy = old_cy;
      }
-     else
+   else
      {
         if ((ty->cursor_state.cx == 0) && (ty->termstate.lr_margins != 0))
           return;
         /* cursor backward */
         ty->cursor_state.cx--;
+     }
+}
+
+static void
+_handle_decfi(Termpty *ty)
+{
+   DBG("DECFI - Forward Index");
+   if ((ty->cursor_state.cx == ty->w - 1)
+       || ((ty->termstate.right_margin > 0)
+           && (ty->cursor_state.cx == ty->termstate.right_margin - 1)))
+     {
+        int y;
+        int max_x = ty->w - 1;
+        int max_y = ty->h;
+
+        if (((ty->termstate.lr_margins != 0)
+             && (ty->cursor_state.cx == ty->w - 1))
+            || ((ty->termstate.top_margin != 0)
+                && (ty->cursor_state.cy < ty->termstate.top_margin))
+            || ((ty->termstate.bottom_margin != 0)
+                && (ty->cursor_state.cy >= ty->termstate.bottom_margin)))
+          {
+             return;
+          }
+        if (ty->termstate.bottom_margin != 0)
+          max_y = ty->termstate.bottom_margin;
+        if (ty->termstate.right_margin != 0)
+          max_x = ty->termstate.right_margin - 1;
+
+        for (y = ty->termstate.top_margin; y < max_y; y++)
+          {
+             int x;
+             Termcell *cells = &(TERMPTY_SCREEN(ty, 0, y));
+
+             for (x = ty->termstate.left_margin; x <= max_x; x++)
+               {
+                  if (x < max_x)
+                    TERMPTY_CELL_COPY(ty, &(cells[x + 1]), &(cells[x]), 1);
+                  else
+                    {
+                       cells[x].codepoint = ' ';
+                       if (EINA_UNLIKELY(cells[x].att.link_id))
+                         term_link_refcount_dec(ty, cells[x].att.link_id, 1);
+                       cells[x].att = ty->termstate.att;
+                       cells[x].att.link_id = 0;
+                       cells[x].att.dblwidth = 0;
+                    }
+               }
+          }
+     }
+   else
+     {
+        if ((ty->cursor_state.cx == ty->w - 1)
+            && (ty->termstate.lr_margins != 0))
+          return;
+        ERR("ty->cursor_state.cx=%d", ty->cursor_state.cx);
+        ERR("ty->cursor_state.cy=%d", ty->cursor_state.cy);
+        /* cursor forward */
+        ty->cursor_state.cx++;
      }
 }
 
@@ -2938,6 +2997,9 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         return 1;
       case '8': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);
+        return 1;
+      case '9':
+        _handle_decfi(ty);
         return 1;
       case 'H': // set tab at current column
         DBG("Character Tabulation Set (HTS) at x:%d", ty->cursor_state.cx);

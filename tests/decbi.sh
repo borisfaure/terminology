@@ -29,7 +29,7 @@ printf '\033[5;22r'
 
 # move to
 printf '\033[4;0H'
-# decbi, not within top/right margin, do nothing
+# decbi, not within top/bottom margin, do nothing
 printf '\033\066b'
 # move to 3; 0
 printf '\033[6;0H'
