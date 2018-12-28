@@ -2793,6 +2793,51 @@ _handle_decaln(Termpty *ty)
      }
 }
 
+static void
+_handle_decbi(Termpty *ty)
+{
+   DBG("DECBI - Back Index");
+   if (ty->cursor_state.cx == ty->termstate.left_margin)
+     {
+        Eina_Unicode blank[1] = { ' ' };
+        int old_insert = ty->termstate.insert;
+        int old_cx = ty->cursor_state.cx;
+        int old_cy = ty->cursor_state.cy;
+        int y;
+        int max = ty->h;
+
+        if (((ty->termstate.lr_margins != 0) && (ty->cursor_state.cx == 0))
+            || ((ty->termstate.top_margin != 0)
+                && (ty->cursor_state.cy < ty->termstate.top_margin))
+            || ((ty->termstate.bottom_margin != 0)
+                && (ty->cursor_state.cy >= ty->termstate.bottom_margin)))
+          {
+             return;
+          }
+        if (ty->termstate.bottom_margin != 0)
+          max = ty->termstate.bottom_margin;
+        ty->termstate.insert = 1;
+        for (y = ty->termstate.top_margin; y < max; y++)
+          {
+             /* Insert a left column */
+             ty->cursor_state.cy = y;
+             ty->cursor_state.cx = old_cx;
+             ty->termstate.wrapnext = 0;
+             termpty_text_append(ty, blank, 1);
+          }
+        ty->termstate.insert = old_insert;
+        ty->cursor_state.cx = old_cx;
+        ty->cursor_state.cy = old_cy;
+     }
+     else
+     {
+        if ((ty->cursor_state.cx == 0) && (ty->termstate.lr_margins != 0))
+          return;
+        /* cursor backward */
+        ty->cursor_state.cx--;
+     }
+}
+
 static int
 _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2887,6 +2932,9 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case '@': // just consume this plus next char
         if (len < 2) return 0;
         return 2;
+      case '6':
+        _handle_decbi(ty);
+        return 1;
       case '7': // save cursor pos
         termpty_cursor_copy(ty, EINA_TRUE);
         return 1;
