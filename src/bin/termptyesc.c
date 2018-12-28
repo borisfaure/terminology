@@ -411,24 +411,13 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    DBG("DECARSM Set/Reset Auto Resize Mode: %d", mode);
                    break;
                 case 100:
-                   if (mode)
-                     {
-                        DBG("DECAAM Set Auto Answerback Mode");
-                     }
-                   else
-                     {
-                        DBG("DECAAM Reset Auto Answerback Mode");
-                     }
+                   DBG("DECAAM Set/Reset Auto Answerback Mode: %d", mode);
                    break;
                 case 101:
-                   if (mode)
-                     {
-                        DBG("DECCANSM Set Conceal Answerback Message Mode");
-                     }
-                   else
-                     {
-                        DBG("DECCANSM Reset Conceal Answerback Message Mode");
-                     }
+                   DBG("DECCANSM Set/Reset Conceal Answerback Message Mode: %d", mode);
+                   break;
+                case 109:
+                   DBG("DECCAPSLK Set/Reset Caps Lock Mode: %d", mode);
                    break;
                 case 1000:
                    if (mode) ty->mouse_mode = MOUSE_NORMAL;
