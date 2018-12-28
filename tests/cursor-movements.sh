@@ -49,7 +49,7 @@ printf '\033[15;30s'
 # change color
 printf '\033[0m\033[45;32;1m'
 # fill restricted region with @
-printf '\033[64;10;15;20;30$x'
+printf '\033[64;10;15;20;30\044x'
 # change color back
 printf '\033[0m\033[46;31;3m'
 # restrict cursor

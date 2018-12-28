@@ -1,6 +1,6 @@
 #!/bin/sh
 # fill space with E
-printf '\033[69;1;1;25;80$x'
+printf '\033[69;1;1;25;80\044x'
 #set color
 printf '\033[46;31;3m'
 
@@ -18,7 +18,7 @@ printf '\033[?69h'
 # set left/right margins:
 printf '\033[5;15s'
 # fill margin with @
-printf '\033[64;10;5;20;15$x'
+printf '\033[64;10;5;20;15\044x'
 
 # move
 printf '\033[12;19HF'
@@ -26,7 +26,7 @@ printf '\033[12;19HF'
 # set left/right margins:
 printf '\033[25;35s'
 # fill margin with @
-printf '\033[64;10;25;20;35$x'
+printf '\033[64;10;25;20;35\044x'
 # restrict cursor
 printf '\033[?6h'
 # move

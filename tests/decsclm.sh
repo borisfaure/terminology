@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # fill space with E
-printf '\033[69;1;1;25;80$x'
+printf '\033[69;1;1;25;80\044x'
 
 # set scrolling mode to fast
 printf '\033[?4l'

@@ -3,8 +3,8 @@
 # move to 0; 0
 printf '\033[H'
 # fill space
-for Y in $(seq 0 23); do
-   for X in $(seq 0 7); do
+for _ in $(seq 0 23); do
+   for _ in $(seq 0 7); do
       printf '\-/|\\~_>^<'
    done
 done

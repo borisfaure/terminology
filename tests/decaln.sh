@@ -9,7 +9,7 @@ printf '\033[?69h'
 # set left/right margins:
 printf '\033[5;15s'
 # fill margin with @
-printf '\033[64;10;5;20;15$x'
+printf '\033[64;10;5;20;15\044x'
 # restrict cursor
 printf '\033[?6h'
 # reset wrap mode
