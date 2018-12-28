@@ -1182,8 +1182,7 @@ _handle_esc_csi_cpl(Termpty *ty, Eina_Unicode **ptr)
 }
 
 static void
-_handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr,
-                    const Eina_Unicode * const end)
+_handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
@@ -1918,7 +1917,7 @@ CUF:
           }
         break;
       case 'P': // erase and scrollback N chars
-        _handle_esc_csi_dch(ty, &b, be);
+        _handle_esc_csi_dch(ty, &b);
         break;
       case 'S': // scroll up N lines
         arg = _csi_arg_get(ty, &b);
