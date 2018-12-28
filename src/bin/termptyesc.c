@@ -2756,6 +2756,37 @@ end:
    return len;
 }
 
+static void
+_handle_decaln(Termpty *ty)
+{
+   int size;
+   Termcell *cells;
+
+   DBG("DECALN - fill screen with E");
+   ty->termstate.top_margin = 0;
+   ty->termstate.bottom_margin = 0;
+   ty->termstate.left_margin = 0;
+   ty->termstate.right_margin = 0;
+   ty->termstate.had_cr_x = 0;
+   ty->termstate.had_cr_y = 0;
+   ty->cursor_state.cx = 0;
+   ty->cursor_state.cy = 0;
+   ty->termstate.att.link_id = 0;
+
+   termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+   if (ty->cb.cancel_sel.func)
+     ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
+   cells = ty->screen;
+   size = ty->w * ty->h;
+   if (cells)
+     {
+        Termatt att;
+
+        memset((&att), 0, sizeof(att));
+        termpty_cell_codepoint_att_fill(ty, 'E', att, cells, size);
+     }
+}
+
 static int
 _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2845,25 +2876,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case '#': // #8 == test mode -> fill screen with "E";
         if (len < 2) return 0;
         if (c[1] == '8')
-          {
-             int size;
-             Termcell *cells;
-
-             DBG("reset to init mode and clear then fill with E");
-             termpty_reset_state(ty);
-             termpty_clear_screen(ty, TERMPTY_CLR_ALL);
-             if (ty->cb.cancel_sel.func)
-               ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
-             cells = ty->screen;
-             size = ty->w * ty->h;
-             if (cells)
-               {
-                  Termatt att;
-
-                  memset((&att), 0, sizeof(att));
-                  termpty_cell_codepoint_att_fill(ty, 'E', att, cells, size);
-               }
-          }
+          _handle_decaln(ty);
         return 2;
       case '@': // just consume this plus next char
         if (len < 2) return 0;
