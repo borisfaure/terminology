@@ -703,7 +703,9 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
              /* Skip other parameters */
              while ((*ptr) && (**ptr != ';'))
                {
-                  _csi_truecolor_arg_get(ty, ptr);
+                  int arg = _csi_truecolor_arg_get(ty, ptr);
+                  if (arg == -CSI_ARG_ERROR)
+                    break;
                }
           }
         if ((*ptr) && (**ptr == ';'))
@@ -756,7 +758,9 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
              /* Skip other parameters */
              while ((*ptr) && (**ptr != ';'))
                {
-                  _csi_truecolor_arg_get(ty, ptr);
+                  int arg = _csi_truecolor_arg_get(ty, ptr);
+                  if (arg == -CSI_ARG_ERROR)
+                    break;
                }
           }
         if ((*ptr) && (**ptr == ';'))
@@ -816,7 +820,9 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
              /* Skip other parameters */
              while ((*ptr) && (**ptr != ';'))
                {
-                  _csi_truecolor_arg_get(ty, ptr);
+                  int arg = _csi_truecolor_arg_get(ty, ptr);
+                  if (arg == -CSI_ARG_ERROR)
+                    break;
                }
           }
         if ((*ptr) && (**ptr == ';'))
