@@ -258,7 +258,6 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
                {
                   ty->cursor_state.cx = max_right - offset;
                   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
-                  return;
                }
              TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
           }

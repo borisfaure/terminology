@@ -329,7 +329,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                        mode);
                    break;
                 case 7:
-                   DBG("set wrap mode to %i", mode);
+                   DBG("DECAWM: set/reset wrap mode to %i", mode);
                    ty->termstate.wrap = mode;
                    break;
                 case 8:
