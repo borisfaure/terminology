@@ -420,6 +420,16 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                         DBG("DECAAM Reset Auto Answerback Mode");
                      }
                    break;
+                case 101:
+                   if (mode)
+                     {
+                        DBG("DECCANSM Set Conceal Answerback Message Mode");
+                     }
+                   else
+                     {
+                        DBG("DECCANSM Reset Conceal Answerback Message Mode");
+                     }
+                   break;
                 case 1000:
                    if (mode) ty->mouse_mode = MOUSE_NORMAL;
                    else ty->mouse_mode = MOUSE_OFF;
