@@ -5165,14 +5165,14 @@ _smart_apply(Evas_Object *obj)
                          }
                        if ((cells[x].att.fgintense) && (!fgext)) fg += 48;
                        if ((cells[x].att.bgintense) && (!bgext)) bg += 48;
+                       if ((cells[x].att.bold) && (!fgext)) fg += 12;
+                       if ((cells[x].att.faint) && (!fgext)) fg += 24;
                        if (cells[x].att.inverse ^ inv)
                          {
                             int t;
                             t = fgext; fgext = bgext; bgext = t;
                             t = fg; fg = bg; bg = t;
                          }
-                       if ((cells[x].att.bold) && (!fgext)) fg += 12;
-                       if ((cells[x].att.faint) && (!fgext)) fg += 24;
                        if ((tc[x].codepoint != codepoint) ||
                            (tc[x].bold != bold) ||
                            (tc[x].italic != italic) ||
