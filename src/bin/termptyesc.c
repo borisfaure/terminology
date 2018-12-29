@@ -1551,6 +1551,117 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 }
 
 static void
+_handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
+                        const Eina_Unicode * const end)
+{
+   Eina_Unicode *b = *ptr;
+   int top;
+   int left;
+   int bottom;
+   int right;
+   int i, len;
+   Eina_Bool set_bold = EINA_FALSE, reset_bold = EINA_FALSE;
+   Eina_Bool set_underline = EINA_FALSE, reset_underline = EINA_FALSE;
+   Eina_Bool set_blink = EINA_FALSE, reset_blink = EINA_FALSE;
+   Eina_Bool set_reverse = EINA_FALSE, reset_reverse = EINA_FALSE;
+
+   top = _csi_arg_get(ty, &b);
+   left = _csi_arg_get(ty, &b);
+   bottom = _csi_arg_get(ty, &b);
+   right = _csi_arg_get(ty, &b);
+
+   DBG("DECCARA (%d;%d;%d;%d) Change Attributes in Rectangular Area",
+       top, left, bottom, right);
+   if ((top == -CSI_ARG_ERROR) ||
+       (left == -CSI_ARG_ERROR) ||
+       (bottom == -CSI_ARG_ERROR) ||
+       (right == -CSI_ARG_ERROR))
+     return;
+
+   while (b && b < end)
+     {
+        int arg = _csi_arg_get(ty, &b);
+        switch (arg)
+          {
+           case -CSI_ARG_ERROR:
+              return;
+           case -CSI_ARG_NO_VALUE:
+              EINA_FALLTHROUGH;
+           case 0:
+              set_bold = set_underline = set_blink = set_reverse = EINA_FALSE;
+              reset_bold = reset_underline = reset_blink = reset_reverse = EINA_TRUE;
+              break;
+           case 1:
+              set_bold = EINA_TRUE;
+              reset_bold = EINA_FALSE;
+              break;
+           case 4:
+              set_underline = EINA_TRUE;
+              reset_underline = EINA_FALSE;
+              break;
+           case 5:
+              set_blink = EINA_TRUE;
+              reset_blink = EINA_FALSE;
+              break;
+           case 7:
+              set_reverse = EINA_TRUE;
+              reset_reverse = EINA_FALSE;
+              break;
+           case 22:
+              set_bold = EINA_FALSE;
+              reset_bold = EINA_TRUE;
+              break;
+           case 24:
+              set_underline = EINA_FALSE;
+              reset_underline = EINA_TRUE;
+              break;
+           case 25:
+              set_blink = EINA_FALSE;
+              reset_blink = EINA_TRUE;
+              break;
+           case 27:
+              set_reverse = EINA_FALSE;
+              reset_reverse = EINA_TRUE;
+              break;
+           default:
+              WRN("Invalid change attribute [%i]", arg);
+              ty->decoding_error = EINA_TRUE;
+              return;
+          }
+     }
+
+   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+     return;
+
+   len = right - left;
+
+   for (; top <= bottom; top++)
+     {
+        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
+        for (i = 0; i < len; i++)
+          {
+             Termatt * att = &cells[i].att;
+             if (set_bold)
+               att->bold = 1;
+             if (set_underline)
+               att->underline = 1;
+             if (set_blink)
+               att->blink = 1;
+             if (set_reverse)
+               att->inverse = 1;
+             if (reset_bold)
+               att->bold = 0;
+             if (reset_underline)
+               att->underline = 0;
+             if (reset_blink)
+               att->blink = 0;
+             if (reset_reverse)
+               att->inverse = 0;
+          }
+     }
+}
+
+static void
 _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
 {
    int top = _csi_arg_get(ty ,b);
@@ -2111,7 +2222,10 @@ HVP:
           }
         break;
       case 'r':
-        _handle_esc_csi_decstbm(ty, &b);
+        if (*(cc-1) == '$')
+          _handle_esc_csi_deccara(ty, &b, be-1);
+        else
+          _handle_esc_csi_decstbm(ty, &b);
         break;
       case 's':
         if (ty->termstate.lr_margins)
