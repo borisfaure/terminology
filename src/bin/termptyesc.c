@@ -1662,6 +1662,88 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
 }
 
 static void
+_handle_esc_csi_decrara(Termpty *ty, Eina_Unicode **ptr,
+                        const Eina_Unicode * const end)
+{
+   Eina_Unicode *b = *ptr;
+   int top;
+   int left;
+   int bottom;
+   int right;
+   int i, len;
+   Eina_Bool reverse_bold = EINA_FALSE;
+   Eina_Bool reverse_underline = EINA_FALSE;
+   Eina_Bool reverse_blink = EINA_FALSE;
+   Eina_Bool reverse_inverse = EINA_FALSE;
+
+   top = _csi_arg_get(ty, &b);
+   left = _csi_arg_get(ty, &b);
+   bottom = _csi_arg_get(ty, &b);
+   right = _csi_arg_get(ty, &b);
+
+   DBG("DECRARA (%d;%d;%d;%d) Reverse Attributes in Rectangular Area",
+       top, left, bottom, right);
+   if ((top == -CSI_ARG_ERROR) ||
+       (left == -CSI_ARG_ERROR) ||
+       (bottom == -CSI_ARG_ERROR) ||
+       (right == -CSI_ARG_ERROR))
+     return;
+
+   while (b && b < end)
+     {
+        int arg = _csi_arg_get(ty, &b);
+        switch (arg)
+          {
+           case -CSI_ARG_ERROR:
+              return;
+           case -CSI_ARG_NO_VALUE:
+              EINA_FALLTHROUGH;
+           case 0:
+              reverse_bold = reverse_underline = reverse_blink = reverse_inverse = EINA_TRUE;
+              break;
+           case 1:
+              reverse_bold = EINA_TRUE;
+              break;
+           case 4:
+              reverse_underline = EINA_TRUE;
+              break;
+           case 5:
+              reverse_blink = EINA_TRUE;
+              break;
+           case 7:
+              reverse_inverse = EINA_TRUE;
+              break;
+           default:
+              WRN("Invalid change attribute [%i]", arg);
+              ty->decoding_error = EINA_TRUE;
+              return;
+          }
+     }
+
+   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+     return;
+
+   len = right - left;
+
+   for (; top <= bottom; top++)
+     {
+        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
+        for (i = 0; i < len; i++)
+          {
+             Termatt * att = &cells[i].att;
+             if (reverse_bold)
+               att->bold = !att->bold;
+             if (reverse_underline)
+               att->underline = !att->underline;
+             if (reverse_blink)
+               att->blink = !att->blink;
+             if (reverse_inverse)
+               att->inverse = !att->inverse;
+          }
+     }
+}
+
+static void
 _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
 {
    int top = _csi_arg_get(ty ,b);
@@ -2266,12 +2348,17 @@ HVP:
             termpty_cursor_copy(ty, EINA_TRUE);
           }
         break;
-      case 't': // window manipulation
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        WRN("TODO: window operation %d not supported", arg);
-        ty->decoding_error = EINA_TRUE;
+      case 't':
+        if (*(cc-1) == '$')
+          _handle_esc_csi_decrara(ty, &b, be-1);
+        else
+          {
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
+             WRN("TODO: window operation %d not supported", arg);
+             ty->decoding_error = EINA_TRUE;
+          }
         break;
       case 'u': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);

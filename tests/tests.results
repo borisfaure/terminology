@@ -43,3 +43,5 @@ decbi.sh 8153bff12a0d529cb8ba0dbff036a1ee
 decfi.sh e93690447902b923d3d9d2ae72a31de4
 deccara-rectangular-no-restrict-cursor.sh 0d04ff5f4a266917528ff8d17846c18a
 deccara-rectangular-restrict-cursor.sh 9f23ac6a3423ba8bf7b8af5116e2843b
+decrara-rectangular-no-restrict-cursor.sh be9836ff18eafb90795faecc042f34d6
+decrara-rectangular-restrict-cursor.sh e98723f8f749e4902f7f4aaa677b85d6
