@@ -120,6 +120,7 @@ typedef struct _Term_State {
     unsigned int  cjk_ambiguous_wide : 1;
     unsigned int  hide_cursor : 1;
     unsigned int  combining_strike : 1;
+    unsigned int  sace_rectangular : 1;
 } Term_State;
 
 typedef struct _Term_Cursor {

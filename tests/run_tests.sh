@@ -7,6 +7,7 @@ RESULTS="tests.results"
 TESTDIR="."
 VERBOSE=0
 DEBUG=0
+GENRESULTS=0
 EXIT_ON_FAILURE=0
 NB_TESTS=0
 OK_TESTS=0
@@ -73,8 +74,9 @@ where options are:
   -e, --exitonfailure      Exit as soon as a test fails
 
 Misc options:
-  -v, --verbose            Be verbose about what is being done.
+  -v, --verbose            Be verbose about what is being done
   --debug                  Debug tests
+  --genresults             Output a results file
   -h, --help               Show this help.
 HELP_EOF
 }
@@ -99,6 +101,9 @@ while [ $# -gt 0 ]; do
         -debug|--debug)
             DEBUG=1
             ;;
+        -genresults|--genresults)
+           GENRESULTS=1
+           ;;
         -t|-tytest|--tytest)
             if [ -z "$value" ]; then
                 value=$1
@@ -138,6 +143,11 @@ fi
 if [ ! -d "$TESTDIR" ]; then
     die "Invalid test directory: $TESTDIR"
 fi
+if [ $GENRESULTS -ne 0 ]; then
+   DEBUG=0
+   VERBOSE=0
+fi
+
 
 if [ $DEBUG -ne 0 ]; then
     cat <<EOF
@@ -160,10 +170,14 @@ while read -r TEST EXPECTED_CHECKSUM; do
     if [ $DEBUG -ne 0 ]; then
         printf "(got %s, expected %s) " "$TEST_CHECKSUM" "$EXPECTED_CHECKSUM"
     fi
-    if [ "$TEST_CHECKSUM" = "$EXPECTED_CHECKSUM" ]; then
-        ok "$TEST"
+    if [ $GENRESULTS -ne 0 ]; then
+        printf "%s %s\n" "$TEST" "$TEST_CHECKSUM"
     else
-        failed "$TEST"
+       if [ "$TEST_CHECKSUM" = "$EXPECTED_CHECKSUM" ]; then
+          ok "$TEST"
+       else
+          failed "$TEST"
+       fi
     fi
 done < "$RESULTS"
 summary

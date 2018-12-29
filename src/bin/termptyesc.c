@@ -1772,6 +1772,34 @@ _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
   termio_set_cursor_shape(ty->obj, shape);
 }
 
+static void
+_handle_esc_csi_decsace(Termpty *ty, Eina_Unicode **b)
+{
+  int arg = _csi_arg_get(ty, b);
+
+  DBG("DECSACE (%d) Select Attribute Change Extent", arg);
+
+  switch (arg)
+    {
+     case -CSI_ARG_ERROR:
+        return;
+     case -CSI_ARG_NO_VALUE:
+        EINA_FALLTHROUGH;
+     case 0:
+        EINA_FALLTHROUGH;
+     case 1:
+        ty->termstate.sace_rectangular = 0;
+        break;
+     case 2:
+        ty->termstate.sace_rectangular = 1;
+        break;
+     default:
+        WRN("Invalid DECSACE %d", arg);
+        ty->decoding_error = EINA_TRUE;
+        return;
+    }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2251,6 +2279,8 @@ HVP:
       case 'x':
         if (*(cc-1) == '$')
           _handle_esc_csi_decfra(ty, &b);
+        else if (*(cc-1) == '*')
+          _handle_esc_csi_decsace(ty, &b);
         break;
       case 'z':
         if (*(cc-1) == '$')
