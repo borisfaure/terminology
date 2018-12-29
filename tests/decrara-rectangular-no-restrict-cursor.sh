@@ -39,10 +39,10 @@ printf '\033[5;20r'
 # force rectangular modifications
 printf '\033[2*x'
 
-# reset all
+# reverse all
 printf '\033[1;10;80;15;0\044t'
 
-# reset all
+# reverse all
 printf '\033[1;20;80;25;1;4;5;7\044t'
 
 # reverse bold/blink

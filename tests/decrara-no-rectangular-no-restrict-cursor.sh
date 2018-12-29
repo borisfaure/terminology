@@ -33,29 +33,31 @@ done
 # move to 0; 0
 printf '\033[H'
 
+# no rectangular modifications
+printf '\033[1*x'
+
 # set top/bottom margins:
-printf '\033[5;20r'
-
-# restrict cursor
-printf '\033[?6h'
-
-# force rectangular modifications
-printf '\033[2*x'
+printf '\033[1;24r'
+# allow left/right margins
+printf '\033[?69h'
+# set left/right margins:
+printf '\033[20;55s'
 
 # reverse all
-printf '\033[1;10;80;15;0\044t'
+printf '\033[2;10;4;65;0\044t'
 
 # reverse all
-printf '\033[1;20;80;25;1;4;5;7\044t'
+printf '\033[6;20;8;55;1;4;5;7\044t'
 
 # reverse bold/blink
-printf '\033[1;30;80;35;1;5\044t'
+printf '\033[10;63;12;55;1;5\044t'
 
 # reverse bold/underline
-printf '\033[1;40;80;45;1;4\044t'
-
-# reverse blink/inverse
-printf '\033[1;50;80;55;5;7\044t'
+printf '\033[14;8;16;45;1;4\044t'
 
 # reverse underline/inverse
-printf '\033[1;60;80;65;4;7;0\044t'
+# @xtermbug
+printf '\033[18;6;20;5;4;7\044t'
+
+# reverse underline/inverse
+printf '\033[21;6;21;65;4;7\044t'

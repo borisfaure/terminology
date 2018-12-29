@@ -1514,6 +1514,80 @@ _clean_up_rect_coordinates(Termpty *ty,
    return 0;
 }
 
+static int
+_clean_up_from_to_coordinates(Termpty *ty,
+                              int *top_ptr,
+                              int *left_ptr,
+                              int *bottom_ptr,
+                              int *right_ptr,
+                              int *left_border,
+                              int *right_border)
+{
+   int top = *top_ptr;
+   int left = *left_ptr;
+   int bottom = *bottom_ptr;
+   int right = *right_ptr;
+
+   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+   if (ty->termstate.restrict_cursor)
+     {
+        top += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin && top >= ty->termstate.bottom_margin)
+          top = ty->termstate.bottom_margin;
+     }
+   top--;
+
+   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+   if (ty->termstate.restrict_cursor)
+     {
+        left += ty->termstate.left_margin;
+        if (ty->termstate.right_margin && left >= ty->termstate.right_margin)
+          left = ty->termstate.right_margin;
+     }
+   left--;
+
+   if (right < 1)
+     right = ty->w;
+   if (ty->termstate.restrict_cursor)
+     {
+        right += ty->termstate.left_margin;
+        if (ty->termstate.right_margin && right >= ty->termstate.right_margin)
+          right = ty->termstate.right_margin;
+     }
+   if (right > ty->w)
+     right = ty->w;
+
+   if (bottom < 1)
+     bottom = ty->h;
+   if (ty->termstate.restrict_cursor)
+     {
+        bottom += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin && bottom >= ty->termstate.bottom_margin)
+          bottom = ty->termstate.bottom_margin;
+     }
+   bottom--;
+   if (bottom > ty->h)
+     bottom = ty->h - 1;
+
+   if ((bottom == top) && (right < left))
+     return -1;
+
+   *left_border = 0;
+   *right_border = ty->w-1;
+   if (ty->termstate.restrict_cursor)
+     {
+        *left_border = ty->termstate.left_margin;
+        *right_border = ty->termstate.right_margin;
+     }
+
+   *top_ptr = top;
+   *left_ptr = left;
+   *bottom_ptr = bottom;
+   *right_ptr = right;
+
+   return 0;
+}
+
 static void
 _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 {
@@ -1551,19 +1625,51 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 }
 
 static void
+_deccara(Termcell *cells, int len,
+         Eina_Bool set_bold, Eina_Bool reset_bold,
+         Eina_Bool set_underline, Eina_Bool reset_underline,
+         Eina_Bool set_blink, Eina_Bool reset_blink,
+         Eina_Bool set_inverse, Eina_Bool reset_inverse)
+{
+   int i;
+
+   for (i = 0; i < len; i++)
+     {
+        Termatt * att = &cells[i].att;
+        if (set_bold)
+          att->bold = 1;
+        if (set_underline)
+          att->underline = 1;
+        if (set_blink)
+          att->blink = 1;
+        if (set_inverse)
+          att->inverse = 1;
+        if (reset_bold)
+          att->bold = 0;
+        if (reset_underline)
+          att->underline = 0;
+        if (reset_blink)
+          att->blink = 0;
+        if (reset_inverse)
+          att->inverse = 0;
+     }
+}
+
+static void
 _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
                         const Eina_Unicode * const end)
 {
    Eina_Unicode *b = *ptr;
+   Termcell *cells;
    int top;
    int left;
    int bottom;
    int right;
-   int i, len;
+   int len;
    Eina_Bool set_bold = EINA_FALSE, reset_bold = EINA_FALSE;
    Eina_Bool set_underline = EINA_FALSE, reset_underline = EINA_FALSE;
    Eina_Bool set_blink = EINA_FALSE, reset_blink = EINA_FALSE;
-   Eina_Bool set_reverse = EINA_FALSE, reset_reverse = EINA_FALSE;
+   Eina_Bool set_inverse = EINA_FALSE, reset_inverse = EINA_FALSE;
 
    top = _csi_arg_get(ty, &b);
    left = _csi_arg_get(ty, &b);
@@ -1588,8 +1694,8 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
            case -CSI_ARG_NO_VALUE:
               EINA_FALLTHROUGH;
            case 0:
-              set_bold = set_underline = set_blink = set_reverse = EINA_FALSE;
-              reset_bold = reset_underline = reset_blink = reset_reverse = EINA_TRUE;
+              set_bold = set_underline = set_blink = set_inverse = EINA_FALSE;
+              reset_bold = reset_underline = reset_blink = reset_inverse = EINA_TRUE;
               break;
            case 1:
               set_bold = EINA_TRUE;
@@ -1604,8 +1710,8 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
               reset_blink = EINA_FALSE;
               break;
            case 7:
-              set_reverse = EINA_TRUE;
-              reset_reverse = EINA_FALSE;
+              set_inverse = EINA_TRUE;
+              reset_inverse = EINA_FALSE;
               break;
            case 22:
               set_bold = EINA_FALSE;
@@ -1620,8 +1726,8 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
               reset_blink = EINA_TRUE;
               break;
            case 27:
-              set_reverse = EINA_FALSE;
-              reset_reverse = EINA_TRUE;
+              set_inverse = EINA_FALSE;
+              reset_inverse = EINA_TRUE;
               break;
            default:
               WRN("Invalid change attribute [%i]", arg);
@@ -1630,34 +1736,90 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
           }
      }
 
-   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
-     return;
-
-   len = right - left;
-
-   for (; top <= bottom; top++)
+   if (ty->termstate.sace_rectangular)
      {
-        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
-        for (i = 0; i < len; i++)
+        if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+          return;
+
+        len = right - left;
+
+        for (; top <= bottom; top++)
           {
-             Termatt * att = &cells[i].att;
-             if (set_bold)
-               att->bold = 1;
-             if (set_underline)
-               att->underline = 1;
-             if (set_blink)
-               att->blink = 1;
-             if (set_reverse)
-               att->inverse = 1;
-             if (reset_bold)
-               att->bold = 0;
-             if (reset_underline)
-               att->underline = 0;
-             if (reset_blink)
-               att->blink = 0;
-             if (reset_reverse)
-               att->inverse = 0;
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             _deccara(cells, len, set_bold, reset_bold, set_underline,
+                      reset_underline, set_blink, reset_blink, set_inverse,
+                      reset_inverse);
           }
+     }
+   else
+     {
+        int left_border = 0;
+        int right_border = ty->w - 1;
+
+        if (_clean_up_from_to_coordinates(ty, &top, &left, &bottom, &right,
+                                          &left_border, &right_border) < 0)
+          return;
+        if (top == bottom)
+          {
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             len = right - left;
+             _deccara(cells, len, set_bold, reset_bold,
+                      set_underline, reset_underline,
+                      set_blink, reset_blink,
+                      set_inverse, reset_inverse);
+          }
+        else
+          {
+             /* First line */
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             len = right_border - left;
+             _deccara(cells, len, set_bold, reset_bold,
+                      set_underline, reset_underline,
+                      set_blink, reset_blink,
+                      set_inverse, reset_inverse);
+
+             /* Middle */
+             len = right_border - left_border;
+             for (top = top + 1; top < bottom; top++)
+               {
+                  cells = &(TERMPTY_SCREEN(ty, left_border, top));
+                  _deccara(cells, len, set_bold, reset_bold,
+                           set_underline, reset_underline,
+                           set_blink, reset_blink,
+                           set_inverse, reset_inverse);
+               }
+
+             /* Last line */
+             cells = &(TERMPTY_SCREEN(ty, left_border, bottom));
+             len = right - left_border;
+             _deccara(cells, len, set_bold, reset_bold,
+                      set_underline, reset_underline,
+                      set_blink, reset_blink,
+                      set_inverse, reset_inverse);
+          }
+     }
+}
+
+static void
+_decrara(Termcell *cells, int len,
+         Eina_Bool reverse_bold,
+         Eina_Bool reverse_underline,
+         Eina_Bool reverse_blink,
+         Eina_Bool reverse_inverse)
+{
+   int i;
+
+   for (i = 0; i < len; i++)
+     {
+        Termatt * att = &cells[i].att;
+        if (reverse_bold)
+          att->bold = !att->bold;
+        if (reverse_underline)
+          att->underline = !att->underline;
+        if (reverse_blink)
+          att->blink = !att->blink;
+        if (reverse_inverse)
+          att->inverse = !att->inverse;
      }
 }
 
@@ -1666,11 +1828,12 @@ _handle_esc_csi_decrara(Termpty *ty, Eina_Unicode **ptr,
                         const Eina_Unicode * const end)
 {
    Eina_Unicode *b = *ptr;
+   Termcell *cells;
    int top;
    int left;
    int bottom;
    int right;
-   int i, len;
+   int len;
    Eina_Bool reverse_bold = EINA_FALSE;
    Eina_Bool reverse_underline = EINA_FALSE;
    Eina_Bool reverse_blink = EINA_FALSE;
@@ -1720,25 +1883,57 @@ _handle_esc_csi_decrara(Termpty *ty, Eina_Unicode **ptr,
           }
      }
 
-   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
-     return;
-
-   len = right - left;
-
-   for (; top <= bottom; top++)
+   if (ty->termstate.sace_rectangular)
      {
-        Termcell *cells = &(TERMPTY_SCREEN(ty, left, top));
-        for (i = 0; i < len; i++)
+        if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+          return;
+
+        len = right - left;
+
+        for (; top <= bottom; top++)
           {
-             Termatt * att = &cells[i].att;
-             if (reverse_bold)
-               att->bold = !att->bold;
-             if (reverse_underline)
-               att->underline = !att->underline;
-             if (reverse_blink)
-               att->blink = !att->blink;
-             if (reverse_inverse)
-               att->inverse = !att->inverse;
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             _decrara(cells, len, reverse_bold, reverse_underline,
+                      reverse_blink, reverse_inverse);
+          }
+     }
+   else
+     {
+        int left_border = 0;
+        int right_border = ty->w - 1;
+
+        if (_clean_up_from_to_coordinates(ty, &top, &left, &bottom, &right,
+                                          &left_border, &right_border) < 0)
+          return;
+        if (top == bottom)
+          {
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             len = right - left;
+             _decrara(cells, len, reverse_bold, reverse_underline,
+                      reverse_blink, reverse_inverse);
+          }
+        else
+          {
+             /* First line */
+             cells = &(TERMPTY_SCREEN(ty, left, top));
+             len = right_border - left;
+             _decrara(cells, len, reverse_bold, reverse_underline,
+                      reverse_blink, reverse_inverse);
+
+             /* Middle */
+             len = right_border - left_border;
+             for (top = top + 1; top < bottom; top++)
+               {
+                  cells = &(TERMPTY_SCREEN(ty, left_border, top));
+                  _decrara(cells, len, reverse_bold, reverse_underline,
+                           reverse_blink, reverse_inverse);
+               }
+
+             /* Last line */
+             cells = &(TERMPTY_SCREEN(ty, left_border, bottom));
+             len = right - left_border;
+             _decrara(cells, len, reverse_bold, reverse_underline,
+                      reverse_blink, reverse_inverse);
           }
      }
 }
