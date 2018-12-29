@@ -1528,13 +1528,12 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
    DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
        c, top, left, bottom, right);
    if ((c == -CSI_ARG_ERROR) ||
+       (c == -CSI_ARG_NO_VALUE) ||
        (top == -CSI_ARG_ERROR) ||
        (left == -CSI_ARG_ERROR) ||
        (bottom == -CSI_ARG_ERROR) ||
        (right == -CSI_ARG_ERROR))
      return;
-
-   /* TODO: -CSI_ARG_NO_VALUE */
 
    if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
      return;

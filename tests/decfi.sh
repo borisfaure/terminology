@@ -68,6 +68,7 @@ done
 # move
 printf '\033[11;81H'
 # decfi, do nothing. Xterm seems change wrapping here. I don't see why
+# @xtermbug
 printf 'f\033\071g'
 
 # move
