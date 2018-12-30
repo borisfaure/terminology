@@ -2077,6 +2077,122 @@ _handle_esc_csi_decsace(Termpty *ty, Eina_Unicode **b)
     }
 }
 
+static void
+_handle_esc_csi_decic(Termpty *ty, Eina_Unicode **b)
+{
+   int arg = _csi_arg_get(ty, b);
+   int old_insert = ty->termstate.insert;
+   Eina_Unicode blank[1] = { ' ' };
+   int top = 0;
+   int bottom = ty->h;
+   int old_cx = ty->cursor_state.cx;
+   int old_cy = ty->cursor_state.cy;
+
+   DBG("DECIC Insert %d Column", arg);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 1;
+   if (ty->termstate.top_margin > 0)
+     {
+        if (ty->cursor_state.cy < ty->termstate.top_margin)
+          return;
+        top = ty->termstate.top_margin;
+     }
+   if (ty->termstate.bottom_margin != 0)
+     {
+        if (ty->cursor_state.cy >= ty->termstate.bottom_margin)
+          return;
+        bottom = ty->termstate.bottom_margin;
+     }
+
+   if (((ty->termstate.left_margin > 0)
+        && (ty->cursor_state.cx < ty->termstate.left_margin))
+       || ((ty->termstate.right_margin > 0)
+           && (ty->cursor_state.cx >= ty->termstate.right_margin)))
+     return;
+
+   ty->termstate.insert = 1;
+   for (; top < bottom; top++)
+     {
+        int i;
+
+        /* Insert a left column */
+        ty->cursor_state.cy = top;
+        ty->cursor_state.cx = old_cx;
+        ty->termstate.wrapnext = 0;
+        for (i = 0; i < arg; i++)
+          termpty_text_append(ty, blank, 1);
+     }
+   ty->termstate.insert = old_insert;
+   ty->cursor_state.cx = old_cx;
+   ty->cursor_state.cy = old_cy;
+}
+
+static void
+_handle_esc_csi_decdc(Termpty *ty, Eina_Unicode **b)
+{
+   int arg = _csi_arg_get(ty, b);
+   int y = 0;
+   int max_y = ty->h;
+   int max_x = ty->w;
+   int lim;
+
+   DBG("DECDC Delete %d Column", arg);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 1;
+   if (ty->termstate.top_margin > 0)
+     {
+        if (ty->cursor_state.cy < ty->termstate.top_margin)
+          return;
+        y = ty->termstate.top_margin;
+     }
+   if (ty->termstate.bottom_margin != 0)
+     {
+        if (ty->cursor_state.cy >= ty->termstate.bottom_margin)
+          return;
+        max_y = ty->termstate.bottom_margin;
+     }
+
+   if (ty->termstate.right_margin > 0)
+     {
+        if (ty->cursor_state.cx >= ty->termstate.right_margin)
+          return;
+        max_x = ty->termstate.right_margin;
+     }
+
+   if (((ty->termstate.left_margin > 0)
+        && (ty->cursor_state.cx < ty->termstate.left_margin)))
+     return;
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, max_x + 1);
+   lim = max_x - arg;
+   for (; y < max_y; y++)
+     {
+        int x;
+        Termcell *cells = &(TERMPTY_SCREEN(ty, 0, y));
+
+        for (x = ty->cursor_state.cx; x < max_x; x++)
+          {
+             if (x < lim)
+               TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
+             else
+               {
+                  cells[x].codepoint = ' ';
+                  if (EINA_UNLIKELY(cells[x].att.link_id))
+                    term_link_refcount_dec(ty, cells[x].att.link_id, 1);
+                  cells[x].att = ty->termstate.att;
+                  cells[x].att.link_id = 0;
+                  cells[x].att.dblwidth = 0;
+               }
+          }
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2563,10 +2679,26 @@ HVP:
           _handle_esc_csi_decfra(ty, &b);
         else if (*(cc-1) == '*')
           _handle_esc_csi_decsace(ty, &b);
+        else
+             ty->decoding_error = EINA_TRUE;
         break;
       case 'z':
         if (*(cc-1) == '$')
           _handle_esc_csi_decera(ty, &b);
+        else
+             ty->decoding_error = EINA_TRUE;
+        break;
+      case '}':
+        if (*(cc-1) == '\'')
+          _handle_esc_csi_decic(ty, &b);
+        else
+             ty->decoding_error = EINA_TRUE;
+        break;
+      case '~':
+        if (*(cc-1) == '\'')
+          _handle_esc_csi_decdc(ty, &b);
+        else
+             ty->decoding_error = EINA_TRUE;
         break;
       default:
         goto unhandled;

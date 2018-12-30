@@ -158,7 +158,8 @@ termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
 {
    int b = 0;
 
-   if (ty->termstate.top_margin != 0) b = ty->termstate.top_margin;
+   if (ty->termstate.top_margin != 0)
+     b = ty->termstate.top_margin;
    if (ty->cursor_state.cy < b)
      {
         termpty_text_scroll_rev(ty, clear);
