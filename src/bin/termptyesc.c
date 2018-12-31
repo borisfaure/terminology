@@ -2193,6 +2193,53 @@ _handle_esc_csi_decdc(Termpty *ty, Eina_Unicode **b)
      }
 }
 
+static void
+_handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode blank[1] = { ' ' };
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int i;
+   int old_insert = ty->termstate.insert;
+   int old_cx = ty->cursor_state.cx;
+   int max = ty->w;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
+
+   DBG("ICH - Insert %d Characters", arg);
+
+   if (ty->termstate.lr_margins)
+     {
+        if ((ty->termstate.left_margin)
+            && (ty->cursor_state.cx < ty->termstate.left_margin))
+          {
+             return;
+          }
+        if (ty->termstate.right_margin)
+          {
+             if (ty->cursor_state.cx >= ty->termstate.right_margin)
+               {
+                  return;
+               }
+             max = ty->termstate.right_margin;
+          }
+     }
+
+   if (ty->cursor_state.cx + arg > max)
+     {
+        arg = max - ty->cursor_state.cx;
+     }
+
+   ty->termstate.wrapnext = 0;
+   ty->termstate.insert = 1;
+   for (i = 0; i < arg; i++)
+     termpty_text_append(ty, blank, 1);
+   ty->termstate.insert = old_insert;
+   ty->cursor_state.cx = old_cx;
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2223,26 +2270,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    switch (*cc)
      {
         /* sorted by ascii value */
-      case '@': // insert N blank chars (ICH)
-        /* TODO: SL */
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
-        DBG("insert %d blank chars", arg);
-          {
-             int pi = ty->termstate.insert;
-             Eina_Unicode blank[1] = { ' ' };
-             int cx = ty->cursor_state.cx;
-
-             ty->termstate.wrapnext = 0;
-             ty->termstate.insert = 1;
-             for (i = 0; i < arg; i++)
-               termpty_text_append(ty, blank, 1);
-             ty->termstate.insert = pi;
-             ty->cursor_state.cx = cx;
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-          }
+      case '@':
+         /* TODO: SL */
+         _handle_esc_csi_ich(ty, &b);
         break;
       case 'A': // cursor up N (CUU)
         /* TODO: SR */
