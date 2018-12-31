@@ -1968,6 +1968,131 @@ _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
 }
 
 static void
+_handle_esc_csi_deccra(Termpty *ty, Eina_Unicode **b)
+{
+   int top = _csi_arg_get(ty, b);
+   int left = _csi_arg_get(ty, b);
+   int bottom = _csi_arg_get(ty, b);
+   int right = _csi_arg_get(ty, b);
+   int p1 = _csi_arg_get(ty, b);
+   int to_top = _csi_arg_get(ty, b);
+   int to_left = _csi_arg_get(ty, b);
+   int p2 = _csi_arg_get(ty, b);
+   int to_bottom = ty->h - 1;
+   int to_right = ty->w;
+   int len;
+
+   DBG("DECFRA (%d;%d;%d;%d -> %d;%d) Copy Rectangular Area",
+       top, left, bottom, right, to_top, to_left);
+   if ((top == -CSI_ARG_ERROR) ||
+       (left == -CSI_ARG_ERROR) ||
+       (bottom == -CSI_ARG_ERROR) ||
+       (right == -CSI_ARG_ERROR) ||
+       (p1 == -CSI_ARG_ERROR) ||
+       (to_top == -CSI_ARG_ERROR) ||
+       (to_left == -CSI_ARG_ERROR) ||
+       (p2 == -CSI_ARG_ERROR))
+     return;
+
+   if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
+     return;
+
+   TERMPTY_RESTRICT_FIELD(to_top, 1, ty->h);
+   if (ty->termstate.restrict_cursor)
+     {
+        to_top += ty->termstate.top_margin;
+        if (ty->termstate.bottom_margin)
+          {
+             if (to_top >= ty->termstate.bottom_margin)
+               to_top = ty->termstate.bottom_margin;
+             to_bottom = ty->termstate.bottom_margin - 1;
+          }
+     }
+   to_top--;
+   if (to_bottom - to_top > bottom - top)
+     to_bottom = to_top + bottom - top;
+   TERMPTY_RESTRICT_FIELD(to_left, 1, ty->w);
+   if (ty->termstate.restrict_cursor)
+     {
+        to_left += ty->termstate.left_margin;
+        if (ty->termstate.right_margin)
+          {
+             if (to_left >= ty->termstate.right_margin)
+               to_left = ty->termstate.right_margin;
+             to_right = ty->termstate.right_margin;
+          }
+     }
+   to_left--;
+
+   len = MIN(right - left, to_right - to_left);
+
+   if (to_top < top)
+     {
+        /* Up -> Bottom */
+        for (; top <= bottom && to_top <= to_bottom; top++, to_top++)
+          {
+             Termcell *cells_src = &(TERMPTY_SCREEN(ty, left, top));
+             Termcell *cells_dst = &(TERMPTY_SCREEN(ty, to_left, to_top));
+             int x;
+             if (to_left <= left)
+               {
+                  /* -> */
+                  for (x = 0; x < len; x++)
+                    {
+                       if (&(cells_src[x]) != &(cells_dst[x]))
+                         {
+                            TERMPTY_CELL_COPY(ty, &(cells_src[x]), &(cells_dst[x]), 1);
+                         }
+                    }
+               }
+             else
+               {
+                  /* <- */
+                  for (x = len - 1; x >= 0; x--)
+                    {
+                       if (&(cells_src[x]) != &(cells_dst[x]))
+                         {
+                            TERMPTY_CELL_COPY(ty, &(cells_src[x]), &(cells_dst[x]), 1);
+                         }
+                    }
+               }
+          }
+     }
+   else
+     {
+        /* Bottom -> Up */
+        for (; bottom >= top && to_bottom >= to_top; bottom--, to_bottom--)
+          {
+             Termcell *cells_src = &(TERMPTY_SCREEN(ty, left, bottom));
+             Termcell *cells_dst = &(TERMPTY_SCREEN(ty, to_left, to_bottom));
+             int x;
+             if (to_left <= left)
+               {
+                  /* -> */
+                  for (x = 0; x < len; x++)
+                    {
+                       if (&(cells_src[x]) != &(cells_dst[x]))
+                         {
+                            TERMPTY_CELL_COPY(ty, &(cells_src[x]), &(cells_dst[x]), 1);
+                         }
+                    }
+               }
+             else
+               {
+                  /* <- */
+                  for (x = len - 1; x >= 0; x--)
+                    {
+                       if (&(cells_src[x]) != &(cells_dst[x]))
+                         {
+                            TERMPTY_CELL_COPY(ty, &(cells_src[x]), &(cells_dst[x]), 1);
+                         }
+                    }
+               }
+          }
+     }
+}
+
+static void
 _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
                                const Eina_Unicode *cc)
 {
@@ -2703,6 +2828,12 @@ HVP:
         break;
       case 'u': // restore cursor pos
         termpty_cursor_copy(ty, EINA_FALSE);
+        break;
+      case 'v':
+        if (*(cc-1) == '$')
+          _handle_esc_csi_deccra(ty, &b);
+        else
+             ty->decoding_error = EINA_TRUE;
         break;
       case 'x':
         if (*(cc-1) == '$')
