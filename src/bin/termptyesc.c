@@ -2516,8 +2516,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->cursor_state.cx = arg - 1;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
         break;
-      case 'H': // cursor pos set (CUP)
-        goto HVP;
+      case 'H':
+        _handle_esc_csi_cursor_pos_set(ty, &b, cc);
+        break;
       case 'I':
         arg = _csi_arg_get(ty, &b);
         if (arg == -CSI_ARG_ERROR)
@@ -2762,11 +2763,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->cursor_state.cy = arg - 1;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         break;
-      case 'e': // cursor down N (VPR)
+      case 'e':
         _handle_esc_csi_cud(ty, &b);
         break;
-      case 'f': // cursor pos set (HVP)
-HVP:
+      case 'f':
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
        break;
       case 'g': // clear tabulation
