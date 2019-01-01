@@ -84,6 +84,11 @@ printf '\033[7;75H'
 # insert spaces
 printf '\033[20@'
 
+# move
+printf '\033[8;8H'
+# insert 1 space
+printf '\033[0@'
+
 # WITH MARGINS ENFORCED
 
 # set top/bottom margins:
