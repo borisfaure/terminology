@@ -2480,6 +2480,19 @@ _handle_esc_csi_cha(Termpty *ty, Eina_Unicode **ptr)
    TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, min, max);
 }
 
+static void
+_handle_esc_csi_cht(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+   DBG("CHT - Cursor Forward Tabulation: %d", arg);
+   _tab_forward(ty, arg);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2540,12 +2553,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
         break;
       case 'I':
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("Cursor Forward Tabulation (CHT): %d", arg);
-        _tab_forward(ty, arg);
+        _handle_esc_csi_cht(ty, &b);
         break;
       case 'J':
         if (*b == '?')
