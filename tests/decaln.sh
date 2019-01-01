@@ -22,6 +22,10 @@ printf '\033[7C\033H\033[8C\033H\033[9C#'
 # set cursor shape
 printf '\033[4 q'
 
+#move to 4;4
+# DECALN has to reset cursor to 0;0
+printf '\033[4;4H'
+
 # fill space with E
 printf '\033#8'
 
