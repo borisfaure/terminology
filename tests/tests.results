@@ -5,7 +5,7 @@ decera-restrict-cursor.sh 89b15109e4e2ade943a2ab3990729931
 decera-decfra-extra.sh abfe90a1df148bf15e7bf0d56163c76a
 decfra-decera-default-values-restrict-cursor.sh 9710ed6167f2127671dbab2d7dbeb1eb
 decfra-decera-default-values-no-restrict-cursor.sh 6508b473da2de3127dd65da0abe0c877
-cursor-movements.sh 6b916da9bdb377e199bba69b1efefac6
+cursor-movements.sh a9cb18bfd51c0b411c1705ac02abed02
 fonts.sh d0dcea18258b95d5c869aa866fcae10f
 cursor-shape-0.sh c91e01b0e859cc043f21d804a01bcd50
 cursor-shape-1.sh c91e01b0e859cc043f21d804a01bcd50
