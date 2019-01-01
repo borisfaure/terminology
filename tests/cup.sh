@@ -23,6 +23,9 @@ printf '\033[64;10;5;20;15\044x'
 # move
 printf '\033[12;19HF'
 
+# Test outside margins
+printf '\033[22;22HG'
+
 # set left/right margins:
 printf '\033[25;35s'
 # fill margin with @
@@ -30,4 +33,8 @@ printf '\033[64;10;25;20;35\044x'
 # restrict cursor
 printf '\033[?6h'
 # move
-printf '\033[2;2HG'
+printf '\033[2;2HH'
+
+# Test outside margins
+printf '\033[22;22HI'
+
