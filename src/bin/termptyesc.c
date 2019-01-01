@@ -2451,6 +2451,35 @@ _handle_esc_csi_cub(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+static void
+_handle_esc_csi_cha(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int min = 0;
+   int max = ty->w;
+
+   DBG("CHA - Cursor Horizontal Absolute: %d", arg);
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 1;
+   ty->termstate.wrapnext = 0;
+   if (ty->termstate.restrict_cursor)
+     {
+        if (ty->termstate.left_margin)
+          {
+             arg += ty->termstate.left_margin;
+          }
+        if (ty->termstate.right_margin)
+          {
+             max = ty->termstate.right_margin;
+          }
+     }
+   ty->cursor_state.cx = arg - 1;
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, min, max);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2504,17 +2533,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'F':
         _handle_esc_csi_cpl(ty, &b);
         break;
-      case 'G': // to column N
-        arg = _csi_arg_get(ty, &b);
-        DBG("CHA - Cursor Horizontal Absolute: %d", arg);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 1;
-        DBG("to column %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cx = arg - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+      case 'G':
+        _handle_esc_csi_cha(ty, &b);
         break;
       case 'H':
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
