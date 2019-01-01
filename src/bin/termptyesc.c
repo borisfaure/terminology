@@ -2365,6 +2365,50 @@ _handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
    ty->cursor_state.cx = old_cx;
 }
 
+static void
+_handle_esc_csi_cuu(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 1;
+   DBG("CUU - Cursor Up %d", arg);
+   ty->termstate.wrapnext = 0;
+   ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+   if (ty->termstate.restrict_cursor && (ty->termstate.top_margin > 0)
+       && (ty->cursor_state.cy < ty->termstate.top_margin))
+     {
+        ty->cursor_state.cy = ty->termstate.top_margin;
+     }
+}
+
+static void
+_handle_esc_csi_cud(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+
+   if (arg < 1)
+     arg = 1;
+
+   DBG("CUD - Cursor Down %d", arg);
+   ty->termstate.wrapnext = 0;
+   ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+   if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin > 0)
+       && (ty->cursor_state.cy >= ty->termstate.bottom_margin))
+     {
+        ty->cursor_state.cy = ty->termstate.bottom_margin - 1;
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2399,39 +2443,12 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
          /* TODO: SL */
          _handle_esc_csi_ich(ty, &b);
         break;
-      case 'A': // cursor up N (CUU)
+      case 'A':
         /* TODO: SR */
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 1;
-        DBG("cursor up %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cy = MAX(0, ty->cursor_state.cy - arg);
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-        if (ty->termstate.restrict_cursor && (ty->termstate.top_margin > 0)
-            && (ty->cursor_state.cy < ty->termstate.top_margin))
-          {
-             ty->cursor_state.cy = ty->termstate.top_margin;
-          }
+         _handle_esc_csi_cuu(ty, &b);
         break;
       case 'B': // cursor down N (CUD)
-CUD:
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 1;
-        DBG("cursor down %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
-        if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin > 0)
-            && (ty->cursor_state.cy >= ty->termstate.bottom_margin))
-          {
-             ty->cursor_state.cy = ty->termstate.bottom_margin - 1;
-          }
+        _handle_esc_csi_cud(ty, &b);
         break;
       case 'C': // cursor right N
 CUF:
@@ -2730,7 +2747,8 @@ CUF:
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
         break;
       case 'e': // cursor down N (VPR)
-        goto CUD;
+        _handle_esc_csi_cud(ty, &b);
+        break;
       case 'f': // cursor pos set (HVP)
 HVP:
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
