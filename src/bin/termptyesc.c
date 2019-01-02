@@ -2493,6 +2493,46 @@ _handle_esc_csi_cht(Termpty *ty, Eina_Unicode **ptr)
    _tab_forward(ty, arg);
 }
 
+static void
+_handle_esc_csi_ed(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 0;
+   /* 3J erases the backlog,
+    * 2J erases the screen,
+    * 1J erase from screen start to cursor,
+    * 0J erase form cursor to end of screen
+    */
+   DBG("ED/DECSED %d: erase in display", arg);
+   switch (arg)
+     {
+      case TERMPTY_CLR_END /* 0 */:
+      case TERMPTY_CLR_BEGIN /* 1 */:
+      case TERMPTY_CLR_ALL /* 2 */:
+         termpty_clear_screen(ty, arg);
+         break;
+      case 3:
+         termpty_clear_backlog(ty);
+         break;
+      default:
+         ERR("invalid EL/DECSEL argument %d", arg);
+         ty->decoding_error = EINA_TRUE;
+     }
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+}
+
+static void
+_handle_esc_csi_decsed(Termpty *ty, Eina_Unicode **ptr)
+{
+   WRN("DECSED - Selective Erase in Display: Unsupported");
+   _handle_esc_csi_ed(ty, ptr);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2557,43 +2597,9 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 'J':
         if (*b == '?')
-          {
-             b++;
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-             WRN("Unsupported selected erase in display %d", arg);
-             ty->decoding_error = EINA_TRUE;
-             break;
-          }
+          _handle_esc_csi_decsed(ty, &b);
         else
-          {
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-          }
-        if (arg < 1)
-          arg = 0;
-        /* 3J erases the backlog,
-         * 2J erases the screen,
-         * 1J erase from screen start to cursor,
-         * 0J erase form cursor to end of screen
-         */
-        DBG("ED/DECSED %d: erase in display", arg);
-        switch (arg)
-          {
-           case TERMPTY_CLR_END /* 0 */:
-           case TERMPTY_CLR_BEGIN /* 1 */:
-           case TERMPTY_CLR_ALL /* 2 */:
-              termpty_clear_screen(ty, arg);
-              break;
-           case 3:
-              termpty_clear_backlog(ty);
-              break;
-           default:
-              ERR("invalid EL/DECSEL argument %d", arg);
-              ty->decoding_error = EINA_TRUE;
-          }
+          _handle_esc_csi_ed(ty, &b);
         break;
       case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
         if (*b == '?')
