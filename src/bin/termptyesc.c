@@ -2533,6 +2533,37 @@ _handle_esc_csi_decsed(Termpty *ty, Eina_Unicode **ptr)
    _handle_esc_csi_ed(ty, ptr);
 }
 
+static void
+_handle_esc_csi_el(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg < 1)
+     arg = 0;
+   DBG("EL - Erase in Line: %d", arg);
+   switch (arg)
+     {
+      case TERMPTY_CLR_END:
+      case TERMPTY_CLR_BEGIN:
+      case TERMPTY_CLR_ALL:
+         termpty_clear_line(ty, arg, ty->w);
+         break;
+      default:
+         ERR("invalid EL/DECSEL argument %d", arg);
+         ty->decoding_error = EINA_TRUE;
+     }
+}
+
+static void
+_handle_esc_csi_decsel(Termpty *ty, Eina_Unicode **ptr)
+{
+   WRN("DECSEL - Selective Erase in Line: Unsupported");
+   _handle_esc_csi_el(ty, ptr);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2601,34 +2632,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         else
           _handle_esc_csi_ed(ty, &b);
         break;
-      case 'K': // 0K erase to end of line, 1K erase from screen start to cursor, 2K erase all of line
+      case 'K':
         if (*b == '?')
-          {
-             b++;
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-             WRN("Unsupported selected erase in line %d", arg);
-             ty->decoding_error = EINA_TRUE;
-             break;
-          }
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 0;
-        DBG("EL/DECSEL %d: erase in line", arg);
-        switch (arg)
-          {
-           case TERMPTY_CLR_END:
-           case TERMPTY_CLR_BEGIN:
-           case TERMPTY_CLR_ALL:
-              termpty_clear_line(ty, arg, ty->w);
-              break;
-           default:
-              ERR("invalid EL/DECSEL argument %d", arg);
-              ty->decoding_error = EINA_TRUE;
-          }
+          _handle_esc_csi_decsel(ty, &b);
+        else
+          _handle_esc_csi_el(ty, &b);
         break;
       case 'L': // insert N lines - cy
         EINA_FALLTHROUGH;

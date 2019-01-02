@@ -3,9 +3,9 @@
 
 typedef enum _Termpty_Clear
 {
-   TERMPTY_CLR_END,
-   TERMPTY_CLR_BEGIN,
-   TERMPTY_CLR_ALL
+   TERMPTY_CLR_END = 0,
+   TERMPTY_CLR_BEGIN = 1,
+   TERMPTY_CLR_ALL = 2
 } Termpty_Clear;
 
 void termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max);
