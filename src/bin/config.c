@@ -496,7 +496,7 @@ config_new(void)
         config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
         config->font.bolditalic = EINA_TRUE;
-        config->helper.email = eina_stringshare_add("xdg-email");;
+        config->helper.email = eina_stringshare_add("xdg-email");
         config->helper.url.general = eina_stringshare_add("xdg-open");
         config->helper.url.video = eina_stringshare_add("xdg-open");
         config->helper.url.image = eina_stringshare_add("xdg-open");
