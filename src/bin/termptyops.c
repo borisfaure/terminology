@@ -22,21 +22,16 @@
 #define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
 
 void
-termpty_cells_fill(Termpty *ty, Eina_Unicode codepoint,
-                   Termcell *cells, int count)
+termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
 {
    Termcell src;
 
    memset(&src, 0, sizeof(src));
-   src.codepoint = codepoint;
+   src.codepoint = 0;
    src.att = ty->termstate.att;
-   termpty_cell_fill(ty, &src, cells, count);
-}
+   src.att.link_id = 0;
 
-void
-termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
-{
-   termpty_cells_fill(ty, 0, cells, count);
+   termpty_cell_fill(ty, &src, cells, count);
 }
 
 
