@@ -1454,6 +1454,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->cursor_state.cy = (new_si.cy >= 0) ? new_si.cy : 0;
    ty->cursor_state.cx = (new_si.cx >= 0) ? new_si.cx : 0;
    ty->circular_offset = new_si.circular_offset;
+   ty->circular_offset2 = 0;
 
    ty->w = new_w;
    ty->h = new_h;
