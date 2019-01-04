@@ -5404,7 +5404,7 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if ((w <= 1) || (h <= 1))
+   if ((w <= 0) || (h <= 0))
      {
         w = 80;
         h = 24;
