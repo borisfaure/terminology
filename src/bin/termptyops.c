@@ -99,28 +99,36 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
    termio_scroll(ty->obj, 1, start_y, end_y);
 
-   if (start_y == 0 && end_y == ty->h - 1)
+   if ((start_y == 0 && end_y == (ty->h - 1)) &&
+       (ty->termstate.left_margin == 0) &&
+       (ty->termstate.right_margin == 0))
      {
-       // screen is a circular buffer now
-       ty->circular_offset--;
-       if (ty->circular_offset < 0)
-         ty->circular_offset = ty->h - 1;
+        // screen is a circular buffer now
+        ty->circular_offset--;
+        if (ty->circular_offset < 0)
+          ty->circular_offset = ty->h - 1;
 
-       cells = &(ty->screen[ty->circular_offset * ty->w]);
-       if (clear)
+        cells = &(ty->screen[ty->circular_offset * ty->w]);
+        if (clear)
           termpty_cells_clear(ty, cells, ty->w);
      }
    else
      {
-       cells = &(TERMPTY_SCREEN(ty, 0, end_y));
-       for (y = end_y; y > start_y; y--)
-         {
-            cells = &(TERMPTY_SCREEN(ty, 0, (y - 1)));
-            cells2 = &(TERMPTY_SCREEN(ty, 0, y));
-            TERMPTY_CELL_COPY(ty, cells, cells2, ty->w);
-         }
-       if (clear)
-          termpty_cells_clear(ty, cells, ty->w);
+        int x = ty->termstate.left_margin;
+        int w = ty->w - x;
+
+        if (ty->termstate.right_margin)
+          w = ty->termstate.right_margin - x;
+
+        cells = &(TERMPTY_SCREEN(ty, x, end_y));
+        for (y = end_y; y > start_y; y--)
+          {
+             cells = &(TERMPTY_SCREEN(ty, x, (y - 1)));
+             cells2 = &(TERMPTY_SCREEN(ty, x, y));
+             TERMPTY_CELL_COPY(ty, cells, cells2, w);
+          }
+        if (clear)
+          termpty_cells_clear(ty, cells, w);
      }
 }
 

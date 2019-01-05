@@ -89,6 +89,21 @@ _safechar(unsigned int c)
    return _str;
 }
 
+static Eina_Bool
+_cursor_is_within_margins(const Termpty *ty)
+{
+   return !(
+      ((ty->termstate.top_margin > 0)
+       && (ty->cursor_state.cy < ty->termstate.top_margin))
+      || ((ty->termstate.bottom_margin > 0)
+          && (ty->cursor_state.cy >= ty->termstate.bottom_margin))
+      || ((ty->termstate.left_margin > 0)
+          && (ty->cursor_state.cx < ty->termstate.left_margin))
+      || ((ty->termstate.right_margin > 0)
+          && (ty->cursor_state.cx >= ty->termstate.right_margin))
+      );
+}
+
 enum csi_arg_error {
      CSI_ARG_NO_VALUE = 1,
      CSI_ARG_ERROR = 2
@@ -2564,6 +2579,82 @@ _handle_esc_csi_decsel(Termpty *ty, Eina_Unicode **ptr)
    _handle_esc_csi_el(ty, ptr);
 }
 
+static void
+_handle_esc_csi_il(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int sy1, sy2, i;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+   DBG("IL - Insert Lines: %d", arg);
+
+   if (!_cursor_is_within_margins(ty))
+     return;
+
+   sy1 = ty->termstate.top_margin;
+   sy2 = ty->termstate.bottom_margin;
+   if (ty->termstate.bottom_margin == 0)
+     {
+        ty->termstate.top_margin = ty->cursor_state.cy;
+        ty->termstate.bottom_margin = ty->h;
+     }
+   else
+     {
+        ty->termstate.top_margin = ty->cursor_state.cy;
+        if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
+          ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
+     }
+   ERR("arg:%d", arg);
+   for (i = 0; i < arg; i++)
+     {
+        termpty_text_scroll_rev(ty, EINA_TRUE);
+     }
+   ty->termstate.top_margin = sy1;
+   ty->termstate.bottom_margin = sy2;
+   ty->cursor_state.cx = ty->termstate.left_margin;
+}
+
+static void
+_handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int sy1, sy2, i;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+   DBG("DL - Delete Lines: %d", arg);
+
+   if (!_cursor_is_within_margins(ty))
+     return;
+
+   sy1 = ty->termstate.top_margin;
+   sy2 = ty->termstate.bottom_margin;
+   if (ty->termstate.bottom_margin == 0)
+     {
+        ty->termstate.top_margin = ty->cursor_state.cy;
+        ty->termstate.bottom_margin = ty->h;
+     }
+   else
+     {
+        ty->termstate.top_margin = ty->cursor_state.cy;
+        if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
+          ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
+     }
+   for (i = 0; i < arg; i++)
+     {
+        termpty_text_scroll(ty, EINA_TRUE);
+     }
+   ty->termstate.top_margin = sy1;
+   ty->termstate.bottom_margin = sy2;
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2638,43 +2729,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         else
           _handle_esc_csi_el(ty, &b);
         break;
-      case 'L': // insert N lines - cy
-        EINA_FALLTHROUGH;
-      case 'M': // delete N lines - cy
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("%s %d lines", (*cc == 'M') ? "delete" : "insert", arg);
-        if ((ty->cursor_state.cy >= ty->termstate.top_margin) &&
-            ((ty->termstate.bottom_margin == 0) ||
-             (ty->cursor_state.cy < ty->termstate.bottom_margin)))
-          {
-             int sy1, sy2;
-
-             sy1 = ty->termstate.top_margin;
-             sy2 = ty->termstate.bottom_margin;
-             if (ty->termstate.bottom_margin == 0)
-               {
-                  ty->termstate.top_margin = ty->cursor_state.cy;
-                  ty->termstate.bottom_margin = ty->h;
-               }
-             else
-               {
-                  ty->termstate.top_margin = ty->cursor_state.cy;
-                  if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
-                    ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
-               }
-             for (i = 0; i < arg; i++)
-               {
-                  if (*cc == 'M')
-                    termpty_text_scroll(ty, EINA_TRUE);
-                  else
-                    termpty_text_scroll_rev(ty, EINA_TRUE);
-               }
-             ty->termstate.top_margin = sy1;
-             ty->termstate.bottom_margin = sy2;
-          }
+      case 'L':
+        _handle_esc_csi_il(ty, &b);
+        break;
+      case 'M':
+        _handle_esc_csi_dl(ty, &b);
         break;
       case 'P': // erase and scrollback N chars
         _handle_esc_csi_dch(ty, &b);
