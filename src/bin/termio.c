@@ -5401,9 +5401,11 @@ static void
 _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
 {
    Termio *sd = evas_object_smart_data_get(obj);
+   Eina_Bool first_time;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if ((w <= 1) || (h <= 1))
+   first_time = (sd->grid.h == 0);
+   if ((w <= 0) || (h <= 0))
      {
         w = 80;
         h = 24;
@@ -5413,12 +5415,13 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
      {
         if ((w == sd->grid.w) && (h == sd->grid.h)) return;
      }
-   evas_event_freeze(evas_object_evas_get(obj));
-   evas_object_textgrid_size_set(sd->grid.obj, w, h);
    sd->grid.w = w;
    sd->grid.h = h;
+   evas_event_freeze(evas_object_evas_get(obj));
+   evas_object_textgrid_size_set(sd->grid.obj, w, h);
    evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
-   evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
+   if (!first_time)
+     evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
    if (!sd->noreqsize)
      evas_object_size_hint_request_set(obj,
                                        sd->font.chw * sd->grid.w,
@@ -5654,7 +5657,11 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   if ((ow == w) && (oh == h)) return;
+   /* Do not resize if same size */
+   if ((ow == w) && (oh == h))
+     {
+        return;
+     }
    evas_object_smart_changed(obj);
    if (!sd->delayed_size_timer)
      sd->delayed_size_timer = ecore_timer_add(0.0, _smart_cb_delayed_size, obj);
@@ -6369,7 +6376,7 @@ termio_add(Evas_Object *win, Config *config,
    sd->pty->cb.bell.data = obj;
    sd->pty->cb.command.func = _smart_pty_command;
    sd->pty->cb.command.data = obj;
-   _smart_size(obj, w, h, EINA_FALSE);
+   _smart_size(obj, w, h, EINA_TRUE);
    return obj;
 }
 
