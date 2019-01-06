@@ -2608,7 +2608,6 @@ _handle_esc_csi_il(Termpty *ty, Eina_Unicode **ptr)
         if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
           ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
      }
-   ERR("arg:%d", arg);
    for (i = 0; i < arg; i++)
      {
         termpty_text_scroll_rev(ty, EINA_TRUE);
@@ -2653,6 +2652,7 @@ _handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
      }
    ty->termstate.top_margin = sy1;
    ty->termstate.bottom_margin = sy2;
+   ty->cursor_state.cx = ty->termstate.left_margin;
 }
 
 static int
@@ -3741,8 +3741,6 @@ _handle_decfi(Termpty *ty)
         if ((ty->cursor_state.cx == ty->w - 1)
             && (ty->termstate.lr_margins != 0))
           return;
-        ERR("ty->cursor_state.cx=%d", ty->cursor_state.cx);
-        ERR("ty->cursor_state.cy=%d", ty->cursor_state.cy);
         /* cursor forward */
         ty->cursor_state.cx++;
      }
