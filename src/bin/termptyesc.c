@@ -2655,6 +2655,43 @@ _handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
    ty->cursor_state.cx = ty->termstate.left_margin;
 }
 
+static void
+_handle_esc_csi_su(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int i;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+   DBG("SU - Scroll Up: %d", arg);
+   for (i = 0; i < arg; i++)
+     termpty_text_scroll(ty, EINA_TRUE);
+}
+
+static void
+_handle_esc_csi_sd(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int i;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if (arg == 0)
+     {
+        WRN("Track Mouse: TODO");
+        return;
+     }
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
+   DBG("SD - Scroll Down: %d", arg);
+   for (i = 0; i < arg; i++)
+     termpty_text_scroll_rev(ty, EINA_TRUE);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2735,26 +2772,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'M':
         _handle_esc_csi_dl(ty, &b);
         break;
-      case 'P': // erase and scrollback N chars
+      case 'P':
         _handle_esc_csi_dch(ty, &b);
         break;
-      case 'S': // scroll up N lines
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("scroll up %d lines", arg);
-        for (i = 0; i < arg; i++)
-          termpty_text_scroll(ty, EINA_TRUE);
+      case 'S':
+        _handle_esc_csi_su(ty, &b);
         break;
-      case 'T': // scroll down N lines
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
-        DBG("scroll down %d lines", arg);
-        for (i = 0; i < arg; i++)
-          termpty_text_scroll_rev(ty, EINA_TRUE);
+      case 'T':
+        _handle_esc_csi_sd(ty, &b);
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(ty, &b);
