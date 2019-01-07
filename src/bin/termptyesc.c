@@ -2701,6 +2701,13 @@ _handle_xterm_unset_title_modes(Termpty *ty EINA_UNUSED,
 }
 
 static void
+_handle_sixel_regis_graphics_attributes(Termpty *ty EINA_UNUSED,
+                                        Eina_Unicode **ptr EINA_UNUSED)
+{
+   DBG("Sixel/ReGIS Graphics Attributes: TODO");
+}
+
+static void
 _handle_esc_csi_decst8c(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
@@ -2816,7 +2823,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_dch(ty, &b);
         break;
       case 'S':
-        _handle_esc_csi_su(ty, &b);
+        if (*b == '?')
+          _handle_sixel_regis_graphics_attributes(ty, &b);
+        else
+          _handle_esc_csi_su(ty, &b);
         break;
       case 'T':
         if (*b == '?')
