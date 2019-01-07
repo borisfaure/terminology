@@ -2932,7 +2932,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              else
                {
                   // Secondary device attributes
-                  snprintf(bf, sizeof(bf), "\033[?64;1;2;6;9;15;18;21;22c");
+                  snprintf(bf, sizeof(bf), "\033[?64;1;9;15;18;21;22c");
                }
              termpty_write(ty, bf, strlen(bf));
           }
