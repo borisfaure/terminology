@@ -2692,6 +2692,15 @@ _handle_esc_csi_sd(Termpty *ty, Eina_Unicode **ptr)
      termpty_text_scroll_rev(ty, EINA_TRUE);
 }
 
+static void
+_handle_xterm_unset_title_modes(Termpty *ty EINA_UNUSED,
+                                Eina_Unicode **ptr EINA_UNUSED,
+                                const Eina_Unicode * const end EINA_UNUSED)
+{
+   DBG("Unset Title Modes: TODO");
+}
+
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2779,7 +2788,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_su(ty, &b);
         break;
       case 'T':
-        _handle_esc_csi_sd(ty, &b);
+        if (*b == '?')
+          _handle_xterm_unset_title_modes(ty, &b, be);
+        else
+          _handle_esc_csi_sd(ty, &b);
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(ty, &b);
