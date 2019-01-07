@@ -2700,6 +2700,37 @@ _handle_xterm_unset_title_modes(Termpty *ty EINA_UNUSED,
    DBG("Unset Title Modes: TODO");
 }
 
+static void
+_handle_esc_csi_decst8c(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+   int i;
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   if ((arg != -CSI_ARG_NO_VALUE) && (arg != 5))
+     return;
+
+   DBG("DECST8C - Set Tab at Every 8 Columns: %d", arg);
+   termpty_clear_tabs_on_screen(ty);
+   for (i = 0; i < ty->w; i += TAB_WIDTH)
+     {
+        TAB_SET(ty, i);
+     }
+}
+
+static void
+_handle_esc_csi_ctc(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("CTC - Cursor Tab Control: %d", arg);
+   /* TODO */
+}
 
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
@@ -2792,6 +2823,12 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           _handle_xterm_unset_title_modes(ty, &b, be);
         else
           _handle_esc_csi_sd(ty, &b);
+        break;
+      case 'W':
+        if (*b == '?')
+          _handle_esc_csi_decst8c(ty, &b);
+        else
+          _handle_esc_csi_ctc(ty, &b);
         break;
       case 'X': // erase N chars
         arg = _csi_arg_get(ty, &b);
