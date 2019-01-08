@@ -2735,8 +2735,25 @@ _handle_esc_csi_ctc(Termpty *ty, Eina_Unicode **ptr)
 
    if (arg == -CSI_ARG_ERROR)
      return;
-   DBG("CTC - Cursor Tab Control: %d", arg);
-   /* TODO */
+   switch (arg)
+     {
+      case -CSI_ARG_NO_VALUE:
+         EINA_FALLTHROUGH;
+      case 0:
+        TAB_SET(ty, ty->cursor_state.cx);
+        break;
+      case 2:
+        TAB_UNSET(ty, ty->cursor_state.cx);
+        break;
+      case 4:
+        EINA_FALLTHROUGH;
+      case 5:
+        termpty_clear_tabs_on_screen(ty);
+        break;
+      default:
+         ERR("invalid CTC argument %d", arg);
+         ty->decoding_error = EINA_TRUE;
+     }
 }
 
 static int
