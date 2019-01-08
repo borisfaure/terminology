@@ -2717,7 +2717,10 @@ _handle_esc_csi_decst8c(Termpty *ty, Eina_Unicode **ptr)
    if (arg == -CSI_ARG_ERROR)
      return;
    if ((arg != -CSI_ARG_NO_VALUE) && (arg != 5))
-     return;
+     {
+        ty->decoding_error = EINA_TRUE;
+        return;
+     }
 
    DBG("DECST8C - Set Tab at Every 8 Columns: %d", arg);
    termpty_clear_tabs_on_screen(ty);
@@ -2735,6 +2738,8 @@ _handle_esc_csi_ctc(Termpty *ty, Eina_Unicode **ptr)
 
    if (arg == -CSI_ARG_ERROR)
      return;
+
+   DBG("CTC - Cursor Tab Control: %d", arg);
    switch (arg)
      {
       case -CSI_ARG_NO_VALUE:
@@ -2753,6 +2758,35 @@ _handle_esc_csi_ctc(Termpty *ty, Eina_Unicode **ptr)
       default:
          ERR("invalid CTC argument %d", arg);
          ty->decoding_error = EINA_TRUE;
+     }
+}
+
+static void
+_handle_esc_csi_tbc(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("TBC - Tab Clear: %d", arg);
+   switch (arg)
+     {
+      case -CSI_ARG_NO_VALUE:
+         EINA_FALLTHROUGH;
+      case 0:
+        TAB_UNSET(ty, ty->cursor_state.cx);
+        break;
+      case 2:
+         EINA_FALLTHROUGH;
+      case 3:
+         EINA_FALLTHROUGH;
+      case 5:
+        termpty_clear_tabs_on_screen(ty);
+        break;
+      default:
+        ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
+        ty->decoding_error = EINA_TRUE;
      }
 }
 
@@ -2971,26 +3005,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'f':
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
        break;
-      case 'g': // clear tabulation
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 0)
-          arg = 0;
-        if (arg == 0)
-          {
-             int cx = ty->cursor_state.cx;
-             TAB_UNSET(ty, cx);
-          }
-        else if (arg == 3)
-          {
-             termpty_clear_tabs_on_screen(ty);
-          }
-        else
-          {
-             ERR("Tabulation Clear (TBC) with invalid argument: %d", arg);
-             ty->decoding_error = EINA_TRUE;
-          }
+      case 'g':
+        _handle_esc_csi_tbc(ty, &b);
         break;
       case 'h':
         _handle_esc_csi_reset_mode(ty, *cc, b, be);
