@@ -2790,6 +2790,19 @@ _handle_esc_csi_tbc(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+static void
+_handle_esc_csi_ech(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("ECH - Erase Character: %d", arg);
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+   termpty_clear_line(ty, TERMPTY_CLR_END, arg);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2891,13 +2904,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         else
           _handle_esc_csi_ctc(ty, &b);
         break;
-      case 'X': // erase N chars
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-        DBG("ECH: erase %d chars", arg);
-        termpty_clear_line(ty, TERMPTY_CLR_END, arg);
+      case 'X':
+        _handle_esc_csi_ech(ty, &b);
         break;
       case 'Z':
           {
