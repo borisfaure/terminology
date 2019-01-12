@@ -57,7 +57,10 @@ jobs:
           rm -fr *@@tyfuzz@exe *@@tyls@exe *@@typop@exe *@@tyq@exe
           rm -fr *@@tysend@exe
           cd /terminology/build/
-          bash <(curl -s https://codecov.io/bash)
+          curl -s https://codecov.io/bash > .codecov
+          chmod +x .codecov
+          sed -i.bak 's/execdir/exec/' .codecov
+          ./.codecov -Z
   build_clang:
     docker:
       - image: borisfaure/terminology-ci:latest
