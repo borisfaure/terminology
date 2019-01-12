@@ -27,7 +27,11 @@ jobs:
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
-      - run: |
+      - run:
+        name: compile_gcc
+        environment:
+          CFLAGS: -O0 -g
+        command: |
           cd /terminology
           meson -Dtests=true -Dfuzzing=true -Db_coverage=true . build
           meson configure build
