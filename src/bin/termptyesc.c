@@ -2803,6 +2803,31 @@ _handle_esc_csi_ech(Termpty *ty, Eina_Unicode **ptr)
    termpty_clear_line(ty, TERMPTY_CLR_END, arg);
 }
 
+static void
+_handle_esc_csi_cbt(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int cx = ty->cursor_state.cx;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("CBT - Cursor Horizontal Backward Tabulation: %d", arg);
+
+   TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
+   for (; arg > 0; arg--)
+     {
+        do
+          {
+             cx--;
+          }
+        while ((cx >= 0) && (!TAB_TEST(ty, cx)));
+     }
+
+   ty->cursor_state.cx = cx;
+   TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2908,26 +2933,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_ech(ty, &b);
         break;
       case 'Z':
-          {
-             int cx = ty->cursor_state.cx;
-
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-             DBG("Cursor Backward Tabulation (CBT): %d", arg);
-             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
-             for (; arg > 0; arg--)
-               {
-                  do
-                    {
-                       cx--;
-                    }
-                  while ((cx >= 0) && (!TAB_TEST(ty, cx)));
-               }
-
-             ty->cursor_state.cx = cx;
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-          }
+        _handle_esc_csi_cbt(ty, &b);
         break;
       case '`': // HPA
         arg = _csi_arg_get(ty, &b);
