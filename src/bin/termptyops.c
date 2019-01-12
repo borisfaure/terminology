@@ -177,10 +177,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    Termcell *cells;
    int i, j;
    int origin = ty->termstate.left_margin;
-   int max_right = ty->w;
 
-   if (ty->termstate.right_margin)
-     max_right = ty->termstate.right_margin;
 
    /* TODO: have content_change_box*/
    termio_content_change(ty->obj, ty->cursor_state.cx, ty->cursor_state.cy, len);
@@ -188,7 +185,14 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
    for (i = 0; i < len; i++)
      {
+        int max_right = ty->w;
         Eina_Unicode g;
+
+        if (ty->termstate.right_margin &&
+            (ty->cursor_state.cx < ty->termstate.right_margin))
+          {
+             max_right = ty->termstate.right_margin;
+          }
 
         if (ty->termstate.wrapnext)
           {
@@ -228,6 +232,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->termstate.combining_strike = 0;
              cells[ty->cursor_state.cx].att.strike = 1;
           }
+
         cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
         if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (max_right - 1))))
           {
@@ -235,6 +240,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
                                              &(cells[ty->cursor_state.cx + 1]), 1);
           }
+
         if (ty->termstate.wrap)
           {
              unsigned char offset = 1;
