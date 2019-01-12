@@ -40,7 +40,7 @@ cup.sh 90545cad6d8202564e813fe9f80294f3
 decaln.sh 9c0cf4de336193bcdaed6ba6c0d6f590
 decawm.sh 84321e76f07b40cf9462238ec0919dc0
 decbi.sh 8153bff12a0d529cb8ba0dbff036a1ee
-decfi.sh e93690447902b923d3d9d2ae72a31de4
+decfi.sh f241509d502fd87555dda1c7469c7568
 deccara-rectangular-no-restrict-cursor.sh 0d04ff5f4a266917528ff8d17846c18a
 deccara-rectangular-restrict-cursor.sh 9f23ac6a3423ba8bf7b8af5116e2843b
 deccara-no-rectangular-no-restrict-cursor.sh 692da353130f5fdaffc4e62a9102147c
@@ -60,8 +60,8 @@ ed-4.sh 574f37ac24ead26ef86c03d7dfae3152
 el.sh abca9d5e5990bed6bd72a7ab9f72b849
 il.sh 1788258650a94f2568d05f749b6cf578
 dl.sh e1e0ba19345d2ebf888f5a3e37f27037
-su.sh 591185f42b75daa61726217033a17eaf
-sd.sh 4bfda7ec3e6192acab077de2bc270525
+su.sh 5531e03205215f228c2308a1413cc7d5
+sd.sh bc272be00c4164b38ac67278e9f9c51a
 decst8c.sh 0ea805e8f4c2626ce66c566a10548d0f
 ctc.sh d35eeacdb2e99f5ac8cc3c4e8d72f8b0
 tbc.sh d0216e4056e5ab1cb4d411b6d6074785
