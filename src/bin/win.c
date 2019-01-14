@@ -1628,6 +1628,13 @@ win_new(const char *name, const char *role, const char *title,
         return NULL;
      }
 
+   if (_win_log_dom < 0)
+     {
+        _win_log_dom = eina_log_domain_register("win", NULL);
+        if (_win_log_dom < 0)
+          EINA_LOG_CRIT("Could not create logging domain '%s'.", "win");
+     }
+
    tc = (Term_Container*) wn;
    tc->term_next = _win_term_next;
    tc->term_prev = _win_term_prev;
@@ -5598,13 +5605,6 @@ term_new(Win *wn, Config *config, const char *cmd,
 
    if (!config) abort();
 
-   /* TODO: clean up that */
-   if (_win_log_dom < 0)
-     {
-        _win_log_dom = eina_log_domain_register("win", NULL);
-        if (_win_log_dom < 0)
-          EINA_LOG_CRIT("Could not create logging domain '%s'.", "win");
-     }
    termpty_init();
    miniview_init();
    gravatar_init();
