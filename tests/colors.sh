@@ -50,7 +50,7 @@ printf 'Grayscale ramp:\n';
 for COLOR in $(seq 232 255); do
     printf '\033[48;5;%sm  ' "${COLOR}"
 done
-printf '\x1b[0m\n';
+printf '\033[0m\n';
 
 # restrict cursor
 printf '\033[?6h'
