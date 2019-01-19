@@ -2853,7 +2853,7 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
 
         if (arg <= 0)
           {
-          arg = 1;
+             arg = 1;
           }
         else if (arg > screen_size)
           {
