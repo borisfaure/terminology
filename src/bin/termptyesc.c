@@ -2869,6 +2869,77 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+static void
+_handle_esc_csi_da(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   char bf[32];
+   char start = 'X';
+   int arg;
+   int len;
+
+   if (b)
+     {
+        start = *b;
+     }
+   arg = _csi_arg_get(ty, &b);
+
+   if ((arg == -CSI_ARG_ERROR) || (arg > 0))
+     return;
+
+   DBG("DA - Device Attributes");
+   switch (start)
+     {
+      case '=':
+        /* Tertiary device attributes
+         * Device ID is set to ~~TY in ascii:
+         * - '~' is 7E
+         * - 'T' is 54
+         * - 'Y' is 59
+         */
+        len = snprintf(bf, sizeof(bf), "\033P!|7E7E5459\033\\");
+        break;
+      case '>':
+        /* Secondary device attributes
+         *  0 → VT100
+         *  1 → VT220
+         *  2 → VT240
+         * 18 → VT330
+         * 19 → VT340
+         * 24 → VT320
+         * 41 → VT420
+         * 61 → VT510
+         * 64 → VT520
+         * 65 → VT525
+         */
+        len = snprintf(bf, sizeof(bf), "\033[>61;337;%ic", 0);
+        break;
+      default:
+        /* Primary device attributes
+         * 1       132 columns
+         * 2       Printer port
+         * 4       Sixel
+         * 6       Selective erase
+         * 7       Soft character set (DRCS)
+         * 8       User-defined keys (UDKs)
+         * 9       National replacement character sets (NRCS) (International terminal only)
+         * 12      Yugoslavian (SCS)
+         * 15      Technical character set
+         * 18      Windowing capability
+         * 21      Horizontal scrolling
+         * 22      Color
+         * 23      Greek
+         * 24      Turkish
+         * 42      ISO Latin-2 character set
+         * 44      PCTerm
+         * 45      Soft key map
+         * 46      ASCII emulation
+         */
+        len = snprintf(bf, sizeof(bf), "\033[?64;1;9;15;18;21;22c");
+     }
+   termpty_write(ty, bf, len);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -2985,32 +3056,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'b':
         _handle_esc_csi_rep(ty, &b);
         break;
-      case 'c': // query device attributes
-        DBG("query device attributes");
-          {
-             char bf[32];
-             if (b && *b == '>')
-               {
-                  // Primary device attributes
-                  //  0 → VT100
-                  //  1 → VT220
-                  //  2 → VT240
-                  // 18 → VT330
-                  // 19 → VT340
-                  // 24 → VT320
-                  // 41 → VT420
-                  // 61 → VT510
-                  // 64 → VT520
-                  // 65 → VT525
-                  snprintf(bf, sizeof(bf), "\033[>41;337;%ic", 0);
-               }
-             else
-               {
-                  // Secondary device attributes
-                  snprintf(bf, sizeof(bf), "\033[?64;1;9;15;18;21;22c");
-               }
-             termpty_write(ty, bf, strlen(bf));
-          }
+      case 'c':
+        _handle_esc_csi_da(ty, &b);
         break;
       case 'd': // to row N
         arg = _csi_arg_get(ty, &b);

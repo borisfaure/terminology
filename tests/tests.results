@@ -16,9 +16,9 @@ cursor-shape-5.sh 21332951c006a2d91cf0f227758ff477
 cursor-shape-6.sh 21332951c006a2d91cf0f227758ff477
 cursor-shape-7.sh 5d0dadf7273d918cbcd99df95e56795e
 tabs.sh 960b74686e23e8e39c3446768b9efc75
-xterm-osc-0-title-icon.sh edae688004c15739bcc5a10f51faa6ed
-xterm-osc-1-icon.sh be549a661504e4dcfb974dcccd7b0bdf
-xterm-osc-2-title.sh e8485fd460aba2a2ae1d4e63a1143b32
+xterm-osc-0-title-icon.sh 020e0953ecb230afdb4c28a8012556bb
+xterm-osc-1-icon.sh 36bd475d00e0ad408063dce8c8ea6fbd
+xterm-osc-2-title.sh 957a0748020027e6723a04aaff3acd3a
 dsr-cpr.sh a03cfba07a7b76075a4126f452d48ad5
 dsr-dir.sh 28b0d8b4b60f3c61d49cee69895a07b2
 dsr-kbd.sh 1c474c101697080a85563d9b5bc1505c
@@ -70,3 +70,4 @@ text_append_after_right_margin.sh 26b334188d39e2b12538a6ca91ca168c
 cbt.sh 417cd352d3eba45d6016df67a0314444
 hpa.sh 0f86ca83e072d41b89dd1a012f0749a7
 rep.sh b91ebb46fb5ebd95aa2cb87ad12bb4ba
+da.sh 3083fbec33befe5299ca3726a19fcff2
