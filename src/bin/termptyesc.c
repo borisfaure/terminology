@@ -2836,10 +2836,43 @@ _handle_esc_csi_cbt(Termpty *ty, Eina_Unicode **ptr)
    TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
 }
 
+static void
+_handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("REP - Repeat last character %d times", arg);
+
+   if (ty->last_char)
+     {
+        int screen_size = ty->w * ty->h;
+        int i;
+
+        if (arg <= 0)
+          {
+          arg = 1;
+          }
+        else if (arg > screen_size)
+          {
+             /* if value is too large, restrict it to something that makes
+              * rendering correct (but not in the backlog, but who cares…)
+              */
+             arg = screen_size + (arg % screen_size);
+          }
+        for (i = 0; i < arg; i++)
+          {
+             termpty_text_append(ty, &ty->last_char, 1);
+          }
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   int arg, i;
+   int arg;
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
 
@@ -2946,20 +2979,11 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case '`':
         _handle_esc_csi_cha(ty, &b, cc);
         break;
-      case 'a': // cursor right N (HPR)
+      case 'a':
         _handle_esc_csi_cuf(ty, &b);
         break;
-      case 'b': // repeat last char
-        if (ty->last_char)
-          {
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-             TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
-             DBG("REP: repeat %d times last char %x", arg, ty->last_char);
-             for (i = 0; i < arg; i++)
-               termpty_text_append(ty, &ty->last_char, 1);
-          }
+      case 'b':
+        _handle_esc_csi_rep(ty, &b);
         break;
       case 'c': // query device attributes
         DBG("query device attributes");
@@ -3123,6 +3147,7 @@ error:
 #if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
+        int i;
         Eina_Strbuf *bf = eina_strbuf_new();
 
         for (i = 0; c + i <= cc && i < 100; i++)
