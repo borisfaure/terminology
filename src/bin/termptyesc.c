@@ -2467,14 +2467,22 @@ _handle_esc_csi_cub(Termpty *ty, Eina_Unicode **ptr)
 }
 
 static void
-_handle_esc_csi_cha(Termpty *ty, Eina_Unicode **ptr)
+_handle_esc_csi_cha(Termpty *ty, Eina_Unicode **ptr,
+                    const Eina_Unicode *cc)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
    int min = 0;
    int max = ty->w;
 
-   DBG("CHA - Cursor Horizontal Absolute: %d", arg);
+   if (*cc == '`')
+     {
+        DBG("HPA - Horizontal Position Absolute: %d", arg);
+     }
+   else
+     {
+        DBG("CHA - Cursor Horizontal Absolute: %d", arg);
+     }
    if (arg == -CSI_ARG_ERROR)
      return;
    if (arg < 1)
@@ -2882,7 +2890,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_cpl(ty, &b);
         break;
       case 'G':
-        _handle_esc_csi_cha(ty, &b);
+        _handle_esc_csi_cha(ty, &b, cc);
         break;
       case 'H':
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
@@ -2935,30 +2943,8 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'Z':
         _handle_esc_csi_cbt(ty, &b);
         break;
-      case '`': // HPA
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        DBG("Horizontal Position Absolute (HPA): %d", arg);
-        arg--;
-        if (arg < 0)
-          arg = 0;
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cx = arg;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        if (ty->termstate.restrict_cursor)
-          {
-             if ((ty->termstate.right_margin != 0)
-                 && (ty->cursor_state.cx >= ty->termstate.right_margin))
-               {
-                  ty->cursor_state.cx = ty->termstate.right_margin - 1;
-               }
-             if ((ty->termstate.left_margin != 0)
-                 && (ty->cursor_state.cx < ty->termstate.left_margin))
-               {
-                  ty->cursor_state.cx = ty->termstate.left_margin;
-               }
-          }
+      case '`':
+        _handle_esc_csi_cha(ty, &b, cc);
         break;
       case 'a': // cursor right N (HPR)
         _handle_esc_csi_cuf(ty, &b);
