@@ -40,9 +40,11 @@ _shortcut_delete(void *data,
    evas_object_size_hint_min_get(hs, &w, NULL);
    evas_object_size_hint_min_get(bx, &min_w, &min_h);
    min_w -= w;
-   evas_object_size_hint_min_set(bx, min_w, min_h);
 
    evas_object_del(hs);
+
+   evas_object_size_hint_min_set(bx, min_w, min_h);
+
    keyin_remove_config(cfg_key);
 
    eina_stringshare_del(cfg_key->keyname);
@@ -208,6 +210,7 @@ _parent_hide_cb(void *data,
                 void *_event_info EINA_UNUSED)
 {
    Keys_Ctx *ctx = data;
+
    _hover_del(ctx);
 }
 
@@ -218,31 +221,30 @@ _parent_del_cb(void *data,
                void *_event_info EINA_UNUSED)
 {
    Keys_Ctx *ctx = data;
-   _hover_del(ctx);
 
-   evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_DEL,
-                                  _parent_del_cb);
-   evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_HIDE,
-                                  _parent_hide_cb);
+   ctx->frame = NULL;
+   _hover_del(ctx);
    free(ctx);
 }
 
 static void
 _hover_del(Keys_Ctx *ctx)
 {
-   if (ctx->layout)
+   Evas_Object *layout = ctx->layout;
+
+   ctx->layout = NULL;
+   if (layout && ctx->frame)
      {
         evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_KEY_UP,
                                        _cb_key_up);
-        evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_del(layout, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_mouse_down);
         evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_MOVE,
                                        _parent_move_cb);
         evas_object_event_callback_del(ctx->frame, EVAS_CALLBACK_RESIZE,
                                        _parent_resize_cb);
-        evas_object_del(ctx->layout);
+        evas_object_del(layout);
      }
-   ctx->layout = NULL;
 }
 
 static void
@@ -250,7 +252,7 @@ _on_shortcut_add(void *data,
                  Evas_Object *bt,
                  void *_event_info EINA_UNUSED)
 {
-   Evas_Object *o, *oe;
+   Evas_Object *oe;
    Evas_Object *bx = data;
    Keys_Ctx *ctx;
 
@@ -258,23 +260,20 @@ _on_shortcut_add(void *data,
    assert(ctx);
 
    assert(ctx->layout == NULL);
-   ctx->layout = o = elm_layout_add(bt);
+   ctx->layout = elm_layout_add(bt);
    evas_object_data_set(ctx->layout, "ctx", ctx);
-   oe = elm_layout_edje_get(o);
+   oe = elm_layout_edje_get(ctx->layout);
    theme_apply(oe, ctx->config, "terminology/keybinding");
    theme_auto_reload_enable(oe);
-   elm_layout_text_set(o, "label", _("Please press key sequence"));
-   evas_object_show(o);
+   elm_layout_text_set(ctx->layout, "label", _("Please press key sequence"));
+   evas_object_show(ctx->layout);
 
    evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_KEY_UP,
                                   _cb_key_up, bx);
-   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_MOUSE_DOWN,
+   evas_object_event_callback_add(ctx->layout, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
-   elm_object_focus_set(ctx->frame, EINA_TRUE);
-   elm_object_focus_allow_set(ctx->frame, EINA_TRUE);
 
    _hover_sizing_eval(ctx);
-
 }
 
 static Evas_Object *
@@ -390,6 +389,10 @@ options_keys(Evas_Object *opbox, Evas_Object *term)
                                   _parent_del_cb, ctx);
    evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
                                   _parent_hide_cb, ctx);
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_MOVE,
+                                  _parent_move_cb, ctx);
+   evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_RESIZE,
+                                  _parent_resize_cb, ctx);
 
    bx = elm_box_add(opbox);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -12,6 +12,7 @@ collections {
    group { name: "terminology/keybinding";
       parts {
          part { name: "shadow"; type: RECT;
+            mouse_events: 1;
             description { state: "default" 0.0;
                color: 0 0 0 196;
             }

@@ -73,19 +73,6 @@ _cb_op_tmp_chg(void *data, Evas_Object *obj, void *_event EINA_UNUSED)
    config->temporary = elm_check_state_get(obj);
 }
 
-static Eina_Bool
-_cb_op_del_delay(void *data)
-{
-   Options_Ctx *ctx = data;
-
-   evas_object_del(ctx->opbox);
-   evas_object_del(ctx->frame);
-
-   free(ctx);
-   elm_cache_all_flush();
-   return EINA_FALSE;
-}
-
 static void
 _cb_opdt_hide_done(void *data,
                    Evas_Object *_obj EINA_UNUSED,
@@ -123,7 +110,11 @@ _cb_opdt_hide_done2(void *data,
    edje_object_signal_callback_del(ctx->base, "optdetails,hide,done",
                                    "terminology",
                                    _cb_opdt_hide_done2);
-   ecore_timer_add(10.0, _cb_op_del_delay, ctx);
+   evas_object_del(ctx->opbox);
+   evas_object_del(ctx->frame);
+
+   free(ctx);
+   elm_cache_all_flush();
 }
 
 static void
