@@ -2940,6 +2940,19 @@ _handle_esc_csi_da(Termpty *ty, Eina_Unicode **ptr)
    termpty_write(ty, bf, len);
 }
 
+static void
+_handle_esc_csi_uts(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("UTS - Unset Tab Stop: %d", arg);
+   TERMPTY_RESTRICT_FIELD(arg, 0, ty->w);
+   TAB_UNSET(ty, arg);
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -3059,16 +3072,21 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'c':
         _handle_esc_csi_da(ty, &b);
         break;
-      case 'd': // to row N
-        arg = _csi_arg_get(ty, &b);
-        if (arg == -CSI_ARG_ERROR)
-          goto error;
-        if (arg < 1)
-          arg = 1;
-        DBG("to row %d", arg);
-        ty->termstate.wrapnext = 0;
-        ty->cursor_state.cy = arg - 1;
-        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+      case 'd':
+        if (*(cc-1) == ' ')
+          _handle_esc_csi_uts(ty, &b);
+        else
+          {
+             arg = _csi_arg_get(ty, &b);
+             if (arg == -CSI_ARG_ERROR)
+               goto error;
+             if (arg < 1)
+               arg = 1;
+             DBG("to row %d", arg);
+             ty->termstate.wrapnext = 0;
+             ty->cursor_state.cy = arg - 1;
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
+          }
         break;
       case 'e':
         _handle_esc_csi_cud(ty, &b);
