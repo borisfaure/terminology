@@ -3122,6 +3122,12 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         WRN("TODO: Media Copy (?:%s)", (*b == '?') ? "yes": "no");
         ty->decoding_error = EINA_TRUE;
         break;
+      case 'j':
+        _handle_esc_csi_cub(ty, &b);
+        break;
+      case 'k':
+        _handle_esc_csi_cuu(ty, &b);
+        break;
       case 'l':
         _handle_esc_csi_reset_mode(ty, *cc, b, be);
         break;

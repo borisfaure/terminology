@@ -11,31 +11,31 @@ printf '\033[H'
 
 # RIGHT
 # cursor right
-printf '\033[CA\033[2CB\033[;CC'
+printf '\033[aA\033[2aB\033[;aC'
 # test on boundaries
-printf '\033[2;80HZ\033[CA'
+printf '\033[2;80HZ\033[aA'
 
 # LEFT
 # go to 12;2 (CUP)
 printf '\033[2;12H'
 # cursor left
-printf 'C\033[DD\033[;Dc\033[3Dd'
+printf 'C\033[jD\033[;jc\033[3jd'
 # Go left on start of line
-printf '\033[2;0HE\033[DF'
+printf '\033[2;0HE\033[jF'
 
 # DOWN
 # cursor down
-printf '\033[BG\033[;BH\033[3BI'
+printf '\033[eG\033[;eH\033[3eI'
 # At Bottom
-printf '\033[26;0HM\033[BN'
+printf '\033[26;0HM\033[eN'
 
 # UP
 # cursor up
 # go to 26;6 (CUP)
 printf '\033[26;6H'
-printf 'O\033[AP\033[;AQ\033[0AR'
+printf 'O\033[kP\033[;kQ\033[0kR'
 # At top
-printf '\033[0;26Hp\033[Aq'
+printf '\033[0;26Hp\033[kq'
 
 # WITH CURSOR RESTRICTION
 # set top/bottom margins:
@@ -53,10 +53,10 @@ printf '\033[0m\033[46;31;3m'
 # restrict cursor
 printf '\033[?6h'
 # RIGHT
-printf '\033[5;16H#\033[C>'
+printf '\033[5;16H#\033[a>'
 # LEFT
-printf '\033[5;0H#\033[D<'
+printf '\033[5;0H#\033[j<'
 # UP
-printf '\033[0;5H#\033[A^'
+printf '\033[0;5H#\033[k^'
 # DOWN
-printf '\033[11;8H#\033[Bv'
+printf '\033[11;8H#\033[ev'
