@@ -20,7 +20,6 @@ Requirements
 ------------
 
   * `efl` (>= 1.20.0)
-  * `elementary` (>= 1.20.0)
 
 Please see http://www.enlightenment.org for information on these.
 
