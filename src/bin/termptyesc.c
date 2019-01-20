@@ -2402,7 +2402,8 @@ _handle_esc_csi_cuu(Termpty *ty, Eina_Unicode **ptr)
 }
 
 static void
-_handle_esc_csi_cud(Termpty *ty, Eina_Unicode **ptr)
+_handle_esc_csi_cud_or_vpr(Termpty *ty, Eina_Unicode **ptr,
+                           const Eina_Unicode *cc)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
@@ -2413,7 +2414,15 @@ _handle_esc_csi_cud(Termpty *ty, Eina_Unicode **ptr)
    if (arg < 1)
      arg = 1;
 
-   DBG("CUD - Cursor Down %d", arg);
+   if (*cc == 'e')
+     {
+        DBG("VPR - Vertical Position Relative: %d", arg);
+     }
+   else
+     {
+        DBG("CUD - Cursor Down: %d", arg);
+     }
+
    ty->termstate.wrapnext = 0;
    ty->cursor_state.cy = MIN(ty->h - 1, ty->cursor_state.cy + arg);
    TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
@@ -2992,7 +3001,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
          _handle_esc_csi_cuu(ty, &b);
         break;
       case 'B':
-        _handle_esc_csi_cud(ty, &b);
+        _handle_esc_csi_cud_or_vpr(ty, &b, cc);
         break;
       case 'C':
         _handle_esc_csi_cuf(ty, &b);
@@ -3089,7 +3098,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         break;
       case 'e':
-        _handle_esc_csi_cud(ty, &b);
+        _handle_esc_csi_cud_or_vpr(ty, &b, cc);
         break;
       case 'f':
         _handle_esc_csi_cursor_pos_set(ty, &b, cc);
