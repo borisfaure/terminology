@@ -41,7 +41,10 @@ CB(disable_visual_bell, 1);
 CB(bell_rings, 0);
 CB(flicker_on_key, 0);
 CB(urg_bell, 0);
-CB(active_links, 0);
+CB(active_links_email, 0);
+CB(active_links_file, 0);
+CB(active_links_url, 0);
+CB(active_links_escape, 0);
 CB(multi_instance, 0);
 CB(xterm_256color, 0);
 CB(erase_is_del, 0);
@@ -204,14 +207,7 @@ static void
 _add_cursors_option(Evas_Object *bx,
                     Behavior_Ctx *ctx)
 {
-   Evas_Object *o, *lbl, *rd, *rdg, *layout, *oe;
-
-   o = elm_separator_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
+   Evas_Object *lbl, *rd, *rdg, *layout, *oe;
 
    lbl = elm_label_add(bx);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
@@ -340,13 +336,6 @@ _add_cursors_option(Evas_Object *bx,
    edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
-   o = elm_separator_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
    elm_radio_value_set(rdg,
      1 +  2 * ctx->config->cursor_shape + (ctx->config->disable_cursor_blink ? 1 : 0));
 }
@@ -355,7 +344,7 @@ void
 options_behavior(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
-   Evas_Object *o, *bx, *sc, *frame;
+   Evas_Object *o, *bx, *sc, *frame, *lbl;
    int w, h;
    const char *tooltip;
    Behavior_Ctx *ctx;
@@ -391,7 +380,18 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(sc, o);
    evas_object_show(o);
 
+#define SEPARATOR                                              \
+   do {                                                        \
+   o = elm_separator_add(bx);                                  \
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0); \
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);    \
+   elm_separator_horizontal_set(o, EINA_TRUE);                 \
+   elm_box_pack_end(bx, o);                                    \
+   evas_object_show(o);                                        \
+   } while (0)
+
 #define CX(_lbl, _cfg_name, _inv)                                         \
+   do {                                                                   \
    o = elm_check_add(bx);                                                 \
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);            \
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);               \
@@ -400,18 +400,35 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);                                               \
    evas_object_show(o);                                                   \
    evas_object_smart_callback_add(o, "changed",                           \
-                                  _cb_op_behavior_##_cfg_name, ctx)
+                                  _cb_op_behavior_##_cfg_name, ctx);      \
+   } while (0)
 
    CX(_("Scroll to bottom on new content"), jump_on_change, 0);
    CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
 
+   SEPARATOR;
+
    _add_cursors_option(bx, ctx);
+
+   SEPARATOR;
+
+   lbl = elm_label_add(bx);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
+   elm_layout_text_set(lbl, NULL, _("Active Links:"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   CX(_("On emails"), active_links_email, 0);
+   CX(_("On file paths"), active_links_file, 0);
+   CX(_("On URLs"), active_links_url, 0);
+   CX(_("Based on escape codes"), active_links_escape, 0);
+
+   SEPARATOR;
 
    CX(_("React to key presses"), flicker_on_key, 0);
    if (!multisense_available)
      {
-        Evas_Object *lbl;
-
         lbl = elm_label_add(bx);
         evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(lbl, 0.0, 0.5);
@@ -422,7 +439,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Visual Bell"), disable_visual_bell, 1);
    CX(_("Bell rings"), bell_rings, 0);
    CX(_("Urgent Bell"), urg_bell, 0);
-   CX(_("Active Links"), active_links, 0);
    CX(_("Multiple instances, one process"), multi_instance, 0);
    CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
    CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
@@ -438,6 +454,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
 
 #undef CX
 
+   SEPARATOR;
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -504,12 +521,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_cg_height, ctx);
 
-   o = elm_separator_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
+   SEPARATOR;
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -572,4 +584,5 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
+#undef SEPARATOR
 }

@@ -69,7 +69,11 @@ struct _Config
    int               cursor_shape;
    Eina_Bool         disable_visual_bell;
    Eina_Bool         bell_rings;
-   Eina_Bool         active_links;
+   Eina_Bool         active_links; /* DEPRECATED */
+   Eina_Bool         active_links_email;
+   Eina_Bool         active_links_file;
+   Eina_Bool         active_links_url;
+   Eina_Bool         active_links_escape;
    Eina_Bool         translucent;
    Eina_Bool         mute;
    Eina_Bool         visualize;

@@ -27,7 +27,8 @@ void         termio_font_update(Evas_Object *obj);
 Config      *termio_config_get(const Evas_Object *obj);
 Eina_Bool    termio_take_selection(Evas_Object *obj, Elm_Sel_Type);
 void         termio_paste_selection(Evas_Object *obj, Elm_Sel_Type);
-const char  *termio_link_get(const Evas_Object *obj);
+const char  *termio_link_get(const Evas_Object *obj,
+                             Eina_Bool *from_escape_code);
 void         termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir);
 void         termio_event_feed_mouse_in(Evas_Object *obj);
 void         termio_size_get(const Evas_Object *obj, int *w, int *h);

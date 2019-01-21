@@ -821,7 +821,8 @@ _should_inline(const Evas_Object *obj)
 
 /* Need to be freed */
 const char *
-termio_link_get(const Evas_Object *obj)
+termio_link_get(const Evas_Object *obj,
+                Eina_Bool *from_escape_code)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
@@ -829,6 +830,9 @@ termio_link_get(const Evas_Object *obj)
 
    if (!sd->link.string && !sd->link.id)
      return NULL;
+
+   if (from_escape_code)
+        *from_escape_code = EINA_FALSE;
    link = sd->link.string;
    if (sd->link.id)
      {
@@ -836,6 +840,8 @@ termio_link_get(const Evas_Object *obj)
         if (!hl->url)
           return NULL;
         link = hl->url;
+        if (from_escape_code)
+          *from_escape_code = EINA_TRUE;
      }
    if (link_is_url(link))
      {
@@ -863,28 +869,47 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    char buf[PATH_MAX], *s, *escaped;
    const char *path = NULL, *cmd = NULL;
    const char *link = NULL;
+   Eina_Bool from_escape_code = EINA_FALSE;
    Eina_Bool url = EINA_FALSE, email = EINA_FALSE, handled = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
-   if (!config) return;
-   if (!config->active_links) return;
+   if (!config)
+     return;
 
-   link = termio_link_get(obj);
+   link = termio_link_get(obj, &from_escape_code);
    if (!link)
      return;
 
-   if (link_is_url(link))
-     url = EINA_TRUE;
-   else if (link[0] == '/')
-     path = link;
-   else if (link_is_email(link))
-     email = EINA_TRUE;
+   if (from_escape_code && !config->active_links_escape)
+     return;
 
-   if (url && casestartswith(link, "mailto:"))
+   if (link_is_url(link))
+     {
+        if (casestartswith(link, "mailto:"))
+          {
+             email = EINA_TRUE;
+             if (!config->active_links_email)
+               return;
+          }
+        else
+          {
+             url = EINA_TRUE;
+             if (!config->active_links_url)
+               return;
+          }
+     }
+   else if (link[0] == '/')
+     {
+        path = link;
+        if (!config->active_links_file)
+          return;
+     }
+   else if (link_is_email(link))
      {
         email = EINA_TRUE;
-        url = EINA_FALSE;
+        if (!config->active_links_email)
+          return;
      }
 
    s = eina_str_escape(link);
@@ -3778,8 +3803,6 @@ _smart_mouseover_apply(Evas_Object *obj)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
    config = sd->config;
-   if (!config->active_links)
-     return;
 
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
        (sd->link.suspend) || (!evas_object_focus_get(obj)))
@@ -3796,7 +3819,8 @@ _smart_mouseover_apply(Evas_Object *obj)
 
    if (cell->att.link_id)
      {
-        _hyperlink_mouseover(obj, sd, cell->att.link_id);
+        if (config->active_links_escape)
+          _hyperlink_mouseover(obj, sd, cell->att.link_id);
         return;
      }
 
@@ -3806,6 +3830,30 @@ _smart_mouseover_apply(Evas_Object *obj)
      {
         _remove_links(sd);
         return;
+     }
+
+   if (link_is_url(s))
+     {
+        if (casestartswith(s, "mailto:"))
+          {
+             if (!config->active_links_email)
+               return;
+          }
+        else
+          {
+             if (!config->active_links_url)
+               return;
+          }
+     }
+   else if (s[0] == '/')
+     {
+        if (!config->active_links_file)
+          return;
+     }
+   else if (link_is_email(s))
+     {
+        if (!config->active_links_email)
+          return;
      }
 
    if (sd->link.string)

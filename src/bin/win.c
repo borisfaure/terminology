@@ -4452,7 +4452,7 @@ _cb_popup(void *data,
      {
         /* Popup a link, there was user interaction on it. */
         from_user_interaction = EINA_TRUE;
-        src = termio_link_get(term->termio);
+        src = termio_link_get(term->termio, NULL);
      }
    if (!src)
      return;
@@ -4473,7 +4473,7 @@ _cb_popup_queue(void *data,
    if (!src)
      {
         from_user_interaction = EINA_TRUE;
-        src = termio_link_get(term->termio);
+        src = termio_link_get(term->termio, NULL);
      }
    if (!src)
      return;

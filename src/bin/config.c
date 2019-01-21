@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 19
+#define CONF_VER 20
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -122,8 +122,16 @@ config_init(void)
      (edd_base, Config, "cursor_shape", cursor_shape, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_visual_bell", disable_visual_bell, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
+   EET_DATA_DESCRIPTOR_ADD_BASIC /* DEPRECATED */
      (edd_base, Config, "active_links", active_links, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "active_links_email", active_links_email, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "active_links_file", active_links_file, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "active_links_url", active_links_url, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "active_links_escape", active_links_escape, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -258,7 +266,10 @@ config_sync(const Config *config_src, Config *config)
    config->cursor_shape = config_src->cursor_shape;
    config->disable_visual_bell = config_src->disable_visual_bell;
    config->bell_rings = config_src->bell_rings;
-   config->active_links = config_src->active_links;
+   config->active_links_email = config_src->active_links_email;
+   config->active_links_file = config_src->active_links_file;
+   config->active_links_url = config_src->active_links_url;
+   config->active_links_escape = config_src->active_links_escape;
    config->mute = config_src->mute;
    config->visualize = config_src->visualize;
    config->urg_bell = config_src->urg_bell;
@@ -519,7 +530,10 @@ config_new(void)
         config->cursor_shape = CURSOR_SHAPE_BLOCK;
         config->disable_visual_bell = EINA_FALSE;
         config->bell_rings = EINA_TRUE;
-        config->active_links = EINA_TRUE;
+        config->active_links_email = EINA_TRUE;
+        config->active_links_file = EINA_TRUE;
+        config->active_links_url = EINA_TRUE;
+        config->active_links_escape = EINA_TRUE;
         config->translucent = EINA_FALSE;
         config->mute = EINA_FALSE;
         config->visualize = EINA_TRUE;
@@ -670,7 +684,14 @@ config_load(const char *key)
                   config->cursor_shape = CURSOR_SHAPE_BLOCK;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 19 */
+                case 19:
+                  config->active_links_email = config->active_links;
+                  config->active_links_file = config->active_links;
+                  config->active_links_url = config->active_links;
+                  config->active_links_escape = config->active_links;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 20 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -745,7 +766,10 @@ config_fork(const Config *config)
    CPY(cursor_shape);
    CPY(disable_visual_bell);
    CPY(bell_rings);
-   CPY(active_links);
+   CPY(active_links_email);
+   CPY(active_links_file);
+   CPY(active_links_url);
+   CPY(active_links_escape);
    CPY(translucent);
    CPY(opacity);
    CPY(mute);

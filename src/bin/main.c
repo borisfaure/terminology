@@ -745,6 +745,10 @@ elm_main(int argc, char **argv)
    if (active_links != 0xff)
      {
         config->active_links = !!active_links;
+        config->active_links_email = config->active_links;
+        config->active_links_file = config->active_links;
+        config->active_links_url = config->active_links;
+        config->active_links_escape = config->active_links;
         config->temporary = EINA_TRUE;
      }
 
