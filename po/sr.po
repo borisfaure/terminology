@@ -1,4 +1,4 @@
-# Serbian translation for enlightenment
+# Serbian translation for Terminology.
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2018-04-01 18:18+0200\n"
 "PO-Revision-Date: 2015-01-31 13:52+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
-"Language-Team: српски <xfce4@xfce4.org>\n"
+"Language-Team: Serbian <xfce4@xfce4.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
