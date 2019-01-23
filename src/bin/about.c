@@ -96,7 +96,7 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
          "<br>"
          "%s" // LICENSE
          ),
-      PACKAGE_VERSION, 2018,
+      PACKAGE_VERSION, 2019,
       "Boris Faure<br>"
       "Carsten Haitzler<br>"
       "Gustavo Sverzut Barbieri<br>"
