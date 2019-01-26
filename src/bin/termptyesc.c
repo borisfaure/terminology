@@ -2981,6 +2981,32 @@ _handle_esc_csi_vpa(Termpty *ty, Eina_Unicode **ptr)
    ty->cursor_state.cy = arg - 1;
 }
 
+static void
+_handle_esc_csi_decswbv(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("DECSWBV - Set Warning Bell Volume: %d", arg);
+   switch (arg)
+     {
+      case 1:
+         DBG("Bell is off");
+         break;
+      case 2:
+         EINA_FALLTHROUGH;
+      case 3:
+         EINA_FALLTHROUGH;
+      case 4:
+         DBG("Bell volume is low");
+         break;
+      default:
+         DBG("Bell volume is high");
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -3182,6 +3208,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 't':
         if (*(cc-1) == '$')
           _handle_esc_csi_decrara(ty, &b, be-1);
+        else if (*(cc-1) == ' ')
+          {
+             _handle_esc_csi_decswbv(ty, &b);
+          }
         else
           {
              arg = _csi_arg_get(ty, &b);
