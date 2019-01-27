@@ -178,10 +178,6 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
    int i, j;
    int origin = ty->termstate.left_margin;
 
-
-   /* TODO: have content_change_box*/
-   termio_content_change(ty->obj, ty->cursor_state.cx, ty->cursor_state.cy, len);
-
    cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
    for (i = 0; i < len; i++)
      {
@@ -299,8 +295,8 @@ termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit)
         return;
      }
    cells = &(TERMPTY_SCREEN(ty, x, y));
-   if (n > limit) n = limit;
-   termio_content_change(ty->obj, x, y, n);
+   if (n > limit)
+     n = limit;
    termpty_cells_clear(ty, cells, n);
 }
 
@@ -352,8 +348,6 @@ termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
           {
              int l = ty->h - (ty->cursor_state.cy + 1);
 
-             termio_content_change(ty->obj, 0, ty->cursor_state.cy, l * ty->w);
-
              while (l)
                {
                   cells = &(TERMPTY_SCREEN(ty, 0, (ty->cursor_state.cy + l)));
@@ -367,8 +361,6 @@ termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
           {
              // First clear from circular > height, then from 0 to circular
              int y = ty->cursor_state.cy + ty->circular_offset;
-
-             termio_content_change(ty->obj, 0, 0, ty->cursor_state.cy * ty->w);
 
              cells = &(TERMPTY_SCREEN(ty, 0, 0));
 

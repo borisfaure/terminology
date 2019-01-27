@@ -214,7 +214,8 @@ _termio_scroll_selection(Termio *sd, Termpty *ty,
 }
 
 void
-termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
+termio_scroll(Evas_Object *obj, int direction,
+              int start_y, int end_y)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Termpty *ty;
@@ -227,100 +228,16 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y)
        (sd->scroll > 0))
      {
         Evas_Object *mv = term_miniview_get(sd->term);
-        if (mv) miniview_position_offset(mv, direction, EINA_FALSE);
+        if (mv)
+          {
+             miniview_position_offset(mv, direction, EINA_FALSE);
+          }
         // adjust scroll position for added scrollback
         sd->scroll -= direction;
      }
 
    _termio_scroll_selection(sd, ty, direction, start_y, end_y);
-
-   if (sd->link.string)
-     {
-        if (sd->link.y1 <= end_y && sd->link.y2 >= start_y)
-          _remove_links(sd);
-     }
 }
-
-void
-termio_content_change(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
-                      int n)
-{
-   Termpty *ty;
-   int start_x, start_y, end_x, end_y;
-   Termio *sd = evas_object_smart_data_get(obj);
-
-   EINA_SAFETY_ON_NULL_RETURN(sd);
-   ty = sd->pty;
-
-   if (sd->link.string)
-     {
-        int _y = y + (x + n) / ty->w;
-
-        start_x = sd->link.x1;
-        start_y = sd->link.y1;
-        end_x   = sd->link.x2;
-        end_y   = sd->link.y2;
-
-        y = MAX(y, start_y);
-        for (; y <= MIN(_y, end_y); y++)
-          {
-             int d = MIN(n, ty->w - x);
-             if (!((x > end_x) || (x + d < start_x)))
-               {
-                  _remove_links(sd);
-                  break;
-               }
-             n -= d;
-             x = 0;
-          }
-     }
-
-   if (!ty->selection.is_active) return;
-
-   start_x = sd->pty->selection.start.x;
-   start_y = sd->pty->selection.start.y;
-   end_x   = sd->pty->selection.end.x;
-   end_y   = sd->pty->selection.end.y;
-
-   if (!sd->pty->selection.is_top_to_bottom)
-     {
-        INT_SWAP(start_y, end_y);
-        INT_SWAP(start_x, end_x);
-     }
-   if (ty->selection.is_box)
-     {
-        int _y = y + (x + n) / ty->w;
-
-        y = MAX(y, start_y);
-        for (; y <= MIN(_y, end_y); y++)
-          {
-             int d = MIN(n, ty->w - x);
-             if (!((x > end_x) || (x + d < start_x)))
-               {
-                  _sel_set(sd, EINA_FALSE);
-                  break;
-               }
-             n -= d;
-             x = 0;
-          }
-     }
-   else
-     {
-        int sel_len;
-        Termcell *cells_changed, *cells_selection;
-
-        sel_len = end_x - start_x + ty->w * (end_y - start_y);
-        cells_changed = &(TERMPTY_SCREEN(ty, x, y));
-        cells_selection = &(TERMPTY_SCREEN(ty, start_x, start_y));
-
-        if (!((cells_changed > (cells_selection + sel_len)) ||
-             (cells_selection > (cells_changed + n))))
-          {
-             _sel_set(sd, EINA_FALSE);
-          }
-     }
-}
-
 
 static void
 _win_obj_del(void *data,
