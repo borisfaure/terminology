@@ -124,6 +124,10 @@ static void _smart_calculate(Evas_Object *obj);
 static void _take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text);
 static void _smart_xy_to_cursor(Termio *sd, Evas_Coord x, Evas_Coord y, int *cx, int *cy);
 static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
+static void _selection_get(const Evas_Object *obj,
+               int c1x, int c1y, int c2x, int c2y,
+               struct ty_sb *sb,
+               Eina_Bool rtrim);
 
 
 /* {{{ Helpers */
@@ -1016,7 +1020,6 @@ _cb_ctxp_link_content_copy(void *data,
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
    const char *raw_link;
-   size_t len;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->link.id)
@@ -1029,7 +1032,12 @@ _cb_ctxp_link_content_copy(void *data,
      }
    else
      {
-        raw_link = termio_selection_get(term, sd->link.x1, sd->link.y1, sd->link.x2, sd->link.y2, &len, EINA_FALSE);
+        struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+        _selection_get(term,
+                       sd->link.x1, sd->link.y1,
+                       sd->link.x2, sd->link.y2,
+                       &sb, EINA_FALSE);
+        raw_link = ty_sb_steal_buf(&sb);
 
         _take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
      }
@@ -1105,13 +1113,16 @@ _cb_link_down(void *data,
           }
         else
           {
-             raw_link = termio_selection_get(sd->self,
-                                             sd->link.x1,
-                                             sd->link.y1,
-                                             sd->link.x2,
-                                             sd->link.y2,
-                                             &len,
-                                             EINA_FALSE);
+             struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+             _selection_get(sd->self,
+                            sd->link.x1,
+                            sd->link.y1,
+                            sd->link.x2,
+                            sd->link.y2,
+                            &sb,
+                            EINA_FALSE);
+             len = sb.len;
+             raw_link = ty_sb_steal_buf(&sb);
           }
 
         if (len > 0 && raw_link[0] == '/')
@@ -2253,17 +2264,16 @@ _mouse_in_selection(Termio *sd, int cx, int cy)
 
 
 
-char *
-termio_selection_get(const Evas_Object *obj,
-                     int c1x, int c1y, int c2x, int c2y,
-                     size_t *lenp,
-                     Eina_Bool rtrim)
+static void
+_selection_get(const Evas_Object *obj,
+               int c1x, int c1y, int c2x, int c2y,
+               struct ty_sb *sb,
+               Eina_Bool rtrim)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
    int x, y;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
@@ -2276,15 +2286,15 @@ termio_selection_get(const Evas_Object *obj,
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells || !w)
           {
-             if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+             if (ty_sb_add(sb, "\n", 1) < 0) goto err;
              continue;
           }
         if (w > sd->grid.w) w = sd->grid.w;
         if (y == c1y && c1x >= w)
           {
              if (rtrim)
-               ty_sb_spaces_rtrim(&sb);
-             if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+               ty_sb_spaces_rtrim(sb);
+             if (ty_sb_add(sb, "\n", 1) < 0) goto err;
              continue;
           }
         start_x = c1x;
@@ -2313,8 +2323,8 @@ termio_selection_get(const Evas_Object *obj,
                   if ((y != c2y) || (x != end_x))
                     {
                        if (rtrim)
-                         ty_sb_spaces_rtrim(&sb);
-                       if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+                         ty_sb_spaces_rtrim(sb);
+                       if (ty_sb_add(sb, "\n", 1) < 0) goto err;
                     }
                   break;
                }
@@ -2333,21 +2343,21 @@ termio_selection_get(const Evas_Object *obj,
                        last0 = -1;
                        while (v >= 0)
                          {
-                            if (ty_sb_add(&sb, " ", 1) < 0) goto err;
+                            if (ty_sb_add(sb, " ", 1) < 0) goto err;
                             v--;
                          }
                     }
                   txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
-                    if (ty_sb_add(&sb, txt, txtlen) < 0) goto err;
+                    if (ty_sb_add(sb, txt, txtlen) < 0) goto err;
                   if ((x == (w - 1)) &&
                       ((x != c2x) || (y != c2y)))
                     {
                        if (!cells[x].att.autowrapped)
                          {
                             if (rtrim)
-                              ty_sb_spaces_rtrim(&sb);
-                            if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+                              ty_sb_spaces_rtrim(sb);
+                            if (ty_sb_add(sb, "\n", 1) < 0) goto err;
                          }
                     }
                }
@@ -2377,8 +2387,8 @@ termio_selection_get(const Evas_Object *obj,
                   if (!have_more)
                     {
                        if (rtrim)
-                         ty_sb_spaces_rtrim(&sb);
-                       if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+                         ty_sb_spaces_rtrim(sb);
+                       if (ty_sb_add(sb, "\n", 1) < 0) goto err;
                     }
                   else
                     {
@@ -2391,31 +2401,27 @@ termio_selection_get(const Evas_Object *obj,
                                  else break;
                               }
                             if (x >= w) break;
-                            if (ty_sb_add(&sb, " ", 1) < 0) goto err;
+                            if (ty_sb_add(sb, " ", 1) < 0) goto err;
                          }
                     }
                }
              else
                {
                   if (rtrim)
-                    ty_sb_spaces_rtrim(&sb);
-                  if (ty_sb_add(&sb, "\n", 1) < 0) goto err;
+                    ty_sb_spaces_rtrim(sb);
+                  if (ty_sb_add(sb, "\n", 1) < 0) goto err;
                }
           }
      }
    termpty_backlog_unlock();
 
    if (rtrim)
-     ty_sb_spaces_rtrim(&sb);
+     ty_sb_spaces_rtrim(sb);
 
-   if (lenp)
-     *lenp = sb.len;
-
-   return ty_sb_steal_buf(&sb);
+   return;
 
 err:
-   ty_sb_free(&sb);
-   return NULL;
+   ty_sb_free(sb);
 }
 
 
@@ -2548,33 +2554,35 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
    if (sd->pty->selection.is_box)
      {
         int i;
-        Eina_Strbuf *sb;
+        struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
 
-        sb = eina_strbuf_new();
         for (i = start_y; i <= end_y; i++)
           {
-             /* TODO: use our own strbuf implementation */
-             char *tmp = termio_selection_get(obj, start_x, i, end_x, i,
-                                              &len, EINA_TRUE);
+             struct ty_sb isb = {.buf = NULL, .len = 0, .alloc = 0};
+             _selection_get(obj, start_x, i, end_x, i,
+                            &isb, EINA_TRUE);
 
-             if (tmp)
+             if (isb.len)
                {
-                  eina_strbuf_append_length(sb, tmp, len);
-                  if (len && tmp[len - 1] != '\n' && i != end_y)
-                    eina_strbuf_append_char(sb, '\n');
-                  free(tmp);
+                  if (isb.buf[sb.len - 1] != '\n' && i != end_y)
+                    ty_sb_add(&isb, "\n", 1);
+                  ty_sb_add(&sb, isb.buf, isb.len);
                }
+             ty_sb_free(&isb);
           }
-        len = eina_strbuf_length_get(sb);
-        s = eina_strbuf_string_steal(sb);
+        len = sb.len;
+        s = ty_sb_steal_buf(&sb);
         s = eina_stringshare_add_length(s, len);
-        eina_strbuf_free(sb);
+        ty_sb_free(&sb);
      }
    else
      {
-        s = termio_selection_get(obj, start_x, start_y, end_x, end_y, &len,
-                                 EINA_TRUE);
-        s = eina_stringshare_add_length(s, len);
+        struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+
+        _selection_get(obj, start_x, start_y, end_x, end_y, &sb, EINA_TRUE);
+        len = sb.len;
+        s = eina_stringshare_add_length(ty_sb_steal_buf(&sb), len);
+        ty_sb_free(&sb);
      }
 
 end:

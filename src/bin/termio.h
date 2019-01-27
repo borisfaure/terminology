@@ -12,9 +12,6 @@ Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd,
                         Term *term, const char *title);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
 void         termio_theme_set(Evas_Object *obj, Evas_Object *theme);
-char        *termio_selection_get(const Evas_Object *obj,
-                                  int c1x, int c1y, int c2x, int c2y,
-                                  size_t *len, Eina_Bool right_trim);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);
 void termio_scroll_top_backlog(Evas_Object *obj);
 void termio_scroll_delta(Evas_Object *obj, int delta, int by_page);

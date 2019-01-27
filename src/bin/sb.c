@@ -79,6 +79,9 @@ ty_sb_steal_buf(struct ty_sb *sb)
    size_t i;
    char *buf;
 
+   if (!sb->len)
+     return NULL;
+
    if (sb->gap != 0)
      {
         sb->buf -= sb->gap;
