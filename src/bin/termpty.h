@@ -185,6 +185,7 @@ struct _Termpty
       struct {
          int x, y;
       } start, end, orig;
+      Eina_Unicode *codepoints;
       time_t last_click;
       unsigned char is_active : 1;
       unsigned char is_box    : 1;

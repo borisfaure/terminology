@@ -2262,8 +2262,6 @@ _mouse_in_selection(Termio *sd, int cx, int cy)
      return EINA_FALSE;
 }
 
-
-
 static void
 _selection_get(const Evas_Object *obj,
                int c1x, int c1y, int c2x, int c2y,
@@ -2428,7 +2426,8 @@ err:
 static void
 _sel_set(Termio *sd, Eina_Bool enable)
 {
-   if (sd->pty->selection.is_active == enable) return;
+   if (sd->pty->selection.is_active == enable)
+     return;
    sd->pty->selection.is_active = enable;
    if (enable)
      evas_object_smart_callback_call(sd->win, "selection,on", NULL);
@@ -2437,6 +2436,7 @@ _sel_set(Termio *sd, Eina_Bool enable)
         evas_object_smart_callback_call(sd->win, "selection,off", NULL);
         sd->pty->selection.by_word = EINA_FALSE;
         sd->pty->selection.by_line = EINA_FALSE;
+        free(sd->pty->selection.codepoints);
      }
 }
 
@@ -2517,6 +2517,149 @@ _take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    sd->have_sel = EINA_TRUE;
    if (sd->sel_str) eina_stringshare_del(sd->sel_str);
    sd->sel_str = text;
+}
+
+struct Codepoints_Buf {
+   Eina_Unicode *codepoints;
+   size_t len;
+   size_t size;
+};
+
+static int
+_codepoint_buf_append(struct Codepoints_Buf *buf,
+                      Eina_Unicode u)
+{
+   if (EINA_UNLIKELY(buf->len == buf->size))
+     {
+        buf->size *= 2;
+        Eina_Unicode *codepoints = realloc(buf->codepoints,
+                                           buf->size * sizeof(Eina_Unicode));
+        if (EINA_UNLIKELY(!codepoints))
+          {
+             free(buf->codepoints);
+             buf->len = buf->size = 0;
+             return -1;
+          }
+        buf->codepoints = codepoints;
+     }
+   buf->codepoints[buf->len++] = u;
+   return 0;
+}
+
+static void
+_sel_codepoints_get(const Termio *sd,
+                    struct Codepoints_Buf *buf,
+                    int c1x, int c1y, int c2x, int c2y)
+{
+   int x, y;
+
+#define TRY(ACTION) do {               \
+     if (EINA_UNLIKELY(ACTION < 0))    \
+       {                               \
+          goto err;                    \
+       }                               \
+} while (0)
+
+   termpty_backlog_lock();
+   for (y = c1y; y <= c2y; y++)
+     {
+        Termcell *cells;
+        ssize_t w = 0;
+        int start_x, end_x;
+
+        cells = termpty_cellrow_get(sd->pty, y, &w);
+        if (!cells || !w || (y == c1y && c1x >= w))
+          {
+             w = 0;
+          }
+
+        /* Compute @start_x, @end_x */
+        start_x = c1x;
+        end_x = c2x;
+        if (c1y != c2y)
+          {
+             if (y == c1y)
+               {
+                  end_x = sd->grid.w - 1;
+               }
+             else if (y == c2y)
+               {
+                  start_x = 0;
+               }
+             else
+               {
+                  start_x = 0;
+                  end_x = sd->grid.w - 1;
+               }
+          }
+        /* Lookup every cell in that line */
+        for (x = start_x; x <= end_x; x++)
+          {
+             if (x >= w)
+               {
+                  /* Selection outside of current line of "text" */
+                  TRY(_codepoint_buf_append(buf, ' '));
+               }
+             else if (cells[x].codepoint == 0)
+               {
+                  TRY(_codepoint_buf_append(buf, ' '));
+               }
+             else
+               {
+                  TRY(_codepoint_buf_append(buf, cells[x].codepoint));
+               }
+          }
+     }
+err:
+   termpty_backlog_unlock();
+}
+
+
+static void
+_sel_fill_in_codepoints_array(Termio *sd)
+{
+   int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
+   struct Codepoints_Buf buf = {
+        .codepoints = NULL,
+        .len = 0,
+        .size = 256,
+   };
+
+   free(sd->pty->selection.codepoints);
+   sd->pty->selection.codepoints = NULL;
+
+   if (!sd->pty->selection.is_active)
+     return;
+
+   buf.codepoints = malloc(sizeof(Eina_Unicode) * buf.size);
+   if (!buf.codepoints)
+     return;
+
+   start_x = sd->pty->selection.start.x;
+   start_y = sd->pty->selection.start.y;
+   end_x = sd->pty->selection.end.x;
+   end_y = sd->pty->selection.end.y;
+
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(start_y, end_y);
+        INT_SWAP(start_x, end_x);
+     }
+
+   if (sd->pty->selection.is_box)
+     {
+        int i;
+
+        for (i = start_y; i <= end_y; i++)
+          {
+             _sel_codepoints_get(sd, &buf, start_x, i, end_x, i);
+          }
+     }
+   else
+     {
+        _sel_codepoints_get(sd, &buf, start_x, start_y, end_x, end_y);
+     }
+   sd->pty->selection.codepoints = buf.codepoints;
 }
 
 Eina_Bool
@@ -4414,6 +4557,7 @@ _smart_cb_mouse_down(void *data,
                   termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
                }
              sd->didclick = EINA_TRUE;
+             _sel_fill_in_codepoints_array(sd);
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
@@ -4429,6 +4573,7 @@ _smart_cb_mouse_down(void *data,
                     _sel_set(sd, EINA_FALSE);
                }
              sd->didclick = EINA_TRUE;
+             _sel_fill_in_codepoints_array(sd);
           }
         else
           {
@@ -4494,6 +4639,7 @@ _smart_cb_mouse_up(void *data,
                   sd->pty->selection.last_click = time(NULL);
                   sd->pty->selection.by_line = EINA_FALSE;
                   sd->pty->selection.by_word = EINA_FALSE;
+                  _sel_fill_in_codepoints_array(sd);
                   _smart_update_queue(data, sd);
                   return;
                }
@@ -4525,6 +4671,7 @@ _smart_cb_mouse_up(void *data,
              _selection_newline_extend_fix(data);
              _smart_update_queue(data, sd);
              termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
+             _sel_fill_in_codepoints_array(sd);
              sd->pty->selection.makesel = EINA_FALSE;
           }
      }
@@ -5008,6 +5155,7 @@ _smart_apply(Evas_Object *obj)
    ssize_t w;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
+
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
    EINA_LIST_FOREACH(sd->pty->block.active, l, blk)
@@ -5018,6 +5166,7 @@ _smart_apply(Evas_Object *obj)
    inv = sd->pty->termstate.reverse;
    termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
+   /* Look at every visible line */
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;
@@ -5025,10 +5174,14 @@ _smart_apply(Evas_Object *obj)
 
         w = 0;
         cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
-        if (!cells) continue;
+        if (!cells)
+          continue;
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
-        if (!tc) continue;
+        if (!tc)
+          continue;
+
         ch1 = -1;
+        /* Look at every cell in that line */
         for (x = 0; x < sd->grid.w; x++)
           {
              if ((!cells) || (x >= w))
