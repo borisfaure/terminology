@@ -117,7 +117,7 @@ static Eina_List *terms = NULL;
 
 static void _sel_set(Termio *sd, Eina_Bool enable);
 static void _remove_links(Termio *sd);
-static void _smart_update_queue(Evas_Object *obj, Termio *sd);
+static void _smart_update_queue(Termio *sd);
 static void _smart_apply(Evas_Object *obj);
 static void _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force);
 static void _smart_calculate(Evas_Object *obj);
@@ -281,7 +281,7 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
         if (sd->anim) ecore_animator_del(sd->anim);
         sd->anim = NULL;
      }
-   _smart_update_queue(obj, sd);
+   _smart_update_queue(sd);
 }
 
 void
@@ -316,7 +316,7 @@ termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
    sd->scroll += delta;
    if (delta <= 0 && sd->scroll < 0)
        sd->scroll = 0;
-   _smart_update_queue(obj, sd);
+   _smart_update_queue(sd);
    miniview_position_offset(term_miniview_get(sd->term), -delta, EINA_TRUE);
 }
 
@@ -2491,7 +2491,7 @@ _lost_selection(void *data, Elm_Sel_Type selection)
                }
              _sel_set(sd, EINA_FALSE);
              elm_object_cnp_selection_clear(sd->win, selection);
-             _smart_update_queue(obj, sd);
+             _smart_update_queue(sd);
              sd->have_sel = EINA_FALSE;
           }
      }
@@ -4540,7 +4540,7 @@ _smart_cb_mouse_down(void *data,
            if (sd->pty->selection.is_active)
              {
                 _sel_set(sd, EINA_FALSE);
-                _smart_update_queue(data, sd);
+                _smart_update_queue(sd);
              }
           return;
        }
@@ -4580,7 +4580,7 @@ _smart_cb_mouse_down(void *data,
           {
              _handle_mouse_down_single_click(sd, cx, cy, ctrl, alt, shift);
           }
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
      }
    else if (ev->button == 2)
      {
@@ -4615,7 +4615,7 @@ _smart_cb_mouse_up(void *data,
            if (sd->pty->selection.is_active)
              {
                 _sel_set(sd, EINA_FALSE);
-                _smart_update_queue(data, sd);
+                _smart_update_queue(sd);
              }
            return;
         }
@@ -4641,7 +4641,7 @@ _smart_cb_mouse_up(void *data,
                   sd->pty->selection.by_line = EINA_FALSE;
                   sd->pty->selection.by_word = EINA_FALSE;
                   _sel_fill_in_codepoints_array(sd);
-                  _smart_update_queue(data, sd);
+                  _smart_update_queue(sd);
                   return;
                }
           }
@@ -4670,7 +4670,7 @@ _smart_cb_mouse_up(void *data,
                }
              _selection_dbl_fix(sd);
              _selection_newline_extend_fix(data);
-             _smart_update_queue(data, sd);
+             _smart_update_queue(sd);
              termio_take_selection(data, ELM_SEL_TYPE_PRIMARY);
              _sel_fill_in_codepoints_array(sd);
              sd->pty->selection.makesel = EINA_FALSE;
@@ -4699,7 +4699,7 @@ _mouse_selection_scroll(void *data)
           cy = -1;
         sd->scroll -= cy;
         sd->pty->selection.end.y = -sd->scroll;
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
      }
    else if (fcy >= (sd->grid.h - 0.3))
      {
@@ -4708,7 +4708,7 @@ _mouse_selection_scroll(void *data)
         sd->scroll -= cy - sd->grid.h;
         if (sd->scroll < 0) sd->scroll = 0;
         sd->pty->selection.end.y = sd->scroll + sd->grid.h - 1;
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
      }
 
    return EINA_TRUE;
@@ -4776,7 +4776,7 @@ _smart_cb_mouse_move(void *data,
      {
         sd->pty->selection.makesel = EINA_FALSE;
         _sel_set(sd, EINA_FALSE);
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
         return;
      }
    if (sd->pty->selection.makesel)
@@ -4810,7 +4810,7 @@ _smart_cb_mouse_move(void *data,
         _selection_dbl_fix(sd);
         if (!sd->pty->selection.is_box)
           _selection_newline_extend_fix(data);
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
         sd->moved = EINA_TRUE;
      }
    /* TODO: make the following useless */
@@ -4904,7 +4904,7 @@ _smart_cb_mouse_wheel(void *data,
              sd->scroll -= (ev->z * 4);
              if (sd->scroll < 0)
                sd->scroll = 0;
-             _smart_update_queue(data, sd);
+             _smart_update_queue(sd);
              miniview_position_offset(term_miniview_get(sd->term),
                                       ev->z * 4, EINA_TRUE);
 
@@ -5679,10 +5679,11 @@ _smart_cb_change(void *data)
 }
 
 static void
-_smart_update_queue(Evas_Object *obj, Termio *sd)
+_smart_update_queue(Termio *sd)
 {
-   if (sd->anim) return;
-   sd->anim = ecore_animator_add(_smart_cb_change, obj);
+   if (sd->anim)
+       return;
+   sd->anim = ecore_animator_add(_smart_cb_change, sd->self);
 }
 
 static void
@@ -5938,7 +5939,7 @@ _smart_pty_change(void *data)
 // if scroll to bottom on updates
    if (sd->jump_on_change)
      sd->scroll = 0;
-   _smart_update_queue(data, sd);
+   _smart_update_queue(sd);
 }
 
 static void
@@ -5975,7 +5976,7 @@ _smart_pty_cancel_sel(void *data)
      {
         _sel_set(sd, EINA_FALSE);
         sd->pty->selection.makesel = EINA_FALSE;
-        _smart_update_queue(data, sd);
+        _smart_update_queue(sd);
      }
 }
 
@@ -6606,7 +6607,7 @@ termio_key_down(Evas_Object *termio,
         if (!key_is_modifier(ev->key))
           {
              sd->scroll = 0;
-             _smart_update_queue(termio, sd);
+             _smart_update_queue(sd);
           }
      }
    if (sd->config->flicker_on_key)
