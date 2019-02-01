@@ -2437,6 +2437,7 @@ _sel_set(Termio *sd, Eina_Bool enable)
         sd->pty->selection.by_word = EINA_FALSE;
         sd->pty->selection.by_line = EINA_FALSE;
         free(sd->pty->selection.codepoints);
+        sd->pty->selection.codepoints = NULL;
      }
 }
 
@@ -5153,6 +5154,8 @@ _smart_apply(Evas_Object *obj)
    int x, y, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
    const char *preedit_str;
    ssize_t w;
+   int sel_start_x = 0, sel_start_y = 0, sel_end_x = 0, sel_end_y = 0;
+   Eina_Unicode *cp;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -5166,42 +5169,102 @@ _smart_apply(Evas_Object *obj)
    inv = sd->pty->termstate.reverse;
    termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
+
+   /* Make selection bottom to top */
+   sel_start_x = sd->pty->selection.start.x;
+   sel_start_y = sd->pty->selection.start.y;
+   sel_end_x = sd->pty->selection.end.x;
+   sel_end_y = sd->pty->selection.end.y;
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(sel_start_y, sel_end_y);
+        INT_SWAP(sel_start_x, sel_end_x);
+     }
+   cp = sd->pty->selection.codepoints;
+
    /* Look at every visible line */
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;
         Evas_Textgrid_Cell *tc;
+        int cur_sel_start_x = -1, cur_sel_end_x = -1;
+        int rel_y = y - sd->scroll;
 
         w = 0;
-        cells = termpty_cellrow_get(sd->pty, y - sd->scroll, &w);
+        cells = termpty_cellrow_get(sd->pty, rel_y, &w);
         if (!cells)
           continue;
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
         if (!tc)
           continue;
 
+        /* Compute @cur_sel_start_x, @cur_sel_end_x */
+        if (sd->pty->selection.codepoints)
+          {
+             if (sel_start_y <= rel_y && rel_y <= sel_end_y)
+               {
+                  if (sd->pty->selection.is_box)
+                    {
+                       cur_sel_start_x = sel_start_x;
+                       cur_sel_end_x = sel_end_x;
+                    }
+                  else
+                    {
+                       cur_sel_start_x = sel_start_x;
+                       cur_sel_end_x = sel_end_x;
+                       if (sel_start_y != sel_end_y)
+                         {
+                            if (rel_y == sel_start_y)
+                              {
+                                 cur_sel_end_x = sd->grid.w - 1;
+                              }
+                            else if (y == sel_end_y)
+                              {
+                                 cur_sel_start_x = 0;
+                              }
+                            else
+                              {
+                                 cur_sel_start_x = 0;
+                                 cur_sel_end_x = sd->grid.w - 1;
+                              }
+                         }
+                    }
+               }
+          }
+
         ch1 = -1;
         /* Look at every cell in that line */
         for (x = 0; x < sd->grid.w; x++)
           {
+             Eina_Unicode *u = NULL;
+
+             if (cp && cur_sel_start_x <= x && x <= cur_sel_end_x)
+               u = cp;
+
              if ((!cells) || (x >= w))
                {
                   if ((tc[x].codepoint != 0) ||
                       (tc[x].bg != COL_INVIS) ||
                       (tc[x].bg_extended))
                     {
-                       if (ch1 < 0) ch1 = x;
+                       if (ch1 < 0)
+                         ch1 = x;
                        ch2 = x;
                     }
                   tc[x].codepoint = 0;
-                  if (inv) tc[x].bg = COL_INVERSEBG;
-                  else tc[x].bg = COL_INVIS;
+                  tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
                   tc[x].bg_extended = 0;
                   tc[x].underline = 0;
                   tc[x].strikethrough = 0;
                   tc[x].bold = 0;
                   tc[x].italic = 0;
                   tc[x].double_width = 0;
+
+                  if (u && *u != ' ')
+                    {
+                       _sel_set(sd, EINA_FALSE);
+                       u = cp = NULL;
+                    }
                }
              else
                {
@@ -5210,7 +5273,8 @@ _smart_apply(Evas_Object *obj)
                   bid = termpty_block_id_get(&(cells[x]), &bx, &by);
                   if (bid >= 0)
                     {
-                       if (ch1 < 0) ch1 = x;
+                       if (ch1 < 0)
+                         ch1 = x;
                        ch2 = x;
                        tc[x].codepoint = 0;
                        tc[x].fg_extended = 0;
@@ -5235,6 +5299,11 @@ _smart_apply(Evas_Object *obj)
                                                blk->w * sd->font.chw,
                                                blk->h * sd->font.chh);
                          }
+                       if (u && *u != ' ')
+                         {
+                            _sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
                     }
                   else if (cells[x].att.invisible)
                     {
@@ -5242,12 +5311,12 @@ _smart_apply(Evas_Object *obj)
                            (tc[x].bg != COL_INVIS) ||
                            (tc[x].bg_extended))
                          {
-                            if (ch1 < 0) ch1 = x;
+                            if (ch1 < 0)
+                              ch1 = x;
                             ch2 = x;
                          }
                        tc[x].codepoint = 0;
-                       if (inv) tc[x].bg = COL_INVERSEBG;
-                       else tc[x].bg = COL_INVIS;
+                       tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
                        tc[x].bg_extended = 0;
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
@@ -5257,6 +5326,11 @@ _smart_apply(Evas_Object *obj)
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
+                       if (u && *u != ' ')
+                         {
+                            _sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
                     }
                   else
                     {
@@ -5289,10 +5363,14 @@ _smart_apply(Evas_Object *obj)
                             else if (!bgext)
                               bg = COL_INVIS;
                          }
-                       if ((cells[x].att.fgintense) && (!fgext)) fg += 48;
-                       if ((cells[x].att.bgintense) && (!bgext)) bg += 48;
-                       if ((cells[x].att.bold) && (!fgext)) fg += 12;
-                       if ((cells[x].att.faint) && (!fgext)) fg += 24;
+                       if ((cells[x].att.fgintense) && (!fgext))
+                         fg += 48;
+                       if ((cells[x].att.bgintense) && (!bgext))
+                         bg += 48;
+                       if ((cells[x].att.bold) && (!fgext))
+                         fg += 12;
+                       if ((cells[x].att.faint) && (!fgext))
+                         fg += 24;
                        if (cells[x].att.inverse ^ inv)
                          {
                             int t;
@@ -5309,7 +5387,8 @@ _smart_apply(Evas_Object *obj)
                            (tc[x].underline != cells[x].att.underline) ||
                            (tc[x].strikethrough != cells[x].att.strike))
                          {
-                            if (ch1 < 0) ch1 = x;
+                            if (ch1 < 0)
+                              ch1 = x;
                             ch2 = x;
                          }
                        tc[x].fg_extended = fgext;
@@ -5335,6 +5414,11 @@ _smart_apply(Evas_Object *obj)
                          ch2 = x;
                        // cells[x].att.blink
                        // cells[x].att.blink2
+                       if (u && *u != codepoint)
+                         {
+                            _sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
                     }
                }
           }
