@@ -11,6 +11,7 @@
 #include <Elementary.h>
 #include "termpty.h"
 #include "termptyops.h"
+#include "termiointernals.h"
 #include <assert.h>
 
 #ifdef TYTEST
@@ -21,28 +22,42 @@
 
 #define TY_H 25
 #define TY_W 80
+#define TY_CH_H 15
+#define TY_CH_W  7
 #define TY_BACKSIZE 50
 
 
 /* {{{ stub */
 int _log_domain = -1;
-static Config *_config = NULL;
 
-const char *
-theme_path_get(void)
-{
-   return NULL;
-}
+static Config *_config = NULL;
+static Termpty _ty;
+static Termio _sd = {
+     .font = {
+          .name = "",
+          .size = 12,
+          .chw = TY_CH_W,
+          .chh = TY_CH_H,
+     },
+     .grid = {
+          .w = TY_W,
+          .h = TY_H,
+     },
+     .sel = {},
+     .cursor = {
+          .obj = NULL,
+          .x = 0,
+          .y = 0,
+          .shape = CURSOR_SHAPE_BLOCK,
+     },
+     .mouse = {},
+     .link = {},
+     .pty = &_ty,
+     .config = NULL,
+};
 
 void
 main_config_sync(const Config *config EINA_UNUSED)
-{
-}
-
-void
-termio_content_change(Evas_Object *obj EINA_UNUSED,
-                      Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED,
-                      int n EINA_UNUSED)
 {
 }
 
@@ -54,17 +69,113 @@ termio_config_get(const Evas_Object *obj EINA_UNUSED)
 }
 
 void
-termio_scroll(Evas_Object *obj EINA_UNUSED,
-              int direction EINA_UNUSED,
-              int start_y EINA_UNUSED,
-              int end_y EINA_UNUSED)
+termio_take_selection_text(Termio *sd EINA_UNUSED,
+                           Elm_Sel_Type type EINA_UNUSED,
+                           const char *text EINA_UNUSED)
 {
 }
 
 void
-termio_font_size_set(Evas_Object *obj EINA_UNUSED,
-                     int size EINA_UNUSED)
+termio_paste_selection(Evas_Object *obj EINA_UNUSED,
+                       Elm_Sel_Type type EINA_UNUSED)
 {
+}
+
+void
+termio_smart_update_queue(Termio *sd EINA_UNUSED)
+{
+}
+
+void
+termio_handle_right_click(Evas_Event_Mouse_Down *ev EINA_UNUSED,
+                          Termio *sd EINA_UNUSED,
+                          int cx EINA_UNUSED, int cy EINA_UNUSED)
+{
+}
+
+void
+termio_smart_cb_mouse_move_job(void *data EINA_UNUSED)
+{
+}
+
+void
+miniview_position_offset(const Evas_Object *obj EINA_UNUSED,
+                         int by EINA_UNUSED,
+                         Eina_Bool sanitize EINA_UNUSED)
+{
+}
+
+Evas_Object *
+term_miniview_get(const Term *term EINA_UNUSED)
+{
+   return NULL;
+}
+
+int
+termio_scroll_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return _sd.scroll;
+}
+
+void
+termio_size_get(const Evas_Object *obj EINA_UNUSED,
+                int *w, int *h)
+{
+   if (w) *w = _sd.grid.w;
+   if (h) *h = _sd.grid.h;
+}
+
+Termpty *
+termio_pty_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return &_ty;
+}
+
+Eina_Bool
+termio_cwd_get(const Evas_Object *obj EINA_UNUSED,
+               char *buf,
+               size_t size)
+{
+   assert (size >= 2);
+
+   buf[0] = '\0';
+   buf[1] = '\0';
+
+   return EINA_TRUE;
+}
+
+void
+termio_sel_set(Termio *sd, Eina_Bool enable)
+{
+   sd->pty->selection.is_active = enable;
+   if (!enable)
+     {
+        sd->pty->selection.by_word = EINA_FALSE;
+        sd->pty->selection.by_line = EINA_FALSE;
+        free(sd->pty->selection.codepoints);
+        sd->pty->selection.codepoints = NULL;
+     }
+}
+void
+termio_object_geometry_get(Termio *sd,
+                           Evas_Coord *x, Evas_Coord *y,
+                           Evas_Coord *w, Evas_Coord *h)
+{
+     if (x)
+       *x = 0;
+     if (y)
+       *y = 0;
+     if (w)
+       *w = sd->font.chw * sd->grid.w;
+     if (h)
+       *h = sd->font.chh * sd->grid.h;
+}
+
+void
+termio_font_size_set(Evas_Object *obj EINA_UNUSED,
+                     int size)
+{
+   _sd.font.size = size;
 }
 
 #ifndef TYTEST
@@ -270,7 +381,6 @@ _termpty_shutdown(Termpty *ty)
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   Termpty ty;
    char buf[4097];
    Eina_Unicode codepoint[4097];
    int len, i, j, k;
@@ -286,13 +396,14 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
        NULL);
 
    _config = config_new();
+   _sd.config = _config;
 
-   _termpty_init(&ty);
+   _termpty_init(&_ty);
 
    if (argc > 1)
      {
-       ty.fd = open(argv[1], O_RDONLY);
-       assert(ty.fd >= 0);
+       _ty.fd = open(argv[1], O_RDONLY);
+       assert(_ty.fd >= 0);
      }
 
    do
@@ -300,13 +411,13 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
         char *rbuf = buf;
         len = sizeof(buf) - 1;
 
-        for (i = 0; i < (int)sizeof(ty.oldbuf) && ty.oldbuf[i] & 0x80; i++)
+        for (i = 0; i < (int)sizeof(_ty.oldbuf) && _ty.oldbuf[i] & 0x80; i++)
           {
-             *rbuf = ty.oldbuf[i];
+             *rbuf = _ty.oldbuf[i];
              rbuf++;
              len--;
           }
-        len = read(ty.fd, rbuf, len);
+        len = read(_ty.fd, rbuf, len);
         if (len < 0 && errno != EAGAIN)
           {
              ERR("error while reading from tty slave fd");
@@ -314,8 +425,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
           }
         if (len <= 0) break;
 
-        for (i = 0; i < (int)sizeof(ty.oldbuf); i++)
-          ty.oldbuf[i] = 0;
+        for (i = 0; i < (int)sizeof(_ty.oldbuf); i++)
+          _ty.oldbuf[i] = 0;
 
         len += rbuf - buf;
 
@@ -330,14 +441,14 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
                {
                   g = eina_unicode_utf8_next_get(buf, &i);
                   if ((0xdc80 <= g) && (g <= 0xdcff) &&
-                      (len - prev_i) <= (int)sizeof(ty.oldbuf))
+                      (len - prev_i) <= (int)sizeof(_ty.oldbuf))
                     {
                        for (k = 0;
-                            (k < (int)sizeof(ty.oldbuf)) &&
+                            (k < (int)sizeof(_ty.oldbuf)) &&
                             (k < (len - prev_i));
                             k++)
                          {
-                            ty.oldbuf[k] = buf[prev_i+k];
+                            _ty.oldbuf[k] = buf[prev_i+k];
                          }
                        DBG("failure at %d/%d/%d", prev_i, i, len);
                        break;
@@ -352,15 +463,15 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
              j++;
           }
         codepoint[j] = 0;
-        termpty_handle_buf(&ty, codepoint, j);
+        termpty_handle_buf(&_ty, codepoint, j);
      }
    while (1);
 
 #ifdef TYTEST
-   _tytest_checksum(&ty);
+   _tytest_checksum(&_ty);
 #endif
 
-   _termpty_shutdown(&ty);
+   _termpty_shutdown(&_ty);
 
    eina_shutdown();
    free(_config);

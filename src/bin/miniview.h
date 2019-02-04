@@ -3,6 +3,9 @@
 
 #include "termpty.h"
 
+Evas_Object *
+term_miniview_get(const Term *term);
+
 Evas_Object * miniview_add(Evas_Object *parent, Evas_Object *termio);
 
 void miniview_redraw(const Evas_Object *obj);

@@ -13,7 +13,6 @@ void term_unfocus(Term *term);
 void term_focus(Term *term);
 
 Evas_Object *term_termio_get(const Term *term);
-Evas_Object *term_miniview_get(const Term *term);
 void term_miniview_toggle(Term *term);
 void term_set_title(Term *term);
 void term_miniview_hide(Term *term);

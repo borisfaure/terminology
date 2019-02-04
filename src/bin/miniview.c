@@ -5,10 +5,11 @@
 #include <assert.h>
 #include <math.h>
 
-#include "miniview.h"
 #include "col.h"
 #include "termpty.h"
 #include "termio.h"
+#include "termiointernals.h"
+#include "miniview.h"
 #include "utils.h"
 #include "main.h"
 

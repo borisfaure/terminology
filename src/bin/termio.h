@@ -5,7 +5,9 @@
 #include "main.h"
 #include "col.h"
 #include "termpty.h"
+#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
 #include "win.h"
+#endif
 #include "termiointernals.h"
 
 Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd,

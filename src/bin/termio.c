@@ -39,6 +39,14 @@ static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
 
 /* {{{ Helpers */
 
+void
+termio_object_geometry_get(Termio *sd,
+                           Evas_Coord *x, Evas_Coord *y,
+                           Evas_Coord *w, Evas_Coord *h)
+{
+   evas_object_geometry_get(sd->self, x, y, w, h);
+}
+
 static void
 _win_obj_del(void *data,
              Evas *_e EINA_UNUSED,
