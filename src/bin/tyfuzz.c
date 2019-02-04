@@ -62,6 +62,12 @@ main_config_sync(const Config *config EINA_UNUSED)
 }
 
 
+Termio *
+termio_get_from_obj(Evas_Object *obj)
+{
+   return &_sd;
+}
+
 Config *
 termio_config_get(const Evas_Object *obj EINA_UNUSED)
 {

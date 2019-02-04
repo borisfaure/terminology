@@ -39,6 +39,12 @@ static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
 
 /* {{{ Helpers */
 
+Termio *
+termio_get_from_obj(Evas_Object *obj)
+{
+   return evas_object_smart_data_get(obj);
+}
+
 void
 termio_object_geometry_get(Termio *sd,
                            Evas_Coord *x, Evas_Coord *y,
@@ -1441,7 +1447,7 @@ _hyperlink_end(Termio *sd,
 }
 
 static void
-_hyperlink_mouseover(Evas_Object *obj, Termio *sd,
+_hyperlink_mouseover(Termio *sd,
                      uint16_t link_id)
 {
    Evas_Coord ox, oy, ow, oh;
@@ -1467,7 +1473,7 @@ _hyperlink_mouseover(Evas_Object *obj, Termio *sd,
      return;
 
    /* Scan the whole screen and display links as needed */
-   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
+   termio_object_geometry_get(sd, &ox, &oy, &ow, &oh);
    termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
@@ -1489,7 +1495,7 @@ _hyperlink_mouseover(Evas_Object *obj, Termio *sd,
                   if (!o)
                     {
                        o = elm_layout_add(sd->win);
-                       evas_object_smart_member_add(o, obj);
+                       evas_object_smart_member_add(o, sd->self);
                        theme_apply(elm_layout_edje_get(o), sd->config,
                                    "terminology/link");
                        evas_object_move(o,
@@ -2277,12 +2283,11 @@ termio_focus_out(Evas_Object *termio)
 }
 
 static void
-_smart_mouseover_apply(Evas_Object *obj)
+_smart_mouseover_apply(Termio *sd)
 {
    char *s;
    int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
    Eina_Bool same_geom = EINA_FALSE;
-   Termio *sd = evas_object_smart_data_get(obj);
    Config *config;
    Termcell *cell = NULL;
 
@@ -2290,7 +2295,7 @@ _smart_mouseover_apply(Evas_Object *obj)
    config = sd->config;
 
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
-       (sd->link.suspend) || (!evas_object_focus_get(obj)))
+       (sd->link.suspend) || (!evas_object_focus_get(sd->self)))
      {
         _remove_links(sd);
         return;
@@ -2305,11 +2310,11 @@ _smart_mouseover_apply(Evas_Object *obj)
    if (cell->att.link_id)
      {
         if (config->active_links_escape)
-          _hyperlink_mouseover(obj, sd, cell->att.link_id);
+          _hyperlink_mouseover(sd, cell->att.link_id);
         return;
      }
 
-   s = termio_link_find(obj, sd->mouse.cx, sd->mouse.cy,
+   s = termio_link_find(sd->self, sd->mouse.cx, sd->mouse.cy,
                         &x1, &y1, &x2, &y2);
    if (!s)
      {
@@ -2362,11 +2367,11 @@ _smart_mouseover_apply(Evas_Object *obj)
 static Eina_Bool
 _smart_mouseover_delay(void *data)
 {
-   Termio *sd = evas_object_smart_data_get(data);
+   Termio *sd = data;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    sd->mouseover_delay = NULL;
-   _smart_mouseover_apply(data);
+   _smart_mouseover_apply(sd);
    return EINA_FALSE;
 }
 
@@ -2381,7 +2386,7 @@ termio_smart_cb_mouse_move_job(void *data)
    if (sd->mouseover_delay)
      ecore_timer_reset(sd->mouseover_delay);
    else
-     sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, data);
+     sd->mouseover_delay = ecore_timer_add(0.05, _smart_mouseover_delay, sd);
 }
 
 

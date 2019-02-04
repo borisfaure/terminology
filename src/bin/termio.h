@@ -13,6 +13,7 @@
 Evas_Object *termio_add(Evas_Object *parent, Config *config, const char *cmd,
                         Eina_Bool login_shell, const char *cd, int w, int h,
                         Term *term, const char *title);
+Termio *termio_get_from_obj(Evas_Object *obj);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
 void         termio_theme_set(Evas_Object *obj, Evas_Object *theme);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);

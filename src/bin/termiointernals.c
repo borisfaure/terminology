@@ -317,7 +317,7 @@ _sel_fill_in_codepoints_array(Termio *sd)
 Eina_Bool
 termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
+   Termio *sd = termio_get_from_obj(obj);
    int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
    const char *s = NULL;
    size_t len = 0;
@@ -1237,13 +1237,10 @@ _sel_to(Termio *sd, int cx, int cy, Eina_Bool extend)
 }
 
 static void
-_selection_newline_extend_fix(Evas_Object *obj)
+_selection_newline_extend_fix(Termio *sd)
 {
    int start_x, start_y, end_x, end_y;
-   Termio *sd;
    ssize_t w;
-
-   sd = evas_object_smart_data_get(obj);
 
    if ((sd->top_left) || (sd->bottom_right) || (sd->pty->selection.is_box))
      return;
@@ -1918,7 +1915,7 @@ termio_internal_mouse_up(Termio *sd,
                     }
                }
              termio_selection_dbl_fix(sd);
-             _selection_newline_extend_fix(sd->self);
+             _selection_newline_extend_fix(sd);
              termio_smart_update_queue(sd);
              termio_take_selection(sd->self, ELM_SEL_TYPE_PRIMARY);
              _sel_fill_in_codepoints_array(sd);
@@ -2068,7 +2065,7 @@ termio_internal_mouse_move(Termio *sd,
 
         termio_selection_dbl_fix(sd);
         if (!sd->pty->selection.is_box)
-          _selection_newline_extend_fix(sd->self);
+          _selection_newline_extend_fix(sd);
         termio_smart_update_queue(sd);
         sd->moved = EINA_TRUE;
      }
@@ -2168,7 +2165,7 @@ void
 termio_scroll(Evas_Object *obj, int direction,
               int start_y, int end_y)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
+   Termio *sd = termio_get_from_obj(obj);
    Termpty *ty;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
