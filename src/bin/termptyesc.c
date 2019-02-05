@@ -1,6 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include <stdint.h>
+#include <assert.h>
 #include "col.h"
 #include "termio.h"
 #include "termpty.h"
@@ -3750,34 +3751,41 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
    Eina_Unicode *cc, *cc_zero = NULL;
    const Eina_Unicode *buf;
    char *cmd;
-   int blen = 0;
+   size_t blen = 0;
    Config *config;
 
-   if (!ty->buf_have_zero) return 0;
+   if (!ty->buf_have_zero)
+     return 0;
 
    config = termio_config_get(ty->obj);
 
    cc = (Eina_Unicode *)c;
-   if ((cc < ce) && (*cc == 0x0)) cc_zero = cc;
+   if ((cc < ce) && (*cc == 0x0))
+     cc_zero = cc;
    while ((cc < ce) && (*cc != 0x0))
      {
         blen++;
         cc++;
      }
-   if ((cc < ce) && (*cc == 0x0)) cc_zero = cc;
-   if (!cc_zero) return 0;
+   if ((cc < ce) && (*cc == 0x0))
+     cc_zero = cc;
+   if (!cc_zero)
+     return 0;
    buf = (Eina_Unicode *)c;
    cc = cc_zero;
 
    // commands are stored in the buffer, 0 bytes not allowed (end marker)
    cmd = eina_unicode_unicode_to_utf8(buf, NULL);
    ty->cur_cmd = cmd;
-   if ((!config->ty_escapes) || (!_termpty_ext_handle(ty, cmd, buf)))
+   if ((!config->ty_escapes) || (!termpty_ext_handle(ty, buf, blen)))
      {
-        if (ty->cb.command.func) ty->cb.command.func(ty->cb.command.data);
+        if (ty->cb.command.func)
+          ty->cb.command.func(ty->cb.command.data);
      }
    ty->cur_cmd = NULL;
    free(cmd);
+
+   assert((size_t)(cc - c) == blen);
 
    return cc - c;
 }

@@ -11,5 +11,9 @@ test_textgrid_palette_get(const Evas_Object *obj,
                           int *g,
                           int *b,
                           int *a);
+void
+tytest_handle_escape_codes(Termpty *ty,
+                           const Eina_Unicode *buf,
+                           size_t blen);
 #endif
 #endif

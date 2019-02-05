@@ -2,13 +2,13 @@
 
 #include <Elementary.h>
 
-#include "tytest.h"
 #include "termio.h"
 #include "miniview.h"
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
+#include "tytest.h"
 
 /* {{{ Selection */
 

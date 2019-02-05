@@ -2,6 +2,8 @@
 #include <Elementary.h>
 #include "termpty.h"
 #include "termptyops.h"
+#include "tytest.h"
+#include <assert.h>
 
 #undef CRITICAL
 #undef ERR
@@ -33,12 +35,12 @@
 
 static Eina_Bool
 _handle_op_a(Termpty *_ty EINA_UNUSED,
-             const char *txt,
-             const Eina_Unicode *_utxt EINA_UNUSED)
+             const Eina_Unicode *buf EINA_UNUSED,
+             size_t blen)
 {
-   switch (txt[1])
+   switch (buf[0])
      {
-      case 'a': // command aa*
+      case 'x': // command ax*
         break;
         // room here for more minor opcode chars like 'b', 'c' etc.
       default:
@@ -48,14 +50,22 @@ _handle_op_a(Termpty *_ty EINA_UNUSED,
 }
 
 Eina_Bool
-_termpty_ext_handle(Termpty *ty, const char *txt, const Eina_Unicode *utxt)
+termpty_ext_handle(Termpty *ty,
+                   const Eina_Unicode *buf,
+                   size_t blen)
 {
-   switch (txt[0]) // major opcode
+   switch (buf[0]) // major opcode
      {
       case 'a': // command a*
-        return _handle_op_a(ty, txt, utxt);
+        return _handle_op_a(ty, buf + 1, blen - 1);
         break;
         // room here for more major opcode chars like 'b', 'c' etc.
+#if defined(ENABLE_TESTS)
+      case 't':
+        tytest_handle_escape_codes(ty, buf + 1, blen - 1);
+        return EINA_FALSE;
+        break;
+#endif
       default:
         break;
      }
