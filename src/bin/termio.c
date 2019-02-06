@@ -2544,10 +2544,20 @@ _smart_cb_mouse_down(void *data,
 {
    Evas_Event_Mouse_Down *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   Termio_Modifiers modifiers = {};
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   termio_internal_mouse_down(sd, ev);
+   modifiers.alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   modifiers.shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   modifiers.ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   modifiers.super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   modifiers.meta = evas_key_modifier_is_set(ev->modifiers, "Meta");
+   modifiers.hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   modifiers.iso_level3_shift = evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   modifiers.altgr= evas_key_modifier_is_set(ev->modifiers, "AltGr");
+
+   termio_internal_mouse_down(sd, ev, modifiers);
 }
 
 static void
@@ -2558,10 +2568,20 @@ _smart_cb_mouse_up(void *data,
 {
    Evas_Event_Mouse_Up *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   Termio_Modifiers modifiers = {};
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   termio_internal_mouse_up(sd, ev);
+   modifiers.alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   modifiers.shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   modifiers.ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   modifiers.super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   modifiers.meta = evas_key_modifier_is_set(ev->modifiers, "Meta");
+   modifiers.hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   modifiers.iso_level3_shift = evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   modifiers.altgr= evas_key_modifier_is_set(ev->modifiers, "AltGr");
+
+   termio_internal_mouse_up(sd, ev, modifiers);
 }
 
 static void
@@ -2572,9 +2592,20 @@ _smart_cb_mouse_move(void *data,
 {
    Evas_Event_Mouse_Move *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
+   Termio_Modifiers modifiers = {};
+
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   termio_internal_mouse_move(sd, ev);
+   modifiers.alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   modifiers.shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   modifiers.ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   modifiers.super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   modifiers.meta = evas_key_modifier_is_set(ev->modifiers, "Meta");
+   modifiers.hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   modifiers.iso_level3_shift = evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   modifiers.altgr= evas_key_modifier_is_set(ev->modifiers, "AltGr");
+
+   termio_internal_mouse_move(sd, ev, modifiers);
 }
 
 static void

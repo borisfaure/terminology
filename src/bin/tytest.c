@@ -151,29 +151,3 @@ _tytest_checksum(Termpty *ty)
    md5out[2 * MD5_HASHBYTES] = '\0';
    printf("%s", md5out);
 }
-
-static void
-_handle_mouse_down(Termpty *ty EINA_UNUSED,
-                   const Eina_Unicode *buf EINA_UNUSED,
-                   size_t blen EINA_UNUSED)
-{
-}
-
-/* Testing escape codes that start with '\033}t' and end with '\0'
- * Then,
- * - 'd': mouse down:
- */
-void
-tytest_handle_escape_codes(Termpty *ty,
-                           const Eina_Unicode *buf,
-                           size_t blen)
-{
-   switch (buf[0])
-     {
-      case 'd':
-        return _handle_mouse_down(ty, buf + 1, blen - 1);
-        break;
-      default:
-        break;
-     }
-}

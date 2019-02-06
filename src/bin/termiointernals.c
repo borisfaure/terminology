@@ -1385,7 +1385,7 @@ termio_selection_dbl_fix(Termio *sd)
 static void
 _handle_mouse_down_single_click(Termio *sd,
                                 int cx, int cy,
-                                int ctrl, int alt, int shift)
+                                Termio_Modifiers modifiers)
 {
    sd->didclick = EINA_FALSE;
    /* SINGLE CLICK */
@@ -1435,18 +1435,18 @@ _handle_mouse_down_single_click(Termio *sd,
         sd->pty->selection.end.y = cy;
         termio_selection_dbl_fix(sd);
      }
-   else if (!shift && alt && !sd->pty->selection.is_active
+   else if (!modifiers.shift && modifiers.alt && !sd->pty->selection.is_active
             && (sd->pty->mouse_mode == MOUSE_OFF))
      {
         /* move cursor to position */
         termpty_move_cursor(sd->pty, cx, cy);
      }
-   else if (!shift && !sd->pty->selection.is_active)
+   else if (!modifiers.shift && !sd->pty->selection.is_active)
      {
         /* New selection */
         sd->moved = EINA_FALSE;
         termio_sel_set(sd, EINA_FALSE);
-        sd->pty->selection.is_box = (ctrl || alt);
+        sd->pty->selection.is_box = (modifiers.ctrl || modifiers.alt);
         sd->pty->selection.start.x = cx;
         sd->pty->selection.start.y = cy - sd->scroll;
         sd->pty->selection.orig.x = sd->pty->selection.start.x;
@@ -1458,23 +1458,23 @@ _handle_mouse_down_single_click(Termio *sd,
         sd->pty->selection.by_word = EINA_FALSE;
         termio_selection_dbl_fix(sd);
      }
-   else if (shift && sd->pty->selection.is_active)
+   else if (modifiers.shift && sd->pty->selection.is_active)
      {
         /* let cb_up handle it */
         /* do nothing */
         return;
      }
-   else if (shift &&
+   else if (modifiers.shift &&
             (time(NULL) - sd->pty->selection.last_click) <= 5)
      {
-        sd->pty->selection.is_box = ctrl;
+        sd->pty->selection.is_box = modifiers.ctrl;
         _sel_to(sd, cx, cy - sd->scroll, EINA_FALSE);
         sd->pty->selection.is_active = EINA_TRUE;
         termio_selection_dbl_fix(sd);
      }
    else
      {
-        sd->pty->selection.is_box = ctrl;
+        sd->pty->selection.is_box = modifiers.ctrl;
         sd->pty->selection.start.x = sd->pty->selection.end.x = cx;
         sd->pty->selection.orig.x = cx;
         sd->pty->selection.start.y = sd->pty->selection.end.y = cy - sd->scroll;
@@ -1487,13 +1487,15 @@ _handle_mouse_down_single_click(Termio *sd,
 }
 
 static Eina_Bool
-_rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
+_rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
+                int cx, int cy, Termio_Modifiers modifiers)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
    int btn;
 
-   if (sd->pty->mouse_mode == MOUSE_OFF) return EINA_FALSE;
+   if (sd->pty->mouse_mode == MOUSE_OFF)
+     return EINA_FALSE;
    if (!sd->mouse.button)
      {
         /* Need to remember the first button pressed for terminal handling */
@@ -1523,7 +1525,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
                }
              else
                {
-                  int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+                  int meta = (modifiers.alt) ? 8 : 0;
 
                   if (btn > 2) btn = 0;
                   buf[0] = 0x1b;
@@ -1540,7 +1542,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
           {
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int meta = (modifiers.alt) ? 8 : 0;
              int v, i;
 
              if (btn > 2) btn = 0;
@@ -1570,7 +1572,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int meta = (modifiers.alt) ? 8 : 0;
 
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
@@ -1581,7 +1583,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
         break;
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             int meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+             int meta = (modifiers.alt) ? 8 : 0;
 
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
@@ -1597,27 +1599,22 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev, int cx, int cy)
    return ret;
 }
 
-
 void
 termio_internal_mouse_down(Termio *sd,
-                           Evas_Event_Mouse_Down *ev)
+                           Evas_Event_Mouse_Down *ev,
+                           Termio_Modifiers modifiers)
 {
    int cx, cy;
-   int shift, ctrl, alt;
 
    termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
-   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
-   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
-   alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
-
-   if ((ev->button == 3) && ctrl)
+   if ((ev->button == 3) && modifiers.ctrl)
      {
         termio_handle_right_click(ev, sd, cx, cy);
         return;
      }
-   if (!shift && !ctrl)
-     if (_rep_mouse_down(sd, ev, cx, cy))
+   if (!modifiers.shift && !modifiers.ctrl)
+     if (_rep_mouse_down(sd, ev, cx, cy, modifiers))
        {
            if (sd->pty->selection.is_active)
              {
@@ -1631,7 +1628,7 @@ termio_internal_mouse_down(Termio *sd,
         sd->pty->selection.makesel = EINA_TRUE;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
-             if (shift && sd->pty->selection.is_active)
+             if (modifiers.shift && sd->pty->selection.is_active)
                _sel_line_to(sd, cy - sd->scroll, EINA_TRUE);
              else
                _sel_line(sd, cy - sd->scroll);
@@ -1646,7 +1643,7 @@ termio_internal_mouse_down(Termio *sd,
           {
              if (!sd->pty->selection.is_active && sd->didclick)
                sd->pty->selection.is_active = EINA_TRUE;
-             if (shift && sd->pty->selection.is_active)
+             if (modifiers.shift && sd->pty->selection.is_active)
                _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
              else
                _sel_word(sd, cx, cy - sd->scroll);
@@ -1660,7 +1657,7 @@ termio_internal_mouse_down(Termio *sd,
           }
         else
           {
-             _handle_mouse_down_single_click(sd, cx, cy, ctrl, alt, shift);
+             _handle_mouse_down_single_click(sd, cx, cy, modifiers);
           }
         termio_smart_update_queue(sd);
      }
@@ -1675,7 +1672,8 @@ termio_internal_mouse_down(Termio *sd,
 }
 
 static Eina_Bool
-_rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
+_rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev,
+              int cx, int cy, Termio_Modifiers modifiers)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
@@ -1687,7 +1685,7 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev, int cx, int cy)
    if (sd->mouse.button == ev->button)
      sd->mouse.button = 0;
 
-   meta = evas_key_modifier_is_set(ev->modifiers, "Alt") ? 8 : 0;
+   meta = (modifiers.alt) ? 8 : 0;
 
    switch (sd->pty->mouse_ext)
      {
@@ -1845,18 +1843,15 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
 
 void
 termio_internal_mouse_up(Termio *sd,
-                         Evas_Event_Mouse_Up *ev)
+                         Evas_Event_Mouse_Up *ev,
+                         Termio_Modifiers modifiers)
 {
-   int shift, ctrl;
    int cx = 0, cy = 0;
 
    termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
-   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
-   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
-
-   if (!shift && !ctrl && !sd->pty->selection.makesel)
-      if (_rep_mouse_up(sd, ev, cx, cy))
+   if (!modifiers.shift && !modifiers.ctrl && !sd->pty->selection.makesel)
+      if (_rep_mouse_up(sd, ev, cx, cy, modifiers))
         {
            if (sd->pty->selection.is_active)
              {
@@ -1895,15 +1890,15 @@ termio_internal_mouse_up(Termio *sd,
           {
              if (sd->pty->selection.by_line)
                {
-                  _sel_line_to(sd, cy - sd->scroll, shift);
+                  _sel_line_to(sd, cy - sd->scroll, modifiers.shift);
                }
              else if (sd->pty->selection.by_word)
                {
-                  _sel_word_to(sd, cx, cy - sd->scroll, shift);
+                  _sel_word_to(sd, cx, cy - sd->scroll, modifiers.shift);
                }
              else
                {
-                  if (shift)
+                  if (modifiers.shift)
                     {
                        /* extend selection */
                        _sel_to(sd, cx, cy - sd->scroll, EINA_TRUE);
@@ -1977,24 +1972,23 @@ termio_cursor_to_xy(Termio *sd, Evas_Coord x, Evas_Coord y,
 
 void
 termio_internal_mouse_move(Termio *sd,
-                           Evas_Event_Mouse_Move *ev)
+                           Evas_Event_Mouse_Move *ev,
+                           Termio_Modifiers modifiers)
 {
    int cx, cy;
    float fcy;
    Evas_Coord ox, oy;
-   int shift, ctrl;
    Eina_Bool scroll = EINA_FALSE;
 
    termio_object_geometry_get(sd, &ox, &oy, NULL, NULL);
    cx = (ev->cur.canvas.x - ox) / sd->font.chw;
    fcy = (ev->cur.canvas.y - oy) / (float)sd->font.chh;
 
-   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
-   ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
-
    cy = fcy;
-   if (cx < 0) cx = 0;
-   else if (cx >= sd->grid.w) cx = sd->grid.w - 1;
+   if (cx < 0)
+     cx = 0;
+   else if (cx >= sd->grid.w)
+     cx = sd->grid.w - 1;
    if (fcy < 0.3)
      {
         cy = 0;
@@ -2026,8 +2020,11 @@ termio_internal_mouse_move(Termio *sd,
 
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
-   if (!shift && !ctrl)
-     if (_rep_mouse_move(sd, cx, cy)) return;
+   if (!modifiers.shift && !modifiers.ctrl)
+     {
+        if (_rep_mouse_move(sd, cx, cy))
+          return;
+     }
    if (sd->link.down.dnd)
      {
         sd->pty->selection.makesel = EINA_FALSE;

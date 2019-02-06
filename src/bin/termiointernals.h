@@ -86,17 +86,39 @@ struct _Termio
    double gesture_zoom_start_size;
 };
 
+typedef struct _Termio_Modifiers Termio_Modifiers;
+struct _Termio_Modifiers
+{
+   unsigned char alt              : 1;
+   unsigned char shift            : 1;
+   unsigned char ctrl             : 1;
+   unsigned char super            : 1;
+   unsigned char meta             : 1;
+   unsigned char hyper            : 1;
+   unsigned char iso_level3_shift : 1;
+   unsigned char altgr            : 1;
+};
+
+
 #define INT_SWAP(_a, _b) do {    \
     int _swap = _a; _a = _b; _b = _swap; \
 } while (0)
 
 
+
 void
-termio_internal_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev);
+termio_internal_mouse_down(Termio *sd,
+                           Evas_Event_Mouse_Down *ev,
+                           Termio_Modifiers modifiers);
+
 void
-termio_internal_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev);
+termio_internal_mouse_up(Termio *sd,
+                         Evas_Event_Mouse_Up *ev,
+                         Termio_Modifiers modifiers);
 void
-termio_internal_mouse_move(Termio *sd, Evas_Event_Mouse_Move *ev);
+termio_internal_mouse_move(Termio *sd,
+                           Evas_Event_Mouse_Move *ev,
+                           Termio_Modifiers modifiers);
 
 void
 termio_selection_dbl_fix(Termio *sd);
