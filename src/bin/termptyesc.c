@@ -168,6 +168,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
    return sum;
 
 error:
+   ERR("Invalid CSI argument");
    ty->decoding_error = EINA_TRUE;
    *ptr = NULL;
    return -CSI_ARG_ERROR;
@@ -484,7 +485,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    /* libreadline6 emits it but it shouldn't.
                       See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
                       */
-                   DBG("Ignored screen mode %i", arg);
+                   WRN("Ignored screen mode %i", arg);
                    ty->decoding_error = EINA_TRUE;
                    break;
                 case 1047:
@@ -2735,6 +2736,7 @@ _handle_esc_csi_decst8c(Termpty *ty, Eina_Unicode **ptr)
      return;
    if ((arg != -CSI_ARG_NO_VALUE) && (arg != 5))
      {
+        ERR("Invalid DECST8C argument");
         ty->decoding_error = EINA_TRUE;
         return;
      }
@@ -3228,7 +3230,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (*(cc-1) == '$')
           _handle_esc_csi_deccra(ty, &b);
         else
+          {
+             ERR("unhandled 'v' CSI escape code");
              ty->decoding_error = EINA_TRUE;
+          }
         break;
       case 'x':
         if (*(cc-1) == '$')
@@ -3236,27 +3241,40 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         else if (*(cc-1) == '*')
           _handle_esc_csi_decsace(ty, &b);
         else
+          {
+             ERR("unhandled 'x' CSI escape code");
              ty->decoding_error = EINA_TRUE;
+          }
         break;
       case 'z':
         if (*(cc-1) == '$')
           _handle_esc_csi_decera(ty, &b);
         else
+          {
+             ERR("unhandled 'z' CSI escape code");
              ty->decoding_error = EINA_TRUE;
+          }
         break;
       case '}':
         if (*(cc-1) == '\'')
           _handle_esc_csi_decic(ty, &b);
         else
+          {
+             ERR("unhandled '}' CSI escape code");
              ty->decoding_error = EINA_TRUE;
+          }
         break;
       case '~':
         if (*(cc-1) == '\'')
           _handle_esc_csi_decdc(ty, &b);
         else
+          {
+             ERR("unhandled '~' CSI escape code");
              ty->decoding_error = EINA_TRUE;
+          }
         break;
       default:
+        ERR("unhandled '0x%x' CSI escape code", *cc);
         goto unhandled;
      }
    cc++;
@@ -3652,7 +3670,8 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         // XXX: set palette entry. not supported.
         ty->decoding_error = EINA_TRUE;
         WRN("set palette, not supported");
-        if ((cc - c) < 3) return 0;
+        if ((cc - c) < 3)
+          return 0;
         break;
       case 8:
         DBG("hyperlink");
