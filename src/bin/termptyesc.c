@@ -27,8 +27,9 @@
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
 #define ESC 033 // Escape
-#define DEL 127
-#define UTF8CC 0xc2
+#define CSI 0x9b
+#define OSC 0x9d
+#define DEL 0x7f
 
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
  * if not enough bytes could be read
@@ -3579,7 +3580,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      {
         if ((cc < ce - 1) &&
             (((*cc == ESC) && (*(cc + 1) == '\\')) ||
-             ((*cc == UTF8CC) && (*(cc + 1) == ST))))
+             (*cc == ST)))
           {
              cc++;
              break;
@@ -3797,7 +3798,7 @@ _handle_esc_dcs(Termpty *ty,
      {
         if ((cc < ce - 1) &&
             (((*cc == ESC) && (*(cc + 1) == '\\')) ||
-             ((*cc == UTF8CC) && (*(cc + 1) == ST))))
+             (*cc == ST)))
           {
              cc++;
              break;
@@ -4086,6 +4087,16 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
         return 1;
+      case '"':
+        if (len < 2)
+          return 0;
+        /* Seems like this sequence activates C1... */
+        if (c[1] != 'C')
+          {
+             ERR("invalid 0x1b 0x22 sequence");
+             ty->decoding_error = 0;
+          }
+        return 2;
       case '(': // charset 0
         if (len < 2) return 0;
         ty->termstate.chset[0] = c[1];
@@ -4152,32 +4163,6 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    return 0;
 }
 
-static int
-_handle_utf8_control_code(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
-{
-   int len = ce - c;
-
-   if (len < 1)
-     return 0;
-   DBG("c0 utf8: '%s' (0x%02x)", _safechar(c[0]), c[0]);
-   switch (c[0])
-     {
-      case 0x9b:
-        len = _handle_esc_csi(ty, c + 1, ce);
-        if (len == 0) return 0;
-        return 1 + len;
-      case 0x9d:
-        len = _handle_esc_osc(ty, c + 1, ce);
-        if (len == 0) return 0;
-        return 1 + len;
-      default:
-        ty->decoding_error = EINA_TRUE;
-        WRN("Unhandled utf8 control code '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
-        return 1;
-     }
-   return 0;
-}
-
 
 /* XXX: ce is excluded */
 int
@@ -4225,25 +4210,24 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              goto end;
           }
      }
-   else if (c[0] == 0x7f) // DEL
+   else if (c[0] == DEL)
      {
         WRN("Unhandled char 0x%02x [DEL]", (unsigned int) c[0]);
         ty->decoding_error = EINA_TRUE;
         len = 1;
         goto end;
      }
-   else if (c[0] == 0x9b) // ANSI ESC!!!
+   else if (c[0] == CSI)
      {
-        DBG("ANSI CSI!!!!!");
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0)
           goto end;
         len++;
         goto end;
      }
-   else if (c[0] == UTF8CC)
+   else if (c[0] == OSC)
      {
-        len = _handle_utf8_control_code(ty, c + 1, ce);
+        len = _handle_esc_osc(ty, c + 1, ce);
         if (len == 0)
           goto end;
         len++;
@@ -4290,8 +4274,8 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    cc = (Eina_Unicode *)c;
 
    DBG("txt: [");
-   while ((cc < ce) && (*cc >= 0x20) && (*cc != 0x7f) && (*cc != 0x9b)
-          && (*cc != UTF8CC))
+   while ((cc < ce) && (*cc >= 0x20) && (*cc != DEL) && (*cc != CSI)
+          && (*cc != OSC))
      {
         DBG("%s", _safechar(*cc));
         cc++;
