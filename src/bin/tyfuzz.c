@@ -66,7 +66,7 @@ main_config_sync(const Config *config EINA_UNUSED)
 
 
 Termio *
-termio_get_from_obj(Evas_Object *obj)
+termio_get_from_obj(Evas_Object *obj EINA_UNUSED)
 {
    return &_sd;
 }
@@ -185,6 +185,18 @@ termio_font_size_set(Evas_Object *obj EINA_UNUSED,
                      int size)
 {
    _sd.font.size = size;
+}
+
+const char *
+term_preedit_str_get(Term *term EINA_UNUSED)
+{
+   return NULL;
+}
+
+void
+termio_block_activate(Evas_Object *obj EINA_UNUSED,
+                      Termblock *blk EINA_UNUSED)
+{
 }
 
 #ifndef TYTEST

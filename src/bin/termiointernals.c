@@ -5,6 +5,7 @@
 #include "termio.h"
 #include "miniview.h"
 #include "termpty.h"
+#include "termptydbl.h"
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
@@ -2184,3 +2185,364 @@ termio_scroll(Evas_Object *obj, int direction,
    _termio_scroll_selection(sd, ty, direction, start_y, end_y);
 }
 
+void
+termio_internal_render(Termio *sd,
+                       Evas_Coord ox, Evas_Coord oy,
+                       int *preedit_xp, int *preedit_yp)
+{
+   int x, y, ch1 = 0, ch2 = 0, inv = 0, preedit_x = 0, preedit_y = 0;
+   const char *preedit_str;
+   ssize_t w;
+   int sel_start_x = 0, sel_start_y = 0, sel_end_x = 0, sel_end_y = 0;
+   Eina_Unicode *cp;
+   Termblock *blk;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(sd->pty->block.active, l, blk)
+     {
+        blk->was_active = blk->active;
+        blk->active = EINA_FALSE;
+     }
+
+
+   inv = sd->pty->termstate.reverse;
+   termpty_backlog_lock();
+   termpty_backscroll_adjust(sd->pty, &sd->scroll);
+
+   /* Make selection bottom to top */
+   sel_start_x = sd->pty->selection.start.x;
+   sel_start_y = sd->pty->selection.start.y;
+   sel_end_x = sd->pty->selection.end.x;
+   sel_end_y = sd->pty->selection.end.y;
+   if (!sd->pty->selection.is_top_to_bottom)
+     {
+        INT_SWAP(sel_start_y, sel_end_y);
+        INT_SWAP(sel_start_x, sel_end_x);
+     }
+   cp = sd->pty->selection.codepoints;
+
+   /* Look at every visible line */
+   for (y = 0; y < sd->grid.h; y++)
+     {
+        Termcell *cells;
+        Evas_Textgrid_Cell *tc;
+        int cur_sel_start_x = -1, cur_sel_end_x = -1;
+        int rel_y = y - sd->scroll;
+
+        w = 0;
+        cells = termpty_cellrow_get(sd->pty, rel_y, &w);
+        if (!cells)
+          continue;
+        tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
+        if (!tc)
+          continue;
+
+        /* Compute @cur_sel_start_x, @cur_sel_end_x */
+        if (sd->pty->selection.codepoints)
+          {
+             if (sel_start_y <= rel_y && rel_y <= sel_end_y)
+               {
+                  if (sd->pty->selection.is_box)
+                    {
+                       cur_sel_start_x = sel_start_x;
+                       cur_sel_end_x = sel_end_x;
+                    }
+                  else
+                    {
+                       cur_sel_start_x = sel_start_x;
+                       cur_sel_end_x = sel_end_x;
+                       if (sel_start_y != sel_end_y)
+                         {
+                            if (rel_y == sel_start_y)
+                              {
+                                 cur_sel_end_x = sd->grid.w - 1;
+                              }
+                            else if (y == sel_end_y)
+                              {
+                                 cur_sel_start_x = 0;
+                              }
+                            else
+                              {
+                                 cur_sel_start_x = 0;
+                                 cur_sel_end_x = sd->grid.w - 1;
+                              }
+                         }
+                    }
+               }
+          }
+
+        ch1 = -1;
+        /* Look at every cell in that line */
+        for (x = 0; x < sd->grid.w; x++)
+          {
+             Eina_Unicode *u = NULL;
+
+             if (cp && cur_sel_start_x <= x && x <= cur_sel_end_x)
+               u = cp;
+
+             if ((!cells) || (x >= w))
+               {
+                  if ((tc[x].codepoint != 0) ||
+                      (tc[x].bg != COL_INVIS) ||
+                      (tc[x].bg_extended))
+                    {
+                       if (ch1 < 0)
+                         ch1 = x;
+                       ch2 = x;
+                    }
+                  tc[x].codepoint = 0;
+                  tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
+                  tc[x].bg_extended = 0;
+                  tc[x].underline = 0;
+                  tc[x].strikethrough = 0;
+                  tc[x].bold = 0;
+                  tc[x].italic = 0;
+                  tc[x].double_width = 0;
+
+                  if (u && *u != ' ')
+                    {
+                       termio_sel_set(sd, EINA_FALSE);
+                       u = cp = NULL;
+                    }
+               }
+             else
+               {
+                  int bid, bx = 0, by = 0;
+
+                  bid = termpty_block_id_get(&(cells[x]), &bx, &by);
+                  if (bid >= 0)
+                    {
+                       if (ch1 < 0)
+                         ch1 = x;
+                       ch2 = x;
+                       tc[x].codepoint = 0;
+                       tc[x].fg_extended = 0;
+                       tc[x].bg_extended = 0;
+                       tc[x].underline = 0;
+                       tc[x].strikethrough = 0;
+                       tc[x].bold = 0;
+                       tc[x].italic = 0;
+                       tc[x].double_width = 0;
+                       tc[x].fg = COL_INVIS;
+                       tc[x].bg = COL_INVIS;
+                       blk = termpty_block_get(sd->pty, bid);
+                       if (blk)
+                         {
+                            termio_block_activate(sd->self, blk);
+                            blk->x = (x - bx);
+                            blk->y = (y - by);
+                            evas_object_move(blk->obj,
+                                             ox + (blk->x * sd->font.chw),
+                                             oy + (blk->y * sd->font.chh));
+                            evas_object_resize(blk->obj,
+                                               blk->w * sd->font.chw,
+                                               blk->h * sd->font.chh);
+                         }
+                       if (u && *u != ' ')
+                         {
+                            termio_sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
+                    }
+                  else if (cells[x].att.invisible)
+                    {
+                       if ((tc[x].codepoint != 0) ||
+                           (tc[x].bg != COL_INVIS) ||
+                           (tc[x].bg_extended))
+                         {
+                            if (ch1 < 0)
+                              ch1 = x;
+                            ch2 = x;
+                         }
+                       tc[x].codepoint = 0;
+                       tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
+                       tc[x].bg_extended = 0;
+                       tc[x].underline = 0;
+                       tc[x].strikethrough = 0;
+                       tc[x].bold = 0;
+                       tc[x].italic = 0;
+                       tc[x].double_width = cells[x].att.dblwidth;
+                       if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
+                           (ch2 == x - 1))
+                         ch2 = x;
+                       if (u && *u != ' ')
+                         {
+                            termio_sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
+                    }
+                  else
+                    {
+                       int fg, bg, fgext, bgext, bold, italic;
+                       Eina_Unicode codepoint;
+
+                       // colors
+                       fg = cells[x].att.fg;
+                       bg = cells[x].att.bg;
+                       fgext = cells[x].att.fg256;
+                       bgext = cells[x].att.bg256;
+                       codepoint = cells[x].codepoint;
+                       if (sd->config->font.bolditalic)
+                         {
+                            bold = cells[x].att.bold;
+                            italic = cells[x].att.italic;
+                         }
+                       else
+                         {
+                            bold = 0;
+                            italic = 0;
+                         }
+
+                       if ((fg == COL_DEF) && (cells[x].att.inverse ^ inv))
+                         fg = COL_INVERSEBG;
+                       if (bg == COL_DEF)
+                         {
+                            if (cells[x].att.inverse ^ inv)
+                              bg = COL_INVERSE;
+                            else if (!bgext)
+                              bg = COL_INVIS;
+                         }
+                       if ((cells[x].att.fgintense) && (!fgext))
+                         fg += 48;
+                       if ((cells[x].att.bgintense) && (!bgext))
+                         bg += 48;
+                       if ((cells[x].att.bold) && (!fgext))
+                         fg += 12;
+                       if ((cells[x].att.faint) && (!fgext))
+                         fg += 24;
+                       if (cells[x].att.inverse ^ inv)
+                         {
+                            int t;
+                            t = fgext; fgext = bgext; bgext = t;
+                            t = fg; fg = bg; bg = t;
+                         }
+                       if ((tc[x].codepoint != codepoint) ||
+                           (tc[x].bold != bold) ||
+                           (tc[x].italic != italic) ||
+                           (tc[x].fg != fg) ||
+                           (tc[x].bg != bg) ||
+                           (tc[x].fg_extended != fgext) ||
+                           (tc[x].bg_extended != bgext) ||
+                           (tc[x].underline != cells[x].att.underline) ||
+                           (tc[x].strikethrough != cells[x].att.strike))
+                         {
+                            if (ch1 < 0)
+                              ch1 = x;
+                            ch2 = x;
+                         }
+                       tc[x].fg_extended = fgext;
+                       tc[x].bg_extended = bgext;
+                       tc[x].underline = cells[x].att.underline;
+                       tc[x].strikethrough = cells[x].att.strike;
+                       if (sd->config->font.bolditalic)
+                         {
+                            tc[x].bold = cells[x].att.bold;
+                            tc[x].italic = cells[x].att.italic;
+                         }
+                       else
+                         {
+                            tc[x].bold = 0;
+                            tc[x].italic = 0;
+                         }
+                       tc[x].double_width = cells[x].att.dblwidth;
+                       tc[x].fg = fg;
+                       tc[x].bg = bg;
+                       tc[x].codepoint = codepoint;
+                       if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
+                           (ch2 == x - 1))
+                         ch2 = x;
+                       // cells[x].att.blink
+                       // cells[x].att.blink2
+                       if (u && *u != codepoint)
+                         {
+                            termio_sel_set(sd, EINA_FALSE);
+                            u = cp = NULL;
+                         }
+                    }
+               }
+          }
+        evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
+        /* only bothering to keep 1 change span per row - not worth doing
+         * more really */
+        if (ch1 >= 0)
+          evas_object_textgrid_update_add(sd->grid.obj, ch1, y,
+                                          ch2 - ch1 + 1, 1);
+     }
+
+   preedit_str = term_preedit_str_get(sd->term);
+   if (preedit_str && preedit_str[0])
+     {
+        Eina_Unicode *uni, g;
+        int len = 0, i, jump, xx, backx;
+        Eina_Bool dbl;
+        Evas_Textgrid_Cell *tc;
+        x = sd->cursor.x, y = sd->cursor.y;
+
+        uni = eina_unicode_utf8_to_unicode(preedit_str, &len);
+        if (uni)
+          {
+             for (i = 0; i < len; i++)
+               {
+                  jump = 1;
+                  g = uni[i];
+                  dbl = _termpty_is_dblwidth_get(sd->pty, g);
+                  if (dbl) jump = 2;
+                  backx = 0;
+                  if ((x + jump) > sd->grid.w)
+                    {
+                       if (y < (sd->grid.h - 1))
+                         {
+                            x = jump;
+                            backx = jump;
+                            y++;
+                         }
+                    }
+                  else
+                    {
+                       x += jump;
+                       backx = jump;
+                    }
+                  tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
+                  xx = x - backx;
+                  tc[xx].bold = 1;
+                  tc[xx].bg = COL_BLACK;
+                  tc[xx].fg = COL_WHITE;
+                  tc[xx].fg_extended = 0;
+                  tc[xx].bg_extended = 0;
+                  tc[xx].underline = 1;
+                  tc[xx].strikethrough = 0;
+                  tc[xx].double_width = dbl;
+                  tc[xx].codepoint = g;
+                  if (dbl)
+                    {
+                       xx = x - backx + 1;
+                       tc[xx].bold = 1;
+                       tc[xx].bg = COL_BLACK;
+                       tc[xx].fg = COL_WHITE;
+                       tc[xx].fg_extended = 0;
+                       tc[xx].bg_extended = 0;
+                       tc[xx].underline = 1;
+                       tc[xx].strikethrough = 0;
+                       tc[xx].double_width = 0;
+                       tc[xx].codepoint = 0;
+                    }
+                  evas_object_textgrid_cellrow_set(sd->grid.obj, y, tc);
+                  if (x >= sd->grid.w)
+                    {
+                       if (y < (sd->grid.h - 1))
+                         {
+                            x = 0;
+                            y++;
+                         }
+                    }
+               }
+             evas_object_textgrid_update_add(sd->grid.obj, 0, sd->cursor.y,
+                                             sd->grid.w, y - sd->cursor.y + 1);
+          }
+        preedit_x = x - sd->cursor.x;
+        preedit_y = y - sd->cursor.y;
+     }
+   termpty_backlog_unlock();
+   *preedit_xp = preedit_x;
+   *preedit_yp = preedit_y;
+}

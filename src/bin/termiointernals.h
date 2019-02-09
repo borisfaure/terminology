@@ -132,4 +132,8 @@ termio_scroll(Evas_Object *obj, int direction, int start_y, int end_y);
 void
 termio_cursor_to_xy(Termio *sd, Evas_Coord x, Evas_Coord y,
                     int *cx, int *cy);
+void
+termio_internal_render(Termio *sd,
+                       Evas_Coord ox, Evas_Coord oy,
+                       int *preedit_xp, int *preedit_yp);
 #endif

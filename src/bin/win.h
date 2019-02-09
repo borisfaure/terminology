@@ -66,8 +66,6 @@ void term_down(Term *term);
 void term_left(Term *term);
 void term_right(Term *term);
 
-const char *
-term_preedit_str_get(Term *term);
 Ecore_IMF_Context *
 term_imf_context_get(Term *term);
 

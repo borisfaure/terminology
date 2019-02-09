@@ -75,4 +75,9 @@ void
 termio_sel_set(Termio *sd, Eina_Bool enable);
 void
 termio_smart_cb_mouse_move_job(void *data);
+
+void
+termio_block_activate(Evas_Object *obj, Termblock *blk);
+const char *
+term_preedit_str_get(Term *term);
 #endif
