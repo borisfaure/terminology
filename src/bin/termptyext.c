@@ -221,15 +221,20 @@ static void
 _handle_selection_is(Termpty *ty,
                      const Eina_Unicode *buf)
 {
-   Eina_Unicode *cp = ty->selection.codepoints;
+   size_t len = 0;
+   Termio *sd = termio_get_from_obj(ty->obj);
+   const char *s = termio_internal_get_selection(sd, &len);
 
-   assert(ty->selection.is_active);
-   assert(ty->selection.codepoints != NULL);
+   assert(s != NULL);
+   return;
 
    while (*buf)
      {
-        assert(*buf == *cp);
-        cp++;
+        int idx;
+        Eina_Unicode u = eina_unicode_utf8_next_get(s, &idx);
+
+        assert(*buf == u);
+        s += idx;
         buf++;
      }
 }
