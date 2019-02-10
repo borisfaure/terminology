@@ -1861,7 +1861,8 @@ termio_internal_mouse_up(Termio *sd,
              }
            return;
         }
-   if (sd->link.down.dnd) return;
+   if (sd->link.down.dnd)
+     return;
    if (sd->pty->selection.makesel)
      {
         if (sd->mouse_selection_scroll_timer)
@@ -1912,10 +1913,10 @@ termio_internal_mouse_up(Termio *sd,
                }
              termio_selection_dbl_fix(sd);
              _selection_newline_extend_fix(sd);
-             termio_smart_update_queue(sd);
              termio_take_selection(sd->self, ELM_SEL_TYPE_PRIMARY);
              _sel_fill_in_codepoints_array(sd);
              sd->pty->selection.makesel = EINA_FALSE;
+             termio_smart_update_queue(sd);
           }
      }
 }
@@ -2017,14 +2018,21 @@ termio_internal_mouse_move(Termio *sd,
         sd->mouse_selection_scroll_timer = NULL;
      }
 
-   if ((sd->mouse.cx == cx) && (sd->mouse.cy == cy)) return;
+   /* Cursor has not changed cells */
+   if ((sd->mouse.cx == cx) && (sd->mouse.cy == cy))
+     {
+        return;
+     }
 
    sd->mouse.cx = cx;
    sd->mouse.cy = cy;
    if (!modifiers.shift && !modifiers.ctrl)
      {
         if (_rep_mouse_move(sd, cx, cy))
-          return;
+          {
+             /* Mouse move already been taken care of */
+             return;
+          }
      }
    if (sd->link.down.dnd)
      {
@@ -2204,7 +2212,6 @@ termio_internal_render(Termio *sd,
         blk->active = EINA_FALSE;
      }
 
-
    inv = sd->pty->termstate.reverse;
    termpty_backlog_lock();
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
@@ -2278,7 +2285,7 @@ termio_internal_render(Termio *sd,
              Eina_Unicode *u = NULL;
 
              if (cp && cur_sel_start_x <= x && x <= cur_sel_end_x)
-               u = cp;
+               u = cp++;
 
              if ((!cells) || (x >= w))
                {

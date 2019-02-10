@@ -259,7 +259,7 @@ termpty_ext_handle(Termpty *ty,
 #if WITH_TESTS
       case 't':
         tytest_handle_escape_codes(ty, buf + 1);
-        return EINA_FALSE;
+        return EINA_TRUE;
         break;
 #endif
       default:

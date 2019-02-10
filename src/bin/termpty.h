@@ -187,9 +187,9 @@ struct _Termpty
       } start, end, orig;
       Eina_Unicode *codepoints;
       time_t last_click;
-      unsigned char is_active : 1;
       unsigned char is_box    : 1;
-      unsigned char makesel   : 1;
+      unsigned char is_active : 1; // there is a visible selection
+      unsigned char makesel   : 1; // selection is being worked on
       unsigned char by_word   : 1;
       unsigned char by_line   : 1;
       unsigned char is_top_to_bottom : 1;
