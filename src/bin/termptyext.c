@@ -234,6 +234,15 @@ _handle_selection_is(Termpty *ty,
      }
 }
 
+static void
+_handle_force_render(Termpty *ty)
+{
+   int preedit_x = 0, preedit_y = 0;
+   Termio *sd = termio_get_from_obj(ty->obj);
+
+   termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
+}
+
 /* Testing escape codes that start with '\033}t' and end with '\0'
  * Then,
  * - 'd': mouse down:
@@ -254,6 +263,9 @@ tytest_handle_escape_codes(Termpty *ty,
         break;
       case 'n':
         assert(!ty->selection.is_active);
+        break;
+      case 'r':
+        _handle_force_render(ty);
         break;
       case 's':
         _handle_selection_is(ty, buf+1);
