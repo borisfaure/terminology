@@ -199,6 +199,13 @@ termio_block_activate(Evas_Object *obj EINA_UNUSED,
 {
 }
 
+Eina_Bool
+termio_take_selection(Evas_Object *obj EINA_UNUSED,
+                      Elm_Sel_Type type EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 #ifndef TYTEST
 void
 termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,

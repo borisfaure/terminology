@@ -903,6 +903,27 @@ termio_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    sd->sel_str = text;
 }
 
+
+Eina_Bool
+termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
+{
+   Termio *sd = termio_get_from_obj(obj);
+   const char *s = NULL;
+   size_t len = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+
+   s = termio_internal_get_selection(sd, &len);
+   if (s)
+     {
+        if ((sd->win) && (len > 0))
+          termio_take_selection_text(sd, type, s);
+        eina_stringshare_del(s);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _cb_ctxp_link_content_copy(void *data,
                            Evas_Object *obj,

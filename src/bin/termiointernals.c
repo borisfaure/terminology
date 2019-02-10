@@ -315,10 +315,9 @@ _sel_fill_in_codepoints_array(Termio *sd)
    sd->pty->selection.codepoints = buf.codepoints;
 }
 
-Eina_Bool
-termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
+const char *
+termio_internal_get_selection(Termio *sd, size_t *lenp)
 {
-   Termio *sd = termio_get_from_obj(obj);
    int start_x = 0, start_y = 0, end_x = 0, end_y = 0;
    const char *s = NULL;
    size_t len = 0;
@@ -382,14 +381,8 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
      }
 
 end:
-   if (s)
-     {
-        if ((sd->win) && (len > 0))
-          termio_take_selection_text(sd, type, s);
-        eina_stringshare_del(s);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   *lenp = len;
+   return s;
 }
 
 static void

@@ -136,4 +136,6 @@ void
 termio_internal_render(Termio *sd,
                        Evas_Coord ox, Evas_Coord oy,
                        int *preedit_xp, int *preedit_yp);
+const char *
+termio_internal_get_selection(Termio *sd, size_t *lenp);
 #endif
