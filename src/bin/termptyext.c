@@ -217,6 +217,23 @@ _handle_mouse_move(Termpty *ty,
    termio_internal_mouse_move(sd, &ev, modifiers);
 }
 
+static void
+_handle_selection_is(Termpty *ty,
+                     const Eina_Unicode *buf)
+{
+   Eina_Unicode *cp = ty->selection.codepoints;
+
+   assert(ty->selection.is_active);
+   assert(ty->selection.codepoints != NULL);
+
+   while (*buf)
+     {
+        assert(*buf == *cp);
+        cp++;
+        buf++;
+     }
+}
+
 /* Testing escape codes that start with '\033}t' and end with '\0'
  * Then,
  * - 'd': mouse down:
@@ -230,13 +247,19 @@ tytest_handle_escape_codes(Termpty *ty,
    switch (buf[0])
      {
       case 'd':
-        return _handle_mouse_down(ty, buf + 1);
+        _handle_mouse_down(ty, buf + 1);
         break;
       case 'm':
-        return _handle_mouse_move(ty, buf + 1);
+        _handle_mouse_move(ty, buf + 1);
+        break;
+      case 'n':
+        assert(!ty->selection.is_active);
+        break;
+      case 's':
+        _handle_selection_is(ty, buf+1);
         break;
       case 'u':
-        return _handle_mouse_up(ty, buf + 1);
+        _handle_mouse_up(ty, buf + 1);
         break;
       default:
         break;
