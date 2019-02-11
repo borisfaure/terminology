@@ -1,7 +1,8 @@
 #define TYTEST 1
 #include "tyfuzz.c"
 
-const char *_cursor_shape = "undefined";
+static const char *_cursor_shape = "undefined";
+static Evas_Textgrid_Cell *_cells;
 
 typedef struct _Termpty_Tests
 {
@@ -150,4 +151,25 @@ _tytest_checksum(Termpty *ty)
      }
    md5out[2 * MD5_HASHBYTES] = '\0';
    printf("%s", md5out);
+}
+
+Evas_Textgrid_Cell *
+test_textgrid_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
+{
+   assert (y >= 0 && y < TY_H);
+   return &_cells[y * TY_W];
+}
+
+
+void
+tytest_init(void)
+{
+   _cells = calloc(TY_H * TY_W, sizeof(Evas_Textgrid_Cell));
+   assert(_cells != NULL);
+}
+
+void
+tytest_shutdown(void)
+{
+   free(_cells);
 }

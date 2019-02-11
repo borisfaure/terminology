@@ -262,6 +262,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    eina_init();
 
+#ifdef TYTEST
+   tytest_init();
+#endif
+
+
    _log_domain = eina_log_domain_register(
 #ifdef TYTEST
        "tytest",
@@ -347,6 +352,10 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 #endif
 
    _termpty_shutdown(&_ty);
+
+#ifdef TYTEST
+   tytest_shutdown();
+#endif
 
    eina_shutdown();
    free(_config);
