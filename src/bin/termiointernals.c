@@ -2071,7 +2071,9 @@ termio_internal_mouse_move(Termio *sd,
    /* TODO: make the following useless */
    if (sd->mouse_move_job)
      ecore_job_del(sd->mouse_move_job);
+#if !defined(ENABLE_TESTS)
    sd->mouse_move_job = ecore_job_add(termio_smart_cb_mouse_move_job, sd);
+#endif
 }
 
 static void
