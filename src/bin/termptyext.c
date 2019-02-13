@@ -224,11 +224,11 @@ _handle_selection_is(Termpty *ty,
    const char *s = termio_internal_get_selection(sd, &len);
 
    assert(s != NULL);
-   return;
+   ERR("len(s)=%zd s='%s'", len, s);
 
    while (*buf)
      {
-        int idx;
+        int idx = 0;
         Eina_Unicode u = eina_unicode_utf8_next_get(s, &idx);
 
         assert(*buf == u);
@@ -271,12 +271,13 @@ tytest_handle_escape_codes(Termpty *ty,
         _handle_force_render(ty);
         break;
       case 's':
-        _handle_selection_is(ty, buf+1);
+        _handle_selection_is(ty, buf + 1);
         break;
       case 'u':
         _handle_mouse_up(ty, buf + 1);
         break;
       default:
+        ERR("invalid test command '0x%x'", buf[0]);
         break;
      }
 }
