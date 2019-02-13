@@ -93,6 +93,25 @@ _tytest_arg_get(const Eina_Unicode *buf, int *value)
  *   - ISO_Level3_Shift
  *   - AltGr
  */
+static int
+_tytest_modifiers_get(const Eina_Unicode *buf, Termio_Modifiers *m)
+{
+   Termio_Modifiers modifier = {};
+   int value = 0;
+   int len = _tytest_arg_get(buf, &value);
+
+   modifier.alt = !!(value & (1 << 0));
+   modifier.shift = !!(value & (1 << 1));
+   modifier.ctrl = !!(value & (1 << 2));
+   modifier.super = !!(value & (1 << 3));
+   modifier.meta = !!(value & (1 << 4));
+   modifier.hyper = !!(value & (1 << 5));
+   modifier.iso_level3_shift = !!(value & (1 << 6));
+   modifier.altgr = !!(value & (1 << 7));
+
+   *m = modifier;
+   return len;
+}
 
 /**
  * FLAGS can be:
@@ -127,14 +146,7 @@ _handle_mouse_down(Termpty *ty,
    buf += _tytest_arg_get(buf, &value);
    ev.button = value;
    /* MODIFIERS */
-   value = 0;
-   buf += _tytest_arg_get(buf, &value);
-   union {
-        Termio_Modifiers m;
-        uint8_t u;
-   } u;
-   u.u = value;
-   modifiers = u.m;
+   buf += _tytest_modifiers_get(buf, &modifiers);
    /* FLAGS */
    value = 0;
    buf +=_tytest_arg_get(buf, &value);
@@ -168,14 +180,7 @@ _handle_mouse_up(Termpty *ty,
    buf += _tytest_arg_get(buf, &value);
    ev.button = value;
    /* MODIFIERS */
-   value = 0;
-   buf += _tytest_arg_get(buf, &value);
-   union {
-        Termio_Modifiers m;
-        uint8_t u;
-   } u;
-   u.u = value;
-   modifiers = u.m;
+   buf += _tytest_modifiers_get(buf, &modifiers);
    /* FLAGS */
    value = 0;
    buf +=_tytest_arg_get(buf, &value);
@@ -205,14 +210,7 @@ _handle_mouse_move(Termpty *ty,
    buf += _tytest_arg_get(buf, &value);
    ev.cur.canvas.y = value;
    /* MODIFIERS */
-   value = 0;
-   buf += _tytest_arg_get(buf, &value);
-   union {
-        Termio_Modifiers m;
-        uint8_t u;
-   } u;
-   u.u = value;
-   modifiers = u.m;
+   buf += _tytest_modifiers_get(buf, &modifiers);
 
    termio_internal_mouse_move(sd, &ev, modifiers);
 }
