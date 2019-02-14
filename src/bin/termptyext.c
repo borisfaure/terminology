@@ -223,16 +223,19 @@ _handle_selection_is(Termpty *ty,
    Termio *sd = termio_get_from_obj(ty->obj);
    const char *s = termio_internal_get_selection(sd, &len);
 
-   assert(s != NULL);
-   ERR("len(s)=%zd s='%s'", len, s);
+   assert(s != NULL && "no selection");
 
    while (*buf)
      {
         int idx = 0;
         Eina_Unicode u = eina_unicode_utf8_next_get(s, &idx);
 
-        assert(*buf == u);
-        s += idx;
+        /* skip spurious carriage returns */
+        if (*buf != '\r')
+          {
+             assert(*buf == u && "unexpected character in selection");
+             s += idx;
+          }
         buf++;
      }
 }
@@ -251,6 +254,9 @@ _handle_force_render(Termpty *ty)
  * - 'd': mouse down:
  * - 'u': mouse up;
  * - 'm': mouse move;
+ * - 'r': force rendering and possibly remove selection;
+ * - 'n': assert there is no selection
+ * - 's': assert selection is what follows till '\0'
  */
 static void
 tytest_handle_escape_codes(Termpty *ty,
@@ -277,7 +283,6 @@ tytest_handle_escape_codes(Termpty *ty,
         _handle_mouse_up(ty, buf + 1);
         break;
       default:
-        ERR("invalid test command '0x%x'", buf[0]);
         break;
      }
 }
