@@ -1922,9 +1922,10 @@ _mouse_selection_scroll(void *data)
    int cy;
    float fcy;
 
-   if (!sd->pty->selection.makesel) return EINA_FALSE;
+   if (!sd->pty->selection.makesel)
+     return EINA_FALSE;
 
-   evas_pointer_canvas_xy_get(sd->self, NULL, &my);
+   evas_pointer_canvas_xy_get(evas_object_evas_get(sd->self), NULL, &my);
    termio_object_geometry_get(sd, NULL, &oy, NULL, NULL);
    fcy = (my - oy) / (float)sd->font.chh;
    cy = fcy;
