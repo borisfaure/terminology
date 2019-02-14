@@ -1602,6 +1602,9 @@ termio_internal_mouse_down(Termio *sd,
 
    termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
+   sd->mouse.cx = cx;
+   sd->mouse.cy = cy;
+
    if ((ev->button == 3) && modifiers.ctrl)
      {
         termio_handle_right_click(ev, sd, cx, cy);
@@ -1843,6 +1846,9 @@ termio_internal_mouse_up(Termio *sd,
    int cx = 0, cy = 0;
 
    termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
+
+   sd->mouse.cx = cx;
+   sd->mouse.cy = cy;
 
    if (!modifiers.shift && !modifiers.ctrl && !sd->pty->selection.makesel)
       if (_rep_mouse_up(sd, ev, cx, cy, modifiers))
