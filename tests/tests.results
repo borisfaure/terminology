@@ -79,3 +79,4 @@ decswbv.sh f7dde335d44f8691041d40c3efd24ffb
 c2.sh 1ee773a0e5ac3c0217d08e4afdb1fef6
 selection_simple.sh 6e1f48cd44beba3923e3e84ed4238dac
 selection_box_simple.sh 6e1f48cd44beba3923e3e84ed4238dac
+selection_all_directions.sh d52ca96d26bdc7b77cd815870c07195a
