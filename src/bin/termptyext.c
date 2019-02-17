@@ -249,8 +249,39 @@ _handle_force_render(Termpty *ty)
    termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
 }
 
+/*
+ * Format is tc;C;V
+ * where C is 0 for top-left, 1 for down-right
+ * and V is 0 to unset, 1 to set
+ */
+static void
+_handle_corner(Termpty *ty, const Eina_Unicode *buf)
+{
+   Termio *sd = termio_get_from_obj(ty->obj);
+   int value;
+   int corner;
+
+   /* C */
+   corner = 0;
+   buf += _tytest_arg_get(buf, &corner);
+
+   /* V */
+   value = 0;
+   buf += _tytest_arg_get(buf, &value);
+
+   if (corner == 0)
+     {
+        sd->top_left = !! value;
+     }
+   else
+     {
+        sd->bottom_right = !! value;
+     }
+}
+
 /* Testing escape codes that start with '\033}t' and end with '\0'
  * Then,
+ * - 'c': set/unset top-left/down-right
  * - 'd': mouse down:
  * - 'u': mouse up;
  * - 'm': mouse move;
@@ -264,6 +295,9 @@ tytest_handle_escape_codes(Termpty *ty,
 {
    switch (buf[0])
      {
+      case 'c':
+        _handle_corner(ty, buf + 1);
+         break;
       case 'd':
         _handle_mouse_down(ty, buf + 1);
         break;
