@@ -322,7 +322,7 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
    const char *s = NULL;
    size_t len = 0;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
    if (sd->pty->selection.is_active)
      {
         start_x = sd->pty->selection.start.x;
@@ -376,6 +376,7 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
 
         termio_selection_get(sd, start_x, start_y, end_x, end_y, &sb, EINA_TRUE);
         len = sb.len;
+
         s = eina_stringshare_add_length(ty_sb_steal_buf(&sb), len);
         ty_sb_free(&sb);
      }
@@ -858,8 +859,12 @@ _sel_word(Termio *sd, int cx, int cy)
         goto end;
      }
    cells = termpty_cellrow_get(sd->pty, y, &w);
-   if (!cells) goto end;
-   if (x >= w) x = w - 1;
+   if (!cells)
+     {
+        goto end;
+     }
+   if (x >= w)
+     x = w - 1;
 
    do
      {
@@ -901,7 +906,10 @@ _sel_word(Termio *sd, int cx, int cy)
      {
         y = cy;
         cells = termpty_cellrow_get(sd->pty, y, &w);
-        if (!cells) goto end;
+        if (!cells)
+          {
+             goto end;
+          }
      }
    x = cx;
 
@@ -925,11 +933,15 @@ _sel_word(Termio *sd, int cx, int cy)
           }
         if (!done)
           {
-             if (!cells[w - 1].att.autowrapped) goto end;
+             if (!cells[w - 1].att.autowrapped)
+               goto end;
              y++;
              x = 0;
              cells = termpty_cellrow_get(sd->pty, y, &w);
-             if (!cells) goto end;
+             if (!cells)
+               {
+                  goto end;
+               }
           }
      }
    while (!done);
@@ -938,6 +950,7 @@ _sel_word(Termio *sd, int cx, int cy)
 
    sd->pty->selection.by_word = EINA_TRUE;
    sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+
    _trim_sel_word(sd);
 
    termpty_backlog_unlock();
@@ -1639,15 +1652,23 @@ termio_internal_mouse_down(Termio *sd,
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
              if (!sd->pty->selection.is_active && sd->didclick)
-               sd->pty->selection.is_active = EINA_TRUE;
+               {
+                  sd->pty->selection.is_active = EINA_TRUE;
+               }
              if (modifiers.shift && sd->pty->selection.is_active)
-               _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
+               {
+                  _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
+               }
              else
-               _sel_word(sd, cx, cy - sd->scroll);
+               {
+                  _sel_word(sd, cx, cy - sd->scroll);
+               }
              if (sd->pty->selection.is_active)
                {
                   if (!termio_take_selection(sd->self, ELM_SEL_TYPE_PRIMARY))
-                    termio_sel_set(sd, EINA_FALSE);
+                    {
+                       termio_sel_set(sd, EINA_FALSE);
+                    }
                }
              sd->didclick = EINA_TRUE;
              _sel_fill_in_codepoints_array(sd);

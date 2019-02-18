@@ -116,9 +116,8 @@ _tytest_modifiers_get(const Eina_Unicode *buf, Termio_Modifiers *m)
 /**
  * FLAGS can be:
  * - 0
- * - 1: SINGLE_CLICK
- * - 2: DOUBLE_CLICK
- * - 3: TRIPLE_CLICK
+ * - 1: DOUBLE_CLICK
+ * - 2: TRIPLE_CLICK
  */
 
 /*
@@ -220,8 +219,13 @@ _handle_selection_is(Termpty *ty,
                      const Eina_Unicode *buf)
 {
    size_t len = 0;
-   Termio *sd = termio_get_from_obj(ty->obj);
-   const char *s = termio_internal_get_selection(sd, &len);
+   Termio *sd;
+   const char *s;
+
+   assert(ty->selection.is_active);
+
+   sd = termio_get_from_obj(ty->obj);
+   s = termio_internal_get_selection(sd, &len);
 
    assert(s != NULL && "no selection");
 
@@ -238,6 +242,7 @@ _handle_selection_is(Termpty *ty,
           }
         buf++;
      }
+   eina_stringshare_del(s);
 }
 
 static void

@@ -200,9 +200,20 @@ termio_block_activate(Evas_Object *obj EINA_UNUSED,
 }
 
 Eina_Bool
-termio_take_selection(Evas_Object *obj EINA_UNUSED,
+termio_take_selection(Evas_Object *obj,
                       Elm_Sel_Type type EINA_UNUSED)
 {
+   Termio *sd;
+   const char *s;
+   size_t len;
+
+   sd = termio_get_from_obj(obj);
+   s = termio_internal_get_selection(sd, &len);
+   if (s)
+     {
+        eina_stringshare_del(s);
+        return EINA_TRUE;
+     }
    return EINA_FALSE;
 }
 
