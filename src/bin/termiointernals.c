@@ -389,7 +389,7 @@ end:
 static void
 _sel_line(Termio *sd, int cy)
 {
-   int y;
+   int x, y;
    ssize_t w = 0;
    Termcell *cells;
 
@@ -424,6 +424,15 @@ _sel_line(Termio *sd, int cy)
         sd->pty->selection.end.x = w - 1;
         y++;
      }
+   /* Right trim */
+   x = sd->pty->selection.end.x;
+   while (x > 0 && ((cells[x].codepoint == 0) ||
+                    (cells[x].codepoint == ' ') ||
+                    (cells[x].att.newline)))
+     {
+        x--;
+     }
+   sd->pty->selection.end.x = x;
    sd->pty->selection.end.y = y;
 
    sd->pty->selection.by_line = EINA_TRUE;
