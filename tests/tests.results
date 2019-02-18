@@ -85,3 +85,4 @@ selection_drag.sh d52ca96d26bdc7b77cd815870c07195a
 selection_box_drag.sh d52ca96d26bdc7b77cd815870c07195a
 selection_double_click.sh 8a9cd9ab55dacf0b2eef17d9bc57cd17
 selection_triple_click.sh 5b9bafc5802342ff3ee2bc6a8629cbe0
+selection_scrolls.sh 0cccd9abeeefb41b7cc6ca3350bfab7c
