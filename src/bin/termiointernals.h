@@ -119,6 +119,10 @@ void
 termio_internal_mouse_move(Termio *sd,
                            Evas_Event_Mouse_Move *ev,
                            Termio_Modifiers modifiers);
+void
+termio_internal_mouse_wheel(Termio *sd,
+                           Evas_Event_Mouse_Wheel *ev,
+                           Termio_Modifiers modifiers);
 
 void
 termio_selection_dbl_fix(Termio *sd);

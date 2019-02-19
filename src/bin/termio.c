@@ -2688,112 +2688,20 @@ _smart_cb_mouse_wheel(void *data,
 {
    Evas_Event_Mouse_Wheel *ev = event;
    Termio *sd = evas_object_smart_data_get(data);
-   char buf[64];
+   Termio_Modifiers modifiers = {};
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   /* do not handle horizontal scrolling */
-   if (ev->direction) return;
+   modifiers.alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
+   modifiers.shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
+   modifiers.ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
+   modifiers.super = evas_key_modifier_is_set(ev->modifiers, "Super");
+   modifiers.meta = evas_key_modifier_is_set(ev->modifiers, "Meta");
+   modifiers.hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
+   modifiers.iso_level3_shift = evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
+   modifiers.altgr= evas_key_modifier_is_set(ev->modifiers, "AltGr");
 
-   if (evas_key_modifier_is_set(ev->modifiers, "Control")) return;
-   if (evas_key_modifier_is_set(ev->modifiers, "Alt")) return;
-   if (evas_key_modifier_is_set(ev->modifiers, "Shift")) return;
-
-   if (sd->pty->mouse_mode == MOUSE_OFF)
-     {
-        if (sd->pty->altbuf)
-          {
-             /* Emulate cursors */
-             buf[0] = 0x1b;
-             buf[1] = 'O';
-             buf[2] = (ev->z < 0) ? 'A' : 'B';
-             buf[3] = 0;
-             termpty_write(sd->pty, buf, strlen(buf));
-          }
-        else
-          {
-             sd->scroll -= (ev->z * 4);
-             if (sd->scroll < 0)
-               sd->scroll = 0;
-             termio_smart_update_queue(sd);
-             miniview_position_offset(term_miniview_get(sd->term),
-                                      ev->z * 4, EINA_TRUE);
-
-             termio_smart_cb_mouse_move_job(sd);
-          }
-     }
-   else
-     {
-       int cx = 0, cy = 0;
-
-       termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
-
-       switch (sd->pty->mouse_ext)
-         {
-          case MOUSE_EXT_NONE:
-            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
-              {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
-
-                 buf[0] = 0x1b;
-                 buf[1] = '[';
-                 buf[2] = 'M';
-                 buf[3] = btn + ' ';
-                 buf[4] = cx + 1 + ' ';
-                 buf[5] = cy + 1 + ' ';
-                 buf[6] = 0;
-                 termpty_write(sd->pty, buf, strlen(buf));
-              }
-            break;
-          case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
-              {
-                 int v, i;
-                 int btn = (ev->z >= 0) ? 'a' : '`';
-
-                 buf[0] = 0x1b;
-                 buf[1] = '[';
-                 buf[2] = 'M';
-                 buf[3] = btn;
-                 i = 4;
-                 v = cx + 1 + ' ';
-                 if (v <= 127) buf[i++] = v;
-                 else
-                   { // 14 bits for cx/cy - enough i think
-                       buf[i++] = 0xc0 + (v >> 6);
-                       buf[i++] = 0x80 + (v & 0x3f);
-                   }
-                 v = cy + 1 + ' ';
-                 if (v <= 127) buf[i++] = v;
-                 else
-                   { // 14 bits for cx/cy - enough i think
-                       buf[i++] = 0xc0 + (v >> 6);
-                       buf[i++] = 0x80 + (v & 0x3f);
-                   }
-                 buf[i] = 0;
-                 termpty_write(sd->pty, buf, strlen(buf));
-              }
-            break;
-          case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
-              {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
-                 snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                          btn, cx + 1, cy + 1);
-                 termpty_write(sd->pty, buf, strlen(buf));
-              }
-            break;
-          case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
-              {
-                 int btn = (ev->z >= 0) ? 1 + 64 : 64;
-                 snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                          btn + ' ',
-                          cx + 1, cy + 1);
-                 termpty_write(sd->pty, buf, strlen(buf));
-              }
-            break;
-          default:
-            break;
-         }
-     }
+   termio_internal_mouse_wheel(sd, ev, modifiers);
 }
 
 /* }}} */

@@ -214,6 +214,41 @@ _handle_mouse_move(Termpty *ty,
    termio_internal_mouse_move(sd, &ev, modifiers);
 }
 
+/*
+ * Format is tw;X;Y;DIRECTION;VALUE;MODIFIERS
+ * DIRECTION: 1 to go up, 0 to go down
+ */
+static void
+_handle_mouse_wheel(Termpty *ty,
+                    const Eina_Unicode *buf)
+{
+   Evas_Event_Mouse_Wheel ev = {};
+   Termio *sd = termio_get_from_obj(ty->obj);
+   Termio_Modifiers modifiers = {};
+   int value;
+
+   /* X */
+   value = 0;
+   buf += _tytest_arg_get(buf, &value);
+   ev.canvas.x = value;
+   /* Y */
+   value = 0;
+   buf += _tytest_arg_get(buf, &value);
+   ev.canvas.y = value;
+   /* DIRECTION */
+   value = 0;
+   buf += _tytest_arg_get(buf, &value);
+   ev.z = (value == 0)? 1 : -1;
+   /* VALUE */
+   value = 0;
+   buf += _tytest_arg_get(buf, &value);
+   ev.z *= value;
+   /* MODIFIERS */
+   buf += _tytest_modifiers_get(buf, &modifiers);
+
+   termio_internal_mouse_wheel(sd, &ev, modifiers);
+}
+
 static void
 _handle_selection_is(Termpty *ty,
                      const Eina_Unicode *buf)
@@ -320,6 +355,9 @@ tytest_handle_escape_codes(Termpty *ty,
         break;
       case 'u':
         _handle_mouse_up(ty, buf + 1);
+        break;
+      case 'w':
+        _handle_mouse_wheel(ty, buf + 1);
         break;
       default:
         break;
