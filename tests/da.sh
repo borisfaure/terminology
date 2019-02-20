@@ -43,4 +43,4 @@ printf '\033[=0c'
 printf '\033[=42c'
 
 # let it print
-sleep 1
+sleep 0.2
