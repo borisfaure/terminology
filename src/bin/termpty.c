@@ -1203,10 +1203,12 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
    if (y_requested >= 0)
      {
+        Termcell *cells = &(TERMPTY_SCREEN(ty, 0, y_requested));
         if (y_requested >= ty->h)
           return NULL;
-        *wret = ty->w;
-        return &(TERMPTY_SCREEN(ty, 0, y_requested));
+
+        *wret = termpty_line_length(cells, ty->w);
+        return cells;
      }
    if (!ty->back)
      return NULL;
