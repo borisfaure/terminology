@@ -97,8 +97,8 @@ printf '\033}tr\0'
 # assert selection
 printf '\033}tsish and the tyranny of evil men. Blessed is he who, in the name of charity and good wi\0'
 # remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tc;0;0\0\033}tc;1;0\0'
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'
 
 
@@ -184,8 +184,8 @@ printf '\033}tr\0'
 # assert selection
 printf '\033}tsish and the tyranny of evil men. Blessed is he who, in the name of charity and good wi\0'
 # remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tc;0;0\0\033}tc;1;0\0'
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'
 
 
@@ -274,8 +274,8 @@ printf '\033}tr\0'
 # assert selection
 printf '\033}tsish and the tyranny of evil men. Blessed is he who, in the name of charity and good wi\0'
 # remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tc;0;0\0\033}tc;1;0\0'
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'
 
 ##
@@ -360,6 +360,6 @@ printf '\033}tr\0'
 # assert selection
 printf '\033}tsish and the tyranny of evil men. Blessed is he who, in the name of charity and good wi\0'
 # remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tc;0;0\0\033}tc;1;0\0'
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'
