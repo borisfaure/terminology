@@ -255,12 +255,12 @@ _handle_selection_is(Termpty *ty,
 {
    size_t len = 0;
    Termio *sd;
-   const char *s;
+   const char *sel, *s;
 
    assert(ty->selection.is_active);
 
    sd = termio_get_from_obj(ty->obj);
-   s = termio_internal_get_selection(sd, &len);
+   sel = s = termio_internal_get_selection(sd, &len);
 
    assert(s != NULL && "no selection");
 
@@ -277,7 +277,7 @@ _handle_selection_is(Termpty *ty,
           }
         buf++;
      }
-   eina_stringshare_del(s);
+   eina_stringshare_del(sel);
 }
 
 static void
