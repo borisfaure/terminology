@@ -377,7 +377,7 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
         termio_selection_get(sd, start_x, start_y, end_x, end_y, &sb, EINA_TRUE);
         len = sb.len;
 
-        s = eina_stringshare_add_length(ty_sb_steal_buf(&sb), len);
+        s = eina_stringshare_add_length(sb.buf, len);
         ty_sb_free(&sb);
      }
 
