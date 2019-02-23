@@ -19,7 +19,7 @@ printf '\033}tu;48;10;1;0;0\0'
 printf '\033}tr\0'
 
 # selection is 'EEEEE'
-printf '\033}tiEEEEE\0'
+printf '\033}tsEEEEE\0'
 
 # insert E in color
 printf '\033[;4HE'
@@ -28,7 +28,7 @@ printf '\033[;4HE'
 printf '\033}tr\0'
 
 # selection is 'EEEEE'
-printf '\033}tiEEEEE\0'
+printf '\033}tsEEEEE\0'
 
 # insert a
 printf 'a'
