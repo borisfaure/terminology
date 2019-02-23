@@ -27,6 +27,8 @@ _tytest_checksum(Termpty *ty);
 #define TY_W 80
 #define TY_CH_H 15
 #define TY_CH_W  7
+#define TY_OFFSET_X 1
+#define TY_OFFSET_Y 1
 #define TY_BACKSIZE 50
 
 
@@ -171,13 +173,13 @@ termio_object_geometry_get(Termio *sd,
                            Evas_Coord *w, Evas_Coord *h)
 {
      if (x)
-       *x = 0;
+       *x = TY_OFFSET_X;
      if (y)
-       *y = 0;
+       *y = TY_OFFSET_Y;
      if (w)
-       *w = sd->font.chw * sd->grid.w;
+       *w = TY_OFFSET_X + sd->font.chw * sd->grid.w;
      if (h)
-       *h = sd->font.chh * sd->grid.h;
+       *h = TY_OFFSET_Y + sd->font.chh * sd->grid.h;
 }
 
 void
