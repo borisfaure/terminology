@@ -23,7 +23,7 @@ static void
 _tytest_checksum(Termpty *ty);
 #endif
 
-#define TY_H 25
+#define TY_H 24
 #define TY_W 80
 #define TY_CH_H 15
 #define TY_CH_W  7
@@ -253,6 +253,8 @@ _termpty_init(Termpty *ty)
    assert(ty->hl.bitmap);
    /* Mark id 0 as set */
    ty->hl.bitmap[0] = 1;
+   ty->backlog_beacon.backlog_y = 0;
+   ty->backlog_beacon.screen_y = 0;
 }
 
 static void
