@@ -184,8 +184,8 @@ printf '\033}tr\0'
 # assert selection
 printf '\033}tsish an\nood wi\0'
 # remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tc;0;0\0\033}tc;1;0\0'
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 
 
 ##
