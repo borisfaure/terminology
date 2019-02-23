@@ -28,5 +28,4 @@ printf '\033}tu;125;135;1;0;0\0'
 # force render
 printf '\033}tr\0'
 # selection is
-printf '\033}tsupon thee.\nThe path of the ri\0'
-
+printf '\033}ts upon thee.\nThe path of the ri\0'
