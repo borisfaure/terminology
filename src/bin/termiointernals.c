@@ -267,7 +267,6 @@ err:
    termpty_backlog_unlock();
 }
 
-
 static void
 _sel_fill_in_codepoints_array(Termio *sd)
 {
@@ -2608,7 +2607,8 @@ termio_internal_render(Termio *sd,
                          ch2 = x;
                        // cells[x].att.blink
                        // cells[x].att.blink2
-                       if (u && *u != codepoint)
+                       if (u && (*u != codepoint) && (*u != ' ') &&
+                           (codepoint != 0))
                          {
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
