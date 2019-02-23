@@ -2410,7 +2410,7 @@ termio_internal_render(Termio *sd,
                               {
                                  cur_sel_end_x = sd->grid.w - 1;
                               }
-                            else if (y == sel_end_y)
+                            else if (rel_y == sel_end_y)
                               {
                                  cur_sel_start_x = 0;
                               }
