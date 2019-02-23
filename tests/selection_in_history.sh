@@ -104,7 +104,7 @@ printf '\033}tu;125;135;1;0;0\0'
 # force render
 printf '\033}tr\0'
 # selection is
-printf "\033}tsother\'s keeper and the finder of lost children. And I will strike down upon thee with great ve\0"
+printf '\033}tsother\047s keeper and the finder of lost children. And I will strike down upon thee with great ve\0'
 
 # remove selection
 printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
