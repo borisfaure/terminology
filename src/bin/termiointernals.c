@@ -748,6 +748,7 @@ _to_trim(Eina_Unicode codepoint, Eina_Bool right_trim)
 {
    static const Eina_Unicode trim_chars[] =
      {
+       ' ',
        ':',
        '<',
        '>',
@@ -795,8 +796,7 @@ _trim_sel_word(Termio *sd)
        ((y == pty->selection.end.y) &&
         (start > pty->selection.end.x)))
      {
-        pty->selection.start.y = pty->selection.end.y;
-        pty->selection.start.x = pty->selection.end.x;
+        termio_sel_set(sd, EINA_FALSE);
         return;
      }
    pty->selection.start.y = y;
@@ -827,8 +827,7 @@ _trim_sel_word(Termio *sd)
        ((y == pty->selection.start.y) &&
         (end < pty->selection.start.x)))
      {
-        pty->selection.end.x = pty->selection.start.x;
-        pty->selection.end.y = pty->selection.start.y;
+        termio_sel_set(sd, EINA_FALSE);
         return;
      }
    pty->selection.end.x = end;
