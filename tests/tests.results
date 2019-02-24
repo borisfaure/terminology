@@ -77,6 +77,7 @@ uts.sh 075ff9f8c4f718784330bac4fcae932b
 vpa.sh 4614f3c337e9d47fed3a4233df719617
 decswbv.sh f90ffe93b1bd99c6b7385ca71c6793de
 c2.sh 9f264ee84b6d89f1f9fa7b76abd442c0
+cell_is_empty.sh 507bc5dca92d6f0d4c081a5146c13ed6
 selection_simple.sh 1b3a915bf40ba8e869021055d368edf2
 selection_box_simple.sh 1b3a915bf40ba8e869021055d368edf2
 selection_all_directions.sh ad1c5bf43f0ec9a921616c3da10cab7f

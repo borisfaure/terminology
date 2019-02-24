@@ -848,13 +848,10 @@ termpty_free(Termpty *ty)
 static Eina_Bool
 _termpty_cell_is_empty(const Termcell *cell)
 {
-   if ((cell->codepoint != 0) &&
-       (!cell->att.invisible) &&
-       (cell->att.fg != COL_INVIS))
-     {
-        return EINA_FALSE;
-     }
-   return EINA_TRUE;
+   return (((cell->codepoint == 0) ||
+        (cell->att.invisible) ||
+        (cell->att.fg == COL_INVIS)) &&
+       (cell->att.bg == COL_INVIS));
 }
 
 static Eina_Bool
