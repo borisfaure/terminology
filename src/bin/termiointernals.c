@@ -358,7 +358,7 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
 
              if (isb.len)
                {
-                  if (isb.buf[sb.len - 1] != '\n' && i != end_y)
+                  if (isb.buf[isb.len - 1] != '\n' && i != end_y)
                     ty_sb_add(&isb, "\n", 1);
                   ty_sb_add(&sb, isb.buf, isb.len);
                }
