@@ -20,8 +20,11 @@ printf "%s\r\n%s\r\n%s" "$TEXT" "$TEXT" "$TEXT"
 # force render
 printf '\033}tr\0'
 
-
-## sel "top-down" to down
+setup_top_down()
+{
+# remove selection
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
+printf '\033}tr\0\033}tn\0'
 # mouse down to start selection
 printf '\033}td;395;148;1;0;0\0'
 # mouse move
@@ -32,6 +35,10 @@ printf '\033}tu;25;160;1;0;0\0'
 printf '\033}tr\0'
 # selection is
 printf '\033}tsthe name of charity and good\0'
+}
+
+## sel "top-down" to down
+setup_top_down
 # To
 # mouse move
 printf '\033}tm;210;178;0\0'
@@ -40,22 +47,10 @@ printf '\033}td;210;178;1;2;1\0'
 printf '\033}tu;210;178;1;2;1\0'
 # selection is
 printf '\033}tsthe name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother\047s keeper and the finder\0'
-# remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
-printf '\033}tr\0\033}tn\0'
 
 
 ## sel "top-down" to up
-# mouse down to start selection
-printf '\033}td;395;148;1;0;0\0'
-# mouse move
-printf '\033}tm;25;160;0\0'
-# mouse up
-printf '\033}tu;25;160;1;0;0\0'
-# force render
-printf '\033}tr\0'
-# selection is
-printf '\033}tsthe name of charity and good\0'
+setup_top_down
 # To
 # mouse move
 printf '\033}tm;500;128;0\0'
@@ -64,93 +59,9 @@ printf '\033}td;500;128;1;2;1\0'
 printf '\033}tu;500;128;1;2;1\0'
 # selection is
 printf '\033}tsof the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good\0'
-# remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
-printf '\033}tr\0\033}tn\0'
 
 ## sel "top_down" to within selection
-# mouse down to start selection
-printf '\033}td;395;148;1;0;0\0'
-# mouse move
-printf '\033}tm;25;160;0\0'
-# mouse up
-printf '\033}tu;25;160;1;0;0\0'
-# force render
-printf '\033}tr\0'
-# selection is
-printf '\033}tsthe name of charity and good\0'
-# To
-# mouse move
-printf '\033}tm;500;150;0\0'
-# mouse double-click with shift
-printf '\033}td;500;150;1;2;1\0'
-printf '\033}tu;500;150;1;2;1\0'
-# selection is
-printf '\033}tsthe name of charity\0'
-# remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
-printf '\033}tr\0\033}tn\0'
-
-
-## sel "down-top" to down
-# mouse down to start selection
-printf '\033}td;25;160;1;0;0\0'
-# mouse move
-printf '\033}tm;395;148;0\0'
-# mouse up
-printf '\033}tu;395;148;1;0;0\0'
-# force render
-printf '\033}tr\0'
-# selection is
-printf '\033}tsthe name of charity and good\0'
-# To
-# mouse move
-printf '\033}tm;210;178;0\0'
-# mouse double-click with shift
-printf '\033}td;210;178;1;2;1\0'
-printf '\033}tu;210;178;1;2;1\0'
-# selection is
-printf '\033}tsthe name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother\047s keeper and the finder\0'
-# remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
-printf '\033}tr\0\033}tn\0'
-
-
-## sel "down-top" to up
-# mouse down to start selection
-printf '\033}td;25;160;1;0;0\0'
-# mouse move
-printf '\033}tm;395;148;0\0'
-# mouse up
-printf '\033}tu;395;148;1;0;0\0'
-# force render
-printf '\033}tr\0'
-# selection is
-printf '\033}tsthe name of charity and good\0'
-# To
-# mouse move
-printf '\033}tm;500;128;0\0'
-# mouse double-click with shift
-printf '\033}td;500;128;1;2;1\0'
-printf '\033}tu;500;128;1;2;1\0'
-# selection is
-printf '\033}tsof the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good\0'
-# remove selection
-printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
-printf '\033}tr\0\033}tn\0'
-
-
-## sel "down-top" to within
-# mouse down to start selection
-printf '\033}td;25;160;1;0;0\0'
-# mouse move
-printf '\033}tm;395;148;0\0'
-# mouse up
-printf '\033}tu;395;148;1;0;0\0'
-# force render
-printf '\033}tr\0'
-# selection is
-printf '\033}tsthe name of charity and good\0'
+setup_top_down
 # To
 # mouse move
 printf '\033}tm;500;150;0\0'
@@ -159,6 +70,61 @@ printf '\033}td;500;150;1;2;1\0'
 printf '\033}tu;500;150;1;2;1\0'
 # selection is
 printf '\033}tscharity and good\0'
+
+
+setup_down_top()
+{
+# remove selection
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
+printf '\033}tr\0\033}tn\0'
+# mouse down to start selection
+printf '\033}td;25;160;1;0;0\0'
+# mouse move
+printf '\033}tm;395;148;0\0'
+# mouse up
+printf '\033}tu;395;148;1;0;0\0'
+# force render
+printf '\033}tr\0'
+# selection is
+printf '\033}tsthe name of charity and good\0'
+}
+
+## sel "down-top" to down
+setup_down_top
+# To
+# mouse move
+printf '\033}tm;210;178;0\0'
+# mouse double-click with shift
+printf '\033}td;210;178;1;2;1\0'
+printf '\033}tu;210;178;1;2;1\0'
+# selection is
+printf '\033}tsthe name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother\047s keeper and the finder\0'
+
+
+## sel "down-top" to up
+setup_down_top
+# To
+# mouse move
+printf '\033}tm;500;128;0\0'
+# mouse double-click with shift
+printf '\033}td;500;128;1;2;1\0'
+printf '\033}tu;500;128;1;2;1\0'
+# selection is
+printf '\033}tsof the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good\0'
+
+
+## sel "down-top" to within
+setup_down_top
+# To
+# mouse move
+printf '\033}tm;500;150;0\0'
+# mouse double-click with shift
+printf '\033}td;500;150;1;2;1\0'
+printf '\033}tu;500;150;1;2;1\0'
+# selection is
+printf '\033}tsthe name of charity\0'
+
+
 # remove selection
 printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'

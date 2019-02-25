@@ -407,8 +407,8 @@ _sel_line(Termio *sd, int cy)
    for (;;)
      {
         cells = termpty_cellrow_get(sd->pty, y - 1, &w);
-        if (!cells || !cells[w-1].att.autowrapped) break;
-
+        if (!cells || !cells[w-1].att.autowrapped)
+          break;
         y--;
      }
    sd->pty->selection.start.y = y;
@@ -418,9 +418,11 @@ _sel_line(Termio *sd, int cy)
    for (;;)
      {
         cells = termpty_cellrow_get(sd->pty, y, &w);
-        if (!cells || !cells[w-1].att.autowrapped) break;
-
-        sd->pty->selection.end.x = w - 1;
+        if (!cells || !cells[w-1].att.autowrapped)
+          {
+             sd->pty->selection.end.x = w - 1;
+             break;
+          }
         y++;
      }
    /* Right trim */
@@ -964,20 +966,20 @@ _sel_word(Termio *sd, int cx, int cy)
 }
 
 static void
-_sel_word_to(Termio *sd, int cx, int cy, Eina_Bool extend)
+_sel_word_to(Termio *sd, int cx, int cy)
 {
    int start_x, start_y, end_x, end_y, orig_x, orig_y,
-       c_start_x, c_start_y, c_end_x, c_end_y,
-       orig_start_x, orig_start_y, orig_end_x, orig_end_y;
+       to_start_x, to_start_y, to_end_x, to_end_y,
+       orig_start_x, orig_start_y, orig_end_y;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    orig_x = sd->pty->selection.orig.x;
    orig_y = sd->pty->selection.orig.y;
-   start_x = sd->pty->selection.start.x;
-   start_y = sd->pty->selection.start.y;
+   orig_start_x = start_x = sd->pty->selection.start.x;
+   orig_start_y = start_y = sd->pty->selection.start.y;
    end_x   = sd->pty->selection.end.x;
-   end_y   = sd->pty->selection.end.y;
+   orig_end_y = end_y   = sd->pty->selection.end.y;
 
    if (!sd->pty->selection.is_top_to_bottom)
      {
@@ -986,149 +988,132 @@ _sel_word_to(Termio *sd, int cx, int cy, Eina_Bool extend)
      }
 
    _sel_word(sd, cx, cy);
-   c_start_x = sd->pty->selection.start.x;
-   c_start_y = sd->pty->selection.start.y;
-   c_end_x   = sd->pty->selection.end.x;
-   c_end_y   = sd->pty->selection.end.y;
-
-   _sel_word(sd, orig_x, orig_y);
-   orig_start_x = sd->pty->selection.start.x;
-   orig_start_y = sd->pty->selection.start.y;
-   orig_end_x   = sd->pty->selection.end.x;
-   orig_end_y   = sd->pty->selection.end.y;
+   to_start_x = sd->pty->selection.start.x;
+   to_start_y = sd->pty->selection.start.y;
+   to_end_x   = sd->pty->selection.end.x;
+   to_end_y   = sd->pty->selection.end.y;
 
    if (sd->pty->selection.is_box)
      {
-        if (extend)
+        /* special case: kind of line selection */
+        if (to_start_y != to_end_y)
           {
-             /* special case: kind of line selection */
-             if (c_start_y != c_end_y)
+             start_x = 0;
+             end_x = sd->grid.w - 1;
+             if (start_y <= cy && cy <= end_y )
                {
-                  start_x = 0;
-                  end_x = sd->grid.w - 1;
-                  if (start_y <= cy && cy <= end_y )
-                    {
-                       start_y = MIN(c_start_y, orig_start_y);
-                       end_y = MAX(c_end_y, orig_end_y);
-                    }
-                  else
-                    {
-                       if (c_end_y > end_y)
-                         {
-                            orig_y = start_y;
-                            end_y = c_end_y;
-                         }
-                       if (c_start_y < start_y)
-                         {
-                            orig_y = end_y;
-                            start_y = c_start_y;
-                         }
-                    }
-                  goto end;
-               }
-             if ((start_y <= cy && cy <= end_y ) &&
-                 (start_x <= cx && cx <= end_x ))
-               {
-                  start_x = MIN(c_start_x, orig_start_x);
-                  end_x = MAX(c_end_x, orig_end_x);
-                  start_y = MIN(c_start_y, orig_start_y);
-                  end_y = MAX(c_end_y, orig_end_y);
+                  start_y = MIN(to_start_y, orig_start_y);
+                  end_y = MAX(to_end_y, orig_end_y);
                }
              else
                {
-                  if (c_end_x > end_x)
-                    {
-                       orig_x = start_x;
-                       end_x = c_end_x;
-                    }
-                  if (c_start_x < start_x)
-                    {
-                       orig_x = end_x;
-                       start_x = c_start_x;
-                    }
-                  if (c_end_y > end_y)
+                  if (to_end_y > end_y)
                     {
                        orig_y = start_y;
-                       end_y = c_end_y;
+                       end_y = to_end_y;
                     }
-                  if (c_start_y < start_y)
+                  if (to_start_y < start_y)
                     {
                        orig_y = end_y;
-                       start_y = c_start_y;
+                       start_y = to_start_y;
                     }
-                  end_x = MAX(c_end_x, end_x);
-                  start_y = MIN(c_start_y, start_y);
-                  end_y = MAX(c_end_y, end_y);
+               }
+             goto end;
+          }
+        if ((start_y <= cy && cy <= end_y ) &&
+            (start_x <= cx && cx <= end_x ))
+          {
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+             if (to_start_y < orig_y)
+               {
+                  start_y = to_start_y;
+                  end_y = orig_y;
+               }
+             if (to_start_y >= orig_y)
+               {
+                  start_y = orig_y;
+                  end_y = to_end_y;
+               }
+             if (to_start_x < orig_x)
+               {
+                  start_x = to_start_x;
+                  end_x = orig_x;
+               }
+             if (to_start_x >= orig_x)
+               {
+                  start_x = orig_x;
+                  end_x = to_end_x;
                }
           }
         else
           {
-             /* special case: kind of line selection */
-             if (c_start_y != c_end_y || orig_start_y != orig_end_y)
+             if (to_end_x > end_x)
                {
-                  start_x = 0;
-                  end_x = sd->grid.w - 1;
-                  start_y = MIN(c_start_y, orig_start_y);
-                  end_y = MAX(c_end_y, orig_end_y);
-                  goto end;
+                  orig_x = start_x;
+                  end_x = to_end_x;
                }
-
-             start_x = MIN(c_start_x, orig_start_x);
-             end_x = MAX(c_end_x, orig_end_x);
-             start_y = MIN(c_start_y, orig_start_y);
-             end_y = MAX(c_end_y, orig_end_y);
+             if (to_start_x < start_x)
+               {
+                  orig_x = end_x;
+                  start_x = to_start_x;
+               }
+             if (to_end_y > end_y)
+               {
+                  orig_y = start_y;
+                  end_y = to_end_y;
+               }
+             if (to_start_y < start_y)
+               {
+                  orig_y = end_y;
+                  start_y = to_start_y;
+               }
+             end_x = MAX(to_end_x, end_x);
+             start_y = MIN(to_start_y, start_y);
+             end_y = MAX(to_end_y, end_y);
+             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
           }
      }
    else
      {
-        if (c_start_y < start_y ||
-            (c_start_y == start_y &&
-             c_start_x < start_x))
+        sd->pty->selection.is_top_to_bottom = EINA_TRUE;
+        /* Change start */
+        if (to_start_y < start_y ||
+            (to_start_y == start_y &&
+             to_start_x <= start_x))
           {
              /* orig is at bottom */
-             if (extend)
-               {
-                  orig_x = end_x;
-                  orig_y = end_y;
-               }
-             sd->pty->selection.is_top_to_bottom = EINA_FALSE;
-             end_x = c_start_x;
-             end_y = c_start_y;
-             start_x = orig_end_x;
-             start_y = orig_end_y;
+             orig_x = end_x;
+             orig_y = end_y;
+             start_x = to_start_x;
+             start_y = to_start_y;
           }
-        else if (c_end_y > end_y ||
-                 (c_end_y == end_y && c_end_x >= end_x))
+        /* change end */
+        else if (to_end_y > end_y ||
+                 (to_end_y == end_y && to_end_x >= end_x))
           {
-             if (extend)
-               {
-                  orig_x = start_x;
-                  orig_y = start_y;
-               }
-             sd->pty->selection.is_top_to_bottom = EINA_TRUE;
-             start_x = orig_start_x;
-             start_y = orig_start_y;
-             end_x = c_end_x;
-             end_y = c_end_y;
+             orig_x = start_x;
+             orig_y = start_y;
+             end_x = to_end_x;
+             end_y = to_end_y;
           }
         else
           {
-             if (c_start_y < orig_start_y ||
-                 (c_start_y == orig_start_y && c_start_x <= orig_start_x))
+             /* within */
+             if (to_start_y < orig_start_y ||
+                 (to_start_y == orig_start_y && to_start_x <= orig_start_x))
                {
-                  sd->pty->selection.is_top_to_bottom = EINA_FALSE;
-                  start_x = orig_end_x;
-                  start_y = orig_end_y;
-                  end_x = c_start_x;
-                  end_y = c_start_y;
+                  orig_x = start_x;
+                  orig_y = start_y;
+                  end_x = to_end_x;
+                  end_y = to_end_y;
                }
              else
                {
                   sd->pty->selection.is_top_to_bottom = EINA_TRUE;
-                  start_x = orig_start_x;
-                  start_y = orig_start_y;
-                  end_x = c_end_x;
-                  end_y = c_end_y;
+                  orig_x = end_x;
+                  orig_y = end_y;
+                  start_x = to_start_x;
+                  start_y = to_start_y;
                }
           }
      }
@@ -1664,7 +1649,7 @@ termio_internal_mouse_down(Termio *sd,
                }
              if (modifiers.shift && sd->pty->selection.is_active)
                {
-                  _sel_word_to(sd, cx, cy - sd->scroll, EINA_TRUE);
+                  _sel_word_to(sd, cx, cy - sd->scroll);
                }
              else
                {
@@ -1923,7 +1908,14 @@ termio_internal_mouse_up(Termio *sd,
                }
              else if (sd->pty->selection.by_word)
                {
-                  _sel_word_to(sd, cx, cy - sd->scroll, modifiers.shift);
+                  if (modifiers.shift)
+                    {
+                       _sel_word_to(sd, cx, cy - sd->scroll);
+                    }
+                  else
+                    {
+                       _sel_word(sd, cx, cy - sd->scroll);
+                    }
                }
              else
                {
@@ -2090,7 +2082,7 @@ termio_internal_mouse_move(Termio *sd,
           }
         else if (sd->pty->selection.by_word)
           {
-             _sel_word_to(sd, cx, cy - sd->scroll, EINA_FALSE);
+             _sel_word_to(sd, cx, cy - sd->scroll);
           }
         else
           {
