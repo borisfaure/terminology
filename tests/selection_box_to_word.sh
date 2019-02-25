@@ -48,7 +48,7 @@ printf '\033}td;450;78;1;2;1\0'
 printf '\033}tu;450;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}te and furious anger those who would attempt\nnd you will know My name is the Lord when I\n\n\ns man is beset on all sides by the iniquiti\n evil men. Blessed is he who, in the name of\n weak through the valley of darkness, for h\0'
+printf '\033}te and furious anger those who would attempt\nnd you will know My name is the Lord when I\n\ns man is beset on all sides by the iniquiti\n evil men. Blessed is he who, in the name of\n weak through the valley of darkness, for h\0'
 
 
 ## sel TO SE
@@ -80,7 +80,7 @@ printf '\033}td;51;78;1;2;1\0'
 printf '\033}tu;51;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\n\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
+printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
 
 ## sel TO middle
 setup_NE_to_SW
@@ -122,7 +122,7 @@ printf '\033}td;510;78;1;2;1\0'
 printf '\033}tu;510;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
+printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
 
 
 ## sel TO SE
@@ -155,7 +155,7 @@ printf '\033}td;51;78;1;2;1\0'
 printf '\033}tu;51;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\n\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
+printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
 
 ## sel TO middle
 setup_SW_to_NE
@@ -196,7 +196,7 @@ printf '\033}td;510;78;1;2;1\0'
 printf '\033}tu;510;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
+printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
 
 
 ## sel TO SE
@@ -229,7 +229,7 @@ printf '\033}td;51;78;1;2;1\0'
 printf '\033}tu;51;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\n\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
+printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
 
 ## sel TO middle
 setup_NW_to_SE
@@ -271,7 +271,7 @@ printf '\033}td;510;78;1;2;1\0'
 printf '\033}tu;510;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
+printf '\033}tse and furious anger those who would attempt to poison\nnd you will know My name is the Lord when I lay My ve\n\ns man is beset on all sides by the iniquities of the\nevil men. Blessed is he who, in the name of charity a\n weak through the valley of darkness, for he is truly\0'
 
 
 ## sel TO SE
@@ -304,7 +304,7 @@ printf '\033}td;51;78;1;2;1\0'
 printf '\033}tu;51;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\n\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
+printf '\033}tswith great vengeance and furious anger those who wou\ntroy My brothers. And you will know My name is the L\nupon thee.\nath of the righteous man is beset on all sides by th\nand the tyranny of evil men. Blessed is he who, in t\nwill, shepherds the weak through the valley of darkn\0'
 
 ## sel TO middle
 setup_SE_to_NW
