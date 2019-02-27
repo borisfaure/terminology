@@ -19,14 +19,6 @@
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
 
-#if defined(ENABLE_TESTS)
- #define WITH_TESTS 1
-#else
- #define WITH_TESTS 0
-#endif
-// Uncomment following to enable testing escape codes within terminology
-//#define WITH_TESTS  1
-
 //// extended terminology escape handling goes in here
 //
 // this is where escapes get handled *IF* the termpty layer needs to interpret
@@ -59,7 +51,7 @@ _handle_op_a(Termpty *_ty EINA_UNUSED,
    return EINA_FALSE;
 }
 
-#if WITH_TESTS
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
 
 static int
 _tytest_arg_get(const Eina_Unicode *buf, int *value)
@@ -377,7 +369,7 @@ termpty_ext_handle(Termpty *ty,
         return _handle_op_a(ty, buf + 1, blen - 1);
         break;
         // room here for more major opcode chars like 'b', 'c' etc.
-#if WITH_TESTS
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
       case 't':
         tytest_handle_escape_codes(ty, buf + 1);
         return EINA_TRUE;

@@ -3011,10 +3011,75 @@ _handle_esc_csi_decswbv(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+static void
+_handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int w, h;
+
+   w = _csi_arg_get(ty, &b);
+   h = _csi_arg_get(ty, &b);
+
+   if ((w == -CSI_ARG_ERROR) || (h == -CSI_ARG_ERROR))
+     return;
+   if (w == -CSI_ARG_NO_VALUE)
+     {
+        w = ty->w;
+     }
+   if (h == -CSI_ARG_NO_VALUE)
+     {
+        h = ty->h;
+     }
+   if ((w == ty->w) && (h == ty->h))
+     {
+        return;
+     }
+   DBG("Window manipulation: resize to %dx%d", w, h);
+
+   /* ONLY FOR TESTING PURPOSE FTM */
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+     {
+#if defined(ENABLE_TEST_UI)
+        Evas_Object *wn;
+        int step_w = 0, step_h = 0, base_w = 0, base_h = 0;
+
+        wn = termio_win_get(ty->obj);
+        elm_win_size_base_get(wn, &base_w, &base_h);
+        elm_win_size_step_get(wn, &step_w, &step_h);
+        evas_object_resize(wn,
+                           base_w + step_w * w,
+                           base_h + step_h * h);
+#endif
+        termpty_resize(ty, w, h);
+     }
+#endif
+}
+
+static void
+_handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   int arg = _csi_arg_get(ty, &b);
+
+   if (arg == -CSI_ARG_ERROR)
+     return;
+   DBG("Window manipulation: %d", arg);
+   switch (arg)
+     {
+      case 8:
+         _handle_resize_by_chars(ty, &b);
+         break;
+      default:
+        // many others
+        WRN("unhandled window manipulation %d", arg);
+        ty->decoding_error = EINA_TRUE;
+        break;
+     }
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
-   int arg;
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
 
@@ -3218,11 +3283,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         else
           {
-             arg = _csi_arg_get(ty, &b);
-             if (arg == -CSI_ARG_ERROR)
-               goto error;
-             WRN("TODO: window operation %d not supported", arg);
-             ty->decoding_error = EINA_TRUE;
+             _handle_window_manipulation(ty, &b);
           }
         break;
       case 'u': // restore cursor pos
@@ -3282,7 +3343,6 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    cc++;
    return cc - c;
 unhandled:
-error:
 #if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
