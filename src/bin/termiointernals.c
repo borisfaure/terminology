@@ -2598,8 +2598,8 @@ termio_internal_render(Termio *sd,
                          ch2 = x;
                        // cells[x].att.blink
                        // cells[x].att.blink2
-                       if (u && (*u != codepoint) && (*u != ' ') &&
-                           (codepoint != 0))
+                       if (u && (*u != codepoint) &&
+                           !(*u == 0x20 && codepoint == 0))
                          {
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
