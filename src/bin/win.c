@@ -2406,8 +2406,7 @@ _size_job(void *data)
    tc->size_eval(tc, &info);
 
    elm_win_size_base_set(wn->win,
-                         info.bg_min_w - info.step_x,
-                         info.bg_min_h - info.step_y);
+                         info.min_w, info.min_h);
    elm_win_size_step_set(wn->win, info.step_x, info.step_y);
    evas_object_size_hint_min_set(wn->backbg,
                                  info.bg_min_w,
