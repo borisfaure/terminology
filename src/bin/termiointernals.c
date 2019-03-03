@@ -2153,7 +2153,8 @@ termio_internal_mouse_wheel(Termio *sd,
        switch (sd->pty->mouse_ext)
          {
           case MOUSE_EXT_NONE:
-            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
+            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')) &&
+                (sd->pty->mouse_mode != MOUSE_X10))
               {
                  int btn = (ev->z >= 0) ? 1 + 64 : 64;
 
