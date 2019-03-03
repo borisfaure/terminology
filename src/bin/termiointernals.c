@@ -1678,14 +1678,13 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev,
    switch (sd->pty->mouse_ext)
      {
       case MOUSE_EXT_NONE:
-        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
-          {
+           {
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
              buf[3] = (3 | meta) + ' ';
-             buf[4] = cx + 1 + ' ';
-             buf[5] = cy + 1 + ' ';
+             buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
+             buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
              buf[6] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -1764,14 +1763,13 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
    switch (sd->pty->mouse_ext)
      {
       case MOUSE_EXT_NONE:
-        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
           {
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
              buf[3] = btn + 32 + ' ';
-             buf[4] = cx + 1 + ' ';
-             buf[5] = cy + 1 + ' ';
+             buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
+             buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
              buf[6] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
