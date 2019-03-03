@@ -15,6 +15,8 @@ test_textgrid_palette_get(const Evas_Object *obj,
 #define evas_object_textgrid_cellrow_get test_textgrid_cellrow_get
 Evas_Textgrid_Cell *
 test_textgrid_cellrow_get(Evas_Object *obj, int y);
+void
+tytest_termio_resize(int w, int h);
 
 void tytest_init(void);
 void tytest_shutdown(void);

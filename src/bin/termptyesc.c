@@ -3049,6 +3049,8 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
         evas_object_resize(wn,
                            base_w + step_w * w,
                            base_h + step_h * h);
+#else
+        tytest_termio_resize(w, h);
 #endif
         termpty_resize(ty, w, h);
      }

@@ -156,8 +156,19 @@ _tytest_checksum(Termpty *ty)
 Evas_Textgrid_Cell *
 test_textgrid_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
 {
-   assert (y >= 0 && y < TY_H);
-   return &_cells[y * TY_W];
+   assert (y >= 0 && y < _sd.pty->h);
+   return &_cells[y * _sd.pty->w];
+}
+
+void
+tytest_termio_resize(int w, int h)
+{
+   Evas_Textgrid_Cell *cells = realloc(_cells,
+                                       w * h * sizeof(Evas_Textgrid_Cell));
+   assert (cells);
+   _sd.grid.w = w;
+   _sd.grid.h = h;
+   _cells = cells;
 }
 
 
