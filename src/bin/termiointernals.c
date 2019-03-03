@@ -2096,7 +2096,7 @@ termio_internal_mouse_wheel(Termio *sd,
         return;
      }
 
-   if (modifiers.ctrl || modifiers.alt || modifiers.shift)
+   if (modifiers.ctrl || modifiers.shift)
      {
         return;
      }
