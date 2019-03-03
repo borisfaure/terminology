@@ -2149,12 +2149,13 @@ termio_internal_mouse_wheel(Termio *sd,
        int cx = 0, cy = 0;
 
        termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
+       if (sd->pty->mouse_mode == MOUSE_X10)
+         return;
 
        switch (sd->pty->mouse_ext)
          {
           case MOUSE_EXT_NONE:
-            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')) &&
-                (sd->pty->mouse_mode != MOUSE_X10))
+            if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
               {
                  int btn = (ev->z >= 0) ? 1 + 64 : 64;
 
