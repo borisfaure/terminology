@@ -2143,8 +2143,8 @@ termio_internal_mouse_wheel(Termio *sd,
                  buf[1] = '[';
                  buf[2] = 'M';
                  buf[3] = btn + ' ';
-                 buf[4] = cx + 1 + ' ';
-                 buf[5] = cy + 1 + ' ';
+                 buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
+                 buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
                  buf[6] = 0;
                  termpty_write(sd->pty, buf, strlen(buf));
               }
