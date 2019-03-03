@@ -1491,7 +1491,7 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
-   int btn;
+   int btn, meta;
 
    if (sd->pty->mouse_mode == MOUSE_OFF)
      return EINA_FALSE;
@@ -1502,46 +1502,28 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
      }
 
    btn = ev->button - 1;
+   meta = (modifiers.alt &&
+           (sd->pty->mouse_mode != MOUSE_X10)) ? 8 : 0;
+
    switch (sd->pty->mouse_ext)
      {
       case MOUSE_EXT_NONE:
-        if ((cx < (0xff - ' ')) && (cy < (0xff - ' ')))
-          {
-             if (sd->pty->mouse_mode == MOUSE_X10)
-               {
-                  if (btn <= 2)
-                    {
-                       buf[0] = 0x1b;
-                       buf[1] = '[';
-                       buf[2] = 'M';
-                       buf[3] = btn + ' ';
-                       buf[4] = cx + 1 + ' ';
-                       buf[5] = cy + 1 + ' ';
-                       buf[6] = 0;
-                       termpty_write(sd->pty, buf, strlen(buf));
-                       ret = EINA_TRUE;
-                    }
-               }
-             else
-               {
-                  int meta = (modifiers.alt) ? 8 : 0;
-
-                  if (btn > 2) btn = 0;
-                  buf[0] = 0x1b;
-                  buf[1] = '[';
-                  buf[2] = 'M';
-                  buf[3] = (btn | meta) + ' ';
-                  buf[4] = cx + 1 + ' ';
-                  buf[5] = cy + 1 + ' ';
-                  buf[6] = 0;
-                  termpty_write(sd->pty, buf, strlen(buf));
-                  ret = EINA_TRUE;
-               }
-          }
+           {
+              if (btn > 2)
+                btn = 0;
+              buf[0] = 0x1b;
+              buf[1] = '[';
+              buf[2] = 'M';
+              buf[3] = (btn | meta) + ' ';
+              buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
+              buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
+              buf[6] = 0;
+              termpty_write(sd->pty, buf, strlen(buf));
+              ret = EINA_TRUE;
+           }
         break;
       case MOUSE_EXT_UTF8: // ESC.[.M.BTN/FLGS.XUTF8.YUTF8
           {
-             int meta = (modifiers.alt) ? 8 : 0;
              int v, i;
 
              if (btn > 2) btn = 0;
@@ -1571,8 +1553,6 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
         break;
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
-             int meta = (modifiers.alt) ? 8 : 0;
-
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
                       (btn | meta), cx + 1, cy + 1);
@@ -1582,8 +1562,6 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
         break;
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
-             int meta = (modifiers.alt) ? 8 : 0;
-
              if (btn > 2) btn = 0;
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
                       (btn | meta) + ' ',
