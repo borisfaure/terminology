@@ -52,7 +52,7 @@ printf '\033[14;25Hzulu'
 printf '\033}tr\0'
 
 #resize window to half width (shall display the same)
-printf '\033[8;40;;t'
+printf '\033[8;;40;t'
 
 # force render
 printf '\033}tr\0'

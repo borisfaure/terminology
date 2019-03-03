@@ -3017,8 +3017,8 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int w, h;
 
-   w = _csi_arg_get(ty, &b);
    h = _csi_arg_get(ty, &b);
+   w = _csi_arg_get(ty, &b);
 
    if ((w == -CSI_ARG_ERROR) || (h == -CSI_ARG_ERROR))
      return;
