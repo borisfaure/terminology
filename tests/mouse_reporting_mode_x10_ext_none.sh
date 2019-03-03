@@ -1,0 +1,135 @@
+#!/bin/sh
+
+# char width: 7
+# char height: 15
+
+# fill space with E
+printf '\033#8'
+
+# set color
+printf '\033[46;31;3m'
+
+# positions used are;
+# - 200;130 -> 9;29
+# - 480;130 -> 9;69
+# indicate the positions to help testing
+printf '\033[9;29H#'
+printf '\033[9;69H#'
+
+# set mouse mode - X10 mode
+printf '\033[?9h'
+printf '\033[H'
+
+## LEFT CLICK
+# should print ^[[M =)
+# move cursor
+printf '\033[1H'
+# mouse down
+printf '\033}td;200;130;1;0;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;1;0;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+## RIGHT CLICK
+# should print ^[[M"=)
+# move cursor
+printf '\033[2H'
+# mouse down
+printf '\033}td;200;130;3;0;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;3;0;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+## MIDDLE CLICK
+# should print ^[[M!=)
+# move cursor
+printf '\033[3H'
+# mouse down
+printf '\033}td;200;130;2;0;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;2;0;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+## WHEEL
+# prints nothing
+# move cursor
+printf '\033[4H'
+# wheel up/down
+printf '\033}tw;200;130;1;1;0\0'
+printf '\033}tw;480;130;0;1;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+
+##
+# Same with Alt
+##
+printf '\033[6HWith Alt:'
+
+## LEFT CLICK
+# should print ^[[M =)
+# move cursor
+printf '\033[7H'
+# mouse down
+printf '\033}td;200;130;1;1;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;1;1;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+
+## RIGHT CLICK
+# should print ^[[M"=)
+# move cursor
+printf '\033[8H'
+# mouse down
+printf '\033}td;200;130;3;1;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;3;1;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+
+## MIDDLE CLICK
+# should print ^[[M!=)
+# move cursor
+printf '\033[9H'
+# mouse down
+printf '\033}td;200;130;2;1;0\0'
+# mouse move
+printf '\033}tm;480;130\0'
+# mouse up
+printf '\033}tu;480;130;2;1;0\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
+
+## WHEEL
+# prints nothing
+# move cursor
+printf '\033[10H'
+# wheel up/down
+printf '\033}tw;200;130;1;1;1\0'
+printf '\033}tu;480;130;0;1;1\0'
+# force render
+printf '\033}tr\0'
+sleep 0.2
