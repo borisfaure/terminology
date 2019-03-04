@@ -1744,11 +1744,12 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev,
 }
 
 static Eina_Bool
-_rep_mouse_move(Termio *sd, int cx, int cy)
+_rep_mouse_move(Termio *sd, int cx, int cy, Termio_Modifiers modifiers)
 {
    char buf[64];
    Eina_Bool ret = EINA_FALSE;
    int btn;
+   int meta = 0;
 
    if ((sd->pty->mouse_mode == MOUSE_OFF) ||
        (sd->pty->mouse_mode == MOUSE_X10) ||
@@ -1757,6 +1758,8 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
 
    if ((!sd->mouse.button) && (sd->pty->mouse_mode == MOUSE_NORMAL_BTN_MOVE))
      return EINA_FALSE;
+   if (modifiers.alt)
+     meta = 8;
 
    btn = sd->mouse.button - 1;
 
@@ -1767,7 +1770,7 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = btn + 32 + ' ';
+             buf[3] =  btn + meta + 32 + ' ';
              buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
              buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
              buf[6] = 0;
@@ -1782,7 +1785,7 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
              buf[0] = 0x1b;
              buf[1] = '[';
              buf[2] = 'M';
-             buf[3] = btn + 32 + ' ';
+             buf[3] = btn + meta + 32 + ' ';
              i = 4;
              v = cx + 1 + ' ';
              if (v <= 127) buf[i++] = v;
@@ -1806,7 +1809,7 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
       case MOUSE_EXT_SGR: // ESC.[.<.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                      btn + 32, cx + 1, cy + 1);
+                      btn + meta + 32, cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
           }
@@ -1814,7 +1817,7 @@ _rep_mouse_move(Termio *sd, int cx, int cy)
       case MOUSE_EXT_URXVT: // ESC.[.NUM.;.NUM.;.NUM.M
           {
              snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                      btn + 32  + ' ',
+                      btn + meta + 32  + ' ',
                       cx + 1, cy + 1);
              termpty_write(sd->pty, buf, strlen(buf));
              ret = EINA_TRUE;
@@ -2028,7 +2031,7 @@ termio_internal_mouse_move(Termio *sd,
    sd->mouse.cy = cy;
    if (!modifiers.shift && !modifiers.ctrl)
      {
-        if (_rep_mouse_move(sd, cx, cy))
+        if (_rep_mouse_move(sd, cx, cy, modifiers))
           {
              /* Mouse move already been taken care of */
              return;
