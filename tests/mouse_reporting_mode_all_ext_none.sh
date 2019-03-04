@@ -179,12 +179,14 @@ printf '\033}tr\0'
 sleep 0.2
 
 ## WHEEL
-# prints ^[[M`=)^[[M+e)
+# prints ^[[M`=)^[[Ma=)^[[M`e)^[[Mae)
 # move cursor
 printf '\033[10H'
 # wheel up/down
 printf '\033}tw;200;130;1;1;1\0'
-printf '\033}tu;480;130;0;1;1\0'
+printf '\033}tw;200;130;0;1;1\0'
+printf '\033}tw;480;130;1;1;1\0'
+printf '\033}tw;480;130;0;1;1\0'
 # force render
 printf '\033}tr\0'
 sleep 0.2

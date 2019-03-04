@@ -2127,10 +2127,12 @@ termio_internal_mouse_wheel(Termio *sd,
    else
      {
        int cx = 0, cy = 0;
+       int meta;
 
        termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
        if (sd->pty->mouse_mode == MOUSE_X10)
          return;
+       meta = (modifiers.alt) ? 8 : 0;
 
        switch (sd->pty->mouse_ext)
          {
@@ -2142,7 +2144,7 @@ termio_internal_mouse_wheel(Termio *sd,
                  buf[0] = 0x1b;
                  buf[1] = '[';
                  buf[2] = 'M';
-                 buf[3] = btn + ' ';
+                 buf[3] = (btn | meta) + ' ';
                  buf[4] = (cx > 94) ? ' ' : cx + 1 + ' ';
                  buf[5] = (cy > 94) ? ' ' : cy + 1 + ' ';
                  buf[6] = 0;
@@ -2157,7 +2159,7 @@ termio_internal_mouse_wheel(Termio *sd,
                  buf[0] = 0x1b;
                  buf[1] = '[';
                  buf[2] = 'M';
-                 buf[3] = btn;
+                 buf[3] = btn | meta;
                  i = 4;
                  v = cx + 1 + ' ';
                  if (v <= 127) buf[i++] = v;
@@ -2181,7 +2183,7 @@ termio_internal_mouse_wheel(Termio *sd,
               {
                  int btn = (ev->z >= 0) ? 1 + 64 : 64;
                  snprintf(buf, sizeof(buf), "%c[<%i;%i;%iM", 0x1b,
-                          btn, cx + 1, cy + 1);
+                          btn | meta, cx + 1, cy + 1);
                  termpty_write(sd->pty, buf, strlen(buf));
               }
             break;
@@ -2189,7 +2191,7 @@ termio_internal_mouse_wheel(Termio *sd,
               {
                  int btn = (ev->z >= 0) ? 1 + 64 : 64;
                  snprintf(buf, sizeof(buf), "%c[%i;%i;%iM", 0x1b,
-                          btn + ' ',
+                          (btn | meta) + ' ',
                           cx + 1, cy + 1);
                  termpty_write(sd->pty, buf, strlen(buf));
               }
