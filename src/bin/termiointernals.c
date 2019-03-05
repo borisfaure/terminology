@@ -1760,8 +1760,7 @@ _rep_mouse_move(Termio *sd, int cx, int cy, Termio_Modifiers modifiers)
      return EINA_FALSE;
    if (modifiers.alt)
      meta = 8;
-
-   btn = sd->mouse.button - 1;
+   btn = (sd->mouse.button > 0) ? sd->mouse.button - 1 : 3;
 
    switch (sd->pty->mouse_ext)
      {
