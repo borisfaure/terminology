@@ -14,15 +14,15 @@ printf '\033[46;31;3m'
 ##
 printf '\017'
 for C in $(seq 32 64); do
-    printf "\u$C"
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
 for C in $(seq 64 96); do
-    printf "\u$C"
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
-for C in $(seq 96 128); do
-    printf "\u$C"
+for C in $(seq 96 127); do
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
 
@@ -32,14 +32,14 @@ printf '\n'
 printf '\n'
 printf '\016'
 for C in $(seq 32 64); do
-    printf "\u$C"
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
 for C in $(seq 64 96); do
-    printf "\u$C"
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
-for C in $(seq 96 128); do
-    printf "\u$C"
+for C in $(seq 96 127); do
+    printf "\x$(printf '%x' $C)"
 done
 printf '\n'
