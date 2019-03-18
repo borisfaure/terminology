@@ -253,7 +253,7 @@ _sel_codepoints_get(const Termio *sd,
                   /* Selection outside of current line of "text" */
                   TRY(_codepoint_buf_append(buf, ' '));
                }
-             else if (cells[x].codepoint == 0)
+             else if (!cells || cells[x].codepoint == 0)
                {
                   TRY(_codepoint_buf_append(buf, ' '));
                }
