@@ -2348,28 +2348,29 @@ _smart_mouseover_apply(Termio *sd)
         if (casestartswith(s, "mailto:"))
           {
              if (!config->active_links_email)
-               return;
+               goto end;
           }
         else
           {
              if (!config->active_links_url)
-               return;
+               goto end;
           }
      }
    else if (s[0] == '/')
      {
         if (!config->active_links_file)
-          return;
+          goto end;
      }
    else if (link_is_email(s))
      {
         if (!config->active_links_email)
-          return;
+          goto end;
      }
 
    if (sd->link.string)
      eina_stringshare_del(sd->link.string);
    sd->link.string = eina_stringshare_add(s);
+   s = NULL;
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
@@ -2382,6 +2383,9 @@ _smart_mouseover_apply(Termio *sd)
    sd->link.x2 = x2;
    sd->link.y2 = y2;
    _update_link(sd, same_geom);
+
+end:
+   free(s);
 }
 
 
