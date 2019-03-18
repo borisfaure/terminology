@@ -31,6 +31,7 @@ dsr-udk.sh 0d8dd90df01e63af33924cd49e0df945
 colors.sh c98080b6ede33b2e7e3b68776cb28132
 sgr-leading-trailing-semicolon.sh 079efb55d1a716dc2ad7111e54ec4538
 sgr-truecolors.sh 74e7c0e3718818f0e0ab0f9f8caeb894
+hang-invalid-truecolors.sh fa5de74f9994d29d17d506fe870f760d
 sgr-long.sh 992d1bed20d6479533d328eaa34598e9
 decsclm.sh fa5de74f9994d29d17d506fe870f760d
 cha.sh 45484618660b9e06c5203a8151797513

@@ -607,6 +607,12 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
         *ptr = NULL;
         return -CSI_ARG_NO_VALUE;
      }
+   /* invalid values */
+   if ((*b < '0') || (*b > '9'))
+     {
+        *ptr = NULL;
+        return -CSI_ARG_ERROR;
+     }
 
    while ((*b >= '0') && (*b <= '9'))
      {
