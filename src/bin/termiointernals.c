@@ -427,9 +427,9 @@ _sel_line(Termio *sd, int cy)
      }
    /* Right trim */
    x = sd->pty->selection.end.x;
-   while (x > 0 && ((cells[x].codepoint == 0) ||
-                    (cells[x].codepoint == ' ') ||
-                    (cells[x].att.newline)))
+   while ((x > 0) && (cells != NULL) && ((cells[x].codepoint == 0) ||
+                                         (cells[x].codepoint == ' ') ||
+                                         (cells[x].att.newline)))
      {
         x--;
      }
