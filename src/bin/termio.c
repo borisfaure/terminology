@@ -1020,37 +1020,45 @@ _getsel_cb(void *data,
 
    if (ev->format == ELM_SEL_FORMAT_TEXT)
      {
-        char *tmp;
+        char *buf;
 
         if (ev->len <= 0) return EINA_TRUE;
 
-        tmp = malloc(ev->len);
-        if (tmp)
+        buf = malloc(ev->len);
+        if (buf)
           {
              char *s = ev->data;
-             size_t i;
+             size_t i, pos = 0;
 
-             // apparently we have to convert \n into \r in terminal land.
+             /* apparently we have to convert \n into \r in terminal land. */
              for (i = 0; i < ev->len && s[i]; i++)
                {
-                  tmp[i] = s[i];
-                  if (tmp[i] == '\n') tmp[i] = '\r';
+                  /* Skip escape codes as a security measure */
+                  if ((s[i] < '\n') ||
+                      ((s[i] > '\n') && (s[i] < ' ')))
+                    {
+                      continue;
+                    }
+                  buf[pos] = s[i];
+                  if (buf[pos] == '\n')
+                    buf[pos] = '\r';
+                  pos++;
                }
-             if (i)
+             if (pos)
                {
 
                 if (sd->pty->bracketed_paste)
                   termpty_write(sd->pty, "\x1b[200~",
                                 sizeof("\x1b[200~") - 1);
 
-                termpty_write(sd->pty, tmp, i);
+                termpty_write(sd->pty, buf, pos);
 
                 if (sd->pty->bracketed_paste)
                   termpty_write(sd->pty, "\x1b[201~",
                                 sizeof("\x1b[201~") - 1);
                }
 
-             free(tmp);
+             free(buf);
           }
      }
    else
