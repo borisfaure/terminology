@@ -613,7 +613,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
      return;
 
    if (from_escape_code && !config->active_links_escape)
-     return;
+     goto end;
 
    if (link_is_url(link))
      {
@@ -621,30 +621,31 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
           {
              email = EINA_TRUE;
              if (!config->active_links_email)
-               return;
+               goto end;
           }
         else
           {
              url = EINA_TRUE;
              if (!config->active_links_url)
-               return;
+               goto end;
           }
      }
    else if (link[0] == '/')
      {
         path = link;
         if (!config->active_links_file)
-          return;
+          goto end;
      }
    else if (link_is_email(link))
      {
         email = EINA_TRUE;
         if (!config->active_links_email)
-          return;
+          goto end;
      }
 
    s = eina_str_escape(link);
-   if (!s) return;
+   if (!s)
+     goto end;
    if (email)
      {
         const char *p = s;
@@ -761,10 +762,14 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    else
      {
         free(s);
-        return;
+        goto end;
      }
    free(s);
-   if (!handled) ecore_exe_run(buf, NULL);
+   if (!handled)
+     ecore_exe_run(buf, NULL);
+
+end:
+   free((char*)link);
 }
 
 static void
