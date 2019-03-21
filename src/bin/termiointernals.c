@@ -873,15 +873,20 @@ _sel_word(Termio *sd, int cx, int cy)
         goto end;
      }
    if (x >= w)
-     x = w - 1;
+     {
+        x = w - 1;
+     }
 
+   /* To the left and up */
    do
      {
         for (; x >= 0; x--)
           {
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth) &&
                  (x > 0))
-               x--;
+               {
+                  x--;
+               }
              if (_codepoint_is_wordsep(cells[x].codepoint))
                {
                   done = EINA_TRUE;
@@ -893,12 +898,14 @@ _sel_word(Termio *sd, int cx, int cy)
         if (!done)
           {
              Termcell *old_cells = cells;
+             size_t old_w = w;
 
              cells = termpty_cellrow_get(sd->pty, y - 1, &w);
-             if (!cells || !cells[w-1].att.autowrapped)
+             if ((!cells) || (w == 0) || (!cells[w-1].att.autowrapped))
                {
-                  x = 0;
+                  x = cx;
                   cells = old_cells;
+                  w = old_w;
                   done = EINA_TRUE;
                }
              else
@@ -922,6 +929,7 @@ _sel_word(Termio *sd, int cx, int cy)
      }
    x = cx;
 
+   /* To the right and down */
    do
      {
         for (; x < w; x++)
@@ -943,7 +951,9 @@ _sel_word(Termio *sd, int cx, int cy)
         if (!done)
           {
              if (!cells[w - 1].att.autowrapped)
-               goto end;
+               {
+                  goto end;
+               }
              y++;
              x = 0;
              cells = termpty_cellrow_get(sd->pty, y, &w);
