@@ -1,3 +1,22 @@
+2019-03-31
+        * Release v1.4.0
+        * Add Continuous Integration on every push to the git repository
+        * Add a test framework on escape code parsing and interpreting
+        * Add more than 120 test files
+        * Add support, along with tests, for the following escape codes: DSR-DIR,
+          DSR-KBD, DSR-MSR, DSR-DECCKSR, DSR-OS, DSR-PP, DSR-UDK, DECSCLM, DECBI,
+          DECFI, DECSACE, DECRARA, DECCRARA, DECIC, DECDC, DECCRA, DECST8C, DA3,
+          DECSWBV
+        * Add finer configuration on whether to activate links
+        * Set environment variable WINDOWID
+        * Selections only disappear if the underlaying content changes
+        * When pasting a buffer, skip control characters as a security measure
+        * Fixes, along with tests, on handling the following escape codes: VPR,
+          DECERA, DECFRA, DSR-CPR, DCH, DECALN, DECAWM, IL, DL
+        * Fixes, along with tests, on mouse reporting
+        * Fixes on issues spotted by Coverity
+
+
 2018-12-18
         * Release v1.3.2
         * Clicking on links works again
