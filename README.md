@@ -1,4 +1,4 @@
-Terminology 1.3.2
+Terminology 1.4.0
 =================
 
 This is an EFL terminal emulator with some extra bells and whistles.
