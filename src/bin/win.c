@@ -994,7 +994,7 @@ _win_focus(Term_Container *tc, Term_Container *relative)
    wn = (Win*) tc;
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
-   if (relative != wn->child)
+   if ((relative != wn->child) || (!wn->focused))
      {
         DBG("focus tc:%p", tc);
         wn->child->focus(wn->child, tc);
