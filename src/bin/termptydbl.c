@@ -11,6 +11,42 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // narrow (Na) or ambiguous (A) codepoints
    // ftp://ftp.unicode.org/Public/UNIDATA/EastAsianWidth.txt
 
+   // emoji should be double:
+   // https://apps.timwhitlock.info/emoji/tables/unicode
+   // [ 0x0080 ->  0x02AF] !!! handle carefully **
+   // [ 0x0300 ->  0x03FF]
+   // [ 0x0600 ->  0x06FF]
+   // [ 0x0C00 ->  0x0C7F]
+   // [ 0x1DC0 ->  0x1DFF]
+   // [ 0x1E00 ->  0x1EFF]
+   // [ 0x2000 ->  0x209F] !!! handle csrefully **
+   // [ 0x20D0 ->  0x214F]
+   // [ 0x2190 ->  0x23FF]
+   // [ 0x2460 ->  0x25FF]
+   // [ 0x2600 ->  0x27EF]
+   // [ 0x2900 ->  0x29FF]
+   // [ 0x2B00 ->  0x2BFF]
+   // [ 0x2C60 ->  0x2C7F]
+   // [ 0x2E00 ->  0x2E7F]
+   // [ 0x3000 ->  0x303F]
+   // [ 0xA490 ->  0xA4CF]
+   // [ 0xE000 ->  0xF8FF]
+   // [ 0xFE00 ->  0xFE0F]
+   // [ 0xFE30 ->  0xFE4F]
+   // [0x1F000 -> 0x1F02F]
+   // [0x1F0A0 -> 0x1F0FF]
+   // [0x1F100 -> 0x1F64F]
+   // [0x1F680 -> 0x1F6FF]
+   // [0x1F910 -> 0x1F96B]
+   // [0x1F980 -> 0x1F9E0]
+   // 
+   // ** this range includes ye olde:
+   // © (copyright)                00A9
+   // ® (registered)               00AE
+   // ‼ (double exclamation)       203C
+   // ⁉ (exclamation questionmark) 2049
+   // which should be single width, so ignore them
+
    // (W)
    if (
        // 1XXX
@@ -39,6 +75,38 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
        // 3XXXX
        ((g >= 0x30000) && (g <= 0x3FFFD)))
      return EINA_TRUE;
+   if (
+       // ** this is latin and should not be handled
+       // ((g >= 0x0080) && (g <= 0x02AF)) ||
+       ((g >= 0x0300) && (g <= 0x03FF)) ||
+       ((g >= 0x0600) && (g <= 0x06FF)) ||
+       ((g >= 0x0C00) && (g <= 0x0C7F)) ||
+       ((g >= 0x1DC0) && (g <= 0x1DFF)) ||
+       ((g >= 0x1E00) && (g <= 0x1EFF)) ||
+       // this is subscripts and should not be handled
+       // ((g >= 0x2000) && (g <= 0x209F)) ||
+       ((g >= 0x20D0) && (g <= 0x214F)) ||
+       ((g >= 0x2190) && (g <= 0x23FF)) ||
+       ((g >= 0x2460) && (g <= 0x25FF)) ||
+       ((g >= 0x2600) && (g <= 0x27EF)) ||
+       ((g >= 0x2900) && (g <= 0x29FF)) ||
+       ((g >= 0x2B00) && (g <= 0x2BFF)) ||
+       ((g >= 0x2C60) && (g <= 0x2C7F)) ||
+       ((g >= 0x2E00) && (g <= 0x2E7F)) ||
+       ((g >= 0x3000) && (g <= 0x303F)) ||
+       ((g >= 0xA490) && (g <= 0xA4CF)) ||
+       ((g >= 0xE000) && (g <= 0xF8FF)) ||
+       ((g >= 0xFE00) && (g <= 0xFE0F)) ||
+       ((g >= 0xFE30) && (g <= 0xFE4F)) ||
+       ((g >= 0x1F000) && (g <= 0x1F02F)) ||
+       ((g >= 0x1F0A0) && (g <= 0x1F0FF)) ||
+       ((g >= 0x1F100) && (g <= 0x1F64F)) ||
+       ((g >= 0x1F680) && (g <= 0x1F6FF)) ||
+       ((g >= 0x1F910) && (g <= 0x1F96B)) ||
+       ((g >= 0x1F980) && (g <= 0x1F9E0))
+      )
+     return EINA_TRUE;
+
    // FIXME: can optimize by breaking into tree and ranges
    // (A)
    if (ty->termstate.cjk_ambiguous_wide)
