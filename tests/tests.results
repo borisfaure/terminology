@@ -7,7 +7,7 @@ decfra-decera-default-values-restrict-cursor.sh 8004d2432d4c351beefb5fb860053ee4
 decfra-decera-default-values-no-restrict-cursor.sh 2eb443bd2e675f58f8a5ab68d66e19bc
 cursor-movements.sh 41bb8a6972f112b6a3be52026534105f
 cursor-movements-alias.sh 41bb8a6972f112b6a3be52026534105f
-fonts.sh e8ef57de2cf020192c6b8acff42a203d
+fonts.sh 4f2a84c872139cbe9265f4f91341a133
 cursor-shape-0.sh 2e3f939bab8986a7b11c7a5b936950da
 cursor-shape-1.sh 2e3f939bab8986a7b11c7a5b936950da
 cursor-shape-2.sh 2e3f939bab8986a7b11c7a5b936950da
@@ -72,7 +72,7 @@ ech.sh b4b9a19b9c33b5d275106ac0919df3a2
 text_append_after_right_margin.sh a10e5f7596777fdef31bd07cda1ad999
 cbt.sh bcf65795669588e6978bebd56583d274
 hpa.sh 45484618660b9e06c5203a8151797513
-rep.sh eb165b5b179d3fe73bd2cfd3e8857856
+rep.sh 1397b2441015d70d0b35e607ddfff505
 da.sh d513dc05ebc6d73d1e584f4282e5769b
 uts.sh 075ff9f8c4f718784330bac4fcae932b
 vpa.sh 4614f3c337e9d47fed3a4233df719617
