@@ -12,7 +12,8 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // ftp://ftp.unicode.org/Public/UNIDATA/EastAsianWidth.txt
 
    // emoji should be double:
-   // https://apps.timwhitlock.info/emoji/tables/unicode
+   // http://www.unicode.org/emoji/charts/full-emoji-list.html
+   //
    // [ 0x0080 ->  0x02AF] !!! handle carefully **
    // [ 0x0300 ->  0x03FF]
    // [ 0x0600 ->  0x06FF]
