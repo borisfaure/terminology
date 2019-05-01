@@ -15,9 +15,6 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // http://www.unicode.org/emoji/charts/full-emoji-list.html
    //
    // [ 0x0080 ->  0x02AF] !!! handle carefully **
-   // [ 0x0300 ->  0x03FF]
-   // [ 0x0600 ->  0x06FF]
-   // [ 0x0C00 ->  0x0C7F]
    // [ 0x1DC0 ->  0x1DFF]
    // [ 0x1E00 ->  0x1EFF]
    // [ 0x2000 ->  0x209F] !!! handle carefully **
@@ -30,7 +27,7 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // [ 0x2B00 ->  0x2BFF] !!! unicode only 2B55 2B50
    // [ 0x2C60 ->  0x2C7F]
    // [ 0x2E00 ->  0x2E7F]
-   // [ 0x3000 ->  0x303F]
+   // [ 0x3000 ->  0x303F] !! not 33D1
    // [ 0xA490 ->  0xA4CF]
    // [ 0xFE00 ->  0xFE0F]
    // [ 0xFE30 ->  0xFE4F]
@@ -61,7 +58,8 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
             // 3XXX -> A4C6
             ((g >= 0x3001) && (g <= 0x303f)) ||
             ((g >= 0x3041) && (g <= 0x3247)) ||
-            ((g >= 0x3250) && (g <= 0x4dbf)) ||
+            ((g >= 0x3250) && (g <= 0x33D0)) ||
+            ((g >= 0x33D2) && (g <= 0x4dbf)) ||
             ((g >= 0x4e00) && (g <= 0xa4c6)) ||
             // aXXX
             ((g >= 0xa960) && (g <= 0xa97c)) ||
@@ -86,9 +84,6 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
         if (
             // ** this is latin and should not be handled
             // ((g >= 0x0080) && (g <= 0x02AF)) ||
-            ((g >= 0x0300) && (g <= 0x03FF)) ||
-            ((g >= 0x0600) && (g <= 0x06FF)) ||
-            ((g >= 0x0C00) && (g <= 0x0C7F)) ||
             ((g >= 0x1DC0) && (g <= 0x1DFF)) ||
             ((g >= 0x1E00) && (g <= 0x1EFF)) ||
             // this is subscripts and should not be handled
