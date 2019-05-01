@@ -29,8 +29,6 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // [ 0x2E00 ->  0x2E7F]
    // [ 0x3000 ->  0x303F] !! not 33D1
    // [ 0xA490 ->  0xA4CF]
-   // [ 0xFE00 ->  0xFE0F]
-   // [ 0xFE30 ->  0xFE4F]
    // [0x1F000 -> 0x1F02F]
    // [0x1F0A0 -> 0x1F0FF]
    // [0x1F100 -> 0x1F64F]
@@ -100,8 +98,6 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
             ((g >= 0x2E00) && (g <= 0x2E7F)) ||
             ((g >= 0x3000) && (g <= 0x303F)) ||
             ((g >= 0xA490) && (g <= 0xA4CF)) ||
-            ((g >= 0xFE00) && (g <= 0xFE0F)) ||
-            ((g >= 0xFE30) && (g <= 0xFE4F)) ||
             ((g >= 0x1F000) && (g <= 0x1F02F)) ||
             ((g >= 0x1F0A0) && (g <= 0x1F0FF)) ||
             ((g >= 0x1F100) && (g <= 0x1F64F)) ||
@@ -328,9 +324,6 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
                  // 3XXX
                  (((g >> 12) == 0x3) &&
                      (((g >= 0x3248) && (g <= 0x324f)))) ||
-                 // eXXX
-                 (((g >> 12) == 0xe) &&
-                     (((g >= 0xe000) && (g <= 0xf8ff)))) ||
                  // fXXX
                  (((g >> 12) == 0xf) &&
                      (
