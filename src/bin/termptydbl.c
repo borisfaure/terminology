@@ -24,7 +24,8 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
    // [ 0x20D0 ->  0x214F]
    // [ 0x2190 ->  0x23FF]
    // [ 0x2460 ->  0x24FF]
-   // [ 0x2600 ->  0x27EF]
+   // [ 0x2600 ->  0x262F]
+   // [ 0x2638 ->  0x27EF]
    // [ 0x2900 ->  0x29FF]
    // [ 0x2B00 ->  0x2BFF] !!! unicode only 2B55 2B50
    // [ 0x2C60 ->  0x2C7F]
@@ -95,7 +96,8 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
             ((g >= 0x20D0) && (g <= 0x214F)) ||
             ((g >= 0x2190) && (g <= 0x23FF)) ||
             ((g >= 0x2460) && (g <= 0x24FF)) ||
-            ((g >= 0x2600) && (g <= 0x27EF)) ||
+            ((g >= 0x2600) && (g <= 0x262F)) ||
+            ((g >= 0x2638) && (g <= 0x27EF)) ||
             ((g >= 0x2900) && (g <= 0x29FF)) ||
             ((g >= 0x2B50)) ||
             ((g >= 0x2B55)) ||
