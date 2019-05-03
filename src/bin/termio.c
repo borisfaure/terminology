@@ -1033,34 +1033,37 @@ _getsel_cb(void *data,
         if (buf)
           {
              char *s = ev->data;
-             size_t i, pos = 0;
+             int i, j, pos = 0, prev_i;
 
              /* apparently we have to convert \n into \r in terminal land. */
-             for (i = 0; i < ev->len && s[i]; i++)
+             for (i = 0; i < (int)ev->len && s[i];)
                {
+                  Eina_Unicode g = 0;
+
+                  prev_i = i;
+                  g = eina_unicode_utf8_next_get(s, &i);
                   /* Skip escape codes as a security measure */
-                  if ((s[i] < '\n') ||
-                      ((s[i] > '\n') && (s[i] < ' ')))
+                  if ((g < '\n') ||
+                      ((g > '\n') && (g < ' ')))
                     {
-                      continue;
+                       continue;
                     }
-                  buf[pos] = s[i];
-                  if (buf[pos] == '\n')
-                    buf[pos] = '\r';
-                  pos++;
+                  for (j = prev_i; j < i; j++)
+                    buf[pos++] = s[j];
+                  if (g == '\n')
+                    buf[pos++] = '\r';
                }
              if (pos)
                {
+                  if (sd->pty->bracketed_paste)
+                    termpty_write(sd->pty, "\x1b[200~",
+                                  sizeof("\x1b[200~") - 1);
 
-                if (sd->pty->bracketed_paste)
-                  termpty_write(sd->pty, "\x1b[200~",
-                                sizeof("\x1b[200~") - 1);
+                  termpty_write(sd->pty, buf, pos);
 
-                termpty_write(sd->pty, buf, pos);
-
-                if (sd->pty->bracketed_paste)
-                  termpty_write(sd->pty, "\x1b[201~",
-                                sizeof("\x1b[201~") - 1);
+                  if (sd->pty->bracketed_paste)
+                    termpty_write(sd->pty, "\x1b[201~",
+                                  sizeof("\x1b[201~") - 1);
                }
 
              free(buf);

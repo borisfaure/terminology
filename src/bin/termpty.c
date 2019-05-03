@@ -302,7 +302,7 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
         j = 0;
         for (i = 0; i < len;)
           {
-             int g = 0, prev_i = i;
+             Eina_Unicode g = 0, prev_i = i;
 
              if (buf[i])
                {
