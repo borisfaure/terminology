@@ -1029,18 +1029,17 @@ _getsel_cb(void *data,
 
         if (ev->len <= 0) return EINA_TRUE;
 
-        buf = malloc(ev->len);
+        buf = calloc(2, ev->len); /* twice in case the paste is only \n */
         if (buf)
           {
-             char *s = ev->data;
-             int i, j, pos = 0, prev_i;
+             const char *s = ev->data;
+             int i, j, pos = 0;
 
              /* apparently we have to convert \n into \r in terminal land. */
              for (i = 0; i < (int)ev->len && s[i];)
                {
                   Eina_Unicode g = 0;
-
-                  prev_i = i;
+                  int prev_i = i;
                   g = eina_unicode_utf8_next_get(s, &i);
                   /* Skip escape codes as a security measure */
                   if ((g < '\n') ||
@@ -1065,7 +1064,6 @@ _getsel_cb(void *data,
                     termpty_write(sd->pty, "\x1b[201~",
                                   sizeof("\x1b[201~") - 1);
                }
-
              free(buf);
           }
      }
