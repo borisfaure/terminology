@@ -1047,10 +1047,11 @@ _getsel_cb(void *data,
                     {
                        continue;
                     }
-                  for (j = prev_i; j < i; j++)
-                    buf[pos++] = s[j];
                   if (g == '\n')
                     buf[pos++] = '\r';
+                  else
+                      for (j = prev_i; j < i; j++)
+                          buf[pos++] = s[j];
                }
              if (pos)
                {
