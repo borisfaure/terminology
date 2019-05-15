@@ -1,6 +1,6 @@
 project('terminology', 'c',
         version: '1.4.99',
-        default_options: ['c_std=gnu99'],
+        default_options: ['buildtype=plain', 'c_std=gnu99'],
         license: 'BSD')
 
 cc = meson.get_compiler('c')
