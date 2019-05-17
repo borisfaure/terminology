@@ -410,6 +410,7 @@ collections {
          part { name: "tabcount_glow_r0";
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "tabcount_r0";
                rel2.to: "tabcount_r0";
                rel1.offset: -4 -4;
@@ -428,6 +429,7 @@ collections {
          part { name: "tabcount_glow_r1";
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "tabcount_r1";
                rel2.to: "tabcount_r1";
                rel1.offset: -4 -4;
@@ -446,6 +448,7 @@ collections {
          part { name: "tabcount_glow_r2";
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "tabcount_r2";
                rel2.to: "tabcount_r2";
                rel1.offset: -4 -4;
@@ -464,6 +467,7 @@ collections {
          part { name: "tabcount_glow_r3";
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "tabcount_r3";
                rel2.to: "tabcount_r3";
                rel1.offset: -4 -4;
@@ -482,6 +486,7 @@ collections {
          part { name: "tabcount_r0"; type: RECT;
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "terminology.tabcount.control";
                rel2.to: "terminology.tabcount.control";
                rel1.relative: 0.05 0.05;
@@ -496,6 +501,7 @@ collections {
          part { name: "tabcount_r1"; type: RECT;
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "terminology.tabcount.control";
                rel2.to: "terminology.tabcount.control";
                rel1.relative: 0.55 0.05;
@@ -510,6 +516,7 @@ collections {
          part { name: "tabcount_r2"; type: RECT;
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "terminology.tabcount.control";
                rel2.to: "terminology.tabcount.control";
                rel1.relative: 0.05 0.55;
@@ -524,6 +531,7 @@ collections {
          part { name: "tabcount_r3"; type: RECT;
             clip_to: "tabcount_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.to: "terminology.tabcount.control";
                rel2.to: "terminology.tabcount.control";
                rel1.relative: 0.55 0.55;
@@ -683,6 +691,7 @@ collections {
          part { name: "sendfile_request_bg"; type: RECT;
             clip_to: "sendfile_request_clip";
             description { state: "default" 0.0;
+               fixed: 1 1;
                color: 64 64 64 255;
                rel1.relative: 0.0 -1.0;
                rel2.relative: 1.0 0.0;
@@ -697,6 +706,7 @@ collections {
             clip_to: "sendfile_request_clip";
             scale: 1;
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel.to: "sendfile_request_bg";
                rel1.offset: 4 4;
                rel2.offset: -5 -5;
@@ -768,6 +778,7 @@ collections {
             clip_to: "sendfile_progress_clip";
             scale : 1;
             description { state: "default" 0.0;
+               fixed: 1 1;
                color: 64 64 64 255;
                rel.to: "terminology.sendfile.progress";
                rel1.offset: -4 -4;
@@ -781,6 +792,7 @@ collections {
             clip_to: "sendfile_progress_clip";
             scale : 1;
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.relative: 0.0 0.0;
                rel1.offset: 4 -5;
                rel2.relative: 1.0 0.0;
@@ -859,6 +871,7 @@ collections {
          part { name: "glow";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                image.normal: "bg_glow_in.png";
                image.border: 7 7 7 7;
                image.middle: 0;
@@ -877,6 +890,7 @@ collections {
          part { name: "bevel";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                image.normal: "bg_bevel.png";
                image.border: 3 3 3 3;
                image.middle: 0;
@@ -890,6 +904,7 @@ collections {
          part { name: "shine_focused";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.offset: 0 0;
                rel2.offset: -1 -1;
                image.normal: "bg_shine";
@@ -907,6 +922,7 @@ collections {
          part { name: "shine_unfocused";
             mouse_events: 0;
             description { state: "default" 0.0;
+               fixed: 1 1;
                rel1.offset: 0 0;
                rel2.offset: -1 -1;
                image.normal: "bg_shine";
