@@ -3006,15 +3006,19 @@ static void
 _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
 {
    Termio *sd = evas_object_smart_data_get(obj);
-   Eina_Bool first_time;
+   Evas_Coord mw = 0, mh = 0;
+
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   first_time = (sd->grid.h == 0);
    if ((w <= 0) || (h <= 0))
      {
         w = 80;
         h = 24;
      }
+
+   evas_object_size_hint_min_get(obj, &mw, &mh);
+   if ((mw != sd->font.chw) || (mh != sd->font.chh))
+     evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
 
    if (!force)
      {
@@ -3025,8 +3029,6 @@ _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force)
    evas_event_freeze(evas_object_evas_get(obj));
    evas_object_textgrid_size_set(sd->grid.obj, w, h);
    evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
-   if (!first_time)
-     evas_object_size_hint_min_set(obj, sd->font.chw, sd->font.chh);
    if (!sd->noreqsize)
      evas_object_size_hint_request_set(obj,
                                        sd->font.chw * sd->grid.w,
