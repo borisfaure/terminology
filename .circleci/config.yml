@@ -21,12 +21,34 @@ jobs:
           paths:
             - /terminology
 
-  build_gcc:
+  build_full_clang_elf-1.22:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-22/efl-1.22.2-r0.apk /pkg/efl-22/efl-dev-1.22.2-r0.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dtests=true -Dfuzzing=true . build
+            meson configure build
+            cd build
+            ninja -j4
+  build_full_gcc_efl-1.22:
     docker:
       - image: borisfaure/terminology-ci:latest
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-22/efl-1.22.2-r0.apk /pkg/efl-22/efl-dev-1.22.2-r0.apk
       - run:
           name: Compile with GCC
           environment:
@@ -36,57 +58,90 @@ jobs:
             meson -Dtests=true -Dfuzzing=true -Db_coverage=true . build
             meson configure build
             cd build
-            ninja
+            ninja -j4
       - save_cache:
-          key: build_gcc-{{ .Environment.CIRCLE_SHA1 }}
+          key: build_full_gcc-efl-1.22-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - /terminology
+  build_minimal_gcc_efl-1.21:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-21/efl-1.21.1-r0.apk /pkg/efl-21/efl-dev-1.21.1-r0.apk
+      - run:
+          name: Compile with GCC
+          command: |
+            cd /terminology
+            meson . build
+            meson configure build
+            cd build
+            ninja -j4
+  build_minimal_gcc_efl-1.20:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-20/efl-1.20.7-r0.apk /pkg/efl-20/efl-dev-1.20.7-r0.apk
+      - run:
+          name: Compile with GCC
+          command: |
+            cd /terminology
+            meson . build
+            meson configure build
+            cd build
+            ninja -j4
   tests_gcc:
     docker:
       - image: borisfaure/terminology-ci:latest
     steps:
       - restore_cache:
-          key: build_gcc-{{ .Environment.CIRCLE_SHA1 }}
-      - run: |
-          cd /terminology
-          tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
-      - run: |
-          cd /terminology/build/
-          cd src/bin
-          rm -fr *@@terminology@exe *@@tyalpha@exe *@@tybg@exe *@@tycat@exe
-          rm -fr *@@tyfuzz@exe *@@tyls@exe *@@typop@exe *@@tyq@exe
-          rm -fr *@@tysend@exe
-          cd /terminology/build/
-          curl -s https://codecov.io/bash > .codecov
-          chmod +x .codecov
-          sed -i.bak 's/execdir/exec/' .codecov
-          ./.codecov -Z
-  build_clang:
-    docker:
-      - image: borisfaure/terminology-ci:latest
-    environment:
-      - CC: clang
-    steps:
-      - restore_cache:
-          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
-      - run: |
-          cd /terminology
-          meson -Dtests=true -Dfuzzing=true . build
-          meson configure build
-          cd build
-          ninja
+          key: build_full_gcc-efl-1.22-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-22/efl-1.22.2-r0.apk /pkg/efl-22/efl-dev-1.22.2-r0.apk
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+      - run:
+          name: codecov
+          command: |
+            cd /terminology/build/
+            cd src/bin
+            rm -fr *@@terminology@exe *@@tyalpha@exe *@@tybg@exe *@@tycat@exe
+            rm -fr *@@tyfuzz@exe *@@tyls@exe *@@typop@exe *@@tyq@exe
+            rm -fr *@@tysend@exe
+            cd /terminology/build/
+            curl -s https://codecov.io/bash > .codecov
+            chmod +x .codecov
+            sed -i.bak 's/execdir/exec/' .codecov
+            ./.codecov -Z
 path: /terminology
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - checkout_code
-      - build_gcc:
+      - build_full_gcc_efl-1.22:
+          requires:
+            - checkout_code
+      - build_minimal_gcc_efl-1.21:
+          requires:
+            - checkout_code
+      - build_minimal_gcc_efl-1.20:
           requires:
             - checkout_code
       - tests_gcc:
           requires:
-            - build_gcc
-      - build_clang:
+            - build_full_gcc_efl-1.22
+      - build_full_clang_elf-1.22:
           requires:
             - checkout_code
