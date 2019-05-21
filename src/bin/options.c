@@ -113,6 +113,8 @@ _cb_opdt_hide_done2(void *data,
    evas_object_del(ctx->opbox);
    evas_object_del(ctx->frame);
 
+   if (ctx->donecb)
+     ctx->donecb(ctx->donedata);
    free(ctx);
    elm_cache_all_flush();
 }
@@ -140,9 +142,6 @@ options_hide(Options_Ctx *ctx)
 
    edje_object_signal_emit(ctx->base, "options,hide", "terminology");
    edje_object_signal_emit(ctx->base, "optdetails,hide", "terminology");
-
-   if (ctx->donecb)
-     ctx->donecb(ctx->donedata);
 }
 
 static void
