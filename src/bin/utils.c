@@ -50,6 +50,32 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
 }
 
 Eina_Bool
+theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
+{
+   const char *errmsg;
+   Evas_Object *edje;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(layout, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
+
+   if (elm_layout_file_set(layout, config_theme_path_get(config), group))
+     return EINA_TRUE;
+
+   edje = elm_layout_edje_get(layout);
+   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
+   INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
+       config_theme_path_get(config), group, errmsg);
+
+   if (elm_layout_file_set(layout, config_theme_path_default_get(config), group))
+     return EINA_TRUE;
+
+   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
+   ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
+   return EINA_FALSE;
+}
+
+Eina_Bool
 theme_apply_default(Evas_Object *edje, const Config *config, const char *group)
 {
    const char *errmsg;

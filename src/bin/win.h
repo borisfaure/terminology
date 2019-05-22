@@ -40,7 +40,6 @@ int win_term_set(Win *wn, Term *term);
 Eina_List *
 terms_from_win_object(Evas_Object *win);
 
-Evas_Object *win_base_get(const Win *wn);
 Evas_Object *win_evas_object_get(const Win *win);
 Eina_List * win_terms_get(const Win *wn);
 Config *win_config_get(const Win *wn);
