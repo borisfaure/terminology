@@ -1,5 +1,5 @@
 project('terminology', 'c',
-        version: '1.4.99',
+        version: '1.4.1',
         default_options: ['c_std=gnu99'],
         license: 'BSD')
 

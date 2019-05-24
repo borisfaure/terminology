@@ -1,3 +1,9 @@
+2019-05-24
+        * Release v1.4.1
+        * Decode pasted string as UTF-8, fixing some characters being skipped
+        * Fix theme to ensure default size is 80x24
+        * Fix focus disappearing after going to Settings and back
+
 2019-03-31
         * Release v1.4.0
         * Add Continuous Integration on every push to the git repository
