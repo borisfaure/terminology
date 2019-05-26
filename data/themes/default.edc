@@ -1,7 +1,7 @@
 #ifndef NO_COLORS
 color_classes {
-# include "default_colors.in.edc"
-# define BG_COL 32 32 32 255
+#define BG_COLOR  32 32 32 255
+#include "default_colors.in.edc"
 }
 #endif
 
@@ -54,7 +54,7 @@ collections {
          part { name: "miniview.bg"; type: RECT;
             //mouse_events: 1;
             description { state: "default" 0.0;
-               color: BG_COL;
+               color_class: "BG";
             }
          }
          part { name: "shadow";
@@ -326,7 +326,7 @@ collections {
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: BG_COL;
+               color_class: "BG";
             }
          }
 
@@ -5153,7 +5153,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
          part { name: "base"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
-               color: BG_COL;
+               color_class: "BG";
                rel1.offset: 2 2;
                rel2.offset: -3 -3;
             }

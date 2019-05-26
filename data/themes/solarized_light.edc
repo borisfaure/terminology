@@ -15,7 +15,7 @@
 #define S_base2     7  54  66 255
 #define S_base3     0  43  54 255
 
-#define BG_COL    S_base03
+#define BG_COLOR  S_base03
 #define NO_COLORS 1
 
 color_classes {
@@ -73,5 +73,7 @@ color_classes {
    color_class { name: "C13"; color: S_violet; } // COL_MAGENTA
    color_class { name: "C14"; color: S_base1; } // COL_CYAN
    color_class { name: "C15"; color: S_base3; } // COL_WHITE
+
+   color_class { name:   "BG";  color: BG_COLOR; }
 }
 #include "default.edc"

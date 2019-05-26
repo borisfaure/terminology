@@ -129,7 +129,7 @@ collections {
             mouse_events: 1;
             clip_to: "baseclip";
             description { state: "default" 0.0;
-               color: BG_COLOR;
+               color_class: "BG";
             }
          }
          part { name: "fade"; type: RECT;
@@ -1820,7 +1820,7 @@ collections {
             part { name: "base"; type: RECT;
                clip_to: "clip";
                description { state: "default" 0.0;
-                  color: BG_COLOR;
+                  color_class: "BG";
                   rel1.to: "terminology.content";
                   rel2.to: "terminology.content";
                }

@@ -79,6 +79,8 @@ color_classes {
    color_class { name: "c42"; color: ANSI13; }
    color_class { name: "c43"; color: ANSI14; }
    color_class { name: "c44"; color: ANSI15; }
+
+   color_class { name: "BG";  color: BG_COLOR; }
 }
 
 #define INHERIT_PROVIDE_OWN_COLORS

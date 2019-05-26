@@ -22,6 +22,8 @@ collections {
         color_class { name: "C13";  color: 245 121 0 255; }
         color_class { name: "C14";  color: 70 164 255 255; }
         color_class { name: "C15";  color: 255 255 255 255; }
+
+        color_class { name: "BG";  color: BG_COLOR; }
     }
 }
 

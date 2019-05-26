@@ -6,16 +6,16 @@
 #define S_blue     38 139 210 255
 #define S_cyan     42 161 152 255
 #define S_green   133 153   0 255
-#define S_base03   0  43  54 255
-#define S_base02   7  54  66 255
-#define S_base01  88 110 117 255
-#define S_base00 101 123 131 255
-#define S_base0  131 148 150 255
-#define S_base1  147 161 161 255
-#define S_base2  238 232 213 255
-#define S_base3  253 246 227 255
+#define S_base03    0  43  54 255
+#define S_base02    7  54  66 255
+#define S_base01   88 110 117 255
+#define S_base00  101 123 131 255
+#define S_base0   131 148 150 255
+#define S_base1   147 161 161 255
+#define S_base2   238 232 213 255
+#define S_base3   253 246 227 255
 
-#define BG_COL    S_base03
+#define BG_COLOR  S_base03
 #define NO_COLORS 1
 
 color_classes {
@@ -82,5 +82,8 @@ color_classes {
    color_class { name: "C13"; color: S_violet; } // COL_MAGENTA
    color_class { name: "C14"; color: S_base1; } // COL_CYAN
    color_class { name: "C15"; color: S_base3; } // COL_WHITE
+
+   color_class { name: "BG";  color: BG_COLOR; }
+
 }
 #include "default.edc"
