@@ -61,7 +61,7 @@ _cb_op(void *data,
 
    ctx->mode = mode;
 
-   edje_object_signal_emit(ctx->base, "optdetails,hide", "terminology");
+   elm_layout_signal_emit(ctx->base, "optdetails,hide", "terminology");
 }
 
 static void
@@ -96,7 +96,7 @@ _cb_opdt_hide_done(void *data,
       case OPTION_ELM:       options_elm(ctx->opbox, ctx->term); break;
       case OPTIONS_MODE_NB:  assert(0 && "should not occur");
      }
-   edje_object_signal_emit(ctx->base, "optdetails,show", "terminology");
+   elm_layout_signal_emit(ctx->base, "optdetails,show", "terminology");
 }
 
 static void
@@ -107,9 +107,8 @@ _cb_opdt_hide_done2(void *data,
 {
    Options_Ctx *ctx = data;
 
-   edje_object_signal_callback_del(ctx->base, "optdetails,hide,done",
-                                   "terminology",
-                                   _cb_opdt_hide_done2);
+   elm_layout_signal_callback_del(ctx->base, "optdetails,hide,done",
+                                  "terminology", _cb_opdt_hide_done2);
    evas_object_del(ctx->opbox);
    evas_object_del(ctx->frame);
 
@@ -122,17 +121,15 @@ _cb_opdt_hide_done2(void *data,
 static void
 options_hide(Options_Ctx *ctx)
 {
-   edje_object_part_swallow(ctx->base, "terminology.optdetails", ctx->opbox);
-   edje_object_part_swallow(ctx->base, "terminology.options", ctx->frame);
-   edje_object_signal_emit(ctx->base, "optdetails,show", "terminology");
-   edje_object_signal_emit(ctx->base, "options,show", "terminology");
+   elm_layout_content_set(ctx->base, "terminology.optdetails", ctx->opbox);
+   elm_layout_content_set(ctx->base, "terminology.options", ctx->frame);
+   elm_layout_signal_emit(ctx->base, "optdetails,show", "terminology");
+   elm_layout_signal_emit(ctx->base, "options,show", "terminology");
 
-   edje_object_signal_callback_del(ctx->base, "optdetails,hide,done",
-                                   "terminology",
-                                   _cb_opdt_hide_done);
-   edje_object_signal_callback_add(ctx->base, "optdetails,hide,done",
-                                   "terminology",
-                                   _cb_opdt_hide_done2, ctx);
+   elm_layout_signal_callback_del(ctx->base, "optdetails,hide,done",
+                                  "terminology", _cb_opdt_hide_done);
+   elm_layout_signal_callback_add(ctx->base, "optdetails,hide,done",
+                                  "terminology", _cb_opdt_hide_done2, ctx);
    elm_object_focus_set(ctx->frame, EINA_FALSE);
    elm_object_focus_set(ctx->opbox, EINA_FALSE);
    elm_object_focus_set(ctx->toolbar, EINA_FALSE);
@@ -140,8 +137,8 @@ options_hide(Options_Ctx *ctx)
    evas_object_del(ctx->over);
    ctx->over = NULL;
 
-   edje_object_signal_emit(ctx->base, "options,hide", "terminology");
-   edje_object_signal_emit(ctx->base, "optdetails,hide", "terminology");
+   elm_layout_signal_emit(ctx->base, "options,hide", "terminology");
+   elm_layout_signal_emit(ctx->base, "optdetails,hide", "terminology");
 }
 
 static void
@@ -186,7 +183,7 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    ctx->opbox = o = elm_box_add(win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_part_swallow(ctx->base, "terminology.optdetails", o);
+   elm_layout_content_set(ctx->base, "terminology.optdetails", o);
    evas_object_show(o);
 
    ctx->frame = o = elm_frame_add(win);
@@ -245,19 +242,18 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed", _cb_op_tmp_chg, ctx);
 
-   edje_object_part_swallow(base, "terminology.options", ctx->frame);
+   elm_layout_content_set(base, "terminology.options", ctx->frame);
    evas_object_show(ctx->frame);
 
-   edje_object_signal_callback_add(ctx->base, "optdetails,hide,done",
-                                   "terminology",
-                                   _cb_opdt_hide_done, ctx);
+   elm_layout_signal_callback_add(ctx->base, "optdetails,hide,done",
+                                  "terminology", _cb_opdt_hide_done, ctx);
    ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
-   edje_object_part_swallow(ctx->base, "terminology.dismiss", o);
+   elm_layout_content_set(ctx->base, "terminology.dismiss", o);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
 
-   edje_object_signal_emit(ctx->base, "options,show", "terminology");
+   elm_layout_signal_emit(ctx->base, "options,show", "terminology");
    elm_object_focus_set(ctx->toolbar, EINA_TRUE);
 }

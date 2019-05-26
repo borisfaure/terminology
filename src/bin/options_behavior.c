@@ -224,16 +224,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_object_text_set(rd, _("Blinking Block"));
    elm_radio_state_value_set(rd, 1);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    /* Steady Block */
@@ -244,16 +243,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 2);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in,noblink", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    /* Blinking Underline */
@@ -264,16 +262,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 3);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor_underline");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor_underline");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    /* Steady Underline */
@@ -284,16 +281,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 4);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor_underline");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor_underline");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in,noblink", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    /* Blinking Bar */
@@ -304,16 +300,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 5);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor_bar");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor_bar");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    /* Steady Bar */
@@ -324,16 +319,15 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 6);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   oe = elm_layout_edje_get(layout);
-   theme_apply(oe, ctx->config, "terminology/cursor_bar");
+   theme_apply_elm(layout, ctx->config, "terminology/cursor_bar");
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(rd, "icon", layout);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
-   edje_object_signal_emit(oe, "focus,out", "terminology");
-   edje_object_signal_emit(oe, "focus,in,noblink", "terminology");
+   elm_layout_signal_emit(layout, "focus,out", "terminology");
+   elm_layout_signal_emit(layout, "focus,in,noblink", "terminology");
    evas_object_smart_callback_add(rd, "changed", _cursors_changed_cb, ctx);
 
    elm_radio_value_set(rdg,

@@ -61,10 +61,10 @@ _cb_hidden(void *data,
 
    evas_object_del(frame);
 
-   o = edje_object_part_swallow_get(ctx->base, "terminology.controls");
+   o = elm_layout_content_get(ctx->base, "terminology.controls");
    if (o)
      {
-        edje_object_part_unswallow(ctx->base, o);
+        elm_layout_content_unset(ctx->base, "terminology.controls");
      }
 
    elm_cache_all_flush();
@@ -286,7 +286,7 @@ controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
    if (ctx->term)
      {
         evas_object_event_callback_del(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del);
-        edje_object_signal_emit(ctx->base, "controls,hide", "terminology");
+        elm_layout_signal_emit(ctx->base, "controls,hide", "terminology");
      }
 
    if (ctx->over)
@@ -311,7 +311,7 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    Controls_Ctx *ctx;
 
    if (eina_hash_find(controls, &win) ||
-       edje_object_part_swallow_get(base, "terminology.controls"))
+       elm_layout_content_get(base, "terminology.controls"))
      {
         donecb(donedata);
         return;
@@ -418,16 +418,16 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
                                   ctx);
 
-   edje_object_part_swallow(base, "terminology.controls", ctx->frame);
+   elm_layout_content_set(base, "terminology.controls", ctx->frame);
    evas_object_show(ctx->frame);
    ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
-   edje_object_part_swallow(base, "terminology.dismiss", o);
+   elm_layout_content_set(base, "terminology.dismiss", o);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
 
-   edje_object_signal_emit(base, "controls,show", "terminology");
+   elm_layout_signal_emit(base, "controls,show", "terminology");
    elm_object_focus_set(ctx->frame, EINA_TRUE);
    evas_object_event_callback_add(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
    evas_object_event_callback_add(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);

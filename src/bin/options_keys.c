@@ -263,7 +263,7 @@ _on_shortcut_add(void *data,
    ctx->layout = elm_layout_add(bt);
    evas_object_data_set(ctx->layout, "ctx", ctx);
    oe = elm_layout_edje_get(ctx->layout);
-   theme_apply(oe, ctx->config, "terminology/keybinding");
+   theme_apply_elm(ctx->layout, ctx->config, "terminology/keybinding");
    theme_auto_reload_enable(oe);
    elm_layout_text_set(ctx->layout, "label", _("Please press key sequence"));
    evas_object_show(ctx->layout);
