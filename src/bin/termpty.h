@@ -314,6 +314,10 @@ void termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int n
 Term_Link * term_link_new(Termpty *ty);
 void term_link_free(Termpty *ty, Term_Link *link);
 
+int
+termpty_color_class_get(Termpty *ty, const char *key,
+                        int *r, int *g, int *b, int *a);
+
 extern int _termpty_log_dom;
 
 #define TERMPTY_SCREEN(Tpty, X, Y) \

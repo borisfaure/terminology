@@ -226,6 +226,21 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
 {
 }
 #endif
+
+int
+termpty_color_class_get(Termpty *ty EINA_UNUSED, const char *key,
+                        int *r, int *g, int *b, int *a)
+{
+   if (strncmp(key, "BG", strlen("BG")) == 0)
+     {
+        *r = 131;
+        *g = 132;
+        *b = 133;
+        *a = 134;
+        return 0;
+     }
+   return -1;
+}
 /* }}} */
 
 
