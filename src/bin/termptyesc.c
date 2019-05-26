@@ -32,6 +32,10 @@
 #define OSC 0x9d
 #define DEL 0x7f
 
+#define TERMPTY_WRITE_STR(_S) \
+   termpty_write(ty, _S, strlen(_S))
+
+
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
  * if not enough bytes could be read
  */
@@ -3633,6 +3637,34 @@ _handle_xterm_777_command(Termpty *ty,
    *title_end = ';';
 }
 
+static void
+_handle_xterm_11_command(Termpty *ty, Eina_Unicode *p)
+{
+   int r = 0, g = 0, b = 0;
+   char buf[32];
+   size_t l;
+
+   if (!*p)
+     goto err;
+
+   /* only support query mode for the moment */
+   if (*p != '?')
+     goto err;
+
+   if (termpty_color_class_get(ty, "BG", &r, &g, &b, NULL) != 0)
+     {
+        ERR("error getting color class 'BG'");
+     }
+   TERMPTY_WRITE_STR("\033]11;rgb:");
+   l = snprintf(buf, sizeof(buf), "%.2X/%.2X/%.2X", r, g, b);
+   termpty_write(ty, buf, l);
+   TERMPTY_WRITE_STR("\007");
+
+   return;
+err:
+   ty->decoding_error = EINA_TRUE;
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -3669,9 +3701,6 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      cc++;
    else
      return 0;
-
-#define TERMPTY_WRITE_STR(_S) \
-   termpty_write(ty, _S, strlen(_S))
 
    arg = _osc_arg_get(&p);
    switch (arg)
@@ -3777,6 +3806,9 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 #endif
           }
         break;
+      case 11:
+        _handle_xterm_11_command(ty, p);
+        break;
       case 50:
         DBG("xterm font support");
         if (!*p)
@@ -3803,8 +3835,6 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->decoding_error = EINA_TRUE;
         break;
      }
-
-#undef TERMPTY_WRITE_STR
 
     return cc - c;
 err:

@@ -233,10 +233,14 @@ termpty_color_class_get(Termpty *ty EINA_UNUSED, const char *key,
 {
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
-        *r = 131;
-        *g = 132;
-        *b = 133;
-        *a = 134;
+        if (r)
+          *r = 131;
+        if (g)
+          *g = 132;
+        if (b)
+          *b = 133;
+        if (a)
+          *a = 134;
         return 0;
      }
    return -1;
