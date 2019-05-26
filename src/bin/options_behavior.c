@@ -207,7 +207,7 @@ static void
 _add_cursors_option(Evas_Object *bx,
                     Behavior_Ctx *ctx)
 {
-   Evas_Object *lbl, *rd, *rdg, *layout, *oe;
+   Evas_Object *lbl, *rd, *rdg, *layout;
 
    lbl = elm_label_add(bx);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
