@@ -5517,6 +5517,14 @@ term_miniview_get(const Term *term)
    return NULL;
 }
 
+Evas_Object *
+term_bg_get(const Term *term)
+{
+   if (term)
+     return term->bg;
+   return NULL;
+}
+
 
 static void
 _cb_bell(void *data,
