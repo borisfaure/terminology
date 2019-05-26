@@ -312,8 +312,8 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
                       (len - prev_i) <= (int)sizeof(ty->oldbuf))
                     {
                        for (k = 0;
-                            (k < (unsigned int)sizeof(ty->oldbuf)) && 
-                            (k < (len - prev_i));
+                            (k < (unsigned int)sizeof(ty->oldbuf)) &&
+                            (k < (unsigned int)(len - prev_i));
                             k++)
                          {
                             ty->oldbuf[k] = buf[prev_i+k];
