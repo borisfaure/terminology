@@ -492,7 +492,6 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                       See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=577012
                       */
                    WRN("Ignored screen mode %i", arg);
-                   ty->decoding_error = EINA_TRUE;
                    break;
                 case 1047:
                    if (!mode && ty->altbuf)
