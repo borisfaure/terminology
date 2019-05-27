@@ -3820,6 +3820,36 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              free(s);
           }
         break;
+      case 110:
+        DBG("Reset VT100 text foreground color");
+        break;
+      case 111:
+        DBG("Reset VT100 text background color");
+        break;
+      case 112:
+        DBG("Reset text cursor color");
+        break;
+      case 113:
+        DBG("Reset mouse foreground color");
+        break;
+      case 114:
+        DBG("Reset mouse background color");
+        break;
+      case 115:
+        DBG("Reset Tektronix foreground color");
+        break;
+      case 116:
+        DBG("Reset Tektronix background color");
+        break;
+      case 117:
+        DBG("Reset highlight color");
+        break;
+      case 118:
+        DBG("Reset Tektronix cursor color");
+        break;
+      case 119:
+        DBG("Reset highlight foreground color");
+        break;
       case 777:
         DBG("xterm notification support");
         s = eina_unicode_unicode_to_utf8(p, &len);
