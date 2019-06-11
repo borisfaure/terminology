@@ -40,7 +40,7 @@ static Termpty _ty;
 static Termio _sd = {
      .font = {
           .name = "",
-          .size = 12,
+          .size = 10,
           .chw = TY_CH_W,
           .chh = TY_CH_H,
      },
