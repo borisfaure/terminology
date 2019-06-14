@@ -277,7 +277,6 @@ _sep_add_h(Evas_Object *win)
 static void
 controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
 {
-   elm_object_focus_set(ctx->frame, EINA_FALSE);
    if (ctx->win)
      {
         evas_object_event_callback_del(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del);
@@ -294,6 +293,7 @@ controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb)
      {
         evas_object_del(ctx->over);
      }
+   elm_object_focus_set(ctx->frame, EINA_FALSE);
 
    if (call_cb)
      {
