@@ -183,7 +183,6 @@ struct _Win
 static Eina_List   *wins = NULL;
 
 static Eina_Bool _win_is_focused(Win *wn);
-static Eina_Bool _term_is_focused(Term *term);
 static Term_Container *_solo_new(Term *term, Win *wn);
 static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
 static Term_Container *_tabs_new(Term_Container *child, Term_Container *parent);
@@ -3764,8 +3763,8 @@ term_popmedia_close(Term *term)
 }
 
 
-static Eina_Bool
-_term_is_focused(Term *term)
+Eina_Bool
+term_is_focused(Term *term)
 {
    Term_Container *tc;
 
@@ -3811,7 +3810,7 @@ term_focus(Term *term)
    Term_Container *tc;
 
    DBG("is focused? tc:%p", term->container);
-   if (_term_is_focused(term))
+   if (term_is_focused(term))
      return;
 
    tc = term->container;
@@ -3825,7 +3824,7 @@ term_unfocus(Term *term)
    Term_Container *tc;
 
    DBG("is focused? tc:%p", term->container);
-   if (!_term_is_focused(term))
+   if (!term_is_focused(term))
      return;
 
    tc = term->container;
@@ -4225,7 +4224,7 @@ _term_miniview_check(Term *term)
         if (term->miniview_shown)
           {
              DBG("is focused? tc:%p", term->container);
-             if (_term_is_focused(term))
+             if (term_is_focused(term))
                edje_object_signal_emit(term->bg, "miniview,on", "terminology");
           }
      }
@@ -4278,7 +4277,7 @@ _on_popover_done(Win *wn)
    EINA_LIST_FOREACH(wn->terms, l, term)
      {
         DBG("is focused? tc:%p", term->container);
-        if (_term_is_focused(term))
+        if (term_is_focused(term))
           return;
      }
    DBG("focus tc:%p", tc);
@@ -4892,7 +4891,7 @@ _cb_icon(void *data,
 {
    Term *term = data;
    DBG("is focused? tc:%p", term->container);
-   if (_term_is_focused(term))
+   if (term_is_focused(term))
      elm_win_icon_name_set(term->wn->win, termio_icon_name_get(term->termio));
 }
 
@@ -5398,7 +5397,7 @@ _term_bg_config(Term *term)
      }
 
    DBG("is focused? tc:%p", term->container);
-   if (_term_is_focused(term) && (_win_is_focused(term->wn)))
+   if (term_is_focused(term) && (_win_is_focused(term->wn)))
      {
         if (term->config->disable_focus_visuals)
           {

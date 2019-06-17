@@ -70,6 +70,7 @@ Ecore_IMF_Context *
 term_imf_context_get(Term *term);
 
 Eina_Bool term_is_visible(Term *term);
+Eina_Bool term_is_focused(Term *term);
 
 void win_font_size_set(Win *wn, int new_size);
 void win_font_update(Term *term);
