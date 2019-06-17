@@ -2331,7 +2331,7 @@ _smart_mouseover_apply(Termio *sd)
    config = sd->config;
 
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
-       (sd->link.suspend) || (!evas_object_focus_get(sd->self)))
+       (sd->link.suspend) || (!term_is_focused(sd->term)))
      {
         _remove_links(sd);
         return;
