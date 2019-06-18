@@ -4011,7 +4011,7 @@ termio_add(Evas_Object *win, Config *config,
 
 void
 termio_key_down(Evas_Object *termio,
-                const Evas_Event_Key_Down *ev,
+                Evas_Event_Key_Down *ev,
                 Eina_Bool action_handled)
 {
    Termio *sd = evas_object_smart_data_get(termio);
@@ -4027,4 +4027,5 @@ termio_key_down(Evas_Object *termio,
      }
    if (sd->config->flicker_on_key)
      edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
+   ev->event_flags = EVAS_EVENT_FLAG_ON_HOLD;
 }

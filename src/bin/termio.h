@@ -63,7 +63,8 @@ Termpty *termio_pty_get(const Evas_Object *obj);
 Evas_Object * termio_miniview_get(const Evas_Object *obj);
 Term* termio_term_get(const Evas_Object *obj);
 
-void termio_key_down(Evas_Object *termio, const Evas_Event_Key_Down *ev,
+void termio_key_down(Evas_Object *termio,
+                     Evas_Event_Key_Down *ev,
                      Eina_Bool action_handled);
 void termio_focus_in(Evas_Object *termio);
 void termio_focus_out(Evas_Object *termio);

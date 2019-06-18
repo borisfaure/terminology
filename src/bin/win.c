@@ -1663,6 +1663,8 @@ win_new(const char *name, const char *role, const char *title,
    evas_object_show(o);
 
    wn->base = o = elm_layout_add(wn->win);
+   elm_object_focus_allow_set(o, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
    theme_apply_elm(o, config, "terminology/base");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -5583,7 +5585,6 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->config = config;
 
    term->base = o = elm_layout_add(wn->win);
-   elm_object_focus_allow_set(o, EINA_TRUE);
    theme_apply_elm(o, term->config, "terminology/core");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
