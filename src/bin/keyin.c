@@ -312,7 +312,6 @@ cb_all_group(Evas_Object *termio_obj)
 
    win_toggle_all_group(wn);
 
-   ERR("ALL GROUP");
    return EINA_TRUE;
 }
 
@@ -323,7 +322,6 @@ cb_visible_group(Evas_Object *termio_obj)
 
    win_toggle_visible_group(wn);
 
-   ERR("VISIBLE GROUP");
    return EINA_TRUE;
 }
 

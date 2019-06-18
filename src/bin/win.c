@@ -5528,17 +5528,14 @@ _cb_options(void *data,
 {
    Term *term = data;
    Term_Container *tc = term->container;
-   ERR("cb options");
 
    term->wn->on_popover++;
 
    term_ref(term);
    tc->unfocus(tc, NULL);
-   ERR("unfocus");
 
    controls_show(term->wn->win, term->wn->base, term->bg, term->termio,
                  _cb_options_done, term);
-   ERR("controls shown");
 }
 
 void
