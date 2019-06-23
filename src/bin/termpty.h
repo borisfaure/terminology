@@ -131,6 +131,7 @@ typedef struct _Term_Cursor {
 struct _Termpty
 {
    Evas_Object *obj;
+   Config *config;
    Ecore_Event_Handler *hand_exe_exit;
    Ecore_Fd_Handler *hand_fd;
    struct {
@@ -273,10 +274,10 @@ void       termpty_init(void);
 void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-                      int w, int h, int backscroll, Eina_Bool xterm_256color,
-                      Eina_Bool erase_is_del, const char *emotion_mod,
-                      const char *title, Ecore_Window window_id);
+                       int w, int h, Config *config, const char *emotion_mod,
+                       const char *title, Ecore_Window window_id);
 void       termpty_free(Termpty *ty);
+void       termpty_config_update(Termpty *ty, Config *config);
 
 void       termpty_backlog_lock(void);
 void       termpty_backlog_unlock(void);
@@ -307,7 +308,6 @@ void       termpty_screen_swap(Termpty *ty);
 
 ssize_t termpty_line_length(const Termcell *cells, ssize_t nb_cells);
 
-Config *termpty_config_get(const Termpty *ty);
 void termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len);
 void termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc);
 

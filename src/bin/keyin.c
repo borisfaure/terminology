@@ -120,7 +120,7 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           }
         else
           {
-             Config *cfg = termpty_config_get(ty);
+             const Config *cfg = ty->config;
 
              if (cfg->erase_is_del && !ctrl)
                {

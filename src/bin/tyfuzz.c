@@ -250,9 +250,10 @@ termpty_color_class_get(Termpty *ty EINA_UNUSED, const char *key,
 
 
 static void
-_termpty_init(Termpty *ty)
+_termpty_init(Termpty *ty, Config *config)
 {
    memset(ty, '\0', sizeof(*ty));
+   ty->config = config;
    ty->w = TY_W;
    ty->h = TY_H;
    ty->backsize = TY_BACKSIZE;
@@ -312,7 +313,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _config = config_new();
    _sd.config = _config;
 
-   _termpty_init(&_ty);
+   _termpty_init(&_ty, _config);
 
    if (argc > 1)
      {

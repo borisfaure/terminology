@@ -479,8 +479,7 @@ _is_shell_valid(const char *cmd)
 
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-            int w, int h, int backscroll, Eina_Bool xterm_256color,
-            Eina_Bool erase_is_del, const char *emotion_mod,
+            int w, int h, Config *config, const char *emotion_mod,
             const char *title, Ecore_Window window_id)
 {
    Termpty *ty;
@@ -494,9 +493,10 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 
    ty = calloc(1, sizeof(Termpty));
    if (!ty) return NULL;
+   ty->config = config;
    ty->w = w;
    ty->h = h;
-   ty->backsize = backscroll;
+   ty->backsize = config->scrollback;
 
    ty->screen = calloc(1, sizeof(Termcell) * ty->w * ty->h);
    if (!ty->screen)
@@ -629,7 +629,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         ERR("unable to tcgetattr: %s", strerror(errno));
         goto err;
      }
-   t.c_cc[VERASE] =  (erase_is_del) ? 0x7f : 0x8;
+   t.c_cc[VERASE] =  (config->erase_is_del) ? 0x7f : 0x8;
 #ifdef IUTF8
    t.c_iflag |= IUTF8;
 #endif
@@ -709,7 +709,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         unsetenv("LINES");
 
         /* pretend to be xterm */
-        if (xterm_256color)
+        if (config->xterm_256color)
           {
              putenv("TERM=xterm-256color");
           }
@@ -847,6 +847,13 @@ termpty_free(Termpty *ty)
    free(ty->buf);
    free(ty->tabs);
    free(ty);
+}
+
+void
+termpty_config_update(Termpty *ty, Config *config)
+{
+   ty->config = config;
+   termpty_backlog_size_set(ty, config->scrollback);
 }
 
 static Eina_Bool
@@ -1732,12 +1739,6 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
 
         dst[i] = local;
      }
-}
-
-Config *
-termpty_config_get(const Termpty *ty)
-{
-   return termio_config_get(ty->obj);
 }
 
 /* 0 means error here */

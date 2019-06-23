@@ -423,7 +423,7 @@ termio_config_update(Evas_Object *obj)
    sd->jump_on_change = sd->config->jump_on_change;
    sd->jump_on_keypress = sd->config->jump_on_keypress;
 
-   termpty_backlog_size_set(sd->pty, sd->config->scrollback);
+   termpty_config_update(sd->pty, sd->config);
    sd->scroll = 0;
 
    colors_term_init(sd->grid.obj, sd->theme, sd->config);
@@ -3981,9 +3981,8 @@ termio_add(Evas_Object *win, Config *config,
                        _smart_cb_drop, obj);
 
    window_id = elm_win_window_id_get(win);
-   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config->scrollback,
-                         config->xterm_256color, config->erase_is_del, mod,
-                         title, window_id);
+   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config, mod, title,
+                         window_id);
    if (!sd->pty)
      {
         ERR(_("Could not allocate termpty"));
