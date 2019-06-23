@@ -93,7 +93,7 @@ _termpty_is_dblwidth_slow_get(const Termpty *ty, int g)
             ((g >= 0x30000) && (g <= 0x3fffd)))
         return EINA_TRUE;
      }
-   if (ty->config->emoji_dbl_width && ((g <= 0x1f004) && (g <= 0x1f9c0)))
+   if (ty->config->emoji_dbl_width && ((g >= 0x1f004) && (g <= 0x1f9c0)))
      {
         /* Taken from
          * https://github.com/ridiculousfish/widecharwidth/blob/master/widechar_width.h
