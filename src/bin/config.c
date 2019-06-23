@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 20
+#define CONF_VER 21
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -183,6 +183,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "emoji_dbl_width", emoji_dbl_width, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "shine", shine, EET_T_INT);
 }
 
@@ -291,6 +293,7 @@ config_sync(const Config *config_src, Config *config)
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
    config->changedir_to_current = config_src->changedir_to_current;
+   config->emoji_dbl_width = config_src->emoji_dbl_width;
    config->shine = config_src->shine;
 }
 
@@ -552,6 +555,7 @@ config_new(void)
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
         config->changedir_to_current = EINA_TRUE;
+        config->emoji_dbl_width = EINA_TRUE;
         for (j = 0; j < 4; j++)
           {
              for (i = 0; i < 12; i++)
@@ -691,7 +695,11 @@ config_load(const char *key)
                   config->active_links_escape = config->active_links;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 20 */
+                case 20:
+                  config->emoji_dbl_width = EINA_TRUE;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 21 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -794,6 +802,7 @@ config_fork(const Config *config)
    CPY(mv_always_show);
    CPY(ty_escapes);
    CPY(changedir_to_current);
+   CPY(emoji_dbl_width);
    CPY(shine);
 
    EINA_LIST_FOREACH(config->keys, l, key)

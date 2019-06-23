@@ -92,6 +92,7 @@ struct _Config
    Eina_Bool         mv_always_show;
    Eina_Bool         ty_escapes;
    Eina_Bool         changedir_to_current;
+   Eina_Bool         emoji_dbl_width;
    Config_Color      colors[(4 * 12)];
    Eina_List        *keys;
 
