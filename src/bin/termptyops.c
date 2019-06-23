@@ -211,6 +211,11 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              continue;
           }
+        /* Skip variation selectors */
+        if (EINA_UNLIKELY(g >= 0xfe00 && g <= 0xfe0f))
+          {
+             continue;
+          }
         if (EINA_UNLIKELY(g >= 0x300 && g <=0x36f))
           {
              /* combining chars */
