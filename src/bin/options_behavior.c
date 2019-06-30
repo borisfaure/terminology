@@ -224,7 +224,6 @@ _cb_op_hide_cursor_changed(void *data,
         config->hide_cursor = INFINITY;
         elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
      }
-   main_hide_cursor_update(config);
    config_save(config, NULL);
 }
 
@@ -241,7 +240,6 @@ _cb_hide_cursor_slider_chg(void *data,
        return;
 
    config->hide_cursor = value;
-   main_hide_cursor_update(config);
    config_save(config, NULL);
 }
 

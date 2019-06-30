@@ -170,6 +170,7 @@ struct _Win
    Evas_Object *cmdbox;
    Ecore_Timer *cmdbox_del_timer;
    Ecore_Timer *cmdbox_focus_timer;
+   Ecore_Timer *hide_cursor_timer;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
    unsigned char group_input : 1;
@@ -677,12 +678,6 @@ _win_trans(Win *wn, Term *term, Eina_Bool trans)
         elm_win_alpha_set(wn->win, EINA_FALSE);
         evas_object_show(wn->backbg);
      }
-}
-
-void
-main_hide_cursor_update(const Config *config)
-{
-   /* TODO */
 }
 
 void
@@ -1546,6 +1541,34 @@ _cb_win_mouse_down(void *data,
    tc_child->focus(tc_child, tc);
 }
 
+static Eina_Bool
+_set_cursor(Term *term, void *data)
+{
+   char *cursor = data;
+
+   if (cursor)
+     {
+        elm_object_cursor_set(term->base, cursor);
+     }
+   else
+     {
+        elm_object_cursor_unset(term->base);
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+
+static Eina_Bool
+_hide_cursor(void *data)
+{
+   Win *wn = data;
+
+   wn->hide_cursor_timer = NULL;
+   for_each_term_do(wn, &_set_cursor, (void*)"blank");
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _cb_win_mouse_move(void *data,
                    Evas *_e EINA_UNUSED,
@@ -1558,10 +1581,25 @@ _cb_win_mouse_move(void *data,
    Term_Container *tc = (Term_Container*) wn;
    Term_Container *tc_child = NULL;
 
-   if (wn->on_popover || wn->group_input || !tc->is_focused)
+   if (wn->on_popover)
      return;
 
-   if (!wn->config->mouse_over_focus)
+   if (!isnan(wn->config->hide_cursor))
+     {
+        if (wn->hide_cursor_timer)
+          {
+             ecore_timer_interval_set(wn->hide_cursor_timer,
+                                      wn->config->hide_cursor);
+          }
+        else
+          {
+             for_each_term_do(wn, &_set_cursor, NULL);
+             wn->hide_cursor_timer = ecore_timer_add(
+                wn->config->hide_cursor, _hide_cursor, wn);
+          }
+     }
+
+   if (wn->group_input || !tc->is_focused || !wn->config->mouse_over_focus)
      return;
 
    term_mouse = tc->find_term_at_coords(tc,
