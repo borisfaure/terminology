@@ -680,6 +680,12 @@ _win_trans(Win *wn, Term *term, Eina_Bool trans)
 }
 
 void
+main_hide_cursor_update(const Config *config)
+{
+   /* TODO */
+}
+
+void
 main_trans_update(const Config *config)
 {
    Win *wn;

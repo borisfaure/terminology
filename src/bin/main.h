@@ -11,7 +11,6 @@ void main_split_v(Evas_Object *win, Evas_Object *term, const char *cmd);
 void term_close(Evas_Object *win, Evas_Object *term,
                 Eina_Bool hold_if_requested);
 
-void main_trans_update(const Config *config);
 void main_media_update(const Config *config);
 void main_media_mute_update(const Config *config);
 void main_media_visualize_update(const Config *config);

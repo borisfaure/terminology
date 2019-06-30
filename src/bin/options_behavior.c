@@ -1,5 +1,6 @@
 #include "private.h"
 
+#include <math.h>
 #include <Elementary.h>
 #include <assert.h>
 #include "config.h"
@@ -14,6 +15,7 @@ typedef struct _Behavior_Ctx {
      Evas_Object *op_h;
      Evas_Object *op_wh_current;
      Evas_Object *term;
+     Evas_Object *sld_hide_cursor;
      Config *config;
 } Behavior_Ctx;
 
@@ -203,6 +205,46 @@ _cursors_changed_cb(void *data, Evas_Object *obj,
    windows_update();
    config_save(config, NULL);
 }
+
+static void
+_cb_op_hide_cursor_changed(void *data,
+                           Evas_Object *obj,
+                           void *_event EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   if (elm_check_state_get(obj))
+     {
+        config->hide_cursor = elm_slider_value_get(ctx->sld_hide_cursor);
+        elm_object_disabled_set(ctx->sld_hide_cursor, EINA_FALSE);
+     }
+   else
+     {
+        config->hide_cursor = INFINITY;
+        elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
+     }
+   main_hide_cursor_update(config);
+   config_save(config, NULL);
+}
+
+static void
+_cb_hide_cursor_slider_chg(void *data,
+                 Evas_Object *obj,
+                 void *_event EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+   double value = elm_slider_value_get(obj);
+
+   if (config->hide_cursor == value)
+       return;
+
+   config->hide_cursor = value;
+   main_hide_cursor_update(config);
+   config_save(config, NULL);
+}
+
 
 static void
 _add_cursors_option(Evas_Object *bx,
@@ -551,6 +593,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_behavior_sback_chg, ctx);
 
+   SEPARATOR;
+
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -564,7 +608,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
 
    o = elm_slider_add(bx);
-   elm_object_tooltip_text_set(o, tooltip);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_slider_span_size_set(o, 40);
@@ -580,5 +623,38 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
+
+   SEPARATOR;
+
+   o = elm_check_add(opbox);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Translucent"));
+   elm_object_text_set(o, _("Auto hide the mouse cursor when idle:"));
+   elm_check_state_set(o, !isnan(config->hide_cursor));
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_op_hide_cursor_changed, ctx);
+
+   o = elm_slider_add(bx);
+   ctx->sld_hide_cursor = o;
+   elm_object_tooltip_text_set(o, tooltip);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_slider_span_size_set(o, 40);
+   elm_slider_unit_format_set(o, _("%1.1f s"));
+   elm_slider_indicator_format_set(o, _("%1.1f s"));
+   elm_slider_min_max_set(o, 0.0, 60.0);
+   elm_slider_value_set(o, config->hide_cursor);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "delay,changed",
+                                  _cb_hide_cursor_slider_chg, ctx);
+
+   evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(o);
+
 #undef SEPARATOR
 }
