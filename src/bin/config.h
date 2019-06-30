@@ -57,6 +57,7 @@ struct _Config
    const char       *theme;
    const char       *background;
    double            tab_zoom;
+   double            hide_cursor;
    int               vidmod;
    int               opacity;
    int               shine;
