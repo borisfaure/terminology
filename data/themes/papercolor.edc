@@ -5,9 +5,9 @@
 #define ANSI2      85 139  46 255 /* #558B2E */
 #define ANSI3     255 143  01 255 /* #FF8F01 */
 #define ANSI4      21 101 192 255 /* #1564C0 */
-#define ANSI5     135   0 175 255 /* #8700AF */
-#define ANSI6     106  30 154 255 /* #6A1E9A */
-#define ANSI7       0 131 143 255 /* #00838F */
+#define ANSI5     106  30 154 255 /* #6A1E9A */
+#define ANSI6       0 131 143 255 /* #00838F */
+#define ANSI7     242 242 242 255 /* #F2F2F2*/
 
 #define ANSI8      84  99 134 255 /* #546386 */
 #define ANSI9     225 126 133 255 /* #E17E85 */
