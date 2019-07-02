@@ -16,6 +16,7 @@ edje_to_compile = [
   ['base16_ocean_dark', ['default_colors.in.edc']],
   ['smyck', ['default_colors.in.edc', 'mild.edc']],
   ['nord', ['default_colors.in.edc', 'default.edc']],
+  ['papercolor', ['default_colors.in.edc', 'default.edc']],
 ]
 
 edje_install_dir = join_paths(get_option('datadir'),
