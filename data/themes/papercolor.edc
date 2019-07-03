@@ -51,7 +51,8 @@ color_classes {
    color_class { name: "c7";  color: ANSI6; }
    color_class { name: "c8";  color: ANSI0; }
 
-   color_class { name: "c11"; color: COL_DEF; }
+   color_class { name: "c10"; color: BG_COLOR; } // COL_REVERSE_FG
+   color_class { name: "c11"; color: ANSI12; } // COL_REVERSE_BG
 
    color_class { name: "c12"; color: ANSI8; }
    color_class { name: "c13"; color: ANSI15; }
