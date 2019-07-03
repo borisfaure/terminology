@@ -16,10 +16,10 @@
 #define ANSI12     76 178 255 255 /* #4CB2FF */
 #define ANSI13    190 134 227 255 /* #BE86E3 */
 #define ANSI14     45 206 208 255 /* #2DCED0 */
-#define ANSI15     68  68  68 255 /* #444444 */
+#define ANSI15    251 251 251 255 /* #FBFBFB */
 
 #define COL_DEF    68  68  68 255 /* #444444 */
-#define BG_COLOR  253 246 227 255 /* #FDF6E3 */
+#define BG_COLOR  238 238 238 255 /* #EEEEEE */
 #define NO_COLORS 1
 
 color_classes {
