@@ -1794,6 +1794,12 @@ imf_done:
 
      }
 
+   if (!isnan(wn->config->hide_cursor))
+     {
+        wn->hide_cursor_timer = ecore_timer_add(
+           wn->config->hide_cursor, _hide_cursor, wn);
+     }
+
    wins = eina_list_append(wins, wn);
    return wn;
 }
