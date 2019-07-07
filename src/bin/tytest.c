@@ -139,8 +139,11 @@ _tytest_checksum(Termpty *ty)
    MD5Update(&ctx, (unsigned char const*)_cursor_shape,
              strlen(_cursor_shape));
    /* Write buffer */
-   MD5Update(&ctx, (unsigned char const*)ty->write_buffer.buf,
-             ty->write_buffer.len);
+   if (ty->write_buffer.buf)
+     {
+        MD5Update(&ctx, (unsigned char const*)ty->write_buffer.buf,
+                  ty->write_buffer.len);
+     }
 
    MD5Final(hash, &ctx);
 
