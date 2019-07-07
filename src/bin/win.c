@@ -1310,8 +1310,10 @@ _cb_win_key_down(void *data,
         term = tc->focused_term_get(tc);
         if (term)
           {
-             Term_Container *tc = term->container;
              Term_Container *tc_parent = tc->parent;
+
+             tc = term->container;
+             tc_parent = tc->parent;
 
              if (tc_parent->type == TERM_CONTAINER_TYPE_TABS)
                {
