@@ -40,6 +40,31 @@ jobs:
             meson configure build
             cd build
             ninja -j4
+  build_and_test_clang_ubsan_efl-1.22:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+      - CFLAGS: CFLAGS="-O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined"
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-22/efl-1.22.2-r0.apk /pkg/efl-22/efl-dev-1.22.2-r0.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dtests=true . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
   build_full_gcc_efl-1.22:
     docker:
       - image: borisfaure/terminology-ci:latest
@@ -143,5 +168,8 @@ workflows:
           requires:
             - build_full_gcc_efl-1.22
       - build_full_clang_efl-1.22:
+          requires:
+            - checkout_code
+      - build_and_test_clang_ubsan_efl-1.22:
           requires:
             - checkout_code
