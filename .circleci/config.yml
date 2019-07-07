@@ -21,7 +21,7 @@ jobs:
           paths:
             - /terminology
 
-  build_full_clang_elf-1.22:
+  build_full_clang_efl-1.22:
     docker:
       - image: borisfaure/terminology-ci:latest
     environment:
@@ -142,6 +142,6 @@ workflows:
       - tests_gcc:
           requires:
             - build_full_gcc_efl-1.22
-      - build_full_clang_elf-1.22:
+      - build_full_clang_efl-1.22:
           requires:
             - checkout_code
