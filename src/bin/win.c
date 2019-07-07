@@ -1303,7 +1303,30 @@ _cb_win_key_down(void *data,
    DBG("ctrl:%d alt:%d shift:%d win:%d meta:%d hyper:%d",
        ctrl, alt, shift, win, meta, hyper);
 
-   /* 1st/ Miniview */
+   /* 1st/ Tab selector */
+     {
+        Term_Container *tc = (Term_Container*) wn;
+
+        term = tc->focused_term_get(tc);
+        if (term)
+          {
+             Term_Container *tc = term->container;
+             Term_Container *tc_parent = tc->parent;
+
+             if (tc_parent->type == TERM_CONTAINER_TYPE_TABS)
+               {
+                  Tabs *tabs = (Tabs*) tc_parent;
+
+                  if (tabs->selector != NULL)
+                    {
+                       sel_key_down(tabs->selector, ev);
+                       return;
+                    }
+               }
+          }
+     }
+
+   /* 2nd/ Miniview */
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1329,7 +1352,7 @@ _cb_win_key_down(void *data,
      }
 
 
-   /* 2nd/ PopMedia */
+   /* 3rd/ PopMedia */
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1361,7 +1384,7 @@ _cb_win_key_down(void *data,
         goto end;
      }
 
-   /* 3rd/ Handle key bindings */
+   /* 4th/ Handle key bindings */
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1391,7 +1414,7 @@ _cb_win_key_down(void *data,
      }
    done = EINA_FALSE;
 
-   /* 4th/ Composing */
+   /* 5th/ Composing */
    /* composing */
    if (wn->khdl.imf)
      {
@@ -1472,7 +1495,7 @@ _cb_win_key_down(void *data,
           goto end;
      }
 
-   /* 5th/ send key to pty */
+   /* 6th/ send key to pty */
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1489,7 +1512,7 @@ _cb_win_key_down(void *data,
           keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
      }
 
-   /* 6th: specifics: jump on keypress / flicker on key */
+   /* 7th: specifics: jump on keypress / flicker on key */
 end:
    if (wn->group_input)
      {
@@ -2719,6 +2742,8 @@ _tabs_restore(Tabs *tabs)
    Term *term;
    Solo *solo;
    Win *wn = tc->wn;
+   Evas_Object *selector = tabs->selector;
+   Evas_Object *selector_bg = tabs->selector_bg;
 
    if (!tabs->selector)
      return;
@@ -2741,18 +2766,16 @@ _tabs_restore(Tabs *tabs)
           tab_item->tc->unfocus(tab_item->tc, tc);
      }
 
-   evas_object_smart_callback_del_full(tabs->selector, "selected",
+   evas_object_smart_callback_del_full(selector, "selected",
                                   _tabs_selector_cb_selected, tabs);
-   evas_object_smart_callback_del_full(tabs->selector, "exit",
+   evas_object_smart_callback_del_full(selector, "exit",
                                   _tabs_selector_cb_exit, tabs);
-   evas_object_smart_callback_del_full(tabs->selector, "ending",
+   evas_object_smart_callback_del_full(selector, "ending",
                                   _tabs_selector_cb_ending, tabs);
-   evas_object_del(tabs->selector);
-   evas_object_del(tabs->selector_bg);
+
+
    tabs->selector = NULL;
    tabs->selector_bg = NULL;
-
-   wn->on_popover = EINA_FALSE;
 
    /* XXX: reswallow in parent */
    tc->parent->swallow(tc->parent, tc, tc);
@@ -2763,6 +2786,11 @@ _tabs_restore(Tabs *tabs)
    _tabs_refresh(tabs);
    tabs->current->tc->unfocus(tabs->current->tc, tabs->current->tc);
    tabs->current->tc->focus(tabs->current->tc, tabs->current->tc);
+
+   elm_object_focus_set(selector, EINA_FALSE);
+
+   evas_object_del(selector);
+   evas_object_del(selector_bg);
 }
 
 static void
@@ -2821,8 +2849,6 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
 
    if (tabs->selector_bg)
      return;
-
-   wn->on_popover = EINA_TRUE;
 
    o = tc->get_evas_object(tc);
    evas_object_geometry_get(o, &x, &y, &w, &h);
@@ -2899,7 +2925,6 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
                                EINA_TRUE);
         sel_exit(tabs->selector);
      }
-   elm_object_focus_set(tabs->selector, EINA_TRUE);
 }
 
 static void

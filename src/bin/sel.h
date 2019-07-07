@@ -13,5 +13,6 @@ void sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep
 void sel_zoom(Evas_Object *obj, double zoom);
 void sel_orig_zoom_set(Evas_Object *obj, double zoom);
 void sel_exit(Evas_Object *obj);
+void sel_key_down(Evas_Object *obj, Evas_Event_Key_Down *event);
 
 #endif

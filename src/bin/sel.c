@@ -182,18 +182,18 @@ _autozoom(Evas_Object *obj)
    sd->autozoom_timeout = ecore_timer_add(0.5, _autozoom_reset, obj);
 }
 
+
 void
-_key_down_cb(void *data,
-             Evas *_e EINA_UNUSED,
-             Evas_Object *obj,
-             void *event)
+sel_key_down(Evas_Object *obj,
+             Evas_Event_Key_Down *event)
 {
    Evas_Event_Key_Down *ev = event;
-   Sel *sd = evas_object_smart_data_get(data);
+   Sel *sd = evas_object_smart_data_get(obj);
    Eina_List *l;
    Entry *en;
 
-   if (!sd) return;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
    if ((!strcmp(ev->key, "Next")) ||
        (!strcmp(ev->key, "Right")))
      {
@@ -207,11 +207,14 @@ _key_down_cb(void *data,
                        sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
-                  else return;
+                  else
+                    {
+                       return;
+                    }
                }
           }
         sd->exit_now = EINA_FALSE;
-        _autozoom(data);
+        _autozoom(obj);
      }
    else if ((!strcmp(ev->key, "Prior")) ||
             (!strcmp(ev->key, "Left")))
@@ -226,11 +229,14 @@ _key_down_cb(void *data,
                        sel_entry_selected_set(obj, en->obj, EINA_FALSE);
                        break;
                     }
-                  else return;
+                  else
+                    {
+                       return;
+                    }
                }
           }
         sd->exit_now = EINA_FALSE;
-        _autozoom(data);
+        _autozoom(obj);
      }
    else if (!strcmp(ev->key, "Up"))
      {
@@ -255,12 +261,14 @@ _key_down_cb(void *data,
                          }
                     }
                   if (found == EINA_FALSE)
-                    return;
+                    {
+                       return;
+                    }
                   break;
                }
           }
         sd->exit_now = EINA_FALSE;
-        _autozoom(data);
+        _autozoom(obj);
      }
    else if (!strcmp(ev->key, "Down"))
      {
@@ -285,12 +293,14 @@ _key_down_cb(void *data,
                          }
                     }
                   if (found == EINA_FALSE)
-                    return;
+                    {
+                       return;
+                    }
                   break;
                }
           }
         sd->exit_now = EINA_FALSE;
-        _autozoom(data);
+        _autozoom(obj);
      }
    else if ((!strcmp(ev->key, "Return")) ||
             (!strcmp(ev->key, "KP_Enter")) ||
@@ -303,8 +313,8 @@ _key_down_cb(void *data,
              ecore_timer_del(sd->autozoom_timeout);
              sd->autozoom_timeout = NULL;
           }
-        evas_object_smart_callback_call(data, "ending", NULL);
-        sel_zoom(data, 1.0);
+        evas_object_smart_callback_call(obj, "ending", NULL);
+        sel_zoom(obj, 1.0);
      }
    else if (!strcmp(ev->key, "Escape"))
      {
@@ -322,8 +332,8 @@ _key_down_cb(void *data,
              ecore_timer_del(sd->autozoom_timeout);
              sd->autozoom_timeout = NULL;
           }
-        evas_object_smart_callback_call(data, "ending", NULL);
-        sel_zoom(data, 1.0);
+        evas_object_smart_callback_call(obj, "ending", NULL);
+        sel_zoom(obj, 1.0);
      }
 }
 
@@ -670,8 +680,6 @@ sel_add(Evas_Object *parent)
                                   _mouse_up_cb, obj);
    evas_object_event_callback_add(sd->o_event, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move_cb, obj);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
-                                  _key_down_cb, obj);
    sd->zoom = 1.0;
 
    return obj;
