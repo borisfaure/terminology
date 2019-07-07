@@ -392,8 +392,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    tytest_shutdown();
 #endif
 
+   config_del(_config);
    eina_shutdown();
-   free(_config);
 
    return 0;
 }
