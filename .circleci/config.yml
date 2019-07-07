@@ -45,7 +45,7 @@ jobs:
       - image: borisfaure/terminology-ci:latest
     environment:
       - CC: clang
-      - CFLAGS: CFLAGS="-O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined"
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
