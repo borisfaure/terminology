@@ -850,7 +850,7 @@ key_bindings_load(Config *config)
 
    if (!_key_bindings)
      {
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
         Shortcut_Action *action = _actions;
 
         while (action->action)

@@ -28,6 +28,5 @@ if get_option('nls')
                 '--from-code=UTF-8',
                 '--foreign-user'
                 ])
-  config_data.set('HAVE_GETTEXT', '1')
   config_data.set('ENABLE_NLS', '1')
 endif

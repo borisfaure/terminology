@@ -60,7 +60,7 @@ _cb_op_color_item_sel(void *data,
                continue;
              if (ctx->colitem[j][i] == it)
                elm_object_text_set(ctx->label,
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
                                    gettext(mapping_names[i])
 #else
                                    mapping_names[i]
@@ -326,7 +326,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term, Evas_Object *bg)
 
    ctx->label = o = elm_label_add(opbox);
    elm_object_text_set(o,
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
                        gettext(mapping_names[0])
 #else
                        mapping_names[0]

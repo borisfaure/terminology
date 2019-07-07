@@ -63,7 +63,7 @@ edj_files = []
 
 if get_option('nls') == true
   subdir('po')
-  terminology_dependencies += cc.find_library('intl', required: true)
+   terminology_dependencies += cc.find_library('intl', required: false)
 endif
 
 foreach efl_dep: efl_deps

@@ -418,7 +418,7 @@ static Ecore_Getopt options = {
    }
 };
 
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
 static void
 _translate_options(void)
 {
@@ -559,12 +559,12 @@ elm_main(int argc, char **argv)
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
    elm_app_compile_locale_set(LOCALEDIR);
 #endif
    elm_app_info_set(elm_main, "terminology", "themes/default.edj");
 
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
    bindtextdomain(PACKAGE, elm_app_locale_dir_get());
    textdomain(PACKAGE);
    _translate_options();
@@ -1002,7 +1002,7 @@ remote:
    _log_domain = -1;
 
 
-#if HAVE_GETTEXT && ENABLE_NLS
+#if ENABLE_NLS
    eina_stringshare_del(options.copyright);
 #endif
 
