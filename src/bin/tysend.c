@@ -1,5 +1,3 @@
-#include "coverity.h"
-
 #include "private.h"
 #include <stdio.h>
 #include <limits.h>

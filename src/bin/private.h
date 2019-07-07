@@ -1,5 +1,3 @@
-#include "coverity.h"
-
 #ifndef _PRIVATE_H__
 #define _PRIVATE_H__ 1
 

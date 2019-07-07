@@ -1,4 +1,4 @@
-terminology_sources = ['private.h', 'coverity.h',
+terminology_sources = ['private.h',
                        'about.c', 'about.h',
                        'col.c', 'col.h',
                        'config.c', 'config.h',
