@@ -361,7 +361,8 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
    ssize_t siz;
 
    snprintf(procpath, sizeof(procpath), "/proc/%ld/cwd", (long) pid);
-   if ((siz = readlink(procpath, buf, size)) < 1)
+   siz = readlink(procpath, buf, size);
+   if ((siz == -1) || (siz >= (ssize_t)size))
      {
         ERR(_("Could not load working directory %s: %s"),
             procpath, strerror(errno));
