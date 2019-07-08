@@ -349,6 +349,7 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
      {
         int i;
         struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+        char *tmp;
 
         for (i = start_y; i <= end_y; i++)
           {
@@ -365,8 +366,9 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
              ty_sb_free(&isb);
           }
         len = sb.len;
-        s = ty_sb_steal_buf(&sb);
-        s = eina_stringshare_add_length(s, len);
+        tmp = ty_sb_steal_buf(&sb);
+        s = eina_stringshare_add_length(tmp, len);
+        free(tmp);
         ty_sb_free(&sb);
      }
    else
