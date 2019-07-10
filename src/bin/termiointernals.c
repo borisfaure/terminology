@@ -409,7 +409,7 @@ _sel_line(Termio *sd, int cy)
    for (;;)
      {
         cells = termpty_cellrow_get(sd->pty, y - 1, &w);
-        if (!cells || !cells[w-1].att.autowrapped)
+        if (!cells || w <= 0 || !cells[w-1].att.autowrapped)
           break;
         y--;
      }
