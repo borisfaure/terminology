@@ -1,8 +1,27 @@
 =================
-Terminology 1.4.0
+Terminology 1.5.0
 =================
 
-Changes since 1.4.0:
+Changes since 1.5.0:
+--------------------
+
+Additions:
+    * Handle emoji has double-width character, introduced in Unicode 9.0.
+    * Add option "Treat Emojis as double-width characters", on by default.
+    * Hide cursor when idle, with parameter to set idle time
+    * Add papercolor theme
+
+Improvements:
+    * Themes can now set background color through a color-class
+    * Handle OSC-11 to report background color
+    * Update Italian and French translations
+
+Fixes:
+    * Fix initial window size hints
+    * Fix focus issues
+
+
+Changes since 1.4.1:
 --------------------
 
 Fixes:

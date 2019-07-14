@@ -1,3 +1,15 @@
+2019-07-20
+        * Release v1.5.0
+        * Handle emoji has double-width character, introduced in Unicode 9.0.
+        * Add option "Treat Emojis as double-width characters", on by default.
+        * Hide cursor when idle, with parameter to set idle time
+        * Add papercolor theme
+        * Themes can now set background color through a color-class
+        * Handle OSC-11 to report background color
+        * Update Italian and French translations
+        * Fix initial window size hints
+        * Fix focus issues
+
 2019-05-24
         * Release v1.4.1
         * Decode pasted string as UTF-8, fixing some characters being skipped
