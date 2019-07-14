@@ -3,8 +3,6 @@
 
 
 typedef struct _Term_Container Term_Container;
-typedef struct _Term  Term;
-typedef struct _Win Win;
 typedef struct _Sizeinfo Sizeinfo;
 
 struct _Sizeinfo

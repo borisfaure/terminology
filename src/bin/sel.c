@@ -6,6 +6,7 @@
 #include "sel.h"
 #include "config.h"
 #include "utils.h"
+#include "win.h"
 #include "term_container.h"
 
 typedef struct _Sel Sel;
