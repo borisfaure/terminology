@@ -3675,7 +3675,7 @@ _handle_xterm_11_command(Termpty *ty, Eina_Unicode *p)
    l = snprintf(buf, sizeof(buf), "%.2x%.2x/%.2x%.2x/%.2x%.2x",
                 r, r, g, g, b, b);
    termpty_write(ty, buf, l);
-   TERMPTY_WRITE_STR("\033");
+   TERMPTY_WRITE_STR("\033\\");
 
    return;
 err:
