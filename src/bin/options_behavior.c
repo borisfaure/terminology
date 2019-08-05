@@ -567,16 +567,14 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
 
    o = elm_slider_add(bx);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_slider_span_size_set(o, 40);
-   elm_slider_step_set(o, 1);
-   elm_slider_units_format_function_set(o,
-                                        sback_units_format,
-                                        (void(*)(char*))eina_stringshare_del);
    elm_slider_indicator_format_function_set(o,
                                             sback_indicator_units_format,
                                             (void(*)(char*))eina_stringshare_del);
+   elm_slider_units_format_function_set(o,
+                                        sback_units_format,
+                                        (void(*)(char*))eina_stringshare_del);
+   elm_slider_span_size_set(o, 40);
+   elm_slider_step_set(o, 1);
    /* http://graphics.stanford.edu/~seander/bithacks.html#IntegerLogFloat */
    union {
        float v;
@@ -586,6 +584,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    u.c = (u.c >> 23) - 127;
    elm_slider_min_max_set(o, 0.0, 17.0);
    elm_slider_value_set(o, u.c);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "delay,changed",
