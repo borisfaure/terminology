@@ -224,6 +224,7 @@ _parent_del_cb(void *data,
 
    ctx->frame = NULL;
    _hover_del(ctx);
+   evas_object_del(ctx->gl);
    free(ctx);
 }
 
