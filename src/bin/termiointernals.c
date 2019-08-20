@@ -21,6 +21,8 @@ termio_selection_get(Termio *sd,
 {
    int x, y;
 
+   if (c1x < 0) c1x = 0;
+   if (c2x < 0) c2x = 0;
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
@@ -46,6 +48,8 @@ termio_selection_get(Termio *sd,
           }
         start_x = c1x;
         end_x = (c2x >= w) ? w - 1 : c2x;
+        if (start_x >= w) start_x = w - 1;
+        if (end_x >= w) end_x = w - 1;
         if (c1y != c2y)
           {
              if (y == c1y) end_x = w - 1;
@@ -213,6 +217,8 @@ _sel_codepoints_get(const Termio *sd,
        }                               \
 } while (0)
 
+   if (c1x < 0) c1x = 0;
+   if (c2x < 0) c2x = 0;
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
@@ -328,6 +334,8 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
         start_y = sd->pty->selection.start.y;
         end_x = sd->pty->selection.end.x;
         end_y = sd->pty->selection.end.y;
+        if (start_x < 0) start_x = 0;
+        if (end_x < 0) end_x = 0;
 
         if (!sd->pty->selection.is_top_to_bottom)
           {
@@ -787,6 +795,7 @@ _trim_sel_word(Termio *sd)
         if (!cells)
           return;
 
+        if (start >= w) start = w - 1;
         while (start < w && _to_trim(cells[start].codepoint, EINA_TRUE))
           start++;
 
@@ -816,6 +825,7 @@ _trim_sel_word(Termio *sd)
         if (!cells)
           return;
 
+        if (end >= w) end = w - 1;
         while (end >= 0 && _to_trim(cells[end].codepoint, EINA_FALSE))
           end--;
 
@@ -874,10 +884,7 @@ _sel_word(Termio *sd, int cx, int cy)
      {
         goto end;
      }
-   if (x >= w)
-     {
-        x = w - 1;
-     }
+   if (x >= w) x = w - 1;
 
    /* To the left and up */
    do
@@ -930,6 +937,7 @@ _sel_word(Termio *sd, int cx, int cy)
           }
      }
    x = cx;
+   if (x >= w) x = w - 1;
 
    /* To the right and down */
    do
@@ -1328,6 +1336,8 @@ termio_selection_dbl_fix(Termio *sd)
 
    termpty_backlog_lock();
    cells = termpty_cellrow_get(sd->pty, end_y - sd->scroll, &w);
+   if (start_x >= w) start_x = w - 1;
+   if (end_x >= w) end_x = w - 1;
    if (cells)
      {
         // if sel2 after sel1
@@ -1354,6 +1364,8 @@ termio_selection_dbl_fix(Termio *sd)
           }
      }
    cells = termpty_cellrow_get(sd->pty, start_y - sd->scroll, &w);
+   if (start_x >= w) start_x = w - 1;
+   if (end_x >= w) end_x = w - 1;
    if (cells)
      {
         // if sel2 after sel1
