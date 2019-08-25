@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-06 20:25+0200\n"
-"PO-Revision-Date: 2019-06-06 20:29+0200\n"
+"POT-Creation-Date: 2019-08-24 14:12+0200\n"
+"PO-Revision-Date: 2019-08-25 09:53+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: [Language]\n"
 "Language: it\n"
@@ -36,11 +36,11 @@ msgstr "Dividi O"
 msgid "Miniview"
 msgstr "Miniature schede"
 
-#: src/bin/controls.c:374 src/bin/win.c:4359
+#: src/bin/controls.c:374 src/bin/win.c:4429
 msgid "Set title"
 msgstr "Imposta titolo"
 
-#: src/bin/controls.c:385 src/bin/termio.c:1194 src/bin/termio.c:2563
+#: src/bin/controls.c:385 src/bin/termio.c:1195 src/bin/termio.c:2564
 msgid "Copy"
 msgstr "Copia"
 
@@ -76,187 +76,187 @@ msgstr ""
 "<br><br>%s<br><br>Distribuito nei termini della licenza '2-clause BSD' "
 "descritta sotto:<br><br>%s"
 
-#: src/bin/keyin.c:655
+#: src/bin/keyin.c:653
 msgid "Scrolling"
 msgstr "Scrolling"
 
-#: src/bin/keyin.c:656
+#: src/bin/keyin.c:654
 msgid "Scroll one page up"
 msgstr "Scrolling di una pagina in su"
 
-#: src/bin/keyin.c:657
+#: src/bin/keyin.c:655
 msgid "Scroll one page down"
 msgstr "Scrolling di una pagina in giù"
 
-#: src/bin/keyin.c:658
+#: src/bin/keyin.c:656
 msgid "Scroll one line up"
 msgstr "Scrolling di una riga in su"
 
-#: src/bin/keyin.c:659
+#: src/bin/keyin.c:657
 msgid "Scroll one line down"
 msgstr "Scrolling di una riga in giù"
 
-#: src/bin/keyin.c:660
+#: src/bin/keyin.c:658
 msgid "Go to the top of the backlog"
 msgstr "Vai all'inizio del backlog"
 
-#: src/bin/keyin.c:661
+#: src/bin/keyin.c:659
 msgid "Reset scroll"
 msgstr "Reimposta scrolling"
 
-#: src/bin/keyin.c:663
+#: src/bin/keyin.c:661
 msgid "Copy/Paste"
 msgstr "Copia/Incolla"
 
-#: src/bin/keyin.c:664
+#: src/bin/keyin.c:662
 msgid "Copy selection to Primary buffer"
 msgstr "Copia la selezione nel buffer primario"
 
-#: src/bin/keyin.c:665
+#: src/bin/keyin.c:663
 msgid "Copy selection to Clipboard buffer"
 msgstr "Copia la selezione nel buffer degli appunti"
 
-#: src/bin/keyin.c:666
+#: src/bin/keyin.c:664
 msgid "Paste Primary buffer (highlight)"
 msgstr "Incolla il buffer primario (evidenziato)"
 
-#: src/bin/keyin.c:667
+#: src/bin/keyin.c:665
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Incolla il buffer degli appunti (ctrl+c/v)"
 
-#: src/bin/keyin.c:669
+#: src/bin/keyin.c:667
 msgid "Splits/Tabs"
 msgstr "Suddivisioni/Schede"
 
-#: src/bin/keyin.c:670
+#: src/bin/keyin.c:668
 msgid "Focus the previous terminal"
 msgstr "Fuoco al terminale precedente"
 
-#: src/bin/keyin.c:671
+#: src/bin/keyin.c:669
 msgid "Focus the next terminal"
 msgstr "Fuoco al terminale successivo"
 
-#: src/bin/keyin.c:672
+#: src/bin/keyin.c:670
 msgid "Focus the terminal above"
 msgstr "Fuoco al terminale di sopra"
 
-#: src/bin/keyin.c:673
+#: src/bin/keyin.c:671
 msgid "Focus the terminal below"
 msgstr "Fuoco al terminale di sotto"
 
-#: src/bin/keyin.c:674
+#: src/bin/keyin.c:672
 msgid "Focus the terminal on the left"
 msgstr "Fuoco al terminale a sinistra"
 
-#: src/bin/keyin.c:675
+#: src/bin/keyin.c:673
 msgid "Focus the terminal on the right"
 msgstr "Fuoco al terminale a destra"
 
-#: src/bin/keyin.c:676
+#: src/bin/keyin.c:674
 msgid "Split horizontally (new below)"
 msgstr "Dividi orizzontalmente (nuovo sotto)"
 
-#: src/bin/keyin.c:677
+#: src/bin/keyin.c:675
 msgid "Split vertically (new on right)"
 msgstr "Dividi verticalmente (nuovo a destra)"
 
-#: src/bin/keyin.c:678
+#: src/bin/keyin.c:676
 msgid "Create a new \"tab\""
 msgstr "Crea nuova scheda"
 
-#: src/bin/keyin.c:679
+#: src/bin/keyin.c:677
 msgid "Close the focused terminal"
 msgstr "Chiudi terminale a fuoco"
 
-#: src/bin/keyin.c:680
+#: src/bin/keyin.c:678
 msgid "Bring up \"tab\" switcher"
 msgstr "Apri commutatore schede"
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:679
 msgid "Switch to terminal tab 1"
 msgstr "Passa alla scheda 1"
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:680
 msgid "Switch to terminal tab 2"
 msgstr "Passa alla scheda 2"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:681
 msgid "Switch to terminal tab 3"
 msgstr "Passa alla scheda 3"
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:682
 msgid "Switch to terminal tab 4"
 msgstr "Passa alla scheda 4"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:683
 msgid "Switch to terminal tab 5"
 msgstr "Passa alla scheda 5"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:684
 msgid "Switch to terminal tab 6"
 msgstr "Passa alla scheda 6"
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:685
 msgid "Switch to terminal tab 7"
 msgstr "Passa alla scheda 7"
 
-#: src/bin/keyin.c:688
+#: src/bin/keyin.c:686
 msgid "Switch to terminal tab 8"
 msgstr "Passa alla scheda 8"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:687
 msgid "Switch to terminal tab 9"
 msgstr "Passa alla scheda 9"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:688
 msgid "Switch to terminal tab 10"
 msgstr "Passa alla scheda 10"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:689
 msgid "Change title"
 msgstr "Cambia titolo"
 
-#: src/bin/keyin.c:692 src/bin/keyin.c:693
+#: src/bin/keyin.c:690 src/bin/keyin.c:691
 msgid "Toggle whether input goes to all visible terminals"
 msgstr "Commuta l'invio dell'input a tutti i terminali visibili"
 
-#: src/bin/keyin.c:696
+#: src/bin/keyin.c:694
 msgid "Font size"
 msgstr "Dimensione carattere"
 
-#: src/bin/keyin.c:697
+#: src/bin/keyin.c:695
 msgid "Font size up 1"
 msgstr "Incrementa dimensione carattere di 1"
 
-#: src/bin/keyin.c:698
+#: src/bin/keyin.c:696
 msgid "Font size down 1"
 msgstr "Decrementa dimensione carattere di 1"
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:697
 msgid "Display big font size"
 msgstr "Visualizza dimensione carattere grande"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:698
 msgid "Reset font size"
 msgstr "Reimposta dimensione carattere"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:700
 msgid "Actions"
 msgstr "Azioni"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:701
 msgid "Open a new terminal window"
 msgstr "Apri una nuova finestra di terminale"
 
-#: src/bin/keyin.c:704
+#: src/bin/keyin.c:702
 msgid "Toggle Fullscreen of the window"
 msgstr "Commuta finestra a schermo pieno"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:703
 msgid "Display the history miniview"
 msgstr "Visualizza le miniature delle schede"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:704
 msgid "Display the command box"
 msgstr "Visualizza il box comandi"
 
@@ -447,164 +447,168 @@ msgstr "Funzione %s fallita: %s"
 msgid "Media visualizing is not supported"
 msgstr "La visualizzazione multimediale non è supportata"
 
-#: src/bin/options_behavior.c:81
+#: src/bin/options_behavior.c:84
 #, c-format
 msgid "%'d lines"
 msgstr "%'d linee"
 
-#: src/bin/options_behavior.c:215
+#: src/bin/options_behavior.c:256
 msgid "Default cursor:"
 msgstr "Cursore predefinito:"
 
-#: src/bin/options_behavior.c:224
+#: src/bin/options_behavior.c:265
 msgid "Blinking Block"
 msgstr "Rettangolo lampeggiante"
 
-#: src/bin/options_behavior.c:242
+#: src/bin/options_behavior.c:283
 msgid "Steady Block"
 msgstr "Rettangolo fisso"
 
-#: src/bin/options_behavior.c:261
+#: src/bin/options_behavior.c:302
 msgid "Blinking Underline"
 msgstr "Trattino basso lampeggiante"
 
-#: src/bin/options_behavior.c:280
+#: src/bin/options_behavior.c:321
 msgid "Steady Underline"
 msgstr "Trattino basso fisso"
 
-#: src/bin/options_behavior.c:299
+#: src/bin/options_behavior.c:340
 msgid "Blinking Bar"
 msgstr "Barra verticale lampeggiante"
 
-#: src/bin/options_behavior.c:318
+#: src/bin/options_behavior.c:359
 msgid "Steady Bar"
 msgstr "Barra verticale fissa"
 
-#: src/bin/options_behavior.c:357 src/bin/options.c:220
+#: src/bin/options_behavior.c:398 src/bin/options.c:220
 msgid "Behavior"
 msgstr "Comportamento"
 
-#: src/bin/options_behavior.c:400
+#: src/bin/options_behavior.c:441
 msgid "Scroll to bottom on new content"
 msgstr "Sospendi scrolling all'arrivo di nuovi contenuti"
 
-#: src/bin/options_behavior.c:401
+#: src/bin/options_behavior.c:442
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Sospendi scrolling alla pressione di un tasto"
 
-#: src/bin/options_behavior.c:412
+#: src/bin/options_behavior.c:453
 msgid "Active Links:"
 msgstr "Link attivi:"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:457
 msgid "On emails"
 msgstr "Per email"
 
-#: src/bin/options_behavior.c:417
+#: src/bin/options_behavior.c:458
 msgid "On file paths"
 msgstr "Per percorsi file"
 
-#: src/bin/options_behavior.c:418
+#: src/bin/options_behavior.c:459
 msgid "On URLs"
 msgstr "Per URL"
 
-#: src/bin/options_behavior.c:419
+#: src/bin/options_behavior.c:460
 msgid "Based on escape codes"
 msgstr "Basato su codici di escape"
 
-#: src/bin/options_behavior.c:423
+#: src/bin/options_behavior.c:464
 msgid "React to key presses"
 msgstr "Reagisci alla pressione dei tasti"
 
-#: src/bin/options_behavior.c:430
+#: src/bin/options_behavior.c:471
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr "Supporto audio per pressione tasti <failure>DISABILITATO</failure>!"
 
-#: src/bin/options_behavior.c:433
+#: src/bin/options_behavior.c:474
 msgid "Visual Bell"
 msgstr "Allarme visivo"
 
-#: src/bin/options_behavior.c:434
+#: src/bin/options_behavior.c:475
 msgid "Bell rings"
 msgstr "Allarme sonoro"
 
-#: src/bin/options_behavior.c:435
+#: src/bin/options_behavior.c:476
 msgid "Urgent Bell"
 msgstr "Allarme urgente"
 
-#: src/bin/options_behavior.c:436
+#: src/bin/options_behavior.c:477
 msgid "Multiple instances, one process"
 msgstr "Istanze multiple, processo unico"
 
-#: src/bin/options_behavior.c:437
+#: src/bin/options_behavior.c:478
 msgid "Set TERM to xterm-256color"
 msgstr "Imposta TERM su xterm-256color"
 
-#: src/bin/options_behavior.c:438
+#: src/bin/options_behavior.c:479
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "Il backspace cancella il carattere successivo invece del precedente"
 
-#: src/bin/options_behavior.c:439
+#: src/bin/options_behavior.c:480
 msgid "Drag & drop links"
 msgstr "Copia e incolla i link"
 
-#: src/bin/options_behavior.c:440
+#: src/bin/options_behavior.c:481
 msgid "Start as login shell"
 msgstr "Avvia come shell di login"
 
-#: src/bin/options_behavior.c:441
+#: src/bin/options_behavior.c:482
 msgid "Focus split under the Mouse"
 msgstr "Fuoco sulla suddivisione sotto il mouse"
 
-#: src/bin/options_behavior.c:442
+#: src/bin/options_behavior.c:483
 msgid "Focus-related visuals"
 msgstr "Visualizzazione correlata al fuoco"
 
-#: src/bin/options_behavior.c:443
+#: src/bin/options_behavior.c:484
 msgid "Gravatar integration"
 msgstr "Integrazione dei Gravatar"
 
-#: src/bin/options_behavior.c:444
+#: src/bin/options_behavior.c:485
 msgid "Show tabs"
 msgstr "Mostra linguette"
 
-#: src/bin/options_behavior.c:445
+#: src/bin/options_behavior.c:486
 msgid "Always show miniview"
 msgstr "Visualizza sempre le miniature delle schede"
 
-#: src/bin/options_behavior.c:446
+#: src/bin/options_behavior.c:487
 msgid "Enable special Terminology escape codes"
 msgstr "Abilita codici escape speciali di Terminology"
 
-#: src/bin/options_behavior.c:447
+#: src/bin/options_behavior.c:488
 msgid "Open new terminals in current working directory"
 msgstr "Apri nuovi terminali nell'attuale directory di lavoro"
 
-#: src/bin/options_behavior.c:456
+#: src/bin/options_behavior.c:489
+msgid "Treat Emojis as double-width characters"
+msgstr "Tratta Emoji come caratteri di larghezza doppia"
+
+#: src/bin/options_behavior.c:498
 msgid "Always open at size:"
 msgstr "Avvia sempre con queste dimensioni:"
 
-#: src/bin/options_behavior.c:466
+#: src/bin/options_behavior.c:508
 msgid "Set Current:"
 msgstr "Impostazioni attuali:"
 
-#: src/bin/options_behavior.c:477
+#: src/bin/options_behavior.c:519
 msgid "Width:"
 msgstr "Larghezza:"
 
-#: src/bin/options_behavior.c:499
+#: src/bin/options_behavior.c:541
 msgid "Height:"
 msgstr "Altezza:"
 
-#: src/bin/options_behavior.c:523
+#: src/bin/options_behavior.c:565
 msgid "Scrollback:"
 msgstr "Scrolling all'indietro:"
 
-#: src/bin/options_behavior.c:555
+#: src/bin/options_behavior.c:599
 msgid "Tab zoom/switch animation time:"
 msgstr "Durata animazione zoom/cambio scheda"
 
-#: src/bin/options_behavior.c:556
+#: src/bin/options_behavior.c:600
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
@@ -613,10 +617,19 @@ msgstr ""
 "sia che<br>lo si faccia da tastiera, rotella del<br>mouse o spostamento del "
 "mouse nel<br>pannello delle schede."
 
-#: src/bin/options_behavior.c:569 src/bin/options_behavior.c:570
+#: src/bin/options_behavior.c:612 src/bin/options_behavior.c:613
+#: src/bin/options_behavior.c:644 src/bin/options_behavior.c:645
 #, c-format
 msgid "%1.1f s"
 msgstr "%1.1f s"
+
+#: src/bin/options_behavior.c:630
+msgid "Translucent"
+msgstr "Translucente"
+
+#: src/bin/options_behavior.c:631
+msgid "Auto hide the mouse cursor when idle:"
+msgstr "Nascondi puntatore mouse quando inattivo:"
 
 #: src/bin/options.c:192
 msgid "Options"
@@ -798,15 +811,15 @@ msgstr "Hyper+"
 msgid "Delete"
 msgstr "Canc"
 
-#: src/bin/options_keys.c:268
+#: src/bin/options_keys.c:269
 msgid "Please press key sequence"
 msgstr "Premere la sequenza di tasti"
 
-#: src/bin/options_keys.c:384
+#: src/bin/options_keys.c:385
 msgid "Key Bindings"
 msgstr "Combinazioni di tasti"
 
-#: src/bin/options_keys.c:456
+#: src/bin/options_keys.c:457
 msgid "Reset bindings"
 msgstr "Reimposta combinazioni di tasti"
 
@@ -851,33 +864,33 @@ msgstr "Comando sconosciuto: %s"
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Non ho ottenuto la directory di lavoro del pid %i: %s"
 
-#: src/bin/termio.c:366
+#: src/bin/termio.c:367
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Non ho potuto caricare la directory di lavoro %s: %s"
 
-#: src/bin/termio.c:1084
+#: src/bin/termio.c:1085
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Formato selezione non supportato '%s'"
 
-#: src/bin/termio.c:1177
+#: src/bin/termio.c:1178
 msgid "Preview"
 msgstr "Anteprima"
 
-#: src/bin/termio.c:1180
+#: src/bin/termio.c:1181
 msgid "Open"
 msgstr "Apri"
 
-#: src/bin/termio.c:1187
+#: src/bin/termio.c:1188
 msgid "Copy relative path"
 msgstr "Copia percorso relativo"
 
-#: src/bin/termio.c:1189
+#: src/bin/termio.c:1190
 msgid "Copy full path"
 msgstr "Copia percorso completo"
 
-#: src/bin/termio.c:2565
+#: src/bin/termio.c:2566
 msgid "Open as URL"
 msgstr "Apri come URL"
 
@@ -920,7 +933,7 @@ msgstr "ioctl() sulla pty '%s' fallita: %s"
 msgid "Could not change current directory to '%s': %s"
 msgstr "Non ho potuto cambiare la directory verso %s: %s"
 
-#: src/bin/termpty.c:1256
+#: src/bin/termpty.c:1263
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Non ho potuto scrivere sul file descriptor %d: %s"
@@ -935,19 +948,19 @@ msgstr "Non ho potuto caricare un tema per group=%s: %s"
 msgid "Could not load default theme for group=%s: %s"
 msgstr "Non ho potuto caricare il tema predefinito per il gruppo=%s: %s"
 
-#: src/bin/win.c:1756
+#: src/bin/win.c:1818
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF fallito"
 
-#: src/bin/win.c:4363
+#: src/bin/win.c:4433
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/win.c:4368
+#: src/bin/win.c:4438
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/bin/win.c:5629
+#: src/bin/win.c:5676
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Non trovo il tema di terminology! Avete dato il comando 'ninja install'?"
