@@ -816,6 +816,7 @@ _trim_sel_word(Termio *sd)
         if (!cells)
           return;
 
+        if (end >= w) end = w - 1;
         while (end >= 0 && _to_trim(cells[end].codepoint, EINA_FALSE))
           end--;
 
@@ -1361,7 +1362,7 @@ termio_selection_dbl_fix(Termio *sd)
             ((end_y == start_y) &&
                 (end_x >= start_x)))
           {
-             if (start_x > 0)
+             if ((start_x > 0) && (start_x < w))
                {
                   if ((cells[start_x].codepoint == 0) &&
                       (cells[start_x].att.dblwidth))
@@ -2442,7 +2443,7 @@ termio_internal_render(Termio *sd,
                   tc[x].italic = 0;
                   tc[x].double_width = 0;
 
-                  if (u && *u != ' ')
+                  if (u && *u != ' ' && *u)
                     {
                        termio_sel_set(sd, EINA_FALSE);
                        u = cp = NULL;
@@ -2481,7 +2482,7 @@ termio_internal_render(Termio *sd,
                                                blk->w * sd->font.chw,
                                                blk->h * sd->font.chh);
                          }
-                       if (u && *u != ' ')
+                       if (u && *u != ' ' && *u)
                          {
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
@@ -2508,7 +2509,7 @@ termio_internal_render(Termio *sd,
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))
                          ch2 = x;
-                       if (u && *u != ' ')
+                       if (u && *u != ' ' && *u)
                          {
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
