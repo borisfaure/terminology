@@ -521,7 +521,7 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
    evas_object_show(sd->cursor.obj);
    sd->cursor.shape = shape;
 
-   if (evas_object_focus_get(obj))
+   if (term_is_focused(sd->term))
      {
         edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
         if (sd->config->disable_cursor_blink)
