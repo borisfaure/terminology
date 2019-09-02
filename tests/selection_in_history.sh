@@ -140,3 +140,19 @@ printf '\033}ts%s\0' "$TEXT"
 # remove selection
 printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
 printf '\033}tr\0\033}tn\0'
+
+## empty selection
+# mouse down to start selection
+printf '\033}td;35;320;1;0;0\0'
+# mouse move
+printf '\033}tm;35;305;0\0'
+# mouse up
+printf '\033}tu;35;305;1;0;0\0'
+# force render
+printf '\033}tr\0'
+# selection is
+printf '\033}ts\n4\n\0'
+
+# remove selection
+printf '\033}td;0;0;1;0;0\0\033}tu;0;0;1;0;0\0'
+printf '\033}tr\0\033}tn\0'
