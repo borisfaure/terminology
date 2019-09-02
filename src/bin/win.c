@@ -1609,7 +1609,7 @@ _cb_win_mouse_move(void *data,
    if (wn->on_popover)
      return;
 
-   if (!isnan(wn->config->hide_cursor))
+   if (wn->config->hide_cursor < CONFIG_CURSOR_IDLE_TIMEOUT_MAX)
      {
         if (wn->hide_cursor_timer)
           {
@@ -1819,7 +1819,7 @@ imf_done:
 
      }
 
-   if (!isnan(wn->config->hide_cursor))
+   if (wn->config->hide_cursor < CONFIG_CURSOR_IDLE_TIMEOUT_MAX)
      {
         wn->hide_cursor_timer = ecore_timer_add(
            wn->config->hide_cursor, _hide_cursor, wn);

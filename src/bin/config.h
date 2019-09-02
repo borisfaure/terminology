@@ -116,4 +116,6 @@ void config_reset_keys(Config *config);
 const char *config_theme_path_get(const Config *config);
 const char *config_theme_path_default_get(const Config *config);
 
+#define CONFIG_CURSOR_IDLE_TIMEOUT_MAX 60.0
+
 #endif
