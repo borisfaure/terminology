@@ -221,7 +221,7 @@ _cb_op_hide_cursor_changed(void *data,
      }
    else
      {
-        config->hide_cursor = INFINITY;
+        config->hide_cursor = CONFIG_CURSOR_IDLE_TIMEOUT_MAX + 1.0;
         elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
      }
    config_save(config, NULL);
@@ -629,7 +629,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, _("Translucent"));
    elm_object_text_set(o, _("Auto hide the mouse cursor when idle:"));
-   elm_check_state_set(o, !isnan(config->hide_cursor));
+   elm_check_state_set(o, config->hide_cursor < CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
@@ -643,7 +643,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_slider_span_size_set(o, 40);
    elm_slider_unit_format_set(o, _("%1.1f s"));
    elm_slider_indicator_format_set(o, _("%1.1f s"));
-   elm_slider_min_max_set(o, 0.0, 60.0);
+   elm_slider_min_max_set(o, 0.0, CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
    elm_slider_value_set(o, config->hide_cursor);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
