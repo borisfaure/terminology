@@ -43,6 +43,7 @@ ty_sb_prepend(struct ty_sb *sb, const char *s, size_t  len)
           return -1;
 
         memcpy(new_buf + new_gap, sb->buf, sb->len);
+        free(sb->buf - sb->gap);
         sb->buf = new_buf + new_gap;
         sb->gap = new_gap;
         sb->alloc = new_alloc;
