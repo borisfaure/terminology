@@ -2386,7 +2386,6 @@ _smart_mouseover_apply(Termio *sd)
    if (sd->link.string)
      eina_stringshare_del(sd->link.string);
    sd->link.string = eina_stringshare_add(s);
-   s = NULL;
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
