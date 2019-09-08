@@ -322,14 +322,14 @@ win_scale_wizard(Evas_Object *win, Term *term)
    lbl = elm_label_add(win);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(lbl, _("Select prefered size so that is text is readable"));
+   elm_object_text_set(lbl, _("Select prefered size so that this text is readable."));
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
 
    lbl = elm_label_add(win);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>"));
+   elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>."));
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
 
