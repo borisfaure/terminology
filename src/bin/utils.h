@@ -12,6 +12,7 @@ void theme_auto_reload_enable(Evas_Object *edje);
 const char *theme_path_get(const char *name);
 
 Eina_Bool homedir_get(char *buf, size_t size);
+Eina_Bool utils_need_scale_wizard(void);
 
 Eina_Bool link_is_protocol(const char *str);
 Eina_Bool link_is_url(const char *str);

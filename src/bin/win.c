@@ -199,6 +199,150 @@ static void _term_tabregion_free(Term *term);
 static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
 
+static void
+_scale_round(void *data       EINA_UNUSED,
+             Evas_Object     *obj,
+             void *event_info EINA_UNUSED)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+_scale_change(void *data       EINA_UNUSED,
+              Evas_Object     *obj,
+              void *event_info EINA_UNUSED)
+{
+   double scale = elm_config_scale_get();
+   double val = elm_slider_value_get(obj);
+
+   if (scale == val)
+     return;
+   elm_config_scale_set(val);
+   elm_config_all_flush();
+}
+
+typedef struct _Scale_Ctx
+{
+   Evas_Object *hv;
+   Term *term;
+} Scale_Ctx;
+
+static void
+_scale_done(void *data,
+            Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   Scale_Ctx *ctx = data;
+
+   evas_object_smart_callback_del_full(ctx->hv, "dismissed",
+                                       _scale_done, ctx);
+   evas_object_del(ctx->hv);
+   ctx->term->wn->on_popover--;
+   term_unref(ctx->term);
+   elm_config_save();
+   config_save(ctx->term->config, NULL);
+   free(ctx);
+}
+
+void
+win_scale_wizard(Evas_Object *win, Term *term)
+{
+   Evas_Object *bx, *lbl, *sl, *fr, *bt;
+   const char *txt;
+   Scale_Ctx *ctx;
+
+   EINA_SAFETY_ON_NULL_RETURN(term);
+   if (!utils_need_scale_wizard())
+     return;
+
+   ctx = calloc(1, sizeof(*ctx));
+   if (!ctx)
+     return;
+
+   ctx->term = term;
+
+   term->wn->on_popover++;
+
+   term_ref(term);
+
+   ctx->hv = elm_hover_add(win);
+   evas_object_size_hint_weight_set(ctx->hv, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(ctx->hv, EVAS_HINT_FILL, 0.5);
+   elm_hover_parent_set(ctx->hv, win);
+   elm_hover_target_set(ctx->hv, win);
+   evas_object_smart_callback_add(ctx->hv, "dismissed", _scale_done, ctx);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(fr, _("Scale"));
+   elm_object_part_content_set(ctx->hv, "middle", fr);
+   evas_object_show(fr);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(fr, "pad_medium");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   lbl = elm_label_add(win);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
+   txt = eina_stringshare_printf("<hilight>%s</>",_("Scale"));
+   elm_object_text_set(lbl, txt);
+   eina_stringshare_del(txt);
+   elm_object_content_set(fr, lbl);
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   sl = elm_slider_add(win);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_indicator_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0.25, 5.0);
+   elm_slider_value_set(sl, elm_config_scale_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+   evas_object_smart_callback_add(sl, "changed", _scale_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", _scale_change, NULL);
+
+   lbl = elm_label_add(win);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(lbl, _("Select prefered size so that is text is readable"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   lbl = elm_label_add(win);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, _("Done"));
+   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _scale_done, ctx);
+   evas_object_show(bt);
+
+   evas_object_show(ctx->hv);
+
+   elm_object_focus_set(ctx->hv, EINA_TRUE);
+}
 
 /* {{{ Solo */
 

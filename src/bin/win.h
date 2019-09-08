@@ -50,6 +50,7 @@ void win_toggle_visible_group(Win *wn);
 void win_toggle_all_group(Win *wn);
 Eina_Bool win_is_group_action_handled(Win *wn);
 Eina_Bool win_is_group_input(Win *wn);
+void win_scale_wizard(Evas_Object *win, Term *term);
 
 
 void term_ref(Term *term);

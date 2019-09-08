@@ -94,10 +94,10 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->xterm_256color) nargc += 1;
    if (inst->active_links) nargc += 1;
    if (inst->cmd) nargc += 2;
-   
+
    nargv = calloc(nargc + 1, sizeof(char *));
    if (!nargv) return;
-   
+
    i = 0;
    nargv[i++] = pargv[0];
    if (inst->cd)
@@ -261,13 +261,13 @@ main_ipc_new(Ipc_Instance *inst)
           {
              char *fname = alloca(strlen(inst->font) + 1);
              char *p;
-             
+
              strcpy(fname, inst->font);
              p = strrchr(fname, '/');
              if (p)
                {
                   int sz;
-                  
+
                   *p = 0;
                   p++;
                   sz = atoi(p);
@@ -281,7 +281,7 @@ main_ipc_new(Ipc_Instance *inst)
              char buf[4096], *file;
              Eina_List *files;
              int n = strlen(inst->font);
-             
+
              snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
              files = ecore_file_ls(buf);
              EINA_LIST_FREE(files, file)
@@ -809,7 +809,7 @@ elm_main(int argc, char **argv)
              pos_set = 1;
           }
      }
-   
+
    if (!size_set)
      {
         if (config->custom_geometry)
@@ -839,9 +839,9 @@ remote:
      {
         Ipc_Instance inst;
         char cwdbuf[4096];
-        
+
         memset(&inst, 0, sizeof(Ipc_Instance));
-        
+
         inst.cmd = cmd;
         if (cd) inst.cd = cd;
         else inst.cd = getcwd(cwdbuf, sizeof(cwdbuf));
@@ -970,6 +970,9 @@ remote:
    ecore_con_url_init();
 
    controls_init();
+
+   win_scale_wizard(win, term);
+
    terminology_starting_up = EINA_FALSE;
 
    elm_run();

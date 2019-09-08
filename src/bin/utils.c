@@ -145,6 +145,36 @@ homedir_get(char *buf, size_t size)
 }
 
 Eina_Bool
+utils_need_scale_wizard(void)
+{
+   static char path[PATH_MAX] = "";
+   struct stat st;
+   int res;
+   char *tmp;
+   Eina_Bool use_xdg_config;
+
+
+   snprintf(path, sizeof(path) -1, "%s/terminology/config/",
+            efreet_config_home_get());
+   res = stat(path, &st);
+   if (res == 0)
+     return EINA_FALSE;
+
+   use_xdg_config = (getenv("ELM_CONFIG_DIR_XDG") != NULL);
+
+   if (use_xdg_config)
+     tmp = eina_vpath_resolve("(:usr.config:)/elementary");
+   else
+     tmp = eina_vpath_resolve("(:home:)/" ".elementary");
+   res = stat(tmp, &st);
+   free(tmp);
+   if (res == 0)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
 link_is_protocol(const char *str)
 {
    const char *p = str;
