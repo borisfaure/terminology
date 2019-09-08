@@ -150,8 +150,7 @@ utils_need_scale_wizard(void)
    static char path[PATH_MAX] = "";
    struct stat st;
    int res;
-   char *tmp;
-   Eina_Bool use_xdg_config;
+   char *config_xdg = getenv("ELM_CONFIG_DIR_XDG");
 
 
    snprintf(path, sizeof(path) -1, "%s/terminology/config/",
@@ -160,14 +159,22 @@ utils_need_scale_wizard(void)
    if (res == 0)
      return EINA_FALSE;
 
-   use_xdg_config = (getenv("ELM_CONFIG_DIR_XDG") != NULL);
-
-   if (use_xdg_config)
-     tmp = eina_vpath_resolve("(:usr.config:)/elementary");
+   if (config_xdg)
+     {
+        snprintf(path, sizeof(path) - 1,
+                 "%s/elementary", config_xdg);
+     }
    else
-     tmp = eina_vpath_resolve("(:home:)/" ".elementary");
-   res = stat(tmp, &st);
-   free(tmp);
+     {
+        const char *suffix = "/.elementary";
+        char home[PATH_MAX - strlen(suffix)];
+
+        if (!homedir_get(home, sizeof(home)))
+            return EINA_TRUE;
+        snprintf(path, sizeof(path) - 1,
+                 "%s%s", home, suffix);
+     }
+   res = stat(path, &st);
    if (res == 0)
      return EINA_FALSE;
 
