@@ -234,7 +234,7 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
      {
-        ERR("error while reading from tty slave fd");
+        DBG("error while reading from tty slave fd");
         ty->hand_fd = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
