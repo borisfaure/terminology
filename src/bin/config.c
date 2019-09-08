@@ -8,6 +8,7 @@
 #include "utils.h"
 
 #define CONF_VER 22
+#define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
 
@@ -207,7 +208,7 @@ config_shutdown(void)
 }
 
 void
-config_save(Config *config, const char *key)
+config_save(Config *config)
 {
    Eet_File *ef;
    char buf[PATH_MAX], buf2[PATH_MAX];
@@ -221,7 +222,6 @@ config_save(Config *config, const char *key)
         main_config_sync(config);
         return;
      }
-   if (!key) key = config->config_key;
    config->font.orig_size = config->font.size;
    eina_stringshare_del(config->font.orig_name);
    config->font.orig_name = NULL;
@@ -236,7 +236,7 @@ config_save(Config *config, const char *key)
    ef = eet_open(buf, EET_FILE_MODE_WRITE);
    if (ef)
      {
-        ok = eet_data_write(ef, edd_base, key, config, 1);
+        ok = eet_data_write(ef, edd_base, CONFIG_KEY, config, 1);
         eet_close(ef);
         if (ok) ecore_file_mv(buf, buf2);
      }
@@ -581,21 +581,19 @@ config_new(void)
 
 
 Config *
-config_load(const char *key)
+config_load(void)
 {
    Eet_File *ef;
    char buf[PATH_MAX];
    const char *cfgdir;
    Config *config = NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
-
    cfgdir = _config_home_get();
    snprintf(buf, sizeof(buf), "%s/terminology/config/standard/base.cfg", cfgdir);
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
-        config = eet_data_read(ef, edd_base, key);
+        config = eet_data_read(ef, edd_base, CONFIG_KEY);
         eet_close(ef);
         if (config)
           {
@@ -731,9 +729,6 @@ config_load(const char *key)
         config->font_set = 1;
      }
 
-   if (config)
-     config->config_key = eina_stringshare_add(key); /* not in eet */
-
    return config;
 }
 
@@ -804,7 +799,6 @@ config_fork(const Config *config)
    CPY(mouse_over_focus);
    CPY(disable_focus_visuals);
    CPY(temporary);
-   SCPY(config_key);
    CPY(font_set);
    CPY(gravatar);
    CPY(notabs);
@@ -850,8 +844,6 @@ config_del(Config *config)
    eina_stringshare_del(config->helper.local.general);
    eina_stringshare_del(config->helper.local.video);
    eina_stringshare_del(config->helper.local.image);
-
-   eina_stringshare_del(config->config_key); /* not in eet */
 
    EINA_LIST_FREE(config->keys, key)
      {

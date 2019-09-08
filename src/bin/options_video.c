@@ -17,7 +17,7 @@ _cb_op_video_mute_chg(void *data,
    Config *config = termio_config_get(term);
    config->mute = elm_check_state_get(obj);
    main_media_mute_update(config);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -29,7 +29,7 @@ _cb_op_video_visualize_chg(void *data,
    Config *config = termio_config_get(term);
    config->visualize = elm_check_state_get(obj);
    main_media_visualize_update(config);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -43,7 +43,7 @@ _cb_op_video_vidmod_chg(void *data,
    if (v == config->vidmod) return;
    config->vidmod = v;
    main_media_update(config);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 void

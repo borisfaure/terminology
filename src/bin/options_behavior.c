@@ -34,7 +34,7 @@ _cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
      config->_cfg_name = elm_check_state_get(obj);              \
    termio_config_update(ctx->term);                             \
    windows_update();                                            \
-   config_save(config, NULL);                                   \
+   config_save(config);                                         \
 }
 
 CB(jump_on_change, 0);
@@ -94,7 +94,7 @@ _cb_op_behavior_sback_chg(void *data,
 
    config->scrollback = (double) sback_double_to_expo_int(elm_slider_value_get(obj));
    termio_config_update(ctx->term);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -107,7 +107,7 @@ _cb_op_behavior_tab_zoom_slider_chg(void *data,
 
    config->tab_zoom = (double)(int)round(elm_slider_value_get(obj) * 10.0) / 10.0;
    termio_config_update(ctx->term);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -124,7 +124,7 @@ _cb_op_behavior_custom_geometry_current_set(void *data,
         elm_spinner_value_set(ctx->op_w, config->cg_width);
         elm_spinner_value_set(ctx->op_h, config->cg_height);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -141,7 +141,7 @@ _cb_op_behavior_custom_geometry(void *data,
         config->cg_width = (int) elm_spinner_value_get(ctx->op_w);
         config->cg_height = (int) elm_spinner_value_get(ctx->op_h);
      }
-   config_save(config, NULL);
+   config_save(config);
 
    elm_object_disabled_set(ctx->op_w, !config->custom_geometry);
    elm_object_disabled_set(ctx->op_h, !config->custom_geometry);
@@ -159,7 +159,7 @@ _cb_op_behavior_cg_width(void *data,
    if (config->custom_geometry)
      {
         config->cg_width = (int) elm_spinner_value_get(obj);
-        config_save(config, NULL);
+        config_save(config);
      }
 }
 
@@ -174,7 +174,7 @@ _cb_op_behavior_cg_height(void *data,
    if (config->custom_geometry)
      {
         config->cg_height = (int) elm_spinner_value_get(obj);
-        config_save(config, NULL);
+        config_save(config);
      }
 }
 
@@ -203,7 +203,7 @@ _cursors_changed_cb(void *data, Evas_Object *obj,
 
    termio_config_update(ctx->term);
    windows_update();
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -224,7 +224,7 @@ _cb_op_hide_cursor_changed(void *data,
         config->hide_cursor = CONFIG_CURSOR_IDLE_TIMEOUT_MAX + 1.0;
         elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -240,7 +240,7 @@ _cb_hide_cursor_slider_chg(void *data,
        return;
 
    config->hide_cursor = value;
-   config_save(config, NULL);
+   config_save(config);
 }
 
 

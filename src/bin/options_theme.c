@@ -79,7 +79,7 @@ _cb_op_theme_sel(void *data,
      return;
 
    eina_stringshare_replace(&(config->theme), t->name);
-   config_save(config, NULL);
+   config_save(config);
    change_theme(termio_win_get(t->ctx->term), config);
 }
 

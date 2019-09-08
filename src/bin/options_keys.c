@@ -51,7 +51,7 @@ _shortcut_delete(void *data,
    eina_stringshare_del(cfg_key->cb);
    free(cfg_key);
 
-   config_save(ctx->config, NULL);
+   config_save(ctx->config);
 }
 
 static Evas_Object *
@@ -152,7 +152,7 @@ _cb_key_up(void *data,
         evas_object_size_hint_min_set(bx, min_w, min_h);
         elm_box_pack_before(bx, bt, last);
 
-        config_save(ctx->config, NULL);
+        config_save(ctx->config);
      }
    else
      {

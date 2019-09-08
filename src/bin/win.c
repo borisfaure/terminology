@@ -244,7 +244,7 @@ _scale_done(void *data,
    ctx->term->wn->on_popover--;
    term_unref(ctx->term);
    elm_config_save();
-   config_save(ctx->term->config, NULL);
+   config_save(ctx->term->config);
    free(ctx);
 }
 
@@ -3937,7 +3937,7 @@ term_apply_shine(Term *term, int shine)
      {
         config->shine = shine;
         background_set_shine(config, term->bg);
-        config_save(config, NULL);
+        config_save(config);
      }
 }
 
@@ -4715,7 +4715,8 @@ _set_alpha(Config *config, const char *val, Eina_Bool save)
      config->translucent = EINA_FALSE;
    main_trans_update(config);
 
-   if (save) config_save(config, NULL);
+   if (save)
+     config_save(config);
 }
 
 static void
@@ -5015,7 +5016,7 @@ _cb_command(void *data,
                   else
                     eina_stringshare_replace(&(config->background), NULL);
                   main_media_update(config);
-                  config_save(config, NULL);
+                  config_save(config);
                }
           }
      }

@@ -101,7 +101,7 @@ _cb_op_color_chg(void *data,
                        config->colors[(j * 12) + i].b = b * a / 256;
                        config->colors[(j * 12) + i].a = a;
                        termio_config_update(ctx->term);
-                       config_save(config, NULL);
+                       config_save(config);
                        return;
                     }
                }
@@ -184,7 +184,7 @@ _cb_op_reset(void *data,
    elm_colorselector_palette_item_color_get(ctx->curitem, &r, &g, &b, &a);
    elm_colorselector_color_set(ctx->colorsel, r, g, b, a);
    termio_config_update(term);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 /* make color palettes wrap back. :) works with elm git. */

@@ -157,7 +157,7 @@ _cb_op_font_sel(void *data,
    elm_object_disabled_set(ctx->op_fsml, f->bitmap);
    elm_object_disabled_set(ctx->op_fontslider, f->bitmap);
    elm_object_disabled_set(ctx->op_fbig, f->bitmap);
-   config_save(config, NULL);
+   config_save(config);
    win_font_update(term);
 }
 
@@ -176,7 +176,7 @@ _cb_op_fontsize_sel(void *data,
    config->font.size = size;
    _update_sizing(ctx);
    elm_genlist_realized_items_update(ctx->op_fontlist);
-   config_save(config, NULL);
+   config_save(config);
    win_font_update(term);
 }
 
@@ -398,7 +398,7 @@ _cb_font_bolditalic(void *data,
 
    config->font.bolditalic = elm_check_state_get(obj);
    termio_config_update(ctx->term);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 void

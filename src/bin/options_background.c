@@ -77,7 +77,7 @@ _cb_op_video_trans_chg(void *data,
    config->translucent = elm_check_state_get(obj);
    elm_object_disabled_set(ctx->op_opacity, !config->translucent);
    main_trans_update(config);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -92,7 +92,7 @@ _cb_op_video_opacity_chg(void *data,
    if (!config->translucent)
      return;
    main_trans_update(config);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -227,12 +227,12 @@ _item_selected(void *data,
         // no background
         eina_stringshare_del(config->background);
         config->background = NULL;
-        config_save(config, NULL);
+        config_save(config);
         main_media_update(config);
      }
    else if (eina_stringshare_replace(&(config->background), item->path))
      {
-        config_save(config, NULL);
+        config_save(config);
         main_media_update(config);
      }
 }
@@ -505,7 +505,7 @@ _cb_grid_doubleclick(void *data,
    if (newfile)
      {
         eina_stringshare_replace(&(config->background), newfile);
-        config_save(config, NULL);
+        config_save(config);
         main_media_update(config);
         eina_stringshare_del(newfile);
         _bubble_show(ctx, _("Picture imported"));

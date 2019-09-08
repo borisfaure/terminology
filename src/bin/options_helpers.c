@@ -15,7 +15,7 @@ _cb_op_helper_inline_chg(void *data,
    Evas_Object *term = data;
    Config *config = termio_config_get(term);
    config->helper.inline_please = elm_check_state_get(obj);
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -38,7 +38,7 @@ _cb_op_helper_email_chg(void *data,
         config->helper.email = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -61,7 +61,7 @@ _cb_op_helper_url_image_chg(void *data,
         config->helper.url.image = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -84,7 +84,7 @@ _cb_op_helper_url_video_chg(void *data,
         config->helper.url.video = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -107,7 +107,7 @@ _cb_op_helper_url_general_chg(void *data,
         config->helper.url.general = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -130,7 +130,7 @@ _cb_op_helper_local_image_chg(void *data,
         config->helper.local.image = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -153,7 +153,7 @@ _cb_op_helper_local_video_chg(void *data,
         config->helper.local.video = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 static void
@@ -176,7 +176,7 @@ _cb_op_helper_local_general_chg(void *data,
         config->helper.local.general = eina_stringshare_add(txt);
         free(txt);
      }
-   config_save(config, NULL);
+   config_save(config);
 }
 
 void

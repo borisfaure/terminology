@@ -99,16 +99,15 @@ struct _Config
 
    Eina_Bool         temporary; /* not in EET */
    Eina_Bool         font_set; /* not in EET */
-   const char       *config_key; /* not in EET, the key that config was loaded */
 };
 
 void config_init(void);
 void config_shutdown(void);
 void config_sync(const Config *config_src, Config *config);
-void config_save(Config *config, const char *key);
-Config *config_load(const char *key);
+void config_save(Config *config);
+Config *config_load(void);
 Config *config_fork(const Config *config);
-Config *config_new();
+Config *config_new(void);
 void config_del(Config *config);
 void config_default_font_set(Config *config, Evas *evas);
 void config_reset_keys(Config *config);

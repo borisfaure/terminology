@@ -582,7 +582,7 @@ elm_main(int argc, char **argv)
 
    config_init();
 
-   _main_config = config_load("config");
+   _main_config = config_load();
    if (key_bindings_load(_main_config) < 0)
      {
         CRITICAL(_("Could not initialize key bindings."));
