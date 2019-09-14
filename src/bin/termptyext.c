@@ -28,28 +28,6 @@
 // EINA_TRUE), handled here first, then in termio (EINA_FALSE return) or not
 // handled here at all and just passed to termio to figure it out (return
 // EINA_FALSE).
-//
-// command strings like like this:
-//   axBLAHBLAH
-// where 'a' is the major opcode char.
-// and 'x' is the minor opcode char.
-// and 'BLAHBLAH' is an optional data payload string
-
-static Eina_Bool
-_handle_op_a(Termpty *_ty EINA_UNUSED,
-             const Eina_Unicode *buf EINA_UNUSED,
-             size_t blen EINA_UNUSED)
-{
-   switch (buf[0])
-     {
-      case 'x': // command ax*
-        break;
-        // room here for more minor opcode chars like 'b', 'c' etc.
-      default:
-        break;
-     }
-   return EINA_FALSE;
-}
 
 #if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
 
@@ -365,10 +343,6 @@ termpty_ext_handle(Termpty *ty,
 {
    switch (buf[0]) // major opcode
      {
-      case 'a': // command a*
-        return _handle_op_a(ty, buf + 1, blen - 1);
-        break;
-        // room here for more major opcode chars like 'b', 'c' etc.
 #if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
       case 't':
         tytest_handle_escape_codes(ty, buf + 1);
