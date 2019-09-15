@@ -48,7 +48,7 @@ printf '\033}td;450;78;1;2;1\0'
 printf '\033}tu;450;78;1;2;1\0'
 printf '\033}tr\0'
 # selection is
-printf '\033}te and furious anger those who would attempt\nnd you will know My name is the Lord when I\n\ns man is beset on all sides by the iniquiti\n evil men. Blessed is he who, in the name of\n weak through the valley of darkness, for h\0'
+printf '\033}tse and furious anger those who would attempt\nnd you will know My name is the Lord when I\n\ns man is beset on all sides by the iniquiti\nevil men. Blessed is he who, in the name of\n weak through the valley of darkness, for h\0'
 
 
 ## sel TO SE
