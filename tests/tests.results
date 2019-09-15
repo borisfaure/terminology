@@ -24,7 +24,7 @@ dsr-cpr.sh 02ee0151d9e9a227f16c40c27eb50604
 dsr-dir.sh f97a921eba6f15c69b3b39637ca8ecd2
 dsr-kbd.sh 31641f6172a325c31a3caeeb859028bc
 dsr-msr.sh 90f10362c318c613f6e8e6c7144019e9
-dsr-deccksr.sh 9dcfa80e4e6e3f11d136238bb5baecd3
+dsr-deccksr.sh 597a26f7661c87084a94b462261b9a3a
 dsr-os.sh bcb52de736fd1a0411d24975f6b7535f
 dsr-pp.sh 37fc9b7c28b6b61be89f395d322b1b7e
 dsr-udk.sh 0d8dd90df01e63af33924cd49e0df945
