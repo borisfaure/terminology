@@ -11,14 +11,13 @@ printf '\033[46;31;3m'
 
 # move to 2; 0
 printf '\033[2;0H'
-
 printf 'Avast to go on account crack Jennys tea cup code of conduct grog https://terminolo.gy/ blossom hands scourge of the seven seas gangway pillage starboard. Admiral of the Black case shot barque red ensign Privateer cutlass Arr measured fer yer chains Gold Road league. Crack Jennys tea cup cog spirits keelhaul handsomely broadside carouser ho gabion barque. www.Enlightenment.org\r\n\r\n'
 
 printf 'Black jack six pounders flogging splice the main brace starboard yo-ho-ho Corsair plunder gally keelhaul. Landlubber or just lubber sloop jib lugsail foo.bar@qux.com clipper jury mast hornswaggle Blimey yard Pirate Round. Ye grapple parley brig brigantine spanker fluke warp league man-of-war.\r\n\r\n'
 
 printf 'Jolly Roger fluke me brig grapple furl tack rutters gally brigantine.  Shiver me timbers yo-ho-ho black spot barque fore doubloon plunder run a shot ~/bin/terminology across the bow tack league. Brig lad keel keelhaul skysail cutlass rutters handsomely snow splice the main brace. \r\n\r\n'
 
-printf "Reef sails Gold Road dead men tell no tales aft gangway lad quarter draught case shot grapple. Stern lass jury mast yo-ho-ho maroon shrouds mizzen /usr/bin/terminology wench jolly boat Admiral of the Black. Maroon Chain Shot pirate wench pillage strike colors bowsprit bucko lee Davy Jones\' Locker.  \r\n"
+printf "Reef sails Gold Road dead men tell no tales aft gangway lad quarter draught case shot grapple. Stern lass jury mast yo-ho-ho maroon shrouds mizzen /usr/bin/terminology wench jolly boat Admiral of the Black. Maroon Chain Shot pirate wench pillage strike colors bowsprit bucko lee Davy Jones\047 Locker.  \r\n"
 
 ##
 # URL (https://terminolo.gy/)
