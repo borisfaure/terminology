@@ -20,7 +20,6 @@ printf 'Jolly Roger fluke me brig grapple furl tack rutters gally brigantine.  S
 
 printf "Reef sails Gold Road dead men tell no tales aft gangway lad quarter draught case shot grapple. Stern lass jury mast yo-ho-ho maroon shrouds mizzen /usr/bin/terminology wench jolly boat Admiral of the Black. Maroon Chain Shot pirate wench pillage strike colors bowsprit bucko lee Davy Jones\' Locker.  \r\n"
 
-
 ##
 # URL (https://terminolo.gy/)
 ##
@@ -67,10 +66,8 @@ printf '\033}tlu;65;1;5;2;https://terminolo.gy/\0'
 
 # mouse move
 printf '\033}tm;45;45\0'
-# TODO: buggy
-### no url detection on space after url
-##printf '\033}tln\0'
-
+# no url detection on space after url
+printf '\033}tln\0'
 
 ##
 # Not a link (league.)
@@ -113,16 +110,14 @@ printf '\033}tm;410;85\0'
 printf '\033}tln\0'
 
 
-
 ##
 # Email (foo.bar@qux.com)
 ##
 
 # mouse move
 printf '\033}tm;485;130\0'
-# TODO: buggy
-### no email detection on ' ' before email
-##printf '\033}tln\0'
+# no email detection on ' ' before email
+printf '\033}tln\0'
 
 # mouse move
 printf '\033}tm;495;133\0'
@@ -145,11 +140,9 @@ printf '\033}tm;10;140\0'
 printf '\033}tle;70;8;4;9;foo.bar@qux.com\0'
 
 # mouse move
-printf '\033}tm;40;140\0'
-# TODO: buggy
-### no email detection on ' ' after email
-##printf '\033}tle;70;8;4;9;foo.bar@qux.com\0'
-
+printf '\033}tm;45;140\0'
+# no email detection on ' ' after email
+printf '\033}tln\0'
 
 
 ##
@@ -183,9 +176,8 @@ printf '\033}tlp;69;13;5;14;%s/bin/terminology\0' "$HOME"
 
 # mouse move
 printf '\033}tm;48;215\0'
-# TODO: buggy
-### no file detection on ' ' after path
-##printf '\033}tln\0'
+# no file detection on ' ' after path
+printf '\033}tln\0'
 
 
 
@@ -219,9 +211,8 @@ printf '\033}tm;40;295\0'
 printf '\033}tlp;67;18;6;19;/usr/bin/terminology\0'
 
 # mouse move
-printf '\033}tm;58;295\0'
-# TODO: buggy
-### no file detection on ' ' after path
-##printf '\033}tln\0'
+printf '\033}tm;55;295\0'
+# no file detection on ' ' after path
+printf '\033}tln\0'
 
 

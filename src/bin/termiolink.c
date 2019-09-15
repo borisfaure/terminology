@@ -309,6 +309,8 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
 
    res = _txt_at(ty, &x1, &y1, txt, &txtlen);
    if ((res != 0) || (txtlen == 0)) goto end;
+   if (isspace(txt[0]))
+     goto end;
    res = ty_sb_add(&sb, txt, txtlen);
    if (res < 0) goto end;
 
