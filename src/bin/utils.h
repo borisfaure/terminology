@@ -14,10 +14,6 @@ const char *theme_path_get(const char *name);
 Eina_Bool homedir_get(char *buf, size_t size);
 Eina_Bool utils_need_scale_wizard(void);
 
-Eina_Bool link_is_protocol(const char *str);
-Eina_Bool link_is_url(const char *str);
-Eina_Bool link_is_email(const char *str);
-
 #define casestartswith(str, constref) \
   (!strncasecmp(str, constref, sizeof(constref) - 1))
 

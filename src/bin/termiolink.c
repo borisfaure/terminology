@@ -42,8 +42,55 @@ _local_path_get(const Evas_Object *obj, const char *relpath)
      return _cwd_path_get(obj, relpath);
 }
 
-static Eina_Bool
-_is_file(const char *str)
+Eina_Bool
+link_is_protocol(const char *str)
+{
+   const char *p = str;
+   int c = *p;
+
+   if (!isalpha(c))
+     return EINA_FALSE;
+
+   /* Try to follow RFC3986 a bit
+    * URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+    * hier-part   = "//" authority path-abempty
+    *             [...] other stuff not taken into account
+    * scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    */
+
+   do
+     {
+        p++;
+        c = *p;
+     }
+   while (isalpha(c) || (c == '.') || (c == '-') || (c == '+'));
+
+   return (p[0] == ':') && (p[1] == '/') && (p[2] == '/');
+}
+
+Eina_Bool
+link_is_url(const char *str)
+{
+   if (link_is_protocol(str) ||
+       casestartswith(str, "www.") ||
+       casestartswith(str, "ftp."))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+link_is_email(const char *str)
+{
+   const char *at = strchr(str, '@');
+   if (at && strchr(at + 1, '.'))
+     return EINA_TRUE;
+   if (casestartswith(str, "mailto:"))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Bool
+link_is_file(const char *str)
 {
    switch (str[0])
      {
@@ -402,7 +449,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
 out:
    if (sb.len)
      {
-        Eina_Bool is_file = _is_file(sb.buf);
+        Eina_Bool is_file = link_is_file(sb.buf);
 
         if (is_file ||
             link_is_email(sb.buf) ||

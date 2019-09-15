@@ -9,6 +9,7 @@
 #include "media.h"
 #include "config.h"
 #include "utils.h"
+#include "termiolink.h"
 
 typedef struct _Media Media;
 
