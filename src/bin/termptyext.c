@@ -330,16 +330,22 @@ tytest_handle_escape_codes(Termpty *ty,
         _handle_mouse_wheel(ty, buf + 1);
         break;
       default:
+        abort();
         break;
      }
 }
 #endif
 
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#define ARG_USED_FOR_TESTS
+#else
+#define ARG_USED_FOR_TESTS EINA_UNUSED
+#endif
 
 Eina_Bool
-termpty_ext_handle(Termpty *ty,
-                   const Eina_Unicode *buf,
-                   size_t blen)
+termpty_ext_handle(Termpty *ty ARG_USED_FOR_TESTS,
+                   const Eina_Unicode *buf ARG_USED_FOR_TESTS,
+                   size_t blen EINA_UNUSED)
 {
    switch (buf[0]) // major opcode
      {
@@ -354,3 +360,4 @@ termpty_ext_handle(Termpty *ty,
      }
    return EINA_FALSE;
 }
+#undef ARG_USED_FOR_TESTS
