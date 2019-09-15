@@ -1382,7 +1382,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               /* DSR-DECCKSR (Memory Checksum) */
               int pid = _csi_arg_get(ty, &b);
-              len = snprintf(bf, sizeof(bf), "\033P%u!~0000\033\\", pid);
+              len = snprintf(bf, sizeof(bf), "\033P%d!~0000\033\\", pid);
               termpty_write(ty, bf, len);
            }
          else
