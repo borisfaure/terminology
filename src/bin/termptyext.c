@@ -1,6 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include "termio.h"
+#include "termiolink.h"
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
@@ -219,6 +220,88 @@ _handle_mouse_wheel(Termpty *ty,
    termio_internal_mouse_wheel(sd, &ev, modifiers);
 }
 
+/*
+ * Format is:
+ * - ln : no link found under cursor
+ * - lT;X1;Y1;X2;Y2;LINK
+ *   where T is
+ *     e: link is an email
+ *     u: link is an url
+ *     p: link is a file path
+ */
+static void
+_handle_link(Termpty *ty, const Eina_Unicode *buf)
+{
+   const Eina_Unicode type = buf[0];
+   Termio *sd = termio_get_from_obj(ty->obj);
+   char *link, *c;
+   int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
+   int value;
+
+   /* highlight where the mouse is */
+     {
+        Termcell *cells = NULL;
+        ssize_t w;
+
+        cells = termpty_cellrow_get(ty, sd->mouse.cy, &w);
+        termpty_reset_att(&cells[sd->mouse.cx].att);
+        cells[sd->mouse.cx].att.bold = 1;
+        cells[sd->mouse.cx].att.fg = COL_WHITE;
+        cells[sd->mouse.cx].att.bg = COL_RED;
+     }
+
+   link = termio_link_find(ty->obj, sd->mouse.cx, sd->mouse.cy,
+                           &x1, &y1, &x2, &y2);
+
+   ERR("x1:%d y1:%d x2:%d y2:%d link:'%s'", x1, y1, x2, y2, link);
+   if (type == 'n')
+     {
+        assert (link == NULL);
+        return;
+     }
+   /* skip type */
+   buf++;
+   /* Get numeric values */
+   buf += _tytest_arg_get(buf, &value);
+   assert(x1 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(y1 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(x2 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(y2 == value);
+   /* skip ; */
+   buf++;
+   /* Compare strings */
+   c = link;
+   while (*buf)
+     {
+        int idx = 0;
+        Eina_Unicode u = eina_unicode_utf8_next_get(c, &idx);
+
+        ERR("%c vs %c", *buf, u);
+        assert(*buf == u && "unexpected character in selection");
+        c += idx;
+        buf++;
+     }
+
+   switch (type)
+     {
+      case 'u':
+         assert(link_is_url(link));
+         break;
+      case 'p':
+         assert(link_is_file(link));
+         break;
+      case 'e':
+         assert(link_is_email(link));
+         break;
+      default:
+         abort();
+     }
+   free(link);
+}
+
 static void
 _handle_selection_is(Termpty *ty,
                      const Eina_Unicode *buf)
@@ -295,6 +378,7 @@ _handle_corner(Termpty *ty, const Eina_Unicode *buf)
  * - 'd': mouse down:
  * - 'u': mouse up;
  * - 'm': mouse move;
+ * - 'l': assert mouse is over a link
  * - 'r': force rendering and possibly remove selection;
  * - 'n': assert there is no selection
  * - 's': assert selection is what follows till '\0'
@@ -310,6 +394,9 @@ tytest_handle_escape_codes(Termpty *ty,
          break;
       case 'd':
         _handle_mouse_down(ty, buf + 1);
+        break;
+      case 'l':
+        _handle_link(ty, buf + 1);
         break;
       case 'm':
         _handle_mouse_move(ty, buf + 1);
