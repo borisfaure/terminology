@@ -1,6 +1,9 @@
 #ifndef NO_COLORS
 color_classes {
-#define BG_COLOR  32 32 32 255
+#define BG_COLOR_NO_ALPHA  32 32 32
+#define BG_COLOR  BG_COLOR_NO_ALPHA 255
+#define FG_COLOR_NO_ALPHA  170 170 170
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
 #include "default_colors.in.edc"
 }
 #endif
@@ -1392,8 +1395,8 @@ collections {
             scale: 1;
             effect: SOFT_SHADOW BOTTOM;
             description { state: "default" 0.0;
-               color: 255 255 255 255;
-               color3: 0 0 0 18;
+               color: FG_COLOR_NO_ALPHA 255;
+               color3: BG_COLOR_NO_ALPHA 18;
                text { font: "Sans:style=Bold"; size: 10;
                   align: 0.5 0.5;
                   min: 0 1;
@@ -2113,15 +2116,15 @@ collections {
          }
          part { name: "terminology.title"; type: TEXT; mouse_events: 0;
             scale: 1;
-            effect: SHADOW BOTTOM;
+            effect: GLOW;
             description { state: "default" 0.0;
                text { font: "Sans:style=Bold"; size: 10;
                   align: 0.5 0.5;
                   min: 0 1;
                }
                align: 0.5 0.5;
-               color: 0 0 0 255;
-               color3: 255 255 255 25;
+               color: 180 180 180 255;
+               color3: 0 0 0 18;
                rel1.to: "tab_bevel_top2";
                rel2.to: "tab_bevel_top2";
             }

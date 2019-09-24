@@ -20,6 +20,10 @@
 
 #define COL_DEF    68  68  68 255 /* #444444 */
 #define BG_COLOR  238 238 238 255 /* #EEEEEE */
+#define BG_COLOR_NO_ALPHA  238 238 238 /* #EEEEEE */
+#define BG_COLOR  BG_COLOR_NO_ALPHA 255
+#define FG_COLOR_NO_ALPHA  68 68 68 /* #444444 */
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
 #define NO_COLORS 1
 
 color_classes {

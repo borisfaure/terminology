@@ -39,7 +39,10 @@
 #define ANSI15    nord6
 
 #define COL_DEF   nord4
-#define BG_COLOR  nord0
+#define BG_COLOR_NO_ALPHA  46  52  64
+#define BG_COLOR  BG_COLOR_NO_ALPHA 255
+#define FG_COLOR_NO_ALPHA  216 222 233
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
 #define NO_COLORS 1
 
 color_classes {
