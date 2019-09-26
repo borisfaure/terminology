@@ -508,8 +508,20 @@ _solo_set_title(Term_Container *tc,
                 Term_Container *_child EINA_UNUSED,
                 const char *title)
 {
+   Solo *solo;
+   Term *term;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   term = solo->term;
+
    eina_stringshare_del(tc->title);
    tc->title = eina_stringshare_add(title);
+   if (!term->config->notabs)
+     {
+        edje_object_part_text_set(term->bg, "terminology.tab.title",
+                                  title);
+     }
    tc->parent->set_title(tc->parent, tc, title);
 }
 
@@ -674,6 +686,61 @@ _solo_new(Term *term, Win *wn)
    term->container = tc;
 
    return tc;
+}
+
+static void
+_solo_title_show(Term_Container *tc)
+{
+   Solo *solo;
+   Term *term;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   term = solo->term;
+
+   if (!term->tab_spacer)
+     {
+        Evas_Coord w = 0, h = 0;
+
+        term->tab_spacer = evas_object_rectangle_add(
+           evas_object_evas_get(term->bg));
+        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tab_spacer, w, h);
+        edje_object_part_swallow(term->bg, "terminology.tab", term->tab_spacer);
+        edje_object_part_drag_value_set(term->bg, "terminology.tabl", 0.0, 0.0);
+        edje_object_part_drag_value_set(term->bg, "terminology.tabr", 1.0, 0.0);
+        edje_object_part_text_set(term->bg, "terminology.tab.title",
+                                  solo->tc.title);
+        edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
+        edje_object_message_signal_process(term->bg);
+     }
+   else
+     {
+        edje_object_part_drag_value_set(term->bg, "terminology.tabl", 0.0, 0.0);
+        edje_object_part_drag_value_set(term->bg, "terminology.tabr", 1.0, 0.0);
+        edje_object_message_signal_process(term->bg);
+     }
+}
+
+static void
+_solo_title_hide(Term_Container *tc)
+{
+   Solo *solo;
+   Term *term;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   term = solo->term;
+
+   if (term->tab_spacer)
+     {
+        edje_object_signal_emit(term->bg, "tabbar,off", "terminology");
+        edje_object_message_signal_process(term->bg);
+        edje_object_part_unswallow(term->bg, term->tab_spacer);
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
+     }
 }
 
 /* }}} */
@@ -1096,6 +1163,12 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    o = new_child->get_evas_object(new_child);
    elm_layout_content_set(wn->base, "terminology.content", o);
 
+   if ((new_child->type == TERM_CONTAINER_TYPE_SOLO
+        && (!wn->config->notabs)))
+     {
+        _solo_title_hide(new_child);
+     }
+
    evas_object_show(o);
    new_child->parent = tc;
    wn->child = new_child;
@@ -1270,6 +1343,14 @@ _win_split(Term_Container *tc, Term_Container *child,
         elm_layout_content_unset(wn->base, "terminology.content");
 
         tc_split = _split_new(child, tc_solo_new, is_horizontal);
+        if (!wn->config->notabs)
+          {
+             if (child->type == TERM_CONTAINER_TYPE_SOLO)
+               {
+                  _solo_title_show(child);
+               }
+             _solo_title_show(tc_solo_new);
+          }
 
         tc_split->is_focused = tc->is_focused;
         tc->swallow(tc, NULL, tc_split);
@@ -2509,6 +2590,11 @@ _split_split(Term_Container *tc, Term_Container *child,
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, child, tc_split);
 
+   if (!wn->config->notabs)
+     {
+        _solo_title_show(tc_solo_new);
+     }
+
    evas_object_show(obj_split);
 }
 
@@ -2521,6 +2607,7 @@ _split_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
    return tc->parent->is_visible(tc->parent, tc);
 }
 
+/* tc1 is a new solo */
 static Term_Container *
 _split_new(Term_Container *tc1, Term_Container *tc2,
            Eina_Bool is_horizontal)
@@ -3227,17 +3314,21 @@ _tabs_close(Term_Container *tc, Term_Container *child)
      {
         Term *next_term;
         Solo *next_solo;
+        Config *config;
 
         assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
         next_solo = (Solo*)next_child;
         next_term = next_solo->term;
+        config = next_term->config;
 
         edje_object_signal_emit(next_term->bg, "tabcount,off", "terminology");
-        if (next_term->tabcount_spacer)
+        if (next_term->tabcount_spacer && config->notabs)
           {
              evas_object_del(next_term->tabcount_spacer);
              next_term->tabcount_spacer = NULL;
           }
+        if (!config->notabs)
+          _solo_title_show(next_child);
 
         if (tabs->selector)
           _tabs_restore(tabs);
