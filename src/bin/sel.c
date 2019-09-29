@@ -86,6 +86,7 @@ _mouse_up_cb(void *data,
    Evas_Event_Mouse_Up *ev = event;
    Sel *sd = data;
    Evas_Coord dx, dy;
+   Evas_Coord finger_size;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -96,8 +97,9 @@ _mouse_up_cb(void *data,
    sd->down.down = EINA_FALSE;
    dx = abs(ev->canvas.x - sd->down.x);
    dy = abs(ev->canvas.y - sd->down.y);
-   if ((dx <= elm_config_finger_size_get()) &&
-       (dy <= elm_config_finger_size_get()))
+   finger_size = elm_config_finger_size_get();
+   if ((dx <= finger_size) &&
+       (dy <= finger_size))
      {
         Eina_List *l;
         Entry *en;
@@ -110,7 +112,7 @@ _mouse_up_cb(void *data,
              evas_object_geometry_get(en->bg, &ox, &oy, &ow, &oh);
              if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, x, y, 1, 1))
                {
-                  sel_entry_selected_set(data, en->obj, EINA_FALSE);
+                  sel_entry_selected_set(sd->self, en->obj, EINA_FALSE);
                   sd->select_me = EINA_TRUE;
                   sd->exit_me = EINA_FALSE;
                   if (sd->autozoom_timeout)
@@ -792,33 +794,37 @@ sel_entry_selected_set(Evas_Object *obj, Evas_Object *entry, Eina_Bool keep_befo
    config = sd->config;
    if (!config) return;
 
+   /* Unselect previous selected item */
+   EINA_LIST_FOREACH(sd->items, l, en)
+     {
+        if ( (en->obj != entry) && (en->selected) )
+          {
+             if ((sd->w > 0) && (sd->h > 0))
+               edje_object_signal_emit(en->bg, "unselected", "terminology");
+             else
+               {
+                  en->was_selected = EINA_TRUE;
+                  sd->pending_sel = EINA_TRUE;
+               }
+             en->selected = EINA_FALSE;
+             sd->select_me = EINA_FALSE;
+             sd->exit_me = EINA_FALSE;
+          }
+        if (!keep_before) en->selected_before = EINA_FALSE;
+     }
+   /* Select new item */
    EINA_LIST_FOREACH(sd->items, l, en)
      {
         if (en->obj == entry)
           {
+             en->was_selected = EINA_FALSE;
+             en->selected = EINA_TRUE;
              if ((sd->w > 0) && (sd->h > 0))
                edje_object_signal_emit(en->bg, "selected", "terminology");
              else
                sd->pending_sel = EINA_TRUE;
              evas_object_stack_below(en->bg, sd->o_event);
-             en->was_selected = EINA_FALSE;
-             en->selected = EINA_TRUE;
           }
-        else
-          {
-             if (en->selected)
-               {
-                  if ((sd->w > 0) && (sd->h > 0))
-                    edje_object_signal_emit(en->bg, "unselected", "terminology");
-                  else
-                    {
-                       en->was_selected = EINA_TRUE;
-                       sd->pending_sel = EINA_TRUE;
-                    }
-                  en->selected = EINA_FALSE;
-               }
-          }
-        if (!keep_before) en->selected_before = EINA_FALSE;
      }
    sd->use_px = EINA_FALSE;
    _transit(sd, config->tab_zoom);
