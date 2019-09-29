@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 22
+#define CONF_VER 23
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -175,8 +175,10 @@ config_init(void)
      (edd_base, Config, "keys", keys, edd_keys);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "gravatar", gravatar, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
+   EET_DATA_DESCRIPTOR_ADD_BASIC /* DEPRECATED, NO LONGER USED */
      (edd_base, Config, "notabs", notabs, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "show_tabs", show_tabs, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "mv_always_show", mv_always_show, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -292,7 +294,7 @@ config_sync(const Config *config_src, Config *config)
    config->disable_focus_visuals = config_src->disable_focus_visuals;
    /* TODO: config->keys */
    config->gravatar = config_src->gravatar;
-   config->notabs = config_src->notabs;
+   config->show_tabs = config_src->show_tabs;
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
    config->changedir_to_current = config_src->changedir_to_current;
@@ -554,7 +556,7 @@ config_new(void)
         config->disable_focus_visuals = EINA_FALSE;
         config->colors_use = EINA_FALSE;
         config->gravatar = EINA_TRUE;
-        config->notabs = EINA_FALSE;
+        config->show_tabs = EINA_TRUE;
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
         config->changedir_to_current = EINA_TRUE;
@@ -705,7 +707,11 @@ config_load(void)
                   config->hide_cursor = 5.0;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 22 */
+                case 22:
+                  config->show_tabs = !config->notabs;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 23 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -801,7 +807,7 @@ config_fork(const Config *config)
    CPY(temporary);
    CPY(font_set);
    CPY(gravatar);
-   CPY(notabs);
+   CPY(show_tabs);
    CPY(mv_always_show);
    CPY(ty_escapes);
    CPY(changedir_to_current);

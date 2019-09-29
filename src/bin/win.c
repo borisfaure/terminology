@@ -517,7 +517,7 @@ _solo_set_title(Term_Container *tc,
 
    eina_stringshare_del(tc->title);
    tc->title = eina_stringshare_add(title);
-   if (!term->config->notabs)
+   if (term->config->show_tabs)
      {
         edje_object_part_text_set(term->bg, "terminology.tab.title",
                                   title);
@@ -1164,7 +1164,7 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    elm_layout_content_set(wn->base, "terminology.content", o);
 
    if ((new_child->type == TERM_CONTAINER_TYPE_SOLO
-        && (!wn->config->notabs)))
+        && (wn->config->show_tabs)))
      {
         _solo_title_hide(new_child);
      }
@@ -1343,7 +1343,7 @@ _win_split(Term_Container *tc, Term_Container *child,
         elm_layout_content_unset(wn->base, "terminology.content");
 
         tc_split = _split_new(child, tc_solo_new, is_horizontal);
-        if (!wn->config->notabs)
+        if (wn->config->show_tabs)
           {
              if (child->type == TERM_CONTAINER_TYPE_SOLO)
                {
@@ -2590,7 +2590,7 @@ _split_split(Term_Container *tc, Term_Container *child,
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, child, tc_split);
 
-   if (!wn->config->notabs)
+   if (wn->config->show_tabs)
      {
         _solo_title_show(tc_solo_new);
      }
@@ -3252,7 +3252,7 @@ _tabs_size_eval(Term_Container *container, Sizeinfo *info)
    config = tc->wn->config;
    tc->size_eval(tc, info);
    /* Current sizing code does not take the tab area correctly into account */
-   if (!config->notabs)
+   if (config->show_tabs)
      {
         info->step_x = 1;
         info->step_y = 1;
@@ -3322,12 +3322,12 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         config = next_term->config;
 
         edje_object_signal_emit(next_term->bg, "tabcount,off", "terminology");
-        if (next_term->tabcount_spacer && config->notabs)
+        if (next_term->tabcount_spacer && !config->show_tabs)
           {
              evas_object_del(next_term->tabcount_spacer);
              next_term->tabcount_spacer = NULL;
           }
-        if (!config->notabs)
+        if (config->show_tabs)
           _solo_title_show(next_child);
 
         if (tabs->selector)
@@ -3685,7 +3685,7 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
              Config *config = tc->wn->config;
              tabs->current->tc->unfocus(tabs->current->tc, tc);
 
-             if (config->tab_zoom >= 0.01 && config->notabs)
+             if (config->tab_zoom >= 0.01 && !config->show_tabs)
                {
                   _cb_tab_selector_show(tabs, tab_item);
                   return;
@@ -3784,7 +3784,7 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
         solo = (Solo*)tab_item->tc;
         term = solo->term;
 
-        if (!term->config->notabs)
+        if (term->config->show_tabs)
           {
              edje_object_part_text_set(term->bg, "terminology.tab.title",
                                        title);
@@ -3854,7 +3854,7 @@ _tabs_refresh(Tabs *tabs)
    edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufmissed);
    edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
    // this is all below just for tab bar at the top
-   if (!term->config->notabs)
+   if (term->config->show_tabs)
      {
         double v1, v2;
 

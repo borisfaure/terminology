@@ -89,7 +89,8 @@ struct _Config
    Eina_Bool         disable_focus_visuals;
    Eina_Bool         colors_use;
    Eina_Bool         gravatar;
-   Eina_Bool         notabs;
+   Eina_Bool         notabs; /* DEPRECATED */
+   Eina_Bool         show_tabs;
    Eina_Bool         mv_always_show;
    Eina_Bool         ty_escapes;
    Eina_Bool         changedir_to_current;
