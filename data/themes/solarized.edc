@@ -15,7 +15,6 @@
 #define S_base2   238 232 213 255
 #define S_base3   253 246 227 255
 
-#define BG_COLOR  S_base03
 #define BG_COLOR_NO_ALPHA  0 43 54
 #define BG_COLOR  BG_COLOR_NO_ALPHA 255
 #define FG_COLOR_NO_ALPHA  253 246 227
