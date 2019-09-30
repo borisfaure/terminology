@@ -628,64 +628,11 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
      term->missed_bell = EINA_FALSE;
 }
 
-static void
-_solo_update(Term_Container *tc)
-{
-   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
-}
-
 static Eina_Bool
 _solo_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    return tc->parent->is_visible(tc->parent, tc);
-}
-
-static Term_Container *
-_solo_new(Term *term, Win *wn)
-{
-   Term_Container *tc = NULL;
-   Solo *solo = NULL;
-   solo = calloc(1, sizeof(Solo));
-   if (!solo)
-     {
-        free(solo);
-        return NULL;
-     }
-
-   tc = (Term_Container*)solo;
-   tc->term_next = _solo_term_next;
-   tc->term_prev = _solo_term_prev;
-   tc->term_up = _solo_term_up;
-   tc->term_down = _solo_term_down;
-   tc->term_left = _solo_term_left;
-   tc->term_right = _solo_term_right;
-   tc->term_first = _solo_term_first;
-   tc->term_last = _solo_term_last;
-   tc->focused_term_get = _solo_focused_term_get;
-   tc->get_evas_object = _solo_get_evas_object;
-   tc->split = _solo_split;
-   tc->find_term_at_coords = _solo_find_term_at_coords;
-   tc->size_eval = _solo_size_eval;
-   tc->swallow = NULL;
-   tc->focus = _solo_focus;
-   tc->unfocus = _solo_unfocus;
-   tc->set_title = _solo_set_title;
-   tc->bell = _solo_bell;
-   tc->close = _solo_close;
-   tc->update = _solo_update;
-   tc->title = eina_stringshare_add("Terminology");
-   tc->is_visible = _solo_is_visible;
-   tc->type = TERM_CONTAINER_TYPE_SOLO;
-
-   tc->parent = NULL;
-   tc->wn = wn;
-
-   solo->term = term;
-
-   term->container = tc;
-
-   return tc;
 }
 
 static void
@@ -741,6 +688,73 @@ _solo_title_hide(Term_Container *tc)
         evas_object_del(term->tab_spacer);
         term->tab_spacer = NULL;
      }
+}
+
+static void
+_solo_update(Term_Container *tc)
+{
+   Solo *solo;
+   Term *term;
+   Term_Container *tc_parent = tc->parent;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   term = solo->term;
+
+   if (tc_parent->type == TERM_CONTAINER_TYPE_SPLIT)
+     {
+        if (term->config->show_tabs)
+          _solo_title_show(tc);
+        else
+          _solo_title_hide(tc);
+     }
+}
+
+static Term_Container *
+_solo_new(Term *term, Win *wn)
+{
+   Term_Container *tc = NULL;
+   Solo *solo = NULL;
+   solo = calloc(1, sizeof(Solo));
+   if (!solo)
+     {
+        free(solo);
+        return NULL;
+     }
+
+   tc = (Term_Container*)solo;
+   tc->term_next = _solo_term_next;
+   tc->term_prev = _solo_term_prev;
+   tc->term_up = _solo_term_up;
+   tc->term_down = _solo_term_down;
+   tc->term_left = _solo_term_left;
+   tc->term_right = _solo_term_right;
+   tc->term_first = _solo_term_first;
+   tc->term_last = _solo_term_last;
+   tc->focused_term_get = _solo_focused_term_get;
+   tc->get_evas_object = _solo_get_evas_object;
+   tc->split = _solo_split;
+   tc->find_term_at_coords = _solo_find_term_at_coords;
+   tc->size_eval = _solo_size_eval;
+   tc->swallow = NULL;
+   tc->focus = _solo_focus;
+   tc->unfocus = _solo_unfocus;
+   tc->set_title = _solo_set_title;
+   tc->bell = _solo_bell;
+   tc->close = _solo_close;
+   tc->update = _solo_update;
+   tc->title = eina_stringshare_add("Terminology");
+   tc->is_visible = _solo_is_visible;
+   tc->type = TERM_CONTAINER_TYPE_SOLO;
+
+   tc->parent = NULL;
+   tc->wn = wn;
+
+   solo->term = term;
+
+   term->container = tc;
+
+   return tc;
 }
 
 /* }}} */
