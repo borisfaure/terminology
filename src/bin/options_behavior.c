@@ -644,6 +644,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_slider_unit_format_set(o, _("%1.1f s"));
    elm_slider_indicator_format_set(o, _("%1.1f s"));
    elm_slider_min_max_set(o, 0.0, CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
+   elm_object_disabled_set(o, config->hide_cursor >= CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
    elm_slider_value_set(o, config->hide_cursor);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
