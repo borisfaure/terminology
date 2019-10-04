@@ -31,7 +31,7 @@ jobs:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Install EFL
-          command: apk add /pkg/efl-1.22/efl-1.22.5-r0.apk /pkg/efl-1.22/efl-dev-1.22.5-r0.apk
+          command: apk add /pkg/efl-1.22/efl-1.22.6-r0.apk /pkg/efl-1.22/efl-dev-1.22.6-r0.apk
       - run:
           name: Compile with Clang
           command: |
@@ -51,7 +51,7 @@ jobs:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Install EFL
-          command: apk add /pkg/efl-1.22/efl-1.22.5-r0.apk /pkg/efl-1.22/efl-dev-1.22.5-r0.apk
+          command: apk add /pkg/efl-1.22/efl-1.22.6-r0.apk /pkg/efl-1.22/efl-dev-1.22.6-r0.apk
       - run:
           name: Compile with Clang
           command: |
@@ -73,7 +73,7 @@ jobs:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Install EFL
-          command: apk add /pkg/efl-1.22/efl-1.22.5-r0.apk /pkg/efl-1.22/efl-dev-1.22.5-r0.apk
+          command: apk add /pkg/efl-1.22/efl-1.22.6-r0.apk /pkg/efl-1.22/efl-dev-1.22.6-r0.apk
       - run:
           name: Compile with GCC
           environment:
@@ -130,7 +130,7 @@ jobs:
           key: build_full_gcc-efl-1.22-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Install EFL
-          command: apk add /pkg/efl-1.22/efl-1.22.5-r0.apk /pkg/efl-1.22/efl-dev-1.22.5-r0.apk
+          command: apk add /pkg/efl-1.22/efl-1.22.6-r0.apk /pkg/efl-1.22/efl-dev-1.22.6-r0.apk
       - run:
           name: Launch tests
           command: |
