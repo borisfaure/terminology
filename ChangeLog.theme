@@ -1,6 +1,11 @@
 =================
-Terminology 1.5.0
+Terminology 1.6.0
 =================
+
+Changes since 1.5.0:
+--------------------
+  * In group "terminology/tabbar_back", add signal "bell" from "terminology"
+  to mark a tab as having the bell on.
 
 Changes since 1.2.0:
 --------------------

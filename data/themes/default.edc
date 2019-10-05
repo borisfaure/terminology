@@ -2116,7 +2116,7 @@ collections {
          }
          part { name: "terminology.title"; type: TEXT; mouse_events: 0;
             scale: 1;
-            effect: GLOW;
+            effect: OUTLINE_SOFT_SHADOW;
             description { state: "default" 0.0;
                text { font: "Sans:style=Bold"; size: 10;
                   align: 0.5 0.5;
@@ -2127,6 +2127,12 @@ collections {
                color3: 0 0 0 18;
                rel1.to: "tab_bevel_top2";
                rel2.to: "tab_bevel_top2";
+            }
+            description { state: "bell" 0.0;
+               inherit: "default" 0.0;
+               color: 255 219 0 96;
+               color2: 255 51 0 48;
+               color3: 255 51 0 8;
             }
          }
          part { name: "clip"; type: RECT;
@@ -2142,6 +2148,11 @@ collections {
          program {
             signal: "mouse,clicked,1"; source: "event";
             action: SIGNAL_EMIT "tab,activate" "terminology";
+         }
+         program { name: "bell";
+            signal: "bell"; source: "terminology";
+            action: STATE_SET "bell" 0.0;
+            target: "terminology.title";
          }
       }
    }

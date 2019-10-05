@@ -2567,7 +2567,6 @@ _split_split(Term_Container *tc, Term_Container *child,
    Term_Container *tc_split, *tc_solo_new;
    Evas_Object *obj_split;
 
-   DBG(" ");
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split *)tc;
    wn = tc->wn;
@@ -2921,6 +2920,8 @@ _tabbar_fill(Tabs *tabs)
                   term->tabbar.r.tabs = eina_list_append(term->tabbar.r.tabs, o);
                   elm_box_pack_end(term->tabbar.r.box, o);
                }
+             if (solo->term->missed_bell)
+                 edje_object_signal_emit(o, "bell", "terminology");
              evas_object_data_set(o, "term", term);
              evas_object_show(o);
              edje_object_signal_callback_add(o, "tab,activate", "terminology",
