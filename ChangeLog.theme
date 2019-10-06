@@ -6,6 +6,9 @@ Changes since 1.5.0:
 --------------------
   * In group "terminology/tabbar_back", add signal "bell" from "terminology"
   to mark a tab as having the bell on.
+  * In group "terminology/background", add signals "tab,bell,on" and
+  "tab,bell,off" from "terminology" to set bell status on tab if there is a
+  tab.
 
 Changes since 1.2.0:
 --------------------
