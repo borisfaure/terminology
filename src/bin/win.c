@@ -536,7 +536,8 @@ _solo_bell(Term_Container *tc,
    solo = (Solo*) tc;
    term = solo->term;
 
-   term->missed_bell = EINA_TRUE;
+   if (!tc->is_focused)
+     term->missed_bell = EINA_TRUE;
 
    if (!tc->wn->config->disable_visual_bell)
      {
@@ -548,6 +549,12 @@ _solo_bell(Term_Container *tc,
              elm_layout_signal_emit(term->base, "bell,ring", "terminology");
           }
      }
+   if ((term->missed_bell) && (term->config->show_tabs)
+       && (tc->parent->type == TERM_CONTAINER_TYPE_SPLIT))
+     {
+        edje_object_signal_emit(term->bg, "tab,bell,on", "terminology");
+     }
+   edje_object_message_signal_process(term->bg);
    tc->parent->bell(tc->parent, tc);
 }
 
@@ -599,6 +606,11 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
      return;
 
    term->missed_bell = EINA_FALSE;
+   if ((term->config->show_tabs)
+       && (tc->parent->type == TERM_CONTAINER_TYPE_SPLIT))
+     {
+        edje_object_signal_emit(term->bg, "tab,bell,off", "terminology");
+     }
 
    if (tc->parent != relative)
      {
@@ -626,6 +638,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
 
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
+   edje_object_message_signal_process(term->bg);
 }
 
 static Eina_Bool

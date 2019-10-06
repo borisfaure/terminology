@@ -7,6 +7,12 @@ color_classes {
 #include "default_colors.in.edc"
 }
 #endif
+#ifndef BG_COLOR_BELL_NO_ALPHA
+#define BG_COLOR_BELL_NO_ALPHA BG_COLOR_NO_ALPHA
+#endif
+#ifndef FG_COLOR_BELL_NO_ALPHA
+#define FG_COLOR_BELL_NO_ALPHA  255 153  51
+#endif
 
 efl_version: 1 20;
 
@@ -1414,6 +1420,21 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+            description { state: "bell" 0.0;
+               inherit: "tab" 0.0;
+               color: FG_COLOR_BELL_NO_ALPHA 255;
+               color3: BG_COLOR_BELL_NO_ALPHA 18;
+            }
+         }
+         program { name: "tab,bell,on";
+            signal: "tab,bell,on"; source: "terminology";
+            action: STATE_SET "bell" 0.0;
+            target: "tabtitle";
+         }
+         program { name: "tab,bell,off";
+            signal: "tab,bell,off"; source: "terminology";
+            action: STATE_SET "tab" 0.0;
+            target: "tabtitle";
          }
          part { name: "tablimit0"; type: SPACER;
             description { state: "default" 0.0;
