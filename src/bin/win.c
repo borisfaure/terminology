@@ -4086,6 +4086,20 @@ _cb_media_loop(void *data,
 }
 
 static void
+_popmedia_queue_free(Term *term)
+{
+   struct Pop_Media *pm;
+   if (!term->popmedia_queue)
+     return;
+
+   EINA_LIST_FREE(term->popmedia_queue, pm)
+     {
+        eina_stringshare_del(pm->src);
+        free(pm);
+     }
+}
+
+static void
 _popmedia_queue_add(Term *term, const char *src,
                     Eina_Bool from_user_interaction)
 {
@@ -4102,6 +4116,22 @@ _popmedia_queue_add(Term *term, const char *src,
      _popmedia_queue_process(term);
 }
 
+static void
+_popmedia_now(Term *term, const char *src,
+              Eina_Bool from_user_interaction)
+{
+   struct Pop_Media *pm;
+
+   /* Flush queue */
+   EINA_LIST_FREE(term->popmedia_queue, pm)
+     {
+        eina_stringshare_del(pm->src);
+     }
+   edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
+
+   _popmedia_queue_add(term, src, from_user_interaction);
+}
+
 
 static void
 _popmedia_show(Term *term, const char *src, Media_Type type)
@@ -4109,21 +4139,8 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
    Evas_Object *o;
    Config *config = termio_config_get(term->termio);
 
+   assert(!term->popmedia);
    EINA_SAFETY_ON_NULL_RETURN(config);
-   if (term->popmedia)
-     {
-        struct Pop_Media *pm;
-
-        /* Flush queue */
-        EINA_LIST_FREE(term->popmedia_queue, pm)
-          {
-             eina_stringshare_del(pm->src);
-          }
-        /* queue new item */
-        _popmedia_queue_add(term, src, EINA_FALSE);
-        edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
-        return;
-     }
    termio_mouseover_suspend_pushpop(term->termio, 1);
    term->popmedia = o = media_add(win_evas_object_get(term->wn),
                                   src, config, MEDIA_POP, type);
@@ -4268,7 +4285,7 @@ error:
 #endif
 
 static void
-_popmedia(Term *term, const char *src, Eina_Bool from_user_interaction)
+_popmedia_unknown(Term *term, const char *src, Eina_Bool from_user_interaction)
 {
    Media_Type type;
    Config *config = termio_config_get(term->termio);
@@ -4337,7 +4354,7 @@ _popmedia_queue_process(Term *term)
                                                 term->popmedia_queue);
    if (!pm)
      return;
-   _popmedia(term, pm->src, pm->from_user_interaction);
+   _popmedia_unknown(term, pm->src, pm->from_user_interaction);
    eina_stringshare_del(pm->src);
    free(pm);
 }
@@ -4359,7 +4376,7 @@ _cb_popup(void *data,
      }
    if (!src)
      return;
-   _popmedia(term, src, from_user_interaction);
+   _popmedia_unknown(term, src, from_user_interaction);
    if (!event)
      free((void*)src);
 }
@@ -5100,7 +5117,7 @@ _cb_command(void *data,
      {
         if (cmd[1] == 'n') // now
           {
-             _popmedia(term, cmd + 2, EINA_FALSE);
+             _popmedia_now(term, cmd + 2, EINA_FALSE);
           }
         else if (cmd[1] == 'q') // queue it to display after current one
           {
@@ -5586,8 +5603,6 @@ main_config_sync(const Config *config)
 static void
 _term_free(Term *term)
 {
-   const char *s;
-
    if (term->sendfile_request)
      {
         evas_object_del(term->sendfile_request);
@@ -5613,10 +5628,7 @@ _term_free(Term *term)
         eina_stringshare_del(term->sendfile_dir);
         term->sendfile_dir = NULL;
      }
-   EINA_LIST_FREE(term->popmedia_queue, s)
-     {
-        eina_stringshare_del(s);
-     }
+   _popmedia_queue_free(term);
    if (term->media)
      {
         evas_object_event_callback_del(term->media,
