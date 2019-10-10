@@ -37,7 +37,8 @@ main(int argc, char **argv)
 
         path = argv[i];
         if (realpath(path, buf)) path = buf;
-        snprintf(tbuf, sizeof(tbuf), "%c}pn%s", 0x1b, path);
+        snprintf(tbuf, sizeof(tbuf), "%c}p%c%s", 0x1b,
+                 (i == 1) ? 'n': 'q', path);
         if (write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1)) perror("write");
      }
    return 0;
