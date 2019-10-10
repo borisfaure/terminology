@@ -4016,80 +4016,11 @@ _tabs_new(Term_Container *child, Term_Container *parent)
 
 
 /* }}} */
-/* {{{ Term */
-
-Eina_Bool
-term_is_visible(Term *term)
-{
-   Term_Container *tc;
-
-   if (!term)
-     return EINA_FALSE;
-
-   tc = term->container;
-   if (!tc)
-     return EINA_FALSE;
-
-   return tc->is_visible(tc, tc);
-}
-
-void
-background_set_shine(Config *config, Evas_Object *bg)
-{
-   Edje_Message_Int msg;
-
-   if (config)
-     msg.val = config->shine;
-   else
-     msg.val = 255;
-
-   if (bg)
-       edje_object_message_send(bg, EDJE_MESSAGE_INT, 2, &msg);
-}
-
-void
-term_apply_shine(Term *term, int shine)
-{
-   Config *config = term->config;
-
-   if (config->shine != shine)
-     {
-        config->shine = shine;
-        background_set_shine(config, term->bg);
-        config_save(config);
-     }
-}
-
-
-static void
-_set_trans(Config *config, Evas_Object *bg, Evas_Object *base)
-{
-   Edje_Message_Int msg;
-
-   if (config && config->translucent)
-     msg.val = config->opacity;
-   else
-     msg.val = 100;
-
-   if (bg)
-       edje_object_message_send(bg, EDJE_MESSAGE_INT, 1, &msg);
-   if (base) {
-       Evas_Object *edje = elm_layout_edje_get(base);
-       edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
-   }
-}
-
-static void
-_term_config_set(Term *term, Config *config)
-{
-   Config *old_config = term->config;
-
-   term->config = config;
-   termio_config_set(term->termio, config);
-   _term_media_update(term, term->config);
-   if (old_config != term->wn->config)
-     config_del(old_config);
-}
+/* {{{ Popup Media */
+struct Pop_Media {
+     const char *src;
+     Eina_Bool from_user_interaction;
+};
 
 Eina_Bool
 term_has_popmedia(const Term *term)
@@ -4103,181 +4034,6 @@ term_popmedia_close(Term *term)
    if (term->popmedia)
      edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
 }
-
-
-Eina_Bool
-term_is_focused(Term *term)
-{
-   Term_Container *tc;
-
-   if (!term)
-     return EINA_FALSE;
-
-   tc = term->container;
-   if (!tc)
-     return EINA_FALSE;
-
-   DBG("tc:%p tc->is_focused:%d", tc, tc->is_focused);
-   return tc->is_focused;
-}
-
-void change_theme(Evas_Object *win, Config *config)
-{
-   const Eina_List *terms, *l;
-   Term *term;
-
-   terms = terms_from_win_object(win);
-   if (!terms) return;
-
-   EINA_LIST_FOREACH(terms, l, term)
-     {
-        Evas_Object *edje = term->bg;
-
-        if (!theme_apply(edje, config, "terminology/background"))
-          ERR("Couldn't find terminology theme!");
-        colors_term_init(termio_textgrid_get(term->termio), edje, config);
-        termio_config_set(term->termio, config);
-     }
-
-   l = elm_theme_overlay_list_get(NULL);
-   if (l) l = eina_list_last(l);
-   if (l) elm_theme_overlay_del(NULL, l->data);
-   elm_theme_overlay_add(NULL, config_theme_path_get(config));
-   main_trans_update(config);
-}
-
-void
-term_focus(Term *term)
-{
-   Term_Container *tc;
-
-   DBG("is focused? tc:%p", term->container);
-   if (term_is_focused(term))
-     return;
-
-   tc = term->container;
-   DBG("tc:%p", tc);
-   tc->focus(tc, tc);
-}
-
-void
-term_unfocus(Term *term)
-{
-   Term_Container *tc;
-
-   DBG("is focused? tc:%p", term->container);
-   if (!term_is_focused(term))
-     return;
-
-   tc = term->container;
-   DBG("tc:%p", tc);
-   tc->unfocus(tc, tc);
-}
-
-enum term_to_direction {
-     TERM_TO_PREV,
-     TERM_TO_NEXT,
-     TERM_TO_UP,
-     TERM_TO_DOWN,
-     TERM_TO_LEFT,
-     TERM_TO_RIGHT,
-};
-
-static void
-term_go_to(Term *from, enum term_to_direction dir)
-{
-   Term *new_term, *focused_term;
-   Win *wn = from->wn;
-   Term_Container *tc;
-
-   tc = (Term_Container *) wn;
-
-   focused_term = tc->focused_term_get(tc);
-   if (!focused_term)
-     focused_term = from;
-   tc = focused_term->container;
-
-   switch (dir)
-     {
-      case TERM_TO_PREV:
-         new_term = tc->term_prev(tc, tc);
-         break;
-      case TERM_TO_NEXT:
-         new_term = tc->term_next(tc, tc);
-         break;
-      case TERM_TO_UP:
-         new_term = tc->term_up(tc, tc);
-         break;
-      case TERM_TO_DOWN:
-         new_term = tc->term_down(tc, tc);
-         break;
-      case TERM_TO_LEFT:
-         new_term = tc->term_left(tc, tc);
-         break;
-      case TERM_TO_RIGHT:
-         new_term = tc->term_right(tc, tc);
-         break;
-     }
-
-   if (new_term && new_term != focused_term)
-     term_focus(new_term);
-
-   /* TODO: get rid of it? */
-   _term_miniview_check(from);
-}
-
-void
-term_prev(Term *term)
-{
-   term_go_to(term, TERM_TO_PREV);
-}
-
-void
-term_next(Term *term)
-{
-   term_go_to(term, TERM_TO_NEXT);
-}
-
-void
-term_up(Term *term)
-{
-   term_go_to(term, TERM_TO_UP);
-}
-
-void
-term_down(Term *term)
-{
-   term_go_to(term, TERM_TO_DOWN);
-}
-
-void
-term_left(Term *term)
-{
-   term_go_to(term, TERM_TO_LEFT);
-}
-
-void
-term_right(Term *term)
-{
-   term_go_to(term, TERM_TO_RIGHT);
-}
-
-Term *
-term_prev_get(const Term *term)
-{
-   Term_Container *tc = term->container;
-
-   return tc->term_prev(tc, tc);
-}
-
-Term *
-term_next_get(const Term *term)
-{
-   Term_Container *tc = term->container;
-
-   return tc->term_next(tc, tc);
-}
-
 
 static void
 _cb_popmedia_del(void *data,
@@ -4551,6 +4307,335 @@ error:
      }
 }
 
+
+
+static void
+_popmedia_queue_process(Term *term)
+{
+   struct Pop_Media *pm;
+
+   if (!term->popmedia_queue)
+     return;
+   pm = term->popmedia_queue->data;
+   term->popmedia_queue = eina_list_remove_list(term->popmedia_queue,
+                                                term->popmedia_queue);
+   if (!pm)
+     return;
+   _popmedia(term, pm->src, pm->from_user_interaction);
+   eina_stringshare_del(pm->src);
+   free(pm);
+}
+
+static void
+_popmedia_queue_add(Term *term, const char *src,
+                    Eina_Bool from_user_interaction)
+{
+   struct Pop_Media *pm = calloc(1, sizeof(struct Pop_Media));
+
+   if (!pm)
+     return;
+
+   pm->src = eina_stringshare_add(src);
+   pm->from_user_interaction = from_user_interaction;
+
+   term->popmedia_queue = eina_list_append(term->popmedia_queue, pm);
+   if (!term->popmedia)
+     _popmedia_queue_process(term);
+}
+
+static void
+_cb_popup(void *data,
+          Evas_Object *_obj EINA_UNUSED,
+          void *event)
+{
+   Term *term = data;
+   const char *src = event;
+   Eina_Bool from_user_interaction = EINA_FALSE;
+
+   if (!src)
+     {
+        /* Popup a link, there was user interaction on it. */
+        from_user_interaction = EINA_TRUE;
+        src = termio_link_get(term->termio, NULL);
+     }
+   if (!src)
+     return;
+   _popmedia(term, src, from_user_interaction);
+   if (!event)
+     free((void*)src);
+}
+
+static void
+_cb_popup_queue(void *data,
+                Evas_Object *_obj EINA_UNUSED,
+                void *event)
+{
+   Term *term = data;
+   const char *src = event;
+   Eina_Bool from_user_interaction = EINA_FALSE;
+
+   if (!src)
+     {
+        from_user_interaction = EINA_TRUE;
+        src = termio_link_get(term->termio, NULL);
+     }
+   if (!src)
+     return;
+   _popmedia_queue_add(term, src, from_user_interaction);
+   if (!event)
+     free((void*)src);
+}
+
+/* }}} */
+/* {{{ Term */
+
+Eina_Bool
+term_is_visible(Term *term)
+{
+   Term_Container *tc;
+
+   if (!term)
+     return EINA_FALSE;
+
+   tc = term->container;
+   if (!tc)
+     return EINA_FALSE;
+
+   return tc->is_visible(tc, tc);
+}
+
+void
+background_set_shine(Config *config, Evas_Object *bg)
+{
+   Edje_Message_Int msg;
+
+   if (config)
+     msg.val = config->shine;
+   else
+     msg.val = 255;
+
+   if (bg)
+       edje_object_message_send(bg, EDJE_MESSAGE_INT, 2, &msg);
+}
+
+void
+term_apply_shine(Term *term, int shine)
+{
+   Config *config = term->config;
+
+   if (config->shine != shine)
+     {
+        config->shine = shine;
+        background_set_shine(config, term->bg);
+        config_save(config);
+     }
+}
+
+
+static void
+_set_trans(Config *config, Evas_Object *bg, Evas_Object *base)
+{
+   Edje_Message_Int msg;
+
+   if (config && config->translucent)
+     msg.val = config->opacity;
+   else
+     msg.val = 100;
+
+   if (bg)
+       edje_object_message_send(bg, EDJE_MESSAGE_INT, 1, &msg);
+   if (base) {
+       Evas_Object *edje = elm_layout_edje_get(base);
+       edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
+   }
+}
+
+static void
+_term_config_set(Term *term, Config *config)
+{
+   Config *old_config = term->config;
+
+   term->config = config;
+   termio_config_set(term->termio, config);
+   _term_media_update(term, term->config);
+   if (old_config != term->wn->config)
+     config_del(old_config);
+}
+
+Eina_Bool
+term_is_focused(Term *term)
+{
+   Term_Container *tc;
+
+   if (!term)
+     return EINA_FALSE;
+
+   tc = term->container;
+   if (!tc)
+     return EINA_FALSE;
+
+   DBG("tc:%p tc->is_focused:%d", tc, tc->is_focused);
+   return tc->is_focused;
+}
+
+void change_theme(Evas_Object *win, Config *config)
+{
+   const Eina_List *terms, *l;
+   Term *term;
+
+   terms = terms_from_win_object(win);
+   if (!terms) return;
+
+   EINA_LIST_FOREACH(terms, l, term)
+     {
+        Evas_Object *edje = term->bg;
+
+        if (!theme_apply(edje, config, "terminology/background"))
+          ERR("Couldn't find terminology theme!");
+        colors_term_init(termio_textgrid_get(term->termio), edje, config);
+        termio_config_set(term->termio, config);
+     }
+
+   l = elm_theme_overlay_list_get(NULL);
+   if (l) l = eina_list_last(l);
+   if (l) elm_theme_overlay_del(NULL, l->data);
+   elm_theme_overlay_add(NULL, config_theme_path_get(config));
+   main_trans_update(config);
+}
+
+void
+term_focus(Term *term)
+{
+   Term_Container *tc;
+
+   DBG("is focused? tc:%p", term->container);
+   if (term_is_focused(term))
+     return;
+
+   tc = term->container;
+   DBG("tc:%p", tc);
+   tc->focus(tc, tc);
+}
+
+void
+term_unfocus(Term *term)
+{
+   Term_Container *tc;
+
+   DBG("is focused? tc:%p", term->container);
+   if (!term_is_focused(term))
+     return;
+
+   tc = term->container;
+   DBG("tc:%p", tc);
+   tc->unfocus(tc, tc);
+}
+
+enum term_to_direction {
+     TERM_TO_PREV,
+     TERM_TO_NEXT,
+     TERM_TO_UP,
+     TERM_TO_DOWN,
+     TERM_TO_LEFT,
+     TERM_TO_RIGHT,
+};
+
+static void
+term_go_to(Term *from, enum term_to_direction dir)
+{
+   Term *new_term, *focused_term;
+   Win *wn = from->wn;
+   Term_Container *tc;
+
+   tc = (Term_Container *) wn;
+
+   focused_term = tc->focused_term_get(tc);
+   if (!focused_term)
+     focused_term = from;
+   tc = focused_term->container;
+
+   switch (dir)
+     {
+      case TERM_TO_PREV:
+         new_term = tc->term_prev(tc, tc);
+         break;
+      case TERM_TO_NEXT:
+         new_term = tc->term_next(tc, tc);
+         break;
+      case TERM_TO_UP:
+         new_term = tc->term_up(tc, tc);
+         break;
+      case TERM_TO_DOWN:
+         new_term = tc->term_down(tc, tc);
+         break;
+      case TERM_TO_LEFT:
+         new_term = tc->term_left(tc, tc);
+         break;
+      case TERM_TO_RIGHT:
+         new_term = tc->term_right(tc, tc);
+         break;
+     }
+
+   if (new_term && new_term != focused_term)
+     term_focus(new_term);
+
+   /* TODO: get rid of it? */
+   _term_miniview_check(from);
+}
+
+void
+term_prev(Term *term)
+{
+   term_go_to(term, TERM_TO_PREV);
+}
+
+void
+term_next(Term *term)
+{
+   term_go_to(term, TERM_TO_NEXT);
+}
+
+void
+term_up(Term *term)
+{
+   term_go_to(term, TERM_TO_UP);
+}
+
+void
+term_down(Term *term)
+{
+   term_go_to(term, TERM_TO_DOWN);
+}
+
+void
+term_left(Term *term)
+{
+   term_go_to(term, TERM_TO_LEFT);
+}
+
+void
+term_right(Term *term)
+{
+   term_go_to(term, TERM_TO_RIGHT);
+}
+
+Term *
+term_prev_get(const Term *term)
+{
+   Term_Container *tc = term->container;
+
+   return tc->term_prev(tc, tc);
+}
+
+Term *
+term_next_get(const Term *term)
+{
+   Term_Container *tc = term->container;
+
+   return tc->term_next(tc, tc);
+}
+
+
 static void
 _term_miniview_check(Term *term)
 {
@@ -4719,88 +4804,6 @@ term_set_title(Term *term)
    evas_object_show(popup);
 
    elm_object_focus_set(o, EINA_TRUE);
-}
-
-struct Pop_Media {
-     const char *src;
-     Eina_Bool from_user_interaction;
-};
-
-static void
-_popmedia_queue_process(Term *term)
-{
-   struct Pop_Media *pm;
-
-   if (!term->popmedia_queue)
-     return;
-   pm = term->popmedia_queue->data;
-   term->popmedia_queue = eina_list_remove_list(term->popmedia_queue,
-                                                term->popmedia_queue);
-   if (!pm)
-     return;
-   _popmedia(term, pm->src, pm->from_user_interaction);
-   eina_stringshare_del(pm->src);
-   free(pm);
-}
-
-static void
-_popmedia_queue_add(Term *term, const char *src,
-                    Eina_Bool from_user_interaction)
-{
-   struct Pop_Media *pm = calloc(1, sizeof(struct Pop_Media));
-
-   if (!pm)
-     return;
-
-   pm->src = eina_stringshare_add(src);
-   pm->from_user_interaction = from_user_interaction;
-
-   term->popmedia_queue = eina_list_append(term->popmedia_queue, pm);
-   if (!term->popmedia)
-     _popmedia_queue_process(term);
-}
-
-static void
-_cb_popup(void *data,
-          Evas_Object *_obj EINA_UNUSED,
-          void *event)
-{
-   Term *term = data;
-   const char *src = event;
-   Eina_Bool from_user_interaction = EINA_FALSE;
-
-   if (!src)
-     {
-        /* Popup a link, there was user interaction on it. */
-        from_user_interaction = EINA_TRUE;
-        src = termio_link_get(term->termio, NULL);
-     }
-   if (!src)
-     return;
-   _popmedia(term, src, from_user_interaction);
-   if (!event)
-     free((void*)src);
-}
-
-static void
-_cb_popup_queue(void *data,
-                Evas_Object *_obj EINA_UNUSED,
-                void *event)
-{
-   Term *term = data;
-   const char *src = event;
-   Eina_Bool from_user_interaction = EINA_FALSE;
-
-   if (!src)
-     {
-        from_user_interaction = EINA_TRUE;
-        src = termio_link_get(term->termio, NULL);
-     }
-   if (!src)
-     return;
-   _popmedia_queue_add(term, src, from_user_interaction);
-   if (!event)
-     free((void*)src);
 }
 
 static void
