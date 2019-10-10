@@ -4086,6 +4086,24 @@ _cb_media_loop(void *data,
 }
 
 static void
+_popmedia_queue_add(Term *term, const char *src,
+                    Eina_Bool from_user_interaction)
+{
+   struct Pop_Media *pm = calloc(1, sizeof(struct Pop_Media));
+
+   if (!pm)
+     return;
+
+   pm->src = eina_stringshare_add(src);
+   pm->from_user_interaction = from_user_interaction;
+
+   term->popmedia_queue = eina_list_append(term->popmedia_queue, pm);
+   if (!term->popmedia)
+     _popmedia_queue_process(term);
+}
+
+
+static void
 _popmedia_show(Term *term, const char *src, Media_Type type)
 {
    Evas_Object *o;
@@ -4094,14 +4112,15 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
    EINA_SAFETY_ON_NULL_RETURN(config);
    if (term->popmedia)
      {
-        const char *s;
+        struct Pop_Media *pm;
 
-        EINA_LIST_FREE(term->popmedia_queue, s)
+        /* Flush queue */
+        EINA_LIST_FREE(term->popmedia_queue, pm)
           {
-             eina_stringshare_del(s);
+             eina_stringshare_del(pm->src);
           }
-        term->popmedia_queue = eina_list_append(term->popmedia_queue,
-                                                eina_stringshare_add(src));
+        /* queue new item */
+        _popmedia_queue_add(term, src, EINA_FALSE);
         edje_object_signal_emit(term->bg, "popmedia,off", "terminology");
         return;
      }
@@ -4161,7 +4180,6 @@ _ty_http_head_delete(Ty_Http_Head *ty_head)
 
    free(ty_head);
 }
-
 
 static Eina_Bool
 _media_http_head_timeout(void *data)
@@ -4307,8 +4325,6 @@ error:
      }
 }
 
-
-
 static void
 _popmedia_queue_process(Term *term)
 {
@@ -4324,23 +4340,6 @@ _popmedia_queue_process(Term *term)
    _popmedia(term, pm->src, pm->from_user_interaction);
    eina_stringshare_del(pm->src);
    free(pm);
-}
-
-static void
-_popmedia_queue_add(Term *term, const char *src,
-                    Eina_Bool from_user_interaction)
-{
-   struct Pop_Media *pm = calloc(1, sizeof(struct Pop_Media));
-
-   if (!pm)
-     return;
-
-   pm->src = eina_stringshare_add(src);
-   pm->from_user_interaction = from_user_interaction;
-
-   term->popmedia_queue = eina_list_append(term->popmedia_queue, pm);
-   if (!term->popmedia)
-     _popmedia_queue_process(term);
 }
 
 static void
