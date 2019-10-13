@@ -1,7 +1,6 @@
 #include "private.h"
 
 #include <Ecore.h>
-#include <Ecore_Con.h>
 #include <Ecore_Ipc.h>
 #include <Eet.h>
 #include "ipc.h"
@@ -172,19 +171,6 @@ ipc_instance_new_func_set(void (*func) (Ipc_Instance *inst))
    func_new_inst = func;
 }
 
-void
-ipc_instance_conn_free(void)
-{
-   char *hash = _ipc_hash_get();
-   char *address = ecore_con_local_path_new(EINA_FALSE,
-                                            hash,
-                                            0);
-   errno = 0;
-   unlink(address);
-   ERR("unlinking: '%s': %s", address, strerror(errno));
-   free(address);
-}
-
 Eina_Bool
 ipc_instance_add(Ipc_Instance *inst)
 {
@@ -192,7 +178,7 @@ ipc_instance_add(Ipc_Instance *inst)
    void *data;
    char *hash = _ipc_hash_get();
    Ecore_Ipc_Server *ipcsrv;
-
+   
    if (!hash) return EINA_FALSE;
    data = eet_data_descriptor_encode(new_inst_edd, inst, &size);
    if (!data)
@@ -200,7 +186,6 @@ ipc_instance_add(Ipc_Instance *inst)
         free(hash);
         return EINA_FALSE;
      }
-
    ipcsrv = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, hash, 0, NULL);
    if (ipcsrv)
      {
@@ -210,10 +195,6 @@ ipc_instance_add(Ipc_Instance *inst)
         free(hash);
         ecore_ipc_server_del(ipcsrv);
         return EINA_TRUE;
-     }
-   else
-     {
-        DBG("connect failed");
      }
    free(data);
    free(hash);
