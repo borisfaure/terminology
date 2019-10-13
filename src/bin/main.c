@@ -468,65 +468,279 @@ _log_void(const Eina_Log_Domain *_d EINA_UNUSED,
 }
 #endif
 
+static void
+_start(Ipc_Instance *instance)
+{
+   Win *wn;
+   Evas_Object *win;
+   Term *term;
+   Config *config;
+
+   wn = win_new(instance->name, instance->role, instance->title,
+                instance->icon_name, instance->config,
+                instance->fullscreen, instance->iconic, instance->borderless,
+                instance->override, instance->maximized);
+   // set an env so terminal apps can detect they are in terminology :)
+   putenv("TERMINOLOGY=1");
+   unsetenv("DESKTOP_STARTUP_ID");
+
+   config_del(instance->config);
+   config = NULL;
+   if (!wn)
+     {
+        CRITICAL(_("Could not create window."));
+        goto exit;
+     }
+
+   config = win_config_get(wn);
+
+   term = term_new(wn, config, instance->cmd, instance->login_shell,
+                   instance->cd,
+                   instance->w, instance->h, instance->hold, instance->title);
+   if (!term)
+     {
+        CRITICAL(_("Could not create terminal widget."));
+        config = NULL;
+        goto exit;
+     }
+
+   if (win_term_set(wn, term) < 0)
+     {
+        goto exit;
+     }
+
+   main_trans_update(config);
+   main_media_update(config);
+   win_sizing_handle(wn);
+   win = win_evas_object_get(wn);
+   evas_object_show(win);
+   if (instance->startup_split)
+     {
+        unsigned int i = 0;
+        Eina_List *cmds_list = NULL;
+        Term *next = term;
+
+        for (i = 0; i < strlen(instance->startup_split); i++)
+          {
+             char *cmd = NULL;
+
+             if (instance->startup_split[i] == 'v')
+               {
+                  cmd = cmds_list ? cmds_list->data : NULL;
+                  split_vertically(win_evas_object_get(term_win_get(next)),
+                                   term_termio_get(next), cmd);
+                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
+               }
+             else if (instance->startup_split[i] == 'h')
+               {
+                  cmd = cmds_list ? cmds_list->data : NULL;
+                  split_horizontally(win_evas_object_get(term_win_get(next)),
+                                     term_termio_get(next), cmd);
+                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
+               }
+             else if (instance->startup_split[i] == '-')
+               next = term_next_get(next);
+             else
+               {
+                  CRITICAL(_("invalid argument found for option -S/--split."
+                             " See --help."));
+                  goto end;
+               }
+          }
+        if (cmds_list)
+          eina_list_free(cmds_list);
+     }
+   if (instance->pos)
+     {
+        int screen_w, screen_h;
+
+        elm_win_screen_size_get(win, NULL, NULL, &screen_w, &screen_h);
+        if (instance->x < 0) instance->x = screen_w + instance->x;
+        if (instance->y < 0) instance->y = screen_h + instance->y;
+        evas_object_move(win, instance->x, instance->y);
+     }
+   if (instance->nowm)
+      ecore_evas_focus_set(ecore_evas_ecore_evas_get(
+            evas_object_evas_get(win)), 1);
+
+   controls_init();
+
+   win_scale_wizard(win, term);
+
+   terminology_starting_up = EINA_FALSE;
+
+
+end:
+   return;
+exit:
+   ecore_main_loop_quit();
+}
+
+struct Instance_Add {
+     Ipc_Instance *instance;
+     char **argv;
+     Eina_Bool result;
+     Eina_Bool timedout;
+     Eina_Bool done;
+     pthread_mutex_t lock;
+};
+
+static void
+_instance_add_free(struct Instance_Add *add)
+{
+   if (!add)
+     return;
+
+   pthread_mutex_destroy(&add->lock);
+   free(add);
+}
+
+
+static void *
+_instance_sleep(void *data)
+{
+   struct Instance_Add *add = data;
+   Eina_Bool timedout = EINA_FALSE;
+
+   sleep(2);
+   pthread_mutex_lock(&add->lock);
+   if (!add->done)
+     timedout = add->timedout = EINA_TRUE;
+   pthread_mutex_unlock(&add->lock);
+   if (timedout)
+     {
+        /* ok, we waited 2 seconds without any answer,
+         * remove the unix socket and restart terminology from scratch in a
+         * better state */
+        ipc_instance_conn_free();
+        execv(add->argv[0], add->argv + 1);
+     }
+   else
+     {
+        _instance_add_free(add);
+     }
+
+   return NULL;
+}
+
+static Eina_Bool
+_instance_add_waiter(Ipc_Instance *instance,
+                     char **argv)
+{
+   struct Instance_Add *add;
+   Eina_Bool timedout = EINA_FALSE;
+   Eina_Bool result = EINA_TRUE;
+   pthread_t thr;
+
+   add = calloc(1, sizeof(*add));
+   if (!add)
+     return EINA_FALSE;
+
+   add->instance = instance;
+   add->argv = argv;
+   pthread_mutex_init(&add->lock, NULL);
+
+   pthread_create(&thr, NULL, &_instance_sleep, add);
+
+   /* If the unix socket is stalled, this might block */
+   result = ipc_instance_add(add->instance);
+   pthread_mutex_lock(&add->lock);
+   /* Hoora, it did not block! */
+   add->done = EINA_TRUE;
+   if (add->timedout)
+       {
+          timedout = add->timedout = EINA_TRUE;
+          result = EINA_FALSE;
+       }
+   pthread_mutex_unlock(&add->lock);
+   if (timedout)
+     _instance_add_free(add);
+
+   return result;
+}
+
+static Eina_Bool
+_start_multi(Ipc_Instance *instance,
+             char **argv)
+{
+   int remote_try = 0;
+   do
+     {
+        if (_instance_add_waiter(instance, argv))
+          {
+             goto exit;
+          }
+        /* Could not start a new window remotely,
+         * let's start our own server */
+        ipc_instance_new_func_set(main_ipc_new);
+        if (ipc_serve())
+          {
+             goto normal_start;
+          }
+        else
+          {
+             DBG("IPC server: failure");
+          }
+        remote_try++;
+     }
+   while (remote_try <= 1);
+
+normal_start:
+   _start(instance);
+   return EINA_FALSE;
+
+exit:
+   return EINA_TRUE;
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   char *cmd = NULL;
-   char *cd = NULL;
    char *theme = NULL;
-   char *background = NULL;
    char *geometry = NULL;
-   char *name = NULL;
-   char *role = NULL;
-   char *title = NULL;
-   char *icon_name = NULL;
-   char *font = NULL;
-   char *startup_split = NULL;
    char *video_module = NULL;
-   Eina_Bool login_shell = 0xff; /* unset */
    Eina_Bool video_mute = 0xff; /* unset */
    Eina_Bool cursor_blink = 0xff; /* unset */
    Eina_Bool visual_bell = 0xff; /* unset */
-   Eina_Bool active_links = 0xff; /* unset */
-   Eina_Bool fullscreen = EINA_FALSE;
-   Eina_Bool iconic = EINA_FALSE;
-   Eina_Bool borderless = EINA_FALSE;
-   Eina_Bool override = EINA_FALSE;
-   Eina_Bool maximized = EINA_FALSE;
-   Eina_Bool nowm = EINA_FALSE;
    Eina_Bool quit_option = EINA_FALSE;
-   Eina_Bool hold = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
    Eina_Bool cmd_options = EINA_FALSE;
    Eina_Bool xterm_256color = EINA_FALSE;
+   Ipc_Instance instance = {
+        .login_shell = 0xff, /* unset */
+        .active_links = 0xff, /* unset */
+        .startup_id = getenv("DESKTOP_STARTUP_ID"),
+        .w = 1,
+        .h = 1,
+   };
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
-     ECORE_GETOPT_VALUE_STR(cd),
+     ECORE_GETOPT_VALUE_STR(instance.cd),
      ECORE_GETOPT_VALUE_STR(theme),
-     ECORE_GETOPT_VALUE_STR(background),
+     ECORE_GETOPT_VALUE_STR(instance.background),
      ECORE_GETOPT_VALUE_STR(geometry),
-     ECORE_GETOPT_VALUE_STR(name),
-     ECORE_GETOPT_VALUE_STR(role),
-     ECORE_GETOPT_VALUE_STR(title),
-     ECORE_GETOPT_VALUE_STR(icon_name),
-     ECORE_GETOPT_VALUE_STR(font),
-     ECORE_GETOPT_VALUE_STR(startup_split),
+     ECORE_GETOPT_VALUE_STR(instance.name),
+     ECORE_GETOPT_VALUE_STR(instance.role),
+     ECORE_GETOPT_VALUE_STR(instance.title),
+     ECORE_GETOPT_VALUE_STR(instance.icon_name),
+     ECORE_GETOPT_VALUE_STR(instance.font),
+     ECORE_GETOPT_VALUE_STR(instance.startup_split),
      ECORE_GETOPT_VALUE_STR(video_module),
 
-     ECORE_GETOPT_VALUE_BOOL(login_shell),
+     ECORE_GETOPT_VALUE_BOOL(instance.login_shell),
      ECORE_GETOPT_VALUE_BOOL(video_mute),
      ECORE_GETOPT_VALUE_BOOL(cursor_blink),
      ECORE_GETOPT_VALUE_BOOL(visual_bell),
-     ECORE_GETOPT_VALUE_BOOL(fullscreen),
-     ECORE_GETOPT_VALUE_BOOL(iconic),
-     ECORE_GETOPT_VALUE_BOOL(borderless),
-     ECORE_GETOPT_VALUE_BOOL(override),
-     ECORE_GETOPT_VALUE_BOOL(maximized),
-     ECORE_GETOPT_VALUE_BOOL(nowm),
-     ECORE_GETOPT_VALUE_BOOL(hold),
+     ECORE_GETOPT_VALUE_BOOL(instance.fullscreen),
+     ECORE_GETOPT_VALUE_BOOL(instance.iconic),
+     ECORE_GETOPT_VALUE_BOOL(instance.borderless),
+     ECORE_GETOPT_VALUE_BOOL(instance.override),
+     ECORE_GETOPT_VALUE_BOOL(instance.maximized),
+     ECORE_GETOPT_VALUE_BOOL(instance.nowm),
+     ECORE_GETOPT_VALUE_BOOL(instance.hold),
      ECORE_GETOPT_VALUE_BOOL(single),
      ECORE_GETOPT_VALUE_BOOL(xterm_256color),
-     ECORE_GETOPT_VALUE_BOOL(active_links),
+     ECORE_GETOPT_VALUE_BOOL(instance.active_links),
 
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -535,16 +749,8 @@ elm_main(int argc, char **argv)
 
      ECORE_GETOPT_VALUE_NONE
    };
-   Win *wn;
-   Term *term;
-   Config *config = NULL;
-   Evas_Object *win;
    int args, retval = EXIT_SUCCESS;
-   int remote_try = 0;
-   int pos_set = 0, size_set = 0;
-   int pos_x = 0, pos_y = 0;
-   int size_w = 1, size_h = 1;
-   Eina_List *cmds_list = NULL;
+   Eina_Bool size_set = EINA_FALSE;
 
    terminology_starting_up = EINA_TRUE;
 
@@ -590,9 +796,12 @@ elm_main(int argc, char **argv)
         goto end;
      }
 
+   ecore_con_init();
+   ecore_con_url_init();
+
    ipc_init();
 
-   config = config_fork(_main_config);
+   instance.config = config_fork(_main_config);
 
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
@@ -606,6 +815,7 @@ elm_main(int argc, char **argv)
 
    if (cmd_options)
      {
+        Eina_List *cmds_list = NULL;
         int i;
 
         if (args == argc)
@@ -615,11 +825,11 @@ elm_main(int argc, char **argv)
              goto end;
           }
 
-        if (startup_split)
+        if (instance.startup_split)
           {
              for(i = args+1; i < argc; i++)
                cmds_list = eina_list_append(cmds_list, argv[i]);
-             cmd = argv[args];
+             instance.cmd = argv[args];
           }
         else
           {
@@ -631,7 +841,7 @@ elm_main(int argc, char **argv)
                   eina_strbuf_append_char(strb, ' ');
                   eina_strbuf_append(strb, argv[i]);
                }
-             cmd = eina_strbuf_string_steal(strb);
+             instance.cmd = eina_strbuf_string_steal(strb);
              eina_strbuf_free(strb);
           }
      }
@@ -654,37 +864,39 @@ elm_main(int argc, char **argv)
         else
           theme_path = theme_path_get(theme_name);
 
-        eina_stringshare_replace(&(config->theme), theme_path);
-        config->temporary = EINA_TRUE;
+        eina_stringshare_replace(&(instance.config->theme), theme_path);
+        instance.config->temporary = EINA_TRUE;
      }
 
-   if (background)
+   if (instance.background)
      {
-        eina_stringshare_replace(&(config->background), background);
-        config->temporary = EINA_TRUE;
+        eina_stringshare_replace(&(instance.config->background),
+                                 instance.background);
+        instance.config->temporary = EINA_TRUE;
      }
 
-   if (font)
+   if (instance.font)
      {
-        char *p = strchr(font, '/');
+        char *p = strchr(instance.font, '/');
         if (p)
           {
              int sz;
-             char *fname = alloca(p - font + 1);
+             char *fname = alloca(p - instance.font + 1);
 
-             strncpy(fname, font, p - font);
-             fname[p - font] = '\0';
+             strncpy(fname, instance.font, p - instance.font);
+             fname[p - instance.font] = '\0';
              sz = atoi(p+1);
-             if (sz > 0) config->font.size = sz;
-             eina_stringshare_replace(&(config->font.name), fname);
-             config->font.bitmap = 0;
-             config->font_set = 1;
+             if (sz > 0)
+               instance.config->font.size = sz;
+             eina_stringshare_replace(&(instance.config->font.name), fname);
+             instance.config->font.bitmap = 0;
+             instance.config->font_set = 1;
           }
         else
           {
              char buf[4096], *file;
              Eina_List *files;
-             int n = strlen(font);
+             int n = strlen(instance.font);
              Eina_Bool found = EINA_FALSE;
 
              snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
@@ -693,12 +905,12 @@ elm_main(int argc, char **argv)
                {
                   if (n > 0)
                     {
-                       if (!strncasecmp(file, font, n))
+                       if (!strncasecmp(file, instance.font, n))
                          {
                             n = -1;
-                            eina_stringshare_replace(&(config->font.name), file);
-                            config->font.bitmap = 1;
-                            config->font_set = 1;
+                            eina_stringshare_replace(&(instance.config->font.name), file);
+                            instance.config->font.bitmap = 1;
+                            instance.config->font_set = 1;
                             found = EINA_TRUE;
                          }
                     }
@@ -706,10 +918,10 @@ elm_main(int argc, char **argv)
                }
              if (!found)
                {
-                  ERR("font '%s' not found in %s", font, buf);
+                  ERR("font '%s' not found in %s", instance.font, buf);
                }
           }
-        config->temporary = EINA_TRUE;
+        instance.config->temporary = EINA_TRUE;
      }
 
    if (video_module)
@@ -723,270 +935,146 @@ elm_main(int argc, char **argv)
 
         if (i == EINA_C_ARRAY_LENGTH(emotion_choices))
           i = 0; /* ecore getopt shouldn't let this happen, but... */
-        config->vidmod = i;
-        config->temporary = EINA_TRUE;
+        instance.config->vidmod = i;
+        instance.config->temporary = EINA_TRUE;
      }
 
    if (video_mute != 0xff)
      {
-        config->mute = video_mute;
-        config->temporary = EINA_TRUE;
+        instance.config->mute = video_mute;
+        instance.config->temporary = EINA_TRUE;
      }
    if (cursor_blink != 0xff)
      {
-        config->disable_cursor_blink = !cursor_blink;
-        config->temporary = EINA_TRUE;
+        instance.config->disable_cursor_blink = !cursor_blink;
+        instance.config->temporary = EINA_TRUE;
      }
    if (visual_bell != 0xff)
      {
-        config->disable_visual_bell = !visual_bell;
-        config->temporary = EINA_TRUE;
+        instance.config->disable_visual_bell = !visual_bell;
+        instance.config->temporary = EINA_TRUE;
      }
-   if (active_links != 0xff)
+   if (instance.active_links != 0xff)
      {
-        config->active_links = !!active_links;
-        config->active_links_email = config->active_links;
-        config->active_links_file = config->active_links;
-        config->active_links_url = config->active_links;
-        config->active_links_escape = config->active_links;
-        config->temporary = EINA_TRUE;
+        instance.config->active_links = !!instance.active_links;
+        instance.config->active_links_email = instance.config->active_links;
+        instance.config->active_links_file = instance.config->active_links;
+        instance.config->active_links_url = instance.config->active_links;
+        instance.config->active_links_escape = instance.config->active_links;
+        instance.config->temporary = EINA_TRUE;
      }
 
    if (xterm_256color)
      {
-        config->xterm_256color = EINA_TRUE;
-        config->temporary = EINA_TRUE;
+        instance.config->xterm_256color = EINA_TRUE;
+        instance.config->temporary = EINA_TRUE;
      }
 
    if (geometry)
      {
-        if (sscanf(geometry,"%ix%i+%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+        if (sscanf(geometry,"%ix%i+%i+%i", &instance.w, &instance.h,
+                   &instance.x, &instance.y) == 4)
           {
-             pos_set = 1;
-             size_set = 1;
+             instance.pos = EINA_TRUE;
+             size_set = EINA_TRUE;
           }
-        else if (sscanf(geometry,"%ix%i-%i+%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+        else if (sscanf(geometry,"%ix%i-%i+%i", &instance.w, &instance.h,
+                        &instance.x, &instance.y) == 4)
           {
-             pos_x = -pos_x;
-             pos_set = 1;
-             size_set = 1;
+             instance.x = -instance.x;
+             instance.pos = EINA_TRUE;
+             size_set = EINA_TRUE;
           }
-        else if (sscanf(geometry,"%ix%i-%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+        else if (sscanf(geometry,"%ix%i-%i-%i", &instance.w, &instance.h,
+                        &instance.x, &instance.y) == 4)
           {
-             pos_x = -pos_x;
-             pos_y = -pos_y;
-             pos_set = 1;
-             size_set = 1;
+             instance.x = -instance.x;
+             instance.y = -instance.y;
+             instance.pos = EINA_TRUE;
+             size_set = EINA_TRUE;
           }
-        else if (sscanf(geometry,"%ix%i+%i-%i", &size_w, &size_h, &pos_x, &pos_y) == 4)
+        else if (sscanf(geometry,"%ix%i+%i-%i", &instance.w, &instance.h,
+                        &instance.x, &instance.y) == 4)
           {
-             pos_y = -pos_y;
-             pos_set = 1;
-             size_set = 1;
+             instance.y = -instance.y;
+             instance.pos = EINA_TRUE;
+             size_set = EINA_TRUE;
           }
-        else if (sscanf(geometry,"%ix%i", &size_w, &size_h) == 2)
+        else if (sscanf(geometry,"%ix%i", &instance.w, &instance.h) == 2)
           {
-             size_set = 1;
+             size_set = EINA_TRUE;
           }
-        else if (sscanf(geometry,"+%i+%i", &pos_x, &pos_y) == 2)
+        else if (sscanf(geometry,"+%i+%i", &instance.x, &instance.y) == 2)
           {
-             pos_set = 1;
+             instance.pos = EINA_TRUE;
           }
-        else if (sscanf(geometry,"-%i+%i", &pos_x, &pos_y) == 2)
+        else if (sscanf(geometry,"-%i+%i", &instance.x, &instance.y) == 2)
           {
-             pos_x = -pos_x;
-             pos_set = 1;
+             instance.x = -instance.x;
+             instance.pos = EINA_TRUE;
           }
-        else if (sscanf(geometry,"+%i-%i", &pos_x, &pos_y) == 2)
+        else if (sscanf(geometry,"+%i-%i", &instance.x, &instance.y) == 2)
           {
-             pos_y = -pos_y;
-             pos_set = 1;
+             instance.y = -instance.y;
+             instance.pos = EINA_TRUE;
           }
-        else if (sscanf(geometry,"-%i-%i", &pos_x, &pos_y) == 2)
+        else if (sscanf(geometry,"-%i-%i", &instance.x, &instance.y) == 2)
           {
-             pos_x = -pos_x;
-             pos_y = -pos_y;
-             pos_set = 1;
+             instance.x = -instance.x;
+             instance.y = -instance.y;
+             instance.pos = EINA_TRUE;
           }
      }
 
    if (!size_set)
      {
-        if (config->custom_geometry)
+        if (instance.config->custom_geometry)
           {
-             size_w = config->cg_width;
-             size_h = config->cg_height;
+             instance.w = instance.config->cg_width;
+             instance.h = instance.config->cg_height;
           }
         else
           {
-             size_w = 80;
-             size_h = 24;
+             instance.w = 80;
+             instance.h = 24;
           }
      }
 
-   if (login_shell != 0xff)
+   if (instance.login_shell != 0xff)
      {
-        config->login_shell = login_shell;
-        config->temporary = EINA_TRUE;
+        instance.config->login_shell = instance.login_shell;
+        instance.config->temporary = EINA_TRUE;
      }
-   login_shell = config->login_shell;
+   instance.login_shell = instance.config->login_shell;
 
-   elm_theme_overlay_add(NULL, config_theme_path_default_get(config));
-   elm_theme_overlay_add(NULL, config_theme_path_get(config));
+   elm_theme_overlay_add(NULL,
+                         config_theme_path_default_get(instance.config));
+   elm_theme_overlay_add(NULL, config_theme_path_get(instance.config));
 
-remote:
-   if ((!single) && (config->multi_instance))
+   if ((!single) && (instance.config->multi_instance))
      {
-        Ipc_Instance inst;
         char cwdbuf[4096];
 
-        memset(&inst, 0, sizeof(Ipc_Instance));
-
-        inst.cmd = cmd;
-        if (cd) inst.cd = cd;
-        else inst.cd = getcwd(cwdbuf, sizeof(cwdbuf));
-        inst.background = background;
-        inst.name = name;
-        inst.role = role;
-        inst.title = title;
-        inst.icon_name = icon_name;
-        inst.font = font;
-        inst.startup_id = getenv("DESKTOP_STARTUP_ID");
-        inst.x = pos_x;
-        inst.y = pos_y;
-        inst.w = size_w;
-        inst.h = size_h;
-        inst.pos = pos_set;
-        inst.login_shell = login_shell;
-        inst.fullscreen = fullscreen;
-        inst.iconic = iconic;
-        inst.borderless = borderless;
-        inst.override = override;
-        inst.maximized = maximized;
-        inst.hold = hold;
-        inst.nowm = nowm;
-        inst.startup_split = startup_split;
-        if (ipc_instance_add(&inst))
+        if (!instance.cd)
+          instance.cd = getcwd(cwdbuf, sizeof(cwdbuf));
+        if (_start_multi(&instance, argv))
           goto end;
      }
-   if ((!single) && (config->multi_instance))
+   else
      {
-        ipc_instance_new_func_set(main_ipc_new);
-        if (!ipc_serve())
-          {
-             if (remote_try < 1)
-               {
-                  remote_try++;
-                  goto remote;
-               }
-          }
+        _start(&instance);
      }
-
-   wn = win_new(name, role, title, icon_name, config,
-                fullscreen, iconic, borderless, override, maximized);
-   // set an env so terminal apps can detect they are in terminology :)
-   putenv("TERMINOLOGY=1");
-   unsetenv("DESKTOP_STARTUP_ID");
-
-   config_del(config);
-   config = NULL;
-   if (!wn)
-     {
-        CRITICAL(_("Could not create window."));
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   config = win_config_get(wn);
-
-   term = term_new(wn, config, cmd, login_shell, cd,
-                   size_w, size_h, hold, title);
-   if (!term)
-     {
-        CRITICAL(_("Could not create terminal widget."));
-        config = NULL;
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   if (win_term_set(wn, term) < 0)
-     {
-        retval = EXIT_FAILURE;
-        goto end;
-     }
-
-   main_trans_update(config);
-   main_media_update(config);
-   win_sizing_handle(wn);
-   win = win_evas_object_get(wn);
-   evas_object_show(win);
-   if (startup_split)
-     {
-        unsigned int i = 0;
-        Term *next = term;
-
-        for (i = 0; i < strlen(startup_split); i++)
-          {
-             if (startup_split[i] == 'v')
-               {
-                  cmd = cmds_list ? cmds_list->data : NULL;
-                  split_vertically(win_evas_object_get(term_win_get(next)),
-                                   term_termio_get(next), cmd);
-                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
-               }
-             else if (startup_split[i] == 'h')
-               {
-                  cmd = cmds_list ? cmds_list->data : NULL;
-                  split_horizontally(win_evas_object_get(term_win_get(next)),
-                                     term_termio_get(next), cmd);
-                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
-               }
-             else if (startup_split[i] == '-')
-               next = term_next_get(next);
-             else
-               {
-                  CRITICAL(_("invalid argument found for option -S/--split."
-                             " See --help."));
-                  goto end;
-               }
-          }
-        if (cmds_list)
-          eina_list_free(cmds_list);
-     }
-   if (pos_set)
-     {
-        int screen_w, screen_h;
-
-        elm_win_screen_size_get(win, NULL, NULL, &screen_w, &screen_h);
-        if (pos_x < 0) pos_x = screen_w + pos_x;
-        if (pos_y < 0) pos_y = screen_h + pos_y;
-        evas_object_move(win, pos_x, pos_y);
-     }
-   if (nowm)
-      ecore_evas_focus_set(ecore_evas_ecore_evas_get(
-            evas_object_evas_get(win)), 1);
-
-   ecore_con_init();
-   ecore_con_url_init();
-
-   controls_init();
-
-   win_scale_wizard(win, term);
-
-   terminology_starting_up = EINA_FALSE;
-
    elm_run();
 
    ecore_con_url_shutdown();
    ecore_con_shutdown();
 
-   config = NULL;
+   instance.config = NULL;
  end:
-   if (!startup_split) free(cmd);
-   if (config)
+   if (instance.config)
      {
-        config_del(config);
-        config = NULL;
+        config_del(instance.config);
+        instance.config = NULL;
      }
 
    ipc_shutdown();
