@@ -613,7 +613,9 @@ _instance_sleep(void *data)
          * remove the unix socket and restart terminology from scratch in a
          * better state */
         ipc_instance_conn_free();
-        execv(add->argv[0], add->argv + 1);
+        errno = 0;
+        execv(add->argv[0], add->argv);
+        ERR("execv failed on '%s': %s", add->argv[0], strerror(errno));
      }
    else
      {
