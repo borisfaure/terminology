@@ -774,6 +774,10 @@ win_free(Win *wn)
           (wn->khdl.imf, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb);
         ecore_imf_context_del(wn->khdl.imf);
      }
+   if (wn->hide_cursor_timer)
+     {
+        ecore_timer_del(wn->hide_cursor_timer);
+     }
    ecore_imf_shutdown();
    free(wn);
 }
