@@ -248,7 +248,6 @@ main_ipc_new(Ipc_Instance *inst)
    win = win_evas_object_get(wn);
    config = win_config_get(wn);
 
-   unsetenv("DESKTOP_STARTUP_ID");
    if (inst->background)
      {
         eina_stringshare_replace(&(config->background), inst->background);
@@ -337,6 +336,7 @@ main_ipc_new(Ipc_Instance *inst)
      (ecore_evas_ecore_evas_get(evas_object_evas_get(win)), 1);
    ecore_app_args_set(pargc, (const char **)pargv);
    free(nargv);
+   unsetenv("DESKTOP_STARTUP_ID");
 }
 
 static const char *emotion_choices[] = {
@@ -482,7 +482,6 @@ _start(Ipc_Instance *instance)
                 instance->override, instance->maximized);
    // set an env so terminal apps can detect they are in terminology :)
    putenv("TERMINOLOGY=1");
-   unsetenv("DESKTOP_STARTUP_ID");
 
    config_del(instance->config);
    config = NULL;
