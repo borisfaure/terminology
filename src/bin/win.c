@@ -6060,11 +6060,11 @@ win_font_update(Term *term)
 void
 windows_free(void)
 {
+   Eina_List *l, *l_next;
    Win *wn;
 
-   while (wins)
+   EINA_LIST_FOREACH_SAFE(wins, l, l_next, wn)
      {
-        wn = eina_list_data_get(wins);
         win_free(wn);
      }
 
