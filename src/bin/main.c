@@ -70,7 +70,7 @@ main_ipc_new(Ipc_Instance *inst)
         char buf[4096];
 
         snprintf(buf, sizeof(buf), "DESKTOP_STARTUP_ID=%s", inst->startup_id);
-        putenv(buf);
+        putenv(strdup(buf));
      }
    ecore_app_args_get(&pargc, &pargv);
    nargc = 1;
