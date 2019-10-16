@@ -16,10 +16,13 @@
 
 typedef struct _Font_Ctx
 {
+   Evas_Object *fr;
+   Evas_Object *opbox;
    Evas_Object *op_fontslider;
    Evas_Object *op_fontlist;
    Evas_Object *op_fsml;
    Evas_Object *op_fbig;
+   Evas_Object *cx;
    Evas_Object *term;
    Eina_List *fonts;
    Eina_Hash *fonthash;
@@ -358,14 +361,16 @@ _cb_term_resize(void *data,
 }
 
 static void
-_cb_font_del(void *data,
-             Evas *_e EINA_UNUSED,
-             Evas_Object *_obj EINA_UNUSED,
-             void *_event EINA_UNUSED)
+_cb_font_bolditalic(void *data,
+                    Evas_Object *obj,
+                    void *_event EINA_UNUSED)
 {
    Font_Ctx *ctx = data;
-   evas_object_event_callback_del_full(ctx->term, EVAS_CALLBACK_RESIZE,
-                                       _cb_term_resize, ctx);
+   Config *config = ctx->config;
+
+   config->font.bolditalic = elm_check_state_get(obj);
+   termio_config_update(ctx->term);
+   config_save(config, NULL);
 }
 
 static void
@@ -385,26 +390,20 @@ _parent_del_cb(void *data,
      }
    eina_hash_free(ctx->fonthash);
 
+   evas_object_event_callback_del_full(ctx->term, EVAS_CALLBACK_RESIZE,
+                                       _cb_term_resize, ctx);
+   evas_object_smart_callback_del_full(ctx->cx, "changed",
+                                       _cb_font_bolditalic, ctx);
+   evas_object_smart_callback_del_full(ctx->op_fontslider, "delay,changed",
+                                       _cb_op_fontsize_sel, ctx);
+
    free(ctx);
-}
-
-static void
-_cb_font_bolditalic(void *data,
-                    Evas_Object *obj,
-                    void *_event EINA_UNUSED)
-{
-   Font_Ctx *ctx = data;
-   Config *config = ctx->config;
-
-   config->font.bolditalic = elm_check_state_get(obj);
-   termio_config_update(ctx->term);
-   config_save(config, NULL);
 }
 
 void
 options_font(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *bx, *fr, *bx0;
+   Evas_Object *o, *bx, *bx0;
    char buf[4096], *file, *fname;
    Eina_List *files, *fontlist, *l;
    Font *f;
@@ -418,21 +417,22 @@ options_font(Evas_Object *opbox, Evas_Object *term)
 
    ctx->config = config;
    ctx->term = term;
+   ctx->opbox = opbox;
 
-   fr = o = elm_frame_add(opbox);
+   ctx->fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(o, _("Font"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
 
-   evas_object_event_callback_add(fr, EVAS_CALLBACK_DEL,
+   evas_object_event_callback_add(ctx->fr, EVAS_CALLBACK_DEL,
                                   _parent_del_cb, ctx);
 
    bx0 = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(fr, o);
+   elm_object_content_set(ctx->fr, o);
    evas_object_show(o);
 
    bx = o = elm_box_add(opbox);
@@ -588,7 +588,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 
-   o = elm_check_add(bx0);
+   ctx->cx = o = elm_check_add(bx0);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(o, _("Display bold and italic in the terminal"));
@@ -602,6 +602,4 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_geometry_get(term, NULL, NULL, &ctx->tsize_w, &ctx->tsize_h);
    evas_object_event_callback_add(term, EVAS_CALLBACK_RESIZE,
                                   _cb_term_resize, ctx);
-   evas_object_event_callback_add(opbox, EVAS_CALLBACK_DEL,
-                                  _cb_font_del, ctx);
 }
