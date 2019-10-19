@@ -11,6 +11,7 @@ struct _Ipc_Instance
    char *cd;
    char *background;
    char *name;
+   char *theme;
    char *role;
    char *title;
    char *icon_name;

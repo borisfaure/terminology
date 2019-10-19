@@ -27,6 +27,30 @@ Eina_Bool multisense_available = EINA_TRUE;
 static Config *_main_config = NULL;
 
 static void
+_set_instance_theme(Ipc_Instance *inst)
+{
+   char path[PATH_MAX];
+   char theme_name[PATH_MAX];
+   const char *theme_path = (const char *)&path;
+
+   if (!inst->theme)
+     return;
+
+   if (eina_str_has_suffix(inst->theme, ".edj"))
+     eina_strlcpy(theme_name, inst->theme, sizeof(theme_name));
+   else
+     snprintf(theme_name, sizeof(theme_name), "%s.edj", inst->theme);
+
+   if (strchr(theme_name, '/'))
+     eina_strlcpy(path, theme_name, sizeof(path));
+   else
+     theme_path = theme_path_get(theme_name);
+
+   eina_stringshare_replace(&(inst->config->theme), theme_path);
+   inst->config->temporary = EINA_TRUE;
+}
+
+static void
 _check_multisense(void)
 {
    int enabled;
@@ -94,6 +118,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->xterm_256color) nargc += 1;
    if (inst->active_links) nargc += 1;
    if (inst->cmd) nargc += 2;
+   if (inst->theme) nargc += 2;
 
    nargv = calloc(nargc + 1, sizeof(char *));
    if (!nargv) return;
@@ -114,6 +139,11 @@ main_ipc_new(Ipc_Instance *inst)
      {
         nargv[i++] = "-n";
         nargv[i++] = (char *)inst->name;
+     }
+   if (inst->theme)
+     {
+        nargv[i++] = "-t";
+        nargv[i++] = (char *)inst->theme;
      }
    if (inst->role)
      {
@@ -247,6 +277,9 @@ main_ipc_new(Ipc_Instance *inst)
 
    win = win_evas_object_get(wn);
    config = win_config_get(wn);
+   inst->config = config;
+
+   _set_instance_theme(inst);
 
    if (inst->background)
      {
@@ -697,7 +730,6 @@ exit:
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   char *theme = NULL;
    char *geometry = NULL;
    char *video_module = NULL;
    Eina_Bool video_mute = 0xff; /* unset */
@@ -717,7 +749,7 @@ elm_main(int argc, char **argv)
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_BOOL(cmd_options),
      ECORE_GETOPT_VALUE_STR(instance.cd),
-     ECORE_GETOPT_VALUE_STR(theme),
+     ECORE_GETOPT_VALUE_STR(instance.theme),
      ECORE_GETOPT_VALUE_STR(instance.background),
      ECORE_GETOPT_VALUE_STR(geometry),
      ECORE_GETOPT_VALUE_STR(instance.name),
@@ -849,25 +881,7 @@ elm_main(int argc, char **argv)
 
    _check_multisense();
 
-   if (theme)
-     {
-        char path[PATH_MAX];
-        char theme_name[PATH_MAX];
-        const char *theme_path = (const char *)&path;
-
-        if (eina_str_has_suffix(theme, ".edj"))
-          eina_strlcpy(theme_name, theme, sizeof(theme_name));
-        else
-          snprintf(theme_name, sizeof(theme_name), "%s.edj", theme);
-
-        if (strchr(theme_name, '/'))
-          eina_strlcpy(path, theme_name, sizeof(path));
-        else
-          theme_path = theme_path_get(theme_name);
-
-        eina_stringshare_replace(&(instance.config->theme), theme_path);
-        instance.config->temporary = EINA_TRUE;
-     }
+   _set_instance_theme(&instance);
 
    if (instance.background)
      {
