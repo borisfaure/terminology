@@ -131,6 +131,16 @@ ipc_init(void)
                                  "hold", hold, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "nowm", nowm, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "xterm_256color", xterm_256color, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "active_links", active_links, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "video_mute", active_links, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "cursor_blink", active_links, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "visual_bell", active_links, EET_T_INT);
 }
 
 Eina_Bool

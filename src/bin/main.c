@@ -51,6 +51,105 @@ _set_instance_theme(Ipc_Instance *inst)
 }
 
 static void
+_configure_instance(Ipc_Instance *inst)
+{
+   Config *config = inst->config;
+
+   _set_instance_theme(inst);
+
+   if (inst->background)
+     {
+        eina_stringshare_replace(&(config->background), inst->background);
+        config->temporary = EINA_TRUE;
+     }
+
+   if (inst->font)
+     {
+        char *p = strchr(inst->font, '/');
+        if (p)
+          {
+             int sz;
+             char *fname = alloca(p - inst->font + 1);
+
+             strncpy(fname, inst->font, p - inst->font);
+             fname[p - inst->font] = '\0';
+             sz = atoi(p+1);
+             if (sz > 0)
+               inst->config->font.size = sz;
+             eina_stringshare_replace(&(inst->config->font.name), fname);
+             inst->config->font.bitmap = EINA_FALSE;
+          }
+        else
+          {
+             char buf[4096], *file;
+             Eina_List *files;
+             int n = strlen(inst->font);
+             Eina_Bool found = EINA_FALSE;
+
+             snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
+             files = ecore_file_ls(buf);
+             EINA_LIST_FREE(files, file)
+               {
+                  if (n > 0)
+                    {
+                       if (!strncasecmp(file, inst->font, n))
+                         {
+                            n = -1;
+                            eina_stringshare_replace(&(inst->config->font.name), file);
+                            inst->config->font.bitmap = EINA_TRUE;
+                            found = EINA_TRUE;
+                         }
+                    }
+                  free(file);
+               }
+             if (!found)
+               {
+                  ERR("font '%s' not found in %s", inst->font, buf);
+               }
+          }
+        config->font_set = EINA_TRUE;
+        config->temporary = EINA_TRUE;
+     }
+
+   if (inst->login_shell)
+     {
+        inst->config->login_shell = inst->login_shell;
+        inst->config->temporary = EINA_TRUE;
+     }
+   inst->login_shell = inst->config->login_shell;
+
+   if (inst->xterm_256color)
+     {
+        inst->config->xterm_256color = EINA_TRUE;
+        inst->config->temporary = EINA_TRUE;
+     }
+   if (inst->video_mute != 0xff)
+     {
+        config->mute = inst->video_mute;
+        config->temporary = EINA_TRUE;
+     }
+   if (inst->cursor_blink != 0xff)
+     {
+        config->disable_cursor_blink = !inst->cursor_blink;
+        config->temporary = EINA_TRUE;
+     }
+   if (inst->visual_bell != 0xff)
+     {
+        config->disable_visual_bell = !inst->visual_bell;
+        config->temporary = EINA_TRUE;
+     }
+   if (inst->active_links != 0xff)
+     {
+        config->active_links = !!inst->active_links;
+        config->active_links_email = inst->config->active_links;
+        config->active_links_file = inst->config->active_links;
+        config->active_links_url = inst->config->active_links;
+        config->active_links_escape = inst->config->active_links;
+        config->temporary = EINA_TRUE;
+     }
+}
+
+static void
 _check_multisense(void)
 {
    int enabled;
@@ -117,6 +216,9 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->nowm) nargc += 1;
    if (inst->xterm_256color) nargc += 1;
    if (inst->active_links) nargc += 1;
+   if (inst->video_mute) nargc += 1;
+   if (inst->cursor_blink) nargc += 1;
+   if (inst->visual_bell) nargc += 1;
    if (inst->cmd) nargc += 2;
    if (inst->theme) nargc += 2;
 
@@ -262,6 +364,19 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
+   if (inst->video_mute)
+     {
+        nargv[i++] = "-m";
+     }
+   if (inst->cursor_blink)
+     {
+        nargv[i++] = "-c";
+     }
+   if (inst->visual_bell)
+     {
+        nargv[i++] = "-G";
+     }
+
 
    ecore_app_args_set(nargc, (const char **)nargv);
    wn = win_new(inst->name, inst->role, inst->title, inst->icon_name,
@@ -279,60 +394,7 @@ main_ipc_new(Ipc_Instance *inst)
    config = win_config_get(wn);
    inst->config = config;
 
-   _set_instance_theme(inst);
-
-   if (inst->background)
-     {
-        eina_stringshare_replace(&(config->background), inst->background);
-        config->temporary = EINA_TRUE;
-     }
-
-   if (inst->font)
-     {
-        if (strchr(inst->font, '/'))
-          {
-             char *fname = alloca(strlen(inst->font) + 1);
-             char *p;
-
-             strcpy(fname, inst->font);
-             p = strrchr(fname, '/');
-             if (p)
-               {
-                  int sz;
-
-                  *p = 0;
-                  p++;
-                  sz = atoi(p);
-                  if (sz > 0) config->font.size = sz;
-                  eina_stringshare_replace(&(config->font.name), fname);
-               }
-             config->font.bitmap = 0;
-          }
-        else
-          {
-             char buf[4096], *file;
-             Eina_List *files;
-             int n = strlen(inst->font);
-
-             snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
-             files = ecore_file_ls(buf);
-             EINA_LIST_FREE(files, file)
-               {
-                  if (n > 0)
-                    {
-                       if (!strncasecmp(file, inst->font, n))
-                         {
-                            n = -1;
-                            eina_stringshare_replace(&(config->font.name), file);
-                            config->font.bitmap = 1;
-                         }
-                    }
-                  free(file);
-               }
-          }
-        config->font_set = EINA_TRUE;
-        config->temporary = EINA_TRUE;
-     }
+   _configure_instance(inst);
 
    if (inst->w <= 0) inst->w = 80;
    if (inst->h <= 0) inst->h = 24;
@@ -732,16 +794,15 @@ elm_main(int argc, char **argv)
 {
    char *geometry = NULL;
    char *video_module = NULL;
-   Eina_Bool video_mute = 0xff; /* unset */
-   Eina_Bool cursor_blink = 0xff; /* unset */
-   Eina_Bool visual_bell = 0xff; /* unset */
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
    Eina_Bool cmd_options = EINA_FALSE;
-   Eina_Bool xterm_256color = EINA_FALSE;
    Ipc_Instance instance = {
         .login_shell = 0xff, /* unset */
         .active_links = 0xff, /* unset */
+        .video_mute = 0xff, /* unset */
+        .cursor_blink = 0xff, /* unset */
+        .visual_bell = 0xff, /* unset */
         .startup_id = getenv("DESKTOP_STARTUP_ID"),
         .w = 1,
         .h = 1,
@@ -761,9 +822,9 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(video_module),
 
      ECORE_GETOPT_VALUE_BOOL(instance.login_shell),
-     ECORE_GETOPT_VALUE_BOOL(video_mute),
-     ECORE_GETOPT_VALUE_BOOL(cursor_blink),
-     ECORE_GETOPT_VALUE_BOOL(visual_bell),
+     ECORE_GETOPT_VALUE_BOOL(instance.video_mute),
+     ECORE_GETOPT_VALUE_BOOL(instance.cursor_blink),
+     ECORE_GETOPT_VALUE_BOOL(instance.visual_bell),
      ECORE_GETOPT_VALUE_BOOL(instance.fullscreen),
      ECORE_GETOPT_VALUE_BOOL(instance.iconic),
      ECORE_GETOPT_VALUE_BOOL(instance.borderless),
@@ -772,7 +833,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(instance.nowm),
      ECORE_GETOPT_VALUE_BOOL(instance.hold),
      ECORE_GETOPT_VALUE_BOOL(single),
-     ECORE_GETOPT_VALUE_BOOL(xterm_256color),
+     ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),
      ECORE_GETOPT_VALUE_BOOL(instance.active_links),
 
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -881,63 +942,8 @@ elm_main(int argc, char **argv)
 
    _check_multisense();
 
-   _set_instance_theme(&instance);
+   _configure_instance(&instance);
 
-   if (instance.background)
-     {
-        eina_stringshare_replace(&(instance.config->background),
-                                 instance.background);
-        instance.config->temporary = EINA_TRUE;
-     }
-
-   if (instance.font)
-     {
-        char *p = strchr(instance.font, '/');
-        if (p)
-          {
-             int sz;
-             char *fname = alloca(p - instance.font + 1);
-
-             strncpy(fname, instance.font, p - instance.font);
-             fname[p - instance.font] = '\0';
-             sz = atoi(p+1);
-             if (sz > 0)
-               instance.config->font.size = sz;
-             eina_stringshare_replace(&(instance.config->font.name), fname);
-             instance.config->font.bitmap = 0;
-             instance.config->font_set = 1;
-          }
-        else
-          {
-             char buf[4096], *file;
-             Eina_List *files;
-             int n = strlen(instance.font);
-             Eina_Bool found = EINA_FALSE;
-
-             snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
-             files = ecore_file_ls(buf);
-             EINA_LIST_FREE(files, file)
-               {
-                  if (n > 0)
-                    {
-                       if (!strncasecmp(file, instance.font, n))
-                         {
-                            n = -1;
-                            eina_stringshare_replace(&(instance.config->font.name), file);
-                            instance.config->font.bitmap = 1;
-                            instance.config->font_set = 1;
-                            found = EINA_TRUE;
-                         }
-                    }
-                  free(file);
-               }
-             if (!found)
-               {
-                  ERR("font '%s' not found in %s", instance.font, buf);
-               }
-          }
-        instance.config->temporary = EINA_TRUE;
-     }
 
    if (video_module)
      {
@@ -954,36 +960,6 @@ elm_main(int argc, char **argv)
         instance.config->temporary = EINA_TRUE;
      }
 
-   if (video_mute != 0xff)
-     {
-        instance.config->mute = video_mute;
-        instance.config->temporary = EINA_TRUE;
-     }
-   if (cursor_blink != 0xff)
-     {
-        instance.config->disable_cursor_blink = !cursor_blink;
-        instance.config->temporary = EINA_TRUE;
-     }
-   if (visual_bell != 0xff)
-     {
-        instance.config->disable_visual_bell = !visual_bell;
-        instance.config->temporary = EINA_TRUE;
-     }
-   if (instance.active_links != 0xff)
-     {
-        instance.config->active_links = !!instance.active_links;
-        instance.config->active_links_email = instance.config->active_links;
-        instance.config->active_links_file = instance.config->active_links;
-        instance.config->active_links_url = instance.config->active_links;
-        instance.config->active_links_escape = instance.config->active_links;
-        instance.config->temporary = EINA_TRUE;
-     }
-
-   if (xterm_256color)
-     {
-        instance.config->xterm_256color = EINA_TRUE;
-        instance.config->temporary = EINA_TRUE;
-     }
 
    if (geometry)
      {
@@ -1054,13 +1030,6 @@ elm_main(int argc, char **argv)
              instance.h = 24;
           }
      }
-
-   if (instance.login_shell != 0xff)
-     {
-        instance.config->login_shell = instance.login_shell;
-        instance.config->temporary = EINA_TRUE;
-     }
-   instance.login_shell = instance.config->login_shell;
 
    elm_theme_overlay_add(NULL,
                          config_theme_path_default_get(instance.config));
