@@ -3324,6 +3324,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
 
    l = _tab_item_find(tabs, child);
    item = l->data;
+   tabs->tabs = eina_list_remove_list(tabs->tabs, l);
 
    next = eina_list_next(l);
    if (!next)
@@ -3331,7 +3332,6 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    next_item = next->data;
    next_child = next_item->tc;
    assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
-   tabs->tabs = eina_list_remove_list(tabs->tabs, l);
 
    assert (child->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*)child;
