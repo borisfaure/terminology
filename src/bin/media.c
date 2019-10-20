@@ -1248,7 +1248,6 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
    if (!_smart) _smart_init();
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return obj;
 
    sd->src = eina_stringshare_add(src);
    sd->config = config;
