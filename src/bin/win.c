@@ -2899,7 +2899,7 @@ _tabbar_fill(Tabs *tabs)
         edje_object_part_swallow(term->bg, "terminology.tabl.content", o);
         evas_object_show(o);
      }
-   //if (i < (n - 1))
+   if (i < (n - 1))
      {
         term->tabbar.r.box = o = elm_box_add(tabs->tc.wn->win);
         elm_box_horizontal_set(o, EINA_TRUE);
@@ -2925,7 +2925,6 @@ _tabbar_fill(Tabs *tabs)
              edje_object_part_text_set(o, "terminology.title",
                                        tab_item->tc->title);
              edje_object_size_min_calc(o, &w, &h);
-             ERR("back: w:%d h:%d", w, h);
              evas_object_size_hint_min_set(o, w, h);
              assert(i != j);
              if (j < i)
@@ -3885,6 +3884,7 @@ _tabs_refresh(Tabs *tabs)
                             term->tabcount_spacer);
    edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
    edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufmissed);
+   edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
    // this is all below just for tab bar at the top
    if (term->config->show_tabs)
      {
@@ -3892,14 +3892,12 @@ _tabs_refresh(Tabs *tabs)
 
         v1 = (double)(i-1) / (double)n;
         v2 = (double)i / (double)n;
-        edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
-        elm_coords_finger_size_adjust(1, &w, 1, &h);
-
         if (!term->tab_spacer)
           {
              term->tab_spacer = evas_object_rectangle_add(
                 evas_object_evas_get(term->bg));
              evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+             elm_coords_finger_size_adjust(1, &w, 1, &h);
              evas_object_size_hint_min_set(term->tab_spacer, w, h);
              edje_object_part_swallow(term->bg, "terminology.tab", term->tab_spacer);
              edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
@@ -3907,24 +3905,24 @@ _tabs_refresh(Tabs *tabs)
              edje_object_part_text_set(term->bg, "terminology.tab.title",
                                        solo->tc.title);
              edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
+             edje_object_message_signal_process(term->bg);
           }
         else
           {
              edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
              edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
+             edje_object_message_signal_process(term->bg);
           }
         _tabbar_fill(tabs);
      }
    else
      {
-        edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
         _tabbar_clear(term);
      }
    if (missed > 0)
      edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
    else
      edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
-   edje_object_message_signal_process(term->bg);
 }
 
 static Tab_Item*
@@ -5790,7 +5788,6 @@ _cb_tabregion_change(void *data,
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_size_hint_min_set(term->tab_region_base, w, h);
-   ERR("tab region %d %d", w ,h);
    elm_layout_content_set(term->base, "terminology.tabregion",
                           term->tab_region_base);
 }
