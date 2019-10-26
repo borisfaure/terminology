@@ -1043,8 +1043,7 @@ _getsel_cb(void *data,
                   int prev_i = i;
                   g = eina_unicode_utf8_next_get(s, &i);
                   /* Skip escape codes as a security measure */
-                  if ((g < '\n') ||
-                      ((g > '\n') && (g < ' ')))
+                  if (! ((g == '\t') || (g == '\n') || (g >= ' ')))
                     {
                        continue;
                     }
