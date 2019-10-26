@@ -442,7 +442,19 @@ collections {
          }
          program {
             signal: "mouse,clicked,1"; source: "tabcount_ev";
-            action: SIGNAL_EMIT "tabcount,go" "terminology";
+            action: SIGNAL_EMIT "tab,go" "terminology";
+         }
+         program {
+            signal: "mouse,clicked,3"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tab,new" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,1"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tab,prev" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tab,next" "terminology";
          }
          program {
             signal: "tabcount,off"; source: "terminology";

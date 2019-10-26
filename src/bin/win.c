@@ -91,7 +91,6 @@ struct _Term
    Evas_Object *sendfile_request;
    Evas_Object *sendfile_progress;
    Evas_Object *sendfile_progress_bar;
-   Evas_Object *tabcount_spacer;
    Evas_Object *tab_spacer;
    Evas_Object *tab_region_base;
    Evas_Object *tab_region_bg;
@@ -3353,11 +3352,13 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         next_term = next_solo->term;
         config = next_term->config;
 
-        edje_object_signal_emit(next_term->bg, "tabcount,off", "terminology");
-        if (next_term->tabcount_spacer && !config->show_tabs)
+        edje_object_signal_emit(term->bg, "tab_btn,off", "terminology");
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
+        if (next_term->tab_spacer && !config->show_tabs)
           {
-             evas_object_del(next_term->tabcount_spacer);
-             next_term->tabcount_spacer = NULL;
+             evas_object_del(next_term->tab_spacer);
+             next_term->tab_spacer = NULL;
           }
         if (config->show_tabs)
           _solo_title_show(next_child);
@@ -3563,10 +3564,10 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
         solo = (Solo*)orig;
         term = solo->term;
         edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
-        if (term->tabcount_spacer)
+        if (term->tab_spacer)
           {
-             evas_object_del(term->tabcount_spacer);
-             term->tabcount_spacer = NULL;
+             evas_object_del(term->tab_spacer);
+             term->tab_spacer = NULL;
           }
 
         o = orig->get_evas_object(orig);
@@ -3872,56 +3873,48 @@ _tabs_refresh(Tabs *tabs)
 
    _tabbar_clear(term);
 
-   if (!term->tabcount_spacer)
+   if (!term->tab_spacer)
      {
-        term->tabcount_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
-        evas_object_color_set(term->tabcount_spacer, 0, 0, 0, 0);
+        term->tab_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
      }
    elm_coords_finger_size_adjust(1, &w, 1, &h);
-   evas_object_size_hint_min_set(term->tabcount_spacer, w, h);
-   edje_object_part_swallow(term->bg, "terminology.tabcount.control",
-                            term->tabcount_spacer);
-   edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
-   edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufmissed);
-   edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
+   evas_object_size_hint_min_set(term->tab_spacer, w, h);
    // this is all below just for tab bar at the top
    if (term->config->show_tabs)
      {
         double v1, v2;
 
+        edje_object_part_swallow(term->bg, "terminology.tab_btn",
+                                 term->tab_spacer);
+
         v1 = (double)(i-1) / (double)n;
         v2 = (double)i / (double)n;
-        if (!term->tab_spacer)
-          {
-             term->tab_spacer = evas_object_rectangle_add(
-                evas_object_evas_get(term->bg));
-             evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
-             elm_coords_finger_size_adjust(1, &w, 1, &h);
-             evas_object_size_hint_min_set(term->tab_spacer, w, h);
-             edje_object_part_swallow(term->bg, "terminology.tab", term->tab_spacer);
-             edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
-             edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
-             edje_object_part_text_set(term->bg, "terminology.tab.title",
-                                       solo->tc.title);
-             edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
-             edje_object_message_signal_process(term->bg);
-          }
-        else
-          {
-             edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
-             edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
-             edje_object_message_signal_process(term->bg);
-          }
+        edje_object_signal_emit(term->bg, "tabcount,off", "terminology");
+
+        edje_object_part_swallow(term->bg, "terminology.tab", term->tab_spacer);
+        edje_object_part_drag_value_set(term->bg, "terminology.tabl", v1, 0.0);
+        edje_object_part_drag_value_set(term->bg, "terminology.tabr", v2, 0.0);
+        edje_object_part_text_set(term->bg, "terminology.tab.title",
+                                  solo->tc.title);
+        edje_object_signal_emit(term->bg, "tabbar,on", "terminology");
+        edje_object_signal_emit(term->bg, "tab_btn,on", "terminology");
         _tabbar_fill(tabs);
      }
    else
      {
+        edje_object_part_swallow(term->bg, "terminology.tabcount.control",
+                                 term->tab_spacer);
+        edje_object_part_text_set(term->bg, "terminology.tabcount.label", buf);
+        edje_object_part_text_set(term->bg, "terminology.tabmissed.label", bufmissed);
+        edje_object_signal_emit(term->bg, "tabcount,on", "terminology");
         _tabbar_clear(term);
+        if (missed > 0)
+          edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
+        else
+          edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
      }
-   if (missed > 0)
-     edje_object_signal_emit(term->bg, "tabmissed,on", "terminology");
-   else
-     edje_object_signal_emit(term->bg, "tabmissed,off", "terminology");
+   edje_object_message_signal_process(term->bg);
 }
 
 static Tab_Item*
@@ -5184,12 +5177,22 @@ _cb_command(void *data,
 }
 
 static void
-_cb_tabcount_go(void *data,
-                Evas_Object *_obj EINA_UNUSED,
-                const char *_sig EINA_UNUSED,
-                const char *_src EINA_UNUSED)
+_cb_tab_go(void *data,
+           Evas_Object *_obj EINA_UNUSED,
+           const char *_sig EINA_UNUSED,
+           const char *_src EINA_UNUSED)
 {
    _cb_select(data, NULL, NULL);
+}
+
+static void
+_cb_tab_new(void *data,
+           Evas_Object *_obj EINA_UNUSED,
+           const char *_sig EINA_UNUSED,
+           const char *_src EINA_UNUSED)
+{
+   Term *term = data;
+   main_new(term->termio);
 }
 
 static void
@@ -5659,16 +5662,16 @@ _term_free(Term *term)
 
    _term_tabregion_free(term);
 
-   if (term->tabcount_spacer)
+   if (term->tab_spacer)
      {
-        evas_object_del(term->tabcount_spacer);
-        term->tabcount_spacer = NULL;
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
      }
    free(term);
 }
 
 static void
-_cb_tabcount_prev(void *data,
+_cb_tab_prev(void *data,
                   Evas_Object *_obj EINA_UNUSED,
                   const char *_sig EINA_UNUSED,
                   const char *_src EINA_UNUSED)
@@ -5677,7 +5680,7 @@ _cb_tabcount_prev(void *data,
 }
 
 static void
-_cb_tabcount_next(void *data,
+_cb_tab_next(void *data,
                   Evas_Object *_obj EINA_UNUSED,
                   const char *_sig EINA_UNUSED,
                   const char *_src EINA_UNUSED)
@@ -5695,12 +5698,14 @@ _term_bg_config(Term *term)
    termio_theme_set(term->termio, term->bg);
    edje_object_signal_callback_add(term->bg, "popmedia,done", "terminology",
                                    _cb_popmedia_done, term);
-   edje_object_signal_callback_add(term->bg, "tabcount,go", "terminology",
-                                   _cb_tabcount_go, term);
-   edje_object_signal_callback_add(term->bg, "tabcount,prev", "terminology",
-                                   _cb_tabcount_prev, term);
-   edje_object_signal_callback_add(term->bg, "tabcount,next", "terminology",
-                                   _cb_tabcount_next, term);
+   edje_object_signal_callback_add(term->bg, "tab,go", "terminology",
+                                   _cb_tab_go, term);
+   edje_object_signal_callback_add(term->bg, "tab,new", "terminology",
+                                   _cb_tab_new, term);
+   edje_object_signal_callback_add(term->bg, "tab,prev", "terminology",
+                                   _cb_tab_prev, term);
+   edje_object_signal_callback_add(term->bg, "tab,next", "terminology",
+                                   _cb_tab_next, term);
    edje_object_signal_callback_add(term->bg, "tab,close", "terminology",
                                    _cb_tab_close, term);
    edje_object_signal_callback_add(term->bg, "tab,title", "terminology",

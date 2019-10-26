@@ -9,6 +9,11 @@ Changes since 1.5.0:
   * In group "terminology/background", add signals "tab,bell,on" and
   "tab,bell,off" from "terminology" to set bell status on tab if there is a
   tab.
+  * In group "terminology/background", change signals "tabcount,go",
+  "tabcount,prev", "tabcount,next" to "tab,go", "tab,prev" and "tab,next"
+  respectively.
+  * In group "terminology/background", add signal "tab,new" from "terminology"
+  to create a new tab.
 
 Changes since 1.2.0:
 --------------------

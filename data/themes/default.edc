@@ -629,15 +629,19 @@ collections {
          }
          program {
             signal: "mouse,clicked,1"; source: "tabcount_ev";
-            action: SIGNAL_EMIT "tabcount,go" "terminology";
+            action: SIGNAL_EMIT "tab,go" "terminology";
+         }
+         program {
+            signal: "mouse,clicked,3"; source: "tabcount_ev";
+            action: SIGNAL_EMIT "tab,new" "terminology";
          }
          program {
             signal: "mouse,wheel,0,1"; source: "tabcount_ev";
-            action: SIGNAL_EMIT "tabcount,prev" "terminology";
+            action: SIGNAL_EMIT "tab,prev" "terminology";
          }
          program {
             signal: "mouse,wheel,0,-1"; source: "tabcount_ev";
-            action: SIGNAL_EMIT "tabcount,next" "terminology";
+            action: SIGNAL_EMIT "tab,next" "terminology";
          }
          program {
             signal: "tabcount,off"; source: "terminology";
@@ -1332,6 +1336,233 @@ collections {
             target: "tabtitle";
             target: "tabclose";
          }
+         program {
+            signal: "tab_btn,on"; source: "terminology";
+            action: STATE_SET "on" 0.0;
+            target: "tab_btn_clip";
+            target: "terminology.tab_btn";
+         }
+         program {
+            signal: "tab_btn,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "tab_btn_clip";
+            target: "terminology.tab_btn";
+         }
+         part { name: "tab_btn_clip"; type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tab_btn_glow_r0";
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "tab_btn_r0";
+               rel2.to: "tab_btn_r0";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tab_btn_glow_r1";
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "tab_btn_r1";
+               rel2.to: "tab_btn_r1";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tab_btn_glow_r2";
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "tab_btn_r2";
+               rel2.to: "tab_btn_r2";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tab_btn_glow_r3";
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "tab_btn_r3";
+               rel2.to: "tab_btn_r3";
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image {
+                  normal: "cr_glow.png";
+                  border: 9 9 9 9;
+               }
+               color: 51 153 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+         part { name: "tab_btn_r0"; type: RECT;
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tab_btn";
+               rel2.to: "terminology.tab_btn";
+               rel1.relative: 0.05 0.05;
+               rel2.relative: 0.45 0.45;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tab_btn_r1"; type: RECT;
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tab_btn";
+               rel2.to: "terminology.tab_btn";
+               rel1.relative: 0.55 0.05;
+               rel2.relative: 0.95 0.45;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tab_btn_r2"; type: RECT;
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tab_btn";
+               rel2.to: "terminology.tab_btn";
+               rel1.relative: 0.05 0.55;
+               rel2.relative: 0.45 0.95;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "tab_btn_r3"; type: RECT;
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tab_btn";
+               rel2.to: "terminology.tab_btn";
+               rel1.relative: 0.55 0.55;
+               rel2.relative: 0.95 0.95;
+               color: 255 255 255 32;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "terminology.tab_btn"; type: SWALLOW;
+            clip_to: "tab_btn_clip";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.relative: 1.0 0.0;
+               rel2.to_y: "tabmiddle";
+               color: 250 0 250 255;
+               visible: 0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+            }
+            description { state: "on" 0.0;
+               inherit: "default" 0.0;
+               min: 16 16;
+               visible: 1;
+            }
+         }
+         part { name: "tab_btn_ev"; type: RECT; repeat_events: 1;
+            clip_to: "tab_btn_clip";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tab_btn";
+               rel2.to: "terminology.tab_btn";
+               color: 0 0 0 0;
+            }
+         }
+         program {
+            signal: "mouse,in"; source: "tab_btn_ev";
+            action: STATE_SET "over" 0.0;
+            transition: DECELERATE 0.5;
+            target: "tab_btn_r0";
+            target: "tab_btn_r1";
+            target: "tab_btn_r2";
+            target: "tab_btn_r3";
+            target: "tab_btn_glow_r0";
+            target: "tab_btn_glow_r1";
+            target: "tab_btn_glow_r2";
+            target: "tab_btn_glow_r3";
+         }
+         program {
+            signal: "mouse,out"; source: "tab_btn_ev";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 2.0;
+            target: "tab_btn_r0";
+            target: "tab_btn_r1";
+            target: "tab_btn_r2";
+            target: "tab_btn_r3";
+            target: "tab_btn_glow_r0";
+            target: "tab_btn_glow_r1";
+            target: "tab_btn_glow_r2";
+            target: "tab_btn_glow_r3";
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "tab_btn_ev";
+            action: SIGNAL_EMIT "tab,go" "terminology";
+         }
+         program {
+            signal: "mouse,clicked,3"; source: "tab_btn_ev";
+            action: SIGNAL_EMIT "tab,new" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,1"; source: "tab_btn_ev";
+            action: SIGNAL_EMIT "tab,prev" "terminology";
+         }
+         program {
+            signal: "mouse,wheel,0,-1"; source: "tab_btn_ev";
+            action: SIGNAL_EMIT "tab,next" "terminology";
+         }
 
          part { name: "terminology.tab"; type: SWALLOW;
             mouse_events: 0;
@@ -1348,11 +1579,12 @@ collections {
          // some slot for dragable parts to stay in along top edge of bg
          part { name: "tabdrag"; type: SPACER;
             description { state: "default" 0.0;
-               rel2.relative: 1.0 0.0;
+               rel2.relative: 0.0 0.0;
+               rel2.to_x: "terminology.tab_btn";
                fixed: 1 1;
             }
          }
-         // left boundary of the active tab (ragable 0.0 -> 1.0)
+         // left boundary of the active tab (dragable 0.0 -> 1.0)
          part { name: "terminology.tabl"; type: SPACER;
             dragable.x: 1 1 0;
             dragable.confine: "tabdrag";
@@ -1362,12 +1594,13 @@ collections {
                fixed: 1 1;
             }
          }
-         // right boundary of the active tab (ragable 0.0 -> 1.0)
+         // right boundary of the active tab (dragable 0.0 -> 1.0)
          part { name: "terminology.tabr"; type: SPACER;
             dragable.x: 1 1 0;
             dragable.confine: "tabdrag";
             description { state: "default" 0.0;
-               rel2.relative: 1.0 0.0;
+               rel2.relative: 0.0 0.0;
+               rel2.to_x: "terminology.tab_btn";
                max: 1 1;
                fixed: 1 1;
             }
@@ -1461,12 +1694,15 @@ collections {
                visible: 1;
             }
          }
+         /*TODO boris */
          part { name: "tabright"; type: RECT;
             mouse_events: 0;
             description { state: "default" 0.0;
                rel1.to: "terminology.tab";
                rel1.relative: 1.0 0.0;
+               rel2.to_x: "terminology.tab_btn";
                rel2.to_y: "tabmiddle";
+               rel2.relative: 0.0 1.0;
                color: 0 0 0 0;
                visible: 0;
                fixed: 1 1;
