@@ -3668,8 +3668,7 @@ _cb_close(void *data,
 }
 
 void
-main_new(Evas_Object *_win EINA_UNUSED,
-         Evas_Object *term)
+main_new(Evas_Object *term)
 {
    Term *tm;
 

@@ -101,7 +101,7 @@ _cb_ct_new(void *data,
            void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
-   main_new(ctx->win, ctx->term);
+   main_new(ctx->term);
 }
 
 static void

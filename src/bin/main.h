@@ -4,7 +4,7 @@
 #include "config.h"
 
 Config * main_config_get(void);
-void main_new(Evas_Object *win, Evas_Object *term);
+void main_new(Evas_Object *term);
 void main_new_with_dir(Evas_Object *win, Evas_Object *term, const char *wdir);
 void main_split_h(Evas_Object *win, Evas_Object *term, const char *cmd);
 void main_split_v(Evas_Object *win, Evas_Object *term, const char *cmd);
