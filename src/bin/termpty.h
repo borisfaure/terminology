@@ -81,12 +81,14 @@ struct _Termatt
    unsigned short fraktur : 1;
    unsigned short framed : 1;
    unsigned short encircled : 1;
-   unsigned short overlined : 1;
+   unsigned short overlined : 1; // TODO: support it
+   unsigned short tab_inserted : 1;
+   unsigned short tab_last : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
-   unsigned short bit_padding : 11;
+   unsigned short bit_padding :  9;
 #else
-   unsigned short bit_padding : 12;
+   unsigned short bit_padding : 10;
 #endif
    uint16_t       link_id;
 };

@@ -207,6 +207,8 @@ _cursor_to_start_of_line(Termpty *ty)
 static void
 _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 {
+   Termcell *cell;
+
    switch (*cc)
      {
       case 0x07: // BEL '\a' (bell)
@@ -220,7 +222,11 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          return;
       case 0x09: // HT  '\t' (horizontal tab)
          DBG("->HT");
+         cell = &(TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy));
+         cell->att.tab_inserted = 1;
          _tab_forward(ty, 1);
+         cell = &(TERMPTY_SCREEN(ty, ty->cursor_state.cx -1, ty->cursor_state.cy));
+         cell->att.tab_last = 1;
          return;
       case 0x0a: // LF  '\n' (new line)
       case 0x0b: // VT  '\v' (vertical tab)

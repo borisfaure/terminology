@@ -427,6 +427,8 @@ termpty_reset_att(Termatt *att)
    att->framed = 0;
    att->encircled = 0;
    att->overlined = 0;
+   att->tab_inserted = 0;
+   att->tab_last = 0;
 }
 
 void
