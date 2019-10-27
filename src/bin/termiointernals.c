@@ -21,6 +21,16 @@ termio_selection_get(Termio *sd,
 {
    int x, y;
 
+#define SB_ADD(STR, LEN) do {         \
+     if (ty_sb_add(sb, STR, LEN) < 0) \
+       goto err;                      \
+} while (0)
+
+#define RTRIM() do {                  \
+     if (rtrim)                       \
+       ty_sb_spaces_rtrim(sb);        \
+} while (0)
+
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
@@ -33,15 +43,14 @@ termio_selection_get(Termio *sd,
         cells = termpty_cellrow_get(sd->pty, y, &w);
         if (!cells || !w)
           {
-             if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+             SB_ADD("\n", 1);
              continue;
           }
         if (w > sd->grid.w) w = sd->grid.w;
         if (y == c1y && c1x >= w)
           {
-             if (rtrim)
-               ty_sb_spaces_rtrim(sb);
-             if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+             RTRIM();
+             SB_ADD("\n", 1);
              continue;
           }
         start_x = c1x;
@@ -60,18 +69,20 @@ termio_selection_get(Termio *sd,
           {
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth))
                {
-                  if (x < end_x) x++;
-                  else break;
+                  if (x < end_x)
+                    x++;
+                  else
+                    break;
                }
-             if (x >= w) break;
+             if (x >= w)
+               break;
              if (cells[x].att.newline)
                {
                   last0 = -1;
                   if ((y != c2y) || (x != end_x))
                     {
-                       if (rtrim)
-                         ty_sb_spaces_rtrim(sb);
-                       if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+                       RTRIM();
+                       SB_ADD("\n", 1);
                     }
                   break;
                }
@@ -90,21 +101,20 @@ termio_selection_get(Termio *sd,
                        last0 = -1;
                        while (v >= 0)
                          {
-                            if (ty_sb_add(sb, " ", 1) < 0) goto err;
+                            SB_ADD(" ", 1);
                             v--;
                          }
                     }
                   txtlen = codepoint_to_utf8(cells[x].codepoint, txt);
                   if (txtlen > 0)
-                    if (ty_sb_add(sb, txt, txtlen) < 0) goto err;
+                    SB_ADD(txt, txtlen);
                   if ((x == (w - 1)) &&
                       ((x != c2x) || (y != c2y)))
                     {
                        if (!cells[x].att.autowrapped)
                          {
-                            if (rtrim)
-                              ty_sb_spaces_rtrim(sb);
-                            if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+                            RTRIM();
+                            SB_ADD("\n", 1);
                          }
                     }
                }
@@ -133,9 +143,8 @@ termio_selection_get(Termio *sd,
                     }
                   if (!have_more)
                     {
-                       if (rtrim)
-                         ty_sb_spaces_rtrim(sb);
-                       if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+                       RTRIM();
+                       SB_ADD("\n", 1);
                     }
                   else
                     {
@@ -148,27 +157,27 @@ termio_selection_get(Termio *sd,
                                  else break;
                               }
                             if (x >= w) break;
-                            if (ty_sb_add(sb, " ", 1) < 0) goto err;
+                            SB_ADD(" ", 1);
                          }
                     }
                }
              else
                {
-                  if (rtrim)
-                    ty_sb_spaces_rtrim(sb);
-                  if (ty_sb_add(sb, "\n", 1) < 0) goto err;
+                  RTRIM();
+                  SB_ADD("\n", 1);
                }
           }
      }
    termpty_backlog_unlock();
 
-   if (rtrim)
-     ty_sb_spaces_rtrim(sb);
+   RTRIM();
 
    return;
 
 err:
    ty_sb_free(sb);
+#undef SB_ADD
+#undef RTRIM
 }
 
 
@@ -1305,8 +1314,6 @@ _selection_newline_extend_fix(Termio *sd)
    termpty_backlog_unlock();
 }
 
-/* }}} */
-
 void
 termio_selection_dbl_fix(Termio *sd)
 {
@@ -1393,6 +1400,7 @@ termio_selection_dbl_fix(Termio *sd)
    sd->pty->selection.end.y = end_y;
 }
 
+/* }}} */
 
 static void
 _handle_mouse_down_single_click(Termio *sd,
