@@ -46,7 +46,10 @@ termio_selection_get(Termio *sd,
              SB_ADD("\n", 1);
              continue;
           }
-        if (w > sd->grid.w) w = sd->grid.w;
+
+        /* Define how much needs to be read on that line */
+        if (w > sd->grid.w)
+          w = sd->grid.w;
         if (y == c1y && c1x >= w)
           {
              RTRIM();
@@ -57,14 +60,17 @@ termio_selection_get(Termio *sd,
         end_x = (c2x >= w) ? w - 1 : c2x;
         if (c1y != c2y)
           {
-             if (y == c1y) end_x = w - 1;
-             else if (y == c2y) start_x = 0;
+             if (y == c1y)
+               end_x = w - 1;
+             else if (y == c2y)
+               start_x = 0;
              else
                {
                   start_x = 0;
                   end_x = w - 1;
                }
           }
+
         for (x = start_x; x <= end_x; x++)
           {
              if ((cells[x].codepoint == 0) && (cells[x].att.dblwidth))
@@ -76,6 +82,36 @@ termio_selection_get(Termio *sd,
                }
              if (x >= w)
                break;
+             if (cells[x].att.tab_inserted)
+               {
+                  /* There was a tab inserted.
+                   * Only output it if there were spaces/empty cells "bellow"
+                   */
+                  Eina_Bool is_tab = EINA_TRUE;
+                  while ((is_tab) && (x < end_x))
+                    {
+                       if (((cells[x].codepoint == 0) ||
+                            (cells[x].att.invisible == 1) ||
+                            (cells[x].codepoint == ' ')))
+                         {
+                              x++;
+                         }
+                       else
+                         {
+                            is_tab = EINA_FALSE;
+                         }
+                       if (cells[x].att.tab_last)
+                         {
+                            SB_ADD("\t", 1);
+                            if (is_tab)
+                              {
+                                 x++;
+                                 is_tab = EINA_FALSE;
+                              }
+                            break;
+                         }
+                    }
+               }
              if (cells[x].att.newline)
                {
                   last0 = -1;
@@ -88,7 +124,10 @@ termio_selection_get(Termio *sd,
                }
              else if (cells[x].codepoint == 0)
                {
-                  if (last0 < 0) last0 = x;
+                  /* empty cell, track it to know whether to replace with
+                   * spaces */
+                  if (last0 < 0)
+                    last0 = x;
                }
              else
                {
@@ -121,6 +160,8 @@ termio_selection_get(Termio *sd,
           }
         if (last0 >= 0)
           {
+             /* line stop by empty cell, need to know whether to insert spaces
+              * or just go to next line */
              if (y == c2y)
                {
                   Eina_Bool have_more = EINA_FALSE;
@@ -130,8 +171,10 @@ termio_selection_get(Termio *sd,
                        if ((cells[x].codepoint == 0) &&
                            (cells[x].att.dblwidth))
                          {
-                            if (x < (w - 1)) x++;
-                            else break;
+                            if (x < (w - 1))
+                              x++;
+                            else
+                              break;
                          }
                        if (((cells[x].codepoint != 0) &&
                             (cells[x].codepoint != ' ')) ||
@@ -153,10 +196,13 @@ termio_selection_get(Termio *sd,
                             if ((cells[x].codepoint == 0) &&
                                 (cells[x].att.dblwidth))
                               {
-                                 if (x < (w - 1)) x++;
-                                 else break;
+                                 if (x < (w - 1))
+                                   x++;
+                                 else
+                                   break;
                               }
-                            if (x >= w) break;
+                            if (x >= w)
+                              break;
                             SB_ADD(" ", 1);
                          }
                     }

@@ -120,3 +120,4 @@ mouse_reporting_mode_all_ext_urxvt.sh a11bbc8ebea42d06cc3ad823b52c09b3
 shift_in_out.sh 3896bcc6887998bbc41b43840a6b2e33
 osc-11-query.sh b762d503e40641ff896dac46391ad7a8
 link_detection.sh bbe87a849586e8b922f26ad5d88146dc
+selection_with_tabs.sh 23557497a8f28ca246048bb2443b3dab
