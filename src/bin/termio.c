@@ -38,6 +38,87 @@ static Eina_Bool _mouse_in_selection(Termio *sd, int cx, int cy);
 
 
 /* {{{ Helpers */
+static Eina_Bool
+_cb_cmd_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   char buf[4096];
+   Eina_Unicode codepoint[4096];
+   Termpty *ty = data;
+   int len, i, j;
+   char *rbuf = buf;
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+     {
+        DBG("error while reading from tty slave fd");
+        return ECORE_CALLBACK_CANCEL;
+     }
+   len = read(ecore_main_fd_handler_fd_get(fd_handler), rbuf, 4096-1);
+   ERR("read:%d", len);
+   if ((len < 0 && errno != EAGAIN) ||
+       (len == 0 && errno != 0))
+     {
+        return ECORE_CALLBACK_CANCEL;
+     }
+   if (len <= 0)
+     return ECORE_CALLBACK_RENEW;
+
+   buf[len] = 0;
+   // convert UTF8 to codepoint integers
+   j = 0;
+   for (i = 0; i < len;)
+     {
+        Eina_Unicode g = 0;
+
+        if (buf[i])
+          {
+             g = eina_unicode_utf8_next_get(buf, &i);
+          }
+        else
+          {
+             g = 0;
+             i++;
+          }
+        codepoint[j] = g;
+        j++;
+     }
+   codepoint[j] = 0;
+   termpty_text_append(ty, codepoint, j);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_run_command(Termio *sd EINA_UNUSED, char *cmd, char *arg)
+{
+   int pid;
+   int fds[2];
+
+   if (pipe(fds) < 0)
+     {
+        ERR("pipe failed: %s", strerror(errno));
+        return;
+     }
+   pid = fork();
+   if (pid == 0)
+     {
+        char * const argv[3] = {cmd, arg, NULL};
+        close(fds[0]);
+        dup2(fds[1], STDOUT_FILENO);
+        close(fds[1]);
+        errno = 0;
+        execvp(cmd, argv);
+        ERR("execv failed on '%s': %s", cmd, strerror(errno));
+     }
+   else
+     {
+        Ecore_Fd_Handler *fd_handler;
+
+        close(fds[1]);
+        fd_handler = ecore_main_fd_handler_add(fds[0], ECORE_FD_READ,
+                                  _cb_cmd_fd_read, sd,
+                                  NULL, NULL);
+        _cb_cmd_fd_read(sd->pty, fd_handler);
+     }
+}
 
 Termio *
 termio_get_from_obj(Evas_Object *obj)
@@ -714,7 +795,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                            (config->helper.local.general[0]))
                          cmd = config->helper.local.general;
                     }
-                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+                  snprintf(buf, sizeof(buf), "%s", escaped);
                   free(escaped);
                }
           }
@@ -755,7 +836,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                            (config->helper.url.general[0]))
                          cmd = config->helper.url.general;
                     }
-                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
+                  snprintf(buf, sizeof(buf), "%s", escaped);
                   free(escaped);
                }
           }
@@ -767,7 +848,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
      }
    free(s);
    if (!handled)
-     ecore_exe_run(buf, NULL);
+     _run_command(sd, cmd, buf);
 
 end:
    free((char*)link);
@@ -1586,7 +1667,8 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
         if (blk->link)
           {
              Media_Type type = media_src_type_get(blk->link);
-             Config *config = termio_config_get(data);
+             Termio *sd = evas_object_smart_data_get(data);
+             Config *config = sd->config;
 
              if (config)
                {
@@ -1602,13 +1684,12 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
                          cmd = config->helper.local.general;
                        if (cmd)
                          {
-                            char buf[PATH_MAX], *escaped;
+                            char *escaped;
 
                             escaped = ecore_file_escape_name(file);
                             if (escaped)
                               {
-                                 snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-                                 ecore_exe_run(buf, NULL);
+                                 _run_command(sd, cmd, escaped);
                                  free(escaped);
                               }
                             return;
@@ -2535,10 +2616,9 @@ _cb_ctxp_sel_open_as_url(void *data,
    if (!escaped)
      goto end;
 
-   snprintf(buf, sizeof(buf), "%s %s%s", cmd, prefix, escaped);
+   snprintf(buf, sizeof(buf), "%s%s", prefix, escaped);
 
-   WRN("trying to launch '%s'", buf);
-   ecore_exe_run(buf, NULL);
+   _run_command(sd, cmd, buf);
 
 end:
    eina_strbuf_free(sb);
