@@ -1,6 +1,39 @@
 =================
-Terminology 1.5.0
+Terminology 1.6.0
 =================
+
+Changes since 1.5.0:
+--------------------
+
+Additions:
+    * Show title tab on splits, depending on configuration
+    * Show tabs that had a bell rang and had not been focused
+    * Add wizard on new configuration to set scaling
+    * Add scale configuration in the Settings panel
+    * Add Polish translation
+
+Improvements:
+    * Themes: make tab title readable based on theme default colors
+    * Move the tab selector on the tab line
+    * Be able to select and copy tabs
+    * Better handle stalled unix socket when using one terminology with
+      multiple instances
+    * Change typop behavior to queue files in case there are multiple files to
+      look at
+    * Update Italian translation
+
+Fixes:
+    * Fix live selections in the scrollback
+    * Fix unchecking "auto-hide cursor" not working
+    * Fix memory leaks related to looking for links under the mouse
+    * Ensure Terminology compiles with EFL-1.20
+    * Fix link detection over spaces
+    * Fix tab selector no longer taking into account the new destination
+    * Fix crash when using typop with multiple files
+    * No longer set environment variable DESKTOP_STARTUP_ID as it may no
+      longer be accurate
+    * Allow tabs to be pasted
+
 
 Changes since 1.4.1:
 --------------------
