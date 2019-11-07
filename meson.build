@@ -78,6 +78,10 @@ if cc.has_function('mkstemps')
   config_data.set('HAVE_MKSTEMPS', 1)
 endif
 
+if cc.has_function('strchrnul')
+  config_data.set('HAVE_STRCHRNUL', 1)
+endif
+
 url_head_code = '''#include <Ecore_Con.h>
 int main(void) { ecore_con_url_head(NULL); return 0; }
 '''

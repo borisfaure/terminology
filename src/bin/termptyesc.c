@@ -3418,7 +3418,7 @@ _eina_unicode_to_hex(Eina_Unicode u)
    return -1;
 }
 
-#if defined(__OpenBSD__)
+#if !defined(HAVE_STRCHRNUL)
 char *
 strchrnul(const char *s, int c)
 {
