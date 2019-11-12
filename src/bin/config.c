@@ -216,6 +216,7 @@ config_save(Config *config)
    char buf[PATH_MAX], buf2[PATH_MAX];
    const char *cfgdir;
    int ok;
+   Eet_Error err;
 
    EINA_SAFETY_ON_NULL_RETURN(config);
 
@@ -236,11 +237,28 @@ config_save(Config *config)
    snprintf(buf, sizeof(buf), "%s/terminology/config/standard/base.cfg.tmp", cfgdir);
    snprintf(buf2, sizeof(buf2), "%s/terminology/config/standard/base.cfg", cfgdir);
    ef = eet_open(buf, EET_FILE_MODE_WRITE);
-   if (ef)
+   if (!ef)
      {
-        ok = eet_data_write(ef, edd_base, CONFIG_KEY, config, 1);
+        ERR("error opening file '%s' for writing", buf);
+        return;
+     }
+   ok = eet_data_write(ef, edd_base, CONFIG_KEY, config, 1);
+   if (!ok)
+     {
         eet_close(ef);
-        if (ok) ecore_file_mv(buf, buf2);
+        ERR("error writing to file '%s'", buf);
+        return;
+     }
+   err = eet_close(ef);
+   if (err != EET_ERROR_NONE)
+     {
+        ERR("error #%d closing file '%s'", err, buf);
+        return;
+     }
+   if (!ecore_file_mv(buf, buf2))
+     {
+        ERR("error moving file '%s' to '%s'", buf, buf2);
+        return;
      }
    main_config_sync(config);
 }
