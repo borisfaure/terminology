@@ -736,10 +736,12 @@ config_load(void)
                   if (config->version < CONF_VER)
                     {
                        // currently no upgrade path so reset config.
+                       ERR("config is from a newer Terminology, discard it");
                        config_del(config);
-                       config = NULL;
+                       config = config_new();
+                       config->temporary = EINA_TRUE;
                     }
-                  /* do no thing in case the config is from a newer
+                  /* do nothing in case the config is from a newer
                    * terminology, we don't want to remove it. */
                }
           }
