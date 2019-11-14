@@ -111,7 +111,7 @@ _configure_instance(Ipc_Instance *inst)
         config->temporary = EINA_TRUE;
      }
 
-   if (inst->login_shell)
+   if (inst->login_shell != 0xff)
      {
         inst->config->login_shell = inst->login_shell;
         inst->config->temporary = EINA_TRUE;
