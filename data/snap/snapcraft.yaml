@@ -1,0 +1,185 @@
+name: terminology
+version: git
+summary: Terminal Emulator written with the Enlightenment Foundation Libraries
+description: |
+  Terminology is a terminal emulator for Linux/BSD/UNIX systems that uses EFL.
+  It has a whole bunch of bells and whistles. Use it as your regular vt100
+  terminal emulator with all the usual features, such as 256 color support.
+  Terminology is designed to emulate Xterm as closely as possible in most
+  respects.
+base: core18
+license: BSD-2-Clause
+confinement: classic
+grade: stable
+icon: data/images/terminology.png
+apps:
+  terminology:
+    command: terminology
+    desktop: usr/share/applications/terminology.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - network
+      - network-bind
+      - home
+      - opengl
+      - pulseaudio
+      - x11
+      - wayland
+      - unity7
+      - audio-playback
+  tyalpha:
+    command: tyalpha
+  tybg:
+    command: tybg
+  tycat:
+    command: tycat
+  tyls:
+    command: tyls
+  typop:
+    command: typop
+  tyq:
+    command: tyq
+  tysend:
+    command: tysend
+parts:
+  efl:
+    plugin: meson
+    source-type: tar
+    source: https://download.enlightenment.org/rel/libs/efl/efl-1.23.2.tar.xz
+    meson-parameters:
+      - --prefix=/usr
+      - --libdir=/usr/lib
+      - --buildtype=release
+      - --default-library=shared
+      - -Dnls=false
+      - -Dopengl=es-egl
+      - -Dxinput22=true
+      - -Dbuffer=false
+      - -Dfb=false
+      - -Ddrm=false
+      - -Dtslib=false
+      - -Dharfbuzz=true
+      - -Dwl=true
+      - -Dnetwork-backend=connman
+      - -Devas-loaders-disabler=pdf,ps,raw,tiff,json,webp
+      - -Dphysics=false
+      - -Davahi=false
+      - -Deeze=false
+      - -Dbindings=
+      - -Dbuild-examples=false
+      - -Dbuild-tests=false
+    build-packages:
+      - gcc
+      - pkg-config
+      - libdbus-1-dev
+      - libssl-dev
+      - libfontconfig1-dev
+      - libfreetype6-dev
+      - libfribidi-dev
+      - libgif-dev
+      - libgstreamer1.0-dev
+      - libgstreamer-plugins-base1.0-dev
+      - libharfbuzz-dev
+      - libjpeg-turbo8-dev
+      - libpng-dev
+      - libpulse-dev
+      - librsvg2-dev
+      - libsndfile1-dev
+      - libx11-dev
+      - libxkbcommon-dev
+      - libxkbcommon-x11-dev
+      - libxcomposite-dev
+      - libxcursor-dev
+      - libxdamage-dev
+      - libxinerama-dev
+      - libxrandr-dev
+      - libxss-dev
+      - libxtst-dev
+      - libsystemd-dev
+      - libluajit-5.1-dev
+      - libibus-1.0-dev
+      - libscim-dev
+    stage-packages:
+      - libcairo2
+      - libcroco3
+      - libdatrie1
+      - libegl1
+      - libfontconfig1
+      - libfreetype6
+      - libfribidi0
+      - libgdk-pixbuf2.0-0
+      - libgif7
+      - libgles2
+      - libglvnd0
+      - libgraphite2-3
+      - libgstreamer-plugins-base1.0-0
+      - libgstreamer1.0-0
+      - libharfbuzz0b
+      - libibus-1.0-5
+      - libicu60
+      - libjpeg-turbo8
+      - libluajit-5.1-2
+      - liborc-0.4-0
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpangoft2-1.0-0
+      - libpixman-1-0
+      - libpng16-16
+      - librsvg2-2
+      - libthai0
+      - libx11-6
+      - libx11-xcb1
+      - libxau6
+      - libxcb-render0
+      - libxcb-shm0
+      - libxcb1
+      - libxcomposite1
+      - libxcursor1
+      - libxdamage1
+      - libxdmcp6
+      - libxext6
+      - libxfixes3
+      - libxi6
+      - libxinerama1
+      - libxkbcommon-x11-0
+      - libxml2
+      - libxrandr2
+      - libxrender1
+      - libxss1
+      - libxtst6
+  terminology:
+    plugin: meson
+    after: [ efl ]
+    source-type: git
+    source: https://github.com/billiob/terminology
+    meson-parameters:
+      - --prefix=/usr
+    stage-packages:
+      - libcurl4
+      - libfontconfig1
+      - libfreetype6
+      - libfribidi0
+      - libgif7
+      - libgraphite2-3
+      - libharfbuzz0b
+      - libjpeg-turbo8
+      - libluajit-5.1-2
+      - libpcre3
+      - libpng16-16
+      - libx11-6
+      - libx11-xcb1
+      - libxau6
+      - libxcb1
+      - libxcomposite1
+      - libxcursor1
+      - libxdamage1
+      - libxdmcp6
+      - libxext6
+      - libxfixes3
+      - libxi6
+      - libxinerama1
+      - libxrandr2
+      - libxrender1
+      - libxss1
+      - libxtst6
