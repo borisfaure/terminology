@@ -19,6 +19,6 @@ Comment[ru]=Эмулятор терминала
 Comment[ko]=터미널 에뮬레이터
 Keywords=shell;prompt;command;commandline;
 Exec=terminology
-Icon=terminology
+Icon=%ICON_PATH%/terminology.png
 Categories=System;TerminalEmulator;
 StartupWMClass=terminology

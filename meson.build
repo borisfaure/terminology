@@ -127,6 +127,8 @@ endif
 
 message('edje_cc set to:' + edje_cc)
 
+sed = find_program('sed')
+
 configure_file(output: 'terminology_config.h',
                configuration: config_data)
 
