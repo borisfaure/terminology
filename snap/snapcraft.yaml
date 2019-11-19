@@ -16,18 +16,6 @@ apps:
   terminology:
     command: terminology
     desktop: usr/share/applications/terminology.desktop
-    plugs:
-      - desktop
-      - desktop-legacy
-      - network
-      - network-bind
-      - home
-      - opengl
-      - pulseaudio
-      - x11
-      - wayland
-      - unity7
-      - audio-playback
   tyalpha:
     command: tyalpha
   tybg:
