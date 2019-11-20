@@ -778,6 +778,9 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
              snprintf(buf, sizeof(buf), "WINDOWID=%lu", window_id);
              putenv(buf);
           }
+#if ((EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 24)) || ((EFL_VERSION_MAJOR == 1) && (EFL_VERSION_MINOR == 23) && (EFL_VERSION_MICRO == 99))
+        eina_file_close_from(3, NULL);
+#endif
         if (!login_shell)
           execvp(args[0], (char *const *)args);
         else
