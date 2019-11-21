@@ -121,3 +121,4 @@ shift_in_out.sh 3896bcc6887998bbc41b43840a6b2e33
 osc-11-query.sh b762d503e40641ff896dac46391ad7a8
 link_detection.sh bbe87a849586e8b922f26ad5d88146dc
 selection_with_tabs.sh 23557497a8f28ca246048bb2443b3dab
+selection_empty_lines.sh 7a90d9bfde9e9fb7f067f6c08eac57ff
