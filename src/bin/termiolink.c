@@ -1,5 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
+#include "termpty.h"
+#include "backlog.h"
 #include "termiolink.h"
 #include "termio.h"
 #include "sb.h"

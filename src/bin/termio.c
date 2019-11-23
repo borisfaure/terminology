@@ -6,6 +6,7 @@
 #include "termio.h"
 #include "termiolink.h"
 #include "termpty.h"
+#include "backlog.h"
 #include "termptyops.h"
 #include "termcmd.h"
 #include "termptydbl.h"

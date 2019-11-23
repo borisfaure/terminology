@@ -317,30 +317,6 @@ termpty_clear_tabs_on_screen(Termpty *ty)
 }
 
 void
-termpty_clear_backlog(Termpty *ty)
-{
-   int backsize;
-
-   ty->backlog_beacon.screen_y = 0;
-   ty->backlog_beacon.backlog_y = 0;
-
-   termpty_backlog_lock();
-   if (ty->back)
-     {
-        size_t i;
-        for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(ty, &ty->back[i]);
-        free(ty->back);
-        ty->back = NULL;
-     }
-   ty->backpos = 0;
-   backsize = ty->backsize;
-   ty->backsize = 0;
-   termpty_backlog_size_set(ty, backsize);
-   termpty_backlog_unlock();
-}
-
-void
 termpty_clear_screen(Termpty *ty, Termpty_Clear mode)
 {
    Termcell *cells;

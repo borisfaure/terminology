@@ -12,6 +12,7 @@
 #include "miniview.h"
 #include "utils.h"
 #include "main.h"
+#include "backlog.h"
 
 /* specific log domain to help debug only miniview */
 int _miniview_log_dom = -1;

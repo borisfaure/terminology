@@ -102,3 +102,88 @@ void
 termpty_backlog_unlock(void)
 {
 }
+
+void
+termpty_backlog_free(Termpty *ty)
+{
+   size_t i;
+
+   if (!ty || !ty->back)
+     return;
+
+   for (i = 0; i < ty->backsize; i++)
+     termpty_save_free(ty, &ty->back[i]);
+   free(ty->back);
+   ty->back = NULL;
+}
+
+void
+termpty_clear_backlog(Termpty *ty)
+{
+   int backsize;
+
+   ty->backlog_beacon.screen_y = 0;
+   ty->backlog_beacon.backlog_y = 0;
+
+   termpty_backlog_lock();
+   termpty_backlog_free(ty);
+   ty->backpos = 0;
+   backsize = ty->backsize;
+   ty->backsize = 0;
+   termpty_backlog_size_set(ty, backsize);
+   termpty_backlog_unlock();
+}
+
+ssize_t
+termpty_backlog_length(Termpty *ty)
+{
+   int backlog_y = ty->backlog_beacon.backlog_y;
+   int screen_y = ty->backlog_beacon.screen_y;
+
+   if (!ty->backsize)
+     return 0;
+
+   for (backlog_y++; backlog_y < (int)ty->backsize; backlog_y++)
+     {
+        int nb_lines;
+        const Termsave *ts;
+
+        ts = BACKLOG_ROW_GET(ty, backlog_y);
+        if (!ts->cells)
+          goto end;
+
+        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        screen_y += nb_lines;
+        ty->backlog_beacon.screen_y = screen_y;
+        ty->backlog_beacon.backlog_y = backlog_y;
+     }
+end:
+     return ty->backlog_beacon.screen_y;
+}
+
+
+void
+termpty_backlog_size_set(Termpty *ty, size_t size)
+{
+   if (ty->backsize == size)
+     return;
+
+   /* TODO: RESIZE: handle that case better: changing backscroll size */
+   termpty_backlog_lock();
+
+   if (ty->back)
+     {
+        size_t i;
+
+        for (i = 0; i < ty->backsize; i++)
+          termpty_save_free(ty, &ty->back[i]);
+        free(ty->back);
+     }
+   if (size > 0)
+     ty->back = calloc(1, sizeof(Termsave) * size);
+   else
+     ty->back = NULL;
+   ty->backpos = 0;
+   ty->backsize = size;
+   termpty_backlog_unlock();
+}

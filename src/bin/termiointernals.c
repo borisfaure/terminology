@@ -5,6 +5,7 @@
 #include "termio.h"
 #include "miniview.h"
 #include "termpty.h"
+#include "backlog.h"
 #include "termptydbl.h"
 #include "termptyops.h"
 #include "termiointernals.h"
