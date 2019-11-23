@@ -9,6 +9,15 @@ static int ts_uncomp = 0;
 static int ts_freeops = 0;
 static Eina_List *ptys = NULL;
 
+static int64_t mem_used = 0;
+
+static void
+_accounting_change(int64_t diff)
+{
+   mem_used += diff;
+}
+
+
 void
 termpty_save_register(Termpty *ty)
 {
@@ -41,6 +50,7 @@ termpty_save_new(Termpty *ty, Termsave *ts, int w)
    if (!cells ) return NULL;
    ts->cells = cells;
    ts->w = w;
+   _accounting_change(w * sizeof(Termcell));
    return ts;
 }
 
@@ -57,7 +67,9 @@ termpty_save_expand(Termpty *ty, Termsave *ts, Termcell *cells, size_t delta)
           0, delta * sizeof(Termcell));
    TERMPTY_CELL_COPY(ty, cells, &newcells[ts->w], (int)delta);
 
+   _accounting_change(-1 * ts->w * sizeof(Termcell));
    ts->w += delta;
+   _accounting_change(ts->w * sizeof(Termcell));
    ts->cells = newcells;
    return ts;
 }
@@ -77,6 +89,7 @@ termpty_save_free(Termpty *ty, Termsave *ts)
      }
    free(ts->cells);
    ts->cells = NULL;
+   _accounting_change(-1 * ts->w * sizeof(Termcell));
    ts->w = 0;
 }
 
