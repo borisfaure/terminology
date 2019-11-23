@@ -113,6 +113,7 @@ termpty_backlog_free(Termpty *ty)
 
    for (i = 0; i < ty->backsize; i++)
      termpty_save_free(ty, &ty->back[i]);
+   _accounting_change(-1 * sizeof(Termsave) * ty->backsize);
    free(ty->back);
    ty->back = NULL;
 }
@@ -171,16 +172,12 @@ termpty_backlog_size_set(Termpty *ty, size_t size)
    /* TODO: RESIZE: handle that case better: changing backscroll size */
    termpty_backlog_lock();
 
-   if (ty->back)
-     {
-        size_t i;
-
-        for (i = 0; i < ty->backsize; i++)
-          termpty_save_free(ty, &ty->back[i]);
-        free(ty->back);
-     }
+   termpty_backlog_free(ty);
    if (size > 0)
-     ty->back = calloc(1, sizeof(Termsave) * size);
+     {
+        ty->back = calloc(1, sizeof(Termsave) * size);
+        _accounting_change(sizeof(Termsave) * size);
+     }
    else
      ty->back = NULL;
    ty->backpos = 0;
