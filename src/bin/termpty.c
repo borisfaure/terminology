@@ -6,7 +6,7 @@
 #include "termpty.h"
 #include "termptyesc.h"
 #include "termptyops.h"
-#include "termptysave.h"
+#include "backlog.h"
 #include "keyin.h"
 #if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
 # include "win.h"

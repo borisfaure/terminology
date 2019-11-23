@@ -1,7 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include "termpty.h"
-#include "termptysave.h"
+#include "backlog.h"
 
 
 static int ts_comp = 0;

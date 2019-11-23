@@ -1,6 +1,7 @@
 A simple documentation to navige through the C files:
 
 * `src/bin/about.c` handles the About widget
+* `src/bin/backlog.c`: backlog handling
 * `src/bin/col.c` is about the colors handled by the terminal
 * `src/bin/config.c`: how the configuration is saved/loaded/updated
 * `src/bin/controls.c`: the widget when a right-click is done on a terminal
@@ -33,7 +34,6 @@ A simple documentation to navige through the C files:
 * `src/bin/termptyext.c`: extented terminology escape handling
 * `src/bin/termptygfx.c`: charset translations
 * `src/bin/termptyops.c`: handling history
-* `src/bin/termptysave.c`: compression of the backlog
 * `src/bin/tyalpha.c`: the `tyalpha` tool
 * `src/bin/tybg.c`: the `tybg` tool
 * `src/bin/tycat.c`: the `tycat` tool

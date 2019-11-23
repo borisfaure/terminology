@@ -5,7 +5,7 @@
 #include "termptydbl.h"
 #include "termptyops.h"
 #include "termptygfx.h"
-#include "termptysave.h"
+#include "backlog.h"
 #include "miniview.h"
 #include <assert.h>
 
