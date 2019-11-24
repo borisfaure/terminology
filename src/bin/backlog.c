@@ -166,21 +166,52 @@ end:
 void
 termpty_backlog_size_set(Termpty *ty, size_t size)
 {
+   Termsave *new_back;
+
    if (ty->backsize == size)
      return;
 
-   /* TODO: RESIZE: handle that case better: changing backscroll size */
    termpty_backlog_lock();
 
-   termpty_backlog_free(ty);
+   if (size == 0)
+     {
+        termpty_backlog_free(ty);
+        goto end;
+     }
    if (size > 0)
      {
-        ty->back = calloc(1, sizeof(Termsave) * size);
-        _accounting_change(sizeof(Termsave) * size);
+        size_t i;
+        if (size > ty->backsize)
+          {
+             new_back = realloc(ty->back, sizeof(Termsave) * size);
+             if (!new_back)
+               return;
+             memset(new_back + ty->backsize, 0,
+                    sizeof(Termsave) * (size - ty->backsize));
+             ty->back = new_back;
+          }
+        else
+          {
+             new_back = calloc(1, sizeof(Termsave) * size);
+             if (!new_back)
+               return;
+             for (i = 0; i < size; i++)
+               new_back[i] = ty->back[i];
+             for (i = size; i < ty->backsize; i++)
+               termpty_save_free(ty, &ty->back[i]);
+             free(ty->back);
+             ty->back = new_back;
+          }
+        _accounting_change(sizeof(Termsave) * (size - ty->backsize));
      }
    else
      ty->back = NULL;
+end:
    ty->backpos = 0;
    ty->backsize = size;
+   /* Reset beacon */
+   ty->backlog_beacon.screen_y = 0;
+   ty->backlog_beacon.backlog_y = 0;
+
    termpty_backlog_unlock();
 }
