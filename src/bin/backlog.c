@@ -9,12 +9,18 @@ static int ts_uncomp = 0;
 static int ts_freeops = 0;
 static Eina_List *ptys = NULL;
 
-static int64_t mem_used = 0;
+static int64_t _mem_used = 0;
 
 static void
 _accounting_change(int64_t diff)
 {
-   mem_used += diff;
+   _mem_used += diff;
+}
+
+int64_t
+termpty_backlog_memory_get(void)
+{
+   return _mem_used;
 }
 
 

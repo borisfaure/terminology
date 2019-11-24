@@ -4,6 +4,8 @@
 #include <math.h>
 #include <Elementary.h>
 #include <assert.h>
+#include "termpty.h"
+#include "backlog.h"
 #include "config.h"
 #include "termio.h"
 #include "options.h"
@@ -17,6 +19,8 @@ typedef struct _Behavior_Ctx {
      Evas_Object *op_wh_current;
      Evas_Object *term;
      Evas_Object *sld_hide_cursor;
+     Evas_Object *backlock_label;
+     char *backlog_msg;
      Config *config;
 } Behavior_Ctx;
 
@@ -86,6 +90,24 @@ sback_units_format(double d)
 }
 
 static void
+_update_backlog_title(Behavior_Ctx *ctx)
+{
+   char *factor = " KMG";
+   double amount = termpty_backlog_memory_get();
+
+   while (amount > 1024.0 && factor[1] != '\0')
+     {
+        amount /= 1024;
+        factor++;
+     }
+   eina_stringshare_del(ctx->backlog_msg);
+   ctx->backlog_msg = (char*) eina_stringshare_printf(
+      _("Scrollback (current memory usage: %'.2f%cB):"),
+      amount, factor[0]);
+   elm_object_text_set(ctx->backlock_label, ctx->backlog_msg);
+}
+
+static void
 _cb_op_behavior_sback_chg(void *data,
                           Evas_Object *obj,
                           void *_event EINA_UNUSED)
@@ -95,6 +117,7 @@ _cb_op_behavior_sback_chg(void *data,
 
    config->scrollback = (double) sback_double_to_expo_int(elm_slider_value_get(obj));
    termio_config_update(ctx->term);
+   _update_backlog_title(ctx);
    config_save(config);
 }
 
@@ -187,6 +210,7 @@ _parent_del_cb(void *data,
 {
    Behavior_Ctx *ctx = data;
 
+   eina_stringshare_del(ctx->backlog_msg);
    free(ctx);
 }
 
@@ -563,7 +587,8 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, _("Scrollback:"));
+   ctx->backlock_label = o;
+   _update_backlog_title(ctx);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 

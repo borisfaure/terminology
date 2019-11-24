@@ -21,6 +21,9 @@ termpty_backlog_size_set(Termpty *ty, size_t size);
 ssize_t
 termpty_backlog_length(Termpty *ty);
 
+int64_t
+termpty_backlog_memory_get(void);
+
 #define BACKLOG_ROW_GET(Ty, Y) \
    (&Ty->back[(Ty->backsize + ty->backpos - ((Y) - 1 )) % Ty->backsize])
 
