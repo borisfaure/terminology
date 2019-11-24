@@ -103,7 +103,7 @@ termpty_save_free(Termpty *ty, Termsave *ts)
      }
    free(ts->cells);
    ts->cells = NULL;
-   _accounting_change(-1 * ts->w * sizeof(Termcell));
+   _accounting_change((-1) * (int)(ts->w * sizeof(Termcell)));
    ts->w = 0;
 }
 
@@ -127,7 +127,7 @@ termpty_backlog_free(Termpty *ty)
 
    for (i = 0; i < ty->backsize; i++)
      termpty_save_free(ty, &ty->back[i]);
-   _accounting_change(-1 * sizeof(Termsave) * ty->backsize);
+   _accounting_change((-1) * (int)(sizeof(Termsave) * ty->backsize));
    free(ty->back);
    ty->back = NULL;
 }
