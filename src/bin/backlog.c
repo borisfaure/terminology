@@ -14,6 +14,14 @@ static int64_t _mem_used = 0;
 static void
 _accounting_change(int64_t diff)
 {
+   if (diff > 0)
+     {
+        diff = ((diff + 16-1) / 16) * 16;
+     }
+   else
+     {
+        diff = ((-1 * diff + 16-1) / 16) * -16;
+     }
    _mem_used += diff;
 }
 
