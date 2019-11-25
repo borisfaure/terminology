@@ -3387,22 +3387,44 @@ unhandled:
 }
 
 static int
-_osc_arg_get(Eina_Unicode **ptr)
+_osc_arg_get(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int sum = 0;
+
+   if ((b == NULL) || (*b == '\0'))
+     {
+        *ptr = NULL;
+        sum = -ESC_ARG_NO_VALUE;
+        goto error;
+     }
 
    while (*b >= '0' && *b <= '9')
      {
         sum *= 10;
         sum += *b - '0';
         b++;
+        if (sum >= 65536)
+          {
+             sum = -ESC_ARG_ERROR;
+             goto error;
+          }
      }
    if (*b != ';')
-     sum = -1;
+     {
+        sum = -ESC_ARG_ERROR;
+        goto error;
+     }
    else
      b++;
    *ptr = b;
+
+   return sum;
+
+error:
+   ERR("Invalid OSC argument");
+   ty->decoding_error = EINA_TRUE;
+   *ptr = NULL;
    return sum;
 }
 
@@ -3728,11 +3750,13 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    else
      return 0;
 
-   arg = _osc_arg_get(&p);
+   arg = _osc_arg_get(ty, &p);
    switch (arg)
      {
-      case -1:
+      case -ESC_ARG_ERROR:
          goto err;
+      case -ESC_ARG_NO_VALUE:
+         EINA_FALLTHROUGH;
       case 0:
         // title + icon name
         if (!*p)
