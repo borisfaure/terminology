@@ -110,9 +110,9 @@ _cursor_is_within_margins(const Termpty *ty)
       );
 }
 
-enum csi_arg_error {
-     CSI_ARG_NO_VALUE = 1,
-     CSI_ARG_ERROR = 2
+enum esc_arg_error {
+     ESC_ARG_NO_VALUE = 1,
+     ESC_ARG_ERROR = 2
 };
 
 static int
@@ -124,7 +124,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
    if ((b == NULL) || (*b == '\0'))
      {
         *ptr = NULL;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    /* Skip potential '?', '>'.... */
@@ -135,13 +135,13 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
      {
         b++;
         *ptr = b;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    if (*b == '\0')
      {
         *ptr = NULL;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    while ((*b >= '0') && (*b <= '9'))
@@ -177,7 +177,7 @@ error:
    ERR("Invalid CSI argument");
    ty->decoding_error = EINA_TRUE;
    *ptr = NULL;
-   return -CSI_ARG_ERROR;
+   return -ESC_ARG_ERROR;
 }
 
 static void
@@ -301,9 +301,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
              // http://ttssh2.sourceforge.jp/manual/en/about/ctrlseq.html
              switch (arg)
                {
-                case -CSI_ARG_ERROR:
+                case -ESC_ARG_ERROR:
                    return;
-              /* TODO: -CSI_ARG_NO_VALUE */
+              /* TODO: -ESC_ARG_NO_VALUE */
                 case 1:
                    ty->termstate.appcursor = mode;
                    break;
@@ -553,9 +553,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
 
              switch (arg)
                {
-                case -CSI_ARG_ERROR:
+                case -ESC_ARG_ERROR:
                    return;
-              /* TODO: -CSI_ARG_NO_VALUE */
+              /* TODO: -ESC_ARG_NO_VALUE */
                 case 1:
                    ty->termstate.appcursor = mode;
                    break;
@@ -593,7 +593,7 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
    if ((b == NULL) || (*b == '\0'))
      {
         *ptr = NULL;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    /* by construction, shall be the same separator as the following ones */
@@ -601,26 +601,26 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
    if ((separator != ';') && (separator != ':'))
      {
         *ptr = NULL;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    if (*b == separator)
      {
         b++;
         *ptr = b;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
 
    if (*b == '\0')
      {
         *ptr = NULL;
-        return -CSI_ARG_NO_VALUE;
+        return -ESC_ARG_NO_VALUE;
      }
    /* invalid values */
    if ((*b < '0') || (*b > '9'))
      {
         *ptr = NULL;
-        return -CSI_ARG_ERROR;
+        return -ESC_ARG_ERROR;
      }
 
    while ((*b >= '0') && (*b <= '9'))
@@ -630,7 +630,7 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
              *ptr = NULL;
              ERR("Invalid sequence: argument is too large");
              ty->decoding_error = EINA_TRUE;
-             return -CSI_ARG_ERROR;
+             return -ESC_ARG_ERROR;
           }
         sum *= 10;
         sum += *b - '0';
@@ -719,9 +719,9 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
    r = _csi_truecolor_arg_get(ty, ptr);
    g = _csi_truecolor_arg_get(ty, ptr);
    b = _csi_truecolor_arg_get(ty, ptr);
-   if ((r == -CSI_ARG_ERROR) ||
-       (g == -CSI_ARG_ERROR) ||
-       (b == -CSI_ARG_ERROR))
+   if ((r == -ESC_ARG_ERROR) ||
+       (g == -ESC_ARG_ERROR) ||
+       (b == -ESC_ARG_ERROR))
      return COL_DEF;
 
    if (separator == ':' && *ptr)
@@ -736,7 +736,7 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
              while ((*ptr) && (**ptr != ';'))
                {
                   int arg = _csi_truecolor_arg_get(ty, ptr);
-                  if (arg == -CSI_ARG_ERROR)
+                  if (arg == -ESC_ARG_ERROR)
                     break;
                }
           }
@@ -746,11 +746,11 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
           }
      }
 
-   if (r == -CSI_ARG_NO_VALUE)
+   if (r == -ESC_ARG_NO_VALUE)
      r = 0;
-   if (g == -CSI_ARG_NO_VALUE)
+   if (g == -ESC_ARG_NO_VALUE)
      g = 0;
-   if (b == -CSI_ARG_NO_VALUE)
+   if (b == -ESC_ARG_NO_VALUE)
      b = 0;
 
    return _approximate_truecolor_rgb(ty, r, g, b);
@@ -774,9 +774,9 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
    m = _csi_truecolor_arg_get(ty, ptr);
    y = _csi_truecolor_arg_get(ty, ptr);
 
-   if ((c == -CSI_ARG_ERROR) ||
-       (m == -CSI_ARG_ERROR) ||
-       (y == -CSI_ARG_ERROR))
+   if ((c == -ESC_ARG_ERROR) ||
+       (m == -ESC_ARG_ERROR) ||
+       (y == -ESC_ARG_ERROR))
      return COL_DEF;
 
    if (separator == ':' && *ptr)
@@ -791,7 +791,7 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
              while ((*ptr) && (**ptr != ';'))
                {
                   int arg = _csi_truecolor_arg_get(ty, ptr);
-                  if (arg == -CSI_ARG_ERROR)
+                  if (arg == -ESC_ARG_ERROR)
                     break;
                }
           }
@@ -801,11 +801,11 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
           }
      }
 
-   if (c == -CSI_ARG_NO_VALUE)
+   if (c == -ESC_ARG_NO_VALUE)
      c = 0;
-   if (m == -CSI_ARG_NO_VALUE)
+   if (m == -ESC_ARG_NO_VALUE)
      m = 0;
-   if (y == -CSI_ARG_NO_VALUE)
+   if (y == -ESC_ARG_NO_VALUE)
      y = 0;
 
    r = 255 - ((c * 255) / 100);
@@ -834,10 +834,10 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
    y = _csi_truecolor_arg_get(ty, ptr);
    k = _csi_truecolor_arg_get(ty, ptr);
 
-   if ((c == -CSI_ARG_ERROR) ||
-       (m == -CSI_ARG_ERROR) ||
-       (y == -CSI_ARG_ERROR) ||
-       (k == -CSI_ARG_ERROR))
+   if ((c == -ESC_ARG_ERROR) ||
+       (m == -ESC_ARG_ERROR) ||
+       (y == -ESC_ARG_ERROR) ||
+       (k == -ESC_ARG_ERROR))
      return COL_DEF;
 
    if (separator == ':' && *ptr)
@@ -853,7 +853,7 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
              while ((*ptr) && (**ptr != ';'))
                {
                   int arg = _csi_truecolor_arg_get(ty, ptr);
-                  if (arg == -CSI_ARG_ERROR)
+                  if (arg == -ESC_ARG_ERROR)
                     break;
                }
           }
@@ -863,13 +863,13 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
           }
      }
 
-   if (c == -CSI_ARG_NO_VALUE)
+   if (c == -ESC_ARG_NO_VALUE)
      c = 0;
-   if (m == -CSI_ARG_NO_VALUE)
+   if (m == -ESC_ARG_NO_VALUE)
      m = 0;
-   if (y == -CSI_ARG_NO_VALUE)
+   if (y == -ESC_ARG_NO_VALUE)
      y = 0;
-   if (k == -CSI_ARG_NO_VALUE)
+   if (k == -ESC_ARG_NO_VALUE)
      k = 0;
 
    r = (255 * (100 - c) * (100 - k)) / 100 / 100;
@@ -897,9 +897,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
         int arg = _csi_arg_get(ty, &b);
         switch (arg)
           {
-           case -CSI_ARG_ERROR:
+           case -ESC_ARG_ERROR:
               return;
-           case -CSI_ARG_NO_VALUE:
+           case -ESC_ARG_NO_VALUE:
               EINA_FALLTHROUGH;
            case 0: // reset to normal
               termpty_reset_att(&(ty->termstate.att));
@@ -977,9 +977,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               arg = _csi_arg_get(ty, &b);
               switch (arg)
                 {
-                 case -CSI_ARG_ERROR:
+                 case -ESC_ARG_ERROR:
                     return;
-                   /* TODO: -CSI_ARG_NO_VALUE */
+                   /* TODO: -ESC_ARG_NO_VALUE */
                  case 1:
                     ty->termstate.att.fg256 = 0;
                     ty->termstate.att.fg = COL_INVIS;
@@ -1008,14 +1008,14 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
                  case 5:
                     // then get next arg - should be color index 0-255
                     arg = _csi_arg_get(ty, &b);
-                    if (arg <= -CSI_ARG_ERROR || arg > 255)
+                    if (arg <= -ESC_ARG_ERROR || arg > 255)
                       {
                          ERR("Invalid fg color %d", arg);
                          ty->decoding_error = EINA_TRUE;
                       }
                     else
                       {
-                         if (arg == -CSI_ARG_NO_VALUE)
+                         if (arg == -ESC_ARG_NO_VALUE)
                            arg = 0;
                          ty->termstate.att.fg256 = 1;
                          ty->termstate.att.fg = arg;
@@ -1048,9 +1048,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               arg = _csi_arg_get(ty, &b);
               switch (arg)
                 {
-                 case -CSI_ARG_ERROR:
+                 case -ESC_ARG_ERROR:
                     return;
-                   /* TODO: -CSI_ARG_NO_VALUE */
+                   /* TODO: -ESC_ARG_NO_VALUE */
                  case 1:
                     ty->termstate.att.bg256 = 0;
                     ty->termstate.att.bg = COL_INVIS;
@@ -1079,14 +1079,14 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
                  case 5:
                     // then get next arg - should be color index 0-255
                     arg = _csi_arg_get(ty, &b);
-                    if (arg <= -CSI_ARG_ERROR || arg > 255)
+                    if (arg <= -ESC_ARG_ERROR || arg > 255)
                       {
                          ERR("Invalid bg color %d", arg);
                          ty->decoding_error = EINA_TRUE;
                       }
                     else
                       {
-                         if (arg == -CSI_ARG_NO_VALUE)
+                         if (arg == -ESC_ARG_NO_VALUE)
                            arg = 0;
                          ty->termstate.att.bg256 = 1;
                          ty->termstate.att.bg = arg;
@@ -1170,7 +1170,7 @@ _handle_esc_csi_cnl(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int max = ty->h;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -1195,7 +1195,7 @@ _handle_esc_csi_cpl(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int max = ty->h;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -1221,7 +1221,7 @@ _handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr)
    Termcell *cells;
    int x, lim, max;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    DBG("DCH - Delete Character: %d chars", arg);
@@ -1279,7 +1279,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
    arg = _csi_arg_get(ty, &b);
    switch (arg)
      {
-      case -CSI_ARG_ERROR:
+      case -ESC_ARG_ERROR:
          return;
       case 5:
          if (question_mark)
@@ -1388,7 +1388,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               /* DSR-DECCKSR (Memory Checksum) */
               int pid = _csi_arg_get(ty, &b);
-              if (pid == -CSI_ARG_NO_VALUE)
+              if (pid == -ESC_ARG_NO_VALUE)
                 pid = 65535;
               len = snprintf(bf, sizeof(bf), "\033P%u!~0000\033\\",
                              ((unsigned int)pid) % 65536);
@@ -1414,7 +1414,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
               ty->decoding_error = EINA_TRUE;
            }
          break;
-      /* TODO: -CSI_ARG_NO_VALUE */
+      /* TODO: -ESC_ARG_NO_VALUE */
       default:
          WRN("unhandled DSR (dec specific: %s) %d",
              (question_mark)? "yes": "no", arg);
@@ -1430,7 +1430,7 @@ _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
   int right = _csi_arg_get(ty, b);
 
   DBG("DECSLRM (%d;%d) Set Left and Right Margins", left, right);
-  if ((left == -CSI_ARG_ERROR) || (right == -CSI_ARG_ERROR))
+  if ((left == -ESC_ARG_ERROR) || (right == -ESC_ARG_ERROR))
     goto bad;
 
   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
@@ -1464,7 +1464,7 @@ _handle_esc_csi_decstbm(Termpty *ty, Eina_Unicode **b)
   int bottom = _csi_arg_get(ty, b);
 
   DBG("DECSTBM (%d;%d) Set Top and Bottom Margins", top, bottom);
-  if ((top == -CSI_ARG_ERROR) || (bottom == -CSI_ARG_ERROR))
+  if ((top == -ESC_ARG_ERROR) || (bottom == -ESC_ARG_ERROR))
     goto bad;
 
   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
@@ -1637,12 +1637,12 @@ _handle_esc_csi_decfra(Termpty *ty, Eina_Unicode **b)
 
    DBG("DECFRA (%d; %d;%d;%d;%d) Fill Rectangular Area",
        c, top, left, bottom, right);
-   if ((c == -CSI_ARG_ERROR) ||
-       (c == -CSI_ARG_NO_VALUE) ||
-       (top == -CSI_ARG_ERROR) ||
-       (left == -CSI_ARG_ERROR) ||
-       (bottom == -CSI_ARG_ERROR) ||
-       (right == -CSI_ARG_ERROR))
+   if ((c == -ESC_ARG_ERROR) ||
+       (c == -ESC_ARG_NO_VALUE) ||
+       (top == -ESC_ARG_ERROR) ||
+       (left == -ESC_ARG_ERROR) ||
+       (bottom == -ESC_ARG_ERROR) ||
+       (right == -ESC_ARG_ERROR))
      return;
 
    if (! ((c >= 32 && c <= 126) || (c >= 160 && c <= 255)))
@@ -1714,10 +1714,10 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
 
    DBG("DECCARA (%d;%d;%d;%d) Change Attributes in Rectangular Area",
        top, left, bottom, right);
-   if ((top == -CSI_ARG_ERROR) ||
-       (left == -CSI_ARG_ERROR) ||
-       (bottom == -CSI_ARG_ERROR) ||
-       (right == -CSI_ARG_ERROR))
+   if ((top == -ESC_ARG_ERROR) ||
+       (left == -ESC_ARG_ERROR) ||
+       (bottom == -ESC_ARG_ERROR) ||
+       (right == -ESC_ARG_ERROR))
      return;
 
    while (b && b < end)
@@ -1725,9 +1725,9 @@ _handle_esc_csi_deccara(Termpty *ty, Eina_Unicode **ptr,
         int arg = _csi_arg_get(ty, &b);
         switch (arg)
           {
-           case -CSI_ARG_ERROR:
+           case -ESC_ARG_ERROR:
               return;
-           case -CSI_ARG_NO_VALUE:
+           case -ESC_ARG_NO_VALUE:
               EINA_FALLTHROUGH;
            case 0:
               set_bold = set_underline = set_blink = set_inverse = EINA_FALSE;
@@ -1882,10 +1882,10 @@ _handle_esc_csi_decrara(Termpty *ty, Eina_Unicode **ptr,
 
    DBG("DECRARA (%d;%d;%d;%d) Reverse Attributes in Rectangular Area",
        top, left, bottom, right);
-   if ((top == -CSI_ARG_ERROR) ||
-       (left == -CSI_ARG_ERROR) ||
-       (bottom == -CSI_ARG_ERROR) ||
-       (right == -CSI_ARG_ERROR))
+   if ((top == -ESC_ARG_ERROR) ||
+       (left == -ESC_ARG_ERROR) ||
+       (bottom == -ESC_ARG_ERROR) ||
+       (right == -ESC_ARG_ERROR))
      return;
 
    while (b && b < end)
@@ -1893,9 +1893,9 @@ _handle_esc_csi_decrara(Termpty *ty, Eina_Unicode **ptr,
         int arg = _csi_arg_get(ty, &b);
         switch (arg)
           {
-           case -CSI_ARG_ERROR:
+           case -ESC_ARG_ERROR:
               return;
-           case -CSI_ARG_NO_VALUE:
+           case -ESC_ARG_NO_VALUE:
               EINA_FALLTHROUGH;
            case 0:
               reverse_bold = reverse_underline = reverse_blink = reverse_inverse = EINA_TRUE;
@@ -1986,10 +1986,10 @@ _handle_esc_csi_decera(Termpty *ty, Eina_Unicode **b)
    DBG("DECERA (%d;%d;%d;%d) Erase Rectangular Area",
        top, left, bottom, right);
 
-   if ((top == -CSI_ARG_ERROR) ||
-       (left == -CSI_ARG_ERROR) ||
-       (bottom == -CSI_ARG_ERROR) ||
-       (right == -CSI_ARG_ERROR))
+   if ((top == -ESC_ARG_ERROR) ||
+       (left == -ESC_ARG_ERROR) ||
+       (bottom == -ESC_ARG_ERROR) ||
+       (right == -ESC_ARG_ERROR))
      return;
 
    if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
@@ -2020,14 +2020,14 @@ _handle_esc_csi_deccra(Termpty *ty, Eina_Unicode **b)
 
    DBG("DECFRA (%d;%d;%d;%d -> %d;%d) Copy Rectangular Area",
        top, left, bottom, right, to_top, to_left);
-   if ((top == -CSI_ARG_ERROR) ||
-       (left == -CSI_ARG_ERROR) ||
-       (bottom == -CSI_ARG_ERROR) ||
-       (right == -CSI_ARG_ERROR) ||
-       (p1 == -CSI_ARG_ERROR) ||
-       (to_top == -CSI_ARG_ERROR) ||
-       (to_left == -CSI_ARG_ERROR) ||
-       (p2 == -CSI_ARG_ERROR))
+   if ((top == -ESC_ARG_ERROR) ||
+       (left == -ESC_ARG_ERROR) ||
+       (bottom == -ESC_ARG_ERROR) ||
+       (right == -ESC_ARG_ERROR) ||
+       (p1 == -ESC_ARG_ERROR) ||
+       (to_top == -ESC_ARG_ERROR) ||
+       (to_left == -ESC_ARG_ERROR) ||
+       (p2 == -ESC_ARG_ERROR))
      return;
 
    if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
@@ -2137,7 +2137,7 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    cy = _csi_arg_get(ty, b);
    cx = _csi_arg_get(ty, b);
 
-   if ((cx == -CSI_ARG_ERROR) || (cy == -CSI_ARG_ERROR))
+   if ((cx == -ESC_ARG_ERROR) || (cy == -ESC_ARG_ERROR))
      return;
 
    DBG("cursor pos set (%s) (%d;%d)", (*cc == 'H') ? "CUP" : "HVP",
@@ -2180,9 +2180,9 @@ _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
 
   switch (arg)
     {
-     case -CSI_ARG_ERROR:
+     case -ESC_ARG_ERROR:
         return;
-     case -CSI_ARG_NO_VALUE:
+     case -ESC_ARG_NO_VALUE:
         EINA_FALLTHROUGH;
      case 0:
         EINA_FALLTHROUGH;
@@ -2219,9 +2219,9 @@ _handle_esc_csi_decsace(Termpty *ty, Eina_Unicode **b)
 
   switch (arg)
     {
-     case -CSI_ARG_ERROR:
+     case -ESC_ARG_ERROR:
         return;
-     case -CSI_ARG_NO_VALUE:
+     case -ESC_ARG_NO_VALUE:
         EINA_FALLTHROUGH;
      case 0:
         EINA_FALLTHROUGH;
@@ -2251,7 +2251,7 @@ _handle_esc_csi_decic(Termpty *ty, Eina_Unicode **b)
 
    DBG("DECIC Insert %d Column", arg);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2302,7 +2302,7 @@ _handle_esc_csi_decdc(Termpty *ty, Eina_Unicode **b)
 
    DBG("DECDC Delete %d Column", arg);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2365,7 +2365,7 @@ _handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
    int old_cx = ty->cursor_state.cx;
    int max = ty->w;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->w * ty->h);
 
@@ -2407,7 +2407,7 @@ _handle_esc_csi_cuu(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2429,7 +2429,7 @@ _handle_esc_csi_cud_or_vpr(Termpty *ty, Eina_Unicode **ptr,
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    if (arg < 1)
@@ -2460,7 +2460,7 @@ _handle_esc_csi_cuf(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2481,7 +2481,7 @@ _handle_esc_csi_cub(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2513,7 +2513,7 @@ _handle_esc_csi_cha(Termpty *ty, Eina_Unicode **ptr,
      {
         DBG("CHA - Cursor Horizontal Absolute: %d", arg);
      }
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 1;
@@ -2539,7 +2539,7 @@ _handle_esc_csi_cht(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
    DBG("CHT - Cursor Forward Tabulation: %d", arg);
@@ -2552,7 +2552,7 @@ _handle_esc_csi_ed(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 0;
@@ -2592,7 +2592,7 @@ _handle_esc_csi_el(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg < 1)
      arg = 0;
@@ -2624,7 +2624,7 @@ _handle_esc_csi_il(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int sy1, sy2, i;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
@@ -2662,7 +2662,7 @@ _handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int sy1, sy2, i;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
@@ -2700,7 +2700,7 @@ _handle_esc_csi_su(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int i;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
@@ -2716,7 +2716,7 @@ _handle_esc_csi_sd(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int i;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    if (arg == 0)
      {
@@ -2752,9 +2752,9 @@ _handle_esc_csi_decst8c(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int i;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
-   if ((arg != -CSI_ARG_NO_VALUE) && (arg != 5))
+   if ((arg != -ESC_ARG_NO_VALUE) && (arg != 5))
      {
         ERR("Invalid DECST8C argument");
         ty->decoding_error = EINA_TRUE;
@@ -2775,13 +2775,13 @@ _handle_esc_csi_ctc(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
 
    DBG("CTC - Cursor Tab Control: %d", arg);
    switch (arg)
      {
-      case -CSI_ARG_NO_VALUE:
+      case -ESC_ARG_NO_VALUE:
          EINA_FALLTHROUGH;
       case 0:
         TAB_SET(ty, ty->cursor_state.cx);
@@ -2806,12 +2806,12 @@ _handle_esc_csi_tbc(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("TBC - Tab Clear: %d", arg);
    switch (arg)
      {
-      case -CSI_ARG_NO_VALUE:
+      case -ESC_ARG_NO_VALUE:
          EINA_FALLTHROUGH;
       case 0:
         TAB_UNSET(ty, ty->cursor_state.cx);
@@ -2835,7 +2835,7 @@ _handle_esc_csi_ech(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("ECH - Erase Character: %d", arg);
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->w);
@@ -2849,7 +2849,7 @@ _handle_esc_csi_cbt(Termpty *ty, Eina_Unicode **ptr)
    int cx = ty->cursor_state.cx;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("CBT - Cursor Horizontal Backward Tabulation: %d", arg);
 
@@ -2873,7 +2873,7 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("REP - Repeat last character %d times", arg);
 
@@ -2915,7 +2915,7 @@ _handle_esc_csi_da(Termpty *ty, Eina_Unicode **ptr)
      }
    arg = _csi_arg_get(ty, &b);
 
-   if ((arg == -CSI_ARG_ERROR) || (arg > 0))
+   if ((arg == -ESC_ARG_ERROR) || (arg > 0))
      return;
 
    DBG("DA - Device Attributes");
@@ -2977,7 +2977,7 @@ _handle_esc_csi_uts(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("UTS - Unset Tab Stop: %d", arg);
    TERMPTY_RESTRICT_FIELD(arg, 0, ty->w);
@@ -2991,7 +2991,7 @@ _handle_esc_csi_vpa(Termpty *ty, Eina_Unicode **ptr)
    int arg = _csi_arg_get(ty, &b);
    int max = ty->h + 1;
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("VPA - Cursor Vertical Position Absolute: %d", arg);
    if (ty->termstate.restrict_cursor && (ty->termstate.bottom_margin > 0))
@@ -3009,7 +3009,7 @@ _handle_esc_csi_decswbv(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("DECSWBV - Set Warning Bell Volume: %d", arg);
    switch (arg)
@@ -3038,13 +3038,13 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
    h = _csi_arg_get(ty, &b);
    w = _csi_arg_get(ty, &b);
 
-   if ((w == -CSI_ARG_ERROR) || (h == -CSI_ARG_ERROR))
+   if ((w == -ESC_ARG_ERROR) || (h == -ESC_ARG_ERROR))
      return;
-   if (w == -CSI_ARG_NO_VALUE)
+   if (w == -ESC_ARG_NO_VALUE)
      {
         w = ty->w;
      }
-   if (h == -CSI_ARG_NO_VALUE)
+   if (h == -ESC_ARG_NO_VALUE)
      {
         h = ty->h;
      }
@@ -3081,7 +3081,7 @@ _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
 
-   if (arg == -CSI_ARG_ERROR)
+   if (arg == -ESC_ARG_ERROR)
      return;
    DBG("Window manipulation: %d", arg);
    switch (arg)
