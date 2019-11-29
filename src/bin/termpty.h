@@ -13,6 +13,7 @@ typedef struct _Termblock     Termblock;
 typedef struct _Termexp       Termexp;
 typedef struct _Termpty       Termpty;
 typedef struct _Termlink      Term_Link;
+typedef struct _TitleIconElem TitleIconElem;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -212,6 +213,7 @@ struct _Termpty
        uint8_t *bitmap;
        uint32_t size;
    } hl;
+   TitleIconElem *title_icon_stack;
 };
 
 struct _Termcell

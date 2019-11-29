@@ -3075,6 +3075,100 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
 #endif
 }
 
+struct _TitleIconElem {
+     const char *title;
+     const char *icon;
+     struct _TitleIconElem *next;
+};
+
+static void
+_title_icon_stack_push(Termpty *ty, Eina_Unicode **p)
+{
+   int arg = _csi_arg_get(ty, p);
+   TitleIconElem *elem = calloc(sizeof(*elem), 1);
+
+   if (!elem)
+     return;
+
+
+   switch (arg)
+     {
+      case -ESC_ARG_ERROR:
+         free(elem);
+         return;
+      case -ESC_ARG_NO_VALUE:
+         EINA_FALLTHROUGH;
+      case 0:
+         elem->title = eina_stringshare_ref(ty->prop.title);
+         elem->icon = eina_stringshare_ref(ty->prop.icon);
+         break;
+      case 1:
+         elem->icon = eina_stringshare_ref(ty->prop.icon);
+         break;
+      case 2:
+         elem->title = eina_stringshare_ref(ty->prop.title);
+         break;
+      default:
+         break;
+     }
+   if (!elem->title)
+     elem->title = ty->title_icon_stack ?
+        eina_stringshare_ref(ty->title_icon_stack->title) :
+        eina_stringshare_ref(ty->prop.title);
+   if (!elem->icon)
+     elem->icon = ty->title_icon_stack ?
+        eina_stringshare_ref(ty->title_icon_stack->icon) :
+        eina_stringshare_ref(ty->prop.icon);
+   elem->next = ty->title_icon_stack;
+   ty->title_icon_stack = elem;
+}
+
+static void
+_title_icon_stack_pop(Termpty *ty, Eina_Unicode **p)
+{
+   int arg = _csi_arg_get(ty, p);
+   TitleIconElem *elem = ty->title_icon_stack;
+
+   if (!elem)
+     return;
+
+   switch (arg)
+     {
+      case -ESC_ARG_ERROR:
+         return;
+      case -ESC_ARG_NO_VALUE:
+         EINA_FALLTHROUGH;
+      case 0:
+         eina_stringshare_del(ty->prop.icon);
+         ty->prop.icon = eina_stringshare_ref(elem->icon);
+         if (ty->cb.set_icon.func)
+           ty->cb.set_icon.func(ty->cb.set_icon.data);
+         eina_stringshare_del(ty->prop.title);
+         ty->prop.title = eina_stringshare_ref(elem->title);
+         if (ty->cb.set_title.func)
+           ty->cb.set_title.func(ty->cb.set_title.data);
+         break;
+      case 1:
+         eina_stringshare_del(ty->prop.icon);
+         ty->prop.icon = eina_stringshare_ref(elem->icon);
+         if (ty->cb.set_icon.func)
+           ty->cb.set_icon.func(ty->cb.set_icon.data);
+         break;
+      case 2:
+         eina_stringshare_del(ty->prop.title);
+         ty->prop.title = eina_stringshare_ref(elem->title);
+         if (ty->cb.set_title.func)
+           ty->cb.set_title.func(ty->cb.set_title.data);
+         break;
+      default:
+         break;
+     }
+   eina_stringshare_del(elem->icon);
+   eina_stringshare_del(elem->title);
+   ty->title_icon_stack = elem->next;
+   free(elem);
+}
+
 static void
 _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
 {
@@ -3089,6 +3183,12 @@ _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
       case 8:
          _handle_resize_by_chars(ty, &b);
          break;
+      case 22:
+        _title_icon_stack_push(ty, &b);
+        break;
+      case 23:
+        _title_icon_stack_pop(ty, &b);
+        break;
       default:
         // many others
         WRN("unhandled window manipulation %d", arg);
