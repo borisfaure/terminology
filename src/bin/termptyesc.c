@@ -3762,8 +3762,8 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (!*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
-        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+        eina_stringshare_del(ty->prop.title);
+        eina_stringshare_del(ty->prop.icon);
         if (s)
           {
              ty->prop.title = eina_stringshare_add(s);
@@ -3777,14 +3777,15 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         if (ty->cb.set_title.func)
           ty->cb.set_title.func(ty->cb.set_title.data);
-        if (ty->cb.set_icon.func) ty->cb.set_icon.func(ty->cb.set_icon.data);
+        if (ty->cb.set_icon.func)
+          ty->cb.set_icon.func(ty->cb.set_icon.data);
         break;
       case 1:
         // icon name
         if (!*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
-        if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+        eina_stringshare_del(ty->prop.icon);
         if (s)
           {
              ty->prop.icon = eina_stringshare_add(s);
@@ -3801,7 +3802,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (!*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
-        if (ty->prop.title) eina_stringshare_del(ty->prop.title);
+        eina_stringshare_del(ty->prop.title);
         if (s)
           {
              ty->prop.title = eina_stringshare_add(s);

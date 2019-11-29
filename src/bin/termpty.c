@@ -818,9 +818,9 @@ termpty_free(Termpty *ty)
      }
    if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
-   if (ty->prop.title) eina_stringshare_del(ty->prop.title);
-   if (ty->prop.user_title) eina_stringshare_del(ty->prop.user_title);
-   if (ty->prop.icon) eina_stringshare_del(ty->prop.icon);
+   eina_stringshare_del(ty->prop.title);
+   eina_stringshare_del(ty->prop.user_title);
+   eina_stringshare_del(ty->prop.icon);
    termpty_backlog_free(ty);
    free(ty->screen);
    free(ty->screen2);
@@ -1395,11 +1395,17 @@ void
 termpty_block_free(Termblock *tb)
 {
    char *s;
-   if (tb->path) eina_stringshare_del(tb->path);
-   if (tb->link) eina_stringshare_del(tb->link);
-   if (tb->chid) eina_stringshare_del(tb->chid);
-   if (tb->obj) evas_object_del(tb->obj);
-   EINA_LIST_FREE(tb->cmds, s) free(s);
+
+   if (!tb)
+     return;
+
+   eina_stringshare_del(tb->path);
+   eina_stringshare_del(tb->link);
+   eina_stringshare_del(tb->chid);
+   if (tb->obj)
+     evas_object_del(tb->obj);
+   EINA_LIST_FREE(tb->cmds, s)
+      free(s);
    free(tb);
 }
 

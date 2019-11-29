@@ -176,11 +176,8 @@ termio_user_title_set(Evas_Object *obj, const char *title)
     size_t len = 0;
     EINA_SAFETY_ON_NULL_RETURN(sd);
 
-    if (sd->pty->prop.user_title)
-      {
-         eina_stringshare_del(sd->pty->prop.user_title);
-         sd->pty->prop.user_title = NULL;
-      }
+    eina_stringshare_del(sd->pty->prop.user_title);
+    sd->pty->prop.user_title = NULL;
 
     if (title)
       {
@@ -409,7 +406,7 @@ termio_config_update(Evas_Object *obj)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->font.name) eina_stringshare_del(sd->font.name);
+   eina_stringshare_del(sd->font.name);
    sd->font.name = NULL;
 
    if (sd->config->font.bitmap)
@@ -872,11 +869,8 @@ _lost_selection(void *data, Elm_Sel_Type selection)
           }
         if (sd->have_sel)
           {
-             if (sd->sel_str)
-               {
-                  eina_stringshare_del(sd->sel_str);
-                  sd->sel_str = NULL;
-               }
+             eina_stringshare_del(sd->sel_str);
+             sd->sel_str = NULL;
              termio_sel_set(sd, EINA_FALSE);
              elm_object_cnp_selection_clear(sd->win, selection);
              termio_smart_update_queue(sd);
@@ -906,7 +900,7 @@ termio_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    elm_cnp_selection_loss_callback_set(sd->win, type,
                                        _lost_selection, sd->self);
    sd->have_sel = EINA_TRUE;
-   if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+   eina_stringshare_del(sd->sel_str);
    sd->sel_str = text;
 }
 
@@ -1439,11 +1433,9 @@ _remove_links(Termio *sd)
 {
    Eina_Bool same_geom = EINA_FALSE;
 
-   if (sd->link.string)
-     {
-        eina_stringshare_del(sd->link.string);
-        sd->link.string = NULL;
-     }
+   eina_stringshare_del(sd->link.string);
+   sd->link.string = NULL;
+
    sd->link.x1 = -1;
    sd->link.y1 = -1;
    sd->link.x2 = -1;
@@ -2383,8 +2375,7 @@ _smart_mouseover_apply(Termio *sd)
           goto end;
      }
 
-   if (sd->link.string)
-     eina_stringshare_del(sd->link.string);
+   eina_stringshare_del(sd->link.string);
    sd->link.string = eina_stringshare_add(s);
 
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
@@ -2829,13 +2820,13 @@ termio_file_send_ok(const Evas_Object *obj, const char *file)
    sd->sendfile.f = fopen(file, "w");
    if (sd->sendfile.f)
      {
-        if (sd->sendfile.file) eina_stringshare_del(sd->sendfile.file);
+        eina_stringshare_del(sd->sendfile.file);
         sd->sendfile.file = eina_stringshare_add(file);
         sd->sendfile.active = EINA_TRUE;
         termpty_write(ty, "k\n", 2);
         return EINA_TRUE;
      }
-   if (sd->sendfile.file) eina_stringshare_del(sd->sendfile.file);
+   eina_stringshare_del(sd->sendfile.file);
    sd->sendfile.file = NULL;
    sd->sendfile.active = EINA_FALSE;
    termpty_write(ty, "n\n", 2);
@@ -3226,10 +3217,9 @@ _smart_del(Evas_Object *obj)
    if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
-   if (sd->font.name) eina_stringshare_del(sd->font.name);
+   eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
-   if (sd->link.string)
-     eina_stringshare_del(sd->link.string);
+   eina_stringshare_del(sd->link.string);
    if (sd->glayer) evas_object_del(sd->glayer);
    if (sd->win)
      evas_object_event_callback_del_full(sd->win, EVAS_CALLBACK_DEL,
@@ -3255,7 +3245,7 @@ _smart_del(Evas_Object *obj)
           }
         sd->sendfile.active = EINA_FALSE;
      }
-   if (sd->sel_str) eina_stringshare_del(sd->sel_str);
+   eina_stringshare_del(sd->sel_str);
    if (sd->sel_reset_job) ecore_job_del(sd->sel_reset_job);
    EINA_LIST_FREE(sd->cur_chids, chid) eina_stringshare_del(chid);
    sd->sel_str = NULL;
@@ -3800,11 +3790,8 @@ _smart_pty_command(void *data)
                {
                   sd->sendfile.progress = 0.0;
                   sd->sendfile.size = 0;
-                  if (sd->sendfile.file)
-                    {
-                       eina_stringshare_del(sd->sendfile.file);
-                       sd->sendfile.file = NULL;
-                    }
+                  eina_stringshare_del(sd->sendfile.file);
+                  sd->sendfile.file = NULL;
                   if (sd->sendfile.f)
                     {
                        fclose(sd->sendfile.f);

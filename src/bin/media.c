@@ -964,8 +964,8 @@ _smart_del(Evas_Object *obj)
         if (sd->realf) unlink(sd->realf);
         close(sd->tmpfd);
      }
-   if (sd->src) eina_stringshare_del(sd->src);
-   if (sd->realf) eina_stringshare_del(sd->realf);
+   eina_stringshare_del(sd->src);
+   eina_stringshare_del(sd->realf);
    if (sd->clip) evas_object_del(sd->clip);
    if (sd->o_img) evas_object_del(sd->o_img);
    if (sd->o_tmp) evas_object_del(sd->o_tmp);

@@ -1000,10 +1000,8 @@ win_free(Win *wn)
      }
    if (wn->size_job)
      ecore_job_del(wn->size_job);
-   if (wn->config)
-     config_del(wn->config);
-   if (wn->preedit_str)
-     eina_stringshare_del(wn->preedit_str);
+   config_del(wn->config);
+   eina_stringshare_del(wn->preedit_str);
    keyin_compose_seq_reset(&wn->khdl);
    if (wn->khdl.imf)
      {
@@ -1488,11 +1486,8 @@ _imf_event_commit_cb(void *data,
                termpty_write(ty, str, len);
           }
      }
-   if (wn->preedit_str)
-     {
-        eina_stringshare_del(wn->preedit_str);
-        wn->preedit_str = NULL;
-     }
+   eina_stringshare_del(wn->preedit_str);
+   wn->preedit_str = NULL;
 }
 
 
@@ -1520,8 +1515,7 @@ _imf_event_preedit_changed_cb(void *data,
    if (!preedit_string)
      return;
    DBG("IMF preedit str '%s'", preedit_string);
-   if (wn->preedit_str)
-     eina_stringshare_del(wn->preedit_str);
+   eina_stringshare_del(wn->preedit_str);
    wn->preedit_str = eina_stringshare_add(preedit_string);
    free(preedit_string);
 }
@@ -5629,11 +5623,8 @@ _term_free(Term *term)
         ecore_timer_del(term->sendfile_progress_hide_timer);
         term->sendfile_progress_hide_timer = NULL;
      }
-   if (term->sendfile_dir)
-     {
-        eina_stringshare_del(term->sendfile_dir);
-        term->sendfile_dir = NULL;
-     }
+   eina_stringshare_del(term->sendfile_dir);
+   term->sendfile_dir = NULL;
    _popmedia_queue_free(term);
    if (term->media)
      {
