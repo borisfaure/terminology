@@ -268,7 +268,7 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
           }
         errno = 0;
         len = read(ty->fd, rbuf, len);
-        if ((len < 0 && errno != EAGAIN) ||
+        if ((len < 0 && !(errno == EAGAIN || errno == EINTR)) ||
             (len == 0 && errno != 0))
           {
              /* Do not print error if the child has exited */
