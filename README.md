@@ -15,6 +15,7 @@ This is an EFL terminal emulator with some extra bells and whistles.
 [![codecov](https://codecov.io/gh/billiob/terminology/branch/master/graph/badge.svg)](https://codecov.io/gh/billiob/terminology)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/49a51811016a44279cb969af82cd246f)](https://www.codacy.com/app/billiob/terminology)
 [![Twitter: _Terminology_](https://img.shields.io/twitter/follow/_Terminology_?style=social)](https://twitter.com/_Terminology_)
+[![terminology](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
 
 Requirements
 ------------
