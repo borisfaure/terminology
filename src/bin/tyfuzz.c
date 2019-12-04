@@ -263,27 +263,12 @@ _termpty_init(Termpty *ty, Config *config)
    assert(ty->screen2);
    ty->circular_offset = 0;
    ty->fd = STDIN_FILENO;
-#if defined(ENABLE_FUZZING)
-   ty->fd_dev_null = open("/dev/null", O_WRONLY|O_APPEND);
-   assert(ty->fd_dev_null >= 0);
-#endif
    ty->hl.bitmap = calloc(1, HL_LINKS_MAX / 8); /* bit map for 1 << 16 elements */
    assert(ty->hl.bitmap);
    /* Mark id 0 as set */
    ty->hl.bitmap[0] = 1;
    ty->backlog_beacon.backlog_y = 0;
    ty->backlog_beacon.screen_y = 0;
-}
-
-static void
-_termpty_shutdown(Termpty *ty)
-{
-#if defined(ENABLE_TESTS)
-   ty_sb_free(&ty->write_buffer);
-#endif
-#if defined(ENABLE_FUZZING)
-   close(ty->fd_dev_null);
-#endif
 }
 
 int
@@ -383,8 +368,6 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 #ifdef TYTEST
    _tytest_checksum(&_ty);
 #endif
-
-   _termpty_shutdown(&_ty);
 
 #ifdef TYTEST
    tytest_shutdown();
