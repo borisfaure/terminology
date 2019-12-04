@@ -271,14 +271,6 @@ _termpty_init(Termpty *ty, Config *config)
    ty->backlog_beacon.screen_y = 0;
 }
 
-static void
-_termpty_shutdown(Termpty *ty)
-{
-#if defined(ENABLE_TESTS)
-   ty_sb_free(&ty->write_buffer);
-#endif
-}
-
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
@@ -376,8 +368,6 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 #ifdef TYTEST
    _tytest_checksum(&_ty);
 #endif
-
-   _termpty_shutdown(&_ty);
 
 #ifdef TYTEST
    tytest_shutdown();

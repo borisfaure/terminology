@@ -225,34 +225,12 @@ _pty_size(Termpty *ty)
 }
 
 static Eina_Bool
-_fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
+_handle_read(Termpty *ty, Eina_Bool false_on_empty)
 {
    char buf[4097];
    Eina_Unicode codepoint[4097];
    int len, i, j, reads;
    unsigned int k;
-
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
-     {
-        DBG("error while reading from tty slave fd");
-        ty->hand_fd = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
-   if (ty->fd == -1)
-     {
-        ty->hand_fd = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
-
-/* it seems the BSDs can not read from this side of the pair if the other side
- * is closed */
-#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
-   if (ty->pid == -1)
-     {
-        ty->hand_fd = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
-#endif
 
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
@@ -278,7 +256,8 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
                }
              close(ty->fd);
              ty->fd = -1;
-             if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+             if (ty->hand_fd)
+               ecore_main_fd_handler_del(ty->hand_fd);
              ty->hand_fd = NULL;
              return ECORE_CALLBACK_CANCEL;
           }
@@ -337,16 +316,19 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
 //        DBG("---------------- handle buf %i", j);
         termpty_handle_buf(ty, codepoint, j);
      }
-   if (ty->cb.change.func) ty->cb.change.func(ty->cb.change.data);
+   if (ty->cb.change.func)
+     ty->cb.change.func(ty->cb.change.data);
 #if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
    if (len <= 0)
      {
         ty->exit_code = 0;
         ty->pid = -1;
 
-        if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+        if (ty->hand_exe_exit)
+          ecore_event_handler_del(ty->hand_exe_exit);
         ty->hand_exe_exit = NULL;
-        if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+        if (ty->hand_fd)
+          ecore_main_fd_handler_del(ty->hand_fd);
         ty->hand_fd = NULL;
         ty->fd = -1;
         ty->slavefd = -1;
@@ -355,14 +337,82 @@ _fd_read_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
         return ECORE_CALLBACK_CANCEL;
      }
 #endif
-   if ((false_on_empty) && (len <= 0)) return ECORE_CALLBACK_CANCEL;
-   return EINA_TRUE;
+   if ((false_on_empty) && (len <= 0))
+     return ECORE_CALLBACK_CANCEL;
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_cb_fd_read(void *data, Ecore_Fd_Handler *fd_handler)
+_handle_write(Termpty *ty)
 {
-   return _fd_read_do(data, fd_handler, EINA_FALSE);
+   struct ty_sb *sb = &ty->write_buffer;
+   ssize_t len;
+
+   if (!sb->len)
+     return ECORE_CALLBACK_RENEW;
+
+   len = write(ty->fd, sb->buf, sb->len);
+   if (len < 0 && (errno != EINTR && errno != EAGAIN))
+     {
+        ERR(_("Could not write to file descriptor %d: %s"),
+            ty->fd, strerror(errno));
+        return ECORE_CALLBACK_CANCEL;
+     }
+   ty_sb_lskip(sb, len);
+
+   if (!sb->len)
+     ecore_main_fd_handler_active_set(ty->hand_fd,
+                                      ECORE_FD_ERROR |
+                                      ECORE_FD_READ);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_fd_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
+{
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_ERROR))
+     {
+        DBG("error while doing I/O on tty slave fd");
+        ty->hand_fd = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   if (ty->fd == -1)
+     {
+        ty->hand_fd = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+/* it seems the BSDs can not read from this side of the pair if the other side
+ * is closed */
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+   if (ty->pid == -1)
+     {
+        ty->hand_fd = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+#endif
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+     {
+        if (!_handle_read(ty, false_on_empty))
+          return ECORE_CALLBACK_CANCEL;
+     }
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+     {
+        if (!_handle_write(ty))
+          return ECORE_CALLBACK_CANCEL;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_cb_fd(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   return _fd_do(data, fd_handler, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -386,7 +436,7 @@ _cb_exe_exit(void *data,
    res = ECORE_CALLBACK_PASS_ON;
    while (ty->hand_fd && res != ECORE_CALLBACK_CANCEL)
      {
-        res = _fd_read_do(ty, ty->hand_fd, EINA_TRUE);
+        res = _fd_do(ty, ty->hand_fd, EINA_TRUE);
      }
 
    if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
@@ -533,7 +583,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->fd = STDIN_FILENO;
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
                                            ECORE_FD_READ | ECORE_FD_ERROR,
-                                           _cb_fd_read, ty,
+                                           _cb_fd, ty,
                                            NULL, NULL);
    _pty_size(ty);
    termpty_save_register(ty);
@@ -747,10 +797,10 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    ty->slavefd = -1;
 
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd, ECORE_FD_READ,
-                                           _cb_fd_read, ty,
+                                           _cb_fd, ty,
                                            NULL, NULL);
    /* ensure we're not missing a read */
-   _cb_fd_read(ty, ty->hand_fd);
+   _cb_fd(ty, ty->hand_fd);
 
    _pty_size(ty);
    termpty_save_register(ty);
@@ -846,6 +896,7 @@ termpty_free(Termpty *ty)
    free(ty->hl.bitmap);
    free(ty->buf);
    free(ty->tabs);
+   ty_sb_free(&ty->write_buffer);
    free(ty);
 }
 
@@ -1251,18 +1302,14 @@ termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
-#if defined(ENABLE_TESTS)
-   ty_sb_add(&ty->write_buffer, input, len);
-#else
-   int fd = ty->fd;
 #if defined(ENABLE_FUZZING)
    return;
 #endif
-   if (fd < 0) return;
-   if (write(fd, input, len) < 0)
-     ERR(_("Could not write to file descriptor %d: %s"),
-         fd, strerror(errno));
-#endif
+   ty_sb_add(&ty->write_buffer, input, len);
+   ecore_main_fd_handler_active_set(ty->hand_fd,
+                                    ECORE_FD_ERROR |
+                                    ECORE_FD_READ |
+                                    ECORE_FD_WRITE);
 }
 
 struct screen_info

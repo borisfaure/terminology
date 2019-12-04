@@ -168,9 +168,7 @@ struct _Termpty
    Backlog_Beacon backlog_beacon;
    int w, h;
    int fd, slavefd;
-#if defined(ENABLE_TESTS)
    struct ty_sb write_buffer;
-#endif
    struct {
       int curid;
       Eina_Hash *blocks;
