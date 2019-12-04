@@ -171,9 +171,6 @@ struct _Termpty
 #if defined(ENABLE_TESTS)
    struct ty_sb write_buffer;
 #endif
-#if defined(ENABLE_FUZZING)
-   int fd_dev_null;
-#endif
    struct {
       int curid;
       Eina_Hash *blocks;

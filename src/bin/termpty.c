@@ -1256,7 +1256,7 @@ termpty_write(Termpty *ty, const char *input, int len)
 #else
    int fd = ty->fd;
 #if defined(ENABLE_FUZZING)
-   fd = ty->fd_dev_null;
+   return;
 #endif
    if (fd < 0) return;
    if (write(fd, input, len) < 0)
