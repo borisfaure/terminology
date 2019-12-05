@@ -1181,11 +1181,19 @@ termpty_write(Termpty *ty, const char *input, int len)
 #if defined(ENABLE_FUZZING)
    return;
 #endif
-   ty_sb_add(&ty->write_buffer, input, len);
-   ecore_main_fd_handler_active_set(ty->hand_fd,
-                                    ECORE_FD_ERROR |
-                                    ECORE_FD_READ |
-                                    ECORE_FD_WRITE);
+   int res = ty_sb_add(&ty->write_buffer, input, len);
+
+   if (res < 0)
+     {
+        ERR("failure to add %d characters to write buffer", len);
+     }
+   else
+     {
+        ecore_main_fd_handler_active_set(ty->hand_fd,
+                                         ECORE_FD_ERROR |
+                                         ECORE_FD_READ |
+                                         ECORE_FD_WRITE);
+     }
 }
 
 struct screen_info

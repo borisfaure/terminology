@@ -69,7 +69,7 @@ main(int argc, char **argv)
 
         path = argv[i];
         snprintf(tbuf, sizeof(tbuf), "%c}fr%s", 0x1b, path);
-        if (write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
+        if (ty_write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
           goto err;
         file_fd = open(path, O_RDONLY);
         if (file_fd >= 0)
@@ -79,7 +79,7 @@ main(int argc, char **argv)
              off = lseek(file_fd, 0, SEEK_END);
              lseek(file_fd, 0, SEEK_SET);
              snprintf(tbuf, sizeof(tbuf), "%c}fs%llu", 0x1b, (unsigned long long)off);
-             if (write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
+             if (ty_write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
                goto err;
              for (;;)
                {
@@ -104,9 +104,9 @@ main(int argc, char **argv)
                                       pksum += rawbuf2[bin];
                                    }
                                  snprintf(tbuf, sizeof(tbuf), "%c}fd%i ", 0x1b, pksum);
-                                 if (write(1, tbuf, strlen(tbuf)) != (signed)(strlen(tbuf)))
+                                 if (ty_write(1, tbuf, strlen(tbuf)) != (signed)(strlen(tbuf)))
                                    goto err;
-                                 if (write(1, rawbuf2, bout + 1) != bout + 1)
+                                 if (ty_write(1, rawbuf2, bout + 1) != bout + 1)
                                    goto err;
                               }
                             else break;
@@ -123,10 +123,10 @@ main(int argc, char **argv)
              close(file_fd);
           }
         snprintf(tbuf, sizeof(tbuf), "%c}fx", 0x1b);
-        if (write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
+        if (ty_write(1, tbuf, strlen(tbuf) + 1) != (signed)(strlen(tbuf) + 1))
           goto err;
         tbuf[0] = 0;
-        if (write(1, tbuf, 1) != 1)
+        if (ty_write(1, tbuf, 1) != 1)
           goto err;
      }
    echo_on();

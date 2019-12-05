@@ -763,7 +763,8 @@ main(int argc, char **argv)
         echo_off();
         snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
         len = strlen(buf);
-        if (write(1, buf, len + 1) < (signed)len + 1) perror("write");
+        if (ty_write(1, buf, len + 1) < (signed)len + 1)
+          perror("write");
         if ((scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
             || (tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
           {
