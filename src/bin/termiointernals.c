@@ -414,9 +414,21 @@ termio_internal_get_selection(Termio *sd, size_t *lenp)
 
              if (isb.len)
                {
+                  int res;
                   if (isb.buf[isb.len - 1] != '\n' && i != end_y)
-                    ty_sb_add(&isb, "\n", 1);
-                  ty_sb_add(&sb, isb.buf, isb.len);
+                    {
+                       res = ty_sb_add(&isb, "\n", 1);
+                       if (res < 0)
+                         {
+                            ERR("failure to add newline to selection buffer");
+                         }
+                    }
+                  res = ty_sb_add(&sb, isb.buf, isb.len);
+                  if (res < 0)
+                    {
+                       ERR("failure to add %zd characters to selection buffer",
+                           isb.len);
+                    }
                }
              ty_sb_free(&isb);
           }
