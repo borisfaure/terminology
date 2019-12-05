@@ -2,6 +2,7 @@
 #define _TY_COMMON_H__ 1
 
 int is_running_in_terminology(void);
+ssize_t ty_write(int fd, const void *buf, size_t count);
 
 #define ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1()                             \
   do                                                                       \
