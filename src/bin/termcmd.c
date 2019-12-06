@@ -61,11 +61,11 @@ _termcmd_font_size(Evas_Object *obj,
           }
         else if (cmd[0] == '+') // size up
           {
-             new_size = config->font.size + 1;
+             new_size = ((double)config->font.size * 1.4) + 1;
           }
         else if (cmd[0] == '-') // size down
           {
-             new_size = config->font.size - 1;
+             new_size = (double)(config->font.size - 1) / 1.4;
           }
         else
           {
