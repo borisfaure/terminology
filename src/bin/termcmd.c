@@ -57,7 +57,7 @@ _termcmd_font_size(Evas_Object *obj,
                   eina_stringshare_del(config->font.name);
                   config->font.name = eina_stringshare_add("10x20.pcf");
                }
-             new_size = 20;
+             new_size = config->font.size * 2;
           }
         else if (cmd[0] == '+') // size up
           {
