@@ -168,7 +168,6 @@ struct _Win
    Ecore_Job   *size_job;
    Evas_Object *cmdbox;
    Ecore_Timer *cmdbox_del_timer;
-   Ecore_Timer *cmdbox_focus_timer;
    Ecore_Timer *hide_cursor_timer;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
@@ -981,11 +980,6 @@ win_free(Win *wn)
         ecore_timer_del(wn->cmdbox_del_timer);
         wn->cmdbox_del_timer = NULL;
      }
-   if (wn->cmdbox_focus_timer)
-     {
-        ecore_timer_del(wn->cmdbox_focus_timer);
-        wn->cmdbox_focus_timer = NULL;
-     }
    if (wn->cmdbox)
      {
         evas_object_del(wn->cmdbox);
@@ -1538,8 +1532,7 @@ _cb_win_key_down(void *data,
    DBG("GROUP key down (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
 
-   if (wn->on_popover)
-       return;
+   if ((wn->on_popover) || (wn->cmdbox_up)) return;
 
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
@@ -5316,11 +5309,7 @@ _cb_cmd_activated(void *data,
              free(cmd);
           }
      }
-   if (wn->cmdbox_focus_timer)
-     {
-        ecore_timer_del(wn->cmdbox_focus_timer);
-        wn->cmdbox_focus_timer = NULL;
-     }
+   elm_object_focus_set(wn->base, EINA_TRUE);
    wn->cmdbox_up = EINA_FALSE;
    if (wn->cmdbox_del_timer) ecore_timer_del(wn->cmdbox_del_timer);
    wn->cmdbox_del_timer = ecore_timer_add(5.0, _cb_cmd_del, wn);
@@ -5334,11 +5323,7 @@ _cb_cmd_aborted(void *data,
    Win *wn = data;
 
    elm_layout_signal_emit(wn->base, "cmdbox,hide", "terminology");
-   if (wn->cmdbox_focus_timer)
-     {
-        ecore_timer_del(wn->cmdbox_focus_timer);
-        wn->cmdbox_focus_timer = NULL;
-     }
+   elm_object_focus_set(wn->base, EINA_TRUE);
    wn->cmdbox_up = EINA_FALSE;
    if (wn->cmdbox_del_timer) ecore_timer_del(wn->cmdbox_del_timer);
    wn->cmdbox_del_timer = ecore_timer_add(5.0, _cb_cmd_del, wn);
@@ -5418,8 +5403,7 @@ _cb_cmdbox(void *data,
    elm_layout_signal_emit(term->wn->base, "cmdbox,show", "terminology");
    elm_entry_entry_set(term->wn->cmdbox, "");
    evas_object_show(term->wn->cmdbox);
-   if (term->wn->cmdbox_focus_timer)
-     ecore_timer_del(term->wn->cmdbox_focus_timer);
+   elm_object_focus_set(term->wn->cmdbox, EINA_TRUE);
    if (term->wn->cmdbox_del_timer)
      {
         ecore_timer_del(term->wn->cmdbox_del_timer);
