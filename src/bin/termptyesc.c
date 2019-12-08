@@ -3540,23 +3540,6 @@ _eina_unicode_to_hex(Eina_Unicode u)
    return -1;
 }
 
-#if !defined(HAVE_STRCHRNUL)
-char *
-strchrnul(const char *s, int c)
-{
-   const char *p = s;
-
-   while (*p)
-     {
-        if (*p == c)
-          return (char *)p;
-
-        ++p;
-     }
-   return (char *)  (p);
-}
-#endif
-
 static int
 _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
                    unsigned char *r, unsigned char *g, unsigned char *b,

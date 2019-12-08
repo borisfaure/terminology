@@ -17,6 +17,24 @@ Eina_Bool utils_need_scale_wizard(void);
 #define casestartswith(str, constref) \
   (!strncasecmp(str, constref, sizeof(constref) - 1))
 
+#if !defined(HAVE_STRCHRNUL)
+static inline char *
+strchrnul(const char *s, int c)
+{
+   const char *p = s;
+
+   while (*p)
+     {
+        if (*p == c)
+          return (char *)p;
+
+        ++p;
+     }
+   return (char *)  (p);
+}
+#endif
+
+
 #if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 20)
 #   if __GNUC__ >= 7
 #    define EINA_FALLTHROUGH __attribute__ ((fallthrough));
