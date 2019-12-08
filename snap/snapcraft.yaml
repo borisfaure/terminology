@@ -12,26 +12,24 @@ license: BSD-2-Clause
 confinement: classic
 grade: stable
 icon: data/images/terminology.png
-architectures:
-  - build-on: amd64
 apps:
   terminology:
-    command: terminology
+    command: usr/bin/terminology
     desktop: usr/share/applications/terminology.desktop
   tyalpha:
-    command: tyalpha
+    command: usr/bin/tyalpha
   tybg:
-    command: tybg
+    command: usr/bin/tybg
   tycat:
-    command: tycat
+    command: usr/bin/tycat
   tyls:
-    command: tyls
+    command: usr/bin/tyls
   typop:
-    command: typop
+    command: usr/bin/typop
   tyq:
-    command: tyq
+    command: usr/bin/tyq
   tysend:
-    command: tysend
+    command: usr/bin/tysend
 parts:
   efl:
     plugin: meson
