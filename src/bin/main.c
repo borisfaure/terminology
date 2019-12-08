@@ -504,6 +504,8 @@ static Ecore_Getopt options = {
                               gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'.")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
                               gettext_noop("Highlight links.")),
+      ECORE_GETOPT_STORE_BOOL('\0', "no-wizard",
+                              gettext_noop("Do not display wizard on start up.")),
 
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
@@ -798,6 +800,7 @@ elm_main(int argc, char **argv)
    char *video_module = NULL;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
+   Eina_Bool no_wizard = EINA_FALSE;
    Eina_Bool cmd_options = EINA_FALSE;
    Ipc_Instance instance = {
         .login_shell = 0xff, /* unset */
@@ -837,6 +840,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(single),
      ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),
      ECORE_GETOPT_VALUE_BOOL(instance.active_links),
+     ECORE_GETOPT_VALUE_BOOL(no_wizard),
 
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -908,7 +912,11 @@ elm_main(int argc, char **argv)
         goto end;
      }
 
-   if (quit_option) goto end;
+   if (no_wizard)
+     need_scale_wizard = EINA_FALSE;
+
+   if (quit_option)
+     goto end;
 
    if (cmd_options)
      {
