@@ -162,11 +162,11 @@ utils_need_scale_wizard(void)
    if (config_xdg)
      {
         snprintf(path, sizeof(path) - 1,
-                 "%s/elementary", config_xdg);
+                 "%s/elementary/config/standard/base.cfg", config_xdg);
      }
    else
      {
-        const char *suffix = "/.elementary";
+        const char *suffix = "/.elementary/config/standard/base.cfg";
         char home[PATH_MAX - strlen(suffix)];
 
         if (!homedir_get(home, sizeof(home)))
