@@ -30,6 +30,8 @@ apps:
     command: usr/bin/tyq
   tysend:
     command: usr/bin/tysend
+  elementaryConfig:
+    command: usr/bin/elementary_config
 parts:
   efl:
     plugin: meson
