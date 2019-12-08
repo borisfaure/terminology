@@ -564,7 +564,7 @@ _log_void(const Eina_Log_Domain *_d EINA_UNUSED,
 #endif
 
 static void
-_start(Ipc_Instance *instance)
+_start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
 {
    Win *wn;
    Evas_Object *win;
@@ -659,7 +659,8 @@ _start(Ipc_Instance *instance)
 
    controls_init();
 
-   win_scale_wizard(win, term);
+   if (need_scale_wizard)
+     win_scale_wizard(win, term);
 
    terminology_starting_up = EINA_FALSE;
 
@@ -757,7 +758,8 @@ _instance_add_waiter(Ipc_Instance *instance,
 
 static Eina_Bool
 _start_multi(Ipc_Instance *instance,
-             char **argv)
+             char **argv,
+             Eina_Bool need_scale_wizard)
 {
    int remote_try = 0;
    do
@@ -782,7 +784,7 @@ _start_multi(Ipc_Instance *instance,
    while (remote_try <= 1);
 
 normal_start:
-   _start(instance);
+   _start(instance, need_scale_wizard);
    return EINA_FALSE;
 
 exit:
@@ -845,6 +847,7 @@ elm_main(int argc, char **argv)
    };
    int args, retval = EXIT_SUCCESS;
    Eina_Bool size_set = EINA_FALSE;
+   Eina_Bool need_scale_wizard = utils_need_scale_wizard();
 
    terminology_starting_up = EINA_TRUE;
 
@@ -1041,12 +1044,12 @@ elm_main(int argc, char **argv)
 
         if (!instance.cd)
           instance.cd = getcwd(cwdbuf, sizeof(cwdbuf));
-        if (_start_multi(&instance, argv))
+        if (_start_multi(&instance, argv, need_scale_wizard))
           goto end;
      }
    else
      {
-        _start(&instance);
+        _start(&instance, need_scale_wizard);
      }
    elm_run();
 

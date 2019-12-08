@@ -254,8 +254,6 @@ win_scale_wizard(Evas_Object *win, Term *term)
    Scale_Ctx *ctx;
 
    EINA_SAFETY_ON_NULL_RETURN(term);
-   if (!utils_need_scale_wizard())
-     return;
 
    ctx = calloc(1, sizeof(*ctx));
    if (!ctx)
