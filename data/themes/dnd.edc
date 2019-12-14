@@ -1,0 +1,26 @@
+efl_version: 1 20;
+collections {
+   group {
+      name: "main";
+      min: 160 160;
+      images {
+         image: "1414151948571.jpg" COMP;
+      }
+
+      parts {
+         part {
+            name: "bg";
+            type: IMAGE;
+
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "1414151948571.jpg";
+               }
+            }
+         }
+      } // parts
+   } // group main
+}
