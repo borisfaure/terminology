@@ -27,7 +27,6 @@ static Evas        *_evas = NULL;
 static Evas_Object *_bg = NULL;
 static Evas_Object *_tab_bar= NULL;
 static Evas_Object *_main_tab = NULL;
-static Evas_Object *_spacer = NULL;
 
 static Tab_Item _tab_items[4] = {
        {.title="tab 1", .has_bell=EINA_FALSE,},
@@ -102,20 +101,6 @@ _tab_bar_setup(void)
    evas_object_event_callback_add(_tab_bar, EVAS_CALLBACK_RESIZE,
                                   _cb_tab_bar_change, NULL);
                                   */
-
-
-   /*
-   _spacer = evas_object_rectangle_add(_evas);
-   evas_object_color_set(_spacer, 0, 0, 0, 0);
-   //elm_coords_finger_size_adjust(1, &w, 1, &h);
-   w = h = 32;
-   edje_object_part_swallow(_tab_bar, "terminology.tab_spacer",
-                            _spacer);
-   evas_object_size_hint_min_set(_spacer, w, h);
-   evas_object_size_hint_weight_set(_tab_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(_tab_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   */
-
 
    _main_tab = edje_object_add(_evas);
    if (!edje_object_file_set(_main_tab, _edje_file, "main_tab"))
