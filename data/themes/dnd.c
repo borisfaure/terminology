@@ -1,10 +1,11 @@
 /**
- * edje_cc -id images/ dnd.edc && gcc -o dnd dnd.c `pkg-config --libs --cflags evas ecore ecore-evas edje`
+ * edje_cc -id images/ dnd.edc && gcc -o dnd dnd.c `pkg-config --libs --cflags elementary`
  */
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
+#include <Elementary.h>
 
 #define CRITICAL(...) EINA_LOG_CRIT(__VA_ARGS__)
 #define ERR(...)      EINA_LOG_ERR(__VA_ARGS__)
@@ -24,9 +25,12 @@ struct _Tab_Item {
 static const char  *_edje_file = "dnd.edj";
 static Ecore_Evas  *_ee = NULL;
 static Evas        *_evas = NULL;
+static Evas_Object *_win = NULL;
 static Evas_Object *_bg = NULL;
 static Evas_Object *_tab_bar= NULL;
 static Evas_Object *_main_tab = NULL;
+
+static int _tab_active_idx = 0;
 
 static Tab_Item _tab_items[4] = {
        {.title="tab 1", .has_bell=EINA_FALSE,},
@@ -37,21 +41,19 @@ static Tab_Item _tab_items[4] = {
 
 
 
-static void
-_on_destroy(Ecore_Evas *ee EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-}
 
 /* here just to keep our example's window size and background image's
  * size in synchrony */
 static void
-_on_canvas_resize(Ecore_Evas *ee)
+_on_canvas_resize(void *data,
+                  Evas *_e EINA_UNUSED,
+                  Evas_Object *obj,
+                  void *_info EINA_UNUSED)
 {
    int          w;
    int          h;
 
-   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+   ecore_evas_geometry_get(_ee, NULL, NULL, &w, &h);
    evas_object_resize(_bg, w, h);
 
    evas_object_geometry_get(_tab_bar, NULL, NULL, &w, &h);
@@ -92,22 +94,10 @@ _tab_bar_setup(void)
 {
    Evas_Coord w = 0, h = 0;
 
-   /*
-   _tab_bar = edje_object_add(_evas);
-   if (!edje_object_file_set(_tab_bar, _edje_file, "tab_bar"))
-     printf("failed to set file %s.\n", _edje_file);
-   evas_object_event_callback_add(_tab_bar, EVAS_CALLBACK_MOVE,
-                                  _cb_tab_bar_change, NULL);
-   evas_object_event_callback_add(_tab_bar, EVAS_CALLBACK_RESIZE,
-                                  _cb_tab_bar_change, NULL);
-                                  */
-
    _main_tab = edje_object_add(_evas);
-   if (!edje_object_file_set(_main_tab, _edje_file, "main_tab"))
+   if (!edje_object_file_set(_main_tab, _edje_file, "tab_main"))
      printf("failed to set file %s.\n", _edje_file);
-   //edje_object_part_swallow(_tab_bar, "terminology.main_tab",
-   //                         _main_tab);
-   edje_object_part_swallow(_bg, "terminology.tab_bar",
+   edje_object_part_swallow(_bg, "terminology.tab_main",
                             _main_tab);
    edje_object_part_text_set(_main_tab, "terminology.tab.title",
                              "foo bar 42 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -122,29 +112,31 @@ _tab_bar_setup(void)
                                   _cb_main_tab_change, NULL);
    evas_object_show(_main_tab);
 
-
-   //edje_object_part_swallow(_bg, "terminology.tab_bar",
-   //                         _tab_bar);
    edje_object_signal_emit(_bg, "tab_bar,on", "terminology");
    evas_object_show(_tab_bar);
 }
 
-
-int
-main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
+EAPI_MAIN int
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *rect;
 
-   assert(ecore_evas_init());
-   assert(edje_init());
-   _ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   _win = elm_win_util_standard_add("tabtest", "Tab Drag Test");
+   elm_win_autodel_set(_win, EINA_TRUE);
+
+   /* and now just resize the window to a size you want. normally widgets
+    * will determine the initial size though */
+   evas_object_resize(_win, 400, 400);
+   /* and show the window */
+   evas_object_show(_win);
+   _evas = evas_object_evas_get(_win);
+   assert(_evas);
+   _ee = ecore_evas_ecore_evas_get(_evas);
    assert(_ee);
 
-   ecore_evas_callback_destroy_set(_ee, _on_destroy);
-   ecore_evas_callback_resize_set(_ee, _on_canvas_resize);
-   ecore_evas_title_set(_ee, "Tab Drag Test");
-
-   _evas = ecore_evas_get(_ee);
+   evas_object_event_callback_add(_win, EVAS_CALLBACK_RESIZE,
+                                  _on_canvas_resize, NULL);
 
    _bg = edje_object_add(_evas);
 
@@ -171,11 +163,12 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 
    ecore_evas_show(_ee);
 
-   ecore_main_loop_begin();
+   elm_run();
 
    ecore_evas_free(_ee);
-   ecore_evas_shutdown();
-   edje_shutdown();
 
    return EXIT_SUCCESS;
 }
+
+ELM_MAIN()
+
