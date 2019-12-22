@@ -33,6 +33,8 @@ static Evas_Object *_left_box = NULL;
 static Evas_Object *_right_box = NULL;
 static Evas_Object *_spacer = NULL;
 static int _tab_active_idx = 2;
+static double _hysteresis_step = 0.0;
+static double _tab_orig = 0.0;
 
 #define NB_TABS  4
 static Tab_Item _tab_items[NB_TABS] = {
@@ -108,6 +110,9 @@ _tab_bar_fill(void)
    Eina_List *l;
    int n = eina_list_count(_tabs);
 
+   if (n > 1)
+       _hysteresis_step = 0.6 / (n - 1);
+
    _tab_bar_clear();
 
    EINA_LIST_FOREACH(_tabs, l, item)
@@ -117,7 +122,7 @@ _tab_bar_fill(void)
         i++;
         if (i == _tab_active_idx)
           {
-             double step, tab_orig;
+             double step;
 
              edje_object_part_text_set(_main_tab, "terminology.tab.title",
                                        item->title);
@@ -125,24 +130,24 @@ _tab_bar_fill(void)
              if (n > 1)
                {
                   step = 1.0 / (n);
-                  tab_orig = (double)(i) / (double)(n - 1);
+                  _tab_orig = (double)(i) / (double)(n - 1);
                }
              else
                {
                   step = 1.0;
-                  tab_orig = 0.0;
+                  _tab_orig = 0.0;
                }
 
              edje_object_part_drag_size_set(_bg, "terminology.main_tab",
                                             step, 0.0);
              edje_object_part_drag_value_set(_bg, "terminology.main_tab",
-                                             tab_orig, 0.0);
+                                             _tab_orig, 0.0);
+             continue;
           }
         /* inactive tab */
         if ((i > 0 && i < _tab_active_idx) ||
-            (i > _tab_active_idx + 1 && i < n - 1))
+            (i > _tab_active_idx + 1))
           {
-             ERR("ADD SEPARATOR");
              /* add separator */
              Evas_Object *sep = elm_layout_add(_win);
              elm_layout_file_set(sep, _edje_file, "tab_separator");
@@ -174,8 +179,35 @@ _on_drag(void *data EINA_UNUSED,
          const char *source EINA_UNUSED)
 {
    double val;
+   int n = eina_list_count(_tabs);
 
    edje_object_part_drag_value_get(o, "terminology.main_tab", &val, NULL);
+   if ((_tab_active_idx + 1 < n) && (val > _tab_orig + _hysteresis_step))
+     {
+        Eina_List *l = eina_list_nth_list(_tabs, _tab_active_idx);
+        Eina_List *next = eina_list_next(l);
+
+        _tabs = eina_list_remove_list(_tabs, l);
+        _tabs = eina_list_append_relative_list(_tabs,
+                                               eina_list_data_get(l),
+                                               next);
+        _tab_active_idx++;
+        _tab_bar_fill();
+        return;
+     }
+   if ((_tab_active_idx > 0) && (val < _tab_orig - _hysteresis_step))
+     {
+        Eina_List *l = eina_list_nth_list(_tabs, _tab_active_idx);
+        Eina_List *prev = eina_list_prev(l);
+
+        _tabs = eina_list_remove_list(_tabs, prev);
+        _tabs = eina_list_append_relative_list(_tabs,
+                                               eina_list_data_get(prev),
+                                               l);
+        _tab_active_idx--;
+        _tab_bar_fill();
+        return;
+     }
    ERR("value changed to: %0.3f", val);
 }
 
