@@ -53,6 +53,7 @@ static Tab_Item _tab_items[NB_TABS] = {
           .has_bell=EINA_FALSE,
        },
 };
+static Eina_List *_tabs = NULL;
 
 
 
@@ -102,14 +103,18 @@ _tab_bar_clear(void)
 static void
 _tab_bar_fill(void)
 {
-   int i;
+   int i = -1;
+   Tab_Item *item;
+   Eina_List *l;
+   int n = eina_list_count(_tabs);
+
    _tab_bar_clear();
 
-   for (i = 0; i < NB_TABS; i++)
+   EINA_LIST_FOREACH(_tabs, l, item)
      {
-        Tab_Item *item = _tab_items + i;
         Evas_Object *tab;
 
+        i++;
         if (i == _tab_active_idx)
           {
              double step, tab_orig;
@@ -117,10 +122,10 @@ _tab_bar_fill(void)
              edje_object_part_text_set(_main_tab, "terminology.tab.title",
                                        item->title);
 
-             if (NB_TABS > 1)
+             if (n > 1)
                {
-                  step = 1.0 / (NB_TABS);
-                  tab_orig = (double)(i) / (double)(NB_TABS - 1);
+                  step = 1.0 / (n);
+                  tab_orig = (double)(i) / (double)(n - 1);
                }
              else
                {
@@ -132,11 +137,10 @@ _tab_bar_fill(void)
                                             step, 0.0);
              edje_object_part_drag_value_set(_bg, "terminology.main_tab",
                                              tab_orig, 0.0);
-             continue;
           }
         /* inactive tab */
         if ((i > 0 && i < _tab_active_idx) ||
-            (i > _tab_active_idx + 1 && i < NB_TABS - 1))
+            (i > _tab_active_idx + 1 && i < n - 1))
           {
              ERR("ADD SEPARATOR");
              /* add separator */
@@ -160,7 +164,6 @@ _tab_bar_fill(void)
         else
           elm_box_pack_end(_right_box, tab);
         evas_object_show(tab);
-
      }
 }
 
@@ -197,6 +200,10 @@ static void
 _tab_bar_setup(void)
 {
    Evas_Coord w = 0, h = 0;
+   int i;
+
+   for (i = 0; i < NB_TABS; i++)
+       _tabs = eina_list_append(_tabs, _tab_items + i);
 
    _spacer = evas_object_rectangle_add(_evas);
    evas_object_color_set(_spacer, 0, 0, 0, 0);
@@ -304,6 +311,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_run();
 
    ecore_evas_free(_ee);
+
+   eina_list_free(_tabs);
 
    return EXIT_SUCCESS;
 }
