@@ -56,26 +56,6 @@ collections {
                }
             }
          }
-         // left boundary of the active tab (dragable 0.0 -> 1.0)
-         part { name: "terminology.tabl"; type: SPACER;
-            dragable.x: 1 1 0;
-            dragable.confine: "tabdrag";
-            description { state: "default" 0.0;
-               rel2.relative: 1.0 0.0;
-               max: 1 1;
-               fixed: 1 1;
-            }
-         }
-         // right boundary of the active tab (dragable 0.0 -> 1.0)
-         part { name: "terminology.tabr"; type: SPACER;
-            dragable.x: 1 1 0;
-            dragable.confine: "tabdrag";
-            description { state: "default" 0.0;
-               rel2.relative: 1.0 0.0;
-               max: 1 1;
-               fixed: 1 1;
-            }
-         }
 
 
          part { name: "terminology.tabs_left"; type: SWALLOW;
@@ -84,7 +64,8 @@ collections {
                fixed: 1 1;
                color: 255 255 255 0;
                rel2 {
-                  to: "terminology.tabl";
+                  to: "terminology.main_tab";
+                  offset: 1 0;
                   relative: 0.0 1.0;
                }
                align: 0.0 0.0;
@@ -104,7 +85,8 @@ collections {
                color: 255 255 255 0;
                align: 0.0 0.0;
                rel1 {
-                  to: "terminology.tabr";
+                  to: "terminology.main_tab";
+                  offset: -1 0;
                   relative: 1.0 0.0;
                }
                rel2 {

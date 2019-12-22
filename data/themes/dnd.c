@@ -112,22 +112,18 @@ _tab_bar_fill(void)
 
         if (i == _tab_active_idx)
           {
-             double v1, v2, step, tab_orig;
+             double step, tab_orig;
 
              edje_object_part_text_set(_main_tab, "terminology.tab.title",
                                        item->title);
 
              if (NB_TABS > 1)
                {
-                  v1 = (double)(i) / (double)NB_TABS;
-                  v2 = (double)(i+1) / (double)NB_TABS;
                   step = 1.0 / (NB_TABS);
                   tab_orig = (double)(i) / (double)(NB_TABS - 1);
                }
              else
                {
-                  v1 = 0.0;
-                  v2 = 1.0;
                   step = 1.0;
                   tab_orig = 0.0;
                }
@@ -136,10 +132,6 @@ _tab_bar_fill(void)
                                             step, 0.0);
              edje_object_part_drag_value_set(_bg, "terminology.main_tab",
                                              tab_orig, 0.0);
-             edje_object_part_drag_value_set(_bg, "terminology.tabl",
-                                             v1, 0.0);
-             edje_object_part_drag_value_set(_bg, "terminology.tabr",
-                                             v2, 0.0);
              continue;
           }
         /* inactive tab */
