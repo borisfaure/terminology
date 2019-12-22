@@ -193,6 +193,15 @@ _on_bg_resize(void *data,
 }
 
 static void
+_on_title(void *data EINA_UNUSED,
+         Evas_Object *o EINA_UNUSED,
+         const char *emission,
+         const char *source)
+{
+   ERR("Received signal '%s' from '%s'", emission, source);
+}
+
+static void
 _tab_bar_setup(void)
 {
    Evas_Coord w = 0, h = 0;
@@ -211,11 +220,13 @@ _tab_bar_setup(void)
    edje_object_part_swallow(_bg, "terminology.main_tab",
                             _main_tab);
    edje_object_part_text_set(_main_tab, "terminology.tab.title",
-                             "foo bar 42 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                             "foo bar 42");
    evas_object_size_hint_weight_set(_main_tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(_main_tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
    edje_object_signal_callback_add(_bg, "drag", "terminology.main_tab",
                                    _on_drag, NULL);
+   edje_object_signal_callback_add(_main_tab, "tab,title", "*",
+                                   _on_title, NULL);
 
    edje_object_size_min_calc(_main_tab, &w, &h);
    ERR("min: %d %d", w, h);
@@ -306,4 +317,3 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 }
 
 ELM_MAIN()
-
