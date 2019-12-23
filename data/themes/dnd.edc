@@ -120,9 +120,6 @@ collections {
                color: 255 0 255 132;
             }
          }
-
-
-
          part { name: "terminology.content"; type: SWALLOW;
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -130,7 +127,8 @@ collections {
                rel1.relative: 0.0 1.0;
             }
          }
-
+      } // parts
+      programs {
          program {
             signal: "tab_bar,on"; source: "terminology";
             action: STATE_SET "tab" 0.0;
@@ -146,7 +144,44 @@ collections {
             target: "terminology.tabs_right";
          }
 
-      } // parts
+         program {
+            signal: "mouse,down,1"; source: "terminology.main_tab";
+            filter: "tabdrag" "default";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               get_geometry(PART:"tabdrag", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.tab", pos, 0.0);
+               emit("tab,drag,start", "terminology");
+
+            }
+         }
+         program {
+            signal: "mouse,up,1"; source: "terminology.main_tab";
+            action: SIGNAL_EMIT "tab,drag,stop" "terminology";
+         }
+         program {
+            signal: "mouse,move"; source: "terminology.main_tab";
+            script {
+               new x, y, w, h, m_x, m_y;
+               new Float:pos;
+
+               if (!get_mouse_buttons()) return;
+
+               get_geometry(PART:"tabdrag", x, y, w, h);
+               get_mouse(m_x, m_y);
+               pos = m_x - x;
+               pos = pos / w;
+               set_drag(PART:"terminology.main_tab", pos, 0.0);
+               emit("tab,drag", "terminology");
+            }
+         }
+      } // programs
+
    } // group main
 
    group {

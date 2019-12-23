@@ -138,10 +138,10 @@ _tab_bar_fill(void)
                   _tab_orig = 0.0;
                }
 
-             edje_object_part_drag_size_set(_bg, "terminology.main_tab",
-                                            step, 0.0);
-             edje_object_part_drag_value_set(_bg, "terminology.main_tab",
-                                             _tab_orig, 0.0);
+             assert(edje_object_part_drag_size_set(_bg, "terminology.main_tab",
+                                            step, 0.0) == EINA_TRUE);
+             assert(edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+                                             _tab_orig, 0.0) == EINA_TRUE);
              continue;
           }
         /* inactive tab */
@@ -170,6 +170,25 @@ _tab_bar_fill(void)
           elm_box_pack_end(_right_box, tab);
         evas_object_show(tab);
      }
+}
+
+static void
+_on_drag_start(void *data EINA_UNUSED,
+               Evas_Object *o EINA_UNUSED,
+               const char *emission EINA_UNUSED,
+               const char *source EINA_UNUSED)
+{
+   ERR("START");
+}
+
+static void
+_on_drag_stop(void *data EINA_UNUSED,
+              Evas_Object *o EINA_UNUSED,
+              const char *emission EINA_UNUSED,
+              const char *source EINA_UNUSED)
+{
+   ERR("STOP");
+   _tab_bar_fill();
 }
 
 static void
@@ -209,6 +228,8 @@ _on_drag(void *data EINA_UNUSED,
         return;
      }
    ERR("value changed to: %0.3f", val);
+change:
+   return;
 }
 
 static void
@@ -254,16 +275,18 @@ _tab_bar_setup(void)
                              "foo bar 42");
    evas_object_size_hint_weight_set(_main_tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(_main_tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_signal_callback_add(_bg, "drag", "terminology.main_tab",
+   edje_object_signal_callback_add(_bg, "tab,drag", "*",
                                    _on_drag, NULL);
+   edje_object_signal_callback_add(_bg, "tab,drag,start", "*",
+                                   _on_drag_start, NULL);
+   edje_object_signal_callback_add(_bg, "tab,drag,stop", "*",
+                                   _on_drag_stop, NULL);
    edje_object_signal_callback_add(_main_tab, "tab,title", "*",
                                    _on_title, NULL);
 
    edje_object_size_min_calc(_main_tab, &w, &h);
    ERR("min: %d %d", w, h);
    evas_object_size_hint_min_set(_main_tab, w, h);
-   evas_object_event_callback_add(_main_tab, EVAS_CALLBACK_MOVE,
-                                  _cb_main_tab_change, NULL);
    evas_object_event_callback_add(_main_tab, EVAS_CALLBACK_RESIZE,
                                   _cb_main_tab_change, NULL);
    evas_object_show(_main_tab);
