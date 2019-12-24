@@ -297,7 +297,7 @@ _tab_bar_setup(void)
    elm_box_homogeneous_set(_left_box, EINA_FALSE);
    evas_object_size_hint_weight_set(_left_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(_left_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_part_swallow(_bg, "terminology.tabs_left", _left_box);
+   edje_object_part_swallow(_bg, "terminology.tabl.content", _left_box);
 
    _right_box = elm_box_add(_win);
    assert(_right_box);
@@ -305,7 +305,7 @@ _tab_bar_setup(void)
    elm_box_homogeneous_set(_right_box, EINA_FALSE);
    evas_object_size_hint_weight_set(_right_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(_right_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_part_swallow(_bg, "terminology.tabs_right", _right_box);
+   edje_object_part_swallow(_bg, "terminology.tabr.content", _right_box);
 
 
    edje_object_signal_emit(_bg, "tab_bar,on", "terminology");

@@ -58,7 +58,7 @@ collections {
          }
 
 
-         part { name: "terminology.tabs_left"; type: SWALLOW;
+         part { name: "terminology.tabl.content"; type: SWALLOW;
             mouse_events: 0;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -78,7 +78,7 @@ collections {
             }
          }
 
-         part { name: "terminology.tabs_right"; type: SWALLOW;
+         part { name: "terminology.tabr.content"; type: SWALLOW;
             mouse_events: 0;
             description { state: "default" 0.0;
                fixed: 1 1;
@@ -133,15 +133,15 @@ collections {
             signal: "tab_bar,on"; source: "terminology";
             action: STATE_SET "tab" 0.0;
             target: "terminology.main_tab";
-            target: "terminology.tabs_left";
-            target: "terminology.tabs_right";
+            target: "terminology.tabl.content";
+            target: "terminology.tabr.content";
          }
          program {
             signal: "tab_bar,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.tab";
-            target: "terminology.tabs_left";
-            target: "terminology.tabs_right";
+            target: "terminology.tabl.content";
+            target: "terminology.tabr.content";
          }
 
          program {
