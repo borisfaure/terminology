@@ -36,6 +36,8 @@ static int _tab_active_idx = 2;
 static double _hysteresis_step = 0.0;
 static double _tab_orig = 0.0;
 
+static void _tab_bar_fill(void);
+
 #define NB_TABS  4
 static Tab_Item _tab_items[NB_TABS] = {
        {
@@ -100,6 +102,29 @@ _tab_bar_clear(void)
 {
    elm_box_clear(_left_box);
    elm_box_clear(_right_box);
+}
+
+static void
+_cb_tab_activate(void *data,
+                 Evas_Object *_obj EINA_UNUSED,
+                 const char *_sig EINA_UNUSED,
+                 const char *_src EINA_UNUSED)
+{
+   Tab_Item *to_focus = data;
+   Eina_List *l;
+   Tab_Item *item;
+   int i = 0;
+
+   EINA_LIST_FOREACH(_tabs, l, item)
+     {
+        if (item == to_focus)
+          {
+             _tab_active_idx = i;
+             _tab_bar_fill();
+             return;
+          }
+        i++;
+     }
 }
 
 static void
@@ -168,6 +193,8 @@ _tab_bar_fill(void)
           elm_box_pack_end(_left_box, tab);
         else
           elm_box_pack_end(_right_box, tab);
+        elm_layout_signal_callback_add(tab, "tab,activate", "terminology",
+                                       _cb_tab_activate, item);
         evas_object_show(tab);
      }
 }
