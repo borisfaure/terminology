@@ -149,7 +149,7 @@ _tab_bar_fill(void)
           {
              double step;
 
-             edje_object_part_text_set(_main_tab, "terminology.tab.title",
+             edje_object_part_text_set(_main_tab, "terminology.title",
                                        item->title);
 
              if (n > 1)
@@ -186,7 +186,7 @@ _tab_bar_fill(void)
           }
         tab = elm_layout_add(_win);
         elm_layout_file_set(tab, _edje_file, "tab_inactive");
-        elm_layout_text_set(tab, "terminology.tab.title", item->title);
+        elm_layout_text_set(tab, "terminology.title", item->title);
         evas_object_size_hint_weight_set(tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_fill_set(tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
         if (i < _tab_active_idx)
@@ -294,11 +294,11 @@ _tab_bar_setup(void)
    evas_object_show(_spacer);
 
    _main_tab = edje_object_add(_evas);
-   if (!edje_object_file_set(_main_tab, _edje_file, "tab_main"))
+   if (!edje_object_file_set(_main_tab, _edje_file, "terminology/tab_main"))
      printf("failed to set file %s.\n", _edje_file);
    edje_object_part_swallow(_bg, "terminology.main_tab",
                             _main_tab);
-   edje_object_part_text_set(_main_tab, "terminology.tab.title",
+   edje_object_part_text_set(_main_tab, "terminology.title",
                              "foo bar 42");
    evas_object_size_hint_weight_set(_main_tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(_main_tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
