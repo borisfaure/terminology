@@ -180,6 +180,7 @@ struct _Win
 };
 
 /* }}} */
+/* {{{ static */
 static Eina_List   *wins = NULL;
 
 static Eina_Bool _win_is_focused(Win *wn);
@@ -198,6 +199,8 @@ static void _term_tabregion_free(Term *term);
 static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
 
+/* }}} */
+/* {{{ Scale */
 static void
 _scale_round(void *data       EINA_UNUSED,
              Evas_Object     *obj,
@@ -341,6 +344,7 @@ win_scale_wizard(Evas_Object *win, Term *term)
    elm_object_focus_set(ctx->hv, EINA_TRUE);
 }
 
+/* }}} */
 /* {{{ Solo */
 
 static Evas_Object *
