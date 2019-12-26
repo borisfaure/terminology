@@ -82,7 +82,7 @@ struct _Term
 
    Term_Container *container;
    Evas_Object *bg;
-   Evas_Object *base;
+   Evas_Object *core;
    Evas_Object *termio;
    Evas_Object *media;
    Evas_Object *popmedia;
@@ -538,11 +538,11 @@ _solo_bell(Term_Container *tc,
    if (!tc->wn->config->disable_visual_bell)
      {
         edje_object_signal_emit(term->bg, "bell", "terminology");
-        elm_layout_signal_emit(term->base, "bell", "terminology");
+        elm_layout_signal_emit(term->core, "bell", "terminology");
         if (tc->wn->config->bell_rings)
           {
              edje_object_signal_emit(term->bg, "bell,ring", "terminology");
-             elm_layout_signal_emit(term->base, "bell,ring", "terminology");
+             elm_layout_signal_emit(term->core, "bell,ring", "terminology");
           }
      }
    if ((term->missed_bell) && (term->config->show_tabs)
@@ -578,7 +578,7 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
    if (!term->config->disable_focus_visuals)
      {
         edje_object_signal_emit(term->bg, "focus,out", "terminology");
-        elm_layout_signal_emit(term->base, "focus,out", "terminology");
+        elm_layout_signal_emit(term->core, "focus,out", "terminology");
      }
 }
 
@@ -618,12 +618,12 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    if (term->config->disable_focus_visuals)
      {
         edje_object_signal_emit(term->bg, "focused,set", "terminology");
-        elm_layout_signal_emit(term->base, "focused,set", "terminology");
+        elm_layout_signal_emit(term->core, "focused,set", "terminology");
      }
    else
      {
         edje_object_signal_emit(term->bg, "focus,in", "terminology");
-        elm_layout_signal_emit(term->base, "focus,in", "terminology");
+        elm_layout_signal_emit(term->core, "focus,in", "terminology");
      }
    termio_event_feed_mouse_in(term->termio);
    termio_focus_in(term->termio);
@@ -802,7 +802,7 @@ _cb_win_focus_in(void *data,
                   if (!term->config->disable_focus_visuals)
                     {
                        edje_object_signal_emit(term->bg, "focus,out", "terminology");
-                       elm_layout_signal_emit(term->base, "focus,out", "terminology");
+                       elm_layout_signal_emit(term->core, "focus,out", "terminology");
                     }
                }
              term = term_mouse;
@@ -893,7 +893,7 @@ static void
 _win_trans(Win *wn, Term *term, Eina_Bool trans)
 {
    Edje_Message_Int msg;
-   Evas_Object *edje = elm_layout_edje_get(term->base);
+   Evas_Object *edje = elm_layout_edje_get(term->core);
 
    if (term->config->translucent)
      msg.val = term->config->opacity;
@@ -1813,11 +1813,11 @@ _set_cursor(Term *term, void *data)
 
    if (cursor)
      {
-        elm_object_cursor_set(term->base, cursor);
+        elm_object_cursor_set(term->core, cursor);
      }
    else
      {
-        elm_object_cursor_unset(term->base);
+        elm_object_cursor_unset(term->core);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -2728,12 +2728,12 @@ _cb_size_hint(void *data,
 {
    Term *term = data;
    Evas_Coord mw, mh, rw, rh, w = 0, h = 0;
-   Evas_Object *edje_base = elm_layout_edje_get(term->base);
+   Evas_Object *edje_base = elm_layout_edje_get(term->core);
 
    evas_object_size_hint_min_get(obj, &mw, &mh);
    evas_object_size_hint_request_get(obj, &rw, &rh);
    edje_object_size_min_calc(edje_base, &w, &h);
-   evas_object_size_hint_min_set(term->base, w, h);
+   evas_object_size_hint_min_set(term->core, w, h);
    edje_object_size_min_calc(term->bg, &w, &h);
    evas_object_size_hint_min_set(term->bg, w, h);
    term->step_x = mw;
@@ -3002,9 +3002,9 @@ _tabs_restore(Tabs *tabs)
         if (term->unswallowed)
           {
              evas_object_image_source_visible_set(term->sel, EINA_TRUE);
-             edje_object_part_swallow(term->bg, "terminology.content", term->base);
+             edje_object_part_swallow(term->bg, "terminology.content", term->core);
              term->unswallowed = EINA_FALSE;
-             evas_object_show(term->base);
+             evas_object_show(term->core);
           }
      }
 
@@ -3124,10 +3124,10 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
         term = solo->term;
         _tabbar_clear(term);
 
-        edje_object_part_unswallow(term->bg, term->base);
+        edje_object_part_unswallow(term->bg, term->core);
         term->unswallowed = EINA_TRUE;
         img = evas_object_image_filled_add(evas_object_evas_get(wn->win));
-        o = term->base;
+        o = term->core;
         evas_object_lower(o);
         evas_object_move(o, -9999, -9999);
         evas_object_show(o);
@@ -5425,7 +5425,7 @@ _cb_media_del(void *data,
    if (term->bg)
      {
         edje_object_signal_emit(term->bg, "media,off", "terminology");
-        elm_layout_signal_emit(term->base, "media,off", "terminology");
+        elm_layout_signal_emit(term->core, "media,off", "terminology");
      }
    if (!config) return;
    if (config->temporary)
@@ -5453,26 +5453,26 @@ _term_media_update(Term *term, const Config *config)
                                     MEDIA_BG, type);
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_media_del, term);
-        elm_layout_content_set(term->base, "terminology.background", o);
+        elm_layout_content_set(term->core, "terminology.background", o);
         evas_object_show(o);
         term->mediatype = type;
         switch (type)
           {
            case MEDIA_TYPE_IMG:
               edje_object_signal_emit(term->bg, "media,image", "terminology");
-              elm_layout_signal_emit(term->base, "media,image", "terminology");
+              elm_layout_signal_emit(term->core, "media,image", "terminology");
               break;
            case MEDIA_TYPE_SCALE:
               edje_object_signal_emit(term->bg, "media,scale", "terminology");
-              elm_layout_signal_emit(term->base, "media,scale", "terminology");
+              elm_layout_signal_emit(term->core, "media,scale", "terminology");
               break;
            case MEDIA_TYPE_EDJE:
               edje_object_signal_emit(term->bg, "media,edje", "terminology");
-              elm_layout_signal_emit(term->base, "media,edje", "terminology");
+              elm_layout_signal_emit(term->core, "media,edje", "terminology");
               break;
            case MEDIA_TYPE_MOV:
               edje_object_signal_emit(term->bg, "media,movie", "terminology");
-              elm_layout_signal_emit(term->base, "media,movie", "terminology");
+              elm_layout_signal_emit(term->core, "media,movie", "terminology");
               break;
            case MEDIA_TYPE_UNKNOWN:
            default:
@@ -5487,7 +5487,7 @@ _term_media_update(Term *term, const Config *config)
                                             EVAS_CALLBACK_DEL,
                                             _cb_media_del);
              edje_object_signal_emit(term->bg, "media,off", "terminology");
-             elm_layout_signal_emit(term->base, "media,off", "terminology");
+             elm_layout_signal_emit(term->core, "media,off", "terminology");
              evas_object_del(term->media);
              term->media = NULL;
           }
@@ -5627,9 +5627,9 @@ _term_free(Term *term)
    evas_object_del(term->termio);
    term->termio = NULL;
 
-   edje_object_part_unswallow(term->bg, term->base);
-   evas_object_del(term->base);
-   term->base = NULL;
+   edje_object_part_unswallow(term->bg, term->core);
+   evas_object_del(term->core);
+   term->core = NULL;
    evas_object_del(term->bg);
    term->bg = NULL;
 
@@ -5665,7 +5665,7 @@ _cb_tab_next(void *data,
 static void
 _term_bg_config(Term *term)
 {
-   _set_trans(term->config, term->bg, term->base);
+   _set_trans(term->config, term->bg, term->core);
    background_set_shine(term->config, term->bg);
 
    termio_theme_set(term->termio, term->bg);
@@ -5683,8 +5683,8 @@ _term_bg_config(Term *term)
                                    _cb_tab_close, term);
    edje_object_signal_callback_add(term->bg, "tab,title", "terminology",
                                    _cb_tab_title, term);
-   elm_layout_content_set(term->base, "terminology.content", term->termio);
-   edje_object_part_swallow(term->bg, "terminology.content", term->base);
+   elm_layout_content_set(term->core, "terminology.content", term->termio);
+   edje_object_part_swallow(term->bg, "terminology.content", term->core);
    edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
    if (term->popmedia)
      {
@@ -5709,24 +5709,24 @@ _term_bg_config(Term *term)
      }
    if (term->media)
      {
-        elm_layout_content_set(term->base, "terminology.background", term->media);
+        elm_layout_content_set(term->core, "terminology.background", term->media);
         switch (term->mediatype)
           {
            case MEDIA_TYPE_IMG:
               edje_object_signal_emit(term->bg, "media,image", "terminology");
-              elm_layout_signal_emit(term->base, "media,image", "terminology");
+              elm_layout_signal_emit(term->core, "media,image", "terminology");
               break;
            case MEDIA_TYPE_SCALE:
               edje_object_signal_emit(term->bg, "media,scale", "terminology");
-              elm_layout_signal_emit(term->base, "media,scale", "terminology");
+              elm_layout_signal_emit(term->core, "media,scale", "terminology");
               break;
            case MEDIA_TYPE_EDJE:
              edje_object_signal_emit(term->bg, "media,edje", "terminology");
-             elm_layout_signal_emit(term->base, "media,edje", "terminology");
+             elm_layout_signal_emit(term->core, "media,edje", "terminology");
              break;
            case MEDIA_TYPE_MOV:
              edje_object_signal_emit(term->bg, "media,movie", "terminology");
-             elm_layout_signal_emit(term->base, "media,movie", "terminology");
+             elm_layout_signal_emit(term->core, "media,movie", "terminology");
              break;
            case MEDIA_TYPE_UNKNOWN:
            default:
@@ -5740,12 +5740,12 @@ _term_bg_config(Term *term)
         if (term->config->disable_focus_visuals)
           {
              edje_object_signal_emit(term->bg, "focused,set", "terminology");
-             elm_layout_signal_emit(term->base, "focused,set", "terminology");
+             elm_layout_signal_emit(term->core, "focused,set", "terminology");
           }
         else
           {
              edje_object_signal_emit(term->bg, "focus,in", "terminology");
-             elm_layout_signal_emit(term->base, "focus,in", "terminology");
+             elm_layout_signal_emit(term->core, "focus,in", "terminology");
           }
      }
    if (term->miniview_shown)
@@ -5765,7 +5765,7 @@ _cb_tabregion_change(void *data,
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_size_hint_min_set(term->tab_region_base, w, h);
-   elm_layout_content_set(term->base, "terminology.tabregion",
+   elm_layout_content_set(term->core, "terminology.tabregion",
                           term->tab_region_base);
 }
 
@@ -5783,7 +5783,7 @@ _term_tabregion_setup(Term *term)
 
    term->tab_region_base = o = evas_object_rectangle_add(evas_object_evas_get(term->bg));
    evas_object_color_set(o, 0, 0, 0, 0);
-   elm_layout_content_set(term->base, "terminology.tabregion", o);
+   elm_layout_content_set(term->core, "terminology.tabregion", o);
 }
 
 static void
@@ -5917,7 +5917,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->hold = hold;
    term->config = config;
 
-   term->base = o = elm_layout_add(wn->win);
+   term->core = o = elm_layout_add(wn->win);
    theme_apply_elm(o, term->config, "terminology/core");
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -5949,7 +5949,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    if (term->config->mv_always_show)
      term->miniview_shown = EINA_TRUE;
 
-   _set_trans(term->config, term->bg, term->base);
+   _set_trans(term->config, term->bg, term->core);
    background_set_shine(term->config, term->bg);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
@@ -5969,8 +5969,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_size_hint_fill_set(o, 0, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _cb_size_hint, term);
-   elm_layout_content_set(term->base, "terminology.content", o);
-   edje_object_part_swallow(term->bg, "terminology.content", term->base);
+   elm_layout_content_set(term->core, "terminology.content", o);
+   edje_object_part_swallow(term->bg, "terminology.content", term->core);
    edje_object_part_swallow(term->bg, "terminology.miniview", term->miniview);
    evas_object_smart_callback_add(o, "options", _cb_options, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
