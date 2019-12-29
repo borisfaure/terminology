@@ -1,6 +1,19 @@
 =================
-Terminology 1.6.0
+Terminology 1.7.0
 =================
+
+Changes since 1.6.0:
+--------------------
+  * In group "terminology/background", spacers "terminology.tabl" and
+  "terminology.tabr" are removed.
+  * In group "terminology/background", text part "terminology.tab.title" is
+  removed.
+  * In group "terminology/background", signals "tab,bell,on" and
+  "tab,bell,off" are no longer caught.
+  * In group "terminology/background", signals "tab,title" and
+  "tab,close" are no longer emitted.
+  * In group "terminology/background", part "terminology.tab" is not longer
+  swallowable.
 
 Changes since 1.5.0:
 --------------------
@@ -21,7 +34,6 @@ Changes since 1.2.0:
 
 Changes since 1.1.1:
 --------------------
-
   * In group "terminology/background", "message" with id 2 requires an INT to
   specify the amount of shine
   * Add parts "terminology.sendfile.progress" and
@@ -31,7 +43,6 @@ Changes since 1.1.1:
 
 Changes since 0.9.1:
 --------------------
-
   * In group "terminology/background", add signal "tab,close" with emitter set
     to "terminology" to close the current tab
   * In group "terminology/tabbar_back", add signal "tab,close" with emitter
