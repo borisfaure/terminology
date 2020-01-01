@@ -7,16 +7,11 @@ command = [edje_cc,
            '@OUTPUT@']
 
 edje_to_compile = [
-  ['default', ['default_colors.in.edc']],
   ['mild', ['default_colors.in.edc']],
   ['black', ['default_colors.in.edc', 'mild.edc']],
-  ['solarized', ['default_colors.in.edc', 'default.edc']],
-  ['solarized_light', ['default_colors.in.edc', 'default.edc']],
   ['mustang',['default_colors.in.edc', 'mild.edc']],
   ['base16_ocean_dark', ['default_colors.in.edc']],
-  ['smyck', ['default_colors.in.edc', 'mild.edc']],
   ['nord', ['default_colors.in.edc', 'default.edc']],
-  ['papercolor', ['default_colors.in.edc', 'default.edc']],
 ]
 
 edje_install_dir = join_paths(get_option('datadir'),
