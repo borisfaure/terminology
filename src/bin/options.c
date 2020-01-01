@@ -207,11 +207,11 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    evas_object_size_hint_align_set(o, 0.5, EVAS_HINT_FILL);
    elm_toolbar_horizontal_set(o, EINA_FALSE);
    elm_object_style_set(o, "item_horizontal");
-   elm_toolbar_icon_size_set(o, 16 * elm_config_scale_get());
+   elm_toolbar_icon_size_set(o, 24 * elm_config_scale_get());
    elm_toolbar_shrink_mode_set(o, ELM_TOOLBAR_SHRINK_SCROLL);
    elm_toolbar_select_mode_set(o, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_toolbar_menu_parent_set(o, win);
-   elm_toolbar_homogeneous_set(o, EINA_FALSE);
+   elm_toolbar_homogeneous_set(o, EINA_TRUE);
 
 #define ITEM_APPEND(_icon_name, _name, _option_mode) \
    elm_toolbar_item_append(o, _icon_name, _name, _cb_op, \
@@ -220,7 +220,7 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    it_fn = ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
    ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
    ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
-   ITEM_APPEND("preferences-desktop-background", _("Background"), BACKGROUND);
+   ITEM_APPEND("background", _("Background"), BACKGROUND);
    ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
    ITEM_APPEND("video-display", _("Video"), VIDEO);
    ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
