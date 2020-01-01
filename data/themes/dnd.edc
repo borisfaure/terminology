@@ -15,6 +15,7 @@ collections {
       min: 160 160;
       images {
          image: "1414151948571.jpg" COMP;
+         image: "tab_bottom.png" COMP;
       }
 
       parts {
@@ -58,10 +59,29 @@ collections {
          }
 
 
+         part { name: "tabl.background"; type: IMAGE;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel2 {
+                  to: "terminology.main_tab";
+                  offset: 1 0;
+                  relative: 0.0 1.0;
+               }
+               align: 0.0 0.0;
+               visible: 0;
+               image.normal: "tab_bg_r0.png";
+               fill.smooth: 0;
+               min: 4 16;
+               fixed: 1 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
          part { name: "terminology.tabl.content"; type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 1;
-               color: 255 255 255 0;
                rel2 {
                   to: "terminology.main_tab";
                   offset: 1 0;
@@ -73,14 +93,53 @@ collections {
             description { state: "tab" 0.0;
                inherit: "default" 0.0;
                visible: 1;
-               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabl.foreground"; type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.to: "terminology.tabl.content";
+               rel2.to: "terminology.tabl.content";
+               align: 0.0 0.0;
+               visible: 0;
+               image.normal: "tab_bottom.png";
+               fill.smooth: 0;
+               fixed: 1 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
             }
          }
 
+         part { name: "tabr.background"; type: IMAGE;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               visible: 0;
+               align: 0.0 0.0;
+               rel1 {
+                  to: "terminology.main_tab";
+                  offset: -1 0;
+                  relative: 1.0 0.0;
+               }
+               rel2 {
+                  to_y: "terminology.main_tab";
+               }
+               visible: 0;
+               image.normal: "tab_bg_r0.png";
+               fill.smooth: 0;
+               min: 4 16;
+               fixed: 1 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
          part { name: "terminology.tabr.content"; type: SWALLOW;
             description { state: "default" 0.0;
                fixed: 1 1;
-               color: 255 255 255 0;
+               visible: 0;
                align: 0.0 0.0;
                rel1 {
                   to: "terminology.main_tab";
@@ -95,7 +154,23 @@ collections {
             description { state: "tab" 0.0;
                inherit: "default" 0.0;
                visible: 1;
-               color: 255 255 255 255;
+            }
+         }
+         part { name: "tabr.foreground"; type: IMAGE;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               rel1.to: "terminology.tabr.content";
+               rel2.to: "terminology.tabr.content";
+               align: 0.0 0.0;
+               visible: 0;
+               image.normal: "tab_bottom.png";
+               fill.smooth: 0;
+               fixed: 1 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
             }
          }
 
@@ -131,15 +206,23 @@ collections {
             signal: "tab_bar,on"; source: "terminology";
             action: STATE_SET "tab" 0.0;
             target: "terminology.main_tab";
+            target: "tabl.background";
             target: "terminology.tabl.content";
+            target: "tabl.foreground";
+            target: "tabr.background";
             target: "terminology.tabr.content";
+            target: "tabr.foreground";
          }
          program {
             signal: "tab_bar,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
-            target: "terminology.tab";
+            target: "terminology.main_tab";
+            target: "tabl.background";
             target: "terminology.tabl.content";
+            target: "tabl.foreground";
+            target: "tabr.background";
             target: "terminology.tabr.content";
+            target: "tabr.foreground";
          }
 
          program {
@@ -153,7 +236,7 @@ collections {
                get_mouse(m_x, m_y);
                pos = m_x - x;
                pos = pos / w;
-               set_drag(PART:"terminology.tab", pos, 0.0);
+               set_drag(PART:"terminology.main_tab", pos, 0.0);
                emit("tab,drag,start", "terminology");
 
             }
