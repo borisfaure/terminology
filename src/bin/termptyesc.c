@@ -9,6 +9,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#include "utils.h"
 #if defined(ENABLE_TESTS)
 #include "tytest.h"
 #endif
