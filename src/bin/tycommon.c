@@ -36,5 +36,5 @@ ty_write(int fd, const void *buf, size_t count)
         data += res;
         len  -= res;
      }
-   return len;
+   return count;
 }
