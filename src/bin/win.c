@@ -197,7 +197,7 @@ static void _popmedia_queue_process(Term *term);
 static void _cb_size_hint(void *data, Evas *_e EINA_UNUSED, Evas_Object *obj, void *_event EINA_UNUSED);
 static void _tab_new_cb(void *data, Evas_Object *_obj EINA_UNUSED, void *_event_info EINA_UNUSED);
 static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
-static void _tabs_refresh(Tabs *tabs);
+static void _tabs_recreate(Tabs *tabs);
 static void _term_tabregion_free(Term *term);
 static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
@@ -752,6 +752,29 @@ _solo_title_show(Term_Container *tc)
 }
 
 static void
+_term_tab_main_free(Term *term)
+{
+   evas_object_del(term->tab_spacer);
+   term->tab_spacer = NULL;
+
+   if (term->tab_main)
+     {
+        elm_layout_content_unset(term->bg, "terminology.tab_main");
+        evas_object_size_hint_min_set(term->tab_spacer, 0, 0);
+        evas_object_size_hint_min_set(term->tab_region_base, 0, 0);
+        evas_object_size_hint_min_set(term->tab_region_bg, 0, 0);
+        if (term->tabbar.l.box)
+          elm_box_unpack_all(term->tabbar.l.box);
+        if (term->tabbar.r.box)
+          elm_box_unpack_all(term->tabbar.r.box);
+
+        evas_object_del(term->tab_main);
+        term->tab_main = NULL;
+        elm_layout_signal_emit(term->bg, "tabbar,off", "terminology");
+     }
+}
+
+static void
 _solo_title_hide(Term_Container *tc)
 {
    Solo *solo;
@@ -761,14 +784,7 @@ _solo_title_hide(Term_Container *tc)
    solo = (Solo*) tc;
    term = solo->term;
 
-   if (term->tab_main)
-     {
-        elm_layout_content_unset(term->bg, "terminology.tab_main");
-        evas_object_del(term->tab_main);
-        term->tab_main = NULL;
-        term->tab_spacer = NULL;
-     }
-   elm_layout_signal_emit(term->bg, "tabbar,off", "terminology");
+   _term_tab_main_free(term);
 }
 
 static void
@@ -2855,21 +2871,41 @@ split_vertically(Evas_Object *_win EINA_UNUSED,
 /* }}} */
 /* {{{ Tabs */
 
-static void
-_tabbar_clear(Term *tm)
+static Term *
+_tab_item_to_term(const Tab_Item *tab_item)
 {
-   evas_object_del(tm->tabbar.l.box);
-   tm->tabbar.l.box = NULL;
-   evas_object_del(tm->tabbar.r.box);
-   tm->tabbar.r.box = NULL;
+   Solo *solo;
 
-   if (tm->tab_spacer)
+   assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*)tab_item->tc;
+   assert (solo->term);
+   assert (solo->term->tab_item == tab_item);
+   return solo->term;
+}
+
+static void
+_tabbar_clear(Term *term)
+{
+   if (term->tabbar.l.box)
      {
-        elm_layout_signal_emit(tm->bg, "tabbar,off", "terminology");
-        edje_object_message_signal_process(tm->bg_edj);
-        elm_layout_content_unset(tm->bg, "terminology.tab");
-        evas_object_del(tm->tab_spacer);
-        tm->tab_spacer = NULL;
+        elm_box_unpack_all(term->tabbar.l.box);
+        evas_object_del(term->tabbar.l.box);
+        term->tabbar.l.box = NULL;
+     }
+   if (term->tabbar.r.box)
+     {
+        elm_box_unpack_all(term->tabbar.r.box);
+        evas_object_del(term->tabbar.r.box);
+        term->tabbar.r.box = NULL;
+     }
+
+   if (term->tab_spacer)
+     {
+        elm_layout_signal_emit(term->bg, "tabbar,off", "terminology");
+        edje_object_message_signal_process(term->bg_edj);
+        elm_layout_content_unset(term->bg, "terminology.tab");
+        evas_object_del(term->tab_spacer);
+        term->tab_spacer = NULL;
      }
 }
 
@@ -2880,14 +2916,65 @@ _cb_tab_activate(void *data,
                  const char *_src EINA_UNUSED)
 {
    Tab_Item *tab_item = data;
-   Solo *solo;
-   Term *term;
+   Term *term = _tab_item_to_term(tab_item);
 
-   assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)tab_item->tc;
-   term = solo->term;
    term_focus(term);
 }
+
+static void
+_tab_item_free(Tab_Item *tab_item)
+{
+   Term *term;
+   if (!tab_item)
+     return;
+
+   term = _tab_item_to_term(tab_item);
+   term->tab_item = NULL;
+   if (term->tab_inactive)
+     edje_object_signal_callback_del(term->tab_inactive,
+                                     "tab,activate", "terminology",
+                                     _cb_tab_activate);
+}
+
+static void
+_tabs_recompute_drag(Tabs *tabs)
+{
+   Term *term;
+   int n = eina_list_count(tabs->tabs);
+   int idx = -1;
+   Tab_Item *tab_item;
+   Eina_List *l;
+   double step;
+
+   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+     {
+        idx++;
+        if (tab_item == tabs->current)
+          {
+            term = _tab_item_to_term(tab_item);
+            break;
+          }
+     }
+   if (n > 1)
+     {
+        step = 1.0 / (n);
+        tabs->tab_orig_pos = (double)(idx) / (double)(n - 1);
+        tabs->hysteresis_step = 0.67 / (n - 1);
+     }
+   else
+     {
+        step = 1.0;
+        tabs->tab_orig_pos = 0.0;
+     }
+
+   edje_object_part_drag_size_set(term->bg_edj,
+                                  "terminology.tab_main",
+                                  step, 0.0);
+   edje_object_part_drag_value_set(term->bg_edj,
+                                   "terminology.tab_main",
+                                   tabs->tab_orig_pos, 0.0);
+}
+
 
 static void
 _tabs_on_drag_stop(void *data,
@@ -2897,98 +2984,7 @@ _tabs_on_drag_stop(void *data,
 {
    Tabs *tabs = data;
 
-   /* TODO: boris */
-   _tabs_refresh(tabs);
-}
-
-/* TODO: Could be made smarter and integrated to _tabs_on_drag() */
-static void
-_tabs_reposition_on_drag(Tabs *tabs)
-{
-   Eina_List *l;
-   Term *term;
-   Solo *solo;
-   Evas_Object *o;
-   int n = eina_list_count(tabs->tabs);
-   int active_idx = 0, i = 0;
-   Tab_Item *tab_item;
-   Evas *canvas = evas_object_evas_get(tabs->tc.wn->win);
-
-   tab_item = tabs->current;
-   assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)tab_item->tc;
-   term = solo->term;
-
-   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-     {
-        if (tab_item == tabs->current)
-          {
-             double step;
-
-             if (n > 1)
-               {
-                  step = 1.0 / (n);
-                  tabs->tab_orig_pos = (double)(i) / (double)(n - 1);
-                  tabs->hysteresis_step = 0.6 / (n - 1);
-               }
-             else
-               {
-                  step = 1.0;
-                  tabs->tab_orig_pos = 0.0;
-               }
-
-             edje_object_part_drag_size_set(term->bg_edj,
-                                            "terminology.tab_main",
-                                            step, 0.0);
-             edje_object_part_drag_value_set(term->bg_edj,
-                                             "terminology.tab_main",
-                                             tabs->tab_orig_pos, 0.0);
-             break;
-          }
-        active_idx++;
-     }
-
-   elm_box_clear(term->tabbar.l.box);
-   elm_box_clear(term->tabbar.r.box);
-
-   i = -1;
-   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-     {
-        Evas_Coord w, h;
-        i++;
-
-        if (tab_item != tabs->current)
-          {
-             solo = (Solo*)tab_item->tc;
-             _tabbar_clear(solo->term);
-
-             solo->term->tab_inactive = o = edje_object_add(canvas);
-             theme_apply(o, term->config, "terminology/tabbar_back");
-             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-             evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-             edje_object_part_text_set(o, "terminology.title",
-                                       tab_item->tc->title);
-             edje_object_size_min_calc(o, &w, &h);
-             evas_object_size_hint_min_set(o, w, h);
-             assert(i != active_idx);
-             if (i < active_idx)
-               {
-                  elm_box_pack_end(term->tabbar.l.box, o);
-               }
-             else if (i > active_idx)
-               {
-                  elm_box_pack_end(term->tabbar.r.box, o);
-               }
-             if (solo->term->missed_bell)
-                 edje_object_signal_emit(o, "bell", "terminology");
-             evas_object_data_set(o, "term", term);
-             evas_object_show(o);
-             edje_object_signal_callback_add(o, "tab,activate", "terminology",
-                                             _cb_tab_activate, tab_item);
-             edje_object_signal_callback_add(o, "tab,close", "terminology",
-                                             _cb_tab_close, term);
-          }
-     }
+   _tabs_recompute_drag(tabs);
 }
 
 static void
@@ -3000,17 +2996,20 @@ _tabs_on_drag(void *data,
    Eina_List *l, *next, *prev;
    Tabs *tabs = data;
    double val;
-   int tab_active_idx = 0;
+   int tab_active_idx;
    int n = eina_list_count(tabs->tabs);
    Tab_Item *tab_item;
+   Tab_Item *item_moved;
    Term *term;
+   Term *term_moved;
    Solo *solo;
 
+   tab_active_idx = -1;
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
+        tab_active_idx++;
         if (tab_item == tabs->current)
           break;
-        tab_active_idx++;
      }
    tab_item = tabs->current;
    assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -3019,165 +3018,208 @@ _tabs_on_drag(void *data,
 
    edje_object_part_drag_value_get(term->bg_edj, "terminology.tab_main",
                                    &val, NULL);
-   if ((tab_active_idx + 1 < n) &&
-       (val > tabs->tab_orig_pos + tabs->hysteresis_step))
+   while ((tab_active_idx < n - 1) &&
+       ((val > tabs->tab_orig_pos + tabs->hysteresis_step) ||
+        (val > 1 - tabs->hysteresis_step)))
      {
+        /* To the right */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
         next = eina_list_next(l);
+        item_moved = next->data;
+        term_moved = _tab_item_to_term(item_moved);
+        elm_box_unpack(term->tabbar.r.box, term_moved->tab_inactive);
+        elm_box_pack_start(term->tabbar.l.box, term_moved->tab_inactive);
 
         tabs->tabs = eina_list_remove_list(tabs->tabs, l);
         tabs->tabs = eina_list_append_relative_list(tabs->tabs,
                                                     eina_list_data_get(l),
                                                     next);
-        _tabs_reposition_on_drag(tabs);
+        tab_active_idx++;
+        tabs->tab_orig_pos = (double)(tab_active_idx) / (double)(n - 1);
         return;
      }
-   if ((tab_active_idx > 0) &&
-       (val < tabs->tab_orig_pos - tabs->hysteresis_step))
+   while ((tab_active_idx > 0) &&
+       ((val < tabs->tab_orig_pos - tabs->hysteresis_step) ||
+        (val < tabs->hysteresis_step)))
      {
+        /* To the left */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
         prev = eina_list_prev(l);
+        item_moved = prev->data;
+        term_moved = _tab_item_to_term(item_moved);
+        elm_box_unpack(term->tabbar.l.box, term_moved->tab_inactive);
+        elm_box_pack_end(term->tabbar.r.box, term_moved->tab_inactive);
 
         tabs->tabs = eina_list_remove_list(tabs->tabs, prev);
         tabs->tabs = eina_list_append_relative_list(tabs->tabs,
                                                eina_list_data_get(prev),
                                                l);
-        _tabs_reposition_on_drag(tabs);
+        tab_active_idx--;
+        tabs->tab_orig_pos = (double)(tab_active_idx) / (double)(n - 1);
         return;
      }
+}
+
+static Evas_Object*
+_tab_inactive_get_or_create(Evas *canvas,
+                            Term *term,
+                            Tab_Item *tab_item)
+{
+   Evas_Object *o;
+   Evas_Coord w, h;
+
+   if (term->tab_inactive)
+     {
+        o = term->tab_inactive;
+        goto created;
+     }
+   assert (!term->tab_main);
+
+   term->tab_inactive = o = edje_object_add(canvas);
+
+   theme_apply(o, term->config, "terminology/tabbar_back");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   edje_object_size_min_calc(o, &w, &h);
+   evas_object_size_hint_min_set(o, w, h);
+   evas_object_data_set(o, "term", term);
+
+created:
+   edje_object_signal_callback_add(o, "tab,activate", "terminology",
+                                   _cb_tab_activate, tab_item);
+
+   if (term->missed_bell)
+     edje_object_signal_emit(o, "bell", "terminology");
+   edje_object_part_text_set(o, "terminology.title",
+                             tab_item->tc->title);
+   return o;
+}
+
+static void
+_tabs_get_or_create_boxes(Term *term, Term *src)
+{
+   Evas_Object *o;
+
+   assert(term->tabbar.l.box == NULL);
+   assert(term->tabbar.r.box == NULL);
+
+   /* Left */
+   if (src && src->tabbar.l.box)
+     {
+        term->tabbar.l.box = o = src->tabbar.l.box;
+        elm_box_unpack_all(term->tabbar.l.box);
+        src->tabbar.l.box = NULL;
+     }
+   else
+     {
+        term->tabbar.l.box = o = elm_box_add(term->bg);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   elm_layout_content_set(term->bg, "terminology.tabl.content", o);
+   evas_object_show(o);
+
+   /* Right */
+   if (src && src->tabbar.r.box)
+     {
+        term->tabbar.r.box = o = src->tabbar.r.box;
+        elm_box_unpack_all(term->tabbar.r.box);
+        src->tabbar.r.box = NULL;
+     }
+   else
+     {
+        term->tabbar.r.box = o = elm_box_add(term->bg);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   elm_layout_content_set(term->bg, "terminology.tabr.content", o);
+   evas_object_show(o);
+}
+
+static void
+_tabs_add_tab_main(Tabs *tabs,
+                   Term *term,
+                   Tab_Item *tab_item)
+{
+   Evas_Coord w, h;
+   Evas *canvas = evas_object_evas_get(term->bg);
+   Evas_Object *o = edje_object_add(canvas);
+
+   assert(term->tab_main == NULL);
+   term->tab_main = o;
+
+   if (!term->tab_spacer)
+     {
+        term->tab_spacer = evas_object_rectangle_add(canvas);
+        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tab_spacer, w, h);
+     }
+   theme_apply(o, term->config, "terminology/tab_main");
+   elm_layout_content_set(term->bg, "terminology.tab_main", o);
+   edje_object_part_swallow(o, "terminology.tab", term->tab_spacer);
+   edje_object_part_text_set(o, "terminology.title", tab_item->tc->title);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_signal_callback_add(term->bg, "tab,drag", "*",
+                                  _tabs_on_drag, tabs);
+   elm_layout_signal_callback_add(term->bg, "tab,drag,stop", "*",
+                                  _tabs_on_drag_stop, tabs);
+   edje_object_signal_callback_add(o, "tab,title", "*",
+                                   _cb_tab_title, term);
+   edje_object_signal_callback_add(o, "tab,close", "*",
+                                   _cb_tab_close, term);
+
+   edje_object_size_min_calc(o, &w, &h);
+   evas_object_size_hint_min_set(o, w, h);
+   evas_object_size_hint_min_set(term->tab_region_bg, w, h);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
+                                  _cb_tab_main_change, term);
+   evas_object_show(o);
+   elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
+   elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
+   edje_object_message_signal_process(term->bg_edj);
 }
 
 static void
 _tabbar_fill(Tabs *tabs)
 {
    Eina_List *l;
-   Term *term;
-   Solo *solo;
-   Evas_Object *o;
-   int n = eina_list_count(tabs->tabs);
-   int i = 0, j = 0;
+   Eina_Bool after_current = EINA_FALSE;
    Tab_Item *tab_item;
-   Evas *canvas = evas_object_evas_get(tabs->tc.wn->win);
+   Term *main_term = _tab_item_to_term(tabs->current);
+   Evas *canvas = evas_object_evas_get(main_term->bg);
 
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
-        if (tab_item == tabs->current) break;
-        i++;
-     }
+        Term *term = _tab_item_to_term(tab_item);
 
-   tab_item = tabs->current;
-   assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)tab_item->tc;
-   term = solo->term;
-
-   assert(term->tabbar.l.box == NULL);
-   assert(term->tabbar.r.box == NULL);
-   assert(term->tab_spacer != NULL);
-
-   term->tabbar.l.box = o = elm_box_add(tabs->tc.wn->win);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_homogeneous_set(o, EINA_TRUE);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_content_set(term->bg, "terminology.tabl.content", o);
-   evas_object_show(o);
-
-   term->tabbar.r.box = o = elm_box_add(tabs->tc.wn->win);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   elm_box_homogeneous_set(o, EINA_TRUE);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_content_set(term->bg, "terminology.tabr.content", o);
-   evas_object_show(o);
-
-   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-     {
-        Evas_Coord w, h;
-
-        if (tab_item != tabs->current)
+        if (tab_item == tabs->current)
           {
-             solo = (Solo*)tab_item->tc;
-             _tabbar_clear(solo->term);
-
-             solo->term->tab_inactive = o = edje_object_add(canvas);
-             theme_apply(o, term->config, "terminology/tabbar_back");
-             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-             evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-             edje_object_part_text_set(o, "terminology.title",
-                                       tab_item->tc->title);
-             edje_object_size_min_calc(o, &w, &h);
-             evas_object_size_hint_min_set(o, w, h);
-             assert(i != j);
-             if (j < i)
-               {
-                  elm_box_pack_end(term->tabbar.l.box, o);
-               }
-             else if (j > i)
-               {
-                  elm_box_pack_end(term->tabbar.r.box, o);
-               }
-             if (solo->term->missed_bell)
-                 edje_object_signal_emit(o, "bell", "terminology");
-             evas_object_data_set(o, "term", term);
-             evas_object_show(o);
-             edje_object_signal_callback_add(o, "tab,activate", "terminology",
-                                             _cb_tab_activate, tab_item);
-             edje_object_signal_callback_add(o, "tab,close", "terminology",
-                                             _cb_tab_close, term);
+             _tabs_add_tab_main(tabs, term, tab_item);
+             assert(main_term == term);
+             evas_object_hide(term->tab_inactive);
+             after_current = EINA_TRUE;
           }
         else
           {
-             double step;
-             o = edje_object_add(canvas);
-             term->tab_main = o;
+             Evas_Object *o;
 
-             theme_apply(o, term->config, "terminology/tab_main");
-             elm_layout_content_set(term->bg, "terminology.tab_main", o);
-             edje_object_part_swallow(o, "terminology.tab", term->tab_spacer);
-             edje_object_part_text_set(o, "terminology.title",
-                                       tab_item->tc->title);
-             evas_object_size_hint_weight_set(o,
-                                              EVAS_HINT_EXPAND,
-                                              EVAS_HINT_EXPAND);
-             evas_object_size_hint_fill_set(o,
-                                            EVAS_HINT_FILL,
-                                            EVAS_HINT_FILL);
-             elm_layout_signal_callback_add(term->bg, "tab,drag", "*",
-                                            _tabs_on_drag, tabs);
-             elm_layout_signal_callback_add(term->bg, "tab,drag,stop", "*",
-                                            _tabs_on_drag_stop, tabs);
-             edje_object_signal_callback_add(o, "tab,title", "*",
-                                             _cb_tab_title, term);
-             edje_object_signal_callback_add(o, "tab,close", "*",
-                                             _cb_tab_close, term);
-             if (n > 1)
-               {
-                  step = 1.0 / (n);
-                  tabs->tab_orig_pos = (double)(j) / (double)(n - 1);
-                  tabs->hysteresis_step = 0.6 / (n - 1);
-               }
-             else
-               {
-                  step = 1.0;
-                  tabs->tab_orig_pos = 0.0;
-               }
+             _tabbar_clear(term);
 
-             edje_object_part_drag_size_set(term->bg_edj,
-                                            "terminology.tab_main",
-                                            step, 0.0);
-             edje_object_part_drag_value_set(term->bg_edj,
-                                             "terminology.tab_main",
-                                             tabs->tab_orig_pos, 0.0);
-
-             edje_object_size_min_calc(o, &w, &h);
-             evas_object_size_hint_min_set(o, w, h);
-             evas_object_size_hint_min_set(term->tab_region_bg, w, h);
-             evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
-                                            _cb_tab_main_change, term);
+             o = _tab_inactive_get_or_create(canvas, term, tab_item);
              evas_object_show(o);
+             if (after_current)
+               elm_box_pack_end(main_term->tabbar.r.box, o);
+             else
+               elm_box_pack_end(main_term->tabbar.l.box, o);
           }
-        j++;
      }
+   _tabs_recompute_drag(tabs);
 }
 
 Eina_Bool
@@ -3277,7 +3319,7 @@ _tabs_restore(Tabs *tabs)
    _tabbar_clear(term);
 
    /* Restore -> recreate the whole tabbar */
-   _tabs_refresh(tabs);
+   _tabs_recreate(tabs);
    tabs->current->tc->unfocus(tabs->current->tc, tabs->current->tc);
    tabs->current->tc->focus(tabs->current->tc, tabs->current->tc);
 
@@ -3553,11 +3595,13 @@ _tabs_close(Term_Container *tc, Term_Container *child)
 
    l = _tab_item_find(tabs, child);
    item = l->data;
-   tabs->tabs = eina_list_remove_list(tabs->tabs, l);
 
    next = eina_list_next(l);
    if (!next)
      next = tabs->tabs;
+
+   tabs->tabs = eina_list_remove_list(tabs->tabs, l);
+
    next_item = next->data;
    next_child = next_item->tc;
    assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
@@ -3566,9 +3610,9 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    solo = (Solo*)child;
    term = solo->term;
    child->unfocus(child, tc);
-   _tabbar_clear(term);
 
    elm_layout_signal_emit(term->bg, "tabcount,off", "terminology");
+   elm_layout_signal_emit(term->bg, "tab_btn,off", "terminology");
 
    count = eina_list_count(tabs->tabs);
    if (count == 1)
@@ -3582,28 +3626,30 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         next_term = next_solo->term;
         config = next_term->config;
 
-        elm_layout_signal_emit(term->bg, "tab_btn,off", "terminology");
         evas_object_del(term->tab_spacer);
         term->tab_spacer = NULL;
-        if (next_term->tab_spacer && !config->show_tabs)
-          {
-             evas_object_del(next_term->tab_spacer);
-             next_term->tab_spacer = NULL;
-          }
-        if (config->show_tabs)
-          _solo_title_show(next_child);
+        evas_object_del(next_term->tab_spacer);
+        next_term->tab_spacer = NULL;
+        if (next_term->tab_inactive)
+          evas_object_hide(next_term->tab_inactive);
+        elm_layout_signal_emit(next_term->bg, "tabcount,off", "terminology");
+        elm_layout_signal_emit(next_term->bg, "tab_btn,off", "terminology");
 
         if (tabs->selector)
           _tabs_restore(tabs);
+
+        if (config->show_tabs)
+          _solo_title_show(next_child);
+
         eina_stringshare_del(tc->title);
 
         tc_parent->swallow(tc_parent, tc, next_child);
         if (tc->is_focused)
           next_child->focus(next_child, tc);
 
-        free(next_item);
+        _tab_item_free(item);
+        _tab_item_free(next_item);
         free(tc);
-        free(item);
         return;
      }
 
@@ -3615,25 +3661,19 @@ _tabs_close(Term_Container *tc, Term_Container *child)
           evas_object_del(o);
        }
 
-     free(item);
      count--;
 
      if (item == tabs->current)
        {
-          tabs->current = next_item;
-          /* XXX: refresh */
-          tc_parent->swallow(tc_parent, tc, tc);
           tc->swallow(tc, child, next_child);
           if (tc->is_focused)
             next_child->focus(next_child, tc);
-          /* TODO: boris is there something to do?*/
+          _tab_item_free(item);
           return;
        }
+     _tab_item_free(item);
 
-     /* Remove inactive tab */
-     evas_object_del(term->tab_inactive);
-     term->tab_inactive = NULL;
-     term->tab_item = NULL;
+     _tabs_recompute_drag(tabs);
 }
 
 static void
@@ -3644,7 +3684,7 @@ _tabs_update(Term_Container *tc)
    tabs = (Tabs*)tc;
 
    /* Update -> recreate the whole tabbar */
-   _tabs_refresh(tabs);
+   _tabs_recreate(tabs);
 }
 
 static Term *
@@ -3762,6 +3802,9 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
    Eina_List *l;
    Evas_Object *o;
    Evas_Coord x, y, w, h;
+   Term *term_orig, *term_new;
+   Solo *solo_orig, *solo_new;
+   Term_Container *tc_parent = tc->parent;
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
@@ -3779,47 +3822,42 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
           sel_entry_update(tab_item->selector_entry);
         return;
      }
-   if (tab_item != tabs->current)
+   if (orig == new_child)
      {
-        /* Occurs when closing current tab */
-        /* TODO: boris reuse left/right tab box */
-        Term *term;
-        Solo *solo;
-        Term_Container *tc_parent = tc->parent;
-        if (tc->is_focused)
-          tabs->current->tc->unfocus(tabs->current->tc, tc);
-        tabs->current = tab_item;
-
-        assert (orig->type == TERM_CONTAINER_TYPE_SOLO);
-        solo = (Solo*)orig;
-        term = solo->term;
-        elm_layout_signal_emit(term->bg, "tabcount,off", "terminology");
-        if (term->tab_main)
-          {
-             evas_object_del(term->tab_main);
-             term->tab_main = NULL;
-             term->tab_spacer = NULL;
-          }
-
-        o = orig->get_evas_object(orig);
-        evas_object_geometry_get(o, &x, &y, &w, &h);
-        evas_object_hide(o);
-
-        o = new_child->get_evas_object(new_child);
-        evas_object_geometry_set(o, x, y, w, h);
-        evas_object_show(o);
-
-        /* XXX: need to refresh */
-        tc_parent->swallow(tc_parent, tc, tc);
-        /* TODO: redo title */
-        _tabs_refresh(tabs);
+        assert(tabs->current == tab_item);
+        return;
      }
-   else
-     {
-        abort();
-        /* TODO: boris */
-        _tabs_refresh(tabs);
-     }
+
+   /* Occurs when closing current tab */
+   if (tc->is_focused)
+     tabs->current->tc->unfocus(tabs->current->tc, tc);
+
+   assert (orig->type == TERM_CONTAINER_TYPE_SOLO);
+   solo_orig = (Solo*)orig;
+   term_orig = solo_orig->term;
+   assert (new_child->type == TERM_CONTAINER_TYPE_SOLO);
+   solo_new = (Solo*)new_child;
+   term_new = solo_new->term;
+
+   tabs->current = tab_item;
+   /* Remove tab effects from the previous focused tab */
+   elm_layout_signal_emit(term_orig->bg, "tabcount,off", "terminology");
+   _term_tab_main_free(term_orig);
+
+   _tabs_get_or_create_boxes(term_new, term_orig);
+   assert(term_new == _tab_item_to_term(tabs->current));
+   _tabbar_fill(tabs);
+
+   o = orig->get_evas_object(orig);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   evas_object_hide(o);
+
+   o = new_child->get_evas_object(new_child);
+   evas_object_geometry_set(o, x, y, w, h);
+   evas_object_show(o);
+
+   /* XXX: need to refresh */
+   tc_parent->swallow(tc_parent, tc, tc);
 }
 
 
@@ -3861,7 +3899,6 @@ _tab_new_cb(void *data,
    tc_new->parent = tc;
 
    tab_item = tab_item_new(tabs, tc_new);
-   tm_new->tab_item = tab_item;
    tc_parent = tc->parent;
    tc_old = tabs->current->tc;
    tc_old->unfocus(tc_old, tc);
@@ -3875,11 +3912,10 @@ _tab_new_cb(void *data,
    /* XXX: need to refresh */
    tc_parent->swallow(tc_parent, tc, tc);
 
+   tc->swallow(tc, tc_old, tc_new);
+
    if (tc->is_focused)
      tc_new->focus(tc_new, tc);
-
-   /* TODO: boris */
-   _tabs_refresh(tabs);
 }
 
 static void
@@ -4103,7 +4139,7 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
 }
 
 static void
-_tabs_refresh(Tabs *tabs)
+_tabs_recreate(Tabs *tabs)
 {
    Eina_List *l;
    Solo *solo;
@@ -4118,7 +4154,7 @@ _tabs_refresh(Tabs *tabs)
    if (n <= 0)
      {
         ERR("no tab");
-     return;
+        return;
      }
 
    buf[0] = '\0';
@@ -4148,7 +4184,6 @@ _tabs_refresh(Tabs *tabs)
    solo = (Solo*)tab_item->tc;
    term = solo->term;
 
-   _tabbar_clear(term);
 
    if (!term->tab_spacer)
      {
@@ -4167,6 +4202,8 @@ _tabs_refresh(Tabs *tabs)
 
         elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
         elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
+        assert(term == _tab_item_to_term(tabs->current));
+        _tabs_get_or_create_boxes(term, NULL);
         _tabbar_fill(tabs);
      }
    else
@@ -4189,12 +4226,19 @@ static Tab_Item*
 tab_item_new(Tabs *tabs, Term_Container *child)
 {
    Tab_Item *tab_item;
+   Solo *solo;
+   Term *term;
 
    tab_item = calloc(1, sizeof(Tab_Item));
-   if (!tab_item) return NULL;
+   if (!tab_item)
+     return NULL;
    tab_item->tc = child;
    assert(child != NULL);
    assert(child->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*)child;
+   term = solo->term;
+   assert(term->tab_item == NULL);
+   term->tab_item = tab_item;
 
    tabs->tabs = eina_list_append(tabs->tabs, tab_item);
 
@@ -4232,7 +4276,6 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tabs = calloc(1, sizeof(Tabs));
    if (!tabs)
      {
-        free(tabs);
         return NULL;
      }
 
@@ -5909,6 +5952,26 @@ _term_free(Term *term)
      }
    term->popmedia = NULL;
    term->popmedia_deleted = EINA_FALSE;
+
+   _term_tabregion_free(term);
+
+   if (term->tabbar.l.box)
+     {
+        elm_box_unpack_all(term->tabbar.l.box);
+        evas_object_del(term->tabbar.l.box);
+        term->tabbar.l.box = NULL;
+     }
+   if (term->tabbar.r.box)
+     {
+        elm_box_unpack_all(term->tabbar.r.box);
+        evas_object_del(term->tabbar.r.box);
+        term->tabbar.r.box = NULL;
+     }
+
+   evas_object_del(term->tab_inactive);
+   term->tab_inactive = NULL;
+   term->tab_item = NULL;
+
    evas_object_del(term->termio);
    term->termio = NULL;
 
@@ -5917,8 +5980,6 @@ _term_free(Term *term)
    evas_object_del(term->bg);
    term->bg = NULL;
    term->bg_edj = NULL;
-
-   _term_tabregion_free(term);
 
    if (term->tab_spacer)
      {
