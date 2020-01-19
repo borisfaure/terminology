@@ -4,7 +4,7 @@ color_classes {
 #define BG_COLOR  BG_COLOR_NO_ALPHA 255
 #define FG_COLOR_NO_ALPHA  170 170 170
 #define FG_COLOR  FG_COLOR_NO_ALPHA 255
-#include "default_colors.in.edc"
+#include "default/colors.edc"
 }
 #endif
 #ifndef BG_COLOR_BELL_NO_ALPHA
