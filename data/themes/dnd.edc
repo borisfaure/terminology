@@ -434,4 +434,26 @@ collections {
           }
       } // programs
    } // group terminology/tab_main;
+   group {
+      name: "terminology/tab_icon";
+      images {
+         image: "tab.png" COMP;
+      }
+      parts {
+         part {
+            name: "bg";
+            type: IMAGE;
+
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "tab.png";
+               }
+               //fill.type: TILE;
+            }
+         }
+      }
+   } // group terminology/tab_icon
 }

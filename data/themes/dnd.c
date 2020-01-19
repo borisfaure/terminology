@@ -16,10 +16,33 @@
 #define WIDTH  400
 #define HEIGHT 400
 
+#define DRAG_TIMEOUT 0.3
+#define ANIM_TIME 0.8
+
 typedef struct _Tab_Item Tab_Item;
 struct _Tab_Item {
      const char *title;
      Eina_Bool has_bell;
+};
+
+typedef struct _Anim_Icon Anim_Icon;
+struct _Anim_Icon
+{
+   int start_x;
+   int start_y;
+   Evas_Object *o;
+};
+typedef struct _Drag_Anim Drag_Anim;
+struct _Drag_Anim
+{
+   Evas_Object *icwin;
+   Evas *e;
+   Evas_Coord mdx;     /* Mouse-down x */
+   Evas_Coord mdy;     /* Mouse-down y */
+   Eina_List *icons;   /* List of icons to animate (Anim_Icon) */
+   Ecore_Timer *tm;
+   Ecore_Animator *ea;
+   Evas_Object *gl;
 };
 
 static const char  *_edje_file = "dnd.edj";
@@ -28,15 +51,17 @@ static Evas        *_evas = NULL;
 static Evas_Object *_win = NULL;
 static Evas_Object *_bg = NULL;
 static Evas_Object *_tab_bar= NULL;
-static Evas_Object *_main_tab = NULL;
+static Evas_Object *_tab_main = NULL;
 static Evas_Object *_left_box = NULL;
 static Evas_Object *_right_box = NULL;
 static Evas_Object *_spacer = NULL;
 static int _tab_active_idx = 2;
 static double _hysteresis_step = 0.0;
 static double _tab_orig = 0.0;
+static Eina_Bool _on_drag_long = EINA_FALSE;
 
 static void _tab_bar_fill(void);
+static void _drag_anim_free(Drag_Anim *anim_st);
 
 #define NB_TABS  4
 static Tab_Item _tab_items[NB_TABS] = {
@@ -60,14 +85,15 @@ static Tab_Item _tab_items[NB_TABS] = {
 static Eina_List *_tabs = NULL;
 
 
+/* Generic {{{ */
 
 
 /* here just to keep our example's window size and background image's
  * size in synchrony */
 static void
-_on_canvas_resize(void *data,
+_on_canvas_resize(void *data EINA_UNUSED,
                   Evas *_e EINA_UNUSED,
-                  Evas_Object *obj,
+                  Evas_Object *obj EINA_UNUSED,
                   void *_info EINA_UNUSED)
 {
    int          w;
@@ -78,14 +104,14 @@ _on_canvas_resize(void *data,
 
    evas_object_geometry_get(_tab_bar, NULL, NULL, &w, &h);
    ERR("tab bar w:%d h:%d", w, h);
-   evas_object_geometry_get(_main_tab, NULL, NULL, &w, &h);
+   evas_object_geometry_get(_tab_main, NULL, NULL, &w, &h);
    ERR("main tab w:%d h:%d", w, h);
-   evas_object_size_hint_min_get(_main_tab, &w, &h);
+   evas_object_size_hint_min_get(_tab_main, &w, &h);
    ERR("main tab min w:%d h:%d", w, h);
 }
 
 static void
-_cb_main_tab_change(void *data,
+_cb_tab_main_change(void *data EINA_UNUSED,
                    Evas *_e EINA_UNUSED,
                    Evas_Object *obj,
                    void *_info EINA_UNUSED)
@@ -149,7 +175,7 @@ _tab_bar_fill(void)
           {
              double step;
 
-             edje_object_part_text_set(_main_tab, "terminology.title",
+             edje_object_part_text_set(_tab_main, "terminology.title",
                                        item->title);
 
              if (n > 1)
@@ -199,6 +225,9 @@ _tab_bar_fill(void)
      }
 }
 
+/* }}} */
+/* Horizontal drag {{{ */
+
 static void
 _on_drag_start(void *data EINA_UNUSED,
                Evas_Object *o EINA_UNUSED,
@@ -214,7 +243,13 @@ _on_drag_stop(void *data EINA_UNUSED,
               const char *emission EINA_UNUSED,
               const char *source EINA_UNUSED)
 {
-   ERR("STOP");
+   ERR("STOP (_on_drag_long:%d)", _on_drag_long);
+   if (_on_drag_long)
+     {
+        edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+                                               _tab_orig, 0.0);
+        return;
+     }
    _tab_bar_fill();
 }
 
@@ -225,7 +260,17 @@ _on_drag(void *data EINA_UNUSED,
          const char *source EINA_UNUSED)
 {
    double val;
-   int n = eina_list_count(_tabs);
+   int n;
+
+   ERR("drag (_on_drag_long:%d)", _on_drag_long);
+   if (_on_drag_long)
+     {
+        edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+                                               _tab_orig, 0.0);
+        return;
+     }
+
+   n = eina_list_count(_tabs);
 
    edje_object_part_drag_value_get(o, "terminology.main_tab", &val, NULL);
    if ((_tab_active_idx + 1 < n) && (val > _tab_orig + _hysteresis_step))
@@ -255,14 +300,13 @@ _on_drag(void *data EINA_UNUSED,
         return;
      }
    ERR("value changed to: %0.3f", val);
-change:
    return;
 }
 
 static void
-_on_bg_resize(void *data,
+_on_bg_resize(void *data EINA_UNUSED,
               Evas *_e EINA_UNUSED,
-              Evas_Object *obj,
+              Evas_Object *obj EINA_UNUSED,
               void *_info EINA_UNUSED)
 {
 }
@@ -275,6 +319,170 @@ _on_title(void *data EINA_UNUSED,
 {
    ERR("Received signal '%s' from '%s'", emission, source);
 }
+
+/* }}} */
+/* Anim {{{ */
+
+static Eina_Bool
+_drag_anim_play(void *data, double pos)
+{
+   /* Impl of the animation of icons, called on frame time */
+   Drag_Anim *anim_st = data;
+   printf("<%s> <%d>\n", __func__, __LINE__);
+   Eina_List *l;
+   Anim_Icon *st;
+
+   if (anim_st)
+     {
+        if (pos > 0.99)
+          {
+             anim_st->ea = NULL;  /* Avoid deleting on mouse up */
+
+             EINA_LIST_FOREACH(anim_st->icons, l, st)
+                evas_object_hide(st->o);   /* Hide animated icons */
+             _drag_anim_free(anim_st);
+             return ECORE_CALLBACK_CANCEL;
+          }
+
+        EINA_LIST_FOREACH(anim_st->icons, l, st)
+          {
+             int x, y, w, h;
+             Evas_Coord xm, ym;
+             evas_object_geometry_get(st->o, NULL, NULL, &w, &h);
+             evas_pointer_canvas_xy_get(anim_st->e, &xm, &ym);
+             x = st->start_x + (pos * (xm - (st->start_x + (w/2))));
+             y = st->start_y + (pos * (ym - (st->start_y + (h/2))));
+             evas_object_move(st->o, x, y);
+          }
+
+        return ECORE_CALLBACK_RENEW;
+     }
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_drag_anim_start(void *data)
+{
+   /* Start icons animation before actually drag-starts */
+   Drag_Anim *anim_st = data;
+   int w, h;
+   Anim_Icon *st = calloc(1, sizeof(*st));
+   Evas_Object *ic = elm_icon_add(anim_st->gl);
+
+   ERR("anim start");
+   edje_object_signal_emit(_bg, "hdrag,off", "terminology");
+
+   elm_image_file_set(ic, _edje_file, "terminology/tab_icon");
+   evas_object_geometry_get(_tab_main, &st->start_x, &st->start_y, &w, &h);
+   evas_object_size_hint_align_set(ic,
+                                   EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ic,
+                                    EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   evas_object_move(ic, st->start_x, st->start_y);
+   evas_object_resize(ic, w, h);
+   evas_object_show(ic);
+
+   _on_drag_long = EINA_TRUE;
+   st->o = ic;
+   anim_st->icons = eina_list_append(anim_st->icons, st);
+
+   anim_st->tm = NULL;
+   anim_st->ea = ecore_animator_timeline_add(DRAG_TIMEOUT,
+         _drag_anim_play, anim_st);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_tab_main_mouse_up(
+   void *data,
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
+   void *event_info EINA_UNUSED)
+{
+   /* Cancel any drag waiting to start on timeout */
+   Drag_Anim *anim_st = data;
+
+   edje_object_signal_emit(_bg, "hdrag,on", "terminology");
+   _drag_anim_free(anim_st);
+}
+
+static void
+_tab_main_mouse_move(
+   void *data,
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
+   void *event_info)
+{
+   /* Cancel any drag waiting to start on timeout */
+   if (((Evas_Event_Mouse_Move *)event_info)->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     {
+        Drag_Anim *anim_st = data;
+
+        _drag_anim_free(anim_st);
+     }
+}
+
+static void
+_tab_main_mouse_down(
+   void *data,
+   Evas *e EINA_UNUSED,
+   Evas_Object *obj EINA_UNUSED,
+   void *event_info)
+{
+   /* Launch a timer to start drag animation */
+   Evas_Event_Mouse_Down *ev = event_info;
+   Drag_Anim *anim_st = calloc(1, sizeof(*anim_st));
+
+   anim_st->e = e;
+   anim_st->mdx = ev->canvas.x;
+   anim_st->mdy = ev->canvas.y;
+   anim_st->gl = data;
+   anim_st->tm = ecore_timer_add(DRAG_TIMEOUT, _drag_anim_start, anim_st);
+   evas_object_event_callback_add(data, EVAS_CALLBACK_MOUSE_UP,
+         _tab_main_mouse_up, anim_st);
+   evas_object_event_callback_add(data, EVAS_CALLBACK_MOUSE_MOVE,
+         _tab_main_mouse_move, anim_st);
+}
+
+static void
+_drag_anim_free(Drag_Anim *anim_st)
+{
+   /* Stops and free mem of ongoing animation */
+   printf("<%s> <%d>\n", __func__, __LINE__);
+   if (!anim_st)
+     return;
+   evas_object_event_callback_del_full(
+      anim_st->gl, EVAS_CALLBACK_MOUSE_MOVE,
+      _tab_main_mouse_move, anim_st);
+   evas_object_event_callback_del_full(
+      anim_st->gl, EVAS_CALLBACK_MOUSE_UP,
+      _tab_main_mouse_up, anim_st);
+
+   ecore_timer_del(anim_st->tm);
+   anim_st->tm = NULL;
+
+   ecore_animator_del(anim_st->ea);
+   anim_st->ea = NULL;
+
+   /*
+      Anim_Icon *st;
+
+      EINA_LIST_FREE(anim_st->icons, st)
+      {
+      evas_object_hide(st->o);
+      evas_object_del(st->o);
+      free(st);
+      }
+
+*/
+   free(anim_st);
+}
+
+/* }}} */
+/* Setup {{{ */
 
 static void
 _tab_bar_setup(void)
@@ -293,30 +501,30 @@ _tab_bar_setup(void)
                             _spacer);
    evas_object_show(_spacer);
 
-   _main_tab = edje_object_add(_evas);
-   if (!edje_object_file_set(_main_tab, _edje_file, "terminology/tab_main"))
-     printf("failed to set file %s.\n", _edje_file);
+   _tab_main = elm_layout_add(_win);
+   elm_layout_file_set(_tab_main, _edje_file, "terminology/tab_main");
    edje_object_part_swallow(_bg, "terminology.main_tab",
-                            _main_tab);
-   edje_object_part_text_set(_main_tab, "terminology.title",
-                             "foo bar 42");
-   evas_object_size_hint_weight_set(_main_tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(_main_tab, EVAS_HINT_FILL, EVAS_HINT_FILL);
+                            _tab_main);
+   elm_layout_text_set(_tab_main, "terminology.title", "foo bar 42");
+   evas_object_size_hint_weight_set(_tab_main, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(_tab_main, EVAS_HINT_FILL, EVAS_HINT_FILL);
    edje_object_signal_callback_add(_bg, "tab,drag", "*",
                                    _on_drag, NULL);
    edje_object_signal_callback_add(_bg, "tab,drag,start", "*",
                                    _on_drag_start, NULL);
    edje_object_signal_callback_add(_bg, "tab,drag,stop", "*",
                                    _on_drag_stop, NULL);
-   edje_object_signal_callback_add(_main_tab, "tab,title", "*",
+   edje_object_signal_callback_add(_tab_main, "tab,title", "*",
                                    _on_title, NULL);
+   evas_object_event_callback_add(_tab_main, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _tab_main_mouse_down, _tab_main);
 
-   edje_object_size_min_calc(_main_tab, &w, &h);
+   edje_object_size_min_calc(_tab_main, &w, &h);
    ERR("min: %d %d", w, h);
-   evas_object_size_hint_min_set(_main_tab, w, h);
-   evas_object_event_callback_add(_main_tab, EVAS_CALLBACK_RESIZE,
-                                  _cb_main_tab_change, NULL);
-   evas_object_show(_main_tab);
+   evas_object_size_hint_min_set(_tab_main, w, h);
+   evas_object_event_callback_add(_tab_main, EVAS_CALLBACK_RESIZE,
+                                  _cb_tab_main_change, NULL);
+   evas_object_show(_tab_main);
 
    _left_box = elm_box_add(_win);
    assert(_left_box);
@@ -400,3 +608,4 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 }
 
 ELM_MAIN()
+/* }}} */
