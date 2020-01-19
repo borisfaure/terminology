@@ -342,7 +342,7 @@ collections {
          ////////////////////////////////////////////////////////////////////
          // actual text grid for chars, cursors, selectiond etc. goes here
          // and has a background layered behind it inside the swallowed
-         // child edje
+         // child edje. Swallow `terminology/core`
          part { name: "terminology.content"; type: SWALLOW;
             description { state: "default" 0.0;
             }
@@ -2585,7 +2585,7 @@ collections {
          }
          
          ////////////////////////////////////////////////////////////////////
-         // swallow to hold invisile rect to click on to dismiss things
+         // swallow to hold invisible rect to click on to dismiss things
          part { name: "terminology.dismiss"; type: SWALLOW;
             description { state: "default" 0.0;
             }
@@ -3588,7 +3588,7 @@ target: "0.clip"; target: "1.clip"; target: "2.clip"; target: "3.clip"; target: 
                visible: 0;
             }
          }
-         
+
          // blinky cursors indicating you can drag the ends of the selection
          part { name: "cursor.top_left"; type: RECT;
             mouse_events: 0;

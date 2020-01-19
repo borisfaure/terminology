@@ -1,6 +1,9 @@
 =================
-Terminology 1.6.0
+Terminology 1.7.0
 =================
+
+Changes since 1.6.0:
+--------------------
 
 Changes since 1.5.0:
 --------------------
@@ -21,7 +24,6 @@ Changes since 1.2.0:
 
 Changes since 1.1.1:
 --------------------
-
   * In group "terminology/background", "message" with id 2 requires an INT to
   specify the amount of shine
   * Add parts "terminology.sendfile.progress" and
@@ -31,7 +33,6 @@ Changes since 1.1.1:
 
 Changes since 0.9.1:
 --------------------
-
   * In group "terminology/background", add signal "tab,close" with emitter set
     to "terminology" to close the current tab
   * In group "terminology/tabbar_back", add signal "tab,close" with emitter
