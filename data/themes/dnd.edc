@@ -56,6 +56,10 @@ collections {
                   relative: 1.0 1.0;
                }
             }
+            description {
+               state: "hdrag,off" 0.0;
+               inherit: "default" 0.0;
+            }
          }
 
 
@@ -193,6 +197,18 @@ collections {
                color: 255 0 255 132;
             }
          }
+         part { name: "terminology.main_tab.drag"; type: SPACER;
+            dragable {
+               confine: "tabdrag";
+               x: 1 1 0;
+            }
+            description { state: "default" 0.0;
+               rel1.to: "terminology.main_tab";
+               rel1.relative: 0.0 0.0;
+               rel2.to: "terminology.main_tab";
+               rel2.relative: 1.0 1.0;
+            }
+         }
          part { name: "terminology.content"; type: SWALLOW;
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -224,6 +240,16 @@ collections {
             target: "terminology.tabr.content";
             target: "tabr.foreground";
          }
+         program {
+            signal: "hdrag,on"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "tabdrag";
+         }
+         program {
+            signal: "hdrag,off"; source: "terminology";
+            action: STATE_SET "hdrag,off" 0.0;
+            target: "tabdrag";
+         }
 
          program {
             signal: "mouse,down,1"; source: "terminology.main_tab";
@@ -231,14 +257,21 @@ collections {
             script {
                new x, y, w, h, m_x, m_y;
                new Float:pos;
+               new Float:vl;
+               new st[31];
 
-               get_geometry(PART:"tabdrag", x, y, w, h);
-               get_mouse(m_x, m_y);
-               pos = m_x - x;
-               pos = pos / w;
-               set_drag(PART:"terminology.main_tab", pos, 0.0);
-               emit("tab,drag,start", "terminology");
-
+               get_state(PART:"tabdrag", st, 30, vl);
+               if (!strcmp(st, "default")) {
+                  echo("mouse,down,1: default");
+                  get_geometry(PART:"tabdrag", x, y, w, h);
+                  get_mouse(m_x, m_y);
+                  pos = m_x - x;
+                  pos = pos / w;
+                  set_drag(PART:"terminology.main_tab.drag", pos, 0.0);
+                  emit("tab,drag,start", "terminology");
+               } else {
+                  echo("mouse,down,1: tabdrag,off");
+               }
             }
          }
          program {
@@ -250,15 +283,23 @@ collections {
             script {
                new x, y, w, h, m_x, m_y;
                new Float:pos;
+               new Float:vl;
+               new st[31];
 
-               if (!get_mouse_buttons()) return;
-
-               get_geometry(PART:"tabdrag", x, y, w, h);
-               get_mouse(m_x, m_y);
-               pos = m_x - x;
-               pos = pos / w;
-               set_drag(PART:"terminology.main_tab", pos, 0.0);
-               emit("tab,drag", "terminology");
+               if (!get_mouse_buttons())
+                 return;
+               get_state(PART:"tabdrag", st, 30, vl);
+               if (!strcmp(st, "default")) {
+                  echo("mouse,move: default");
+                  get_geometry(PART:"tabdrag", x, y, w, h);
+                  get_mouse(m_x, m_y);
+                  pos = m_x - x;
+                  pos = pos / w;
+                  set_drag(PART:"terminology.main_tab.drag", pos, 0.0);
+                  emit("tab,drag", "terminology");
+               } else {
+                  echo("mouse,move: tabdrag,off");
+               }
             }
          }
       } // programs

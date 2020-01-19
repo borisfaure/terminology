@@ -189,9 +189,10 @@ _tab_bar_fill(void)
                   _tab_orig = 0.0;
                }
 
-             assert(edje_object_part_drag_size_set(_bg, "terminology.main_tab",
+             assert(edje_object_part_drag_size_set(_bg,
+                                                   "terminology.main_tab.drag",
                                             step, 0.0) == EINA_TRUE);
-             assert(edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+             assert(edje_object_part_drag_value_set(_bg, "terminology.main_tab.drag",
                                              _tab_orig, 0.0) == EINA_TRUE);
              continue;
           }
@@ -246,7 +247,7 @@ _on_drag_stop(void *data EINA_UNUSED,
    ERR("STOP (_on_drag_long:%d)", _on_drag_long);
    if (_on_drag_long)
      {
-        edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+        edje_object_part_drag_value_set(_bg, "terminology.main_tab.drag",
                                                _tab_orig, 0.0);
         return;
      }
@@ -265,14 +266,14 @@ _on_drag(void *data EINA_UNUSED,
    ERR("drag (_on_drag_long:%d)", _on_drag_long);
    if (_on_drag_long)
      {
-        edje_object_part_drag_value_set(_bg, "terminology.main_tab",
+        edje_object_part_drag_value_set(_bg, "terminology.main_tab.drag",
                                                _tab_orig, 0.0);
         return;
      }
 
    n = eina_list_count(_tabs);
 
-   edje_object_part_drag_value_get(o, "terminology.main_tab", &val, NULL);
+   edje_object_part_drag_value_get(o, "terminology.main_tab.drag", &val, NULL);
    if ((_tab_active_idx + 1 < n) && (val > _tab_orig + _hysteresis_step))
      {
         Eina_List *l = eina_list_nth_list(_tabs, _tab_active_idx);
