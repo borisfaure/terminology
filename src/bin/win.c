@@ -2888,7 +2888,7 @@ _cb_tab_title(void *data,
 static void
 _tabs_recompute_drag(Tabs *tabs)
 {
-   Term *term;
+   Term *term = NULL;
    int n = eina_list_count(tabs->tabs);
    int idx = -1;
    Tab_Item *tab_item;
@@ -2913,6 +2913,7 @@ _tabs_recompute_drag(Tabs *tabs)
      }
    tabs->v1_orig = v1;
    tabs->v2_orig = v2;
+   assert(term != NULL);
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl", v1, 0.0);
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr", v2, 0.0);
 }
