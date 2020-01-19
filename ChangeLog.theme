@@ -4,6 +4,8 @@ Terminology 1.7.0
 
 Changes since 1.6.0:
 --------------------
+  * In group "terminology/tabbar_back", add signal "bell,off" from "terminology"
+  to unmark a tab as having missed the bell.
 
 Changes since 1.5.0:
 --------------------

@@ -2430,6 +2430,11 @@ collections {
             action: STATE_SET "bell" 0.0;
             target: "terminology.title";
          }
+         program { name: "bell,off";
+            signal: "bell,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.title";
+         }
       }
    }
 

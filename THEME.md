@@ -105,7 +105,9 @@ When clicked on it, to notify that the user wants to go to that tab.
 
 ## Signal received
 ### `bell`
-To mark the tab as having received a bell.
+To mark the tab as having missed a bell.
+### `bell,off`
+To unmark the tab as having missed a bell.
 
 
 
