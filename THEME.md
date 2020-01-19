@@ -84,6 +84,10 @@ Whether to display a tab bar. Default is off.
 ### `tab_btn,off` and `tab_btn,on`
 Whether to display a tab button to easily navigate through tabs. Default is off.
 
+## Signal emitted
+### `tab,drag` and `tab,drage,stop`
+To notify that the current tab is being dragged.
+
 
 
 # `terminology/about`

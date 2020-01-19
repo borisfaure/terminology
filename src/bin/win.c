@@ -2828,6 +2828,8 @@ _tabbar_clear(Term *term)
         evas_object_del(term->tab_spacer);
         term->tab_spacer = NULL;
      }
+   if (term->tab_inactive)
+     evas_object_hide(term->tab_inactive);
 }
 
 static void
@@ -2907,7 +2909,7 @@ _tabs_recompute_drag(Tabs *tabs)
      {
         v1 = (double)(idx) / (double)n;
         v2 = (double)(idx+1) / (double)n;
-        tabs->hysteresis_step = 0.67 / (n - 1);
+        tabs->hysteresis_step = 0.67 / (double)n;
      }
    tabs->v1_orig = v1;
    tabs->v2_orig = v2;
@@ -2925,7 +2927,10 @@ _tabs_on_drag_stop(void *data,
    Term *term = data;
    Tabs *tabs = evas_object_data_get(term->bg, "tabs");
 
-   _tabs_recompute_drag(tabs);
+   edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl",
+                                   tabs->v1_orig, 0.0);
+   edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr",
+                                   tabs->v2_orig, 0.0);
 }
 
 static void
@@ -2935,7 +2940,6 @@ _tabs_on_drag(void *data,
               const char *source EINA_UNUSED)
 {
    Eina_List *l, *next, *prev;
-   double val;
    int tab_active_idx;
    int n;
    Tabs *tabs;
@@ -2962,10 +2966,12 @@ _tabs_on_drag(void *data,
    term = solo->term;
 
    edje_object_part_drag_value_get(term->bg_edj, "terminology.tabl",
-                                   &val, NULL);
+                                   &v1, NULL);
+   edje_object_part_drag_value_get(term->bg_edj, "terminology.tabr",
+                                   &v2, NULL);
    while ((tab_active_idx < n - 1) &&
-       ((val > tabs->v1_orig + tabs->hysteresis_step) ||
-        (val > 1 - tabs->hysteresis_step)))
+       ((v2 > tabs->v2_orig + tabs->hysteresis_step) ||
+        (v2 > 1 - tabs->hysteresis_step)))
      {
         /* To the right */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
@@ -2973,7 +2979,7 @@ _tabs_on_drag(void *data,
         item_moved = next->data;
         term_moved = _tab_item_to_term(item_moved);
         elm_box_unpack(term->tabbar.r.box, term_moved->tab_inactive);
-        elm_box_pack_start(term->tabbar.l.box, term_moved->tab_inactive);
+        elm_box_pack_end(term->tabbar.l.box, term_moved->tab_inactive);
 
         tabs->tabs = eina_list_remove_list(tabs->tabs, l);
         tabs->tabs = eina_list_append_relative_list(tabs->tabs,
@@ -2983,8 +2989,8 @@ _tabs_on_drag(void *data,
         return;
      }
    while ((tab_active_idx > 0) &&
-       ((val < tabs->v1_orig - tabs->hysteresis_step) ||
-        (val < tabs->hysteresis_step)))
+       ((v1 < tabs->v1_orig - tabs->hysteresis_step) ||
+        (v1 < tabs->hysteresis_step)))
      {
         /* To the left */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
@@ -2992,7 +2998,7 @@ _tabs_on_drag(void *data,
         item_moved = prev->data;
         term_moved = _tab_item_to_term(item_moved);
         elm_box_unpack(term->tabbar.l.box, term_moved->tab_inactive);
-        elm_box_pack_end(term->tabbar.r.box, term_moved->tab_inactive);
+        elm_box_pack_start(term->tabbar.r.box, term_moved->tab_inactive);
 
         tabs->tabs = eina_list_remove_list(tabs->tabs, prev);
         tabs->tabs = eina_list_append_relative_list(tabs->tabs,
@@ -4083,6 +4089,9 @@ _tabs_recreate(Tabs *tabs)
         assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
         solo = (Solo*) tab_item->tc;
         term = solo->term;
+
+        if (term->tab_inactive)
+          evas_object_hide(term->tab_inactive);
 
         if (term->missed_bell)
           missed++;

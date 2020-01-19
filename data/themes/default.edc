@@ -1769,6 +1769,40 @@ collections {
                visible: 1;
             }
          }
+          program {
+             signal: "mouse,up,1"; source: "tabmiddle";
+             action: SIGNAL_EMIT "tab,drag,stop" "terminology";
+          }
+         program {
+            signal: "mouse,move"; source: "tabmiddle";
+            script {
+               new y, h, drag_x, drag_w;
+               if (!get_mouse_buttons())
+                 return;
+               get_geometry(PART:"tabdrag", drag_x, y, drag_w, h);
+               if (drag_w > 0) {
+                  new m_x, m_y;
+                  new Float:mid;
+                  new Float:d;
+                  new Float:v1;
+                  new Float:v2;
+                  new Float:n;
+
+                  get_mouse(m_x, m_y);
+                  mid = m_x - drag_x;
+                  mid = mid / drag_w;
+
+                  get_drag(PART:"terminology.tabl", v1, n);
+                  get_drag(PART:"terminology.tabr", v2, n);
+
+                  d = (v2 - v1) / 2;
+                  set_drag(PART:"terminology.tabl", mid - d, 0.0);
+                  set_drag(PART:"terminology.tabr", mid + d, 0.0);
+                  emit("tab,drag", "terminology");
+               }
+            }
+         }
+
          program {
             signal: "mouse,down,1,double"; source: "tabmiddle";
             action: SIGNAL_EMIT "tab,title" "terminology";
