@@ -18,7 +18,7 @@ collections {
 
 #ifndef INHERIT_PROVIDE_OWN_COLORS
        color_classes {
-#include "default_colors.in.edc"
+#include "default/colors.edc"
        }
 #endif
 

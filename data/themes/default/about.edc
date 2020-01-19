@@ -1,0 +1,100 @@
+///////////////////////////////////////////////////////////////////////////
+//// the about box content image
+group { name: "terminology/about";
+   images {
+      image: "ab_base.png" COMP;
+      image: "ab_shell.png" COMP;
+   }
+   styles {
+      style { name: "aboutstyle";
+         base: "font=Sans font_size=8 color=#3f1 style=glow glow2_color=#3f13 glow_color=#3f11 wrap=word";
+         tag:  "b" "+ color=#8f8 glow2_color=#3f15 glow_color=#3f12";
+      }
+   }
+   parts {
+      part { name: "base";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1 {
+               relative: (39/198) (27/198);
+               to: "shell";
+            }
+            rel2 {
+               relative: (151/198) (115/198);
+               to: "shell";
+            }
+            image.normal: "ab_base.png";
+         }
+      }
+      part { name: "baseclip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+            rel1.to: "base";
+            rel2.to: "base";
+         }
+      }
+      part { name: "terminology.text"; type: TEXTBLOCK;
+         clip_to: "baseclip";
+         mouse_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            align: 0.5 0.0;
+            max: 10000 10000;
+            rel1 {
+               to: "base";
+               relative: 0.08 1.0;
+            }
+            rel2 {
+               to: "base";
+               relative: 0.97 1.0;
+            }
+            text {
+               style: "aboutstyle";
+               text: "Hello world.<br>This is <b>Terminology</b>, your friendly neighbourhood terminal.<br><br>This needs more text to test vertical scrolling to see if the animation works right.<br>I hope this will be enough now.";
+               min: 0 1;
+            }
+         }
+         description { state: "up" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.08 0.0;
+            rel2.relative: 0.97 0.0;
+         }
+      }
+      part { name: "shell";
+         scale: 1;
+         description { state: "default" 0.0;
+            max: 198 198;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            image.normal: "ab_shell.png";
+         }
+      }                                              
+   }
+   programs {
+      program {
+         signal: "begin"; source: "terminology";
+         action: ACTION_STOP;
+         target: "show";
+         target: "show2";
+         after: "begin2";
+      }
+      program { name: "begin2";
+         action: STATE_SET "default" 0.0;
+         target: "terminology.text";
+         after: "show";
+      }
+      program { name: "show";
+         action: STATE_SET "up" 0.0;
+         transition: LINEAR 60.0;
+         target: "terminology.text";
+         after: "show2";
+      }
+      program { name: "show2";
+         action: STATE_SET "default" 0.0;
+         target: "terminology.text";
+         after: "show";
+      }
+   }
+}

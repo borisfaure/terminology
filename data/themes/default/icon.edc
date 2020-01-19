@@ -1,0 +1,16 @@
+#define ICON(Grp, Img) \
+   group { name: "elm/icon/"##Grp##"/default"; min: 10 10; max: 80 80; \
+      images.image: Img COMP; \
+      parts { part { name: "base"; description { state: "default" 0.0; \
+      aspect: 1.0 1.0; aspect_preference: BOTH; image.normal: Img; \
+   } } } }
+   ICON("new",      "icon_new.png");
+   ICON("split-h",  "icon_split_h.png");
+   ICON("split-v",  "icon_split_v.png");
+   ICON("mini-view",  "icon_miniview.png");
+   ICON("close",    "icon_close.png");
+   ICON("copy",     "icon_copy.png");
+   ICON("paste",    "icon_paste.png");
+   ICON("settings", "icon_settings.png");
+   ICON("about",    "icon_about.png");
+#undef ICON

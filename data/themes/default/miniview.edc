@@ -1,0 +1,99 @@
+group { name: "terminology/miniview";
+   images {
+      image: "icon_close.png" COMP;
+      image: "fn_shadow.png" COMP;
+   }
+   set { name: "bg_shadow";
+      image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
+      image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
+      image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
+   }
+   parts {
+      part { name: "miniview.bg"; type: RECT;
+           //mouse_events: 1;
+         description { state: "default" 0.0;
+            color_class: "BG";
+         }
+      }
+      part { name: "shadow";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "bg_shadow";
+            fill.smooth: 0;
+         }
+      }
+      part { name: "miniview.img"; type: SWALLOW;
+         description { state: "default" 0.0;
+            visible: 1;
+            rel1 {
+               to: "miniview.bg";
+               relative: 0.0 0.0;
+               offset: 0 0;
+            }
+            rel2 {
+               to: "miniview.bg";
+               relative: 1.0 1.0;
+               offset: -1 -1;
+            }
+         }
+      }
+      part { name: "miniview_screen"; type: RECT;
+         mouse_events: 1;
+         dragable {
+            confine: "miniview.img";
+            x: 0 0 0;
+            y: 1 1 0;
+         }
+         description { state: "default" 0.0;
+            color: 255 255 255 40;
+            fixed:1 1;
+         }
+         description { state: "outbounds" 0.0;
+            color: 255 25 35 40;
+            fixed:1 1;
+         }
+      }
+      part { name: "miniview.close_shadow"; type: IMAGE;
+         description { state: "default" 0.0;
+            image {
+               normal: "fn_shadow.png";
+            };
+            rel1 {
+               to: "miniview.bg";
+               relative: 0.0 0.0;
+               offset: 0 0;
+            }
+            rel2 {
+               to: "miniview.bg";
+               relative: 0.0 0.0;
+               offset: 16 16;
+            }
+         }
+      }
+      part { name: "miniview.close"; type: IMAGE;
+         description { state: "default" 0.0;
+            image {
+               normal: "icon_close.png";
+            };
+            rel1.to: "miniview.close_shadow";
+            rel2.to: "miniview.close_shadow";
+         }
+      }
+   };
+   programs {
+      program {
+         signal: "mouse,clicked,1"; source: "miniview.close";
+         action: SIGNAL_EMIT "miniview,close" "terminology";
+      }
+      program {
+         signal: "miniview_screen,inbounds"; source: "miniview";
+         action: STATE_SET "default" 0.0;
+         target: "miniview_screen";
+      }
+      program {
+         signal: "miniview_screen,outbounds"; source: "miniview";
+         action: STATE_SET "outbounds" 0.0;
+         target: "miniview_screen";
+      }
+   };
+};

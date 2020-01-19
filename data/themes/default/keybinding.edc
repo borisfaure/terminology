@@ -1,0 +1,31 @@
+group { name: "terminology/keybinding";
+   parts {
+      part { name: "shadow"; type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 196;
+         }
+      }
+      part { name: "label"; type: TEXT;
+         mouse_events: 0;
+         effect: SOFT_SHADOW BOTTOM;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "shadow";
+            rel2.to: "shadow";
+            rel1.relative: 0.5 0.5;
+            rel1.offset: 0 0;
+            rel2.relative: 0.5 0.5;
+            rel2.offset: 0 0;
+            color: 255 255 255 255;
+            color3: 0 0 0 18;
+            align: 0.5 0.5;
+            text { font: "Sans"; size: 12;
+               min: 1 1;
+               ellipsis: 0;
+            }
+         }
+      }
+   };
+};

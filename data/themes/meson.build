@@ -6,7 +6,24 @@ command = [edje_cc,
            '@INPUT@',
            '@OUTPUT@']
 
-default_deps = ['default.edc', 'default/colors.edc']
+default_deps = [
+  'default.edc',
+  'default/colors.edc',
+  'default/keybinding.edc',
+  'default/miniview.edc',
+  'default/core.edc',
+  'default/background.edc',
+  'default/tabbar_back.edc',
+  'default/base.edc',
+  'default/selection.edc',
+  'default/cursor.edc',
+  'default/sel.edc',
+  'default/link.edc',
+  'default/media.edc',
+  'default/icon.edc',
+  'default/about.edc',
+  'default/fontpreview.edc',
+  ]
 mild_deps = ['mild.edc', 'default/colors.edc']
 edje_to_compile = [
   ['default', default_deps],

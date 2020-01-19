@@ -1,0 +1,291 @@
+group { name: "terminology/base";
+   images.image: "pm_shadow.png" COMP;
+   images.image: "bg_bevel.png" COMP;
+   images.image: "bg_glint.png" COMP;
+   parts {
+      part { name: "terminology.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+      ////////////////////////////////////////////////////////////////////
+      // a place terminology will place an entry box for internal commands
+      part { name: "cmdclip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "terminology.cmdbox";
+            rel1.offset: -100 -100;
+            rel2.to: "terminology.cmdbox";
+            rel2.offset: 99 99;
+            color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+      }
+      part { name: "cmdshadow"; mouse_events: 0;
+         clip_to: "cmdclip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "cmdback";
+            rel1.offset: -32 -32;
+            rel2.to: "cmdback";
+            rel2.offset: 31 31;
+            image.normal: "pm_shadow.png";
+            image.border: 64 64 64 64;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "cmdback"; type: RECT;
+         clip_to: "cmdclip";
+         description { state: "default" 0.0;
+            color: 48 48 48 255;
+            rel1.to: "terminology.cmdbox";
+            rel1.offset: -2 -2;
+            rel2.to: "terminology.cmdbox";
+            rel2.offset: 1 1;
+         }
+      }
+      part { name: "terminology.cmdbox"; type: SWALLOW;
+         clip_to: "cmdclip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 8 8;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 8 9;
+            rel2.offset: -9 9;
+            align: 0.5 0.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: 8 -9;
+            rel2.offset: -9 -9;
+            align: 0.5 1.0;
+         }
+      }
+      part { name: "cmdbevel"; mouse_events: 0;
+         clip_to: "cmdclip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "cmdback";
+            rel2.to: "cmdback";
+            image.normal: "bg_bevel.png";
+            image.border: 3 3 3 3;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "cmdglint"; mouse_events: 0;
+         clip_to: "cmdclip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 79 5;
+            max: 79 5;
+            rel1 {
+               to: "cmdback";
+               relative: 0.0 0.0;
+               offset: 0 0;
+            }
+            rel2 {
+               to: "cmdback";
+               relative: 1.0 0.0;
+               offset: -1 0;
+            }
+            image.normal: "bg_glint.png";
+         }
+      }
+      program {
+         signal: "cmdbox,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.4;
+         target: "cmdclip";
+      }
+      program {
+         signal: "cmdbox,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: SPRING 0.4 0.5 4;
+         target: "terminology.cmdbox";
+      }
+      program {
+         signal: "cmdbox,hide"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         transition: ACCELERATE 0.5;
+         target: "terminology.cmdbox";
+         target: "cmdclip";
+      }
+
+      ////////////////////////////////////////////////////////////////////
+      // overlayed options and controls
+      part { name: "terminology.about"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 198 198;
+            max: 198 198;
+            align: 0.5 0.0;
+            visible: 0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 0.5 0.5;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      program {
+         signal: "about,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: SPRING 1.2 2.0 6;
+         target: "terminology.about";
+      }
+      program {
+         signal: "about,hide"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.6;
+         target: "terminology.about";
+      }
+
+      ////////////////////////////////////////////////////////////////////
+      // swallow to hold invisible rect to click on to dismiss things
+      part { name: "terminology.dismiss"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+
+      ////////////////////////////////////////////////////////////////////
+      // overlayed options and controls
+      part { name: "terminology.optdetails"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 40 40;
+            align: 0.0 0.5;
+            visible: 0;
+            rel1 {
+               relative: 1.0 0.02;
+               offset: 8 8;
+            }
+            rel2 {
+               relative: 1.0 0.98;
+               offset: 8 -9;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 1.0 0.5;
+            rel1 {
+               relative: 0.1 0.02;
+               offset: 8 8;
+            }
+            rel2 {
+               to_x: "terminology.options";
+               relative: 0.0 0.98;
+               offset: -9 -9;
+            }
+         }
+      }
+      program {
+         signal: "optdetails,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.4;
+         target: "terminology.optdetails";
+      }
+      program {
+         signal: "optdetails,hide"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2;
+         target: "terminology.optdetails";
+         after: "opdt_hide2";
+      }
+      program { name: "opdt_hide2";
+         action: SIGNAL_EMIT "optdetails,hide,done" "terminology";
+      }
+
+      part { name: "terminology.options"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            align: 0.0 0.5;
+            visible: 0;
+            rel1 {
+               relative: 1.0 0.02;
+               offset: 8 8;
+            }
+            rel2 {
+               relative: 1.0 0.98;
+               offset: 8 -9;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 1.0 0.5;
+            rel1 {
+               offset: -9 8;
+            }
+            rel2 {
+               offset: -9 -9;
+            }
+         }
+      }
+      program {
+         signal: "options,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.4;
+         target: "terminology.options";
+      }
+      program {
+         signal: "options,hide"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.6;
+         target: "terminology.options";
+      }
+
+      part { name: "terminology.controls"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 10 10;
+            align: 0.0 0.5;
+            visible: 0;
+            rel1 {
+               relative: 1.0 0.5;
+               offset: 8 8;
+            }
+            rel2 {
+               relative: 1.0 0.5;
+               offset: 8 -9;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 1.0 0.5;
+            rel1 {
+               relative: 1.0 0.5;
+               offset: -9 8;
+            }
+            rel2 {
+               offset: -9 -9;
+            }
+         }
+      }
+      program {
+         signal: "controls,show"; source: "terminology";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.3;
+         target: "terminology.controls";
+      }
+      program {
+         signal: "controls,hide"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
+         target: "terminology.controls";
+      }
+   }
+}

@@ -1,0 +1,90 @@
+///////////////////////////////////////////////////////////////////////////
+//// the background and general container for the terminal
+group { name: "terminology/core";
+   script {
+      public message(Msg_Type:type, id, ...) {
+
+         if (type != MSG_INT)
+         return;
+         if (id == 1) { // fade
+            new r, g, b, a, v;
+            v = (getarg(2) * 255) / 100;
+
+            custom_state(PART:"fade", "default", 0.0);
+            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
+            set_state(PART:"fade", "custom", 0.0);
+         }
+      }
+   }
+   parts {
+        ////////////////////////////////////////////////////////////////////
+        // background handling
+      part { name: "fade"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "terminology.background"; type: SWALLOW;
+         clip_to: "fade";
+         description { state: "default" 0.0;
+         }
+         description { state: "image" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "scale" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "edje" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "movie" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      program {
+         signal: "media,off"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         target: "terminology.background";
+      }
+      program {
+         signal: "media,image"; source: "terminology";
+         action: STATE_SET "image" 0.0;
+         target: "terminology.background";
+      }
+      program {
+         signal: "media,scale"; source: "terminology";
+         action: STATE_SET "scale" 0.0;
+         target: "terminology.background";
+      }
+      program {
+         signal: "media,edje"; source: "terminology";
+         action: STATE_SET "edje" 0.0;
+         target: "terminology.background";
+      }
+      program {
+         signal: "media,movie"; source: "terminology";
+         action: STATE_SET "movie" 0.0;
+         target: "terminology.background";
+      }
+
+      part { name: "terminology.tabregion"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel2.relative: 1.0 0.0;
+            min: 1 1;
+            align: 0.0 0.0;
+         }
+      }
+      ////////////////////////////////////////////////////////////////////
+      // actual text grid for chars, cursors, selectiond etc. goes here
+      part { name: "terminology.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.offset: 1 0;
+            rel1.relative: 0.0 1.0;
+            rel1.to_y: "terminology.tabregion";
+            rel2.offset: -2 -2;
+         }
+      }
+
+   }
+}
