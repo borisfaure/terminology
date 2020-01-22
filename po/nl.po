@@ -1,0 +1,972 @@
+# Dutch translation for Terminology.
+# This file is distributed under the same license as the Terminology package.
+# Pjotr <pjotrvertaalt@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: terminology\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-09-08 20:55+0200\n"
+"PO-Revision-Date: 2020-01-22 12:38+0100\n"
+"Last-Translator: Pjotr <pjotrvertaalt@gmail.com>\n"
+"Language-Team: Dutch (nl)\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+
+#: src/bin/controls.c:334
+msgid "Controls"
+msgstr "Knoppen"
+
+#: src/bin/controls.c:350
+msgid "New"
+msgstr "Nieuw"
+
+#: src/bin/controls.c:357
+msgid "Split V"
+msgstr "Splits V"
+
+#: src/bin/controls.c:360
+msgid "Split H"
+msgstr "Splits H"
+
+#: src/bin/controls.c:367
+msgid "Miniview"
+msgstr "Miniweergave"
+
+#: src/bin/controls.c:374 src/bin/win.c:4573
+msgid "Set title"
+msgstr "Titel instellen"
+
+#: src/bin/controls.c:385 src/bin/termio.c:1195 src/bin/termio.c:2563
+msgid "Copy"
+msgstr "Kopiëren"
+
+#: src/bin/controls.c:391
+msgid "Paste"
+msgstr "Plakken"
+
+#: src/bin/controls.c:397
+msgid "Settings"
+msgstr "Instellingen"
+
+#: src/bin/controls.c:403
+msgid "About"
+msgstr "Over"
+
+#: src/bin/controls.c:413
+msgid "Close Terminal"
+msgstr "Terminalvenster sluiten"
+
+#: src/bin/about.c:83
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This terminal was "
+"written for Enlightenment, to use EFL and otherwise push the boundaries of what a "
+"modern terminal emulator should be. We hope you enjoy it.<br><br>Copyright © 2012-%d "
+"by:<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:<br><br>"
+"%s"
+msgstr ""
+"<b>Terminology %s</b><br>Waarom zouden terminals saai moeten zijn?<br><br>Gemaakt voor "
+"Enlightenment. We hopen dat u er plezier aan beleeft.<br><br>Auteursrecht © 2012-%d "
+"door:<br><br>%s<br><br>BSD-licentie hieronder:<br><br>%s"
+
+#: src/bin/keyin.c:653
+msgid "Scrolling"
+msgstr "Schuiven"
+
+#: src/bin/keyin.c:654
+msgid "Scroll one page up"
+msgstr "Schuif één bladzijde omhoog"
+
+#: src/bin/keyin.c:655
+msgid "Scroll one page down"
+msgstr "Schuif één bladzijde naar beneden"
+
+#: src/bin/keyin.c:656
+msgid "Scroll one line up"
+msgstr "Schuif één regel omhoog"
+
+#: src/bin/keyin.c:657
+msgid "Scroll one line down"
+msgstr "Schuif één regel omlaag"
+
+#: src/bin/keyin.c:658
+msgid "Go to the top of the backlog"
+msgstr "Ga naar de bovenkant van de achterstand"
+
+#: src/bin/keyin.c:659
+msgid "Reset scroll"
+msgstr "Schuiven terugzetten"
+
+#: src/bin/keyin.c:661
+msgid "Copy/Paste"
+msgstr "Kopiëren/plakken"
+
+#: src/bin/keyin.c:662
+msgid "Copy selection to Primary buffer"
+msgstr "Kopieer selectie naar primaire buffer"
+
+#: src/bin/keyin.c:663
+msgid "Copy selection to Clipboard buffer"
+msgstr "Kopieer selectie naar klembordbuffer"
+
+#: src/bin/keyin.c:664
+msgid "Paste Primary buffer (highlight)"
+msgstr "Plak primaire buffer (markering)"
+
+#: src/bin/keyin.c:665
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr "Plak klembordbuffer (Ctrl c / Ctrl v)"
+
+#: src/bin/keyin.c:667
+msgid "Splits/Tabs"
+msgstr "Afsplitsingen/tabbladen"
+
+#: src/bin/keyin.c:668
+msgid "Focus the previous terminal"
+msgstr "Scherpstellen op vorige terminalvenster"
+
+#: src/bin/keyin.c:669
+msgid "Focus the next terminal"
+msgstr "Scherpstellen op volgende terminalvenster"
+
+#: src/bin/keyin.c:670
+msgid "Focus the terminal above"
+msgstr "Scherpstellen op bovenstaand terminalvenster"
+
+#: src/bin/keyin.c:671
+msgid "Focus the terminal below"
+msgstr "Scherpstellen op onderstaand terminalvenster"
+
+#: src/bin/keyin.c:672
+msgid "Focus the terminal on the left"
+msgstr "Scherpstellen op linkerterminalvenster"
+
+#: src/bin/keyin.c:673
+msgid "Focus the terminal on the right"
+msgstr "Scherpstellen op rechterterminalvenster"
+
+#: src/bin/keyin.c:674
+msgid "Split horizontally (new below)"
+msgstr "Horizontaal splitsen (nieuwe onder)"
+
+#: src/bin/keyin.c:675
+msgid "Split vertically (new on right)"
+msgstr "Verticaal splitsen (nieuwe rechts)"
+
+#: src/bin/keyin.c:676
+msgid "Create a new \"tab\""
+msgstr "Maak een nieuw 'tabblad'"
+
+#: src/bin/keyin.c:677
+msgid "Close the focused terminal"
+msgstr "Scherpgestelde terminalvenster sluiten"
+
+#: src/bin/keyin.c:678
+msgid "Bring up \"tab\" switcher"
+msgstr "'Tabbladen'wisselaar oproepen"
+
+#: src/bin/keyin.c:679
+msgid "Switch to terminal tab 1"
+msgstr "Schakel naar terminaltabblad 1"
+
+#: src/bin/keyin.c:680
+msgid "Switch to terminal tab 2"
+msgstr "Schakel naar terminaltabblad 2"
+
+#: src/bin/keyin.c:681
+msgid "Switch to terminal tab 3"
+msgstr "Schakel naar terminaltabblad 3"
+
+#: src/bin/keyin.c:682
+msgid "Switch to terminal tab 4"
+msgstr "Schakel naar terminaltabblad 4"
+
+#: src/bin/keyin.c:683
+msgid "Switch to terminal tab 5"
+msgstr "Schakel naar terminaltabblad 5"
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 6"
+msgstr "Schakel naar terminaltabblad 6"
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 7"
+msgstr "Schakel naar terminaltabblad 7"
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 8"
+msgstr "Schakel naar terminaltabblad 8"
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 9"
+msgstr "Schakel naar terminaltabblad 9"
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 10"
+msgstr "Schakel naar terminaltabblad 10"
+
+#: src/bin/keyin.c:689
+msgid "Change title"
+msgstr "Titel veranderen"
+
+#: src/bin/keyin.c:690 src/bin/keyin.c:691
+msgid "Toggle whether input goes to all visible terminals"
+msgstr "Omschakelen of invoer naar alle zichtbare terminalvensters gaat"
+
+#: src/bin/keyin.c:694
+msgid "Font size"
+msgstr "Grootte van letters"
+
+#: src/bin/keyin.c:695
+msgid "Font size up 1"
+msgstr "Lettergrootte 1 omhoog"
+
+#: src/bin/keyin.c:696
+msgid "Font size down 1"
+msgstr "Lettergrootte 1 omlaag"
+
+#: src/bin/keyin.c:697
+msgid "Display big font size"
+msgstr "Groot lettertype tonen"
+
+#: src/bin/keyin.c:698
+msgid "Reset font size"
+msgstr "Lettergrootte terugzetten"
+
+#: src/bin/keyin.c:700
+msgid "Actions"
+msgstr "Acties"
+
+#: src/bin/keyin.c:701
+msgid "Open a new terminal window"
+msgstr "Open een nieuw terminalvenster"
+
+#: src/bin/keyin.c:702
+msgid "Toggle Fullscreen of the window"
+msgstr "Schermvullendheid omschakelen"
+
+#: src/bin/keyin.c:703
+msgid "Display the history miniview"
+msgstr "Miniweergave van geschiedenis tonen"
+
+#: src/bin/keyin.c:704
+msgid "Display the command box"
+msgstr "Opdrachtvenster tonen"
+
+#: src/bin/main.c:242 src/bin/main.c:895
+msgid "Could not create window."
+msgstr "Kon geen venster maken."
+
+#: src/bin/main.c:312 src/bin/main.c:906
+msgid "Could not create terminal widget."
+msgstr "Kon terminalhulpje niet maken."
+
+#: src/bin/main.c:351
+#, c-format
+msgid "(C) 2012-%d Carsten Haitzler and others"
+msgstr "(C) 2012-%d Carsten Haitzler en anderen"
+
+#: src/bin/main.c:353
+msgid "Terminal emulator written with Enlightenment Foundation Libraries."
+msgstr "Terminal-nabootser geschreven met Enlightenment Foundation Libraries."
+
+#: src/bin/main.c:357
+msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
+msgstr "Uit te voeren opdracht. Standaard is $SHELL (of passwd shell of /bin/sh)"
+
+#: src/bin/main.c:359
+msgid "Change to directory for execution of terminal command."
+msgstr "Verander naar map voor uitvoering van terminalopdracht."
+
+#: src/bin/main.c:361
+msgid "Use the named edje theme or path to theme file."
+msgstr "Gebruik het genoemde edje-thema of pad naar themabestand."
+
+#: src/bin/main.c:363
+msgid "Use the named file as a background wallpaper."
+msgstr "Gebruik het genoemde bestand als achtergrond."
+
+#: src/bin/main.c:365
+msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
+msgstr "Te gebruiken terminalafmetingen (bijv. 80x24 of 80x24+50+20 enz.)."
+
+#: src/bin/main.c:367
+msgid "Set window name."
+msgstr "Stel vensternaam in."
+
+#: src/bin/main.c:369
+msgid "Set window role."
+msgstr "Stel vensterrol in."
+
+#: src/bin/main.c:371
+msgid "Set window title."
+msgstr "Stel venstertitel in."
+
+#: src/bin/main.c:373
+msgid "Set icon name."
+msgstr "Stel pictogramnaam in."
+
+#: src/bin/main.c:375
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
+msgstr "Stel lettertype in (NAAM/GROOTTE voor schaalbaar, NAAM voor bitmap)."
+
+#: src/bin/main.c:377
+msgid ""
+"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be used "
+"multiple times. eg -S vhvv or --split hv More description available on the man page."
+msgstr ""
+"Splits het terminalvenster. 'v' voor verticaal en 'h' voor horizontaal. Kan meerdere "
+"keren worden gebruikt; bijv. -S vhvv of --slit hv.Meer informatie beschikbaar op de "
+"man-pagina."
+
+#: src/bin/main.c:382
+msgid "Set emotion module to use."
+msgstr "Stel te gebruiken emotiemodule in."
+
+#: src/bin/main.c:385
+msgid "Run the shell as a login shell."
+msgstr "Draai de terminal als een aanmeldvenster."
+
+#: src/bin/main.c:387
+msgid "Set mute mode for video playback."
+msgstr "Stel dempingsmodus in voor afspelen van video's."
+
+#: src/bin/main.c:389
+msgid "Set cursor blink mode."
+msgstr "Stel knippermodus in voor aanwijzer."
+
+#: src/bin/main.c:391
+msgid "Set visual bell mode."
+msgstr "Stel modus in voor visuele bel."
+
+#: src/bin/main.c:393
+msgid "Go into the fullscreen mode from the start."
+msgstr "Ga direct in schermvullende modus."
+
+#: src/bin/main.c:395
+msgid "Go into an iconic state from the start."
+msgstr "Ga direct in geminimaliseerde modus."
+
+#: src/bin/main.c:397
+msgid "Become a borderless managed window."
+msgstr "Word een randloos beheerd venster."
+
+#: src/bin/main.c:399
+msgid "Become an override-redirect window."
+msgstr ""
+
+#: src/bin/main.c:401
+msgid "Become maximized from the start."
+msgstr "Word meteen gemaximaliseerd."
+
+#: src/bin/main.c:403
+msgid "Terminology is run without a window manager."
+msgstr "Terminology wordt gedraaid zonder een vensterbeheerder."
+
+#: src/bin/main.c:405
+msgid "Do not exit when the command process exits."
+msgstr "Sluit niet af wanneer het opdrachtproces eindigt."
+
+#: src/bin/main.c:407
+msgid "Force single executable if multi-instance is enabled."
+msgstr "Forceer een enkele uitvoerbare als 'meerdere instanties' is ingeschakeld."
+
+#: src/bin/main.c:409
+msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
+msgstr "Stel TERM in op 'xterm-256color' in plaats van op 'xterm'."
+
+#: src/bin/main.c:411
+msgid "Highlight links."
+msgstr "Koppelingen markeren."
+
+#: src/bin/main.c:437
+msgid "show program version."
+msgstr "toon programmaversie."
+
+#: src/bin/main.c:440
+msgid "show copyright."
+msgstr "toon auteursrecht."
+
+#: src/bin/main.c:443
+msgid "show license."
+msgstr "toon licentie."
+
+#: src/bin/main.c:446
+msgid "show this message."
+msgstr "toon deze boodschap."
+
+#: src/bin/main.c:578 src/bin/miniview.c:40
+#, c-format
+msgid "Could not create logging domain '%s'."
+msgstr "Kon loggend domein '%s' niet maken."
+
+#: src/bin/main.c:588
+msgid "Could not initialize key bindings."
+msgstr "Kon toetsbindingen niet initialiseren."
+
+#: src/bin/main.c:600
+msgid "Could not parse command line options."
+msgstr "Kon opdrachtregelopties niet lezen."
+
+#: src/bin/main.c:613
+#, c-format
+msgid "option %s requires an argument!"
+msgstr "optie %s vereist een argument."
+
+#: src/bin/main.c:614
+msgid "invalid options found. See --help."
+msgstr "ongeldige opties gevonden. Zie --help."
+
+#: src/bin/main.c:948
+msgid "invalid argument found for option -S/--split. See --help."
+msgstr "ongeldig argument gevonden voor optie -S/--split. Zie --help."
+
+#: src/bin/media.c:807
+#, c-format
+msgid "Could not Initialize the emotion module '%s'"
+msgstr "Kon de emotiemodule '%s' niet initialiseren."
+
+#: src/bin/media.c:1348 src/bin/termpty.c:584 src/bin/termpty.c:589 src/bin/termpty.c:593
+#, c-format
+msgid "Function %s failed: %s"
+msgstr "Functie %s mislukte: %s"
+
+#: src/bin/media.c:1445
+msgid "Media visualizing is not supported"
+msgstr "Zichtbaar maken van media wordt niet ondersteund"
+
+#: src/bin/options_behavior.c:84
+#, c-format
+msgid "%'d lines"
+msgstr "%'d regels"
+
+#: src/bin/options_behavior.c:256
+msgid "Default cursor:"
+msgstr "Standaardaanwijzer:"
+
+#: src/bin/options_behavior.c:265
+msgid "Blinking Block"
+msgstr "Knipperend blokje"
+
+#: src/bin/options_behavior.c:283
+msgid "Steady Block"
+msgstr "Onbewegelijk blokje"
+
+#: src/bin/options_behavior.c:302
+msgid "Blinking Underline"
+msgstr "Knipperende onderstreping"
+
+#: src/bin/options_behavior.c:321
+msgid "Steady Underline"
+msgstr "Onbewegelijke onderstreping"
+
+#: src/bin/options_behavior.c:340
+msgid "Blinking Bar"
+msgstr "Knipperend balkje"
+
+#: src/bin/options_behavior.c:359
+msgid "Steady Bar"
+msgstr "Onbewegelijk balkje"
+
+#: src/bin/options_behavior.c:398 src/bin/options.c:220
+msgid "Behavior"
+msgstr "Gedrag"
+
+#: src/bin/options_behavior.c:441
+msgid "Scroll to bottom on new content"
+msgstr "Schuif bij nieuwe inhoud naar onderkant"
+
+#: src/bin/options_behavior.c:442
+msgid "Scroll to bottom when a key is pressed"
+msgstr "Schuif naar onderkant bij indrukken van een toets"
+
+#: src/bin/options_behavior.c:453
+msgid "Active Links:"
+msgstr "Actieve koppelingen:"
+
+#: src/bin/options_behavior.c:457
+msgid "On emails"
+msgstr "Bij e-mails"
+
+#: src/bin/options_behavior.c:458
+msgid "On file paths"
+msgstr "Bij bestandpaden"
+
+#: src/bin/options_behavior.c:459
+msgid "On URLs"
+msgstr "Bij webadressen"
+
+#: src/bin/options_behavior.c:460
+msgid "Based on escape codes"
+msgstr "Gebaseerd op escape-codes"
+
+#: src/bin/options_behavior.c:464
+msgid "React to key presses"
+msgstr "Reageer op toetsaanslagen"
+
+#: src/bin/options_behavior.c:471
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr "Geluidondersteuning voor toetsaanslagen <mislukking>UITGESCHAKELD</mislukking>!"
+
+#: src/bin/options_behavior.c:474
+msgid "Visual Bell"
+msgstr "Visuele bel"
+
+#: src/bin/options_behavior.c:475
+msgid "Bell rings"
+msgstr "Bel rinkelt"
+
+#: src/bin/options_behavior.c:476
+msgid "Urgent Bell"
+msgstr "Dringende bel"
+
+#: src/bin/options_behavior.c:477
+msgid "Multiple instances, one process"
+msgstr "Meerdere instanties, één proces"
+
+#: src/bin/options_behavior.c:478
+msgid "Set TERM to xterm-256color"
+msgstr "Stel TERM in op xterm-256color"
+
+#: src/bin/options_behavior.c:479
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr ""
+
+#: src/bin/options_behavior.c:480
+msgid "Drag & drop links"
+msgstr "Koppelingen voor 'sleuren en pleuren'"
+
+#: src/bin/options_behavior.c:481
+msgid "Start as login shell"
+msgstr "Starten als aanmeldvenster"
+
+#: src/bin/options_behavior.c:482
+msgid "Focus split under the Mouse"
+msgstr "Scherpstelling gesplitst onder de muis"
+
+#: src/bin/options_behavior.c:483
+msgid "Focus-related visuals"
+msgstr "Scherpstelling-gerelateerde visuele effecten"
+
+#: src/bin/options_behavior.c:484
+msgid "Gravatar integration"
+msgstr "Gravatar-integratie"
+
+#: src/bin/options_behavior.c:485
+msgid "Show tabs"
+msgstr "Tabbladen tonen"
+
+#: src/bin/options_behavior.c:486
+msgid "Always show miniview"
+msgstr "Miniweergave altijd tonen"
+
+#: src/bin/options_behavior.c:487
+msgid "Enable special Terminology escape codes"
+msgstr ""
+
+#: src/bin/options_behavior.c:488
+msgid "Open new terminals in current working directory"
+msgstr "Open nieuwe terminalvensters in huidige werkmap"
+
+#: src/bin/options_behavior.c:489
+msgid "Treat Emojis as double-width characters"
+msgstr "Behandel emoticons als tekens met dubbele breedte"
+
+#: src/bin/options_behavior.c:498
+msgid "Always open at size:"
+msgstr "Altijd openen met grootte:"
+
+#: src/bin/options_behavior.c:508
+msgid "Set Current:"
+msgstr "Huidige instellen:"
+
+#: src/bin/options_behavior.c:519
+msgid "Width:"
+msgstr "Breedte:"
+
+#: src/bin/options_behavior.c:541
+msgid "Height:"
+msgstr "Hoogte:"
+
+#: src/bin/options_behavior.c:565
+msgid "Scrollback:"
+msgstr "Terugschuiven:"
+
+#: src/bin/options_behavior.c:599
+msgid "Tab zoom/switch animation time:"
+msgstr "Animatietijd voor tabvergroting/wisseling:"
+
+#: src/bin/options_behavior.c:600
+msgid ""
+"Set the time of the animation that<br>takes places on tab switches,<br>be them by key "
+"binding, mouse<br>wheel or tabs panel mouse move"
+msgstr ""
+
+#: src/bin/options_behavior.c:612 src/bin/options_behavior.c:613
+#: src/bin/options_behavior.c:644 src/bin/options_behavior.c:645
+#, c-format
+msgid "%1.1f s"
+msgstr "%1.1f s"
+
+#: src/bin/options_behavior.c:630
+msgid "Translucent"
+msgstr "Doorzichtig"
+
+#: src/bin/options_behavior.c:631
+msgid "Auto hide the mouse cursor when idle:"
+msgstr "Muisaanwijzer automatisch verbergen wanneer inactief:"
+
+#: src/bin/options.c:192
+msgid "Options"
+msgstr "Opties"
+
+#: src/bin/options.c:221 src/bin/options_font.c:425
+msgid "Font"
+msgstr "Lettertype"
+
+#: src/bin/options.c:222 src/bin/options_theme.c:154
+msgid "Theme"
+msgstr "Thema"
+
+#: src/bin/options.c:223
+msgid "Background"
+msgstr "Achtergrond"
+
+#: src/bin/options.c:224 src/bin/options_colors.c:234
+msgid "Colors"
+msgstr "Kleuren"
+
+#: src/bin/options.c:225 src/bin/options_video.c:58
+msgid "Video"
+msgstr "Video"
+
+#: src/bin/options.c:226
+msgid "Keys"
+msgstr "Toetsen"
+
+#: src/bin/options.c:227 src/bin/options_helpers.c:193
+msgid "Helpers"
+msgstr "Helpers"
+
+#: src/bin/options.c:228
+msgid "Toolkit"
+msgstr "Gereedschapskist"
+
+#: src/bin/options.c:239
+msgid "Temporary"
+msgstr "Tijdelijk"
+
+#: src/bin/options_colors.c:12
+msgid "Default"
+msgstr "Standaard"
+
+#: src/bin/options_colors.c:13
+msgid "Black"
+msgstr "Zwart"
+
+#: src/bin/options_colors.c:14
+msgid "Red"
+msgstr "Rood"
+
+#: src/bin/options_colors.c:15
+msgid "Green"
+msgstr "Groen"
+
+#: src/bin/options_colors.c:16
+msgid "Yellow"
+msgstr "Geel"
+
+#: src/bin/options_colors.c:17
+msgid "Blue"
+msgstr "Blauw"
+
+#: src/bin/options_colors.c:18
+msgid "Magenta"
+msgstr "Roze"
+
+#: src/bin/options_colors.c:19
+msgid "Cyan"
+msgstr ""
+
+#: src/bin/options_colors.c:20
+msgid "White"
+msgstr "Wit"
+
+#: src/bin/options_colors.c:21
+msgid "Invisible"
+msgstr "Onzichtbaar"
+
+#: src/bin/options_colors.c:22
+msgid "Inverse"
+msgstr "Omgekeerd"
+
+#: src/bin/options_colors.c:23
+msgid "Inverse Background"
+msgstr "Omgekeerde achtergrond"
+
+#: src/bin/options_colors.c:270
+msgid "Normal"
+msgstr "Normaal"
+
+#: src/bin/options_colors.c:272
+msgid "Bright/Bold"
+msgstr "Helder/vetgedrukt"
+
+#: src/bin/options_colors.c:274
+msgid "Intense"
+msgstr "Intens"
+
+#: src/bin/options_colors.c:276
+msgid "Intense Bright/Bold"
+msgstr "Intens helder/vetgedrukt"
+
+#: src/bin/options_colors.c:361
+msgid "Reset all the colors"
+msgstr "Alle kleuren terugzetten op de standaarden"
+
+#: src/bin/options_font.c:491
+msgid "Bitmap"
+msgstr "Bitmap"
+
+#: src/bin/options_font.c:532
+msgid "Standard"
+msgstr "Standaard"
+
+#: src/bin/options_font.c:594
+msgid "Display bold and italic in the terminal"
+msgstr "Toon vetgedrukt en schuingedrukt het terminalvenster"
+
+#: src/bin/options_helpers.c:206
+msgid "Inline if possible"
+msgstr "Indien mogelijk als geïntegreerd onderdeel"
+
+#: src/bin/options_helpers.c:236
+msgid "E-mail:"
+msgstr "E-mail:"
+
+#: src/bin/options_helpers.c:269
+msgid "URL (Images):"
+msgstr "Webadres (afbeeldingen):"
+
+#: src/bin/options_helpers.c:294
+msgid "URL (Video):"
+msgstr "Webadres (video):"
+
+#: src/bin/options_helpers.c:319
+msgid "URL (All):"
+msgstr "Webadres (alle):"
+
+#: src/bin/options_helpers.c:352
+msgid "Local (Images):"
+msgstr "Plaatselijk (bestanden):"
+
+#: src/bin/options_helpers.c:377
+msgid "Local (Video):"
+msgstr "Plaatselijk (video):"
+
+#: src/bin/options_helpers.c:402
+msgid "Local (All):"
+msgstr "Plaatselijk (alle):"
+
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
+msgstr "Ctrl+"
+
+#: src/bin/options_keys.c:67
+msgid "Alt+"
+msgstr "Alt+"
+
+#: src/bin/options_keys.c:68
+msgid "Shift+"
+msgstr "Shift+"
+
+#: src/bin/options_keys.c:69
+msgid "Win+"
+msgstr "Win+"
+
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
+
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Hyper+"
+
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr "Wissen"
+
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "Tik a.u.b. de toetsvolgorde"
+
+#: src/bin/options_keys.c:385
+msgid "Key Bindings"
+msgstr "Toetsbindingen"
+
+#: src/bin/options_keys.c:457
+msgid "Reset bindings"
+msgstr "Bindingen terugzetten"
+
+#: src/bin/options_video.c:72
+msgid "Audio muted"
+msgstr "Geluid gedempt"
+
+#: src/bin/options_video.c:85
+msgid "Audio visualized"
+msgstr "Geluid gevisualiseerd"
+
+#: src/bin/options_video.c:102
+msgid "Video Engine:"
+msgstr "Videomachine:"
+
+#: src/bin/options_video.c:109
+msgid "Automatic"
+msgstr "Automatisch"
+
+#: src/bin/termcmd.c:72
+#, c-format
+msgid "Unknown font command: %s"
+msgstr "Onbekende lettertype-opdracht: %s"
+
+#: src/bin/termcmd.c:106
+#, c-format
+msgid "Unknown grid size command: %s"
+msgstr "Onbekende rastergrootte-opdracht: %s"
+
+#: src/bin/termcmd.c:134
+#, c-format
+msgid "Background file could not be read: %s"
+msgstr "Achtergrondbestand kon niet worden gelezen: %s"
+
+#: src/bin/termcmd.c:163
+#, c-format
+msgid "Unknown command: %s"
+msgstr "Onbekende opdracht: %s"
+
+#: src/bin/termio.c:352
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr "Kon werkmap van pid %i niet verkrijgen: %s"
+
+#: src/bin/termio.c:367
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr "Kon werkmap %s niet laden: %s"
+
+#: src/bin/termio.c:1085
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "niet-ondersteunde selectie-opmaak '%s'"
+
+#: src/bin/termio.c:1178
+msgid "Preview"
+msgstr "Voorbeeldweergave"
+
+#: src/bin/termio.c:1181
+msgid "Open"
+msgstr "Openen"
+
+#: src/bin/termio.c:1188
+msgid "Copy relative path"
+msgstr "Relatief pad kopiëren"
+
+#: src/bin/termio.c:1190
+msgid "Copy full path"
+msgstr "Volledig pad kopiëren"
+
+#: src/bin/termio.c:2565
+msgid "Open as URL"
+msgstr "Openen als webadres"
+
+#: src/bin/termio.c:3988
+msgid "Could not allocate termpty"
+msgstr "Kon geen termpty toewijzen"
+
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr "memerr: %s"
+
+#: src/bin/termpty.c:224
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:560
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr ""
+
+#: src/bin/termpty.c:600
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr "open() van pty '%s' is mislukt: %s"
+
+#: src/bin/termpty.c:607 src/bin/termpty.c:613
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr "fcntl() op pty '%s' is mislukt: %s"
+
+#: src/bin/termpty.c:622
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr "ioctl() op pty '%s' is mislukt: %s"
+
+#: src/bin/termpty.c:666 src/bin/termpty.c:674 src/bin/termpty.c:683
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr "Kon huidige map niet veranderen in '%s': %s"
+
+#: src/bin/termpty.c:1263
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr "Kon niet schrijven naar bestandbeschrijver %d: %s"
+
+#: src/bin/utils.c:48 src/bin/utils.c:74
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr "Kon geen thema laden voor group=%s: %s"
+
+#: src/bin/utils.c:91
+#, c-format
+msgid "Could not load default theme for group=%s: %s"
+msgstr "Kon standaardthema niet laden voor group=%s: %s"
+
+#: src/bin/win.c:282 src/bin/win.c:302
+msgid "Scale"
+msgstr "Schalen"
+
+#: src/bin/win.c:325
+msgid "Select prefered size so that this text is readable."
+msgstr "Kies voorkeursgrootte zodat deze tekst leesbaar is."
+
+#: src/bin/win.c:332
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the terminal) "
+"→  Toolkit, or by starting the command <keyword>elementary_config</keyword>."
+msgstr ""
+
+#: src/bin/win.c:337
+msgid "Done"
+msgstr "Klaar"
+
+#: src/bin/win.c:1962
+msgid "Ecore IMF failed"
+msgstr "Ecore IMF is mislukt"
+
+#: src/bin/win.c:4577
+msgid "Ok"
+msgstr "Oké"
+
+#: src/bin/win.c:4582
+msgid "Cancel"
+msgstr "Afbreken"
+
+#: src/bin/win.c:5821
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Kon Terminology-thema niet vinden. Bestaat het wel?"
