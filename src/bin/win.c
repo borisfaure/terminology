@@ -2893,7 +2893,6 @@ _tabs_recompute_drag(Tabs *tabs)
    int idx = -1;
    Tab_Item *tab_item;
    Eina_List *l;
-   double step;
    double v1 = 0.0, v2 = 1.0;
 
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
