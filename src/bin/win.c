@@ -3723,6 +3723,72 @@ _tabs_term_last(const Term_Container *tc)
 }
 
 static void
+_tabcount_refresh(Tabs *tabs)
+{
+   Eina_List *l;
+   Tab_Item *tab_item;
+   Term *main_term = _tab_item_to_term(tabs->current);
+   Evas *canvas = evas_object_evas_get(main_term->bg);
+   char buf[32], bufmissed[32];
+   int n = eina_list_count(tabs->tabs);
+   Evas_Coord w = 0, h = 0;
+   int missed = 0;
+   int i;
+
+   if (n <= 0)
+     {
+        ERR("no tab");
+        return;
+     }
+
+   buf[0] = '\0';
+   i = 0;
+   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+     {
+        Solo *solo;
+        Term *term;
+
+        i++;
+        assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
+        solo = (Solo*) tab_item->tc;
+        term = solo->term;
+
+        if (term->tab_inactive)
+          evas_object_hide(term->tab_inactive);
+
+        if (term->missed_bell)
+          missed++;
+        if (tabs->current == tab_item)
+          {
+             snprintf(buf, sizeof(buf), "%i/%i", i, n);
+          }
+     }
+   if (missed > 0)
+     snprintf(bufmissed, sizeof(bufmissed), "%i", missed);
+   else
+     bufmissed[0] = '\0';
+
+   if (!main_term->tab_spacer)
+     {
+        main_term->tab_spacer = evas_object_rectangle_add(canvas);
+        evas_object_color_set(main_term->tab_spacer, 0, 0, 0, 0);
+     }
+   elm_coords_finger_size_adjust(1, &w, 1, &h);
+   evas_object_size_hint_min_set(main_term->tab_spacer, w, h);
+
+   elm_layout_content_set(main_term->bg, "terminology.tabcount.control",
+                          main_term->tab_spacer);
+   elm_layout_text_set(main_term->bg, "terminology.tabcount.label", buf);
+   elm_layout_text_set(main_term->bg, "terminology.tabmissed.label", bufmissed);
+   elm_layout_signal_emit(main_term->bg, "tabcount,on", "terminology");
+   _tabbar_clear(main_term);
+   if (missed > 0)
+     elm_layout_signal_emit(main_term->bg, "tabmissed,on", "terminology");
+   else
+     elm_layout_signal_emit(main_term->bg, "tabmissed,off", "terminology");
+}
+
+static void
 _tabs_swallow(Term_Container *tc, Term_Container *orig,
               Term_Container *new_child)
 {
@@ -3772,9 +3838,16 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
    /* Remove tab effects from the previous focused tab */
    elm_layout_signal_emit(term_orig->bg, "tabcount,off", "terminology");
 
-   _tabs_get_or_create_boxes(term_new, term_orig);
-   assert(term_new == _tab_item_to_term(tabs->current));
-   _tabbar_fill(tabs);
+   if (term_new->config->show_tabs)
+     {
+        _tabs_get_or_create_boxes(term_new, term_orig);
+        assert(term_new == _tab_item_to_term(tabs->current));
+        _tabbar_fill(tabs);
+     }
+   else
+     {
+        _tabcount_refresh(tabs);
+     }
 
     o = orig->get_evas_object(orig);
     evas_object_geometry_get(o, &x, &y, &w, &h);
@@ -4070,11 +4143,9 @@ _tabs_recreate(Tabs *tabs)
    Eina_List *l;
    Solo *solo;
    Term *term;
-   char buf[32], bufmissed[32];
    Tab_Item *tab_item;
    Evas_Coord w = 0, h = 0;
    int missed = 0;
-   int i = 1;
    int n = eina_list_count(tabs->tabs);
 
    if (n <= 0)
@@ -4083,7 +4154,6 @@ _tabs_recreate(Tabs *tabs)
         return;
      }
 
-   buf[0] = '\0';
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
         assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -4096,17 +4166,6 @@ _tabs_recreate(Tabs *tabs)
         if (term->missed_bell)
           missed++;
      }
-   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-     {
-        if (tabs->current == tab_item)
-          {
-             snprintf(buf, sizeof(buf), "%i/%i", i, n);
-             break;
-          }
-        i++;
-     }
-   if (missed > 0) snprintf(bufmissed, sizeof(bufmissed), "%i", missed);
-   else bufmissed[0] = '\0';
 
    tab_item = tabs->current;
    assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -4114,16 +4173,16 @@ _tabs_recreate(Tabs *tabs)
    term = solo->term;
 
 
-   if (!term->tab_spacer)
-     {
-        term->tab_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
-        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
-     }
-   elm_coords_finger_size_adjust(1, &w, 1, &h);
-   evas_object_size_hint_min_set(term->tab_spacer, w, h);
    // this is all below just for tab bar at the top
    if (term->config->show_tabs)
      {
+        if (!term->tab_spacer)
+          {
+             term->tab_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
+             evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+          }
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tab_spacer, w, h);
         elm_layout_content_set(term->bg, "terminology.tab_btn",
                                term->tab_spacer);
 
@@ -4134,21 +4193,12 @@ _tabs_recreate(Tabs *tabs)
         assert(term == _tab_item_to_term(tabs->current));
         _tabs_get_or_create_boxes(term, NULL);
         _tabbar_fill(tabs);
+        edje_object_message_signal_process(term->bg_edj);
      }
    else
      {
-        elm_layout_content_set(term->bg, "terminology.tabcount.control",
-                                 term->tab_spacer);
-        elm_layout_text_set(term->bg, "terminology.tabcount.label", buf);
-        elm_layout_text_set(term->bg, "terminology.tabmissed.label", bufmissed);
-        elm_layout_signal_emit(term->bg, "tabcount,on", "terminology");
-        _tabbar_clear(term);
-        if (missed > 0)
-          elm_layout_signal_emit(term->bg, "tabmissed,on", "terminology");
-        else
-          elm_layout_signal_emit(term->bg, "tabmissed,off", "terminology");
+        _tabcount_refresh(tabs);
      }
-   edje_object_message_signal_process(term->bg_edj);
 }
 
 static Tab_Item*
