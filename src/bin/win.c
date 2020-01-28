@@ -3732,7 +3732,7 @@ _tabcount_refresh(Tabs *tabs)
    char buf[32], bufmissed[32];
    int n = eina_list_count(tabs->tabs);
    Evas_Coord w = 0, h = 0;
-   int missed = 0;
+   unsigned int missed = 0;
    int i;
 
    if (n <= 0)
@@ -3756,12 +3756,12 @@ _tabcount_refresh(Tabs *tabs)
         if (term->tab_inactive)
           evas_object_hide(term->tab_inactive);
 
-        if (term->missed_bell)
-          missed++;
         if (tabs->current == tab_item)
           {
              snprintf(buf, sizeof(buf), "%i/%i", i, n);
           }
+        else if (term->missed_bell)
+          missed++;
      }
    if (missed > 0)
      snprintf(bufmissed, sizeof(bufmissed), "%i", missed);
