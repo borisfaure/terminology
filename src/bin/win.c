@@ -2745,7 +2745,7 @@ _cb_size_hint(void *data,
    evas_object_size_hint_request_get(obj, &rw, &rh);
    edje_object_size_min_calc(edje_base, &w, &h);
    evas_object_size_hint_min_set(term->core, w, h);
-   edje_object_size_min_calc(term->bg, &w, &h);
+   edje_object_size_min_calc(term->bg_edj, &w, &h);
    evas_object_size_hint_min_set(term->bg, w, h);
    term->step_x = mw;
    term->step_y = mh;
