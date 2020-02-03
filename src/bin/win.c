@@ -5954,7 +5954,6 @@ _term_free(Term *term)
    evas_object_del(term->termio);
    term->termio = NULL;
 
-   elm_layout_content_unset(term->bg, "terminology.content");
    evas_object_del(term->core);
    term->core = NULL;
    evas_object_del(term->bg);
