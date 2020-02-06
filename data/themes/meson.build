@@ -35,7 +35,7 @@ edje_to_compile = [
   ['mustang', mild_deps],
   ['base16_ocean_dark', mild_deps],
   ['smyck', mild_deps],
-  ['nord', default_deps],
+  ['nord', default_deps + ['background_nord.edc', 'tabbar_back_nord.edc', 'tab_drag_thumb_nord.edc']],
   ['papercolor', default_deps],
 ]
 

@@ -106,4 +106,39 @@ color_classes {
 
    color_class { name: "BG";  color: BG_COLOR; }
 }
-#include "default.edc"
+
+#ifndef NO_COLORS
+color_classes {
+#define BG_COLOR_NO_ALPHA  32 32 32
+#define BG_COLOR  BG_COLOR_NO_ALPHA 255
+#define FG_COLOR_NO_ALPHA  170 170 170
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
+#include "default/colors.edc"
+}
+#endif
+#ifndef BG_COLOR_BELL_NO_ALPHA
+#define BG_COLOR_BELL_NO_ALPHA BG_COLOR_NO_ALPHA
+#endif
+#ifndef FG_COLOR_BELL_NO_ALPHA
+#define FG_COLOR_BELL_NO_ALPHA  255 153  51
+#endif
+
+efl_version: 1 20;
+
+collections {
+   #include "default/keybinding.edc"
+   #include "default/miniview.edc"
+   #include "default/core.edc"
+   #include "background_nord.edc"
+   #include "tabbar_back_nord.edc"
+   #include "default/base.edc"
+   #include "default/selection.edc"
+   #include "default/cursor.edc"
+   #include "default/sel.edc"
+   #include "default/link.edc"
+   #include "default/media.edc"
+   #include "default/icon.edc"
+   #include "default/about.edc"
+   #include "default/fontpreview.edc"
+   #include "tab_drag_thumb_nord.edc"
+}
