@@ -6,8 +6,14 @@ Changes since 1.6.0:
 --------------------
   * In group "terminology/tabbar_back", add signal "bell,off" from "terminology"
   to unmark a tab as having missed the bell.
-  * In group "terminology/background", signals "tab,drag" and "tab,drag,stop"
-  are emitted when the current tab is dragged.
+  * In group "terminology/background", add signals "hdrag,on" (default) and
+  "hdrag,off" to restrict (default) tab to be dragged only horizontally
+  * In group "terminology/background", signals "tab,mouse,down" and
+  "tab,mouse,up" whenever the left mouse button is pressed on a tab.
+  * In group "terminology/background", signals "tab,hdrag" and "tab,drag,stop"
+  are emitted when the current tab is dragged between tabs.
+  * In group "terminology/background", signal "tab,drag,move" is emitted when
+  the current tab is dragged outside of the tabbar.
 
 Changes since 1.5.0:
 --------------------

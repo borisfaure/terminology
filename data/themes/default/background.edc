@@ -1361,6 +1361,19 @@ group { name: "terminology/background";
             rel2.to_x: "terminology.tab_btn";
             fixed: 1 1;
          }
+         description { state: "hdrag,off" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      program {
+         signal: "hdrag,on"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         target: "tabdrag";
+      }
+      program {
+         signal: "hdrag,off"; source: "terminology";
+         action: STATE_SET "hdrag,off" 0.0;
+         target: "tabdrag";
       }
       // left boundary of the active tab (dragable 0.0 -> 1.0)
       part { name: "terminology.tabl"; type: SPACER;
@@ -1540,8 +1553,16 @@ group { name: "terminology/background";
          signal: "mouse,move"; source: "tabmiddle";
          script {
             new y, h, drag_x, drag_w;
+            new state[31]; \
+            new Float:vl;
+
             if (!get_mouse_buttons())
-            return;
+              return;
+            get_state(PART:"tabdrag", state, 30, vl);
+            if (!strcmp(state, "hdrag,off")) {
+               emit("tab,drag,move", "terminology");
+               return
+            }
             get_geometry(PART:"tabdrag", drag_x, y, drag_w, h);
             if (drag_w > 0) {
                new m_x, m_y;
@@ -1561,7 +1582,7 @@ group { name: "terminology/background";
                d = (v2 - v1) / 2;
                set_drag(PART:"terminology.tabl", mid - d, 0.0);
                set_drag(PART:"terminology.tabr", mid + d, 0.0);
-               emit("tab,drag", "terminology");
+               emit("tab,hdrag", "terminology");
             }
          }
       }
@@ -1569,6 +1590,14 @@ group { name: "terminology/background";
       program {
          signal: "mouse,down,1,double"; source: "tabmiddle";
          action: SIGNAL_EMIT "tab,title" "terminology";
+      }
+      program {
+         signal: "mouse,down,1"; source: "tabmiddle";
+         action: SIGNAL_EMIT "tab,mouse,down" "terminology";
+      }
+      program {
+         signal: "mouse,up,1"; source: "tabmiddle";
+         action: SIGNAL_EMIT "tab,mouse,up" "terminology";
       }
       program {
          signal: "mouse,clicked,1"; source: "tabclose";

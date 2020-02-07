@@ -54,7 +54,25 @@ It reacts to the following signals:
 ### `terminology.content`
 Here is swallowed an object of group `terminology.background`.
 
-__TODO__
+### TODO
+
+## Signal received
+### `tabbar,off` and `tabbar,on`
+Whether to display a tab bar. Default is off.
+### `tab_btn,off` and `tab_btn,on`
+Whether to display a tab button to easily navigate through tabs. Default is off.
+
+### TODO
+
+## Signal emitted
+### `tab,hdrag`
+To notify that the current tab is being dragged.
+### `tab,drag,stop`
+To notify that the current tab is no longer being dragged.
+### `tab,drag,move`
+To notify that the current tab is being dragged outside of other tabs.
+
+### TODO
 
 
 
@@ -83,10 +101,14 @@ Where actual text grid goes.
 Whether to display a tab bar. Default is off.
 ### `tab_btn,off` and `tab_btn,on`
 Whether to display a tab button to easily navigate through tabs. Default is off.
+### `hdrag,on` and `hdrag,off`
+Whether to restrict (default) horizontal tab drag
 
 ## Signal emitted
-### `tab,drag` and `tab,drage,stop`
+### `tab,drag` and `tab,drag,stop`
 To notify that the current tab is being dragged.
+### `tab,mouse,down` and `tab,mouse,up`
+Whenever the left mouse button is pressed on a tab.
 
 
 
