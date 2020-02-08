@@ -3223,6 +3223,7 @@ _drag_anim_start(void *data)
    theme_apply_elm(o, term->config, "terminology/tabbar_back");
    elm_layout_text_set(o, "terminology.title",
                        term->container->title);
+   elm_layout_signal_emit(o, "style,active", "terminology");
 
    for_each_term_do(drag_anim->term->wn, &_term_hdrag_off, NULL);
 

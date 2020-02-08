@@ -6,6 +6,8 @@ Changes since 1.6.0:
 --------------------
   * In group "terminology/tabbar_back", add signal "bell,off" from "terminology"
   to unmark a tab as having missed the bell.
+  * In group "terminology/tabbar_back", add signal "style,active" from "terminology"
+  to set style as active, used during tab drag and drop.
   * In group "terminology/background", add signals "hdrag,on" (default) and
   "hdrag,off" to restrict (default) tab to be dragged only horizontally
   * In group "terminology/background", signals "tab,mouse,down" and

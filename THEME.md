@@ -134,6 +134,8 @@ When clicked on it, to notify that the user wants to go to that tab.
 To mark the tab as having missed a bell.
 ### `bell,off`
 To unmark the tab as having missed a bell.
+### `style,active`
+To set the style as active, used during tab drag and drop.
 
 
 

@@ -127,6 +127,11 @@ group { name: "terminology/tabbar_back";
             color2: 255 51 0 48;
             color3: 255 51 0 8;
          }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            color3: 0 0 0 18;
+         }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
@@ -138,20 +143,26 @@ group { name: "terminology/tabbar_back";
             color: 0 0 0 0;
          }
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "tab,activate" "terminology";
-      }
-      program { name: "bell";
-         signal: "bell"; source: "terminology";
-         action: STATE_SET "bell" 0.0;
-         target: "terminology.title";
-      }
-      program { name: "bell,off";
-         signal: "bell,off"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         target: "terminology.title";
+      programs {
+         program {
+            signal: "mouse,clicked,1"; source: "event";
+            action: SIGNAL_EMIT "tab,activate" "terminology";
+         }
+         program { name: "bell";
+            signal: "bell"; source: "terminology";
+            action: STATE_SET "bell" 0.0;
+            target: "terminology.title";
+         }
+         program { name: "bell,off";
+            signal: "bell,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.title";
+         }
+         program { name: "style,active";
+            signal: "style,active"; source: "terminology";
+            action: STATE_SET "active" 0.0;
+            target: "terminology.title";
+         }
       }
    }
 }
-
