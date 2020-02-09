@@ -2974,10 +2974,10 @@ _tab_drag_free(Term *term)
 }
 
 static void
-_tabs_on_drag(void *data,
-              Evas_Object *o EINA_UNUSED,
-              const char *emission EINA_UNUSED,
-              const char *source EINA_UNUSED)
+_term_on_horizontal_drag(void *data,
+                         Evas_Object *o EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Eina_List *l, *next, *prev;
    int tab_active_idx;
@@ -2986,17 +2986,25 @@ _tabs_on_drag(void *data,
    Tab_Item *tab_item;
    Tab_Item *item_moved;
    Term *term = data;
+   Term_Container *tc = term->container;
+   Term_Container *tc_parent = tc->parent;
    Term *term_moved;
-   Solo *solo;
    double v1, v2;
 
-   tabs = evas_object_data_get(term->bg, "tabs");
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   if (tc->parent->type != TERM_CONTAINER_TYPE_TABS)
+     {
+        edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl",
+                                        0.0, 0.0);
+        edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr",
+                                        1.0, 0.0);
+        return;
+     }
+
+   tabs = (Tabs*) tc_parent;
    n = eina_list_count(tabs->tabs);
 
    tab_item = tabs->current;
-   assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)tab_item->tc;
-   term = solo->term;
 
    _tab_drag_free(term);
 
@@ -3058,11 +3066,21 @@ _tabs_on_drag(void *data,
 }
 
 static void
-_tabs_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
+_tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
-   Tabs *tabs = evas_object_data_get(term->bg, "tabs");
+   Term_Container *tc = term->container;
+   Term_Container *tc_parent = tc->parent;
+   Tabs *tabs;
    double mid;
+
+   tc = term->container;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+
+   if (tc_parent->type != TERM_CONTAINER_TYPE_TABS)
+     return;
+
+   tabs = (Tabs*) tc_parent;
 
    edje_object_part_geometry_get(term->bg_edj, "tabdrag",
                                  &x, NULL, &w, NULL);
@@ -3076,31 +3094,31 @@ _tabs_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl", mid, 0.0);
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr", mid, 0.0);
 
-   _tabs_on_drag(term, NULL, NULL, NULL);
+   _term_on_horizontal_drag(term, NULL, NULL, NULL);
    /* In case there is no drag, need to recompute to something valid */
    _tabs_recompute_drag(tabs);
 }
 
 static void
-_tabs_tab_drag_stop(Term *term)
+_tab_drag_stop(Term *term)
 {
    Evas_Coord mx = 0, my = 0;
    Tab_Drag *tab_drag = term->tab_drag;
    Win *wn = term->wn;
-   Term_Container *tc = (Term_Container*) wn;
+   Term_Container *tc_wn = (Term_Container*) wn;
    Term *term_at_coords;
 
    assert(tab_drag);
 
    evas_pointer_canvas_xy_get(tab_drag->e, &mx, &my);
-   term_at_coords = tc->find_term_at_coords(tc, mx, my);
+   term_at_coords = tc_wn->find_term_at_coords(tc_wn, mx, my);
    if (!term_at_coords)
      goto end;
 
    if (term_at_coords == term)
      {
-        /* Reinsert in same set of Tabs */
-        _tabs_drag_reinsert(term, mx, my);
+        /* Reinsert in same set of Tabs or same "tab" (could be a split) */
+        _tab_drag_reinsert(term, mx, my);
      }
    else
      {
@@ -3113,25 +3131,34 @@ end:
 }
 
 static void
-_tabs_on_drag_stop(void *data,
+_term_on_drag_stop(void *data,
                    Evas_Object *o EINA_UNUSED,
                    const char *emission EINA_UNUSED,
                    const char *source EINA_UNUSED)
 {
    Term *term = data;
-   Tabs *tabs = evas_object_data_get(term->bg, "tabs");
+   Term_Container *tc;
 
    if (term->tab_drag && term->tab_drag->icon)
      {
-        _tabs_tab_drag_stop(term);
+        _tab_drag_stop(term);
         return;
      }
    _tab_drag_free(term);
 
-   edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl",
-                                   tabs->v1_orig, 0.0);
-   edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr",
-                                   tabs->v2_orig, 0.0);
+   tc = term->container;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+
+   if (tc->parent->type == TERM_CONTAINER_TYPE_TABS)
+     {
+        Term_Container *tc_parent = tc->parent;
+        Tabs *tabs = (Tabs*) tc_parent;
+
+        edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl",
+                                        tabs->v1_orig, 0.0);
+        edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr",
+                                        tabs->v2_orig, 0.0);
+     }
 }
 
 
@@ -6215,11 +6242,11 @@ _term_bg_config(Term *term)
    elm_layout_signal_callback_add(term->bg, "tab,title", "terminology",
                                    _cb_tab_title, term);
    elm_layout_signal_callback_add(term->bg, "tab,hdrag", "*",
-                                  _tabs_on_drag, term);
+                                  _term_on_horizontal_drag, term);
    elm_layout_signal_callback_add(term->bg, "tab,drag,move", "*",
                                   _tabs_drag_mouse_move, term);
    elm_layout_signal_callback_add(term->bg, "tab,drag,stop", "*",
-                                  _tabs_on_drag_stop, term);
+                                  _term_on_drag_stop, term);
    elm_layout_signal_callback_add(term->bg, "tab,mouse,down", "*",
                                   _tabs_mouse_down, term);
    elm_layout_content_set(term->core, "terminology.content", term->termio);
