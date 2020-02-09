@@ -33,6 +33,7 @@ struct _Ipc_Instance
    Eina_Bool active_links;
    Eina_Bool cursor_blink;
    Eina_Bool visual_bell;
+   Eina_List *cmds;
    Config *config;
 };
 
