@@ -613,7 +613,6 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
    if (instance->startup_split)
      {
         unsigned int i = 0;
-        Eina_List *cmds_list = NULL;
         Term *next = term;
 
         for (i = 0; i < strlen(instance->startup_split); i++)
@@ -622,17 +621,19 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
 
              if (instance->startup_split[i] == 'v')
                {
-                  cmd = cmds_list ? cmds_list->data : NULL;
+                  cmd = eina_list_data_get(instance->cmds);
                   split_vertically(win_evas_object_get(term_win_get(next)),
                                    term_termio_get(next), cmd);
-                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
+                  instance->cmds = eina_list_remove_list(instance->cmds,
+                                                         instance->cmds);
                }
              else if (instance->startup_split[i] == 'h')
                {
-                  cmd = cmds_list ? cmds_list->data : NULL;
+                  cmd = eina_list_data_get(instance->cmds);
                   split_horizontally(win_evas_object_get(term_win_get(next)),
                                      term_termio_get(next), cmd);
-                  cmds_list = eina_list_remove_list(cmds_list, cmds_list);
+                  instance->cmds = eina_list_remove_list(instance->cmds,
+                                                         instance->cmds);
                }
              else if (instance->startup_split[i] == '-')
                next = term_next_get(next);
@@ -643,8 +644,6 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
                   goto end;
                }
           }
-        if (cmds_list)
-          eina_list_free(cmds_list);
      }
    if (instance->pos)
      {
@@ -920,7 +919,6 @@ elm_main(int argc, char **argv)
 
    if (cmd_options)
      {
-        Eina_List *cmds_list = NULL;
         int i;
 
         if (args == argc)
@@ -933,7 +931,7 @@ elm_main(int argc, char **argv)
         if (instance.startup_split)
           {
              for(i = args+1; i < argc; i++)
-               cmds_list = eina_list_append(cmds_list, argv[i]);
+               instance.cmds = eina_list_append(instance.cmds, argv[i]);
              instance.cmd = argv[args];
           }
         else

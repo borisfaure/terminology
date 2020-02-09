@@ -6,6 +6,9 @@
 #include <Eet.h>
 #include "ipc.h"
 
+#define TY_IPC_MAJOR  3
+#define TY_IPC_MINOR  8
+
 static Ecore_Ipc_Server *ipc = NULL;
 static Ecore_Event_Handler *hnd_data = NULL;
 static void (*func_new_inst) (Ipc_Instance *inst) = NULL;
@@ -20,7 +23,9 @@ _ipc_cb_client_data(void *_data EINA_UNUSED,
    
    if (ecore_ipc_client_server_get(e->client) != ipc)
      return ECORE_CALLBACK_PASS_ON;
-   if ((e->major == 3) && (e->minor == 7) && (e->data) && (e->size > 0))
+   if ((e->major == TY_IPC_MAJOR) &&
+       (e->minor == TY_IPC_MINOR) &&
+       (e->data) && (e->size > 0))
      {
         Ipc_Instance *inst;
         
@@ -79,16 +84,19 @@ void
 ipc_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
-   
+
    ecore_ipc_init();
    eet_init();
    eet_eina_stream_data_descriptor_class_set(&eddc, sizeof(eddc),
                                              "inst", sizeof(Ipc_Instance));
    new_inst_edd = eet_data_descriptor_stream_new(&eddc);
+
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "cmd", cmd, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "cd", cd, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(new_inst_edd, Ipc_Instance,
+                                       "cmds", cmds);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "background", background, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
@@ -216,7 +224,8 @@ ipc_instance_add(Ipc_Instance *inst)
    ipcsrv = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, hash, 0, NULL);
    if (ipcsrv)
      {
-        ecore_ipc_server_send(ipcsrv, 3, 7, 0, 0, 0, data, size);
+        ecore_ipc_server_send(ipcsrv, TY_IPC_MAJOR, TY_IPC_MINOR,
+                              0, 0, 0, data, size);
         ecore_ipc_server_flush(ipcsrv);
         free(data);
         free(hash);
