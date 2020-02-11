@@ -3324,8 +3324,7 @@ _tabs_get_or_create_boxes(Term *term, Term *src)
 }
 
 static void
-_tabs_set_main_tab(Tabs *tabs,
-                   Term *term,
+_tabs_set_main_tab(Term *term,
                    Tab_Item *tab_item)
 {
    if (!term->tab_spacer)
@@ -3340,7 +3339,6 @@ _tabs_set_main_tab(Tabs *tabs,
         elm_layout_content_set(term->bg, "terminology.tab", term->tab_spacer);
      }
    evas_object_show(term->tab_spacer);
-   evas_object_data_set(term->bg, "tabs", tabs);
    elm_layout_text_set(term->bg, "terminology.tab.title", tab_item->tc->title);
    elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
    elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
@@ -3362,7 +3360,7 @@ _tabbar_fill(Tabs *tabs)
 
         if (tab_item == tabs->current)
           {
-             _tabs_set_main_tab(tabs, term, tab_item);
+             _tabs_set_main_tab(term, tab_item);
              assert(main_term == term);
              evas_object_hide(term->tab_inactive);
              after_current = EINA_TRUE;
