@@ -1748,31 +1748,35 @@ collections {
             }
          }
          part { name: "tabclose"; type: IMAGE;
-            description { state: "default" 0.0;
-               image {
-                  normal: "tab_close.png";
-               };
-               rel1 {
-                  to: "tabmiddle";
-                  relative: 1.0 0.5;
-                  offset: -20 -8;
-               }
-               rel2 {
-                  to: "tabmiddle";
-                  relative: 1.0 0.5;
-                  offset: -2 8;
-               }
-               visible: 0;
-            }
-            description { state: "tab" 0.0;
-               inherit: "default" 0.0;
-               visible: 1;
-            }
+             scale: 1;
+             description { state: "default" 0.0;
+                 aspect: 1.0 1.0; aspect_preference: BOTH;
+                 align: 1.0 0.5;
+                 image.normal: "tab_close.png";
+                 rel1 {
+                     to_y: "tabmiddle";
+                     to_x: "tab_bevel_top3";
+                     relative: 0.0 0.2;
+                 }
+                 rel2 {
+                     to_y: "tabmiddle";
+                     to_x: "tab_bevel_top3";
+                     relative: 1.0 0.8;
+                 }
+                 min: 19 19;
+                 max: 19 19;
+                 fixed: 1 1;
+                 visible: 0;
+             }
+             description { state: "tab" 0.0;
+                 inherit: "default" 0.0;
+                 visible: 1;
+             }
          }
-          program {
+         program {
              signal: "mouse,up,1"; source: "tabmiddle";
              action: SIGNAL_EMIT "tab,drag,stop" "terminology";
-          }
+         }
          program {
             signal: "mouse,move"; source: "tabmiddle";
             script {
