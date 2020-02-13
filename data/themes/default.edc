@@ -1664,8 +1664,9 @@ collections {
                align: 0.5 0.5;
                rel1.to_x: "tab_bevel_top2";
                rel1.to_y: "tabmiddle";
-               rel2.to_x: "tab_bevel_top2";
+               rel2.to_x: "tabclose";
                rel2.to_y: "tabmiddle";
+               rel2.relative: 0.5 1.0;
                visible: 0;
                fixed: 1 1;
             }
@@ -1761,7 +1762,7 @@ collections {
                  rel2 {
                      to_y: "tabmiddle";
                      to_x: "tab_bevel_top3";
-                     relative: 1.0 0.8;
+                     relative: 0.0 0.8;
                  }
                  min: 19 19;
                  max: 19 19;
