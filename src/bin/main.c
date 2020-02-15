@@ -502,6 +502,8 @@ static Ecore_Getopt options = {
                               gettext_noop("Force single executable if multi-instance is enabled.")),
       ECORE_GETOPT_STORE_TRUE('2', "256color",
                               gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'.")),
+      ECORE_GETOPT_STORE_DOUBLE('\0', "scale",
+                              gettext_noop("Set scaling factor.")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
                               gettext_noop("Highlight links.")),
       ECORE_GETOPT_STORE_BOOL('\0', "no-wizard",
@@ -801,6 +803,7 @@ elm_main(int argc, char **argv)
    Eina_Bool single = EINA_FALSE;
    Eina_Bool no_wizard = EINA_FALSE;
    Eina_Bool cmd_options = EINA_FALSE;
+   double scale = NAN; /* unset */
    Ipc_Instance instance = {
         .login_shell = 0xff, /* unset */
         .active_links = 0xff, /* unset */
@@ -838,6 +841,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(instance.hold),
      ECORE_GETOPT_VALUE_BOOL(single),
      ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),
+     ECORE_GETOPT_VALUE_DOUBLE(scale),
      ECORE_GETOPT_VALUE_BOOL(instance.active_links),
      ECORE_GETOPT_VALUE_BOOL(no_wizard),
 
@@ -909,6 +913,13 @@ elm_main(int argc, char **argv)
         CRITICAL(_("Could not parse command line options."));
         retval = EXIT_FAILURE;
         goto end;
+     }
+
+   if (!isnan(scale))
+     {
+        elm_config_scale_set(scale);
+        elm_config_all_flush();
+        instance.config->temporary = EINA_TRUE;
      }
 
    if (no_wizard)
