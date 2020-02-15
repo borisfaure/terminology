@@ -783,6 +783,7 @@ _solo_new(Term *term, Win *wn)
    tc->update = _solo_update;
    tc->title = eina_stringshare_add("Terminology");
    tc->is_visible = _solo_is_visible;
+   tc->detach = NULL;
    tc->type = TERM_CONTAINER_TYPE_SOLO;
 
    tc->parent = NULL;
@@ -1840,6 +1841,7 @@ _set_cursor(Term *term, void *data)
 {
    char *cursor = data;
 
+   assert(term->core);
    if (cursor)
      {
         elm_object_cursor_set(term->core, cursor);
@@ -1971,6 +1973,7 @@ win_new(const char *name, const char *role, const char *title,
    tc->close = _win_close;
    tc->update = _win_update;
    tc->is_visible = _win_is_visible;
+   tc->detach = NULL;
    tc->title = eina_stringshare_add(title? title : "Terminology");
    tc->type = TERM_CONTAINER_TYPE_WIN;
    tc->wn = wn;
@@ -2650,6 +2653,15 @@ _split_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
    return tc->parent->is_visible(tc->parent, tc);
 }
 
+static void
+_split_detach(Term_Container *tc, Term_Container *solo_child)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
+
+   _split_close(tc, solo_child);
+}
+
 /* tc1 is a new solo */
 static Term_Container *
 _split_new(Term_Container *tc1, Term_Container *tc2,
@@ -2687,6 +2699,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    tc->close = _split_close;
    tc->update = _split_update;
    tc->is_visible = _split_is_visible;
+   tc->detach = _split_detach;
    tc->title = eina_stringshare_add("Terminology");
    tc->type = TERM_CONTAINER_TYPE_SPLIT;
 
@@ -3068,7 +3081,7 @@ _term_on_horizontal_drag(void *data,
 static void
 _tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
 {
-   Evas_Coord x = 0, y = 0, w = 0, h = 0;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, off_x = 0, off_y = 0;
    Term_Container *tc = term->container;
    Term_Container *tc_parent = tc->parent;
    Tabs *tabs;
@@ -3082,10 +3095,13 @@ _tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
 
    tabs = (Tabs*) tc_parent;
 
+   evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
    edje_object_part_geometry_get(term->bg_edj, "tabdrag",
                                  &x, NULL, &w, NULL);
    edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
                                  NULL, &y, NULL, &h);
+   x += off_x;
+   y += off_y;
 
    if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
      return;
@@ -3097,6 +3113,74 @@ _tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
    _term_on_horizontal_drag(term, NULL, NULL, NULL);
    /* In case there is no drag, need to recompute to something valid */
    _tabs_recompute_drag(tabs);
+}
+
+static void
+_tabs_attach(Term_Container *tc, Term_Container *tc_new)
+{
+   Tabs *tabs;
+   Tab_Item *tab_item;
+   Evas_Object *o;
+   Evas_Coord x, y, w, h;
+   Term_Container *tc_old, *tc_parent;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
+   assert (tc_new->type == TERM_CONTAINER_TYPE_SOLO);
+
+   tabs = (Tabs*) tc;
+
+   tc_new->parent = tc;
+   tab_item = tab_item_new(tabs, tc_new);
+
+   tc_parent = tc->parent;
+   tc_old = tabs->current->tc;
+   tc_old->unfocus(tc_old, tc);
+   o = tc_old->get_evas_object(tc_old);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   evas_object_hide(o);
+   o = tc_new->get_evas_object(tc_new);
+   evas_object_geometry_set(o, x, y, w, h);
+   evas_object_show(o);
+
+   tc->swallow(tc, tc_old, tc_new);
+   tabs->current = tab_item;
+
+   /* XXX: need to refresh parent */
+   tc_parent->swallow(tc_parent, tc, tc);
+
+   if (tc->is_focused)
+     tc_new->focus(tc_new, tc);
+   else
+     tc_new->unfocus(tc_new, tc);
+}
+
+static void
+_solo_attach(Term_Container *tc, Term_Container *tc_to_add)
+{
+   assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
+   assert(tc_to_add->type == TERM_CONTAINER_TYPE_SOLO);
+
+   if (tc->parent->type != TERM_CONTAINER_TYPE_TABS)
+     _tabs_new(tc, tc->parent);
+
+   _tabs_attach(tc->parent, tc_to_add);
+}
+
+static void
+_tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
+{
+   Term_Container *tc_orig = term->container;
+   Term_Container *tc_orig_parent = tc_orig->parent;
+   Term_Container *to_tc = to_term->container;
+
+   assert(tc_orig->type == TERM_CONTAINER_TYPE_SOLO);
+   assert(to_tc->type == TERM_CONTAINER_TYPE_SOLO);
+
+   tc_orig_parent->detach(tc_orig_parent, tc_orig);
+   _solo_attach(to_tc, tc_orig);
+
+   /* reinsert at correct place */
+   _tab_drag_reinsert(term, mx, my);
 }
 
 static void
@@ -3123,7 +3207,7 @@ _tab_drag_stop(Term *term)
    else
      {
         /* Move to different set of Tabs */
-        ERR("to different set of tabs");
+        _tab_reorg(term, term_at_coords, mx, my);
      }
 
 end:
@@ -3786,8 +3870,8 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         next_term = next_solo->term;
         config = next_term->config;
 
-        evas_object_del(term->tab_spacer);
-        term->tab_spacer = NULL;
+        _tabbar_clear(term);
+
         evas_object_del(next_term->tab_spacer);
         next_term->tab_spacer = NULL;
         if (next_term->tab_inactive)
@@ -4097,11 +4181,8 @@ _tab_new_cb(void *data,
             void *_event_info EINA_UNUSED)
 {
    Tabs *tabs = data;
-   Tab_Item *tab_item;
-   Evas_Object *o;
-   Evas_Coord x, y, w, h;
    Term_Container *tc = (Term_Container*) tabs,
-                  *tc_new, *tc_parent, *tc_old;
+                  *tc_new;
    Term *tm_new;
    Win *wn = tc->wn;
    char *wdir = NULL;
@@ -4112,8 +4193,7 @@ _tab_new_cb(void *data,
    if (wn->config->changedir_to_current)
      {
         Term *tm;
-
-        tc_old = tabs->current->tc;
+        Term_Container *tc_old = tabs->current->tc;
         tm = tc_old->term_first(tc_old);
 
         if (tm && termio_cwd_get(tm->termio, buf, sizeof(buf)))
@@ -4126,26 +4206,7 @@ _tab_new_cb(void *data,
    tc_new = _solo_new(tm_new, wn);
    evas_object_data_set(tm_new->termio, "sizedone", tm_new->termio);
 
-   tc_new->parent = tc;
-
-   tab_item = tab_item_new(tabs, tc_new);
-   tc_parent = tc->parent;
-   tc_old = tabs->current->tc;
-   tc_old->unfocus(tc_old, tc);
-   o = tc_old->get_evas_object(tc_old);
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_hide(o);
-   o = tc_new->get_evas_object(tc_new);
-   evas_object_geometry_set(o, x, y, w, h);
-   evas_object_show(o);
-   tabs->current = tab_item;
-   /* XXX: need to refresh */
-   tc_parent->swallow(tc_parent, tc, tc);
-
-   tc->swallow(tc, tc_old, tc_new);
-
-   if (tc->is_focused)
-     tc_new->focus(tc_new, tc);
+   _tabs_attach(tc, tc_new);
 }
 
 static void
@@ -4475,6 +4536,15 @@ _tabs_is_visible(Term_Container *tc, Term_Container *child)
 }
 
 
+static void
+_tabs_detach(Term_Container *tc, Term_Container *solo_child)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
+   assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
+
+   _tabs_close(tc, solo_child);
+}
+
 static Term_Container *
 _tabs_new(Term_Container *child, Term_Container *parent)
 {
@@ -4513,6 +4583,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc->close = _tabs_close;
    tc->update = _tabs_update;
    tc->is_visible = _tabs_is_visible;
+   tc->detach = _tabs_detach;
    tc->title = eina_stringshare_add("Terminology");
    tc->type = TERM_CONTAINER_TYPE_TABS;
 
