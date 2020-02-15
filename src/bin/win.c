@@ -3313,6 +3313,9 @@ _tabs_mouse_down(
    Evas_Coord mx = 0, my = 0;
    Tab_Drag *tab_drag = calloc(1, sizeof(*tab_drag));
 
+   if (!tab_drag)
+     return;
+
    tab_drag->e = evas_object_evas_get(term->bg);
    evas_pointer_canvas_xy_get(tab_drag->e, &mx, &my);
 
