@@ -3036,7 +3036,8 @@ _term_on_horizontal_drag(void *data,
                                    &v2, NULL);
    while ((tab_active_idx < n - 1) &&
        ((v2 > tabs->v2_orig + tabs->hysteresis_step) ||
-        (v2 > 1 - tabs->hysteresis_step)))
+        (v2 > 1.0 - tabs->hysteresis_step) ||
+        ((v1 == v2) && (v2 > tabs->v2_orig))))
      {
         /* To the right */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
@@ -3057,7 +3058,9 @@ _term_on_horizontal_drag(void *data,
      }
    while ((tab_active_idx > 0) &&
        ((v1 < tabs->v1_orig - tabs->hysteresis_step) ||
-        (v1 < tabs->hysteresis_step)))
+        (v1 < tabs->hysteresis_step) ||
+        (v2 >= tabs->v2_orig) ||
+        ((v1 == v2) && v1 < tabs->v1_orig)))
      {
         /* To the left */
         l = eina_list_nth_list(tabs->tabs, tab_active_idx);
@@ -3073,8 +3076,6 @@ _term_on_horizontal_drag(void *data,
                                                l);
         _tabs_recompute_drag(tabs);
         tab_active_idx--;
-        if (v1 >= tabs->v1_orig)
-          return;
      }
 }
 
