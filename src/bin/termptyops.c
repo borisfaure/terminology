@@ -206,8 +206,8 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           }
 
         g = _termpty_charset_trans(ty, codepoints[i]);
-        /* Skip 0-width space */
-        if (EINA_UNLIKELY(g == 0x200b))
+        /* Skip 0-width space or RTL/LTR marks */
+        if (EINA_UNLIKELY(g >= 0x200b && g <= 0x200f))
           {
              continue;
           }
