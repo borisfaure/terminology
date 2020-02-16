@@ -803,7 +803,7 @@ elm_main(int argc, char **argv)
    Eina_Bool single = EINA_FALSE;
    Eina_Bool no_wizard = EINA_FALSE;
    Eina_Bool cmd_options = EINA_FALSE;
-   double scale = NAN; /* unset */
+   double scale = -1.0; /* unset */
    Ipc_Instance instance = {
         .login_shell = 0xff, /* unset */
         .active_links = 0xff, /* unset */
@@ -915,7 +915,7 @@ elm_main(int argc, char **argv)
         goto end;
      }
 
-   if (!isnan(scale))
+   if (scale > 0.0)
      {
         elm_config_scale_set(scale);
         elm_config_all_flush();
