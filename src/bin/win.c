@@ -75,7 +75,6 @@ typedef struct _Tab_Drag Tab_Drag;
 
 struct _Tab_Drag
 {
-   Evas_Object *icwin;
    Evas_Coord mdx;     /* Mouse-down x */
    Evas_Coord mdy;     /* Mouse-down y */
    Evas_Object *icon;
@@ -113,7 +112,6 @@ struct _Term
    Evas_Object *tab_region_bg;
    Evas_Object *tab_inactive;
    Tab_Item    *tab_item;
-   Tab_Drag    *tab_drag;
    Eina_List   *popmedia_queue;
    Ecore_Timer *sendfile_request_hide_timer;
    Ecore_Timer *sendfile_progress_hide_timer;
@@ -200,6 +198,7 @@ struct _Win
 /* }}} */
 /* {{{ static */
 static Eina_List   *wins = NULL;
+static Tab_Drag *_tab_drag = NULL;
 
 static Eina_Bool _win_is_focused(Win *wn);
 static Term_Container *_solo_new(Term *term, Win *wn);
@@ -540,9 +539,9 @@ _solo_set_title(Term_Container *tc,
      {
         elm_layout_text_set(term->bg, "terminology.tab.title", title);
      }
-   if (term->tab_drag && term->tab_drag->icon)
+   if (_tab_drag && _tab_drag->term == term && _tab_drag->icon)
      {
-        elm_layout_text_set(term->tab_drag->icon,
+        elm_layout_text_set(_tab_drag->icon,
                             "terminology.title", title);
      }
    tc->parent->set_title(tc->parent, tc, title);
@@ -2967,23 +2966,21 @@ _term_hdrag_off(Term *term, void *data EINA_UNUSED)
 }
 
 static void
-_tab_drag_free(Term *term)
+_tab_drag_free(void)
 {
-   Tab_Drag *tab_drag = term->tab_drag;
-
-   if (!tab_drag)
+   if (!_tab_drag)
      return;
 
-   for_each_term_do(tab_drag->term->wn, &_term_hdrag_on, NULL);
+   for_each_term_do(_tab_drag->term->wn, &_term_hdrag_on, NULL);
 
-   ecore_timer_del(tab_drag->timer);
-   tab_drag->timer = NULL;
+   ecore_timer_del(_tab_drag->timer);
+   _tab_drag->timer = NULL;
 
-   evas_object_del(tab_drag->icon);
+   evas_object_del(_tab_drag->icon);
 
-   term->tab_drag = NULL;
-   term_unref(tab_drag->term);
-   free(tab_drag);
+   term_unref(_tab_drag->term);
+   free(_tab_drag);
+   _tab_drag = NULL;
 }
 
 static void
@@ -3019,7 +3016,7 @@ _term_on_horizontal_drag(void *data,
 
    tab_item = tabs->current;
 
-   _tab_drag_free(term);
+   _tab_drag_free();
 
    tab_active_idx = -1;
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
@@ -3188,14 +3185,13 @@ static void
 _tab_drag_stop(Term *term)
 {
    Evas_Coord mx = 0, my = 0;
-   Tab_Drag *tab_drag = term->tab_drag;
    Win *wn = term->wn;
    Term_Container *tc_wn = (Term_Container*) wn;
    Term *term_at_coords;
 
-   assert(tab_drag);
+   assert(_tab_drag);
 
-   evas_pointer_canvas_xy_get(tab_drag->e, &mx, &my);
+   evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
    term_at_coords = tc_wn->find_term_at_coords(tc_wn, mx, my);
    if (!term_at_coords)
      goto end;
@@ -3212,7 +3208,7 @@ _tab_drag_stop(Term *term)
      }
 
 end:
-   _tab_drag_free(term);
+   _tab_drag_free();
 }
 
 static void
@@ -3224,12 +3220,12 @@ _term_on_drag_stop(void *data,
    Term *term = data;
    Term_Container *tc;
 
-   if (term->tab_drag && term->tab_drag->icon)
+   if (_tab_drag && _tab_drag->term == term && _tab_drag->icon)
      {
         _tab_drag_stop(term);
         return;
      }
-   _tab_drag_free(term);
+   _tab_drag_free();
 
    tc = term->container;
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -3249,33 +3245,31 @@ _term_on_drag_stop(void *data,
 
 static void
 _tabs_drag_mouse_move(
-   void *data,
+   void *data EINA_UNUSED,
    Evas_Object *obj EINA_UNUSED,
    const char *emission EINA_UNUSED,
    const char *source EINA_UNUSED)
 {
-   Term *term = data;
-   Tab_Drag *tab_drag = term->tab_drag;
    int x, y, w, h;
    Evas_Coord xm, ym;
 
-   if (!tab_drag || !tab_drag->icon)
+   if (!_tab_drag || !_tab_drag->icon)
      return;
 
-   evas_object_geometry_get(tab_drag->icon, NULL, NULL, &w, &h);
-   evas_pointer_canvas_xy_get(tab_drag->e, &xm, &ym);
+   evas_object_geometry_get(_tab_drag->icon, NULL, NULL, &w, &h);
+   evas_pointer_canvas_xy_get(_tab_drag->e, &xm, &ym);
    x = (xm - (w/2));
    y = (ym - (h/2));
-   evas_object_move(tab_drag->icon, x, y);
+   evas_object_move(_tab_drag->icon, x, y);
+   /* TODO: boris */
 }
 
 static Eina_Bool
-_tab_drag_start(void *data)
+_tab_drag_start(void *data EINA_UNUSED)
 {
    /* Start icons animation before actually drag-starts */
-   Tab_Drag *tab_drag = data;
    Evas_Coord x, y, w, h, off_x, off_y;
-   Term *term = tab_drag->term;
+   Term *term = _tab_drag->term;
    Evas_Object *o = elm_layout_add(term->bg);
 
    theme_apply_elm(o, term->config, "terminology/tabbar_back");
@@ -3283,7 +3277,7 @@ _tab_drag_start(void *data)
                        term->container->title);
    elm_layout_signal_emit(o, "style,active", "terminology");
 
-   for_each_term_do(tab_drag->term->wn, &_term_hdrag_off, NULL);
+   for_each_term_do(_tab_drag->term->wn, &_term_hdrag_off, NULL);
 
    edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
                                  &x, &y, &w, &h);
@@ -3295,9 +3289,9 @@ _tab_drag_start(void *data)
    evas_object_move(o, x + off_x, y + off_y);
    evas_object_show(o);
 
-   tab_drag->icon = o;
+   _tab_drag->icon = o;
 
-   tab_drag->timer = NULL;
+   _tab_drag->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -3311,22 +3305,21 @@ _tabs_mouse_down(
    /* Launch a timer to start drag animation */
    Term *term = data;
    Evas_Coord mx = 0, my = 0;
-   Tab_Drag *tab_drag = calloc(1, sizeof(*tab_drag));
+   _tab_drag = calloc(1, sizeof(*_tab_drag));
 
-   if (!tab_drag)
+   if (!_tab_drag)
      return;
 
-   tab_drag->e = evas_object_evas_get(term->bg);
-   evas_pointer_canvas_xy_get(tab_drag->e, &mx, &my);
+   _tab_drag->e = evas_object_evas_get(term->bg);
+   evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
 
    term_ref(term);
 
-   term->tab_drag = tab_drag;
-   tab_drag->mdx = mx;
-   tab_drag->mdy = my;
-   tab_drag->term = term;
-   tab_drag->timer = ecore_timer_add(DRAG_TIMEOUT,
-                                     _tab_drag_start, tab_drag);
+   _tab_drag->mdx = mx;
+   _tab_drag->mdy = my;
+   _tab_drag->term = term;
+   _tab_drag->timer = ecore_timer_add(DRAG_TIMEOUT,
+                                     _tab_drag_start, NULL);
 }
 
 
