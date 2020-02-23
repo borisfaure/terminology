@@ -16,6 +16,8 @@ Changes since 1.6.0:
   are emitted when the current tab is dragged between tabs.
   * In group "terminology/background", signal "tab,drag,move" is emitted when
   the current tab is dragged outside of the tabbar.
+  * In group "terminology/background", parts "tabdrag", "tabmiddle" are used
+  to adjust drag.
 
 Changes since 1.5.0:
 --------------------

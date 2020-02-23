@@ -56,6 +56,11 @@ Here is swallowed an object of group `terminology.background`.
 
 ### TODO
 
+## Special parts
+
+### `tabdrag` and `tabmiddle`
+Their geometry are used to adjust drag values.
+
 ## Signal received
 ### `tabbar,off` and `tabbar,on`
 Whether to display a tab bar. Default is off.
