@@ -1617,7 +1617,7 @@ group { name: "terminology/background";
       }
       program {
          signal: "mouse,up,1"; source: "tabmiddle";
-         action: SIGNAL_EMIT "tab,mouse,up" "terminology";
+         action: SIGNAL_EMIT "tab,drag,stop" "terminology";
       }
 
       ////////////////////////////////////////////////////////////////////

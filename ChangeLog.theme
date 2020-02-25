@@ -10,9 +10,9 @@ Changes since 1.6.0:
   to set style as active, used during tab drag and drop.
   * In group "terminology/background", add signals "hdrag,on" (default) and
   "hdrag,off" to restrict (default) tab to be dragged only horizontally
-  * In group "terminology/background", signals "tab,mouse,down" and
-  "tab,mouse,up" whenever the left mouse button is pressed on a tab.
-  * In group "terminology/background", signals "tab,hdrag" and "tab,drag,stop"
+  * In group "terminology/background", signals "tab,mouse,down" is emitted
+  whenever the left mouse button is pressed on a tab.
+  * In group "terminology/background", signal "tab,hdrag" and "tab,drag,stop"
   are emitted when the current tab is dragged between tabs.
   * In group "terminology/background", signal "tab,drag,move" is emitted when
   the current tab is dragged outside of the tabbar.

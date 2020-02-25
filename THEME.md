@@ -112,7 +112,7 @@ Whether to restrict (default) horizontal tab drag
 ## Signal emitted
 ### `tab,drag` and `tab,drag,stop`
 To notify that the current tab is being dragged.
-### `tab,mouse,down` and `tab,mouse,up`
+### `tab,mouse,down`
 Whenever the left mouse button is pressed on a tab.
 
 
