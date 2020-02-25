@@ -28,7 +28,6 @@ group { name: "terminology/background";
       image: "tab_shad_r1.png" COMP;
       image: "media_busy_knob.png" COMP;
       image: "media_busy_spinner.png" COMP;
-      image: "tab_close.png" COMP;
    }
    set { name: "bg_shadow";
       image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
@@ -41,6 +40,10 @@ group { name: "terminology/background";
       image { image: "bg_shine3.png" COMP; size: 512 240 1024 480; }
       image { image: "bg_shine2.png" COMP; size: 1024 480 2048 960; }
       image { image: "bg_shine.png"  COMP; size: 2048 960 99999 99999; }
+   }
+   set { name: "tab_close";
+      image { image: "tab_close_8.png" COMP; size: 0 0 8 8; }
+      image { image: "tab_close_16.png" COMP; size: 8 8 99999 99999; }
    }
    sounds {
       sample { name: "bell" LOSSY 64;
@@ -1520,35 +1523,52 @@ group { name: "terminology/background";
          }
       }
       part { name: "tabclose"; type: IMAGE;
-          scale: 1;
-          description { state: "default" 0.0;
-              aspect: 1.0 1.0; aspect_preference: BOTH;
-              align: 1.0 0.5;
-              image.normal: "tab_close.png";
-              rel1 {
-                  to_y: "tabmiddle";
-                  to_x: "tab_bevel_top3";
-                  relative: 0.0 0.2;
-              }
-              rel2 {
-                  to_y: "tabmiddle";
-                  to_x: "tab_bevel_top3";
-                  relative: 0.0 0.8;
-              }
-              min: 19 19;
-              max: 19 19;
-              fixed: 1 1;
-              visible: 0;
-          }
-          description { state: "tab" 0.0;
-              inherit: "default" 0.0;
-              visible: 1;
-          }
+         scale: 1;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            align: 1.0 0.5;
+            image.normal: "tab_close";
+            rel1 {
+               to: "tabmiddle";
+               to_x: "tab_bevel_top3";
+               relative: 0.0 0.3;
+            }
+            rel2 {
+               to_y: "tabmiddle";
+               to_x: "tab_bevel_top3";
+               relative: 0.0 0.7;
+            }
+            min: 8 8;
+            max: 16 16;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "tab" 0.0;
+            inherit: "default" 0.0;
+            color: FG_COLOR_NO_ALPHA 80;
+            visible: 1;
+         }
+         description { state: "over" 0.0;
+            inherit: "default" 0.0;
+            color: FG_COLOR_NO_ALPHA 255;
+            visible: 1;
+         }
       }
       program {
-         signal: "mouse,up,1"; source: "tabmiddle";
-         action: SIGNAL_EMIT "tab,drag,stop" "terminology";
+         signal: "mouse,in"; source: "tabclose";
+         action: STATE_SET "over" 0.0;
+         target: "tabclose";
       }
+      program {
+         signal: "mouse,out"; source: "tabclose";
+         action: STATE_SET "tab" 0.0;
+         target: "tabclose";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "tabclose";
+         action: SIGNAL_EMIT "tab,close" "terminology";
+      }
+
       program {
          signal: "mouse,move"; source: "tabmiddle";
          script {
@@ -1598,10 +1618,6 @@ group { name: "terminology/background";
       program {
          signal: "mouse,up,1"; source: "tabmiddle";
          action: SIGNAL_EMIT "tab,mouse,up" "terminology";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "tabclose";
-         action: SIGNAL_EMIT "tab,close" "terminology";
       }
 
       ////////////////////////////////////////////////////////////////////

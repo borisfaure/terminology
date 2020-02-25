@@ -8,7 +8,6 @@ group { name: "terminology/tabbar_back";
       image: "tab_other_r.png" COMP;
       image: "tab_shad_l2.png" COMP;
       image: "tab_shad_r2.png" COMP;
-      image: "tab_close.png" COMP;
    }
    parts {
       part { name: "tab_bevel_shad1";
