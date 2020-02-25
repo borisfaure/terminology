@@ -18,6 +18,12 @@ Changes since 1.6.0:
   the current tab is dragged outside of the tabbar.
   * In group "terminology/background", parts "tabdrag", "tabmiddle" are used
   to adjust drag.
+  * In group "terminology/background", parts "drag_left_outline",
+  "drag_right_outline", "drag_top_outline", "drag_bottom_outline" are used to
+  know when the cursor enters them when dragging a tab into them.
+  * In group "terminology/background", signals "drag_left,on", "drag_left,off"
+  are received when the mouse enters or leaves "drag_left_outline". Same for
+  right, top, bottom.
 
 Changes since 1.5.0:
 --------------------

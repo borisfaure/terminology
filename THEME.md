@@ -61,11 +61,20 @@ Here is swallowed an object of group `terminology.background`.
 ### `tabdrag` and `tabmiddle`
 Their geometry are used to adjust drag values.
 
+### `drag_left_outline`, `drag_right_outline`, `drag_top_outline`, `drag_bottom_outline`
+Their geometry are used to know when the cursor enters them when dragging a
+tab.
+
 ## Signal received
 ### `tabbar,off` and `tabbar,on`
 Whether to display a tab bar. Default is off.
 ### `tab_btn,off` and `tab_btn,on`
 Whether to display a tab button to easily navigate through tabs. Default is off.
+### `drag_left,on`, `drag_right,on`, `drag_top,on`, `drag_bottom,on`
+When to start an animation when the cursor enters `drag_XXXX_outline` while
+dragging a tab.
+### `drag_left,off`, `drag_right,off`, `drag_top,off`, `drag_bottom,off`
+When to stop an animation started by the related `*,on` signals.
 
 ### TODO
 
