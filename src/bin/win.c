@@ -73,10 +73,20 @@ typedef struct _Tabs Tabs;
 typedef struct _Tab_Item Tab_Item;
 typedef struct _Tab_Drag Tab_Drag;
 
+enum drag_over_position {
+     DRAG_OVER_NONE,
+     DRAG_OVER_LEFT,
+     DRAG_OVER_RIGHT,
+     DRAG_OVER_TOP,
+     DRAG_OVER_BOTTOM,
+};
+
 struct _Tab_Drag
 {
    Evas_Coord mdx;     /* Mouse-down x */
    Evas_Coord mdy;     /* Mouse-down y */
+   enum drag_over_position drag_over;
+   Term *term_over;
    Evas_Object *icon;
    Evas *e;
    Ecore_Timer *timer;
@@ -2964,11 +2974,45 @@ _term_hdrag_off(Term *term, void *data EINA_UNUSED)
 }
 
 static void
+_tab_drag_disable_anim_over(void)
+{
+   if ((!_tab_drag) || (!_tab_drag->term_over) ||
+       (_tab_drag->drag_over == DRAG_OVER_NONE))
+     return;
+
+   switch (_tab_drag->drag_over)
+     {
+      case DRAG_OVER_LEFT:
+         elm_layout_signal_emit(_tab_drag->term_over->bg,
+                                "drag_left,off", "terminology");
+         break;
+      case DRAG_OVER_RIGHT:
+         elm_layout_signal_emit(_tab_drag->term_over->bg,
+                                "drag_right,off", "terminology");
+         break;
+      case DRAG_OVER_TOP:
+         elm_layout_signal_emit(_tab_drag->term_over->bg,
+                                "drag_top,off", "terminology");
+         break;
+      case DRAG_OVER_BOTTOM:
+         elm_layout_signal_emit(_tab_drag->term_over->bg,
+                                "drag_bottom,off", "terminology");
+         break;
+      default:
+         break;
+     }
+   elm_layout_signal_emit(_tab_drag->term_over->bg,
+                          "hdrag,off", "terminology");
+}
+
+
+static void
 _tab_drag_free(void)
 {
    if (!_tab_drag)
      return;
 
+   _tab_drag_disable_anim_over();
    for_each_term_do(_tab_drag->term->wn, &_term_hdrag_on, NULL);
 
    ecore_timer_del(_tab_drag->timer);
@@ -3248,18 +3292,91 @@ _tabs_drag_mouse_move(
    const char *emission EINA_UNUSED,
    const char *source EINA_UNUSED)
 {
-   int x, y, w, h;
-   Evas_Coord xm, ym;
+   Evas_Coord x, y, w, h, off_x, off_y, mx, my;
+   Win *wn;
+   Term_Container *tc_wn;
+   Term *term_at_coords;
+   enum drag_over_position drag_over_position = DRAG_OVER_NONE;
 
    if (!_tab_drag || !_tab_drag->icon)
      return;
 
+   wn = _tab_drag->term->wn;
+   tc_wn = (Term_Container*) wn;
+
    evas_object_geometry_get(_tab_drag->icon, NULL, NULL, &w, &h);
-   evas_pointer_canvas_xy_get(_tab_drag->e, &xm, &ym);
-   x = (xm - (w/2));
-   y = (ym - (h/2));
+   evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
+   x = (mx - (w/2));
+   y = (my - (h/2));
    evas_object_move(_tab_drag->icon, x, y);
-   /* TODO: boris */
+
+   term_at_coords = tc_wn->find_term_at_coords(tc_wn, mx, my);
+   if (!term_at_coords)
+     return;
+   evas_object_geometry_get(term_at_coords->bg_edj, &off_x, &off_y, NULL, NULL);
+   edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_left_outline",
+                                 &x, &y, &w, &h);
+   if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
+     {
+        drag_over_position = DRAG_OVER_LEFT;
+        goto found;
+     }
+   edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_right_outline",
+                                 &x, &y, &w, &h);
+   if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
+     {
+        drag_over_position = DRAG_OVER_RIGHT;
+        goto found;
+     }
+   edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_top_outline",
+                                 &x, &y, &w, &h);
+   if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
+     {
+        drag_over_position = DRAG_OVER_TOP;
+        goto found;
+     }
+   edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_bottom_outline",
+                                 &x, &y, &w, &h);
+   if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
+     {
+        drag_over_position = DRAG_OVER_BOTTOM;
+        goto found;
+     }
+   found:
+   if ((_tab_drag->term_over != NULL) &&
+       ((_tab_drag->term_over != term_at_coords) ||
+        (_tab_drag->drag_over != drag_over_position)))
+     {
+        _tab_drag_disable_anim_over();
+     }
+   if ((drag_over_position != DRAG_OVER_NONE) &&
+       ((_tab_drag->term_over != term_at_coords) ||
+        (_tab_drag->drag_over != drag_over_position)))
+     {
+        switch (drag_over_position)
+          {
+           case DRAG_OVER_LEFT:
+              elm_layout_signal_emit(term_at_coords->bg,
+                                     "drag_left,on", "terminology");
+              break;
+           case DRAG_OVER_RIGHT:
+              elm_layout_signal_emit(term_at_coords->bg,
+                                     "drag_right,on", "terminology");
+              break;
+           case DRAG_OVER_TOP:
+              elm_layout_signal_emit(term_at_coords->bg,
+                                     "drag_top,on", "terminology");
+              break;
+           case DRAG_OVER_BOTTOM:
+              elm_layout_signal_emit(term_at_coords->bg,
+                                     "drag_bottom,on", "terminology");
+              break;
+           default:
+              break;
+          }
+     }
+   _tab_drag->term_over = term_at_coords;
+   _tab_drag->drag_over = drag_over_position;
 }
 
 static Eina_Bool
@@ -6200,6 +6317,11 @@ _term_free(Term *term)
    if (_tab_drag && _tab_drag->term == term)
      {
         _tab_drag_free();
+     }
+   if (_tab_drag && _tab_drag->term_over == term)
+     {
+        _tab_drag->term_over = NULL;
+        _tab_drag->drag_over = DRAG_OVER_NONE;
      }
    if (term->sendfile_request)
      {
