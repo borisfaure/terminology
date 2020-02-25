@@ -3272,6 +3272,12 @@ _tab_drag_start(void *data EINA_UNUSED)
    Term *term = _tab_drag->term;
    Evas_Object *o = elm_layout_add(term->bg);
 
+   if (!term->container)
+     {
+        _tab_drag_free();
+        return ECORE_CALLBACK_CANCEL;
+     }
+
    theme_apply_elm(o, term->config, "terminology/tabbar_back");
    elm_layout_text_set(o, "terminology.title",
                        term->container->title);
@@ -3305,8 +3311,11 @@ _tabs_mouse_down(
    /* Launch a timer to start drag animation */
    Term *term = data;
    Evas_Coord mx = 0, my = 0;
-   _tab_drag = calloc(1, sizeof(*_tab_drag));
 
+   assert(term->container != NULL);
+   assert(_tab_drag == NULL);
+
+   _tab_drag = calloc(1, sizeof(*_tab_drag));
    if (!_tab_drag)
      return;
 
@@ -3319,7 +3328,7 @@ _tabs_mouse_down(
    _tab_drag->mdy = my;
    _tab_drag->term = term;
    _tab_drag->timer = ecore_timer_add(DRAG_TIMEOUT,
-                                     _tab_drag_start, NULL);
+                                      _tab_drag_start, NULL);
 }
 
 
@@ -6191,6 +6200,10 @@ main_config_sync(const Config *config)
 static void
 _term_free(Term *term)
 {
+   if (_tab_drag && _tab_drag->term == term)
+     {
+        _tab_drag_free();
+     }
    if (term->sendfile_request)
      {
         evas_object_del(term->sendfile_request);
