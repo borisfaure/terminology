@@ -12,6 +12,7 @@ group { name: "terminology/background";
       image: "pm_overlay.png" COMP;
       image: "pm_fill.png" COMP;
       image: "cr_glow.png" COMP;
+      image: "cr_pulse.png" COMP;
       image: "tab_base_bottom.png" COMP;
       image: "tab_base_l0.png" COMP;
       image: "tab_base_l1.png" COMP;
