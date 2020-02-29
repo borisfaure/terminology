@@ -40,6 +40,8 @@ collections {
         image: "tab_shad_l1.png" COMP;
         image: "tab_shad_r0.png" COMP;
         image: "tab_shad_r1.png" COMP;
+        image: "cr_glow.png" COMP;
+        image: "cr_pulse.png" COMP;
       }
       sounds {
          sample { name: "bell" LOSSY 64;
@@ -922,11 +924,27 @@ collections {
             signal: "hdrag,on"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "tabdrag";
+            target: "drag_left_pulse";
+            target: "drag_left_outline";
+            target: "drag_right_pulse";
+            target: "drag_right_outline";
+            target: "drag_top_pulse";
+            target: "drag_top_outline";
+            target: "drag_bottom_pulse";
+            target: "drag_bottom_outline";
          }
          program {
             signal: "hdrag,off"; source: "terminology";
             action: STATE_SET "hdrag,off" 0.0;
             target: "tabdrag";
+            target: "drag_left_pulse";
+            target: "drag_left_outline";
+            target: "drag_right_pulse";
+            target: "drag_right_outline";
+            target: "drag_top_pulse";
+            target: "drag_top_outline";
+            target: "drag_bottom_pulse";
+            target: "drag_bottom_outline";
          }
          // left boundary of the active tab (dragable 0.0 -> 1.0)
          part { name: "terminology.tabl"; type: SPACER;
@@ -1282,6 +1300,113 @@ collections {
             transition: LINEAR 0.9;
             target: "bell_strobe";
          }
+
+         #define DRAG_TARGET(DIR, REL_ONE, REL_TWO)                     \
+         part { name: "drag_"##DIR##"_pulse";                           \
+            mouse_events: 0;                                            \
+            description { state: "default" 0.0;                         \
+               rel1.offset: -4 -4;                                      \
+               rel1.to: "drag_"##DIR##"_outline";                       \
+               rel2.offset: 3 3;                                        \
+               rel2.to: "drag_"##DIR##"_outline";                       \
+               image {                                                  \
+                  normal: "cr_pulse.png";                               \
+                  border: 4 4 4 4;                                      \
+               }                                                        \
+               color: 255 255 255 64;                                   \
+               visible: 0;                                              \
+            }                                                           \
+            description { state: "hdrag,off" 0.0;                       \
+               inherit: "default" 0.0;                                  \
+            }                                                           \
+            description { state: "on" 0.0;                              \
+               inherit: "default" 0.0;                                  \
+               color: 255 255 255 255;                                  \
+               visible: 1;                                              \
+            }                                                           \
+            description { state: "out" 0.0;                             \
+               inherit: "default" 0.0;                                  \
+               color: 255 255 255 0;                                    \
+               rel1.offset: -8 -8;                                      \
+               rel2.offset: 7 7;                                        \
+               visible: 1;                                              \
+            }                                                           \
+         }                                                              \
+         part { name: "drag_"##DIR##"_outline";                         \
+            mouse_events: 0;                                            \
+            description { state: "default" 0.0;                         \
+               rel1.to: "viewregion";                                   \
+               rel1.relative: REL_ONE;                                  \
+               rel2.to: "viewregion";                                   \
+               rel2.relative: REL_TWO;                                  \
+               image {                                                  \
+                  normal: "cr_out.png";                                 \
+                  border: 3 3 3 3;                                      \
+               }                                                        \
+               color: 255 255 255 80;                                   \
+               visible: 0;                                              \
+            }                                                           \
+            description { state: "hdrag,off" 0.0;                       \
+               inherit: "default" 0.0;                                  \
+               visible: 1;                                              \
+            }                                                           \
+            description { state: "active" 0.0;                          \
+               inherit: "default" 0.0;                                  \
+               color: 255 255 255 255;                                  \
+               visible: 1;                                              \
+            }                                                           \
+         }                                                              \
+         program {                                                      \
+            name: "drag_"##DIR##",on";                                  \
+            signal: "drag_"##DIR##",on"; source: "terminology";         \
+            action: STATE_SET "active" 0.0;                             \
+            target: "drag_"##DIR##"_outline";                           \
+            after: "drag_"##DIR##",on2";                                \
+            after: "drag_"##DIR##"_pulse";                              \
+         }                                                              \
+         program { name: "drag_"##DIR##",on2";                          \
+            in: 0.5 0.0;                                                \
+            action: STATE_SET "default" 0.0;                            \
+            transition: DECELERATE 0.5;                                 \
+            target: "drag_"##DIR##"_outline";                           \
+            after: "drag_"##DIR##",on3";                                \
+         }                                                              \
+         program { name: "drag_"##DIR##",on3";                          \
+            in: 0.5 0.0;                                                \
+            action: STATE_SET "active" 0.0;                             \
+            target: "drag_"##DIR##"_outline";                           \
+            after: "drag_"##DIR##",on2";                                \
+            after: "drag_"##DIR##"_pulse";                              \
+         }                                                              \
+         program { name: "drag_"##DIR##"_pulse";                        \
+            action: STATE_SET "on" 0.0;                                 \
+            target: "drag_"##DIR##"_pulse";                             \
+            after: "drag_"##DIR##"_pulse2";                             \
+         }                                                              \
+         program { name: "drag_"##DIR##"_pulse2";                       \
+            action: STATE_SET "out" 0.0;                                \
+            transition: DECELERATE 0.5;                                 \
+            target: "drag_"##DIR##"_pulse";                             \
+         }                                                              \
+         program {                                                      \
+            signal: "drag_"##DIR##",off"; source: "terminology";        \
+            action: ACTION_STOP;                                        \
+            target: "drag_"##DIR##",on";                                \
+            target: "drag_"##DIR##",on2";                               \
+            target: "drag_"##DIR##",on3";                               \
+            target: "drag_"##DIR##"_pulse";                             \
+            target: "drag_"##DIR##"_pulse2";                            \
+            after: "drag_"##DIR##",off2";                               \
+         }                                                              \
+         program { name: "drag_"##DIR##",off2";                         \
+            action: STATE_SET "default" 0.0;                            \
+            target: "drag_"##DIR##"_outline";                           \
+         }
+
+         DRAG_TARGET(left, 0.0 0.2, 0.15 0.8)
+         DRAG_TARGET(right, 0.85 0.2, 1.0 0.8)
+         DRAG_TARGET(top, 0.2 0.0, 0.8 0.2)
+         DRAG_TARGET(bottom, 0.2 0.8, 0.8 1.0)
 
          ////////////////////////////////////////////////////////////////////
          // popup media over the terminal (until dismissed)
