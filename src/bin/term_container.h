@@ -27,6 +27,14 @@ typedef enum _Term_Container_Type
    TERM_CONTAINER_TYPE_WIN
 } Term_Container_Type;
 
+typedef enum _Split_Direction {
+     SPLIT_DIRECTION_NONE,
+     SPLIT_DIRECTION_LEFT,
+     SPLIT_DIRECTION_RIGHT,
+     SPLIT_DIRECTION_TOP,
+     SPLIT_DIRECTION_BOTTOM,
+} Split_Direction;
+
 struct _Term_Container {
      Term_Container_Type type;
      Term_Container *parent;
@@ -49,6 +57,10 @@ struct _Term_Container {
                                   Evas_Coord mx, Evas_Coord my);
      void (*split)(Term_Container *tc, Term_Container *child,
                    Term *from, const char *cmd, Eina_Bool is_horizontal);
+     int (*split_direction)(Term_Container *tc,
+                            Term_Container *child_orig,
+                            Term_Container *child_new,
+                             Split_Direction direction);
      void (*size_eval)(Term_Container *container, Sizeinfo *info);
      void (*swallow)(Term_Container *container, Term_Container *orig,
                      Term_Container *new_child);

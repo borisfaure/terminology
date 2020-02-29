@@ -73,24 +73,17 @@ typedef struct _Tabs Tabs;
 typedef struct _Tab_Item Tab_Item;
 typedef struct _Tab_Drag Tab_Drag;
 
-enum drag_over_position {
-     DRAG_OVER_NONE,
-     DRAG_OVER_LEFT,
-     DRAG_OVER_RIGHT,
-     DRAG_OVER_TOP,
-     DRAG_OVER_BOTTOM,
-};
 
 struct _Tab_Drag
 {
    Evas_Coord mdx;     /* Mouse-down x */
    Evas_Coord mdy;     /* Mouse-down y */
-   enum drag_over_position drag_over;
+   Split_Direction split_direction;
    Term *term_over;
+   Term *term;
    Evas_Object *icon;
    Evas *e;
    Ecore_Timer *timer;
-   Term *term;
 };
 
 struct _Tabbar
@@ -470,6 +463,15 @@ _solo_split(Term_Container *tc,
    tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
+static int
+_solo_split_direction(Term_Container *tc,
+                      Term_Container *child_orig EINA_UNUSED,
+                      Term_Container *child_new,
+                      Split_Direction direction)
+{
+   return tc->parent->split_direction(tc->parent, tc, child_new, direction);
+}
+
 static Term *
 _solo_term_next(const Term_Container *tc,
                 const Term_Container *_child EINA_UNUSED)
@@ -780,6 +782,7 @@ _solo_new(Term *term, Win *wn)
    tc->focused_term_get = _solo_focused_term_get;
    tc->get_evas_object = _solo_get_evas_object;
    tc->split = _solo_split;
+   tc->split_direction = _solo_split_direction;
    tc->find_term_at_coords = _solo_find_term_at_coords;
    tc->size_eval = _solo_size_eval;
    tc->swallow = NULL;
@@ -1410,13 +1413,66 @@ _win_split(Term_Container *tc, Term_Container *child,
              _solo_title_show(tc_solo_new);
           }
 
+        tc_split->focus(tc_split, tc_solo_new);
         tc_split->is_focused = tc->is_focused;
         tc->swallow(tc, NULL, tc_split);
      }
    else
      {
-        DBG("term is not splittable");
+        ERR("term is not splittable");
      }
+}
+
+static int
+_win_split_direction(Term_Container *tc,
+                     Term_Container *child_orig,
+                     Term_Container *child_new,
+                     Split_Direction direction)
+{
+   Term_Container *child1, *child2, *tc_split;
+   Win *wn;
+   Eina_Bool is_horizontal =
+      (direction == SPLIT_DIRECTION_LEFT) || (direction == SPLIT_DIRECTION_RIGHT) ?
+      EINA_FALSE : EINA_TRUE;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_WIN);
+   wn = (Win*) tc;
+
+   if (!_term_container_is_splittable(tc, is_horizontal))
+     {
+        ERR("term is not splittable");
+        return -1;
+     }
+
+   if ((direction == SPLIT_DIRECTION_TOP) ||
+       (direction == SPLIT_DIRECTION_LEFT))
+     {
+        child1 = child_new;
+        child2 = child_orig;
+     }
+   else
+     {
+        child1 = child_orig;
+        child2 = child_new;
+     }
+   tc_split = _split_new(child1, child2, is_horizontal);
+
+   if (wn->config->show_tabs)
+     {
+        if (child_orig->type == TERM_CONTAINER_TYPE_SOLO)
+          {
+             _solo_title_show(child_orig);
+          }
+        _solo_title_show(child_new);
+     }
+
+   tc_split->is_focused = tc->is_focused;
+   tc->swallow(tc, NULL, tc_split);
+
+   child_orig->unfocus(child_orig, tc);
+   child_new->focus(child_new, tc_split);
+
+   return 0;
 }
 
 static void
@@ -1971,6 +2027,7 @@ win_new(const char *name, const char *role, const char *title,
    tc->focused_term_get = _win_focused_term_get;
    tc->get_evas_object = _win_get_evas_object;
    tc->split = _win_split;
+   tc->split_direction = _win_split_direction;
    tc->find_term_at_coords = _win_find_term_at_coords;
    tc->size_eval = _win_size_eval;
    tc->swallow = _win_swallow;
@@ -2641,6 +2698,7 @@ _split_split(Term_Container *tc, Term_Container *child,
 
    obj_split = tc_split->get_evas_object(tc_split);
 
+   tc_split->focus(tc_split, tc_solo_new);
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, child, tc_split);
 
@@ -2650,6 +2708,66 @@ _split_split(Term_Container *tc, Term_Container *child,
      }
 
    evas_object_show(obj_split);
+}
+
+static int
+_split_split_direction(Term_Container *tc,
+                       Term_Container *child_orig,
+                       Term_Container *child_new,
+                       Split_Direction direction)
+{
+   Split *split;
+   Win *wn;
+   Term_Container *child1, *child2, *tc_split;
+   Eina_Bool is_horizontal =
+      (direction == SPLIT_DIRECTION_LEFT) || (direction == SPLIT_DIRECTION_RIGHT) ?
+      EINA_FALSE : EINA_TRUE;
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+   split = (Split *)tc;
+   wn = tc->wn;
+
+   if (!_term_container_is_splittable(tc, is_horizontal))
+     {
+        ERR("term is not splittable");
+        return -1;
+     }
+
+   if ((direction == SPLIT_DIRECTION_TOP) ||
+       (direction == SPLIT_DIRECTION_LEFT))
+     {
+        child1 = child_new;
+        child2 = child_orig;
+     }
+   else
+     {
+        child1 = child_orig;
+        child2 = child_new;
+     }
+
+   if (child_orig == split->tc1)
+     elm_object_part_content_unset(split->panes, PANES_TOP);
+   else
+     elm_object_part_content_unset(split->panes, PANES_BOTTOM);
+
+   tc_split = _split_new(child1, child2, is_horizontal);
+
+   if (wn->config->show_tabs)
+     {
+        if (child_orig->type == TERM_CONTAINER_TYPE_SOLO)
+          {
+             _solo_title_show(child_orig);
+          }
+        _solo_title_show(child_new);
+     }
+
+   tc_split->is_focused = tc->is_focused;
+   tc->swallow(tc, child_orig, tc_split);
+
+   child_orig->unfocus(child_orig, tc);
+   child_new->focus(child_new, tc_split);
+
+   return 0;
 }
 
 static Eina_Bool
@@ -2670,7 +2788,6 @@ _split_detach(Term_Container *tc, Term_Container *solo_child)
    _split_close(tc, solo_child);
 }
 
-/* tc1 is a new solo */
 static Term_Container *
 _split_new(Term_Container *tc1, Term_Container *tc2,
            Eina_Bool is_horizontal)
@@ -2697,6 +2814,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    tc->focused_term_get = _split_focused_term_get;
    tc->get_evas_object = _split_get_evas_object;
    tc->split = _split_split;
+   tc->split_direction = _split_split_direction;
    tc->find_term_at_coords = _split_find_term_at_coords;
    tc->size_eval = _split_size_eval;
    tc->swallow = _split_swallow;
@@ -2719,14 +2837,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
 
    split->tc1 = tc1;
    split->tc2 = tc2;
-   if (tc1->is_focused)
-     {
-        tc1->unfocus(tc1, tc);
-        tc2->focus(tc2, tc);
-        split->last_focus = tc2;
-     }
-   else
-     split->last_focus = tc1;
+   split->last_focus = tc1;
 
    o = split->panes = elm_panes_add(tc1->wn->win);
    elm_object_style_set(o, "flush");
@@ -2977,24 +3088,24 @@ static void
 _tab_drag_disable_anim_over(void)
 {
    if ((!_tab_drag) || (!_tab_drag->term_over) ||
-       (_tab_drag->drag_over == DRAG_OVER_NONE))
+       (_tab_drag->split_direction == SPLIT_DIRECTION_NONE))
      return;
 
-   switch (_tab_drag->drag_over)
+   switch (_tab_drag->split_direction)
      {
-      case DRAG_OVER_LEFT:
+      case SPLIT_DIRECTION_LEFT:
          elm_layout_signal_emit(_tab_drag->term_over->bg,
                                 "drag_left,off", "terminology");
          break;
-      case DRAG_OVER_RIGHT:
+      case SPLIT_DIRECTION_RIGHT:
          elm_layout_signal_emit(_tab_drag->term_over->bg,
                                 "drag_right,off", "terminology");
          break;
-      case DRAG_OVER_TOP:
+      case SPLIT_DIRECTION_TOP:
          elm_layout_signal_emit(_tab_drag->term_over->bg,
                                 "drag_top,off", "terminology");
          break;
-      case DRAG_OVER_BOTTOM:
+      case SPLIT_DIRECTION_BOTTOM:
          elm_layout_signal_emit(_tab_drag->term_over->bg,
                                 "drag_bottom,off", "terminology");
          break;
@@ -3119,13 +3230,11 @@ _term_on_horizontal_drag(void *data,
 }
 
 static void
-_tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
+_tab_drag_reinsert(Term *term, double mid)
 {
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, off_x = 0, off_y = 0;
    Term_Container *tc = term->container;
    Term_Container *tc_parent = tc->parent;
    Tabs *tabs;
-   double mid;
 
    tc = term->container;
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -3135,18 +3244,6 @@ _tab_drag_reinsert(Term *term, Evas_Coord mx, Evas_Coord my)
 
    tabs = (Tabs*) tc_parent;
 
-   evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
-   edje_object_part_geometry_get(term->bg_edj, "tabdrag",
-                                 &x, NULL, &w, NULL);
-   edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
-                                 NULL, &y, NULL, &h);
-   x += off_x;
-   y += off_y;
-
-   if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
-     return;
-
-   mid = (double)(mx - x) / (double)w;
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabl", mid, 0.0);
    edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr", mid, 0.0);
 
@@ -3216,22 +3313,48 @@ _tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
    assert(tc_orig->type == TERM_CONTAINER_TYPE_SOLO);
    assert(to_tc->type == TERM_CONTAINER_TYPE_SOLO);
 
-   tc_orig_parent->detach(tc_orig_parent, tc_orig);
-   _solo_attach(to_tc, tc_orig);
+   if (_tab_drag->split_direction == SPLIT_DIRECTION_NONE)
+     {
+        Evas_Coord x = 0, y = 0, w = 0, h = 0, off_x = 0, off_y = 0;
+        double mid;
 
-   /* reinsert at correct place */
-   _tab_drag_reinsert(term, mx, my);
+        /* check whether there is a need to add a tab or fail the drag */
+        evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
+        edje_object_part_geometry_get(term->bg_edj, "tabdrag",
+                                      &x, NULL, &w, NULL);
+        edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
+                                      NULL, &y, NULL, &h);
+        if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
+          return;
+
+        mid = (double)(mx - x) / (double)w;
+
+        tc_orig_parent->detach(tc_orig_parent, tc_orig);
+        _solo_attach(to_tc, tc_orig);
+
+        /* reinsert at correct place */
+        _tab_drag_reinsert(term, mid);
+        return;
+     }
+
+   tc_orig_parent->detach(tc_orig_parent, tc_orig);
+   to_tc->split_direction(to_tc, to_tc, tc_orig, _tab_drag->split_direction);
 }
 
 static void
-_tab_drag_stop(Term *term)
+_tab_drag_stop(void)
 {
    Evas_Coord mx = 0, my = 0;
-   Win *wn = term->wn;
-   Term_Container *tc_wn = (Term_Container*) wn;
+   Win *wn;
+   Term_Container *tc_wn;
+   Term *term;
    Term *term_at_coords;
 
    assert(_tab_drag);
+
+   term = _tab_drag->term;
+   wn = term->wn;
+   tc_wn = (Term_Container*) wn;
 
    evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
    term_at_coords = tc_wn->find_term_at_coords(tc_wn, mx, my);
@@ -3240,8 +3363,20 @@ _tab_drag_stop(Term *term)
 
    if (term_at_coords == term)
      {
+        Evas_Coord x = 0, y = 0, w = 0, h = 0, off_x = 0, off_y = 0;
+        double mid;
+
         /* Reinsert in same set of Tabs or same "tab" (could be a split) */
-        _tab_drag_reinsert(term, mx, my);
+        evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
+        edje_object_part_geometry_get(term->bg_edj, "tabdrag",
+                                      &x, NULL, &w, NULL);
+        edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
+                                      NULL, &y, NULL, &h);
+        if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
+          goto end;
+
+        mid = (double)(mx - x) / (double)w;
+        _tab_drag_reinsert(term, mid);
      }
    else
      {
@@ -3262,9 +3397,9 @@ _term_on_drag_stop(void *data,
    Term *term = data;
    Term_Container *tc;
 
-   if (_tab_drag && _tab_drag->term == term && _tab_drag->icon)
+   if (_tab_drag && _tab_drag->icon)
      {
-        _tab_drag_stop(term);
+        _tab_drag_stop();
         return;
      }
    _tab_drag_free();
@@ -3296,7 +3431,7 @@ _tabs_drag_mouse_move(
    Win *wn;
    Term_Container *tc_wn;
    Term *term_at_coords;
-   enum drag_over_position drag_over_position = DRAG_OVER_NONE;
+   Split_Direction split_direction = SPLIT_DIRECTION_NONE;
 
    if (!_tab_drag || !_tab_drag->icon)
      return;
@@ -3318,56 +3453,56 @@ _tabs_drag_mouse_move(
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
      {
-        drag_over_position = DRAG_OVER_LEFT;
+        split_direction = SPLIT_DIRECTION_LEFT;
         goto found;
      }
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_right_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
      {
-        drag_over_position = DRAG_OVER_RIGHT;
+        split_direction = SPLIT_DIRECTION_RIGHT;
         goto found;
      }
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_top_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
      {
-        drag_over_position = DRAG_OVER_TOP;
+        split_direction = SPLIT_DIRECTION_TOP;
         goto found;
      }
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_bottom_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
      {
-        drag_over_position = DRAG_OVER_BOTTOM;
+        split_direction = SPLIT_DIRECTION_BOTTOM;
         goto found;
      }
    found:
    if ((_tab_drag->term_over != NULL) &&
        ((_tab_drag->term_over != term_at_coords) ||
-        (_tab_drag->drag_over != drag_over_position)))
+        (_tab_drag->split_direction != split_direction)))
      {
         _tab_drag_disable_anim_over();
      }
-   if ((drag_over_position != DRAG_OVER_NONE) &&
+   if ((split_direction != SPLIT_DIRECTION_NONE) &&
        ((_tab_drag->term_over != term_at_coords) ||
-        (_tab_drag->drag_over != drag_over_position)))
+        (_tab_drag->split_direction != split_direction)))
      {
-        switch (drag_over_position)
+        switch (split_direction)
           {
-           case DRAG_OVER_LEFT:
+           case SPLIT_DIRECTION_LEFT:
               elm_layout_signal_emit(term_at_coords->bg,
                                      "drag_left,on", "terminology");
               break;
-           case DRAG_OVER_RIGHT:
+           case SPLIT_DIRECTION_RIGHT:
               elm_layout_signal_emit(term_at_coords->bg,
                                      "drag_right,on", "terminology");
               break;
-           case DRAG_OVER_TOP:
+           case SPLIT_DIRECTION_TOP:
               elm_layout_signal_emit(term_at_coords->bg,
                                      "drag_top,on", "terminology");
               break;
-           case DRAG_OVER_BOTTOM:
+           case SPLIT_DIRECTION_BOTTOM:
               elm_layout_signal_emit(term_at_coords->bg,
                                      "drag_bottom,on", "terminology");
               break;
@@ -3376,7 +3511,7 @@ _tabs_drag_mouse_move(
           }
      }
    _tab_drag->term_over = term_at_coords;
-   _tab_drag->drag_over = drag_over_position;
+   _tab_drag->split_direction = split_direction;
 }
 
 static Eina_Bool
@@ -4647,6 +4782,15 @@ _tabs_split(Term_Container *tc,
    tc->parent->split(tc->parent, tc, from, cmd, is_horizontal);
 }
 
+static int
+_tabs_split_direction(Term_Container *tc,
+                      Term_Container *child_orig EINA_UNUSED,
+                      Term_Container *child_new,
+                      Split_Direction direction)
+{
+   return tc->parent->split_direction(tc->parent, tc, child_new, direction);
+}
+
 static Eina_Bool
 _tabs_is_visible(Term_Container *tc, Term_Container *child)
 {
@@ -4694,6 +4838,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc->focused_term_get = _tabs_focused_term_get;
    tc->get_evas_object = _tabs_get_evas_object;
    tc->split = _tabs_split;
+   tc->split_direction = _tabs_split_direction;
    tc->find_term_at_coords = _tabs_find_term_at_coords;
    tc->size_eval = _tabs_size_eval;
    tc->swallow = _tabs_swallow;
@@ -6321,7 +6466,7 @@ _term_free(Term *term)
    if (_tab_drag && _tab_drag->term_over == term)
      {
         _tab_drag->term_over = NULL;
-        _tab_drag->drag_over = DRAG_OVER_NONE;
+        _tab_drag->split_direction = SPLIT_DIRECTION_NONE;
      }
    if (term->sendfile_request)
      {
