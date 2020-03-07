@@ -84,6 +84,19 @@ struct _Tab_Drag
    Evas_Object *icon;
    Evas *e;
    Ecore_Timer *timer;
+   /* To be able to restore */
+   Term_Container_Type parent_type;
+   union {
+        struct {
+             unsigned int previous_position;
+             Term_Container *tabs_child;
+        };
+        struct {
+             Term_Container *other;
+             Eina_Bool is_horizontal;
+             Eina_Bool is_first_child;
+        };
+   };
 };
 
 struct _Tabbar
@@ -1224,9 +1237,10 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    o = new_child->get_evas_object(new_child);
    elm_layout_content_set(wn->base, "terminology.content", o);
 
-   if ((new_child->type == TERM_CONTAINER_TYPE_SOLO
-        && (wn->config->show_tabs)))
+   if ((new_child->type == TERM_CONTAINER_TYPE_SOLO)
+       && (wn->config->show_tabs))
      {
+        /* TODO: boris show tab tab_drag */
         _solo_title_hide(new_child);
      }
 
@@ -1413,9 +1427,11 @@ _win_split(Term_Container *tc, Term_Container *child,
              _solo_title_show(tc_solo_new);
           }
 
-        tc_split->focus(tc_split, tc_solo_new);
-        tc_split->is_focused = tc->is_focused;
+        child->unfocus(child, tc_split);
         tc->swallow(tc, NULL, tc_split);
+        tc_split->is_focused = EINA_TRUE;
+        tc_solo_new->focus(tc_solo_new, tc_split);
+        tc_split->focus(tc_split, tc_solo_new);
      }
    else
      {
@@ -2468,6 +2484,12 @@ _split_swallow(Term_Container *tc, Term_Container *orig,
 
    assert (orig && (orig == split->tc1 || orig == split->tc2));
 
+   if ((_tab_drag) && (_tab_drag->parent_type == TERM_CONTAINER_TYPE_SPLIT) &&
+       (_tab_drag->other == orig))
+     {
+        _tab_drag->other = new_child;
+     }
+
    if (split->last_focus == orig)
      split->last_focus = new_child;
 
@@ -2540,8 +2562,15 @@ _split_close(Term_Container *tc, Term_Container *child)
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
+   assert ((child == split->tc1) || (child == split->tc2));
 
    DBG("close");
+
+   if ((_tab_drag) && (_tab_drag->parent_type == TERM_CONTAINER_TYPE_SPLIT) &&
+       (_tab_drag->other == child))
+     {
+        _tab_drag->other = tc->parent;
+     }
 
    top = elm_object_part_content_unset(split->panes, PANES_TOP);
    bottom = elm_object_part_content_unset(split->panes, PANES_BOTTOM);
@@ -2786,6 +2815,7 @@ _split_detach(Term_Container *tc, Term_Container *solo_child)
    assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
 
    _split_close(tc, solo_child);
+   solo_child->is_focused = EINA_FALSE;
 }
 
 static Term_Container *
@@ -2852,6 +2882,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    elm_object_part_content_set(o, PANES_BOTTOM,
                                tc2->get_evas_object(tc2));
 
+   tc->is_focused = tc1->is_focused | tc2->is_focused;
    return tc;
 }
 
@@ -3116,12 +3147,123 @@ _tab_drag_disable_anim_over(void)
                           "hdrag,off", "terminology");
 }
 
+static void
+_tab_drag_rollback_split(void)
+{
+   ERR("rollback split");
+   Eina_Bool is_horizontal = _tab_drag->is_horizontal;
+   Term_Container *tc_split = NULL;
+   Term_Container *child1 = NULL, *child2 = NULL;
+   Term_Container *other = _tab_drag->other;
+   Term_Container *parent = NULL;
+   Win *wn = _tab_drag->term->wn;
+   Term_Container *tc_win = (Term_Container*)wn;
+   Term_Container *tc = _tab_drag->term->container;
+
+   if (!_tab_drag->other)
+     {
+        other = wn->child;
+     }
+   parent = other->parent;
+
+   if (_tab_drag->is_first_child)
+     {
+        child1 = tc;
+        child2 = other;
+     }
+   else
+     {
+        child1 = other;
+        child2 = tc;
+     }
+
+   tc_split = _split_new(child1, child2, is_horizontal);
+   parent->swallow(parent, other, tc_split);
+   tc_win->unfocus(tc_win, NULL);
+   tc->focus(tc, NULL);
+}
+
+static void
+_tab_drag_rollback(void)
+{
+   ERR("rollback");
+   /* TODO: boris */
+
+   switch (_tab_drag->parent_type)
+     {
+      case TERM_CONTAINER_TYPE_TABS:
+         ERR("rollback tabs");
+         abort();
+         break;
+      case TERM_CONTAINER_TYPE_SPLIT:
+         _tab_drag_rollback_split();
+         break;
+      case TERM_CONTAINER_TYPE_WIN:
+         ERR("rollback win");
+         abort();
+         break;
+      default:
+         ERR("invalid parent type:%d", _tab_drag->parent_type);
+         abort();
+     }
+}
+
+static void
+_tab_drag_save_state(Term_Container *tc)
+{
+   assert(_tab_drag);
+
+   _tab_drag->parent_type = tc->parent->type;
+   switch (_tab_drag->parent_type)
+     {
+      case TERM_CONTAINER_TYPE_TABS:
+           {
+              unsigned int position = 0;
+              Tabs *tabs;
+              Eina_List *l;
+              Tab_Item *tab_item;
+              /* TODO boris
+              _tab_drag->parent_type = _tab_drag->parent_orig->type;
+              */
+
+              tabs = (Tabs*) tc->parent;
+              EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+                {
+                   if (tab_item->tc == tc)
+                     break;
+                   position++;
+                }
+              _tab_drag->previous_position = position;
+           }
+         break;
+      case TERM_CONTAINER_TYPE_SPLIT:
+           {
+              Split *split;
+
+              split = (Split*)tc->parent;
+              _tab_drag->is_horizontal = split->is_horizontal;
+              if ((_tab_drag->is_first_child = (split->tc1 == tc)))
+                _tab_drag->other = split->tc2;
+              else
+                _tab_drag->other = split->tc1;
+           }
+         break;
+      default:
+         ERR("invalid parent type:%d", tc->parent->type);
+         abort();
+     }
+
+
+}
 
 static void
 _tab_drag_free(void)
 {
    if (!_tab_drag)
      return;
+
+   if (_tab_drag->parent_type != TERM_CONTAINER_TYPE_UNKNOWN)
+     _tab_drag_rollback();
 
    _tab_drag_disable_anim_over();
    for_each_term_do(_tab_drag->term->wn, &_term_hdrag_on, NULL);
@@ -3230,6 +3372,13 @@ _term_on_horizontal_drag(void *data,
 }
 
 static void
+_tab_drag_reparented(void)
+{
+   assert(_tab_drag);
+   _tab_drag->parent_type = TERM_CONTAINER_TYPE_UNKNOWN;
+}
+
+static void
 _tab_drag_reinsert(Term *term, double mid)
 {
    Term_Container *tc = term->container;
@@ -3307,7 +3456,6 @@ static void
 _tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
 {
    Term_Container *tc_orig = term->container;
-   Term_Container *tc_orig_parent = tc_orig->parent;
    Term_Container *to_tc = to_term->container;
 
    assert(tc_orig->type == TERM_CONTAINER_TYPE_SOLO);
@@ -3329,16 +3477,16 @@ _tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
 
         mid = (double)(mx - x) / (double)w;
 
-        tc_orig_parent->detach(tc_orig_parent, tc_orig);
         _solo_attach(to_tc, tc_orig);
 
         /* reinsert at correct place */
         _tab_drag_reinsert(term, mid);
+        _tab_drag_reparented();
         return;
      }
 
-   tc_orig_parent->detach(tc_orig_parent, tc_orig);
    to_tc->split_direction(to_tc, to_tc, tc_orig, _tab_drag->split_direction);
+   _tab_drag_reparented();
 }
 
 static void
@@ -3377,6 +3525,7 @@ _tab_drag_stop(void)
 
         mid = (double)(mx - x) / (double)w;
         _tab_drag_reinsert(term, mid);
+        _tab_drag_reparented();
      }
    else
      {
@@ -3521,6 +3670,7 @@ _tab_drag_start(void *data EINA_UNUSED)
    Evas_Coord x, y, w, h, off_x, off_y;
    Term *term = _tab_drag->term;
    Evas_Object *o = elm_layout_add(term->bg);
+   Term_Container *tc = term->container;
 
    if (!term->container)
      {
@@ -3528,6 +3678,7 @@ _tab_drag_start(void *data EINA_UNUSED)
         return ECORE_CALLBACK_CANCEL;
      }
 
+   /* TODO: Have it's own group and put content inside */
    theme_apply_elm(o, term->config, "terminology/tabbar_back");
    elm_layout_text_set(o, "terminology.title",
                        term->container->title);
@@ -3546,6 +3697,9 @@ _tab_drag_start(void *data EINA_UNUSED)
    evas_object_show(o);
 
    _tab_drag->icon = o;
+
+   _tab_drag_save_state(tc);
+   tc->parent->detach(tc->parent, tc);
 
    _tab_drag->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
@@ -4808,6 +4962,7 @@ _tabs_detach(Term_Container *tc, Term_Container *solo_child)
    assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
 
    _tabs_close(tc, solo_child);
+   solo_child->is_focused = EINA_FALSE;
 }
 
 static Term_Container *
@@ -6909,8 +7064,6 @@ term_new(Win *wn, Config *config, const char *cmd,
 
 
 /* }}} */
-
-
 
 static Eina_Bool
 _font_size_set(Term *term, void *data)
