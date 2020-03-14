@@ -4273,15 +4273,22 @@ _tabs_size_eval(Term_Container *container, Sizeinfo *info)
 }
 
 static Eina_List *
-_tab_item_find(const Tabs *tabs, const Term_Container *child)
+_tab_item_find(const Tabs *tabs, const Term_Container *child,
+               int *pos)
 {
    Eina_List *l;
    Tab_Item *tab_item;
+   int i = 0;
 
    EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
      {
         if (tab_item->tc == child)
-          return l;
+          {
+             if (pos)
+               *pos = i;
+             return l;
+          }
+        i++;
      }
    return NULL;
 }
@@ -4297,6 +4304,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    Term_Container *next_child, *tc_parent;
    Term *term;
    Solo *solo;
+   int pos = 0;
 
    /* TODO: figure out whether to move position if tab_drag */
 
@@ -4305,7 +4313,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
 
    tc_parent = tc->parent;
 
-   l = _tab_item_find(tabs, child);
+   l = _tab_item_find(tabs, child, &pos);
    item = l->data;
 
    next = eina_list_next(l);
@@ -4359,10 +4367,24 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         if (tc->is_focused)
           next_child->focus(next_child, tc);
 
+        if ((_tab_drag) && (_tab_drag->parent_type == TERM_CONTAINER_TYPE_TABS)
+            && (_tab_drag->tabs_child == tc))
+          {
+             _tab_drag->tabs_child = next_child;
+          }
+
         _tab_item_free(item);
         _tab_item_free(next_item);
         free(tc);
+
         return;
+     }
+
+   if ((_tab_drag) && (_tab_drag->parent_type == TERM_CONTAINER_TYPE_TABS)
+       && (_tab_drag->tabs_child == tc))
+     {
+        if (pos < _tab_drag->previous_position)
+          _tab_drag->previous_position--;
      }
 
      if (item->tc->selector_img)
@@ -4408,7 +4430,7 @@ _tabs_term_next(const Term_Container *tc, const Term_Container *child)
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*)tc;
-   l = _tab_item_find(tabs, child);
+   l = _tab_item_find(tabs, child, NULL);
    l = eina_list_next(l);
    if (l)
      {
@@ -4431,7 +4453,7 @@ _tabs_term_prev(const Term_Container *tc, const Term_Container *child)
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*)tc;
-   l = _tab_item_find(tabs, child);
+   l = _tab_item_find(tabs, child, NULL);
    l = eina_list_prev(l);
    if (l)
      {
@@ -4587,7 +4609,7 @@ _tabs_swallow(Term_Container *tc, Term_Container *orig,
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
 
-   l = _tab_item_find(tabs, new_child);
+   l = _tab_item_find(tabs, new_child, NULL);
    tab_item = l->data;
 
    if (tabs->selector)
@@ -4738,7 +4760,7 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
         Eina_List *l;
         Tab_Item *tab_item;
 
-        l = _tab_item_find(tabs, relative);
+        l = _tab_item_find(tabs, relative, NULL);
         if (!l)
           return;
 
@@ -4863,7 +4885,7 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
 
-   l = _tab_item_find(tabs, child);
+   l = _tab_item_find(tabs, child, NULL);
    if (!l)
      return;
    tab_item = l->data;
