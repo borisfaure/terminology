@@ -88,15 +88,14 @@ struct _Tab_Drag
    Term_Container_Type parent_type;
    union {
         struct {
-             unsigned int previous_position;
+             int previous_position;
              Term_Container *tabs_child;
         };
         struct {
              Term_Container *other;
              Eina_Bool is_horizontal;
              Eina_Bool is_first_child;
-        };
-   };
+        }; };
 };
 
 struct _Tabbar
@@ -227,6 +226,7 @@ static void _cb_size_hint(void *data, Evas *_e EINA_UNUSED, Evas_Object *obj, vo
 static void _tab_new_cb(void *data, Evas_Object *_obj EINA_UNUSED, void *_event_info EINA_UNUSED);
 static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_recreate(Tabs *tabs);
+static void _tab_drag_free(void);
 static void _term_tabregion_free(Term *term);
 static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
@@ -3150,7 +3150,6 @@ _tab_drag_disable_anim_over(void)
 static void
 _tab_drag_rollback_split(void)
 {
-   ERR("rollback split");
    Eina_Bool is_horizontal = _tab_drag->is_horizontal;
    Term_Container *tc_split = NULL;
    Term_Container *child1 = NULL, *child2 = NULL;
@@ -3184,98 +3183,62 @@ _tab_drag_rollback_split(void)
 }
 
 static void
-_tab_drag_rollback(void)
+_tabs_attach(Term_Container *tc, Term_Container *tc_new)
 {
-   ERR("rollback");
-   /* TODO: boris */
+   Tabs *tabs;
+   Tab_Item *tab_item;
+   Evas_Object *o;
+   Evas_Coord x, y, w, h;
+   Term_Container *tc_old, *tc_parent;
 
-   switch (_tab_drag->parent_type)
-     {
-      case TERM_CONTAINER_TYPE_TABS:
-         ERR("rollback tabs");
-         abort();
-         break;
-      case TERM_CONTAINER_TYPE_SPLIT:
-         _tab_drag_rollback_split();
-         break;
-      case TERM_CONTAINER_TYPE_WIN:
-         ERR("rollback win");
-         abort();
-         break;
-      default:
-         ERR("invalid parent type:%d", _tab_drag->parent_type);
-         abort();
-     }
+   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
+   assert (tc_new->type == TERM_CONTAINER_TYPE_SOLO);
+
+   tabs = (Tabs*) tc;
+
+   tc_new->parent = tc;
+   tab_item = tab_item_new(tabs, tc_new);
+
+   tc_parent = tc->parent;
+   tc_old = tabs->current->tc;
+   tc_old->unfocus(tc_old, tc);
+   o = tc_old->get_evas_object(tc_old);
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+   evas_object_hide(o);
+   o = tc_new->get_evas_object(tc_new);
+   evas_object_geometry_set(o, x, y, w, h);
+   evas_object_show(o);
+
+   tc->swallow(tc, tc_old, tc_new);
+   tabs->current = tab_item;
+
+   /* XXX: need to refresh parent */
+   tc_parent->swallow(tc_parent, tc, tc);
+
+   if (tc->is_focused)
+     tc_new->focus(tc_new, tc);
+   else
+     tc_new->unfocus(tc_new, tc);
+}
+
+
+static void
+_solo_attach(Term_Container *tc, Term_Container *tc_to_add)
+{
+   assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
+   assert(tc_to_add->type == TERM_CONTAINER_TYPE_SOLO);
+
+   if (tc->parent->type != TERM_CONTAINER_TYPE_TABS)
+     _tabs_new(tc, tc->parent);
+
+   _tabs_attach(tc->parent, tc_to_add);
 }
 
 static void
-_tab_drag_save_state(Term_Container *tc)
+_tab_drag_reparented(void)
 {
    assert(_tab_drag);
-
-   _tab_drag->parent_type = tc->parent->type;
-   switch (_tab_drag->parent_type)
-     {
-      case TERM_CONTAINER_TYPE_TABS:
-           {
-              unsigned int position = 0;
-              Tabs *tabs;
-              Eina_List *l;
-              Tab_Item *tab_item;
-              /* TODO boris
-              _tab_drag->parent_type = _tab_drag->parent_orig->type;
-              */
-
-              tabs = (Tabs*) tc->parent;
-              EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-                {
-                   if (tab_item->tc == tc)
-                     break;
-                   position++;
-                }
-              _tab_drag->previous_position = position;
-           }
-         break;
-      case TERM_CONTAINER_TYPE_SPLIT:
-           {
-              Split *split;
-
-              split = (Split*)tc->parent;
-              _tab_drag->is_horizontal = split->is_horizontal;
-              if ((_tab_drag->is_first_child = (split->tc1 == tc)))
-                _tab_drag->other = split->tc2;
-              else
-                _tab_drag->other = split->tc1;
-           }
-         break;
-      default:
-         ERR("invalid parent type:%d", tc->parent->type);
-         abort();
-     }
-
-
-}
-
-static void
-_tab_drag_free(void)
-{
-   if (!_tab_drag)
-     return;
-
-   if (_tab_drag->parent_type != TERM_CONTAINER_TYPE_UNKNOWN)
-     _tab_drag_rollback();
-
-   _tab_drag_disable_anim_over();
-   for_each_term_do(_tab_drag->term->wn, &_term_hdrag_on, NULL);
-
-   ecore_timer_del(_tab_drag->timer);
-   _tab_drag->timer = NULL;
-
-   evas_object_del(_tab_drag->icon);
-
-   term_unref(_tab_drag->term);
-   free(_tab_drag);
-   _tab_drag = NULL;
+   _tab_drag->parent_type = TERM_CONTAINER_TYPE_UNKNOWN;
 }
 
 static void
@@ -3372,10 +3335,294 @@ _term_on_horizontal_drag(void *data,
 }
 
 static void
-_tab_drag_reparented(void)
+_tabs_set_main_tab(Term *term,
+                   Tab_Item *tab_item)
+{
+   if (!term->tab_spacer)
+     {
+        Evas_Coord w = 0, h = 0;
+        Evas *canvas = evas_object_evas_get(term->bg);
+
+        term->tab_spacer = evas_object_rectangle_add(canvas);
+        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tab_spacer, w, h);
+        elm_layout_content_set(term->bg, "terminology.tab", term->tab_spacer);
+     }
+   evas_object_show(term->tab_spacer);
+   elm_layout_text_set(term->bg, "terminology.tab.title", tab_item->tc->title);
+   elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
+   elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
+   edje_object_message_signal_process(term->bg_edj);
+}
+
+static Evas_Object*
+_tab_inactive_get_or_create(Evas *canvas,
+                            Term *term,
+                            Tab_Item *tab_item)
+{
+   Evas_Object *o;
+   Evas_Coord w, h;
+
+   if (term->tab_inactive)
+     {
+        o = term->tab_inactive;
+        goto created;
+     }
+
+   term->tab_inactive = o = edje_object_add(canvas);
+
+   theme_apply(o, term->config, "terminology/tabbar_back");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   edje_object_size_min_calc(o, &w, &h);
+   evas_object_size_hint_min_set(o, w, h);
+   evas_object_data_set(o, "term", term);
+
+created:
+   edje_object_signal_callback_add(o, "tab,activate", "terminology",
+                                   _cb_tab_activate, tab_item);
+
+   if (term->missed_bell)
+     edje_object_signal_emit(o, "bell", "terminology");
+   else
+     edje_object_signal_emit(o, "bell,off", "terminology");
+   edje_object_part_text_set(o, "terminology.title",
+                             tab_item->tc->title);
+   return o;
+}
+
+
+static void
+_tabbar_fill(Tabs *tabs)
+{
+   Eina_List *l;
+   Eina_Bool after_current = EINA_FALSE;
+   Tab_Item *tab_item;
+   Term *main_term = _tab_item_to_term(tabs->current);
+   Evas *canvas = evas_object_evas_get(main_term->bg);
+
+   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+     {
+        Term *term = _tab_item_to_term(tab_item);
+
+        if (tab_item == tabs->current)
+          {
+             _tabs_set_main_tab(term, tab_item);
+             assert(main_term == term);
+             evas_object_hide(term->tab_inactive);
+             after_current = EINA_TRUE;
+          }
+        else
+          {
+             Evas_Object *o;
+
+             _tabbar_clear(term);
+
+             o = _tab_inactive_get_or_create(canvas, term, tab_item);
+             evas_object_show(o);
+             if (after_current)
+               elm_box_pack_end(main_term->tabbar.r.box, o);
+             else
+               elm_box_pack_end(main_term->tabbar.l.box, o);
+          }
+     }
+   _tabs_recompute_drag(tabs);
+}
+
+static void
+_tabs_get_or_create_boxes(Term *term, Term *src)
+{
+   Evas_Object *o;
+
+   assert(term->tabbar.l.box == NULL);
+   assert(term->tabbar.r.box == NULL);
+
+   /* Left */
+   if (src && src->tabbar.l.box)
+     {
+        term->tabbar.l.box = o = src->tabbar.l.box;
+        elm_box_unpack_all(term->tabbar.l.box);
+        src->tabbar.l.box = NULL;
+     }
+   else
+     {
+        term->tabbar.l.box = o = elm_box_add(term->bg);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   elm_layout_content_set(term->bg, "terminology.tabl.content", o);
+   evas_object_show(o);
+
+   /* Right */
+   if (src && src->tabbar.r.box)
+     {
+        term->tabbar.r.box = o = src->tabbar.r.box;
+        elm_box_unpack_all(term->tabbar.r.box);
+        src->tabbar.r.box = NULL;
+     }
+   else
+     {
+        term->tabbar.r.box = o = elm_box_add(term->bg);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        elm_box_homogeneous_set(o, EINA_TRUE);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
+   elm_layout_content_set(term->bg, "terminology.tabr.content", o);
+   evas_object_show(o);
+}
+
+
+static void
+_tab_drag_rollback_tabs(void)
+{
+   ERR("rollback tabs");
+   Term *term = _tab_drag->term;
+   Win *wn = term->wn;
+   Term_Container *tc_win = (Term_Container*)wn;
+   Term_Container *tc = term->container;
+   Term_Container *tc_tabs = _tab_drag->tabs_child;
+
+   if (tc_tabs->type == TERM_CONTAINER_TYPE_TABS)
+     {
+        Tabs *tabs = (Tabs*) tc_tabs;
+        int n;
+
+        /* reinsert at correct place */
+        _solo_attach(tabs->current->tc, tc);
+
+        n = eina_list_count(tabs->tabs);
+
+        /* move tab_item to expected place */
+        if (_tab_drag->previous_position < n)
+          {
+             int i = 0;
+             Tab_Item *tab_item = term->tab_item;
+             Eina_List *l;
+
+             tabs->tabs = eina_list_remove(tabs->tabs, tab_item);
+             EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+               {
+                  if (i == _tab_drag->previous_position)
+                    {
+                       tabs->tabs = eina_list_prepend_relative_list(tabs->tabs,
+                                           term->tab_item,
+                                           l);
+                       break;
+                    }
+                  i++;
+               }
+          }
+
+        tc_win->unfocus(tc_win, NULL);
+        tc->focus(tc, NULL);
+
+        /* Repack in correct boxes */
+        elm_box_unpack_all(term->tabbar.l.box);
+        elm_box_unpack_all(term->tabbar.r.box);
+        _tabbar_fill(tabs);
+
+        _tab_drag_reparented();
+     }
+   else
+     {
+        assert(tc_tabs->type == TERM_CONTAINER_TYPE_SOLO);
+        /* Create tabs with solo */
+        ERR("TAB CREATE");
+     }
+}
+
+static void
+_tab_drag_rollback(void)
+{
+
+   switch (_tab_drag->parent_type)
+     {
+      case TERM_CONTAINER_TYPE_TABS:
+         _tab_drag_rollback_tabs();
+         break;
+      case TERM_CONTAINER_TYPE_SPLIT:
+         _tab_drag_rollback_split();
+         break;
+      case TERM_CONTAINER_TYPE_WIN:
+         ERR("rollback win");
+         abort();
+         break;
+      default:
+         ERR("invalid parent type:%d", _tab_drag->parent_type);
+         abort();
+     }
+}
+
+static void
+_tab_drag_save_state(Term_Container *tc)
 {
    assert(_tab_drag);
-   _tab_drag->parent_type = TERM_CONTAINER_TYPE_UNKNOWN;
+
+   _tab_drag->parent_type = tc->parent->type;
+   switch (_tab_drag->parent_type)
+     {
+      case TERM_CONTAINER_TYPE_TABS:
+           {
+              int position = 0;
+              Tabs *tabs;
+              Eina_List *l;
+              Tab_Item *tab_item;
+
+              tabs = (Tabs*) tc->parent;
+              EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+                {
+                   if (tab_item->tc == tc)
+                     break;
+                   position++;
+                }
+              _tab_drag->previous_position = position;
+              _tab_drag->tabs_child = tc->parent;
+           }
+         break;
+      case TERM_CONTAINER_TYPE_SPLIT:
+           {
+              Split *split;
+
+              split = (Split*)tc->parent;
+              _tab_drag->is_horizontal = split->is_horizontal;
+              if ((_tab_drag->is_first_child = (split->tc1 == tc)))
+                _tab_drag->other = split->tc2;
+              else
+                _tab_drag->other = split->tc1;
+           }
+         break;
+      default:
+         ERR("invalid parent type:%d", tc->parent->type);
+         abort();
+     }
+
+
+}
+
+static void
+_tab_drag_free(void)
+{
+   if (!_tab_drag)
+     return;
+
+   if (_tab_drag->parent_type != TERM_CONTAINER_TYPE_UNKNOWN)
+     _tab_drag_rollback();
+
+   _tab_drag_disable_anim_over();
+   for_each_term_do(_tab_drag->term->wn, &_term_hdrag_on, NULL);
+
+   ecore_timer_del(_tab_drag->timer);
+   _tab_drag->timer = NULL;
+
+   evas_object_del(_tab_drag->icon);
+
+   term_unref(_tab_drag->term);
+   free(_tab_drag);
+   _tab_drag = NULL;
 }
 
 static void
@@ -3399,57 +3646,6 @@ _tab_drag_reinsert(Term *term, double mid)
    _term_on_horizontal_drag(term, NULL, NULL, NULL);
    /* In case there is no drag, need to recompute to something valid */
    _tabs_recompute_drag(tabs);
-}
-
-static void
-_tabs_attach(Term_Container *tc, Term_Container *tc_new)
-{
-   Tabs *tabs;
-   Tab_Item *tab_item;
-   Evas_Object *o;
-   Evas_Coord x, y, w, h;
-   Term_Container *tc_old, *tc_parent;
-
-   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
-   assert (tc_new->type == TERM_CONTAINER_TYPE_SOLO);
-
-   tabs = (Tabs*) tc;
-
-   tc_new->parent = tc;
-   tab_item = tab_item_new(tabs, tc_new);
-
-   tc_parent = tc->parent;
-   tc_old = tabs->current->tc;
-   tc_old->unfocus(tc_old, tc);
-   o = tc_old->get_evas_object(tc_old);
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   evas_object_hide(o);
-   o = tc_new->get_evas_object(tc_new);
-   evas_object_geometry_set(o, x, y, w, h);
-   evas_object_show(o);
-
-   tc->swallow(tc, tc_old, tc_new);
-   tabs->current = tab_item;
-
-   /* XXX: need to refresh parent */
-   tc_parent->swallow(tc_parent, tc, tc);
-
-   if (tc->is_focused)
-     tc_new->focus(tc_new, tc);
-   else
-     tc_new->unfocus(tc_new, tc);
-}
-
-static void
-_solo_attach(Term_Container *tc, Term_Container *tc_to_add)
-{
-   assert(tc->type == TERM_CONTAINER_TYPE_SOLO);
-   assert(tc_to_add->type == TERM_CONTAINER_TYPE_SOLO);
-
-   if (tc->parent->type != TERM_CONTAINER_TYPE_TABS)
-     _tabs_new(tc, tc->parent);
-
-   _tabs_attach(tc->parent, tc_to_add);
 }
 
 static void
@@ -3735,146 +3931,6 @@ _tabs_mouse_down(
                                       _tab_drag_start, NULL);
 }
 
-
-static Evas_Object*
-_tab_inactive_get_or_create(Evas *canvas,
-                            Term *term,
-                            Tab_Item *tab_item)
-{
-   Evas_Object *o;
-   Evas_Coord w, h;
-
-   if (term->tab_inactive)
-     {
-        o = term->tab_inactive;
-        goto created;
-     }
-
-   term->tab_inactive = o = edje_object_add(canvas);
-
-   theme_apply(o, term->config, "terminology/tabbar_back");
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   edje_object_size_min_calc(o, &w, &h);
-   evas_object_size_hint_min_set(o, w, h);
-   evas_object_data_set(o, "term", term);
-
-created:
-   edje_object_signal_callback_add(o, "tab,activate", "terminology",
-                                   _cb_tab_activate, tab_item);
-
-   if (term->missed_bell)
-     edje_object_signal_emit(o, "bell", "terminology");
-   else
-     edje_object_signal_emit(o, "bell,off", "terminology");
-   edje_object_part_text_set(o, "terminology.title",
-                             tab_item->tc->title);
-   return o;
-}
-
-static void
-_tabs_get_or_create_boxes(Term *term, Term *src)
-{
-   Evas_Object *o;
-
-   assert(term->tabbar.l.box == NULL);
-   assert(term->tabbar.r.box == NULL);
-
-   /* Left */
-   if (src && src->tabbar.l.box)
-     {
-        term->tabbar.l.box = o = src->tabbar.l.box;
-        elm_box_unpack_all(term->tabbar.l.box);
-        src->tabbar.l.box = NULL;
-     }
-   else
-     {
-        term->tabbar.l.box = o = elm_box_add(term->bg);
-        elm_box_horizontal_set(o, EINA_TRUE);
-        elm_box_homogeneous_set(o, EINA_TRUE);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-   elm_layout_content_set(term->bg, "terminology.tabl.content", o);
-   evas_object_show(o);
-
-   /* Right */
-   if (src && src->tabbar.r.box)
-     {
-        term->tabbar.r.box = o = src->tabbar.r.box;
-        elm_box_unpack_all(term->tabbar.r.box);
-        src->tabbar.r.box = NULL;
-     }
-   else
-     {
-        term->tabbar.r.box = o = elm_box_add(term->bg);
-        elm_box_horizontal_set(o, EINA_TRUE);
-        elm_box_homogeneous_set(o, EINA_TRUE);
-        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-   elm_layout_content_set(term->bg, "terminology.tabr.content", o);
-   evas_object_show(o);
-}
-
-static void
-_tabs_set_main_tab(Term *term,
-                   Tab_Item *tab_item)
-{
-   if (!term->tab_spacer)
-     {
-        Evas_Coord w = 0, h = 0;
-        Evas *canvas = evas_object_evas_get(term->bg);
-
-        term->tab_spacer = evas_object_rectangle_add(canvas);
-        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
-        elm_coords_finger_size_adjust(1, &w, 1, &h);
-        evas_object_size_hint_min_set(term->tab_spacer, w, h);
-        elm_layout_content_set(term->bg, "terminology.tab", term->tab_spacer);
-     }
-   evas_object_show(term->tab_spacer);
-   elm_layout_text_set(term->bg, "terminology.tab.title", tab_item->tc->title);
-   elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
-   elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
-   edje_object_message_signal_process(term->bg_edj);
-}
-
-static void
-_tabbar_fill(Tabs *tabs)
-{
-   Eina_List *l;
-   Eina_Bool after_current = EINA_FALSE;
-   Tab_Item *tab_item;
-   Term *main_term = _tab_item_to_term(tabs->current);
-   Evas *canvas = evas_object_evas_get(main_term->bg);
-
-   EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
-     {
-        Term *term = _tab_item_to_term(tab_item);
-
-        if (tab_item == tabs->current)
-          {
-             _tabs_set_main_tab(term, tab_item);
-             assert(main_term == term);
-             evas_object_hide(term->tab_inactive);
-             after_current = EINA_TRUE;
-          }
-        else
-          {
-             Evas_Object *o;
-
-             _tabbar_clear(term);
-
-             o = _tab_inactive_get_or_create(canvas, term, tab_item);
-             evas_object_show(o);
-             if (after_current)
-               elm_box_pack_end(main_term->tabbar.r.box, o);
-             else
-               elm_box_pack_end(main_term->tabbar.l.box, o);
-          }
-     }
-   _tabs_recompute_drag(tabs);
-}
 
 Eina_Bool
 term_tab_go(Term *term, int tnum)
@@ -4241,6 +4297,8 @@ _tabs_close(Term_Container *tc, Term_Container *child)
    Term_Container *next_child, *tc_parent;
    Term *term;
    Solo *solo;
+
+   /* TODO: figure out whether to move position if tab_drag */
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*)tc;
