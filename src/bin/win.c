@@ -1260,8 +1260,15 @@ _win_close(Term_Container *tc,
 {
    Win *wn;
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
-
    wn = (Win*) tc;
+
+   DBG("win close");
+   if (_tab_drag && _tab_drag->term && (_tab_drag->term->wn == wn))
+     {
+        _tab_drag->parent_type = TERM_CONTAINER_TYPE_WIN;
+        _tab_drag_free();
+        return;
+     }
    eina_stringshare_del(tc->title);
    win_free(wn);
 }
@@ -3492,6 +3499,20 @@ _tabs_get_or_create_boxes(Term *term, Term *src)
    evas_object_show(o);
 }
 
+static void
+_tab_drag_rollback_win(void)
+{
+   Term *term = _tab_drag->term;
+   Win *wn = term->wn;
+   Term_Container *tc_win = (Term_Container*)wn;
+   Term_Container *tc = term->container;
+
+   tc_win->swallow(tc_win, NULL, tc);
+   tc_win->unfocus(tc_win, NULL);
+   tc->focus(tc, NULL);
+
+   _tab_drag_reparented();
+}
 
 static void
 _tab_drag_rollback_tabs(void)
@@ -3577,8 +3598,7 @@ _tab_drag_rollback(void)
          _tab_drag_rollback_split();
          break;
       case TERM_CONTAINER_TYPE_WIN:
-         ERR("rollback win");
-         abort();
+         _tab_drag_rollback_win();
          break;
       default:
          ERR("invalid parent type:%d", _tab_drag->parent_type);
