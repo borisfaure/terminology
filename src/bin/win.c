@@ -232,6 +232,57 @@ static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
 
 /* }}} */
+/* {{{ Utils */
+#ifndef NDEBUG
+static void
+_focus_validator(void)
+{
+   Win *wn;
+   Term *term;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(wins, l, wn)
+     {
+        Eina_Bool focused_found = EINA_FALSE;
+
+        if (wn->group_input)
+          continue;
+
+        EINA_LIST_FOREACH(wn->terms, ll, term)
+          {
+             Term_Container *tc = term->container;
+
+             if (focused_found)
+               {
+                  assert(!tc->is_focused);
+               }
+             else
+               {
+                  if (tc->is_focused)
+                    {
+                       Term *term_focused;
+
+                       focused_found = EINA_TRUE;
+                       do
+                         {
+                            assert (tc->is_focused);
+                            tc = tc->parent;
+                         }
+                       while (tc->type != TERM_CONTAINER_TYPE_WIN);
+                       assert (tc->is_focused);
+                       term_focused = tc->focused_term_get(tc);
+                       assert(term_focused == term);
+                    }
+               }
+          }
+     }
+}
+#else
+static void
+_focus_validator(void)
+{}
+#endif
+/* }}} */
 /* {{{ Scale */
 static void
 _scale_round(void *data       EINA_UNUSED,
@@ -390,13 +441,18 @@ _solo_get_evas_object(const Term_Container *tc)
 }
 
 static Term *
-_solo_focused_term_get(const Term_Container *container)
+_solo_focused_term_get(const Term_Container *tc)
 {
    Solo *solo;
-   assert (container->type == TERM_CONTAINER_TYPE_SOLO);
-   solo = (Solo*)container;
+   Term *term = NULL;
 
-   return container->is_focused ? solo->term : NULL;
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*)tc;
+
+   if (tc->is_focused)
+     term = solo->term;
+   DBG("%p term focused:%p", tc, term);
+   return term;
 }
 
 static Term *
@@ -695,7 +751,7 @@ _solo_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
 }
 
 static void
-_solo_title_show(Term_Container *tc)
+_solo_tab_show(Term_Container *tc)
 {
    Solo *solo;
    Term *term;
@@ -703,6 +759,7 @@ _solo_title_show(Term_Container *tc)
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*) tc;
    term = solo->term;
+   DBG("tab show tc:%p", tc);
 
    if (!term->tab_spacer)
      {
@@ -732,11 +789,12 @@ _solo_title_show(Term_Container *tc)
 }
 
 static void
-_solo_title_hide(Term_Container *tc)
+_solo_tab_hide(Term_Container *tc)
 {
    Solo *solo;
    Term *term;
 
+   DBG("title hide tc:%p", tc);
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*) tc;
    term = solo->term;
@@ -765,9 +823,9 @@ _solo_update(Term_Container *tc)
    if (tc_parent->type == TERM_CONTAINER_TYPE_SPLIT)
      {
         if (term->config->show_tabs)
-          _solo_title_show(tc);
+          _solo_tab_show(tc);
         else
-          _solo_title_hide(tc);
+          _solo_tab_hide(tc);
      }
 }
 
@@ -1186,11 +1244,16 @@ static Term *
 _win_focused_term_get(const Term_Container *tc)
 {
    Win *wn;
+   Term *term = NULL;
+
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
 
-   return tc->is_focused ? wn->child->focused_term_get(wn->child) : NULL;
+   if (tc->is_focused)
+     term = wn->child->focused_term_get(wn->child);
+   DBG("%p term focused:%p", tc, term);
+   return term;
 }
 
 static Term *
@@ -1240,8 +1303,10 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    if ((new_child->type == TERM_CONTAINER_TYPE_SOLO)
        && (wn->config->show_tabs))
      {
-        /* TODO: boris show tab tab_drag */
-        _solo_title_hide(new_child);
+        if (_tab_drag && _tab_drag->term && (_tab_drag->term->wn == wn))
+          _solo_tab_show(new_child);
+        else
+          _solo_tab_hide(new_child);
      }
 
    evas_object_show(o);
@@ -1434,9 +1499,9 @@ _win_split(Term_Container *tc, Term_Container *child,
           {
              if (child->type == TERM_CONTAINER_TYPE_SOLO)
                {
-                  _solo_title_show(child);
+                  _solo_tab_show(child);
                }
-             _solo_title_show(tc_solo_new);
+             _solo_tab_show(tc_solo_new);
           }
 
         child->unfocus(child, tc_split);
@@ -1489,9 +1554,9 @@ _win_split_direction(Term_Container *tc,
      {
         if (child_orig->type == TERM_CONTAINER_TYPE_SOLO)
           {
-             _solo_title_show(child_orig);
+             _solo_tab_show(child_orig);
           }
-        _solo_title_show(child_new);
+        _solo_tab_show(child_new);
      }
 
    tc_split->is_focused = tc->is_focused;
@@ -1651,7 +1716,7 @@ _cb_win_key_down(void *data,
 
    DBG("GROUP key down (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
-
+   _focus_validator();
    if ((wn->on_popover) || (wn->cmdbox_up)) return;
 
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
@@ -1666,6 +1731,7 @@ _cb_win_key_down(void *data,
        ctrl, alt, shift, win, meta, hyper);
 
    /* 1st/ Tab selector */
+   DBG("1> tab selector");
      {
         Term_Container *tc = (Term_Container*) wn;
 
@@ -1691,6 +1757,7 @@ _cb_win_key_down(void *data,
      }
 
    /* 2nd/ Miniview */
+   DBG("2> miniview");
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1706,7 +1773,10 @@ _cb_win_key_down(void *data,
 
         term = tc->focused_term_get(tc);
         if (!term)
-          return;
+          {
+             DBG("no focused term");
+             return;
+          }
         done = miniview_handle_key(term_miniview_get(term), ev);
      }
    if (done)
@@ -1717,6 +1787,7 @@ _cb_win_key_down(void *data,
 
 
    /* 3rd/ PopMedia */
+   DBG("3> popmedia");
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1735,7 +1806,10 @@ _cb_win_key_down(void *data,
 
         term = tc->focused_term_get(tc);
         if (!term)
-          return;
+          {
+             DBG("no focused term");
+             return;
+          }
         if (term_has_popmedia(term) && !strcmp(ev->key, "Escape"))
           {
              term_popmedia_close(term);
@@ -1749,6 +1823,7 @@ _cb_win_key_down(void *data,
      }
 
    /* 4th/ Handle key bindings */
+   DBG("4> key binding");
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1780,6 +1855,7 @@ _cb_win_key_down(void *data,
 
    /* 5th/ Composing */
    /* composing */
+   DBG("5> composing");
    if (wn->khdl.imf)
      {
         // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
@@ -1860,6 +1936,7 @@ _cb_win_key_down(void *data,
      }
 
    /* 6th/ send key to pty */
+   DBG("6> to pty");
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1872,12 +1949,15 @@ _cb_win_key_down(void *data,
    else
      {
         ty = termio_pty_get(term->termio);
+        DBG("ty:%p", ty);
         if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
           keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
      }
 
    /* 7th: specifics: jump on keypress / flicker on key */
+   DBG("7> specifics");
 end:
+   DBG("term:%p", term);
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -2530,13 +2610,15 @@ static Term *
 _split_focused_term_get(const Term_Container *tc)
 {
    Split *split;
+   Term *term = NULL;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split*) tc;
 
-   return tc->is_focused ?
-      split->last_focus->focused_term_get(split->last_focus)
-      : NULL;
+   if (tc->is_focused)
+      term = split->last_focus->focused_term_get(split->last_focus);
+   DBG("%p term focused:%p", tc, term);
+   return term;
 }
 
 static Term *
@@ -2735,20 +2817,22 @@ _split_split(Term_Container *tc, Term_Container *child,
    else
      elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
+   child->unfocus(child, tc);
    tc_split = _split_new(child, tc_solo_new, is_horizontal);
 
    obj_split = tc_split->get_evas_object(tc_split);
 
-   tc_split->focus(tc_split, tc_solo_new);
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, child, tc_split);
+   tc_solo_new->focus(tc_solo_new, tc_split);
 
    if (wn->config->show_tabs)
      {
-        _solo_title_show(tc_solo_new);
+        _solo_tab_show(tc_solo_new);
      }
 
    evas_object_show(obj_split);
+   _focus_validator();
 }
 
 static int
@@ -2797,9 +2881,9 @@ _split_split_direction(Term_Container *tc,
      {
         if (child_orig->type == TERM_CONTAINER_TYPE_SOLO)
           {
-             _solo_title_show(child_orig);
+             _solo_tab_show(child_orig);
           }
-        _solo_title_show(child_new);
+        _solo_tab_show(child_new);
      }
 
    tc_split->is_focused = tc->is_focused;
@@ -2823,11 +2907,15 @@ _split_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
 static void
 _split_detach(Term_Container *tc, Term_Container *solo_child)
 {
+   Evas_Object *o;
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
 
    _split_close(tc, solo_child);
    solo_child->is_focused = EINA_FALSE;
+
+   o = solo_child->get_evas_object(solo_child);
+   evas_object_hide(o);
 }
 
 static Term_Container *
@@ -2843,6 +2931,8 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
         free(split);
         return NULL;
      }
+
+   DBG("split new %p 1:%p 2:%p", split, tc1, tc2);
 
    tc = (Term_Container*)split;
    tc->term_next = _split_term_next;
@@ -2879,7 +2969,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
 
    split->tc1 = tc1;
    split->tc2 = tc2;
-   split->last_focus = tc1;
+   split->last_focus = tc2;
 
    o = split->panes = elm_panes_add(tc1->wn->win);
    elm_object_style_set(o, "flush");
@@ -4393,6 +4483,8 @@ _tabs_close(Term_Container *tc, Term_Container *child)
         assert (next_child->type == TERM_CONTAINER_TYPE_SOLO);
         next_solo = (Solo*)next_child;
         next_term = next_solo->term;
+        assert(next_term != term);
+        assert(tc != next_child);
         config = next_term->config;
 
         _tabbar_clear(term);
@@ -4413,7 +4505,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
           _tabs_restore(tabs);
 
         if (config->show_tabs)
-          _solo_title_show(next_child);
+          _solo_tab_show(next_child);
 
         eina_stringshare_del(tc->title);
 
@@ -4425,6 +4517,7 @@ _tabs_close(Term_Container *tc, Term_Container *child)
             && (_tab_drag->tabs_child == tc))
           {
              _tab_drag->tabs_child = next_child;
+             _solo_tab_show(next_child);
           }
 
         _tab_item_free(item);
@@ -5104,11 +5197,15 @@ _tabs_is_visible(Term_Container *tc, Term_Container *child)
 static void
 _tabs_detach(Term_Container *tc, Term_Container *solo_child)
 {
+   Evas_Object *o;
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    assert (solo_child->type == TERM_CONTAINER_TYPE_SOLO);
 
    _tabs_close(tc, solo_child);
    solo_child->is_focused = EINA_FALSE;
+
+   o = solo_child->get_evas_object(solo_child);
+   evas_object_hide(o);
 }
 
 static Term_Container *
