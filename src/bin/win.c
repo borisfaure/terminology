@@ -152,7 +152,6 @@ struct _Tabs {
      Tab_Item *current;
      double v1_orig;
      double v2_orig;
-     double hysteresis_step;
 };
 
 struct _Split
@@ -2940,7 +2939,6 @@ _tabs_recompute_drag(Tabs *tabs)
      {
         v1 = (double)(idx) / (double)n;
         v2 = (double)(idx+1) / (double)n;
-        tabs->hysteresis_step = 0.67 / (double)n;
      }
    tabs->v1_orig = v1;
    tabs->v2_orig = v2;
@@ -2999,7 +2997,7 @@ _term_on_horizontal_drag(void *data,
    Term_Container *tc = term->container;
    Term_Container *tc_parent = tc->parent;
    Term *term_moved;
-   double v1, v2;
+   double v1, v2, m;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    if (tc->parent->type != TERM_CONTAINER_TYPE_TABS)
@@ -3031,9 +3029,9 @@ _term_on_horizontal_drag(void *data,
                                    &v1, NULL);
    edje_object_part_drag_value_get(term->bg_edj, "terminology.tabr",
                                    &v2, NULL);
+   m = 1.2 / ((double)(2 * n)); /* 1.2, to have some sense of hysteresis */
    while ((tab_active_idx < n - 1) &&
-       ((v2 > tabs->v2_orig + tabs->hysteresis_step) ||
-        (v2 > 1.0 - tabs->hysteresis_step) ||
+       ((v2 > (tabs->v2_orig + m)) ||
         ((v1 == v2) && (v2 > tabs->v2_orig))))
      {
         /* To the right */
@@ -3054,9 +3052,7 @@ _term_on_horizontal_drag(void *data,
           return;
      }
    while ((tab_active_idx > 0) &&
-       ((v1 < tabs->v1_orig - tabs->hysteresis_step) ||
-        (v1 < tabs->hysteresis_step) ||
-        (v2 >= tabs->v2_orig) ||
+       ((v1 < tabs->v1_orig - m) ||
         ((v1 == v2) && v1 < tabs->v1_orig)))
      {
         /* To the left */
@@ -5085,7 +5081,6 @@ term_is_focused(Term *term)
    if (!tc)
      return EINA_FALSE;
 
-   DBG("tc:%p tc->is_focused:%d", tc, tc->is_focused);
    return tc->is_focused;
 }
 
