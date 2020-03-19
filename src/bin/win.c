@@ -3011,6 +3011,8 @@ _term_on_horizontal_drag(void *data,
 
    tabs = (Tabs*) tc_parent;
    n = eina_list_count(tabs->tabs);
+   if (n <= 1)
+     return;
 
    tab_item = tabs->current;
 
