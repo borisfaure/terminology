@@ -209,3 +209,19 @@ __TODO__
 
 # `terminology/mediactrl`
 __TODO__
+
+
+
+# `terminology/tab_drag_thumb`
+A thumbnail of a tab being dragged.
+
+## Swallowed parts
+### `terminology.content`
+Here is swallowed an object of group `terminology.background`.
+
+### `terminology.title`
+Title of the tab.
+
+## Signal received
+### `bell`
+To mark the tab as having missed a bell.

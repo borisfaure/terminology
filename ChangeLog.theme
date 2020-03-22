@@ -4,6 +4,8 @@ Terminology 1.7.0
 
 Changes since 1.6.0:
 --------------------
+  * Add group "terminology/tab_drag_thumb", used to have a thumbnail of a
+  terminal being dragged.
   * In group "terminology/tabbar_back", add signal "bell,off" from "terminology"
   to unmark a tab as having missed the bell.
   * In group "terminology/background", add signals "hdrag,on" (default) and
