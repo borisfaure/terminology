@@ -23,6 +23,7 @@ default_deps = [
   'default/icon.edc',
   'default/about.edc',
   'default/fontpreview.edc',
+  'default/tab_drag_thumb.edc',
   ]
 mild_deps = ['mild.edc', 'default/colors.edc']
 edje_to_compile = [
