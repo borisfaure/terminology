@@ -190,7 +190,7 @@ group { name: "terminology/sel/item";
       part { name: "base"; type: RECT;
          clip_to: "clip";
          description { state: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "BG";
             rel1.to: "terminology.content";
             rel2.to: "terminology.content";
          }
