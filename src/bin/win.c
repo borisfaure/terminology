@@ -3853,6 +3853,7 @@ _tab_drag_stop(void)
    evas_object_image_source_visible_set(_tab_drag->img, EINA_TRUE);
    elm_layout_content_unset(_tab_drag->icon, "terminology.content");
    elm_layout_content_set(term->bg, "terminology.content", term->core);
+   elm_object_cursor_unset(term->bg);
    term->unswallowed = EINA_FALSE;
    evas_object_show(term->core);
 
@@ -4063,6 +4064,7 @@ _tab_drag_start(void *data EINA_UNUSED)
    evas_object_resize(o, w, h);
    evas_object_move(o, x + off_x, y + off_y);
    evas_object_raise(o);
+   elm_object_cursor_set(term->bg, "hand2");
    evas_object_show(o);
 
    _tab_drag_save_state(tc);
