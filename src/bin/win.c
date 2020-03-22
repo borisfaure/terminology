@@ -82,6 +82,7 @@ struct _Tab_Drag
    Term *term_over;
    Term *term;
    Evas_Object *icon;
+   Evas_Object *img;
    Evas *e;
    Ecore_Timer *timer;
    /* To be able to restore */
@@ -649,6 +650,10 @@ _solo_bell(Term_Container *tc,
           {
              elm_layout_signal_emit(term->bg, "bell,ring", "terminology");
              elm_layout_signal_emit(term->core, "bell,ring", "terminology");
+          }
+        if ((_tab_drag != NULL) && (_tab_drag->term == term))
+          {
+             elm_layout_signal_emit(_tab_drag->icon, "bell", "terminology");
           }
      }
    if ((term->missed_bell) && (term->config->show_tabs)
@@ -2916,6 +2921,7 @@ _split_detach(Term_Container *tc, Term_Container *solo_child)
 
    o = solo_child->get_evas_object(solo_child);
    evas_object_hide(o);
+   solo_child->parent = (Term_Container*) solo_child->wn;
 }
 
 static Term_Container *
@@ -3678,7 +3684,6 @@ _tab_drag_rollback_tabs(void)
 static void
 _tab_drag_rollback(void)
 {
-
    switch (_tab_drag->parent_type)
      {
       case TERM_CONTAINER_TYPE_TABS:
@@ -3756,6 +3761,9 @@ _tab_drag_free(void)
    _tab_drag->timer = NULL;
 
    evas_object_del(_tab_drag->icon);
+   _tab_drag->icon = NULL;
+   evas_object_del(_tab_drag->img);
+   _tab_drag->img = NULL;
 
    term_unref(_tab_drag->term);
    free(_tab_drag);
@@ -3841,6 +3849,12 @@ _tab_drag_stop(void)
    term_at_coords = tc_wn->find_term_at_coords(tc_wn, mx, my);
    if (!term_at_coords)
      goto end;
+
+   evas_object_image_source_visible_set(_tab_drag->img, EINA_TRUE);
+   elm_layout_content_unset(_tab_drag->icon, "terminology.content");
+   elm_layout_content_set(term->bg, "terminology.content", term->core);
+   term->unswallowed = EINA_FALSE;
+   evas_object_show(term->core);
 
    if (term_at_coords == term)
      {
@@ -4000,10 +4014,12 @@ static Eina_Bool
 _tab_drag_start(void *data EINA_UNUSED)
 {
    /* Start icons animation before actually drag-starts */
-   Evas_Coord x, y, w, h, off_x, off_y;
+   Evas_Coord x, y, w, h, off_x, off_y, ch_w, ch_h, core_w, core_h;
    Term *term = _tab_drag->term;
    Evas_Object *o = elm_layout_add(term->bg);
+   Evas_Object *img;
    Term_Container *tc = term->container;
+   float ratio;
 
    if (!term->container)
      {
@@ -4011,26 +4027,43 @@ _tab_drag_start(void *data EINA_UNUSED)
         return ECORE_CALLBACK_CANCEL;
      }
 
-   /* TODO: Have it's own group and put content inside */
-   theme_apply_elm(o, term->config, "terminology/tabbar_back");
-   elm_layout_text_set(o, "terminology.title",
-                       term->container->title);
-   elm_layout_signal_emit(o, "style,active", "terminology");
-
    for_each_term_do(_tab_drag->term->wn, &_term_hdrag_off, NULL);
 
+   _tab_drag->icon = o;
+   theme_apply_elm(o, term->config, "terminology/tab_drag_thumb");
+   elm_layout_text_set(o, "terminology.title",
+                       term->container->title);
+   elm_layout_content_unset(term->bg, "terminology.content");
+   term->unswallowed = EINA_TRUE;
+   img = evas_object_image_filled_add(evas_object_evas_get(term->core));
+   evas_object_lower(term->core);
+   evas_object_move(term->core, -9999, -9999);
+   evas_object_show(term->core);
+   evas_object_clip_unset(term->core);
+   evas_object_image_source_set(img, term->core);
+   evas_object_geometry_get(term->core, NULL, NULL, &core_w, &core_h);
+   evas_object_resize(img, core_w, core_h);
+   _tab_drag->img = img;
+   elm_layout_content_set(o, "terminology.content", img);
+   evas_object_size_hint_min_get(term->core, &ch_w, &ch_h);
+
    edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
-                                 &x, &y, &w, &h);
+                                 &x, &y, NULL, NULL);
    evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
+   w = ch_w * 10;
+   h = ch_h * 5;
+   ratio = (float) core_w / (float) core_h;
+   if (h * ratio > w)
+     h = w / ratio;
+   else
+     w = h * ratio;
    evas_object_resize(o, w, h);
    evas_object_move(o, x + off_x, y + off_y);
    evas_object_raise(o);
    evas_object_show(o);
-
-   _tab_drag->icon = o;
 
    _tab_drag_save_state(tc);
    tc->parent->detach(tc->parent, tc);
@@ -5206,6 +5239,7 @@ _tabs_detach(Term_Container *tc, Term_Container *solo_child)
 
    o = solo_child->get_evas_object(solo_child);
    evas_object_hide(o);
+   solo_child->parent = (Term_Container*) solo_child->wn;
 }
 
 static Term_Container *

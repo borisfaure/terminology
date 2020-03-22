@@ -31,4 +31,5 @@ collections {
    #include "default/icon.edc"
    #include "default/about.edc"
    #include "default/fontpreview.edc"
+   #include "default/tab_drag_thumb.edc"
 }
