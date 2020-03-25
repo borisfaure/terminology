@@ -3256,6 +3256,10 @@ _tab_drag_disable_anim_over(void)
          elm_layout_signal_emit(_tab_drag->term_over->bg,
                                 "drag_bottom,off", "terminology");
          break;
+      case SPLIT_DIRECTION_TABS:
+         elm_layout_signal_emit(_tab_drag->term_over->bg,
+                                "drag_over_tabs,off", "terminology");
+         break;
       default:
          break;
      }
@@ -3794,7 +3798,7 @@ _tab_drag_reinsert(Term *term, double mid)
 }
 
 static void
-_tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
+_tab_reorg(Term *term, Term *to_term, Evas_Coord mx)
 {
    Term_Container *tc_orig = term->container;
    Term_Container *to_tc = to_term->container;
@@ -3802,19 +3806,13 @@ _tab_reorg(Term *term, Term *to_term, Evas_Coord mx, Evas_Coord my)
    assert(tc_orig->type == TERM_CONTAINER_TYPE_SOLO);
    assert(to_tc->type == TERM_CONTAINER_TYPE_SOLO);
 
-   if (_tab_drag->split_direction == SPLIT_DIRECTION_NONE)
+   if (_tab_drag->split_direction == SPLIT_DIRECTION_TABS)
      {
-        Evas_Coord x = 0, y = 0, w = 0, h = 0, off_x = 0, off_y = 0;
+        Evas_Coord x = 0, w = 0;
         double mid;
 
-        /* check whether there is a need to add a tab or fail the drag */
-        evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
-        edje_object_part_geometry_get(term->bg_edj, "tabdrag",
+        edje_object_part_geometry_get(term->bg_edj, "terminology.tabregion",
                                       &x, NULL, &w, NULL);
-        edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
-                                      NULL, &y, NULL, &h);
-        if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
-          return;
 
         mid = (double)(mx - x) / (double)w;
 
@@ -3864,10 +3862,8 @@ _tab_drag_stop(void)
 
         /* Reinsert in same set of Tabs or same "tab" (could be a split) */
         evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
-        edje_object_part_geometry_get(term->bg_edj, "tabdrag",
-                                      &x, NULL, &w, NULL);
-        edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
-                                      NULL, &y, NULL, &h);
+        edje_object_part_geometry_get(term->bg_edj, "terminology.tabregion",
+                                      &x, &y, &w, &h);
         if (!ELM_RECTS_INTERSECT(x,y,w,h, mx,my,1,1))
           goto end;
 
@@ -3875,10 +3871,10 @@ _tab_drag_stop(void)
         _tab_drag_reparented();
         _tab_drag_reinsert(term, mid);
      }
-   else
+   else if (_tab_drag->split_direction != SPLIT_DIRECTION_NONE)
      {
         /* Move to different set of Tabs */
-        _tab_reorg(term, term_at_coords, mx, my);
+        _tab_reorg(term, term_at_coords, mx);
      }
 
 end:
@@ -3946,6 +3942,15 @@ _tabs_drag_mouse_move(
    if (!term_at_coords)
      return;
    evas_object_geometry_get(term_at_coords->bg_edj, &off_x, &off_y, NULL, NULL);
+
+   edje_object_part_geometry_get(term_at_coords->bg_edj, "terminology.tabregion",
+                                 &x, &y, &w, &h);
+   if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
+     {
+        split_direction = SPLIT_DIRECTION_TABS;
+        goto found;
+     }
+
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_left_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
@@ -3953,6 +3958,7 @@ _tabs_drag_mouse_move(
         split_direction = SPLIT_DIRECTION_LEFT;
         goto found;
      }
+
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_right_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
@@ -3960,6 +3966,7 @@ _tabs_drag_mouse_move(
         split_direction = SPLIT_DIRECTION_RIGHT;
         goto found;
      }
+
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_top_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
@@ -3967,6 +3974,7 @@ _tabs_drag_mouse_move(
         split_direction = SPLIT_DIRECTION_TOP;
         goto found;
      }
+
    edje_object_part_geometry_get(term_at_coords->bg_edj, "drag_bottom_outline",
                                  &x, &y, &w, &h);
    if (ELM_RECTS_INTERSECT(x+off_x, y+off_y, w, h, mx, my, 1, 1))
@@ -3974,7 +3982,8 @@ _tabs_drag_mouse_move(
         split_direction = SPLIT_DIRECTION_BOTTOM;
         goto found;
      }
-   found:
+
+found:
    if ((_tab_drag->term_over != NULL) &&
        ((_tab_drag->term_over != term_at_coords) ||
         (_tab_drag->split_direction != split_direction)))
@@ -4003,6 +4012,9 @@ _tabs_drag_mouse_move(
               elm_layout_signal_emit(term_at_coords->bg,
                                      "drag_bottom,on", "terminology");
               break;
+           case SPLIT_DIRECTION_TABS:
+              elm_layout_signal_emit(term_at_coords->bg,
+                                     "drag_over_tabs,on", "terminology");
            default:
               break;
           }

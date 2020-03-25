@@ -33,6 +33,7 @@ typedef enum _Split_Direction {
      SPLIT_DIRECTION_RIGHT,
      SPLIT_DIRECTION_TOP,
      SPLIT_DIRECTION_BOTTOM,
+     SPLIT_DIRECTION_TABS,
 } Split_Direction;
 
 struct _Term_Container {
