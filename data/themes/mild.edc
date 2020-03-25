@@ -919,6 +919,46 @@ collections {
             description { state: "hdrag,off" 0.0;
                inherit: "default" 0.0;
             }
+            description { state: "drag_over" 0.0;
+               inherit: "default" 0.0;
+               rel1.relative: 0.2 0.0;
+               rel2.to_x: "terminology.tabregion";
+               rel2.relative: 0.8 0.0;
+            }
+         }
+         program {
+            name: "drag_over_tabs,on";
+            signal: "drag_over_tabs,on"; source: "terminology";
+            action: STATE_SET "drag_over" 0.0;
+            target: "tabdrag";
+            after: "drag_over_tabs,pulse";
+         }
+         program {
+            name: "drag_over_tabs,pulse";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.6;
+            target: "tabdrag";
+            after: "drag_over_tabs,pulse2";
+         }
+         program {
+            name: "drag_over_tabs,pulse2";
+            transition: ACCELERATE 0.6;
+            action: STATE_SET "drag_over" 0.0;
+            target: "tabdrag";
+            after: "drag_over_tabs,pulse";
+         }
+         program {
+            signal: "drag_over_tabs,off"; source: "terminology";
+            action: ACTION_STOP;
+            target: "drag_over_tabs,on";
+            target: "drag_over_tabs,pulse";
+            target: "drag_over_tabs,pulse2";
+            after: "drag_over_tabs,off2";
+         }
+         program {
+            name: "drag_over_tabs,off2";
+            action: STATE_SET "default" 0.0;
+            target: "tabdrag";
          }
          program {
             signal: "hdrag,on"; source: "terminology";
@@ -962,7 +1002,7 @@ collections {
             dragable.confine: "tabdrag";
             description { state: "default" 0.0;
                rel2.relative: 0.0 0.0;
-               rel2.to_x: "terminology.tab_btn";
+               rel2.to_x: "tabdrag";
                max: 1 1;
                fixed: 1 1;
             }
