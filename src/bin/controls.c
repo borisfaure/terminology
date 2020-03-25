@@ -101,6 +101,7 @@ _cb_ct_new(void *data,
            void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   controls_hide(ctx, EINA_TRUE);
    main_new(ctx->term);
 }
 
@@ -110,6 +111,7 @@ _cb_ct_split_v(void *data,
                void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   controls_hide(ctx, EINA_TRUE);
    split_vertically(ctx->win, ctx->term, NULL);
 }
 
@@ -119,6 +121,7 @@ _cb_ct_split_h(void *data,
                void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   controls_hide(ctx, EINA_TRUE);
    split_horizontally(ctx->win, ctx->term, NULL);
 }
 
