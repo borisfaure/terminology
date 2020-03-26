@@ -29,6 +29,8 @@ group { name: "terminology/background";
       image: "tab_shad_r1.png" COMP;
       image: "media_busy_knob.png" COMP;
       image: "media_busy_spinner.png" COMP;
+      image: "icon_split_h.png" COMP;
+      image: "icon_split_v.png" COMP;
    }
    set { name: "bg_shadow";
       image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
@@ -1416,15 +1418,19 @@ group { name: "terminology/background";
          target: "drag_left_pulse";
          target: "drag_left_outline";
          target: "drag_left_glow";
+         target: "drag_left_icon";
          target: "drag_right_pulse";
          target: "drag_right_outline";
          target: "drag_right_glow";
+         target: "drag_right_icon";
          target: "drag_top_pulse";
          target: "drag_top_outline";
          target: "drag_top_glow";
+         target: "drag_top_icon";
          target: "drag_bottom_pulse";
          target: "drag_bottom_outline";
          target: "drag_bottom_glow";
+         target: "drag_bottom_icon";
       }
       program {
          signal: "hdrag,off"; source: "terminology";
@@ -1433,15 +1439,19 @@ group { name: "terminology/background";
          target: "drag_left_pulse";
          target: "drag_left_outline";
          target: "drag_left_glow";
+         target: "drag_left_icon";
          target: "drag_right_pulse";
          target: "drag_right_outline";
          target: "drag_right_glow";
+         target: "drag_right_icon";
          target: "drag_top_pulse";
          target: "drag_top_outline";
+         target: "drag_top_icon";
          target: "drag_top_glow";
          target: "drag_bottom_pulse";
          target: "drag_bottom_outline";
          target: "drag_bottom_glow";
+         target: "drag_bottom_icon";
       }
       // left boundary of the active tab (dragable 0.0 -> 1.0)
       part { name: "terminology.tabl"; type: SPACER;
@@ -1826,7 +1836,7 @@ group { name: "terminology/background";
          target: "bell_strobe";
       }
 
-      #define DRAG_TARGET(DIR, REL_ONE, REL_TWO)                     \
+      #define DRAG_TARGET(DIR, ICON, REL_ONE, REL_TWO)               \
       part { name: "drag_"##DIR##"_pulse";                           \
          mouse_events: 0;                                            \
          description { state: "default" 0.0;                         \
@@ -1878,6 +1888,22 @@ group { name: "terminology/background";
          description { state: "active" 0.0;                          \
             inherit: "default" 0.0;                                  \
             color: 51 153 255 255;                                   \
+            visible: 1;                                              \
+         }                                                           \
+      }                                                              \
+      part { name: "drag_"##DIR##"_icon";                            \
+         description { state: "default" 0.0;                         \
+            aspect: 1.0 1.0; aspect_preference: BOTH;                \
+            align: 0.5 0.5;                                          \
+            rel1.to: "drag_"##DIR##"_outline";                       \
+            rel2.to: "drag_"##DIR##"_outline";                       \
+            min: 10 10;                                              \
+            max: 80 80;                                              \
+            image.normal: "icon_split_"##ICON##".png";               \
+            visible: 0;                                              \
+         }                                                           \
+         description { state: "hdrag,off" 0.0;                       \
+            inherit: "default" 0.0;                                  \
             visible: 1;                                              \
          }                                                           \
       }                                                              \
@@ -1956,10 +1982,10 @@ group { name: "terminology/background";
          target: "drag_"##DIR##"_outline";                           \
       }
 
-      DRAG_TARGET(left, 0.0 0.2, 0.15 0.8)
-      DRAG_TARGET(right, 0.85 0.2, 1.0 0.8)
-      DRAG_TARGET(top, 0.2 0.0, 0.8 0.2)
-      DRAG_TARGET(bottom, 0.2 0.8, 0.8 1.0)
+      DRAG_TARGET(left, v, 0.0 0.2, 0.15 0.8)
+      DRAG_TARGET(right, v, 0.85 0.2, 1.0 0.8)
+      DRAG_TARGET(top, h, 0.2 0.0, 0.8 0.2)
+      DRAG_TARGET(bottom, h, 0.2 0.8, 0.8 1.0)
 
       ////////////////////////////////////////////////////////////////////
       // popup media over the terminal (until dismissed)
