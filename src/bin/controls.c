@@ -357,10 +357,11 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Split V"), "object-flip-vertical",
+   o = _button_add(win, _("Split V"), "split-v",
                    _cb_ct_split_v, ctx);
    elm_box_pack_end(ct_box, o);
-   o = _button_add(win, _("Split H"), "object-flip-horizontal",
+
+   o = _button_add(win, _("Split H"), "split-h",
                    _cb_ct_split_h, ctx);
    elm_box_pack_end(ct_box, o);
 
