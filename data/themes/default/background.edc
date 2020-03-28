@@ -1419,18 +1419,22 @@ group { name: "terminology/background";
          target: "drag_left_outline";
          target: "drag_left_glow";
          target: "drag_left_icon";
+         target: "drag_left_rect";
          target: "drag_right_pulse";
          target: "drag_right_outline";
          target: "drag_right_glow";
          target: "drag_right_icon";
+         target: "drag_right_rect";
          target: "drag_top_pulse";
          target: "drag_top_outline";
          target: "drag_top_glow";
          target: "drag_top_icon";
+         target: "drag_top_rect";
          target: "drag_bottom_pulse";
          target: "drag_bottom_outline";
          target: "drag_bottom_glow";
          target: "drag_bottom_icon";
+         target: "drag_bottom_rect";
       }
       program {
          signal: "hdrag,off"; source: "terminology";
@@ -1440,18 +1444,22 @@ group { name: "terminology/background";
          target: "drag_left_outline";
          target: "drag_left_glow";
          target: "drag_left_icon";
+         target: "drag_left_rect";
          target: "drag_right_pulse";
          target: "drag_right_outline";
          target: "drag_right_glow";
          target: "drag_right_icon";
+         target: "drag_right_rect";
          target: "drag_top_pulse";
          target: "drag_top_outline";
          target: "drag_top_icon";
+         target: "drag_top_rect";
          target: "drag_top_glow";
          target: "drag_bottom_pulse";
          target: "drag_bottom_outline";
          target: "drag_bottom_glow";
          target: "drag_bottom_icon";
+         target: "drag_bottom_rect";
       }
       // left boundary of the active tab (dragable 0.0 -> 1.0)
       part { name: "terminology.tabl"; type: SPACER;
@@ -1837,6 +1845,19 @@ group { name: "terminology/background";
       }
 
       #define DRAG_TARGET(DIR, ICON, REL_ONE, REL_TWO)               \
+      part { name: "drag_"##DIR##"_rect";                            \
+         type: RECT;                                                 \
+         description { state: "default" 0.0;                         \
+            rel1.to: "drag_"##DIR##"_outline";                       \
+            rel2.to: "drag_"##DIR##"_outline";                       \
+            color: FG_COLOR_NO_ALPHA 40;                             \
+            visible: 0;                                              \
+         }                                                           \
+         description { state: "hdrag,off" 0.0;                       \
+            inherit: "default" 0.0;                                  \
+            visible: 1;                                              \
+         }                                                           \
+      }                                                              \
       part { name: "drag_"##DIR##"_pulse";                           \
          mouse_events: 0;                                            \
          description { state: "default" 0.0;                         \
