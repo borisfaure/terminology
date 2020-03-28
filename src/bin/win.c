@@ -5164,6 +5164,8 @@ _tabs_recreate(Tabs *tabs)
    // this is all below just for tab bar at the top
    if (term->config->show_tabs)
      {
+        _tabbar_clear(term);
+
         if (!term->tab_spacer)
           {
              term->tab_spacer = evas_object_rectangle_add(evas_object_evas_get(term->bg));
