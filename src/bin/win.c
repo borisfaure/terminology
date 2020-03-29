@@ -262,16 +262,17 @@ _focus_validator(void)
                   if (tc->is_focused)
                     {
                        Term *term_focused;
+                       Term_Container *tc_parent = tc;
 
                        focused_found = EINA_TRUE;
                        do
                          {
-                            assert (tc->is_focused);
-                            tc = tc->parent;
+                            assert (tc_parent->is_focused);
+                            tc_parent = tc_parent->parent;
                          }
-                       while (tc->type != TERM_CONTAINER_TYPE_WIN);
-                       assert (tc->is_focused);
-                       term_focused = tc->focused_term_get(tc);
+                       while (tc_parent->type != TERM_CONTAINER_TYPE_WIN);
+                       assert (tc_parent->is_focused);
+                       term_focused = tc_parent->focused_term_get(tc_parent);
                        assert(term_focused == term);
                     }
                }
@@ -452,7 +453,6 @@ _solo_focused_term_get(const Term_Container *tc)
 
    if (tc->is_focused)
      term = solo->term;
-   DBG("%p term focused:%p", tc, term);
    return term;
 }
 
@@ -746,6 +746,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
    edje_object_message_signal_process(term->bg_edj);
+   _focus_validator();
 }
 
 static Eina_Bool
@@ -1257,7 +1258,6 @@ _win_focused_term_get(const Term_Container *tc)
 
    if (tc->is_focused)
      term = wn->child->focused_term_get(wn->child);
-   DBG("%p term focused:%p", tc, term);
    return term;
 }
 
@@ -1567,7 +1567,7 @@ _win_split_direction(Term_Container *tc,
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, NULL, tc_split);
 
-   child_orig->unfocus(child_orig, tc);
+   child_orig->unfocus(child_orig, tc_split);
    child_new->focus(child_new, tc_split);
 
    return 0;
@@ -3910,6 +3910,7 @@ _term_on_drag_stop(void *data,
         edje_object_part_drag_value_set(term->bg_edj, "terminology.tabr",
                                         tabs->v2_orig, 0.0);
      }
+   _focus_validator();
 }
 
 
@@ -4911,6 +4912,7 @@ _cb_new(void *data,
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
 
    _solo_tabs_new(tc);
+   _focus_validator();
 }
 
 static void
