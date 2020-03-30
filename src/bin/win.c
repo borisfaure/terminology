@@ -725,7 +725,6 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
         tc->parent->focus(tc->parent, tc);
      }
 
-   tc->is_focused = EINA_TRUE;
    if (term->config->disable_focus_visuals)
      {
         elm_layout_signal_emit(term->bg, "focused,set", "terminology");
@@ -746,6 +745,12 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    if (term->missed_bell)
      term->missed_bell = EINA_FALSE;
    edje_object_message_signal_process(term->bg_edj);
+   if (!tc->is_focused && relative != tc->parent)
+     {
+       tc->is_focused = EINA_TRUE;
+       tc->parent->focus(tc->parent, tc);
+     }
+   tc->is_focused = EINA_TRUE;
    _focus_validator();
 }
 
@@ -1352,6 +1357,11 @@ _win_focus(Term_Container *tc, Term_Container *relative)
    wn = (Win*) tc;
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
+
+   if (!tc->is_focused)
+     elm_win_urgent_set(wn->win, EINA_FALSE);
+
+   tc->is_focused = EINA_TRUE;
    if ((relative != wn->child) || (!wn->focused))
      {
         DBG("focus tc:%p", tc);
@@ -1370,10 +1380,6 @@ _win_focus(Term_Container *tc, Term_Container *relative)
                termio_imf_cursor_set(focused->termio, wn->khdl.imf);
           }
      }
-
-   if (!tc->is_focused)
-     elm_win_urgent_set(wn->win, EINA_FALSE);
-   tc->is_focused = EINA_TRUE;
 }
 
 static void
@@ -1553,6 +1559,9 @@ _win_split_direction(Term_Container *tc,
         child1 = child_orig;
         child2 = child_new;
      }
+
+   wn->tc.unfocus(&wn->tc, NULL); /* unfocus from top */
+
    tc_split = _split_new(child1, child2, is_horizontal);
 
    if (wn->config->show_tabs)
@@ -1567,8 +1576,7 @@ _win_split_direction(Term_Container *tc,
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, NULL, tc_split);
 
-   child_orig->unfocus(child_orig, tc_split);
-   child_new->focus(child_new, tc_split);
+   child_new->focus(child_new, NULL); /* refocus from bottom */
 
    return 0;
 }
@@ -2727,8 +2735,10 @@ _split_focus(Term_Container *tc, Term_Container *relative)
           split->last_focus->unfocus(split->last_focus, tc);
         split->last_focus = relative;
         if (!tc->is_focused)
-          tc->parent->focus(tc->parent, tc);
-        tc->is_focused = EINA_TRUE;
+          {
+             tc->is_focused = EINA_TRUE;
+             tc->parent->focus(tc->parent, tc);
+          }
      }
 }
 
@@ -2880,6 +2890,8 @@ _split_split_direction(Term_Container *tc,
    else
      elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
+   wn->tc.unfocus(&wn->tc, NULL); /* unfocus from top */
+
    tc_split = _split_new(child1, child2, is_horizontal);
 
    if (wn->config->show_tabs)
@@ -2894,8 +2906,7 @@ _split_split_direction(Term_Container *tc,
    tc_split->is_focused = tc->is_focused;
    tc->swallow(tc, child_orig, tc_split);
 
-   child_orig->unfocus(child_orig, tc);
-   child_new->focus(child_new, tc_split);
+   child_new->focus(child_new, NULL); /* refocus from bottom */
 
    return 0;
 }
