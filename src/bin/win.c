@@ -244,7 +244,7 @@ _focus_validator(void)
 
    EINA_LIST_FOREACH(wins, l, wn)
      {
-        Eina_Bool focused_found = EINA_FALSE;
+        Term_Container *focused_found = NULL;
 
         if (wn->group_input)
           continue;
@@ -264,7 +264,7 @@ _focus_validator(void)
                        Term *term_focused;
                        Term_Container *tc_parent = tc;
 
-                       focused_found = EINA_TRUE;
+                       focused_found = tc;
                        do
                          {
                             assert (tc_parent->is_focused);
@@ -675,8 +675,8 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
    solo = (Solo*) tc;
    term = solo->term;
 
-   DBG("tc:%p tc->is_focused:%d from_parent:%d",
-       tc, tc->is_focused, tc->parent == relative);
+   DBG("tc:%p tc->is_focused:%d from_parent:%d term:%p",
+       tc, tc->is_focused, tc->parent == relative, term);
    if (!tc->is_focused)
      return;
 
@@ -707,8 +707,8 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
    if (!tc->parent)
      return;
 
-   DBG("tc:%p tc->is_focused:%d from_parent:%d",
-       tc, tc->is_focused, tc->parent == relative);
+   DBG("tc:%p tc->is_focused:%d from_parent:%d term:%p",
+       tc, tc->is_focused, tc->parent == relative, term);
    if (tc->is_focused)
      return;
 
@@ -721,7 +721,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
 
    if (tc->parent != relative)
      {
-        DBG("focus tc:%p", tc);
+        DBG("focus tc:%p term:%p", tc, solo->term);
         tc->parent->focus(tc->parent, tc);
      }
 
