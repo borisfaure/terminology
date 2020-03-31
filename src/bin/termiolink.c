@@ -333,13 +333,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           {
              int old_txtlen = txtlen;
              res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen);
-             if ((res != 0) || (txtlen == 0))
-               {
-                  goback = EINA_FALSE;
-                  goforward = EINA_TRUE;
-                  break;
-               }
-             if (txt[0] != '\\')
+             if ((res != 0) || (txtlen == 0) || (txt[0] != '\\'))
                {
                   ty_sb_lskip(&sb, old_txtlen);
                   goback = EINA_FALSE;
