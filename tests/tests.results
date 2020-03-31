@@ -127,3 +127,4 @@ title_icon_stack_simple.sh 9231de4459dbb52d0ffab6f33fc386a0
 title_icon_stack_unset.sh d2ebe2295eb036d9612209490f8aa7f9
 title_icon_stack_default.sh d2ebe2295eb036d9612209490f8aa7f9
 zero-width-spaces.sh 4bbf6bbaef5f651d27b7593d82650de9
+link_detection_email_surrounded.sh cb14f5c5601c045507220db6b503b1f2
