@@ -114,7 +114,7 @@ link_is_file(const char *str)
 }
 
 static int
-_txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
+_txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp, int *codepointp)
 {
    Termcell *cells = NULL;
    Termcell cell;
@@ -138,12 +138,14 @@ _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
      goto empty;
 
    *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+   *codepointp = cell.codepoint;
 
    return 0;
 
 empty:
         txt[0] = '\0';
         *txtlenp = 0;
+        *codepointp = 0;
    return 0;
 
 bad:
@@ -153,7 +155,8 @@ bad:
 }
 
 static int
-_txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
+_txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
+             int *codepointp)
 {
    Termcell *cells = NULL;
    Termcell cell;
@@ -199,12 +202,14 @@ _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
      goto empty;
 
    *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+   *codepointp = cell.codepoint;
 
    return 0;
 
 empty:
    txt[0] = '\0';
    *txtlenp = 0;
+   *codepointp = 0;
    return 0;
 
 bad:
@@ -214,7 +219,8 @@ bad:
 }
 
 static int
-_txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
+_txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
+             int *codepointp)
 {
    Termcell *cells = NULL;
    Termcell cell;
@@ -263,12 +269,14 @@ _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp)
      goto empty;
 
    *txtlenp = codepoint_to_utf8(cell.codepoint, txt);
+   *codepointp = cell.codepoint;
 
    return 0;
 
 empty:
    txt[0] = '\0';
    *txtlenp = 0;
+   *codepointp = 0;
    return 0;
 
 bad:
@@ -283,7 +291,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
                  int *x1r, int *y1r, int *x2r, int *y2r)
 {
    char *s = NULL;
-   char endmatch = 0;
+   int endmatch1 = 0, endmatch2 = 0;
    int x1, x2, y1, y2, w = 0, h = 0, sc;
    Eina_Bool goback = EINA_TRUE,
              goforward = EINA_FALSE,
@@ -293,6 +301,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
    int res;
    char txt[8];
    int txtlen = 0;
+   int codepoint = 0;
    Eina_Bool was_protocol = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ty, NULL);
@@ -309,9 +318,9 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
    y1 -= sc;
    y2 -= sc;
 
-   res = _txt_at(ty, &x1, &y1, txt, &txtlen);
+   res = _txt_at(ty, &x1, &y1, txt, &txtlen, &codepoint);
    if ((res != 0) || (txtlen == 0)) goto end;
-   if (isspace(txt[0]))
+   if (isspace(codepoint))
      goto end;
    res = ty_sb_add(&sb, txt, txtlen);
    if (res < 0) goto end;
@@ -320,7 +329,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
      {
         int new_x1 = x1, new_y1 = y1;
 
-        res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen);
+        res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen, &codepoint);
         if ((res != 0) || (txtlen == 0))
           {
              goback = EINA_FALSE;
@@ -329,11 +338,11 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           }
         res = ty_sb_prepend(&sb, txt, txtlen);
         if (res < 0) goto end;
-        if (isspace(sb.buf[0]))
+        if (isspace(codepoint))
           {
              int old_txtlen = txtlen;
-             res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen);
-             if ((res != 0) || (txtlen == 0) || (txt[0] != '\\'))
+             res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen, &codepoint);
+             if ((res != 0) || (txtlen == 0) || (codepoint != '\\'))
                {
                   ty_sb_lskip(&sb, old_txtlen);
                   goback = EINA_FALSE;
@@ -341,18 +350,33 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
                   break;
                }
           }
-        switch (sb.buf[0])
+        switch (codepoint)
           {
-           case '"': endmatch = '"'; break;
-           case '\'': endmatch = '\''; break;
-           case '`': endmatch = '`'; break;
-           case '<': endmatch = '>'; break;
-           case '[': endmatch = ']'; break;
-           case '{': endmatch = '}'; break;
-           case '(': endmatch = ')'; break;
-           case '|': endmatch = '|'; break;
+           case '"':  endmatch1 = endmatch2 = '"'; break;
+           case '\'': endmatch1 = endmatch2 = '\''; break;
+           case '`':  endmatch1 = endmatch2 = '`'; break;
+           case '<':  endmatch1 = endmatch2 = '>'; break;
+           case '[':  endmatch1 = endmatch2 = ']'; break;
+           case ']':  endmatch1 = endmatch2 = '['; break;
+           case '{':  endmatch1 = endmatch2 = '}'; break;
+           case '(':  endmatch1 = endmatch2 = ')'; break;
+           case '|':  endmatch1 = endmatch2 = '|'; break;
+           case 0xab:  endmatch1 = endmatch2 = 0xbb; break; // french « »
+           case 0xbb:  endmatch1 = endmatch2 = 0xab; break; // swedish » «
+           case 0x2018:  endmatch1 = endmatch2 = 0x2019; break;  // ‘ ’
+           case 0x201b:  endmatch1 = endmatch2 = 0x2019; break;  // ‛ ’
+           case 0x201c:  endmatch1 = endmatch2 = 0x201d; break;  // “ ”
+           case 0x201e:  endmatch1 = 0x201c; endmatch2 = 0x201d; break;  // „ “”
+           case 0x2039: endmatch1 = endmatch2 = 0x203a; break; // ‹›
+           case 0x27e6:  endmatch1 = endmatch2 = 0x27e7; break; // ⟦ ⟧
+           case 0x27e8:  endmatch1 = endmatch2 = 0x27e9; break; // ⟨ ⟩
+           case 0x2329:  endmatch1 = endmatch2 = 0x232a; break; // 〈 〉
+           case 0x231c:  endmatch1 = 0x231d; endmatch2 = 0x231f; break;  // ⌜⌝⌟
+           case 0x231e:  endmatch1 = 0x231d; endmatch2 = 0x231f; break;  // ⌞⌝⌟
+           case 0x2308:  endmatch1 = 0x2309; endmatch2 = 0x230b; break;  // ⌈⌉⌋
+           case 0x230a:  endmatch1 = 0x2309; endmatch2 = 0x230b; break;  // ⌊⌉⌋
           }
-        if (endmatch)
+        if (endmatch1)
           {
              ty_sb_lskip(&sb, txtlen);
              goback = EINA_FALSE;
@@ -364,8 +388,8 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           {
              if (was_protocol)
                {
-                  if (!isspace(sb.buf[0]))
-                    endmatch = sb.buf[0];
+                  if (!isspace(codepoint))
+                    endmatch1 = endmatch2 = codepoint;
                   ty_sb_lskip(&sb, txtlen);
                   goback = EINA_FALSE;
                   goforward = EINA_TRUE;
@@ -384,14 +408,14 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
      {
         int new_x2 = x2, new_y2 = y2;
         /* Check if the previous char is a delimiter */
-        res = _txt_next_at(ty, &new_x2, &new_y2, txt, &txtlen);
+        res = _txt_next_at(ty, &new_x2, &new_y2, txt, &txtlen, &codepoint);
         if ((res != 0) || (txtlen == 0))
           {
              goforward = EINA_FALSE;
              break;
           }
         /* escaping */
-        if (txt[0] == '\\')
+        if (codepoint == '\\')
           {
              x2 = new_x2;
              y2 = new_y2;
@@ -405,12 +429,13 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
              escaped = EINA_FALSE;
           }
 
-        if (isspace(txt[0]) || txt[0] == endmatch)
+        if (isspace(codepoint) || (codepoint == endmatch1)
+            || (codepoint == endmatch2))
           {
              goforward = EINA_FALSE;
              break;
           }
-        switch (txt[0])
+        switch (codepoint)
           {
            case '"':
            case '\'':
@@ -422,6 +447,30 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
            case '{':
            case '}':
            case '|':
+           case 0xab:
+           case 0xbb:
+           case 0x2018:
+           case 0x2019:
+           case 0x201b:
+           case 0x201c:
+           case 0x201d:
+           case 0x201e:
+           case 0x2039:
+           case 0x203a:
+           case 0x2308:
+           case 0x2309:
+           case 0x230a:
+           case 0x230b:
+           case 0x231c:
+           case 0x231d:
+           case 0x231e:
+           case 0x231f:
+           case 0x2329:
+           case 0x232a:
+           case 0x27e6:
+           case 0x27e7:
+           case 0x27e8:
+           case 0x27e9:
              goto out;
           }
 
