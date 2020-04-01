@@ -79,7 +79,7 @@ jobs:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Install EFL
-          command: apk add /pkg/efl-1.23.1-r0.apk /pkg/efl-dev-1.23.1-r0.apk
+          command: apk add /pkg/efl-1.23.3-r2.apk /pkg/efl-dev-1.23.3-r2.apk
       - run:
           name: Compile with GCC
           command: |
