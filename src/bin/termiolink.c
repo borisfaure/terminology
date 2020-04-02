@@ -8,6 +8,78 @@
 #include "utf8.h"
 #include "utils.h"
 
+static Eina_Bool
+_isspace_unicode(const int codepoint)
+{
+   switch (codepoint)
+     {
+      case 9: // character tabulation
+         EINA_FALLTHROUGH;
+      case 10: // line feed
+         EINA_FALLTHROUGH;
+      case 11: // line tabulation
+         EINA_FALLTHROUGH;
+      case 12: // form feed
+         EINA_FALLTHROUGH;
+      case 13: // carriage return
+         EINA_FALLTHROUGH;
+      case 32: // space
+         EINA_FALLTHROUGH;
+      case 133: // next line
+         EINA_FALLTHROUGH;
+      case 160: // no-break space
+         EINA_FALLTHROUGH;
+      case 5760: // ogham space mark
+         EINA_FALLTHROUGH;
+      case 6158: // mongolian vowel separator
+         EINA_FALLTHROUGH;
+      case 8192: // en quad
+         EINA_FALLTHROUGH;
+      case 8193: // em quad
+         EINA_FALLTHROUGH;
+      case 8194: // en space
+         EINA_FALLTHROUGH;
+      case 8195: // em space
+         EINA_FALLTHROUGH;
+      case 8196: // three-per-em space
+         EINA_FALLTHROUGH;
+      case 8197: // four-per-em space
+         EINA_FALLTHROUGH;
+      case 8198: // six-per-em space
+         EINA_FALLTHROUGH;
+      case 8199: // figure space
+         EINA_FALLTHROUGH;
+      case 8200: // puncturation space
+         EINA_FALLTHROUGH;
+      case 8201: // thin space
+         EINA_FALLTHROUGH;
+      case 8202: // hair space
+         EINA_FALLTHROUGH;
+      case 8203: // zero width space
+         EINA_FALLTHROUGH;
+      case 8204: // zero width non-joiner
+         EINA_FALLTHROUGH;
+      case 8205: // zero width joiner
+         EINA_FALLTHROUGH;
+      case 8232: // line separator
+         EINA_FALLTHROUGH;
+      case 8233: // paragraph separator
+         EINA_FALLTHROUGH;
+      case 8239: // narrow no-break space
+         EINA_FALLTHROUGH;
+      case 8287: // medium mathematical space
+         EINA_FALLTHROUGH;
+      case 8288: // word joiner
+         EINA_FALLTHROUGH;
+      case 12288: // ideographic space
+         EINA_FALLTHROUGH;
+      case 65279: // zero width non-breaking space
+         return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+
 static char *
 _cwd_path_get(const Evas_Object *obj, const char *relpath)
 {
@@ -320,7 +392,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
 
    res = _txt_at(ty, &x1, &y1, txt, &txtlen, &codepoint);
    if ((res != 0) || (txtlen == 0)) goto end;
-   if (isspace(codepoint))
+   if (_isspace_unicode(codepoint))
      goto end;
    res = ty_sb_add(&sb, txt, txtlen);
    if (res < 0) goto end;
@@ -338,7 +410,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           }
         res = ty_sb_prepend(&sb, txt, txtlen);
         if (res < 0) goto end;
-        if (isspace(codepoint))
+        if (_isspace_unicode(codepoint))
           {
              int old_txtlen = txtlen;
              res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen, &codepoint);
@@ -388,7 +460,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           {
              if (was_protocol)
                {
-                  if (!isspace(codepoint))
+                  if (!_isspace_unicode(codepoint))
                     endmatch1 = endmatch2 = codepoint;
                   ty_sb_lskip(&sb, txtlen);
                   goback = EINA_FALSE;
@@ -429,7 +501,7 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
              escaped = EINA_FALSE;
           }
 
-        if (isspace(codepoint) || (codepoint == endmatch1)
+        if (_isspace_unicode(codepoint) || (codepoint == endmatch1)
             || (codepoint == endmatch2))
           {
              goforward = EINA_FALSE;
