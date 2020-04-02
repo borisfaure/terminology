@@ -361,7 +361,7 @@ _handle_write(Termpty *ty)
      }
    ty_sb_lskip(sb, len);
 
-   if (!sb->len)
+   if (!sb->len && ty->hand_fd)
      ecore_main_fd_handler_active_set(ty->hand_fd,
                                       ECORE_FD_ERROR |
                                       ECORE_FD_READ);
@@ -437,14 +437,18 @@ _cb_exe_exit(void *data,
         res = _fd_do(ty, ty->hand_fd, EINA_TRUE);
      }
 
-   if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+   if (ty->hand_fd)
+     ecore_main_fd_handler_del(ty->hand_fd);
    ty->hand_fd = NULL;
-   if (ty->fd >= 0) close(ty->fd);
+   if (ty->fd >= 0)
+     close(ty->fd);
    ty->fd = -1;
-   if (ty->slavefd >= 0) close(ty->slavefd);
+   if (ty->slavefd >= 0)
+     close(ty->slavefd);
    ty->slavefd = -1;
 
-   if (ty->cb.exited.func) ty->cb.exited.func(ty->cb.exited.data);
+   if (ty->cb.exited.func)
+     ty->cb.exited.func(ty->cb.exited.data);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -784,7 +788,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         else
           {
              char *cmdfile, *cmd0;
-             
+
              cmdfile = (char *)args[0];
              cmd0 = alloca(strlen(cmdfile) + 2);
              cmd0[0] = '-';
@@ -867,8 +871,10 @@ termpty_free(Termpty *ty)
              ty->pid = -1;
           }
      }
-   if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
-   if (ty->hand_fd) ecore_main_fd_handler_del(ty->hand_fd);
+   if (ty->hand_exe_exit)
+     ecore_event_handler_del(ty->hand_exe_exit);
+   if (ty->hand_fd)
+     ecore_main_fd_handler_del(ty->hand_fd);
    eina_stringshare_del(ty->prop.title);
    eina_stringshare_del(ty->prop.user_title);
    eina_stringshare_del(ty->prop.icon);
@@ -1188,7 +1194,7 @@ termpty_write(Termpty *ty, const char *input, int len)
      {
         ERR("failure to add %d characters to write buffer", len);
      }
-   else
+   else if (ty->hand_fd)
      {
         ecore_main_fd_handler_active_set(ty->hand_fd,
                                          ECORE_FD_ERROR |
