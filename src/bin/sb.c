@@ -14,8 +14,11 @@ ty_sb_add(struct ty_sb *sb, const char *s, size_t len)
      {
         size_t new_alloc = ((new_len + sb->gap + 15) / 16) * 24;
         char *new_buf;
+        char *buf = sb->buf;
 
-        new_buf = realloc(sb->buf - sb->gap, new_alloc);
+        if (buf && sb->gap)
+          buf -= sb->gap;
+        new_buf = realloc(buf, new_alloc);
         if (new_buf == NULL)
           return -1;
         sb->buf = new_buf + sb->gap;
@@ -131,7 +134,10 @@ ty_sb_rskip(struct ty_sb *sb, int len)
 void
 ty_sb_free(struct ty_sb *sb)
 {
-   free(sb->buf - sb->gap);
+   char *buf = sb->buf;
+   if (buf && sb->gap)
+     buf -= sb->gap;
+   free(buf);
    sb->gap = sb->len = sb->alloc = 0;
    sb->buf = NULL;
 }
