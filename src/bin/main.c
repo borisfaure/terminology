@@ -413,7 +413,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (win_term_set(wn, term) < 0)
      return;
 
-   main_trans_update(config);
+   main_trans_update();
    main_media_update(config);
    if (inst->pos)
      {
@@ -607,7 +607,7 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
         goto exit;
      }
 
-   main_trans_update(config);
+   main_trans_update();
    main_media_update(config);
    win_sizing_handle(wn);
    win = win_evas_object_get(wn);

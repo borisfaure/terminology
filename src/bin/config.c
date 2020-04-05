@@ -318,6 +318,8 @@ config_sync(const Config *config_src, Config *config)
    config->changedir_to_current = config_src->changedir_to_current;
    config->emoji_dbl_width = config_src->emoji_dbl_width;
    config->shine = config_src->shine;
+   config->translucent = config_src->translucent;
+   config->opacity = config_src->opacity;
 }
 
 static void

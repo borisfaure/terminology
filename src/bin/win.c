@@ -1013,7 +1013,7 @@ win_evas_object_get(const Win *wn)
 }
 
 static void
-_win_trans(Win *wn, Term *term, Eina_Bool trans)
+_win_trans(Win *wn, Term *term)
 {
    Edje_Message_Int msg;
    Evas_Object *edje = elm_layout_edje_get(term->core);
@@ -1025,7 +1025,7 @@ _win_trans(Win *wn, Term *term, Eina_Bool trans)
    edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
 
-   if (trans)
+   if (term->config->translucent)
      {
         elm_win_alpha_set(wn->win, EINA_TRUE);
         evas_object_hide(wn->backbg);
@@ -1038,36 +1038,17 @@ _win_trans(Win *wn, Term *term, Eina_Bool trans)
 }
 
 void
-main_trans_update(const Config *config)
+main_trans_update(void)
 {
    Win *wn;
-   Term *term, *term2;
+   Term *term;
    Eina_List *l, *ll;
 
    EINA_LIST_FOREACH(wins, l, wn)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
-             if (term->config == config)
-               {
-                  if (config->translucent)
-                    _win_trans(wn, term, EINA_TRUE);
-                  else
-                    {
-                       Eina_Bool trans_exists = EINA_FALSE;
-
-                       EINA_LIST_FOREACH(wn->terms, ll, term2)
-                         {
-                            if (term2->config->translucent)
-                              {
-                                 trans_exists = EINA_TRUE;
-                                 break;
-                              }
-                         }
-                       _win_trans(wn, term, trans_exists);
-                    }
-                  return;
-               }
+             _win_trans(wn, term);
           }
      }
 }
@@ -5831,7 +5812,7 @@ void change_theme(Evas_Object *win, Config *config)
    if (l) l = eina_list_last(l);
    if (l) elm_theme_overlay_del(NULL, l->data);
    elm_theme_overlay_add(NULL, config_theme_path_get(config));
-   main_trans_update(config);
+   main_trans_update();
 }
 
 void
@@ -6166,10 +6147,9 @@ _set_alpha(Config *config, const char *val, Eina_Bool save)
      config->translucent = EINA_TRUE;
    else
      config->translucent = EINA_FALSE;
-   main_trans_update(config);
-
    if (save)
      config_save(config);
+   main_trans_update();
 }
 
 static void

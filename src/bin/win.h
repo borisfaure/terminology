@@ -90,6 +90,6 @@ void
 term_apply_shine(Term *term, int shine);
 void background_set_shine(Config *config, Evas_Object *bg);
 
-void main_trans_update(const Config *config);
+void main_trans_update();
 
 #endif

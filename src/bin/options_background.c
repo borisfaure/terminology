@@ -76,8 +76,8 @@ _cb_op_video_trans_chg(void *data,
 
    config->translucent = elm_check_state_get(obj);
    elm_object_disabled_set(ctx->op_opacity, !config->translucent);
-   main_trans_update(config);
    config_save(config);
+   main_trans_update();
 }
 
 static void
@@ -91,8 +91,8 @@ _cb_op_video_opacity_chg(void *data,
    config->opacity = elm_slider_value_get(obj);
    if (!config->translucent)
      return;
-   main_trans_update(config);
    config_save(config);
+   main_trans_update();
 }
 
 static void
