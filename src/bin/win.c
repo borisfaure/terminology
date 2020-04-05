@@ -1022,7 +1022,7 @@ _win_trans(Win *wn, Term *term)
      msg.val = term->config->opacity;
    else
      msg.val = 100;
-   edje_object_message_send(term->bg, EDJE_MESSAGE_INT, 1, &msg);
+   edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
 
    if (term->config->translucent)
