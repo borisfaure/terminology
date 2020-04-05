@@ -760,18 +760,22 @@ main(int argc, char **argv)
         int i, cw, ch;
         int len;
         char *rp;
-        
+
         evas = ecore_evas_get(ee);
         echo_off();
         snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
         len = strlen(buf);
         if (ty_write(1, buf, len + 1) < (signed)len + 1)
-          perror("write");
+          {
+             perror("write");
+             echo_on();
+             return -1;
+          }
         if ((scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4)
             || (tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1))
           {
              echo_on();
-             return 0;
+             return -1;
           }
         echo_on();
         for (i = 1; i < argc; i++)

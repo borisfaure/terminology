@@ -337,7 +337,11 @@ main(int argc, char **argv)
    echo_off();
    snprintf(buf, sizeof(buf), "%c}qs", 0x1b);
    if (ty_write(1, buf, strlen(buf) + 1) < 0)
-     perror("write");
+     {
+        perror("write");
+        echo_on();
+        goto shutdown;
+     }
    if (scanf("%i;%i;%i;%i", &tw, &th, &cw, &ch) != 4 ||
        ((tw <= 0) || (th <= 0) || (cw <= 1) || (ch <= 1)))
      {
