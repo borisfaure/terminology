@@ -1,13 +1,13 @@
 #ifndef _TY_COMMON_H__
 #define _TY_COMMON_H__ 1
 
-int is_running_in_terminology(void);
+int expect_running_in_terminology(void);
 ssize_t ty_write(int fd, const void *buf, size_t count);
 
 #define ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1()                             \
   do                                                                       \
     {                                                                      \
-       if (!is_running_in_terminology())                                   \
+       if (expect_running_in_terminology() != 0)                           \
          {                                                                 \
             fprintf(stderr, "not directly running in terminology\n");      \
             exit(1);                                                       \
