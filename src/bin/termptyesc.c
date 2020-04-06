@@ -213,6 +213,7 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
    switch (*cc)
      {
       case 0x07: // BEL '\a' (bell)
+        DBG("->BEL");
          if (ty->cb.bell.func) ty->cb.bell.func(ty->cb.bell.data);
          return;
       case 0x08: // BS  '\b' (backspace)
