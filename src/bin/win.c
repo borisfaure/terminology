@@ -206,6 +206,7 @@ struct _Win
    unsigned char group_input : 1;
    unsigned char group_only_visible : 1;
    unsigned char group_once_handled : 1;
+   unsigned char translucent : 1;
 
    unsigned int  on_popover;
 };
@@ -229,7 +230,6 @@ static Tab_Item* tab_item_new(Tabs *tabs, Term_Container *child);
 static void _tabs_recreate(Tabs *tabs);
 static void _tab_drag_free(void);
 static void _term_tabregion_free(Term *term);
-static void _set_trans(Config *config, Evas_Object *bg, Evas_Object *base);
 static void _imf_event_commit_cb(void *data, Ecore_IMF_Context *_ctx EINA_UNUSED, void *event);
 
 /* }}} */
@@ -1013,10 +1013,11 @@ win_evas_object_get(const Win *wn)
 }
 
 static void
-_win_trans(Win *wn, Term *term)
+_term_trans(Term *term)
 {
    Edje_Message_Int msg;
    Evas_Object *edje = elm_layout_edje_get(term->core);
+   Win *wn = term->wn;
 
    if (term->config->translucent)
      msg.val = term->config->opacity;
@@ -1025,15 +1026,20 @@ _win_trans(Win *wn, Term *term)
    edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
 
-   if (term->config->translucent)
+   if (term->config->translucent != wn->translucent)
      {
-        elm_win_alpha_set(wn->win, EINA_TRUE);
-        evas_object_hide(wn->backbg);
-     }
-   else
-     {
-        elm_win_alpha_set(wn->win, EINA_FALSE);
-        evas_object_show(wn->backbg);
+        if (term->config->translucent)
+          {
+             elm_win_alpha_set(wn->win, EINA_TRUE);
+             evas_object_hide(wn->backbg);
+             wn->translucent = EINA_TRUE;
+          }
+        else
+          {
+             elm_win_alpha_set(wn->win, EINA_FALSE);
+             evas_object_show(wn->backbg);
+             wn->translucent = EINA_FALSE;
+          }
      }
 }
 
@@ -1048,7 +1054,7 @@ main_trans_update(void)
      {
         EINA_LIST_FOREACH(wn->terms, ll, term)
           {
-             _win_trans(wn, term);
+             _term_trans(term);
           }
      }
 }
@@ -4271,6 +4277,7 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    Tab_Item *tab_item;
    Evas_Object *o;
    Evas_Coord x, y, w, h;
+   Edje_Message_Int msg;
 
    if (tabs->selector_bg)
      return;
@@ -4284,7 +4291,11 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    evas_object_geometry_set(tabs->selector_bg, x, y, w, h);
    evas_object_hide(o);
 
-   _set_trans(wn->config, tabs->selector_bg, NULL);
+   if (wn->config && wn->config->translucent)
+     msg.val = wn->config->opacity;
+   else
+     msg.val = 100;
+   edje_object_message_send(tabs->selector_bg, EDJE_MESSAGE_INT, 1, &msg);
    background_set_shine(wn->config, tabs->selector_bg);
    edje_object_signal_emit(tabs->selector_bg, "begin", "terminology");
 
@@ -5746,24 +5757,6 @@ term_apply_shine(Term *term, int shine)
 
 
 static void
-_set_trans(Config *config, Evas_Object *bg, Evas_Object *base)
-{
-   Edje_Message_Int msg;
-
-   if (config && config->translucent)
-     msg.val = config->opacity;
-   else
-     msg.val = 100;
-
-   if (bg)
-       edje_object_message_send(bg, EDJE_MESSAGE_INT, 1, &msg);
-   if (base) {
-       Evas_Object *edje = elm_layout_edje_get(base);
-       edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
-   }
-}
-
-static void
 _term_config_set(Term *term, Config *config)
 {
    Config *old_config = term->config;
@@ -7007,7 +7000,7 @@ _cb_tab_next(void *data,
 static void
 _term_bg_config(Term *term)
 {
-   _set_trans(term->config, term->bg_edj, term->core);
+   _term_trans(term);
    background_set_shine(term->config, term->bg_edj);
 
    termio_theme_set(term->termio, term->bg_edj);
@@ -7299,7 +7292,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    if (term->config->mv_always_show)
      term->miniview_shown = EINA_TRUE;
 
-   _set_trans(term->config, term->bg_edj, term->core);
+   _term_trans(term);
+
    background_set_shine(term->config, term->bg_edj);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
