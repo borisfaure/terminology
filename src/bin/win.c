@@ -4291,7 +4291,7 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    evas_object_geometry_set(tabs->selector_bg, x, y, w, h);
    evas_object_hide(o);
 
-   if (wn->config && wn->config->translucent)
+   if (wn->config->translucent)
      msg.val = wn->config->opacity;
    else
      msg.val = 100;
