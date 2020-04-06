@@ -22,10 +22,9 @@ typedef struct _Controls_Ctx {
 } Controls_Ctx;
 
 
+/* /!\ can free ctx */
 static void
 controls_hide(Controls_Ctx *ctx, Eina_Bool call_cb);
-
-
 
 static void
 _cb_sel_on(void *data,
@@ -80,6 +79,8 @@ _cb_ct_copy(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
+   ctx = NULL;
+
    termio_take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
 
@@ -92,6 +93,8 @@ _cb_ct_paste(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
+   ctx = NULL;
+
    termio_paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
 
@@ -101,8 +104,12 @@ _cb_ct_new(void *data,
            void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+
    controls_hide(ctx, EINA_TRUE);
-   main_new(ctx->term);
+   ctx = NULL;
+
+   main_new(term);
 }
 
 static void
@@ -111,8 +118,13 @@ _cb_ct_split_v(void *data,
                void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+
+
    controls_hide(ctx, EINA_TRUE);
-   split_vertically(ctx->win, ctx->term, NULL);
+   ctx = NULL;
+
+   split_vertically(term, NULL);
 }
 
 static void
@@ -121,8 +133,12 @@ _cb_ct_split_h(void *data,
                void *_event EINA_UNUSED)
 {
    Controls_Ctx *ctx = data;
+   Evas_Object *term = ctx->term;
+
    controls_hide(ctx, EINA_TRUE);
-   split_horizontally(ctx->win, ctx->term, NULL);
+   ctx = NULL;
+
+   split_horizontally(term, NULL);
 }
 
 static void
@@ -141,7 +157,10 @@ _cb_ct_set_title(void *data,
 {
    Controls_Ctx *ctx = data;
    Evas_Object *term = ctx->term;
+
    controls_hide(ctx, EINA_TRUE);
+   ctx = NULL;
+
    term_set_title(termio_term_get(term));
 }
 
@@ -155,6 +174,8 @@ _cb_ct_close(void *data,
    Evas_Object *win = ctx->win;
 
    controls_hide(ctx, EINA_TRUE);
+   ctx = NULL;
+
    term_close(win, term, EINA_FALSE);
 }
 

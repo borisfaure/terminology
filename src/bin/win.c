@@ -3049,8 +3049,7 @@ _cb_size_hint(void *data,
 }
 
 void
-split_horizontally(Evas_Object *_win EINA_UNUSED,
-                   Evas_Object *term,
+split_horizontally(Evas_Object *term,
                    const char *cmd)
 {
    Term *tm;
@@ -3064,8 +3063,7 @@ split_horizontally(Evas_Object *_win EINA_UNUSED,
 }
 
 void
-split_vertically(Evas_Object *_win EINA_UNUSED,
-                 Evas_Object *term,
+split_vertically(Evas_Object *term,
                  const char *cmd)
 {
    Term *tm;

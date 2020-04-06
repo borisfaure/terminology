@@ -624,16 +624,14 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
              if (instance->startup_split[i] == 'v')
                {
                   cmd = eina_list_data_get(instance->cmds);
-                  split_vertically(win_evas_object_get(term_win_get(next)),
-                                   term_termio_get(next), cmd);
+                  split_vertically(term_termio_get(next), cmd);
                   instance->cmds = eina_list_remove_list(instance->cmds,
                                                          instance->cmds);
                }
              else if (instance->startup_split[i] == 'h')
                {
                   cmd = eina_list_data_get(instance->cmds);
-                  split_horizontally(win_evas_object_get(term_win_get(next)),
-                                     term_termio_get(next), cmd);
+                  split_horizontally(term_termio_get(next), cmd);
                   instance->cmds = eina_list_remove_list(instance->cmds,
                                                          instance->cmds);
                }

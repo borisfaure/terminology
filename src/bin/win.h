@@ -18,8 +18,8 @@ void term_set_title(Term *term);
 void term_miniview_hide(Term *term);
 Eina_Bool term_tab_go(Term *term, int tnum);
 
-void split_horizontally(Evas_Object *win, Evas_Object *term, const char *cmd);
-void split_vertically(Evas_Object *win, Evas_Object *term, const char *cmd);
+void split_horizontally(Evas_Object *term, const char *cmd);
+void split_vertically(Evas_Object *term, const char *cmd);
 
 
 Win *
