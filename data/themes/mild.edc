@@ -1,15 +1,29 @@
 /* overlay to default to make theme easier on the eyes, less effects */
 
-#ifndef BG_COLOR
-#define BG_COLOR 48 48 48 255
-#endif
-
-#ifndef BG_COLOR_TRANSLUCENT
-#define BG_COLOR_TRANSLUCENT 48 48 48 200
-#endif
 
 #ifndef BELL_OVERLAY_COLOR
 #define BELL_OVERLAY_COLOR 220 220 220 16
+#endif
+#ifndef BG_COLOR_NO_ALPHA
+#define BG_COLOR_NO_ALPHA  48 48 48
+#endif
+#ifndef BG_COLOR
+#define BG_COLOR  BG_COLOR_NO_ALPHA 255
+#endif
+#ifndef FG_COLOR_NO_ALPHA
+#define FG_COLOR_NO_ALPHA  170 170 170
+#endif
+#ifndef FG_COLOR
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
+#endif
+#ifndef BG_COLOR_TRANSLUCENT
+#define BG_COLOR_TRANSLUCENT BG_COLOR_NO_ALPHA 200
+#endif
+#ifndef BG_COLOR_BELL_NO_ALPHA
+#define BG_COLOR_BELL_NO_ALPHA BG_COLOR_NO_ALPHA
+#endif
+#ifndef FG_COLOR_BELL_NO_ALPHA
+#define FG_COLOR_BELL_NO_ALPHA  255 153  51
 #endif
 
 
@@ -586,17 +600,14 @@ collections {
                rel1.to_x: "terminology.content";
                rel1.to_y: "viewregion";
                rel2.to: "terminology.content";
-               //color: 255 255 255 0;
                visible: 0;
                fixed: 1 1;
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
                visible: 1;
-               //color: 255 255 255 255;
             }
          }
-
          program {
             signal: "miniview,off"; source: "terminology";
             action: STATE_SET "default" 0.0;
@@ -608,6 +619,9 @@ collections {
             target: "terminology.miniview";
          }
 
+
+         ////////////////////////////////////////////////////////////////////
+         // tabs
          part { name: "tab_bevel_bg0";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -1140,6 +1154,21 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+            description { state: "bell" 0.0;
+               inherit: "tab" 0.0;
+               color: FG_COLOR_BELL_NO_ALPHA 255;
+               color3: BG_COLOR_BELL_NO_ALPHA 18;
+            }
+         }
+         program { name: "tab,bell,on";
+            signal: "tab,bell,on"; source: "terminology";
+            action: STATE_SET "bell" 0.0;
+            target: "tabtitle";
+         }
+         program { name: "tab,bell,off";
+            signal: "tab,bell,off"; source: "terminology";
+            action: STATE_SET "tab" 0.0;
+            target: "tabtitle";
          }
          part { name: "tablimit0"; type: SPACER;
             description { state: "default" 0.0;
