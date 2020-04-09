@@ -57,6 +57,10 @@ collections {
         image: "cr_glow.png" COMP;
         image: "cr_pulse.png" COMP;
       }
+      set { name: "tab_close";
+         image { image: "tab_close_8.png" COMP; size: 0 0 8 8; }
+         image { image: "tab_close_16.png" COMP; size: 8 8 99999 99999; }
+      }
       sounds {
          sample { name: "bell" LOSSY 64;
             source: "bell.wav";
@@ -737,6 +741,7 @@ collections {
             target: "tab_bevel_bg3";
             target: "tab_bevel_bg4";
             target: "tabtitle";
+            target: "tabclose";
          }
          program {
             signal: "tabbar,off"; source: "terminology";
@@ -750,6 +755,7 @@ collections {
             target: "tab_bevel_bg3";
             target: "tab_bevel_bg4";
             target: "tabtitle";
+            target: "tabclose";
          }
 
          program {
@@ -1225,6 +1231,52 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+         }
+         part { name: "tabclose"; type: IMAGE;
+            scale: 1;
+            description { state: "default" 0.0;
+               aspect: 1.0 1.0; aspect_preference: BOTH;
+               align: 1.0 0.5;
+               image.normal: "tab_close";
+               rel1 {
+                  to_y: "tabmiddle";
+                  to_x: "tab_bevel_bg3";
+                  relative: 0.0 0.3;
+               }
+               rel2 {
+                  to_y: "tabmiddle";
+                  to_x: "tab_bevel_bg3";
+                  relative: 0.0 0.7;
+               }
+               min: 8 8;
+               max: 16 16;
+               fixed: 1 1;
+               visible: 0;
+            }
+            description { state: "tab" 0.0;
+               inherit: "default" 0.0;
+               color: FG_COLOR_NO_ALPHA 80;
+               visible: 1;
+            }
+            description { state: "over" 0.0;
+               inherit: "default" 0.0;
+               color: FG_COLOR_NO_ALPHA 255;
+               visible: 1;
+            }
+         }
+         program {
+            signal: "mouse,in"; source: "tabclose";
+            action: STATE_SET "over" 0.0;
+            target: "tabclose";
+         }
+         program {
+            signal: "mouse,out"; source: "tabclose";
+            action: STATE_SET "tab" 0.0;
+            target: "tabclose";
+         }
+         program {
+            signal: "mouse,clicked,1"; source: "tabclose";
+            action: SIGNAL_EMIT "tab,close" "terminology";
          }
 
          ////////////////////////////////////////////////////////////////////
