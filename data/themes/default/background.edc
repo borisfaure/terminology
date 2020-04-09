@@ -87,8 +87,8 @@ group { name: "terminology/background";
       }
    }
    parts {
-        ////////////////////////////////////////////////////////////////////
-        // background handling
+      ////////////////////////////////////////////////////////////////////
+      // background handling
       part { name: "shadow";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -111,9 +111,8 @@ group { name: "terminology/background";
          description { state: "default" 0.0;
          }
       }
-
       ////////////////////////////////////////////////////////////////////
-      // indicator of other tabs and control
+      // indicator of other tabs and control {{{
       part { name: "tabcount_clip"; type: RECT;
          description { state: "default" 0.0;
             color: 255 255 255 0;
@@ -438,9 +437,10 @@ group { name: "terminology/background";
          transition: DECELERATE 3.0;
          target: "terminology.tabmissed.label";
       }
+      // }}}
 
       ////////////////////////////////////////////////////////////////////
-      // sendfile request
+      // sendfile request {{{
       part { name: "sendfile_request_clip"; type: RECT;
          description { state: "default" 0.0;
             color: 255 255 255 0;
@@ -524,9 +524,9 @@ group { name: "terminology/background";
          target: "sendfile_request_clip";
          target: "sendfile_request_bg";
       }
-
+      // }}}
       ////////////////////////////////////////////////////////////////////
-      // sendfile progress
+      // sendfile progress {{{
       part { name: "sendfile_progress_clip"; type: RECT;
          description { state: "default" 0.0;
             color: 255 255 255 0;
@@ -613,25 +613,23 @@ group { name: "terminology/background";
          target: "sendfile_progress_clip";
          target: "terminology.sendfile.progress";
       }
+      // }}}
 
       ////////////////////////////////////////////////////////////////////
-      // miniview
+      // miniview {{{
       part { name: "terminology.miniview"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to_x: "terminology.content";
             rel1.to_y: "viewregion";
             rel2.to: "terminology.content";
-            //color: 255 255 255 0;
             visible: 0;
             fixed: 1 1;
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-                     //color: 255 255 255 255;
          }
       }
-
       program {
          signal: "miniview,off"; source: "terminology";
          action: STATE_SET "default" 0.0;
@@ -642,9 +640,10 @@ group { name: "terminology/background";
          action: STATE_SET "on" 0.0;
          target: "terminology.miniview";
       }
+      // }}}
 
       ////////////////////////////////////////////////////////////////////
-      // overlayed prettiness
+      // overlayed prettiness {{{
       part { name: "glow";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -744,7 +743,10 @@ group { name: "terminology/background";
             color: 255 255 255 255;
          }
       }
+      // }}}
 
+      ////////////////////////////////////////////////////////////////////
+      // tabs {{{
       part { name: "tab_bevel_bottom";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -1046,8 +1048,6 @@ group { name: "terminology/background";
          }
       }
 
-      ////////////////////////////////////////////////////////////////////
-      // a swallow to hold a finger size rect for min tab size
       program {
          signal: "tabbar,on"; source: "terminology";
          action: STATE_SET "tab" 0.0;
@@ -1701,9 +1701,10 @@ group { name: "terminology/background";
          signal: "mouse,up,1"; source: "tabmiddle";
          action: SIGNAL_EMIT "tab,drag,stop" "terminology";
       }
+      // }}}
 
       ////////////////////////////////////////////////////////////////////
-      // visual bell - spinning red siren light
+      // visual bell - spinning red siren light {{{
       part { name: "bell_glow";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -1843,7 +1844,10 @@ group { name: "terminology/background";
          transition: LINEAR 0.9;
          target: "bell_strobe";
       }
+      // }}}
 
+      ////////////////////////////////////////////////////////////////////
+      // Drag target areas {{{
       #define DRAG_TARGET(DIR, ICON, REL_ONE, REL_TWO)               \
       part { name: "drag_"##DIR##"_rect";                            \
          type: RECT;                                                 \
@@ -2007,9 +2011,10 @@ group { name: "terminology/background";
       DRAG_TARGET(right, v, 0.85 0.2, 1.0 0.8)
       DRAG_TARGET(top, h, 0.2 0.0, 0.8 0.2)
       DRAG_TARGET(bottom, h, 0.2 0.8, 0.8 1.0)
+      // }}}
 
       ////////////////////////////////////////////////////////////////////
-      // popup media over the terminal (until dismissed)
+      // popup media over the terminal (until dismissed) {{{
       part { name: "popmedia_clip"; type: RECT;
          mouse_events: 1;
          description { state: "default" 0.0;
@@ -2366,6 +2371,7 @@ group { name: "terminology/background";
          transition: DECELERATE 1.5;
          target: "media";
       }
+      // }}}
    }
 }
 

@@ -194,7 +194,7 @@ collections {
          }
 
          ////////////////////////////////////////////////////////////////////
-         // indicator of other tabs and control
+         // indicator of other tabs and control {{{
          part { name: "tabcount_clip"; type: RECT;
             description { state: "default" 0.0;
                color: 255 255 255 0;
@@ -422,9 +422,10 @@ collections {
             transition: DECELERATE 3.0;
             target: "terminology.tabmissed.label";
          }
+         // }}}
 
          ////////////////////////////////////////////////////////////////////
-         // sendfile request
+         // sendfile request {{{
          part { name: "sendfile_request_clip"; type: RECT;
             description { state: "default" 0.0;
                color: 255 255 255 0;
@@ -508,9 +509,9 @@ collections {
             target: "sendfile_request_clip";
             target: "sendfile_request_bg";
          }
-
+         // }}}
          ////////////////////////////////////////////////////////////////////
-         // sendfile progress
+         // sendfile progress {{{
          part { name: "sendfile_progress_clip"; type: RECT;
             description { state: "default" 0.0;
                color: 255 255 255 0;
@@ -597,9 +598,10 @@ collections {
             target: "sendfile_progress_clip";
             target: "terminology.sendfile.progress";
          }
+         // }}}
 
          ////////////////////////////////////////////////////////////////////
-         // miniview
+         // miniview {{{
          part { name: "terminology.miniview"; type: SWALLOW;
             description { state: "default" 0.0;
                rel1.to_x: "terminology.content";
@@ -623,10 +625,10 @@ collections {
             action: STATE_SET "on" 0.0;
             target: "terminology.miniview";
          }
-
+         // }}}
 
          ////////////////////////////////////////////////////////////////////
-         // tabs
+         // tabs {{{
          part { name: "tab_bevel_bg0";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -728,8 +730,6 @@ collections {
             }
          }
 
-         ////////////////////////////////////////////////////////////////////
-         // a swallow to hold a finger size rect for min tab size
          program {
             signal: "tabbar,on"; source: "terminology";
             action: STATE_SET "tab" 0.0;
@@ -1334,10 +1334,10 @@ collections {
             signal: "mouse,up,1"; source: "tabmiddle";
             action: SIGNAL_EMIT "tab,mouse,up" "terminology";
          }
-
+         // }}}
 
          ////////////////////////////////////////////////////////////////////
-         // visual bell - spinning red siren light
+         // visual bell - spinning red siren light {{{
          part { name: "bell_base";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -1443,7 +1443,10 @@ collections {
             transition: LINEAR 0.9;
             target: "bell_strobe";
          }
+         // }}}
 
+         ////////////////////////////////////////////////////////////////////
+         // Drag target areas {{{
          #define DRAG_TARGET(DIR, REL_ONE, REL_TWO)                     \
          part { name: "drag_"##DIR##"_pulse";                           \
             mouse_events: 0;                                            \
@@ -1550,9 +1553,10 @@ collections {
          DRAG_TARGET(right, 0.85 0.2, 1.0 0.8)
          DRAG_TARGET(top, 0.2 0.0, 0.8 0.2)
          DRAG_TARGET(bottom, 0.2 0.8, 0.8 1.0)
+         // }}}
 
          ////////////////////////////////////////////////////////////////////
-         // popup media over the terminal (until dismissed)
+         // popup media over the terminal (until dismissed) {{{
          part { name: "popmedia_clip"; type: RECT;
             mouse_events: 1;
             description { state: "default" 0.0;
@@ -1855,6 +1859,7 @@ collections {
             target: "popmedia_glintclip";
             target: "popmedia_shine";
          }
+         // }}}
       }
    }
 
