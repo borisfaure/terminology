@@ -43,6 +43,7 @@ collections {
         image: "bg_led_base.png" COMP;
         image: "bg_led.png" COMP;
         image: "bg_led_strobe.png" COMP;
+        image: "cr_out.png" COMP;
         image: "pm_shadow.png" COMP;
         image: "pm_overlay.png" COMP;
         image: "pm_fill.png" COMP;
