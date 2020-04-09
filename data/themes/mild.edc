@@ -124,68 +124,6 @@ collections {
             }
          }
 
-         part { name: "bellclip"; type: RECT;
-            description { state: "default" 0.0;
-            }
-            description { state: "pulse1" 0.0;
-               inherit: "default" 0.0;
-               color: 200 200 200 255;
-            }
-            description { state: "pulse2" 0.0;
-               inherit: "default" 0.0;
-            }
-         }
-         part { name: "belloverlay"; type: RECT;
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               color: 255 255 255 0;
-               visible: 0;
-            }
-            description { state: "pulse1" 0.0;
-               inherit: "default" 0.0;
-            }
-            description { state: "pulse2" 0.0;
-               inherit: "default" 0.0;
-               color: BELL_OVERLAY_COLOR;
-               visible: 1;
-            }
-         }
-         program {
-            signal: "bell,ring"; source: "terminology";
-            action: PLAY_SAMPLE "bell" 1.0 ALERT;
-         }
-         program {
-            signal: "bell";
-            source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "bellclip";
-            target: "belloverlay";
-            after: "bellclip_bell.2";
-         }
-         program {
-            name: "bellclip_bell.2";
-            action: STATE_SET "pulse1" 0.0;
-            transition: ACCELERATE 0.2;
-            target: "bellclip";
-            target: "belloverlay";
-            after: "bellclip_bell.3";
-         }
-         program {
-            name: "bellclip_bell.3";
-            action: STATE_SET "pulse2" 0.0;
-            transition: ACCELERATE 0.2;
-            target: "bellclip";
-            target: "belloverlay";
-            after: "bellclip_bell.4";
-         }
-         program {
-            name: "bellclip_bell.4";
-            action: STATE_SET "default" 0.0;
-            transition: ACCELERATE 0.2;
-            target: "bellclip";
-            target: "belloverlay";
-         }
-
          ////////////////////////////////////////////////////////////////////
          // actual text grid for chars, cursors, selectiond etc. goes here
          part { name: "terminology.content"; type: SWALLOW;
@@ -1338,6 +1276,33 @@ collections {
 
          ////////////////////////////////////////////////////////////////////
          // visual bell - spinning red siren light {{{
+         part { name: "bellclip"; type: RECT;
+            description { state: "default" 0.0;
+            }
+            description { state: "pulse1" 0.0;
+               inherit: "default" 0.0;
+               color: 200 200 200 255;
+            }
+            description { state: "pulse2" 0.0;
+               inherit: "default" 0.0;
+            }
+         }
+         part { name: "belloverlay"; type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               visible: 0;
+            }
+            description { state: "pulse1" 0.0;
+               inherit: "default" 0.0;
+            }
+            description { state: "pulse2" 0.0;
+               inherit: "default" 0.0;
+               color: BELL_OVERLAY_COLOR;
+               visible: 1;
+            }
+         }
+
          part { name: "bell_base";
             mouse_events: 0;
             description { state: "default" 0.0;
@@ -1399,6 +1364,41 @@ collections {
                color: 255 255 255 0;
                map.rotation.z: 684.0;
             }
+         }
+         program {
+            signal: "bell,ring"; source: "terminology";
+            action: PLAY_SAMPLE "bell" 1.0 ALERT;
+         }
+         program {
+            signal: "bell";
+            source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "bellclip";
+            target: "belloverlay";
+            after: "bellclip_bell.2";
+         }
+         program {
+            name: "bellclip_bell.2";
+            action: STATE_SET "pulse1" 0.0;
+            transition: ACCELERATE 0.2;
+            target: "bellclip";
+            target: "belloverlay";
+            after: "bellclip_bell.3";
+         }
+         program {
+            name: "bellclip_bell.3";
+            action: STATE_SET "pulse2" 0.0;
+            transition: ACCELERATE 0.2;
+            target: "bellclip";
+            target: "belloverlay";
+            after: "bellclip_bell.4";
+         }
+         program {
+            name: "bellclip_bell.4";
+            action: STATE_SET "default" 0.0;
+            transition: ACCELERATE 0.2;
+            target: "bellclip";
+            target: "belloverlay";
          }
          program { name: "bell0";
             signal: "bell";
@@ -1862,6 +1862,7 @@ collections {
          // }}}
       }
    }
+   #if 0
 
    group { name: "terminology/tabbar_back";
       images {
@@ -3037,4 +3038,5 @@ collections {
          }
       }
    }
+   #endif
 }
