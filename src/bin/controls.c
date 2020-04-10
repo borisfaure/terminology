@@ -331,7 +331,7 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
               Evas_Object *term, void (*donecb) (void *data), void *donedata)
 {
    Evas_Object *o;
-   Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2, *ct_box3;
+   Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2;
    Controls_Ctx *ctx;
 
    if (eina_hash_find(controls, &win) ||
@@ -431,12 +431,8 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    o = _sep_add_h(win);
    elm_box_pack_end(ct_boxv, o);
 
-   ct_box3 = o = elm_box_add(win);
-   elm_box_pack_end(ct_boxv, o);
-   evas_object_show(o);
-
    o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, ctx);
-   elm_box_pack_end(ct_box3, o);
+   elm_box_pack_end(ct_boxv, o);
 
    evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
                                   ctx);
