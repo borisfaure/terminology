@@ -3002,14 +3002,17 @@ _size_job(void *data)
    wn->size_job = NULL;
    tc->size_eval(tc, &info);
 
-   elm_win_size_base_set(wn->win,
-                         info.min_w, info.min_h);
    elm_win_size_step_set(wn->win, info.step_x, info.step_y);
-   evas_object_size_hint_min_set(wn->backbg,
-                                 info.bg_min_w,
-                                 info.bg_min_h);
-   if (info.req)
-     evas_object_resize(wn->win, info.req_w, info.req_h);
+   if (info.bg_min_w > 0 && info.bg_min_h > 0)
+     {
+        elm_win_size_base_set(wn->win,
+                              info.min_w, info.min_h);
+        evas_object_size_hint_min_set(wn->backbg,
+                                      info.bg_min_w,
+                                      info.bg_min_h);
+        if (info.req)
+          evas_object_resize(wn->win, info.req_w, info.req_h);
+     }
 }
 
 void
@@ -7118,7 +7121,6 @@ _term_tabregion_setup(Term *term)
    if (term->tab_region_bg) return;
    term->tab_region_bg = o = evas_object_rectangle_add(evas_object_evas_get(term->bg));
    evas_object_color_set(o, 0, 0, 0, 0);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _cb_tabregion_change, term);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _cb_tabregion_change, term);
    elm_layout_content_set(term->bg, "terminology.tabregion", o);
 
@@ -7306,14 +7308,15 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    o = term->termio;
-
    evas_object_size_hint_weight_set(o, 0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, 0, EVAS_HINT_FILL);
    evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _cb_size_hint, term);
    elm_layout_content_set(term->core, "terminology.content", o);
+
    elm_layout_content_set(term->bg, "terminology.content", term->core);
    elm_layout_content_set(term->bg, "terminology.miniview", term->miniview);
+
    evas_object_smart_callback_add(o, "options", _cb_options, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
