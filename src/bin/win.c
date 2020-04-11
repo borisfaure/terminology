@@ -1119,9 +1119,8 @@ win_free(Win *wn)
    free(wn);
 }
 
-
-static Win *
-_win_find(Evas_Object *win)
+Win *
+win_evas_object_to_win(const Evas_Object *win)
 {
    Win *wn;
    Eina_List *l;
@@ -1138,7 +1137,7 @@ terms_from_win_object(Evas_Object *win)
 {
    Win *wn;
 
-   wn = _win_find(win);
+   wn = win_evas_object_to_win(win);
    if (!wn) return NULL;
 
    return wn->terms;
@@ -2279,7 +2278,7 @@ term_close(Evas_Object *win, Evas_Object *term, Eina_Bool hold_if_requested)
 {
    Term *tm;
    Term_Container *tc;
-   Win *wn = _win_find(win);
+   Win *wn = win_evas_object_to_win(win);
 
    if (!wn)
      return;
