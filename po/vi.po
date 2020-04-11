@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-01 18:18+0200\n"
+"POT-Creation-Date: 2020-04-12 00:15+0200\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -19,316 +19,464 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/controls.c:324
-msgid "Controls"
-msgstr "Điều Khiển"
+#: src/bin/options_helpers.c:193 src/bin/options.c:227
+msgid "Helpers"
+msgstr "Bộ Phụ Trợ"
 
-#: src/bin/controls.c:340
-msgid "New"
-msgstr "Tạo Mới"
+#: src/bin/options_helpers.c:206
+msgid "Inline if possible"
+msgstr "Inline nếu có thể"
 
-#: src/bin/controls.c:347
-msgid "Split V"
-msgstr "Chia Dọc"
+#: src/bin/options_helpers.c:236
+msgid "E-mail:"
+msgstr "E-mail:"
 
-#: src/bin/controls.c:350
-msgid "Split H"
-msgstr "Chia Ngang"
+#: src/bin/options_helpers.c:269
+msgid "URL (Images):"
+msgstr "URL (Ảnh):"
 
-#: src/bin/controls.c:357
-msgid "Miniview"
-msgstr "Miniview"
+#: src/bin/options_helpers.c:294
+msgid "URL (Video):"
+msgstr "URL (Video):"
 
-#: src/bin/controls.c:364 src/bin/win.c:4323
-#, fuzzy
-msgid "Set title"
-msgstr "Đặt tiêu đề cho cửa sổ."
+#: src/bin/options_helpers.c:319
+msgid "URL (All):"
+msgstr "URL (Tất Cả):"
 
-#: src/bin/controls.c:375 src/bin/termio.c:1073 src/bin/termio.c:4097
+#: src/bin/options_helpers.c:352
+msgid "Local (Images):"
+msgstr "Cục Bộ (Ảnh):"
+
+#: src/bin/options_helpers.c:377
+msgid "Local (Video):"
+msgstr "Cục Bộ (Video):"
+
+#: src/bin/options_helpers.c:402
+msgid "Local (All):"
+msgstr "Cục Bộ (Tất Cả):"
+
+#: src/bin/termio.c:350
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr "Không thể lấy thư mục làm việc của pid %i: %s"
+
+#: src/bin/termio.c:365
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr "Không thể tải thư mục làm việc %s: %s"
+
+#: src/bin/termio.c:1079
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "không hỗ trợ định dạng chọn '%s'"
+
+#: src/bin/termio.c:1172
+msgid "Preview"
+msgstr "Xem Trước"
+
+#: src/bin/termio.c:1175
+msgid "Open"
+msgstr "Mở"
+
+#: src/bin/termio.c:1182
+msgid "Copy relative path"
+msgstr ""
+
+#: src/bin/termio.c:1184
+msgid "Copy full path"
+msgstr ""
+
+#: src/bin/termio.c:1189 src/bin/termio.c:2554 src/bin/controls.c:424
 msgid "Copy"
 msgstr "Sao Chép"
 
-#: src/bin/controls.c:381
-msgid "Paste"
-msgstr "Dán"
+#: src/bin/termio.c:2556
+msgid "Open as URL"
+msgstr "Mở như là URL"
 
-#: src/bin/controls.c:387
-msgid "Settings"
-msgstr "Thiết Lập"
+#: src/bin/termio.c:3975
+msgid "Could not allocate termpty"
+msgstr "Không thể cấp phát termpty"
 
-#: src/bin/controls.c:393
-msgid "About"
-msgstr "Về"
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
+msgstr "Ctrl+"
 
-#: src/bin/controls.c:403
-msgid "Close Terminal"
-msgstr "Đóng Terminal"
+#: src/bin/options_keys.c:67
+msgid "Alt+"
+msgstr "Alt+"
 
-#: src/bin/about.c:83
+#: src/bin/options_keys.c:68
+msgid "Shift+"
+msgstr "Shift+"
+
+#: src/bin/options_keys.c:69
+msgid "Win+"
+msgstr "Win+"
+
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
+
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Hyper+"
+
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr "Xóa"
+
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "Xin hãy nhấn tổ hợp phím"
+
+#: src/bin/options_keys.c:385
+msgid "Key Bindings"
+msgstr "Các Phép Gán Phím"
+
+#: src/bin/options_keys.c:457
+#, fuzzy
+msgid "Reset bindings"
+msgstr "Các Phép Gán Phím"
+
+#: src/bin/options_background.c:163
+msgid "None"
+msgstr "Không Gì Cả"
+
+#: src/bin/options_background.c:498
+msgid "Source file is target file"
+msgstr "Tập tin nguồn là tập tin đích"
+
+#: src/bin/options_background.c:511
+msgid "Picture imported"
+msgstr "Hình ảnh đã được nhập"
+
+#: src/bin/options_background.c:516
+msgid "Failed"
+msgstr "Thất Bại"
+
+#: src/bin/options_background.c:568 src/bin/options.c:223
+msgid "Background"
+msgstr "Hình Nền"
+
+#: src/bin/options_background.c:584
+msgid "Shine:"
+msgstr ""
+
+#: src/bin/options_background.c:608 src/bin/options_behavior.c:656
+msgid "Translucent"
+msgstr "Trong Mờ"
+
+#: src/bin/options_background.c:619 src/bin/options_background.c:620
+#, c-format
+msgid "%1.0f%%"
+msgstr "%1.0f%%"
+
+#: src/bin/options_background.c:639
+msgid "Select Path"
+msgstr "Chọn Đường Dẫn"
+
+#: src/bin/options_background.c:645
+msgid "System"
+msgstr "Hệ Thống"
+
+#: src/bin/options_background.c:648
+msgid "User"
+msgstr "Người Dùng"
+
+#: src/bin/options_background.c:651
+msgid "Other"
+msgstr "Khác"
+
+#: src/bin/options_background.c:693
+#, fuzzy
+msgid "Click on a picture to use it as background"
+msgstr "Nhấp đúp vào hình để nhập nó"
+
+#: src/bin/options_elm.c:109 src/bin/options.c:228
+msgid "Toolkit"
+msgstr "Công Cụ"
+
+#: src/bin/options_elm.c:122
 #, c-format
 msgid ""
-"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
-"terminal was written for Enlightenment, to use EFL and otherwise push the "
-"boundaries of what a modern terminal emulator should be. We hope you enjoy "
-"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s"
-msgstr ""
-"<b>Terminology %s</b><br>Tại sao các terminal lại nhàm chán?<br><br>Terminal "
-"này được viết cho Enlightenment, để dùng EFL và mặt khác là để thể hiện "
-"những ranh giới mà các terminal hiện đại khác không có. Chúng tôi hy vọng "
-"bạn thích nó.<br><br>Bản quyền © 2012-%d bởi:<br><br>%s<br><br>Phân phối "
-"theo giấy phép 2-clause BSD license với thông tin cụ thể bên dưới:<br><br>%s"
-
-#: src/bin/keyin.c:654
-msgid "Scrolling"
-msgstr "Cuộn"
-
-#: src/bin/keyin.c:655
-msgid "Scroll one page up"
-msgstr "Cuộn lên trên một trang"
-
-#: src/bin/keyin.c:656
-msgid "Scroll one page down"
-msgstr "Cuộn xuống dưới một trang"
-
-#: src/bin/keyin.c:657
-msgid "Scroll one line up"
-msgstr "Cuộn lên trên một dòng"
-
-#: src/bin/keyin.c:658
-msgid "Scroll one line down"
-msgstr "Cuộn xuống dưới một dòng"
-
-#: src/bin/keyin.c:659
-msgid "Go to the top of the backlog"
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>."
 msgstr ""
 
-#: src/bin/keyin.c:660
-msgid "Reset scroll"
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
 msgstr ""
 
-#: src/bin/keyin.c:662
-msgid "Copy/Paste"
-msgstr "Sao Chép/Dán"
-
-#: src/bin/keyin.c:663
-msgid "Copy selection to Primary buffer"
-msgstr "Sao chép phần được chọn đến bộ đệm Chính"
-
-#: src/bin/keyin.c:664
-msgid "Copy selection to Clipboard buffer"
-msgstr "Sao chép phần được chọn đến bộ đệm Clipboard"
-
-#: src/bin/keyin.c:665
-msgid "Paste Primary buffer (highlight)"
-msgstr "Dán từ bộ đệm Chính (phần nổi bật)"
-
-#: src/bin/keyin.c:666
-msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Dán từ bộ đệm Clipboard (ctrl+c/v)"
-
-#: src/bin/keyin.c:668
-msgid "Splits/Tabs"
-msgstr "Chia/Thẻ"
-
-#: src/bin/keyin.c:669
-#, fuzzy
-msgid "Focus the previous terminal"
-msgstr "Tập trung vào terminal phía trước"
-
-#: src/bin/keyin.c:670
-#, fuzzy
-msgid "Focus the next terminal"
-msgstr "Tập trung vào terminal kế tiếp"
-
-#: src/bin/keyin.c:671
-#, fuzzy
-msgid "Focus the terminal above"
-msgstr "Tập trung vào terminal kế tiếp"
-
-#: src/bin/keyin.c:672
-#, fuzzy
-msgid "Focus the terminal below"
-msgstr "Tập trung vào terminal kế tiếp"
-
-#: src/bin/keyin.c:673
-#, fuzzy
-msgid "Focus the terminal on the left"
-msgstr "Tập trung vào terminal kế tiếp"
-
-#: src/bin/keyin.c:674
-#, fuzzy
-msgid "Focus the terminal on the right"
-msgstr "Tập trung vào terminal kế tiếp"
-
-#: src/bin/keyin.c:675
-msgid "Split horizontally (new below)"
-msgstr "Chia ngang (cái mới phía dưới)"
-
-#: src/bin/keyin.c:676
-msgid "Split vertically (new on right)"
-msgstr "Chia dọc (cái mới bên phải)"
-
-#: src/bin/keyin.c:677
-msgid "Create a new \"tab\""
-msgstr "Tạo \"thẻ\" mới"
-
-#: src/bin/keyin.c:678
-msgid "Close the focused terminal"
-msgstr "Đóng terminal đang được tập trung"
-
-#: src/bin/keyin.c:679
-msgid "Bring up \"tab\" switcher"
-msgstr "Đưa ra bộ chuyển đổi \"\thẻ\""
-
-#: src/bin/keyin.c:680
-msgid "Switch to terminal tab 1"
-msgstr "Chuyển đến terminal ở thẻ 1"
-
-#: src/bin/keyin.c:681
-msgid "Switch to terminal tab 2"
-msgstr "Chuyển đến terminal ở thẻ 2"
-
-#: src/bin/keyin.c:682
-msgid "Switch to terminal tab 3"
-msgstr "Chuyển đến terminal ở thẻ 3"
-
-#: src/bin/keyin.c:683
-msgid "Switch to terminal tab 4"
-msgstr "Chuyển đến terminal ở thẻ 4"
-
-#: src/bin/keyin.c:684
-msgid "Switch to terminal tab 5"
-msgstr "Chuyển đến terminal ở thẻ 5"
-
-#: src/bin/keyin.c:685
-msgid "Switch to terminal tab 6"
-msgstr "Chuyển đến terminal ở thẻ 6"
-
-#: src/bin/keyin.c:686
-msgid "Switch to terminal tab 7"
-msgstr "Chuyển đến terminal ở thẻ 7"
-
-#: src/bin/keyin.c:687
-msgid "Switch to terminal tab 8"
-msgstr "Chuyển đến terminal ở thẻ 8"
-
-#: src/bin/keyin.c:688
-msgid "Switch to terminal tab 9"
-msgstr "Chuyển đến terminal ở thẻ 9"
-
-#: src/bin/keyin.c:689
-msgid "Switch to terminal tab 10"
-msgstr "Chuyển đến terminal ở thẻ 10"
-
-#: src/bin/keyin.c:690
-msgid "Change title"
+#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
+msgid "Scale"
 msgstr ""
 
-#: src/bin/keyin.c:691 src/bin/keyin.c:692
-msgid "Toggle whether input goes to all visible terminals"
+#: src/bin/options_elm.c:172 src/bin/win.c:410
+msgid "Select prefered size so that this text is readable."
 msgstr ""
 
-#: src/bin/keyin.c:695
-msgid "Font size"
-msgstr "Kích thước phông"
-
-#: src/bin/keyin.c:696
-msgid "Font size up 1"
-msgstr "Tăng kích thước phông lên 1"
-
-#: src/bin/keyin.c:697
-msgid "Font size down 1"
-msgstr "Giảm kích thước phông đi 1"
-
-#: src/bin/keyin.c:698
-msgid "Display big font size"
-msgstr "Biểu diễn kích thước phông lớn nhất"
-
-#: src/bin/keyin.c:699
-msgid "Reset font size"
-msgstr "Điều chỉnh kích thước phông"
-
-#: src/bin/keyin.c:701
-msgid "Actions"
-msgstr "Hành Động"
-
-#: src/bin/keyin.c:702
-msgid "Open a new terminal window"
+#: src/bin/options_elm.c:179
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel."
 msgstr ""
 
-#: src/bin/keyin.c:703
-msgid "Toggle Fullscreen of the window"
-msgstr "Bật Tắt cửa sổ toàn màn hình"
+#: src/bin/options_theme.c:154 src/bin/options.c:222
+msgid "Theme"
+msgstr "Theme"
 
-#: src/bin/keyin.c:704
-msgid "Display the history miniview"
-msgstr "Biểu diễn lịch sử miniview"
+#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
+#, c-format
+msgid "Could not create logging domain '%s'."
+msgstr "Không thể tạo miền nhật ký '%s'."
 
-#: src/bin/keyin.c:705
-msgid "Display the command box"
-msgstr "Biểu diễn hộp mệnh lệnh"
+#: src/bin/options_behavior.c:89
+#, c-format
+msgid "%'d lines"
+msgstr "%'d dòng"
 
-#: src/bin/main.c:218 src/bin/main.c:885
+#: src/bin/options_behavior.c:105
+#, c-format
+msgid "Scrollback (current memory usage: %'.2f%cB):"
+msgstr ""
+
+#: src/bin/options_behavior.c:281
+#, fuzzy
+msgid "Default cursor:"
+msgstr "Mặc Định"
+
+#: src/bin/options_behavior.c:290
+msgid "Blinking Block"
+msgstr ""
+
+#: src/bin/options_behavior.c:308
+msgid "Steady Block"
+msgstr ""
+
+#: src/bin/options_behavior.c:327
+msgid "Blinking Underline"
+msgstr ""
+
+#: src/bin/options_behavior.c:346
+msgid "Steady Underline"
+msgstr ""
+
+#: src/bin/options_behavior.c:365
+msgid "Blinking Bar"
+msgstr ""
+
+#: src/bin/options_behavior.c:384
+msgid "Steady Bar"
+msgstr ""
+
+#: src/bin/options_behavior.c:423 src/bin/options.c:220
+msgid "Behavior"
+msgstr "Hành Vi"
+
+#: src/bin/options_behavior.c:466
+msgid "Scroll to bottom on new content"
+msgstr "Cuộn xuống dưới cùng khi có nội dung mới"
+
+#: src/bin/options_behavior.c:467
+msgid "Scroll to bottom when a key is pressed"
+msgstr "Cuộn xuống dưới cùng khi nhấn phím"
+
+#: src/bin/options_behavior.c:478
+#, fuzzy
+msgid "Active Links:"
+msgstr "Liên Kết Kích Hoạt"
+
+#: src/bin/options_behavior.c:482
+msgid "On emails"
+msgstr ""
+
+#: src/bin/options_behavior.c:483
+msgid "On file paths"
+msgstr ""
+
+#: src/bin/options_behavior.c:484
+#, fuzzy
+msgid "On URLs"
+msgstr "Mở như là URL"
+
+#: src/bin/options_behavior.c:485
+#, fuzzy
+msgid "Based on escape codes"
+msgstr "Bật các mã thoát đặc biệt của Terminology"
+
+#: src/bin/options_behavior.c:489
+msgid "React to key presses"
+msgstr "Phản ứng với nhấn phím"
+
+#: src/bin/options_behavior.c:496
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr ""
+
+#: src/bin/options_behavior.c:499
+msgid "Visual Bell"
+msgstr "Chuông Trực Quan"
+
+#: src/bin/options_behavior.c:500
+msgid "Bell rings"
+msgstr "Ring chuông"
+
+#: src/bin/options_behavior.c:501
+msgid "Urgent Bell"
+msgstr "Chuông Khẩn Cấp"
+
+#: src/bin/options_behavior.c:502
+msgid "Multiple instances, one process"
+msgstr "Đa thực thể, một tiến trình"
+
+#: src/bin/options_behavior.c:503
+msgid "Set TERM to xterm-256color"
+msgstr "Dùng xterm-256color cho TERM"
+
+#: src/bin/options_behavior.c:504
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr "BackArrow gửi Del (thay vì BackSpace)"
+
+#: src/bin/options_behavior.c:505
+msgid "Drag & drop links"
+msgstr "Kéo & thả liên kết"
+
+#: src/bin/options_behavior.c:506
+msgid "Start as login shell"
+msgstr "Khởi động như là shell đăng nhập"
+
+#: src/bin/options_behavior.c:507
+msgid "Focus split under the Mouse"
+msgstr "Tập trung phân tách phía dưới con trỏ"
+
+#: src/bin/options_behavior.c:508
+msgid "Focus-related visuals"
+msgstr ""
+
+#: src/bin/options_behavior.c:509
+msgid "Gravatar integration"
+msgstr "Tích hợp Gravatar"
+
+#: src/bin/options_behavior.c:510
+msgid "Show tabs"
+msgstr "Hiển thị các thẻ"
+
+#: src/bin/options_behavior.c:511
+msgid "Always show miniview"
+msgstr "Luôn hiển thị miniview"
+
+#: src/bin/options_behavior.c:512
+msgid "Enable special Terminology escape codes"
+msgstr "Bật các mã thoát đặc biệt của Terminology"
+
+#: src/bin/options_behavior.c:513
+msgid "Open new terminals in current working directory"
+msgstr ""
+
+#: src/bin/options_behavior.c:514
+msgid "Treat Emojis as double-width characters"
+msgstr ""
+
+#: src/bin/options_behavior.c:523
+msgid "Always open at size:"
+msgstr "Luôn mở với kích thước:"
+
+#: src/bin/options_behavior.c:533
+msgid "Set Current:"
+msgstr ""
+
+#: src/bin/options_behavior.c:544
+msgid "Width:"
+msgstr "Chiều Rộng:"
+
+#: src/bin/options_behavior.c:566
+msgid "Height:"
+msgstr "Chiều Cao:"
+
+#: src/bin/options_behavior.c:625
+msgid "Tab zoom/switch animation time:"
+msgstr "Thời gian chuyển động cho chuyển/phóng to thẻ:"
+
+#: src/bin/options_behavior.c:626
+msgid ""
+"Set the time of the animation that<br>takes places on tab switches,<br>be "
+"them by key binding, mouse<br>wheel or tabs panel mouse move"
+msgstr ""
+"Đặt thời gian cho chuyển động của tác vụ <br>chuyển thẻ,<br>gán phím, cuộn "
+"con trỏ<br> hoặc di chuyển con trỏ giữa các thẻ"
+
+#: src/bin/options_behavior.c:638 src/bin/options_behavior.c:639
+#: src/bin/options_behavior.c:670 src/bin/options_behavior.c:671
+#, c-format
+msgid "%1.1f s"
+msgstr "%1.1f s"
+
+#: src/bin/options_behavior.c:657
+msgid "Auto hide the mouse cursor when idle:"
+msgstr ""
+
+#: src/bin/main.c:387 src/bin/main.c:589
 msgid "Could not create window."
 msgstr "Không thể tạo cửa sổ mới."
 
-#: src/bin/main.c:288 src/bin/main.c:896
+#: src/bin/main.c:406 src/bin/main.c:600
 msgid "Could not create terminal widget."
 msgstr "Không thể tạo terminal widget."
 
-#: src/bin/main.c:327
+#: src/bin/main.c:446
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler và những người khác"
 
-#: src/bin/main.c:329
+#: src/bin/main.c:448
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
 msgstr ""
 "Bộ mô phỏng terminal được viết bằng Enlightenment Foundation Libraries."
 
-#: src/bin/main.c:333
+#: src/bin/main.c:452
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Mệnh lệnh để thực thi. Mặc định là $SHELL (hoặc passwd shell hoặc /bin/sh)"
 
-#: src/bin/main.c:335
+#: src/bin/main.c:454
 msgid "Change to directory for execution of terminal command."
 msgstr "Thay đổi thư mục cho việc thực thi lệnh terminal."
 
-#: src/bin/main.c:337
+#: src/bin/main.c:456
 msgid "Use the named edje theme or path to theme file."
 msgstr "Sử dụng tên của edje theme hoặc đường dẫn đến tập tin theme."
 
-#: src/bin/main.c:339
+#: src/bin/main.c:458
 msgid "Use the named file as a background wallpaper."
 msgstr "Sử dụng tên thư mục như là màn hình nền."
 
-#: src/bin/main.c:341
+#: src/bin/main.c:460
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
 msgstr "Sử dụng kích thước terminal (ví dụ 80x24 hoặc 80x24+50+20 vân vân)."
 
-#: src/bin/main.c:343
+#: src/bin/main.c:462
 msgid "Set window name."
 msgstr "Đặt tên cho cửa sổ."
 
-#: src/bin/main.c:345
+#: src/bin/main.c:464
 msgid "Set window role."
 msgstr "Đặt nhiệm vụ cho cửa sổ."
 
-#: src/bin/main.c:347
+#: src/bin/main.c:466
 msgid "Set window title."
 msgstr "Đặt tiêu đề cho cửa sổ."
 
-#: src/bin/main.c:349
+#: src/bin/main.c:468
 msgid "Set icon name."
 msgstr "Đặt biểu tượng cho cửa sổ."
 
-#: src/bin/main.c:351
+#: src/bin/main.c:470
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
 msgstr "Đặt phông (TÊN/KÍCH THƯỚC cho scalable, TÊN cho bimap)."
 
-#: src/bin/main.c:353
+#: src/bin/main.c:472
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -338,313 +486,110 @@ msgstr ""
 "dụng nhiều lần. Ví dụ - S vhvv hoặc --split hv. Mô tả cụ thể có thể được tìm "
 "thấy trong trang man."
 
-#: src/bin/main.c:358
+#: src/bin/main.c:477
 msgid "Set emotion module to use."
 msgstr "Đặt mô-đun cảm xúc để sử dụng."
 
-#: src/bin/main.c:361
+#: src/bin/main.c:480
 msgid "Run the shell as a login shell."
 msgstr "Chạy shell giống với shell đăng nhập."
 
-#: src/bin/main.c:363
+#: src/bin/main.c:482
 msgid "Set mute mode for video playback."
 msgstr "Đặt chế độ yên lặng cho việc chơi video."
 
-#: src/bin/main.c:365
+#: src/bin/main.c:484
 msgid "Set cursor blink mode."
 msgstr "Đặt chế độ nhấp nháy của con trỏ."
 
-#: src/bin/main.c:367
+#: src/bin/main.c:486
 msgid "Set visual bell mode."
 msgstr "Đặt chế độ chuông trực quan."
 
-#: src/bin/main.c:369
+#: src/bin/main.c:488
 msgid "Go into the fullscreen mode from the start."
 msgstr "Dùng chế độ toàn màn hình khi khởi động."
 
-#: src/bin/main.c:371
+#: src/bin/main.c:490
 msgid "Go into an iconic state from the start."
 msgstr "Dùng chế độ biểu tượng khi khởi động."
 
-#: src/bin/main.c:373
+#: src/bin/main.c:492
 msgid "Become a borderless managed window."
 msgstr "Trở thành cửa sổ được quản lý không viền."
 
-#: src/bin/main.c:375
+#: src/bin/main.c:494
 msgid "Become an override-redirect window."
 msgstr "Trở thành cửa sổ chuyển đổi tái thiết lập."
 
-#: src/bin/main.c:377
+#: src/bin/main.c:496
 msgid "Become maximized from the start."
 msgstr "Trở thành cực đại lúc khởi động."
 
-#: src/bin/main.c:379
+#: src/bin/main.c:498
 msgid "Terminology is run without a window manager."
 msgstr "Terminology đang được chạy mà không có bộ quản lý cửa sổ."
 
-#: src/bin/main.c:381
+#: src/bin/main.c:500
 msgid "Do not exit when the command process exits."
 msgstr "Không thoát ra khi có lệnh đang chạy."
 
-#: src/bin/main.c:383
+#: src/bin/main.c:502
 msgid "Force single executable if multi-instance is enabled."
 msgstr "Ép thực thi đơn nếu đa thực thể khả dụng."
 
-#: src/bin/main.c:385
+#: src/bin/main.c:504
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
 msgstr "Đặt TERM 'xterm-256color' thay vì 'xterm'."
 
-#: src/bin/main.c:387
+#: src/bin/main.c:506
+msgid "Set scaling factor."
+msgstr ""
+
+#: src/bin/main.c:508
 msgid "Highlight links."
 msgstr "Nổi bật các liên kết."
 
-#: src/bin/main.c:413
+#: src/bin/main.c:510
+msgid "Do not display wizard on start up."
+msgstr ""
+
+#: src/bin/main.c:536
 msgid "show program version."
 msgstr "Hiển thị phiên bản của chương trình."
 
-#: src/bin/main.c:416
+#: src/bin/main.c:539
 msgid "show copyright."
 msgstr "Hiển thị bản quyền."
 
-#: src/bin/main.c:419
+#: src/bin/main.c:542
 msgid "show license."
 msgstr "Hiển thị giấy phép."
 
-#: src/bin/main.c:422
+#: src/bin/main.c:545
 msgid "show this message."
 msgstr "Hiển thị thông điệp này."
 
-#: src/bin/main.c:574 src/bin/miniview.c:38
-#, c-format
-msgid "Could not create logging domain '%s'."
-msgstr "Không thể tạo miền nhật ký '%s'."
+#: src/bin/main.c:642
+msgid "invalid argument found for option -S/--split. See --help."
+msgstr "phát hiện đối số không hợp lệ cho tùy chọn -S/--split. Xem --help."
 
-#: src/bin/main.c:584
+#: src/bin/main.c:896
 msgid "Could not initialize key bindings."
 msgstr "Không thể khởi tạo phép gán phím."
 
-#: src/bin/main.c:596
+#: src/bin/main.c:911
 msgid "Could not parse command line options."
 msgstr "Không thể phân tích các tùy chọn dòng lệnh."
 
-#: src/bin/main.c:609
+#: src/bin/main.c:935
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "Tùy chọn %s yêu cầu một đối số!"
 
-#: src/bin/main.c:610
+#: src/bin/main.c:936
 msgid "invalid options found. See --help."
 msgstr "Tìm thấy các tùy chọn không hợp lệ. Xem --help."
-
-#: src/bin/main.c:938
-msgid "invalid argument found for option -S/--split. See --help."
-msgstr "phát hiện đối số không hợp lệ cho tùy chọn -S/--split. Xem --help."
-
-#: src/bin/media.c:807
-#, c-format
-msgid "Could not Initialize the emotion module '%s'"
-msgstr "Không thể khởi tạo mô-đun cảm xúc '%s'"
-
-#: src/bin/media.c:1348 src/bin/termpty.c:571 src/bin/termpty.c:576
-#: src/bin/termpty.c:580
-#, c-format
-msgid "Function %s failed: %s"
-msgstr "Hàm %s thất bại: %s"
-
-#: src/bin/media.c:1445
-msgid "Media visualizing is not supported"
-msgstr "Không hỗ trợ trực quan phương tiện"
-
-#: src/bin/options_behavior.c:77
-#, c-format
-msgid "%'d lines"
-msgstr "%'d dòng"
-
-#: src/bin/options_behavior.c:218
-#, fuzzy
-msgid "Default cursor:"
-msgstr "Mặc Định"
-
-#: src/bin/options_behavior.c:227
-msgid "Blinking Block"
-msgstr ""
-
-#: src/bin/options_behavior.c:246
-msgid "Steady Block"
-msgstr ""
-
-#: src/bin/options_behavior.c:266
-msgid "Blinking Underline"
-msgstr ""
-
-#: src/bin/options_behavior.c:286
-msgid "Steady Underline"
-msgstr ""
-
-#: src/bin/options_behavior.c:306
-msgid "Blinking Bar"
-msgstr ""
-
-#: src/bin/options_behavior.c:326
-msgid "Steady Bar"
-msgstr ""
-
-#: src/bin/options_behavior.c:373 src/bin/options.c:233
-msgid "Behavior"
-msgstr "Hành Vi"
-
-#: src/bin/options_behavior.c:404
-msgid "Scroll to bottom on new content"
-msgstr "Cuộn xuống dưới cùng khi có nội dung mới"
-
-#: src/bin/options_behavior.c:405
-msgid "Scroll to bottom when a key is pressed"
-msgstr "Cuộn xuống dưới cùng khi nhấn phím"
-
-#: src/bin/options_behavior.c:409
-msgid "React to key presses"
-msgstr "Phản ứng với nhấn phím"
-
-#: src/bin/options_behavior.c:410
-msgid "Visual Bell"
-msgstr "Chuông Trực Quan"
-
-#: src/bin/options_behavior.c:411
-msgid "Bell rings"
-msgstr "Ring chuông"
-
-#: src/bin/options_behavior.c:412
-msgid "Urgent Bell"
-msgstr "Chuông Khẩn Cấp"
-
-#: src/bin/options_behavior.c:413
-msgid "Active Links"
-msgstr "Liên Kết Kích Hoạt"
-
-#: src/bin/options_behavior.c:414
-msgid "Multiple instances, one process"
-msgstr "Đa thực thể, một tiến trình"
-
-#: src/bin/options_behavior.c:415
-msgid "Set TERM to xterm-256color"
-msgstr "Dùng xterm-256color cho TERM"
-
-#: src/bin/options_behavior.c:416
-msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr "BackArrow gửi Del (thay vì BackSpace)"
-
-#: src/bin/options_behavior.c:417
-msgid "Drag & drop links"
-msgstr "Kéo & thả liên kết"
-
-#: src/bin/options_behavior.c:418
-msgid "Start as login shell"
-msgstr "Khởi động như là shell đăng nhập"
-
-#: src/bin/options_behavior.c:419
-msgid "Focus split under the Mouse"
-msgstr "Tập trung phân tách phía dưới con trỏ"
-
-#: src/bin/options_behavior.c:420
-msgid "Focus-related visuals"
-msgstr ""
-
-#: src/bin/options_behavior.c:421
-msgid "Gravatar integration"
-msgstr "Tích hợp Gravatar"
-
-#: src/bin/options_behavior.c:422
-msgid "Show tabs"
-msgstr "Hiển thị các thẻ"
-
-#: src/bin/options_behavior.c:423
-msgid "Always show miniview"
-msgstr "Luôn hiển thị miniview"
-
-#: src/bin/options_behavior.c:424
-msgid "Enable special Terminology escape codes"
-msgstr "Bật các mã thoát đặc biệt của Terminology"
-
-#: src/bin/options_behavior.c:425
-msgid "Open new terminals in current working directory"
-msgstr ""
-
-#: src/bin/options_behavior.c:433
-msgid "Always open at size:"
-msgstr "Luôn mở với kích thước:"
-
-#: src/bin/options_behavior.c:443
-msgid "Set Current:"
-msgstr ""
-
-#: src/bin/options_behavior.c:454
-msgid "Width:"
-msgstr "Chiều Rộng:"
-
-#: src/bin/options_behavior.c:476
-msgid "Height:"
-msgstr "Chiều Cao:"
-
-#: src/bin/options_behavior.c:505
-msgid "Scrollback:"
-msgstr "Cuộn:"
-
-#: src/bin/options_behavior.c:537
-msgid "Tab zoom/switch animation time:"
-msgstr "Thời gian chuyển động cho chuyển/phóng to thẻ:"
-
-#: src/bin/options_behavior.c:538
-msgid ""
-"Set the time of the animation that<br>takes places on tab switches,<br>be "
-"them by key binding, mouse<br>wheel or tabs panel mouse move"
-msgstr ""
-"Đặt thời gian cho chuyển động của tác vụ <br>chuyển thẻ,<br>gán phím, cuộn "
-"con trỏ<br> hoặc di chuyển con trỏ giữa các thẻ"
-
-#: src/bin/options_behavior.c:551 src/bin/options_behavior.c:552
-#, c-format
-msgid "%1.1f s"
-msgstr "%1.1f s"
-
-#: src/bin/options.c:205
-msgid "Options"
-msgstr "Tùy Chọn"
-
-#: src/bin/options.c:234 src/bin/options_font.c:425
-msgid "Font"
-msgstr "Phông"
-
-#: src/bin/options.c:235 src/bin/options_theme.c:154
-msgid "Theme"
-msgstr "Theme"
-
-#: src/bin/options.c:236
-msgid "Background"
-msgstr "Hình Nền"
-
-#: src/bin/options.c:237 src/bin/options_colors.c:234
-msgid "Colors"
-msgstr "Màu Sắc"
-
-#: src/bin/options.c:238 src/bin/options_video.c:58
-msgid "Video"
-msgstr "Video"
-
-#: src/bin/options.c:239
-msgid "Keys"
-msgstr "Phím"
-
-#: src/bin/options.c:240 src/bin/options_helpers.c:193
-msgid "Helpers"
-msgstr "Bộ Phụ Trợ"
-
-#: src/bin/options.c:241
-msgid "Toolkit"
-msgstr "Công Cụ"
-
-#: src/bin/options.c:252
-msgid "Temporary"
-msgstr "Tạm Thời"
 
 #: src/bin/options_colors.c:12
 msgid "Default"
@@ -695,6 +640,10 @@ msgstr "Nghịch Đảo"
 msgid "Inverse Background"
 msgstr "Hình Nền"
 
+#: src/bin/options_colors.c:234 src/bin/options.c:224
+msgid "Colors"
+msgstr "Màu Sắc"
+
 #: src/bin/options_colors.c:270
 msgid "Normal"
 msgstr "Thông Thường"
@@ -715,6 +664,200 @@ msgstr "Sáng Mạnh/Cực Đậm "
 msgid "Reset all the colors"
 msgstr ""
 
+#: src/bin/keyin.c:653
+msgid "Scrolling"
+msgstr "Cuộn"
+
+#: src/bin/keyin.c:654
+msgid "Scroll one page up"
+msgstr "Cuộn lên trên một trang"
+
+#: src/bin/keyin.c:655
+msgid "Scroll one page down"
+msgstr "Cuộn xuống dưới một trang"
+
+#: src/bin/keyin.c:656
+msgid "Scroll one line up"
+msgstr "Cuộn lên trên một dòng"
+
+#: src/bin/keyin.c:657
+msgid "Scroll one line down"
+msgstr "Cuộn xuống dưới một dòng"
+
+#: src/bin/keyin.c:658
+msgid "Go to the top of the backlog"
+msgstr ""
+
+#: src/bin/keyin.c:659
+msgid "Reset scroll"
+msgstr ""
+
+#: src/bin/keyin.c:661
+msgid "Copy/Paste"
+msgstr "Sao Chép/Dán"
+
+#: src/bin/keyin.c:662
+msgid "Copy selection to Primary buffer"
+msgstr "Sao chép phần được chọn đến bộ đệm Chính"
+
+#: src/bin/keyin.c:663
+msgid "Copy selection to Clipboard buffer"
+msgstr "Sao chép phần được chọn đến bộ đệm Clipboard"
+
+#: src/bin/keyin.c:664
+msgid "Paste Primary buffer (highlight)"
+msgstr "Dán từ bộ đệm Chính (phần nổi bật)"
+
+#: src/bin/keyin.c:665
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr "Dán từ bộ đệm Clipboard (ctrl+c/v)"
+
+#: src/bin/keyin.c:667
+msgid "Splits/Tabs"
+msgstr "Chia/Thẻ"
+
+#: src/bin/keyin.c:668
+#, fuzzy
+msgid "Focus the previous terminal"
+msgstr "Tập trung vào terminal phía trước"
+
+#: src/bin/keyin.c:669
+#, fuzzy
+msgid "Focus the next terminal"
+msgstr "Tập trung vào terminal kế tiếp"
+
+#: src/bin/keyin.c:670
+#, fuzzy
+msgid "Focus the terminal above"
+msgstr "Tập trung vào terminal kế tiếp"
+
+#: src/bin/keyin.c:671
+#, fuzzy
+msgid "Focus the terminal below"
+msgstr "Tập trung vào terminal kế tiếp"
+
+#: src/bin/keyin.c:672
+#, fuzzy
+msgid "Focus the terminal on the left"
+msgstr "Tập trung vào terminal kế tiếp"
+
+#: src/bin/keyin.c:673
+#, fuzzy
+msgid "Focus the terminal on the right"
+msgstr "Tập trung vào terminal kế tiếp"
+
+#: src/bin/keyin.c:674
+msgid "Split horizontally (new below)"
+msgstr "Chia ngang (cái mới phía dưới)"
+
+#: src/bin/keyin.c:675
+msgid "Split vertically (new on right)"
+msgstr "Chia dọc (cái mới bên phải)"
+
+#: src/bin/keyin.c:676
+msgid "Create a new \"tab\""
+msgstr "Tạo \"thẻ\" mới"
+
+#: src/bin/keyin.c:677
+msgid "Close the focused terminal"
+msgstr "Đóng terminal đang được tập trung"
+
+#: src/bin/keyin.c:678
+msgid "Bring up \"tab\" switcher"
+msgstr "Đưa ra bộ chuyển đổi \"\thẻ\""
+
+#: src/bin/keyin.c:679
+msgid "Switch to terminal tab 1"
+msgstr "Chuyển đến terminal ở thẻ 1"
+
+#: src/bin/keyin.c:680
+msgid "Switch to terminal tab 2"
+msgstr "Chuyển đến terminal ở thẻ 2"
+
+#: src/bin/keyin.c:681
+msgid "Switch to terminal tab 3"
+msgstr "Chuyển đến terminal ở thẻ 3"
+
+#: src/bin/keyin.c:682
+msgid "Switch to terminal tab 4"
+msgstr "Chuyển đến terminal ở thẻ 4"
+
+#: src/bin/keyin.c:683
+msgid "Switch to terminal tab 5"
+msgstr "Chuyển đến terminal ở thẻ 5"
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 6"
+msgstr "Chuyển đến terminal ở thẻ 6"
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 7"
+msgstr "Chuyển đến terminal ở thẻ 7"
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 8"
+msgstr "Chuyển đến terminal ở thẻ 8"
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 9"
+msgstr "Chuyển đến terminal ở thẻ 9"
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 10"
+msgstr "Chuyển đến terminal ở thẻ 10"
+
+#: src/bin/keyin.c:689
+msgid "Change title"
+msgstr ""
+
+#: src/bin/keyin.c:690 src/bin/keyin.c:691
+msgid "Toggle whether input goes to all visible terminals"
+msgstr ""
+
+#: src/bin/keyin.c:694
+msgid "Font size"
+msgstr "Kích thước phông"
+
+#: src/bin/keyin.c:695
+msgid "Font size up 1"
+msgstr "Tăng kích thước phông lên 1"
+
+#: src/bin/keyin.c:696
+msgid "Font size down 1"
+msgstr "Giảm kích thước phông đi 1"
+
+#: src/bin/keyin.c:697
+msgid "Display big font size"
+msgstr "Biểu diễn kích thước phông lớn nhất"
+
+#: src/bin/keyin.c:698
+msgid "Reset font size"
+msgstr "Điều chỉnh kích thước phông"
+
+#: src/bin/keyin.c:700
+msgid "Actions"
+msgstr "Hành Động"
+
+#: src/bin/keyin.c:701
+msgid "Open a new terminal window"
+msgstr ""
+
+#: src/bin/keyin.c:702
+msgid "Toggle Fullscreen of the window"
+msgstr "Bật Tắt cửa sổ toàn màn hình"
+
+#: src/bin/keyin.c:703
+msgid "Display the history miniview"
+msgstr "Biểu diễn lịch sử miniview"
+
+#: src/bin/keyin.c:704
+msgid "Display the command box"
+msgstr "Biểu diễn hộp mệnh lệnh"
+
+#: src/bin/options_font.c:425 src/bin/options.c:221
+msgid "Font"
+msgstr "Phông"
+
 #: src/bin/options_font.c:491
 msgid "Bitmap"
 msgstr "Bitmap"
@@ -727,78 +870,181 @@ msgstr "Chuẩn"
 msgid "Display bold and italic in the terminal"
 msgstr ""
 
-#: src/bin/options_helpers.c:206
-msgid "Inline if possible"
-msgstr "Inline nếu có thể"
+#: src/bin/about.c:83
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+"<b>Terminology %s</b><br>Tại sao các terminal lại nhàm chán?<br><br>Terminal "
+"này được viết cho Enlightenment, để dùng EFL và mặt khác là để thể hiện "
+"những ranh giới mà các terminal hiện đại khác không có. Chúng tôi hy vọng "
+"bạn thích nó.<br><br>Bản quyền © 2012-%d bởi:<br><br>%s<br><br>Phân phối "
+"theo giấy phép 2-clause BSD license với thông tin cụ thể bên dưới:<br><br>%s"
 
-#: src/bin/options_helpers.c:236
-msgid "E-mail:"
-msgstr "E-mail:"
+#: src/bin/media.c:808
+#, c-format
+msgid "Could not Initialize the emotion module '%s'"
+msgstr "Không thể khởi tạo mô-đun cảm xúc '%s'"
 
-#: src/bin/options_helpers.c:269
-msgid "URL (Images):"
-msgstr "URL (Ảnh):"
+#: src/bin/media.c:1348 src/bin/termpty.c:636 src/bin/termpty.c:641
+#: src/bin/termpty.c:645
+#, c-format
+msgid "Function %s failed: %s"
+msgstr "Hàm %s thất bại: %s"
 
-#: src/bin/options_helpers.c:294
-msgid "URL (Video):"
-msgstr "URL (Video):"
+#: src/bin/media.c:1445
+msgid "Media visualizing is not supported"
+msgstr "Không hỗ trợ trực quan phương tiện"
 
-#: src/bin/options_helpers.c:319
-msgid "URL (All):"
-msgstr "URL (Tất Cả):"
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr "memerr: %s"
 
-#: src/bin/options_helpers.c:352
-msgid "Local (Images):"
-msgstr "Cục Bộ (Ảnh):"
+#: src/bin/termpty.c:224
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr "Ioctrl thiết lập kích thước thất bại: %s"
 
-#: src/bin/options_helpers.c:377
-msgid "Local (Video):"
-msgstr "Cục Bộ (Video):"
+#: src/bin/termpty.c:358
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr "Không thể viết vào mô tả tập tin %d: %s"
 
-#: src/bin/options_helpers.c:402
-msgid "Local (All):"
-msgstr "Cục Bộ (Tất Cả):"
+#: src/bin/termpty.c:612
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr "Không thể tìm thấy shell, quay lại với %s"
 
-#: src/bin/options_keys.c:64
-msgid "Ctrl+"
-msgstr "Ctrl+"
+#: src/bin/termpty.c:652
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr "open() của pty '%s' thất bại: %s"
 
-#: src/bin/options_keys.c:65
-msgid "Alt+"
-msgstr "Alt+"
+#: src/bin/termpty.c:659 src/bin/termpty.c:665
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr "fcntl() trên pty '%s' thất bại: %s"
 
-#: src/bin/options_keys.c:66
-msgid "Shift+"
-msgstr "Shift+"
+#: src/bin/termpty.c:674
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr "ioctl() trên pty '%s' thất bại: %s"
 
-#: src/bin/options_keys.c:67
-msgid "Win+"
-msgstr "Win+"
+#: src/bin/termpty.c:718 src/bin/termpty.c:726 src/bin/termpty.c:735
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr "Không thể thay đổi thư mục hiện hành đến '%s': %s"
 
-#: src/bin/options_keys.c:68
-msgid "Meta+"
-msgstr "Meta+"
+#: src/bin/win.c:417
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the "
+"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
+"keyword>."
+msgstr ""
 
-#: src/bin/options_keys.c:69
-msgid "Hyper+"
-msgstr "Hyper+"
+#: src/bin/win.c:422
+msgid "Done"
+msgstr ""
 
-#: src/bin/options_keys.c:80
-msgid "Delete"
-msgstr "Xóa"
+#: src/bin/win.c:2270
+msgid "Ecore IMF failed"
+msgstr "Ecore IMF thất bại"
 
-#: src/bin/options_keys.c:266
-msgid "Please press key sequence"
-msgstr "Xin hãy nhấn tổ hợp phím"
-
-#: src/bin/options_keys.c:385
-msgid "Key Bindings"
-msgstr "Các Phép Gán Phím"
-
-#: src/bin/options_keys.c:453
+#: src/bin/win.c:6091 src/bin/controls.c:413
 #, fuzzy
-msgid "Reset bindings"
-msgstr "Các Phép Gán Phím"
+msgid "Set title"
+msgstr "Đặt tiêu đề cho cửa sổ."
+
+#: src/bin/win.c:6095
+msgid "Ok"
+msgstr ""
+
+#: src/bin/win.c:6100
+msgid "Cancel"
+msgstr ""
+
+#: src/bin/win.c:7286
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
+
+#: src/bin/controls.c:372
+msgid "Controls"
+msgstr "Điều Khiển"
+
+#: src/bin/controls.c:388
+msgid "New"
+msgstr "Tạo Mới"
+
+#: src/bin/controls.c:395
+msgid "Split V"
+msgstr "Chia Dọc"
+
+#: src/bin/controls.c:399
+msgid "Split H"
+msgstr "Chia Ngang"
+
+#: src/bin/controls.c:406
+msgid "Miniview"
+msgstr "Miniview"
+
+#: src/bin/controls.c:430
+msgid "Paste"
+msgstr "Dán"
+
+#: src/bin/controls.c:436
+msgid "Settings"
+msgstr "Thiết Lập"
+
+#: src/bin/controls.c:442
+msgid "About"
+msgstr "Về"
+
+#: src/bin/controls.c:451
+msgid "Grouped input"
+msgstr ""
+
+#: src/bin/controls.c:463
+msgid "Close Terminal"
+msgstr "Đóng Terminal"
+
+#: src/bin/utils.c:48 src/bin/utils.c:74
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr "Không thể tải theme nào cho nhóm=%s: %s"
+
+#: src/bin/utils.c:91
+#, c-format
+msgid "Could not load default theme for group=%s: %s"
+msgstr "Không thể tải theme mặc định cho nhóm=%s: %s"
+
+#: src/bin/termcmd.c:84
+#, c-format
+msgid "Unknown font command: %s"
+msgstr "Lệnh phông chưa biết: %s"
+
+#: src/bin/termcmd.c:118
+#, c-format
+msgid "Unknown grid size command: %s"
+msgstr "Lệnh kích thước lưới chưa biết: %s"
+
+#: src/bin/termcmd.c:146
+#, c-format
+msgid "Background file could not be read: %s"
+msgstr "Không thể đọc tập tin hình nền: %s"
+
+#: src/bin/termcmd.c:175
+#, c-format
+msgid "Unknown command: %s"
+msgstr "Lệnh chưa biết: %s"
+
+#: src/bin/options_video.c:58 src/bin/options.c:225
+msgid "Video"
+msgstr "Video"
 
 #: src/bin/options_video.c:72
 msgid "Audio muted"
@@ -816,130 +1062,20 @@ msgstr "Động Cơ Video:"
 msgid "Automatic"
 msgstr "Tự Động"
 
-#: src/bin/termcmd.c:72
-#, c-format
-msgid "Unknown font command: %s"
-msgstr "Lệnh phông chưa biết: %s"
+#: src/bin/options.c:192
+msgid "Options"
+msgstr "Tùy Chọn"
 
-#: src/bin/termcmd.c:106
-#, c-format
-msgid "Unknown grid size command: %s"
-msgstr "Lệnh kích thước lưới chưa biết: %s"
+#: src/bin/options.c:226
+msgid "Keys"
+msgstr "Phím"
 
-#: src/bin/termcmd.c:134
-#, c-format
-msgid "Background file could not be read: %s"
-msgstr "Không thể đọc tập tin hình nền: %s"
+#: src/bin/options.c:239
+msgid "Temporary"
+msgstr "Tạm Thời"
 
-#: src/bin/termcmd.c:163
-#, c-format
-msgid "Unknown command: %s"
-msgstr "Lệnh chưa biết: %s"
-
-#: src/bin/termio.c:553
-#, c-format
-msgid "Could not get working directory of pid %i: %s"
-msgstr "Không thể lấy thư mục làm việc của pid %i: %s"
-
-#: src/bin/termio.c:567
-#, c-format
-msgid "Could not load working directory %s: %s"
-msgstr "Không thể tải thư mục làm việc %s: %s"
-
-#: src/bin/termio.c:1052
-msgid "Preview"
-msgstr "Xem Trước"
-
-#: src/bin/termio.c:1055
-msgid "Open"
-msgstr "Mở"
-
-#: src/bin/termio.c:1066
-msgid "Copy relative path"
-msgstr ""
-
-#: src/bin/termio.c:1068
-msgid "Copy full path"
-msgstr ""
-
-#: src/bin/termio.c:2435
-#, c-format
-msgid "unsupported selection format '%s'"
-msgstr "không hỗ trợ định dạng chọn '%s'"
-
-#: src/bin/termio.c:4099
-msgid "Open as URL"
-msgstr "Mở như là URL"
-
-#: src/bin/termio.c:6091
-msgid "Could not allocate termpty"
-msgstr "Không thể cấp phát termpty"
-
-#: src/bin/termpty.c:97 src/bin/termpty.c:139 src/bin/termpty.c:186
-#, c-format
-msgid "memerr: %s"
-msgstr "memerr: %s"
-
-#: src/bin/termpty.c:222
-#, c-format
-msgid "Size set ioctl failed: %s"
-msgstr "Ioctrl thiết lập kích thước thất bại: %s"
-
-#: src/bin/termpty.c:547
-#, c-format
-msgid "Could not find shell, falling back to %s"
-msgstr "Không thể tìm thấy shell, quay lại với %s"
-
-#: src/bin/termpty.c:587
-#, c-format
-msgid "open() of pty '%s' failed: %s"
-msgstr "open() của pty '%s' thất bại: %s"
-
-#: src/bin/termpty.c:594 src/bin/termpty.c:600
-#, c-format
-msgid "fcntl() on pty '%s' failed: %s"
-msgstr "fcntl() trên pty '%s' thất bại: %s"
-
-#: src/bin/termpty.c:609
-#, c-format
-msgid "ioctl() on pty '%s' failed: %s"
-msgstr "ioctl() trên pty '%s' thất bại: %s"
-
-#: src/bin/termpty.c:653 src/bin/termpty.c:661 src/bin/termpty.c:670
-#, c-format
-msgid "Could not change current directory to '%s': %s"
-msgstr "Không thể thay đổi thư mục hiện hành đến '%s': %s"
-
-#: src/bin/termpty.c:1198
-#, c-format
-msgid "Could not write to file descriptor %d: %s"
-msgstr "Không thể viết vào mô tả tập tin %d: %s"
-
-#: src/bin/utils.c:48
-#, c-format
-msgid "Could not load any theme for group=%s: %s"
-msgstr "Không thể tải theme nào cho nhóm=%s: %s"
-
-#: src/bin/utils.c:65
-#, c-format
-msgid "Could not load default theme for group=%s: %s"
-msgstr "Không thể tải theme mặc định cho nhóm=%s: %s"
-
-#: src/bin/win.c:1756
-msgid "Ecore IMF failed"
-msgstr "Ecore IMF thất bại"
-
-#: src/bin/win.c:4327
-msgid "Ok"
-msgstr ""
-
-#: src/bin/win.c:4332
-msgid "Cancel"
-msgstr ""
-
-#: src/bin/win.c:5548
-msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
+#~ msgid "Scrollback:"
+#~ msgstr "Cuộn:"
 
 #~ msgid "Cursor blinking"
 #~ msgstr "Nhấp nháy con trỏ"
@@ -955,36 +1091,3 @@ msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
 
 #~ msgid "Reset"
 #~ msgstr "Đặt Lại"
-
-#~ msgid "Translucent"
-#~ msgstr "Trong Mờ"
-
-#~ msgid "%1.0f%%"
-#~ msgstr "%1.0f%%"
-
-#~ msgid "None"
-#~ msgstr "Không Gì Cả"
-
-#~ msgid "Source file is target file"
-#~ msgstr "Tập tin nguồn là tập tin đích"
-
-#~ msgid "Picture imported"
-#~ msgstr "Hình ảnh đã được nhập"
-
-#~ msgid "Failed"
-#~ msgstr "Thất Bại"
-
-#~ msgid "Select Path"
-#~ msgstr "Chọn Đường Dẫn"
-
-#~ msgid "System"
-#~ msgstr "Hệ Thống"
-
-#~ msgid "User"
-#~ msgstr "Người Dùng"
-
-#~ msgid "Other"
-#~ msgstr "Khác"
-
-#~ msgid "Double click on a picture to import it"
-#~ msgstr "Nhấp đúp vào hình để nhập nó"
