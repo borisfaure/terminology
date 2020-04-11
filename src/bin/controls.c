@@ -12,8 +12,10 @@ static Eina_Hash *controls = NULL;
 
 typedef struct _Controls_Ctx {
      Evas_Object *frame;
+     Evas_Object *group_input_cx;
      Evas_Object *over;
      Evas_Object *win;
+     Win *wn;
      Evas_Object *base;
      Evas_Object *bg;
      Evas_Object *term;
@@ -224,6 +226,17 @@ _cb_ct_about(void *data,
 }
 
 static void
+_cb_group_input_changed(void *data, Evas_Object *obj EINA_UNUSED,
+                        void *_event EINA_UNUSED)
+{
+   Controls_Ctx *ctx = data;
+   Win *wn = ctx->wn;
+
+   controls_hide(ctx, EINA_TRUE);
+   win_toggle_visible_group(wn);
+}
+
+static void
 _cb_mouse_down(void *data,
                Evas *_e EINA_UNUSED,
                Evas_Object *_obj EINA_UNUSED,
@@ -344,6 +357,7 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    ctx = malloc(sizeof(*ctx));
    assert(ctx);
    ctx->win = win;
+   ctx->wn = win_evas_object_to_win(win);
    ctx->base = base;
    ctx->bg = bg;
    ctx->term = term;
@@ -427,6 +441,21 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
 
    o = _button_add(win, _("About"), "help-about", _cb_ct_about, ctx);
    elm_box_pack_end(ct_box2, o);
+
+   o = _sep_add_h(win);
+   elm_box_pack_end(ct_boxv, o);
+
+   o = elm_check_add(win);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Grouped input"));
+   elm_object_disabled_set(o, win_has_single_child(ctx->wn));
+   elm_check_state_set(o, win_is_group_input(ctx->wn));
+   elm_box_pack_end(ct_boxv, o);
+   evas_object_show(o);
+   ctx->group_input_cx = o;
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_group_input_changed, ctx);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_boxv, o);
