@@ -50,7 +50,7 @@ void win_sizing_handle(Win *wn);
 void win_toggle_visible_group(Win *wn);
 void win_toggle_all_group(Win *wn);
 Eina_Bool win_is_group_action_handled(Win *wn);
-Eina_Bool win_is_group_input(Win *wn);
+Eina_Bool win_is_group_input(const Win *wn);
 Eina_Bool win_has_single_child(const Win *wn);
 void win_scale_wizard(Evas_Object *win, Term *term);
 
@@ -72,8 +72,8 @@ void term_right(Term *term);
 Ecore_IMF_Context *
 term_imf_context_get(Term *term);
 
-Eina_Bool term_is_visible(Term *term);
-Eina_Bool term_is_focused(Term *term);
+Eina_Bool term_is_visible(const Term *term);
+Eina_Bool term_is_focused(const Term *term);
 
 void win_font_size_set(Win *wn, int new_size);
 void win_font_update(Term *term);

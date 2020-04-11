@@ -755,7 +755,7 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
 }
 
 static Eina_Bool
-_solo_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+_solo_is_visible(const Term_Container *tc, const Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    return tc->parent->is_visible(tc->parent, tc);
@@ -2018,7 +2018,7 @@ _cb_win_mouse_down(void *data,
 static Eina_Bool
 _set_cursor(Term *term, void *data)
 {
-   char *cursor = data;
+   const char *cursor = data;
 
    assert(term->core);
    if (cursor)
@@ -2096,7 +2096,7 @@ _cb_win_mouse_move(void *data,
 }
 
 static Eina_Bool
-_win_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+_win_is_visible(const Term_Container *tc, const Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
    return EINA_TRUE;
@@ -2321,7 +2321,7 @@ win_is_group_action_handled(Win *wn)
 }
 
 Eina_Bool
-win_is_group_input(Win *wn)
+win_is_group_input(const Win *wn)
 {
    return wn->group_input;
 }
@@ -2906,7 +2906,8 @@ _split_split_direction(Term_Container *tc,
 }
 
 static Eina_Bool
-_split_is_visible(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+_split_is_visible(const Term_Container *tc,
+                  const Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    /* Could return True with the current design because splits are at a higher
@@ -5247,7 +5248,7 @@ _tabs_split_direction(Term_Container *tc,
 }
 
 static Eina_Bool
-_tabs_is_visible(Term_Container *tc, Term_Container *child)
+_tabs_is_visible(const Term_Container *tc, const Term_Container *child)
 {
    Tabs *tabs;
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
@@ -5722,9 +5723,9 @@ _cb_popup_queue(void *data,
 /* {{{ Term */
 
 Eina_Bool
-term_is_visible(Term *term)
+term_is_visible(const Term *term)
 {
-   Term_Container *tc;
+   const Term_Container *tc;
 
    if (!term)
      return EINA_FALSE;
@@ -5777,7 +5778,7 @@ _term_config_set(Term *term, Config *config)
 }
 
 Eina_Bool
-term_is_focused(Term *term)
+term_is_focused(const Term *term)
 {
    Term_Container *tc;
 

@@ -71,7 +71,7 @@ struct _Term_Container {
      void (*bell)(Term_Container *tc, Term_Container *child);
      void (*close)(Term_Container *container, Term_Container *child);
      void (*update)(Term_Container *tc);
-     Eina_Bool (*is_visible)(Term_Container *tc, Term_Container *child);
+     Eina_Bool (*is_visible)(const Term_Container *tc, const Term_Container *child);
      /* Only valid for splits/tabs */
      void (*detach)(Term_Container *container, Term_Container *solo_child);
 };
