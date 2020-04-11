@@ -1578,6 +1578,14 @@ _win_update(Term_Container *tc)
    wn->child->update(wn->child);
 }
 
+Eina_Bool
+win_has_single_child(const Win *wn)
+{
+   const Term_Container *child = wn->child;
+
+   return (child->type == TERM_CONTAINER_TYPE_SOLO);
+}
+
 static void
 _cb_win_key_up(void *data,
                Evas *_e EINA_UNUSED,
