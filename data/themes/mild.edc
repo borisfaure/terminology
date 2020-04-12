@@ -1862,7 +1862,6 @@ collections {
          // }}}
       }
    }
-   #if 0
 
    group { name: "terminology/tabbar_back";
       images {
@@ -3038,5 +3037,4 @@ collections {
          }
       }
    }
-   #endif
 }
