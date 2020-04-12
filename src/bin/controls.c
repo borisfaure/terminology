@@ -231,9 +231,13 @@ _cb_group_input_changed(void *data, Evas_Object *obj EINA_UNUSED,
 {
    Controls_Ctx *ctx = data;
    Win *wn = ctx->wn;
+   Config *config = termio_config_get(ctx->term);
 
    controls_hide(ctx, EINA_TRUE);
-   win_toggle_visible_group(wn);
+   if (config && config->group_all)
+     win_toggle_all_group(wn);
+   else
+     win_toggle_visible_group(wn);
 }
 
 static void

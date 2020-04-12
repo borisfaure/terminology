@@ -65,6 +65,7 @@ CB(mv_always_show, 0);
 CB(ty_escapes, 0);
 CB(changedir_to_current, 0);
 CB(emoji_dbl_width, 0);
+CB(group_all, 0);
 
 #undef CB
 
@@ -512,6 +513,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
    CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
    CX(_("Treat Emojis as double-width characters"), emoji_dbl_width, 0);
+   CX(_("When grouping input, do it to all terminals and not just the visible ones"), group_all, 0);
 
 #undef CX
 

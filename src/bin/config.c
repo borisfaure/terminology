@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 23
+#define CONF_VER 24
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -191,6 +191,8 @@ config_init(void)
      (edd_base, Config, "shine", shine, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "hide_cursor", hide_cursor, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "group_all", group_all, EET_T_UCHAR);
 }
 
 void
@@ -319,6 +321,7 @@ config_sync(const Config *config_src, Config *config)
    config->shine = config_src->shine;
    config->translucent = config_src->translucent;
    config->opacity = config_src->opacity;
+   config->group_all = config_src->group_all;
 }
 
 static void
@@ -595,6 +598,7 @@ config_new(void)
         _add_default_keys(config);
         config->shine = 255;
         config->hide_cursor = 5.0;
+        config->group_all = EINA_FALSE;
      }
    return config;
 }
@@ -728,8 +732,11 @@ config_load(void)
                 case 22:
                   config->show_tabs = !config->notabs;
                   EINA_FALLTHROUGH;
+                case 23:
+                  config->group_all = EINA_FALSE;
+                  EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 23 */
+                case CONF_VER: /* 24 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -832,6 +839,7 @@ config_fork(const Config *config)
    CPY(changedir_to_current);
    CPY(emoji_dbl_width);
    CPY(shine);
+   CPY(group_all);
 
    EINA_LIST_FOREACH(config->keys, l, key)
      {

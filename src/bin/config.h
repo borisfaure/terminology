@@ -95,6 +95,7 @@ struct _Config
    Eina_Bool         ty_escapes;
    Eina_Bool         changedir_to_current;
    Eina_Bool         emoji_dbl_width;
+   Eina_Bool         group_all;
    Config_Color      colors[(4 * 12)];
    Eina_List        *keys;
 
