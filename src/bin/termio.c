@@ -3909,15 +3909,6 @@ termio_add(Evas_Object *win, Config *config,
    Evas *e;
    Evas_Object *obj, *g;
    Termio *sd;
-   char *modules[] =
-     {
-        NULL,
-        "gstreamer",
-        "xine",
-        "vlc",
-        "gstreamer1"
-     };
-   char *mod = NULL;
    Ecore_Window window_id;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
@@ -3928,10 +3919,6 @@ termio_add(Evas_Object *win, Config *config,
    obj = evas_object_smart_add(e, _smart);
    sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, obj);
-
-   if ((config->vidmod >= 0) &&
-       (config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
-     mod = modules[config->vidmod];
 
    sd->cursor.shape = config->cursor_shape;
    termio_config_set(obj, config);
@@ -3968,7 +3955,7 @@ termio_add(Evas_Object *win, Config *config,
                        _smart_cb_drop, obj);
 
    window_id = elm_win_window_id_get(win);
-   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config, mod, title,
+   sd->pty = termpty_new(cmd, login_shell, cd, w, h, config, title,
                          window_id);
    if (!sd->pty)
      {

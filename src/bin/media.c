@@ -785,31 +785,12 @@ _type_mov_init(Evas_Object *obj)
 {
    Evas_Object *o;
    double vol;
-   char *modules[] =
-     {
-        NULL,
-        "gstreamer",
-        "xine",
-        "vlc",
-        "gstreamer1"
-    };
-   char *mod = NULL;
    Media *sd = evas_object_smart_data_get(obj);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
 
    emotion_init();
    o = sd->o_img = emotion_object_add(evas_object_evas_get(obj));
-   if ((sd->config->vidmod >= 0) &&
-       (sd->config->vidmod < (int)EINA_C_ARRAY_LENGTH(modules)))
-     mod = modules[sd->config->vidmod];
-   if (!emotion_object_init(o, mod))
-     {
-        ERR(_("Could not Initialize the emotion module '%s'"), mod);
-        evas_object_del(sd->o_img);
-        sd->o_img = NULL;
-        return -1;
-     }
    evas_object_smart_callback_add(o, "frame_decode",
                                   _cb_mov_frame_decode, obj);
    evas_object_smart_callback_add(o, "frame_resize",

@@ -434,11 +434,6 @@ main_ipc_new(Ipc_Instance *inst)
    unsetenv("DESKTOP_STARTUP_ID");
 }
 
-static const char *emotion_choices[] = {
-  "auto", "gstreamer", "xine", "generic", "gstreamer1",
-  NULL
-};
-
 static Ecore_Getopt options = {
    PACKAGE_NAME,
    "%prog [options]",
@@ -473,9 +468,6 @@ static Ecore_Getopt options = {
                               " 'v' for vertical and 'h' for horizontal."
                               " Can be used multiple times. eg -S vhvv or --split hv"
                               " More description available on the man page.")),
-      ECORE_GETOPT_CHOICE    ('v', "video-module",
-                              gettext_noop("Set emotion module to use."), emotion_choices),
-
       ECORE_GETOPT_STORE_BOOL('l', "login",
                               gettext_noop("Run the shell as a login shell.")),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
@@ -796,7 +788,6 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    char *geometry = NULL;
-   char *video_module = NULL;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Bool single = EINA_FALSE;
    Eina_Bool no_wizard = EINA_FALSE;
@@ -824,7 +815,6 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(instance.icon_name),
      ECORE_GETOPT_VALUE_STR(instance.font),
      ECORE_GETOPT_VALUE_STR(instance.startup_split),
-     ECORE_GETOPT_VALUE_STR(video_module),
 
      ECORE_GETOPT_VALUE_BOOL(instance.login_shell),
      ECORE_GETOPT_VALUE_BOOL(instance.video_mute),
@@ -961,22 +951,6 @@ elm_main(int argc, char **argv)
    _check_multisense();
 
    _configure_instance(&instance);
-
-
-   if (video_module)
-     {
-        int i;
-        for (i = 0; i < (int)EINA_C_ARRAY_LENGTH(emotion_choices); i++)
-          {
-             if (video_module == emotion_choices[i])
-               break;
-          }
-
-        if (i == EINA_C_ARRAY_LENGTH(emotion_choices))
-          i = 0; /* ecore getopt shouldn't let this happen, but... */
-        instance.config->vidmod = i;
-        instance.config->temporary = EINA_TRUE;
-     }
 
 
    if (geometry)

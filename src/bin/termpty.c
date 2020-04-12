@@ -531,8 +531,8 @@ _is_shell_valid(const char *cmd)
 
 Termpty *
 termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-            int w, int h, Config *config, const char *emotion_mod,
-            const char *title, Ecore_Window window_id)
+            int w, int h, Config *config, const char *title,
+            Ecore_Window window_id)
 {
    Termpty *ty;
    const char *pty;
@@ -770,11 +770,6 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
              putenv("TERM=xterm");
           }
         putenv("XTERM_256_COLORS=1");
-        if (emotion_mod)
-          {
-             snprintf(buf, sizeof(buf), "EMOTION_ENGINE=%s", emotion_mod);
-             putenv(buf);
-          }
         if (window_id)
           {
              snprintf(buf, sizeof(buf), "WINDOWID=%lu", window_id);

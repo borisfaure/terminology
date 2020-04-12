@@ -273,8 +273,8 @@ void       termpty_init(void);
 void       termpty_shutdown(void);
 
 Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
-                       int w, int h, Config *config, const char *emotion_mod,
-                       const char *title, Ecore_Window window_id);
+                       int w, int h, Config *config, const char *title,
+                       Ecore_Window window_id);
 void       termpty_free(Termpty *ty);
 void       termpty_config_update(Termpty *ty, Config *config);
 

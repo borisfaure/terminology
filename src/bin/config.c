@@ -110,7 +110,7 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "tab_zoom", tab_zoom, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "vidmod", vidmod, EET_T_INT);
+     (edd_base, Config, "vidmod", _vidmod, EET_T_INT); /* DEPRECATED */
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "jump_on_change", jump_on_change, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -283,7 +283,6 @@ config_sync(const Config *config_src, Config *config)
    config->scrollback = config_src->scrollback;
    config->tab_zoom = config_src->tab_zoom;
    config->hide_cursor = config_src->hide_cursor;
-   config->vidmod = config_src->vidmod;
    config->jump_on_keypress = config_src->jump_on_keypress;
    config->jump_on_change = config_src->jump_on_change;
    config->flicker_on_key = config_src->flicker_on_key;
@@ -547,7 +546,6 @@ config_new(void)
         config->theme = eina_stringshare_add("default.edj");
         config->background = NULL;
         config->tab_zoom = 0.5;
-        config->vidmod = 0;
         config->opacity = 50;
         config->cg_width = 80;
         config->cg_height = 24;
@@ -633,7 +631,7 @@ config_load(void)
                   LIM(config->font.size, 3, 400);
                   LIM(config->scrollback, 0, 131072);
                   LIM(config->tab_zoom, 0.0, 1.0);
-                  LIM(config->vidmod, 0, 4)
+                  LIM(config->_vidmod, 0, 4)
 
                   /* upgrade to v3 */
                   config->active_links = EINA_TRUE;
@@ -798,7 +796,6 @@ config_fork(const Config *config)
    CPY(scrollback);
    CPY(tab_zoom);
    CPY(hide_cursor);
-   CPY(vidmod);
    CPY(jump_on_change);
    CPY(jump_on_keypress);
    CPY(flicker_on_key);

@@ -58,7 +58,7 @@ struct _Config
    const char       *background;
    double            tab_zoom;
    double            hide_cursor;
-   int               vidmod;
+   int               _vidmod; /* DEPRECATED */
    int               opacity;
    int               shine;
    int               cg_width;
