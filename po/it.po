@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2019-08-25 09:53+0200\n"
+"PO-Revision-Date: 2020-04-13 13:59+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: [Language]\n"
 "Language: it\n"
@@ -137,19 +137,19 @@ msgstr "Reimposta combinazioni di tasti"
 
 #: src/bin/options_background.c:163
 msgid "None"
-msgstr ""
+msgstr "Nessuno"
 
 #: src/bin/options_background.c:498
 msgid "Source file is target file"
-msgstr ""
+msgstr "Il file di origine è uguale a quello di destinazione"
 
 #: src/bin/options_background.c:511
 msgid "Picture imported"
-msgstr ""
+msgstr "Immagine importata"
 
 #: src/bin/options_background.c:516
 msgid "Failed"
-msgstr ""
+msgstr "Non ha funzionato"
 
 #: src/bin/options_background.c:568 src/bin/options.c:223
 msgid "Background"
@@ -157,7 +157,7 @@ msgstr "Sfondo"
 
 #: src/bin/options_background.c:584
 msgid "Shine:"
-msgstr ""
+msgstr "Brillantezza:"
 
 #: src/bin/options_background.c:608 src/bin/options_behavior.c:656
 msgid "Translucent"
@@ -166,27 +166,27 @@ msgstr "Translucente"
 #: src/bin/options_background.c:619 src/bin/options_background.c:620
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:639
 msgid "Select Path"
-msgstr ""
+msgstr "Seleziona percorso"
 
 #: src/bin/options_background.c:645
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: src/bin/options_background.c:648
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: src/bin/options_background.c:651
 msgid "Other"
-msgstr ""
+msgstr "Altro"
 
 #: src/bin/options_background.c:693
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Cliccare su un'immagine per usarla come sfondo"
 
 #: src/bin/options_elm.c:109 src/bin/options.c:228
 msgid "Toolkit"
@@ -198,26 +198,26 @@ msgid ""
 "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>."
-msgstr ""
+msgstr "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si può accedere alle impostazioni di configurazione del toolkit eseguendo <keyword>%s</keyword>."
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Lancia %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
 msgid "Scale"
-msgstr ""
+msgstr "Scala"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:410
 msgid "Select prefered size so that this text is readable."
-msgstr ""
+msgstr "Selezionare la dimensione preferita così che questo testo sia leggibile."
 
 #: src/bin/options_elm.c:179
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel."
-msgstr ""
+msgstr "La configurazione della scala può essere impostata dal pannello di configurazione di <hilight>elementary</hilight>."
 
 #: src/bin/options_theme.c:154 src/bin/options.c:222
 msgid "Theme"
@@ -236,7 +236,7 @@ msgstr "%'d linee"
 #: src/bin/options_behavior.c:105
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Scrolling all'indietro (memoria utilizzata attualmente: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:281
 msgid "Default cursor:"
@@ -537,7 +537,7 @@ msgstr "Imposta TERM su 'xterm-256color' invece di 'xterm'"
 
 #: src/bin/main.c:506
 msgid "Set scaling factor."
-msgstr ""
+msgstr "Imposta fattore di scala."
 
 #: src/bin/main.c:508
 msgid "Highlight links."
@@ -545,7 +545,7 @@ msgstr "Evidenzia i link"
 
 #: src/bin/main.c:510
 msgid "Do not display wizard on start up."
-msgstr ""
+msgstr "Non mostrare il wizard all'avvio."
 
 #: src/bin/main.c:536
 msgid "show program version."
@@ -932,11 +932,11 @@ msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>."
-msgstr ""
+msgstr "La configurazione della scala può essere impostata attraverso Impostazioni (clic destro sul terminale) → Toolkit, ocon il comando <keyword>elementary_config</keyword>."
 
 #: src/bin/win.c:422
 msgid "Done"
-msgstr ""
+msgstr "Fatto"
 
 #: src/bin/win.c:2270
 msgid "Ecore IMF failed"
@@ -993,7 +993,7 @@ msgstr "Informazioni"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Input raggruppato"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
@@ -1060,6 +1060,3 @@ msgstr "Tasti"
 #: src/bin/options.c:239
 msgid "Temporary"
 msgstr "Temporaneo"
-
-#~ msgid "Scrollback:"
-#~ msgstr "Scrolling all'indietro:"

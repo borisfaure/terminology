@@ -1,14 +1,15 @@
-# English translations for terminology package.
+# French translation for Terminology.
 # Copyright (C) 2014 Terminology development team
 # This file is distributed under the same license as the terminology package.
 #  <boris@fau.re>, 2014.
+#  similar <similar@orange.fr>, 2019, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2019-07-03 13:36+0200\n"
+"PO-Revision-Date: 2020-04-12 17:15+0200\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -16,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3\n"
 
 #: src/bin/options_helpers.c:193 src/bin/options.c:227
 msgid "Helpers"
@@ -143,11 +144,11 @@ msgstr "Aucun"
 
 #: src/bin/options_background.c:498
 msgid "Source file is target file"
-msgstr ""
+msgstr "Le fichier source est le fichier cible"
 
 #: src/bin/options_background.c:511
 msgid "Picture imported"
-msgstr ""
+msgstr "Image importée"
 
 #: src/bin/options_background.c:516
 msgid "Failed"
@@ -159,7 +160,7 @@ msgstr "Arrière-plan"
 
 #: src/bin/options_background.c:584
 msgid "Shine:"
-msgstr ""
+msgstr "Brillance :"
 
 #: src/bin/options_background.c:608 src/bin/options_behavior.c:656
 msgid "Translucent"
@@ -168,7 +169,7 @@ msgstr "Transparence"
 #: src/bin/options_background.c:619 src/bin/options_background.c:620
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:639
 msgid "Select Path"
@@ -188,7 +189,7 @@ msgstr "Autre"
 
 #: src/bin/options_background.c:693
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Cliquez sur une image pour l'utiliser comme arrière-plan"
 
 #: src/bin/options_elm.c:109 src/bin/options.c:228
 msgid "Toolkit"
@@ -201,25 +202,30 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>."
 msgstr ""
+"<em>Terminology</em> utilise la boîte à outils <hilight>Elementary</hilight>."
+"<br>Les paramètres de configuration sont accessibles en lançant <keyword>%s</"
+"keyword>."
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Lancer %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
 msgid "Scale"
-msgstr ""
+msgstr "Échelle"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:410
 msgid "Select prefered size so that this text is readable."
-msgstr ""
+msgstr "Sélectionner la taille adéquate pour que ce texte soit lisible."
 
 #: src/bin/options_elm.c:179
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel."
 msgstr ""
+"Le paramètres d'échelle sont également modifiables en passant par le panneau "
+"Configuration pour <hilight>Elementary</hilight>."
 
 #: src/bin/options_theme.c:154 src/bin/options.c:222
 msgid "Theme"
@@ -238,7 +244,7 @@ msgstr "%'d lignes"
 #: src/bin/options_behavior.c:105
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Lignes d'historique (utilisation mémoire en ce moment : %'.2f%cB) :"
 
 #: src/bin/options_behavior.c:281
 msgid "Default cursor:"
@@ -278,38 +284,36 @@ msgstr "Faire défiler jusqu'en bas en cas de nouveau contenu"
 
 #: src/bin/options_behavior.c:467
 msgid "Scroll to bottom when a key is pressed"
-msgstr "Faire défiler jusqu'en bas lorsqu'une touche est enfoncée"
+msgstr "Faire défiler jusqu'en bas sur pression d'une touche"
 
 #: src/bin/options_behavior.c:478
-#, fuzzy
 msgid "Active Links:"
-msgstr "Liens actifs"
+msgstr "Liens actifs :"
 
 #: src/bin/options_behavior.c:482
 msgid "On emails"
-msgstr ""
+msgstr "Pour les courriels"
 
 #: src/bin/options_behavior.c:483
 msgid "On file paths"
-msgstr ""
+msgstr "Pour les chemins de fichier"
 
 #: src/bin/options_behavior.c:484
-#, fuzzy
 msgid "On URLs"
-msgstr "Ouvrir en tant q'URL"
+msgstr "Pour les URL"
 
 #: src/bin/options_behavior.c:485
-#, fuzzy
 msgid "Based on escape codes"
-msgstr "Activer les codes d'échappement spécifiques à Terminology"
+msgstr "Codes d'échappement pour source"
 
 #: src/bin/options_behavior.c:489
 msgid "React to key presses"
-msgstr "Réagir aux touches"
+msgstr "Réagir aux pressions sur les touches"
 
 #: src/bin/options_behavior.c:496
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
+"Support audio pour la pression des touches <failure>DÉSACTIVÉ</failure> !"
 
 #: src/bin/options_behavior.c:499
 msgid "Visual Bell"
@@ -374,11 +378,11 @@ msgstr "Ouvrir les nouveaux terminaux dans le répertoire de travail actuel"
 
 #: src/bin/options_behavior.c:514
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Traiter les Emojis comme des caractères de largeur double"
 
 #: src/bin/options_behavior.c:523
 msgid "Always open at size:"
-msgstr "Toujours utiliser les dimensions :"
+msgstr "Toujours utiliser ces dimensions :"
 
 #: src/bin/options_behavior.c:533
 msgid "Set Current:"
@@ -413,7 +417,7 @@ msgstr "%1.1f s"
 
 #: src/bin/options_behavior.c:657
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Auto-masquage du pointeur quand inactif pendant :"
 
 #: src/bin/main.c:387 src/bin/main.c:589
 msgid "Could not create window."
@@ -443,7 +447,7 @@ msgstr "Déplacement vers le répertoire pour exécuter la commande du terminal.
 
 #: src/bin/main.c:456
 msgid "Use the named edje theme or path to theme file."
-msgstr "Utiliser le thème edje fourni ou le chemin vers le fichier de thème."
+msgstr "Utiliser le thème Edje fourni ou le chemin vers le fichier de thème."
 
 #: src/bin/main.c:458
 msgid "Use the named file as a background wallpaper."
@@ -509,7 +513,7 @@ msgstr "Lancer en mode plein écran."
 
 #: src/bin/main.c:490
 msgid "Go into an iconic state from the start."
-msgstr "Lancer en mode icônifié."
+msgstr "Lancer en mode iconifié."
 
 #: src/bin/main.c:492
 msgid "Become a borderless managed window."
@@ -541,7 +545,7 @@ msgstr "Définir TERM sur « xterm-256color » au lieu de « xterm »."
 
 #: src/bin/main.c:506
 msgid "Set scaling factor."
-msgstr ""
+msgstr "Définir le facteur d'échelle."
 
 #: src/bin/main.c:508
 msgid "Highlight links."
@@ -549,7 +553,7 @@ msgstr "Surligner les liens."
 
 #: src/bin/main.c:510
 msgid "Do not display wizard on start up."
-msgstr ""
+msgstr "Ne pas afficher l'assistant au démarrage."
 
 #: src/bin/main.c:536
 msgid "show program version."
@@ -561,7 +565,7 @@ msgstr "afficher le copyright."
 
 #: src/bin/main.c:542
 msgid "show license."
-msgstr "afficher la license."
+msgstr "afficher la licence."
 
 #: src/bin/main.c:545
 msgid "show this message."
@@ -666,19 +670,19 @@ msgstr "Défilement"
 
 #: src/bin/keyin.c:654
 msgid "Scroll one page up"
-msgstr "Défilement d'une page vers le haut"
+msgstr "Faire défiler d'une page vers le haut"
 
 #: src/bin/keyin.c:655
 msgid "Scroll one page down"
-msgstr "Défilement d'une page vers le bas"
+msgstr "Faire défiler d'une page vers le bas"
 
 #: src/bin/keyin.c:656
 msgid "Scroll one line up"
-msgstr "Défilement d'une ligne vers le haut"
+msgstr "Faire défiler d'une ligne vers le haut"
 
 #: src/bin/keyin.c:657
 msgid "Scroll one line down"
-msgstr "Défilement d'une ligne vers le bas"
+msgstr "Faire défiler d'une ligne vers le bas"
 
 #: src/bin/keyin.c:658
 msgid "Go to the top of the backlog"
@@ -937,10 +941,13 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>."
 msgstr ""
+"Les paramètres d'échelle sont modifiables dans Configuration (clic droit "
+"dans le terminal) →  Boîte à outils, ou avec la commande "
+"<keyword>elementary_config</keyword>."
 
 #: src/bin/win.c:422
 msgid "Done"
-msgstr ""
+msgstr "Terminé"
 
 #: src/bin/win.c:2270
 msgid "Ecore IMF failed"
@@ -998,7 +1005,7 @@ msgstr "À propos"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Entrée groupée"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
