@@ -62,6 +62,11 @@ collections {
          image { image: "tab_close_8.png" COMP; size: 0 0 8 8; }
          image { image: "tab_close_16.png" COMP; size: 8 8 99999 99999; }
       }
+      set { name: "tab_grouped";
+         image { image: "tab_grouped_8.png" COMP; size: 0 0 8 8; }
+         image { image: "tab_grouped_16.png" COMP; size: 8 8 16 16; }
+         image { image: "tab_grouped_32.png" COMP; size: 16 16 99999 99999; }
+      }
       sounds {
          sample { name: "bell" LOSSY 64;
             source: "bell.wav";
@@ -1056,21 +1061,70 @@ collections {
             }
          }
 
+         part { name: "tabgrouped"; type: IMAGE;
+            scale: 1;
+            description { state: "default" 0.0;
+               aspect: 1.0 1.0; aspect_preference: BOTH;
+               align: 0.0 0.5;
+               min: 0 0;
+               max: 0 0;
+               fixed: 1 1;
+               rel1 {
+                  to_x: "tab_bevel_bg2";
+                  to_y: "tabmiddle";
+                  offset: 0 2;
+                  relative: 0.0 0.3;
+               }
+               rel2 {
+                  to_x: "tab_bevel_bg2";
+                  to_y: "tabmiddle";
+                  relative: 1.0 0.7;
+               }
+               visible: 0;
+            }
+            description { state: "grouped" 0.0;
+               inherit: "default" 0.0;
+               min: 8 8;
+               max: 32 32;
+               image.normal: "tab_grouped";
+               rel1 {
+                  to_y: "tabmiddle";
+                  to_x: "tab_bevel_bg2";
+                  relative: 0.0 0.3;
+               }
+               rel2 {
+                  to_y: "tabmiddle";
+                  to_x: "tab_bevel_bg2";
+                  relative: 1.0 0.7;
+               }
+               color: FG_COLOR;
+               visible: 1;
+            }
+         }
+         program {
+            signal: "grouped,on"; source: "terminology";
+            action: STATE_SET "grouped" 0.0;
+            target: "tabgrouped";
+         }
+         program {
+            signal: "grouped,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "tabgrouped";
+         }
+
          part { name: "terminology.tab.title"; type: TEXT; mouse_events: 0;
             scale: 1;
-            effect: SOFT_SHADOW BOTTOM;
             mouse_events: 0;
             description { state: "default" 0.0;
-               color: 255 255 255 255;
-               color3: 0 0 0 18;
                text { font: "Sans:style=Bold"; size: 10;
                   align: 0.5 0.0;
                   min: 0 1;
                }
                align: 0.5 0.0;
-               rel1.to_x: "tab_bevel_bg2";
-               rel1.offset: 0 2;
-               rel2.to_x: "tab_bevel_bg2";
+               rel1.to_x: "tabgrouped";
+               rel1.offset: 2 2;
+               rel1.relative: 1.0 0.0;
+               rel2.to_x: "tabgrouped";
                rel2.offset: -1 2;
                rel2.relative: 1.0 0.0;
                visible: 0;
@@ -1088,10 +1142,12 @@ collections {
                   text_source: "terminology.tab.title";
                }
                align: 0.5 0.5;
-               rel1.to_x: "tab_bevel_bg2";
+               rel1.to_x: "tabgrouped";
                rel1.to_y: "tabmiddle";
-               rel2.to_x: "tab_bevel_bg2";
+               rel1.relative: 1.0 0.0;
+               rel2.to_x: "tabclose";
                rel2.to_y: "tabmiddle";
+               rel2.relative: 0.0 1.0;
                visible: 0;
                fixed: 1 1;
             }
@@ -1870,6 +1926,11 @@ collections {
          image: "tab_other_r.png" COMP;
          image: "tab_shad_l2.png" COMP;
          image: "tab_shad_r2.png" COMP;
+      }
+      set { name: "tab_grouped";
+         image { image: "tab_grouped_8.png" COMP; size: 0 0 8 8; }
+         image { image: "tab_grouped_16.png" COMP; size: 8 8 16 16; }
+         image { image: "tab_grouped_32.png" COMP; size: 16 16 99999 99999; }
       }
       parts {
          part { name: "tab_bevel_shad1";

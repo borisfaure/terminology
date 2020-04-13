@@ -77,6 +77,8 @@ dragging a tab.
 When to stop an animation started by the related `*,on` signals.
 ### `drag_over_tabs,on` and `drag_over_tabs,off`
 When the mouse, while dragging a tab, enters or leaves the tab region.
+### `grouped,on` and `grouped,off`
+When input is broadcast to multiple terminals.
 
 ### TODO
 

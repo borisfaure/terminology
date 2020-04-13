@@ -2340,6 +2340,8 @@ _win_toggle_group(Win *wn)
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              edje_object_signal_emit(term->bg, "focus,in", "terminology");
+             edje_object_signal_emit(term->bg, "grouped,on", "terminology");
+             /* TODO: boris tabbar_back */
              termio_event_feed_mouse_in(term->termio);
              termio_focus_in(term->termio);
           }
@@ -2353,6 +2355,8 @@ _win_toggle_group(Win *wn)
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              edje_object_signal_emit(term->bg, "focus,out", "terminology");
+             edje_object_signal_emit(term->bg, "grouped,off", "terminology");
+             /* TODO: boris tabbar_back */
              termio_focus_out(term->termio);
           }
         term = wn->child->term_first(wn->child);
