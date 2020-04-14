@@ -94,6 +94,7 @@ struct _Tab_Drag
         };
         struct {
              Term_Container *other;
+             double left_size;
              Eina_Bool is_horizontal;
              Eina_Bool is_first_child;
         }; };
@@ -218,7 +219,8 @@ static Tab_Drag *_tab_drag = NULL;
 
 static Eina_Bool _win_is_focused(Win *wn);
 static Term_Container *_solo_new(Term *term, Win *wn);
-static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2, Eina_Bool is_horizontal);
+static Term_Container *_split_new(Term_Container *tc1, Term_Container *tc2,
+                                  double left_size, Eina_Bool is_horizontal);
 static Term_Container *_tabs_new(Term_Container *child, Term_Container *parent);
 static void _term_free(Term *term);
 static void _term_media_update(Term *term, const Config *config);
@@ -1519,7 +1521,7 @@ _win_split(Term_Container *tc, Term_Container *child,
 
         elm_layout_content_unset(wn->base, "terminology.content");
 
-        tc_split = _split_new(child, tc_solo_new, is_horizontal);
+        tc_split = _split_new(child, tc_solo_new, 0.5, is_horizontal);
         if (wn->config->show_tabs)
           {
              if (child->type == TERM_CONTAINER_TYPE_SOLO)
@@ -1576,7 +1578,7 @@ _win_split_direction(Term_Container *tc,
 
    wn->tc.unfocus(&wn->tc, NULL); /* unfocus from top */
 
-   tc_split = _split_new(child1, child2, is_horizontal);
+   tc_split = _split_new(child1, child2, 0.5, is_horizontal);
 
    if (wn->config->show_tabs)
      {
@@ -2861,7 +2863,7 @@ _split_split(Term_Container *tc, Term_Container *child,
      elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
    child->unfocus(child, tc);
-   tc_split = _split_new(child, tc_solo_new, is_horizontal);
+   tc_split = _split_new(child, tc_solo_new, 0.5, is_horizontal);
 
    obj_split = tc_split->get_evas_object(tc_split);
 
@@ -2920,7 +2922,7 @@ _split_split_direction(Term_Container *tc,
 
    wn->tc.unfocus(&wn->tc, NULL); /* unfocus from top */
 
-   tc_split = _split_new(child1, child2, is_horizontal);
+   tc_split = _split_new(child1, child2, 0.5, is_horizontal);
 
    if (wn->config->show_tabs)
      {
@@ -2966,6 +2968,7 @@ _split_detach(Term_Container *tc, Term_Container *solo_child)
 
 static Term_Container *
 _split_new(Term_Container *tc1, Term_Container *tc2,
+           double left_size,
            Eina_Bool is_horizontal)
 {
    Evas_Object *o;
@@ -3029,6 +3032,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
                                tc1->get_evas_object(tc1));
    elm_object_part_content_set(o, PANES_BOTTOM,
                                tc2->get_evas_object(tc2));
+   elm_panes_content_left_size_set(o, left_size);
 
    tc->is_focused = tc1->is_focused | tc2->is_focused;
    return tc;
@@ -3337,7 +3341,7 @@ _tab_drag_rollback_split(void)
         child2 = tc;
      }
 
-   tc_split = _split_new(child1, child2, is_horizontal);
+   tc_split = _split_new(child1, child2, _tab_drag->left_size, is_horizontal);
    parent->swallow(parent, other, tc_split);
    tc_win->unfocus(tc_win, NULL);
    tc->focus(tc, NULL);
@@ -3782,6 +3786,8 @@ _tab_drag_save_state(Term_Container *tc)
                 _tab_drag->other = split->tc2;
               else
                 _tab_drag->other = split->tc1;
+              _tab_drag->left_size = elm_panes_content_left_size_get(
+                 split->panes);
            }
          break;
       default:
