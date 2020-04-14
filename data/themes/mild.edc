@@ -1072,8 +1072,8 @@ collections {
                rel1 {
                   to_x: "tab_bevel_bg2";
                   to_y: "tabmiddle";
-                  offset: 0 2;
                   relative: 0.0 0.3;
+                  offset: -1 0;
                }
                rel2 {
                   to_x: "tab_bevel_bg2";
@@ -1145,6 +1145,7 @@ collections {
                rel1.to_x: "tabgrouped";
                rel1.to_y: "tabmiddle";
                rel1.relative: 1.0 0.0;
+               rel1.offset:  2 0;
                rel2.to_x: "tabclose";
                rel2.to_y: "tabmiddle";
                rel2.relative: 0.0 1.0;
@@ -1995,6 +1996,52 @@ collections {
                fill.smooth: 0;
             }
          }
+         part { name: "tabgrouped"; type: IMAGE;
+            scale: 1;
+            description { state: "default" 0.0;
+               aspect: 1.0 1.0; aspect_preference: BOTH;
+               align: 0.0 0.5;
+               min: 0 0;
+               max: 0 0;
+               fixed: 1 1;
+               rel1 {
+                  to: "tab_base_top2";
+                  relative: 0.0 0.3;
+                  offset: -1 0;
+               }
+               rel2 {
+                  to: "tab_base_top2";
+                  relative: 1.0 0.7;
+               }
+               visible: 0;
+            }
+            description { state: "grouped" 0.0;
+               inherit: "default" 0.0;
+               min: 8 8;
+               max: 32 32;
+               image.normal: "tab_grouped";
+               rel1 {
+                  to: "tab_base_top2";
+                  relative: 0.0 0.3;
+               }
+               rel2 {
+                  to: "tab_base_top2";
+                  relative: 1.0 0.7;
+               }
+               color: FG_COLOR;
+               visible: 1;
+            }
+         }
+         program {
+            signal: "grouped,on"; source: "terminology";
+            action: STATE_SET "grouped" 0.0;
+            target: "tabgrouped";
+         }
+         program {
+            signal: "grouped,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "tabgrouped";
+         }
          part { name: "terminology.title"; type: TEXT; mouse_events: 0;
             scale: 1;
             description { state: "default" 0.0;
@@ -2004,7 +2051,12 @@ collections {
                }
                align: 0.5 0.5;
                color: 96 96 96 255;
-               rel1.to: "tab_base_top2";
+               rel1 {
+                  to_x: "tabgrouped";
+                  to_y: "tab_base_top2";
+                  relative: 1.0 0.0;
+                  offset: 2 0;
+               }
                rel2.to: "tab_base_top2";
             }
             description { state: "bell" 0.0;

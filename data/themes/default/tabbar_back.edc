@@ -9,6 +9,11 @@ group { name: "terminology/tabbar_back";
       image: "tab_shad_l2.png" COMP;
       image: "tab_shad_r2.png" COMP;
    }
+   set { name: "tab_grouped";
+      image { image: "tab_grouped_8.png" COMP; size: 0 0 8 8; }
+      image { image: "tab_grouped_16.png" COMP; size: 8 8 16 16; }
+      image { image: "tab_grouped_32.png" COMP; size: 16 16 99999 99999; }
+   }
    parts {
       part { name: "tab_bevel_shad1";
          mouse_events: 0;
@@ -106,6 +111,52 @@ group { name: "terminology/tabbar_back";
             fixed: 1 0;
          }
       }
+      part { name: "tabgrouped"; type: IMAGE;
+         scale: 1;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            align: 0.0 0.5;
+            min: 0 0;
+            max: 0 0;
+            fixed: 1 1;
+            rel1 {
+               to: "tab_bevel_top2";
+               relative: 0.0 0.3;
+               offset: -1 0;
+            }
+            rel2 {
+               to: "tab_bevel_top2";
+               relative: 1.0 0.7;
+            }
+            visible: 0;
+         }
+         description { state: "grouped" 0.0;
+            inherit: "default" 0.0;
+            min: 8 8;
+            max: 32 32;
+            image.normal: "tab_grouped";
+            rel1 {
+               to: "tab_bevel_top2";
+               relative: 0.0 0.3;
+            }
+            rel2 {
+               to: "tab_bevel_top2";
+               relative: 1.0 0.7;
+            }
+            color: FG_COLOR;
+            visible: 1;
+         }
+      }
+      program {
+         signal: "grouped,on"; source: "terminology";
+         action: STATE_SET "grouped" 0.0;
+         target: "tabgrouped";
+      }
+      program {
+         signal: "grouped,off"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         target: "tabgrouped";
+      }
       part { name: "terminology.title"; type: TEXT; mouse_events: 0;
          scale: 1;
          effect: OUTLINE_SOFT_SHADOW;
@@ -117,7 +168,12 @@ group { name: "terminology/tabbar_back";
             align: 0.5 0.5;
             color: 180 180 180 255;
             color3: 0 0 0 18;
-            rel1.to: "tab_bevel_top2";
+            rel1 {
+               to_x: "tabgrouped";
+               to_y: "tab_bevel_top2";
+               relative: 1.0 0.0;
+               offset: 2 0;
+            }
             rel2.to: "tab_bevel_top2";
          }
          description { state: "bell" 0.0;
