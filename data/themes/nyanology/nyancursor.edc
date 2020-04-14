@@ -4,6 +4,8 @@
 collections {
 	group { name: "nyanology/catcursor";
 		alias: "terminology/cursor";
+		alias: "terminology/cursor_bar";
+		alias: "terminology/cursor_underline";
 		images {
 			image: "cat01.png" COMP;
 			image: "cat02.png" COMP;
