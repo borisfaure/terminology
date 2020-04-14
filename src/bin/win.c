@@ -284,6 +284,11 @@ static void
 _focus_validator(void)
 {}
 #endif
+
+#define GROUPED_INPUT_TERM_FOREACH(_wn, _list, _term) \
+   EINA_LIST_FOREACH(_wn->terms, _list, _term) \
+     if (!_wn->group_only_visible || term_is_visible(_term))
+
 /* }}} */
 /* {{{ Scale */
 static void
@@ -911,7 +916,19 @@ _cb_win_focus_in(void *data,
 
    term = tc->focused_term_get(tc);
 
-   if ( wn->config->mouse_over_focus )
+   if (wn->group_input)
+     {
+        Eina_List *l;
+        Term *t;
+
+        GROUPED_INPUT_TERM_FOREACH(wn, l, t)
+          {
+             elm_layout_signal_emit(t->bg, "focus,in", "terminology");
+             termio_event_feed_mouse_in(t->termio);
+             termio_focus_in(t->termio);
+          }
+     }
+   else if ( wn->config->mouse_over_focus )
      {
         Term *term_mouse;
         Evas_Coord mx, my;
@@ -954,6 +971,17 @@ _cb_win_focus_out(void *data,
    DBG("FOCUS OUT tc:%p tc->is_focused:%d",
        tc, tc->is_focused);
    tc->unfocus(tc, NULL);
+   if (wn->group_input)
+     {
+        Eina_List *l;
+        Term *term;
+
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
+          {
+             elm_layout_signal_emit(term->bg, "focus,out", "terminology");
+             termio_focus_out(term->termio);
+          }
+     }
 }
 
 static Eina_Bool
@@ -1599,11 +1627,6 @@ _cb_win_key_up(void *data,
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
    keyin_handle_up(&wn->khdl, ev);
 }
-
-#define GROUPED_INPUT_TERM_FOREACH(_wn, _list, _term) \
-   EINA_LIST_FOREACH(_wn->terms, _list, _term) \
-     if (!_wn->group_only_visible || term_is_visible(_term))
-
 
 const char *
 term_preedit_str_get(Term *term)
