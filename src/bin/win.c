@@ -1759,11 +1759,8 @@ _cb_win_key_down(void *data,
       evas_key_modifier_is_set(ev->modifiers, "AltGr") ||
       evas_key_modifier_is_set(ev->modifiers, "ISO_Level3_Shift");
    hyper = evas_key_modifier_is_set(ev->modifiers, "Hyper");
-   DBG("ctrl:%d alt:%d shift:%d win:%d meta:%d hyper:%d",
-       ctrl, alt, shift, win, meta, hyper);
 
    /* 1st/ Tab selector */
-   DBG("1> tab selector");
      {
         Term_Container *tc = (Term_Container*) wn;
 
@@ -1789,7 +1786,6 @@ _cb_win_key_down(void *data,
      }
 
    /* 2nd/ Miniview */
-   DBG("2> miniview");
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1819,7 +1815,6 @@ _cb_win_key_down(void *data,
 
 
    /* 3rd/ PopMedia */
-   DBG("3> popmedia");
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1855,7 +1850,6 @@ _cb_win_key_down(void *data,
      }
 
    /* 4th/ Handle key bindings */
-   DBG("4> key binding");
    done = EINA_FALSE;
    if (wn->group_input)
      {
@@ -1886,8 +1880,6 @@ _cb_win_key_down(void *data,
    done = EINA_FALSE;
 
    /* 5th/ Composing */
-   /* composing */
-   DBG("5> composing");
    if (wn->khdl.imf)
      {
         // EXCEPTION. Don't filter modifiers alt+shift -> breaks emacs
@@ -1968,7 +1960,6 @@ _cb_win_key_down(void *data,
      }
 
    /* 6th/ send key to pty */
-   DBG("6> to pty");
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -1987,9 +1978,7 @@ _cb_win_key_down(void *data,
      }
 
    /* 7th: specifics: jump on keypress / flicker on key */
-   DBG("7> specifics");
 end:
-   DBG("term:%p", term);
    if (wn->group_input)
      {
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
@@ -2660,7 +2649,6 @@ _split_focused_term_get(const Term_Container *tc)
 
    if (tc->is_focused)
       term = split->last_focus->focused_term_get(split->last_focus);
-   DBG("%p term focused:%p", tc, term);
    return term;
 }
 
