@@ -4063,7 +4063,7 @@ static Eina_Bool
 _tab_drag_start(void *data EINA_UNUSED)
 {
    /* Start icons animation before actually drag-starts */
-   Evas_Coord x, y, w, h, off_x, off_y, ch_w, ch_h, core_w, core_h;
+   Evas_Coord mx, my, w, h, ch_w, ch_h, core_w, core_h;
    Term *term = _tab_drag->term;
    Evas_Object *o = elm_layout_add(term->bg);
    Evas_Object *img;
@@ -4096,9 +4096,6 @@ _tab_drag_start(void *data EINA_UNUSED)
    elm_layout_content_set(o, "terminology.content", img);
    evas_object_size_hint_min_get(term->core, &ch_w, &ch_h);
 
-   edje_object_part_geometry_get(term->bg_edj, "tabmiddle",
-                                 &x, &y, NULL, NULL);
-   evas_object_geometry_get(term->bg_edj, &off_x, &off_y, NULL, NULL);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
@@ -4110,7 +4107,8 @@ _tab_drag_start(void *data EINA_UNUSED)
    else
      w = h * ratio;
    evas_object_resize(o, w, h);
-   evas_object_move(o, x + off_x, y + off_y);
+   evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
+   evas_object_move(_tab_drag->icon, mx - w/2, my - h/2);
    evas_object_raise(o);
    elm_object_cursor_set(term->bg, "hand2");
    evas_object_show(o);
@@ -4118,6 +4116,7 @@ _tab_drag_start(void *data EINA_UNUSED)
    _tab_drag_save_state(tc);
    tc->parent->detach(tc->parent, tc);
    assert(term->tab_item == NULL);
+   _focus_validator();
 
    _tab_drag->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
