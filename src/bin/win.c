@@ -3650,6 +3650,10 @@ _tab_drag_rollback_win(void)
    Term_Container *tc_win = (Term_Container*)wn;
    Term_Container *tc = term->container;
 
+   if (term->unswallowed)
+     elm_layout_content_set(term->bg, "terminology.content", term->core);
+   term->unswallowed = EINA_FALSE;
+
    tc_win->swallow(tc_win, NULL, tc);
    tc_win->unfocus(tc_win, NULL);
    tc->focus(tc, NULL);
