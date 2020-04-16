@@ -726,12 +726,6 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
         elm_layout_signal_emit(term->bg, "tab,bell,off", "terminology");
      }
 
-   if (tc->parent != relative)
-     {
-        DBG("focus tc:%p term:%p", tc, solo->term);
-        tc->parent->focus(tc->parent, tc);
-     }
-
    if (term->config->disable_focus_visuals)
      {
         elm_layout_signal_emit(term->bg, "focused,set", "terminology");
@@ -2708,6 +2702,7 @@ _split_close(Term_Container *tc, Term_Container *child)
 
    if (tc->is_focused)
      {
+        child->unfocus(child, tc);
         other_child->focus(other_child, parent);
      }
 
@@ -2744,8 +2739,16 @@ _split_focus(Term_Container *tc, Term_Container *relative)
 
    if (tc->parent == relative)
      {
-        tc->is_focused = EINA_TRUE;
-        split->last_focus->focus(split->last_focus, tc);
+        if (!tc->is_focused)
+          {
+             Term_Container *last_focus = split->last_focus;
+             Term_Container *other = (split->tc1 == last_focus) ?
+                split->tc2 : split->tc1;
+
+             tc->is_focused = EINA_TRUE;
+             other->unfocus(other, tc);
+             last_focus->focus(last_focus, tc);
+          }
      }
    else
      {
@@ -3023,6 +3026,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    elm_panes_content_left_size_set(o, left_size);
 
    tc->is_focused = tc1->is_focused | tc2->is_focused;
+   assert(!(tc1->is_focused && tc2->is_focused));
    return tc;
 }
 
@@ -3329,9 +3333,14 @@ _tab_drag_rollback_split(void)
         child2 = tc;
      }
 
+   assert(!tc->is_focused);
    tc_split = _split_new(child1, child2, _tab_drag->left_size, is_horizontal);
    parent->swallow(parent, other, tc_split);
+   /* Ensure the other child is unfocused */
+   other->unfocus(other, tc_split);
+   /* Unfocus from the window down to a single term */
    tc_win->unfocus(tc_win, NULL);
+   /* Focus the dragged term, up to the window */
    tc->focus(tc, NULL);
 }
 
@@ -3721,6 +3730,7 @@ _tab_drag_rollback_tabs(void)
 static void
 _tab_drag_rollback(void)
 {
+   _focus_validator();
    switch (_tab_drag->parent_type)
      {
       case TERM_CONTAINER_TYPE_TABS:
@@ -3736,6 +3746,7 @@ _tab_drag_rollback(void)
          ERR("invalid parent type:%d", _tab_drag->parent_type);
          abort();
      }
+   _focus_validator();
 }
 
 static void
@@ -4114,9 +4125,11 @@ _tab_drag_start(void *data EINA_UNUSED)
    evas_object_show(o);
 
    _tab_drag_save_state(tc);
+   DBG("detaching %p from %p", tc, tc->parent);
    tc->parent->detach(tc->parent, tc);
    assert(term->tab_item == NULL);
    _focus_validator();
+   assert(!tc->is_focused);
 
    _tab_drag->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
