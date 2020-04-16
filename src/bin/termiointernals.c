@@ -250,6 +250,7 @@ _codepoint_buf_append(struct Codepoints_Buf *buf,
              return -1;
           }
         buf->codepoints = codepoints;
+        codepoints = NULL;
      }
    buf->codepoints[buf->len++] = u;
    return 0;
