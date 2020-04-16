@@ -31,7 +31,6 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static Eina_List *terms = NULL;
 
-static void _remove_links(Termio *sd);
 static void _smart_apply(Evas_Object *obj);
 static void _smart_size(Evas_Object *obj, int w, int h, Eina_Bool force);
 static void _smart_calculate(Evas_Object *obj);
@@ -137,7 +136,7 @@ termio_scroll_set(Evas_Object *obj, int scroll)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = scroll;
-   _remove_links(sd);
+   termio_remove_links(sd);
    _smart_apply(obj);
 }
 
@@ -147,7 +146,7 @@ termio_scroll_top_backlog(Evas_Object *obj)
    Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->scroll = INT32_MAX;
-   _remove_links(sd);
+   termio_remove_links(sd);
    _smart_apply(obj);
 }
 
@@ -1428,8 +1427,8 @@ _update_link(Termio *sd, Eina_Bool same_geom)
      }
 }
 
-static void
-_remove_links(Termio *sd)
+void
+termio_remove_links(Termio *sd)
 {
    Eina_Bool same_geom = EINA_FALSE;
 
@@ -1494,7 +1493,7 @@ _hyperlink_mouseover(Termio *sd,
    if (sd->link.suspend)
      return;
 
-   _remove_links(sd);
+   termio_remove_links(sd);
    sd->link.id = link_id;
 
    hl = &sd->pty->hl.links[link_id];
@@ -1510,6 +1509,7 @@ _hyperlink_mouseover(Termio *sd,
         ssize_t w = 0;
         Termcell *cells;
         int start_x = -1;
+        Eina_Bool add_tooltip = EINA_FALSE;
 
         o = NULL;
 
@@ -1540,10 +1540,16 @@ _hyperlink_mouseover(Termio *sd,
                        evas_object_resize(o,
                                           (x - start_x) * sd->font.chw,
                                           sd->font.chh);
-                       _hyperlink_end(sd, hl, o,
-                                      (y == sd->mouse.cy) &&
+                       add_tooltip = ((y == sd->mouse.cy) &&
                                       ((start_x <= sd->mouse.cx) &&
-                                        (sd->mouse.cx <= x)));
+                                       (sd->mouse.cx <= x)));
+                       _hyperlink_end(sd, hl, o, add_tooltip);
+                       if (add_tooltip)
+                         {
+                            sd->link.y1 = sd->link.y2 = y;
+                            sd->link.x1 = start_x;
+                            sd->link.x2 = x;
+                         }
                        o = NULL;
                     }
                }
@@ -1553,10 +1559,16 @@ _hyperlink_mouseover(Termio *sd,
              evas_object_resize(o,
                                 (x - start_x + 1) * sd->font.chw,
                                 sd->font.chh);
-             _hyperlink_end(sd, hl, o,
-                            (y == sd->mouse.cy) &&
+             add_tooltip = ((y == sd->mouse.cy) &&
                             ((start_x <= sd->mouse.cx) &&
                              (sd->mouse.cx <= x)));
+             _hyperlink_end(sd, hl, o, add_tooltip);
+             if (add_tooltip)
+               {
+                  sd->link.y1 = sd->link.y2 = y;
+                  sd->link.x1 = start_x;
+                  sd->link.x2 = x;
+               }
           }
      }
    termpty_backlog_unlock();
@@ -2307,7 +2319,7 @@ termio_focus_out(Evas_Object *termio)
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
    if (!sd->ctxpopup)
-     _remove_links(sd);
+     termio_remove_links(sd);
    term_unfocus(sd->term);
 }
 
@@ -2326,13 +2338,13 @@ _smart_mouseover_apply(Termio *sd)
    if ((sd->mouse.cx < 0) || (sd->mouse.cy < 0) ||
        (sd->link.suspend) || (!term_is_focused(sd->term)))
      {
-        _remove_links(sd);
+        termio_remove_links(sd);
         return;
      }
    cell = termpty_cell_get(sd->pty, sd->mouse.cy - sd->scroll, sd->mouse.cx);
    if (!cell)
      {
-        _remove_links(sd);
+        termio_remove_links(sd);
         return;
      }
 
@@ -2347,7 +2359,7 @@ _smart_mouseover_apply(Termio *sd)
                         &x1, &y1, &x2, &y2);
    if (!s)
      {
-        _remove_links(sd);
+        termio_remove_links(sd);
         return;
      }
 
@@ -2684,7 +2696,7 @@ _smart_cb_mouse_out(void *data,
         sd->mouse.cx = cx;
         sd->mouse.cy = cy;
      }
-   _remove_links(sd);
+   termio_remove_links(sd);
 
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    sd->mouseover_delay = NULL;
@@ -3226,7 +3238,8 @@ _smart_del(Evas_Object *obj)
                                          _win_obj_del, obj);
    EINA_LIST_FREE(sd->link.objs, o)
      {
-        if (o == sd->link.down.dndobj) sd->link.down.dndobj = NULL;
+        if (o == sd->link.down.dndobj)
+          sd->link.down.dndobj = NULL;
         evas_object_del(o);
      }
    if (sd->link.down.dndobj) evas_object_del(sd->link.down.dndobj);

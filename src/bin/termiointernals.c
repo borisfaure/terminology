@@ -2439,6 +2439,7 @@ termio_internal_render(Termio *sd,
         Evas_Textgrid_Cell *tc;
         int cur_sel_start_x = -1, cur_sel_end_x = -1;
         int rel_y = y - sd->scroll;
+        int l1 = -1, l2 = -1;
 
         w = 0;
         cells = termpty_cellrow_get(sd->pty, rel_y, &w);
@@ -2481,6 +2482,35 @@ termio_internal_render(Termio *sd,
                     }
                }
           }
+        if (EINA_UNLIKELY(sd->link.objs != NULL))
+          {
+             if (sd->link.y1 == sd->link.y2)
+               {
+                  if (y == sd->link.y1)
+                    {
+                       l1 = sd->link.x1;
+                       l2 = sd->link.x2;
+                    }
+               }
+             else
+               {
+                  if (y == sd->link.y1)
+                    {
+                       l1 = sd->link.x1;
+                       l2 = w;
+                    }
+                  else if (y == sd->link.y2)
+                    {
+                       l1 = 0;
+                       l2 = sd->link.x2;
+                    }
+                  else if (y > sd->link.y1 && y < sd->link.y2)
+                    {
+                       l1 = sd->link.x1;
+                       l2 = sd->link.x2;
+                    }
+               }
+          }
 
         ch1 = -1;
         /* Look at every cell in that line */
@@ -2514,6 +2544,11 @@ termio_internal_render(Termio *sd,
                     {
                        termio_sel_set(sd, EINA_FALSE);
                        u = cp = NULL;
+                    }
+                  if (EINA_UNLIKELY(l1 >= 0 && x >= l1 && x <= l2))
+                    {
+                       termio_remove_links(sd);
+                       l1 = l2 = -1;
                     }
                }
              else
@@ -2554,6 +2589,11 @@ termio_internal_render(Termio *sd,
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
                          }
+                       if (EINA_UNLIKELY(l1 >= 0 && x >= l1 && x <= l2))
+                         {
+                            termio_remove_links(sd);
+                            l1 = l2 = -1;
+                         }
                     }
                   else if (cells[x].att.invisible)
                     {
@@ -2580,6 +2620,11 @@ termio_internal_render(Termio *sd,
                          {
                             termio_sel_set(sd, EINA_FALSE);
                             u = cp = NULL;
+                         }
+                       if (EINA_UNLIKELY(l1 >= 0 && x >= l1 && x <= l2))
+                         {
+                            termio_remove_links(sd);
+                            l1 = l2 = -1;
                          }
                     }
                   else
@@ -2658,6 +2703,12 @@ termio_internal_render(Termio *sd,
                        tc[x].double_width = cells[x].att.dblwidth;
                        tc[x].fg = fg;
                        tc[x].bg = bg;
+                       if (tc[x].codepoint != codepoint &&
+                           EINA_UNLIKELY(l1 >= 0 && x >= l1 && x <= l2))
+                         {
+                            termio_remove_links(sd);
+                            l1 = l2 = -1;
+                         }
                        tc[x].codepoint = codepoint;
                        if ((tc[x].double_width) && (tc[x].codepoint == 0) &&
                            (ch2 == x - 1))

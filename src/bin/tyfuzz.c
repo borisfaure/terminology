@@ -217,6 +217,19 @@ termio_take_selection(Evas_Object *obj,
    return EINA_FALSE;
 }
 
+void
+termio_remove_links(Termio *sd)
+{
+   sd->link.string = NULL;
+   sd->link.x1 = -1;
+   sd->link.y1 = -1;
+   sd->link.x2 = -1;
+   sd->link.y2 = -1;
+   sd->link.suspend = EINA_FALSE;
+   sd->link.id = 0;
+   sd->link.objs = 0;
+}
+
 #ifndef TYTEST
 void
 termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
