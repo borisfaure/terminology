@@ -1324,7 +1324,8 @@ _win_swallow(Term_Container *tc, Term_Container *orig,
    if ((new_child->type == TERM_CONTAINER_TYPE_SOLO)
        && (wn->config->show_tabs))
      {
-        if (_tab_drag && _tab_drag->term && (_tab_drag->term->wn == wn))
+        if (_tab_drag && _tab_drag->term && (_tab_drag->term->wn == wn) &&
+            _tab_drag->icon)
           _solo_tab_show(new_child);
         else
           _solo_tab_hide(new_child);
@@ -3816,6 +3817,10 @@ _tab_drag_free(void)
         _tab_drag->term->has_bg_cursor = EINA_FALSE;
      }
 
+   /* free _tab_drag->icon to mark we're freeing _tab_drag */
+   evas_object_del(_tab_drag->icon);
+   _tab_drag->icon = NULL;
+
    if (_tab_drag->parent_type != TERM_CONTAINER_TYPE_UNKNOWN)
      _tab_drag_rollback();
 
@@ -3825,8 +3830,6 @@ _tab_drag_free(void)
    ecore_timer_del(_tab_drag->timer);
    _tab_drag->timer = NULL;
 
-   evas_object_del(_tab_drag->icon);
-   _tab_drag->icon = NULL;
    evas_object_del(_tab_drag->img);
    _tab_drag->img = NULL;
 
