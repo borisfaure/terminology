@@ -81,7 +81,7 @@ termpty_save_expand(Termpty *ty, Termsave *ts, Termcell *cells, size_t delta)
           0, delta * sizeof(Termcell));
    TERMPTY_CELL_COPY(ty, cells, &newcells[ts->w], (int)delta);
 
-   _accounting_change(-1 * ts->w * sizeof(Termcell));
+   _accounting_change((-1) * (int64_t)(ts->w * sizeof(Termcell)));
    ts->w += delta;
    _accounting_change(ts->w * sizeof(Termcell));
    ts->cells = newcells;
@@ -103,7 +103,7 @@ termpty_save_free(Termpty *ty, Termsave *ts)
      }
    free(ts->cells);
    ts->cells = NULL;
-   _accounting_change((-1) * (int)(ts->w * sizeof(Termcell)));
+   _accounting_change((-1) * (int64_t)(ts->w * sizeof(Termcell)));
    ts->w = 0;
 }
 
@@ -127,7 +127,7 @@ termpty_backlog_free(Termpty *ty)
 
    for (i = 0; i < ty->backsize; i++)
      termpty_save_free(ty, &ty->back[i]);
-   _accounting_change((-1) * (int)(sizeof(Termsave) * ty->backsize));
+   _accounting_change((-1) * (int64_t)(sizeof(Termsave) * ty->backsize));
    free(ty->back);
    ty->back = NULL;
 }
@@ -214,7 +214,7 @@ termpty_backlog_size_set(Termpty *ty, size_t size)
         free(ty->back);
         ty->back = new_back;
      }
-   _accounting_change(sizeof(Termsave) * (size - ty->backsize));
+   _accounting_change((size - ty->backsize) * (int64_t)sizeof(Termsave));
 end:
    ty->backpos = 0;
    ty->backsize = size;
