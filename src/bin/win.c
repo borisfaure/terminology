@@ -145,6 +145,7 @@ struct _Term
    unsigned char missed_bell : 1;
    unsigned char miniview_shown : 1;
    unsigned char popmedia_deleted : 1;
+   unsigned char has_bg_cursor : 1;
 
    Eina_Bool sendfile_request_enabled : 1;
    Eina_Bool sendfile_progress_enabled : 1;
@@ -3800,6 +3801,16 @@ _tab_drag_free(void)
 {
    if (!_tab_drag)
      return;
+   if (_tab_drag->term_over && _tab_drag->term_over->has_bg_cursor)
+     {
+        elm_object_cursor_unset(_tab_drag->term_over->bg);
+        _tab_drag->term_over->has_bg_cursor = EINA_FALSE;
+     }
+   if (_tab_drag->term->has_bg_cursor)
+     {
+        elm_object_cursor_unset(_tab_drag->term->bg);
+        _tab_drag->term->has_bg_cursor = EINA_FALSE;
+     }
 
    if (_tab_drag->parent_type != TERM_CONTAINER_TYPE_UNKNOWN)
      _tab_drag_rollback();
@@ -3895,11 +3906,16 @@ _tab_drag_stop(void)
      goto end;
 
    evas_object_image_source_visible_set(_tab_drag->img, EINA_TRUE);
+   if (term->has_bg_cursor)
+     {
+        elm_object_cursor_unset(term->bg);
+        term->has_bg_cursor = EINA_FALSE;
+     }
    elm_layout_content_unset(_tab_drag->icon, "terminology.content");
    elm_layout_content_set(term->bg, "terminology.content", term->core);
-   elm_object_cursor_unset(term->bg);
    term->unswallowed = EINA_FALSE;
    evas_object_show(term->core);
+   evas_object_show(term->bg);
 
    if (term_at_coords == term)
      {
@@ -4122,6 +4138,7 @@ _tab_drag_start(void *data EINA_UNUSED)
    evas_object_move(_tab_drag->icon, mx - w/2, my - h/2);
    evas_object_raise(o);
    elm_object_cursor_set(term->bg, "hand2");
+   term->has_bg_cursor = EINA_TRUE;
    evas_object_show(o);
 
    _tab_drag_save_state(tc);
