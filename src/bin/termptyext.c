@@ -215,7 +215,7 @@ _handle_mouse_wheel(Termpty *ty,
    buf += _tytest_arg_get(buf, &value);
    ev.z *= value;
    /* MODIFIERS */
-   buf += _tytest_modifiers_get(buf, &modifiers);
+   _tytest_modifiers_get(buf, &modifiers);
 
    termio_internal_mouse_wheel(sd, &ev, modifiers);
 }
@@ -360,7 +360,7 @@ _handle_corner(Termpty *ty, const Eina_Unicode *buf)
 
    /* V */
    value = 0;
-   buf += _tytest_arg_get(buf, &value);
+   _tytest_arg_get(buf, &value);
 
    if (corner == 0)
      {
