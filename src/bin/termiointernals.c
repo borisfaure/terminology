@@ -2735,17 +2735,23 @@ termio_internal_render(Termio *sd,
    preedit_str = term_preedit_str_get(sd->term);
    if (preedit_str && preedit_str[0])
      {
-        Eina_Unicode *uni, g;
-        int len = 0, i, jump, xx, backx;
-        Eina_Bool dbl;
-        Evas_Textgrid_Cell *tc;
+        Eina_Unicode *uni;
+        int len = 0;
         x = sd->cursor.x, y = sd->cursor.y;
 
         uni = eina_unicode_utf8_to_unicode(preedit_str, &len);
         if (uni)
           {
+             int i;
              for (i = 0; i < len; i++)
                {
+                  int backx;
+                  int xx;
+                  int jump;
+                  Eina_Bool dbl;
+                  Evas_Textgrid_Cell *tc;
+                  Eina_Unicode g;
+
                   jump = 1;
                   g = uni[i];
                   dbl = _termpty_is_dblwidth_get(sd->pty, g);

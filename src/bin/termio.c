@@ -401,7 +401,6 @@ termio_config_update(Evas_Object *obj)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Evas_Coord w, h, ow = 0, oh = 0;
-   char buf[4096];
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -410,6 +409,8 @@ termio_config_update(Evas_Object *obj)
 
    if (sd->config->font.bitmap)
      {
+        char buf[4096];
+
         snprintf(buf, sizeof(buf), "%s/fonts/%s",
                  elm_app_data_dir_get(), sd->config->font.name);
         sd->font.name = eina_stringshare_add(buf);
@@ -931,7 +932,6 @@ _cb_ctxp_link_content_copy(void *data,
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
-   const char *raw_link;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->link.id)
@@ -945,6 +945,8 @@ _cb_ctxp_link_content_copy(void *data,
    else
      {
         struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+        const char *raw_link;
+
         termio_selection_get(sd,
                              sd->link.x1, sd->link.y1,
                              sd->link.x2, sd->link.y2,
@@ -1479,7 +1481,6 @@ _hyperlink_mouseover(Termio *sd,
                      uint16_t link_id)
 {
    Evas_Coord ox, oy, ow, oh;
-   Evas_Object *o;
    int x, y;
    Term_Link *hl;
 
@@ -1506,8 +1507,9 @@ _hyperlink_mouseover(Termio *sd,
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
      {
-        ssize_t w = 0;
         Termcell *cells;
+        Evas_Object *o;
+        ssize_t w = 0;
         int start_x = -1;
         Eina_Bool add_tooltip = EINA_FALSE;
 
@@ -1607,11 +1609,13 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
                          cmd = config->helper.local.general;
                        if (cmd)
                          {
-                            char buf[PATH_MAX], *escaped;
+                            char *escaped;
 
                             escaped = ecore_file_escape_name(file);
                             if (escaped)
                               {
+                                 char buf[PATH_MAX];
+
                                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
                                  ecore_exe_run(buf, NULL);
                                  free(escaped);
@@ -1896,7 +1900,6 @@ static void
 _block_edje_cmds(Termpty *ty, Termblock *blk, Eina_List *cmds, Eina_Bool created)
 {
    Eina_List *l;
-   char *s;
 
 #define ISCMD(cmd) !strcmp(s, cmd)
 #define GETS(var) l = l->next; if (!l) return; var = l->data
@@ -1905,7 +1908,7 @@ _block_edje_cmds(Termpty *ty, Termblock *blk, Eina_List *cmds, Eina_Bool created
    l = cmds;
    while (l)
      {
-        s = l->data;
+        char *s = l->data;
 
         /////////////////////////////////////////////////////////////////////
         if (ISCMD("text")) // set text part
@@ -3522,6 +3525,7 @@ _smart_pty_command(void *data)
              char *pp;
              int ww = 0, hh = 0, repch;
              Eina_List *strs = NULL;
+             char *link = NULL;
 
              // exact size in CHAR CELLS - WW (decimal) width CELLS,
              // HH (decimal) in CELLS.
@@ -3536,115 +3540,113 @@ _smart_pty_command(void *data)
              //  CMD is the command, P1, P2, P3 etc. are parameters (P2 and
              //  on are optional depending on CMD)
              repch = ty->cur_cmd[2];
-             if (repch)
-               {
-                  char *link = NULL;
+             if (!repch)
+               return;
 
-                  for (p0 = p = &(ty->cur_cmd[3]); *p; p++)
+             for (p0 = p = &(ty->cur_cmd[3]); *p; p++)
+               {
+                  if (*p == ';')
                     {
-                       if (*p == ';')
-                         {
-                            ww = strtol(p0, NULL, 10);
-                            p++;
-                            break;
-                         }
+                       ww = strtol(p0, NULL, 10);
+                       p++;
+                       break;
                     }
-                  for (p0 = p; *p; p++)
+               }
+             for (p0 = p; *p; p++)
+               {
+                  if (*p == ';')
                     {
-                       if (*p == ';')
-                         {
-                            hh = strtol(p0, NULL, 10);
-                            p++;
-                            break;
-                         }
+                       hh = strtol(p0, NULL, 10);
+                       p++;
+                       break;
                     }
-                  if (ty->cur_cmd[1] == 'j')
+               }
+             if (ty->cur_cmd[1] == 'j')
+               {
+                  // parse from p until end of string - one newline
+                  // per list item in strs
+                  p0 = p1 = p;
+                  for (;;)
                     {
-                       // parse from p until end of string - one newline
-                       // per list item in strs
-                       p0 = p1 = p;
-                       for (;;)
+                       // end of str param
+                       if ((*p1 == '\n') || (*p1 == '\r') || (!*p1))
                          {
-                            // end of str param
-                            if ((*p1 == '\n') || (*p1 == '\r') || (!*p1))
+                            // if string is non-empty...
+                            if ((p1 - p0) >= 1)
                               {
-                                 // if string is non-empty...
-                                 if ((p1 - p0) >= 1)
+                                 // allocate, fill and add to list
+                                 pp = malloc(p1 - p0 + 1);
+                                 if (pp)
                                    {
-                                      // allocate, fill and add to list
-                                      pp = malloc(p1 - p0 + 1);
-                                      if (pp)
-                                        {
-                                           strncpy(pp, p0, p1 - p0);
-                                           pp[p1 - p0] = 0;
-                                           strs = eina_list_append(strs, pp);
-                                        }
+                                      strncpy(pp, p0, p1 - p0);
+                                      pp[p1 - p0] = 0;
+                                      strs = eina_list_append(strs, pp);
                                    }
-                                 // end of string buffer
-                                 if (!*p1) break;
-                                 p1++; // skip \n or \r
-                                 p0 = p1;
                               }
-                            else
-                              p1++;
+                            // end of string buffer
+                            if (!*p1) break;
+                            p1++; // skip \n or \r
+                            p0 = p1;
+                         }
+                       else
+                         p1++;
+                    }
+               }
+             else
+               {
+                  path = p;
+                  p = strchr(path, '\n');
+                  if (p)
+                    {
+                       link = strdup(path);
+                       path = p + 1;
+                       if (isspace(path[0])) path++;
+                       pp = strchr(link, '\n');
+                       if (pp) *pp = 0;
+                       pp = strchr(link, '\r');
+                       if (pp) *pp = 0;
+                    }
+               }
+             if ((ww < 512) && (hh < 512))
+               {
+                  Termblock *blk = NULL;
+
+                  if (strs)
+                    {
+                       const char *file, *group;
+                       Eina_List *l;
+
+                       file = eina_list_nth(strs, 0);
+                       group = eina_list_nth(strs, 1);
+                       l = eina_list_nth_list(strs, 2);
+                       blk = termpty_block_new(ty, ww, hh, file, group);
+                       for (;l; l = l->next)
+                         {
+                            pp = l->data;
+                            if (pp)
+                              blk->cmds = eina_list_append(blk->cmds, pp);
+                            l->data = NULL;
                          }
                     }
                   else
+                    blk = termpty_block_new(ty, ww, hh, path, link);
+                  if (blk)
                     {
-                       path = p;
-                       p = strchr(path, '\n');
-                       if (p)
-                         {
-                            link = strdup(path);
-                            path = p + 1;
-                            if (isspace(path[0])) path++;
-                            pp = strchr(link, '\n');
-                            if (pp) *pp = 0;
-                            pp = strchr(link, '\r');
-                            if (pp) *pp = 0;
-                         }
+                       if (ty->cur_cmd[1] == 's')
+                         blk->scale_stretch = EINA_TRUE;
+                       else if (ty->cur_cmd[1] == 'c')
+                         blk->scale_center = EINA_TRUE;
+                       else if (ty->cur_cmd[1] == 'f')
+                         blk->scale_fill = EINA_TRUE;
+                       else if (ty->cur_cmd[1] == 't')
+                         blk->thumb = EINA_TRUE;
+                       else if (ty->cur_cmd[1] == 'j')
+                         blk->edje = EINA_TRUE;
+                       termpty_block_insert(ty, repch, blk);
                     }
-                  if ((ww < 512) && (hh < 512))
-                    {
-                       Termblock *blk = NULL;
-
-                       if (strs)
-                         {
-                            const char *file, *group;
-                            Eina_List *l;
-
-                            file = eina_list_nth(strs, 0);
-                            group = eina_list_nth(strs, 1);
-                            l = eina_list_nth_list(strs, 2);
-                            blk = termpty_block_new(ty, ww, hh, file, group);
-                            for (;l; l = l->next)
-                              {
-                                 pp = l->data;
-                                 if (pp)
-                                   blk->cmds = eina_list_append(blk->cmds, pp);
-                                 l->data = NULL;
-                              }
-                         }
-                       else
-                         blk = termpty_block_new(ty, ww, hh, path, link);
-                       if (blk)
-                         {
-                            if (ty->cur_cmd[1] == 's')
-                              blk->scale_stretch = EINA_TRUE;
-                            else if (ty->cur_cmd[1] == 'c')
-                              blk->scale_center = EINA_TRUE;
-                            else if (ty->cur_cmd[1] == 'f')
-                              blk->scale_fill = EINA_TRUE;
-                            else if (ty->cur_cmd[1] == 't')
-                              blk->thumb = EINA_TRUE;
-                            else if (ty->cur_cmd[1] == 'j')
-                              blk->edje = EINA_TRUE;
-                            termpty_block_insert(ty, repch, blk);
-                         }
-                    }
-                  free(link);
-                  EINA_LIST_FREE(strs, pp) free(pp);
                }
+             free(link);
+             EINA_LIST_FREE(strs, pp) free(pp);
              return;
           }
         else if (ty->cur_cmd[1] == 'C')
@@ -3718,27 +3720,25 @@ _smart_pty_command(void *data)
           }
         else if (ty->cur_cmd[1] == 'd') // data packet
           {
-             int pksum = atoi(&(ty->cur_cmd[2]));
-             int sum;
              char *p = strchr(ty->cur_cmd, ' ');
              Eina_Bool valid = EINA_TRUE;
 
              if (p)
                {
                   Eina_Binbuf *bb = eina_binbuf_new();
-                  unsigned char v;
 
                   if (bb)
                     {
                        unsigned char localbuf[128];
                        unsigned char localbufpos = 0;
+                       int pksum = atoi(&(ty->cur_cmd[2]));
+                       int sum;
 
                        eina_binbuf_expand(bb, 32 * 1024);
-                       sum = 0;
                        for (sum = 0, p++; *p; p++)
                          {
                             // high nibble
-                            v = (unsigned char)(*p);
+                            unsigned char v = (unsigned char)(*p);
                             sum += v;
                             v = ((v - '@') & 0xf) << 4;
                             // low nibble
@@ -3852,13 +3852,13 @@ _smart_cb_drop(void *data,
      {
         if (strchr(ev->data, '\n'))
           {
-             char *p, *p2, *p3, *tb;
-
-             tb = malloc(strlen(ev->data) + 1);
+             char *tb = malloc(strlen(ev->data) + 1);
              if (tb)
                {
+                  char *p;
                   for (p = ev->data; p;)
                     {
+                       char *p2, *p3;
                        p2 = strchr(p, '\n');
                        p3 = strchr(p, '\r');
                        if (p2 && p3)

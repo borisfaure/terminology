@@ -227,15 +227,15 @@ _pty_size(Termpty *ty)
 static Eina_Bool
 _handle_read(Termpty *ty, Eina_Bool false_on_empty)
 {
-   char buf[4097];
-   Eina_Unicode codepoint[4097];
-   int len, i, j, reads;
-   unsigned int k;
+   int len, reads;
 
    // read up to 64 * 4096 bytes
    for (reads = 0; reads < 64; reads++)
      {
+        Eina_Unicode codepoint[4097];
+        char buf[4097];
         char *rbuf = buf;
+        int i, j;
         len = sizeof(buf) - 1;
 
         for (i = 0; i < (int)sizeof(ty->oldbuf) && ty->oldbuf[i] & 0x80; i++)
@@ -293,6 +293,8 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
                   if ((0xdc80 <= g) && (g <= 0xdcff) &&
                       (len - prev_i) <= (int)sizeof(ty->oldbuf))
                     {
+                       unsigned int k;
+
                        for (k = 0;
                             (k < (unsigned int)sizeof(ty->oldbuf)) &&
                             (k < (unsigned int)(len - prev_i));
@@ -474,7 +476,7 @@ termpty_resize_tabs(Termpty *ty, int old_w, int new_w)
 {
     unsigned int *new_tabs;
     int i;
-    size_t nb_elems, n;
+    size_t nb_elems;
 
     if ((new_w == old_w) && ty->tabs) return;
 
@@ -484,7 +486,7 @@ termpty_resize_tabs(Termpty *ty, int old_w, int new_w)
 
     if (ty->tabs)
       {
-         n = old_w;
+         size_t n = old_w;
          if (nb_elems < n) n = nb_elems;
          if (n > 0) memcpy(new_tabs, ty->tabs, n * sizeof(unsigned int));
          free(ty->tabs);
@@ -707,12 +709,9 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
      }
    if (!ty->pid)
      {
-        char buf[256];
-        int ret;
-
         if (cd)
           {
-             ret = chdir(cd);
+             int ret = chdir(cd);
              if (ret != 0)
                {
                   ERR(_("Could not change current directory to '%s': %s"),
@@ -772,6 +771,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         putenv("XTERM_256_COLORS=1");
         if (window_id)
           {
+             char buf[256];
+
              snprintf(buf, sizeof(buf), "WINDOWID=%lu", window_id);
              putenv(buf);
           }
@@ -931,7 +932,7 @@ _termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
 ssize_t
 termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
-   ssize_t len = nb_cells;
+   ssize_t len;
 
    if (!cells)
      return 0;

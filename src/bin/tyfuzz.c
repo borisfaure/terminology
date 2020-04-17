@@ -287,10 +287,6 @@ _termpty_init(Termpty *ty, Config *config)
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   char buf[4097];
-   Eina_Unicode codepoint[4097];
-   int len, i, j, k;
-
    eina_init();
 
 #ifdef TYTEST
@@ -319,8 +315,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    do
      {
+        char buf[4097];
+        Eina_Unicode codepoint[4097];
+        int i, j;
         char *rbuf = buf;
-        len = sizeof(buf) - 1;
+        int len = sizeof(buf) - 1;
 
         for (i = 0; i < (int)sizeof(_ty.oldbuf) && _ty.oldbuf[i] & 0x80; i++)
           {
@@ -354,6 +353,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
                   if ((0xdc80 <= g) && (g <= 0xdcff) &&
                       (len - prev_i) <= (int)sizeof(_ty.oldbuf))
                     {
+                       int k;
                        for (k = 0;
                             (k < (int)sizeof(_ty.oldbuf)) &&
                             (k < (len - prev_i));

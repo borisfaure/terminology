@@ -38,8 +38,8 @@ termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
 void
 termpty_text_scroll(Termpty *ty, Eina_Bool clear)
 {
-   Termcell *cells = NULL, *cells2;
-   int y, start_y = 0, end_y = ty->h - 1;
+   Termcell *cells = NULL;
+   int start_y = 0, end_y = ty->h - 1;
 
    start_y = ty->termstate.top_margin;
    if (ty->termstate.bottom_margin != 0)
@@ -69,6 +69,7 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
      {
         int x = ty->termstate.left_margin;
         int w = ty->w - x;
+        int y;
 
         if (ty->termstate.right_margin)
           w = ty->termstate.right_margin - x;
@@ -76,6 +77,8 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
         cells = &(TERMPTY_SCREEN(ty, x, end_y));
         for (y = start_y; y < end_y; y++)
           {
+             Termcell *cells2;
+
              cells = &(TERMPTY_SCREEN(ty, x, (y + 1)));
              cells2 = &(TERMPTY_SCREEN(ty, x, y));
              TERMPTY_CELL_COPY(ty, cells, cells2, w);
@@ -88,8 +91,8 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
 void
 termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
 {
-   Termcell *cells, *cells2 = NULL;
-   int y, start_y = 0, end_y = ty->h - 1;
+   Termcell *cells;
+   int start_y = 0, end_y = ty->h - 1;
 
    if (ty->termstate.bottom_margin != 0)
      {
@@ -116,6 +119,7 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
      {
         int x = ty->termstate.left_margin;
         int w = ty->w - x;
+        int y;
 
         if (ty->termstate.right_margin)
           w = ty->termstate.right_margin - x;
@@ -123,6 +127,8 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
         cells = &(TERMPTY_SCREEN(ty, x, end_y));
         for (y = end_y; y > start_y; y--)
           {
+             Termcell *cells2;
+
              cells = &(TERMPTY_SCREEN(ty, x, (y - 1)));
              cells2 = &(TERMPTY_SCREEN(ty, x, y));
              TERMPTY_CELL_COPY(ty, cells, cells2, w);

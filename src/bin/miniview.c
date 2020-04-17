@@ -213,7 +213,6 @@ void
 miniview_position_offset(const Evas_Object *obj, int by, Eina_Bool sanitize)
 {
    Miniview *mv = evas_object_smart_data_get(obj);
-   int remain = 0;
 
    termio_scroll_get(mv->termio);
    EINA_SAFETY_ON_NULL_RETURN(mv);
@@ -222,6 +221,8 @@ miniview_position_offset(const Evas_Object *obj, int by, Eina_Bool sanitize)
 
    if (!mv->fits_to_img)
      {
+        int remain;
+
         mv->screen.pos_val += (double) by / (mv->img_h - mv->rows);
         edje_object_part_drag_value_set(mv->base, "miniview_screen",
                                         0.0, mv->screen.pos_val);
@@ -517,7 +518,6 @@ _deferred_renderer(void *data)
    int history_len, pos;
    ssize_t wret;
    unsigned int *pixels, y;
-   Termcell *cells;
    Termpty *ty;
    unsigned int colors[512];
    double bottom_bound;
@@ -555,8 +555,10 @@ _deferred_renderer(void *data)
 
    for (y = 0; y < mv->img_h; y++)
      {
-        cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
-        if (!cells) break;
+        Termcell *cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
+
+        if (!cells)
+          break;
         _draw_line(ty, &pixels[y * mv->cols], cells, wret, colors);
      }
    evas_object_image_data_set(mv->img, pixels);

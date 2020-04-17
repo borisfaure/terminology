@@ -51,11 +51,12 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
 
    if (!strcmp(part, "elm.swallow.icon"))
      {
-        Evas_Object *o;
         Config *config = t->ctx->config;
 
         if (config)
           {
+             Evas_Object *o;
+
              o = options_theme_preview_add(obj, config,
                                            theme_path_get(t->name),
                                            128 * elm_config_scale_get(),

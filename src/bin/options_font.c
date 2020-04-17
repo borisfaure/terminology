@@ -236,7 +236,6 @@ _cb_op_font_preview_delayed_eval(void *data)
      goto done;
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
-        char buf[4096];
         int r, g, b, a;
         Evas *evas = evas_object_evas_get(obj);
         Evas_Object *textgrid = termio_textgrid_get(f->ctx->term);
@@ -250,6 +249,7 @@ _cb_op_font_preview_delayed_eval(void *data)
         evas_object_scale_set(o, elm_config_scale_get());
         if (f->bitmap)
           {
+             char buf[4096];
              snprintf(buf, sizeof(buf), "%s/fonts/%s",
                       elm_app_data_dir_get(), f->full_name);
              evas_object_text_font_set(o, buf, config->font.size);

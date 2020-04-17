@@ -54,14 +54,17 @@ static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 static const char *
 _is_fmt(const char *f, const char **extn)
 {
-   int i, len, l;
+   int i;
+   size_t len;
 
    len = strlen(f);
    for (i = 0; extn[i]; i++)
      {
-        l = strlen(extn[i]);
-        if (len < l) continue;
-        if (!strcasecmp(extn[i], f + len - l)) return extn[i];
+        size_t l = strlen(extn[i]);
+        if (len < l)
+          continue;
+        if (!strcasecmp(extn[i], f + len - l))
+          return extn[i];
      }
    return NULL;
 }
@@ -472,7 +475,6 @@ _type_scale_init(Evas_Object *obj)
 static void
 _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Object *o;
    Media *sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if ((w <= 0) || (h <= 0) || (sd->iw <= 0) || (sd->ih <= 0))
@@ -526,6 +528,8 @@ _type_scale_calc(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Eva
         if (lh < 256) lh = 256;
         if ((lw != sd->sw) || (lh != sd->sh))
           {
+             Evas_Object *o;
+
              o = sd->o_tmp = evas_object_image_filled_add(evas_object_evas_get(obj));
              evas_object_smart_member_add(o, obj);
              evas_object_clip_set(o, sd->clip);

@@ -173,43 +173,44 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
    Background_Ctx *ctx = evas_object_data_get(obj, "ctx");
    assert(ctx);
    Background_Item *item = data;
-   Evas_Object *o, *oe;
    Config *config = ctx->config;
-   char path[PATH_MAX];
 
-   if (!strcmp(part, "elm.swallow.icon"))
+   if (strcmp(part, "elm.swallow.icon"))
+     return NULL;
+
+   if (item->path)
      {
-        if (item->path)
+        int i;
+        Media_Type type;
+        for (i = 0; extn_edj[i]; i++)
           {
-             int i;
-             Media_Type type;
-             for (i = 0; extn_edj[i]; i++)
-               {
-                  if (eina_str_has_extension(item->path, extn_edj[i]))
-                    return media_add(obj, item->path, config,
-                                     MEDIA_BG, MEDIA_TYPE_EDJE);
-               }
-             type = media_src_type_get(item->path);
-             return media_add(obj, item->path, config, MEDIA_THUMB, type);
+             if (eina_str_has_extension(item->path, extn_edj[i]))
+               return media_add(obj, item->path, config,
+                                MEDIA_BG, MEDIA_TYPE_EDJE);
           }
-        else
-          {
-             if (!config->theme)
-               return NULL;
-             snprintf(path, PATH_MAX, "%s/themes/%s", elm_app_data_dir_get(),
-                                                      config->theme);
-             o = elm_layout_add(obj);
-             oe = elm_layout_edje_get(o);
-             if (!edje_object_file_set(oe, path, "terminology/background"))
-               {
-                  evas_object_del(o);
-                  return NULL;
-               }
-             evas_object_show(o);
-             return o;
-         }
+        type = media_src_type_get(item->path);
+        return media_add(obj, item->path, config, MEDIA_THUMB, type);
      }
-   return NULL;
+   else
+     {
+        Evas_Object *o, *oe;
+        char path[PATH_MAX];
+
+        if (!config->theme)
+          return NULL;
+        snprintf(path, PATH_MAX, "%s/themes/%s", elm_app_data_dir_get(),
+                 config->theme);
+        o = elm_layout_add(obj);
+        oe = elm_layout_edje_get(o);
+        if (!edje_object_file_set(oe, path, "terminology/background"))
+          {
+             evas_object_del(o);
+             return NULL;
+          }
+        evas_object_show(o);
+        return o;
+     }
+   return NULL; /* unreached */
 }
 
 static void
@@ -389,7 +390,6 @@ _cb_entry_changed(void *data,
 static void
 _cb_hoversel_select(Background_Ctx *ctx, const Eina_Stringshare *path)
 {
-   Evas_Object *o;
    if (path)
      {
         elm_flip_go_to(ctx->flip, EINA_TRUE, ELM_FLIP_PAGE_LEFT);
@@ -397,7 +397,7 @@ _cb_hoversel_select(Background_Ctx *ctx, const Eina_Stringshare *path)
      }
    else
      {
-        o = elm_object_part_content_get(ctx->flip, "back");
+        Evas_Object *o = elm_object_part_content_get(ctx->flip, "back");
         elm_fileselector_path_set(o, elm_object_text_get(ctx->entry));
         elm_flip_go_to(ctx->flip, EINA_FALSE, ELM_FLIP_PAGE_RIGHT);
      }
@@ -553,7 +553,7 @@ options_background(Evas_Object *opbox, Evas_Object *term)
 {
    Evas_Object *o, *bx, *bx_front;
    Config *config = termio_config_get(term);
-   char path[PATH_MAX], *config_background_dir;
+   char path[PATH_MAX];
    Background_Ctx *ctx;
 
    ctx = calloc(1, sizeof(*ctx));
@@ -706,6 +706,7 @@ options_background(Evas_Object *opbox, Evas_Object *term)
 
    if (config->background)
      {
+        char *config_background_dir;
         config_background_dir = ecore_file_dir_get(config->background);
         elm_object_text_set(ctx->entry, config_background_dir);
         free(config_background_dir);

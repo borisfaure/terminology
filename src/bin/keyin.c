@@ -382,11 +382,9 @@ cb_term_right(Evas_Object *termio_obj)
 static Eina_Bool
 cb_term_new(Evas_Object *termio_obj)
 {
-   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
+   char path[PATH_MAX], cwd[PATH_MAX];
 
-   char path[PATH_MAX], cwd[PATH_MAX], *cmd;
-   const char *template = "%s -d %s";
-   int length;
+   RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
 
 #if (EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 16)
    eina_file_path_join(path, sizeof(path), elm_app_bin_dir_get(),
@@ -397,6 +395,10 @@ cb_term_new(Evas_Object *termio_obj)
 #endif
    if (termio_cwd_get(termio_obj, cwd, sizeof(cwd)))
      {
+        const char *template = "%s -d %s";
+        int length;
+        char *cmd;
+
         length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
         cmd = malloc(sizeof(char) * length);
         snprintf(cmd, length, template, path, cwd);

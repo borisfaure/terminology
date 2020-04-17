@@ -48,8 +48,7 @@ _ipc_hash_get(void)
    const char *disp, *session, *xdg_session, *xdg_id, *xdg_seat, *xdg_vt;
    char *s;
    unsigned int i;
-   unsigned char c1, c2;
-   
+
    /* dumb stoopid hash - i'm feeling lazy */
    disp = getenv("DISPLAY");
    if (!disp) disp = "-unknown-";
@@ -70,6 +69,8 @@ _ipc_hash_get(void)
    memset(hash+12, 'x', 32);
    for (i = 0, s = buf; *s; s++)
      {
+        unsigned char c1, c2;
+
         c1 = (((unsigned char)*s) >> 4) & 0xf;
         c2 = ((unsigned char)*s) & 0x0f;
         hash[12 + (i % 32)] = (((hash[12 + (i % 32)] - 'a') ^ c1) % 26) + 'a';

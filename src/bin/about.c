@@ -58,7 +58,6 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    Evas_Object *o;
    About_Ctx *ctx;
    Config *config = termio_config_get(term);
-   char buf[PATH_MAX];
    const char *txt;
 
    ctx = malloc(sizeof(*ctx));
@@ -74,6 +73,8 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    if (elm_layout_file_set(o, config_theme_path_get(config),
                            "terminology/about") == 0)
      {
+        char buf[PATH_MAX];
+
         snprintf(buf, sizeof(buf), "%s/themes/default.edj",
                  elm_app_data_dir_get());
         elm_layout_file_set(o, buf, "terminology/about");

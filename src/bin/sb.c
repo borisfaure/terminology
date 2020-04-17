@@ -80,7 +80,6 @@ ty_sb_spaces_rtrim(struct ty_sb *sb)
 char *
 ty_sb_steal_buf(struct ty_sb *sb)
 {
-   size_t i;
    char *buf;
 
    if (!sb->len)
@@ -88,6 +87,8 @@ ty_sb_steal_buf(struct ty_sb *sb)
 
    if (sb->gap != 0)
      {
+        size_t i;
+
         sb->buf -= sb->gap;
         for (i = 0; i <= sb->len; i++)
           {

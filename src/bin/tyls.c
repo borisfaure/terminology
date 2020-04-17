@@ -98,7 +98,7 @@ colorprint(int mode, int fgbg, int r, int g, int b)
    else if (mode == CORE) // 8 bg and 8 fg colors
      {
         int v = 0;
-        
+
         if (r & BRIGHT) printf("%c[01m", 0x1b);
         else printf("%c[0m", 0x1b);
         if (fgbg == FG) v = 30 + (r & 0x7);
@@ -108,7 +108,7 @@ colorprint(int mode, int fgbg, int r, int g, int b)
    else if (mode == CUBE) // 6x6x6 cube
      {
         int v = 0, c = 0;
-        
+
         if (fgbg == FG) v = 38;
         else v = 48;
         c = 16 + ((r * 6 * 6) + (g * 6) + b);
@@ -244,7 +244,7 @@ const Cmatch fmatch[] =
    { 5, 5, 5,  9, 9, 9, "*.SRF", NULL},
    { 5, 5, 5,  9, 9, 9, "*.x3f", NULL},
    { 5, 5, 5,  9, 9, 9, "*.X3F", NULL},
-   
+
    { 5, 5, 2,  9, 9, 9, "*.pdf", NULL},
    { 5, 5, 2,  9, 9, 9, "*.PDF", NULL},
    { 5, 5, 2,  9, 9, 9, "*.pdf", NULL},
@@ -302,7 +302,7 @@ const Cmatch fmatch[] =
    { 3, 4, 5,  9, 9, 9, "*.3p2", NULL},
    { 3, 4, 5,  9, 9, 9, "*.264", NULL},
    { 3, 4, 5,  9, 9, 9, "*.3gp", NULL},
-   
+
    { 2, 3, 5,  9, 9, 9, "*.mp3", "audio-x-mpeg.svg"},
    { 2, 3, 5,  9, 9, 9, "*.MP3", "audio-x-mpeg.svg"},
    { 2, 3, 5,  9, 9, 9, "*.aac", "audio-x-generic.svg"},
@@ -313,7 +313,7 @@ const Cmatch fmatch[] =
    { 2, 3, 5,  9, 9, 9, "*.WAV", "audio-x-wav.svg"},
    { 2, 3, 5,  9, 9, 9, "*.m3u", "audio-x-mp3-playlist"},
    { 2, 3, 5,  9, 9, 9, "*.M3U", "audio-x-mp3-playlist"},
-   
+
    { 3, 5, 2,  9, 9, 9, "*.patch", "text-x-generic"},
    { 3, 5, 2,  9, 9, 9, "*.PATCH", "text-x-generic"},
    { 3, 5, 2,  9, 9, 9, "*.diff", "text-x-generic"},
@@ -347,7 +347,7 @@ const Cmatch fmatch[] =
    { 0, 5, 2,  9, 9, 9, "*.ISO", "application-x-cd-image"},
    { 0, 5, 2,  9, 9, 9, "*.img", "text-x-generic"},
    { 0, 5, 2,  9, 9, 9, "*.IMG", "text-x-generic"},
-   
+
    { 3, 5, 1,  9, 9, 9, "*.ttf", "font-x-generic"},
    { 3, 5, 1,  9, 9, 9, "*.TTF", "font-x-generic"},
    { 3, 5, 1,  9, 9, 9, "*.bdf", "font-x-generic"},
@@ -356,7 +356,7 @@ const Cmatch fmatch[] =
    { 3, 5, 1,  9, 9, 9, "*.PCF", "font-x-generic"},
 
    { 1, 1, 1,  9, 9, 9, "*~", "text-x-generic"},
-   
+
    { 1, 2, 2,  9, 9, 9, "stamp-h1", "text-x-generic"},
 
    { 5, 3, 1,  9, 9, 9, "Makefile", "text-x-generic"},
@@ -364,9 +364,9 @@ const Cmatch fmatch[] =
    { 3, 1, 0,  9, 9, 9, "*.am", "text-x-generic"},
 
    { 4, 2, 5,  9, 9, 9, "*.spec", "text-x-generic"},
-   
+
    { 4, 1, 5,  9, 9, 9, "*.m4", "application-x-m4"},
-   
+
    { 5, 2, 0,  9, 9, 9, "*.sh", "text-x-generic"},
    { 5, 2, 0,  9, 9, 9, "*.SH", "text-x-generic"},
    { 5, 2, 0,  9, 9, 9, "*.bin", "text-x-generic"},
@@ -379,7 +379,7 @@ const Cmatch fmatch[] =
    { 5, 2, 0,  9, 9, 9, "configure.ac", "text-x-generic"},
 
    { 2, 2, 3,  9, 9, 9, "*.in", "text-x-generic"},
-   
+
    { 0, 5, 5,  9, 9, 9, "*.c", "text-x-c"},
    { 0, 5, 5,  9, 9, 9, "*.C", "text-x-c"},
    { 1, 4, 5,  9, 9, 9, "*.x", "text-x-c"},
@@ -392,7 +392,7 @@ const Cmatch fmatch[] =
 
    { 5, 3, 0,  9, 9, 9, "*.edj", "text-x-generic"},
    { 5, 3, 0,  9, 9, 9, "*.EDJ", "text-x-generic"},
-   
+
    { 5, 0, 5,  9, 9, 9, "*.cc", "text-x-c++"},
    { 5, 0, 5,  9, 9, 9, "*.CC", "text-x-c++"},
    { 3, 1, 5,  9, 9, 9, "*.hh", "text-x-c++hdr"},
@@ -403,7 +403,7 @@ const Cmatch fmatch[] =
 
    { 2, 0, 5,  9, 9, 9, "*.desktop", "application-x-desktop"},
    { 2, 0, 5,  9, 9, 9, "*.directory", "application-x-desktop"},
-   
+
    { 0, 1, 3,  9, 9, 9, "*.o", "text-x-generic"},
    { 0, 1, 3,  9, 9, 9, "*.O", "text-x-generic"},
    { 0, 1, 3,  9, 9, 9, "*.lo", "text-x-generic"},
@@ -435,7 +435,7 @@ const Cmatch fmatch[] =
    { 3, 1, 5,  9, 9, 9, "*.HTM", "text-x-html"},
    { 3, 1, 5,  9, 9, 9, "*.css", "text-x-css"},
    { 3, 1, 5,  9, 9, 9, "*.CSS", "text-x-css"},
-   
+
    { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
 
@@ -460,7 +460,7 @@ const Cmatch xmatch[] =
    { 4, 0, 4,  9, 9, 9, "*.EXE", "application-x-executable"},
 
    { 5, 0, 5,  9, 9, 9, "*", "application-x-executable"},
-   
+
    { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
 
@@ -468,7 +468,7 @@ static const char *
 filematch(const char *name, const Cmatch *m)
 {
    int i;
-   
+
    for (i = 0; m[i].match; i++)
      {
         if (!fnmatch(m[i].match, name, 0))
@@ -483,7 +483,7 @@ fileicon(const char *path)
    Eina_Bool isdir = EINA_FALSE;
    Eina_Bool isexec = EINA_FALSE;
    const char *name;
-   
+
    name = ecore_file_file_get(path);
    if (name)
      {
@@ -502,7 +502,7 @@ static Eina_Bool
 printmatch(const char *name, const Cmatch *m)
 {
    int i;
-   
+
    for (i = 0; m[i].match; i++)
      {
         if (!fnmatch(m[i].match, name, 0))
@@ -522,11 +522,11 @@ fileprint(char *path, char *name, Eina_Bool type)
    Eina_Bool isdir = EINA_FALSE;
    Eina_Bool islink = EINA_FALSE;
    Eina_Bool isexec = EINA_FALSE;
-   
+
    if (name || type)
      {
         char *ts;
-             
+
         if (ecore_file_is_dir(path)) isdir = EINA_TRUE;
         ts = ecore_file_readlink(path);
         if (ts)
@@ -590,8 +590,8 @@ list_dir(const char *dir, Tyls_Options *options)
 {
    Eina_List *files, *l;
    char *s, **names;
-   int maxlen = 0, cols, c, rows, i, j, num, cw, stuff;
-   
+   int maxlen = 0, i, num, stuff;
+
    files = ecore_file_ls(dir);
    if (!files) return;
    names = calloc(eina_list_count(files) * 2, sizeof(char *));
@@ -600,7 +600,7 @@ list_dir(const char *dir, Tyls_Options *options)
    EINA_LIST_FOREACH(files, l, s)
      {
         int len = eina_unicode_utf8_get_len(s);
-        
+
         if (s[0] == '.' && options->hidden == EINA_FALSE) continue;
         if (len > maxlen) maxlen = len;
         names[i] = s;
@@ -618,7 +618,9 @@ list_dir(const char *dir, Tyls_Options *options)
    maxlen += stuff;
    if (maxlen > 0)
      {
-        cols = tw / maxlen;
+        int rows;
+        int cols = tw / maxlen;
+
         if (cols < 1) cols = 1;
         if (cols == 1)
           {
@@ -632,14 +634,15 @@ list_dir(const char *dir, Tyls_Options *options)
           {
              char buf[4096];
              const char *icon;
-             
+             int c, j, cw;
+
              if (options->mode == SMALL)
                {
                   for (c = 0; c < cols; c++)
                     {
                        char sz[6], szch = ' ';
                        long long size;
-                       
+
                        s = names[(c * rows) + i];
                        if (!s) continue;
                        snprintf(buf, sizeof(buf), "%s/%s", dir, s);
@@ -694,7 +697,7 @@ list_dir(const char *dir, Tyls_Options *options)
                        char sz[6], szch = ' ';
                        long long size;
                        int len;
-                       
+
                        s = names[(c * rows) + i];
                        if (!s) continue;
                        snprintf(buf, sizeof(buf), "%s/%s", dir, s);
@@ -738,9 +741,6 @@ print_usage(const char *argv0)
 int
 main(int argc, char **argv)
 {
-   char buf[64];
-   char *path;
-   Eina_List *dirs = NULL;
    Tyls_Options options = {SMALL, EINA_FALSE};
 
    ON_NOT_RUNNING_IN_TERMINOLOGY_EXIT_1();
@@ -759,7 +759,9 @@ main(int argc, char **argv)
      {
         int i, cw, ch;
         int len;
-        char *rp;
+        char buf[64];
+        char *path;
+        Eina_List *dirs = NULL;
 
         evas = ecore_evas_get(ee);
         echo_off();
@@ -806,7 +808,9 @@ main(int argc, char **argv)
           }
         EINA_LIST_FREE(dirs, path)
           {
-            if ((rp = ecore_file_realpath(path))
+             char *rp;
+
+             if ((rp = ecore_file_realpath(path))
                  && ecore_file_is_dir(rp))
                {
                   list_dir(rp, &options);
@@ -814,7 +818,6 @@ main(int argc, char **argv)
                }
           }
         fflush(stdout);
-//        ecore_main_loop_begin();
         ecore_evas_free(ee);
      }
    emotion_shutdown();

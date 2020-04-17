@@ -69,12 +69,12 @@ scaleterm(int w, int h, int *iw, int *ih)
 static const char *
 is_fmt(const char *f, const char **extn)
 {
-   int i, len, l;
+   int i, len;
 
    len = strlen(f);
    for (i = 0; extn[i]; i++)
      {
-        l = strlen(extn[i]);
+        int l = strlen(extn[i]);
         if (len < l) continue;
         if (!strcasecmp(extn[i], f + len - l)) return extn[i];
      }
