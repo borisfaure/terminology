@@ -217,11 +217,11 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
    it_fn = ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
    ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
    ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
-   ITEM_APPEND("background", _("Background"), BACKGROUND);
-   ITEM_APPEND("preferences-desktop-theme", _("Colors"), COLORS);
-   ITEM_APPEND("preferences-desktop-keyboard-shortcuts", _("Keys"), KEYS);
+   ITEM_APPEND("preferences-desktop-wallpaper", _("Background"), BACKGROUND);
+   ITEM_APPEND("preferences-color", _("Colors"), COLORS);
+   ITEM_APPEND("preferences-desktop-keyboard", _("Keys"), KEYS);
    ITEM_APPEND("system-run", _("Helpers"), HELPERS);
-   ITEM_APPEND("preferences-color", _("Toolkit"), ELM);
+   ITEM_APPEND("preferences-desktop", _("Toolkit"), ELM);
 #undef ITEM_APPEND
 
    elm_box_pack_end(op_tbox, o);
