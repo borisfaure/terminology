@@ -119,7 +119,7 @@ _handle_mouse_down(Termpty *ty,
    buf += _tytest_modifiers_get(buf, &modifiers);
    /* FLAGS */
    value = 0;
-   buf +=_tytest_arg_get(buf, &value);
+   _tytest_arg_get(buf, &value);
    ev.flags = value;
 
    termio_internal_mouse_down(sd, &ev, modifiers);
@@ -153,7 +153,7 @@ _handle_mouse_up(Termpty *ty,
    buf += _tytest_modifiers_get(buf, &modifiers);
    /* FLAGS */
    value = 0;
-   buf +=_tytest_arg_get(buf, &value);
+   _tytest_arg_get(buf, &value);
    ev.flags = value;
 
    termio_internal_mouse_up(sd, &ev, modifiers);
@@ -180,7 +180,7 @@ _handle_mouse_move(Termpty *ty,
    buf += _tytest_arg_get(buf, &value);
    ev.cur.canvas.y = value;
    /* MODIFIERS */
-   buf += _tytest_modifiers_get(buf, &modifiers);
+   _tytest_modifiers_get(buf, &modifiers);
 
    termio_internal_mouse_move(sd, &ev, modifiers);
 }
