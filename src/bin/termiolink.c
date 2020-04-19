@@ -120,8 +120,12 @@ Eina_Bool
 link_is_protocol(const char *str)
 {
    const char *p = str;
-   int c = *p;
+   int c;
 
+   if (!str)
+     return EINA_FALSE;
+
+   c = *p;
    if (!isalpha(c))
      return EINA_FALSE;
 
@@ -145,6 +149,9 @@ link_is_protocol(const char *str)
 Eina_Bool
 link_is_url(const char *str)
 {
+   if (!str)
+     return EINA_FALSE;
+
    if (link_is_protocol(str) ||
        casestartswith(str, "www.") ||
        casestartswith(str, "ftp."))
@@ -155,7 +162,12 @@ link_is_url(const char *str)
 Eina_Bool
 link_is_email(const char *str)
 {
-   const char *at = strchr(str, '@');
+   const char *at;
+
+   if (!str)
+     return EINA_FALSE;
+
+   at = strchr(str, '@');
    if (at && strchr(at + 1, '.'))
      return EINA_TRUE;
    if (casestartswith(str, "mailto:"))
@@ -166,6 +178,9 @@ link_is_email(const char *str)
 Eina_Bool
 link_is_file(const char *str)
 {
+   if (!str)
+     return EINA_FALSE;
+
    switch (str[0])
      {
       case '/':
