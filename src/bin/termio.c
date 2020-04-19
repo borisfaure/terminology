@@ -1441,7 +1441,7 @@ termio_remove_links(Termio *sd)
    sd->link.y1 = -1;
    sd->link.x2 = -1;
    sd->link.y2 = -1;
-   sd->link.suspend = EINA_FALSE;
+   sd->link.suspend = 0;
    sd->link.id = 0;
    _update_link(sd, same_geom);
 }
@@ -2689,7 +2689,7 @@ _smart_cb_mouse_out(void *data,
      {
         sd->mouse.cx = -1;
         sd->mouse.cy = -1;
-        sd->link.suspend = EINA_FALSE;
+        sd->link.suspend = 0;
      }
    else
      {
