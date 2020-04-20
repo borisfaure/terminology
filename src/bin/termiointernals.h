@@ -34,9 +34,16 @@ struct _Termio
    struct {
       const char *string;
       int x1, y1, x2, y2;
+      Eina_Bool is_color;
       int suspend;
       uint16_t id;
       Eina_List *objs;
+      struct {
+           uint8_t r;
+           uint8_t g;
+           uint8_t b;
+           uint8_t a;
+      } color;
       struct {
          Evas_Object *dndobj;
          Evas_Coord x, y;

@@ -549,7 +549,9 @@ _should_inline(const Evas_Object *obj)
    return EINA_TRUE;
 }
 
-/* Need to be freed */
+/*
+ * Returned string needs to be freed.
+ * Does not handle colors */
 const char *
 termio_link_get(const Evas_Object *obj,
                 Eina_Bool *from_escape_code)
@@ -1341,6 +1343,31 @@ _cb_link_move(void *data,
      }
 }
 
+static Evas_Object *
+_color_tooltip_content(void *data,
+                       Evas_Object *obj,
+                       Evas_Object *_tt EINA_UNUSED)
+{
+   Termio *sd = data;
+   Evas_Object *o;
+
+   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_size_hint_min_set(o, 80, 80);
+   evas_object_color_set(o,
+                         sd->link.color.r,
+                         sd->link.color.g,
+                         sd->link.color.b,
+                         sd->link.color.a);
+   return o;
+}
+
+static void
+_color_tooltip(Evas_Object *obj,
+               Termio *sd)
+{
+   elm_object_tooltip_content_cb_set(obj, _color_tooltip_content, sd, NULL);
+}
+
 static void
 _update_link(Termio *sd, Eina_Bool same_geom)
 {
@@ -1353,7 +1380,7 @@ _update_link(Termio *sd, Eina_Bool same_geom)
    EINA_SAFETY_ON_NULL_RETURN(sd);
    obj = sd->self;
 
-   if (sd->link.id)
+   if (sd->link.id || sd->link.is_color)
      {
         same_geom = EINA_FALSE;
      }
@@ -1376,7 +1403,7 @@ _update_link(Termio *sd, Eina_Bool same_geom)
         else
           evas_object_del(o);
      }
-   if (!sd->link.string)
+   if (!sd->link.string && !sd->link.is_color)
      return;
 
    popup_exists = main_term_popup_exists(sd->term);
@@ -1422,9 +1449,16 @@ _update_link(Termio *sd, Eina_Bool same_geom)
                                        _cb_link_up, obj);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE,
                                        _cb_link_move, obj);
-        if ((!popup_exists) && link_is_email(sd->link.string))
+        if (!popup_exists)
           {
-             gravatar_tooltip(o, sd->config, sd->link.string);
+             if (link_is_email(sd->link.string))
+               {
+                  gravatar_tooltip(o, sd->config, sd->link.string);
+               }
+             if (sd->link.is_color)
+               {
+                  _color_tooltip(o, sd);
+               }
           }
      }
 }
@@ -1443,6 +1477,11 @@ termio_remove_links(Termio *sd)
    sd->link.y2 = -1;
    sd->link.suspend = 0;
    sd->link.id = 0;
+   sd->link.is_color = EINA_FALSE;
+   sd->link.color.r = 0;
+   sd->link.color.g = 0;
+   sd->link.color.b = 0;
+   sd->link.color.a = 0;
    _update_link(sd, same_geom);
 }
 
@@ -2362,6 +2401,18 @@ _smart_mouseover_apply(Termio *sd)
                         &x1, &y1, &x2, &y2);
    if (!s)
      {
+        uint8_t r = 0, g = 0, b = 0, a = 0;
+        /* TODO: boris: check config */
+        if (termio_color_find(sd->self, sd->mouse.cx, sd->mouse.cy,
+                              &x1, &y1, &x2, &y2, &r, &g, &b, &a))
+          {
+             sd->link.is_color = EINA_TRUE;
+             sd->link.color.r = r;
+             sd->link.color.g = g;
+             sd->link.color.b = b;
+             sd->link.color.a = a;
+             goto found;
+          }
         termio_remove_links(sd);
         return;
      }
@@ -2393,6 +2444,7 @@ _smart_mouseover_apply(Termio *sd)
    eina_stringshare_del(sd->link.string);
    sd->link.string = eina_stringshare_add(s);
 
+found:
    if ((x1 == sd->link.x1) && (y1 == sd->link.y1) &&
        (x2 == sd->link.x2) && (y2 == sd->link.y2))
      same_geom = EINA_TRUE;

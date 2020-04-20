@@ -614,3 +614,231 @@ end:
    ty_sb_free(&sb);
    return s;
 }
+
+static Eina_Bool
+_is_authorized_in_color(const int codepoint)
+{
+   switch (codepoint)
+     {
+      case '#': EINA_FALLTHROUGH;
+      case '0': EINA_FALLTHROUGH;
+      case '1': EINA_FALLTHROUGH;
+      case '2': EINA_FALLTHROUGH;
+      case '3': EINA_FALLTHROUGH;
+      case '4': EINA_FALLTHROUGH;
+      case '5': EINA_FALLTHROUGH;
+      case '6': EINA_FALLTHROUGH;
+      case '7': EINA_FALLTHROUGH;
+      case '8': EINA_FALLTHROUGH;
+      case '9': EINA_FALLTHROUGH;
+      case 'a': EINA_FALLTHROUGH;
+      case 'A': EINA_FALLTHROUGH;
+      case 'b': EINA_FALLTHROUGH;
+      case 'B': EINA_FALLTHROUGH;
+      case 'c': EINA_FALLTHROUGH;
+      case 'C': EINA_FALLTHROUGH;
+      case 'd': EINA_FALLTHROUGH;
+      case 'D': EINA_FALLTHROUGH;
+      case 'e': EINA_FALLTHROUGH;
+      case 'E': EINA_FALLTHROUGH;
+      case 'f': EINA_FALLTHROUGH;
+      case 'F':
+         return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_parse_hex(char c, uint8_t *v)
+{
+   if (c < '0')
+     return EINA_FALSE;
+   if (c <= '9')
+     {
+        *v = c - '0';
+        return EINA_TRUE;
+     }
+   if (c < 'A')
+     return EINA_FALSE;
+   if (c <= 'F')
+     {
+        *v = 10 + c - 'A';
+        return EINA_TRUE;
+     }
+   if (c < 'a')
+     return EINA_FALSE;
+   if (c <= 'f')
+     {
+        *v = 10 + c - 'a';
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_parse_2hex(char *s, uint8_t *v)
+{
+   uint8_t v0, v1;
+   if (!_parse_hex(s[0], &v0))
+     return EINA_FALSE;
+   if (!_parse_hex(s[1], &v1))
+     return EINA_FALSE;
+   *v = v0 << 4 | v1;
+   return EINA_TRUE;
+}
+
+Eina_Bool
+termio_color_find(const Evas_Object *obj, int cx, int cy,
+                  int *x1r, int *y1r, int *x2r, int *y2r,
+                  uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   int x1, x2, y1, y2, w = 0, h = 0, sc;
+   //const char authorized[] = "#0123456789aAbBcCdDeEfFrghsoltun() ,+/";
+   Eina_Bool goback = EINA_TRUE,
+             goforward = EINA_FALSE;
+   struct ty_sb sb = {.buf = NULL, .gap = 0, .len = 0, .alloc = 0};
+   Termpty *ty = termio_pty_get(obj);
+   int res;
+   char txt[8];
+   int txtlen = 0;
+   Eina_Bool found = EINA_FALSE;
+   int codepoint;
+   uint8_t r, g, b, a = 255;
+
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ty, EINA_FALSE);
+
+   x1 = x2 = cx;
+   y1 = y2 = cy;
+   termio_size_get(obj, &w, &h);
+   if ((w <= 0) || (h <= 0)) goto end;
+
+   sc = termio_scroll_get(obj);
+
+   termpty_backlog_lock();
+
+   y1 -= sc;
+   y2 -= sc;
+
+   /* TODO: boris */
+   res = _txt_at(ty, &x1, &y1, txt, &txtlen, &codepoint);
+   if ((res != 0) || (txtlen == 0))
+     goto end;
+   if (!_is_authorized_in_color(codepoint))
+     goto end;
+   res = ty_sb_add(&sb, txt, txtlen);
+   if (res < 0) goto end;
+
+   while (goback)
+     {
+        int new_x1 = x1, new_y1 = y1;
+
+        res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen, &codepoint);
+        if ((res != 0) || (txtlen == 0))
+          {
+             goback = EINA_FALSE;
+             goforward = EINA_TRUE;
+             break;
+          }
+        res = ty_sb_prepend(&sb, txt, txtlen);
+        if (res < 0) goto end;
+        if (!_is_authorized_in_color(codepoint))
+          {
+             ty_sb_lskip(&sb, txtlen);
+             goback = EINA_FALSE;
+             goforward = EINA_TRUE;
+             break;
+          }
+
+        x1 = new_x1;
+        y1 = new_y1;
+     }
+
+   while (goforward)
+     {
+        int new_x2 = x2, new_y2 = y2;
+
+        /* Check if the previous char is a delimiter */
+        res = _txt_next_at(ty, &new_x2, &new_y2, txt, &txtlen, &codepoint);
+        if ((res != 0) || (txtlen == 0))
+          {
+             goforward = EINA_FALSE;
+             break;
+          }
+
+        if (!_is_authorized_in_color(codepoint))
+          {
+             goforward = EINA_FALSE;
+             break;
+          }
+
+        res = ty_sb_add(&sb, txt, txtlen);
+        if (res < 0) goto end;
+
+        x2 = new_x2;
+        y2 = new_y2;
+     }
+
+   if (!sb.len)
+     goto end;
+
+   if (sb.buf[0] == '#')
+     {
+        ty_sb_lskip(&sb, 1);
+        switch (sb.len)
+          {
+           case 3:
+              if ((!_parse_hex(sb.buf[0], &r)) ||
+                  (!_parse_hex(sb.buf[1], &g)) ||
+                  (!_parse_hex(sb.buf[2], &b)))
+                goto end;
+              r <<= 4;
+              g <<= 4;
+              b <<= 4;
+              break;
+           case 4:
+              if ((!_parse_hex(sb.buf[0], &r)) ||
+                  (!_parse_hex(sb.buf[1], &g)) ||
+                  (!_parse_hex(sb.buf[2], &b)) ||
+                  (!_parse_hex(sb.buf[3], &a)))
+                goto end;
+              r <<= 4;
+              g <<= 4;
+              b <<= 4;
+              a <<= 4;
+              break;
+           case 6:
+              if ((!_parse_2hex(&sb.buf[0], &r)) ||
+                  (!_parse_2hex(&sb.buf[2], &g)) ||
+                  (!_parse_2hex(&sb.buf[4], &b)))
+                goto end;
+              break;
+           case 8:
+              if ((!_parse_2hex(&sb.buf[0], &r)) ||
+                  (!_parse_2hex(&sb.buf[2], &g)) ||
+                  (!_parse_2hex(&sb.buf[4], &b)) ||
+                  (!_parse_2hex(&sb.buf[6], &a)))
+                goto end;
+              break;
+           default:
+              goto end;
+          }
+        found = EINA_TRUE;
+     }
+
+end:
+   termpty_backlog_unlock();
+   ty_sb_free(&sb);
+   if (found)
+     {
+        if (rp) *rp = r;
+        if (gp) *gp = g;
+        if (bp) *bp = b;
+        if (ap) *ap = a;
+        if (x1r) *x1r = x1;
+        if (y1r) *y1r = y1 + sc;
+        if (x2r) *x2r = x2;
+        if (y2r) *y2r = y2 + sc;
+     }
+   return found;
+}
