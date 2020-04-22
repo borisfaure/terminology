@@ -734,7 +734,10 @@ _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
    int c;
    int distance_min = INT_MAX;
    Evas_Object *textgrid;
-   const uint32_t color_msb = (r0 << 24) | (g0 << 16) | (b0 << 8);
+   const uint32_t color_msb = 0
+      | (((uint8_t)r0) << 24)
+      | (((uint8_t)g0) << 16)
+      | (((uint8_t)b0) << 8);
 
    if (_tcc_find(color_msb, &chosen_color))
      return chosen_color;
