@@ -722,7 +722,7 @@ _tcc_insert(const uint32_t color_msb, const uint8_t approximated)
 #endif
 
 static uint8_t
-_approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
+_approximate_truecolor_rgb(Termpty *ty, uint8_t r0, uint8_t g0, uint8_t b0)
 {
    uint8_t chosen_color = COL_DEF;
 #if defined(ENABLE_FUZZING)
@@ -735,9 +735,9 @@ _approximate_truecolor_rgb(Termpty *ty, int r0, int g0, int b0)
    int distance_min = INT_MAX;
    Evas_Object *textgrid;
    const uint32_t color_msb = 0
-      | (((uint8_t)r0) << 24)
-      | (((uint8_t)g0) << 16)
-      | (((uint8_t)b0) << 8);
+      | (((uint32_t)r0) << 24)
+      | (((uint32_t)g0) << 16)
+      | (((uint32_t)b0) << 8);
 
    if (_tcc_find(color_msb, &chosen_color))
      return chosen_color;
