@@ -88,7 +88,7 @@ jobs:
             meson configure build
             cd build
             ninja -j4
-  build_full_gcc_efl_latest:
+  build_and_test_debug_gcc_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
     steps:
@@ -103,23 +103,10 @@ jobs:
             CFLAGS: -O0 -g
           command: |
             cd /terminology
-            meson -Dtests=true -Dfuzzing=true -Db_coverage=true . build
+            meson -Dtests=true -Dfuzzing=true -Db_coverage=true -Dbuildtype=debug . build
             meson configure build
             cd build
             ninja -j4
-      - save_cache:
-          key: build_full_gcc_efl_latest-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - /terminology
-  tests_gcc_efl_latest:
-    docker:
-      - image: borisfaure/terminology-ci:latest
-    steps:
-      - restore_cache:
-          key: build_full_gcc_efl_latest-{{ .Environment.CIRCLE_SHA1 }}
-      - run:
-          name: Install EFL
-          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
       - run:
           name: Launch tests
           command: |
@@ -138,6 +125,30 @@ jobs:
             chmod +x .codecov
             sed -i.bak 's/execdir/exec/' .codecov
             ./.codecov -Z
+  build_and_test_release_gcc_efl_latest:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
+      - run:
+          name: Compile with GCC
+          environment:
+            CFLAGS: -O0 -g
+          command: |
+            cd /terminology
+            meson -Dtests=true -Dbuildtype=release . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
   build_full_clang_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
@@ -200,12 +211,12 @@ workflows:
       - build_minimal_gcc_efl-1.23:
           requires:
             - checkout_code
-      - build_full_gcc_efl_latest:
+      - build_and_test_debug_gcc_efl_latest:
           requires:
             - checkout_code
-      - tests_gcc_efl_latest:
+      - build_and_test_release_gcc_efl_latest:
           requires:
-            - build_full_gcc_efl_latest
+            - checkout_code
       - build_full_clang_efl_latest:
           requires:
             - checkout_code
