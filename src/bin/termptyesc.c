@@ -77,8 +77,8 @@ static const char *const ASCII_CHARS_TABLE[] =
    "US"   // '\037'
 };
 
-static const char *
-_safechar(unsigned int c)
+static const char * EINA_PURE
+_safechar(const unsigned int c)
 {
    static char _str[9];
 
