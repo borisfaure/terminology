@@ -2292,6 +2292,9 @@ imf_done:
      }
 
    wins = eina_list_append(wins, wn);
+
+   wn->tc.is_focused = EINA_TRUE;
+
    return wn;
 }
 
