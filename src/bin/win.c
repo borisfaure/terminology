@@ -1272,7 +1272,7 @@ _win_focused_term_get(const Term_Container *tc)
 
    wn = (Win*) tc;
 
-   if (tc->is_focused)
+   if (tc->is_focused && wn->child)
      term = wn->child->focused_term_get(wn->child);
    return term;
 }
@@ -1286,6 +1286,9 @@ _win_find_term_at_coords(const Term_Container *tc,
 
    wn = (Win*) tc;
 
+   if (!wn->child)
+     return NULL;
+
    return wn->child->find_term_at_coords(wn->child, mx, my);
 }
 
@@ -1297,6 +1300,7 @@ _win_size_eval(Term_Container *tc, Sizeinfo *info)
 
    wn = (Win*) tc;
 
+   assert(wn->child);
    wn->child->size_eval(wn->child, info);
 }
 
