@@ -1,3 +1,31 @@
+2020-05-02
+        * Release v1.6.0
+        * Terminology is packaged on the snapstore at https://snapcraft.io/terminology
+        * Add THEME.md, a documentation file on theming Terminology
+        * Drag tabs to reorder them
+        * Dragging tabs outside the tab bar can be used to create new splits or
+          tabs
+        * Memory accounting of the backlogs. Seen under the Behavior tab on the
+          Settings panel
+        * Handle escape codes to stack titles
+        * Tyls: add icon for flac files
+        * Update the mild-based themes to be on-par feature-wise with the default
+          theme
+        * Tab selector shows background color
+        * Controls panel is hidden when creating new tab or split
+        * Enable Grouped Input from the Controls panel
+        * Show special icon on tab when using Grouped Input
+        * Add option to decide whether Grouped input goes to all tabs or only
+          visible ones
+        * Improve email/links detection when surrounded with special characters
+        * Remove link underline when the link disappears
+        * Share translucent / opacity setting accross all instances
+        * Use a default icon of each tab on the Settings toolbar
+        * Update french, italian, serbian translations
+        * Removed video settings
+        * Handle invalid values on OS escape codes
+        * Better handle reads and writes on EINTR/EAGAIN
+
 2019-11-16
         * Release v1.6.0
         * Show title tab on splits, depending on configuration
