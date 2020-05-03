@@ -315,6 +315,16 @@ _handle_link(Termpty *ty, const Eina_Unicode *buf)
 }
 
 static void
+_handle_selection_active(Termpty *ty,
+                         const Eina_Unicode *buf)
+{
+   if (*buf == '!')
+     assert(ty->selection.is_active);
+   else
+     assert(!ty->selection.is_active);
+}
+
+static void
 _handle_selection_is(Termpty *ty,
                      const Eina_Unicode *buf)
 {
@@ -414,7 +424,7 @@ tytest_handle_escape_codes(Termpty *ty,
         _handle_mouse_move(ty, buf + 1);
         break;
       case 'n':
-        assert(!ty->selection.is_active);
+        _handle_selection_active(ty, buf + 1);
         break;
       case 'r':
         _handle_force_render(ty);
