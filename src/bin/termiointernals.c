@@ -2091,17 +2091,15 @@ termio_internal_mouse_move(Termio *sd,
      }
    if (scroll == EINA_TRUE)
      {
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+        _mouse_selection_scroll(sd);
+#else
         if (!sd->mouse_selection_scroll_timer)
           {
              sd->mouse_selection_scroll_timer
-                = ecore_timer_add(
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
-                   0.01
-#else
-                   0.04
-#endif
-                   , _mouse_selection_scroll, sd);
+                = ecore_timer_add(0.04 , _mouse_selection_scroll, sd);
           }
+#endif
         return;
      }
    else if (sd->mouse_selection_scroll_timer)
