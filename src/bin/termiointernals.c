@@ -2094,7 +2094,13 @@ termio_internal_mouse_move(Termio *sd,
         if (!sd->mouse_selection_scroll_timer)
           {
              sd->mouse_selection_scroll_timer
-                = ecore_timer_add(0.05, _mouse_selection_scroll, sd);
+                = ecore_timer_add(
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+                   0.01
+#else
+                   0.04
+#endif
+                   , _mouse_selection_scroll, sd);
           }
         return;
      }
