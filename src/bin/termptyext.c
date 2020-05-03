@@ -122,6 +122,9 @@ _handle_mouse_down(Termpty *ty,
    _tytest_arg_get(buf, &value);
    ev.flags = value;
 
+#if defined(ENABLE_TESTS)
+   test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
+#endif
    termio_internal_mouse_down(sd, &ev, modifiers);
 }
 
@@ -156,6 +159,9 @@ _handle_mouse_up(Termpty *ty,
    _tytest_arg_get(buf, &value);
    ev.flags = value;
 
+#if defined(ENABLE_TESTS)
+   test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
+#endif
    termio_internal_mouse_up(sd, &ev, modifiers);
 }
 
@@ -182,6 +188,9 @@ _handle_mouse_move(Termpty *ty,
    /* MODIFIERS */
    _tytest_modifiers_get(buf, &modifiers);
 
+#if defined(ENABLE_TESTS)
+   test_set_mouse_pointer(ev.cur.canvas.x, ev.cur.canvas.y);
+#endif
    termio_internal_mouse_move(sd, &ev, modifiers);
 }
 
@@ -217,6 +226,9 @@ _handle_mouse_wheel(Termpty *ty,
    /* MODIFIERS */
    _tytest_modifiers_get(buf, &modifiers);
 
+#if defined(ENABLE_TESTS)
+   test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
+#endif
    termio_internal_mouse_wheel(sd, &ev, modifiers);
 }
 
