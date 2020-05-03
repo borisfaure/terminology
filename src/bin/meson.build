@@ -38,6 +38,7 @@ terminology_sources = ['private.h',
                        'extns.c', 'extns.h',
                        'gravatar.c', 'gravatar.h',
                        'tty_keys.h',
+                       'tytest.c', 'tytest.h',
                        'sb.c', 'sb.h']
 
 tybg_sources = ['tycommon.c', 'tycommon.h', 'tybg.c']

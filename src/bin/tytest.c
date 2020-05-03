@@ -1,10 +1,10 @@
+#include "private.h"
+#if defined(ENABLE_TESTS)
 #define TYTEST 1
 #include "tyfuzz.c"
 
 static const char *_cursor_shape = "undefined";
 static Evas_Textgrid_Cell *_cells;
-static int _mx;
-static int _my;
 
 typedef struct _Termpty_Tests
 {
@@ -71,23 +71,6 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
       case CURSOR_SHAPE_BLOCK:
          _cursor_shape = "block";
      }
-}
-
-void
-test_set_mouse_pointer(int mx, int my)
-{
-   _mx = mx;
-   _my = my;
-}
-
-void
-test_pointer_canvas_xy_get(const Evas *e EINA_UNUSED,
-                           int *mx, int *my)
-{
-   if (mx)
-     *mx = _mx;
-   if (my)
-     *my = _my;
 }
 
 static void
@@ -206,3 +189,25 @@ tytest_shutdown(void)
 {
    free(_cells);
 }
+#endif
+
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+static int _mx;
+static int _my;
+
+void
+test_set_mouse_pointer(int mx, int my)
+{
+   _mx = mx;
+   _my = my;
+}
+
+void
+test_pointer_canvas_xy_get(int *mx, int *my)
+{
+   if (mx)
+     *mx = _mx;
+   if (my)
+     *my = _my;
+}
+#endif

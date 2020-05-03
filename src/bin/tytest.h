@@ -16,19 +16,20 @@ test_textgrid_palette_get(const Evas_Object *obj,
 Evas_Textgrid_Cell *
 test_textgrid_cellrow_get(Evas_Object *obj, int y);
 
-#define evas_pointer_canvas_xy_get  test_pointer_canvas_xy_get
-void
-test_pointer_canvas_xy_get(const Evas *e,
-                           int *mx,
-                           int *my);
-
-void test_set_mouse_pointer(int mx, int my);
 
 void
 tytest_termio_resize(int w, int h);
 
 void tytest_init(void);
 void tytest_shutdown(void);
-
 #endif
+
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+void
+test_pointer_canvas_xy_get(int *mx,
+                           int *my);
+
+void test_set_mouse_pointer(int mx, int my);
+#endif
+
 #endif
