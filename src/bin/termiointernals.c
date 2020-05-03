@@ -2145,7 +2145,9 @@ termio_internal_mouse_move(Termio *sd,
           {
              if ((cx != start_x) ||
                  ((cy - sd->scroll) != start_y))
-               termio_sel_set(sd, EINA_TRUE);
+               {
+                  termio_sel_set(sd, EINA_TRUE);
+               }
           }
 
         if (sd->pty->selection.by_line)
@@ -2416,7 +2418,6 @@ termio_internal_render(Termio *sd,
    const char *preedit_str;
    ssize_t w;
    int sel_start_x = 0, sel_start_y = 0, sel_end_x = 0, sel_end_y = 0;
-   Eina_Unicode *cp;
    Termblock *blk;
    Eina_List *l;
 
@@ -2440,13 +2441,13 @@ termio_internal_render(Termio *sd,
         INT_SWAP(sel_start_y, sel_end_y);
         INT_SWAP(sel_start_x, sel_end_x);
      }
-   cp = sd->pty->selection.codepoints;
 
    /* Look at every visible line */
    for (y = 0; y < sd->grid.h; y++)
      {
         Termcell *cells;
         Evas_Textgrid_Cell *tc;
+        Eina_Unicode *cp = NULL;
         int cur_sel_start_x = -1, cur_sel_end_x = -1;
         int rel_y = y - sd->scroll;
         int l1 = -1, l2 = -1;
@@ -2462,15 +2463,18 @@ termio_internal_render(Termio *sd,
         /* Compute @cur_sel_start_x, @cur_sel_end_x */
         if (sd->pty->selection.codepoints)
           {
+             cp = sd->pty->selection.codepoints;
              if (sel_start_y <= rel_y && rel_y <= sel_end_y)
                {
                   if (sd->pty->selection.is_box)
                     {
+                       cp += (rel_y - sel_start_y) * (sel_end_x - sel_start_x + 1);
                        cur_sel_start_x = sel_start_x;
                        cur_sel_end_x = sel_end_x;
                     }
                   else
                     {
+                       cp += (rel_y - sel_start_y) * sd->pty->w;
                        cur_sel_start_x = sel_start_x;
                        cur_sel_end_x = sel_end_x;
                        if (sel_start_y != sel_end_y)
@@ -2481,10 +2485,12 @@ termio_internal_render(Termio *sd,
                               }
                             else if (rel_y == sel_end_y)
                               {
+                                 cp -= sel_start_x;
                                  cur_sel_start_x = 0;
                               }
                             else
                               {
+                                 cp -= sel_start_x;
                                  cur_sel_start_x = 0;
                                  cur_sel_end_x = sd->grid.w - 1;
                               }
