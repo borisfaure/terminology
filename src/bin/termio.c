@@ -901,7 +901,7 @@ termio_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
                                        _lost_selection, sd->self);
    sd->have_sel = EINA_TRUE;
    eina_stringshare_del(sd->sel_str);
-   sd->sel_str = text;
+   sd->sel_str = eina_stringshare_add(text);
 }
 
 
@@ -945,15 +945,15 @@ _cb_ctxp_link_content_copy(void *data,
    else
      {
         struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
-        const char *raw_link;
+        char *raw_link;
 
         termio_selection_get(sd,
                              sd->link.x1, sd->link.y1,
                              sd->link.x2, sd->link.y2,
                              &sb, EINA_FALSE);
         raw_link = ty_sb_steal_buf(&sb);
-
         termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
+        free(raw_link);
      }
 
    sd->ctxpopup = NULL;
