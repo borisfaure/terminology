@@ -12,6 +12,8 @@ Additions:
     * Dragging tabs outside the tab bar can be used to create new splits or
       tabs
     * Add Croatian translation
+    * Handle escape code used to display terminal program and version
+    * Set environment variables TERM_PROGRAM and TERM_PROGRAM_VERSION
 
 Improvements:
     * Memory accounting of the backlogs. Seen under the Behavior tab on the

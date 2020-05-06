@@ -25,6 +25,8 @@
         * Add croatian translation
         * Removed video settings
         * Handle invalid values on OS escape codes
+        * Handle escape code used to display terminal program and version
+        * Set environment variables TERM_PROGRAM and TERM_PROGRAM_VERSION
         * Better handle reads and writes on EINTR/EAGAIN
 
 2019-11-16
