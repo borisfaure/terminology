@@ -22,6 +22,7 @@
         * Share translucent / opacity setting accross all instances
         * Use a default icon of each tab on the Settings toolbar
         * Update french, italian, serbian translations
+        * Add croatian translation
         * Removed video settings
         * Handle invalid values on OS escape codes
         * Better handle reads and writes on EINTR/EAGAIN

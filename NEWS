@@ -11,6 +11,7 @@ Additions:
     * Drag tabs to reorder them
     * Dragging tabs outside the tab bar can be used to create new splits or
       tabs
+    * Add Croatian translation
 
 Improvements:
     * Memory accounting of the backlogs. Seen under the Behavior tab on the
