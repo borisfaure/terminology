@@ -2294,6 +2294,29 @@ _handle_esc_csi_decscusr(Termpty *ty, Eina_Unicode **b)
 }
 
 static void
+_handle_esc_csi_term_version(Termpty *ty, Eina_Unicode **b)
+{
+  int arg = _csi_arg_get(ty, b);
+
+  DBG("CSI Term version (%d)", arg);
+
+  switch (arg)
+    {
+     case -ESC_ARG_ERROR:
+        return;
+     case -ESC_ARG_NO_VALUE:
+        EINA_FALLTHROUGH;
+     case 0:
+        break;
+     default:
+        WRN("Invalid Term Version %d", arg);
+        ty->decoding_error = EINA_TRUE;
+        return;
+    }
+  TERMPTY_WRITE_STR("\033P>|" PACKAGE_NAME " " PACKAGE_VERSION "\033\\");
+}
+
+static void
 _handle_esc_csi_decsace(Termpty *ty, Eina_Unicode **b)
 {
   int arg = _csi_arg_get(ty, b);
@@ -3456,8 +3479,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         else
           {
-             WRN("TODO: Load LEDs (DECLL)");
-             ty->decoding_error = EINA_TRUE;
+             if (*b == '>')
+               _handle_esc_csi_term_version(ty, &b);
+             else
+               {
+                  WRN("TODO: Load LEDs (DECLL)");
+                  ty->decoding_error = EINA_TRUE;
+               }
           }
         break;
       case 'r':
