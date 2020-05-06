@@ -769,6 +769,8 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
              putenv("TERM=xterm");
           }
         putenv("XTERM_256_COLORS=1");
+        putenv("TERM_PROGRAM=terminology");
+        putenv("TERM_PROGRAM_VERSION=" PACKAGE_VERSION);
         if (window_id)
           {
              char buf[256];
