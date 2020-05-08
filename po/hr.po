@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-05-06 15:18+0200\n"
+"PO-Revision-Date: 2020-05-08 22:25+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,7 +26,7 @@ msgstr "Pomoćnici"
 
 #: src/bin/options_helpers.c:206
 msgid "Inline if possible"
-msgstr "U retku, ako je moguće"
+msgstr "U terminalu, ako je moguće"
 
 #: src/bin/options_helpers.c:236
 msgid "E-mail:"
@@ -137,7 +137,7 @@ msgstr "Tipkovne funkcije"
 
 #: src/bin/options_keys.c:457
 msgid "Reset bindings"
-msgstr "Poništi tipkovne funkcije"
+msgstr "Vrati standardne tipkovne funkcije"
 
 #: src/bin/options_background.c:163
 msgid "None"
@@ -149,11 +149,11 @@ msgstr "Izvorna datoteka je odredišna datoteka"
 
 #: src/bin/options_background.c:511
 msgid "Picture imported"
-msgstr "Slika uvezena"
+msgstr "Slika je uvezena"
 
 #: src/bin/options_background.c:516
 msgid "Failed"
-msgstr "Nije uspjelo"
+msgstr "Neuspjelo"
 
 #: src/bin/options_background.c:568 src/bin/options.c:223
 msgid "Background"
@@ -225,7 +225,7 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel."
 msgstr ""
-"Konfiguracija skaliranja može se promijeniti i putem konfiguracijske ploče "
+"Skaliranje može se promijeniti i putem konfiguracijske ploče "
 "<hilight>elementary</hilight> sustava."
 
 #: src/bin/options_theme.c:154 src/bin/options.c:222
@@ -404,8 +404,8 @@ msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
 msgstr ""
-"Postavi vrijeme animacije za mijenjanje<br>kartica pomoću tipkovnice, "
-"pomicanjem<br>kotačića miša ili pomoću tabulatora"
+"Postavi vrijeme animacije za premještanje<br>po karticama pomoću tipkovne "
+"funkcije,<br>kotačića miša ili povlačenjem ploče mišem"
 
 #: src/bin/options_behavior.c:638 src/bin/options_behavior.c:639
 #: src/bin/options_behavior.c:670 src/bin/options_behavior.c:671
@@ -454,8 +454,7 @@ msgstr "Koristi imenovanu datoteku kao sliku pozadine."
 
 #: src/bin/main.c:460
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
-msgstr ""
-"Korištena geometrija terminala (npr. 80 × 24 ili 80 × 24 + 50 + 20 idt.)."
+msgstr "Veličina terminala (npr. 80 × 24 ili 80 × 24 + 50 + 20 idt.)."
 
 #: src/bin/main.c:462
 msgid "Set window name."
@@ -483,7 +482,7 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page."
 msgstr ""
-"Podijeli prozor terminala. „v” za okomito i „h” za vodoravno. Može se "
+"Podijeli prozor terminala. „O” za okomito i „V” za vodoravno. Može se "
 "koristiti više puta. Npr. -S vhvv ili --split hv Opširan opis je dostupan na "
 "stranici priručnika."
 
@@ -509,23 +508,23 @@ msgstr "Postavi vizualno zvono."
 
 #: src/bin/main.c:488
 msgid "Go into the fullscreen mode from the start."
-msgstr "Pokreni program u cjeloekranskom prikazu."
+msgstr "Pokreni u cjeloekranskom prikazu."
 
 #: src/bin/main.c:490
 msgid "Go into an iconic state from the start."
-msgstr "Pokreni program u prikazu s ikonama."
+msgstr "Pokreni u prikazu s ikonama."
 
 #: src/bin/main.c:492
 msgid "Become a borderless managed window."
-msgstr "Postani bezruban prozor."
+msgstr "Pokreni kao upravljan prozor bez ruba."
 
 #: src/bin/main.c:494
 msgid "Become an override-redirect window."
-msgstr "Postani prepisan-preusmerjen prozor."
+msgstr "Pokreni kao override-redirect prozor."
 
 #: src/bin/main.c:496
 msgid "Become maximized from the start."
-msgstr "Postani maksimalno otvoren od samog početka."
+msgstr "Pokreni kao cjeloekranski prikaz."
 
 #: src/bin/main.c:498
 msgid "Terminology is run without a window manager."
@@ -586,7 +585,7 @@ msgstr "Nije bilo moguće obraditi opcije naredbenog retka."
 #: src/bin/main.c:935
 #, c-format
 msgid "option %s requires an argument!"
-msgstr "Opcija „%s” zahtijeva argument!"
+msgstr "opcija „%s” zahtijeva argument!"
 
 #: src/bin/main.c:936
 msgid "invalid options found. See --help."
@@ -662,7 +661,7 @@ msgstr "Intenzivno svijetlo/podebljano"
 
 #: src/bin/options_colors.c:361
 msgid "Reset all the colors"
-msgstr "Poništi sve boje"
+msgstr "Vrati sve boje na standardne vrijednosti"
 
 #: src/bin/keyin.c:653
 msgid "Scrolling"
@@ -670,19 +669,19 @@ msgstr "Klizanje"
 
 #: src/bin/keyin.c:654
 msgid "Scroll one page up"
-msgstr "Klizni stranicu gore"
+msgstr "Klizni jednu stranicu gore"
 
 #: src/bin/keyin.c:655
 msgid "Scroll one page down"
-msgstr "Klizni stranicu dolje"
+msgstr "Klizni jednu stranicu dolje"
 
 #: src/bin/keyin.c:656
 msgid "Scroll one line up"
-msgstr "Klizni redak gore"
+msgstr "Klizni jedan redak gore"
 
 #: src/bin/keyin.c:657
 msgid "Scroll one line down"
-msgstr "Klizni redak dolje"
+msgstr "Klizni jedan redak dolje"
 
 #: src/bin/keyin.c:658
 msgid "Go to the top of the backlog"
@@ -690,7 +689,7 @@ msgstr "Prijeđi na početak zapisa"
 
 #: src/bin/keyin.c:659
 msgid "Reset scroll"
-msgstr "Poništi klizanje"
+msgstr "Vrati standardni način klizanja"
 
 #: src/bin/keyin.c:661
 msgid "Copy/Paste"
@@ -762,43 +761,43 @@ msgstr "Prikaži preklopnik „kartica”"
 
 #: src/bin/keyin.c:679
 msgid "Switch to terminal tab 1"
-msgstr "Prebaci na prvu karticu terminala"
+msgstr "Prijeđi na karticu 1"
 
 #: src/bin/keyin.c:680
 msgid "Switch to terminal tab 2"
-msgstr "Prebaci na drugu karticu terminala"
+msgstr "Prijeđi na karticu 2"
 
 #: src/bin/keyin.c:681
 msgid "Switch to terminal tab 3"
-msgstr "Prebaci na treću karticu terminala"
+msgstr "Prijeđi na karticu 3"
 
 #: src/bin/keyin.c:682
 msgid "Switch to terminal tab 4"
-msgstr "Prebaci na četvrtu karticu terminala"
+msgstr "Prijeđi na karticu 4"
 
 #: src/bin/keyin.c:683
 msgid "Switch to terminal tab 5"
-msgstr "Prebaci na petu karticu terminala"
+msgstr "Prijeđi na karticu 5"
 
 #: src/bin/keyin.c:684
 msgid "Switch to terminal tab 6"
-msgstr "Prebaci na šestu karticu terminala"
+msgstr "Prijeđi na karticu 6"
 
 #: src/bin/keyin.c:685
 msgid "Switch to terminal tab 7"
-msgstr "Prebaci na sedmu karticu terminala"
+msgstr "Prijeđi na karticu 7"
 
 #: src/bin/keyin.c:686
 msgid "Switch to terminal tab 8"
-msgstr "Prebaci na osmu karticu terminala"
+msgstr "Prijeđi na karticu 8"
 
 #: src/bin/keyin.c:687
 msgid "Switch to terminal tab 9"
-msgstr "Prebaci na devetu karticu terminala"
+msgstr "Prijeđi na karticu 9"
 
 #: src/bin/keyin.c:688
 msgid "Switch to terminal tab 10"
-msgstr "Prebaci na desetu karticu terminala"
+msgstr "Prijeđi na karticu 10"
 
 #: src/bin/keyin.c:689
 msgid "Change title"
@@ -814,19 +813,19 @@ msgstr "Veličina fonta"
 
 #: src/bin/keyin.c:695
 msgid "Font size up 1"
-msgstr "Veličina fonta plus 1"
+msgstr "Veličina fonta +1"
 
 #: src/bin/keyin.c:696
 msgid "Font size down 1"
-msgstr "Veličina fonta minus 1"
+msgstr "Veličina fonta −1"
 
 #: src/bin/keyin.c:697
 msgid "Display big font size"
-msgstr "Prikaži veliku veličinu fonta"
+msgstr "Koristi veliki font"
 
 #: src/bin/keyin.c:698
 msgid "Reset font size"
-msgstr "Vrati na izvornu veličinu fonta"
+msgstr "Vrati standardnu veličinu fonta"
 
 #: src/bin/keyin.c:700
 msgid "Actions"
@@ -846,7 +845,7 @@ msgstr "Prikaži umanjeni prikaz povijesti"
 
 #: src/bin/keyin.c:704
 msgid "Display the command box"
-msgstr "Prikaži kutiju naredbi"
+msgstr "Prikaži naredbeni prozor"
 
 #: src/bin/options_font.c:425 src/bin/options.c:221
 msgid "Font"
@@ -908,12 +907,12 @@ msgstr "Neuspjelo postavljanje veličine ioctl: %s"
 #: src/bin/termpty.c:358
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr "Neuspjelo pisanje u datotečni opisivač %d: %s"
+msgstr "Nije bilo moguće pisati u datotečni opisivač %d: %s"
 
 #: src/bin/termpty.c:612
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr "Neuspjelo pronalaženje ljuske, kosristi se %s"
+msgstr "Nije bilo moguće pronaäi ljusku, kosristi se %s"
 
 #: src/bin/termpty.c:652
 #, c-format
@@ -933,7 +932,7 @@ msgstr "ioctl() na pty „%s” neuspjelo: %s"
 #: src/bin/termpty.c:718 src/bin/termpty.c:726 src/bin/termpty.c:735
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr "Neuspjelo mijenjanje trenutačne mape u „%s”: %s"
+msgstr "Nije bilo moguće promijeniti trenutačnu mapu u „%s”: %s"
 
 #: src/bin/win.c:417
 msgid ""
@@ -968,11 +967,11 @@ msgstr "Odustani"
 #: src/bin/win.c:7286
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
-"Neuspjelo pronalaženje terminology-teme! Je li „ninja install” izvršeno?"
+"Nije bilo moguće pronaći Terminology temu! Je li „ninja install” izvršeno?"
 
 #: src/bin/controls.c:372
 msgid "Controls"
-msgstr "Kontrole"
+msgstr "Funkcije"
 
 #: src/bin/controls.c:388
 msgid "New"
@@ -980,15 +979,15 @@ msgstr "Novi"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr "Podijeli okomito"
+msgstr "Podijeli O"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr "Podijeli vodoravno"
+msgstr "Podijeli V"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr "Umanjeni prikaz"
+msgstr "Mini-prikaz"
 
 #: src/bin/controls.c:430
 msgid "Paste"
@@ -1013,12 +1012,12 @@ msgstr "Zatvori terminal"
 #: src/bin/utils.c:48 src/bin/utils.c:74
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr "Nije biilo moguće učitati bilo koju temu za grupu=%s: %s"
+msgstr "Nije biilo moguće učitati bilo koju temu za group=%s: %s"
 
 #: src/bin/utils.c:91
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
-msgstr "Nije biilo moguće učitati standardnu temu za grupu=%s: %s"
+msgstr "Nije biilo moguće učitati standardnu temu za group=%s: %s"
 
 #: src/bin/termcmd.c:84
 #, c-format
