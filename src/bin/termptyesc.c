@@ -715,7 +715,8 @@ _tcc_insert(const uint32_t color_msb, const uint8_t approximated)
    uint32_t c = color_msb | approximated;
    int i;
 
-   i = (TCC_LEN / 2) + ((_tcc_random_pos + TCC_PRIME) % (TCC_LEN / 2));
+   _tcc_random_pos = ((_tcc_random_pos + TCC_PRIME) % (TCC_LEN / 2));
+   i = (TCC_LEN / 2) + _tcc_random_pos;
 
   _truecolor_cache.colors[i] = c;
 }
