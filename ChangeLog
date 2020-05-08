@@ -21,7 +21,7 @@
         * Remove link underline when the link disappears
         * Share translucent / opacity setting accross all instances
         * Use a default icon of each tab on the Settings toolbar
-        * Update french, italian, serbian translations
+        * Update french, german, italian and serbian translations
         * Add croatian translation
         * Removed video settings
         * Handle invalid values on OS escape codes
