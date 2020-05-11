@@ -632,12 +632,6 @@ _codepoint_is_wordsep(const Eina_Unicode g)
    // http://en.wikipedia.org/wiki/Bracket
    static const Eina_Unicode wordsep[] =
      {
-       0,
-       ' ',
-       '!',
-       '"',
-       '#',
-       '$',
        '\'',
        '(',
        ')',
@@ -801,6 +795,8 @@ _codepoint_is_wordsep(const Eina_Unicode g)
    size_t imaxmax = imax;
 
    if (g & 0x80000000)
+     return EINA_TRUE;
+   if (g < '.')
      return EINA_TRUE;
 
    while (imax >= imin)
