@@ -1350,14 +1350,15 @@ _color_tooltip_content(void *data,
 {
    Termio *sd = data;
    Evas_Object *o;
+   Evas *canvas = evas_object_evas_get(obj);
 
-   o = evas_object_rectangle_add(evas_object_evas_get(obj));
+   o = edje_object_add(canvas);
+   theme_apply(o, sd->config, "terminology/color_preview");
    evas_object_size_hint_min_set(o, 80, 80);
-   evas_object_color_set(o,
-                         sd->link.color.r,
-                         sd->link.color.g,
-                         sd->link.color.b,
-                         sd->link.color.a);
+   edje_object_color_class_set(o, "color_preview",
+       sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
+       sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
+       sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a);
    return o;
 }
 

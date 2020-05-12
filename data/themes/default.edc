@@ -32,4 +32,5 @@ collections {
    #include "default/about.edc"
    #include "default/fontpreview.edc"
    #include "default/tab_drag_thumb.edc"
+   #include "default/color_preview.edc"
 }
