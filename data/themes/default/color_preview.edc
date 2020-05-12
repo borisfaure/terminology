@@ -1,0 +1,28 @@
+group { name: "terminology/color_preview";
+   images.image: "pm_overlay.png" COMP;
+   images.image: "tiles.png" COMP;
+   parts {
+      part { name: "tiles";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "tiles.png";
+            fill.type: TILE;
+         }
+      }
+      part { name: "preview"; type: RECT;
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            color_class: "color_preview";
+         }
+      }
+      part { name: "overlay";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "pm_overlay.png";
+            fill.smooth: 0;
+         }
+      }
+   }
+}
