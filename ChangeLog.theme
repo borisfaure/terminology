@@ -1,6 +1,11 @@
 =================
-Terminology 1.7.0
+Terminology 1.8.0
 =================
+
+Changes since 1.7.0:
+--------------------
+  * Add group "terminology/color_preview", used to preview a color in a
+  tooltip.
 
 Changes since 1.6.0:
 --------------------
