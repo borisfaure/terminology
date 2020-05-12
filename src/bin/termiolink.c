@@ -660,7 +660,7 @@ _is_authorized_in_color(const int codepoint)
 }
 
 static Eina_Bool
-_parse_hex(char c, uint8_t *v)
+_parse_hex(const char c, uint8_t *v)
 {
    if (c < '0')
      return EINA_FALSE;
@@ -687,7 +687,7 @@ _parse_hex(char c, uint8_t *v)
 }
 
 static Eina_Bool
-_parse_2hex(char *s, uint8_t *v)
+_parse_2hex(const char *s, uint8_t *v)
 {
    uint8_t v0, v1;
    if (!_parse_hex(s[0], &v0))
