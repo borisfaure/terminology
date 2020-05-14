@@ -253,6 +253,50 @@ _handle_mouse_wheel(Termpty *ty,
    termio_internal_mouse_wheel(sd, &ev, modifiers);
 }
 
+static void
+_handle_color_link(Termpty *ty, const Eina_Unicode *buf)
+{
+   uint8_t r = 0, g = 0, b = 0, a = 0;
+   int value;
+   Eina_Bool found;
+   int x1 = -1, y1 = -1, x2 = -1, y2 = -1;
+   Termio *sd = termio_get_from_obj(ty->obj);
+
+   found = termio_color_find(ty->obj, sd->mouse.cx, sd->mouse.cy,
+                             &x1, &y1, &x2, &y2,
+                             &r, &g, &b, &a);
+   ERR("x1:%d y1:%d x2:%d y2:%d", x1, y1, x2, y2);
+   ERR("rgba: %d %d %d %d", r, g, b, a);
+   if (*buf == 'n')
+     {
+        assert(!found);
+        return;
+     }
+   assert(found);
+
+   /* Get numeric values */
+   buf += _tytest_arg_get(buf, &value);
+   assert(x1 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(y1 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(x2 == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(y2 == value);
+   /* skip ; */
+   buf++;
+
+   /* Get numeric values */
+   buf += _tytest_arg_get(buf, &value);
+   assert(r == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(g == value);
+   buf += _tytest_arg_get(buf, &value);
+   assert(b == value);
+   _tytest_arg_get(buf, &value);
+   assert(a == value);
+}
+
 /*
  * Format is:
  * - ln : no link found under cursor
@@ -261,6 +305,7 @@ _handle_mouse_wheel(Termpty *ty,
  *     e: link is an email
  *     u: link is an url
  *     p: link is a file path
+ *     c: link is a color
  */
 static void
 _handle_link(Termpty *ty, const Eina_Unicode *buf)
@@ -283,6 +328,14 @@ _handle_link(Termpty *ty, const Eina_Unicode *buf)
         cells[sd->mouse.cx].att.bg = COL_RED;
      }
 
+   /* skip type */
+   buf++;
+
+   if (type == 'c')
+     {
+        _handle_color_link(ty, buf);
+        return;
+     }
    link = termio_link_find(ty->obj, sd->mouse.cx, sd->mouse.cy,
                            &x1, &y1, &x2, &y2);
 
@@ -292,8 +345,7 @@ _handle_link(Termpty *ty, const Eina_Unicode *buf)
         assert (link == NULL);
         return;
      }
-   /* skip type */
-   buf++;
+
    /* Get numeric values */
    buf += _tytest_arg_get(buf, &value);
    assert(x1 == value);
@@ -305,6 +357,7 @@ _handle_link(Termpty *ty, const Eina_Unicode *buf)
    assert(y2 == value);
    /* skip ; */
    buf++;
+
    /* Compare strings */
    c = link;
    while (*buf)
