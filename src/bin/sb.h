@@ -12,6 +12,7 @@ struct ty_sb {
 
 int ty_sb_add(struct ty_sb *sb, const char *s, size_t len);
 void ty_sb_spaces_rtrim(struct ty_sb *sb);
+void ty_sb_spaces_ltrim(struct ty_sb *sb);
 int ty_sb_prepend(struct ty_sb *sb, const char *s, size_t  len);
 char *ty_sb_steal_buf(struct ty_sb *sb);
 void ty_sb_lskip(struct ty_sb *sb, int len);

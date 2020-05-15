@@ -59,6 +59,24 @@ ty_sb_prepend(struct ty_sb *sb, const char *s, size_t  len)
    return 0;
 }
 
+/* unlike eina_strbuf_rtrim, only trims \t, \f, ' ' */
+void
+ty_sb_spaces_ltrim(struct ty_sb *sb)
+{
+   if (!sb->buf)
+     return;
+
+   while (sb->len > 0)
+     {
+        char c = sb->buf[0];
+        if ((c != ' ') && (c != '\t') && (c != '\f'))
+            break;
+        sb->len--;
+        sb->buf++;
+        sb->gap++;
+     }
+   sb->buf[sb->len] = '\0';
+}
 
 /* unlike eina_strbuf_rtrim, only trims \t, \f, ' ' */
 void
