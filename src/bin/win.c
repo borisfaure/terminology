@@ -272,6 +272,12 @@ _focus_validator(void)
                          {
                             assert (tc_parent->is_focused);
                             tc_parent = tc_parent->parent;
+                            if (tc_parent->type == TERM_CONTAINER_TYPE_TABS)
+                              {
+                                 Tabs *tabs = (Tabs*) tc_parent;
+                                 if (tabs->selector_bg)
+                                   return;
+                              }
                          }
                        while (tc_parent->type != TERM_CONTAINER_TYPE_WIN);
                        assert (tc_parent->is_focused);
