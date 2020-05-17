@@ -36,7 +36,7 @@ parts:
   efl:
     plugin: meson
     source-type: tar
-    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.0.tar.xz
+    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.1.tar.xz
     meson-parameters:
       - --prefix=/usr
       - --libdir=/usr/lib
