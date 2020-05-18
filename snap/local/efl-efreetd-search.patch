@@ -1,0 +1,76 @@
+diff --git a/src/lib/efreet/efreet_cache.c b/src/lib/efreet/efreet_cache.c
+index f859c630f0..159cc81155 100644
+--- a/src/lib/efreet/efreet_cache.c
++++ b/src/lib/efreet/efreet_cache.c
+@@ -112,6 +112,53 @@ EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
+    if (e->server != ipc) \
+      return ECORE_CALLBACK_PASS_ON
+ 
++static void
++_find_binary(char buf[PATH_MAX])
++{
++   char *path_env = getenv("PATH");
++   char *names[] = { "efreetd", "terminology.efreetd"};
++   int i, n_names = sizeof(names) / sizeof(names[0]);
++
++   if (!path_env)
++     goto error;
++
++   for (i = 0; i < n_names; i++)
++     {
++        char *name = names[i];
++        char *start = path_env;
++        char *end = strchrnul(start, ':');
++        while (*start)
++          {
++             if (end > start)
++               {
++                  struct stat st;
++                  int res;
++                  int len = (int)(end - start);
++                  if (*(end-1) == '/')
++                    len = snprintf(buf, PATH_MAX, "%.*s%s",
++                             len,
++                             start,
++                             name);
++                  else
++                    len = snprintf(buf, PATH_MAX, "%.*s/%s",
++                             len,
++                             start,
++                             name);
++                  res = stat(buf, &st);
++                  if (res == 0 && S_ISREG(st.st_mode) && (S_IXUSR & st.st_mode))
++                      return;
++               }
++             if (!*end)
++               break;
++             start = end + 1;
++             end = strchrnul(start, ':');
++          }
++     }
++
++error:
++   snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
++}
++
+ static void
+ _ipc_launch(void)
+ {
+@@ -146,7 +193,7 @@ _ipc_launch(void)
+    if (run_in_tree)
+      bs_binary_get(buf, sizeof(buf), "efreet", "efreetd");
+    else
+-     snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
++     _find_binary(buf);
+    ecore_exe_run(buf, NULL);
+    num = 0;
+    while ((!ipc) && (num < tries))
+@@ -155,7 +202,7 @@ _ipc_launch(void)
+         usleep(try_gap);
+         ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
+      }
+-   if (!ipc) ERR("Timeout in trying to start and then connect to efreetd");
++   if (!ipc) ERR("Timeout in trying to start '%s' and then connect to efreetd", buf);
+ }
+ 
+ static Eina_Bool

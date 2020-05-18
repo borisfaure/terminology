@@ -32,11 +32,18 @@ apps:
     command: usr/bin/tysend
   elementaryConfig:
     command: usr/bin/elementary_config
+  efreetd:
+     command: usr/bin/efreetd
 parts:
   efl:
     plugin: meson
     source-type: tar
-    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.0.tar.xz
+#    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.1.tar.xz
+    source: https://downloads.terminolo.gy/efl-1.24.1.tar.xz
+    override-pull: |
+      snapcraftctl pull
+      cd "${SNAPCRAFT_PART_SRC}"
+      patch -p1 < "${SNAPCRAFT_PROJECT_DIR}"/snap/local/efl-efreetd-search.patch
     meson-parameters:
       - --prefix=/usr
       - --libdir=/usr/lib
@@ -63,7 +70,6 @@ parts:
       - gcc
       - pkg-config
       - libdbus-1-dev
-      - libssl-dev
       - libfontconfig1-dev
       - libfreetype6-dev
       - libfribidi-dev
@@ -71,11 +77,17 @@ parts:
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
       - libharfbuzz-dev
+      - libibus-1.0-dev
       - libjpeg-turbo8-dev
+      - libluajit-5.1-dev
+      - libopenjp2-7-dev
       - libpng-dev
       - libpulse-dev
       - librsvg2-dev
+      - libscim-dev
       - libsndfile1-dev
+      - libssl-dev
+      - libsystemd-dev
       - libx11-dev
       - libxkbcommon-dev
       - libxkbcommon-x11-dev
@@ -86,11 +98,6 @@ parts:
       - libxrandr-dev
       - libxss-dev
       - libxtst-dev
-      - libsystemd-dev
-      - libluajit-5.1-dev
-      - libibus-1.0-dev
-      - libscim-dev
-      - libopenjp2-7-dev
     stage-packages:
       - libcairo2
       - libcroco3
@@ -110,7 +117,9 @@ parts:
       - libibus-1.0-5
       - libicu60
       - libjpeg-turbo8
+      - libltdl7
       - libluajit-5.1-2
+      - libopenjp2-7
       - liborc-0.4-0
       - libpango-1.0-0
       - libpangocairo-1.0-0
@@ -118,6 +127,7 @@ parts:
       - libpixman-1-0
       - libpng16-16
       - librsvg2-2
+      - libscim8v5
       - libthai0
       - libwayland-egl1
       - libx11-6
@@ -140,7 +150,6 @@ parts:
       - libxrender1
       - libxss1
       - libxtst6
-      - libopenjp2-7
   terminology:
     plugin: meson
     after: [ efl ]
