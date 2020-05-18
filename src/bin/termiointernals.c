@@ -796,7 +796,7 @@ _codepoint_is_wordsep(const Eina_Unicode g)
 
    if (g & 0x80000000)
      return EINA_TRUE;
-   if (g < '.')
+   if (g <= '$')
      return EINA_TRUE;
 
    while (imax >= imin)
