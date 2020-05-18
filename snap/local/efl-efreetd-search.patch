@@ -1,5 +1,5 @@
 diff --git a/src/lib/efreet/efreet_cache.c b/src/lib/efreet/efreet_cache.c
-index f859c630f0..159cc81155 100644
+index f859c630f0..f7d196ef6b 100644
 --- a/src/lib/efreet/efreet_cache.c
 +++ b/src/lib/efreet/efreet_cache.c
 @@ -112,6 +112,53 @@ EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
@@ -29,12 +29,12 @@ index f859c630f0..159cc81155 100644
 +                  int res;
 +                  int len = (int)(end - start);
 +                  if (*(end-1) == '/')
-+                    len = snprintf(buf, PATH_MAX, "%.*s%s",
++                    snprintf(buf, PATH_MAX, "%.*s%s",
 +                             len,
 +                             start,
 +                             name);
 +                  else
-+                    len = snprintf(buf, PATH_MAX, "%.*s/%s",
++                    snprintf(buf, PATH_MAX, "%.*s/%s",
 +                             len,
 +                             start,
 +                             name);

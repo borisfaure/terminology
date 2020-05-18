@@ -65,7 +65,7 @@ _find_binary(void)
                   struct stat st;
                   int res;
                   const char *lookup_path;
-                  if (*end == '/')
+                  if (*(end-1) == '/')
                     lookup_path = eina_stringshare_printf("%.*s%s",
                                                           (int)(end - start),
                                                           start,
