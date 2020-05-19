@@ -495,6 +495,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
         evas_object_size_hint_align_set(lbl, 0.0, 0.5);
         elm_box_pack_before(bx, lbl, o);
         elm_object_text_set(lbl, _("Audio Support for key presses <failure>DISABLED</failure>!"));
+        elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
         evas_object_show(lbl);
      }
    CX(_("Visual Bell"), disable_visual_bell, 1);
@@ -591,6 +592,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    ctx->backlock_label = o;
    _update_backlog_title(ctx);
+   elm_label_line_wrap_set(o, ELM_WRAP_WORD);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -625,6 +627,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    elm_object_text_set(o, _("Tab zoom/switch animation time:"));
+   elm_label_line_wrap_set(o, ELM_WRAP_WORD);
    tooltip = _("Set the time of the animation that<br>"
        "takes places on tab switches,<br>"
        "be them by key binding, mouse<br>"
@@ -655,7 +658,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Translucent"));
    elm_object_text_set(o, _("Auto hide the mouse cursor when idle:"));
    elm_check_state_set(o, config->hide_cursor < CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
    elm_box_pack_end(bx, o);
