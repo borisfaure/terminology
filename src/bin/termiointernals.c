@@ -624,6 +624,7 @@ end:
      }
 }
 
+__attribute__((const))
 static Eina_Bool
 _codepoint_is_wordsep(const Eina_Unicode g)
 {
