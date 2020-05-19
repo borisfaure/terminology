@@ -418,10 +418,17 @@ win_scale_wizard(Evas_Object *win, Term *term)
    evas_object_smart_callback_add(sl, "changed", _scale_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", _scale_change, NULL);
 
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, _("Done"));
+   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _scale_done, ctx);
+   evas_object_show(bt);
+
    lbl = elm_label_add(win);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(lbl, _("Select prefered size so that this text is readable."));
+   elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
 
@@ -429,18 +436,14 @@ win_scale_wizard(Evas_Object *win, Term *term)
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>."));
+   elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
-
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, _("Done"));
-   elm_box_pack_end(bx, bt);
-   evas_object_smart_callback_add(bt, "clicked", _scale_done, ctx);
-   evas_object_show(bt);
 
    evas_object_show(ctx->hv);
 
    elm_object_focus_set(ctx->hv, EINA_TRUE);
+   elm_object_focus_set(bt, EINA_TRUE);
 }
 
 /* }}} */
