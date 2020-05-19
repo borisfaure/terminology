@@ -691,6 +691,7 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_text_set(o, _("Click on a picture to use it as background"));
+   elm_label_line_wrap_set(o, ELM_WRAP_WORD);
    elm_box_pack_end(bx_front, o);
    evas_object_show(o);
 
