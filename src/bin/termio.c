@@ -1096,6 +1096,24 @@ termio_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
                          _getsel_cb, obj);
 }
 
+static const char *
+_color_to_txt(const Termio *sd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+
+   if (sd->link.color.a == 255)
+     return eina_stringshare_printf("#%.2x%.2x%.2x",
+                                    sd->link.color.r,
+                                    sd->link.color.g,
+                                    sd->link.color.b);
+   else
+     return eina_stringshare_printf("#%.2x%.2x%.2x%.2x",
+                                    sd->link.color.r,
+                                    sd->link.color.g,
+                                    sd->link.color.b,
+                                    sd->link.color.a);
+}
+
 static void
 _cb_ctxp_color_copy(void *data,
                     Evas_Object *obj,
@@ -1105,20 +1123,12 @@ _cb_ctxp_color_copy(void *data,
    const char *txt;
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->link.color.a == 255)
-     txt = eina_stringshare_printf("#%.2x%.2x%.2x",
-                                   sd->link.color.r,
-                                   sd->link.color.g,
-                                   sd->link.color.b);
-   else
-     txt = eina_stringshare_printf("#%.2x%.2x%.2x%.2x",
-                                   sd->link.color.r,
-                                   sd->link.color.g,
-                                   sd->link.color.b,
-                                   sd->link.color.a);
+   txt = _color_to_txt(sd);
+   if (!sd) return;
 
    termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, txt);
 
+   eina_stringshare_del(txt);
    sd->ctxpopup = NULL;
    evas_object_del(obj);
 }
@@ -1410,6 +1420,7 @@ _color_tooltip_content(void *data,
    Termio *sd = data;
    Evas_Object *o;
    Evas *canvas = evas_object_evas_get(obj);
+   const char *txt;
 
    o = edje_object_add(canvas);
    theme_apply(o, sd->config, "terminology/color_preview");
@@ -1418,6 +1429,10 @@ _color_tooltip_content(void *data,
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a);
+
+   txt = _color_to_txt(sd);
+   edje_object_part_text_set(o, "name", txt);
+   eina_stringshare_del(txt);
    return o;
 }
 

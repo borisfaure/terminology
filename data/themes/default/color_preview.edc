@@ -16,6 +16,21 @@ group { name: "terminology/color_preview";
             color_class: "color_preview";
          }
       }
+      part { name: "name"; type: TEXT;
+         mouse_events: 0;
+         effect: OUTLINE_SOFT_SHADOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+            color2: 0 0 0 128;
+            color3: 0 0 0 20;
+            align: 0.5 0.0;
+            text { font: "monospace"; size: 10;
+               align: 0.5 0.0;
+               min: 0 1;
+            }
+         }
+      }
       part { name: "overlay";
          mouse_events: 0;
          description { state: "default" 0.0;

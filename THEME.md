@@ -237,3 +237,7 @@ To mark the tab as having missed a bell.
 # `terminology/color_preview`
 A group to preview a color in a tooltip. The color is defined by the color
 class `color_preview`.
+
+## Swallowed part
+### `name`
+Name of the color being previewed
