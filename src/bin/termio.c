@@ -1096,6 +1096,32 @@ termio_paste_selection(Evas_Object *obj, Elm_Sel_Type type)
                          _getsel_cb, obj);
 }
 
+static void
+_cb_ctxp_color_copy(void *data,
+                    Evas_Object *obj,
+                    void *_event EINA_UNUSED)
+{
+   Termio *sd = data;
+   const char *txt;
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+
+   if (sd->link.color.a == 255)
+     txt = eina_stringshare_printf("#%.2x%.2x%.2x",
+                                   sd->link.color.r,
+                                   sd->link.color.g,
+                                   sd->link.color.b);
+   else
+     txt = eina_stringshare_printf("#%.2x%.2x%.2x%.2x",
+                                   sd->link.color.r,
+                                   sd->link.color.g,
+                                   sd->link.color.b,
+                                   sd->link.color.a);
+
+   termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, txt);
+
+   sd->ctxpopup = NULL;
+   evas_object_del(obj);
+}
 
 static void
 _cb_link_down(void *data,
@@ -1123,82 +1149,115 @@ _cb_link_down(void *data,
         sd->link.down.x = ev->canvas.x;
         sd->link.down.y = ev->canvas.y;
      }
-   else if (ev->button == 3)
+   else if (ev->button == 3) /* right click */
      {
         Evas_Object *ctxp;
-        Eina_Bool absolut = EINA_FALSE;
-        const char *raw_link;
-        size_t len;
-
-        if (sd->pty->selection.is_active)
-          {
-             int cx = 0, cy = 0;
-
-             termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
-             if (_mouse_in_selection(sd, cx, cy))
-               return;
-          }
 
         ctxp = elm_ctxpopup_add(sd->win);
         sd->ctxpopup = ctxp;
 
-        if (hl)
+        if (sd->link.is_color)
           {
-             raw_link = hl->url;
-             len = strlen(hl->url);
+             const char *fmt, *txt;
+             if (sd->link.color.a == 255)
+               {
+                  fmt = eina_stringshare_printf(_("Copy '%s'"),
+                                                "#%.2x%.2x%.2x");
+                  txt = eina_stringshare_printf(fmt,
+                                                sd->link.color.r,
+                                                sd->link.color.g,
+                                                sd->link.color.b);
+               }
+               else
+               {
+                  fmt = eina_stringshare_printf(_("Copy '%s'"),
+                                                "#%.2x%.2x%.2x%.2x");
+                  txt = eina_stringshare_printf(fmt,
+                                                sd->link.color.r,
+                                                sd->link.color.g,
+                                                sd->link.color.b,
+                                                sd->link.color.a);
+               }
+             elm_ctxpopup_item_append(ctxp, txt, NULL,
+                                      _cb_ctxp_color_copy, sd);
+             eina_stringshare_del(txt);
+             eina_stringshare_del(fmt);
           }
         else
           {
-             struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
-             termio_selection_get(sd,
-                                  sd->link.x1,
-                                  sd->link.y1,
-                                  sd->link.x2,
-                                  sd->link.y2,
-                                  &sb,
-                                  EINA_FALSE);
-             len = sb.len;
-             raw_link = ty_sb_steal_buf(&sb);
-          }
+             Eina_Bool absolut = EINA_FALSE;
+             const char *raw_link;
+             size_t len;
 
-        if (len > 0 && raw_link[0] == '/')
-          absolut = EINA_TRUE;
+             if (sd->pty->selection.is_active)
+               {
+                  int cx = 0, cy = 0;
 
-        if (sd->config->helper.inline_please)
-          {
-             Media_Type type = media_src_type_get(raw_link);
+                  termio_cursor_to_xy(sd, ev->canvas.x, ev->canvas.y, &cx, &cy);
+                  if (_mouse_in_selection(sd, cx, cy))
+                    return;
+               }
 
-             if ((type == MEDIA_TYPE_IMG) ||
-                 (type == MEDIA_TYPE_SCALE) ||
-                 (type == MEDIA_TYPE_EDJE) ||
-                 (type == MEDIA_TYPE_MOV))
-               elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
-                                        _cb_ctxp_link_preview, sd->self);
-          }
-        elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
-                                 sd->self);
 
-        if (!absolut &&
-            !link_is_url(raw_link) &&
-            !link_is_email(raw_link))
-          {
-             elm_ctxpopup_item_append(ctxp, _("Copy relative path"), NULL, _cb_ctxp_link_content_copy,
+             if (hl)
+               {
+                  raw_link = hl->url;
+                  len = strlen(hl->url);
+               }
+             else
+               {
+                  struct ty_sb sb = {.buf = NULL, .len = 0, .alloc = 0};
+                  termio_selection_get(sd,
+                                       sd->link.x1,
+                                       sd->link.y1,
+                                       sd->link.x2,
+                                       sd->link.y2,
+                                       &sb,
+                                       EINA_FALSE);
+                  len = sb.len;
+                  raw_link = ty_sb_steal_buf(&sb);
+               }
+
+             if (len > 0 && raw_link[0] == '/')
+               absolut = EINA_TRUE;
+
+             if (sd->config->helper.inline_please)
+               {
+                  Media_Type type = media_src_type_get(raw_link);
+
+                  if ((type == MEDIA_TYPE_IMG) ||
+                      (type == MEDIA_TYPE_SCALE) ||
+                      (type == MEDIA_TYPE_EDJE) ||
+                      (type == MEDIA_TYPE_MOV))
+                    elm_ctxpopup_item_append(ctxp, _("Preview"), NULL,
+                                             _cb_ctxp_link_preview, sd->self);
+               }
+             elm_ctxpopup_item_append(ctxp, _("Open"), NULL, _cb_ctxp_link_open,
                                       sd->self);
-             elm_ctxpopup_item_append(ctxp, _("Copy full path"), NULL, _cb_ctxp_link_copy,
-                                      sd->self);
+
+             if (!absolut &&
+                 !link_is_url(raw_link) &&
+                 !link_is_email(raw_link))
+               {
+                  elm_ctxpopup_item_append(ctxp, _("Copy relative path"), NULL, _cb_ctxp_link_content_copy,
+                                           sd->self);
+                  elm_ctxpopup_item_append(ctxp, _("Copy full path"), NULL, _cb_ctxp_link_copy,
+                                           sd->self);
+               }
+             else
+               {
+                  elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_link_copy, sd->self);
+               }
+             if (!hl)
+               free((void*)raw_link);
           }
-        else
-          {
-              elm_ctxpopup_item_append(ctxp, _("Copy"), NULL, _cb_ctxp_link_copy, sd->self);
-          }
+
         evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
         evas_object_show(ctxp);
         evas_object_smart_callback_add(ctxp, "dismissed",
                                        _cb_ctxp_dismissed, sd);
         evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
                                        _cb_ctxp_del, sd);
-        if (!hl)
-          free((void*)raw_link);
      }
 }
 
@@ -2631,7 +2690,7 @@ termio_handle_right_click(Evas_Event_Mouse_Down *ev, Termio *sd,
                                        _cb_ctxp_del, sd);
         return;
      }
-   if (!sd->link.string)
+   if (!sd->link.string && !sd->link.is_color)
      evas_object_smart_callback_call(sd->self, "options", NULL);
 }
 
