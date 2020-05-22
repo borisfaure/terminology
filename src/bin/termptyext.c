@@ -5,7 +5,9 @@
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
+#endif
 #include <assert.h>
 
 #undef CRITICAL
@@ -31,6 +33,25 @@
 // EINA_FALSE).
 
 #if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+
+static int _mx;
+static int _my;
+
+void
+test_set_mouse_pointer(int mx, int my)
+{
+   _mx = mx;
+   _my = my;
+}
+
+void
+test_pointer_canvas_xy_get(int *mx, int *my)
+{
+   if (mx)
+     *mx = _mx;
+   if (my)
+     *my = _my;
+}
 
 static int
 _tytest_arg_get(const Eina_Unicode *buf, int *value)

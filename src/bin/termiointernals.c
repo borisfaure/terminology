@@ -10,7 +10,9 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
+#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
+#endif
 
 /* {{{ Selection */
 

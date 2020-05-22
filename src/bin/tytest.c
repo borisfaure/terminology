@@ -1,10 +1,24 @@
 #include "private.h"
-#if defined(ENABLE_TESTS)
-#define TYTEST 1
-#include "tyfuzz.c"
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <assert.h>
 
-static const char *_cursor_shape = "undefined";
-static Evas_Textgrid_Cell *_cells;
+#include "private.h"
+#include <Elementary.h>
+#include "config.h"
+#include "termpty.h"
+#include "termptyops.h"
+#include "termiointernals.h"
+#include "tytest_common.h"
+
+#include "md5/md5.h"
+
+int _log_domain = -1;
 
 typedef struct _Termpty_Tests
 {
@@ -19,59 +33,6 @@ typedef struct _Termpty_Tests
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
 } Termpty_Tests;
-
-Evas_Object *
-termio_textgrid_get(const Evas_Object *obj EINA_UNUSED)
-{
-   return NULL;
-}
-
-void
-test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
-                          Evas_Textgrid_Palette pal,
-                          int idx,
-                          int *r,
-                          int *g,
-                          int *b,
-                          int *a)
-{
-   if (pal == EVAS_TEXTGRID_PALETTE_EXTENDED)
-     {
-        colors_256_get(idx,
-                       (unsigned char *)r,
-                       (unsigned char *)g,
-                       (unsigned char *)b,
-                       (unsigned char *)a);
-     }
-   else
-     {
-        int set = idx / 12;
-        int col = idx % 12;
-        colors_standard_get(set, col,
-                            (unsigned char*)r,
-                            (unsigned char*)g,
-                            (unsigned char*)b,
-                            (unsigned char*)a);
-     }
-}
-
-void
-termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
-                        Cursor_Shape shape EINA_UNUSED)
-{
-   switch (shape)
-     {
-      case CURSOR_SHAPE_UNDERLINE:
-         _cursor_shape = "underline";
-         break;
-      case CURSOR_SHAPE_BAR:
-         _cursor_shape = "bar";
-         break;
-      default:
-      case CURSOR_SHAPE_BLOCK:
-         _cursor_shape = "block";
-     }
-}
 
 static void
 _termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
@@ -138,8 +99,9 @@ _tytest_checksum(Termpty *ty)
         MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
      }
    /* Cursor shape */
-   MD5Update(&ctx, (unsigned char const*)_cursor_shape,
-             strlen(_cursor_shape));
+   const char *cursor_shape = tytest_cursor_shape_get();
+   MD5Update(&ctx, (unsigned char const*)cursor_shape,
+             strlen(cursor_shape));
    /* Write buffer */
    if (ty->write_buffer.buf)
      {
@@ -158,56 +120,23 @@ _tytest_checksum(Termpty *ty)
    printf("%s", md5out);
 }
 
-Evas_Textgrid_Cell *
-test_textgrid_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
+
+int
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   assert (y >= 0 && y < _sd.pty->h);
-   return &_cells[y * _sd.pty->w];
+   eina_init();
+
+   _log_domain = eina_log_domain_register("tytest", NULL);
+
+   tytest_common_init();
+
+   tytest_common_main_loop();
+
+   _tytest_checksum(tytest_termpty_get());
+
+   tytest_common_shutdown();
+
+   eina_shutdown();
+
+   return 0;
 }
-
-void
-tytest_termio_resize(int w, int h)
-{
-   Evas_Textgrid_Cell *cells = realloc(_cells,
-                                       w * h * sizeof(Evas_Textgrid_Cell));
-   assert (cells);
-   _sd.grid.w = w;
-   _sd.grid.h = h;
-   _cells = cells;
-}
-
-
-void
-tytest_init(void)
-{
-   _cells = calloc(TY_H * TY_W, sizeof(Evas_Textgrid_Cell));
-   assert(_cells != NULL);
-}
-
-void
-tytest_shutdown(void)
-{
-   free(_cells);
-}
-#endif
-
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
-static int _mx;
-static int _my;
-
-void
-test_set_mouse_pointer(int mx, int my)
-{
-   _mx = mx;
-   _my = my;
-}
-
-void
-test_pointer_canvas_xy_get(int *mx, int *my)
-{
-   if (mx)
-     *mx = _mx;
-   if (my)
-     *my = _my;
-}
-#endif

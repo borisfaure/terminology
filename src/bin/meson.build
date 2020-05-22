@@ -38,7 +38,6 @@ terminology_sources = ['private.h',
                        'extns.c', 'extns.h',
                        'gravatar.c', 'gravatar.h',
                        'tty_keys.h',
-                       'tytest.c', 'tytest.h',
                        'sb.c', 'sb.h']
 
 tybg_sources = ['tycommon.c', 'tycommon.h', 'tybg.c']
@@ -62,6 +61,7 @@ tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'sb.c', 'sb.h',
                   'utf8.c', 'utf8.h',
                   'utils.c', 'utils.h',
+                  'tytest_common.c', 'tytest_common.h',
                   'tyfuzz.c']
 tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'backlog.c', 'backlog.h',
@@ -78,6 +78,7 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'utf8.c', 'utf8.h',
                   'utils.c', 'utils.h',
                   'md5/md5.c', 'md5/md5.h',
+                  'tytest_common.c', 'tytest_common.h',
                   'tytest.c', 'tytest.h']
 
 executable('terminology',
