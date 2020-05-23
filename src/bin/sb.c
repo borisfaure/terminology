@@ -146,7 +146,8 @@ ty_sb_lskip(struct ty_sb *sb, size_t len)
    else
      {
         /* buffer is empty, get rid of gap */
-        sb->buf -= sb->gap;
+        if (sb->buf)
+          sb->buf -= sb->gap;
         sb->gap = 0;
      }
 }
