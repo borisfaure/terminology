@@ -247,6 +247,9 @@ tytest_sb_trim(void)
    assert(strncmp(sb.buf, "sb_trim_spaces", sb.len) == 0);
 
    ty_sb_free(&sb);
+   /* on empty */
+   ty_sb_spaces_rtrim(&sb);
+   ty_sb_spaces_ltrim(&sb);
    return 0;
 }
 
@@ -272,10 +275,39 @@ tytest_sb_gap(void)
    assert(ty_sb_prepend(&sb, ">>>>>>", strlen(">>>>>>")) == 0);
    assert(sb.len == strlen(data) + 6);
    assert(strncmp(sb.buf,">>>>>>alpha", 6+5) == 0);
+   ty_sb_free(&sb);
+
+   /** add that realloc, with gap */
+   assert(ty_sb_add(&sb, "foobar", strlen("foobar")) == 0);
+   ty_sb_lskip(&sb, 3);
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
 
    ty_sb_free(&sb);
    return 0;
 }
+
+static int
+tytest_sb_steal(void)
+{
+   struct ty_sb sb = {};
+   const char *data = "foobar foobar";
+   char *buf;
+   assert(ty_sb_steal_buf(&sb) == NULL);
+
+   /* with gap */
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   ty_sb_lskip(&sb, 7);
+   buf = ty_sb_steal_buf(&sb);
+   assert(strlen(buf) == strlen("foobar"));
+   assert(sb.buf == NULL);
+   assert(sb.len == 0);
+   assert(sb.alloc == 0);
+   assert(sb.gap == 0);
+   free(buf);
+   ty_sb_free(&sb);
+   return 0;
+}
+
 
 int
 tytest_sb(void)
@@ -283,6 +315,7 @@ tytest_sb(void)
    assert(tytest_sb_skip() == 0);
    assert(tytest_sb_trim() == 0);
    assert(tytest_sb_gap() == 0);
+   assert(tytest_sb_steal() == 0);
    return 0;
 }
 #endif
