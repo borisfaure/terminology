@@ -28,4 +28,9 @@ test_pointer_canvas_xy_get(int *mx,
 void test_set_mouse_pointer(int mx, int my);
 #endif
 
+
+/* Unit tests */
+typedef int (*tytest_func)(void);
+int tytest_dummy(void);
+
 #endif

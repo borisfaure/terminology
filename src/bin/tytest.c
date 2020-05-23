@@ -14,11 +14,82 @@
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
+#include "tytest.h"
 #include "tytest_common.h"
 
 #include "md5/md5.h"
 
 int _log_domain = -1;
+
+/* {{{ Unit tests */
+
+static struct {
+     const char *name;
+     tytest_func func;
+} _tytests[] = {
+       { "dummy", tytest_dummy },
+       { NULL, NULL},
+};
+
+static int
+_run_this_tytest(const char *name, tytest_func func)
+{
+   int res;
+   fprintf(stderr, "\033[0m%s...", name);
+   res = func();
+   fprintf(stderr, " %s\n", res == 0 ? "\033[32m✔" : "\033[31;1m×");
+   return res;
+}
+
+static tytest_func
+_find_tytest(const char *name)
+{
+   int ntests = (sizeof(_tytests) / sizeof(_tytests[0])) - 1;
+   int i;
+
+   for (i = 0; i < ntests; i++)
+     {
+        if (strcmp(name, _tytests[i].name) == 0)
+          return _tytests[i].func;
+     }
+   return NULL;
+}
+
+static int
+_run_all_tytests(void)
+{
+   int ntests = (sizeof(_tytests) / sizeof(_tytests[0])) - 1;
+   int i, res = 0;
+
+   for (i = 0; res == 0 && i < ntests; i++)
+     res = _run_this_tytest(_tytests[i].name, _tytests[i].func);
+   return res;
+}
+
+static int
+_run_tytests(int argc, char **argv)
+{
+   int i, res = 0;
+
+   for (i = 1; res == 0 && i < argc; i++)
+     {
+        if (strncmp(argv[i], "all", strlen("all")) == 0)
+          res = _run_all_tytests();
+        else
+          {
+             tytest_func func = _find_tytest(argv[i]);
+             if (!func)
+               {
+                  fprintf(stderr, "can not find test named '%s'\n", argv[i]);
+                  return -1;
+               }
+             res = _run_this_tytest(argv[i], func);
+          }
+     }
+   return res;
+}
+
+/* }}} */
 
 typedef struct _Termpty_Tests
 {
@@ -122,8 +193,11 @@ _tytest_checksum(Termpty *ty)
 
 
 int
-main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+main(int argc, char **argv)
 {
+   if (argc > 1)
+     return _run_tytests(argc, argv);
+
    eina_init();
 
    _log_domain = eina_log_domain_register("tytest", NULL);

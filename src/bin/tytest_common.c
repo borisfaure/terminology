@@ -445,3 +445,10 @@ tytest_common_set_fd(int fd)
    _ty.fd = fd;
    assert(_ty.fd >= 0);
 }
+
+/* dummy unit test */
+int
+tytest_dummy(void)
+{
+   return 0;
+}
