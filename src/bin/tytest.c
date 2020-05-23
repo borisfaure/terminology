@@ -15,6 +15,7 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "tytest.h"
+#include "unit_tests.h"
 #include "tytest_common.h"
 
 #include "md5/md5.h"
@@ -28,6 +29,7 @@ static struct {
      tytest_func func;
 } _tytests[] = {
        { "dummy", tytest_dummy },
+       { "sb", tytest_sb},
        { NULL, NULL},
 };
 

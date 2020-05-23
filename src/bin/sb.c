@@ -1,9 +1,15 @@
 #include "private.h"
-#include "sb.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+
+#include "sb.h"
+
+#if defined(ENABLE_TESTS)
+#include "unit_tests.h"
+#endif
 
 int
 ty_sb_add(struct ty_sb *sb, const char *s, size_t len)
@@ -31,7 +37,7 @@ ty_sb_add(struct ty_sb *sb, const char *s, size_t len)
 }
 
 int
-ty_sb_prepend(struct ty_sb *sb, const char *s, size_t  len)
+ty_sb_prepend(struct ty_sb *sb, const char *s, size_t len)
 {
    if (len >= sb->gap)
      {
@@ -127,8 +133,10 @@ ty_sb_steal_buf(struct ty_sb *sb)
 }
 
 void
-ty_sb_lskip(struct ty_sb *sb, int len)
+ty_sb_lskip(struct ty_sb *sb, size_t len)
 {
+   if (len >= sb->len)
+     len = sb->len;
    sb->len -= len;
    if (sb->len)
      {
@@ -144,10 +152,13 @@ ty_sb_lskip(struct ty_sb *sb, int len)
 }
 
 void
-ty_sb_rskip(struct ty_sb *sb, int len)
+ty_sb_rskip(struct ty_sb *sb, size_t len)
 {
+   if (len >= sb->len)
+     len = sb->len;
    sb->len -= len;
-   sb->buf[sb->len] = '\0';
+   if (sb->alloc)
+     sb->buf[sb->len] = '\0';
 }
 
 void
@@ -160,3 +171,117 @@ ty_sb_free(struct ty_sb *sb)
    sb->gap = sb->len = sb->alloc = 0;
    sb->buf = NULL;
 }
+
+#if defined(ENABLE_TESTS)
+static int
+tytest_sb_skip(void)
+{
+   struct ty_sb sb = {};
+   const char *data = "foobar";
+
+   /* lskip normal */
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   ty_sb_lskip(&sb, 3);
+   assert(sb.len == strlen(data) - 3);
+   assert(sb.gap == 3);
+   assert(strncmp(sb.buf, data+3, sb.len) == 0);
+   /* lskip too large */
+   ty_sb_lskip(&sb, 30);
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+   ty_sb_free(&sb);
+
+   /* lskip all */
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   ty_sb_lskip(&sb, strlen(data));
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+   ty_sb_free(&sb);
+   /* lskip empty */
+   ty_sb_lskip(&sb, 3);
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+
+   /* rskip normal */
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   ty_sb_rskip(&sb, 3);
+   assert(sb.len == strlen(data) - 3);
+   assert(sb.gap == 0);
+   assert(strncmp(sb.buf, data, sb.len) == 0);
+   /* rskip too large */
+   ty_sb_rskip(&sb, 30);
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+   ty_sb_free(&sb);
+
+   /* rskip all */
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   ty_sb_rskip(&sb, strlen(data));
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+   ty_sb_free(&sb);
+   /* rskip empty */
+   ty_sb_rskip(&sb, 3);
+   assert(sb.len == 0);
+   assert(sb.gap == 0);
+
+   return 0;
+}
+
+static int
+tytest_sb_trim(void)
+{
+   struct ty_sb sb = {};
+
+   assert(ty_sb_add(&sb,
+                    " \f \t sb_trim_spaces \t ",
+                    strlen(" \f \t sb_trim_spaces \t ")) == 0);
+
+   ty_sb_spaces_ltrim(&sb);
+   assert(sb.gap == 5);
+   assert(strncmp(sb.buf, "sb", 2) == 0);
+   ty_sb_spaces_rtrim(&sb);
+   assert(sb.gap == 5);
+   assert(sb.len == strlen("sb_trim_spaces"));
+   assert(strncmp(sb.buf, "sb_trim_spaces", sb.len) == 0);
+
+   ty_sb_free(&sb);
+   return 0;
+}
+
+static int
+tytest_sb_gap(void)
+{
+   struct ty_sb sb = {};
+   const char *data = "alpha bravo charlie delta";
+
+   assert(ty_sb_add(&sb, data, strlen(data)) == 0);
+   /* prepend with no gap */
+   assert(ty_sb_prepend(&sb, ">>>", strlen(">>>")) == 0);
+   assert(sb.len == strlen(data) + 3);
+   assert(strncmp(sb.buf,">>>alpha", 3+5) == 0);
+   /* make gap */
+   ty_sb_lskip(&sb, 3);
+   /* prepend with enough gap */
+   assert(ty_sb_prepend(&sb, "!!", strlen("!!")) == 0);
+   assert(strncmp(sb.buf,"!!alpha", 2+5) == 0);
+   /* make gap larger */
+   ty_sb_lskip(&sb, 2);
+   /* prepend with not enough gap */
+   assert(ty_sb_prepend(&sb, ">>>>>>", strlen(">>>>>>")) == 0);
+   assert(sb.len == strlen(data) + 6);
+   assert(strncmp(sb.buf,">>>>>>alpha", 6+5) == 0);
+
+   ty_sb_free(&sb);
+   return 0;
+}
+
+int
+tytest_sb(void)
+{
+   assert(tytest_sb_skip() == 0);
+   assert(tytest_sb_trim() == 0);
+   assert(tytest_sb_gap() == 0);
+   return 0;
+}
+#endif

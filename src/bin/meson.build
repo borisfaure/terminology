@@ -78,6 +78,7 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'utf8.c', 'utf8.h',
                   'utils.c', 'utils.h',
                   'md5/md5.c', 'md5/md5.h',
+                  'unit_tests.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tytest.c', 'tytest.h']
 
