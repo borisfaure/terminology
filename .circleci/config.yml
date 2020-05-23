@@ -112,6 +112,7 @@ jobs:
           command: |
             cd /terminology
             tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest all
       - run:
           name: codecov
           command: |
@@ -149,6 +150,7 @@ jobs:
           command: |
             cd /terminology
             tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest all
   build_full_clang_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
@@ -193,6 +195,7 @@ jobs:
           command: |
             cd /terminology
             tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest all
 path: /terminology
 workflows:
   version: 2
