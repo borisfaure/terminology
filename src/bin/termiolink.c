@@ -1,5 +1,6 @@
 #include "private.h"
 #include <Elementary.h>
+#include <assert.h>
 #include "termpty.h"
 #include "backlog.h"
 #include "termiolink.h"
@@ -615,35 +616,64 @@ end:
    return s;
 }
 
+__attribute__((const))
 static Eina_Bool
 _is_authorized_in_color(const int codepoint)
 {
-   switch (codepoint)
+   static const Eina_Unicode authorized[] = {
+        '\t',
+        ' ',
+        '#',
+        '(',
+        ')',
+        '+',
+        ',',
+        '/',
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        ':',
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'l',
+        'n',
+        'o',
+        'r',
+        's',
+        't',
+        'u',
+   };
+   size_t imax = (sizeof(authorized) / sizeof(authorized[0])) - 1,
+          imin = 0;
+   size_t imaxmax = imax;
+
+   while (imax >= imin)
      {
-      case '#': EINA_FALLTHROUGH;
-      case '0': EINA_FALLTHROUGH;
-      case '1': EINA_FALLTHROUGH;
-      case '2': EINA_FALLTHROUGH;
-      case '3': EINA_FALLTHROUGH;
-      case '4': EINA_FALLTHROUGH;
-      case '5': EINA_FALLTHROUGH;
-      case '6': EINA_FALLTHROUGH;
-      case '7': EINA_FALLTHROUGH;
-      case '8': EINA_FALLTHROUGH;
-      case '9': EINA_FALLTHROUGH;
-      case 'a': EINA_FALLTHROUGH;
-      case 'A': EINA_FALLTHROUGH;
-      case 'b': EINA_FALLTHROUGH;
-      case 'B': EINA_FALLTHROUGH;
-      case 'c': EINA_FALLTHROUGH;
-      case 'C': EINA_FALLTHROUGH;
-      case 'd': EINA_FALLTHROUGH;
-      case 'D': EINA_FALLTHROUGH;
-      case 'e': EINA_FALLTHROUGH;
-      case 'E': EINA_FALLTHROUGH;
-      case 'f': EINA_FALLTHROUGH;
-      case 'F':
-         return EINA_TRUE;
+        size_t imid = (imin + imax) / 2;
+
+        if (authorized[imid] == codepoint) return EINA_TRUE;
+        else if (authorized[imid] < codepoint) imin = imid + 1;
+        else imax = imid - 1;
+        if (imax > imaxmax) break;
      }
    return EINA_FALSE;
 }
@@ -687,13 +717,228 @@ _parse_2hex(const char *s, uint8_t *v)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_parse_sharp_color(struct ty_sb *sb,
+                   uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   uint8_t r, g, b, a = 255;
+
+   /* skip sharp */
+   ty_sb_lskip(sb, 1);
+   switch (sb->len)
+     {
+      case 3:
+         if ((!_parse_hex(sb->buf[0], &r)) ||
+             (!_parse_hex(sb->buf[1], &g)) ||
+             (!_parse_hex(sb->buf[2], &b)))
+           return EINA_FALSE;
+         r <<= 4;
+         g <<= 4;
+         b <<= 4;
+         break;
+      case 4:
+         if ((!_parse_hex(sb->buf[0], &r)) ||
+             (!_parse_hex(sb->buf[1], &g)) ||
+             (!_parse_hex(sb->buf[2], &b)) ||
+             (!_parse_hex(sb->buf[3], &a)))
+           return EINA_FALSE;
+         r <<= 4;
+         g <<= 4;
+         b <<= 4;
+         a <<= 4;
+         break;
+      case 6:
+         if ((!_parse_2hex(&sb->buf[0], &r)) ||
+             (!_parse_2hex(&sb->buf[2], &g)) ||
+             (!_parse_2hex(&sb->buf[4], &b)))
+           return EINA_FALSE;
+         break;
+      case 8:
+         if ((!_parse_2hex(&sb->buf[0], &r)) ||
+             (!_parse_2hex(&sb->buf[2], &g)) ||
+             (!_parse_2hex(&sb->buf[4], &b)) ||
+             (!_parse_2hex(&sb->buf[6], &a)))
+           return EINA_FALSE;
+         break;
+      default:
+         return EINA_FALSE;
+     }
+   *rp = r;
+   *gp = g;
+   *bp = b;
+   *ap = a;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_parse_uint8(struct ty_sb *sb,
+             uint8_t *vp)
+{
+   uint16_t v = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!sb->len) return EINA_FALSE;
+
+   while (sb->len && v < 255 && sb->buf[0] >= '0' && sb->buf[0] <= '9')
+     {
+        v = (v * 10) + sb->buf[0] - '0';
+        ty_sb_lskip(sb, 1);
+        ret = EINA_TRUE;
+     }
+   if (v > 255)
+     return EINA_FALSE;
+
+   *vp = v;
+   return ret;
+}
+
+static Eina_Bool
+_parse_edc_color(struct ty_sb *sb,
+                 uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   uint8_t r = 0, g = 0, b = 0, a = 255;
+
+   /* skip color */
+   ty_sb_lskip(sb, 5);
+   if (sb->buf[0] != ':')
+     ty_sb_lskip(sb, 1);
+   ty_sb_lskip(sb, 1); /* skip ':' */
+   ty_sb_spaces_ltrim(sb);
+
+   if (!sb->len) return EINA_FALSE;
+   if (sb->buf[0] == '#')
+     return _parse_sharp_color(sb, rp, gp, bp, ap);
+
+   if (!_parse_uint8(sb, &r)) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!_parse_uint8(sb, &g)) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!_parse_uint8(sb, &b)) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!_parse_uint8(sb, &a)) return EINA_FALSE;
+
+   *rp = r;
+   *gp = g;
+   *bp = b;
+   *ap = a;
+   return EINA_TRUE;
+}
+
+__attribute__((const))
+static Eina_Bool
+_is_authorized_in_color_sharp(const Eina_Unicode g)
+{
+   if (g == '#' ||
+       (g >= '0' && g <= '9') ||
+       (g >= 'A' && g <= 'F') ||
+       (g >= 'a' && g <= 'f'))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_sharp_color_find(Termpty *ty, int sc,
+                  int *x1r, int *y1r, int *x2r, int *y2r,
+                  uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   int x1 = *x1r, y1 = *y1r, x2 = *x2r, y2 = *y2r;
+   Eina_Bool goback = EINA_TRUE,
+             goforward = EINA_FALSE;
+   struct ty_sb sb = {.buf = NULL, .gap = 0, .len = 0, .alloc = 0};
+   int res;
+   char txt[8];
+   int txtlen = 0;
+   Eina_Bool found = EINA_FALSE;
+   int codepoint;
+   uint8_t r, g, b, a = 255;
+
+   res = _txt_at(ty, &x1, &y1, txt, &txtlen, &codepoint);
+   if ((res != 0) || (txtlen == 0))
+     goto end;
+   if (!_is_authorized_in_color_sharp(codepoint))
+     goto end;
+   res = ty_sb_add(&sb, txt, txtlen);
+   if (res < 0) goto end;
+
+   while (goback && sb.len <= 9)
+     {
+        int new_x1 = x1, new_y1 = y1;
+
+        res = _txt_prev_at(ty, &new_x1, &new_y1, txt, &txtlen, &codepoint);
+        if ((res != 0) || (txtlen == 0))
+          {
+             goback = EINA_FALSE;
+             goforward = EINA_TRUE;
+             break;
+          }
+        res = ty_sb_prepend(&sb, txt, txtlen);
+        if (res < 0) goto end;
+        if (!_is_authorized_in_color_sharp(codepoint))
+          {
+             ty_sb_lskip(&sb, txtlen);
+             goback = EINA_FALSE;
+             goforward = EINA_TRUE;
+             break;
+          }
+
+        x1 = new_x1;
+        y1 = new_y1;
+     }
+
+   while (goforward && sb.len <= 9)
+     {
+        int new_x2 = x2, new_y2 = y2;
+
+        /* Check if the previous char is a delimiter */
+        res = _txt_next_at(ty, &new_x2, &new_y2, txt, &txtlen, &codepoint);
+        if ((res != 0) || (txtlen == 0))
+          {
+             goforward = EINA_FALSE;
+             break;
+          }
+
+        if (!_is_authorized_in_color_sharp(codepoint))
+          {
+             goforward = EINA_FALSE;
+             break;
+          }
+
+        res = ty_sb_add(&sb, txt, txtlen);
+        if (res < 0) goto end;
+
+        x2 = new_x2;
+        y2 = new_y2;
+     }
+
+   if (sb.buf[0] == '#')
+     {
+        if (!_parse_sharp_color(&sb, &r, &g, &b, &a))
+          goto end;
+        found = EINA_TRUE;
+     }
+   end:
+   ty_sb_free(&sb);
+   if (found)
+     {
+        if (rp) *rp = r;
+        if (gp) *gp = g;
+        if (bp) *bp = b;
+        if (ap) *ap = a;
+        if (x1r) *x1r = x1;
+        if (y1r) *y1r = y1 + sc;
+        if (x2r) *x2r = x2;
+        if (y2r) *y2r = y2 + sc;
+     }
+   return found;
+}
+
+
 Eina_Bool
 termio_color_find(const Evas_Object *obj, int cx, int cy,
                   int *x1r, int *y1r, int *x2r, int *y2r,
                   uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
 {
    int x1, x2, y1, y2, w = 0, h = 0, sc;
-   //const char authorized[] = "#0123456789aAbBcCdDeEfFrghsoltun() ,+/";
    Eina_Bool goback = EINA_TRUE,
              goforward = EINA_FALSE;
    struct ty_sb sb = {.buf = NULL, .gap = 0, .len = 0, .alloc = 0};
@@ -704,7 +949,6 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
    Eina_Bool found = EINA_FALSE;
    int codepoint;
    uint8_t r, g, b, a = 255;
-
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ty, EINA_FALSE);
 
@@ -720,7 +964,11 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
    y1 -= sc;
    y2 -= sc;
 
-   /* TODO: boris */
+   found = _sharp_color_find(ty, sc, &x1, &y1, &x2, &y2,
+                             &r, &g, &b, &a);
+   if (found)
+     goto end;
+
    res = _txt_at(ty, &x1, &y1, txt, &txtlen, &codepoint);
    if ((res != 0) || (txtlen == 0))
      goto end;
@@ -752,6 +1000,12 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
 
         x1 = new_x1;
         y1 = new_y1;
+        if (sbstartswith(&sb, "color"))
+          {
+             goback = EINA_FALSE;
+             goforward = EINA_TRUE;
+             break;
+          }
      }
 
    while (goforward)
@@ -779,50 +1033,37 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
         y2 = new_y2;
      }
 
+   /* colors do not span multiple lines (for the moment) */
+   if (y1 != y2)
+     goto end;
+
+   /* Trim */
+   while (sb.len && (sb.buf[0] == ' ' || sb.buf[0] == '\t'))
+     {
+        sb.len--;
+        sb.buf++;
+        sb.gap++;
+        x1++;
+     }
+   while (sb.len && (sb.buf[sb.len-1] == ' ' || sb.buf[sb.len-1] == '\t'))
+     {
+        sb.len--;
+        x2--;
+     }
+
    if (!sb.len)
      goto end;
 
-   if (sb.buf[0] == '#')
+   if (sb.len > 6 && strncmp(sb.buf, "color", 5) == 0)
      {
-        ty_sb_lskip(&sb, 1);
-        switch (sb.len)
-          {
-           case 3:
-              if ((!_parse_hex(sb.buf[0], &r)) ||
-                  (!_parse_hex(sb.buf[1], &g)) ||
-                  (!_parse_hex(sb.buf[2], &b)))
-                goto end;
-              r <<= 4;
-              g <<= 4;
-              b <<= 4;
-              break;
-           case 4:
-              if ((!_parse_hex(sb.buf[0], &r)) ||
-                  (!_parse_hex(sb.buf[1], &g)) ||
-                  (!_parse_hex(sb.buf[2], &b)) ||
-                  (!_parse_hex(sb.buf[3], &a)))
-                goto end;
-              r <<= 4;
-              g <<= 4;
-              b <<= 4;
-              a <<= 4;
-              break;
-           case 6:
-              if ((!_parse_2hex(&sb.buf[0], &r)) ||
-                  (!_parse_2hex(&sb.buf[2], &g)) ||
-                  (!_parse_2hex(&sb.buf[4], &b)))
-                goto end;
-              break;
-           case 8:
-              if ((!_parse_2hex(&sb.buf[0], &r)) ||
-                  (!_parse_2hex(&sb.buf[2], &g)) ||
-                  (!_parse_2hex(&sb.buf[4], &b)) ||
-                  (!_parse_2hex(&sb.buf[6], &a)))
-                goto end;
-              break;
-           default:
-              goto end;
-          }
+        if (!_parse_edc_color(&sb, &r, &g, &b, &a))
+          goto end;
+        found = EINA_TRUE;
+     }
+   else if (sb.buf[0] == '#')
+     {
+        if (!_parse_sharp_color(&sb, &r, &g, &b, &a))
+          goto end;
         found = EINA_TRUE;
      }
 

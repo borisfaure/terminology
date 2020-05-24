@@ -19,4 +19,8 @@ void ty_sb_lskip(struct ty_sb *sb, size_t len);
 void ty_sb_rskip(struct ty_sb *sb, size_t len);
 void ty_sb_free(struct ty_sb *sb);
 
+#define sbstartswith(SB, ConstRef) \
+     (((SB)->len >= sizeof(ConstRef) -1) \
+        && (!strncmp((SB)->buf, ConstRef, sizeof(ConstRef) - 1)))
+
 #endif
