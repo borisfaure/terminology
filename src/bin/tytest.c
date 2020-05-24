@@ -29,7 +29,10 @@ static struct {
      tytest_func func;
 } _tytests[] = {
        { "dummy", tytest_dummy },
-       { "sb", tytest_sb},
+       { "sb_skip", tytest_sb_skip},
+       { "sb_trim", tytest_sb_trim},
+       { "sb_gap", tytest_sb_gap},
+       { "sb_steal", tytest_sb_steal},
        { NULL, NULL},
 };
 

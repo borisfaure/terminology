@@ -174,7 +174,7 @@ ty_sb_free(struct ty_sb *sb)
 }
 
 #if defined(BINARY_TYTEST)
-static int
+int
 tytest_sb_skip(void)
 {
    struct ty_sb sb = {};
@@ -229,7 +229,7 @@ tytest_sb_skip(void)
    return 0;
 }
 
-static int
+int
 tytest_sb_trim(void)
 {
    struct ty_sb sb = {};
@@ -253,7 +253,7 @@ tytest_sb_trim(void)
    return 0;
 }
 
-static int
+int
 tytest_sb_gap(void)
 {
    struct ty_sb sb = {};
@@ -286,7 +286,7 @@ tytest_sb_gap(void)
    return 0;
 }
 
-static int
+int
 tytest_sb_steal(void)
 {
    struct ty_sb sb = {};
@@ -305,17 +305,6 @@ tytest_sb_steal(void)
    assert(sb.gap == 0);
    free(buf);
    ty_sb_free(&sb);
-   return 0;
-}
-
-
-int
-tytest_sb(void)
-{
-   assert(tytest_sb_skip() == 0);
-   assert(tytest_sb_trim() == 0);
-   assert(tytest_sb_gap() == 0);
-   assert(tytest_sb_steal() == 0);
    return 0;
 }
 #endif
