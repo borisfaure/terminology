@@ -13,7 +13,7 @@ void tytest_common_main_loop(void);
 void tytest_common_init(void);
 void tytest_common_shutdown(void);
 void tytest_common_set_fd(int fd);
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 const char *tytest_cursor_shape_get(void);
 Termpty *tytest_termpty_get(void);
 #endif

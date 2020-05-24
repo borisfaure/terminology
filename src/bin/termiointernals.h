@@ -1,7 +1,7 @@
 #ifndef _TERMIOINTERNALS_H__
 #define _TERMIOINTERNALS_H__ 1
 
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
 typedef void Term;
 #endif
 

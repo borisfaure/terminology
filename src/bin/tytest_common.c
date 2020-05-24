@@ -12,7 +12,7 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "tytest_common.h"
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 #include "col.h"
 #include "tytest.h"
 #endif
@@ -44,7 +44,7 @@ static Termio _sd = {
      .config = NULL,
 };
 static const char *_cursor_shape = "undefined";
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
 
 const char *
@@ -294,7 +294,7 @@ termio_textgrid_get(const Evas_Object *obj EINA_UNUSED)
    return NULL;
 }
 
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 void
 test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
                           Evas_Textgrid_Palette pal,
@@ -424,7 +424,7 @@ tytest_common_init(void)
    _config = config_new();
    _sd.config = _config;
    _termpty_init(&_ty, _config);
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
    _cells = calloc(TY_H * TY_W, sizeof(Evas_Textgrid_Cell));
    assert(_cells != NULL);
 #endif
@@ -434,7 +434,7 @@ void
 tytest_common_shutdown(void)
 {
    config_del(_config);
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
    free(_cells);
 #endif
 }

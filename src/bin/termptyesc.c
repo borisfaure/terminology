@@ -10,7 +10,7 @@
 #include "termptyops.h"
 #include "termptyext.h"
 #include "utils.h"
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 #include "tytest.h"
 #endif
 
@@ -654,7 +654,7 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
    return sum;
 }
 
-#if !defined(ENABLE_FUZZING)
+#if !defined(BINARY_TYFUZZ)
 /*********************************
  * cache true color approximations
  *********************************
@@ -726,7 +726,7 @@ static uint8_t
 _approximate_truecolor_rgb(Termpty *ty, uint8_t r0, uint8_t g0, uint8_t b0)
 {
    uint8_t chosen_color = COL_DEF;
-#if defined(ENABLE_FUZZING)
+#if defined(BINARY_TYFUZZ)
    (void) ty;
    (void) r0;
    (void) g0;
@@ -3162,7 +3162,7 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
    DBG("Window manipulation: resize to %dx%d", w, h);
 
    /* ONLY FOR TESTING PURPOSE FTM */
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
      {
 #if defined(ENABLE_TEST_UI)
         Evas_Object *wn;
@@ -3575,7 +3575,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    cc++;
    return cc - c;
 unhandled:
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
    if (eina_log_domain_level_check(_termpty_log_dom, EINA_LOG_LEVEL_WARN))
      {
         int i;
@@ -4044,7 +4044,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              len = cc - c - (p - buf);
              if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
                goto err;
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
              evas_object_textgrid_palette_set(
                 termio_textgrid_get(ty->obj),
                 EVAS_TEXTGRID_PALETTE_STANDARD, 0,
@@ -4669,7 +4669,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
        last_char = c[len-1];
 
 end:
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
    if (ty->decoding_error)
      {
       int j;

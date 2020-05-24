@@ -20,11 +20,11 @@ extern int terminology_starting_up;
  * the normal 'terminology' binary.
  * This is only useful to write tests
  */
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 //#define ENABLE_TEST_UI
 #endif
 
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
 #define EINA_LOG_LEVEL_MAXIMUM (-1)
 #endif
 extern int _log_domain;

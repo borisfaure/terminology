@@ -5,7 +5,7 @@
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
 #endif
 #include <assert.h>
@@ -32,7 +32,7 @@
 // handled here at all and just passed to termio to figure it out (return
 // EINA_FALSE).
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 
 static int _mx;
 static int _my;
@@ -143,7 +143,7 @@ _handle_mouse_down(Termpty *ty,
    _tytest_arg_get(buf, &value);
    ev.flags = value;
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
    test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
 #endif
    termio_internal_mouse_down(sd, &ev, modifiers);
@@ -180,7 +180,7 @@ _handle_mouse_up(Termpty *ty,
    _tytest_arg_get(buf, &value);
    ev.flags = value;
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
    test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
 #endif
    termio_internal_mouse_up(sd, &ev, modifiers);
@@ -209,7 +209,7 @@ _handle_mouse_move(Termpty *ty,
    /* MODIFIERS */
    _tytest_modifiers_get(buf, &modifiers);
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
    test_set_mouse_pointer(ev.cur.canvas.x, ev.cur.canvas.y);
 #endif
    termio_internal_mouse_move(sd, &ev, modifiers);
@@ -247,7 +247,7 @@ _handle_mouse_wheel(Termpty *ty,
    /* MODIFIERS */
    _tytest_modifiers_get(buf, &modifiers);
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
    test_set_mouse_pointer(ev.canvas.x, ev.canvas.y);
 #endif
    termio_internal_mouse_wheel(sd, &ev, modifiers);
@@ -466,7 +466,7 @@ tytest_handle_escape_codes(Termpty *ty,
 }
 #endif
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 #define ARG_USED_FOR_TESTS
 #else
 #define ARG_USED_FOR_TESTS EINA_UNUSED
@@ -479,7 +479,7 @@ termpty_ext_handle(Termpty *ty ARG_USED_FOR_TESTS,
 {
    switch (buf[0]) // major opcode
      {
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
       case 't':
         tytest_handle_escape_codes(ty, buf + 1);
         return EINA_TRUE;

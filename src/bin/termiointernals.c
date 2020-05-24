@@ -10,7 +10,7 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
 #endif
 
@@ -2007,7 +2007,7 @@ _mouse_selection_scroll(void *data)
    if (!sd->pty->selection.makesel)
      return EINA_FALSE;
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
    test_pointer_canvas_xy_get(NULL, &my);
 #else
    evas_pointer_canvas_xy_get(evas_object_evas_get(sd->self), NULL, &my);
@@ -2089,7 +2089,7 @@ termio_internal_mouse_move(Termio *sd,
      }
    if (scroll == EINA_TRUE)
      {
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
         _mouse_selection_scroll(sd);
 #else
         if (!sd->mouse_selection_scroll_timer)
@@ -2168,7 +2168,7 @@ termio_internal_mouse_move(Termio *sd,
    /* TODO: make the following useless */
    if (sd->mouse_move_job)
      ecore_job_del(sd->mouse_move_job);
-#if !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYTEST)
    sd->mouse_move_job = ecore_job_add(termio_smart_cb_mouse_move_job, sd);
 #endif
 }

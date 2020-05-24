@@ -1,7 +1,7 @@
 #ifndef _TYTEST_H__
 #define _TYTEST_H__ 1
 
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 #define evas_object_textgrid_palette_get  test_textgrid_palette_get
 void
 test_textgrid_palette_get(const Evas_Object *obj,
@@ -20,7 +20,7 @@ void
 tytest_termio_resize(int w, int h);
 #endif
 
-#if defined(ENABLE_TESTS) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 void
 test_pointer_canvas_xy_get(int *mx,
                            int *my);

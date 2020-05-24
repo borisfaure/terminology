@@ -5,7 +5,7 @@
 #include "main.h"
 #include "col.h"
 #include "termpty.h"
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 #include "win.h"
 #endif
 #include "termiointernals.h"

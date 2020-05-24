@@ -7,7 +7,7 @@
 
 #include "sb.h"
 
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 #include "unit_tests.h"
 #endif
 
@@ -173,7 +173,7 @@ ty_sb_free(struct ty_sb *sb)
    sb->buf = NULL;
 }
 
-#if defined(ENABLE_TESTS)
+#if defined(BINARY_TYTEST)
 static int
 tytest_sb_skip(void)
 {

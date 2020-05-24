@@ -8,7 +8,7 @@
 #include "termptyops.h"
 #include "backlog.h"
 #include "keyin.h"
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 # include "win.h"
 #endif
 #include "termio.h"
@@ -320,7 +320,7 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
      }
    if (ty->cb.change.func)
      ty->cb.change.func(ty->cb.change.data);
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
    if (len <= 0)
      {
         ty->exit_code = 0;
@@ -583,7 +583,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
 
    ty->circular_offset = 0;
 
-#if defined(ENABLE_FUZZING) || defined(ENABLE_TESTS)
+#if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
    ty->fd = STDIN_FILENO;
    ty->hand_fd = ecore_main_fd_handler_add(ty->fd,
                                            ECORE_FD_READ | ECORE_FD_ERROR,
@@ -1183,7 +1183,7 @@ termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
-#if defined(ENABLE_FUZZING)
+#if defined(BINARY_TYFUZZ)
    return;
 #endif
    int res = ty_sb_add(&ty->write_buffer, input, len);
@@ -1778,7 +1778,7 @@ term_link_free(Termpty *ty, Term_Link *link)
    /* Remove from bitmap */
    hl_bitmap_clear_bit(ty, id);
 }
-#if !defined(ENABLE_FUZZING) && !defined(ENABLE_TESTS)
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 int
 termpty_color_class_get(Termpty *ty, const char *key,
                         int *r, int *g, int *b, int *a)
