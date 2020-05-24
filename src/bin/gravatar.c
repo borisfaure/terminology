@@ -6,7 +6,7 @@
 #include "config.h"
 #include "termio.h"
 #include "media.h"
-#include "md5/md5.h"
+#include "md5.h"
 #include "utils.h"
 
 /* specific log domain to help debug the gravatar module */

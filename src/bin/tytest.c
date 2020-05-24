@@ -18,7 +18,7 @@
 #include "unit_tests.h"
 #include "tytest_common.h"
 
-#include "md5/md5.h"
+#include "md5.h"
 
 int _log_domain = -1;
 
