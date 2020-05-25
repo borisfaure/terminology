@@ -33,6 +33,10 @@ static struct {
        { "sb_trim", tytest_sb_trim},
        { "sb_gap", tytest_sb_gap},
        { "sb_steal", tytest_sb_steal},
+       { "color_parse_hex", tytest_color_parse_hex},
+       { "color_parse_2hex", tytest_color_parse_2hex},
+       { "color_parse_sharp", tytest_color_parse_sharp},
+       { "color_parse_uint8", tytest_color_parse_uint8},
        { NULL, NULL},
 };
 

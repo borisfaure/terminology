@@ -723,7 +723,9 @@ _parse_sharp_color(struct ty_sb *sb,
 {
    uint8_t r, g, b, a = 255;
 
-   /* skip sharp */
+   /* sharp */
+   if (sb->buf[0] != '#')
+     return EINA_FALSE;
    ty_sb_lskip(sb, 1);
    switch (sb->len)
      {
@@ -1083,3 +1085,204 @@ end:
      }
    return found;
 }
+
+
+#if defined(BINARY_TYTEST)
+int
+tytest_color_parse_hex(void)
+{
+   uint8_t v = 42;
+
+   assert(_parse_hex('3', &v) == EINA_TRUE);
+   assert(v == 3);
+
+   assert(_parse_hex('b', &v) == EINA_TRUE);
+   assert(v == 11);
+
+   assert(_parse_hex('F', &v) == EINA_TRUE);
+   assert(v == 15);
+
+   assert(_parse_hex('@', &v) == EINA_FALSE);
+   assert(_parse_hex('#', &v) == EINA_FALSE);
+   assert(_parse_hex('G', &v) == EINA_FALSE);
+   assert(_parse_hex('_', &v) == EINA_FALSE);
+   assert(_parse_hex('g', &v) == EINA_FALSE);
+   assert(_parse_hex('~', &v) == EINA_FALSE);
+
+   return 0;
+}
+
+int
+tytest_color_parse_2hex(void)
+{
+   uint8_t v = 42;
+
+   assert(_parse_2hex("03", &v) == EINA_TRUE);
+   assert(v == 3);
+
+   assert(_parse_2hex("aF", &v) == EINA_TRUE);
+   assert(v == 175);
+
+   assert(_parse_2hex("44", &v) == EINA_TRUE);
+   assert(v == 68);
+
+   assert(_parse_2hex("gg", &v) == EINA_FALSE);
+   assert(_parse_2hex("@3", &v) == EINA_FALSE);
+   assert(_parse_2hex("#3", &v) == EINA_FALSE);
+   assert(_parse_2hex("G3", &v) == EINA_FALSE);
+   assert(_parse_2hex("_3", &v) == EINA_FALSE);
+   assert(_parse_2hex("~3", &v) == EINA_FALSE);
+   return 0;
+}
+
+int
+tytest_color_parse_sharp(void)
+{
+   struct ty_sb sb = {};
+   uint8_t r = 0, g = 0, b = 0, a = 0;
+
+   /* 3 letters */
+   assert(TY_SB_ADD(&sb, "#fab") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 240 && g == 160 && b == 176 && a == 255);
+   ty_sb_free(&sb);
+
+   /* 4 letters */
+   assert(TY_SB_ADD(&sb, "#2345") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 32 && g == 48 && b == 64 && a == 80);
+   ty_sb_free(&sb);
+
+   /* 6 letters */
+   assert(TY_SB_ADD(&sb, "#decfab") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 222 && g == 207 && b == 171 && a == 255);
+   ty_sb_free(&sb);
+
+   /* 8 letters */
+   assert(TY_SB_ADD(&sb, "#fabdec86") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 250 && g == 189 && b == 236 && a == 134);
+   ty_sb_free(&sb);
+
+   /* upper case */
+   assert(TY_SB_ADD(&sb, "#DECFAB") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 222 && g == 207 && b == 171 && a == 255);
+   ty_sb_free(&sb);
+
+   /* mixed case */
+   assert(TY_SB_ADD(&sb, "#fAbDeC") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 250 && g == 189 && b == 236 && a == 255);
+   ty_sb_free(&sb);
+
+   /* Invalid*/
+   /* improper start */
+   assert(TY_SB_ADD(&sb, "~decfab") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   /* improper ending */
+   assert(TY_SB_ADD(&sb, "#decfab;") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   /* invalid hex */
+   assert(TY_SB_ADD(&sb, "#dgc") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dgca") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dgcaca") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dgcacaca") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dgcacaca") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   /* invalid length */
+   assert(TY_SB_ADD(&sb, "#a") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#da") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dadad") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dadadad") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "#dadadadad") == 0);
+   assert(_parse_sharp_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+   return 0;
+}
+
+int
+tytest_color_parse_uint8(void)
+{
+   struct ty_sb sb = {};
+   uint8_t v = 0;
+
+   /* 1 digit (with/without ending) */
+   assert(TY_SB_ADD(&sb, "3 ") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 3);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "4") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 4);
+   ty_sb_free(&sb);
+
+   /* 2 digit (with/without ending) */
+   assert(TY_SB_ADD(&sb, "12 ") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 12);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "34") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 34);
+   ty_sb_free(&sb);
+
+   /* 3 digit (with/without ending) */
+   assert(TY_SB_ADD(&sb, "123 ") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 123);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "234") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 234);
+   ty_sb_free(&sb);
+
+   /* 0 padded */
+   assert(TY_SB_ADD(&sb, "012") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 12);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "007") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 7);
+   ty_sb_free(&sb);
+
+   /* too large */
+   assert(TY_SB_ADD(&sb, "256") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_FALSE);
+   ty_sb_free(&sb);
+   /* too long */
+   assert(TY_SB_ADD(&sb, "1234") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_FALSE);
+   ty_sb_free(&sb);
+   /* not a digit */
+   assert(TY_SB_ADD(&sb, "a") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_FALSE);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, ".") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_FALSE);
+   ty_sb_free(&sb);
+
+   return 0;
+}
+#endif
