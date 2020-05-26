@@ -628,189 +628,173 @@ __attribute__((const))
 static Eina_Bool
 _codepoint_is_wordsep(const Eina_Unicode g)
 {
-   /* TODO: use bitmaps to speed things up */
-   // http://en.wikipedia.org/wiki/Asterisk
-   // http://en.wikipedia.org/wiki/Comma
-   // http://en.wikipedia.org/wiki/Interpunct
-   // http://en.wikipedia.org/wiki/Bracket
-   static const Eina_Unicode wordsep[] =
-     {
-       '\'',
-       '(',
-       ')',
-       '*',
-       ',',
-       ';',
-       '=',
-       '?',
-       '[',
-       '\\',
-       ']',
-       '^',
-       '`',
-       '{',
-       '|',
-       '}',
-       0x00a0,
-       0x00ab,
-       0x00b7,
-       0x00bb,
-       0x0294,
-       0x02bb,
-       0x02bd,
-       0x02d0,
-       0x0312,
-       0x0313,
-       0x0314,
-       0x0315,
-       0x0326,
-       0x0387,
-       0x055d,
-       0x055e,
-       0x060c,
-       0x061f,
-       0x066d,
-       0x07fb,
-       0x1363,
-       0x1367,
-       0x14fe,
-       0x1680,
-       0x1802,
-       0x1808,
-       0x180e,
-       0x2000,
-       0x2001,
-       0x2002,
-       0x2003,
-       0x2004,
-       0x2005,
-       0x2006,
-       0x2007,
-       0x2008,
-       0x2009,
-       0x200a,
-       0x200b,
-       0x2018,
-       0x2019,
-       0x201a,
-       0x201b,
-       0x201c,
-       0x201d,
-       0x201e,
-       0x201f,
-       0x2022,
-       0x2027,
-       0x202f,
-       0x2039,
-       0x203a,
-       0x203b,
-       0x203d,
-       0x2047,
-       0x2048,
-       0x2049,
-       0x204e,
-       0x205f,
-       0x2217,
-       0x225f,
-       0x2308,
-       0x2309,
-       0x2420,
-       0x2422,
-       0x2423,
-       0x2722,
-       0x2723,
-       0x2724,
-       0x2725,
-       0x2731,
-       0x2732,
-       0x2733,
-       0x273a,
-       0x273b,
-       0x273c,
-       0x273d,
-       0x2743,
-       0x2749,
-       0x274a,
-       0x274b,
-       0x2a7b,
-       0x2a7c,
-       0x2cfa,
-       0x2e2e,
-       0x2e2e,
-       0x3000,
-       0x3001,
-       0x3008,
-       0x3009,
-       0x300a,
-       0x300b,
-       0x300c,
-       0x300c,
-       0x300d,
-       0x300d,
-       0x300e,
-       0x300f,
-       0x3010,
-       0x3011,
-       0x301d,
-       0x301e,
-       0x301f,
-       0x30fb,
-       0xa60d,
-       0xa60f,
-       0xa6f5,
-       0xe0a0,
-       0xe0b0,
-       0xe0b2,
-       0xfe10,
-       0xfe41,
-       0xfe42,
-       0xfe43,
-       0xfe44,
-       0xfe50,
-       0xfe51,
-       0xfe56,
-       0xfe61,
-       0xfe62,
-       0xfe63,
-       0xfeff,
-       0xff02,
-       0xff07,
-       0xff08,
-       0xff09,
-       0xff0a,
-       0xff0c,
-       0xff1b,
-       0xff1c,
-       0xff1e,
-       0xff1f,
-       0xff3b,
-       0xff3d,
-       0xff5b,
-       0xff5d,
-       0xff62,
-       0xff63,
-       0xff64,
-       0xff65,
-       0xe002a
-   };
-   size_t imax = (sizeof(wordsep) / sizeof(wordsep[0])) - 1,
-          imin = 0;
-   size_t imaxmax = imax;
-
    if (g & 0x80000000)
      return EINA_TRUE;
    if (g <= '$')
      return EINA_TRUE;
 
-   while (imax >= imin)
+   // http://en.wikipedia.org/wiki/Asterisk
+   // http://en.wikipedia.org/wiki/Comma
+   // http://en.wikipedia.org/wiki/Interpunct
+   // http://en.wikipedia.org/wiki/Bracket
+   switch (g)
      {
-        size_t imid = (imin + imax) / 2;
-
-        if (wordsep[imid] == g) return EINA_TRUE;
-        else if (wordsep[imid] < g) imin = imid + 1;
-        else imax = imid - 1;
-        if (imax > imaxmax) break;
+      case '\'': return EINA_TRUE;
+      case '(': return EINA_TRUE;
+      case ')': return EINA_TRUE;
+      case '*': return EINA_TRUE;
+      case ',': return EINA_TRUE;
+      case ';': return EINA_TRUE;
+      case '=': return EINA_TRUE;
+      case '?': return EINA_TRUE;
+      case '[': return EINA_TRUE;
+      case '\\': return EINA_TRUE;
+      case ']': return EINA_TRUE;
+      case '^': return EINA_TRUE;
+      case '`': return EINA_TRUE;
+      case '{': return EINA_TRUE;
+      case '|': return EINA_TRUE;
+      case '}': return EINA_TRUE;
+      case 0x00a0: return EINA_TRUE;
+      case 0x00ab: return EINA_TRUE;
+      case 0x00b7: return EINA_TRUE;
+      case 0x00bb: return EINA_TRUE;
+      case 0x0294: return EINA_TRUE;
+      case 0x02bb: return EINA_TRUE;
+      case 0x02bd: return EINA_TRUE;
+      case 0x02d0: return EINA_TRUE;
+      case 0x0312: return EINA_TRUE;
+      case 0x0313: return EINA_TRUE;
+      case 0x0314: return EINA_TRUE;
+      case 0x0315: return EINA_TRUE;
+      case 0x0326: return EINA_TRUE;
+      case 0x0387: return EINA_TRUE;
+      case 0x055d: return EINA_TRUE;
+      case 0x055e: return EINA_TRUE;
+      case 0x060c: return EINA_TRUE;
+      case 0x061f: return EINA_TRUE;
+      case 0x066d: return EINA_TRUE;
+      case 0x07fb: return EINA_TRUE;
+      case 0x1363: return EINA_TRUE;
+      case 0x1367: return EINA_TRUE;
+      case 0x14fe: return EINA_TRUE;
+      case 0x1680: return EINA_TRUE;
+      case 0x1802: return EINA_TRUE;
+      case 0x1808: return EINA_TRUE;
+      case 0x180e: return EINA_TRUE;
+      case 0x2000: return EINA_TRUE;
+      case 0x2001: return EINA_TRUE;
+      case 0x2002: return EINA_TRUE;
+      case 0x2003: return EINA_TRUE;
+      case 0x2004: return EINA_TRUE;
+      case 0x2005: return EINA_TRUE;
+      case 0x2006: return EINA_TRUE;
+      case 0x2007: return EINA_TRUE;
+      case 0x2008: return EINA_TRUE;
+      case 0x2009: return EINA_TRUE;
+      case 0x200a: return EINA_TRUE;
+      case 0x200b: return EINA_TRUE;
+      case 0x2018: return EINA_TRUE;
+      case 0x2019: return EINA_TRUE;
+      case 0x201a: return EINA_TRUE;
+      case 0x201b: return EINA_TRUE;
+      case 0x201c: return EINA_TRUE;
+      case 0x201d: return EINA_TRUE;
+      case 0x201e: return EINA_TRUE;
+      case 0x201f: return EINA_TRUE;
+      case 0x2022: return EINA_TRUE;
+      case 0x2027: return EINA_TRUE;
+      case 0x202f: return EINA_TRUE;
+      case 0x2039: return EINA_TRUE;
+      case 0x203a: return EINA_TRUE;
+      case 0x203b: return EINA_TRUE;
+      case 0x203d: return EINA_TRUE;
+      case 0x2047: return EINA_TRUE;
+      case 0x2048: return EINA_TRUE;
+      case 0x2049: return EINA_TRUE;
+      case 0x204e: return EINA_TRUE;
+      case 0x205f: return EINA_TRUE;
+      case 0x2217: return EINA_TRUE;
+      case 0x225f: return EINA_TRUE;
+      case 0x2308: return EINA_TRUE;
+      case 0x2309: return EINA_TRUE;
+      case 0x2420: return EINA_TRUE;
+      case 0x2422: return EINA_TRUE;
+      case 0x2423: return EINA_TRUE;
+      case 0x2722: return EINA_TRUE;
+      case 0x2723: return EINA_TRUE;
+      case 0x2724: return EINA_TRUE;
+      case 0x2725: return EINA_TRUE;
+      case 0x2731: return EINA_TRUE;
+      case 0x2732: return EINA_TRUE;
+      case 0x2733: return EINA_TRUE;
+      case 0x273a: return EINA_TRUE;
+      case 0x273b: return EINA_TRUE;
+      case 0x273c: return EINA_TRUE;
+      case 0x273d: return EINA_TRUE;
+      case 0x2743: return EINA_TRUE;
+      case 0x2749: return EINA_TRUE;
+      case 0x274a: return EINA_TRUE;
+      case 0x274b: return EINA_TRUE;
+      case 0x2a7b: return EINA_TRUE;
+      case 0x2a7c: return EINA_TRUE;
+      case 0x2cfa: return EINA_TRUE;
+      case 0x2e2e: return EINA_TRUE;
+      case 0x3000: return EINA_TRUE;
+      case 0x3001: return EINA_TRUE;
+      case 0x3008: return EINA_TRUE;
+      case 0x3009: return EINA_TRUE;
+      case 0x300a: return EINA_TRUE;
+      case 0x300b: return EINA_TRUE;
+      case 0x300c: return EINA_TRUE;
+      case 0x300d: return EINA_TRUE;
+      case 0x300e: return EINA_TRUE;
+      case 0x300f: return EINA_TRUE;
+      case 0x3010: return EINA_TRUE;
+      case 0x3011: return EINA_TRUE;
+      case 0x301d: return EINA_TRUE;
+      case 0x301e: return EINA_TRUE;
+      case 0x301f: return EINA_TRUE;
+      case 0x30fb: return EINA_TRUE;
+      case 0xa60d: return EINA_TRUE;
+      case 0xa60f: return EINA_TRUE;
+      case 0xa6f5: return EINA_TRUE;
+      case 0xe0a0: return EINA_TRUE;
+      case 0xe0b0: return EINA_TRUE;
+      case 0xe0b2: return EINA_TRUE;
+      case 0xfe10: return EINA_TRUE;
+      case 0xfe41: return EINA_TRUE;
+      case 0xfe42: return EINA_TRUE;
+      case 0xfe43: return EINA_TRUE;
+      case 0xfe44: return EINA_TRUE;
+      case 0xfe50: return EINA_TRUE;
+      case 0xfe51: return EINA_TRUE;
+      case 0xfe56: return EINA_TRUE;
+      case 0xfe61: return EINA_TRUE;
+      case 0xfe62: return EINA_TRUE;
+      case 0xfe63: return EINA_TRUE;
+      case 0xfeff: return EINA_TRUE;
+      case 0xff02: return EINA_TRUE;
+      case 0xff07: return EINA_TRUE;
+      case 0xff08: return EINA_TRUE;
+      case 0xff09: return EINA_TRUE;
+      case 0xff0a: return EINA_TRUE;
+      case 0xff0c: return EINA_TRUE;
+      case 0xff1b: return EINA_TRUE;
+      case 0xff1c: return EINA_TRUE;
+      case 0xff1e: return EINA_TRUE;
+      case 0xff1f: return EINA_TRUE;
+      case 0xff3b: return EINA_TRUE;
+      case 0xff3d: return EINA_TRUE;
+      case 0xff5b: return EINA_TRUE;
+      case 0xff5d: return EINA_TRUE;
+      case 0xff62: return EINA_TRUE;
+      case 0xff63: return EINA_TRUE;
+      case 0xff64: return EINA_TRUE;
+      case 0xff65: return EINA_TRUE;
+      case 0xe002a: return EINA_TRUE;
      }
+
    return EINA_FALSE;
 }
 
