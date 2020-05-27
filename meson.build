@@ -40,6 +40,7 @@ if host_os == 'linux'
 endif
 
 efl_version = '1.20.0'
+m_dep = cc.find_library('m', required : false)
 efl_deps = ['edje',
             'elementary',
             'eina',
@@ -56,7 +57,7 @@ efl_deps = ['edje',
             'efreet',
             'ecore-con',
             'ethumb_client']
-terminology_dependencies = []
+terminology_dependencies = [ m_dep ]
 edje_cc_path = ''
 edj_targets = []
 edj_files = []
