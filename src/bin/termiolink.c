@@ -800,10 +800,18 @@ _parse_edc_color(struct ty_sb *sb,
 {
    uint8_t r = 0, g = 0, b = 0, a = 255;
 
+   ty_sb_spaces_ltrim(sb);
    /* skip color */
+   if (sb->len <= 6)
+     return EINA_FALSE;
+   if (strncmp(sb->buf, "color", 5) != 0)
+     return EINA_FALSE;
    ty_sb_lskip(sb, 5);
-   if (sb->buf[0] != ':')
+   if (sb->buf[0] == '2' || sb->buf[0] == '3')
      ty_sb_lskip(sb, 1);
+   ty_sb_spaces_ltrim(sb);
+   if (sb->buf[0] != ':')
+     return EINA_FALSE;
    ty_sb_lskip(sb, 1); /* skip ':' */
    ty_sb_spaces_ltrim(sb);
 
@@ -1257,6 +1265,12 @@ tytest_color_parse_uint8(void)
    assert(v == 234);
    ty_sb_free(&sb);
 
+   /* ending with semicolon */
+   assert(TY_SB_ADD(&sb, "42;") == 0);
+   assert(_parse_uint8(&sb, &v) == EINA_TRUE);
+   assert(v == 42);
+   ty_sb_free(&sb);
+
    /* 0 padded */
    assert(TY_SB_ADD(&sb, "012") == 0);
    assert(_parse_uint8(&sb, &v) == EINA_TRUE);
@@ -1281,6 +1295,50 @@ tytest_color_parse_uint8(void)
    ty_sb_free(&sb);
    assert(TY_SB_ADD(&sb, ".") == 0);
    assert(_parse_uint8(&sb, &v) == EINA_FALSE);
+   ty_sb_free(&sb);
+
+   return 0;
+}
+
+int
+tytest_color_parse_edc(void)
+{
+   struct ty_sb sb = {};
+   uint8_t r = 0, g = 0, b = 0, a = 0;
+
+   /* color */
+   assert(TY_SB_ADD(&sb, "  color:  51 153 255  32;") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 51 && g == 153 && b == 255 && a == 32);
+   ty_sb_free(&sb);
+
+   /* color2 */
+   assert(TY_SB_ADD(&sb, "  color2:  244  99 93 127;") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 244 && g == 99 && b == 93 && a == 127);
+   ty_sb_free(&sb);
+
+   /* color3 */
+   assert(TY_SB_ADD(&sb, "  color3:  149 181 16 234;") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 149 && g == 181 && b == 16 && a == 234);
+   ty_sb_free(&sb);
+
+   /* color: #color */
+   assert(TY_SB_ADD(&sb, "  color:  #3399ff20") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 51 && g == 153 && b == 255 && a == 32);
+   ty_sb_free(&sb);
+
+   /* with tabs */
+   assert(TY_SB_ADD(&sb, "  color\t:\t244\t99\t93\t127\t;") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 244 && g == 99 && b == 93 && a == 127);
+   ty_sb_free(&sb);
+
+   /* invalid */
+   assert(TY_SB_ADD(&sb, "  color:  COL;") == 0);
+   assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
    ty_sb_free(&sb);
 
    return 0;

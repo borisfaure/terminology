@@ -37,6 +37,7 @@ static struct {
        { "color_parse_2hex", tytest_color_parse_2hex},
        { "color_parse_sharp", tytest_color_parse_sharp},
        { "color_parse_uint8", tytest_color_parse_uint8},
+       { "color_parse_edc", tytest_color_parse_edc},
        { NULL, NULL},
 };
 
