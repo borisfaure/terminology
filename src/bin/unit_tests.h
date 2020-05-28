@@ -14,5 +14,6 @@ int tytest_color_parse_hex(void);
 int tytest_color_parse_2hex(void);
 int tytest_color_parse_sharp(void);
 int tytest_color_parse_uint8(void);
+int tytest_color_parse_edc(void);
 
 #endif

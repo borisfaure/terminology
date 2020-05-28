@@ -16,6 +16,8 @@ Eina_Bool utils_need_scale_wizard(void);
 
 #define casestartswith(str, constref) \
   (!strncasecmp(str, constref, sizeof(constref) - 1))
+#define startswith(str, constref) \
+  (!strncmp(str, constref, sizeof(constref) - 1))
 
 #if !defined(HAVE_STRCHRNUL)
 static inline char *
