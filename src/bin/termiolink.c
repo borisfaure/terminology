@@ -223,6 +223,13 @@ _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp, int *codepointp)
         cell = cells[*x];
      }
 
+   if (cell.att.tab_inserted)
+     {
+        *txtlenp = 1;
+        *codepointp = '\t';
+        txt[0] = '\t';
+        return 0;
+     }
    if ((cell.codepoint == 0) || (cell.att.link_id))
      goto empty;
 
@@ -287,6 +294,17 @@ _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
         cell = cells[*x];
      }
 
+   if (cell.att.tab_last)
+     {
+        while (*x >= 0 && !cells[*x].att.tab_inserted)
+          (*x)--;
+        if (*x < 0)
+          goto bad;
+        *txtlenp = 1;
+        *codepointp = '\t';
+        txt[0] = '\t';
+        return 0;
+     }
    if ((cell.codepoint == 0) || (cell.att.link_id))
      goto empty;
 
@@ -302,8 +320,8 @@ empty:
    return 0;
 
 bad:
-   *txtlenp = 0;
    txt[0] = '\0';
+   *txtlenp = 0;
    return -1;
 }
 
@@ -354,6 +372,17 @@ _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
      }
 
    cell = cells[*x];
+   if (cell.att.tab_inserted)
+     {
+        while (*x < w && !cells[*x].att.tab_last)
+          (*x)++;
+        if (*x >= w)
+          goto bad;
+        *txtlenp = 1;
+        *codepointp = '\t';
+        txt[0] = '\t';
+        return 0;
+     }
    if ((cell.codepoint == 0) || (cell.att.link_id))
      goto empty;
 
