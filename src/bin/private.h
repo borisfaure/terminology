@@ -21,7 +21,7 @@ extern int terminology_starting_up;
  * This is only useful to write tests
  */
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
-//#define ENABLE_TEST_UI
+#define ENABLE_TEST_UI
 #endif
 
 #if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)

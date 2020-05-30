@@ -2038,6 +2038,9 @@ termio_cursor_to_xy(Termio *sd, Evas_Coord x, Evas_Coord y,
      *cy = 0;
    else if (*cy >= sd->grid.h)
      *cy = sd->grid.h - 1;
+#if defined(ENABLE_TEST_UI)
+   ERR("coord(x:%d, y:%d) -> grid(x:%d, y:%d)", x, y, *cx, *cy);
+#endif
 }
 
 
