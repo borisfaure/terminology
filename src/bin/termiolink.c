@@ -8,71 +8,72 @@
 #include "utf8.h"
 #include "utils.h"
 
+__attribute__((const))
 static Eina_Bool
 _isspace_unicode(const int codepoint)
 {
    switch (codepoint)
      {
       case 9: // character tabulation
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 10: // line feed
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 11: // line tabulation
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 12: // form feed
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 13: // carriage return
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 32: // space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 133: // next line
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 160: // no-break space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 5760: // ogham space mark
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 6158: // mongolian vowel separator
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8192: // en quad
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8193: // em quad
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8194: // en space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8195: // em space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8196: // three-per-em space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8197: // four-per-em space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8198: // six-per-em space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8199: // figure space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8200: // puncturation space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8201: // thin space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8202: // hair space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8203: // zero width space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8204: // zero width non-joiner
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8205: // zero width joiner
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8232: // line separator
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8233: // paragraph separator
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8239: // narrow no-break space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8287: // medium mathematical space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 8288: // word joiner
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 12288: // ideographic space
-         EINA_FALLTHROUGH;
+         return EINA_TRUE;;
       case 65279: // zero width non-breaking space
          return EINA_TRUE;
      }
@@ -524,41 +525,40 @@ termio_link_find(const Evas_Object *obj, int cx, int cy,
           }
         switch (codepoint)
           {
-           case '"':
-           case '\'':
-           case '`':
-           case '<':
-           case '>':
-           case '[':
-           case ']':
-           case '{':
-           case '}':
-           case '|':
-           case 0xab:
-           case 0xbb:
-           case 0x2018:
-           case 0x2019:
-           case 0x201b:
-           case 0x201c:
-           case 0x201d:
-           case 0x201e:
-           case 0x2039:
-           case 0x203a:
-           case 0x2308:
-           case 0x2309:
-           case 0x230a:
-           case 0x230b:
-           case 0x231c:
-           case 0x231d:
-           case 0x231e:
-           case 0x231f:
-           case 0x2329:
-           case 0x232a:
-           case 0x27e6:
-           case 0x27e7:
-           case 0x27e8:
-           case 0x27e9:
-             goto out;
+           case '"': goto out;
+           case '\'': goto out;
+           case '`': goto out;
+           case '<': goto out;
+           case '>': goto out;
+           case '[': goto out;
+           case ']': goto out;
+           case '{': goto out;
+           case '}': goto out;
+           case '|': goto out;
+           case 0xab: goto out;
+           case 0xbb: goto out;
+           case 0x2018: goto out;
+           case 0x2019: goto out;
+           case 0x201b: goto out;
+           case 0x201c: goto out;
+           case 0x201d: goto out;
+           case 0x201e: goto out;
+           case 0x2039: goto out;
+           case 0x203a: goto out;
+           case 0x2308: goto out;
+           case 0x2309: goto out;
+           case 0x230a: goto out;
+           case 0x230b: goto out;
+           case 0x231c: goto out;
+           case 0x231d: goto out;
+           case 0x231e: goto out;
+           case 0x231f: goto out;
+           case 0x2329: goto out;
+           case 0x232a: goto out;
+           case 0x27e6: goto out;
+           case 0x27e7: goto out;
+           case 0x27e8: goto out;
+           case 0x27e9: goto out;
           }
 
         res = ty_sb_add(&sb, txt, txtlen);
