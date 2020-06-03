@@ -1,6 +1,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include <assert.h>
+#include <math.h>
 #include "termpty.h"
 #include "backlog.h"
 #include "termiolink.h"
@@ -824,6 +825,192 @@ _parse_uint8(struct ty_sb *sb,
 }
 
 static Eina_Bool
+_parse_one_css_rgb_color(struct ty_sb *sb,
+                         uint8_t *vp,
+                         Eina_Bool *is_percentp)
+{
+   char *endptr_double, *endptr_long;
+   double d;
+   long int l;
+
+   if (!sb->len)
+     return EINA_FALSE;
+
+   d = strtod(sb->buf, &endptr_double);
+   l = strtol(sb->buf, &endptr_long, 0);
+   if (isnan(d) || endptr_double == sb->buf || d < 0 || l < 0)
+       return EINA_FALSE;
+   if (endptr_double > endptr_long)
+     {
+        ty_sb_lskip(sb, endptr_double - sb->buf);
+        *is_percentp = sb->len && sb->buf[0] == '%';
+        if (*is_percentp)
+          {
+             ty_sb_lskip(sb, 1);
+             if (d > 100.0)
+               return EINA_FALSE;
+             d = (255.0 * d) / 100;
+          }
+        if (d > 255)
+          return EINA_FALSE;
+        *vp = round(d);
+     }
+   else
+     {
+        ty_sb_lskip(sb, endptr_long - sb->buf);
+        *is_percentp = sb->len && sb->buf[0] == '%';
+        if (*is_percentp)
+          {
+             ty_sb_lskip(sb, 1);
+             if (l > 100)
+               return EINA_FALSE;
+             l = (255 * l) / 100;
+          }
+        if (l > 255)
+          return EINA_FALSE;
+        *vp = (uint8_t)l;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_parse_one_css_alpha(struct ty_sb *sb,
+                     uint8_t *ap)
+{
+   char *endptr_double;
+   double d;
+
+   if (!sb->len)
+     return EINA_FALSE;
+
+   d = strtod(sb->buf, &endptr_double);
+   if (isnan(d) || endptr_double == sb->buf || d < 0)
+       return EINA_FALSE;
+   ty_sb_lskip(sb, endptr_double - sb->buf);
+   if (sb->len && sb->buf[0] == '%')
+     {
+        ty_sb_lskip(sb, 1);
+        if (d > 100.0)
+          return EINA_FALSE;
+        d = (255.0 * d) / 100;
+     }
+   else
+     {
+        d *= 255.0;
+     }
+   if (d > 255)
+     return EINA_FALSE;
+   *ap = round(d);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_parse_css_hsl_color(struct ty_sb *sb,
+                     uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   uint8_t r = 0, g = 0, b = 0, a = 255;
+
+   ty_sb_spaces_ltrim(sb);
+
+   if (!sbstartswith(sb, "hsl"))
+       return EINA_FALSE;
+   ty_sb_lskip(sb, 3);
+   if (sb->buf[0] == 'a')
+       ty_sb_lskip(sb, 1);
+   if (!sb->len) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len || sb->buf[0] != '(')
+       return EINA_FALSE;
+   ty_sb_lskip(sb, 1);
+   if (!sb->len) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+
+   /* TODO: boris */
+   *rp = r;
+   *gp = g;
+   *bp = b;
+   *ap = a;
+   return EINA_TRUE;
+}
+
+
+static Eina_Bool
+_parse_css_rgb_color(struct ty_sb *sb,
+                     uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
+{
+   uint8_t r = 0, g = 0, b = 0, a = 255;
+   Eina_Bool must_be_percent, is_percent, is_functional;
+
+   ty_sb_spaces_ltrim(sb);
+
+   if (!sbstartswith(sb, "rgb"))
+       return EINA_FALSE;
+   ty_sb_lskip(sb, 3);
+   if (sb->buf[0] == 'a')
+       ty_sb_lskip(sb, 1);
+   if (!sb->len) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len || sb->buf[0] != '(')
+       return EINA_FALSE;
+   ty_sb_lskip(sb, 1);
+   if (!sb->len) return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+
+   if (!_parse_one_css_rgb_color(sb, &r, &must_be_percent))
+     return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   is_functional = (sb->buf[0] == ',');
+   if (is_functional)
+     ty_sb_lskip(sb, 1);
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+
+   if (!_parse_one_css_rgb_color(sb, &g, &is_percent))
+     return EINA_FALSE;
+   if (is_percent != must_be_percent)
+     return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (is_functional != (sb->buf[0] == ','))
+     return EINA_FALSE;
+   if (is_functional)
+     ty_sb_lskip(sb, 1);
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+
+   if (!_parse_one_css_rgb_color(sb, &b, &is_percent))
+     return EINA_FALSE;
+   if (is_percent != must_be_percent)
+     return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (sb->buf[0] == ')')
+     {
+        ty_sb_lskip(sb, 1);
+        a = 255;
+     }
+   else
+     {
+        if ((is_functional && (sb->buf[0] != ',')) ||
+            (!is_functional && (sb->buf[0] != '/')))
+          return EINA_FALSE;
+        if (!sb->len) return EINA_FALSE;
+        ty_sb_lskip(sb, 1);
+        ty_sb_spaces_ltrim(sb);
+        if (!sb->len) return EINA_FALSE;
+        if (!_parse_one_css_alpha(sb, &a))
+          return EINA_FALSE;
+        ty_sb_spaces_ltrim(sb);
+        if (sb->buf[0] != ')')
+          ty_sb_lskip(sb, 1);
+     }
+
+   *rp = r;
+   *gp = g;
+   *bp = b;
+   *ap = a;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _parse_edc_color(struct ty_sb *sb,
                  uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
 {
@@ -847,6 +1034,10 @@ _parse_edc_color(struct ty_sb *sb,
    if (!sb->len) return EINA_FALSE;
    if (sb->buf[0] == '#')
      return _parse_sharp_color(sb, rp, gp, bp, ap);
+   if (sbstartswith(sb, "rgb"))
+       return _parse_css_rgb_color(sb, rp, gp, bp, ap);
+   if (sbstartswith(sb, "hsl"))
+       return _parse_css_hsl_color(sb, rp, gp, bp, ap);
 
    if (!_parse_uint8(sb, &r)) return EINA_FALSE;
    ty_sb_spaces_ltrim(sb);
@@ -1039,7 +1230,9 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
 
         x1 = new_x1;
         y1 = new_y1;
-        if (sbstartswith(&sb, "color"))
+        if (sbstartswith(&sb, "rgb") ||
+            sbstartswith(&sb, "hsl") ||
+            sbstartswith(&sb, "color"))
           {
              goback = EINA_FALSE;
              goforward = EINA_TRUE;
@@ -1093,18 +1286,31 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
    if (!sb.len)
      goto end;
 
-   if (sb.len > 6 && strncmp(sb.buf, "color", 5) == 0)
-     {
-        if (!_parse_edc_color(&sb, &r, &g, &b, &a))
-          goto end;
-        found = EINA_TRUE;
-     }
-   else if (sb.buf[0] == '#')
+   if (sb.buf[0] == '#')
      {
         if (!_parse_sharp_color(&sb, &r, &g, &b, &a))
           goto end;
-        found = EINA_TRUE;
      }
+   else if (sbstartswith(&sb, "color"))
+     {
+        if (!_parse_edc_color(&sb, &r, &g, &b, &a))
+          goto end;
+     }
+   else if (sbstartswith(&sb, "rgb"))
+     {
+        if (!_parse_css_rgb_color(&sb, &r, &g, &b, &a))
+          goto end;
+     }
+   else if (sbstartswith(&sb, "hsl"))
+     {
+        if (!_parse_css_hsl_color(&sb, &r, &g, &b, &a))
+          goto end;
+     }
+   else
+     goto end;
+
+   found = EINA_TRUE;
+   /* TODO: right trim */
 
 end:
    termpty_backlog_unlock();
@@ -1368,6 +1574,127 @@ tytest_color_parse_edc(void)
    /* invalid */
    assert(TY_SB_ADD(&sb, "  color:  COL;") == 0);
    assert(_parse_edc_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+
+   return 0;
+}
+
+int
+tytest_color_parse_css_rgb(void)
+{
+   struct ty_sb sb = {};
+   uint8_t r = 0, g = 0, b = 0, a = 0;
+
+   /* (rgb) Functional syntax */
+   assert(TY_SB_ADD(&sb, "rgb(255,1,153)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 1 && b == 153 && a == 255);
+   ty_sb_free(&sb);
+
+   assert(TY_SB_ADD(&sb, "rgb(254, 2, 152)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 254 && g == 2 && b == 152 && a == 255);
+   ty_sb_free(&sb);
+
+   assert(TY_SB_ADD(&sb, "rgb(253, 3, 151.0)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 253 && g == 3 && b == 151 && a == 255);
+   ty_sb_free(&sb);
+
+   /* (rgb) Percents */
+   assert(TY_SB_ADD(&sb, "rgb(100%,4%,40%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 10 && b == 102 && a == 255);
+   ty_sb_free(&sb);
+
+   assert(TY_SB_ADD(&sb, "rgb(50%, 0%, 60%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 127 && g == 0 && b == 153 && a == 255);
+   ty_sb_free(&sb);
+
+   /* (rgb) ERROR! Don't mix numbers and percentages. */
+   assert(TY_SB_ADD(&sb, "rgb(100%, 0, 60%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+
+   /* (rgb) Functional syntax with alpha value */
+   assert(TY_SB_ADD(&sb, "rgb(254, 1, 150, 0)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 254 && g == 1 && b == 150 && a == 0);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgb(253, 2, 149, 1)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 253 && g == 2 && b == 149 && a == 255);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgb(252, 3, 148, 50%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 252 && g == 3 && b == 148 && a == 128);
+   ty_sb_free(&sb);
+
+   /* (rgb) Whitespace syntax */
+   assert(TY_SB_ADD(&sb, "rgb(255 0 153)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 0 && b == 153 && a == 255);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgb(254 1 152 / 0)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 254 && g == 1 && b == 152 && a == 0);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgb(253 2 151 / 100%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 253 && g == 2 && b == 151 && a == 255);
+   ty_sb_free(&sb);
+
+   /* (rgb) Functional syntax with floats value */
+   assert(TY_SB_ADD(&sb, "rgb(255, 0, 153.6, 1)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 0 && b == 154 && a == 255);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgb(1e2, .5e1, .5e0, +.25e2%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 100 && g == 5 && b == 1 && a == 64);
+   ty_sb_free(&sb);
+
+   /* (rgba) Functional syntax */
+   assert(TY_SB_ADD(&sb, "rgba(51, 170, 51, .1)") == 0); /*  10% opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 51 && g == 170 && b == 51 && a == 26);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgba(50, 171, 52, .4)") == 0); /*  40% opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 50 && g == 171 && b == 52 && a == 102);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgba(49, 172, 53, .7)") == 0); /*  70% opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 49 && g == 172 && b == 53 && a == 179);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgba(48, 173, 54,  1)") == 0); /* full opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 48 && g == 173 && b == 54 && a == 255);
+   ty_sb_free(&sb);
+
+   /* (rgba) Whitespace syntax */
+   assert(TY_SB_ADD(&sb, "rgba(51 170 51 / 0.4)") == 0); /*  40% opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 51 && g == 170 && b == 51 && a == 102);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgba(50 171 50 / 70%)") == 0); /*  40% opaque green */
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 50 && g == 171 && b == 50 && a == 179);
+   ty_sb_free(&sb);
+   /* (rgba) ERROR! invalid alpha */
+   assert(TY_SB_ADD(&sb, "rgba(51 170 51 / 40)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_FALSE);
+   ty_sb_free(&sb);
+
+   /* (rgba) Functional syntax with floats value */
+   assert(TY_SB_ADD(&sb, "rgba(255, 0, 153.6, 1)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 0 && b == 154 && a == 255);
+   ty_sb_free(&sb);
+   assert(TY_SB_ADD(&sb, "rgba(1e2, .5e1, .5e0, +.25e2%)") == 0);
+   assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 100 && g == 5 && b == 1 && a == 64);
    ty_sb_free(&sb);
 
    return 0;
