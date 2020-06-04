@@ -650,60 +650,49 @@ __attribute__((const))
 static Eina_Bool
 _is_authorized_in_color(const int codepoint)
 {
-   static const Eina_Unicode authorized[] = {
-        '\t',
-        ' ',
-        '#',
-        '(',
-        ')',
-        '+',
-        ',',
-        '/',
-        '0',
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9',
-        ':',
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-        'F',
-        'a',
-        'b',
-        'c',
-        'd',
-        'e',
-        'f',
-        'g',
-        'h',
-        'l',
-        'n',
-        'o',
-        'r',
-        's',
-        't',
-        'u',
-   };
-   size_t imax = (sizeof(authorized) / sizeof(authorized[0])) - 1,
-          imin = 0;
-   size_t imaxmax = imax;
-
-   while (imax >= imin)
+   switch (codepoint)
      {
-        size_t imid = (imin + imax) / 2;
-
-        if (authorized[imid] == codepoint) return EINA_TRUE;
-        else if (authorized[imid] < codepoint) imin = imid + 1;
-        else imax = imid - 1;
-        if (imax > imaxmax) break;
+      case '\t': return EINA_TRUE;
+      case ' ': return EINA_TRUE;
+      case '#': return EINA_TRUE;
+      case '(': return EINA_TRUE;
+      case ')': return EINA_TRUE;
+      case '+': return EINA_TRUE;
+      case ',': return EINA_TRUE;
+      case '.': return EINA_TRUE;
+      case '/': return EINA_TRUE;
+      case '0': return EINA_TRUE;
+      case '1': return EINA_TRUE;
+      case '2': return EINA_TRUE;
+      case '3': return EINA_TRUE;
+      case '4': return EINA_TRUE;
+      case '5': return EINA_TRUE;
+      case '6': return EINA_TRUE;
+      case '7': return EINA_TRUE;
+      case '8': return EINA_TRUE;
+      case '9': return EINA_TRUE;
+      case ':': return EINA_TRUE;
+      case 'A': return EINA_TRUE;
+      case 'B': return EINA_TRUE;
+      case 'C': return EINA_TRUE;
+      case 'D': return EINA_TRUE;
+      case 'E': return EINA_TRUE;
+      case 'F': return EINA_TRUE;
+      case 'a': return EINA_TRUE;
+      case 'b': return EINA_TRUE;
+      case 'c': return EINA_TRUE;
+      case 'd': return EINA_TRUE;
+      case 'e': return EINA_TRUE;
+      case 'f': return EINA_TRUE;
+      case 'g': return EINA_TRUE;
+      case 'h': return EINA_TRUE;
+      case 'l': return EINA_TRUE;
+      case 'n': return EINA_TRUE;
+      case 'o': return EINA_TRUE;
+      case 'r': return EINA_TRUE;
+      case 's': return EINA_TRUE;
+      case 't': return EINA_TRUE;
+      case 'u': return EINA_TRUE;
      }
    return EINA_FALSE;
 }
