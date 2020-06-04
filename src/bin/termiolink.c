@@ -15,65 +15,65 @@ _isspace_unicode(const int codepoint)
    switch (codepoint)
      {
       case 9: // character tabulation
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 10: // line feed
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 11: // line tabulation
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 12: // form feed
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 13: // carriage return
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 32: // space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 133: // next line
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 160: // no-break space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 5760: // ogham space mark
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 6158: // mongolian vowel separator
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8192: // en quad
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8193: // em quad
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8194: // en space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8195: // em space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8196: // three-per-em space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8197: // four-per-em space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8198: // six-per-em space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8199: // figure space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8200: // puncturation space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8201: // thin space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8202: // hair space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8203: // zero width space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8204: // zero width non-joiner
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8205: // zero width joiner
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8232: // line separator
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8233: // paragraph separator
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8239: // narrow no-break space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8287: // medium mathematical space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 8288: // word joiner
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 12288: // ideographic space
-         return EINA_TRUE;;
+         return EINA_TRUE;
       case 65279: // zero width non-breaking space
          return EINA_TRUE;
      }
