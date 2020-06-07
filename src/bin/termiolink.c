@@ -655,8 +655,8 @@ _is_authorized_in_color(const int codepoint)
       case '\t': return EINA_TRUE;
       case ' ': return EINA_TRUE;
       case '#': return EINA_TRUE;
+      case '%': return EINA_TRUE;
       case '(': return EINA_TRUE;
-      case ')': return EINA_TRUE;
       case '+': return EINA_TRUE;
       case ',': return EINA_TRUE;
       case '.': return EINA_TRUE;
@@ -825,7 +825,7 @@ _parse_one_css_rgb_color(struct ty_sb *sb,
    if (!sb->len)
      return EINA_FALSE;
 
-   d = strtod(sb->buf, &endptr_double);
+   d = eina_convert_strtod_c(sb->buf, &endptr_double);
    l = strtol(sb->buf, &endptr_long, 0);
    if (isnan(d) || endptr_double == sb->buf || d < 0 || l < 0)
        return EINA_FALSE;
@@ -872,7 +872,7 @@ _parse_one_css_alpha(struct ty_sb *sb,
    if (!sb->len)
      return EINA_FALSE;
 
-   d = strtod(sb->buf, &endptr_double);
+   d = eina_convert_strtod_c(sb->buf, &endptr_double);
    if (isnan(d) || endptr_double == sb->buf || d < 0)
        return EINA_FALSE;
    ty_sb_lskip(sb, endptr_double - sb->buf);
@@ -989,7 +989,7 @@ _parse_css_rgb_color(struct ty_sb *sb,
           return EINA_FALSE;
         ty_sb_spaces_ltrim(sb);
         if (sb->buf[0] != ')')
-          ty_sb_lskip(sb, 1);
+          return EINA_FALSE;
      }
 
    *rp = r;
@@ -1235,23 +1235,17 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
 
         /* Check if the previous char is a delimiter */
         res = _txt_next_at(ty, &new_x2, &new_y2, txt, &txtlen, &codepoint);
-        if ((res != 0) || (txtlen == 0))
-          {
-             goforward = EINA_FALSE;
-             break;
-          }
-
-        if (!_is_authorized_in_color(codepoint))
-          {
-             goforward = EINA_FALSE;
-             break;
-          }
+        if ((res != 0) || (txtlen == 0) ||
+            (!_is_authorized_in_color(codepoint) && (codepoint != ')')))
+          break;
 
         res = ty_sb_add(&sb, txt, txtlen);
         if (res < 0) goto end;
 
         x2 = new_x2;
         y2 = new_y2;
+        if (codepoint == ')')
+          break;
      }
 
    /* colors do not span multiple lines (for the moment) */
@@ -1299,7 +1293,6 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
      goto end;
 
    found = EINA_TRUE;
-   /* TODO: right trim */
 
 end:
    termpty_backlog_unlock();
