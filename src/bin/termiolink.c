@@ -904,11 +904,106 @@ _parse_one_css_alpha(struct ty_sb *sb,
    return EINA_TRUE;
 }
 
+/* return hue between 0 and 1 */
+static Eina_Bool
+_parse_one_hue(struct ty_sb *sb,
+               double *dp)
+{
+   char *endptr_double;
+   double d;
+
+   if (!sb->len)
+     return EINA_FALSE;
+
+   d = eina_convert_strtod_c(sb->buf, &endptr_double);
+   if (isnan(d) || endptr_double == sb->buf || d < 0)
+       return EINA_FALSE;
+   ty_sb_lskip(sb, endptr_double - sb->buf);
+   if (sbstartswith(sb, "turn"))
+     {
+        ty_sb_lskip(sb, strlen("turn"));
+     }
+   else if (sbstartswith(sb, "rad"))
+     {
+          ty_sb_lskip(sb, strlen("rad"));
+          d /= 2 * M_PI;
+     }
+   else if (sbstartswith(sb, "grad"))
+     {
+          ty_sb_lskip(sb, strlen("grad"));
+          d /= 400;
+     }
+   else if (sbstartswith(sb, "deg") || sb->buf[0] == ',' || sb->buf[0] == ' ')
+     {
+        if (sbstartswith(sb, "deg"))
+          ty_sb_lskip(sb, strlen("deg"));
+        d /= 360;
+     }
+   else
+     return EINA_FALSE;
+   d = d - (long) d;
+   if (d < 0)
+     d = 1 + d;
+   *dp = d;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_parse_one_percent(struct ty_sb *sb,
+                   double *dp)
+{
+   char *endptr_double;
+   double d;
+
+   if (!sb->len)
+     return EINA_FALSE;
+
+   d = eina_convert_strtod_c(sb->buf, &endptr_double);
+   if (isnan(d) || endptr_double == sb->buf || d < 0)
+       return EINA_FALSE;
+   ty_sb_lskip(sb, endptr_double - sb->buf);
+   if (!sb->len || sb->buf[0] != '%') return EINA_FALSE;
+   ty_sb_lskip(sb, 1);
+   if (d > 100.0)
+     return EINA_FALSE;
+   d /= 100.0;
+   *dp = d;
+   return EINA_TRUE;
+}
+
+
+/* From http://en.wikipedia.org/wiki/HSL_color_space */
+static Eina_Bool
+_hsl_to_rgb(double hue, double saturation, double lightness,
+            uint8_t *rp, uint8_t *gp, uint8_t *bp)
+{
+   double a = saturation * MIN(lightness, 1.0 - lightness);
+   int n[3] = {0, 8, 4};
+   double res[3] = {};
+   int i;
+
+   for (i = 0; i < 3; i++)
+     {
+        double k = fmod(n[i] + hue / 12., 12.);
+        double f = lightness - a * MAX(-1, MIN(MIN(k - 3, 9 - k), 1));
+        if (f > 1 || f < 0)
+          return EINA_FALSE;
+        res[i] = f * 255.0;
+     }
+
+   *rp = res[0];
+   *gp = res[1];
+   *bp = res[2];
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _parse_css_hsl_color(struct ty_sb *sb,
                      uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
 {
    uint8_t r = 0, g = 0, b = 0, a = 255;
+   double hue, saturation, lightness;
+   Eina_Bool is_functional;
 
    ty_sb_spaces_ltrim(sb);
 
@@ -925,7 +1020,54 @@ _parse_css_hsl_color(struct ty_sb *sb,
    if (!sb->len) return EINA_FALSE;
    ty_sb_spaces_ltrim(sb);
 
-   /* TODO: boris */
+   if (!_parse_one_hue(sb, &hue))
+     return EINA_FALSE;
+   is_functional = (sb->len && sb->buf[0] == ',');
+   if (is_functional)
+     {
+        ty_sb_lskip(sb, 1);
+     }
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+
+   if (!_parse_one_percent(sb, &saturation))
+     return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+   if (is_functional != (sb->buf[0] == ','))
+     return EINA_FALSE;
+   if (is_functional)
+     ty_sb_lskip(sb, 1);
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+
+   if (!_parse_one_percent(sb, &lightness))
+     return EINA_FALSE;
+   ty_sb_spaces_ltrim(sb);
+   if (!sb->len) return EINA_FALSE;
+   if (sb->buf[0] == ')')
+     {
+        ty_sb_lskip(sb, 1);
+        a = 255;
+     }
+   else
+     {
+        if ((is_functional && (sb->buf[0] != ',')) ||
+            (!is_functional && (sb->buf[0] != '/')))
+          return EINA_FALSE;
+        if (!sb->len) return EINA_FALSE;
+        ty_sb_lskip(sb, 1);
+        ty_sb_spaces_ltrim(sb);
+        if (!sb->len) return EINA_FALSE;
+        if (!_parse_one_css_alpha(sb, &a))
+          return EINA_FALSE;
+        ty_sb_spaces_ltrim(sb);
+        if (sb->buf[0] != ')')
+          return EINA_FALSE;
+     }
+   if (!_hsl_to_rgb(hue, saturation, lightness, &r, &g, &b))
+     return EINA_FALSE;
+
    *rp = r;
    *gp = g;
    *bp = b;
@@ -1689,6 +1831,125 @@ tytest_color_parse_css_rgb(void)
    assert(_parse_css_rgb_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
    assert(r == 100 && g == 5 && b == 1 && a == 64);
    ty_sb_free(&sb);
+
+   return 0;
+}
+
+int
+tytest_color_parse_css_hsl(void)
+{
+   struct ty_sb sb = {};
+   uint8_t r = 0, g = 0, b = 0, a = 0;
+
+
+   /* These examples all specify the same color: a lavender. */
+   assert(TY_SB_ADD(&sb, "hsl(270,60%,70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270, 60%, 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270 60% 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270deg, 60%, 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(4.71239rad, 60%, 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(300grad, 60%, 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(.75turn, 60%, 70%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+
+   /* These examples all specify the same color: a lavender that is 15% opaque. */
+   assert(TY_SB_ADD(&sb, "hsl(270, 60%, 50%, .15)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270, 60%, 50%, 15%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270 60% 50% / .15)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsl(270 60% 50% / 15%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+
+   /* Different shades */
+   assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .05)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .4)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 102);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .7)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 179);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, 1)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 255);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   /* Whitespace syntax */
+   assert(TY_SB_ADD(&sb, "hsla(240 100% 50% / .05)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
+
+   /* Percentage value for alpha */
+   assert(TY_SB_ADD(&sb, "hsla(240 100% 50% / 5%)") == 0);
+   assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
+   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   ty_sb_free(&sb);
+   r = g = b = a = 0;
 
    return 0;
 }
