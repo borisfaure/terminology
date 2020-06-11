@@ -20,7 +20,7 @@ This is an EFL terminal emulator with some extra bells and whistles.
 Requirements
 ------------
 
-  * `efl` (>= 1.20.0)
+  * `efl` (>= 1.22.0)
 
 Please see http://www.enlightenment.org for information on these.
 
