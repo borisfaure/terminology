@@ -143,7 +143,7 @@ jobs:
       - image: borisfaure/terminology-ci:latest
     environment:
       - CC: clang
-      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability -fno-sanitize-recover=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
