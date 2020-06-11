@@ -1,7 +1,10 @@
+
+#if !defined(BINARY_TYFUZZ_COLOR_PARSER)
 #include "private.h"
 #include <Elementary.h>
 #include <assert.h>
 #include <math.h>
+#include <limits.h>
 #include "termpty.h"
 #include "backlog.h"
 #include "termiolink.h"
@@ -9,7 +12,29 @@
 #include "sb.h"
 #include "utf8.h"
 #include "utils.h"
+#else
+#include <assert.h>
+#include <math.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include "sb.h"
+#define eina_convert_strtod_c strtod
+#ifndef MIN
+# define MIN(x, y) (((x) > (y)) ? (y) : (x))
+#endif
+#ifndef MAX
+# define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#endif
+typedef uint32_t Eina_Unicode;
+typedef bool Eina_Bool;
+#define EINA_TRUE true
+#define EINA_FALSE false
+#endif
 
+#if !defined(BINARY_TYFUZZ_COLOR_PARSER)
 __attribute__((const))
 static Eina_Bool
 _isspace_unicode(const int codepoint)
@@ -656,6 +681,7 @@ end:
    ty_sb_free(&sb);
    return s;
 }
+#endif
 
 __attribute__((const))
 static Eina_Bool
@@ -941,6 +967,8 @@ _parse_one_hue(struct ty_sb *sb,
      }
    else
      return EINA_FALSE;
+   if (d > LONG_MAX)
+     return EINA_FALSE;
    d = d - (long) d;
    if (d < 0)
      d = 1 + d;
@@ -1209,6 +1237,43 @@ _is_authorized_in_color_sharp(const Eina_Unicode g)
 }
 
 static Eina_Bool
+_parse_color(struct ty_sb *sb,
+             uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *a)
+{
+   if (!sb->len)
+     goto end;
+
+   if (sb->buf[0] == '#')
+     {
+        if (!_parse_sharp_color(sb, r, g, b, a))
+          goto end;
+     }
+   else if (sbstartswith(sb, "color"))
+     {
+        if (!_parse_edc_color(sb, r, g, b, a))
+          goto end;
+     }
+   else if (sbstartswith(sb, "rgb"))
+     {
+        if (!_parse_css_rgb_color(sb, r, g, b, a))
+          goto end;
+     }
+   else if (sbstartswith(sb, "hsl"))
+     {
+        if (!_parse_css_hsl_color(sb, r, g, b, a))
+          goto end;
+     }
+   else
+     goto end;
+
+   return EINA_TRUE;
+
+end:
+   return EINA_FALSE;
+}
+
+#if !defined(BINARY_TYFUZZ_COLOR_PARSER)
+static Eina_Bool
 _sharp_color_find(Termpty *ty, int sc,
                   int *x1r, int *y1r, int *x2r, int *y2r,
                   uint8_t *rp, uint8_t *gp, uint8_t *bp, uint8_t *ap)
@@ -1419,31 +1484,9 @@ termio_color_find(const Evas_Object *obj, int cx, int cy,
         x2--;
      }
 
-   if (!sb.len)
+   if (!_parse_color(&sb, &r, &g, &b, &a))
      goto end;
 
-   if (sb.buf[0] == '#')
-     {
-        if (!_parse_sharp_color(&sb, &r, &g, &b, &a))
-          goto end;
-     }
-   else if (sbstartswith(&sb, "color"))
-     {
-        if (!_parse_edc_color(&sb, &r, &g, &b, &a))
-          goto end;
-     }
-   else if (sbstartswith(&sb, "rgb"))
-     {
-        if (!_parse_css_rgb_color(&sb, &r, &g, &b, &a))
-          goto end;
-     }
-   else if (sbstartswith(&sb, "hsl"))
-     {
-        if (!_parse_css_hsl_color(&sb, &r, &g, &b, &a))
-          goto end;
-     }
-   else
-     goto end;
 
    found = EINA_TRUE;
 
@@ -1464,7 +1507,7 @@ end:
    return found;
 }
 
-
+#endif
 #if defined(BINARY_TYTEST)
 int
 tytest_color_parse_hex(void)
@@ -1951,6 +1994,19 @@ tytest_color_parse_css_hsl(void)
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
+   return 0;
+}
+#endif
+#if defined(BINARY_TYFUZZ_COLOR_PARSER)
+int
+LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
+   struct ty_sb sb = {};
+   uint8_t r, g, b, a;
+
+   assert(!ty_sb_add(&sb, (const char*)data, size));
+   _parse_color(&sb, &r, &g, &b, &a);
+   ty_sb_free(&sb);
    return 0;
 }
 #endif
