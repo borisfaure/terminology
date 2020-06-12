@@ -25,6 +25,6 @@ int64_t
 termpty_backlog_memory_get(void);
 
 #define BACKLOG_ROW_GET(Ty, Y) \
-   (&Ty->back[(Ty->backsize + ty->backpos - ((Y) - 1 )) % Ty->backsize])
+   (&Ty->back[(Ty->backsize - 1 + ty->backpos - Y) % Ty->backsize])
 
 #endif
