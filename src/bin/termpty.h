@@ -61,7 +61,7 @@ struct _Termlink
 
 struct _Termatt
 {
-   unsigned char fg, bg;
+   uint8_t fg, bg;
    unsigned short bold : 1;
    unsigned short faint : 1;
    unsigned short italic : 1;

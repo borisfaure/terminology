@@ -787,7 +787,7 @@ _approximate_truecolor_rgb(Termpty *ty, uint8_t r0, uint8_t g0, uint8_t b0)
    return chosen_color;
 }
 
-static int
+static uint8_t
 _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b;
@@ -837,10 +837,10 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
    if (b == -ESC_ARG_NO_VALUE)
      b = 0;
 
-   return _approximate_truecolor_rgb(ty, r, g, b);
+   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
-static int
+static uint8_t
 _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b, c, m, y;
@@ -896,10 +896,10 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
    g = 255 - ((m * 255) / 100);
    b = 255 - ((y * 255) / 100);
 
-   return _approximate_truecolor_rgb(ty, r, g, b);
+   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
-static int
+static uint8_t
 _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b, c, m, y, k;
@@ -960,7 +960,7 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
    g = (255 * (100 - m) * (100 - k)) / 100 / 100;
    b = (255 * (100 - y) * (100 - k)) / 100 / 100;
 
-   return _approximate_truecolor_rgb(ty, r, g, b);
+   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
 static void
