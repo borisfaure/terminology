@@ -161,6 +161,9 @@ void MD5Final(unsigned char digest[16], MD5_CTX *ctx)
 #define MD5STEP(f, w, x, y, z, data, s) \
 	( w += f(x, y, z) + data,  w = w<<s | w>>(32-s),  w += x )
 
+#if defined(__clang__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 /*
  * The core of the MD5 algorithm, this alters an existing MD5 hash to
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
