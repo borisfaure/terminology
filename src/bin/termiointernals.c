@@ -1599,15 +1599,15 @@ _rep_mouse_down(Termio *sd, Evas_Event_Mouse_Down *ev,
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              v = cy + 1 + ' ';
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              buf[i] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
@@ -1766,15 +1766,15 @@ _rep_mouse_up(Termio *sd, Evas_Event_Mouse_Up *ev,
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              v = cy + 1 + ' ';
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              buf[i] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
@@ -1853,15 +1853,15 @@ _rep_mouse_move(Termio *sd, int cx, int cy, Termio_Modifiers modifiers)
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              v = cy + 1 + ' ';
              if (v <= 127) buf[i++] = v;
              else
                { // 14 bits for cx/cy - enough i think
-                   buf[i++] = 0xc0 + (v >> 6);
-                   buf[i++] = 0x80 + (v & 0x3f);
+                   buf[i++] = (char)(0xc0 + (v >> 6));
+                   buf[i++] = (char)(0x80 + (v & 0x3f));
                }
              buf[i] = 0;
              termpty_write(sd->pty, buf, strlen(buf));
