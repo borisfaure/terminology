@@ -14,14 +14,13 @@
 #include "utils.h"
 
 typedef struct _Behavior_Ctx {
+     Config *config;
+     Evas_Object *term;
      Evas_Object *op_w;
      Evas_Object *op_h;
      Evas_Object *op_wh_current;
-     Evas_Object *term;
-     Evas_Object *sld_hide_cursor;
      Evas_Object *backlock_label;
      char *backlog_msg;
-     Config *config;
 } Behavior_Ctx;
 
 extern Eina_Bool multisense_available;
@@ -36,8 +35,6 @@ OPTIONS_CB(Behavior_Ctx, multi_instance, 0);
 OPTIONS_CB(Behavior_Ctx, xterm_256color, 0);
 OPTIONS_CB(Behavior_Ctx, erase_is_del, 0);
 OPTIONS_CB(Behavior_Ctx, login_shell, 0);
-OPTIONS_CB(Behavior_Ctx, mouse_over_focus, 0);
-OPTIONS_CB(Behavior_Ctx, disable_focus_visuals, 1);
 OPTIONS_CB(Behavior_Ctx, show_tabs,  0);
 OPTIONS_CB(Behavior_Ctx, mv_always_show, 0);
 OPTIONS_CB(Behavior_Ctx, ty_escapes, 0);
@@ -191,7 +188,6 @@ _parent_del_cb(void *data,
    free(ctx);
 }
 
-
 static void
 _cursors_changed_cb(void *data, Evas_Object *obj,
                     void *event_info EINA_UNUSED)
@@ -205,43 +201,6 @@ _cursors_changed_cb(void *data, Evas_Object *obj,
 
    termio_config_update(ctx->term);
    windows_update();
-   config_save(config);
-}
-
-static void
-_cb_op_hide_cursor_changed(void *data,
-                           Evas_Object *obj,
-                           void *_event EINA_UNUSED)
-{
-   Behavior_Ctx *ctx = data;
-   Config *config = ctx->config;
-
-   if (elm_check_state_get(obj))
-     {
-        config->hide_cursor = elm_slider_value_get(ctx->sld_hide_cursor);
-        elm_object_disabled_set(ctx->sld_hide_cursor, EINA_FALSE);
-     }
-   else
-     {
-        config->hide_cursor = CONFIG_CURSOR_IDLE_TIMEOUT_MAX + 1.0;
-        elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
-     }
-   config_save(config);
-}
-
-static void
-_cb_hide_cursor_slider_chg(void *data,
-                 Evas_Object *obj,
-                 void *_event EINA_UNUSED)
-{
-   Behavior_Ctx *ctx = data;
-   Config *config = ctx->config;
-   double value = elm_slider_value_get(obj);
-
-   if (config->hide_cursor == value)
-       return;
-
-   config->hide_cursor = value;
    config_save(config);
 }
 
@@ -417,14 +376,15 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(sc, o);
    evas_object_show(o);
 
+   OPTIONS_CX(_("Show tabs"), show_tabs, 0);
+   OPTIONS_SEPARATOR;
+
    OPTIONS_CX(_("Scroll to bottom on new content"), jump_on_change, 0);
    OPTIONS_CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
 
    OPTIONS_SEPARATOR;
 
    _add_cursors_option(bx, ctx);
-
-   OPTIONS_SEPARATOR;
 
    OPTIONS_CX(_("React to key presses"), flicker_on_key, 0);
    if (!multisense_available)
@@ -436,19 +396,18 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(lbl, _("Audio Support for key presses <failure>DISABLED</failure>!"));
         evas_object_show(lbl);
      }
+   OPTIONS_SEPARATOR;
    OPTIONS_CX(_("Visual Bell"), disable_visual_bell, 1);
    OPTIONS_CX(_("Bell rings"), bell_rings, 0);
    OPTIONS_CX(_("Urgent Bell"), urg_bell, 0);
+   OPTIONS_SEPARATOR;
    OPTIONS_CX(_("Multiple instances, one process"), multi_instance, 0);
    OPTIONS_CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
    OPTIONS_CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
    OPTIONS_CX(_("Start as login shell"), login_shell, 0);
-   OPTIONS_CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
-   OPTIONS_CX(_("Focus-related visuals"), disable_focus_visuals, 1);
-   OPTIONS_CX(_("Show tabs"), show_tabs, 0);
+   OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
    OPTIONS_CX(_("Always show miniview"), mv_always_show, 0);
    OPTIONS_CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
-   OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
    OPTIONS_CX(_("Treat Emojis as double-width characters"), emoji_dbl_width, 0);
    OPTIONS_CX(_("When grouping input, do it on all terminals and not just the visible ones"), group_all, 0);
 
@@ -585,35 +544,4 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 
-   OPTIONS_SEPARATOR;
-
-   o = elm_check_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Auto hide the mouse cursor when idle:"));
-   elm_check_state_set(o, config->hide_cursor < CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_hide_cursor_changed, ctx);
-
-   o = elm_slider_add(bx);
-   ctx->sld_hide_cursor = o;
-   elm_object_tooltip_text_set(o, tooltip);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   elm_slider_span_size_set(o, 40);
-   elm_slider_unit_format_set(o, _("%1.1f s"));
-   elm_slider_indicator_format_set(o, _("%1.1f s"));
-   elm_slider_min_max_set(o, 0.0, CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
-   elm_object_disabled_set(o, config->hide_cursor >= CONFIG_CURSOR_IDLE_TIMEOUT_MAX);
-   elm_slider_value_set(o, config->hide_cursor);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_hide_cursor_slider_chg, ctx);
-
-   evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(o);
 }
