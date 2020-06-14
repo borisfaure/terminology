@@ -32,18 +32,12 @@ OPTIONS_CB(Behavior_Ctx, disable_visual_bell, 1);
 OPTIONS_CB(Behavior_Ctx, bell_rings, 0);
 OPTIONS_CB(Behavior_Ctx, flicker_on_key, 0);
 OPTIONS_CB(Behavior_Ctx, urg_bell, 0);
-OPTIONS_CB(Behavior_Ctx, active_links_email, 0);
-OPTIONS_CB(Behavior_Ctx, active_links_file, 0);
-OPTIONS_CB(Behavior_Ctx, active_links_url, 0);
-OPTIONS_CB(Behavior_Ctx, active_links_escape, 0);
 OPTIONS_CB(Behavior_Ctx, multi_instance, 0);
 OPTIONS_CB(Behavior_Ctx, xterm_256color, 0);
 OPTIONS_CB(Behavior_Ctx, erase_is_del, 0);
-OPTIONS_CB(Behavior_Ctx, drag_links, 0);
 OPTIONS_CB(Behavior_Ctx, login_shell, 0);
 OPTIONS_CB(Behavior_Ctx, mouse_over_focus, 0);
 OPTIONS_CB(Behavior_Ctx, disable_focus_visuals, 1);
-OPTIONS_CB(Behavior_Ctx, gravatar,  0);
 OPTIONS_CB(Behavior_Ctx, show_tabs,  0);
 OPTIONS_CB(Behavior_Ctx, mv_always_show, 0);
 OPTIONS_CB(Behavior_Ctx, ty_escapes, 0);
@@ -432,20 +426,6 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
 
    OPTIONS_SEPARATOR;
 
-   lbl = elm_label_add(bx);
-   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
-   elm_layout_text_set(lbl, NULL, _("Active Links:"));
-   elm_box_pack_end(bx, lbl);
-   evas_object_show(lbl);
-
-   OPTIONS_CX(_("On emails"), active_links_email, 0);
-   OPTIONS_CX(_("On file paths"), active_links_file, 0);
-   OPTIONS_CX(_("On URLs"), active_links_url, 0);
-   OPTIONS_CX(_("Based on escape codes"), active_links_escape, 0);
-
-   OPTIONS_SEPARATOR;
-
    OPTIONS_CX(_("React to key presses"), flicker_on_key, 0);
    if (!multisense_available)
      {
@@ -462,11 +442,9 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    OPTIONS_CX(_("Multiple instances, one process"), multi_instance, 0);
    OPTIONS_CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
    OPTIONS_CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
-   OPTIONS_CX(_("Drag & drop links"), drag_links, 0);
    OPTIONS_CX(_("Start as login shell"), login_shell, 0);
    OPTIONS_CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
    OPTIONS_CX(_("Focus-related visuals"), disable_focus_visuals, 1);
-   OPTIONS_CX(_("Gravatar integration"), gravatar, 0);
    OPTIONS_CX(_("Show tabs"), show_tabs, 0);
    OPTIONS_CX(_("Always show miniview"), mv_always_show, 0);
    OPTIONS_CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
