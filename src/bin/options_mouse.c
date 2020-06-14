@@ -4,7 +4,7 @@
 #include "config.h"
 #include "termio.h"
 #include "options.h"
-#include "options_helpers.h"
+#include "options_mouse.h"
 #include "main.h"
 
 static void
@@ -180,7 +180,7 @@ _cb_op_helper_local_general_chg(void *data,
 }
 
 void
-options_helpers(Evas_Object *opbox, Evas_Object *term)
+options_mouse(Evas_Object *opbox, Evas_Object *term)
 {
    Config *config = termio_config_get(term);
    Evas_Object *o, *tb, *sc, *fr, *bx;
@@ -190,7 +190,7 @@ options_helpers(Evas_Object *opbox, Evas_Object *term)
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, _("Helpers"));
+   elm_object_text_set(o, _("Mouse"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
    

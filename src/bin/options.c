@@ -9,7 +9,7 @@
 #include "options_colors.h"
 #include "options_behavior.h"
 #include "options_keys.h"
-#include "options_helpers.h"
+#include "options_mouse.h"
 #include "options_elm.h"
 #include "config.h"
 #include "termio.h"
@@ -23,7 +23,7 @@ enum option_mode {
      OPTION_BACKGROUND,
      OPTION_COLORS,
      OPTION_KEYS,
-     OPTION_HELPERS,
+     OPTION_MOUSE,
      OPTION_ELM,
 
      OPTIONS_MODE_NB
@@ -82,16 +82,16 @@ _cb_opdt_hide_done(void *data,
    elm_box_clear(ctx->opbox);
    switch (ctx->mode)
      {
-      case OPTION_NONE:      break;
-      case OPTION_BEHAVIOR:  options_behavior(ctx->opbox, ctx->term); break;
-      case OPTION_FONT:      options_font(ctx->opbox, ctx->term); break;
-      case OPTION_THEME:     options_theme(ctx->opbox, ctx->term); break;
+      case OPTION_NONE:       break;
+      case OPTION_BEHAVIOR:   options_behavior(ctx->opbox, ctx->term); break;
+      case OPTION_FONT:       options_font(ctx->opbox, ctx->term); break;
+      case OPTION_THEME:      options_theme(ctx->opbox, ctx->term); break;
       case OPTION_BACKGROUND: options_background(ctx->opbox, ctx->term); break;
-      case OPTION_COLORS:    options_colors(ctx->opbox, ctx->term, ctx->bg); break;
-      case OPTION_KEYS:      options_keys(ctx->opbox, ctx->term); break;
-      case OPTION_HELPERS:   options_helpers(ctx->opbox, ctx->term); break;
-      case OPTION_ELM:       options_elm(ctx->opbox, ctx->term); break;
-      case OPTIONS_MODE_NB:  assert(0 && "should not occur");
+      case OPTION_COLORS:     options_colors(ctx->opbox, ctx->term, ctx->bg); break;
+      case OPTION_KEYS:       options_keys(ctx->opbox, ctx->term); break;
+      case OPTION_MOUSE:      options_mouse(ctx->opbox, ctx->term); break;
+      case OPTION_ELM:        options_elm(ctx->opbox, ctx->term); break;
+      case OPTIONS_MODE_NB:   assert(0 && "should not occur");
      }
    elm_layout_signal_emit(ctx->base, "optdetails,show", "terminology");
 }
@@ -215,12 +215,12 @@ options_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg, Evas_Object *
                            (void*) &ctx->modes[OPTION_##_option_mode])
 
    it_fn = ITEM_APPEND("preferences-system", _("Behavior"), BEHAVIOR);
+   ITEM_APPEND("input-mouse", _("Mouse"), MOUSE);
    ITEM_APPEND("preferences-desktop-font", _("Font"), FONT);
    ITEM_APPEND("preferences-desktop-theme", _("Theme"), THEME);
    ITEM_APPEND("preferences-desktop-wallpaper", _("Background"), BACKGROUND);
    ITEM_APPEND("preferences-color", _("Colors"), COLORS);
    ITEM_APPEND("preferences-desktop-keyboard", _("Keys"), KEYS);
-   ITEM_APPEND("system-run", _("Helpers"), HELPERS);
    ITEM_APPEND("preferences-desktop", _("Toolkit"), ELM);
 #undef ITEM_APPEND
 

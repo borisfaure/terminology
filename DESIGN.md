@@ -18,7 +18,7 @@ A simple documentation to navige through the C files:
 * `src/bin/options_colors.c`: the settings panel about colors in the terminal
 * `src/bin/options_elm.c`: the settings panel to configure Elementary
 * `src/bin/options_font.c`: the settings panel to choose the Font
-* `src/bin/options_helpers.c`: the settings panel on Helpers
+* `src/bin/options_mouse.c`: the settings panel on mouse interactions
 * `src/bin/options_keys.c`: the settings panel to configure key bindings
 * `src/bin/options_theme.c`: the settings panel to choose a theme
 * `src/bin/options_themepv.c`: the widget that handles theme previews
