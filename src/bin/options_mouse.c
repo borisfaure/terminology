@@ -1,20 +1,30 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <assert.h>
 #include "config.h"
 #include "termio.h"
 #include "options.h"
 #include "options_mouse.h"
 #include "main.h"
 
+typedef struct _Mouse_Ctx {
+     Evas_Object *term;
+     Config *config;
+} Mouse_Ctx;
+
 static void
 _cb_op_helper_inline_chg(void *data,
                          Evas_Object *obj,
                          void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
+
    config->helper.inline_please = elm_check_state_get(obj);
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -23,8 +33,9 @@ _cb_op_helper_email_chg(void *data,
                         Evas_Object *obj,
                         void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.email)
@@ -38,6 +49,8 @@ _cb_op_helper_email_chg(void *data,
         config->helper.email = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -46,8 +59,9 @@ _cb_op_helper_url_image_chg(void *data,
                             Evas_Object *obj,
                             void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.url.image)
@@ -61,6 +75,8 @@ _cb_op_helper_url_image_chg(void *data,
         config->helper.url.image = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -69,8 +85,9 @@ _cb_op_helper_url_video_chg(void *data,
                             Evas_Object *obj,
                             void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.url.video)
@@ -84,6 +101,8 @@ _cb_op_helper_url_video_chg(void *data,
         config->helper.url.video = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -92,8 +111,9 @@ _cb_op_helper_url_general_chg(void *data,
                               Evas_Object *obj,
                               void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.url.general)
@@ -107,6 +127,8 @@ _cb_op_helper_url_general_chg(void *data,
         config->helper.url.general = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -115,8 +137,9 @@ _cb_op_helper_local_image_chg(void *data,
                               Evas_Object *obj,
                               void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.local.image)
@@ -130,6 +153,8 @@ _cb_op_helper_local_image_chg(void *data,
         config->helper.local.image = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -138,8 +163,9 @@ _cb_op_helper_local_video_chg(void *data,
                               Evas_Object *obj,
                               void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.local.video)
@@ -153,6 +179,8 @@ _cb_op_helper_local_video_chg(void *data,
         config->helper.local.video = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
 }
 
@@ -161,8 +189,9 @@ _cb_op_helper_local_general_chg(void *data,
                                 Evas_Object *obj,
                                 void *_event EINA_UNUSED)
 {
-   Evas_Object *term = data;
-   Config *config = termio_config_get(term);
+   Mouse_Ctx *ctx = data;
+   Config *config = ctx->config;
+   Evas_Object *term = ctx->term;
    char *txt;
 
    if (config->helper.local.general)
@@ -176,7 +205,20 @@ _cb_op_helper_local_general_chg(void *data,
         config->helper.local.general = eina_stringshare_add(txt);
         free(txt);
      }
+   termio_config_update(term);
+   windows_update();
    config_save(config);
+}
+
+static void
+_parent_del_cb(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *_event_info EINA_UNUSED)
+{
+   Mouse_Ctx *ctx = data;
+
+   free(ctx);
 }
 
 void
@@ -186,6 +228,13 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    Evas_Object *o, *tb, *sc, *fr, *bx;
    char *txt;
    int row = 0;
+   Mouse_Ctx *ctx;
+
+   ctx = calloc(1, sizeof(*ctx));
+   assert(ctx);
+
+   ctx->config = config;
+   ctx->term = term;
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -193,13 +242,16 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_object_text_set(o, _("Mouse"));
    elm_box_pack_end(opbox, o);
    evas_object_show(o);
-   
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                  _parent_del_cb, ctx);
+
    bx = o = elm_box_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, o);
    evas_object_show(o);
-   
+
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -208,15 +260,10 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_inline_chg, term);
+                                  _cb_op_helper_inline_chg, ctx);
 
-   o = elm_separator_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-   
+   OPTIONS_SEPARATOR;
+
    sc = o = elm_scroller_add(opbox);
    elm_scroller_content_min_limit(sc, EINA_TRUE, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -229,7 +276,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(sc, o);
    evas_object_show(o);
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -252,7 +299,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_email_chg, term);
+                                  _cb_op_helper_email_chg, ctx);
    row++;
 
    o = elm_separator_add(opbox);
@@ -262,7 +309,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 0, row, 2, 1);
    evas_object_show(o);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -285,9 +332,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_url_image_chg, term);
+                                  _cb_op_helper_url_image_chg, ctx);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -310,9 +357,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_url_video_chg, term);
+                                  _cb_op_helper_url_video_chg, ctx);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -335,9 +382,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_url_general_chg, term);
+                                  _cb_op_helper_url_general_chg, ctx);
    row++;
-   
+
    o = elm_separator_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
@@ -345,7 +392,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 0, row, 2, 1);
    evas_object_show(o);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -368,9 +415,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_local_image_chg, term);
+                                  _cb_op_helper_local_image_chg, ctx);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -393,9 +440,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_local_video_chg, term);
+                                  _cb_op_helper_local_video_chg, ctx);
    row++;
-   
+
    o = elm_label_add(tb);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
@@ -418,9 +465,9 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_table_pack(tb, o, 1, row, 1, 1);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
-                                  _cb_op_helper_local_general_chg, term);
+                                  _cb_op_helper_local_general_chg, ctx);
    row++;
-   
+
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
