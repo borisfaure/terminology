@@ -1293,7 +1293,7 @@ _cb_link_up(void *data,
    Termio *sd = evas_object_smart_data_get(data);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if ((ev->button == 1) && (sd->link.down.down))
+   if ((ev->button == 1) && (sd->link.down.down) && (!sd->link.is_color))
      {
         Evas_Coord dx, dy, finger_size;
 
