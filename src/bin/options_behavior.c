@@ -26,48 +26,30 @@ typedef struct _Behavior_Ctx {
 
 extern Eina_Bool multisense_available;
 
-#define CB(_cfg_name, _inv)                                     \
-static void                                                     \
-_cb_op_behavior_##_cfg_name(void *data, Evas_Object *obj,       \
-                            void *_event EINA_UNUSED)           \
-{                                                               \
-   Behavior_Ctx *ctx = data;                                    \
-   Config *config = ctx->config;                                \
-   if (_inv)                                                    \
-     config->_cfg_name = !elm_check_state_get(obj);             \
-   else                                                         \
-     config->_cfg_name = elm_check_state_get(obj);              \
-   termio_config_update(ctx->term);                             \
-   windows_update();                                            \
-   config_save(config);                                         \
-}
-
-CB(jump_on_change, 0);
-CB(jump_on_keypress, 0);
-CB(disable_visual_bell, 1);
-CB(bell_rings, 0);
-CB(flicker_on_key, 0);
-CB(urg_bell, 0);
-CB(active_links_email, 0);
-CB(active_links_file, 0);
-CB(active_links_url, 0);
-CB(active_links_escape, 0);
-CB(multi_instance, 0);
-CB(xterm_256color, 0);
-CB(erase_is_del, 0);
-CB(drag_links, 0);
-CB(login_shell, 0);
-CB(mouse_over_focus, 0);
-CB(disable_focus_visuals, 1);
-CB(gravatar,  0);
-CB(show_tabs,  0);
-CB(mv_always_show, 0);
-CB(ty_escapes, 0);
-CB(changedir_to_current, 0);
-CB(emoji_dbl_width, 0);
-CB(group_all, 0);
-
-#undef CB
+OPTIONS_CB(Behavior_Ctx, jump_on_change, 0);
+OPTIONS_CB(Behavior_Ctx, jump_on_keypress, 0);
+OPTIONS_CB(Behavior_Ctx, disable_visual_bell, 1);
+OPTIONS_CB(Behavior_Ctx, bell_rings, 0);
+OPTIONS_CB(Behavior_Ctx, flicker_on_key, 0);
+OPTIONS_CB(Behavior_Ctx, urg_bell, 0);
+OPTIONS_CB(Behavior_Ctx, active_links_email, 0);
+OPTIONS_CB(Behavior_Ctx, active_links_file, 0);
+OPTIONS_CB(Behavior_Ctx, active_links_url, 0);
+OPTIONS_CB(Behavior_Ctx, active_links_escape, 0);
+OPTIONS_CB(Behavior_Ctx, multi_instance, 0);
+OPTIONS_CB(Behavior_Ctx, xterm_256color, 0);
+OPTIONS_CB(Behavior_Ctx, erase_is_del, 0);
+OPTIONS_CB(Behavior_Ctx, drag_links, 0);
+OPTIONS_CB(Behavior_Ctx, login_shell, 0);
+OPTIONS_CB(Behavior_Ctx, mouse_over_focus, 0);
+OPTIONS_CB(Behavior_Ctx, disable_focus_visuals, 1);
+OPTIONS_CB(Behavior_Ctx, gravatar,  0);
+OPTIONS_CB(Behavior_Ctx, show_tabs,  0);
+OPTIONS_CB(Behavior_Ctx, mv_always_show, 0);
+OPTIONS_CB(Behavior_Ctx, ty_escapes, 0);
+OPTIONS_CB(Behavior_Ctx, changedir_to_current, 0);
+OPTIONS_CB(Behavior_Ctx, emoji_dbl_width, 0);
+OPTIONS_CB(Behavior_Ctx, group_all, 0);
 
 static unsigned int
 sback_double_to_expo_int(double d)
@@ -441,37 +423,14 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(sc, o);
    evas_object_show(o);
 
-#define SEPARATOR                                              \
-   do {                                                        \
-   o = elm_separator_add(bx);                                  \
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0); \
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);    \
-   elm_separator_horizontal_set(o, EINA_TRUE);                 \
-   elm_box_pack_end(bx, o);                                    \
-   evas_object_show(o);                                        \
-   } while (0)
+   OPTIONS_CX(_("Scroll to bottom on new content"), jump_on_change, 0);
+   OPTIONS_CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
 
-#define CX(_lbl, _cfg_name, _inv)                                         \
-   do {                                                                   \
-   o = elm_check_add(bx);                                                 \
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);            \
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);               \
-   elm_object_text_set(o, _lbl);                                          \
-   elm_check_state_set(o, _inv ? !config->_cfg_name : config->_cfg_name); \
-   elm_box_pack_end(bx, o);                                               \
-   evas_object_show(o);                                                   \
-   evas_object_smart_callback_add(o, "changed",                           \
-                                  _cb_op_behavior_##_cfg_name, ctx);      \
-   } while (0)
-
-   CX(_("Scroll to bottom on new content"), jump_on_change, 0);
-   CX(_("Scroll to bottom when a key is pressed"), jump_on_keypress, 0);
-
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    _add_cursors_option(bx, ctx);
 
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    lbl = elm_label_add(bx);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
@@ -480,14 +439,14 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
 
-   CX(_("On emails"), active_links_email, 0);
-   CX(_("On file paths"), active_links_file, 0);
-   CX(_("On URLs"), active_links_url, 0);
-   CX(_("Based on escape codes"), active_links_escape, 0);
+   OPTIONS_CX(_("On emails"), active_links_email, 0);
+   OPTIONS_CX(_("On file paths"), active_links_file, 0);
+   OPTIONS_CX(_("On URLs"), active_links_url, 0);
+   OPTIONS_CX(_("Based on escape codes"), active_links_escape, 0);
 
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
-   CX(_("React to key presses"), flicker_on_key, 0);
+   OPTIONS_CX(_("React to key presses"), flicker_on_key, 0);
    if (!multisense_available)
      {
         lbl = elm_label_add(bx);
@@ -497,27 +456,25 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
         elm_object_text_set(lbl, _("Audio Support for key presses <failure>DISABLED</failure>!"));
         evas_object_show(lbl);
      }
-   CX(_("Visual Bell"), disable_visual_bell, 1);
-   CX(_("Bell rings"), bell_rings, 0);
-   CX(_("Urgent Bell"), urg_bell, 0);
-   CX(_("Multiple instances, one process"), multi_instance, 0);
-   CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
-   CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
-   CX(_("Drag & drop links"), drag_links, 0);
-   CX(_("Start as login shell"), login_shell, 0);
-   CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
-   CX(_("Focus-related visuals"), disable_focus_visuals, 1);
-   CX(_("Gravatar integration"), gravatar, 0);
-   CX(_("Show tabs"), show_tabs, 0);
-   CX(_("Always show miniview"), mv_always_show, 0);
-   CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
-   CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
-   CX(_("Treat Emojis as double-width characters"), emoji_dbl_width, 0);
-   CX(_("When grouping input, do it on all terminals and not just the visible ones"), group_all, 0);
+   OPTIONS_CX(_("Visual Bell"), disable_visual_bell, 1);
+   OPTIONS_CX(_("Bell rings"), bell_rings, 0);
+   OPTIONS_CX(_("Urgent Bell"), urg_bell, 0);
+   OPTIONS_CX(_("Multiple instances, one process"), multi_instance, 0);
+   OPTIONS_CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
+   OPTIONS_CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
+   OPTIONS_CX(_("Drag & drop links"), drag_links, 0);
+   OPTIONS_CX(_("Start as login shell"), login_shell, 0);
+   OPTIONS_CX(_("Focus split under the Mouse"), mouse_over_focus, 0);
+   OPTIONS_CX(_("Focus-related visuals"), disable_focus_visuals, 1);
+   OPTIONS_CX(_("Gravatar integration"), gravatar, 0);
+   OPTIONS_CX(_("Show tabs"), show_tabs, 0);
+   OPTIONS_CX(_("Always show miniview"), mv_always_show, 0);
+   OPTIONS_CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
+   OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
+   OPTIONS_CX(_("Treat Emojis as double-width characters"), emoji_dbl_width, 0);
+   OPTIONS_CX(_("When grouping input, do it on all terminals and not just the visible ones"), group_all, 0);
 
-#undef CX
-
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    o = elm_check_add(bx);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -584,7 +541,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_behavior_cg_height, ctx);
 
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
@@ -619,17 +576,17 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_smart_callback_add(o, "delay,changed",
                                   _cb_op_behavior_sback_chg, ctx);
 
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    o = elm_label_add(bx);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, _("Tab zoom/switch animation time:"));
    tooltip = _("Set the time of the animation that<br>"
        "takes places on tab switches,<br>"
        "be them by key binding, mouse<br>"
        "wheel or tabs panel mouse move");
    elm_object_tooltip_text_set(o, tooltip);
+   elm_object_text_set(o, _("Tab zoom/switch animation time:"));
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 
@@ -650,7 +607,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
 
-   SEPARATOR;
+   OPTIONS_SEPARATOR;
 
    o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -681,6 +638,4 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(opbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(opbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(o);
-
-#undef SEPARATOR
 }
