@@ -2474,10 +2474,10 @@ _smart_mouseover_apply(Termio *sd)
 
    s = termio_link_find(sd->self, sd->mouse.cx, sd->mouse.cy,
                         &x1, &y1, &x2, &y2);
-   if (!s)
+   if (!s && config->active_links_color)
      {
         uint8_t r = 0, g = 0, b = 0, a = 0;
-        /* TODO: boris: check config */
+
         if (termio_color_find(sd->self, sd->mouse.cx, sd->mouse.cy,
                               &x1, &y1, &x2, &y2, &r, &g, &b, &a))
           {
@@ -2491,6 +2491,8 @@ _smart_mouseover_apply(Termio *sd)
         termio_remove_links(sd);
         return;
      }
+   if (!s)
+     return;
 
    if (link_is_url(s))
      {

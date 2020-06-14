@@ -75,6 +75,7 @@ struct _Config
    Eina_Bool         active_links_file;
    Eina_Bool         active_links_url;
    Eina_Bool         active_links_escape;
+   Eina_Bool         active_links_color;
    Eina_Bool         translucent;
    Eina_Bool         mute;
    Eina_Bool         visualize;

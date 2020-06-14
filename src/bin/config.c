@@ -7,7 +7,7 @@
 #include "col.h"
 #include "utils.h"
 
-#define CONF_VER 24
+#define CONF_VER 25
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -133,6 +133,8 @@ config_init(void)
      (edd_base, Config, "active_links_url", active_links_url, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "active_links_escape", active_links_escape, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "active_links_color", active_links_color, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "translucent", translucent, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -296,6 +298,7 @@ config_sync(const Config *config_src, Config *config)
    config->active_links_file = config_src->active_links_file;
    config->active_links_url = config_src->active_links_url;
    config->active_links_escape = config_src->active_links_escape;
+   config->active_links_color = config_src->active_links_color;
    config->mute = config_src->mute;
    config->visualize = config_src->visualize;
    config->urg_bell = config_src->urg_bell;
@@ -563,6 +566,7 @@ config_new(void)
         config->active_links_file = EINA_TRUE;
         config->active_links_url = EINA_TRUE;
         config->active_links_escape = EINA_TRUE;
+        config->active_links_color = EINA_TRUE;
         config->translucent = EINA_FALSE;
         config->mute = EINA_FALSE;
         config->visualize = EINA_TRUE;
@@ -736,7 +740,15 @@ config_load(void)
                   config->group_all = EINA_FALSE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 24 */
+                case 24:
+                  config->active_links_color = (
+                     config->active_links_email ||
+                     config->active_links_file ||
+                     config->active_links_url ||
+                     config->active_links_escape);
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 25 */
                   config->version = CONF_VER;
                   break;
                 default:
