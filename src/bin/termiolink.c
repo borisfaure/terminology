@@ -850,6 +850,13 @@ _parse_uint8(struct ty_sb *sb,
    return ret;
 }
 
+/* isnan() in musl generates  ' runtime error: negation of 1 cannot be
+ * represented in type 'unsigned long long'
+ * under ubsan
+ */
+#if defined(__clang__) && !defined(__GLIBC__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 static Eina_Bool
 _parse_one_css_rgb_color(struct ty_sb *sb,
                          uint8_t *vp,
@@ -863,8 +870,8 @@ _parse_one_css_rgb_color(struct ty_sb *sb,
      return EINA_FALSE;
 
    d = eina_convert_strtod_c(sb->buf, &endptr_double);
-   l = strtol(sb->buf, &endptr_long, 0);
-   if (isnan(d) || endptr_double == sb->buf || d < 0 || l < 0)
+   l = (long int)strtol(sb->buf, &endptr_long, 0);
+   if (endptr_double == sb->buf || d < 0 || l < 0 || isnan(d))
        return EINA_FALSE;
    if (endptr_double > endptr_long)
      {
@@ -899,6 +906,13 @@ _parse_one_css_rgb_color(struct ty_sb *sb,
    return EINA_TRUE;
 }
 
+/* isnan() in musl generates  ' runtime error: negation of 1 cannot be
+ * represented in type 'unsigned long long'
+ * under ubsan
+ */
+#if defined(__clang__) && !defined(__GLIBC__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 static Eina_Bool
 _parse_one_css_alpha(struct ty_sb *sb,
                      uint8_t *ap)
@@ -910,7 +924,7 @@ _parse_one_css_alpha(struct ty_sb *sb,
      return EINA_FALSE;
 
    d = eina_convert_strtod_c(sb->buf, &endptr_double);
-   if (isnan(d) || endptr_double == sb->buf || d < 0)
+   if (endptr_double == sb->buf || d < 0 || isnan(d))
        return EINA_FALSE;
    ty_sb_lskip(sb, endptr_double - sb->buf);
    if (sb->len && sb->buf[0] == '%')
@@ -930,7 +944,14 @@ _parse_one_css_alpha(struct ty_sb *sb,
    return EINA_TRUE;
 }
 
-/* return hue between 0 and 1 */
+/* isnan() in musl generates  ' runtime error: negation of 1 cannot be
+ * represented in type 'unsigned long long'
+ * under ubsan
+ */
+#if defined(__clang__) && !defined(__GLIBC__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
+/* returns hue between 0 and 1 */
 static Eina_Bool
 _parse_one_hue(struct ty_sb *sb,
                double *dp)
@@ -942,7 +963,7 @@ _parse_one_hue(struct ty_sb *sb,
      return EINA_FALSE;
 
    d = eina_convert_strtod_c(sb->buf, &endptr_double);
-   if (isnan(d) || endptr_double == sb->buf || d < 0)
+   if (endptr_double == sb->buf || d < 0 || isnan(d))
        return EINA_FALSE;
    ty_sb_lskip(sb, endptr_double - sb->buf);
    if (sbstartswith(sb, "turn"))
@@ -967,7 +988,7 @@ _parse_one_hue(struct ty_sb *sb,
      }
    else
      return EINA_FALSE;
-   if (d > LONG_MAX)
+   if (d >= (double)LONG_MAX)
      return EINA_FALSE;
    d = d - (long) d;
    if (d < 0)
@@ -976,6 +997,13 @@ _parse_one_hue(struct ty_sb *sb,
    return EINA_TRUE;
 }
 
+/* isnan() in musl generates  ' runtime error: negation of 1 cannot be
+ * represented in type 'unsigned long long'
+ * under ubsan
+ */
+#if defined(__clang__) && !defined(__GLIBC__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 static Eina_Bool
 _parse_one_percent(struct ty_sb *sb,
                    double *dp)
