@@ -42,7 +42,7 @@ _run_this_tytest(const char *name, tytest_func func)
    int res;
    fprintf(stderr, "\033[0m%s...", name);
    res = func();
-   fprintf(stderr, " %s\n", res == 0 ? "\033[32m✔" : "\033[31;1m×");
+   fprintf(stderr, " %s\033[0m\n", res == 0 ? "\033[32m✔" : "\033[31;1m×");
    return res;
 }
 
