@@ -1124,7 +1124,7 @@ _cb_ctxp_color_copy(void *data,
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    txt = _color_to_txt(sd);
-   if (!sd) return;
+   if (!txt) return;
 
    termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, txt);
 

@@ -1385,14 +1385,14 @@ _sharp_color_find(Termpty *ty, int sc,
    ty_sb_free(&sb);
    if (found)
      {
-        if (rp) *rp = r;
-        if (gp) *gp = g;
-        if (bp) *bp = b;
-        if (ap) *ap = a;
-        if (x1r) *x1r = x1;
-        if (y1r) *y1r = y1 + sc;
-        if (x2r) *x2r = x2;
-        if (y2r) *y2r = y2 + sc;
+        *rp = r;
+        *gp = g;
+        *bp = b;
+        *ap = a;
+        *x1r = x1;
+        *y1r = y1 + sc;
+        *x2r = x2;
+        *y2r = y2 + sc;
      }
    return found;
 }
