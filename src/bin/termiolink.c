@@ -117,6 +117,17 @@ _local_path_get(const Evas_Object *obj, const char *relpath)
      return _cwd_path_get(obj, relpath);
 }
 
+/* isalpha() may produce unsigned-integer-overflow
+ * runtime error: unsigned integer overflow: 32 - 97 cannot be represented in
+ * type 'unsigned int'
+ * int isalpha(int c)
+ * {
+ *     return ((unsigned)c|32)-'a' < 26;
+ * }
+ */
+#if defined(__clang__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 Eina_Bool
 link_is_protocol(const char *str)
 {
