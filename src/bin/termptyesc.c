@@ -3954,7 +3954,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
          EINA_FALLTHROUGH;
       case 0:
         // title + icon name
-        if (!*p)
+        if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         eina_stringshare_del(ty->prop.title);
@@ -3977,7 +3977,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 1:
         // icon name
-        if (!*p)
+        if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         eina_stringshare_del(ty->prop.icon);
@@ -3994,7 +3994,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 2:
         // Title
-        if (!*p)
+        if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         eina_stringshare_del(ty->prop.title);
@@ -4010,7 +4010,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
       case 4:
-        if (!*p)
+        if (!p || !*p)
           goto err;
         // XXX: set palette entry. not supported.
         ty->decoding_error = EINA_TRUE;
@@ -4020,11 +4020,13 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 8:
         DBG("hyperlink");
+        if (!p || !*p)
+          goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         _handle_hyperlink(ty, s, len);
         break;
       case 10:
-        if (!*p)
+        if (!p || !*p)
           goto err;
         if (*p == '?')
           {
@@ -4053,11 +4055,13 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         break;
       case 11:
+        if (!p || !*p)
+          goto err;
         _handle_xterm_11_command(ty, p);
         break;
       case 50:
         DBG("xterm font support");
-        if (!*p)
+        if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         if (s)
@@ -4098,6 +4102,8 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 777:
         DBG("xterm notification support");
+        if (!p || !*p)
+          goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
         if (s)
           {
