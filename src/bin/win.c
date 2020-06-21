@@ -2841,6 +2841,7 @@ _split_split(Term_Container *tc, Term_Container *child,
    char buf[PATH_MAX];
    Term_Container *tc_split, *tc_solo_new;
    Evas_Object *obj_split;
+   Eina_Bool child_is_focused;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
    split = (Split *)tc;
@@ -2871,14 +2872,18 @@ _split_split(Term_Container *tc, Term_Container *child,
    else
      elm_object_part_content_unset(split->panes, PANES_BOTTOM);
 
-   child->unfocus(child, tc);
+   child_is_focused = child->is_focused;
+
+   /* force unfocus animation */
+   tc_solo_new->is_focused = EINA_TRUE;
+   tc_solo_new->unfocus(tc_solo_new, NULL);
+
    tc_split = _split_new(child, tc_solo_new, 0.5, is_horizontal);
 
    obj_split = tc_split->get_evas_object(tc_split);
 
-   tc_split->is_focused = tc->is_focused;
+   tc_split->is_focused = child_is_focused;
    tc->swallow(tc, child, tc_split);
-   tc_solo_new->focus(tc_solo_new, tc_split);
 
    if (wn->config->show_tabs)
      {
@@ -3028,6 +3033,8 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    split->tc1 = tc1;
    split->tc2 = tc2;
    split->last_focus = tc2;
+   if (tc1->is_focused)
+     split->last_focus = tc1;
 
    o = split->panes = elm_panes_add(tc1->wn->win);
    elm_object_style_set(o, "flush");
