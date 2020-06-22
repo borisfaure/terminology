@@ -43,6 +43,10 @@ static Termio _sd = {
      .pty = &_ty,
      .config = NULL,
 };
+static int _bg_r = 131;
+static int _bg_g = 132;
+static int _bg_b = 133;
+static int _bg_a = 134;
 static const char *_cursor_shape = "undefined";
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
@@ -270,22 +274,45 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
 
 
 int
-termpty_color_class_get(Termpty *ty EINA_UNUSED, const char *key,
+termio_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
                         int *r, int *g, int *b, int *a)
 {
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
         if (r)
-          *r = 131;
+          *r = _bg_r;
         if (g)
-          *g = 132;
+          *g = _bg_g;
         if (b)
-          *b = 133;
+          *b = _bg_b;
         if (a)
-          *a = 134;
+          *a = _bg_a;
         return 0;
      }
    return -1;
+}
+int
+termio_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
+                       int r, int g, int b, int a)
+{
+   if (strncmp(key, "BG", strlen("BG")) == 0)
+     {
+        _bg_r = r;
+        _bg_g = g;
+        _bg_b = b;
+        _bg_a = a;
+        return 0;
+     }
+   return -1;
+}
+
+void
+termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
+{
+   _bg_r = 131;
+   _bg_g = 132;
+   _bg_b = 133;
+   _bg_a = 134;
 }
 
 Evas_Object *

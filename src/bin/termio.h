@@ -82,4 +82,12 @@ void
 termio_block_activate(Evas_Object *obj, Termblock *blk);
 const char *
 term_preedit_str_get(Term *term);
+int
+termio_color_class_get(Evas_Object *termio, const char *key,
+                       int *r, int *g, int *b, int *a);
+int
+termio_color_class_set(Evas_Object *termio, const char *key,
+                       int r, int g, int b, int a);
+void
+termio_reset_main_colors(Evas_Object *termio);
 #endif

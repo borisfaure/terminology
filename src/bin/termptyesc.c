@@ -3880,28 +3880,77 @@ _handle_xterm_777_command(Termpty *ty,
 }
 
 static void
-_handle_xterm_11_command(Termpty *ty, Eina_Unicode *p)
+_handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
 {
-   int r = 0, g = 0, b = 0;
-   char buf[32];
-   size_t l;
-
-   if (!*p)
+   if (!p || !*p)
      goto err;
-
-   /* only support query mode for the moment */
-   if (*p != '?')
-     goto err;
-
-   if (termpty_color_class_get(ty, "BG", &r, &g, &b, NULL) != 0)
+   if (*p == '?')
      {
-        ERR("error getting color class 'BG'");
+        int r, g, b;
+        char bf[7];
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
+        evas_object_textgrid_palette_get(
+           termio_textgrid_get(ty->obj),
+           EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+           &r, &g, &b, NULL);
+#else
+        Config *config = termio_config_get(ty->obj);
+        r = config->colors[0].r;
+        g = config->colors[0].g;
+        b = config->colors[0].b;
+#endif
+        TERMPTY_WRITE_STR("\033]10;#");
+        snprintf(bf, sizeof(bf), "%.2X%.2X%.2X", r, g, b);
+        termpty_write(ty, bf, 6);
+        TERMPTY_WRITE_STR("\007");
      }
-   TERMPTY_WRITE_STR("\033]11;rgb:");
-   l = snprintf(buf, sizeof(buf), "%.2x%.2x/%.2x%.2x/%.2x%.2x",
-                r, r, g, g, b, b);
-   termpty_write(ty, buf, l);
-   TERMPTY_WRITE_STR("\033\\");
+   else
+     {
+        unsigned char r, g, b;
+        if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
+          goto err;
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
+        evas_object_textgrid_palette_set(
+           termio_textgrid_get(ty->obj),
+           EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+           r, g, b, 0xff);
+#endif
+     }
+   return;
+err:
+   ty->decoding_error = EINA_TRUE;
+}
+
+static void
+_handle_xterm_11_command(Termpty *ty, Eina_Unicode *p, int len)
+{
+
+   if (!*p || !*p)
+     goto err;
+
+   if (*p == '?')
+     {
+        int r = 0, g = 0, b = 0;
+        char buf[32];
+        size_t l;
+
+        if (termio_color_class_get(ty->obj, "BG", &r, &g, &b, NULL) != 0)
+          {
+             ERR("error getting color class 'BG'");
+          }
+        TERMPTY_WRITE_STR("\033]11;rgb:");
+        l = snprintf(buf, sizeof(buf), "%.2x%.2x/%.2x%.2x/%.2x%.2x",
+                     r, r, g, g, b, b);
+        termpty_write(ty, buf, l);
+        TERMPTY_WRITE_STR("\033\\");
+     }
+   else
+     {
+        unsigned char r, g, b;
+        if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
+          goto err;
+        termio_color_class_set(ty->obj, "BG", r, g, b, 0xff);
+     }
 
    return;
 err:
@@ -4026,38 +4075,12 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_hyperlink(ty, s, len);
         break;
       case 10:
-        if (!p || !*p)
-          goto err;
-        if (*p == '?')
-          {
-             char bf[7];
-             Config *config = termio_config_get(ty->obj);
-             TERMPTY_WRITE_STR("\033]10;#");
-             snprintf(bf, sizeof(bf), "%.2X%.2X%.2X",
-                      config->colors[0].r,
-                      config->colors[0].g,
-                      config->colors[0].b);
-             termpty_write(ty, bf, 6);
-             TERMPTY_WRITE_STR("\007");
-          }
-        else
-          {
-             unsigned char r, g, b;
-             len = cc - c - (p - buf);
-             if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
-               goto err;
-#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
-             evas_object_textgrid_palette_set(
-                termio_textgrid_get(ty->obj),
-                EVAS_TEXTGRID_PALETTE_STANDARD, 0,
-                r, g, b, 0xff);
-#endif
-          }
+        _handle_xterm_10_command(ty, p, cc - c - (p - buf));
         break;
       case 11:
         if (!p || !*p)
           goto err;
-        _handle_xterm_11_command(ty, p);
+        _handle_xterm_11_command(ty, p, cc - c - (p - buf));
         break;
       case 50:
         DBG("xterm font support");

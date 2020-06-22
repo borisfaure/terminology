@@ -455,6 +455,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
 
+   termio_reset_main_colors(ty->obj);
    termpty_clear_tabs_on_screen(ty);
    for (i = 0; i < ty->w; i += TAB_WIDTH)
      {

@@ -59,6 +59,12 @@ struct _Termio
       unsigned long long total, size;
       Eina_Bool active : 1;
    } sendfile;
+   struct {
+        int r;
+        int g;
+        int b;
+        int a;
+   } saved_bg, saved_fg;
    Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;

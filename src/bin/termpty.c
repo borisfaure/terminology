@@ -1778,34 +1778,3 @@ term_link_free(Termpty *ty, Term_Link *link)
    /* Remove from bitmap */
    hl_bitmap_clear_bit(ty, id);
 }
-#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
-int
-termpty_color_class_get(Termpty *ty, const char *key,
-                        int *r, int *g, int *b, int *a)
-{
-   Term *term;
-
-   term = termio_term_get(ty->obj);
-   if (term)
-     {
-        Evas_Object *bg = term_bg_get(term);
-        if (!edje_object_color_class_get(bg, key,
-                                         r,
-                                         g,
-                                         b,
-                                         a,
-                                         NULL, NULL, NULL, NULL,
-                                         NULL, NULL, NULL, NULL))
-          {
-             ERR("color class BG not found in theme");
-             return -1;
-          }
-     }
-   else
-     {
-        ERR("term not found");
-        return -1;
-     }
-   return 0;
-}
-#endif
