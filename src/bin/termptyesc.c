@@ -3925,7 +3925,7 @@ static void
 _handle_xterm_11_command(Termpty *ty, Eina_Unicode *p, int len)
 {
 
-   if (!*p || !*p)
+   if (!p || !*p)
      goto err;
 
    if (*p == '?')
