@@ -1280,7 +1280,6 @@ _win_focused_term_get(const Term_Container *tc)
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
-
    if (tc->is_focused && wn->child)
      term = wn->child->focused_term_get(wn->child);
    return term;
@@ -1543,8 +1542,8 @@ _win_split(Term_Container *tc, Term_Container *child,
         child->unfocus(child, tc_split);
         tc->swallow(tc, NULL, tc_split);
         tc_split->is_focused = EINA_TRUE;
-        tc_solo_new->focus(tc_solo_new, tc_split);
         tc_split->focus(tc_split, tc_solo_new);
+        tc_solo_new->focus(tc_solo_new, tc_split);
      }
    else
      {
@@ -4514,7 +4513,6 @@ _tabs_focused_term_get(const Term_Container *tc)
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*)tc;
-
 
    return tc->is_focused ?
       tabs->current->tc->focused_term_get(tabs->current->tc)
