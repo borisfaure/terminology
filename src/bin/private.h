@@ -52,4 +52,27 @@ extern int _log_domain;
      (DIV_ROUND_UP((_v), (_n)) * (_n))
 #endif
 
+
+#define casestartswith(str, constref) \
+  (!strncasecmp(str, constref, sizeof(constref) - 1))
+#define startswith(str, constref) \
+  (!strncmp(str, constref, sizeof(constref) - 1))
+
+#if !defined(HAVE_STRCHRNUL)
+static inline char *
+strchrnul(const char *s, int c)
+{
+   const char *p = s;
+
+   while (*p)
+     {
+        if (*p == c)
+          return (char *)p;
+
+        ++p;
+     }
+   return (char *)  (p);
+}
+#endif
+
 #endif

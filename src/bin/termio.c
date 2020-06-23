@@ -19,6 +19,7 @@
 #include "miniview.h"
 #include "gravatar.h"
 #include "sb.h"
+#include "utils.h"
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
 # include <sys/proc_info.h>

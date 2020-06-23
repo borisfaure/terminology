@@ -306,12 +306,6 @@ termio_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
    return -1;
 }
 
-Eina_Bool
-homedir_get(char *buf, size_t size)
-{
-   return eina_strlcpy(buf, "/home/foo", size) < size;
-}
-
 void
 termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
 {

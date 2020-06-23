@@ -12,6 +12,7 @@
 #include "sb.h"
 #include "utf8.h"
 #include "theme.h"
+#include "utils.h"
 #else
 #include <assert.h>
 #include <math.h>
