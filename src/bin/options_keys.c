@@ -7,7 +7,7 @@
 #include "options.h"
 #include "options_keys.h"
 #include "keyin.h"
-#include "utils.h"
+#include "theme.h"
 
 typedef struct _Keys_Ctx {
      Config *config;

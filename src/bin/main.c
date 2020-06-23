@@ -13,7 +13,7 @@
 #include "config.h"
 #include "controls.h"
 #include "media.h"
-#include "utils.h"
+#include "theme.h"
 #include "ipc.h"
 #include "sel.h"
 #include "miniview.h"

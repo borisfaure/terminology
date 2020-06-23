@@ -6,7 +6,7 @@
 #include "termpty.h"
 #include "options.h"
 #include "options_themepv.h"
-#include "utils.h"
+#include "theme.h"
 #include "main.h"
 #include "col.h"
 

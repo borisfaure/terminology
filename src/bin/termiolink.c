@@ -11,7 +11,7 @@
 #include "termio.h"
 #include "sb.h"
 #include "utf8.h"
-#include "utils.h"
+#include "theme.h"
 #else
 #include <assert.h>
 #include <math.h>

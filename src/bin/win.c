@@ -13,7 +13,7 @@
 #include "gravatar.h"
 #include "media.h"
 #include "termio.h"
-#include "utils.h"
+#include "theme.h"
 #include "sel.h"
 #include "controls.h"
 #include "keyin.h"

@@ -7,7 +7,7 @@
 #include "termio.h"
 #include "media.h"
 #include "md5.h"
-#include "utils.h"
+#include "theme.h"
 
 /* specific log domain to help debug the gravatar module */
 int _gravatar_log_dom = -1;

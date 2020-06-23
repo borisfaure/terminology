@@ -8,7 +8,7 @@
 #include "options.h"
 #include "options_theme.h"
 #include "options_themepv.h"
-#include "utils.h"
+#include "theme.h"
 #include "main.h"
 
 typedef struct _Theme_Ctx

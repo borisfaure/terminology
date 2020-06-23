@@ -11,7 +11,7 @@
 #include "options.h"
 #include "options_behavior.h"
 #include "main.h"
-#include "utils.h"
+#include "theme.h"
 
 typedef struct _Behavior_Ctx {
      Config *config;

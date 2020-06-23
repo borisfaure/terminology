@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include "media.h"
 #include "config.h"
-#include "utils.h"
+#include "theme.h"
 #include "termiolink.h"
 
 typedef struct _Media Media;

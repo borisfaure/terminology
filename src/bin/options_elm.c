@@ -3,7 +3,7 @@
 #include <Elementary.h>
 #include "options.h"
 #include "options_elm.h"
-#include "utils.h"
+#include "theme.h"
 
 static char *_elementary_config = NULL;
 static void

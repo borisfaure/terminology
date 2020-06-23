@@ -6,7 +6,7 @@
 #include "termio.h"
 #include "options.h"
 #include "options_font.h"
-#include "utils.h"
+#include "theme.h"
 
 #define TEST_STRING "oislOIS.015!|,"
 #define FONT_MIN 5

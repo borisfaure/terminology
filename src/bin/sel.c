@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "sel.h"
 #include "config.h"
-#include "utils.h"
+#include "theme.h"
 #include "win.h"
 #include "term_container.h"
 

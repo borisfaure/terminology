@@ -14,7 +14,7 @@
 #include "col.h"
 #include "keyin.h"
 #include "config.h"
-#include "utils.h"
+#include "theme.h"
 #include "media.h"
 #include "miniview.h"
 #include "gravatar.h"

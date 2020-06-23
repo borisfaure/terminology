@@ -5,7 +5,7 @@
 #include "config.h"
 #include "main.h"
 #include "col.h"
-#include "utils.h"
+#include "theme.h"
 
 #define CONF_VER 25
 #define CONFIG_KEY "config"
@@ -899,29 +899,3 @@ config_del(Config *config)
    free(config);
 }
 
-const char *
-config_theme_path_get(const Config *config)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config->theme, NULL);
-
-   if (strchr(config->theme, '/'))
-     return config->theme;
-
-   return theme_path_get(config->theme);
-}
-
-const char *
-config_theme_path_default_get(const Config *config)
-{
-   static char path[PATH_MAX] = "";
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config->theme, NULL);
-
-   if (path[0]) return path;
-
-   snprintf(path, sizeof(path), "%s/themes/default.edj",
-            elm_app_data_dir_get());
-   return path;
-}

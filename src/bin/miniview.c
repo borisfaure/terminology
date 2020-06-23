@@ -10,7 +10,7 @@
 #include "termio.h"
 #include "termiointernals.h"
 #include "miniview.h"
-#include "utils.h"
+#include "theme.h"
 #include "main.h"
 #include "backlog.h"
 

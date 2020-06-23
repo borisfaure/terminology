@@ -9,7 +9,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
-#include "utils.h"
+#include "theme.h"
 #if defined(BINARY_TYTEST)
 #include "tytest.h"
 #endif
