@@ -13,16 +13,4 @@ const char *theme_path_get(const char *name);
 
 Eina_Bool utils_need_scale_wizard(void);
 
-#if (ELM_VERSION_MAJOR == 1) && (ELM_VERSION_MINOR < 20)
-#   if __GNUC__ >= 7
-#    define EINA_FALLTHROUGH __attribute__ ((fallthrough));
-#   else
-#    define EINA_FALLTHROUGH
-#   endif
-#else
-#  ifndef EINA_FALLTHROUGH
-#    define EINA_FALLTHROUGH
-#   endif
-#endif
-
 #endif
