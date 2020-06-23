@@ -826,6 +826,7 @@ config_fork(const Config *config)
    CPY(active_links_file);
    CPY(active_links_url);
    CPY(active_links_escape);
+   CPY(active_links_color);
    CPY(translucent);
    CPY(opacity);
    CPY(mute);
