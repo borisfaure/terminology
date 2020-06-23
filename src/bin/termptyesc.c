@@ -3653,60 +3653,132 @@ _eina_unicode_to_hex(Eina_Unicode u)
 }
 
 static int
+_xterm_parse_color_sharp(Eina_Unicode *p,
+                   unsigned char *r, unsigned char *g, unsigned char *b,
+                   int len)
+{
+   int i;
+
+   switch (len)
+     {
+      case 3*4+1:
+         i = _eina_unicode_to_hex(p[0]);
+         if (i < 0) return -1;
+         *r = i;
+         i = _eina_unicode_to_hex(p[1]);
+         if (i < 0) return -1;
+         *r = *r * 16 + i;
+         i = _eina_unicode_to_hex(p[2]);
+         if (i < 0) return -1;
+         i = _eina_unicode_to_hex(p[3]);
+         if (i < 0) return -1;
+
+         i = _eina_unicode_to_hex(p[4]);
+         if (i < 0) return -1;
+         *g = i;
+         i = _eina_unicode_to_hex(p[5]);
+         if (i < 0) return -1;
+         *g = *g * 16 + i;
+         i = _eina_unicode_to_hex(p[6]);
+         if (i < 0) return -1;
+         i = _eina_unicode_to_hex(p[7]);
+         if (i < 0) return -1;
+
+         i = _eina_unicode_to_hex(p[8]);
+         if (i < 0) return -1;
+         *b = i;
+         i = _eina_unicode_to_hex(p[9]);
+         if (i < 0) return -1;
+         *b = *b * 16 + i;
+         i = _eina_unicode_to_hex(p[10]);
+         if (i < 0) return -1;
+         i = _eina_unicode_to_hex(p[11]);
+         if (i < 0) return -1;
+         break;
+      case 3*3+1:
+         i = _eina_unicode_to_hex(p[0]);
+         if (i < 0) return -1;
+         *r = i;
+         i = _eina_unicode_to_hex(p[1]);
+         if (i < 0) return -1;
+         *r = *r * 16 + i;
+         i = _eina_unicode_to_hex(p[3]);
+         if (i < 0) return -1;
+
+         i = _eina_unicode_to_hex(p[4]);
+         if (i < 0) return -1;
+         *g = i;
+         i = _eina_unicode_to_hex(p[5]);
+         if (i < 0) return -1;
+         *g = *g * 16 + i;
+         i = _eina_unicode_to_hex(p[3]);
+         if (i < 0) return -1;
+
+         i = _eina_unicode_to_hex(p[7]);
+         if (i < 0) return -1;
+         *b = i;
+         i = _eina_unicode_to_hex(p[8]);
+         if (i < 0) return -1;
+         *b = *b * 16 + i;
+         i = _eina_unicode_to_hex(p[3]);
+         if (i < 0) return -1;
+         break;
+      case 3*2+1:
+         i = _eina_unicode_to_hex(p[0]);
+         if (i < 0) return -1;
+         *r = i;
+         i = _eina_unicode_to_hex(p[1]);
+         if (i < 0) return -1;
+         *r = *r * 16 + i;
+
+         i = _eina_unicode_to_hex(p[2]);
+         if (i < 0) return -1;
+         *g = i;
+         i = _eina_unicode_to_hex(p[3]);
+         if (i < 0) return -1;
+         *g = *g * 16 + i;
+
+         i = _eina_unicode_to_hex(p[4]);
+         if (i < 0) return -1;
+         *b = i;
+         i = _eina_unicode_to_hex(p[5]);
+         if (i < 0) return -1;
+         *b = *b * 16 + i;
+         break;
+      case 3*1+1:
+         i = _eina_unicode_to_hex(p[0]);
+         if (i < 0) return -1;
+         *r = i;
+         i = _eina_unicode_to_hex(p[1]);
+         if (i < 0) return -1;
+         *g = i;
+         i = _eina_unicode_to_hex(p[2]);
+         if (i < 0) return -1;
+         *b = i;
+         break;
+      default:
+         return -1;
+     }
+   return 0;
+}
+
+
+static int
 _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
                    unsigned char *r, unsigned char *g, unsigned char *b,
                    int len)
 {
    Eina_Unicode *p = *ptr;
-   int i;
 
-   if (*p != '#')
+   if (*p == '#')
      {
-        WRN("unsupported xterm color");
-        ty->decoding_error = EINA_TRUE;
-        return -1;
-     }
-   p++;
-   len--;
-   if (len == 7)
-     {
-        i = _eina_unicode_to_hex(p[0]);
-        if (i < 0) goto err;
-        *r = i;
-        i = _eina_unicode_to_hex(p[1]);
-        if (i < 0) goto err;
-        *r = *r * 16 + i;
-
-        i = _eina_unicode_to_hex(p[2]);
-        if (i < 0) goto err;
-        *g = i;
-        i = _eina_unicode_to_hex(p[3]);
-        if (i < 0) goto err;
-        *g = *g * 16 + i;
-
-        i = _eina_unicode_to_hex(p[4]);
-        if (i < 0) goto err;
-        *b = i;
-        i = _eina_unicode_to_hex(p[5]);
-        if (i < 0) goto err;
-        *b = *b * 16 + i;
-     }
-   else if (len == 4)
-     {
-        i = _eina_unicode_to_hex(p[0]);
-        if (i < 0) goto err;
-        *r = i;
-        i = _eina_unicode_to_hex(p[1]);
-        if (i < 0) goto err;
-        *g = i;
-        i = _eina_unicode_to_hex(p[2]);
-        if (i < 0) goto err;
-        *b = i;
+        p++;
+        len--;
+        if (_xterm_parse_color_sharp(p, r, g, b, len))
+          goto err;
      }
    else
-     {
-        goto err;
-     }
+     goto err;
 
    return 0;
 
