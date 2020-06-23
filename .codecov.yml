@@ -1,5 +1,3 @@
 fixes:
   - "../::"
   - "/terminology/::"
-  - "/sbin/::/src/bin/"
-  - "/terminology/sbin/::/src/bin/"
