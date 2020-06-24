@@ -216,7 +216,7 @@ msgid "Scale"
 msgstr "Échelle"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:410
-msgid "Select prefered size so that this text is readable."
+msgid "Select preferred size so that this text is readable."
 msgstr "Sélectionner la taille adéquate pour que ce texte soit lisible."
 
 #: src/bin/options_elm.c:179
