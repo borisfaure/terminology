@@ -22,6 +22,16 @@
 #define NO_COLORS 1
 
 color_classes {
+
+   color_class { name: "BG"  ;  color: BG_COLOR; }
+   color_class { name: "FG"  ;  color: FG_COLOR; }
+   color_class { name: "GLOW";  color: 51 153 255 255; }
+   color_class { name: "GLOW_TXT";
+      color: 255 255 255 255;
+      color2: 51 153 255 128;
+      color3: 51 153 255  20;
+   }
+
    color_class { name: "c0";  color: S_base0; }
    color_class { name: "c1";  color: S_base03; }
    color_class { name: "c2";  color: S_red; }
@@ -85,8 +95,5 @@ color_classes {
    color_class { name: "C13"; color: S_violet; } // COL_MAGENTA
    color_class { name: "C14"; color: S_base1; } // COL_CYAN
    color_class { name: "C15"; color: S_base3; } // COL_WHITE
-
-   color_class { name: "BG";  color: BG_COLOR; }
-
 }
 #include "default.edc"

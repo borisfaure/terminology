@@ -46,6 +46,16 @@
 #define NO_COLORS 1
 
 color_classes {
+
+   color_class { name: "BG"  ;  color: BG_COLOR; }
+   color_class { name: "FG"  ;  color: FG_COLOR; }
+   color_class { name: "GLOW";  color: 51 153 255 255; }
+   color_class { name: "GLOW_TXT";
+      color: 255 255 255 255;
+      color2: 51 153 255 128;
+      color3: 51 153 255  20;
+   }
+
    color_class { name: "C0";  color: ANSI0; } // COL_BLACK
    color_class { name: "C1";  color: ANSI1; } // COL_RED
    color_class { name: "C2";  color: ANSI2; } // COL_GREEN
@@ -103,7 +113,5 @@ color_classes {
    color_class { name: "c42"; color: ANSI13; }
    color_class { name: "c43"; color: ANSI14; }
    color_class { name: "c44"; color: ANSI15; }
-
-   color_class { name: "BG";  color: BG_COLOR; }
 }
 #include "default.edc"
