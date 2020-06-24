@@ -115,7 +115,7 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigne
      }
    if ((cell->att.bold) && (!fgext)) fg += 12;
    if ((cell->att.faint) && (!fgext)) fg += 24;
-   
+
    if (bgext) *pixel = colors[bg + 256];
    else if (bg && ((bg % 12) != COL_INVIS)) *pixel = colors[bg];
    else if ((codepoint > 32) && (codepoint < 0x00110000))
@@ -425,14 +425,14 @@ _do_configure(Evas_Object *obj)
    mv->img_h = oh;
    mv->rows = oh / font_h;
    mv->cols = ow / font_w;
-   
+
    if ((mv->rows == 0) || (mv->cols == 0)) return;
-   
+
    mv->screen.size = (double) mv->rows / (double) mv->img_h;
    edje_object_part_drag_size_set(mv->base, "miniview_screen", 1.0, mv->screen.size);
 
    w = (mv->cols * font_w) / font_h;
-   
+
    evas_object_resize(mv->base, w, mv->img_h);
    evas_object_move(mv->base, ox + ow - w, oy);
 }
@@ -495,7 +495,7 @@ miniview_colors_get(Miniview *mv, unsigned int *colors)
 {
    Evas_Object *tg = termio_textgrid_get(mv->termio);
    int r, g, b, a, c;
-   
+
    for (c = 0; c < 256; c++)
      {
         evas_object_textgrid_palette_get

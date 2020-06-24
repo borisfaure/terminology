@@ -140,7 +140,7 @@ theme_reload_cb(void *_data EINA_UNUSED,
 {
    void (*func) (void *d);
    void *func_data;
-   
+
    theme_reload(obj);
    func = evas_object_data_get(obj, "theme_reload_func");
    func_data = evas_object_data_get(obj, "theme_reload_func_data");

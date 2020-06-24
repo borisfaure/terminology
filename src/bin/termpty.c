@@ -1474,7 +1474,7 @@ termpty_block_new(Termpty *ty, int w, int h, const char *path, const char *link)
 {
    Termblock *tb;
    int id;
-   
+
    id = ty->block.curid;
    if (!ty->block.blocks)
      ty->block.blocks = eina_hash_int32_new((Eina_Free_Cb)termpty_block_free);
@@ -1507,12 +1507,12 @@ termpty_block_insert(Termpty *ty, int ch, Termblock *blk)
    // bit 9-17 = x (9b 0->511)
    // bit 18-30 = id (13b 0->8191)
    // bit 31 = 1
-   // 
+   //
    // fg/bg = 8+8bit unused. (use for extra id bits? so 16 + 13 == 29bit?)
-   // 
+   //
    // cp = (1 << 31) | ((id 0x1fff) << 18) | ((x & 0x1ff) << 9) | (y & 0x1ff);
    Termexp *ex;
-   
+
    ex = calloc(1, sizeof(Termexp));
    if (!ex) return;
    ex->ch = ch;
@@ -1527,7 +1527,7 @@ int
 termpty_block_id_get(const Termcell *cell, int *x, int *y)
 {
    int id;
-   
+
    if (!(cell->codepoint & 0x80000000)) return -1;
    id = (cell->codepoint >> 18) & 0x1fff;
    *x = (cell->codepoint >> 9) & 0x1ff;
@@ -1556,7 +1556,7 @@ Termblock *
 termpty_block_chid_get(const Termpty *ty, const char *chid)
 {
    Termblock *tb;
-   
+
    tb = eina_hash_find(ty->block.chid_map, chid);
    return tb;
 }
@@ -1570,7 +1570,7 @@ termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
    if (oldc & 0x80000000) ido = (oldc >> 18) & 0x1fff;
    if (newc & 0x80000000) idn = (newc >> 18) & 0x1fff;
    if (((oldc & 0x80000000) && (newc & 0x80000000)) && (idn == ido)) return;
-   
+
    if (oldc & 0x80000000)
      {
         tb = termpty_block_get(ty, ido);
@@ -1583,7 +1583,7 @@ termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int newc)
              eina_hash_del(ty->block.blocks, &ido, tb);
           }
      }
-   
+
    if (newc & 0x80000000)
      {
         tb = termpty_block_get(ty, idn);

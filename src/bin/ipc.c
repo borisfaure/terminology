@@ -20,7 +20,7 @@ _ipc_cb_client_data(void *_data EINA_UNUSED,
                     void *event)
 {
    Ecore_Ipc_Event_Client_Data *e = event;
-   
+
    if (ecore_ipc_client_server_get(e->client) != ipc)
      return ECORE_CALLBACK_PASS_ON;
    if ((e->major == TY_IPC_MAJOR) &&
@@ -28,7 +28,7 @@ _ipc_cb_client_data(void *_data EINA_UNUSED,
        (e->data) && (e->size > 0))
      {
         Ipc_Instance *inst;
-        
+
         inst = eet_data_descriptor_decode(new_inst_edd, e->data, e->size);
         if (inst)
           {
@@ -62,8 +62,8 @@ _ipc_hash_get(void)
    if (!xdg_seat) xdg_seat = "@unknown@";
    xdg_vt = getenv("XDG_VTNR");
    if (!xdg_vt) xdg_vt = "!unknown!";
-   snprintf(buf, sizeof(buf), "%s.%s.%s.%s.%s.%s", 
-            disp, session, xdg_session, 
+   snprintf(buf, sizeof(buf), "%s.%s.%s.%s.%s.%s",
+            disp, session, xdg_session,
             xdg_id, xdg_seat, xdg_vt);
    memcpy(hash, "terminology-", 12);
    memset(hash+12, 'x', 32);
