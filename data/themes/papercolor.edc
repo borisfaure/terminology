@@ -32,8 +32,8 @@ color_classes {
    color_class { name: "GLOW";  color: 85 139 46 128; }
    color_class { name: "GLOW_TXT";
       color: 255 255 255 255;
-      color2: 85 139  46  128;
-      color3: 85 139  46   20;
+      color2: 85 139  46 255;
+      color3: 85 139  46 255;
    }
 
    color_class { name: "C0";  color: ANSI7; } // COL_BLACK
