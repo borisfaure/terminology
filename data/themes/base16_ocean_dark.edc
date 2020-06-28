@@ -3,11 +3,17 @@
 
 #define BG_COLOR 43 48 59 255
 #define BG_COLOR_TRANSLUCENT 43 48 59 200
+#define FG_COLOR_NO_ALPHA  192 197 206
+#define FG_COLOR  FG_COLOR_NO_ALPHA 255
+
 #define BELL_OVERLAY_COLOR 43 48 59 32
 #define INHERIT_PROVIDE_OWN_COLORS 1
 
 collections {
     color_classes {
+        color_class { name: "BG";  color: BG_COLOR; }
+        color_class { name: "FG"  ;  color: FG_COLOR; }
+
         color_class { name: "c0";  color: 192 197 206 255; }
         color_class { name: "C0";  color: 43 48 59 255; }
         color_class { name: "C1";  color: 191 97 106 255; }
@@ -25,7 +31,6 @@ collections {
         color_class { name: "C7";  color: 192 197 206 255; }
         color_class { name: "C8";  color: 101 115 126 255; }
         color_class { name: "C9";  color: 208 135 112 255; }
-        color_class { name: "BG";  color: BG_COLOR; }
     }
 }
 
