@@ -38,8 +38,8 @@ parts:
   efl:
     plugin: meson
     source-type: tar
-#    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.2.tar.xz
-    source: https://downloads.terminolo.gy/efl-1.24.2.tar.xz
+#    source: https://download.enlightenment.org/rel/libs/efl/efl-1.24.3.tar.xz
+    source: https://downloads.terminolo.gy/efl-1.24.3.tar.xz
     override-pull: |
       snapcraftctl pull
       cd "${SNAPCRAFT_PART_SRC}"
