@@ -50,7 +50,7 @@ index f859c630f0..f7d196ef6b 100644
 +     }
 +
 +error:
-+   snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
++   snprintf(buf, PATH_MAX, PACKAGE_BIN_DIR "/efreetd");
 +}
 +
  static void
