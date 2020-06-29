@@ -68,6 +68,7 @@ parts:
       - -Dbuild-tests=false
     build-packages:
       - gcc
+      - g++
       - pkg-config
       - libdbus-1-dev
       - libfontconfig1-dev
