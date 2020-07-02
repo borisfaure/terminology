@@ -25,16 +25,18 @@
 #define FG_COLOR  FG_COLOR_NO_ALPHA 255
 #define NO_COLORS 1
 
+
+#define HL_COLOR_NO_ALPHA 76 178 255 /* ANSI12 */
 color_classes {
 
    color_class { name: "BG"  ;  color: BG_COLOR; }
    color_class { name: "FG"  ;  color: FG_COLOR; }
-   color_class { name: "GLOW";  color: 85 139 46 128; }
+   color_class { name: "GLOW";  color: HL_COLOR_NO_ALPHA 128; }
    color_class { name: "GLOW_HIGHLIGHT";  color: 255 255 255 255; }
    color_class { name: "GLOW_TXT";
       color: 255 255 255 255;
-      color2: 85 139  46 255;
-      color3: 85 139  46 255;
+      color2: HL_COLOR_NO_ALPHA 255;
+      color3: HL_COLOR_NO_ALPHA 255;
    }
 
    color_class { name: "C0";  color: ANSI7; } // COL_BLACK
@@ -66,7 +68,7 @@ color_classes {
    color_class { name: "c8";  color: ANSI0; }
 
    color_class { name: "c10"; color: BG_COLOR; } // COL_REVERSE_FG
-   color_class { name: "c11"; color: ANSI2; } // COL_REVERSE_BG
+   color_class { name: "c11"; color: HL_COLOR_NO_ALPHA 255; } // COL_REVERSE_BG
 
    color_class { name: "c12"; color: ANSI8; }
    color_class { name: "c13"; color: ANSI15; }
