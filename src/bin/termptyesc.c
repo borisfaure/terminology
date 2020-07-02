@@ -3762,6 +3762,13 @@ _xterm_parse_color_sharp(Eina_Unicode *p,
    return 0;
 }
 
+/* isnan() in musl generates  ' runtime error: negation of 1 cannot be
+ * represented in type 'unsigned long long'
+ * under ubsan
+ */
+#if defined(__clang__) && !defined(__GLIBC__)
+__attribute__((no_sanitize("unsigned-integer-overflow")))
+#endif
 /* returns len read or -1 in case of error */
 static int
 _xterm_parse_intensity(Eina_Unicode *p, unsigned char *c, int len)
