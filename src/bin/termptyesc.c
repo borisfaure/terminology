@@ -3771,7 +3771,7 @@ _xterm_parse_intensity(Eina_Unicode *p, unsigned char *c, int len)
    char *endptr_double;
    double d;
 
-   while (l < 64 && len && p[0] && p[0] != '/' && p[0] != '\007' && p[0] < 128)
+   while (l < 63 && len && p[0] && p[0] != '/' && p[0] != '\007' && p[0] < 128)
      {
         buf[l++] = p[0];
         len--;
@@ -3785,7 +3785,11 @@ _xterm_parse_intensity(Eina_Unicode *p, unsigned char *c, int len)
    if (endptr_double == buf || d < 0 || d > 1.0 || isnan(d))
        return -1;
 
-   *c = d * 255.0;
+   d *= 255.0;
+   if (d > 255.0)
+     *c = 255;
+   else
+     *c = round(d);
    return endptr_double - buf;
 }
 
