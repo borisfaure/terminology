@@ -3762,6 +3762,98 @@ _xterm_parse_color_sharp(Eina_Unicode *p,
    return 0;
 }
 
+static int
+_xterm_parse_color_rgbi(Eina_Unicode *p EINA_UNUSED,
+                        unsigned char *r EINA_UNUSED,
+                        unsigned char *g EINA_UNUSED,
+                        unsigned char *b EINA_UNUSED,
+                        int len EINA_UNUSED)
+{
+   return -1;
+}
+
+/* returns len read or -1 in case of error */
+static int
+_xterm_parse_hex(Eina_Unicode *p, unsigned char *c, int len)
+{
+   int l = 0;
+   int v = 0;
+   int i;
+
+   i = _eina_unicode_to_hex(p[0]);
+   if (i < 0) return -1;
+   p++;
+   l++;
+   len--;
+   if (len <= 0)
+     goto end;
+   v = i;
+
+   i = _eina_unicode_to_hex(p[0]);
+   if (i < 0) goto end;
+   p++;
+   l++;
+   len--;
+   if (len <= 0)
+     goto end;
+   v = v * 16 + i;
+
+   i = _eina_unicode_to_hex(p[0]);
+   if (i < 0) goto end;
+   p++;
+   l++;
+   len--;
+   if (len <= 0)
+     goto end;
+
+   i = _eina_unicode_to_hex(p[0]);
+   if (i < 0) goto end;
+   p++;
+   l++;
+   len--;
+   if (len <= 0)
+     goto end;
+
+end:
+   if (l == 1)
+     v <<= 4;
+   *c = v;
+   if (l > 0)
+     return l;
+   return -1;
+}
+
+static int
+_xterm_parse_color_rgb(Eina_Unicode *p,
+                       unsigned char *r, unsigned char *g, unsigned char *b,
+                       int len)
+{
+   int l;
+
+   /* parse r */
+   l = _xterm_parse_hex(p, r, len);
+   if (l <= 0)
+     return -1;
+   p += l;
+   if (p[0] != '/')
+     return -1;
+   p++;
+   /* parse g */
+   l = _xterm_parse_hex(p, g, len);
+   if (l <= 0)
+     return -1;
+   p += l;
+   if (p[0] != '/')
+     return -1;
+   p++;
+   /* parse b */
+   l = _xterm_parse_hex(p, b, len);
+   if (l <= 0)
+     return -1;
+
+   return 0;
+}
+
 
 static int
 _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
@@ -3775,6 +3867,21 @@ _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
         p++;
         len--;
         if (_xterm_parse_color_sharp(p, r, g, b, len))
+          goto err;
+     }
+   else if (len > 5 && p[0] == 'r' && p[1] == 'g' && p[2] == 'b')
+     {
+        if (p[3] == 'i' && p[4] == ':')
+          {
+             if (_xterm_parse_color_rgbi(p+5, r, g, b, len-5))
+               goto err;
+          }
+        else if (p[3] == ':')
+          {
+             if (_xterm_parse_color_rgb(p+4, r, g, b, len-4))
+               goto err;
+          }
+        else
           goto err;
      }
    else

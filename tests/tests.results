@@ -146,3 +146,4 @@ crash_empty_osc.sh b87272896ce7be9856253b32be1bef14
 xterm-osc-10.sh b8c23c9c5482b1e9c30d8a261edc29f0
 xterm-osc-11.sh 3e02038964b78d948fb599c996bf370d
 xterm-colors-sharp.sh 79d6f72df04237d76a0fa3e722dcec5b
+xterm-colors-rgb.sh d9b55817ef8428343105b44dabd535a8
