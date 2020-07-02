@@ -3762,14 +3762,64 @@ _xterm_parse_color_sharp(Eina_Unicode *p,
    return 0;
 }
 
+/* returns len read or -1 in case of error */
 static int
-_xterm_parse_color_rgbi(Eina_Unicode *p EINA_UNUSED,
-                        unsigned char *r EINA_UNUSED,
-                        unsigned char *g EINA_UNUSED,
-                        unsigned char *b EINA_UNUSED,
-                        int len EINA_UNUSED)
+_xterm_parse_intensity(Eina_Unicode *p, unsigned char *c, int len)
 {
-   return -1;
+   int l = 0;
+   char buf[64];
+   char *endptr_double;
+   double d;
+
+   while (l < 64 && len && p[0] && p[0] != '/' && p[0] != '\007' && p[0] < 128)
+     {
+        buf[l++] = p[0];
+        len--;
+        p++;
+     }
+   if (l == 0)
+     return -1;
+   buf[l] = '\0';
+
+   d = eina_convert_strtod_c(buf, &endptr_double);
+   if (endptr_double == buf || d < 0 || d > 1.0 || isnan(d))
+       return -1;
+
+   *c = d * 255.0;
+   return endptr_double - buf;
+}
+
+static int
+_xterm_parse_color_rgbi(Eina_Unicode *p,
+                        unsigned char *r,
+                        unsigned char *g,
+                        unsigned char *b,
+                        int len)
+{
+   int l;
+
+   /* parse r */
+   l = _xterm_parse_intensity(p, r, len);
+   if (l <= 0)
+     return -1;
+   p += l;
+   if (p[0] != '/')
+     return -1;
+   p++;
+   /* parse g */
+   l = _xterm_parse_intensity(p, g, len);
+   if (l <= 0)
+     return -1;
+   p += l;
+   if (p[0] != '/')
+     return -1;
+   p++;
+   /* parse b */
+   l = _xterm_parse_intensity(p, b, len);
+   if (l <= 0)
+     return -1;
+
+   return 0;
 }
 
 /* returns len read or -1 in case of error */
