@@ -88,7 +88,7 @@ termio_selection_get(Termio *sd,
              if (cells[x].att.tab_inserted)
                {
                   /* There was a tab inserted.
-                   * Only output it if there were spaces/empty cells "bellow"
+                   * Only output it if there were spaces/empty cells "below"
                    */
                   Eina_Bool is_tab = EINA_TRUE;
                   while ((is_tab) && (x < end_x))

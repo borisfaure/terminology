@@ -224,7 +224,7 @@ _type_thumb_init2(Evas_Object *obj)
                     {
                        theme = efreet_icon_theme_find(*itr);
                        if (!theme) continue;
-                       //try to fetch the icon, if we dont find it, continue at other themes
+                       //try to fetch the icon, if we don't find it, continue at other themes
                        icon_theme = eina_stringshare_add(theme->name.internal);
                        fl = efreet_icon_path_find(icon_theme, sd->realf, sd->iw);
                        if (fl) break;
@@ -573,7 +573,7 @@ _type_edje_init(Evas_Object *obj)
    int i;
    const char *groups[] =
      {
-        "terminology/backgroud",
+        "terminology/background",
         "e/desktop/background",
         NULL
      };

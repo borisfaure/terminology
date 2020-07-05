@@ -34,7 +34,7 @@ _ipc_cb_client_data(void *_data EINA_UNUSED,
           {
              if (func_new_inst) func_new_inst(inst);
              // NOTE strings in inst are part of the inst alloc blob and
-             // dont need separate frees.
+             // don't need separate frees.
              free(inst);
           }
      }

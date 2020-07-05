@@ -449,7 +449,7 @@ const Cmatch dmatch[] =
    { 0, 0, 0,  0, 0, 0, NULL, NULL}
 };
 
-// for exectuable files
+// for executable files
 const Cmatch xmatch[] =
 {
    { 5, 2, 0,  9, 9, 9, "*.sh", "text-x-script"},

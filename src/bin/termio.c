@@ -622,7 +622,7 @@ termio_link_get(const Evas_Object *obj,
           {
              // TODO: decode string: %XX -> char
              link = link + sizeof("file://") - 1;
-             /* Handle cases where / is ommitted: file://HOSTNAME/home/ */
+             /* Handle cases where / is omitted: file://HOSTNAME/home/ */
              if (link[0] != '/')
                {
                   link = strchr(link, '/');

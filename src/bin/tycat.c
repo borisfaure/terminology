@@ -180,7 +180,7 @@ handle_edje(char *rp)
 
    o = edje_object_add(evas);
    if (edje_object_file_set
-       (o, rp, "terminology/backgroud") == EINA_TRUE ||
+       (o, rp, "terminology/background") == EINA_TRUE ||
        !edje_object_file_set
        (o, rp, "e/desktop/background"))
      {

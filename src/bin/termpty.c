@@ -67,7 +67,7 @@ termpty_can_handle_key(const Termpty *ty,
                        const Keys_Handler *khdl,
                        const Evas_Event_Key_Down *ev)
 {
-   // if term app asked for kbd lock - dont handle here
+   // if term app asked for kbd lock - don't handle here
    if (ty->termstate.kbd_lock)
      return EINA_FALSE;
    // if app asked us to not do autorepeat - ignore press if is it is the same
