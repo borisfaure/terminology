@@ -17,6 +17,6 @@ printf '\033[0m'
 
 # set cursor color
 printf '\033]12;#ff00ff\007'
-exit 0
+
 # reset cursor color
 printf '\033]112\007'
