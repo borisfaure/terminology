@@ -3622,7 +3622,7 @@ _osc_arg_get(Termpty *ty, Eina_Unicode **ptr)
              goto error;
           }
      }
-   if (*b != ';')
+   if (*b != ';' && *b != BEL)
      {
         sum = -ESC_ARG_ERROR;
         goto error;
@@ -3636,7 +3636,6 @@ _osc_arg_get(Termpty *ty, Eina_Unicode **ptr)
 error:
    ERR("Invalid OSC argument");
    ty->decoding_error = EINA_TRUE;
-   *ptr = NULL;
    return sum;
 }
 
@@ -4321,6 +4320,9 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (!p || !*p)
           goto err;
         _handle_xterm_11_command(ty, p, cc - c - (p - buf));
+        break;
+      case 12:
+        DBG("Set cursor color");
         break;
       case 50:
         DBG("xterm font support");

@@ -148,3 +148,4 @@ xterm-osc-11.sh 3e02038964b78d948fb599c996bf370d
 xterm-colors-sharp.sh 79d6f72df04237d76a0fa3e722dcec5b
 xterm-colors-rgb.sh d9b55817ef8428343105b44dabd535a8
 xterm-colors-rgbi.sh d9b55817ef8428343105b44dabd535a8
+xterm-set-cursor-color.sh e11819850eb17c3b09b94743e6b64ebd
