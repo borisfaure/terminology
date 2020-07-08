@@ -41,17 +41,17 @@ group { name: "terminology/cursor";
                border: 4 4 4 4;
             }
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -7 -15;
             rel2.offset: 6 14;
          }
@@ -72,17 +72,17 @@ group { name: "terminology/cursor";
                border: 4 4 4 4;
             }
             color: 255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -8 -8;
             rel2.offset: 7 7;
          }
@@ -97,12 +97,12 @@ group { name: "terminology/cursor";
                border: 9 9 9 9;
             }
             color:  255 255 255 40;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
       }
       part { name: "outline";
@@ -113,12 +113,12 @@ group { name: "terminology/cursor";
                border: 3 3 3 3;
             }
             color:  255 255 255 80;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "GLOW_HIGHLIGHT";
+            color_class:  "CURSOR_HIGHLIGHT";
          }
       }
       programs {
@@ -263,7 +263,7 @@ group { name: "terminology/cursor_bar";
                border: 4 4 4 4;
             }
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
@@ -272,7 +272,7 @@ group { name: "terminology/cursor_bar";
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -7 -15;
             rel2.offset: 6 14;
          }
@@ -293,17 +293,17 @@ group { name: "terminology/cursor_bar";
                border: 4 4 4 4;
             }
             color: 255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -8 -8;
             rel2.offset: 7 7;
          }
@@ -318,12 +318,12 @@ group { name: "terminology/cursor_bar";
                border: 9 9 9 9;
             }
             color:  255 255 255 40;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
       }
       part { name: "outline";
@@ -334,12 +334,12 @@ group { name: "terminology/cursor_bar";
                border: 3 3 3 3;
             }
             color:  255 255 255 80;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "GLOW_HIGHLIGHT";
+            color_class:  "CURSOR_HIGHLIGHT";
          }
       }
       programs {
@@ -484,17 +484,17 @@ group { name: "terminology/cursor_underline";
                border: 4 4 4 4;
             }
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -7 -15;
             rel2.offset: 6 14;
          }
@@ -515,17 +515,17 @@ group { name: "terminology/cursor_underline";
                border: 4 4 4 4;
             }
             color: 255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "on" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "out" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 0;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
             rel1.offset: -8 -8;
             rel2.offset: 7 7;
          }
@@ -540,12 +540,12 @@ group { name: "terminology/cursor_underline";
                border: 9 9 9 9;
             }
             color:  255 255 255 40;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color:  255 255 255 255;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
       }
       part { name: "outline";
@@ -556,12 +556,12 @@ group { name: "terminology/cursor_underline";
                border: 3 3 3 3;
             }
             color:  255 255 255 80;
-            color_class:  "GLOW";
+            color_class:  "CURSOR";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "GLOW_HIGHLIGHT";
+            color_class:  "CURSOR_HIGHLIGHT";
          }
       }
       programs {

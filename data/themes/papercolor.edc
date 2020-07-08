@@ -31,6 +31,8 @@ color_classes {
 
    color_class { name: "BG"  ;  color: BG_COLOR; }
    color_class { name: "FG"  ;  color: FG_COLOR; }
+   color_class { name: "CURSOR"; color: HL_COLOR_NO_ALPHA 255; }
+   color_class { name: "CURSOR_HIGHLIGHT"; color: 255 255 255 255; }
    color_class { name: "GLOW";  color: HL_COLOR_NO_ALPHA 128; }
    color_class { name: "GLOW_HIGHLIGHT";  color: 255 255 255 255; }
    color_class { name: "GLOW_TXT";
