@@ -30,9 +30,14 @@ def get_ranges(xmlfile, emoji_as_wide):
         if not cp:
             continue
         if emoji_as_wide:
-            emoji = c.get('ExtPict')
-            if emoji == 'Y':
+            ext_pic = c.get('ExtPict')
+            emoji = c.get('Emoji')
+            if emoji == 'Y' and ext_pic == 'Y':
                 ea = 'W'
+            else:
+                blk = c.get('blk')
+                if blk == 'Misc_Pictographs':
+                    ea = 'W'
 
         cp = int(cp, 16)
         if ea != r[0]:
