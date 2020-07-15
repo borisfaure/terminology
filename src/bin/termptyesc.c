@@ -3622,7 +3622,7 @@ _osc_arg_get(Termpty *ty, Eina_Unicode **ptr)
              goto error;
           }
      }
-   if (*b != ';' && *b != BEL)
+   if (*b != ';' && *b != BEL && *b != 0)
      {
         sum = -ESC_ARG_ERROR;
         goto error;
