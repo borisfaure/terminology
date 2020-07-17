@@ -1035,13 +1035,13 @@ _hsl_to_rgb(double hue, double saturation, double lightness,
             uint8_t *rp, uint8_t *gp, uint8_t *bp)
 {
    double a = saturation * MIN(lightness, 1.0 - lightness);
-   int n[3] = {0, 8, 4};
+   double n[3] = {0., 8., 4.};
    double res[3] = {};
    int i;
 
    for (i = 0; i < 3; i++)
      {
-        double k = fmod(n[i] + hue / 12., 12.);
+        double k = fmod(n[i] + 12.0 * hue, 12.);
         double f = lightness - a * MAX(-1, MIN(MIN(k - 3, 9 - k), 1));
         if (f > 1 || f < 0)
           return EINA_FALSE;
@@ -1917,43 +1917,43 @@ tytest_color_parse_css_hsl(void)
    /* These examples all specify the same color: a lavender. */
    assert(TY_SB_ADD(&sb, "hsl(270,60%,70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270, 60%, 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270 60% 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270deg, 60%, 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(4.71239rad, 60%, 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(300grad, 60%, 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(.75turn, 60%, 70%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 224 && g == 135 && b == 132 && a == 255);
+   assert(r == 178 && g == 132 && b == 224 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
@@ -1961,25 +1961,25 @@ tytest_color_parse_css_hsl(void)
    /* These examples all specify the same color: a lavender that is 15% opaque. */
    assert(TY_SB_ADD(&sb, "hsl(270, 60%, 50%, .15)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   assert(r == 127 && g == 51 && b == 204 && a == 38);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270, 60%, 50%, 15%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   assert(r == 127 && g == 51 && b == 204 && a == 38);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270 60% 50% / .15)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   assert(r == 127 && g == 51 && b == 204 && a == 38);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsl(270 60% 50% / 15%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 204 && g == 55 && b == 51 && a == 38);
+   assert(r == 127 && g == 51 && b == 204 && a == 38);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
@@ -1987,39 +1987,39 @@ tytest_color_parse_css_hsl(void)
    /* Different shades */
    assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .05)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   assert(r == 0 && g == 0 && b == 255 && a == 13);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .4)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 102);
+   assert(r == 0 && g == 0 && b == 255 && a == 102);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, .7)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 179);
+   assert(r == 0 && g == 0 && b == 255 && a == 179);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    assert(TY_SB_ADD(&sb, "hsla(240, 100%, 50%, 1)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 255);
+   assert(r == 0 && g == 0 && b == 255 && a == 255);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    /* Whitespace syntax */
    assert(TY_SB_ADD(&sb, "hsla(240 100% 50% / .05)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   assert(r == 0 && g == 0 && b == 255 && a == 13);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
    /* Percentage value for alpha */
    assert(TY_SB_ADD(&sb, "hsla(240 100% 50% / 5%)") == 0);
    assert(_parse_css_hsl_color(&sb, &r, &g, &b, &a) == EINA_TRUE);
-   assert(r == 255 && g == 7 && b == 0 && a == 13);
+   assert(r == 0 && g == 0 && b == 255 && a == 13);
    ty_sb_free(&sb);
    r = g = b = a = 0;
 
