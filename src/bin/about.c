@@ -185,6 +185,8 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    eina_stringshare_del(txt);
    evas_object_show(o);
    elm_layout_content_set(base, "terminology.about", ctx->layout);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _cb_mouse_down, ctx);
 
    ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 0, 0, 0, 0);
