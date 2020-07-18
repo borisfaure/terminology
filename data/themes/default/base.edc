@@ -116,6 +116,13 @@ group { name: "terminology/base";
       }
 
       ////////////////////////////////////////////////////////////////////
+      // swallow to hold invisible rect to click on to dismiss things
+      part { name: "terminology.dismiss"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+
+      ////////////////////////////////////////////////////////////////////
       // overlayed options and controls
       part { name: "terminology.about"; type: SWALLOW;
          scale: 1;
@@ -149,12 +156,6 @@ group { name: "terminology/base";
          target: "terminology.about";
       }
 
-      ////////////////////////////////////////////////////////////////////
-      // swallow to hold invisible rect to click on to dismiss things
-      part { name: "terminology.dismiss"; type: SWALLOW;
-         description { state: "default" 0.0;
-         }
-      }
 
       ////////////////////////////////////////////////////////////////////
       // overlayed options and controls
