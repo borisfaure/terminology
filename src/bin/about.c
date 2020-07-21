@@ -15,6 +15,7 @@ typedef struct _about_ctx {
      Evas_Object *term;
      void (*donecb) (void *data);
      void *donedata;
+     Config *config;
 } About_Ctx;
 
 
@@ -25,6 +26,32 @@ _cb_del_delay(void *data)
    evas_object_del(layout);
    elm_cache_all_flush();
    return EINA_FALSE;
+}
+
+static void
+_run_url(const About_Ctx *ctx,
+         const char *url)
+{
+   char buf[PATH_MAX];
+   const char *cmd = "xdg-open";
+
+   if (ctx->config && ctx->config->helper.url.general &&
+       ctx->config->helper.url.general[0])
+     cmd = ctx->config->helper.url.general;
+
+   snprintf(buf, sizeof(buf), "%s %s", cmd, url);
+   ecore_exe_run(buf, NULL);
+}
+
+static void
+_cb_twitter(void *data,
+            Evas_Object *_obj EINA_UNUSED,
+            const char *_sig EINA_UNUSED,
+            const char *_src EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+
+   _run_url(ctx, "https://twitter.com/_Terminology_");
 }
 
 static void
@@ -47,6 +74,8 @@ _cb_mouse_down(void *data,
 
    if (ctx->donecb)
      ctx->donecb(ctx->donedata);
+   elm_layout_signal_callback_del(ctx->base, "about,twitter", "*",
+                                  _cb_twitter);
 
    free(ctx);
 }
@@ -68,6 +97,7 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    ctx->term = term;
    ctx->donecb = donecb;
    ctx->donedata = donedata;
+   ctx->config = config;
 
    ctx->layout = o = elm_layout_add(win);
    if (elm_layout_file_set(o, config_theme_path_get(config),
@@ -194,6 +224,9 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_mouse_down, ctx);
+
+   elm_layout_signal_callback_add(base, "about,twitter", "*",
+                                  _cb_twitter, ctx);
 
    elm_layout_signal_emit(base, "about,show", "terminology");
    elm_object_signal_emit(ctx->layout, "begin" ,"terminology");

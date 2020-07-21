@@ -70,7 +70,7 @@ group { name: "terminology/about";
             aspect_preference: BOTH;
             image.normal: "ab_shell.png";
          }
-      }                                              
+      }
    }
    programs {
       program {
