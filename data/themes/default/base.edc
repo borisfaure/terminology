@@ -374,8 +374,12 @@ group { name: "terminology/base";
          target: "twitter.r";
       }
       program {
-         signal: "mouse,down,1"; source: "twitter.txt";
+         signal: "mouse,clicked,1"; source: "twitter.txt";
          action: SIGNAL_EMIT "about,twitter" "terminology";
+      }
+      program {
+         signal: "mouse,clicked,3"; source: "twitter.txt";
+         action: SIGNAL_EMIT "about,twitter,ctx" "terminology";
       }
       program {
          signal: "about,show"; source: "terminology";

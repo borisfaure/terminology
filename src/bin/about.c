@@ -6,6 +6,7 @@
 #include "config.h"
 #include "termio.h"
 
+#define TWITTER_HANDLE  "@_Terminology_"
 
 typedef struct _about_ctx {
      Evas_Object *layout;
@@ -13,6 +14,7 @@ typedef struct _about_ctx {
      Evas_Object *win;
      Evas_Object *base;
      Evas_Object *term;
+     Evas_Object *ctxpopup;
      void (*donecb) (void *data);
      void *donedata;
      Config *config;
@@ -44,6 +46,58 @@ _run_url(const About_Ctx *ctx,
 }
 
 static void
+_cb_ctxpopup_del(void *data,
+                 Evas *_e EINA_UNUSED,
+                 Evas_Object *_obj EINA_UNUSED,
+                 void *_event EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+
+   ctx->ctxpopup = NULL;
+}
+
+static void
+_cb_ctxpopup_dismissed(void *data,
+                       Evas_Object *obj,
+                       void *_event EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+
+   ctx->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxpopup_copy_twitter(void *data,
+                          Evas_Object *obj,
+                          void *_event EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+
+   elm_cnp_selection_set(ctx->win, ELM_SEL_TYPE_CLIPBOARD,
+                         ELM_SEL_FORMAT_TEXT,
+                         TWITTER_HANDLE,
+                         strlen(TWITTER_HANDLE));
+   ctx->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxpopup_open_twitter_as_url(void *data,
+                                 Evas_Object *obj,
+                                 void *_event EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+
+   _run_url(ctx, "https://twitter.com/_Terminology_");
+
+   ctx->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+
+
+static void
 _cb_twitter(void *data,
             Evas_Object *_obj EINA_UNUSED,
             const char *_sig EINA_UNUSED,
@@ -52,6 +106,38 @@ _cb_twitter(void *data,
    About_Ctx *ctx = data;
 
    _run_url(ctx, "https://twitter.com/_Terminology_");
+}
+
+static void
+_cb_twitter_ctx(void *data,
+                Evas_Object *_obj EINA_UNUSED,
+                const char *_sig EINA_UNUSED,
+                const char *_src EINA_UNUSED)
+{
+   About_Ctx *ctx = data;
+   Evas_Object *popup;
+   const char *fmt;
+   Evas *e = evas_object_evas_get(ctx->base);
+   Evas_Coord x;
+   Evas_Coord y;
+
+   evas_pointer_canvas_xy_get(e, &x, &y);
+
+   popup = elm_ctxpopup_add(ctx->win);
+   ctx->ctxpopup = popup;
+   fmt = eina_stringshare_printf(_("Copy '%s'"),
+                                 TWITTER_HANDLE);
+
+   elm_ctxpopup_item_append(popup, fmt, NULL,
+                            _cb_ctxpopup_copy_twitter, ctx);
+   elm_ctxpopup_item_append(popup, _("Open"), NULL,
+                            _cb_ctxpopup_open_twitter_as_url, ctx);
+   evas_object_move(popup, x, y);
+   evas_object_show(popup);
+   evas_object_smart_callback_add(popup, "dismissed",
+                                  _cb_ctxpopup_dismissed, ctx);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_DEL,
+                                  _cb_ctxpopup_del, ctx);
 }
 
 static void
@@ -76,6 +162,8 @@ _cb_mouse_down(void *data,
      ctx->donecb(ctx->donedata);
    elm_layout_signal_callback_del(ctx->base, "about,twitter", "*",
                                   _cb_twitter);
+   elm_layout_signal_callback_del(ctx->base, "about,twitter,ctx", "*",
+                                  _cb_twitter_ctx);
 
    free(ctx);
 }
@@ -98,6 +186,9 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    ctx->donecb = donecb;
    ctx->donedata = donedata;
    ctx->config = config;
+
+   elm_object_part_text_set(base, "twitter.txt",
+                            _("Twitter: @_Terminology_"));
 
    ctx->layout = o = elm_layout_add(win);
    if (elm_layout_file_set(o, config_theme_path_get(config),
@@ -227,6 +318,8 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
 
    elm_layout_signal_callback_add(base, "about,twitter", "*",
                                   _cb_twitter, ctx);
+   elm_layout_signal_callback_add(base, "about,twitter,ctx", "*",
+                                  _cb_twitter_ctx, ctx);
 
    elm_layout_signal_emit(base, "about,show", "terminology");
    elm_object_signal_emit(ctx->layout, "begin" ,"terminology");
