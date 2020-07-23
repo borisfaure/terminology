@@ -381,12 +381,248 @@ group { name: "terminology/base";
          signal: "mouse,clicked,3"; source: "twitter.txt";
          action: SIGNAL_EMIT "about,twitter,ctx" "terminology";
       }
+
+      part { name: "youtube.base"; type: RECT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            fixed: 1 1;
+            rel1 {
+               to_y: "terminology.about";
+               relative: 0.5 1.0;
+            }
+            rel2 {
+               relative: 1.0 1.0;
+            }
+         }
+      }
+      part { name: "youtube.txt"; type: TEXT;
+         mouse_events: 1;
+         scale: 1;
+         effect: GLOW;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            rel1 {
+               to: "youtube.base";
+               relative: 0.5 0.5;
+            }
+            rel2 {
+               to: "youtube.base";
+               relative: 0.5 0.5;
+            }
+            color: 51 255 17 255;
+            color2: 136 255 136 40;
+            color3: 136 255 136 8;
+            text {
+               font: "Sans"; size: 11;
+               text: "Youtube channel";
+               align: 0.0 0.5;
+               min: 1 1;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "youtube.bottom";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "lk_bottom.png";
+            image.border: 9 9 0 0;
+            align: 0.5 1.0;
+            min: 20 8;
+            rel1 {
+               to: "youtube.txt";
+               offset: -6 -2;
+               relative: 0.0 1.0;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: 5 -1;
+            }
+            color: 51 255 17 255;
+            fill.smooth: 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default";
+            visible: 1;
+         }
+      }
+      part { name: "youtube.l";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "lk_left.png";
+            align: 0.0 1.0;
+            min: 4 4;
+            rel1 {
+               to: "youtube.txt";
+               offset: 6 -2;
+               relative: 0.0 1.0;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: 6 -2;
+               relative: 0.0 1.0;
+            }
+            color: 51 255 17 255;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default";
+            visible: 1;
+         }
+         description { state: "out" 0.0;
+            fixed: 1 1;
+            inherit: "visible" 0.0;
+            min: 16 16;
+            rel1 {
+               to: "youtube.txt";
+               offset: -10 -2;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: -10 -2;
+            }
+            color: 51 255 17 255;
+         }
+         description { state: "out2" 0.0;
+            fixed: 1 1;
+            inherit: "visible" 0.0;
+            min: 32 32;
+            rel1 {
+               to: "youtube.txt";
+               offset: -26 -2;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: -26 -2;
+            }
+            color: 51 255 17 0;
+         }
+      }
+      part { name: "youtube.r";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            image.normal: "lk_right.png";
+            align: 1.0 1.0;
+            min: 4 4;
+            rel1 {
+               to: "youtube.txt";
+               offset: -5 -1;
+               relative: 1.0 1.0;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: -5 -1;
+               relative: 1.0 1.0;
+            }
+            color: 51 255 17 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default";
+            visible: 1;
+         }
+         description { state: "out" 0.0;
+            fixed: 1 1;
+            inherit: "visible" 0.0;
+            min: 16 16;
+            rel1 {
+               to: "youtube.txt";
+               offset: 9 -2;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: 9 -2;
+            }
+            color: 51 255 17 255;
+         }
+         description { state: "out2" 0.0;
+            fixed: 1 1;
+            inherit: "visible" 0.0;
+            min: 32 32;
+            rel1 {
+               to: "youtube.txt";
+               offset: 25 -2;
+            }
+            rel2 {
+               to: "youtube.txt";
+               offset: 25 -2;
+            }
+            color: 51 255 17 0;
+         }
+      }
+      program { name: "youtube.show2";
+         action: STATE_SET "out2" 0.0;
+         transition: LINEAR 0.3;
+         target: "youtube.l";
+         target: "youtube.r";
+         after: "youtube.show3";
+      }
+      program { name: "youtube.show3";
+         action: STATE_SET "default" 0.0;
+         target: "youtube.l";
+         target: "youtube.r";
+         after: "youtube.show";
+      }
+      program {
+         name: "youtube.show_bottom";
+         signal: "mouse,in"; source: "youtube.txt";
+         action: STATE_SET "visible" 0.0;
+         target: "youtube.bottom";
+      }
+      program {
+         name: "youtube.show";
+         signal: "mouse,in"; source: "youtube.txt";
+         action: STATE_SET "out" 0.0;
+         transition: LINEAR 0.3;
+         target: "youtube.l";
+         target: "youtube.r";
+         after: "youtube.show2";
+      }
+      program {
+         signal: "mouse,out"; source: "youtube.txt";
+         action: STATE_SET "visible" 0.0;
+         target: "youtube.txt";
+      }
+      program {
+         signal: "mouse,out"; source: "youtube.txt";
+         action: ACTION_STOP;
+         target: "youtube.show";
+         target: "youtube.show2";
+         target: "youtube.show3";
+      }
+      program {
+         signal: "mouse,out"; source: "youtube.txt";
+         action: STATE_SET "default" 0.0;
+         target: "youtube.bottom";
+         target: "youtube.l";
+         target: "youtube.r";
+      }
+      program {
+         signal: "mouse,clicked,1"; source: "youtube.txt";
+         action: SIGNAL_EMIT "about,youtube" "terminology";
+      }
+      program {
+         signal: "mouse,clicked,3"; source: "youtube.txt";
+         action: SIGNAL_EMIT "about,youtube,ctx" "terminology";
+      }
+
       program {
          signal: "about,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
          transition: SPRING 1.2 2.0 6;
          target: "terminology.about";
          target: "twitter.txt";
+         target: "youtube.txt";
       }
       program {
          signal: "about,hide"; source: "terminology";
@@ -394,6 +630,7 @@ group { name: "terminology/base";
          transition: DECELERATE 0.6;
          target: "terminology.about";
          target: "twitter.txt";
+         target: "youtube.txt";
       }
 
 
