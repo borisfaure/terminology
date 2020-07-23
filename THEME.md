@@ -45,6 +45,49 @@ It reacts to the following signals:
 * `controls,show`
 * `controls,hide`
 
+## Special parts
+
+### `youtube.txt`
+A text part used to hold `Youtube channel` when the About is shown.
+
+### `twitter.txt`
+A text part used to hold `Youtube channel` when the About is shown.
+
+## Signals emitted
+
+### `about,twitter`
+When the Twitter link on the About page is clicked.
+
+### `about,twitter,ctx`
+When the Twitter link on the About page is right-clicked.
+
+### `about,youtube`
+When the Youtube link on the About page is clicked.
+
+### `about,youtube,ctx`
+When the Youtube link on the About page is right-clicked.
+
+### `optdetails,hide,done`
+When the swallowed part `terminology.optdetails` is finally hidden.
+
+
+## Signals received
+
+### `about,show` and `about,hide`
+Used to hide or show the about page, swallowed in `terminology.about`.
+
+### `controls,show` and `controls,hide`
+Used to hide or show the controls, swallowed in `terminology.controls`.
+
+### `options,show` and `options,hide`
+Used to hide or show the options panel, swallowed in `terminology.options`.
+
+### `optdetails,show` and `optdetails,hide`
+Used to hide or show the options details settings panel, swallowed in `terminology.optdetails`.
+
+### `cmdbox,show` and `cmdbox,hide`
+Used to hide or show the command box, swallowed in `terminology.cmdbox`.
+
 
 
 # `terminology/background`
