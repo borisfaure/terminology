@@ -1,6 +1,27 @@
 =================
-Terminology 1.7.0
+Terminology 1.8.0
 =================
+
+Changes since 1.7.0:
+--------------------
+
+Additions:
+    * Small framework to add unit tests
+    * Display tooltips on when hovering color descriptions
+    * Handle OSC 10/11 to change/get background and foreground colors
+
+Improvements:
+    * Reworked build system for testing and fuzzing
+    * Use of switch-case constructs when home-made binary search was not
+      efficient
+    * Support EFL 1-22 or newer only
+    * Larger list of word separators when doing word-selection
+    * Reworked the Settings panel to add one panel on Mouse interactions
+    * Handle Emoji characters as double-width, following Unicode 13.0
+
+Fixes:
+    * Fix issues detected by UndefinedBehavior Sanitizer
+
 
 Changes since 1.6.0:
 --------------------
