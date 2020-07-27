@@ -107,7 +107,7 @@ group { name: "terminology/tab_drag_thumb";
             color:  255 255 255 255;
             color2: 255 255 255 128;
             color3: 255 255 255  20;
-            color_class: "GLOW_TXT";
+            color_class: "GLOW_TXT_HIGHLIGHT";
             align: 0.5 1.0;
             text { font: "Sans"; size: 10;
                align: 0.5 1.0;

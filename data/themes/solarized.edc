@@ -30,6 +30,11 @@ color_classes {
    color_class { name: "GLOW";  color: 51 153 255 255; }
    color_class { name: "GLOW_HIGHLIGHT";  color: 255 255 255 255; }
    color_class { name: "GLOW_TXT";
+      color:  51 153 255 255;
+      color2: 51 153 255 255;
+      color3: 51 153 255 255;
+   }
+   color_class { name: "GLOW_TXT_HIGHLIGHT";
       color: 255 255 255 255;
       color2: 51 153 255 255;
       color3: 51 153 255 255;
