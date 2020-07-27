@@ -18,7 +18,8 @@ group { name: "terminology/link";
             rel1.offset: -6 0;
             rel1.relative: 0.0 1.0;
             rel2.offset: 5 0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
             fill.smooth: 0;
          }
       }
@@ -33,7 +34,8 @@ group { name: "terminology/link";
             rel1.relative: 0.0 1.0;
             rel2.offset: 16 -1;
             rel2.relative: 0.0 1.0;
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
          description { state: "out" 0.0;
             fixed: 1 1;
@@ -41,7 +43,8 @@ group { name: "terminology/link";
             min: 16 16;
             rel1.offset: -10 -1;
             rel2.offset: -10 -1;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
          description { state: "out2" 0.0;
             fixed: 1 1;
@@ -49,7 +52,8 @@ group { name: "terminology/link";
             min: 32 32;
             rel1.offset: -26 -1;
             rel2.offset: -26 -1;
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
       }
       part { name: "r";
@@ -63,7 +67,8 @@ group { name: "terminology/link";
             rel1.relative: 1.0 1.0;
             rel2.offset: -15 0;
             rel2.relative: 1.0 1.0;
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
          description { state: "out" 0.0;
             fixed: 1 1;
@@ -71,7 +76,8 @@ group { name: "terminology/link";
             min: 16 16;
             rel1.offset: 9 -1;
             rel2.offset: 9 -1;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
          description { state: "out2" 0.0;
             fixed: 1 1;
@@ -79,7 +85,8 @@ group { name: "terminology/link";
             min: 32 32;
             rel1.offset: 25 -1;
             rel2.offset: 25 -1;
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
       }
       part { name: "event"; type: RECT;
