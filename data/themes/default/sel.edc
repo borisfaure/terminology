@@ -177,11 +177,13 @@ group { name: "terminology/sel/item";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
 
@@ -267,9 +269,10 @@ group { name: "terminology/sel/item";
          description { state: "default" 0.0;
             rel1.to: "terminology.content";
             rel2.to: "terminology.content";
-            color: 51 153 255 255;
-            color2: 51 153 255 24;
-            color3: 51 153 255 18;
+            color:  255 255 255 255;
+            color2: 255 255 255  24;
+            color3: 255 255 255  18;
+            color_class: "GLOW_TXT";
             align: 0.5 1.0;
             text { font: "Sans"; size: 10;
                align: 0.5 1.0;
@@ -278,9 +281,10 @@ group { name: "terminology/sel/item";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color2: 51 153 255 128;
-            color3: 51 153 255 20;
+            color:  255 255 255 255;
+            color2: 255 255 255 128;
+            color3: 255 255 255  20;
+            color_class: "GLOW_TXT_HIGHLIGHT";
          }
       }
       part { name: "clip2"; type: RECT;
