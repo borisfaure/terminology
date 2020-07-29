@@ -1,20 +1,24 @@
-version: 2
+version: 2.1
 
 jobs:
   checkout_code:
     docker:
       - image: borisfaure/terminology-ci:latest
+    shell: /bin/sh -leo pipefail
+    environment:
+      - BASH_ENV: /etc/profile
     steps:
       - run: |
           cd /terminology
           git pull --ff-only
           if [ -n "$CIRCLE_PR_NUMBER" ]; then
               git fetch origin pull/$CIRCLE_PR_NUMBER/head
-          fi
-          if [ -n "$CIRCLE_SHA1" ]; then
-            git reset --hard $CIRCLE_SHA1
           else
-            git reset --hard origin/master
+              if [ -n "$CIRCLE_SHA1" ]; then
+                git reset --hard $CIRCLE_SHA1
+              else
+                git reset --hard origin/master
+              fi
           fi
       - save_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
@@ -57,6 +61,9 @@ jobs:
   build_and_test_debug_gcc_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
+    shell: /bin/sh -leo pipefail
+    environment:
+      - BASH_ENV: /etc/profile
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
