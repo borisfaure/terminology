@@ -146,6 +146,7 @@ struct _Term
    unsigned char miniview_shown : 1;
    unsigned char popmedia_deleted : 1;
    unsigned char has_bg_cursor : 1;
+   unsigned char core_cursor_set: 1;
 
    Eina_Bool sendfile_request_enabled : 1;
    Eina_Bool sendfile_progress_enabled : 1;
@@ -1605,6 +1606,27 @@ _win_split_direction(Term_Container *tc,
    return 0;
 }
 
+static Eina_Bool
+_set_cursor(Term *term, void *data)
+{
+   const char *cursor = data;
+
+   assert(term->core);
+   if (cursor)
+     {
+        elm_object_cursor_set(term->core, cursor);
+        term->core_cursor_set = 1;
+     }
+   else
+     {
+        if (term->core_cursor_set)
+          elm_object_cursor_unset(term->core);
+        term->core_cursor_set = 0;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static void
 _win_update(Term_Container *tc)
 {
@@ -1612,6 +1634,14 @@ _win_update(Term_Container *tc)
 
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
    wn = (Win*) tc;
+
+   if (wn->config->hide_cursor >= CONFIG_CURSOR_IDLE_TIMEOUT_MAX)
+     {
+        ecore_timer_del(wn->hide_cursor_timer);
+        wn->hide_cursor_timer = NULL;
+
+        for_each_term_do(wn, &_set_cursor, NULL);
+     }
 
    wn->child->update(wn->child);
 }
@@ -2036,25 +2066,6 @@ _cb_win_mouse_down(void *data,
    DBG("focus tc_child:%p", tc_child);
    tc_child->focus(tc_child, tc);
 }
-
-static Eina_Bool
-_set_cursor(Term *term, void *data)
-{
-   const char *cursor = data;
-
-   assert(term->core);
-   if (cursor)
-     {
-        elm_object_cursor_set(term->core, cursor);
-     }
-   else
-     {
-        elm_object_cursor_unset(term->core);
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 
 static Eina_Bool
 _hide_cursor(void *data)

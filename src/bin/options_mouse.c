@@ -93,6 +93,7 @@ _cb_op_hide_cursor_changed(void *data,
         config->hide_cursor = CONFIG_CURSOR_IDLE_TIMEOUT_MAX + 1.0;
         elm_object_disabled_set(ctx->sld_hide_cursor, EINA_TRUE);
      }
+   windows_update();
    config_save(config);
 }
 
@@ -109,6 +110,7 @@ _cb_hide_cursor_slider_chg(void *data,
        return;
 
    config->hide_cursor = value;
+   windows_update();
    config_save(config);
 }
 
