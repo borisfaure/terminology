@@ -24,7 +24,7 @@ jobs:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - /terminology
-  build_minimal_gcc_efl-1.22:
+  build_minimal_gcc_efl-1_22:
     docker:
       - image: borisfaure/terminology-ci:latest
     steps:
@@ -41,7 +41,7 @@ jobs:
             meson configure build
             cd build
             ninja -j4
-  build_minimal_gcc_efl-1.23:
+  build_minimal_gcc_efl-1_23:
     docker:
       - image: borisfaure/terminology-ci:latest
     steps:
@@ -178,10 +178,10 @@ workflows:
   build-and-deploy:
     jobs:
       - checkout_code
-      - build_minimal_gcc_efl-1.22:
+      - build_minimal_gcc_efl-1_22:
           requires:
             - checkout_code
-      - build_minimal_gcc_efl-1.23:
+      - build_minimal_gcc_efl-1_23:
           requires:
             - checkout_code
       - build_and_test_debug_gcc_efl_latest:
