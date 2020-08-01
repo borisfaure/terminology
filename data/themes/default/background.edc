@@ -140,9 +140,10 @@ group { name: "terminology/background";
             rel1.offset: -4 0;
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -1;
-            color: 255 153 51 64;
-            color2: 255 51 0 18;
-            color3: 255 0 0 8;
+            color:  255 255 255 64;
+            color2: 255 255 255 18;
+            color3: 255 255 255 8;
+            color_class: "TAB_MISSED";
             align: 1.0 0.5;
             text { font: "Sans"; size: 8;
                align: 1.0 0.5;
@@ -155,6 +156,7 @@ group { name: "terminology/background";
             color: 255 255 64 255;
             color2: 255 153 51 128;
             color3: 255 0 0 20;
+            color_class: "TAB_MISSED";
          }
       }
       part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;
@@ -167,9 +169,10 @@ group { name: "terminology/background";
             rel2.to: "terminology.tabcount.control";
             rel1.relative: -0.2 0.0;
             rel2.relative: -0.2 1.0;
-            color: 51 153 255 64;
-            color2: 51 153 255 18;
-            color3: 51 153 255 8;
+            color:  255 255 255  64;
+            color2: 255 255 255 18;
+            color3: 255 255 255  8;
+            color_class: "GLOW_TXT";
             align: 1.0 0.5;
             text { font: "Sans"; size: 8;
                align: 1.0 0.5;
@@ -179,9 +182,10 @@ group { name: "terminology/background";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color2: 51 153 255 128;
-            color3: 51 153 255 20;
+            color:  255 255 255 255;
+            color2: 255 255 255 128;
+            color3: 255 255 255  20;
+            color_class: "GLOW_TXT_HIGHLIGHT";
          }
       }
       part { name: "tabcount_glow_r0";
@@ -196,11 +200,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tabcount_glow_r1";
@@ -215,11 +221,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tabcount_glow_r2";
@@ -234,11 +242,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tabcount_glow_r3";
@@ -253,11 +263,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tabcount_r0"; type: RECT;
@@ -269,10 +281,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.05;
             rel2.relative: 0.45 0.45;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tabcount_r1"; type: RECT;
@@ -284,10 +298,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.05;
             rel2.relative: 0.95 0.45;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tabcount_r2"; type: RECT;
@@ -299,10 +315,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.55;
             rel2.relative: 0.45 0.95;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tabcount_r3"; type: RECT;
@@ -314,10 +332,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.55;
             rel2.relative: 0.95 0.95;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "terminology.tabcount.control"; type: SWALLOW;
@@ -474,7 +494,8 @@ group { name: "terminology/background";
          clip_to: "sendfile_request_clip";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 64 64 64 255;
+            color: 255 255 255 255;
+            color_class: "BG_SENDFILE";
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
          }
@@ -561,7 +582,8 @@ group { name: "terminology/background";
          scale : 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 64 64 64 255;
+            color: 255 255 255 255;
+            color_class: "BG_SENDFILE";
             rel.to: "terminology.sendfile.progress";
             rel1.offset: -4 -4;
             rel2.offset: 4 4;
@@ -657,15 +679,18 @@ group { name: "terminology/background";
             image.border: 7 7 7 7;
             image.middle: 0;
             fill.smooth: 0;
-            color: 51 153 255 0;
+            color: 255 255 255 0;
+            color_class: "GLOW";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
          description { state: "focused2" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 64;
+            color: 255 255 255 16;
+            color_class: "GLOW";
          }
       }
       part { name: "bevel";
@@ -694,10 +719,12 @@ group { name: "terminology/background";
             aspect: (256/120) (256/120);
             aspect_preference: HORIZONTAL;
             color: 255 255 255 0;
+            color_class: "SHINE";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "SHINE";
          }
       }
       part { name: "shine_unfocused";
@@ -712,10 +739,12 @@ group { name: "terminology/background";
             aspect: (256/120) (256/120);
             aspect_preference: HORIZONTAL;
             color: 255 255 255 64;
+            color_class: "SHINE";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 0;
+            color_class: "SHINE";
          }
       }
       part { name: "glintclip"; type: RECT;
@@ -742,10 +771,12 @@ group { name: "terminology/background";
             }
             image.normal: "bg_glint.png";
             color: 255 255 255 128;
+            color_class: "SHINE";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "SHINE";
          }
       }
       // }}}

@@ -40,6 +40,19 @@ color_classes {
       color3: 51 153 255 255;
    }
    color_class { name: "END_SELECTION"; color: 255 0 0 255; }
+   color_class { name: "TAB_MISSED";
+      color:  255 153  51 255;
+      color2: 255  51   0 255;
+      color3: 255   0   0 255;
+   }
+   color_class { name: "TAB_MISSED_OVER";
+      color: 255 255 255 255;
+      color2: 51 153 255 255;
+      color3: 51 153 255 255;
+   }
+   color_class { name: "BG_SENDFILE"; color: 64 64 64 255; }
+   color_class { name: "SHINE"; color: 255 255 255 255; }
+
 
    color_class { name: "c0";  color: S_base0; }
    color_class { name: "c1";  color: S_base03; }
