@@ -5,10 +5,16 @@ color_class { name: "CURSOR_HIGHLIGHT"; color: 255 255 255 255; }
 color_class { name: "GLOW";     color: 51 153 255 255; }
 color_class { name: "GLOW_HIGHLIGHT";  color: 255 255 255 255; }
 color_class { name: "GLOW_TXT";
+   color: 51 153 255 255;
+   color2: 51 153 255 255;
+   color3: 51 153 255 255;
+}
+color_class { name: "GLOW_TXT_HIGHLIGHT";
    color: 255 255 255 255;
    color2: 51 153 255 255;
    color3: 51 153 255 255;
 }
+color_class { name: "END_SELECTION"; color: 255 0 0 255; }
 
 color_class { name: "c0";       color: 170 170 170 255; } // COL_DEF
 color_class { name: "c1";       color:   0   0   0 255; } // COL_BLACK

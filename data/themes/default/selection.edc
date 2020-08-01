@@ -20,8 +20,6 @@
 // bottomfull:
 // |        ######|
 // |##############|
-#define PATCOL   255 255 255 25
-#define OUTCOL   51 153 255 128
 
 group { name: "terminology/selection";
    images {
@@ -40,7 +38,8 @@ group { name: "terminology/selection";
          mouse_events: 0;
          clip_to: "top_clip";
          description { state: "default" 0.0;
-            color: PATCOL;
+            color: 255 255 255 25;
+            color_class: "GLOW";
             image.normal: "sl_stripe.png";
             fill.size.relative: 0.0 0.0;
             fill.size.offset: 240 240;
@@ -50,7 +49,8 @@ group { name: "terminology/selection";
          mouse_events: 0;
          clip_to: "middle_clip";
          description { state: "default" 0.0;
-            color: PATCOL;
+            color: 255 255 255 25;
+            color_class: "GLOW";
             image.normal: "sl_stripe.png";
             fill.size.relative: 0.0 0.0;
             fill.size.offset: 240 240;
@@ -60,7 +60,8 @@ group { name: "terminology/selection";
          mouse_events: 0;
          clip_to: "bottom_clip";
          description { state: "default" 0.0;
-            color: PATCOL;
+            color: 255 255 255 25;
+            color_class: "GLOW";
             image.normal: "sl_stripe.png";
             fill.size.relative: 0.0 0.0;
             fill.size.offset: 240 240;
@@ -199,7 +200,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -219,7 +221,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 0 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -239,7 +242,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -258,7 +262,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -287,7 +292,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -307,7 +313,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: -1 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -327,7 +334,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -346,7 +354,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -364,7 +373,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -384,7 +394,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 0 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -404,7 +415,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -423,7 +435,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -452,7 +465,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 2;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_top.png";
             image.border: 0 0 4 7;
          }
@@ -471,7 +485,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: 3 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_bottom.png";
             image.border: 0 0 7 4;
          }
@@ -489,7 +504,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -508,7 +524,8 @@ group { name: "terminology/selection";
                to: "middle_clip";
                offset: 0 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -528,7 +545,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -547,7 +565,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -566,7 +585,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -585,7 +605,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -614,7 +635,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: 3 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_bottom.png";
             image.border: 0 0 7 4;
          }
@@ -632,7 +654,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -651,7 +674,8 @@ group { name: "terminology/selection";
                to: "middle_clip";
                offset: 0 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -671,7 +695,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -690,7 +715,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -709,7 +735,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -738,7 +765,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 2;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_top.png";
             image.border: 0 0 4 7;
          }
@@ -756,7 +784,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: 2 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_left.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -774,7 +803,8 @@ group { name: "terminology/selection";
             rel2 {
                offset: 0 0;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_right.png";
             image.border: 0 0 4 4;
             fill.smooth: 0;
@@ -794,7 +824,8 @@ group { name: "terminology/selection";
                relative: 0.0 0.0;
                offset: -1 3;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -813,7 +844,8 @@ group { name: "terminology/selection";
                relative: 0.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_htop.png";
             fill.smooth: 0;
          }
@@ -832,7 +864,8 @@ group { name: "terminology/selection";
                relative: 1.0 1.0;
                offset: -1 -1;
             }
-            color: OUTCOL;
+            color: 255 255 255 128;
+            color_class: "GLOW";
             image.normal: "sl_hbottom.png";
             fill.smooth: 0;
          }
@@ -871,7 +904,8 @@ group { name: "terminology/selection";
             rel2.to: "terminology.top_left";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 -1;
-            color: 255 0 0 128;
+            color: 255 255 255 128;
+            color_class: "END_SELECTION";
          }
       }
       part { name: "cursor_blink.top_left"; type: RECT;
@@ -883,12 +917,14 @@ group { name: "terminology/selection";
          }
          description { state: "fading" 0.0;
             inherit: "default" 0.0;
-            color: 255 0 0 255;
+            color: 255 255 255 255;
+            color_class: "END_SELECTION";
             visible: 1;
          }
          description { state: "fading" 1.0;
             inherit: "fading" 0.0;
-            color: 255 0 0 64;
+            color: 255 255 255 64;
+            color_class: "END_SELECTION";
             rel1.offset: -5 0;
          }
       }
@@ -929,7 +965,8 @@ group { name: "terminology/selection";
             rel2.to: "terminology.bottom_right";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 -1;
-            color: 255 0 0 128;
+            color: 255 255 255 128;
+            color_class: "END_SELECTION";
          }
       }
       part { name: "cursor_blink.bottom_right"; type: RECT;
@@ -941,12 +978,14 @@ group { name: "terminology/selection";
          }
          description { state: "fading" 0.0;
             inherit: "default" 0.0;
-            color: 255 0 0 255;
+            color: 255 255 255 255;
+            color_class: "END_SELECTION";
             visible: 1;
          }
          description { state: "fading" 1.0;
             inherit: "fading" 0.0;
-            color: 255 0 0 64;
+            color: 255 255 255 64;
+            color_class: "END_SELECTION";
             rel2.offset: +5 0;
          }
       }

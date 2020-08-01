@@ -45,6 +45,7 @@ color_classes {
       color2: HL_COLOR_NO_ALPHA 255;
       color3: HL_COLOR_NO_ALPHA 255;
    }
+   color_class { name: "END_SELECTION"; color: 255 0 0 255; }
 
    color_class { name: "C0";  color: ANSI7; } // COL_BLACK
    color_class { name: "C1";  color: ANSI1; } // COL_RED

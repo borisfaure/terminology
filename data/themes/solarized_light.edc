@@ -39,6 +39,7 @@ color_classes {
       color2: 51 153 255 255;
       color3: 51 153 255 255;
    }
+   color_class { name: "END_SELECTION"; color: 255 0 0 255; }
 
    color_class { name: "c0";  color: S_base0; }
    color_class { name: "c1";  color: S_base02; }
