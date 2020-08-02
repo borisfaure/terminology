@@ -51,10 +51,6 @@ collections {
         image: "tab_bg_l1.png" COMP;
         image: "tab_bg_r0.png" COMP;
         image: "tab_bg_r1.png" COMP;
-        image: "tab_shad_l0.png" COMP;
-        image: "tab_shad_l1.png" COMP;
-        image: "tab_shad_r0.png" COMP;
-        image: "tab_shad_r1.png" COMP;
         image: "cr_glow.png" COMP;
         image: "cr_pulse.png" COMP;
       }
