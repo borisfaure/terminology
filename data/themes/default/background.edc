@@ -1191,11 +1191,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tab_btn_glow_r1";
@@ -1210,11 +1212,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tab_btn_glow_r2";
@@ -1229,11 +1233,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tab_btn_glow_r3";
@@ -1248,11 +1254,13 @@ group { name: "terminology/background";
                normal: "cr_glow.png";
                border: 9 9 9 9;
             }
-            color: 51 153 255 32;
+            color: 255 255 255 32;
+            color_class: "GLOW";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
          }
       }
       part { name: "tab_btn_r0"; type: RECT;
@@ -1264,10 +1272,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.05;
             rel2.relative: 0.45 0.45;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r1"; type: RECT;
@@ -1279,10 +1289,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.05;
             rel2.relative: 0.95 0.45;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r2"; type: RECT;
@@ -1294,10 +1306,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.55;
             rel2.relative: 0.45 0.95;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r3"; type: RECT;
@@ -1309,10 +1323,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.55;
             rel2.relative: 0.95 0.95;
             color: 255 255 255 32;
+            color_class: "GLOW_HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            color_class: "GLOW_HIGHLIGHT";
          }
       }
       part { name: "terminology.tab_btn"; type: SWALLOW;
@@ -1321,7 +1337,6 @@ group { name: "terminology/background";
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
             rel2.to_y: "tabmiddle";
-            color: 250 0 250 255;
             visible: 0;
             align: 1.0 0.0;
             fixed: 1 1;
@@ -1554,7 +1569,8 @@ group { name: "terminology/background";
                to_x: "tab_bevel_top2";
                relative: 1.0 0.7;
             }
-            color: FG_COLOR;
+            color: 255 255 255 255;
+            color_class: "FG";
             visible: 1;
          }
       }
@@ -1597,8 +1613,10 @@ group { name: "terminology/background";
          scale: 1;
          effect: SOFT_SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color: FG_COLOR_NO_ALPHA 255;
-            color3: BG_COLOR_NO_ALPHA 18;
+            color: 255 255 255 255;
+            color2: 255 255 255 255;
+            color3: 255 255 255 18;
+            color_class: "TAB_TITLE";
             text { font: "Sans:style=Bold"; size: 10;
                align: 0.5 0.5;
                min: 0 1;
@@ -1625,8 +1643,6 @@ group { name: "terminology/background";
          }
          description { state: "bell" 0.0;
             inherit: "tab" 0.0;
-            color: FG_COLOR_BELL_NO_ALPHA 255;
-            color3: BG_COLOR_BELL_NO_ALPHA 18;
          }
       }
       program { name: "tab,bell,on";
@@ -1655,7 +1671,8 @@ group { name: "terminology/background";
             rel2.to_x: "terminology.tab";
             rel2.to_y: "tabmiddle";
             rel2.relative: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 255 255 255 255;
+            color_class: "TAB_BG";
             visible: 0;
             fixed: 1 1;
          }
@@ -1672,7 +1689,8 @@ group { name: "terminology/background";
             //rel2.to_x: "terminology.tab_btn";
             rel2.to_y: "tabmiddle";
             //rel2.relative: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 255 255 255 255;
+            color_class: "TAB_BG";
             visible: 0;
             fixed: 1 1;
          }
@@ -1687,7 +1705,8 @@ group { name: "terminology/background";
             rel2.to_x: "terminology.tab";
             rel2.to_y: "tablimit0";
             rel2.offset: -1 0;
-            color: 0 0 0 0;
+            color: 255 255 255 255;
+            color_class: "TAB_BG";
             align: 0.0 0.0;
             visible: 0;
             fixed: 1 1;
@@ -1720,12 +1739,14 @@ group { name: "terminology/background";
          }
          description { state: "tab" 0.0;
             inherit: "default" 0.0;
-            color: FG_COLOR_NO_ALPHA 80;
+            color: 255 255 255 80;
+            color_class: "FG";
             visible: 1;
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: FG_COLOR_NO_ALPHA 255;
+            color: 255 255 255 255;
+            color_class: "FG";
             visible: 1;
          }
       }
@@ -1946,7 +1967,8 @@ group { name: "terminology/background";
          description { state: "default" 0.0;                         \
             rel1.to: "drag_"##DIR##"_outline";                       \
             rel2.to: "drag_"##DIR##"_outline";                       \
-            color: FG_COLOR_NO_ALPHA 40;                             \
+            color: 255 255 255 40;                                   \
+            color_class: "FG";                                       \
             visible: 0;                                              \
          }                                                           \
          description { state: "hdrag,off" 0.0;                       \
@@ -1965,7 +1987,8 @@ group { name: "terminology/background";
                normal: "cr_pulse.png";                               \
                border: 4 4 4 4;                                      \
             }                                                        \
-            color: 51 153 255 0;                                     \
+            color: 255 255 255 0;                                    \
+            color_class: "GLOW";                                     \
             visible: 0;                                              \
          }                                                           \
          description { state: "hdrag,off" 0.0;                       \
@@ -1973,12 +1996,14 @@ group { name: "terminology/background";
          }                                                           \
          description { state: "on" 0.0;                              \
             inherit: "default" 0.0;                                  \
-            color: 51 153 255 255;                                   \
+            color: 255 255 255 255;                                  \
+            color_class: "GLOW";                                     \
             visible: 1;                                              \
          }                                                           \
          description { state: "out" 0.0;                             \
             inherit: "default" 0.0;                                  \
-            color: 51 153 255 0;                                     \
+            color: 255 255 255 0;                                    \
+            color_class: "GLOW";                                     \
             rel1.offset: -8 -8;                                      \
             rel2.offset: 7 7;                                        \
             visible: 1;                                              \
@@ -1995,7 +2020,8 @@ group { name: "terminology/background";
                normal: "cr_glow.png";                                \
                border: 9 9 9 9;                                      \
             }                                                        \
-            color: 51 153 255 40;                                    \
+            color: 255 255 255 40;                                   \
+            color_class: "GLOW";                                     \
             visible: 0;                                              \
          }                                                           \
          description { state: "hdrag,off" 0.0;                       \
@@ -2004,7 +2030,8 @@ group { name: "terminology/background";
          }                                                           \
          description { state: "active" 0.0;                          \
             inherit: "default" 0.0;                                  \
-            color: 51 153 255 255;                                   \
+            color: 255 255 255 255;                                  \
+            color_class: "GLOW";                                     \
             visible: 1;                                              \
          }                                                           \
       }                                                              \
@@ -2019,7 +2046,8 @@ group { name: "terminology/background";
                normal: "cr_out.png";                                 \
                border: 3 3 3 3;                                      \
             }                                                        \
-            color: 51 153 255 80;                                    \
+            color: 255 255 255 80;                                   \
+            color_class: "GLOW";                                     \
             visible: 0;                                              \
          }                                                           \
          description { state: "hdrag,off" 0.0;                       \
@@ -2029,6 +2057,7 @@ group { name: "terminology/background";
          description { state: "active" 0.0;                          \
             inherit: "default" 0.0;                                  \
             color: 255 255 255 255;                                  \
+            color_class: "GLOW_HIGHLIGHT";                           \
             visible: 1;                                              \
          }                                                           \
       }                                                              \
@@ -2422,7 +2451,8 @@ group { name: "terminology/background";
          mouse_events: 0;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color: 255 255 255 255;
+            color_class: "GLOW";
             rel1.to: "knob";
             rel2.to: "knob";
             image.normal: "media_busy_spinner.png";
