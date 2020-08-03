@@ -153,10 +153,10 @@ group { name: "terminology/background";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 64 255;
-            color2: 255 153 51 128;
-            color3: 255 0 0 20;
-            color_class: "TAB_MISSED";
+            color:  255 255 255 255;
+            color2: 255 255 255 128;
+            color3: 255 255 255  20;
+            color_class: "TAB_MISSED_OVER";
          }
       }
       part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;

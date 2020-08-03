@@ -52,9 +52,9 @@ color_classes {
       color3: 255   0   0 255;
    }
    color_class { name: "TAB_MISSED_OVER";
-      color: 255 255 255 255;
-      color2: 51 153 255 255;
-      color3: 51 153 255 255;
+      color:  255 255  64 255;
+      color2: 255 153  51 255;
+      color3: 255   0   0 255;
    }
    color_class { name: "TAB_TITLE";
       color:  FG_COLOR_NO_ALPHA 255;

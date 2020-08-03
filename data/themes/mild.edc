@@ -93,7 +93,8 @@ collections {
             description { state: "default" 0.0;
             }
             description { state: "unfocused" 0.0;
-               color: 200 200 200 255;
+               color: 255 255 255 200;
+               color_class: "FG";
             }
          }
          program {
@@ -121,6 +122,7 @@ collections {
             mouse_events: 1;
             clip_to: "focusclip";
             description { state: "default" 0.0;
+               color: 255 255 255 255;
                color_class: "BG";
             }
          }
@@ -156,7 +158,10 @@ collections {
                rel1.offset: -4 0;
                rel2.relative: 0.0 1.0;
                rel2.offset: -5 -1;
-               color: 255 153 51 64;
+               color:  255 255 255 64;
+               color2: 255 255 255 18;
+               color3: 255 255 255 8;
+               color_class: "TAB_MISSED";
                align: 1.0 0.5;
                text { font: "Sans"; size: 8;
                   align: 1.0 0.5;
@@ -167,6 +172,9 @@ collections {
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 64 255;
+               color2: 255 153 51 128;
+               color3: 255 0 0 20;
+               color_class: "TAB_MISSED_OVER";
             }
          }
          part { name: "terminology.tabcount.label"; type: TEXT; mouse_events: 0;
