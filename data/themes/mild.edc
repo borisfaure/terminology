@@ -1937,7 +1937,7 @@ collections {
       }
    }
 
-   group { name: "terminology/tabbar_back";
+   group { name: "terminology/tabbar_back"; // {{{
       images {
          image: "tab_other_l.png" COMP;
          image: "tab_other_m.png" COMP;
@@ -2108,11 +2108,11 @@ collections {
             target: "terminology.title";
          }
       }
-   }
+   } // }}}
 
    //////////////////////////////////////////////////////////////////////////////
    //// the cursor to show where text is typed
-   group { name: "terminology/cursor";
+   group { name: "terminology/cursor"; // {{{
       images {
         image: "cr_key.png" COMP;
         image: "cr_out.png" COMP;
@@ -2272,11 +2272,11 @@ collections {
             }
          }
       }
-   }
+   } // }}}
 
    //////////////////////////////////////////////////////////////////////////////
    //// the cursor as an underline to show where text is typed
-   group { name: "terminology/cursor_underline";
+   group { name: "terminology/cursor_underline"; // {{{
       images {
         image: "cr_key.png" COMP;
         image: "cr_underline_out.png" COMP;
@@ -2436,11 +2436,11 @@ collections {
             }
          }
       }
-   }
+   } // }}}
 
    //////////////////////////////////////////////////////////////////////////////
    //// the cursor as a bar to show where text is typed
-   group { name: "terminology/cursor_bar";
+   group { name: "terminology/cursor_bar"; // {{{
       images {
         image: "cr_key.png" COMP;
         image: "cr_bar_out.png" COMP;
@@ -2600,12 +2600,12 @@ collections {
             }
          }
       }
-   }
+   } // }}}
 
    //////////////////////////////////////////////////////////////////////////////
    //// an object to contain the selection tool used for selecting tabs (with
    //// a glow grid of terms
-   group { name: "terminology/sel/base";
+   group { name: "terminology/sel/base"; // {{{
       images {
          image: "pm_fill.png" COMP;
       }
@@ -2659,9 +2659,9 @@ collections {
             }
          }
       }
-   }
+   } // }}}
 
-   group { name: "terminology/sel/item";
+   group { name: "terminology/sel/item"; // {{{
       images {
          image: "bg_bevel.png" COMP;
          image: "pm_shadow.png" COMP;
@@ -2921,12 +2921,12 @@ collections {
             after: "bell4.3";
          }
       }
-   }
+   } // }}}
 
 
    //////////////////////////////////////////////////////////////////////////////
    //// an object overlayd on text that is a link
-   group { name: "terminology/link";
+   group { name: "terminology/link"; // {{{
       images {
         image: "lk_bottom.png" COMP;
       }
@@ -2953,9 +2953,9 @@ collections {
             }
          }
       }
-   }
+   } // }}}
 
-   group { name: "terminology/tab_drag_thumb";
+   group { name: "terminology/tab_drag_thumb"; // {{{
       images {
          image: "bg_bevel.png" COMP;
          image: "pm_shadow.png" COMP;
@@ -3166,5 +3166,5 @@ collections {
             after: "bell4.3";
          }
       }
-   }
+   } // }}}
 }
