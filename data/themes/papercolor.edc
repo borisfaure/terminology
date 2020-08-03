@@ -58,12 +58,11 @@ color_classes {
    }
    color_class { name: "TAB_TITLE";
       color:  FG_COLOR_NO_ALPHA 255;
-      color:  0 0 0 255;
+      color:  0 0 0 0;
       color3: BG_COLOR_NO_ALPHA 255;
    }
    color_class { name: "BG_SENDFILE"; color: 64 64 64 255; }
    color_class { name: "SHINE"; color: 255 255 255 255; }
-   color_class { name: "TAB_BG"; color: 31 31 31 255; }
 
    color_class { name: "C0";  color: ANSI7; } // COL_BLACK
    color_class { name: "C1";  color: ANSI1; } // COL_RED
