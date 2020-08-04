@@ -171,9 +171,9 @@ collections {
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 64 255;
-               color2: 255 153 51 128;
-               color3: 255 0 0 20;
+               color: 255 255 255 255;
+               color2: 255 255 255 128;
+               color3: 255 255 255 20;
                color_class: "TAB_MISSED_OVER";
             }
          }
@@ -187,6 +187,7 @@ collections {
                rel1.relative: -0.2 0.0;
                rel2.relative: -0.2 1.0;
                color: 255 255 255 64;
+               color_class: "GLOW_HIGHLIGHT";
                align: 1.0 0.5;
                text { font: "Sans"; size: 8;
                   align: 1.0 0.5;
@@ -197,6 +198,7 @@ collections {
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tabcount_r0"; type: RECT;
@@ -207,10 +209,12 @@ collections {
                rel1.relative: 0.05 0.05;
                rel2.relative: 0.45 0.45;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tabcount_r1"; type: RECT;
@@ -221,10 +225,12 @@ collections {
                rel1.relative: 0.55 0.05;
                rel2.relative: 0.95 0.45;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tabcount_r2"; type: RECT;
@@ -235,10 +241,12 @@ collections {
                rel1.relative: 0.05 0.55;
                rel2.relative: 0.45 0.95;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tabcount_r3"; type: RECT;
@@ -249,10 +257,12 @@ collections {
                rel1.relative: 0.55 0.55;
                rel2.relative: 0.95 0.95;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "terminology.tabcount.control"; type: SWALLOW;
@@ -401,7 +411,8 @@ collections {
             clip_to: "sendfile_request_clip";
             description { state: "default" 0.0;
                fixed: 1 1;
-               color: 64 64 64 255;
+               color: 255 255 255 255;
+               color_class: "BG_SENDFILE";
                rel1.relative: 0.0 -1.0;
                rel2.relative: 1.0 0.0;
             }
@@ -488,7 +499,8 @@ collections {
             scale : 1;
             description { state: "default" 0.0;
                fixed: 1 1;
-               color: 64 64 64 255;
+               color: 255 255 255 255;
+               color_class: "BG_SENDFILE";
                rel.to: "terminology.sendfile.progress";
                rel1.offset: -4 -4;
                rel2.offset: 4 4;
@@ -761,11 +773,13 @@ collections {
                   normal: "cr_glow.png";
                   border: 9 9 9 9;
                }
-               color: 51 153 255 32;
+               color: 255 255 255 32;
+               color_class: "GLOW";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: 51 153 255 255;
+               color: 255 255 255 255;
+               color_class: "GLOW";
             }
          }
          part { name: "tab_btn_glow_r1";
@@ -780,11 +794,13 @@ collections {
                   normal: "cr_glow.png";
                   border: 9 9 9 9;
                }
-               color: 51 153 255 32;
+               color: 255 255 255 32;
+               color_class: "GLOW";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: 51 153 255 255;
+               color: 255 255 255 255;
+               color_class: "GLOW";
             }
          }
          part { name: "tab_btn_glow_r2";
@@ -799,11 +815,13 @@ collections {
                   normal: "cr_glow.png";
                   border: 9 9 9 9;
                }
-               color: 51 153 255 32;
+               color: 255 255 255 32;
+               color_class: "GLOW";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: 51 153 255 255;
+               color: 255 255 255 255;
+               color_class: "GLOW";
             }
          }
          part { name: "tab_btn_glow_r3";
@@ -818,11 +836,13 @@ collections {
                   normal: "cr_glow.png";
                   border: 9 9 9 9;
                }
-               color: 51 153 255 32;
+               color: 255 255 255 32;
+               color_class: "GLOW";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: 51 153 255 255;
+               color: 255 255 255 255;
+               color_class: "GLOW";
             }
          }
          part { name: "tab_btn_r0"; type: RECT;
@@ -834,10 +854,12 @@ collections {
                rel1.relative: 0.05 0.05;
                rel2.relative: 0.45 0.45;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r1"; type: RECT;
@@ -849,10 +871,12 @@ collections {
                rel1.relative: 0.55 0.05;
                rel2.relative: 0.95 0.45;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r2"; type: RECT;
@@ -864,10 +888,12 @@ collections {
                rel1.relative: 0.05 0.55;
                rel2.relative: 0.45 0.95;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r3"; type: RECT;
@@ -879,10 +905,12 @@ collections {
                rel1.relative: 0.55 0.55;
                rel2.relative: 0.95 0.95;
                color: 255 255 255 32;
+               color_class: "GLOW_HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_HIGHLIGHT";
             }
          }
          part { name: "terminology.tab_btn"; type: SWALLOW;
@@ -1109,7 +1137,8 @@ collections {
                   to_x: "tab_bevel_bg2";
                   relative: 1.0 0.7;
                }
-               color: FG_COLOR;
+               color: 255 255 255 255;
+               color_class: "FG";
                visible: 1;
             }
          }
@@ -1147,7 +1176,8 @@ collections {
             scale: 1;
             mouse_events: 0;
             description { state: "default" 0.0;
-               color: FG_COLOR;
+               color: 255 255 255 255;
+               color_class: "FG";
                text { font: "Sans:style=Bold"; size: 10;
                   align: 0.5 0.5;
                   min: 0 1;
@@ -1170,8 +1200,6 @@ collections {
             }
             description { state: "bell" 0.0;
                inherit: "tab" 0.0;
-               color: FG_COLOR_BELL_NO_ALPHA 255;
-               color3: BG_COLOR_BELL_NO_ALPHA 18;
             }
          }
          program { name: "tab,bell,on";
@@ -1263,12 +1291,14 @@ collections {
             }
             description { state: "tab" 0.0;
                inherit: "default" 0.0;
-               color: FG_COLOR_NO_ALPHA 80;
+               color: 255 255 255 80;
+               color_class: "FG";
                visible: 1;
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
-               color: FG_COLOR_NO_ALPHA 255;
+               color: 255 255 255 255;
+               color_class: "FG";
                visible: 1;
             }
          }
@@ -1350,7 +1380,8 @@ collections {
             }
             description { state: "pulse1" 0.0;
                inherit: "default" 0.0;
-               color: 200 200 200 255;
+               color: 255 255 255 255;
+               color_class: "BELL_OVERLAY";
             }
             description { state: "pulse2" 0.0;
                inherit: "default" 0.0;
@@ -1367,7 +1398,8 @@ collections {
             }
             description { state: "pulse2" 0.0;
                inherit: "default" 0.0;
-               color: BELL_OVERLAY_COLOR;
+               color: 255 255 255 32;
+               color_class: "BELL_OVERLAY";
                visible: 1;
             }
          }
@@ -1522,7 +1554,8 @@ collections {
             description { state: "default" 0.0;                         \
                rel1.to: "drag_"##DIR##"_outline";                       \
                rel2.to: "drag_"##DIR##"_outline";                       \
-               color: FG_COLOR_NO_ALPHA 40;                             \
+               color: 255 255 255 40;                                   \
+               color_class: "FG";                                       \
                visible: 0;                                              \
             }                                                           \
             description { state: "hdrag,off" 0.0;                       \
@@ -1542,6 +1575,7 @@ collections {
                   border: 4 4 4 4;                                      \
                }                                                        \
                color: 255 255 255 64;                                   \
+               color_class: "GLOW_HIGHLIGHT";                           \
                visible: 0;                                              \
             }                                                           \
             description { state: "hdrag,off" 0.0;                       \
@@ -1550,11 +1584,13 @@ collections {
             description { state: "on" 0.0;                              \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 255;                                  \
+               color_class: "GLOW_HIGHLIGHT";                           \
                visible: 1;                                              \
             }                                                           \
             description { state: "out" 0.0;                             \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 0;                                    \
+               color_class: "GLOW_HIGHLIGHT";                           \
                rel1.offset: -8 -8;                                      \
                rel2.offset: 7 7;                                        \
                visible: 1;                                              \
@@ -1572,6 +1608,7 @@ collections {
                   border: 3 3 3 3;                                      \
                }                                                        \
                color: 255 255 255 80;                                   \
+               color_class: "GLOW_HIGHLIGHT";                           \
                visible: 0;                                              \
             }                                                           \
             description { state: "hdrag,off" 0.0;                       \
@@ -1581,6 +1618,7 @@ collections {
             description { state: "active" 0.0;                          \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 255;                                  \
+               color_class: "GLOW_HIGHLIGHT";                           \
                visible: 1;                                              \
             }                                                           \
          }                                                              \
@@ -2053,7 +2091,8 @@ collections {
                   to: "tab_base_top2";
                   relative: 1.0 0.7;
                }
-               color: FG_COLOR;
+               color: 255 255 255 255;
+               color_class: "FG";
                visible: 1;
             }
          }
@@ -2075,7 +2114,8 @@ collections {
                   min: 0 1;
                }
                align: 0.5 0.5;
-               color: 96 96 96 255;
+               color: 255 255 255 255;
+               color_class: "TAB_TITLE";
                rel1 {
                   to_x: "tabgrouped";
                   to_y: "tab_base_top2";
@@ -2086,9 +2126,6 @@ collections {
             }
             description { state: "bell" 0.0;
                inherit: "default" 0.0;
-               color: 255 219 0 96;
-               color2: 255 51 0 48;
-               color3: 255 51 0 8;
             }
          }
          part { name: "clip"; type: RECT;
