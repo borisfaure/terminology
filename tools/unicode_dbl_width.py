@@ -32,7 +32,7 @@ def get_ranges(xmlfile, emoji_as_wide):
         if emoji_as_wide:
             ext_pic = c.get('ExtPict')
             emoji = c.get('Emoji')
-            if emoji == 'Y' and ext_pic == 'Y':
+            if emoji == 'Y' and ext_pic == 'Y' and ea != 'A':
                 ea = 'W'
             else:
                 blk = c.get('blk')
@@ -190,5 +190,5 @@ parser.add_argument('source', type=argparse.FileType('w'))
 
 args = parser.parse_args()
 
-ranges = get_ranges(args.xml, True)
+ranges = get_ranges(args.xml, False)
 gen_c(ranges, args.header, args.source)
