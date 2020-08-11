@@ -1,4 +1,4 @@
-Terminology 1.8.0
+Terminology 1.8.1
 =================
 
 This is an EFL terminal emulator with some extra bells and whistles.
