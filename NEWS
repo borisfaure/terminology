@@ -1,6 +1,14 @@
 =================
-Terminology 1.8.0
+Terminology 1.8.1
 =================
+
+Changes since 1.8.0:
+--------------------
+
+Fixes:
+    * Be stricter on which characters can be considered wide or not
+    * Apply change about hiding mouse pointer after idle time on all terminals
+
 
 Changes since 1.7.0:
 --------------------

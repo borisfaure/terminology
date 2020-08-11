@@ -1,3 +1,9 @@
+2020-08-11
+        * Release v1.8.1
+        * Be stricter on which characters can be considered wide or not
+        * Apply change about hiding mouse pointer after idle time on all
+          terminals
+
 2020-07-26
         * Release v1.8.0
         * Small framework to add unit tests
