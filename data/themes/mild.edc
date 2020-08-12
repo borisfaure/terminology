@@ -2185,6 +2185,7 @@ collections {
             }
             description { state: "pulse" 0.0;
                color: 255 255 255 80;
+               color_class: "CURSOR";
             }
          }
          part { name: "key";
@@ -2203,14 +2204,17 @@ collections {
                   border: 4 4 4 4;
                }
                color: 255 255 255 0;
+               color_class: "CURSOR";
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
-               color: 160 100 255 0;
+               color: 255 255 255 0;
+               color_class: "CURSOR";
             }
          }
          part { name: "outline";
@@ -2222,10 +2226,12 @@ collections {
                   border: 3 3 3 3;
                }
                color: 255 255 255 64;
+               color_class: "CURSOR";
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
          }
          programs {
@@ -2349,6 +2355,7 @@ collections {
             }
             description { state: "pulse" 0.0;
                color: 255 255 255 80;
+               color_class: "CURSOR";
             }
          }
          part { name: "key";
@@ -2367,14 +2374,17 @@ collections {
                   border: 4 4 4 4;
                }
                color: 255 255 255 0;
+               color_class: "CURSOR";
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
-               color: 160 100 255 0;
+               color: 255 255 255 0;
+               color_class: "CURSOR";
             }
          }
          part { name: "outline";
@@ -2386,10 +2396,12 @@ collections {
                   border: 3 3 3 3;
                }
                color: 255 255 255 64;
+               color_class: "CURSOR";
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
          }
          programs {
@@ -2513,6 +2525,7 @@ collections {
             }
             description { state: "pulse" 0.0;
                color: 255 255 255 80;
+               color_class: "CURSOR";
             }
          }
          part { name: "key";
@@ -2531,14 +2544,17 @@ collections {
                   border: 4 4 4 4;
                }
                color: 255 255 255 0;
+               color_class: "CURSOR";
             }
             description { state: "on" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
             description { state: "out" 0.0;
                inherit: "default" 0.0;
-               color: 160 100 255 0;
+               color: 255 255 255 0;
+               color_class: "CURSOR";
             }
          }
          part { name: "outline";
@@ -2550,10 +2566,12 @@ collections {
                   border: 3 3 3 3;
                }
                color: 255 255 255 64;
+               color_class: "CURSOR";
             }
             description { state: "focused" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "CURSOR";
             }
          }
          programs {
