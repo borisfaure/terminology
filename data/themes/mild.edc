@@ -2782,10 +2782,12 @@ collections {
                   border: 9 9 9 9;
                }
                color: 255 255 255 0;
+               color_class: "GLOW";
             }
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW";
             }
          }
 
@@ -2861,6 +2863,7 @@ collections {
                rel1.to: "terminology.content";
                rel2.to: "terminology.content";
                color: 255 255 255 255;
+               color_class: "GLOW_TXT_HIGHLIGHT";
                align: 0.5 1.0;
                text { font: "Sans"; size: 10;
                   align: 0.5 1.0;
@@ -2870,6 +2873,7 @@ collections {
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
+               color_class: "GLOW_TXT_HIGHLIGHT";
                text { font:"Sans:style=Bold"; }
             }
          }
@@ -2882,6 +2886,7 @@ collections {
                fixed: 1 1;
                visible: 0;
                color: 255 255 255 0;
+               color_class: "FG";
                min: 32 32;
                max: 32 32;
                rel1.to: "terminology.content";
@@ -2893,6 +2898,7 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
                color: 255 255 255 255;
+               color_class: "FG";
             }
          }
          part { name: "bell";
@@ -2901,6 +2907,7 @@ collections {
                fixed: 1 1;
                visible: 0;
                color: 255 255 255 0;
+               color_class: "FG";
                rel1.to: "bell_base";
                rel2.to: "bell_base";
                image.normal: "bg_led.png";
@@ -2909,6 +2916,7 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
                color: 255 255 255 255;
+               color_class: "FG";
             }
          }
          part { name: "bell_strobe";
@@ -2930,6 +2938,7 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
                color: 255 255 255 255;
+               color_class: "FG";
                map.rotation.z: 36.0;
             }
             description { state: "spin_done" 0.0;
