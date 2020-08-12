@@ -1,9 +1,6 @@
 /* overlay to default to make theme easier on the eyes, less effects */
 
 
-#ifndef BELL_OVERLAY_COLOR
-#define BELL_OVERLAY_COLOR 220 220 220 16
-#endif
 #ifndef BG_COLOR_NO_ALPHA
 #define BG_COLOR_NO_ALPHA  48 48 48
 #endif
@@ -1380,8 +1377,8 @@ collections {
             }
             description { state: "pulse1" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
-               color_class: "BELL_OVERLAY";
+               color: 255 255 255 220;
+               color_class: "BG";
             }
             description { state: "pulse2" 0.0;
                inherit: "default" 0.0;
@@ -1399,7 +1396,7 @@ collections {
             description { state: "pulse2" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 32;
-               color_class: "BELL_OVERLAY";
+               color_class: "BG";
                visible: 1;
             }
          }
