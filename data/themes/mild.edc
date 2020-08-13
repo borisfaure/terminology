@@ -29,7 +29,10 @@ collections {
 
 #ifndef INHERIT_PROVIDE_OWN_COLORS
        color_classes {
+#define PROVIDE_CURSOR
+         color_class { name: "CURSOR"; color: 220 220 220 255; }
 #include "default/colors.edc"
+#undef PROVIDE_CURSOR
        }
 #endif
 
