@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "main.h"
-#include "col.h"
+#include "colors.h"
 #include "termpty.h"
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 #include "win.h"

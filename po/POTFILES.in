@@ -12,7 +12,7 @@ src/bin/options_elm.c
 src/bin/backlog.c
 src/bin/tyq.c
 src/bin/options_elm.h
-src/bin/col.h
+src/bin/colors.h
 src/bin/termptygfx.h
 src/bin/private.h
 src/bin/term_container.h
@@ -22,7 +22,7 @@ src/bin/options_theme.c
 src/bin/miniview.c
 src/bin/options_behavior.c
 src/bin/options_video.h
-src/bin/col.c
+src/bin/colors.c
 src/bin/options_behavior.h
 src/bin/utf8.h
 src/bin/utils.h

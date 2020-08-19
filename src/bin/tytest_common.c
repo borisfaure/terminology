@@ -13,7 +13,7 @@
 #include "termiointernals.h"
 #include "tytest_common.h"
 #if defined(BINARY_TYTEST)
-#include "col.h"
+#include "colors.h"
 #include "tytest.h"
 #endif
 #include <assert.h>

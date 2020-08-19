@@ -4,7 +4,7 @@
 #include <Efreet.h>
 #include "config.h"
 #include "main.h"
-#include "col.h"
+#include "colors.h"
 #include "theme.h"
 
 #define CONF_VER 25

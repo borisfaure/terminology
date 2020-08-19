@@ -2,7 +2,7 @@
 #include <Elementary.h>
 #include <stdint.h>
 #include <assert.h>
-#include "col.h"
+#include "colors.h"
 #include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"

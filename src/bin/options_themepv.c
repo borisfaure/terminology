@@ -8,7 +8,7 @@
 #include "options_themepv.h"
 #include "theme.h"
 #include "main.h"
-#include "col.h"
+#include "colors.h"
 
 static void
 _row_set(Evas_Object *o, int y, const char *txt)

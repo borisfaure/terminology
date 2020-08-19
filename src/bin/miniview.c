@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <math.h>
 
-#include "col.h"
+#include "colors.h"
 #include "termpty.h"
 #include "termio.h"
 #include "termiointernals.h"

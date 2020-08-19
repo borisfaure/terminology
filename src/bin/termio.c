@@ -11,7 +11,7 @@
 #include "termcmd.h"
 #include "termptydbl.h"
 #include "utf8.h"
-#include "col.h"
+#include "colors.h"
 #include "keyin.h"
 #include "config.h"
 #include "theme.h"

@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <Elementary.h>
 #include "config.h"
-#include "col.h"
+#include "colors.h"
 
 typedef struct _Color Color;
 
