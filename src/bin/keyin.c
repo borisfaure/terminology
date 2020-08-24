@@ -250,21 +250,21 @@ keyin_handle_key_binding(Evas_Object *termio, const Evas_Event_Key_Down *ev,
 Eina_Bool
 key_is_modifier(const char *key)
 {
-#define STATIC_STR_EQUAL(STR) (!strncmp(key, STR, strlen(STR)))
+#define STATIC_KEY_EQUAL(STR) (!strncmp(key, STR, strlen(STR)))
    if ((key != NULL) && (
-       STATIC_STR_EQUAL("Shift") ||
-       STATIC_STR_EQUAL("Control") ||
-       STATIC_STR_EQUAL("Alt") ||
-       STATIC_STR_EQUAL("AltGr") ||
-       STATIC_STR_EQUAL("Meta") ||
-       STATIC_STR_EQUAL("Super") ||
-       STATIC_STR_EQUAL("Hyper") ||
-       STATIC_STR_EQUAL("Scroll_Lock") ||
-       STATIC_STR_EQUAL("Num_Lock") ||
-       STATIC_STR_EQUAL("ISO_Level3_Shift") ||
-       STATIC_STR_EQUAL("Caps_Lock")))
+       STATIC_KEY_EQUAL("Shift") ||
+       STATIC_KEY_EQUAL("Control") ||
+       STATIC_KEY_EQUAL("Alt") ||
+       STATIC_KEY_EQUAL("AltGr") ||
+       STATIC_KEY_EQUAL("Meta") ||
+       STATIC_KEY_EQUAL("Super") ||
+       STATIC_KEY_EQUAL("Hyper") ||
+       STATIC_KEY_EQUAL("Scroll_Lock") ||
+       STATIC_KEY_EQUAL("Num_Lock") ||
+       STATIC_KEY_EQUAL("ISO_Level3_Shift") ||
+       STATIC_KEY_EQUAL("Caps_Lock")))
      return EINA_TRUE;
-#undef STATIC_STR_EQUAL
+#undef STATIC_KEY_EQUAL
    return EINA_FALSE;
 }
 
