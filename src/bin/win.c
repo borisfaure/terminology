@@ -5900,7 +5900,7 @@ void change_theme(Evas_Object *win, Config *config)
      {
         Evas_Object *edje = term->bg_edj;
 
-        if (!theme_apply(edje, config, "terminology/background"))
+        if (!theme_apply_elm(term->bg, config, "terminology/background"))
           ERR("Couldn't find terminology theme!");
         colors_term_init(termio_textgrid_get(term->termio), edje, config);
         termio_config_set(term->termio, config);
@@ -7377,7 +7377,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->bg_edj = elm_layout_edje_get(term->bg);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   if (!theme_apply(o, config, "terminology/background"))
+   if (!theme_apply_elm(o, config, "terminology/background"))
      {
         CRITICAL(_("Couldn't find terminology theme! Forgot 'ninja install'?"));
         evas_object_del(term->bg);
