@@ -1,6 +1,7 @@
 #include "private.h"
 #include "theme.h"
 #include "config.h"
+#include "colors.h"
 #include "utils.h"
 #include <unistd.h>
 #include <pwd.h>
@@ -63,19 +64,27 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
 
-   if (edje_object_file_set(edje, config_theme_path_get(config), group))
-     return EINA_TRUE;
+   /* use default if nord is chosen but rely on color_scheme_apply() */
+   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
+     {
+        if (edje_object_file_set(edje, config_theme_path_get(config), group))
+          goto done;
 
-   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
-       config_theme_path_get(config), group, errmsg);
+        errmsg = edje_load_error_str(edje_object_load_error_get(edje));
+        INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
+            config_theme_path_get(config), group, errmsg);
+     }
 
    if (edje_object_file_set(edje, config_theme_path_default_get(config), group))
-     return EINA_TRUE;
+     goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
    ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
    return EINA_FALSE;
+
+done:
+   color_scheme_apply(edje, config);
+   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -88,20 +97,29 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
 
-   if (elm_layout_file_set(layout, config_theme_path_get(config), group))
-     return EINA_TRUE;
-
    edje = elm_layout_edje_get(layout);
+
+   /* use default if nord is chosen but rely on color_scheme_apply() */
+   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
+     {
+        if (elm_layout_file_set(layout, config_theme_path_get(config), group))
+          goto done;
+     }
+
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
    INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
        config_theme_path_get(config), group, errmsg);
 
    if (elm_layout_file_set(layout, config_theme_path_default_get(config), group))
-     return EINA_TRUE;
+     goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
    ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
    return EINA_FALSE;
+
+done:
+   color_scheme_apply(edje, config);
+   return EINA_TRUE;
 }
 
 Eina_Bool

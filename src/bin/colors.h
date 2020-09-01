@@ -23,4 +23,9 @@ colors_256_get(int col,
                unsigned char *b,
                unsigned char *a);
 
+
+void
+color_scheme_apply(Evas_Object *edje,
+                   const Config *config);
+
 #endif

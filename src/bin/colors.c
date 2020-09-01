@@ -523,3 +523,145 @@ colors_256_get(int col,
    *b = default_colors256[col].b;
    *a = default_colors256[col].a;
 }
+
+void
+color_scheme_apply(Evas_Object *edje,
+                   const Config *config)
+{
+   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
+     return;
+   ERR("edje:%p", edje);
+#define CS_BG       46,   52,  64, 255
+#define CS_FG       216, 222, 233, 255
+#define CS_MAIN     137, 152, 161, 255
+#define CS_HL       255, 255, 255, 255
+#define CS_RAGE     255,  51,   0, 255
+#define CS_RED      255,   0,   0, 255
+#define CS_ORANGE   255, 153,  51, 255
+#define CS_BLACK      0,   0,   0, 255
+#define CS_DARK      64,  64,  64, 255
+#define CS_YELLOW   255, 255,  64, 255
+   edje_object_color_class_set(edje, "BG", CS_BG, CS_BG, CS_BG);
+   edje_object_color_class_set(edje, "FG", CS_BG, CS_BG, CS_BG);
+   edje_object_color_class_set(edje, "CURSOR", CS_MAIN, CS_MAIN, CS_MAIN);
+   edje_object_color_class_set(edje, "CURSOR_HIGHLIGHT", CS_HL, CS_HL, CS_HL);
+   edje_object_color_class_set(edje, "GLOW", CS_MAIN, CS_MAIN, CS_MAIN);
+   edje_object_color_class_set(edje, "GLOW_HIGHLIGHT", CS_HL, CS_HL, CS_HL);
+   edje_object_color_class_set(edje, "GLOW_TXT", CS_MAIN, CS_MAIN, CS_MAIN);
+   edje_object_color_class_set(edje, "GLOW_HIGHLIGHT", CS_HL, CS_MAIN, CS_MAIN);
+   edje_object_color_class_set(edje, "END_SELECTION", CS_RAGE, CS_RAGE, CS_RAGE);
+   edje_object_color_class_set(edje, "TAB_MISSED", CS_ORANGE, CS_RAGE, CS_RED);
+   edje_object_color_class_set(edje, "TAB_MISSED_OVER", CS_YELLOW, CS_ORANGE, CS_RED);
+   edje_object_color_class_set(edje, "TAB_TITLE", CS_FG, CS_BLACK, CS_BG);
+   edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
+   edje_object_color_class_set(edje, "SHINE", CS_HL, CS_HL, CS_HL);
+
+#define CS_SET(K, C) \
+   edje_object_color_class_set(edje, K, C, C, C)
+
+#define CS_DEF       216, 222, 233, 255 /* #D8DEE9 */
+#define CS_ANSI00     59,  66,  82, 255 /* #3B4252 */
+#define CS_ANSI01    191,  97, 106, 255 /* #BF616A */
+#define CS_ANSI02    163, 190, 140, 255 /* #A3BE8C */
+#define CS_ANSI03    235, 203, 139, 255 /* #EBCB8B */
+#define CS_ANSI04    129, 161, 193, 255 /* #81A1C1 */
+#define CS_ANSI05    180, 142, 173, 255 /* #B38EAD */
+#define CS_ANSI06    136, 192, 208, 255 /* #88C0D0 */
+#define CS_ANSI07    229, 233, 248, 255 /* #E5E9F0 */
+#define CS_ANSI08     76,  86, 106, 255 /* #4C566A */
+#define CS_ANSI09    191,  97, 106, 255 /* #BF616A */
+#define CS_ANSI10    163, 190, 140, 255 /* #A3BE8C */
+#define CS_ANSI11    235, 203, 139, 255 /* #EBCB8B */
+#define CS_ANSI12    129, 161, 193, 255 /* #81A1C1 */
+#define CS_ANSI13    180, 142, 173, 255 /* #B38EAD */
+#define CS_ANSI14    143, 188, 187, 255 /* #8FBCBB */
+#define CS_ANSI15    236, 239, 244, 255 /* #ECEFF4 */
+
+   CS_SET("C0",  CS_ANSI00);
+   CS_SET("C1",  CS_ANSI01);
+   CS_SET("C2",  CS_ANSI02);
+   CS_SET("C3",  CS_ANSI03);
+   CS_SET("C4",  CS_ANSI04);
+   CS_SET("C5",  CS_ANSI05);
+   CS_SET("C6",  CS_ANSI06);
+   CS_SET("C7",  CS_ANSI07);
+
+   CS_SET("C8",  CS_ANSI08);
+   CS_SET("C9",  CS_ANSI09);
+   CS_SET("C10", CS_ANSI10);
+   CS_SET("C11", CS_ANSI11);
+   CS_SET("C12", CS_ANSI12);
+   CS_SET("C13", CS_ANSI13);
+   CS_SET("C14", CS_ANSI14);
+   CS_SET("C14", CS_ANSI15);
+
+   CS_SET("c0", CS_DEF);
+   CS_SET("c1", CS_ANSI00);
+   CS_SET("c2", CS_ANSI01);
+   CS_SET("c3", CS_ANSI02);
+   CS_SET("c4", CS_ANSI03);
+   CS_SET("c5", CS_ANSI04);
+   CS_SET("c6", CS_ANSI05);
+   CS_SET("c7", CS_ANSI06);
+   CS_SET("c8", CS_ANSI07);
+
+   CS_SET("c11", CS_DEF);
+
+   CS_SET("c12", CS_ANSI15);
+   CS_SET("c13", CS_ANSI08);
+   CS_SET("c14", CS_ANSI09);
+   CS_SET("c15", CS_ANSI10);
+   CS_SET("c16", CS_ANSI11);
+   CS_SET("c17", CS_ANSI12);
+   CS_SET("c18", CS_ANSI13);
+   CS_SET("c19", CS_ANSI14);
+   CS_SET("c20", CS_ANSI15);
+
+   CS_SET("c25", CS_ANSI08);
+   CS_SET("c26", CS_ANSI09);
+   CS_SET("c27", CS_ANSI10);
+   CS_SET("c28", CS_ANSI11);
+   CS_SET("c29", CS_ANSI12);
+   CS_SET("c30", CS_ANSI13);
+   CS_SET("c31", CS_ANSI14);
+   CS_SET("c32", CS_ANSI15);
+
+   CS_SET("c37", CS_ANSI08);
+   CS_SET("c38", CS_ANSI09);
+   CS_SET("c39", CS_ANSI10);
+   CS_SET("c40", CS_ANSI11);
+   CS_SET("c41", CS_ANSI12);
+   CS_SET("c42", CS_ANSI13);
+   CS_SET("c43", CS_ANSI14);
+   CS_SET("c44", CS_ANSI15);
+
+#undef CS_DEF
+#undef CS_ANSI00
+#undef CS_ANSI01
+#undef CS_ANSI02
+#undef CS_ANSI03
+#undef CS_ANSI04
+#undef CS_ANSI05
+#undef CS_ANSI06
+#undef CS_ANSI07
+#undef CS_ANSI08
+#undef CS_ANSI09
+#undef CS_ANSI10
+#undef CS_ANSI11
+#undef CS_ANSI12
+#undef CS_ANSI13
+#undef CS_ANSI14
+#undef CS_ANSI15
+
+#undef CS_BG
+#undef CS_FG
+#undef CS_MAIN
+#undef CS_HL
+#undef CS_RAGE
+#undef CS_RED
+#undef CS_ORANGE
+#undef CS_BLACK
+#undef CS_DARK
+#undef CS_YELLOW
+#undef CS_SET
+}
