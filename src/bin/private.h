@@ -58,6 +58,9 @@ extern int _log_domain;
 #define startswith(str, constref) \
   (!strncmp(str, constref, sizeof(constref) - 1))
 
+#define static_strequal(STR, STATIC_STR)  \
+   (!strncmp(STR, STATIC_STR, strlen(STATIC_STR)))
+
 #if !defined(HAVE_STRCHRNUL)
 static inline char *
 strchrnul(const char *s, int c)
