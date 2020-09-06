@@ -1,5 +1,5 @@
-#ifndef _COL_H__
-#define _COL_H__ 1
+#ifndef _COLORS_H__
+#define _COLORS_H__ 1
 
 #include <Evas.h>
 #include "config.h"
