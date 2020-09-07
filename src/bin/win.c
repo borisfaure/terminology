@@ -2900,6 +2900,10 @@ _split_split(Term_Container *tc, Term_Container *child,
         _solo_tab_show(tc_solo_new);
      }
 
+   tc_split->is_focused = EINA_TRUE;
+   tc_split->focus(tc_split, tc_solo_new);
+   tc_solo_new->focus(tc_solo_new, tc_split);
+
    evas_object_show(obj_split);
    _focus_validator();
 }
