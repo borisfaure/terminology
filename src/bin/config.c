@@ -200,16 +200,12 @@ config_init(void)
 void
 config_shutdown(void)
 {
-   if (edd_base)
-     {
-        eet_data_descriptor_free(edd_base);
-        edd_base = NULL;
-     }
-   if (edd_color)
-     {
-        eet_data_descriptor_free(edd_color);
-        edd_color = NULL;
-     }
+   eet_data_descriptor_free(edd_base);
+   edd_base = NULL;
+
+   eet_data_descriptor_free(edd_color);
+   edd_color = NULL;
+
    efreet_shutdown();
 }
 
