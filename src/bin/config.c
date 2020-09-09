@@ -36,22 +36,19 @@ config_init(void)
             _config_home_get());
    ecore_file_mkpath(path);
 
-   eet_eina_stream_data_descriptor_class_set
-     (&eddc, sizeof(eddc), "Config", sizeof(Config));
-   edd_base = eet_data_descriptor_stream_new(&eddc);
 
    eet_eina_stream_data_descriptor_class_set
-     (&eddc, sizeof(eddc), "Config_Color", sizeof(Config_Color));
+     (&eddc, sizeof(eddc), "Config_Color", sizeof(Color));
    edd_color = eet_data_descriptor_stream_new(&eddc);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_color, Config_Color, "r", r, EET_T_UCHAR);
+     (edd_color, Color, "r", r, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_color, Config_Color, "g", g, EET_T_UCHAR);
+     (edd_color, Color, "g", g, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_color, Config_Color, "b", b, EET_T_UCHAR);
+     (edd_color, Color, "b", b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_color, Config_Color, "a", a, EET_T_UCHAR);
+     (edd_color, Color, "a", a, EET_T_UCHAR);
 
 
    eet_eina_stream_data_descriptor_class_set
@@ -74,6 +71,11 @@ config_init(void)
      (edd_keys, Config_Keys, "hyper", hyper, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_keys, Config_Keys, "cb", cb, EET_T_STRING);
+
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddc, sizeof(eddc), "Config", sizeof(Config));
+   edd_base = eet_data_descriptor_stream_new(&eddc);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "version", version, EET_T_INT);

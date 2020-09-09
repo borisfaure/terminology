@@ -4,7 +4,7 @@
 #include <Evas.h>
 
 typedef struct _Config Config;
-typedef struct _Config_Color Config_Color;
+typedef struct _Color Color;
 typedef struct _Config_Keys Config_Keys;
 
 struct _Config_Keys
@@ -20,7 +20,7 @@ struct _Config_Keys
 };
 /* TODO: separate config per terminal (tab, window) and global. */
 
-struct _Config_Color
+struct _Color
 {
    unsigned char r, g, b, a;
 };
@@ -97,7 +97,7 @@ struct _Config
    Eina_Bool         changedir_to_current;
    Eina_Bool         emoji_dbl_width;
    Eina_Bool         group_all;
-   Config_Color      colors[(4 * 12)];
+   Color             colors[(4 * 12)];
    Eina_List        *keys;
 
    Eina_Bool         temporary; /* not in EET */

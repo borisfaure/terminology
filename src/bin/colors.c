@@ -4,16 +4,6 @@
 #include "config.h"
 #include "colors.h"
 
-typedef struct _Color Color;
-
-struct _Color
-{
-   unsigned char r;
-   unsigned char g;
-   unsigned char b;
-   unsigned char a;
-};
-
 static const Color default_colors[2][2][12] =
 {
    { // normal
