@@ -879,6 +879,7 @@ elm_main(int argc, char **argv)
      }
 
    config_init();
+   colors_init();
 
    _main_config = config_load();
    if (key_bindings_load(_main_config) < 0)
@@ -1063,6 +1064,7 @@ elm_main(int argc, char **argv)
 
    config_del(_main_config);
    key_bindings_shutdown();
+   colors_shutdown();
    config_shutdown();
    controls_shutdown();
    eina_log_domain_unregister(_log_domain);

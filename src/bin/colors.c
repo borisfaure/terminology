@@ -370,6 +370,9 @@ static const Color default_colors256[256] =
    { 0xee, 0xee, 0xee, 0xff },
 };
 
+static Eet_Data_Descriptor *edd_cs = NULL;
+static Eet_Data_Descriptor *edd_color = NULL;
+
 void
 colors_term_init(Evas_Object *textgrid,
                  const Evas_Object *bg,
@@ -654,4 +657,83 @@ color_scheme_apply(Evas_Object *edje,
 #undef CS_DARK
 #undef CS_YELLOW
 #undef CS_SET
+}
+
+void
+colors_init(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddc, sizeof(eddc), "Color", sizeof(Color));
+   edd_color = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Color, "r", r, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Color, "g", g, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Color, "b", b, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_color, Color, "a", a, EET_T_UCHAR);
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddc, sizeof(eddc), "Color_Scheme", sizeof(Color_Scheme));
+   edd_cs = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "version", version, EET_T_INT);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "md.version", md.version, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "md.name", md.name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "md.author", md.author, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "md.website", md.website, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_cs, Color_Scheme, "md.license", md.license, EET_T_STRING);
+
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "def", def, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "bg", bg, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "fg", fg, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "main", main, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "hl", hl, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "end_sel", end_sel, edd_color);
+
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_1", tab_missed_1, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_2", tab_missed_2, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_3", tab_missed_3, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_over_1", tab_missed_over_1, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_over_2", tab_missed_over_2, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_missed_over_3", tab_missed_over_3, edd_color);
+
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "tab_title_2", tab_title_2, edd_color);
+
+   EET_DATA_DESCRIPTOR_ADD_ARRAY
+     (edd_cs, Color_Scheme, "ansi", ansi, edd_color);
+}
+
+void
+colors_shutdown(void)
+{
+   eet_data_descriptor_free(edd_cs);
+   edd_cs = NULL;
+
+   eet_data_descriptor_free(edd_color);
+   edd_color = NULL;
 }
