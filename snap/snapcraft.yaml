@@ -127,6 +127,7 @@ parts:
       - libpangoft2-1.0-0
       - libpixman-1-0
       - libpng16-16
+      - libpulse0
       - librsvg2-2
       - libscim8v5
       - libthai0
