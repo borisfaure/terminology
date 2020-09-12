@@ -630,7 +630,14 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
    arg0 = strrchr(args[0], '/');
    if (!arg0) arg0 = args[0];
    else arg0++;
-   ty->prop.title = eina_stringshare_add(title? title : arg0);
+
+   if (title)
+     {
+        ty->prop.title = eina_stringshare_add(title);
+        ty->prop.user_title = eina_stringshare_add(title);
+     }
+   else
+     ty->prop.title = eina_stringshare_add(arg0);
 
    ty->fd = posix_openpt(O_RDWR | O_NOCTTY);
    if (ty->fd < 0)
