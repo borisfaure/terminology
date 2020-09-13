@@ -1,6 +1,9 @@
 option('edje-cc',
        type: 'string',
        description: 'A path to a edje_cc. Defaults to system\'s edje_cc')
+option('eet',
+       type: 'string',
+       description: 'A path to a eet. Defaults to system\'s eet')
 option('fuzzing',
        type: 'boolean',
        value: false,

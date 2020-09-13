@@ -59,6 +59,7 @@ efl_deps = ['edje',
             'ethumb_client']
 terminology_dependencies = [ m_dep ]
 edje_cc_path = ''
+eet_path = ''
 edj_targets = []
 edj_files = []
 
@@ -72,6 +73,9 @@ foreach efl_dep: efl_deps
   terminology_dependencies += [dep]
   if efl_dep == 'edje'
     edje_cc_path = dep.get_pkgconfig_variable('prefix') + '/bin/edje_cc'
+  endif
+  if efl_dep == 'eet'
+    eet_path = dep.get_pkgconfig_variable('prefix') + '/bin/eet'
   endif
 endforeach
 
@@ -96,8 +100,12 @@ endif
 
 message('Checking for ecore_con_url_head: ' + found)
 
-edje_cc = get_option('edje-cc')
+eet_bin = get_option('eet')
+if eet_bin == ''
+  eet_bin = eet_path
+endif
 
+edje_cc = get_option('edje-cc')
 if edje_cc == ''
   edje_cc = edje_cc_path
 endif
