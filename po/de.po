@@ -9,17 +9,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-15 20:44+0200\n"
-"PO-Revision-Date: 2020-05-08 22:25+0200\n"
-"Last-Translator: Milo Ivir <mail@milotype.de>\n"
-"Language-Team: German <de@li.org>\n"
+"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"PO-Revision-Date: 2020-09-15 19:51+0000\n"
+"Last-Translator: Marcel Hollerbach <mail@bu5hm4n.de>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/terminology/"
+"terminology/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.3-dev\n"
 "X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
-"X-Generator: Poedit 2.3\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
@@ -784,7 +785,7 @@ msgstr "Unsichtbar"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
-msgstr "Inverse"
+msgstr "Invers"
 
 #: src/bin/options_colors.c:23
 msgid "Inverse Background"
@@ -1031,7 +1032,7 @@ msgstr "termpty konnte nicht zugewiesen werden"
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr "memerr: %s"
+msgstr "Speicherfehler: %s"
 
 #: src/bin/termpty.c:224
 #, c-format

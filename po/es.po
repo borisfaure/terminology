@@ -8,65 +8,53 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-15 20:44+0200\n"
-"PO-Revision-Date: 2015-05-02 13:22+0100\n"
-"Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
-"Language-Team: [Language]\n"
+"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"PO-Revision-Date: 2020-09-15 19:51+0000\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
+"terminology/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.5\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.3-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
-#: src/bin/termio.c:1224
-#, fuzzy, c-format
-msgid "Copy '%s'"
-msgstr "Copiar"
+#: src/bin/options_helpers.c:193 src/bin/options.c:227
+msgid "Helpers"
+msgstr "Auxiliares"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
 msgstr "Abrir"
 
-#: src/bin/about.c:273
-msgid "Twitter: @_Terminology_"
-msgstr ""
+#: src/bin/options_helpers.c:236
+msgid "E-mail:"
+msgstr "Correo electrónico:"
 
-#: src/bin/about.c:275
-msgid "Youtube channel"
-msgstr ""
+#: src/bin/options_helpers.c:269
+msgid "URL (Images):"
+msgstr "URL (imágenes):"
 
-#: src/bin/about.c:289
-#, c-format
-msgid ""
-"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
-"terminal was written for Enlightenment, to use EFL and otherwise push the "
-"boundaries of what a modern terminal emulator should be. We hope you enjoy "
-"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s"
-msgstr ""
-"<b>Terminology %s</b><br>¿Por qué las terminales deberían ser aburridas?"
-"<br><br>Esta terminal se escribió para Enlightenment, para usar las "
-"librerías EFL y sobrepasar los límites de lo que debería ser un emulador de "
-"terminal moderno. Esperamos que lo disfrute.<br><br>Copyright © 2012-%d por:"
-"<br><br>%s<br><br>Distribuido bajo la licencia '2-clause BSD' descrito más "
-"abajo:<br><br>%s"
+#: src/bin/options_helpers.c:294
+msgid "URL (Video):"
+msgstr "URL (vídeo):"
 
-#: src/bin/controls.c:376
-msgid "Controls"
-msgstr "Controles"
+#: src/bin/options_helpers.c:319
+msgid "URL (All):"
+msgstr "URL (todo):"
 
-#: src/bin/controls.c:392
-msgid "New"
-msgstr "Nuevo"
+#: src/bin/options_helpers.c:352
+msgid "Local (Images):"
+msgstr "Local (imágenes):"
 
-#: src/bin/controls.c:399
-msgid "Split V"
-msgstr "Dividir V"
+#: src/bin/options_helpers.c:377
+msgid "Local (Video):"
+msgstr "Local (vídeo):"
 
-#: src/bin/controls.c:403
-msgid "Split H"
-msgstr "Dividir H"
+#: src/bin/options_helpers.c:402
+msgid "Local (All):"
+msgstr "Local (todo):"
 
 #: src/bin/controls.c:410
 msgid "Miniview"
@@ -77,9 +65,10 @@ msgstr "Minivista"
 msgid "Set title"
 msgstr "Establecer título de la ventana"
 
-#: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
-msgid "Copy"
-msgstr "Copiar"
+#: src/bin/termio.c:1079
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "no se admite el formato de selección «%s»"
 
 #: src/bin/controls.c:434
 msgid "Paste"
@@ -252,9 +241,9 @@ msgstr "Cambiar a la pestaña 10"
 msgid "Change title"
 msgstr ""
 
-#: src/bin/keyin.c:692 src/bin/keyin.c:693
-msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+#: src/bin/termio.c:3975
+msgid "Could not allocate termpty"
+msgstr "No se pudo asignar «termpty»"
 
 #: src/bin/keyin.c:696
 msgid "Font size"
@@ -273,30 +262,21 @@ msgstr "Tamaño -1"
 msgid "Display big font size"
 msgstr "Mostrar fuente grande"
 
-# Se puede cortar porque está parte de una sección que lleva la etiqueta "Font size".
-#: src/bin/keyin.c:700
-msgid "Reset font size"
-msgstr "Restaurar tamaño"
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
 
-#: src/bin/keyin.c:702
-msgid "Actions"
-msgstr "Acciones"
-
-#: src/bin/keyin.c:703
-msgid "Open a new terminal window"
-msgstr ""
-
-#: src/bin/keyin.c:704
-msgid "Toggle Fullscreen of the window"
-msgstr ""
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Híper+"
 
 #: src/bin/keyin.c:705
 msgid "Display the history miniview"
 msgstr "Mostrar minivista del historial"
 
-#: src/bin/keyin.c:706
-msgid "Display the command box"
-msgstr "Mostrar el cuadro de comandos"
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "Presione una secuencia de teclas"
 
 #: src/bin/main.c:387 src/bin/main.c:581
 #, fuzzy
@@ -544,7 +524,7 @@ msgstr "Translúcido"
 #: src/bin/options_background.c:619 src/bin/options_background.c:620
 #, c-format
 msgid "%1.0f%%"
-msgstr "%1.0f%%"
+msgstr "%1.0f %%"
 
 # RR: En la traducción de E, se usa seleccionar y creo que hay bastante espacio, pero tambien hace sentido usar elegir aquí para dejar más espacio para la ruta.
 #: src/bin/options_background.c:639
@@ -568,7 +548,47 @@ msgstr "Otro"
 msgid "Click on a picture to use it as background"
 msgstr "Doble clic en una imagen para importarla"
 
-#: src/bin/options_behavior.c:63
+#: src/bin/options_elm.c:109 src/bin/options.c:228
+msgid "Toolkit"
+msgstr "Caja de herramientas"
+
+#: src/bin/options_elm.c:122
+#, c-format
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>"
+msgstr ""
+
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
+msgstr "Iniciar %s"
+
+#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
+msgid "Scale"
+msgstr "Escala"
+
+#: src/bin/options_elm.c:172 src/bin/win.c:410
+msgid "Select preferred size so that this text is readable"
+msgstr "Seleccione el tamaño que desee de modo que este texto sea legible"
+
+#: src/bin/options_elm.c:179
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
+msgstr ""
+
+#: src/bin/options_theme.c:154 src/bin/options.c:222
+msgid "Theme"
+msgstr "Tema"
+
+#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
+#, c-format
+msgid "Could not create logging domain '%s'"
+msgstr "No se pudo crear el dominio de registros «%s»"
+
+#: src/bin/options_behavior.c:89
 #, c-format
 msgid "%'d lines"
 msgstr "%'d lineas"
@@ -595,17 +615,50 @@ msgstr ""
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:282
+#: src/bin/options_behavior.c:346
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:301
+#: src/bin/options_behavior.c:365
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:320
+#: src/bin/options_behavior.c:384
 msgid "Steady Bar"
 msgstr ""
+
+#: src/bin/options_behavior.c:423 src/bin/options.c:220
+msgid "Behavior"
+msgstr "Comportamiento"
+
+#: src/bin/options_behavior.c:466
+msgid "Scroll to bottom on new content"
+msgstr "Desplazar abajo con nuevo contenido"
+
+#: src/bin/options_behavior.c:467
+msgid "Scroll to bottom when a key is pressed"
+msgstr "Desplazar hasta abajo al presionar una tecla"
+
+# RR: ¿activos o activados? En las páginas man hay una opción de comando "--active-links=ACTIVATE-LINKS" que trata de resaltar los enlaces.
+#: src/bin/options_behavior.c:478
+msgid "Active Links:"
+msgstr "Enlaces activos:"
+
+#: src/bin/options_behavior.c:482
+msgid "On emails"
+msgstr "En mensajes de correo electrónico"
+
+#: src/bin/options_behavior.c:483
+msgid "On file paths"
+msgstr "En rutas de archivos"
+
+#: src/bin/options_behavior.c:484
+msgid "On URLs"
+msgstr "En URL"
+
+#: src/bin/options_behavior.c:485
+msgid "Based on escape codes"
+msgstr "Según los códigos de escape"
 
 #: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
