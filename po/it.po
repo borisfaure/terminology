@@ -561,10 +561,6 @@ msgstr "Altro"
 msgid "Click on a picture to use it as background"
 msgstr "Cliccare su un'immagine per usarla come sfondo"
 
-#: src/bin/options_elm.c:109 src/bin/options.c:228
-msgid "Toolkit"
-msgstr "Toolkit"
-
 #: src/bin/options_elm.c:122
 #, c-format
 msgid ""
@@ -578,10 +574,6 @@ msgstr "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si
 msgid "Launch %s"
 msgstr "Lancia %s"
 
-#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
-msgid "Scale"
-msgstr "Scala"
-
 #: src/bin/options_elm.c:172 src/bin/win.c:410
 msgid "Select preferred size so that this text is readable."
 msgstr "Selezionare la dimensione preferita così che questo testo sia leggibile."
@@ -591,10 +583,6 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel."
 msgstr "La configurazione della scala può essere impostata dal pannello di configurazione di <hilight>elementary</hilight>."
-
-#: src/bin/options_theme.c:154 src/bin/options.c:222
-msgid "Theme"
-msgstr "Tema"
 
 #: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
 #, c-format
@@ -857,11 +845,6 @@ msgstr ""
 "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si può "
 "accedere alle impostazioni di configurazione del toolkit eseguendo <keyword>"
 "%s</keyword>"
-
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr "Lancia %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
 msgid "Scale"

@@ -20,10 +20,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.3-dev\n"
 
-#: src/bin/options_helpers.c:193 src/bin/options.c:227
-msgid "Helpers"
-msgstr "Auxiliares"
-
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
 msgstr "Abrir"
@@ -31,30 +27,6 @@ msgstr "Abrir"
 #: src/bin/options_helpers.c:236
 msgid "E-mail:"
 msgstr "Correo electrónico:"
-
-#: src/bin/options_helpers.c:269
-msgid "URL (Images):"
-msgstr "URL (imágenes):"
-
-#: src/bin/options_helpers.c:294
-msgid "URL (Video):"
-msgstr "URL (vídeo):"
-
-#: src/bin/options_helpers.c:319
-msgid "URL (All):"
-msgstr "URL (todo):"
-
-#: src/bin/options_helpers.c:352
-msgid "Local (Images):"
-msgstr "Local (imágenes):"
-
-#: src/bin/options_helpers.c:377
-msgid "Local (Video):"
-msgstr "Local (vídeo):"
-
-#: src/bin/options_helpers.c:402
-msgid "Local (All):"
-msgstr "Local (todo):"
 
 #: src/bin/controls.c:410
 msgid "Miniview"
@@ -89,11 +61,6 @@ msgstr ""
 #: src/bin/controls.c:467
 msgid "Close Terminal"
 msgstr "Cerrar terminal"
-
-#: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
-#, fuzzy, c-format
-msgid "Could not create logging domain '%s'"
-msgstr "No se pudo crear el dominio de logging '%s'"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
@@ -548,18 +515,6 @@ msgstr "Otro"
 msgid "Click on a picture to use it as background"
 msgstr "Doble clic en una imagen para importarla"
 
-#: src/bin/options_elm.c:109 src/bin/options.c:228
-msgid "Toolkit"
-msgstr "Caja de herramientas"
-
-#: src/bin/options_elm.c:122
-#, c-format
-msgid ""
-"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
-"toolkit configuration settings can be accessed by running <keyword>%s</"
-"keyword>"
-msgstr ""
-
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
@@ -578,10 +533,6 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-
-#: src/bin/options_theme.c:154 src/bin/options.c:222
-msgid "Theme"
-msgstr "Tema"
 
 #: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
 #, c-format
@@ -626,23 +577,6 @@ msgstr ""
 #: src/bin/options_behavior.c:384
 msgid "Steady Bar"
 msgstr ""
-
-#: src/bin/options_behavior.c:423 src/bin/options.c:220
-msgid "Behavior"
-msgstr "Comportamiento"
-
-#: src/bin/options_behavior.c:466
-msgid "Scroll to bottom on new content"
-msgstr "Desplazar abajo con nuevo contenido"
-
-#: src/bin/options_behavior.c:467
-msgid "Scroll to bottom when a key is pressed"
-msgstr "Desplazar hasta abajo al presionar una tecla"
-
-# RR: ¿activos o activados? En las páginas man hay una opción de comando "--active-links=ACTIVATE-LINKS" que trata de resaltar los enlaces.
-#: src/bin/options_behavior.c:478
-msgid "Active Links:"
-msgstr "Enlaces activos:"
 
 #: src/bin/options_behavior.c:482
 msgid "On emails"
@@ -879,25 +813,6 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr ""
-
-#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
-msgid "Scale"
-msgstr ""
-
-#: src/bin/options_elm.c:172 src/bin/win.c:431
-msgid "Select preferred size so that this text is readable"
-msgstr ""
-
-#: src/bin/options_elm.c:180
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel"
-msgstr ""
-
 #: src/bin/options_font.c:491
 msgid "Bitmap"
 msgstr "Bitmap"
@@ -926,21 +841,9 @@ msgstr "Mayús+"
 msgid "Win+"
 msgstr "Win+"
 
-#: src/bin/options_keys.c:70
-msgid "Meta+"
-msgstr ""
-
-#: src/bin/options_keys.c:71
-msgid "Hyper+"
-msgstr ""
-
 #: src/bin/options_keys.c:82
 msgid "Delete"
 msgstr "Supr"
-
-#: src/bin/options_keys.c:269
-msgid "Please press key sequence"
-msgstr "Por favor, pulse una secuencia de teclas"
 
 #: src/bin/options_keys.c:385
 msgid "Key Bindings"
@@ -969,26 +872,10 @@ msgstr ""
 msgid "Active Links:"
 msgstr "Enlaces activos"
 
-#: src/bin/options_mouse.c:208
-msgid "On emails"
-msgstr ""
-
-#: src/bin/options_mouse.c:209
-msgid "On file paths"
-msgstr ""
-
-#: src/bin/options_mouse.c:210
-msgid "On URLs"
-msgstr ""
-
 #: src/bin/options_mouse.c:211
 #, fuzzy
 msgid "On colors"
 msgstr "Colores"
-
-#: src/bin/options_mouse.c:212
-msgid "Based on escape codes"
-msgstr ""
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -1001,10 +888,6 @@ msgstr "Arrastrar y soltar enlaces"
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
 msgstr "De la línea si es posible"
-
-#: src/bin/options_mouse.c:265
-msgid "E-mail:"
-msgstr "E-mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
@@ -1060,11 +943,6 @@ msgstr "No se pudo obtener el directorio de trabajo del pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "No se pudo cargar el directorio de trabajo %s: %s"
 
-#: src/bin/termio.c:1123
-#, c-format
-msgid "unsupported selection format '%s'"
-msgstr "Formato de selección no admitido '%s'"
-
 #: src/bin/termio.c:1283
 msgid "Preview"
 msgstr "Previsualización"
@@ -1080,10 +958,6 @@ msgstr ""
 #: src/bin/termio.c:2741
 msgid "Open as URL"
 msgstr ""
-
-#: src/bin/termio.c:4145
-msgid "Could not allocate termpty"
-msgstr "No se pudo asignar \"termpty\""
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format

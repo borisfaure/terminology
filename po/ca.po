@@ -135,10 +135,6 @@ msgstr "Reinicia la mida del tipus de lletra"
 msgid "Actions"
 msgstr "Accions"
 
-#: src/bin/keyin.c:703
-msgid "Open a new terminal window"
-msgstr ""
-
 #: src/bin/keyin.c:704
 msgid "Toggle Fullscreen of the window"
 msgstr "Commuta finestra a pantalla completa"
@@ -204,10 +200,6 @@ msgstr "Altres"
 msgid "Click on a picture to use it as background"
 msgstr "Feu clic a una imatge per utilitzar-la de fons"
 
-#: src/bin/options_elm.c:109 src/bin/options.c:228
-msgid "Toolkit"
-msgstr "Joc d'eines"
-
 #: src/bin/options_elm.c:122
 #, c-format
 msgid ""
@@ -231,18 +223,6 @@ msgstr "Escala"
 #: src/bin/options_elm.c:172 src/bin/win.c:410
 msgid "Select preferred size so that this text is readable"
 msgstr "Seleccioneu la mida desitjada per a que aquest text sigui llegible"
-
-#: src/bin/options_elm.c:179
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel"
-msgstr ""
-"La configuració d'escala pot ser modificada a través del panell de "
-"configuració de <hilight>elementary</hilight>"
-
-#: src/bin/options_theme.c:154 src/bin/options.c:222
-msgid "Theme"
-msgstr "Tema"
 
 #: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
 #, c-format
@@ -299,10 +279,6 @@ msgstr "Desplaça cap avall quan hi hagi nou contingut"
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Desplaça cap avall quan es premi una tecla"
 
-#: src/bin/options_behavior.c:478
-msgid "Active Links:"
-msgstr "Enllaços Actius:"
-
 #: src/bin/options_behavior.c:482
 msgid "On emails"
 msgstr "En correus"
@@ -355,17 +331,9 @@ msgstr "Fletxa enrera actua com Supr (enlloc de Retrocés)"
 msgid "Start as login shell"
 msgstr "Inicia com a intèrpret d'ordres"
 
-#: src/bin/options_behavior.c:507
-msgid "Focus split under the Mouse"
-msgstr "Divisió de focus sota el ratolí"
-
 #: src/bin/options_behavior.c:508
 msgid "Focus-related visuals"
 msgstr "Visualitzacions relacionades amb el focus"
-
-#: src/bin/options_behavior.c:509
-msgid "Gravatar integration"
-msgstr "Integració amb Gravatar"
 
 #: src/bin/options_behavior.c:510
 msgid "Show tabs"
@@ -679,15 +647,6 @@ msgstr "Desplaça una línia avall"
 msgid "Go to the top of the backlog"
 msgstr "Ves a l'inici de l'historial"
 
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr ""
-
-#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
-msgid "Scale"
-msgstr ""
-
 #: src/bin/keyin.c:668
 msgid "Focus the previous terminal"
 msgstr "Focus al terminal previ"
@@ -746,35 +705,14 @@ msgstr "Premi la seqüència de tecles"
 msgid "Key Bindings"
 msgstr "Dreceres de teclat"
 
-#: src/bin/options_keys.c:457
-#, fuzzy
-msgid "Reset bindings"
-msgstr "Dreceres de teclat"
-
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
 msgstr "Divisió de focus sota el ratolí"
-
-#: src/bin/options_mouse.c:168
-msgid "Focus-related visuals"
-msgstr ""
-
-#: src/bin/options_mouse.c:174
-msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
 
 #: src/bin/options_mouse.c:204
 #, fuzzy
 msgid "Active Links:"
 msgstr "Enllaços actius"
-
-#: src/bin/options_mouse.c:208
-msgid "On emails"
-msgstr ""
-
-#: src/bin/options_mouse.c:209
-msgid "On file paths"
-msgstr ""
 
 #: src/bin/keyin.c:689
 msgid "Change title"
@@ -784,10 +722,6 @@ msgstr "Canvia el títol"
 #, fuzzy
 msgid "On colors"
 msgstr "Colors"
-
-#: src/bin/options_mouse.c:212
-msgid "Based on escape codes"
-msgstr ""
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -868,18 +802,6 @@ msgstr "format de selecció no permès '%s'"
 msgid "Preview"
 msgstr "Previsualitza"
 
-#: src/bin/termio.c:1293
-msgid "Copy relative path"
-msgstr ""
-
-#: src/bin/termio.c:1295
-msgid "Copy full path"
-msgstr ""
-
-#: src/bin/termio.c:2741
-msgid "Open as URL"
-msgstr ""
-
 #: src/bin/termio.c:4145
 msgid "Could not allocate termpty"
 msgstr "No s'ha ubicat termpty"
@@ -955,10 +877,6 @@ msgstr ""
 #: src/bin/win.c:2303
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF ha fallat"
-
-#: src/bin/win.c:6091 src/bin/controls.c:413
-msgid "Set title"
-msgstr "Anomena la finestra"
 
 #: src/bin/win.c:6095
 msgid "Ok"
