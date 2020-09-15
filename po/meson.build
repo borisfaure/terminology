@@ -16,3 +16,10 @@ if get_option('nls')
             ])
   config_data.set('ENABLE_NLS', '1')
 endif
+
+# maintainer shortcut for updating po stuff
+run_target ('po',
+  command: ['ninja', '-C', meson.build_root(),
+    meson.project_name() + '-pot',
+    meson.project_name() + '-update-po']
+  )
