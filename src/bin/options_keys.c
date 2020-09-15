@@ -119,7 +119,7 @@ _cb_key_up(void *data,
    action = evas_object_data_get(bx, "action");
    if (!action)
      {
-        ERR("can't find any action to associate with.");
+        ERR("Could not find any action to associate with");
         return;
      }
 

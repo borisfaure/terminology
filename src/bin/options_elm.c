@@ -120,7 +120,7 @@ options_elm(Evas_Object *opbox, Evas_Object *_term EINA_UNUSED)
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
    txt = eina_stringshare_printf(
       _("<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>"
-        "The toolkit configuration settings can be accessed by running <keyword>%s</keyword>."), _elementary_config);
+        "The toolkit configuration settings can be accessed by running <keyword>%s</keyword>"), _elementary_config);
    elm_object_text_set(en, txt);
    eina_stringshare_del(txt);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0);
@@ -169,7 +169,7 @@ options_elm(Evas_Object *opbox, Evas_Object *_term EINA_UNUSED)
    lbl = elm_label_add(opbox);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, 0.0, 0.0);
-   elm_object_text_set(lbl, _("Select preferred size so that this text is readable."));
+   elm_object_text_set(lbl, _("Select preferred size so that this text is readable"));
    elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
@@ -177,7 +177,7 @@ options_elm(Evas_Object *opbox, Evas_Object *_term EINA_UNUSED)
    lbl = elm_label_add(opbox);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, 0.0, 0.0);
-   elm_object_text_set(lbl, _("The scale configuration can also be changed through <hilight>elementary</hilight>'s configuration panel."));
+   elm_object_text_set(lbl, _("The scale configuration can also be changed through <hilight>elementary</hilight>'s configuration panel"));
    elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);

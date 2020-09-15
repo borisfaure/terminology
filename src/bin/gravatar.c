@@ -118,7 +118,7 @@ gravatar_init(void)
 
    _gravatar_log_dom = eina_log_domain_register("gravatar", NULL);
    if (_gravatar_log_dom < 0)
-     EINA_LOG_CRIT(_("Could not create logging domain '%s'."), "gravatar");
+     EINA_LOG_CRIT(_("Could not create logging domain '%s'"), "gravatar");
 }
 
 void

@@ -50,7 +50,7 @@ termpty_init(void)
 
    _termpty_log_dom = eina_log_domain_register("termpty", NULL);
    if (_termpty_log_dom < 0)
-     EINA_LOG_CRIT("Could not create logging domain '%s'.", "termpty");
+     EINA_LOG_CRIT("Could not create logging domain '%s'", "termpty");
 }
 
 void

@@ -428,7 +428,7 @@ win_scale_wizard(Evas_Object *win, Term *term)
    lbl = elm_label_add(win);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(lbl, _("Select preferred size so that this text is readable."));
+   elm_object_text_set(lbl, _("Select preferred size so that this text is readable"));
    elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
@@ -436,7 +436,7 @@ win_scale_wizard(Evas_Object *win, Term *term)
    lbl = elm_label_add(win);
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>."));
+   elm_object_text_set(lbl, _("The scale configuration can be changed in the Settings (right click on the terminal) →  Toolkit, or by starting the command <keyword>elementary_config</keyword>"));
    elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
    elm_box_pack_end(bx, lbl);
    evas_object_show(lbl);
@@ -2160,7 +2160,7 @@ win_new(const char *name, const char *role, const char *title,
      {
         _win_log_dom = eina_log_domain_register("win", NULL);
         if (_win_log_dom < 0)
-          EINA_LOG_CRIT("Could not create logging domain '%s'.", "win");
+          EINA_LOG_CRIT("Could not create logging domain '%s'", "win");
      }
 
    tc = (Term_Container*) wn;

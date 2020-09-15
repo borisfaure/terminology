@@ -38,7 +38,7 @@ miniview_init(void)
 
    _miniview_log_dom = eina_log_domain_register("miniview", NULL);
    if (_miniview_log_dom < 0)
-     EINA_LOG_CRIT(_("Could not create logging domain '%s'."), "miniview");
+     EINA_LOG_CRIT(_("Could not create logging domain '%s'"), "miniview");
 }
 
 void

@@ -384,7 +384,7 @@ main_ipc_new(Ipc_Instance *inst)
                 inst->borderless, inst->override, inst->maximized);
    if (!wn)
      {
-        CRITICAL(_("Could not create window."));
+        CRITICAL(_("Could not create window"));
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
         return;
@@ -403,7 +403,7 @@ main_ipc_new(Ipc_Instance *inst)
                    inst->title);
    if (!term)
      {
-        CRITICAL(_("Could not create terminal widget."));
+        CRITICAL(_("Could not create terminal widget"));
         win_free(wn);
         ecore_app_args_set(pargc, (const char **)pargv);
         free(nargv);
@@ -440,66 +440,66 @@ static Ecore_Getopt options = {
    PACKAGE_VERSION,
    gettext_noop("(C) 2012-%d Carsten Haitzler and others"),
    "BSD 2-Clause",
-   gettext_noop("Terminal emulator written with Enlightenment Foundation Libraries."),
+   gettext_noop("Terminal emulator written with Enlightenment Foundation Libraries"),
    EINA_TRUE,
    {
       ECORE_GETOPT_BREAK_STR ('e', "exec",
                               gettext_noop("Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)")),
       ECORE_GETOPT_STORE_STR ('d', "current-directory",
-                              gettext_noop("Change to directory for execution of terminal command.")),
+                              gettext_noop("Change to directory for execution of terminal command")),
       ECORE_GETOPT_STORE_STR ('t', "theme",
-                              gettext_noop("Use the named edje theme or path to theme file.")),
+                              gettext_noop("Use the named edje theme or path to theme file")),
       ECORE_GETOPT_STORE_STR ('b', "background",
-                              gettext_noop("Use the named file as a background wallpaper.")),
+                              gettext_noop("Use the named file as a background wallpaper")),
       ECORE_GETOPT_STORE_STR ('g', "geometry",
-                              gettext_noop("Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.).")),
+                              gettext_noop("Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)")),
       ECORE_GETOPT_STORE_STR ('n', "name",
-                              gettext_noop("Set window name.")),
+                              gettext_noop("Set window name")),
       ECORE_GETOPT_STORE_STR ('r', "role",
-                              gettext_noop("Set window role.")),
+                              gettext_noop("Set window role")),
       ECORE_GETOPT_STORE_STR ('T', "title",
-                              gettext_noop("Set window title.")),
+                              gettext_noop("Set window title")),
       ECORE_GETOPT_STORE_STR ('i', "icon-name",
-                              gettext_noop("Set icon name.")),
+                              gettext_noop("Set icon name")),
       ECORE_GETOPT_STORE_STR ('f', "font",
-                              gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap.")),
+                              gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap")),
       ECORE_GETOPT_STORE_STR ('S', "split",
                               gettext_noop("Split the terminal window."
                               " 'v' for vertical and 'h' for horizontal."
                               " Can be used multiple times. eg -S vhvv or --split hv"
-                              " More description available on the man page.")),
+                              " More description available on the man page")),
       ECORE_GETOPT_STORE_BOOL('l', "login",
-                              gettext_noop("Run the shell as a login shell.")),
+                              gettext_noop("Run the shell as a login shell")),
       ECORE_GETOPT_STORE_BOOL('m', "video-mute",
-                              gettext_noop("Set mute mode for video playback.")),
+                              gettext_noop("Set mute mode for video playback")),
       ECORE_GETOPT_STORE_BOOL('c', "cursor-blink",
-                              gettext_noop("Set cursor blink mode.")),
+                              gettext_noop("Set cursor blink mode")),
       ECORE_GETOPT_STORE_BOOL('G', "visual-bell",
-                              gettext_noop("Set visual bell mode.")),
+                              gettext_noop("Set visual bell mode")),
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
-                              gettext_noop("Go into the fullscreen mode from the start.")),
+                              gettext_noop("Go into the fullscreen mode from the start")),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
-                              gettext_noop("Go into an iconic state from the start.")),
+                              gettext_noop("Go into an iconic state from the start")),
       ECORE_GETOPT_STORE_TRUE('B', "borderless",
-                              gettext_noop("Become a borderless managed window.")),
+                              gettext_noop("Become a borderless managed window")),
       ECORE_GETOPT_STORE_TRUE('O', "override",
-                              gettext_noop("Become an override-redirect window.")),
+                              gettext_noop("Become an override-redirect window")),
       ECORE_GETOPT_STORE_TRUE('M', "maximized",
-                              gettext_noop("Become maximized from the start.")),
+                              gettext_noop("Become maximized from the start")),
       ECORE_GETOPT_STORE_TRUE('W', "nowm",
-                              gettext_noop("Terminology is run without a window manager.")),
+                              gettext_noop("Terminology is run without a window manager")),
       ECORE_GETOPT_STORE_TRUE('H', "hold",
-                              gettext_noop("Do not exit when the command process exits.")),
+                              gettext_noop("Do not exit when the command process exits")),
       ECORE_GETOPT_STORE_TRUE('s', "single",
-                              gettext_noop("Force single executable if multi-instance is enabled.")),
+                              gettext_noop("Force single executable if multi-instance is enabled")),
       ECORE_GETOPT_STORE_TRUE('2', "256color",
-                              gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'.")),
+                              gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'")),
       ECORE_GETOPT_STORE_DOUBLE('\0', "scale",
-                              gettext_noop("Set scaling factor.")),
+                              gettext_noop("Set scaling factor")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
-                              gettext_noop("Highlight links.")),
+                              gettext_noop("Highlight links")),
       ECORE_GETOPT_STORE_BOOL('\0', "no-wizard",
-                              gettext_noop("Do not display wizard on start up.")),
+                              gettext_noop("Do not display wizard on start up")),
 
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
@@ -525,16 +525,16 @@ _translate_options(void)
              switch (desc->action)
                {
                 case ECORE_GETOPT_ACTION_VERSION:
-                   desc->help = _("show program version.");
+                   desc->help = _("show program version");
                    break;
                 case ECORE_GETOPT_ACTION_COPYRIGHT:
-                   desc->help = _("show copyright.");
+                   desc->help = _("show copyright");
                    break;
                 case ECORE_GETOPT_ACTION_LICENSE:
-                   desc->help = _("show license.");
+                   desc->help = _("show license");
                    break;
                 case ECORE_GETOPT_ACTION_HELP:
-                   desc->help = _("show this message.");
+                   desc->help = _("show this message");
                    break;
                 default:
                    desc->help = gettext(desc->help);
@@ -578,7 +578,7 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
    config = NULL;
    if (!wn)
      {
-        CRITICAL(_("Could not create window."));
+        CRITICAL(_("Could not create window"));
         goto exit;
      }
 
@@ -589,7 +589,7 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
                    instance->w, instance->h, instance->hold, instance->title);
    if (!term)
      {
-        CRITICAL(_("Could not create terminal widget."));
+        CRITICAL(_("Could not create terminal widget"));
         config = NULL;
         goto exit;
      }
@@ -632,7 +632,7 @@ _start(Ipc_Instance *instance, Eina_Bool need_scale_wizard)
              else
                {
                   CRITICAL(_("invalid argument found for option -S/--split."
-                             " See --help."));
+                             " See --help"));
                   goto end;
                }
           }
@@ -873,7 +873,7 @@ elm_main(int argc, char **argv)
    _log_domain = eina_log_domain_register("terminology", NULL);
    if (_log_domain < 0)
      {
-        EINA_LOG_CRIT(_("Could not create logging domain '%s'."), "terminology");
+        EINA_LOG_CRIT(_("Could not create logging domain '%s'"), "terminology");
         elm_shutdown();
         return EXIT_FAILURE;
      }
@@ -884,7 +884,7 @@ elm_main(int argc, char **argv)
    _main_config = config_load();
    if (key_bindings_load(_main_config) < 0)
      {
-        CRITICAL(_("Could not initialize key bindings."));
+        CRITICAL(_("Could not initialize key bindings"));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -899,7 +899,7 @@ elm_main(int argc, char **argv)
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        CRITICAL(_("Could not parse command line options."));
+        CRITICAL(_("Could not parse command line options"));
         retval = EXIT_FAILURE;
         goto end;
      }
@@ -924,7 +924,7 @@ elm_main(int argc, char **argv)
         if (args == argc)
           {
              CRITICAL(_("option %s requires an argument!"), argv[args-1]);
-             CRITICAL(_("invalid options found. See --help."));
+             CRITICAL(_("invalid options found. See --help"));
              goto end;
           }
 

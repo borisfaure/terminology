@@ -71,7 +71,7 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
           goto done;
 
         errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-        INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
+        INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
             config_theme_path_get(config), group, errmsg);
      }
 
@@ -107,7 +107,7 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
      }
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   INF("Cannot find theme: file=%s group=%s error='%s', trying default...",
+   INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
        config_theme_path_get(config), group, errmsg);
 
    if (elm_layout_file_set(layout, config_theme_path_default_get(config), group))
