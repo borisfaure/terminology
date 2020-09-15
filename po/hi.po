@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"POT-Creation-Date: 2020-09-15 20:44+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -17,123 +17,480 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/options_helpers.c:193 src/bin/options.c:227
-msgid "Helpers"
-msgstr "सहायकों"
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
+#: src/bin/termio.c:1224
+#, fuzzy, c-format
+msgid "Copy '%s'"
+msgstr "कॉपी"
 
-#: src/bin/options_helpers.c:206
-msgid "Inline if possible"
-msgstr "संभव हो तो इनलाइन"
-
-#: src/bin/options_helpers.c:236
-msgid "E-mail:"
-msgstr "ई-मेल:"
-
-#: src/bin/options_helpers.c:269
-msgid "URL (Images):"
-msgstr "URL(चित्र):"
-
-#: src/bin/options_helpers.c:294
-msgid "URL (Video):"
-msgstr "URL (वीडियो):"
-
-#: src/bin/options_helpers.c:319
-msgid "URL (All):"
-msgstr "URL (सब):"
-
-#: src/bin/options_helpers.c:352
-msgid "Local (Images):"
-msgstr "लोकल (चित्र):"
-
-#: src/bin/options_helpers.c:377
-msgid "Local (Video):"
-msgstr "लोकल (वीडियो):"
-
-#: src/bin/options_helpers.c:402
-msgid "Local (All):"
-msgstr "लोकल (सब):"
-
-#: src/bin/termio.c:350
-#, c-format
-msgid "Could not get working directory of pid %i: %s"
-msgstr ""
-
-#: src/bin/termio.c:365
-#, c-format
-msgid "Could not load working directory %s: %s"
-msgstr ""
-
-#: src/bin/termio.c:1079
-#, c-format
-msgid "unsupported selection format '%s'"
-msgstr "'%s' असमर्थित चयन प्रारूप."
-
-#: src/bin/termio.c:1172
-msgid "Preview"
-msgstr "पूर्वावलोकन"
-
-#: src/bin/termio.c:1175
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
 msgstr "ओपन"
 
-#: src/bin/termio.c:1182
-msgid "Copy relative path"
+#: src/bin/about.c:273
+msgid "Twitter: @_Terminology_"
 msgstr ""
 
-#: src/bin/termio.c:1184
-msgid "Copy full path"
+#: src/bin/about.c:275
+msgid "Youtube channel"
 msgstr ""
 
-#: src/bin/termio.c:1189 src/bin/termio.c:2554 src/bin/controls.c:424
+#: src/bin/about.c:289
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+"टेर्मिनोलजी %s</b><br>. टर्मिनल बोरिंग क्यों होना चाहिए? </b><br>इस टर्मिनल एक "
+"आधुनिक टर्मिनल एमुलेटर की सीमाओं को बढ़ाने अन्यथा EFL का उपयोग करने के लिए लिखा गया है. "
+"हम आशा करते हैं आप इसे का आनंद ले. <br><br>कॉपीराइट © 2012-%d:<br><br>"
+"%s<br><br>नीचे विस्तृत 2-खंड BSD लाइसेंस के तहत वितरित: <br><br>%s"
+
+#: src/bin/controls.c:376
+msgid "Controls"
+msgstr "नियंत्रण"
+
+#: src/bin/controls.c:392
+msgid "New"
+msgstr "नया टर्मिनल"
+
+#: src/bin/controls.c:399
+msgid "Split V"
+msgstr "लम्बवत में विभाजन"
+
+#: src/bin/controls.c:403
+msgid "Split H"
+msgstr "क्षैतिज में विभाजन"
+
+#: src/bin/controls.c:410
+msgid "Miniview"
+msgstr "मिनी व्यू"
+
+#: src/bin/controls.c:417 src/bin/win.c:6191
+#, fuzzy
+msgid "Set title"
+msgstr "विंडो शीर्षक सेट करें"
+
+#: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
 msgid "Copy"
 msgstr "कॉपी"
 
-#: src/bin/termio.c:2556
-msgid "Open as URL"
+#: src/bin/controls.c:434
+msgid "Paste"
+msgstr "पेस्ट"
+
+#: src/bin/controls.c:440
+msgid "Settings"
+msgstr "सेटिंग्स"
+
+#: src/bin/controls.c:446
+msgid "About"
+msgstr "के बारे में"
+
+#: src/bin/controls.c:455
+msgid "Grouped input"
 msgstr ""
 
-#: src/bin/termio.c:3975
-msgid "Could not allocate termpty"
+#: src/bin/controls.c:467
+msgid "Close Terminal"
+msgstr "टर्मिनल बंद"
+
+#: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
+#, c-format
+msgid "Could not create logging domain '%s'"
 msgstr ""
 
-#: src/bin/options_keys.c:66
-msgid "Ctrl+"
+#: src/bin/keyin.c:655
+msgid "Scrolling"
+msgstr "स्क्रॉलिंग"
+
+#: src/bin/keyin.c:656
+msgid "Scroll one page up"
+msgstr "एक पेज ऊपर स्क्रॉल"
+
+#: src/bin/keyin.c:657
+msgid "Scroll one page down"
+msgstr "एक पेज नीचे स्क्रॉल"
+
+#: src/bin/keyin.c:658
+msgid "Scroll one line up"
+msgstr "एक लाइन ऊपर स्क्रॉल"
+
+#: src/bin/keyin.c:659
+msgid "Scroll one line down"
+msgstr "एक लाइन नीचे स्क्रॉल"
+
+#: src/bin/keyin.c:660
+msgid "Go to the top of the backlog"
 msgstr ""
 
-#: src/bin/options_keys.c:67
-msgid "Alt+"
+#: src/bin/keyin.c:661
+msgid "Reset scroll"
 msgstr ""
 
-#: src/bin/options_keys.c:68
-msgid "Shift+"
+#: src/bin/keyin.c:663
+msgid "Copy/Paste"
+msgstr "कॉपी/पेस्ट"
+
+#: src/bin/keyin.c:664
+msgid "Copy selection to Primary buffer"
+msgstr "सेलेक्शन की कॉपी प्राइमरी बफर में करें"
+
+#: src/bin/keyin.c:665
+msgid "Copy selection to Clipboard buffer"
+msgstr "सेलेक्शन की कॉपी क्लिपबोर्ड बफर में करें"
+
+#: src/bin/keyin.c:666
+msgid "Paste Primary buffer (highlight)"
+msgstr "प्राइमरी बफर पेस्ट करें (highlight)"
+
+#: src/bin/keyin.c:667
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr "क्लिपबोर्ड बफर पेस्ट करें (ctrl+v/c)"
+
+#: src/bin/keyin.c:669
+msgid "Splits/Tabs"
+msgstr "विभाजन/टैब्स"
+
+#: src/bin/keyin.c:670
+#, fuzzy
+msgid "Focus the previous terminal"
+msgstr "पिछले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:671
+#, fuzzy
+msgid "Focus the next terminal"
+msgstr "अगले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:672
+#, fuzzy
+msgid "Focus the terminal above"
+msgstr "अगले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:673
+#, fuzzy
+msgid "Focus the terminal below"
+msgstr "अगले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:674
+#, fuzzy
+msgid "Focus the terminal on the left"
+msgstr "अगले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:675
+#, fuzzy
+msgid "Focus the terminal on the right"
+msgstr "अगले टर्मिनल को फोकस"
+
+#: src/bin/keyin.c:676
+msgid "Split horizontally (new below)"
+msgstr "क्षैतिज में विभाजन(नीचे नया टर्मिनल)"
+
+#: src/bin/keyin.c:677
+msgid "Split vertically (new on right)"
+msgstr "लम्बवत में विभाजन(दाएँ पर नया टर्मिनल)"
+
+#: src/bin/keyin.c:678
+msgid "Create a new \"tab\""
+msgstr "एक नया टैब बनाएँ"
+
+#: src/bin/keyin.c:679
+msgid "Close the focused terminal"
+msgstr "केंद्रित टर्मिनल बंद"
+
+#: src/bin/keyin.c:680
+msgid "Bring up \"tab\" switcher"
+msgstr "टैब स्विचर ऊपर लाओ"
+
+#: src/bin/keyin.c:681
+msgid "Switch to terminal tab 1"
+msgstr "टर्मिनल टैब 1 पर स्विच करें"
+
+#: src/bin/keyin.c:682
+msgid "Switch to terminal tab 2"
+msgstr "टर्मिनल टैब 2 पर स्विच करें"
+
+#: src/bin/keyin.c:683
+msgid "Switch to terminal tab 3"
+msgstr "टर्मिनल टैब 3 पर स्विच करें"
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 4"
+msgstr "टर्मिनल टैब 4 पर स्विच करें"
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 5"
+msgstr "टर्मिनल टैब 5 पर स्विच करें"
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 6"
+msgstr "टर्मिनल टैब 6 पर स्विच करें"
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 7"
+msgstr "टर्मिनल टैब 7 पर स्विच करें"
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 8"
+msgstr "टर्मिनल टैब 8 पर स्विच करें"
+
+#: src/bin/keyin.c:689
+msgid "Switch to terminal tab 9"
+msgstr "टर्मिनल टैब 9 पर स्विच करें"
+
+#: src/bin/keyin.c:690
+msgid "Switch to terminal tab 10"
+msgstr "टर्मिनल टैब 10 पर स्विच करें"
+
+#: src/bin/keyin.c:691
+msgid "Change title"
 msgstr ""
 
-#: src/bin/options_keys.c:69
-msgid "Win+"
+#: src/bin/keyin.c:692 src/bin/keyin.c:693
+msgid "Toggle whether input goes to all visible terminals"
 msgstr ""
 
-#: src/bin/options_keys.c:70
-msgid "Meta+"
+#: src/bin/keyin.c:696
+msgid "Font size"
+msgstr "फ़ॉन्ट का आकार"
+
+#: src/bin/keyin.c:697
+msgid "Font size up 1"
+msgstr "फ़ॉन्ट आकार को में 1 वृद्धि"
+
+#: src/bin/keyin.c:698
+msgid "Font size down 1"
+msgstr "फ़ॉन्ट आकार को में 1 नीचे"
+
+#: src/bin/keyin.c:699
+msgid "Display big font size"
+msgstr "बड़े फ़ॉन्ट आकार के प्रदर्शन"
+
+#: src/bin/keyin.c:700
+msgid "Reset font size"
+msgstr "फ़ॉन्ट आकार रीसेट"
+
+#: src/bin/keyin.c:702
+msgid "Actions"
+msgstr "क्रियाएं"
+
+#: src/bin/keyin.c:703
+msgid "Open a new terminal window"
 msgstr ""
 
-#: src/bin/options_keys.c:71
-msgid "Hyper+"
+#: src/bin/keyin.c:704
+msgid "Toggle Fullscreen of the window"
 msgstr ""
 
-#: src/bin/options_keys.c:82
-msgid "Delete"
-msgstr "हटाएँ"
+#: src/bin/keyin.c:705
+msgid "Display the history miniview"
+msgstr "मिनी व्यू  इतिहास प्रदर्शित करें"
 
-#: src/bin/options_keys.c:269
-msgid "Please press key sequence"
-msgstr "की अनुक्रम प्रेस करें."
+#: src/bin/keyin.c:706
+msgid "Display the command box"
+msgstr "कमांड बॉक्स को दिखाने"
 
-#: src/bin/options_keys.c:385
-msgid "Key Bindings"
+#: src/bin/main.c:387 src/bin/main.c:581
+msgid "Could not create window"
 msgstr ""
 
-#: src/bin/options_keys.c:457
-msgid "Reset bindings"
+#: src/bin/main.c:406 src/bin/main.c:592
+msgid "Could not create terminal widget"
+msgstr ""
+
+#: src/bin/main.c:441
+#, c-format
+msgid "(C) 2012-%d Carsten Haitzler and others"
+msgstr "(C) 2012-%d कार्स्टन हाइट्ज़लर और अन्य लोग"
+
+#: src/bin/main.c:443
+#, fuzzy
+msgid "Terminal emulator written with Enlightenment Foundation Libraries"
+msgstr "Enlightenment Foundation Libraries द्वारा लिखित टर्मिनल एमुलेटर "
+
+#: src/bin/main.c:447
+msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
+msgstr "अमल करने के कमांड.  (passwd shell या /bin/sh)  में मूलभूत"
+
+#: src/bin/main.c:449
+#, fuzzy
+msgid "Change to directory for execution of terminal command"
+msgstr "टर्मिनल कमांड के अमल के लिए डायरेक्ट्री बदले"
+
+#: src/bin/main.c:451
+#, fuzzy
+msgid "Use the named edje theme or path to theme file"
+msgstr "नामित edje थीम या थीम का पथ उपयोग करें"
+
+#: src/bin/main.c:453
+#, fuzzy
+msgid "Use the named file as a background wallpaper"
+msgstr "नामित फ़ाइल या फ़ाइल का पथ उपयोग करें"
+
+#: src/bin/main.c:455
+#, fuzzy
+msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
+msgstr "प्रयोग की जाने वाली टर्मिनल रेखागणित ( 80x24 या  80x24+50+20)."
+
+#: src/bin/main.c:457
+#, fuzzy
+msgid "Set window name"
+msgstr "विंडो नाम  सेट करें"
+
+#: src/bin/main.c:459
+#, fuzzy
+msgid "Set window role"
+msgstr "विंडो भूमिका सेट करें"
+
+#: src/bin/main.c:461
+#, fuzzy
+msgid "Set window title"
+msgstr "विंडो शीर्षक सेट करें"
+
+#: src/bin/main.c:463
+#, fuzzy
+msgid "Set icon name"
+msgstr "आइकन नाम सेट करें"
+
+#: src/bin/main.c:465
+#, fuzzy
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgstr "फ़ॉन्ट  सेट करें"
+
+#: src/bin/main.c:467
+msgid ""
+"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
+"used multiple times. eg -S vhvv or --split hv More description available on "
+"the man page"
+msgstr ""
+
+#: src/bin/main.c:472
+#, fuzzy
+msgid "Run the shell as a login shell"
+msgstr "लॉगिन शेल के रूप में शेल चलाएं"
+
+#: src/bin/main.c:474
+#, fuzzy
+msgid "Set mute mode for video playback"
+msgstr "वीडियो प्लेबैक के लिए मूक मोड सेट करें"
+
+#: src/bin/main.c:476
+#, fuzzy
+msgid "Set cursor blink mode"
+msgstr "कर्सर झपकी मोड में सेट करें"
+
+#: src/bin/main.c:478
+#, fuzzy
+msgid "Set visual bell mode"
+msgstr "विजुअल घंटी मोड सेट करें"
+
+#: src/bin/main.c:480
+#, fuzzy
+msgid "Go into the fullscreen mode from the start"
+msgstr "शुरू से ही फुल स्क्रीन मोड में जाना"
+
+#: src/bin/main.c:482
+#, fuzzy
+msgid "Go into an iconic state from the start"
+msgstr "शुरू से ही iconic state में जाना"
+
+#: src/bin/main.c:484
+#, fuzzy
+msgid "Become a borderless managed window"
+msgstr "अनवधि प्रबंधित विंडों बनें"
+
+#: src/bin/main.c:486
+#, fuzzy
+msgid "Become an override-redirect window"
+msgstr "अनवधि प्रबंधित विंडों बनें"
+
+#: src/bin/main.c:488
+#, fuzzy
+msgid "Become maximized from the start"
+msgstr "शुरू से ही अधिकतम किए बनें"
+
+#: src/bin/main.c:490
+msgid "Terminology is run without a window manager"
+msgstr ""
+
+#: src/bin/main.c:492
+msgid "Do not exit when the command process exits"
+msgstr ""
+
+#: src/bin/main.c:494
+msgid "Force single executable if multi-instance is enabled"
+msgstr ""
+
+#: src/bin/main.c:496
+#, fuzzy
+msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+msgstr "xterm-256color로 TERM 설정"
+
+#: src/bin/main.c:498
+msgid "Set scaling factor"
+msgstr ""
+
+#: src/bin/main.c:500
+#, fuzzy
+msgid "Highlight links"
+msgstr "लिंक हाइलाइट करें"
+
+#: src/bin/main.c:502
+msgid "Do not display wizard on start up"
+msgstr ""
+
+#: src/bin/main.c:528
+#, fuzzy
+msgid "show program version"
+msgstr "प्रोग्राम संस्करण दिखा"
+
+#: src/bin/main.c:531
+#, fuzzy
+msgid "show copyright"
+msgstr "कॉपीराइट दिखा"
+
+#: src/bin/main.c:534
+#, fuzzy
+msgid "show license"
+msgstr "लाइसेंस दिखा"
+
+#: src/bin/main.c:537
+#, fuzzy
+msgid "show this message"
+msgstr "इस संदेश को दिखा"
+
+#: src/bin/main.c:634
+msgid "invalid argument found for option -S/--split. See --help"
+msgstr ""
+
+#: src/bin/main.c:887
+msgid "Could not initialize key bindings"
+msgstr ""
+
+#: src/bin/main.c:902
+msgid "Could not parse command line options"
+msgstr ""
+
+#: src/bin/main.c:926
+#, c-format
+msgid "option %s requires an argument!"
+msgstr ""
+
+#: src/bin/main.c:927
+msgid "invalid options found. See --help"
+msgstr ""
+
+#: src/bin/media.c:1333 src/bin/termpty.c:645 src/bin/termpty.c:650
+#: src/bin/termpty.c:654
+#, c-format
+msgid "Function %s failed: %s"
+msgstr ""
+
+#: src/bin/media.c:1430
+msgid "Media visualizing is not supported"
 msgstr ""
 
 #: src/bin/options_background.c:163
@@ -152,7 +509,7 @@ msgstr "आयात किया चित्र."
 msgid "Failed"
 msgstr "विफल"
 
-#: src/bin/options_background.c:568 src/bin/options.c:223
+#: src/bin/options_background.c:568 src/bin/options.c:221
 msgid "Background"
 msgstr "पृष्ठभूमि"
 
@@ -160,7 +517,7 @@ msgstr "पृष्ठभूमि"
 msgid "Shine:"
 msgstr ""
 
-#: src/bin/options_background.c:608 src/bin/options_behavior.c:656
+#: src/bin/options_background.c:608
 msgid "Translucent"
 msgstr "पारदर्शी"
 
@@ -190,398 +547,182 @@ msgstr "अन्य"
 msgid "Click on a picture to use it as background"
 msgstr "एक आयात करने के लिए तस्वीर पर डबल क्लिक करें."
 
-#: src/bin/options_elm.c:109 src/bin/options.c:228
-msgid "Toolkit"
-msgstr "टूलकिट"
-
-#: src/bin/options_elm.c:122
-#, fuzzy, c-format
-msgid ""
-"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
-"toolkit configuration settings can be accessed by running <keyword>%s</"
-"keyword>."
-msgstr ""
-"<em>टेर्मिनोलजी</em> <hilight>elementary</hilight> टूलकिट का प्रयोग करता."
-"<br>टूलकिट विन्यास सेटिंग्स  <keyword>elementary_config</keyword> द्वारा पहुँचा जा "
-"सकता है."
-
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr ""
-
-#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
-msgid "Scale"
-msgstr ""
-
-#: src/bin/options_elm.c:172 src/bin/win.c:410
-msgid "Select preferred size so that this text is readable."
-msgstr ""
-
-#: src/bin/options_elm.c:179
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel."
-msgstr ""
-
-#: src/bin/options_theme.c:154 src/bin/options.c:222
-msgid "Theme"
-msgstr "थीम"
-
-#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
-#, c-format
-msgid "Could not create logging domain '%s'."
-msgstr ""
-
-#: src/bin/options_behavior.c:89
+#: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
 msgstr "%'d पंक्तियां"
 
-#: src/bin/options_behavior.c:105
+#: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:281
+#: src/bin/options_behavior.c:217
 #, fuzzy
 msgid "Default cursor:"
 msgstr "डिफ़ॉल्ट"
 
-#: src/bin/options_behavior.c:290
+#: src/bin/options_behavior.c:226
 msgid "Blinking Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:308
+#: src/bin/options_behavior.c:244
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:327
+#: src/bin/options_behavior.c:263
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:346
+#: src/bin/options_behavior.c:282
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:365
+#: src/bin/options_behavior.c:301
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:384
+#: src/bin/options_behavior.c:320
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:423 src/bin/options.c:220
+#: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
 msgstr "व्यवहार"
 
-#: src/bin/options_behavior.c:466
-msgid "Scroll to bottom on new content"
-msgstr "नई सामग्री पर नीचे स्क्रॉल"
-
-#: src/bin/options_behavior.c:467
-msgid "Scroll to bottom when a key is pressed"
-msgstr "की दबाया जाता है जब नीचे स्क्रॉल"
-
-#: src/bin/options_behavior.c:478
-#, fuzzy
-msgid "Active Links:"
-msgstr "सक्रिय लिंक"
-
-#: src/bin/options_behavior.c:482
-msgid "On emails"
-msgstr ""
-
-#: src/bin/options_behavior.c:483
-msgid "On file paths"
-msgstr ""
-
-#: src/bin/options_behavior.c:484
-msgid "On URLs"
-msgstr ""
-
-#: src/bin/options_behavior.c:485
-msgid "Based on escape codes"
-msgstr ""
-
-#: src/bin/options_behavior.c:489
-msgid "React to key presses"
-msgstr "Key प्रेस के लिए प्रतिक्रिया"
-
-#: src/bin/options_behavior.c:496
-msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
-
-#: src/bin/options_behavior.c:499
-msgid "Visual Bell"
-msgstr "विशुवल बेल"
-
-#: src/bin/options_behavior.c:500
-msgid "Bell rings"
-msgstr "बेल रिंग"
-
-#: src/bin/options_behavior.c:501
-msgid "Urgent Bell"
-msgstr "तत्काल बेल"
-
-#: src/bin/options_behavior.c:502
-msgid "Multiple instances, one process"
-msgstr "अधिक इंस्टेंस, एक प्रक्रिया"
-
-#: src/bin/options_behavior.c:503
-msgid "Set TERM to xterm-256color"
-msgstr "xterm-256color로 TERM 설정"
-
-#: src/bin/options_behavior.c:504
-msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr "BackArrow डेल भेजता (बजाय बैकस्पेस)"
-
-#: src/bin/options_behavior.c:505
-msgid "Drag & drop links"
-msgstr "ड्रैग एंड ड्रॉप लिंक"
-
-#: src/bin/options_behavior.c:506
-msgid "Start as login shell"
-msgstr "लॉगिन शेल के रूप में प्रारंभ"
-
-#: src/bin/options_behavior.c:507
-msgid "Focus split under the Mouse"
-msgstr "माउस के अंतर्गत विभाजित फोकस"
-
-#: src/bin/options_behavior.c:508
-msgid "Focus-related visuals"
-msgstr ""
-
-#: src/bin/options_behavior.c:509
-msgid "Gravatar integration"
-msgstr ""
-
-#: src/bin/options_behavior.c:510
+#: src/bin/options_behavior.c:379
 msgid "Show tabs"
 msgstr ""
 
-#: src/bin/options_behavior.c:511
+#: src/bin/options_behavior.c:382
+msgid "Scroll to bottom on new content"
+msgstr "नई सामग्री पर नीचे स्क्रॉल"
+
+#: src/bin/options_behavior.c:383
+msgid "Scroll to bottom when a key is pressed"
+msgstr "की दबाया जाता है जब नीचे स्क्रॉल"
+
+#: src/bin/options_behavior.c:389
+msgid "React to key presses"
+msgstr "Key प्रेस के लिए प्रतिक्रिया"
+
+#: src/bin/options_behavior.c:396
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr ""
+
+#: src/bin/options_behavior.c:400
+msgid "Visual Bell"
+msgstr "विशुवल बेल"
+
+#: src/bin/options_behavior.c:401
+msgid "Bell rings"
+msgstr "बेल रिंग"
+
+#: src/bin/options_behavior.c:402
+msgid "Urgent Bell"
+msgstr "तत्काल बेल"
+
+#: src/bin/options_behavior.c:404
+msgid "Multiple instances, one process"
+msgstr "अधिक इंस्टेंस, एक प्रक्रिया"
+
+#: src/bin/options_behavior.c:405
+msgid "Set TERM to xterm-256color"
+msgstr "xterm-256color로 TERM 설정"
+
+#: src/bin/options_behavior.c:406
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr "BackArrow डेल भेजता (बजाय बैकस्पेस)"
+
+#: src/bin/options_behavior.c:407
+msgid "Start as login shell"
+msgstr "लॉगिन शेल के रूप में प्रारंभ"
+
+#: src/bin/options_behavior.c:408
+msgid "Open new terminals in current working directory"
+msgstr ""
+
+#: src/bin/options_behavior.c:409
 #, fuzzy
 msgid "Always show miniview"
 msgstr "मिनी व्यू  इतिहास प्रदर्शित करें"
 
-#: src/bin/options_behavior.c:512
+#: src/bin/options_behavior.c:410
 msgid "Enable special Terminology escape codes"
 msgstr ""
 
-#: src/bin/options_behavior.c:513
-msgid "Open new terminals in current working directory"
-msgstr ""
-
-#: src/bin/options_behavior.c:514
+#: src/bin/options_behavior.c:411
 msgid "Treat Emojis as double-width characters"
 msgstr ""
 
-#: src/bin/options_behavior.c:523
+#: src/bin/options_behavior.c:412
+msgid ""
+"When grouping input, do it on all terminals and not just the visible ones"
+msgstr ""
+
+#: src/bin/options_behavior.c:419
 msgid "Always open at size:"
 msgstr "इस size में हमेशा खुले:"
 
-#: src/bin/options_behavior.c:533
+#: src/bin/options_behavior.c:429
 msgid "Set Current:"
 msgstr ""
 
-#: src/bin/options_behavior.c:544
+#: src/bin/options_behavior.c:440
 msgid "Width:"
 msgstr "चौड़ाई:"
 
-#: src/bin/options_behavior.c:566
+#: src/bin/options_behavior.c:462
 msgid "Height:"
 msgstr "ऊंचाई:"
 
-#: src/bin/options_behavior.c:625
-msgid "Tab zoom/switch animation time:"
-msgstr "टैब ज़ूम / स्विच एनीमेशन समय:"
-
-#: src/bin/options_behavior.c:626
+#: src/bin/options_behavior.c:521
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
 msgstr ""
 
-#: src/bin/options_behavior.c:638 src/bin/options_behavior.c:639
-#: src/bin/options_behavior.c:670 src/bin/options_behavior.c:671
+#: src/bin/options_behavior.c:526
+msgid "Tab zoom/switch animation time:"
+msgstr "टैब ज़ूम / स्विच एनीमेशन समय:"
+
+#: src/bin/options_behavior.c:534 src/bin/options_behavior.c:535
+#: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
 msgstr ""
 
-#: src/bin/options_behavior.c:657
-msgid "Auto hide the mouse cursor when idle:"
+#: src/bin/options.c:189
+msgid "Options"
+msgstr "विकल्प"
+
+#: src/bin/options.c:218 src/bin/options_mouse.c:147
+msgid "Mouse"
 msgstr ""
 
-#: src/bin/main.c:387 src/bin/main.c:589
-msgid "Could not create window."
-msgstr ""
+#: src/bin/options.c:219 src/bin/options_font.c:425
+msgid "Font"
+msgstr "फ़ॉन्ट"
 
-#: src/bin/main.c:406 src/bin/main.c:600
-msgid "Could not create terminal widget."
-msgstr ""
+#: src/bin/options.c:220 src/bin/options_theme.c:155
+msgid "Theme"
+msgstr "थीम"
 
-#: src/bin/main.c:446
-#, c-format
-msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "(C) 2012-%d कार्स्टन हाइट्ज़लर और अन्य लोग"
+#: src/bin/options.c:222 src/bin/options_colors.c:234
+msgid "Colors"
+msgstr "रंग"
 
-#: src/bin/main.c:448
-msgid "Terminal emulator written with Enlightenment Foundation Libraries."
-msgstr "Enlightenment Foundation Libraries द्वारा लिखित टर्मिनल एमुलेटर "
+#: src/bin/options.c:223
+msgid "Keys"
+msgstr "चाबियाँ"
 
-#: src/bin/main.c:452
-msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr "अमल करने के कमांड.  (passwd shell या /bin/sh)  में मूलभूत"
+#: src/bin/options.c:224 src/bin/options_elm.c:109
+msgid "Toolkit"
+msgstr "टूलकिट"
 
-#: src/bin/main.c:454
-msgid "Change to directory for execution of terminal command."
-msgstr "टर्मिनल कमांड के अमल के लिए डायरेक्ट्री बदले"
-
-#: src/bin/main.c:456
-msgid "Use the named edje theme or path to theme file."
-msgstr "नामित edje थीम या थीम का पथ उपयोग करें"
-
-#: src/bin/main.c:458
-msgid "Use the named file as a background wallpaper."
-msgstr "नामित फ़ाइल या फ़ाइल का पथ उपयोग करें"
-
-#: src/bin/main.c:460
-msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
-msgstr "प्रयोग की जाने वाली टर्मिनल रेखागणित ( 80x24 या  80x24+50+20)."
-
-#: src/bin/main.c:462
-msgid "Set window name."
-msgstr "विंडो नाम  सेट करें"
-
-#: src/bin/main.c:464
-msgid "Set window role."
-msgstr "विंडो भूमिका सेट करें"
-
-#: src/bin/main.c:466
-msgid "Set window title."
-msgstr "विंडो शीर्षक सेट करें"
-
-#: src/bin/main.c:468
-msgid "Set icon name."
-msgstr "आइकन नाम सेट करें"
-
-#: src/bin/main.c:470
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
-msgstr "फ़ॉन्ट  सेट करें"
-
-#: src/bin/main.c:472
-msgid ""
-"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
-"used multiple times. eg -S vhvv or --split hv More description available on "
-"the man page."
-msgstr ""
-
-#: src/bin/main.c:477
-msgid "Set emotion module to use."
-msgstr "emotion मॉड्यूल सेट करें"
-
-#: src/bin/main.c:480
-msgid "Run the shell as a login shell."
-msgstr "लॉगिन शेल के रूप में शेल चलाएं"
-
-#: src/bin/main.c:482
-msgid "Set mute mode for video playback."
-msgstr "वीडियो प्लेबैक के लिए मूक मोड सेट करें"
-
-#: src/bin/main.c:484
-msgid "Set cursor blink mode."
-msgstr "कर्सर झपकी मोड में सेट करें"
-
-#: src/bin/main.c:486
-msgid "Set visual bell mode."
-msgstr "विजुअल घंटी मोड सेट करें"
-
-#: src/bin/main.c:488
-msgid "Go into the fullscreen mode from the start."
-msgstr "शुरू से ही फुल स्क्रीन मोड में जाना"
-
-#: src/bin/main.c:490
-msgid "Go into an iconic state from the start."
-msgstr "शुरू से ही iconic state में जाना"
-
-#: src/bin/main.c:492
-msgid "Become a borderless managed window."
-msgstr "अनवधि प्रबंधित विंडों बनें"
-
-#: src/bin/main.c:494
-msgid "Become an override-redirect window."
-msgstr ""
-
-#: src/bin/main.c:496
-msgid "Become maximized from the start."
-msgstr "शुरू से ही अधिकतम किए बनें"
-
-#: src/bin/main.c:498
-msgid "Terminology is run without a window manager."
-msgstr ""
-
-#: src/bin/main.c:500
-msgid "Do not exit when the command process exits."
-msgstr ""
-
-#: src/bin/main.c:502
-msgid "Force single executable if multi-instance is enabled."
-msgstr ""
-
-#: src/bin/main.c:504
-msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
-msgstr ""
-
-#: src/bin/main.c:506
-msgid "Set scaling factor."
-msgstr ""
-
-#: src/bin/main.c:508
-msgid "Highlight links."
-msgstr "लिंक हाइलाइट करें"
-
-#: src/bin/main.c:510
-msgid "Do not display wizard on start up."
-msgstr ""
-
-#: src/bin/main.c:536
-msgid "show program version."
-msgstr "प्रोग्राम संस्करण दिखा"
-
-#: src/bin/main.c:539
-msgid "show copyright."
-msgstr "कॉपीराइट दिखा"
-
-#: src/bin/main.c:542
-msgid "show license."
-msgstr "लाइसेंस दिखा"
-
-#: src/bin/main.c:545
-msgid "show this message."
-msgstr "इस संदेश को दिखा"
-
-#: src/bin/main.c:642
-msgid "invalid argument found for option -S/--split. See --help."
-msgstr ""
-
-#: src/bin/main.c:896
-msgid "Could not initialize key bindings."
-msgstr ""
-
-#: src/bin/main.c:911
-msgid "Could not parse command line options."
-msgstr ""
-
-#: src/bin/main.c:935
-#, c-format
-msgid "option %s requires an argument!"
-msgstr ""
-
-#: src/bin/main.c:936
-msgid "invalid options found. See --help."
-msgstr ""
+#: src/bin/options.c:235
+msgid "Temporary"
+msgstr "टेम्पररी"
 
 #: src/bin/options_colors.c:12
 msgid "Default"
@@ -632,10 +773,6 @@ msgstr "उलटा"
 msgid "Inverse Background"
 msgstr "पृष्ठभूमि"
 
-#: src/bin/options_colors.c:234 src/bin/options.c:224
-msgid "Colors"
-msgstr "रंग"
-
 #: src/bin/options_colors.c:270
 msgid "Normal"
 msgstr "साधारण"
@@ -657,199 +794,35 @@ msgstr ""
 msgid "Reset all the colors"
 msgstr ""
 
-#: src/bin/keyin.c:653
-msgid "Scrolling"
-msgstr "स्क्रॉलिंग"
+#: src/bin/options_elm.c:122
+#, fuzzy, c-format
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>"
+msgstr ""
+"<em>टेर्मिनोलजी</em> <hilight>elementary</hilight> टूलकिट का प्रयोग करता."
+"<br>टूलकिट विन्यास सेटिंग्स  <keyword>elementary_config</keyword> द्वारा पहुँचा जा "
+"सकता है."
 
-#: src/bin/keyin.c:654
-msgid "Scroll one page up"
-msgstr "एक पेज ऊपर स्क्रॉल"
-
-#: src/bin/keyin.c:655
-msgid "Scroll one page down"
-msgstr "एक पेज नीचे स्क्रॉल"
-
-#: src/bin/keyin.c:656
-msgid "Scroll one line up"
-msgstr "एक लाइन ऊपर स्क्रॉल"
-
-#: src/bin/keyin.c:657
-msgid "Scroll one line down"
-msgstr "एक लाइन नीचे स्क्रॉल"
-
-#: src/bin/keyin.c:658
-msgid "Go to the top of the backlog"
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
 msgstr ""
 
-#: src/bin/keyin.c:659
-msgid "Reset scroll"
+#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
+msgid "Scale"
 msgstr ""
 
-#: src/bin/keyin.c:661
-msgid "Copy/Paste"
-msgstr "कॉपी/पेस्ट"
-
-#: src/bin/keyin.c:662
-msgid "Copy selection to Primary buffer"
-msgstr "सेलेक्शन की कॉपी प्राइमरी बफर में करें"
-
-#: src/bin/keyin.c:663
-msgid "Copy selection to Clipboard buffer"
-msgstr "सेलेक्शन की कॉपी क्लिपबोर्ड बफर में करें"
-
-#: src/bin/keyin.c:664
-msgid "Paste Primary buffer (highlight)"
-msgstr "प्राइमरी बफर पेस्ट करें (highlight)"
-
-#: src/bin/keyin.c:665
-msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "क्लिपबोर्ड बफर पेस्ट करें (ctrl+v/c)"
-
-#: src/bin/keyin.c:667
-msgid "Splits/Tabs"
-msgstr "विभाजन/टैब्स"
-
-#: src/bin/keyin.c:668
-#, fuzzy
-msgid "Focus the previous terminal"
-msgstr "पिछले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:669
-#, fuzzy
-msgid "Focus the next terminal"
-msgstr "अगले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:670
-#, fuzzy
-msgid "Focus the terminal above"
-msgstr "अगले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:671
-#, fuzzy
-msgid "Focus the terminal below"
-msgstr "अगले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:672
-#, fuzzy
-msgid "Focus the terminal on the left"
-msgstr "अगले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:673
-#, fuzzy
-msgid "Focus the terminal on the right"
-msgstr "अगले टर्मिनल को फोकस"
-
-#: src/bin/keyin.c:674
-msgid "Split horizontally (new below)"
-msgstr "क्षैतिज में विभाजन(नीचे नया टर्मिनल)"
-
-#: src/bin/keyin.c:675
-msgid "Split vertically (new on right)"
-msgstr "लम्बवत में विभाजन(दाएँ पर नया टर्मिनल)"
-
-#: src/bin/keyin.c:676
-msgid "Create a new \"tab\""
-msgstr "एक नया टैब बनाएँ"
-
-#: src/bin/keyin.c:677
-msgid "Close the focused terminal"
-msgstr "केंद्रित टर्मिनल बंद"
-
-#: src/bin/keyin.c:678
-msgid "Bring up \"tab\" switcher"
-msgstr "टैब स्विचर ऊपर लाओ"
-
-#: src/bin/keyin.c:679
-msgid "Switch to terminal tab 1"
-msgstr "टर्मिनल टैब 1 पर स्विच करें"
-
-#: src/bin/keyin.c:680
-msgid "Switch to terminal tab 2"
-msgstr "टर्मिनल टैब 2 पर स्विच करें"
-
-#: src/bin/keyin.c:681
-msgid "Switch to terminal tab 3"
-msgstr "टर्मिनल टैब 3 पर स्विच करें"
-
-#: src/bin/keyin.c:682
-msgid "Switch to terminal tab 4"
-msgstr "टर्मिनल टैब 4 पर स्विच करें"
-
-#: src/bin/keyin.c:683
-msgid "Switch to terminal tab 5"
-msgstr "टर्मिनल टैब 5 पर स्विच करें"
-
-#: src/bin/keyin.c:684
-msgid "Switch to terminal tab 6"
-msgstr "टर्मिनल टैब 6 पर स्विच करें"
-
-#: src/bin/keyin.c:685
-msgid "Switch to terminal tab 7"
-msgstr "टर्मिनल टैब 7 पर स्विच करें"
-
-#: src/bin/keyin.c:686
-msgid "Switch to terminal tab 8"
-msgstr "टर्मिनल टैब 8 पर स्विच करें"
-
-#: src/bin/keyin.c:687
-msgid "Switch to terminal tab 9"
-msgstr "टर्मिनल टैब 9 पर स्विच करें"
-
-#: src/bin/keyin.c:688
-msgid "Switch to terminal tab 10"
-msgstr "टर्मिनल टैब 10 पर स्विच करें"
-
-#: src/bin/keyin.c:689
-msgid "Change title"
+#: src/bin/options_elm.c:172 src/bin/win.c:431
+msgid "Select preferred size so that this text is readable"
 msgstr ""
 
-#: src/bin/keyin.c:690 src/bin/keyin.c:691
-msgid "Toggle whether input goes to all visible terminals"
+#: src/bin/options_elm.c:180
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
 msgstr ""
-
-#: src/bin/keyin.c:694
-msgid "Font size"
-msgstr "फ़ॉन्ट का आकार"
-
-#: src/bin/keyin.c:695
-msgid "Font size up 1"
-msgstr "फ़ॉन्ट आकार को में 1 वृद्धि"
-
-#: src/bin/keyin.c:696
-msgid "Font size down 1"
-msgstr "फ़ॉन्ट आकार को में 1 नीचे"
-
-#: src/bin/keyin.c:697
-msgid "Display big font size"
-msgstr "बड़े फ़ॉन्ट आकार के प्रदर्शन"
-
-#: src/bin/keyin.c:698
-msgid "Reset font size"
-msgstr "फ़ॉन्ट आकार रीसेट"
-
-#: src/bin/keyin.c:700
-msgid "Actions"
-msgstr "क्रियाएं"
-
-#: src/bin/keyin.c:701
-msgid "Open a new terminal window"
-msgstr ""
-
-#: src/bin/keyin.c:702
-msgid "Toggle Fullscreen of the window"
-msgstr ""
-
-#: src/bin/keyin.c:703
-msgid "Display the history miniview"
-msgstr "मिनी व्यू  इतिहास प्रदर्शित करें"
-
-#: src/bin/keyin.c:704
-msgid "Display the command box"
-msgstr "कमांड बॉक्स को दिखाने"
-
-#: src/bin/options_font.c:425 src/bin/options.c:221
-msgid "Font"
-msgstr "फ़ॉन्ट"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
@@ -863,156 +836,123 @@ msgstr "स्टैंडर्ड"
 msgid "Display bold and italic in the terminal"
 msgstr ""
 
-#: src/bin/about.c:83
-#, c-format
-msgid ""
-"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
-"terminal was written for Enlightenment, to use EFL and otherwise push the "
-"boundaries of what a modern terminal emulator should be. We hope you enjoy "
-"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s"
-msgstr ""
-"टेर्मिनोलजी %s</b><br>. टर्मिनल बोरिंग क्यों होना चाहिए? </b><br>इस टर्मिनल एक "
-"आधुनिक टर्मिनल एमुलेटर की सीमाओं को बढ़ाने अन्यथा EFL का उपयोग करने के लिए लिखा गया है. "
-"हम आशा करते हैं आप इसे का आनंद ले. <br><br>कॉपीराइट © 2012-%d:<br><br>"
-"%s<br><br>नीचे विस्तृत 2-खंड BSD लाइसेंस के तहत वितरित: <br><br>%s"
-
-#: src/bin/media.c:808
-#, c-format
-msgid "Could not Initialize the emotion module '%s'"
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
 msgstr ""
 
-#: src/bin/media.c:1348 src/bin/termpty.c:636 src/bin/termpty.c:641
-#: src/bin/termpty.c:645
-#, c-format
-msgid "Function %s failed: %s"
+#: src/bin/options_keys.c:67
+msgid "Alt+"
 msgstr ""
 
-#: src/bin/media.c:1445
-msgid "Media visualizing is not supported"
+#: src/bin/options_keys.c:68
+msgid "Shift+"
 msgstr ""
 
-#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
-#, c-format
-msgid "memerr: %s"
-msgstr "मेमोरी त्रुटि: %s"
-
-#: src/bin/termpty.c:224
-#, c-format
-msgid "Size set ioctl failed: %s"
+#: src/bin/options_keys.c:69
+msgid "Win+"
 msgstr ""
 
-#: src/bin/termpty.c:358
-#, c-format
-msgid "Could not write to file descriptor %d: %s"
+#: src/bin/options_keys.c:70
+msgid "Meta+"
 msgstr ""
 
-#: src/bin/termpty.c:612
-#, c-format
-msgid "Could not find shell, falling back to %s"
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
 msgstr ""
 
-#: src/bin/termpty.c:652
-#, c-format
-msgid "open() of pty '%s' failed: %s"
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr "हटाएँ"
+
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "की अनुक्रम प्रेस करें."
+
+#: src/bin/options_keys.c:385
+msgid "Key Bindings"
 msgstr ""
 
-#: src/bin/termpty.c:659 src/bin/termpty.c:665
-#, c-format
-msgid "fcntl() on pty '%s' failed: %s"
+#: src/bin/options_keys.c:457
+msgid "Reset bindings"
 msgstr ""
 
-#: src/bin/termpty.c:674
-#, c-format
-msgid "ioctl() on pty '%s' failed: %s"
+#: src/bin/options_mouse.c:167
+msgid "Focus split under the Mouse"
+msgstr "माउस के अंतर्गत विभाजित फोकस"
+
+#: src/bin/options_mouse.c:168
+msgid "Focus-related visuals"
 msgstr ""
 
-#: src/bin/termpty.c:718 src/bin/termpty.c:726 src/bin/termpty.c:735
-#, c-format
-msgid "Could not change current directory to '%s': %s"
+#: src/bin/options_mouse.c:174
+msgid "Auto hide the mouse cursor when idle:"
 msgstr ""
 
-#: src/bin/win.c:417
-msgid ""
-"The scale configuration can be changed in the Settings (right click on the "
-"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
-"keyword>."
-msgstr ""
-
-#: src/bin/win.c:422
-msgid "Done"
-msgstr ""
-
-#: src/bin/win.c:2270
-msgid "Ecore IMF failed"
-msgstr ""
-
-#: src/bin/win.c:6091 src/bin/controls.c:413
+#: src/bin/options_mouse.c:204
 #, fuzzy
-msgid "Set title"
-msgstr "विंडो शीर्षक सेट करें"
+msgid "Active Links:"
+msgstr "सक्रिय लिंक"
 
-#: src/bin/win.c:6095
-msgid "Ok"
+#: src/bin/options_mouse.c:208
+msgid "On emails"
 msgstr ""
 
-#: src/bin/win.c:6100
-msgid "Cancel"
+#: src/bin/options_mouse.c:209
+msgid "On file paths"
 msgstr ""
 
-#: src/bin/win.c:7286
-msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
-
-#: src/bin/controls.c:372
-msgid "Controls"
-msgstr "नियंत्रण"
-
-#: src/bin/controls.c:388
-msgid "New"
-msgstr "नया टर्मिनल"
-
-#: src/bin/controls.c:395
-msgid "Split V"
-msgstr "लम्बवत में विभाजन"
-
-#: src/bin/controls.c:399
-msgid "Split H"
-msgstr "क्षैतिज में विभाजन"
-
-#: src/bin/controls.c:406
-msgid "Miniview"
-msgstr "मिनी व्यू"
-
-#: src/bin/controls.c:430
-msgid "Paste"
-msgstr "पेस्ट"
-
-#: src/bin/controls.c:436
-msgid "Settings"
-msgstr "सेटिंग्स"
-
-#: src/bin/controls.c:442
-msgid "About"
-msgstr "के बारे में"
-
-#: src/bin/controls.c:451
-msgid "Grouped input"
+#: src/bin/options_mouse.c:210
+msgid "On URLs"
 msgstr ""
 
-#: src/bin/controls.c:463
-msgid "Close Terminal"
-msgstr "टर्मिनल बंद"
+#: src/bin/options_mouse.c:211
+#, fuzzy
+msgid "On colors"
+msgstr "रंग"
 
-#: src/bin/utils.c:48 src/bin/utils.c:74
-#, c-format
-msgid "Could not load any theme for group=%s: %s"
+#: src/bin/options_mouse.c:212
+msgid "Based on escape codes"
 msgstr ""
 
-#: src/bin/utils.c:91
-#, c-format
-msgid "Could not load default theme for group=%s: %s"
+#: src/bin/options_mouse.c:213
+msgid "Gravatar integration"
 msgstr ""
+
+#: src/bin/options_mouse.c:215
+msgid "Drag & drop links"
+msgstr "ड्रैग एंड ड्रॉप लिंक"
+
+#: src/bin/options_mouse.c:221
+msgid "Inline if possible"
+msgstr "संभव हो तो इनलाइन"
+
+#: src/bin/options_mouse.c:265
+msgid "E-mail:"
+msgstr "ई-मेल:"
+
+#: src/bin/options_mouse.c:269
+msgid "URL (Images):"
+msgstr "URL(चित्र):"
+
+#: src/bin/options_mouse.c:270
+msgid "URL (Video):"
+msgstr "URL (वीडियो):"
+
+#: src/bin/options_mouse.c:271
+msgid "URL (All):"
+msgstr "URL (सब):"
+
+#: src/bin/options_mouse.c:274
+msgid "Local (Images):"
+msgstr "लोकल (चित्र):"
+
+#: src/bin/options_mouse.c:275
+msgid "Local (Video):"
+msgstr "लोकल (वीडियो):"
+
+#: src/bin/options_mouse.c:276
+msgid "Local (All):"
+msgstr "लोकल (सब):"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -1034,37 +974,143 @@ msgstr "पृष्ठभूमि फ़ाइल पढ़ा नहीं �
 msgid "Unknown command: %s"
 msgstr "अज्ञात कमांड: %s"
 
-#: src/bin/options_video.c:58 src/bin/options.c:225
-msgid "Video"
-msgstr "वीडियो"
+#: src/bin/termio.c:390
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr ""
 
-#: src/bin/options_video.c:72
-msgid "Audio muted"
-msgstr "ऑडियो मौन"
+#: src/bin/termio.c:405
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr ""
 
-#: src/bin/options_video.c:85
-msgid "Audio visualized"
-msgstr "कल्पना की ऑडियो"
+#: src/bin/termio.c:1123
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "'%s' असमर्थित चयन प्रारूप."
 
-#: src/bin/options_video.c:102
-msgid "Video Engine:"
-msgstr "वीडियो इंजन:"
+#: src/bin/termio.c:1283
+msgid "Preview"
+msgstr "पूर्वावलोकन"
 
-#: src/bin/options_video.c:109
-msgid "Automatic"
-msgstr "स्वचालित"
+#: src/bin/termio.c:1293
+msgid "Copy relative path"
+msgstr ""
 
-#: src/bin/options.c:192
-msgid "Options"
-msgstr "विकल्प"
+#: src/bin/termio.c:1295
+msgid "Copy full path"
+msgstr ""
 
-#: src/bin/options.c:226
-msgid "Keys"
-msgstr "चाबियाँ"
+#: src/bin/termio.c:2741
+msgid "Open as URL"
+msgstr ""
 
-#: src/bin/options.c:239
-msgid "Temporary"
-msgstr "टेम्पररी"
+#: src/bin/termio.c:4145
+msgid "Could not allocate termpty"
+msgstr ""
+
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr "मेमोरी त्रुटि: %s"
+
+#: src/bin/termpty.c:224
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:360
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr ""
+
+#: src/bin/termpty.c:614
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr ""
+
+#: src/bin/termpty.c:661
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:683
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr ""
+
+#: src/bin/theme.c:74 src/bin/theme.c:110
+#, c-format
+msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
+msgstr ""
+
+#: src/bin/theme.c:82 src/bin/theme.c:117
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr ""
+
+#: src/bin/theme.c:138
+#, c-format
+msgid "Could not load default theme for group=%s: %s"
+msgstr ""
+
+#: src/bin/win.c:423
+msgid "Done"
+msgstr ""
+
+#: src/bin/win.c:439
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the "
+"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
+"keyword>"
+msgstr ""
+
+#: src/bin/win.c:2303
+msgid "Ecore IMF failed"
+msgstr ""
+
+#: src/bin/win.c:6195
+msgid "Ok"
+msgstr ""
+
+#: src/bin/win.c:6200
+msgid "Cancel"
+msgstr ""
+
+#: src/bin/win.c:7386
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
+
+#~ msgid "Helpers"
+#~ msgstr "सहायकों"
+
+#~ msgid "Set emotion module to use."
+#~ msgstr "emotion मॉड्यूल सेट करें"
+
+#~ msgid "Video"
+#~ msgstr "वीडियो"
+
+#~ msgid "Audio muted"
+#~ msgstr "ऑडियो मौन"
+
+#~ msgid "Audio visualized"
+#~ msgstr "कल्पना की ऑडियो"
+
+#~ msgid "Video Engine:"
+#~ msgstr "वीडियो इंजन:"
+
+#~ msgid "Automatic"
+#~ msgstr "स्वचालित"
 
 #~ msgid "Scrollback:"
 #~ msgstr "स्क्रॉलबैक:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"POT-Creation-Date: 2020-09-15 20:44+0200\n"
 "PO-Revision-Date: 2015-04-16 07:13+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan <ca@li.org>\n"
@@ -18,125 +18,498 @@ msgstr ""
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 "X-Generator: Launchpad (build 17474)\n"
 
-#: src/bin/options_helpers.c:193 src/bin/options.c:227
-msgid "Helpers"
-msgstr "Ajudants"
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
+#: src/bin/termio.c:1224
+#, fuzzy, c-format
+msgid "Copy '%s'"
+msgstr "Còpia"
 
-#: src/bin/options_helpers.c:206
-msgid "Inline if possible"
-msgstr "En línia si és possible"
-
-#: src/bin/options_helpers.c:236
-msgid "E-mail:"
-msgstr "Correu electrònic:"
-
-#: src/bin/options_helpers.c:269
-msgid "URL (Images):"
-msgstr "URL (Imatges):"
-
-#: src/bin/options_helpers.c:294
-msgid "URL (Video):"
-msgstr "URL (Vídeo):"
-
-#: src/bin/options_helpers.c:319
-msgid "URL (All):"
-msgstr "URL (Tot):"
-
-#: src/bin/options_helpers.c:352
-msgid "Local (Images):"
-msgstr "Local (Imatges):"
-
-#: src/bin/options_helpers.c:377
-msgid "Local (Video):"
-msgstr "Local (Vídeo):"
-
-#: src/bin/options_helpers.c:402
-msgid "Local (All):"
-msgstr "Local (Tot):"
-
-#: src/bin/termio.c:350
-#, c-format
-msgid "Could not get working directory of pid %i: %s"
-msgstr "No s'ha pogut obtenir el directori de treball amb pid %i: %s"
-
-#: src/bin/termio.c:365
-#, c-format
-msgid "Could not load working directory %s: %s"
-msgstr "No s'ha pogut carregar el directori de treball %s: %s"
-
-#: src/bin/termio.c:1079
-#, c-format
-msgid "unsupported selection format '%s'"
-msgstr "format de selecció no permès '%s'"
-
-#: src/bin/termio.c:1172
-msgid "Preview"
-msgstr "Previsualitza"
-
-#: src/bin/termio.c:1175
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
 msgstr "Obre"
 
-#: src/bin/termio.c:1182
-msgid "Copy relative path"
+#: src/bin/about.c:273
+msgid "Twitter: @_Terminology_"
 msgstr ""
 
-#: src/bin/termio.c:1184
-msgid "Copy full path"
+#: src/bin/about.c:275
+msgid "Youtube channel"
 msgstr ""
 
-#: src/bin/termio.c:1189 src/bin/termio.c:2554 src/bin/controls.c:424
+#: src/bin/about.c:289
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+"<b>Terminology %s</b><br>Per què els termminals han de ser avorrits?"
+"<br><br>Aquest terminal es va escriure per Enlightenment, per utilitzar EFL "
+"i arribar una mica més lluny del que hauria de ser un emulador de terminal "
+"modern. Esperem que el gaudiu!.<br><br>Copyright © 2012-%d by:<br><br>"
+"%s<br><br>Distribuït sota la clàusula-2 de la llicència BSD detallada a sota:"
+"<br><br>%s"
+
+#: src/bin/controls.c:376
+msgid "Controls"
+msgstr "Controls"
+
+#: src/bin/controls.c:392
+msgid "New"
+msgstr "Nou"
+
+#: src/bin/controls.c:399
+msgid "Split V"
+msgstr "Divideix V"
+
+#: src/bin/controls.c:403
+msgid "Split H"
+msgstr "Divideix H"
+
+#: src/bin/controls.c:410
+msgid "Miniview"
+msgstr "Minivista"
+
+#: src/bin/controls.c:417 src/bin/win.c:6191
+#, fuzzy
+msgid "Set title"
+msgstr "Anomena la finestra"
+
+#: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
 msgid "Copy"
 msgstr "Còpia"
 
-#: src/bin/termio.c:2556
-msgid "Open as URL"
+#: src/bin/controls.c:434
+msgid "Paste"
+msgstr "Enganxa"
+
+#: src/bin/controls.c:440
+msgid "Settings"
+msgstr "Paràmetres"
+
+#: src/bin/controls.c:446
+msgid "About"
+msgstr "Quant a"
+
+#: src/bin/controls.c:455
+msgid "Grouped input"
 msgstr ""
 
-#: src/bin/termio.c:3975
-msgid "Could not allocate termpty"
-msgstr "No s'ha ubicat termpty"
+#: src/bin/controls.c:467
+msgid "Close Terminal"
+msgstr "Tanca el terminal"
 
-#: src/bin/options_keys.c:66
-msgid "Ctrl+"
-msgstr "Ctrl+"
+#: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
+#, fuzzy, c-format
+msgid "Could not create logging domain '%s'"
+msgstr "No s'ha pogut crear la connexió amb el domini '%s'"
 
-#: src/bin/options_keys.c:67
-msgid "Alt+"
-msgstr "Alt+"
+#: src/bin/keyin.c:655
+msgid "Scrolling"
+msgstr "Desplaçament"
 
-#: src/bin/options_keys.c:68
-msgid "Shift+"
-msgstr "Maj+"
+#: src/bin/keyin.c:656
+msgid "Scroll one page up"
+msgstr "Desplaça una pàgina amunt"
 
-#: src/bin/options_keys.c:69
-msgid "Win+"
-msgstr "Win+"
+#: src/bin/keyin.c:657
+msgid "Scroll one page down"
+msgstr "Desplaça una pàgina avall"
 
-#: src/bin/options_keys.c:70
-msgid "Meta+"
-msgstr "Meta+"
+#: src/bin/keyin.c:658
+msgid "Scroll one line up"
+msgstr "Desplaça una línia amunt"
 
-#: src/bin/options_keys.c:71
-msgid "Hyper+"
-msgstr "Hyper+"
+#: src/bin/keyin.c:659
+msgid "Scroll one line down"
+msgstr "Desplaça una línia avall"
 
-#: src/bin/options_keys.c:82
-msgid "Delete"
-msgstr "Suprimeix"
+#: src/bin/keyin.c:660
+msgid "Go to the top of the backlog"
+msgstr ""
 
-#: src/bin/options_keys.c:269
-msgid "Please press key sequence"
-msgstr "Premi la seqüència de tecles"
+#: src/bin/keyin.c:661
+msgid "Reset scroll"
+msgstr ""
 
-#: src/bin/options_keys.c:385
-msgid "Key Bindings"
-msgstr "Dreceres de teclat"
+#: src/bin/keyin.c:663
+msgid "Copy/Paste"
+msgstr "Copia/Enganxa"
 
-#: src/bin/options_keys.c:457
+#: src/bin/keyin.c:664
+msgid "Copy selection to Primary buffer"
+msgstr "Copia la selecció a la memòria intermèdia primària"
+
+#: src/bin/keyin.c:665
+msgid "Copy selection to Clipboard buffer"
+msgstr "Copia la selecció al porta-retalls"
+
+#: src/bin/keyin.c:666
+msgid "Paste Primary buffer (highlight)"
+msgstr "Enganxa la memòria intermèdia primària (ressaltat)"
+
+#: src/bin/keyin.c:667
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr "Enganxa el porta-retalls (ctrl+c/v)"
+
+#: src/bin/keyin.c:669
+msgid "Splits/Tabs"
+msgstr "Divisions/Pestanyes"
+
+#: src/bin/keyin.c:670
 #, fuzzy
-msgid "Reset bindings"
-msgstr "Dreceres de teclat"
+msgid "Focus the previous terminal"
+msgstr "Focus al terminal previ"
+
+#: src/bin/keyin.c:671
+#, fuzzy
+msgid "Focus the next terminal"
+msgstr "Focus al terminal següent"
+
+#: src/bin/keyin.c:672
+#, fuzzy
+msgid "Focus the terminal above"
+msgstr "Focus al terminal següent"
+
+#: src/bin/keyin.c:673
+#, fuzzy
+msgid "Focus the terminal below"
+msgstr "Focus al terminal següent"
+
+#: src/bin/keyin.c:674
+#, fuzzy
+msgid "Focus the terminal on the left"
+msgstr "Focus al terminal següent"
+
+#: src/bin/keyin.c:675
+#, fuzzy
+msgid "Focus the terminal on the right"
+msgstr "Focus al terminal següent"
+
+#: src/bin/keyin.c:676
+msgid "Split horizontally (new below)"
+msgstr "Divideix horitzontalment (nou a sota)"
+
+#: src/bin/keyin.c:677
+msgid "Split vertically (new on right)"
+msgstr "Divideix verticalment (nou a la dreta)"
+
+#: src/bin/keyin.c:678
+msgid "Create a new \"tab\""
+msgstr "Crea una nova \"pestanya\""
+
+#: src/bin/keyin.c:679
+msgid "Close the focused terminal"
+msgstr "Tanca el terminal que tingui el focus"
+
+#: src/bin/keyin.c:680
+msgid "Bring up \"tab\" switcher"
+msgstr "Mostra el commutador de \"pestanyes\""
+
+#: src/bin/keyin.c:681
+msgid "Switch to terminal tab 1"
+msgstr "Commuta al terminal de la pestanya 1"
+
+#: src/bin/keyin.c:682
+msgid "Switch to terminal tab 2"
+msgstr "Commuta al terminal de la pestanya 2"
+
+#: src/bin/keyin.c:683
+msgid "Switch to terminal tab 3"
+msgstr "Commuta al terminal de la pestanya 3"
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 4"
+msgstr "Commuta al terminal de la pestanya 4"
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 5"
+msgstr "Commuta al terminal de la pestanya 5"
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 6"
+msgstr "Commuta al terminal de la pestanya 6"
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 7"
+msgstr "Commuta al terminal de la pestanya 7"
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 8"
+msgstr "Commuta al terminal de la pestanya 8"
+
+#: src/bin/keyin.c:689
+msgid "Switch to terminal tab 9"
+msgstr "Commuta al terminal de la pestanya 9"
+
+#: src/bin/keyin.c:690
+msgid "Switch to terminal tab 10"
+msgstr "Commuta al terminal de la pestanya 10"
+
+#: src/bin/keyin.c:691
+msgid "Change title"
+msgstr ""
+
+#: src/bin/keyin.c:692 src/bin/keyin.c:693
+msgid "Toggle whether input goes to all visible terminals"
+msgstr ""
+
+#: src/bin/keyin.c:696
+msgid "Font size"
+msgstr "Mida del tipus de lletra"
+
+#: src/bin/keyin.c:697
+msgid "Font size up 1"
+msgstr "Augmenta en 1 la mida del tipus de lletra"
+
+#: src/bin/keyin.c:698
+msgid "Font size down 1"
+msgstr "Disminueix en 1 la mida del tipus de lletra"
+
+#: src/bin/keyin.c:699
+msgid "Display big font size"
+msgstr "Mostra mida de tipus de lletra grossa"
+
+#: src/bin/keyin.c:700
+msgid "Reset font size"
+msgstr "Reinicia la mida del tipus de lletra"
+
+#: src/bin/keyin.c:702
+msgid "Actions"
+msgstr "Accions"
+
+#: src/bin/keyin.c:703
+msgid "Open a new terminal window"
+msgstr ""
+
+#: src/bin/keyin.c:704
+msgid "Toggle Fullscreen of the window"
+msgstr "Commuta finestra a pantalla completa"
+
+#: src/bin/keyin.c:705
+msgid "Display the history miniview"
+msgstr "Mostra la vista petita de l'historial"
+
+#: src/bin/keyin.c:706
+msgid "Display the command box"
+msgstr "Mostra el quadre de comandes"
+
+#: src/bin/main.c:387 src/bin/main.c:581
+#, fuzzy
+msgid "Could not create window"
+msgstr "No s'ha pogut crear la finestra"
+
+#: src/bin/main.c:406 src/bin/main.c:592
+#, fuzzy
+msgid "Could not create terminal widget"
+msgstr "No s'ha pogut crear el giny de terminal"
+
+#: src/bin/main.c:441
+#, c-format
+msgid "(C) 2012-%d Carsten Haitzler and others"
+msgstr "(C) 2012-%d Carsten Haitzler i altres"
+
+#: src/bin/main.c:443
+#, fuzzy
+msgid "Terminal emulator written with Enlightenment Foundation Libraries"
+msgstr ""
+"L'emulador de terminal ha estat escrit amb les les biblioteques "
+"d'Enlightenment Foundation"
+
+#: src/bin/main.c:447
+msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
+msgstr "Comanda a executar. Per defecte a $SHELL (o passwd shell o /bin/sh)"
+
+#: src/bin/main.c:449
+#, fuzzy
+msgid "Change to directory for execution of terminal command"
+msgstr "Canvia al directori per executar una ordre de terminal"
+
+#: src/bin/main.c:451
+#, fuzzy
+msgid "Use the named edje theme or path to theme file"
+msgstr "Utilitza el tema edje o la trajectòria del fitxer de temes"
+
+#: src/bin/main.c:453
+#, fuzzy
+msgid "Use the named file as a background wallpaper"
+msgstr "Utilitza el fitxer com a fons de pantalla"
+
+#: src/bin/main.c:455
+#, fuzzy
+msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
+msgstr "Geometria del terminal que s'utilitzarà (eg 80x24 or 80x24+50+20 etc.)"
+
+#: src/bin/main.c:457
+#, fuzzy
+msgid "Set window name"
+msgstr "Anomena la finestra"
+
+#: src/bin/main.c:459
+#, fuzzy
+msgid "Set window role"
+msgstr "Estableix el rol de la finestra"
+
+#: src/bin/main.c:461
+#, fuzzy
+msgid "Set window title"
+msgstr "Anomena la finestra"
+
+#: src/bin/main.c:463
+#, fuzzy
+msgid "Set icon name"
+msgstr "Anomena la icona"
+
+#: src/bin/main.c:465
+#, fuzzy
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgstr "Estableix la font (NOM/TAMANY per escalable, NOM per mapa de bits"
+
+#: src/bin/main.c:467
+#, fuzzy
+msgid ""
+"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
+"used multiple times. eg -S vhvv or --split hv More description available on "
+"the man page"
+msgstr ""
+"Divideix la finestra de terminal. 'v' per vertical i 'h' per horitzontal. Es "
+"pot utilitzar diferents vegades. ex -S vhvv o --split hv Més informació "
+"disponible a la pàgina man"
+
+#: src/bin/main.c:472
+#, fuzzy
+msgid "Run the shell as a login shell"
+msgstr "Executa l'intèrpret d'ordres com a intèrpret d'ordres d'entrada"
+
+#: src/bin/main.c:474
+#, fuzzy
+msgid "Set mute mode for video playback"
+msgstr "Estableix la reproducció de vídeo sense so"
+
+#: src/bin/main.c:476
+#, fuzzy
+msgid "Set cursor blink mode"
+msgstr "Estableix mode de cursor intermitent"
+
+#: src/bin/main.c:478
+#, fuzzy
+msgid "Set visual bell mode"
+msgstr "Estableix mode visual de campana"
+
+#: src/bin/main.c:480
+#, fuzzy
+msgid "Go into the fullscreen mode from the start"
+msgstr "Vés a mode de pantalla completa des de l'inici"
+
+#: src/bin/main.c:482
+#, fuzzy
+msgid "Go into an iconic state from the start"
+msgstr "Vés a mode minimitzat des de l'inici"
+
+#: src/bin/main.c:484
+#, fuzzy
+msgid "Become a borderless managed window"
+msgstr "Converteix a finestra sense vora"
+
+#: src/bin/main.c:486
+#, fuzzy
+msgid "Become an override-redirect window"
+msgstr "Esdevé una finestra de redirecció-sobreposició"
+
+#: src/bin/main.c:488
+#, fuzzy
+msgid "Become maximized from the start"
+msgstr "Maximitzat des de l'inici"
+
+#: src/bin/main.c:490
+#, fuzzy
+msgid "Terminology is run without a window manager"
+msgstr "Terminology s'executa sense un gestor de finestres"
+
+#: src/bin/main.c:492
+#, fuzzy
+msgid "Do not exit when the command process exits"
+msgstr "No surtis quan el procés de comandes finalitzi"
+
+#: src/bin/main.c:494
+#, fuzzy
+msgid "Force single executable if multi-instance is enabled"
+msgstr "Força l'execució única si la multi-instància està habilitada"
+
+#: src/bin/main.c:496
+#, fuzzy
+msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+msgstr "Estableix TERM a 'xterm-256color' enlloc de 'xterm'"
+
+#: src/bin/main.c:498
+msgid "Set scaling factor"
+msgstr ""
+
+#: src/bin/main.c:500
+#, fuzzy
+msgid "Highlight links"
+msgstr "Ressalta enllaços"
+
+#: src/bin/main.c:502
+msgid "Do not display wizard on start up"
+msgstr ""
+
+#: src/bin/main.c:528
+#, fuzzy
+msgid "show program version"
+msgstr "mostra versió del programa"
+
+#: src/bin/main.c:531
+#, fuzzy
+msgid "show copyright"
+msgstr "mostra copyright"
+
+#: src/bin/main.c:534
+#, fuzzy
+msgid "show license"
+msgstr "mostra llicència"
+
+#: src/bin/main.c:537
+#, fuzzy
+msgid "show this message"
+msgstr "mostra aquest missatge"
+
+#: src/bin/main.c:634
+#, fuzzy
+msgid "invalid argument found for option -S/--split. See --help"
+msgstr "s'ha trobat un paràmetre no vàlid a l'opció -S/--split. Mireu --help"
+
+#: src/bin/main.c:887
+#, fuzzy
+msgid "Could not initialize key bindings"
+msgstr "No s'han pogut inicialitzar les dreceres de teclat"
+
+#: src/bin/main.c:902
+#, fuzzy
+msgid "Could not parse command line options"
+msgstr "No s'han interpretat les opcions de la línia de comandes"
+
+#: src/bin/main.c:926
+#, c-format
+msgid "option %s requires an argument!"
+msgstr "l'opció %s requereix un argument"
+
+#: src/bin/main.c:927
+#, fuzzy
+msgid "invalid options found. See --help"
+msgstr "s'han trobat opcions invàlides. Mireu --help"
+
+#: src/bin/media.c:1333 src/bin/termpty.c:645 src/bin/termpty.c:650
+#: src/bin/termpty.c:654
+#, c-format
+msgid "Function %s failed: %s"
+msgstr "La funció %s ha fallat: %s"
+
+#: src/bin/media.c:1430
+msgid "Media visualizing is not supported"
+msgstr "La visualització multimèdia no està implementada"
 
 #: src/bin/options_background.c:163
 msgid "None"
@@ -154,7 +527,7 @@ msgstr "S'ha importat la imatge"
 msgid "Failed"
 msgstr "Ha fallat"
 
-#: src/bin/options_background.c:568 src/bin/options.c:223
+#: src/bin/options_background.c:568 src/bin/options.c:221
 msgid "Background"
 msgstr "Fons"
 
@@ -162,7 +535,7 @@ msgstr "Fons"
 msgid "Shine:"
 msgstr ""
 
-#: src/bin/options_background.c:608 src/bin/options_behavior.c:656
+#: src/bin/options_background.c:608
 msgid "Translucent"
 msgstr "Translúcid"
 
@@ -192,212 +565,136 @@ msgstr "Altres"
 msgid "Click on a picture to use it as background"
 msgstr "Feu doble clic a una imatge per importar-la"
 
-#: src/bin/options_elm.c:109 src/bin/options.c:228
-msgid "Toolkit"
-msgstr "Joc d'eines"
-
-#: src/bin/options_elm.c:122
-#, c-format
-msgid ""
-"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
-"toolkit configuration settings can be accessed by running <keyword>%s</"
-"keyword>."
-msgstr ""
-
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr ""
-
-#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
-msgid "Scale"
-msgstr ""
-
-#: src/bin/options_elm.c:172 src/bin/win.c:410
-msgid "Select preferred size so that this text is readable."
-msgstr ""
-
-#: src/bin/options_elm.c:179
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel."
-msgstr ""
-
-#: src/bin/options_theme.c:154 src/bin/options.c:222
-msgid "Theme"
-msgstr "Tema"
-
-#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
-#, c-format
-msgid "Could not create logging domain '%s'."
-msgstr "No s'ha pogut crear la connexió amb el domini '%s'."
-
-#: src/bin/options_behavior.c:89
+#: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
 msgstr "%d lines"
 
-#: src/bin/options_behavior.c:105
+#: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:281
+#: src/bin/options_behavior.c:217
 #, fuzzy
 msgid "Default cursor:"
 msgstr "Predeterminat"
 
-#: src/bin/options_behavior.c:290
+#: src/bin/options_behavior.c:226
 msgid "Blinking Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:308
+#: src/bin/options_behavior.c:244
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:327
+#: src/bin/options_behavior.c:263
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:346
+#: src/bin/options_behavior.c:282
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:365
+#: src/bin/options_behavior.c:301
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:384
+#: src/bin/options_behavior.c:320
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:423 src/bin/options.c:220
+#: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
 msgstr "Comportament"
 
-#: src/bin/options_behavior.c:466
-msgid "Scroll to bottom on new content"
-msgstr "Desplaça cap avall quan hi hagi nou contingut"
-
-#: src/bin/options_behavior.c:467
-msgid "Scroll to bottom when a key is pressed"
-msgstr "Desplaça cap avall quan es premi una tecla"
-
-#: src/bin/options_behavior.c:478
-#, fuzzy
-msgid "Active Links:"
-msgstr "Enllaços actius"
-
-#: src/bin/options_behavior.c:482
-msgid "On emails"
-msgstr ""
-
-#: src/bin/options_behavior.c:483
-msgid "On file paths"
-msgstr ""
-
-#: src/bin/options_behavior.c:484
-msgid "On URLs"
-msgstr ""
-
-#: src/bin/options_behavior.c:485
-msgid "Based on escape codes"
-msgstr ""
-
-#: src/bin/options_behavior.c:489
-msgid "React to key presses"
-msgstr "Reacciona a pulsacions de tecla"
-
-#: src/bin/options_behavior.c:496
-msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
-
-#: src/bin/options_behavior.c:499
-msgid "Visual Bell"
-msgstr "Campana visual"
-
-#: src/bin/options_behavior.c:500
-msgid "Bell rings"
-msgstr "Sons d'avís sonor"
-
-#: src/bin/options_behavior.c:501
-msgid "Urgent Bell"
-msgstr "Avís sonor urgent"
-
-#: src/bin/options_behavior.c:502
-msgid "Multiple instances, one process"
-msgstr "Múltiples instàncies, un procés"
-
-#: src/bin/options_behavior.c:503
-msgid "Set TERM to xterm-256color"
-msgstr "Estableix TERM a xterm-256colors"
-
-#: src/bin/options_behavior.c:504
-msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr "Fletxa enrera actua com Supr (enlloc de Retrocés)"
-
-#: src/bin/options_behavior.c:505
-msgid "Drag & drop links"
-msgstr "Enllaços de'arrossega i deixa anar"
-
-#: src/bin/options_behavior.c:506
-msgid "Start as login shell"
-msgstr "Inicia com a intèrpret d'ordres"
-
-#: src/bin/options_behavior.c:507
-msgid "Focus split under the Mouse"
-msgstr "Divisió de focus sota el ratolí"
-
-#: src/bin/options_behavior.c:508
-msgid "Focus-related visuals"
-msgstr ""
-
-#: src/bin/options_behavior.c:509
-msgid "Gravatar integration"
-msgstr "Integració amb Gravatar"
-
-#: src/bin/options_behavior.c:510
+#: src/bin/options_behavior.c:379
 msgid "Show tabs"
 msgstr "Mostra les pestanyes"
 
-#: src/bin/options_behavior.c:511
+#: src/bin/options_behavior.c:382
+msgid "Scroll to bottom on new content"
+msgstr "Desplaça cap avall quan hi hagi nou contingut"
+
+#: src/bin/options_behavior.c:383
+msgid "Scroll to bottom when a key is pressed"
+msgstr "Desplaça cap avall quan es premi una tecla"
+
+#: src/bin/options_behavior.c:389
+msgid "React to key presses"
+msgstr "Reacciona a pulsacions de tecla"
+
+#: src/bin/options_behavior.c:396
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr ""
+
+#: src/bin/options_behavior.c:400
+msgid "Visual Bell"
+msgstr "Campana visual"
+
+#: src/bin/options_behavior.c:401
+msgid "Bell rings"
+msgstr "Sons d'avís sonor"
+
+#: src/bin/options_behavior.c:402
+msgid "Urgent Bell"
+msgstr "Avís sonor urgent"
+
+#: src/bin/options_behavior.c:404
+msgid "Multiple instances, one process"
+msgstr "Múltiples instàncies, un procés"
+
+#: src/bin/options_behavior.c:405
+msgid "Set TERM to xterm-256color"
+msgstr "Estableix TERM a xterm-256colors"
+
+#: src/bin/options_behavior.c:406
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr "Fletxa enrera actua com Supr (enlloc de Retrocés)"
+
+#: src/bin/options_behavior.c:407
+msgid "Start as login shell"
+msgstr "Inicia com a intèrpret d'ordres"
+
+#: src/bin/options_behavior.c:408
+msgid "Open new terminals in current working directory"
+msgstr ""
+
+#: src/bin/options_behavior.c:409
 #, fuzzy
 msgid "Always show miniview"
 msgstr "Mostra la vista petita de l'historial"
 
-#: src/bin/options_behavior.c:512
+#: src/bin/options_behavior.c:410
 msgid "Enable special Terminology escape codes"
 msgstr ""
 
-#: src/bin/options_behavior.c:513
-msgid "Open new terminals in current working directory"
-msgstr ""
-
-#: src/bin/options_behavior.c:514
+#: src/bin/options_behavior.c:411
 msgid "Treat Emojis as double-width characters"
 msgstr ""
 
-#: src/bin/options_behavior.c:523
+#: src/bin/options_behavior.c:412
+msgid ""
+"When grouping input, do it on all terminals and not just the visible ones"
+msgstr ""
+
+#: src/bin/options_behavior.c:419
 msgid "Always open at size:"
 msgstr "Obre sempre a mida:"
 
-#: src/bin/options_behavior.c:533
+#: src/bin/options_behavior.c:429
 msgid "Set Current:"
 msgstr ""
 
-#: src/bin/options_behavior.c:544
+#: src/bin/options_behavior.c:440
 msgid "Width:"
 msgstr "Amplada:"
 
-#: src/bin/options_behavior.c:566
+#: src/bin/options_behavior.c:462
 msgid "Height:"
 msgstr "Alçada:"
 
-#: src/bin/options_behavior.c:625
-msgid "Tab zoom/switch animation time:"
-msgstr "Temps d'animació de l'ampliació/intercanvi:"
-
-#: src/bin/options_behavior.c:626
+#: src/bin/options_behavior.c:521
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
@@ -405,190 +702,47 @@ msgstr ""
 "Estableix el temps de l'animació <br>durant els canvis,<br>que succeeixen "
 "per dreceres de teclat, roda<br>de ratolí o altres accions"
 
-#: src/bin/options_behavior.c:638 src/bin/options_behavior.c:639
-#: src/bin/options_behavior.c:670 src/bin/options_behavior.c:671
+#: src/bin/options_behavior.c:526
+msgid "Tab zoom/switch animation time:"
+msgstr "Temps d'animació de l'ampliació/intercanvi:"
+
+#: src/bin/options_behavior.c:534 src/bin/options_behavior.c:535
+#: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
 msgstr "%1.1f s"
 
-#: src/bin/options_behavior.c:657
-msgid "Auto hide the mouse cursor when idle:"
+#: src/bin/options.c:189
+msgid "Options"
+msgstr "Opcions"
+
+#: src/bin/options.c:218 src/bin/options_mouse.c:147
+msgid "Mouse"
 msgstr ""
 
-#: src/bin/main.c:387 src/bin/main.c:589
-msgid "Could not create window."
-msgstr "No s'ha pogut crear la finestra"
+#: src/bin/options.c:219 src/bin/options_font.c:425
+msgid "Font"
+msgstr "Tipus de lletra"
 
-#: src/bin/main.c:406 src/bin/main.c:600
-msgid "Could not create terminal widget."
-msgstr "No s'ha pogut crear el giny de terminal"
+#: src/bin/options.c:220 src/bin/options_theme.c:155
+msgid "Theme"
+msgstr "Tema"
 
-#: src/bin/main.c:446
-#, c-format
-msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "(C) 2012-%d Carsten Haitzler i altres"
+#: src/bin/options.c:222 src/bin/options_colors.c:234
+msgid "Colors"
+msgstr "Colors"
 
-#: src/bin/main.c:448
-msgid "Terminal emulator written with Enlightenment Foundation Libraries."
-msgstr ""
-"L'emulador de terminal ha estat escrit amb les les biblioteques "
-"d'Enlightenment Foundation."
+#: src/bin/options.c:223
+msgid "Keys"
+msgstr "Tecles"
 
-#: src/bin/main.c:452
-msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr "Comanda a executar. Per defecte a $SHELL (o passwd shell o /bin/sh)"
+#: src/bin/options.c:224 src/bin/options_elm.c:109
+msgid "Toolkit"
+msgstr "Joc d'eines"
 
-#: src/bin/main.c:454
-msgid "Change to directory for execution of terminal command."
-msgstr "Canvia al directori per executar una ordre de terminal"
-
-#: src/bin/main.c:456
-msgid "Use the named edje theme or path to theme file."
-msgstr "Utilitza el tema edje o la trajectòria del fitxer de temes."
-
-#: src/bin/main.c:458
-msgid "Use the named file as a background wallpaper."
-msgstr "Utilitza el fitxer com a fons de pantalla."
-
-#: src/bin/main.c:460
-msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)."
-msgstr ""
-"Geometria del terminal que s'utilitzarà (eg 80x24 or 80x24+50+20 etc.)."
-
-#: src/bin/main.c:462
-msgid "Set window name."
-msgstr "Anomena la finestra."
-
-#: src/bin/main.c:464
-msgid "Set window role."
-msgstr "Estableix el rol de la finestra."
-
-#: src/bin/main.c:466
-msgid "Set window title."
-msgstr "Anomena la finestra."
-
-#: src/bin/main.c:468
-msgid "Set icon name."
-msgstr "Anomena la icona."
-
-#: src/bin/main.c:470
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap."
-msgstr "Estableix la font (NOM/TAMANY per escalable, NOM per mapa de bits."
-
-#: src/bin/main.c:472
-msgid ""
-"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
-"used multiple times. eg -S vhvv or --split hv More description available on "
-"the man page."
-msgstr ""
-"Divideix la finestra de terminal. 'v' per vertical i 'h' per horitzontal. Es "
-"pot utilitzar diferents vegades. ex -S vhvv o --split hv Més informació "
-"disponible a la pàgina man."
-
-#: src/bin/main.c:477
-msgid "Set emotion module to use."
-msgstr "Estableix el mòdul emotion que s'utilitzarà."
-
-#: src/bin/main.c:480
-msgid "Run the shell as a login shell."
-msgstr "Executa l'intèrpret d'ordres com a intèrpret d'ordres d'entrada."
-
-#: src/bin/main.c:482
-msgid "Set mute mode for video playback."
-msgstr "Estableix la reproducció de vídeo sense so"
-
-#: src/bin/main.c:484
-msgid "Set cursor blink mode."
-msgstr "Estableix mode de cursor intermitent."
-
-#: src/bin/main.c:486
-msgid "Set visual bell mode."
-msgstr "Estableix mode visual de campana."
-
-#: src/bin/main.c:488
-msgid "Go into the fullscreen mode from the start."
-msgstr "Vés a mode de pantalla completa des de l'inici"
-
-#: src/bin/main.c:490
-msgid "Go into an iconic state from the start."
-msgstr "Vés a mode minimitzat des de l'inici"
-
-#: src/bin/main.c:492
-msgid "Become a borderless managed window."
-msgstr "Converteix a finestra sense vora"
-
-#: src/bin/main.c:494
-msgid "Become an override-redirect window."
-msgstr "Esdevé una finestra de redirecció-sobreposició"
-
-#: src/bin/main.c:496
-msgid "Become maximized from the start."
-msgstr "Maximitzat des de l'inici"
-
-#: src/bin/main.c:498
-msgid "Terminology is run without a window manager."
-msgstr "Terminology s'executa sense un gestor de finestres."
-
-#: src/bin/main.c:500
-msgid "Do not exit when the command process exits."
-msgstr "No surtis quan el procés de comandes finalitzi."
-
-#: src/bin/main.c:502
-msgid "Force single executable if multi-instance is enabled."
-msgstr "Força l'execució única si la multi-instància està habilitada."
-
-#: src/bin/main.c:504
-msgid "Set TERM to 'xterm-256color' instead of 'xterm'."
-msgstr "Estableix TERM a 'xterm-256color' enlloc de 'xterm'."
-
-#: src/bin/main.c:506
-msgid "Set scaling factor."
-msgstr ""
-
-#: src/bin/main.c:508
-msgid "Highlight links."
-msgstr "Ressalta enllaços."
-
-#: src/bin/main.c:510
-msgid "Do not display wizard on start up."
-msgstr ""
-
-#: src/bin/main.c:536
-msgid "show program version."
-msgstr "mostra versió del programa."
-
-#: src/bin/main.c:539
-msgid "show copyright."
-msgstr "mostra copyright."
-
-#: src/bin/main.c:542
-msgid "show license."
-msgstr "mostra llicència."
-
-#: src/bin/main.c:545
-msgid "show this message."
-msgstr "mostra aquest missatge"
-
-#: src/bin/main.c:642
-msgid "invalid argument found for option -S/--split. See --help."
-msgstr "s'ha trobat un paràmetre no vàlid a l'opció -S/--split. Mireu --help."
-
-#: src/bin/main.c:896
-msgid "Could not initialize key bindings."
-msgstr "No s'han pogut inicialitzar les dreceres de teclat"
-
-#: src/bin/main.c:911
-msgid "Could not parse command line options."
-msgstr "No s'han interpretat les opcions de la línia de comandes"
-
-#: src/bin/main.c:935
-#, c-format
-msgid "option %s requires an argument!"
-msgstr "l'opció %s requereix un argument"
-
-#: src/bin/main.c:936
-msgid "invalid options found. See --help."
-msgstr "s'han trobat opcions invàlides. Mireu --help."
+#: src/bin/options.c:235
+msgid "Temporary"
+msgstr "Temporal"
 
 #: src/bin/options_colors.c:12
 msgid "Default"
@@ -639,10 +793,6 @@ msgstr "Invers"
 msgid "Inverse Background"
 msgstr "Fons"
 
-#: src/bin/options_colors.c:234 src/bin/options.c:224
-msgid "Colors"
-msgstr "Colors"
-
 #: src/bin/options_colors.c:270
 msgid "Normal"
 msgstr "Normal"
@@ -663,199 +813,32 @@ msgstr "Brillant/Negreta intens"
 msgid "Reset all the colors"
 msgstr ""
 
-#: src/bin/keyin.c:653
-msgid "Scrolling"
-msgstr "Desplaçament"
-
-#: src/bin/keyin.c:654
-msgid "Scroll one page up"
-msgstr "Desplaça una pàgina amunt"
-
-#: src/bin/keyin.c:655
-msgid "Scroll one page down"
-msgstr "Desplaça una pàgina avall"
-
-#: src/bin/keyin.c:656
-msgid "Scroll one line up"
-msgstr "Desplaça una línia amunt"
-
-#: src/bin/keyin.c:657
-msgid "Scroll one line down"
-msgstr "Desplaça una línia avall"
-
-#: src/bin/keyin.c:658
-msgid "Go to the top of the backlog"
+#: src/bin/options_elm.c:122
+#, c-format
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>"
 msgstr ""
 
-#: src/bin/keyin.c:659
-msgid "Reset scroll"
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
 msgstr ""
 
-#: src/bin/keyin.c:661
-msgid "Copy/Paste"
-msgstr "Copia/Enganxa"
-
-#: src/bin/keyin.c:662
-msgid "Copy selection to Primary buffer"
-msgstr "Copia la selecció a la memòria intermèdia primària"
-
-#: src/bin/keyin.c:663
-msgid "Copy selection to Clipboard buffer"
-msgstr "Copia la selecció al porta-retalls"
-
-#: src/bin/keyin.c:664
-msgid "Paste Primary buffer (highlight)"
-msgstr "Enganxa la memòria intermèdia primària (ressaltat)"
-
-#: src/bin/keyin.c:665
-msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Enganxa el porta-retalls (ctrl+c/v)"
-
-#: src/bin/keyin.c:667
-msgid "Splits/Tabs"
-msgstr "Divisions/Pestanyes"
-
-#: src/bin/keyin.c:668
-#, fuzzy
-msgid "Focus the previous terminal"
-msgstr "Focus al terminal previ"
-
-#: src/bin/keyin.c:669
-#, fuzzy
-msgid "Focus the next terminal"
-msgstr "Focus al terminal següent"
-
-#: src/bin/keyin.c:670
-#, fuzzy
-msgid "Focus the terminal above"
-msgstr "Focus al terminal següent"
-
-#: src/bin/keyin.c:671
-#, fuzzy
-msgid "Focus the terminal below"
-msgstr "Focus al terminal següent"
-
-#: src/bin/keyin.c:672
-#, fuzzy
-msgid "Focus the terminal on the left"
-msgstr "Focus al terminal següent"
-
-#: src/bin/keyin.c:673
-#, fuzzy
-msgid "Focus the terminal on the right"
-msgstr "Focus al terminal següent"
-
-#: src/bin/keyin.c:674
-msgid "Split horizontally (new below)"
-msgstr "Divideix horitzontalment (nou a sota)"
-
-#: src/bin/keyin.c:675
-msgid "Split vertically (new on right)"
-msgstr "Divideix verticalment (nou a la dreta)"
-
-#: src/bin/keyin.c:676
-msgid "Create a new \"tab\""
-msgstr "Crea una nova \"pestanya\""
-
-#: src/bin/keyin.c:677
-msgid "Close the focused terminal"
-msgstr "Tanca el terminal que tingui el focus"
-
-#: src/bin/keyin.c:678
-msgid "Bring up \"tab\" switcher"
-msgstr "Mostra el commutador de \"pestanyes\""
-
-#: src/bin/keyin.c:679
-msgid "Switch to terminal tab 1"
-msgstr "Commuta al terminal de la pestanya 1"
-
-#: src/bin/keyin.c:680
-msgid "Switch to terminal tab 2"
-msgstr "Commuta al terminal de la pestanya 2"
-
-#: src/bin/keyin.c:681
-msgid "Switch to terminal tab 3"
-msgstr "Commuta al terminal de la pestanya 3"
-
-#: src/bin/keyin.c:682
-msgid "Switch to terminal tab 4"
-msgstr "Commuta al terminal de la pestanya 4"
-
-#: src/bin/keyin.c:683
-msgid "Switch to terminal tab 5"
-msgstr "Commuta al terminal de la pestanya 5"
-
-#: src/bin/keyin.c:684
-msgid "Switch to terminal tab 6"
-msgstr "Commuta al terminal de la pestanya 6"
-
-#: src/bin/keyin.c:685
-msgid "Switch to terminal tab 7"
-msgstr "Commuta al terminal de la pestanya 7"
-
-#: src/bin/keyin.c:686
-msgid "Switch to terminal tab 8"
-msgstr "Commuta al terminal de la pestanya 8"
-
-#: src/bin/keyin.c:687
-msgid "Switch to terminal tab 9"
-msgstr "Commuta al terminal de la pestanya 9"
-
-#: src/bin/keyin.c:688
-msgid "Switch to terminal tab 10"
-msgstr "Commuta al terminal de la pestanya 10"
-
-#: src/bin/keyin.c:689
-msgid "Change title"
+#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
+msgid "Scale"
 msgstr ""
 
-#: src/bin/keyin.c:690 src/bin/keyin.c:691
-msgid "Toggle whether input goes to all visible terminals"
+#: src/bin/options_elm.c:172 src/bin/win.c:431
+msgid "Select preferred size so that this text is readable"
 msgstr ""
 
-#: src/bin/keyin.c:694
-msgid "Font size"
-msgstr "Mida del tipus de lletra"
-
-#: src/bin/keyin.c:695
-msgid "Font size up 1"
-msgstr "Augmenta en 1 la mida del tipus de lletra"
-
-#: src/bin/keyin.c:696
-msgid "Font size down 1"
-msgstr "Disminueix en 1 la mida del tipus de lletra"
-
-#: src/bin/keyin.c:697
-msgid "Display big font size"
-msgstr "Mostra mida de tipus de lletra grossa"
-
-#: src/bin/keyin.c:698
-msgid "Reset font size"
-msgstr "Reinicia la mida del tipus de lletra"
-
-#: src/bin/keyin.c:700
-msgid "Actions"
-msgstr "Accions"
-
-#: src/bin/keyin.c:701
-msgid "Open a new terminal window"
+#: src/bin/options_elm.c:180
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
 msgstr ""
-
-#: src/bin/keyin.c:702
-msgid "Toggle Fullscreen of the window"
-msgstr "Commuta finestra a pantalla completa"
-
-#: src/bin/keyin.c:703
-msgid "Display the history miniview"
-msgstr "Mostra la vista petita de l'historial"
-
-#: src/bin/keyin.c:704
-msgid "Display the command box"
-msgstr "Mostra el quadre de comandes"
-
-#: src/bin/options_font.c:425 src/bin/options.c:221
-msgid "Font"
-msgstr "Tipus de lletra"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
@@ -869,160 +852,124 @@ msgstr "Estàndard"
 msgid "Display bold and italic in the terminal"
 msgstr ""
 
-#: src/bin/about.c:83
-#, c-format
-msgid ""
-"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
-"terminal was written for Enlightenment, to use EFL and otherwise push the "
-"boundaries of what a modern terminal emulator should be. We hope you enjoy "
-"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
-"clause BSD license detailed below:<br><br>%s"
-msgstr ""
-"<b>Terminology %s</b><br>Per què els termminals han de ser avorrits?"
-"<br><br>Aquest terminal es va escriure per Enlightenment, per utilitzar EFL "
-"i arribar una mica més lluny del que hauria de ser un emulador de terminal "
-"modern. Esperem que el gaudiu!.<br><br>Copyright © 2012-%d by:<br><br>"
-"%s<br><br>Distribuït sota la clàusula-2 de la llicència BSD detallada a sota:"
-"<br><br>%s"
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
+msgstr "Ctrl+"
 
-#: src/bin/media.c:808
-#, c-format
-msgid "Could not Initialize the emotion module '%s'"
-msgstr "No s'ha pogut inicialitzar el mòdul emotion '%s'"
+#: src/bin/options_keys.c:67
+msgid "Alt+"
+msgstr "Alt+"
 
-#: src/bin/media.c:1348 src/bin/termpty.c:636 src/bin/termpty.c:641
-#: src/bin/termpty.c:645
-#, c-format
-msgid "Function %s failed: %s"
-msgstr "La funció %s ha fallat: %s"
+#: src/bin/options_keys.c:68
+msgid "Shift+"
+msgstr "Maj+"
 
-#: src/bin/media.c:1445
-msgid "Media visualizing is not supported"
-msgstr "La visualització multimèdia no està implementada"
+#: src/bin/options_keys.c:69
+msgid "Win+"
+msgstr "Win+"
 
-#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
-#, c-format
-msgid "memerr: %s"
-msgstr "memerr: %s"
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
 
-#: src/bin/termpty.c:224
-#, c-format
-msgid "Size set ioctl failed: %s"
-msgstr "Establiment de mida ioctl ha fallat: %s"
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Hyper+"
 
-#: src/bin/termpty.c:358
-#, c-format
-msgid "Could not write to file descriptor %d: %s"
-msgstr "No s'ha pogut escriure al descriptor de fitxer %d: %s"
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr "Suprimeix"
 
-#: src/bin/termpty.c:612
-#, c-format
-msgid "Could not find shell, falling back to %s"
-msgstr "No s'ha trobat intèrpret d'ordres, es retorna a %s"
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "Premi la seqüència de tecles"
 
-#: src/bin/termpty.c:652
-#, c-format
-msgid "open() of pty '%s' failed: %s"
-msgstr "open() de pty '%s' ha fallat: %s"
+#: src/bin/options_keys.c:385
+msgid "Key Bindings"
+msgstr "Dreceres de teclat"
 
-#: src/bin/termpty.c:659 src/bin/termpty.c:665
-#, c-format
-msgid "fcntl() on pty '%s' failed: %s"
-msgstr "fcntl() a pty '%s' ha fallat: %s"
-
-#: src/bin/termpty.c:674
-#, c-format
-msgid "ioctl() on pty '%s' failed: %s"
-msgstr "ioctl() a pty '%s' ha fallat: %s"
-
-#: src/bin/termpty.c:718 src/bin/termpty.c:726 src/bin/termpty.c:735
-#, c-format
-msgid "Could not change current directory to '%s': %s"
-msgstr "No s'ha pogut canviar el directori actual a '%s': %s"
-
-#: src/bin/win.c:417
-msgid ""
-"The scale configuration can be changed in the Settings (right click on the "
-"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
-"keyword>."
-msgstr ""
-
-#: src/bin/win.c:422
-msgid "Done"
-msgstr ""
-
-#: src/bin/win.c:2270
-msgid "Ecore IMF failed"
-msgstr "Ecore IMF ha fallat"
-
-#: src/bin/win.c:6091 src/bin/controls.c:413
+#: src/bin/options_keys.c:457
 #, fuzzy
-msgid "Set title"
-msgstr "Anomena la finestra."
+msgid "Reset bindings"
+msgstr "Dreceres de teclat"
 
-#: src/bin/win.c:6095
-msgid "Ok"
+#: src/bin/options_mouse.c:167
+msgid "Focus split under the Mouse"
+msgstr "Divisió de focus sota el ratolí"
+
+#: src/bin/options_mouse.c:168
+msgid "Focus-related visuals"
 msgstr ""
 
-#: src/bin/win.c:6100
-msgid "Cancel"
+#: src/bin/options_mouse.c:174
+msgid "Auto hide the mouse cursor when idle:"
 msgstr ""
 
-#: src/bin/win.c:7286
-msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
-"No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "
-"install'."
+#: src/bin/options_mouse.c:204
+#, fuzzy
+msgid "Active Links:"
+msgstr "Enllaços actius"
 
-#: src/bin/controls.c:372
-msgid "Controls"
-msgstr "Controls"
-
-#: src/bin/controls.c:388
-msgid "New"
-msgstr "Nou"
-
-#: src/bin/controls.c:395
-msgid "Split V"
-msgstr "Divideix V"
-
-#: src/bin/controls.c:399
-msgid "Split H"
-msgstr "Divideix H"
-
-#: src/bin/controls.c:406
-msgid "Miniview"
-msgstr "Minivista"
-
-#: src/bin/controls.c:430
-msgid "Paste"
-msgstr "Enganxa"
-
-#: src/bin/controls.c:436
-msgid "Settings"
-msgstr "Paràmetres"
-
-#: src/bin/controls.c:442
-msgid "About"
-msgstr "Quant a"
-
-#: src/bin/controls.c:451
-msgid "Grouped input"
+#: src/bin/options_mouse.c:208
+msgid "On emails"
 msgstr ""
 
-#: src/bin/controls.c:463
-msgid "Close Terminal"
-msgstr "Tanca el terminal"
+#: src/bin/options_mouse.c:209
+msgid "On file paths"
+msgstr ""
 
-#: src/bin/utils.c:48 src/bin/utils.c:74
-#, c-format
-msgid "Could not load any theme for group=%s: %s"
-msgstr "No s'ha pogut carregar cap tema pel grup=%s: %s"
+#: src/bin/options_mouse.c:210
+msgid "On URLs"
+msgstr ""
 
-#: src/bin/utils.c:91
-#, c-format
-msgid "Could not load default theme for group=%s: %s"
-msgstr "No s'ha pogut carregar el tema predeterminat pel grup=%s: %s"
+#: src/bin/options_mouse.c:211
+#, fuzzy
+msgid "On colors"
+msgstr "Colors"
+
+#: src/bin/options_mouse.c:212
+msgid "Based on escape codes"
+msgstr ""
+
+#: src/bin/options_mouse.c:213
+msgid "Gravatar integration"
+msgstr "Integració amb Gravatar"
+
+#: src/bin/options_mouse.c:215
+msgid "Drag & drop links"
+msgstr "Enllaços de'arrossega i deixa anar"
+
+#: src/bin/options_mouse.c:221
+msgid "Inline if possible"
+msgstr "En línia si és possible"
+
+#: src/bin/options_mouse.c:265
+msgid "E-mail:"
+msgstr "Correu electrònic:"
+
+#: src/bin/options_mouse.c:269
+msgid "URL (Images):"
+msgstr "URL (Imatges):"
+
+#: src/bin/options_mouse.c:270
+msgid "URL (Video):"
+msgstr "URL (Vídeo):"
+
+#: src/bin/options_mouse.c:271
+msgid "URL (All):"
+msgstr "URL (Tot):"
+
+#: src/bin/options_mouse.c:274
+msgid "Local (Images):"
+msgstr "Local (Imatges):"
+
+#: src/bin/options_mouse.c:275
+msgid "Local (Video):"
+msgstr "Local (Vídeo):"
+
+#: src/bin/options_mouse.c:276
+msgid "Local (All):"
+msgstr "Local (Tot):"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -1044,37 +991,149 @@ msgstr "No s'ha pogut llegir el fitxer de fons de pantalla: %s"
 msgid "Unknown command: %s"
 msgstr "Ordre desconeguda: %s"
 
-#: src/bin/options_video.c:58 src/bin/options.c:225
-msgid "Video"
-msgstr "Vídeo"
+#: src/bin/termio.c:390
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr "No s'ha pogut obtenir el directori de treball amb pid %i: %s"
 
-#: src/bin/options_video.c:72
-msgid "Audio muted"
-msgstr "Àudio silenciat"
+#: src/bin/termio.c:405
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr "No s'ha pogut carregar el directori de treball %s: %s"
 
-#: src/bin/options_video.c:85
-msgid "Audio visualized"
-msgstr "Es visualitza àudio"
+#: src/bin/termio.c:1123
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "format de selecció no permès '%s'"
 
-#: src/bin/options_video.c:102
-msgid "Video Engine:"
-msgstr "Motor de vídeo:"
+#: src/bin/termio.c:1283
+msgid "Preview"
+msgstr "Previsualitza"
 
-#: src/bin/options_video.c:109
-msgid "Automatic"
-msgstr "Automàtic"
+#: src/bin/termio.c:1293
+msgid "Copy relative path"
+msgstr ""
 
-#: src/bin/options.c:192
-msgid "Options"
-msgstr "Opcions"
+#: src/bin/termio.c:1295
+msgid "Copy full path"
+msgstr ""
 
-#: src/bin/options.c:226
-msgid "Keys"
-msgstr "Tecles"
+#: src/bin/termio.c:2741
+msgid "Open as URL"
+msgstr ""
 
-#: src/bin/options.c:239
-msgid "Temporary"
-msgstr "Temporal"
+#: src/bin/termio.c:4145
+msgid "Could not allocate termpty"
+msgstr "No s'ha ubicat termpty"
+
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr "memerr: %s"
+
+#: src/bin/termpty.c:224
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr "Establiment de mida ioctl ha fallat: %s"
+
+#: src/bin/termpty.c:360
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr "No s'ha pogut escriure al descriptor de fitxer %d: %s"
+
+#: src/bin/termpty.c:614
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr "No s'ha trobat intèrpret d'ordres, es retorna a %s"
+
+#: src/bin/termpty.c:661
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr "open() de pty '%s' ha fallat: %s"
+
+#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr "fcntl() a pty '%s' ha fallat: %s"
+
+#: src/bin/termpty.c:683
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr "ioctl() a pty '%s' ha fallat: %s"
+
+#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr "No s'ha pogut canviar el directori actual a '%s': %s"
+
+#: src/bin/theme.c:74 src/bin/theme.c:110
+#, c-format
+msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
+msgstr ""
+
+#: src/bin/theme.c:82 src/bin/theme.c:117
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr "No s'ha pogut carregar cap tema pel grup=%s: %s"
+
+#: src/bin/theme.c:138
+#, c-format
+msgid "Could not load default theme for group=%s: %s"
+msgstr "No s'ha pogut carregar el tema predeterminat pel grup=%s: %s"
+
+#: src/bin/win.c:423
+msgid "Done"
+msgstr ""
+
+#: src/bin/win.c:439
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the "
+"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
+"keyword>"
+msgstr ""
+
+#: src/bin/win.c:2303
+msgid "Ecore IMF failed"
+msgstr "Ecore IMF ha fallat"
+
+#: src/bin/win.c:6195
+msgid "Ok"
+msgstr ""
+
+#: src/bin/win.c:6200
+msgid "Cancel"
+msgstr ""
+
+#: src/bin/win.c:7386
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr ""
+"No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "
+"install'"
+
+#~ msgid "Helpers"
+#~ msgstr "Ajudants"
+
+#~ msgid "Set emotion module to use."
+#~ msgstr "Estableix el mòdul emotion que s'utilitzarà."
+
+#, c-format
+#~ msgid "Could not Initialize the emotion module '%s'"
+#~ msgstr "No s'ha pogut inicialitzar el mòdul emotion '%s'"
+
+#~ msgid "Video"
+#~ msgstr "Vídeo"
+
+#~ msgid "Audio muted"
+#~ msgstr "Àudio silenciat"
+
+#~ msgid "Audio visualized"
+#~ msgstr "Es visualitza àudio"
+
+#~ msgid "Video Engine:"
+#~ msgstr "Motor de vídeo:"
+
+#~ msgid "Automatic"
+#~ msgstr "Automàtic"
 
 #~ msgid "Scrollback:"
 #~ msgstr "Desplaçament:"
