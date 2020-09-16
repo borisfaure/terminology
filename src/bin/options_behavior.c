@@ -519,9 +519,9 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, 0.0, 0.5);
    tooltip = _("Set the time of the animation that<br>"
-       "takes places on tab switches,<br>"
-       "be them by key binding, mouse<br>"
-       "wheel or tabs panel mouse move");
+       "takes places during tab switches,<br>"
+       "be those done due to key bindings or <br>"
+       "mouse wheel over the tabs panel");
    elm_object_tooltip_text_set(o, tooltip);
    elm_object_text_set(o, _("Tab zoom/switch animation time:"));
    elm_box_pack_end(bx, o);
