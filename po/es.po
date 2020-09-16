@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-15 19:51+0000\n"
+"PO-Revision-Date: 2020-09-16 20:34+0000\n"
 "Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
@@ -56,7 +56,7 @@ msgstr "Acerca de"
 
 #: src/bin/controls.c:455
 msgid "Grouped input"
-msgstr ""
+msgstr "Entrada agrupada"
 
 #: src/bin/controls.c:467
 msgid "Close Terminal"
@@ -84,15 +84,15 @@ msgstr "Desplazar una línea hacia abajo"
 
 #: src/bin/keyin.c:660
 msgid "Go to the top of the backlog"
-msgstr ""
+msgstr "Ir al principio del historial de desplazamiento"
 
 #: src/bin/keyin.c:661
 msgid "Reset scroll"
-msgstr ""
+msgstr "Restablecer desplazamiento"
 
 #: src/bin/keyin.c:663
 msgid "Copy/Paste"
-msgstr "Copiar/Pegar"
+msgstr "Copiar/pegar"
 
 #: src/bin/keyin.c:664
 msgid "Copy selection to Primary buffer"
@@ -206,7 +206,7 @@ msgstr "Cambiar a la pestaña 10"
 
 #: src/bin/keyin.c:691
 msgid "Change title"
-msgstr ""
+msgstr "Cambiar título"
 
 #: src/bin/termio.c:3975
 msgid "Could not allocate termpty"
@@ -394,7 +394,7 @@ msgstr "TERM= 'xterm-256 colores' en lugar de 'xterm'"
 
 #: src/bin/main.c:498
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Establecer factor de escala"
 
 #: src/bin/main.c:500
 #, fuzzy
@@ -403,7 +403,7 @@ msgstr "Resaltar enlaces"
 
 #: src/bin/main.c:502
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "No mostrar el asistente al iniciar"
 
 #: src/bin/main.c:528
 #, fuzzy
@@ -482,7 +482,7 @@ msgstr "Fondo"
 
 #: src/bin/options_background.c:584
 msgid "Shine:"
-msgstr ""
+msgstr "Lustre:"
 
 #: src/bin/options_background.c:608
 msgid "Translucent"
@@ -612,7 +612,7 @@ msgstr "Desplazar abajo al pulsar una tecla"
 
 #: src/bin/options_behavior.c:389
 msgid "React to key presses"
-msgstr "Reaccionar al pulsar una tecla"
+msgstr "Reaccionar al presionar teclas"
 
 #: src/bin/options_behavior.c:396
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
