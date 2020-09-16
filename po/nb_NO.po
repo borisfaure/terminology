@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-15 19:51+0000\n"
+"PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "terminology/terminology/nb_NO/>\n"
@@ -44,20 +44,20 @@ msgstr "Nettadresse (alle):"
 
 #: src/bin/options_helpers.c:352
 msgid "Local (Images):"
-msgstr ""
+msgstr "Lokale (bilder):"
 
 #: src/bin/options_helpers.c:377
 msgid "Local (Video):"
-msgstr ""
+msgstr "Lokal (video):"
 
 #: src/bin/options_helpers.c:402
 msgid "Local (All):"
-msgstr ""
+msgstr "Lokalt (alt):"
 
 #: src/bin/termio.c:350
-#, c-format
+#, c-format, fuzzy
 msgid "Could not get working directory of pid %i: %s"
-msgstr ""
+msgstr "Kunne ikke hente arbeidsområde for PID %i: %s"
 
 #: src/bin/termio.c:365
 #, c-format
@@ -94,8 +94,9 @@ msgid "Open as URL"
 msgstr "Åpne som nettadresse"
 
 #: src/bin/termio.c:3975
+#, fuzzy
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "Kunne ikke tildele «termpty»"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -131,11 +132,11 @@ msgstr "Tast inn sekvens"
 
 #: src/bin/options_keys.c:385
 msgid "Key Bindings"
-msgstr ""
+msgstr "Hurtigtaster"
 
 #: src/bin/options_keys.c:457
 msgid "Reset bindings"
-msgstr ""
+msgstr "Tilbakestill hurtigtaster"
 
 #: src/bin/options_background.c:163
 msgid "None"
@@ -158,12 +159,14 @@ msgid "Background"
 msgstr "Bakgrunn"
 
 #: src/bin/options_background.c:584
+#, fuzzy
 msgid "Shine:"
-msgstr ""
+msgstr "Gjenskinn:"
 
 #: src/bin/options_background.c:608 src/bin/options_behavior.c:656
+#, fuzzy
 msgid "Translucent"
-msgstr ""
+msgstr "Gjennomsiktig"
 
 #: src/bin/options_background.c:619 src/bin/options_background.c:620
 #, c-format
@@ -187,8 +190,9 @@ msgid "Other"
 msgstr "Annet"
 
 #: src/bin/options_background.c:693
+#, fuzzy
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Klikk for å bruke som bakgrunnsbilde"
 
 #: src/bin/options_elm.c:109 src/bin/options.c:228
 msgid "Toolkit"
@@ -201,6 +205,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>."
 msgstr ""
+"<em>Terminology</em> bruker <hilight>elementary</hilight>-"
+"verktøysettet.<br>Oppsett av verktøyssettsinnstillinger får du ved å kjøre "
+"<keyword>%s</keyword>."
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -214,13 +221,15 @@ msgstr "Størrelse"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:410
 msgid "Select preferred size so that this text is readable."
-msgstr ""
+msgstr "Velg foretrukken størrelse som gjør teksten lesbar."
 
 #: src/bin/options_elm.c:179
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel."
 msgstr ""
+"Størrelsesoppsett kan også endres gjennom <hilight>elementary</hilight> sitt "
+"oppsettspanel."
 
 #: src/bin/options_theme.c:154 src/bin/options.c:222
 msgid "Theme"
@@ -239,7 +248,7 @@ msgstr "%'d linjer"
 #: src/bin/options_behavior.c:105
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Tilbakerullingsminne (nåværende minnebruk: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:281
 msgid "Default cursor:"
@@ -247,27 +256,27 @@ msgstr "Forvalgt peker:"
 
 #: src/bin/options_behavior.c:290
 msgid "Blinking Block"
-msgstr ""
+msgstr "Blinkende tekstblokk"
 
 #: src/bin/options_behavior.c:308
 msgid "Steady Block"
-msgstr ""
+msgstr "Fast tekstblokk"
 
 #: src/bin/options_behavior.c:327
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Blinkende understrek"
 
 #: src/bin/options_behavior.c:346
 msgid "Steady Underline"
-msgstr ""
+msgstr "Fast underlinje"
 
 #: src/bin/options_behavior.c:365
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Blinkende felt"
 
 #: src/bin/options_behavior.c:384
 msgid "Steady Bar"
-msgstr ""
+msgstr "Fast felt"
 
 #: src/bin/options_behavior.c:423 src/bin/options.c:220
 msgid "Behavior"
@@ -279,7 +288,7 @@ msgstr "Rull til bunnen av nytt innhold"
 
 #: src/bin/options_behavior.c:467
 msgid "Scroll to bottom when a key is pressed"
-msgstr ""
+msgstr "Rull til bunnen når en tast trykkes"
 
 #: src/bin/options_behavior.c:478
 msgid "Active Links:"
@@ -299,56 +308,61 @@ msgid "On URLs"
 msgstr "På nettadresser"
 
 #: src/bin/options_behavior.c:485
+#, fuzzy
 msgid "Based on escape codes"
-msgstr ""
+msgstr "Baser på skiftesekvenser"
 
 #: src/bin/options_behavior.c:489
 msgid "React to key presses"
-msgstr ""
+msgstr "Reager på tastetrykk"
 
 #: src/bin/options_behavior.c:496
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Lydstøtte for tastetrykk <failure>avskrudd</failure>."
 
 #: src/bin/options_behavior.c:499
 msgid "Visual Bell"
-msgstr ""
+msgstr "Visuell ringeklokke"
 
 #: src/bin/options_behavior.c:500
 msgid "Bell rings"
-msgstr ""
+msgstr "Klokkering"
 
 #: src/bin/options_behavior.c:501
 msgid "Urgent Bell"
-msgstr ""
+msgstr "Hasteringeklokke"
 
 #: src/bin/options_behavior.c:502
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "Flere instanser, én prosess"
 
 #: src/bin/options_behavior.c:503
+#, fuzzy
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "Sett TERM til xterm-256color"
 
 #: src/bin/options_behavior.c:504
+#, fuzzy
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "Tilbakepil sender \"Delete\" (istedenfor rettetast)"
 
 #: src/bin/options_behavior.c:505
 msgid "Drag & drop links"
-msgstr ""
+msgstr "Dra og slipp lenker"
 
 #: src/bin/options_behavior.c:506
 msgid "Start as login shell"
-msgstr ""
+msgstr "Start som innloggingsskall"
 
 #: src/bin/options_behavior.c:507
+#, fuzzy
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "Fokus delt under musepeker"
 
 #: src/bin/options_behavior.c:508
+#, fuzzy
 msgid "Focus-related visuals"
-msgstr ""
+msgstr "Fokus-relaterte visualiseringer"
 
 #: src/bin/options_behavior.c:509
 msgid "Gravatar integration"
@@ -364,23 +378,25 @@ msgstr "Alltid vis minivisning"
 
 #: src/bin/options_behavior.c:512
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Skru på spesielle Terminology-skiftesekvenser"
 
 #: src/bin/options_behavior.c:513
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "Åpne nye terminaler i nåværende arbeidsområde"
 
 #: src/bin/options_behavior.c:514
+#, fuzzy
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Behandle emoji-er som dobbeltbreddetegn"
 
 #: src/bin/options_behavior.c:523
+#, fuzzy
 msgid "Always open at size:"
-msgstr ""
+msgstr "Alltid åpen i størrelse:"
 
 #: src/bin/options_behavior.c:533
 msgid "Set Current:"
-msgstr ""
+msgstr "Sett nåværende:"
 
 #: src/bin/options_behavior.c:544
 msgid "Width:"
@@ -391,14 +407,18 @@ msgid "Height:"
 msgstr "Høyde:"
 
 #: src/bin/options_behavior.c:625
+#, fuzzy
 msgid "Tab zoom/switch animation time:"
-msgstr ""
+msgstr "Faneforstørrelse/bytt animasjonstid:"
 
 #: src/bin/options_behavior.c:626
+#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places on tab switches,<br>be "
 "them by key binding, mouse<br>wheel or tabs panel mouse move"
 msgstr ""
+"Sett varighet for animasjonen som<br>finner sted ved fanebytting,<br>ved "
+"hurtigtast, mus,<br>hjul, eller flytting av fanepanel med mus"
 
 #: src/bin/options_behavior.c:638 src/bin/options_behavior.c:639
 #: src/bin/options_behavior.c:670 src/bin/options_behavior.c:671
@@ -408,7 +428,7 @@ msgstr "%1.1f s"
 
 #: src/bin/options_behavior.c:657
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Autoskjul musepekeren ved lediggang:"
 
 #: src/bin/main.c:387 src/bin/main.c:589
 msgid "Could not create window."
@@ -424,12 +444,14 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "© 2012-%d Carsten Haitzler og andre"
 
 #: src/bin/main.c:448
+#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries."
-msgstr ""
+msgstr "Terminalemulator skrevet med Enlightenment Foundation-bibliotekene."
 
 #: src/bin/main.c:452
+#, fuzzy
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr ""
+msgstr "Kommando å kjøre. Som forvalg $SHELL (eller passwd shell eller /bin/sh)"
 
 #: src/bin/main.c:454
 msgid "Change to directory for execution of terminal command."
@@ -480,15 +502,15 @@ msgstr ""
 
 #: src/bin/main.c:480
 msgid "Run the shell as a login shell."
-msgstr ""
+msgstr "Kjør skallet som innloggingsskall."
 
 #: src/bin/main.c:482
 msgid "Set mute mode for video playback."
-msgstr ""
+msgstr "Sett forstummingsmodus for videoavspilling."
 
 #: src/bin/main.c:484
 msgid "Set cursor blink mode."
-msgstr ""
+msgstr "Sett pekerblinkemodus."
 
 #: src/bin/main.c:486
 msgid "Set visual bell mode."
@@ -532,68 +554,70 @@ msgstr ""
 
 #: src/bin/main.c:506
 msgid "Set scaling factor."
-msgstr ""
+msgstr "Sett skaleringsfaktor."
 
 #: src/bin/main.c:508
 msgid "Highlight links."
-msgstr ""
+msgstr "Framhev lenker."
 
 #: src/bin/main.c:510
+#, fuzzy
 msgid "Do not display wizard on start up."
-msgstr ""
+msgstr "Ikke vis veiviser ved programoppstart."
 
 #: src/bin/main.c:536
 msgid "show program version."
-msgstr ""
+msgstr "vis programversjon."
 
 #: src/bin/main.c:539
 msgid "show copyright."
-msgstr ""
+msgstr "vis opphavsrettinfo."
 
 #: src/bin/main.c:542
 msgid "show license."
-msgstr ""
+msgstr "vis lisens."
 
 #: src/bin/main.c:545
 msgid "show this message."
-msgstr ""
+msgstr "vis denne meldingen."
 
 #: src/bin/main.c:642
 msgid "invalid argument found for option -S/--split. See --help."
-msgstr ""
+msgstr "Ugyldig argument for valget S/--split. Sjekk --help."
 
 #: src/bin/main.c:896
 msgid "Could not initialize key bindings."
-msgstr ""
+msgstr "Kunne ikke igangsette hurtigtaster."
 
 #: src/bin/main.c:911
+#, fuzzy
 msgid "Could not parse command line options."
-msgstr ""
+msgstr "Kunne ikke fortolke kommandolinjeinnstillinger."
 
 #: src/bin/main.c:935
 #, c-format
 msgid "option %s requires an argument!"
-msgstr ""
+msgstr "innstillingen %s krever et argument!"
 
 #: src/bin/main.c:936
 msgid "invalid options found. See --help."
-msgstr ""
+msgstr "Ugyldig innstilling funnet. Sjekk --help."
 
 #: src/bin/options_colors.c:12
 msgid "Default"
-msgstr ""
+msgstr "Forvalg"
 
 #: src/bin/options_colors.c:13
 msgid "Black"
-msgstr ""
+msgstr "Svart"
 
 #: src/bin/options_colors.c:14
 msgid "Red"
-msgstr ""
+msgstr "Rød"
 
 #: src/bin/options_colors.c:15
 msgid "Green"
-msgstr ""
+msgstr "Grønn"
 
 #: src/bin/options_colors.c:16
 msgid "Yellow"
@@ -701,7 +725,7 @@ msgstr ""
 
 #: src/bin/keyin.c:667
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "Inndelinger/faner"
 
 #: src/bin/keyin.c:668
 msgid "Focus the previous terminal"
@@ -795,7 +819,7 @@ msgstr "Endre tittel"
 
 #: src/bin/keyin.c:690 src/bin/keyin.c:691
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Veksle hvorvidt inndata går til alle synlige terminaler"
 
 #: src/bin/keyin.c:694
 msgid "Font size"
@@ -813,7 +837,7 @@ msgstr "Skriftstørrelse -1"
 
 #: src/bin/keyin.c:697
 msgid "Display big font size"
-msgstr ""
+msgstr "Vis stor skriftstørrelse"
 
 #: src/bin/keyin.c:698
 msgid "Reset font size"
@@ -881,9 +905,9 @@ msgid "Media visualizing is not supported"
 msgstr "Mediavisualisering støttes ikke"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
-#, c-format
+#, c-format, fuzzy
 msgid "memerr: %s"
-msgstr ""
+msgstr "Minnefeil: %s"
 
 #: src/bin/termpty.c:224
 #, c-format
@@ -986,21 +1010,21 @@ msgstr "Om"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Gruppert inndata"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Lukk terminal"
 
 #: src/bin/utils.c:48 src/bin/utils.c:74
-#, c-format
+#, c-format, fuzzy
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Kunne ikke laste inn noen drakt for gruppen=%s: %s"
 
 #: src/bin/utils.c:91
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
-msgstr ""
+msgstr "Kunne ikke laste inn forvalgt drakt for gruppe=%s: %s"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -1013,9 +1037,9 @@ msgid "Unknown grid size command: %s"
 msgstr "Ukjent rutenettsstørrelseskommando: %s"
 
 #: src/bin/termcmd.c:146
-#, c-format
+#, c-format, fuzzy
 msgid "Background file could not be read: %s"
-msgstr ""
+msgstr "Kunne ikke lese bakgrunnsflis: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
@@ -1028,7 +1052,7 @@ msgstr "Video"
 
 #: src/bin/options_video.c:72
 msgid "Audio muted"
-msgstr ""
+msgstr "Lyd forstummet"
 
 #: src/bin/options_video.c:85
 #, fuzzy
