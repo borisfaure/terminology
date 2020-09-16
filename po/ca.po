@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-15 19:51+0000\n"
-"Last-Translator: Xavi Artigas <xavierartigas@yahoo.es>\n"
+"PO-Revision-Date: 2020-09-16 21:34+0000\n"
+"Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
 "terminology/ca/>\n"
 "Language: ca\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: src/bin/termio.c:1224
 #, fuzzy, c-format
 msgid "Copy '%s'"
-msgstr "Còpia"
+msgstr "Còpia '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -407,10 +407,11 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler i altres"
 
 #: src/bin/main.c:448
+#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
-"L'emulador de terminal ha estat escrit amb les les biblioteques "
-"d'Enlightenment Foundation"
+"L'emulador de terminal ha estat escrit amb les biblioteques d'Enlightenment "
+"Foundation"
 
 #: src/bin/main.c:452
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -710,9 +711,8 @@ msgid "Focus split under the Mouse"
 msgstr "Divisió de focus sota el ratolí"
 
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
-msgstr "Enllaços actius"
+msgstr "Enllaços Actius:"
 
 #: src/bin/keyin.c:689
 msgid "Change title"
@@ -850,8 +850,6 @@ msgstr "No s'ha pogut canviar el directori actual a '%s': %s"
 #, c-format
 msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
 msgstr ""
-"La escala pot ser canviada en el menú de Configuració (botó dret al terminal)"
-" →  Eines, or executant la comanda <keyword>elementary_config</keyword>"
 
 #: src/bin/theme.c:82 src/bin/theme.c:117
 #, c-format
@@ -887,6 +885,7 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #: src/bin/win.c:7386
+#, fuzzy
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "

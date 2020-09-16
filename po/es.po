@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-16 20:34+0000\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
+"PO-Revision-Date: 2020-09-16 21:34+0000\n"
+"Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
 "Language: es\n"
@@ -552,7 +552,7 @@ msgstr ""
 #: src/bin/options_behavior.c:217
 #, fuzzy
 msgid "Default cursor:"
-msgstr "Predeterminado"
+msgstr "Predeterminado:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
@@ -870,7 +870,7 @@ msgstr ""
 #: src/bin/options_mouse.c:204
 #, fuzzy
 msgid "Active Links:"
-msgstr "Enlaces activos"
+msgstr "Enlaces activos:"
 
 #: src/bin/options_mouse.c:211
 #, fuzzy

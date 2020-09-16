@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-15 20:44+0200\n"
-"PO-Revision-Date: 2020-09-16 20:34+0000\n"
-"Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
+"PO-Revision-Date: 2020-09-16 21:34+0000\n"
+"Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
 "Language: fr\n"
@@ -23,9 +23,9 @@ msgstr ""
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Copier"
+msgstr "Copier « %s »"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -106,7 +106,7 @@ msgstr "Fermer le terminal"
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "IImpossible de créer le domaine de connexion « %s »"
+msgstr "Impossible de créer le domaine de journalisation « %s »"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
@@ -306,10 +306,10 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "© 2012-%d Carsten Haitzler et coll."
 
 #: src/bin/main.c:443
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
-"Émulateur de terminal écrit avec les Enlightenment Foundation Libraries"
+"Émulateur de terminal écrit avec les bibliothèques Enlightenment Foundation "
+"Libraries"
 
 #: src/bin/main.c:447
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -386,17 +386,14 @@ msgid "Go into an iconic state from the start"
 msgstr "Lancer en mode iconifié"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Become a borderless managed window"
 msgstr "Transformer en fenêtre gérée sans bordure"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Become an override-redirect window"
 msgstr "Transformer la fenêtre avec l'attribut override-redirect"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid "Become maximized from the start"
 msgstr "Transformer en fenêtre maximisée au lancement"
 
