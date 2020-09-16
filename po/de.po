@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-15 19:51+0000\n"
-"Last-Translator: Marcel Hollerbach <mail@bu5hm4n.de>\n"
+"PO-Revision-Date: 2020-09-16 20:34+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
 "terminology/de/>\n"
 "Language: de\n"
@@ -24,9 +24,9 @@ msgstr ""
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopieren"
+msgstr "Copia «%s»"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -34,11 +34,11 @@ msgstr "Öffnen"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "YouTube-Kanal"
 
 #: src/bin/about.c:289
 #, c-format
@@ -105,7 +105,7 @@ msgid "Close Terminal"
 msgstr "Terminal schließen"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Protokollierungsdomäne „%s“ konnte nicht erstellt werden"
 
@@ -294,12 +294,10 @@ msgid "Display the command box"
 msgstr "Befehlsfenster anzeigen"
 
 #: src/bin/main.c:387 src/bin/main.c:581
-#, fuzzy
 msgid "Could not create window"
 msgstr "Fenster konnte nicht erstellt werden"
 
 #: src/bin/main.c:406 src/bin/main.c:592
-#, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Terminal-Widget konnte nicht erstellt werden"
 
@@ -948,7 +946,7 @@ msgstr "Im Terminal, wenn möglich"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr "E-mail:"
+msgstr "E-Mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"

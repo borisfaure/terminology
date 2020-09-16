@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-15 20:44+0200\n"
-"PO-Revision-Date: 2020-09-14 21:03+0000\n"
-"Last-Translator: Boris Faure <billiob@gmail.com>\n"
+"PO-Revision-Date: 2020-09-16 20:34+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
 "Language: fr\n"
@@ -701,7 +701,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:526
 msgid "Tab zoom/switch animation time:"
-msgstr "Durée de l'animation du zoom / basculement :"
+msgstr "Durée de l'animation du zoom / basculement :"
 
 #: src/bin/options_behavior.c:534 src/bin/options_behavior.c:535
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187

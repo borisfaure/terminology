@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-12 00:15+0200\n"
-"PO-Revision-Date: 2020-09-15 19:51+0000\n"
-"Last-Translator: Boris Faure <billiob@gmail.com>\n"
+"PO-Revision-Date: 2020-09-16 20:34+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
 "terminology/it/>\n"
 "Language: it\n"
@@ -21,9 +21,9 @@ msgstr ""
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Copia"
+msgstr "Copia «%s»"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -31,11 +31,11 @@ msgstr "Apri"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "Canale YouTube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -102,13 +102,13 @@ msgid "Close Terminal"
 msgstr "Chiudi terminale"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Non ho potuto creare il dominio di logging '%s'"
+msgstr "Non ho potuto creare il dominio di accesso «%s»"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
-msgstr "Scrolling"
+msgstr "Scorrimento"
 
 #: src/bin/keyin.c:656
 msgid "Scroll one page up"
@@ -291,12 +291,10 @@ msgid "Display the command box"
 msgstr "Visualizza il box comandi"
 
 #: src/bin/main.c:387 src/bin/main.c:581
-#, fuzzy
 msgid "Could not create window"
 msgstr "Non ho potuto creare la finestra"
 
 #: src/bin/main.c:406 src/bin/main.c:592
-#, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Non ho potuto creare l'oggetto del terminale"
 
@@ -935,7 +933,7 @@ msgstr "Link attivi:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr "Per email"
+msgstr "Per e-mail"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
