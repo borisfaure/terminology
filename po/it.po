@@ -1136,10 +1136,6 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Non trovo il tema di terminology! Avete dato il comando 'ninja install'?"
 
-#~ msgid "Select preferred size so that this text is readable."
-#~ msgstr ""
-#~ "Selezionare la dimensione preferita così che questo testo sia leggibile."
-
 #~ msgid "Helpers"
 #~ msgstr "Aiutanti"
 
