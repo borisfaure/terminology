@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"POT-Creation-Date: 2020-09-16 23:42+0200\n"
 "PO-Revision-Date: 2020-09-16 20:34+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
@@ -559,35 +559,7 @@ msgstr "Altro"
 msgid "Click on a picture to use it as background"
 msgstr "Cliccare su un'immagine per usarla come sfondo"
 
-#: src/bin/options_elm.c:122
-#, c-format
-msgid ""
-"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
-"toolkit configuration settings can be accessed by running <keyword>%s</"
-"keyword>."
-msgstr "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si può accedere alle impostazioni di configurazione del toolkit eseguendo <keyword>%s</keyword>."
-
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr "Lancia %s"
-
-#: src/bin/options_elm.c:172 src/bin/win.c:410
-msgid "Select preferred size so that this text is readable."
-msgstr "Selezionare la dimensione preferita così che questo testo sia leggibile."
-
-#: src/bin/options_elm.c:179
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel."
-msgstr "La configurazione della scala può essere impostata dal pannello di configurazione di <hilight>elementary</hilight>."
-
-#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
-#, c-format
-msgid "Could not create logging domain '%s'."
-msgstr "Non ho potuto creare il dominio di logging '%s'."
-
-#: src/bin/options_behavior.c:89
+#: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
 msgstr "%'d linee"
@@ -715,9 +687,10 @@ msgid "Height:"
 msgstr "Altezza:"
 
 #: src/bin/options_behavior.c:521
+#, fuzzy
 msgid ""
-"Set the time of the animation that<br>takes places on tab switches,<br>be "
-"them by key binding, mouse<br>wheel or tabs panel mouse move"
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 "Imposta la durata dell'animazione che<br>avviene quando si cambia scheda, "
 "sia che<br>lo si faccia da tastiera, rotella del<br>mouse o spostamento del "
@@ -843,6 +816,11 @@ msgstr ""
 "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si può "
 "accedere alle impostazioni di configurazione del toolkit eseguendo <keyword>"
 "%s</keyword>"
+
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
+msgstr "Lancia %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
 msgid "Scale"
@@ -1133,6 +1111,31 @@ msgstr "Annulla"
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Non trovo il tema di terminology! Avete dato il comando 'ninja install'?"
+
+#, c-format
+#~ msgid ""
+#~ "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit."
+#~ "<br>The toolkit configuration settings can be accessed by running "
+#~ "<keyword>%s</keyword>."
+#~ msgstr ""
+#~ "<em>Terminology</em> usa il toolkit <hilight>elementary</hilight>.<br>Si "
+#~ "può accedere alle impostazioni di configurazione del toolkit eseguendo "
+#~ "<keyword>%s</keyword>."
+
+#~ msgid "Select preferred size so that this text is readable."
+#~ msgstr ""
+#~ "Selezionare la dimensione preferita così che questo testo sia leggibile."
+
+#~ msgid ""
+#~ "The scale configuration can also be changed through <hilight>elementary</"
+#~ "hilight>'s configuration panel."
+#~ msgstr ""
+#~ "La configurazione della scala può essere impostata dal pannello di "
+#~ "configurazione di <hilight>elementary</hilight>."
+
+#, c-format
+#~ msgid "Could not create logging domain '%s'."
+#~ msgstr "Non ho potuto creare il dominio di logging '%s'."
 
 #~ msgid "Helpers"
 #~ msgstr "Aiutanti"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-15 20:44+0200\n"
+"POT-Creation-Date: 2020-09-16 23:42+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -678,8 +678,8 @@ msgstr "ऊंचाई:"
 
 #: src/bin/options_behavior.c:521
 msgid ""
-"Set the time of the animation that<br>takes places on tab switches,<br>be "
-"them by key binding, mouse<br>wheel or tabs panel mouse move"
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 
 #: src/bin/options_behavior.c:526

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-15 20:44+0200\n"
+"POT-Creation-Date: 2020-09-16 23:42+0200\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -314,8 +314,7 @@ msgstr "(C) 2012-%d Carsten Haitzler và những người khác"
 #: src/bin/main.c:443
 #, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr ""
-"Bộ mô phỏng terminal được viết bằng Enlightenment Foundation Libraries"
+msgstr "Bộ mô phỏng terminal được viết bằng Enlightenment Foundation Libraries"
 
 #: src/bin/main.c:447
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -694,9 +693,10 @@ msgid "Height:"
 msgstr "Chiều Cao:"
 
 #: src/bin/options_behavior.c:521
+#, fuzzy
 msgid ""
-"Set the time of the animation that<br>takes places on tab switches,<br>be "
-"them by key binding, mouse<br>wheel or tabs panel mouse move"
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 "Đặt thời gian cho chuyển động của tác vụ <br>chuyển thẻ,<br>gán phím, cuộn "
 "con trỏ<br> hoặc di chuyển con trỏ giữa các thẻ"

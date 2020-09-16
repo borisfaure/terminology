@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-12 00:15+0200\n"
+"POT-Creation-Date: 2020-09-16 23:42+0200\n"
 "PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,49 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.3-dev\n"
 
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
+#: src/bin/termio.c:1224
+#, c-format
+msgid "Copy '%s'"
+msgstr ""
+
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
 msgstr "Abrir"
 
-#: src/bin/options_helpers.c:236
-msgid "E-mail:"
-msgstr "Correo electrónico:"
+#: src/bin/about.c:273
+msgid "Twitter: @_Terminology_"
+msgstr ""
+
+#: src/bin/about.c:275
+msgid "Youtube channel"
+msgstr ""
+
+#: src/bin/about.c:289
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+
+#: src/bin/controls.c:376
+msgid "Controls"
+msgstr ""
+
+#: src/bin/controls.c:392
+msgid "New"
+msgstr ""
+
+#: src/bin/controls.c:399
+msgid "Split V"
+msgstr ""
+
+#: src/bin/controls.c:403
+msgid "Split H"
+msgstr ""
 
 #: src/bin/controls.c:410
 msgid "Miniview"
@@ -37,10 +73,9 @@ msgstr "Minivista"
 msgid "Set title"
 msgstr "Establecer título de la ventana"
 
-#: src/bin/termio.c:1079
-#, c-format
-msgid "unsupported selection format '%s'"
-msgstr "no se admite el formato de selección «%s»"
+#: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
+msgid "Copy"
+msgstr ""
 
 #: src/bin/controls.c:434
 msgid "Paste"
@@ -61,6 +96,11 @@ msgstr "Entrada agrupada"
 #: src/bin/controls.c:467
 msgid "Close Terminal"
 msgstr "Cerrar terminal"
+
+#: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
+#, c-format
+msgid "Could not create logging domain '%s'"
+msgstr "No se pudo crear el dominio de registros «%s»"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
@@ -208,9 +248,9 @@ msgstr "Cambiar a la pestaña 10"
 msgid "Change title"
 msgstr "Cambiar título"
 
-#: src/bin/termio.c:3975
-msgid "Could not allocate termpty"
-msgstr "No se pudo asignar «termpty»"
+#: src/bin/keyin.c:692 src/bin/keyin.c:693
+msgid "Toggle whether input goes to all visible terminals"
+msgstr ""
 
 #: src/bin/keyin.c:696
 msgid "Font size"
@@ -229,21 +269,31 @@ msgstr "Tamaño -1"
 msgid "Display big font size"
 msgstr "Mostrar fuente grande"
 
-#: src/bin/options_keys.c:70
-msgid "Meta+"
-msgstr "Meta+"
+#: src/bin/keyin.c:700
+#, fuzzy
+msgid "Reset font size"
+msgstr "Tamaño de fuente"
 
-#: src/bin/options_keys.c:71
-msgid "Hyper+"
-msgstr "Híper+"
+#: src/bin/keyin.c:702
+#, fuzzy
+msgid "Actions"
+msgstr "Preferencias"
+
+#: src/bin/keyin.c:703
+msgid "Open a new terminal window"
+msgstr ""
+
+#: src/bin/keyin.c:704
+msgid "Toggle Fullscreen of the window"
+msgstr ""
 
 #: src/bin/keyin.c:705
 msgid "Display the history miniview"
 msgstr "Mostrar minivista del historial"
 
-#: src/bin/options_keys.c:269
-msgid "Please press key sequence"
-msgstr "Presione una secuencia de teclas"
+#: src/bin/keyin.c:706
+msgid "Display the command box"
+msgstr ""
 
 #: src/bin/main.c:387 src/bin/main.c:581
 #, fuzzy
@@ -515,31 +565,7 @@ msgstr "Otro"
 msgid "Click on a picture to use it as background"
 msgstr "Doble clic en una imagen para importarla"
 
-#: src/bin/options_elm.c:134
-#, c-format
-msgid "Launch %s"
-msgstr "Iniciar %s"
-
-#: src/bin/options_elm.c:150 src/bin/win.c:367 src/bin/win.c:387
-msgid "Scale"
-msgstr "Escala"
-
-#: src/bin/options_elm.c:172 src/bin/win.c:410
-msgid "Select preferred size so that this text is readable"
-msgstr "Seleccione el tamaño que desee de modo que este texto sea legible"
-
-#: src/bin/options_elm.c:179
-msgid ""
-"The scale configuration can also be changed through <hilight>elementary</"
-"hilight>'s configuration panel"
-msgstr ""
-
-#: src/bin/miniview.c:41 src/bin/main.c:886 src/bin/gravatar.c:121
-#, c-format
-msgid "Could not create logging domain '%s'"
-msgstr "No se pudo crear el dominio de registros «%s»"
-
-#: src/bin/options_behavior.c:89
+#: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
 msgstr "%'d lineas"
@@ -566,33 +592,17 @@ msgstr ""
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:346
+#: src/bin/options_behavior.c:282
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:365
+#: src/bin/options_behavior.c:301
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:384
+#: src/bin/options_behavior.c:320
 msgid "Steady Bar"
 msgstr ""
-
-#: src/bin/options_behavior.c:482
-msgid "On emails"
-msgstr "En mensajes de correo electrónico"
-
-#: src/bin/options_behavior.c:483
-msgid "On file paths"
-msgstr "En rutas de archivos"
-
-#: src/bin/options_behavior.c:484
-msgid "On URLs"
-msgstr "En URL"
-
-#: src/bin/options_behavior.c:485
-msgid "Based on escape codes"
-msgstr "Según los códigos de escape"
 
 #: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
@@ -685,9 +695,10 @@ msgid "Height:"
 msgstr "Altura:"
 
 #: src/bin/options_behavior.c:521
+#, fuzzy
 msgid ""
-"Set the time of the animation that<br>takes places on tab switches,<br>be "
-"them by key binding, mouse<br>wheel or tabs panel mouse move"
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 "Establezca la duración de la animación<br>al cambiar entre pestañas, "
 "si<br>se producen después de un atajo de teclado, un giro<br>de la rueda del "
@@ -813,6 +824,25 @@ msgid ""
 "keyword>"
 msgstr ""
 
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
+msgstr "Iniciar %s"
+
+#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
+msgid "Scale"
+msgstr "Escala"
+
+#: src/bin/options_elm.c:172 src/bin/win.c:431
+msgid "Select preferred size so that this text is readable"
+msgstr "Seleccione el tamaño que desee de modo que este texto sea legible"
+
+#: src/bin/options_elm.c:180
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
+msgstr ""
+
 #: src/bin/options_font.c:491
 msgid "Bitmap"
 msgstr "Bitmap"
@@ -841,9 +871,21 @@ msgstr "Mayús+"
 msgid "Win+"
 msgstr "Win+"
 
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
+
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Híper+"
+
 #: src/bin/options_keys.c:82
 msgid "Delete"
 msgstr "Supr"
+
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr "Presione una secuencia de teclas"
 
 #: src/bin/options_keys.c:385
 msgid "Key Bindings"
@@ -872,10 +914,26 @@ msgstr ""
 msgid "Active Links:"
 msgstr "Enlaces activos:"
 
+#: src/bin/options_mouse.c:208
+msgid "On emails"
+msgstr "En mensajes de correo electrónico"
+
+#: src/bin/options_mouse.c:209
+msgid "On file paths"
+msgstr "En rutas de archivos"
+
+#: src/bin/options_mouse.c:210
+msgid "On URLs"
+msgstr "En URL"
+
 #: src/bin/options_mouse.c:211
 #, fuzzy
 msgid "On colors"
 msgstr "Colores"
+
+#: src/bin/options_mouse.c:212
+msgid "Based on escape codes"
+msgstr "Según los códigos de escape"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -888,6 +946,10 @@ msgstr "Arrastrar y soltar enlaces"
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
 msgstr "De la línea si es posible"
+
+#: src/bin/options_mouse.c:265
+msgid "E-mail:"
+msgstr "Correo electrónico:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
@@ -943,6 +1005,11 @@ msgstr "No se pudo obtener el directorio de trabajo del pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "No se pudo cargar el directorio de trabajo %s: %s"
 
+#: src/bin/termio.c:1123
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "no se admite el formato de selección «%s»"
+
 #: src/bin/termio.c:1283
 msgid "Preview"
 msgstr "Previsualización"
@@ -958,6 +1025,10 @@ msgstr ""
 #: src/bin/termio.c:2741
 msgid "Open as URL"
 msgstr ""
+
+#: src/bin/termio.c:4145
+msgid "Could not allocate termpty"
+msgstr "No se pudo asignar «termpty»"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
