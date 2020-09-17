@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-16 23:42+0200\n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
 "PO-Revision-Date: 2020-09-17 19:43+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -347,7 +347,8 @@ msgid "Set icon name"
 msgstr "Задать название иконки"
 
 #: src/bin/main.c:465
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+#, fuzzy
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Задать шрифт (НАЗВАНИЕ/РАЗМЕР для векторного, НАЗВАНИЕ для растрового)"
 
 #: src/bin/main.c:467
@@ -801,8 +802,8 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"Масштаб можно также изменить в панели конфигурации "
-"<hilight>elementary</hilight>"
+"Масштаб можно также изменить в панели конфигурации <hilight>elementary</"
+"hilight>"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
@@ -1054,8 +1055,8 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"Масштаб можно изменить в Настройках (клик правой кнопкой мыши по терминалу) →"
-"  Фреймворк, или запустив команду <keyword>elementary_config</keyword>"
+"Масштаб можно изменить в Настройках (клик правой кнопкой мыши по терминалу) "
+"→  Фреймворк, или запустив команду <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2303
 msgid "Ecore IMF failed"

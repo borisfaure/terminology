@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-16 23:42+0200\n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
 "PO-Revision-Date: 2020-09-16 20:34+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
@@ -356,7 +356,7 @@ msgstr "Imposta il nome dell'icona"
 
 #: src/bin/main.c:465
 #, fuzzy
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr ""
 "Imposta il carattere (NOME/DIMENSIONE per gli scalabili, NOME per i bitmap)"
 

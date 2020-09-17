@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-16 23:42+0200\n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -335,7 +335,7 @@ msgid "Set icon name"
 msgstr ""
 
 #: src/bin/main.c:465
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr ""
 
 #: src/bin/main.c:467

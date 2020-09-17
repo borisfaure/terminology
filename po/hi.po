@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-16 23:42+0200\n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -357,7 +357,7 @@ msgstr "आइकन नाम सेट करें"
 
 #: src/bin/main.c:465
 #, fuzzy
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "फ़ॉन्ट  सेट करें"
 
 #: src/bin/main.c:467

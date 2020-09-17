@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-16 23:42+0200\n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
@@ -348,7 +348,7 @@ msgid "Set icon name"
 msgstr "아이콘 이름 설정"
 
 #: src/bin/main.c:465
-msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr ""
 
 #: src/bin/main.c:467
