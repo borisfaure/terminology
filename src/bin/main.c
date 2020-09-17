@@ -462,7 +462,7 @@ static Ecore_Getopt options = {
       ECORE_GETOPT_STORE_STR ('i', "icon-name",
                               gettext_noop("Set icon name")),
       ECORE_GETOPT_STORE_STR ('f', "font",
-                              gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap")),
+                              gettext_noop("Set font (NAME/SIZE for scalable, NAME for bitmap)")),
       ECORE_GETOPT_STORE_STR ('S', "split",
                               gettext_noop("Split the terminal window."
                               " 'v' for vertical and 'h' for horizontal."
