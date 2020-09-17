@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-16 23:42+0200\n"
-"PO-Revision-Date: 2020-09-16 20:34+0000\n"
+"PO-Revision-Date: 2020-09-17 19:43+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
 "terminology/ru/>\n"
@@ -21,9 +21,9 @@ msgstr ""
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Копировать"
+msgstr "Копировать '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -31,11 +31,11 @@ msgstr "Открыть"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "Канал Youtube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -102,9 +102,9 @@ msgid "Close Terminal"
 msgstr "Закрыть терминал"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Невозможно создать окно."
+msgstr "Невозможно создать опрос домена '%s'"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
@@ -291,14 +291,12 @@ msgid "Display the command box"
 msgstr "Отобразить поле для команд"
 
 #: src/bin/main.c:387 src/bin/main.c:581
-#, fuzzy
 msgid "Could not create window"
-msgstr "Невозможно создать окно."
+msgstr "Не удалось создать окно"
 
 #: src/bin/main.c:406 src/bin/main.c:592
-#, fuzzy
 msgid "Could not create terminal widget"
-msgstr "Невозможно создать виджет терминала."
+msgstr "Не удалось создать виджет терминала"
 
 #: src/bin/main.c:441
 #, c-format
@@ -306,9 +304,10 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler и другие"
 
 #: src/bin/main.c:443
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr "Эмулятор терминала, основанный на Enlightenment Foundation Libraries."
+msgstr ""
+"Эмулятор терминала, написанный с использованием Enlightenment Foundation "
+"Libraries"
 
 #: src/bin/main.c:447
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -316,53 +315,42 @@ msgstr ""
 "Команда для выполнения. По умолчанию $SHELL (или passwd shell или /bin/sh)"
 
 #: src/bin/main.c:449
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr "Изменить каталог для выполнения команды терминала."
+msgstr "Изменить каталог для выполнения команды терминала"
 
 #: src/bin/main.c:451
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
-msgstr "Использовать указанную тему или путь к файлу темы."
+msgstr "Использовать указанную тему или путь к файлу темы"
 
 #: src/bin/main.c:453
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
-msgstr "Использовать указанный файл в качестве фона."
+msgstr "Использовать указанный файл в качестве фона"
 
 #: src/bin/main.c:455
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "Геометрия терминала (к пр. 80x24 или 80x24+50+20 и т.д.)."
+msgstr "Геометрия терминала (к пр. 80x24 или 80x24+50+20 и т.д.)"
 
 #: src/bin/main.c:457
-#, fuzzy
 msgid "Set window name"
-msgstr "Задать имя окна."
+msgstr "Задать имя окна"
 
 #: src/bin/main.c:459
-#, fuzzy
 msgid "Set window role"
-msgstr "Задать роль окна."
+msgstr "Задать роль окна"
 
 #: src/bin/main.c:461
-#, fuzzy
 msgid "Set window title"
-msgstr "Задать заголовок окна."
+msgstr "Задать заголовок окна"
 
 #: src/bin/main.c:463
-#, fuzzy
 msgid "Set icon name"
-msgstr "Задать название иконки."
+msgstr "Задать название иконки"
 
 #: src/bin/main.c:465
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap"
-msgstr ""
-"Задать шрифт (НАЗВАНИЕ/РАЗМЕР для векторного, НАЗВАНИЕ для растрового)."
+msgstr "Задать шрифт (НАЗВАНИЕ/РАЗМЕР для векторного, НАЗВАНИЕ для растрового)"
 
 #: src/bin/main.c:467
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -370,124 +358,101 @@ msgid ""
 msgstr ""
 "Разделить окно терминала. 'v' для вертикального и 'h' для горизонтального "
 "разделения. Может указываться несколько раз, к примеру -S vhvv или --split "
-"hv Подробное описание доступно в справочной странице (man)."
+"hv Подробное описание доступно в справочной странице (man)"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Запустить оболочку в качестве оболочки входа в систему."
+msgstr "Запустить оболочку в качестве оболочки входа в систему"
 
 #: src/bin/main.c:474
-#, fuzzy
 msgid "Set mute mode for video playback"
-msgstr "Задать беззвучный режим для воспроизведения видео."
+msgstr "Задать беззвучный режим для воспроизведения видео"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Set cursor blink mode"
-msgstr "Задать режим мигания курсора."
+msgstr "Задать режим мигания курсора"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set visual bell mode"
-msgstr "Задать режим визуального звукового сигнала."
+msgstr "Задать режим визуального звукового сигнала"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
-msgstr "Перейти в полноэкранный режим при запуске."
+msgstr "Перейти в полноэкранный режим при запуске"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Go into an iconic state from the start"
-msgstr "Запустить в свёрнутом виде."
+msgstr "Запустить в свёрнутом виде"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Become a borderless managed window"
-msgstr "Запустить в режиме окна без рамок."
+msgstr "Запустить в режиме окна без рамок"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Become an override-redirect window"
-msgstr "Запустить в режиме окна без рамок."
+msgstr "Запустить в окне без перенаправления в композит"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid "Become maximized from the start"
-msgstr "Развернуть на весь экран при запуске."
+msgstr "Развернуть на весь экран при запуске"
 
 #: src/bin/main.c:490
-#, fuzzy
 msgid "Terminology is run without a window manager"
-msgstr "Запустить Terminology без Window Manager."
+msgstr "Запустить Terminology без менеджера окон"
 
 #: src/bin/main.c:492
-#, fuzzy
 msgid "Do not exit when the command process exits"
-msgstr "Не выходить пока существует процесс команды."
+msgstr "Не выходить пока существует процесс команды"
 
 #: src/bin/main.c:494
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
-"Принудительно использовать один процесс если разрешено запускать несколько "
-"экземпляров."
+"Принудительно использовать один процесс, если разрешено запускать несколько "
+"экземпляров"
 
 #: src/bin/main.c:496
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "Установить переменную TERM как 'xterm-256color' вместо 'xterm'."
+msgstr "Установить переменную TERM как 'xterm-256color' вместо 'xterm'"
 
 #: src/bin/main.c:498
-#, fuzzy
 msgid "Set scaling factor"
-msgstr "Задать коэффициент масштабирования."
+msgstr "Задать коэффициент масштабирования"
 
 #: src/bin/main.c:500
-#, fuzzy
 msgid "Highlight links"
-msgstr "Подсвечивать ссылки."
+msgstr "Подсвечивать ссылки"
 
 #: src/bin/main.c:502
-#, fuzzy
 msgid "Do not display wizard on start up"
-msgstr "Не отображать мастер при запуске."
+msgstr "Не отображать мастер при запуске"
 
 #: src/bin/main.c:528
-#, fuzzy
 msgid "show program version"
-msgstr "показать версию программы."
+msgstr "показать версию программы"
 
 #: src/bin/main.c:531
-#, fuzzy
 msgid "show copyright"
-msgstr "показать copyright."
+msgstr "показать copyright"
 
 #: src/bin/main.c:534
-#, fuzzy
 msgid "show license"
-msgstr "показать лицензию."
+msgstr "показать лицензию"
 
 #: src/bin/main.c:537
-#, fuzzy
 msgid "show this message"
-msgstr "показать это сообщение."
+msgstr "показать это сообщение"
 
 #: src/bin/main.c:634
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "неверный аргумент для параметра -S/--split. Смотрите --help."
+msgstr "неверный аргумент для параметра -S/--split. Смотрите --help"
 
 #: src/bin/main.c:887
-#, fuzzy
 msgid "Could not initialize key bindings"
-msgstr "Невозможно инициализировать привязки клавиш."
+msgstr "Не удалось инициализировать привязки клавиш"
 
 #: src/bin/main.c:902
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "Невозможно распознать параметры командной строки."
+msgstr "Не удалось распознать параметры командной строки"
 
 #: src/bin/main.c:926
 #, c-format
@@ -495,9 +460,8 @@ msgid "option %s requires an argument!"
 msgstr "параметр %s требует аргумент!"
 
 #: src/bin/main.c:927
-#, fuzzy
 msgid "invalid options found. See --help"
-msgstr "обнаружен неверный параметр. Смотрите --help."
+msgstr "обнаружен неверный параметр. Смотрите --help"
 
 #: src/bin/media.c:1333 src/bin/termpty.c:645 src/bin/termpty.c:650
 #: src/bin/termpty.c:654
@@ -515,7 +479,7 @@ msgstr "Нет"
 
 #: src/bin/options_background.c:498
 msgid "Source file is target file"
-msgstr ""
+msgstr "Исходный файл является целевым файлом"
 
 #: src/bin/options_background.c:511
 msgid "Picture imported"
@@ -540,7 +504,7 @@ msgstr "Прозрачность"
 #: src/bin/options_background.c:619 src/bin/options_background.c:620
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:639
 msgid "Select Path"
@@ -672,6 +636,8 @@ msgstr "Обрабатывать Emoji как символы двойной ши
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"При множественном вводе активировать его на всех терминалах, а не только на "
+"видимых"
 
 #: src/bin/options_behavior.c:419
 msgid "Always open at size:"
@@ -690,13 +656,12 @@ msgid "Height:"
 msgstr "Высота:"
 
 #: src/bin/options_behavior.c:521
-#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Задаёт время анимации при<br>переключении вкладок<br>привязками клавиш, "
-"колёсиком<br>мыши или перетаскиванием мышью<br>на панели вкладок"
+"Задаёт время анимации при<br>переключении вкладок<br>привязками клавиш или "
+"колёсиком<br>мыши на панели вкладок"
 
 #: src/bin/options_behavior.c:526
 msgid "Tab zoom/switch animation time:"
@@ -714,7 +679,7 @@ msgstr "Настройки"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Мышь"
 
 #: src/bin/options.c:219 src/bin/options_font.c:425
 msgid "Font"
@@ -734,7 +699,7 @@ msgstr "Горячие клавиши"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Фреймворк"
 
 #: src/bin/options.c:235
 msgid "Temporary"
@@ -809,14 +774,14 @@ msgid "Reset all the colors"
 msgstr "Сбросить все цвета"
 
 #: src/bin/options_elm.c:122
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
 "<em>Terminology</em> использует набор элементов <hilight>elementary</"
-"hilight>.<br>Настроить набор элементов можно командой <keyword>%s</keyword>."
+"hilight>.<br>Настроить набор элементов можно командой <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -828,18 +793,16 @@ msgid "Scale"
 msgstr "Масштаб"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:431
-#, fuzzy
 msgid "Select preferred size so that this text is readable"
-msgstr "Выберите предпочтительный размер, чтобы текст был читаемым."
+msgstr "Выберите предпочтительный размер, чтобы текст был читаемым"
 
 #: src/bin/options_elm.c:180
-#, fuzzy
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"Масштаб можно также изменить в панели конфигурации <hilight>elementary</"
-"hilight>."
+"Масштаб можно также изменить в панели конфигурации "
+"<hilight>elementary</hilight>"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
@@ -855,27 +818,27 @@ msgstr "Отображать жирный и кириллический в те�
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
-msgstr ""
+msgstr "Ctrl+"
 
 #: src/bin/options_keys.c:67
 msgid "Alt+"
-msgstr ""
+msgstr "Alt+"
 
 #: src/bin/options_keys.c:68
 msgid "Shift+"
-msgstr ""
+msgstr "Shift+"
 
 #: src/bin/options_keys.c:69
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:70
 msgid "Meta+"
-msgstr ""
+msgstr "Meta+"
 
 #: src/bin/options_keys.c:71
 msgid "Hyper+"
-msgstr ""
+msgstr "Hyper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
@@ -922,9 +885,8 @@ msgid "On URLs"
 msgstr "Для URL"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Цвета"
+msgstr "Для кодов цвета"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
@@ -944,7 +906,7 @@ msgstr "Встроить при возможности"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr ""
+msgstr "E-mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
@@ -973,32 +935,32 @@ msgstr "Локальные (Все):"
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "Неизвестная команда шрифта: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr ""
+msgstr "Неизвестная команда размера сетки: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr ""
+msgstr "Файл фона не может быть прочитан: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "Неизвестная команда: %s"
 
 #: src/bin/termio.c:390
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr "Невозможно получить рабочий каталог процесса %i: %s"
+msgstr "Не удалось получить рабочий каталог процесса %i: %s"
 
 #: src/bin/termio.c:405
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr "Невозможно загрузить рабочий каталог %s: %s"
+msgstr "Не удалось загрузить рабочий каталог %s: %s"
 
 #: src/bin/termio.c:1123
 #, c-format
@@ -1023,80 +985,81 @@ msgstr "Открыть как URL"
 
 #: src/bin/termio.c:4145
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "Невозможно выделить termpty"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "ошибка памяти: %s"
 
 #: src/bin/termpty.c:224
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "Не удалось установить размер ioctl: %s"
 
 #: src/bin/termpty.c:360
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "Не удалось записать в дескриптор файла %d: %s"
 
 #: src/bin/termpty.c:614
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "Не удалось найти оболочку, используется %s"
 
 #: src/bin/termpty.c:661
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "не удалось выполнить open() pty '%s': %s"
 
 #: src/bin/termpty.c:668 src/bin/termpty.c:674
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "не удалось выполнить fcntl() pty '%s': %s"
 
 #: src/bin/termpty.c:683
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "не удалось выполнить ioctl() pty '%s': %s"
 
 #: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr ""
+msgstr "Невозможно изменить текущий каталог на '%s': %s"
 
 #: src/bin/theme.c:74 src/bin/theme.c:110
 #, c-format
 msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
 msgstr ""
+"Не удалось найти файл темы: file=%s group=%s error='%s', используется тема "
+"по умолчанию"
 
 #: src/bin/theme.c:82 src/bin/theme.c:117
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Не удалось загрузить какую-либо тему для group=%s: %s"
 
 #: src/bin/theme.c:138
 #, c-format
 msgid "Could not load default theme for group=%s: %s"
-msgstr ""
+msgstr "Не удалось загрузить тему по умолчанию для group=%s: %s"
 
 #: src/bin/win.c:423
 msgid "Done"
 msgstr "Готово"
 
 #: src/bin/win.c:439
-#, fuzzy
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"Масштаб можно изменить в Настройках (клик правой кнопкой мыши по терминалу) "
-"→  Toolkit, или запустив команду <keyword>elementary_config</keyword>."
+"Масштаб можно изменить в Настройках (клик правой кнопкой мыши по терминалу) →"
+"  Фреймворк, или запустив команду <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2303
 msgid "Ecore IMF failed"
-msgstr ""
+msgstr "Ошибка Ecore IMF"
 
 #: src/bin/win.c:6195
 msgid "Ok"
@@ -1108,7 +1071,7 @@ msgstr "Отмена"
 
 #: src/bin/win.c:7386
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
+msgstr "Не удалось найти тему для terminology! Забыли 'ninja install'?"
 
 #~ msgid "Set emotion module to use."
 #~ msgstr "Задать используемый модуль emotion."
