@@ -12,10 +12,11 @@ This is an EFL terminal emulator with some extra bells and whistles.
 
 [![Coverity](https://scan.coverity.com/projects/terminology/badge.svg)](https://scan.coverity.com/projects/terminology)
 [![CircleCI](https://circleci.com/gh/billiob/terminology.svg?style=shield)](https://circleci.com/gh/billiob/terminology)
-[![codecov](https://codecov.io/gh/billiob/terminology/branch/master/graph/badge.svg)](https://codecov.io/gh/billiob/terminology)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/49a51811016a44279cb969af82cd246f)](https://www.codacy.com/app/billiob/terminology)
+[![Codecov](https://codecov.io/gh/billiob/terminology/branch/master/graph/badge.svg)](https://codecov.io/gh/billiob/terminology)
+[![Codacy](https://api.codacy.com/project/badge/Grade/49a51811016a44279cb969af82cd246f)](https://www.codacy.com/app/billiob/terminology)
 [![Twitter: _Terminology_](https://img.shields.io/twitter/follow/_Terminology_?style=social)](https://twitter.com/_Terminology_)
-[![terminology](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
+[![Snapcraft](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
+[![Weblate](https://hosted.weblate.org/widgets/terminology/-/terminology/svg-badge.svg)](https://hosted.weblate.org/engage/terminology/)
 
 Requirements
 ------------
