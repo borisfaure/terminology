@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2020-09-17 19:43+0000\n"
+"PO-Revision-Date: 2020-09-20 09:39+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
 "terminology/ru/>\n"
@@ -71,7 +71,7 @@ msgstr "Разделить H"
 
 #: src/bin/controls.c:410
 msgid "Miniview"
-msgstr "Мини-предпросмотр"
+msgstr "Мини-карта"
 
 #: src/bin/controls.c:417 src/bin/win.c:6191
 msgid "Set title"
@@ -284,7 +284,7 @@ msgstr "Переключить Полноэкранный режим окна"
 
 #: src/bin/keyin.c:705
 msgid "Display the history miniview"
-msgstr "Отобразить мини-предпросмотр истории"
+msgstr "Отобразить мини-карту истории"
 
 #: src/bin/keyin.c:706
 msgid "Display the command box"
@@ -347,7 +347,6 @@ msgid "Set icon name"
 msgstr "Задать название иконки"
 
 #: src/bin/main.c:465
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Задать шрифт (НАЗВАНИЕ/РАЗМЕР для векторного, НАЗВАНИЕ для растрового)"
 
@@ -748,11 +747,11 @@ msgstr "Невидимый"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
-msgstr "Инвертированный"
+msgstr "Инверсный"
 
 #: src/bin/options_colors.c:23
 msgid "Inverse Background"
-msgstr "Инвертированный фон"
+msgstr "Инверсный фон"
 
 #: src/bin/options_colors.c:270
 msgid "Normal"
@@ -815,7 +814,7 @@ msgstr "Обычные"
 
 #: src/bin/options_font.c:594
 msgid "Display bold and italic in the terminal"
-msgstr "Отображать жирный и кириллический в терминале"
+msgstr "Отображать жирный и курсивный в терминале"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -859,7 +858,7 @@ msgstr "Сбросить привязку клавиш"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
-msgstr "Переводить фокус разделения при наведении мыши"
+msgstr "Переводить фокус разделённого окна по наведению мыши"
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
@@ -887,7 +886,7 @@ msgstr "Для URL"
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
-msgstr "Для кодов цвета"
+msgstr "Для цветовых кодов"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
