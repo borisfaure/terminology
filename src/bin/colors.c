@@ -705,6 +705,58 @@ color_scheme_apply(Evas_Object *edje,
 #undef CS_SET
 }
 
+Color_Scheme *
+_color_scheme_from_file(const char *path, const char *name)
+{
+   Eet_File *ef;
+   Color_Scheme *cs;
+
+   ef = eet_open(path, EET_FILE_MODE_READ);
+   if (!ef)
+     return NULL;
+
+   cs = eet_data_read(ef, edd_cs, name);
+   eet_close(ef);
+
+   return cs;
+}
+
+Color_Scheme *
+color_scheme_get(const char *name)
+{
+   static char path_user[PATH_MAX] = "";
+   static char path_app[PATH_MAX] = "";
+   Color_Scheme *cs_user;
+   Color_Scheme *cs_app;
+
+   snprintf(path_user, sizeof(path_user) - 1,
+            "%s/terminology/" COLORSCHEMES_FILENAME,
+            efreet_config_home_get());
+
+   snprintf(path_app, sizeof(path_app) - 1,
+            "%s/" COLORSCHEMES_FILENAME,
+            elm_app_data_dir_get());
+
+
+   cs_user = _color_scheme_from_file(path_user, name);
+   cs_app = _color_scheme_from_file(path_app, name);
+
+   if (cs_user && cs_app)
+     {
+        /* Prefer user file */
+        if (cs_user->md.version >= cs_app->md.version)
+          return cs_user;
+        else
+          return cs_app;
+     }
+   else if (cs_user)
+     return cs_user;
+   else if (cs_app)
+     return cs_app;
+   else
+     return NULL;
+}
+
 void
 colors_init(void)
 {
