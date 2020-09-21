@@ -4,6 +4,52 @@
 #include "config.h"
 #include "colors.h"
 
+#define COLORSCHEMES_FILENAME "colorschemes.eet"
+#define COLORSCHEMES_VERSION  1
+
+#define CS(R,G,B) {.r = R, .g = G, .b = B, .a = 255}
+static Color_Scheme default_colorscheme =
+{
+   .version = COLORSCHEMES_VERSION,
+   .md = {
+        .version = 1,
+        .name = "default",
+        .author = gettext_noop("Terminology's developers"),
+        .website = "https://www.enlightenment.org/about-terminology",
+        .license = "BSD-2-Clause",
+   },
+   .def = CS(170, 170, 170), /* #aaaaaa */
+   .bg = CS(32, 32, 32), /* #202020 */
+   .fg = CS(170, 170, 170), /* #aaaaaa */
+   .main = CS(53, 153, 255), /* #3599ff */
+   .hl = CS(255,255,255), /* #ffffff */
+   .end_sel = CS(255,51,0), /* #ff3300 */
+   .tab_missed_1 = CS(255,153,51), /* #ff9933 */
+   .tab_missed_2 = CS(255,51,0), /* #ff3300 */
+   .tab_missed_3 = CS(255,0,0), /* #ff0000 */
+   .tab_missed_over_1 = CS(255,255,64), /* #ffff40 */
+   .tab_missed_over_2 = CS(255,153,51), /* #ff9933 */
+   .tab_missed_over_3 = CS(255,0,0), /* #ff0000 */
+   .tab_title_2 = CS(0,0,0), /* #000000 */
+   .ansi[0]  = CS(  0,   0,   0), /* #000000 */
+   .ansi[1]  = CS(204,  51,  51), /* #cc3333 */
+   .ansi[2]  = CS( 51, 204,  51), /* #33cc33 */
+   .ansi[3]  = CS(204, 136,  51), /* #cc8833 */
+   .ansi[4]  = CS( 51,  51, 204), /* #3333cc */
+   .ansi[5]  = CS(204,  51, 204), /* #cc33cc */
+   .ansi[6]  = CS( 51, 204, 204), /* #33cccc */
+   .ansi[7]  = CS(204, 204, 204), /* #cccccc */
+   .ansi[8]  = CS(102, 102, 102), /* #666666 */
+   .ansi[9]  = CS(255, 102, 102), /* #ff6666 */
+   .ansi[10] = CS(102, 255, 102), /* #66ff66 */
+   .ansi[11] = CS(255, 255, 102), /* #ffff66 */
+   .ansi[12] = CS(102, 102, 255), /* #6666ff */
+   .ansi[13] = CS(255, 102, 255), /* #ff66ff */
+   .ansi[14] = CS(102, 255, 255), /* #66ffff */
+   .ansi[15] = CS(255, 255, 255), /* #ffffff */
+};
+#undef CS
+
 static const Color default_colors[2][2][12] =
 {
    { // normal
@@ -726,6 +772,10 @@ colors_init(void)
 
    EET_DATA_DESCRIPTOR_ADD_ARRAY
      (edd_cs, Color_Scheme, "ansi", ansi, edd_color);
+
+#if ENABLE_NLS
+   default_colorscheme.md.author = gettext(default_colorscheme.md.author);
+#endif
 }
 
 void
