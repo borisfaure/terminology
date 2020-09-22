@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2020-09-20 09:39+0000\n"
+"PO-Revision-Date: 2020-09-22 14:49+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -627,7 +627,7 @@ msgstr "Toujours afficher la mini-vue"
 
 #: src/bin/options_behavior.c:410
 msgid "Enable special Terminology escape codes"
-msgstr "Activer les codes d'échappement spécifiques à Terminology"
+msgstr "Activer les séquences d'échappement spécifiques à Terminology"
 
 #: src/bin/options_behavior.c:411
 msgid "Treat Emojis as double-width characters"
@@ -891,7 +891,7 @@ msgstr "Pour les couleurs"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr "Codes d'échappement pour source"
+msgstr "Basé sur les séquences d'échappement"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -903,7 +903,7 @@ msgstr "Glisser-déposer les liens"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr "En ligne si possible"
+msgstr "À l'intérieur du terminal si possible"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
