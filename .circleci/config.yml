@@ -58,6 +58,23 @@ jobs:
             meson configure build
             cd build
             ninja -j4
+  build_minimal_gcc_efl-1_24:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-1.24.3-r2.apk /pkg/efl-dev-1.24.3-r2.apk
+      - run:
+          name: Compile with GCC
+          command: |
+            cd /terminology
+            meson . build
+            meson configure build
+            cd build
+            ninja -j4
   build_and_test_debug_gcc_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
@@ -182,6 +199,9 @@ workflows:
           requires:
             - checkout_code
       - build_minimal_gcc_efl-1_23:
+          requires:
+            - checkout_code
+      - build_minimal_gcc_efl-1_24:
           requires:
             - checkout_code
       - build_and_test_debug_gcc_efl_latest:
