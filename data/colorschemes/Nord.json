@@ -1,0 +1,41 @@
+{
+    "version": 1,
+    "md": {
+        "version": 1,
+        "name": "Nord",
+        "author": "Arctic Ice Studio",
+        "website": "https://git.io/nord",
+        "license": "MIT"
+    },
+    "def": "#d8dee9",
+    "bg": "#2e3440",
+    "fg": "#d8dee9",
+    "main": "#88c0d0",
+    "hl": "#ffffff",
+    "end_sel": "#ff3300",
+    "tab_missed_1": "#ff9933",
+    "tab_missed_2": "#ff3300",
+    "tab_missed_3": "#ff0000",
+    "tab_missed_over_1": "#ffff40",
+    "tab_missed_over_2": "#ff9933",
+    "tab_missed_over_3": "#ff0000",
+    "tab_title_2": "#000000",
+    "ansi": [
+        "#3b4252",
+        "#bf616a",
+        "#a3be8c",
+        "#ebcb8b",
+        "#81a1c1",
+        "#b48ead",
+        "#88c0d0",
+        "#e5e9f8",
+        "#4c566a",
+        "#bf616a",
+        "#a3be8c",
+        "#ebcb8b",
+        "#81a1c1",
+        "#b48ead",
+        "#8fbcbb",
+        "#eceff4"
+    ]
+}

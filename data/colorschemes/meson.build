@@ -1,6 +1,6 @@
 colorschemes_desc = [
-  'Nord.desc',
-  'PaperColor.desc',
+  'Nord.json',
+  'PaperColor.json',
 ]
 cs_builder = [join_paths(meson.source_root(),
                          'data', 'colorschemes', 'builder.sh'),
