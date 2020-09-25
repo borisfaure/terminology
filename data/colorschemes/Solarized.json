@@ -1,0 +1,41 @@
+{
+    "version": 1,
+    "md": {
+        "version": 1,
+        "name": "Solarized",
+        "author": "Ethan Schoonover",
+        "website": "https://ethanschoonover.com/solarized/",
+        "license": "MIT"
+    },
+    "def": "#839496",
+    "bg": "#002b36",
+    "fg": "#fdf6e3",
+    "main": "#3399ff",
+    "hl": "#ffffff",
+    "end_sel": "#ff0000",
+    "tab_missed_1": "#ff9933",
+    "tab_missed_2": "#ff3300",
+    "tab_missed_3": "#ff0000",
+    "tab_missed_over_1": "#ffff33",
+    "tab_missed_over_2": "#ff9933",
+    "tab_missed_over_3": "#ff0000",
+    "tab_title_2": "#000000",
+    "ansi": [
+        "#073642",
+        "#dc322f",
+        "#859900",
+        "#b58900",
+        "#268bd2",
+        "#d33682",
+        "#2aa198",
+        "#eee8d5",
+        "#002b36",
+        "#cb4b16",
+        "#586e75",
+        "#657b83",
+        "#839496",
+        "#6c71c4",
+        "#93a1a1",
+        "#fdf6e3"
+    ]
+}
