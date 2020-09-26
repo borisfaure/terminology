@@ -1,5 +1,6 @@
 colorschemes_desc = [
   'Nord.json',
+  'Ocean Dark.json',
   'PaperColor.json',
   'Solarized.json',
   'Solarized Light.json',
