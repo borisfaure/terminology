@@ -569,7 +569,6 @@ color_scheme_apply(Evas_Object *edje,
 {
    if (!eina_str_has_suffix(config->theme, "/nord.edj"))
      return;
-   ERR("edje:%p", edje);
 #define CS_BG       46,   52,  64, 255
 #define CS_FG       216, 222, 233, 255
 #define CS_MAIN     137, 152, 161, 255
