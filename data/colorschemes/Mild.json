@@ -1,0 +1,41 @@
+{
+    "version": 1,
+    "md": {
+        "version": 1,
+        "name": "Mild",
+        "author": "Terminology's developers",
+        "website": "https://www.enlightenment.org/about-terminology",
+        "license": "BSD-2-Clause"
+    },
+    "def": "#aaaaaa",
+    "bg": "#303030",
+    "fg": "#aaaaaa",
+    "main": "#dcdcdc",
+    "hl": "#ffffff",
+    "end_sel": "#ff0000",
+    "tab_missed_1": "#ff9933",
+    "tab_missed_2": "#ff3300",
+    "tab_missed_3": "#ff0000",
+    "tab_missed_over_1": "#ffff33",
+    "tab_missed_over_2": "#ff9933",
+    "tab_missed_over_3": "#ff0000",
+    "tab_title_2": "#000000",
+    "ansi": [
+        "#000000",
+        "#ff6565",
+        "#93d44f",
+        "#eab93d",
+        "#204a87",
+        "#ce5c00",
+        "#89b6e2",
+        "#cccccc",
+        "#555753",
+        "#ff8d8d",
+        "#c8e7a8",
+        "#ffc123",
+        "#3465a4",
+        "#f57900",
+        "#46a400",
+        "#ffffff"
+    ]
+}
