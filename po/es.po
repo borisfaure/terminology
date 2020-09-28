@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2020-09-16 21:34+0000\n"
-"Last-Translator: Boris Faure <billiob@gmail.com>\n"
+"PO-Revision-Date: 2020-09-28 16:40+0000\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
 "Language: es\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: src/bin/termio.c:1224
 #, c-format
 msgid "Copy '%s'"
-msgstr ""
+msgstr "Abrir «%s»"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -32,11 +32,11 @@ msgstr "Abrir"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "Canal de YouTube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -47,35 +47,40 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
+"<b>Terminology %s</b><br>¿Por qué los terminales habrían de ser "
+"aburridos?<br><br>Este terminal se escribió para Enlightenment, para "
+"utilizar EFL y para ampliar las fronteras de lo que representa un emulador "
+"de terminal moderno. Esperamos que lo disfrute.<br><br>Derechos de autor © "
+"2012-%d de:<br><br>%s<br><br>Distribuido en virtud de la licencia BSD de dos "
+"cláusulas que se detalla a continuación:<br><br>%s"
 
 #: src/bin/controls.c:376
 msgid "Controls"
-msgstr ""
+msgstr "Controles"
 
 #: src/bin/controls.c:392
 msgid "New"
-msgstr ""
+msgstr "Nuevo"
 
 #: src/bin/controls.c:399
 msgid "Split V"
-msgstr ""
+msgstr "Subdivisión vert."
 
 #: src/bin/controls.c:403
 msgid "Split H"
-msgstr ""
+msgstr "Subdivisión horiz."
 
 #: src/bin/controls.c:410
 msgid "Miniview"
 msgstr "Minivista"
 
 #: src/bin/controls.c:417 src/bin/win.c:6191
-#, fuzzy
 msgid "Set title"
-msgstr "Establecer título de la ventana"
+msgstr "Establecer título"
 
 #: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: src/bin/controls.c:434
 msgid "Paste"
@@ -194,7 +199,7 @@ msgstr "Dividir horizontalmente (nuevo a la derecha)"
 
 #: src/bin/keyin.c:678
 msgid "Create a new \"tab\""
-msgstr "Crear una nueva \"pestaña\""
+msgstr "Crear una «pestaña» nueva"
 
 #: src/bin/keyin.c:679
 msgid "Close the focused terminal"
@@ -202,7 +207,7 @@ msgstr "Cerrar la terminal enfocada"
 
 #: src/bin/keyin.c:680
 msgid "Bring up \"tab\" switcher"
-msgstr "Abrir conmutador de \"pestañas\""
+msgstr "Abrir conmutador de «pestañas»"
 
 #: src/bin/keyin.c:681
 msgid "Switch to terminal tab 1"
@@ -254,7 +259,7 @@ msgstr ""
 
 #: src/bin/keyin.c:696
 msgid "Font size"
-msgstr "Tamaño de fuente"
+msgstr "Tamaño de letra"
 
 # RR: Alternativa más corta que conserva espacio: "Tamaño +1". Además capta bien el registro del inglés.
 #: src/bin/keyin.c:697
@@ -267,25 +272,23 @@ msgstr "Tamaño -1"
 
 #: src/bin/keyin.c:699
 msgid "Display big font size"
-msgstr "Mostrar fuente grande"
+msgstr "Mostrar tipo de letra grande"
 
 #: src/bin/keyin.c:700
-#, fuzzy
 msgid "Reset font size"
-msgstr "Tamaño de fuente"
+msgstr "Restablecer tamaño de letra"
 
 #: src/bin/keyin.c:702
-#, fuzzy
 msgid "Actions"
-msgstr "Preferencias"
+msgstr "Acciones"
 
 #: src/bin/keyin.c:703
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "Abrir ventana de terminal nueva"
 
 #: src/bin/keyin.c:704
 msgid "Toggle Fullscreen of the window"
-msgstr ""
+msgstr "Alternar ventana en pantalla completa"
 
 #: src/bin/keyin.c:705
 msgid "Display the history miniview"
@@ -293,10 +296,9 @@ msgstr "Mostrar minivista del historial"
 
 #: src/bin/keyin.c:706
 msgid "Display the command box"
-msgstr ""
+msgstr "Mostrar cuadro de órdenes"
 
 #: src/bin/main.c:387 src/bin/main.c:581
-#, fuzzy
 msgid "Could not create window"
 msgstr "No se pudo crear la ventana"
 
@@ -308,7 +310,7 @@ msgstr "No se pudo crear el widget de la terminal"
 #: src/bin/main.c:441
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "(C) 2012-%d Carsten Haitzler y otros"
+msgstr "© 2012-%d Carsten Haitzler y otros"
 
 #: src/bin/main.c:443
 #, fuzzy
@@ -318,69 +320,62 @@ msgstr ""
 
 #: src/bin/main.c:447
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr "Comando a ejecutar. Por defecto $SHELL (o shell passwd o /bin/sh)"
+msgstr ""
+"Orden que ejecutar. De manera predeterminada $SHELL (o shell passwd o /bin/"
+"sh)"
 
 #: src/bin/main.c:449
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr "Cambiar al directorio para ejecutar comandos de la terminal"
+msgstr "Cambiar al directorio para ejecutar órdenes de la terminal"
 
 #: src/bin/main.c:451
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
-msgstr "Use el tema edje o la ruta al archivo del tema"
+msgstr "Utilizar el tema edje especificado o la ruta al archivo de tema"
 
 #: src/bin/main.c:453
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
-msgstr "Use el archivo de este nombre para el fondo"
+msgstr "Utilizar el archivo especificado como fondo"
 
 #: src/bin/main.c:455
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "Geometría de la terminal (ej. 80x24 o 80x24+50+20 etc.)"
+msgstr "Geometría de terminal que utilizar (p. ej., 80x24 o 80x24+50+20, etc.)"
 
 # RR: Quizás hay que usar traducciones más cortas. No encuentro donde aparecen estas cadenas que en realidad explican algunos de los comandos de Terminology. Tampoco se si sería mejor dicho "asignar".
 #: src/bin/main.c:457
-#, fuzzy
 msgid "Set window name"
 msgstr "Establecer nombre de ventana"
 
 #: src/bin/main.c:459
-#, fuzzy
 msgid "Set window role"
-msgstr "Establecer rol de la ventana"
+msgstr "Establecer rol de ventana"
 
 #: src/bin/main.c:461
-#, fuzzy
 msgid "Set window title"
-msgstr "Establecer título de la ventana"
+msgstr "Establecer título de ventana"
 
 #: src/bin/main.c:463
-#, fuzzy
 msgid "Set icon name"
-msgstr "Establecer el nombre del icono"
+msgstr "Establecer nombre de icono"
 
 #: src/bin/main.c:465
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Establecer fuente (NOMBRE/TAMAÑO para expansible; NOMBRE para bitmap)"
+msgstr ""
+"Establecer tipo de letra (NOMBRE/TAMAÑO para expansible; NOMBRE para mapa de "
+"bits)"
 
 #: src/bin/main.c:467
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Dividir la terminal, 'v' en el sentido vertical y 'h' en horizontal. Se "
-"puede usar múltiples veces. Ej., -S vhvv o --split hv. Hay más información "
-"en la página man"
+"Dividir el terminal, «v» en el sentido vertical y «h» en horizontal. Se "
+"puede usar varias veces; p. ej., -S vhvv o --split hv. Hay más información "
+"en la página de manual"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Ejecutar el shell como shell de inicio"
+msgstr "Ejecutar el intérprete como intérprete de acceso"
 
 #: src/bin/main.c:474
 #, fuzzy
@@ -423,14 +418,12 @@ msgid "Become maximized from the start"
 msgstr "Maximizada desde el principio"
 
 #: src/bin/main.c:490
-#, fuzzy
 msgid "Terminology is run without a window manager"
-msgstr "Terminology se ejecuta sin un gestor de ventanas"
+msgstr "Terminology se ejecuta sin ningún gestor de ventanas"
 
 #: src/bin/main.c:492
-#, fuzzy
 msgid "Do not exit when the command process exits"
-msgstr "No salir al finalizar el comando"
+msgstr "No salir al finalizar el proceso de la orden"
 
 #: src/bin/main.c:494
 #, fuzzy
@@ -438,9 +431,8 @@ msgid "Force single executable if multi-instance is enabled"
 msgstr "Forzar un solo ejecutable si el modo multi-instancia está habilitado"
 
 #: src/bin/main.c:496
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "TERM= 'xterm-256 colores' en lugar de 'xterm'"
+msgstr "Establecer TERM a «xterm-256color» en lugar de «xterm»"
 
 #: src/bin/main.c:498
 msgid "Set scaling factor"
@@ -456,39 +448,33 @@ msgid "Do not display wizard on start up"
 msgstr "No mostrar el asistente al iniciar"
 
 #: src/bin/main.c:528
-#, fuzzy
 msgid "show program version"
-msgstr "Mostrar la versión del programa"
+msgstr "mostrar versión del programa"
 
 #: src/bin/main.c:531
-#, fuzzy
 msgid "show copyright"
-msgstr "Mostrar información del copyright"
+msgstr "mostrar información de derechos de autor"
 
 #: src/bin/main.c:534
-#, fuzzy
 msgid "show license"
-msgstr "Mostrar la licencia"
+msgstr "mostrar licencia"
 
 #: src/bin/main.c:537
-#, fuzzy
 msgid "show this message"
-msgstr "Mostrar este mensaje"
+msgstr "mostrar este mensaje"
 
 #: src/bin/main.c:634
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "Parámetro inválido encontrado para la opción -S/--split. Ver --help"
+msgstr ""
+"se encontró un parámetro no válido para la opción -S/--split. Vea --help"
 
 #: src/bin/main.c:887
-#, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "No se pudieron inicializar los atajos de teclado"
 
 #: src/bin/main.c:902
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "No se pudieron analizar las opciones de la línea de comando"
+msgstr "No se pudieron procesar las opciones de línea de órdenes"
 
 #: src/bin/main.c:926
 #, c-format
@@ -496,9 +482,8 @@ msgid "option %s requires an argument!"
 msgstr "La opción %s requiere un parámetro!"
 
 #: src/bin/main.c:927
-#, fuzzy
 msgid "invalid options found. See --help"
-msgstr "Se encontraron opciones inválidas. Ver --help"
+msgstr "se encontraron opciones no válidas. Vea --help"
 
 #: src/bin/media.c:1333 src/bin/termpty.c:645 src/bin/termpty.c:650
 #: src/bin/termpty.c:654
@@ -561,48 +546,46 @@ msgid "Other"
 msgstr "Otro"
 
 #: src/bin/options_background.c:693
-#, fuzzy
 msgid "Click on a picture to use it as background"
-msgstr "Doble clic en una imagen para importarla"
+msgstr "Pulse en una imagen para utilizarla de fondo"
 
 #: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
-msgstr "%'d lineas"
+msgstr "%'d renglones"
 
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Historial de desplazamiento (uso de memoria actual: %'.2f%c B):"
 
 #: src/bin/options_behavior.c:217
-#, fuzzy
 msgid "Default cursor:"
-msgstr "Predeterminado:"
+msgstr "Cursor predeterminado:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
-msgstr ""
+msgstr "Bloque parpadeante"
 
 #: src/bin/options_behavior.c:244
 msgid "Steady Block"
-msgstr ""
+msgstr "Bloque persistente"
 
 #: src/bin/options_behavior.c:263
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Subraya parpadeante"
 
 #: src/bin/options_behavior.c:282
 msgid "Steady Underline"
-msgstr ""
+msgstr "Subraya persistente"
 
 #: src/bin/options_behavior.c:301
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Barra parpadeante"
 
 #: src/bin/options_behavior.c:320
 msgid "Steady Bar"
-msgstr ""
+msgstr "Barra persistente"
 
 #: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
@@ -627,6 +610,8 @@ msgstr "Reaccionar al presionar teclas"
 #: src/bin/options_behavior.c:396
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
+"Se ha <failure>DESACTIVADO</failure> la compatibilidad de audio para teclas "
+"presionadas."
 
 #: src/bin/options_behavior.c:400
 msgid "Visual Bell"
@@ -646,7 +631,7 @@ msgstr "Instancias múltiples, proceso único"
 
 #: src/bin/options_behavior.c:405
 msgid "Set TERM to xterm-256color"
-msgstr "Asignar TERM=xterm-256 colores"
+msgstr "Establecer TERM a xterm-256color"
 
 #: src/bin/options_behavior.c:406
 msgid "BackArrow sends Del (instead of BackSpace)"
@@ -654,29 +639,30 @@ msgstr "\"FlechaAtrás\" funciona como Supr (en vez de Retroceso)"
 
 #: src/bin/options_behavior.c:407
 msgid "Start as login shell"
-msgstr "Iniciar como shell de inicio"
+msgstr "Iniciar como intérprete de acceso"
 
 #: src/bin/options_behavior.c:408
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "Abrir terminales nuevos en el directorio de trabajo actual"
 
 #: src/bin/options_behavior.c:409
-#, fuzzy
 msgid "Always show miniview"
-msgstr "Mostrar minivista del historial"
+msgstr "Mostrar siempre la minivista"
 
 #: src/bin/options_behavior.c:410
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Activar códigos de escapado especiales de Terminology"
 
 #: src/bin/options_behavior.c:411
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Tratar emoyis como caracteres de anchura doble"
 
 #: src/bin/options_behavior.c:412
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Al agrupar la entrada, hacerlo en todos los terminales, no solo en los "
+"visibles"
 
 #: src/bin/options_behavior.c:419
 msgid "Always open at size:"
@@ -684,7 +670,7 @@ msgstr "Siempre abrir con tamaño:"
 
 #: src/bin/options_behavior.c:429
 msgid "Set Current:"
-msgstr ""
+msgstr "Establecer actuales:"
 
 #: src/bin/options_behavior.c:440
 msgid "Width:"
@@ -706,7 +692,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:526
 msgid "Tab zoom/switch animation time:"
-msgstr "Duración de la animación al hacer zoom/cambiar la pestaña:"
+msgstr "Duración de la animación al acercar/cambiar pestaña:"
 
 #: src/bin/options_behavior.c:534 src/bin/options_behavior.c:535
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
@@ -716,15 +702,15 @@ msgstr "%1.1f s"
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr "Preferencias"
+msgstr "Opciones"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Ratón"
 
 #: src/bin/options.c:219 src/bin/options_font.c:425
 msgid "Font"
-msgstr "Fuente"
+msgstr "Tipo de letra"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:155
 msgid "Theme"
@@ -784,16 +770,15 @@ msgstr "Blanco"
 
 #: src/bin/options_colors.c:21
 msgid "Invisible"
-msgstr ""
+msgstr "Invisible"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
 msgstr "Invertido"
 
 #: src/bin/options_colors.c:23
-#, fuzzy
 msgid "Inverse Background"
-msgstr "Fondo"
+msgstr "Fondo invertido"
 
 #: src/bin/options_colors.c:270
 msgid "Normal"
@@ -806,7 +791,7 @@ msgstr "Brillante"
 
 #: src/bin/options_colors.c:274
 msgid "Intense"
-msgstr ""
+msgstr "Intenso"
 
 #: src/bin/options_colors.c:276
 msgid "Intense Bright/Bold"
@@ -814,7 +799,7 @@ msgstr ""
 
 #: src/bin/options_colors.c:361
 msgid "Reset all the colors"
-msgstr ""
+msgstr "Restablecer todos los colores"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -823,6 +808,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> utiliza el kit de herramientas <hilight>elementary</"
+"hilight>.<br>Se puede acceder a la configuración del kit de herramientas "
+"mediante la orden <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -842,10 +830,12 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"También es posible cambiar la configuración de escala a través del panel de "
+"configuración de <hilight>elementary</hilight>"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
-msgstr "Bitmap"
+msgstr "Mapa de bits"
 
 #: src/bin/options_font.c:532
 msgid "Standard"
@@ -853,7 +843,7 @@ msgstr "Estándar"
 
 #: src/bin/options_font.c:594
 msgid "Display bold and italic in the terminal"
-msgstr ""
+msgstr "Mostrar negrita e itálica en el terminal"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -892,9 +882,8 @@ msgid "Key Bindings"
 msgstr "Atajos de teclado"
 
 #: src/bin/options_keys.c:457
-#, fuzzy
 msgid "Reset bindings"
-msgstr "Atajos de teclado"
+msgstr "Restablecer atajos"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
@@ -906,11 +895,10 @@ msgstr ""
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Ocultar puntero del ratón durante inactividad:"
 
 # RR: ¿activos o activados? En las páginas man hay una opción de comando "--active-links=ACTIVATE-LINKS" que trata de resaltar los enlaces.
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
 msgstr "Enlaces activos:"
 
@@ -927,9 +915,8 @@ msgid "On URLs"
 msgstr "En URL"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Colores"
+msgstr "En colores"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
@@ -937,15 +924,15 @@ msgstr "Según los códigos de escape"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr "Integración \"Gravatar\""
+msgstr "Integración con Gravatar"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
-msgstr "Arrastrar y soltar enlaces"
+msgstr "Arrastrar y colocar enlaces"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr "De la línea si es posible"
+msgstr "En renglón si es posible"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
@@ -953,37 +940,37 @@ msgstr "Correo electrónico:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr "URL (Imágenes):"
+msgstr "URL (imágenes):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr "URL (Vídeo):"
+msgstr "URL (vídeo):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr "URL (Todo):"
+msgstr "URL (todo):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr "Local (Imágenes):"
+msgstr "Local (imágenes):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr "Local (Vídeo):"
+msgstr "Local (vídeo):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr "Local (Todo):"
+msgstr "Local (todo):"
 
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr "Comando de fuente desconocido: %s"
+msgstr "Orden de tipo de letra desconocida: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr "Comando de tamaño de cuadrícula desconocido: %s"
+msgstr "Orden de tamaño de cuadrícula desconocida: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
@@ -993,7 +980,7 @@ msgstr "No se pudo leer el archivo del fondo: %s"
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr "Comando desconocido: %s"
+msgstr "Orden desconocida: %s"
 
 #: src/bin/termio.c:390
 #, c-format
@@ -1016,15 +1003,15 @@ msgstr "Previsualización"
 
 #: src/bin/termio.c:1293
 msgid "Copy relative path"
-msgstr ""
+msgstr "Copiar ruta relativa"
 
 #: src/bin/termio.c:1295
 msgid "Copy full path"
-msgstr ""
+msgstr "Copiar ruta completa"
 
 #: src/bin/termio.c:2741
 msgid "Open as URL"
-msgstr ""
+msgstr "Abrir como URL"
 
 #: src/bin/termio.c:4145
 msgid "Could not allocate termpty"
@@ -1043,27 +1030,27 @@ msgstr "Fallo al establecer tamaño ioctl: %s"
 #: src/bin/termpty.c:360
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr "No se pudo escribir al descriptor del fichero %d: %s"
+msgstr "No se pudo escribir al descriptor del archivo %d: %s"
 
 #: src/bin/termpty.c:614
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr "No se pudo encontrar la shell, regresando a %s"
+msgstr "No se pudo encontrar el intérprete; regresando a %s"
 
 #: src/bin/termpty.c:661
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr "open() de pty '%s' falló: %s"
+msgstr "Falló open() de pty «%s»: %s"
 
 #: src/bin/termpty.c:668 src/bin/termpty.c:674
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr "fcntl() en pty '%s' falló: %s"
+msgstr "Falló fcntl() en pty «%s»: %s"
 
 #: src/bin/termpty.c:683
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr "ioctl() en pty '%s' falló: %s"
+msgstr "Falló ioctl() en pty «%s»: %s"
 
 #: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
 #, c-format
@@ -1074,6 +1061,8 @@ msgstr "No se pudo cambiar el directorio actual a %s: %s"
 #, c-format
 msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
 msgstr ""
+"No se pudo encontrar el tema: file=%s group=%s error='%s'; se probará el "
+"tema predeterminado"
 
 #: src/bin/theme.c:82 src/bin/theme.c:117
 #, c-format
@@ -1087,7 +1076,7 @@ msgstr "No se pudo cargar el tema predeterminado para el grupo=%s: %s"
 
 #: src/bin/win.c:423
 msgid "Done"
-msgstr ""
+msgstr "Hecho"
 
 #: src/bin/win.c:439
 msgid ""
@@ -1095,24 +1084,27 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"La configuración de escala puede modificarse en Configuración (pulse con el "
+"botón secundario del ratón en el terminal) ▸ Caja de herramientas, o bien "
+"iniciando la orden <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2303
 msgid "Ecore IMF failed"
-msgstr "Falló Ecore IMF"
+msgstr "Falló la IMF de Ecore"
 
 #: src/bin/win.c:6195
 msgid "Ok"
-msgstr ""
+msgstr "Aceptar"
 
 #: src/bin/win.c:6200
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: src/bin/win.c:7386
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
-"¡No pudo encontrar un tema para terminology! ¿Se le olvidó el comando 'ninja "
-"install'?"
+"No se pudo encontrar el tema para terminology. ¿Olvidó la orden «ninja "
+"install»?"
 
 #~ msgid "Helpers"
 #~ msgstr "Ayudantes"
