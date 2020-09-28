@@ -18,7 +18,7 @@ trap 'rm -f "$TMPFILE"' INT TERM HUP EXIT
 for JSON in "$@"
 do
    # use the name, without extension as key in eet
-   KEY=$(basename "$JSON" ".desc")
+   KEY=$(basename "$JSON" ".json")
    DESC="${KEY}.desc"
    $JSON2DESC "$JSON" "$DESC"
    $EET -e "$TMP_EET" "$KEY" "$DESC" "$COMPRESS"
