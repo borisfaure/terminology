@@ -19,6 +19,7 @@ custom_target('colorschemes.eet',
   install:true,
   install_dir: cs_install_dir,
   install_mode: 'rw-r--r--',
+  depend_files: ['builder.sh', 'json2desc.py'],
   command: cs_builder,
   input: colorschemes_desc,
   output: 'colorschemes.eet')
