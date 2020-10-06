@@ -64,7 +64,8 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
 
-   /* use default if nord is chosen but rely on color_scheme_apply() */
+   /* use default if nord is chosen
+    * but rely on color_scheme_apply_from_config() */
    if (!eina_str_has_suffix(config->theme, "/nord.edj"))
      {
         if (edje_object_file_set(edje, config_theme_path_get(config), group))
@@ -83,7 +84,7 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
    return EINA_FALSE;
 
 done:
-   color_scheme_apply(edje, config);
+   color_scheme_apply_from_config(edje, config);
    return EINA_TRUE;
 }
 
@@ -99,7 +100,8 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
 
    edje = elm_layout_edje_get(layout);
 
-   /* use default if nord is chosen but rely on color_scheme_apply() */
+   /* use default if nord is chosen
+    * but rely on color_scheme_apply_from_config() */
    if (!eina_str_has_suffix(config->theme, "/nord.edj"))
      {
         if (elm_layout_file_set(layout, config_theme_path_get(config), group))
@@ -118,7 +120,7 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
    return EINA_FALSE;
 
 done:
-   color_scheme_apply(edje, config);
+   color_scheme_apply_from_config(edje, config);
    return EINA_TRUE;
 }
 

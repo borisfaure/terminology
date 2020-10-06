@@ -58,8 +58,8 @@ colors_256_get(int col,
 
 
 void
-color_scheme_apply(Evas_Object *edje,
-                   const Config *config);
+color_scheme_apply_from_config(Evas_Object *edje,
+                               const Config *config);
 
 void
 colors_init(void);
