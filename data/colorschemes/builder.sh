@@ -8,19 +8,19 @@ EET=$1
 shift
 OUTPUT=$1
 shift
-JSON2DESC=$(dirname "$0")/json2desc.py
+INI2DESC=$(dirname "$0")/ini2desc.py
 
 # work on a temporary file till every insertion worked
 TMP_EET=$(mktemp "$OUTPUT-XXXXXX")
 # trap to avoid creating orphan files
 trap 'rm -f "$TMPFILE"' INT TERM HUP EXIT
 
-for JSON in "$@"
+for INI in "$@"
 do
    # use the name, without extension as key in eet
-   KEY=$(basename "$JSON" ".json")
+   KEY=$(basename "$INI" ".ini")
    DESC="${KEY}.desc"
-   $JSON2DESC "$JSON" "$DESC"
+   $INI2DESC "$INI" "$DESC"
    $EET -e "$TMP_EET" "$KEY" "$DESC" "$COMPRESS"
 done
 
