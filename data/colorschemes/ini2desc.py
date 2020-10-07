@@ -17,22 +17,21 @@ cfg.read_file(args.input_file)
 
 out = args.output_file
 
-print(cfg.sections())
 assert(int(cfg['Main']['version']) == 1)
 out.write('group "Color_Scheme" struct {\n')
 
 
 out.write('    value "version" int: {};\n'
-          .format(cfg['Main']['version']))
+          .format(cfg.get('Main', 'version', fallback='1')))
 
 out.write('    value "md.version" int: {};\n'
-          .format(cfg['Metadata']['version']))
+          .format(cfg.get('Metadata', 'version', fallback='1')))
 out.write('    value "md.name" string: "{}";\n'
           .format(cfg['Metadata']['name']))
 out.write('    value "md.author" string: "{}";\n'
           .format(cfg['Metadata']['author']))
 out.write('    value "md.website" string: "{}";\n'
-          .format(cfg['Metadata']['website']))
+          .format(cfg.get('Metadata', 'website', fallback='')))
 out.write('    value "md.license" string: "{}";\n'
           .format(cfg['Metadata']['license']))
 
@@ -56,30 +55,48 @@ def write_color(color_string):
     out.write('            value "a" uchar: {};\n'.format(a))
     out.write('        }\n')
 
-def write_name_color(color_name):
+def write_name_color(color_name, default):
     out.write('    group "{}" struct {{\n'.format(color_name))
-    write_color(cfg['Colors'][color_name])
+    write_color(cfg.get('Colors', color_name, fallback=default))
     out.write('    }\n')
 
-write_name_color('def')
-write_name_color('bg')
-write_name_color('fg')
-write_name_color('main')
-write_name_color('hl')
-write_name_color('end_sel')
-write_name_color('tab_missed_1')
-write_name_color('tab_missed_2')
-write_name_color('tab_missed_3')
-write_name_color('tab_missed_over_1')
-write_name_color('tab_missed_over_2')
-write_name_color('tab_missed_over_3')
-write_name_color('tab_title_2')
+write_name_color('def', '#aaaaaa')
+write_name_color('bg', '#202020')
+write_name_color('fg', '#aaaaaa')
+write_name_color('main', '#3599ff')
+write_name_color('hl', '#ffffff')
+write_name_color('end_sel', '#ff3300')
+write_name_color('tab_missed_1', '#ff9933')
+write_name_color('tab_missed_2', '#ff3300')
+write_name_color('tab_missed_3', '#ff0000')
+write_name_color('tab_missed_over_1', '#ffff40')
+write_name_color('tab_missed_over_2', '#ff9933')
+write_name_color('tab_missed_over_3', '#ff0000')
+write_name_color('tab_title_2', '#000000')
 
 def write_ansi():
     out.write('    group "ansi" array {\n')
     out.write('        count 16;\n')
+    default = ['#000000',
+               '#cc3333',
+               '#33cc33',
+               '#cc8833',
+               '#3333cc',
+               '#cc33cc',
+               '#33cccc',
+               '#cccccc',
+               '#666666',
+               '#ff6666',
+               '#66ff66',
+               '#ffff66',
+               '#6666ff',
+               '#ff66ff',
+               '#66ffff',
+               '#ffffff']
+
     for c in range(15):
-        write_color(cfg['Ansi']['ansi{0:02d}'.format(c)])
+        write_color(cfg.get('Ansi', 'ansi{0:02d}'.format(c),
+                            fallback=default[c]))
         out.write('    }\n')
 
 write_ansi()
