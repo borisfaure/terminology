@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2020-09-16 21:34+0000\n"
+"PO-Revision-Date: 2020-10-08 23:26+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
 "terminology/terminology/nb_NO/>\n"
@@ -20,9 +20,9 @@ msgstr ""
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopier"
+msgstr "Kopier «%s»"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
