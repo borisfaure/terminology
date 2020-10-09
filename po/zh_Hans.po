@@ -1,0 +1,1047 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: terminology\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-17 21:46+0200\n"
+"PO-Revision-Date: 2020-10-09 20:53+0000\n"
+"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"terminology/terminology/zh_Hans/>\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.3-dev\n"
+
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
+#: src/bin/termio.c:1224
+#, c-format
+msgid "Copy '%s'"
+msgstr "复制 '%s'"
+
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
+msgid "Open"
+msgstr "打开"
+
+#: src/bin/about.c:273
+msgid "Twitter: @_Terminology_"
+msgstr "Twitter: @_Terminology_"
+
+#: src/bin/about.c:275
+msgid "Youtube channel"
+msgstr ""
+
+#: src/bin/about.c:289
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+
+#: src/bin/controls.c:376
+msgid "Controls"
+msgstr "控制面板"
+
+#: src/bin/controls.c:392
+msgid "New"
+msgstr "新建"
+
+#: src/bin/controls.c:399
+msgid "Split V"
+msgstr "垂直分割"
+
+#: src/bin/controls.c:403
+msgid "Split H"
+msgstr "水平分割"
+
+#: src/bin/controls.c:410
+msgid "Miniview"
+msgstr "迷你视图"
+
+#: src/bin/controls.c:417 src/bin/win.c:6191
+msgid "Set title"
+msgstr "设置标题"
+
+#: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
+msgid "Copy"
+msgstr "复制"
+
+#: src/bin/controls.c:434
+msgid "Paste"
+msgstr "粘贴"
+
+#: src/bin/controls.c:440
+msgid "Settings"
+msgstr "设置"
+
+#: src/bin/controls.c:446
+msgid "About"
+msgstr "关于"
+
+#: src/bin/controls.c:455
+msgid "Grouped input"
+msgstr "分组输入"
+
+#: src/bin/controls.c:467
+msgid "Close Terminal"
+msgstr "关闭终端"
+
+#: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
+#, c-format
+msgid "Could not create logging domain '%s'"
+msgstr "无法创建日志域 '%s'"
+
+#: src/bin/keyin.c:655
+msgid "Scrolling"
+msgstr "滚动"
+
+#: src/bin/keyin.c:656
+msgid "Scroll one page up"
+msgstr "向上回滚一页"
+
+#: src/bin/keyin.c:657
+msgid "Scroll one page down"
+msgstr "向下滚动一页"
+
+#: src/bin/keyin.c:658
+msgid "Scroll one line up"
+msgstr "向上回滚一行"
+
+#: src/bin/keyin.c:659
+msgid "Scroll one line down"
+msgstr "向下滚动一行"
+
+#: src/bin/keyin.c:660
+msgid "Go to the top of the backlog"
+msgstr "转到回滚记录顶部"
+
+#: src/bin/keyin.c:661
+msgid "Reset scroll"
+msgstr "重置滚动"
+
+#: src/bin/keyin.c:663
+msgid "Copy/Paste"
+msgstr "复制/粘贴"
+
+#: src/bin/keyin.c:664
+msgid "Copy selection to Primary buffer"
+msgstr "复制所选至主缓存区"
+
+#: src/bin/keyin.c:665
+msgid "Copy selection to Clipboard buffer"
+msgstr "复制所选至剪贴板缓存区"
+
+#: src/bin/keyin.c:666
+msgid "Paste Primary buffer (highlight)"
+msgstr "粘贴主缓存（高亮）"
+
+#: src/bin/keyin.c:667
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr "粘贴剪贴板缓存 (ctrl+c/v)"
+
+#: src/bin/keyin.c:669
+msgid "Splits/Tabs"
+msgstr "分割/标签"
+
+#: src/bin/keyin.c:670
+msgid "Focus the previous terminal"
+msgstr "聚焦上一终端"
+
+#: src/bin/keyin.c:671
+msgid "Focus the next terminal"
+msgstr "聚焦下一终端"
+
+#: src/bin/keyin.c:672
+msgid "Focus the terminal above"
+msgstr "聚焦上方终端"
+
+#: src/bin/keyin.c:673
+msgid "Focus the terminal below"
+msgstr "聚焦下方终端"
+
+#: src/bin/keyin.c:674
+msgid "Focus the terminal on the left"
+msgstr "聚焦左侧终端"
+
+#: src/bin/keyin.c:675
+msgid "Focus the terminal on the right"
+msgstr "聚焦右侧终端"
+
+#: src/bin/keyin.c:676
+msgid "Split horizontally (new below)"
+msgstr "水平分割（下方新增）"
+
+#: src/bin/keyin.c:677
+msgid "Split vertically (new on right)"
+msgstr "垂直分割（右侧新增）"
+
+#: src/bin/keyin.c:678
+msgid "Create a new \"tab\""
+msgstr "创建一个新 \"标签\""
+
+#: src/bin/keyin.c:679
+msgid "Close the focused terminal"
+msgstr "关闭聚焦终端"
+
+#: src/bin/keyin.c:680
+msgid "Bring up \"tab\" switcher"
+msgstr "打开“标签”切换器"
+
+#: src/bin/keyin.c:681
+msgid "Switch to terminal tab 1"
+msgstr "切换至标签 1 终端"
+
+#: src/bin/keyin.c:682
+msgid "Switch to terminal tab 2"
+msgstr "切换至标签 2 终端"
+
+#: src/bin/keyin.c:683
+msgid "Switch to terminal tab 3"
+msgstr "切换至标签 3 终端"
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 4"
+msgstr "切换至标签 4 终端"
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 5"
+msgstr "切换至标签 5 终端"
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 6"
+msgstr "切换至标签 6 终端"
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 7"
+msgstr "切换至标签 7 终端"
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 8"
+msgstr "切换至标签 8 终端"
+
+#: src/bin/keyin.c:689
+msgid "Switch to terminal tab 9"
+msgstr "切换至标签 9 终端"
+
+#: src/bin/keyin.c:690
+msgid "Switch to terminal tab 10"
+msgstr "切换至标签 10 终端"
+
+#: src/bin/keyin.c:691
+msgid "Change title"
+msgstr "更改标题"
+
+#: src/bin/keyin.c:692 src/bin/keyin.c:693
+msgid "Toggle whether input goes to all visible terminals"
+msgstr ""
+
+#: src/bin/keyin.c:696
+msgid "Font size"
+msgstr "字体大小"
+
+#: src/bin/keyin.c:697
+msgid "Font size up 1"
+msgstr "字体大小增加1"
+
+#: src/bin/keyin.c:698
+msgid "Font size down 1"
+msgstr "字体大小减小1"
+
+#: src/bin/keyin.c:699
+msgid "Display big font size"
+msgstr "显示大字体"
+
+#: src/bin/keyin.c:700
+msgid "Reset font size"
+msgstr "重置字体大小"
+
+#: src/bin/keyin.c:702
+msgid "Actions"
+msgstr "动作"
+
+#: src/bin/keyin.c:703
+msgid "Open a new terminal window"
+msgstr "打开新的终端窗口"
+
+#: src/bin/keyin.c:704
+msgid "Toggle Fullscreen of the window"
+msgstr "全屏切换"
+
+#: src/bin/keyin.c:705
+msgid "Display the history miniview"
+msgstr "显示历史迷你视图"
+
+#: src/bin/keyin.c:706
+msgid "Display the command box"
+msgstr "显示命令框"
+
+#: src/bin/main.c:387 src/bin/main.c:581
+msgid "Could not create window"
+msgstr "无法创建窗口"
+
+#: src/bin/main.c:406 src/bin/main.c:592
+msgid "Could not create terminal widget"
+msgstr "无法创建终端小部件"
+
+#: src/bin/main.c:441
+#, c-format
+msgid "(C) 2012-%d Carsten Haitzler and others"
+msgstr "(C) 2012-%d Carsten Haitzler 和其他人员"
+
+#: src/bin/main.c:443
+msgid "Terminal emulator written with Enlightenment Foundation Libraries"
+msgstr "用Enlightenment Foundation 库编写的终端模拟器"
+
+#: src/bin/main.c:447
+msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
+msgstr "要执行的命令。默认为 $SHELL (或 passwd shell 或 /bin/sh)"
+
+#: src/bin/main.c:449
+msgid "Change to directory for execution of terminal command"
+msgstr "切换到执行终端命令的目录"
+
+#: src/bin/main.c:451
+msgid "Use the named edje theme or path to theme file"
+msgstr "使用指定的 edje 主题或主题文件夹"
+
+#: src/bin/main.c:453
+msgid "Use the named file as a background wallpaper"
+msgstr "使用指定的文件作为背景壁纸"
+
+#: src/bin/main.c:455
+msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
+msgstr "要使用的终端尺寸 (例如 80x24 或 80x24+50+20 等。)"
+
+#: src/bin/main.c:457
+msgid "Set window name"
+msgstr "设置窗口名称"
+
+#: src/bin/main.c:459
+msgid "Set window role"
+msgstr "设置窗口角色"
+
+#: src/bin/main.c:461
+msgid "Set window title"
+msgstr "设置窗口标题"
+
+#: src/bin/main.c:463
+msgid "Set icon name"
+msgstr "设置图标名称"
+
+#: src/bin/main.c:465
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
+msgstr "设置字体 (NAME/SIZE 可缩放字体, NAME 点阵字体)"
+
+#: src/bin/main.c:467
+msgid ""
+"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
+"used multiple times. eg -S vhvv or --split hv More description available on "
+"the man page"
+msgstr "分割终端窗口。 'v' 表示垂直和 'h' 表示水平。可以叠加使用。例如 -S vhvv 或 --split hv 。更多详情请参考手册页"
+
+#: src/bin/main.c:472
+msgid "Run the shell as a login shell"
+msgstr "将 shell 作为登录 shell 运行"
+
+#: src/bin/main.c:474
+msgid "Set mute mode for video playback"
+msgstr "设置视频播放为静音模式"
+
+#: src/bin/main.c:476
+msgid "Set cursor blink mode"
+msgstr "设置光标闪烁模式"
+
+#: src/bin/main.c:478
+msgid "Set visual bell mode"
+msgstr "设置可视化铃声模式"
+
+#: src/bin/main.c:480
+msgid "Go into the fullscreen mode from the start"
+msgstr "以全屏模式启动"
+
+#: src/bin/main.c:482
+msgid "Go into an iconic state from the start"
+msgstr "启动即进入图标模式"
+
+#: src/bin/main.c:484
+msgid "Become a borderless managed window"
+msgstr "无边框窗口"
+
+#: src/bin/main.c:486
+msgid "Become an override-redirect window"
+msgstr ""
+
+#: src/bin/main.c:488
+msgid "Become maximized from the start"
+msgstr "启动最大化"
+
+#: src/bin/main.c:490
+msgid "Terminology is run without a window manager"
+msgstr "在没有窗口管理器的情况下运行"
+
+#: src/bin/main.c:492
+msgid "Do not exit when the command process exits"
+msgstr "当命令进程退出时不退出"
+
+#: src/bin/main.c:494
+msgid "Force single executable if multi-instance is enabled"
+msgstr "如果启用了多实例，则强制执行单个可执行文件"
+
+#: src/bin/main.c:496
+msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+msgstr "设置 TERM 为 'xterm-256color' 以替代 'xterm'"
+
+#: src/bin/main.c:498
+msgid "Set scaling factor"
+msgstr "设置缩放系数"
+
+#: src/bin/main.c:500
+msgid "Highlight links"
+msgstr "高亮链接"
+
+#: src/bin/main.c:502
+msgid "Do not display wizard on start up"
+msgstr "启动时不显示向导"
+
+#: src/bin/main.c:528
+msgid "show program version"
+msgstr "显示程序版本"
+
+#: src/bin/main.c:531
+msgid "show copyright"
+msgstr "显示版权"
+
+#: src/bin/main.c:534
+msgid "show license"
+msgstr "显示许可证"
+
+#: src/bin/main.c:537
+msgid "show this message"
+msgstr "显示此信息"
+
+#: src/bin/main.c:634
+msgid "invalid argument found for option -S/--split. See --help"
+msgstr "使用选项 -S/--split 时发现无效参数。请参阅  --help"
+
+#: src/bin/main.c:887
+msgid "Could not initialize key bindings"
+msgstr "无法初始化按键绑定"
+
+#: src/bin/main.c:902
+msgid "Could not parse command line options"
+msgstr "无法解析命令行选项"
+
+#: src/bin/main.c:926
+#, c-format
+msgid "option %s requires an argument!"
+msgstr "选项 %s 需要一个参数！"
+
+#: src/bin/main.c:927
+msgid "invalid options found. See --help"
+msgstr "发现无效选项。 请参阅 --help"
+
+#: src/bin/media.c:1333 src/bin/termpty.c:645 src/bin/termpty.c:650
+#: src/bin/termpty.c:654
+#, c-format
+msgid "Function %s failed: %s"
+msgstr "功能 %s 失败: %s"
+
+#: src/bin/media.c:1430
+msgid "Media visualizing is not supported"
+msgstr "不支持媒体可视化"
+
+#: src/bin/options_background.c:163
+msgid "None"
+msgstr "无"
+
+#: src/bin/options_background.c:498
+msgid "Source file is target file"
+msgstr "源文件是目标文件"
+
+#: src/bin/options_background.c:511
+msgid "Picture imported"
+msgstr "图片导入"
+
+#: src/bin/options_background.c:516
+msgid "Failed"
+msgstr "失败"
+
+#: src/bin/options_background.c:568 src/bin/options.c:221
+msgid "Background"
+msgstr "背景"
+
+#: src/bin/options_background.c:584
+msgid "Shine:"
+msgstr "光线:"
+
+#: src/bin/options_background.c:608
+msgid "Translucent"
+msgstr "透明度"
+
+#: src/bin/options_background.c:619 src/bin/options_background.c:620
+#, c-format
+msgid "%1.0f%%"
+msgstr "%1.0f%%"
+
+#: src/bin/options_background.c:639
+msgid "Select Path"
+msgstr "选择目录"
+
+#: src/bin/options_background.c:645
+msgid "System"
+msgstr "系统"
+
+#: src/bin/options_background.c:648
+msgid "User"
+msgstr "用户"
+
+#: src/bin/options_background.c:651
+msgid "Other"
+msgstr "其他"
+
+#: src/bin/options_background.c:693
+msgid "Click on a picture to use it as background"
+msgstr "单击图片以用作背景"
+
+#: src/bin/options_behavior.c:63
+#, c-format
+msgid "%'d lines"
+msgstr "%'d 行"
+
+#: src/bin/options_behavior.c:79
+#, c-format
+msgid "Scrollback (current memory usage: %'.2f%cB):"
+msgstr "回滚 (当前内存使用情况：: %'.2f%cB):"
+
+#: src/bin/options_behavior.c:217
+msgid "Default cursor:"
+msgstr "默认光标:"
+
+#: src/bin/options_behavior.c:226
+msgid "Blinking Block"
+msgstr "闪烁块"
+
+#: src/bin/options_behavior.c:244
+msgid "Steady Block"
+msgstr "块"
+
+#: src/bin/options_behavior.c:263
+msgid "Blinking Underline"
+msgstr "闪烁下划线"
+
+#: src/bin/options_behavior.c:282
+msgid "Steady Underline"
+msgstr "下划线"
+
+#: src/bin/options_behavior.c:301
+msgid "Blinking Bar"
+msgstr "闪烁垂直线"
+
+#: src/bin/options_behavior.c:320
+msgid "Steady Bar"
+msgstr "垂直线"
+
+#: src/bin/options_behavior.c:359 src/bin/options.c:217
+msgid "Behavior"
+msgstr "特性"
+
+#: src/bin/options_behavior.c:379
+msgid "Show tabs"
+msgstr "显示标签"
+
+#: src/bin/options_behavior.c:382
+msgid "Scroll to bottom on new content"
+msgstr "滚动到新内容的底部"
+
+#: src/bin/options_behavior.c:383
+msgid "Scroll to bottom when a key is pressed"
+msgstr "按任一键滚动到底部"
+
+#: src/bin/options_behavior.c:389
+msgid "React to key presses"
+msgstr "对按键做出反应"
+
+#: src/bin/options_behavior.c:396
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr ""
+
+#: src/bin/options_behavior.c:400
+msgid "Visual Bell"
+msgstr "可视化铃声"
+
+#: src/bin/options_behavior.c:401
+msgid "Bell rings"
+msgstr "响铃"
+
+#: src/bin/options_behavior.c:402
+msgid "Urgent Bell"
+msgstr "紧急铃声"
+
+#: src/bin/options_behavior.c:404
+msgid "Multiple instances, one process"
+msgstr "多实例，单进程"
+
+#: src/bin/options_behavior.c:405
+msgid "Set TERM to xterm-256color"
+msgstr "将 TERM 设置为 xterm-256color"
+
+#: src/bin/options_behavior.c:406
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr "BackArrow 发送 Del (代替 BackSpace)"
+
+#: src/bin/options_behavior.c:407
+msgid "Start as login shell"
+msgstr "作为登录 shell 启动"
+
+#: src/bin/options_behavior.c:408
+msgid "Open new terminals in current working directory"
+msgstr "在当前工作目录打开新终端"
+
+#: src/bin/options_behavior.c:409
+msgid "Always show miniview"
+msgstr "总是显示迷你视图"
+
+#: src/bin/options_behavior.c:410
+msgid "Enable special Terminology escape codes"
+msgstr "启用专用术语转义码"
+
+#: src/bin/options_behavior.c:411
+msgid "Treat Emojis as double-width characters"
+msgstr "将表情符号视为全角字符"
+
+#: src/bin/options_behavior.c:412
+msgid ""
+"When grouping input, do it on all terminals and not just the visible ones"
+msgstr ""
+
+#: src/bin/options_behavior.c:419
+msgid "Always open at size:"
+msgstr "始终按以下尺寸打开:"
+
+#: src/bin/options_behavior.c:429
+msgid "Set Current:"
+msgstr "按当前尺寸设置："
+
+#: src/bin/options_behavior.c:440
+msgid "Width:"
+msgstr "宽："
+
+#: src/bin/options_behavior.c:462
+msgid "Height:"
+msgstr "高："
+
+#: src/bin/options_behavior.c:521
+msgid ""
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
+msgstr ""
+
+#: src/bin/options_behavior.c:526
+msgid "Tab zoom/switch animation time:"
+msgstr "标签缩放/切换动画时长："
+
+#: src/bin/options_behavior.c:534 src/bin/options_behavior.c:535
+#: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
+#, c-format
+msgid "%1.1f s"
+msgstr "%1.1f 秒"
+
+#: src/bin/options.c:189
+msgid "Options"
+msgstr "选项"
+
+#: src/bin/options.c:218 src/bin/options_mouse.c:147
+msgid "Mouse"
+msgstr "鼠标"
+
+#: src/bin/options.c:219 src/bin/options_font.c:425
+msgid "Font"
+msgstr "字体"
+
+#: src/bin/options.c:220 src/bin/options_theme.c:155
+msgid "Theme"
+msgstr "主题"
+
+#: src/bin/options.c:222 src/bin/options_colors.c:234
+msgid "Colors"
+msgstr "颜色"
+
+#: src/bin/options.c:223
+msgid "Keys"
+msgstr "快捷键"
+
+#: src/bin/options.c:224 src/bin/options_elm.c:109
+msgid "Toolkit"
+msgstr "工具包"
+
+#: src/bin/options.c:235
+msgid "Temporary"
+msgstr "临时"
+
+#: src/bin/options_colors.c:12
+msgid "Default"
+msgstr "默认"
+
+#: src/bin/options_colors.c:13
+msgid "Black"
+msgstr "黑色"
+
+#: src/bin/options_colors.c:14
+msgid "Red"
+msgstr "红色"
+
+#: src/bin/options_colors.c:15
+msgid "Green"
+msgstr "绿色"
+
+#: src/bin/options_colors.c:16
+msgid "Yellow"
+msgstr "黄色"
+
+#: src/bin/options_colors.c:17
+msgid "Blue"
+msgstr "蓝色"
+
+#: src/bin/options_colors.c:18
+msgid "Magenta"
+msgstr "品红"
+
+#: src/bin/options_colors.c:19
+msgid "Cyan"
+msgstr "青色"
+
+#: src/bin/options_colors.c:20
+msgid "White"
+msgstr "白色"
+
+#: src/bin/options_colors.c:21
+msgid "Invisible"
+msgstr ""
+
+#: src/bin/options_colors.c:22
+msgid "Inverse"
+msgstr ""
+
+#: src/bin/options_colors.c:23
+msgid "Inverse Background"
+msgstr ""
+
+#: src/bin/options_colors.c:270
+msgid "Normal"
+msgstr "正常"
+
+#: src/bin/options_colors.c:272
+msgid "Bright/Bold"
+msgstr "明亮/粗体"
+
+#: src/bin/options_colors.c:274
+msgid "Intense"
+msgstr ""
+
+#: src/bin/options_colors.c:276
+msgid "Intense Bright/Bold"
+msgstr ""
+
+#: src/bin/options_colors.c:361
+msgid "Reset all the colors"
+msgstr "重置所有颜色"
+
+#: src/bin/options_elm.c:122
+#, c-format
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>"
+msgstr ""
+
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
+msgstr "启动 %s"
+
+#: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
+msgid "Scale"
+msgstr "缩放"
+
+#: src/bin/options_elm.c:172 src/bin/win.c:431
+msgid "Select preferred size so that this text is readable"
+msgstr "选择首选大小，以便此文本可读"
+
+#: src/bin/options_elm.c:180
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
+msgstr ""
+
+#: src/bin/options_font.c:491
+msgid "Bitmap"
+msgstr "点阵"
+
+#: src/bin/options_font.c:532
+msgid "Standard"
+msgstr "标准"
+
+#: src/bin/options_font.c:594
+msgid "Display bold and italic in the terminal"
+msgstr "在终端中显示粗体和斜体"
+
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
+msgstr "Ctrl+"
+
+#: src/bin/options_keys.c:67
+msgid "Alt+"
+msgstr "Alt+"
+
+#: src/bin/options_keys.c:68
+msgid "Shift+"
+msgstr "Shift+"
+
+#: src/bin/options_keys.c:69
+msgid "Win+"
+msgstr "Win+"
+
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr "Meta+"
+
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr "Hyper+"
+
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr "删除"
+
+#: src/bin/options_keys.c:269
+msgid "Please press key sequence"
+msgstr ""
+
+#: src/bin/options_keys.c:385
+msgid "Key Bindings"
+msgstr "按键绑定"
+
+#: src/bin/options_keys.c:457
+msgid "Reset bindings"
+msgstr "复位绑定"
+
+#: src/bin/options_mouse.c:167
+msgid "Focus split under the Mouse"
+msgstr "聚焦鼠标所在分割"
+
+#: src/bin/options_mouse.c:168
+msgid "Focus-related visuals"
+msgstr "焦点视觉效果"
+
+#: src/bin/options_mouse.c:174
+msgid "Auto hide the mouse cursor when idle:"
+msgstr "空闲时自动隐藏光标："
+
+#: src/bin/options_mouse.c:204
+msgid "Active Links:"
+msgstr "激活链接:"
+
+#: src/bin/options_mouse.c:208
+msgid "On emails"
+msgstr "在电子邮件上"
+
+#: src/bin/options_mouse.c:209
+msgid "On file paths"
+msgstr "在文件路径上"
+
+#: src/bin/options_mouse.c:210
+msgid "On URLs"
+msgstr "在 URL 网址上"
+
+#: src/bin/options_mouse.c:211
+msgid "On colors"
+msgstr ""
+
+#: src/bin/options_mouse.c:212
+msgid "Based on escape codes"
+msgstr "基于转义码"
+
+#: src/bin/options_mouse.c:213
+msgid "Gravatar integration"
+msgstr ""
+
+#: src/bin/options_mouse.c:215
+msgid "Drag & drop links"
+msgstr "拖放链接"
+
+#: src/bin/options_mouse.c:221
+msgid "Inline if possible"
+msgstr "如果可能使用内嵌"
+
+#: src/bin/options_mouse.c:265
+msgid "E-mail:"
+msgstr "E-mail:"
+
+#: src/bin/options_mouse.c:269
+msgid "URL (Images):"
+msgstr "URL (图像):"
+
+#: src/bin/options_mouse.c:270
+msgid "URL (Video):"
+msgstr "URL (视频):"
+
+#: src/bin/options_mouse.c:271
+msgid "URL (All):"
+msgstr "URL (所有):"
+
+#: src/bin/options_mouse.c:274
+msgid "Local (Images):"
+msgstr "本地 (图像):"
+
+#: src/bin/options_mouse.c:275
+msgid "Local (Video):"
+msgstr "本地 (视频):"
+
+#: src/bin/options_mouse.c:276
+msgid "Local (All):"
+msgstr "本地 (所有):"
+
+#: src/bin/termcmd.c:84
+#, c-format
+msgid "Unknown font command: %s"
+msgstr "未知的字体命令: %s"
+
+#: src/bin/termcmd.c:118
+#, c-format
+msgid "Unknown grid size command: %s"
+msgstr "未知的网格尺寸命令: %s"
+
+#: src/bin/termcmd.c:146
+#, c-format
+msgid "Background file could not be read: %s"
+msgstr "无法读取背景文件: %s"
+
+#: src/bin/termcmd.c:175
+#, c-format
+msgid "Unknown command: %s"
+msgstr "未知命令: %s"
+
+#: src/bin/termio.c:390
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr "无法获取pid %i 的工作目录: %s"
+
+#: src/bin/termio.c:405
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr "无法加载工作目录 %s: %s"
+
+#: src/bin/termio.c:1123
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr "不支持的所选格式'%s'"
+
+#: src/bin/termio.c:1283
+msgid "Preview"
+msgstr "预览"
+
+#: src/bin/termio.c:1293
+msgid "Copy relative path"
+msgstr "复制相对路径"
+
+#: src/bin/termio.c:1295
+msgid "Copy full path"
+msgstr "复制完整路径"
+
+#: src/bin/termio.c:2741
+msgid "Open as URL"
+msgstr "打开为 URL"
+
+#: src/bin/termio.c:4145
+msgid "Could not allocate termpty"
+msgstr ""
+
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr ""
+
+#: src/bin/termpty.c:224
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:360
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr "无法写入文件描述符 %d: %s"
+
+#: src/bin/termpty.c:614
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr "找不到 shell，回退至 %s"
+
+#: src/bin/termpty.c:661
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:683
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr "无法将当前目录更改为 '%s': %s"
+
+#: src/bin/theme.c:74 src/bin/theme.c:110
+#, c-format
+msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
+msgstr ""
+
+#: src/bin/theme.c:82 src/bin/theme.c:117
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr "无法为群组 =%s: %s 加载任何主题"
+
+#: src/bin/theme.c:138
+#, c-format
+msgid "Could not load default theme for group=%s: %s"
+msgstr "无法为群组 =%s: %s 加载默认主题"
+
+#: src/bin/win.c:423
+msgid "Done"
+msgstr "完成"
+
+#: src/bin/win.c:439
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the "
+"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
+"keyword>"
+msgstr ""
+
+#: src/bin/win.c:2303
+msgid "Ecore IMF failed"
+msgstr "Ecore IMF 出错"
+
+#: src/bin/win.c:6195
+msgid "Ok"
+msgstr "确定"
+
+#: src/bin/win.c:6200
+msgid "Cancel"
+msgstr "取消"
+
+#: src/bin/win.c:7386
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr "找不到 terminology 的主题！忘记了“ninja install”命令？"
