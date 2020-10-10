@@ -13,7 +13,7 @@ static Color_Scheme default_colorscheme =
    .version = COLORSCHEMES_VERSION,
    .md = {
         .version = 1,
-        .name = "default",
+        .name = "Default",
         .author = gettext_noop("Terminology's developers"),
         .website = "https://www.enlightenment.org/about-terminology",
         .license = "BSD-2-Clause",
@@ -716,6 +716,91 @@ color_scheme_get(const char *name)
      return cs_app;
    else
      return NULL;
+}
+
+static int
+color_scheme_cmp(const void *d1, const void *d2)
+{
+   const Color_Scheme *cs1 = d1;
+   const Color_Scheme *cs2 = d2;
+
+   return strcmp(cs1->md.name, cs2->md.name);
+}
+
+Eina_List *
+color_scheme_list(void)
+{
+   Eina_List *l = NULL;
+   static char path_user[PATH_MAX] = "";
+   static char path_app[PATH_MAX] = "";
+   Eet_File *ef_app = NULL;
+   Eet_File *ef_user = NULL;
+   Eina_Iterator *it = NULL;
+   Eet_Entry *entry;
+
+   snprintf(path_user, sizeof(path_user) - 1,
+            "%s/terminology/" COLORSCHEMES_FILENAME,
+            efreet_config_home_get());
+
+   snprintf(path_app, sizeof(path_app) - 1,
+            "%s/" COLORSCHEMES_FILENAME,
+            elm_app_data_dir_get());
+
+   l = eina_list_sorted_insert(l, color_scheme_cmp, &default_colorscheme);
+
+   ef_app = eet_open(path_app, EET_FILE_MODE_READ);
+   if (!ef_app)
+     {
+        ERR("failed to open '%s'", path_app);
+        goto end;
+     }
+   ef_user = eet_open(path_user, EET_FILE_MODE_READ);
+
+   it = eet_list_entries(ef_app);
+   if (!it)
+     {
+        ERR("failed to list entries in '%s'", path_app);
+        goto end;
+     }
+   EINA_ITERATOR_FOREACH(it, entry)
+     {
+        Color_Scheme *cs_user;
+        Color_Scheme *cs_app;
+
+        cs_app = eet_data_read(ef_app, edd_cs, entry->name);
+        if (!cs_app)
+          {
+             ERR("failed to load color scheme '%s' from '%s'",
+                 entry->name, path_app);
+          }
+        cs_user = eet_data_read(ef_user, edd_cs, entry->name);
+        if (cs_user)
+          {
+             /* Prefer user file */
+             if (cs_user->md.version >= cs_app->md.version)
+               {
+                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
+                  free(cs_app);
+               }
+             else
+               {
+                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
+                  free(cs_user);
+               }
+          }
+        else
+          {
+             l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
+          }
+     }
+end:
+   eina_iterator_free(it);
+   if (ef_app)
+     eet_close(ef_app);
+   if (ef_user)
+     eet_close(ef_user);
+
+   return l;
 }
 
 void
