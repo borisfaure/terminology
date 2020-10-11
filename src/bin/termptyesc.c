@@ -3878,9 +3878,7 @@ end:
    if (l == 1)
      v <<= 4;
    *c = v;
-   if (l > 0)
-     return l;
-   return -1;
+   return l;
 }
 
 static int
