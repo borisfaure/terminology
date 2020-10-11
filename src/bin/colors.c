@@ -772,6 +772,7 @@ color_scheme_list(void)
           {
              ERR("failed to load color scheme '%s' from '%s'",
                  entry->name, path_app);
+             continue;
           }
         cs_user = eet_data_read(ef_user, edd_cs, entry->name);
         if (cs_user)
