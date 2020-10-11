@@ -737,6 +737,8 @@ color_scheme_list(void)
    Eet_File *ef_user = NULL;
    Eina_Iterator *it = NULL;
    Eet_Entry *entry;
+   Color_Scheme *cs_user;
+   Color_Scheme *cs_app;
 
    snprintf(path_user, sizeof(path_user) - 1,
             "%s/terminology/" COLORSCHEMES_FILENAME,
@@ -746,7 +748,12 @@ color_scheme_list(void)
             "%s/" COLORSCHEMES_FILENAME,
             elm_app_data_dir_get());
 
-   l = eina_list_sorted_insert(l, color_scheme_cmp, &default_colorscheme);
+   /* Add default theme */
+   cs_app = malloc(sizeof(*cs_app));
+   if (!cs_app)
+     return NULL;
+   memcpy(cs_app, &default_colorscheme, sizeof(*cs_app));
+   l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
 
    ef_app = eet_open(path_app, EET_FILE_MODE_READ);
    if (!ef_app)
@@ -764,9 +771,6 @@ color_scheme_list(void)
      }
    EINA_ITERATOR_FOREACH(it, entry)
      {
-        Color_Scheme *cs_user;
-        Color_Scheme *cs_app;
-
         cs_app = eet_data_read(ef_app, edd_cs, entry->name);
         if (!cs_app)
           {

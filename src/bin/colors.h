@@ -61,6 +61,9 @@ void
 color_scheme_apply_from_config(Evas_Object *edje,
                                const Config *config);
 
+Eina_List *
+color_scheme_list(void);
+
 void
 colors_init(void);
 
