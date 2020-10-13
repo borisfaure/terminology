@@ -8,20 +8,22 @@ msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2017-08-20 00:00+0000\n"
-"Last-Translator: scootergrisen\n"
-"Language-Team: Danish\n"
+"PO-Revision-Date: 2020-10-13 16:26+0000\n"
+"Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
+"Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
+"terminology/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.3-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopiér"
+msgstr "Kopiér '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
@@ -29,11 +31,11 @@ msgstr "Åbn"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "Youtube-kanal"
 
 #: src/bin/about.c:289
 #, c-format
@@ -73,7 +75,7 @@ msgstr "Minivisning"
 
 #: src/bin/controls.c:417 src/bin/win.c:6191
 msgid "Set title"
-msgstr "Sæt titel"
+msgstr "Indstil titel"
 
 #: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
 msgid "Copy"
@@ -93,16 +95,16 @@ msgstr "Om"
 
 #: src/bin/controls.c:455
 msgid "Grouped input"
-msgstr ""
+msgstr "Grupperet input"
 
 #: src/bin/controls.c:467
 msgid "Close Terminal"
 msgstr "Luk terminal"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Kunne ikke oprette logningsdomæne '%s'"
+msgstr "Kunne ikke oprette logningsdomænet '%s'"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
@@ -246,7 +248,7 @@ msgstr "Skift titel"
 
 #: src/bin/keyin.c:692 src/bin/keyin.c:693
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Skift om input sendes til alle synlige terminaler"
 
 #: src/bin/keyin.c:696
 msgid "Font size"
@@ -289,12 +291,10 @@ msgid "Display the command box"
 msgstr "Vis kommandoboksen"
 
 #: src/bin/main.c:387 src/bin/main.c:581
-#, fuzzy
 msgid "Could not create window"
 msgstr "Kunne ikke oprette vindue"
 
 #: src/bin/main.c:406 src/bin/main.c:592
-#, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Kunne ikke oprette terminal-widget"
 
@@ -304,7 +304,6 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler og andre"
 
 #: src/bin/main.c:443
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Terminalemulator skrevet med Enlightenment Foundation Libraries"
 
@@ -315,53 +314,43 @@ msgstr ""
 "eller /bin/sh)"
 
 #: src/bin/main.c:449
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Skift til mappe for eksekvering af terminalkommando"
 
 #: src/bin/main.c:451
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "Brug det navngivne edje-tema eller sti til temafil"
 
 #: src/bin/main.c:453
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Brug den navngivne fil som et baggrundstapet"
 
 #: src/bin/main.c:455
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr ""
 "Terminalgeometrien som skal bruges (f.eks. 80x24 eller 80x24+50+20 osv.)"
 
 #: src/bin/main.c:457
-#, fuzzy
 msgid "Set window name"
-msgstr "Sæt vinduets navn"
+msgstr "Indstil vinduets navn"
 
 #: src/bin/main.c:459
-#, fuzzy
 msgid "Set window role"
-msgstr "Sæt vinduets rolle"
+msgstr "Indstil vinduets rolle"
 
 #: src/bin/main.c:461
-#, fuzzy
 msgid "Set window title"
-msgstr "Sæt vinduets titel"
+msgstr "Indstil vinduets titel"
 
 #: src/bin/main.c:463
-#, fuzzy
 msgid "Set icon name"
-msgstr "Sæt ikonnavn"
+msgstr "Indstil ikonnavn"
 
 #: src/bin/main.c:465
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Sæt skrifttype (NAVN/STØRRELSE for skalerbar, NAVN for bitmap"
+msgstr "Indstil skrifttype (NAVN/STØRRELSE for skalerbar, NAVN for bitmap)"
 
 #: src/bin/main.c:467
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -371,117 +360,96 @@ msgstr ""
 "gange. F.eks. -S vhvv eller --split hv Der er mere beskrivelse på man-siden"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Kør skallen som en login-skal"
+msgstr "Kør skallen som en loginskal"
 
 #: src/bin/main.c:474
-#, fuzzy
 msgid "Set mute mode for video playback"
-msgstr "Sæt mutetilstand for videoafspilning"
+msgstr "Indstil mutetilstand for videoafspilning"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Set cursor blink mode"
-msgstr "Sæt markørens blinktilstand"
+msgstr "Indstil markørens blinktilstand"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set visual bell mode"
-msgstr "Sæt visuel klokke-tilstand"
+msgstr "Indstil visuel klokketilstand"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Gå i fuldskærmstilstand fra starten"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Go into an iconic state from the start"
-msgstr "Gå i ikon-tilstand fra starten"
+msgstr "Gå i ikontilstand fra starten"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Become a borderless managed window"
 msgstr "Bliv et vindue uden kanter"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Become an override-redirect window"
-msgstr "Bliv et tilsidesæt-redirect-vindue"
+msgstr "Bliv et override-redirect-vindue"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid "Become maximized from the start"
 msgstr "Bliv maksimeret fra starten"
 
 #: src/bin/main.c:490
-#, fuzzy
 msgid "Terminology is run without a window manager"
-msgstr "Terminology kører uden en window manager"
+msgstr "Terminology kører uden en vindueshåndtering"
 
 #: src/bin/main.c:492
-#, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Afslut ikke når kommandoprocessen afslutter"
 
 #: src/bin/main.c:494
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Tving enkel eksekverbar hvis flere-instans er aktiveret"
 
 #: src/bin/main.c:496
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "Sæt TERM til 'xterm-256color' i stedet for 'xterm'"
+msgstr "Indstil TERM til 'xterm-256color' i stedet for 'xterm'"
 
 #: src/bin/main.c:498
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Indstil skaleringsfaktor"
 
 #: src/bin/main.c:500
-#, fuzzy
 msgid "Highlight links"
 msgstr "Fremhæv links"
 
 #: src/bin/main.c:502
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Vis ikke assistent ved opstart"
 
 #: src/bin/main.c:528
-#, fuzzy
 msgid "show program version"
 msgstr "vis programversion"
 
 #: src/bin/main.c:531
-#, fuzzy
 msgid "show copyright"
 msgstr "vis ophavsret"
 
 #: src/bin/main.c:534
-#, fuzzy
 msgid "show license"
 msgstr "vis licens"
 
 #: src/bin/main.c:537
-#, fuzzy
 msgid "show this message"
 msgstr "vis denne meddelelse"
 
 #: src/bin/main.c:634
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "ugyldigt argument fundet for tilvalget -S/--split. Se --help"
 
 #: src/bin/main.c:887
-#, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "Kunne ikke initialisere tastebindinger"
 
 #: src/bin/main.c:902
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "Kunne ikke parse kommandolinjetilvalg"
+msgstr "Kunne ikke fortolke kommandolinjetilvalg"
 
 #: src/bin/main.c:926
 #, c-format
@@ -489,7 +457,6 @@ msgid "option %s requires an argument!"
 msgstr "tilvalget %s kræver et argument!"
 
 #: src/bin/main.c:927
-#, fuzzy
 msgid "invalid options found. See --help"
 msgstr "ugyldige tilvalg fundet. Se --help"
 
@@ -525,7 +492,7 @@ msgstr "Baggrund"
 
 #: src/bin/options_background.c:584
 msgid "Shine:"
-msgstr ""
+msgstr "Skin:"
 
 #: src/bin/options_background.c:608
 msgid "Translucent"
@@ -553,9 +520,8 @@ msgid "Other"
 msgstr "Anden"
 
 #: src/bin/options_background.c:693
-#, fuzzy
 msgid "Click on a picture to use it as background"
-msgstr "Dobbeltklik på et billede for at importere det"
+msgstr "Dobbeltklik på et billede for at bruge det som baggrund"
 
 #: src/bin/options_behavior.c:63
 #, c-format
@@ -565,36 +531,35 @@ msgstr "%'d linjer"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Tilbagerulning (nuværende hukommelsesforbrug: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
-#, fuzzy
 msgid "Default cursor:"
-msgstr "Standard"
+msgstr "Standardmarkør:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
-msgstr ""
+msgstr "Blinkende blok"
 
 #: src/bin/options_behavior.c:244
 msgid "Steady Block"
-msgstr ""
+msgstr "Fast blok"
 
 #: src/bin/options_behavior.c:263
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Blinkende understregning"
 
 #: src/bin/options_behavior.c:282
 msgid "Steady Underline"
-msgstr ""
+msgstr "Fast understregning"
 
 #: src/bin/options_behavior.c:301
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Blinkende linje"
 
 #: src/bin/options_behavior.c:320
 msgid "Steady Bar"
-msgstr ""
+msgstr "Fast linje"
 
 #: src/bin/options_behavior.c:359 src/bin/options.c:217
 msgid "Behavior"
@@ -618,7 +583,7 @@ msgstr "Reager på tastetryk"
 
 #: src/bin/options_behavior.c:396
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Lydunderstøttelse for tastetryk <failure>DEAKTIVERET</failure>!"
 
 #: src/bin/options_behavior.c:400
 msgid "Visual Bell"
@@ -638,7 +603,7 @@ msgstr "Flere instanser, én proces"
 
 #: src/bin/options_behavior.c:405
 msgid "Set TERM to xterm-256color"
-msgstr "Sæt TERM til xterm-256color"
+msgstr "Indstil TERM til xterm-256color"
 
 #: src/bin/options_behavior.c:406
 msgid "BackArrow sends Del (instead of BackSpace)"
@@ -646,7 +611,7 @@ msgstr "Tilbage-pil sender Del (i stedet for BackSpace)"
 
 #: src/bin/options_behavior.c:407
 msgid "Start as login shell"
-msgstr "Start som login-skal"
+msgstr "Start som loginskal"
 
 #: src/bin/options_behavior.c:408
 msgid "Open new terminals in current working directory"
@@ -662,12 +627,14 @@ msgstr "Aktivér specielle Terminology-undvigekoder"
 
 #: src/bin/options_behavior.c:411
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Behandl Emojis som tegn med dobbelt bredde"
 
 #: src/bin/options_behavior.c:412
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Når input grupperes, så gør det på alle terminaler og ikke kun dem der er "
+"synlige"
 
 #: src/bin/options_behavior.c:419
 msgid "Always open at size:"
@@ -675,7 +642,7 @@ msgstr "Åbn altid med størrelse:"
 
 #: src/bin/options_behavior.c:429
 msgid "Set Current:"
-msgstr "Sæt nuværende:"
+msgstr "Indstil nuværende:"
 
 #: src/bin/options_behavior.c:440
 msgid "Width:"
@@ -686,14 +653,13 @@ msgid "Height:"
 msgstr "Højde:"
 
 #: src/bin/options_behavior.c:521
-#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Sæt tiden af animationen som<br>sker når der skiftes faneblad,<br>hvad enten "
-"det er med tastebinding, musehjul<br>eller når fanebladspanelet flyttes med "
-"musen"
+"Indstil animationens tid som<br>sker når der skiftes faneblad,<br>hvad enten "
+"det er med tastebindinger eller <br>når musehjul flyttes over "
+"fanebladspanelet"
 
 #: src/bin/options_behavior.c:526
 msgid "Tab zoom/switch animation time:"
@@ -711,7 +677,7 @@ msgstr "Valgmuligheder"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Mus"
 
 #: src/bin/options.c:219 src/bin/options_font.c:425
 msgid "Font"
@@ -731,7 +697,7 @@ msgstr "Taster"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr "Værktøjssæt"
+msgstr "Værktøjskit"
 
 #: src/bin/options.c:235
 msgid "Temporary"
@@ -775,16 +741,15 @@ msgstr "Hvid"
 
 #: src/bin/options_colors.c:21
 msgid "Invisible"
-msgstr ""
+msgstr "Usynlig"
 
 #: src/bin/options_colors.c:22
 msgid "Inverse"
 msgstr "Omvend"
 
 #: src/bin/options_colors.c:23
-#, fuzzy
 msgid "Inverse Background"
-msgstr "Baggrund"
+msgstr "Omvend baggrund"
 
 #: src/bin/options_colors.c:270
 msgid "Normal"
@@ -804,7 +769,7 @@ msgstr "Intens lys/fed"
 
 #: src/bin/options_colors.c:361
 msgid "Reset all the colors"
-msgstr ""
+msgstr "Nulstil alle farverne"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -813,25 +778,30 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> bruger <hilight>elementary</hilight>-"
+"værktøjskittet.<br>Konfigurationsindstillingerne til værktøjskittet kan "
+"tilgås ved at køre <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Start %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:382 src/bin/win.c:402
 msgid "Scale"
-msgstr ""
+msgstr "Skalering"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:431
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Vælg den foretrukne størrelse så teksten er læsbar"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"Skaleringskonfigurationen kan også ændres gennem <hilight>elementarys</"
+"hilight> konfigurationspanel"
 
 #: src/bin/options_font.c:491
 msgid "Bitmap"
@@ -895,35 +865,31 @@ msgstr "Fokus-relaterede visuelle"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Skjul automatisk musemarkøren når inaktiv:"
 
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
-msgstr "Aktive links"
+msgstr "Aktive links:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "Ved e-mails"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "Ved filstier"
 
 #: src/bin/options_mouse.c:210
-#, fuzzy
 msgid "On URLs"
-msgstr "Åbn som URL"
+msgstr "Ved URL'er"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Farver"
+msgstr "Ved farver"
 
 #: src/bin/options_mouse.c:212
-#, fuzzy
 msgid "Based on escape codes"
-msgstr "Aktivér specielle Terminology-undvigekoder"
+msgstr "Baseret på undvigekoder"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -1002,7 +968,7 @@ msgstr "ikke-understøttet markeringsformat '%s'"
 
 #: src/bin/termio.c:1283
 msgid "Preview"
-msgstr "Forhåndvis"
+msgstr "Forhåndsvis"
 
 #: src/bin/termio.c:1293
 msgid "Copy relative path"
@@ -1028,7 +994,7 @@ msgstr "memerr: %s"
 #: src/bin/termpty.c:224
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr "Størrelse sæt ioctl mislykkedes: %s"
+msgstr "Størrelse indstil ioctl mislykkedes: %s"
 
 #: src/bin/termpty.c:360
 #, c-format
@@ -1064,6 +1030,7 @@ msgstr "Kunne ikke skifte nuværende mappe til '%s': %s"
 #, c-format
 msgid "Could not find theme: file=%s group=%s error='%s', trying default theme"
 msgstr ""
+"Kunne ikke finde tema: fil=%s gruppe=%s fejl='%s', prøver standardtemaet"
 
 #: src/bin/theme.c:82 src/bin/theme.c:117
 #, c-format
@@ -1077,7 +1044,7 @@ msgstr "Kunne ikke indlæse standardtema for gruppe=%s: %s"
 
 #: src/bin/win.c:423
 msgid "Done"
-msgstr ""
+msgstr "Færdig"
 
 #: src/bin/win.c:439
 msgid ""
@@ -1085,6 +1052,9 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Skaleringskonfigurationen kan ændres i Indstillinger (højreklik på "
+"terminalen) →  Værktøjskit, eller ved at starte kommandoen "
+"<keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2303
 msgid "Ecore IMF failed"
