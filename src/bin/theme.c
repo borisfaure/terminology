@@ -41,8 +41,8 @@ config_theme_path_get(const Config *config)
    return theme_path_get(config->theme);
 }
 
-static const char *
-_theme_path_default_get(void)
+const char *
+theme_path_default_get(void)
 {
    static char path[PATH_MAX] = "";
 
@@ -74,7 +74,7 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
             config_theme_path_get(config), group, errmsg);
      }
 
-   if (edje_object_file_set(edje, _theme_path_default_get(), group))
+   if (edje_object_file_set(edje, theme_path_default_get(), group))
      goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
@@ -110,7 +110,7 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
    INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
        config_theme_path_get(config), group, errmsg);
 
-   if (elm_layout_file_set(layout, _theme_path_default_get(), group))
+   if (elm_layout_file_set(layout, theme_path_default_get(), group))
      goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
@@ -120,23 +120,6 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
 done:
    color_scheme_apply_from_config(edje, config);
    return EINA_TRUE;
-}
-
-Eina_Bool
-theme_apply_default(Evas_Object *edje, const Config *config, const char *group)
-{
-   const char *errmsg;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(edje, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
-
-   if (edje_object_file_set(edje, _theme_path_default_get(), group))
-     return EINA_TRUE;
-
-   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   ERR(_("Could not load default theme for group=%s: %s"), group, errmsg);
-   return EINA_FALSE;
 }
 
 void
