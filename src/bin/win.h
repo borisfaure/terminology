@@ -90,7 +90,7 @@ for_each_term_do(Win *wn, For_Each_Term cb, void *data);
 
 void
 term_apply_shine(Term *term, int shine);
-void background_set_shine(Config *config, Evas_Object *bg);
+void background_set_shine(const Config *config, Evas_Object *bg);
 
 void main_trans_update(void);
 

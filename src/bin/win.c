@@ -5843,7 +5843,7 @@ term_is_visible(const Term *term)
 }
 
 void
-background_set_shine(Config *config, Evas_Object *bg_edj)
+background_set_shine(const Config *config, Evas_Object *bg_edj)
 {
    Edje_Message_Int msg;
 
