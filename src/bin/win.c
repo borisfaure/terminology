@@ -2767,6 +2767,7 @@ _split_focus(Term_Container *tc, Term_Container *relative)
 
    if (tc->parent == relative)
      {
+        /* top to bottom */
         if (!tc->is_focused)
           {
              Term_Container *last_focus = split->last_focus;
@@ -2780,11 +2781,13 @@ _split_focus(Term_Container *tc, Term_Container *relative)
      }
    else
      {
+        /* bottom to top */
         if (split->last_focus != relative)
           split->last_focus->unfocus(split->last_focus, tc);
         split->last_focus = relative;
         if (!tc->is_focused)
           {
+             /* was not focused, bring focus up */
              tc->is_focused = EINA_TRUE;
              tc->parent->focus(tc->parent, tc);
           }
@@ -2900,7 +2903,7 @@ _split_split(Term_Container *tc, Term_Container *child,
         _solo_tab_show(tc_solo_new);
      }
 
-   tc_split->is_focused = EINA_TRUE;
+   child->unfocus(child, tc_split);
    tc_split->focus(tc_split, tc_solo_new);
    tc_solo_new->focus(tc_solo_new, tc_split);
 
@@ -3009,7 +3012,9 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
         return NULL;
      }
 
-   DBG("split new %p 1:%p 2:%p", split, tc1, tc2);
+   DBG("split new %p 1:%p 2:%p (1 is %sfocused) (2 is %sfocused)", split, tc1, tc2,
+       tc1->is_focused ? "" : "not ",
+       tc2->is_focused ? "" : "not ");
 
    tc = (Term_Container*)split;
    tc->term_next = _split_term_next;
