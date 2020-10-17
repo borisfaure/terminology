@@ -563,8 +563,8 @@ colors_256_get(int col,
    *a = default_colors256[col].a;
 }
 
-static void
-_colorscheme_apply(Evas_Object *edje,
+void
+color_scheme_apply(Evas_Object *edje,
                    const Color_Scheme *cs)
 {
    if (!cs)
@@ -824,7 +824,7 @@ color_scheme_apply_from_config(Evas_Object *edje,
         ERR("Could not find color scheme \"%s\"", "Nord");
         return;
      }
-   _colorscheme_apply(edje, cs);
+   color_scheme_apply(edje, cs);
 }
 
 void

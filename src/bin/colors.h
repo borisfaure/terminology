@@ -60,6 +60,9 @@ colors_256_get(int col,
 void
 color_scheme_apply_from_config(Evas_Object *edje,
                                const Config *config);
+void
+color_scheme_apply(Evas_Object *edje,
+                   const Color_Scheme *cs);
 
 Eina_List *
 color_scheme_list(void);
