@@ -16,13 +16,14 @@ theme_path_get(const char *name)
    static char path1[PATH_MAX] = "";
    static char path2[PATH_MAX] = "";
 
-   /* use the newer file */
+   /* use the file from home if available */
    struct stat s2;
 
    snprintf(path2, sizeof(path2) - 1, "%s/terminology/themes/%s",
             efreet_config_home_get(), name);
 
-   if (stat(path2, &s2) == 0) return path2;
+   if (stat(path2, &s2) == 0)
+     return path2;
    snprintf(path1, sizeof(path1) - 1, "%s/themes/%s",
             elm_app_data_dir_get(), name);
    return path1;
@@ -40,13 +41,10 @@ config_theme_path_get(const Config *config)
    return theme_path_get(config->theme);
 }
 
-const char *
-config_theme_path_default_get(const Config *config)
+static const char *
+_theme_path_default_get(void)
 {
    static char path[PATH_MAX] = "";
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config->theme, NULL);
 
    if (path[0]) return path;
 
@@ -76,7 +74,7 @@ theme_apply(Evas_Object *edje, const Config *config, const char *group)
             config_theme_path_get(config), group, errmsg);
      }
 
-   if (edje_object_file_set(edje, config_theme_path_default_get(config), group))
+   if (edje_object_file_set(edje, _theme_path_default_get(), group))
      goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
@@ -112,7 +110,7 @@ theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
    INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
        config_theme_path_get(config), group, errmsg);
 
-   if (elm_layout_file_set(layout, config_theme_path_default_get(config), group))
+   if (elm_layout_file_set(layout, _theme_path_default_get(), group))
      goto done;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
@@ -133,7 +131,7 @@ theme_apply_default(Evas_Object *edje, const Config *config, const char *group)
    EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
 
-   if (edje_object_file_set(edje, config_theme_path_default_get(config), group))
+   if (edje_object_file_set(edje, _theme_path_default_get(), group))
      return EINA_TRUE;
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));

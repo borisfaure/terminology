@@ -2286,8 +2286,7 @@ _block_edje_activate(Evas_Object *obj, Termblock *blk)
    else if (!strcmp(blk->path, "THEME"))
      {
         ok = edje_object_file_set(blk->obj,
-                                  config_theme_path_default_get
-                                  (sd->config),
+                                  config_theme_path_get(sd->config),
                                   blk->link);
      }
    else

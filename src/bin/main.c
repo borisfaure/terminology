@@ -1024,8 +1024,7 @@ elm_main(int argc, char **argv)
           }
      }
 
-   elm_theme_overlay_add(NULL,
-                         config_theme_path_default_get(instance.config));
+   elm_theme_overlay_add(NULL, theme_path_get("default"));
    elm_theme_overlay_add(NULL, config_theme_path_get(instance.config));
 
    if ((!single) && (instance.config->multi_instance))
