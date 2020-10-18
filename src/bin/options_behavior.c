@@ -226,7 +226,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_object_text_set(rd, _("Blinking Block"));
    elm_radio_state_value_set(rd, 1);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor");
+   theme_apply(layout, ctx->config, "terminology/cursor",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
@@ -245,7 +246,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 2);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor");
+   theme_apply(layout, ctx->config, "terminology/cursor",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
@@ -264,7 +266,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 3);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor_underline");
+   theme_apply(layout, ctx->config, "terminology/cursor_underline",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
@@ -283,7 +286,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 4);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor_underline");
+   theme_apply(layout, ctx->config, "terminology/cursor_underline",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
@@ -302,7 +306,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 5);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor_bar");
+   theme_apply(layout, ctx->config, "terminology/cursor_bar",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);
@@ -321,7 +326,8 @@ _add_cursors_option(Evas_Object *bx,
    elm_radio_state_value_set(rd, 6);
    elm_radio_group_add(rd, rdg);
    layout = elm_layout_add(rd);
-   theme_apply_elm(layout, ctx->config, "terminology/cursor_bar");
+   theme_apply(layout, ctx->config, "terminology/cursor_bar",
+               NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_image_resizable_set(layout, EINA_FALSE, EINA_FALSE);

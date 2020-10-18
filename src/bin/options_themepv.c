@@ -110,8 +110,8 @@ options_theme_preview_add(Evas_Object *parent,
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
    obg = oe;
-   if (!edje_object_file_set(oe, file, "terminology/background"))
-     edje_object_file_set(oe, theme_path_default_get(), "terminology/background");
+   theme_apply(oe, config, "terminology/background",
+               file, NULL, EINA_FALSE);
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -132,8 +132,8 @@ options_theme_preview_add(Evas_Object *parent,
    // create a bg and swallow into core frame
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
-   if (!edje_object_file_set(oe, file, "terminology/core"))
-     edje_object_file_set(oe, theme_path_default_get(), "terminology/core");
+   theme_apply(oe, config, "terminology/core",
+               file, NULL, EINA_FALSE);
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -208,8 +208,8 @@ options_theme_preview_add(Evas_Object *parent,
    // create a cursor and put it in the grid
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
-   if (!edje_object_file_set(oe, file, "terminology/cursor"))
-     edje_object_file_set(oe, theme_path_default_get(), "terminology/cursor");
+   theme_apply(oe, config, "terminology/cursor",
+               file, NULL, EINA_FALSE);
    edje_object_signal_emit(oe, "focus,in", "terminology");
    evas_object_show(o);
    evas_object_data_set(oo, "cursor", o);
@@ -218,8 +218,8 @@ options_theme_preview_add(Evas_Object *parent,
    // create a selection and put it in the grid
    o = edje_object_add(evas);
    oe = o;
-   if (!edje_object_file_set(oe, file, "terminology/selection"))
-     edje_object_file_set(oe, theme_path_default_get(), "terminology/selection");
+   theme_apply(oe, config, "terminology/selection",
+               file, NULL, EINA_FALSE);
    edje_object_signal_emit(oe, "focus,in", "terminology");
    edje_object_signal_emit(oe, "mode,oneline", "terminology");
    evas_object_show(o);

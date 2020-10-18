@@ -527,7 +527,8 @@ termio_config_set(Evas_Object *obj, Config *config)
 
    termio_set_cursor_shape(obj, sd->cursor.shape);
 
-   theme_apply(sd->sel.theme, config, "terminology/selection");
+   theme_apply(sd->sel.theme, config, "terminology/selection",
+               NULL, NULL, EINA_FALSE);
    theme_auto_reload_enable(sd->sel.theme);
    edje_object_part_swallow(sd->sel.theme, "terminology.top_left", sd->sel.top);
    edje_object_part_swallow(sd->sel.theme, "terminology.bottom_right", sd->sel.bottom);
@@ -554,7 +555,8 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    config = sd->config;
-   theme_apply(sd->cursor.obj, config, _cursor_shape_to_group_name(shape));
+   theme_apply(sd->cursor.obj, config, _cursor_shape_to_group_name(shape),
+               NULL, NULL, EINA_FALSE);
    theme_auto_reload_enable(sd->cursor.obj);
    evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
    evas_object_show(sd->cursor.obj);
@@ -1464,7 +1466,8 @@ _color_tooltip_content(void *data,
    const char *txt;
 
    o = edje_object_add(canvas);
-   theme_apply(o, sd->config, "terminology/color_preview");
+   theme_apply(o, sd->config, "terminology/color_preview",
+               NULL, NULL, EINA_FALSE);
    evas_object_size_hint_min_set(o, 80, 80);
    edje_object_color_class_set(o, "color_preview",
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
@@ -1527,7 +1530,8 @@ _update_link(Termio *sd, Eina_Bool same_geom)
      {
         o = elm_layout_add(sd->win);
         evas_object_smart_member_add(o, obj);
-        theme_apply(elm_layout_edje_get(o), sd->config, "terminology/link");
+        theme_apply(o, sd->config, "terminology/link",
+                    NULL, NULL, EINA_TRUE);
 
         if (y == sd->link.y1)
           {
@@ -1682,8 +1686,8 @@ _hyperlink_mouseover(Termio *sd,
                     {
                        o = elm_layout_add(sd->win);
                        evas_object_smart_member_add(o, sd->self);
-                       theme_apply(elm_layout_edje_get(o), sd->config,
-                                   "terminology/link");
+                       theme_apply(o, sd->config, "terminology/link",
+                                   NULL, NULL, EINA_TRUE);
                        evas_object_move(o,
                                         ox + (x * sd->font.chw),
                                         oy + (y * sd->font.chh));

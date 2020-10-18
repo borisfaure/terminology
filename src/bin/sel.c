@@ -729,7 +729,8 @@ sel_entry_add(Evas_Object *obj, Evas_Object *entry,
    en->selected_before = selected;
    en->selected_orig = selected;
    en->bg = edje_object_add(evas_object_evas_get(obj));
-   theme_apply(en->bg, config, "terminology/sel/item");
+   theme_apply(en->bg, config, "terminology/sel/item",
+               NULL, NULL, EINA_FALSE);
    evas_object_smart_member_add(en->bg, obj);
    evas_object_clip_set(en->bg, sd->clip);
    edje_object_part_swallow(en->bg, "terminology.content", en->obj);

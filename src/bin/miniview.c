@@ -681,7 +681,8 @@ miniview_add(Evas_Object *parent, Evas_Object *termio)
    mv->termio = termio;
 
    mv->base = edje_object_add(canvas);
-   theme_apply(mv->base, termio_config_get(termio), "terminology/miniview");
+   theme_apply(mv->base, termio_config_get(termio), "terminology/miniview",
+               NULL, NULL, EINA_FALSE);
 
    evas_object_smart_member_add(mv->base, obj);
 

@@ -54,71 +54,46 @@ theme_path_default_get(void)
 }
 
 Eina_Bool
-theme_apply(Evas_Object *edje, const Config *config, const char *group)
+theme_apply(Evas_Object *obj,
+            const Config *config,
+            const char *group,
+            const char *theme_file,
+            const Color_Scheme *cs,
+            Eina_Bool is_elm_layout)
 {
+   const char *theme_path = theme_file;
+   Evas_Object *edje = obj;
    const char *errmsg;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(edje, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
+   if (!theme_file)
+     theme_path = config_theme_path_get(config);
 
-   /* use default if nord is chosen
-    * but rely on color_scheme_apply_from_config() */
-   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
+   if (is_elm_layout)
+     {
+        edje = elm_layout_edje_get(obj);
+
+        if (elm_layout_file_set(obj, config_theme_path_get(config), group))
+          goto done;
+        if (elm_layout_file_set(obj, theme_path_default_get(), group))
+          goto done;
+     }
+   else
      {
         if (edje_object_file_set(edje, config_theme_path_get(config), group))
           goto done;
-
-        errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-        INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
-            config_theme_path_get(config), group, errmsg);
-     }
-
-   if (edje_object_file_set(edje, theme_path_default_get(), group))
-     goto done;
-
-   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
-   return EINA_FALSE;
-
-done:
-   color_scheme_apply_from_config(edje, config);
-   return EINA_TRUE;
-}
-
-Eina_Bool
-theme_apply_elm(Evas_Object *layout, const Config *config, const char *group)
-{
-   const char *errmsg;
-   Evas_Object *edje;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(layout, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(config, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, EINA_FALSE);
-
-   edje = elm_layout_edje_get(layout);
-
-   /* use default if nord is chosen
-    * but rely on color_scheme_apply_from_config() */
-   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
-     {
-        if (elm_layout_file_set(layout, config_theme_path_get(config), group))
+        if (edje_object_file_set(edje, theme_path_default_get(), group))
           goto done;
      }
 
    errmsg = edje_load_error_str(edje_object_load_error_get(edje));
-   INF(_("Could not find theme: file=%s group=%s error='%s', trying default theme"),
-       config_theme_path_get(config), group, errmsg);
-
-   if (elm_layout_file_set(layout, theme_path_default_get(), group))
-     goto done;
-
-   errmsg = edje_load_error_str(edje_object_load_error_get(edje));
    ERR(_("Could not load any theme for group=%s: %s"), group, errmsg);
    return EINA_FALSE;
 
 done:
-   color_scheme_apply_from_config(edje, config);
+   if (cs)
+     color_scheme_apply(edje, cs);
+   else
+     color_scheme_apply_from_config(edje, config);
    return EINA_TRUE;
 }
 

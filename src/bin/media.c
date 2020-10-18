@@ -818,7 +818,8 @@ _type_mov_init(Evas_Object *obj)
    evas_object_raise(sd->o_event);
 
    o = sd->o_ctrl = edje_object_add(evas_object_evas_get(obj));
-   theme_apply(o, sd->config, "terminology/mediactrl");
+   theme_apply(o, sd->config, "terminology/mediactrl",
+               NULL, NULL, EINA_FALSE);
    vol = emotion_object_audio_volume_get(sd->o_img);
    edje_object_part_drag_value_set(o, "terminology.voldrag", vol, vol);
    edje_object_signal_callback_add(o, "play", "",
@@ -1316,7 +1317,8 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
 
                             o = sd->o_busy = edje_object_add(evas_object_evas_get(obj));
                             evas_object_smart_member_add(o, obj);
-                            theme_apply(o, sd->config, "terminology/mediabusy");
+                            theme_apply(o, sd->config, "terminology/mediabusy",
+                                        NULL, NULL, EINA_FALSE);
                             evas_object_show(o);
                             edje_object_signal_emit(o, "busy", "terminology");
 

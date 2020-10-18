@@ -2219,7 +2219,7 @@ win_new(const char *name, const char *role, const char *title,
    wn->base = o = elm_layout_add(wn->win);
    elm_object_focus_allow_set(o, EINA_TRUE);
    evas_object_propagate_events_set(o, EINA_FALSE);
-   theme_apply_elm(o, config, "terminology/base");
+   theme_apply(o, config, "terminology/base", NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(wn->conform, o);
@@ -3579,7 +3579,8 @@ _tab_inactive_get_or_create(Evas *canvas,
 
    term->tab_inactive = o = edje_object_add(canvas);
 
-   theme_apply(o, term->config, "terminology/tabbar_back");
+   theme_apply(o, term->config, "terminology/tabbar_back",
+               NULL, NULL, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    edje_object_size_min_calc(o, &w, &h);
@@ -4155,7 +4156,8 @@ _tab_drag_start(void *data EINA_UNUSED)
    for_each_term_do(_tab_drag->term->wn, &_term_hdrag_off, NULL);
 
    _tab_drag->icon = o;
-   theme_apply_elm(o, term->config, "terminology/tab_drag_thumb");
+   theme_apply(o, term->config, "terminology/tab_drag_thumb",
+               NULL, NULL, EINA_TRUE);
    elm_layout_text_set(o, "terminology.title",
                        term->container->title);
    elm_layout_content_unset(term->bg, "terminology.content");
@@ -4401,7 +4403,8 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    tabs->selector_bg = edje_object_add(evas_object_evas_get(tc->wn->win));
-   theme_apply(tabs->selector_bg, wn->config, "terminology/sel/base");
+   theme_apply(tabs->selector_bg, wn->config, "terminology/sel/base",
+               NULL, NULL, EINA_FALSE);
 
    evas_object_geometry_set(tabs->selector_bg, x, y, w, h);
    evas_object_hide(o);
@@ -5909,7 +5912,8 @@ void change_theme(Evas_Object *win, Config *config)
      {
         Evas_Object *edje = term->bg_edj;
 
-        if (!theme_apply_elm(term->bg, config, "terminology/background"))
+        if (!theme_apply(term->bg, config, "terminology/background",
+                         NULL, NULL, EINA_TRUE))
           ERR("Couldn't find terminology theme!");
         colors_term_init(termio_textgrid_get(term->termio), edje, config);
         termio_config_set(term->termio, config);
@@ -7373,7 +7377,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->config = config;
 
    term->core = o = elm_layout_add(wn->win);
-   theme_apply_elm(o, term->config, "terminology/core");
+   theme_apply(o, term->config, "terminology/core", NULL, NULL, EINA_TRUE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -7386,7 +7390,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->bg_edj = elm_layout_edje_get(o);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   if (!theme_apply_elm(o, config, "terminology/background"))
+   if (!theme_apply(o, config, "terminology/background", NULL, NULL, EINA_TRUE))
      {
         CRITICAL(_("Couldn't find terminology theme! Forgot 'ninja install'?"));
         evas_object_del(term->bg);

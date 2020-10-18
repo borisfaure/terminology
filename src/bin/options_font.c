@@ -309,7 +309,8 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
         Config *config = f->ctx->config;
 
         o = edje_object_add(evas_object_evas_get(obj));
-        theme_apply(o, config, "terminology/fontpreview");
+        theme_apply(o, config, "terminology/fontpreview",
+                    NULL, NULL, EINA_FALSE);
         theme_auto_reload_enable(o);
         evas_object_size_hint_min_set(o,
                                       96 * elm_config_scale_get(),
