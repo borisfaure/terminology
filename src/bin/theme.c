@@ -72,14 +72,14 @@ theme_apply(Evas_Object *obj,
      {
         edje = elm_layout_edje_get(obj);
 
-        if (elm_layout_file_set(obj, config_theme_path_get(config), group))
+        if (elm_layout_file_set(obj, theme_path, group))
           goto done;
         if (elm_layout_file_set(obj, theme_path_default_get(), group))
           goto done;
      }
    else
      {
-        if (edje_object_file_set(edje, config_theme_path_get(config), group))
+        if (edje_object_file_set(edje, theme_path, group))
           goto done;
         if (edje_object_file_set(edje, theme_path_default_get(), group))
           goto done;
