@@ -97,7 +97,7 @@ def write_ansi():
     for c in range(15):
         write_color(cfg.get('Ansi', 'ansi{0:02d}'.format(c),
                             fallback=default[c]))
-        out.write('    }\n')
+    out.write('    }\n')
 
 write_ansi()
 out.write('}\n')
