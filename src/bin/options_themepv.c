@@ -95,8 +95,10 @@ _cb_resize(void *_data EINA_UNUSED,
 
 Evas_Object *
 options_theme_preview_add(Evas_Object *parent,
-                          Config *config,
-                          const char *file, Evas_Coord w, Evas_Coord h)
+                          const Config *config,
+                          const char *file,
+                          const Color_Scheme *cs,
+                          Evas_Coord w, Evas_Coord h)
 {
    Evas_Object *o, *oo, *obase, *oe, *obg;
    Evas *evas;
@@ -111,7 +113,7 @@ options_theme_preview_add(Evas_Object *parent,
    oe = elm_layout_edje_get(o);
    obg = oe;
    theme_apply(oe, config, "terminology/background",
-               file, NULL, EINA_FALSE);
+               file, cs, EINA_FALSE);
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -133,7 +135,7 @@ options_theme_preview_add(Evas_Object *parent,
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
    theme_apply(oe, config, "terminology/core",
-               file, NULL, EINA_FALSE);
+               file, cs, EINA_FALSE);
    if (config->translucent)
      edje_object_signal_emit(oe, "translucent,on", "terminology");
    else
@@ -207,21 +209,19 @@ options_theme_preview_add(Evas_Object *parent,
 
    // create a cursor and put it in the grid
    o = elm_layout_add(parent);
-   oe = elm_layout_edje_get(o);
-   theme_apply(oe, config, "terminology/cursor",
-               file, NULL, EINA_FALSE);
-   edje_object_signal_emit(oe, "focus,in", "terminology");
+   theme_apply(o, config, "terminology/cursor",
+               file, cs, EINA_TRUE);
+   elm_layout_signal_emit(o, "focus,in", "terminology");
    evas_object_show(o);
    evas_object_data_set(oo, "cursor", o);
    elm_grid_pack(oo, o, 0, 0, 10, 10);
 
    // create a selection and put it in the grid
    o = edje_object_add(evas);
-   oe = o;
-   theme_apply(oe, config, "terminology/selection",
-               file, NULL, EINA_FALSE);
-   edje_object_signal_emit(oe, "focus,in", "terminology");
-   edje_object_signal_emit(oe, "mode,oneline", "terminology");
+   theme_apply(o, config, "terminology/selection",
+               file, cs, EINA_FALSE);
+   edje_object_signal_emit(o, "focus,in", "terminology");
+   edje_object_signal_emit(o, "mode,oneline", "terminology");
    evas_object_show(o);
    evas_object_data_set(oo, "selection", o);
    elm_grid_pack(oo, o, 0, 0, 10, 10);

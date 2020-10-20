@@ -59,6 +59,7 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
 
              o = options_theme_preview_add(obj, config,
                                            theme_path_get(t->name),
+                                           NULL,
                                            128 * elm_config_scale_get(),
                                            64 * elm_config_scale_get());
              return o;
