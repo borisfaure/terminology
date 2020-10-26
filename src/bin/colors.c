@@ -621,7 +621,7 @@ edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
    CS_SET("C12", ansi[12]);
    CS_SET("C13", ansi[13]);
    CS_SET("C14", ansi[14]);
-   CS_SET("C14", ansi[15]);
+   CS_SET("C15", ansi[15]);
 
    CS_SET("c0", def);
    CS_SET("c1", ansi[0]);
