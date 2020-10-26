@@ -2659,9 +2659,9 @@ termio_internal_render(Termio *sd,
                          fg += 48;
                        if ((cells[x].att.bgintense) && (!bgext))
                          bg += 48;
-                       if ((cells[x].att.bold) && (!fgext))
+                       if ((cells[x].att.bold && !cells[x].att.faint) && (!fgext))
                          fg += 12;
-                       if ((cells[x].att.faint) && (!fgext))
+                       else if ((cells[x].att.faint) && (!fgext))
                          fg += 24;
                        if (cells[x].att.inverse ^ inv)
                          {
