@@ -2635,16 +2635,6 @@ termio_internal_render(Termio *sd,
                        fgext = cells[x].att.fg256;
                        bgext = cells[x].att.bg256;
                        codepoint = cells[x].codepoint;
-                       if (sd->config->font.bolditalic)
-                         {
-                            bold = cells[x].att.bold;
-                            italic = cells[x].att.italic;
-                         }
-                       else
-                         {
-                            bold = 0;
-                            italic = 0;
-                         }
 
                        if ((fg == COL_DEF) && (cells[x].att.inverse ^ inv))
                          fg = COL_INVERSEBG;
@@ -2669,6 +2659,21 @@ termio_internal_render(Termio *sd,
                             t = fgext; fgext = bgext; bgext = t;
                             t = fg; fg = bg; bg = t;
                          }
+
+                       /* if font does not have bolditalic, bright/bold
+                        * color is still applied
+                        */
+                       if (sd->config->font.bolditalic)
+                         {
+                            bold = cells[x].att.bold;
+                            italic = cells[x].att.italic;
+                         }
+                       else
+                         {
+                            bold = 0;
+                            italic = 0;
+                         }
+
                        if ((tc[x].codepoint != codepoint) ||
                            (tc[x].bold != bold) ||
                            (tc[x].italic != italic) ||
