@@ -18,9 +18,7 @@ static Color_Scheme default_colorscheme =
         .website = "https://www.enlightenment.org/about-terminology",
         .license = "BSD-2-Clause",
    },
-   .def = CS(170, 170, 170), /* #aaaaaa */
    .bg = CS(32, 32, 32), /* #202020 */
-   .fg = CS(170, 170, 170), /* #aaaaaa */
    .main = CS(53, 153, 255), /* #3599ff */
    .hl = CS(255,255,255), /* #ffffff */
    .end_sel = CS(255,51,0), /* #ff3300 */
@@ -31,22 +29,32 @@ static Color_Scheme default_colorscheme =
    .tab_missed_over_2 = CS(255,153,51), /* #ff9933 */
    .tab_missed_over_3 = CS(255,0,0), /* #ff0000 */
    .tab_title_2 = CS(0,0,0), /* #000000 */
-   .ansi[0]  = CS(  0,   0,   0), /* #000000 */
-   .ansi[1]  = CS(204,  51,  51), /* #cc3333 */
-   .ansi[2]  = CS( 51, 204,  51), /* #33cc33 */
-   .ansi[3]  = CS(204, 136,  51), /* #cc8833 */
-   .ansi[4]  = CS( 51,  51, 204), /* #3333cc */
-   .ansi[5]  = CS(204,  51, 204), /* #cc33cc */
-   .ansi[6]  = CS( 51, 204, 204), /* #33cccc */
-   .ansi[7]  = CS(204, 204, 204), /* #cccccc */
-   .ansi[8]  = CS(102, 102, 102), /* #666666 */
-   .ansi[9]  = CS(255, 102, 102), /* #ff6666 */
-   .ansi[10] = CS(102, 255, 102), /* #66ff66 */
-   .ansi[11] = CS(255, 255, 102), /* #ffff66 */
-   .ansi[12] = CS(102, 102, 255), /* #6666ff */
-   .ansi[13] = CS(255, 102, 255), /* #ff66ff */
-   .ansi[14] = CS(102, 255, 255), /* #66ffff */
-   .ansi[15] = CS(255, 255, 255), /* #ffffff */
+   .normal = {
+        .def        = CS(170, 170, 170), /* #aaaaaa */
+        .black      = CS(  0,   0,   0), /* #000000 */
+        .red        = CS(204,  51,  51), /* #cc3333 */
+        .green      = CS( 51, 204,  51), /* #33cc33 */
+        .yellow     = CS(204, 136,  51), /* #cc8833 */
+        .blue       = CS( 51,  51, 204), /* #3333cc */
+        .magenta    = CS(204,  51, 204), /* #cc33cc */
+        .cyan       = CS( 51, 204, 204), /* #33cccc */
+        .white      = CS(204, 204, 204), /* #cccccc */
+        .inverse_fg = CS( 34,  34,  34), /* #222222 */
+        .inverse_bg = CS(170, 170, 170), /* #aaaaaa */
+   },
+   .bright = {
+        .def        = CS(238, 238, 238), /* #eeeeee */
+        .black      = CS(102, 102, 102), /* #666666 */
+        .red        = CS(255, 102, 102), /* #ff6666 */
+        .green      = CS(102, 255, 102), /* #66ff66 */
+        .yellow     = CS(255, 255, 102), /* #ffff66 */
+        .blue       = CS(102, 102, 255), /* #6666ff */
+        .magenta    = CS(255, 102, 255), /* #ff66ff */
+        .cyan       = CS(102, 255, 255), /* #66ffff */
+        .white      = CS(255, 255, 255), /* #ffffff */
+        .inverse_fg = CS( 17,  17,  17), /* #111111 */
+        .inverse_bg = CS(238, 238, 238), /* #eeeeee */
+   },
 };
 #undef CS
 
@@ -417,6 +425,7 @@ static const Color default_colors256[256] =
 };
 
 static Eet_Data_Descriptor *edd_cs = NULL;
+static Eet_Data_Descriptor *edd_cb = NULL;
 static Eet_Data_Descriptor *edd_color = NULL;
 
 void
@@ -583,9 +592,8 @@ color_scheme_apply(Evas_Object *edje,
                                cs->_F3.r, cs->_F3.g, cs->_F3.b, cs->_F3.a); \
 } while (0)
 
-   CS_SET("DEF", def);
    CS_SET("BG", bg);
-   CS_SET("FG", fg);
+   CS_SET("FG", normal.def);
    CS_SET("CURSOR", main);
    CS_SET("CURSOR_HIGHLIGHT", hl);
    CS_SET("GLOW", main);
@@ -597,7 +605,7 @@ color_scheme_apply(Evas_Object *edje,
    CS_SET_MANY("TAB_MISSED", tab_missed_1, tab_missed_2, tab_missed_3);
    CS_SET_MANY("TAB_MISSED_OVER",
                tab_missed_over_1, tab_missed_over_2, tab_missed_over_3);
-   CS_SET_MANY("TAB_TITLE", fg, tab_title_2, bg);
+   CS_SET_MANY("TAB_TITLE", normal.def, tab_title_2, bg);
 
 #define CS_DARK      64,  64,  64, 255
 edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
@@ -605,63 +613,67 @@ edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
 
    CS_SET("SHINE", hl);
 
-   CS_SET("C0",  ansi[0]);
-   CS_SET("C1",  ansi[1]);
-   CS_SET("C2",  ansi[2]);
-   CS_SET("C3",  ansi[3]);
-   CS_SET("C4",  ansi[4]);
-   CS_SET("C5",  ansi[5]);
-   CS_SET("C6",  ansi[6]);
-   CS_SET("C7",  ansi[7]);
+   /* ANSI Colors in the 256 colors mode */
+   CS_SET("C0" /* black */,   normal.black);
+   CS_SET("C1" /* red */,     normal.red);
+   CS_SET("C2" /* green */,   normal.green);
+   CS_SET("C3" /* yellow */,  normal.yellow);
+   CS_SET("C4" /* blue */,    normal.blue);
+   CS_SET("C5" /* magenta */, normal.magenta);
+   CS_SET("C6" /* cyan */,    normal.cyan);
+   CS_SET("C7" /* white */,   normal.white);
 
-   CS_SET("C8",  ansi[8]);
-   CS_SET("C9",  ansi[9]);
-   CS_SET("C10", ansi[10]);
-   CS_SET("C11", ansi[11]);
-   CS_SET("C12", ansi[12]);
-   CS_SET("C13", ansi[13]);
-   CS_SET("C14", ansi[14]);
-   CS_SET("C15", ansi[15]);
+   CS_SET("C8" /* black */,    bright.black);
+   CS_SET("C9" /* red */,      bright.red);
+   CS_SET("C10" /* green */,   bright.green);
+   CS_SET("C11" /* yellow */,  bright.yellow);
+   CS_SET("C12" /* blue */,    bright.blue);
+   CS_SET("C13" /* magenta */, bright.magenta);
+   CS_SET("C14" /* cyan */,    bright.cyan);
+   CS_SET("C15" /* white */,   bright.white);
 
-   CS_SET("c0", def);
-   CS_SET("c1", ansi[0]);
-   CS_SET("c2", ansi[1]);
-   CS_SET("c3", ansi[2]);
-   CS_SET("c4", ansi[3]);
-   CS_SET("c5", ansi[4]);
-   CS_SET("c6", ansi[5]);
-   CS_SET("c7", ansi[6]);
-   CS_SET("c8", ansi[7]);
+   /* Normal */
+   CS_SET("c0" /* def */,     normal.def);
+   CS_SET("c1" /* black */,   normal.black);
+   CS_SET("c2" /* red */,     normal.red);
+   CS_SET("c3" /* green */,   normal.green);
+   CS_SET("c4" /* yellow */,  normal.yellow);
+   CS_SET("c5" /* blue */,    normal.blue);
+   CS_SET("c6" /* magenta */, normal.magenta);
+   CS_SET("c7" /* cyan */,    normal.cyan);
+   CS_SET("c8" /* white */,   normal.white);
+   /* c9 is invisible, use default */
+   CS_SET("c10" /* inverse fg */, normal.inverse_fg);
+   CS_SET("c11" /* inverse bg */, normal.inverse_bg);
 
-   CS_SET("c11", def);
+   /* Bold */
+   CS_SET("c12" /* def */,     bright.def);
+   CS_SET("c13" /* black */,   bright.black);
+   CS_SET("c14" /* red */,     bright.red);
+   CS_SET("c15" /* green */,   bright.green);
+   CS_SET("c16" /* yellow */,  bright.yellow);
+   CS_SET("c17" /* blue */,    bright.blue);
+   CS_SET("c18" /* magenta */, bright.magenta);
+   CS_SET("c19" /* cyan */,    bright.cyan);
+   CS_SET("c20" /* white */,   bright.white);
+   /* c21 is invisible, use default */
+   CS_SET("c22" /* inverse fg */, bright.inverse_fg);
+   CS_SET("c23" /* inverse bg */, bright.inverse_bg);
 
-   CS_SET("c12", ansi[15]);
-   CS_SET("c13", ansi[8]);
-   CS_SET("c14", ansi[9]);
-   CS_SET("c15", ansi[10]);
-   CS_SET("c16", ansi[11]);
-   CS_SET("c17", ansi[12]);
-   CS_SET("c18", ansi[13]);
-   CS_SET("c19", ansi[14]);
-   CS_SET("c20", ansi[15]);
+   /* Faint */
+   CS_SET("c24" /* def */,     faint.def);
+   CS_SET("c25" /* black */,   faint.black);
+   CS_SET("c26" /* red */,     faint.red);
+   CS_SET("c27" /* green */,   faint.green);
+   CS_SET("c28" /* yellow */,  faint.yellow);
+   CS_SET("c29" /* blue */,    faint.blue);
+   CS_SET("c30" /* magenta */, faint.magenta);
+   CS_SET("c31" /* cyan */,    faint.cyan);
+   CS_SET("c32" /* white */,   faint.white);
+   /* c33 is invisible, use default */
+   CS_SET("c34" /* inverse fg */, faint.inverse_fg);
+   CS_SET("c35" /* inverse bg */, faint.inverse_bg);
 
-   CS_SET("c25", ansi[8]);
-   CS_SET("c26", ansi[9]);
-   CS_SET("c27", ansi[10]);
-   CS_SET("c28", ansi[11]);
-   CS_SET("c29", ansi[12]);
-   CS_SET("c30", ansi[13]);
-   CS_SET("c31", ansi[14]);
-   CS_SET("c32", ansi[15]);
-
-   CS_SET("c37", ansi[8]);
-   CS_SET("c38", ansi[9]);
-   CS_SET("c39", ansi[10]);
-   CS_SET("c40", ansi[11]);
-   CS_SET("c41", ansi[12]);
-   CS_SET("c42", ansi[13]);
-   CS_SET("c43", ansi[14]);
-   CS_SET("c44", ansi[15]);
 
 #undef CS_SET
 #undef CS_SET_MANY
@@ -845,6 +857,35 @@ colors_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_color, Color, "a", a, EET_T_UCHAR);
 
+
+   eet_eina_stream_data_descriptor_class_set
+     (&eddc, sizeof(eddc), "Color_Block", sizeof(Color_Block));
+   edd_cb = eet_data_descriptor_stream_new(&eddc);
+
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "def", def, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "black", black, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "red", red, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "green", green, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "yellow", yellow, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "blue", blue, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "magenta", magenta, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "cyan", cyan, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "white", white, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "inverse_fg", inverse_fg, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cb, Color_Block, "inverse_bg", inverse_bg, edd_color);
+
+
    eet_eina_stream_data_descriptor_class_set
      (&eddc, sizeof(eddc), "Color_Scheme", sizeof(Color_Scheme));
    edd_cs = eet_data_descriptor_stream_new(&eddc);
@@ -864,11 +905,7 @@ colors_init(void)
      (edd_cs, Color_Scheme, "md.license", md.license, EET_T_STRING);
 
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
-      (edd_cs, Color_Scheme, "def", def, edd_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
       (edd_cs, Color_Scheme, "bg", bg, edd_color);
-   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
-      (edd_cs, Color_Scheme, "fg", fg, edd_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
       (edd_cs, Color_Scheme, "main", main, edd_color);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
@@ -892,8 +929,9 @@ colors_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
       (edd_cs, Color_Scheme, "tab_title_2", tab_title_2, edd_color);
 
-   EET_DATA_DESCRIPTOR_ADD_ARRAY
-     (edd_cs, Color_Scheme, "ansi", ansi, edd_color);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "normal", normal, edd_color);
+
 
 #if ENABLE_NLS
    default_colorscheme.md.author = gettext(default_colorscheme.md.author);
@@ -905,6 +943,9 @@ colors_shutdown(void)
 {
    eet_data_descriptor_free(edd_cs);
    edd_cs = NULL;
+
+   eet_data_descriptor_free(edd_cb);
+   edd_cb = NULL;
 
    eet_data_descriptor_free(edd_color);
    edd_color = NULL;
