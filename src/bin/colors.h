@@ -5,6 +5,22 @@
 #include "config.h"
 
 typedef struct _Color_Scheme Color_Scheme;
+typedef struct _Color_Block Color_Block;
+
+struct _Color_Block
+{
+   Color def;
+   Color black;
+   Color red;
+   Color green;
+   Color yellow;
+   Color blue;
+   Color magenta;
+   Color cyan;
+   Color white;
+   Color inverse_fg;
+   Color inverse_bg;
+};
 
 struct _Color_Scheme
 {
@@ -17,9 +33,7 @@ struct _Color_Scheme
         const char *license;
    } md;
 
-   Color def;
    Color bg;
-   Color fg;
    Color main;
    Color hl;
    Color end_sel;
@@ -33,7 +47,9 @@ struct _Color_Scheme
 
    Color tab_title_2;
 
-   Color ansi[16];
+   Color_Block normal;
+   Color_Block bright;
+   Color_Block faint;
 };
 
 
