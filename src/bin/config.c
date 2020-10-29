@@ -570,7 +570,7 @@ config_new(void)
         config->visualize = EINA_TRUE;
         config->urg_bell = EINA_TRUE;
         config->multi_instance = EINA_FALSE;
-        config->xterm_256color = EINA_FALSE;
+        config->xterm_256color = EINA_TRUE;
         config->erase_is_del = EINA_FALSE;
         config->custom_geometry = EINA_FALSE;
         config->drag_links = EINA_FALSE;
