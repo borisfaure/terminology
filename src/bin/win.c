@@ -5915,7 +5915,7 @@ void change_theme(Evas_Object *win, Config *config)
         if (!theme_apply(term->bg, config, "terminology/background",
                          NULL, NULL, EINA_TRUE))
           ERR("Couldn't find terminology theme!");
-        colors_term_init(termio_textgrid_get(term->termio), edje, config);
+        colors_term_init(termio_textgrid_get(term->termio), edje);
         termio_config_set(term->termio, config);
      }
 
@@ -7416,7 +7416,7 @@ term_new(Win *wn, Config *config, const char *cmd,
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                  size_w, size_h, term, title);
    evas_object_data_set(o, "term", term);
-   colors_term_init(termio_textgrid_get(term->termio), term->bg_edj, config);
+   colors_term_init(termio_textgrid_get(term->termio), term->bg_edj);
 
    termio_theme_set(o, term->bg_edj);
 

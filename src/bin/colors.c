@@ -55,71 +55,93 @@ static Color_Scheme default_colorscheme =
         .inverse_fg = CS( 17,  17,  17), /* #111111 */
         .inverse_bg = CS(238, 238, 238), /* #eeeeee */
    },
+   .faint = {
+        .def        = CS(135, 135, 135), /* #878787 */
+        .black      = CS(  8,   8,   8), /* #080808 */
+        .red        = CS(152,   8,   8), /* #980808 */
+        .green      = CS(  8, 152,   8), /* #089808 */
+        .yellow     = CS(152, 152,   8), /* #989808 */
+        .blue       = CS(  8,   8, 152), /* #080898 */
+        .magenta    = CS(152,   8, 152), /* #980898 */
+        .cyan       = CS(  8, 152, 152), /* #089898 */
+        .white      = CS(152, 152, 152), /* #989898 */
+        .inverse_fg = CS( 33,  33,  33), /* #212121 */
+        .inverse_bg = CS(135, 135, 135), /* #878787 */
+   },
+   .brightfaint = {
+        .def        = CS(186, 186, 186), /* #bababa */
+        .black      = CS( 84,  84,  84), /* #545454 */
+        .red        = CS(199,  84,  84), /* #c75454 */
+        .green      = CS( 84, 199,  84), /* #54c754 */
+        .yellow     = CS(199, 199,  84), /* #c7c754 */
+        .blue       = CS( 84,  84, 199), /* #5454c7 */
+        .magenta    = CS(199,  84, 199), /* #c754c7 */
+        .cyan       = CS( 84, 199, 199), /* #54c7c7 */
+        .white      = CS(199, 199, 199), /* #c7c7c7 */
+        .inverse_fg = CS( 20,  20,  20), /* #141414 */
+        .inverse_bg = CS(186, 186, 186), /* #bababa */
+   }
 };
 #undef CS
 
-static const Color default_colors[2][2][12] =
+static const Color default_colors[4][12] =
 {
-   { // normal
-        { // normal
-             { 0xaa, 0xaa, 0xaa, 0xff }, // COL_DEF
-             { 0x00, 0x00, 0x00, 0xff }, // COL_BLACK
-             { 0xc0, 0x00, 0x00, 0xff }, // COL_RED
-             { 0x00, 0xc0, 0x00, 0xff }, // COL_GREEN
-             { 0xc0, 0xc0, 0x00, 0xff }, // COL_YELLOW
-             { 0x00, 0x00, 0xc0, 0xff }, // COL_BLUE
-             { 0xc0, 0x00, 0xc0, 0xff }, // COL_MAGENTA
-             { 0x00, 0xc0, 0xc0, 0xff }, // COL_CYAN
-             { 0xc0, 0xc0, 0xc0, 0xff }, // COL_WHITE
-             { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
-             { 0x22, 0x22, 0x22, 0xff }, // COL_INVERSE
-             { 0xaa, 0xaa, 0xaa, 0xff }, // COL_INVERSEBG
-        },
-        { // bright/bold
-             { 0xee, 0xee, 0xee, 0xff }, // COL_DEF
-             { 0xcc, 0xcc, 0xcc, 0xff }, // COL_BLACK
-             { 0xcc, 0x88, 0x88, 0xff }, // COL_RED
-             { 0x88, 0xcc, 0x88, 0xff }, // COL_GREEN
-             { 0xcc, 0xaa, 0x88, 0xff }, // COL_YELLOW
-             { 0x88, 0x88, 0xcc, 0xff }, // COL_BLUE
-             { 0xcc, 0x88, 0xcc, 0xff }, // COL_MAGENTA
-             { 0x88, 0xcc, 0xcc, 0xff }, // COL_CYAN
-             { 0xcc, 0xcc, 0xcc, 0xff }, // COL_WHITE
-             { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
-             { 0x11, 0x11, 0x11, 0xff }, // COL_INVERSE
-             { 0xee, 0xee, 0xee, 0xff }, // COL_INVERSEBG
-        },
-   },
-   { // intense
-        { // normal
-             { 0xdd, 0xdd, 0xdd, 0xff }, // COL_DEF
-             { 0x80, 0x80, 0x80, 0xff }, // COL_BLACK
-             { 0xff, 0x80, 0x80, 0xff }, // COL_RED
-             { 0x80, 0xff, 0x80, 0xff }, // COL_GREEN
-             { 0xff, 0xff, 0x80, 0xff }, // COL_YELLOW
-             { 0x80, 0x80, 0xff, 0xff }, // COL_BLUE
-             { 0xff, 0x80, 0xff, 0xff }, // COL_MAGENTA
-             { 0x80, 0xff, 0xff, 0xff }, // COL_CYAN
-             { 0xff, 0xff, 0xff, 0xff }, // COL_WHITE
-             { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
-             { 0x11, 0x11, 0x11, 0xff }, // COL_INVERSE
-             { 0xcc, 0xcc, 0xcc, 0xff }, // COL_INVERSEBG
-        },
-        { // bright/bold
-             { 0xff, 0xff, 0xff, 0xff }, // COL_DEF
-             { 0xcc, 0xcc, 0xcc, 0xff }, // COL_BLACK
-             { 0xff, 0xcc, 0xcc, 0xff }, // COL_RED
-             { 0xcc, 0xff, 0xcc, 0xff }, // COL_GREEN
-             { 0xff, 0xff, 0xcc, 0xff }, // COL_YELLOW
-             { 0xcc, 0xcc, 0xff, 0xff }, // COL_BLUE
-             { 0xff, 0xcc, 0xff, 0xff }, // COL_MAGENTA
-             { 0xcc, 0xff, 0xff, 0xff }, // COL_CYAN
-             { 0xff, 0xff, 0xff, 0xff }, // COL_WHITE
-             { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
-             { 0x00, 0x00, 0x00, 0xff }, // COL_INVERSE
-             { 0xff, 0xff, 0xff, 0xff }, // COL_INVERSEBG
-        }
-   }
+     { // normal
+          { 0xaa, 0xaa, 0xaa, 0xff }, // COL_DEF
+          { 0x00, 0x00, 0x00, 0xff }, // COL_BLACK
+          { 0xc0, 0x00, 0x00, 0xff }, // COL_RED
+          { 0x00, 0xc0, 0x00, 0xff }, // COL_GREEN
+          { 0xc0, 0xc0, 0x00, 0xff }, // COL_YELLOW
+          { 0x00, 0x00, 0xc0, 0xff }, // COL_BLUE
+          { 0xc0, 0x00, 0xc0, 0xff }, // COL_MAGENTA
+          { 0x00, 0xc0, 0xc0, 0xff }, // COL_CYAN
+          { 0xc0, 0xc0, 0xc0, 0xff }, // COL_WHITE
+          { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
+          { 0x22, 0x22, 0x22, 0xff }, // COL_INVERSE
+          { 0xaa, 0xaa, 0xaa, 0xff }, // COL_INVERSEBG
+     },
+     { // bright/bold
+          { 0xee, 0xee, 0xee, 0xff }, // COL_DEF
+          { 0xcc, 0xcc, 0xcc, 0xff }, // COL_BLACK
+          { 0xcc, 0x88, 0x88, 0xff }, // COL_RED
+          { 0x88, 0xcc, 0x88, 0xff }, // COL_GREEN
+          { 0xcc, 0xaa, 0x88, 0xff }, // COL_YELLOW
+          { 0x88, 0x88, 0xcc, 0xff }, // COL_BLUE
+          { 0xcc, 0x88, 0xcc, 0xff }, // COL_MAGENTA
+          { 0x88, 0xcc, 0xcc, 0xff }, // COL_CYAN
+          { 0xcc, 0xcc, 0xcc, 0xff }, // COL_WHITE
+          { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
+          { 0x11, 0x11, 0x11, 0xff }, // COL_INVERSE
+          { 0xee, 0xee, 0xee, 0xff }, // COL_INVERSEBG
+     },
+     { // faint
+          { 0x80, 0x80, 0x80, 0xff }, // COL_DEF
+          { 0x08, 0x08, 0x08, 0xff }, // COL_BLACK
+          { 0x98, 0x08, 0x08, 0xff }, // COL_RED
+          { 0x08, 0x98, 0x08, 0x98 }, // COL_GREEN
+          { 0x98, 0x98, 0x08, 0x98 }, // COL_YELLOW
+          { 0x08, 0x08, 0x98, 0x98 }, // COL_BLUE
+          { 0x98, 0x08, 0x98, 0x98 }, // COL_MAGENTA
+          { 0x08, 0x98, 0x98, 0x98 }, // COL_CYAN
+          { 0x98, 0x98, 0x98, 0x98 }, // COL_WHITE
+          { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
+          { 0x21, 0x21, 0x21, 0xff }, // COL_INVERSE
+          { 0x87, 0x87, 0x87, 0xff }, // COL_INVERSEBG
+     },
+     { // bright + faint
+          { 0xba, 0xba, 0xba, 0xff }, // COL_DEF
+          { 0x54, 0x54, 0x54, 0xff }, // COL_BLACK
+          { 0xc7, 0x54, 0x54, 0xff }, // COL_RED
+          { 0x54, 0xc7, 0x54, 0xc7 }, // COL_GREEN
+          { 0xc7, 0xc7, 0x54, 0xc7 }, // COL_YELLOW
+          { 0x54, 0x54, 0xc7, 0xc7 }, // COL_BLUE
+          { 0xc7, 0x54, 0xc7, 0xc7 }, // COL_MAGENTA
+          { 0x54, 0xc7, 0xc7, 0xc7 }, // COL_CYAN
+          { 0xc7, 0xc7, 0xc7, 0xc7 }, // COL_WHITE
+          { 0x00, 0x00, 0x00, 0x00 }, // COL_INVIS
+          { 0x14, 0x14, 0x14, 0xff }, // COL_INVERSE
+          { 0xba, 0xba, 0xba, 0xff }, // COL_INVERSEBG
+     }
 };
 
 static const Color default_colors256[256] =
@@ -430,91 +452,31 @@ static Eet_Data_Descriptor *edd_color = NULL;
 
 void
 colors_term_init(Evas_Object *textgrid,
-                 const Evas_Object *bg,
-                 const Config *config)
+                 const Evas_Object *bg)
 {
    int c;
    char buf[32];
    int r, g , b, a;
    const Color *color;
 
+   /* 4: normal, bright, faint, bright+faint */
    for (c = 0; c < (4 * 12); c++)
      {
-        int n = c + (24 * (c / 24));
-        if (config->colors_use)
+        snprintf(buf, sizeof(buf) - 1, "c%i", c);
+        if (!edje_object_color_class_get(bg, buf,
+                                         &r, &g, &b, &a,
+                                         NULL, NULL, NULL, NULL,
+                                         NULL, NULL, NULL, NULL))
           {
-             r = config->colors[c].r;
-             g = config->colors[c].g;
-             b = config->colors[c].b;
-             a = config->colors[c].a;
+             color = &default_colors[c / 12][c % 12];
+             r = color->r;
+             g = color->g;
+             b = color->b;
+             a = color->a;
           }
-        else
-          {
-             snprintf(buf, sizeof(buf) - 1, "c%i", c);
-             if (!edje_object_color_class_get(bg, buf,
-                                              &r,
-                                              &g,
-                                              &b,
-                                              &a,
-                                              NULL, NULL, NULL, NULL,
-                                              NULL, NULL, NULL, NULL))
-               {
-                  color = &default_colors[c / 24][(c % 24) / 12][c % 12];
-                  r = color->r;
-                  g = color->g;
-                  b = color->b;
-                  a = color->a;
-               }
-          }
-        /* normal */
         evas_object_textgrid_palette_set(
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n,
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
            r, g, b, a);
-
-        /* faint */
-        evas_object_textgrid_palette_set(
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, n + 24,
-           r / 2, g / 2, b / 2, a / 2);
-     }
-   for (c = 48; c < 72; c++)
-     {
-        if (!config->colors_use)
-          {
-             snprintf(buf, sizeof(buf) - 1, "c%i", c);
-             if (edje_object_color_class_get(bg, buf,
-                                             &r,
-                                             &g,
-                                             &b,
-                                             &a,
-                                             NULL, NULL, NULL, NULL,
-                                             NULL, NULL, NULL, NULL))
-               {
-                   /* faint */
-                   evas_object_textgrid_palette_set(
-                       textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
-                       r, g, b, a);
-               }
-          }
-     }
-   for (c = 72; c < 96; c++)
-     {
-        if (!config->colors_use)
-          {
-             snprintf(buf, sizeof(buf) - 1, "c%i", c);
-             if (edje_object_color_class_get(bg, buf,
-                                             &r,
-                                             &g,
-                                             &b,
-                                             &a,
-                                             NULL, NULL, NULL, NULL,
-                                             NULL, NULL, NULL, NULL))
-               {
-                   /* faint */
-                   evas_object_textgrid_palette_set(
-                       textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c - 48,
-                       r, g, b, a);
-               }
-          }
      }
    for (c = 0; c < 256; c++)
      {
@@ -547,15 +509,12 @@ colors_standard_get(int set, int col,
                     unsigned char *b,
                     unsigned char *a)
 {
-   int s1, s2;
-   assert((set >= 0) && (set < 4));
+   assert((set >= 0) && (set < 3));
 
-   s1 = set / 2;
-   s2 = set % 2;
-   *r = default_colors[s1][s2][col].r;
-   *g = default_colors[s1][s2][col].g;
-   *b = default_colors[s1][s2][col].b;
-   *a = default_colors[s1][s2][col].a;
+   *r = default_colors[set][col].r;
+   *g = default_colors[set][col].g;
+   *b = default_colors[set][col].b;
+   *a = default_colors[set][col].a;
 }
 
 void
@@ -673,6 +632,20 @@ edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
    /* c33 is invisible, use default */
    CS_SET("c34" /* inverse fg */, faint.inverse_fg);
    CS_SET("c35" /* inverse bg */, faint.inverse_bg);
+
+   /* BrightFaint */
+   CS_SET("c36" /* def */,     faint.def);
+   CS_SET("c37" /* black */,   faint.black);
+   CS_SET("c38" /* red */,     faint.red);
+   CS_SET("c39" /* green */,   faint.green);
+   CS_SET("c40" /* yellow */,  faint.yellow);
+   CS_SET("c41" /* blue */,    faint.blue);
+   CS_SET("c42" /* magenta */, faint.magenta);
+   CS_SET("c43" /* cyan */,    faint.cyan);
+   CS_SET("c44" /* white */,   faint.white);
+   /* c45 is invisible, use default */
+   CS_SET("c46" /* inverse fg */, faint.inverse_fg);
+   CS_SET("c47" /* inverse bg */, faint.inverse_bg);
 
 
 #undef CS_SET
@@ -842,11 +815,13 @@ color_scheme_apply_from_config(Evas_Object *edje,
 void
 colors_init(void)
 {
-   Eet_Data_Descriptor_Class eddc;
+   Eet_Data_Descriptor_Class eddc_color;
+   Eet_Data_Descriptor_Class eddc_color_block;
+   Eet_Data_Descriptor_Class eddc_color_scheme;
 
    eet_eina_stream_data_descriptor_class_set
-     (&eddc, sizeof(eddc), "Color", sizeof(Color));
-   edd_color = eet_data_descriptor_stream_new(&eddc);
+     (&eddc_color, sizeof(eddc_color), "Color", sizeof(Color));
+   edd_color = eet_data_descriptor_stream_new(&eddc_color);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_color, Color, "r", r, EET_T_UCHAR);
@@ -859,8 +834,8 @@ colors_init(void)
 
 
    eet_eina_stream_data_descriptor_class_set
-     (&eddc, sizeof(eddc), "Color_Block", sizeof(Color_Block));
-   edd_cb = eet_data_descriptor_stream_new(&eddc);
+     (&eddc_color_block, sizeof(eddc_color_block), "Color_Block", sizeof(Color_Block));
+   edd_cb = eet_data_descriptor_stream_new(&eddc_color_block);
 
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
       (edd_cb, Color_Block, "def", def, edd_color);
@@ -887,8 +862,8 @@ colors_init(void)
 
 
    eet_eina_stream_data_descriptor_class_set
-     (&eddc, sizeof(eddc), "Color_Scheme", sizeof(Color_Scheme));
-   edd_cs = eet_data_descriptor_stream_new(&eddc);
+     (&eddc_color_scheme, sizeof(eddc_color_scheme), "Color_Scheme", sizeof(Color_Scheme));
+   edd_cs = eet_data_descriptor_stream_new(&eddc_color_scheme);
 
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_cs, Color_Scheme, "version", version, EET_T_INT);
@@ -930,7 +905,13 @@ colors_init(void)
       (edd_cs, Color_Scheme, "tab_title_2", tab_title_2, edd_color);
 
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
-      (edd_cs, Color_Scheme, "normal", normal, edd_color);
+      (edd_cs, Color_Scheme, "Normal", normal, edd_cb);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "Bright", bright, edd_cb);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "Faint", faint, edd_cb);
+   EET_DATA_DESCRIPTOR_ADD_SUB_NESTED
+      (edd_cs, Color_Scheme, "BrightFaint", brightfaint, edd_cb);
 
 
 #if ENABLE_NLS

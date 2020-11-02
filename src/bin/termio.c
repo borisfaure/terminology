@@ -475,7 +475,7 @@ termio_config_update(Evas_Object *obj)
    termpty_config_update(sd->pty, sd->config);
    sd->scroll = 0;
 
-   colors_term_init(sd->grid.obj, sd->theme, sd->config);
+   colors_term_init(sd->grid.obj, sd->theme);
 
    evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);

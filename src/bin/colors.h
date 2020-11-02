@@ -20,6 +20,7 @@ struct _Color_Block
    Color white;
    Color inverse_fg;
    Color inverse_bg;
+   uint32_t _padding;
 };
 
 struct _Color_Scheme
@@ -50,13 +51,13 @@ struct _Color_Scheme
    Color_Block normal;
    Color_Block bright;
    Color_Block faint;
+   Color_Block brightfaint;
 };
 
 
 void
 colors_term_init(Evas_Object *textgrid,
-                 const Evas_Object *bg,
-                 const Config *config);
+                 const Evas_Object *bg);
 void
 colors_standard_get(int set,
                     int col,

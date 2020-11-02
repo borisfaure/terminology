@@ -2645,14 +2645,18 @@ termio_internal_render(Termio *sd,
                             else if (!bgext)
                               bg = COL_INVIS;
                          }
-                       if ((cells[x].att.fgintense) && (!fgext))
-                         fg += 48;
+
                        if ((cells[x].att.bgintense) && (!bgext))
-                         bg += 48;
-                       if ((cells[x].att.bold && !cells[x].att.faint) && (!fgext))
-                         fg += 12;
-                       else if ((cells[x].att.faint) && (!fgext))
-                         fg += 24;
+                         bg += 12;
+
+                       if (!fgext)
+                         {
+                            if ((cells[x].att.fgintense) || (cells[x].att.bold))
+                              fg += 12;
+                            if (cells[x].att.faint)
+                              fg += 2 * 12;
+                         }
+
                        if (cells[x].att.inverse ^ inv)
                          {
                             int t;
