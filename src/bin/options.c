@@ -87,7 +87,7 @@ _cb_opdt_hide_done(void *data,
       case OPTION_FONT:       options_font(ctx->opbox, ctx->term); break;
       case OPTION_THEME:      options_theme(ctx->opbox, ctx->term); break;
       case OPTION_BACKGROUND: options_background(ctx->opbox, ctx->term); break;
-      case OPTION_COLORS:     options_colors(ctx->opbox, ctx->term, ctx->bg); break;
+      case OPTION_COLORS:     options_colors(ctx->opbox, ctx->term); break;
       case OPTION_KEYS:       options_keys(ctx->opbox, ctx->term); break;
       case OPTION_MOUSE:      options_mouse(ctx->opbox, ctx->term); break;
       case OPTION_ELM:        options_elm(ctx->opbox, ctx->term); break;
