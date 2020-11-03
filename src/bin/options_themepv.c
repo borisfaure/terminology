@@ -194,7 +194,6 @@ options_theme_preview_add(Evas_Object *parent,
    // \x19 = white BRIGHT
 
 #define F(_x) "\x01"_x
-#define B(_x) "\x01"_x
 #define X "\x01\x01\x02\x10"
    _row_set(o, 0, " "F("\x04")"$"X" "F("\x19")">"X" test");
    _row_set(o, 1, F("\x02")"black"X" "F("\x03")"red"X" "F("\x04")"green"X" "F("\x05")"yellow");
