@@ -61,7 +61,8 @@ _cb_op_theme_content_get(void *data, Evas_Object *obj, const char *part)
                                            theme_path_get(t->name),
                                            NULL,
                                            128 * elm_config_scale_get(),
-                                           64 * elm_config_scale_get());
+                                           64 * elm_config_scale_get(),
+                                           EINA_FALSE);
              return o;
           }
      }
