@@ -37,6 +37,7 @@ void termio_remove_links(Termio *sd);
 void         termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir);
 void         termio_event_feed_mouse_in(Evas_Object *obj);
 void         termio_size_get(const Evas_Object *obj, int *w, int *h);
+void         termio_character_size_get(const Evas_Object *obj, int *w, int *h);
 int          termio_scroll_get(const Evas_Object *obj);
 void         termio_font_size_set(Evas_Object *obj, int size);
 void         termio_grid_size_set(Evas_Object *obj, int w, int h);

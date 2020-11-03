@@ -138,10 +138,19 @@ termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
 void
 termio_size_get(const Evas_Object *obj, int *w, int *h)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
+   const Termio *sd = evas_object_smart_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (w) *w = sd->grid.w;
    if (h) *h = sd->grid.h;
+}
+
+void
+termio_character_size_get(const Evas_Object *obj, int *w, int *h)
+{
+   const Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (w) *w = sd->font.chw;
+   if (h) *h = sd->font.chh;
 }
 
 int
