@@ -4,8 +4,6 @@
 #include <Evas.h>
 #include "config.h"
 
-typedef struct _Color_Scheme Color_Scheme;
-typedef struct _Color_Block Color_Block;
 
 struct _Color_Block
 {
@@ -85,6 +83,9 @@ color_scheme_list(void);
 
 Color_Scheme *
 color_scheme_dup(const Color_Scheme *src);
+
+void
+config_compute_color_scheme(Config *cfg);
 
 void
 colors_init(void);

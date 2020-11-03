@@ -106,6 +106,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "color_scheme_name", color_scheme_name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "background", background, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "scrollback", scrollback, EET_T_INT);
@@ -282,6 +284,7 @@ config_sync(const Config *config_src, Config *config)
    eina_stringshare_replace(&(config->helper.local.video), config_src->helper.local.video);
    eina_stringshare_replace(&(config->helper.local.image), config_src->helper.local.image);
    eina_stringshare_replace(&(config->theme), config_src->theme);
+   eina_stringshare_replace(&(config->color_scheme_name), config_src->color_scheme_name);
    config->scrollback = config_src->scrollback;
    config->tab_zoom = config_src->tab_zoom;
    config->hide_cursor = config_src->hide_cursor;
@@ -548,6 +551,7 @@ config_new(void)
         config->helper.inline_please = EINA_TRUE;
         config->scrollback = 2000;
         config->theme = eina_stringshare_add("default.edj");
+        config->color_scheme_name = eina_stringshare_add("Default");
         config->background = NULL;
         config->tab_zoom = 0.5;
         config->opacity = 50;
@@ -604,7 +608,6 @@ config_new(void)
      }
    return config;
 }
-
 
 Config *
 config_load(void)
@@ -769,6 +772,7 @@ config_load(void)
      }
    else
      {
+        config_compute_color_scheme(config);
         config->font_set = 1;
      }
 
@@ -809,6 +813,8 @@ config_fork(const Config *config)
    SCPY(helper.local.image);
    CPY(helper.inline_please);
    SCPY(theme);
+   SCPY(color_scheme_name);
+   config2->color_scheme = color_scheme_dup(config->color_scheme);
    SCPY(background);
    CPY(scrollback);
    CPY(tab_zoom);
@@ -880,6 +886,8 @@ config_del(Config *config)
    eina_stringshare_del(config->font.name);
    eina_stringshare_del(config->font.orig_name);
    eina_stringshare_del(config->theme);
+   eina_stringshare_del(config->color_scheme_name);
+   free((void*)config->color_scheme);
    eina_stringshare_del(config->background);
    eina_stringshare_del(config->helper.email);
    eina_stringshare_del(config->helper.url.general);

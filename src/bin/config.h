@@ -5,7 +5,16 @@
 
 typedef struct _Config Config;
 typedef struct _Color Color;
+typedef struct _Color_Scheme Color_Scheme;
+typedef struct _Color_Block Color_Block;
 typedef struct _Config_Keys Config_Keys;
+struct _Color
+{
+   unsigned char r, g, b, a;
+};
+
+
+#include "colors.h"
 
 struct _Config_Keys
 {
@@ -19,11 +28,6 @@ struct _Config_Keys
    const char *cb;
 };
 /* TODO: separate config per terminal (tab, window) and global. */
-
-struct _Color
-{
-   unsigned char r, g, b, a;
-};
 
 typedef enum _Cursor_Shape
 {
@@ -55,6 +59,8 @@ struct _Config
       Eina_Bool      inline_please;
    } helper;
    const char       *theme;
+   const char       *color_scheme_name;
+   const Color_Scheme *color_scheme; /* not in EET */
    const char       *background;
    double            tab_zoom;
    double            hide_cursor;

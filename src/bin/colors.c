@@ -669,7 +669,7 @@ _color_scheme_get_from_file(const char *path, const char *name)
 }
 
 static Color_Scheme *
-color_scheme_get(const char *name)
+_color_scheme_get(const char *name)
 {
    static char path_user[PATH_MAX] = "";
    static char path_app[PATH_MAX] = "";
@@ -702,6 +702,22 @@ color_scheme_get(const char *name)
    else
      return NULL;
 }
+
+void
+config_compute_color_scheme(Config *cfg)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cfg);
+
+   free((void*)cfg->color_scheme);
+   cfg->color_scheme = _color_scheme_get(cfg->color_scheme_name);
+   if (!cfg->color_scheme)
+     {
+        eina_stringshare_del(cfg->color_scheme_name);
+        cfg->color_scheme_name = eina_stringshare_add("Default");
+        cfg->color_scheme = color_scheme_dup(&default_colorscheme);
+     }
+}
+
 
 static int
 color_scheme_cmp(const void *d1, const void *d2)
@@ -797,10 +813,10 @@ Color_Scheme *
 color_scheme_dup(const Color_Scheme *src)
 {
    Color_Scheme *cs;
-   size_t len_name = strlen(src->name) + 1;
-   size_t len_author = strlen(src->author) + 1;
-   size_t len_website = strlen(src->website) + 1;
-   size_t len_license = strlen(src->license) + 1;
+   size_t len_name = strlen(src->md.name) + 1;
+   size_t len_author = strlen(src->md.author) + 1;
+   size_t len_website = strlen(src->md.website) + 1;
+   size_t len_license = strlen(src->md.license) + 1;
    size_t len = sizeof(*cs) + len_name + len_author + len_website
       + len_license;
    char *s;
@@ -811,20 +827,20 @@ color_scheme_dup(const Color_Scheme *src)
    memcpy(cs, src, sizeof(*cs));
    s = ((char*)cs) + sizeof(*cs);
 
-   cs->name = s;
-   memcpy(s, src->name, len_name);
+   cs->md.name = s;
+   memcpy(s, src->md.name, len_name);
    s += len_name;
 
-   cs->author = s;
-   memcpy(s, src->author, len_author);
+   cs->md.author = s;
+   memcpy(s, src->md.author, len_author);
    s += len_author;
 
-   cs->website = s;
-   memcpy(s, src->website, len_website);
+   cs->md.website = s;
+   memcpy(s, src->md.website, len_website);
    s += len_website;
 
-   cs->license = s;
-   memcpy(s, src->license, len_license);
+   cs->md.license = s;
+   memcpy(s, src->md.license, len_license);
 
    return cs;
 }
@@ -833,16 +849,15 @@ void
 color_scheme_apply_from_config(Evas_Object *edje,
                                const Config *config)
 {
-   Color_Scheme *cs;
+   const Color_Scheme *cs;
 
-   if (!eina_str_has_suffix(config->theme, "/nord.edj"))
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(config);
+   EINA_SAFETY_ON_NULL_RETURN(edje);
 
-   /* This should be cached in config */
-   cs = color_scheme_get("Nord");
+   cs = config->color_scheme;
    if (!cs)
      {
-        ERR("Could not find color scheme \"%s\"", "Nord");
+        ERR("Could not find color scheme \"%s\"", config->color_scheme_name);
         return;
      }
    color_scheme_apply(edje, cs);
