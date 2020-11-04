@@ -16,6 +16,7 @@ typedef struct _Color_Scheme_Ctx
    Evas_Coord pv_width;
    Evas_Coord pv_height;
    Eina_List *cs_infos;
+   Ecore_Timer *seltimer;
 } Color_Scheme_Ctx;
 
 typedef struct _Color_Scheme_Info
@@ -67,17 +68,33 @@ _cb_op_color_scheme_sel(void *data,
                         void *_event EINA_UNUSED)
 {
    Color_Scheme_Info *csi = data;
+   Color_Scheme *cs = csi->cs;
    Config *config = csi->ctx->config;
 
-   ERR("TODO: csi sel %p cfg:%p", csi, config);
-#if 0
-   if ((config->theme) && (!strcmp(t->name, config->theme)))
+   if ((config->color_scheme_name) &&
+       (!strcmp(cs->md.name, config->color_scheme_name)))
      return;
 
-   eina_stringshare_replace(&(config->theme), t->name);
+   eina_stringshare_replace(&(config->color_scheme_name), cs->md.name);
+   free((void*)config->color_scheme);
+   config->color_scheme = color_scheme_dup(cs);
+
    config_save(config);
-   change_theme(termio_win_get(t->ctx->term), config);
-#endif
+   change_theme(termio_win_get(csi->ctx->term), config);
+}
+
+static Eina_Bool
+_cb_sel_item(void *data)
+{
+   Color_Scheme_Info *csi = data;
+
+   if (csi)
+     {
+        elm_gengrid_item_selected_set(csi->item, EINA_TRUE);
+        elm_gengrid_item_bring_in(csi->item, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
+        csi->ctx->seltimer = NULL;
+     }
+   return EINA_FALSE;
 }
 
 static void
@@ -94,6 +111,7 @@ _parent_del_cb(void *data,
         free(csi->cs);
         free(csi);
      }
+   ecore_timer_del(ctx->seltimer);
    free(ctx);
 }
 
@@ -116,7 +134,6 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    ctx->term = term;
    ctx->pv_width = (COLOR_MODE_PREVIEW_WIDTH+0) * chw;
    ctx->pv_height = (COLOR_MODE_PREVIEW_HEIGHT+0) * chh;
-   ERR("w:%d, h:%d", ctx->pv_width, ctx->pv_height);
    if (ctx->pv_width >= ctx->pv_height)
      ctx->pv_height = ctx->pv_width;
    else
@@ -147,7 +164,6 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    o = elm_gengrid_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   //elm_gengrid_item_size_set(o, ctx->pv_width + 10, ctx->pv_height + 10);
 
    schemes = color_scheme_list();
 
@@ -166,15 +182,13 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
           {
              ctx->cs_infos = eina_list_append(ctx->cs_infos, csi);
 
-#if 0
-             if ((config) && (config->theme) &&
-                 (!strcmp(config->theme, t->name)))
+             if ((config) && (config->color_scheme_name) &&
+                 (!strcmp(config->color_scheme_name, cs->md.name)))
                {
                   if (ctx->seltimer)
                     ecore_timer_del(ctx->seltimer);
-                  ctx->seltimer = ecore_timer_add(0.2, _cb_sel_item, t);
+                  ctx->seltimer = ecore_timer_add(0.2, _cb_sel_item, csi);
                }
-#endif
           }
         else
           {
