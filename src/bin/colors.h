@@ -54,7 +54,6 @@ struct _Color_Scheme
    Color_Block brightfaint;
 };
 
-
 void
 colors_term_init(Evas_Object *textgrid,
                  const Evas_Object *bg);
@@ -83,6 +82,9 @@ color_scheme_apply(Evas_Object *edje,
 
 Eina_List *
 color_scheme_list(void);
+
+Color_Scheme *
+color_scheme_dup(const Color_Scheme *src);
 
 void
 colors_init(void);

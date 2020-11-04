@@ -793,6 +793,42 @@ end:
    return l;
 }
 
+Color_Scheme *
+color_scheme_dup(const Color_Scheme *src)
+{
+   Color_Scheme *cs;
+   size_t len_name = strlen(src->name) + 1;
+   size_t len_author = strlen(src->author) + 1;
+   size_t len_website = strlen(src->website) + 1;
+   size_t len_license = strlen(src->license) + 1;
+   size_t len = sizeof(*cs) + len_name + len_author + len_website
+      + len_license;
+   char *s;
+
+   cs = malloc(len);
+   if (!cs)
+     return NULL;
+   memcpy(cs, src, sizeof(*cs));
+   s = ((char*)cs) + sizeof(*cs);
+
+   cs->name = s;
+   memcpy(s, src->name, len_name);
+   s += len_name;
+
+   cs->author = s;
+   memcpy(s, src->author, len_author);
+   s += len_author;
+
+   cs->website = s;
+   memcpy(s, src->website, len_website);
+   s += len_website;
+
+   cs->license = s;
+   memcpy(s, src->license, len_license);
+
+   return cs;
+}
+
 void
 color_scheme_apply_from_config(Evas_Object *edje,
                                const Config *config)
