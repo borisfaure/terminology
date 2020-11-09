@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 25
+#define CONF_VER 26
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -749,7 +749,35 @@ config_load(void)
                      config->active_links_escape);
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 25 */
+                case 25:
+                  #define THEME_TO_COLORSCHEME(_Theme, _Base, _ColorSheme)   \
+                  do {                                                       \
+                       if (!strncmp(config->theme, _Theme, sizeof(_Theme)-1)) \
+                         {                                                   \
+                            eina_stringshare_replace(&config->theme,         \
+                                                     _Base);                 \
+                            eina_stringshare_replace(                        \
+                               &config->color_scheme_name,                   \
+                               _ColorSheme);                                 \
+                         }                                                   \
+                  } while (0)
+
+                  THEME_TO_COLORSCHEME("mild.edj", "mild.edj", "Mild");
+                  THEME_TO_COLORSCHEME("black.edj", "mild.edj", "Black");
+                  THEME_TO_COLORSCHEME("solarized.edj", "default.edj", "Solarized");
+                  THEME_TO_COLORSCHEME("solarized_light.edj", "default.edj", "Solarized Light");
+                  THEME_TO_COLORSCHEME("mustang.edj", "mild.edj", "Mustang");
+                  THEME_TO_COLORSCHEME("base16_ocean_dark.edj", "mild.edj", "Ocean Dark");
+                  THEME_TO_COLORSCHEME("smyck.edj", "mild.edj", "Smyck");
+                  THEME_TO_COLORSCHEME("nord.edj", "default.edj", "Nord");
+                  THEME_TO_COLORSCHEME("papercolor.edj", "default.edj", "PaperColor");
+
+                  #undef THEME_TO_COLORSCHEME
+
+                  config_compute_color_scheme(config);
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 26 */
                   config->version = CONF_VER;
                   break;
                 default:
