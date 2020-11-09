@@ -57,6 +57,13 @@ _configure_instance(Ipc_Instance *inst)
 
    _set_instance_theme(inst);
 
+   if (inst->colorscheme)
+   {
+        eina_stringshare_replace(&(config->color_scheme_name), inst->colorscheme);
+        config_compute_color_scheme(config);
+        config->temporary = EINA_TRUE;
+   }
+
    if (inst->background)
      {
         eina_stringshare_replace(&(config->background), inst->background);
@@ -221,6 +228,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->visual_bell) nargc += 1;
    if (inst->cmd) nargc += 2;
    if (inst->theme) nargc += 2;
+   if (inst->colorscheme) nargc += 2;
 
    nargv = calloc(nargc + 1, sizeof(char *));
    if (!nargv) return;
@@ -246,6 +254,11 @@ main_ipc_new(Ipc_Instance *inst)
      {
         nargv[i++] = "-t";
         nargv[i++] = (char *)inst->theme;
+     }
+   if (inst->colorscheme)
+     {
+        nargv[i++] = "--colorscheme";
+        nargv[i++] = (char *)inst->colorscheme;
      }
    if (inst->role)
      {
@@ -500,6 +513,8 @@ static Ecore_Getopt options = {
                               gettext_noop("Highlight links")),
       ECORE_GETOPT_STORE_BOOL('\0', "no-wizard",
                               gettext_noop("Do not display wizard on start up")),
+      ECORE_GETOPT_STORE_STR ('\0', "colorscheme",
+                              gettext_noop("Use the named color scheme")),
 
       ECORE_GETOPT_VERSION   ('V', "version"),
       ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
@@ -832,6 +847,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_DOUBLE(scale),
      ECORE_GETOPT_VALUE_BOOL(instance.active_links),
      ECORE_GETOPT_VALUE_BOOL(no_wizard),
+     ECORE_GETOPT_VALUE_STR(instance.colorscheme),
 
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),

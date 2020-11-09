@@ -105,6 +105,8 @@ ipc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "colorscheme", colorscheme, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "role", role, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "title", title, EET_T_STRING);
