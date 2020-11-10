@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: 2020-09-22 14:49+0000\n"
+"PO-Revision-Date: 2020-11-10 09:21+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.4-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
@@ -194,7 +194,7 @@ msgstr "Scinder verticalement (nouveau à droite)"
 
 #: src/bin/keyin.c:678
 msgid "Create a new \"tab\""
-msgstr "Créer une nouvel onglet"
+msgstr "Créer un nouvel onglet"
 
 #: src/bin/keyin.c:679
 msgid "Close the focused terminal"
