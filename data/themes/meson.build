@@ -26,18 +26,9 @@ default_deps = [
   'default/tab_drag_thumb.edc',
   'default/color_preview.edc',
   ]
-mild_deps = ['mild.edc', 'default/colors.edc']
 edje_to_compile = [
   ['default', default_deps],
-  ['mild', mild_deps],
-  ['black', mild_deps],
-  ['solarized', default_deps],
-  ['solarized_light', default_deps],
-  ['mustang', mild_deps],
-  ['base16_ocean_dark', mild_deps],
-  ['smyck', mild_deps],
-  ['nord', default_deps],
-  ['papercolor', default_deps],
+  ['mild',['mild.edc', 'default/colors.edc'] ],
 ]
 
 edje_install_dir = join_paths(get_option('datadir'),
