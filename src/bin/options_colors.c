@@ -24,6 +24,7 @@ typedef struct _Color_Scheme_Info
    Color_Scheme_Ctx *ctx;
    Elm_Object_Item *item;
    Color_Scheme *cs;
+   const char *tooltip;
 } Color_Scheme_Info;
 
 static char *
@@ -56,6 +57,15 @@ _cb_op_cs_content_get(void *data, Evas_Object *obj, const char *part)
                                       csi->ctx->pv_width,
                                       csi->ctx->pv_height,
                                       EINA_TRUE);
+        if (!csi->tooltip)
+          {
+             csi->tooltip = eina_stringshare_printf(
+                _("<b>Author: </b>%s<br/>"
+                "<b>Website: </b>%s<br/>"
+                "<b>License: </b>%s"),
+                csi->cs->md.author, csi->cs->md.website, csi->cs->md.license);
+          }
+        elm_object_tooltip_text_set(o, csi->tooltip);
         return o;
      }
 
@@ -109,6 +119,7 @@ _parent_del_cb(void *data,
    EINA_LIST_FREE(ctx->cs_infos, csi)
      {
         free(csi->cs);
+        eina_stringshare_del(csi->tooltip);
         free(csi);
      }
    ecore_timer_del(ctx->seltimer);
