@@ -17,6 +17,7 @@ typedef struct _Color_Scheme_Ctx
    Evas_Coord pv_height;
    Eina_List *cs_infos;
    Ecore_Timer *seltimer;
+   Evas_Object *ctxpopup;
 } Color_Scheme_Ctx;
 
 typedef struct _Color_Scheme_Info
@@ -36,6 +37,111 @@ _cb_op_cs_name_get(void *data,
    Color_Scheme *cs = csi->cs;
 
    return strdup(cs->md.name);
+}
+
+static void
+_cb_ctxp_del(void *data,
+             Evas *_e EINA_UNUSED,
+             Evas_Object *_obj EINA_UNUSED,
+             void *_event EINA_UNUSED)
+{
+   Color_Scheme_Info *csi = data;
+   EINA_SAFETY_ON_NULL_RETURN(csi);
+   csi->ctx->ctxpopup = NULL;
+
+   /* Force refocus */
+   //term_unfocus(sd->term);
+   //term_focus(sd->term);
+}
+
+static void
+_cb_ctxp_dismissed(void *data,
+                   Evas_Object *obj,
+                   void *_event EINA_UNUSED)
+{
+   Color_Scheme_Info *csi = data;
+   EINA_SAFETY_ON_NULL_RETURN(csi);
+   csi->ctx->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+static void
+_cb_ctxp_open_website(void *data,
+                      Evas_Object *obj,
+                      void *_event EINA_UNUSED)
+{
+   Color_Scheme_Info *csi = data;
+   Color_Scheme_Ctx *ctx;
+   Config *config;
+   char buf[PATH_MAX], *s = NULL, *escaped = NULL;
+   const char *cmd;
+   const char *prefix = "http://";
+   Eina_Strbuf *sb = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN(csi);
+   ctx = csi->ctx;
+   config = ctx->config;
+
+   if (!(config->helper.url.general) ||
+       !(config->helper.url.general[0]))
+     goto end;
+   cmd = config->helper.url.general;
+
+   sb = eina_strbuf_new();
+   if (!sb)
+     goto end;
+   eina_strbuf_append(sb, csi->cs->md.website);
+   eina_strbuf_trim(sb);
+
+   s = eina_str_escape(eina_strbuf_string_get(sb));
+   if (!s)
+     goto end;
+   if (casestartswith(s, "http://") ||
+        casestartswith(s, "https://"))
+     prefix = "";
+
+   escaped = ecore_file_escape_name(s);
+   if (!escaped)
+     goto end;
+
+   snprintf(buf, sizeof(buf), "%s %s%s", cmd, prefix, escaped);
+
+   WRN("trying to launch '%s'", buf);
+   ecore_exe_run(buf, NULL);
+
+end:
+   eina_strbuf_free(sb);
+   free(escaped);
+   free(s);
+   ctx->ctxpopup = NULL;
+   evas_object_del(obj);
+}
+
+static void
+_handle_mouse_down(void *data,
+                   Evas *_e EINA_UNUSED,
+                   Evas_Object *obj,
+                   void *event)
+{
+   Evas_Event_Mouse_Down *ev = event;
+   Color_Scheme_Info *csi = data;
+   Evas_Object *ctxp;
+
+   if (ev->button != 3 || csi->cs->md.website == NULL ||
+       csi->cs->md.website[0] == '\0')
+     return;
+
+   ctxp = elm_ctxpopup_add(obj);
+   csi->ctx->ctxpopup = ctxp;
+
+   elm_ctxpopup_item_append(ctxp, _("Open website"), NULL,
+                            _cb_ctxp_open_website, csi);
+   evas_object_move(ctxp, ev->canvas.x, ev->canvas.y);
+   evas_object_show(ctxp);
+   evas_object_smart_callback_add(ctxp, "dismissed",
+                                  _cb_ctxp_dismissed, csi);
+   evas_object_event_callback_add(ctxp, EVAS_CALLBACK_DEL,
+                                  _cb_ctxp_del, csi);
 }
 
 static Evas_Object *
@@ -66,6 +172,8 @@ _cb_op_cs_content_get(void *data, Evas_Object *obj, const char *part)
                 csi->cs->md.author, csi->cs->md.website, csi->cs->md.license);
           }
         elm_object_tooltip_text_set(o, csi->tooltip);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _handle_mouse_down, csi);
         return o;
      }
 
