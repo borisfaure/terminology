@@ -509,7 +509,7 @@ colors_standard_get(int set, int col,
                     unsigned char *b,
                     unsigned char *a)
 {
-   assert((set >= 0) && (set < 3));
+   assert((set >= 0) && (set < 4));
 
    *r = default_colors[set][col].r;
    *g = default_colors[set][col].g;
