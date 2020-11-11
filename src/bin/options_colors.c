@@ -8,6 +8,7 @@
 #include "colors.h"
 #include "options_colors.h"
 #include "options_themepv.h"
+#include "utils.h"
 
 typedef struct _Color_Scheme_Ctx
 {
@@ -48,10 +49,6 @@ _cb_ctxp_del(void *data,
    Color_Scheme_Info *csi = data;
    EINA_SAFETY_ON_NULL_RETURN(csi);
    csi->ctx->ctxpopup = NULL;
-
-   /* Force refocus */
-   //term_unfocus(sd->term);
-   //term_focus(sd->term);
 }
 
 static void
@@ -72,47 +69,12 @@ _cb_ctxp_open_website(void *data,
 {
    Color_Scheme_Info *csi = data;
    Color_Scheme_Ctx *ctx;
-   Config *config;
-   char buf[PATH_MAX], *s = NULL, *escaped = NULL;
-   const char *cmd;
-   const char *prefix = "http://";
-   Eina_Strbuf *sb = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN(csi);
    ctx = csi->ctx;
-   config = ctx->config;
 
-   if (!(config->helper.url.general) ||
-       !(config->helper.url.general[0]))
-     goto end;
-   cmd = config->helper.url.general;
+   open_url(ctx->config, csi->cs->md.website);
 
-   sb = eina_strbuf_new();
-   if (!sb)
-     goto end;
-   eina_strbuf_append(sb, csi->cs->md.website);
-   eina_strbuf_trim(sb);
-
-   s = eina_str_escape(eina_strbuf_string_get(sb));
-   if (!s)
-     goto end;
-   if (casestartswith(s, "http://") ||
-        casestartswith(s, "https://"))
-     prefix = "";
-
-   escaped = ecore_file_escape_name(s);
-   if (!escaped)
-     goto end;
-
-   snprintf(buf, sizeof(buf), "%s %s%s", cmd, prefix, escaped);
-
-   WRN("trying to launch '%s'", buf);
-   ecore_exe_run(buf, NULL);
-
-end:
-   eina_strbuf_free(sb);
-   free(escaped);
-   free(s);
    ctx->ctxpopup = NULL;
    evas_object_del(obj);
 }
