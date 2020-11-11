@@ -303,10 +303,10 @@ _rec_read_directorys(Background_Ctx *ctx, Eina_List *list,
                             item = calloc(1, sizeof(Background_Item));
                             if (item)
                               {
-                                 notify = calloc(1,
-                                          sizeof(Insert_Gen_Grid_Item_Notify));
                                  item->path = eina_stringshare_add(path);
                                  list = eina_list_append(list, item);
+                                 notify = calloc(1,
+                                          sizeof(Insert_Gen_Grid_Item_Notify));
                                  if (notify)
                                    {
                                       //insert item to gengrid
@@ -350,6 +350,11 @@ _refresh_directory(Background_Ctx *ctx, const char* data)
    item_class->func.content_get = _grid_content_get;
 
    item = calloc(1, sizeof(Background_Item));
+   if (!item)
+     {
+        elm_gengrid_item_class_free(item_class);
+        return;
+     }
    ctx->background_list = eina_list_append(ctx->background_list, item);
 
    //Insert None Item
