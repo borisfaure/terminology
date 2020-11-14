@@ -2686,7 +2686,6 @@ _cb_ctxp_sel_open_as_url(void *data,
 {
    Evas_Object *term = data;
    Termio *sd = evas_object_smart_data_get(term);
-   Eina_Strbuf *sb = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
