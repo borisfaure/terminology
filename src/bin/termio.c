@@ -87,6 +87,11 @@ termio_theme_set(Evas_Object *obj, Evas_Object *theme)
                           &sd->saved_bg.g,
                           &sd->saved_bg.b,
                           &sd->saved_bg.a);
+   termio_color_class_get(sd->cursor.obj, "CURSOR",
+                          &sd->saved_cursor.r,
+                          &sd->saved_cursor.g,
+                          &sd->saved_cursor.b,
+                          &sd->saved_cursor.a);
    evas_object_textgrid_palette_get(
       sd->grid.obj,
       EVAS_TEXTGRID_PALETTE_STANDARD, 0,
@@ -110,6 +115,19 @@ termio_reset_main_colors(Evas_Object *termio)
                                sd->saved_bg.g,
                                sd->saved_bg.b,
                                sd->saved_bg.a);
+        edje_object_color_class_set(sd->cursor.obj, "CURSOR",
+                                    sd->saved_cursor.r,
+                                    sd->saved_cursor.g,
+                                    sd->saved_cursor.b,
+                                    sd->saved_cursor.a,
+                                    sd->saved_cursor.r,
+                                    sd->saved_cursor.g,
+                                    sd->saved_cursor.b,
+                                    sd->saved_cursor.a,
+                                    sd->saved_cursor.r,
+                                    sd->saved_cursor.g,
+                                    sd->saved_cursor.b,
+                                    sd->saved_cursor.a);
         evas_object_textgrid_palette_set(
            sd->grid.obj,
            EVAS_TEXTGRID_PALETTE_STANDARD, 0,
@@ -553,6 +571,14 @@ _cursor_shape_to_group_name(Cursor_Shape shape)
       case CURSOR_SHAPE_UNDERLINE: return "terminology/cursor_underline";
      }
    return NULL;
+}
+
+Evas_Object *
+termio_get_cursor(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+   return sd->cursor.obj;
 }
 
 void

@@ -45,6 +45,7 @@ pid_t        termio_pid_get(const Evas_Object *obj);
 Eina_Bool    termio_cwd_get(const Evas_Object *obj, char *buf, size_t size);
 Evas_Object *termio_textgrid_get(const Evas_Object *obj);
 Evas_Object *termio_win_get(const Evas_Object *obj);
+Evas_Object *termio_get_cursor(const Evas_Object *obj);
 const char  *termio_title_get(const Evas_Object *obj);
 const char  *termio_user_title_get(const Evas_Object *obj);
 void         termio_user_title_set(Evas_Object *obj, const char *title);

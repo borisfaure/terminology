@@ -43,10 +43,8 @@ static Termio _sd = {
      .pty = &_ty,
      .config = NULL,
 };
-static int _bg_r = 131;
-static int _bg_g = 132;
-static int _bg_b = 133;
-static int _bg_a = 134;
+static Color _bg = { .r = 131, .g = 132, .b = 133, .a = 134 };
+static Color _cursor = { .r = 135, .g = 136, .b = 137, .a = 138 };
 static const char *_cursor_shape = "undefined";
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
@@ -88,6 +86,11 @@ main_config_sync(const Config *config EINA_UNUSED)
 {
 }
 
+Evas_Object *
+termio_get_cursor(const Evas_Object *obj EINA_UNUSED)
+{
+   return NULL;
+}
 
 Termio *
 termio_get_from_obj(Evas_Object *obj EINA_UNUSED)
@@ -280,13 +283,25 @@ termio_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
         if (r)
-          *r = _bg_r;
+          *r = _bg.r;
         if (g)
-          *g = _bg_g;
+          *g = _bg.g;
         if (b)
-          *b = _bg_b;
+          *b = _bg.b;
         if (a)
-          *a = _bg_a;
+          *a = _bg.a;
+        return 0;
+     }
+   if (strncmp(key, "CURSOR", strlen("CURSOR")) == 0)
+     {
+        if (r)
+          *r = _cursor.r;
+        if (g)
+          *g = _cursor.g;
+        if (b)
+          *b = _cursor.b;
+        if (a)
+          *a = _cursor.a;
         return 0;
      }
    return -1;
@@ -297,10 +312,18 @@ termio_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
 {
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
-        _bg_r = r;
-        _bg_g = g;
-        _bg_b = b;
-        _bg_a = a;
+        _bg.r = r;
+        _bg.g = g;
+        _bg.b = b;
+        _bg.a = a;
+        return 0;
+     }
+   if (strncmp(key, "CURSOR", strlen("CURSOR")) == 0)
+     {
+        _cursor.r = r;
+        _cursor.g = g;
+        _cursor.b = b;
+        _cursor.a = a;
         return 0;
      }
    return -1;
@@ -309,10 +332,14 @@ termio_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
 void
 termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
 {
-   _bg_r = 131;
-   _bg_g = 132;
-   _bg_b = 133;
-   _bg_a = 134;
+   _bg.r = 131;
+   _bg.g = 132;
+   _bg.b = 133;
+   _bg.a = 134;
+   _cursor.r = 135;
+   _cursor.g = 136;
+   _cursor.b = 137;
+   _cursor.a = 138;
 }
 
 Evas_Object *

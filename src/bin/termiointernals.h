@@ -64,7 +64,7 @@ struct _Termio
         int g;
         int b;
         int a;
-   } saved_bg, saved_fg;
+   } saved_bg, saved_fg, saved_cursor;
    Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;
