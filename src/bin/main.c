@@ -456,14 +456,16 @@ static Ecore_Getopt options = {
    gettext_noop("Terminal emulator written with Enlightenment Foundation Libraries"),
    EINA_TRUE,
    {
-      ECORE_GETOPT_BREAK_STR ('e', "exec",
-                              gettext_noop("Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)")),
-      ECORE_GETOPT_STORE_STR ('d', "current-directory",
-                              gettext_noop("Change to directory for execution of terminal command")),
-      ECORE_GETOPT_STORE_STR ('t', "theme",
-                              gettext_noop("Use the named edje theme or path to theme file")),
       ECORE_GETOPT_STORE_STR ('b', "background",
                               gettext_noop("Use the named file as a background wallpaper")),
+      ECORE_GETOPT_STORE_STR ('d', "current-directory",
+                              gettext_noop("Change to directory for execution of terminal command")),
+      ECORE_GETOPT_BREAK_STR ('e', "exec",
+                              gettext_noop("Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)")),
+      ECORE_GETOPT_STORE_STR ('t', "theme",
+                              gettext_noop("Use the named edje theme or path to theme file")),
+      ECORE_GETOPT_STORE_STR ('C', "colorscheme",
+                              gettext_noop("Use the named color scheme")),
       ECORE_GETOPT_STORE_STR ('g', "geometry",
                               gettext_noop("Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)")),
       ECORE_GETOPT_STORE_STR ('n', "name",
@@ -513,11 +515,9 @@ static Ecore_Getopt options = {
                               gettext_noop("Highlight links")),
       ECORE_GETOPT_STORE_BOOL('\0', "no-wizard",
                               gettext_noop("Do not display wizard on start up")),
-      ECORE_GETOPT_STORE_STR ('\0', "colorscheme",
-                              gettext_noop("Use the named color scheme")),
 
       ECORE_GETOPT_VERSION   ('V', "version"),
-      ECORE_GETOPT_COPYRIGHT ('C', "copyright"),
+      ECORE_GETOPT_COPYRIGHT ('\0', "copyright"),
       ECORE_GETOPT_LICENSE   ('L', "license"),
       ECORE_GETOPT_HELP      ('h', "help"),
       ECORE_GETOPT_SENTINEL
@@ -819,40 +819,39 @@ elm_main(int argc, char **argv)
         .h = 1,
    };
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_BOOL(cmd_options),
-     ECORE_GETOPT_VALUE_STR(instance.cd),
-     ECORE_GETOPT_VALUE_STR(instance.theme),
-     ECORE_GETOPT_VALUE_STR(instance.background),
-     ECORE_GETOPT_VALUE_STR(geometry),
-     ECORE_GETOPT_VALUE_STR(instance.name),
-     ECORE_GETOPT_VALUE_STR(instance.role),
-     ECORE_GETOPT_VALUE_STR(instance.title),
-     ECORE_GETOPT_VALUE_STR(instance.icon_name),
-     ECORE_GETOPT_VALUE_STR(instance.font),
-     ECORE_GETOPT_VALUE_STR(instance.startup_split),
+     ECORE_GETOPT_VALUE_STR(instance.background),       /* -b, --background */
+     ECORE_GETOPT_VALUE_STR(instance.cd),               /* -d, --current-directory */
+     ECORE_GETOPT_VALUE_BOOL(cmd_options),              /* -e, --exec */
+     ECORE_GETOPT_VALUE_STR(instance.theme),            /* -t, --theme */
+     ECORE_GETOPT_VALUE_STR(instance.colorscheme),      /* -C, --colorscheme */
+     ECORE_GETOPT_VALUE_STR(geometry),                  /* -g, --geometry */
+     ECORE_GETOPT_VALUE_STR(instance.name),             /* -n, --name */
+     ECORE_GETOPT_VALUE_STR(instance.role),             /* -r, --role */
+     ECORE_GETOPT_VALUE_STR(instance.title),            /* -T, --title */
+     ECORE_GETOPT_VALUE_STR(instance.icon_name),        /* -i, --icon-name */
+     ECORE_GETOPT_VALUE_STR(instance.font),             /* -f, --font */
+     ECORE_GETOPT_VALUE_STR(instance.startup_split),    /* -S, --split */
+     ECORE_GETOPT_VALUE_BOOL(instance.login_shell),     /* -l, --login */
+     ECORE_GETOPT_VALUE_BOOL(instance.video_mute),      /* -m, --video-mute */
+     ECORE_GETOPT_VALUE_BOOL(instance.cursor_blink),    /* -c, --cursor-blink */
+     ECORE_GETOPT_VALUE_BOOL(instance.visual_bell),     /* -G, --visual-bell */
+     ECORE_GETOPT_VALUE_BOOL(instance.fullscreen),      /* -F, --fullscreen */
+     ECORE_GETOPT_VALUE_BOOL(instance.iconic),          /* -I, --iconic */
+     ECORE_GETOPT_VALUE_BOOL(instance.borderless),      /* -B, --borderless */
+     ECORE_GETOPT_VALUE_BOOL(instance.override),        /* -O, --override */
+     ECORE_GETOPT_VALUE_BOOL(instance.maximized),       /* -M, --maximized */
+     ECORE_GETOPT_VALUE_BOOL(instance.nowm),            /* -W, --nowm */
+     ECORE_GETOPT_VALUE_BOOL(instance.hold),            /* -H, --hold */
+     ECORE_GETOPT_VALUE_BOOL(single),                   /* -s, --single */
+     ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),  /* -2, --256color */
+     ECORE_GETOPT_VALUE_DOUBLE(scale),                  /* --scale */
+     ECORE_GETOPT_VALUE_BOOL(instance.active_links),    /* --active-links */
+     ECORE_GETOPT_VALUE_BOOL(no_wizard),                /* --no-wizard */
 
-     ECORE_GETOPT_VALUE_BOOL(instance.login_shell),
-     ECORE_GETOPT_VALUE_BOOL(instance.video_mute),
-     ECORE_GETOPT_VALUE_BOOL(instance.cursor_blink),
-     ECORE_GETOPT_VALUE_BOOL(instance.visual_bell),
-     ECORE_GETOPT_VALUE_BOOL(instance.fullscreen),
-     ECORE_GETOPT_VALUE_BOOL(instance.iconic),
-     ECORE_GETOPT_VALUE_BOOL(instance.borderless),
-     ECORE_GETOPT_VALUE_BOOL(instance.override),
-     ECORE_GETOPT_VALUE_BOOL(instance.maximized),
-     ECORE_GETOPT_VALUE_BOOL(instance.nowm),
-     ECORE_GETOPT_VALUE_BOOL(instance.hold),
-     ECORE_GETOPT_VALUE_BOOL(single),
-     ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),
-     ECORE_GETOPT_VALUE_DOUBLE(scale),
-     ECORE_GETOPT_VALUE_BOOL(instance.active_links),
-     ECORE_GETOPT_VALUE_BOOL(no_wizard),
-     ECORE_GETOPT_VALUE_STR(instance.colorscheme),
-
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
+     ECORE_GETOPT_VALUE_BOOL(quit_option),              /* -v, --version */
+     ECORE_GETOPT_VALUE_BOOL(quit_option),              /* --copyright */
+     ECORE_GETOPT_VALUE_BOOL(quit_option),              /* -L, --license */
+     ECORE_GETOPT_VALUE_BOOL(quit_option),              /* -h, --help */
 
      ECORE_GETOPT_VALUE_NONE
    };
