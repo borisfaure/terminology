@@ -605,6 +605,7 @@ config_new(void)
         config->shine = 255;
         config->hide_cursor = 5.0;
         config->group_all = EINA_FALSE;
+        config_compute_color_scheme(config);
      }
    return config;
 }
