@@ -4173,12 +4173,14 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
         char buf[64];
         size_t l;
 
-        if (termio_color_class_get(obj, color_class, &r, &g, &b, NULL) != 0)
+        if (edje_object_color_class_get(obj, color_class, &r, &g, &b, NULL,
+                                        NULL, NULL, NULL, NULL,
+                                        NULL, NULL, NULL, NULL) != 0)
           {
              ERR("error getting color class '%s'", color_class);
           }
         l = snprintf(buf, sizeof(buf),
-                     "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\033\\",
+                     "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\007",
                      number, r, r, g, g, b, b);
         termpty_write(ty, buf, l);
      }
@@ -4187,13 +4189,10 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
         unsigned char r, g, b;
         if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
           goto err;
-        if (obj == ty->obj)
-          termio_color_class_set(obj, color_class, r, g, b, 0xff);
-        else
-          edje_object_color_class_set(obj, "CURSOR",
-                                      r, g, b, 0xff,
-                                      r, g, b, 0xff,
-                                      r, g, b, 0xff);
+        edje_object_color_class_set(obj, color_class,
+                                    r, g, b, 0xff,
+                                    r, g, b, 0xff,
+                                    r, g, b, 0xff);
      }
 
    return;
@@ -4325,7 +4324,8 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 11:
         DBG("Set background color");
         _handle_xterm_set_color_class(ty, p, cc - c - (p - buf),
-                                      ty->obj, "BG", 11);
+                                      termio_bg_get(ty->obj),
+                                      "BG", 11);
         break;
       case 12:
         DBG("Set cursor color");

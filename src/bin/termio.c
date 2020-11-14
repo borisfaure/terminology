@@ -76,22 +76,30 @@ void
 termio_theme_set(Evas_Object *obj, Evas_Object *theme)
 {
    Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Object *bg;
+
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(sd->grid.obj);
    EINA_SAFETY_ON_NULL_RETURN(theme);
 
    sd->theme = theme;
+   bg = term_bg_get(sd->term);
+   EINA_SAFETY_ON_NULL_RETURN(bg);
 
-   termio_color_class_get(obj, "BG",
+   edje_object_color_class_get(bg, "BG",
                           &sd->saved_bg.r,
                           &sd->saved_bg.g,
                           &sd->saved_bg.b,
-                          &sd->saved_bg.a);
-   termio_color_class_get(sd->cursor.obj, "CURSOR",
-                          &sd->saved_cursor.r,
-                          &sd->saved_cursor.g,
-                          &sd->saved_cursor.b,
-                          &sd->saved_cursor.a);
+                          &sd->saved_bg.a,
+                          NULL, NULL, NULL, NULL,
+                          NULL, NULL, NULL, NULL);
+   edje_object_color_class_get(sd->cursor.obj, "CURSOR",
+                               &sd->saved_cursor.r,
+                               &sd->saved_cursor.g,
+                               &sd->saved_cursor.b,
+                               &sd->saved_cursor.a,
+                               NULL, NULL, NULL, NULL,
+                               NULL, NULL, NULL, NULL);
    evas_object_textgrid_palette_get(
       sd->grid.obj,
       EVAS_TEXTGRID_PALETTE_STANDARD, 0,
@@ -107,10 +115,22 @@ termio_reset_main_colors(Evas_Object *termio)
    if (termio)
      {
         Termio *sd = evas_object_smart_data_get(termio);
+        Evas_Object *bg;
+
         EINA_SAFETY_ON_NULL_RETURN(sd);
         EINA_SAFETY_ON_NULL_RETURN(sd->grid.obj);
 
-        termio_color_class_set(termio, "BG",
+        bg = term_bg_get(sd->term);
+        EINA_SAFETY_ON_NULL_RETURN(bg);
+        edje_object_color_class_set(bg, "BG",
+                               sd->saved_bg.r,
+                               sd->saved_bg.g,
+                               sd->saved_bg.b,
+                               sd->saved_bg.a,
+                               sd->saved_bg.r,
+                               sd->saved_bg.g,
+                               sd->saved_bg.b,
+                               sd->saved_bg.a,
                                sd->saved_bg.r,
                                sd->saved_bg.g,
                                sd->saved_bg.b,
@@ -327,6 +347,15 @@ termio_term_get(const Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
 
    return sd->term;
+}
+
+Evas_Object *
+termio_bg_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+
+   return term_bg_get(sd->term);
 }
 
 static void
@@ -4186,63 +4215,4 @@ termio_key_down(Evas_Object *termio,
    if (sd->config->flicker_on_key)
      edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
    ev->event_flags = EVAS_EVENT_FLAG_ON_HOLD;
-}
-
-int
-termio_color_class_get(Evas_Object *termio, const char *key,
-                       int *r, int *g, int *b, int *a)
-{
-   Termio *sd = evas_object_smart_data_get(termio);
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
-
-   if (sd->term)
-     {
-        Evas_Object *bg = term_bg_get(sd->term);
-        if (!edje_object_color_class_get(bg, key,
-                                         r,
-                                         g,
-                                         b,
-                                         a,
-                                         NULL, NULL, NULL, NULL,
-                                         NULL, NULL, NULL, NULL))
-          {
-             ERR("color class '%s' not found in theme", key);
-             return -1;
-          }
-     }
-   else
-     {
-        ERR("term not found");
-        return -1;
-     }
-   return 0;
-}
-
-int
-termio_color_class_set(Evas_Object *termio, const char *key,
-                       int r, int g, int b, int a)
-{
-   Termio *sd = evas_object_smart_data_get(termio);
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, -1);
-
-   if (sd->term)
-     {
-        Evas_Object *bg = term_bg_get(sd->term);
-        if (!edje_object_color_class_set(bg, key,
-                                         r, g, b, a,
-                                         r, g, b, a,
-                                         r, g, b, a))
-          {
-             ERR("can not set color class '%s'", key);
-             return -1;
-          }
-     }
-   else
-     {
-        ERR("term not found");
-        return -1;
-     }
-   return 0;
 }

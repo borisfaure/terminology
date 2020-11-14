@@ -65,6 +65,7 @@ termio_imf_cursor_set(Evas_Object *obj, Ecore_IMF_Context *imf);
 Termpty *termio_pty_get(const Evas_Object *obj);
 Evas_Object * termio_miniview_get(const Evas_Object *obj);
 Term* termio_term_get(const Evas_Object *obj);
+Evas_Object *termio_bg_get(const Evas_Object *obj);
 
 void termio_key_down(Evas_Object *termio,
                      Evas_Event_Key_Down *ev,
@@ -84,12 +85,6 @@ void
 termio_block_activate(Evas_Object *obj, Termblock *blk);
 const char *
 term_preedit_str_get(Term *term);
-int
-termio_color_class_get(Evas_Object *termio, const char *key,
-                       int *r, int *g, int *b, int *a);
-int
-termio_color_class_set(Evas_Object *termio, const char *key,
-                       int r, int g, int b, int a);
 void
 termio_reset_main_colors(Evas_Object *termio);
 #endif

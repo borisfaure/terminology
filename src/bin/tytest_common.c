@@ -277,8 +277,10 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
 
 
 int
-termio_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
-                        int *r, int *g, int *b, int *a)
+tytest_edje_object_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
+                        int *r, int *g, int *b, int *a,
+                        int *r1 EINA_UNUSED, int *g1 EINA_UNUSED, int *b1 EINA_UNUSED, int *a1 EINA_UNUSED,
+                        int *r2 EINA_UNUSED, int *g2 EINA_UNUSED, int *b2 EINA_UNUSED, int *a2 EINA_UNUSED)
 {
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
@@ -306,9 +308,12 @@ termio_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
      }
    return -1;
 }
+
 int
-termio_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
-                       int r, int g, int b, int a)
+tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
+                                 int r, int g, int b, int a,
+                                 int r1 EINA_UNUSED, int g1 EINA_UNUSED, int b1 EINA_UNUSED, int a1 EINA_UNUSED,
+                                 int r2 EINA_UNUSED, int g2 EINA_UNUSED, int b2 EINA_UNUSED, int a2 EINA_UNUSED)
 {
    if (strncmp(key, "BG", strlen("BG")) == 0)
      {
@@ -344,6 +349,12 @@ termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
 
 Evas_Object *
 termio_textgrid_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return NULL;
+}
+
+Evas_Object *
+termio_bg_get(const Evas_Object *obj EINA_UNUSED)
 {
    return NULL;
 }
