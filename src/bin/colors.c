@@ -535,8 +535,7 @@ void
 color_scheme_apply(Evas_Object *edje,
                    const Color_Scheme *cs)
 {
-   if (!cs)
-     return;
+   EINA_SAFETY_ON_NULL_RETURN(cs);
 
 #define CS_SET(_K, _F) do {\
    edje_object_color_class_set(edje, _K, \
