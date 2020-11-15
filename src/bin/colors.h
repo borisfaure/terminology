@@ -54,7 +54,7 @@ struct _Color_Scheme
 
 void
 colors_term_init(Evas_Object *textgrid,
-                 const Evas_Object *bg);
+                 const Color_Scheme *cs);
 void
 colors_standard_get(int set,
                     int col,

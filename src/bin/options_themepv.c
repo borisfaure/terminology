@@ -230,7 +230,7 @@ options_theme_preview_add(Evas_Object *parent,
                           Evas_Coord w, Evas_Coord h,
                           Eina_Bool colors_mode)
 {
-   Evas_Object *o, *oo, *obase, *oe, *obg;
+   Evas_Object *o, *oo, *obase, *oe;
    Evas *evas;
    Evas_Coord ww, hh, y;
 
@@ -241,7 +241,6 @@ options_theme_preview_add(Evas_Object *parent,
    // make core frame
    o = elm_layout_add(parent);
    oe = elm_layout_edje_get(o);
-   obg = oe;
    theme_apply(oe, config, "terminology/background",
                file, cs, EINA_FALSE);
    if (config->translucent)
@@ -287,7 +286,7 @@ options_theme_preview_add(Evas_Object *parent,
 
    // create a texgrid and swallow pack into grid
    o = evas_object_textgrid_add(evas);
-   colors_term_init(o, obg);
+   colors_term_init(o, cs ? cs: config->color_scheme);
    evas_object_scale_set(o, elm_config_scale_get());
    if (config->font.bitmap)
      {

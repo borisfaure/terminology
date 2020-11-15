@@ -452,54 +452,125 @@ static Eet_Data_Descriptor *edd_color = NULL;
 
 void
 colors_term_init(Evas_Object *textgrid,
-                 const Evas_Object *bg)
+                 const Color_Scheme *cs)
 {
    int c;
-   char buf[32];
    int r, g , b, a;
-   const Color *color;
 
-   /* 4: normal, bright, faint, bright+faint */
-   for (c = 0; c < (4 * 12); c++)
-     {
-        snprintf(buf, sizeof(buf) - 1, "c%i", c);
-        if (!edje_object_color_class_get(bg, buf,
-                                         &r, &g, &b, &a,
-                                         NULL, NULL, NULL, NULL,
-                                         NULL, NULL, NULL, NULL))
-          {
-             color = &default_colors[c / 12][c % 12];
-             r = color->r;
-             g = color->g;
-             b = color->b;
-             a = color->a;
-          }
-        evas_object_textgrid_palette_set(
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c,
-           r, g, b, a);
-     }
-   for (c = 0; c < 256; c++)
-     {
-        snprintf(buf, sizeof(buf) - 1, "C%i", c);
+   if (!cs)
+     cs = &default_colorscheme;
 
-        if (!edje_object_color_class_get(bg, buf,
-                                         &r,
-                                         &g,
-                                         &b,
-                                         &a,
-                                         NULL, NULL, NULL, NULL,
-                                         NULL, NULL, NULL, NULL))
-          {
-             color = &default_colors256[c];
-             r = color->r;
-             g = color->g;
-             b = color->b;
-             a = color->a;
-          }
+#define CS_SET_INVISIBLE(_c)  do {                         \
+        evas_object_textgrid_palette_set(                  \
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, _c,   \
+           0, 0, 0, 0);                                    \
+} while(0)
+#define CS_SET(_c, _F) do {                                \
+        r = cs->_F.r;                                      \
+        g = cs->_F.g;                                      \
+        b = cs->_F.b;                                      \
+        a = cs->_F.a;                                      \
+        evas_object_textgrid_palette_set(                  \
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, _c,   \
+           r, g, b, a);                                    \
+} while (0)
+
+   /* Normal */
+   CS_SET(0 /* def */,     normal.def);
+   CS_SET(1 /* black */,   normal.black);
+   CS_SET(2 /* red */,     normal.red);
+   CS_SET(3 /* green */,   normal.green);
+   CS_SET(4 /* yellow */,  normal.yellow);
+   CS_SET(5 /* blue */,    normal.blue);
+   CS_SET(6 /* magenta */, normal.magenta);
+   CS_SET(7 /* cyan */,    normal.cyan);
+   CS_SET(8 /* white */,   normal.white);
+   CS_SET_INVISIBLE(9);
+   CS_SET(10 /* inverse fg */, normal.inverse_fg);
+   CS_SET(11 /* inverse bg */, normal.inverse_bg);
+
+   /* Bold */
+   CS_SET(12 /* def */,     bright.def);
+   CS_SET(13 /* black */,   bright.black);
+   CS_SET(14 /* red */,     bright.red);
+   CS_SET(15 /* green */,   bright.green);
+   CS_SET(16 /* yellow */,  bright.yellow);
+   CS_SET(17 /* blue */,    bright.blue);
+   CS_SET(18 /* magenta */, bright.magenta);
+   CS_SET(19 /* cyan */,    bright.cyan);
+   CS_SET(20 /* white */,   bright.white);
+   CS_SET_INVISIBLE(21);
+   CS_SET(22 /* inverse fg */, bright.inverse_fg);
+   CS_SET(23 /* inverse bg */, bright.inverse_bg);
+
+   /* Faint */
+   CS_SET(24 /* def */,     faint.def);
+   CS_SET(25 /* black */,   faint.black);
+   CS_SET(26 /* red */,     faint.red);
+   CS_SET(27 /* green */,   faint.green);
+   CS_SET(28 /* yellow */,  faint.yellow);
+   CS_SET(29 /* blue */,    faint.blue);
+   CS_SET(30 /* magenta */, faint.magenta);
+   CS_SET(31 /* cyan */,    faint.cyan);
+   CS_SET(32 /* white */,   faint.white);
+   CS_SET_INVISIBLE(33);
+   CS_SET(34 /* inverse fg */, faint.inverse_fg);
+   CS_SET(35 /* inverse bg */, faint.inverse_bg);
+
+   /* BrightFaint */
+   CS_SET(36 /* def */,     faint.def);
+   CS_SET(37 /* black */,   faint.black);
+   CS_SET(38 /* red */,     faint.red);
+   CS_SET(39 /* green */,   faint.green);
+   CS_SET(40 /* yellow */,  faint.yellow);
+   CS_SET(41 /* blue */,    faint.blue);
+   CS_SET(42 /* magenta */, faint.magenta);
+   CS_SET(43 /* cyan */,    faint.cyan);
+   CS_SET(44 /* white */,   faint.white);
+   CS_SET_INVISIBLE(45);
+   CS_SET(46 /* inverse fg */, faint.inverse_fg);
+   CS_SET(47 /* inverse bg */, faint.inverse_bg);
+#undef CS_SET
+
+#define CS_SET(_c, _F) do {                                \
+        r = cs->_F.r;                                      \
+        g = cs->_F.g;                                      \
+        b = cs->_F.b;                                      \
+        a = cs->_F.a;                                      \
+        evas_object_textgrid_palette_set(                  \
+           textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, _c,   \
+           r, g, b, a);                                    \
+   } while (0)
+
+   CS_SET(0 /* black */,   normal.black);
+   CS_SET(1 /* red */,     normal.red);
+   CS_SET(2 /* green */,   normal.green);
+   CS_SET(3 /* yellow */,  normal.yellow);
+   CS_SET(4 /* blue */,    normal.blue);
+   CS_SET(5 /* magenta */, normal.magenta);
+   CS_SET(6 /* cyan */,    normal.cyan);
+   CS_SET(7 /* white */,   normal.white);
+
+   CS_SET(8 /* black */,    bright.black);
+   CS_SET(9 /* red */,      bright.red);
+   CS_SET(10 /* green */,   bright.green);
+   CS_SET(11 /* yellow */,  bright.yellow);
+   CS_SET(12 /* blue */,    bright.blue);
+   CS_SET(13 /* magenta */, bright.magenta);
+   CS_SET(14 /* cyan */,    bright.cyan);
+   CS_SET(15 /* white */,   bright.white);
+
+   for (c = 16; c < 256; c++)
+     {
+        r = default_colors256[c].r;
+        g = default_colors256[c].g;
+        b = default_colors256[c].b;
+        a = default_colors256[c].a;
         evas_object_textgrid_palette_set(
            textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c,
            r, g, b, a);
      }
+#undef CS_SET
 }
 
 void
@@ -578,82 +649,6 @@ edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
 #undef CS_DARK
 
    CS_SET("SHINE", hl);
-
-   /* ANSI Colors in the 256 colors mode */
-   CS_SET("C0" /* black */,   normal.black);
-   CS_SET("C1" /* red */,     normal.red);
-   CS_SET("C2" /* green */,   normal.green);
-   CS_SET("C3" /* yellow */,  normal.yellow);
-   CS_SET("C4" /* blue */,    normal.blue);
-   CS_SET("C5" /* magenta */, normal.magenta);
-   CS_SET("C6" /* cyan */,    normal.cyan);
-   CS_SET("C7" /* white */,   normal.white);
-
-   CS_SET("C8" /* black */,    bright.black);
-   CS_SET("C9" /* red */,      bright.red);
-   CS_SET("C10" /* green */,   bright.green);
-   CS_SET("C11" /* yellow */,  bright.yellow);
-   CS_SET("C12" /* blue */,    bright.blue);
-   CS_SET("C13" /* magenta */, bright.magenta);
-   CS_SET("C14" /* cyan */,    bright.cyan);
-   CS_SET("C15" /* white */,   bright.white);
-
-   /* Normal */
-   CS_SET("c0" /* def */,     normal.def);
-   CS_SET("c1" /* black */,   normal.black);
-   CS_SET("c2" /* red */,     normal.red);
-   CS_SET("c3" /* green */,   normal.green);
-   CS_SET("c4" /* yellow */,  normal.yellow);
-   CS_SET("c5" /* blue */,    normal.blue);
-   CS_SET("c6" /* magenta */, normal.magenta);
-   CS_SET("c7" /* cyan */,    normal.cyan);
-   CS_SET("c8" /* white */,   normal.white);
-   /* c9 is invisible, use default */
-   CS_SET("c10" /* inverse fg */, normal.inverse_fg);
-   CS_SET("c11" /* inverse bg */, normal.inverse_bg);
-
-   /* Bold */
-   CS_SET("c12" /* def */,     bright.def);
-   CS_SET("c13" /* black */,   bright.black);
-   CS_SET("c14" /* red */,     bright.red);
-   CS_SET("c15" /* green */,   bright.green);
-   CS_SET("c16" /* yellow */,  bright.yellow);
-   CS_SET("c17" /* blue */,    bright.blue);
-   CS_SET("c18" /* magenta */, bright.magenta);
-   CS_SET("c19" /* cyan */,    bright.cyan);
-   CS_SET("c20" /* white */,   bright.white);
-   /* c21 is invisible, use default */
-   CS_SET("c22" /* inverse fg */, bright.inverse_fg);
-   CS_SET("c23" /* inverse bg */, bright.inverse_bg);
-
-   /* Faint */
-   CS_SET("c24" /* def */,     faint.def);
-   CS_SET("c25" /* black */,   faint.black);
-   CS_SET("c26" /* red */,     faint.red);
-   CS_SET("c27" /* green */,   faint.green);
-   CS_SET("c28" /* yellow */,  faint.yellow);
-   CS_SET("c29" /* blue */,    faint.blue);
-   CS_SET("c30" /* magenta */, faint.magenta);
-   CS_SET("c31" /* cyan */,    faint.cyan);
-   CS_SET("c32" /* white */,   faint.white);
-   /* c33 is invisible, use default */
-   CS_SET("c34" /* inverse fg */, faint.inverse_fg);
-   CS_SET("c35" /* inverse bg */, faint.inverse_bg);
-
-   /* BrightFaint */
-   CS_SET("c36" /* def */,     faint.def);
-   CS_SET("c37" /* black */,   faint.black);
-   CS_SET("c38" /* red */,     faint.red);
-   CS_SET("c39" /* green */,   faint.green);
-   CS_SET("c40" /* yellow */,  faint.yellow);
-   CS_SET("c41" /* blue */,    faint.blue);
-   CS_SET("c42" /* magenta */, faint.magenta);
-   CS_SET("c43" /* cyan */,    faint.cyan);
-   CS_SET("c44" /* white */,   faint.white);
-   /* c45 is invisible, use default */
-   CS_SET("c46" /* inverse fg */, faint.inverse_fg);
-   CS_SET("c47" /* inverse bg */, faint.inverse_bg);
-
 
 #undef CS_SET
 #undef CS_SET_MANY
