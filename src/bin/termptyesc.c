@@ -4124,7 +4124,8 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
    if (*p == '?')
      {
         int r, g, b;
-        char bf[7];
+        char bf[32];
+        int l;
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
         evas_object_textgrid_palette_get(
            termio_textgrid_get(ty->obj),
@@ -4136,10 +4137,8 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
         g = config->colors[0].g;
         b = config->colors[0].b;
 #endif
-        TERMPTY_WRITE_STR("\033]10;#");
-        snprintf(bf, sizeof(bf), "%.2X%.2X%.2X", r, g, b);
-        termpty_write(ty, bf, 6);
-        TERMPTY_WRITE_STR("\007");
+        l = snprintf(bf, sizeof(bf), "\033]10;#%.2X%.2X%.2X\007", r, g, b);
+        termpty_write(ty, bf, l);
      }
    else
      {
@@ -4161,17 +4160,21 @@ err:
 static void
 _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
                               Evas_Object *obj,
-                               const char *color_class,
-                               uint8_t number)
+                              const char *color_class,
+                              uint8_t number)
 {
-   if (!p || !*p || !obj)
+   if (!p || !*p)
      goto err;
+#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
+   if (!obj)
+     goto err;
+#endif
 
    if (*p == '?')
      {
         int r = 0, g = 0, b = 0;
         char buf[64];
-        size_t l;
+        int l;
 
         if (edje_object_color_class_get(obj, color_class, &r, &g, &b, NULL,
                                         NULL, NULL, NULL, NULL,
@@ -4190,9 +4193,9 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
         if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
           goto err;
         if (edje_object_color_class_set(obj, color_class,
-                                    r, g, b, 0xff,
-                                    r, g, b, 0xff,
-                                    r, g, b, 0xff) != EINA_TRUE)
+                                        r, g, b, 0xff,
+                                        r, g, b, 0xff,
+                                        r, g, b, 0xff) != EINA_TRUE)
           {
              ERR("error setting color class '%s' on obj %p", color_class, obj);
           }
