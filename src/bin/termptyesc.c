@@ -77,8 +77,8 @@ static const char *const ASCII_CHARS_TABLE[] =
    "US"   // '\037'
 };
 
-static const char * EINA_PURE
-_safechar(const unsigned int c)
+const char * EINA_PURE
+termptyesc_safechar(const unsigned int c)
 {
    static char _str[9];
 
@@ -3329,7 +3329,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    *b = 0;
    be = b;
    b = buf;
-   DBG(" CSI: '%s' args '%s'", _safechar(*cc), (char *) buf);
+   DBG(" CSI: '%s' args '%s'", termptyesc_safechar(*cc), (char *) buf);
    switch (*cc)
      {
         /* sorted by ascii value */
@@ -3589,7 +3589,7 @@ unhandled:
              else
                eina_strbuf_append_char(bf, c[i]);
           }
-        WRN("unhandled CSI '%s': %s", _safechar(*cc), eina_strbuf_string_get(bf));
+        WRN("unhandled CSI '%s': %s", termptyesc_safechar(*cc), eina_strbuf_string_get(bf));
         eina_strbuf_free(bf);
      }
 #endif
@@ -4511,7 +4511,8 @@ _handle_esc_dcs(Termpty *ty,
          /* Request status string */
          if (len > 1 && buf[1] != 'q')
            {
-              WRN("invalid/unhandled dsc esc '$%s' (expected '$q')", _safechar(buf[1]));
+              WRN("invalid/unhandled dsc esc '$%s' (expected '$q')",
+                  termptyesc_safechar(buf[1]));
               ty->decoding_error = EINA_TRUE;
               goto end;
            }
@@ -4534,7 +4535,8 @@ _handle_esc_dcs(Termpty *ty,
                  }
                else
                  {
-                    WRN("invalid/unhandled dsc esc '$q\"%s'", _safechar(buf[3]));
+                    WRN("invalid/unhandled dsc esc '$q\"%s'",
+                        termptyesc_safechar(buf[3]));
                     ty->decoding_error = EINA_TRUE;
                     goto end;
                  }
@@ -4545,13 +4547,14 @@ _handle_esc_dcs(Termpty *ty,
                /* TODO: */
             default:
                ty->decoding_error = EINA_TRUE;
-               WRN("unhandled dsc request status string '$q%s'", _safechar(buf[2]));
+               WRN("unhandled dsc request status string '$q%s'",
+                   termptyesc_safechar(buf[2]));
                goto end;
            }
          break;
       default:
         // many others
-        WRN("Unhandled DCS escape '%s'", _safechar(buf[0]));
+        WRN("Unhandled DCS escape '%s'", termptyesc_safechar(buf[0]));
         ty->decoding_error = EINA_TRUE;
         break;
      }
@@ -4698,7 +4701,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    int len = ce - c;
 
    if (len < 1) return 0;
-   DBG("ESC: '%s'", _safechar(c[0]));
+   DBG("ESC: '%s'", termptyesc_safechar(c[0]));
    switch (c[0])
      {
       case '[':
@@ -4822,7 +4825,8 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
  */
       default:
         ty->decoding_error = EINA_TRUE;
-        WRN("Unhandled escape '%s' (0x%02x)", _safechar(c[0]), (unsigned int) c[0]);
+        WRN("Unhandled escape '%s' (0x%02x)",
+            termptyesc_safechar(c[0]), (unsigned int) c[0]);
         return 1;
      }
    return 0;
@@ -4942,7 +4946,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    while ((cc < ce) && (*cc >= 0x20) && (*cc != DEL) && (*cc != CSI)
           && (*cc != OSC))
      {
-        DBG("%s", _safechar(*cc));
+        DBG("%s", termptyesc_safechar(*cc));
         cc++;
         len++;
      }
@@ -4961,7 +4965,7 @@ end:
            if ((c[j] < ' ') || (c[j] >= 0x7f))
              printf("\033[35m%08x\033[0m", c[j]);
            else
-             printf("%s", _safechar(c[j]));
+             printf("%s", termptyesc_safechar(c[j]));
         }
       printf("\n");
      }

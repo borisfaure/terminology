@@ -2,5 +2,6 @@
 #define _TERMPTY_ESC_H__ 1
 
 int termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce);
+const char * EINA_PURE termptyesc_safechar(const unsigned int c);
 
 #endif
