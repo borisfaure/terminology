@@ -4175,9 +4175,9 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
 
         if (edje_object_color_class_get(obj, color_class, &r, &g, &b, NULL,
                                         NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL, NULL) != 0)
+                                        NULL, NULL, NULL, NULL) != EINA_TRUE)
           {
-             ERR("error getting color class '%s'", color_class);
+             ERR("error getting color class '%s' on obj %p", color_class, obj);
           }
         l = snprintf(buf, sizeof(buf),
                      "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\007",
@@ -4189,10 +4189,13 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
         unsigned char r, g, b;
         if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
           goto err;
-        edje_object_color_class_set(obj, color_class,
+        if (edje_object_color_class_set(obj, color_class,
                                     r, g, b, 0xff,
                                     r, g, b, 0xff,
-                                    r, g, b, 0xff);
+                                    r, g, b, 0xff) != EINA_TRUE)
+          {
+             ERR("error setting color class '%s' on obj %p", color_class, obj);
+          }
      }
 
    return;

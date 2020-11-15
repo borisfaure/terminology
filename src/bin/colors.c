@@ -538,16 +538,24 @@ color_scheme_apply(Evas_Object *edje,
    EINA_SAFETY_ON_NULL_RETURN(cs);
 
 #define CS_SET(_K, _F) do {\
-   edje_object_color_class_set(edje, _K, \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a, \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a, \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a); \
+   if (edje_object_color_class_set(edje, _K,                            \
+                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a,  \
+                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a,  \
+                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a)  \
+       != EINA_TRUE)                                                    \
+       {                                                                \
+          ERR("error setting color class '%s' on object %p", _K, edje); \
+       }                                                                \
 } while (0)
-#define CS_SET_MANY(_K, _F1, _F2, _F3) do {\
-   edje_object_color_class_set(edje, _K, \
+#define CS_SET_MANY(_K, _F1, _F2, _F3) do {                                \
+   if (edje_object_color_class_set(edje, _K,                               \
                                cs->_F1.r, cs->_F1.g, cs->_F1.b, cs->_F1.a, \
                                cs->_F2.r, cs->_F2.g, cs->_F2.b, cs->_F2.a, \
-                               cs->_F3.r, cs->_F3.g, cs->_F3.b, cs->_F3.a); \
+                               cs->_F3.r, cs->_F3.g, cs->_F3.b, cs->_F3.a) \
+       != EINA_TRUE)                                                       \
+       {                                                                   \
+          ERR("error setting color class '%s' on object %p", _K, edje);    \
+       }                                                                   \
 } while (0)
 
    CS_SET("BG", bg);
