@@ -276,7 +276,7 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
 }
 
 
-int
+Eina_Bool
 tytest_edje_object_color_class_get(Evas_Object *termio EINA_UNUSED, const char *key,
                         int *r, int *g, int *b, int *a,
                         int *r1 EINA_UNUSED, int *g1 EINA_UNUSED, int *b1 EINA_UNUSED, int *a1 EINA_UNUSED,
@@ -292,7 +292,7 @@ tytest_edje_object_color_class_get(Evas_Object *termio EINA_UNUSED, const char *
           *b = _bg.b;
         if (a)
           *a = _bg.a;
-        return 0;
+        return EINA_TRUE;
      }
    if (strncmp(key, "CURSOR", strlen("CURSOR")) == 0)
      {
@@ -304,12 +304,12 @@ tytest_edje_object_color_class_get(Evas_Object *termio EINA_UNUSED, const char *
           *b = _cursor.b;
         if (a)
           *a = _cursor.a;
-        return 0;
+        return EINA_TRUE;
      }
-   return -1;
+   return EINA_FALSE;
 }
 
-int
+Eina_Bool
 tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *key,
                                  int r, int g, int b, int a,
                                  int r1 EINA_UNUSED, int g1 EINA_UNUSED, int b1 EINA_UNUSED, int a1 EINA_UNUSED,
@@ -321,7 +321,7 @@ tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *
         _bg.g = g;
         _bg.b = b;
         _bg.a = a;
-        return 0;
+        return EINA_TRUE;
      }
    if (strncmp(key, "CURSOR", strlen("CURSOR")) == 0)
      {
@@ -329,9 +329,9 @@ tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *
         _cursor.g = g;
         _cursor.b = b;
         _cursor.a = a;
-        return 0;
+        return EINA_TRUE;
      }
-   return -1;
+   return EINA_FALSE;
 }
 
 void
