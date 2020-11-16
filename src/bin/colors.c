@@ -815,6 +815,7 @@ Color_Scheme *
 color_scheme_dup(const Color_Scheme *src)
 {
    Color_Scheme *cs;
+   if (!src) src = &default_colorscheme;
    size_t len_name = strlen(src->md.name) + 1;
    size_t len_author = strlen(src->md.author) + 1;
    size_t len_website = strlen(src->md.website) + 1;
