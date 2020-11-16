@@ -5910,8 +5910,6 @@ void change_theme(Evas_Object *win, Config *config)
 
    EINA_LIST_FOREACH(terms, l, term)
      {
-        Evas_Object *edje = term->bg_edj;
-
         if (!theme_apply(term->bg, config, "terminology/background",
                          NULL, NULL, EINA_TRUE))
           ERR("Couldn't find terminology theme!");
