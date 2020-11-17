@@ -187,7 +187,7 @@ collections {
                rel1.relative: -0.2 0.0;
                rel2.relative: -0.2 1.0;
                color: 255 255 255 64;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
                align: 1.0 0.5;
                text { font: "Sans"; size: 8;
                   align: 1.0 0.5;
@@ -198,7 +198,7 @@ collections {
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tabcount_r0"; type: RECT;
@@ -209,12 +209,12 @@ collections {
                rel1.relative: 0.05 0.05;
                rel2.relative: 0.45 0.45;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tabcount_r1"; type: RECT;
@@ -225,12 +225,12 @@ collections {
                rel1.relative: 0.55 0.05;
                rel2.relative: 0.95 0.45;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tabcount_r2"; type: RECT;
@@ -241,12 +241,12 @@ collections {
                rel1.relative: 0.05 0.55;
                rel2.relative: 0.45 0.95;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tabcount_r3"; type: RECT;
@@ -257,12 +257,12 @@ collections {
                rel1.relative: 0.55 0.55;
                rel2.relative: 0.95 0.95;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "terminology.tabcount.control"; type: SWALLOW;
@@ -854,12 +854,12 @@ collections {
                rel1.relative: 0.05 0.05;
                rel2.relative: 0.45 0.45;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r1"; type: RECT;
@@ -871,12 +871,12 @@ collections {
                rel1.relative: 0.55 0.05;
                rel2.relative: 0.95 0.45;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r2"; type: RECT;
@@ -888,12 +888,12 @@ collections {
                rel1.relative: 0.05 0.55;
                rel2.relative: 0.45 0.95;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "tab_btn_r3"; type: RECT;
@@ -905,12 +905,12 @@ collections {
                rel1.relative: 0.55 0.55;
                rel2.relative: 0.95 0.95;
                color: 255 255 255 32;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
             description { state: "over" 0.0;
                inherit: "default" 0.0;
                color: 255 255 255 255;
-               color_class: "GLOW_HIGHLIGHT";
+               color_class: "HIGHLIGHT";
             }
          }
          part { name: "terminology.tab_btn"; type: SWALLOW;
@@ -1575,7 +1575,7 @@ collections {
                   border: 4 4 4 4;                                      \
                }                                                        \
                color: 255 255 255 64;                                   \
-               color_class: "GLOW_HIGHLIGHT";                           \
+               color_class: "HIGHLIGHT";                                \
                visible: 0;                                              \
             }                                                           \
             description { state: "hdrag,off" 0.0;                       \
@@ -1584,13 +1584,13 @@ collections {
             description { state: "on" 0.0;                              \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 255;                                  \
-               color_class: "GLOW_HIGHLIGHT";                           \
+               color_class: "HIGHLIGHT";                                \
                visible: 1;                                              \
             }                                                           \
             description { state: "out" 0.0;                             \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 0;                                    \
-               color_class: "GLOW_HIGHLIGHT";                           \
+               color_class: "HIGHLIGHT";                                \
                rel1.offset: -8 -8;                                      \
                rel2.offset: 7 7;                                        \
                visible: 1;                                              \
@@ -1608,7 +1608,7 @@ collections {
                   border: 3 3 3 3;                                      \
                }                                                        \
                color: 255 255 255 80;                                   \
-               color_class: "GLOW_HIGHLIGHT";                           \
+               color_class: "HIGHLIGHT";                                \
                visible: 0;                                              \
             }                                                           \
             description { state: "hdrag,off" 0.0;                       \
@@ -1618,7 +1618,7 @@ collections {
             description { state: "active" 0.0;                          \
                inherit: "default" 0.0;                                  \
                color: 255 255 255 255;                                  \
-               color_class: "GLOW_HIGHLIGHT";                           \
+               color_class: "HIGHLIGHT";                                \
                visible: 1;                                              \
             }                                                           \
          }                                                              \

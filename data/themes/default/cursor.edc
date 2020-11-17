@@ -118,7 +118,7 @@ group { name: "terminology/cursor";
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "CURSOR_HIGHLIGHT";
+            color_class:  "HIGHLIGHT";
          }
       }
       programs {
@@ -339,7 +339,7 @@ group { name: "terminology/cursor_bar";
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "CURSOR_HIGHLIGHT";
+            color_class:  "HIGHLIGHT";
          }
       }
       programs {
@@ -561,7 +561,7 @@ group { name: "terminology/cursor_underline";
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class:  "CURSOR_HIGHLIGHT";
+            color_class:  "HIGHLIGHT";
          }
       }
       programs {

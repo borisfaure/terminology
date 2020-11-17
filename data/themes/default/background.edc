@@ -281,12 +281,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.05;
             rel2.relative: 0.45 0.45;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tabcount_r1"; type: RECT;
@@ -298,12 +298,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.05;
             rel2.relative: 0.95 0.45;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tabcount_r2"; type: RECT;
@@ -315,12 +315,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.55;
             rel2.relative: 0.45 0.95;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tabcount_r3"; type: RECT;
@@ -332,12 +332,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.55;
             rel2.relative: 0.95 0.95;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "terminology.tabcount.control"; type: SWALLOW;
@@ -1272,12 +1272,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.05;
             rel2.relative: 0.45 0.45;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r1"; type: RECT;
@@ -1289,12 +1289,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.05;
             rel2.relative: 0.95 0.45;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r2"; type: RECT;
@@ -1306,12 +1306,12 @@ group { name: "terminology/background";
             rel1.relative: 0.05 0.55;
             rel2.relative: 0.45 0.95;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "tab_btn_r3"; type: RECT;
@@ -1323,12 +1323,12 @@ group { name: "terminology/background";
             rel1.relative: 0.55 0.55;
             rel2.relative: 0.95 0.95;
             color: 255 255 255 32;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
          description { state: "over" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "terminology.tab_btn"; type: SWALLOW;
@@ -2054,7 +2054,7 @@ group { name: "terminology/background";
          description { state: "active" 0.0;                          \
             inherit: "default" 0.0;                                  \
             color: 255 255 255 255;                                  \
-            color_class: "GLOW_HIGHLIGHT";                           \
+            color_class: "HIGHLIGHT";                                \
             visible: 1;                                              \
          }                                                           \
       }                                                              \

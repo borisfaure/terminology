@@ -56,7 +56,7 @@ group { name: "terminology/mediabusy";
             inherit: "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
-            color_class: "GLOW_HIGHLIGHT";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "knob";
