@@ -34,4 +34,3 @@ color_class { name: "TAB_TITLE";
 }
 
 color_class { name: "BG_SENDFILE"; color: 64 64 64 255; }
-color_class { name: "SHINE"; color: 255 255 255 255; }

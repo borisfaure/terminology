@@ -719,12 +719,12 @@ group { name: "terminology/background";
             aspect: (256/120) (256/120);
             aspect_preference: HORIZONTAL;
             color: 255 255 255 0;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "shine_unfocused";
@@ -739,12 +739,12 @@ group { name: "terminology/background";
             aspect: (256/120) (256/120);
             aspect_preference: HORIZONTAL;
             color: 255 255 255 64;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 0;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
       }
       part { name: "glintclip"; type: RECT;
@@ -771,12 +771,12 @@ group { name: "terminology/background";
             }
             image.normal: "bg_glint.png";
             color: 255 255 255 128;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color_class: "SHINE";
+            color_class: "HIGHLIGHT";
          }
       }
       // }}}

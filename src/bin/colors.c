@@ -647,8 +647,6 @@ color_scheme_apply(Evas_Object *edje,
 edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
 #undef CS_DARK
 
-   CS_SET("SHINE", hl);
-
 #undef CS_SET
 #undef CS_SET_MANY
 }
