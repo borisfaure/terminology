@@ -13,7 +13,7 @@ INI2DESC=$(dirname "$0")/ini2desc.py
 # work on a temporary file till every insertion worked
 TMP_EET=$(mktemp "$OUTPUT-XXXXXX")
 # trap to avoid creating orphan files
-trap 'rm -f "$TMPFILE"' INT TERM HUP EXIT
+trap 'rm -f "$TMP_EET"' INT TERM HUP EXIT
 
 for INI in "$@"
 do
