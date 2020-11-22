@@ -143,6 +143,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    Config *config = termio_config_get(term);
    Eina_Bool to_skip = EINA_FALSE;
    double scale = elm_config_scale_get();
+   const char *config_theme_name = "";
    Theme_Ctx *ctx;
 
    ctx = calloc(1, sizeof(*ctx));
@@ -150,6 +151,15 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
 
    ctx->config = config;
    ctx->term = term;
+
+   if (config && config->theme)
+     {
+        config_theme_name = strrchr(config->theme, '/');
+        if (config_theme_name)
+          config_theme_name++;
+        else
+          config_theme_name = config->theme;
+     }
 
    fr = o = elm_frame_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -236,9 +246,7 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
                                           _cb_op_theme_sel, t);
         if (t->item)
           {
-             ctx->themes = eina_list_append(ctx->themes, t);
-             if ((config) && (config->theme) &&
-                 (!strcmp(config->theme, t->name)))
+            if (!strcmp(config_theme_name, t->name))
                {
                   if (ctx->seltimer)
                     ecore_timer_del(ctx->seltimer);
