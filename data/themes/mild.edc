@@ -93,8 +93,8 @@ collections {
             description { state: "default" 0.0;
             }
             description { state: "unfocused" 0.0;
-               color: 255 255 255 200;
-               color_class: "FG";
+               color: 255 255 255 240;
+               color_class: "BG";
             }
          }
          program {
