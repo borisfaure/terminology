@@ -761,7 +761,39 @@ color_scheme_list(void)
         ERR("failed to open '%s'", path_app);
         goto end;
      }
+
    ef_user = eet_open(path_user, EET_FILE_MODE_READ);
+   if (ef_user)
+     {
+        it = eet_list_entries(ef_user);
+        if (!it)
+          {
+             ERR("failed to list entries in '%s'", path_user);
+             goto end;
+          }
+        EINA_ITERATOR_FOREACH(it, entry)
+          {
+             cs_user = eet_data_read(ef_user, edd_cs, entry->name);
+             if (!cs_user)
+               {
+                  ERR("failed to load color scheme '%s' from '%s'",
+                      entry->name, path_user);
+                  continue;
+               }
+             cs_app = eet_data_read(ef_app, edd_cs, entry->name);
+             if (cs_app)
+               {
+                  /* Prefer user file */
+                  if (cs_user->md.version >= cs_app->md.version)
+                    l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
+                  else
+                    free(cs_user);
+                  free(cs_app);
+               }
+             else
+                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
+          }
+     }
 
    it = eet_list_entries(ef_app);
    if (!it)
@@ -781,22 +813,15 @@ color_scheme_list(void)
         cs_user = eet_data_read(ef_user, edd_cs, entry->name);
         if (cs_user)
           {
-             /* Prefer user file */
-             if (cs_user->md.version >= cs_app->md.version)
-               {
-                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
-                  free(cs_app);
-               }
+             /* Prefer user file if higher version */
+             if (cs_user->md.version < cs_app->md.version)
+               l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
              else
-               {
-                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
-                  free(cs_user);
-               }
+               free(cs_app);
+             free(cs_user);
           }
         else
-          {
-             l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
-          }
+          l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
      }
 end:
    eina_iterator_free(it);
