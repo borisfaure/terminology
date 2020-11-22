@@ -1,4 +1,5 @@
 colorschemes_desc = [
+  'Dracula.ini',
   'Mild.ini',
   'Mustang.ini',
   'Nord.ini',
