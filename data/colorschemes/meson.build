@@ -7,6 +7,8 @@ colorschemes_desc = [
   'Smyck.ini',
   'Solarized.ini',
   'Solarized Light.ini',
+  'Tango Dark.ini',
+  'Tango Light.ini',
 ]
 cs_builder = [join_paths(meson.source_root(),
                          'data', 'colorschemes', 'builder.sh'),
