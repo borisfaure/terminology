@@ -24,8 +24,8 @@ def blend_color(cfg, blend_factor, src, dest, color_name):
 
 def main():
     parser = argparse.ArgumentParser(description='Generate Faint colors in INI colorschemes description files.')
-    parser.add_argument('input_file',
-                        type=argparse.FileType('r'),
+    parser.add_argument('file',
+                        type=argparse.FileType('r+'),
                         help='INI File to convert')
     parser.add_argument('blend_factor',
                         type=int, nargs='?', default=75,
@@ -33,7 +33,7 @@ def main():
     args = parser.parse_args()
 
     cfg = configparser.ConfigParser()
-    cfg.read_file(args.input_file)
+    cfg.read_file(args.file)
 
     f = args.blend_factor
 
@@ -69,7 +69,8 @@ def main():
     blend_color(cfg, f, 'Bright', 'BrightFaint', 'inverse_fg')
     blend_color(cfg, f, 'Bright', 'BrightFaint', 'inverse_bg')
 
-    cfg.write(sys.stdout)
+    args.file.truncate(size=0)
+    cfg.write(args.file)
 
 
 if __name__ == "__main__":
