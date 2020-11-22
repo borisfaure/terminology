@@ -1,13 +1,54 @@
+# Themes in Terminology
+
 This document describes how Terminology interacts with themes and what needs
 to be handled by themes.
 
 See `ChangeLog.theme` on changes related to themes.
 
+# Color classes
 
-Windows contain group `terminology/base`.
+Based on the chosen color scheme, Terminology sets the following color classes
+on all the following edje groups:
 
+* `BG`: the background color of the terminal
+* `FG`: the default foreground color
+* `CURSOR`: the color of the cursor
+* `GLOW`: the color in the UI to ouline elements
+* `HIGHLIGHT`: the color used as main color when an elemeent is highlighted
+* `GLOW_TXT`: text colors with some glow
+* `GLOW_TXT_HIGHLIGHT`: text with glow that is highlighted
+* `END_SELECTION`: on selections, the color of the handles used to expand or shrink
+  the area of the selection
+* `TAB_MISSED`: the number of tabs where a bell has rung, tabs that need
+  attention
+* `TAB_MISSED_OVER`: same but when the mouse is over that number
+* `TAB_TITLE`: the colors of the active tab title
+* `BG_SENDFILE` is the background color when there is a sendfile action. See
+  `man tysend`. It is set to `#404040`.
+
+The following table explains how color classes are set from color scheme
+values:
+
+| Color Class          | Object color     | Outline color    | Shadow color  |
+| -------------------- | ---------------- | ---------------- | ------------- |
+| `BG`                 | `Colors.bg`      | `Colors.bg`      | `Colors.bg`   |
+| `FG`                 | `Normal.def`     | `Normal.def`     | `Normal.def`  |
+| `CURSOR`             | `Colors.main`    | `Colors.main`    | `Colors.main` |
+| `GLOW`               | `Colors.main`    | `Colors.main`    | `Colors.main` |
+| `GLOW_TXT_HIGHLIGHT` | `Colors.hl`      | `Colors.main`    | `Colors.main` |
+| `END_SELECTION`      | `Colors.end_sel` | `Colors.end_sel` | `Colors.end_sel` |
+| `TAB_MISSED`         | `Colors.tab_missed_1` | `Colors.tab_missed_2` | `Colors.tab_missed_3` |
+| `TAB_MISSED_OVER`    | `Colors.tab_missed_1` | `Colors.tab_missed_2` | `Colors.tab_missed_3` |
+| `TAB_TITLE`          | `Normal.def` | `Colors.tab_title_2` | `Colors.bg`   |
+| `BG_SENDFILE`        | `#404040`    | `#404040`            | `#404040`     |
+
+
+
+Let's dive into the edje groups that Terminology uses.
 
 # `terminology/base`
+Windows contain group `terminology/base`.
+
 Contains what is global to a window.
 
 ## Swallowed parts

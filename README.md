@@ -46,6 +46,25 @@ Note: to make terminology work with input methods in general you need:
 ```
 
 
+Themes
+------
+
+Apart from the ones shipped with Terminology, themes can be stored in
+`~/.config/terminology/themes/` .
+
+Documentation on themes is written in [THEMES.md](THEMES.md).
+
+
+Color Schemes
+-------------
+
+Terminology ships with some common color schemes.
+
+To know how to modify or add some new color schemes, please read
+[COLORSCHEMES.md](COLORSCHEMES.md).
+
+
+
 Mouse controls
 --------------
 
@@ -110,12 +129,6 @@ Default key controls
   * `Ctrl+0` = switch to terminal tab 10
 
 
-
-Themes
-------
-
-Apart from the ones shipped with Terminology, themes can be stored in
-`~/.config/terminology/themes/` .
 
 
 Companion tools
