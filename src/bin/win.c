@@ -204,6 +204,7 @@ struct _Win
    Evas_Object *cmdbox;
    Ecore_Timer *cmdbox_del_timer;
    Ecore_Timer *hide_cursor_timer;
+   Ecore_Event_Handler *config_elm_handler;
    unsigned char focused : 1;
    unsigned char cmdbox_up : 1;
    unsigned char group_input : 1;
@@ -1114,6 +1115,11 @@ win_free(Win *wn)
    Term *term;
 
    wins = eina_list_remove(wins, wn);
+   if (wn->config_elm_handler)
+     {
+        ecore_event_handler_del(wn->config_elm_handler);
+        wn->config_elm_handler = NULL;
+     }
    EINA_LIST_FREE(wn->terms, term)
      {
         term_unref(term);
@@ -2129,6 +2135,24 @@ _cb_win_mouse_move(void *data,
 }
 
 static Eina_Bool
+_config_font_size_set(Term *term, void *data EINA_UNUSED)
+{
+   Config *config = termio_config_get(term->termio);
+
+   termio_font_size_set(term->termio, config->font.size);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_cb_elm_config_change(void *data, int event EINA_UNUSED, void *info EINA_UNUSED)
+{
+   Win *wn = data;
+
+   for_each_term_do(wn, &_config_font_size_set, NULL);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
 _win_is_visible(const Term_Container *tc, const Term_Container *_child EINA_UNUSED)
 {
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
@@ -2314,6 +2338,8 @@ imf_done:
 
    wn->tc.is_focused = EINA_TRUE;
 
+   wn->config_elm_handler = ecore_event_handler_add
+     (ELM_EVENT_CONFIG_ALL_CHANGED, _cb_elm_config_change, wn);
    return wn;
 }
 
