@@ -1,4 +1,6 @@
 colorschemes_desc = [
+  'Belafonte Day.ini',
+  'Belafonte Night.ini',
   'Dracula.ini',
   'Mild.ini',
   'Mustang.ini',
