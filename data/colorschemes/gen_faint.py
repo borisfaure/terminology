@@ -69,7 +69,8 @@ def main():
     blend_color(cfg, f, 'Bright', 'BrightFaint', 'inverse_fg')
     blend_color(cfg, f, 'Bright', 'BrightFaint', 'inverse_bg')
 
-    args.file.truncate(size=0)
+    args.file.seek(0)
+    args.file.truncate()
     cfg.write(args.file)
 
 
