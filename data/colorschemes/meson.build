@@ -11,6 +11,7 @@ colorschemes_desc = [
   'PaleNight.ini',
   'PaperColor.ini',
   'Smyck.ini',
+  'Soft Era.ini',
   'Solarized.ini',
   'Solarized Light.ini',
   'Tango Dark.ini',
