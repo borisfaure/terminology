@@ -8,6 +8,7 @@ colorschemes_desc = [
   'Mustang.ini',
   'Nord.ini',
   'Ocean Dark.ini',
+  'PaleNight.ini',
   'PaperColor.ini',
   'Smyck.ini',
   'Solarized.ini',
