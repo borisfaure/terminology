@@ -14,6 +14,7 @@ colorschemes_desc = [
   'Solarized Light.ini',
   'Tango Dark.ini',
   'Tango Light.ini',
+  'Tomorrow Night Burns.ini',
 ]
 cs_builder = [join_paths(meson.source_root(),
                          'data', 'colorschemes', 'builder.sh'),
