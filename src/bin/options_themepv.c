@@ -345,7 +345,10 @@ options_theme_preview_add(Evas_Object *parent,
    o = elm_layout_add(parent);
    theme_apply(o, config, "terminology/cursor",
                file, cs, EINA_TRUE);
-   elm_layout_signal_emit(o, "focus,in", "terminology");
+   if (colors_mode)
+     elm_layout_signal_emit(o, "focus,in,noblink", "terminology");
+   else
+     elm_layout_signal_emit(o, "focus,in", "terminology");
    evas_object_show(o);
    evas_object_data_set(oo, "cursor", o);
    elm_grid_pack(oo, o, 0, 0, 10, 10);
