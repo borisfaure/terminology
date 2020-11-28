@@ -46,28 +46,27 @@ values:
 
 Let's dive into the edje groups that Terminology uses.
 
-# `terminology/base`
-Windows contain group `terminology/base`.
-
+# Group `terminology/base`
+All windows contain a group `terminology/base`.
 Contains what is global to a window.
 
 ## Swallowed parts
 
-### `terminology.content`
+### Part `terminology.content`
 where `terminology/background`, or a split widget can be swallowed.
 
-### `terminology.cmdbox`
+### Part `terminology.cmdbox`
 To swallow a command box.
 It reacts to the following signals:
 * `cmdbox,show`
 * `cmdbox,hide`
 
-### `terminology.about`
+### Part `terminology.about`
 It reacts to the following signals:
 * `about,show`
 * `about,hide`
 
-### `terminology.optdetails`
+### Part `terminology.optdetails`
 Detailed settings panel.
 It reacts to the following signals:
 * `optdetails,show`
@@ -75,12 +74,12 @@ It reacts to the following signals:
 It emits the following signal:
 * `optdetails,hide,done`
 
-### `terminology.options`
+### Part `terminology.options`
 It reacts to the following signals:
 * `options,show`
 * `options,hide`
 
-### `terminology.controls`
+### Part `terminology.controls`
 The controls box shown on right click.
 It reacts to the following signals:
 * `controls,show`
@@ -88,101 +87,96 @@ It reacts to the following signals:
 
 ## Special parts
 
-### `youtube.txt`
+### Part `youtube.txt`
 A text part used to hold `Youtube channel` when the About is shown.
 
-### `twitter.txt`
+### Part `twitter.txt`
 A text part used to hold `Youtube channel` when the About is shown.
 
 ## Signals emitted
 
-### `about,twitter`
+### Signal `about,twitter`
 When the Twitter link on the About page is clicked.
 
-### `about,twitter,ctx`
+### Signal `about,twitter,ctx`
 When the Twitter link on the About page is right-clicked.
 
-### `about,youtube`
+### Signal `about,youtube`
 When the Youtube link on the About page is clicked.
 
-### `about,youtube,ctx`
+### Signal `about,youtube,ctx`
 When the Youtube link on the About page is right-clicked.
 
-### `optdetails,hide,done`
+### Signal `optdetails,hide,done`
 When the swallowed part `terminology.optdetails` is finally hidden.
 
 
 ## Signals received
 
-### `about,show` and `about,hide`
+### Signals `about,show` and `about,hide`
 Used to hide or show the about page, swallowed in `terminology.about`.
 
-### `controls,show` and `controls,hide`
+### Signals `controls,show` and `controls,hide`
 Used to hide or show the controls, swallowed in `terminology.controls`.
 
-### `options,show` and `options,hide`
+### Signals `options,show` and `options,hide`
 Used to hide or show the options panel, swallowed in `terminology.options`.
 
-### `optdetails,show` and `optdetails,hide`
+### Signals `optdetails,show` and `optdetails,hide`
 Used to hide or show the options details settings panel, swallowed in `terminology.optdetails`.
 
-### `cmdbox,show` and `cmdbox,hide`
+### Signals `cmdbox,show` and `cmdbox,hide`
 Used to hide or show the command box, swallowed in `terminology.cmdbox`.
 
 
 
-# `terminology/background`
+# Group `terminology/background`
 
 ## Swallowed parts
 
-### `terminology.content`
+### Parts `terminology.content`
 Here is swallowed an object of group `terminology.background`.
-
-### TODO
 
 ## Special parts
 
-### `tabdrag` and `tabmiddle`
+### Parts `tabdrag` and `tabmiddle`
 Their geometry are used to adjust drag values.
 
-### `drag_left_outline`, `drag_right_outline`, `drag_top_outline`, `drag_bottom_outline` and `terminology.tabregion`
+### Parts `drag_left_outline`, `drag_right_outline`, `drag_top_outline`, `drag_bottom_outline` and `terminology.tabregion`
 Their geometry are used to know when the cursor enters them when dragging a
 tab.
 
-## Signal received
-### `tabbar,off` and `tabbar,on`
+## Signals received
+### Signals `tabbar,off` and `tabbar,on`
 Whether to display a tab bar. Default is off.
-### `tab_btn,off` and `tab_btn,on`
+### Signals `tab_btn,off` and `tab_btn,on`
 Whether to display a tab button to easily navigate through tabs. Default is off.
-### `drag_left,on`, `drag_right,on`, `drag_top,on`, `drag_bottom,on`
+### Signals `drag_left,on`, `drag_right,on`, `drag_top,on`, `drag_bottom,on`
 When to start an animation when the cursor enters `drag_XXXX_outline` while
 dragging a tab.
-### `drag_left,off`, `drag_right,off`, `drag_top,off`, `drag_bottom,off`
+### Signals `drag_left,off`, `drag_right,off`, `drag_top,off`, `drag_bottom,off`
 When to stop an animation started by the related `*,on` signals.
-### `drag_over_tabs,on` and `drag_over_tabs,off`
+### Signals `drag_over_tabs,on` and `drag_over_tabs,off`
 When the mouse, while dragging a tab, enters or leaves the tab region.
-### `grouped,on` and `grouped,off`
+### Signals `grouped,on` and `grouped,off`
 When input is broadcast to multiple terminals.
 
-### TODO
-
 ## Signal emitted
-### `tab,hdrag`
+### Signal `tab,hdrag`
 To notify that the current tab is being dragged.
-### `tab,drag,stop`
+### Signal `tab,drag,stop`
 To notify that the current tab is no longer being dragged.
-### `tab,drag,move`
+### Signal `tab,drag,move`
 To notify that the current tab is being dragged outside of other tabs.
 
-### TODO
 
 
 
-# `terminology/core`
+# Group `terminology/core`
 
 ## Swallowed parts
 
-### `terminology.background`
+### Part `terminology.background`
 
 Actual background.
 It reacts to the following signals based on the media to play in background:
@@ -192,136 +186,146 @@ It reacts to the following signals based on the media to play in background:
 * `media,edje`
 * `media,movie`
 
-### `terminology.tabregion`
+### Part `terminology.tabregion`
 Here is swalloed a fully transparent rectangle to move down the textgrid.
 
-### `terminology.content`
+### Part `terminology.content`
 Where actual text grid goes.
 
-## Signal received
-### `tabbar,off` and `tabbar,on`
+## Signals received
+### Signals `tabbar,off` and `tabbar,on`
 Whether to display a tab bar. Default is off.
-### `tab_btn,off` and `tab_btn,on`
+### Signals `tab_btn,off` and `tab_btn,on`
 Whether to display a tab button to easily navigate through tabs. Default is off.
-### `hdrag,on` and `hdrag,off`
+### Signals `hdrag,on` and `hdrag,off`
 Whether to restrict (default) horizontal tab drag
 
 ## Signal emitted
-### `tab,drag` and `tab,drag,stop`
+### Signals `tab,drag` and `tab,drag,stop`
 To notify that the current tab is being dragged.
-### `tab,mouse,down`
+### Signals `tab,mouse,down`
 Whenever the left mouse button is pressed on a tab.
 
 
 
-# `terminology/about`
+# Group `terminology/about`
 ## Text parts
-### `terminology.text`
+### Part `terminology.text`
 The text of the __About__ message.
 
 
 
-# `terminology.tabbar_back`
+# Group `terminology.tabbar_back`
 An inactive tab item
 ## Text parts
-### `terminology.title`
+### Part `terminology.title`
 Title of the tab.
 
 ## Signal emitted
-### `tab,activate`
+### Signal `tab,activate`
 When clicked on it, to notify that the user wants to go to that tab.
 
-## Signal received
-### `bell`
+## Signals received
+### Signal `bell`
 To mark the tab as having missed a bell.
-### `bell,off`
+### Signal `bell,off`
 To unmark the tab as having missed a bell.
-### `grouped,on` and `grouped,off`
+### Signals `grouped,on` and `grouped,off`
 When input is broadcast to multiple terminals.
 
 
 
-# `terminology/keybinding`
+# Group `terminology/keybinding`
 __TODO__
 
 
 
-# `terminology/miniview`
+# Group `terminology/miniview`
 __TODO__
 
 
 
-# `terminology/fontpreview`
+# Group `terminology/fontpreview`
 __TODO__
 
 
 
-# `terminology/selection`
+# Group `terminology/selection`
 An object used when selecting text.
 __TODO__
 
 
 
-# `terminology/cursor`
+# Group `terminology/cursor`
 __TODO__
 
 
 
-# `terminology/cursor_bar`
+# Group `terminology/cursor_bar`
 __TODO__
 
 
 
-# `terminology/cursor_underline`
+# Group `terminology/cursor_underline`
 __TODO__
 
 
 
-# `terminology/sel/base`
+# Group `terminology/sel/base`
 __TODO__
 
 
 
-# `terminology/sel/item`
+# Group `terminology/sel/item`
 __TODO__
 
 
 
-# `terminology/link`
+# Group `terminology/link`
 An object overlayd on text that is a link.
 
 
 
-# `terminology/mediabusy`
+# Group `terminology/mediabusy`
 __TODO__
 
 
 
-# `terminology/mediactrl`
+# Group `terminology/mediactrl`
 __TODO__
 
 
 
-# `terminology/tab_drag_thumb`
+# Group `terminology/tab_drag_thumb`
 A thumbnail of a tab being dragged.
 
-## Swallowed parts
-### `terminology.content`
+## Swallowed part
+### Part `terminology.content`
 Here is swallowed an object of group `terminology.background`.
 
-### `terminology.title`
+## Text part
+### Part `terminology.title`
 Title of the tab.
 
 ## Signal received
-### `bell`
+### Signal `bell`
 To mark the tab as having missed a bell.
 
 
 
-# `terminology/color_preview`
+# Group `terminology/colorscheme_preview`
+A group to preview a colorscheme. Used in the Colors panel in the settings.
+
+## Swallowed part
+### Part `terminology.content`
+Where a textgrid showing off a color scheme is displayed.
+
+
+
+# Group `terminology/color_preview`
 A group to preview a color in a tooltip. The color is defined by the color
 class `color_preview`.
 
-## Swallowed part
-### `name`
+## Text part
+### Part `name`
 Name of the color being previewed
