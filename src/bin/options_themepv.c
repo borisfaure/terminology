@@ -230,57 +230,65 @@ options_theme_preview_add(Evas_Object *parent,
                           Evas_Coord w, Evas_Coord h,
                           Eina_Bool colors_mode)
 {
-   Evas_Object *o, *oo, *obase;
-   Evas *evas;
+   Evas_Object *o, *oo, *obase, *grid;
+   Evas *evas = evas_object_evas_get(parent);
    Evas_Coord ww, hh, y;
 
-   obase = elm_grid_add(parent);
-   evas = evas_object_evas_get(obase);
-   elm_grid_size_set(obase, w, h);
-
-   // make core frame
-   o = elm_layout_add(parent);
-   theme_apply(o, config, "terminology/background",
-               file, cs, EINA_TRUE);
-   if (config->translucent)
-     elm_layout_signal_emit(o, "translucent,on", "terminology");
+   if (colors_mode)
+     {
+        o = elm_layout_add(parent);
+        theme_apply(o, config, "terminology/colorscheme_preview",
+                    file, cs, EINA_TRUE);
+        evas_object_show(o);
+        obase = oo = o;
+     }
    else
-     elm_layout_signal_emit(o, "translucent,off", "terminology");
+     {
+        obase = elm_grid_add(parent);
+        elm_grid_size_set(obase, w, h);
 
-   background_set_shine(config, elm_layout_edje_get(o));
+        // make core frame
+        o = elm_layout_add(parent);
+        theme_apply(o, config, "terminology/background",
+                    file, cs, EINA_TRUE);
+        if (config->translucent)
+          elm_layout_signal_emit(o, "translucent,on", "terminology");
+        else
+          elm_layout_signal_emit(o, "translucent,off", "terminology");
 
-   elm_layout_signal_emit(o, "focus,in", "terminology");
-   elm_layout_signal_emit(o, "tabcount,on", "terminology");
-   elm_layout_signal_emit(o, "tabmissed,on", "terminology");
-   elm_layout_text_set(o, "terminology.tabcount.label", "5/8");
-   elm_layout_text_set(o, "terminology.tabmissed.label", "2");
-   elm_grid_pack(obase, o, 0, 0, w, h);
-   evas_object_show(o);
+        background_set_shine(config, elm_layout_edje_get(o));
 
-   oo = o;
+        elm_layout_signal_emit(o, "focus,in", "terminology");
+        elm_layout_signal_emit(o, "tabcount,on", "terminology");
+        elm_layout_signal_emit(o, "tabmissed,on", "terminology");
+        elm_layout_text_set(o, "terminology.tabcount.label", "5/8");
+        elm_layout_text_set(o, "terminology.tabmissed.label", "2");
+        elm_grid_pack(obase, o, 0, 0, w, h);
+        evas_object_show(o);
 
-   // create a bg and swallow into core frame
-   o = elm_layout_add(parent);
-   theme_apply(o, config, "terminology/core",
-               file, cs, EINA_TRUE);
-   if (config->translucent)
-     elm_layout_signal_emit(o, "translucent,on", "terminology");
-   else
-     elm_layout_signal_emit(o, "translucent,off", "terminology");
-   elm_layout_signal_emit(o, "focus,in", "terminology");
-   evas_object_show(o);
-   elm_layout_content_set(oo, "terminology.content", o);
+        oo = o;
 
-   oo = o;
+        // create a bg and swallow into core frame
+        o = elm_layout_add(parent);
+        theme_apply(o, config, "terminology/core",
+                    file, cs, EINA_TRUE);
+        if (config->translucent)
+          elm_layout_signal_emit(o, "translucent,on", "terminology");
+        else
+          elm_layout_signal_emit(o, "translucent,off", "terminology");
+        elm_layout_signal_emit(o, "focus,in", "terminology");
+        evas_object_show(o);
+        elm_layout_content_set(oo, "terminology.content", o);
+
+        oo = o;
+     }
 
    // create a grid proportional layout to hold selection, textgrid and cursor
-   o = elm_grid_add(parent);
+   grid = o = elm_grid_add(parent);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _cb_resize, NULL);
    elm_grid_size_set(o, 100, 100);
    evas_object_show(o);
    elm_layout_content_set(oo, "terminology.content", o);
-
-   oo = o;
 
    // create a texgrid and swallow pack into grid
    o = evas_object_textgrid_add(evas);
@@ -336,8 +344,8 @@ options_theme_preview_add(Evas_Object *parent,
      }
 
    evas_object_show(o);
-   evas_object_data_set(oo, "textgrid", o);
-   elm_grid_pack(oo, o, 0, 0, 100, 100);
+   evas_object_data_set(grid, "textgrid", o);
+   elm_grid_pack(grid, o, 0, 0, 100, 100);
 
    // create a cursor and put it in the grid
    o = elm_layout_add(parent);
@@ -348,8 +356,8 @@ options_theme_preview_add(Evas_Object *parent,
    else
      elm_layout_signal_emit(o, "focus,in", "terminology");
    evas_object_show(o);
-   evas_object_data_set(oo, "cursor", o);
-   elm_grid_pack(oo, o, 0, 0, 10, 10);
+   evas_object_data_set(grid, "cursor", o);
+   elm_grid_pack(grid, o, 0, 0, 10, 10);
 
    // create a selection and put it in the grid
    o = edje_object_add(evas);
@@ -358,8 +366,8 @@ options_theme_preview_add(Evas_Object *parent,
    edje_object_signal_emit(o, "focus,in", "terminology");
    edje_object_signal_emit(o, "mode,oneline", "terminology");
    evas_object_show(o);
-   evas_object_data_set(oo, "selection", o);
-   elm_grid_pack(oo, o, 0, 0, 10, 10);
+   evas_object_data_set(grid, "selection", o);
+   elm_grid_pack(grid, o, 0, 0, 10, 10);
 
    evas_object_size_hint_min_set(obase, w, h);
    return obase;

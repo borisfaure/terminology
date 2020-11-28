@@ -41,3 +41,18 @@ group { name: "terminology/color_preview";
       }
    }
 }
+
+group { name: "terminology/colorscheme_preview";
+   parts {
+      part { name: "bg"; type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color_class: "BG";
+         }
+      }
+      part { name: "terminology.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+   }
+}
