@@ -230,7 +230,7 @@ options_theme_preview_add(Evas_Object *parent,
                           Evas_Coord w, Evas_Coord h,
                           Eina_Bool colors_mode)
 {
-   Evas_Object *o, *oo, *obase, *oe;
+   Evas_Object *o, *oo, *obase;
    Evas *evas;
    Evas_Coord ww, hh, y;
 
@@ -240,21 +240,20 @@ options_theme_preview_add(Evas_Object *parent,
 
    // make core frame
    o = elm_layout_add(parent);
-   oe = elm_layout_edje_get(o);
-   theme_apply(oe, config, "terminology/background",
-               file, cs, EINA_FALSE);
+   theme_apply(o, config, "terminology/background",
+               file, cs, EINA_TRUE);
    if (config->translucent)
-     edje_object_signal_emit(oe, "translucent,on", "terminology");
+     elm_layout_signal_emit(o, "translucent,on", "terminology");
    else
-     edje_object_signal_emit(oe, "translucent,off", "terminology");
+     elm_layout_signal_emit(o, "translucent,off", "terminology");
 
-   background_set_shine(config, oe);
+   background_set_shine(config, elm_layout_edje_get(o));
 
-   edje_object_signal_emit(oe, "focus,in", "terminology");
-   edje_object_signal_emit(oe, "tabcount,on", "terminology");
-   edje_object_signal_emit(oe, "tabmissed,on", "terminology");
-   edje_object_part_text_set(oe, "terminology.tabcount.label", "5/8");
-   edje_object_part_text_set(oe, "terminology.tabmissed.label", "2");
+   elm_layout_signal_emit(o, "focus,in", "terminology");
+   elm_layout_signal_emit(o, "tabcount,on", "terminology");
+   elm_layout_signal_emit(o, "tabmissed,on", "terminology");
+   elm_layout_text_set(o, "terminology.tabcount.label", "5/8");
+   elm_layout_text_set(o, "terminology.tabmissed.label", "2");
    elm_grid_pack(obase, o, 0, 0, w, h);
    evas_object_show(o);
 
@@ -262,14 +261,13 @@ options_theme_preview_add(Evas_Object *parent,
 
    // create a bg and swallow into core frame
    o = elm_layout_add(parent);
-   oe = elm_layout_edje_get(o);
-   theme_apply(oe, config, "terminology/core",
-               file, cs, EINA_FALSE);
+   theme_apply(o, config, "terminology/core",
+               file, cs, EINA_TRUE);
    if (config->translucent)
-     edje_object_signal_emit(oe, "translucent,on", "terminology");
+     elm_layout_signal_emit(o, "translucent,on", "terminology");
    else
-     edje_object_signal_emit(oe, "translucent,off", "terminology");
-   edje_object_signal_emit(oe, "focus,in", "terminology");
+     elm_layout_signal_emit(o, "translucent,off", "terminology");
+   elm_layout_signal_emit(o, "focus,in", "terminology");
    evas_object_show(o);
    elm_layout_content_set(oo, "terminology.content", o);
 
