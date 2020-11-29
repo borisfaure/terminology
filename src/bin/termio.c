@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include <Ecore_Input.h>
 
 #include "termio.h"
@@ -1625,7 +1626,7 @@ _update_link(Termio *sd, Eina_Bool same_geom)
           }
 
         sd->link.objs = eina_list_append(sd->link.objs, o);
-        elm_object_cursor_set(o, "hand2");
+        elm_object_cursor_set(o, ELM_CURSOR_HAND2);
         evas_object_show(o);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                        _cb_link_down, obj);
@@ -1678,7 +1679,7 @@ _hyperlink_end(Termio *sd,
    Eina_Bool popup_exists;
 
    sd->link.objs = eina_list_append(sd->link.objs, o);
-   elm_object_cursor_set(o, "hand2");
+   elm_object_cursor_set(o, ELM_CURSOR_HAND2);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _cb_link_down, sd->self);

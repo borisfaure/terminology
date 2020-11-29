@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include <Ecore_Input.h>
 #include <Ecore_IMF.h>
 #include <Ecore_IMF_Evas.h>
@@ -4214,7 +4215,7 @@ _tab_drag_start(void *data EINA_UNUSED)
    evas_pointer_canvas_xy_get(_tab_drag->e, &mx, &my);
    evas_object_move(_tab_drag->icon, mx - w/2, my - h/2);
    evas_object_raise(o);
-   elm_object_cursor_set(term->bg, "hand2");
+   elm_object_cursor_set(term->bg, ELM_CURSOR_HAND2);
    term->has_bg_cursor = EINA_TRUE;
    evas_object_show(o);
 
