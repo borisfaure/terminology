@@ -237,6 +237,40 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
    elm_object_content_set(fr, o);
    evas_object_show(o);
 
+   if (config && config->theme)
+     {
+        char theme[4096];
+        const char *start = strrchr(config->theme, '/');
+        const char *end;
+        size_t len;
+
+        if (start)
+          start++;
+        else
+          start = config->theme;
+
+        end = strrchr(start, '.');
+        if (!end)
+          end = start + strlen(start) - 1;
+        len = end - start;
+        if (len < sizeof(theme))
+          {
+             char buf[4096];
+
+             strncpy(theme, start, len);
+             theme[len] = '\0';
+             o = elm_label_add(opbox);
+             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
+             evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+             snprintf(buf, sizeof(buf), _("Using theme <hilight>%s</hilight>"),
+                      theme);
+             elm_object_text_set(o, buf);
+             elm_box_pack_end(box, o);
+             evas_object_show(o);
+          }
+     }
+
+
    it_class = elm_gengrid_item_class_new();
    it_class->item_style = "thumb";
    it_class->func.text_get = _cb_op_cs_name_get;

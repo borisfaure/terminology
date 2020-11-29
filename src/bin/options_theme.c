@@ -1,6 +1,7 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include <Efreet.h>
 #include <assert.h>
 #include "config.h"
@@ -177,6 +178,18 @@ options_theme(Evas_Object *opbox, Evas_Object *term)
    elm_box_horizontal_set(o, EINA_FALSE);
    elm_object_content_set(fr, o);
    evas_object_show(o);
+
+   if (config && config->color_scheme)
+     {
+        o = elm_label_add(opbox);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        snprintf(buf, sizeof(buf), _("Using colorscheme <hilight>%s</hilight>"),
+                 config->color_scheme->md.name);
+        elm_object_text_set(o, buf);
+        elm_box_pack_end(box, o);
+        evas_object_show(o);
+     }
 
    it_class = elm_gengrid_item_class_new();
    it_class->item_style = "thumb";
