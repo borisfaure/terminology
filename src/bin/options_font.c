@@ -24,6 +24,8 @@ typedef struct _Font_Ctx
    Evas_Object *op_fbig;
    Evas_Object *cx;
    Evas_Object *term;
+   Evas_Object *filter;
+   const char  *filter_data;
    Eina_List *fonts;
    Eina_Hash *fonthash;
    Config *config;
@@ -374,6 +376,38 @@ _cb_font_bolditalic(void *data,
    config_save(config);
 }
 
+static Eina_Bool
+_cb_font_filter_get(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *filter_key)
+{
+   const Font *f = data;
+   const char *key = filter_key;
+
+   /* test whether there's a filter */
+   if ((!key) || (!key[0]))
+     return EINA_TRUE;
+
+   /* If filter matches, show item */
+   if (strcasestr(f->pretty_name, key))
+     return EINA_TRUE;
+
+   /* Default case should return false (item fails filter hence will be hidden */
+   return EINA_FALSE;
+}
+
+void
+_entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Font_Ctx *ctx = data;
+
+   if (ctx->filter_data)
+     eina_stringshare_del(ctx->filter_data);
+
+   ctx->filter_data = eina_stringshare_add(elm_object_text_get(obj));
+   elm_genlist_filter_set(ctx->op_fontlist, (void *)(ctx->filter_data));
+}
+
 static void
 _parent_del_cb(void *data,
                Evas *_e EINA_UNUSED,
@@ -397,6 +431,8 @@ _parent_del_cb(void *data,
                                        _cb_font_bolditalic, ctx);
    evas_object_smart_callback_del_full(ctx->op_fontslider, "delay,changed",
                                        _cb_op_fontsize_sel, ctx);
+
+   eina_stringshare_del(ctx->filter_data);
 
    free(ctx);
 }
@@ -469,10 +505,19 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(bx0, bx);
    evas_object_show(bx);
 
+   ctx->filter = o = elm_entry_add(bx);
+   elm_entry_single_line_set(o, EINA_TRUE);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
+   elm_object_part_text_set(o, "guide", _("Search font"));
+   elm_box_pack_end(bx0, o);
+   evas_object_show(o);
+
    it_class = elm_genlist_item_class_new();
    it_class->item_style = "end_icon";
    it_class->func.text_get = _cb_op_font_text_get;
    it_class->func.content_get = _cb_op_font_content_get;
+   it_class->func.filter_get = _cb_font_filter_get;
 
    it_group = elm_genlist_item_class_new();
    it_group->item_style = "group_index";
@@ -603,4 +648,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_geometry_get(term, NULL, NULL, &ctx->tsize_w, &ctx->tsize_h);
    evas_object_event_callback_add(term, EVAS_CALLBACK_RESIZE,
                                   _cb_term_resize, ctx);
+
+   elm_object_focus_set(ctx->filter, EINA_TRUE);
+   evas_object_smart_callback_add(ctx->filter, "changed,user",
+                                  _entry_change_cb, ctx);
 }
