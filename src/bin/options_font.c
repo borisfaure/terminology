@@ -26,6 +26,7 @@ typedef struct _Font_Ctx
    Evas_Object *term;
    Evas_Object *filter;
    const char  *filter_data;
+   const char  *filter_new_data;
    Eina_List *fonts;
    Eina_Hash *fonthash;
    Config *config;
@@ -396,16 +397,41 @@ _cb_font_filter_get(void *data,
    return EINA_FALSE;
 }
 
-void
+static void
 _entry_change_cb(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   Font_Ctx *ctx = data;
+
+   if (ctx->filter_new_data)
+     eina_stringshare_del(ctx->filter_new_data);
+   ctx->filter_new_data = NULL;
+
+   ctx->filter_new_data = eina_stringshare_add(elm_object_text_get(obj));
+   if (ctx->filter_new_data)
+     {
+        ctx->filter_data = ctx->filter_new_data;
+        ctx->filter_new_data = NULL;
+        elm_genlist_filter_set(ctx->op_fontlist, (void *)(ctx->filter_data));
+     }
+}
+
+static void
+_cb_filter_finished(void *data,
+                    Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
 {
    Font_Ctx *ctx = data;
 
    if (ctx->filter_data)
      eina_stringshare_del(ctx->filter_data);
+   ctx->filter_data = NULL;
 
-   ctx->filter_data = eina_stringshare_add(elm_object_text_get(obj));
-   elm_genlist_filter_set(ctx->op_fontlist, (void *)(ctx->filter_data));
+   if (ctx->filter_new_data)
+     {
+        ctx->filter_data = ctx->filter_new_data;
+        ctx->filter_new_data = NULL;
+        elm_genlist_filter_set(ctx->op_fontlist, (void *)(ctx->filter_data));
+     }
 }
 
 static void
@@ -433,6 +459,7 @@ _parent_del_cb(void *data,
                                        _cb_op_fontsize_sel, ctx);
 
    eina_stringshare_del(ctx->filter_data);
+   eina_stringshare_del(ctx->filter_new_data);
 
    free(ctx);
 }
@@ -528,6 +555,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_genlist_mode_set(o, ELM_LIST_COMPRESS);
    elm_genlist_homogeneous_set(o, EINA_TRUE);
+   evas_object_smart_callback_add(o, "filter,done", _cb_filter_finished, ctx);
 
    /* Bitmaps */
    snprintf(buf, sizeof(buf), "%s/fonts", elm_app_data_dir_get());
