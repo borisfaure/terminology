@@ -293,7 +293,6 @@ options_theme_preview_add(Evas_Object *parent,
    // create a texgrid and swallow pack into grid
    o = evas_object_textgrid_add(evas);
    colors_term_init(o, cs ? cs: config->color_scheme);
-   evas_object_scale_set(o, elm_config_scale_get());
    if (config->font.bitmap)
      {
         char buf[PATH_MAX];
@@ -304,6 +303,7 @@ options_theme_preview_add(Evas_Object *parent,
      }
    else
      evas_object_textgrid_font_set(o, config->font.name, config->font.size);
+   evas_object_scale_set(o, elm_config_scale_get());
    evas_object_textgrid_size_set(o, COLOR_MODE_PREVIEW_WIDTH,
                                  COLOR_MODE_PREVIEW_HEIGHT);
 

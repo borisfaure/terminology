@@ -525,9 +525,9 @@ termio_config_update(Evas_Object *obj)
 
    colors_term_init(sd->grid.obj, sd->config->color_scheme);
 
-   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_cell_size_get(sd->grid.obj, &w, &h);
+   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -569,9 +569,9 @@ termio_config_set(Evas_Object *obj, Config *config)
      sd->font.name = eina_stringshare_add(config->font.name);
    sd->font.size = config->font.size;
 
-   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    evas_object_textgrid_size_get(sd->grid.obj, &w, &h);
+   evas_object_scale_set(sd->grid.obj, elm_config_scale_get());
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    evas_object_textgrid_size_set(sd->grid.obj, w, h);
