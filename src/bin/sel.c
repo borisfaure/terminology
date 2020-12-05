@@ -572,8 +572,9 @@ _entry_del_cb(void *data,
               void *_info EINA_UNUSED)
 {
    Entry *en = data;
-   if (en->obj) evas_object_event_callback_del_full
-     (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
+   if (en->obj)
+     evas_object_event_callback_del_full(en->obj, EVAS_CALLBACK_DEL,
+                                         _entry_del_cb, en);
    en->obj = NULL;
    /*
    if (en->termio)
@@ -619,8 +620,9 @@ _smart_del(Evas_Object *obj)
    if (sd->autozoom_timeout) ecore_timer_del(sd->autozoom_timeout);
    EINA_LIST_FREE(sd->items, en)
      {
-        if (en->obj) evas_object_event_callback_del_full
-          (en->obj, EVAS_CALLBACK_DEL, _entry_del_cb, en);
+        if (en->obj)
+          evas_object_event_callback_del_full(en->obj, EVAS_CALLBACK_DEL,
+                                              _entry_del_cb, en);
         if (en->obj) evas_object_del(en->obj);
         evas_object_del(en->bg);
         free(en);
