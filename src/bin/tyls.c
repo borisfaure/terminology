@@ -725,6 +725,162 @@ list_dir(const char *dir, Tyls_Options *options)
    EINA_LIST_FREE(files, s) free(s);
 }
 
+static Eina_List *files_list = NULL;
+
+static void
+list_file(const char *dir, Tyls_Options *options EINA_UNUSED)
+{
+   char *file = strdup(dir);
+   files_list = eina_list_append(files_list, file);
+}
+
+static void
+flush_file(Tyls_Options *options)
+{
+   Eina_List *l;
+   char *s, **names, *s2;
+   int maxlen = 0, i, num, stuff;
+
+   if (!files_list) return;
+   names = calloc(eina_list_count(files_list) * 2, sizeof(char *));
+   if (!names) return;
+   i = 0;
+   EINA_LIST_FOREACH(files_list, l, s)
+     {
+        int len;
+
+        s2 = strrchr(s, '/');
+        if (!s2) continue;
+        s2++;
+        len = eina_unicode_utf8_get_len(s2);
+        if (len > maxlen) maxlen = len;
+        names[i] = s;
+        i++;
+     }
+   num = i;
+   stuff = 0;
+   if (options->mode == SMALL) stuff += 2;
+   else if (options->mode == MEDIUM) stuff += 4;
+   stuff += 5; // xxxx[ /K/M/G/T/P...]
+   stuff += 1; // spacer at start
+   // name
+   stuff += 1; // type [@/*/|/=...]
+   stuff += 1; // spacer
+   maxlen += stuff;
+   if (maxlen > 0)
+     {
+        int rows;
+        int cols = tw / maxlen;
+
+        if (cols < 1) cols = 1;
+        if (cols == 1)
+          {
+             maxlen--;
+             stuff--;
+          }
+        if (cols > num) cols = num;
+        if (cols == 0) cols = 1;
+        rows = ((num + (cols - 1)) / cols);
+        for (i = 0; i < rows; i++)
+          {
+             const char *icon;
+             int c, j, cw;
+
+             if (options->mode == SMALL)
+               {
+                  for (c = 0; c < cols; c++)
+                    {
+                       char sz[6], szch = ' ';
+                       long long size;
+
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       s2 = strrchr(s, '/');
+                       if (!s2) continue;
+                       s2++;
+                       int len = eina_unicode_utf8_get_len(s2);
+                       icon = fileicon(s);
+                       cw = tw / cols;
+                       size = ecore_file_size(s);
+                       size_print(sz, sizeof(sz), &szch, size);
+                       len += stuff;
+                       if (icon)
+                         printf("%c}it#%i;%i;%s\n%s%c", 0x1b, 2, 1, s, icon, 0);
+                       else
+                         printf("%c}it#%i;%i;%s%c", 0x1b, 2, 1, s, 0);
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("##");
+                       printf("%c}ie%c", 0x1b, 0);
+                       sizeprint(sz, szch);
+                       printf(" ");
+                       fileprint(s, s2, EINA_TRUE);
+                       for (j = 0; j < (cw - len); j++) printf(" ");
+                    }
+                  printf("\n");
+               }
+             else if (options->mode == MEDIUM)
+               {
+                  for (c = 0; c < cols; c++)
+                    {
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       s2 = strrchr(s, '/');
+                       if (!s2) continue;
+                       s2++;
+                       int len = eina_unicode_utf8_get_len(s2);
+                       icon = fileicon(s);
+                       cw = tw / cols;
+                       len += 3;
+                       if (cols > 1) len += 1;
+                       if (icon)
+                         printf("%c}it%c%i;%i;%s\n%s%c", 0x1b, 33 + c, 4, 2, s, icon, 0);
+                       else
+                         printf("%c}it%c%i;%i;%s%c", 0x1b, 33 + c, 4, 2, s, 0);
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
+                       printf("%c}ie%c", 0x1b, 0);
+                       fileprint(s, s2, EINA_FALSE);
+                       if (c < (cols - 1))
+                         {
+                            for (j = 0; j < (cw - len); j++) printf(" ");
+                         }
+                    }
+                  printf("\n");
+                  for (c = 0; c < cols; c++)
+                    {
+                       char sz[6], szch = ' ';
+                       long long size;
+                       int len;
+
+                       s = names[(c * rows) + i];
+                       if (!s) continue;
+                       cw = tw / cols;
+                       s2 = strrchr(s, '/');
+                       if (!s2) continue;
+                       s2++;
+                       size = ecore_file_size(s);
+                       size_print(sz, sizeof(sz), &szch, size);
+                       len = eina_unicode_utf8_get_len(sz) + 2 + 4;
+                       if (cols > 1) len += 1;
+                       printf("%c}ib%c", 0x1b, 0);
+                       printf("%c%c%c%c", 33 + c, 33 + c, 33 + c, 33 + c);
+                       printf("%c}ie%c", 0x1b, 0);
+                       sizeprint(sz, szch);
+                       printf(" ");
+                       fileprint(s, NULL, EINA_TRUE);
+                       if (c < (cols - 1))
+                         {
+                            for (j = 0; j < (cw - len); j++) printf(" ");
+                         }
+                    }
+                  printf("\n");
+               }
+          }
+     }
+   free(names);
+   EINA_LIST_FREE(files_list, s) free(s);
+}
+
 static void
 print_usage(const char *argv0)
 {
@@ -810,13 +966,20 @@ main(int argc, char **argv)
           {
              char *rp;
 
-             if ((rp = ecore_file_realpath(path))
-                 && ecore_file_is_dir(rp))
+             rp = ecore_file_realpath(path);
+             if (rp)
                {
-                  list_dir(rp, &options);
+                  if (ecore_file_is_dir(rp))
+                    {
+                       flush_file(&options);
+                       list_dir(rp, &options);
+                    }
+                  else
+                    list_file(rp, &options);
                   free(rp);
                }
           }
+        flush_file(&options);
         fflush(stdout);
         ecore_evas_free(ee);
      }
