@@ -392,6 +392,7 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    o = _button_add(win, _("New"), "window-new",
                    _cb_ct_new, ctx);
    elm_box_pack_end(ct_box, o);
+   elm_object_focus_set(o, EINA_TRUE);
 
    o = _sep_add_h(win);
    elm_box_pack_end(ct_box, o);

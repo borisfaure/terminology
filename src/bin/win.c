@@ -977,6 +977,9 @@ _cb_win_focus_out(void *data,
    Win *wn = data;
    Term_Container *tc = (Term_Container*) wn;
 
+   if (wn->on_popover)
+     return;
+
    DBG("FOCUS OUT tc:%p tc->is_focused:%d",
        tc, tc->is_focused);
    tc->unfocus(tc, NULL);
@@ -1000,7 +1003,6 @@ _win_is_focused(Win *wn)
 
    if (!wn)
      return EINA_FALSE;
-
    tc = (Term_Container*) wn;
 
    DBG("tc:%p tc->is_focused:%d",
@@ -2243,12 +2245,11 @@ win_new(const char *name, const char *role, const char *title,
 
    wn->base = o = elm_layout_add(wn->win);
    elm_object_focus_allow_set(o, EINA_TRUE);
-   evas_object_propagate_events_set(o, EINA_FALSE);
    theme_apply(o, config, "terminology/base", NULL, NULL, EINA_TRUE);
+   evas_object_propagate_events_set(o, EINA_FALSE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(wn->conform, o);
-   evas_object_show(o);
 
    evas_object_smart_callback_add(wn->win, "focus,in", _cb_win_focus_in, wn);
    evas_object_smart_callback_add(wn->win, "focus,out", _cb_win_focus_out, wn);
@@ -2269,6 +2270,7 @@ win_new(const char *name, const char *role, const char *title,
                                   EVAS_CALLBACK_MOUSE_MOVE,
                                   _cb_win_mouse_move,
                                   wn);
+   evas_object_show(o);
    elm_object_focus_set(wn->base, EINA_TRUE);
 
    if (ecore_imf_init())
@@ -7354,7 +7356,6 @@ _cb_options(void *data,
    term->wn->on_popover++;
 
    term_ref(term);
-   tc->unfocus(tc, NULL);
 
    controls_show(term->wn->win, term->wn->base, term->bg_edj, term->termio,
                  _cb_options_done, term);
