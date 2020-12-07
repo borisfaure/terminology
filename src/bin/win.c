@@ -7351,7 +7351,6 @@ _cb_options(void *data,
             void *_event EINA_UNUSED)
 {
    Term *term = data;
-   Term_Container *tc = term->container;
 
    term->wn->on_popover++;
 
