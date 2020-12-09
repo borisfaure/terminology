@@ -533,6 +533,7 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(bx);
 
    ctx->filter = o = elm_entry_add(bx);
+   elm_object_focus_set(o, EINA_TRUE);
    elm_entry_single_line_set(o, EINA_TRUE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
@@ -545,6 +546,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    it_class->func.text_get = _cb_op_font_text_get;
    it_class->func.content_get = _cb_op_font_content_get;
    it_class->func.filter_get = _cb_font_filter_get;
+   it_class->func.state_get = NULL;
+   it_class->func.del = NULL;
 
    it_group = elm_genlist_item_class_new();
    it_group->item_style = "group_index";
