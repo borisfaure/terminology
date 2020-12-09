@@ -1392,6 +1392,7 @@ _win_focus(Term_Container *tc, Term_Container *relative)
    elm_object_focus_allow_set(wn->base, EINA_TRUE);
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
+   elm_object_focus_set(wn->base, EINA_TRUE);
 
    if (!tc->is_focused)
      elm_win_urgent_set(wn->win, EINA_FALSE);
@@ -1425,6 +1426,7 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
 
    wn = (Win*) tc;
 
+   elm_object_focus_set(wn->base, EINA_FALSE);
    elm_object_focus_allow_set(wn->base, EINA_FALSE);
 
    DBG("tc:%p tc->is_focused:%d from_child:%d",
@@ -7360,10 +7362,10 @@ _cb_options(void *data,
 
    term_ref(term);
 
+   tc->unfocus(tc, NULL);
+
    controls_show(term->wn->win, term->wn->base, term->bg_edj, term->termio,
                  _cb_options_done, term);
-
-   tc->unfocus(tc, NULL);
 }
 
 void
