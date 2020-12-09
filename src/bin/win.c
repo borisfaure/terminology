@@ -1389,6 +1389,7 @@ _win_focus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
+   elm_object_focus_allow_set(wn->base, EINA_TRUE);
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
 
@@ -1423,6 +1424,8 @@ _win_unfocus(Term_Container *tc, Term_Container *relative)
    assert (tc->type == TERM_CONTAINER_TYPE_WIN);
 
    wn = (Win*) tc;
+
+   elm_object_focus_allow_set(wn->base, EINA_FALSE);
 
    DBG("tc:%p tc->is_focused:%d from_child:%d",
        tc, tc->is_focused, wn->child == relative);
@@ -7351,6 +7354,7 @@ _cb_options(void *data,
             void *_event EINA_UNUSED)
 {
    Term *term = data;
+   Term_Container *tc = term->container;
 
    term->wn->on_popover++;
 
@@ -7358,6 +7362,8 @@ _cb_options(void *data,
 
    controls_show(term->wn->win, term->wn->base, term->bg_edj, term->termio,
                  _cb_options_done, term);
+
+   tc->unfocus(tc, NULL);
 }
 
 void

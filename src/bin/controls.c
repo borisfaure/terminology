@@ -19,6 +19,7 @@ typedef struct _Controls_Ctx {
      Evas_Object *base;
      Evas_Object *bg;
      Evas_Object *term;
+     Evas_Object *new_btn;
      void (*donecb) (void *data);
      void *donedata;
 } Controls_Ctx;
@@ -351,141 +352,142 @@ controls_show(Evas_Object *win, Evas_Object *base, Evas_Object *bg,
    Evas_Object *ct_boxh, *ct_boxv, *ct_box, *ct_box2;
    Controls_Ctx *ctx;
 
-   if (eina_hash_find(controls, &win) ||
-       elm_layout_content_get(base, "terminology.controls"))
+   ctx = eina_hash_find(controls, &win);
+   if (ctx)
      {
         donecb(donedata);
-        return;
      }
+   else
+     {
+        ctx = malloc(sizeof(*ctx));
+        assert(ctx);
+        ctx->win = win;
+        ctx->wn = win_evas_object_to_win(win);
+        ctx->base = base;
+        ctx->bg = bg;
+        ctx->term = term;
+        ctx->donecb = donecb;
+        ctx->donedata = donedata;
 
-   ctx = malloc(sizeof(*ctx));
-   assert(ctx);
-   ctx->win = win;
-   ctx->wn = win_evas_object_to_win(win);
-   ctx->base = base;
-   ctx->bg = bg;
-   ctx->term = term;
-   ctx->donecb = donecb;
-   ctx->donedata = donedata;
+        eina_hash_add(controls, &win, ctx);
 
-   eina_hash_add(controls, &win, ctx);
+        ctx->frame = o = elm_frame_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_object_text_set(o, _("Controls"));
 
-   ctx->frame = o = elm_frame_add(win);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(o, _("Controls"));
+        ct_boxv = o = elm_box_add(win);
+        elm_box_horizontal_set(o, EINA_FALSE);
+        elm_object_content_set(ctx->frame, o);
+        evas_object_show(o);
 
-   ct_boxv = o = elm_box_add(win);
-   elm_box_horizontal_set(o, EINA_FALSE);
-   elm_object_content_set(ctx->frame, o);
-   evas_object_show(o);
+        ct_boxh = o = elm_box_add(win);
+        elm_box_pack_end(ct_boxv, o);
+        elm_box_horizontal_set(o, EINA_TRUE);
+        evas_object_show(o);
 
-   ct_boxh = o = elm_box_add(win);
-   elm_box_pack_end(ct_boxv, o);
-   elm_box_horizontal_set(o, EINA_TRUE);
-   evas_object_show(o);
+        ct_box = o = elm_box_add(win);
+        elm_box_pack_end(ct_boxh, o);
+        evas_object_show(o);
 
-   ct_box = o = elm_box_add(win);
-   elm_box_pack_end(ct_boxh, o);
-   evas_object_show(o);
+        o = _button_add(win, _("New"), "window-new",
+                        _cb_ct_new, ctx);
+        elm_box_pack_end(ct_box, o);
+        ctx->new_btn=o;
 
-   o = _button_add(win, _("New"), "window-new",
-                   _cb_ct_new, ctx);
-   elm_box_pack_end(ct_box, o);
-   elm_object_focus_set(o, EINA_TRUE);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box, o);
+        o = _button_add(win, _("Split V"), "split-v",
+                        _cb_ct_split_v, ctx);
+        elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Split V"), "split-v",
-                   _cb_ct_split_v, ctx);
-   elm_box_pack_end(ct_box, o);
+        o = _button_add(win, _("Split H"), "split-h",
+                        _cb_ct_split_h, ctx);
+        elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Split H"), "split-h",
-                   _cb_ct_split_h, ctx);
-   elm_box_pack_end(ct_box, o);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box, o);
+        o = _button_add(win, _("Miniview"), "view-restore",
+                        _cb_ct_miniview, ctx);
+        elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Miniview"), "view-restore",
-                   _cb_ct_miniview, ctx);
-   elm_box_pack_end(ct_box, o);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box, o);
+        o = _button_add(win, _("Set title"), "format-text-underline",
+                        _cb_ct_set_title, ctx);
+        elm_box_pack_end(ct_box, o);
 
-   o = _button_add(win, _("Set title"), "format-text-underline",
-                   _cb_ct_set_title, ctx);
-   elm_box_pack_end(ct_box, o);
+        o = _sep_add_v(win);
+        elm_box_pack_end(ct_boxh, o);
 
-   o = _sep_add_v(win);
-   elm_box_pack_end(ct_boxh, o);
+        ct_box2 = o = elm_box_add(win);
+        elm_box_pack_end(ct_boxh, o);
+        evas_object_show(o);
 
-   ct_box2 = o = elm_box_add(win);
-   elm_box_pack_end(ct_boxh, o);
-   evas_object_show(o);
+        o = _button_add(win, _("Copy"), "edit-copy", _cb_ct_copy, ctx);
+        evas_object_data_set(ctx->frame, "bt_copy", o);
+        if (!termio_selection_exists(term))
+          elm_object_disabled_set(o, EINA_TRUE);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("Copy"), "edit-copy", _cb_ct_copy, ctx);
-   evas_object_data_set(ctx->frame, "bt_copy", o);
-   if (!termio_selection_exists(term))
-     elm_object_disabled_set(o, EINA_TRUE);
-   elm_box_pack_end(ct_box2, o);
+        o = _button_add(win, _("Paste"), "edit-paste", _cb_ct_paste, ctx);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("Paste"), "edit-paste", _cb_ct_paste, ctx);
-   elm_box_pack_end(ct_box2, o);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box2, o);
+        o = _button_add(win, _("Settings"), "preferences-desktop", _cb_ct_options, ctx);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("Settings"), "preferences-desktop", _cb_ct_options, ctx);
-   elm_box_pack_end(ct_box2, o);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_box2, o);
+        o = _button_add(win, _("About"), "help-about", _cb_ct_about, ctx);
+        elm_box_pack_end(ct_box2, o);
 
-   o = _button_add(win, _("About"), "help-about", _cb_ct_about, ctx);
-   elm_box_pack_end(ct_box2, o);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_boxv, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_boxv, o);
+        o = elm_check_add(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+        elm_object_text_set(o, _("Grouped input"));
+        elm_object_disabled_set(o, win_has_single_child(ctx->wn));
+        elm_check_state_set(o, win_is_group_input(ctx->wn));
+        elm_box_pack_end(ct_boxv, o);
+        evas_object_show(o);
+        ctx->group_input_cx = o;
+        evas_object_smart_callback_add(o, "changed",
+                                       _cb_group_input_changed, ctx);
 
-   o = elm_check_add(win);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_object_text_set(o, _("Grouped input"));
-   elm_object_disabled_set(o, win_has_single_child(ctx->wn));
-   elm_check_state_set(o, win_is_group_input(ctx->wn));
-   elm_box_pack_end(ct_boxv, o);
-   evas_object_show(o);
-   ctx->group_input_cx = o;
-   evas_object_smart_callback_add(o, "changed",
-                                  _cb_group_input_changed, ctx);
+        o = _sep_add_h(win);
+        elm_box_pack_end(ct_boxv, o);
 
-   o = _sep_add_h(win);
-   elm_box_pack_end(ct_boxv, o);
+        o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, ctx);
+        elm_box_pack_end(ct_boxv, o);
 
-   o = _button_add(win, _("Close Terminal"), "window-close", _cb_ct_close, ctx);
-   elm_box_pack_end(ct_boxv, o);
+        evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
+                                       ctx);
+        evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
+                                       ctx);
 
-   evas_object_smart_callback_add(win, "selection,on", _cb_sel_on,
-                                  ctx);
-   evas_object_smart_callback_add(win, "selection,off", _cb_sel_off,
-                                  ctx);
+        elm_layout_content_set(base, "terminology.controls", ctx->frame);
+        evas_object_show(ctx->frame);
+        ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
+        evas_object_color_set(o, 0, 0, 0, 0);
+        elm_layout_content_set(base, "terminology.dismiss", o);
+        evas_object_show(o);
+        evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cb_mouse_down, ctx);
 
-   elm_layout_content_set(base, "terminology.controls", ctx->frame);
-   evas_object_show(ctx->frame);
-   ctx->over = o = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_color_set(o, 0, 0, 0, 0);
-   elm_layout_content_set(base, "terminology.dismiss", o);
-   evas_object_show(o);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _cb_mouse_down, ctx);
-
-   elm_layout_signal_emit(base, "controls,show", "terminology");
-   elm_object_focus_set(ctx->frame, EINA_TRUE);
-   evas_object_event_callback_add(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
-   evas_object_event_callback_add(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
+        elm_layout_signal_emit(base, "controls,show", "terminology");
+        evas_object_event_callback_add(ctx->win, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
+        evas_object_event_callback_add(ctx->term, EVAS_CALLBACK_DEL, _cb_saved_del, ctx);
+     }
+   elm_object_focus_set(ctx->new_btn, EINA_TRUE);
 }
 
 void
