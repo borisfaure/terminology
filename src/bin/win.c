@@ -2276,7 +2276,8 @@ win_new(const char *name, const char *role, const char *title,
                                   _cb_win_mouse_move,
                                   wn);
    evas_object_show(o);
-   elm_object_focus_set(wn->base, EINA_TRUE);
+   elm_object_focus_highlight_style_set(o, "blank");
+   elm_object_focus_set(o, EINA_TRUE);
 
    if (ecore_imf_init())
      {
@@ -7345,6 +7346,7 @@ _cb_options_done(void *data)
    Term *orig_term = data;
    Win *wn = orig_term->wn;
 
+   elm_object_focus_highlight_style_set(wn->base, "blank");
    _on_popover_done(wn);
 
    term_unref(orig_term);
@@ -7364,6 +7366,7 @@ _cb_options(void *data,
 
    tc->unfocus(tc, NULL);
 
+   elm_object_focus_highlight_style_set(term->wn->base, "default");
    controls_show(term->wn->win, term->wn->base, term->bg_edj, term->termio,
                  _cb_options_done, term);
 }
