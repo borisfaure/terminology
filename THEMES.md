@@ -14,7 +14,7 @@ on all the following edje groups:
 * `FG`: the default foreground color
 * `CURSOR`: the color of the cursor
 * `GLOW`: the color in the UI to ouline elements
-* `HIGHLIGHT`: the color used as main color when an elemeent is highlighted
+* `HIGHLIGHT`: the color used as main color when an element is highlighted
 * `GLOW_TXT`: text colors with some glow
 * `GLOW_TXT_HIGHLIGHT`: text with glow that is highlighted
 * `END_SELECTION`: on selections, the color of the handles used to expand or shrink
