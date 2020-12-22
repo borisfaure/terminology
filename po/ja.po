@@ -7,31 +7,34 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 21:46+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-12-22 06:29+0000\n"
+"Last-Translator: haruna <w10776e8w@yahoo.co.jp>\n"
+"Language-Team: Japanese <https://hosted.weblate.org/projects/terminology/"
+"terminology/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.4-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1215
 #: src/bin/termio.c:1224
 #, c-format
 msgid "Copy '%s'"
-msgstr ""
+msgstr "'%s'をコピー"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1286
 msgid "Open"
-msgstr ""
+msgstr "開く"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "Youtube channel"
-msgstr ""
+msgstr "Youtubeチャンネル"
 
 #: src/bin/about.c:289
 #, c-format
@@ -42,284 +45,288 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
+"<b>Terminology %s</b><br>なぜターミナルがつまらないものでないといけないの？<br><br>この端末はEnlightenment("
+"X Windows System用のマネージャ)のために書かれたもので、EFLを使用したり、現代の端末エミュレータの理想の境界線を押し広げたりしています。"
+"楽しんでもらえると幸いです。<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed "
+"under the 2-clause BSD license detailed below:<br><br>%s"
 
 #: src/bin/controls.c:376
 msgid "Controls"
-msgstr ""
+msgstr "コントロール"
 
 #: src/bin/controls.c:392
 msgid "New"
-msgstr ""
+msgstr "新規"
 
 #: src/bin/controls.c:399
 msgid "Split V"
-msgstr ""
+msgstr "垂直分割"
 
 #: src/bin/controls.c:403
 msgid "Split H"
-msgstr ""
+msgstr "水平分割"
 
 #: src/bin/controls.c:410
 msgid "Miniview"
-msgstr ""
+msgstr "ミニビュー"
 
 #: src/bin/controls.c:417 src/bin/win.c:6191
 msgid "Set title"
-msgstr ""
+msgstr "タイトルの設定"
 
 #: src/bin/controls.c:428 src/bin/termio.c:1300 src/bin/termio.c:2739
 msgid "Copy"
-msgstr ""
+msgstr "コピー"
 
 #: src/bin/controls.c:434
 msgid "Paste"
-msgstr ""
+msgstr "貼り付け"
 
 #: src/bin/controls.c:440
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #: src/bin/controls.c:446
 msgid "About"
-msgstr ""
+msgstr "詳細"
 
 #: src/bin/controls.c:455
 msgid "Grouped input"
-msgstr ""
+msgstr "全端末に入力"
 
 #: src/bin/controls.c:467
 msgid "Close Terminal"
-msgstr ""
+msgstr "端末を閉じる"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:876 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr ""
+msgstr "ロギングドメインが作成できませんでした。 '%s'"
 
 #: src/bin/keyin.c:655
 msgid "Scrolling"
-msgstr ""
+msgstr "スクロール"
 
 #: src/bin/keyin.c:656
 msgid "Scroll one page up"
-msgstr ""
+msgstr "1ページ分上にスクロール"
 
 #: src/bin/keyin.c:657
 msgid "Scroll one page down"
-msgstr ""
+msgstr "1ページ分下にスクロール"
 
 #: src/bin/keyin.c:658
 msgid "Scroll one line up"
-msgstr ""
+msgstr "1行分上にスクロール"
 
 #: src/bin/keyin.c:659
 msgid "Scroll one line down"
-msgstr ""
+msgstr "1行分下にスクロール"
 
 #: src/bin/keyin.c:660
 msgid "Go to the top of the backlog"
-msgstr ""
+msgstr "バックログの最上部に移動"
 
 #: src/bin/keyin.c:661
 msgid "Reset scroll"
-msgstr ""
+msgstr "スクロールのリセット"
 
 #: src/bin/keyin.c:663
 msgid "Copy/Paste"
-msgstr ""
+msgstr "コピー/貼り付け"
 
 #: src/bin/keyin.c:664
 msgid "Copy selection to Primary buffer"
-msgstr ""
+msgstr "セクションを最初のバッファにコピー"
 
 #: src/bin/keyin.c:665
 msgid "Copy selection to Clipboard buffer"
-msgstr ""
+msgstr "セクションをクリップボードのバッファにコピー"
 
 #: src/bin/keyin.c:666
 msgid "Paste Primary buffer (highlight)"
-msgstr ""
+msgstr "最初のバッファに貼り付け (強調)"
 
 #: src/bin/keyin.c:667
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr ""
+msgstr "クリップボードのバッファを貼り付け (ctrl+c/v)"
 
 #: src/bin/keyin.c:669
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "分割/タブ"
 
 #: src/bin/keyin.c:670
 msgid "Focus the previous terminal"
-msgstr ""
+msgstr "一つ前の端末にフォーカス"
 
 #: src/bin/keyin.c:671
 msgid "Focus the next terminal"
-msgstr ""
+msgstr "次の端末にフォーカス"
 
 #: src/bin/keyin.c:672
 msgid "Focus the terminal above"
-msgstr ""
+msgstr "上の端末にフォーカス"
 
 #: src/bin/keyin.c:673
 msgid "Focus the terminal below"
-msgstr ""
+msgstr "下の端末にフォーカス"
 
 #: src/bin/keyin.c:674
 msgid "Focus the terminal on the left"
-msgstr ""
+msgstr "左の端末にフォーカス"
 
 #: src/bin/keyin.c:675
 msgid "Focus the terminal on the right"
-msgstr ""
+msgstr "右の端末にフォーカス"
 
 #: src/bin/keyin.c:676
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "水平分割 (下に新規端末)"
 
 #: src/bin/keyin.c:677
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "垂直分割 (右に新規端末)"
 
 #: src/bin/keyin.c:678
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "新規タブの作成"
 
 #: src/bin/keyin.c:679
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "フォーカスしている端末を閉じる"
 
 #: src/bin/keyin.c:680
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "タブスイッチャを起動"
 
 #: src/bin/keyin.c:681
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "タブ1の端末に切替"
 
 #: src/bin/keyin.c:682
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "タブ2の端末に切替"
 
 #: src/bin/keyin.c:683
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "タブ3の端末に切替"
 
 #: src/bin/keyin.c:684
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "タブ4の端末に切替"
 
 #: src/bin/keyin.c:685
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "タブ5の端末に切替"
 
 #: src/bin/keyin.c:686
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "タブ6の端末に切替"
 
 #: src/bin/keyin.c:687
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "タブ7の端末に切替"
 
 #: src/bin/keyin.c:688
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "タブ8の端末に切替"
 
 #: src/bin/keyin.c:689
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "タブ9の端末に切替"
 
 #: src/bin/keyin.c:690
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "タブ10の端末に切替"
 
 #: src/bin/keyin.c:691
 msgid "Change title"
-msgstr ""
+msgstr "タイトルの変更"
 
 #: src/bin/keyin.c:692 src/bin/keyin.c:693
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "表示中の全端末に入力を行うかどうかを切替"
 
 #: src/bin/keyin.c:696
 msgid "Font size"
-msgstr ""
+msgstr "フォントサイズ"
 
 #: src/bin/keyin.c:697
 msgid "Font size up 1"
-msgstr ""
+msgstr "フォントサイズを1上げる"
 
 #: src/bin/keyin.c:698
 msgid "Font size down 1"
-msgstr ""
+msgstr "フォントサイズを1下げる"
 
 #: src/bin/keyin.c:699
 msgid "Display big font size"
-msgstr ""
+msgstr "大きなフォントサイズを表示"
 
 #: src/bin/keyin.c:700
 msgid "Reset font size"
-msgstr ""
+msgstr "フォントサイズのリセット"
 
 #: src/bin/keyin.c:702
 msgid "Actions"
-msgstr ""
+msgstr "アクション"
 
 #: src/bin/keyin.c:703
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "新規端末ウィンドウを開く"
 
 #: src/bin/keyin.c:704
 msgid "Toggle Fullscreen of the window"
-msgstr ""
+msgstr "全画面表示の切替"
 
 #: src/bin/keyin.c:705
 msgid "Display the history miniview"
-msgstr ""
+msgstr "ミニビューの履歴を表示"
 
 #: src/bin/keyin.c:706
 msgid "Display the command box"
-msgstr ""
+msgstr "コマンドボックスの表示"
 
 #: src/bin/main.c:387 src/bin/main.c:581
 msgid "Could not create window"
-msgstr ""
+msgstr "ウィンドウを作成できません"
 
 #: src/bin/main.c:406 src/bin/main.c:592
 msgid "Could not create terminal widget"
-msgstr ""
+msgstr "端末ウィジェットを作成できません"
 
 #: src/bin/main.c:441
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr ""
+msgstr "(C) 2012-%d Carsten Haitzler and others"
 
 #: src/bin/main.c:443
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr ""
+msgstr "Enlightenment財団のライブラリで書かれた端末エミュレータ"
 
 #: src/bin/main.c:447
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr ""
+msgstr "実行コマンド。デフォルトでは$SHELL (もしくはpasswd shell か /bin/sh)"
 
 #: src/bin/main.c:449
 msgid "Change to directory for execution of terminal command"
-msgstr ""
+msgstr "端末コマンド実行ディレクトリの変更"
 
 #: src/bin/main.c:451
 msgid "Use the named edje theme or path to theme file"
-msgstr ""
+msgstr "命名済みEdjeテーマ/テーマファイルへのパスを使用"
 
 #: src/bin/main.c:453
 msgid "Use the named file as a background wallpaper"
-msgstr ""
+msgstr "命名済みファイルを壁紙として使用"
 
 #: src/bin/main.c:455
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr ""
+msgstr "使用する端末のジオメトリ (例: 80x24, 80x24+50+20, ...)"
 
 #: src/bin/main.c:457
 msgid "Set window name"
-msgstr ""
+msgstr "ウィンドウ名の設定"
 
 #: src/bin/main.c:459
 msgid "Set window role"
@@ -1041,4 +1048,4 @@ msgstr ""
 
 #: src/bin/win.c:7386
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
+msgstr "Terminologyのテーマが見つからない！ 'ninja install'をお忘れですか？"
