@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-23 21:57+0100\n"
-"PO-Revision-Date: 2020-09-20 09:39+0000\n"
+"PO-Revision-Date: 2020-12-24 22:29+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
 "terminology/ru/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.4.1-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -55,7 +55,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Разработчики Terminology"
 
 #: src/bin/controls.c:377
 msgid "Controls"
@@ -332,7 +332,7 @@ msgstr "Использовать указанную тему или путь к 
 
 #: src/bin/main.c:468
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Использовать указанную цветовую схему"
 
 #: src/bin/main.c:470
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -715,22 +715,21 @@ msgstr "Временно"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Открыть сайт"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Автор: </b>%s<br/><b>Сайт: </b>%s<br/><b>Лицензия: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Цвета"
+msgstr "Цветовые схемы"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Используется тема <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -765,7 +764,7 @@ msgstr ""
 
 #: src/bin/options_font.c:540
 msgid "Search font"
-msgstr ""
+msgstr "Поиск шрифта"
 
 #: src/bin/options_font.c:568
 msgid "Bitmap"
@@ -898,7 +897,7 @@ msgstr "Локальные (Все):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Используется цветовая схема <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
