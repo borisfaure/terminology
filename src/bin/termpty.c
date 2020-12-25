@@ -778,6 +778,9 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         putenv("XTERM_256_COLORS=1");
         putenv("TERM_PROGRAM=terminology");
         putenv("TERM_PROGRAM_VERSION=" PACKAGE_VERSION);
+#if defined(ENABLE_TEST_UI)
+        putenv("IN_TY_TEST_UI=1" PACKAGE_VERSION);
+#endif
         if (window_id)
           {
              char buf[256];

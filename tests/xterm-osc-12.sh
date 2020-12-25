@@ -22,4 +22,3 @@ printf '\033]12;fff000\007'
 # change cursor color and then query it
 printf '\033]12;#ff00FF\007'
 printf '\033]12;?\007'
-sleep 0.1

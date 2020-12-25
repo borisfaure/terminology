@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck source=tests/utils.sh
+. "$(dirname "$0")/utils.sh"
 
 # fill space with E
 printf '\033#8'
@@ -12,7 +14,7 @@ printf '\033[6n'
 # Request cursor position (dec)
 printf '\033[?6n'
 
-sleep 0.2
+test_sleep 0.2
 
 # set top/bottom margins:
 printf '\033[10;20r'
@@ -29,7 +31,7 @@ printf '\033[6n'
 # Request cursor position (dec)
 printf '\033[?6n'
 
-sleep 0.2
+test_sleep 0.2
 
 # restrict cursor
 printf '\033[?6h'

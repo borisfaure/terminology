@@ -22,4 +22,3 @@ printf '\033]10;fff000\007'
 # change foreground color and then query it
 printf '\033]10;#ff00FF\007'
 printf '\033]10;?\007'
-sleep 0.1

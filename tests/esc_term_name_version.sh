@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck source=tests/utils.sh
+. "$(dirname "$0")/utils.sh"
 
 # fill space with E
 printf '\033[69;1;1;25;80\044x'
@@ -13,7 +15,7 @@ printf '\033[H'
 printf '\033[>0q'
 
 # let it print
-sleep 0.2
+test_sleep 0.2
 
 # move
 printf '\033[2H'
@@ -22,4 +24,4 @@ printf '\033[2H'
 printf '\033[>q'
 
 # let it print
-sleep 0.2
+test_sleep 0.2

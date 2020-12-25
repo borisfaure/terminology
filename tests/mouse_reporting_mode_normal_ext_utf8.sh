@@ -1,4 +1,6 @@
 #!/bin/sh
+# shellcheck source=tests/utils.sh
+. "$(dirname "$0")/utils.sh"
 
 # char width: 7
 # char height: 15
@@ -8,7 +10,7 @@
 printf '\033[8;;180;t'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 # fill space with E
 printf '\033#8'
@@ -62,7 +64,7 @@ printf '\033}tm;1230;130;0\0'
 printf '\033}tu;1230;130;1;0;0\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 ## RIGHT CLICK
 # should print ^[[M"=)^[[M#e)
@@ -78,7 +80,7 @@ printf '\033}tu;480;130;3;0;0\0'
 printf '\033}tm;200;130;0\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 ## MIDDLE CLICK
 # should print ^[[M!=)^[[M#e)
@@ -94,7 +96,7 @@ printf '\033}tu;480;130;2;0;0\0'
 printf '\033}tm;200;130;0\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 ## WHEEL
 # prints ^[[M`=)^[[Ma=)^[[M`e)^[[Mae)
@@ -107,7 +109,7 @@ printf '\033}tw;480;130;1;1;0\0'
 printf '\033}tw;480;130;0;1;0\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 
 ##
@@ -129,7 +131,7 @@ printf '\033}tu;480;130;1;1;0\0'
 printf '\033}tm;200;130;1\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 
 ## RIGHT CLICK
@@ -146,7 +148,7 @@ printf '\033}tu;480;130;3;1;0\0'
 printf '\033}tm;200;130;1\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 
 ## MIDDLE CLICK
@@ -163,7 +165,7 @@ printf '\033}tu;480;130;2;1;0\0'
 printf '\033}tm;200;130;1\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2
 
 ## WHEEL
 # prints ^[[Mh=)^[[Mi=)^[[Mhe)^[[Mie)
@@ -176,4 +178,4 @@ printf '\033}tw;480;130;1;1;1\0'
 printf '\033}tw;480;130;0;1;1\0'
 # force render
 printf '\033}tr\0'
-sleep 0.2
+test_sleep 0.2

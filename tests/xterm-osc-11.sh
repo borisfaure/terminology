@@ -22,4 +22,3 @@ printf '\033]11;fff000\007'
 # change background color and then query it
 printf '\033]11;#ff00FF\007'
 printf '\033]11;?\007'
-sleep 0.1
