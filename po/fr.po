@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-23 21:57+0100\n"
-"PO-Revision-Date: 2020-11-10 09:21+0000\n"
+"PO-Revision-Date: 2020-12-28 08:29+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4-dev\n"
+"X-Generator: Weblate 4.4.1-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
@@ -57,7 +57,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Les développeurs de Terminology"
 
 #: src/bin/controls.c:377
 msgid "Controls"
@@ -317,7 +317,7 @@ msgstr ""
 
 #: src/bin/main.c:460
 msgid "Use the named file as a background wallpaper"
-msgstr "Utiliser le fichier fourni comme fond d'écran"
+msgstr "Utiliser le fichier spécifié comme fond d'écran"
 
 #: src/bin/main.c:462
 msgid "Change to directory for execution of terminal command"
@@ -329,11 +329,11 @@ msgstr "Commande à exécuter. $SHELL par défaut (ou passwd shell ou /bin/sh)"
 
 #: src/bin/main.c:466
 msgid "Use the named edje theme or path to theme file"
-msgstr "Utiliser le thème Edje fourni ou le chemin vers le fichier de thème"
+msgstr "Utiliser le thème Edje spécifié ou le chemin vers le fichier de thème"
 
 #: src/bin/main.c:468
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Utiliser le jeu de couleurs spécifié"
 
 #: src/bin/main.c:470
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -715,22 +715,22 @@ msgstr "Temporaire"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Accéder au site"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
 msgstr ""
+"<b>Auteur : </b>%s<br/><b>Site Internet : </b>%s<br/><b>Licence : </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Couleurs"
+msgstr "Jeux de couleurs"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Thème actif : <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -766,7 +766,7 @@ msgstr ""
 
 #: src/bin/options_font.c:540
 msgid "Search font"
-msgstr ""
+msgstr "Rechercher une police"
 
 #: src/bin/options_font.c:568
 msgid "Bitmap"
@@ -899,7 +899,7 @@ msgstr "Local (Tous) :"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Jeu de couleurs actif : <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
