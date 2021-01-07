@@ -220,8 +220,9 @@ _pty_size(Termpty *ty)
    sz.ws_row = ty->h;
    sz.ws_xpixel = 0;
    sz.ws_ypixel = 0;
-   if (ioctl(ty->fd, TIOCSWINSZ, &sz) < 0)
-     ERR(_("Size set ioctl failed: %s"), strerror(errno));
+   if (ty->fd >= 0)
+     if (ioctl(ty->fd, TIOCSWINSZ, &sz) < 0)
+       ERR(_("Size set ioctl failed: %s"), strerror(errno));
 }
 
 static Eina_Bool
