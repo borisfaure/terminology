@@ -425,12 +425,15 @@ _cb_exe_exit(void *data,
    Termpty *ty = data;
    Eina_Bool res;
 
-   if (ev->pid != ty->pid) return ECORE_CALLBACK_PASS_ON;
+   DBG("got exit (code:%d) on pid %d (ty->pid=%d)", ev->exit_code, ev->pid, ty->pid);
+   if (ev->pid != ty->pid)
+     return ECORE_CALLBACK_PASS_ON;
    ty->exit_code = ev->exit_code;
 
    ty->pid = -1;
 
-   if (ty->hand_exe_exit) ecore_event_handler_del(ty->hand_exe_exit);
+   if (ty->hand_exe_exit)
+     ecore_event_handler_del(ty->hand_exe_exit);
    ty->hand_exe_exit = NULL;
 
    /* Read everything till the end */
