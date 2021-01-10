@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-09-16 20:34+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
@@ -34,7 +34,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+#, fuzzy
+msgid "YouTube channel"
 msgstr "Canale YouTube"
 
 #: src/bin/about.c:289
@@ -504,8 +505,8 @@ msgstr "L'opzione %s richiede un argomento!"
 msgid "invalid options found. See --help"
 msgstr "Trovate opzioni non valide. Vedere --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funzione %s fallita: %s"
@@ -998,37 +999,37 @@ msgstr "Non ho potuto allocare termpty"
 msgid "memerr: %s"
 msgstr "Errore memoria: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Impostazione dimensione ioctl fallita: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Non ho potuto scrivere sul file descriptor %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Non ho trovato la shell, ripiego su %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() della pty '%s' fallita: %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() della pty '%s' fallita: %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() sulla pty '%s' fallita: %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Non ho potuto cambiare la directory verso %s: %s"

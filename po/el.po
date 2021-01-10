@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2014-10-01 12:04+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
@@ -35,7 +35,7 @@ msgid "Twitter: @_Terminology_"
 msgstr ""
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+msgid "YouTube channel"
 msgstr ""
 
 #: src/bin/about.c:289
@@ -515,8 +515,8 @@ msgstr "η επιλογή %s χρειάζεται ένα όρισμα!"
 msgid "invalid options found. See --help"
 msgstr "βρέθηκαν άκυρες επιλογές. Δείτε --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Αποτυχία λειτουργίας %s: %s"
@@ -1008,37 +1008,37 @@ msgstr ""
 msgid "memerr: %s"
 msgstr "Σφάλμα μνήμης: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Αποτυχία ορισμού μεγέθους ioctl: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Αδυναμία εγγραφής στον περιγραφέα αρχείου %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "αποτυχία open() στο pty '%s': %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "αποτυχία fcntl() στο pty '%s': %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, fuzzy, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "αποτυχία fcntl() στο pty '%s': %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Αδυναμία αλλαγής τρέχοντος καταλόγου σε '%s': %s"

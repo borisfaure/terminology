@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-10-13 16:26+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -34,7 +34,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+#, fuzzy
+msgid "YouTube channel"
 msgstr "Youtube-kanal"
 
 #: src/bin/about.c:289
@@ -468,8 +469,8 @@ msgstr "tilvalget %s kræver et argument!"
 msgid "invalid options found. See --help"
 msgstr "ugyldige tilvalg fundet. Se --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktionen %s mislykkedes: %s"
@@ -959,37 +960,37 @@ msgstr "Kunne ikke allokere termpty"
 msgid "memerr: %s"
 msgstr "memerr: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Størrelse indstil ioctl mislykkedes: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Kunne ikke skrive til fildeskriptor %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Kunne ikke finde skal, falder tilbage til %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() af pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() på pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() på pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Kunne ikke skifte nuværende mappe til '%s': %s"

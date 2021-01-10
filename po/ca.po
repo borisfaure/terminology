@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
@@ -35,7 +35,7 @@ msgid "Twitter: @_Terminology_"
 msgstr ""
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+msgid "YouTube channel"
 msgstr ""
 
 #: src/bin/about.c:289
@@ -489,8 +489,8 @@ msgstr ""
 msgid "invalid options found. See --help"
 msgstr ""
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, fuzzy, c-format
 msgid "Function %s failed: %s"
 msgstr "fcntl() a pty '%s' ha fallat: %s"
@@ -980,37 +980,37 @@ msgstr "No s'ha ubicat termpty"
 msgid "memerr: %s"
 msgstr "memerr: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Establiment de mida ioctl ha fallat: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "No s'ha pogut escriure al descriptor de fitxer %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "No s'ha trobat intèrpret d'ordres, es retorna a %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() de pty '%s' ha fallat: %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() a pty '%s' ha fallat: %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() a pty '%s' ha fallat: %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "No s'ha pogut canviar el directori actual a '%s': %s"

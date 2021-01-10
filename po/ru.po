@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-12-24 22:29+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -34,7 +34,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+#, fuzzy
+msgid "YouTube channel"
 msgstr "Канал Youtube"
 
 #: src/bin/about.c:289
@@ -471,8 +472,8 @@ msgstr "параметр %s требует аргумент!"
 msgid "invalid options found. See --help"
 msgstr "обнаружен неверный параметр. Смотрите --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Ошибка функции %s: %s"
@@ -959,37 +960,37 @@ msgstr "Невозможно выделить termpty"
 msgid "memerr: %s"
 msgstr "ошибка памяти: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Не удалось установить размер ioctl: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Не удалось записать в дескриптор файла %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Не удалось найти оболочку, используется %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "не удалось выполнить open() pty '%s': %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "не удалось выполнить fcntl() pty '%s': %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "не удалось выполнить ioctl() pty '%s': %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Невозможно изменить текущий каталог на '%s': %s"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-09-22 14:49+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
@@ -36,7 +36,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+#, fuzzy
+msgid "YouTube channel"
 msgstr "Youtube kanal"
 
 #: src/bin/about.c:289
@@ -470,8 +471,8 @@ msgstr "opcija „%s” zahtijeva argument!"
 msgid "invalid options found. See --help"
 msgstr "pronađena je nevažeća opcija. Pogledaj --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Neuspjela funkcija %s: %s"
@@ -960,37 +961,37 @@ msgstr "Nije bilo moguće alocirati termpty"
 msgid "memerr: %s"
 msgstr "memerr: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Neuspjelo postavljanje veličine ioctl: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Nije bilo moguće pisati u datotečni opisivač %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Nije bilo moguće pronaäi ljusku, kosristi se %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() od pty „%s” neuspjelo: %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() na pty „%s” neuspjelo: %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() na pty „%s” neuspjelo: %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Nije bilo moguće promijeniti trenutačnu mapu u „%s”: %s"

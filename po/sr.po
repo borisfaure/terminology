@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-23 21:57+0100\n"
+"POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2020-03-08 19:40+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -35,7 +35,7 @@ msgid "Twitter: @_Terminology_"
 msgstr ""
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+msgid "YouTube channel"
 msgstr ""
 
 #: src/bin/about.c:289
@@ -502,8 +502,8 @@ msgstr "могућност %s захтева примедбу!"
 msgid "invalid options found. See --help"
 msgstr "неисправна могућност. Погледајте --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:645 src/bin/termpty.c:650
-#: src/bin/termpty.c:654
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Радња %s није успела: %s"
@@ -993,37 +993,37 @@ msgstr "Нисам успео да доделим меморију термпт�
 msgid "memerr: %s"
 msgstr "гршкмем: %s"
 
-#: src/bin/termpty.c:224
+#: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Поставка величине иоцтл није успела: %s"
 
-#: src/bin/termpty.c:360
+#: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Нисам успео да пишем у опису датотеке %d: %s"
 
-#: src/bin/termpty.c:614
+#: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Нисам успео да пронађем љуску, замењујем је са %s"
 
-#: src/bin/termpty.c:661
+#: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "отварање() птипсилон „%s“ није успело: %s"
 
-#: src/bin/termpty.c:668 src/bin/termpty.c:674
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "фнцтл() на припсилон „%s“ није успело: %s"
 
-#: src/bin/termpty.c:683
+#: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "иоцтл() на пту „%s“ није успео: %s"
 
-#: src/bin/termpty.c:724 src/bin/termpty.c:732 src/bin/termpty.c:741
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Нисам успео да пређем са тренутне фасцикле на „%s“: %s"
