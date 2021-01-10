@@ -418,7 +418,7 @@ group { name: "terminology/base";
             color3: 136 255 136 8;
             text {
                font: "Sans"; size: 11;
-               text: "Youtube channel";
+               text: "YouTube channel";
                align: 0.0 0.5;
                min: 1 1;
             }

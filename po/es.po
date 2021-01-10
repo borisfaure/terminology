@@ -35,7 +35,7 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-msgid "Youtube channel"
+msgid "YouTube channel"
 msgstr "Canal de YouTube"
 
 #: src/bin/about.c:289

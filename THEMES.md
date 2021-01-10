@@ -88,10 +88,10 @@ It reacts to the following signals:
 ## Special parts
 
 ### Part `youtube.txt`
-A text part used to hold `Youtube channel` when the About is shown.
+A text part used to hold `YouTube channel` when the About is shown.
 
 ### Part `twitter.txt`
-A text part used to hold `Youtube channel` when the About is shown.
+A text part used to hold `YouTube channel` when the About is shown.
 
 ## Signals emitted
 
@@ -102,10 +102,10 @@ When the Twitter link on the About page is clicked.
 When the Twitter link on the About page is right-clicked.
 
 ### Signal `about,youtube`
-When the Youtube link on the About page is clicked.
+When the YouTube link on the About page is clicked.
 
 ### Signal `about,youtube,ctx`
-When the Youtube link on the About page is right-clicked.
+When the YouTube link on the About page is right-clicked.
 
 ### Signal `optdetails,hide,done`
 When the swallowed part `terminology.optdetails` is finally hidden.

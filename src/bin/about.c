@@ -141,7 +141,7 @@ _cb_twitter_ctx(void *data,
                                   _cb_ctxpopup_del, ctx);
 }
 /* }}} */
-/* Youtube {{{ */
+/* YouTube {{{ */
 
 static void
 _cb_ctxpopup_copy_youtube(void *data,
@@ -272,7 +272,7 @@ about_show(Evas_Object *win, Evas_Object *base, Evas_Object *term,
    elm_object_part_text_set(base, "twitter.txt",
                             _("Twitter: @_Terminology_"));
    elm_object_part_text_set(base, "youtube.txt",
-                            _("Youtube channel"));
+                            _("YouTube channel"));
 
    ctx->layout = o = elm_layout_add(win);
    if (elm_layout_file_set(o, config_theme_path_get(config),
