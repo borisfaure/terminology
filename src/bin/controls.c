@@ -61,6 +61,8 @@ _cb_hidden(void *data,
    Evas_Object *frame = ctx->frame;
    Evas_Object *o;
 
+   evas_object_event_callback_del_full(ctx->frame, EVAS_CALLBACK_HIDE,
+                                       _cb_hidden, ctx);
    evas_object_del(frame);
 
    o = elm_layout_content_get(ctx->base, "terminology.controls");
