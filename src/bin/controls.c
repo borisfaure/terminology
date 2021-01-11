@@ -84,7 +84,6 @@ _cb_ct_copy(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    termio_take_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
@@ -98,7 +97,6 @@ _cb_ct_paste(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    termio_paste_selection(term, ELM_SEL_TYPE_CLIPBOARD);
 }
@@ -112,7 +110,6 @@ _cb_ct_new(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    main_new(term);
 }
@@ -127,7 +124,6 @@ _cb_ct_split_v(void *data,
 
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    split_vertically(term, NULL);
 }
@@ -141,7 +137,6 @@ _cb_ct_split_h(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    split_horizontally(term, NULL);
 }
@@ -164,7 +159,6 @@ _cb_ct_set_title(void *data,
    Evas_Object *term = ctx->term;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    term_set_title(termio_term_get(term));
 }
@@ -179,7 +173,6 @@ _cb_ct_close(void *data,
    Evas_Object *win = ctx->win;
 
    controls_hide(ctx, EINA_TRUE);
-   ctx = NULL;
 
    term_close(win, term, EINA_FALSE);
 }
@@ -190,18 +183,17 @@ _on_sub_done(void *data)
    Controls_Ctx *ctx = data;
 
    if (ctx->donecb)
-     ctx->donecb(ctx->donedata);
-
-   eina_hash_del(controls, &ctx->win, ctx);
-
-   if (evas_object_visible_get(ctx->frame))
      {
-        evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
-                                       _cb_hidden, ctx);
-     }
-   else
-     {
-        _cb_hidden(ctx, NULL, NULL, NULL);
+        ctx->donecb(ctx->donedata);
+        ctx->donecb = NULL;
+
+        eina_hash_del(controls, &ctx->win, ctx);
+
+        if (evas_object_visible_get(ctx->frame))
+          evas_object_event_callback_add(ctx->frame, EVAS_CALLBACK_HIDE,
+                                         _cb_hidden, ctx);
+        else
+          _cb_hidden(ctx, NULL, NULL, NULL);
      }
 }
 
