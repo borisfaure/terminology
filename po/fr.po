@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-10 13:11+0100\n"
-"PO-Revision-Date: 2020-12-28 08:29+0000\n"
+"PO-Revision-Date: 2021-01-12 14:32+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -36,9 +36,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter : @_Terminology_"
 
 #: src/bin/about.c:275
-#, fuzzy
 msgid "YouTube channel"
-msgstr "Chaîne Youtube"
+msgstr "Chaîne YouTube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -151,7 +150,7 @@ msgstr "Copier la sélection vers le tampon primaire"
 
 #: src/bin/keyin.c:668
 msgid "Copy selection to Clipboard buffer"
-msgstr "Copier la sélection vers le tampon du presse-papier"
+msgstr "Copier la sélection vers le tampon du presse-papiers"
 
 #: src/bin/keyin.c:669
 msgid "Paste Primary buffer (highlight)"
@@ -159,7 +158,7 @@ msgstr "Coller le tampon primaire (surligné)"
 
 #: src/bin/keyin.c:670
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Coller le tampon du presse-papier (Ctrl+c/v)"
+msgstr "Coller le tampon du presse-papiers (Ctrl+c/v)"
 
 #: src/bin/keyin.c:672
 msgid "Splits/Tabs"
@@ -951,7 +950,7 @@ msgstr "Copier le chemin complet"
 
 #: src/bin/termio.c:2773
 msgid "Open as URL"
-msgstr "Ouvrir en tant q'URL"
+msgstr "Ouvrir en tant que URL"
 
 #: src/bin/termio.c:4177
 msgid "Could not allocate termpty"
