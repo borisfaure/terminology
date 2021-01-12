@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-10 13:11+0100\n"
-"PO-Revision-Date: 2020-10-13 16:26+0000\n"
+"PO-Revision-Date: 2021-01-12 14:32+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
 "terminology/da/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.4.1-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -34,9 +34,8 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-#, fuzzy
 msgid "YouTube channel"
-msgstr "Youtube-kanal"
+msgstr "YouTube-kanal"
 
 #: src/bin/about.c:289
 #, c-format
@@ -56,7 +55,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminologys udviklere"
 
 #: src/bin/controls.c:377
 msgid "Controls"
@@ -332,7 +331,7 @@ msgstr "Brug det navngivne edje-tema eller sti til temafil"
 
 #: src/bin/main.c:468
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Brug det navngivede farvetema"
 
 #: src/bin/main.c:470
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -714,22 +713,21 @@ msgstr "Midlertidig"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Åbn websted"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Forfatter: </b>%s<br/><b>Websted: </b>%s<br/><b>Licens: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Farver"
+msgstr "Farvetemaer"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Bruger temaet <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -765,7 +763,7 @@ msgstr ""
 
 #: src/bin/options_font.c:540
 msgid "Search font"
-msgstr ""
+msgstr "Søg efter skrifttype"
 
 #: src/bin/options_font.c:568
 msgid "Bitmap"
@@ -898,7 +896,7 @@ msgstr "Lokale (alle):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Bruger farvetemaet <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
