@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-10 13:11+0100\n"
-"PO-Revision-Date: 2020-09-22 14:49+0000\n"
+"PO-Revision-Date: 2021-01-12 14:32+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
 "terminology/hr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.4.1-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -36,7 +36,6 @@ msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
-#, fuzzy
 msgid "YouTube channel"
 msgstr "Youtube kanal"
 
@@ -58,7 +57,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Programeri programa Terminology"
 
 #: src/bin/controls.c:377
 msgid "Controls"
@@ -334,7 +333,7 @@ msgstr "Koristi imenovanu edje temu ili stazu do datoteke teme"
 
 #: src/bin/main.c:468
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Koristi shemu imenovanih boja"
 
 #: src/bin/main.c:470
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -715,22 +714,21 @@ msgstr "Privremeno"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Otvori web-stranicu"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Autor: </b>%s<br/><b>Web-stranica: </b>%s<br/><b>Licenca: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Boje"
+msgstr "Sheme boja"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Koristi se tema <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -766,7 +764,7 @@ msgstr ""
 
 #: src/bin/options_font.c:540
 msgid "Search font"
-msgstr ""
+msgstr "Traži font"
 
 #: src/bin/options_font.c:568
 msgid "Bitmap"
@@ -899,7 +897,7 @@ msgstr "Lokalno (sve):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Koristi se shema boja <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
