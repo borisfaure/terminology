@@ -1,3 +1,20 @@
+2021-01-18
+        * Release v1.9.0
+        * Colorshemes: easily change the colors of the terminal
+        * Add the following color schemes: Tango Dark, Tango light, Dracula,
+          Belafonte Day, Belafonte Night, Material, Fahrenheit, Tomorrow Night
+          Burns, PaleNight, Soft Era, One Dark, Cobalt2
+        * New translations: Chinese (Simplified), Japanese, Norwegian Bokmål,
+          Russian and Ukrainian
+        * Handle OSC 12 to change the cursor color
+        * Translation updates for Catalan, Croatian, Danish, Dutch, French,
+          German, Italian, Spanish
+        * Add font search in the fonts panel
+        * Set TERM to xterm_256color by default
+        * Focus simplifications when going into the settings
+        * Tests: better compatibility with debian-based systems
+        * Fix tyls with png/jpg thumbnails
+
 2020-08-11
         * Release v1.8.1
         * Be stricter on which characters can be considered wide or not
