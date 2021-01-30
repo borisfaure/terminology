@@ -1,6 +1,7 @@
 colorschemes_desc = [
   'Belafonte Day.ini',
   'Belafonte Night.ini',
+  'Black.ini',
   'Cobalt2.ini',
   'Dracula.ini',
   'Fahrenheit.ini',
