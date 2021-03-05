@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-10 13:11+0100\n"
 "PO-Revision-Date: 2021-03-02 01:50+0000\n"
-"Last-Translator: Gustavo Costa <xfgusta@gmail.com>\n"
+"Last-Translator: Gustavo Costa <sirguxx@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "terminology/terminology/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -703,7 +703,7 @@ msgstr "Teclas"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Kit de ferramentas"
 
 #: src/bin/options.c:235
 msgid "Temporary"
@@ -734,6 +734,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> usa o kit de ferramentas <hilight>elementary</"
+"hilight>.<br>As definições de configuração do kit de ferramentas podem ser "
+"acessadas executando <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -753,6 +756,8 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"A configuração da escala também pode ser alterada através do painel de "
+"configuração do <hilight>elementary</hilight>"
 
 #: src/bin/options_font.c:540
 msgid "Search font"
@@ -796,11 +801,11 @@ msgstr ""
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr ""
+msgstr "Deletar"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr ""
+msgstr "Pressione a sequência de teclas"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
@@ -820,11 +825,11 @@ msgstr ""
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Ocultar automaticamente o cursor do mouse quando inativo:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr ""
+msgstr "Links ativos:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
@@ -848,7 +853,7 @@ msgstr "Baseado em códigos de escape"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr ""
+msgstr "Integração com Gravatar"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
@@ -894,12 +899,12 @@ msgstr "Usando o esquema de cores <hilight>%s</hilight>"
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "Comando de fonte desconhecido: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr ""
+msgstr "Comando de tamanho de grade desconhecido: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
@@ -944,7 +949,7 @@ msgstr "Abrir como URL"
 
 #: src/bin/termio.c:4177
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "Não foi possível alocar termpty"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
@@ -959,27 +964,27 @@ msgstr "O tamanho definido para ioctl falhou: %s"
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "Não foi possível escrever no descritor de arquivo %d: %s"
 
 #: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "Não foi possível encontrar o shell, voltando para %s"
 
 #: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "open() de pty '%s' falhou: %s"
 
 #: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "fcntl() em pty '%s' falhou: %s"
 
 #: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "ioctl() em pty '%s' falhou: %s"
 
 #: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
@@ -989,7 +994,7 @@ msgstr "Não foi possível mudar o diretório atual para '%s': %s"
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Não foi possível carregar nenhum tema para o grupo=%s: %s"
 
 #: src/bin/win.c:425
 msgid "Done"
