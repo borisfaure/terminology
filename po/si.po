@@ -7,13 +7,16 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-01-10 13:11+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-02-27 12:50+0000\n"
+"Last-Translator: HelaBasa <R45XvezA@protonmail.ch>\n"
+"Language-Team: Sinhala <https://hosted.weblate.org/projects/terminology/"
+"terminology/si/>\n"
 "Language: si\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.5\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -73,19 +76,19 @@ msgstr ""
 
 #: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
-msgstr ""
+msgstr "පිටපත්"
 
 #: src/bin/controls.c:436
 msgid "Paste"
-msgstr ""
+msgstr "අලවන්න"
 
 #: src/bin/controls.c:442
 msgid "Settings"
-msgstr ""
+msgstr "සැකසුම්"
 
 #: src/bin/controls.c:448
 msgid "About"
-msgstr ""
+msgstr "පිළිබඳව"
 
 #: src/bin/controls.c:457
 msgid "Grouped input"
