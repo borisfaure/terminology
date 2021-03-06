@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2014-10-01 12:04+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
@@ -58,52 +58,52 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr ""
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Ρυθμίσεις"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Νέο"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Διαίρεση Κ"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Διαίρεση Ο"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr ""
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 #, fuzzy
 msgid "Set title"
 msgstr "Ορισμός τίτλου παραθύρου"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Αντιγραφή"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "Σχετικά"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr ""
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 #, fuzzy
 msgid "Close Terminal"
 msgstr "Κλείσιμο εστιασμένου τερματικού"
@@ -419,9 +419,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Χρήση λειτουργίας πλήρους οθόνης από την αρχή"
 
 #: src/bin/main.c:497
-#, fuzzy
-msgid "Go into an iconic state from the start"
-msgstr "Χρήση λειτουργίας πλήρους οθόνης από την αρχή"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 #, fuzzy
@@ -1076,6 +1075,10 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'ninja "
 "install';"
+
+#, fuzzy
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "Χρήση λειτουργίας πλήρους οθόνης από την αρχή"
 
 #~ msgid "Default"
 #~ msgstr "Προεπιλογή"

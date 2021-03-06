@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2021-03-02 01:50+0000\n"
 "Last-Translator: Gustavo Costa <sirguxx@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
@@ -55,51 +55,51 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr "Desenvolvedores do Terminology"
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Controles"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Novo"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Dividir V"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Dividir H"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "Minivisão"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 msgid "Set title"
 msgstr "Definir título"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Colar"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Opções"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "Sobre"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr "Entrada agrupada"
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Fechar terminal"
 
@@ -385,7 +385,7 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Ir para o modo de tela inteira desde o início"
 
 #: src/bin/main.c:497
-msgid "Go into an iconic state from the start"
+msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
@@ -663,9 +663,9 @@ msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Define o tempo da animação que<br>ocorre durante as alternâncias de "
-"abas,<br>sejam aquelas feitas devido a teclas de atalho ou<br>roda do mouse "
-"sobre o painel de abas"
+"Define o tempo da animação que<br>ocorre durante as alternâncias de abas,"
+"<br>sejam aquelas feitas devido a teclas de atalho ou<br>roda do mouse sobre "
+"o painel de abas"
 
 #: src/bin/options_behavior.c:532
 msgid "Tab zoom/switch animation time:"
@@ -734,9 +734,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> usa o kit de ferramentas <hilight>elementary</"
-"hilight>.<br>As definições de configuração do kit de ferramentas podem ser "
-"acessadas executando <keyword>%s</keyword>"
+"<em>Terminology</em> usa o kit de ferramentas <hilight>elementary</hilight>."
+"<br>As definições de configuração do kit de ferramentas podem ser acessadas "
+"executando <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
