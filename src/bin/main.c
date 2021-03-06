@@ -494,7 +494,7 @@ static Ecore_Getopt options = {
       ECORE_GETOPT_STORE_TRUE('F', "fullscreen",
                               gettext_noop("Go into the fullscreen mode from the start")),
       ECORE_GETOPT_STORE_TRUE('I', "iconic",
-                              gettext_noop("Go into an iconic state from the start")),
+                              gettext_noop("Start iconified")),
       ECORE_GETOPT_STORE_TRUE('B', "borderless",
                               gettext_noop("Become a borderless managed window")),
       ECORE_GETOPT_STORE_TRUE('O', "override",
