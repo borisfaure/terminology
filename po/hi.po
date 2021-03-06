@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -53,52 +53,52 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr ""
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "नियंत्रण"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "नया टर्मिनल"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "लम्बवत में विभाजन"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "क्षैतिज में विभाजन"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "मिनी व्यू"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 #, fuzzy
 msgid "Set title"
 msgstr "विंडो शीर्षक सेट करें"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "कॉपी"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "पेस्ट"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "सेटिंग्स"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "के बारे में"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr ""
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "टर्मिनल बंद"
 
@@ -401,9 +401,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "शुरू से ही फुल स्क्रीन मोड में जाना"
 
 #: src/bin/main.c:497
-#, fuzzy
-msgid "Go into an iconic state from the start"
-msgstr "शुरू से ही iconic state में जाना"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 #, fuzzy
@@ -1046,6 +1045,10 @@ msgstr ""
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
+
+#, fuzzy
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "शुरू से ही iconic state में जाना"
 
 #~ msgid "Default"
 #~ msgstr "डिफ़ॉल्ट"

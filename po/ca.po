@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
@@ -58,52 +58,52 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr ""
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Controls"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Nou"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Divideix V"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Divideix H"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "Minivista"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 #, fuzzy
 msgid "Set title"
 msgstr "Anomena la finestra"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Còpia"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Enganxa"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Paràmetres"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr ""
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr ""
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr ""
 
@@ -407,8 +407,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Vés a mode de pantalla completa des de l'inici"
 
 #: src/bin/main.c:497
-msgid "Go into an iconic state from the start"
-msgstr "Vés a mode minimitzat des de l'inici"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 msgid "Become a borderless managed window"
@@ -1049,6 +1049,9 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "
 "install'"
+
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "Vés a mode minimitzat des de l'inici"
 
 #~ msgid "Default"
 #~ msgstr "Predeterminat"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -56,52 +56,52 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr ""
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Điều Khiển"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Tạo Mới"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Chia Dọc"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Chia Ngang"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "Miniview"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 #, fuzzy
 msgid "Set title"
 msgstr "Đặt tiêu đề cho cửa sổ"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Sao Chép"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Dán"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Thiết Lập"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "Về"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr ""
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Đóng Terminal"
 
@@ -411,9 +411,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Dùng chế độ toàn màn hình khi khởi động"
 
 #: src/bin/main.c:497
-#, fuzzy
-msgid "Go into an iconic state from the start"
-msgstr "Dùng chế độ biểu tượng khi khởi động"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 #, fuzzy
@@ -1065,6 +1064,10 @@ msgstr ""
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "Dùng chế độ biểu tượng khi khởi động"
 
 #~ msgid "Default"
 #~ msgstr "Mặc Định"

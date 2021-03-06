@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2021-02-18 17:50+0000\n"
 "Last-Translator: Da C <cslldnl@gmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
@@ -58,51 +58,51 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr "Sviluppatori di terminologia"
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Controlli"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Nuovo"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Dividi V"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Dividi O"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "Miniature schede"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 msgid "Set title"
 msgstr "Imposta titolo"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Copia"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "Informazioni"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr "Input raggruppato"
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Chiudi terminale"
 
@@ -406,9 +406,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Si avvia a schermo pieno"
 
 #: src/bin/main.c:497
-#, fuzzy
-msgid "Go into an iconic state from the start"
-msgstr "Si avvia in modo iconificato"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 #, fuzzy
@@ -1070,6 +1069,10 @@ msgstr "Annulla"
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Non trovo il tema di terminology! Avete dato il comando 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "Si avvia in modo iconificato"
 
 #~ msgid "Default"
 #~ msgstr "Predefinito"

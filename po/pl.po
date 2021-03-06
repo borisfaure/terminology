@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 13:11+0100\n"
+"POT-Creation-Date: 2021-03-06 10:57+0100\n"
 "PO-Revision-Date: 2019-09-02 15:30+0200\n"
 "Last-Translator: Fervi <lordfervi@protonmail.com>\n"
 "Language-Team: Polish\n"
@@ -54,51 +54,51 @@ msgstr ""
 msgid "Terminology's developers"
 msgstr ""
 
-#: src/bin/controls.c:377
+#: src/bin/controls.c:371
 msgid "Controls"
 msgstr "Opcje"
 
-#: src/bin/controls.c:393
+#: src/bin/controls.c:387
 msgid "New"
 msgstr "Nowa zakładka"
 
-#: src/bin/controls.c:401
+#: src/bin/controls.c:395
 msgid "Split V"
 msgstr "Podziel pionowo"
 
-#: src/bin/controls.c:405
+#: src/bin/controls.c:399
 msgid "Split H"
 msgstr "Podziel poziomo"
 
-#: src/bin/controls.c:412
+#: src/bin/controls.c:406
 msgid "Miniview"
 msgstr "Minipodgląd"
 
-#: src/bin/controls.c:419 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6234
 msgid "Set title"
 msgstr "Ustaw nazwę okna"
 
-#: src/bin/controls.c:430 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: src/bin/controls.c:436
+#: src/bin/controls.c:430
 msgid "Paste"
 msgstr "Wklej"
 
-#: src/bin/controls.c:442
+#: src/bin/controls.c:436
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: src/bin/controls.c:448
+#: src/bin/controls.c:442
 msgid "About"
 msgstr "O programie"
 
-#: src/bin/controls.c:457
+#: src/bin/controls.c:451
 msgid "Grouped input"
 msgstr ""
 
-#: src/bin/controls.c:469
+#: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Wyłącz terminal"
 
@@ -404,9 +404,8 @@ msgid "Go into the fullscreen mode from the start"
 msgstr "Włącz pełnoekranowy tryb na start"
 
 #: src/bin/main.c:497
-#, fuzzy
-msgid "Go into an iconic state from the start"
-msgstr "Włącz tryb ikonowy na start"
+msgid "Start iconified"
+msgstr ""
 
 #: src/bin/main.c:499
 #, fuzzy
@@ -1056,6 +1055,10 @@ msgstr "Anuluj"
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Nie mogę znaleźć skórki terminology! Zapomniałeś 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Go into an iconic state from the start"
+#~ msgstr "Włącz tryb ikonowy na start"
 
 #~ msgid "Default"
 #~ msgstr "Domyślny"
