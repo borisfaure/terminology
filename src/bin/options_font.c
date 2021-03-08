@@ -464,6 +464,16 @@ _parent_del_cb(void *data,
    free(ctx);
 }
 
+static Eina_Bool
+_show_timer_cb(void *data)
+{
+    Font_Ctx *ctx = data;
+
+    elm_object_focus_set(ctx->filter, EINA_TRUE);
+
+    return EINA_FALSE;
+}
+
 void
 options_font(Evas_Object *opbox, Evas_Object *term)
 {
@@ -533,8 +543,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(bx);
 
    ctx->filter = o = elm_entry_add(bx);
-   elm_object_focus_set(o, EINA_TRUE);
    elm_entry_single_line_set(o, EINA_TRUE);
+   elm_entry_scrollable_set(o, EINA_TRUE);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
    elm_object_part_text_set(o, "guide", _("Search font"));
@@ -680,7 +690,8 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_event_callback_add(term, EVAS_CALLBACK_RESIZE,
                                   _cb_term_resize, ctx);
 
-   elm_object_focus_set(ctx->filter, EINA_TRUE);
+   ecore_timer_add(0.2, _show_timer_cb, ctx);
+
    evas_object_smart_callback_add(ctx->filter, "changed,user",
                                   _entry_change_cb, ctx);
 }
