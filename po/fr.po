@@ -1,15 +1,15 @@
 # French translation for Terminology.
 # Copyright (C) 2014 Terminology development team
 # This file is distributed under the same license as the terminology package.
-#  <boris@fau.re>, 2014.
-#  similar <similar@orange.fr>, 2019, 2020.
-#
+# <boris@fau.re>, 2014.
+# similar <similar@orange.fr>, 2019, 2020.
+# Philippe Jean Guillaumie <similar@orange.fr>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-06 10:57+0100\n"
-"PO-Revision-Date: 2021-01-12 14:32+0000\n"
+"PO-Revision-Date: 2021-03-07 15:50+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4.1-dev\n"
+"X-Generator: Weblate 4.5.1\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
@@ -391,7 +391,7 @@ msgstr "Lancer en mode plein écran"
 
 #: src/bin/main.c:497
 msgid "Start iconified"
-msgstr ""
+msgstr "Lancer minimisé"
 
 #: src/bin/main.c:499
 msgid "Become a borderless managed window"
@@ -403,7 +403,7 @@ msgstr "Transformer la fenêtre avec l'attribut override-redirect"
 
 #: src/bin/main.c:503
 msgid "Become maximized from the start"
-msgstr "Transformer en fenêtre maximisée au lancement"
+msgstr "Lancer maximisé"
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
