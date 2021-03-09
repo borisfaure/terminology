@@ -2,14 +2,13 @@
 # This file is put in the public domain.
 #
 # Translators:
-# Milo Ivir <mail@milotype.de>, 2020.
-#
+# Milo Ivir <mail@milotype.de>, 2020, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-06 10:57+0100\n"
-"PO-Revision-Date: 2021-01-12 14:32+0000\n"
+"PO-Revision-Date: 2021-03-09 18:02+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
 "terminology/hr/>\n"
@@ -19,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.4.1-dev\n"
+"X-Generator: Weblate 4.5.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -391,7 +390,7 @@ msgstr "Pokreni u cjeloekranskom prikazu"
 
 #: src/bin/main.c:497
 msgid "Start iconified"
-msgstr ""
+msgstr "Pokreni s ikonama"
 
 #: src/bin/main.c:499
 msgid "Become a borderless managed window"
