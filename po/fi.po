@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2015-04-14 19:08+0300\n"
 "Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -413,19 +413,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Muuntaudu maksimoiduksi käynnistäessä"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1062,6 +1060,14 @@ msgstr ""
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Muuntaudu maksimoiduksi käynnistäessä"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

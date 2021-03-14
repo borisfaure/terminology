@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2020-09-22 14:49+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
@@ -406,19 +406,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Word een randloos beheerd venster"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Word een randloos beheerd venster"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Word meteen gemaximaliseerd"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1049,6 +1047,14 @@ msgstr "Afbreken"
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kon Terminology-thema niet vinden. Bestaat het wel?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Word een randloos beheerd venster"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Word meteen gemaximaliseerd"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

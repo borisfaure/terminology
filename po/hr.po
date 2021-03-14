@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2021-03-09 18:02+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
@@ -393,16 +393,18 @@ msgid "Start iconified"
 msgstr "Pokreni s ikonama"
 
 #: src/bin/main.c:499
-msgid "Become a borderless managed window"
-msgstr "Pokreni kao bezrubni prozor"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
-msgid "Become an override-redirect window"
+#, fuzzy
+msgid "Start as a override-redirect window"
 msgstr "Pokreni kao override-redirect prozor"
 
 #: src/bin/main.c:503
-msgid "Become maximized from the start"
-msgstr "Pokreni u cjeloekranskom prikazu"
+#, fuzzy
+msgid "Start maximized"
+msgstr "Pokreni s ikonama"
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
@@ -1028,6 +1030,12 @@ msgstr "Odustani"
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Nije bilo moguće pronaći Terminology temu! Je li „ninja install” izvršeno?"
+
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Pokreni kao bezrubni prozor"
+
+#~ msgid "Become maximized from the start"
+#~ msgstr "Pokreni u cjeloekranskom prikazu"
 
 #~ msgid "Go into an iconic state from the start"
 #~ msgstr "Pokreni u prikazu s ikonama"

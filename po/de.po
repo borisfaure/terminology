@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2020-12-03 20:29+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
@@ -411,19 +411,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Starte als verwaltetes Fenster ohne Rand"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Starte als override-redirect Fenster"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Starte im Vollbild-Modus"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1070,6 +1068,14 @@ msgstr "Abbruch"
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Terminology-Tema konnte nicht gefunden werden! „ninja install“ vergessen?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Starte als verwaltetes Fenster ohne Rand"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Starte im Vollbild-Modus"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

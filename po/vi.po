@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -415,19 +415,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Trở thành cửa sổ được quản lý không viền"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Trở thành cửa sổ chuyển đổi tái thiết lập"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Trở thành cực đại lúc khởi động"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1064,6 +1062,14 @@ msgstr ""
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Trở thành cửa sổ được quản lý không viền"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Trở thành cực đại lúc khởi động"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

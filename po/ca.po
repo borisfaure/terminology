@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
@@ -411,16 +411,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-msgid "Become a borderless managed window"
-msgstr "Converteix a finestra sense vora"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
-msgid "Become an override-redirect window"
+#, fuzzy
+msgid "Start as a override-redirect window"
 msgstr "Esdevé una finestra de redirecció-sobreposició"
 
 #: src/bin/main.c:503
-msgid "Become maximized from the start"
-msgstr "Maximitzat des de l'inici"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
@@ -1049,6 +1050,12 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "
 "install'"
+
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Converteix a finestra sense vora"
+
+#~ msgid "Become maximized from the start"
+#~ msgstr "Maximitzat des de l'inici"
 
 #~ msgid "Go into an iconic state from the start"
 #~ msgstr "Vés a mode minimitzat des de l'inici"

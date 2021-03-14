@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2020-03-08 19:40+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -409,19 +409,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Начини прозор без оквира"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Начини прозор као преусмерени прозор"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Покрећи као увећан прозор"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1061,6 +1059,14 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Нисам успео да пронађем тему Терминологије! Да нисте заборавили да урадите "
 "„make install“?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Начини прозор без оквира"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Покрећи као увећан прозор"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"
