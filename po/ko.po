@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
@@ -393,15 +393,15 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-msgid "Become a borderless managed window"
+msgid "Start borderless"
 msgstr ""
 
 #: src/bin/main.c:501
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr ""
 
 #: src/bin/main.c:503
-msgid "Become maximized from the start"
+msgid "Start maximized"
 msgstr ""
 
 #: src/bin/main.c:505

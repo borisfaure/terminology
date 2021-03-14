@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2021-02-14 04:50+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -393,16 +393,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-msgid "Become a borderless managed window"
-msgstr "Запустить в режиме окна без рамок"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
-msgid "Become an override-redirect window"
+#, fuzzy
+msgid "Start as a override-redirect window"
 msgstr "Запустить в окне без перенаправления в композит"
 
 #: src/bin/main.c:503
-msgid "Become maximized from the start"
-msgstr "Развернуть на весь экран при запуске"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
@@ -1027,6 +1028,12 @@ msgstr "Отмена"
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Не удалось найти тему для terminology! Забыли 'ninja install'?"
+
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Запустить в режиме окна без рамок"
+
+#~ msgid "Become maximized from the start"
+#~ msgstr "Развернуть на весь экран при запуске"
 
 #~ msgid "Go into an iconic state from the start"
 #~ msgstr "Запустить в свёрнутом виде"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2019-09-02 15:30+0200\n"
 "Last-Translator: Fervi <lordfervi@protonmail.com>\n"
 "Language-Team: Polish\n"
@@ -408,19 +408,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Wyłącz obramowanie okna"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Stań się nadrzędnym oknem"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Ustaw maksymalizację okna na start"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1055,6 +1053,14 @@ msgstr "Anuluj"
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Nie mogę znaleźć skórki terminology! Zapomniałeś 'ninja install'?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Wyłącz obramowanie okna"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Ustaw maksymalizację okna na start"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

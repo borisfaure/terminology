@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2014-10-01 12:04+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
@@ -423,19 +423,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "Να γίνει παράθυρο χωρίς πλαίσιο"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "Να γίνει παράθυρο παράκαμψης ανακατεύθυνσης"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "Να γίνει μεγιστοποίηση από την αρχή"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 #, fuzzy
@@ -1075,6 +1073,14 @@ msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'ninja "
 "install';"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "Να γίνει παράθυρο χωρίς πλαίσιο"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "Να γίνει μεγιστοποίηση από την αρχή"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"

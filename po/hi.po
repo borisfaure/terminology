@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-06 10:57+0100\n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -405,19 +405,17 @@ msgid "Start iconified"
 msgstr ""
 
 #: src/bin/main.c:499
-#, fuzzy
-msgid "Become a borderless managed window"
-msgstr "अनवधि प्रबंधित विंडों बनें"
+msgid "Start borderless"
+msgstr ""
 
 #: src/bin/main.c:501
 #, fuzzy
-msgid "Become an override-redirect window"
+msgid "Start as a override-redirect window"
 msgstr "अनवधि प्रबंधित विंडों बनें"
 
 #: src/bin/main.c:503
-#, fuzzy
-msgid "Become maximized from the start"
-msgstr "शुरू से ही अधिकतम किए बनें"
+msgid "Start maximized"
+msgstr ""
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
@@ -1045,6 +1043,14 @@ msgstr ""
 #: src/bin/win.c:7432
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
+
+#, fuzzy
+#~ msgid "Become a borderless managed window"
+#~ msgstr "अनवधि प्रबंधित विंडों बनें"
+
+#, fuzzy
+#~ msgid "Become maximized from the start"
+#~ msgstr "शुरू से ही अधिकतम किए बनें"
 
 #, fuzzy
 #~ msgid "Go into an iconic state from the start"
