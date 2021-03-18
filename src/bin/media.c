@@ -967,6 +967,7 @@ _smart_del(Evas_Object *obj)
    sd->et_req = NULL;
 
    _parent_sc.del(obj);
+   free(sd);
 }
 
 static void

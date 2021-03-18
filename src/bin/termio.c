@@ -3482,6 +3482,7 @@ _smart_del(Evas_Object *obj)
    sd->glayer = NULL;
 
    _parent_sc.del(obj);
+   free(sd);
 }
 
 static void

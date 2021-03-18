@@ -628,6 +628,7 @@ _smart_del(Evas_Object *obj)
         free(en);
      }
    _parent_sc.del(obj);
+   free(sd);
 }
 
 static void
