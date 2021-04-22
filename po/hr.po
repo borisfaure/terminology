@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2021-03-09 18:02+0000\n"
+"PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
 "terminology/hr/>\n"
@@ -390,21 +390,19 @@ msgstr "Pokreni u cjeloekranskom prikazu"
 
 #: src/bin/main.c:497
 msgid "Start iconified"
-msgstr "Pokreni s ikonama"
+msgstr "Pokreni sklopljeno"
 
 #: src/bin/main.c:499
 msgid "Start borderless"
-msgstr ""
+msgstr "Pokreni bez rubova"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Start as a override-redirect window"
 msgstr "Pokreni kao override-redirect prozor"
 
 #: src/bin/main.c:503
-#, fuzzy
 msgid "Start maximized"
-msgstr "Pokreni s ikonama"
+msgstr "Pokreni rasklopljeno"
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
