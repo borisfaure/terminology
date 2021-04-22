@@ -1,13 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 玉堂白鹤 <yjwork@qq.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2020-10-09 20:53+0000\n"
+"PO-Revision-Date: 2021-04-03 08:26+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "terminology/terminology/zh_Hans/>\n"
@@ -16,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.6-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -34,7 +33,7 @@ msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "YouTube 频道"
 
 #: src/bin/about.c:289
 #, c-format
@@ -48,7 +47,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminology 开发者"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -322,7 +321,7 @@ msgstr "使用指定的 edje 主题或主题文件夹"
 
 #: src/bin/main.c:468
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "使用指定的配色方案"
 
 #: src/bin/main.c:470
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -698,12 +697,12 @@ msgstr "临时"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "打开网站"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>作者: </b>%s<br/><b>网站: </b>%s<br/><b>许可: </b>%s"
 
 #: src/bin/options_colors.c:226
 #, fuzzy
@@ -713,7 +712,7 @@ msgstr "颜色"
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "使用主题 <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -744,7 +743,7 @@ msgstr ""
 
 #: src/bin/options_font.c:540
 msgid "Search font"
-msgstr ""
+msgstr "搜索字体"
 
 #: src/bin/options_font.c:568
 msgid "Bitmap"
@@ -877,7 +876,7 @@ msgstr "本地 (所有):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "使用配色方案 <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
