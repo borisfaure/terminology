@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2021-03-07 15:50+0000\n"
+"PO-Revision-Date: 2021-03-15 19:02+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.5.1\n"
+"X-Generator: Weblate 4.5.2-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
@@ -395,17 +395,15 @@ msgstr "Lancer minimisé"
 
 #: src/bin/main.c:499
 msgid "Start borderless"
-msgstr ""
+msgstr "Lancer sans bordure"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Transformer la fenêtre avec l'attribut override-redirect"
+msgstr "Lancer la fenêtre avec override-redirect positionné"
 
 #: src/bin/main.c:503
-#, fuzzy
 msgid "Start maximized"
-msgstr "Lancer minimisé"
+msgstr "Lancer maximisé"
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
