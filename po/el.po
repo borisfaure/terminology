@@ -1,24 +1,25 @@
 # English translations for terminology package.
 # Copyright (C) 2014 Terminology development team
 # This file is distributed under the same license as the terminology package.
-#  <boris@fau.re>, 2014.
+# <boris@fau.re>, 2014.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2014.
 # Panagiotis Galatsanos <galatsanosp@gmail.com>, 2014.
-#
+# Michalis <michalisntovas@yahoo.gr>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2014-10-01 12:04+0200\n"
-"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
-"Language-Team: Greek, Modern (1453-) <opensuse-translation-el@opensuse.org>\n"
+"PO-Revision-Date: 2021-04-26 21:31+0000\n"
+"Last-Translator: Michalis <michalisntovas@yahoo.gr>\n"
+"Language-Team: Greek <https://hosted.weblate.org/projects/terminology/"
+"terminology/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.7\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -748,11 +749,11 @@ msgstr "Χρώματα"
 
 #: src/bin/options.c:223
 msgid "Keys"
-msgstr "Συντομεύσεις"
+msgstr "Κλειδιά"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Εργαλειοθήκη"
 
 #: src/bin/options.c:235
 msgid "Temporary"
