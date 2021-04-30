@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the terminology package.
 # scootergrisen, 2017.
 #
+# scootergrisen <scootergrisen@gmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2021-01-12 14:32+0000\n"
+"PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
 "terminology/da/>\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4.1-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
@@ -389,20 +390,19 @@ msgstr "Gå i fuldskærmstilstand fra starten"
 
 #: src/bin/main.c:497
 msgid "Start iconified"
-msgstr ""
+msgstr "Start som ikon"
 
 #: src/bin/main.c:499
 msgid "Start borderless"
-msgstr ""
+msgstr "Start uden kant"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Bliv et override-redirect-vindue"
+msgstr "Start som et override-redirect-vindue"
 
 #: src/bin/main.c:503
 msgid "Start maximized"
-msgstr ""
+msgstr "Start maksimeret"
 
 #: src/bin/main.c:505
 msgid "Terminology is run without a window manager"
