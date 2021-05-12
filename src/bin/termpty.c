@@ -292,7 +292,7 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
                {
                   g = eina_unicode_utf8_next_get(buf, &i);
                   if ((0xdc80 <= g) && (g <= 0xdcff) &&
-                      (len - prev_i) <= (int)sizeof(ty->oldbuf))
+                      (len - (int)prev_i) <= (int)sizeof(ty->oldbuf))
                     {
                        unsigned int k;
 
@@ -303,7 +303,7 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
                          {
                             ty->oldbuf[k] = buf[prev_i+k];
                          }
-                       DBG("failure at %d/%d/%d", prev_i, i, len);
+                       DBG("failure at %d/%d/%d", (int)prev_i, (int)i, len);
                        break;
                     }
                }
@@ -789,7 +789,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
           {
              char buf[256];
 
-             snprintf(buf, sizeof(buf), "WINDOWID=%lu", window_id);
+             snprintf(buf, sizeof(buf), "WINDOWID=%lu", (unsigned long)window_id);
              putenv(buf);
           }
 #if ((EFL_VERSION_MAJOR > 1) || (EFL_VERSION_MINOR >= 24)) || ((EFL_VERSION_MAJOR == 1) && (EFL_VERSION_MINOR == 23) && (EFL_VERSION_MICRO == 99))

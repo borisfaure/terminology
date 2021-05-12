@@ -3569,7 +3569,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         break;
       default:
-        ERR("unhandled '0x%x' CSI escape code", *cc);
+        ERR("unhandled '0x%x' CSI escape code", (int)*cc);
         goto unhandled;
      }
    cc++;
@@ -4966,7 +4966,7 @@ end:
       for (j = 0; c + j < ce && j < len; j++)
         {
            if ((c[j] < ' ') || (c[j] >= 0x7f))
-             printf("\033[35m%08x\033[0m", c[j]);
+             printf("\033[35m%08x\033[0m", (int)c[j]);
            else
              printf("%s", termptyesc_safechar(c[j]));
         }
