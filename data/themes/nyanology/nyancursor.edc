@@ -1,3 +1,5 @@
+efl_version: 1 22;
+
 #ifndef __NYANCAT_CURSOR
 #define __NYANCAT_CURSOR
 #define FRAME_DURATION 0.07
