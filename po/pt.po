@@ -1,0 +1,1003 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# Hugo Carvalho <hugokarvalho@hotmail.com>, 2021.
+msgid ""
+msgstr ""
+"Project-Id-Version: terminology\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"PO-Revision-Date: 2021-05-18 10:57+0000\n"
+"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
+"Language-Team: Portuguese <https://hosted.weblate.org/projects/terminology/"
+"terminology/pt/>\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.7-dev\n"
+
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
+#: src/bin/termio.c:1291
+#, c-format
+msgid "Copy '%s'"
+msgstr ""
+
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+msgid "Open"
+msgstr "Abrir"
+
+#: src/bin/about.c:273
+msgid "Twitter: @_Terminology_"
+msgstr "Twitter: @_Terminology_"
+
+#: src/bin/about.c:275
+msgid "YouTube channel"
+msgstr "Canal do YouTube"
+
+#: src/bin/about.c:289
+#, c-format
+msgid ""
+"<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
+"terminal was written for Enlightenment, to use EFL and otherwise push the "
+"boundaries of what a modern terminal emulator should be. We hope you enjoy "
+"it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
+"clause BSD license detailed below:<br><br>%s"
+msgstr ""
+
+#: src/bin/colors.c:17
+msgid "Terminology's developers"
+msgstr ""
+
+#: src/bin/controls.c:371
+msgid "Controls"
+msgstr ""
+
+#: src/bin/controls.c:387
+msgid "New"
+msgstr ""
+
+#: src/bin/controls.c:395
+msgid "Split V"
+msgstr ""
+
+#: src/bin/controls.c:399
+msgid "Split H"
+msgstr ""
+
+#: src/bin/controls.c:406
+msgid "Miniview"
+msgstr ""
+
+#: src/bin/controls.c:413 src/bin/win.c:6234
+msgid "Set title"
+msgstr ""
+
+#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+msgid "Copy"
+msgstr ""
+
+#: src/bin/controls.c:430
+msgid "Paste"
+msgstr ""
+
+#: src/bin/controls.c:436
+msgid "Settings"
+msgstr ""
+
+#: src/bin/controls.c:442
+msgid "About"
+msgstr ""
+
+#: src/bin/controls.c:451
+msgid "Grouped input"
+msgstr ""
+
+#: src/bin/controls.c:463
+msgid "Close Terminal"
+msgstr ""
+
+#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#, c-format
+msgid "Could not create logging domain '%s'"
+msgstr ""
+
+#: src/bin/keyin.c:658
+msgid "Scrolling"
+msgstr ""
+
+#: src/bin/keyin.c:659
+msgid "Scroll one page up"
+msgstr ""
+
+#: src/bin/keyin.c:660
+msgid "Scroll one page down"
+msgstr ""
+
+#: src/bin/keyin.c:661
+msgid "Scroll one line up"
+msgstr ""
+
+#: src/bin/keyin.c:662
+msgid "Scroll one line down"
+msgstr ""
+
+#: src/bin/keyin.c:663
+msgid "Go to the top of the backlog"
+msgstr ""
+
+#: src/bin/keyin.c:664
+msgid "Reset scroll"
+msgstr ""
+
+#: src/bin/keyin.c:666
+msgid "Copy/Paste"
+msgstr ""
+
+#: src/bin/keyin.c:667
+msgid "Copy selection to Primary buffer"
+msgstr ""
+
+#: src/bin/keyin.c:668
+msgid "Copy selection to Clipboard buffer"
+msgstr ""
+
+#: src/bin/keyin.c:669
+msgid "Paste Primary buffer (highlight)"
+msgstr ""
+
+#: src/bin/keyin.c:670
+msgid "Paste Clipboard buffer (ctrl+c/v)"
+msgstr ""
+
+#: src/bin/keyin.c:672
+msgid "Splits/Tabs"
+msgstr ""
+
+#: src/bin/keyin.c:673
+msgid "Focus the previous terminal"
+msgstr ""
+
+#: src/bin/keyin.c:674
+msgid "Focus the next terminal"
+msgstr ""
+
+#: src/bin/keyin.c:675
+msgid "Focus the terminal above"
+msgstr ""
+
+#: src/bin/keyin.c:676
+msgid "Focus the terminal below"
+msgstr ""
+
+#: src/bin/keyin.c:677
+msgid "Focus the terminal on the left"
+msgstr ""
+
+#: src/bin/keyin.c:678
+msgid "Focus the terminal on the right"
+msgstr ""
+
+#: src/bin/keyin.c:679
+msgid "Split horizontally (new below)"
+msgstr ""
+
+#: src/bin/keyin.c:680
+msgid "Split vertically (new on right)"
+msgstr ""
+
+#: src/bin/keyin.c:681
+msgid "Create a new \"tab\""
+msgstr ""
+
+#: src/bin/keyin.c:682
+msgid "Close the focused terminal"
+msgstr ""
+
+#: src/bin/keyin.c:683
+msgid "Bring up \"tab\" switcher"
+msgstr ""
+
+#: src/bin/keyin.c:684
+msgid "Switch to terminal tab 1"
+msgstr ""
+
+#: src/bin/keyin.c:685
+msgid "Switch to terminal tab 2"
+msgstr ""
+
+#: src/bin/keyin.c:686
+msgid "Switch to terminal tab 3"
+msgstr ""
+
+#: src/bin/keyin.c:687
+msgid "Switch to terminal tab 4"
+msgstr ""
+
+#: src/bin/keyin.c:688
+msgid "Switch to terminal tab 5"
+msgstr ""
+
+#: src/bin/keyin.c:689
+msgid "Switch to terminal tab 6"
+msgstr ""
+
+#: src/bin/keyin.c:690
+msgid "Switch to terminal tab 7"
+msgstr ""
+
+#: src/bin/keyin.c:691
+msgid "Switch to terminal tab 8"
+msgstr ""
+
+#: src/bin/keyin.c:692
+msgid "Switch to terminal tab 9"
+msgstr ""
+
+#: src/bin/keyin.c:693
+msgid "Switch to terminal tab 10"
+msgstr ""
+
+#: src/bin/keyin.c:694
+msgid "Change title"
+msgstr ""
+
+#: src/bin/keyin.c:695 src/bin/keyin.c:696
+msgid "Toggle whether input goes to all visible terminals"
+msgstr ""
+
+#: src/bin/keyin.c:699
+msgid "Font size"
+msgstr ""
+
+#: src/bin/keyin.c:700
+msgid "Font size up 1"
+msgstr ""
+
+#: src/bin/keyin.c:701
+msgid "Font size down 1"
+msgstr ""
+
+#: src/bin/keyin.c:702
+msgid "Display big font size"
+msgstr ""
+
+#: src/bin/keyin.c:703
+msgid "Reset font size"
+msgstr ""
+
+#: src/bin/keyin.c:705
+msgid "Actions"
+msgstr ""
+
+#: src/bin/keyin.c:706
+msgid "Open a new terminal window"
+msgstr ""
+
+#: src/bin/keyin.c:707
+msgid "Toggle Fullscreen of the window"
+msgstr ""
+
+#: src/bin/keyin.c:708
+msgid "Display the history miniview"
+msgstr ""
+
+#: src/bin/keyin.c:709
+msgid "Display the command box"
+msgstr ""
+
+#: src/bin/main.c:400 src/bin/main.c:596
+msgid "Could not create window"
+msgstr ""
+
+#: src/bin/main.c:419 src/bin/main.c:607
+msgid "Could not create terminal widget"
+msgstr ""
+
+#: src/bin/main.c:454
+#, c-format
+msgid "(C) 2012-%d Carsten Haitzler and others"
+msgstr ""
+
+#: src/bin/main.c:456
+msgid "Terminal emulator written with Enlightenment Foundation Libraries"
+msgstr ""
+
+#: src/bin/main.c:460
+msgid "Use the named file as a background wallpaper"
+msgstr ""
+
+#: src/bin/main.c:462
+msgid "Change to directory for execution of terminal command"
+msgstr ""
+
+#: src/bin/main.c:464
+msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
+msgstr ""
+
+#: src/bin/main.c:466
+msgid "Use the named edje theme or path to theme file"
+msgstr ""
+
+#: src/bin/main.c:468
+msgid "Use the named color scheme"
+msgstr ""
+
+#: src/bin/main.c:470
+msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
+msgstr ""
+
+#: src/bin/main.c:472
+msgid "Set window name"
+msgstr ""
+
+#: src/bin/main.c:474
+msgid "Set window role"
+msgstr ""
+
+#: src/bin/main.c:476
+msgid "Set window title"
+msgstr ""
+
+#: src/bin/main.c:478
+msgid "Set icon name"
+msgstr ""
+
+#: src/bin/main.c:480
+msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
+msgstr ""
+
+#: src/bin/main.c:482
+msgid ""
+"Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
+"used multiple times. eg -S vhvv or --split hv More description available on "
+"the man page"
+msgstr ""
+
+#: src/bin/main.c:487
+msgid "Run the shell as a login shell"
+msgstr ""
+
+#: src/bin/main.c:489
+msgid "Set mute mode for video playback"
+msgstr ""
+
+#: src/bin/main.c:491
+msgid "Set cursor blink mode"
+msgstr ""
+
+#: src/bin/main.c:493
+msgid "Set visual bell mode"
+msgstr ""
+
+#: src/bin/main.c:495
+msgid "Go into the fullscreen mode from the start"
+msgstr ""
+
+#: src/bin/main.c:497
+msgid "Start iconified"
+msgstr ""
+
+#: src/bin/main.c:499
+msgid "Start borderless"
+msgstr ""
+
+#: src/bin/main.c:501
+msgid "Start as a override-redirect window"
+msgstr ""
+
+#: src/bin/main.c:503
+msgid "Start maximized"
+msgstr ""
+
+#: src/bin/main.c:505
+msgid "Terminology is run without a window manager"
+msgstr ""
+
+#: src/bin/main.c:507
+msgid "Do not exit when the command process exits"
+msgstr ""
+
+#: src/bin/main.c:509
+msgid "Force single executable if multi-instance is enabled"
+msgstr ""
+
+#: src/bin/main.c:511
+msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+msgstr ""
+
+#: src/bin/main.c:513
+msgid "Set scaling factor"
+msgstr ""
+
+#: src/bin/main.c:515
+msgid "Highlight links"
+msgstr ""
+
+#: src/bin/main.c:517
+msgid "Do not display wizard on start up"
+msgstr ""
+
+#: src/bin/main.c:543
+msgid "show program version"
+msgstr ""
+
+#: src/bin/main.c:546
+msgid "show copyright"
+msgstr ""
+
+#: src/bin/main.c:549
+msgid "show license"
+msgstr ""
+
+#: src/bin/main.c:552
+msgid "show this message"
+msgstr ""
+
+#: src/bin/main.c:649
+msgid "invalid argument found for option -S/--split. See --help"
+msgstr ""
+
+#: src/bin/main.c:902
+msgid "Could not initialize key bindings"
+msgstr ""
+
+#: src/bin/main.c:917
+msgid "Could not parse command line options"
+msgstr ""
+
+#: src/bin/main.c:941
+#, c-format
+msgid "option %s requires an argument!"
+msgstr ""
+
+#: src/bin/main.c:942
+msgid "invalid options found. See --help"
+msgstr ""
+
+#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/termpty.c:658
+#, c-format
+msgid "Function %s failed: %s"
+msgstr ""
+
+#: src/bin/media.c:1432
+msgid "Media visualizing is not supported"
+msgstr ""
+
+#: src/bin/options_background.c:163
+msgid "None"
+msgstr ""
+
+#: src/bin/options_background.c:503
+msgid "Source file is target file"
+msgstr ""
+
+#: src/bin/options_background.c:516
+msgid "Picture imported"
+msgstr ""
+
+#: src/bin/options_background.c:521
+msgid "Failed"
+msgstr ""
+
+#: src/bin/options_background.c:573 src/bin/options.c:221
+msgid "Background"
+msgstr ""
+
+#: src/bin/options_background.c:589
+msgid "Shine:"
+msgstr ""
+
+#: src/bin/options_background.c:613
+msgid "Translucent"
+msgstr ""
+
+#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#, c-format
+msgid "%1.0f%%"
+msgstr ""
+
+#: src/bin/options_background.c:644
+msgid "Select Path"
+msgstr ""
+
+#: src/bin/options_background.c:650
+msgid "System"
+msgstr ""
+
+#: src/bin/options_background.c:653
+msgid "User"
+msgstr ""
+
+#: src/bin/options_background.c:656
+msgid "Other"
+msgstr ""
+
+#: src/bin/options_background.c:698
+msgid "Click on a picture to use it as background"
+msgstr ""
+
+#: src/bin/options_behavior.c:63
+#, c-format
+msgid "%'d lines"
+msgstr ""
+
+#: src/bin/options_behavior.c:79
+#, c-format
+msgid "Scrollback (current memory usage: %'.2f%cB):"
+msgstr ""
+
+#: src/bin/options_behavior.c:217
+msgid "Default cursor:"
+msgstr ""
+
+#: src/bin/options_behavior.c:226
+msgid "Blinking Block"
+msgstr ""
+
+#: src/bin/options_behavior.c:245
+msgid "Steady Block"
+msgstr ""
+
+#: src/bin/options_behavior.c:265
+msgid "Blinking Underline"
+msgstr ""
+
+#: src/bin/options_behavior.c:285
+msgid "Steady Underline"
+msgstr ""
+
+#: src/bin/options_behavior.c:305
+msgid "Blinking Bar"
+msgstr ""
+
+#: src/bin/options_behavior.c:325
+msgid "Steady Bar"
+msgstr ""
+
+#: src/bin/options_behavior.c:365 src/bin/options.c:217
+msgid "Behavior"
+msgstr ""
+
+#: src/bin/options_behavior.c:385
+msgid "Show tabs"
+msgstr ""
+
+#: src/bin/options_behavior.c:388
+msgid "Scroll to bottom on new content"
+msgstr ""
+
+#: src/bin/options_behavior.c:389
+msgid "Scroll to bottom when a key is pressed"
+msgstr ""
+
+#: src/bin/options_behavior.c:395
+msgid "React to key presses"
+msgstr ""
+
+#: src/bin/options_behavior.c:402
+msgid "Audio Support for key presses <failure>DISABLED</failure>!"
+msgstr ""
+
+#: src/bin/options_behavior.c:406
+msgid "Visual Bell"
+msgstr ""
+
+#: src/bin/options_behavior.c:407
+msgid "Bell rings"
+msgstr ""
+
+#: src/bin/options_behavior.c:408
+msgid "Urgent Bell"
+msgstr ""
+
+#: src/bin/options_behavior.c:410
+msgid "Multiple instances, one process"
+msgstr ""
+
+#: src/bin/options_behavior.c:411
+msgid "Set TERM to xterm-256color"
+msgstr ""
+
+#: src/bin/options_behavior.c:412
+msgid "BackArrow sends Del (instead of BackSpace)"
+msgstr ""
+
+#: src/bin/options_behavior.c:413
+msgid "Start as login shell"
+msgstr ""
+
+#: src/bin/options_behavior.c:414
+msgid "Open new terminals in current working directory"
+msgstr ""
+
+#: src/bin/options_behavior.c:415
+msgid "Always show miniview"
+msgstr ""
+
+#: src/bin/options_behavior.c:416
+msgid "Enable special Terminology escape codes"
+msgstr ""
+
+#: src/bin/options_behavior.c:417
+msgid "Treat Emojis as double-width characters"
+msgstr ""
+
+#: src/bin/options_behavior.c:418
+msgid ""
+"When grouping input, do it on all terminals and not just the visible ones"
+msgstr ""
+
+#: src/bin/options_behavior.c:425
+msgid "Always open at size:"
+msgstr ""
+
+#: src/bin/options_behavior.c:435
+msgid "Set Current:"
+msgstr ""
+
+#: src/bin/options_behavior.c:446
+msgid "Width:"
+msgstr ""
+
+#: src/bin/options_behavior.c:468
+msgid "Height:"
+msgstr ""
+
+#: src/bin/options_behavior.c:527
+msgid ""
+"Set the time of the animation that<br>takes places during tab switches,"
+"<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
+msgstr ""
+
+#: src/bin/options_behavior.c:532
+msgid "Tab zoom/switch animation time:"
+msgstr ""
+
+#: src/bin/options_behavior.c:540 src/bin/options_behavior.c:541
+#: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
+#, c-format
+msgid "%1.1f s"
+msgstr ""
+
+#: src/bin/options.c:189
+msgid "Options"
+msgstr ""
+
+#: src/bin/options.c:218 src/bin/options_mouse.c:147
+msgid "Mouse"
+msgstr ""
+
+#: src/bin/options.c:219 src/bin/options_font.c:489
+msgid "Font"
+msgstr ""
+
+#: src/bin/options.c:220 src/bin/options_theme.c:168
+msgid "Theme"
+msgstr ""
+
+#: src/bin/options.c:222
+msgid "Colors"
+msgstr ""
+
+#: src/bin/options.c:223
+msgid "Keys"
+msgstr ""
+
+#: src/bin/options.c:224 src/bin/options_elm.c:109
+msgid "Toolkit"
+msgstr ""
+
+#: src/bin/options.c:235
+msgid "Temporary"
+msgstr ""
+
+#: src/bin/options_colors.c:99
+msgid "Open website"
+msgstr ""
+
+#: src/bin/options_colors.c:131
+#, c-format
+msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
+msgstr ""
+
+#: src/bin/options_colors.c:226
+msgid "Color schemes"
+msgstr ""
+
+#: src/bin/options_colors.c:265
+#, c-format
+msgid "Using theme <hilight>%s</hilight>"
+msgstr ""
+
+#: src/bin/options_elm.c:122
+#, c-format
+msgid ""
+"<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
+"toolkit configuration settings can be accessed by running <keyword>%s</"
+"keyword>"
+msgstr ""
+
+#: src/bin/options_elm.c:134
+#, c-format
+msgid "Launch %s"
+msgstr ""
+
+#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+msgid "Scale"
+msgstr ""
+
+#: src/bin/options_elm.c:172 src/bin/win.c:433
+msgid "Select preferred size so that this text is readable"
+msgstr ""
+
+#: src/bin/options_elm.c:180
+msgid ""
+"The scale configuration can also be changed through <hilight>elementary</"
+"hilight>'s configuration panel"
+msgstr ""
+
+#: src/bin/options_font.c:540
+msgid "Search font"
+msgstr ""
+
+#: src/bin/options_font.c:568
+msgid "Bitmap"
+msgstr ""
+
+#: src/bin/options_font.c:609
+msgid "Standard"
+msgstr ""
+
+#: src/bin/options_font.c:671
+msgid "Display bold and italic in the terminal"
+msgstr ""
+
+#: src/bin/options_keys.c:66
+msgid "Ctrl+"
+msgstr ""
+
+#: src/bin/options_keys.c:67
+msgid "Alt+"
+msgstr ""
+
+#: src/bin/options_keys.c:68
+msgid "Shift+"
+msgstr ""
+
+#: src/bin/options_keys.c:69
+msgid "Win+"
+msgstr ""
+
+#: src/bin/options_keys.c:70
+msgid "Meta+"
+msgstr ""
+
+#: src/bin/options_keys.c:71
+msgid "Hyper+"
+msgstr ""
+
+#: src/bin/options_keys.c:82
+msgid "Delete"
+msgstr ""
+
+#: src/bin/options_keys.c:270
+msgid "Please press key sequence"
+msgstr ""
+
+#: src/bin/options_keys.c:386
+msgid "Key Bindings"
+msgstr ""
+
+#: src/bin/options_keys.c:458
+msgid "Reset bindings"
+msgstr ""
+
+#: src/bin/options_mouse.c:167
+msgid "Focus split under the Mouse"
+msgstr ""
+
+#: src/bin/options_mouse.c:168
+msgid "Focus-related visuals"
+msgstr ""
+
+#: src/bin/options_mouse.c:174
+msgid "Auto hide the mouse cursor when idle:"
+msgstr ""
+
+#: src/bin/options_mouse.c:204
+msgid "Active Links:"
+msgstr ""
+
+#: src/bin/options_mouse.c:208
+msgid "On emails"
+msgstr ""
+
+#: src/bin/options_mouse.c:209
+msgid "On file paths"
+msgstr ""
+
+#: src/bin/options_mouse.c:210
+msgid "On URLs"
+msgstr ""
+
+#: src/bin/options_mouse.c:211
+msgid "On colors"
+msgstr ""
+
+#: src/bin/options_mouse.c:212
+msgid "Based on escape codes"
+msgstr ""
+
+#: src/bin/options_mouse.c:213
+msgid "Gravatar integration"
+msgstr ""
+
+#: src/bin/options_mouse.c:215
+msgid "Drag & drop links"
+msgstr ""
+
+#: src/bin/options_mouse.c:221
+msgid "Inline if possible"
+msgstr ""
+
+#: src/bin/options_mouse.c:265
+msgid "E-mail:"
+msgstr ""
+
+#: src/bin/options_mouse.c:269
+msgid "URL (Images):"
+msgstr ""
+
+#: src/bin/options_mouse.c:270
+msgid "URL (Video):"
+msgstr ""
+
+#: src/bin/options_mouse.c:271
+msgid "URL (All):"
+msgstr ""
+
+#: src/bin/options_mouse.c:274
+msgid "Local (Images):"
+msgstr ""
+
+#: src/bin/options_mouse.c:275
+msgid "Local (Video):"
+msgstr ""
+
+#: src/bin/options_mouse.c:276
+msgid "Local (All):"
+msgstr ""
+
+#: src/bin/options_theme.c:187
+#, c-format
+msgid "Using colorscheme <hilight>%s</hilight>"
+msgstr ""
+
+#: src/bin/termcmd.c:84
+#, c-format
+msgid "Unknown font command: %s"
+msgstr ""
+
+#: src/bin/termcmd.c:118
+#, c-format
+msgid "Unknown grid size command: %s"
+msgstr ""
+
+#: src/bin/termcmd.c:146
+#, c-format
+msgid "Background file could not be read: %s"
+msgstr ""
+
+#: src/bin/termcmd.c:175
+#, c-format
+msgid "Unknown command: %s"
+msgstr ""
+
+#: src/bin/termio.c:447
+#, c-format
+msgid "Could not get working directory of pid %i: %s"
+msgstr ""
+
+#: src/bin/termio.c:462
+#, c-format
+msgid "Could not load working directory %s: %s"
+msgstr ""
+
+#: src/bin/termio.c:1190
+#, c-format
+msgid "unsupported selection format '%s'"
+msgstr ""
+
+#: src/bin/termio.c:1350
+msgid "Preview"
+msgstr ""
+
+#: src/bin/termio.c:1360
+msgid "Copy relative path"
+msgstr ""
+
+#: src/bin/termio.c:1362
+msgid "Copy full path"
+msgstr ""
+
+#: src/bin/termio.c:2773
+msgid "Open as URL"
+msgstr ""
+
+#: src/bin/termio.c:4177
+msgid "Could not allocate termpty"
+msgstr ""
+
+#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#, c-format
+msgid "memerr: %s"
+msgstr ""
+
+#: src/bin/termpty.c:225
+#, c-format
+msgid "Size set ioctl failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:361
+#, c-format
+msgid "Could not write to file descriptor %d: %s"
+msgstr ""
+
+#: src/bin/termpty.c:618
+#, c-format
+msgid "Could not find shell, falling back to %s"
+msgstr ""
+
+#: src/bin/termpty.c:665
+#, c-format
+msgid "open() of pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:672 src/bin/termpty.c:678
+#, c-format
+msgid "fcntl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:687
+#, c-format
+msgid "ioctl() on pty '%s' failed: %s"
+msgstr ""
+
+#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
+#, c-format
+msgid "Could not change current directory to '%s': %s"
+msgstr ""
+
+#: src/bin/theme.c:91
+#, c-format
+msgid "Could not load any theme for group=%s: %s"
+msgstr ""
+
+#: src/bin/win.c:425
+msgid "Done"
+msgstr ""
+
+#: src/bin/win.c:441
+msgid ""
+"The scale configuration can be changed in the Settings (right click on the "
+"terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
+"keyword>"
+msgstr ""
+
+#: src/bin/win.c:2336
+msgid "Ecore IMF failed"
+msgstr ""
+
+#: src/bin/win.c:6238
+msgid "Ok"
+msgstr ""
+
+#: src/bin/win.c:6243
+msgid "Cancel"
+msgstr ""
+
+#: src/bin/win.c:7432
+msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
+msgstr ""
