@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <fnmatch.h>
 #include "private.h"
 #include "tycommon.h"
 
@@ -471,7 +470,7 @@ filematch(const char *name, const Cmatch *m)
 
    for (i = 0; m[i].match; i++)
      {
-        if (!fnmatch(m[i].match, name, 0))
+        if (eina_fnmatch(m[i].match, name, 0))
           return m[i].icon;
      }
    return NULL;
@@ -505,7 +504,7 @@ printmatch(const char *name, const Cmatch *m)
 
    for (i = 0; m[i].match; i++)
      {
-        if (!fnmatch(m[i].match, name, 0))
+        if (eina_fnmatch(m[i].match, name, 0))
           {
              if (m[i].fr <= 5) colorprint(CUBE, FG, m[i].fr, m[i].fg, m[i].fb);
              if (m[i].br <= 5) colorprint(CUBE, BG, m[i].br, m[i].bg, m[i].bb);
