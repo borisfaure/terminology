@@ -4,13 +4,14 @@
 # <boris@fau.re>, 2014.
 # similar <similar@orange.fr>, 2019, 2020.
 # Philippe Jean Guillaumie <similar@orange.fr>, 2021.
+# anthi <thetechrobo@pm.me>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2021-03-15 19:02+0000\n"
-"Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
+"PO-Revision-Date: 2021-06-01 18:34+0000\n"
+"Last-Translator: anthi <thetechrobo@pm.me>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
 "Language: fr\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.5.2-dev\n"
+"X-Generator: Weblate 4.7-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
@@ -93,7 +94,7 @@ msgstr "Coller"
 
 #: src/bin/controls.c:436
 msgid "Settings"
-msgstr "Configuration"
+msgstr "Réglages"
 
 #: src/bin/controls.c:442
 msgid "About"
@@ -307,7 +308,7 @@ msgstr "Impossible de créer le widget du terminal"
 #: src/bin/main.c:454
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "© 2012-%d Carsten Haitzler et coll."
+msgstr "© 2012-%d Carsten Haitzler et contributeurs"
 
 #: src/bin/main.c:456
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
