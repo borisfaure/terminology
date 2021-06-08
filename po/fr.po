@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2021-06-01 18:34+0000\n"
-"Last-Translator: anthi <thetechrobo@pm.me>\n"
+"PO-Revision-Date: 2021-06-08 13:34+0000\n"
+"Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
 "Language: fr\n"
@@ -49,12 +49,12 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Pourquoi les terminaux devraient-ils être ennuyeux ?"
-"<br><br>Ce terminal a été écrit pour Enlightenment, afin d'utiliser les EFL "
+"<b>Terminology %s</b><br>Pourquoi les terminaux devraient-ils être ennuyeux "
+"?<br><br>Ce terminal a été écrit pour Enlightenment, afin d'utiliser les EFL "
 "et repousser les limites de ce que devrait être un terminal moderne. Nous "
-"espérons que vous l'apprécierez.<br><br>Copyright © 2012-%d par :<br><br>"
-"%s<br><br>Distribué sous licence BSD 2-clauses détaillée ci-dessous :<br><br>"
-"%s"
+"espérons que vous l'apprécierez.<br><br>Copyright © 2012-%d par :"
+"<br><br>%s<br><br>Distribué sous licence BSD à 2 clauses détaillée ci-"
+"dessous :<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -94,7 +94,7 @@ msgstr "Coller"
 
 #: src/bin/controls.c:436
 msgid "Settings"
-msgstr "Réglages"
+msgstr "Configuration"
 
 #: src/bin/controls.c:442
 msgid "About"
@@ -312,9 +312,7 @@ msgstr "© 2012-%d Carsten Haitzler et contributeurs"
 
 #: src/bin/main.c:456
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr ""
-"Émulateur de terminal écrit avec les bibliothèques Enlightenment Foundation "
-"Libraries"
+msgstr "Émulateur de terminal écrit avec les Enlightenment Foundation Libraries"
 
 #: src/bin/main.c:460
 msgid "Use the named file as a background wallpaper"
@@ -762,8 +760,8 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"Les paramètres d'échelle sont également modifiables en passant par le "
-"panneau Configuration pour <hilight>Elementary</hilight>"
+"Les paramètres d'échelle sont également modifiables via la "
+"<hilight>Configuration pour Elementary</hilight>"
 
 #: src/bin/options_font.c:540
 msgid "Search font"
@@ -811,7 +809,7 @@ msgstr "Supprimer"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr "Veuillez composer la séquence au clavier"
+msgstr "Composez la séquence au clavier"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
