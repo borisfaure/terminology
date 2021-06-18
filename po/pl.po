@@ -3,25 +3,29 @@
 # Fervi <lordfervi@protonmail.com>, 2019.
 # Warning, the translation may contain errors. If you notice any, report it so that it can be corrected.
 # Ostrzeżenie, tłumaczenie może zawierać błędy. Jeśli jakieś zauważysz, zgłoś to, by można było je poprawić.
-#
+# gnu-ewm <gnu.ewm@protonmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-14 15:20+0100\n"
-"PO-Revision-Date: 2019-09-02 15:30+0200\n"
-"Last-Translator: Fervi <lordfervi@protonmail.com>\n"
-"Language-Team: Polish\n"
-"Language: \n"
+"PO-Revision-Date: 2021-06-18 11:33+0000\n"
+"Last-Translator: gnu-ewm <gnu.ewm@protonmail.com>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
+"terminology/pl/>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.7\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
 #: src/bin/termio.c:1291
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopiuj"
+msgstr "Kopiuj '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
 msgid "Open"
@@ -29,11 +33,11 @@ msgstr "Otwórz"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "Kanał YouTube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -52,7 +56,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Programiści Terminology"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -293,9 +297,8 @@ msgid "Display the command box"
 msgstr "Wyświetl polę komend"
 
 #: src/bin/main.c:400 src/bin/main.c:596
-#, fuzzy
 msgid "Could not create window"
-msgstr "Nie mogę stworzyć okna"
+msgstr "Nie można stworzyć okna"
 
 #: src/bin/main.c:419 src/bin/main.c:607
 #, fuzzy
@@ -511,11 +514,11 @@ msgstr "Wizualizacja mediów nie jest wspierana"
 
 #: src/bin/options_background.c:163
 msgid "None"
-msgstr ""
+msgstr "Brak"
 
 #: src/bin/options_background.c:503
 msgid "Source file is target file"
-msgstr ""
+msgstr "Plik źródłowy jest plikiem docelowym"
 
 #: src/bin/options_background.c:516
 msgid "Picture imported"
@@ -540,11 +543,11 @@ msgstr ""
 #: src/bin/options_background.c:624 src/bin/options_background.c:625
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:644
 msgid "Select Path"
-msgstr ""
+msgstr "Wybierz Ścieżkę"
 
 #: src/bin/options_background.c:650
 msgid "System"
@@ -552,15 +555,15 @@ msgstr ""
 
 #: src/bin/options_background.c:653
 msgid "User"
-msgstr ""
+msgstr "Użytkownik"
 
 #: src/bin/options_background.c:656
 msgid "Other"
-msgstr ""
+msgstr "Inne"
 
 #: src/bin/options_background.c:698
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Kliknij na obraz, aby użyć go jako obraz tła"
 
 #: src/bin/options_behavior.c:63
 #, c-format
@@ -855,9 +858,8 @@ msgid "Auto hide the mouse cursor when idle:"
 msgstr ""
 
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
-msgstr "Aktywne linki"
+msgstr "Aktywne linki:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
