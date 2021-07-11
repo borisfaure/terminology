@@ -50,6 +50,8 @@ _set_instance_theme(Ipc_Instance *inst)
    inst->config->temporary = EINA_TRUE;
 }
 
+#define IPC_INSTANCE_OPT_UNSET  0xff
+
 static void
 _configure_instance(Ipc_Instance *inst)
 {
@@ -118,7 +120,7 @@ _configure_instance(Ipc_Instance *inst)
         config->temporary = EINA_TRUE;
      }
 
-   if (inst->login_shell != 0xff)
+   if (inst->login_shell != IPC_INSTANCE_OPT_UNSET)
      {
         inst->config->login_shell = inst->login_shell;
         inst->config->temporary = EINA_TRUE;
@@ -130,22 +132,22 @@ _configure_instance(Ipc_Instance *inst)
         inst->config->xterm_256color = EINA_TRUE;
         inst->config->temporary = EINA_TRUE;
      }
-   if (inst->video_mute != 0xff)
+   if (inst->video_mute != IPC_INSTANCE_OPT_UNSET)
      {
         config->mute = inst->video_mute;
         config->temporary = EINA_TRUE;
      }
-   if (inst->cursor_blink != 0xff)
+   if (inst->cursor_blink != IPC_INSTANCE_OPT_UNSET)
      {
         config->disable_cursor_blink = !inst->cursor_blink;
         config->temporary = EINA_TRUE;
      }
-   if (inst->visual_bell != 0xff)
+   if (inst->visual_bell != IPC_INSTANCE_OPT_UNSET)
      {
         config->disable_visual_bell = !inst->visual_bell;
         config->temporary = EINA_TRUE;
      }
-   if (inst->active_links != 0xff)
+   if (inst->active_links != IPC_INSTANCE_OPT_UNSET)
      {
         config->active_links = !!inst->active_links;
         config->active_links_email = inst->config->active_links;
@@ -809,11 +811,11 @@ elm_main(int argc, char **argv)
    Eina_Bool cmd_options = EINA_FALSE;
    double scale = -1.0; /* unset */
    Ipc_Instance instance = {
-        .login_shell = 0xff, /* unset */
-        .active_links = 0xff, /* unset */
-        .video_mute = 0xff, /* unset */
-        .cursor_blink = 0xff, /* unset */
-        .visual_bell = 0xff, /* unset */
+        .login_shell = IPC_INSTANCE_OPT_UNSET,
+        .active_links = IPC_INSTANCE_OPT_UNSET,
+        .video_mute = IPC_INSTANCE_OPT_UNSET,
+        .cursor_blink = IPC_INSTANCE_OPT_UNSET,
+        .visual_bell = IPC_INSTANCE_OPT_UNSET,
         .startup_id = getenv("DESKTOP_STARTUP_ID"),
         .w = 1,
         .h = 1,
