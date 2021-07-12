@@ -125,7 +125,6 @@ _configure_instance(Ipc_Instance *inst)
         inst->config->login_shell = inst->login_shell;
         inst->config->temporary = EINA_TRUE;
      }
-   inst->login_shell = inst->config->login_shell;
 
    if (inst->xterm_256color)
      {
@@ -334,7 +333,8 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-g";
         nargv[i++] = geom;
      }
-   if (inst->login_shell)
+   if ((inst->login_shell != IPC_INSTANCE_OPT_UNSET)
+       && (inst->login_shell != 0))
      {
         nargv[i++] = "-l";
      }
@@ -370,7 +370,8 @@ main_ipc_new(Ipc_Instance *inst)
      {
         nargv[i++] = "-2";
      }
-   if (inst->active_links)
+   if ((inst->active_links != IPC_INSTANCE_OPT_UNSET)
+       && (inst->active_links != 0))
      {
         nargv[i++] = "--active-links";
      }
@@ -379,15 +380,18 @@ main_ipc_new(Ipc_Instance *inst)
         nargv[i++] = "-e";
         nargv[i++] = (char *)inst->cmd;
      }
-   if (inst->video_mute)
+   if ((inst->video_mute != IPC_INSTANCE_OPT_UNSET)
+       && (inst->video_mute != 0))
      {
         nargv[i++] = "-m";
      }
-   if (inst->cursor_blink)
+   if ((inst->cursor_blink != IPC_INSTANCE_OPT_UNSET)
+       && (inst->cursor_blink != 0))
      {
         nargv[i++] = "-c";
      }
-   if (inst->visual_bell)
+   if ((inst->visual_bell != IPC_INSTANCE_OPT_UNSET)
+       && (inst->visual_bell != 0))
      {
         nargv[i++] = "-G";
      }
@@ -800,6 +804,7 @@ normal_start:
 exit:
    return EINA_TRUE;
 }
+
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
