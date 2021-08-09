@@ -68,6 +68,7 @@ struct _Termio
    Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;
+   int font_size_scale;
    Evas_Object *self;
    Evas_Object *event;
    Term *term;

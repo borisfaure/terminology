@@ -213,8 +213,7 @@ termio_scroll_delta(Evas_Object *obj, int delta, int by_page)
           delta *= by;
      }
    sd->scroll += delta;
-   if (delta <= 0 && sd->scroll < 0)
-       sd->scroll = 0;
+   if ((delta <= 0) && (sd->scroll < 0)) sd->scroll = 0;
    termio_smart_update_queue(sd);
    miniview_position_offset(term_miniview_get(sd->term), -delta, EINA_TRUE);
 }
@@ -365,11 +364,15 @@ _font_size_set(Evas_Object *obj, int size)
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config;
    EINA_SAFETY_ON_NULL_RETURN(sd);
+   int font_size_scale;
 
    config = sd->config;
 
    if (size < 5) size = 5;
    else if (size > 100) size = 100;
+   font_size_scale = ELM_SCALE_SIZE(size);
+   if (sd->font_size_scale == font_size_scale) return;
+   sd->font_size_scale = font_size_scale;
    if (config)
      {
         config->temporary = EINA_TRUE;
@@ -3561,8 +3564,7 @@ _smart_pty_change(void *data)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
 // if scroll to bottom on updates
-   if (sd->jump_on_change)
-     sd->scroll = 0;
+   if (sd->jump_on_change) sd->scroll = 0;
    termio_smart_update_queue(sd);
 }
 

@@ -2190,8 +2190,7 @@ termio_internal_mouse_wheel(Termio *sd,
         else
           {
              sd->scroll -= (ev->z * 4);
-             if (sd->scroll < 0)
-               sd->scroll = 0;
+             if (sd->scroll < 0) sd->scroll = 0;
              termio_smart_update_queue(sd);
              miniview_position_offset(term_miniview_get(sd->term),
                                       ev->z * 4, EINA_TRUE);
