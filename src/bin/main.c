@@ -1049,6 +1049,9 @@ elm_main(int argc, char **argv)
    elm_theme_overlay_add(NULL, theme_path_get("default"));
    elm_theme_overlay_add(NULL, config_theme_path_get(instance.config));
 
+   if (instance.login_shell == IPC_INSTANCE_OPT_UNSET)
+     instance.login_shell = instance.config->login_shell;
+
    if ((!single) && (instance.config->multi_instance))
      {
         char cwdbuf[4096];
