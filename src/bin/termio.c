@@ -8,6 +8,7 @@
 #include "termiolink.h"
 #include "termpty.h"
 #include "backlog.h"
+#include "extns.h"
 #include "termptyops.h"
 #include "termcmd.h"
 #include "termptydbl.h"
@@ -4044,6 +4045,7 @@ _smart_cb_drag_pos(void *_data EINA_UNUSED,
    DBG("dnd at %i %i act:%i", x, y, action);
 }
 
+
 static Eina_Bool
 _smart_cb_drop(void *data,
                Evas_Object *_o EINA_UNUSED,
@@ -4051,53 +4053,91 @@ _smart_cb_drop(void *data,
 {
    Evas_Object *obj = data;
    Termio *sd = evas_object_smart_data_get(obj);
+   size_t len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_TRUE);
-   if (ev->action == ELM_XDND_ACTION_COPY)
+   if (ev->action != ELM_XDND_ACTION_COPY)
+     return EINA_TRUE;
+
+   if (strchr(ev->data, '\n'))
      {
-        if (strchr(ev->data, '\n'))
+        char *buf = alloca(strlen(ev->data) + 1);
+        const char *p = ev->data;
+        while (p)
           {
-             char *tb = malloc(strlen(ev->data) + 1);
-             if (tb)
+             char *new_line = strchr(p, '\n');
+             char *carriage_return = strchr(p, '\r');
+             if (new_line && carriage_return)
                {
-                  char *p;
-                  for (p = ev->data; p;)
+                  if (carriage_return < new_line)
+                    new_line = carriage_return;
+               }
+             else if (!new_line)
+               new_line = carriage_return;
+             if (new_line)
+               {
+                  strncpy(buf, p, new_line - p);
+                  len = new_line - p;
+                  buf[len] = '\0';
+                  p = new_line;
+                  while ((*p) && (isspace(*p)))
+                    p++;
+                  if (buf[0])
                     {
-                       char *p2, *p3;
-                       p2 = strchr(p, '\n');
-                       p3 = strchr(p, '\r');
-                       if (p2 && p3)
-                         {
-                            if (p3 < p2) p2 = p3;
-                         }
-                       else if (!p2) p2 = p3;
-                       if (p2)
-                         {
-                            strncpy(tb, p, p2 - p);
-                            tb[p2 - p] = 0;
-                            p = p2;
-                            while ((*p) && (isspace(*p))) p++;
-                            if (strlen(tb) > 0)
-                              evas_object_smart_callback_call
-                              (obj, "popup,queue", tb);
-                         }
+                       if (extn_is_media(buf, len))
+                         evas_object_smart_callback_call(obj, "popup,queue", buf);
                        else
                          {
-                            strcpy(tb, p);
-                            if (strlen(tb) > 0)
-                              evas_object_smart_callback_call
-                              (obj, "popup,queue", tb);
-                            break;
+                            if (sd->pty->bracketed_paste)
+                              termpty_write(sd->pty, "\x1b[200~", sizeof("\x1b[200~") - 1);
+
+                            termpty_write(sd->pty, buf, len);
+
+                            if (sd->pty->bracketed_paste)
+                              termpty_write(sd->pty, "\x1b[201~", sizeof("\x1b[201~") - 1);
                          }
                     }
-                  free(tb);
+               }
+             else
+               {
+                  if (*p)
+                    {
+                       len = strlen(p);
+                       strncpy(buf, p, len);
+                       buf[len] = '\0';
+                       if (extn_is_media(buf, len))
+                         evas_object_smart_callback_call(obj, "popup,queue", buf);
+                       else
+                         {
+                            if (sd->pty->bracketed_paste)
+                              termpty_write(sd->pty, "\x1b[200~", sizeof("\x1b[200~") - 1);
+
+                            termpty_write(sd->pty, buf, len);
+
+                            if (sd->pty->bracketed_paste)
+                              termpty_write(sd->pty, "\x1b[201~", sizeof("\x1b[201~") - 1);
+                         }
+                    }
+                  break;
                }
           }
-        else
-          evas_object_smart_callback_call(obj, "popup", ev->data);
      }
    else
-     termpty_write(sd->pty, ev->data, ev->len);
+     {
+        len = strlen(ev->data);
+        if (extn_is_media(ev->data, len))
+          evas_object_smart_callback_call(obj, "popup", ev->data);
+        else
+          {
+             if (sd->pty->bracketed_paste)
+               termpty_write(sd->pty, "\x1b[200~", sizeof("\x1b[200~") - 1);
+
+             termpty_write(sd->pty, ev->data, len);
+
+             if (sd->pty->bracketed_paste)
+               termpty_write(sd->pty, "\x1b[201~", sizeof("\x1b[201~") - 1);
+          }
+     }
    return EINA_TRUE;
 }
 
