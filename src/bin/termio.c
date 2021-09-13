@@ -788,7 +788,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         escaped = ecore_file_escape_name(path);
         if (escaped)
           {
-             Media_Type type = media_src_type_get(path);
+             size_t len = strlen(path);
+             Media_Type type = media_src_type_get(path, len);
              if (may_inline && _should_inline(obj))
                {
                   if ((type == MEDIA_TYPE_IMG) ||
@@ -839,7 +840,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         escaped = ecore_file_escape_name(s);
         if (escaped)
           {
-             Media_Type type = media_src_type_get(link);
+             size_t len = strlen(link);
+             Media_Type type = media_src_type_get(link, len);
              if (may_inline && _should_inline(obj))
                {
                   evas_object_smart_callback_call(obj, "popup", NULL);
@@ -1345,7 +1347,8 @@ _cb_link_down(void *data,
 
              if (sd->config->helper.inline_please)
                {
-                  Media_Type type = media_src_type_get(raw_link);
+                  size_t len = strlen(raw_link);
+                  Media_Type type = media_src_type_get(raw_link, len);
 
                   if ((type == MEDIA_TYPE_IMG) ||
                       (type == MEDIA_TYPE_SCALE) ||
@@ -1820,7 +1823,7 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
      {
         if (blk->link)
           {
-             Media_Type type = media_src_type_get(blk->link);
+             Media_Type type = media_src_type_get(blk->link, strlen(blk->link));
              Config *config = termio_config_get(data);
 
              if (config)
@@ -2429,7 +2432,7 @@ _block_media_activate(Evas_Object *obj, Termblock *blk)
    else
      media |= MEDIA_RECOVER | MEDIA_SAVE;
 
-   type = media_src_type_get(blk->path);
+   type = media_src_type_get(blk->path, strlen(blk->path));
    blk->obj = media_add(obj, blk->path, sd->config, media, type);
 
    if (type == MEDIA_TYPE_MOV)

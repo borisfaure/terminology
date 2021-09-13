@@ -185,7 +185,7 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
         if (extn_matches(item->path, len, extn_edj))
           return media_add(obj, item->path, config,
                            MEDIA_BG, MEDIA_TYPE_EDJE);
-        type = media_src_type_get(item->path);
+        type = media_src_type_get(item->path, len);
         return media_add(obj, item->path, config, MEDIA_THUMB, type);
      }
    else

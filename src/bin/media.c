@@ -1501,14 +1501,14 @@ media_get(const Evas_Object *obj)
 }
 
 Media_Type
-media_src_type_get(const char *src)
+media_src_type_get(const char *src, size_t len)
 {
    Media_Type type = MEDIA_TYPE_UNKNOWN;
 
-   if      (_is_fmt(src, extn_img))   type = MEDIA_TYPE_IMG;
-   else if (_is_fmt(src, extn_scale)) type = MEDIA_TYPE_SCALE;
-   else if (_is_fmt(src, extn_edj))   type = MEDIA_TYPE_EDJE;
-   else if (_is_fmt(src, extn_mov))   type = MEDIA_TYPE_MOV;
+   if      (extn_matches(src, len, extn_img))   type = MEDIA_TYPE_IMG;
+   else if (extn_matches(src, len, extn_scale)) type = MEDIA_TYPE_SCALE;
+   else if (extn_matches(src, len, extn_edj))   type = MEDIA_TYPE_EDJE;
+   else if (extn_matches(src, len, extn_mov))   type = MEDIA_TYPE_MOV;
    return type;
 }
 

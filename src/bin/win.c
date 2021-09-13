@@ -5749,8 +5749,9 @@ _popmedia_unknown(Term *term, const char *src, Eina_Bool from_user_interaction)
 {
    Media_Type type;
    Config *config = termio_config_get(term->termio);
+   size_t len = strlen(src);
 
-   type = media_src_type_get(src);
+   type = media_src_type_get(src, len);
    if (type == MEDIA_TYPE_UNKNOWN)
      {
 #ifdef HAVE_ECORE_CON_URL_HEAD
@@ -6907,7 +6908,8 @@ _term_media_update(Term *term, const Config *config)
                                             _cb_media_del);
              evas_object_del(term->media);
           }
-        type = media_src_type_get(config->background);
+        type = media_src_type_get(config->background,
+                                  strlen(config->background));
         term->media = o = media_add(term->wn->win,
                                     config->background, config,
                                     MEDIA_BG, type);

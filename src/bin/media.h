@@ -36,7 +36,7 @@ void media_volume_set(Evas_Object *obj, double vol);
 void media_visualize_set(Evas_Object *obj, Eina_Bool visualize);
 void media_stop(Evas_Object *obj);
 const char *media_get(const Evas_Object *obj);
-Media_Type media_src_type_get(const char *src);
+Media_Type media_src_type_get(const char *src, size_t len);
 Evas_Object *media_control_get(const Evas_Object *obj);
 void media_unknown_handle(const char *handler, const char *src);
 
