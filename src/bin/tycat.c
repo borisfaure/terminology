@@ -66,21 +66,6 @@ scaleterm(int w, int h, int *iw, int *ih)
      }
 }
 
-static const char *
-is_fmt(const char *f, const char **extn)
-{
-   int i, len;
-
-   len = strlen(f);
-   for (i = 0; extn[i]; i++)
-     {
-        int l = strlen(extn[i]);
-        if (len < l) continue;
-        if (!strcasecmp(extn[i], f + len - l)) return extn[i];
-     }
-   return NULL;
-}
-
 static void
 prnt(const char *path, int w, int h, int mode)
 {
@@ -142,16 +127,16 @@ timeout_cb(void *data)
 }
 
 static int
-handle_image(char *rp)
+handle_image(const char *rp, size_t len)
 {
    Evas_Object *o;
    int w = 0, h = 0;
    int iw = 0, ih = 0;
    int r = -1;
 
-   if (!is_fmt(rp, extn_img) &&
-       !is_fmt(rp, extn_scale) &&
-       !is_fmt(rp, extn_mov))
+   if (!extn_matches(rp, len, extn_img) &&
+       !extn_matches(rp, len, extn_scale) &&
+       !extn_matches(rp, len, extn_mov))
      return -1;
 
    o = evas_object_image_add(evas);
@@ -170,13 +155,13 @@ handle_image(char *rp)
 }
 
 static int
-handle_edje(char *rp)
+handle_edje(const char *rp, size_t len)
 {
    Evas_Object *o;
    int iw = 0, ih = 0;
    int r = -1;
 
-   if (!is_fmt(rp, extn_edj)) return -1;
+   if (!extn_matches(rp, len, extn_edj)) return -1;
 
    o = edje_object_add(evas);
    if (edje_object_file_set
@@ -240,12 +225,12 @@ done:
 }
 
 static int
-handle_video(char *rp)
+handle_video(const char *rp, size_t len)
 {
    Evas_Object *o;
 
-   if (!is_fmt(rp, extn_aud) &&
-       !is_fmt(rp, extn_mov))
+   if (!extn_matches(rp, len, extn_aud) &&
+       !extn_matches(rp, len, extn_mov))
      return -1;
 
    o = emotion_object_add(evas);
@@ -274,8 +259,9 @@ static Eina_Bool
 handle_file(void *data)
 {
    Eina_List **file_q = data;
+   size_t len;
 
-   int (*handlers[])(char *rp) = {
+   int (*handlers[])(const char *rp, size_t len) = {
      handle_image,
      handle_edje,
      handle_video,
@@ -294,10 +280,11 @@ handle_file(void *data)
    rp = eina_list_data_get(*file_q);
    *file_q = eina_list_remove_list(*file_q, *file_q);
    if (!rp) return ECORE_CALLBACK_RENEW;
+   len = strlen(rp);
 
    for (i = 0; handlers[i]; i++)
      {
-        if (handlers[i](rp) == 0) break;
+        if (handlers[i](rp, len) == 0) break;
      }
    free(rp);
 
