@@ -180,14 +180,11 @@ _grid_content_get(void *data, Evas_Object *obj, const char *part)
 
    if (item->path)
      {
-        int i;
         Media_Type type;
-        for (i = 0; extn_edj[i]; i++)
-          {
-             if (eina_str_has_extension(item->path, extn_edj[i]))
-               return media_add(obj, item->path, config,
-                                MEDIA_BG, MEDIA_TYPE_EDJE);
-          }
+        size_t len = strlen(item->path);
+        if (extn_matches(item->path, len, extn_edj))
+          return media_add(obj, item->path, config,
+                           MEDIA_BG, MEDIA_TYPE_EDJE);
         type = media_src_type_get(item->path);
         return media_add(obj, item->path, config, MEDIA_THUMB, type);
      }
@@ -277,11 +274,8 @@ _rec_read_directorys(Background_Ctx *ctx, Eina_List *list,
 {
    Eina_List *childs = ecore_file_ls(root_path);
    char *file_name, path[PATH_MAX];
-   int i, j;
    Background_Item *item;
-   const char **extns[5] =
-   { extn_img, extn_scale, extn_edj, extn_mov, NULL };
-   const char **ex;
+   const char **extns[5] = { extn_img, extn_scale, extn_edj, extn_mov, NULL };
    Insert_Gen_Grid_Item_Notify *notify;
 
 
@@ -291,33 +285,31 @@ _rec_read_directorys(Background_Ctx *ctx, Eina_List *list,
         snprintf(path, PATH_MAX, "%s/%s", root_path, file_name);
         if ((!ecore_file_is_dir(path)) && (file_name[0] != '.'))
           {
+             int i;
+             size_t len = strlen(file_name);
              //file is found, search for correct file endings !
-             for (j = 0; extns[j]; j++)
+             for (i = 0; extns[i]; i++)
                {
-                  ex = extns[j];
-                  for (i = 0; ex[i]; i++)
+                  if (extn_matches(file_name, len, extns[i]))
                     {
-                       if (eina_str_has_extension(file_name, ex[i]))
+                       //File is found and valid
+                       item = calloc(1, sizeof(Background_Item));
+                       if (item)
                          {
-                            //File is found and valid
-                            item = calloc(1, sizeof(Background_Item));
-                            if (item)
+                            item->path = eina_stringshare_add(path);
+                            list = eina_list_append(list, item);
+                            notify = calloc(1,
+                                            sizeof(Insert_Gen_Grid_Item_Notify));
+                            if (notify)
                               {
-                                 item->path = eina_stringshare_add(path);
-                                 list = eina_list_append(list, item);
-                                 notify = calloc(1,
-                                          sizeof(Insert_Gen_Grid_Item_Notify));
-                                 if (notify)
-                                   {
-                                      //insert item to gengrid
-                                      notify->class = class;
-                                      notify->item = item;
-                                      //ecore_thread_feedback(th, notify);
-                                      _insert_gengrid_item(ctx, notify);
-                                   }
+                                 //insert item to gengrid
+                                 notify->class = class;
+                                 notify->item = item;
+                                 //ecore_thread_feedback(th, notify);
+                                 _insert_gengrid_item(ctx, notify);
                               }
-                            break;
                          }
+                       break;
                     }
                }
           }
