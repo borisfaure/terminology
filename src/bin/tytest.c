@@ -40,6 +40,7 @@ static struct {
        { "color_parse_edc", tytest_color_parse_edc},
        { "color_parse_css_rgb", tytest_color_parse_css_rgb},
        { "color_parse_css_hsl", tytest_color_parse_css_hsl},
+       { "extn_matching", tytest_extn_matching},
        { NULL, NULL},
 };
 

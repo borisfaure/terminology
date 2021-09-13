@@ -17,5 +17,6 @@ int tytest_color_parse_uint8(void);
 int tytest_color_parse_edc(void);
 int tytest_color_parse_css_rgb(void);
 int tytest_color_parse_css_hsl(void);
+int tytest_extn_matching(void);
 
 #endif
