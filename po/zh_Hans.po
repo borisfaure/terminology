@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2021-04-03 08:26+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -17,13 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.6-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "复制 '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "打开"
 
@@ -69,11 +69,11 @@ msgstr "水平分割"
 msgid "Miniview"
 msgstr "迷你视图"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "设置标题"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "复制"
 
@@ -97,7 +97,7 @@ msgstr "分组输入"
 msgid "Close Terminal"
 msgstr "关闭终端"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "无法创建日志域 '%s'"
@@ -286,68 +286,68 @@ msgstr "显示历史迷你视图"
 msgid "Display the command box"
 msgstr "显示命令框"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "无法创建窗口"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "无法创建终端小部件"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler 和其他人员"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "用Enlightenment Foundation 库编写的终端模拟器"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
 msgstr "使用指定的文件作为背景壁纸"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
 msgstr "切换到执行终端命令的目录"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr "要执行的命令。默认为 $SHELL (或 passwd shell 或 /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
 msgstr "使用指定的 edje 主题或主题文件夹"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr "使用指定的配色方案"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "要使用的终端尺寸 (例如 80x24 或 80x24+50+20 等。)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 msgid "Set window name"
 msgstr "设置窗口名称"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 msgid "Set window role"
 msgstr "设置窗口角色"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 msgid "Set window title"
 msgstr "设置窗口标题"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 msgid "Set icon name"
 msgstr "设置图标名称"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "设置字体 (NAME/SIZE 可缩放字体, NAME 点阵字体)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -356,114 +356,114 @@ msgstr ""
 "分割终端窗口。 'v' 表示垂直和 'h' 表示水平。可以叠加使用。例如 -S vhvv 或 --"
 "split hv 。更多详情请参考手册页"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 msgid "Run the shell as a login shell"
 msgstr "将 shell 作为登录 shell 运行"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 msgid "Set mute mode for video playback"
 msgstr "设置视频播放为静音模式"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 msgid "Set cursor blink mode"
 msgstr "设置光标闪烁模式"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 msgid "Set visual bell mode"
 msgstr "设置可视化铃声模式"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
 msgstr "以全屏模式启动"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr ""
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 msgid "Start as a override-redirect window"
 msgstr ""
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr "在没有窗口管理器的情况下运行"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr "当命令进程退出时不退出"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr "如果启用了多实例，则强制执行单个可执行文件"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "设置 TERM 为 'xterm-256color' 以替代 'xterm'"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr "设置缩放系数"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 msgid "Highlight links"
 msgstr "高亮链接"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "启动时不显示向导"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 msgid "show program version"
 msgstr "显示程序版本"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 msgid "show copyright"
 msgstr "显示版权"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 msgid "show license"
 msgstr "显示许可证"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 msgid "show this message"
 msgstr "显示此信息"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "使用选项 -S/--split 时发现无效参数。请参阅  --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr "无法初始化按键绑定"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr "无法解析命令行选项"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "选项 %s 需要一个参数！"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr "发现无效选项。 请参阅 --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "功能 %s 失败: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "不支持媒体可视化"
 
@@ -471,52 +471,52 @@ msgstr "不支持媒体可视化"
 msgid "None"
 msgstr "无"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "源文件是目标文件"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "图片导入"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "失败"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "背景"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "光线:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "透明度"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "选择目录"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "系统"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "用户"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "其他"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "单击图片以用作背景"
 
@@ -671,7 +671,7 @@ msgstr "选项"
 msgid "Mouse"
 msgstr "鼠标"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "字体"
 
@@ -741,19 +741,19 @@ msgid ""
 "hilight>'s configuration panel"
 msgstr ""
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr "搜索字体"
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "点阵"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "标准"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "在终端中显示粗体和斜体"
 
@@ -898,38 +898,38 @@ msgstr "无法读取背景文件: %s"
 msgid "Unknown command: %s"
 msgstr "未知命令: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "无法获取pid %i 的工作目录: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "无法加载工作目录 %s: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "不支持的所选格式'%s'"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "预览"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "复制相对路径"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "复制完整路径"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "打开为 URL"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -993,15 +993,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF 出错"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "确定"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "取消"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "找不到 terminology 的主题！忘记了“ninja install”命令？"
 

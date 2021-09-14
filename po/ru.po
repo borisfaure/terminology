@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -18,13 +18,13 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.5.2-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "Копировать '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Открыть"
 
@@ -76,11 +76,11 @@ msgstr "Разделить H"
 msgid "Miniview"
 msgstr "Мини-карта"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Заголовок"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Копировать"
 
@@ -104,7 +104,7 @@ msgstr "Множественный ввод"
 msgid "Close Terminal"
 msgstr "Закрыть терминал"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Невозможно создать опрос домена '%s'"
@@ -293,71 +293,71 @@ msgstr "Отобразить мини-карту истории"
 msgid "Display the command box"
 msgstr "Отобразить поле для команд"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "Не удалось создать окно"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "Не удалось создать виджет терминала"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler и другие"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
 "Эмулятор терминала, написанный с использованием Enlightenment Foundation "
 "Libraries"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
 msgstr "Использовать указанный файл в качестве фона"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
 msgstr "Изменить каталог для выполнения команды терминала"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Команда для выполнения. По умолчанию $SHELL (или passwd shell или /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
 msgstr "Использовать указанную тему или путь к файлу темы"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr "Использовать указанную цветовую схему"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Геометрия терминала (к пр. 80x24 или 80x24+50+20 и т.д.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 msgid "Set window name"
 msgstr "Задать имя окна"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 msgid "Set window role"
 msgstr "Задать роль окна"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 msgid "Set window title"
 msgstr "Задать заголовок окна"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 msgid "Set icon name"
 msgstr "Задать название иконки"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Задать шрифт (НАЗВАНИЕ/РАЗМЕР для векторного, НАЗВАНИЕ для растрового)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -367,116 +367,116 @@ msgstr ""
 "разделения. Может указываться несколько раз, к примеру -S vhvv или --split "
 "hv Подробное описание доступно в справочной странице (man)"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 msgid "Run the shell as a login shell"
 msgstr "Запустить оболочку в качестве оболочки входа в систему"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 msgid "Set mute mode for video playback"
 msgstr "Задать беззвучный режим для воспроизведения видео"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 msgid "Set cursor blink mode"
 msgstr "Задать режим мигания курсора"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 msgid "Set visual bell mode"
 msgstr "Задать режим визуального звукового сигнала"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
 msgstr "Перейти в полноэкранный режим при запуске"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr "Запуск в свёрнутом виде"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr "Запуск в окне без рамки"
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 msgid "Start as a override-redirect window"
 msgstr "Запуск в окне без перенаправления в композит"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr "Запуск в развёрнутом окне"
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr "Запустить Terminology без менеджера окон"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr "Не выходить пока существует процесс команды"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
 "Принудительно использовать один процесс, если разрешено запускать несколько "
 "экземпляров"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Установить переменную TERM как 'xterm-256color' вместо 'xterm'"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr "Задать коэффициент масштабирования"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 msgid "Highlight links"
 msgstr "Подсвечивать ссылки"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "Не отображать мастер при запуске"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 msgid "show program version"
 msgstr "показать версию программы"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 msgid "show copyright"
 msgstr "показать copyright"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 msgid "show license"
 msgstr "показать лицензию"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 msgid "show this message"
 msgstr "показать это сообщение"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "неверный аргумент для параметра -S/--split. Смотрите --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr "Не удалось инициализировать привязки клавиш"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr "Не удалось распознать параметры командной строки"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "параметр %s требует аргумент!"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr "обнаружен неверный параметр. Смотрите --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Ошибка функции %s: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Визуализация медиа не поддерживается"
 
@@ -484,52 +484,52 @@ msgstr "Визуализация медиа не поддерживается"
 msgid "None"
 msgstr "Нет"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "Исходный файл является целевым файлом"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "Изображение импортировано"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "Ошибка"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Фон"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "Свечение:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Прозрачность"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "Выбрать путь"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "Системный"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "Пользовательский"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "Другой"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "Нажмите на изображение, чтобы использовать его в качестве фона"
 
@@ -688,7 +688,7 @@ msgstr "Настройки"
 msgid "Mouse"
 msgstr "Мышь"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Шрифт"
 
@@ -761,19 +761,19 @@ msgstr ""
 "Масштаб можно также изменить в панели конфигурации <hilight>elementary</"
 "hilight>"
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr "Поиск шрифта"
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Растровые"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Обычные"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Отображать жирный и курсивный в терминале"
 
@@ -918,38 +918,38 @@ msgstr "Файл фона не может быть прочитан: %s"
 msgid "Unknown command: %s"
 msgstr "Неизвестная команда: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Не удалось получить рабочий каталог процесса %i: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Не удалось загрузить рабочий каталог %s: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "неподдерживаемый формат выделения '%s'"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Копировать относительный путь"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Копировать абсолютный путь"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Открыть как URL"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "Невозможно выделить termpty"
 
@@ -1015,15 +1015,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ошибка Ecore IMF"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "Ок"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Не удалось найти тему для terminology! Забыли 'ninja install'?"
 

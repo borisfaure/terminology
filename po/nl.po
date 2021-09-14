@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2020-09-22 14:49+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
@@ -18,13 +18,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.3-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Kopiëren"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Openen"
 
@@ -74,11 +74,11 @@ msgstr "Splits H"
 msgid "Miniview"
 msgstr "Miniweergave"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Titel instellen"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Kopiëren"
 
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Close Terminal"
 msgstr "Terminalvenster sluiten"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, fuzzy, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Kon loggend domein '%s' niet maken"
@@ -291,81 +291,81 @@ msgstr "Miniweergave van geschiedenis tonen"
 msgid "Display the command box"
 msgstr "Opdrachtvenster tonen"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 #, fuzzy
 msgid "Could not create window"
 msgstr "Kon geen venster maken"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 #, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Kon terminalhulpje niet maken"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler en anderen"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 #, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Terminal-nabootser geschreven met Enlightenment Foundation Libraries"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 #, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Gebruik het genoemde bestand als achtergrond"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 #, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Verander naar map voor uitvoering van terminalopdracht"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Uit te voeren opdracht. Standaard is $SHELL (of passwd shell of /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 #, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "Gebruik het genoemde edje-thema of pad naar themabestand"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr ""
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 #, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Te gebruiken terminalafmetingen (bijv. 80x24 of 80x24+50+20 enz.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 #, fuzzy
 msgid "Set window name"
 msgstr "Stel vensternaam in"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 #, fuzzy
 msgid "Set window role"
 msgstr "Stel vensterrol in"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 #, fuzzy
 msgid "Set window title"
 msgstr "Stel venstertitel in"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 #, fuzzy
 msgid "Set icon name"
 msgstr "Stel pictogramnaam in"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 #, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Stel lettertype in (NAAM/GROOTTE voor schaalbaar, NAAM voor bitmap)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 #, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
@@ -376,134 +376,134 @@ msgstr ""
 "meerdere keren worden gebruikt; bijv. -S vhvv of --slit hv.Meer informatie "
 "beschikbaar op de man-pagina"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 #, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "Draai de terminal als een aanmeldvenster"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 #, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "Stel dempingsmodus in voor afspelen van video's"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 #, fuzzy
 msgid "Set cursor blink mode"
 msgstr "Stel knippermodus in voor aanwijzer"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 #, fuzzy
 msgid "Set visual bell mode"
 msgstr "Stel modus in voor visuele bel"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 #, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Ga direct in schermvullende modus"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr ""
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 #, fuzzy
 msgid "Start as a override-redirect window"
 msgstr "Word een randloos beheerd venster"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 #, fuzzy
 msgid "Terminology is run without a window manager"
 msgstr "Terminology wordt gedraaid zonder een vensterbeheerder"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 #, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Sluit niet af wanneer het opdrachtproces eindigt"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 #, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
 "Forceer een enkele uitvoerbare als 'meerdere instanties' is ingeschakeld"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 #, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Stel TERM in op 'xterm-256color' in plaats van op 'xterm'"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr ""
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 #, fuzzy
 msgid "Highlight links"
 msgstr "Koppelingen markeren"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr ""
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 #, fuzzy
 msgid "show program version"
 msgstr "toon programmaversie"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 #, fuzzy
 msgid "show copyright"
 msgstr "toon auteursrecht"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 #, fuzzy
 msgid "show license"
 msgstr "toon licentie"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 #, fuzzy
 msgid "show this message"
 msgstr "toon deze boodschap"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 #, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "ongeldig argument gevonden voor optie -S/--split. Zie --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 #, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "Kon toetsbindingen niet initialiseren"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 #, fuzzy
 msgid "Could not parse command line options"
 msgstr "Kon opdrachtregelopties niet lezen"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "optie %s vereist een argument"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 #, fuzzy
 msgid "invalid options found. See --help"
 msgstr "ongeldige opties gevonden. Zie --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Functie %s mislukte: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Zichtbaar maken van media wordt niet ondersteund"
 
@@ -511,52 +511,52 @@ msgstr "Zichtbaar maken van media wordt niet ondersteund"
 msgid "None"
 msgstr ""
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr ""
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr ""
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr ""
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Achtergrond"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr ""
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Doorzichtig"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr ""
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr ""
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr ""
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr ""
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr ""
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr ""
 
@@ -712,7 +712,7 @@ msgstr "Opties"
 msgid "Mouse"
 msgstr ""
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Lettertype"
 
@@ -783,19 +783,19 @@ msgid ""
 "hilight>'s configuration panel"
 msgstr ""
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr ""
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Bitmap"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Standaard"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Toon vetgedrukt en schuingedrukt het terminalvenster"
 
@@ -941,38 +941,38 @@ msgstr "Achtergrondbestand kon niet worden gelezen: %s"
 msgid "Unknown command: %s"
 msgstr "Onbekende opdracht: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kon werkmap van pid %i niet verkrijgen: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kon werkmap %s niet laden: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "niet-ondersteunde selectie-opmaak '%s'"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Voorbeeldweergave"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Relatief pad kopiëren"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Volledig pad kopiëren"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Openen als webadres"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "Kon geen termpty toewijzen"
 
@@ -1036,15 +1036,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF is mislukt"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "Oké"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Afbreken"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kon Terminology-thema niet vinden. Bestaat het wel?"
 

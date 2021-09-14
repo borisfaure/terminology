@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2020-12-03 20:29+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
@@ -22,13 +22,13 @@ msgstr ""
 "X-Generator: Weblate 4.4-dev\n"
 "X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "Copia «%s»"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Öffnen"
 
@@ -80,11 +80,11 @@ msgstr "Horiz. teilen"
 msgid "Miniview"
 msgstr "Mini-Ansicht"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Titel bestimmen"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -108,7 +108,7 @@ msgstr "Gruppierte Eingabe"
 msgid "Close Terminal"
 msgstr "Terminal schließen"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Protokollierungsdomäne „%s“ konnte nicht erstellt werden"
@@ -297,80 +297,80 @@ msgstr "Mini-Ansicht der Chronik"
 msgid "Display the command box"
 msgstr "Befehlsfenster anzeigen"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "Fenster konnte nicht erstellt werden"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "Terminal-Widget konnte nicht erstellt werden"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012 – %d Carsten Haitzler und andere"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 #, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
 "Terminal-Emulator programmiert mit Enlightenment Foundation Bibliotheken"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 #, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Verwende die benannte Datei als Hintergrundbild"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 #, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Wechsle zum Verzeichnis, um den Terminalbefehl auszuführen"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Auszuführender Befehl. Standardmäßig $SHELL (oder passwd shell oder /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 #, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "Verwende das benannte edje Thema oder den Pfad zur Themendatei"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr ""
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 #, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Bestimme die Terminalgröße (z.B. 80 × 24 oder 80 × 24 + 50 + 20 usw.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 #, fuzzy
 msgid "Set window name"
 msgstr "Bestimme den Namen des Fensters"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 #, fuzzy
 msgid "Set window role"
 msgstr "Bestimme die Rolle des Fensters"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 #, fuzzy
 msgid "Set window title"
 msgstr "Bestimme den Titel des Fensters"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 #, fuzzy
 msgid "Set icon name"
 msgstr "Bestimme den Namen des Symbols"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 #, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Bestimme die Schrift (NAME/GRÖSSE für sklierbare, NAME für Bitmap"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 #, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
@@ -381,137 +381,137 @@ msgstr ""
 "mehrfach verwendet werden, z.B. -S vhvv oder --split hv. Weitere "
 "Beschreibung auf der Handbuchseite"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 #, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "Starte die Shell als Shell zur Anmeldung"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 #, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "Stelle auf stumm bei Videowiedergaben"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 #, fuzzy
 msgid "Set cursor blink mode"
 msgstr "Setze das Blinken des Zeigers"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 #, fuzzy
 msgid "Set visual bell mode"
 msgstr "Setze auf sichtbare Glocke"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 #, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Starte im Vollbild-Modus"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr ""
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 #, fuzzy
 msgid "Start as a override-redirect window"
 msgstr "Starte als override-redirect Fenster"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 #, fuzzy
 msgid "Terminology is run without a window manager"
 msgstr "Terminology wird ohne Fenster-Manager ausgeführt"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 #, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Nicht beenden, wenn der Befehlsprozess beendet wird"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 #, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
 "Erzwinge einzelne ausführbare Datei, wenn die Benutzung von mehreren "
 "Instanzen aktiviert ist"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 #, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Setze TERM auf „xterm-256color“, statt „xterm“"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 #, fuzzy
 msgid "Set scaling factor"
 msgstr "Bestimme den Vergrößerungsfaktor"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 #, fuzzy
 msgid "Highlight links"
 msgstr "Hebe Verknüfungen hervor"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 #, fuzzy
 msgid "Do not display wizard on start up"
 msgstr "Assistenten beim Start nicht anzeigen"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 #, fuzzy
 msgid "show program version"
 msgstr "zeige die Versionsnummer"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 #, fuzzy
 msgid "show copyright"
 msgstr "zeige das Copyright"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 #, fuzzy
 msgid "show license"
 msgstr "zeige die Linzenz"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 #, fuzzy
 msgid "show this message"
 msgstr "zeige diese Nachricht"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 #, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "ungültiges Argument gefunden für Option -S/--split. Öffne --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 #, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "Tastenkombinationen konnten nicht gestartet werden"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 #, fuzzy
 msgid "Could not parse command line options"
 msgstr "Optionen der Kommandozeile konnten nicht analysiert werden"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "Option %s benötigt ein Argument!"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 #, fuzzy
 msgid "invalid options found. See --help"
 msgstr "ungültige Option gefunden. Öffne --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktion %s fehlgeschlagen: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Das Anzeigen von Medien wird nicht unterstützt"
 
@@ -519,52 +519,52 @@ msgstr "Das Anzeigen von Medien wird nicht unterstützt"
 msgid "None"
 msgstr "Nichts"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "Quelldatei ist Zieldatei"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "Bild importiert"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Hintergrund"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "Leuchten:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Durchsichtig"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f %%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "Pfad auswählen"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "Benutzer"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "Anderer"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "Bild für Hintergrund klicken"
 
@@ -723,7 +723,7 @@ msgstr "Optionen"
 msgid "Mouse"
 msgstr "Maus"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Schrift"
 
@@ -800,19 +800,19 @@ msgstr ""
 "Die Größenänderung kann auch in den Einstullungen von <hilight>elementary</"
 "hilight> festgelegt werden"
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr ""
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Bitmap"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Standard"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Fett- und Kursivschrift im Terminal anzeigen"
 
@@ -958,38 +958,38 @@ msgstr "Hintergrunddatei konnte nicht gelesen werden: %s"
 msgid "Unknown command: %s"
 msgstr "Unbekannter Befehl: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Arbeitsordner von pid %i konnte nicht abrufen: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Arbeitsordner %s konnte nicht eingelesen werden: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nicht unterstütztes Auswahl-Format „%s“"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Relativen Pfad kopieren"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Vollständigen Pfad kopieren"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Als URL öffnen"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "termpty konnte nicht zugewiesen werden"
 
@@ -1056,15 +1056,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF fehlgeschlagen"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "OK"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Abbruch"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Terminology-Tema konnte nicht gefunden werden! „ninja install“ vergessen?"

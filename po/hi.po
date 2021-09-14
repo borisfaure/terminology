@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "कॉपी"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "ओपन"
 
@@ -73,12 +73,12 @@ msgstr "क्षैतिज में विभाजन"
 msgid "Miniview"
 msgstr "मिनी व्यू"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 #, fuzzy
 msgid "Set title"
 msgstr "विंडो शीर्षक सेट करें"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "कॉपी"
 
@@ -102,7 +102,7 @@ msgstr ""
 msgid "Close Terminal"
 msgstr "टर्मिनल बंद"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr ""
@@ -297,204 +297,204 @@ msgstr "मिनी व्यू  इतिहास प्रदर्शि�
 msgid "Display the command box"
 msgstr "कमांड बॉक्स को दिखाने"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr ""
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr ""
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d कार्स्टन हाइट्ज़लर और अन्य लोग"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 #, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Enlightenment Foundation Libraries द्वारा लिखित टर्मिनल एमुलेटर "
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 #, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "नामित फ़ाइल या फ़ाइल का पथ उपयोग करें"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 #, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "टर्मिनल कमांड के अमल के लिए डायरेक्ट्री बदले"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr "अमल करने के कमांड.  (passwd shell या /bin/sh)  में मूलभूत"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 #, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "नामित edje थीम या थीम का पथ उपयोग करें"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr ""
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 #, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "प्रयोग की जाने वाली टर्मिनल रेखागणित ( 80x24 या  80x24+50+20)."
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 #, fuzzy
 msgid "Set window name"
 msgstr "विंडो नाम  सेट करें"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 #, fuzzy
 msgid "Set window role"
 msgstr "विंडो भूमिका सेट करें"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 #, fuzzy
 msgid "Set window title"
 msgstr "विंडो शीर्षक सेट करें"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 #, fuzzy
 msgid "Set icon name"
 msgstr "आइकन नाम सेट करें"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 #, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "फ़ॉन्ट  सेट करें"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 #, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "लॉगिन शेल के रूप में शेल चलाएं"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 #, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "वीडियो प्लेबैक के लिए मूक मोड सेट करें"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 #, fuzzy
 msgid "Set cursor blink mode"
 msgstr "कर्सर झपकी मोड में सेट करें"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 #, fuzzy
 msgid "Set visual bell mode"
 msgstr "विजुअल घंटी मोड सेट करें"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 #, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "शुरू से ही फुल स्क्रीन मोड में जाना"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr ""
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 #, fuzzy
 msgid "Start as a override-redirect window"
 msgstr "अनवधि प्रबंधित विंडों बनें"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr ""
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr ""
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 #, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "xterm-256color로 TERM 설정"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr ""
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 #, fuzzy
 msgid "Highlight links"
 msgstr "लिंक हाइलाइट करें"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr ""
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 #, fuzzy
 msgid "show program version"
 msgstr "प्रोग्राम संस्करण दिखा"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 #, fuzzy
 msgid "show copyright"
 msgstr "कॉपीराइट दिखा"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 #, fuzzy
 msgid "show license"
 msgstr "लाइसेंस दिखा"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 #, fuzzy
 msgid "show this message"
 msgstr "इस संदेश को दिखा"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr ""
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr ""
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr ""
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr ""
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr ""
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr ""
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr ""
 
@@ -502,52 +502,52 @@ msgstr ""
 msgid "None"
 msgstr "कोई नहीं"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "सोर्स फ़ाइल लक्ष्य फ़ाइल है"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "आयात किया चित्र."
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "विफल"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "पृष्ठभूमि"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr ""
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "पारदर्शी"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr ""
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "पथ चुनना"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "सिस्टम"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "पयोगकर्ता"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "अन्य"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 #, fuzzy
 msgid "Click on a picture to use it as background"
 msgstr "एक आयात करने के लिए तस्वीर पर डबल क्लिक करें."
@@ -705,7 +705,7 @@ msgstr "विकल्प"
 msgid "Mouse"
 msgstr ""
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "फ़ॉन्ट"
 
@@ -778,19 +778,19 @@ msgid ""
 "hilight>'s configuration panel"
 msgstr ""
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr ""
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "बिटमैप"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "स्टैंडर्ड"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr ""
 
@@ -937,38 +937,38 @@ msgstr "पृष्ठभूमि फ़ाइल पढ़ा नहीं �
 msgid "Unknown command: %s"
 msgstr "अज्ञात कमांड: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "'%s' असमर्थित चयन प्रारूप."
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "पूर्वावलोकन"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -1032,15 +1032,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr ""
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr ""
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "टेर्मिनोलजी थीम नहीं मिल सका!  'ninja install' भूल गए ?"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.5.2-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiraj '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Otvori"
 
@@ -78,11 +78,11 @@ msgstr "Podijeli V"
 msgid "Miniview"
 msgstr "Mini-prikaz"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Postavi naslov"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Kopiraj"
 
@@ -106,7 +106,7 @@ msgstr "Grupirani unos"
 msgid "Close Terminal"
 msgstr "Zatvori terminal"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Nije bilo moguće stvoriti domenu za prijavu „%s”"
@@ -295,70 +295,70 @@ msgstr "Prikaži umanjeni prikaz povijesti"
 msgid "Display the command box"
 msgstr "Prikaži naredbeni prozor"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "Nije bilo moguće stvoriti prozor"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "Nije bilo moguće stvoriti programčić terminala"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012. – %d. Carsten Haitzler i drugi"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Emulator terminala pisan s Enlightenment Foundation bibliotekama"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
 msgstr "Koristi imenovanu datoteku kao sliku pozadine"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
 msgstr "Promijeni u mapu za izvršavanje naredbe terminala"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Naredba koja će se izvršiti. Standardno je $SHELL (ili passwd shell ili /bin/"
 "sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
 msgstr "Koristi imenovanu edje temu ili stazu do datoteke teme"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr "Koristi shemu imenovanih boja"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Veličina terminala (npr. 80 × 24 ili 80 × 24 + 50 + 20 idt.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 msgid "Set window name"
 msgstr "Postavi ime prozora"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 msgid "Set window role"
 msgstr "Postavi ulogu prozora"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 msgid "Set window title"
 msgstr "Postavi naslov prozora"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 msgid "Set icon name"
 msgstr "Postavi ime ikone"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Postavi font (IME/VELIČINA za skalirajuće, IME za bitmap)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -368,114 +368,114 @@ msgstr ""
 "koristiti više puta. Npr. -S vhvv ili --split hv. Opširan opis dostupan je "
 "na stranici priručnika."
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 msgid "Run the shell as a login shell"
 msgstr "Pokreni ljusku kao ljusku prijave"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 msgid "Set mute mode for video playback"
 msgstr "Postavi bezvučni modus za sviranje videa"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 msgid "Set cursor blink mode"
 msgstr "Postavi treperenje pokazivača"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 msgid "Set visual bell mode"
 msgstr "Postavi vizualno zvono"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
 msgstr "Pokreni u cjeloekranskom prikazu"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr "Pokreni sklopljeno"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr "Pokreni bez rubova"
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 msgid "Start as a override-redirect window"
 msgstr "Pokreni kao override-redirect prozor"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr "Pokreni rasklopljeno"
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr "Terminology se pokreće bez upravljača prozora"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr "Ne zatvaraj program kad proces naredbe završi"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Prisili jedno izvršavanje, ako je aktiviran rad s više instanci"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Postavi TERM na „xterm-256color” umjesto „xterm”"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr "Postavi faktor skaliranja"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 msgid "Highlight links"
 msgstr "Istakni poveznice"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "Ne prikazuj čarobnjaka prilikom pokretanja"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 msgid "show program version"
 msgstr "prikaži verziju programa"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 msgid "show copyright"
 msgstr "prikaži autorska prava"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 msgid "show license"
 msgstr "prikaži licencu"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 msgid "show this message"
 msgstr "prikaži ovu poruku"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "pronađen je nevažeči argument za opciju -S/--split. Pogledaj --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr "Nije bilo moguće pokrenuti tipkovne funkcije"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr "Nije bilo moguće obraditi opcije naredbenog retka"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "opcija „%s” zahtijeva argument!"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr "pronađena je nevažeća opcija. Pogledaj --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Neuspjela funkcija %s: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Vizualizacija medija nije podržana"
 
@@ -483,52 +483,52 @@ msgstr "Vizualizacija medija nije podržana"
 msgid "None"
 msgstr "Ništa"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "Izvorna datoteka je odredišna datoteka"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "Slika je uvezena"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "Neuspjelo"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Pozadina"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "Sjaj:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Providno"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f %%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "Odaberi stazu"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "Sustav"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "Korisnik"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "Drugo"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "Klikni na sliku, kako bi se koristila za pozadinu"
 
@@ -687,7 +687,7 @@ msgstr "Postavke"
 msgid "Mouse"
 msgstr "Miš"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Font"
 
@@ -761,19 +761,19 @@ msgstr ""
 "Skaliranje se može promijeniti i putem konfiguracijske ploče "
 "<hilight>elementary</hilight> sustava"
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr "Traži font"
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Bitmap"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Standardno"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Prikaži podebljani i kurzivni tekst u terminalu"
 
@@ -918,38 +918,38 @@ msgstr "Nije bilo moguće učitati datoteku pozadine: %s"
 msgid "Unknown command: %s"
 msgstr "Nepoznata naredba: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Nije bilo moguće dobiti radnu mapu pid-a %i: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Nije bilo moguće učitati radnu mapu %s: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nepodržani format odabira „%s”"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Pregled"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Kopiraj relativnu stazu"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Kopiraj potpunu stazu"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Otvori kao URL"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "Nije bilo moguće alocirati termpty"
 
@@ -1016,15 +1016,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Neuspio Ecore IMF"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "U redu"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Odustani"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Nije bilo moguće pronaći Terminology temu! Je li „ninja install” izvršeno?"

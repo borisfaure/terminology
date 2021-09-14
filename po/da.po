@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiér '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Åbn"
 
@@ -78,11 +78,11 @@ msgstr "Opdel vandret"
 msgid "Miniview"
 msgstr "Minivisning"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Indstil titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Kopiér"
 
@@ -106,7 +106,7 @@ msgstr "Grupperet input"
 msgid "Close Terminal"
 msgstr "Luk terminal"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Kunne ikke oprette logningsdomænet '%s'"
@@ -295,71 +295,71 @@ msgstr "Vis minivisning for historik"
 msgid "Display the command box"
 msgstr "Vis kommandoboksen"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "Kunne ikke oprette vindue"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "Kunne ikke oprette terminal-widget"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler og andre"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Terminalemulator skrevet med Enlightenment Foundation Libraries"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
 msgstr "Brug den navngivne fil som et baggrundstapet"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
 msgstr "Skift til mappe for eksekvering af terminalkommando"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Kommando skal som eksekveres. Bruger $SHELL som standard (eller passwd-skal "
 "eller /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
 msgstr "Brug det navngivne edje-tema eller sti til temafil"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr "Brug det navngivede farvetema"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr ""
 "Terminalgeometrien som skal bruges (f.eks. 80x24 eller 80x24+50+20 osv.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 msgid "Set window name"
 msgstr "Indstil vinduets navn"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 msgid "Set window role"
 msgstr "Indstil vinduets rolle"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 msgid "Set window title"
 msgstr "Indstil vinduets titel"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 msgid "Set icon name"
 msgstr "Indstil ikonnavn"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Indstil skrifttype (NAVN/STØRRELSE for skalerbar, NAVN for bitmap)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -368,114 +368,114 @@ msgstr ""
 "Opdel terminalvinduet. 'v' for lodret og 'h' og vandret. Kan bruges flere "
 "gange. F.eks. -S vhvv eller --split hv Der er mere beskrivelse på man-siden"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 msgid "Run the shell as a login shell"
 msgstr "Kør skallen som en loginskal"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 msgid "Set mute mode for video playback"
 msgstr "Indstil mutetilstand for videoafspilning"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 msgid "Set cursor blink mode"
 msgstr "Indstil markørens blinktilstand"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 msgid "Set visual bell mode"
 msgstr "Indstil visuel klokketilstand"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
 msgstr "Gå i fuldskærmstilstand fra starten"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr "Start som ikon"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr "Start uden kant"
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 msgid "Start as a override-redirect window"
 msgstr "Start som et override-redirect-vindue"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr "Start maksimeret"
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr "Terminology kører uden en vindueshåndtering"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr "Afslut ikke når kommandoprocessen afslutter"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Tving enkel eksekverbar hvis flere-instans er aktiveret"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Indstil TERM til 'xterm-256color' i stedet for 'xterm'"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr "Indstil skaleringsfaktor"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 msgid "Highlight links"
 msgstr "Fremhæv links"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "Vis ikke assistent ved opstart"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 msgid "show program version"
 msgstr "vis programversion"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 msgid "show copyright"
 msgstr "vis ophavsret"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 msgid "show license"
 msgstr "vis licens"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 msgid "show this message"
 msgstr "vis denne meddelelse"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "ugyldigt argument fundet for tilvalget -S/--split. Se --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr "Kunne ikke initialisere tastebindinger"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr "Kunne ikke fortolke kommandolinjetilvalg"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "tilvalget %s kræver et argument!"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr "ugyldige tilvalg fundet. Se --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktionen %s mislykkedes: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Medievisualisering understøttes ikke"
 
@@ -483,52 +483,52 @@ msgstr "Medievisualisering understøttes ikke"
 msgid "None"
 msgstr "Ingen"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "Kildefil er målfil"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "Billede importeret"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "Mislykkedes"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Baggrund"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "Skin:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Gennemsigtig"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "Vælg sti"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "Bruger"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "Anden"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "Dobbeltklik på et billede for at bruge det som baggrund"
 
@@ -688,7 +688,7 @@ msgstr "Valgmuligheder"
 msgid "Mouse"
 msgstr "Mus"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Skrifttype"
 
@@ -762,19 +762,19 @@ msgstr ""
 "Skaleringskonfigurationen kan også ændres gennem <hilight>elementarys</"
 "hilight> konfigurationspanel"
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr "Søg efter skrifttype"
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Bitmap"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Standard"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Vis fed og kursiv i terminalen"
 
@@ -919,38 +919,38 @@ msgstr "Baggrundsfil kunne ikke læses: %s"
 msgid "Unknown command: %s"
 msgstr "Ukendt kommando: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kunne ikke hente arbejdsmappe af pid %i: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kunne ikke indlæse arbejdsmappe %s: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "ikke-understøttet markeringsformat '%s'"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Kopiér relativ sti"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Kopiér fuld sti"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Åbn som URL"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "Kunne ikke allokere termpty"
 
@@ -1017,15 +1017,15 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore-IMF mislykkedes"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "OK"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Annuller"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunne ikke finde terminology-tema! Glemte du 'ninja install'?"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-14 15:20+0100\n"
+"POT-Creation-Date: 2021-09-14 21:18+0200\n"
 "PO-Revision-Date: 2021-04-22 14:51+0000\n"
 "Last-Translator: Durver Eriksson <dyrver.eriksson@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
@@ -17,13 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1282
-#: src/bin/termio.c:1291
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
+#: src/bin/termio.c:1297
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiera '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1353
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
 msgstr "Öppna"
 
@@ -44,12 +44,12 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Varför ska en terminal behöva vara "
-"tråkig?<br><br>Denna terminal var skapad för Enlightenment, använder EFL och "
+"<b>Terminology %s</b><br>Varför ska en terminal behöva vara tråkig?"
+"<br><br>Denna terminal var skapad för Enlightenment, använder EFL och "
 "övervägande förflyttar gränserna för hur en modern terminal emulator ska "
-"vara. Vi hoppas du tycker om den.<br><br>Copyright © 2012-%d by:"
-"<br><br>%s<br><br>Distributerad under en 2-clause BSD licens detailerad "
-"nedanför.<br><br>%s"
+"vara. Vi hoppas du tycker om den.<br><br>Copyright © 2012-%d by:<br><br>"
+"%s<br><br>Distributerad under en 2-clause BSD licens detailerad nedanför."
+"<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -75,11 +75,11 @@ msgstr "Splittra H"
 msgid "Miniview"
 msgstr "Minivy"
 
-#: src/bin/controls.c:413 src/bin/win.c:6234
+#: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
 msgstr "Sätt titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1367 src/bin/termio.c:2771
+#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
 msgstr "Kopiera"
 
@@ -103,7 +103,7 @@ msgstr "Grupperad inmatning"
 msgid "Close Terminal"
 msgstr "Stäng Terminal"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:891 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Kunde inte skapa log domän '%s'"
@@ -292,69 +292,69 @@ msgstr "Visa historik i minivy"
 msgid "Display the command box"
 msgstr "Visa kommandorad"
 
-#: src/bin/main.c:400 src/bin/main.c:596
+#: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
 msgstr "Kunde inte skapa fönster"
 
-#: src/bin/main.c:419 src/bin/main.c:607
+#: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
 msgstr "Kunde inte skapa terminal-widget"
 
-#: src/bin/main.c:454
+#: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler och övriga"
 
-#: src/bin/main.c:456
+#: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr "Terminalemulator skriven med Enlightenment Foundation Libraries"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
 msgstr "Använd nämnd fil som backgrundsbild"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
 msgstr "Ändra till katalog för exekvering av terminalkommando"
 
-#: src/bin/main.c:464
+#: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Kommando att köra. Normalt $SHELL (alternativt passwd shell eller /bin/sh)"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
 msgstr "Använd namngivet edje tema eller sökväg till tema-fil"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:474
 msgid "Use the named color scheme"
 msgstr "Använd namngivet färgschema"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Terminalens geometri att använda (ex. 80x24 eller 80x24+50+20 osv.)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:478
 msgid "Set window name"
 msgstr "Ställ in fönsternamn"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:480
 msgid "Set window role"
 msgstr "Ställ in fönsterroll"
 
-#: src/bin/main.c:476
+#: src/bin/main.c:482
 msgid "Set window title"
 msgstr "Ställ in fönstertitel"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:484
 msgid "Set icon name"
 msgstr "Ställ in ikonnamn"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Ändra typsnitt (NAMN/STORLEK för skalbar, NAMN för bitmapp)"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:488
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -364,114 +364,114 @@ msgstr ""
 "upprepas flera gånger. ex -S vhvv eller --split hv Mer beskrivning återfinns "
 "i man sidorna"
 
-#: src/bin/main.c:487
+#: src/bin/main.c:493
 msgid "Run the shell as a login shell"
 msgstr "Kör skal som inloggnings skal"
 
-#: src/bin/main.c:489
+#: src/bin/main.c:495
 msgid "Set mute mode for video playback"
 msgstr "Tysta videoåterspelning"
 
-#: src/bin/main.c:491
+#: src/bin/main.c:497
 msgid "Set cursor blink mode"
 msgstr "Ändra pekarens blinkläge"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:499
 msgid "Set visual bell mode"
 msgstr "Ändra visuellt alarmläge"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
 msgstr "Starta i fullskärmsläge"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:503
 msgid "Start iconified"
 msgstr "Starta ikonifierad"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:505
 msgid "Start borderless"
 msgstr "Starta utan ram"
 
-#: src/bin/main.c:501
+#: src/bin/main.c:507
 msgid "Start as a override-redirect window"
 msgstr "Starta som överskriden eftersänt fönster"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:509
 msgid "Start maximized"
 msgstr "Starta maximerad"
 
-#: src/bin/main.c:505
+#: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
 msgstr "Terminology körs utan fönsterhanterare"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
 msgstr "Stäng inte när kommandot slutförs"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Tvinga enkel process även när multi-instans är aktiverad"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Ställ in TERM till 'xterm-256color' istället för 'xterm'"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:519
 msgid "Set scaling factor"
 msgstr "Ställ in skalningsläge"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:521
 msgid "Highlight links"
 msgstr "Lys upp länkar"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "Visa inte installationsguide vid uppstart"
 
-#: src/bin/main.c:543
+#: src/bin/main.c:549
 msgid "show program version"
 msgstr "visa programversion"
 
-#: src/bin/main.c:546
+#: src/bin/main.c:552
 msgid "show copyright"
 msgstr "visa upphovsrätt"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:555
 msgid "show license"
 msgstr "visa licenser"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:558
 msgid "show this message"
 msgstr "visa detta meddelande"
 
-#: src/bin/main.c:649
+#: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "Ogiltigt argument för -S/--split. Se --help"
 
-#: src/bin/main.c:902
+#: src/bin/main.c:909
 msgid "Could not initialize key bindings"
 msgstr "Kunde inte initialisera knappkombinationer"
 
-#: src/bin/main.c:917
+#: src/bin/main.c:924
 msgid "Could not parse command line options"
 msgstr "Kunde inte läsa in kommandoradstillval"
 
-#: src/bin/main.c:941
+#: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "alternativ %s behöver en instruktion!"
 
-#: src/bin/main.c:942
+#: src/bin/main.c:949
 msgid "invalid options found. See --help"
 msgstr "ogiltiga alternativ funna. Se --help"
 
-#: src/bin/media.c:1335 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktion %s misslyckades: %s"
 
-#: src/bin/media.c:1432
+#: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
 msgstr "Media-visualisering stöds ej"
 
@@ -479,52 +479,52 @@ msgstr "Media-visualisering stöds ej"
 msgid "None"
 msgstr "Ingen"
 
-#: src/bin/options_background.c:503
+#: src/bin/options_background.c:495
 msgid "Source file is target file"
 msgstr "Källfil är länkfil"
 
-#: src/bin/options_background.c:516
+#: src/bin/options_background.c:508
 msgid "Picture imported"
 msgstr "Bild importerad"
 
-#: src/bin/options_background.c:521
+#: src/bin/options_background.c:513
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: src/bin/options_background.c:573 src/bin/options.c:221
+#: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
 msgstr "Bakgrund"
 
-#: src/bin/options_background.c:589
+#: src/bin/options_background.c:581
 msgid "Shine:"
 msgstr "Lyster:"
 
-#: src/bin/options_background.c:613
+#: src/bin/options_background.c:605
 msgid "Translucent"
 msgstr "Genomskinlig"
 
-#: src/bin/options_background.c:624 src/bin/options_background.c:625
+#: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:644
+#: src/bin/options_background.c:636
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: src/bin/options_background.c:650
+#: src/bin/options_background.c:642
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:653
+#: src/bin/options_background.c:645
 msgid "User"
 msgstr "Användare"
 
-#: src/bin/options_background.c:656
+#: src/bin/options_background.c:648
 msgid "Other"
 msgstr "Övrig"
 
-#: src/bin/options_background.c:698
+#: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
 msgstr "Klicka på en bild att använda som bakgrund"
 
@@ -637,7 +637,8 @@ msgstr "Emojis hanteras som dubbel-vidd karaktärer"
 #: src/bin/options_behavior.c:418
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
-msgstr "När inmatning grupperas, gör det på alla terminaler inte enbart synliga"
+msgstr ""
+"När inmatning grupperas, gör det på alla terminaler inte enbart synliga"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
@@ -681,7 +682,7 @@ msgstr "Alternativ"
 msgid "Mouse"
 msgstr "Mus"
 
-#: src/bin/options.c:219 src/bin/options_font.c:489
+#: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
 msgstr "Typsnitt"
 
@@ -730,9 +731,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> använder <hilight>elementary</hilight> som "
-"ramverk.<br>Ramverkets inställningar kan kommas åt genom att köra "
-"<keyword>%s</keyword>"
+"<em>Terminology</em> använder <hilight>elementary</hilight> som ramverk."
+"<br>Ramverkets inställningar kan kommas åt genom att köra <keyword>%s</"
+"keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -754,19 +755,19 @@ msgid ""
 msgstr ""
 "Skalning kan ändras genom <hilight>elementary</hilight>'s inställningspanel"
 
-#: src/bin/options_font.c:540
+#: src/bin/options_font.c:550
 msgid "Search font"
 msgstr "Sök typsnitt"
 
-#: src/bin/options_font.c:568
+#: src/bin/options_font.c:578
 msgid "Bitmap"
 msgstr "Bitmapp"
 
-#: src/bin/options_font.c:609
+#: src/bin/options_font.c:619
 msgid "Standard"
 msgstr "Standard"
 
-#: src/bin/options_font.c:671
+#: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
 msgstr "Visa fet och kursiv i terminalen"
 
@@ -911,38 +912,38 @@ msgstr "Bakgrundsfil kunde inte läsas: %s"
 msgid "Unknown command: %s"
 msgstr "Okänt kommando: %s"
 
-#: src/bin/termio.c:447
+#: src/bin/termio.c:451
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kunde inte hitta arbetskatalog för pid %i: %s"
 
-#: src/bin/termio.c:462
+#: src/bin/termio.c:466
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kunde inte ladda arbetskatalog %s: %s"
 
-#: src/bin/termio.c:1190
+#: src/bin/termio.c:1196
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "markeringsformat stöds ej '%s'"
 
-#: src/bin/termio.c:1350
+#: src/bin/termio.c:1357
 msgid "Preview"
 msgstr "Förslagsvy"
 
-#: src/bin/termio.c:1360
+#: src/bin/termio.c:1367
 msgid "Copy relative path"
 msgstr "Kopiera relativ sökväg"
 
-#: src/bin/termio.c:1362
+#: src/bin/termio.c:1369
 msgid "Copy full path"
 msgstr "Kopiera hel sökväg"
 
-#: src/bin/termio.c:2773
+#: src/bin/termio.c:2780
 msgid "Open as URL"
 msgstr "Öppna som URL"
 
-#: src/bin/termio.c:4177
+#: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
 msgstr "Kunde inte hitta termpty"
 
@@ -1001,21 +1002,21 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"Skalans inställningar kan ändras i Inställningar (högerklicka på terminal) →"
-"  Ramverk, eller genom att köra <keyword>elementary_config</keyword>"
+"Skalans inställningar kan ändras i Inställningar (högerklicka på terminal) "
+"→  Ramverk, eller genom att köra <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2336
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF misslyckades"
 
-#: src/bin/win.c:6238
+#: src/bin/win.c:6239
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6244
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/bin/win.c:7432
+#: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunde inte hitta terminology tema! Glömde 'ninja install'?"
