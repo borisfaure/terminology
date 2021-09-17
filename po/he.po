@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# Elisha Hollander <just4now666666@gmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 21:18+0200\n"
-"PO-Revision-Date: 2021-03-05 18:50+0000\n"
-"Last-Translator: Omer I.S. <omeritzicschwartz@gmail.com>\n"
+"PO-Revision-Date: 2021-09-17 21:37+0000\n"
+"Last-Translator: Elisha Hollander <just4now666666@gmail.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/terminology/"
 "terminology/he/>\n"
 "Language: he\n"
@@ -17,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.5.1-dev\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
 #: src/bin/termio.c:1297
@@ -73,7 +72,7 @@ msgstr "תצוגה ממוזערת"
 
 #: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
-msgstr ""
+msgstr "ערוך כותרת"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
 msgid "Copy"
