@@ -37,7 +37,7 @@ jobs:
           name: Compile with GCC
           command: |
             cd /terminology
-            meson . build
+            meson -Dnls=false. build
             meson configure build
             cd build
             ninja -j4
@@ -54,7 +54,7 @@ jobs:
           name: Compile with GCC
           command: |
             cd /terminology
-            meson . build
+            meson -Dnls=false . build
             meson configure build
             cd build
             ninja -j4
@@ -71,7 +71,7 @@ jobs:
           name: Compile with GCC
           command: |
             cd /terminology
-            meson . build
+            meson -Dnls=false . build
             meson configure build
             cd build
             ninja -j4
@@ -93,7 +93,7 @@ jobs:
             CFLAGS: -O0 -g
           command: |
             cd /terminology
-            meson -Dtests=true -Dfuzzing=true -Db_coverage=true -Dbuildtype=debug . build
+            meson -Dnls=false -Dtests=true -Dfuzzing=true -Db_coverage=true -Dbuildtype=debug . build
             meson configure build
             cd build
             ninja -j4
@@ -132,7 +132,7 @@ jobs:
             CFLAGS: -O0 -g
           command: |
             cd /terminology
-            meson -Dtests=true -Dbuildtype=release . build
+            meson -Dnls=false -Dtests=true -Dbuildtype=release . build
             meson configure build
             cd build
             ninja -j4
@@ -158,7 +158,7 @@ jobs:
           name: Compile with Clang
           command: |
             cd /terminology
-            meson -Dtests=true -Dfuzzing=true . build
+            meson -Dnls=false -Dtests=true -Dfuzzing=true . build
             meson configure build
             cd build
             ninja -j4
@@ -178,7 +178,7 @@ jobs:
           name: Compile with Clang
           command: |
             cd /terminology
-            meson -Dtests=true . build
+            meson -Dnls=false -Dtests=true . build
             meson configure build
             cd build
             ninja -j4
