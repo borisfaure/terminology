@@ -37,7 +37,7 @@ jobs:
           name: Compile with GCC
           command: |
             cd /terminology
-            meson -Dnls=false. build
+            meson -Dnls=false . build
             meson configure build
             cd build
             ninja -j4
