@@ -15,4 +15,4 @@ option('tests',
 option('nls',
        type: 'boolean',
        value: true,
-       description: 'enable localization: (default=true)')
+       description: 'enable localization. Requires libintl. (default=true)')

@@ -65,7 +65,7 @@ edj_files = []
 
 if get_option('nls') == true
   subdir('po')
-  terminology_dependencies += dependency('intl', required: false)
+  terminology_dependencies += dependency('intl', required: true)
 endif
 
 foreach efl_dep: efl_deps
