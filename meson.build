@@ -65,7 +65,9 @@ edj_files = []
 
 if get_option('nls') == true
   subdir('po')
-  terminology_dependencies += dependency('intl', required: true)
+  # need both cause libintl may be included in glibc or not
+  terminology_dependencies += dependency('intl', required: false)
+  terminology_dependencies += cc.find_library('intl', required: false)
 endif
 
 foreach efl_dep: efl_deps
