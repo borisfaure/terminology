@@ -255,7 +255,7 @@ options_colors(Evas_Object *opbox, Evas_Object *term)
         len = end - start;
         if (len < sizeof(theme))
           {
-             char buf[4096];
+             char buf[4096 + 1024];
 
              strncpy(theme, start, len);
              theme[len] = '\0';
