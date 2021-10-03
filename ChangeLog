@@ -1,3 +1,16 @@
+2021-10-03
+        * Colorshemes: add Black scheme
+        * New translations: Sinhala, Hebrew
+        * Translation updates for Chinese (Simplified), Croatian, Danish,
+          French, Greek, Italian, Norwegian Bokmål, Polish, Portuguese,
+          Portuguese (Brazil), Russian, Spanish, Swedish, Ukrainian
+        * Focus font search in the Font settings panel
+        * Fix issue when configuration was marked as Temporary
+        * Stop jumping down to the botton when configuration changed
+        * Respect login shell on start
+        * Fix drag'n'drop of paths or media on the terminal
+        * Fix libintl detection
+
 2021-01-18
         * Release v1.9.0
         * Colorshemes: easily change the colors of the terminal

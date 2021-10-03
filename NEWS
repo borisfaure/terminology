@@ -1,6 +1,27 @@
-=================
-Terminology 1.9.0
-=================
+==================
+Terminology 1.10.0
+==================
+
+
+Changes since 1.9.0:
+--------------------
+
+Additions:
+    * Colorshemes: add Black scheme
+    * New translations: Sinhala, Hebrew
+
+Improvements:
+    * Translation updates for Chinese (Simplified), Croatian, Danish, French,
+      Greek, Italian, Norwegian Bokmål, Polish, Portuguese,
+      Portuguese (Brazil), Russian, Spanish, Swedish, Ukrainian
+    * Focus font search in the Font settings panel
+
+Fixes:
+    * Fix issue when configuration was marked as Temporary
+    * Stop jumping down to the botton when configuration changed
+    * Respect login shell on start
+    * Fix drag'n'drop of paths or media on the terminal
+    * Fix libintl detection
 
 
 Changes since 1.8.1:
