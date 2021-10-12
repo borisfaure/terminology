@@ -2,25 +2,28 @@
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Linus Virtanen <linus.virtanen@protonmail.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-14 21:18+0200\n"
-"PO-Revision-Date: 2015-04-14 19:08+0300\n"
-"Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
-"Language-Team: Finnish <fi@li.org>\n"
+"PO-Revision-Date: 2021-10-12 19:21+0000\n"
+"Last-Translator: Linus Virtanen <linus.virtanen@protonmail.com>\n"
+"Language-Team: Finnish <https://hosted.weblate.org/projects/terminology/"
+"terminology/fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
 #: src/bin/termio.c:1297
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopioi"
+msgstr "Jäljennä '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
 msgid "Open"
@@ -28,11 +31,11 @@ msgstr "Avaa"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "YouTube-kanava"
 
 #: src/bin/about.c:289
 #, c-format
@@ -52,7 +55,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminologyn kehittäjät"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -75,7 +78,6 @@ msgid "Miniview"
 msgstr "Pienoisnäkymä"
 
 #: src/bin/controls.c:413 src/bin/win.c:6235
-#, fuzzy
 msgid "Set title"
 msgstr "Aseta ikkunan otsikko"
 
@@ -97,16 +99,16 @@ msgstr "Tietoja"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Ryhmitetty syöte"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Sulje pääte"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Ikkunaa ei pystytty luomaan"
+msgstr "Kirjausikkunaa ei kyetty luomaan '%s'"
 
 #: src/bin/keyin.c:658
 msgid "Scrolling"
@@ -130,11 +132,11 @@ msgstr "Vieritä yksi rivi alaspäin"
 
 #: src/bin/keyin.c:663
 msgid "Go to the top of the backlog"
-msgstr ""
+msgstr "Siirry rästitöiden päällimmäiseen osaan"
 
 #: src/bin/keyin.c:664
 msgid "Reset scroll"
-msgstr ""
+msgstr "Nollaa vieritys"
 
 #: src/bin/keyin.c:666
 msgid "Copy/Paste"
@@ -161,34 +163,28 @@ msgid "Splits/Tabs"
 msgstr "Jaot/välilehdet"
 
 #: src/bin/keyin.c:673
-#, fuzzy
 msgid "Focus the previous terminal"
 msgstr "Kohdista edelliseen päätteeseen"
 
 #: src/bin/keyin.c:674
-#, fuzzy
 msgid "Focus the next terminal"
 msgstr "Kohdista seuraavaan päätteeseen"
 
 #: src/bin/keyin.c:675
-#, fuzzy
 msgid "Focus the terminal above"
-msgstr "Kohdista seuraavaan päätteeseen"
+msgstr "Kohdista ylläolevaan päätteeseen"
 
 #: src/bin/keyin.c:676
-#, fuzzy
 msgid "Focus the terminal below"
-msgstr "Kohdista seuraavaan päätteeseen"
+msgstr "Kohdista alapuolella olevaan päätteeseen"
 
 #: src/bin/keyin.c:677
-#, fuzzy
 msgid "Focus the terminal on the left"
-msgstr "Kohdista seuraavaan päätteeseen"
+msgstr "Kohdista vasemmanpuoleiseen päätteeseen"
 
 #: src/bin/keyin.c:678
-#, fuzzy
 msgid "Focus the terminal on the right"
-msgstr "Kohdista seuraavaan päätteeseen"
+msgstr "Kohdista oikeanpuoleiseen päätteeseen"
 
 #: src/bin/keyin.c:679
 msgid "Split horizontally (new below)"
@@ -252,11 +248,11 @@ msgstr "Siirry päätevälilehdelle kymmenen"
 
 #: src/bin/keyin.c:694
 msgid "Change title"
-msgstr ""
+msgstr "Muuta otsikko"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Määritä meneekö syöte kaikkiin näkyvissä oleviin päätteisiin vaiko ei"
 
 #: src/bin/keyin.c:699
 msgid "Font size"
@@ -284,7 +280,7 @@ msgstr "Toiminnot"
 
 #: src/bin/keyin.c:706
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "Avaa uusi pääteikkuna"
 
 #: src/bin/keyin.c:707
 msgid "Toggle Fullscreen of the window"
@@ -299,14 +295,12 @@ msgid "Display the command box"
 msgstr "Näytä komentolaatikko"
 
 #: src/bin/main.c:406 src/bin/main.c:602
-#, fuzzy
 msgid "Could not create window"
-msgstr "Ikkunaa ei pystytty luomaan"
+msgstr "Ikkunaa ei kyetty luomaan"
 
 #: src/bin/main.c:425 src/bin/main.c:613
-#, fuzzy
 msgid "Could not create terminal widget"
-msgstr "Terminaali-vekotinta ei pystytty luomaan"
+msgstr "Päätevimpainta ei kyetty luomaan"
 
 #: src/bin/main.c:460
 #, c-format
@@ -314,184 +308,157 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler ja muut"
 
 #: src/bin/main.c:462
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
-"Pääte-emulaattori, kirjoitettu käyttäen Enlightenment Foundation Libraries"
+"Pääte-emulaattori joka on kirjoitettu Enlightenment Foundation Libraries:ia "
+"käyttäen"
 
 #: src/bin/main.c:466
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Käytä nimettyä tiedostoa taustakuvana"
 
 #: src/bin/main.c:468
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr "Vaihda hakemistoon päätekomennon ajon ajaksi"
+msgstr "Vaihda hakemistoon päätekomentoajon ajaksi"
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr "Ajettava komento. Oletuksena $SHELL (tai passwd shell tai /bin/sh)"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "Käytä nimettyä edje-teemaa tai polkua teematiedostoon"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Käytä nimettyä värirakennetta"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "Käytettävä päätteen geometria (esim. 80x24 tai 80x24+50+20 jne.)"
+msgstr "Geometria jota päätteessä käytetään (esim. 80x24 tai 80x24+50+20 jne.)"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set window name"
-msgstr "Aseta ikkunan nimi"
+msgstr "Aseta ikkunalle nimi"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Set window role"
 msgstr "Aseta ikkunan rooli"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Set window title"
 msgstr "Aseta ikkunan otsikko"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Set icon name"
-msgstr "Aseta ikonin nimi"
+msgstr "Aseta kuvakkeen nimi"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Aseta fontti (NIMI/KOKO skaalattavalle, NIMI kuvakartalle)"
+msgstr "Aseta kirjasin (NIMI/KOKO mittakaavoitettaville, NIMI kuvakartalle)"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Jaa pääteikkuna. 'v' vertikaalisesti ja 'h' horinsontaalisti. Voidaan "
-"käyttää useaan kertaan. esim. -S vhvv tai --split hv  Lisätietoja löydät man-"
-"sivulta"
+"Jaa pääteikkuna kahtia. 'v' pystysuuntaisesti ja 'h' vaakasuuntaisesti. "
+"Voidaan käyttää useaan kertaan. esim. -S vhvv tai --split hv Lisätietoja "
+"löydät man-sivulta"
 
 #: src/bin/main.c:493
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Aja komentotulkki kirjautuvana"
+msgstr "Aja komentotulkki kirjautumiseen tarkoitettuna"
 
 #: src/bin/main.c:495
-#, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "Aseta mykistystila videotoistolle"
 
 #: src/bin/main.c:497
-#, fuzzy
 msgid "Set cursor blink mode"
 msgstr "Aseta kohdistimen vilkkumistila"
 
 #: src/bin/main.c:499
-#, fuzzy
 msgid "Set visual bell mode"
 msgstr "Aseta visuaalisen kellon tila"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Siirry täysruututilaan käynnistettäessä"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Aloita kuvakkeellistettuna"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Aloita ilman rajoja"
 
 #: src/bin/main.c:507
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi"
+msgstr "Käynnistä reunattomassa hallitun ikkunan muodossa"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Aloita enimmäiskoossa"
 
 #: src/bin/main.c:511
-#, fuzzy
 msgid "Terminology is run without a window manager"
-msgstr "Terminology ajetaan ilman ikkunoinnin hallintaa"
+msgstr "Terminology ajetaan ilman ikkunoinninhallintaa"
 
 #: src/bin/main.c:513
-#, fuzzy
 msgid "Do not exit when the command process exits"
-msgstr "Älä poistu kun komennon prosessi loppuu"
+msgstr "Älä poistu kun komennon käsittely loppuu"
 
 #: src/bin/main.c:515
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
-msgstr "Pakota yksi ajoprosessi mikäli usean instanssin asetus on päällä"
+msgstr "Pakota yksi ajoprosessi mikäli monitapahtuma-asetus on päällä"
 
 #: src/bin/main.c:517
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "Aseta TERM-komennoksi 'xterm-256color' komennon 'xterm' sijaan"
+msgstr "Aseta TERM-komennoksi 'xterm-256color' komennon 'xterm' sijasta"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Määritä mittakaava"
 
 #: src/bin/main.c:521
-#, fuzzy
 msgid "Highlight links"
 msgstr "Korosta linkit"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Älä näytä asetusvelhoa käynnistyksen yhteydessä"
 
 #: src/bin/main.c:549
-#, fuzzy
 msgid "show program version"
-msgstr "näytä ohjelman versio"
+msgstr "näytä ohjelman julkaisuversio"
 
 #: src/bin/main.c:552
-#, fuzzy
 msgid "show copyright"
 msgstr "näytä tekijänoikeustiedot"
 
 #: src/bin/main.c:555
-#, fuzzy
 msgid "show license"
-msgstr "näytä lisenssi"
+msgstr "näytä lupa"
 
 #: src/bin/main.c:558
-#, fuzzy
 msgid "show this message"
 msgstr "näytä tämä viesti"
 
 #: src/bin/main.c:655
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "virheellinen argumentti löydetty optiolle -S/--split. Katso --help"
+msgstr ""
+"virheellinen argumentti löydetty vivulle -S/--split. Katso apuosio --help"
 
 #: src/bin/main.c:909
-#, fuzzy
 msgid "Could not initialize key bindings"
-msgstr "Ei voitu alustaa näppäimistön toimintosidoksia"
+msgstr "Näppäinsidoksia ei saatu käyttöön"
 
 #: src/bin/main.c:924
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "Komentorivioptioita ei pystytty jäsentämään"
+msgstr "Komentoriviasetteita ei saatu jäsennettyä"
 
 #: src/bin/main.c:948
 #, c-format
@@ -499,9 +466,8 @@ msgid "option %s requires an argument!"
 msgstr "optio %s tarvitsee argumentin!"
 
 #: src/bin/main.c:949
-#, fuzzy
 msgid "invalid options found. See --help"
-msgstr "virheellisiä optioita löydetty. Katso --help"
+msgstr "löydettiin virheellisiä asetusmääreitä. Katso apu --help"
 
 #: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
@@ -535,7 +501,7 @@ msgstr "Tausta"
 
 #: src/bin/options_background.c:581
 msgid "Shine:"
-msgstr ""
+msgstr "Paiste:"
 
 #: src/bin/options_background.c:605
 msgid "Translucent"
@@ -563,9 +529,8 @@ msgid "Other"
 msgstr "Muu"
 
 #: src/bin/options_background.c:690
-#, fuzzy
 msgid "Click on a picture to use it as background"
-msgstr "Kaksoisnapsauta kuvaa tuodaksesi sen"
+msgstr "Kaksoisnapsauta kuvaa asettaaksesi sen taustakuvaksi"
 
 #: src/bin/options_behavior.c:63
 #, c-format
@@ -575,36 +540,35 @@ msgstr "%'d riviä"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Takaisinrullaus (muistinkäyttö on tällä hetkellä: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
-#, fuzzy
 msgid "Default cursor:"
-msgstr "Oletus"
+msgstr "Oletuksellinen kohdistin:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
-msgstr ""
+msgstr "Vilkkuva neliömöhkäle"
 
 #: src/bin/options_behavior.c:245
 msgid "Steady Block"
-msgstr ""
+msgstr "Tasainen neliömöhkäle"
 
 #: src/bin/options_behavior.c:265
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Vilkkuva alleviivaus"
 
 #: src/bin/options_behavior.c:285
 msgid "Steady Underline"
-msgstr ""
+msgstr "Tasainen alleviivaus"
 
 #: src/bin/options_behavior.c:305
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Vilkkuva palkki"
 
 #: src/bin/options_behavior.c:325
 msgid "Steady Bar"
-msgstr ""
+msgstr "Tasainen palkki"
 
 #: src/bin/options_behavior.c:365 src/bin/options.c:217
 msgid "Behavior"
@@ -628,7 +592,7 @@ msgstr "Reagoi näppäimiin"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Näppäinpainallusten äänituki <failure>POIS</failure>!"
 
 #: src/bin/options_behavior.c:406
 msgid "Visual Bell"
@@ -660,25 +624,26 @@ msgstr "Käynnistä kirjautumiskomentotulkkina"
 
 #: src/bin/options_behavior.c:414
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "Avaa uudet päätteet tämänhetkisessä työkansiossa"
 
 #: src/bin/options_behavior.c:415
-#, fuzzy
 msgid "Always show miniview"
-msgstr "Näytä historian pienoisnäyttö"
+msgstr "Näytä pienoisnäyttö aina"
 
 #: src/bin/options_behavior.c:416
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Kytke päälle erityiset Terminology-pakokoodit"
 
 #: src/bin/options_behavior.c:417
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Käsittele hymiöt tuplaleveinä merkkeinä"
 
 #: src/bin/options_behavior.c:418
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Syötettä ryhmitellessä, tee sama kaikissa päätteissä eikä vain niissä jotka "
+"ovat näkyvissä"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
@@ -686,7 +651,7 @@ msgstr "Käynnistä aina koossa:"
 
 #: src/bin/options_behavior.c:435
 msgid "Set Current:"
-msgstr ""
+msgstr "Aseta tämänhetkinen:"
 
 #: src/bin/options_behavior.c:446
 msgid "Width:"
@@ -697,12 +662,11 @@ msgid "Height:"
 msgstr "Korkeus:"
 
 #: src/bin/options_behavior.c:527
-#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Aseta kesto animaatiolle joka<br>näytetään välilehtiä vaihdettaessa,<br>joko "
+"Aseta animaation kesto joka<br>näytetään välilehtiä vaihdettaessa,<br>joko "
 "näppäimistötoiminnoilla, hiiren rullalla<br>taikka välilehtipaneelissa "
 "osoitinta siirtämällä"
 
@@ -722,7 +686,7 @@ msgstr "Optiot"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Hiiri"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
@@ -750,22 +714,21 @@ msgstr "Väliaikainen"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Avaa verkkosivusto"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Tekijä: </b>%s<br/><b>Verkkosivu: </b>%s<br/><b>Lupa: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Värit"
+msgstr "Värirakenteet"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Käytetään teemaa <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -774,29 +737,34 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> käyttää <hilight>elementary</hilight> "
+"työkaluja.<br>Työkaluasetuksia pääsee säätämään ajamalla "
+"<keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Käynnistä %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
 msgid "Scale"
-msgstr ""
+msgstr "Mittakaava"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:433
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Valitse koko siten että tämä teksti on luettavissa"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"Mittakaava-asetuksia voidaan muuttaa myös <hilight>elementary</hilight>'n "
+"asetuspaneelin kautta"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Etsi kirjasinta"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
@@ -808,7 +776,7 @@ msgstr "Vakio"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr ""
+msgstr "Näytä päätteessä lihavoituna sekä kursiivina"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -847,9 +815,8 @@ msgid "Key Bindings"
 msgstr "Näppäimistön toimintosidokset"
 
 #: src/bin/options_keys.c:458
-#, fuzzy
 msgid "Reset bindings"
-msgstr "Näppäimistön toimintosidokset"
+msgstr "Nollaa näppäimistösidokset"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
@@ -857,37 +824,35 @@ msgstr "Kohdista jako hiiriosoittimen kohdalle"
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
-msgstr ""
+msgstr "Huomiokeskeiset havaintotehosteet"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Piilota hiiren osoitin automaattisesti kun joutilas:"
 
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
-msgstr "Aktiiviset linkit"
+msgstr "Aktiiviset linkit:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "Sähköposteissa"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "Tiedostopoluissa"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr ""
+msgstr "URL-osoitteissa"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Värit"
+msgstr "Väreissä"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr ""
+msgstr "Perustuen pakokoodeihin"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -907,32 +872,32 @@ msgstr "Sähköposti:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr "Verkko (kuvat)"
+msgstr "Verkko-osoite (kuvat):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr "Verkko (video)"
+msgstr "Verkko-osoite (video):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr "Verkko (kaikki)"
+msgstr "Verkko-osoite (kaikki):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr "Paikallinen (kuvat)"
+msgstr "Paikallinen (kuvat):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr "Paikallinen (video)"
+msgstr "Paikallinen (video):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr "Paikallinen (kaikki)"
+msgstr "Paikallinen (kaikki):"
 
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Käyttäessä värirakennetta <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -975,29 +940,29 @@ msgstr "Esikatsele"
 
 #: src/bin/termio.c:1367
 msgid "Copy relative path"
-msgstr ""
+msgstr "Jäljennä liittyvä polku"
 
 #: src/bin/termio.c:1369
 msgid "Copy full path"
-msgstr ""
+msgstr "Jäljennä koko polku"
 
 #: src/bin/termio.c:2780
 msgid "Open as URL"
-msgstr ""
+msgstr "Avaa URL-osoitteena"
 
 #: src/bin/termio.c:4223
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "Ei voitu kohdentaa termptya"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "memerr-virhe: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "ioctl-koon asetus epäonnistui: %s"
 
 #: src/bin/termpty.c:361
 #, c-format
@@ -1007,22 +972,22 @@ msgstr "Ei voitu kirjoittaa tiedostokahvaa %d: %s"
 #: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "Ohjelmakuorta ei löydetty, palataan malliin %s"
 
 #: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "pty:n() avaaminen '%s' epäonnistui: %s"
 
 #: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "fcntl() pty:ssä '%s' epäonnistui: %s"
 
 #: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "ioctl() pty:ssä '%s' epäonnistui: %s"
 
 #: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
@@ -1032,11 +997,11 @@ msgstr "Ei voitu vaihtaa nykyistä hakemistoa kohteeseen '%s': %s"
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Yhtäkään teemaa ei saatu ladattua ryhmälle=%s: %s"
 
 #: src/bin/win.c:425
 msgid "Done"
-msgstr ""
+msgstr "Valmis"
 
 #: src/bin/win.c:441
 msgid ""
@@ -1044,18 +1009,21 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Mittakaava-asetuksia voidaan muuttaa itse Asetuksissa (napsauta päätteessä "
+"oikealla hiiren napilla) →  Työkalut, tai käskyllä "
+"<keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2336
 msgid "Ecore IMF failed"
-msgstr ""
+msgstr "Ecore IMF ei onnistunut"
 
 #: src/bin/win.c:6239
 msgid "Ok"
-msgstr ""
+msgstr "Selvä"
 
 #: src/bin/win.c:6244
 msgid "Cancel"
-msgstr ""
+msgstr "Peruuta"
 
 #: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
