@@ -4183,7 +4183,7 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
              ERR("error getting color class '%s' on obj %p", color_class, obj);
           }
         l = snprintf(buf, sizeof(buf),
-                     "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\007",
+                     "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\033\\",
                      number, r, r, g, g, b, b);
         termpty_write(ty, buf, l);
      }

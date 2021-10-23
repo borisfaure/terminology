@@ -119,7 +119,7 @@ mouse_reporting_mode_normal_ext_urxvt.sh bf68099047410f102e71d2e451875c69
 mouse_reporting_mode_mouse_move_pressed_ext_urxvt.sh 59f3e59b60b3a43260de6a80135489eb
 mouse_reporting_mode_all_ext_urxvt.sh a11bbc8ebea42d06cc3ad823b52c09b3
 shift_in_out.sh 3896bcc6887998bbc41b43840a6b2e33 c3bb903237d9ef40d39ec07f328d922a
-osc-11-query.sh 369e4e03be35dcb360e45d13fcd7da61
+osc-11-query.sh b762d503e40641ff896dac46391ad7a8
 link_detection.sh bbe87a849586e8b922f26ad5d88146dc
 selection_with_tabs.sh 23557497a8f28ca246048bb2443b3dab
 selection_empty_lines.sh 7a90d9bfde9e9fb7f067f6c08eac57ff
@@ -144,8 +144,8 @@ color_link_css_rgb.sh c1f5a5b4f3d87b710aed59f72439a645
 color_link_css_hsl.sh fc9bda72bd4eea5e9414ef9755ae176a
 crash_empty_osc.sh b87272896ce7be9856253b32be1bef14
 xterm-osc-10.sh b8c23c9c5482b1e9c30d8a261edc29f0
-xterm-osc-11.sh 29deaf351c40843f5280b78bf3009985
-xterm-osc-12.sh 400cffeb5f55fabecacb97f00ddc2128
+xterm-osc-11.sh 3e02038964b78d948fb599c996bf370d
+xterm-osc-12.sh 5cdd71681d6b8e60091c1ecde4214709
 xterm-colors-sharp.sh 79d6f72df04237d76a0fa3e722dcec5b
 xterm-colors-rgb.sh d9b55817ef8428343105b44dabd535a8
 xterm-colors-rgbi.sh d9b55817ef8428343105b44dabd535a8
