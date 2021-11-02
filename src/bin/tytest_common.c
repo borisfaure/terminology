@@ -390,6 +390,12 @@ test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
 }
 #endif
 
+Eina_Bool
+termio_is_focused(const Evas_Object *obj EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 static void
 _termpty_init(Termpty *ty, Config *config)
 {

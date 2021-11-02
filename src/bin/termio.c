@@ -350,6 +350,15 @@ termio_term_get(const Evas_Object *obj)
    return sd->term;
 }
 
+Eina_Bool
+termio_is_focused(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+
+   return term_is_focused(sd->term);
+}
+
 Evas_Object *
 termio_bg_get(const Evas_Object *obj)
 {
