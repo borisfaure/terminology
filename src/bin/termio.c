@@ -2548,6 +2548,7 @@ termio_focus_in(Evas_Object *termio)
    else
      edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
    if (!sd->win) return;
+   termpty_focus_report(sd->pty, EINA_TRUE);
 }
 
 void
@@ -2562,6 +2563,7 @@ termio_focus_out(Evas_Object *termio)
    sd->pty->selection.last_click = 0;
    if (!sd->ctxpopup)
      termio_remove_links(sd);
+   termpty_focus_report(sd->pty, EINA_FALSE);
    term_unfocus(sd->term);
 }
 

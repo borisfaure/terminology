@@ -1733,6 +1733,17 @@ hl_bitmap_clear_bit(Termpty *ty, uint16_t id)
    *pos &= ~bit;
 }
 
+void
+termpty_focus_report(Termpty *ty, Eina_Bool focus)
+{
+   if (!ty || !ty->focus_reporting)
+     return;
+   if (focus)
+     TERMPTY_WRITE_STR("\033[I");
+   else
+     TERMPTY_WRITE_STR("\033[O");
+}
+
 Term_Link *
 term_link_new(Termpty *ty)
 {

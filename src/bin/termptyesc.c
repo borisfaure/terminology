@@ -467,9 +467,17 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    else ty->mouse_mode = MOUSE_OFF;
                    DBG("set mouse (press+release+all motion) %i", mode);
                    break;
-                case 1004: // I don't know what focus reporting is?
-                   WRN("TODO: enable focus reporting %i", mode);
-                   ty->decoding_error = EINA_TRUE;
+                case 1004:
+                   DBG("%s focus reporting", mode ? "enable" : "disable");
+                   if (mode)
+                     {
+                        ty->focus_reporting = EINA_TRUE;
+                        termpty_focus_report(ty, termio_is_focused(ty->obj));
+                     }
+                   else
+                     {
+                        ty->focus_reporting = EINA_FALSE;
+                     }
                    break;
                 case 1005:
                    if (mode) ty->mouse_ext = MOUSE_EXT_UTF8;

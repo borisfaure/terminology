@@ -203,6 +203,7 @@ struct _Termpty
    unsigned int mouse_ext  : 2;
    unsigned int bracketed_paste : 1;
    unsigned int decoding_error : 1;
+   unsigned int focus_reporting : 1;
    struct {
        Term_Link *links;
        uint8_t *bitmap;
@@ -315,6 +316,8 @@ void term_link_free(Termpty *ty, Term_Link *link);
 int
 termpty_color_class_get(Termpty *ty, const char *key,
                         int *r, int *g, int *b, int *a);
+void
+termpty_focus_report(Termpty *ty, Eina_Bool focus);
 
 extern int _termpty_log_dom;
 
