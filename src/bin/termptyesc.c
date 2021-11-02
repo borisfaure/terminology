@@ -33,9 +33,6 @@
 #define OSC 0x9d
 #define DEL 0x7f
 
-#define TERMPTY_WRITE_STR(_S) \
-   termpty_write(ty, _S, strlen(_S))
-
 
 /* XXX: all handle_ functions return the number of bytes successfully read, 0
  * if not enough bytes could be read
@@ -1376,8 +1373,7 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            {
               /* DSR-OS (Operating Status)
                * Reply Ok */
-              termpty_write(ty, "\033[0n",
-                            strlen("\033[0n"));
+              TERMPTY_WRITE_STR("\033[0n");
            }
          break;
       case 6:

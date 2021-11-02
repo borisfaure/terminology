@@ -281,7 +281,11 @@ void       termpty_config_update(Termpty *ty, Config *config);
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
 Termcell * termpty_cell_get(Termpty *ty, int y_requested, int x_requested);
 ssize_t termpty_row_length(Termpty *ty, int y);
+
+#define TERMPTY_WRITE_STR(_S) \
+   termpty_write(ty, _S, strlen(_S))
 void       termpty_write(Termpty *ty, const char *input, int len);
+
 void       termpty_resize(Termpty *ty, int new_w, int new_h);
 void       termpty_resize_tabs(Termpty *ty, int old_w, int new_w);
 void       termpty_backscroll_adjust(Termpty *ty, int *scroll);
