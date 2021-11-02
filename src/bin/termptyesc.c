@@ -282,13 +282,15 @@ static void
 _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                            const Eina_Unicode * const end)
 {
-   int mode = 0, priv = 0, arg;
+   Eina_Bool mode = EINA_FALSE;
+   Eina_Bool priv = EINA_FALSE;
+   int arg;
 
    if (cc == 'h')
-     mode = 1;
+     mode = EINA_TRUE;
    if (*b == '?')
      {
-        priv = 1;
+        priv = EINA_TRUE;
         b++;
      }
    if (priv) /* DEC Private Mode Reset (DECRST) */
