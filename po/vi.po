@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -19,13 +19,13 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Sao Chép"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "Mở"
 
@@ -81,7 +81,7 @@ msgstr "Miniview"
 msgid "Set title"
 msgstr "Đặt tiêu đề cho cửa sổ"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "Sao Chép"
 
@@ -956,38 +956,38 @@ msgstr "Không thể đọc tập tin hình nền: %s"
 msgid "Unknown command: %s"
 msgstr "Lệnh chưa biết: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Không thể lấy thư mục làm việc của pid %i: %s"
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Không thể tải thư mục làm việc %s: %s"
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "không hỗ trợ định dạng chọn '%s'"
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "Xem Trước"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr "Mở như là URL"
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr "Không thể cấp phát termpty"
 

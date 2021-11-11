@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "कॉपी"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "ओपन"
 
@@ -78,7 +78,7 @@ msgstr "मिनी व्यू"
 msgid "Set title"
 msgstr "विंडो शीर्षक सेट करें"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "कॉपी"
 
@@ -937,38 +937,38 @@ msgstr "पृष्ठभूमि फ़ाइल पढ़ा नहीं �
 msgid "Unknown command: %s"
 msgstr "अज्ञात कमांड: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "'%s' असमर्थित चयन प्रारूप."
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "पूर्वावलोकन"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr ""
 

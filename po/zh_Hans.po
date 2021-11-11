@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2021-04-03 08:26+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -17,13 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.6-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, c-format
 msgid "Copy '%s'"
 msgstr "复制 '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "打开"
 
@@ -73,7 +73,7 @@ msgstr "迷你视图"
 msgid "Set title"
 msgstr "设置标题"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "复制"
 
@@ -898,38 +898,38 @@ msgstr "无法读取背景文件: %s"
 msgid "Unknown command: %s"
 msgstr "未知命令: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "无法获取pid %i 的工作目录: %s"
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "无法加载工作目录 %s: %s"
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "不支持的所选格式'%s'"
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "预览"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr "复制相对路径"
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr "复制完整路径"
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr "打开为 URL"
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2021-08-24 15:11+0200\n"
 "Last-Translator: Da C <cslldnl@gmail.com>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/terminology/"
@@ -19,13 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.5\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, c-format
 msgid "Copy '%s'"
 msgstr "Copia «%s»"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "Apri"
 
@@ -81,7 +81,7 @@ msgstr "Miniature schede"
 msgid "Set title"
 msgstr "Imposta titolo"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "Copia"
 
@@ -920,38 +920,38 @@ msgstr "Non ho potuto leggere il file per lo sfondo: %s"
 msgid "Unknown command: %s"
 msgstr "Comando sconosciuto: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Non ho ottenuto la directory di lavoro del pid %i: %s"
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Non ho potuto caricare la directory di lavoro %s: %s"
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Formato selezione non supportato '%s'"
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "Anteprima"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr "Copia percorso relativo"
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr "Copia percorso completo"
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr "Apri come URL"
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr "Non ho potuto allocare termpty"
 

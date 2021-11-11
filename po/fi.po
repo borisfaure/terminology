@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2021-10-12 19:21+0000\n"
 "Last-Translator: Linus Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/terminology/"
@@ -19,13 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.9-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, c-format
 msgid "Copy '%s'"
 msgstr "Jäljennä '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "Avaa"
 
@@ -81,7 +81,7 @@ msgstr "Pienoisnäkymä"
 msgid "Set title"
 msgstr "Aseta ikkunan otsikko"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "Kopioi"
 
@@ -737,9 +737,8 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> käyttää <hilight>elementary</hilight> "
-"työkaluja.<br>Työkaluasetuksia pääsee säätämään ajamalla "
-"<keyword>%s</keyword>"
+"<em>Terminology</em> käyttää <hilight>elementary</hilight> työkaluja."
+"<br>Työkaluasetuksia pääsee säätämään ajamalla <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -919,38 +918,38 @@ msgstr "Taustakuvatiedostoa ei voi lukea: %s"
 msgid "Unknown command: %s"
 msgstr "Tuntematon komento: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Ei voitu hakea työhakemistoa prosessille %i: %s"
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Ei voitu hakea työhakemistoa %s: %s"
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "valintamuotoa '%s' ei tueta"
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "Esikatsele"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr "Jäljennä liittyvä polku"
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr "Jäljennä koko polku"
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr "Avaa URL-osoitteena"
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr "Ei voitu kohdentaa termptya"
 

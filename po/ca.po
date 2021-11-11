@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 21:18+0200\n"
+"POT-Creation-Date: 2021-11-11 19:11+0100\n"
 "PO-Revision-Date: 2020-09-16 21:34+0000\n"
 "Last-Translator: Boris Faure <billiob@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "X-Generator: Weblate 4.3-dev\n"
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1288
-#: src/bin/termio.c:1297
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
+#: src/bin/termio.c:1306
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Còpia '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1360
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
 msgid "Open"
 msgstr "Obre"
 
@@ -83,7 +83,7 @@ msgstr "Minivista"
 msgid "Set title"
 msgstr "Anomena la finestra"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1374 src/bin/termio.c:2778
+#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
 msgid "Copy"
 msgstr "Còpia"
 
@@ -941,38 +941,38 @@ msgstr "No s'ha pogut llegir el fitxer de fons de pantalla: %s"
 msgid "Unknown command: %s"
 msgstr "Ordre desconeguda: %s"
 
-#: src/bin/termio.c:451
+#: src/bin/termio.c:460
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "No s'ha pogut obtenir el directori de treball amb pid %i: %s"
 
-#: src/bin/termio.c:466
+#: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "No s'ha pogut carregar el directori de treball %s: %s"
 
-#: src/bin/termio.c:1196
+#: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "format de selecció no permès '%s'"
 
-#: src/bin/termio.c:1357
+#: src/bin/termio.c:1366
 msgid "Preview"
 msgstr "Previsualitza"
 
-#: src/bin/termio.c:1367
+#: src/bin/termio.c:1376
 msgid "Copy relative path"
 msgstr "Copia ruta relativa"
 
-#: src/bin/termio.c:1369
+#: src/bin/termio.c:1378
 msgid "Copy full path"
 msgstr "Copia ruta completa"
 
-#: src/bin/termio.c:2780
+#: src/bin/termio.c:2791
 msgid "Open as URL"
 msgstr "Obre com a URL"
 
-#: src/bin/termio.c:4223
+#: src/bin/termio.c:4234
 msgid "Could not allocate termpty"
 msgstr "No s'ha ubicat termpty"
 
