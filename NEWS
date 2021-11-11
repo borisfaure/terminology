@@ -1,6 +1,19 @@
 ==================
-Terminology 1.10.0
+Terminology 1.11.0
 ==================
+
+
+Changes since 1.10.0:
+--------------------
+
+Additions:
+    * Support for focus reporting escape codes
+
+Improvements:
+    * Translation updates for Finnish and Ukrainian
+
+Fixes:
+    * Fix handling of escape code OSC 11
 
 
 Changes since 1.9.0:

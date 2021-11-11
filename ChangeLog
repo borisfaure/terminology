@@ -1,4 +1,11 @@
+2021-11-11
+        * Release v1.11.0
+        * Support for focus reporting escape codes
+        * Translation updates for Finnish and Ukrainian
+        * Fix handling of escape code OSC 11
+
 2021-10-03
+        * Release v1.10.0
         * Colorshemes: add Black scheme
         * New translations: Sinhala, Hebrew
         * Translation updates for Chinese (Simplified), Croatian, Danish,
