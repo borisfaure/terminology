@@ -659,7 +659,7 @@ _color_scheme_get_from_file(const char *path, const char *name)
 
    ef = eet_open(path, EET_FILE_MODE_READ);
    if (!ef)
-     return NULL;
+      return NULL;
 
    cs = eet_data_read(ef, edd_cs, name);
    eet_close(ef);
@@ -676,12 +676,12 @@ _color_scheme_get(const char *name)
    Color_Scheme *cs_app;
 
    snprintf(path_user, sizeof(path_user) - 1,
-            "%s/terminology/" COLORSCHEMES_FILENAME,
-            efreet_config_home_get());
+            "%s/terminology/colorschemes/%s.eet",
+            efreet_config_home_get(), name);
 
    snprintf(path_app, sizeof(path_app) - 1,
-            "%s/" COLORSCHEMES_FILENAME,
-            elm_app_data_dir_get());
+            "%s/colorschemes/%s.eet",
+            elm_app_data_dir_get(), name);
 
    cs_user = _color_scheme_get_from_file(path_user, name);
    cs_app = _color_scheme_get_from_file(path_app, name);
@@ -699,7 +699,10 @@ _color_scheme_get(const char *name)
    else if (cs_app)
      return cs_app;
    else
-     return NULL;
+     {
+        ERR("failed find colorscheme '%s'", name);
+        return NULL;
+     }
 }
 
 void
@@ -731,104 +734,91 @@ Eina_List *
 color_scheme_list(void)
 {
    Eina_List *l = NULL;
-   static char path_user[PATH_MAX] = "";
-   static char path_app[PATH_MAX] = "";
-   Eet_File *ef_app = NULL;
-   Eet_File *ef_user = NULL;
+   Eina_List *dir = NULL;
+   Eina_List *name_list = NULL;
+   Eina_List *search_paths = NULL;
+   static char buf[PATH_MAX] = "";
+   char *file;
+   char *sp;
+   Eet_File *ef = NULL;
    Eina_Iterator *it = NULL;
    Eet_Entry *entry;
-   Color_Scheme *cs_user;
-   Color_Scheme *cs_app;
+   Color_Scheme *cs;
+   const char *current_name;
 
-   snprintf(path_user, sizeof(path_user) - 1,
-            "%s/terminology/" COLORSCHEMES_FILENAME,
+   /* Search homedir first, so color classes there get used */
+   snprintf(buf, sizeof(buf) - 1,
+            "%s/terminology/colorchemes",
             efreet_config_home_get());
-
-   snprintf(path_app, sizeof(path_app) - 1,
-            "%s/" COLORSCHEMES_FILENAME,
+   search_paths = eina_list_append(search_paths, eina_stringshare_add(buf));
+   snprintf(buf, sizeof(buf) - 1,
+            "%s/colorschemes",
             elm_app_data_dir_get());
 
+  search_paths = eina_list_append(search_paths, eina_stringshare_add(buf));
+
    /* Add default theme */
-   cs_app = malloc(sizeof(*cs_app));
-   if (!cs_app)
+   cs = malloc(sizeof(*cs));
+   if (!cs)
      return NULL;
-   memcpy(cs_app, &default_colorscheme, sizeof(*cs_app));
-   l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
+   memcpy(cs, &default_colorscheme, sizeof(*cs));
+   l = eina_list_sorted_insert(l, color_scheme_cmp, cs);
+   /* Make sure default theme is the only theme */
+   name_list = eina_list_append(name_list, eina_stringshare_add("Default"));
 
-   ef_app = eet_open(path_app, EET_FILE_MODE_READ);
-   if (!ef_app)
-     {
-        ERR("failed to open '%s'", path_app);
-        goto end;
+   EINA_LIST_FREE(search_paths, sp)
+      {
+         dir = ecore_file_ls(sp);
+
+         EINA_LIST_FREE(dir, file)
+           {
+              snprintf(buf, sizeof(buf), "%s/%s", sp, file);
+              if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
+                {
+                   if (eina_str_has_extension(file, ".eet"))
+                     {
+                        ef = eet_open(buf, EET_FILE_MODE_READ);
+                        if (!ef)
+                           {
+                              ERR("failed to open '%s'", buf);
+                              continue;
+                           }
+                        it = eet_list_entries(ef);
+                        if (!it)
+                           {
+                              ERR("failed to list entries in '%s'", buf);
+                              continue;
+                           }
+                        EINA_ITERATOR_FOREACH(it, entry)
+                           {
+                              /* If we already have a cs with this name skip it */
+                              current_name = eina_stringshare_add(entry->name);
+                              if (eina_list_data_find_list(name_list, current_name))
+                                 {
+                                    WRN("Skipping loading '%s' from '%s' color scheme exists already",
+                                       entry->name, buf);
+                                    eina_stringshare_del(entry->name);
+                                    continue;
+                                 }
+                              cs = eet_data_read(ef, edd_cs, entry->name);
+                              if (!cs)
+                                {
+                                   ERR("failed to load color scheme '%s' from '%s'",
+                                       entry->name, buf);
+                                   eina_stringshare_del(entry->name);
+                                   continue;
+                                }
+                              l = eina_list_sorted_insert(l, color_scheme_cmp, cs);
+                              name_list = eina_list_append(name_list, current_name);
+                           }
+                        eet_close(ef);
+                     }
+                }
+              free(file);
+           }
      }
 
-   ef_user = eet_open(path_user, EET_FILE_MODE_READ);
-   if (ef_user)
-     {
-        it = eet_list_entries(ef_user);
-        if (!it)
-          {
-             ERR("failed to list entries in '%s'", path_user);
-             goto end;
-          }
-        EINA_ITERATOR_FOREACH(it, entry)
-          {
-             cs_user = eet_data_read(ef_user, edd_cs, entry->name);
-             if (!cs_user)
-               {
-                  ERR("failed to load color scheme '%s' from '%s'",
-                      entry->name, path_user);
-                  continue;
-               }
-             cs_app = eet_data_read(ef_app, edd_cs, entry->name);
-             if (cs_app)
-               {
-                  /* Prefer user file */
-                  if (cs_user->md.version >= cs_app->md.version)
-                    l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
-                  else
-                    free(cs_user);
-                  free(cs_app);
-               }
-             else
-                  l = eina_list_sorted_insert(l, color_scheme_cmp, cs_user);
-          }
-     }
-
-   it = eet_list_entries(ef_app);
-   if (!it)
-     {
-        ERR("failed to list entries in '%s'", path_app);
-        goto end;
-     }
-   EINA_ITERATOR_FOREACH(it, entry)
-     {
-        cs_app = eet_data_read(ef_app, edd_cs, entry->name);
-        if (!cs_app)
-          {
-             ERR("failed to load color scheme '%s' from '%s'",
-                 entry->name, path_app);
-             continue;
-          }
-        cs_user = eet_data_read(ef_user, edd_cs, entry->name);
-        if (cs_user)
-          {
-             /* Prefer user file if higher version */
-             if (cs_user->md.version < cs_app->md.version)
-               l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
-             else
-               free(cs_app);
-             free(cs_user);
-          }
-        else
-          l = eina_list_sorted_insert(l, color_scheme_cmp, cs_app);
-     }
-end:
    eina_iterator_free(it);
-   if (ef_app)
-     eet_close(ef_app);
-   if (ef_user)
-     eet_close(ef_user);
 
    return l;
 }

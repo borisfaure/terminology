@@ -21,18 +21,26 @@ colorschemes_desc = [
   'Tango Light.ini',
   'Tomorrow Night Burns.ini',
 ]
+
+colorschemes_out = []
+
+foreach c : colorschemes_desc
+  colorschemes_out += c.replace('ini','eet')
+endforeach
+
 cs_builder = [join_paths(meson.source_root(),
                          'data', 'colorschemes', 'builder.sh'),
-              eet_bin, '@OUTPUT@', '@INPUT@']
+              eet_bin, '@INPUT@']
 cs_install_dir = join_paths(get_option('datadir'),
-                              meson.project_name())
+                              meson.project_name(),
+                              'colorschemes')
 
 
-custom_target('colorschemes.eet',
+custom_target('colorschemes',
   install:true,
   install_dir: cs_install_dir,
   install_mode: 'rw-r--r--',
   depend_files: ['builder.sh', 'ini2desc.py', 'get_name.py', 'add_color_scheme.sh'],
   command: cs_builder,
   input: colorschemes_desc,
-  output: 'colorschemes.eet')
+  output: colorschemes_out)
