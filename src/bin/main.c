@@ -1046,7 +1046,7 @@ elm_main(int argc, char **argv)
           }
      }
 
-   elm_theme_overlay_add(NULL, theme_path_get("default"));
+   elm_theme_extension_add(NULL, theme_path_get("default.edj"));
    elm_theme_overlay_add(NULL, config_theme_path_get(instance.config));
 
    if (instance.login_shell == IPC_INSTANCE_OPT_UNSET)
