@@ -1,46 +1,52 @@
-colorschemes_desc = [
-  'Belafonte Day.ini',
-  'Belafonte Night.ini',
-  'Black.ini',
-  'Cobalt2.ini',
-  'Dracula.ini',
-  'Fahrenheit.ini',
-  'Material.ini',
-  'Mild.ini',
-  'Mustang.ini',
-  'Nord.ini',
-  'Ocean Dark.ini',
-  'One Dark.ini',
-  'PaleNight.ini',
-  'PaperColor.ini',
-  'Smyck.ini',
-  'Soft Era.ini',
-  'Solarized.ini',
-  'Solarized Light.ini',
-  'Tango Dark.ini',
-  'Tango Light.ini',
-  'Tomorrow Night Burns.ini',
+colorschemes = [
+  'Belafonte Day',
+  'Belafonte Night',
+  'Black',
+  'Cobalt2',
+  'Dracula',
+  'Fahrenheit',
+  'Material',
+  'Mild',
+  'Mustang',
+  'Nord',
+  'Ocean Dark',
+  'One Dark',
+  'PaleNight',
+  'PaperColor',
+  'Smyck',
+  'Soft Era',
+  'Solarized',
+  'Solarized Light',
+  'Tango Dark',
+  'Tango Light',
+  'Tomorrow Night Burns',
 ]
 
-colorschemes_out = []
+add_color_scheme_sh = find_program(
+  'add_color_scheme.sh',
+  native: false,
+  required: true,
+  dirs: [join_paths(meson.source_root(), 'data', 'colorschemes')])
 
-foreach c : colorschemes_desc
-  colorschemes_out += c.replace('ini','eet')
-endforeach
+cs_builder = [add_color_scheme_sh,
+              eet_bin, '@OUTPUT@', '@INPUT@']
 
-cs_builder = [join_paths(meson.source_root(),
-                         'data', 'colorschemes', 'builder.sh'),
-              eet_bin, '@INPUT@']
 cs_install_dir = join_paths(get_option('datadir'),
-                              meson.project_name(),
-                              'colorschemes')
+                              meson.project_name())
+
+cs_install_dir = join_paths(
+  get_option('datadir'),
+  meson.project_name(),
+  'colorschemes')
 
 
-custom_target('colorschemes',
-  install:true,
-  install_dir: cs_install_dir,
-  install_mode: 'rw-r--r--',
-  depend_files: ['builder.sh', 'ini2desc.py', 'get_name.py', 'add_color_scheme.sh'],
-  command: cs_builder,
-  input: colorschemes_desc,
-  output: colorschemes_out)
+foreach c : colorschemes
+  custom_target(c,
+    install:true,
+    install_dir: cs_install_dir,
+    install_mode: 'rw-r--r--',
+    depend_files : ['ini2desc.py', 'get_name.py', 'add_color_scheme.sh'],
+    command: cs_builder,
+    input: [c + '.ini'],
+    output: [c + '.eet'])
+endforeach

@@ -104,8 +104,6 @@ proportion is configurable, like this for a 80/20 proportion:
 Now that we are happy with the content of `FooBar.ini`, we can call
 the script `add_color_scheme.sh` stored in `data/color_schemes/` as seen
 below:
-`add_color_scheme.sh eet ~/.config/terminology/colorschemes.eet FooBar.ini`
+`add_color_scheme.sh eet ~/.config/terminology/colorschemes/FooBar.eet FooBar.ini`
 
 Now you should be able to select your color scheme in Terminology!
-
-

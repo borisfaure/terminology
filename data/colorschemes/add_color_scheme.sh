@@ -6,6 +6,8 @@ COMPRESS=1
 
 EET=$1
 shift
+EET_FILE=$1
+shift
 INI=$1
 shift
 
@@ -14,16 +16,17 @@ GET_NAME=$(dirname "$0")/get_name.py
 
 NAME=$($GET_NAME "$INI")
 
+# ensure output directory exists
+mkdir -p "$(dirname "$EET_FILE")"
+
 # generate desc on a temporary file
 TMP_DESC=$(mktemp "$NAME-DESC-XXXXXX")
+TMP_EET=$(mktemp "$NAME-EET-XXXXXX")
 
 # trap to avoid creating orphan files
-trap 'rm -f "$TMP_DESC"' INT TERM HUP EXIT
+trap 'rm -f "$TMP_DESC" "$TMP_EET"' INT TERM HUP EXIT
 
 NAME=$($GET_NAME "$INI")
-
-mkdir -p "data/colorschemes"
-EET_FILE="data/colorschemes/$NAME.eet"
 
 [ ! -w "$EET_FILE" ] && touch "$EET_FILE"
 
