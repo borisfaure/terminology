@@ -120,12 +120,12 @@ _mouse_up_cb(void *data,
                        ecore_timer_del(sd->autozoom_timeout);
                        sd->autozoom_timeout = NULL;
                     }
-                  evas_object_smart_callback_call(data, "ending", NULL);
+                  evas_object_smart_callback_call(sd->self, "ending", NULL);
                   sel_zoom(sd->self, 1.0);
                   return;
                }
           }
-        evas_object_smart_callback_call(data, "clicked", NULL);
+        evas_object_smart_callback_call(sd->self, "clicked", NULL);
      }
 }
 
