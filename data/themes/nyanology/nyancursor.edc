@@ -21,7 +21,6 @@ collections {
 			image: "cat10.png" COMP;
 			image: "cat11.png" COMP;
 			image: "cat12.png" COMP;
-			image: "cr_key.png" COMP;
 		}
 		parts {
 			part { name: "cat";
@@ -92,37 +91,6 @@ collections {
 				}
 			}
 
-			part { name: "key";
-				mouse_events: 0;
-				description { state: "default" 0.0;
-					rel1 {
-						to: "cat";
-						offset: -5 -5;
-						relative: 0.1 0.0;
-					}
-					rel2 {
-						to: "cat";
-						offset: 4 4;
-						relative: 0.5 1.0;
-					}
-					image {
-						normal: "cr_key.png";
-						border: 4 4 4 4;
-					}
-					color: 255 255 255 0;
-				}
-				description { state: "on" 0.0;
-					inherit: "default" 0.0;
-					color: 255 255 255 255;
-				}
-				description { state: "out" 0.0;
-					inherit: "default" 0.0;
-					color: 160 100 255 0;
-					rel1.relative: -0.2 -0.18;
-					rel2.relative: 0.6 1.18;
-				}
-			}
-
 		}
 		programs {
 			program { name: "anim";
@@ -155,23 +123,6 @@ collections {
 				action: STATE_SET "greyed" 0.0;
 				transition: LINEAR FRAME_DURATION*6;
 				target: "cat";
-			}
-			program { name: "key";
-				signal: "key,down";
-				source: "terminology";
-				action: STATE_SET "default" 0.0;
-				target: "key";
-				after: "key2";
-			}
-			program { name: "key2";
-				action: STATE_SET "on" 0.0;
-				target: "key";
-				after: "key3";
-			}
-			program { name: "key3";
-				action: STATE_SET "out" 0.0;
-				transition: DECELERATE 0.3;
-				target: "key";
 			}
 			program { name: "bellrotate1";
 				signal: "bell";
