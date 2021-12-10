@@ -22,49 +22,31 @@
 // |##############|
 
 group { name: "terminology/selection";
-   images {
-      image: "sl_stripe.png" COMP;
-      image: "sl_left.png" COMP;
-      image: "sl_right.png" COMP;
-      image: "sl_top.png" COMP;
-      image: "sl_bottom.png" COMP;
-      image: "sl_htop.png" COMP;
-      image: "sl_hbottom.png" COMP;
-   }
    parts {
-        // background pattern. duplicated because clips cut out regions of
-        // it to see and clips don't overlap
-      part { name: "background_top";
+      // background pattern. duplicated because clips cut out regions of
+      // it to see and clips don't overlap
+      part { name: "background_top"; type: RECT;
          mouse_events: 0;
          clip_to: "top_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 25;
+            color: 255 255 255 128; // no cc
             color_class: "GLOW";
-            image.normal: "sl_stripe.png";
-            fill.size.relative: 0.0 0.0;
-            fill.size.offset: 240 240;
          }
       }
-      part { name: "background_middle";
+      part { name: "background_middle"; type: RECT;
          mouse_events: 0;
          clip_to: "middle_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 25;
+            color: 255 255 255 128; // no cc
             color_class: "GLOW";
-            image.normal: "sl_stripe.png";
-            fill.size.relative: 0.0 0.0;
-            fill.size.offset: 240 240;
          }
       }
-      part { name: "background_bottom";
+      part { name: "background_bottom"; type: RECT;
          mouse_events: 0;
          clip_to: "bottom_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 25;
+            color: 255 255 255 128; // no cc
             color_class: "GLOW";
-            image.normal: "sl_stripe.png";
-            fill.size.relative: 0.0 0.0;
-            fill.size.offset: 240 240;
          }
       }
 
@@ -137,7 +119,7 @@ group { name: "terminology/selection";
             inherit: "default" 0.0;
          }
       }
-
+/*
       // the outline around the selection...
       #define TARGETS \
       target: "top_clip"; target: "middle_clip"; target: "bottom_clip"; \
@@ -186,6 +168,7 @@ group { name: "terminology/selection";
 
       // oneline (also multiple lines but all fill the row):
       // |  #########   |
+
       part { name: "0.left";
          mouse_events: 0;
          clip_to: "0.clip";
@@ -875,6 +858,7 @@ group { name: "terminology/selection";
          action: STATE_SET "bottomfull" 0.0;
          TARGETS;
       }
+*/
 
       // top and bottom swallows used to coimmunicate via min/max size the
       // size of the top and bottom lines
@@ -896,123 +880,177 @@ group { name: "terminology/selection";
       }
 
       // blinky cursors indicating you can drag the ends of the selection
-      part { name: "cursor.top_left"; type: RECT;
-         mouse_events: 0;
+      part { name: "cursor.top_left"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "terminology.top_left";
+            rel.to: "terminology.top_left";
             rel1.relative: 1.0 0.0;
-            rel2.to: "terminology.top_left";
             rel2.relative: 1.0 1.0;
-            rel2.offset: 0 -1;
-            color: 255 255 255 128;
-            color_class: "END_SELECTION";
+            max: 0 99999;
          }
       }
-      part { name: "cursor_blink.top_left"; type: RECT;
-         mouse_events: 0;
+      part { name: "cursor.top_left_arrow_l";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "cursor.top_left";
-            rel2.to: "cursor.top_left";
-            visible: 0;
+            image.normal: "arrow-l";
+            color_class: "/fg/normal/term/selection/arrow/left";
+            rel.to: "cursor.top_left";
+            min: 15 15;
+            max: 15 15;
+            align: 1.0 0.5;
+            rel1.offset: -5 0;
+            rel2.offset: -5 -1;
+            rel2.relative: 0.0 1.0;
+            offscale;
          }
          description { state: "fading" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class: "END_SELECTION";
-            visible: 1;
          }
          description { state: "fading" 1.0;
-            inherit: "fading" 0.0;
-            color: 255 255 255 64;
-            color_class: "END_SELECTION";
-            rel1.offset: -5 0;
+            inherit: "default" 0.0;
+            rel1.offset: -15 0;
+            rel2.offset: -15 -1;
+            color: 255 255 255 0; // no cc
+         }
+      }
+      part { name: "cursor.top_left_arrow_u";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "arrow-u";
+            color_class: "/fg/normal/term/selection/arrow/up";
+            rel.to: "cursor.top_left";
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 1.0;
+            rel1.offset: 0 -5;
+            rel2.offset: -1 -5;
+            rel2.relative: 1.0 0.0;
+            offscale;
+         }
+         description { state: "fading" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "fading" 1.0;
+            inherit: "default" 0.0;
+            rel1.offset: 0 -15;
+            rel2.offset: -1 -15;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "zone.top_left"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "cursor.top_left";
-            rel1.offset: -15 0;
-            rel2.to: "cursor.top_left";
-            rel2.offset:  15 0;
             color: 0 0 0 0;
+            rel.to: "cursor.top_left";
+            min: 30 30;
+            rel1.offset: -15 -15;
+            rel2.offset: 14 -1;
+            offscale;
          }
          program { name: "top_left.blink";
-            signal: "mouse,in";
-            source: "zone.top_left";
+            signal: "mouse,in"; source: "zone.top_left";
             action: STATE_SET "fading" 0.0;
-            target: "cursor_blink.top_left";
+            target: "cursor.top_left_arrow_l";
+            target: "cursor.top_left_arrow_u";
             after: "top_left.fade";
          }
          program { name: "top_left.fade";
             action: STATE_SET "fading" 1.0;
-            transition: LINEAR 0.3;
-            target: "cursor_blink.top_left";
+            transition: LINEAR 0.5;
+            target: "cursor.top_left_arrow_l";
+            target: "cursor.top_left_arrow_u";
             after: "top_left.blink";
          }
-         program { name: "top_left.stop";
-            signal: "mouse,out";
-            source: "zone.top_left";
+         program { signal: "mouse,out"; source: "zone.top_left";
             action: STATE_SET "default" 0.0;
-            target: "cursor_blink.top_left";
+            target: "cursor.top_left_arrow_l";
+            target: "cursor.top_left_arrow_u";
          }
       }
-      part { name: "cursor.bottom_right"; type: RECT;
-         mouse_events: 0;
+
+      part { name: "cursor.bottom_right"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "terminology.bottom_right";
+            rel.to: "terminology.bottom_right";
             rel1.relative: 0.0 0.0;
-            rel1.offset: -1 0;
-            rel2.to: "terminology.bottom_right";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
-            color: 255 255 255 128;
-            color_class: "END_SELECTION";
+            max: 0 99999;
          }
       }
-      part { name: "cursor_blink.bottom_right"; type: RECT;
-         mouse_events: 0;
+      part { name: "cursor.top_left_arrow_r";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "cursor.bottom_right";
-            rel2.to: "cursor.bottom_right";
-            visible: 0;
+            image.normal: "arrow-r";
+            color_class: "/fg/normal/term/selection/arrow/left";
+            rel.to: "cursor.bottom_right";
+            min: 15 15;
+            max: 15 15;
+            align: 0.0 0.5;
+            rel1.offset: 4 0;
+            rel2.offset: 4 -1;
+            rel1.relative: 1.0 0.0;
+            offscale;
          }
          description { state: "fading" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class: "END_SELECTION";
-            visible: 1;
          }
          description { state: "fading" 1.0;
-            inherit: "fading" 0.0;
-            color: 255 255 255 64;
-            color_class: "END_SELECTION";
-            rel2.offset: +5 0;
+            inherit: "default" 0.0;
+            rel1.offset: 14 0;
+            rel2.offset: 14 -1;
+            color: 255 255 255 0; // no cc
+         }
+      }
+      part { name: "cursor.top_left_arrow_d";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "arrow-d";
+            color_class: "/fg/normal/term/selection/arrow/down";
+            rel.to: "cursor.bottom_right";
+            min: 15 15;
+            max: 15 15;
+            align: 0.5 0.0;
+            rel1.offset: 0 4;
+            rel2.offset: -1 4;
+            rel1.relative: 0.0 1.0;
+            offscale;
+         }
+         description { state: "fading" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "fading" 1.0;
+            inherit: "default" 0.0;
+            rel1.offset: 0 14;
+            rel2.offset: -1 14;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "zone.bottom_right"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "cursor.bottom_right";
-            rel1.offset: -15 0;
-            rel2.to: "cursor.bottom_right";
-            rel2.offset:  15 0;
             color: 0 0 0 0;
+            rel.to: "cursor.bottom_right";
+            min: 30 30;
+            rel1.offset: -15 0;
+            rel2.offset: 14 14;
+            offscale;
          }
          program { name: "bottom_right.blink";
             signal: "mouse,in"; source: "zone.bottom_right";
             action: STATE_SET "fading" 0.0;
-            target: "cursor_blink.bottom_right";
+            target: "cursor.top_left_arrow_r";
+            target: "cursor.top_left_arrow_d";
             after: "bottom_right.fade";
          }
          program { name: "bottom_right.fade";
             action: STATE_SET "fading" 1.0;
-            transition: LINEAR 0.3;
-            target: "cursor_blink.bottom_right";
+            transition: LINEAR 0.5;
+            target: "cursor.top_left_arrow_r";
+            target: "cursor.top_left_arrow_d";
             after: "bottom_right.blink";
          }
-         program { name: "bottom_right.stop";
-            signal: "mouse,out"; source: "zone.bottom_right";
+         program { signal: "mouse,out"; source: "zone.bottom_right";
             action: STATE_SET "default" 0.0;
-            target: "cursor_blink.bottom_right";
+            target: "cursor.top_left_arrow_r";
+            target: "cursor.top_left_arrow_d";
          }
       }
    }

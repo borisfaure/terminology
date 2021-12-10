@@ -5954,10 +5954,10 @@ void change_theme(Evas_Object *win, Config *config)
         termio_config_set(term->termio, config);
      }
 
-   l = elm_theme_overlay_list_get(NULL);
+   l = elm_theme_extension_list_get(NULL);
    if (l) l = eina_list_last(l);
-   if (l) elm_theme_overlay_del(NULL, l->data);
-   elm_theme_overlay_add(NULL, config_theme_path_get(config));
+   if (l) elm_theme_extension_del(NULL, l->data);
+   elm_theme_extension_add(NULL, config_theme_path_get(config));
    main_trans_update();
 }
 

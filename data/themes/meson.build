@@ -28,7 +28,6 @@ default_deps = [
   ]
 edje_to_compile = [
   ['default', default_deps],
-  ['mild',['mild.edc', 'default/colors.edc'] ],
 ]
 
 edje_install_dir = join_paths(get_option('datadir'),

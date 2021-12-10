@@ -1,36 +1,21 @@
-color_class { name: "BG";       color: BG_COLOR ; }
-color_class { name: "FG";       color: FG_COLOR ; }
-#ifndef PROVIDE_CURSOR
-color_class { name: "CURSOR"; color: 51 153 255 255; }
-#endif
-color_class { name: "GLOW";     color: 51 153 255 255; }
+
 color_class { name: "HIGHLIGHT";  color: 255 255 255 255; }
-color_class { name: "GLOW_TXT";
-   color: 51 153 255 255;
-   color2: 51 153 255 255;
-   color3: 51 153 255 255;
-}
-color_class { name: "GLOW_TXT_HIGHLIGHT";
-   color: 255 255 255 255;
-   color2: 51 153 255 255;
-   color3: 51 153 255 255;
-}
-color_class { name: "END_SELECTION"; color: 255 0 0 255; }
 
-color_class { name: "TAB_MISSED";
-   color:  255 153  51 255;
-   color2: 255  51   0 255;
-   color3: 255   0   0 255;
-}
-color_class { name: "TAB_MISSED_OVER";
-   color:  255 255  64 255;
-   color2: 255 153  51 255;
-   color3: 255   0   0 255;
-}
-color_class { name: "TAB_TITLE";
-   color:  FG_COLOR_NO_ALPHA 255;
-   color2:  0 0 0 0;
-   color3: BG_COLOR_NO_ALPHA 255;
-}
+color_class { name: "BG_SENDFILE";      color:  64  64  64 255; }
 
-color_class { name: "BG_SENDFILE"; color: 64 64 64 255; }
+color_class { name: "BG";               color:  32  32  32 255; }
+color_class { name: "FG";               color: 170 170 170 255; }
+color_class { name: "CURSOR";           color: 255 255 255 255; }
+color_class { name: "GLOW";             color:  51 153 255 255; }
+
+color_class { name: ":bg";              color:  64  64  64 255; }
+color_class { name: ":bg-dark";         color:  32  32  32 255; }
+color_class { name: ":dim-dark";        color:   0   0   0 200; }
+color_class { name: ":fg";              color: 160 160 160 255; }
+color_class { name: ":fg-light";        color: 255 255 255 255; }
+color_class { name: ":light-medium";    color: 255 255 255 128; }
+color_class { name: ":selected-medium"; color:  51 153 255 128; }
+color_class { name: ":selected";        color:  51 153 255 255; }
+color_class { name: ":selected-alt";    color: 255 153  51 255; }
+color_class { name: ":shadow";          color:   0   0   0 128; }
+color_class { name: ":shadow-selected"; color:   0   0   0 255; }

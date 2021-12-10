@@ -1,220 +1,385 @@
 ///////////////////////////////////////////////////////////////////////////
 //// the cursor to show where text is typed
+sounds {
+   sample { name: "key-tap1" LOSSY 64;
+      source: "kbd-tap.wav";
+   }
+   sample { name: "key-tap2" LOSSY 64;
+      source: "kbd-tap2.wav";
+   }
+   sample { name: "key-tap3" LOSSY 64;
+      source: "kbd-tap3.wav";
+   }
+   sample { name: "key-tap4" LOSSY 64;
+      source: "kbd-tap4.wav";
+   }
+   sample { name: "key-tap5" LOSSY 64;
+      source: "kbd-tap5.wav";
+   }
+}
+#define KEY_RESPONSE(_to) \
+      part { name: "k0"; type: RECT; \
+         scale: 1; \
+         description { state: "default" 0.0; \
+            color: 255 255 255 0; /* no cc */ \
+            color_class: "GLOW"; \
+            rel.to: _to; \
+            rel1.relative: 0.0 0.0; \
+            rel1.offset: 0 0; \
+            rel2.relative: 1.0 0.0; \
+            rel2.offset: -1 0; \
+            align: 0.0 0.0; \
+            min: 1 1; \
+            offscale; \
+         } \
+         description { state: "on" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 255; /* no cc */ \
+         } \
+         description { state: "out" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 0; /* no cc */ \
+            rel1.relative: -1.0 -0.5; \
+            rel2.relative:  2.0 -0.5; \
+         } \
+      } \
+      part { name: "k1"; type: RECT; \
+         scale: 1; \
+         description { state: "default" 0.0; \
+            color: 255 255 255 0; /* no ccc */ \
+            color_class: "GLOW"; \
+            rel.to: _to; \
+            rel1.relative: 0.0 1.0; \
+            rel1.offset: 0 0; \
+            rel2.relative: 1.0 1.0; \
+            rel2.offset: -1 0; \
+            align: 0.0 0.0; \
+            min: 1 1; \
+            offscale; \
+         } \
+         description { state: "on" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 255; /* no cc */ \
+         } \
+         description { state: "out" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 0; /* no cc */ \
+            rel1.relative: -1.0 1.5; \
+            rel2.relative:  2.0 1.5; \
+         } \
+      } \
+      program { signal: "key,down"; source: "terminology"; \
+         script { \
+            new buf[32]; \
+            snprintf(buf,  31, "key-down%i", (rand() % 5) + 1); \
+            run_program(get_program_id(buf)); \
+         } \
+      } \
+      program { name: "key-down1"; \
+         action: PLAY_SAMPLE "key-tap1" 1.0 INPUT; \
+      } \
+      program { name: "key-down2"; \
+         action: PLAY_SAMPLE "key-tap2" 1.0 INPUT; \
+      } \
+      program { name: "key-down3"; \
+         action: PLAY_SAMPLE "key-tap3" 1.0 INPUT; \
+      } \
+      program { name: "key-down4"; \
+         action: PLAY_SAMPLE "key-tap4" 1.0 INPUT; \
+      } \
+      program { name: "key-down5"; \
+         action: PLAY_SAMPLE "key-tap5" 1.0 INPUT; \
+      } \
+      program { signal: "key,down"; source: "terminology"; \
+         action: STATE_SET "default" 0.0; \
+         target: "k0"; \
+         target: "k1"; \
+         after: "key2"; \
+      } \
+      program { name: "key2"; \
+         action: STATE_SET "on" 0.0; \
+         target: "k0"; \
+         target: "k1"; \
+         after: "key3"; \
+      } \
+      program { name: "key3"; \
+         action: STATE_SET "out" 0.0; \
+         transition: DECELERATE 0.2; \
+         target: "k0"; \
+         target: "k1"; \
+      }
+
 group { name: "terminology/cursor";
-   images {
-      image: "cr_key.png" COMP;
-      image: "cr_out.png" COMP;
-      image: "cr_pulse.png" COMP;
-      image: "cr_glow.png" COMP;
-   }
-   sounds {
-      sample { name: "key-tap1" LOSSY 64;
-         source: "kbd-tap.wav";
-      }
-      sample { name: "key-tap2" LOSSY 64;
-         source: "kbd-tap2.wav";
-      }
-      sample { name: "key-tap3" LOSSY 64;
-         source: "kbd-tap3.wav";
-      }
-      sample { name: "key-tap4" LOSSY 64;
-         source: "kbd-tap4.wav";
-      }
-      sample { name: "key-tap5" LOSSY 64;
-         source: "kbd-tap5.wav";
-      }
-   }
+   images.image: "grad-v-1.png" COMP;
+   images.image: "grad-v-2.png" COMP;
    parts {
-      part { name: "key";
-         mouse_events: 0;
+      // key "things" that fly out above/below
+      part { name: "base";  type: SPACER;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -5 -5;
-            }
-            rel2 {
-               to: "outline";
-               offset: 4 4;
-            }
-            image {
-               normal: "cr_key.png";
-               border: 4 4 4 4;
-            }
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -7 -15;
-            rel2.offset: 6 14;
          }
       }
-      part { name: "pulse";
-         mouse_events: 0;
+      KEY_RESPONSE("base")
+      // base colored rect block always there
+      part { name: "b0"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -4 -4;
-            }
-            rel2 {
-               to: "outline";
-               offset: 3 3;
-            }
-            image {
-               normal: "cr_pulse.png";
-               border: 4 4 4 4;
-            }
-            color: 255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -8 -8;
-            rel2.offset: 7 7;
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            align: 0.0 0.0;
+            min: 1 1;
+            offscale;
          }
       }
-      part { name: "glow";
-         mouse_events: 0;
+      part { name: "b1"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image {
-               normal: "cr_glow.png";
-               border: 9 9 9 9;
-            }
-            color:  255 255 255 40;
-            color_class:  "CURSOR";
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+            align: 0.0 1.0;
+            min: 1 1;
+            offscale;
+         }
+      }
+      part { name: "b2"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 1;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -2;
+            align: 0.0 0.0;
+            min: 1 1;
+            offscale;
+         }
+      }
+      part { name: "b3"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 1;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -2;
+            align: 1.0 0.0;
+            min: 1 1;
+            offscale;
+         }
+      }
+      // light layered top + bottom lines and 2 gradient lines on left + right
+      part { name: "r0"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 0;
+            align: 0.0 0.0;
+            min: 1 1;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
+            color:  255 255 255 255; // no cc
+            visible: 1;
          }
       }
-      part { name: "outline";
-         mouse_events: 0;
+      part { name: "r01";
+         scale: 1;
          description { state: "default" 0.0;
-            image {
-               normal: "cr_out.png";
-               border: 3 3 3 3;
-            }
-            color:  255 255 255 80;
-            color_class:  "CURSOR";
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            align: 0.0 0.0;
+            min: 1 0;
+            max: 1 0;
+            image.normal: "grad-v-1.png";
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class:  "HIGHLIGHT";
+            max: 1 0;
+            max: 1 99999;
+            color:  255 255 255 255; // no cc
+            visible: 1;
+         }
+      }
+      part { name: "r02";
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+            align: 1.0 0.0;
+            min: 1 0;
+            max: 1 0;
+            image.normal: "grad-v-1.png";
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            max: 1 99999;
+            color:  255 255 255 255; // no cc
+            visible: 1;
+         }
+      }
+      part { name: "r1"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+            align: 0.0 1.0;
+            min: 1 1;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color:  255 255 255 255; // no cc
+            visible: 1;
+         }
+      }
+      part { name: "r11";
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            align: 0.0 1.0;
+            min: 1 1;
+            max: 1 0;
+            image.normal: "grad-v-2.png";
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            max: 1 99999;
+            color:  255 255 255 255; // no cc
+            visible: 1;
+         }
+      }
+      part { name: "r12";
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 0;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+            align: 1.0 1.0;
+            min: 1 1;
+            max: 1 0;
+            image.normal: "grad-v-2.png";
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            max: 1 99999;
+            color:  255 255 255 255; // no cc
+            visible: 1;
          }
       }
       programs {
-         program {
-            signal: "focus,in,noblink"; source: "terminology";
+         program { signal: "focus,in,noblink"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            target: "r0";
+            target: "r01";
+            target: "r02";
+            target: "r1";
+            target: "r11";
+            target: "r12";
          }
          program { name: "focus_in";
             signal: "focus,in"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r1";
             after: "focus2";
-            after: "pulse";
          }
          program { name: "focus2";
-            in: 0.5 0.0;
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.2;
-            target: "glow";
-            target: "outline";
+            action: STATE_SET "focused" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
+            target: "r11";
+            target: "r12";
             after: "focus3";
          }
          program { name: "focus3";
             in: 0.5 0.0;
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
+            target: "r11";
+            target: "r12";
+            after: "focus4";
+         }
+         program { name: "focus4";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r1";
+            after: "focus5";
+         }
+         program { name: "focus5";
+            in: 0.5 0.0;
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r1";
             after: "focus2";
-            after: "pulse";
          }
-         program { name: "pulse";
-            action: STATE_SET "on" 0.0;
-            target: "pulse";
-            after: "pulse2";
-         }
-         program { name: "pulse2";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.4;
-            target: "pulse";
-         }
-         program {
-            signal: "focus,out"; source: "terminology";
+         program { signal: "focus,out"; source: "terminology";
             action: ACTION_STOP;
             target: "focus_in";
             target: "focus2";
             target: "focus3";
-            target: "pulse";
-            target: "pulse2";
+            target: "focus4";
+            target: "focus5";
             after: "focus_out2";
          }
          program { name: "focus_out2";
             action: STATE_SET "default" 0.0;
-            target: "glow";
-            target: "outline";
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            script {
-               new buf[32];
-               snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
-               run_program(get_program_id(buf));
-            }
-         }
-         program { name: "key-down1";
-            action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
-         }
-         program { name: "key-down2";
-            action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
-         }
-         program { name: "key-down3";
-            action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
-         }
-         program { name: "key-down4";
-            action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
-         }
-         program { name: "key-down5";
-            action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "key";
-            after: "key2";
-         }
-         program { name: "key2";
-            action: STATE_SET "on" 0.0;
-            target: "key";
-            after: "key3";
-         }
-         program { name: "key3";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.3;
-            target: "key";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r01";
+            target: "r02";
+            target: "r1";
+            target: "r11";
+            target: "r12";
          }
       }
    }
@@ -223,219 +388,158 @@ group { name: "terminology/cursor";
 ///////////////////////////////////////////////////////////////////////////
 //// the cursor as a bar to show where text is typed
 group { name: "terminology/cursor_bar";
-   images {
-      image: "cr_key.png" COMP;
-      image: "cr_bar_out.png" COMP;
-      image: "cr_bar_pulse.png" COMP;
-      image: "cr_bar_glow.png" COMP;
-   }
-   sounds {
-      sample { name: "key-tap1" LOSSY 64;
-         source: "kbd-tap.wav";
-      }
-      sample { name: "key-tap2" LOSSY 64;
-         source: "kbd-tap2.wav";
-      }
-      sample { name: "key-tap3" LOSSY 64;
-         source: "kbd-tap3.wav";
-      }
-      sample { name: "key-tap4" LOSSY 64;
-         source: "kbd-tap4.wav";
-      }
-      sample { name: "key-tap5" LOSSY 64;
-         source: "kbd-tap5.wav";
-      }
-   }
+   images.image: "grad-v-1.png" COMP;
+   images.image: "grad-v-2.png" COMP;
    parts {
-      part { name: "key";
-         mouse_events: 0;
+      // key "things" that fly out above/below
+      part { name: "base";  type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -5 -5;
-            }
-            rel2 {
-               to: "outline";
-               offset: 4 4;
-            }
-            image {
-               normal: "cr_key.png";
-               border: 4 4 4 4;
-            }
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color: 51 153 255 255;
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -7 -15;
-            rel2.offset: 6 14;
+            min: 3 0;
+            rel.to: "b0";
          }
       }
-      part { name: "pulse";
-         mouse_events: 0;
+      KEY_RESPONSE("base")
+
+      // base colored rect block always there
+      part { name: "b0"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -4 -4;
-            }
-            rel2 {
-               to: "outline";
-               offset: 3 3;
-            }
-            image {
-               normal: "cr_bar_pulse.png";
-               border: 4 4 4 4;
-            }
-            color: 255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -8 -8;
-            rel2.offset: 7 7;
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            align: 0.0 0.0;
+            min: 1 0;
+            offscale;
          }
       }
-      part { name: "glow";
-         mouse_events: 0;
+      // light layered top + bottom lines and 2 gradient lines on left + right
+      part { name: "r0"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image {
-               normal: "cr_bar_glow.png";
-               border: 9 9 9 9;
-            }
-            color:  255 255 255 40;
-            color_class:  "CURSOR";
+            color:  255 255 255 255; // no cc
+            color_class: "CURSOR";
+            rel1.relative: 0.0 0.5;
+            rel1.offset: 0 0;
+            rel2.relative: 0.0 0.5;
+            rel2.offset: 0 -1;
+            align: 0.0 0.5;
+            min: 1 0;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
          }
       }
-      part { name: "outline";
-         mouse_events: 0;
+      part { name: "r01";
+         scale: 1;
          description { state: "default" 0.0;
-            image {
-               normal: "cr_bar_out.png";
-               border: 3 3 3 3;
-            }
-            color:  255 255 255 80;
-            color_class:  "CURSOR";
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.0 0.5;
+            rel1.offset: 0 0;
+            rel2.to: "r0";
+            rel2.relative: 0.0 0.5;
+            rel2.offset: 0 -1;
+            align: 0.0 1.0;
+            min: 1 0;
+            image.normal: "grad-v-2.png";
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class:  "HIGHLIGHT";
+            color:  255 255 255 255; // no cc
+            rel1.relative: 0.0 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "r02";
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.to: "r0";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 0;
+            rel2.relative: 0.0 0.5;
+            rel2.offset: 0 -1;
+            align: 0.0 0.0;
+            min: 1 0;
+            image.normal: "grad-v-1.png";
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color:  255 255 255 255; // no cc
+            rel2.relative: 0.0 1.0;
+            visible: 1;
          }
       }
       programs {
-         program {
-            signal: "focus,in,noblink"; source: "terminology";
+         program { signal: "focus,in,noblink"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            target: "r0";
+            target: "r01";
+            target: "r02";
          }
          program { name: "focus_in";
             signal: "focus,in"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
             after: "focus2";
-            after: "pulse";
          }
          program { name: "focus2";
-            in: 0.5 0.0;
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.2;
-            target: "glow";
-            target: "outline";
+            action: STATE_SET "focused" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
             after: "focus3";
          }
          program { name: "focus3";
             in: 0.5 0.0;
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            after: "focus4";
+         }
+         program { name: "focus4";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
+            after: "focus5";
+         }
+         program { name: "focus5";
+            in: 0.5 0.0;
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
             after: "focus2";
-            after: "pulse";
          }
-         program { name: "pulse";
-            action: STATE_SET "on" 0.0;
-            target: "pulse";
-            after: "pulse2";
-         }
-         program { name: "pulse2";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.4;
-            target: "pulse";
-         }
-         program {
-            signal: "focus,out"; source: "terminology";
+         program { signal: "focus,out"; source: "terminology";
             action: ACTION_STOP;
             target: "focus_in";
             target: "focus2";
             target: "focus3";
-            target: "pulse";
-            target: "pulse2";
+            target: "focus4";
+            target: "focus5";
             after: "focus_out2";
          }
          program { name: "focus_out2";
             action: STATE_SET "default" 0.0;
-            target: "glow";
-            target: "outline";
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            script {
-               new buf[32];
-               snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
-               run_program(get_program_id(buf));
-            }
-         }
-         program { name: "key-down1";
-            action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
-         }
-         program { name: "key-down2";
-            action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
-         }
-         program { name: "key-down3";
-            action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
-         }
-         program { name: "key-down4";
-            action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
-         }
-         program { name: "key-down5";
-            action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "key";
-            after: "key2";
-         }
-         program { name: "key2";
-            action: STATE_SET "on" 0.0;
-            target: "key";
-            after: "key3";
-         }
-         program { name: "key3";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.3;
-            target: "key";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r01";
+            target: "r02";
          }
       }
    }
@@ -444,220 +548,158 @@ group { name: "terminology/cursor_bar";
 ///////////////////////////////////////////////////////////////////////////
 //// the cursor as an underline to show where text is typed
 group { name: "terminology/cursor_underline";
-   images {
-      image: "cr_key.png" COMP;
-      image: "cr_underline_out.png" COMP;
-      image: "cr_underline_pulse.png" COMP;
-      image: "cr_underline_glow.png" COMP;
-   }
-   sounds {
-      sample { name: "key-tap1" LOSSY 64;
-         source: "kbd-tap.wav";
-      }
-      sample { name: "key-tap2" LOSSY 64;
-         source: "kbd-tap2.wav";
-      }
-      sample { name: "key-tap3" LOSSY 64;
-         source: "kbd-tap3.wav";
-      }
-      sample { name: "key-tap4" LOSSY 64;
-         source: "kbd-tap4.wav";
-      }
-      sample { name: "key-tap5" LOSSY 64;
-         source: "kbd-tap5.wav";
-      }
-   }
+   images.image: "grad-h-1.png" COMP;
+   images.image: "grad-h-2.png" COMP;
    parts {
-      part { name: "key";
-         mouse_events: 0;
+      // key "things" that fly out above/below
+      part { name: "base";  type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -5 -5;
-            }
-            rel2 {
-               to: "outline";
-               offset: 4 4;
-            }
-            image {
-               normal: "cr_key.png";
-               border: 4 4 4 4;
-            }
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -7 -15;
-            rel2.offset: 6 14;
+            min: 3 0;
+            rel.to: "b0";
          }
       }
-      part { name: "pulse";
-         mouse_events: 0;
+      KEY_RESPONSE("base")
+
+      // base colored rect block always there
+      part { name: "b0"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1 {
-               to: "outline";
-               offset: -4 -4;
-            }
-            rel2 {
-               to: "outline";
-               offset: 3 3;
-            }
-            image {
-               normal: "cr_underline_pulse.png";
-               border: 4 4 4 4;
-            }
-            color: 255 255 255 0;
-            color_class:  "CURSOR";
-         }
-         description { state: "on" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
-         }
-         description { state: "out" 0.0;
-            inherit: "default" 0.0;
-            color:  255 255 255 0;
-            color_class:  "CURSOR";
-            rel1.offset: -8 -8;
-            rel2.offset: 7 7;
+            color: 255 255 255 128; // no cc
+            color_class: "GLOW";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -1;
+            align: 0.0 0.0;
+            min: 0 1;
+            offscale;
          }
       }
-      part { name: "glow";
-         mouse_events: 0;
+      // light layered top + bottom lines and 2 gradient lines on left + right
+      part { name: "r0"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image {
-               normal: "cr_underline_glow.png";
-               border: 9 9 9 9;
-            }
-            color:  255 255 255 40;
-            color_class:  "CURSOR";
+            color:  255 255 255 255; // no cc
+            color_class: "CURSOR";
+            rel1.relative: 0.5 1.0;
+            rel1.offset: 0 -1;
+            rel2.relative: 0.5 1.0;
+            rel2.offset: -1 -1;
+            align: 0.5 1.0;
+            min: 0 1;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color_class:  "CURSOR";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
          }
       }
-      part { name: "outline";
-         mouse_events: 0;
+      part { name: "r01";
+         scale: 1;
          description { state: "default" 0.0;
-            image {
-               normal: "cr_underline_out.png";
-               border: 3 3 3 3;
-            }
-            color:  255 255 255 80;
-            color_class:  "CURSOR";
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.relative: 0.5 1.0;
+            rel1.offset: 0 -1;
+            rel2.to: "r0";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -1;
+            align: 0.0 1.0;
+            min: 0 1;
+            image.normal: "grad-h-2.png";
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class:  "HIGHLIGHT";
+            color:  255 255 255 255; // no cc
+            rel1.relative: 0.0 1.0;
+            visible: 1;
+         }
+      }
+      part { name: "r02";
+         scale: 1;
+         description { state: "default" 0.0;
+            color:  255 255 255 0; // no cc
+            color_class: "CURSOR";
+            visible: 0;
+            rel1.to: "r0";
+            rel1.relative: 1.0 1.0;
+            rel1.offset: 0 -1;
+            rel2.relative: 0.5 1.0;
+            rel2.offset: -1 -1;
+            align: 0.0 0.0;
+            min: 1 0;
+            image.normal: "grad-h-1.png";
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color:  255 255 255 255; // no cc
+            rel2.relative: 1.0 1.0;
+            visible: 1;
          }
       }
       programs {
-         program {
-            signal: "focus,in,noblink"; source: "terminology";
+         program { signal: "focus,in,noblink"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            target: "r0";
+            target: "r01";
+            target: "r02";
          }
          program { name: "focus_in";
             signal: "focus,in"; source: "terminology";
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
             after: "focus2";
-            after: "pulse";
          }
          program { name: "focus2";
-            in: 0.5 0.0;
-            action: STATE_SET "default" 0.0;
-            transition: DECELERATE 0.2;
-            target: "glow";
-            target: "outline";
+            action: STATE_SET "focused" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
             after: "focus3";
          }
          program { name: "focus3";
             in: 0.5 0.0;
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            after: "focus4";
+         }
+         program { name: "focus4";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.05 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
+            after: "focus5";
+         }
+         program { name: "focus5";
+            in: 0.5 0.0;
             action: STATE_SET "focused" 0.0;
-            target: "glow";
-            target: "outline";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r01";
+            target: "r02";
             after: "focus2";
-            after: "pulse";
          }
-         program { name: "pulse";
-            action: STATE_SET "on" 0.0;
-            target: "pulse";
-            after: "pulse2";
-         }
-         program { name: "pulse2";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.4;
-            target: "pulse";
-         }
-         program {
-            signal: "focus,out"; source: "terminology";
+         program { signal: "focus,out"; source: "terminology";
             action: ACTION_STOP;
             target: "focus_in";
             target: "focus2";
             target: "focus3";
-            target: "pulse";
-            target: "pulse2";
+            target: "focus4";
+            target: "focus5";
             after: "focus_out2";
          }
          program { name: "focus_out2";
             action: STATE_SET "default" 0.0;
-            target: "glow";
-            target: "outline";
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            script {
-               new buf[32];
-               snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
-               run_program(get_program_id(buf));
-            }
-         }
-         program { name: "key-down1";
-            action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
-         }
-         program { name: "key-down2";
-            action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
-         }
-         program { name: "key-down3";
-            action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
-         }
-         program { name: "key-down4";
-            action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
-         }
-         program { name: "key-down5";
-            action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
-         }
-         program {
-            signal: "key,down"; source: "terminology";
-            action: STATE_SET "default" 0.0;
-            target: "key";
-            after: "key2";
-         }
-         program { name: "key2";
-            action: STATE_SET "on" 0.0;
-            target: "key";
-            after: "key3";
-         }
-         program { name: "key3";
-            action: STATE_SET "out" 0.0;
-            transition: DECELERATE 0.3;
-            target: "key";
+            transition: LINEAR 0.1 USE_DURATION_FACTOR 1;
+            target: "r0";
+            target: "r01";
+            target: "r02";
          }
       }
    }

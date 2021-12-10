@@ -1,11 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //// the multimedia controls
 group { name: "terminology/mediabusy";
-   images {
-      image: "media_busy_knob.png" COMP;
-      image: "media_busy_spinner.png" COMP;
-      image: "media_busy_progress.png" COMP;
-   }
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_FLOAT) && (id == 1)) {
@@ -23,103 +18,56 @@ group { name: "terminology/mediabusy";
          mouse_events: 0;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel2.to_x: "knob";
-            rel2.relative: 0.0 1.0;
-            min: 10 40;
-            max: 99999 40;
+            min: 0 5;
+            max: 99999 5;
             align: 0.0 1.0;
          }
       }
-      part { name: "progress";
-         mouse_events: 0;
+      part { name: "progress"; type: RECT; mouse_events: 0;
          clip_to: "fade";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "progress_area";
-            rel2.to: "progress_area";
+            rel.to: "progress_area";
             rel2.relative: 0.0 1.0;
-            color: 255 255 255 255;
-            color_class: "GLOW";
-            image.normal: "media_busy_progress.png";
-            image.border: 5 5 0 0;
-            min: 10 40;
+            color_class: "/bg/selected/media/position";
+            min: 0 5;
             align: 0.0 1.0;
          }
       }
       part { name: "fade"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
-            color_class: "HIGHLIGHT";
+            color: 255 255 255 255; // no cc
          }
       }
-      part { name: "knob";
-         clip_to: "fade";
-         mouse_events: 0;
+      part { name: "busy_base"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            image.normal: "media_busy_knob.png";
-            min: 40 40;
-            max: 40 40;
+            min: 40 40; max: 40 40;
             align: 1.0 1.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "knob_spinner";
-         clip_to: "fade";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            color: 51 153 255 255;
-            rel1.to: "knob";
-            rel2.to: "knob";
-            image.normal: "media_busy_spinner.png";
-            map {
-               on: 1;
-               smooth: 1;
-               rotation.center: "knob";
-            }
-         }
-         description { state: "spin" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            map.rotation.z: 360;
-         }
-      }
+      BUSY("busy_base", "busy", "terminology", "done", "terminology")
    }
    programs {
-      program {
-         signal: "busy"; source: "terminology";
+      program { signal: "busy"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "fade";
       }
-      program { name: "spin1";
-         signal: "busy"; source: "terminology";
-         action: STATE_SET "spin" 0.0;
-         transition: LINEAR 0.5;
-         target: "knob_spinner";
-         after: "spin2";
-      }
-      program { name: "spin2";
+      program { signal: "done"; source: "terminology";
          action: STATE_SET "default" 0.0;
-         target: "knob_spinner";
-         after: "spin1";
-      }
-      //         program { name: "downloading";
-      //            signal: "busy";
-      //            source: "terminology";
-      //            action: STATE_SET "default" 0.0;
-      //         }
-      program {
-         signal: "done"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 1.5;
+         transition: DECELERATE 1.5 USE_DURATION_FACTOR 1 CURRENT;
          target: "fade";
       }
    }
@@ -140,8 +88,7 @@ group { name: "terminology/mediactrl";
       part { name: "media_clip"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "media_bg";
-            rel2.to: "media_bg";
+            rel.to: "media_bg";
          }
       }
       part { name: "media_bg";
@@ -151,7 +98,7 @@ group { name: "terminology/mediactrl";
             image.border: 11 11 11 11;
             min: 24 24;
             max: 24 24;
-            align: 1.0 0.0;
+            align: 1.0 1.0;
          }
          description { state: "expanded" 0.0;
             inherit: "default" 0.0;
@@ -164,6 +111,7 @@ group { name: "terminology/mediactrl";
          repeat_events: 1;
          clip_to: "media_clip";
          description { state: "default" 0.0;
+            rel.to: "media_bg";
             image.normal: "media_pause.png";
             max: 24 24;
             align: 1.0 0.0;
@@ -195,8 +143,7 @@ group { name: "terminology/mediactrl";
             image.border: 15 15 0 0;
             min: 90 14;
             max: 90 14;
-            rel1.to: "stop";
-            rel2.to: "stop";
+            rel.to: "stop";
             rel1.offset: -25 0;
             rel2.offset: -90 0;
          }
@@ -259,54 +206,46 @@ group { name: "terminology/mediactrl";
       }
    }
    programs {
-      program {
-         signal: "mouse,in"; source: "media_bg";
+      program { signal: "pause,set"; source: "terminology";
+         action: STATE_SET "paused" 0.0;
+         target: "play";
+      }
+      program { signal: "play,set"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         target: "play";
+      }
+      program { signal: "mute,set"; source: "terminology";
+         action: STATE_SET "muted" 0.0;
+         target: "terminology.voldrag";
+      }
+      program { signal: "mute,unset"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         target: "terminology.voldrag";
+      }
+
+      program { signal: "mouse,in"; source: "media_bg";
          action: STATE_SET "expanded" 0.0;
          transition: SINUSOIDAL 0.4 CURRENT;
          target: "media_bg";
       }
-      program {
-         signal: "mouse,out"; source: "media_bg";
+      program { signal: "mouse,out"; source: "media_bg";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.4 CURRENT;
          target: "media_bg";
       }
-      program {
-         signal: "mouse,up,*"; source: "play";
+      program { signal: "mouse,up,*"; source: "play";
          filter: "play" "default";
          action: SIGNAL_EMIT "pause" "";
       }
-      program {
-         signal: "mouse,up,1"; source: "play";
+      program { signal: "mouse,up,1"; source: "play";
          filter: "play" "paused";
          action: SIGNAL_EMIT "play" "";
       }
-      program {
-         signal: "mouse,up,1"; source: "stop";
+      program { signal: "mouse,up,1"; source: "stop";
          action: SIGNAL_EMIT "stop" "";
       }
-      program {
-         signal: "pause,set"; source: "terminology";
-         action: STATE_SET "paused" 0.0;
-         target: "play";
-      }
-      program {
-         signal: "play,set"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         target: "play";
-      }
-      program {
-         signal: "mute,set"; source: "terminology";
-         action: STATE_SET "muted" 0.0;
-         target: "terminology.voldrag";
-      }
-      program {
-         signal: "mute,unset"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         target: "terminology.voldrag";
-      }
-      program {
-         signal: "mouse,down,1"; source: "posline";
+
+      program { signal: "mouse,down,1"; source: "posline";
          filter: "terminology.posdrag" "default";
          script {
             new x, y, w, h, m_x, m_y;
@@ -321,12 +260,10 @@ group { name: "terminology/mediactrl";
 
          }
       }
-      program {
-         signal: "mouse,up,1"; source: "posline";
+      program { signal: "mouse,up,1"; source: "posline";
          action: SIGNAL_EMIT "pos,drag,stop" "";
       }
-      program {
-         signal: "mouse,move"; source: "posline";
+      program { signal: "mouse,move"; source: "posline";
          script {
             new x, y, w, h, m_x, m_y;
             new Float:pos;
@@ -341,8 +278,7 @@ group { name: "terminology/mediactrl";
             emit("pos,drag", "");
          }
       }
-      program {
-         signal: "mouse,down,1"; source: "volline";
+      program { signal: "mouse,down,1"; source: "volline";
          filter: "terminology.voldrag" "default";
          script {
             new x, y, w, h, m_x, m_y;
@@ -357,8 +293,7 @@ group { name: "terminology/mediactrl";
 
          }
       }
-      program {
-         signal: "mouse,move"; source: "volline";
+      program { signal: "mouse,move"; source: "volline";
          script {
             new x, y, w, h, m_x, m_y;
             new Float:pos;

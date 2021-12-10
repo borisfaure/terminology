@@ -16,7 +16,202 @@ color_classes {
 
 efl_version: 1 20;
 
+#define IMAGE_RING(x, sz) \
+   set { name: x; \
+      image { image: x"1.png" COMP; size:  (sz/2)   (sz/2)  99999   99999;   } \
+      image { image: x"2.png" COMP; size:  (sz/4)   (sz/4)  (sz/2)  (sz/2);  } \
+      image { image: x"3.png" COMP; size:  (sz/8)   (sz/8)  (sz/4)  (sz/4);  } \
+      image { image: x"4.png" COMP; size:  (sz/16)  (sz/16) (sz/8)  (sz/8);  } \
+      image { image: x"5.png" COMP; size:       0        0  (sz/16) (sz/16); } \
+   }
+
+#define BUSY(x, start1, start2, stop1, stop2) \
+   program { signal: start1; source: start2; \
+      action: STATE_SET "visible" 0.0; \
+      transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1; \
+      target: "busy"; } \
+   program { signal: start1; source: start2; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy1"; \
+      target: "busy2"; \
+      target: "busy3"; \
+      after: "busy-p11"; \
+      after: "busy-p21"; \
+      after: "busy-p31"; } \
+   program { signal: stop1; source: stop2; \
+      action: STATE_SET "default" 0.0; \
+      transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1; \
+      target: "busy"; \
+      after: "busy_stop2"; } \
+   program { name: "busy_stop2"; \
+      action: ACTION_STOP; \
+      target: "busy-p11"; \
+      target: "busy-p12"; \
+      target: "busy-p21"; \
+      target: "busy-p22"; \
+      target: "busy-p31"; \
+      target: "busy-p32"; } \
+   part { name: "busy"; type: RECT; \
+      description { state: "default" 0.0; \
+         rel1.to: x; rel2.to: x; \
+         color: 255 255 255 0; /* no cc */ visible: 0; } \
+      description { state: "visible" 0.0; \
+         inherit: "default" 0.0; \
+         color: 255 255 255 255; /* no cc */ visible: 1; } } \
+   part { name: "busy1"; mouse_events: 0; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringa"; \
+         color_class: "/fg/normal/progress/busy/1"; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 0; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 360; } } \
+   program { name: "busy-p11"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 1.0; \
+      target: "busy1"; \
+      after: "busy-p12"; } \
+   program { name: "busy-p12"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy1"; \
+      after: "busy-p11"; } \
+   part { name: "busy2"; mouse_events: 0; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringb"; \
+         color_class: "/fg/normal/progress/busy/2"; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 420; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 80; } } \
+   program { name: "busy-p21"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 0.7; \
+      target: "busy2"; \
+      after: "busy-p22"; } \
+   program { name: "busy-p22"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy2"; \
+      after: "busy-p21"; } \
+   part { name: "busy3"; mouse_events: 0; \
+      clip_to: "busy"; \
+      description { state: "default" 0.0; \
+         rel1.to: "busy"; rel2.to: "busy"; \
+         aspect: 1.0 1.0; aspect_preference: BOTH; \
+         image.normal: "ringc"; \
+         color_class: "/fg/normal/progress/busy/3"; \
+         map.on: 1; \
+         map.smooth: 1; \
+         map.rotation.center: "busy"; \
+         map.rotation.z: 170; } \
+      description { state: "default" 1.0; \
+         inherit: "default" 0.0; \
+         map.rotation.z: 530; } } \
+   program { name: "busy-p31"; \
+      action: STATE_SET "default" 1.0; \
+      transition: LINEAR 1.4; \
+      target: "busy3"; \
+      after: "busy-p32"; } \
+   program { name: "busy-p32"; \
+      action: STATE_SET "default" 0.0; \
+      target: "busy3"; \
+      after: "busy-p31"; }
+
+#define I060(_NAME, _FILE) \
+   set { name: _NAME; \
+      image { image: _FILE"-060.png" COMP; size: 31 31 60000 60000; } \
+      image { image: _FILE"-030.png" COMP; size: 16 16    30    30; } \
+      image { image: _FILE"-015.png" COMP; size:  0  0    15    15; } \
+   }
+
 collections {
+   color_tree {
+      ":bg" {
+         "/bg/normal/tab";
+         "/bg/normal/background";
+      }
+      ":bg-dark" {
+         "/bg/selected/titlebar";
+         "/bg/normal/term/font_preview";
+      }
+      ":dim-dark" {
+         "/bg/normal/term/keybinding";
+      }
+      ":fg" {
+         "/fg/normal/term/tab/title/text";
+         "/fg/normal/tab/term/icon/grouped";
+         "/fg/normal/term/tab_button";
+         "/fg/pressed/term/miniview/close";
+         "/fg/normal/term/sel/title/text";
+         "/fg/normal/term/drag/target";
+      }
+      ":fg-light" {
+         "/fg/normal/progress/busy/1";
+         "/fg/normal/term/tabcount";
+         "/fg/selected/term/tab/title/close";
+         "/fg/selected/term/tab/title/text";
+         "/fg/pressed/term/tab_button";
+         "/fg/normal/term/keybinding";
+         "/fg/normal/term/miniview/close";
+         "/fg/normal/term/selection/arrow/left";
+         "/fg/normal/term/selection/arrow/up";
+         "/fg/normal/term/selection/arrow/right";
+         "/fg/normal/term/selection/arrow/down";
+         "/fg/selected/term/sel/title/text";
+         "/bg/normal/term/drag/target";
+         "/fg/selected/term/drag/target";
+      }
+      ":light-medium" {
+         "/fg/normal/progress/busy/2";
+      }
+      ":selected-medium" {
+         "/fg/normal/progress/busy/3";
+      }
+      ":bg-dark" {
+         "/bg-dark/normal/background";
+      }
+      ":bg-dark-alt" {
+         "/bg-dark-alt/normal/background";
+      };
+      ":selected" {
+         "/bg/selected/tab/hilight";
+         "/fg/normal/term/text/tabcount";
+         "/bg/selected/media/position";
+         "/fg/selected/term/miniview/screen";
+         "/bg/selected/term/text";
+      };
+      ":selected-alt" {
+         "/fg/normal/term/text/tabcount/missed";
+         "/fg/selected/term/tab/title/text/bell";
+         "/fg/disabled/term/miniview/screen";
+         "/bg/selected/term/drag/target";
+      };
+      ":shadow" {
+         "/shadow/normal/tab";
+         "/shadow/normal/term/sel/item";
+         "/shadow/normal/term/drag_thumb";
+      }
+      ":shadow-selected" {
+         "/shadow/selected/tab";
+         "/shadow/selected/term/sel/item";
+      }
+   }
+
+   IMAGE_RING("ringa", 160)
+   IMAGE_RING("ringb", 160)
+   IMAGE_RING("ringc", 160)
+
    #include "default/keybinding.edc"
    #include "default/miniview.edc"
    #include "default/core.edc"
@@ -34,3 +229,4 @@ collections {
    #include "default/tab_drag_thumb.edc"
    #include "default/color_preview.edc"
 }
+

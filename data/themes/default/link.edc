@@ -1,122 +1,54 @@
 ///////////////////////////////////////////////////////////////////////////
 //// an object overlayd on text that is a link
 group { name: "terminology/link";
-   images {
-      image: "lk_bottom.png" COMP;
-      image: "lk_left.png" COMP;
-      image: "lk_right.png" COMP;
-   }
    parts {
-      part { name: "bottom";
+      part { name: "bottom"; type: RECT;
          mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            image.normal: "lk_bottom.png";
-            image.border: 9 9 0 0;
             align: 0.5 1.0;
-            min: 20 8;
-            rel1.offset: -6 0;
+            min: 20 1;
+            rel1.offset: -1 -1;
             rel1.relative: 0.0 1.0;
-            rel2.offset: 5 0;
-            color: 255 255 255 255;
-            color_class: "GLOW";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "l";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_left.png";
-            align: 0.0 1.0;
-            min: 4 4;
-            rel1.offset: 16 -1;
-            rel1.relative: 0.0 1.0;
-            rel2.offset: 16 -1;
-            rel2.relative: 0.0 1.0;
-            color: 255 255 255 0;
-            color_class: "GLOW";
+            rel2.offset: 0 -1;
+            color: 51 153 255 255;
+            offscale;
          }
          description { state: "out" 0.0;
-            fixed: 1 1;
             inherit: "default" 0.0;
-            min: 16 16;
-            rel1.offset: -10 -1;
-            rel2.offset: -10 -1;
-            color: 255 255 255 255;
-            color_class: "GLOW";
+            rel1.offset: -5 -1;
+            rel2.offset: 4 -1;
          }
          description { state: "out2" 0.0;
-            fixed: 1 1;
             inherit: "default" 0.0;
-            min: 32 32;
-            rel1.offset: -26 -1;
-            rel2.offset: -26 -1;
-            color: 255 255 255 0;
-            color_class: "GLOW";
-         }
-      }
-      part { name: "r";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_right.png";
-            align: 1.0 1.0;
-            min: 4 4;
-            rel1.offset: -15 0;
-            rel1.relative: 1.0 1.0;
-            rel2.offset: -15 0;
-            rel2.relative: 1.0 1.0;
-            color: 255 255 255 0;
-            color_class: "GLOW";
-         }
-         description { state: "out" 0.0;
-            fixed: 1 1;
-            inherit: "default" 0.0;
-            min: 16 16;
-            rel1.offset: 9 -1;
-            rel2.offset: 9 -1;
-            color: 255 255 255 255;
-            color_class: "GLOW";
-         }
-         description { state: "out2" 0.0;
-            fixed: 1 1;
-            inherit: "default" 0.0;
-            min: 32 32;
-            rel1.offset: 25 -1;
-            rel2.offset: 25 -1;
-            color: 255 255 255 0;
-            color_class: "GLOW";
          }
       }
       part { name: "event"; type: RECT;
-         mouse_events: 1;
          repeat_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       programs {
          program { name: "show";
             signal: "show"; source: "";
             action: STATE_SET "out" 0.0;
-            transition: LINEAR 0.3;
-            target: "l";
-            target: "r";
+            transition: SINUSOIDAL 0.5;
+            target: "bottom";
             after: "show2";
          }
          program { name: "show2";
             action: STATE_SET "out2" 0.0;
-            transition: LINEAR 0.3;
-            target: "l";
-            target: "r";
+            transition: SINUSOIDAL 0.2;
+            target: "bottom";
             after: "show3";
          }
          program { name: "show3";
-            action: STATE_SET "default" 0.0;
-            target: "l";
-            target: "r";
-            after: "show";
+            action: STATE_SET "out" 0.0;
+            transition: SINUSOIDAL 0.2;
+            target: "bottom";
+            after: "show2";
          }
       }
    }

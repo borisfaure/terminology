@@ -2,54 +2,34 @@
 //// used in the font selection dialog to give a base for black text
 //// previews so they are always visible
 group { name: "terminology/fontpreview";
-   images {
-      image: "fn_shadow.png" COMP;
-   }
    parts {
-      part { name: "shadow";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1 {
-               offset: -2 -1;
-               to: "base";
-            }
-            rel2 {
-               offset: 1 2;
-               to: "base";
-            }
-            image {
-               normal: "fn_shadow.png";
-               border: 5 5 5 5;
-            }
-            fill.smooth: 0;
-         }
-      }
       part { name: "base"; type: RECT;
-         mouse_events: 1;
+         scale: 1;
          description { state: "default" 0.0;
-            color_class: "BG";
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
+            color_class: "/bg/normal/term/font_preview";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            color: 255 255 255 255;
+            rel.to: "base";
          }
       }
       part { name: "terminology.text.preview"; type: SWALLOW;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
             rel1 {
                to: "base";
-               offset: 1 1;
+               offset: 4 4;
             }
             rel2 {
                to: "base";
-               offset: -2 -2;
+               offset: -5 -5;
             }
+            offscale;
          }
       }
    }

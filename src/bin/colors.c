@@ -631,7 +631,7 @@ color_scheme_apply(Evas_Object *edje,
 
    CS_SET("BG", bg);
    CS_SET("FG", normal.def);
-   CS_SET("CURSOR", main);
+   CS_SET("CURSOR", hl);
    CS_SET("GLOW", main);
    CS_SET("HIGHLIGHT", hl);
    CS_SET("GLOW_TXT", main);

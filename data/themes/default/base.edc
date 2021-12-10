@@ -1,12 +1,4 @@
 group { name: "terminology/base";
-   images {
-      image: "pm_shadow.png" COMP;
-      image: "bg_bevel.png" COMP;
-      image: "bg_glint.png" COMP;
-      image: "lk_bottom.png" COMP;
-      image: "lk_left.png" COMP;
-      image: "lk_right.png" COMP;
-   }
    parts {
       part { name: "terminology.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -20,39 +12,29 @@ group { name: "terminology/base";
             rel1.offset: -100 -100;
             rel2.to: "terminology.cmdbox";
             rel2.offset: 99 99;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
-      part { name: "cmdshadow"; mouse_events: 0;
-         clip_to: "cmdclip";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "cmdback";
-            rel1.offset: -32 -32;
-            rel2.to: "cmdback";
-            rel2.offset: 31 31;
-            image.normal: "pm_shadow.png";
-            image.border: 64 64 64 64;
-            fill.smooth: 0;
-         }
-      }
       part { name: "cmdback"; type: RECT;
+         scale: 1;
          clip_to: "cmdclip";
          description { state: "default" 0.0;
             color: 48 48 48 255;
             rel1.to: "terminology.cmdbox";
-            rel1.offset: -2 -2;
+            rel1.offset: -4 -4;
             rel2.to: "terminology.cmdbox";
-            rel2.offset: 1 1;
+            rel2.offset: 3 3;
+            offscale;
          }
       }
       part { name: "terminology.cmdbox"; type: SWALLOW;
+         scale: 1;
          clip_to: "cmdclip";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -61,6 +43,7 @@ group { name: "terminology/base";
             rel1.offset: 8 9;
             rel2.offset: -9 9;
             align: 0.5 0.0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -69,53 +52,19 @@ group { name: "terminology/base";
             align: 0.5 1.0;
          }
       }
-      part { name: "cmdbevel"; mouse_events: 0;
-         clip_to: "cmdclip";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "cmdback";
-            rel2.to: "cmdback";
-            image.normal: "bg_bevel.png";
-            image.border: 3 3 3 3;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "cmdglint"; mouse_events: 0;
-         clip_to: "cmdclip";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 79 5;
-            max: 79 5;
-            rel1 {
-               to: "cmdback";
-               relative: 0.0 0.0;
-               offset: 0 0;
-            }
-            rel2 {
-               to: "cmdback";
-               relative: 1.0 0.0;
-               offset: -1 0;
-            }
-            image.normal: "bg_glint.png";
-         }
-      }
-      program {
-         signal: "cmdbox,show"; source: "terminology";
+      program { signal: "cmdbox,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.2;
          target: "cmdclip";
       }
-      program {
-         signal: "cmdbox,show"; source: "terminology";
+      program { signal: "cmdbox,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: SPRING 0.4 0.5 4;
+         transition: SPRING 0.2 0.2 4;
          target: "terminology.cmdbox";
       }
-      program {
-         signal: "cmdbox,hide"; source: "terminology";
+      program { signal: "cmdbox,hide"; source: "terminology";
          action: STATE_SET "default" 0.0;
-         transition: ACCELERATE 0.5;
+         transition: ACCELERATE 0.3;
          target: "terminology.cmdbox";
          target: "cmdclip";
       }
@@ -183,7 +132,7 @@ group { name: "terminology/base";
             color2: 136 255 136 40;
             color3: 136 255 136 8;
             text {
-               font: "Sans"; size: 11;
+               font: "Sans"; size: 10;
                text: "Twitter: @_Terminology_";
                align: 1.0 0.5;
                min: 1 1;
@@ -194,191 +143,10 @@ group { name: "terminology/base";
             visible: 1;
          }
       }
-      part { name: "twitter.bottom";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_bottom.png";
-            image.border: 9 9 0 0;
-            align: 0.5 1.0;
-            min: 20 8;
-            rel1 {
-               to: "twitter.txt";
-               offset: -6 -2;
-               relative: 0.0 1.0;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: 5 -1;
-            }
-            color: 51 255 17 255;
-            fill.smooth: 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-      }
-      part { name: "twitter.l";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_left.png";
-            align: 0.0 1.0;
-            min: 4 4;
-            rel1 {
-               to: "twitter.txt";
-               offset: 6 -2;
-               relative: 0.0 1.0;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: 6 -2;
-               relative: 0.0 1.0;
-            }
-            color: 51 255 17 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-         description { state: "out" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 16 16;
-            rel1 {
-               to: "twitter.txt";
-               offset: -10 -2;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: -10 -2;
-            }
-            color: 51 255 17 255;
-         }
-         description { state: "out2" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 32 32;
-            rel1 {
-               to: "twitter.txt";
-               offset: -26 -2;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: -26 -2;
-            }
-            color: 51 255 17 0;
-         }
-      }
-      part { name: "twitter.r";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_right.png";
-            align: 1.0 1.0;
-            min: 4 4;
-            rel1 {
-               to: "twitter.txt";
-               offset: -5 -1;
-               relative: 1.0 1.0;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: -5 -1;
-               relative: 1.0 1.0;
-            }
-            color: 51 255 17 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-         description { state: "out" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 16 16;
-            rel1 {
-               to: "twitter.txt";
-               offset: 9 -2;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: 9 -2;
-            }
-            color: 51 255 17 255;
-         }
-         description { state: "out2" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 32 32;
-            rel1 {
-               to: "twitter.txt";
-               offset: 25 -2;
-            }
-            rel2 {
-               to: "twitter.txt";
-               offset: 25 -2;
-            }
-            color: 51 255 17 0;
-         }
-      }
-      program { name: "twitter.show2";
-         action: STATE_SET "out2" 0.0;
-         transition: LINEAR 0.3;
-         target: "twitter.l";
-         target: "twitter.r";
-         after: "twitter.show3";
-      }
-      program { name: "twitter.show3";
-         action: STATE_SET "default" 0.0;
-         target: "twitter.l";
-         target: "twitter.r";
-         after: "twitter.show";
-      }
-      program {
-         name: "twitter.show_bottom";
-         signal: "mouse,in"; source: "twitter.txt";
-         action: STATE_SET "visible" 0.0;
-         target: "twitter.bottom";
-      }
-      program {
-         name: "twitter.show";
-         signal: "mouse,in"; source: "twitter.txt";
-         action: STATE_SET "out" 0.0;
-         transition: LINEAR 0.3;
-         target: "twitter.l";
-         target: "twitter.r";
-         after: "twitter.show2";
-      }
-      program {
-         signal: "mouse,out"; source: "twitter.txt";
-         action: STATE_SET "visible" 0.0;
-         target: "twitter.txt";
-      }
-      program {
-         signal: "mouse,out"; source: "twitter.txt";
-         action: ACTION_STOP;
-         target: "twitter.show";
-         target: "twitter.show2";
-         target: "twitter.show3";
-      }
-      program {
-         signal: "mouse,out"; source: "twitter.txt";
-         action: STATE_SET "default" 0.0;
-         target: "twitter.bottom";
-         target: "twitter.l";
-         target: "twitter.r";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "twitter.txt";
+      program { signal: "mouse,clicked,1"; source: "twitter.txt";
          action: SIGNAL_EMIT "about,twitter" "terminology";
       }
-      program {
-         signal: "mouse,clicked,3"; source: "twitter.txt";
+      program { signal: "mouse,clicked,3"; source: "twitter.txt";
          action: SIGNAL_EMIT "about,twitter,ctx" "terminology";
       }
 
@@ -417,7 +185,7 @@ group { name: "terminology/base";
             color2: 136 255 136 40;
             color3: 136 255 136 8;
             text {
-               font: "Sans"; size: 11;
+               font: "Sans"; size: 10;
                text: "YouTube channel";
                align: 0.0 0.5;
                min: 1 1;
@@ -428,204 +196,21 @@ group { name: "terminology/base";
             visible: 1;
          }
       }
-      part { name: "youtube.bottom";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_bottom.png";
-            image.border: 9 9 0 0;
-            align: 0.5 1.0;
-            min: 20 8;
-            rel1 {
-               to: "youtube.txt";
-               offset: -6 -2;
-               relative: 0.0 1.0;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: 5 -1;
-            }
-            color: 51 255 17 255;
-            fill.smooth: 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-      }
-      part { name: "youtube.l";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_left.png";
-            align: 0.0 1.0;
-            min: 4 4;
-            rel1 {
-               to: "youtube.txt";
-               offset: 6 -2;
-               relative: 0.0 1.0;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: 6 -2;
-               relative: 0.0 1.0;
-            }
-            color: 51 255 17 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-         description { state: "out" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 16 16;
-            rel1 {
-               to: "youtube.txt";
-               offset: -10 -2;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: -10 -2;
-            }
-            color: 51 255 17 255;
-         }
-         description { state: "out2" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 32 32;
-            rel1 {
-               to: "youtube.txt";
-               offset: -26 -2;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: -26 -2;
-            }
-            color: 51 255 17 0;
-         }
-      }
-      part { name: "youtube.r";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            image.normal: "lk_right.png";
-            align: 1.0 1.0;
-            min: 4 4;
-            rel1 {
-               to: "youtube.txt";
-               offset: -5 -1;
-               relative: 1.0 1.0;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: -5 -1;
-               relative: 1.0 1.0;
-            }
-            color: 51 255 17 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default";
-            visible: 1;
-         }
-         description { state: "out" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 16 16;
-            rel1 {
-               to: "youtube.txt";
-               offset: 9 -2;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: 9 -2;
-            }
-            color: 51 255 17 255;
-         }
-         description { state: "out2" 0.0;
-            fixed: 1 1;
-            inherit: "visible" 0.0;
-            min: 32 32;
-            rel1 {
-               to: "youtube.txt";
-               offset: 25 -2;
-            }
-            rel2 {
-               to: "youtube.txt";
-               offset: 25 -2;
-            }
-            color: 51 255 17 0;
-         }
-      }
-      program { name: "youtube.show2";
-         action: STATE_SET "out2" 0.0;
-         transition: LINEAR 0.3;
-         target: "youtube.l";
-         target: "youtube.r";
-         after: "youtube.show3";
-      }
-      program { name: "youtube.show3";
-         action: STATE_SET "default" 0.0;
-         target: "youtube.l";
-         target: "youtube.r";
-         after: "youtube.show";
-      }
-      program {
-         name: "youtube.show_bottom";
-         signal: "mouse,in"; source: "youtube.txt";
-         action: STATE_SET "visible" 0.0;
-         target: "youtube.bottom";
-      }
-      program {
-         name: "youtube.show";
-         signal: "mouse,in"; source: "youtube.txt";
-         action: STATE_SET "out" 0.0;
-         transition: LINEAR 0.3;
-         target: "youtube.l";
-         target: "youtube.r";
-         after: "youtube.show2";
-      }
-      program {
-         signal: "mouse,out"; source: "youtube.txt";
-         action: STATE_SET "visible" 0.0;
-         target: "youtube.txt";
-      }
-      program {
-         signal: "mouse,out"; source: "youtube.txt";
-         action: ACTION_STOP;
-         target: "youtube.show";
-         target: "youtube.show2";
-         target: "youtube.show3";
-      }
-      program {
-         signal: "mouse,out"; source: "youtube.txt";
-         action: STATE_SET "default" 0.0;
-         target: "youtube.bottom";
-         target: "youtube.l";
-         target: "youtube.r";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "youtube.txt";
+      program { signal: "mouse,clicked,1"; source: "youtube.txt";
          action: SIGNAL_EMIT "about,youtube" "terminology";
       }
-      program {
-         signal: "mouse,clicked,3"; source: "youtube.txt";
+      program { signal: "mouse,clicked,3"; source: "youtube.txt";
          action: SIGNAL_EMIT "about,youtube,ctx" "terminology";
       }
 
-      program {
-         signal: "about,show"; source: "terminology";
+      program { signal: "about,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
          transition: SPRING 1.2 2.0 6;
          target: "terminology.about";
          target: "twitter.txt";
          target: "youtube.txt";
       }
-      program {
-         signal: "about,hide"; source: "terminology";
+      program { signal: "about,hide"; source: "terminology";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.6;
          target: "terminology.about";
@@ -651,6 +236,7 @@ group { name: "terminology/base";
                relative: 1.0 0.98;
                offset: 8 -9;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -667,16 +253,14 @@ group { name: "terminology/base";
             }
          }
       }
-      program {
-         signal: "optdetails,show"; source: "terminology";
+      program { signal: "optdetails,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.2;
          target: "terminology.optdetails";
       }
-      program {
-         signal: "optdetails,hide"; source: "terminology";
+      program { signal: "optdetails,hide"; source: "terminology";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.3;
          target: "terminology.optdetails";
          after: "opdt_hide2";
       }
@@ -698,6 +282,7 @@ group { name: "terminology/base";
                relative: 1.0 0.98;
                offset: 8 -9;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -711,16 +296,14 @@ group { name: "terminology/base";
             }
          }
       }
-      program {
-         signal: "options,show"; source: "terminology";
+      program { signal: "options,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.2;
          target: "terminology.options";
       }
-      program {
-         signal: "options,hide"; source: "terminology";
+      program { signal: "options,hide"; source: "terminology";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.6;
+         transition: DECELERATE 0.3;
          target: "terminology.options";
       }
 
@@ -739,6 +322,7 @@ group { name: "terminology/base";
                relative: 1.0 0.5;
                offset: 8 -9;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -753,16 +337,14 @@ group { name: "terminology/base";
             }
          }
       }
-      program {
-         signal: "controls,show"; source: "terminology";
+      program { signal: "controls,show"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.3;
+         transition: DECELERATE 0.2;
          target: "terminology.controls";
       }
-      program {
-         signal: "controls,hide"; source: "terminology";
+      program { signal: "controls,hide"; source: "terminology";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.3;
          target: "terminology.controls";
       }
    }

@@ -2,53 +2,33 @@
 //// an object to contain the selection tool used for selecting tabs (with
 //// a glow grid of terms
 group { name: "terminology/sel/base";
-   images {
-      image: "pm_overlay.png" COMP;
-      image: "pm_fill.png" COMP;
-      image: "inset_shadow.png" COMP;
-   }
-   set { name: "bg_shadow";
-      image { image: "bg_shadow.png"  COMP; size: 0 0 200 150; }
-      image { image: "bg_shadow2.png" COMP; size: 200 150 400 300; }
-      image { image: "bg_shadow3.png" COMP; size: 400 300 99999 99999; }
-   }
    script {
       public message(Msg_Type:type, id, ...) {
-         new r, g, b, a, v;
+//         new r, g, b, a;
+         new v;
 
          if ((type != MSG_INT) || (id != 1)) return;
 
          v = (getarg(2) * 255) / 100;
 
-         custom_state(PART:"shadow", "default", 0.0);
-         get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
-         set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
-         set_state(PART:"shadow", "custom", 0.0);
+//         custom_state(PART:"shadow", "default", 0.0);
+//         get_state_val(PART:"shadow", STATE_COLOR, r, g, b, a);
+//         set_state_val(PART:"shadow", STATE_COLOR, r, g, b, v);
+//         set_state(PART:"shadow", "custom", 0.0);
 
          if (v < 255)
-         set_state(PART:"fill", "translucent", 0.0);
+           set_state(PART:"fill", "translucent", 0.0);
          else
-         set_state(PART:"fill", "default", 0.0);
+           set_state(PART:"fill", "default", 0.0);
       }
    }
    parts {
-        ////////////////////////////////////////////////////////////////////
-        // background and shadows
-      part { name: "shadow";
+      ////////////////////////////////////////////////////////////////////
+      // background and shadows
+      part { name: "fill"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "bg_shadow";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "fill";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "pm_fill.png";
-            fill {
-               size.relative: 0.0 0.0;
-               size.offset: 64 64;
-            }
+            color: 32 32 32 255;
          }
          description { state: "translucent" 0.0;
             inherit: "default" 0.0;
@@ -70,120 +50,57 @@ group { name: "terminology/sel/base";
 
       ////////////////////////////////////////////////////////////////////
       // fancy stuff on top
-      part { name: "overlay";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "pm_overlay.png";
-            color: 255 255 255 0;
-            fill.smooth: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "overlay_shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      program {
-         signal: "begin"; source: "terminology";
-         action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.3;
-         target: "overlay";
-         target: "overlay_shadow";
-      }
-      program {
-         signal: "end"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3 CURRENT;
-         target: "overlay";
-         target: "overlay_shadow";
-      }
+//      program { signal: "begin"; source: "terminology";
+//         action: STATE_SET "visible" 0.0;
+//         transition: DECELERATE 0.3;
+//         target: "overlay";
+//      }
+//      program { signal: "end"; source: "terminology";
+//         action: STATE_SET "default" 0.0;
+//         transition: DECELERATE 0.3 CURRENT;
+//         target: "overlay";
+//         target: "overlay_shadow";
+//      }
    }
 }
 
 group { name: "terminology/sel/item";
-   images {
-      image: "bg_bevel.png" COMP;
-      image: "bg_glint.png" COMP;
-      image: "pm_shadow.png" COMP;
-      image: "cr_glow.png" COMP;
-      image: "bg_led_glow.png" COMP;
-      image: "bg_led_base.png" COMP;
-      image: "bg_led.png" COMP;
-      image: "bg_led_strobe.png" COMP;
-   }
-   set { name: "bg_shine";
-      image { image: "bg_shine5.png" COMP; size: 0 0 256 120; }
-      image { image: "bg_shine4.png" COMP; size: 256 120 512 240; }
-      image { image: "bg_shine3.png" COMP; size: 512 240 1024 480; }
-      image { image: "bg_shine2.png" COMP; size: 1024 480 2048 960; }
-      image { image: "bg_shine.png"  COMP; size: 2048 960 99999 99999; }
-   }
+   images.image: "pm_shadow.png" COMP;
    parts {
-        ////////////////////////////////////////////////////////////////////
-        // base background and selection image
+      ////////////////////////////////////////////////////////////////////
+      // base background and selection image
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            color: 128 128 128 255;
+            rel.to: "terminology.content";
+            color: 192 192 192 255; // no cc
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "shadow";
          mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            rel1.offset: -5 -5;
-            rel2.offset: 4 4;
+            rel.to: "terminology.content";
+            rel1.offset: -32 -32;
+            rel2.offset: 31 31;
             image.normal: "pm_shadow.png";
             image.border: 64 64 64 64;
-            image.border_scale_by: 0.1;
-            color: 255 255 255 128;
+            image.border_scale_by: 0.5;
+            image.border_scale: 1;
+            color_class: "/shadow/normal/term/sel/item";
             fill.smooth: 0;
+            offscale;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: -40 -40;
-            rel2.offset: 39 39;
+            rel1.offset: -64 -64;
+            rel2.offset: 63 63;
             image.border_scale_by: 1.0;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "glow";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image {
-               normal: "cr_glow.png";
-               border: 9 9 9 9;
-            }
-            color: 255 255 255 0;
-            color_class: "GLOW";
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color_class: "GLOW";
+            color_class: "/shadow/selected/term/sel/item";
          }
       }
 
@@ -193,8 +110,7 @@ group { name: "terminology/sel/item";
          clip_to: "clip";
          description { state: "default" 0.0;
             color_class: "BG";
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
+            rel.to: "terminology.content";
          }
       }
       part { name: "terminology.content"; type: SWALLOW;
@@ -209,238 +125,152 @@ group { name: "terminology/sel/item";
             rel2.relative: 1.0 1.0;
          }
       }
-      program {
-         signal: "selected"; source: "terminology";
+      program { signal: "selected"; source: "terminology";
          action: STATE_SET "selected" 0.0;
          transition: DECELERATE 0.2 CURRENT;
          target: "terminology.content";
          target: "terminology.label";
          target: "shadow";
          target: "clip";
-         target: "glow";
       }
-      program {
-         signal: "selected,start"; source: "terminology";
+      program { signal: "selected,start"; source: "terminology";
          action: STATE_SET "selected" 0.0;
          target: "terminology.content";
          target: "terminology.label";
          target: "shadow";
          target: "clip";
-         target: "glow";
       }
-      program {
-         signal: "unselected"; source: "terminology";
+      program { signal: "unselected"; source: "terminology";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4 CURRENT;
          target: "terminology.content";
          target: "terminology.label";
          target: "shadow";
          target: "clip";
-         target: "glow";
       }
 
       ////////////////////////////////////////////////////////////////////
       // fancy stuff over the top of the terminal for shading and labelling
-      part { name: "overlay";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            image.normal: "pm_overlay.png";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "bevel";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            image.normal: "bg_bevel.png";
-            image.border: 3 3 3 3;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
       part { name: "terminology.label"; type: TEXT; mouse_events: 0;
-         effect: GLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            color:  255 255 255 255;
-            color2: 255 255 255  24;
-            color3: 255 255 255  18;
-            color_class: "GLOW_TXT";
-            align: 0.5 1.0;
+            rel.to: "terminology.content";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+            color_class: "/fg/normal/term/sel/title/text";
+            align: 0.5 0.0;
             text { font: "Sans"; size: 10;
-               align: 0.5 1.0;
+               align: 0.5 0.0;
                min: 0 1;
             }
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color:  255 255 255 255;
-            color2: 255 255 255 128;
-            color3: 255 255 255  20;
-            color_class: "GLOW_TXT_HIGHLIGHT";
-         }
-      }
-      part { name: "clip2"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-         }
-      }
-
-      ////////////////////////////////////////////////////////////////////
-      // fancy stuff on top
-      part { name: "glint";
-         mouse_events: 0;
-         clip_to: "clip2";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 79 5;
-            max: 79 5;
-            rel1 {
-               to: "terminology.content";
-               relative: 0.0 0.0;
-               offset: 0 0;
-            }
-            rel2 {
-               to: "terminology.content";
-               relative: 1.0 0.0;
-               offset: -1 0;
-            }
-            image.normal: "bg_glint.png";
-         }
-      }
-      part { name: "shine";
-         mouse_events: 0;
-         clip_to: "clip2";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            image.normal: "bg_shine";
-            fill.smooth: 0;
-            align: 0.5 0.0;
-            aspect: (256/120) (256/120);
-            aspect_preference: HORIZONTAL;
+            color_class: "/fg/selected/term/sel/title/text";
          }
       }
 
       ////////////////////////////////////////////////////////////////////
       // visual bell - spinning red siren light
-      part { name: "bell_glow";
-         mouse_events: 0;
+      images.image: "circle-1200.png" COMP;
+      images.image: "strobe-600.png" COMP;
+      part { name: "bell_glow"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            color: 255 255 255 0;
-            rel1.to: "bell_base";
-            rel2.to: "bell_base";
-            min: 200 200;
-            fill.smooth: 0;
-            image.normal: "bg_led_glow.png";
+            color: 255 80 60 0; // no cc
+            rel.to: "bell";
+            min: 100 100;
+            image.normal: "circle-1200.png";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
+            color: 255 80 60 32;
          }
       }
-      part { name: "bell_base";
-         mouse_events: 0;
+      part { name: "bell_glow2"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            color: 255 255 255 0;
-            min: 32 32;
-            max: 32 32;
-            rel1.to: "terminology.content";
-            rel2.to: "terminology.content";
-            align: 1.0 1.0;
-            image.normal: "bg_led_base.png";
+            color: 255 240 160 0; // no cc
+            rel.to: "bell";
+            min: 50 50;
+            image.normal: "circle-1200.png";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
-         }
-      }
-      part { name: "bell";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            color: 255 255 255 0;
-            rel1.to: "bell_base";
-            rel2.to: "bell_base";
-            image.normal: "bg_led.png";
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            color: 255 255 255 255;
+            color: 255 220 120 32;
          }
       }
       part { name: "bell_strobe";
          mouse_events: 0;
          description { state: "default" 0.0;
             fixed: 1 1;
-            visible: 0;
-            color: 255 255 255 0;
-            rel1.to: "bell";
-            rel2.to: "bell";
-            image.normal: "bg_led_strobe.png";
+            color: 255 255 200 255;
+            rel.to: "bell_glow2";
+            image.normal: "strobe-600.png";
+            rel1.relative: -0.5 -0.5;
+            rel2.relative: 1.5 1.5;
             map {
                on: 1;
                smooth: 1;
                rotation.center: "bell";
             }
+            visible: 0;
          }
          description { state: "spin" 0.0;
             inherit: "default" 0.0;
+            map.rotation.z: 0.0;
             visible: 1;
-            color: 255 255 255 255;
-            map.rotation.z: 36.0;
          }
          description { state: "spin_done" 0.0;
-            inherit: "spin" 0.0;
+            inherit: "default" 0.0;
             map.rotation.z: 720.0;
-         }
-         description { state: "spin_done2" 0.0;
-            inherit: "spin" 0.0;
-            map.rotation.z: 1440.0;
+            visible: 1;
          }
       }
-      program {
-         signal: "bell"; source: "terminology";
-         action: STATE_SET "default" 0.0;
-         target: "bell_base";
-         target: "bell";
-         target: "bell_strobe";
-         target: "bell_glow";
-         after: "bell";
+      part { name: "bell";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            color: 255 255 255 0;
+            max: 20 20;
+            min: 20 20;
+            align: 1.0 1.0;
+            rel1.offset: 15 15;
+            rel2.offset: -16 -16;
+            rel.to: "terminology.content";
+            image.normal: "circle-1200.png";
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
       }
-      program { name: "bell";
+      program { signal: "bell"; source: "terminology";
          action: STATE_SET "visible" 0.0;
-         target: "bell_base";
-         target: "bell_glow";
-         after: "bell2";
-      }
-      program { name: "bell2";
-         action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.1;
          target: "bell";
          target: "bell_glow";
+         target: "bell_glow2";
          after: "bell3";
       }
       program { name: "bell3";
          action: STATE_SET "spin" 0.0;
          transition: LINEAR 0.1;
+         target: "bell_strobe";
+         after: "bell4.1";
+      }
+      program { name: "bell4.1";
+         action: STATE_SET "spin" 0.0;
          target: "bell_strobe";
          after: "bell4.2";
       }
@@ -448,18 +278,7 @@ group { name: "terminology/sel/item";
          action: STATE_SET "spin_done" 0.0;
          transition: LINEAR 0.9;
          target: "bell_strobe";
-         after: "bell4.3";
-      }
-      program { name: "bell4.3";
-         action: STATE_SET "spin_done2" 0.0;
-         transition: LINEAR 1.0;
-         target: "bell_strobe";
-         after: "bell4.4";
-      }
-      program { name: "bell4.4";
-         action: STATE_SET "spin_done" 0.0;
-         target: "bell_strobe";
-         after: "bell4.3";
+         after: "bell4.1";
       }
    }
 }

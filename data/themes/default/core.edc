@@ -78,13 +78,14 @@ group { name: "terminology/core";
       ////////////////////////////////////////////////////////////////////
       // actual text grid for chars, cursors, selectiond etc. goes here
       part { name: "terminology.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 1 0;
             rel1.relative: 0.0 1.0;
             rel1.to_y: "terminology.tabregion";
             rel2.offset: -2 -2;
+            offscale;
          }
       }
-
    }
 }
