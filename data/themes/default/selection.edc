@@ -860,6 +860,30 @@ group { name: "terminology/selection";
       }
 */
 
+      // the outline around the selection...
+#define TARGETS \
+      target: "top_clip"; target: "middle_clip"; target: "bottom_clip";
+
+      program { signal: "mode,oneline"; source: "terminology";
+         action: STATE_SET "oneline" 0.0;
+         TARGETS;
+      }
+      program { signal: "mode,disjoint"; source: "terminology";
+         action: STATE_SET "disjoint" 0.0;
+         TARGETS;
+      }
+      program { signal: "mode,multiline"; source: "terminology";
+         action: STATE_SET "default" 0.0;
+         TARGETS;
+      }
+      program { signal: "mode,topfull"; source: "terminology";
+         action: STATE_SET "topfull" 0.0;
+         TARGETS;
+      }
+      program { signal: "mode,bottomfull"; source: "terminology";
+         action: STATE_SET "bottomfull" 0.0;
+         TARGETS;
+      }
       // top and bottom swallows used to coimmunicate via min/max size the
       // size of the top and bottom lines
       part { name: "terminology.top_left"; type: SWALLOW;
