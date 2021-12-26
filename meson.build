@@ -39,7 +39,7 @@ if host_os == 'linux'
    config_data.set('_POSIX_1_SOURCE', 1)
 endif
 
-efl_version = '1.22.0'
+efl_version = '1.26.0'
 m_dep = cc.find_library('m', required : false)
 efl_deps = ['edje',
             'elementary',
