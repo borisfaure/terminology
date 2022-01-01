@@ -4,9 +4,9 @@ jobs:
   checkout_code:
     docker:
       - image: borisfaure/terminology-ci:latest
-    shell: /bin/sh -leo pipefail
     environment:
-      - BASH_ENV: /etc/profile
+      - COLUMNS: 150
+      - TERM: xterm-256color
     steps:
       - run: |
           cd /terminology
@@ -27,9 +27,9 @@ jobs:
   build_and_test_debug_gcc_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
-    shell: /bin/sh -leo pipefail
     environment:
-      - BASH_ENV: /etc/profile
+      - COLUMNS: 150
+      - TERM: xterm-256color
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
@@ -69,6 +69,9 @@ jobs:
   build_and_test_release_gcc_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
+    environment:
+      - COLUMNS: 150
+      - TERM: xterm-256color
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
@@ -97,6 +100,8 @@ jobs:
       - image: borisfaure/terminology-ci:latest
     environment:
       - CC: clang
+      - COLUMNS: 150
+      - TERM: xterm-256color
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
@@ -117,6 +122,8 @@ jobs:
     environment:
       - CC: clang
       - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability -fno-sanitize-recover=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability
+      - COLUMNS: 150
+      - TERM: xterm-256color
     steps:
       - restore_cache:
           key: checkout-{{ .Environment.CIRCLE_SHA1 }}
