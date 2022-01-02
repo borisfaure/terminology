@@ -171,7 +171,6 @@ jobs:
           name: Launch tests
           command: |
             cd /terminology
-            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
             build/src/bin/tytest dummy
             build/src/bin/tytest all
   build_and_test_clang_lsan_efl_latest:
