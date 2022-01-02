@@ -863,7 +863,7 @@ _parse_one_css_rgb_color(struct ty_sb *sb,
                          uint8_t *vp,
                          Eina_Bool *is_percentp)
 {
-   char *endptr_double, *endptr_long;
+   char *endptr_double = sb->buf, *endptr_long;
    double d;
    long int l;
 
@@ -918,7 +918,7 @@ static Eina_Bool
 _parse_one_css_alpha(struct ty_sb *sb,
                      uint8_t *ap)
 {
-   char *endptr_double;
+   char *endptr_double = sb->buf;
    double d;
 
    if (!sb->len)
@@ -957,7 +957,7 @@ static Eina_Bool
 _parse_one_hue(struct ty_sb *sb,
                double *dp)
 {
-   char *endptr_double;
+   char *endptr_double = sb->buf;
    double d;
 
    if (!sb->len)
@@ -1009,7 +1009,7 @@ static Eina_Bool
 _parse_one_percent(struct ty_sb *sb,
                    double *dp)
 {
-   char *endptr_double;
+   char *endptr_double = sb->buf;
    double d;
 
    if (!sb->len)
