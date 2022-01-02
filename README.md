@@ -1,4 +1,4 @@
-Terminology 1.11.0
+Terminology 1.12.0
 ==================
 
 This is an EFL terminal emulator with some extra bells and whistles.
@@ -21,7 +21,7 @@ This is an EFL terminal emulator with some extra bells and whistles.
 Requirements
 ------------
 
-  * `efl` (>= 1.22.0)
+  * `efl` (>= 1.26.0)
 
 Please see http://www.enlightenment.org for information on these.
 

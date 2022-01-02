@@ -1,3 +1,10 @@
+2022-01-02
+        * Release v1.12.0
+        * New default theme!
+        * Support EFL 1-26 or newer only
+        * Colorschemes generate their own configuration file, allowing for
+          easy management of outside contributions
+
 2021-11-11
         * Release v1.11.0
         * Support for focus reporting escape codes
