@@ -116,12 +116,128 @@ jobs:
             meson configure build
             cd build
             ninja -j4
+  build_and_test_clang_asan_efl_latest:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=address -fno-sanitize-recover=address
+      - COLUMNS: 150
+      - TERM: xterm-256color
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dnls=false -Dtests=true . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest dummy
+            build/src/bin/tytest all
+  build_and_test_clang_msan_efl_latest:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=memory -fno-sanitize-recover=memory
+      - COLUMNS: 150
+      - TERM: xterm-256color
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dnls=false -Dtests=true . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest dummy
+            build/src/bin/tytest all
+  build_and_test_clang_lsan_efl_latest:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=leak -fno-sanitize-recover=leak
+      - COLUMNS: 150
+      - TERM: xterm-256color
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dnls=false -Dtests=true . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest dummy
+            build/src/bin/tytest all
+  build_and_test_clang_isan_efl_latest:
+    docker:
+      - image: borisfaure/terminology-ci:latest
+    environment:
+      - CC: clang
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=integer -fno-sanitize-recover=integer
+      - COLUMNS: 150
+      - TERM: xterm-256color
+    steps:
+      - restore_cache:
+          key: checkout-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Install EFL
+          command: apk add /pkg/efl-latest.apk /pkg/efl-dev-latest.apk
+      - run:
+          name: Compile with Clang
+          command: |
+            cd /terminology
+            meson -Dnls=false -Dtests=true . build
+            meson configure build
+            cd build
+            ninja -j4
+      - run:
+          name: Launch tests
+          command: |
+            cd /terminology
+            tests/run_tests.sh -v -t build/src/bin/tytest -r tests/tests.results -d tests/
+            build/src/bin/tytest dummy
+            build/src/bin/tytest all
   build_and_test_clang_ubsan_efl_latest:
     docker:
       - image: borisfaure/terminology-ci:latest
     environment:
       - CC: clang
-      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability -fno-sanitize-recover=undefined,float-divide-by-zero,unsigned-integer-overflow,implicit-conversion,local-bounds,nullability
+      - CFLAGS: -O0 -pipe -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined
       - COLUMNS: 150
       - TERM: xterm-256color
     steps:
@@ -158,6 +274,15 @@ workflows:
           requires:
             - checkout_code
       - build_full_clang_efl_latest:
+          requires:
+            - checkout_code
+      - build_and_test_clang_asan_efl_latest:
+          requires:
+            - checkout_code
+      - build_and_test_clang_msan_efl_latest:
+          requires:
+            - checkout_code
+      - build_and_test_clang_lsan_efl_latest:
           requires:
             - checkout_code
       - build_and_test_clang_ubsan_efl_latest:
