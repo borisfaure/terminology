@@ -1301,7 +1301,7 @@ _cb_link_down(void *data,
                                                 sd->link.color.g,
                                                 sd->link.color.b);
                }
-               else
+             else
                {
                   fmt = eina_stringshare_printf(_("Copy '%s'"),
                                                 "#%.2x%.2x%.2x%.2x");
