@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 19:11+0100\n"
+"POT-Creation-Date: 2022-01-02 18:48+0100\n"
 "PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Copy '%s'"
 msgstr "Kopiér '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
 msgstr "Åbn"
 
@@ -82,7 +82,7 @@ msgstr "Minivisning"
 msgid "Set title"
 msgstr "Indstil titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
+#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
 msgstr "Kopiér"
 
@@ -934,23 +934,23 @@ msgstr "Kunne ikke indlæse arbejdsmappe %s: %s"
 msgid "unsupported selection format '%s'"
 msgstr "ikke-understøttet markeringsformat '%s'"
 
-#: src/bin/termio.c:1366
+#: src/bin/termio.c:1365
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1375
 msgid "Copy relative path"
 msgstr "Kopiér relativ sti"
 
-#: src/bin/termio.c:1378
+#: src/bin/termio.c:1377
 msgid "Copy full path"
 msgstr "Kopiér fuld sti"
 
-#: src/bin/termio.c:2791
+#: src/bin/termio.c:2790
 msgid "Open as URL"
 msgstr "Åbn som URL"
 
-#: src/bin/termio.c:4234
+#: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
 msgstr "Kunne ikke allokere termpty"
 

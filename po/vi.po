@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 19:11+0100\n"
+"POT-Creation-Date: 2022-01-02 18:48+0100\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Copy '%s'"
 msgstr "Sao Chép"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
 msgstr "Mở"
 
@@ -81,7 +81,7 @@ msgstr "Miniview"
 msgid "Set title"
 msgstr "Đặt tiêu đề cho cửa sổ"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
+#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
 msgstr "Sao Chép"
 
@@ -971,23 +971,23 @@ msgstr "Không thể tải thư mục làm việc %s: %s"
 msgid "unsupported selection format '%s'"
 msgstr "không hỗ trợ định dạng chọn '%s'"
 
-#: src/bin/termio.c:1366
+#: src/bin/termio.c:1365
 msgid "Preview"
 msgstr "Xem Trước"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1375
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1378
+#: src/bin/termio.c:1377
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2791
+#: src/bin/termio.c:2790
 msgid "Open as URL"
 msgstr "Mở như là URL"
 
-#: src/bin/termio.c:4234
+#: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
 msgstr "Không thể cấp phát termpty"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 19:11+0100\n"
+"POT-Creation-Date: 2022-01-02 18:48+0100\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: Sanjeev <as2902.b@samsung.com>\n"
 "Language-Team: Hindi\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Copy '%s'"
 msgstr "कॉपी"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
 msgstr "ओपन"
 
@@ -78,7 +78,7 @@ msgstr "मिनी व्यू"
 msgid "Set title"
 msgstr "विंडो शीर्षक सेट करें"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
+#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
 msgstr "कॉपी"
 
@@ -952,23 +952,23 @@ msgstr ""
 msgid "unsupported selection format '%s'"
 msgstr "'%s' असमर्थित चयन प्रारूप."
 
-#: src/bin/termio.c:1366
+#: src/bin/termio.c:1365
 msgid "Preview"
 msgstr "पूर्वावलोकन"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1375
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1378
+#: src/bin/termio.c:1377
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2791
+#: src/bin/termio.c:2790
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4234
+#: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
 msgstr ""
 

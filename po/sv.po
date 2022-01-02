@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 19:11+0100\n"
+"POT-Creation-Date: 2022-01-02 18:48+0100\n"
 "PO-Revision-Date: 2021-04-22 14:51+0000\n"
 "Last-Translator: Durver Eriksson <dyrver.eriksson@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Copy '%s'"
 msgstr "Kopiera '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
 msgstr "Öppna"
 
@@ -79,7 +79,7 @@ msgstr "Minivy"
 msgid "Set title"
 msgstr "Sätt titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
+#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
 msgstr "Kopiera"
 
@@ -927,23 +927,23 @@ msgstr "Kunde inte ladda arbetskatalog %s: %s"
 msgid "unsupported selection format '%s'"
 msgstr "markeringsformat stöds ej '%s'"
 
-#: src/bin/termio.c:1366
+#: src/bin/termio.c:1365
 msgid "Preview"
 msgstr "Förslagsvy"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1375
 msgid "Copy relative path"
 msgstr "Kopiera relativ sökväg"
 
-#: src/bin/termio.c:1378
+#: src/bin/termio.c:1377
 msgid "Copy full path"
 msgstr "Kopiera hel sökväg"
 
-#: src/bin/termio.c:2791
+#: src/bin/termio.c:2790
 msgid "Open as URL"
 msgstr "Öppna som URL"
 
-#: src/bin/termio.c:4234
+#: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
 msgstr "Kunde inte hitta termpty"
 

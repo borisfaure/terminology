@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-11 19:11+0100\n"
+"POT-Creation-Date: 2022-01-02 18:48+0100\n"
 "PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Copy '%s'"
 msgstr "Копировать '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1369
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
 msgstr "Открыть"
 
@@ -80,7 +80,7 @@ msgstr "Мини-карта"
 msgid "Set title"
 msgstr "Заголовок"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1383 src/bin/termio.c:2789
+#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
 msgstr "Копировать"
 
@@ -933,23 +933,23 @@ msgstr "Не удалось загрузить рабочий каталог %s:
 msgid "unsupported selection format '%s'"
 msgstr "неподдерживаемый формат выделения '%s'"
 
-#: src/bin/termio.c:1366
+#: src/bin/termio.c:1365
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1375
 msgid "Copy relative path"
 msgstr "Копировать относительный путь"
 
-#: src/bin/termio.c:1378
+#: src/bin/termio.c:1377
 msgid "Copy full path"
 msgstr "Копировать абсолютный путь"
 
-#: src/bin/termio.c:2791
+#: src/bin/termio.c:2790
 msgid "Open as URL"
 msgstr "Открыть как URL"
 
-#: src/bin/termio.c:4234
+#: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
 msgstr "Невозможно выделить termpty"
 
