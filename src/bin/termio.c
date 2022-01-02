@@ -1356,7 +1356,6 @@ _cb_link_down(void *data,
 
              if (sd->config->helper.inline_please)
                {
-                  size_t len = strlen(raw_link);
                   Media_Type type = media_src_type_get(raw_link, len);
 
                   if ((type == MEDIA_TYPE_IMG) ||
