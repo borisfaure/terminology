@@ -1,3 +1,8 @@
+2022-01-03
+        * Release v1.12.1
+        * Build and install Default colorscheme
+        * Correctly set the version
+
 2022-01-02
         * Release v1.12.0
         * New default theme!
