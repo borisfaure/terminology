@@ -3,6 +3,7 @@ colorschemes = [
   'Belafonte Night',
   'Black',
   'Cobalt2',
+  'Default',
   'Dracula',
   'Fahrenheit',
   'Material',
