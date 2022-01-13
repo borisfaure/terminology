@@ -2,39 +2,41 @@
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# E-Akcaer <gurbetcii_@hotmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-02 18:48+0100\n"
-"PO-Revision-Date: 2014-10-23 00:17+0000\n"
-"Last-Translator: Volkan Gezer <Unknown>\n"
-"Language-Team: Turkish <tr@li.org>\n"
+"PO-Revision-Date: 2022-01-13 18:58+0000\n"
+"Last-Translator: E-Akcaer <gurbetcii_@hotmail.com>\n"
+"Language-Team: Turkish <https://hosted.weblate.org/projects/terminology/"
+"terminology/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.10.1\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
-"X-Generator: Launchpad (build 17341)\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
 #: src/bin/termio.c:1306
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Kopyala"
+msgstr "'%s'i kopyala"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
 msgid "Open"
-msgstr ""
+msgstr "Aç"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "YouTube kanalı"
 
 #: src/bin/about.c:289
 #, c-format
@@ -54,7 +56,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminology'nin geliştiricileri"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -74,11 +76,11 @@ msgstr "Y Ayır"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr ""
+msgstr "MiniGörünüm"
 
 #: src/bin/controls.c:413 src/bin/win.c:6235
 msgid "Set title"
-msgstr ""
+msgstr "Başlığı ayarla"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
 msgid "Copy"
@@ -98,11 +100,11 @@ msgstr "Hakkında"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Gruplanmış girdi"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
-msgstr ""
+msgstr "Uçbirimi Kapat"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
@@ -130,124 +132,127 @@ msgid "Scroll one line down"
 msgstr "Bir satır aşağı kaydır"
 
 #: src/bin/keyin.c:663
+#, fuzzy
 msgid "Go to the top of the backlog"
-msgstr ""
+msgstr "Birikenlerin en üstüne git"
 
 #: src/bin/keyin.c:664
 msgid "Reset scroll"
-msgstr ""
+msgstr "Kaydırmayı sıfırla"
 
 #: src/bin/keyin.c:666
 msgid "Copy/Paste"
-msgstr ""
+msgstr "Kopyala/Yapıştır"
 
 #: src/bin/keyin.c:667
+#, fuzzy
 msgid "Copy selection to Primary buffer"
-msgstr ""
+msgstr "Seçimi Öncelikli arabelleğe kopyala"
 
 #: src/bin/keyin.c:668
 msgid "Copy selection to Clipboard buffer"
-msgstr ""
+msgstr "Seçimi Pano arabelleğine kopyala"
 
 #: src/bin/keyin.c:669
+#, fuzzy
 msgid "Paste Primary buffer (highlight)"
-msgstr ""
+msgstr "Öncelikli arabelleği yapıştır (vurgula)"
 
 #: src/bin/keyin.c:670
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr ""
+msgstr "Pano arabelleğini yapıştır (ctrl+c/v)"
 
 #: src/bin/keyin.c:672
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "Bölümler/Sekmeler"
 
 #: src/bin/keyin.c:673
 msgid "Focus the previous terminal"
-msgstr ""
+msgstr "Önceki uçbirime odaklan"
 
 #: src/bin/keyin.c:674
 msgid "Focus the next terminal"
-msgstr ""
+msgstr "Sonraki uçbirime odaklan"
 
 #: src/bin/keyin.c:675
 msgid "Focus the terminal above"
-msgstr ""
+msgstr "Üstteki uçbirime odaklan"
 
 #: src/bin/keyin.c:676
 msgid "Focus the terminal below"
-msgstr ""
+msgstr "Alttaki uçbirime odaklan"
 
 #: src/bin/keyin.c:677
 msgid "Focus the terminal on the left"
-msgstr ""
+msgstr "Soldaki uçbirime odaklan"
 
 #: src/bin/keyin.c:678
 msgid "Focus the terminal on the right"
-msgstr ""
+msgstr "Sağdaki uçbirime odaklan"
 
 #: src/bin/keyin.c:679
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "Yatay olarak ikiye ayır (yenisi aşağıda)"
 
 #: src/bin/keyin.c:680
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "Dikey olarak ikiye ayır (yenisi sağda)"
 
 #: src/bin/keyin.c:681
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "Yeni \"sekme\" oluştur"
 
 #: src/bin/keyin.c:682
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "Odaklanılmış uçbirimi kapat"
 
 #: src/bin/keyin.c:683
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "\"sekme\" değiştiriciyi yukarı getir"
 
 #: src/bin/keyin.c:684
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "1 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:685
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "2 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:686
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "3 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:687
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "4 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:688
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "5 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:689
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "6 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:690
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "7 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:691
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "8 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:692
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "9 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:693
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "10 no.lu uçbirim sekmesine geç"
 
 #: src/bin/keyin.c:694
 msgid "Change title"
-msgstr ""
+msgstr "Başlığı değiştir"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
 msgid "Toggle whether input goes to all visible terminals"
@@ -255,35 +260,35 @@ msgstr ""
 
 #: src/bin/keyin.c:699
 msgid "Font size"
-msgstr ""
+msgstr "Yazı tipi boyutu"
 
 #: src/bin/keyin.c:700
 msgid "Font size up 1"
-msgstr ""
+msgstr "Yazı tipi boyutunu 1 artır"
 
 #: src/bin/keyin.c:701
 msgid "Font size down 1"
-msgstr ""
+msgstr "Yazı tipi boyutunu 1 azalt"
 
 #: src/bin/keyin.c:702
 msgid "Display big font size"
-msgstr ""
+msgstr "Büyük yazı tipi boyutunu görüntüle"
 
 #: src/bin/keyin.c:703
 msgid "Reset font size"
-msgstr ""
+msgstr "Yazı tipi boyutunu sıfırla"
 
 #: src/bin/keyin.c:705
 msgid "Actions"
-msgstr ""
+msgstr "Eylemler"
 
 #: src/bin/keyin.c:706
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "Yeni bir uçbirim penceresi aç"
 
 #: src/bin/keyin.c:707
 msgid "Toggle Fullscreen of the window"
-msgstr ""
+msgstr "Tam ekran pencereye geçiş yap"
 
 #: src/bin/keyin.c:708
 msgid "Display the history miniview"
@@ -291,36 +296,41 @@ msgstr ""
 
 #: src/bin/keyin.c:709
 msgid "Display the command box"
-msgstr ""
+msgstr "Komut kutusunu görüntüle"
 
 #: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
-msgstr ""
+msgstr "Pencere oluşturulamadı"
 
 #: src/bin/main.c:425 src/bin/main.c:613
+#, fuzzy
 msgid "Could not create terminal widget"
-msgstr ""
+msgstr "Uçbirim uygulamacığı oluşturulamadı"
 
 #: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr ""
+msgstr "(C) 2012-%d Carsten Haitzler ve diğerleri"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr ""
+msgstr "Enlightenment Vakfı Kitaplıkları ile yazılan uçbirim öykünücüsü"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
-msgstr ""
+msgstr "Adlandırılan dosyayı arkaplan duvar kağıdı olarak kullan"
 
 #: src/bin/main.c:468
+#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr ""
+msgstr "Uçbirim komutu çalıştırma dizinini değiştir"
 
 #: src/bin/main.c:470
+#, fuzzy
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
+"Çalıştırılacak komut. Varsayılan olarak $SHELL (veya parola shell veya /bin/"
+"sh)"
 
 #: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
@@ -328,31 +338,32 @@ msgstr ""
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Adlandırılan renk şemasını kullan"
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr ""
+msgstr "Kullanılacak uçbirim geometrisi (örn. 80x24 veya 80x24+50+20 vb.)"
 
 #: src/bin/main.c:478
 msgid "Set window name"
-msgstr ""
+msgstr "Pencere adını ayarla"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr ""
+msgstr "Pencere görevini ayarla"
 
 #: src/bin/main.c:482
 msgid "Set window title"
-msgstr ""
+msgstr "Pencere başlığını ayarla"
 
 #: src/bin/main.c:484
 msgid "Set icon name"
-msgstr ""
+msgstr "Simge adını ayarla"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr ""
+"Yazı tipini ayarla (Ölçeklenebilir olması için AD/BOYUT, bitmap için AD)"
 
 #: src/bin/main.c:488
 msgid ""
@@ -360,6 +371,9 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
+"Uçbirim penceresini ikiye ayırın. Dikey için 'v' ve yatay için 'h'. Pek çok "
+"kez kullanılabilir. Örn. \"-S vhvv\" veya \"--split hv\". Daha fazla "
+"açıklama klavuz sayfasında bulunmaktadır."
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
@@ -367,15 +381,15 @@ msgstr ""
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
-msgstr ""
+msgstr "Video oynatımı için sessiz kipi ayarla"
 
 #: src/bin/main.c:497
 msgid "Set cursor blink mode"
-msgstr ""
+msgstr "Yanıp sönen imleç kipini ayarla"
 
 #: src/bin/main.c:499
 msgid "Set visual bell mode"
-msgstr ""
+msgstr "Görsel uyarı zili kipini ayarla"
 
 #: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
@@ -383,11 +397,11 @@ msgstr ""
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Simge durumunda başlat"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Çerçevesiz başlat"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
@@ -395,15 +409,15 @@ msgstr ""
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "En büyüt boyutta başlat"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
-msgstr ""
+msgstr "Terminology, bir pencere yöneticisi olmadan çalıştırılır"
 
 #: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
-msgstr ""
+msgstr "Komut süreci bitmeden çıkma"
 
 #: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
@@ -411,124 +425,125 @@ msgstr ""
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr ""
+msgstr "TERM'i 'xterm' yerine 'xterm-256color'a ayarla"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Ölçekleme katsayısını ayarla"
 
 #: src/bin/main.c:521
 msgid "Highlight links"
-msgstr ""
+msgstr "Bağlantıları vurgula"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Sihirbazı başlangıçta gösterme"
 
 #: src/bin/main.c:549
 msgid "show program version"
-msgstr ""
+msgstr "program sürümünü göster"
 
 #: src/bin/main.c:552
 msgid "show copyright"
-msgstr ""
+msgstr "telif haklarını göster"
 
 #: src/bin/main.c:555
 msgid "show license"
-msgstr ""
+msgstr "lisansı göster"
 
 #: src/bin/main.c:558
 msgid "show this message"
-msgstr ""
+msgstr "bu mesajı göster"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr ""
+msgstr "-S/--split seçeneği için geçersiz değişken bulundu. --help 'e bakın"
 
 #: src/bin/main.c:909
 msgid "Could not initialize key bindings"
-msgstr ""
+msgstr "Tuş ilişkilendirmeleri başlatılamadı"
 
 #: src/bin/main.c:924
 msgid "Could not parse command line options"
-msgstr ""
+msgstr "Komut satırı seçenekleri çözümlenemedi"
 
 #: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
-msgstr ""
+msgstr "%s seçeneği bir değişken gerektiriyor!"
 
 #: src/bin/main.c:949
 msgid "invalid options found. See --help"
-msgstr ""
+msgstr "geçersiz seçenekler bulundu. --help 'e bakın"
 
 #: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
-msgstr ""
+msgstr "%s işlevi başarısız: %s"
 
 #: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
-msgstr ""
+msgstr "Ortam görselleştirme desteklenmiyor"
 
 #: src/bin/options_background.c:163
 msgid "None"
-msgstr ""
+msgstr "Hiçbiri"
 
 #: src/bin/options_background.c:495
 msgid "Source file is target file"
-msgstr ""
+msgstr "Kaynak dosya, hedef dosyadır"
 
 #: src/bin/options_background.c:508
 msgid "Picture imported"
-msgstr ""
+msgstr "İçe aktarılan resim"
 
 #: src/bin/options_background.c:513
 msgid "Failed"
-msgstr ""
+msgstr "Başarısız"
 
 #: src/bin/options_background.c:565 src/bin/options.c:221
 msgid "Background"
-msgstr ""
+msgstr "Arkaplan"
 
 #: src/bin/options_background.c:581
+#, fuzzy
 msgid "Shine:"
-msgstr ""
+msgstr "Parlaklık:"
 
 #: src/bin/options_background.c:605
 msgid "Translucent"
-msgstr ""
+msgstr "Yarı şeffaf"
 
 #: src/bin/options_background.c:616 src/bin/options_background.c:617
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:636
 msgid "Select Path"
-msgstr ""
+msgstr "Yolu Seçin"
 
 #: src/bin/options_background.c:642
 msgid "System"
-msgstr ""
+msgstr "Sistem"
 
 #: src/bin/options_background.c:645
 msgid "User"
-msgstr ""
+msgstr "Kullanıcı"
 
 #: src/bin/options_background.c:648
 msgid "Other"
-msgstr ""
+msgstr "Diğer"
 
 #: src/bin/options_background.c:690
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Arka plan olarak kullanılacak resme tıklayın"
 
 #: src/bin/options_behavior.c:63
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d satır"
 
 #: src/bin/options_behavior.c:79
 #, c-format
@@ -537,120 +552,125 @@ msgstr ""
 
 #: src/bin/options_behavior.c:217
 msgid "Default cursor:"
-msgstr ""
+msgstr "Varsayılan imleç:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
-msgstr ""
+msgstr "Yanıp Sönen Kutucuk"
 
 #: src/bin/options_behavior.c:245
 msgid "Steady Block"
-msgstr ""
+msgstr "Sabit Kutucuk"
 
 #: src/bin/options_behavior.c:265
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Yanıp Sönen Alt Çizgi"
 
 #: src/bin/options_behavior.c:285
 msgid "Steady Underline"
-msgstr ""
+msgstr "Sabit Alt Çizgi"
 
 #: src/bin/options_behavior.c:305
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Yanıp Sönen Çubuk"
 
 #: src/bin/options_behavior.c:325
 msgid "Steady Bar"
-msgstr ""
+msgstr "Sabit Çubuk"
 
 #: src/bin/options_behavior.c:365 src/bin/options.c:217
 msgid "Behavior"
-msgstr ""
+msgstr "Davranış"
 
 #: src/bin/options_behavior.c:385
 msgid "Show tabs"
-msgstr ""
+msgstr "Sekmeleri göster"
 
 #: src/bin/options_behavior.c:388
 msgid "Scroll to bottom on new content"
-msgstr ""
+msgstr "Yeni içerikte alta kaydır"
 
 #: src/bin/options_behavior.c:389
 msgid "Scroll to bottom when a key is pressed"
-msgstr ""
+msgstr "Bir tuşa basıldığında üste kaydır"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses"
-msgstr ""
+msgstr "Tuş basışlarına tepki ver"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Tuş basışları için Ses Desteği <failure>DEVRE DIŞI</failure>!"
 
 #: src/bin/options_behavior.c:406
 msgid "Visual Bell"
-msgstr ""
+msgstr "Görsel Uyarı Zili"
 
 #: src/bin/options_behavior.c:407
 msgid "Bell rings"
-msgstr ""
+msgstr "Zil çanları"
 
 #: src/bin/options_behavior.c:408
 msgid "Urgent Bell"
-msgstr ""
+msgstr "Acil Zili"
 
 #: src/bin/options_behavior.c:410
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "Çoklu pencereler, tek işlem"
 
 #: src/bin/options_behavior.c:411
+#, fuzzy
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "TERM'i xterm-256color'a ayarla"
 
 #: src/bin/options_behavior.c:412
+#, fuzzy
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "Geri-Ok, Del işlevi görür (Silme Tuşu yerine)"
 
 #: src/bin/options_behavior.c:413
+#, fuzzy
 msgid "Start as login shell"
-msgstr ""
+msgstr "Açılış kabuğu olarak başlat"
 
 #: src/bin/options_behavior.c:414
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "Yeni uçbirimleri geçerli çalışma dizininde aç"
 
 #: src/bin/options_behavior.c:415
 msgid "Always show miniview"
-msgstr ""
+msgstr "Her zaman mini görünümde göster"
 
 #: src/bin/options_behavior.c:416
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Özel Terminology çıkış kodlarına izin ver"
 
 #: src/bin/options_behavior.c:417
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Suratlar (emojiler)'a çift karakter boşluk gibi davran"
 
 #: src/bin/options_behavior.c:418
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Girdiler gruplandığında, sadece görünür olanlarda değil tüm uçbirimlerde "
+"bunu yap"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
-msgstr ""
+msgstr "Her zaman şu boyutta aç:"
 
 #: src/bin/options_behavior.c:435
 msgid "Set Current:"
-msgstr ""
+msgstr "Geçerli Olarak Ayarla:"
 
 #: src/bin/options_behavior.c:446
 msgid "Width:"
-msgstr ""
+msgstr "Genişlik:"
 
 #: src/bin/options_behavior.c:468
 msgid "Height:"
-msgstr ""
+msgstr "Yükseklik:"
 
 #: src/bin/options_behavior.c:527
 msgid ""
@@ -660,63 +680,63 @@ msgstr ""
 
 #: src/bin/options_behavior.c:532
 msgid "Tab zoom/switch animation time:"
-msgstr ""
+msgstr "Sekme yaklaştırma/geçiş hareketlendirmesi süresi:"
 
 #: src/bin/options_behavior.c:540 src/bin/options_behavior.c:541
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr ""
+msgstr "Seçenekler"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Fare"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
-msgstr ""
+msgstr "Yazı Tipi"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:168
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/bin/options.c:222
 msgid "Colors"
-msgstr ""
+msgstr "Renkler"
 
 #: src/bin/options.c:223
 msgid "Keys"
-msgstr ""
+msgstr "Tuşlar"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Araç Takımı"
 
 #: src/bin/options.c:235
 msgid "Temporary"
-msgstr ""
+msgstr "Geçici"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Web sayfası aç"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Yazar: </b>%s<br/><b>Web sayfası: </b>%s<br/><b>Lisans: </b>%s"
 
 #: src/bin/options_colors.c:226
 msgid "Color schemes"
-msgstr ""
+msgstr "Renk şemaları"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "<hilight>%s</hilight> temasını kullan"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -725,81 +745,88 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em>, <hilight>elementary</hilight> araç çantası "
+"kullanır.<br>Araç takımı yapılandırma ayarlarına <keyword>%s</keyword> "
+"çalıştırılarak erişilebilir"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "%s'i başlat"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
 msgid "Scale"
-msgstr ""
+msgstr "Ölçek"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:433
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Bu metnin okunabilir olması için tercih edilen boyutu seçin"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"Ölçek yapılandırması,<hilight>elementary</hilight>'nin yapılandırma panosu "
+"üzerinden de değiştirilebilir"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Yazı tipi ara"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
-msgstr ""
+msgstr "Bitmap"
 
 #: src/bin/options_font.c:619
 msgid "Standard"
-msgstr ""
+msgstr "Standart"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr ""
+msgstr "Uçbirimde kalın ve eğik yazılar göster"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
-msgstr ""
+msgstr "Ctrl+"
 
 #: src/bin/options_keys.c:67
 msgid "Alt+"
-msgstr ""
+msgstr "Alt+"
 
 #: src/bin/options_keys.c:68
 msgid "Shift+"
-msgstr ""
+msgstr "Shift+"
 
 #: src/bin/options_keys.c:69
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:70
 msgid "Meta+"
-msgstr ""
+msgstr "Meta+"
 
 #: src/bin/options_keys.c:71
 msgid "Hyper+"
-msgstr ""
+msgstr "Hyper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr ""
+msgstr "Sil"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr ""
+msgstr "Lütfen sıralı tuşlara basınız (ctrl+x gibi)"
 
 #: src/bin/options_keys.c:386
+#, fuzzy
 msgid "Key Bindings"
-msgstr ""
+msgstr "Kısayol Tuşları"
 
 #: src/bin/options_keys.c:458
+#, fuzzy
 msgid "Reset bindings"
-msgstr ""
+msgstr "Kısayolları sıfırla"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
@@ -811,27 +838,27 @@ msgstr ""
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Boşta iken fare imlecini otomatik gizle:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr ""
+msgstr "Bağlantıları Etkinleştir:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "E-postalarda"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "Dosya yollarında"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr ""
+msgstr "UrL'lerde"
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
-msgstr ""
+msgstr "Renklerde"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
@@ -843,7 +870,7 @@ msgstr ""
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
-msgstr ""
+msgstr "Bağlantıları sürükle & bırak"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
@@ -851,56 +878,56 @@ msgstr ""
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr ""
+msgstr "E-posta:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr ""
+msgstr "URL (Resimler):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr ""
+msgstr "URL (Video):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr ""
+msgstr "URL (Tümü):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr ""
+msgstr "Yerel (Resimler):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr ""
+msgstr "Yerel (Video):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr ""
+msgstr "Yerel (Tümü):"
 
 #: src/bin/options_theme.c:187
-#, c-format
+#, c-format, fuzzy
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "<hilight>%s</hilight> renk şemasını kullanıyor"
 
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "Bilinmeyen yazı tipi komutu: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr ""
+msgstr "Bilinmeyen ızgara boyutu komutu: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr ""
+msgstr "Arka plan dosyası okunamadı: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "Bilinmeyen komut: %s"
 
 #: src/bin/termio.c:460
 #, c-format
@@ -910,28 +937,28 @@ msgstr ""
 #: src/bin/termio.c:475
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr ""
+msgstr "Çalışma dizini '%s' yüklenemedi: %s"
 
 #: src/bin/termio.c:1205
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr ""
+msgstr "desteklenmeyen seçim biçimi '%s'"
 
 #: src/bin/termio.c:1365
 msgid "Preview"
-msgstr ""
+msgstr "Önizleme"
 
 #: src/bin/termio.c:1375
 msgid "Copy relative path"
-msgstr ""
+msgstr "İlişkili yolu kopyala"
 
 #: src/bin/termio.c:1377
 msgid "Copy full path"
-msgstr ""
+msgstr "Tam yolu kopyala"
 
 #: src/bin/termio.c:2790
 msgid "Open as URL"
-msgstr ""
+msgstr "URL olarak aç"
 
 #: src/bin/termio.c:4233
 msgid "Could not allocate termpty"
@@ -950,12 +977,12 @@ msgstr ""
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "Dosya anahtar sözcüğü '%d' yazılamadı: %s"
 
 #: src/bin/termpty.c:618
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "Kabuk bulunamadı, %s'e geri dönülüyor"
 
 #: src/bin/termpty.c:665
 #, c-format
@@ -975,7 +1002,7 @@ msgstr ""
 #: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr ""
+msgstr "Geçerli dizin '%s'e değiştirilemedi: %s"
 
 #: src/bin/theme.c:91
 #, c-format
@@ -984,7 +1011,7 @@ msgstr ""
 
 #: src/bin/win.c:425
 msgid "Done"
-msgstr ""
+msgstr "Tamamlandı"
 
 #: src/bin/win.c:441
 msgid ""
@@ -999,11 +1026,11 @@ msgstr ""
 
 #: src/bin/win.c:6239
 msgid "Ok"
-msgstr ""
+msgstr "Tamam"
 
 #: src/bin/win.c:6244
 msgid "Cancel"
-msgstr ""
+msgstr "İptal"
 
 #: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
