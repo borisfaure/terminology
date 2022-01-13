@@ -748,7 +748,7 @@ color_scheme_list(void)
 
    /* Search homedir first, so color classes there get used */
    snprintf(buf, sizeof(buf) - 1,
-            "%s/terminology/colorchemes",
+            "%s/terminology/colorschemes",
             efreet_config_home_get());
    search_paths = eina_list_append(search_paths, eina_stringshare_add(buf));
    snprintf(buf, sizeof(buf) - 1,
