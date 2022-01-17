@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-02 18:48+0100\n"
-"PO-Revision-Date: 2022-01-13 18:58+0000\n"
+"PO-Revision-Date: 2022-01-17 18:57+0000\n"
 "Last-Translator: E-Akcaer <gurbetcii_@hotmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/terminology/"
 "terminology/tr/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
@@ -145,7 +145,6 @@ msgid "Copy/Paste"
 msgstr "Kopyala/Yapıştır"
 
 #: src/bin/keyin.c:667
-#, fuzzy
 msgid "Copy selection to Primary buffer"
 msgstr "Seçimi Öncelikli arabelleğe kopyala"
 
@@ -154,9 +153,8 @@ msgid "Copy selection to Clipboard buffer"
 msgstr "Seçimi Pano arabelleğine kopyala"
 
 #: src/bin/keyin.c:669
-#, fuzzy
 msgid "Paste Primary buffer (highlight)"
-msgstr "Öncelikli arabelleği yapıştır (vurgula)"
+msgstr "Öncelikli arabelleği yapıştır (vurgu)"
 
 #: src/bin/keyin.c:670
 msgid "Paste Clipboard buffer (ctrl+c/v)"
@@ -373,7 +371,7 @@ msgid ""
 msgstr ""
 "Uçbirim penceresini ikiye ayırın. Dikey için 'v' ve yatay için 'h'. Pek çok "
 "kez kullanılabilir. Örn. \"-S vhvv\" veya \"--split hv\". Daha fazla "
-"açıklama klavuz sayfasında bulunmaktadır."
+"açıklama kılavuz sayfasında bulunmaktadır"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
