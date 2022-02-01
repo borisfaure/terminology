@@ -383,9 +383,8 @@ _font_size_set(Evas_Object *obj, int size)
    font_size_scale = ELM_SCALE_SIZE(size);
    if (sd->font_size_scale == font_size_scale) return;
    sd->font_size_scale = font_size_scale;
-   if ((config) && (size != config->font.size))
+   if (config)
      {
-        config->temporary = EINA_TRUE;
         config->font.size = size;
         sd->noreqsize = 1;
         termio_config_update(obj);
