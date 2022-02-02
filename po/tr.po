@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-02 18:48+0100\n"
-"PO-Revision-Date: 2022-01-17 18:57+0000\n"
+"PO-Revision-Date: 2022-01-27 09:56+0000\n"
 "Last-Translator: E-Akcaer <gurbetcii_@hotmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/terminology/"
 "terminology/tr/>\n"
@@ -253,8 +253,9 @@ msgid "Change title"
 msgstr "Başlığı değiştir"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
+#, fuzzy
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Girdinin tüm görünür uçbirimlere gidip gitmemesini değiştir"
 
 #: src/bin/keyin.c:699
 msgid "Font size"
@@ -374,8 +375,9 @@ msgstr ""
 "açıklama kılavuz sayfasında bulunmaktadır"
 
 #: src/bin/main.c:493
+#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr ""
+msgstr "Kabuğu, açılış kabuğu olarak çalıştır"
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
@@ -390,8 +392,9 @@ msgid "Set visual bell mode"
 msgstr "Görsel uyarı zili kipini ayarla"
 
 #: src/bin/main.c:501
+#, fuzzy
 msgid "Go into the fullscreen mode from the start"
-msgstr ""
+msgstr "Başlangıçta tam ekran kipine gir"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
@@ -418,8 +421,9 @@ msgid "Do not exit when the command process exits"
 msgstr "Komut süreci bitmeden çıkma"
 
 #: src/bin/main.c:515
+#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
-msgstr ""
+msgstr "Çoklu örnek etkinse tekli çalıştırmaya zorla"
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
@@ -1032,4 +1036,4 @@ msgstr "İptal"
 
 #: src/bin/win.c:7434
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
+msgstr "Terminology teması bulunamadı! 'ninja install' işlemini unuttunuz mu?"
