@@ -3,9 +3,9 @@
 
 #include "config.h"
 
-typedef struct _Ipc_Instance Ipc_Instance;
+typedef struct tag_Ipc_Instance Ipc_Instance;
 
-struct _Ipc_Instance
+struct tag_Ipc_Instance
 {
    char *cmd;
    char *cd;

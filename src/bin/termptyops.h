@@ -1,7 +1,7 @@
 #ifndef TERMINOLOGY_TERMPTY_OPS_H_
 #define TERMINOLOGY_TERMPTY_OPS_H_ 1
 
-typedef enum _Termpty_Clear
+typedef enum tag_Termpty_Clear
 {
    TERMPTY_CLR_END = 0,
    TERMPTY_CLR_BEGIN = 1,

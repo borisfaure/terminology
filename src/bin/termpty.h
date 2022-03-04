@@ -5,15 +5,15 @@
 #include "media.h"
 #include "sb.h"
 
-typedef struct _Termcell      Termcell;
-typedef struct _Termatt       Termatt;
-typedef struct _Termsave      Termsave;
-typedef struct _Termsavecomp  Termsavecomp;
-typedef struct _Termblock     Termblock;
-typedef struct _Termexp       Termexp;
-typedef struct _Termpty       Termpty;
-typedef struct _Termlink      Term_Link;
-typedef struct _TitleIconElem TitleIconElem;
+typedef struct tag_Termcell      Termcell;
+typedef struct tag_Termatt       Termatt;
+typedef struct tag_Termsave      Termsave;
+typedef struct tag_Termsavecomp  Termsavecomp;
+typedef struct tag_Termblock     Termblock;
+typedef struct tag_Termexp       Termexp;
+typedef struct tag_Termpty       Termpty;
+typedef struct tag_Termlink      Term_Link;
+typedef struct tag_TitleIconElem TitleIconElem;
 
 #define COL_DEF        0
 #define COL_BLACK      1
@@ -49,7 +49,7 @@ typedef struct _TitleIconElem TitleIconElem;
 
 #define HL_LINKS_MAX  (1 << 16)
 
-struct _Termlink
+struct tag_Termlink
 {
     const char *key;
     const char *url;
@@ -59,7 +59,7 @@ struct _Termlink
 
 
 
-struct _Termatt
+struct tag_Termatt
 {
    uint8_t fg, bg;
    unsigned short bold : 1;
@@ -94,12 +94,12 @@ struct _Termatt
    uint16_t       link_id;
 };
 
-typedef struct _Backlog_Beacon{
+typedef struct tag_Backlog_Beacon{
     int screen_y;
     int backlog_y;
 } Backlog_Beacon;
 
-typedef struct _Term_State {
+typedef struct tag_Term_State {
     Termatt       att;
     unsigned char charset;
     unsigned char charsetch;
@@ -125,13 +125,13 @@ typedef struct _Term_State {
     unsigned int  sace_rectangular : 1;
 } Term_State;
 
-typedef struct _Term_Cursor {
+typedef struct tag_Term_Cursor {
     int cx;
     int cy;
     unsigned char wrapnext : 1;
 } Term_Cursor;
 
-struct _Termpty
+struct tag_Termpty
 {
    Evas_Object *obj;
    Config *config;
@@ -212,13 +212,13 @@ struct _Termpty
    TitleIconElem *title_icon_stack;
 };
 
-struct _Termcell
+struct tag_Termcell
 {
    Eina_Unicode   codepoint;
    Termatt        att;
 };
 
-struct _Termsave
+struct tag_Termsave
 {
    unsigned int   gen  : 8;
    unsigned int   comp : 1;
@@ -229,7 +229,7 @@ struct _Termsave
 };
 
 /* TODO: RESIZE rewrite Termsavecomp */
-struct _Termsavecomp
+struct tag_Termsavecomp
 {
    unsigned int   gen  : 8;
    unsigned int   comp : 1;
@@ -238,7 +238,7 @@ struct _Termsavecomp
    unsigned int   wout; // output width in Termcells
 };
 
-struct _Termblock
+struct tag_Termblock
 {
    Termpty     *pty;
    const char  *path, *link, *chid;
@@ -262,7 +262,7 @@ struct _Termblock
    unsigned char mov_state : 2;  // movie state marker
 };
 
-struct _Termexp
+struct tag_Termexp
 {
    Eina_Unicode ch;
    int left, id;

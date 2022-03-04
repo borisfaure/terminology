@@ -1,9 +1,9 @@
 #ifndef TERMINOLOGY_KEYIN_H_
 #define TERMINOLOGY_KEYIN_H_ 1
 
-typedef struct _Keys_Handler Keys_Handler;
+typedef struct tag_Keys_Handler Keys_Handler;
 
-struct _Keys_Handler
+struct tag_Keys_Handler
 {
    Ecore_IMF_Context *imf;
    unsigned int last_keyup;
@@ -29,9 +29,9 @@ void keyin_handle_up(Keys_Handler *khdl, Evas_Event_Key_Up *ev);
 
 typedef Eina_Bool (*Key_Binding_Cb)(Evas_Object *term);
 
-typedef struct _Shortcut_Action Shortcut_Action;
+typedef struct tag_Shortcut_Action Shortcut_Action;
 
-struct _Shortcut_Action
+struct tag_Shortcut_Action
 {
    const char *action;
    const char *description;

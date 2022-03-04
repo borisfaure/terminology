@@ -12,7 +12,7 @@
 #include "theme.h"
 #include "main.h"
 
-typedef struct _Theme_Ctx
+typedef struct tag_Theme_Ctx
 {
    Evas_Object *term;
    Config *config;
@@ -21,8 +21,8 @@ typedef struct _Theme_Ctx
    Ecore_Timer *seltimer;
 } Theme_Ctx;
 
-typedef struct _Theme Theme;
-struct _Theme
+typedef struct tag_Theme Theme;
+struct tag_Theme
 {
    Elm_Object_Item *item;
    const char *name;

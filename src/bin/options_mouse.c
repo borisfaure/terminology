@@ -8,7 +8,7 @@
 #include "options_mouse.h"
 #include "main.h"
 
-typedef struct _Mouse_Ctx {
+typedef struct tag_Mouse_Ctx {
      Config *config;
      Evas_Object *term;
      Evas_Object *sld_hide_cursor;

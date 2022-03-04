@@ -11,9 +11,9 @@
 #include "theme.h"
 #include "termiolink.h"
 
-typedef struct _Media Media;
+typedef struct tag_Media Media;
 
-struct _Media
+struct tag_Media
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *clip, *o_img, *o_tmp, *o_ctrl, *o_busy, *o_event;

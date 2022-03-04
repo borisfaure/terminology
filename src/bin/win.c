@@ -67,15 +67,15 @@ int _win_log_dom = -1;
 
 /* {{{ Structs */
 
-typedef struct _Split Split;
-typedef struct _Tabbar Tabbar;
-typedef struct _Solo Solo;
-typedef struct _Tabs Tabs;
-typedef struct _Tab_Item Tab_Item;
-typedef struct _Tab_Drag Tab_Drag;
+typedef struct tag_Split Split;
+typedef struct tag_Tabbar Tabbar;
+typedef struct tag_Solo Solo;
+typedef struct tag_Tabs Tabs;
+typedef struct tag_Tab_Item Tab_Item;
+typedef struct tag_Tab_Drag Tab_Drag;
 
 
-struct _Tab_Drag
+struct tag_Tab_Drag
 {
    Evas_Coord mdx;     /* Mouse-down x */
    Evas_Coord mdy;     /* Mouse-down y */
@@ -101,14 +101,14 @@ struct _Tab_Drag
         }; };
 };
 
-struct _Tabbar
+struct tag_Tabbar
 {
    struct {
       Evas_Object *box;
    } l, r;
 };
 
-struct _Term
+struct tag_Term
 {
    Win         *wn;
    Config      *config;
@@ -153,18 +153,18 @@ struct _Term
    Eina_Bool sendfile_progress_enabled : 1;
 };
 
-struct _Solo {
+struct tag_Solo {
      Term_Container tc;
      Term *term;
 };
 
-struct _Tab_Item {
+struct tag_Tab_Item {
      Term_Container *tc;
      Evas_Object *obj;
      void *selector_entry;
 };
 
-struct _Tabs {
+struct tag_Tabs {
      Term_Container tc;
      Evas_Object *selector;
      Evas_Object *selector_bg;
@@ -174,7 +174,7 @@ struct _Tabs {
      double v2_orig;
 };
 
-struct _Split
+struct tag_Split
 {
    Term_Container tc;
    Term_Container *tc1, *tc2; // left/right or top/bottom child splits, null if leaf
@@ -187,7 +187,7 @@ struct _Split
 
 
 
-struct _Win
+struct tag_Win
 {
    Term_Container tc; /* has to be first field */
 
@@ -329,7 +329,7 @@ _scale_change(void *data       EINA_UNUSED,
    elm_config_all_flush();
 }
 
-typedef struct _Scale_Ctx
+typedef struct tag_Scale_Ctx
 {
    Evas_Object *hv;
    Term *term;
@@ -5631,7 +5631,7 @@ _popmedia_show(Term *term, const char *src, Media_Type type)
 }
 
 #ifdef HAVE_ECORE_CON_URL_HEAD
-typedef struct _Ty_Http_Head {
+typedef struct tag_Ty_Http_Head {
      const char *handler;
      const char *src;
      Ecore_Con_Url *url;

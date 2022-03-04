@@ -14,7 +14,7 @@
 #define FONT_STEP (1.0 / (FONT_MAX - FONT_MIN))
 
 
-typedef struct _Font_Ctx
+typedef struct tag_Font_Ctx
 {
    Evas_Object *fr;
    Evas_Object *opbox;
@@ -35,7 +35,7 @@ typedef struct _Font_Ctx
    int expecting_resize;
 } Font_Ctx;
 
-typedef struct _Font
+typedef struct tag_Font
 {
    Elm_Object_Item *item;
    const char *pretty_name;

@@ -2,10 +2,10 @@
 #define TERMINOLOGY_TERM_CONTAINER_H_ 1
 
 
-typedef struct _Term_Container Term_Container;
-typedef struct _Sizeinfo Sizeinfo;
+typedef struct tag_Term_Container Term_Container;
+typedef struct tag_Sizeinfo Sizeinfo;
 
-struct _Sizeinfo
+struct tag_Sizeinfo
 {
    int min_w;
    int min_h;
@@ -18,7 +18,7 @@ struct _Sizeinfo
    int req;
 };
 
-typedef enum _Term_Container_Type
+typedef enum tag_Term_Container_Type
 {
    TERM_CONTAINER_TYPE_UNKNOWN = 0,
    TERM_CONTAINER_TYPE_SOLO,
@@ -27,7 +27,7 @@ typedef enum _Term_Container_Type
    TERM_CONTAINER_TYPE_WIN
 } Term_Container_Type;
 
-typedef enum _Split_Direction {
+typedef enum tag_Split_Direction {
      SPLIT_DIRECTION_NONE,
      SPLIT_DIRECTION_LEFT,
      SPLIT_DIRECTION_RIGHT,
@@ -36,7 +36,7 @@ typedef enum _Split_Direction {
      SPLIT_DIRECTION_TABS,
 } Split_Direction;
 
-struct _Term_Container {
+struct tag_Term_Container {
      Term_Container_Type type;
      Term_Container *parent;
      Win *wn;

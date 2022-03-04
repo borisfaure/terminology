@@ -3,12 +3,12 @@
 
 #include <Evas.h>
 
-typedef struct _Config Config;
-typedef struct _Color Color;
-typedef struct _Color_Scheme Color_Scheme;
-typedef struct _Color_Block Color_Block;
-typedef struct _Config_Keys Config_Keys;
-struct _Color
+typedef struct tag_Config Config;
+typedef struct tag_Color Color;
+typedef struct tag_Color_Scheme Color_Scheme;
+typedef struct tag_Color_Block Color_Block;
+typedef struct tag_Config_Keys Config_Keys;
+struct tag_Color
 {
    unsigned char r, g, b, a;
 };
@@ -16,7 +16,7 @@ struct _Color
 
 #include "colors.h"
 
-struct _Config_Keys
+struct tag_Config_Keys
 {
    const char *keyname;
    Eina_Bool ctrl;
@@ -29,14 +29,14 @@ struct _Config_Keys
 };
 /* TODO: separate config per terminal (tab, window) and global. */
 
-typedef enum _Cursor_Shape
+typedef enum tag_Cursor_Shape
 {
    CURSOR_SHAPE_BLOCK = 0,
    CURSOR_SHAPE_UNDERLINE = 1,
    CURSOR_SHAPE_BAR = 2
 } Cursor_Shape;
 
-struct _Config
+struct tag_Config
 {
    int               version;
    int               scrollback;

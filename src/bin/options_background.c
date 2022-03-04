@@ -12,7 +12,7 @@
 #include "main.h"
 #include <sys/stat.h>
 
-typedef struct _Background_Ctx {
+typedef struct tag_Background_Ctx {
      Config *config;
      Evas_Object *frame;
      Evas_Object *flip;
@@ -30,14 +30,14 @@ typedef struct _Background_Ctx {
      Ecore_Timer *bubble_disappear;
 } Background_Ctx;
 
-typedef struct _Background_Item
+typedef struct tag_Background_Item
 {
    const char *path;
    Eina_Bool selected;
    Elm_Object_Item *item;
 } Background_Item;
 
-typedef struct _Insert_Gen_Grid_Item_Notify
+typedef struct tag_Insert_Gen_Grid_Item_Notify
 {
    Elm_Gengrid_Item_Class *class;
    Background_Item *item;

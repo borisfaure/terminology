@@ -140,14 +140,14 @@ sizeprint(char *sz, char szch)
    colorprint(RESET, 0, 0, 0, 0);
 }
 
-typedef struct _Cmatch
+typedef struct tag_Cmatch
 {
    short fr, fg, fb;
    short br, bg, bb;
    const char *match, *icon;
 } Cmatch;
 
-typedef struct _Tyls_Options
+typedef struct tag_Tyls_Options
 {
   int mode;
   Eina_Bool hidden;

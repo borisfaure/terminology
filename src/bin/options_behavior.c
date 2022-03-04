@@ -13,7 +13,7 @@
 #include "main.h"
 #include "theme.h"
 
-typedef struct _Behavior_Ctx {
+typedef struct tag_Behavior_Ctx {
      Config *config;
      Evas_Object *term;
      Evas_Object *op_w;

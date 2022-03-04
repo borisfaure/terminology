@@ -3,8 +3,8 @@
 
 #include "config.h"
 
-typedef struct _Win   Win;
-typedef struct _Term  Term;
+typedef struct tag_Win   Win;
+typedef struct tag_Term  Term;
 
 
 

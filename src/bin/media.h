@@ -14,9 +14,9 @@
 #define MEDIA_SAVE         0x0020
 
 
-typedef enum _Media_Type Media_Type;
+typedef enum tag_Media_Type Media_Type;
 
-enum _Media_Type {
+enum tag_Media_Type {
      MEDIA_TYPE_UNKNOWN,
      MEDIA_TYPE_IMG,
      MEDIA_TYPE_SCALE,

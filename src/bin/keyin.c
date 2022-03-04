@@ -10,15 +10,15 @@
 #include "keyin.h"
 #include "win.h"
 
-typedef struct _Tty_Key Tty_Key;
-typedef struct _Key_Values Key_Values;
+typedef struct tag_Tty_Key Tty_Key;
+typedef struct tag_Key_Values Key_Values;
 
 struct _s {
     char *s;
     ssize_t len;
 };
 
-struct _Key_Values {
+struct tag_Key_Values {
     struct _s plain;
     struct _s alt;
     struct _s ctrl;
@@ -28,7 +28,7 @@ struct _Key_Values {
     struct _s shift_ctrl;
     struct _s shift_ctrl_alt;
 };
-struct _Tty_Key
+struct tag_Tty_Key
 {
     char *key;
     int key_len;
@@ -36,9 +36,9 @@ struct _Tty_Key
     Key_Values cursor;
 };
 
-typedef struct _Key_Binding Key_Binding;
+typedef struct tag_Key_Binding Key_Binding;
 
-struct _Key_Binding
+struct tag_Key_Binding
 {
    uint16_t ctrl  : 1;
    uint16_t alt   : 1;

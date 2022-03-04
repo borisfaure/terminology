@@ -104,7 +104,7 @@ _run_tytests(int argc, char **argv)
 
 /* }}} */
 
-typedef struct _Termpty_Tests
+typedef struct tag_Termpty_Tests
 {
    size_t backsize, backpos;
    Backlog_Beacon backlog_beacon;

@@ -3188,10 +3188,10 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
 #endif
 }
 
-struct _TitleIconElem {
+struct tag_TitleIconElem {
      const char *title;
      const char *icon;
-     struct _TitleIconElem *next;
+     struct tag_TitleIconElem *next;
 };
 
 static void

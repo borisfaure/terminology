@@ -9,10 +9,10 @@
 #include "win.h"
 #include "term_container.h"
 
-typedef struct _Sel Sel;
-typedef struct _Entry Entry;
+typedef struct tag_Sel Sel;
+typedef struct tag_Entry Entry;
 
-struct _Sel
+struct tag_Sel
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    Evas_Object *self;
@@ -41,7 +41,7 @@ struct _Sel
    unsigned char use_px : 1;
 };
 
-struct _Entry
+struct tag_Entry
 {
    Evas_Object *obj, *bg;
    Term_Container *tc;

@@ -9,7 +9,7 @@
 #include "keyin.h"
 #include "theme.h"
 
-typedef struct _Keys_Ctx {
+typedef struct tag_Keys_Ctx {
      Config *config;
      Evas_Object *frame;
      Evas_Object *gl;

@@ -29,7 +29,7 @@ enum option_mode {
      OPTIONS_MODE_NB
 };
 
-typedef struct _Options_Ctx {
+typedef struct tag_Options_Ctx {
      enum option_mode mode;
      Evas_Object *frame;
      Evas_Object *toolbar;
@@ -42,7 +42,7 @@ typedef struct _Options_Ctx {
      Config *config;
      void (*donecb) (void *data);
      void *donedata;
-     struct _Options_Ctx *modes[OPTIONS_MODE_NB];
+     struct tag_Options_Ctx *modes[OPTIONS_MODE_NB];
 } Options_Ctx;
 
 static void

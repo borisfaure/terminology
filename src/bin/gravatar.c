@@ -27,7 +27,7 @@ int _gravatar_log_dom = -1;
 #define GRAVATAR_URL_START "https://www.gravatar.com/avatar/"
 #define GRAVATAR_URL_END ""
 
-typedef struct _Gravatar {
+typedef struct tag_Gravatar {
      const char *url;
      const Config *config;
 } Gravatar;

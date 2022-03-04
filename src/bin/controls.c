@@ -10,7 +10,7 @@
 
 static Eina_Hash *controls = NULL;
 
-typedef struct _Controls_Ctx {
+typedef struct tag_Controls_Ctx {
      Evas_Object *frame;
      Evas_Object *group_input_cx;
      Evas_Object *over;

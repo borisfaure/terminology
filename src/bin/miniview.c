@@ -49,9 +49,9 @@ miniview_shutdown(void)
    _miniview_log_dom = -1;
 }
 
-typedef struct _Miniview Miniview;
+typedef struct tag_Miniview Miniview;
 
-struct _Miniview
+struct tag_Miniview
 {
    Evas_Object *self;
    Evas_Object *base;

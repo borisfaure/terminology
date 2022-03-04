@@ -5,7 +5,7 @@
 #include "config.h"
 
 
-struct _Color_Block
+struct tag_Color_Block
 {
    Color def;
    Color black;
@@ -21,7 +21,7 @@ struct _Color_Block
    uint32_t _padding;
 };
 
-struct _Color_Scheme
+struct tag_Color_Scheme
 {
    int version;
    struct {

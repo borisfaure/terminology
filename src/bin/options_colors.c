@@ -10,7 +10,7 @@
 #include "options_themepv.h"
 #include "utils.h"
 
-typedef struct _Color_Scheme_Ctx
+typedef struct tag_Color_Scheme_Ctx
 {
    Evas_Object *term;
    Config *config;
@@ -21,7 +21,7 @@ typedef struct _Color_Scheme_Ctx
    Evas_Object *ctxpopup;
 } Color_Scheme_Ctx;
 
-typedef struct _Color_Scheme_Info
+typedef struct tag_Color_Scheme_Info
 {
    Color_Scheme_Ctx *ctx;
    Elm_Object_Item *item;

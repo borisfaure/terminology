@@ -5,9 +5,9 @@
 typedef void Term;
 #endif
 
-typedef struct _Termio Termio;
+typedef struct tag_Termio Termio;
 
-struct _Termio
+struct tag_Termio
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
    struct {
@@ -100,8 +100,8 @@ struct _Termio
    double gesture_zoom_start_size;
 };
 
-typedef struct _Termio_Modifiers Termio_Modifiers;
-struct _Termio_Modifiers
+typedef struct tag_Termio_Modifiers Termio_Modifiers;
+struct tag_Termio_Modifiers
 {
    unsigned char alt              : 1;
    unsigned char shift            : 1;
