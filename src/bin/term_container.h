@@ -1,5 +1,5 @@
-#ifndef _TERM_CONTAINER_H__
-#define _TERM_CONTAINER_H__ 1
+#ifndef TERMINOLOGY_TERM_CONTAINER_H_
+#define TERMINOLOGY_TERM_CONTAINER_H_ 1
 
 
 typedef struct _Term_Container Term_Container;

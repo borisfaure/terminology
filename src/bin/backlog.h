@@ -1,5 +1,5 @@
-#ifndef _BACKLOG_H__
-#define _BACKLOG_H__ 1
+#ifndef TERMINOLOGY_BACKLOG_H_
+#define TERMINOLOGY_BACKLOG_H_ 1
 
 void termpty_save_register(Termpty *ty);
 void termpty_save_unregister(Termpty *ty);

@@ -1,5 +1,5 @@
-#ifndef _OPTIONS_BEHAVIOR_H__
-#define _OPTIONS_BEHAVIOR_H__ 1
+#ifndef TERMINOLOGY_OPTIONS_BEHAVIOR_H_
+#define TERMINOLOGY_OPTIONS_BEHAVIOR_H_ 1
 
 void options_behavior(Evas_Object *opbox, Evas_Object *term);
 

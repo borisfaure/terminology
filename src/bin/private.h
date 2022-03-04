@@ -1,5 +1,5 @@
-#ifndef _PRIVATE_H__
-#define _PRIVATE_H__ 1
+#ifndef TERMINOLOGY_PRIVATE_H_
+#define TERMINOLOGY_PRIVATE_H_ 1
 
 #ifdef HAVE_CONFIG_H
 #include "terminology_config.h"

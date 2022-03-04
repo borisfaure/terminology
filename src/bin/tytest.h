@@ -1,5 +1,5 @@
-#ifndef _TYTEST_H__
-#define _TYTEST_H__ 1
+#ifndef TERMINOLOGY_TYTEST_H_
+#define TERMINOLOGY_TYTEST_H_ 1
 
 #if defined(BINARY_TYTEST)
 #define evas_object_textgrid_palette_get  test_textgrid_palette_get

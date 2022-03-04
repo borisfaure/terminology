@@ -1,5 +1,5 @@
-#ifndef _UTILS_H__
-#define _UTILS_H__
+#ifndef TERMINOLOGY_UTILS_H_
+#define TERMINOLOGY_UTILS_H_
 
 #include <Eina.h>
 #include "config.h"

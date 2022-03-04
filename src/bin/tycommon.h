@@ -1,5 +1,5 @@
-#ifndef _TY_COMMON_H__
-#define _TY_COMMON_H__ 1
+#ifndef TERMINOLOGY_TY_COMMON_H_
+#define TERMINOLOGY_TY_COMMON_H_ 1
 
 int expect_running_in_terminology(void);
 ssize_t ty_write(int fd, const void *buf, size_t count);

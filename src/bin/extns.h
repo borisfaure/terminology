@@ -1,5 +1,5 @@
-#ifndef _EXTNS_H__
-#define _EXTNS_H__ 1
+#ifndef TERMINOLOGY_EXTNS_H_
+#define TERMINOLOGY_EXTNS_H_ 1
 
 extern const char *extn_img[];
 extern const char *extn_scale[];

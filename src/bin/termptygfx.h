@@ -1,5 +1,5 @@
-#ifndef _TERMPTY_GFX_H__
-#define _TERMPTY_GFX_H__ 1
+#ifndef TERMINOLOGY_TERMPTY_GFX_H_
+#define TERMINOLOGY_TERMPTY_GFX_H_ 1
 
 #include "termpty.h"
 

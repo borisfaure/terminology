@@ -1,5 +1,5 @@
-#ifndef _TERMIOINTERNALS_H__
-#define _TERMIOINTERNALS_H__ 1
+#ifndef TERMINOLOGY_TERMIOINTERNALS_H_
+#define TERMINOLOGY_TERMIOINTERNALS_H_ 1
 
 #if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
 typedef void Term;

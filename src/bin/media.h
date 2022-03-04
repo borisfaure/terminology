@@ -1,5 +1,5 @@
-#ifndef _MEDIA_H__
-#define _MEDIA_H__ 1
+#ifndef TERMINOLOGY_MEDIA_H_
+#define TERMINOLOGY_MEDIA_H_ 1
 
 #define MEDIA_SIZE_MASK    0x000f
 #define MEDIA_OPTIONS_MASK 0x00f0

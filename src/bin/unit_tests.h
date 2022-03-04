@@ -1,5 +1,5 @@
-#ifndef _TY_UNIT_TESTS_H__
-#define _TY_UNIT_TESTS_H__ 1
+#ifndef TERMINOLOGY_TY_UNIT_TESTS_H_
+#define TERMINOLOGY_TY_UNIT_TESTS_H_ 1
 
 /* Unit tests */
 typedef int (*tytest_func)(void);

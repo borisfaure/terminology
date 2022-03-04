@@ -1,5 +1,5 @@
-#ifndef _IPC_H__
-#define _IPC_H__ 1
+#ifndef TERMINOLOGY_IPC_H_
+#define TERMINOLOGY_IPC_H_ 1
 
 #include "config.h"
 

@@ -1,5 +1,5 @@
-#ifndef _TERMCMD_H__
-#define _TERMCMD_H__ 1
+#ifndef TERMINOLOGY_TERMCMD_H_
+#define TERMINOLOGY_TERMCMD_H_ 1
 
 #include "config.h"
 

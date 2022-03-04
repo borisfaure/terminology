@@ -1,5 +1,5 @@
-#ifndef _MAIN_H__
-#define _MAIN_H__ 1
+#ifndef TERMINOLOGY_MAIN_H_
+#define TERMINOLOGY_MAIN_H_ 1
 
 #include "config.h"
 

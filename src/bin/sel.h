@@ -1,5 +1,5 @@
-#ifndef _SEL_H__
-#define _SEL_H__ 1
+#ifndef TERMINOLOGY_SEL_H_
+#define TERMINOLOGY_SEL_H_ 1
 
 #include "config.h"
 

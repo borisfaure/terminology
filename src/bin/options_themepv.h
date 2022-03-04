@@ -1,5 +1,5 @@
-#ifndef _OPTIONS_THEMEPV_H__
-#define _OPTIONS_THEMEPV_H__ 1
+#ifndef TERMINOLOGY_OPTIONS_THEMEPV_H_
+#define TERMINOLOGY_OPTIONS_THEMEPV_H_ 1
 #include "colors.h"
 
 Evas_Object *

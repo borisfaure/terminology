@@ -1,5 +1,5 @@
-#ifndef _TERMPTY_H__
-#define _TERMPTY_H__ 1
+#ifndef TERMINOLOGY_TERMPTY_H_
+#define TERMINOLOGY_TERMPTY_H_ 1
 
 #include "config.h"
 #include "media.h"

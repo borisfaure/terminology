@@ -1,5 +1,5 @@
-#ifndef _CONFIG_H__
-#define _CONFIG_H__ 1
+#ifndef TERMINOLOGY_CONFIG_H_
+#define TERMINOLOGY_CONFIG_H_ 1
 
 #include <Evas.h>
 

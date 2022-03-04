@@ -1,5 +1,5 @@
-#ifndef _COLORS_H__
-#define _COLORS_H__ 1
+#ifndef TERMINOLOGY_COLORS_H_
+#define TERMINOLOGY_COLORS_H_ 1
 
 #include <Evas.h>
 #include "config.h"

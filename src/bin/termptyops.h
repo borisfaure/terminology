@@ -1,5 +1,5 @@
-#ifndef _TERMPTY_OPS_H__
-#define _TERMPTY_OPS_H__ 1
+#ifndef TERMINOLOGY_TERMPTY_OPS_H_
+#define TERMINOLOGY_TERMPTY_OPS_H_ 1
 
 typedef enum _Termpty_Clear
 {

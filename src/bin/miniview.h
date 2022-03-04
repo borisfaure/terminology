@@ -1,5 +1,5 @@
-#ifndef _MINIVIEW_H__
-#define _MINIVIEW_H__ 1
+#ifndef TERMINOLOGY_MINIVIEW_H_
+#define TERMINOLOGY_MINIVIEW_H_ 1
 
 #include "termpty.h"
 

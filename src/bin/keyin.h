@@ -1,5 +1,5 @@
-#ifndef _KEYIN_H__
-#define _KEYIN_H__ 1
+#ifndef TERMINOLOGY_KEYIN_H_
+#define TERMINOLOGY_KEYIN_H_ 1
 
 typedef struct _Keys_Handler Keys_Handler;
 

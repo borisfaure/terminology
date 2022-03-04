@@ -1,5 +1,5 @@
-#ifndef _OPTIONS_KEYS_H__
-#define _OPTIONS_KEYS_H__ 1
+#ifndef TERMINOLOGY_OPTIONS_KEYS_H_
+#define TERMINOLOGY_OPTIONS_KEYS_H_ 1
 
 void options_keys(Evas_Object *opbox, Evas_Object *term);
 

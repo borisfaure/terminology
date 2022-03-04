@@ -1,5 +1,5 @@
-#ifndef _THEME_H__
-#define _THEME_H__
+#ifndef TERMINOLOGY_THEME_H_
+#define TERMINOLOGY_THEME_H_
 
 #include <Evas.h>
 #include "config.h"

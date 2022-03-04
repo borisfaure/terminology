@@ -1,5 +1,5 @@
-#ifndef _TYTEST_COMMON_H__
-#define _TYTEST_COMMON_H__ 1
+#ifndef TERMINOLOGY_TYTEST_COMMON_H_
+#define TERMINOLOGY_TYTEST_COMMON_H_ 1
 
 #define TY_H 24
 #define TY_W 80

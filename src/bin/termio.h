@@ -1,5 +1,5 @@
-#ifndef _TERMIO_H__
-#define _TERMIO_H__ 1
+#ifndef TERMINOLOGY_TERMIO_H_
+#define TERMINOLOGY_TERMIO_H_ 1
 
 #include "config.h"
 #include "main.h"

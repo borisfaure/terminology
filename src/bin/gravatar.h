@@ -1,5 +1,5 @@
-#ifndef _GRAVATAR_H__
-#define _GRAVATAR_H__ 1
+#ifndef TERMINOLOGY_GRAVATAR_H_
+#define TERMINOLOGY_GRAVATAR_H_ 1
 
 #include "config.h"
 

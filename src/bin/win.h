@@ -1,5 +1,5 @@
-#ifndef _WIN_H__
-#define _WIN_H__ 1
+#ifndef TERMINOLOGY_WIN_H_
+#define TERMINOLOGY_WIN_H_ 1
 
 #include "config.h"
 

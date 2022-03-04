@@ -1,5 +1,5 @@
-#ifndef _SB_H__
-#define _SB_H__
+#ifndef TERMINOLOGY_SB_H_
+#define TERMINOLOGY_SB_H_
 
 #include <stddef.h>
 

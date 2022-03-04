@@ -1,5 +1,5 @@
-#ifndef _MD5_H_
-#define _MD5_H_
+#ifndef TERMINOLOGY_MD5_H_
+#define TERMINOLOGY_MD5_H_
 
 #include <stdint.h>
 #include <sys/types.h>
