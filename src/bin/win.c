@@ -5688,13 +5688,13 @@ _media_http_head_complete(void *data,
    headers = ecore_con_url_response_headers_get(ev->url_con);
    EINA_LIST_FOREACH(headers, l, str)
      {
-#define  _CONTENT_TYPE_HDR "Content-Type: "
-#define  _LOCATION_HDR "Location: "
-        if (!strncmp(str, _LOCATION_HDR, strlen(_LOCATION_HDR)))
+#define  CONTENT_TYPE_HDR_ "Content-Type: "
+#define  LOCATION_HDR_ "Location: "
+        if (!strncmp(str, LOCATION_HDR_, strlen(LOCATION_HDR_)))
           {
              unsigned int len;
 
-             str += strlen(_LOCATION_HDR);
+             str += strlen(LOCATION_HDR_);
              if (*str != '/')
                {
                   eina_stringshare_del(ty_head->src);
@@ -5709,9 +5709,9 @@ _media_http_head_complete(void *data,
                     goto error;
                }
           }
-        else if (!strncmp(str, _CONTENT_TYPE_HDR, strlen(_CONTENT_TYPE_HDR)))
+        else if (!strncmp(str, CONTENT_TYPE_HDR_, strlen(CONTENT_TYPE_HDR_)))
           {
-             str += strlen(_CONTENT_TYPE_HDR);
+             str += strlen(CONTENT_TYPE_HDR_);
              if (!strncmp(str, "image/", strlen("image/")))
                {
                   type = MEDIA_TYPE_IMG;
@@ -5726,8 +5726,8 @@ _media_http_head_complete(void *data,
                   break;
                }
           }
-#undef _CONTENT_TYPE_HDR
-#undef _LOCATION_HDR
+#undef CONTENT_TYPE_HDR_
+#undef LOCATION_HDR_
      }
    if (type == MEDIA_TYPE_UNKNOWN)
      goto error;

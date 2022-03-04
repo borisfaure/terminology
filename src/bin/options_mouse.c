@@ -39,9 +39,9 @@ _cb_op_helper_inline_chg(void *data,
    config_save(config);
 }
 
-#define _CB(_CFG, _NAME)                                       \
+#define CB_(CFG_, NAME_)                                       \
 static void                                                    \
-_cb_op_##_NAME(void *data,                                     \
+_cb_op_##NAME_(void *data,                                     \
                Evas_Object *obj,                               \
                void *_event EINA_UNUSED)                       \
 {                                                              \
@@ -50,15 +50,15 @@ _cb_op_##_NAME(void *data,                                     \
    Evas_Object *term = ctx->term;                              \
    char *txt;                                                  \
                                                                \
-   if (config->_CFG)                                           \
+   if (config->CFG_)                                           \
      {                                                         \
-        eina_stringshare_del(config->_CFG);                    \
-        config->_CFG = NULL;                                   \
+        eina_stringshare_del(config->CFG_);                    \
+        config->CFG_ = NULL;                                   \
      }                                                         \
    txt = elm_entry_markup_to_utf8(elm_object_text_get(obj));   \
    if (txt)                                                    \
      {                                                         \
-        config->_CFG = eina_stringshare_add(txt);              \
+        config->CFG_ = eina_stringshare_add(txt);              \
         free(txt);                                             \
      }                                                         \
    termio_config_update(term);                                 \
@@ -66,14 +66,14 @@ _cb_op_##_NAME(void *data,                                     \
    config_save(config);                                        \
 }
 
-_CB(helper.email, helper_email);
-_CB(helper.url.image, helper_url_image);
-_CB(helper.url.video, helper_url_video);
-_CB(helper.url.general, helper_url_general);
-_CB(helper.local.image, helper_local_image);
-_CB(helper.local.video, helper_local_video);
-_CB(helper.local.general, helper_local_general);
-#undef _CB
+CB_(helper.email, helper_email);
+CB_(helper.url.image, helper_url_image);
+CB_(helper.url.video, helper_url_video);
+CB_(helper.url.general, helper_url_general);
+CB_(helper.local.image, helper_local_image);
+CB_(helper.local.video, helper_local_video);
+CB_(helper.local.general, helper_local_general);
+#undef CB_
 
 static void
 _cb_op_hide_cursor_changed(void *data,
@@ -227,7 +227,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
 
    OPTIONS_SEPARATOR;
 
-#define HELPERS_LINE(_TXT, _CFG, _NAME)                        \
+#define HELPERS_LINE(TXT_, CFG_, NAME_)                        \
    do {                                                        \
    hbx = o = elm_box_add(opbox);                               \
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0); \
@@ -239,7 +239,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    o = elm_label_add(hbx);                                     \
    evas_object_size_hint_weight_set(o, 0.0, 0.0);              \
    evas_object_size_hint_align_set(o, 0.0, 0.5);               \
-   elm_object_text_set(o, _TXT);                               \
+   elm_object_text_set(o, TXT_);                               \
    elm_box_pack_end(hbx, o);                                   \
    evas_object_show(o);                                        \
                                                                \
@@ -250,7 +250,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_entry_scrollable_set(o, EINA_TRUE);                     \
    elm_scroller_policy_set(o, ELM_SCROLLER_POLICY_OFF,         \
                            ELM_SCROLLER_POLICY_OFF);           \
-   txt = elm_entry_utf8_to_markup(config->_CFG);               \
+   txt = elm_entry_utf8_to_markup(config->CFG_);               \
    if (txt)                                                    \
      {                                                         \
         elm_object_text_set(o, txt);                           \
@@ -259,7 +259,7 @@ options_mouse(Evas_Object *opbox, Evas_Object *term)
    elm_box_pack_end(hbx, o);                                   \
    evas_object_show(o);                                        \
    evas_object_smart_callback_add(o, "changed",                \
-                                  _cb_op_##_NAME, ctx);        \
+                                  _cb_op_##NAME_, ctx);        \
    } while(0)
 
    HELPERS_LINE(_("E-mail:"), helper.email, helper_email);

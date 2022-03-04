@@ -751,15 +751,15 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 25:
-                  #define THEME_TO_COLORSCHEME(_Theme, _Base, _ColorSheme)   \
+                  #define THEME_TO_COLORSCHEME(Theme_, Base_, ColorSheme_)   \
                   do {                                                       \
-                       if (!strncmp(config->theme, _Theme, sizeof(_Theme)-1)) \
+                       if (!strncmp(config->theme, Theme_, sizeof(Theme_)-1)) \
                          {                                                   \
                             eina_stringshare_replace(&config->theme,         \
-                                                     _Base);                 \
+                                                     Base_);                 \
                             eina_stringshare_replace(                        \
                                &config->color_scheme_name,                   \
-                               _ColorSheme);                                 \
+                               ColorSheme_);                                 \
                          }                                                   \
                   } while (0)
 

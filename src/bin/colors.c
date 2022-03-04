@@ -460,18 +460,18 @@ colors_term_init(Evas_Object *textgrid,
    if (!cs)
      cs = &default_colorscheme;
 
-#define CS_SET_INVISIBLE(_c)  do {                         \
+#define CS_SET_INVISIBLE(c_)  do {                         \
         evas_object_textgrid_palette_set(                  \
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, _c,   \
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c_,   \
            0, 0, 0, 0);                                    \
 } while(0)
-#define CS_SET(_c, _F) do {                                \
-        r = cs->_F.r;                                      \
-        g = cs->_F.g;                                      \
-        b = cs->_F.b;                                      \
-        a = cs->_F.a;                                      \
+#define CS_SET(c_, F_) do {                                \
+        r = cs->F_.r;                                      \
+        g = cs->F_.g;                                      \
+        b = cs->F_.b;                                      \
+        a = cs->F_.a;                                      \
         evas_object_textgrid_palette_set(                  \
-           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, _c,   \
+           textgrid, EVAS_TEXTGRID_PALETTE_STANDARD, c_,   \
            r, g, b, a);                                    \
 } while (0)
 
@@ -532,13 +532,13 @@ colors_term_init(Evas_Object *textgrid,
    CS_SET(47 /* inverse bg */, faint.inverse_bg);
 #undef CS_SET
 
-#define CS_SET(_c, _F) do {                                \
-        r = cs->_F.r;                                      \
-        g = cs->_F.g;                                      \
-        b = cs->_F.b;                                      \
-        a = cs->_F.a;                                      \
+#define CS_SET(c_, F_) do {                                \
+        r = cs->F_.r;                                      \
+        g = cs->F_.g;                                      \
+        b = cs->F_.b;                                      \
+        a = cs->F_.a;                                      \
         evas_object_textgrid_palette_set(                  \
-           textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, _c,   \
+           textgrid, EVAS_TEXTGRID_PALETTE_EXTENDED, c_,   \
            r, g, b, a);                                    \
    } while (0)
 
@@ -608,24 +608,24 @@ color_scheme_apply(Evas_Object *edje,
 {
    EINA_SAFETY_ON_NULL_RETURN(cs);
 
-#define CS_SET(_K, _F) do {\
-   if (edje_object_color_class_set(edje, _K,                            \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a,  \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a,  \
-                               cs->_F.r, cs->_F.g, cs->_F.b, cs->_F.a)  \
+#define CS_SET(K_, F_) do {\
+   if (edje_object_color_class_set(edje, K_,                            \
+                               cs->F_.r, cs->F_.g, cs->F_.b, cs->F_.a,  \
+                               cs->F_.r, cs->F_.g, cs->F_.b, cs->F_.a,  \
+                               cs->F_.r, cs->F_.g, cs->F_.b, cs->F_.a)  \
        != EINA_TRUE)                                                    \
        {                                                                \
-          ERR("error setting color class '%s' on object %p", _K, edje); \
+          ERR("error setting color class '%s' on object %p", K_, edje); \
        }                                                                \
 } while (0)
-#define CS_SET_MANY(_K, _F1, _F2, _F3) do {                                \
-   if (edje_object_color_class_set(edje, _K,                               \
-                               cs->_F1.r, cs->_F1.g, cs->_F1.b, cs->_F1.a, \
-                               cs->_F2.r, cs->_F2.g, cs->_F2.b, cs->_F2.a, \
-                               cs->_F3.r, cs->_F3.g, cs->_F3.b, cs->_F3.a) \
+#define CS_SET_MANY(K_, F1_, F2_, F3_) do {                                \
+   if (edje_object_color_class_set(edje, K_,                               \
+                               cs->F1_.r, cs->F1_.g, cs->F1_.b, cs->F1_.a, \
+                               cs->F2_.r, cs->F2_.g, cs->F2_.b, cs->F2_.a, \
+                               cs->F3_.r, cs->F3_.g, cs->F3_.b, cs->F3_.a) \
        != EINA_TRUE)                                                       \
        {                                                                   \
-          ERR("error setting color class '%s' on object %p", _K, edje);    \
+          ERR("error setting color class '%s' on object %p", K_, edje);    \
        }                                                                   \
 } while (0)
 
