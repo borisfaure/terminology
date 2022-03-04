@@ -1438,7 +1438,7 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
 
    ty->w = new_w;
    ty->h = new_h;
-   ty->termstate.wrapnext = 0;
+   ty->cursor_state.wrapnext = 0;
 
    if (altbuf)
      termpty_screen_swap(ty);

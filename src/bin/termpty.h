@@ -114,7 +114,6 @@ typedef struct _Term_State {
     unsigned int  insert : 1;
     unsigned int  appcursor : 1;
     unsigned int  wrap : 1;
-    unsigned int  wrapnext : 1;
     unsigned int  crlf : 1;
     unsigned int  send_bs : 1;
     unsigned int  kbd_lock : 1;
@@ -129,6 +128,7 @@ typedef struct _Term_State {
 typedef struct _Term_Cursor {
     int cx;
     int cy;
+    unsigned char wrapnext : 1;
 } Term_Cursor;
 
 struct _Termpty

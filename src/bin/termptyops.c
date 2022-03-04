@@ -196,10 +196,10 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              max_right = ty->termstate.right_margin;
           }
 
-        if (ty->termstate.wrapnext)
+        if (ty->cursor_state.wrapnext)
           {
              cells[max_right-1].att.autowrapped = 1;
-             ty->termstate.wrapnext = 0;
+             ty->cursor_state.wrapnext = 0;
              ty->cursor_state.cx = origin;
              ty->cursor_state.cy++;
              termpty_text_scroll_test(ty, EINA_TRUE);
@@ -252,11 +252,11 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              unsigned char offset = 1;
 
-             ty->termstate.wrapnext = 0;
+             ty->cursor_state.wrapnext = 0;
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
              if (EINA_UNLIKELY(ty->cursor_state.cx >= (max_right - offset)))
-               ty->termstate.wrapnext = 1;
+               ty->cursor_state.wrapnext = 1;
              else
                {
                   ty->cursor_state.cx += offset;
@@ -267,7 +267,7 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
           {
              unsigned char offset = 1;
 
-             ty->termstate.wrapnext = 0;
+             ty->cursor_state.wrapnext = 0;
              if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
                offset = 2;
              ty->cursor_state.cx += offset;
@@ -443,7 +443,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.insert = 0;
    ty->termstate.appcursor = 0;
    ty->termstate.wrap = 1;
-   ty->termstate.wrapnext = 0;
+   ty->cursor_state.wrapnext = 0;
    ty->termstate.crlf = 0;
    ty->termstate.send_bs = 0;
    ty->termstate.reverse = 0;
