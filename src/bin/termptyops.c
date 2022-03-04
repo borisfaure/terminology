@@ -479,14 +479,12 @@ termpty_cursor_copy(Termpty *ty, Eina_Bool save)
 {
    if (save)
      {
-        ty->cursor_save[ty->altbuf].cx = ty->cursor_state.cx;
-        ty->cursor_save[ty->altbuf].cy = ty->cursor_state.cy;
+        ty->cursor_save[ty->altbuf] = ty->cursor_state;
      }
    else
      {
-        ty->cursor_state.cx = ty->cursor_save[ty->altbuf].cx;
+        ty->cursor_state = ty->cursor_save[ty->altbuf];
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, ty->w);
-        ty->cursor_state.cy = ty->cursor_save[ty->altbuf].cy;
         TERMPTY_RESTRICT_FIELD(ty->cursor_state.cy, 0, ty->h);
      }
 }
