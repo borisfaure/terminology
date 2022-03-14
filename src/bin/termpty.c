@@ -924,8 +924,8 @@ _termpty_cell_is_empty(const Termcell *cell)
 {
    return ((cell->codepoint == 0) ||
            (cell->att.invisible) ||
-           (cell->att.fg == COL_INVIS)) &&
-      ((cell->att.bg == COL_INVIS) || (cell->att.bg == COL_DEF));
+           ((cell->att.fg256 == 0) && (cell->att.fg == COL_INVIS))) &&
+      (((cell->att.bg256 == 0) && (cell->att.bg == COL_INVIS)) || (cell->att.bg == COL_DEF));
 }
 
 static Eina_Bool
