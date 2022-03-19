@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# gbonaspetti <gbonaspetti@hotmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-02 18:48+0100\n"
-"PO-Revision-Date: 2021-03-02 01:50+0000\n"
-"Last-Translator: Gustavo Costa <sirguxx@gmail.com>\n"
+"PO-Revision-Date: 2022-03-19 23:59+0000\n"
+"Last-Translator: gbonaspetti <gbonaspetti@hotmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "terminology/terminology/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -16,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.5\n"
+"X-Generator: Weblate 4.12-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
 #: src/bin/termio.c:1306
@@ -106,7 +105,7 @@ msgstr "Fechar terminal"
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr ""
+msgstr "Não foi possível criar domínio de acesso '%s'"
 
 #: src/bin/keyin.c:658
 msgid "Scrolling"
@@ -340,7 +339,7 @@ msgstr "Definir o nome da janela"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr ""
+msgstr "Definir a função da janela"
 
 #: src/bin/main.c:482
 msgid "Set window title"
@@ -366,7 +365,7 @@ msgstr ""
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
-msgstr ""
+msgstr "Executar o shell como um shell de conexão"
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
@@ -378,7 +377,7 @@ msgstr "Definir modo de piscar do cursor"
 
 #: src/bin/main.c:499
 msgid "Set visual bell mode"
-msgstr ""
+msgstr "Definir o modo campainha visual"
 
 #: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
@@ -386,19 +385,19 @@ msgstr "Ir para o modo de tela inteira desde o início"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Iniciar minimizado"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Iniciar sem margens"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
-msgstr ""
+msgstr "Iniciar como uma janela de override-redirect"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Iniciar maximizado"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
@@ -410,7 +409,7 @@ msgstr "Não sair quando o processo de comando terminar"
 
 #: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
-msgstr ""
+msgstr "Forçar um único executável se a multi-instância estiver ativada"
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
@@ -497,7 +496,7 @@ msgstr "Fundo"
 
 #: src/bin/options_background.c:581
 msgid "Shine:"
-msgstr ""
+msgstr "Brilho:"
 
 #: src/bin/options_background.c:605
 msgid "Translucent"
@@ -536,7 +535,7 @@ msgstr "%'d linhas"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Scrollback (utilização atual de memória: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
 msgid "Default cursor:"
@@ -593,15 +592,15 @@ msgstr ""
 
 #: src/bin/options_behavior.c:406
 msgid "Visual Bell"
-msgstr ""
+msgstr "Campainha visual"
 
 #: src/bin/options_behavior.c:407
 msgid "Bell rings"
-msgstr ""
+msgstr "Toque da campainha"
 
 #: src/bin/options_behavior.c:408
 msgid "Urgent Bell"
-msgstr ""
+msgstr "Campainha de emergência"
 
 #: src/bin/options_behavior.c:410
 msgid "Multiple instances, one process"
@@ -617,7 +616,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:413
 msgid "Start as login shell"
-msgstr ""
+msgstr "Iniciar como shell de conexão"
 
 #: src/bin/options_behavior.c:414
 msgid "Open new terminals in current working directory"
