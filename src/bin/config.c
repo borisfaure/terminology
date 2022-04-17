@@ -193,8 +193,8 @@ config_init(void)
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "emoji_dbl_width", emoji_dbl_width, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "shine", shine, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC /* DEPRECATED, NO LONGER USED */
+     (edd_base, Config, "shine", _shine, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "hide_cursor", hide_cursor, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -322,7 +322,6 @@ config_sync(const Config *config_src, Config *config)
    config->ty_escapes = config_src->ty_escapes;
    config->changedir_to_current = config_src->changedir_to_current;
    config->emoji_dbl_width = config_src->emoji_dbl_width;
-   config->shine = config_src->shine;
    config->translucent = config_src->translucent;
    config->opacity = config_src->opacity;
    config->group_all = config_src->group_all;
@@ -602,7 +601,6 @@ config_new(void)
                }
           }
         _add_default_keys(config);
-        config->shine = 255;
         config->hide_cursor = 5.0;
         config->group_all = EINA_FALSE;
         config_compute_color_scheme(config);
@@ -708,7 +706,7 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 16:
-                  config->shine = 255;
+                  config->_shine = 255;
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 17:
@@ -884,7 +882,6 @@ config_fork(const Config *config)
    CPY(ty_escapes);
    CPY(changedir_to_current);
    CPY(emoji_dbl_width);
-   CPY(shine);
    CPY(group_all);
 
    EINA_LIST_FOREACH(config->keys, l, key)

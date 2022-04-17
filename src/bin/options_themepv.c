@@ -256,8 +256,6 @@ options_theme_preview_add(Evas_Object *parent,
         else
           elm_layout_signal_emit(o, "translucent,off", "terminology");
 
-        background_set_shine(config, elm_layout_edje_get(o));
-
         elm_layout_signal_emit(o, "focus,in", "terminology");
         elm_layout_signal_emit(o, "tabcount,on", "terminology");
         elm_layout_signal_emit(o, "tabmissed,on", "terminology");

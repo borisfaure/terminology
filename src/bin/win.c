@@ -4449,7 +4449,6 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
    else
      msg.val = 100;
    edje_object_message_send(tabs->selector_bg, EDJE_MESSAGE_INT, 1, &msg);
-   background_set_shine(wn->config, tabs->selector_bg);
    edje_object_signal_emit(tabs->selector_bg, "begin", "terminology");
 
    tabs->selector = sel_add(wn->win);
@@ -5881,34 +5880,6 @@ term_is_visible(const Term *term)
    return tc->is_visible(tc, tc);
 }
 
-void
-background_set_shine(const Config *config, Evas_Object *bg_edj)
-{
-   Edje_Message_Int msg;
-
-   if (config)
-     msg.val = config->shine;
-   else
-     msg.val = 255;
-
-   if (bg_edj)
-       edje_object_message_send(bg_edj, EDJE_MESSAGE_INT, 2, &msg);
-}
-
-void
-term_apply_shine(Term *term, int shine)
-{
-   Config *config = term->config;
-
-   if (config->shine != shine)
-     {
-        config->shine = shine;
-        background_set_shine(config, term->bg_edj);
-        config_save(config);
-     }
-}
-
-
 static void
 _term_config_set(Term *term, Config *config)
 {
@@ -7155,7 +7126,6 @@ static void
 _term_bg_config(Term *term)
 {
    _term_trans(term);
-   background_set_shine(term->config, term->bg_edj);
 
    termio_theme_set(term->termio, term->bg_edj);
    elm_layout_signal_callback_add(term->bg, "popmedia,done", "terminology",
@@ -7449,8 +7419,6 @@ term_new(Win *wn, Config *config, const char *cmd,
      term->miniview_shown = EINA_TRUE;
 
    _term_trans(term);
-
-   background_set_shine(term->config, term->bg_edj);
 
    term->termio = o = termio_add(wn->win, config, cmd, login_shell, cd,
                                  size_w, size_h, term, title);

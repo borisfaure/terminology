@@ -22,7 +22,6 @@ typedef struct tag_Background_Ctx {
      Evas_Object *bubble;
      Evas_Object *op_trans;
      Evas_Object *op_opacity;
-     Evas_Object *op_shine_slider;
 
      Eina_Stringshare *system_path;
      Eina_Stringshare *user_path;
@@ -42,29 +41,6 @@ typedef struct tag_Insert_Gen_Grid_Item_Notify
    Elm_Gengrid_Item_Class *class;
    Background_Item *item;
 } Insert_Gen_Grid_Item_Notify;
-
-
-static void
-_cb_op_shine_sel(void *data,
-                 Evas_Object *obj,
-                 void *_event EINA_UNUSED)
-{
-   Background_Ctx *ctx = data;
-   Config *config = ctx->config;
-   Term *term = termio_term_get(ctx->term);
-   Win *wn = term_win_get(term);
-   int shine = elm_slider_value_get(obj);
-   Eina_List *l, *wn_list;
-
-   if (config->shine == shine)
-       return;
-
-   wn_list = win_terms_get(wn);
-   EINA_LIST_FOREACH(wn_list, l, term)
-     {
-        term_apply_shine(term, shine);
-     }
-}
 
 static void
 _cb_op_video_trans_chg(void *data,
@@ -574,30 +550,6 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(ctx->frame, bx);
    evas_object_show(o);
-
-   o = elm_label_add(opbox);
-   evas_object_size_hint_weight_set(o, 0.0, 0.0);
-   evas_object_size_hint_align_set(o, 0.0, 0.5);
-   elm_object_text_set(o, _("Shine:"));
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   ctx->op_shine_slider = o = elm_slider_add(opbox);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
-   elm_slider_span_size_set(o, 40);
-   elm_slider_unit_format_set(o, "%1.0f");
-   elm_slider_indicator_format_set(o, "%1.0f");
-   elm_slider_min_max_set(o, 0, 255);
-   elm_slider_step_set(o, 1);
-   elm_slider_value_set(o, config->shine);
-   elm_box_pack_end(bx, o);
-   evas_object_show(o);
-
-   evas_object_smart_callback_add(o, "delay,changed",
-                                  _cb_op_shine_sel, ctx);
-
-
 
    ctx->op_trans = o = elm_check_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);

@@ -66,7 +66,7 @@ struct tag_Config
    double            hide_cursor;
    int               _vidmod; /* DEPRECATED */
    int               opacity;
-   int               shine;
+   int               _shine; /* DEPRECATED */
    int               cg_width;
    int               cg_height;
    Eina_Bool         jump_on_keypress;
