@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 # E-Akcaer <gurbetcii_@hotmail.com>, 2022.
+# Sabri Ünal <libreajans@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-02 18:48+0100\n"
-"PO-Revision-Date: 2022-01-27 09:56+0000\n"
-"Last-Translator: E-Akcaer <gurbetcii_@hotmail.com>\n"
+"PO-Revision-Date: 2022-04-23 10:14+0000\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/terminology/"
 "terminology/tr/>\n"
 "Language: tr\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11-dev\n"
+"X-Generator: Weblate 4.12.1-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
@@ -132,7 +133,6 @@ msgid "Scroll one line down"
 msgstr "Bir satır aşağı kaydır"
 
 #: src/bin/keyin.c:663
-#, fuzzy
 msgid "Go to the top of the backlog"
 msgstr "Birikenlerin en üstüne git"
 
@@ -253,7 +253,6 @@ msgid "Change title"
 msgstr "Başlığı değiştir"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
-#, fuzzy
 msgid "Toggle whether input goes to all visible terminals"
 msgstr "Girdinin tüm görünür uçbirimlere gidip gitmemesini değiştir"
 
@@ -302,7 +301,6 @@ msgid "Could not create window"
 msgstr "Pencere oluşturulamadı"
 
 #: src/bin/main.c:425 src/bin/main.c:613
-#, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Uçbirim uygulamacığı oluşturulamadı"
 
@@ -320,12 +318,10 @@ msgid "Use the named file as a background wallpaper"
 msgstr "Adlandırılan dosyayı arkaplan duvar kağıdı olarak kullan"
 
 #: src/bin/main.c:468
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Uçbirim komutu çalıştırma dizinini değiştir"
 
 #: src/bin/main.c:470
-#, fuzzy
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 "Çalıştırılacak komut. Varsayılan olarak $SHELL (veya parola shell veya /bin/"
@@ -392,7 +388,6 @@ msgid "Set visual bell mode"
 msgstr "Görsel uyarı zili kipini ayarla"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Başlangıçta tam ekran kipine gir"
 
@@ -421,7 +416,6 @@ msgid "Do not exit when the command process exits"
 msgstr "Komut süreci bitmeden çıkma"
 
 #: src/bin/main.c:515
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Çoklu örnek etkinse tekli çalıştırmaya zorla"
 
@@ -621,7 +615,6 @@ msgid "Multiple instances, one process"
 msgstr "Çoklu pencereler, tek işlem"
 
 #: src/bin/options_behavior.c:411
-#, fuzzy
 msgid "Set TERM to xterm-256color"
 msgstr "TERM'i xterm-256color'a ayarla"
 
@@ -868,7 +861,7 @@ msgstr ""
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr ""
+msgstr "Gravatar entegrasyonu"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
@@ -876,7 +869,7 @@ msgstr "Bağlantıları sürükle & bırak"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr ""
+msgstr "Mümkünse satır içi"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
@@ -907,7 +900,7 @@ msgid "Local (All):"
 msgstr "Yerel (Tümü):"
 
 #: src/bin/options_theme.c:187
-#, c-format, fuzzy
+#, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
 msgstr "<hilight>%s</hilight> renk şemasını kullanıyor"
 
