@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 18:48+0100\n"
+"POT-Creation-Date: 2022-04-25 21:11+0200\n"
 "PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -18,13 +18,13 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.5.2-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
-#: src/bin/termio.c:1306
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
+#: src/bin/termio.c:1305
 #, c-format
 msgid "Copy '%s'"
 msgstr "Копировать '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
 msgid "Open"
 msgstr "Открыть"
 
@@ -76,11 +76,11 @@ msgstr "Разделить H"
 msgid "Miniview"
 msgstr "Мини-карта"
 
-#: src/bin/controls.c:413 src/bin/win.c:6235
+#: src/bin/controls.c:413 src/bin/win.c:6206
 msgid "Set title"
 msgstr "Заголовок"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
+#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Копировать"
 
@@ -480,56 +480,52 @@ msgstr "Ошибка функции %s: %s"
 msgid "Media visualizing is not supported"
 msgstr "Визуализация медиа не поддерживается"
 
-#: src/bin/options_background.c:163
+#: src/bin/options_background.c:139
 msgid "None"
 msgstr "Нет"
 
-#: src/bin/options_background.c:495
+#: src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Исходный файл является целевым файлом"
 
-#: src/bin/options_background.c:508
+#: src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Изображение импортировано"
 
-#: src/bin/options_background.c:513
+#: src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Ошибка"
 
-#: src/bin/options_background.c:565 src/bin/options.c:221
+#: src/bin/options_background.c:541 src/bin/options.c:221
 msgid "Background"
 msgstr "Фон"
 
-#: src/bin/options_background.c:581
-msgid "Shine:"
-msgstr "Свечение:"
-
-#: src/bin/options_background.c:605
+#: src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Прозрачность"
 
-#: src/bin/options_background.c:616 src/bin/options_background.c:617
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:636
+#: src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Выбрать путь"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:594
 msgid "System"
 msgstr "Системный"
 
-#: src/bin/options_background.c:645
+#: src/bin/options_background.c:597
 msgid "User"
 msgstr "Пользовательский"
 
-#: src/bin/options_background.c:648
+#: src/bin/options_background.c:600
 msgid "Other"
 msgstr "Другой"
 
-#: src/bin/options_background.c:690
+#: src/bin/options_background.c:642
 msgid "Click on a picture to use it as background"
 msgstr "Нажмите на изображение, чтобы использовать его в качестве фона"
 
@@ -588,8 +584,8 @@ msgid "Scroll to bottom when a key is pressed"
 msgstr "Прокручивать вниз при нажатии клавиши"
 
 #: src/bin/options_behavior.c:395
-msgid "React to key presses"
-msgstr "Реагировать на нажатия клавиш"
+msgid "React to key presses (typing sounds and animations)"
+msgstr ""
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -918,38 +914,38 @@ msgstr "Файл фона не может быть прочитан: %s"
 msgid "Unknown command: %s"
 msgstr "Неизвестная команда: %s"
 
-#: src/bin/termio.c:460
+#: src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Не удалось получить рабочий каталог процесса %i: %s"
 
-#: src/bin/termio.c:475
+#: src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Не удалось загрузить рабочий каталог %s: %s"
 
-#: src/bin/termio.c:1205
+#: src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "неподдерживаемый формат выделения '%s'"
 
-#: src/bin/termio.c:1365
+#: src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr "Копировать относительный путь"
 
-#: src/bin/termio.c:1377
+#: src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr "Копировать абсолютный путь"
 
-#: src/bin/termio.c:2790
+#: src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Открыть как URL"
 
-#: src/bin/termio.c:4233
+#: src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "Невозможно выделить termpty"
 
@@ -1015,17 +1011,23 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ошибка Ecore IMF"
 
-#: src/bin/win.c:6239
+#: src/bin/win.c:6210
 msgid "Ok"
 msgstr "Ок"
 
-#: src/bin/win.c:6244
+#: src/bin/win.c:6215
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/bin/win.c:7434
+#: src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Не удалось найти тему для terminology! Забыли 'ninja install'?"
+
+#~ msgid "Shine:"
+#~ msgstr "Свечение:"
+
+#~ msgid "React to key presses"
+#~ msgstr "Реагировать на нажатия клавиш"
 
 #~ msgid "Become a borderless managed window"
 #~ msgstr "Запустить в режиме окна без рамок"

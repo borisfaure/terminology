@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 18:48+0100\n"
+"POT-Creation-Date: 2022-04-25 21:11+0200\n"
 "PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
-#: src/bin/termio.c:1306
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
+#: src/bin/termio.c:1305
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiér '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
 msgid "Open"
 msgstr "Åbn"
 
@@ -78,11 +78,11 @@ msgstr "Opdel vandret"
 msgid "Miniview"
 msgstr "Minivisning"
 
-#: src/bin/controls.c:413 src/bin/win.c:6235
+#: src/bin/controls.c:413 src/bin/win.c:6206
 msgid "Set title"
 msgstr "Indstil titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
+#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Kopiér"
 
@@ -479,56 +479,52 @@ msgstr "Funktionen %s mislykkedes: %s"
 msgid "Media visualizing is not supported"
 msgstr "Medievisualisering understøttes ikke"
 
-#: src/bin/options_background.c:163
+#: src/bin/options_background.c:139
 msgid "None"
 msgstr "Ingen"
 
-#: src/bin/options_background.c:495
+#: src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Kildefil er målfil"
 
-#: src/bin/options_background.c:508
+#: src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Billede importeret"
 
-#: src/bin/options_background.c:513
+#: src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Mislykkedes"
 
-#: src/bin/options_background.c:565 src/bin/options.c:221
+#: src/bin/options_background.c:541 src/bin/options.c:221
 msgid "Background"
 msgstr "Baggrund"
 
-#: src/bin/options_background.c:581
-msgid "Shine:"
-msgstr "Skin:"
-
-#: src/bin/options_background.c:605
+#: src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Gennemsigtig"
 
-#: src/bin/options_background.c:616 src/bin/options_background.c:617
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:636
+#: src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Vælg sti"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:594
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:645
+#: src/bin/options_background.c:597
 msgid "User"
 msgstr "Bruger"
 
-#: src/bin/options_background.c:648
+#: src/bin/options_background.c:600
 msgid "Other"
 msgstr "Anden"
 
-#: src/bin/options_background.c:690
+#: src/bin/options_background.c:642
 msgid "Click on a picture to use it as background"
 msgstr "Dobbeltklik på et billede for at bruge det som baggrund"
 
@@ -587,8 +583,8 @@ msgid "Scroll to bottom when a key is pressed"
 msgstr "Rul til bunden når der trykkes på en tast"
 
 #: src/bin/options_behavior.c:395
-msgid "React to key presses"
-msgstr "Reager på tastetryk"
+msgid "React to key presses (typing sounds and animations)"
+msgstr ""
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -919,38 +915,38 @@ msgstr "Baggrundsfil kunne ikke læses: %s"
 msgid "Unknown command: %s"
 msgstr "Ukendt kommando: %s"
 
-#: src/bin/termio.c:460
+#: src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kunne ikke hente arbejdsmappe af pid %i: %s"
 
-#: src/bin/termio.c:475
+#: src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kunne ikke indlæse arbejdsmappe %s: %s"
 
-#: src/bin/termio.c:1205
+#: src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "ikke-understøttet markeringsformat '%s'"
 
-#: src/bin/termio.c:1365
+#: src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr "Kopiér relativ sti"
 
-#: src/bin/termio.c:1377
+#: src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr "Kopiér fuld sti"
 
-#: src/bin/termio.c:2790
+#: src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Åbn som URL"
 
-#: src/bin/termio.c:4233
+#: src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "Kunne ikke allokere termpty"
 
@@ -1017,17 +1013,23 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore-IMF mislykkedes"
 
-#: src/bin/win.c:6239
+#: src/bin/win.c:6210
 msgid "Ok"
 msgstr "OK"
 
-#: src/bin/win.c:6244
+#: src/bin/win.c:6215
 msgid "Cancel"
 msgstr "Annuller"
 
-#: src/bin/win.c:7434
+#: src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunne ikke finde terminology-tema! Glemte du 'ninja install'?"
+
+#~ msgid "Shine:"
+#~ msgstr "Skin:"
+
+#~ msgid "React to key presses"
+#~ msgstr "Reager på tastetryk"
 
 #~ msgid "Become a borderless managed window"
 #~ msgstr "Bliv et vindue uden kanter"

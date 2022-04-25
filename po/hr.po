@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 18:48+0100\n"
+"POT-Creation-Date: 2022-04-25 21:11+0200\n"
 "PO-Revision-Date: 2021-03-20 12:18+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.5.2-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
-#: src/bin/termio.c:1306
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
+#: src/bin/termio.c:1305
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiraj '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
 msgid "Open"
 msgstr "Otvori"
 
@@ -78,11 +78,11 @@ msgstr "Podijeli V"
 msgid "Miniview"
 msgstr "Mini-prikaz"
 
-#: src/bin/controls.c:413 src/bin/win.c:6235
+#: src/bin/controls.c:413 src/bin/win.c:6206
 msgid "Set title"
 msgstr "Postavi naslov"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
+#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Kopiraj"
 
@@ -479,56 +479,52 @@ msgstr "Neuspjela funkcija %s: %s"
 msgid "Media visualizing is not supported"
 msgstr "Vizualizacija medija nije podržana"
 
-#: src/bin/options_background.c:163
+#: src/bin/options_background.c:139
 msgid "None"
 msgstr "Ništa"
 
-#: src/bin/options_background.c:495
+#: src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Izvorna datoteka je odredišna datoteka"
 
-#: src/bin/options_background.c:508
+#: src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Slika je uvezena"
 
-#: src/bin/options_background.c:513
+#: src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Neuspjelo"
 
-#: src/bin/options_background.c:565 src/bin/options.c:221
+#: src/bin/options_background.c:541 src/bin/options.c:221
 msgid "Background"
 msgstr "Pozadina"
 
-#: src/bin/options_background.c:581
-msgid "Shine:"
-msgstr "Sjaj:"
-
-#: src/bin/options_background.c:605
+#: src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Providno"
 
-#: src/bin/options_background.c:616 src/bin/options_background.c:617
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f %%"
 
-#: src/bin/options_background.c:636
+#: src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Odaberi stazu"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:594
 msgid "System"
 msgstr "Sustav"
 
-#: src/bin/options_background.c:645
+#: src/bin/options_background.c:597
 msgid "User"
 msgstr "Korisnik"
 
-#: src/bin/options_background.c:648
+#: src/bin/options_background.c:600
 msgid "Other"
 msgstr "Drugo"
 
-#: src/bin/options_background.c:690
+#: src/bin/options_background.c:642
 msgid "Click on a picture to use it as background"
 msgstr "Klikni na sliku, kako bi se koristila za pozadinu"
 
@@ -587,8 +583,8 @@ msgid "Scroll to bottom when a key is pressed"
 msgstr "Klizni na kraj pri pritiskanju tipke"
 
 #: src/bin/options_behavior.c:395
-msgid "React to key presses"
-msgstr "Reagiraj na pritiskanje tipki"
+msgid "React to key presses (typing sounds and animations)"
+msgstr ""
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -918,38 +914,38 @@ msgstr "Nije bilo moguće učitati datoteku pozadine: %s"
 msgid "Unknown command: %s"
 msgstr "Nepoznata naredba: %s"
 
-#: src/bin/termio.c:460
+#: src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Nije bilo moguće dobiti radnu mapu pid-a %i: %s"
 
-#: src/bin/termio.c:475
+#: src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Nije bilo moguće učitati radnu mapu %s: %s"
 
-#: src/bin/termio.c:1205
+#: src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nepodržani format odabira „%s”"
 
-#: src/bin/termio.c:1365
+#: src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Pregled"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr "Kopiraj relativnu stazu"
 
-#: src/bin/termio.c:1377
+#: src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr "Kopiraj potpunu stazu"
 
-#: src/bin/termio.c:2790
+#: src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Otvori kao URL"
 
-#: src/bin/termio.c:4233
+#: src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "Nije bilo moguće alocirati termpty"
 
@@ -1016,18 +1012,24 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Neuspio Ecore IMF"
 
-#: src/bin/win.c:6239
+#: src/bin/win.c:6210
 msgid "Ok"
 msgstr "U redu"
 
-#: src/bin/win.c:6244
+#: src/bin/win.c:6215
 msgid "Cancel"
 msgstr "Odustani"
 
-#: src/bin/win.c:7434
+#: src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Nije bilo moguće pronaći Terminology temu! Je li „ninja install” izvršeno?"
+
+#~ msgid "Shine:"
+#~ msgstr "Sjaj:"
+
+#~ msgid "React to key presses"
+#~ msgstr "Reagiraj na pritiskanje tipki"
 
 #~ msgid "Become a borderless managed window"
 #~ msgstr "Pokreni kao bezrubni prozor"

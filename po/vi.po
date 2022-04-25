@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 18:48+0100\n"
+"POT-Creation-Date: 2022-04-25 21:11+0200\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -19,13 +19,13 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
-#: src/bin/termio.c:1306
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
+#: src/bin/termio.c:1305
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Sao Chép"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
 msgid "Open"
 msgstr "Mở"
 
@@ -76,12 +76,12 @@ msgstr "Chia Ngang"
 msgid "Miniview"
 msgstr "Miniview"
 
-#: src/bin/controls.c:413 src/bin/win.c:6235
+#: src/bin/controls.c:413 src/bin/win.c:6206
 #, fuzzy
 msgid "Set title"
 msgstr "Đặt tiêu đề cho cửa sổ"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
+#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Sao Chép"
 
@@ -515,56 +515,52 @@ msgstr "Hàm %s thất bại: %s"
 msgid "Media visualizing is not supported"
 msgstr "Không hỗ trợ trực quan phương tiện"
 
-#: src/bin/options_background.c:163
+#: src/bin/options_background.c:139
 msgid "None"
 msgstr "Không Gì Cả"
 
-#: src/bin/options_background.c:495
+#: src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Tập tin nguồn là tập tin đích"
 
-#: src/bin/options_background.c:508
+#: src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Hình ảnh đã được nhập"
 
-#: src/bin/options_background.c:513
+#: src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Thất Bại"
 
-#: src/bin/options_background.c:565 src/bin/options.c:221
+#: src/bin/options_background.c:541 src/bin/options.c:221
 msgid "Background"
 msgstr "Hình Nền"
 
-#: src/bin/options_background.c:581
-msgid "Shine:"
-msgstr ""
-
-#: src/bin/options_background.c:605
+#: src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Trong Mờ"
 
-#: src/bin/options_background.c:616 src/bin/options_background.c:617
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:636
+#: src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Chọn Đường Dẫn"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:594
 msgid "System"
 msgstr "Hệ Thống"
 
-#: src/bin/options_background.c:645
+#: src/bin/options_background.c:597
 msgid "User"
 msgstr "Người Dùng"
 
-#: src/bin/options_background.c:648
+#: src/bin/options_background.c:600
 msgid "Other"
 msgstr "Khác"
 
-#: src/bin/options_background.c:690
+#: src/bin/options_background.c:642
 #, fuzzy
 msgid "Click on a picture to use it as background"
 msgstr "Nhấp đúp vào hình để nhập nó"
@@ -625,8 +621,8 @@ msgid "Scroll to bottom when a key is pressed"
 msgstr "Cuộn xuống dưới cùng khi nhấn phím"
 
 #: src/bin/options_behavior.c:395
-msgid "React to key presses"
-msgstr "Phản ứng với nhấn phím"
+msgid "React to key presses (typing sounds and animations)"
+msgstr ""
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -956,38 +952,38 @@ msgstr "Không thể đọc tập tin hình nền: %s"
 msgid "Unknown command: %s"
 msgstr "Lệnh chưa biết: %s"
 
-#: src/bin/termio.c:460
+#: src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Không thể lấy thư mục làm việc của pid %i: %s"
 
-#: src/bin/termio.c:475
+#: src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Không thể tải thư mục làm việc %s: %s"
 
-#: src/bin/termio.c:1205
+#: src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "không hỗ trợ định dạng chọn '%s'"
 
-#: src/bin/termio.c:1365
+#: src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Xem Trước"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1377
+#: src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2790
+#: src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Mở như là URL"
 
-#: src/bin/termio.c:4233
+#: src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "Không thể cấp phát termpty"
 
@@ -1051,17 +1047,20 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF thất bại"
 
-#: src/bin/win.c:6239
+#: src/bin/win.c:6210
 msgid "Ok"
 msgstr ""
 
-#: src/bin/win.c:6244
+#: src/bin/win.c:6215
 msgid "Cancel"
 msgstr ""
 
-#: src/bin/win.c:7434
+#: src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
+
+#~ msgid "React to key presses"
+#~ msgstr "Phản ứng với nhấn phím"
 
 #, fuzzy
 #~ msgid "Become a borderless managed window"

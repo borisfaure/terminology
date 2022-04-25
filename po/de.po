@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-02 18:48+0100\n"
+"POT-Creation-Date: 2022-04-25 21:11+0200\n"
 "PO-Revision-Date: 2020-12-03 20:29+0000\n"
 "Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
@@ -22,13 +22,13 @@ msgstr ""
 "X-Generator: Weblate 4.4-dev\n"
 "X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1297
-#: src/bin/termio.c:1306
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
+#: src/bin/termio.c:1305
 #, c-format
 msgid "Copy '%s'"
 msgstr "Copia «%s»"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1368
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
 msgid "Open"
 msgstr "Öffnen"
 
@@ -80,11 +80,11 @@ msgstr "Horiz. teilen"
 msgid "Miniview"
 msgstr "Mini-Ansicht"
 
-#: src/bin/controls.c:413 src/bin/win.c:6235
+#: src/bin/controls.c:413 src/bin/win.c:6206
 msgid "Set title"
 msgstr "Titel bestimmen"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1382 src/bin/termio.c:2788
+#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -515,56 +515,52 @@ msgstr "Funktion %s fehlgeschlagen: %s"
 msgid "Media visualizing is not supported"
 msgstr "Das Anzeigen von Medien wird nicht unterstützt"
 
-#: src/bin/options_background.c:163
+#: src/bin/options_background.c:139
 msgid "None"
 msgstr "Nichts"
 
-#: src/bin/options_background.c:495
+#: src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Quelldatei ist Zieldatei"
 
-#: src/bin/options_background.c:508
+#: src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Bild importiert"
 
-#: src/bin/options_background.c:513
+#: src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: src/bin/options_background.c:565 src/bin/options.c:221
+#: src/bin/options_background.c:541 src/bin/options.c:221
 msgid "Background"
 msgstr "Hintergrund"
 
-#: src/bin/options_background.c:581
-msgid "Shine:"
-msgstr "Leuchten:"
-
-#: src/bin/options_background.c:605
+#: src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Durchsichtig"
 
-#: src/bin/options_background.c:616 src/bin/options_background.c:617
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f %%"
 
-#: src/bin/options_background.c:636
+#: src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Pfad auswählen"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:594
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:645
+#: src/bin/options_background.c:597
 msgid "User"
 msgstr "Benutzer"
 
-#: src/bin/options_background.c:648
+#: src/bin/options_background.c:600
 msgid "Other"
 msgstr "Anderer"
 
-#: src/bin/options_background.c:690
+#: src/bin/options_background.c:642
 msgid "Click on a picture to use it as background"
 msgstr "Bild für Hintergrund klicken"
 
@@ -623,8 +619,8 @@ msgid "Scroll to bottom when a key is pressed"
 msgstr "Scroole ans Ende beim Tastenschlag"
 
 #: src/bin/options_behavior.c:395
-msgid "React to key presses"
-msgstr "Reagiere auf Tastenschlag"
+msgid "React to key presses (typing sounds and animations)"
+msgstr ""
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -958,38 +954,38 @@ msgstr "Hintergrunddatei konnte nicht gelesen werden: %s"
 msgid "Unknown command: %s"
 msgstr "Unbekannter Befehl: %s"
 
-#: src/bin/termio.c:460
+#: src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Arbeitsordner von pid %i konnte nicht abrufen: %s"
 
-#: src/bin/termio.c:475
+#: src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Arbeitsordner %s konnte nicht eingelesen werden: %s"
 
-#: src/bin/termio.c:1205
+#: src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nicht unterstütztes Auswahl-Format „%s“"
 
-#: src/bin/termio.c:1365
+#: src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr "Relativen Pfad kopieren"
 
-#: src/bin/termio.c:1377
+#: src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr "Vollständigen Pfad kopieren"
 
-#: src/bin/termio.c:2790
+#: src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Als URL öffnen"
 
-#: src/bin/termio.c:4233
+#: src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "termpty konnte nicht zugewiesen werden"
 
@@ -1056,18 +1052,24 @@ msgstr ""
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF fehlgeschlagen"
 
-#: src/bin/win.c:6239
+#: src/bin/win.c:6210
 msgid "Ok"
 msgstr "OK"
 
-#: src/bin/win.c:6244
+#: src/bin/win.c:6215
 msgid "Cancel"
 msgstr "Abbruch"
 
-#: src/bin/win.c:7434
+#: src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Terminology-Tema konnte nicht gefunden werden! „ninja install“ vergessen?"
+
+#~ msgid "Shine:"
+#~ msgstr "Leuchten:"
+
+#~ msgid "React to key presses"
+#~ msgstr "Reagiere auf Tastenschlag"
 
 #, fuzzy
 #~ msgid "Become a borderless managed window"
