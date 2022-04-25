@@ -392,7 +392,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
 
    _add_cursors_option(bx, ctx);
 
-   OPTIONS_CX(_("React to key presses"), flicker_on_key, 0);
+   OPTIONS_CX(_("React to key presses (typing sounds and animations)"), flicker_on_key, 0);
    if (!multisense_available)
      {
         lbl = elm_label_add(bx);
