@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the terminology package.
 # <boris@fau.re>, 2014.
 # similar <similar@orange.fr>, 2019, 2020.
-# Philippe Jean Guillaumie <similar@orange.fr>, 2021.
+# Philippe Jean Guillaumie <similar@orange.fr>, 2021, 2022.
 # anthi <thetechrobo@pm.me>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2021-06-08 13:34+0000\n"
+"PO-Revision-Date: 2022-04-27 05:16+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.12.1-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
@@ -585,7 +585,7 @@ msgstr "Faire défiler jusqu'en bas sur pression d'une touche"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Réagir aux pressions sur les touches (sons de frappe et animations)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
