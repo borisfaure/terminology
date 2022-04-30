@@ -4115,7 +4115,7 @@ _smart_cb_drop(void *data,
                   if (*p)
                     {
                        len = strlen(p);
-                       strncpy(buf, p, len);
+                       memcpy(buf, p, len);
                        buf[len] = '\0';
                        if (extn_is_media(buf, len))
                          evas_object_smart_callback_call(obj, "popup,queue", buf);
