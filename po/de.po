@@ -4,14 +4,14 @@
 # Translators:
 # Tobias Bannert <Unknown>, 2014
 # Milo Ivir <mail@milotype.de>, 2020.
-#
+# Ingo Noelleke <ingo.noelleke@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2020-12-03 20:29+0000\n"
-"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"PO-Revision-Date: 2022-05-03 08:16+0000\n"
+"Last-Translator: Ingo Noelleke <ingo.noelleke@gmail.com>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
 "terminology/de/>\n"
 "Language: de\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4-dev\n"
+"X-Generator: Weblate 4.12.1\n"
 "X-Launchpad-Export-Date: 2014-10-05 12:16+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
@@ -58,7 +58,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminology's Entwickler"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -338,7 +338,7 @@ msgstr "Verwende das benannte edje Thema oder den Pfad zur Themendatei"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Verwende das benannte Farbschema"
 
 #: src/bin/main.c:476
 #, fuzzy
@@ -412,7 +412,7 @@ msgstr ""
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Starte randlos"
 
 #: src/bin/main.c:507
 #, fuzzy
@@ -421,7 +421,7 @@ msgstr "Starte als override-redirect Fenster"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Starte maximiert"
 
 #: src/bin/main.c:511
 #, fuzzy
