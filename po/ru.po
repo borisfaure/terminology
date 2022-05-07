@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
-# Arthur Nikitenko <niko2040@4e.by>, 2021.
+# Arthur Nikitenko <niko2040@4e.by>, 2021, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2021-03-20 12:18+0000\n"
+"PO-Revision-Date: 2022-05-05 23:10+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
 "terminology/ru/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.5.2-dev\n"
+"X-Generator: Weblate 4.12.1\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
 #: src/bin/termio.c:1305
@@ -585,7 +585,7 @@ msgstr "Прокручивать вниз при нажатии клавиши"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Реакция на нажатие клавиш (звуки и анимация)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
