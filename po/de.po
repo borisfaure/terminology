@@ -5,13 +5,14 @@
 # Tobias Bannert <Unknown>, 2014
 # Milo Ivir <mail@milotype.de>, 2020.
 # Ingo Noelleke <ingo.noelleke@gmail.com>, 2022.
+# styx <styx+weblate@office-vienna.at>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2022-05-03 08:16+0000\n"
-"Last-Translator: Ingo Noelleke <ingo.noelleke@gmail.com>\n"
+"PO-Revision-Date: 2022-05-07 09:11+0000\n"
+"Last-Translator: styx <styx+weblate@office-vienna.at>\n"
 "Language-Team: German <https://hosted.weblate.org/projects/terminology/"
 "terminology/de/>\n"
 "Language: de\n"
@@ -311,20 +312,17 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012 – %d Carsten Haitzler und andere"
 
 #: src/bin/main.c:462
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
 "Terminal-Emulator programmiert mit Enlightenment Foundation Bibliotheken"
 
 #: src/bin/main.c:466
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
-msgstr "Verwende die benannte Datei als Hintergrundbild"
+msgstr "Als Hintergrundbild verwenden"
 
 #: src/bin/main.c:468
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr "Wechsle zum Verzeichnis, um den Terminalbefehl auszuführen"
+msgstr "Führe einen Terminal in diesem Verzeichnis aus"
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
@@ -332,178 +330,149 @@ msgstr ""
 "Auszuführender Befehl. Standardmäßig $SHELL (oder passwd shell oder /bin/sh)"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
-msgstr "Verwende das benannte edje Thema oder den Pfad zur Themendatei"
+msgstr "Verwende dieses edje Thema oder den Pfad zur Themendatei"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr "Verwende das benannte Farbschema"
+msgstr "Verwende dieses Farbschema"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Bestimme die Terminalgröße (z.B. 80 × 24 oder 80 × 24 + 50 + 20 usw.)"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set window name"
-msgstr "Bestimme den Namen des Fensters"
+msgstr "Fensternamen setzen"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Set window role"
-msgstr "Bestimme die Rolle des Fensters"
+msgstr "Fensterrolle setzen"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Set window title"
-msgstr "Bestimme den Titel des Fensters"
+msgstr "Fenstertitel setzen"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Set icon name"
-msgstr "Bestimme den Namen des Symbols"
+msgstr "Name des Icon setzen"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Bestimme die Schrift (NAME/GRÖSSE für sklierbare, NAME für Bitmap"
+msgstr "Schrift (NAME/GRÖSSE für skalierbare, NAME für Bitmap) setzen"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
 "Teile das Terminalfenster. „v“ für vertikal und „h“ für horizontal. Kann "
-"mehrfach verwendet werden, z.B. -S vhvv oder --split hv. Weitere "
-"Beschreibung auf der Handbuchseite"
+"mehrfach verwendet werden, z.B. -S vhvv oder --split hv. Weitere Optionen "
+"siehe Handbuch (man-Seite)"
 
 #: src/bin/main.c:493
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Starte die Shell als Shell zur Anmeldung"
+msgstr "Starte die Shell als Anmelde-shell"
 
 #: src/bin/main.c:495
-#, fuzzy
 msgid "Set mute mode for video playback"
-msgstr "Stelle auf stumm bei Videowiedergaben"
+msgstr "Bei Videowiedergabe stumm schalten"
 
 #: src/bin/main.c:497
-#, fuzzy
 msgid "Set cursor blink mode"
-msgstr "Setze das Blinken des Zeigers"
+msgstr "Bestimme den Modus, in dem der Cursor blinkt"
 
 #: src/bin/main.c:499
-#, fuzzy
 msgid "Set visual bell mode"
-msgstr "Setze auf sichtbare Glocke"
+msgstr "Optische Notifizierung setzen"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Starte im Vollbild-Modus"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Minimiert starten"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr "Starte randlos"
+msgstr "Rahmenlos starten"
 
 #: src/bin/main.c:507
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Starte als override-redirect Fenster"
+msgstr "Starte als override-redirect-Fenster"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr "Starte maximiert"
+msgstr "Maximiert starten"
 
 #: src/bin/main.c:511
-#, fuzzy
 msgid "Terminology is run without a window manager"
 msgstr "Terminology wird ohne Fenster-Manager ausgeführt"
 
 #: src/bin/main.c:513
-#, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Nicht beenden, wenn der Befehlsprozess beendet wird"
 
 #: src/bin/main.c:515
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
-"Erzwinge einzelne ausführbare Datei, wenn die Benutzung von mehreren "
+"Erzwinge einen einzigen Prozeß, auch wenn die Benutzung von mehreren "
 "Instanzen aktiviert ist"
 
 #: src/bin/main.c:517
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Setze TERM auf „xterm-256color“, statt „xterm“"
 
 #: src/bin/main.c:519
-#, fuzzy
 msgid "Set scaling factor"
 msgstr "Bestimme den Vergrößerungsfaktor"
 
 #: src/bin/main.c:521
-#, fuzzy
 msgid "Highlight links"
 msgstr "Hebe Verknüfungen hervor"
 
 #: src/bin/main.c:523
-#, fuzzy
 msgid "Do not display wizard on start up"
 msgstr "Assistenten beim Start nicht anzeigen"
 
 #: src/bin/main.c:549
-#, fuzzy
 msgid "show program version"
-msgstr "zeige die Versionsnummer"
+msgstr "Versionsnummer zeigen"
 
 #: src/bin/main.c:552
-#, fuzzy
 msgid "show copyright"
-msgstr "zeige das Copyright"
+msgstr "Copyright zeigen"
 
 #: src/bin/main.c:555
-#, fuzzy
 msgid "show license"
-msgstr "zeige die Linzenz"
+msgstr "Lizenz zeigen"
 
 #: src/bin/main.c:558
-#, fuzzy
 msgid "show this message"
-msgstr "zeige diese Nachricht"
+msgstr "Diese Meldung anzeigen"
 
 #: src/bin/main.c:655
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "ungültiges Argument gefunden für Option -S/--split. Öffne --help"
+msgstr "ungültiges Argument gefunden für Option -S/--split. Siehe --help"
 
 #: src/bin/main.c:909
-#, fuzzy
 msgid "Could not initialize key bindings"
-msgstr "Tastenkombinationen konnten nicht gestartet werden"
+msgstr "Tastenkombinationen konnten nicht aktiviert werden"
 
 #: src/bin/main.c:924
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "Optionen der Kommandozeile konnten nicht analysiert werden"
+msgstr "Optionen der Kommandozeile konnten nicht verarbeitet werden"
 
 #: src/bin/main.c:948
 #, c-format
 msgid "option %s requires an argument!"
-msgstr "Option %s benötigt ein Argument!"
+msgstr "Option %s benötigt einen Parameter!"
 
 #: src/bin/main.c:949
-#, fuzzy
 msgid "invalid options found. See --help"
-msgstr "ungültige Option gefunden. Öffne --help"
+msgstr "ungültige Option gefunden. Siehe --help"
 
 #: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
@@ -513,15 +482,15 @@ msgstr "Funktion %s fehlgeschlagen: %s"
 
 #: src/bin/media.c:1433
 msgid "Media visualizing is not supported"
-msgstr "Das Anzeigen von Medien wird nicht unterstützt"
+msgstr "Medienvisualisierung wird nicht unterstützt"
 
 #: src/bin/options_background.c:139
 msgid "None"
-msgstr "Nichts"
+msgstr "KeineS"
 
 #: src/bin/options_background.c:471
 msgid "Source file is target file"
-msgstr "Quelldatei ist Zieldatei"
+msgstr "Quell- und Zieldatei sind identisch"
 
 #: src/bin/options_background.c:484
 msgid "Picture imported"
@@ -620,7 +589,7 @@ msgstr "Scroole ans Ende beim Tastenschlag"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Auf Tastendruck reagieren (Sound und Animiationen)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -674,6 +643,7 @@ msgstr "Benutze Emojis als Zeichen mit doppelter Breite"
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Bei Eingabeverteilunng auf alle Terminals verteilen, nicht nur auf sichtbare"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
@@ -692,14 +662,13 @@ msgid "Height:"
 msgstr "Höhe:"
 
 #: src/bin/options_behavior.c:527
-#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 "Bestimme die Dauer der Animation beim<br>Wechsel zwischen den Reitern "
-"per<br>Tastenkombination, Mausrädchen oder<br>durch ziehen des Reiterpanels "
-"per Maus"
+"per<br>Tastenkombination, Mausrädchen oder<br>durch ziehen des Reiters per "
+"Maus"
 
 #: src/bin/options_behavior.c:532
 msgid "Tab zoom/switch animation time:"
@@ -745,33 +714,32 @@ msgstr "Temporär"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Webseite öffnen"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Autor:</b>%s<br /><b>Webseite:</b>%s<br />Lizenz:</b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Farben"
+msgstr "Farbschemata"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Thema-Hervorhebung <hilight>%s</highlight>"
 
 #: src/bin/options_elm.c:122
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> verwendet Werkzeuge von <hilight>elementary</hilight>."
-"<br>Die Konfigurationseinstellungen können durch das Ausführen von <keyword>"
-"%s</keyword> aufgerufen werden"
+"<em>Terminology</em> verwendet Werkzeuge von <hilight>elementary</"
+"hilight>.<br>Konfigurationseinstellungen durch  das Ausführen von "
+"<keyword>%s</keyword> aufrufen"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -783,22 +751,20 @@ msgid "Scale"
 msgstr "Größe"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:433
-#, fuzzy
 msgid "Select preferred size so that this text is readable"
-msgstr "Wähle die bevorzugte Größe, damit dieser Text lesbar ist"
+msgstr "Gut lesbare Textgröße einstellen"
 
 #: src/bin/options_elm.c:180
-#, fuzzy
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"Die Größenänderung kann auch in den Einstullungen von <hilight>elementary</"
-"hilight> festgelegt werden"
+"Die Größeneinstellungen kann auch in den <hilight>elementary</hilight>-"
+"Einstellungen festgelegt werden"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Schriftart suchen"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
@@ -881,9 +847,8 @@ msgid "On URLs"
 msgstr "Bei URL-Adressen"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Farben"
+msgstr "Pro Farbe"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
@@ -932,7 +897,7 @@ msgstr "Lokal (Alle):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Farbschema <hilight>%s</hilight> verwenden"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -1039,14 +1004,13 @@ msgid "Done"
 msgstr "Fertig"
 
 #: src/bin/win.c:441
-#, fuzzy
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
 "Ändere die Größe in den Einstellungen (Rechtsklick auf das Terminal) → "
-"Toolkit, oder starte den Befehl <keyword>elementary_config</keyword>"
+"Toolkit, oder starte <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2336
 msgid "Ecore IMF failed"
