@@ -640,7 +640,7 @@ list_dir(const char *dir, Tyls_Options *options)
                {
                   for (c = 0; c < cols; c++)
                     {
-                       char sz[6], szch = ' ';
+                       char sz[32], szch = ' ';
                        long long size;
 
                        s = names[(c * rows) + i];
@@ -694,7 +694,7 @@ list_dir(const char *dir, Tyls_Options *options)
                   printf("\n");
                   for (c = 0; c < cols; c++)
                     {
-                       char sz[6], szch = ' ';
+                       char sz[32], szch = ' ';
                        long long size;
                        int len;
 
@@ -790,7 +790,7 @@ flush_file(Tyls_Options *options)
                {
                   for (c = 0; c < cols; c++)
                     {
-                       char sz[6], szch = ' ';
+                       char sz[32], szch = ' ';
                        long long size;
 
                        s = names[(c * rows) + i];
@@ -848,7 +848,7 @@ flush_file(Tyls_Options *options)
                   printf("\n");
                   for (c = 0; c < cols; c++)
                     {
-                       char sz[6], szch = ' ';
+                       char sz[32], szch = ' ';
                        long long size;
                        int len;
 
