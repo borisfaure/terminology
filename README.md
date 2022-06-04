@@ -1,12 +1,12 @@
-Terminology 1.12.1
-==================
+![Terminology](/data/icons/terminology.png)
+# Terminology
 
 This is an EFL terminal emulator with some extra bells and whistles.
 
 :warning: :warning: :warning:
 
-> FOR ANY ISSUES, PLEASE CONSULT THEM ON
-> http://issues.terminolo.gy/
+*Please report bugs/issues at*
+[git.enlightenment.org](https://git.enlightenment.org/enlightenment/terminology/issues)
 
 :warning: :warning: :warning:
 
@@ -17,157 +17,139 @@ This is an EFL terminal emulator with some extra bells and whistles.
 [![Snapcraft](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
 [![Weblate](https://hosted.weblate.org/widgets/terminology/-/terminology/svg-badge.svg)](https://hosted.weblate.org/engage/terminology/)
 
-Requirements
-------------
+## Requirements
 
-  * `efl` (>= 1.26.0)
+* [efl](https://git.enlightenment.org/enlightenment/efl)
 
 Please see http://www.enlightenment.org for information on these.
 
-
-Compiling
----------
+## Compiling
 
 Once you have met requirements, compiling and installing is simple:
 
-```sh
-  meson build
-  cd build
-  ninja
-  ninja install
+``` sh
+meson build
+ninja -C build
+sudo ninja -C build install
 ```
 
 Note: to make terminology work with input methods in general you need:
 
-```sh
-  export ECORE_IMF_MODULE="xim"
-  export XMODIFIERS="@im=none"
+``` sh
+export ECORE_IMF_MODULE="xim"
+export XMODIFIERS="@im=none"
 ```
 
-
-Themes
-------
+## Themes
 
 Apart from the ones shipped with Terminology, themes can be stored in
-`~/.config/terminology/themes/` .
+`~/.config/terminology/themes/`.
 
 Documentation on themes is written in [THEMES.md](THEMES.md).
 
-
-Color Schemes
--------------
+## Color Schemes
 
 Terminology ships with some common color schemes.
 
 To know how to modify or add some new color schemes, please read
 [COLORSCHEMES.md](COLORSCHEMES.md).
 
+## Mouse controls
 
+* `Right mouse button` = controls menu
+* `Middle mouse button` = paste highlight selection
+* `Left mouse button/drag` = make highlight
+* `Wheel` = scroll up or down in history
+* `Ctrl+Wheel` = zoom font size up/down
+* `Ctrl+Left mouse button/drag` = make block selection highlight
 
-Mouse controls
---------------
+## Default key controls
 
-  * `Right mouse button` = controls menu
-  * `Middle mouse button` = paste highlight selection
-  * `Left mouse button/drag` = make highlight
-  * `Wheel` = scroll up or down in history
-  * `Ctrl+Wheel` = zoom font size up/down
-  * `Ctrl+Left mouse button/drag` = make block selection highlight
+* `Shift+PgUp` = Scroll 1 page up
+* `Shift+PgDn` = Scroll 1 page down
+* `Shift+Up` = Scroll 1 line up
+* `Shift+Down` = Scroll 1 line down
+* `Shift+Home` = Scroll to the top of the backlog
+* `Shift+End` = Reset scroll
+* `Shift+Left` = switch focus to previous terminal inside a window
+* `Shift+Right` = switch focus to next terminal inside a window
+* `Shift+Insert` = Paste Clipboard (`ctrl+v/c`) selection
+* `Shift+Ctrl+Insert` = Paste Primary (highlight) selection
+* `Shift+Keypad-Plus` = Font size up 1
+* `Shift+Keypad-Minus` = Font size down 1
+* `Shift+Keypad-Multiply` = Reset font size
+* `Shift+Keypad-Divide` = Copy highlight to Clipboard (same as `Ctrl+c` in gui apps)
+* `Ctrl+PgUp` = switch focus to previous terminal inside a window
+* `Ctrl+PgDn` = switch focus to next terminal inside a window
+* `Ctrl+Shift+t` = create new terminal on top of current inside window (tabs)
+* `Ctrl+Shift+End` = close the focused terminal.
+* `Ctrl+Shift+h` = toggle displaying the miniview of the history
+* `Ctrl+Shift+Home` = bring up "tab" switcher
+* `Ctrl+Shift+PgUp` = split terminal horizontally (1 term above the other)
+* `Ctrl+Shift+PgDn` = split terminal vertically (1 term to the left of the other)
+* `Ctrl+Shift+c` = copy current selection to clipboard
+* `Ctrl+Shift+v` = paste current clipboard selection
+* `Alt+Home` = Enter command mode (enter commands to control terminology itself)
+* `Alt+Return` = Paste primary selection
+* `Alt+g` = Group input: send input to all visible terminals in the window
+* `Alt+Shift+g` = Group input: send input to all terminals in the window
+* `Alt+w` = Copy selection to primary
+* `Alt+Up` = Focus the terminal above
+* `Alt+Down` = Focus the terminal below
+* `Alt+Left` = Focus the terminal on the left
+* `Alt+Right` = Focus the terminal on the right
+* `Ctrl+Alt+Equal` = Font size up 1
+* `Ctrl+Alt+Minus` = Font size down 1
+* `Ctrl+Alt+0` = Reset font size
+* `Ctrl+Alt+9` = Big font size
+* `Ctrl+Alt+t` = Set terminal title
+* `Ctrl+1` = switch to terminal tab 1
+* `Ctrl+2` = switch to terminal tab 2
+* `Ctrl+3` = switch to terminal tab 3
+* `Ctrl+4` = switch to terminal tab 4
+* `Ctrl+5` = switch to terminal tab 5
+* `Ctrl+6` = switch to terminal tab 6
+* `Ctrl+7` = switch to terminal tab 7
+* `Ctrl+8` = switch to terminal tab 8
+* `Ctrl+9` = switch to terminal tab 9
+* `Ctrl+0` = switch to terminal tab 10
 
-
-Default key controls
---------------------
-
-  * `Shift+PgUp` = Scroll 1 page up
-  * `Shift+PgDn` = Scroll 1 page down
-  * `Shift+Up` = Scroll 1 line up
-  * `Shift+Down` = Scroll 1 line down
-  * `Shift+Home` = Scroll to the top of the backlog
-  * `Shift+End` = Reset scroll
-  * `Shift+Left` = switch focus to previous terminal inside a window
-  * `Shift+Right` = switch focus to next terminal inside a window
-  * `Shift+Insert` = Paste Clipboard (`ctrl+v/c`) selection
-  * `Shift+Ctrl+Insert` = Paste Primary (highlight) selection
-  * `Shift+Keypad-Plus` = Font size up 1
-  * `Shift+Keypad-Minus` = Font size down 1
-  * `Shift+Keypad-Multiply` = Reset font size
-  * `Shift+Keypad-Divide` = Copy highlight to Clipboard (same as `Ctrl+c` in gui apps)
-  * `Ctrl+PgUp` = switch focus to previous terminal inside a window
-  * `Ctrl+PgDn` = switch focus to next terminal inside a window
-  * `Ctrl+Shift+t` = create new terminal on top of current inside window (tabs)
-  * `Ctrl+Shift+End` = close the focused terminal.
-  * `Ctrl+Shift+h` = toggle displaying the miniview of the history
-  * `Ctrl+Shift+Home` = bring up "tab" switcher
-  * `Ctrl+Shift+PgUp` = split terminal horizontally (1 term above the other)
-  * `Ctrl+Shift+PgDn` = split terminal vertically (1 term to the left of the other)
-  * `Ctrl+Shift+c` = copy current selection to clipboard
-  * `Ctrl+Shift+v` = paste current clipboard selection
-  * `Alt+Home` = Enter command mode (enter commands to control terminology itself)
-  * `Alt+Return` = Paste primary selection
-  * `Alt+g` = Group input: send input to all visible terminals in the window
-  * `Alt+Shift+g` = Group input: send input to all terminals in the window
-  * `Alt+w` = Copy selection to primary
-  * `Alt+Up` = Focus the terminal above
-  * `Alt+Down` = Focus the terminal below
-  * `Alt+Left` = Focus the terminal on the left
-  * `Alt+Right` = Focus the terminal on the right
-  * `Ctrl+Alt+Equal` = Font size up 1
-  * `Ctrl+Alt+Minus` = Font size down 1
-  * `Ctrl+Alt+0` = Reset font size
-  * `Ctrl+Alt+9` = Big font size
-  * `Ctrl+Alt+t` = Set terminal title
-  * `Ctrl+1` = switch to terminal tab 1
-  * `Ctrl+2` = switch to terminal tab 2
-  * `Ctrl+3` = switch to terminal tab 3
-  * `Ctrl+4` = switch to terminal tab 4
-  * `Ctrl+5` = switch to terminal tab 5
-  * `Ctrl+6` = switch to terminal tab 6
-  * `Ctrl+7` = switch to terminal tab 7
-  * `Ctrl+8` = switch to terminal tab 8
-  * `Ctrl+9` = switch to terminal tab 9
-  * `Ctrl+0` = switch to terminal tab 10
-
-
-
-
-Companion tools
----------------
+## Companion tools
 
 Terminology ships with a set of tools to help you get the best out of
 Terminology.
 
-  * `tyls`: list directory contents with bells and whistles
-  * `tyalpha`: set transparency level of the background
-  * `tybg`: change the background image
-  * `tycat`: display inline a media file or a URI
-  * `typop`: display in a popup a media file or a URI
-  * `tyq`: queue media files or URI to be popped up
-  * `tysend`: send files to the terminal (useful through ssh)
+* `tyls`: list directory contents with bells and whistles
+* `tyalpha`: set transparency level of the background
+* `tybg`: change the background image
+* `tycat`: display inline a media file or a URI
+* `typop`: display in a popup a media file or a URI
+* `tyq`: queue media files or URI to be popped up
+* `tysend`: send files to the terminal (useful through ssh)
 
-
-
-Extended escapes for terminology only
---------------------------------------
+## Extended escapes for terminology only
 
 `[\033][}][COMMAND][\000]`
 i.e.
-  1. `ESC` char (`\033` or `0x1b`)
-  2. `}` char
-  3. a sequence of UTF8 chars other than `nul` (`\000` or `0x00`).
-  4. `\000` char (`nul` byte or `0x00` to indicate end of sequence)
+1. `ESC` char (`\033` or `0x1b`)
+2. `}` char
+3. a sequence of UTF8 chars other than `nul` (`\000` or `0x00`).
+4. `\000` char (`nul` byte or `0x00` to indicate end of sequence)
 
 e.g.
+``` sh
   `echo -n '\033}Hello world\000'`
+```
 
 ## Commands
 
 In the following, any values inside square brackets `[]` are to be replaced
 by some content (numbers, strings, paths, url's etc.).
 
-examples:
+Examples:
 
-  * `aa[PATH-OF-FILE]` should become something like: `aa/tmp/file.png`
-  * `aa[true/false]` should become something like:  `aatrue` or `aafalse`
+* `aa[PATH-OF-FILE]` should become something like: `aa/tmp/file.png`
+* `aa[true/false]` should become something like:  `aatrue` or `aafalse`
 
 ## Available commands
 
@@ -220,7 +202,7 @@ examples:
     destination URI when a user may click on the given media image.
 
     example:
-    ```sh
+    ``` sh
       printf("\033}is#5;3;%s\000"
              "\033}ib\000#####\033}ie\000\n"
              "\033}ib\000#####\033}ie\000\n"
