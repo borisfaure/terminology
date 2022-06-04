@@ -363,7 +363,7 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/
 
 You will need to enusre that the destination library directory (e.g.
 `/usr/local/lib` is in your /etc/ld.so.conf or /etc/ld.so.conf.d/
-files and after insgtaling anything that installes libraries you
+files and after installing anything that installs libraries you
 re-run `ldconfig`. Please see relevant documentation on ldconfig and
 ld.so.conf for your distribution.
 
