@@ -33,7 +33,10 @@ ninja -C build
 sudo ninja -C build install
 ```
 
-Note: to make terminology work with input methods in general you need:
+At the end of this file is more complete information on cimpiling and
+installing.
+
+**NOTE:** to make terminology work with input methods in general you need:
 
 ``` sh
 export ECORE_IMF_MODULE="xim"
