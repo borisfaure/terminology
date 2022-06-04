@@ -22,7 +22,7 @@ such as the ability to display in-line images, video and even play
 music files, background images, videos, Z-Modem like sending (e.g. SSH
 into a server and use tysend to send a file back to the local
 terminal), GPU Accelerated rendering (optional - just set the
-Elementary enginer to use OpenGL) and much more.
+EFL Elementary toolkit  engine to use OpenGL) and much more.
 
 ## Requirements
 
