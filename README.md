@@ -1,14 +1,12 @@
 ![Terminology](/data/readme/terminology.png)
 # Terminology
 
-This is an EFL terminal emulator with some extra bells and whistles.
-
-:warning: :warning: :warning:
+-----
 
 *Please report bugs/issues at*
 [git.enlightenment.org](https://git.enlightenment.org/enlightenment/terminology/issues)
 
-:warning: :warning: :warning:
+-----
 
 [![Coverity](https://scan.coverity.com/projects/terminology/badge.svg)](https://scan.coverity.com/projects/terminology)
 [![CircleCI](https://circleci.com/gh/borisfaure/terminology.svg?style=shield)](https://circleci.com/gh/borisfaure/terminology)
@@ -16,6 +14,15 @@ This is an EFL terminal emulator with some extra bells and whistles.
 [![Twitter: _Terminology_](https://img.shields.io/twitter/follow/_Terminology_?style=social)](https://twitter.com/_Terminology_)
 [![Snapcraft](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
 [![Weblate](https://hosted.weblate.org/widgets/terminology/-/terminology/svg-badge.svg)](https://hosted.weblate.org/engage/terminology/)
+
+-----
+
+This is an EFL terminal emulator with some extra bells and whistles
+such as the ability to display in-line images, video and even play
+music files, background images, videos, Z-Modem like sending (e.g. SSH
+into a server and use tysend to send a file back to the local
+terminal), GPU Accelerated rendering (optional - just set the
+Elementary enginer to use OpenGL) and much more.
 
 ## Requirements
 
@@ -25,7 +32,7 @@ Please see http://www.enlightenment.org for information on these.
 
 ## Compiling
 
-Once you have met requirements, compiling and installing is simple:
+Once you have met requirements, compiling and installing are simple:
 
 ``` sh
 meson build
