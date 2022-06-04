@@ -1,4 +1,4 @@
-![Terminology](/data/icons/terminology.png)
+![Terminology](/data/readme/terminology.png)
 # Terminology
 
 This is an EFL terminal emulator with some extra bells and whistles.
