@@ -361,7 +361,7 @@ to your library locations so you might have to have more like:
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:/usr/local/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/lib64/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig
 ```
 
-You will need to enusre that the destination library directory (e.g.
+You will need to ensure that the destination library directory (e.g.
 `/usr/local/lib` is in your /etc/ld.so.conf or /etc/ld.so.conf.d/
 files and after installing anything that installs libraries you
 re-run `ldconfig`. Please see relevant documentation on ldconfig and
@@ -407,7 +407,7 @@ meson . build
 
 ### Quick build help
 
-How clean out the build and config and start fresh:
+How to clean out the build and config and start fresh:
 ```sh
 rm -rf build
 ```
