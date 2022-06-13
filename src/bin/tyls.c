@@ -313,6 +313,8 @@ const Cmatch fmatch[] =
    { 2, 3, 5,  9, 9, 9, "*.WAV", "audio-x-wav"},
    { 2, 3, 5,  9, 9, 9, "*.m3u", "audio-x-mp3-playlist"},
    { 2, 3, 5,  9, 9, 9, "*.M3U", "audio-x-mp3-playlist"},
+   { 2, 3, 5,  9, 9, 9, "*.pls", "audio-x-mp3-playlist"},
+   { 2, 3, 5,  9, 9, 9, "*.PLS", "audio-x-mp3-playlist"},
 
    { 3, 5, 2,  9, 9, 9, "*.patch", "text-x-generic"},
    { 3, 5, 2,  9, 9, 9, "*.PATCH", "text-x-generic"},
