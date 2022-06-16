@@ -1,12 +1,12 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
-# Durver Eriksson <dyrver.eriksson@gmail.com>, 2021.
+# Durver Eriksson <dyrver.eriksson@gmail.com>, 2021, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2021-04-22 14:51+0000\n"
+"PO-Revision-Date: 2022-06-16 09:17+0000\n"
 "Last-Translator: Durver Eriksson <dyrver.eriksson@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
 "terminology/sv/>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.13-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
 #: src/bin/termio.c:1305
@@ -44,12 +44,12 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Varför ska en terminal behöva vara tråkig?"
-"<br><br>Denna terminal var skapad för Enlightenment, använder EFL och "
+"<b>Terminology %s</b><br>Varför ska en terminal behöva vara "
+"tråkig?<br><br>Denna terminal var skapad för Enlightenment, använder EFL och "
 "övervägande förflyttar gränserna för hur en modern terminal emulator ska "
-"vara. Vi hoppas du tycker om den.<br><br>Copyright © 2012-%d by:<br><br>"
-"%s<br><br>Distributerad under en 2-clause BSD licens detailerad nedanför."
-"<br><br>%s"
+"vara. Vi hoppas du tycker om den.<br><br>Copyright © 2012-%d av:"
+"<br><br>%s<br><br>Distributerad under en 2-clause BSD licens detaljerad "
+"nedanför.<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -580,7 +580,7 @@ msgstr "Rulla till botten när en tangent trycks ned"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reagera på knapptryckningar (tangentljud och animationer)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
