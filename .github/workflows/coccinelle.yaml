@@ -14,6 +14,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GIT_ACCESS_TOKEN }}
+        token: ${{ github.token }}
     - name: coccinelle check
       run: scripts/coccinelle/coccicheck.sh
