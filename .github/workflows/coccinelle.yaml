@@ -1,0 +1,19 @@
+name: coccinelle
+
+on: [push]
+
+jobs:
+  coccinelle:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: install coccinelle
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+        sudo apt install -y coccinelle
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GIT_ACCESS_TOKEN }}
+    - name: coccinelle check
+      run: scripts/coccinelle/coccicheck.sh
