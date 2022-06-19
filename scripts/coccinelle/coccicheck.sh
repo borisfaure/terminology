@@ -19,7 +19,7 @@ div_round_up.cocci
 HAS_ERROR=0
 for f in $COCCI_FILES; do
    OPTIONS=""
-   if [ "$COCCI_FILES" = "div_round_up.cocci" ]; then
+   if [ "$f" = "div_round_up.cocci" ]; then
       OPTIONS="--defined DIV_ROUND_UP"
    fi
    CMD="spatch --timeout 200 --very-quiet --cocci-file scripts/coccinelle/$f --include-headers --dir $DIR $OPTIONS"
