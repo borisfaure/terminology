@@ -147,7 +147,7 @@ _mouse_move_cb(void *data,
      return;
    iw = sqrt(eina_list_count(sd->items));
    if (iw < 1) iw = 1;
-   ih = (eina_list_count(sd->items) + (iw - 1)) / iw;
+   ih = DIV_ROUND_UP(eina_list_count(sd->items), iw);
    if (ih < 1) ih = 1;
    evas_object_geometry_get(sd->self, &x, &y, &w, &h);
    sw = w * sd->zoom;
@@ -366,7 +366,7 @@ _layout(Sel *sd)
 
    iw = sqrt(eina_list_count(sd->items));
    if (iw < 1) iw = 1;
-   ih = (eina_list_count(sd->items) + (iw - 1)) / iw;
+   ih = DIV_ROUND_UP(eina_list_count(sd->items), iw);
    if (ih < 1) ih = 1;
    evas_object_geometry_get(sd->self, &ox, &oy, &ow, &oh);
    w = ow * sd->zoom;

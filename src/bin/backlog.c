@@ -16,11 +16,11 @@ _accounting_change(int64_t diff)
 {
    if (diff > 0)
      {
-        diff = ((diff + 16-1) / 16) * 16;
+        diff = DIV_ROUND_UP(diff, 16) * 16;
      }
    else
      {
-        diff = ((-1 * diff + 16-1) / 16) * -16;
+        diff = DIV_ROUND_UP(-1 * diff, 16) * -16;
      }
    _mem_used += diff;
 }
@@ -167,7 +167,7 @@ termpty_backlog_length(Termpty *ty)
         if (!ts->cells)
           goto end;
 
-        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        nb_lines = (ts->w == 0) ? 1 : DIV_ROUND_UP(ts->w, ty->w);
         screen_y += nb_lines;
         ty->backlog_beacon.screen_y = screen_y;
         ty->backlog_beacon.backlog_y = backlog_y;

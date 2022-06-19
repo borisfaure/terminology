@@ -52,17 +52,17 @@ scaleterm(int w, int h, int *iw, int *ih)
    if (w > (width * cw))
      {
         *iw = width;
-        *ih = ((h * (width * cw) / w) + (ch - 1)) / ch;
+        *ih = DIV_ROUND_UP((h * (width * cw) / w), ch);
      }
    else
      {
-        *iw = (w + (cw - 1)) / cw;
-        *ih = (h + (ch - 1)) / ch;
+        *iw = DIV_ROUND_UP(w, cw);
+        *ih = DIV_ROUND_UP(h, ch);
      }
    if (maxh && *ih > maxh)
      {
         *ih = maxh;
-        *iw = ((w * (maxh * ch) / h) + (cw - 1)) / cw;
+        *iw = DIV_ROUND_UP((w * (maxh * ch) / h), cw);
      }
 }
 

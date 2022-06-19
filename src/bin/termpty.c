@@ -992,8 +992,8 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
           {
              int old_len = ts->w;
              termpty_save_expand(ty, ts, cells, w);
-             ty->backlog_beacon.screen_y += (ts->w + ty->w - 1) / ty->w
-                                          - (old_len + ty->w - 1) / ty->w;
+             ty->backlog_beacon.screen_y += DIV_ROUND_UP(ts->w, ty->w)
+                                          - DIV_ROUND_UP(old_len, ty->w);
              return;
           }
      }
@@ -1060,7 +1060,7 @@ termpty_backscroll_adjust(Termpty *ty, int *scroll)
              *scroll = ty->backlog_beacon.screen_y;
              return;
           }
-        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        nb_lines = (ts->w == 0) ? 1 : DIV_ROUND_UP(ts->w, ty->w);
         screen_y += nb_lines;
         ty->backlog_beacon.screen_y = screen_y;
         ty->backlog_beacon.backlog_y = backlog_y;
@@ -1099,7 +1099,7 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
           {
              return NULL;
           }
-        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        nb_lines = (ts->w == 0) ? 1 : DIV_ROUND_UP(ts->w, ty->w);
 
         /* Only update the beacon if working on different line than the one
          * from the beacon */
@@ -1130,7 +1130,7 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
           {
              return NULL;
           }
-        nb_lines = (ts->w == 0) ? 1 : (ts->w + ty->w - 1) / ty->w;
+        nb_lines = (ts->w == 0) ? 1 : DIV_ROUND_UP(ts->w, ty->w);
 
         ty->backlog_beacon.screen_y = screen_y;
         ty->backlog_beacon.backlog_y = backlog_y;
