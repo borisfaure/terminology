@@ -62,7 +62,7 @@ extern int _log_domain;
    (!strncmp(STR, STATIC_STR, strlen(STATIC_STR)))
 
 #if !defined(HAVE_STRCHRNUL)
-static inline char *
+static inline const char *
 strchrnul(const char *s, int c)
 {
    const char *p = s;

@@ -4489,7 +4489,7 @@ _handle_esc_dcs(Termpty *ty,
      }
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
-   else return 0;
+   else {return 0};
    len = cc - c;
    switch (buf[0])
      {
