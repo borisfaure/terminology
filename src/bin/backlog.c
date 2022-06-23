@@ -16,7 +16,7 @@ _accounting_change(int64_t diff)
 {
    if (diff > 0)
      {
-        diff = DIV_ROUND_UP(diff, 16) * 16;
+        diff = ROUND_UP(diff, 16);
      }
    else
      {
