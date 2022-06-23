@@ -20,7 +20,7 @@ HAS_ERROR=0
 for f in $COCCI_FILES; do
    OPTIONS=""
    if [ "$f" = "macros.cocci" ]; then
-      OPTIONS="--defined DIV_ROUND_UP --defined ROUND_UP"
+      OPTIONS="--defined DIV_ROUND_UP --defined ROUND_UP --defined MIN --defined MAX"
    fi
    CMD="spatch --timeout 200 --very-quiet --cocci-file scripts/coccinelle/$f --include-headers --dir $DIR $OPTIONS"
    OUT=$($CMD)

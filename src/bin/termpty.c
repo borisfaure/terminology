@@ -1431,8 +1431,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    free(ty->screen);
    ty->screen = new_screen;
 
-   ty->cursor_state.cy = (new_si.cy >= 0) ? new_si.cy : 0;
-   ty->cursor_state.cx = (new_si.cx >= 0) ? new_si.cx : 0;
+   ty->cursor_state.cy = MAX(new_si.cy, 0);
+   ty->cursor_state.cx = MAX(new_si.cx, 0);
    ty->circular_offset = new_si.circular_offset;
    ty->circular_offset2 = 0;
 

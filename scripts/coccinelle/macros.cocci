@@ -24,3 +24,15 @@ expression n, d;
 - (DIV_ROUND_UP(n,d) * d)
 + ROUND_UP(n, d)
 )
+
+// MIN / MAX
+@@
+expression x, y;
+@@
+(
+- (((x) > (y)) ? (y) : (x))
++ MIN(x, y)
+|
+- (((x) > (y)) ? (x) : (y))
++ MAX(x, y)
+)
