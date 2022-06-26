@@ -2,14 +2,14 @@
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-#
+# Maite Guix <maite.guix@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2020-09-16 21:34+0000\n"
-"Last-Translator: Boris Faure <billiob@gmail.com>\n"
+"PO-Revision-Date: 2022-06-26 16:14+0000\n"
+"Last-Translator: Maite Guix <maite.guix@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
 "terminology/ca/>\n"
 "Language: ca\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.3-dev\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
 #: src/bin/termio.c:1305
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
 msgstr "Còpia '%s'"
 
@@ -79,9 +79,8 @@ msgid "Miniview"
 msgstr "Minivista"
 
 #: src/bin/controls.c:413 src/bin/win.c:6206
-#, fuzzy
 msgid "Set title"
-msgstr "Anomena la finestra"
+msgstr "Estableix títol"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
@@ -141,9 +140,8 @@ msgid "Reset scroll"
 msgstr ""
 
 #: src/bin/keyin.c:666
-#, fuzzy
 msgid "Copy/Paste"
-msgstr "Enganxa"
+msgstr "Copiar/Enganxar"
 
 #: src/bin/keyin.c:667
 msgid "Copy selection to Primary buffer"
@@ -170,27 +168,24 @@ msgid "Focus the previous terminal"
 msgstr "Focus al terminal previ"
 
 #: src/bin/keyin.c:674
-#, fuzzy
 msgid "Focus the next terminal"
-msgstr "Focus al terminal previ"
+msgstr "Enfocar terminal següent"
 
 #: src/bin/keyin.c:675
 msgid "Focus the terminal above"
 msgstr "Focus al terminal superior"
 
 #: src/bin/keyin.c:676
-#, fuzzy
 msgid "Focus the terminal below"
-msgstr "Focus al terminal superior"
+msgstr "Enfocar terminal de sota"
 
 #: src/bin/keyin.c:677
 msgid "Focus the terminal on the left"
 msgstr "Focus al terminal de l'esquerra"
 
 #: src/bin/keyin.c:678
-#, fuzzy
 msgid "Focus the terminal on the right"
-msgstr "Focus al terminal de l'esquerra"
+msgstr "Enfocar el terminal de la dreta"
 
 #: src/bin/keyin.c:679
 msgid "Split horizontally (new below)"
@@ -205,18 +200,16 @@ msgid "Create a new \"tab\""
 msgstr ""
 
 #: src/bin/keyin.c:682
-#, fuzzy
 msgid "Close the focused terminal"
-msgstr "Focus al terminal previ"
+msgstr "Tancar el terminal enfocat"
 
 #: src/bin/keyin.c:683
 msgid "Bring up \"tab\" switcher"
 msgstr ""
 
 #: src/bin/keyin.c:684
-#, fuzzy
 msgid "Switch to terminal tab 1"
-msgstr "Focus al terminal superior"
+msgstr "Commutar al terminal de la pestanya 1"
 
 #: src/bin/keyin.c:685
 #, fuzzy
@@ -325,11 +318,9 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler i altres"
 
 #: src/bin/main.c:462
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
-"L'emulador de terminal ha estat escrit amb les biblioteques d'Enlightenment "
-"Foundation"
+"L'emulador de terminal ha estat escrit amb Enlightenment Foundation Libraries"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
@@ -816,7 +807,7 @@ msgstr "Meta+"
 
 #: src/bin/options_keys.c:71
 msgid "Hyper+"
-msgstr "Hyper+"
+msgstr "Hiper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
@@ -975,7 +966,7 @@ msgstr "No s'ha ubicat termpty"
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr "memerr: %s"
+msgstr "error memòria: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
@@ -1041,11 +1032,10 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #: src/bin/win.c:7404
-#, fuzzy
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
-"No es pot trobar el tema de terminology! Potser heu oblidat fer un 'ninja "
-"install'"
+"No s'ha pogut trobar el tema per a terminology. Heu oblidat l'ordre 'ninja "
+"install'?"
 
 #~ msgid "Shine:"
 #~ msgstr "Brillantor:"
