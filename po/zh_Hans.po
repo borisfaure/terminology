@@ -1,13 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
 # 玉堂白鹤 <yjwork@qq.com>, 2021.
+# 135e2 <shangshangzikun@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2021-04-03 08:26+0000\n"
-"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
+"PO-Revision-Date: 2022-07-04 17:15+0000\n"
+"Last-Translator: 135e2 <shangshangzikun@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "terminology/terminology/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -15,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6-dev\n"
+"X-Generator: Weblate 4.13.1-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
 #: src/bin/termio.c:1305
@@ -44,6 +45,10 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
+"<b>Terminology %s</b><br>你的下一代终端，何必如此无聊？<br><br>速来尝试Termin"
+"ology！这个终端专为Enlightenment打造，使用EFL和其他现代科技构建，力图成为现代"
+"终端模拟器的应有标杆。<br><br>版权所有 © 2012-%d "
+"作者：<br><br>%s<br><br>依据BSD-2许可证分发，详情如下：<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -244,7 +249,7 @@ msgstr "更改标题"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "切换是否将输入发送至所有终端"
 
 #: src/bin/keyin.c:699
 msgid "Font size"
@@ -378,11 +383,11 @@ msgstr "以全屏模式启动"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "最小化启动"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "无边框启动"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
@@ -390,7 +395,7 @@ msgstr ""
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "最大化启动"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
