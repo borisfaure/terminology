@@ -1,4 +1,4 @@
-A simple documentation to navige through the C files:
+A simple documentation to navigate through the C files:
 
 * `src/bin/about.c` handles the About widget
 * `src/bin/backlog.c`: backlog handling
