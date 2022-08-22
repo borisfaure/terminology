@@ -797,7 +797,7 @@ color_scheme_list(void)
                                  {
                                     WRN("Skipping loading '%s' from '%s' color scheme exists already",
                                        entry->name, buf);
-                                    eina_stringshare_del(entry->name);
+                                    eina_stringshare_del(current_name);
                                     continue;
                                  }
                               cs = eet_data_read(ef, edd_cs, entry->name);
@@ -805,7 +805,7 @@ color_scheme_list(void)
                                 {
                                    ERR("failed to load color scheme '%s' from '%s'",
                                        entry->name, buf);
-                                   eina_stringshare_del(entry->name);
+                                   eina_stringshare_del(current_name);
                                    continue;
                                 }
                               l = eina_list_sorted_insert(l, color_scheme_cmp, cs);
