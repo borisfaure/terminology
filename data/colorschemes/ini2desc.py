@@ -3,6 +3,14 @@
 import argparse
 import configparser
 
+def ensure_premultiplied(t):
+    (r, g, b, a) = t
+    if a != 255 and (a > r or a > g or a > b):
+        r = (r * a) // 255
+        g = (g * a) // 255
+        b = (b * a) // 255
+    return (r, g, b, a)
+
 def parse_color(color_string):
     h = color_string.lstrip('#')
     if len(h) == 6:
@@ -10,9 +18,13 @@ def parse_color(color_string):
     elif len(h) == 3:
         return tuple(int(h[i]+h[i], 16) for i in (0, 1, 2)) + (255,)
     elif len(h) == 8:
-        return tuple(int(h[i:i+2], 16) for i in (0, 2, 4, 6))
+        t = tuple(int(h[i:i+2], 16) for i in (0, 2, 4, 6))
+        t = ensure_premultiplied(t)
+        return t
     elif len(h) == 4:
-        return tuple(int(h[i]+h[i], 16) for i in (0, 1, 2, 3))
+        t = tuple(int(h[i]+h[i], 16) for i in (0, 1, 2, 3))
+        t = ensure_premultiplied(t)
+        return t
 
 def write_color(out, color_string):
     (r, g, b, a) = parse_color(color_string)
