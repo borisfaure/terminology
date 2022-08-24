@@ -6,6 +6,7 @@ colorschemes = [
   'Default',
   'Dracula',
   'Fahrenheit',
+  'Fir Dark',
   'Material',
   'Mild',
   'Mustang',
