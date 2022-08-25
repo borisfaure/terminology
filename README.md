@@ -432,3 +432,13 @@ How to build with verbose output (full commands run):
 ```sh
 ninja -C build -v
 ```
+
+## Running on framebuffer
+
+Terminology can run on the framebuffer, if EFL is compiled with ``fb`` or
+``drm`` support.
+Then the following environment need to be set:
+
+*  ``ELM_DISPLAY=fb``
+*  ``ELM_ACCEL=none``
+*  ``EVAS_FB_DEV=/dev/fb0``
