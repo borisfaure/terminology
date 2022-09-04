@@ -37,5 +37,5 @@ $EET -e "$EET_FILE" "$NAME" "$TMP_DESC" "$COMPRESS"
 
 rm "$TMP_DESC"
 
-# file successfully written, so need to trap to rename temp file
+# file successfully written, so no need to trap to remove temp file
 trap - INT TERM HUP EXIT
