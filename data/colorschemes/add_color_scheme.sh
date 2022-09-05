@@ -21,10 +21,9 @@ mkdir -p "$(dirname "$EET_FILE")"
 
 # generate desc on a temporary file
 TMP_DESC=$(mktemp "$NAME-DESC-XXXXXX")
-TMP_EET=$(mktemp "$NAME-EET-XXXXXX")
 
 # trap to avoid creating orphan files
-trap 'rm -f "$TMP_DESC" "$TMP_EET"' INT TERM HUP EXIT
+trap 'rm -f "$TMP_DESC"' INT TERM HUP EXIT
 
 NAME=$($GET_NAME "$INI")
 
