@@ -1,6 +1,11 @@
-=================
-Terminology 1.8.0
-=================
+==================
+Terminology 1.12.1
+==================
+
+Changes since 1.8.0:
+--------------------
+  * Add group "terminology/color_preview" to display a preview of a
+  colorscheme.
 
 Changes since 1.7.0:
 --------------------
