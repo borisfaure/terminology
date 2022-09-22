@@ -4,13 +4,14 @@
 # Adrián Arévalo <adri58@gmail.com>, 2015.
 # Roy Reese <waterbearer54@gmx.com>, 2015.
 # Adolfo Jayme Barrientos <fitojb@ubuntu.com>, 2021.
+# Eduardo Malaspina <vaio0@swismail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2021-05-04 20:31+0000\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
+"PO-Revision-Date: 2022-09-22 14:22+0000\n"
+"Last-Translator: Eduardo Malaspina <vaio0@swismail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
 "Language: es\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.7-dev\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
 #: src/bin/termio.c:1305
@@ -592,6 +593,7 @@ msgstr "Desplazar abajo al pulsar una tecla"
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
+"Reaccionar a la pulsación de teclas (sonidos y animaciones de escritura)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
