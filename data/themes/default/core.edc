@@ -10,23 +10,25 @@ group { name: "terminology/core";
             new r, g, b, a, v;
             v = (getarg(2) * 255) / 100;
 
-            custom_state(PART:"fade", "default", 0.0);
-            get_state_val(PART:"fade", STATE_COLOR, r, g, b, a);
-            set_state_val(PART:"fade", STATE_COLOR, r, g, b, v);
-            set_state(PART:"fade", "custom", 0.0);
+            custom_state(PART:"terminology.fade", "default", 0.0);
+            get_state_val(PART:"terminology.fade", STATE_COLOR, r, g, b, a);
+            set_state_val(PART:"terminology.fade", STATE_COLOR, r, g, b, v);
+            set_state(PART:"terminology.fade", "custom", 0.0);
          }
       }
    }
    parts {
         ////////////////////////////////////////////////////////////////////
         // background handling
-      part { name: "fade"; type: RECT;
+      part { name: "terminology.fade"; type: RECT;
          description { state: "default" 0.0;
+             color_class: "BG";
          }
       }
       part { name: "terminology.background"; type: SWALLOW;
-         clip_to: "fade";
+         clip_to: "terminology.fade";
          description { state: "default" 0.0;
+             color_class: "BG";
          }
          description { state: "image" 0.0;
             inherit: "default" 0.0;

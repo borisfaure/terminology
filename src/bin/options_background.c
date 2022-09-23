@@ -51,7 +51,6 @@ _cb_op_video_trans_chg(void *data,
    Config *config = ctx->config;
 
    config->translucent = elm_check_state_get(obj);
-   elm_object_disabled_set(ctx->op_opacity, !config->translucent);
    config_save(config);
    main_trans_update();
 }
@@ -65,8 +64,6 @@ _cb_op_video_opacity_chg(void *data,
    Config *config = ctx->config;
 
    config->opacity = elm_slider_value_get(obj);
-   if (!config->translucent)
-     return;
    config_save(config);
    main_trans_update();
 }
@@ -569,7 +566,6 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    elm_slider_indicator_format_set(o, _("%1.0f%%"));
    elm_slider_min_max_set(o, 0, 100);
    elm_slider_value_set(o, config->opacity);
-   elm_object_disabled_set(o, !config->translucent);
    elm_box_pack_end(bx, o);
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",

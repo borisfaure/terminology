@@ -176,6 +176,11 @@ To notify that the current tab is being dragged outside of other tabs.
 
 ## Swallowed parts
 
+### Part `terminology.fade`
+
+Part used to fade the background, either with a solid color or the screen
+background when the `translucent` option is set.
+
 ### Part `terminology.background`
 
 Actual background.

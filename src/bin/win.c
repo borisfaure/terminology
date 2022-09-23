@@ -1058,10 +1058,7 @@ _term_trans(Term *term)
    Evas_Object *edje = elm_layout_edje_get(term->core);
    Win *wn = term->wn;
 
-   if (term->config->translucent)
-     msg.val = term->config->opacity;
-   else
-     msg.val = 100;
+   msg.val = term->config->opacity;
    edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
 
@@ -1075,6 +1072,13 @@ _term_trans(Term *term)
           }
         else
           {
+             if (wn->config->color_scheme)
+               {
+                  evas_object_color_set(wn->backbg,
+                                        wn->config->color_scheme->bg.r,
+                                        wn->config->color_scheme->bg.g,
+                                        wn->config->color_scheme->bg.b, 255);
+               }
              elm_win_alpha_set(wn->win, EINA_FALSE);
              evas_object_show(wn->backbg);
              wn->translucent = EINA_FALSE;
@@ -2237,6 +2241,15 @@ win_new(const char *name, const char *role, const char *title,
 
    wn->backbg = o = evas_object_rectangle_add(evas_object_evas_get(wn->win));
    evas_object_color_set(o, 0, 0, 0, 255);
+   if (wn->config->color_scheme)
+     {
+        evas_object_color_set(o,
+                              wn->config->color_scheme->bg.r,
+                              wn->config->color_scheme->bg.g,
+                              wn->config->color_scheme->bg.b, 255);
+     }
+   else
+     evas_object_color_set(o, 0, 0, 0, 255);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(wn->win, o);
