@@ -638,6 +638,11 @@ color_scheme_apply(Evas_Object *edje,
    CS_SET_MANY("GLOW_TXT_HIGHLIGHT", hl, main, main);
 
    CS_SET("END_SELECTION", end_sel);
+   CS_SET("/fg/normal/term/selection/arrow/left", end_sel);
+   CS_SET("/fg/normal/term/selection/arrow/down", end_sel);
+   CS_SET("/fg/normal/term/selection/arrow/up", end_sel);
+   CS_SET("/fg/normal/term/selection/arrow/right", end_sel);
+
    CS_SET_MANY("TAB_MISSED", tab_missed_1, tab_missed_2, tab_missed_3);
    CS_SET_MANY("TAB_MISSED_OVER",
                tab_missed_over_1, tab_missed_over_2, tab_missed_over_3);
