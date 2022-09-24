@@ -8,6 +8,10 @@ Changes since 1.12.1:
   used to fade the background of the terminal.  Terminology sets it to the
   background color of the colorscheme.
 
+Changes since 1.11.0:
+--------------------
+  * New default theme!
+
 Changes since 1.8.0:
 --------------------
   * Add group "terminology/color_preview" to display a preview of a

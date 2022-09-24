@@ -17,14 +17,19 @@ on all the following edje groups:
 * `HIGHLIGHT`: the color used as main color when an element is highlighted
 * `GLOW_TXT`: text colors with some glow
 * `GLOW_TXT_HIGHLIGHT`: text with glow that is highlighted
-* `END_SELECTION`: on selections, the color of the handles used to expand or shrink
-  the area of the selection
 * `TAB_MISSED`: the number of tabs where a bell has rung, tabs that need
   attention
 * `TAB_MISSED_OVER`: same but when the mouse is over that number
 * `TAB_TITLE`: the colors of the active tab title
 * `BG_SENDFILE` is the background color when there is a sendfile action. See
   `man tysend`. It is set to `#404040`.
+* `END_SELECTION`: on selections, the color of the handles used to expand or shrink
+  the area of the selection
+* `/fg/normal/term/selection/arrow/left`,
+  `/fg/normal/term/selection/arrow/down`,
+  `/fg/normal/term/selection/arrow/up`,
+  `/fg/normal/term/selection/arrow/right` replace `END_SELECTION` and are used
+  to control the different arrows used to change the area of the selection
 
 The following table explains how color classes are set from color scheme
 values:
@@ -257,8 +262,12 @@ __TODO__
 
 # Group `terminology/selection`
 An object used when selecting text.
-__TODO__
 
+## Parts
+
+### Parts `terminology.top_left` and `terminology.bottom_right`
+Swallow parts used to communicate via min/max size the size of the top and
+bottom lines.
 
 
 # Group `terminology/cursor`
