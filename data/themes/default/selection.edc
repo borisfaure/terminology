@@ -144,7 +144,7 @@ group { name: "terminology/selection";
          action: STATE_SET "bottomfull" 0.0;
          TARGETS;
       }
-      // top and bottom swallows used to coimmunicate via min/max size the
+      // top and bottom swallows used to communicate via min/max size the
       // size of the top and bottom lines
       part { name: "terminology.top_left"; type: SWALLOW;
          mouse_events: 0;
