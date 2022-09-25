@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-25 21:11+0200\n"
-"PO-Revision-Date: 2022-06-26 16:14+0000\n"
+"PO-Revision-Date: 2022-09-25 18:23+0000\n"
 "Last-Translator: Maite Guix <maite.guix@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
 "terminology/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"X-Generator: Weblate 4.14.1\n"
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
@@ -32,11 +32,11 @@ msgstr "Obre"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "Canal de YouTube"
 
 #: src/bin/about.c:289
 #, c-format
@@ -56,7 +56,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Desenvolupadors de terminologia"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -68,11 +68,11 @@ msgstr "Nou"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr "Divideix V"
+msgstr "Dividir V"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr "Divideix H"
+msgstr "Dividir H"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
@@ -96,15 +96,15 @@ msgstr "Paràmetres"
 
 #: src/bin/controls.c:442
 msgid "About"
-msgstr ""
+msgstr "Quan a"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Entrada agrupada"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
-msgstr ""
+msgstr "Tancar terminal"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
@@ -137,7 +137,7 @@ msgstr "Ves a l'inici de l'historial"
 
 #: src/bin/keyin.c:664
 msgid "Reset scroll"
-msgstr ""
+msgstr "Restablir desplaçament"
 
 #: src/bin/keyin.c:666
 msgid "Copy/Paste"
@@ -145,23 +145,23 @@ msgstr "Copiar/Enganxar"
 
 #: src/bin/keyin.c:667
 msgid "Copy selection to Primary buffer"
-msgstr ""
+msgstr "Copiar selecció a la memòria intermèdia primària"
 
 #: src/bin/keyin.c:668
 msgid "Copy selection to Clipboard buffer"
-msgstr ""
+msgstr "Copiar selecció a la memòria intermèdia del porta-retalls"
 
 #: src/bin/keyin.c:669
 msgid "Paste Primary buffer (highlight)"
-msgstr ""
+msgstr "Enganxar memòria intermèdia primària (ressaltat)"
 
 #: src/bin/keyin.c:670
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr ""
+msgstr "Enganxar buffer de Portaretalls (ctrl+c/v)"
 
 #: src/bin/keyin.c:672
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "Subdivisions/Pestanyes"
 
 #: src/bin/keyin.c:673
 msgid "Focus the previous terminal"
@@ -189,15 +189,15 @@ msgstr "Enfocar el terminal de la dreta"
 
 #: src/bin/keyin.c:679
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "Dividir horitzontalment (nou a sota)"
 
 #: src/bin/keyin.c:680
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "Dividir verticalment (nou a la dreta)"
 
 #: src/bin/keyin.c:681
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "Crear una «pestanya» nova"
 
 #: src/bin/keyin.c:682
 msgid "Close the focused terminal"
@@ -205,56 +205,47 @@ msgstr "Tancar el terminal enfocat"
 
 #: src/bin/keyin.c:683
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "Obrir el commutador «pestanya»."
 
 #: src/bin/keyin.c:684
 msgid "Switch to terminal tab 1"
 msgstr "Commutar al terminal de la pestanya 1"
 
 #: src/bin/keyin.c:685
-#, fuzzy
 msgid "Switch to terminal tab 2"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 2"
 
 #: src/bin/keyin.c:686
-#, fuzzy
 msgid "Switch to terminal tab 3"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 3"
 
 #: src/bin/keyin.c:687
-#, fuzzy
 msgid "Switch to terminal tab 4"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 4"
 
 #: src/bin/keyin.c:688
-#, fuzzy
 msgid "Switch to terminal tab 5"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 5"
 
 #: src/bin/keyin.c:689
-#, fuzzy
 msgid "Switch to terminal tab 6"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 6"
 
 #: src/bin/keyin.c:690
-#, fuzzy
 msgid "Switch to terminal tab 7"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 7"
 
 #: src/bin/keyin.c:691
-#, fuzzy
 msgid "Switch to terminal tab 8"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 8"
 
 #: src/bin/keyin.c:692
-#, fuzzy
 msgid "Switch to terminal tab 9"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 9"
 
 #: src/bin/keyin.c:693
-#, fuzzy
 msgid "Switch to terminal tab 10"
-msgstr "Focus al terminal superior"
+msgstr "Canviar a la pestanya 10"
 
 #: src/bin/keyin.c:694
 msgid "Change title"
@@ -373,9 +364,9 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Divideix la finestra de terminal. 'v' per vertical i 'h' per horitzontal. Es "
+"Divideix la finestra de terminal. «v» per vertical i «h» per horitzontal. Es "
 "pot utilitzar diferents vegades. ex -S vhvv o --split hv Més informació "
-"disponible a la pàgina man"
+"disponible al manual"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
@@ -461,6 +452,7 @@ msgstr ""
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr ""
+"s'ha trobat un paràmetre no vàlid per a l'opció -S/--split. Consulta --help"
 
 #: src/bin/main.c:909
 #, fuzzy
