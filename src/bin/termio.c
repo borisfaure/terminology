@@ -124,7 +124,7 @@ termio_reset_main_colors(Evas_Object *termio)
 
         bg = term_bg_get(sd->term);
         EINA_SAFETY_ON_NULL_RETURN(bg);
-        edje_object_color_class_set(bg, "BG",
+        if (edje_object_color_class_set(bg, "BG",
                                sd->saved_bg.r,
                                sd->saved_bg.g,
                                sd->saved_bg.b,
@@ -136,8 +136,12 @@ termio_reset_main_colors(Evas_Object *termio)
                                sd->saved_bg.r,
                                sd->saved_bg.g,
                                sd->saved_bg.b,
-                               sd->saved_bg.a);
-        edje_object_color_class_set(sd->cursor.obj, "CURSOR",
+                               sd->saved_bg.a)
+            != EINA_TRUE)
+          {
+             ERR("error setting color class '%s'", "BG");
+          }
+        if (edje_object_color_class_set(sd->cursor.obj, "CURSOR",
                                     sd->saved_cursor.r,
                                     sd->saved_cursor.g,
                                     sd->saved_cursor.b,
@@ -149,7 +153,11 @@ termio_reset_main_colors(Evas_Object *termio)
                                     sd->saved_cursor.r,
                                     sd->saved_cursor.g,
                                     sd->saved_cursor.b,
-                                    sd->saved_cursor.a);
+                                    sd->saved_cursor.a)
+            != EINA_TRUE)
+          {
+             ERR("error setting color class '%s'", "CURSOR");
+          }
         evas_object_textgrid_palette_set(
            sd->grid.obj,
            EVAS_TEXTGRID_PALETTE_STANDARD, 0,
