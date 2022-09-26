@@ -649,7 +649,12 @@ color_scheme_apply(Evas_Object *edje,
    CS_SET_MANY("TAB_TITLE", normal.def, tab_title_2, bg);
 
 #define CS_DARK      64,  64,  64, 255
-edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK);
+   if (edje_object_color_class_set(edje, "BG_SENDFILE", CS_DARK, CS_DARK, CS_DARK)
+       != EINA_TRUE)
+     {
+        ERR("error setting color class '%s' on object %p",
+              "BG_SENDFILE", edje);
+     }
 #undef CS_DARK
 
 #undef CS_SET
