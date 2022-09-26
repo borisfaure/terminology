@@ -1548,10 +1548,14 @@ _color_tooltip_content(void *data,
    theme_apply(o, sd->config, "terminology/color_preview",
                NULL, NULL, EINA_FALSE);
    evas_object_size_hint_min_set(o, 80, 80);
-   edje_object_color_class_set(o, "color_preview",
+   if (edje_object_color_class_set(o, "color_preview",
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
        sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a,
-       sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a);
+       sd->link.color.r, sd->link.color.g, sd->link.color.b, sd->link.color.a)
+       != EINA_TRUE)
+     {
+        ERR("error setting color class '%s'", "color_preview");
+     }
 
    txt = _color_to_txt(sd);
    edje_object_part_text_set(o, "name", txt);
