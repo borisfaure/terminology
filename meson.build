@@ -93,18 +93,18 @@ if cc.has_function('strchrnul')
   config_data.set('HAVE_STRCHRNUL', 1)
 endif
 
-url_head_code = '''#include <Ecore_Con.h>
-int main(void) { ecore_con_url_head(NULL); return 0; }
+sel_format_urilist_code = '''#include <Elementary.h>
+int main(void) { return ELM_SEL_FORMAT_URILIST; }
 '''
 
 found = 'Not found'
 
-if cc.links(url_head_code, dependencies: terminology_dependencies)
-  config_data.set('HAVE_ECORE_CON_URL_HEAD', 1)
+if cc.links(sel_format_urilist_code, dependencies: terminology_dependencies)
+  config_data.set('HAVE_ELM_SEL_FORMAT_URILIST', 1)
   found = 'Found'
 endif
 
-message('Checking for ecore_con_url_head: ' + found)
+message('Checking for ELM_SEL_FORMAT_URILIST: ' + found)
 
 eet_bin = get_option('eet')
 if eet_bin == ''

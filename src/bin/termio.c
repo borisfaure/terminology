@@ -1208,6 +1208,9 @@ _getsel_cb(void *data,
            case ELM_SEL_FORMAT_IMAGE: fmt = "IMAGE"; break;
            case ELM_SEL_FORMAT_VCARD: fmt = "VCARD"; break;
            case ELM_SEL_FORMAT_HTML: fmt = "HTML"; break;
+#ifdef HAVE_ELM_SEL_FORMAT_URILIST
+           case ELM_SEL_FORMAT_URILIST: fmt = "URILIST"; break;
+#endif
           }
         WRN(_("unsupported selection format '%s'"), fmt);
      }
