@@ -396,6 +396,7 @@ group { name: "terminology/cursor_bar";
          scale: 1;
          description { state: "default" 0.0;
             min: 3 0;
+            fixed: 1 1;
             rel.to: "b0";
          }
       }
@@ -556,6 +557,7 @@ group { name: "terminology/cursor_underline";
          scale: 1;
          description { state: "default" 0.0;
             min: 3 0;
+            fixed: 1 1;
             rel.to: "b0";
          }
       }
@@ -632,6 +634,7 @@ group { name: "terminology/cursor_underline";
             rel2.offset: -1 -1;
             align: 0.0 0.0;
             min: 1 0;
+            fixed: 1 1;
             image.normal: "grad-h-1.png";
             offscale;
          }
