@@ -1072,13 +1072,6 @@ _term_trans(Term *term)
           }
         else
           {
-             if (wn->config->color_scheme)
-               {
-                  evas_object_color_set(wn->backbg,
-                                        wn->config->color_scheme->bg.r,
-                                        wn->config->color_scheme->bg.g,
-                                        wn->config->color_scheme->bg.b, 255);
-               }
              elm_win_alpha_set(wn->win, EINA_FALSE);
              evas_object_show(wn->backbg);
              wn->translucent = EINA_FALSE;
@@ -5924,6 +5917,7 @@ void change_theme(Evas_Object *win, Config *config)
 {
    const Eina_List *terms, *l;
    Term *term;
+   Win *wn;
 
    terms = terms_from_win_object(win);
    if (!terms) return;
@@ -5942,6 +5936,17 @@ void change_theme(Evas_Object *win, Config *config)
    if (l) l = eina_list_last(l);
    if (l) elm_theme_extension_del(NULL, l->data);
    elm_theme_extension_add(NULL, config_theme_path_get(config));
+
+   EINA_LIST_FOREACH(wins, l, wn)
+     {
+        if (config->color_scheme)
+          {
+             evas_object_color_set(wn->backbg,
+                                   config->color_scheme->bg.r,
+                                   config->color_scheme->bg.g,
+                                   config->color_scheme->bg.b, 255);
+          }
+     }
    main_trans_update();
 }
 
