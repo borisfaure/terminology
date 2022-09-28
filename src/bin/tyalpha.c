@@ -14,6 +14,8 @@ print_usage(const char *argv0)
           "  Change the terminal transparency on or off\n"
           "  -p  Make change permanent (stored in config)\n"
           HELP_ARGUMENT_DOC"\n"
+          "\n"
+          "<opacity> is between 0 and 100\n"
           "\n",
           argv0);
 }
