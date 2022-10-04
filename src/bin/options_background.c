@@ -521,7 +521,7 @@ _parent_del_cb(void *data,
 void
 options_background(Evas_Object *opbox, Evas_Object *term)
 {
-   Evas_Object *o, *bx, *bx_front;
+   Evas_Object *o, *bx, *bx_front, *lbl;
    Config *config = termio_config_get(term);
    char path[PATH_MAX];
    Background_Ctx *ctx;
@@ -557,6 +557,14 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_op_video_trans_chg, ctx);
+
+   OPTIONS_SEPARATOR;
+   lbl = elm_label_add(bx);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
+   elm_layout_text_set(lbl, NULL, _("Opacity:"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
 
    ctx->op_opacity = o = elm_slider_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -639,8 +647,6 @@ options_background(Evas_Object *opbox, Evas_Object *term)
    elm_label_line_wrap_set(o, ELM_WRAP_WORD);
    elm_box_pack_end(bx_front, o);
    evas_object_show(o);
-
-
 
    o = elm_fileselector_add(opbox);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
