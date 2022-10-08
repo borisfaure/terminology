@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 21:11+0200\n"
+"POT-Creation-Date: 2022-10-08 10:37+0200\n"
 "PO-Revision-Date: 2021-06-18 11:33+0000\n"
 "Last-Translator: gnu-ewm <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
@@ -21,13 +21,13 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.7\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
-#: src/bin/termio.c:1305
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
+#: src/bin/termio.c:1316
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiuj '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
 msgid "Open"
 msgstr "Otwórz"
 
@@ -78,11 +78,11 @@ msgstr "Podziel poziomo"
 msgid "Miniview"
 msgstr "Minipodgląd"
 
-#: src/bin/controls.c:413 src/bin/win.c:6206
+#: src/bin/controls.c:413 src/bin/win.c:6239
 msgid "Set title"
 msgstr "Ustaw nazwę okna"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
+#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
 msgid "Copy"
 msgstr "Kopiuj"
 
@@ -512,52 +512,56 @@ msgstr "Function %s nie działa: %s"
 msgid "Media visualizing is not supported"
 msgstr "Wizualizacja mediów nie jest wspierana"
 
-#: src/bin/options_background.c:139
+#: src/bin/options_background.c:136
 msgid "None"
 msgstr "Brak"
 
-#: src/bin/options_background.c:471
+#: src/bin/options_background.c:468
 msgid "Source file is target file"
 msgstr "Plik źródłowy jest plikiem docelowym"
 
-#: src/bin/options_background.c:484
+#: src/bin/options_background.c:481
 msgid "Picture imported"
 msgstr ""
 
-#: src/bin/options_background.c:489
+#: src/bin/options_background.c:486
 msgid "Failed"
 msgstr ""
 
-#: src/bin/options_background.c:541 src/bin/options.c:221
+#: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
 msgstr "Tło"
 
-#: src/bin/options_background.c:557
+#: src/bin/options_background.c:554
 msgid "Translucent"
 msgstr ""
 
-#: src/bin/options_background.c:568 src/bin/options_background.c:569
+#: src/bin/options_background.c:565
+msgid "Opacity:"
+msgstr ""
+
+#: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:588
+#: src/bin/options_background.c:592
 msgid "Select Path"
 msgstr "Wybierz Ścieżkę"
 
-#: src/bin/options_background.c:594
+#: src/bin/options_background.c:598
 msgid "System"
 msgstr ""
 
-#: src/bin/options_background.c:597
+#: src/bin/options_background.c:601
 msgid "User"
 msgstr "Użytkownik"
 
-#: src/bin/options_background.c:600
+#: src/bin/options_background.c:604
 msgid "Other"
 msgstr "Inne"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
 msgstr "Kliknij na obraz, aby użyć go jako obraz tła"
 
@@ -945,38 +949,38 @@ msgstr "Plik tła nie może zosać odczytany: %s"
 msgid "Unknown command: %s"
 msgstr "Nieznane polecenie: %s"
 
-#: src/bin/termio.c:459
+#: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Nie mogę odczytywać aktualnego katalogu dla pid %i: %s"
 
-#: src/bin/termio.c:474
+#: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Nie mogę załadować roboczego katalogu %s: %s"
 
-#: src/bin/termio.c:1204
+#: src/bin/termio.c:1215
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "niewspierany format selekcji '%s'"
 
-#: src/bin/termio.c:1364
+#: src/bin/termio.c:1375
 msgid "Preview"
 msgstr "Podgląd"
 
-#: src/bin/termio.c:1374
+#: src/bin/termio.c:1385
 msgid "Copy relative path"
 msgstr "Skopiuj względną ścieżkę"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1387
 msgid "Copy full path"
 msgstr "Skopiuj pełną ścieżkę"
 
-#: src/bin/termio.c:2789
+#: src/bin/termio.c:2804
 msgid "Open as URL"
 msgstr "Otwórz jako odnośnik"
 
-#: src/bin/termio.c:4232
+#: src/bin/termio.c:4247
 msgid "Could not allocate termpty"
 msgstr "Nie mogę zaalokować termpty"
 
@@ -1036,19 +1040,19 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2336
+#: src/bin/win.c:2358
 msgid "Ecore IMF failed"
 msgstr "Awaria Ecore IMF"
 
-#: src/bin/win.c:6210
+#: src/bin/win.c:6243
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/win.c:6215
+#: src/bin/win.c:6248
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/bin/win.c:7404
+#: src/bin/win.c:7446
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Nie mogę znaleźć skórki terminology! Zapomniałeś 'ninja install'?"
 

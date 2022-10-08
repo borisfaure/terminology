@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 21:11+0200\n"
+"POT-Creation-Date: 2022-10-08 10:37+0200\n"
 "PO-Revision-Date: 2016-09-21 17:18+0200\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -18,13 +18,13 @@ msgstr ""
 "X-Launchpad-Export-Date: 2016-09-16 20:20+0000\n"
 "X-Generator: Poedit 1.8.9\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
-#: src/bin/termio.c:1305
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
+#: src/bin/termio.c:1316
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Kopiraj"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
 msgid "Open"
 msgstr "Odpri"
 
@@ -76,11 +76,11 @@ msgstr "Split V"
 msgid "Miniview"
 msgstr "Mini pogled"
 
-#: src/bin/controls.c:413 src/bin/win.c:6206
+#: src/bin/controls.c:413 src/bin/win.c:6239
 msgid "Set title"
 msgstr "Nastavi ime"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
+#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
 msgid "Copy"
 msgstr "Kopiraj"
 
@@ -516,52 +516,56 @@ msgstr "Funkcija %s spodletela: %s"
 msgid "Media visualizing is not supported"
 msgstr "Pregledovanje medije ni podprto"
 
-#: src/bin/options_background.c:139
+#: src/bin/options_background.c:136
 msgid "None"
 msgstr "Brez"
 
-#: src/bin/options_background.c:471
+#: src/bin/options_background.c:468
 msgid "Source file is target file"
 msgstr "Izvorna datoteka je ciljna datoteka"
 
-#: src/bin/options_background.c:484
+#: src/bin/options_background.c:481
 msgid "Picture imported"
 msgstr "Slika uvožena"
 
-#: src/bin/options_background.c:489
+#: src/bin/options_background.c:486
 msgid "Failed"
 msgstr "Spodletelo"
 
-#: src/bin/options_background.c:541 src/bin/options.c:221
+#: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
 msgstr "Ozadje"
 
-#: src/bin/options_background.c:557
+#: src/bin/options_background.c:554
 msgid "Translucent"
 msgstr "Prosojno"
 
-#: src/bin/options_background.c:568 src/bin/options_background.c:569
+#: src/bin/options_background.c:565
+msgid "Opacity:"
+msgstr ""
+
+#: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:588
+#: src/bin/options_background.c:592
 msgid "Select Path"
 msgstr "Izberi pot"
 
-#: src/bin/options_background.c:594
+#: src/bin/options_background.c:598
 msgid "System"
 msgstr "Sistem"
 
-#: src/bin/options_background.c:597
+#: src/bin/options_background.c:601
 msgid "User"
 msgstr "Uporabnik"
 
-#: src/bin/options_background.c:600
+#: src/bin/options_background.c:604
 msgid "Other"
 msgstr "Drugo"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:646
 #, fuzzy
 msgid "Click on a picture to use it as background"
 msgstr "Dvoklikni na sliko za njen uvoz"
@@ -952,38 +956,38 @@ msgstr "Datoteka ozadja se ni mogla prebrati: %s"
 msgid "Unknown command: %s"
 msgstr "Neznan ukaz: %s"
 
-#: src/bin/termio.c:459
+#: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Ni bilo možno dobiti delovnega imenika za pid %i: %s"
 
-#: src/bin/termio.c:474
+#: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Ni bilo možno naložiti delovnega imenika %s: %s"
 
-#: src/bin/termio.c:1204
+#: src/bin/termio.c:1215
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nepodprti izbrani format '%s'"
 
-#: src/bin/termio.c:1364
+#: src/bin/termio.c:1375
 msgid "Preview"
 msgstr "Predogled"
 
-#: src/bin/termio.c:1374
+#: src/bin/termio.c:1385
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1387
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2789
+#: src/bin/termio.c:2804
 msgid "Open as URL"
 msgstr "Odpri kot URL"
 
-#: src/bin/termio.c:4232
+#: src/bin/termio.c:4247
 msgid "Could not allocate termpty"
 msgstr "Ni bilo možno dodeliti termpty"
 
@@ -1043,19 +1047,19 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2336
+#: src/bin/win.c:2358
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF spodletelo"
 
-#: src/bin/win.c:6210
+#: src/bin/win.c:6243
 msgid "Ok"
 msgstr "V redu"
 
-#: src/bin/win.c:6215
+#: src/bin/win.c:6248
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: src/bin/win.c:7404
+#: src/bin/win.c:7446
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Ni bilo mogoče najti teme za terminology! Pozabljen 'ninja install?"
 

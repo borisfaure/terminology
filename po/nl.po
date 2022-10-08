@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 21:11+0200\n"
+"POT-Creation-Date: 2022-10-08 10:37+0200\n"
 "PO-Revision-Date: 2022-01-06 15:53+0000\n"
 "Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
@@ -18,13 +18,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.10.1\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1296
-#: src/bin/termio.c:1305
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
+#: src/bin/termio.c:1316
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiëren '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1367
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
 msgid "Open"
 msgstr "Openen"
 
@@ -74,11 +74,11 @@ msgstr "Splits H"
 msgid "Miniview"
 msgstr "Miniweergave"
 
-#: src/bin/controls.c:413 src/bin/win.c:6206
+#: src/bin/controls.c:413 src/bin/win.c:6239
 msgid "Set title"
 msgstr "Titel instellen"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1381 src/bin/termio.c:2787
+#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
 msgid "Copy"
 msgstr "Kopiëren"
 
@@ -507,52 +507,56 @@ msgstr "Functie %s mislukte: %s"
 msgid "Media visualizing is not supported"
 msgstr "Zichtbaar maken van media wordt niet ondersteund"
 
-#: src/bin/options_background.c:139
+#: src/bin/options_background.c:136
 msgid "None"
 msgstr "Geen"
 
-#: src/bin/options_background.c:471
+#: src/bin/options_background.c:468
 msgid "Source file is target file"
 msgstr "Bronbestand is doelbestand"
 
-#: src/bin/options_background.c:484
+#: src/bin/options_background.c:481
 msgid "Picture imported"
 msgstr "Afbeelding geïmporteerd"
 
-#: src/bin/options_background.c:489
+#: src/bin/options_background.c:486
 msgid "Failed"
 msgstr "Mislukt"
 
-#: src/bin/options_background.c:541 src/bin/options.c:221
+#: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
 msgstr "Achtergrond"
 
-#: src/bin/options_background.c:557
+#: src/bin/options_background.c:554
 msgid "Translucent"
 msgstr "Doorzichtig"
 
-#: src/bin/options_background.c:568 src/bin/options_background.c:569
+#: src/bin/options_background.c:565
+msgid "Opacity:"
+msgstr ""
+
+#: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:588
+#: src/bin/options_background.c:592
 msgid "Select Path"
 msgstr "Selecteer Pad"
 
-#: src/bin/options_background.c:594
+#: src/bin/options_background.c:598
 msgid "System"
 msgstr "Systeem"
 
-#: src/bin/options_background.c:597
+#: src/bin/options_background.c:601
 msgid "User"
 msgstr "Gebruiker"
 
-#: src/bin/options_background.c:600
+#: src/bin/options_background.c:604
 msgid "Other"
 msgstr "Overig"
 
-#: src/bin/options_background.c:642
+#: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
 msgstr "Klik op een afbeelding om het als achtergrond te gebruiken"
 
@@ -937,38 +941,38 @@ msgstr "Achtergrondbestand kon niet worden gelezen: %s"
 msgid "Unknown command: %s"
 msgstr "Onbekende opdracht: %s"
 
-#: src/bin/termio.c:459
+#: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kon werkmap van pid %i niet verkrijgen: %s"
 
-#: src/bin/termio.c:474
+#: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kon werkmap %s niet laden: %s"
 
-#: src/bin/termio.c:1204
+#: src/bin/termio.c:1215
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "niet-ondersteunde selectie-opmaak '%s'"
 
-#: src/bin/termio.c:1364
+#: src/bin/termio.c:1375
 msgid "Preview"
 msgstr "Voorbeeldweergave"
 
-#: src/bin/termio.c:1374
+#: src/bin/termio.c:1385
 msgid "Copy relative path"
 msgstr "Relatief pad kopiëren"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1387
 msgid "Copy full path"
 msgstr "Volledig pad kopiëren"
 
-#: src/bin/termio.c:2789
+#: src/bin/termio.c:2804
 msgid "Open as URL"
 msgstr "Openen als webadres"
 
-#: src/bin/termio.c:4232
+#: src/bin/termio.c:4247
 msgid "Could not allocate termpty"
 msgstr "Kon geen termpty toewijzen"
 
@@ -1028,19 +1032,19 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2336
+#: src/bin/win.c:2358
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF is mislukt"
 
-#: src/bin/win.c:6210
+#: src/bin/win.c:6243
 msgid "Ok"
 msgstr "Oké"
 
-#: src/bin/win.c:6215
+#: src/bin/win.c:6248
 msgid "Cancel"
 msgstr "Afbreken"
 
-#: src/bin/win.c:7404
+#: src/bin/win.c:7446
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kon Terminology-thema niet vinden. Bestaat het wel?"
 
