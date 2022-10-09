@@ -196,7 +196,6 @@ struct tag_Win
    Term_Container *child;
    Evas_Object *win;
    Evas_Object *conform;
-   Evas_Object *backbg;
    Evas_Object *base;
    Config      *config;
    Eina_List   *terms;
@@ -1067,13 +1066,11 @@ _term_trans(Term *term)
         if (term->config->translucent)
           {
              elm_win_alpha_set(wn->win, EINA_TRUE);
-             evas_object_hide(wn->backbg);
              wn->translucent = EINA_TRUE;
           }
         else
           {
              elm_win_alpha_set(wn->win, EINA_FALSE);
-             evas_object_show(wn->backbg);
              wn->translucent = EINA_FALSE;
           }
      }
@@ -2232,22 +2229,6 @@ win_new(const char *name, const char *role, const char *title,
    if (override) elm_win_override_set(wn->win, EINA_TRUE);
    if (maximized) elm_win_maximized_set(wn->win, EINA_TRUE);
 
-   wn->backbg = o = evas_object_rectangle_add(evas_object_evas_get(wn->win));
-   evas_object_color_set(o, 0, 0, 0, 255);
-   if (wn->config->color_scheme)
-     {
-        evas_object_color_set(o,
-                              wn->config->color_scheme->bg.r,
-                              wn->config->color_scheme->bg.g,
-                              wn->config->color_scheme->bg.b, 255);
-     }
-   else
-     evas_object_color_set(o, 0, 0, 0, 255);
-   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(wn->win, o);
-   evas_object_show(o);
-
    wn->conform = o = elm_conformant_add(wn->win);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -3130,9 +3111,6 @@ _size_job(void *data)
      {
         elm_win_size_base_set(wn->win,
                               info.min_w, info.min_h);
-        evas_object_size_hint_min_set(wn->backbg,
-                                      info.bg_min_w,
-                                      info.bg_min_h);
         if (info.req)
           evas_object_resize(wn->win, info.req_w, info.req_h);
      }
@@ -5930,6 +5908,7 @@ void change_theme(Evas_Object *win, Config *config)
         colors_term_init(termio_textgrid_get(term->termio),
                          config->color_scheme);
         termio_config_set(term->termio, config);
+        /* TODO: change background color */
      }
 
    l = elm_theme_extension_list_get(NULL);
@@ -5937,16 +5916,6 @@ void change_theme(Evas_Object *win, Config *config)
    if (l) elm_theme_extension_del(NULL, l->data);
    elm_theme_extension_add(NULL, config_theme_path_get(config));
 
-   EINA_LIST_FOREACH(wins, l, wn)
-     {
-        if (config->color_scheme)
-          {
-             evas_object_color_set(wn->backbg,
-                                   config->color_scheme->bg.r,
-                                   config->color_scheme->bg.g,
-                                   config->color_scheme->bg.b, 255);
-          }
-     }
    main_trans_update();
 }
 
