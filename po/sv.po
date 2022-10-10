@@ -18,12 +18,13 @@ msgstr ""
 "X-Generator: Weblate 4.13-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
-#: src/bin/termio.c:1316
+#: src/bin/termio.c:1316 src/bin/termio.c:1296 src/bin/termio.c:1305
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiera '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
+#: src/bin/termio.c:1367
 msgid "Open"
 msgstr "Öppna"
 
@@ -75,11 +76,12 @@ msgstr "Splittra H"
 msgid "Miniview"
 msgstr "Minivy"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6239 src/bin/win.c:6206
 msgid "Set title"
 msgstr "Sätt titel"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
+#: src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Kopiera"
 
@@ -475,27 +477,28 @@ msgstr "Funktion %s misslyckades: %s"
 msgid "Media visualizing is not supported"
 msgstr "Media-visualisering stöds ej"
 
-#: src/bin/options_background.c:136
+#: src/bin/options_background.c:136 src/bin/options_background.c:139
 msgid "None"
 msgstr "Ingen"
 
-#: src/bin/options_background.c:468
+#: src/bin/options_background.c:468 src/bin/options_background.c:471
 msgid "Source file is target file"
 msgstr "Källfil är länkfil"
 
-#: src/bin/options_background.c:481
+#: src/bin/options_background.c:481 src/bin/options_background.c:484
 msgid "Picture imported"
 msgstr "Bild importerad"
 
-#: src/bin/options_background.c:486
+#: src/bin/options_background.c:486 src/bin/options_background.c:489
 msgid "Failed"
 msgstr "Misslyckades"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
+#: src/bin/options_background.c:541
 msgid "Background"
 msgstr "Bakgrund"
 
-#: src/bin/options_background.c:554
+#: src/bin/options_background.c:554 src/bin/options_background.c:557
 msgid "Translucent"
 msgstr "Genomskinlig"
 
@@ -504,27 +507,28 @@ msgid "Opacity:"
 msgstr ""
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
+#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:592
+#: src/bin/options_background.c:592 src/bin/options_background.c:588
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: src/bin/options_background.c:598
+#: src/bin/options_background.c:598 src/bin/options_background.c:594
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:601
+#: src/bin/options_background.c:601 src/bin/options_background.c:597
 msgid "User"
 msgstr "Användare"
 
-#: src/bin/options_background.c:604
+#: src/bin/options_background.c:604 src/bin/options_background.c:600
 msgid "Other"
 msgstr "Övrig"
 
-#: src/bin/options_background.c:646
+#: src/bin/options_background.c:646 src/bin/options_background.c:642
 msgid "Click on a picture to use it as background"
 msgstr "Klicka på en bild att använda som bakgrund"
 
@@ -912,38 +916,38 @@ msgstr "Bakgrundsfil kunde inte läsas: %s"
 msgid "Unknown command: %s"
 msgstr "Okänt kommando: %s"
 
-#: src/bin/termio.c:467
+#: src/bin/termio.c:467 src/bin/termio.c:459
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kunde inte hitta arbetskatalog för pid %i: %s"
 
-#: src/bin/termio.c:482
+#: src/bin/termio.c:482 src/bin/termio.c:474
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kunde inte ladda arbetskatalog %s: %s"
 
-#: src/bin/termio.c:1215
+#: src/bin/termio.c:1215 src/bin/termio.c:1204
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "markeringsformat stöds ej '%s'"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1375 src/bin/termio.c:1364
 msgid "Preview"
 msgstr "Förslagsvy"
 
-#: src/bin/termio.c:1385
+#: src/bin/termio.c:1385 src/bin/termio.c:1374
 msgid "Copy relative path"
 msgstr "Kopiera relativ sökväg"
 
-#: src/bin/termio.c:1387
+#: src/bin/termio.c:1387 src/bin/termio.c:1376
 msgid "Copy full path"
 msgstr "Kopiera hel sökväg"
 
-#: src/bin/termio.c:2804
+#: src/bin/termio.c:2804 src/bin/termio.c:2789
 msgid "Open as URL"
 msgstr "Öppna som URL"
 
-#: src/bin/termio.c:4247
+#: src/bin/termio.c:4247 src/bin/termio.c:4232
 msgid "Could not allocate termpty"
 msgstr "Kunde inte hitta termpty"
 
@@ -1005,19 +1009,19 @@ msgstr ""
 "Skalans inställningar kan ändras i Inställningar (högerklicka på terminal) "
 "→  Ramverk, eller genom att köra <keyword>elementary_config</keyword>"
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2358 src/bin/win.c:2336
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF misslyckades"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6243 src/bin/win.c:6210
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6248 src/bin/win.c:6215
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7446 src/bin/win.c:7404
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunde inte hitta terminology tema! Glömde 'ninja install'?"
 
