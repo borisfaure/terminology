@@ -1057,13 +1057,13 @@ _smart_calculate(Evas_Object *obj)
    sd->h = oh;
    switch (sd->type)
      {
+      case MEDIA_TYPE_RECT: return; /* NOT HANDLED HERE */
       case MEDIA_TYPE_IMG: _type_img_calc(obj, ox, oy, ow, oh); break;
       case MEDIA_TYPE_SCALE: _type_scale_calc(obj, ox, oy, ow, oh); break;
       case MEDIA_TYPE_EDJE: _type_edje_calc(obj, ox, oy, ow, oh); break;
       case MEDIA_TYPE_MOV: _type_mov_calc(obj, ox, oy, ow, oh); break;
       case MEDIA_TYPE_THUMB: _type_thumb_calc(obj, ox, oy, ow, oh); break;
-      case MEDIA_TYPE_UNKNOWN:
-         return;
+      case MEDIA_TYPE_UNKNOWN: return;
      }
    evas_object_move(sd->clip, ox, oy);
    evas_object_resize(sd->clip, ow, oh);
@@ -1283,6 +1283,7 @@ media_add(Evas_Object *parent, const char *src, const Config *config, int mode,
                 case MEDIA_TYPE_EDJE:
                    sd->ext = ".edj";
                    break;
+                case MEDIA_TYPE_RECT:
                 case MEDIA_TYPE_MOV:
                 case MEDIA_TYPE_UNKNOWN:
                 case MEDIA_TYPE_THUMB:

@@ -18,6 +18,7 @@ typedef enum tag_Media_Type Media_Type;
 
 enum tag_Media_Type {
      MEDIA_TYPE_UNKNOWN,
+     MEDIA_TYPE_RECT,
      MEDIA_TYPE_IMG,
      MEDIA_TYPE_SCALE,
      MEDIA_TYPE_EDJE,

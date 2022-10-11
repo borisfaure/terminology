@@ -1057,9 +1057,20 @@ _term_trans(Term *term)
    Evas_Object *edje = elm_layout_edje_get(term->core);
    Win *wn = term->wn;
 
-   msg.val = term->config->opacity;
-   edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
-   edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
+   if (term->config->translucent)
+     {
+        msg.val = term->config->opacity;
+        edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
+        msg.val = term->config->opacity;
+        edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
+     }
+   else
+     {
+        msg.val = 100;
+        edje_object_message_send(term->bg_edj, EDJE_MESSAGE_INT, 1, &msg);
+        msg.val = term->config->opacity;
+        edje_object_message_send(edje, EDJE_MESSAGE_INT, 1, &msg);
+     }
 
    if (term->config->translucent != wn->translucent)
      {
@@ -5895,7 +5906,6 @@ void change_theme(Evas_Object *win, Config *config)
 {
    const Eina_List *terms, *l;
    Term *term;
-   Win *wn;
 
    terms = terms_from_win_object(win);
    if (!terms) return;
@@ -5908,7 +5918,13 @@ void change_theme(Evas_Object *win, Config *config)
         colors_term_init(termio_textgrid_get(term->termio),
                          config->color_scheme);
         termio_config_set(term->termio, config);
-        /* TODO: change background color */
+        if (config->color_scheme && term->mediatype == MEDIA_TYPE_RECT)
+          {
+             evas_object_color_set(term->media,
+                                   config->color_scheme->bg.r,
+                                   config->color_scheme->bg.g,
+                                   config->color_scheme->bg.b, 255);
+          }
      }
 
    l = elm_theme_extension_list_get(NULL);
@@ -6854,63 +6870,72 @@ _cb_media_del(void *data,
 static void
 _term_media_update(Term *term, const Config *config)
 {
+   Media_Type type;
+   Evas_Object *o;
+
+   if (term->media)
+     {
+        evas_object_event_callback_del(term->media,
+                                       EVAS_CALLBACK_DEL,
+                                       _cb_media_del);
+        evas_object_del(term->media);
+     }
+
    if ((config->background) && (config->background[0]))
      {
-        Evas_Object *o;
-        Media_Type type;
-
-        if (term->media)
-          {
-             evas_object_event_callback_del(term->media,
-                                            EVAS_CALLBACK_DEL,
-                                            _cb_media_del);
-             evas_object_del(term->media);
-          }
         type = media_src_type_get(config->background,
                                   strlen(config->background));
-        term->media = o = media_add(term->wn->win,
-                                    config->background, config,
-                                    MEDIA_BG, type);
+        o = media_add(term->wn->win,
+                      config->background, config,
+                      MEDIA_BG, type);
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _cb_media_del, term);
         elm_layout_content_set(term->core, "terminology.background", o);
         evas_object_show(o);
-        term->mediatype = type;
-        switch (type)
-          {
-           case MEDIA_TYPE_IMG:
-              elm_layout_signal_emit(term->bg, "media,image", "terminology");
-              elm_layout_signal_emit(term->core, "media,image", "terminology");
-              break;
-           case MEDIA_TYPE_SCALE:
-              elm_layout_signal_emit(term->bg, "media,scale", "terminology");
-              elm_layout_signal_emit(term->core, "media,scale", "terminology");
-              break;
-           case MEDIA_TYPE_EDJE:
-              elm_layout_signal_emit(term->bg, "media,edje", "terminology");
-              elm_layout_signal_emit(term->core, "media,edje", "terminology");
-              break;
-           case MEDIA_TYPE_MOV:
-              elm_layout_signal_emit(term->bg, "media,movie", "terminology");
-              elm_layout_signal_emit(term->core, "media,movie", "terminology");
-              break;
-           case MEDIA_TYPE_UNKNOWN:
-           default:
-              break;
-          }
      }
    else
      {
-        if (term->media)
+        type = MEDIA_TYPE_RECT;
+        o = evas_object_rectangle_add(evas_object_evas_get(term->wn->win));
+        evas_object_color_set(o, 0, 0, 0, 255);
+        if (config->color_scheme)
           {
-             evas_object_event_callback_del(term->media,
-                                            EVAS_CALLBACK_DEL,
-                                            _cb_media_del);
-             elm_layout_signal_emit(term->bg, "media,off", "terminology");
-             elm_layout_signal_emit(term->core, "media,off", "terminology");
-             evas_object_del(term->media);
-             term->media = NULL;
+             evas_object_color_set(o,
+                                   config->color_scheme->bg.r,
+                                   config->color_scheme->bg.g,
+                                   config->color_scheme->bg.b, 255);
           }
+        else
+          evas_object_color_set(o, 0, 0, 0, 255);
+     }
+   evas_object_show(o);
+   term->media = o;
+   term->mediatype = type;
+   switch (type)
+     {
+      case MEDIA_TYPE_RECT:
+         elm_layout_signal_emit(term->bg, "media,off", "terminology");
+         elm_layout_signal_emit(term->core, "media,off", "terminology");
+         break;
+      case MEDIA_TYPE_IMG:
+         elm_layout_signal_emit(term->bg, "media,image", "terminology");
+         elm_layout_signal_emit(term->core, "media,image", "terminology");
+         break;
+      case MEDIA_TYPE_SCALE:
+         elm_layout_signal_emit(term->bg, "media,scale", "terminology");
+         elm_layout_signal_emit(term->core, "media,scale", "terminology");
+         break;
+      case MEDIA_TYPE_EDJE:
+         elm_layout_signal_emit(term->bg, "media,edje", "terminology");
+         elm_layout_signal_emit(term->core, "media,edje", "terminology");
+         break;
+      case MEDIA_TYPE_MOV:
+         elm_layout_signal_emit(term->bg, "media,movie", "terminology");
+         elm_layout_signal_emit(term->core, "media,movie", "terminology");
+         break;
+      case MEDIA_TYPE_UNKNOWN:
+      default:
+         break;
      }
 }
 
