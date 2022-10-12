@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-08 10:37+0200\n"
-"PO-Revision-Date: 2022-04-27 05:16+0000\n"
+"PO-Revision-Date: 2022-10-12 08:25+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.12.1-dev\n"
+"X-Generator: Weblate 4.15-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
@@ -506,7 +506,7 @@ msgstr "Transparence"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Opacité :"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
