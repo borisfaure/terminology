@@ -3,7 +3,7 @@ Terminology 1.12.1
 ==================
 
 Changes since 1.12.0:
---------------------
+---------------------
 
 Fixes:
     * Build and install Default colorscheme
@@ -11,7 +11,7 @@ Fixes:
 
 
 Changes since 1.11.0:
---------------------
+---------------------
 
 Additions:
     * New default theme!
@@ -23,7 +23,7 @@ Improvements:
 
 
 Changes since 1.10.0:
---------------------
+---------------------
 
 Additions:
     * Support for focus reporting escape codes
