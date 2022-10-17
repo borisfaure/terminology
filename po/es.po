@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-08 10:37+0200\n"
-"PO-Revision-Date: 2022-09-22 14:22+0000\n"
+"PO-Revision-Date: 2022-10-17 22:54+0000\n"
 "Last-Translator: Eduardo Malaspina <vaio0@swismail.com>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -512,7 +512,7 @@ msgstr "Translúcido"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Opacidad:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
