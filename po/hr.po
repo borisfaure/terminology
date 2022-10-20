@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-08 10:37+0200\n"
-"PO-Revision-Date: 2022-05-22 22:19+0000\n"
+"PO-Revision-Date: 2022-10-20 11:02+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
 "terminology/hr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Weblate 4.14.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -68,11 +68,11 @@ msgstr "Novi"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr "Podijeli O"
+msgstr "Podijeli okomito"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr "Podijeli V"
+msgstr "Podijeli vodoravno"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
@@ -100,7 +100,7 @@ msgstr "Informacije"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr "Grupirani unos"
+msgstr "Grupiran unos"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
@@ -364,7 +364,7 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Podijeli prozor terminala. „O” za okomito i „V” za vodoravno. Može se "
+"Podijeli prozor terminala. „v” za okomito i „h” za vodoravno. Može se "
 "koristiti više puta. Npr. -S vhvv ili --split hv. Opširan opis dostupan je "
 "na stranici priručnika."
 
@@ -374,7 +374,7 @@ msgstr "Pokreni ljusku kao ljusku prijave"
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
-msgstr "Postavi bezvučni modus za sviranje videa"
+msgstr "Postavi bezvučni modus za reprodukciju videa"
 
 #: src/bin/main.c:497
 msgid "Set cursor blink mode"
@@ -505,7 +505,7 @@ msgstr "Providno"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Neprozirnost:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -650,7 +650,7 @@ msgstr "Uvijek otvori veličinom:"
 
 #: src/bin/options_behavior.c:435
 msgid "Set Current:"
-msgstr "Postavi trenutačnu:"
+msgstr "Postavi trenutačni:"
 
 #: src/bin/options_behavior.c:446
 msgid "Width:"
