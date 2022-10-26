@@ -1,13 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
 # Durver Eriksson <dyrver.eriksson@gmail.com>, 2021, 2022.
+# Luna Jernberg <droidbittin@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-08 10:37+0200\n"
-"PO-Revision-Date: 2022-06-16 09:17+0000\n"
-"Last-Translator: Durver Eriksson <dyrver.eriksson@gmail.com>\n"
+"PO-Revision-Date: 2022-10-26 19:04+0000\n"
+"Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
 "terminology/sv/>\n"
 "Language: sv\n"
@@ -15,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Weblate 4.14.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316 src/bin/termio.c:1296 src/bin/termio.c:1305
@@ -504,7 +505,7 @@ msgstr "Genomskinlig"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Opacitet:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #: src/bin/options_background.c:568 src/bin/options_background.c:569
