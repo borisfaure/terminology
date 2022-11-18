@@ -755,6 +755,7 @@ color_scheme_list(void)
    Eet_Entry *entry;
    Color_Scheme *cs;
    const char *current_name;
+   Eina_Bool default_found = EINA_FALSE;
 
    /* Search homedir first, so color classes there get used */
    snprintf(buf, sizeof(buf) - 1,
@@ -773,8 +774,6 @@ color_scheme_list(void)
      return NULL;
    memcpy(cs, &default_colorscheme, sizeof(*cs));
    l = eina_list_sorted_insert(l, color_scheme_cmp, cs);
-   /* Make sure default theme is the only theme */
-   name_list = eina_list_append(name_list, eina_stringshare_add("Default"));
 
    EINA_LIST_FREE(search_paths, sp)
       {
@@ -820,6 +819,8 @@ color_scheme_list(void)
                                 }
                               l = eina_list_sorted_insert(l, color_scheme_cmp, cs);
                               name_list = eina_list_append(name_list, current_name);
+                              if (strcmp(current_name, "Default") == 0)
+                                default_found = EINA_TRUE;
                            }
                         eet_close(ef);
                      }
@@ -827,6 +828,9 @@ color_scheme_list(void)
               free(file);
            }
      }
+   /* Make sure default theme is there */
+   if (!default_found)
+     name_list = eina_list_prepend(name_list, eina_stringshare_add("Default"));
 
    eina_iterator_free(it);
 
