@@ -5279,7 +5279,6 @@ _tabs_recreate(Tabs *tabs)
    Term *term;
    Tab_Item *tab_item;
    Evas_Coord w = 0, h = 0;
-   int missed = 0;
    int n = eina_list_count(tabs->tabs);
 
    if (n <= 0)
@@ -5301,9 +5300,6 @@ _tabs_recreate(Tabs *tabs)
                                              "tab,activate", "terminology",
                                              _cb_tab_activate);
           }
-
-        if (term->missed_bell)
-          missed++;
      }
 
    tab_item = tabs->current;
