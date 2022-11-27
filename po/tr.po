@@ -4,13 +4,14 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 # E-Akcaer <gurbetcii_@hotmail.com>, 2022.
 # Sabri Ünal <libreajans@gmail.com>, 2022.
+# Oğuz Ersen <oguz@ersen.moe>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-08 10:37+0200\n"
-"PO-Revision-Date: 2022-04-23 10:14+0000\n"
-"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
+"PO-Revision-Date: 2022-11-27 11:47+0000\n"
+"Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/terminology/"
 "terminology/tr/>\n"
 "Language: tr\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12.1-dev\n"
+"X-Generator: Weblate 4.15-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
@@ -77,7 +78,7 @@ msgstr "Y Ayır"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr "MiniGörünüm"
+msgstr "Küçük görünüm"
 
 #: src/bin/controls.c:413 src/bin/win.c:6239
 msgid "Set title"
@@ -110,7 +111,7 @@ msgstr "Uçbirimi Kapat"
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr ""
+msgstr "'%s' günlük etki alanı oluşturulamadı"
 
 #: src/bin/keyin.c:658
 msgid "Scrolling"
@@ -290,7 +291,7 @@ msgstr "Tam ekran pencereye geçiş yap"
 
 #: src/bin/keyin.c:708
 msgid "Display the history miniview"
-msgstr ""
+msgstr "Geçmiş küçük görünümünü göster"
 
 #: src/bin/keyin.c:709
 msgid "Display the command box"
@@ -315,7 +316,7 @@ msgstr "Enlightenment Vakfı Kitaplıkları ile yazılan uçbirim öykünücüs�
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
-msgstr "Adlandırılan dosyayı arkaplan duvar kağıdı olarak kullan"
+msgstr "Belirtilen dosyayı arka plan duvar kağıdı olarak kullan"
 
 #: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
@@ -329,11 +330,11 @@ msgstr ""
 
 #: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
-msgstr ""
+msgstr "Belirtilen Edje temasını veya tema dosyasının yolunu kullan"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr "Adlandırılan renk şemasını kullan"
+msgstr "Belirtilen renk şemasını kullan"
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -371,7 +372,6 @@ msgstr ""
 "açıklama kılavuz sayfasında bulunmaktadır"
 
 #: src/bin/main.c:493
-#, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "Kabuğu, açılış kabuğu olarak çalıştır"
 
@@ -401,7 +401,7 @@ msgstr "Çerçevesiz başlat"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
-msgstr ""
+msgstr "Geçersiz kılma-yönlendirme penceresi olarak başlat"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
@@ -421,7 +421,7 @@ msgstr "Çoklu örnek etkinse tekli çalıştırmaya zorla"
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "TERM'i 'xterm' yerine 'xterm-256color'a ayarla"
+msgstr "TERM'i 'xterm' yerine 'xterm-256color' olarak ayarla"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
@@ -453,7 +453,8 @@ msgstr "bu mesajı göster"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "-S/--split seçeneği için geçersiz değişken bulundu. --help 'e bakın"
+msgstr ""
+"-S/--split seçeneği için geçersiz değişken bulundu. --help seçeneğine bakın"
 
 #: src/bin/main.c:909
 msgid "Could not initialize key bindings"
@@ -470,7 +471,7 @@ msgstr "%s seçeneği bir değişken gerektiriyor!"
 
 #: src/bin/main.c:949
 msgid "invalid options found. See --help"
-msgstr "geçersiz seçenekler bulundu. --help 'e bakın"
+msgstr "geçersiz seçenekler bulundu. --help seçeneğine bakın"
 
 #: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
@@ -492,7 +493,7 @@ msgstr "Kaynak dosya, hedef dosyadır"
 
 #: src/bin/options_background.c:481
 msgid "Picture imported"
-msgstr "İçe aktarılan resim"
+msgstr "Resim içe aktarıldı"
 
 #: src/bin/options_background.c:486
 msgid "Failed"
@@ -500,7 +501,7 @@ msgstr "Başarısız"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
-msgstr "Arkaplan"
+msgstr "Arka plan"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
@@ -508,12 +509,12 @@ msgstr "Yarı şeffaf"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Matlık:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
-msgstr "%1.0f%%"
+msgstr "%%%1.0f"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
@@ -543,7 +544,7 @@ msgstr "%'d satır"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Geri kaydırma (geçerli bellek kullanımı: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
 msgid "Default cursor:"
@@ -591,7 +592,7 @@ msgstr "Bir tuşa basıldığında üste kaydır"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Tuşlara basıldığında tepki ver (yazma sesleri ve hareketlendirmeler)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -615,15 +616,13 @@ msgstr "Çoklu pencereler, tek işlem"
 
 #: src/bin/options_behavior.c:411
 msgid "Set TERM to xterm-256color"
-msgstr "TERM'i xterm-256color'a ayarla"
+msgstr "TERM'i xterm-256color olarak ayarla"
 
 #: src/bin/options_behavior.c:412
-#, fuzzy
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "Geri-Ok, Del işlevi görür (Silme Tuşu yerine)"
 
 #: src/bin/options_behavior.c:413
-#, fuzzy
 msgid "Start as login shell"
 msgstr "Açılış kabuğu olarak başlat"
 
@@ -633,7 +632,7 @@ msgstr "Yeni uçbirimleri geçerli çalışma dizininde aç"
 
 #: src/bin/options_behavior.c:415
 msgid "Always show miniview"
-msgstr "Her zaman mini görünümde göster"
+msgstr "Her zaman küçük görünümde göster"
 
 #: src/bin/options_behavior.c:416
 msgid "Enable special Terminology escape codes"
@@ -671,6 +670,9 @@ msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
+"Tuş atamaları ve sekmeler paneli<br>üzerinde fare ile yapılan "
+"sekme<br>geçişleri sırasında gerçekleşen<br>hareketlendirmenin zamanını "
+"ayarla"
 
 #: src/bin/options_behavior.c:532
 msgid "Tab zoom/switch animation time:"
@@ -813,22 +815,20 @@ msgid "Please press key sequence"
 msgstr "Lütfen sıralı tuşlara basınız (ctrl+x gibi)"
 
 #: src/bin/options_keys.c:386
-#, fuzzy
 msgid "Key Bindings"
-msgstr "Kısayol Tuşları"
+msgstr "Tuş Atamaları"
 
 #: src/bin/options_keys.c:458
-#, fuzzy
 msgid "Reset bindings"
-msgstr "Kısayolları sıfırla"
+msgstr "Tuş atamalarını sıfırla"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "Farenin bulunduğu bölmeye odaklan"
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
-msgstr ""
+msgstr "Odaklanma ile ilgili görseller"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
@@ -848,7 +848,7 @@ msgstr "Dosya yollarında"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr "UrL'lerde"
+msgstr "URL'lerde"
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
@@ -856,11 +856,11 @@ msgstr "Renklerde"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr ""
+msgstr "Kaçış kodlarına göre"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr "Gravatar entegrasyonu"
+msgstr "Gravatar bütünleşimi"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
@@ -926,7 +926,7 @@ msgstr "Bilinmeyen komut: %s"
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr ""
+msgstr "%i işlem kimliğinin çalışma dizini alınamadı: %s"
 
 #: src/bin/termio.c:482
 #, c-format
@@ -940,11 +940,11 @@ msgstr "desteklenmeyen seçim biçimi '%s'"
 
 #: src/bin/termio.c:1375
 msgid "Preview"
-msgstr "Önizleme"
+msgstr "Ön izleme"
 
 #: src/bin/termio.c:1385
 msgid "Copy relative path"
-msgstr "İlişkili yolu kopyala"
+msgstr "Göreceli yolu kopyala"
 
 #: src/bin/termio.c:1387
 msgid "Copy full path"
@@ -956,17 +956,17 @@ msgstr "URL olarak aç"
 
 #: src/bin/termio.c:4247
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "termpty tahsis edilemedi"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "bellek hatası: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "Boyut ayarı ioctl başarısız oldu: %s"
 
 #: src/bin/termpty.c:361
 #, c-format
@@ -981,17 +981,17 @@ msgstr "Kabuk bulunamadı, %s'e geri dönülüyor"
 #: src/bin/termpty.c:665
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' için open() başarısız oldu: %s"
 
 #: src/bin/termpty.c:672 src/bin/termpty.c:678
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' için fcntl() başarısız oldu: %s"
 
 #: src/bin/termpty.c:687
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' için ioctl() başarısız oldu: %s"
 
 #: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
 #, c-format
@@ -1001,7 +1001,7 @@ msgstr "Geçerli dizin '%s'e değiştirilemedi: %s"
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Group=%s için herhangi bir tema yüklenemedi: %s"
 
 #: src/bin/win.c:425
 msgid "Done"
@@ -1013,10 +1013,12 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Ölçek yapılandırması Ayarlar (uçbirimde sağ tıklama) →  Araç Takımı veya "
+"<keyword>elementary_config</keyword> komutu başlatılarak değiştirilebilir"
 
 #: src/bin/win.c:2358
 msgid "Ecore IMF failed"
-msgstr ""
+msgstr "Ecore IMF başarısız oldu"
 
 #: src/bin/win.c:6243
 msgid "Ok"
