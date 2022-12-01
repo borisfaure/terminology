@@ -1,6 +1,39 @@
 ==================
-Terminology 1.12.1
+Terminology 1.13.1
 ==================
+
+Changes since 1.12.1:
+---------------------
+
+Additions:
+    * Colorshemes: add Fir Dark, Selenized Dark, Selenized Black,
+      Selenized Light and Selenized White schemes
+    * New translations: Indonesian
+
+Improvements:
+    * Translation updates for Catalan, Chinese (Simplified), Croatian, Dutch,
+      French, German, Italian, Portuguese, Portuguese (Brazil),
+      Russian, Spanish, Swedish, Turkish
+    * Handle scale changes on the fly
+    * Better named option to enable/disable typing sounds
+    * Improved README file
+    * The tyls tools now supports pls files
+    * Fade the background of the terminal with the background color defined in
+      the color scheme
+    * Update the default theme to customize selection arrows
+    * Update color schemes about selection arrows
+    * Better documentation of the tyalpha tool
+
+Fixes:
+    * Fix issue when restoring the cursor state
+    * Fix issue preventing some red color from being displayed
+
+Internal improvements:
+    * Cleanup the code base about C reserved identifiers
+    * Code analyzed with Coverity 2022.06
+    * Test code with some Coccinelle script in the GitHub's CI
+    * Update the ChangeLog.theme file
+
 
 Changes since 1.12.0:
 ---------------------
