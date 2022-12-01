@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2020-03-08 19:40+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <xfce4@xfce4.org>\n"
@@ -77,7 +77,7 @@ msgstr "Подели В"
 msgid "Miniview"
 msgstr "Мали преглед"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "Постави наслов"
 
@@ -499,13 +499,13 @@ msgstr "могућност %s захтева примедбу!"
 msgid "invalid options found. See --help"
 msgstr "неисправна могућност. Погледајте --help"
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Радња %s није успела: %s"
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr "Приказ садржаја није подржан"
 
@@ -775,11 +775,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr ""
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr ""
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr ""
 
@@ -1030,30 +1030,30 @@ msgstr "Нисам успео да пређем са тренутне фасци
 msgid "Could not load any theme for group=%s: %s"
 msgstr "Нисам успео да учитам било коју тему скупа=%s: %s"
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr ""
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr "Неуспех ИМФ екора"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr "У реду"
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr "Откажи"
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7412
 #, fuzzy
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""

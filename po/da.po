@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -78,7 +78,7 @@ msgstr "Opdel vandret"
 msgid "Miniview"
 msgstr "Minivisning"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "Indstil titel"
 
@@ -469,13 +469,13 @@ msgstr "tilvalget %s kræver et argument!"
 msgid "invalid options found. See --help"
 msgstr "ugyldige tilvalg fundet. Se --help"
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktionen %s mislykkedes: %s"
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr "Medievisualisering understøttes ikke"
 
@@ -746,11 +746,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr "Start %s"
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr "Skalering"
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr "Vælg den foretrukne størrelse så teksten er læsbar"
 
@@ -999,11 +999,11 @@ msgstr "Kunne ikke skifte nuværende mappe til '%s': %s"
 msgid "Could not load any theme for group=%s: %s"
 msgstr "Kunne ikke indlæse noget tema for gruppe=%s: %s"
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr "Færdig"
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
@@ -1013,19 +1013,19 @@ msgstr ""
 "terminalen) →  Værktøjskit, eller ved at starte kommandoen "
 "<keyword>elementary_config</keyword>"
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr "Ecore-IMF mislykkedes"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr "OK"
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr "Annuller"
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunne ikke finde terminology-tema! Glemte du 'ninja install'?"
 

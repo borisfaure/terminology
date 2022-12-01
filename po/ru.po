@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2022-05-05 23:10+0000\n"
 "Last-Translator: Arthur Nikitenko <niko2040@4e.by>\n"
 "Language-Team: Russian <https://hosted.weblate.org/projects/terminology/"
@@ -76,7 +76,7 @@ msgstr "Разделить H"
 msgid "Miniview"
 msgstr "Мини-карта"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "Заголовок"
 
@@ -470,13 +470,13 @@ msgstr "параметр %s требует аргумент!"
 msgid "invalid options found. See --help"
 msgstr "обнаружен неверный параметр. Смотрите --help"
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Ошибка функции %s: %s"
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr "Визуализация медиа не поддерживается"
 
@@ -745,11 +745,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr "Запустить %s"
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr "Масштаб"
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr "Выберите предпочтительный размер, чтобы текст был читаемым"
 
@@ -998,11 +998,11 @@ msgstr "Невозможно изменить текущий каталог на
 msgid "Could not load any theme for group=%s: %s"
 msgstr "Не удалось загрузить какую-либо тему для group=%s: %s"
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr "Готово"
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
@@ -1011,19 +1011,19 @@ msgstr ""
 "Масштаб можно изменить в Настройках (клик правой кнопкой мыши по терминалу) "
 "→  Фреймворк, или запустив команду <keyword>elementary_config</keyword>"
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr "Ошибка Ecore IMF"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr "Ок"
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Не удалось найти тему для terminology! Забыли 'ninja install'?"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2020-12-22 06:29+0000\n"
 "Last-Translator: haruna <w10776e8w@yahoo.co.jp>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/terminology/"
@@ -77,7 +77,7 @@ msgstr "水平分割"
 msgid "Miniview"
 msgstr "ミニビュー"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "タイトルの設定"
 
@@ -463,13 +463,13 @@ msgstr ""
 msgid "invalid options found. See --help"
 msgstr ""
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr ""
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr ""
 
@@ -732,11 +732,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr ""
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr ""
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr ""
 
@@ -983,29 +983,29 @@ msgstr ""
 msgid "Could not load any theme for group=%s: %s"
 msgstr ""
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr ""
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr ""
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr ""
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Terminologyのテーマが見つからない！ 'ninja install'をお忘れですか？"

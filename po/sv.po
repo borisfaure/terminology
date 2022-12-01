@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2022-10-26 19:04+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
@@ -19,13 +19,12 @@ msgstr ""
 "X-Generator: Weblate 4.14.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
-#: src/bin/termio.c:1316 src/bin/termio.c:1296 src/bin/termio.c:1305
+#: src/bin/termio.c:1316
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiera '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
-#: src/bin/termio.c:1367
 msgid "Open"
 msgstr "Öppna"
 
@@ -77,12 +76,11 @@ msgstr "Splittra H"
 msgid "Miniview"
 msgstr "Minivy"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239 src/bin/win.c:6206
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "Sätt titel"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
-#: src/bin/termio.c:1381 src/bin/termio.c:2787
 msgid "Copy"
 msgstr "Kopiera"
 
@@ -468,38 +466,37 @@ msgstr "alternativ %s behöver en instruktion!"
 msgid "invalid options found. See --help"
 msgstr "ogiltiga alternativ funna. Se --help"
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktion %s misslyckades: %s"
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr "Media-visualisering stöds ej"
 
-#: src/bin/options_background.c:136 src/bin/options_background.c:139
+#: src/bin/options_background.c:136
 msgid "None"
 msgstr "Ingen"
 
-#: src/bin/options_background.c:468 src/bin/options_background.c:471
+#: src/bin/options_background.c:468
 msgid "Source file is target file"
 msgstr "Källfil är länkfil"
 
-#: src/bin/options_background.c:481 src/bin/options_background.c:484
+#: src/bin/options_background.c:481
 msgid "Picture imported"
 msgstr "Bild importerad"
 
-#: src/bin/options_background.c:486 src/bin/options_background.c:489
+#: src/bin/options_background.c:486
 msgid "Failed"
 msgstr "Misslyckades"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
-#: src/bin/options_background.c:541
 msgid "Background"
 msgstr "Bakgrund"
 
-#: src/bin/options_background.c:554 src/bin/options_background.c:557
+#: src/bin/options_background.c:554
 msgid "Translucent"
 msgstr "Genomskinlig"
 
@@ -508,28 +505,27 @@ msgid "Opacity:"
 msgstr "Opacitet:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
-#: src/bin/options_background.c:568 src/bin/options_background.c:569
 #, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
-#: src/bin/options_background.c:592 src/bin/options_background.c:588
+#: src/bin/options_background.c:592
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: src/bin/options_background.c:598 src/bin/options_background.c:594
+#: src/bin/options_background.c:598
 msgid "System"
 msgstr "System"
 
-#: src/bin/options_background.c:601 src/bin/options_background.c:597
+#: src/bin/options_background.c:601
 msgid "User"
 msgstr "Användare"
 
-#: src/bin/options_background.c:604 src/bin/options_background.c:600
+#: src/bin/options_background.c:604
 msgid "Other"
 msgstr "Övrig"
 
-#: src/bin/options_background.c:646 src/bin/options_background.c:642
+#: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
 msgstr "Klicka på en bild att använda som bakgrund"
 
@@ -745,11 +741,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr "Kör %s"
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr "Skala"
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr "Välj storlek tills denna text är läsbar"
 
@@ -917,38 +913,38 @@ msgstr "Bakgrundsfil kunde inte läsas: %s"
 msgid "Unknown command: %s"
 msgstr "Okänt kommando: %s"
 
-#: src/bin/termio.c:467 src/bin/termio.c:459
+#: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Kunde inte hitta arbetskatalog för pid %i: %s"
 
-#: src/bin/termio.c:482 src/bin/termio.c:474
+#: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Kunde inte ladda arbetskatalog %s: %s"
 
-#: src/bin/termio.c:1215 src/bin/termio.c:1204
+#: src/bin/termio.c:1215
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "markeringsformat stöds ej '%s'"
 
-#: src/bin/termio.c:1375 src/bin/termio.c:1364
+#: src/bin/termio.c:1375
 msgid "Preview"
 msgstr "Förslagsvy"
 
-#: src/bin/termio.c:1385 src/bin/termio.c:1374
+#: src/bin/termio.c:1385
 msgid "Copy relative path"
 msgstr "Kopiera relativ sökväg"
 
-#: src/bin/termio.c:1387 src/bin/termio.c:1376
+#: src/bin/termio.c:1387
 msgid "Copy full path"
 msgstr "Kopiera hel sökväg"
 
-#: src/bin/termio.c:2804 src/bin/termio.c:2789
+#: src/bin/termio.c:2804
 msgid "Open as URL"
 msgstr "Öppna som URL"
 
-#: src/bin/termio.c:4247 src/bin/termio.c:4232
+#: src/bin/termio.c:4247
 msgid "Could not allocate termpty"
 msgstr "Kunde inte hitta termpty"
 
@@ -997,11 +993,11 @@ msgstr "Kunde inte ändra nuvarande katalog till '%s': %s"
 msgid "Could not load any theme for group=%s: %s"
 msgstr "Kunde inte ladda tema för grupp=%s: %s"
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr "Färdig"
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
@@ -1010,19 +1006,19 @@ msgstr ""
 "Skalans inställningar kan ändras i Inställningar (högerklicka på terminal) "
 "→  Ramverk, eller genom att köra <keyword>elementary_config</keyword>"
 
-#: src/bin/win.c:2358 src/bin/win.c:2336
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF misslyckades"
 
-#: src/bin/win.c:6243 src/bin/win.c:6210
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr "Ok"
 
-#: src/bin/win.c:6248 src/bin/win.c:6215
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/bin/win.c:7446 src/bin/win.c:7404
+#: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Kunde inte hitta terminology tema! Glömde 'ninja install'?"
 

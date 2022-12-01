@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-08 10:37+0200\n"
+"POT-Creation-Date: 2022-12-01 19:19+0100\n"
 "PO-Revision-Date: 2021-10-12 19:21+0000\n"
 "Last-Translator: Linus Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/terminology/"
@@ -77,7 +77,7 @@ msgstr "Jaa vaaka"
 msgid "Miniview"
 msgstr "Pienoisnäkymä"
 
-#: src/bin/controls.c:413 src/bin/win.c:6239
+#: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
 msgstr "Aseta ikkunan otsikko"
 
@@ -469,13 +469,13 @@ msgstr "optio %s tarvitsee argumentin!"
 msgid "invalid options found. See --help"
 msgstr "löydettiin virheellisiä asetusmääreitä. Katso apu --help"
 
-#: src/bin/media.c:1336 src/bin/termpty.c:649 src/bin/termpty.c:654
+#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
 #: src/bin/termpty.c:658
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktion %s suoritus epäonnistui: %s"
 
-#: src/bin/media.c:1433
+#: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
 msgstr "Mediavisualisointia ei tueta"
 
@@ -745,11 +745,11 @@ msgstr ""
 msgid "Launch %s"
 msgstr "Käynnistä %s"
 
-#: src/bin/options_elm.c:150 src/bin/win.c:384 src/bin/win.c:404
+#: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr "Mittakaava"
 
-#: src/bin/options_elm.c:172 src/bin/win.c:433
+#: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
 msgstr "Valitse koko siten että tämä teksti on luettavissa"
 
@@ -998,11 +998,11 @@ msgstr "Ei voitu vaihtaa nykyistä hakemistoa kohteeseen '%s': %s"
 msgid "Could not load any theme for group=%s: %s"
 msgstr "Yhtäkään teemaa ei saatu ladattua ryhmälle=%s: %s"
 
-#: src/bin/win.c:425
+#: src/bin/win.c:424
 msgid "Done"
 msgstr "Valmis"
 
-#: src/bin/win.c:441
+#: src/bin/win.c:440
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
@@ -1012,19 +1012,19 @@ msgstr ""
 "oikealla hiiren napilla) →  Työkalut, tai käskyllä "
 "<keyword>elementary_config</keyword>"
 
-#: src/bin/win.c:2358
+#: src/bin/win.c:2334
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF ei onnistunut"
 
-#: src/bin/win.c:6243
+#: src/bin/win.c:6209
 msgid "Ok"
 msgstr "Selvä"
 
-#: src/bin/win.c:6248
+#: src/bin/win.c:6214
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/bin/win.c:7446
+#: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'ninja install'?"
 
