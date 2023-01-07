@@ -24,6 +24,22 @@ group { name: "terminology/core";
          description { state: "default" 0.0;
              color_class: "BG";
          }
+         description { state: "image" 0.0;
+            inherit: "default" 0.0;
+             color_class: "";
+         }
+         description { state: "scale" 0.0;
+            inherit: "default" 0.0;
+             color_class: "";
+         }
+         description { state: "edje" 0.0;
+            inherit: "default" 0.0;
+             color_class: "";
+         }
+         description { state: "movie" 0.0;
+            inherit: "default" 0.0;
+             color_class: "";
+         }
       }
       part { name: "terminology.background"; type: SWALLOW;
          clip_to: "terminology.fade";
@@ -47,26 +63,31 @@ group { name: "terminology/core";
          signal: "media,off"; source: "terminology";
          action: STATE_SET "default" 0.0;
          target: "terminology.background";
+         target: "terminology.fade";
       }
       program {
          signal: "media,image"; source: "terminology";
          action: STATE_SET "image" 0.0;
          target: "terminology.background";
+         target: "terminology.fade";
       }
       program {
          signal: "media,scale"; source: "terminology";
          action: STATE_SET "scale" 0.0;
          target: "terminology.background";
+         target: "terminology.fade";
       }
       program {
          signal: "media,edje"; source: "terminology";
          action: STATE_SET "edje" 0.0;
          target: "terminology.background";
+         target: "terminology.fade";
       }
       program {
          signal: "media,movie"; source: "terminology";
          action: STATE_SET "movie" 0.0;
          target: "terminology.background";
+         target: "terminology.fade";
       }
 
       part { name: "terminology.tabregion"; type: SWALLOW;
