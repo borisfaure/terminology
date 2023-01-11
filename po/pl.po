@@ -4,13 +4,14 @@
 # Warning, the translation may contain errors. If you notice any, report it so that it can be corrected.
 # Ostrzeżenie, tłumaczenie może zawierać błędy. Jeśli jakieś zauważysz, zgłoś to, by można było je poprawić.
 # gnu-ewm <gnu.ewm@protonmail.com>, 2021.
+# IntinteDAO <lordfervi@protonmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2021-06-18 11:33+0000\n"
-"Last-Translator: gnu-ewm <gnu.ewm@protonmail.com>\n"
+"PO-Revision-Date: 2023-01-09 22:51+0000\n"
+"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.7\n"
+"X-Generator: Weblate 4.15.1-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -412,7 +413,7 @@ msgstr ""
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Uruchom w trybie bezramkowym"
 
 #: src/bin/main.c:507
 #, fuzzy
@@ -421,7 +422,7 @@ msgstr "Stań się nadrzędnym oknem"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Uruchom zmaksymalizowane"
 
 #: src/bin/main.c:511
 #, fuzzy
@@ -446,7 +447,7 @@ msgstr "Ustaw TERM na 'xterm-256color' zamiast 'xterm'"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Ustaw współczynnik skalowania"
 
 #: src/bin/main.c:521
 #, fuzzy
@@ -455,7 +456,7 @@ msgstr "Podświetl linki"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Nie wyświetlaj kreatora przy uruchamianiu"
 
 #: src/bin/main.c:549
 #, fuzzy
@@ -526,7 +527,7 @@ msgstr ""
 
 #: src/bin/options_background.c:486
 msgid "Failed"
-msgstr ""
+msgstr "Nieudane"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
@@ -534,11 +535,11 @@ msgstr "Tło"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
-msgstr ""
+msgstr "Przeźroczysty"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Poziom przeźroczystości:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -551,7 +552,7 @@ msgstr "Wybierz Ścieżkę"
 
 #: src/bin/options_background.c:598
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #: src/bin/options_background.c:601
 msgid "User"
@@ -573,7 +574,7 @@ msgstr "%'d linii"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Długość historii (aktualny rozmiar pamięci: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
 msgid "Default cursor:"
@@ -621,11 +622,11 @@ msgstr "Przewiń na dół jeśli zostanie wciśnięty przycisk"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reagowanie na naciskanie klawiszy (dźwięki i animacje pisania)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Obsługa audio dla naciśnięć klawiszy <failure>WYŁĄCZONA</failure>!"
 
 #: src/bin/options_behavior.c:406
 msgid "Visual Bell"
@@ -669,12 +670,14 @@ msgstr "Włącz specjalne kody modyfikacji Terminology"
 
 #: src/bin/options_behavior.c:417
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Traktuj Emoji jako znaki o podwójnej szerokości"
 
 #: src/bin/options_behavior.c:418
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
+"Gdy grupujesz wejścia, rób to na wszystkich terminalach, a nie tylko na tych "
+"widocznych"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
@@ -717,7 +720,7 @@ msgstr "Opcje"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Mysz"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
@@ -745,12 +748,12 @@ msgstr "Tymczasowy"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Otwórz stronę"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Autor: </b>%s<br/><b>Strona: </b>%s<br/><b>Licencja: </b>%s"
 
 #: src/bin/options_colors.c:226
 #, fuzzy
@@ -760,7 +763,7 @@ msgstr "Kolory"
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Użyj motywu <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -769,11 +772,14 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> używa narzędzi środowiska <hilight>elementary</"
+"hilight>.<br>Ustawienia konfiguracyjne zestawu narzędzi są dostępne poprzez "
+"uruchomienie <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Uruchom %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
@@ -781,7 +787,7 @@ msgstr ""
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Wybierz preferowany rozmiar, aby ten tekst był czytelny"
 
 #: src/bin/options_elm.c:180
 msgid ""
@@ -855,7 +861,7 @@ msgstr "Wizualizacje na aktywnym oknie"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Automatycznie ukryj kursor myszy podczas bezczynności:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
@@ -1031,14 +1037,18 @@ msgstr "Nie mogę załadować jakiegokolwiek wyglądu dla grupy=%s: %s"
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr ""
+msgstr "Gotowe"
 
 #: src/bin/win.c:440
+#, fuzzy
 msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Konfigurację skalowania można zmienić w Ustawieniach (prawy klik na "
+"terminalu) → Zestaw narzędzi, lub uruchamiając polecenie "
+"<keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
