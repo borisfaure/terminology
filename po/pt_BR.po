@@ -1,13 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
 # gbonaspetti <gbonaspetti@hotmail.com>, 2022.
+# Felipe Nogueira <contato.fnog@gmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2022-03-19 23:59+0000\n"
-"Last-Translator: gbonaspetti <gbonaspetti@hotmail.com>\n"
+"PO-Revision-Date: 2023-02-24 13:36+0000\n"
+"Last-Translator: Felipe Nogueira <contato.fnog@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "terminology/terminology/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -15,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.12-dev\n"
+"X-Generator: Weblate 4.16-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -583,7 +584,7 @@ msgstr "Rolar para baixo quando uma tecla for pressionada"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reagir ao digitar (sons e animações de digitação)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
