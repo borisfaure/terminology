@@ -9,7 +9,6 @@ jobs:
     - name: install coccinelle
       run: |
         sudo apt update
-        sudo apt upgrade -y
         sudo apt install -y coccinelle
     - name: Checkout
       uses: actions/checkout@v3
