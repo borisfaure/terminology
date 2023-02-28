@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2023-02-25 22:36+0000\n"
+"PO-Revision-Date: 2023-02-26 23:38+0000\n"
 "Last-Translator: Reza Almanda <rezaalmanda27@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/terminology/"
 "terminology/id/>\n"
@@ -56,7 +56,7 @@ msgstr "Kendali"
 
 #: src/bin/controls.c:387
 msgid "New"
-msgstr ""
+msgstr "Baru"
 
 #: src/bin/controls.c:395
 msgid "Split V"
@@ -76,19 +76,19 @@ msgstr ""
 
 #: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
 msgid "Copy"
-msgstr ""
+msgstr "Salin"
 
 #: src/bin/controls.c:430
 msgid "Paste"
-msgstr ""
+msgstr "Tempel"
 
 #: src/bin/controls.c:436
 msgid "Settings"
-msgstr ""
+msgstr "Pengaturan"
 
 #: src/bin/controls.c:442
 msgid "About"
-msgstr ""
+msgstr "Tentang"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
