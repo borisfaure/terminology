@@ -233,15 +233,15 @@ _termpty_is_ambigous_wide(Eina_Unicode g)
        case 0x1F680 ... 0x1F6C5: EINA_FALLTHROUGH;
        case 0x1F6CC: EINA_FALLTHROUGH;
        case 0x1F6D0 ... 0x1F6D2: EINA_FALLTHROUGH;
-       case 0x1F6D5 ... 0x1F6D7: EINA_FALLTHROUGH;
+       case 0x1F6D5 ... 0x1F6DF: EINA_FALLTHROUGH;
        case 0x1F6EB ... 0x1F6EC: EINA_FALLTHROUGH;
        case 0x1F6F4 ... 0x1F6FC: EINA_FALLTHROUGH;
-       case 0x1F7E0 ... 0x1F7EB: EINA_FALLTHROUGH;
+       case 0x1F7E0 ... 0x1F7F0: EINA_FALLTHROUGH;
        case 0x1F90C ... 0x1F93A: EINA_FALLTHROUGH;
        case 0x1F93C ... 0x1F945: EINA_FALLTHROUGH;
        case 0x1F947 ... 0x1F9FF: EINA_FALLTHROUGH;
-       case 0x1FA70 ... 0x1FAD6: EINA_FALLTHROUGH;
-       case 0x20000 ... 0x3134A: EINA_FALLTHROUGH;
+       case 0x1FA70 ... 0x1FAF8: EINA_FALLTHROUGH;
+       case 0x20000 ... 0x323AF: EINA_FALLTHROUGH;
        case 0xE0100 ... 0xE01EF:
 
         return EINA_TRUE;
@@ -327,15 +327,15 @@ _termpty_is_wide(Eina_Unicode g)
        case 0x1F680 ... 0x1F6C5: EINA_FALLTHROUGH;
        case 0x1F6CC: EINA_FALLTHROUGH;
        case 0x1F6D0 ... 0x1F6D2: EINA_FALLTHROUGH;
-       case 0x1F6D5 ... 0x1F6D7: EINA_FALLTHROUGH;
+       case 0x1F6D5 ... 0x1F6DF: EINA_FALLTHROUGH;
        case 0x1F6EB ... 0x1F6EC: EINA_FALLTHROUGH;
        case 0x1F6F4 ... 0x1F6FC: EINA_FALLTHROUGH;
-       case 0x1F7E0 ... 0x1F7EB: EINA_FALLTHROUGH;
+       case 0x1F7E0 ... 0x1F7F0: EINA_FALLTHROUGH;
        case 0x1F90C ... 0x1F93A: EINA_FALLTHROUGH;
        case 0x1F93C ... 0x1F945: EINA_FALLTHROUGH;
        case 0x1F947 ... 0x1F9FF: EINA_FALLTHROUGH;
-       case 0x1FA70 ... 0x1FAD6: EINA_FALLTHROUGH;
-       case 0x20000 ... 0x3134A:
+       case 0x1FA70 ... 0x1FAF8: EINA_FALLTHROUGH;
+       case 0x20000 ... 0x323AF:
 
         return EINA_TRUE;
     }
