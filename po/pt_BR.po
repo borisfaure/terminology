@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2023-02-28 16:39+0000\n"
+"PO-Revision-Date: 2023-03-02 11:39+0000\n"
 "Last-Translator: Felipe Nogueira <contato.fnog@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://hosted.weblate.org/projects/"
 "terminology/terminology/pt_BR/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.16-rc\n"
+"X-Generator: Weblate 4.16.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -613,7 +613,7 @@ msgstr "Definir TERM para xterm-256color"
 
 #: src/bin/options_behavior.c:412
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "BackArrow emite Del (em vez de BackSpace)"
 
 #: src/bin/options_behavior.c:413
 msgid "Start as login shell"
@@ -797,7 +797,7 @@ msgstr "Meta+"
 
 #: src/bin/options_keys.c:71
 msgid "Hyper+"
-msgstr ""
+msgstr "Hyper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
@@ -817,11 +817,11 @@ msgstr "Redefinir atalhos"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "Foco dividido sob o mouse"
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
-msgstr ""
+msgstr "Visuais relacionados ao foco"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
@@ -861,7 +861,7 @@ msgstr "Arrastar e soltar links"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr ""
+msgstr "Em linha, se possível"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
@@ -1012,7 +1012,7 @@ msgstr ""
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
-msgstr ""
+msgstr "Erro do Ecore IMF"
 
 #: src/bin/win.c:6209
 msgid "Ok"
