@@ -391,7 +391,6 @@ _fd_do(Termpty *ty, Ecore_Fd_Handler *fd_handler, Eina_Bool false_on_empty)
    // is closed ... but no longer just bsd's - i have seen this now on linux
    if (ty->pid == -1)
      {
-        ty->hand_fd = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
 
