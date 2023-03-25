@@ -152,3 +152,4 @@ xterm-colors-sharp.sh d35dc9a85f2e1f5b5be9a9d9bb876af7
 xterm-colors-rgb.sh 29145c3cb5960cbec2559f20c17e9a6c
 xterm-colors-rgbi.sh 29145c3cb5960cbec2559f20c17e9a6c
 xterm-set-cursor-color.sh bb605a08705dce5456c825697cb62be3
+csi-38-no-value.sh 62a4f10751b13322fb048f8754d4c2ae

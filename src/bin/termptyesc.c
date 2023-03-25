@@ -1069,8 +1069,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               switch (arg)
                 {
                  case -ESC_ARG_ERROR:
+                    EINA_FALLTHROUGH;
+                 case -ESC_ARG_NO_VALUE:
                     return;
-                   /* TODO: -ESC_ARG_NO_VALUE */
                  case 1:
                     ty->termstate.att.fg256 = 0;
                     ty->termstate.att.fg = COL_INVIS;
@@ -1140,8 +1141,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               switch (arg)
                 {
                  case -ESC_ARG_ERROR:
+                    EINA_FALLTHROUGH;
+                 case -ESC_ARG_NO_VALUE:
                     return;
-                   /* TODO: -ESC_ARG_NO_VALUE */
                  case 1:
                     ty->termstate.att.bg256 = 0;
                     ty->termstate.att.bg = COL_INVIS;
