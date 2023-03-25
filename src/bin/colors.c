@@ -721,7 +721,8 @@ config_compute_color_scheme(Config *cfg)
    EINA_SAFETY_ON_NULL_RETURN(cfg);
 
    free((void*)cfg->color_scheme);
-   cfg->color_scheme = _color_scheme_get(cfg->color_scheme_name);
+   cfg->color_scheme = (cfg->color_scheme_name) ?
+      _color_scheme_get(cfg->color_scheme_name) : NULL;
    if (!cfg->color_scheme)
      {
         eina_stringshare_del(cfg->color_scheme_name);
