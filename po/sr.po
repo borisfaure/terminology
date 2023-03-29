@@ -3,28 +3,30 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 # Саша <Петровић>, 2014.
-# Саша Петровић <salepetronije@gmail.com>, 2015.
-#
+# Саша Петровић <salepetronije@gmail.com>, 2015, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2020-03-08 19:40+0100\n"
+"PO-Revision-Date: 2023-03-29 17:42+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
-"Language-Team: српски <xfce4@xfce4.org>\n"
+"Language-Team: Serbian <https://hosted.weblate.org/projects/terminology/"
+"terminology/sr/>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.17-dev\n"
 "X-Launchpad-Export-Date: 2017-08-03 05:19+0000\n"
-"X-Generator: Poedit 2.2.1\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
-#, fuzzy, c-format
+#, c-format
 msgid "Copy '%s'"
-msgstr "Умножи"
+msgstr "Умножи „%s“"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
 msgid "Open"
@@ -32,11 +34,11 @@ msgstr "Отвори"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Твитер: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "Канал Јутуба"
 
 #: src/bin/about.c:289
 #, c-format
@@ -55,7 +57,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Развијачи Терминологије"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -99,14 +101,14 @@ msgstr "О програму"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Груписани унос"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
 msgstr "Затвори терминал"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Нисам успео да направим област за пријаву „%s“"
 
@@ -252,7 +254,7 @@ msgstr "Измени наслов"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Прекидач да ли унос иде свим видљивим терминалима"
 
 #: src/bin/keyin.c:699
 msgid "Font size"
@@ -295,12 +297,10 @@ msgid "Display the command box"
 msgstr "Прикажи наредбену кућицу"
 
 #: src/bin/main.c:406 src/bin/main.c:602
-#, fuzzy
 msgid "Could not create window"
 msgstr "Нисам успео да направим прозор"
 
 #: src/bin/main.c:425 src/bin/main.c:613
-#, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Нисам успео отворити справицу терминала"
 
@@ -310,17 +310,14 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Карстен Хедзла (Carsten Haitzler) и остали"
 
 #: src/bin/main.c:462
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr "Опонашач терминала написан по билиотекама задужбине Просвећења"
+msgstr "Опонашач терминала написан по књижницама задужбине Просвећења"
 
 #: src/bin/main.c:466
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Користи именовану датотеку као слику позадине"
 
 #: src/bin/main.c:468
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Промени фасциклу ради извршења наредбе терминала у њој"
 
@@ -330,46 +327,38 @@ msgstr ""
 "Наредба за извршење. Подразумевано је $SHELL (или passwd shell или /bin/sh)"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
-msgstr "Користи именовану едје тему или путању до датотеке теме"
+msgstr "Користи именовану тему едје или путању до датотеке теме"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Користи именовани образац боје"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Размера терминала (нпр. 80x24 или 80x24+50+20 итд.)"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set window name"
 msgstr "Постави име прозору"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Set window role"
 msgstr "Постави улогу прозора"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Set window title"
 msgstr "Постави наслов прозора"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Set icon name"
 msgstr "Постави име сличице"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Постави словни лик (ИМЕ/ВЕЛИЧИНА за променљив, ИМЕ за битмапу)"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
@@ -380,112 +369,94 @@ msgstr ""
 "man страници"
 
 #: src/bin/main.c:493
-#, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "Покрећи љуску као љуску за пријаву"
 
 #: src/bin/main.c:495
-#, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "Постави извођење видеа без звука"
 
 #: src/bin/main.c:497
-#, fuzzy
 msgid "Set cursor blink mode"
-msgstr "Постави да трепће показивач"
+msgstr "Постави начин трептања показивача"
 
 #: src/bin/main.c:499
-#, fuzzy
 msgid "Set visual bell mode"
 msgstr "Укључи видно звоно"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
-msgstr "Покрећи  у приказу преко целог екрана"
+msgstr "Покрећи у приказу преко целог заслона"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Покрени умањеним прозором"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Покрени без оквира"
 
 #: src/bin/main.c:507
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Начини прозор као преусмерени прозор"
+msgstr "Покрени као преусмерени прозор"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Покрени увећаним прозором"
 
 #: src/bin/main.c:511
-#, fuzzy
 msgid "Terminology is run without a window manager"
 msgstr "Терминологија је покренута без управника прозора"
 
 #: src/bin/main.c:513
-#, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Не излази када се изврши наредба"
 
 #: src/bin/main.c:515
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Приморај на једну извршну датотеку ако је омогућено више примерака"
 
 #: src/bin/main.c:517
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
 msgstr "Постави TERM на „xterm-256color“ уместо на „xterm“"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Постави размеру увећања"
 
 #: src/bin/main.c:521
-#, fuzzy
 msgid "Highlight links"
 msgstr "Истакни везе"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Не приказуј чаробњака при покретању"
 
 #: src/bin/main.c:549
-#, fuzzy
 msgid "show program version"
 msgstr "прикажи издање програма"
 
 #: src/bin/main.c:552
-#, fuzzy
 msgid "show copyright"
 msgstr "прикажи права умножавања"
 
 #: src/bin/main.c:555
-#, fuzzy
 msgid "show license"
 msgstr "прикажи дозволу"
 
 #: src/bin/main.c:558
-#, fuzzy
 msgid "show this message"
 msgstr "прикажи ову поруку"
 
 #: src/bin/main.c:655
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "неисправна примедба за могућност  -S/--split. Погледајте --help"
+msgstr "неисправна примедба за могућност -S/--split. Погледајте --help"
 
 #: src/bin/main.c:909
-#, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "Нисам успео да покренем пречице"
 
 #: src/bin/main.c:924
-#, fuzzy
 msgid "Could not parse command line options"
 msgstr "Нисам успео да рашчланим могућности наредбене линије"
 
@@ -495,7 +466,6 @@ msgid "option %s requires an argument!"
 msgstr "могућност %s захтева примедбу!"
 
 #: src/bin/main.c:949
-#, fuzzy
 msgid "invalid options found. See --help"
 msgstr "неисправна могућност. Погледајте --help"
 
@@ -535,7 +505,7 @@ msgstr "Прозирност"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Прозирност:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -559,9 +529,8 @@ msgid "Other"
 msgstr "Друго"
 
 #: src/bin/options_background.c:646
-#, fuzzy
 msgid "Click on a picture to use it as background"
-msgstr "_Двоклик за увоз слике"
+msgstr "Кликните на слику ради коришћења као позадине"
 
 #: src/bin/options_behavior.c:63
 #, c-format
@@ -571,36 +540,35 @@ msgstr "%'d линија"
 #: src/bin/options_behavior.c:79
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Клизање уназад (тренутно коришћење меморије: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:217
-#, fuzzy
 msgid "Default cursor:"
-msgstr "Подразумевано"
+msgstr "Подразумевани показивач:"
 
 #: src/bin/options_behavior.c:226
 msgid "Blinking Block"
-msgstr ""
+msgstr "Трепћућа целина"
 
 #: src/bin/options_behavior.c:245
 msgid "Steady Block"
-msgstr ""
+msgstr "Мирна целина"
 
 #: src/bin/options_behavior.c:265
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Трепћућа подлинија"
 
 #: src/bin/options_behavior.c:285
 msgid "Steady Underline"
-msgstr ""
+msgstr "Мирна подлинија"
 
 #: src/bin/options_behavior.c:305
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Трепћућа трака"
 
 #: src/bin/options_behavior.c:325
 msgid "Steady Bar"
-msgstr ""
+msgstr "Мирна трака"
 
 #: src/bin/options_behavior.c:365 src/bin/options.c:217
 msgid "Behavior"
@@ -620,11 +588,11 @@ msgstr "Клизни до дна када се притисне дугме"
 
 #: src/bin/options_behavior.c:395
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Одазови се на притисак дугмади (звуке притисака и оживљавање)"
 
 #: src/bin/options_behavior.c:402
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Звучна подршка притисака дугмади <failure>ОНЕМОГУЋЕНА</failure>!"
 
 #: src/bin/options_behavior.c:406
 msgid "Visual Bell"
@@ -668,12 +636,12 @@ msgstr "Омогући нарочите излазне кодове Термин
 
 #: src/bin/options_behavior.c:417
 msgid "Treat Emojis as double-width characters"
-msgstr ""
+msgstr "Подразумевај осећањца као знаке двоструке ширине"
 
 #: src/bin/options_behavior.c:418
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
-msgstr ""
+msgstr "При груписању уноса, чини то у свим терминалима, а не само у видљивим"
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
@@ -692,14 +660,13 @@ msgid "Height:"
 msgstr "Висина:"
 
 #: src/bin/options_behavior.c:527
-#, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Постави време дејства оживљавања које<br>заузима место промене листова,"
-"<br>било пречицом дугмади, точкићем<br>миша или променом мишем на површи "
-"листова"
+"Постави време дејства оживљавања које<br>заузима место промене "
+"листова,<br>било пречицом дугмади, точкићем<br>миша или променом мишем на "
+"површи листова"
 
 #: src/bin/options_behavior.c:532
 msgid "Tab zoom/switch animation time:"
@@ -717,7 +684,7 @@ msgstr "Могућности"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Миш"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
@@ -745,22 +712,21 @@ msgstr "Привремено"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Отвори страницу веба"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Творац</b>%s<br/><b>Страница веба: </b>%s<br/><b>Дозвола: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Боје"
+msgstr "Образац боја"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Користим тему <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -769,29 +735,33 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Терминологија</em> користи прибор <hilight>елементарија</hilight>. "
+"Поставкама прибора се може приступити покретањем <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Покрени %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
-msgstr ""
+msgstr "Размера"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Одредите омиљену величину тако да је писмо читљиво"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"Поставке размере такође могу бити измењене преко полице поставки "
+"<hilight>елементарија</hilight>"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Тражи словолик"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
@@ -855,35 +825,31 @@ msgstr "Призори односни на жижу"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Самостално скривај показивач миша када мирује:"
 
 #: src/bin/options_mouse.c:204
-#, fuzzy
 msgid "Active Links:"
-msgstr "Везе у погону"
+msgstr "Везе у погону:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "У е-пошти"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "У путањама датотека"
 
 #: src/bin/options_mouse.c:210
-#, fuzzy
 msgid "On URLs"
-msgstr "Отвори као адресу"
+msgstr "У адресама"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Боје"
+msgstr "У бојама"
 
 #: src/bin/options_mouse.c:212
-#, fuzzy
 msgid "Based on escape codes"
-msgstr "Омогући нарочите излазне кодове Терминологији"
+msgstr "Засновано на кодивима бега"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -928,7 +894,7 @@ msgstr "Месно (свега):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Користи образац боја <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -1032,7 +998,7 @@ msgstr "Нисам успео да учитам било коју тему ск�
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr ""
+msgstr "Урађено"
 
 #: src/bin/win.c:440
 msgid ""
@@ -1040,6 +1006,8 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Поставке размере се могу изменити у Поставкама (десни клик на терминал)→  "
+"Прибор, или покретањем наредбе <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
@@ -1054,11 +1022,10 @@ msgid "Cancel"
 msgstr "Откажи"
 
 #: src/bin/win.c:7412
-#, fuzzy
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
-"Нисам успео да пронађем тему Терминологије! Да нисте заборавили да урадите "
-"„make install“?"
+"Нисам успео да пронађем тему Терминологије! Да нисте заборавили да урадите „"
+"ninja install“?"
 
 #~ msgid "React to key presses"
 #~ msgstr "Одазови се на притисак дугмади"
