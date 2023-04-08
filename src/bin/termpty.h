@@ -99,6 +99,15 @@ typedef struct tag_Backlog_Beacon{
     int backlog_y;
 } Backlog_Beacon;
 
+typedef enum exmod {
+     XMOD_KEYBOARD = 0,
+     XMOD_CURSOR = 1,
+     XMOD_FUNCTIONS= 2,
+     XMOD_KEYPAD = 3,
+     XMOD_OTHER = 4,
+     XMOD_STRING = 5,
+} XMod;
+
 typedef struct tag_Term_State {
     Termatt       att;
     unsigned char charset;
@@ -123,6 +132,7 @@ typedef struct tag_Term_State {
     unsigned int  hide_cursor : 1;
     unsigned int  combining_strike : 1;
     unsigned int  sace_rectangular : 1;
+    int xmod[6];
 } Term_State;
 
 typedef struct tag_Term_Cursor {

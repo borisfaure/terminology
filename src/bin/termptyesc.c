@@ -3300,6 +3300,91 @@ _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
      }
 }
 
+
+static void
+_handle_xmodkeys(Termpty *ty,
+                 Eina_Unicode cmd, Eina_Unicode **ptr,
+                 const Eina_Unicode * const end)
+{
+   Eina_Unicode *b = *ptr;
+   Eina_Bool set = (cmd == 'm');
+   Eina_Unicode param = *b;
+   b++;
+   if (param == '?')
+     return; // Not actually supported by xterm
+   if (param != '>')
+     {
+        ERR("XMODKEYS: Invalid sequence");
+        ty->decoding_error = EINA_TRUE;
+        return;
+     }
+   if (set)
+     {
+        int arg1 = _csi_arg_get(ty, &b);
+        int arg2 = _csi_arg_get(ty, &b);
+        int v, mod;
+        if (arg1 == -ESC_ARG_ERROR)
+          {
+             ERR("XMODKEYS set: Invalid sequence");
+             ty->decoding_error = EINA_TRUE;
+             return;
+          }
+        if (arg2 == -ESC_ARG_NO_VALUE)
+          {
+             mod = arg1;
+             v = 0;
+          }
+        else
+          {
+             mod = arg2;
+             v = arg1;
+          }
+        switch (mod)
+          {
+           case XMOD_KEYBOARD:
+              EINA_FALLTHROUGH;
+           case XMOD_CURSOR:
+              EINA_FALLTHROUGH;
+           case XMOD_FUNCTIONS:
+              EINA_FALLTHROUGH;
+           case XMOD_KEYPAD:
+              EINA_FALLTHROUGH;
+           case XMOD_OTHER:
+              EINA_FALLTHROUGH;
+           case XMOD_STRING:
+              break;
+           default:
+              ERR("XMODKEYS set: Invalid sequence");
+              ty->decoding_error = EINA_TRUE;
+              return;
+          }
+        ty->termstate.xmod[mod] = v;
+     }
+   else
+     { /* reset */
+        int arg = _csi_arg_get(ty, &b);
+        switch (arg)
+          {
+           case XMOD_KEYBOARD:
+              EINA_FALLTHROUGH;
+           case XMOD_CURSOR:
+              EINA_FALLTHROUGH;
+           case XMOD_FUNCTIONS:
+              EINA_FALLTHROUGH;
+           case XMOD_KEYPAD:
+              EINA_FALLTHROUGH;
+           case XMOD_OTHER:
+              EINA_FALLTHROUGH;
+           case XMOD_STRING:
+              break;
+           default:
+              ERR("XMODKEYS reset: Invalid sequence");
+              ty->decoding_error = EINA_TRUE;
+              return;
+          }
+        ty->termstate.xmod[arg] = 0;
+     }
+}
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -3451,19 +3536,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 'm': // color set
         if (b && (*b == '>' || *b == '?'))
-          { // key resources used by xterm
-             WRN("TODO: set/reset key resources used by xterm");
-             ty->decoding_error = EINA_TRUE;
-          }
+          _handle_xmodkeys(ty, *cc, &b, be);
         else
           _handle_esc_csi_color_set(ty, &b, be);
         break;
       case 'n':
         if (*b == '>')
-          {
-             WRN("TODO: disable key resources used by xterm");
-             ty->decoding_error = EINA_TRUE;
-          }
+          _handle_xmodkeys(ty, *cc, &b, be);
         else
           _handle_esc_csi_dsr(ty, b);
         break;
