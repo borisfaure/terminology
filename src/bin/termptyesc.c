@@ -1352,12 +1352,6 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
    char bf[32];
    Eina_Bool question_mark = EINA_FALSE;
 
-   if (*b == '>')
-     {
-        WRN("TODO: disable key resources used by xterm");
-        ty->decoding_error = EINA_TRUE;
-        return;
-     }
    if (*b == '?')
      {
         question_mark = EINA_TRUE;
@@ -3465,7 +3459,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           _handle_esc_csi_color_set(ty, &b, be);
         break;
       case 'n':
-        _handle_esc_csi_dsr(ty, b);
+        if (*b == '>')
+          {
+             WRN("TODO: disable key resources used by xterm");
+             ty->decoding_error = EINA_TRUE;
+          }
+        else
+          _handle_esc_csi_dsr(ty, b);
         break;
       case 'p': // define key assignments based on keycode
         if (b && *b == '!')
