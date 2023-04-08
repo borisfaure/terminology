@@ -976,12 +976,6 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
 {
    Eina_Unicode *b = *ptr;
 
-   if (b && (*b == '>'))
-     { // key resources used by xterm
-        WRN("TODO: set/reset key resources used by xterm");
-        ty->decoding_error = EINA_TRUE;
-        return;
-     }
    DBG("color set");
    while (b && b <= end)
      {
@@ -3462,7 +3456,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         _handle_esc_csi_reset_mode(ty, *cc, b, be);
         break;
       case 'm': // color set
-        _handle_esc_csi_color_set(ty, &b, be);
+        if (b && (*b == '>' || *b == '?'))
+          { // key resources used by xterm
+             WRN("TODO: set/reset key resources used by xterm");
+             ty->decoding_error = EINA_TRUE;
+          }
+        else
+          _handle_esc_csi_color_set(ty, &b, be);
         break;
       case 'n':
         _handle_esc_csi_dsr(ty, b);
