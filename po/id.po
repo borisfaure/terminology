@@ -2,13 +2,14 @@
 # This file is put in the public domain.
 # Andika Triwidada <andika@gmail.com>, 2022.
 # Reza Almanda <rezaalmanda27@gmail.com>, 2023.
+# Haydar Alaidrus <haydar.alaidrus@gmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-01 19:19+0100\n"
-"PO-Revision-Date: 2023-02-26 23:38+0000\n"
-"Last-Translator: Reza Almanda <rezaalmanda27@gmail.com>\n"
+"PO-Revision-Date: 2023-05-26 14:51+0000\n"
+"Last-Translator: Haydar Alaidrus <haydar.alaidrus@gmail.com>\n"
 "Language-Team: Indonesian <https://hosted.weblate.org/projects/terminology/"
 "terminology/id/>\n"
 "Language: id\n"
@@ -16,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.16-dev\n"
+"X-Generator: Weblate 4.18-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
 #: src/bin/termio.c:1316
@@ -48,7 +49,7 @@ msgstr ""
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Para pengembang Terminology"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -72,7 +73,7 @@ msgstr ""
 
 #: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
-msgstr ""
+msgstr "Atur Judul"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
 msgid "Copy"
@@ -96,7 +97,7 @@ msgstr ""
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
-msgstr ""
+msgstr "Tutup Terminal"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
@@ -105,23 +106,23 @@ msgstr ""
 
 #: src/bin/keyin.c:658
 msgid "Scrolling"
-msgstr ""
+msgstr "Men-scroll"
 
 #: src/bin/keyin.c:659
 msgid "Scroll one page up"
-msgstr ""
+msgstr "Scroll satu halaman ke atas"
 
 #: src/bin/keyin.c:660
 msgid "Scroll one page down"
-msgstr ""
+msgstr "Scroll satu halaman ke bawah"
 
 #: src/bin/keyin.c:661
 msgid "Scroll one line up"
-msgstr ""
+msgstr "Scroll satu baris ke atas"
 
 #: src/bin/keyin.c:662
 msgid "Scroll one line down"
-msgstr ""
+msgstr "Scroll satu baris ke bawah"
 
 #: src/bin/keyin.c:663
 msgid "Go to the top of the backlog"
@@ -129,11 +130,11 @@ msgstr ""
 
 #: src/bin/keyin.c:664
 msgid "Reset scroll"
-msgstr ""
+msgstr "Atur ulang scroll"
 
 #: src/bin/keyin.c:666
 msgid "Copy/Paste"
-msgstr ""
+msgstr "Salin/Tempel"
 
 #: src/bin/keyin.c:667
 msgid "Copy selection to Primary buffer"
@@ -157,43 +158,43 @@ msgstr ""
 
 #: src/bin/keyin.c:673
 msgid "Focus the previous terminal"
-msgstr ""
+msgstr "Fokus ke terminal sebelumnya"
 
 #: src/bin/keyin.c:674
 msgid "Focus the next terminal"
-msgstr ""
+msgstr "Fokus ke terminal selanjutnya"
 
 #: src/bin/keyin.c:675
 msgid "Focus the terminal above"
-msgstr ""
+msgstr "Fokus ke terminal di atas"
 
 #: src/bin/keyin.c:676
 msgid "Focus the terminal below"
-msgstr ""
+msgstr "Fokus ke terminal di bawah"
 
 #: src/bin/keyin.c:677
 msgid "Focus the terminal on the left"
-msgstr ""
+msgstr "Fokus ke terminal kiri"
 
 #: src/bin/keyin.c:678
 msgid "Focus the terminal on the right"
-msgstr ""
+msgstr "Fokus ke terminal kanan"
 
 #: src/bin/keyin.c:679
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "Belah secara horizontal (yang baru di bawah)"
 
 #: src/bin/keyin.c:680
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "Belah secara horizontal (yang baru di atas)"
 
 #: src/bin/keyin.c:681
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "Buat \"tab\" baru"
 
 #: src/bin/keyin.c:682
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "Tutup terminal yang sedang difokuskan"
 
 #: src/bin/keyin.c:683
 msgid "Bring up \"tab\" switcher"
@@ -201,47 +202,47 @@ msgstr ""
 
 #: src/bin/keyin.c:684
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "Pindah ke tab terminal 1"
 
 #: src/bin/keyin.c:685
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "Pindah ke tab terminal 2"
 
 #: src/bin/keyin.c:686
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "Pindah ke tab terminal 3"
 
 #: src/bin/keyin.c:687
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "Pindah ke tab terminal 4"
 
 #: src/bin/keyin.c:688
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "Pindah ke tab terminal 5"
 
 #: src/bin/keyin.c:689
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "Pindah ke tab terminal 6"
 
 #: src/bin/keyin.c:690
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "Pindah ke tab terminal 7"
 
 #: src/bin/keyin.c:691
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "Pindah ke tab terminal 8"
 
 #: src/bin/keyin.c:692
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "Pindah ke tab terminal 9"
 
 #: src/bin/keyin.c:693
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "Pindah ke tab terminal 10"
 
 #: src/bin/keyin.c:694
 msgid "Change title"
-msgstr ""
+msgstr "Ubah judul"
 
 #: src/bin/keyin.c:695 src/bin/keyin.c:696
 msgid "Toggle whether input goes to all visible terminals"
@@ -249,7 +250,7 @@ msgstr ""
 
 #: src/bin/keyin.c:699
 msgid "Font size"
-msgstr ""
+msgstr "Ukuran huruf"
 
 #: src/bin/keyin.c:700
 msgid "Font size up 1"
@@ -265,7 +266,7 @@ msgstr ""
 
 #: src/bin/keyin.c:703
 msgid "Reset font size"
-msgstr ""
+msgstr "Atur ulang ukuran huruf"
 
 #: src/bin/keyin.c:705
 msgid "Actions"
@@ -273,7 +274,7 @@ msgstr ""
 
 #: src/bin/keyin.c:706
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "Buka jendela terminal baru"
 
 #: src/bin/keyin.c:707
 msgid "Toggle Fullscreen of the window"
@@ -298,7 +299,7 @@ msgstr ""
 #: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr ""
+msgstr "(C) 2012-%d Carsten Haitzler dan lain-lain"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
@@ -330,19 +331,19 @@ msgstr ""
 
 #: src/bin/main.c:478
 msgid "Set window name"
-msgstr ""
+msgstr "Atur nama jendela"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr ""
+msgstr "Atur peran jendela"
 
 #: src/bin/main.c:482
 msgid "Set window title"
-msgstr ""
+msgstr "Atur judul jendela"
 
 #: src/bin/main.c:484
 msgid "Set icon name"
-msgstr ""
+msgstr "Atur nama ikon"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
@@ -393,7 +394,7 @@ msgstr ""
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
-msgstr ""
+msgstr "Terminology dijalankan tanpa window manager"
 
 #: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
@@ -421,19 +422,19 @@ msgstr ""
 
 #: src/bin/main.c:549
 msgid "show program version"
-msgstr ""
+msgstr "tampilkan versi program"
 
 #: src/bin/main.c:552
 msgid "show copyright"
-msgstr ""
+msgstr "tampilkan hak cipta"
 
 #: src/bin/main.c:555
 msgid "show license"
-msgstr ""
+msgstr "tampilkan lisensi"
 
 #: src/bin/main.c:558
 msgid "show this message"
-msgstr ""
+msgstr "tampilkan pesan ini"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
@@ -480,11 +481,11 @@ msgstr ""
 
 #: src/bin/options_background.c:486
 msgid "Failed"
-msgstr ""
+msgstr "Gagal"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
-msgstr ""
+msgstr "Latar belakang"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
@@ -505,11 +506,11 @@ msgstr ""
 
 #: src/bin/options_background.c:598
 msgid "System"
-msgstr ""
+msgstr "Sistem"
 
 #: src/bin/options_background.c:601
 msgid "User"
-msgstr ""
+msgstr "Pengguna"
 
 #: src/bin/options_background.c:604
 msgid "Other"
@@ -517,7 +518,7 @@ msgstr ""
 
 #: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Klik gambar untuk menjadikannya latar belakang"
 
 #: src/bin/options_behavior.c:63
 #, c-format
@@ -559,7 +560,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:365 src/bin/options.c:217
 msgid "Behavior"
-msgstr ""
+msgstr "Perilaku"
 
 #: src/bin/options_behavior.c:385
 msgid "Show tabs"
@@ -632,7 +633,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:425
 msgid "Always open at size:"
-msgstr ""
+msgstr "Selalu buka dengan ukuran:"
 
 #: src/bin/options_behavior.c:435
 msgid "Set Current:"
@@ -640,11 +641,11 @@ msgstr ""
 
 #: src/bin/options_behavior.c:446
 msgid "Width:"
-msgstr ""
+msgstr "Lebar:"
 
 #: src/bin/options_behavior.c:468
 msgid "Height:"
-msgstr ""
+msgstr "Tinggi:"
 
 #: src/bin/options_behavior.c:527
 msgid ""
@@ -664,7 +665,7 @@ msgstr ""
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr ""
+msgstr "Opsi"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
@@ -672,15 +673,15 @@ msgstr ""
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
-msgstr ""
+msgstr "Huruf"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:168
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/bin/options.c:222
 msgid "Colors"
-msgstr ""
+msgstr "Warna-warna"
 
 #: src/bin/options.c:223
 msgid "Keys"
@@ -692,11 +693,11 @@ msgstr ""
 
 #: src/bin/options.c:235
 msgid "Temporary"
-msgstr ""
+msgstr "Sementara"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Buka situs"
 
 #: src/bin/options_colors.c:131
 #, c-format
@@ -781,7 +782,7 @@ msgstr ""
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr ""
+msgstr "Hapus"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
@@ -845,7 +846,7 @@ msgstr ""
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr ""
+msgstr "E-mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
@@ -978,7 +979,7 @@ msgstr ""
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr ""
+msgstr "Selesai"
 
 #: src/bin/win.c:440
 msgid ""
@@ -993,12 +994,12 @@ msgstr ""
 
 #: src/bin/win.c:6209
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: src/bin/win.c:6214
 msgid "Cancel"
-msgstr ""
+msgstr "Batal"
 
 #: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
+msgstr "Tema Terminology tidak ditemukan! Lupa 'ninja install'?"
