@@ -3,3 +3,4 @@
 *~
 /po/*.gmo
 /build
+/data/colorschemes/__pycache__/
