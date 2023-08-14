@@ -3303,8 +3303,7 @@ _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
 
 static void
 _handle_xmodkeys(Termpty *ty,
-                 Eina_Unicode cmd, Eina_Unicode **ptr,
-                 const Eina_Unicode * const end)
+                 Eina_Unicode cmd, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    Eina_Bool set = (cmd == 'm');
@@ -3536,13 +3535,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 'm': // color set
         if (b && (*b == '>' || *b == '?'))
-          _handle_xmodkeys(ty, *cc, &b, be);
+          _handle_xmodkeys(ty, *cc, &b);
         else
           _handle_esc_csi_color_set(ty, &b, be);
         break;
       case 'n':
         if (*b == '>')
-          _handle_xmodkeys(ty, *cc, &b, be);
+          _handle_xmodkeys(ty, *cc, &b);
         else
           _handle_esc_csi_dsr(ty, b);
         break;
