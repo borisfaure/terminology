@@ -2310,7 +2310,7 @@ _handle_esc_csi_term_version(Termpty *ty, Eina_Unicode **b)
         ty->decoding_error = EINA_TRUE;
         return;
     }
-  TERMPTY_WRITE_STR("\033P>|" PACKAGE_NAME " " PACKAGE_VERSION "\033\\");
+  TERMPTY_WRITE_STR("\033P>|" PACKAGE_NAME "(" PACKAGE_VERSION ")\033\\");
 }
 
 static void
