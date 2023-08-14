@@ -539,11 +539,25 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                 case 2004:
                    ty->bracketed_paste = mode;
                    break;
+                case 7700: // ignore
+                   WRN("TODO: ambigous width reporting %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
                 case 7727: // ignore
                    WRN("TODO: enable application escape mode %i", mode);
                    ty->decoding_error = EINA_TRUE;
                    break;
+                case 7766: // ignore
+                   WRN("TODO: %s scrollbar", mode ? "hide" : "show");
+                   ty->decoding_error = EINA_TRUE;
+                   break;
+                case 7783: // ignore
+                   WRN("TODO: shortcut override mode %i", mode);
+                   ty->decoding_error = EINA_TRUE;
+                   break;
                 case 7786: // ignore
+                   EINA_FALLTHROUGH;
+                case 7787: // ignore
                    WRN("TODO: enable mouse wheel -> cursor key xlation %i", mode);
                    ty->decoding_error = EINA_TRUE;
                    break;
