@@ -586,7 +586,7 @@ config_new(void)
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
         config->changedir_to_current = EINA_TRUE;
-        config->emoji_dbl_width = EINA_TRUE;
+        config->emoji_dbl_width = EINA_FALSE;
         for (j = 0; j < 4; j++)
           {
              for (i = 0; i < 12; i++)
@@ -726,7 +726,7 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 20:
-                  config->emoji_dbl_width = EINA_TRUE;
+                  config->emoji_dbl_width = EINA_FALSE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 21:
