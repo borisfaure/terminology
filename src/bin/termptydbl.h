@@ -2,8 +2,8 @@
 #ifndef TERMINOLOGY_TERMPTY_DBL_H_
 #define TERMINOLOGY_TERMPTY_DBL_H_ 1
 
-Eina_Bool _termpty_is_wide(const Eina_Unicode g);
-Eina_Bool _termpty_is_ambigous_wide(const Eina_Unicode g);
+Eina_Bool _termpty_is_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
+Eina_Bool _termpty_is_ambigous_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
 
 static inline Eina_Bool
 _termpty_is_dblwidth_get(const Termpty *ty, const Eina_Unicode g)
@@ -12,9 +12,9 @@ _termpty_is_dblwidth_get(const Termpty *ty, const Eina_Unicode g)
    if (g <= 0xA0)
      return EINA_FALSE;
    if (!ty->termstate.cjk_ambiguous_wide)
-     return _termpty_is_wide(g);
+     return _termpty_is_wide(g, ty->config->emoji_dbl_width);
    else
-     return _termpty_is_ambigous_wide(g);
+     return _termpty_is_ambigous_wide(g, ty->config->emoji_dbl_width);
 }
 
 #endif
