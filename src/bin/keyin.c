@@ -133,6 +133,25 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           }
         return;
      }
+   if (!strcmp(ev->key, "Escape"))
+     {
+        if (ty->termstate.esc_keycode)
+          {
+             TERMPTY_WRITE_STR("\033O[");
+          }
+        else
+          {
+             if (alt)
+               {
+                  TERMPTY_WRITE_STR("\x9b");
+               }
+             else
+               {
+                  TERMPTY_WRITE_STR("\033");
+               }
+          }
+        return;
+     }
    if (!strcmp(ev->key, "Return"))
      {
         if (alt)

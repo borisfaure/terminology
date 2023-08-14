@@ -132,6 +132,7 @@ typedef struct tag_Term_State {
     unsigned int  hide_cursor : 1;
     unsigned int  combining_strike : 1;
     unsigned int  sace_rectangular : 1;
+    unsigned int  esc_keycode : 1;
     int xmod[6];
 } Term_State;
 

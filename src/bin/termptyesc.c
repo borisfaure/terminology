@@ -543,9 +543,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    WRN("TODO: ambigous width reporting %i", mode);
                    ty->decoding_error = EINA_TRUE;
                    break;
-                case 7727: // ignore
-                   WRN("TODO: enable application escape mode %i", mode);
-                   ty->decoding_error = EINA_TRUE;
+                case 7727:
+                   DBG("%s application escape mode", mode ? "enable" : "disable");
+                   ty->termstate.esc_keycode = !!mode;
                    break;
                 case 7766: // ignore
                    WRN("TODO: %s scrollbar", mode ? "hide" : "show");
