@@ -139,6 +139,10 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           {
              TERMPTY_WRITE_STR("\033O[");
           }
+        else if (ty->termstate.alternate_esc)
+          {
+             TERMPTY_WRITE_STR("\034");
+          }
         else
           {
              if (alt)

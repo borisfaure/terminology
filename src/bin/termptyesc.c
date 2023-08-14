@@ -547,6 +547,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    DBG("%s application escape mode", mode ? "enable" : "disable");
                    ty->termstate.esc_keycode = !!mode;
                    break;
+                case 7728:
+                   DBG("%s alternate escape", mode ? "enable" : "disable");
+                   ty->termstate.alternate_esc = !!mode;
+                   break;
                 case 7766: // ignore
                    WRN("TODO: %s scrollbar", mode ? "hide" : "show");
                    ty->decoding_error = EINA_TRUE;
