@@ -1012,9 +1012,10 @@ _lost_selection(void *data, Elm_Sel_Type selection)
 }
 
 
-
+/* Set the @type selection to @text.
+ * This does not modify the widget itself */
 void
-termio_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
+termio_set_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
 {
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
@@ -1050,7 +1051,7 @@ termio_take_selection(Evas_Object *obj, Elm_Sel_Type type)
    if (s)
      {
         if ((sd->win) && (len > 0))
-          termio_take_selection_text(sd, type, s);
+          termio_set_selection_text(sd, type, s);
         eina_stringshare_del(s);
         return EINA_TRUE;
      }
@@ -1072,7 +1073,7 @@ _cb_ctxp_link_content_copy(void *data,
 
         if (!hl->url)
           return;
-        termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, hl->url);
+        termio_set_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, hl->url);
      }
    else
      {
@@ -1084,7 +1085,7 @@ _cb_ctxp_link_content_copy(void *data,
                              sd->link.x2, sd->link.y2,
                              &sb, EINA_FALSE);
         raw_link = ty_sb_steal_buf(&sb);
-        termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
+        termio_set_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, raw_link);
         free(raw_link);
      }
 
@@ -1101,7 +1102,7 @@ _cb_ctxp_link_copy(void *data,
    Termio *sd = evas_object_smart_data_get(term);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    EINA_SAFETY_ON_NULL_RETURN(sd->link.string);
-   termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
+   termio_set_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, sd->link.string);
 
    sd->ctxpopup = NULL;
    evas_object_del(obj);
@@ -1259,7 +1260,7 @@ _cb_ctxp_color_copy(void *data,
    txt = _color_to_txt(sd);
    if (!txt) return;
 
-   termio_take_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, txt);
+   termio_set_selection_text(sd, ELM_SEL_TYPE_CLIPBOARD, txt);
 
    eina_stringshare_del(txt);
    sd->ctxpopup = NULL;
