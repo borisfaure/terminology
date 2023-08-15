@@ -162,28 +162,30 @@ EOF
 fi
 
 while read -r TEST EXPECTED_CHECKSUMS; do
-    NB_TESTS=$((NB_TESTS + 1))
-    if [ $VERBOSE -ne 0 ]; then
-        printf "%s... " "$TEST"
-    fi
-    TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST")
-    if [ $DEBUG -ne 0 ]; then
-        printf "(got %s, expected %s) " "$TEST_CHECKSUM" "$EXPECTED_CHECKSUMS"
-    fi
-    if [ $GENRESULTS -ne 0 ]; then
-        printf "%s %s\n" "$TEST" "$TEST_CHECKSUM"
-    else
-        OK=0
-        for CHECKSUM in $EXPECTED_CHECKSUMS; do
-            if [ "$TEST_CHECKSUM" = "$CHECKSUM" ]; then
-                OK=1
-                break
-            fi
-        done
-        if [ "$OK" -eq 1 ]; then
-            ok "$TEST"
+    if case "${TEST}" in \#*) false;; esac; then
+        NB_TESTS=$((NB_TESTS + 1))
+        if [ $VERBOSE -ne 0 ]; then
+            printf "%s... " "$TEST"
+        fi
+        TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST")
+        if [ $DEBUG -ne 0 ]; then
+            printf "(got %s, expected %s) " "$TEST_CHECKSUM" "$EXPECTED_CHECKSUMS"
+        fi
+        if [ $GENRESULTS -ne 0 ]; then
+            printf "%s %s\n" "$TEST" "$TEST_CHECKSUM"
         else
-            failed "$TEST"
+            OK=0
+            for CHECKSUM in $EXPECTED_CHECKSUMS; do
+                if [ "$TEST_CHECKSUM" = "$CHECKSUM" ]; then
+                    OK=1
+                    break
+                fi
+            done
+            if [ "$OK" -eq 1 ]; then
+                ok "$TEST"
+            else
+                failed "$TEST"
+            fi
         fi
     fi
 done < "$RESULTS"
