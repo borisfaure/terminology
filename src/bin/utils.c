@@ -1,8 +1,12 @@
 #include "private.h"
 #include "utils.h"
 #include "sb.h"
+
 #include <Ecore.h>
 #include <Ecore_File.h>
+#include <Emile.h>
+
+#include <assert.h>
 #include <unistd.h>
 #include <pwd.h>
 
@@ -72,3 +76,54 @@ end:
    free(escaped);
    free(s);
 }
+
+char *
+ty_eina_unicode_base64_encode(Eina_Unicode *unicode)
+{
+   int utf8_len = 0;
+   Eina_Binbuf *bb;
+   char *src;
+   char *res;
+   Eina_Strbuf *sb;
+
+   src = eina_unicode_unicode_to_utf8(unicode, &utf8_len);
+   bb = eina_binbuf_manage_new((const unsigned char*)src, utf8_len, EINA_FALSE);
+
+   sb = emile_base64_encode(bb);
+
+   eina_binbuf_free(bb);
+   res = (char*) eina_strbuf_string_steal(sb);
+   eina_strbuf_free(sb);
+   return res;
+}
+
+#if defined(BINARY_TYTEST)
+int tytest_base64(void)
+{
+   Eina_Unicode *src;
+   char *res;
+   const char *expected;
+
+
+   const char *terminology = "Terminology rox!";
+   src = eina_unicode_utf8_to_unicode(terminology, NULL);
+   res = ty_eina_unicode_base64_encode(src);
+   assert(res);
+   expected = "VGVybWlub2xvZ3kgcm94IQ==";
+   assert(memcmp(res, expected, strlen(expected)) == 0);
+   free(src);
+   free(res);
+
+
+   const char *hearts = "♥♡👍🚲✿ ❀ ❁🙌";
+   src = eina_unicode_utf8_to_unicode(hearts, NULL);
+   res = ty_eina_unicode_base64_encode(src);
+   assert(res);
+   expected = "4pml4pmh8J+RjfCfmrLinL8g4p2AIOKdgfCfmYw=";
+   assert(memcmp(res, expected, strlen(expected)) == 0);
+   free(src);
+   free(res);
+
+   return 0;
+}
+#endif

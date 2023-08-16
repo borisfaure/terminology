@@ -41,6 +41,7 @@ static struct {
        { "color_parse_css_rgb", tytest_color_parse_css_rgb},
        { "color_parse_css_hsl", tytest_color_parse_css_hsl},
        { "extn_matching", tytest_extn_matching},
+       { "base64", tytest_base64},
        { NULL, NULL},
 };
 
@@ -212,6 +213,7 @@ main(int argc, char **argv)
      return _run_tytests(argc, argv);
 
    eina_init();
+   emile_init();
 
    _log_domain = eina_log_domain_register("tytest", NULL);
 
@@ -223,6 +225,7 @@ main(int argc, char **argv)
 
    tytest_common_shutdown();
 
+   emile_shutdown();
    eina_shutdown();
 
    return 0;

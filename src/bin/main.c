@@ -911,6 +911,7 @@ elm_main(int argc, char **argv)
         goto end;
      }
 
+   emile_init();
    ecore_con_init();
    ecore_con_url_init();
 
@@ -1069,6 +1070,7 @@ elm_main(int argc, char **argv)
 
    ecore_con_url_shutdown();
    ecore_con_shutdown();
+   emile_shutdown();
 
    instance.config = NULL;
  end:
