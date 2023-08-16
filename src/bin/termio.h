@@ -17,7 +17,7 @@ Termio *termio_get_from_obj(Evas_Object *obj);
 void         termio_win_set(Evas_Object *obj, Evas_Object *win);
 void         termio_theme_set(Evas_Object *obj, Evas_Object *theme);
 Eina_Bool    termio_selection_exists(const Evas_Object *obj);
-void termio_take_selection_text(Termio *sd, Elm_Sel_Type type, const char *text);
+void termio_set_selection_text(Termio *sd, Elm_Sel_Type type, const char *text);
 void termio_scroll_top_backlog(Evas_Object *obj);
 void termio_scroll_delta(Evas_Object *obj, int delta, int by_page);
 void termio_scroll_set(Evas_Object *obj, int scroll);
