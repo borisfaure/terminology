@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-01 19:19+0100\n"
+"POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2014-11-05 13:27+0000\n"
 "Last-Translator: abuyop <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
@@ -18,13 +18,13 @@ msgstr ""
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 "X-Generator: Launchpad (build 17341)\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
-#: src/bin/termio.c:1316
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
+#: src/bin/termio.c:1317
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Salin"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgstr ""
 msgid "Set title"
 msgstr "Tetapkan tajuk tetingkap"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
+#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
 msgid "Copy"
 msgstr "Salin"
 
@@ -104,193 +104,193 @@ msgstr ""
 msgid "Could not create logging domain '%s'"
 msgstr "Tidak dapat cipta domain pengelogan '%s'"
 
-#: src/bin/keyin.c:658
+#: src/bin/keyin.c:681
 msgid "Scrolling"
 msgstr "Penatalan"
 
-#: src/bin/keyin.c:659
+#: src/bin/keyin.c:682
 msgid "Scroll one page up"
 msgstr "Tatal satu halaman ke atas"
 
-#: src/bin/keyin.c:660
+#: src/bin/keyin.c:683
 msgid "Scroll one page down"
 msgstr "Tatal satu halaman ke bawah"
 
-#: src/bin/keyin.c:661
+#: src/bin/keyin.c:684
 msgid "Scroll one line up"
 msgstr "Tatal satu baris ke atas"
 
-#: src/bin/keyin.c:662
+#: src/bin/keyin.c:685
 msgid "Scroll one line down"
 msgstr "Tatal satu bris ke bawah"
 
-#: src/bin/keyin.c:663
+#: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
 msgstr ""
 
-#: src/bin/keyin.c:664
+#: src/bin/keyin.c:687
 msgid "Reset scroll"
 msgstr ""
 
-#: src/bin/keyin.c:666
+#: src/bin/keyin.c:689
 msgid "Copy/Paste"
 msgstr "Salin/Tampal"
 
-#: src/bin/keyin.c:667
+#: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
 msgstr "Salin pemilihan ke penimbal Utama"
 
-#: src/bin/keyin.c:668
+#: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
 msgstr "Salin pemilihan ke penimbal Papan Keratan"
 
-#: src/bin/keyin.c:669
+#: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
 msgstr "Tampal penimbal Utama (sorot)"
 
-#: src/bin/keyin.c:670
+#: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Tampal penimbal Papan Keratan (ctrl+c/v)"
 
-#: src/bin/keyin.c:672
+#: src/bin/keyin.c:695
 msgid "Splits/Tabs"
 msgstr "Pisah/Tab"
 
-#: src/bin/keyin.c:673
+#: src/bin/keyin.c:696
 #, fuzzy
 msgid "Focus the previous terminal"
 msgstr "Fokus ke terminal terdahulu"
 
-#: src/bin/keyin.c:674
+#: src/bin/keyin.c:697
 #, fuzzy
 msgid "Focus the next terminal"
 msgstr "Fokus ke terminal berikutnya"
 
-#: src/bin/keyin.c:675
+#: src/bin/keyin.c:698
 #, fuzzy
 msgid "Focus the terminal above"
 msgstr "Fokus ke terminal berikutnya"
 
-#: src/bin/keyin.c:676
+#: src/bin/keyin.c:699
 #, fuzzy
 msgid "Focus the terminal below"
 msgstr "Fokus ke terminal berikutnya"
 
-#: src/bin/keyin.c:677
+#: src/bin/keyin.c:700
 #, fuzzy
 msgid "Focus the terminal on the left"
 msgstr "Fokus ke terminal berikutnya"
 
-#: src/bin/keyin.c:678
+#: src/bin/keyin.c:701
 #, fuzzy
 msgid "Focus the terminal on the right"
 msgstr "Fokus ke terminal berikutnya"
 
-#: src/bin/keyin.c:679
+#: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
 msgstr "Pisah secara mengufuk (bawah baharu)"
 
-#: src/bin/keyin.c:680
+#: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
 msgstr "Pisah secara menegak (baharu di sebelah kanan)"
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
 msgstr "Cipta \"tab\" baharu"
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:705
 msgid "Close the focused terminal"
 msgstr "Tutup terminal berfokus"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
 msgstr "Naik ke atas penukar \"tab\""
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
 msgstr "Tukar ke tab terminal 1"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
 msgstr "Tukar ke tab terminal 2"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
 msgstr "Tukar ke tab terminal 3"
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
 msgstr "Tukar ke tab terminal 4"
 
-#: src/bin/keyin.c:688
+#: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
 msgstr "Tukar ke tab terminal 5"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
 msgstr "Tukar ke tab terminal 6"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
 msgstr "Tukar ke tab terminal 7"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
 msgstr "Tukar ke tab terminal 8"
 
-#: src/bin/keyin.c:692
+#: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
 msgstr "Tukar ke tab terminal 9"
 
-#: src/bin/keyin.c:693
+#: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
 msgstr "Tukar ke tab terminal 10"
 
-#: src/bin/keyin.c:694
+#: src/bin/keyin.c:717
 msgid "Change title"
 msgstr ""
 
-#: src/bin/keyin.c:695 src/bin/keyin.c:696
+#: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
 msgstr ""
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:722
 msgid "Font size"
 msgstr "Saiz fon"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:723
 msgid "Font size up 1"
 msgstr "Saiz fon naik 1"
 
-#: src/bin/keyin.c:701
+#: src/bin/keyin.c:724
 msgid "Font size down 1"
 msgstr "Saiz fon turun 1"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:725
 msgid "Display big font size"
 msgstr "Papar saiz fon besar"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:726
 msgid "Reset font size"
 msgstr "Tetap semula saiz fon"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:728
 msgid "Actions"
 msgstr "Tindakan"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:729
 msgid "Open a new terminal window"
 msgstr ""
 
-#: src/bin/keyin.c:707
+#: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
 msgstr ""
 
-#: src/bin/keyin.c:708
+#: src/bin/keyin.c:731
 msgid "Display the history miniview"
 msgstr "Papar paparan mini sejarah"
 
-#: src/bin/keyin.c:709
+#: src/bin/keyin.c:732
 msgid "Display the command box"
 msgstr "Papar kotak perintah"
 
@@ -479,23 +479,23 @@ msgstr "pilihan tidak ditemui bagi pilihan -S/--split. Lihat --help"
 msgid "Could not initialize key bindings"
 msgstr "Tidak dapat awalkan pengikatan kunci"
 
-#: src/bin/main.c:924
+#: src/bin/main.c:925
 #, fuzzy
 msgid "Could not parse command line options"
 msgstr "Tidak dapat hurai pilihan baris perintah"
 
-#: src/bin/main.c:948
+#: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "pilihan %s memerlukan argumen!"
 
-#: src/bin/main.c:949
+#: src/bin/main.c:950
 #, fuzzy
 msgid "invalid options found. See --help"
 msgstr "pilihan tidak ditemui. Lihat --help"
 
-#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
-#: src/bin/termpty.c:658
+#: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
+#: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
 msgstr ""
@@ -557,145 +557,149 @@ msgstr ""
 msgid "Click on a picture to use it as background"
 msgstr ""
 
-#: src/bin/options_behavior.c:63
+#: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
 msgstr ""
 
-#: src/bin/options_behavior.c:79
+#: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:217
+#: src/bin/options_behavior.c:218
 msgid "Default cursor:"
 msgstr ""
 
-#: src/bin/options_behavior.c:226
+#: src/bin/options_behavior.c:227
 msgid "Blinking Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:245
+#: src/bin/options_behavior.c:246
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:265
+#: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:285
+#: src/bin/options_behavior.c:286
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:305
+#: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:325
+#: src/bin/options_behavior.c:326
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:365 src/bin/options.c:217
+#: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
 msgstr "Kelakuan"
 
-#: src/bin/options_behavior.c:385
+#: src/bin/options_behavior.c:386
 msgid "Show tabs"
 msgstr ""
 
-#: src/bin/options_behavior.c:388
+#: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
 msgstr "Tatal ke bawah pada kandungan baharu"
 
-#: src/bin/options_behavior.c:389
+#: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Tatal ke bawah bila kekunci ditekan"
 
-#: src/bin/options_behavior.c:395
+#: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
 
-#: src/bin/options_behavior.c:402
+#: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
 
-#: src/bin/options_behavior.c:406
+#: src/bin/options_behavior.c:407
 msgid "Visual Bell"
 msgstr "Visual Bell"
 
-#: src/bin/options_behavior.c:407
+#: src/bin/options_behavior.c:408
 msgid "Bell rings"
 msgstr ""
 
-#: src/bin/options_behavior.c:408
+#: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
 msgstr ""
 
-#: src/bin/options_behavior.c:410
+#: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
 msgstr ""
 
-#: src/bin/options_behavior.c:411
+#: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
 msgstr ""
 
-#: src/bin/options_behavior.c:412
+#: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr ""
 
-#: src/bin/options_behavior.c:413
+#: src/bin/options_behavior.c:414
 msgid "Start as login shell"
 msgstr "Mula sebagai shell daftar masuk"
 
-#: src/bin/options_behavior.c:414
+#: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
 msgstr ""
 
-#: src/bin/options_behavior.c:415
+#: src/bin/options_behavior.c:416
 #, fuzzy
 msgid "Always show miniview"
 msgstr "Papar paparan mini sejarah"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
 msgstr ""
 
-#: src/bin/options_behavior.c:417
-msgid "Treat Emojis as double-width characters"
+#: src/bin/options_behavior.c:418
+msgid "Enable escape codes manipulating selections"
 msgstr ""
 
-#: src/bin/options_behavior.c:418
+#: src/bin/options_behavior.c:419
+msgid "Always treat Emojis as double-width characters"
+msgstr ""
+
+#: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
 
-#: src/bin/options_behavior.c:425
+#: src/bin/options_behavior.c:427
 msgid "Always open at size:"
 msgstr ""
 
-#: src/bin/options_behavior.c:435
+#: src/bin/options_behavior.c:437
 msgid "Set Current:"
 msgstr ""
 
-#: src/bin/options_behavior.c:446
+#: src/bin/options_behavior.c:448
 msgid "Width:"
 msgstr ""
 
-#: src/bin/options_behavior.c:468
+#: src/bin/options_behavior.c:470
 msgid "Height:"
 msgstr ""
 
-#: src/bin/options_behavior.c:527
+#: src/bin/options_behavior.c:529
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 
-#: src/bin/options_behavior.c:532
+#: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
 msgstr ""
 
-#: src/bin/options_behavior.c:540 src/bin/options_behavior.c:541
+#: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
@@ -946,28 +950,28 @@ msgstr ""
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:1215
+#: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1376
 msgid "Preview"
 msgstr ""
 
-#: src/bin/termio.c:1385
+#: src/bin/termio.c:1386
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1387
+#: src/bin/termio.c:1388
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2804
+#: src/bin/termio.c:2805
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4247
+#: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -986,27 +990,27 @@ msgstr ""
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
 
-#: src/bin/termpty.c:618
+#: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:665
+#: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:672 src/bin/termpty.c:678
+#: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:687
+#: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
+#: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""

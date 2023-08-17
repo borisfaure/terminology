@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-01 19:19+0100\n"
+"POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2021-04-30 19:31+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
-#: src/bin/termio.c:1316
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
+#: src/bin/termio.c:1317
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiér '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
 msgstr "Åbn"
 
@@ -50,9 +50,9 @@ msgstr ""
 "<b>Terminology %s</b><br>Hvorfor skal terminaler være kedelige?<br><br>Denne "
 "terminal blev skrevet til Enlightenment, til at bruge EFL og på andre måder "
 "at skubbe grænserne for hvad en moderne terminalemulator skal være. Vil "
-"håber at du får glæde af den.<br><br>Ophavsret © 2012-%d af:<br><br>"
-"%s<br><br>Distribueret under den 2.-klausul BSD-licens detaljeret nedenfor:"
-"<br><br>%s"
+"håber at du får glæde af den.<br><br>Ophavsret © 2012-%d af:"
+"<br><br>%s<br><br>Distribueret under den 2.-klausul BSD-licens detaljeret "
+"nedenfor:<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -82,7 +82,7 @@ msgstr "Minivisning"
 msgid "Set title"
 msgstr "Indstil titel"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
+#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
 msgid "Copy"
 msgstr "Kopiér"
 
@@ -111,187 +111,187 @@ msgstr "Luk terminal"
 msgid "Could not create logging domain '%s'"
 msgstr "Kunne ikke oprette logningsdomænet '%s'"
 
-#: src/bin/keyin.c:658
+#: src/bin/keyin.c:681
 msgid "Scrolling"
 msgstr "Rulning"
 
-#: src/bin/keyin.c:659
+#: src/bin/keyin.c:682
 msgid "Scroll one page up"
 msgstr "Rul en side op"
 
-#: src/bin/keyin.c:660
+#: src/bin/keyin.c:683
 msgid "Scroll one page down"
 msgstr "Rul en side ned"
 
-#: src/bin/keyin.c:661
+#: src/bin/keyin.c:684
 msgid "Scroll one line up"
 msgstr "Rul en linje op"
 
-#: src/bin/keyin.c:662
+#: src/bin/keyin.c:685
 msgid "Scroll one line down"
 msgstr "Rul en linje ned"
 
-#: src/bin/keyin.c:663
+#: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
 msgstr "Gå til toppen af tilbage-loggen"
 
-#: src/bin/keyin.c:664
+#: src/bin/keyin.c:687
 msgid "Reset scroll"
 msgstr "Nulstil rulning"
 
-#: src/bin/keyin.c:666
+#: src/bin/keyin.c:689
 msgid "Copy/Paste"
 msgstr "Kopiér/indsæt"
 
-#: src/bin/keyin.c:667
+#: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
 msgstr "Kopiér markering til primær buffer"
 
-#: src/bin/keyin.c:668
+#: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
 msgstr "Kopiér markering til udklipsholderens buffer"
 
-#: src/bin/keyin.c:669
+#: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
 msgstr "Indsæt primær buffer (fremhæv)"
 
-#: src/bin/keyin.c:670
+#: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Indsæt udklipsholderens buffer (ctrl+c/v)"
 
-#: src/bin/keyin.c:672
+#: src/bin/keyin.c:695
 msgid "Splits/Tabs"
 msgstr "Opdelinger/faneblade"
 
-#: src/bin/keyin.c:673
+#: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
 msgstr "Fokus til den forrige terminal"
 
-#: src/bin/keyin.c:674
+#: src/bin/keyin.c:697
 msgid "Focus the next terminal"
 msgstr "Fokus til den næste terminal"
 
-#: src/bin/keyin.c:675
+#: src/bin/keyin.c:698
 msgid "Focus the terminal above"
 msgstr "Fokus til terminalen ovenover"
 
-#: src/bin/keyin.c:676
+#: src/bin/keyin.c:699
 msgid "Focus the terminal below"
 msgstr "Fokus til terminalen nedenunder"
 
-#: src/bin/keyin.c:677
+#: src/bin/keyin.c:700
 msgid "Focus the terminal on the left"
 msgstr "Fokus til terminalen til venstre"
 
-#: src/bin/keyin.c:678
+#: src/bin/keyin.c:701
 msgid "Focus the terminal on the right"
 msgstr "Fokus til terminalen til højre"
 
-#: src/bin/keyin.c:679
+#: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
 msgstr "Opdel vandret (ny nedenfor)"
 
-#: src/bin/keyin.c:680
+#: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
 msgstr "Opdel lodret (ny til højre)"
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
 msgstr "Opret et nyt \"faneblad\""
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:705
 msgid "Close the focused terminal"
 msgstr "Luk den fokuserede terminal"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
 msgstr "Frembring \"faneblad\"-skifter"
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
 msgstr "Skift til terminal-faneblade 1"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
 msgstr "Skift til terminal-faneblade 2"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
 msgstr "Skift til terminal-faneblade 3"
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
 msgstr "Skift til terminal-faneblade 4"
 
-#: src/bin/keyin.c:688
+#: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
 msgstr "Skift til terminal-faneblade 5"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
 msgstr "Skift til terminal-faneblade 6"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
 msgstr "Skift til terminal-faneblade 7"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
 msgstr "Skift til terminal-faneblade 8"
 
-#: src/bin/keyin.c:692
+#: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
 msgstr "Skift til terminal-faneblade 9"
 
-#: src/bin/keyin.c:693
+#: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
 msgstr "Skift til terminal-faneblade 10"
 
-#: src/bin/keyin.c:694
+#: src/bin/keyin.c:717
 msgid "Change title"
 msgstr "Skift titel"
 
-#: src/bin/keyin.c:695 src/bin/keyin.c:696
+#: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
 msgstr "Skift om input sendes til alle synlige terminaler"
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:722
 msgid "Font size"
 msgstr "Skriftstørrelse"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:723
 msgid "Font size up 1"
 msgstr "Skriftstørrelse 1 op"
 
-#: src/bin/keyin.c:701
+#: src/bin/keyin.c:724
 msgid "Font size down 1"
 msgstr "Skriftstørrelse 1 ned"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:725
 msgid "Display big font size"
 msgstr "Vis stor skriftstørrelse"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:726
 msgid "Reset font size"
 msgstr "Nulstil skriftstørrelse"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:728
 msgid "Actions"
 msgstr "Handlinger"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:729
 msgid "Open a new terminal window"
 msgstr "Åbn et nyt terminalvindue"
 
-#: src/bin/keyin.c:707
+#: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
 msgstr "Fuldskærm for vinduet til/fra"
 
-#: src/bin/keyin.c:708
+#: src/bin/keyin.c:731
 msgid "Display the history miniview"
 msgstr "Vis minivisning for historik"
 
-#: src/bin/keyin.c:709
+#: src/bin/keyin.c:732
 msgid "Display the command box"
 msgstr "Vis kommandoboksen"
 
@@ -456,21 +456,21 @@ msgstr "ugyldigt argument fundet for tilvalget -S/--split. Se --help"
 msgid "Could not initialize key bindings"
 msgstr "Kunne ikke initialisere tastebindinger"
 
-#: src/bin/main.c:924
+#: src/bin/main.c:925
 msgid "Could not parse command line options"
 msgstr "Kunne ikke fortolke kommandolinjetilvalg"
 
-#: src/bin/main.c:948
+#: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "tilvalget %s kræver et argument!"
 
-#: src/bin/main.c:949
+#: src/bin/main.c:950
 msgid "invalid options found. See --help"
 msgstr "ugyldige tilvalg fundet. Se --help"
 
-#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
-#: src/bin/termpty.c:658
+#: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
+#: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funktionen %s mislykkedes: %s"
@@ -532,136 +532,141 @@ msgstr "Anden"
 msgid "Click on a picture to use it as background"
 msgstr "Dobbeltklik på et billede for at bruge det som baggrund"
 
-#: src/bin/options_behavior.c:63
+#: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
 msgstr "%'d linjer"
 
-#: src/bin/options_behavior.c:79
+#: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr "Tilbagerulning (nuværende hukommelsesforbrug: %'.2f%cB):"
 
-#: src/bin/options_behavior.c:217
+#: src/bin/options_behavior.c:218
 msgid "Default cursor:"
 msgstr "Standardmarkør:"
 
-#: src/bin/options_behavior.c:226
+#: src/bin/options_behavior.c:227
 msgid "Blinking Block"
 msgstr "Blinkende blok"
 
-#: src/bin/options_behavior.c:245
+#: src/bin/options_behavior.c:246
 msgid "Steady Block"
 msgstr "Fast blok"
 
-#: src/bin/options_behavior.c:265
+#: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
 msgstr "Blinkende understregning"
 
-#: src/bin/options_behavior.c:285
+#: src/bin/options_behavior.c:286
 msgid "Steady Underline"
 msgstr "Fast understregning"
 
-#: src/bin/options_behavior.c:305
+#: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
 msgstr "Blinkende linje"
 
-#: src/bin/options_behavior.c:325
+#: src/bin/options_behavior.c:326
 msgid "Steady Bar"
 msgstr "Fast linje"
 
-#: src/bin/options_behavior.c:365 src/bin/options.c:217
+#: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
 msgstr "Adfærd"
 
-#: src/bin/options_behavior.c:385
+#: src/bin/options_behavior.c:386
 msgid "Show tabs"
 msgstr "Vis faneblade"
 
-#: src/bin/options_behavior.c:388
+#: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
 msgstr "Rul til bunden når der kommer nyt indhold"
 
-#: src/bin/options_behavior.c:389
+#: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Rul til bunden når der trykkes på en tast"
 
-#: src/bin/options_behavior.c:395
+#: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
 
-#: src/bin/options_behavior.c:402
+#: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr "Lydunderstøttelse for tastetryk <failure>DEAKTIVERET</failure>!"
 
-#: src/bin/options_behavior.c:406
+#: src/bin/options_behavior.c:407
 msgid "Visual Bell"
 msgstr "Visuel klokke"
 
-#: src/bin/options_behavior.c:407
+#: src/bin/options_behavior.c:408
 msgid "Bell rings"
 msgstr "Klokke ringer"
 
-#: src/bin/options_behavior.c:408
+#: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
 msgstr "Hasterklokke"
 
-#: src/bin/options_behavior.c:410
+#: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
 msgstr "Flere instanser, én proces"
 
-#: src/bin/options_behavior.c:411
+#: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
 msgstr "Indstil TERM til xterm-256color"
 
-#: src/bin/options_behavior.c:412
+#: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "Tilbage-pil sender Del (i stedet for BackSpace)"
 
-#: src/bin/options_behavior.c:413
+#: src/bin/options_behavior.c:414
 msgid "Start as login shell"
 msgstr "Start som loginskal"
 
-#: src/bin/options_behavior.c:414
+#: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
 msgstr "Åbn nye terminaler i nuværende arbejdsmappe"
 
-#: src/bin/options_behavior.c:415
+#: src/bin/options_behavior.c:416
 msgid "Always show miniview"
 msgstr "Vis altid minivisning"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
 msgstr "Aktivér specielle Terminology-undvigekoder"
 
-#: src/bin/options_behavior.c:417
-msgid "Treat Emojis as double-width characters"
+#: src/bin/options_behavior.c:418
+msgid "Enable escape codes manipulating selections"
+msgstr ""
+
+#: src/bin/options_behavior.c:419
+#, fuzzy
+msgid "Always treat Emojis as double-width characters"
 msgstr "Behandl Emojis som tegn med dobbelt bredde"
 
-#: src/bin/options_behavior.c:418
+#: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
 "Når input grupperes, så gør det på alle terminaler og ikke kun dem der er "
 "synlige"
 
-#: src/bin/options_behavior.c:425
+#: src/bin/options_behavior.c:427
 msgid "Always open at size:"
 msgstr "Åbn altid med størrelse:"
 
-#: src/bin/options_behavior.c:435
+#: src/bin/options_behavior.c:437
 msgid "Set Current:"
 msgstr "Indstil nuværende:"
 
-#: src/bin/options_behavior.c:446
+#: src/bin/options_behavior.c:448
 msgid "Width:"
 msgstr "Bredde:"
 
-#: src/bin/options_behavior.c:468
+#: src/bin/options_behavior.c:470
 msgid "Height:"
 msgstr "Højde:"
 
-#: src/bin/options_behavior.c:527
+#: src/bin/options_behavior.c:529
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
@@ -670,11 +675,11 @@ msgstr ""
 "det er med tastebindinger eller <br>når musehjul flyttes over "
 "fanebladspanelet"
 
-#: src/bin/options_behavior.c:532
+#: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
 msgstr "Faneblades zoom/skift animationstid:"
 
-#: src/bin/options_behavior.c:540 src/bin/options_behavior.c:541
+#: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
@@ -929,28 +934,28 @@ msgstr "Kunne ikke hente arbejdsmappe af pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "Kunne ikke indlæse arbejdsmappe %s: %s"
 
-#: src/bin/termio.c:1215
+#: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "ikke-understøttet markeringsformat '%s'"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1376
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: src/bin/termio.c:1385
+#: src/bin/termio.c:1386
 msgid "Copy relative path"
 msgstr "Kopiér relativ sti"
 
-#: src/bin/termio.c:1387
+#: src/bin/termio.c:1388
 msgid "Copy full path"
 msgstr "Kopiér fuld sti"
 
-#: src/bin/termio.c:2804
+#: src/bin/termio.c:2805
 msgid "Open as URL"
 msgstr "Åbn som URL"
 
-#: src/bin/termio.c:4247
+#: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
 msgstr "Kunne ikke allokere termpty"
 
@@ -969,27 +974,27 @@ msgstr "Størrelse indstil ioctl mislykkedes: %s"
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Kunne ikke skrive til fildeskriptor %d: %s"
 
-#: src/bin/termpty.c:618
+#: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Kunne ikke finde skal, falder tilbage til %s"
 
-#: src/bin/termpty.c:665
+#: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() af pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:672 src/bin/termpty.c:678
+#: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() på pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:687
+#: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() på pty '%s' mislykkedes: %s"
 
-#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
+#: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Kunne ikke skifte nuværende mappe til '%s': %s"

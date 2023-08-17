@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.7.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-01 19:19+0100\n"
+"POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2014-10-14 08:20+0900\n"
 "Last-Translator: maeryo <pu8046@gmail.com>\n"
 "Language-Team: Korean\n"
@@ -18,13 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1307
-#: src/bin/termio.c:1316
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
+#: src/bin/termio.c:1317
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "복사"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1378
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
 msgstr "열기"
 
@@ -75,7 +75,7 @@ msgstr "미니뷰"
 msgid "Set title"
 msgstr "창 제목 설정"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1392 src/bin/termio.c:2802
+#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
 msgid "Copy"
 msgstr "복사"
 
@@ -104,193 +104,193 @@ msgstr "터미널 닫기"
 msgid "Could not create logging domain '%s'"
 msgstr ""
 
-#: src/bin/keyin.c:658
+#: src/bin/keyin.c:681
 msgid "Scrolling"
 msgstr "스크롤링"
 
-#: src/bin/keyin.c:659
+#: src/bin/keyin.c:682
 msgid "Scroll one page up"
 msgstr "한 페이지 위로 스크롤"
 
-#: src/bin/keyin.c:660
+#: src/bin/keyin.c:683
 msgid "Scroll one page down"
 msgstr "한 페이지 아래로 스크롤"
 
-#: src/bin/keyin.c:661
+#: src/bin/keyin.c:684
 msgid "Scroll one line up"
 msgstr "한 줄 위로 스크롤"
 
-#: src/bin/keyin.c:662
+#: src/bin/keyin.c:685
 msgid "Scroll one line down"
 msgstr "한 줄 아래로 스크롤"
 
-#: src/bin/keyin.c:663
+#: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
 msgstr ""
 
-#: src/bin/keyin.c:664
+#: src/bin/keyin.c:687
 msgid "Reset scroll"
 msgstr ""
 
-#: src/bin/keyin.c:666
+#: src/bin/keyin.c:689
 msgid "Copy/Paste"
 msgstr "복사/붙여넣기"
 
-#: src/bin/keyin.c:667
+#: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
 msgstr "현재 선택된 부분을 전면 버퍼에 복사"
 
-#: src/bin/keyin.c:668
+#: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
 msgstr "현재 선택된 부분을 클립보드에 복사"
 
-#: src/bin/keyin.c:669
+#: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
 msgstr "전면 버퍼 (강조) 붙여넣기"
 
-#: src/bin/keyin.c:670
+#: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "클립보드 내용 붙여넣기 (ctrl+v/c)"
 
-#: src/bin/keyin.c:672
+#: src/bin/keyin.c:695
 msgid "Splits/Tabs"
 msgstr "분할/탭"
 
-#: src/bin/keyin.c:673
+#: src/bin/keyin.c:696
 #, fuzzy
 msgid "Focus the previous terminal"
 msgstr "이전 터미널 활성화"
 
-#: src/bin/keyin.c:674
+#: src/bin/keyin.c:697
 #, fuzzy
 msgid "Focus the next terminal"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:675
+#: src/bin/keyin.c:698
 #, fuzzy
 msgid "Focus the terminal above"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:676
+#: src/bin/keyin.c:699
 #, fuzzy
 msgid "Focus the terminal below"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:677
+#: src/bin/keyin.c:700
 #, fuzzy
 msgid "Focus the terminal on the left"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:678
+#: src/bin/keyin.c:701
 #, fuzzy
 msgid "Focus the terminal on the right"
 msgstr "다음 터미널 활성화"
 
-#: src/bin/keyin.c:679
+#: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
 msgstr "수평 분할 (하단에 새 창)"
 
-#: src/bin/keyin.c:680
+#: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
 msgstr "수직 분할 (우측에 새 창)"
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
 msgstr "새 터미널 탭"
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:705
 msgid "Close the focused terminal"
 msgstr "탭 닫기"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
 msgstr "탭 스위치 보이기"
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
 msgstr "1번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
 msgstr "2번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
 msgstr "3번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
 msgstr "4번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:688
+#: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
 msgstr "5번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
 msgstr "6번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
 msgstr "7번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
 msgstr "8번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:692
+#: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
 msgstr "9번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:693
+#: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
 msgstr "10번 탭 터미널로 전환"
 
-#: src/bin/keyin.c:694
+#: src/bin/keyin.c:717
 msgid "Change title"
 msgstr ""
 
-#: src/bin/keyin.c:695 src/bin/keyin.c:696
+#: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
 msgstr ""
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:722
 msgid "Font size"
 msgstr "글꼴 크기"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:723
 msgid "Font size up 1"
 msgstr "글꼴 크기 1 증가"
 
-#: src/bin/keyin.c:701
+#: src/bin/keyin.c:724
 msgid "Font size down 1"
 msgstr "글꼴 크기 1 감소"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:725
 msgid "Display big font size"
 msgstr "글꼴 크게 출력"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:726
 msgid "Reset font size"
 msgstr "글꼴 크기 초기화"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:728
 msgid "Actions"
 msgstr "동작"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:729
 msgid "Open a new terminal window"
 msgstr ""
 
-#: src/bin/keyin.c:707
+#: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
 msgstr ""
 
-#: src/bin/keyin.c:708
+#: src/bin/keyin.c:731
 msgid "Display the history miniview"
 msgstr "미니뷰 출력"
 
-#: src/bin/keyin.c:709
+#: src/bin/keyin.c:732
 msgid "Display the command box"
 msgstr "명령 상자 출력"
 
@@ -457,21 +457,21 @@ msgstr ""
 msgid "Could not initialize key bindings"
 msgstr ""
 
-#: src/bin/main.c:924
+#: src/bin/main.c:925
 msgid "Could not parse command line options"
 msgstr ""
 
-#: src/bin/main.c:948
+#: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
 msgstr ""
 
-#: src/bin/main.c:949
+#: src/bin/main.c:950
 msgid "invalid options found. See --help"
 msgstr ""
 
-#: src/bin/media.c:1337 src/bin/termpty.c:649 src/bin/termpty.c:654
-#: src/bin/termpty.c:658
+#: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
+#: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
 msgstr ""
@@ -534,146 +534,150 @@ msgstr "기타"
 msgid "Click on a picture to use it as background"
 msgstr "더블 클릭하면 이미지를 가져옵니다"
 
-#: src/bin/options_behavior.c:63
+#: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
 msgstr "%'d 줄"
 
-#: src/bin/options_behavior.c:79
+#: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:217
+#: src/bin/options_behavior.c:218
 #, fuzzy
 msgid "Default cursor:"
 msgstr "기본값"
 
-#: src/bin/options_behavior.c:226
+#: src/bin/options_behavior.c:227
 msgid "Blinking Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:245
+#: src/bin/options_behavior.c:246
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:265
+#: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:285
+#: src/bin/options_behavior.c:286
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:305
+#: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:325
+#: src/bin/options_behavior.c:326
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:365 src/bin/options.c:217
+#: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
 msgstr "동작"
 
-#: src/bin/options_behavior.c:385
+#: src/bin/options_behavior.c:386
 msgid "Show tabs"
 msgstr ""
 
-#: src/bin/options_behavior.c:388
+#: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
 msgstr "새 내용이 있으면 바닥으로 스크롤"
 
-#: src/bin/options_behavior.c:389
+#: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
 msgstr "키를 입력하면 바닥으로 스크롤"
 
-#: src/bin/options_behavior.c:395
+#: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
 
-#: src/bin/options_behavior.c:402
+#: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
 
-#: src/bin/options_behavior.c:406
+#: src/bin/options_behavior.c:407
 msgid "Visual Bell"
 msgstr "경고 시각 효과"
 
-#: src/bin/options_behavior.c:407
+#: src/bin/options_behavior.c:408
 msgid "Bell rings"
 msgstr "벨 울리기"
 
-#: src/bin/options_behavior.c:408
+#: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
 msgstr "긴급 벨"
 
-#: src/bin/options_behavior.c:410
+#: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
 msgstr "한 프로세스로 다중 인스턴스 처리"
 
-#: src/bin/options_behavior.c:411
+#: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
 msgstr "xterm-256color로 TERM 설정"
 
-#: src/bin/options_behavior.c:412
+#: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "왼쪽 화살표로 백스페이스 기능 대체"
 
-#: src/bin/options_behavior.c:413
+#: src/bin/options_behavior.c:414
 msgid "Start as login shell"
 msgstr "로그인 쉘로 시작"
 
-#: src/bin/options_behavior.c:414
+#: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
 msgstr ""
 
-#: src/bin/options_behavior.c:415
+#: src/bin/options_behavior.c:416
 #, fuzzy
 msgid "Always show miniview"
 msgstr "미니뷰 출력"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
 msgstr ""
 
-#: src/bin/options_behavior.c:417
-msgid "Treat Emojis as double-width characters"
+#: src/bin/options_behavior.c:418
+msgid "Enable escape codes manipulating selections"
 msgstr ""
 
-#: src/bin/options_behavior.c:418
+#: src/bin/options_behavior.c:419
+msgid "Always treat Emojis as double-width characters"
+msgstr ""
+
+#: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
 
-#: src/bin/options_behavior.c:425
+#: src/bin/options_behavior.c:427
 msgid "Always open at size:"
 msgstr "항상 아래 크기로 열기:"
 
-#: src/bin/options_behavior.c:435
+#: src/bin/options_behavior.c:437
 msgid "Set Current:"
 msgstr ""
 
-#: src/bin/options_behavior.c:446
+#: src/bin/options_behavior.c:448
 msgid "Width:"
 msgstr "너비:"
 
-#: src/bin/options_behavior.c:468
+#: src/bin/options_behavior.c:470
 msgid "Height:"
 msgstr "높이:"
 
-#: src/bin/options_behavior.c:527
+#: src/bin/options_behavior.c:529
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 
-#: src/bin/options_behavior.c:532
+#: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
 msgstr "탭 확대 / 스위치 움직임 시간:"
 
-#: src/bin/options_behavior.c:540 src/bin/options_behavior.c:541
+#: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
@@ -930,28 +934,28 @@ msgstr ""
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:1215
+#: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "'%s' 는 지원하지 않는 포맷입니다"
 
-#: src/bin/termio.c:1375
+#: src/bin/termio.c:1376
 msgid "Preview"
 msgstr "미리보기"
 
-#: src/bin/termio.c:1385
+#: src/bin/termio.c:1386
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1387
+#: src/bin/termio.c:1388
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2804
+#: src/bin/termio.c:2805
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4247
+#: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -970,27 +974,27 @@ msgstr ""
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
 
-#: src/bin/termpty.c:618
+#: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:665
+#: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:672 src/bin/termpty.c:678
+#: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:687
+#: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:728 src/bin/termpty.c:736 src/bin/termpty.c:745
+#: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr ""
