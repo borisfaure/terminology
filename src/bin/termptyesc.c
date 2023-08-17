@@ -3064,7 +3064,7 @@ _handle_esc_csi_da(Termpty *ty, Eina_Unicode **ptr)
          * 64 → VT520
          * 65 → VT525
          */
-        len = snprintf(bf, sizeof(bf), "\033[>41;337;%ic", 0);
+        len = snprintf(bf, sizeof(bf), "\033[>61;337;%ic", 0);
         break;
       default:
         /* Primary device attributes
