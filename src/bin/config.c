@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 26
+#define CONF_VER 27
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -190,6 +190,8 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "ty_escapes", ty_escapes, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "selection_escapes", selection_escapes, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "emoji_dbl_width", emoji_dbl_width, EET_T_UCHAR);
@@ -320,6 +322,7 @@ config_sync(const Config *config_src, Config *config)
    config->show_tabs = config_src->show_tabs;
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
+   config->selection_escapes = config_src->selection_escapes;
    config->changedir_to_current = config_src->changedir_to_current;
    config->emoji_dbl_width = config_src->emoji_dbl_width;
    config->translucent = config_src->translucent;
@@ -585,6 +588,7 @@ config_new(void)
         config->show_tabs = EINA_TRUE;
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
+        config->selection_escapes = EINA_TRUE;
         config->changedir_to_current = EINA_TRUE;
         config->emoji_dbl_width = EINA_FALSE;
         for (j = 0; j < 4; j++)
@@ -776,7 +780,11 @@ config_load(void)
                   config_compute_color_scheme(config);
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 26 */
+                case 26:
+                  config->selection_escapes = EINA_TRUE;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 27 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -880,6 +888,7 @@ config_fork(const Config *config)
    CPY(show_tabs);
    CPY(mv_always_show);
    CPY(ty_escapes);
+   CPY(selection_escapes);
    CPY(changedir_to_current);
    CPY(emoji_dbl_width);
    CPY(group_all);
