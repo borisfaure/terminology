@@ -88,10 +88,17 @@ ty_eina_unicode_base64_encode(Eina_Unicode *unicode)
 
    src = eina_unicode_unicode_to_utf8(unicode, &utf8_len);
    bb = eina_binbuf_manage_new((const unsigned char*)src, utf8_len, EINA_FALSE);
+   if (!bb)
+     {
+        free(src);
+        return NULL;
+     }
 
    sb = emile_base64_encode(bb);
-
    eina_binbuf_free(bb);
+   if (!sb)
+     return NULL;
+
    res = (char*) eina_strbuf_string_steal(sb);
    eina_strbuf_free(sb);
    return res;
