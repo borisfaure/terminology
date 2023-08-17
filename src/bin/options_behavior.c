@@ -38,6 +38,7 @@ OPTIONS_CB(Behavior_Ctx, login_shell, 0);
 OPTIONS_CB(Behavior_Ctx, show_tabs,  0);
 OPTIONS_CB(Behavior_Ctx, mv_always_show, 0);
 OPTIONS_CB(Behavior_Ctx, ty_escapes, 0);
+OPTIONS_CB(Behavior_Ctx, selection_escapes, 0);
 OPTIONS_CB(Behavior_Ctx, changedir_to_current, 0);
 OPTIONS_CB(Behavior_Ctx, emoji_dbl_width, 0);
 OPTIONS_CB(Behavior_Ctx, group_all, 0);
@@ -414,6 +415,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
    OPTIONS_CX(_("Always show miniview"), mv_always_show, 0);
    OPTIONS_CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
+   OPTIONS_CX(_("Enable escape codes manipulating selections"), selection_escapes, 0);
    OPTIONS_CX(_("Always treat Emojis as double-width characters"), emoji_dbl_width, 0);
    OPTIONS_CX(_("When grouping input, do it on all terminals and not just the visible ones"), group_all, 0);
 
