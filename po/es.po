@@ -5,13 +5,14 @@
 # Roy Reese <waterbearer54@gmx.com>, 2015.
 # Adolfo Jayme Barrientos <fitojb@ubuntu.com>, 2021.
 # Eduardo Malaspina <vaio0@swismail.com>, 2022.
+# gallegonovato <fran-carro@hotmail.es>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2022-10-17 22:54+0000\n"
-"Last-Translator: Eduardo Malaspina <vaio0@swismail.com>\n"
+"PO-Revision-Date: 2023-08-19 00:51+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
 "Language: es\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -602,8 +603,8 @@ msgstr ""
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
-"Se ha <failure>DESACTIVADO</failure> la compatibilidad de audio para teclas "
-"presionadas."
+"¡Los sonidos para las pulsaciones de las tecla están "
+"<failure>DESACTIVADOS</failure>!"
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
@@ -650,9 +651,8 @@ msgid "Enable escape codes manipulating selections"
 msgstr ""
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "Tratar emoyis como caracteres de anchura doble"
+msgstr "Tratar siempre a los emoticonos como caracteres de doble ancho"
 
 #: src/bin/options_behavior.c:420
 msgid ""
