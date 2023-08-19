@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-01-11 11:52+0000\n"
+"PO-Revision-Date: 2023-08-19 00:51+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <batden@sfr.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.15.1-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
@@ -640,10 +640,9 @@ msgstr "Activer les séquences d'échappement spécifiques à Terminology"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Activer les séquences d'échappement pour manipuler les sélections"
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
 msgstr "Traiter les Emojis comme des caractères de largeur double"
 
