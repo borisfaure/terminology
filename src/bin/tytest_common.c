@@ -359,6 +359,37 @@ termio_bg_get(const Evas_Object *obj EINA_UNUSED)
    return NULL;
 }
 
+static char *_sel_primary = NULL;
+static char *_sel_secondary = NULL;
+static char *_sel_clipboard = NULL;
+
+void
+termio_set_selection_text(Evas_Object *obj EINA_UNUSED,
+                          Elm_Sel_Type type, const char *text)
+{
+   switch (type)
+     {
+      case ELM_SEL_TYPE_PRIMARY:
+         free(_sel_primary);
+         if (text)
+           _sel_primary = strdup(text);
+         break;
+      case ELM_SEL_TYPE_SECONDARY:
+         free(_sel_secondary);
+         if (text)
+           _sel_secondary = strdup(text);
+         break;
+      case ELM_SEL_TYPE_CLIPBOARD:
+         free(_sel_clipboard);
+         if (text)
+           _sel_clipboard = strdup(text);
+         break;
+      default:
+         break;
+     }
+}
+
+
 #if defined(BINARY_TYTEST)
 void
 test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,

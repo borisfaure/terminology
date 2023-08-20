@@ -13,6 +13,7 @@
 #if defined(BINARY_TYTEST)
 #include "tytest.h"
 #endif
+#include "utils.h"
 
 #undef CRITICAL
 #undef ERR
@@ -4310,6 +4311,68 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
+static Elm_Sel_Type
+_elm_sel_type_from_osc52(Eina_Unicode c)
+{
+   Elm_Sel_Type sel_type;
+   switch (c)
+     {
+      case 's':
+         sel_type = ELM_SEL_TYPE_SECONDARY;
+         break;
+      case 'c':
+         sel_type = ELM_SEL_TYPE_CLIPBOARD;
+         break;
+      case ';':
+         EINA_FALLTHROUGH;
+      case 'p':
+         EINA_FALLTHROUGH;
+      default:
+         sel_type = ELM_SEL_TYPE_PRIMARY;
+         break;
+     }
+   return sel_type;
+}
+
+static void
+_handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
+{
+   Eina_Unicode *c;
+   Elm_Sel_Type sel_type;
+
+   if (!p || !*p || len <= 0)
+     goto err;
+   c = p;
+   while (*c != ';' && (c - p) < len)
+     c++;
+   if (*c != ';')
+     goto err;
+   c++;
+   if (*c == '?')
+     {
+        /* Report */
+        /* TODO */
+        goto err;
+     }
+   else
+     {
+        /* Set */
+        sel_type = _elm_sel_type_from_osc52(*p);
+        /* Decode base64 from the request */
+        p[len] = '\0';
+        char *out = ty_eina_unicode_base64_decode(c);
+
+        if (out)
+          {
+             termio_set_selection_text(ty->obj, sel_type, out);
+             free(out);
+          }
+     }
+   return;
+err:
+   ty->decoding_error = EINA_TRUE;
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -4453,6 +4516,11 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              _handle_xterm_50_command(ty, s, len);
              free(s);
           }
+        break;
+      case 52:
+        DBG("Manipulate selection data");
+        if (ty->config->selection_escapes)
+          _handle_osc_selection(ty, p, cc - c - (p - buf));
         break;
       case 110:
         DBG("Reset VT100 text foreground color");
