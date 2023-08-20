@@ -1016,6 +1016,8 @@ _lost_selection(void *data, Elm_Sel_Type selection)
 void
 _termio_set_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
 {
+   Eina_Bool res;
+
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    text = eina_stringshare_add(text);
@@ -1025,10 +1027,14 @@ _termio_set_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
    sd->set_sel_at = ecore_time_get(); // hack
    sd->sel_type = type;
 
-   elm_cnp_selection_set(sd->win, type,
+   res = elm_cnp_selection_set(sd->win, type,
                          ELM_SEL_FORMAT_TEXT,
                          text,
                          eina_stringshare_strlen(text));
+   if (!res)
+     {
+        ERR("Unable to set selection data '%s' of type %d", text, type);
+     }
    elm_cnp_selection_loss_callback_set(sd->win, type,
                                        _lost_selection, sd->self);
    sd->have_sel = EINA_TRUE;
