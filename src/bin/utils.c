@@ -87,6 +87,8 @@ ty_eina_unicode_base64_encode(Eina_Unicode *unicode)
    Eina_Strbuf *sb;
 
    src = eina_unicode_unicode_to_utf8(unicode, &utf8_len);
+   if (!src)
+     return NULL;
    bb = eina_binbuf_manage_new((const unsigned char*)src, utf8_len, EINA_FALSE);
    if (!bb)
      {
@@ -114,6 +116,7 @@ int tytest_base64(void)
 
    const char *terminology = "Terminology rox!";
    src = eina_unicode_utf8_to_unicode(terminology, NULL);
+   assert(src);
    res = ty_eina_unicode_base64_encode(src);
    assert(res);
    expected = "VGVybWlub2xvZ3kgcm94IQ==";
@@ -124,6 +127,7 @@ int tytest_base64(void)
 
    const char *hearts = "♥♡👍🚲✿ ❀ ❁🙌";
    src = eina_unicode_utf8_to_unicode(hearts, NULL);
+   assert(src);
    res = ty_eina_unicode_base64_encode(src);
    assert(res);
    expected = "4pml4pmh8J+RjfCfmrLinL8g4p2AIOKdgfCfmYw=";
