@@ -78,7 +78,7 @@ end:
 }
 
 char *
-ty_eina_unicode_base64_encode(Eina_Unicode *unicode)
+ty_eina_unicode_base64_decode(Eina_Unicode *unicode)
 {
    int utf8_len = 0;
    Eina_Binbuf *bb;
@@ -89,20 +89,20 @@ ty_eina_unicode_base64_encode(Eina_Unicode *unicode)
    src = eina_unicode_unicode_to_utf8(unicode, &utf8_len);
    if (!src)
      return NULL;
-   bb = eina_binbuf_manage_new((const unsigned char*)src, utf8_len, EINA_FALSE);
-   if (!bb)
+   sb = eina_strbuf_manage_new_length(src, utf8_len);
+   if (!sb)
      {
         free(src);
         return NULL;
      }
 
-   sb = emile_base64_encode(bb);
-   eina_binbuf_free(bb);
-   if (!sb)
+   bb = emile_base64_decode(sb);
+   eina_strbuf_free(sb);
+   if (!bb)
      return NULL;
 
-   res = (char*) eina_strbuf_string_steal(sb);
-   eina_strbuf_free(sb);
+   res = (char*) eina_binbuf_string_steal(bb);
+   eina_binbuf_free(bb);
    return res;
 }
 
@@ -114,23 +114,23 @@ int tytest_base64(void)
    const char *expected;
 
 
-   const char *terminology = "Terminology rox!";
-   src = eina_unicode_utf8_to_unicode(terminology, NULL);
+   const char *terminology_rox = "VGVybWlub2xvZ3kgcm94IQ==";
+   src = eina_unicode_utf8_to_unicode(terminology_rox, NULL);
    assert(src);
-   res = ty_eina_unicode_base64_encode(src);
+   res = ty_eina_unicode_base64_decode(src);
    assert(res);
-   expected = "VGVybWlub2xvZ3kgcm94IQ==";
+   expected = "Terminology rox!";
    assert(memcmp(res, expected, strlen(expected)) == 0);
    free(src);
    free(res);
 
 
-   const char *hearts = "♥♡👍🚲✿ ❀ ❁🙌";
+   const char *hearts = "4pml4pmh8J+RjfCfmrLinL8g4p2AIOKdgfCfmYw=";
    src = eina_unicode_utf8_to_unicode(hearts, NULL);
    assert(src);
-   res = ty_eina_unicode_base64_encode(src);
+   res = ty_eina_unicode_base64_decode(src);
    assert(res);
-   expected = "4pml4pmh8J+RjfCfmrLinL8g4p2AIOKdgfCfmYw=";
+   expected = "♥♡👍🚲✿ ❀ ❁🙌";
    assert(memcmp(res, expected, strlen(expected)) == 0);
    free(src);
    free(res);
