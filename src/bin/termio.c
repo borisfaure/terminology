@@ -1011,6 +1011,15 @@ _lost_selection(void *data, Elm_Sel_Type selection)
      }
 }
 
+void termio_selection_buffer_get_cb(Evas_Object *obj,
+                                    Elm_Sel_Type type,
+                                    Elm_Sel_Format format,
+                                    Elm_Drop_Cb cb,
+                                    void *data)
+{
+   elm_cnp_selection_get(obj, type, format, cb, data);
+}
+
 /* Set the @type selection to @text.
  * This does not modify the widget itself */
 void

@@ -360,9 +360,38 @@ termio_bg_get(const Evas_Object *obj EINA_UNUSED)
 }
 
 static char *_sel_primary = NULL;
-static char *_sel_secondary = NULL;
 static char *_sel_clipboard = NULL;
 
+void termio_selection_buffer_get_cb(Evas_Object *obj,
+                                    Elm_Sel_Type type,
+                                    Elm_Sel_Format format EINA_UNUSED,
+                                    Elm_Drop_Cb cb,
+                                    void *data)
+{
+   Elm_Selection_Data ev = {};
+   switch (type)
+     {
+      case ELM_SEL_TYPE_PRIMARY:
+         ev.data = _sel_primary;
+         if (_sel_primary)
+              ev.len = strlen(_sel_primary) + 1;
+         else
+              ev.len = 0;
+         cb(data, obj, &ev);
+         break;
+      case ELM_SEL_TYPE_CLIPBOARD:
+         ev.data = _sel_clipboard;
+         if (_sel_clipboard)
+              ev.len = strlen(_sel_clipboard) + 1;
+         else
+              ev.len = 0;
+         cb(data, obj, &ev);
+         break;
+      default:
+         break;
+     }
+
+}
 void
 termio_set_selection_text(Evas_Object *obj EINA_UNUSED,
                           Elm_Sel_Type type, const char *text)
@@ -371,18 +400,17 @@ termio_set_selection_text(Evas_Object *obj EINA_UNUSED,
      {
       case ELM_SEL_TYPE_PRIMARY:
          free(_sel_primary);
-         if (text)
+         if (text[0])
            _sel_primary = strdup(text);
-         break;
-      case ELM_SEL_TYPE_SECONDARY:
-         free(_sel_secondary);
-         if (text)
-           _sel_secondary = strdup(text);
+         else
+           _sel_primary = NULL;
          break;
       case ELM_SEL_TYPE_CLIPBOARD:
          free(_sel_clipboard);
-         if (text)
+         if (text[0])
            _sel_clipboard = strdup(text);
+         else
+           _sel_clipboard = NULL;
          break;
       default:
          break;
