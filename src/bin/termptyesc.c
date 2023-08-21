@@ -4317,9 +4317,6 @@ _elm_sel_type_from_osc52(Eina_Unicode c)
    Elm_Sel_Type sel_type;
    switch (c)
      {
-      case 's':
-         sel_type = ELM_SEL_TYPE_SECONDARY;
-         break;
       case 'c':
          sel_type = ELM_SEL_TYPE_CLIPBOARD;
          break;
