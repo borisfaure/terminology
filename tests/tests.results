@@ -153,3 +153,4 @@ xterm-colors-rgb.sh 3269d17289a29ccec79598d47db7add7
 xterm-colors-rgbi.sh 3269d17289a29ccec79598d47db7add7
 xterm-set-cursor-color.sh e3d64c03d8257d7db7cf72204f4e3b2c
 csi-38-no-value.sh b2f4d1ab6a3171950371c88b4aae9c58
+osc_selection.sh 4579ba1bf3b5ca4b13b5701f1d52d597
