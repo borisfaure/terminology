@@ -1029,26 +1029,34 @@ _termio_set_selection_text(Termio *sd, Elm_Sel_Type type, const char *text)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   text = eina_stringshare_add(text);
-
-   sd->have_sel = EINA_FALSE;
-   sd->reset_sel = EINA_FALSE;
-   sd->set_sel_at = ecore_time_get(); // hack
-   sd->sel_type = type;
-
-   res = elm_cnp_selection_set(sd->win, type,
-                         ELM_SEL_FORMAT_TEXT,
-                         text,
-                         eina_stringshare_strlen(text));
-   if (!res)
+   if (text[0] != '\0')
      {
-        ERR("Unable to set selection data '%s' of type %d", text, type);
+        text = eina_stringshare_add(text);
+
+        sd->have_sel = EINA_FALSE;
+        sd->reset_sel = EINA_FALSE;
+        sd->set_sel_at = ecore_time_get(); // hack
+        sd->sel_type = type;
+
+        res = elm_cnp_selection_set(sd->win, type,
+                                    ELM_SEL_FORMAT_TEXT,
+                                    text,
+                                    eina_stringshare_strlen(text));
+        if (!res)
+          {
+             ERR("Unable to set selection data '%s'(%d) of type %d",
+                 text, eina_stringshare_strlen(text), type);
+          }
+        elm_cnp_selection_loss_callback_set(sd->win, type,
+                                            _lost_selection, sd->self);
+        sd->have_sel = EINA_TRUE;
+        eina_stringshare_del(sd->sel_str);
+        sd->sel_str = eina_stringshare_add(text);
      }
-   elm_cnp_selection_loss_callback_set(sd->win, type,
-                                       _lost_selection, sd->self);
-   sd->have_sel = EINA_TRUE;
-   eina_stringshare_del(sd->sel_str);
-   sd->sel_str = eina_stringshare_add(text);
+   else
+     {
+        elm_object_cnp_selection_clear(sd->win, type);
+     }
 }
 
 void
