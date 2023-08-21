@@ -107,6 +107,14 @@ ty_eina_unicode_base64_decode(Eina_Unicode *unicode)
 }
 
 #if defined(BINARY_TYTEST)
+
+
+#if defined(__has_feature)
+#  if __has_feature(memory_sanitizer)
+   __attribute__((no_sanitize("memory")))
+// disable with msan due to false positives
+#  endif
+#endif
 int tytest_base64(void)
 {
    Eina_Unicode *src;
