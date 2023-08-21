@@ -4408,14 +4408,14 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
           {
              sel_type = _elm_sel_type_from_osc52(*p);
              cb.sel = sel_type;
-             elm_cnp_selection_get(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
+             termio_selection_buffer_get_cb(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
                                    _osc52_report_cb, &cb);
              c++;
           }
         if (!cb.has_data)
           {
              cb.sel = ELM_SEL_TYPE_PRIMARY;
-             elm_cnp_selection_get(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
+             termio_selection_buffer_get_cb(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
                                    _osc52_report_cb, &cb);
           }
      }
