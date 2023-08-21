@@ -4331,6 +4331,57 @@ _elm_sel_type_from_osc52(Eina_Unicode c)
    return sel_type;
 }
 
+typedef struct _Osc52_Cb {
+     Termpty *ty;
+     Elm_Sel_Type sel;
+     Eina_Bool has_data;
+} Osc52_Cb;
+
+static Eina_Bool
+_osc52_report_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
+{
+   Osc52_Cb *cb = data;
+   Termpty *ty = cb->ty;
+   if (ev && ev->len > 0)
+     {
+        Eina_Binbuf *bb = eina_binbuf_new();
+        Eina_Strbuf *sb;
+        char bf[32];
+        size_t len;
+        char c;
+
+        if (!bb || ev->len <= 1)
+          return EINA_FALSE;
+
+        eina_binbuf_append_length(bb, ev->data, ev->len-1);
+        sb = emile_base64_encode(bb);
+        if (!sb)
+          goto end;
+        switch (cb->sel)
+          {
+           case ELM_SEL_TYPE_CLIPBOARD:
+              c = 'c';
+              break;
+           default:
+              c = 'p';
+              break;
+          }
+        /* Write header */
+        len = snprintf(bf, sizeof(bf), "\033]52;%c;", c);
+        termpty_write(ty, bf, len);
+        /* Write data */
+        termpty_write(ty, eina_strbuf_string_get(sb), eina_strbuf_length_get(sb));
+        /* Write end*/
+        TERMPTY_WRITE_STR("\033\\");
+        cb->has_data = EINA_TRUE;
+end:
+        eina_binbuf_free(bb);
+        eina_strbuf_free(sb);
+     }
+
+   return EINA_TRUE;
+}
+
 static void
 _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
 {
@@ -4348,8 +4399,25 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
    if (*c == '?')
      {
         /* Report */
-        /* TODO */
-        goto err;
+        Osc52_Cb cb;
+
+        cb.ty = ty;
+        cb.has_data = EINA_FALSE;
+        c = p;
+        while (!cb.has_data && *c != ';')
+          {
+             sel_type = _elm_sel_type_from_osc52(*p);
+             cb.sel = sel_type;
+             elm_cnp_selection_get(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
+                                   _osc52_report_cb, &cb);
+             c++;
+          }
+        if (!cb.has_data)
+          {
+             cb.sel = ELM_SEL_TYPE_PRIMARY;
+             elm_cnp_selection_get(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
+                                   _osc52_report_cb, &cb);
+          }
      }
    else
      {
