@@ -109,18 +109,18 @@ ty_eina_unicode_base64_decode(Eina_Unicode *unicode)
 #if defined(BINARY_TYTEST)
 
 
-#if defined(__has_feature)
-#  if __has_feature(memory_sanitizer)
-   __attribute__((no_sanitize("memory")))
-// disable with msan due to false positives
-#  endif
-#endif
 int tytest_base64(void)
 {
    Eina_Unicode *src;
    char *res;
    const char *expected;
 
+#if defined(__has_feature)
+#  if __has_feature(memory_sanitizer)
+// disable with msan due to false positives
+   return 0;
+#  endif
+#endif
 
    const char *terminology_rox = "VGVybWlub2xvZ3kgcm94IQ==";
    src = eina_unicode_utf8_to_unicode(terminology_rox, NULL);
