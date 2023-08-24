@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-08-19 00:51+0000\n"
+"PO-Revision-Date: 2023-08-21 19:36+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/terminology/"
 "terminology/es/>\n"
@@ -648,7 +648,7 @@ msgstr "Activar códigos de escapado especiales de Terminology"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Habilitar los códigos de escape manipulando las selecciones"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
