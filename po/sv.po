@@ -1,13 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # This file is put in the public domain.
 # Durver Eriksson <dyrver.eriksson@gmail.com>, 2021, 2022.
-# Luna Jernberg <droidbittin@gmail.com>, 2022.
+# Luna Jernberg <droidbittin@gmail.com>, 2022, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2022-10-26 19:04+0000\n"
+"PO-Revision-Date: 2023-08-21 19:36+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/terminology/"
 "terminology/sv/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -633,12 +633,11 @@ msgstr "Aktivera flyktkoder speciellt inbyggda för Terminology"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Aktivera escape koder som manipulerar val"
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "Emojis hanteras som dubbel-vidd karaktärer"
+msgstr "Behandla alltid Emojis som tecken med dubbel bredd"
 
 #: src/bin/options_behavior.c:420
 msgid ""
