@@ -6,31 +6,36 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2023-11-12 15:01+0000\n"
+"Last-Translator: Mindaugas <m.celiesius@yandex.ru>\n"
+"Language-Team: Lithuanian <https://hosted.weblate.org/projects/terminology/"
+"terminology/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
+"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
+"1 : 2);\n"
+"X-Generator: Weblate 5.2-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
 #, c-format
 msgid "Copy '%s'"
-msgstr ""
+msgstr "Kopijuoti '%'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
-msgstr ""
+msgstr "Atverti"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
-msgstr ""
+msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr ""
+msgstr "YouTube kanalas"
 
 #: src/bin/about.c:289
 #, c-format
@@ -41,147 +46,153 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
+"<b>Terminology %s</b><br>Kodėl terminalas turi būti nuobodus?<br><br>Šis "
+"terminalas buvo sukurtas Enlightenment darbalaukio aplinkai, panaudojant "
+"EFLbibliotekas ir  peržiangiant šiuolaikinio terminalo ribas. Mes tikimės, "
+"kad jūs patirsite malonumą naudojantis juo.<br><br>Copyright © 2012-%d by:"
+"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed "
+"below:<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminology kūrėjai"
 
 #: src/bin/controls.c:371
 msgid "Controls"
-msgstr ""
+msgstr "Valdikliai"
 
 #: src/bin/controls.c:387
 msgid "New"
-msgstr ""
+msgstr "Naujas"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr ""
+msgstr "Padalinimas V"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr ""
+msgstr "Padalinimas H"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr ""
+msgstr "Mini vaizdas"
 
 #: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
-msgstr ""
+msgstr "Nustatyti pavadinimą"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
 msgid "Copy"
-msgstr ""
+msgstr "Kopijuoti"
 
 #: src/bin/controls.c:430
 msgid "Paste"
-msgstr ""
+msgstr "Įklijuoti"
 
 #: src/bin/controls.c:436
 msgid "Settings"
-msgstr ""
+msgstr "Nustatymai"
 
 #: src/bin/controls.c:442
 msgid "About"
-msgstr ""
+msgstr "Apie"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Sugrupuota įvestis"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
-msgstr ""
+msgstr "Uždaryti terminalą"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr ""
+msgstr "Nepavyko sukurti registravimo domeno '%s'"
 
 #: src/bin/keyin.c:681
 msgid "Scrolling"
-msgstr ""
+msgstr "Slinkimas"
 
 #: src/bin/keyin.c:682
 msgid "Scroll one page up"
-msgstr ""
+msgstr "Slinkite vienu puslapiu aukštyn"
 
 #: src/bin/keyin.c:683
 msgid "Scroll one page down"
-msgstr ""
+msgstr "Slinkite vienu puslapiu žemyn"
 
 #: src/bin/keyin.c:684
 msgid "Scroll one line up"
-msgstr ""
+msgstr "Slinkite viena eilute aukštyn"
 
 #: src/bin/keyin.c:685
 msgid "Scroll one line down"
-msgstr ""
+msgstr "Slinkite viena eilute žemyn"
 
 #: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
-msgstr ""
+msgstr "Eiti į atsilikimo viršų"
 
 #: src/bin/keyin.c:687
 msgid "Reset scroll"
-msgstr ""
+msgstr "Iš naujo nustatyti slinktį"
 
 #: src/bin/keyin.c:689
 msgid "Copy/Paste"
-msgstr ""
+msgstr "Nukopijuoti/Įklijuoti"
 
 #: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
-msgstr ""
+msgstr "Nukopijuoti pasirinkimą į pagrindinį buferį"
 
 #: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
-msgstr ""
+msgstr "Nukopijuoti pasirinkimą į mainų srities buferį"
 
 #: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
-msgstr ""
+msgstr "Įklijuoti į pagrindinį buferį (paryškinti)"
 
 #: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr ""
+msgstr "Įklijuoti į iškarpinės buferį (Ctrl+c/v)"
 
 #: src/bin/keyin.c:695
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "Padaliniai / skirtukai"
 
 #: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
-msgstr ""
+msgstr "Sufokusuoti ankstesnį terminalą"
 
 #: src/bin/keyin.c:697
 msgid "Focus the next terminal"
-msgstr ""
+msgstr "Sufokusuoti sekantį terminalą"
 
 #: src/bin/keyin.c:698
 msgid "Focus the terminal above"
-msgstr ""
+msgstr "Sufokusuoti aukščiau esantį terminalą"
 
 #: src/bin/keyin.c:699
 msgid "Focus the terminal below"
-msgstr ""
+msgstr "Sufokusuoti žemiau esantį terminalą"
 
 #: src/bin/keyin.c:700
 msgid "Focus the terminal on the left"
-msgstr ""
+msgstr "Sufokusuoti terminalą kairėje"
 
 #: src/bin/keyin.c:701
 msgid "Focus the terminal on the right"
-msgstr ""
+msgstr "Sufokusuoti terminalą dešinėje"
 
 #: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
-msgstr ""
+msgstr "Padalinti horizontaliai (naujas žemiau)"
 
 #: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
-msgstr ""
+msgstr "Padalinti vertikaliai (naujas dešinėje)"
 
 #: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
