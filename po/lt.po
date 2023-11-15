@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-11-12 15:01+0000\n"
+"PO-Revision-Date: 2023-11-15 14:06+0000\n"
 "Last-Translator: Mindaugas <m.celiesius@yandex.ru>\n"
 "Language-Team: Lithuanian <https://hosted.weblate.org/projects/terminology/"
 "terminology/lt/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: src/bin/termio.c:1317
 #, c-format
 msgid "Copy '%s'"
-msgstr "Kopijuoti '%'"
+msgstr "Kopijuoti '%s'"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
@@ -48,7 +48,7 @@ msgid ""
 msgstr ""
 "<b>Terminology %s</b><br>Kodėl terminalas turi būti nuobodus?<br><br>Šis "
 "terminalas buvo sukurtas Enlightenment darbalaukio aplinkai, panaudojant "
-"EFLbibliotekas ir  peržiangiant šiuolaikinio terminalo ribas. Mes tikimės, "
+"EFLbibliotekas ir peržiangiant šiuolaikinio terminalo ribas. Mes tikimės, "
 "kad jūs patirsite malonumą naudojantis juo.<br><br>Copyright © 2012-%d by:"
 "<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed "
 "below:<br><br>%s"
@@ -196,164 +196,167 @@ msgstr "Padalinti vertikaliai (naujas dešinėje)"
 
 #: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
-msgstr ""
+msgstr "Sukurti naują \"skirtuką\""
 
 #: src/bin/keyin.c:705
 msgid "Close the focused terminal"
-msgstr ""
+msgstr "Uždaryti sufokusuotą terminalą"
 
 #: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
-msgstr ""
+msgstr "Parodyti „skirtukų“ perjungiklį"
 
 #: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 1"
 
 #: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 2"
 
 #: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 3"
 
 #: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 4"
 
 #: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 5"
 
 #: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 6"
 
 #: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 7"
 
 #: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 8"
 
 #: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 9"
 
 #: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
-msgstr ""
+msgstr "Perjungti į terminalo skirtuką 10"
 
 #: src/bin/keyin.c:717
 msgid "Change title"
-msgstr ""
+msgstr "Pakeisti pavadinimą"
 
 #: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
-msgstr ""
+msgstr "Perjungti, ar įvestis eina į visus matomus terminalus"
 
 #: src/bin/keyin.c:722
 msgid "Font size"
-msgstr ""
+msgstr "Šrifto dydis"
 
 #: src/bin/keyin.c:723
 msgid "Font size up 1"
-msgstr ""
+msgstr "Didesnis šrifto dydis 1"
 
 #: src/bin/keyin.c:724
 msgid "Font size down 1"
-msgstr ""
+msgstr "Mažesnis šrifto dydis 1"
 
 #: src/bin/keyin.c:725
 msgid "Display big font size"
-msgstr ""
+msgstr "Rodyti didelį šrifto dydį"
 
 #: src/bin/keyin.c:726
 msgid "Reset font size"
-msgstr ""
+msgstr "Iš naujo nustatyti šrifto dydį"
 
 #: src/bin/keyin.c:728
 msgid "Actions"
-msgstr ""
+msgstr "Veiksmai"
 
 #: src/bin/keyin.c:729
 msgid "Open a new terminal window"
-msgstr ""
+msgstr "Atverti naują terminalo langą"
 
 #: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
-msgstr ""
+msgstr "Perjungti į viso lango ekraną"
 
 #: src/bin/keyin.c:731
 msgid "Display the history miniview"
-msgstr ""
+msgstr "Rodyti istorijos miniatiūrinį vaizdą"
 
 #: src/bin/keyin.c:732
 msgid "Display the command box"
-msgstr ""
+msgstr "Rodyti komandų laukelį"
 
 #: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
-msgstr ""
+msgstr "Neįmanoma sukurti lango"
 
 #: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
-msgstr ""
+msgstr "Nepavyko sukurti terminalo valdiklio"
 
 #: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr ""
+msgstr "(C) 2012-%d Carsten Haitzler ir kiti"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
+"Terminalo emuliatorius, parašytas naudojant Enlightenment Foundation "
+"Libraries"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
-msgstr ""
+msgstr "Naudoti pavadintą failą kaip fono foną"
 
 #: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
-msgstr ""
+msgstr "Pereiti į katalogą terminalo komandos vykdymui"
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr ""
+msgstr "Vykdyti komandą. Numatyta $SHELL (arba passwd apvalkalas arba /bin/sh)"
 
 #: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
-msgstr ""
+msgstr "Naudoti pavadintą edje temą arba kelią į temos failą"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Naudoti pavadintą spalvų schemą"
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr ""
+msgstr "Naudoti terminalo išmatavimus (pvz. 80x24 ar 80x24+50+20 )"
 
 #: src/bin/main.c:478
 msgid "Set window name"
-msgstr ""
+msgstr "Nustatyti lango vardą"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr ""
+msgstr "Nustatyti lango vaidmenį"
 
 #: src/bin/main.c:482
 msgid "Set window title"
-msgstr ""
+msgstr "Nustatykite lango pavadinimą"
 
 #: src/bin/main.c:484
 msgid "Set icon name"
-msgstr ""
+msgstr "Nustatyti ženklelio pavadinimą"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr ""
+"Nustatyti šriftą (pavadinimas/dydis keičiamo dydžio, bitmap pavadinimas)"
 
 #: src/bin/main.c:488
 msgid ""
@@ -361,367 +364,375 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
+"Padalinti terminalo langą. 'v' vertikaliai ir 'h' horizontaliai. Galima "
+"naudoti kelis kartus, pvz. -S vhvv arba --split hv Daugiau aprašymo rasite "
+"vadovo puslapyje"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
-msgstr ""
+msgstr "Paleiskite apvalkalą kaip prisijungimo apvalkalą"
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
-msgstr ""
+msgstr "Nustatykite vaizdo atkūrimui nutildymo režimą"
 
 #: src/bin/main.c:497
 msgid "Set cursor blink mode"
-msgstr ""
+msgstr "Nustatyti žymeklio mirksėjimo režimą"
 
 #: src/bin/main.c:499
 msgid "Set visual bell mode"
-msgstr ""
+msgstr "Nustatyti vaizdinį režimą"
 
 #: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
-msgstr ""
+msgstr "Nuo pat pradžių eikite į viso ekrano režimą"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Pradėti piktogramos režimu"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Pradėti be kraštų"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
-msgstr ""
+msgstr "Pradėti kaip perrašymo-peradresavimo langas"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "Pradėti išdidinus"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
-msgstr ""
+msgstr "Terminology vykdoma be langų tvarkyklės"
 
 #: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
-msgstr ""
+msgstr "Neišeiti, kai baigiasi komandų procesas"
 
 #: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
+"Priverstinai vykdyti vieną vykdomąjį failą, jei įgalinti keli egzemplioriai"
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr ""
+msgstr "Nustatyti TERM į 'xterm-256color' vietoje 'xterm'"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "Nustatyti mastelio koeficientą"
 
 #: src/bin/main.c:521
 msgid "Highlight links"
-msgstr ""
+msgstr "Paryškinti nuorodas"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Nerodyti vedlio paleidžiant"
 
 #: src/bin/main.c:549
 msgid "show program version"
-msgstr ""
+msgstr "Rodyti programos versiją"
 
 #: src/bin/main.c:552
 msgid "show copyright"
-msgstr ""
+msgstr "rodyti autorines teises"
 
 #: src/bin/main.c:555
 msgid "show license"
-msgstr ""
+msgstr "parodyti licenziją"
 
 #: src/bin/main.c:558
 msgid "show this message"
-msgstr ""
+msgstr "parodyti šią žinutę"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr ""
+"rastas netinkamas argumentas parinkties -S/--padalinimui. Žiūrėkite --pagalba"
 
 #: src/bin/main.c:909
 msgid "Could not initialize key bindings"
-msgstr ""
+msgstr "Nepavyko inicijuoti klavišų susiejimo"
 
 #: src/bin/main.c:925
 msgid "Could not parse command line options"
-msgstr ""
+msgstr "Nepavyko išanalizuoti komandinės eilutės parinkčių"
 
 #: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
-msgstr ""
+msgstr "parinktis %s reikalauja argumento!"
 
 #: src/bin/main.c:950
 msgid "invalid options found. See --help"
-msgstr ""
+msgstr "rastos netinkamos parinktys. Žiūrėti --pagalbą"
 
 #: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
 #: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
-msgstr ""
+msgstr "Funkcija %s nepavyko: %s"
 
 #: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
-msgstr ""
+msgstr "Medijos vizualizavimas nepalaikomas"
 
 #: src/bin/options_background.c:136
 msgid "None"
-msgstr ""
+msgstr "Nei vienas"
 
 #: src/bin/options_background.c:468
 msgid "Source file is target file"
-msgstr ""
+msgstr "Šaltinio failas yra tikslinis failas"
 
 #: src/bin/options_background.c:481
 msgid "Picture imported"
-msgstr ""
+msgstr "Nuotrauka importuota"
 
 #: src/bin/options_background.c:486
 msgid "Failed"
-msgstr ""
+msgstr "Nepavyko"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
-msgstr ""
+msgstr "Fonas"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
-msgstr ""
+msgstr "Permatomas"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Neskaidrumas:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
-msgstr ""
+msgstr "Pasirinkti kelią"
 
 #: src/bin/options_background.c:598
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: src/bin/options_background.c:601
 msgid "User"
-msgstr ""
+msgstr "Naudotojas"
 
 #: src/bin/options_background.c:604
 msgid "Other"
-msgstr ""
+msgstr "Kitas"
 
 #: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "Spustelėkite paveikslėlį, kad naudotumėte jį kaip foną"
 
 #: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d linijos"
 
 #: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "Slinkimas atgal (dabartinis atminties naudojimas: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:218
 msgid "Default cursor:"
-msgstr ""
+msgstr "Numatytas žymeklis:"
 
 #: src/bin/options_behavior.c:227
 msgid "Blinking Block"
-msgstr ""
+msgstr "Mirksintis blokas"
 
 #: src/bin/options_behavior.c:246
 msgid "Steady Block"
-msgstr ""
+msgstr "Pastovus blokas"
 
 #: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
-msgstr ""
+msgstr "Mirksintis pabraukimas"
 
 #: src/bin/options_behavior.c:286
 msgid "Steady Underline"
-msgstr ""
+msgstr "Nuolatinis pabraukimas"
 
 #: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
-msgstr ""
+msgstr "Mirksinti juosta"
 
 #: src/bin/options_behavior.c:326
 msgid "Steady Bar"
-msgstr ""
+msgstr "Nuolatinė juosta"
 
 #: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
-msgstr ""
+msgstr "Elgsena"
 
 #: src/bin/options_behavior.c:386
 msgid "Show tabs"
-msgstr ""
+msgstr "Rodyti skirtukus"
 
 #: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
-msgstr ""
+msgstr "Slinti į apačią esant naujam turiniui"
 
 #: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
-msgstr ""
+msgstr "Slinkti į apačią, kai paspaudžiamas klavišas"
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reaguoti į klavišų paspaudimus (spausdinimo garsai ir animacijos)"
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "Garso palaikymas klavišų paspaudimams <failure>IŠJUNGTA</failure>!"
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
-msgstr ""
+msgstr "Vizualus varpelis"
 
 #: src/bin/options_behavior.c:408
 msgid "Bell rings"
-msgstr ""
+msgstr "Suskamba varpelis"
 
 #: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
-msgstr ""
+msgstr "Skubus varpelis"
 
 #: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "Keli atvejai, vienas procesas"
 
 #: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "Nustatyti TERM į xterm-256color"
 
 #: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "„BackArrow“ siunčia „Del“ (vietoj „BackSpace“)"
 
 #: src/bin/options_behavior.c:414
 msgid "Start as login shell"
-msgstr ""
+msgstr "Pradėti kaip prisijungimo apvalkalas"
 
 #: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "Atverti naujus terminalus esamame darbo kataloge"
 
 #: src/bin/options_behavior.c:416
 msgid "Always show miniview"
-msgstr ""
+msgstr "Visada rodyti miniatiūrinį vaizdą"
 
 #: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Įgalinti specialius Terminologį atšaukimo kodus"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Įgalinti atšaukimo kodus manipuliuojant pasirinkimais"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
-msgstr ""
+msgstr "Visada laikyti jaustukus kaip dvigubo pločio simbolius"
 
 #: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
-msgstr ""
+msgstr "Grupuodami įvestį, daryti tai visuose terminaluose, o ne tik matomuose"
 
 #: src/bin/options_behavior.c:427
 msgid "Always open at size:"
-msgstr ""
+msgstr "Visada atidaryti dydžiu:"
 
 #: src/bin/options_behavior.c:437
 msgid "Set Current:"
-msgstr ""
+msgstr "Nustatyti dabartiniu:"
 
 #: src/bin/options_behavior.c:448
 msgid "Width:"
-msgstr ""
+msgstr "Plotis:"
 
 #: src/bin/options_behavior.c:470
 msgid "Height:"
-msgstr ""
+msgstr "Aukštis:"
 
 #: src/bin/options_behavior.c:529
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
+"Nustatyti animacijos, kuri<br>vyksta perjungiant skirtukus, "
+"laiką,<br>nesvarbu, ar tai daroma dėl klavišų sekos ar <br>pelės ratuko virš "
+"skirtukų skydelio"
 
 #: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
-msgstr ""
+msgstr "Skirtuko mastelio/perjungimo animacijos laikas:"
 
 #: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr ""
+msgstr "Galimybės"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "Pelė"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
-msgstr ""
+msgstr "Šriftas"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:168
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/bin/options.c:222
 msgid "Colors"
-msgstr ""
+msgstr "Spalvos"
 
 #: src/bin/options.c:223
 msgid "Keys"
-msgstr ""
+msgstr "Klavišai"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Įrankiai"
 
 #: src/bin/options.c:235
 msgid "Temporary"
-msgstr ""
+msgstr "Laikinas"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "Atverti interneto svetainę"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>Autorius: </b>%s<br/><b>Svetainė: </b>%s<br/><b>Licenzija: </b>%s"
 
 #: src/bin/options_colors.c:226
 msgid "Color schemes"
-msgstr ""
+msgstr "Spalvų schemos"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Naudojama tema<hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -730,266 +741,271 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> naudoja <hilight>elementary </"
+"hilight>įrankius.<br>Įrankių rinkinio konfigūracijos nustatymus galima "
+"pasiekti paleidus<keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "Paleisti%s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
-msgstr ""
+msgstr "Mastelis"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "Pasirinkite norimą dydį, kad šis tekstas būtų įskaitomas"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"Mastelio konfigūraciją taip pat galima pakeisti, naudojant "
+"<hilight>elementary</hilight>konfigūravimo skydelį"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Ieškoti šrifto"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
-msgstr ""
+msgstr "Bitmap"
 
 #: src/bin/options_font.c:619
 msgid "Standard"
-msgstr ""
+msgstr "Standartinis"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr ""
+msgstr "Terminale rodyti pusjuodį ir kursyvą"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
-msgstr ""
+msgstr "Ctrl+"
 
 #: src/bin/options_keys.c:67
 msgid "Alt+"
-msgstr ""
+msgstr "Alt+"
 
 #: src/bin/options_keys.c:68
 msgid "Shift+"
-msgstr ""
+msgstr "Shift+"
 
 #: src/bin/options_keys.c:69
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:70
 msgid "Meta+"
-msgstr ""
+msgstr "Meta+"
 
 #: src/bin/options_keys.c:71
 msgid "Hyper+"
-msgstr ""
+msgstr "Hiper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr ""
+msgstr "Panaikinti"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr ""
+msgstr "Prašome paspausti klavišų seką"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
-msgstr ""
+msgstr "Klavišų Seka"
 
 #: src/bin/options_keys.c:458
 msgid "Reset bindings"
-msgstr ""
+msgstr "Iš naujo atstatyti klavišų derinius"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
-msgstr ""
+msgstr "Fokusas padalintas po pele"
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
-msgstr ""
+msgstr "Su fokusavimu susiję vaizdai"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "Ramybės būsenoje automatiškai slėpti pelės žymeklį:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr ""
+msgstr "Aktyvios nuorodos:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "Elektroniniuose laiškuose"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "Failų keliuose"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr ""
+msgstr "URL adresuose"
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
-msgstr ""
+msgstr "Spalvose"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr ""
+msgstr "Remiantis atšaukimo kodais"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr ""
+msgstr "Gravatarų integracija"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
-msgstr ""
+msgstr "Vilkite ir numeskite nuorodas"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr ""
+msgstr "Eilute, jei įmanoma"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr ""
+msgstr "El. pašto adresas:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr ""
+msgstr "URL (vaizdai):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr ""
+msgstr "URL (Video):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr ""
+msgstr "URL (Visi):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr ""
+msgstr "Vietinis (vaizdai):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr ""
+msgstr "Vietinis (Video):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr ""
+msgstr "Vietinis (Visi):"
 
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Naudojama spavų schema <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "Nežinoma šrifto komanda: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr ""
+msgstr "Nežinoma tinklelio dydžio komanda: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr ""
+msgstr "Nepavyko nuskaityti fono failo: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "Nežinoma komanda: %s"
 
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr ""
+msgstr "Nepavyko gauti darbinio pid katalogo %i: %s"
 
 #: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr ""
+msgstr "Nepavyko įkelti darbinio katalogo %s: %s"
 
 #: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr ""
+msgstr "nepalaikomas pasirinkimo formatas '%s'"
 
 #: src/bin/termio.c:1376
 msgid "Preview"
-msgstr ""
+msgstr "Peržiūra"
 
 #: src/bin/termio.c:1386
 msgid "Copy relative path"
-msgstr ""
+msgstr "Nukopijuoti santykinį kelią"
 
 #: src/bin/termio.c:1388
 msgid "Copy full path"
-msgstr ""
+msgstr "Nukopijuoti pilną kelią"
 
 #: src/bin/termio.c:2805
 msgid "Open as URL"
-msgstr ""
+msgstr "Atverti kaip URL"
 
 #: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "Nepavyko priskirti terminalopty"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "atminties klaida: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "Nepavyko nustatyti ioctl dydžio: %s"
 
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "Nepavyko įrašyti į failo aprašą %d: %s"
 
 #: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "Neįmanoma rasti apvalkalo, pereinama į %s"
 
 #: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' atvėrimas() nepavyko: %s"
 
 #: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "fcntl() pty '%s' nepavyko:%s"
 
 #: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "ioctl() pty '%s' nepavyko: %s"
 
 #: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr ""
+msgstr "Nepavyko pakeisti dabartinio katalogo į %s:%s"
 
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "Nepavyko įkelti jokios temos, grupei=%s: %s"
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr ""
+msgstr "Atlikta"
 
 #: src/bin/win.c:440
 msgid ""
@@ -997,19 +1013,22 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
+"Mastelio konfigūraciją galima pakeisti nustatymuose (dešiniuoju pelės "
+"mygtuku spustelėkite terminalą) →  Įrankinė, arba paleisdami "
+"komandą<keyword>elementary_konfigūracija</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
-msgstr ""
+msgstr "Ecore IMF nulūžo"
 
 #: src/bin/win.c:6209
 msgid "Ok"
-msgstr ""
+msgstr "Gerai"
 
 #: src/bin/win.c:6214
 msgid "Cancel"
-msgstr ""
+msgstr "Atšaukti"
 
 #: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr ""
+msgstr "Neįmanoma rasti terminology temos! Pamiršote 'ninja install'?"
