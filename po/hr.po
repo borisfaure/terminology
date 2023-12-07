@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-08-24 22:49+0000\n"
+"PO-Revision-Date: 2023-12-07 16:03+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://hosted.weblate.org/projects/terminology/"
 "terminology/hr/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.0\n"
+"X-Generator: Weblate 5.3-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -366,7 +366,7 @@ msgid ""
 msgstr ""
 "Podijeli prozor terminala. „v” za okomito i „h” za vodoravno. Može se "
 "koristiti više puta. Npr. -S vhvv ili --split hv. Opširan opis dostupan je "
-"na stranici priručnika."
+"na stranici priručnika"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
@@ -632,11 +632,11 @@ msgstr "Uvijek prikaži umanjeni prikaz"
 
 #: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
-msgstr "Aktiviraj posebne escape kodove od Terminology"
+msgstr "Aktiviraj posebne Terminology escape kodove"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Aktiviraj escape kodove koji manipuliraju odabirima"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
@@ -960,7 +960,7 @@ msgstr "Nije bilo moguće alocirati termpty"
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr "memerr: %s"
+msgstr "greška memorije: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
