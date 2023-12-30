@@ -2,13 +2,14 @@
 # This file is distributed under the same license as the Terminology package.
 # Pjotr <pjotrvertaalt@gmail.com>, 2020.
 # Ruud Bos <ruud.bos@gmail.com>, 2022.
+# Heimen Stoffels <vistausss@fastmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2022-01-06 15:53+0000\n"
-"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
+"PO-Revision-Date: 2023-12-30 16:08+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -16,13 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
 #, c-format
 msgid "Copy '%s'"
-msgstr "Kopiëren '%s'"
+msgstr "“%s” kopiëren"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
@@ -34,7 +35,7 @@ msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr "YouTube kanaal"
+msgstr "YouTubekanaal"
 
 #: src/bin/about.c:289
 #, c-format
@@ -45,18 +46,20 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Waarom zouden terminals saai moeten zijn?"
-"<br><br>Gemaakt voor Enlightenment. We hopen dat u er plezier aan beleeft."
-"<br><br>Auteursrecht © 2012-%d door:<br><br>%s<br><br>BSD-licentie hieronder:"
-"<br><br>%s"
+"<b>Terminology %s</b><br>Waarom zouden terminals saai moeten "
+"zijn?<br><br>Gemaakt voor Enlightenment, om EFL te kunnen benutten en de "
+"grenzen van een moderne terminalemulator te verleggen. We hopen dat u er "
+"plezier aan beleeft.<br><br>Copyright © 2012-%d:"
+"<br><br>%s<br><br>Uitgebracht onder de BSD-licentie (zie "
+"hieronder):<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr "Terminology's ontwikkelaars"
+msgstr "Terminology-ontwikkelaars"
 
 #: src/bin/controls.c:371
 msgid "Controls"
-msgstr "Knoppen"
+msgstr "Bediening"
 
 #: src/bin/controls.c:387
 msgid "New"
@@ -64,11 +67,11 @@ msgstr "Nieuw"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr "Splits V"
+msgstr "Vert. splitsen"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr "Splits H"
+msgstr "Horiz. splitsen"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
@@ -103,9 +106,9 @@ msgid "Close Terminal"
 msgstr "Terminalvenster sluiten"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Kon loggend domein '%s' niet maken"
+msgstr "Het loggend domein ‘%s’ kan niet worden aangemaakt"
 
 #: src/bin/keyin.c:681
 msgid "Scrolling"
@@ -113,11 +116,11 @@ msgstr "Schuiven"
 
 #: src/bin/keyin.c:682
 msgid "Scroll one page up"
-msgstr "Schuif één bladzijde omhoog"
+msgstr "Schuif één pagina omhoog"
 
 #: src/bin/keyin.c:683
 msgid "Scroll one page down"
-msgstr "Schuif één bladzijde naar beneden"
+msgstr "Schuif één pagina naar beneden"
 
 #: src/bin/keyin.c:684
 msgid "Scroll one line up"
@@ -129,147 +132,147 @@ msgstr "Schuif één regel omlaag"
 
 #: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
-msgstr "Ga naar de bovenkant van de achterstand"
+msgstr "Ga naar de bovenkant van het logboek"
 
 #: src/bin/keyin.c:687
 msgid "Reset scroll"
-msgstr "Schuiven terugzetten"
+msgstr "Schuifpositie herstellen"
 
 #: src/bin/keyin.c:689
 msgid "Copy/Paste"
-msgstr "Kopiëren/plakken"
+msgstr "Kopiëren/Plakken"
 
 #: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
-msgstr "Kopieer selectie naar primaire buffer"
+msgstr "Selectie kopiëren naar primaire buffer"
 
 #: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
-msgstr "Kopieer selectie naar klembordbuffer"
+msgstr "Selectie kopiëren naar klembordbuffer"
 
 #: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
-msgstr "Plak primaire buffer (markering)"
+msgstr "Primaire buffer plakken (markering)"
 
 #: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Plak klembordbuffer (Ctrl c / Ctrl v)"
+msgstr "Klembordbuffer plakken (Ctrl+c/Ctrl+v)"
 
 #: src/bin/keyin.c:695
 msgid "Splits/Tabs"
-msgstr "Afsplitsingen/tabbladen"
+msgstr "Splitsingen/Tabbladen"
 
 #: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
-msgstr "Scherpstellen op vorige terminalvenster"
+msgstr "Vorig terminalvenster focussen"
 
 #: src/bin/keyin.c:697
 msgid "Focus the next terminal"
-msgstr "Scherpstellen op volgende terminalvenster"
+msgstr "Volgend terminalvenster focussen"
 
 #: src/bin/keyin.c:698
 msgid "Focus the terminal above"
-msgstr "Scherpstellen op bovenstaand terminalvenster"
+msgstr "Bovenstaand terminalvenster focussen"
 
 #: src/bin/keyin.c:699
 msgid "Focus the terminal below"
-msgstr "Scherpstellen op onderstaand terminalvenster"
+msgstr "Onderstaand terminalvenster focussen"
 
 #: src/bin/keyin.c:700
 msgid "Focus the terminal on the left"
-msgstr "Scherpstellen op linkerterminalvenster"
+msgstr "Linkerterminalvenster focussen"
 
 #: src/bin/keyin.c:701
 msgid "Focus the terminal on the right"
-msgstr "Scherpstellen op rechterterminalvenster"
+msgstr "Rechterterminalvenster focussen"
 
 #: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
-msgstr "Horizontaal splitsen (nieuwe onder)"
+msgstr "Horizontaal splitsen (onder)"
 
 #: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
-msgstr "Verticaal splitsen (nieuwe rechts)"
+msgstr "Verticaal splitsen (rechts)"
 
 #: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
-msgstr "Maak een nieuw 'tabblad'"
+msgstr "Nieuw tabblad"
 
 #: src/bin/keyin.c:705
 msgid "Close the focused terminal"
-msgstr "Scherpgestelde terminalvenster sluiten"
+msgstr "Gefocust terminalvenster sluiten"
 
 #: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
-msgstr "'Tabbladen'wisselaar oproepen"
+msgstr "Tabbladwisselaar openen"
 
 #: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
-msgstr "Schakel naar terminaltabblad 1"
+msgstr "Ga naar terminaltabblad 1"
 
 #: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
-msgstr "Schakel naar terminaltabblad 2"
+msgstr "Ga naar terminaltabblad 2"
 
 #: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
-msgstr "Schakel naar terminaltabblad 3"
+msgstr "Ga naar terminaltabblad 3"
 
 #: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
-msgstr "Schakel naar terminaltabblad 4"
+msgstr "Ga naar terminaltabblad 4"
 
 #: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
-msgstr "Schakel naar terminaltabblad 5"
+msgstr "Ga naar terminaltabblad 5"
 
 #: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
-msgstr "Schakel naar terminaltabblad 6"
+msgstr "Ga naar terminaltabblad 6"
 
 #: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
-msgstr "Schakel naar terminaltabblad 7"
+msgstr "Ga naar terminaltabblad 7"
 
 #: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
-msgstr "Schakel naar terminaltabblad 8"
+msgstr "Ga naar terminaltabblad 8"
 
 #: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
-msgstr "Schakel naar terminaltabblad 9"
+msgstr "Ga naar terminaltabblad 9"
 
 #: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
-msgstr "Schakel naar terminaltabblad 10"
+msgstr "Ga naar terminaltabblad 10"
 
 #: src/bin/keyin.c:717
 msgid "Change title"
-msgstr "Titel veranderen"
+msgstr "Titel wĳzigen"
 
 #: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
-msgstr "Omschakelen of invoer naar alle zichtbare terminalvensters gaat"
+msgstr "Invoer naar alle zichtbare terminalvensters aan/uit"
 
 #: src/bin/keyin.c:722
 msgid "Font size"
-msgstr "Grootte van letters"
+msgstr "Tekstgrootte"
 
 #: src/bin/keyin.c:723
 msgid "Font size up 1"
-msgstr "Lettergrootte 1 omhoog"
+msgstr "Tekstgrootte +1"
 
 #: src/bin/keyin.c:724
 msgid "Font size down 1"
-msgstr "Lettergrootte 1 omlaag"
+msgstr "Tekstgrootte -1"
 
 #: src/bin/keyin.c:725
 msgid "Display big font size"
-msgstr "Groot lettertype tonen"
+msgstr "Groot lettertype gebruiken"
 
 #: src/bin/keyin.c:726
 msgid "Reset font size"
-msgstr "Lettergrootte terugzetten"
+msgstr "Standaard tekstgrootte"
 
 #: src/bin/keyin.c:728
 msgid "Actions"
@@ -277,11 +280,11 @@ msgstr "Acties"
 
 #: src/bin/keyin.c:729
 msgid "Open a new terminal window"
-msgstr "Open een nieuw terminalvenster"
+msgstr "Nieuw terminalvenster openen"
 
 #: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
-msgstr "Schermvullendheid omschakelen"
+msgstr "Schermvullende weergave aan/uit"
 
 #: src/bin/keyin.c:731
 msgid "Display the history miniview"
@@ -292,14 +295,12 @@ msgid "Display the command box"
 msgstr "Opdrachtvenster tonen"
 
 #: src/bin/main.c:406 src/bin/main.c:602
-#, fuzzy
 msgid "Could not create window"
-msgstr "Kon geen venster maken"
+msgstr "Het venster kan niet worden geopend"
 
 #: src/bin/main.c:425 src/bin/main.c:613
-#, fuzzy
 msgid "Could not create terminal widget"
-msgstr "Kon terminalhulpje niet maken"
+msgstr "Het terminalelement kan niet worden gemaakt"
 
 #: src/bin/main.c:460
 #, c-format
@@ -307,63 +308,54 @@ msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler en anderen"
 
 #: src/bin/main.c:462
-#, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr "Terminal-nabootser geschreven met Enlightenment Foundation Libraries"
+msgstr "Terminalemulator, geschreven met de Enlightenment Foundation Libraries"
 
 #: src/bin/main.c:466
-#, fuzzy
 msgid "Use the named file as a background wallpaper"
-msgstr "Gebruik het genoemde bestand als achtergrond"
+msgstr "Gebruik het gekozen bestand als achtergrond"
 
 #: src/bin/main.c:468
-#, fuzzy
 msgid "Change to directory for execution of terminal command"
-msgstr "Verander naar map voor uitvoering van terminalopdracht"
+msgstr "Wijzigen naar map voor uitvoering van terminalopdracht"
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
-"Uit te voeren opdracht. Standaard is $SHELL (of passwd shell of /bin/sh)"
+"De uit te voeren opdracht. Standaard: $SHELL (of passwd shell of /bin/sh)"
 
 #: src/bin/main.c:472
-#, fuzzy
 msgid "Use the named edje theme or path to theme file"
-msgstr "Gebruik het genoemde edje-thema of pad naar themabestand"
+msgstr "Gebruik het gekozen edje-thema of locatie van het themabestand"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr "Gebruik het genoemde kleurschema"
+msgstr "Gebruik het genoemde kleurenschema"
 
 #: src/bin/main.c:476
-#, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "Te gebruiken terminalafmetingen (bijv. 80x24 of 80x24+50+20 enz.)"
+msgstr "De te gebruiken terminalafmetingen (bijv. 80x24 of 80x24+50+20, enz.)"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set window name"
-msgstr "Stel vensternaam in"
+msgstr "Vensternaam instellen"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Set window role"
-msgstr "Stel vensterrol in"
+msgstr "Vensterrol instellen"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Set window title"
-msgstr "Stel venstertitel in"
+msgstr "Venstertitel instellen"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Set icon name"
-msgstr "Stel pictogramnaam in"
+msgstr "Pictogramnaam instellen"
 
 #: src/bin/main.c:486
-#, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Stel lettertype in (NAAM/GROOTTE voor schaalbaar, NAAM voor bitmap)"
+msgstr ""
+"Lettertype instellen (NAAM/GROOTTE indien aanpasbaar; NAAM indien bitmap)"
 
 #: src/bin/main.c:488
 #, fuzzy
