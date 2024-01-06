@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-06 18:45+0000\n"
-"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
+"PO-Revision-Date: 2024-01-06 18:50+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -739,33 +739,34 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> gebruikt de <hilight>elementary</hilight> "
-"toolkit.<br>De configuratie-instellingen van de toolkit zijn toegankelijk "
-"door het uitvoeren van <keyword>%s</keyword>"
+"<em>Terminology</em> maakt gebruik van de <hilight>elementary</hilight>-"
+"toolkit.<br>De instellingen van de toolkit kunnen worden geopend door het "
+"uitvoeren van <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "%s starten"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
 msgstr "Schalen"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
-#, fuzzy
 msgid "Select preferred size so that this text is readable"
-msgstr "Kies voorkeursgrootte zodat deze tekst leesbaar is"
+msgstr "Kies de voorkeursgrootte zodat deze tekst leesbaar is"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"De beeldgrootte-instellingen kunnen tevens worden gewijzigd vanuit het "
+"<hilight>elementary</hilight>-instellingenpaneel"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr "Zoek lettertype"
+msgstr "Lettertype zoeken"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
@@ -777,7 +778,7 @@ msgstr "Standaard"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr "Toon vetgedrukt en schuingedrukt het terminalvenster"
+msgstr "Vetgedrukt en cursief tonen in terminalvenster"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -809,15 +810,15 @@ msgstr "Wissen"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr "Tik a.u.b. de toetsvolgorde"
+msgstr "Druk op de toetsencombinatie"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
-msgstr "Toetsbindingen"
+msgstr "Toetstoewijzingen"
 
 #: src/bin/options_keys.c:458
 msgid "Reset bindings"
-msgstr "Bindingen terugzetten"
+msgstr "Standaardwaarden"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
@@ -829,32 +830,31 @@ msgstr "Scherpstelling-gerelateerde visuele effecten"
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr "Muisaanwijzer automatisch verbergen wanneer inactief:"
+msgstr "Muisaanwijzer automatisch verbergen indien inactief:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr "Actieve koppelingen:"
+msgstr "Actieve links:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr "Bij e-mails"
+msgstr "E-mails"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr "Bij bestandpaden"
+msgstr "Bestandslocaties"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr "Bij webadressen"
+msgstr "Url's"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
 msgstr "Kleuren"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr "Gebaseerd op escape-codes"
+msgstr "Gebaseerd op escapecodes"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -862,11 +862,11 @@ msgstr "Gravatar-integratie"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
-msgstr "Koppelingen voor 'sleuren en pleuren'"
+msgstr "Links slepen-en-neerzetten"
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr "Indien mogelijk als geïntegreerd onderdeel"
+msgstr "Geïntegreerd (indien mogelijk)"
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
@@ -874,32 +874,32 @@ msgstr "E-mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr "Webadres (afbeeldingen):"
+msgstr "Url (afbeeldingen):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr "Webadres (video):"
+msgstr "Url (video):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr "Webadres (alle):"
+msgstr "Url (alle):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr "Plaatselijk (bestanden):"
+msgstr "Lokaal (afbeeldingen):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr "Plaatselijk (video):"
+msgstr "Lokaal (video):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr "Plaatselijk (alle):"
+msgstr "Lokaal (alle):"
 
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr "Kleurschema <hilight>%s</hilight> gebruiken"
+msgstr "Kleurenschema <hilight>%s</hilight> gebruiken"
 
 #: src/bin/termcmd.c:84
 #, c-format
@@ -909,12 +909,12 @@ msgstr "Onbekende lettertype-opdracht: %s"
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr "Onbekende rastergrootte-opdracht: %s"
+msgstr "Onbekende roostergrootte-opdracht: %s"
 
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr "Achtergrondbestand kon niet worden gelezen: %s"
+msgstr "Het achtergrondbestand kan niet worden ingelezen: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
@@ -924,37 +924,37 @@ msgstr "Onbekende opdracht: %s"
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr "Kon werkmap van pid %i niet verkrijgen: %s"
+msgstr "De werkmap van pid %i kan niet worden opgehaald: %s"
 
 #: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr "Kon werkmap %s niet laden: %s"
+msgstr "De werkmap van %s kan niet worden geladen: %s"
 
 #: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr "niet-ondersteunde selectie-opmaak '%s'"
+msgstr "Niet-ondersteunde selectie-opmaak ‘%s’"
 
 #: src/bin/termio.c:1376
 msgid "Preview"
-msgstr "Voorbeeldweergave"
+msgstr "Voorvertoning"
 
 #: src/bin/termio.c:1386
 msgid "Copy relative path"
-msgstr "Relatief pad kopiëren"
+msgstr "Relatieve locatie kopiëren"
 
 #: src/bin/termio.c:1388
 msgid "Copy full path"
-msgstr "Volledig pad kopiëren"
+msgstr "Volledige locatie kopiëren"
 
 #: src/bin/termio.c:2805
 msgid "Open as URL"
-msgstr "Openen als webadres"
+msgstr "Openen als url"
 
 #: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
-msgstr "Kon geen termpty toewijzen"
+msgstr "termpty kan niet worden toegewezen"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
