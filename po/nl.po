@@ -1,7 +1,7 @@
 # Dutch translation for Terminology.
 # This file is distributed under the same license as the Terminology package.
 # Pjotr <pjotrvertaalt@gmail.com>, 2020.
-# Ruud Bos <ruud.bos@gmail.com>, 2022.
+# Ruud Bos <ruud.bos@gmail.com>, 2022, 2024.
 # Heimen Stoffels <vistausss@fastmail.com>, 2023, 2024.
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-06 18:44+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -617,7 +617,7 @@ msgstr "TERM instellen op xterm-256color"
 
 #: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr ""
+msgstr "PijltjeTerug stuurt Del (in plaats van BackSpace)"
 
 #: src/bin/options_behavior.c:414
 msgid "Start as login shell"
@@ -669,6 +669,8 @@ msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
+"Stel de tijd in van de animatie die<br>plaats vind tijdens het wisselen van "
+"tabbladen,<br>gedaan door sneltoetsen of<br>muiswiel over het tabbladenpaneel"
 
 #: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
