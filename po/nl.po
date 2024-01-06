@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-06 18:50+0000\n"
-"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
+"PO-Revision-Date: 2024-01-06 18:52+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -964,42 +964,42 @@ msgstr "memerr: %s"
 #: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr "Grootte instellen ioctl mislukt: %s"
+msgstr "Grootte instellen van ioctl mislukt: %s"
 
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr "Kon niet schrijven naar bestandbeschrijver %d: %s"
+msgstr "Er kan niet worden geschreven naar bestandbeschrijver %d: %s"
 
 #: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr "Kon shell niet vinden, terugvallend op %s"
+msgstr "De shell is niet aangetroffen - er wordt teruggevallen op %s"
 
 #: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr "open() van pty '%s' is mislukt: %s"
+msgstr "open() van pty ‘%s’ is mislukt: %s"
 
 #: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr "fcntl() op pty '%s' is mislukt: %s"
+msgstr "fcntl() op pty ‘%s’ is mislukt: %s"
 
 #: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr "ioctl() op pty '%s' is mislukt: %s"
+msgstr "ioctl() op pty ‘%s’ is mislukt: %s"
 
 #: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr "Kon huidige map niet veranderen in '%s': %s"
+msgstr "De huidige map kan niet worden gewijzigd in ‘%s’: %s"
 
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr "Kon geen thema laden voor group=%s: %s"
+msgstr "Er kan geen thema voor group=%s worden geladen: %s"
 
 #: src/bin/win.c:424
 msgid "Done"
