@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-06 18:45+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -739,6 +739,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> gebruikt de <hilight>elementary</hilight> "
+"toolkit.<br>De configuratie-instellingen van de toolkit zijn toegankelijk "
+"door het uitvoeren van <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
