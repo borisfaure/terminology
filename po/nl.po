@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the Terminology package.
 # Pjotr <pjotrvertaalt@gmail.com>, 2020.
 # Ruud Bos <ruud.bos@gmail.com>, 2022.
-# Heimen Stoffels <vistausss@fastmail.com>, 2023.
+# Heimen Stoffels <vistausss@fastmail.com>, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-12-30 16:08+0000\n"
+"PO-Revision-Date: 2024-01-06 18:44+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
@@ -358,146 +358,126 @@ msgstr ""
 "Lettertype instellen (NAAM/GROOTTE indien aanpasbaar; NAAM indien bitmap)"
 
 #: src/bin/main.c:488
-#, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Splits het terminalvenster. 'v' voor verticaal en 'h' voor horizontaal. Kan "
-"meerdere keren worden gebruikt; bijv. -S vhvv of --split hv. Meer informatie "
-"beschikbaar op de man-pagina"
+"Splits het terminalvenster: ‘v’ voor verticaal en ‘h’ voor horizontaal. Kan "
+"meerdere keren worden gebruikt. Voorbeeld: -S vhvv of --split hv. Meer "
+"informatie is de vinden op de man-pagina"
 
 #: src/bin/main.c:493
-#, fuzzy
 msgid "Run the shell as a login shell"
-msgstr "Draai de terminal als een aanmeldvenster"
+msgstr "Shell uitvoeren als aanmeldshell"
 
 #: src/bin/main.c:495
-#, fuzzy
 msgid "Set mute mode for video playback"
-msgstr "Stel dempingsmodus in voor afspelen van video's"
+msgstr "Video's standaard dempen"
 
 #: src/bin/main.c:497
-#, fuzzy
 msgid "Set cursor blink mode"
-msgstr "Stel knippermodus in voor aanwijzer"
+msgstr "Cursorknippering instellen"
 
 #: src/bin/main.c:499
-#, fuzzy
 msgid "Set visual bell mode"
-msgstr "Stel modus in voor visuele bel"
+msgstr "Visuele bel instellen"
 
 #: src/bin/main.c:501
-#, fuzzy
 msgid "Go into the fullscreen mode from the start"
-msgstr "Ga direct in schermvullende modus"
+msgstr "Altijd in schermvullende weergave openen"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "Geminimaliseerd opstarten"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "Opstarten zonder vensterranden"
 
 #: src/bin/main.c:507
-#, fuzzy
 msgid "Start as a override-redirect window"
-msgstr "Word een randloos beheerd venster"
+msgstr "Opstarten als doorverwijsvenster"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr "Start gemaximaliseerd"
+msgstr "Gemaximaliseerd opstarten"
 
 #: src/bin/main.c:511
-#, fuzzy
 msgid "Terminology is run without a window manager"
-msgstr "Terminology wordt gedraaid zonder een vensterbeheerder"
+msgstr "Terminology is actief zonder vensterbeheerder"
 
 #: src/bin/main.c:513
-#, fuzzy
 msgid "Do not exit when the command process exits"
-msgstr "Sluit niet af wanneer het opdrachtproces eindigt"
+msgstr "Niet afsluiten nadat opdrachtproces is beëindigd"
 
 #: src/bin/main.c:515
-#, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
-"Forceer een enkele uitvoerbare als 'meerdere instanties' is ingeschakeld"
+"Enkel uitvoerbaar bestand afdwingen als ‘meerdere instanties’ is ingeschakeld"
 
 #: src/bin/main.c:517
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "Stel TERM in op 'xterm-256color' in plaats van op 'xterm'"
+msgstr "TERM instellen op ‘xterm-256color’ in plaats van op ‘xterm’"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr "Stel schaalfactor in"
+msgstr "Beeldgrootte instellen"
 
 #: src/bin/main.c:521
-#, fuzzy
 msgid "Highlight links"
-msgstr "Koppelingen markeren"
+msgstr "Links markeren"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "Instelhulp niet tonen na opstarten"
 
 #: src/bin/main.c:549
-#, fuzzy
 msgid "show program version"
-msgstr "toon programmaversie"
+msgstr "Programmaversie tonen"
 
 #: src/bin/main.c:552
-#, fuzzy
 msgid "show copyright"
-msgstr "toon auteursrecht"
+msgstr "Auteursrecht tonen"
 
 #: src/bin/main.c:555
-#, fuzzy
 msgid "show license"
-msgstr "toon licentie"
+msgstr "Licentie tonen"
 
 #: src/bin/main.c:558
-#, fuzzy
 msgid "show this message"
-msgstr "toon deze boodschap"
+msgstr "Deze boodschap tonen"
 
 #: src/bin/main.c:655
-#, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr "ongeldig argument gevonden voor optie -S/--split. Zie --help"
+msgstr "Ongeldig argument voor optie ‘-S/--split’. Zie --help"
 
 #: src/bin/main.c:909
-#, fuzzy
 msgid "Could not initialize key bindings"
-msgstr "Kon toetsbindingen niet initialiseren"
+msgstr "De toetstoewijzingen kunnen niet worden ingesteld"
 
 #: src/bin/main.c:925
-#, fuzzy
 msgid "Could not parse command line options"
-msgstr "Kon opdrachtregelopties niet lezen"
+msgstr "De opdrachtregelopties kunnen niet worden verwerkt"
 
 #: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
-msgstr "optie %s vereist een argument!"
+msgstr "‘%s’ vereist een argument!"
 
 #: src/bin/main.c:950
-#, fuzzy
 msgid "invalid options found. See --help"
-msgstr "ongeldige opties gevonden. Zie --help"
+msgstr "Ongeldige opties aangetroffen. Zie --help"
 
 #: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
 #: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
-msgstr "Functie %s mislukte: %s"
+msgstr "‘%s’ mislukte: %s"
 
 #: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
-msgstr "Zichtbaar maken van media wordt niet ondersteund"
+msgstr "Mediavisualisaties worden niet ondersteund"
 
 #: src/bin/options_background.c:136
 msgid "None"
@@ -525,7 +505,7 @@ msgstr "Doorzichtig"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Doorzichtigheid:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -534,7 +514,7 @@ msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
-msgstr "Selecteer Pad"
+msgstr "Kies een locatie"
 
 #: src/bin/options_background.c:598
 msgid "System"
@@ -550,7 +530,7 @@ msgstr "Overig"
 
 #: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
-msgstr "Klik op een afbeelding om het als achtergrond te gebruiken"
+msgstr "Klik op een afbeelding om deze als achtergrond te gebruiken"
 
 #: src/bin/options_behavior.c:64
 #, c-format
@@ -560,11 +540,11 @@ msgstr "%'d regels"
 #: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr "Terug scrollen (huidig geheugengebruik: %'.2f%cB):"
+msgstr "Terugscrollen (huidig geheugengebruik: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:218
 msgid "Default cursor:"
-msgstr "Standaardaanwijzer:"
+msgstr "Standaardcursor:"
 
 #: src/bin/options_behavior.c:227
 msgid "Blinking Block"
@@ -572,15 +552,15 @@ msgstr "Knipperend blokje"
 
 #: src/bin/options_behavior.c:246
 msgid "Steady Block"
-msgstr "Onbewegelijk blokje"
+msgstr "Vast blokje"
 
 #: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
-msgstr "Knipperende onderstreping"
+msgstr "Knipperend streepje"
 
 #: src/bin/options_behavior.c:286
 msgid "Steady Underline"
-msgstr "Onbewegelijke onderstreping"
+msgstr "Vast streepje"
 
 #: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
@@ -588,7 +568,7 @@ msgstr "Knipperend balkje"
 
 #: src/bin/options_behavior.c:326
 msgid "Steady Bar"
-msgstr "Onbewegelijk balkje"
+msgstr "Vast balkje"
 
 #: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
@@ -600,20 +580,20 @@ msgstr "Tabbladen tonen"
 
 #: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
-msgstr "Schuif bij nieuwe inhoud naar onderkant"
+msgstr "Naar onderkant schuiven bij nieuwe activiteit"
 
 #: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
-msgstr "Schuif naar onderkant bij indrukken van een toets"
+msgstr "Naar onderkant schuiven na indrukken van een toets"
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reageren op toetsaanslagen (typgeluiden en animaties)"
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
-"Geluidondersteuning voor toetsaanslagen <failure>UITGESCHAKELD</failure>!"
+"Geluidsondersteuning bij toetsaanslagen <failure>UITGESCHAKELD</failure>!"
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
@@ -633,7 +613,7 @@ msgstr "Meerdere instanties, één proces"
 
 #: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
-msgstr "Stel TERM in op xterm-256color"
+msgstr "TERM instellen op xterm-256color"
 
 #: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
@@ -641,11 +621,11 @@ msgstr ""
 
 #: src/bin/options_behavior.c:414
 msgid "Start as login shell"
-msgstr "Starten als aanmeldvenster"
+msgstr "Starten als aanmeldshell"
 
 #: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
-msgstr "Open nieuwe terminalvensters in huidige werkmap"
+msgstr "Nieuwe terminalvensters openen in huidige werkmap"
 
 #: src/bin/options_behavior.c:416
 msgid "Always show miniview"
@@ -653,25 +633,24 @@ msgstr "Miniweergave altijd tonen"
 
 #: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
-msgstr "Speciale Terminology escape codes inschakelen"
+msgstr "Speciale Terminology-escapecodes inschakelen"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Escapecodes voor het beheren van selecties inschakelen"
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "Behandel emoticons als tekens met dubbele breedte"
+msgstr "Emoji's behandelen als tekens met dubbele breedte"
 
 #: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
-msgstr ""
+msgstr "Invoer groeperen op alle terminalvensters in plaats van alleen huidige"
 
 #: src/bin/options_behavior.c:427
 msgid "Always open at size:"
-msgstr "Altijd openen met grootte:"
+msgstr "Altijd openen met afmetingen:"
 
 #: src/bin/options_behavior.c:437
 msgid "Set Current:"
