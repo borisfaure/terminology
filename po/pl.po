@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-18 22:50+0000\n"
+"PO-Revision-Date: 2024-01-18 22:56+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
@@ -102,7 +102,7 @@ msgstr "O programie"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr "Zgrupowane wejścia"
+msgstr "Zgrupowane wejście"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
@@ -348,22 +348,18 @@ msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr "Geometria terminala do użytku (np 80x24 albo 80x24+50+20 itd.)"
 
 #: src/bin/main.c:478
-#, fuzzy
 msgid "Set window name"
 msgstr "Ustaw nazwę okna"
 
 #: src/bin/main.c:480
-#, fuzzy
 msgid "Set window role"
 msgstr "Ustaw rolę okna"
 
 #: src/bin/main.c:482
-#, fuzzy
 msgid "Set window title"
 msgstr "Ustaw tytuł okna"
 
 #: src/bin/main.c:484
-#, fuzzy
 msgid "Set icon name"
 msgstr "Ustaw nazwę ikony"
 
@@ -451,33 +447,28 @@ msgid "Set scaling factor"
 msgstr "Ustaw współczynnik skalowania"
 
 #: src/bin/main.c:521
-#, fuzzy
 msgid "Highlight links"
-msgstr "Podświetl linki"
+msgstr "Podświetlaj linki"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
 msgstr "Nie wyświetlaj kreatora przy uruchamianiu"
 
 #: src/bin/main.c:549
-#, fuzzy
 msgid "show program version"
 msgstr "pokaż wersję programu"
 
 #: src/bin/main.c:552
-#, fuzzy
 msgid "show copyright"
 msgstr "pokaż informacje o prawach autorskich"
 
 #: src/bin/main.c:555
-#, fuzzy
 msgid "show license"
-msgstr "pokaż licencję"
+msgstr "pokaż licencję"
 
 #: src/bin/main.c:558
-#, fuzzy
 msgid "show this message"
-msgstr "pokaż tą wiadomość"
+msgstr "pokaż tę wiadomość"
 
 #: src/bin/main.c:655
 #, fuzzy
@@ -762,9 +753,8 @@ msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
 msgstr "<b>Autor: </b>%s<br/><b>Strona: </b>%s<br/><b>Licencja: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "Kolory"
+msgstr "Schematy kolorów"
 
 #: src/bin/options_colors.c:265
 #, c-format
@@ -886,9 +876,8 @@ msgid "On URLs"
 msgstr "Na adresach URL"
 
 #: src/bin/options_mouse.c:211
-#, fuzzy
 msgid "On colors"
-msgstr "Kolory"
+msgstr "Na kolorach"
 
 #: src/bin/options_mouse.c:212
 #, fuzzy
