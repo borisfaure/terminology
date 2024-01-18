@@ -4,7 +4,7 @@
 # Warning, the translation may contain errors. If you notice any, report it so that it can be corrected.
 # Ostrzeżenie, tłumaczenie może zawierać błędy. Jeśli jakieś zauważysz, zgłoś to, by można było je poprawić.
 # gnu-ewm <gnu.ewm@protonmail.com>, 2021.
-# IntinteDAO <lordfervi@protonmail.com>, 2023.
+# IntinteDAO <lordfervi@protonmail.com>, 2023, 2024.
 # Eryk Michalak <gnu.ewm@protonmail.com>, 2024.
 msgid ""
 msgstr ""
@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-18 22:49+0000\n"
-"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
+"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -789,7 +789,7 @@ msgstr "Uruchom %s"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
-msgstr ""
+msgstr "Skaluj"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
@@ -875,7 +875,7 @@ msgstr "Aktywne linki:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr ""
+msgstr "Na e-maile"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
