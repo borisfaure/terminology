@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-18 22:56+0000\n"
-"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
+"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -793,7 +793,7 @@ msgstr ""
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "Wyszukaj czcionkę"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
@@ -869,7 +869,7 @@ msgstr "Na e-mailach"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr ""
+msgstr "Na ścieżki plików"
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
@@ -927,7 +927,7 @@ msgstr "Lokalne (Wszystkie):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr ""
+msgstr "Używając schematów kolorów <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
