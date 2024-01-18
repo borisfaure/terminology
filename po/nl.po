@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-06 18:52+0000\n"
-"Last-Translator: Ruud Bos <ruud.bos@gmail.com>\n"
+"PO-Revision-Date: 2024-01-07 19:06+0000\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -1011,9 +1011,9 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"De schaal-configuratie kan worden gewijzigd in de Instellingen (klik met de "
-"rechtermuisknop op de terminal) →  Toolkit, of door het commando "
-"<keyword>elementary_config</keyword> te starten"
+"De beeldgrootte-instellingen kunnen worden gewijzigd in de instellingen ("
+"klik met de rechtermuisknop op de terminal) →    Toolkit, of door middel van "
+"de opdracht <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
@@ -1025,11 +1025,12 @@ msgstr "Oké"
 
 #: src/bin/win.c:6214
 msgid "Cancel"
-msgstr "Afbreken"
+msgstr "Annuleren"
 
 #: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "Kon Terminology-thema niet vinden. Bestaat het wel?"
+msgstr ""
+"Het Terminology-thema is niet aangetroffen. Bent u ninja install vergeten?"
 
 #~ msgid "React to key presses"
 #~ msgstr "Reageer op toetsaanslagen"
