@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-18 22:49+0000\n"
+"PO-Revision-Date: 2024-01-18 22:50+0000\n"
 "Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
@@ -102,7 +102,7 @@ msgstr "O programie"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr ""
+msgstr "Zgrupowane wejścia"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
