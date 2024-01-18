@@ -5,13 +5,14 @@
 # Ostrzeżenie, tłumaczenie może zawierać błędy. Jeśli jakieś zauważysz, zgłoś to, by można było je poprawić.
 # gnu-ewm <gnu.ewm@protonmail.com>, 2021.
 # IntinteDAO <lordfervi@protonmail.com>, 2023.
+# Eryk Michalak <gnu.ewm@protonmail.com>, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2023-01-09 22:51+0000\n"
-"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
+"PO-Revision-Date: 2024-01-18 22:49+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -20,7 +21,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.1-dev\n"
+"X-Generator: Weblate 5.4-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -523,7 +524,7 @@ msgstr "Plik źródłowy jest plikiem docelowym"
 
 #: src/bin/options_background.c:481
 msgid "Picture imported"
-msgstr ""
+msgstr "Zaimportowano obraz"
 
 #: src/bin/options_background.c:486
 msgid "Failed"
