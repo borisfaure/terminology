@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-18 22:50+0000\n"
-"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -875,16 +875,15 @@ msgstr "Aktywne linki:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr "Na e-maile"
+msgstr "Na e-mailach"
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
 msgstr ""
 
 #: src/bin/options_mouse.c:210
-#, fuzzy
 msgid "On URLs"
-msgstr "Otwórz jako odnośnik"
+msgstr "Na adresach URL"
 
 #: src/bin/options_mouse.c:211
 #, fuzzy
