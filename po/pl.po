@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-01-18 22:56+0000\n"
-"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
+"PO-Revision-Date: 2024-01-19 23:00+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -303,9 +303,8 @@ msgid "Could not create window"
 msgstr "Nie można stworzyć okna"
 
 #: src/bin/main.c:425 src/bin/main.c:613
-#, fuzzy
 msgid "Could not create terminal widget"
-msgstr "Nie mogę stworzyć widżetu terminala"
+msgstr "Nie można utworzyć widżetu terminala"
 
 #: src/bin/main.c:460
 #, c-format
@@ -390,7 +389,6 @@ msgid "Set mute mode for video playback"
 msgstr "Wycisz dźwięk dla odtwarzania wideo"
 
 #: src/bin/main.c:497
-#, fuzzy
 msgid "Set cursor blink mode"
 msgstr "Ustaw kursor w trybie mrugającym"
 
@@ -476,9 +474,8 @@ msgid "invalid argument found for option -S/--split. See --help"
 msgstr "niepoprawny argument dla opcji -S/--split. Zobacz --help"
 
 #: src/bin/main.c:909
-#, fuzzy
 msgid "Could not initialize key bindings"
-msgstr "Nie mogę zainicjalizować skrótów klawiszowych"
+msgstr "Nie można zainicjalizować skrótów klawiszowych"
 
 #: src/bin/main.c:925
 #, fuzzy
@@ -491,7 +488,6 @@ msgid "option %s requires an argument!"
 msgstr "opcja %s wymaga parametru!"
 
 #: src/bin/main.c:950
-#, fuzzy
 msgid "invalid options found. See --help"
 msgstr "wykryto nieznane opcje. Zobacz --help"
 
@@ -880,9 +876,8 @@ msgid "On colors"
 msgstr "Na kolorach"
 
 #: src/bin/options_mouse.c:212
-#, fuzzy
 msgid "Based on escape codes"
-msgstr "Włącz specjalne kody modyfikacji Terminology"
+msgstr "Oparte na kodach wyjściowych"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
@@ -927,7 +922,7 @@ msgstr "Lokalne (Wszystkie):"
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr "Używając schematów kolorów <hilight>%s</hilight>"
+msgstr "Używanie schematu kolorów <hilight>%s</hilight>"
 
 #: src/bin/termcmd.c:84
 #, c-format
