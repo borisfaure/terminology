@@ -12,7 +12,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2024-01-19 23:00+0000\n"
-"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
+"Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
 "terminology/pl/>\n"
 "Language: pl\n"
@@ -339,7 +339,7 @@ msgstr "Użyj nazwanego wyglądu edje albo ścieżki do pliku ze skórką"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "Użyj nazwanego schematu kolorów"
 
 #: src/bin/main.c:476
 #, fuzzy
