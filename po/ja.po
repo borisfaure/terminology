@@ -35,7 +35,7 @@ msgstr "Twitter: @_Terminology_"
 #: src/bin/about.c:275
 #, fuzzy
 msgid "YouTube channel"
-msgstr "Youtubeチャンネル"
+msgstr "Youtube チャンネル"
 
 #: src/bin/about.c:289
 #, c-format
@@ -46,16 +46,16 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>なぜターミナルがつまらないものでないといけないの？"
-"<br><br>この端末はEnlightenment(X Windows System用のマネージャ)のために書かれ"
-"たもので、EFLを使用したり、現代の端末エミュレータの理想の境界線を押し広げたり"
+"<b>Terminology %s</b><br>なぜ端末がつまらないものでないといけないの？"
+"<br><br>この端末は Enlightenment のために書かれたもので、"
+"EFL を使用したり、現代の端末エミュレータの理想の境界線を押し広げたり"
 "しています。楽しんでもらえると幸いです。<br><br>Copyright © 2012-%d by:"
 "<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:"
 "<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr ""
+msgstr "Terminology 開発者"
 
 #: src/bin/controls.c:371
 msgid "Controls"
@@ -108,7 +108,7 @@ msgstr "端末を閉じる"
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "ロギングドメインが作成できませんでした。 '%s'"
+msgstr "ロギング・ドメイン '%s' が作成できませんでした"
 
 #: src/bin/keyin.c:681
 msgid "Scrolling"
@@ -309,7 +309,7 @@ msgstr "(C) 2012-%d Carsten Haitzler and others"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr "Enlightenment財団のライブラリで書かれた端末エミュレータ"
+msgstr "Enlightenment Foundation ライブラリで書かれた端末エミュレータ"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
@@ -321,15 +321,15 @@ msgstr "端末コマンド実行ディレクトリの変更"
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr "実行コマンド。デフォルトでは$SHELL (もしくはpasswd shell か /bin/sh)"
+msgstr "実行コマンド。既定では $SHELL (もしくは passwd shell または /bin/sh)"
 
 #: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
-msgstr "命名済みEdjeテーマ/テーマファイルへのパスを使用"
+msgstr "命名済み Edje テーマ/テーマファイルへのパスを使用"
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr ""
+msgstr "命名済みのカラースキームを使用"
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
@@ -341,15 +341,15 @@ msgstr "ウィンドウ名の設定"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr ""
+msgstr "ウィンドウのロールを設定"
 
 #: src/bin/main.c:482
 msgid "Set window title"
-msgstr ""
+msgstr "ウィンドウのタイトルを設定"
 
 #: src/bin/main.c:484
 msgid "Set icon name"
-msgstr ""
+msgstr "アイコン名を設定"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
