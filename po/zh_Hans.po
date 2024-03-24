@@ -2,13 +2,14 @@
 # This file is put in the public domain.
 # 玉堂白鹤 <yjwork@qq.com>, 2021.
 # 135e2 <shangshangzikun@gmail.com>, 2022.
+# 复予 <clonewith@qq.com>, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2022-07-04 17:15+0000\n"
-"Last-Translator: 135e2 <shangshangzikun@gmail.com>\n"
+"PO-Revision-Date: 2024-03-24 08:01+0000\n"
+"Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "terminology/terminology/zh_Hans/>\n"
 "Language: zh_Hans\n"
@@ -16,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"X-Generator: Weblate 5.5-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -498,7 +499,7 @@ msgstr "透明度"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "透明度："
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -581,11 +582,11 @@ msgstr "按任一键滚动到底部"
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "响应按键（打字声与动画）"
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr ""
+msgstr "按键音频支持已<failure>禁用</failure>！"
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
@@ -632,14 +633,13 @@ msgid "Enable escape codes manipulating selections"
 msgstr ""
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "将表情符号视为全角字符"
+msgstr "总是将表情符号视为全角字符"
 
 #: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
-msgstr ""
+msgstr "对所有终端的输入分组，而不只是可见终端"
 
 #: src/bin/options_behavior.c:427
 msgid "Always open at size:"
@@ -715,9 +715,8 @@ msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
 msgstr "<b>作者: </b>%s<br/><b>网站: </b>%s<br/><b>许可: </b>%s"
 
 #: src/bin/options_colors.c:226
-#, fuzzy
 msgid "Color schemes"
-msgstr "颜色"
+msgstr "颜色配置"
 
 #: src/bin/options_colors.c:265
 #, c-format
@@ -725,12 +724,14 @@ msgid "Using theme <hilight>%s</hilight>"
 msgstr "使用主题 <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> 使用 <hilight>elementary</hilight> 工具包。"
+"<br>工具包配置可以通过运行 <keyword>%s</keyword> 查看"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -797,7 +798,7 @@ msgstr "删除"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr ""
+msgstr "请按下按键"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
@@ -837,7 +838,7 @@ msgstr "在 URL 网址上"
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
-msgstr ""
+msgstr "在颜色上"
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
@@ -845,7 +846,7 @@ msgstr "基于转义码"
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr ""
+msgstr "Gravatar 集成"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
@@ -941,17 +942,17 @@ msgstr "打开为 URL"
 
 #: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
-msgstr ""
+msgstr "无法分配 termpty"
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
 #, c-format
 msgid "memerr: %s"
-msgstr ""
+msgstr "memerr: %s"
 
 #: src/bin/termpty.c:225
-#, c-format
+#, c-format, fuzzy
 msgid "Size set ioctl failed: %s"
-msgstr ""
+msgstr "大小设置 ioctl 失败: %s"
 
 #: src/bin/termpty.c:361
 #, c-format
@@ -966,17 +967,17 @@ msgstr "找不到 shell，回退至 %s"
 #: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' 执行 open() 失败: %s"
 
 #: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' 执行 fcntl() 失败: %s"
 
 #: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr ""
+msgstr "pty '%s' 执行 ioctl() 失败: %s"
 
 #: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
@@ -997,7 +998,8 @@ msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
-msgstr ""
+msgstr "尺寸配置可在“设置（右键点击终端）→  工具包”中或执行命令 "
+"<keyword>elementary_config</keyword> 更改"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
