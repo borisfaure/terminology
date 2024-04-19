@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-03-24 08:01+0000\n"
+"PO-Revision-Date: 2024-04-19 01:15+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
 "terminology/terminology/zh_Hans/>\n"
@@ -392,7 +392,7 @@ msgstr "无边框启动"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
-msgstr ""
+msgstr "作为 override-redirect 窗口启动"
 
 #: src/bin/main.c:509
 msgid "Start maximized"
@@ -630,7 +630,7 @@ msgstr "启用专用术语转义码"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "启用处理选区的转义代码"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
@@ -661,7 +661,7 @@ msgstr "高："
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
-msgstr ""
+msgstr "设置切换标签页时的动画时长，<br>通过按键绑定或在标签页<br>面板上滚动鼠标滚轮"
 
 #: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
@@ -724,7 +724,7 @@ msgid "Using theme <hilight>%s</hilight>"
 msgstr "使用主题 <hilight>%s</hilight>"
 
 #: src/bin/options_elm.c:122
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "<em>Terminology</em> uses the <hilight>elementary</hilight> toolkit.<br>The "
 "toolkit configuration settings can be accessed by running <keyword>%s</"
@@ -750,7 +750,7 @@ msgstr "选择首选大小，以便此文本可读"
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
-msgstr ""
+msgstr "缩放配置也可通过 <hilight>elementary</hilight> 的配置面板更改"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
@@ -950,7 +950,7 @@ msgid "memerr: %s"
 msgstr "memerr: %s"
 
 #: src/bin/termpty.c:225
-#, c-format, fuzzy
+#, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "大小设置 ioctl 失败: %s"
 
