@@ -145,7 +145,7 @@ color_link_edc.sh 06155942ad90e408ed11225b1e84b6a4
 color_link_css_rgb.sh d465a1d5095e550b73e73266452068d9
 color_link_css_hsl.sh 3a3dc638c80d5a2a9d5c804a778c09fb
 crash_empty_osc.sh 3675247f0d0c1aa439bb5075237e3fe5
-xterm-osc-10.sh 3782074fb92672b55351cc11f253b418
+xterm-osc-10.sh e96950ab6c1e2df17dca8b55e34a5540
 xterm-osc-11.sh 1039019667ac61b387f1436e7eff2398
 xterm-osc-12.sh 9237a291abf73341d4e6a9cf94592c6d
 xterm-colors-sharp.sh f034efaac9b49ea97e46e9ec4b139c23
