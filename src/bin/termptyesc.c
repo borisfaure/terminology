@@ -4222,6 +4222,14 @@ _handle_xterm_777_command(Termpty *ty,
 }
 
 static void
+_write_xterm_color_response(Termpty *ty, uint8_t number, int r, int g, int b)
+{
+   char buf[64];
+   int l = snprintf(buf, sizeof(buf), "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\033\\", number, r, r, g, g, b, b);
+   termpty_write(ty, buf, l);
+}
+
+static void
 _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
 {
    if (!p || !*p)
@@ -4229,8 +4237,6 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
    if (*p == '?')
      {
         int r, g, b;
-        char bf[32];
-        int l;
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
         evas_object_textgrid_palette_get(
            termio_textgrid_get(ty->obj),
@@ -4242,8 +4248,7 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
         g = config->colors[0].g;
         b = config->colors[0].b;
 #endif
-        l = snprintf(bf, sizeof(bf), "\033]10;#%.2X%.2X%.2X\007", r, g, b);
-        termpty_write(ty, bf, l);
+        _write_xterm_color_response(ty, 10, r, g, b);
      }
    else
      {
@@ -4278,8 +4283,6 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
    if (*p == '?')
      {
         int r = 0, g = 0, b = 0;
-        char buf[64];
-        int l;
 
         if (edje_object_color_class_get(obj, color_class, &r, &g, &b, NULL,
                                         NULL, NULL, NULL, NULL,
@@ -4287,10 +4290,7 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
           {
              ERR("error getting color class '%s' on obj %p", color_class, obj);
           }
-        l = snprintf(buf, sizeof(buf),
-                     "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\033\\",
-                     number, r, r, g, g, b, b);
-        termpty_write(ty, buf, l);
+        _write_xterm_color_response(ty, number, r, g, b);
      }
    else
      {
