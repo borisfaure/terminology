@@ -2,13 +2,13 @@
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-# Linus Virtanen <linus.virtanen@protonmail.com>, 2021.
+# Linus Virtanen <linus.virtanen@protonmail.com>, 2021, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2021-10-12 19:21+0000\n"
+"PO-Revision-Date: 2024-05-28 16:09+0000\n"
 "Last-Translator: Linus Virtanen <linus.virtanen@protonmail.com>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/terminology/"
 "terminology/fi/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9-dev\n"
+"X-Generator: Weblate 5.6-dev\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
 #: src/bin/termio.c:1317
@@ -505,7 +505,7 @@ msgstr "Läpikuultava"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "Läpikuultavuus:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
@@ -588,7 +588,7 @@ msgstr "Vieritä alas kun näppäintä painetaan"
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "Reagoi näppäinpainalluksiin (kirjoitusäänet ja animaatiot)"
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -636,12 +636,11 @@ msgstr "Kytke päälle erityiset Terminology-pakokoodit"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Kytke pakokoodeja hyödyntävät valinnat päälle"
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "Käsittele hymiöt tuplaleveinä merkkeinä"
+msgstr "Käsittele hymiöt aina kaksoisleveyksisinä merkkeinä"
 
 #: src/bin/options_behavior.c:420
 msgid ""
