@@ -1,18 +1,16 @@
-# Finnish translation for enlightenment
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
-# This file is distributed under the same license as the enlightenment package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-# Linus Virtanen <linus.virtanen@protonmail.com>, 2021, 2024.
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# "Benedek Vigh (冯白诺)" <benedek.vigh@gmail.com>, 2024.
 msgid ""
 msgstr ""
-"Project-Id-Version: enlightenment\n"
+"Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
-"PO-Revision-Date: 2024-05-28 16:09+0000\n"
-"Last-Translator: Linus Virtanen <linus.virtanen@protonmail.com>\n"
-"Language-Team: Finnish <https://hosted.weblate.org/projects/terminology/"
-"terminology/fi/>\n"
-"Language: fi\n"
+"PO-Revision-Date: 2024-05-30 19:09+0000\n"
+"Last-Translator: \"Benedek Vigh (冯白诺)\" <benedek.vigh@gmail.com>\n"
+"Language-Team: Hungarian <https://hosted.weblate.org/projects/terminology/"
+"terminology/hu/>\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,11 +21,11 @@ msgstr ""
 #: src/bin/termio.c:1317
 #, c-format
 msgid "Copy '%s'"
-msgstr "Jäljennä '%s'"
+msgstr "'%s' másolása"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
 msgid "Open"
-msgstr "Avaa"
+msgstr "Megnyitás"
 
 #: src/bin/about.c:273
 msgid "Twitter: @_Terminology_"
@@ -35,7 +33,7 @@ msgstr "Twitter: @_Terminology_"
 
 #: src/bin/about.c:275
 msgid "YouTube channel"
-msgstr "YouTube-kanava"
+msgstr "YouTube csatorna"
 
 #: src/bin/about.c:289
 #, c-format
@@ -46,316 +44,315 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Miksi päätteiden tulisi olla tylsiä?<br><br>Tämä "
-"päätesovellus kirjoitettiin Enlightenmentia varten, käyttämään EFL:ää sekä "
-"näyttämään suuntaa siitä millainen modernin pääte-emulaattorin tulisi olla. "
-"Toivomme että nautit siitä.<br><br>Tekijänoikeudet 2012-%d:"
-"<br><br>%s<br><br>Jaetaan kahden ehdon BSD-lisenssin alaisuudessa joka on "
-"kokonaisuudessaan seuraava:<br><br>%s"
+"<b>Terminology %s</b><br>Miért kéne a termináloknak unalmasnak "
+"lenniük?<br><br>Ez a terminál az Enlightenment-hez készült, hogy ez EFL-t "
+"használja, és hogy feszegesse egy modern terminál emulátor lehetőségeinek a "
+"határait. Reméljük tetszeni fog.<br><br>Copyright © 2012-%d by:"
+"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed "
+"below:<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
-msgstr "Terminologyn kehittäjät"
+msgstr "A Terminology fejlesztői"
 
 #: src/bin/controls.c:371
 msgid "Controls"
-msgstr "Säätimet"
+msgstr "Irányítás"
 
 #: src/bin/controls.c:387
 msgid "New"
-msgstr "Uusi"
+msgstr "Új"
 
 #: src/bin/controls.c:395
 msgid "Split V"
-msgstr "Jaa pysty"
+msgstr "Függőleges felosztás"
 
 #: src/bin/controls.c:399
 msgid "Split H"
-msgstr "Jaa vaaka"
+msgstr "Vízszintes felosztás"
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr "Pienoisnäkymä"
+msgstr "Kisméretű nézet"
 
 #: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
-msgstr "Aseta ikkunan otsikko"
+msgstr "Cím beállítása"
 
 #: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
 msgid "Copy"
-msgstr "Kopioi"
+msgstr "Másolás"
 
 #: src/bin/controls.c:430
 msgid "Paste"
-msgstr "Liitä"
+msgstr "Beillesztés"
 
 #: src/bin/controls.c:436
 msgid "Settings"
-msgstr "Asetukset"
+msgstr "Beállítások"
 
 #: src/bin/controls.c:442
 msgid "About"
-msgstr "Tietoja"
+msgstr "Információ"
 
 #: src/bin/controls.c:451
 msgid "Grouped input"
-msgstr "Ryhmitetty syöte"
+msgstr "Csoportos bevitel"
 
 #: src/bin/controls.c:463
 msgid "Close Terminal"
-msgstr "Sulje pääte"
+msgstr "Terminál bezárása"
 
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "Kirjausikkunaa ei kyetty luomaan '%s'"
+msgstr ""
 
 #: src/bin/keyin.c:681
 msgid "Scrolling"
-msgstr "Vieritys"
+msgstr "Görgetés"
 
 #: src/bin/keyin.c:682
 msgid "Scroll one page up"
-msgstr "Vieritä yksi sivu ylöspäin"
+msgstr "Egy oldal görgetése felfelé"
 
 #: src/bin/keyin.c:683
 msgid "Scroll one page down"
-msgstr "Vieritä yksi sivu alaspäin"
+msgstr "Egy oldal görgetése lefelé"
 
 #: src/bin/keyin.c:684
 msgid "Scroll one line up"
-msgstr "Vieritä yksi rivi ylöspäin"
+msgstr "Görgetés egy sorral feljebb"
 
 #: src/bin/keyin.c:685
 msgid "Scroll one line down"
-msgstr "Vieritä yksi rivi alaspäin"
+msgstr "Görgetés egy sorral lejjebb"
 
 #: src/bin/keyin.c:686
 msgid "Go to the top of the backlog"
-msgstr "Siirry rästitöiden päällimmäiseen osaan"
+msgstr ""
 
 #: src/bin/keyin.c:687
 msgid "Reset scroll"
-msgstr "Nollaa vieritys"
+msgstr "Görgetés visszaállítása"
 
 #: src/bin/keyin.c:689
 msgid "Copy/Paste"
-msgstr "Kopioi/Liitä"
+msgstr "Másolás/Beillesztés"
 
 #: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
-msgstr "Kopioi valinta primääripuskuriin"
+msgstr "A kijelölés Másolása az Elsődleges pufferre"
 
 #: src/bin/keyin.c:691
 msgid "Copy selection to Clipboard buffer"
-msgstr "Kopioi valinta leikepöydän puskuriin"
+msgstr ""
 
 #: src/bin/keyin.c:692
 msgid "Paste Primary buffer (highlight)"
-msgstr "Liitä primääripuskuri (korostettu)"
+msgstr "Elsődleges puffer beillesztése (kiemelés)"
 
 #: src/bin/keyin.c:693
 msgid "Paste Clipboard buffer (ctrl+c/v)"
-msgstr "Liitä leikepöydän puskuri (ctrl+c/v)"
+msgstr ""
 
 #: src/bin/keyin.c:695
 msgid "Splits/Tabs"
-msgstr "Jaot/välilehdet"
+msgstr ""
 
 #: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
-msgstr "Kohdista edelliseen päätteeseen"
+msgstr "Fókusz az előző terminálra"
 
 #: src/bin/keyin.c:697
 msgid "Focus the next terminal"
-msgstr "Kohdista seuraavaan päätteeseen"
+msgstr "Fókusz a következő terminálra"
 
 #: src/bin/keyin.c:698
 msgid "Focus the terminal above"
-msgstr "Kohdista ylläolevaan päätteeseen"
+msgstr "Fókusz a fenti terminálra"
 
 #: src/bin/keyin.c:699
 msgid "Focus the terminal below"
-msgstr "Kohdista alapuolella olevaan päätteeseen"
+msgstr "Fókusz a lenti terminálra"
 
 #: src/bin/keyin.c:700
 msgid "Focus the terminal on the left"
-msgstr "Kohdista vasemmanpuoleiseen päätteeseen"
+msgstr "Fókusz a bal oldali terminálra"
 
 #: src/bin/keyin.c:701
 msgid "Focus the terminal on the right"
-msgstr "Kohdista oikeanpuoleiseen päätteeseen"
+msgstr "Fókusz a jobb oldali terminálra"
 
 #: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
-msgstr "Jaa vaakatasossa (uusi alla)"
+msgstr "Vízszintes szétválasztás (új alul)"
 
 #: src/bin/keyin.c:703
 msgid "Split vertically (new on right)"
-msgstr "Jaa pystytasossa (uusi oikealla)"
+msgstr "Függőleges szétválasztás (új jobbra)"
 
 #: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
-msgstr "Luo uusi välilehti"
+msgstr "Új \"lap\" létrehozása"
 
 #: src/bin/keyin.c:705
 msgid "Close the focused terminal"
-msgstr "Sulje kohdistettu pääte"
+msgstr "Fókuszban lévő terminál bezárása"
 
 #: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
-msgstr "Tuo esiin välilehtivalitsin"
+msgstr "\"Lapválasztó\" mutatása"
 
 #: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
-msgstr "Siirry päätevälilehdelle yksi"
+msgstr "Váltás az 1. terminállapra"
 
 #: src/bin/keyin.c:708
 msgid "Switch to terminal tab 2"
-msgstr "Siirry päätevälilehdelle kaksi"
+msgstr "Váltás a 2. terminállapra"
 
 #: src/bin/keyin.c:709
 msgid "Switch to terminal tab 3"
-msgstr "Siirry päätevälilehdelle kolme"
+msgstr "Váltás a 3. terminállapra"
 
 #: src/bin/keyin.c:710
 msgid "Switch to terminal tab 4"
-msgstr "Siirry päätevälilehdelle neljä"
+msgstr "Váltás a 4. terminállapra"
 
 #: src/bin/keyin.c:711
 msgid "Switch to terminal tab 5"
-msgstr "Siirry päätevälilehdelle viisi"
+msgstr "Váltás az 5. terminállapra"
 
 #: src/bin/keyin.c:712
 msgid "Switch to terminal tab 6"
-msgstr "Siirry päätevälilehdelle kuusi"
+msgstr "Váltás a 6. terminállapra"
 
 #: src/bin/keyin.c:713
 msgid "Switch to terminal tab 7"
-msgstr "Siirry päätevälilehdelle seitsemän"
+msgstr "Váltás a 7. terminállapra"
 
 #: src/bin/keyin.c:714
 msgid "Switch to terminal tab 8"
-msgstr "Siirry päätevälilehdelle kahdeksan"
+msgstr "Váltás a 8. terminállapra"
 
 #: src/bin/keyin.c:715
 msgid "Switch to terminal tab 9"
-msgstr "Siirry päätevälilehdelle yhdeksän"
+msgstr "Váltás a 9. terminállapra"
 
 #: src/bin/keyin.c:716
 msgid "Switch to terminal tab 10"
-msgstr "Siirry päätevälilehdelle kymmenen"
+msgstr "Váltás a 10. terminállapra"
 
 #: src/bin/keyin.c:717
 msgid "Change title"
-msgstr "Muuta otsikko"
+msgstr "Cím megváltoztatása"
 
 #: src/bin/keyin.c:718 src/bin/keyin.c:719
 msgid "Toggle whether input goes to all visible terminals"
-msgstr "Määritä meneekö syöte kaikkiin näkyvissä oleviin päätteisiin vaiko ei"
+msgstr ""
 
 #: src/bin/keyin.c:722
 msgid "Font size"
-msgstr "Fonttikoko"
+msgstr "Betűméret"
 
 #: src/bin/keyin.c:723
 msgid "Font size up 1"
-msgstr "Fonttikoko isommaksi"
+msgstr "Betűméret növelése 1-el"
 
 #: src/bin/keyin.c:724
 msgid "Font size down 1"
-msgstr "Fonttikoko pienemmäksi"
+msgstr "Betűméret csökkentése 1-el"
 
 #: src/bin/keyin.c:725
 msgid "Display big font size"
-msgstr "Näytä iso fonttikoko"
+msgstr "Nagy betűk megjelenítése"
 
 #: src/bin/keyin.c:726
 msgid "Reset font size"
-msgstr "Aseta fonttikoko oletukseksi"
+msgstr "Betűméret visszaállítása"
 
 #: src/bin/keyin.c:728
 msgid "Actions"
-msgstr "Toiminnot"
+msgstr ""
 
 #: src/bin/keyin.c:729
 msgid "Open a new terminal window"
-msgstr "Avaa uusi pääteikkuna"
+msgstr "Új terminálablak megnyitása"
 
 #: src/bin/keyin.c:730
 msgid "Toggle Fullscreen of the window"
-msgstr "Kytke ikkunan täysruututila"
+msgstr "Váltás Teljes képernyős ablakra"
 
 #: src/bin/keyin.c:731
 msgid "Display the history miniview"
-msgstr "Näytä historian pienoisnäyttö"
+msgstr "Az előzmények kisméretű megjelenítése"
 
 #: src/bin/keyin.c:732
 msgid "Display the command box"
-msgstr "Näytä komentolaatikko"
+msgstr "Parancsdoboz megjelenítése"
 
 #: src/bin/main.c:406 src/bin/main.c:602
 msgid "Could not create window"
-msgstr "Ikkunaa ei kyetty luomaan"
+msgstr "Nem sikerült az ablak létrehozása"
 
 #: src/bin/main.c:425 src/bin/main.c:613
 msgid "Could not create terminal widget"
-msgstr "Päätevimpainta ei kyetty luomaan"
+msgstr "Nem sikerült a terminálmodul létrehozása"
 
 #: src/bin/main.c:460
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
-msgstr "(C) 2012-%d Carsten Haitzler ja muut"
+msgstr "(C) 2012-%d Carsten Haitzler és társai"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
-"Pääte-emulaattori joka on kirjoitettu Enlightenment Foundation Libraries:ia "
-"käyttäen"
+"Terminál emulátor az Enlightenment Foundation Libraries felhasználásával"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
-msgstr "Käytä nimettyä tiedostoa taustakuvana"
+msgstr "A megnevezett fájl háttérképként való használata"
 
 #: src/bin/main.c:468
 msgid "Change to directory for execution of terminal command"
-msgstr "Vaihda hakemistoon päätekomentoajon ajaksi"
+msgstr ""
 
 #: src/bin/main.c:470
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
-msgstr "Ajettava komento. Oletuksena $SHELL (tai passwd shell tai /bin/sh)"
+msgstr ""
 
 #: src/bin/main.c:472
 msgid "Use the named edje theme or path to theme file"
-msgstr "Käytä nimettyä edje-teemaa tai polkua teematiedostoon"
+msgstr ""
 
 #: src/bin/main.c:474
 msgid "Use the named color scheme"
-msgstr "Käytä nimettyä värirakennetta"
+msgstr ""
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "Geometria jota päätteessä käytetään (esim. 80x24 tai 80x24+50+20 jne.)"
+msgstr ""
 
 #: src/bin/main.c:478
 msgid "Set window name"
-msgstr "Aseta ikkunalle nimi"
+msgstr "Ablak nevének beállítása"
 
 #: src/bin/main.c:480
 msgid "Set window role"
-msgstr "Aseta ikkunan rooli"
+msgstr "Ablak szerepének beállítása"
 
 #: src/bin/main.c:482
 msgid "Set window title"
-msgstr "Aseta ikkunan otsikko"
+msgstr "Ablak címének beállítása"
 
 #: src/bin/main.c:484
 msgid "Set icon name"
-msgstr "Aseta kuvakkeen nimi"
+msgstr "Ikon nevének beállítása"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr "Aseta kirjasin (NIMI/KOKO mittakaavoitettaville, NIMI kuvakartalle)"
+msgstr "Betűtípus beállítása (NÉV/MÉRET - változtatható méretű, NÉV - bitmap)"
 
 #: src/bin/main.c:488
 msgid ""
@@ -363,320 +360,311 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"Jaa pääteikkuna kahtia. 'v' pystysuuntaisesti ja 'h' vaakasuuntaisesti. "
-"Voidaan käyttää useaan kertaan. esim. -S vhvv tai --split hv Lisätietoja "
-"löydät man-sivulta"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
-msgstr "Aja komentotulkki kirjautumiseen tarkoitettuna"
+msgstr ""
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
-msgstr "Aseta mykistystila videotoistolle"
+msgstr "Néma mód használata a videólejátszáshoz"
 
 #: src/bin/main.c:497
 msgid "Set cursor blink mode"
-msgstr "Aseta kohdistimen vilkkumistila"
+msgstr "Kurzorvillogás módjának beállítása"
 
 #: src/bin/main.c:499
 msgid "Set visual bell mode"
-msgstr "Aseta visuaalisen kellon tila"
+msgstr ""
 
 #: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
-msgstr "Siirry täysruututilaan käynnistettäessä"
+msgstr ""
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr "Aloita kuvakkeellistettuna"
+msgstr ""
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr "Aloita ilman rajoja"
+msgstr "Keret nélküli indítás"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
-msgstr "Käynnistä reunattomassa hallitun ikkunan muodossa"
+msgstr ""
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr "Aloita enimmäiskoossa"
+msgstr "Teljes képernyős indítás"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
-msgstr "Terminology ajetaan ilman ikkunoinninhallintaa"
+msgstr "A Terminology ablakkezelő nélküli fut"
 
 #: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
-msgstr "Älä poistu kun komennon käsittely loppuu"
+msgstr "Ne lépjen ki amikor a parancs folyamata befejeződik"
 
 #: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
-msgstr "Pakota yksi ajoprosessi mikäli monitapahtuma-asetus on päällä"
+msgstr ""
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr "Aseta TERM-komennoksi 'xterm-256color' komennon 'xterm' sijasta"
+msgstr ""
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr "Määritä mittakaava"
+msgstr ""
 
 #: src/bin/main.c:521
 msgid "Highlight links"
-msgstr "Korosta linkit"
+msgstr "Hivatkozások kiemelése"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr "Älä näytä asetusvelhoa käynnistyksen yhteydessä"
+msgstr "Ne mutassa a varázslót induláskor"
 
 #: src/bin/main.c:549
 msgid "show program version"
-msgstr "näytä ohjelman julkaisuversio"
+msgstr "program verziójának mutatása"
 
 #: src/bin/main.c:552
 msgid "show copyright"
-msgstr "näytä tekijänoikeustiedot"
+msgstr ""
 
 #: src/bin/main.c:555
 msgid "show license"
-msgstr "näytä lupa"
+msgstr "licensz mutatása"
 
 #: src/bin/main.c:558
 msgid "show this message"
-msgstr "näytä tämä viesti"
+msgstr "ez az üzenet mutatása"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr ""
-"virheellinen argumentti löydetty vivulle -S/--split. Katso apuosio --help"
 
 #: src/bin/main.c:909
 msgid "Could not initialize key bindings"
-msgstr "Näppäinsidoksia ei saatu käyttöön"
+msgstr ""
 
 #: src/bin/main.c:925
 msgid "Could not parse command line options"
-msgstr "Komentoriviasetteita ei saatu jäsennettyä"
+msgstr ""
 
 #: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
-msgstr "optio %s tarvitsee argumentin!"
+msgstr "a %s opció egy argumentumot vár!"
 
 #: src/bin/main.c:950
 msgid "invalid options found. See --help"
-msgstr "löydettiin virheellisiä asetusmääreitä. Katso apu --help"
+msgstr ""
 
 #: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
 #: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
-msgstr "Funktion %s suoritus epäonnistui: %s"
+msgstr ""
 
 #: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
-msgstr "Mediavisualisointia ei tueta"
+msgstr "Média megjelenítése nem támogatott"
 
 #: src/bin/options_background.c:136
 msgid "None"
-msgstr "Ei mikään"
+msgstr "Semmi"
 
 #: src/bin/options_background.c:468
 msgid "Source file is target file"
-msgstr "Lähdetiedosto on sama kuin kohdetiedosto"
+msgstr "A forrásfájl és a célfájl megegyezik"
 
 #: src/bin/options_background.c:481
 msgid "Picture imported"
-msgstr "Kuva tuotu"
+msgstr "Kép importálva"
 
 #: src/bin/options_background.c:486
 msgid "Failed"
-msgstr "Epäonnistui"
+msgstr "Sikertelen"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
-msgstr "Tausta"
+msgstr "Háttérkép"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
-msgstr "Läpikuultava"
+msgstr "Átlátszó"
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr "Läpikuultavuus:"
+msgstr "Átlátszatlanság:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
-#, c-format
+#, c-format, fuzzy
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
-msgstr "Valitse polku"
+msgstr "Útvonal kiválasztása"
 
 #: src/bin/options_background.c:598
 msgid "System"
-msgstr "Järjestelmä"
+msgstr "Rendszer"
 
 #: src/bin/options_background.c:601
 msgid "User"
-msgstr "Käyttäjä"
+msgstr "Felhasználó"
 
 #: src/bin/options_background.c:604
 msgid "Other"
-msgstr "Muu"
+msgstr "Egyéb"
 
 #: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
-msgstr "Kaksoisnapsauta kuvaa asettaaksesi sen taustakuvaksi"
+msgstr "Kattints a képre a háttérként való használathoz"
 
 #: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
-msgstr "%'d riviä"
+msgstr "%'d sorok"
 
 #: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr "Takaisinrullaus (muistinkäyttö on tällä hetkellä: %'.2f%cB):"
+msgstr ""
 
 #: src/bin/options_behavior.c:218
 msgid "Default cursor:"
-msgstr "Oletuksellinen kohdistin:"
+msgstr "Alapértelmezett kurzor:"
 
 #: src/bin/options_behavior.c:227
 msgid "Blinking Block"
-msgstr "Vilkkuva neliömöhkäle"
+msgstr "Villogó Négyzet"
 
 #: src/bin/options_behavior.c:246
 msgid "Steady Block"
-msgstr "Tasainen neliömöhkäle"
+msgstr ""
 
 #: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
-msgstr "Vilkkuva alleviivaus"
+msgstr "Villogó Aláhúzás"
 
 #: src/bin/options_behavior.c:286
 msgid "Steady Underline"
-msgstr "Tasainen alleviivaus"
+msgstr ""
 
 #: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
-msgstr "Vilkkuva palkki"
+msgstr "Villogó Vonal"
 
 #: src/bin/options_behavior.c:326
 msgid "Steady Bar"
-msgstr "Tasainen palkki"
+msgstr ""
 
 #: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
-msgstr "Käytös"
+msgstr "Viselkedés"
 
 #: src/bin/options_behavior.c:386
 msgid "Show tabs"
-msgstr "Näytä välilehdet"
+msgstr "Lapok mutatása"
 
 #: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
-msgstr "Vieritä alas uuden sisällön tullen"
+msgstr ""
 
 #: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
-msgstr "Vieritä alas kun näppäintä painetaan"
+msgstr ""
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr "Reagoi näppäinpainalluksiin (kirjoitusäänet ja animaatiot)"
+msgstr ""
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
-msgstr "Näppäinpainallusten äänituki <failure>POIS</failure>!"
+msgstr ""
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
-msgstr "Näkyvä kello"
+msgstr ""
 
 #: src/bin/options_behavior.c:408
 msgid "Bell rings"
-msgstr "Kellon sointi"
+msgstr ""
 
 #: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
-msgstr "Kiireellinen kello"
+msgstr ""
 
 #: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
-msgstr "Usea instanssi, yksi prosessi"
+msgstr ""
 
 #: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
-msgstr "Aseta TERM komennoksi xterm-256color"
+msgstr ""
 
 #: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
-msgstr "'Nuoli takaisin'-näppäin lähettää Poista (Askelpalautuksen sijasta)"
+msgstr ""
 
 #: src/bin/options_behavior.c:414
 msgid "Start as login shell"
-msgstr "Käynnistä kirjautumiskomentotulkkina"
+msgstr ""
 
 #: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
-msgstr "Avaa uudet päätteet tämänhetkisessä työkansiossa"
+msgstr "Új terminálok megnyitása a jelenlegi könyvtárban"
 
 #: src/bin/options_behavior.c:416
 msgid "Always show miniview"
-msgstr "Näytä pienoisnäyttö aina"
+msgstr "Kis nézet folyamatos mutatása"
 
 #: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
-msgstr "Kytke päälle erityiset Terminology-pakokoodit"
+msgstr ""
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr "Kytke pakokoodeja hyödyntävät valinnat päälle"
+msgstr ""
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
-msgstr "Käsittele hymiöt aina kaksoisleveyksisinä merkkeinä"
+msgstr ""
 
 #: src/bin/options_behavior.c:420
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
-"Syötettä ryhmitellessä, tee sama kaikissa päätteissä eikä vain niissä jotka "
-"ovat näkyvissä"
 
 #: src/bin/options_behavior.c:427
 msgid "Always open at size:"
-msgstr "Käynnistä aina koossa:"
+msgstr "Megnyitáskor mindig használja ezt a méretet:"
 
 #: src/bin/options_behavior.c:437
 msgid "Set Current:"
-msgstr "Aseta tämänhetkinen:"
+msgstr "Jelenlegi beállítása:"
 
 #: src/bin/options_behavior.c:448
 msgid "Width:"
-msgstr "Leveys:"
+msgstr "Szélesség:"
 
 #: src/bin/options_behavior.c:470
 msgid "Height:"
-msgstr "Korkeus:"
+msgstr "Magasság:"
 
 #: src/bin/options_behavior.c:529
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Aseta animaation kesto joka<br>näytetään välilehtiä vaihdettaessa,<br>joko "
-"näppäimistötoiminnoilla, hiiren rullalla<br>taikka välilehtipaneelissa "
-"osoitinta siirtämällä"
 
 #: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
-msgstr "Välilehden zoomauksen/vaihdon animaatiokesto:"
+msgstr ""
 
 #: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
@@ -686,53 +674,53 @@ msgstr "%1.1f s"
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr "Optiot"
+msgstr "Opciók"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr "Hiiri"
+msgstr "Egér"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
-msgstr "Fontti"
+msgstr "Betű"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:168
 msgid "Theme"
-msgstr "Teema"
+msgstr "Téma"
 
 #: src/bin/options.c:222
 msgid "Colors"
-msgstr "Värit"
+msgstr "Színek"
 
 #: src/bin/options.c:223
 msgid "Keys"
-msgstr "Näppäimet"
+msgstr "Billentyűk"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr "Työkalut"
+msgstr ""
 
 #: src/bin/options.c:235
 msgid "Temporary"
-msgstr "Väliaikainen"
+msgstr "Ideiglenes"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr "Avaa verkkosivusto"
+msgstr "Weboldal megnyitása"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr "<b>Tekijä: </b>%s<br/><b>Verkkosivu: </b>%s<br/><b>Lupa: </b>%s"
+msgstr "<b>Készítő: </b>%s<br/><b>Weboldal: </b>%s<br/><b>Licensz: </b>%s"
 
 #: src/bin/options_colors.c:226
 msgid "Color schemes"
-msgstr "Värirakenteet"
+msgstr "Színtémák"
 
 #: src/bin/options_colors.c:265
 #, c-format
 msgid "Using theme <hilight>%s</hilight>"
-msgstr "Käytetään teemaa <hilight>%s</hilight>"
+msgstr "<hilight>%s</hilight> téma használata"
 
 #: src/bin/options_elm.c:122
 #, c-format
@@ -741,45 +729,41 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> käyttää <hilight>elementary</hilight> työkaluja."
-"<br>Työkaluasetuksia pääsee säätämään ajamalla <keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr "Käynnistä %s"
+msgstr "%s futtatása"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
-msgstr "Mittakaava"
+msgstr ""
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
-msgstr "Valitse koko siten että tämä teksti on luettavissa"
+msgstr "Válaszd ki a megfelelő méretet úgy, hogy ez a szöveg olvasható legyen"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"Mittakaava-asetuksia voidaan muuttaa myös <hilight>elementary</hilight>'n "
-"asetuspaneelin kautta"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr "Etsi kirjasinta"
+msgstr "Betű keresése"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
-msgstr "Bittikartta"
+msgstr "Bitmap"
 
 #: src/bin/options_font.c:619
 msgid "Standard"
-msgstr "Vakio"
+msgstr "Standard"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr "Näytä päätteessä lihavoituna sekä kursiivina"
+msgstr "Félkövér és dőlt betűk megjelenítése a terminálban"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -807,204 +791,204 @@ msgstr "Hyper+"
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr "Delete"
+msgstr "Törlés"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr "Ole hyvä ja syötä näppäinyhdistelmä"
+msgstr ""
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
-msgstr "Näppäimistön toimintosidokset"
+msgstr ""
 
 #: src/bin/options_keys.c:458
 msgid "Reset bindings"
-msgstr "Nollaa näppäimistösidokset"
+msgstr ""
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
-msgstr "Kohdista jako hiiriosoittimen kohdalle"
+msgstr ""
 
 #: src/bin/options_mouse.c:168
 msgid "Focus-related visuals"
-msgstr "Huomiokeskeiset havaintotehosteet"
+msgstr ""
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr "Piilota hiiren osoitin automaattisesti kun joutilas:"
+msgstr "A kurzor automatikus elrejtése ha nincs használatban:"
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr "Aktiiviset linkit:"
+msgstr "Aktív Hivatkozások:"
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
-msgstr "Sähköposteissa"
+msgstr ""
 
 #: src/bin/options_mouse.c:209
 msgid "On file paths"
-msgstr "Tiedostopoluissa"
+msgstr ""
 
 #: src/bin/options_mouse.c:210
 msgid "On URLs"
-msgstr "URL-osoitteissa"
+msgstr ""
 
 #: src/bin/options_mouse.c:211
 msgid "On colors"
-msgstr "Väreissä"
+msgstr ""
 
 #: src/bin/options_mouse.c:212
 msgid "Based on escape codes"
-msgstr "Perustuen pakokoodeihin"
+msgstr ""
 
 #: src/bin/options_mouse.c:213
 msgid "Gravatar integration"
-msgstr "Gravatar-integraatio"
+msgstr "Gravatar integráció"
 
 #: src/bin/options_mouse.c:215
 msgid "Drag & drop links"
-msgstr "Vedä ja pudota linkkejä"
+msgstr ""
 
 #: src/bin/options_mouse.c:221
 msgid "Inline if possible"
-msgstr "Näytä suoraan mikäli mahdollista"
+msgstr ""
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr "Sähköposti:"
+msgstr "E-mail:"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr "Verkko-osoite (kuvat):"
+msgstr "URL (Képek):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr "Verkko-osoite (video):"
+msgstr "URL (Videó):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr "Verkko-osoite (kaikki):"
+msgstr "URL (Minden):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr "Paikallinen (kuvat):"
+msgstr "Helyi (Képek):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr "Paikallinen (video):"
+msgstr "Helyi (Videók):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr "Paikallinen (kaikki):"
+msgstr "Hely (Minden):"
 
 #: src/bin/options_theme.c:187
 #, c-format
 msgid "Using colorscheme <hilight>%s</hilight>"
-msgstr "Käyttäessä värirakennetta <hilight>%s</hilight>"
+msgstr "<hilight>%s</hilight> színtéma használata"
 
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr "Tuntematon fonttikomento: %s"
+msgstr "Ismeretlen betű-parancs: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
 msgid "Unknown grid size command: %s"
-msgstr "Tuntematon ruudukkokomento: %s"
+msgstr ""
 
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr "Taustakuvatiedostoa ei voi lukea: %s"
+msgstr "A háttérképként választott fájl nem olvasható: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr "Tuntematon komento: %s"
+msgstr "Ismeretlen parancs: %s"
 
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr "Ei voitu hakea työhakemistoa prosessille %i: %s"
+msgstr ""
 
 #: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr "Ei voitu hakea työhakemistoa %s: %s"
+msgstr ""
 
 #: src/bin/termio.c:1216
 #, c-format
 msgid "unsupported selection format '%s'"
-msgstr "valintamuotoa '%s' ei tueta"
+msgstr "nem támogatott kiválasztási formátum '%s'"
 
 #: src/bin/termio.c:1376
 msgid "Preview"
-msgstr "Esikatsele"
+msgstr "Előnézet"
 
 #: src/bin/termio.c:1386
 msgid "Copy relative path"
-msgstr "Jäljennä liittyvä polku"
+msgstr "Relatív útvonal másolása"
 
 #: src/bin/termio.c:1388
 msgid "Copy full path"
-msgstr "Jäljennä koko polku"
+msgstr "Teljes útvonal másolása"
 
 #: src/bin/termio.c:2805
 msgid "Open as URL"
-msgstr "Avaa URL-osoitteena"
+msgstr "URL-ként való megnyitás"
 
 #: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
-msgstr "Ei voitu kohdentaa termptya"
+msgstr ""
 
 #: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
-#, c-format
+#, c-format, fuzzy
 msgid "memerr: %s"
-msgstr "memerr-virhe: %s"
+msgstr "memerr: %s"
 
 #: src/bin/termpty.c:225
 #, c-format
 msgid "Size set ioctl failed: %s"
-msgstr "ioctl-koon asetus epäonnistui: %s"
+msgstr ""
 
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr "Ei voitu kirjoittaa tiedostokahvaa %d: %s"
+msgstr ""
 
 #: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr "Ohjelmakuorta ei löydetty, palataan malliin %s"
+msgstr ""
 
 #: src/bin/termpty.c:662
 #, c-format
 msgid "open() of pty '%s' failed: %s"
-msgstr "pty:n() avaaminen '%s' epäonnistui: %s"
+msgstr ""
 
 #: src/bin/termpty.c:669 src/bin/termpty.c:675
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
-msgstr "fcntl() pty:ssä '%s' epäonnistui: %s"
+msgstr ""
 
 #: src/bin/termpty.c:684
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
-msgstr "ioctl() pty:ssä '%s' epäonnistui: %s"
+msgstr ""
 
 #: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr "Ei voitu vaihtaa nykyistä hakemistoa kohteeseen '%s': %s"
+msgstr "Nem sikerült átváltani a '%s' könyvtárra: %s"
 
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr "Yhtäkään teemaa ei saatu ladattua ryhmälle=%s: %s"
+msgstr "Nem sikerült témát betölteni a csoporthoz=%s: %s"
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr "Valmis"
+msgstr "Kész"
 
 #: src/bin/win.c:440
 msgid ""
@@ -1012,129 +996,19 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"Mittakaava-asetuksia voidaan muuttaa itse Asetuksissa (napsauta päätteessä "
-"oikealla hiiren napilla) →  Työkalut, tai käskyllä "
-"<keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
-msgstr "Ecore IMF ei onnistunut"
+msgstr ""
 
 #: src/bin/win.c:6209
 msgid "Ok"
-msgstr "Selvä"
+msgstr "Oké"
 
 #: src/bin/win.c:6214
 msgid "Cancel"
-msgstr "Peruuta"
+msgstr "Mégse"
 
 #: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "Terminologyn teemaa ei löytynyt! Muistitko ajaa 'ninja install'?"
-
-#~ msgid "Shine:"
-#~ msgstr "Paiste:"
-
-#~ msgid "React to key presses"
-#~ msgstr "Reagoi näppäimiin"
-
-#, fuzzy
-#~ msgid "Become a borderless managed window"
-#~ msgstr "Muuntaudu reunattomaksi hallituksi ikkunaksi"
-
-#, fuzzy
-#~ msgid "Become maximized from the start"
-#~ msgstr "Muuntaudu maksimoiduksi käynnistäessä"
-
-#, fuzzy
-#~ msgid "Go into an iconic state from the start"
-#~ msgstr "Siirry ikonisoituun tilaan käynnistettäessä"
-
-#~ msgid "Default"
-#~ msgstr "Oletus"
-
-#~ msgid "Black"
-#~ msgstr "Musta"
-
-#~ msgid "Red"
-#~ msgstr "Punainen"
-
-#~ msgid "Green"
-#~ msgstr "Vihreä"
-
-#~ msgid "Yellow"
-#~ msgstr "Keltainen"
-
-#~ msgid "Blue"
-#~ msgstr "Sininen"
-
-#~ msgid "Magenta"
-#~ msgstr "Purppura"
-
-#~ msgid "Cyan"
-#~ msgstr "Syaani"
-
-#~ msgid "White"
-#~ msgstr "Valkoinen"
-
-#~ msgid "Inverse"
-#~ msgstr "Käänteinen"
-
-#, fuzzy
-#~ msgid "Inverse Background"
-#~ msgstr "Tausta"
-
-#~ msgid "Normal"
-#~ msgstr "Normaali"
-
-#, fuzzy
-#~ msgid "Bright/Bold"
-#~ msgstr "Kirkas"
-
-#~ msgid "Helpers"
-#~ msgstr "Apuohjelmat"
-
-#~ msgid "Set emotion module to use."
-#~ msgstr "Aseta käytettävä Emotion-moduuli"
-
-#~ msgid "Could not Initialize the emotion module '%s'"
-#~ msgstr "Ei voitu alustaa Emotion-moduulia '%s'"
-
-#~ msgid "Video"
-#~ msgstr "Video"
-
-#~ msgid "Audio muted"
-#~ msgstr "Ääni mykistetty"
-
-#~ msgid "Audio visualized"
-#~ msgstr "Ääni visualisoitu"
-
-#~ msgid "Video Engine:"
-#~ msgstr "Videomoottori:"
-
-#~ msgid "Automatic"
-#~ msgstr "Automaattinen"
-
-#~ msgid "Scrollback:"
-#~ msgstr "Takaisinvieritys:"
-
-#~ msgid "Cursor blinking"
-#~ msgstr "Vilkkuva kohdistin"
-
-#~ msgid "Wallpaper"
-#~ msgstr "Taustakuva"
-
-#~ msgid "Inverse Base"
-#~ msgstr "Käänteinen pohjaväri"
-
-#~ msgid "Use"
-#~ msgstr "Käytä"
-
-#~ msgid "Reset"
-#~ msgstr "Palauta"
-
-#~ msgid "Normal 2"
-#~ msgstr "Normaali 2"
-
-#~ msgid "Bright 2"
-#~ msgstr "Kirkas 2"
+msgstr "Terminology téma nem található! Nem felejtetted el a 'ninja install'-t?"
