@@ -6933,6 +6933,7 @@ _term_media_update(Term *term, const Config *config)
       default:
          break;
      }
+   _term_trans(term);
 }
 
 void

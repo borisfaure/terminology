@@ -22,29 +22,23 @@ group { name: "terminology/core";
         // background handling
       part { name: "terminology.fade"; type: RECT;
          description { state: "default" 0.0;
-             color_class: "BG";
          }
          description { state: "image" 0.0;
             inherit: "default" 0.0;
-             color_class: "";
          }
          description { state: "scale" 0.0;
             inherit: "default" 0.0;
-             color_class: "";
          }
          description { state: "edje" 0.0;
             inherit: "default" 0.0;
-             color_class: "";
          }
          description { state: "movie" 0.0;
             inherit: "default" 0.0;
-             color_class: "";
          }
       }
       part { name: "terminology.background"; type: SWALLOW;
          clip_to: "terminology.fade";
          description { state: "default" 0.0;
-             color_class: "BG";
          }
          description { state: "image" 0.0;
             inherit: "default" 0.0;
