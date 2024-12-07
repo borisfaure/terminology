@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-17 12:36+0200\n"
 "PO-Revision-Date: 2020-12-22 06:29+0000\n"
-"Last-Translator: haruna <w10776e8w@yahoo.co.jp>\n"
+"Last-Translator: Green <usergreen@users.osdn.me>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/terminology/"
 "terminology/ja/>\n"
 "Language: ja\n"
@@ -35,7 +35,7 @@ msgstr "Twitter: @_Terminology_"
 #: src/bin/about.c:275
 #, fuzzy
 msgid "YouTube channel"
-msgstr "Youtube チャンネル"
+msgstr "YouTube チャンネル"
 
 #: src/bin/about.c:289
 #, c-format
@@ -46,10 +46,10 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>なぜ端末がつまらないものでないといけないの？"
-"<br><br>この端末は Enlightenment のために書かれたもので、"
-"EFL を使用したり、現代の端末エミュレータの理想の境界線を押し広げたり"
-"しています。楽しんでもらえると幸いです。<br><br>Copyright © 2012-%d by:"
+"<b>Terminology %s</b><br>どうして端末はつまらないのでしょうか？ "
+"<br><br>この端末は Enlightenment で使う目的で書かれたものです。 "
+"EFL を使用することで現代の端末エミュレータの理想の境界線を押し広げます。 "
+"この端末を気に入っていただけると幸いです。<br><br>Copyright © 2012-%d by:"
 "<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:"
 "<br><br>%s"
 
@@ -108,7 +108,7 @@ msgstr "端末を閉じる"
 #: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
-msgstr "ロギング・ドメイン '%s' が作成できませんでした"
+msgstr "ロギング・ドメイン '%s' を作成できません"
 
 #: src/bin/keyin.c:681
 msgid "Scrolling"
@@ -164,7 +164,7 @@ msgstr "分割/タブ"
 
 #: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
-msgstr "一つ前の端末にフォーカス"
+msgstr "直前の端末にフォーカス"
 
 #: src/bin/keyin.c:697
 msgid "Focus the next terminal"
@@ -172,19 +172,19 @@ msgstr "次の端末にフォーカス"
 
 #: src/bin/keyin.c:698
 msgid "Focus the terminal above"
-msgstr "上の端末にフォーカス"
+msgstr "上側の端末にフォーカス"
 
 #: src/bin/keyin.c:699
 msgid "Focus the terminal below"
-msgstr "下の端末にフォーカス"
+msgstr "下側の端末にフォーカス"
 
 #: src/bin/keyin.c:700
 msgid "Focus the terminal on the left"
-msgstr "左の端末にフォーカス"
+msgstr "左側の端末にフォーカス"
 
 #: src/bin/keyin.c:701
 msgid "Focus the terminal on the right"
-msgstr "右の端末にフォーカス"
+msgstr "右側の端末にフォーカス"
 
 #: src/bin/keyin.c:702
 msgid "Split horizontally (new below)"
@@ -196,7 +196,7 @@ msgstr "垂直分割 (右に新規端末)"
 
 #: src/bin/keyin.c:704
 msgid "Create a new \"tab\""
-msgstr "新規タブの作成"
+msgstr "新規 \"タブ\" の作成"
 
 #: src/bin/keyin.c:705
 msgid "Close the focused terminal"
@@ -204,7 +204,7 @@ msgstr "フォーカスしている端末を閉じる"
 
 #: src/bin/keyin.c:706
 msgid "Bring up \"tab\" switcher"
-msgstr "タブスイッチャを起動"
+msgstr "\"タブ\" スイッチャを起動"
 
 #: src/bin/keyin.c:707
 msgid "Switch to terminal tab 1"
@@ -288,7 +288,7 @@ msgstr "全画面表示の切替"
 
 #: src/bin/keyin.c:731
 msgid "Display the history miniview"
-msgstr "ミニビューの履歴を表示"
+msgstr "履歴ミニビューを表示"
 
 #: src/bin/keyin.c:732
 msgid "Display the command box"
@@ -309,7 +309,7 @@ msgstr "(C) 2012-%d Carsten Haitzler and others"
 
 #: src/bin/main.c:462
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
-msgstr "Enlightenment Foundation ライブラリで書かれた端末エミュレータ"
+msgstr "Enlightenment Foundation Library で作成した端末エミュレータ"
 
 #: src/bin/main.c:466
 msgid "Use the named file as a background wallpaper"
@@ -333,7 +333,7 @@ msgstr "命名済みのカラースキームを使用"
 
 #: src/bin/main.c:476
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
-msgstr "使用する端末のジオメトリ (例: 80x24, 80x24+50+20, ...)"
+msgstr "使用する端末のジオメトリ (例: 80x24, 80x24+50+20, etc.)"
 
 #: src/bin/main.c:478
 msgid "Set window name"
@@ -353,7 +353,7 @@ msgstr "アイコン名を設定"
 
 #: src/bin/main.c:486
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
-msgstr ""
+msgstr "フォントを設定（スケーラブルの名前/サイズ、ビットマップの名前）"
 
 #: src/bin/main.c:488
 msgid ""
@@ -361,34 +361,37 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
+"端末ウィンドウを分割。'v' は縦方向、'h' は横方向を表します。"
+"複数回使用することが可能です。例：eg -S vhvv or --split hv "
+"詳しい説明は man ページにあります。"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
-msgstr ""
+msgstr "シェルをログインシェルとして実行"
 
 #: src/bin/main.c:495
 msgid "Set mute mode for video playback"
-msgstr ""
+msgstr "ビデオ再生でミュートモードを設定"
 
 #: src/bin/main.c:497
 msgid "Set cursor blink mode"
-msgstr ""
+msgstr "カーソルの点滅モードを設定"
 
 #: src/bin/main.c:499
 msgid "Set visual bell mode"
-msgstr ""
+msgstr "視覚的なベルモードを設定"
 
 #: src/bin/main.c:501
 msgid "Go into the fullscreen mode from the start"
-msgstr ""
+msgstr "最初から全画面表示モードで開始する"
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "アイコンで開始"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "ボーダレスで開始"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
@@ -396,82 +399,82 @@ msgstr ""
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "最大化して開始"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
-msgstr ""
+msgstr "Terminology はウィンドウマネージャ無しで稼働しています"
 
 #: src/bin/main.c:513
 msgid "Do not exit when the command process exits"
-msgstr ""
+msgstr "コマンドプロセス終了時でも終了しない"
 
 #: src/bin/main.c:515
 msgid "Force single executable if multi-instance is enabled"
-msgstr ""
+msgstr "マルチインスタンスが有効な場合でも、単一の実行を強制する"
 
 #: src/bin/main.c:517
 msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
-msgstr ""
+msgstr "TERM を 'xterm' ではなく 'xterm-256color' に設定する"
 
 #: src/bin/main.c:519
 msgid "Set scaling factor"
-msgstr ""
+msgstr "スケーリング係数の設定"
 
 #: src/bin/main.c:521
 msgid "Highlight links"
-msgstr ""
+msgstr "リンクの強調"
 
 #: src/bin/main.c:523
 msgid "Do not display wizard on start up"
-msgstr ""
+msgstr "起動時にウィザードを表示しない"
 
 #: src/bin/main.c:549
 msgid "show program version"
-msgstr ""
+msgstr "プログラムのバージョンを表示"
 
 #: src/bin/main.c:552
 msgid "show copyright"
-msgstr ""
+msgstr "著作権を表示"
 
 #: src/bin/main.c:555
 msgid "show license"
-msgstr ""
+msgstr "ライセンスを表示"
 
 #: src/bin/main.c:558
 msgid "show this message"
-msgstr ""
+msgstr "このメッセージを表示"
 
 #: src/bin/main.c:655
 msgid "invalid argument found for option -S/--split. See --help"
-msgstr ""
+msgstr "オプション -S/--split. See --help で無効な引数が見つかりました"
 
 #: src/bin/main.c:909
 msgid "Could not initialize key bindings"
-msgstr ""
+msgstr "キーバインディングを初期化できません"
 
 #: src/bin/main.c:925
 msgid "Could not parse command line options"
-msgstr ""
+msgstr "コマンドラインオプションを解析できません"
 
 #: src/bin/main.c:949
 #, c-format
 msgid "option %s requires an argument!"
-msgstr ""
+msgstr "%s オプションには引数が必要です"
 
 #: src/bin/main.c:950
 msgid "invalid options found. See --help"
-msgstr ""
+msgstr "無効なオプションが見つかりました。--help をご覧ください"
 
 #: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
 #: src/bin/termpty.c:655
 #, c-format
 msgid "Function %s failed: %s"
-msgstr ""
+msgstr "関数 %s が失敗しました: %s"
 
 #: src/bin/media.c:1434
 msgid "Media visualizing is not supported"
-msgstr ""
+msgstr "メディアの視覚化はサポートされていません"
 
 #: src/bin/options_background.c:136
 msgid "None"
@@ -479,7 +482,7 @@ msgstr ""
 
 #: src/bin/options_background.c:468
 msgid "Source file is target file"
-msgstr ""
+msgstr "ソースファイルはターゲットファイルです"
 
 #: src/bin/options_background.c:481
 msgid "Picture imported"
@@ -487,11 +490,11 @@ msgstr ""
 
 #: src/bin/options_background.c:486
 msgid "Failed"
-msgstr ""
+msgstr "失敗しました"
 
 #: src/bin/options_background.c:538 src/bin/options.c:221
 msgid "Background"
-msgstr ""
+msgstr "背景"
 
 #: src/bin/options_background.c:554
 msgid "Translucent"
@@ -499,32 +502,32 @@ msgstr ""
 
 #: src/bin/options_background.c:565
 msgid "Opacity:"
-msgstr ""
+msgstr "透明度"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
-msgstr ""
+msgstr "パス（場所）を選択"
 
 #: src/bin/options_background.c:598
 msgid "System"
-msgstr ""
+msgstr "システム"
 
 #: src/bin/options_background.c:601
 msgid "User"
-msgstr ""
+msgstr "ユーザ"
 
 #: src/bin/options_background.c:604
 msgid "Other"
-msgstr ""
+msgstr "その他"
 
 #: src/bin/options_background.c:646
 msgid "Click on a picture to use it as background"
-msgstr ""
+msgstr "背景として使用する画像をクリックします"
 
 #: src/bin/options_behavior.c:64
 #, c-format
@@ -534,15 +537,15 @@ msgstr ""
 #: src/bin/options_behavior.c:80
 #, c-format
 msgid "Scrollback (current memory usage: %'.2f%cB):"
-msgstr ""
+msgstr "スクロールバック (現在のメモリ使用率: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:218
 msgid "Default cursor:"
-msgstr ""
+msgstr "既定のカーソル"
 
 #: src/bin/options_behavior.c:227
 msgid "Blinking Block"
-msgstr ""
+msgstr "点滅ブロック"
 
 #: src/bin/options_behavior.c:246
 msgid "Steady Block"
@@ -550,7 +553,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:266
 msgid "Blinking Underline"
-msgstr ""
+msgstr "点滅する下線"
 
 #: src/bin/options_behavior.c:286
 msgid "Steady Underline"
@@ -558,7 +561,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:306
 msgid "Blinking Bar"
-msgstr ""
+msgstr "点滅バー"
 
 #: src/bin/options_behavior.c:326
 msgid "Steady Bar"
@@ -566,23 +569,23 @@ msgstr ""
 
 #: src/bin/options_behavior.c:366 src/bin/options.c:217
 msgid "Behavior"
-msgstr ""
+msgstr "振る舞い"
 
 #: src/bin/options_behavior.c:386
 msgid "Show tabs"
-msgstr ""
+msgstr "タブを表示"
 
 #: src/bin/options_behavior.c:389
 msgid "Scroll to bottom on new content"
-msgstr ""
+msgstr "新規コンテンツで一番下までスクロールする"
 
 #: src/bin/options_behavior.c:390
 msgid "Scroll to bottom when a key is pressed"
-msgstr ""
+msgstr "キーを押下した時ボトムへスクロール"
 
 #: src/bin/options_behavior.c:396
 msgid "React to key presses (typing sounds and animations)"
-msgstr ""
+msgstr "キーを押下した時反応する（タイピング音とアニメーション）"
 
 #: src/bin/options_behavior.c:403
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
@@ -590,23 +593,23 @@ msgstr ""
 
 #: src/bin/options_behavior.c:407
 msgid "Visual Bell"
-msgstr ""
+msgstr "視覚的なベル"
 
 #: src/bin/options_behavior.c:408
 msgid "Bell rings"
-msgstr ""
+msgstr "ベルが鳴る"
 
 #: src/bin/options_behavior.c:409
 msgid "Urgent Bell"
-msgstr ""
+msgstr "緊急ベル"
 
 #: src/bin/options_behavior.c:411
 msgid "Multiple instances, one process"
-msgstr ""
+msgstr "複数のインスタンス、1つのプロセス"
 
 #: src/bin/options_behavior.c:412
 msgid "Set TERM to xterm-256color"
-msgstr ""
+msgstr "TERM を xterm-256color に設定する"
 
 #: src/bin/options_behavior.c:413
 msgid "BackArrow sends Del (instead of BackSpace)"
@@ -614,27 +617,27 @@ msgstr ""
 
 #: src/bin/options_behavior.c:414
 msgid "Start as login shell"
-msgstr ""
+msgstr "ログインシェルとして開始する"
 
 #: src/bin/options_behavior.c:415
 msgid "Open new terminals in current working directory"
-msgstr ""
+msgstr "現在の作業ディレクトリで新規端末を開く"
 
 #: src/bin/options_behavior.c:416
 msgid "Always show miniview"
-msgstr ""
+msgstr "常にミニビューを表示"
 
 #: src/bin/options_behavior.c:417
 msgid "Enable special Terminology escape codes"
-msgstr ""
+msgstr "Terminology で特別なエスケープコードを有効にする"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "エスケープコードによる選択操作を有効にする"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
-msgstr ""
+msgstr "絵文字は常に全角文字として扱う"
 
 #: src/bin/options_behavior.c:420
 msgid ""
@@ -643,7 +646,7 @@ msgstr ""
 
 #: src/bin/options_behavior.c:427
 msgid "Always open at size:"
-msgstr ""
+msgstr "常に次のサイズ開く："
 
 #: src/bin/options_behavior.c:437
 msgid "Set Current:"
@@ -651,11 +654,11 @@ msgstr ""
 
 #: src/bin/options_behavior.c:448
 msgid "Width:"
-msgstr ""
+msgstr "幅："
 
 #: src/bin/options_behavior.c:470
 msgid "Height:"
-msgstr ""
+msgstr "高さ："
 
 #: src/bin/options_behavior.c:529
 msgid ""
@@ -671,52 +674,52 @@ msgstr ""
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
-msgstr ""
+msgstr "%1.1f s"
 
 #: src/bin/options.c:189
 msgid "Options"
-msgstr ""
+msgstr "オプション"
 
 #: src/bin/options.c:218 src/bin/options_mouse.c:147
 msgid "Mouse"
-msgstr ""
+msgstr "マウス"
 
 #: src/bin/options.c:219 src/bin/options_font.c:499
 msgid "Font"
-msgstr ""
+msgstr "フォント"
 
 #: src/bin/options.c:220 src/bin/options_theme.c:168
 msgid "Theme"
-msgstr ""
+msgstr "テーマ"
 
 #: src/bin/options.c:222
 msgid "Colors"
-msgstr ""
+msgstr "色"
 
 #: src/bin/options.c:223
 msgid "Keys"
-msgstr ""
+msgstr "キー"
 
 #: src/bin/options.c:224 src/bin/options_elm.c:109
 msgid "Toolkit"
-msgstr ""
+msgstr "Toolkit"
 
 #: src/bin/options.c:235
 msgid "Temporary"
-msgstr ""
+msgstr "テンポラリ"
 
 #: src/bin/options_colors.c:99
 msgid "Open website"
-msgstr ""
+msgstr "ウェブサイトを開く"
 
 #: src/bin/options_colors.c:131
 #, c-format
 msgid "<b>Author: </b>%s<br/><b>Website: </b>%s<br/><b>License: </b>%s"
-msgstr ""
+msgstr "<b>作者: </b>%s<br/><b>ウェブサイト: </b>%s<br/><b>ライセンス: </b>%s"
 
 #: src/bin/options_colors.c:226
 msgid "Color schemes"
-msgstr ""
+msgstr "配色"
 
 #: src/bin/options_colors.c:265
 #, c-format
@@ -730,57 +733,61 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
+"<em>Terminology</em> は <hilight>elementary</hilight> toolkit を利用しています。<br> "
+"ツールキットの構成設定は  <keyword>%s を起動すればアクセスできます。"
 
 #: src/bin/options_elm.c:134
 #, c-format
 msgid "Launch %s"
-msgstr ""
+msgstr "%s の起動"
 
 #: src/bin/options_elm.c:150 src/bin/win.c:383 src/bin/win.c:403
 msgid "Scale"
-msgstr ""
+msgstr "拡大縮小"
 
 #: src/bin/options_elm.c:172 src/bin/win.c:432
 msgid "Select preferred size so that this text is readable"
-msgstr ""
+msgstr "このテキストが読み易いように、お好きなサイズを選択してください。"
 
 #: src/bin/options_elm.c:180
 msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
+"拡大縮小の設定は <hilight>elementary</hilight>'s 設定パネルからでも "
+"行えます"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
-msgstr ""
+msgstr "フォントを検索"
 
 #: src/bin/options_font.c:578
 msgid "Bitmap"
-msgstr ""
+msgstr "ビットマップ"
 
 #: src/bin/options_font.c:619
 msgid "Standard"
-msgstr ""
+msgstr "標準"
 
 #: src/bin/options_font.c:681
 msgid "Display bold and italic in the terminal"
-msgstr ""
+msgstr "端末では太字とイタリック体を表示する"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
-msgstr ""
+msgstr "Ctrl+"
 
 #: src/bin/options_keys.c:67
 msgid "Alt+"
-msgstr ""
+msgstr "Alt+"
 
 #: src/bin/options_keys.c:68
 msgid "Shift+"
-msgstr ""
+msgstr "Shift+"
 
 #: src/bin/options_keys.c:69
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:70
 msgid "Meta+"
@@ -792,19 +799,19 @@ msgstr ""
 
 #: src/bin/options_keys.c:82
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 #: src/bin/options_keys.c:270
 msgid "Please press key sequence"
-msgstr ""
+msgstr "キーシーケンスを押下してください"
 
 #: src/bin/options_keys.c:386
 msgid "Key Bindings"
-msgstr ""
+msgstr "キーバインディング"
 
 #: src/bin/options_keys.c:458
 msgid "Reset bindings"
-msgstr ""
+msgstr "バインディングをリセット"
 
 #: src/bin/options_mouse.c:167
 msgid "Focus split under the Mouse"
@@ -816,11 +823,11 @@ msgstr ""
 
 #: src/bin/options_mouse.c:174
 msgid "Auto hide the mouse cursor when idle:"
-msgstr ""
+msgstr "以下のアイドル時にマウスカーソルを自動的に隠す："
 
 #: src/bin/options_mouse.c:204
 msgid "Active Links:"
-msgstr ""
+msgstr "アクティブなリンク："
 
 #: src/bin/options_mouse.c:208
 msgid "On emails"
@@ -856,31 +863,31 @@ msgstr ""
 
 #: src/bin/options_mouse.c:265
 msgid "E-mail:"
-msgstr ""
+msgstr "電子メール"
 
 #: src/bin/options_mouse.c:269
 msgid "URL (Images):"
-msgstr ""
+msgstr "URL (画像):"
 
 #: src/bin/options_mouse.c:270
 msgid "URL (Video):"
-msgstr ""
+msgstr "URL (ビデオ):"
 
 #: src/bin/options_mouse.c:271
 msgid "URL (All):"
-msgstr ""
+msgstr "URL (すべて):"
 
 #: src/bin/options_mouse.c:274
 msgid "Local (Images):"
-msgstr ""
+msgstr "ローカル (画像):"
 
 #: src/bin/options_mouse.c:275
 msgid "Local (Video):"
-msgstr ""
+msgstr "ローカル (ビデオ):"
 
 #: src/bin/options_mouse.c:276
 msgid "Local (All):"
-msgstr ""
+msgstr "ローカル (すべて):"
 
 #: src/bin/options_theme.c:187
 #, c-format
@@ -890,7 +897,7 @@ msgstr ""
 #: src/bin/termcmd.c:84
 #, c-format
 msgid "Unknown font command: %s"
-msgstr ""
+msgstr "不明なフォントコマンド: %s"
 
 #: src/bin/termcmd.c:118
 #, c-format
@@ -900,22 +907,22 @@ msgstr ""
 #: src/bin/termcmd.c:146
 #, c-format
 msgid "Background file could not be read: %s"
-msgstr ""
+msgstr "背景ファイルが読み込めません: %s"
 
 #: src/bin/termcmd.c:175
 #, c-format
 msgid "Unknown command: %s"
-msgstr ""
+msgstr "不明なコマンド: %s"
 
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr ""
+msgstr "pid %i の作業ディレクトリを取得できません: %s"
 
 #: src/bin/termio.c:482
 #, c-format
 msgid "Could not load working directory %s: %s"
-msgstr ""
+msgstr "作業ディレクトリ %s を読み込めません: %s"
 
 #: src/bin/termio.c:1216
 #, c-format
@@ -924,19 +931,19 @@ msgstr ""
 
 #: src/bin/termio.c:1376
 msgid "Preview"
-msgstr ""
+msgstr "プレビュー"
 
 #: src/bin/termio.c:1386
 msgid "Copy relative path"
-msgstr ""
+msgstr "相対パスをコピー"
 
 #: src/bin/termio.c:1388
 msgid "Copy full path"
-msgstr ""
+msgstr "フルパス（絶対パス）をコピー"
 
 #: src/bin/termio.c:2805
 msgid "Open as URL"
-msgstr ""
+msgstr "URL として開く"
 
 #: src/bin/termio.c:4248
 msgid "Could not allocate termpty"
@@ -955,12 +962,12 @@ msgstr ""
 #: src/bin/termpty.c:361
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
-msgstr ""
+msgstr "ファイル記述子 %d: %s に書き込めません"
 
 #: src/bin/termpty.c:615
 #, c-format
 msgid "Could not find shell, falling back to %s"
-msgstr ""
+msgstr "シェルが見つかないので %s に戻ります"
 
 #: src/bin/termpty.c:662
 #, c-format
@@ -980,16 +987,16 @@ msgstr ""
 #: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
 #, c-format
 msgid "Could not change current directory to '%s': %s"
-msgstr ""
+msgstr "現在のディレクトリを  '%s': %s へ変更できません"
 
 #: src/bin/theme.c:91
 #, c-format
 msgid "Could not load any theme for group=%s: %s"
-msgstr ""
+msgstr "group=%s: %s 用のテーマが一切読み込めません"
 
 #: src/bin/win.c:424
 msgid "Done"
-msgstr ""
+msgstr "完了"
 
 #: src/bin/win.c:440
 msgid ""
@@ -1004,12 +1011,12 @@ msgstr ""
 
 #: src/bin/win.c:6209
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: src/bin/win.c:6214
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #: src/bin/win.c:7412
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "Terminologyのテーマが見つからない！ 'ninja install'をお忘れですか？"
+msgstr "Terminology のテーマが見つかりません！ 'ninja install'をお忘れですか？"
