@@ -541,7 +541,7 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    ty->bracketed_paste = mode;
                    break;
                 case 7700: // ignore
-                   WRN("TODO: ambigous width reporting %i", mode);
+                   WRN("TODO: ambiguous width reporting %i", mode);
                    ty->decoding_error = EINA_TRUE;
                    break;
                 case 7727:
