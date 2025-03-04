@@ -3623,8 +3623,17 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              _handle_window_manipulation(ty, &b);
           }
         break;
-      case 'u': // restore cursor pos
-        termpty_cursor_copy(ty, EINA_FALSE);
+      case 'u':
+        if (cc == c)
+          {
+             // No parameter. Restore cursor pos
+             termpty_cursor_copy(ty, EINA_FALSE);
+          }
+        else
+          {
+             ERR("unhandled 'u' CSI escape code");
+             ty->decoding_error = EINA_TRUE;
+          }
         break;
       case 'v':
         if (*(cc-1) == '$')
