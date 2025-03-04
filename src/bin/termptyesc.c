@@ -3207,7 +3207,7 @@ static void
 _title_icon_stack_push(Termpty *ty, Eina_Unicode **p)
 {
    int arg = _csi_arg_get(ty, p);
-   TitleIconElem *elem = calloc(sizeof(*elem), 1);
+   TitleIconElem *elem = calloc(1, sizeof(*elem));
 
    if (!elem)
      return;

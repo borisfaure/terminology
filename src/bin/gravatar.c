@@ -72,7 +72,7 @@ gravatar_tooltip(Evas_Object *obj, const Config *config, const char *email)
    if (!config->gravatar)
      return;
 
-   g = calloc(sizeof(Gravatar), 1);
+   g = calloc(1, sizeof(Gravatar));
    if (!g)
      return;
    g->config = config;
