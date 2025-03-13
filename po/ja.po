@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2020-12-22 06:29+0000\n"
 "Last-Translator: Green <usergreen@users.osdn.me>\n"
 "Language-Team: Japanese <https://hosted.weblate.org/projects/terminology/"
@@ -18,13 +18,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.4-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "'%s'をコピー"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "開く"
 
@@ -46,12 +46,11 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>どうして端末はつまらないのでしょうか？ "
-"<br><br>この端末は Enlightenment で使う目的で書かれたものです。 "
-"EFL を使用することで現代の端末エミュレータの理想の境界線を押し広げます。 "
-"この端末を気に入っていただけると幸いです。<br><br>Copyright © 2012-%d by:"
-"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:"
-"<br><br>%s"
+"<b>Terminology %s</b><br>どうして端末はつまらないのでしょうか？ <br><br>この"
+"端末は Enlightenment で使う目的で書かれたものです。 EFL を使用することで現代"
+"の端末エミュレータの理想の境界線を押し広げます。 この端末を気に入っていただけ"
+"ると幸いです。<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed "
+"under the 2-clause BSD license detailed below:<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -81,7 +80,7 @@ msgstr "ミニビュー"
 msgid "Set title"
 msgstr "タイトルの設定"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "コピー"
 
@@ -361,9 +360,9 @@ msgid ""
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
-"端末ウィンドウを分割。'v' は縦方向、'h' は横方向を表します。"
-"複数回使用することが可能です。例：eg -S vhvv or --split hv "
-"詳しい説明は man ページにあります。"
+"端末ウィンドウを分割。'v' は縦方向、'h' は横方向を表します。複数回使用するこ"
+"とが可能です。例：eg -S vhvv or --split hv 詳しい説明は man ページにありま"
+"す。"
 
 #: src/bin/main.c:493
 msgid "Run the shell as a login shell"
@@ -733,8 +732,8 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> は <hilight>elementary</hilight> toolkit を利用しています。<br> "
-"ツールキットの構成設定は  <keyword>%s を起動すればアクセスできます。"
+"<em>Terminology</em> は <hilight>elementary</hilight> toolkit を利用していま"
+"す。<br> ツールキットの構成設定は  <keyword>%s を起動すればアクセスできます。"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -754,8 +753,7 @@ msgid ""
 "The scale configuration can also be changed through <hilight>elementary</"
 "hilight>'s configuration panel"
 msgstr ""
-"拡大縮小の設定は <hilight>elementary</hilight>'s 設定パネルからでも "
-"行えます"
+"拡大縮小の設定は <hilight>elementary</hilight>'s 設定パネルからでも 行えます"
 
 #: src/bin/options_font.c:550
 msgid "Search font"
@@ -924,28 +922,28 @@ msgstr "pid %i の作業ディレクトリを取得できません: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "作業ディレクトリ %s を読み込めません: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr ""
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "プレビュー"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "相対パスをコピー"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "フルパス（絶対パス）をコピー"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "URL として開く"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -1017,6 +1015,6 @@ msgstr "OK"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Terminology のテーマが見つかりません！ 'ninja install'をお忘れですか？"

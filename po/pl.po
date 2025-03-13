@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2024-01-19 23:00+0000\n"
 "Last-Translator: IntinteDAO <lordfervi@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/terminology/"
@@ -23,13 +23,13 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.4-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopiuj '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Otwórz"
 
@@ -84,7 +84,7 @@ msgstr "Minipodgląd"
 msgid "Set title"
 msgstr "Ustaw nazwę okna"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Kopiuj"
 
@@ -954,28 +954,28 @@ msgstr "Nie mogę odczytywać aktualnego katalogu dla pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "Nie mogę załadować roboczego katalogu %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "niewspierany format selekcji '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Podgląd"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "Skopiuj względną ścieżkę"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "Skopiuj pełną ścieżkę"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "Otwórz jako odnośnik"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "Nie mogę zaalokować termpty"
 
@@ -1051,7 +1051,7 @@ msgstr "Ok"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Nie mogę znaleźć skórki terminology! Zapomniałeś 'ninja install'?"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2023-11-15 14:06+0000\n"
 "Last-Translator: Mindaugas <m.celiesius@yandex.ru>\n"
 "Language-Team: Lithuanian <https://hosted.weblate.org/projects/terminology/"
@@ -19,13 +19,13 @@ msgstr ""
 "1 : 2);\n"
 "X-Generator: Weblate 5.2-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "Kopijuoti '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Atverti"
 
@@ -50,8 +50,8 @@ msgstr ""
 "terminalas buvo sukurtas Enlightenment darbalaukio aplinkai, panaudojant "
 "EFLbibliotekas ir peržiangiant šiuolaikinio terminalo ribas. Mes tikimės, "
 "kad jūs patirsite malonumą naudojantis juo.<br><br>Copyright © 2012-%d by:"
-"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed "
-"below:<br><br>%s"
+"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:"
+"<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -81,7 +81,7 @@ msgstr "Mini vaizdas"
 msgid "Set title"
 msgstr "Nustatyti pavadinimą"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Kopijuoti"
 
@@ -670,8 +670,8 @@ msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
-"Nustatyti animacijos, kuri<br>vyksta perjungiant skirtukus, "
-"laiką,<br>nesvarbu, ar tai daroma dėl klavišų sekos ar <br>pelės ratuko virš "
+"Nustatyti animacijos, kuri<br>vyksta perjungiant skirtukus, laiką,"
+"<br>nesvarbu, ar tai daroma dėl klavišų sekos ar <br>pelės ratuko virš "
 "skirtukų skydelio"
 
 #: src/bin/options_behavior.c:534
@@ -741,9 +741,9 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> naudoja <hilight>elementary </"
-"hilight>įrankius.<br>Įrankių rinkinio konfigūracijos nustatymus galima "
-"pasiekti paleidus<keyword>%s</keyword>"
+"<em>Terminology</em> naudoja <hilight>elementary </hilight>įrankius."
+"<br>Įrankių rinkinio konfigūracijos nustatymus galima pasiekti "
+"paleidus<keyword>%s</keyword>"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -933,28 +933,28 @@ msgstr "Nepavyko gauti darbinio pid katalogo %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "Nepavyko įkelti darbinio katalogo %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nepalaikomas pasirinkimo formatas '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Peržiūra"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "Nukopijuoti santykinį kelią"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "Nukopijuoti pilną kelią"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "Atverti kaip URL"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "Nepavyko priskirti terminalopty"
 
@@ -1029,6 +1029,6 @@ msgstr "Gerai"
 msgid "Cancel"
 msgstr "Atšaukti"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Neįmanoma rasti terminology temos! Pamiršote 'ninja install'?"

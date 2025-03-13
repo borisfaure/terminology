@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2021-04-26 21:31+0000\n"
 "Last-Translator: Michalis <michalisntovas@yahoo.gr>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/terminology/"
@@ -21,13 +21,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.7-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Αντιγραφή"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Άνοιγμα"
 
@@ -84,7 +84,7 @@ msgstr ""
 msgid "Set title"
 msgstr "Ορισμός τίτλου παραθύρου"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Αντιγραφή"
 
@@ -980,28 +980,28 @@ msgstr "Δεν μπόρεσε να εντοπιστεί κατάλογος με 
 msgid "Could not load working directory %s: %s"
 msgstr "Δεν μπόρεσε να φορτωθεί ο κατάλογος εργασίας %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Μή υποστηριζόμενη μορφή επιλογής '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr ""
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr ""
 
@@ -1073,7 +1073,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Δεν μπορεί να εντοπιστεί το θέμα του terminology! Μήπως ξεχάσατε το 'ninja "

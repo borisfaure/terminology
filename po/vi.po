@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.8.99\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2015-10-05 02:10+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: [Language]\n"
@@ -19,13 +19,13 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Sao Chép"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Mở"
 
@@ -81,7 +81,7 @@ msgstr "Miniview"
 msgid "Set title"
 msgstr "Đặt tiêu đề cho cửa sổ"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Sao Chép"
 
@@ -970,28 +970,28 @@ msgstr "Không thể lấy thư mục làm việc của pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "Không thể tải thư mục làm việc %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "không hỗ trợ định dạng chọn '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Xem Trước"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "Mở như là URL"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "Không thể cấp phát termpty"
 
@@ -1063,7 +1063,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Không thể tìm thấy terminology theme! Quên 'ninja install'?"
 

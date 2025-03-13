@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2022-12-15 09:49+0000\n"
 "Last-Translator: Maite Guix <maite.guix@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
@@ -20,13 +20,13 @@ msgstr ""
 "X-Generator: Weblate 4.15-dev\n"
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "Còpia '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Obre"
 
@@ -82,7 +82,7 @@ msgstr "Minivista"
 msgid "Set title"
 msgstr "Estableix títol"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Còpia"
 
@@ -935,28 +935,28 @@ msgstr "No s'ha pogut obtenir el directori de treball amb pid %i: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "No s'ha pogut carregar el directori de treball %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "format de selecció no permès '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Previsualitza"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "Copia ruta relativa"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "Copia ruta completa"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "Obre com a URL"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "No s'ha ubicat termpty"
 
@@ -1031,7 +1031,7 @@ msgstr "D'acord"
 msgid "Cancel"
 msgstr "Cancel·la"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "No s'ha pogut trobar el tema per a terminology. Heu oblidat l'ordre 'ninja "

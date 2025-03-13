@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2024-01-07 19:06+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
@@ -19,13 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.4-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "“%s” kopiëren"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "Openen"
 
@@ -46,12 +46,11 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Waarom zouden terminals saai moeten "
-"zijn?<br><br>Gemaakt voor Enlightenment, om EFL te kunnen benutten en de "
-"grenzen van een moderne terminalemulator te verleggen. We hopen dat u er "
-"plezier aan beleeft.<br><br>Copyright © 2012-%d:"
-"<br><br>%s<br><br>Uitgebracht onder de BSD-licentie (zie "
-"hieronder):<br><br>%s"
+"<b>Terminology %s</b><br>Waarom zouden terminals saai moeten zijn?"
+"<br><br>Gemaakt voor Enlightenment, om EFL te kunnen benutten en de grenzen "
+"van een moderne terminalemulator te verleggen. We hopen dat u er plezier aan "
+"beleeft.<br><br>Copyright © 2012-%d:<br><br>%s<br><br>Uitgebracht onder de "
+"BSD-licentie (zie hieronder):<br><br>%s"
 
 #: src/bin/colors.c:17
 msgid "Terminology's developers"
@@ -81,7 +80,7 @@ msgstr "Miniweergave"
 msgid "Set title"
 msgstr "Titel instellen"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "Kopiëren"
 
@@ -931,28 +930,28 @@ msgstr "De werkmap van pid %i kan niet worden opgehaald: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "De werkmap van %s kan niet worden geladen: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "Niet-ondersteunde selectie-opmaak ‘%s’"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "Voorvertoning"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "Relatieve locatie kopiëren"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "Volledige locatie kopiëren"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "Openen als url"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "termpty kan niet worden toegewezen"
 
@@ -1011,9 +1010,9 @@ msgid ""
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
 msgstr ""
-"De beeldgrootte-instellingen kunnen worden gewijzigd in de instellingen ("
-"klik met de rechtermuisknop op de terminal) →    Toolkit, of door middel van "
-"de opdracht <keyword>elementary_config</keyword>"
+"De beeldgrootte-instellingen kunnen worden gewijzigd in de instellingen "
+"(klik met de rechtermuisknop op de terminal) →    Toolkit, of door middel "
+"van de opdracht <keyword>elementary_config</keyword>"
 
 #: src/bin/win.c:2334
 msgid "Ecore IMF failed"
@@ -1027,7 +1026,7 @@ msgstr "Oké"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr ""
 "Het Terminology-thema is niet aangetroffen. Bent u ninja install vergeten?"

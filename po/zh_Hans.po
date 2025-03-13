@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2025-03-13 22:21+0100\n"
 "PO-Revision-Date: 2024-04-19 01:15+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
@@ -19,13 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 5.5-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
+#: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
 msgstr "复制 '%s'"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
 msgstr "打开"
 
@@ -79,7 +79,7 @@ msgstr "迷你视图"
 msgid "Set title"
 msgstr "设置标题"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
 msgid "Copy"
 msgstr "复制"
 
@@ -661,7 +661,8 @@ msgstr "高："
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
-msgstr "设置切换标签页时的动画时长，<br>通过按键绑定或在标签页<br>面板上滚动鼠标滚轮"
+msgstr ""
+"设置切换标签页时的动画时长，<br>通过按键绑定或在标签页<br>面板上滚动鼠标滚轮"
 
 #: src/bin/options_behavior.c:534
 msgid "Tab zoom/switch animation time:"
@@ -730,8 +731,8 @@ msgid ""
 "toolkit configuration settings can be accessed by running <keyword>%s</"
 "keyword>"
 msgstr ""
-"<em>Terminology</em> 使用 <hilight>elementary</hilight> 工具包。"
-"<br>工具包配置可以通过运行 <keyword>%s</keyword> 查看"
+"<em>Terminology</em> 使用 <hilight>elementary</hilight> 工具包。<br>工具包配"
+"置可以通过运行 <keyword>%s</keyword> 查看"
 
 #: src/bin/options_elm.c:134
 #, c-format
@@ -919,28 +920,28 @@ msgstr "无法获取pid %i 的工作目录: %s"
 msgid "Could not load working directory %s: %s"
 msgstr "无法加载工作目录 %s: %s"
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1247
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "不支持的所选格式'%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1407
 msgid "Preview"
 msgstr "预览"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1417
 msgid "Copy relative path"
 msgstr "复制相对路径"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1419
 msgid "Copy full path"
 msgstr "复制完整路径"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:2836
 msgid "Open as URL"
 msgstr "打开为 URL"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4279
 msgid "Could not allocate termpty"
 msgstr "无法分配 termpty"
 
@@ -998,7 +999,8 @@ msgid ""
 "The scale configuration can be changed in the Settings (right click on the "
 "terminal) →  Toolkit, or by starting the command <keyword>elementary_config</"
 "keyword>"
-msgstr "尺寸配置可在“设置（右键点击终端）→  工具包”中或执行命令 "
+msgstr ""
+"尺寸配置可在“设置（右键点击终端）→  工具包”中或执行命令 "
 "<keyword>elementary_config</keyword> 更改"
 
 #: src/bin/win.c:2334
@@ -1013,7 +1015,7 @@ msgstr "确定"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:7413
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "找不到 terminology 的主题！忘记了“ninja install”命令？"
 
