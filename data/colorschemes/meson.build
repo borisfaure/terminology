@@ -32,7 +32,7 @@ add_color_scheme_sh = find_program(
   'add_color_scheme.sh',
   native: false,
   required: true,
-  dirs: [join_paths(meson.source_root(), 'data', 'colorschemes')])
+  dirs: [join_paths(meson.project_source_root(), 'data', 'colorschemes')])
 
 cs_builder = [add_color_scheme_sh,
               eet_bin, '@OUTPUT@', '@INPUT@']

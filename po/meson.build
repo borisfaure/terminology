@@ -4,7 +4,7 @@ if get_option('nls')
     add_project_arguments('-DGETTEXT_PACKAGE="terminology"', language:'c')
     i18n.gettext(meson.project_name(),
           args: [
-            '--directory=' + meson.source_root(),
+            '--directory=' + meson.project_source_root(),
             '--keyword=_',
             '--keyword=d_:1',
             '--keyword=P_:1,2',
@@ -19,7 +19,7 @@ endif
 
 # maintainer shortcut for updating po stuff
 run_target ('po',
-  command: ['ninja', '-C', meson.build_root(),
+  command: ['ninja', '-C', meson.project_build_root(),
     meson.project_name() + '-pot',
     meson.project_name() + '-update-po']
   )

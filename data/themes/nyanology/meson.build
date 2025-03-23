@@ -1,9 +1,9 @@
 command = [edje_cc,
-           '-id', join_paths(meson.source_root(), 'data', 'themes',
+           '-id', join_paths(meson.project_source_root(), 'data', 'themes',
                              'nyanology', 'images'),
-           '-id', join_paths(meson.source_root(), 'data', 'themes', 'images'),
-           '-fd', join_paths(meson.source_root(), 'data', 'fonts'),
-           '-sd', join_paths(meson.source_root(), 'data', 'themes', 'sounds'),
+           '-id', join_paths(meson.project_source_root(), 'data', 'themes', 'images'),
+           '-fd', join_paths(meson.project_source_root(), 'data', 'fonts'),
+           '-sd', join_paths(meson.project_source_root(), 'data', 'themes', 'sounds'),
            '@INPUT@',
            '@OUTPUT@']
 

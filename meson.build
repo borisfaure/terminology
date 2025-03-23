@@ -1,7 +1,8 @@
 project('terminology', 'c',
         version: '1.13.0',
         default_options: ['buildtype=plain', 'c_std=gnu99'],
-        license: 'BSD')
+        license: 'BSD',
+        meson_version: '>=0.59.0')
 
 cc = meson.get_compiler('c')
 
@@ -78,10 +79,10 @@ foreach efl_dep: efl_deps
   dep = dependency(efl_dep, version: '>=' + efl_version)
   terminology_dependencies += [dep]
   if efl_dep == 'edje'
-    edje_cc_path = dep.get_pkgconfig_variable('prefix') + '/bin/edje_cc'
+    edje_cc_path = dep.get_variable(pkgconfig: 'prefix') + '/bin/edje_cc'
   endif
   if efl_dep == 'eet'
-    eet_path = dep.get_pkgconfig_variable('prefix') + '/bin/eet'
+    eet_path = dep.get_variable(pkgconfig: 'prefix') + '/bin/eet'
   endif
 endforeach
 
