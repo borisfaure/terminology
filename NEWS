@@ -1,6 +1,40 @@
 ==================
-Terminology 1.13.1
+Terminology 1.14.0
 ==================
+
+Changes since 1.13.0:
+---------------------
+
+Additions:
+    * New translations: Hungarian, Slovak
+    * Report or Set Selection through escape codes
+    * Handle Alternate Escape (7728)
+    * Handle Application Escape Code
+    * Add configuration whether emojis should be considered as double width.
+      Default is double width.
+    * Colorshemes: add GruvBox Material Dark
+
+Improvements:
+    * Translation updates for Chinese (Simplified), Catalan, Croatian, Dutch,
+      Finnish, French, Indonesian, Japanese, Lithuanian, Polish, Portuguese,
+      Portuguese (Brazil), Russian, Serbian, Spanish, Swedish, Turkish
+    * Unify format of responses to OSC 10, 11 and 12
+
+Fixes:
+    * Fix translucent background on startup
+    * Fix wheel events emitted even if wheel has not moved
+    * Do not use spaces when returning terminal name
+    * Colorschemes: ensure metadata.name and file name are the same
+    * Fix issue when exiting on *BSD
+    * Do not interpret "CSI = 5 u" as DECRC
+    * Handle empty CSI SRG 38/48
+    * Do not consider Key Resources as color
+
+Internal improvements:
+    * Build with Meson 0.59 or later
+    * Cleanup the code base about misuse of calloc()
+    * Testing on OSC 52
+
 
 Changes since 1.12.1:
 ---------------------
