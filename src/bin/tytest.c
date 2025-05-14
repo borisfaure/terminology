@@ -107,17 +107,17 @@ _run_tytests(int argc, char **argv)
 
 typedef struct tag_Termpty_Tests
 {
-   size_t backsize, backpos;
+   uint64_t backsize, backpos;
    Backlog_Beacon backlog_beacon;
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
    int w, h;
-   unsigned int altbuf     : 1;
-   unsigned int mouse_mode : 3;
-   unsigned int mouse_ext  : 2;
-   unsigned int bracketed_paste : 1;
-} Termpty_Tests;
+   uint64_t altbuf     : 1;
+   uint64_t mouse_mode : 3;
+   uint64_t mouse_ext  : 2;
+   uint64_t bracketed_paste : 1;
+} __attribute((__packed__)) Termpty_Tests;
 
 static void
 _termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
