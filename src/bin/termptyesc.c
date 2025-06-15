@@ -32,6 +32,7 @@
 #define ESC 033 // Escape
 #define CSI 0x9b
 #define OSC 0x9d
+#define APC 0x9f
 #define DEL 0x7f
 
 
@@ -4652,6 +4653,28 @@ err:
 }
 
 static int
+_handle_esc_apc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   const Eina_Unicode *cc = c;
+
+   while ((cc < ce - 1) && (*cc != ST) && ((*cc != ESC) || (*(cc + 1) != '\\')))
+     cc++;
+
+   if (*cc != ST)
+     cc++;
+
+   if ((*cc == ST) || ((cc > c) && (*(cc - 1) == ESC) && (*cc == '\\')))
+     {
+        WRN("unhandled application program command");
+        ty->decoding_error = EINA_TRUE;
+        cc++;
+        return cc - c;
+     }
+
+   return 0;
+}
+
+static int
 _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    Eina_Unicode *cc, *cc_zero = NULL;
@@ -4961,6 +4984,10 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len = _handle_esc_osc(ty, c + 1, ce);
         if (len == 0) return 0;
         return 1 + len;
+      case '_':
+        len = _handle_esc_apc(ty, c + 1, ce);
+        if (len == 0) return 0;
+        return 1 + len;
       case '}':
         len = _handle_esc_terminology(ty, c + 1, ce);
         if (len == 0) return 0;
@@ -5151,6 +5178,14 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len++;
         goto end;
      }
+   else if (c[0] == APC)
+     {
+        len = _handle_esc_apc(ty, c + 1, ce);
+        if (len == 0)
+          goto end;
+        len++;
+        goto end;
+     }
    else if ((ty->block.expecting) && (ty->block.on))
      {
         Termexp *ex;
@@ -5193,7 +5228,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 
    DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != DEL) && (*cc != CSI)
-          && (*cc != OSC))
+          && (*cc != OSC) && (*cc != APC))
      {
         DBG("%s", termptyesc_safechar(*cc));
         cc++;
