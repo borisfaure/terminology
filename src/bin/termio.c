@@ -2023,7 +2023,7 @@ _block_edje_message_cb(void *data,
    if ((!blk->chid) || (!sd->cur_chids)) return;
    EINA_LIST_FOREACH(sd->cur_chids, l, chid)
      {
-        if (!(!strcmp(blk->chid, chid))) break;
+        if (!strcmp(blk->chid, chid)) break;
         chid = NULL;
      }
    if (!chid) return;
