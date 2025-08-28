@@ -2386,7 +2386,7 @@ _block_edje_cmds(Termpty *ty, Termblock *blk, Eina_List *cmds, Eina_Bool created
                   blk->chid = eina_stringshare_add(chid);
                   termpty_block_chid_update(ty, blk);
                }
-             if (created)
+             if ((created) && (!blk->no_listen))
                {
                   edje_object_signal_callback_add(blk->obj, "*", "*",
                                                   _block_edje_signal_cb,
@@ -3968,6 +3968,21 @@ _smart_pty_command(void *data)
         else if (ty->cur_cmd[1] == 'e')
           {
              ty->block.on = EINA_FALSE;
+          }
+        else if (ty->cur_cmd[1] == 'x')
+          {
+             const char *chid = &(ty->cur_cmd[2]);
+             Termblock *blk = termpty_block_chid_get(ty, chid);
+
+             if (blk->edje)
+               {
+                  blk->no_listen = EINA_TRUE;
+                  edje_object_signal_callback_del(blk->obj, "*", "*",
+                                                  _block_edje_signal_cb);
+                  edje_object_message_handler_set(blk->obj,
+                                                  NULL,
+                                                  NULL);
+               }
           }
      }
    else if (ty->cur_cmd[0] == 'f') // file...

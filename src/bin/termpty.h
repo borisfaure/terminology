@@ -267,6 +267,8 @@ struct tag_Termblock
    unsigned char thumb : 1;
    unsigned char edje : 1;
 
+   unsigned char no_listen : 1;
+
    unsigned char active : 1;
    unsigned char was_active : 1;
    unsigned char was_active_before : 1;

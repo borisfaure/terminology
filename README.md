@@ -319,6 +319,11 @@ Examples:
   * `ie`
     end media replace sequence run
 
+  * `ix[chid]`
+    stops the given image/edje block with channel id "chid" from
+    listening to signals and messages. do this when you are done with
+    interacting with the chid identified element.
+
   * `fr[PATH/FILE]`
     begin file send for a file named `PATH` / `FILE`
 
