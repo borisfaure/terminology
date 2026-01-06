@@ -2,13 +2,13 @@
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-# Maite Guix <maite.guix@gmail.com>, 2022.
+# Maite Guix <maite.guix@gmail.com>, 2022, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-13 22:21+0100\n"
-"PO-Revision-Date: 2022-12-15 09:49+0000\n"
+"PO-Revision-Date: 2026-01-06 16:01+0000\n"
 "Last-Translator: Maite Guix <maite.guix@gmail.com>\n"
 "Language-Team: Catalan <https://hosted.weblate.org/projects/terminology/"
 "terminology/ca/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15-dev\n"
+"X-Generator: Weblate 5.15.1\n"
 "X-Launchpad-Export-Date: 2015-05-04 05:16+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
@@ -638,12 +638,11 @@ msgstr "Activa els codis d'escapament especials de Terminology"
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Habilita els codis d'escapada manipulant seleccions"
 
 #: src/bin/options_behavior.c:419
-#, fuzzy
 msgid "Always treat Emojis as double-width characters"
-msgstr "Tracta el Emojis com a caràcters de doble amplada"
+msgstr "Sempre tractar Emojis com a caràcters de doble amplada"
 
 #: src/bin/options_behavior.c:420
 msgid ""
