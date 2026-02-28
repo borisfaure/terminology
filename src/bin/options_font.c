@@ -69,7 +69,7 @@ _parse_font_name(const char *full_name,
    char buf[4096];
    size_t style_len = 0;
    size_t font_len = 0;
-   char *style = NULL;
+   const char *style = NULL;
    char *s;
    unsigned int len;
 
@@ -83,7 +83,7 @@ _parse_font_name(const char *full_name,
    if (style)
      font_len = (size_t)(style - full_name);
 
-   s = strchr(full_name, ',');
+   s = (char *)strchr(full_name, ',');
    if (s && style && s < style)
      font_len = s - full_name;
 
@@ -91,7 +91,7 @@ _parse_font_name(const char *full_name,
    if (style && strncmp(style, STYLE_STR, strlen(STYLE_STR)) == 0)
      {
         style += strlen(STYLE_STR);
-        s = strchr(style, ',');
+        s = (char *)strchr(style, ',');
         style_len = (s == NULL) ? strlen(style) : (size_t)(s - style);
      }
 

@@ -4000,7 +4000,7 @@ _smart_pty_command(void *data)
           }
         else if (ty->cur_cmd[1] == 'd') // data packet
           {
-             char *p = strchr(ty->cur_cmd, ' ');
+             const char *p = strchr(ty->cur_cmd, ' ');
              Eina_Bool valid = EINA_TRUE;
 
              if (p)
@@ -4139,8 +4139,8 @@ _smart_cb_drop(void *data,
         const char *p = ev->data;
         while (p)
           {
-             char *new_line = strchr(p, '\n');
-             char *carriage_return = strchr(p, '\r');
+             const char *new_line = strchr(p, '\n');
+             const char *carriage_return = strchr(p, '\r');
              if (new_line && carriage_return)
                {
                   if (carriage_return < new_line)
