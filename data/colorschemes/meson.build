@@ -13,6 +13,7 @@ colorschemes = [
   'Nord',
   'Ocean Dark',
   'One Dark',
+  'GruvBox Material Dark',
   'PaleNight',
   'PaperColor',
   'Smyck',
