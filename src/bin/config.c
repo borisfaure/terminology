@@ -580,7 +580,11 @@ config_new(void)
         config->erase_is_del = EINA_FALSE;
         config->custom_geometry = EINA_FALSE;
         config->drag_links = EINA_FALSE;
+#ifdef __APPLE__
+        config->login_shell = EINA_TRUE;
+#else
         config->login_shell = EINA_FALSE;
+#endif
         config->mouse_over_focus = EINA_TRUE;
         config->disable_focus_visuals = EINA_FALSE;
         config->colors_use = EINA_FALSE;
