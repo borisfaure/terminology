@@ -763,7 +763,10 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
        tc->is_focused = EINA_TRUE;
        tc->parent->focus(tc->parent, tc);
      }
-   tc->is_focused = EINA_TRUE;
+   else
+     {
+       tc->is_focused = EINA_TRUE;
+     }
    _focus_validator();
 }
 
@@ -5127,6 +5130,11 @@ _tabs_focus(Term_Container *tc, Term_Container *relative)
              if (config->tab_zoom >= 0.01 && !config->show_tabs)
                {
                   _cb_tab_selector_show(tabs, tab_item);
+                  /* During selector animation no tab owns focus.
+                   * Clear the flags so _focus_validator won't find
+                   * a stale focused solo while the selector is up. */
+                  relative->is_focused = EINA_FALSE;
+                  tc->is_focused = EINA_FALSE;
                   return;
                }
 
@@ -5153,7 +5161,17 @@ _tabs_unfocus(Term_Container *tc, Term_Container *relative)
 
    if (tc->parent == relative)
      {
-        tabs->current->tc->unfocus(tabs->current->tc, tc);
+        Eina_List *l;
+        Tab_Item *tab_item;
+
+        /* Unfocus all tab children, not just tabs->current, because
+         * during the tab selector animation tabs->current may be stale
+         * (not yet updated to the newly focused tab). */
+        EINA_LIST_FOREACH(tabs->tabs, l, tab_item)
+          {
+             if (tab_item->tc->is_focused)
+               tab_item->tc->unfocus(tab_item->tc, tc);
+          }
         tc->is_focused = EINA_FALSE;
      }
    else
