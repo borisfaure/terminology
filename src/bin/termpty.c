@@ -928,13 +928,18 @@ _termpty_cell_is_empty(const Termcell *cell)
 static Eina_Bool
 _termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
 {
-   ssize_t len;
+   static const Termcell zero_cells[8] = {{0}};
+   ssize_t pos;
 
-   for (len = nb_cells - 1; len >= 0; len--)
+   pos = nb_cells;
+
+   while (pos >= 8 &&
+          memcmp(&cells[pos - 8], zero_cells, 8 * sizeof(Termcell)) == 0)
+     pos -= 8;
+
+   for (pos = pos - 1; pos >= 0; pos--)
      {
-        const Termcell *cell = cells + len;
-
-        if (!_termpty_cell_is_empty(cell))
+        if (!_termpty_cell_is_empty(&cells[pos]))
           return EINA_FALSE;
      }
 
@@ -945,17 +950,25 @@ _termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
 ssize_t
 termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
-   ssize_t len;
+   static const Termcell zero_cells[8] = {{0}};
+   ssize_t pos;
 
-   if (!cells)
+   if (!cells || nb_cells <= 0)
      return 0;
 
-   for (len = nb_cells - 1; len >= 0; len--)
-     {
-        const Termcell *cell = cells + len;
+   pos = nb_cells;
 
-        if (!_termpty_cell_is_empty(cell))
-          return len + 1;
+   /* Fast scan: skip trailing chunks of 8 zero cells at a time.
+    * glibc memcmp uses AVX2 for 96-byte comparisons. */
+   while (pos >= 8 &&
+          memcmp(&cells[pos - 8], zero_cells, 8 * sizeof(Termcell)) == 0)
+     pos -= 8;
+
+   /* Per-cell scan through the remaining tail */
+   for (pos = pos - 1; pos >= 0; pos--)
+     {
+        if (!_termpty_cell_is_empty(&cells[pos]))
+          return pos + 1;
      }
 
    return 0;
