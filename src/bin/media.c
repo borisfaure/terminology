@@ -1527,7 +1527,12 @@ media_unknown_handle(const char *handler, const char *src)
    const char *cmd;
    char buf[PATH_MAX];
    char *escaped;
+#ifdef __APPLE__
+   cmd = "open";
+#else
    cmd = "xdg-open";
+#endif
+
    escaped = ecore_file_escape_name(src);
    if (!escaped)
      return;

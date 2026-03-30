@@ -780,7 +780,11 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         const char *p = s;
 
         // run mail client
+#ifdef __APPLE__
+        cmd = "open";
+#else
         cmd = "xdg-email";
+#endif
 
         if ((config->helper.email) &&
             (config->helper.email[0]))
@@ -799,7 +803,11 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    else if (path)
      {
         // locally accessible file
+#ifdef __APPLE__
+        cmd = "open";
+#else
         cmd = "xdg-open";
+#endif
 
         escaped = ecore_file_escape_name(path);
         if (escaped)
@@ -851,7 +859,11 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
    else if (url)
      {
         // remote file needs ecore-con-url
+#ifdef __APPLE__
+        cmd = "open";
+#else
         cmd = "xdg-open";
+#endif
 
         escaped = ecore_file_escape_name(s);
         if (escaped)

@@ -36,7 +36,11 @@ _run_url(const About_Ctx *ctx,
          const char *url)
 {
    char buf[PATH_MAX];
+#ifdef __APPLE__
+   const char *cmd = "open";
+#else
    const char *cmd = "xdg-open";
+#endif
 
    if (ctx->config && ctx->config->helper.url.general &&
        ctx->config->helper.url.general[0])

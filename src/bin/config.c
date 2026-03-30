@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 27
+#define CONF_VER 28
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -543,6 +543,15 @@ config_new(void)
         config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
         config->font.bolditalic = EINA_TRUE;
+#ifdef __APPLE__
+        config->helper.email = eina_stringshare_add("open");
+        config->helper.url.general = eina_stringshare_add("open");
+        config->helper.url.video = eina_stringshare_add("open");
+        config->helper.url.image = eina_stringshare_add("open");
+        config->helper.local.general = eina_stringshare_add("open");
+        config->helper.local.video = eina_stringshare_add("open");
+        config->helper.local.image = eina_stringshare_add("open");
+#else
         config->helper.email = eina_stringshare_add("xdg-email");
         config->helper.url.general = eina_stringshare_add("xdg-open");
         config->helper.url.video = eina_stringshare_add("xdg-open");
@@ -550,6 +559,7 @@ config_new(void)
         config->helper.local.general = eina_stringshare_add("xdg-open");
         config->helper.local.video = eina_stringshare_add("xdg-open");
         config->helper.local.image = eina_stringshare_add("xdg-open");
+#endif
         config->helper.inline_please = EINA_TRUE;
         config->scrollback = 2000;
         config->theme = eina_stringshare_add("default.edj");
@@ -788,7 +798,34 @@ config_load(void)
                   config->selection_escapes = EINA_TRUE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 27 */
+                case 27:
+#ifdef __APPLE__
+                  /* migrate xdg-open/xdg-email to macOS "open" command */
+                  if (config->helper.email &&
+                      !strcmp(config->helper.email, "xdg-email"))
+                    eina_stringshare_replace(&config->helper.email, "open");
+                  if (config->helper.url.general &&
+                      !strcmp(config->helper.url.general, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.url.general, "open");
+                  if (config->helper.url.video &&
+                      !strcmp(config->helper.url.video, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.url.video, "open");
+                  if (config->helper.url.image &&
+                      !strcmp(config->helper.url.image, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.url.image, "open");
+                  if (config->helper.local.general &&
+                      !strcmp(config->helper.local.general, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.local.general, "open");
+                  if (config->helper.local.video &&
+                      !strcmp(config->helper.local.video, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.local.video, "open");
+                  if (config->helper.local.image &&
+                      !strcmp(config->helper.local.image, "xdg-open"))
+                    eina_stringshare_replace(&config->helper.local.image, "open");
+#endif
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 28 */
                   config->version = CONF_VER;
                   break;
                 default:
