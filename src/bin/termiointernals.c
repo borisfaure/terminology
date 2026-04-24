@@ -2404,6 +2404,7 @@ termio_internal_render(Termio *sd,
    int sel_start_x = 0, sel_start_y = 0, sel_end_x = 0, sel_end_y = 0;
    Termblock *blk;
    Eina_List *l;
+   Eina_Bool has_blocks = (sd->pty->block.blocks != NULL);
 
    EINA_LIST_FOREACH(sd->pty->block.active, l, blk)
      {
@@ -2553,9 +2554,10 @@ termio_internal_render(Termio *sd,
                }
              else
                {
-                  int bid, bx = 0, by = 0;
+                  int bid = -1, bx = 0, by = 0;
 
-                  bid = termpty_block_id_get(&(cells[x]), &bx, &by);
+                  if (EINA_UNLIKELY(has_blocks))
+                    bid = termpty_block_id_get(&(cells[x]), &bx, &by);
                   if (bid >= 0)
                     {
                        if (ch1 < 0)
