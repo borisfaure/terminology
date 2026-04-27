@@ -253,9 +253,15 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
      }
 }
 
+/* Forward declaration: defined in the Synchronized Output section below. */
+static void _sync_output_end(Termpty *ty);
+
 static void
 _switch_to_alternative_screen(Termpty *ty, int mode)
 {
+   /* An alt-buffer switch invalidates the sync window; the app will re-bracket. */
+   if (ty->sync_output.active)
+     _sync_output_end(ty);
    // swap screen content now
    if (mode != ty->altbuf)
      termpty_screen_swap(ty);
@@ -278,6 +284,86 @@ _move_cursor_to_origin(Termpty *ty)
     }
 }
 
+
+/* --- Synchronized Output (DECSET/DECRST 2026) helpers --- */
+
+static void
+_sync_output_end(Termpty *ty)
+{
+   if (!ty->sync_output.active) return;
+
+   /* Drop active first: accessor calls during teardown fall through to live. */
+   ty->sync_output.active = EINA_FALSE;
+   if (ty->sync_output.watchdog)
+     {
+        ecore_timer_del(ty->sync_output.watchdog);
+        ty->sync_output.watchdog = NULL;
+     }
+   termpty_sync_output_snapshot_free(ty);
+   /* Nudge the change pipeline so the renderer paints the now-live cells. */
+   if (ty->cb.change.func)
+     ty->cb.change.func(ty->cb.change.data);
+}
+
+static Eina_Bool
+_sync_output_watchdog_cb(void *data)
+{
+   Termpty *ty = data;
+
+   WRN("Synchronized Output watchdog fired — ESU missing after 150 ms, "
+       "forcing render (mode 2026)");
+   ty->sync_output.watchdog = NULL; /* timer owns itself; NULL before _end */
+   _sync_output_end(ty);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_sync_output_begin(Termpty *ty)
+{
+   if (ty->sync_output.active)
+     {
+        /* Nested BSU: ignore but reset the watchdog deadline. */
+        if (ty->sync_output.watchdog)
+          ecore_timer_reset(ty->sync_output.watchdog);
+        return;
+     }
+
+   {
+      int y;
+      Termcell **rows = calloc(ty->h, sizeof(Termcell *));
+      if (!rows)
+        {
+           /* Allocation failure: skip sync, render live. */
+           return;
+        }
+      for (y = 0; y < ty->h; y++)
+        {
+           Termcell *snap = malloc(ty->w * sizeof(Termcell));
+           if (!snap)
+             {
+                /* Partial snapshot: free what we have and bail out. */
+                int k;
+                for (k = 0; k < y; k++) free(rows[k]);
+                free(rows);
+                return;
+             }
+           /* Snapshot row y from the live circular screen buffer. */
+           memcpy(snap, &(TERMPTY_SCREEN(ty, 0, y)), ty->w * sizeof(Termcell));
+           rows[y] = snap;
+        }
+      ty->sync_output.shadow_rows = rows;
+   }
+   ty->sync_output.shadow_h = ty->h;
+   ty->sync_output.shadow_w = ty->w;
+   ty->sync_output.shadow_cur_x = ty->cursor_state.cx;
+   ty->sync_output.shadow_cur_y = ty->cursor_state.cy;
+   ty->sync_output.shadow_cur_hidden = ty->termstate.hide_cursor;
+   ty->sync_output.active = EINA_TRUE;
+   ty->sync_output.watchdog =
+      ecore_timer_add(0.150, _sync_output_watchdog_cb, ty);
+}
+
+/* --------------------------------------------------------- */
 
 static void
 _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
@@ -539,6 +625,12 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    break;
                 case 2004:
                    ty->bracketed_paste = mode;
+                   break;
+                case 2026: /* Synchronized Output (BSU/ESU) */
+                   if (mode)
+                     _sync_output_begin(ty);
+                   else
+                     _sync_output_end(ty);
                    break;
                 case 7700: // ignore
                    WRN("TODO: ambiguous width reporting %i", mode);
@@ -3569,6 +3661,31 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           {
              DBG("soft reset (DECSTR)");
              termpty_soft_reset_state(ty);
+          }
+        else if (*(cc-1) == '$' && b && *b == '?')
+          {
+             /* DECRQM — DEC Request Mode (private).
+              * Parse ?<mode>$p and reply \e[?<mode>;<status>$y
+              * Status: 1 = set, 2 = reset, 0 = not recognized.
+              */
+             char bf[32];
+             int len, qarg;
+             b++; /* skip '?' */
+             qarg = _csi_arg_get(ty, &b);
+             if (qarg < 0) break; /* malformed: no response */
+             if (qarg == 2026)
+               {
+                  /* Known mode: report current state */
+                  len = snprintf(bf, sizeof(bf), "\033[?2026;%d$y",
+                                 ty->sync_output.active ? 1 : 2);
+                  termpty_write(ty, bf, len);
+               }
+             else
+               {
+                  /* Unknown/unrecognized mode: report 0 */
+                  len = snprintf(bf, sizeof(bf), "\033[?%d;0$y", qarg);
+                  termpty_write(ty, bf, len);
+               }
           }
         else
           {

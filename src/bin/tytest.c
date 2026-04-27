@@ -43,6 +43,11 @@ static struct {
        { "extn_matching", tytest_extn_matching},
        { "base64", tytest_base64},
        { "shell_quote", tytest_shell_quote},
+       { "sync_frame_coherence", tytest_sync_frame_coherence},
+       { "sync_watchdog_teardown", tytest_sync_watchdog_teardown},
+       { "sync_nested", tytest_sync_nested},
+       { "sync_resize", tytest_sync_resize},
+       { "sync_soft_reset", tytest_sync_soft_reset},
        { NULL, NULL},
 };
 

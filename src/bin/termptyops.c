@@ -456,6 +456,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
+   termpty_sync_output_reset(ty);
 
    termio_reset_main_colors(ty->obj);
    termpty_clear_tabs_on_screen(ty);

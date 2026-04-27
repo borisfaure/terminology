@@ -3181,6 +3181,21 @@ _smart_apply(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
 
+   /* Set cursor base position before rendering so that the preedit overlay
+    * in termio_internal_render uses the right (snapshot vs live) coordinates
+    * as its starting point.  During sync the preedit must be anchored to the
+    * snapshot cursor, not the live cursor that may have advanced past it. */
+   if (sd->pty->sync_output.active)
+     {
+        sd->cursor.x = sd->pty->sync_output.shadow_cur_x;
+        sd->cursor.y = sd->pty->sync_output.shadow_cur_y;
+     }
+   else
+     {
+        sd->cursor.x = sd->pty->cursor_state.cx;
+        sd->cursor.y = sd->pty->cursor_state.cy;
+     }
+
    termio_internal_render(sd,
                           ox, oy,
                           &preedit_x, &preedit_y);
@@ -3195,12 +3210,23 @@ _smart_apply(Evas_Object *obj)
                (sd->pty->block.active, l);
           }
      }
-   if ((sd->scroll != 0) || (sd->pty->termstate.hide_cursor))
-     evas_object_hide(sd->cursor.obj);
+   if (sd->pty->sync_output.active)
+     {
+        /* During sync: present the pre-BSU cursor position. */
+        if ((sd->scroll != 0) || (sd->pty->sync_output.shadow_cur_hidden))
+          evas_object_hide(sd->cursor.obj);
+        else
+          evas_object_show(sd->cursor.obj);
+        /* sd->cursor.x/y already set to snapshot values above. */
+     }
    else
-     evas_object_show(sd->cursor.obj);
-   sd->cursor.x = sd->pty->cursor_state.cx;
-   sd->cursor.y = sd->pty->cursor_state.cy;
+     {
+        if ((sd->scroll != 0) || (sd->pty->termstate.hide_cursor))
+          evas_object_hide(sd->cursor.obj);
+        else
+          evas_object_show(sd->cursor.obj);
+        /* sd->cursor.x/y already set to live values above. */
+     }
    evas_object_move(sd->cursor.obj,
                     ox + ((sd->cursor.x + preedit_x) * sd->font.chw),
                     oy + ((sd->cursor.y + preedit_y) * sd->font.chh));
@@ -3364,7 +3390,7 @@ void
 termio_smart_update_queue(Termio *sd)
 {
    if (sd->anim)
-       return;
+     return;
    sd->anim = ecore_animator_add(_smart_cb_change, sd->self);
 }
 

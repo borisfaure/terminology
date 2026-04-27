@@ -20,5 +20,10 @@ int tytest_color_parse_css_hsl(void);
 int tytest_extn_matching(void);
 int tytest_base64(void);
 int tytest_shell_quote(void);
+int tytest_sync_frame_coherence(void);
+int tytest_sync_watchdog_teardown(void);
+int tytest_sync_nested(void);
+int tytest_sync_resize(void);
+int tytest_sync_soft_reset(void);
 
 #endif

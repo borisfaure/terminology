@@ -830,6 +830,24 @@ err:
 }
 
 void
+termpty_sync_output_snapshot_free(Termpty *ty)
+{
+   int y;
+
+   if (!ty->sync_output.shadow_rows)
+     return;
+   for (y = 0; y < ty->sync_output.shadow_h; y++)
+     {
+        free(ty->sync_output.shadow_rows[y]);
+        ty->sync_output.shadow_rows[y] = NULL;
+     }
+   free(ty->sync_output.shadow_rows);
+   ty->sync_output.shadow_rows = NULL;
+   ty->sync_output.shadow_h = 0;
+   ty->sync_output.shadow_w = 0;
+}
+
+void
 termpty_free(Termpty *ty)
 {
    Termexp *ex;
@@ -880,6 +898,14 @@ termpty_free(Termpty *ty)
              ty->pid = -1;
           }
      }
+   /* Reset active first so accessor fall-through during teardown is safe. */
+   ty->sync_output.active = EINA_FALSE;
+   if (ty->sync_output.watchdog)
+     {
+        ecore_timer_del(ty->sync_output.watchdog);
+        ty->sync_output.watchdog = NULL;
+     }
+   termpty_sync_output_snapshot_free(ty);
    if (ty->hand_exe_exit)
      ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd)
@@ -907,6 +933,20 @@ termpty_free(Termpty *ty)
    free(ty->tabs);
    ty_sb_free(&ty->write_buffer);
    free(ty);
+}
+
+void
+termpty_sync_output_reset(Termpty *ty)
+{
+   /* active must go FALSE before freeing the snapshot so that any accessor
+    * call during teardown falls through to the live path. */
+   ty->sync_output.active = EINA_FALSE;
+   if (ty->sync_output.watchdog)
+     {
+        ecore_timer_del(ty->sync_output.watchdog);
+        ty->sync_output.watchdog = NULL;
+     }
+   termpty_sync_output_snapshot_free(ty);
 }
 
 void
@@ -1180,6 +1220,32 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
    return _termpty_cellrow_from_beacon_get(ty, y_requested, wret);
 }
 
+/* Read accessor: returns the snapshot row during a sync window (pre-BSU state),
+ * or the live row otherwise.  Renderer always calls this. */
+const Termcell *
+termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
+{
+   if (ty->sync_output.active &&
+       ty->sync_output.shadow_rows &&
+       y_requested >= 0 &&
+       y_requested < ty->sync_output.shadow_h)
+     {
+        if (wret)
+          *wret = termpty_line_length(ty->sync_output.shadow_rows[y_requested],
+                                     ty->sync_output.shadow_w);
+        return ty->sync_output.shadow_rows[y_requested];
+     }
+   return _termpty_cellrow_live_get(ty, y_requested, wret);
+}
+
+/* Write accessor: always returns the live (mutable) row.
+ * Snapshot was taken eagerly at BSU, so no per-write COW is needed here. */
+Termcell *
+termpty_cellrow_get_writeable(Termpty *ty, int y_requested, ssize_t *wret)
+{
+   return _termpty_cellrow_live_get(ty, y_requested, wret);
+}
+
 /* @requested_y unit is in visual lines on the screen */
 Termcell *
 termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
@@ -1356,6 +1422,10 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    int altbuf = 0;
    struct screen_info new_si = {.screen = NULL};
    if ((ty->w == new_w) && (ty->h == new_h)) return;
+
+   /* A resize invalidates any in-flight sync window; the app will re-bracket. */
+   if (ty->sync_output.active)
+     termpty_sync_output_reset(ty);
 
    termpty_backlog_lock();
 
@@ -1801,3 +1871,233 @@ term_link_free(Termpty *ty, Term_Link *link)
    /* Remove from bitmap */
    hl_bitmap_clear_bit(ty, id);
 }
+
+#if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
+
+/* Feed a NUL-terminated ASCII string as if the PTY sent it. */
+static void
+_ty_feed(Termpty *ty, const char *str)
+{
+   Eina_Unicode buf[256];
+   int i, j = 0;
+
+   for (i = 0; str[i] && j < 255; i++, j++)
+     buf[j] = (unsigned char)str[i];
+   buf[j] = 0;
+   termpty_handle_buf(ty, buf, j);
+}
+
+/* Minimal Termpty allocator for unit tests — no fd, no EFL object.
+ * Requires eina+ecore init so that ecore_timer_add (watchdog) works. */
+static void
+_ty_test_init(Termpty *ty, int w, int h)
+{
+   eina_init();
+   ecore_init();
+
+   memset(ty, 0, sizeof(*ty));
+   ty->w = w;
+   ty->h = h;
+   ty->fd = -1;
+   ty->slavefd = -1;
+   ty->pid = -1;
+   ty->backsize = 50;
+   termpty_resize_tabs(ty, 0, w);
+   termpty_reset_state(ty);
+   ty->screen  = calloc(1, sizeof(Termcell) * w * h);
+   ty->screen2 = calloc(1, sizeof(Termcell) * w * h);
+   ty->hl.bitmap = calloc(1, HL_LINKS_MAX / 8);
+   ty->hl.bitmap[0] = 1; /* id 0 reserved */
+   assert(ty->screen && ty->screen2 && ty->hl.bitmap);
+}
+
+static void
+_ty_test_shutdown(Termpty *ty)
+{
+   termpty_sync_output_reset(ty);
+   termpty_backlog_free(ty);
+   free(ty->screen);
+   free(ty->screen2);
+   free(ty->tabs);
+   free(ty->hl.bitmap);
+   free(ty->buf);
+
+   ecore_shutdown();
+   eina_shutdown();
+}
+
+/* Helper: read codepoint of cell (x,y) via the read accessor. */
+static Eina_Unicode
+_ty_cell_cp(Termpty *ty, int x, int y)
+{
+   ssize_t w = 0;
+   const Termcell *cells = termpty_cellrow_get(ty, y, &w);
+   if (!cells || x >= w) return 0;
+   return cells[x].codepoint;
+}
+
+/* Test 1: Frame coherence.
+ * BSU; write "foo"; ESU.  The read accessor must return the pre-BSU (blank)
+ * row until ESU is received, and the live "foo" after. */
+int
+tytest_sync_frame_coherence(void)
+{
+   Termpty ty;
+   const Termcell *row;
+   ssize_t w = 0;
+
+   _ty_test_init(&ty, 80, 24);
+
+   /* Pre-BSU: row 0 is blank. */
+   row = termpty_cellrow_get(&ty, 0, &w);
+   assert(row);
+   assert(row[0].codepoint == 0);
+
+   /* Begin Synchronized Update. */
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   assert(ty.sync_output.shadow_rows != NULL);
+
+   /* Write "foo" to row 0.  Writes to live row; the eager snapshot taken at BSU is unaffected. */
+   _ty_feed(&ty, "\r\x1b[2Kfoo");
+
+   /* Renderer sees old blank row (snapshot). */
+   row = termpty_cellrow_get(&ty, 0, &w);
+   assert(row);
+   assert(row[0].codepoint == 0); /* snapshot: still blank */
+
+   /* Writeable accessor sees live row with 'f'. */
+   {
+      Termcell *live = termpty_cellrow_get_writeable(&ty, 0, &w);
+      assert(live);
+      assert(live[0].codepoint == 'f');
+   }
+
+   /* End Synchronized Update. */
+   _ty_feed(&ty, "\x1b[?2026l");
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.shadow_rows == NULL);
+
+   /* After ESU the read accessor returns the live row. */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'f');
+   assert(_ty_cell_cp(&ty, 1, 0) == 'o');
+   assert(_ty_cell_cp(&ty, 2, 0) == 'o');
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 2: Watchdog teardown.
+ * BSU + partial write, then force watchdog expiry by calling reset directly.
+ * Snapshot freed, no leaks, subsequent read returns live (partial) state. */
+int
+tytest_sync_watchdog_teardown(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   _ty_feed(&ty, "\r\x1b[2Kpartial");
+
+   /* Simulate watchdog by calling reset (same effect as timer firing). */
+   termpty_sync_output_reset(&ty);
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.shadow_rows == NULL);
+   assert(ty.sync_output.watchdog == NULL);
+
+   /* Live state has the partial write. */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'p');
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 3: Nested ESU/BSU.
+ * BSU "A" ESU "B" BSU "C" ESU.  After first ESU the renderer sees "A".
+ * After second ESU it sees "A...B...C" (all live). */
+int
+tytest_sync_nested(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   /* First sync window: write 'A' to col 0. */
+   _ty_feed(&ty, "\x1b[?2026h");
+   _ty_feed(&ty, "\r\x1b[2KA");
+
+   /* Renderer still sees blank (snapshot). */
+   assert(_ty_cell_cp(&ty, 0, 0) == 0);
+
+   _ty_feed(&ty, "\x1b[?2026l"); /* ESU */
+   assert(ty.sync_output.active == EINA_FALSE);
+   /* Now renderer sees live: "A". */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'A');
+
+   /* Write "B" outside sync (visible immediately). */
+   _ty_feed(&ty, "\x1b[2GB"); /* cursor to col 2, write 'B' */
+
+   /* Second sync window: write 'C' at col 4. */
+   _ty_feed(&ty, "\x1b[?2026h");
+   _ty_feed(&ty, "\x1b[4GC");
+
+   /* Renderer still sees pre-second-BSU state: 'A'@0, 'B'@1, nothing at 3. */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'A');
+   assert(_ty_cell_cp(&ty, 3, 0) == 0);
+
+   _ty_feed(&ty, "\x1b[?2026l"); /* second ESU */
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(_ty_cell_cp(&ty, 1, 0) == 'B'); /* inter-window write survives second snapshot/restore */
+   assert(_ty_cell_cp(&ty, 3, 0) == 'C');
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 4: Resize during sync.
+ * BSU + writes + termpty_resize.  Snapshot freed, sync inactive. */
+int
+tytest_sync_resize(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   _ty_feed(&ty, "\r\x1b[2Khello");
+
+   /* Resize invalidates the sync window. */
+   termpty_resize(&ty, 40, 24);
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.shadow_rows == NULL);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 5: Soft reset during sync.
+ * BSU + writes + DECSTR (\e[!p). Snapshot freed. */
+int
+tytest_sync_soft_reset(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   _ty_feed(&ty, "\r\x1b[2Kworld");
+
+   /* DECSTR — soft reset. */
+   _ty_feed(&ty, "\x1b[!p");
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.shadow_rows == NULL);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+#endif /* BINARY_TYFUZZ || BINARY_TYTEST */

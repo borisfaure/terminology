@@ -156,6 +156,15 @@ struct tag_Termpty
       } change, set_title, set_icon, cancel_sel, exited, bell, command;
    } cb;
    struct {
+      Ecore_Timer *watchdog;
+      Termcell   **shadow_rows;     /* size shadow_h, each entry NULL or malloc'd row copy */
+      int          shadow_h;
+      int          shadow_w;
+      int          shadow_cur_x, shadow_cur_y;
+      Eina_Bool    shadow_cur_hidden : 1;
+      Eina_Bool    active : 1;
+   } sync_output;
+   struct {
       const char *icon;
       /* dynamic title set by xterm, keep it in case user don't want a
        * title any more by setting a empty title
@@ -291,6 +300,9 @@ Termpty   *termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
                        int w, int h, Config *config, const char *title,
                        Ecore_Window window_id);
 void       termpty_free(Termpty *ty);
+void       termpty_sync_output_reset(Termpty *ty);
+/* private — called from termptyesc.c _sync_output_end only */
+void       termpty_sync_output_snapshot_free(Termpty *ty);
 void       termpty_config_update(Termpty *ty, Config *config);
 
 Termcell  *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
