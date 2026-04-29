@@ -1807,7 +1807,7 @@ _hyperlink_mouseover(Termio *sd,
    termpty_backscroll_adjust(sd->pty, &sd->scroll);
    for (y = 0; y < sd->grid.h; y++)
      {
-        Termcell *cells;
+        const Termcell *cells;
         Evas_Object *o;
         ssize_t w = 0;
         int start_x = -1;
@@ -1820,7 +1820,7 @@ _hyperlink_mouseover(Termio *sd,
           continue;
         for (x = 0; x < w; x++)
           {
-             Termcell *c = cells + x;
+             const Termcell *c = cells + x;
              if (term_link_eq(sd->pty, hl, c->att.link_id))
                {
                   if (!o)

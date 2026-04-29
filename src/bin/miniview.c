@@ -555,7 +555,7 @@ _deferred_renderer(void *data)
 
    for (y = 0; y < mv->img_h; y++)
      {
-        Termcell *cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
+        const Termcell *cells = termpty_cellrow_get(ty, mv->img_hist + y, &wret);
 
         if (!cells)
           break;

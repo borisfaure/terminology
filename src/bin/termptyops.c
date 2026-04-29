@@ -498,6 +498,8 @@ termpty_move_cursor(Termpty *ty, int cx, int cy)
 {
    int cur_cx = ty->cursor_state.cx;
    int cur_cy = ty->cursor_state.cy;
+   /* Use the writeable (live) accessor: autowrapped is a parser-semantic flag
+    * that must reflect the current live state, not any sync snapshot. */
    Termcell *cells;
    ssize_t wlen;
    int n_to_down = 0;
@@ -509,7 +511,7 @@ termpty_move_cursor(Termpty *ty, int cx, int cy)
         if (cur_cy < cy)
           {
              /* go down */
-             cells = termpty_cellrow_get(ty, cur_cy, &wlen);
+             cells = termpty_cellrow_get_writeable(ty, cur_cy, &wlen);
              assert(cells);
              if (cells[wlen-1].att.autowrapped)
                {
@@ -524,7 +526,7 @@ termpty_move_cursor(Termpty *ty, int cx, int cy)
         else
           {
              /* go up */
-             cells = termpty_cellrow_get(ty, cur_cy - 1, &wlen);
+             cells = termpty_cellrow_get_writeable(ty, cur_cy - 1, &wlen);
              assert(cells);
              if (cells[wlen-1].att.autowrapped)
                {

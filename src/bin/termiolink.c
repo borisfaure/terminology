@@ -243,7 +243,7 @@ link_is_file(const char *str)
 static int
 _txt_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp, int *codepointp)
 {
-   Termcell *cells = NULL;
+   const Termcell *cells = NULL;
    Termcell cell;
    ssize_t w;
 
@@ -292,7 +292,7 @@ static int
 _txt_prev_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
              int *codepointp)
 {
-   Termcell *cells = NULL;
+   const Termcell *cells = NULL;
    Termcell cell;
    ssize_t w;
 
@@ -367,7 +367,7 @@ static int
 _txt_next_at(Termpty *ty, int *x, int *y, char *txt, int *txtlenp,
              int *codepointp)
 {
-   Termcell *cells = NULL;
+   const Termcell *cells = NULL;
    Termcell cell;
    ssize_t w;
 

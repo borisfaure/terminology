@@ -305,9 +305,10 @@ void       termpty_sync_output_reset(Termpty *ty);
 void       termpty_sync_output_snapshot_free(Termpty *ty);
 void       termpty_config_update(Termpty *ty, Config *config);
 
-Termcell  *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
-Termcell * termpty_cell_get(Termpty *ty, int y_requested, int x_requested);
-ssize_t termpty_row_length(Termpty *ty, int y);
+const Termcell *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
+Termcell       *termpty_cellrow_get_writeable(Termpty *ty, int y, ssize_t *wret);
+Termcell       *termpty_cell_get(Termpty *ty, int y_requested, int x_requested);
+ssize_t         termpty_row_length(Termpty *ty, int y);
 
 #define TERMPTY_WRITE_STR(S_) \
    termpty_write(ty, S_, strlen(S_))
@@ -433,7 +434,7 @@ term_link_eq(Termpty *ty, Term_Link *hl, uint16_t link_id)
 }
 
 static inline void
-termpty_cell_fill(Termpty *ty, Termcell *src, Termcell *dst, int n)
+termpty_cell_fill(Termpty *ty, const Termcell *src, Termcell *dst, int n)
 {
    int i;
 

@@ -1073,7 +1073,7 @@ ssize_t
 termpty_row_length(Termpty *ty, int y)
 {
    ssize_t wret;
-   Termcell *cells = termpty_cellrow_get(ty, y, &wret);
+   const Termcell *cells = termpty_cellrow_get(ty, y, &wret);
 
    if (!cells)
      return 0;

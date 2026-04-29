@@ -328,7 +328,7 @@ _handle_link(Termpty *ty, const Eina_Unicode *buf)
         Termcell *cells = NULL;
         ssize_t w;
 
-        cells = termpty_cellrow_get(ty, sd->mouse.cy, &w);
+        cells = termpty_cellrow_get_writeable(ty, sd->mouse.cy, &w);
         termpty_reset_att(&cells[sd->mouse.cx].att);
         cells[sd->mouse.cx].att.bold = 1;
         cells[sd->mouse.cx].att.fg = COL_WHITE;

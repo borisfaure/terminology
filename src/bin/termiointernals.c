@@ -37,7 +37,7 @@ termio_selection_get(Termio *sd,
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
-        Termcell *cells;
+        const Termcell *cells;
         ssize_t w;
         int last0, v, start_x, end_x;
 
@@ -274,7 +274,7 @@ _sel_codepoints_get(const Termio *sd,
    termpty_backlog_lock();
    for (y = c1y; y <= c2y; y++)
      {
-        Termcell *cells;
+        const Termcell *cells;
         ssize_t w = 0;
         int start_x, end_x;
 
@@ -824,7 +824,7 @@ static void
 _trim_sel_word(Termio *sd)
 {
    Termpty *pty = sd->pty;
-   Termcell *cells;
+   const Termcell *cells;
    int start = 0, end = 0, y = 0;
    ssize_t w;
 
@@ -893,7 +893,7 @@ _trim_sel_word(Termio *sd)
 static void
 _sel_word(Termio *sd, int cx, int cy)
 {
-   Termcell *cells;
+   const Termcell *cells;
    int x, y;
    ssize_t w = 0;
    Eina_Bool done = EINA_FALSE;
@@ -951,7 +951,7 @@ _sel_word(Termio *sd, int cx, int cy)
           }
         if (!done)
           {
-             Termcell *old_cells = cells;
+             const Termcell *old_cells = cells;
              size_t old_w = w;
 
              cells = termpty_cellrow_get(sd->pty, y - 1, &w);
@@ -1361,7 +1361,7 @@ termio_selection_dbl_fix(Termio *sd)
 {
    int start_x, start_y, end_x, end_y;
    ssize_t w = 0;
-   Termcell *cells;
+   const Termcell *cells;
    /* Only change the end position */
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
@@ -2430,7 +2430,7 @@ termio_internal_render(Termio *sd,
    /* Look at every visible line */
    for (y = 0; y < sd->grid.h; y++)
      {
-        Termcell *cells;
+        const Termcell *cells;
         Evas_Textgrid_Cell *tc;
         Eina_Unicode *cp = NULL;
         int cur_sel_start_x = -1, cur_sel_end_x = -1;
