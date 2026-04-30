@@ -2,9 +2,11 @@
 
 #include <Elementary.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "about.h"
 #include "config.h"
 #include "termio.h"
+#include "utils.h"
 
 #define TWITTER_HANDLE  "@_Terminology_"
 #define YOUTUBE_URL "https://www.youtube.com/channel/UCZ2iBYbbxvcZfcUmnz-rmlQ"
@@ -36,6 +38,7 @@ _run_url(const About_Ctx *ctx,
          const char *url)
 {
    char buf[PATH_MAX];
+   char *quoted;
 #ifdef __APPLE__
    const char *cmd = "open";
 #else
@@ -46,7 +49,10 @@ _run_url(const About_Ctx *ctx,
        ctx->config->helper.url.general[0])
      cmd = ctx->config->helper.url.general;
 
-   snprintf(buf, sizeof(buf), "%s %s", cmd, url);
+   quoted = shell_quote(url);
+   if (!quoted) return;
+   snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
+   free(quoted);
    ecore_exe_run(buf, NULL);
 }
 

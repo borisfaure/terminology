@@ -10,6 +10,7 @@
 #include "config.h"
 #include "theme.h"
 #include "termiolink.h"
+#include "utils.h"
 
 typedef struct tag_Media Media;
 
@@ -1526,19 +1527,19 @@ media_unknown_handle(const char *handler, const char *src)
 {
    const char *cmd;
    char buf[PATH_MAX];
-   char *escaped;
+   char *quoted;
 #ifdef __APPLE__
    cmd = "open";
 #else
    cmd = "xdg-open";
 #endif
 
-   escaped = ecore_file_escape_name(src);
-   if (!escaped)
+   quoted = shell_quote(src);
+   if (!quoted)
      return;
    if (handler && *handler)
      cmd = handler;
-   snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-   free(escaped);
+   snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
+   free(quoted);
    ecore_exe_run(buf, NULL);
 }

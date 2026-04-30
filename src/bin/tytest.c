@@ -42,6 +42,7 @@ static struct {
        { "color_parse_css_hsl", tytest_color_parse_css_hsl},
        { "extn_matching", tytest_extn_matching},
        { "base64", tytest_base64},
+       { "shell_quote", tytest_shell_quote},
        { NULL, NULL},
 };
 

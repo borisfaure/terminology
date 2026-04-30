@@ -726,7 +726,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
 {
    Termio *sd = evas_object_smart_data_get(obj);
    Config *config;
-   char buf[PATH_MAX], *s, *escaped;
+   char buf[PATH_MAX], *s = NULL, *quoted = NULL;
    const char *path = NULL, *cmd = NULL;
    const char *link = NULL;
    Eina_Bool from_escape_code = EINA_FALSE;
@@ -793,13 +793,13 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         if (casestartswith(s, "mailto:"))
           p += sizeof("mailto:") - 1;
 
-        escaped = ecore_file_escape_name(p);
-        if (escaped)
-          {
-             snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-             free(escaped);
-          }
-     }
+        quoted = shell_quote(p);
+        if (quoted)
+           {
+              snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
+              free(quoted);
+           }
+      }
    else if (path)
      {
         // locally accessible file
@@ -809,8 +809,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         cmd = "xdg-open";
 #endif
 
-        escaped = ecore_file_escape_name(path);
-        if (escaped)
+        quoted = shell_quote(path);
+        if (quoted)
           {
              size_t len = strlen(path);
              Media_Type type = media_src_type_get(path, len);
@@ -851,11 +851,11 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                            (config->helper.local.general[0]))
                          cmd = config->helper.local.general;
                     }
-                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-                  free(escaped);
+                  snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
                }
+             free(quoted);
           }
-     }
+      }
    else if (url)
      {
         // remote file needs ecore-con-url
@@ -865,8 +865,8 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
         cmd = "xdg-open";
 #endif
 
-        escaped = ecore_file_escape_name(s);
-        if (escaped)
+        quoted = shell_quote(s);
+        if (quoted)
           {
              size_t len = strlen(link);
              Media_Type type = media_src_type_get(link, len);
@@ -897,11 +897,11 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                            (config->helper.url.general[0]))
                          cmd = config->helper.url.general;
                     }
-                  snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-                  free(escaped);
+                  snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
                }
+             free(quoted);
           }
-     }
+      }
    else
      {
         free(s);
@@ -1904,21 +1904,21 @@ _smart_media_clicked(void *data, Evas_Object *obj, void *_info EINA_UNUSED)
                        if ((config->helper.local.general) &&
                            (config->helper.local.general[0]))
                          cmd = config->helper.local.general;
-                       if (cmd)
-                         {
-                            char *escaped;
+                        if (cmd)
+                          {
+                             char *quoted;
 
-                            escaped = ecore_file_escape_name(file);
-                            if (escaped)
-                              {
-                                 char buf[PATH_MAX];
+                             quoted = shell_quote(file);
+                             if (quoted)
+                               {
+                                  char buf[PATH_MAX];
 
-                                 snprintf(buf, sizeof(buf), "%s %s", cmd, escaped);
-                                 ecore_exe_run(buf, NULL);
-                                 free(escaped);
-                              }
-                            return;
-                         }
+                                  snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
+                                  ecore_exe_run(buf, NULL);
+                                  free(quoted);
+                               }
+                             return;
+                          }
                     }
                   file = blk->link;
                }
