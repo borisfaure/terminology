@@ -462,7 +462,7 @@ _sel_line(Termio *sd, int cy)
 {
    int x, y;
    ssize_t w = 0;
-   Termcell *cells;
+   const Termcell *cells;
 
    termpty_backlog_lock();
 
