@@ -799,6 +799,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
               snprintf(buf, sizeof(buf), "%s %s", cmd, quoted);
               free(quoted);
            }
+        else goto end;
       }
    else if (path)
      {
@@ -855,6 +856,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                }
              free(quoted);
           }
+        else goto end;
       }
    else if (url)
      {
@@ -901,6 +903,7 @@ _activate_link(Evas_Object *obj, Eina_Bool may_inline)
                }
              free(quoted);
           }
+        else goto end;
       }
    else
      {
