@@ -1202,8 +1202,8 @@ _termpty_cellrow_from_beacon_get(Termpty *ty, int requested_y, ssize_t *wret)
 }
 
 /* @requested_y unit is in visual lines on the screen */
-Termcell *
-termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
+static Termcell *
+_termpty_cellrow_live_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
    if (y_requested >= 0)
      {
@@ -1222,7 +1222,7 @@ termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 
 /* Read accessor: returns the snapshot row during a sync window (pre-BSU state),
  * or the live row otherwise.  Renderer always calls this. */
-const Termcell *
+Termcell *
 termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
    if (ty->sync_output.active &&
