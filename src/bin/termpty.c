@@ -1222,7 +1222,7 @@ _termpty_cellrow_live_get(Termpty *ty, int y_requested, ssize_t *wret)
 
 /* Read accessor: returns the snapshot row during a sync window (pre-BSU state),
  * or the live row otherwise.  Renderer always calls this. */
-Termcell *
+const Termcell *
 termpty_cellrow_get(Termpty *ty, int y_requested, ssize_t *wret)
 {
    if (ty->sync_output.active &&
