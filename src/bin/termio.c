@@ -3675,6 +3675,10 @@ _smart_pty_change(void *data)
 
 // if scroll to bottom on updates
    if (sd->jump_on_change) sd->scroll = 0;
+   /* Mode 2026: suppress renders between BSU and ESU. _sync_output_end will
+    * fire cb.change.func on ESU (or watchdog), which re-enters here with
+    * sync_output.active == FALSE and queues the single coalesced frame. */
+   if (sd->pty->sync_output.active) return;
    termio_smart_update_queue(sd);
 }
 
