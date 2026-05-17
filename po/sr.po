@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 # Саша <Петровић>, 2014.
-# Саша Петровић <salepetronije@gmail.com>, 2015, 2023, 2025.
+# Саша Петровић <salepetronije@gmail.com>, 2015, 2023, 2025, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-13 22:21+0100\n"
-"PO-Revision-Date: 2025-07-13 05:51+0000\n"
+"PO-Revision-Date: 2026-05-17 21:11+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: Serbian <https://hosted.weblate.org/projects/terminology/"
 "terminology/sr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.13-dev\n"
+"X-Generator: Weblate 2026.6.dev0\n"
 "X-Launchpad-Export-Date: 2017-08-03 05:19+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
@@ -636,7 +636,7 @@ msgstr "Омогући нарочите излазне кодове Термин
 
 #: src/bin/options_behavior.c:418
 msgid "Enable escape codes manipulating selections"
-msgstr ""
+msgstr "Омогући излазне кодове управљања означавањима"
 
 #: src/bin/options_behavior.c:419
 msgid "Always treat Emojis as double-width characters"
