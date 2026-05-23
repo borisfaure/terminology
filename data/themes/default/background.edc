@@ -108,9 +108,9 @@ group { name: "terminology/background";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "terminology.tabcount.control";
-            rel2.offset: -5 0;
+            rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 1.0;
-            rel2.offset: -5 -1;
+            rel2.offset: -1 -1;
             offscale;
             color:  255 255 255 160; // no cc
             color_class: "/fg/normal/term/text/tabcount";
