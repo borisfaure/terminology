@@ -639,6 +639,7 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   if ((sd->cursor.shape == shape) && (!sd->cursor.force)) return;
    config = sd->config;
    theme_apply(sd->cursor.obj, config, _cursor_shape_to_group_name(shape),
                NULL, NULL, EINA_FALSE);
@@ -646,6 +647,7 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
    evas_object_resize(sd->cursor.obj, sd->font.chw, sd->font.chh);
    evas_object_show(sd->cursor.obj);
    sd->cursor.shape = shape;
+   sd->cursor.force = EINA_FALSE;
 
    if (term_is_focused(sd->term))
      {
@@ -3498,6 +3500,7 @@ _smart_add(Evas_Object *obj)
                                   _smart_cb_mouse_wheel, obj);
 
    sd->link.suspend = 1;
+   sd->cursor.force = EINA_TRUE;
 
    terms = eina_list_append(terms, obj);
 }

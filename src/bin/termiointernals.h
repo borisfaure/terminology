@@ -26,6 +26,7 @@ struct tag_Termio
       Evas_Object *obj;
       int x, y;
       Cursor_Shape shape;
+      Eina_Bool force : 1;
    } cursor;
    struct {
       int cx, cy;
