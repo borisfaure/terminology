@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-13 22:21+0100\n"
-"PO-Revision-Date: 2026-02-02 16:01+0000\n"
+"PO-Revision-Date: 2026-07-10 16:01+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://hosted.weblate.org/projects/terminology/"
 "terminology/ka/>\n"
@@ -15,13 +15,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16-dev\n"
+"X-Generator: Weblate 2026.7.1.dev0\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
 #: src/bin/termio.c:1348
 #, c-format
 msgid "Copy '%s'"
-msgstr ""
+msgstr "'%s'-ის კოპირება"
 
 #: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
 msgid "Open"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: src/bin/controls.c:406
 msgid "Miniview"
-msgstr ""
+msgstr "მინიხედი"
 
 #: src/bin/controls.c:413 src/bin/win.c:6205
 msgid "Set title"
@@ -132,7 +132,7 @@ msgstr ""
 
 #: src/bin/keyin.c:689
 msgid "Copy/Paste"
-msgstr ""
+msgstr "კოპირება/ჩასმა"
 
 #: src/bin/keyin.c:690
 msgid "Copy selection to Primary buffer"
@@ -152,7 +152,7 @@ msgstr ""
 
 #: src/bin/keyin.c:695
 msgid "Splits/Tabs"
-msgstr ""
+msgstr "გაყოფები/ჩანართები"
 
 #: src/bin/keyin.c:696
 msgid "Focus the previous terminal"
@@ -376,11 +376,11 @@ msgstr ""
 
 #: src/bin/main.c:503
 msgid "Start iconified"
-msgstr ""
+msgstr "ჩაკეცილად გაშვება"
 
 #: src/bin/main.c:505
 msgid "Start borderless"
-msgstr ""
+msgstr "გაშვება საზღვრების გარეშე"
 
 #: src/bin/main.c:507
 msgid "Start as a override-redirect window"
@@ -388,7 +388,7 @@ msgstr ""
 
 #: src/bin/main.c:509
 msgid "Start maximized"
-msgstr ""
+msgstr "გაშლილად გაშვება"
 
 #: src/bin/main.c:511
 msgid "Terminology is run without a window manager"
@@ -496,7 +496,7 @@ msgstr "გაუმჭირვალობა:"
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
 #, c-format
 msgid "%1.0f%%"
-msgstr ""
+msgstr "%1.0f%%"
 
 #: src/bin/options_background.c:592
 msgid "Select Path"
@@ -521,7 +521,7 @@ msgstr ""
 #: src/bin/options_behavior.c:64
 #, c-format
 msgid "%'d lines"
-msgstr ""
+msgstr "%'d ხაზი"
 
 #: src/bin/options_behavior.c:80
 #, c-format
@@ -772,7 +772,7 @@ msgstr "Shift+"
 
 #: src/bin/options_keys.c:69
 msgid "Win+"
-msgstr ""
+msgstr "Win+"
 
 #: src/bin/options_keys.c:70
 msgid "Meta+"
