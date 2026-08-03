@@ -74,6 +74,38 @@ simd_scan_plain_ascii_u32_neon(const Eina_Unicode *buf, size_t len)
    return len;
 }
 
+size_t
+simd_rscan_nonzero_neon(const unsigned char *buf, size_t len)
+{
+   size_t i = len;
+
+   while (i >= 16)
+     {
+        uint8x16_t v = vld1q_u8(buf + i - 16);
+        uint64_t m;
+
+        /* vtstq_u8(v, v) is 0xff in every lane whose byte is non-zero. */
+        m = vget_lane_u64(vreinterpret_u64_u8(
+                             vshrn_n_u16(vreinterpretq_u16_u8(vtstq_u8(v, v)),
+                                         4)), 0);
+        if (m)
+          {
+             /* Highest set nibble is the last non-zero byte of this block. */
+             size_t lane = (size_t)(63 - __builtin_clzll(m)) >> 2;
+
+             return i - 16 + lane + 1;
+          }
+        i -= 16;
+     }
+
+   while (i > 0)
+     {
+        if (buf[i - 1]) return i;
+        i--;
+     }
+   return 0;
+}
+
 void
 simd_widen_ascii_neon(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {

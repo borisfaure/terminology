@@ -48,6 +48,16 @@ simd_scan_plain_ascii_u32(const Eina_Unicode *buf, size_t len)
    return simd_scan_plain_ascii_u32_scalar(buf, len);
 }
 
+size_t
+simd_rscan_nonzero(const unsigned char *buf, size_t len)
+{
+#if defined(TERMINOLOGY_HAVE_NEON)
+   if (EINA_LIKELY(_use_simd))
+     return simd_rscan_nonzero_neon(buf, len);
+#endif
+   return simd_rscan_nonzero_scalar(buf, len);
+}
+
 void
 simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
@@ -215,6 +225,52 @@ _test_scan_u32(void)
 }
 
 static void
+_test_rscan(void)
+{
+   size_t len, off, pos;
+   int density;
+
+   for (len = 0; len <= 70; len++)
+     {
+        for (density = 0; density <= 100; density += 25)
+          {
+             for (off = 0; off < 16; off++)
+               {
+                  unsigned char *base = _alloc_guarded(off + len);
+                  unsigned char *p = base + GUARD + off;
+
+                  memset(p, 0, len);
+                  for (pos = 0; pos < len; pos++)
+                    {
+                       if ((int)(_rnd() % 100) < density)
+                         p[pos] = (unsigned char)(1 + (_rnd() % 255));
+                    }
+
+                  assert(simd_rscan_nonzero_scalar(p, len) ==
+                         simd_rscan_nonzero_neon(p, len));
+                  assert(_guards_intact(base, off + len));
+                  free(base);
+               }
+          }
+     }
+
+   /* One non-zero byte walked across every position: pins down the lane
+    * arithmetic rather than trusting the random fill to have covered it. */
+   for (len = 1; len <= 40; len++)
+     {
+        for (pos = 0; pos < len; pos++)
+          {
+             unsigned char buf[48];
+
+             memset(buf, 0, sizeof(buf));
+             buf[pos] = 0x01;
+             assert(simd_rscan_nonzero_scalar(buf, len) == pos + 1);
+             assert(simd_rscan_nonzero_neon(buf, len) == pos + 1);
+          }
+     }
+}
+
+static void
 _test_widen(void)
 {
    size_t len, off, i;
@@ -310,6 +366,7 @@ tytest_simd_parity(void)
 #if defined(TERMINOLOGY_HAVE_NEON)
    _test_scan();
    _test_scan_u32();
+   _test_rscan();
    _test_widen();
    _test_every_byte();
    _test_every_u32_boundary();
