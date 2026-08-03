@@ -5337,6 +5337,9 @@ end:
      }
 #endif
    ty->decoding_error = EINA_FALSE;
-   ty->last_char = last_char;
+   /* A zero return means incomplete: nothing was consumed, so leave last_char
+    * alone or a REP whose escape straddles a read boundary finds nothing. */
+   if (len > 0)
+     ty->last_char = last_char;
    return len;
 }
