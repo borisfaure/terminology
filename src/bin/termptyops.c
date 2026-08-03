@@ -6,6 +6,7 @@
 #include "termptyops.h"
 #include "termptygfx.h"
 #include "backlog.h"
+#include "simd/simd.h"
 #include "miniview.h"
 #include <assert.h>
 
@@ -234,18 +235,87 @@ _dblwidth_pair(Termpty *ty, Termcell *cell, Termcell *partner)
    termpty_cell_codepoint_att_fill(ty, 0, cell->att, partner, 1);
 }
 
+/* Whether a run of plain ASCII can take the bulk path. Fixed for the duration
+ * of one text run, so answered once rather than per character.
+ * combining_strike is re-checked per run since the general loop sets it. */
+static Eina_Bool
+_append_fast_ok(const Termpty *ty)
+{
+   /* Charset translation has to be the identity. */
+   if ((ty->termstate.charsetch == '0') || (ty->termstate.charsetch == 'A'))
+     return EINA_FALSE;
+   if (ty->termstate.att.fraktur || ty->termstate.att.encircled)
+     return EINA_FALSE;
+   /* Insert mode shifts the rest of the line for every character. */
+   if (ty->termstate.insert) return EINA_FALSE;
+   /* Autowrap off clamps the cursor instead of wrapping it, with different
+    * enough semantics that it is not worth duplicating here. */
+   if (!ty->termstate.wrap) return EINA_FALSE;
+   /* A link on the incoming cells needs refcounting per run; rare enough that
+    * the general loop can keep it. */
+   if (ty->termstate.att.link_id) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+/* Write 'n' cells of plain printable ASCII at the cursor. Everything the
+ * general loop re-asks per character is constant across such a run, so it is
+ * hoisted. The caller guarantees n <= max_right - cx, so the run cannot cross
+ * the margin. */
+static void
+_append_ascii_run(Termpty *ty, Termcell *cells, const Eina_Unicode *cp, int n,
+                  int max_right)
+{
+   Termatt att = ty->termstate.att;
+   int cx = ty->cursor_state.cx;
+   int k;
+
+   /* Nothing in 0x20..0x7e is ever double width. */
+   att.dblwidth = 0;
+
+   for (k = 0; k < n; k++)
+     {
+        Termcell *dst = &cells[cx + k];
+
+        HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst->codepoint, cp[k]);
+        if (EINA_UNLIKELY(dst->att.link_id))
+          term_link_refcount_dec(ty, dst->att.link_id, 1);
+        dst->codepoint = cp[k];
+        dst->att = att;
+     }
+
+   /* Recorded before the cursor moves, as the per-character path does. */
+   ty->vs16_base_x = cx + n - 1;
+   ty->vs16_base_y = ty->cursor_state.cy;
+
+   /* As the per-character path leaves it: on the last cell written, with
+    * wrapnext set once the margin is reached. */
+   cx += n;
+   if (cx >= max_right)
+     {
+        ty->cursor_state.cx = max_right - 1;
+        ty->cursor_state.wrapnext = 1;
+     }
+   else
+     {
+        ty->cursor_state.cx = cx;
+        ty->cursor_state.wrapnext = 0;
+     }
+}
+
 void
 termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
    Termcell *cells;
    int i, j;
    int origin = ty->termstate.left_margin;
+   Eina_Bool fast_ok = _append_fast_ok(ty);
 
    cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
    for (i = 0; i < len; i++)
      {
         int max_right = ty->w;
         Eina_Unicode g;
+        Eina_Bool wrapped = EINA_FALSE;
 
         if (ty->termstate.right_margin &&
             (ty->cursor_state.cx < ty->termstate.right_margin))
@@ -311,11 +381,36 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              ty->cursor_state.cy++;
              termpty_text_scroll_test(ty, EINA_TRUE);
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
+             wrapped = EINA_TRUE;
           }
         if (ty->termstate.insert)
           {
              for (j = max_right-1; j > ty->cursor_state.cx; j--)
                TERMPTY_CELL_COPY(ty, &(cells[j - 1]), &(cells[j]), 1);
+          }
+
+        /* Not on an iteration that just wrapped: max_right was computed above
+         * from the pre-wrap cursor, and a whole run written against that stale
+         * value would sail past the right margin. */
+        if (fast_ok && !wrapped && !ty->termstate.combining_strike &&
+            (codepoints[i] >= 0x20) && (codepoints[i] < 0x7f))
+          {
+             int avail = max_right - ty->cursor_state.cx;
+
+             if (avail > 0)
+               {
+                  size_t run = simd_scan_plain_ascii_u32(codepoints + i,
+                                                         (size_t)(len - i));
+
+                  if (run > (size_t)avail) run = (size_t)avail;
+                  if (run >= 2)
+                    {
+                       _append_ascii_run(ty, cells, codepoints + i, (int)run,
+                                         max_right);
+                       i += (int)run - 1;
+                       continue;
+                    }
+               }
           }
 
         /* Skip 0-width space or RTL/LTR marks */
