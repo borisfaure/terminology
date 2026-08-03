@@ -406,19 +406,25 @@ do {                                                                         \
        termpty_handle_block_codepoint_overwrite_heavy(Tpty, OLDC, NEWC);     \
 } while (0)
 
+/* No cell can carry a link id or a bit-31 block codepoint unless one was ever
+ * created, so the bookkeeping loop is skippable. hl.size and block.blocks both
+ * only ever go from unset to set. */
 #define TERMPTY_CELL_COPY(Tpty, Tsrc, Tdst, N)                               \
 do {                                                                         \
-   int __i;                                                                  \
-                                                                             \
-   for (__i = 0; __i < N; __i++)                                             \
+   if (EINA_UNLIKELY(((Tpty)->hl.size != 0) || ((Tpty)->block.blocks)))      \
      {                                                                       \
-        HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                               \
-                                         (Tdst)[__i].codepoint,              \
-                                         (Tsrc)[__i].codepoint);             \
-        if (EINA_UNLIKELY((Tdst)[__i].att.link_id))                          \
-          term_link_refcount_dec(ty, (Tdst)[__i].att.link_id, 1);            \
-        if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                          \
-          term_link_refcount_inc(ty, (Tsrc)[__i].att.link_id, 1);            \
+        int __i;                                                             \
+                                                                             \
+        for (__i = 0; __i < N; __i++)                                        \
+          {                                                                  \
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                          \
+                                              (Tdst)[__i].codepoint,         \
+                                              (Tsrc)[__i].codepoint);        \
+             if (EINA_UNLIKELY((Tdst)[__i].att.link_id))                     \
+               term_link_refcount_dec(Tpty, (Tdst)[__i].att.link_id, 1);     \
+             if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                     \
+               term_link_refcount_inc(Tpty, (Tsrc)[__i].att.link_id, 1);     \
+          }                                                                  \
      }                                                                       \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
