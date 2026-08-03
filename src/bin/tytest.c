@@ -32,6 +32,7 @@ static struct {
      tytest_func func;
 } _tytests[] = {
        { "dummy", tytest_dummy },
+       { "simd_parity", tytest_simd_parity},
        { "sb_skip", tytest_sb_skip},
        { "sb_trim", tytest_sb_trim},
        { "sb_gap", tytest_sb_gap},
