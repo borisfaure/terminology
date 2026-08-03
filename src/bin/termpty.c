@@ -7,6 +7,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "backlog.h"
+#include "utf8.h"
 #include "keyin.h"
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 # include "win.h"
@@ -236,7 +237,7 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
         Eina_Unicode codepoint[4097];
         char buf[4097];
         char *rbuf = buf;
-        int i, j;
+        int i, j, consumed;
         len = sizeof(buf) - 1;
 
         for (i = 0; i < (int)sizeof(ty->oldbuf) && ty->oldbuf[i] & 0x80; i++)
@@ -283,38 +284,10 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
         */
         buf[len] = 0;
         // convert UTF8 to codepoint integers
-        j = 0;
-        for (i = 0; i < len;)
-          {
-             Eina_Unicode g = 0, prev_i = i;
-
-             if (buf[i])
-               {
-                  g = eina_unicode_utf8_next_get(buf, &i);
-                  if ((0xdc80 <= g) && (g <= 0xdcff) &&
-                      (len - (int)prev_i) <= (int)sizeof(ty->oldbuf))
-                    {
-                       unsigned int k;
-
-                       for (k = 0;
-                            (k < (unsigned int)sizeof(ty->oldbuf)) &&
-                            (k < (unsigned int)(len - prev_i));
-                            k++)
-                         {
-                            ty->oldbuf[k] = buf[prev_i+k];
-                         }
-                       DBG("failure at %d/%d/%d", (int)prev_i, (int)i, len);
-                       break;
-                    }
-               }
-             else
-               {
-                  g = 0;
-                  i++;
-               }
-             codepoint[j] = g;
-             j++;
-          }
+        j = utf8_to_codepoints(buf, len, codepoint, &consumed);
+        /* Retain a multibyte sequence cut in half by the read boundary. */
+        for (i = 0; (i < len - consumed) && (i < (int)sizeof(ty->oldbuf)); i++)
+          ty->oldbuf[i] = buf[consumed + i];
         codepoint[j] = 0;
 //        DBG("---------------- handle buf %i", j);
         termpty_handle_buf(ty, codepoint, j);

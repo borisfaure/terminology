@@ -1,6 +1,58 @@
 #include "private.h"
 #include "utf8.h"
 
+/* Decode UTF-8 bytes into codepoints.
+ *
+ * 'buf' must hold 'len' bytes and be NUL-terminated at buf[len], as
+ * eina_unicode_utf8_next_get() works on NUL-terminated strings. 'codepoints'
+ * must have room for 'len' entries, which is always enough since multibyte
+ * sequences only ever shrink the count.
+ *
+ * Returns the number of codepoints written. '*consumed' gets the number of
+ * input bytes decoded; anything left over is a multibyte sequence truncated by
+ * the end of the buffer, which the caller carries over and re-submits in front
+ * of the next chunk.
+ */
+int
+utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
+                   int *consumed)
+{
+   int i = 0, j = 0;
+
+   while (i < len)
+     {
+        Eina_Unicode g;
+
+        if (buf[i])
+          {
+             int prev_i = i;
+
+             g = eina_unicode_utf8_next_get(buf, &i);
+             /* EFL maps invalid and truncated sequences alike into the
+              * surrogate-escape range; near the end of the buffer, assume
+              * truncation and hand the tail back to the caller. */
+             if ((0xdc80 <= g) && (g <= 0xdcff) &&
+                 ((len - prev_i) <= UTF8_CARRY_MAX))
+               {
+                  i = prev_i;
+                  break;
+               }
+          }
+        else
+          {
+             /* eina_unicode_utf8_next_get() stops at NUL, so an embedded one
+              * has to be stepped over by hand. */
+             g = 0;
+             i++;
+          }
+        codepoints[j] = g;
+        j++;
+     }
+
+   *consumed = i;
+   return j;
+}
+
 int
 codepoint_to_utf8(Eina_Unicode g, char *txt)
 {
