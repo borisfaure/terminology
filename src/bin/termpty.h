@@ -258,6 +258,9 @@ struct tag_Termsave
    unsigned int   comp : 1;
    unsigned int   z    : 1;
    unsigned int   w    : 22;
+   /* Cells the allocation holds, which is >= 'w': a row keeps its block when
+    * rewritten. Free on LP64, where the pointer below already forced padding. */
+   unsigned int   cap;
    /* TODO: union ? */
    Termcell       *cells;
 };

@@ -55,16 +55,52 @@ termpty_save_extract(Termsave *ts)
    return ts;
 }
 
+/* Release the link refcounts held by a row's contents. hl.size stays zero
+ * until the first link is created, and most terminals never make one. */
+static void
+_ts_links_release(Termpty *ty, Termsave *ts)
+{
+   unsigned int i;
+
+   if (EINA_LIKELY(ty->hl.size == 0)) return;
+   for (i = 0; i < ts->w; i++)
+     {
+        if (EINA_UNLIKELY(ts->cells[i].att.link_id))
+          term_link_refcount_dec(ty, ts->cells[i].att.link_id, 1);
+     }
+}
+
 Termsave *
 termpty_save_new(Termpty *ty, Termsave *ts, int w)
 {
+   Termcell *cells;
+
+   /* Keep the block this row already holds when it is big enough. A ring slot
+    * settles at the longest line it has held and stops allocating. Rows stay
+    * trimmed to their content, so backlog memory does not scale with
+    * scrollback times columns. */
+   if (ts->cells && !ts->comp && (ts->cap >= (unsigned int)w))
+     {
+        _ts_links_release(ty, ts);
+        /* The caller decrements the link refcount of what it overwrites, so
+         * the cells must not still hold the previous row's link ids. */
+        if (w > 0) memset(ts->cells, 0, (size_t)w * sizeof(Termcell));
+        ts->w = w;
+        return ts;
+     }
+
    termpty_save_free(ty, ts);
 
-   Termcell *cells = calloc(1, w * sizeof(Termcell));
-   if (!cells ) return NULL;
+   /* One cell more than 'cap' will advertise: termpty_line_length() returns 0
+    * for a blank row, and calloc(1, 0) may hand back NULL, which the check
+    * below would read as an allocation failure. The spare cell is deliberately
+    * left out of 'cap' and out of the accounting, so nothing can reach it. */
+   cells = calloc(1, ((size_t)w + 1) * sizeof(Termcell));
+   if (!cells) return NULL;
+   _accounting_change((int64_t)w * sizeof(Termcell));
    ts->cells = cells;
    ts->w = w;
-   _accounting_change(w * sizeof(Termcell));
+   ts->cap = w;
    return ts;
 }
 
@@ -72,39 +108,45 @@ Termsave *
 termpty_save_expand(Termpty *ty, Termsave *ts, Termcell *cells, size_t delta)
 {
    Termcell *newcells;
+   size_t need = ts->w + delta;
 
-   newcells = realloc(ts->cells, (ts->w + delta) * sizeof(Termcell));
-   if (!newcells)
-     return NULL;
+   if (need > ts->cap)
+     {
+        newcells = realloc(ts->cells, need * sizeof(Termcell));
+        if (!newcells)
+          return NULL;
+        _accounting_change((-1) * (int64_t)(ts->cap * sizeof(Termcell)));
+        _accounting_change(need * sizeof(Termcell));
+        ts->cap = need;
+        ts->cells = newcells;
+     }
+   else
+     {
+        newcells = ts->cells;
+     }
 
    memset(newcells + ts->w,
           0, delta * sizeof(Termcell));
    TERMPTY_CELL_COPY(ty, cells, &newcells[ts->w], (int)delta);
 
-   _accounting_change((-1) * (int64_t)(ts->w * sizeof(Termcell)));
    ts->w += delta;
-   _accounting_change(ts->w * sizeof(Termcell));
-   ts->cells = newcells;
    return ts;
 }
 
 void
 termpty_save_free(Termpty *ty, Termsave *ts)
 {
-   unsigned int i;
    if (!ts) return;
    if (ts->comp) ts_comp--;
    else ts_uncomp--;
    ts_freeops++;
-   for (i = 0; i < ts->w; i++)
-     {
-        if (EINA_UNLIKELY(ts->cells[i].att.link_id))
-          term_link_refcount_dec(ty, ts->cells[i].att.link_id, 1);
-     }
+   _ts_links_release(ty, ts);
+
    free(ts->cells);
    ts->cells = NULL;
-   _accounting_change((-1) * (int64_t)(ts->w * sizeof(Termcell)));
+   _accounting_change((-1) * (int64_t)(ts->cap * sizeof(Termcell)));
    ts->w = 0;
+   ts->cap = 0;
 }
 
 void
