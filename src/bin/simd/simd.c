@@ -38,6 +38,16 @@ simd_scan_plain_ascii(const unsigned char *buf, size_t len)
    return simd_scan_plain_ascii_scalar(buf, len);
 }
 
+size_t
+simd_scan_plain_ascii_u32(const Eina_Unicode *buf, size_t len)
+{
+#if defined(TERMINOLOGY_HAVE_NEON)
+   if (EINA_LIKELY(_use_simd))
+     return simd_scan_plain_ascii_u32_neon(buf, len);
+#endif
+   return simd_scan_plain_ascii_u32_scalar(buf, len);
+}
+
 void
 simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
@@ -158,6 +168,53 @@ _test_scan(void)
 }
 
 static void
+_test_scan_u32(void)
+{
+   size_t len, off, i;
+   int density;
+
+   for (len = 0; len <= 40; len++)
+     {
+        for (density = 0; density <= 100; density += 10)
+          {
+             for (off = 0; off < 8; off++)
+               {
+                  /* Guarded in bytes, so an overread past the payload lands in
+                   * guard bytes rather than in slack. */
+                  unsigned char *base =
+                     _alloc_guarded((off + len) * sizeof(Eina_Unicode));
+                  Eina_Unicode *p = (Eina_Unicode *)(base + GUARD) + off;
+
+                  for (i = 0; i < len; i++)
+                    {
+                       if ((int)(_rnd() % 100) < density)
+                         {
+                            switch (_rnd() % 7)
+                              {
+                               case 0: p[i] = 0x00; break;
+                               case 1: p[i] = 0x1f; break;
+                               case 2: p[i] = 0x7f; break;
+                               case 3: p[i] = 0x80; break;
+                               case 4: p[i] = 0x4e2d; break;
+                               case 5: p[i] = 0x1f600; break;
+                               default: p[i] = 0x80000000u | 0x1234; break;
+                              }
+                         }
+                       else
+                         p[i] = 0x20 + (_rnd() % 0x5f);
+                    }
+
+                  assert(simd_scan_plain_ascii_u32_scalar(p, len) ==
+                         simd_scan_plain_ascii_u32_neon(p, len));
+                  assert(_guards_intact(base,
+                                        (off + len) * sizeof(Eina_Unicode)));
+                  free(base);
+               }
+          }
+     }
+}
+
+static void
 _test_widen(void)
 {
    size_t len, off, i;
@@ -219,6 +276,32 @@ _test_every_byte(void)
      }
 }
 
+static void
+_test_every_u32_boundary(void)
+{
+   static const Eina_Unicode vals[] = {
+        0x00, 0x01, 0x1f, 0x20, 0x21, 0x7d, 0x7e, 0x7f, 0x80, 0xa0,
+        0x200b, 0x300, 0x4e2d, 0xfe00, 0x1f600, 0x80000000u
+   };
+   size_t v, len, pos, i;
+
+   for (v = 0; v < sizeof(vals) / sizeof(vals[0]); v++)
+     {
+        for (len = 1; len <= 20; len++)
+          {
+             for (pos = 0; pos < len; pos++)
+               {
+                  Eina_Unicode buf[24];
+
+                  for (i = 0; i < len; i++) buf[i] = 'x';
+                  buf[pos] = vals[v];
+                  assert(simd_scan_plain_ascii_u32_scalar(buf, len) ==
+                         simd_scan_plain_ascii_u32_neon(buf, len));
+               }
+          }
+     }
+}
+
 #endif
 
 int
@@ -226,8 +309,10 @@ tytest_simd_parity(void)
 {
 #if defined(TERMINOLOGY_HAVE_NEON)
    _test_scan();
+   _test_scan_u32();
    _test_widen();
    _test_every_byte();
+   _test_every_u32_boundary();
 #endif
    /* Without a vector kernel the scalar path is the only path. */
    return 0;

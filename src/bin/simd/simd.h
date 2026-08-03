@@ -21,6 +21,13 @@ size_t simd_scan_plain_ascii_scalar(const unsigned char *buf, size_t len);
 size_t simd_scan_plain_ascii_neon(const unsigned char *buf, size_t len);
 #endif
 
+/* Same, over decoded codepoints. */
+size_t simd_scan_plain_ascii_u32(const Eina_Unicode *buf, size_t len);
+size_t simd_scan_plain_ascii_u32_scalar(const Eina_Unicode *buf, size_t len);
+#if defined(TERMINOLOGY_HAVE_NEON)
+size_t simd_scan_plain_ascii_u32_neon(const Eina_Unicode *buf, size_t len);
+#endif
+
 /* Widen bytes already known to be plain printable ASCII into codepoints. */
 void simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out);
 void simd_widen_ascii_scalar(const unsigned char *buf, size_t len,

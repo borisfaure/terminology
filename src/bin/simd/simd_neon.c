@@ -44,6 +44,36 @@ simd_scan_plain_ascii_neon(const unsigned char *buf, size_t len)
    return len;
 }
 
+size_t
+simd_scan_plain_ascii_u32_neon(const Eina_Unicode *buf, size_t len)
+{
+   /* One unsigned compare instead of two: g - 0x20 wraps for anything below
+    * 0x20, pushing it above the 0x5e span that 0x20..0x7e occupies. */
+   const uint32x4_t bias = vdupq_n_u32(0x20);
+   const uint32x4_t span = vdupq_n_u32(0x7e - 0x20);
+   size_t i = 0;
+
+   for (; i + 4 <= len; i += 4)
+     {
+        uint32x4_t v = vld1q_u32((const uint32_t *)(buf + i));
+        uint32x4_t bad = vcgtq_u32(vsubq_u32(v, bias), span);
+        uint64_t m;
+
+        /* Narrow the four 32-bit lanes to four 16-bit ones, so the first
+         * offending lane is a trailing-zero count divided by sixteen. */
+        m = vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(bad)), 0);
+        if (m) return i + (size_t)(__builtin_ctzll(m) >> 4);
+     }
+
+   for (; i < len; i++)
+     {
+        Eina_Unicode g = buf[i];
+
+        if ((g < 0x20) || (g >= 0x7f)) return i;
+     }
+   return len;
+}
+
 void
 simd_widen_ascii_neon(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
