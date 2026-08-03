@@ -13,6 +13,14 @@
 # define TERMINOLOGY_HAVE_NEON 1
 #endif
 
+/* Index of the first byte that is not plain printable ASCII (0x20..0x7e),
+ * or len. */
+size_t simd_scan_plain_ascii(const unsigned char *buf, size_t len);
+size_t simd_scan_plain_ascii_scalar(const unsigned char *buf, size_t len);
+#if defined(TERMINOLOGY_HAVE_NEON)
+size_t simd_scan_plain_ascii_neon(const unsigned char *buf, size_t len);
+#endif
+
 /* Read TERMINOLOGY_SIMD_DISABLE, which switches the vector kernels off without
  * a rebuild. Modelled on EFL's EVAS_NEON_DISABLE. */
 void simd_init(void);

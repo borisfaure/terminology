@@ -27,3 +27,13 @@ simd_enabled(void)
 {
    return _use_simd;
 }
+
+size_t
+simd_scan_plain_ascii(const unsigned char *buf, size_t len)
+{
+#if defined(TERMINOLOGY_HAVE_NEON)
+   if (EINA_LIKELY(_use_simd))
+     return simd_scan_plain_ascii_neon(buf, len);
+#endif
+   return simd_scan_plain_ascii_scalar(buf, len);
+}
