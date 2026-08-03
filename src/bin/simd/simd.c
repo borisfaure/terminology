@@ -59,6 +59,20 @@ simd_rscan_nonzero(const unsigned char *buf, size_t len)
 }
 
 void
+simd_records_or_byte(void *buf, size_t n, size_t rec, size_t off,
+                     unsigned char bit)
+{
+#if defined(TERMINOLOGY_HAVE_NEON)
+   if (EINA_LIKELY(_use_simd))
+     {
+        simd_records_or_byte_neon(buf, n, rec, off, bit);
+        return;
+     }
+#endif
+   simd_records_or_byte_scalar(buf, n, rec, off, bit);
+}
+
+void
 simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
 #if defined(TERMINOLOGY_HAVE_NEON)
@@ -271,6 +285,42 @@ _test_rscan(void)
 }
 
 static void
+_test_records_or(void)
+{
+   size_t n, off, rec, i;
+
+   /* Both the vectorised 12-byte stride and one that must fall back. */
+   for (rec = 11; rec <= 12; rec++)
+     {
+        for (n = 0; n <= 40; n++)
+          {
+             for (off = 0; off < rec; off++)
+               {
+                  unsigned char *a = _alloc_guarded(n * rec);
+                  unsigned char *b = _alloc_guarded(n * rec);
+
+                  for (i = 0; i < n * rec; i++)
+                    {
+                       unsigned char v = (unsigned char)(_rnd() & 0xff);
+
+                       a[GUARD + i] = v;
+                       b[GUARD + i] = v;
+                    }
+
+                  simd_records_or_byte_scalar(a + GUARD, n, rec, off, 0x40);
+                  simd_records_or_byte_neon(b + GUARD, n, rec, off, 0x40);
+
+                  assert(memcmp(a + GUARD, b + GUARD, n * rec) == 0);
+                  assert(_guards_intact(a, n * rec));
+                  assert(_guards_intact(b, n * rec));
+                  free(a);
+                  free(b);
+               }
+          }
+     }
+}
+
+static void
 _test_widen(void)
 {
    size_t len, off, i;
@@ -367,6 +417,7 @@ tytest_simd_parity(void)
    _test_scan();
    _test_scan_u32();
    _test_rscan();
+   _test_records_or();
    _test_widen();
    _test_every_byte();
    _test_every_u32_boundary();

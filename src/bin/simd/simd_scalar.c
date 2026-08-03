@@ -43,6 +43,17 @@ simd_rscan_nonzero_scalar(const unsigned char *buf, size_t len)
 }
 
 void
+simd_records_or_byte_scalar(void *buf, size_t n, size_t rec, size_t off,
+                            unsigned char bit)
+{
+   unsigned char *p = (unsigned char *)buf + off;
+   size_t i;
+
+   for (i = 0; i < n; i++, p += rec)
+     *p |= bit;
+}
+
+void
 simd_widen_ascii_scalar(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
    size_t i;

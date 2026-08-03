@@ -107,6 +107,41 @@ simd_rscan_nonzero_neon(const unsigned char *buf, size_t len)
 }
 
 void
+simd_records_or_byte_neon(void *buf, size_t n, size_t rec, size_t off,
+                          unsigned char bit)
+{
+   unsigned char *p = (unsigned char *)buf;
+   size_t i = 0;
+
+   /* A 12-byte stride lines up with the vector every four records, so the mask
+    * repeats every 48 bytes. Other strides use the scalar form. */
+   if ((rec == 12) && (off < rec))
+     {
+        unsigned char pat[48];
+        uint8x16_t m0, m1, m2;
+
+        memset(pat, 0, sizeof(pat));
+        pat[off] = bit;
+        pat[rec + off] = bit;
+        pat[2 * rec + off] = bit;
+        pat[3 * rec + off] = bit;
+        m0 = vld1q_u8(pat);
+        m1 = vld1q_u8(pat + 16);
+        m2 = vld1q_u8(pat + 32);
+
+        for (; i + 4 <= n; i += 4, p += 48)
+          {
+             vst1q_u8(p,      vorrq_u8(vld1q_u8(p),      m0));
+             vst1q_u8(p + 16, vorrq_u8(vld1q_u8(p + 16), m1));
+             vst1q_u8(p + 32, vorrq_u8(vld1q_u8(p + 32), m2));
+          }
+     }
+
+   for (; i < n; i++, p += rec)
+     p[off] |= bit;
+}
+
+void
 simd_widen_ascii_neon(const unsigned char *buf, size_t len, Eina_Unicode *out)
 {
    size_t i = 0;

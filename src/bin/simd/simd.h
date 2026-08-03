@@ -35,6 +35,17 @@ size_t simd_rscan_nonzero_scalar(const unsigned char *buf, size_t len);
 size_t simd_rscan_nonzero_neon(const unsigned char *buf, size_t len);
 #endif
 
+/* OR 'bit' into byte 'off' of each of 'n' records of 'rec' bytes. 'off' must
+ * be less than 'rec'. */
+void simd_records_or_byte(void *buf, size_t n, size_t rec, size_t off,
+                          unsigned char bit);
+void simd_records_or_byte_scalar(void *buf, size_t n, size_t rec, size_t off,
+                                 unsigned char bit);
+#if defined(TERMINOLOGY_HAVE_NEON)
+void simd_records_or_byte_neon(void *buf, size_t n, size_t rec, size_t off,
+                               unsigned char bit);
+#endif
+
 /* Widen bytes already known to be plain printable ASCII into codepoints. */
 void simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out);
 void simd_widen_ascii_scalar(const unsigned char *buf, size_t len,
