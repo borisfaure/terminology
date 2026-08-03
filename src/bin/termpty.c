@@ -990,11 +990,62 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 }
 
 
+/* Flag a run of cells as continuing onto the next line. The byte carrying
+ * att.autowrapped depends on the compiler's bitfield layout, so it is worked
+ * out once from a cell that has the bit set. */
+static void
+_mark_autowrapped(Termcell *cells, ssize_t n)
+{
+   /* NOT_PROBED rather than a zero 'bit', so the probe runs exactly once even
+    * if it ever comes up empty. */
+#define NOT_PROBED ((size_t)-1)
+   static size_t off = NOT_PROBED;
+   static unsigned char bit;
+
+   if (EINA_UNLIKELY(off == NOT_PROBED))
+     {
+        Termcell probe;
+        size_t i;
+
+        memset(&probe, 0, sizeof(probe));
+        probe.att.autowrapped = 1;
+        for (i = 0; i < sizeof(probe); i++)
+          {
+             if (((const unsigned char *)&probe)[i])
+               {
+                  off = i;
+                  bit = ((const unsigned char *)&probe)[i];
+                  break;
+               }
+          }
+        assert(off != NOT_PROBED);
+     }
+
+   if (EINA_UNLIKELY(off == NOT_PROBED))
+     {
+        /* One bitfield bit always lands in some byte, so this is unreachable --
+         * but assert() is gone under NDEBUG, and marking nothing at all would
+         * silently stop wrapped lines from rejoining. Mark them the slow way
+         * instead of trusting the layout. */
+        ssize_t i;
+
+        for (i = 0; i < n; i++)
+          cells[i].att.autowrapped = 1;
+        return;
+     }
+
+   _Static_assert(sizeof(Termcell) == 12,
+                  "Termcell size changed: simd_records_or_byte() vectorises a "
+                  "12-byte stride and silently falls back to scalar otherwise");
+   simd_records_or_byte(cells, (size_t)n, sizeof(Termcell), off, bit);
+#undef NOT_PROBED
+}
+
 void
 termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
 {
    Termsave *ts;
-   ssize_t w, i;
+   ssize_t w;
 
    if (ty->backsize == 0)
      return;
@@ -1003,10 +1054,8 @@ termpty_text_save_top(Termpty *ty, Termcell *cells, ssize_t w_max)
    termpty_backlog_lock();
 
    w = termpty_line_length(cells, w_max);
-   for (i = 0; i < w - 1; i++)
-     {
-        cells[i].att.autowrapped = 1;
-     }
+   if (w > 1)
+     _mark_autowrapped(cells, w - 1);
    if (ty->backsize > 0)
      {
         ts = BACKLOG_ROW_GET(ty, 1);
