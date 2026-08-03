@@ -966,21 +966,20 @@ _termpty_line_is_empty(const Termcell *cells, ssize_t nb_cells)
 ssize_t
 termpty_line_length(const Termcell *cells, ssize_t nb_cells)
 {
-   static const Termcell zero_cells[8] = {{0}};
    ssize_t pos;
+   size_t used;
 
    if (!cells || nb_cells <= 0)
      return 0;
 
-   pos = nb_cells;
+   /* An all-zero cell is always empty (COL_DEF is 0), so nothing past the last
+    * non-zero byte can contribute. This only narrows the range; the per-cell
+    * test below still decides. */
+   used = simd_rscan_nonzero((const unsigned char *)cells,
+                             (size_t)nb_cells * sizeof(Termcell));
+   pos = (ssize_t)((used + sizeof(Termcell) - 1) / sizeof(Termcell));
+   if (pos > nb_cells) pos = nb_cells;
 
-   /* Fast scan: skip trailing chunks of 8 zero cells at a time.
-    * glibc memcmp uses AVX2 for 96-byte comparisons. */
-   while (pos >= 8 &&
-          memcmp(&cells[pos - 8], zero_cells, 8 * sizeof(Termcell)) == 0)
-     pos -= 8;
-
-   /* Per-cell scan through the remaining tail */
    for (pos = pos - 1; pos >= 0; pos--)
      {
         if (!_termpty_cell_is_empty(&cells[pos]))
