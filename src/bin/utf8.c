@@ -1,6 +1,38 @@
 #include "private.h"
 #include "utf8.h"
 
+/* How many bytes the sequence introduced by this lead byte occupies, or 0 if it
+ * cannot start one (a continuation byte, or a length this decoder will not
+ * carry across a boundary). */
+static inline int
+_utf8_seq_len(unsigned char d)
+{
+   if (d < 0x80) return 1;
+   if ((d & 0xe0) == 0xc0) return 2;
+   if ((d & 0xf0) == 0xe0) return 3;
+   if ((d & 0xf8) == 0xf0) return 4;
+   return 0;
+}
+
+/* True when the 'avail' bytes at 'p' are the beginning of a longer sequence
+ * that has simply not arrived yet: a lead byte followed only by continuation
+ * bytes, with at least one still missing. */
+static Eina_Bool
+_utf8_truncated(const char *p, int avail)
+{
+   int need = _utf8_seq_len((unsigned char)p[0]);
+   int i;
+
+   if ((need < 2) || (need > UTF8_CARRY_MAX)) return EINA_FALSE;
+   if (avail >= need) return EINA_FALSE;
+
+   for (i = 1; i < avail; i++)
+     {
+        if (((unsigned char)p[i] & 0xc0) != 0x80) return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 /* Decode UTF-8 bytes into codepoints.
  *
  * 'buf' must hold 'len' bytes and be NUL-terminated at buf[len], as
@@ -10,8 +42,12 @@
  *
  * Returns the number of codepoints written. '*consumed' gets the number of
  * input bytes decoded; anything left over is a multibyte sequence truncated by
- * the end of the buffer, which the caller carries over and re-submits in front
- * of the next chunk.
+ * the end of the buffer, which the caller is expected to carry over and
+ * re-submit in front of the next chunk. At most UTF8_CARRY_MAX - 1 bytes are
+ * ever left behind.
+ *
+ * Truncation is decided from the bytes themselves, so that where the read
+ * boundaries fall cannot change how the same input decodes.
  */
 int
 utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
@@ -25,18 +61,13 @@ utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
 
         if (buf[i])
           {
-             int prev_i = i;
-
+             /* Only the last few bytes can possibly hold a cut-off sequence, so
+              * lead with that test: it is false for all but the tail of the
+              * buffer and keeps this to one comparison per character. */
+             if (EINA_UNLIKELY((len - i) < UTF8_CARRY_MAX) &&
+                 _utf8_truncated(buf + i, len - i))
+               break;
              g = eina_unicode_utf8_next_get(buf, &i);
-             /* EFL maps invalid and truncated sequences alike into the
-              * surrogate-escape range; near the end of the buffer, assume
-              * truncation and hand the tail back to the caller. */
-             if ((0xdc80 <= g) && (g <= 0xdcff) &&
-                 ((len - prev_i) <= UTF8_CARRY_MAX))
-               {
-                  i = prev_i;
-                  break;
-               }
           }
         else
           {
