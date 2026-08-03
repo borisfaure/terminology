@@ -24,12 +24,29 @@
 void
 termpty_cells_clear(Termpty *ty, Termcell *cells, int count)
 {
+   static const Termcell zero_cell = { 0 };
    Termcell src;
+
+   /* memset() would take a negative count as an enormous unsigned one, where
+    * the per-cell loop below simply does nothing. No caller passes one today,
+    * but several compute it from a width. */
+   if (count <= 0) return;
 
    memset(&src, 0, sizeof(src));
    src.codepoint = 0;
    src.att = ty->termstate.att;
    src.att.link_id = 0;
+
+   /* Clearing to default attributes makes every cell all-zero, so the row is
+    * one memset. Only when no link or block exists, since overwriting either
+    * adjusts a refcount. The template is compared against zero rather than
+    * field by field, so adding a bit to Termatt cannot make this wrong. */
+   if (EINA_LIKELY((ty->hl.size == 0) && (ty->block.blocks == NULL) &&
+                   (memcmp(&src, &zero_cell, sizeof(src)) == 0)))
+     {
+        memset(cells, 0, count * sizeof(Termcell));
+        return;
+     }
 
    termpty_cell_fill(ty, &src, cells, count);
 }
