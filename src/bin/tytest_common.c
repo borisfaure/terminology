@@ -12,6 +12,7 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
+#include "simd/simd.h"
 #include "tytest_common.h"
 #if defined(BINARY_TYTEST)
 #include "colors.h"
@@ -589,6 +590,7 @@ tytest_common_main_loop(void)
 void
 tytest_common_init(void)
 {
+   simd_init();
    _config = config_new();
    _sd.config = _config;
    _termpty_init(&_ty, _config);

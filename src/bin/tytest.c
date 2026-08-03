@@ -15,6 +15,7 @@
 #include "termptyops.h"
 #include "backlog.h"
 #include "utf8.h"
+#include "simd/simd.h"
 #include "termiointernals.h"
 #include "tytest.h"
 #include "unit_tests.h"
@@ -424,6 +425,12 @@ main(int argc, char **argv)
    Eina_Bool dump = EINA_FALSE;
    int chunk = 0;
    int i;
+
+   /* Before the argument loop: the unit-test path returns out of it without
+    * ever reaching tytest_common_init(), and several of those tests drive the
+    * real parser. Leaving the kernels un-dispatched there would make
+    * TERMINOLOGY_SIMD_DISABLE silently ineffective for 'tytest all'. */
+   simd_init();
 
    for (i = 1; i < argc; i++)
      {

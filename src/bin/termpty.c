@@ -8,6 +8,7 @@
 #include "termptyops.h"
 #include "backlog.h"
 #include "utf8.h"
+#include "simd/simd.h"
 #include "keyin.h"
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
 # include "win.h"
@@ -47,6 +48,8 @@ int _termpty_log_dom = -1;
 void
 termpty_init(void)
 {
+   simd_init();
+
    if (_termpty_log_dom >= 0) return;
 
    _termpty_log_dom = eina_log_domain_register("termpty", NULL);
