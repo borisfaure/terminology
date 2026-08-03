@@ -37,6 +37,19 @@ simd_scan_plain_ascii(const unsigned char *buf, size_t len)
 #endif
    return simd_scan_plain_ascii_scalar(buf, len);
 }
+
+void
+simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
+{
+#if defined(TERMINOLOGY_HAVE_NEON)
+   if (EINA_LIKELY(_use_simd))
+     {
+        simd_widen_ascii_neon(buf, len, out);
+        return;
+     }
+#endif
+   simd_widen_ascii_scalar(buf, len, out);
+}
 /* Parity tests: each vector kernel must agree with its scalar reference.
  *
  * Buffers are guard-padded so a kernel writing outside its range fails even
@@ -144,6 +157,44 @@ _test_scan(void)
      }
 }
 
+static void
+_test_widen(void)
+{
+   size_t len, off, i;
+
+   for (len = 0; len <= 70; len++)
+     {
+        for (off = 0; off < 16; off++)
+          {
+             unsigned char *base = _alloc_guarded(off + len);
+             unsigned char *p = base + GUARD + off;
+             Eina_Unicode *o1 = calloc(len + 8, sizeof(Eina_Unicode));
+             Eina_Unicode *o2 = calloc(len + 8, sizeof(Eina_Unicode));
+
+             assert(o1 != NULL);
+             assert(o2 != NULL);
+             _fill(p, len, 0);
+             for (i = 0; i < 8; i++)
+               {
+                  o1[len + i] = 0xdeadbeef;
+                  o2[len + i] = 0xdeadbeef;
+               }
+
+             simd_widen_ascii_scalar(p, len, o1);
+             simd_widen_ascii_neon(p, len, o2);
+
+             assert(memcmp(o1, o2, (len + 8) * sizeof(Eina_Unicode)) == 0);
+             for (i = 0; i < 8; i++)
+               assert(o2[len + i] == 0xdeadbeef);
+             assert(_guards_intact(base, off + len));
+
+             free(base);
+             free(o1);
+             free(o2);
+          }
+     }
+}
+
 /* Every byte value, at every position, exhaustively. */
 static void
 _test_every_byte(void)
@@ -175,6 +226,7 @@ tytest_simd_parity(void)
 {
 #if defined(TERMINOLOGY_HAVE_NEON)
    _test_scan();
+   _test_widen();
    _test_every_byte();
 #endif
    /* Without a vector kernel the scalar path is the only path. */

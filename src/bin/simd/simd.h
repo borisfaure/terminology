@@ -21,6 +21,15 @@ size_t simd_scan_plain_ascii_scalar(const unsigned char *buf, size_t len);
 size_t simd_scan_plain_ascii_neon(const unsigned char *buf, size_t len);
 #endif
 
+/* Widen bytes already known to be plain printable ASCII into codepoints. */
+void simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out);
+void simd_widen_ascii_scalar(const unsigned char *buf, size_t len,
+                             Eina_Unicode *out);
+#if defined(TERMINOLOGY_HAVE_NEON)
+void simd_widen_ascii_neon(const unsigned char *buf, size_t len,
+                           Eina_Unicode *out);
+#endif
+
 /* Read TERMINOLOGY_SIMD_DISABLE, which switches the vector kernels off without
  * a rebuild. Modelled on EFL's EVAS_NEON_DISABLE. */
 void simd_init(void);

@@ -44,5 +44,26 @@ simd_scan_plain_ascii_neon(const unsigned char *buf, size_t len)
    return len;
 }
 
+void
+simd_widen_ascii_neon(const unsigned char *buf, size_t len, Eina_Unicode *out)
+{
+   size_t i = 0;
+
+   for (; i + 16 <= len; i += 16)
+     {
+        uint8x16_t v = vld1q_u8(buf + i);
+        /* Zero-extend 8 -> 16 -> 32 bits in two steps per half. */
+        uint16x8_t w0 = vmovl_u8(vget_low_u8(v));
+        uint16x8_t w1 = vmovl_u8(vget_high_u8(v));
+
+        vst1q_u32((uint32_t *)(out + i +  0), vmovl_u16(vget_low_u16(w0)));
+        vst1q_u32((uint32_t *)(out + i +  4), vmovl_u16(vget_high_u16(w0)));
+        vst1q_u32((uint32_t *)(out + i +  8), vmovl_u16(vget_low_u16(w1)));
+        vst1q_u32((uint32_t *)(out + i + 12), vmovl_u16(vget_high_u16(w1)));
+     }
+
+   for (; i < len; i++)
+     out[i] = buf[i];
+}
 
 #endif

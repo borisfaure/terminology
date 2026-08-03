@@ -16,3 +16,12 @@ simd_scan_plain_ascii_scalar(const unsigned char *buf, size_t len)
      }
    return len;
 }
+
+void
+simd_widen_ascii_scalar(const unsigned char *buf, size_t len, Eina_Unicode *out)
+{
+   size_t i;
+
+   for (i = 0; i < len; i++)
+     out[i] = buf[i];
+}
