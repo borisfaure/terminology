@@ -358,6 +358,23 @@ termpty_focus_report(Termpty *ty, Eina_Bool focus);
 
 extern int _termpty_log_dom;
 
+/* Debug logging for the parser. EINA_LOG_DOM_DBG() evaluates its arguments
+ * before the level is checked, which is too expensive for the hot paths, so
+ * check the level first. */
+#if defined(EINA_LOG_LEVEL_MAXIMUM)
+/* Compiled out already; a level check would only add a call. */
+# define TERMPTY_DBG(...) EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
+#else
+# define TERMPTY_DBG(...)                                                     \
+   do                                                                         \
+     {                                                                        \
+        if (EINA_UNLIKELY(eina_log_domain_level_check(_termpty_log_dom,       \
+                                                      EINA_LOG_LEVEL_DBG)))   \
+          EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__);                    \
+     }                                                                        \
+   while (0)
+#endif
+
 #define TERMPTY_SCREEN(Tpty, X, Y) \
   Tpty->screen[X + (((Y + Tpty->circular_offset) % Tpty->h) * Tpty->w)]
 

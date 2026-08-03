@@ -25,7 +25,7 @@
 #define ERR(...)      EINA_LOG_DOM_ERR(_termpty_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_termpty_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_termpty_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_DBG(_termpty_log_dom, __VA_ARGS__)
+#define DBG(...)      TERMPTY_DBG(__VA_ARGS__)
 
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
@@ -93,6 +93,47 @@ termptyesc_safechar(const unsigned int c)
    _str[8] = '\0';
    return _str;
 }
+
+/* Render a run of printable codepoints into one DBG line. Checks the level
+ * itself, since it is the formatting loop that needs skipping. Long runs are
+ * truncated. */
+#if defined(EINA_LOG_LEVEL_MAXIMUM)
+static void
+_log_text_run(const Eina_Unicode *c EINA_UNUSED, int len EINA_UNUSED)
+{
+}
+#else
+static void
+_log_text_run(const Eina_Unicode *c, int len)
+{
+   char buf[512];
+   int i, n = 0;
+
+   /* Binaries that compile logging out never register the domain, so asking
+    * about its level would trip eina's safety check. */
+   if (EINA_LIKELY(!eina_log_domain_level_check(_termpty_log_dom,
+                                                EINA_LOG_LEVEL_DBG)))
+     return;
+
+   for (i = 0; i < len; i++)
+     {
+        /* termptyesc_safechar() returns a pointer to its own static buffer, so
+         * copy before calling it again. */
+        const char *s = termptyesc_safechar(c[i]);
+        int l = strlen(s);
+
+        if (n + l >= (int)sizeof(buf) - 1) break;
+        memcpy(buf + n, s, l);
+        n += l;
+     }
+   buf[n] = '\0';
+
+   if (i < len)
+     DBG("txt: [%s...] (%d codepoints)", buf, len);
+   else
+     DBG("txt: [%s]", buf);
+}
+#endif
 
 static Eina_Bool
 _cursor_is_within_margins(const Termpty *ty)
@@ -5308,15 +5349,13 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    cc = (Eina_Unicode *)c;
 
-   DBG("txt: [");
    while ((cc < ce) && (*cc >= 0x20) && (*cc != DEL) && (*cc != CSI)
           && (*cc != OSC))
      {
-        DBG("%s", termptyesc_safechar(*cc));
         cc++;
         len++;
      }
-   DBG("]");
+   _log_text_run(c, len);
    termpty_text_append(ty, c, len);
    if (len > 0)
        last_char = c[len-1];
