@@ -1,5 +1,6 @@
 #include "private.h"
 #include "utf8.h"
+#include "simd/simd.h"
 
 /* How many bytes the sequence introduced by this lead byte occupies, or 0 if it
  * cannot start one (a continuation byte, or a length this decoder will not
@@ -54,10 +55,42 @@ utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
                    int *consumed)
 {
    int i = 0, j = 0;
+#if defined(TERMINOLOGY_HAVE_NEON)
+   /* Hoisted out of the loop: simd_enabled() is a call, and what it reports
+    * cannot change mid-buffer. */
+   Eina_Bool fast = simd_enabled();
+#endif
 
    while (i < len)
      {
         Eina_Unicode g;
+#if defined(TERMINOLOGY_HAVE_NEON)
+        size_t run;
+
+        /* Plain printable ASCII needs none of the per-character work below, so
+         * widen it a run at a time. The inline test on the first byte keeps
+         * mostly-non-ASCII input from calling the scanner per character.
+         *
+         * Compiled in only where there is a vector kernel to call. The scalar
+         * kernel walks the run exactly as the loop below does, so it can only
+         * pay for the same bytes twice -- and merely leaving this in the loop
+         * to be branched over costs the decoder ~8% on a non-NEON target. */
+        if (fast &&
+            ((unsigned char)buf[i] >= 0x20) && ((unsigned char)buf[i] < 0x7f))
+          run = simd_scan_plain_ascii((const unsigned char *)buf + i,
+                                      (size_t)(len - i));
+        else
+          run = 0;
+        /* Below this the scan-then-widen pair costs more than it saves. */
+        if (run >= 4)
+          {
+             simd_widen_ascii((const unsigned char *)buf + i, run,
+                              codepoints + j);
+             i += (int)run;
+             j += (int)run;
+             continue;
+          }
+#endif
 
         if (buf[i])
           {

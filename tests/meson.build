@@ -28,8 +28,23 @@ if tests
          timeout: 600)
   endforeach
 
+  # Again with the vector kernels off, so the scalar path -- what non-NEON
+  # targets run -- has end-to-end coverage too.
+  test('escape-codes-scalar',
+       run_tests,
+       args: ['-v',
+              '-t', tytest.full_path(),
+              '-r', meson.current_source_dir() / 'tests.results',
+              '-d', meson.current_source_dir()],
+       env: {'TERMINOLOGY_SIMD_DISABLE': '1'},
+       depends: tytest,
+       workdir: meson.current_source_dir(),
+       timeout: 300)
+
   # The in-process C unit tests compiled into tytest itself.
   test('unit', tytest, args: ['all'], timeout: 120)
+  test('unit-scalar', tytest, args: ['all'],
+       env: {'TERMINOLOGY_SIMD_DISABLE': '1'}, timeout: 120)
 endif
 
 if benchmarks
