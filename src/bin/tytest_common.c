@@ -12,6 +12,7 @@
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "tytest_common.h"
+#include "utf8.h"
 #if defined(BINARY_TYTEST)
 #include "colors.h"
 #include "tytest.h"
@@ -486,7 +487,7 @@ tytest_common_main_loop(void)
      {
         char buf[4097];
         Eina_Unicode codepoint[4097];
-        int i, j;
+        int i, j, consumed;
         char *rbuf = buf;
         int len = sizeof(buf) - 1;
 
@@ -511,37 +512,10 @@ tytest_common_main_loop(void)
 
         buf[len] = 0;
         // convert UTF8 to codepoint integers
-        j = 0;
-        for (i = 0; i < len;)
-          {
-             int g = 0, prev_i = i;
-
-             if (buf[i])
-               {
-                  g = eina_unicode_utf8_next_get(buf, &i);
-                  if ((0xdc80 <= g) && (g <= 0xdcff) &&
-                      (len - prev_i) <= (int)sizeof(_ty.oldbuf))
-                    {
-                       int k;
-                       for (k = 0;
-                            (k < (int)sizeof(_ty.oldbuf)) &&
-                            (k < (len - prev_i));
-                            k++)
-                         {
-                            _ty.oldbuf[k] = buf[prev_i+k];
-                         }
-                       DBG("failure at %d/%d/%d", prev_i, i, len);
-                       break;
-                    }
-               }
-             else
-               {
-                  g = 0;
-                  i++;
-               }
-             codepoint[j] = g;
-             j++;
-          }
+        j = utf8_to_codepoints(buf, len, codepoint, &consumed);
+        /* Retain a multibyte sequence cut in half by the read boundary. */
+        for (i = 0; (i < len - consumed) && (i < (int)sizeof(_ty.oldbuf)); i++)
+          _ty.oldbuf[i] = buf[consumed + i];
         codepoint[j] = 0;
         termpty_handle_buf(&_ty, codepoint, j);
      }
