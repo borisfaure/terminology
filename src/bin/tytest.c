@@ -13,6 +13,7 @@
 #include "config.h"
 #include "termpty.h"
 #include "termptyops.h"
+#include "backlog.h"
 #include "termiointernals.h"
 #include "tytest.h"
 #include "unit_tests.h"
@@ -144,6 +145,37 @@ _termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
    tt->bracketed_paste = ty->bracketed_paste;
 }
 
+/* Fold the scrollback into the checksum.
+ *
+ * Only backsize/backpos/beacon used to be covered, so everything that had
+ * scrolled off the screen was invisible to the tests -- which is precisely
+ * where a bug in the scroll or text-append path shows up first. Rows are read
+ * back through termpty_cellrow_get() rather than reached into directly, so the
+ * test keeps comparing what a reader of the backlog would see even if how a
+ * row is stored changes. */
+static void
+_checksum_backlog(Termpty *ty, MD5_CTX *ctx)
+{
+   ssize_t len = termpty_backlog_length(ty);
+   int y;
+
+   for (y = 1; y <= (int)len; y++)
+     {
+        const Termcell *cells;
+        ssize_t w = 0;
+        uint32_t width;
+
+        cells = termpty_cellrow_get(ty, -y, &w);
+        if (!cells || (w < 0)) w = 0;
+        /* Fixed width, not sizeof(ssize_t): the checksum is compared across
+         * machines and must not depend on the size of a pointer. */
+        width = (uint32_t)w;
+        MD5Update(ctx, (unsigned char const*)&width, sizeof(width));
+        if (cells && (w > 0))
+          MD5Update(ctx, (unsigned char const*)cells, sizeof(Termcell) * w);
+     }
+}
+
 static void
 _tytest_checksum(Termpty *ty)
 {
@@ -168,6 +200,8 @@ _tytest_checksum(Termpty *ty)
    MD5Update(&ctx,
              (unsigned char const*)ty->screen2,
              sizeof(Termcell) * ty->w * ty->h);
+   /* The scrollback */
+   _checksum_backlog(ty, &ctx);
    /* Icon/Title */
    if (ty->prop.icon)
      {
