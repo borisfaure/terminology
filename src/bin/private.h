@@ -24,8 +24,12 @@ extern int terminology_starting_up;
 //#define ENABLE_TEST_UI
 #endif
 
+/* Test binaries compile logging out. tybench must not: it measures what the
+ * shipping binary costs, and logging is part of that. */
 #if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
-#define EINA_LOG_LEVEL_MAXIMUM (-1)
+# if !defined(BINARY_TYBENCH)
+#  define EINA_LOG_LEVEL_MAXIMUM (-1)
+# endif
 #endif
 extern int _log_domain;
 
