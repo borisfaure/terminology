@@ -212,11 +212,32 @@ _tytest_checksum(Termpty *ty)
 }
 
 
+static void
+_usage(const char *argv0)
+{
+   fprintf(stderr,
+           "usage: %s                 read escape codes on stdin, print a state checksum\n"
+           "       %s <test>|all      run the built-in unit tests\n",
+           argv0, argv0);
+}
+
 int
 main(int argc, char **argv)
 {
-   if (argc > 1)
-     return _run_tytests(argc, argv);
+   int chunk = 0;
+   int i;
+
+   for (i = 1; i < argc; i++)
+     {
+        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help"))
+          {
+             _usage(argv[0]);
+             return 0;
+          }
+        else if (!strncmp(argv[i], "--chunk=", 8)) chunk = atoi(argv[i] + 8);
+        /* Anything else is a unit test name, and those take over entirely. */
+        else return _run_tytests(argc, argv);
+     }
 
    eina_init();
    emile_init();
@@ -224,6 +245,7 @@ main(int argc, char **argv)
    _log_domain = eina_log_domain_register("tytest", NULL);
 
    tytest_common_init();
+   if (chunk > 0) tytest_common_set_chunk(chunk);
 
    tytest_common_main_loop();
 

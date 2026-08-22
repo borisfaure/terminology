@@ -9,6 +9,7 @@ VERBOSE=0
 DEBUG=0
 GENRESULTS=0
 EXIT_ON_FAILURE=0
+CHUNK=""
 NB_TESTS=0
 OK_TESTS=0
 FAILED_TESTS=0
@@ -72,6 +73,9 @@ where options are:
   -r, --results=PATH       Path to the result file
   -d, --testdir=PATH       Path to the test files
   -e, --exitonfailure      Exit as soon as a test fails
+  -c, --chunk=N            Feed tytest N bytes per read, to exercise sequences
+                           split across read boundaries. Results must match the
+                           default run exactly.
 
 Misc options:
   -v, --verbose            Be verbose about what is being done
@@ -128,6 +132,13 @@ while [ $# -gt 0 ]; do
         -e|-exitonfailure|--exitonfailure)
             EXIT_ON_FAILURE=1
             ;;
+        -c|-chunk|--chunk)
+            if [ -z "$value" ]; then
+                value=$1
+                shift
+            fi
+            CHUNK="--chunk=$value"
+            ;;
         *)
             echo "Unknown option: $option" 1>&2
             ;;
@@ -167,7 +178,11 @@ while read -r TEST EXPECTED_CHECKSUMS; do
         if [ $VERBOSE -ne 0 ]; then
             printf "%s... " "$TEST"
         fi
-        TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST")
+        if [ -n "$CHUNK" ]; then
+            TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST" "$CHUNK")
+        else
+            TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST")
+        fi
         if [ $DEBUG -ne 0 ]; then
             printf "(got %s, expected %s) " "$TEST_CHECKSUM" "$EXPECTED_CHECKSUMS"
         fi

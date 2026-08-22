@@ -11,6 +11,7 @@
 
 void tytest_common_main_loop(void);
 void tytest_common_feed(const char *data, int datalen);
+void tytest_common_set_chunk(int chunk);
 void tytest_common_init(void);
 void tytest_common_shutdown(void);
 void tytest_common_set_fd(int fd);

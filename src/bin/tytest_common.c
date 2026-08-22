@@ -549,15 +549,31 @@ tytest_common_feed(const char *data, int datalen)
    termpty_handle_buf(&_ty, _feed_codepoint, j);
 }
 
+/* How much to take from the fd at a time.
+ *
+ * Adjustable so the suite can replay the same input at different chunk sizes.
+ * Feeding one byte at a time is a brutal test of the carry-over logic: every
+ * escape sequence and every multibyte character then straddles a boundary, and
+ * the result must still be identical to reading in big blocks. */
+static int _read_chunk = 4096;
+
+void
+tytest_common_set_chunk(int chunk)
+{
+   if (chunk > 0) _read_chunk = chunk;
+}
+
 void
 tytest_common_main_loop(void)
 {
    char buf[4096];
-   int len;
+   int len, want;
+
+   want = (_read_chunk < (int)sizeof(buf)) ? _read_chunk : (int)sizeof(buf);
 
    do
      {
-        len = read(_ty.fd, buf, sizeof(buf));
+        len = read(_ty.fd, buf, want);
         if (len < 0 && errno != EAGAIN)
           {
              ERR("error while reading from tty slave fd");
