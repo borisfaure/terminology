@@ -12,6 +12,10 @@ option('tests',
        type: 'boolean',
        value: false,
        description: 'Enable generating tytest, used to run tests. (default=false)')
+option('benchmarks',
+       type: 'boolean',
+       value: false,
+       description: 'Enable generating tybench, used to benchmark the pty intake path. (default=false)')
 option('nls',
        type: 'boolean',
        value: true,

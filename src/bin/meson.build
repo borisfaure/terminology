@@ -85,6 +85,23 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'unit_tests.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tytest.c', 'tytest.h']
+tybench_sources = ['termptyesc.c', 'termptyesc.h',
+                  'backlog.c', 'backlog.h',
+                  'termptyops.c', 'termptyops.h',
+                  'termptydbl.c', 'termptydbl.h',
+                  'termptyext.c', 'termptyext.h',
+                  'termptygfx.c', 'termptygfx.h',
+                  'termpty.c', 'termpty.h',
+                  'termiointernals.c', 'termiointernals.h',
+                  'termiolink.c', 'termiolink.h',
+                  'config.c', 'config.h',
+                  'colors.c', 'colors.h',
+                  'sb.c', 'sb.h',
+                  'theme.h',
+                  'utils.c', 'utils.h',
+                  'utf8.c', 'utf8.h',
+                  'tytest_common.c', 'tytest_common.h',
+                  'tybench.c']
 
 executable('terminology',
            terminology_sources,
@@ -142,5 +159,16 @@ if tests
              install: true,
              include_directories: config_dir,
              c_args: '-DBINARY_TYTEST=1',
+             dependencies: terminology_dependencies)
+endif
+
+if benchmarks
+  # BINARY_TYFUZZ for the headless setup, BINARY_TYBENCH to keep eina logging
+  # compiled in so the numbers include what it costs.
+  tybench = executable('tybench',
+             tybench_sources,
+             install: false,
+             include_directories: config_dir,
+             c_args: ['-DBINARY_TYFUZZ=1', '-DBINARY_TYBENCH=1'],
              dependencies: terminology_dependencies)
 endif

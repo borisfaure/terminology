@@ -141,6 +141,13 @@ else
   message('Tests are disabled')
 endif
 
+benchmarks = get_option('benchmarks')
+if benchmarks
+  message('Benchmarks are enabled')
+else
+  message('Benchmarks are disabled')
+endif
+
 message('edje_cc set to:' + edje_cc)
 
 sed = find_program('sed')
