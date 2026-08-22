@@ -31,3 +31,29 @@ if tests
   # The in-process C unit tests compiled into tytest itself.
   test('unit', tytest, args: ['all'], timeout: 120)
 endif
+
+if benchmarks
+  python3 = find_program('python3')
+  bench_corpus_dir = meson.current_build_dir()
+
+  # Generated rather than committed: megabytes of derived data, and the
+  # generator is deterministic so the bytes are reproducible. It writes to
+  # @OUTDIR@ so that what it produces is what 'output' declares.
+  bench_corpus = custom_target('bench-corpus',
+      output: ['plain-ascii', 'scroll', 'sgr', 'unicode'],
+      command: [python3,
+                meson.current_source_dir() / 'bench' / 'gen_corpus.py',
+                '@OUTDIR@'],
+      build_by_default: false)
+
+  # Run with `meson test --benchmark`.
+  benchmark('pty-intake',
+            tybench,
+            args: ['-i', '5',
+                   bench_corpus_dir / 'plain-ascii',
+                   bench_corpus_dir / 'scroll',
+                   bench_corpus_dir / 'sgr',
+                   bench_corpus_dir / 'unicode'],
+            depends: bench_corpus,
+            timeout: 600)
+endif
