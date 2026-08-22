@@ -11,8 +11,8 @@
 #include "termpty.h"
 #include "termptyops.h"
 #include "termiointernals.h"
-#include "tytest_common.h"
 #include "utf8.h"
+#include "tytest_common.h"
 #if defined(BINARY_TYTEST)
 #include "colors.h"
 #include "tytest.h"
@@ -480,24 +480,84 @@ _termpty_init(Termpty *ty, Config *config)
    ty->backlog_beacon.screen_y = 0;
 }
 
+/* Scratch buffers for the feed path. Grown on demand and kept between calls so
+ * that a benchmark measures the parser rather than the allocator. */
+static char *_feed_buf = NULL;
+static Eina_Unicode *_feed_codepoint = NULL;
+static int _feed_size = 0;
+
+static Eina_Bool
+_feed_reserve(int len)
+{
+   char *buf;
+   Eina_Unicode *codepoint;
+   int size;
+
+   /* Room for the bytes themselves, a multibyte sequence carried over from the
+    * previous chunk, and the NUL that utf8_to_codepoints() expects. */
+   size = len + UTF8_CARRY_MAX + 1;
+   if (size <= _feed_size) return EINA_TRUE;
+
+   buf = realloc(_feed_buf, size);
+   if (!buf) return EINA_FALSE;
+   _feed_buf = buf;
+
+   codepoint = realloc(_feed_codepoint, size * sizeof(Eina_Unicode));
+   if (!codepoint) return EINA_FALSE;
+   _feed_codepoint = codepoint;
+
+   _feed_size = size;
+   return EINA_TRUE;
+}
+
+/* Feed one chunk of raw pty bytes, exactly as if read() had just returned them.
+ * A multibyte sequence left dangling at the end of the chunk is retained and
+ * completed by the next call, so callers are free to split the stream anywhere. */
+void
+tytest_common_feed(const char *data, int datalen)
+{
+   char *rbuf;
+   int i, j, len, consumed;
+
+   if (datalen <= 0) return;
+   if (!_feed_reserve(datalen))
+     {
+        ERR("memerr: cannot grow feed buffer to %d bytes", datalen);
+        return;
+     }
+
+   rbuf = _feed_buf;
+   for (i = 0; i < (int)sizeof(_ty.oldbuf) && _ty.oldbuf[i] & 0x80; i++)
+     {
+        *rbuf = _ty.oldbuf[i];
+        rbuf++;
+     }
+   memcpy(rbuf, data, datalen);
+   len = (rbuf - _feed_buf) + datalen;
+
+   for (i = 0; i < (int)sizeof(_ty.oldbuf); i++)
+     _ty.oldbuf[i] = 0;
+
+   _feed_buf[len] = 0;
+   // convert UTF8 to codepoint integers
+   j = utf8_to_codepoints(_feed_buf, len, _feed_codepoint, &consumed);
+   /* Retain a multibyte sequence cut in half by the chunk boundary; it gets put
+    * back in front of the next chunk. */
+   for (i = 0; (i < len - consumed) && (i < (int)sizeof(_ty.oldbuf)); i++)
+     _ty.oldbuf[i] = _feed_buf[consumed + i];
+   _feed_codepoint[j] = 0;
+   termpty_handle_buf(&_ty, _feed_codepoint, j);
+}
+
 void
 tytest_common_main_loop(void)
 {
+   char buf[4096];
+   int len;
+
    do
      {
-        char buf[4097];
-        Eina_Unicode codepoint[4097];
-        int i, j, consumed;
-        char *rbuf = buf;
-        int len = sizeof(buf) - 1;
-
-        for (i = 0; i < (int)sizeof(_ty.oldbuf) && _ty.oldbuf[i] & 0x80; i++)
-          {
-             *rbuf = _ty.oldbuf[i];
-             rbuf++;
-             len--;
-          }
-        len = read(_ty.fd, rbuf, len);
+        len = read(_ty.fd, buf, sizeof(buf));
         if (len < 0 && errno != EAGAIN)
           {
              ERR("error while reading from tty slave fd");
@@ -505,19 +565,7 @@ tytest_common_main_loop(void)
           }
         if (len <= 0) break;
 
-        for (i = 0; i < (int)sizeof(_ty.oldbuf); i++)
-          _ty.oldbuf[i] = 0;
-
-        len += rbuf - buf;
-
-        buf[len] = 0;
-        // convert UTF8 to codepoint integers
-        j = utf8_to_codepoints(buf, len, codepoint, &consumed);
-        /* Retain a multibyte sequence cut in half by the read boundary. */
-        for (i = 0; (i < len - consumed) && (i < (int)sizeof(_ty.oldbuf)); i++)
-          _ty.oldbuf[i] = buf[consumed + i];
-        codepoint[j] = 0;
-        termpty_handle_buf(&_ty, codepoint, j);
+        tytest_common_feed(buf, len);
      }
    while (1);
 }
@@ -537,6 +585,11 @@ tytest_common_init(void)
 void
 tytest_common_shutdown(void)
 {
+   free(_feed_buf);
+   _feed_buf = NULL;
+   free(_feed_codepoint);
+   _feed_codepoint = NULL;
+   _feed_size = 0;
    config_del(_config);
 #if defined(BINARY_TYTEST)
    free(_cells);
