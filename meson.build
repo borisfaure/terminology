@@ -152,4 +152,5 @@ config_dir = include_directories('.')
 subdir('data')
 subdir('man')
 subdir('src/bin')
+subdir('tests')
 

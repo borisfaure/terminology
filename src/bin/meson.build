@@ -137,7 +137,7 @@ if fuzzing
              dependencies: terminology_dependencies)
 endif
 if tests
-  executable('tytest',
+  tytest = executable('tytest',
              tytest_sources,
              install: true,
              include_directories: config_dir,
