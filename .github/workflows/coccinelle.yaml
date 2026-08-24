@@ -11,7 +11,7 @@ jobs:
         sudo apt update
         sudo apt install -y coccinelle
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         token: ${{ github.token }}
     - name: coccinelle check

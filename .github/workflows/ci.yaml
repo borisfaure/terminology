@@ -83,7 +83,7 @@ jobs:
             ldflags: -fsanitize=address
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # EFL 1.27 from noble/universe is new enough for the 1.26 the build asks
       # for, so there is nothing to build from source here.
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload meson logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: meson-logs-${{ matrix.name }}
           path: build/meson-logs/
@@ -154,7 +154,7 @@ jobs:
           - arch: arm64
             runner: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build dependencies
         run: |
@@ -204,7 +204,7 @@ jobs:
       # of /usr/include that the gcovr filter above exists to keep out. Upload
       # the report we built and nothing else.
       - name: Upload to codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           files: coverage.xml
           disable_search: true
@@ -215,7 +215,7 @@ jobs:
 
       - name: Upload meson logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: meson-logs-coverage-${{ matrix.arch }}
           path: build/meson-logs/
