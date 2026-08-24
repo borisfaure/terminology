@@ -570,7 +570,7 @@ tytest_common_main_loop(void)
    char buf[4096];
    int len, want;
 
-   want = (_read_chunk < (int)sizeof(buf)) ? _read_chunk : (int)sizeof(buf);
+   want = MIN((int)sizeof(buf), _read_chunk);
 
    do
      {
