@@ -1,0 +1,17 @@
+version: 2
+
+updates:
+  # Only the workflows have dependencies Dependabot understands. The build
+  # takes EFL from the distribution and snapcraft is not an ecosystem it
+  # supports, so there is nothing else here for it to watch.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # None of these move fast enough to be worth a pull request each.
+    groups:
+      actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: ci
