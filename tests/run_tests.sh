@@ -10,6 +10,7 @@ DEBUG=0
 GENRESULTS=0
 EXIT_ON_FAILURE=0
 CHUNK=""
+TEST_SHELL=""
 NB_TESTS=0
 OK_TESTS=0
 FAILED_TESTS=0
@@ -18,6 +19,22 @@ die()
 {
     echo "$*" 1>&2
     exit 1
+}
+
+# The test scripts write their escape sequences as \xNN, which POSIX does not
+# require printf to understand: dash, /bin/sh on Debian and Ubuntu, emits them
+# verbatim instead. So the scripts cannot simply be run through /bin/sh; pick a
+# shell whose printf does the right thing. meson passes one it found at
+# configure time, this is for standalone runs.
+detect_shell()
+{
+    for CANDIDATE in "$@"; do
+        if [ "$("$CANDIDATE" -c 'printf "\x41"' 2>/dev/null)" = "A" ]; then
+            printf '%s' "$CANDIDATE"
+            return 0
+        fi
+    done
+    return 1
 }
 ESC="\033"
 GREEN="${ESC}[32m"
@@ -72,6 +89,9 @@ where options are:
   -t, --tytest=PATH        Path to the tytest binary
   -r, --results=PATH       Path to the result file
   -d, --testdir=PATH       Path to the test files
+  -s, --shell=PATH         Shell used to run the test scripts. Defaults to the
+                           first of sh, bash, ksh, zsh whose printf understands
+                           \xNN escapes.
   -e, --exitonfailure      Exit as soon as a test fails
   -c, --chunk=N            Feed tytest N bytes per read, to exercise sequences
                            split across read boundaries. Results must match the
@@ -129,6 +149,13 @@ while [ $# -gt 0 ]; do
             fi
             TESTDIR=$value
             ;;
+        -s|-shell|--shell)
+            if [ -z "$value" ]; then
+                value=$1
+                shift
+            fi
+            TEST_SHELL=$value
+            ;;
         -e|-exitonfailure|--exitonfailure)
             EXIT_ON_FAILURE=1
             ;;
@@ -154,6 +181,10 @@ fi
 if [ ! -d "$TESTDIR" ]; then
     die "Invalid test directory: $TESTDIR"
 fi
+if [ -z "$TEST_SHELL" ]; then
+    TEST_SHELL=$(detect_shell sh bash ksh zsh) ||
+        die "No shell found whose printf understands \\xNN escapes"
+fi
 if [ $GENRESULTS -ne 0 ]; then
    DEBUG=0
    VERBOSE=0
@@ -167,6 +198,7 @@ Using:
    TYTEST=$TYTEST
    RESULTS=$RESULTS
    TESTDIR=$TESTDIR
+   TEST_SHELL=$TEST_SHELL
    EXIT_ON_FAILURE=$EXIT_ON_FAILURE
 
 EOF
@@ -179,9 +211,9 @@ while read -r TEST EXPECTED_CHECKSUMS; do
             printf "%s... " "$TEST"
         fi
         if [ -n "$CHUNK" ]; then
-            TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST" "$CHUNK")
+            TEST_CHECKSUM=$("$TEST_SHELL" "$TESTDIR"/"$TEST" | "$TYTEST" "$CHUNK")
         else
-            TEST_CHECKSUM=$("$TESTDIR"/"$TEST" | "$TYTEST")
+            TEST_CHECKSUM=$("$TEST_SHELL" "$TESTDIR"/"$TEST" | "$TYTEST")
         fi
         if [ $DEBUG -ne 0 ]; then
             printf "(got %s, expected %s) " "$TEST_CHECKSUM" "$EXPECTED_CHECKSUMS"
