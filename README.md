@@ -11,8 +11,6 @@
 [![Coverity](https://scan.coverity.com/projects/terminology/badge.svg)](https://scan.coverity.com/projects/terminology)
 [![CI](https://github.com/borisfaure/terminology/actions/workflows/ci.yaml/badge.svg)](https://github.com/borisfaure/terminology/actions/workflows/ci.yaml)
 [![Codecov](https://codecov.io/gh/borisfaure/terminology/branch/master/graph/badge.svg)](https://codecov.io/gh/borisfaure/terminology)
-[![Twitter: _Terminology_](https://img.shields.io/twitter/follow/_Terminology_?style=social)](https://twitter.com/_Terminology_)
-[![Snapcraft](https://snapcraft.io//terminology/badge.svg)](https://snapcraft.io/terminology)
 [![Weblate](https://hosted.weblate.org/widgets/terminology/-/terminology/svg-badge.svg)](https://hosted.weblate.org/engage/terminology/)
 
 -----
