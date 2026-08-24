@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     env:
       COLUMNS: 150
@@ -24,11 +24,13 @@ jobs:
       matrix:
         include:
           - name: gcc-debug
+            runner: ubuntu-24.04
             cc: gcc
             options: -Dnls=false -Dbuildtype=debug -Dfuzzing=true -Dbenchmarks=true
             cflags: -O0 -g -Wall -Wextra
 
           - name: gcc-release
+            runner: ubuntu-24.04
             cc: gcc
             options: -Dnls=true -Dbuildtype=release
             cflags: -O2 -g -Wall -Wextra
@@ -36,6 +38,7 @@ jobs:
             install: true
 
           - name: clang-release
+            runner: ubuntu-24.04
             cc: clang
             # lld rather than bfd, so the LLVM toolchain is exercised end to end.
             cc_ld: lld
@@ -44,6 +47,7 @@ jobs:
             cflags: -O2 -g -Wall -Wextra
 
           - name: clang-asan
+            runner: ubuntu-24.04
             cc: clang
             llvm: true
             options: -Dnls=false -Dbuildtype=debug
@@ -51,11 +55,32 @@ jobs:
             ldflags: -fsanitize=address
 
           - name: clang-ubsan
+            runner: ubuntu-24.04
             cc: clang
             llvm: true
             options: -Dnls=false -Dbuildtype=debug
             cflags: -O1 -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined
             ldflags: -fsanitize=undefined
+
+          # TERMINOLOGY_HAVE_NEON is gated on __aarch64__, so these are the only
+          # jobs that compile simd_neon.c to anything, run the parity test in
+          # simd.c, or give TERMINOLOGY_SIMD_DISABLE something to switch off.
+          # Both differ from their x86_64 twin above only in the runner.
+          - name: gcc-debug-arm64
+            runner: ubuntu-24.04-arm
+            cc: gcc
+            options: -Dnls=false -Dbuildtype=debug -Dfuzzing=true -Dbenchmarks=true
+            cflags: -O0 -g -Wall -Wextra
+
+          # asan so that a vector kernel storing outside its range is caught
+          # rather than merely disagreeing with the scalar reference.
+          - name: clang-asan-arm64
+            runner: ubuntu-24.04-arm
+            cc: clang
+            llvm: true
+            options: -Dnls=false -Dbuildtype=debug
+            cflags: -O1 -g -fno-omit-frame-pointer -fsanitize=address -fno-sanitize-recover=address
+            ldflags: -fsanitize=address
 
     steps:
       - uses: actions/checkout@v4
@@ -111,12 +136,23 @@ jobs:
           path: build/meson-logs/
 
   coverage:
-    name: coverage
-    runs-on: ubuntu-24.04
+    name: coverage-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     env:
       COLUMNS: 150
       TERM: xterm-256color
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+
+          # On x86_64 gcov sees simd_neon.c as a file with no code in it, so the
+          # NEON kernels are absent from the report rather than shown uncovered.
+          - arch: arm64
+            runner: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
 
@@ -157,10 +193,15 @@ jobs:
 
       # Tokenless uploads are rate limited, so pass CODECOV_TOKEN if the repo
       # has it. A failed upload should not fail the build either way.
+      #
+      # The two architectures cover different sets of lines, so they upload
+      # under separate flags and codecov merges them into one report instead of
+      # the second arriving as a replacement for the first.
       - name: Upload to codecov
         uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
+          flags: ${{ matrix.arch }}
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
 
@@ -168,5 +209,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: meson-logs-coverage
+          name: meson-logs-coverage-${{ matrix.arch }}
           path: build/meson-logs/
