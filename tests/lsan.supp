@@ -1,0 +1,8 @@
+# LeakSanitizer suppressions for the test binaries.
+#
+# EFL pulls in efreet and ethumb_client, which reach for a D-Bus session bus.
+# Where there is none -- CI containers, a bare build machine -- libdbus builds
+# and keeps the error strings for the failed connection. Nothing terminology
+# allocated, and nothing it can free, so ignore that whole library rather than
+# giving up on leak detection altogether.
+leak:libdbus-1

@@ -1,0 +1,172 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+# A new push to a branch makes the run already in flight for it pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      COLUMNS: 150
+      TERM: xterm-256color
+    strategy:
+      # One configuration failing says nothing about the others, and knowing
+      # which ones also broke is the useful part of the report.
+      fail-fast: false
+      matrix:
+        include:
+          - name: gcc-debug
+            cc: gcc
+            options: -Dnls=false -Dbuildtype=debug -Dfuzzing=true -Dbenchmarks=true
+            cflags: -O0 -g -Wall -Wextra
+
+          - name: gcc-release
+            cc: gcc
+            options: -Dnls=true -Dbuildtype=release
+            cflags: -O2 -g -Wall -Wextra
+            # The release build is the one that has to survive being installed.
+            install: true
+
+          - name: clang-release
+            cc: clang
+            # lld rather than bfd, so the LLVM toolchain is exercised end to end.
+            cc_ld: lld
+            llvm: true
+            options: -Dnls=false -Dbuildtype=release -Dfuzzing=true -Dbenchmarks=true
+            cflags: -O2 -g -Wall -Wextra
+
+          - name: clang-asan
+            cc: clang
+            llvm: true
+            options: -Dnls=false -Dbuildtype=debug
+            cflags: -O1 -g -fno-omit-frame-pointer -fsanitize=address -fno-sanitize-recover=address
+            ldflags: -fsanitize=address
+
+          - name: clang-ubsan
+            cc: clang
+            llvm: true
+            options: -Dnls=false -Dbuildtype=debug
+            cflags: -O1 -g -fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=undefined
+            ldflags: -fsanitize=undefined
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # EFL 1.27 from noble/universe is new enough for the 1.26 the build asks
+      # for, so there is nothing to build from source here.
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential meson ninja-build pkg-config gettext python3 \
+            libefl-all-dev libedje-bin libeet-bin libelementary-bin
+
+      # libclang-rt carries the sanitizer runtimes; clang cannot even link a
+      # -fsanitize= program without it.
+      - name: Install LLVM toolchain
+        if: matrix.llvm
+        run: sudo apt-get install -y --no-install-recommends clang lld libclang-rt-18-dev
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+          CC_LD: ${{ matrix.cc_ld }}
+          CFLAGS: ${{ matrix.cflags }}
+          LDFLAGS: ${{ matrix.ldflags }}
+        run: |
+          meson setup -Dtests=true ${{ matrix.options }} \
+            --prefix="${{ github.workspace }}/install" build
+          meson configure build
+
+      - name: Build
+        run: ninja -C build
+
+      - name: Test
+        env:
+          # EFL reaches for a D-Bus session bus that CI does not have, and
+          # libdbus holds on to the error strings from the failed connection.
+          # Suppress that one library rather than switching leak detection off.
+          ASAN_OPTIONS: detect_leaks=1
+          LSAN_OPTIONS: suppressions=${{ github.workspace }}/tests/lsan.supp:print_suppressions=0
+          UBSAN_OPTIONS: print_stacktrace=1
+        run: meson test -C build --print-errorlogs
+
+      - name: Install
+        if: matrix.install
+        run: ninja -C build install
+
+      - name: Upload meson logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meson-logs-${{ matrix.name }}
+          path: build/meson-logs/
+
+  coverage:
+    name: coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      COLUMNS: 150
+      TERM: xterm-256color
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential meson ninja-build pkg-config gettext python3 \
+            libefl-all-dev libedje-bin libeet-bin libelementary-bin gcovr
+
+      - name: Configure
+        env:
+          CC: gcc
+          # Unoptimised, so that the line numbers gcov reports are the ones the
+          # source actually has.
+          CFLAGS: -O0 -g
+        run: |
+          meson setup -Dnls=false -Dtests=true -Db_coverage=true \
+            -Dbuildtype=debug build
+          meson configure build
+
+      - name: Build
+        run: ninja -C build
+
+      - name: Test
+        env:
+          LSAN_OPTIONS: suppressions=${{ github.workspace }}/tests/lsan.supp:print_suppressions=0
+        run: meson test -C build --print-errorlogs
+
+      # Only tytest is ever run, so it is the only target leaving .gcda behind
+      # and there is nothing to double count. merge-mode-functions is needed
+      # because a few static functions share a name across translation units.
+      - name: Collect coverage
+        run: |
+          gcovr --root . --filter src/bin/ \
+            --merge-mode-functions=merge-use-line-min \
+            --xml-pretty -o coverage.xml --print-summary
+
+      # Tokenless uploads are rate limited, so pass CODECOV_TOKEN if the repo
+      # has it. A failed upload should not fail the build either way.
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+      - name: Upload meson logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meson-logs-coverage
+          path: build/meson-logs/

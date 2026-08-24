@@ -9,6 +9,7 @@
 -----
 
 [![Coverity](https://scan.coverity.com/projects/terminology/badge.svg)](https://scan.coverity.com/projects/terminology)
+[![CI](https://github.com/borisfaure/terminology/actions/workflows/ci.yaml/badge.svg)](https://github.com/borisfaure/terminology/actions/workflows/ci.yaml)
 [![CircleCI](https://circleci.com/gh/borisfaure/terminology.svg?style=shield)](https://circleci.com/gh/borisfaure/terminology)
 [![Codecov](https://codecov.io/gh/borisfaure/terminology/branch/master/graph/badge.svg)](https://codecov.io/gh/borisfaure/terminology)
 [![Twitter: _Terminology_](https://img.shields.io/twitter/follow/_Terminology_?style=social)](https://twitter.com/_Terminology_)
