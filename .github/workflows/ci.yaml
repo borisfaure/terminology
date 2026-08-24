@@ -197,10 +197,18 @@ jobs:
       # The two architectures cover different sets of lines, so they upload
       # under separate flags and codecov merges them into one report instead of
       # the second arriving as a replacement for the first.
+      #
+      # Naming a file is not enough on its own to make it the only one sent:
+      # the uploader still searches the tree and still runs its gcov plugin,
+      # which found sixty more reports to add to ours, among them headers out
+      # of /usr/include that the gcovr filter above exists to keep out. Upload
+      # the report we built and nothing else.
       - name: Upload to codecov
         uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
+          disable_search: true
+          plugins: noop
           flags: ${{ matrix.arch }}
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
