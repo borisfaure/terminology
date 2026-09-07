@@ -26,6 +26,9 @@ int tytest_sync_watchdog_teardown(void);
 int tytest_sync_nested(void);
 int tytest_sync_resize(void);
 int tytest_sync_soft_reset(void);
+int tytest_sync_change_cb_coalesced(void);
+int tytest_sync_change_cb_watchdog(void);
+int tytest_sync_change_cb_altscreen(void);
 int tytest_percent_decode(void);
 
 #endif

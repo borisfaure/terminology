@@ -2076,4 +2076,160 @@ tytest_sync_soft_reset(void)
    return 0;
 }
 
+/* Change-callback coalescing (mode 2026)
+ * termio's _smart_pty_change() drops pty change callbacks while
+ * sync_output.active is true, so the whole render pipeline depends on
+ * _sync_output_end() firing cb.change.func exactly once when the window
+ * closes: on ESU, on the watchdog, or on an alt-buffer switch.
+ * _ty_feed() calls termpty_handle_buf() directly, bypassing the fire in
+ * termpty_read_cb(), so the counter below sees the sync path and nothing
+ * else. */
+
+/* Counts the number of times the change callback fires. */
+static void
+_ty_change_cb_count(void *data)
+{
+   int *fires = data;
+
+   (*fires)++;
+}
+
+/* Counts and stops the main loop so the watchdog test need not wait. */
+static void
+_ty_change_cb_count_quit(void *data)
+{
+   int *fires = data;
+
+   (*fires)++;
+   ecore_main_loop_quit();
+}
+
+/* safety timer for the watchdog test */
+static Eina_Bool
+_ty_loop_timeout_cb(void *data)
+{
+   Ecore_Timer **timer = data;
+
+   *timer = NULL; /* timer owns itself once it has fired */
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+/* Test 6: One coalesced frame per BSU/ESU pair.
+ * No change callback may fire between BSU and ESU, however many writes the
+ * burst contains; ESU queues exactly one. */
+int
+tytest_sync_change_cb_coalesced(void)
+{
+   Termpty ty;
+   int fires = 0;
+
+   _ty_test_init(&ty, 80, 24);
+   ty.cb.change.func = _ty_change_cb_count;
+   ty.cb.change.data = &fires;
+
+   /* ESU with no window open has nothing to render. */
+   _ty_feed(&ty, "\x1b[?2026l");
+   assert(fires == 0);
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   assert(fires == 0);
+
+   /* A burst of full-line clears and rewrites: the pattern some TUIs
+    * emit.  Every one of these mutates the live screen; none may queue a
+    * frame. */
+   _ty_feed(&ty, "\r\x1b[2Kfoo\r\x1b[2Kbar\r\x1b[2Kbaz");
+   assert(fires == 0);
+
+   /* Nested BSU only pushes the watchdog deadline back. */
+   _ty_feed(&ty, "\x1b[?2026h");
+   assert(ty.sync_output.active == EINA_TRUE);
+   assert(fires == 0);
+
+   /* ESU closes the window and queues the single coalesced frame. */
+   _ty_feed(&ty, "\x1b[?2026l");
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(fires == 1);
+   assert(_ty_cell_cp(&ty, 0, 0) == 'b'); /* last write of the burst */
+
+   /* A second ESU has no window to close: no extra frame. */
+   _ty_feed(&ty, "\x1b[?2026l");
+   assert(fires == 1);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 7: The watchdog queues the frame when ESU never arrives.
+ * Without this, a buggy or killed app would leave the window open and
+ * _smart_pty_change() would keep dropping frames forever. */
+int
+tytest_sync_change_cb_watchdog(void)
+{
+   Termpty ty;
+   int fires = 0;
+   Ecore_Timer *safety;
+
+   _ty_test_init(&ty, 80, 24);
+   ty.cb.change.func = _ty_change_cb_count_quit;
+   ty.cb.change.data = &fires;
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   _ty_feed(&ty, "\r\x1b[2Kpartial");
+   assert(ty.sync_output.active == EINA_TRUE);
+   assert(ty.sync_output.watchdog != NULL);
+   assert(fires == 0);
+
+   /* No ESU is ever sent.  The 150ms watchdog has to end the window on its
+    * own; the safety timer only keeps a broken watchdog from hanging the
+    * suite. */
+   safety = ecore_timer_add(5.0, _ty_loop_timeout_cb, &safety);
+   ecore_main_loop_begin();
+   if (safety) ecore_timer_del(safety);
+
+   assert(fires == 1);
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.watchdog == NULL);
+   assert(ty.sync_output.shadow_rows == NULL);
+   /* The frame that got queued shows the live, partial burst. */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'p');
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test 8: An alt-buffer switch mid-sync queues one frame.
+ * The window is invalidated (the app is expected to re-bracket), and the
+ * renderer must be told, or the swapped-in screen never gets painted. */
+int
+tytest_sync_change_cb_altscreen(void)
+{
+   Termpty ty;
+   int fires = 0;
+
+   _ty_test_init(&ty, 80, 24);
+   ty.cb.change.func = _ty_change_cb_count;
+   ty.cb.change.data = &fires;
+
+   _ty_feed(&ty, "\x1b[?2026h");
+   _ty_feed(&ty, "\r\x1b[2Kmain");
+   assert(ty.sync_output.active == EINA_TRUE);
+   assert(fires == 0);
+
+   /* DECSET 1049 -- switch to the alternate buffer. */
+   _ty_feed(&ty, "\x1b[?1049h");
+   assert(ty.sync_output.active == EINA_FALSE);
+   assert(ty.sync_output.shadow_rows == NULL);
+   assert(fires == 1);
+
+   /* Back to the normal buffer with no window open: no frame from the sync
+    * path. */
+   _ty_feed(&ty, "\x1b[?1049l");
+   assert(fires == 1);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
