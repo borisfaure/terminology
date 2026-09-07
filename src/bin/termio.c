@@ -1,4 +1,5 @@
 #include "private.h"
+#include "uri_decode.h"
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -709,7 +710,7 @@ termio_link_get(const Evas_Object *obj,
      {
         if (casestartswith(link, "file://"))
           {
-             // TODO: decode string: %XX -> char
+             char *decoded;
              link = link + sizeof("file://") - 1;
              /* Handle cases where / is omitted: file://HOSTNAME/home/ */
              if (link[0] != '/')
@@ -718,6 +719,11 @@ termio_link_get(const Evas_Object *obj,
                   if (!link)
                     return NULL;
                }
+             /* Percent-decode the path per RFC 3986 §2.1
+              * (e.g., file:///home/u/My%20Docs → /home/u/My Docs) */
+             decoded = strdup(link);
+             if (decoded) uri_percent_decode_inplace(decoded);
+             return decoded;
           }
      }
    return strdup(link);

@@ -52,6 +52,7 @@ static struct {
        { "sync_nested", tytest_sync_nested},
        { "sync_resize", tytest_sync_resize},
        { "sync_soft_reset", tytest_sync_soft_reset},
+       { "percent_decode", tytest_percent_decode},
        { NULL, NULL},
 };
 
