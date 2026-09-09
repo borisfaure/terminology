@@ -5,13 +5,13 @@
 # similar <similar@orange.fr>, 2019, 2020.
 # Philippe Jean Guillaumie <similar@orange.fr>, 2021, 2022.
 # anthi <thetechrobo@pm.me>, 2021.
-# Philippe Jean Guillaumie <batden@sfr.fr>, 2023.
+# Philippe Jean Guillaumie <batden@sfr.fr>, 2023, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-13 22:21+0100\n"
-"PO-Revision-Date: 2023-08-19 00:51+0000\n"
+"PO-Revision-Date: 2026-09-09 08:51+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <batden@sfr.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"X-Generator: Weblate 2026.9.1\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
@@ -929,7 +929,7 @@ msgstr "Commande inconnue : %s"
 #: src/bin/termio.c:467
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
-msgstr "Impossible de déterminer le répertoire de travail de PID %i : %s"
+msgstr "Impossible de déterminer le répertoire de travail de PID %i : %s"
 
 #: src/bin/termio.c:482
 #, c-format
