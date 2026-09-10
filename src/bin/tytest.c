@@ -59,6 +59,18 @@ static struct {
        { "xmodkeys_set", tytest_xmodkeys_set},
        { "xmodkeys_query", tytest_xmodkeys_query},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},
+       { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
+       { "vs16_bare_narrow", tytest_vs16_bare_narrow},
+       { "vs16_widens_one_call", tytest_vs16_widens_one_call},
+       { "vs16_widens_split_calls", tytest_vs16_widens_split_calls},
+       { "vs16_no_room_no_wrap", tytest_vs16_no_room_no_wrap},
+       { "vs16_base_table_unaffected", tytest_vs16_base_table_unaffected},
+       { "vs16_guard_invalidated_by_cursor_move", tytest_vs16_guard_invalidated_by_cursor_move},
+       { "vs16_cjk_ambiguous_wide", tytest_vs16_cjk_ambiguous_wide},
+       { "vs16_guard_invalidated_by_ht", tytest_vs16_guard_invalidated_by_ht},
+       { "vs16_guard_invalidated_by_decom", tytest_vs16_guard_invalidated_by_decom},
+       { "vs16_guard_invalidated_by_decstbm", tytest_vs16_guard_invalidated_by_decstbm},
+       { "vs16_guard_invalidated_by_decrc", tytest_vs16_guard_invalidated_by_decrc},
        { NULL, NULL},
 };
 

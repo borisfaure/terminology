@@ -33,5 +33,17 @@ int tytest_percent_decode(void);
 int tytest_xmodkeys_set(void);
 int tytest_xmodkeys_query(void);
 int tytest_kitty_keyboard_ignored(void);
+int tytest_vs16_regression_no_scroll(void);
+int tytest_vs16_bare_narrow(void);
+int tytest_vs16_widens_one_call(void);
+int tytest_vs16_widens_split_calls(void);
+int tytest_vs16_no_room_no_wrap(void);
+int tytest_vs16_base_table_unaffected(void);
+int tytest_vs16_guard_invalidated_by_cursor_move(void);
+int tytest_vs16_cjk_ambiguous_wide(void);
+int tytest_vs16_guard_invalidated_by_ht(void);
+int tytest_vs16_guard_invalidated_by_decom(void);
+int tytest_vs16_guard_invalidated_by_decstbm(void);
+int tytest_vs16_guard_invalidated_by_decrc(void);
 
 #endif

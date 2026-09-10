@@ -2770,9 +2770,16 @@ termio_internal_render(Termio *sd,
                   Evas_Textgrid_Cell *tc;
                   Eina_Unicode g;
 
-                  jump = 1;
                   g = uni[i];
-                  dbl = _termpty_is_dblwidth_get(sd->pty, g);
+                  /* U+FE0F does not consume its own column: it is folded
+                   * into the preceding codepoint's width below via
+                   * lookahead (safe here since the whole preedit string
+                   * is available in uni[]). */
+                  if (EINA_UNLIKELY(g == 0xfe0f))
+                    continue;
+                  jump = 1;
+                  dbl = _termpty_is_dblwidth_get(sd->pty, g,
+                                                 (i + 1 < len) && (uni[i + 1] == 0xfe0f));
                   if (dbl) jump = 2;
                   backx = 0;
                   if ((x + jump) > sd->grid.w)

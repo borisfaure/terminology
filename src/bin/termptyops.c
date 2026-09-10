@@ -180,6 +180,43 @@ termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
      }
 }
 
+/* Advance the cursor by `offset` columns (1 for a normal codepoint, 2 for
+ * a double-width one), honouring termstate.wrap the same way for any
+ * offset. Shared by the main text-append loop and the VS16 retro-widen
+ * block (offset == 1 there). */
+static void
+_cursor_advance(Termpty *ty, int offset, int max_right)
+{
+   ty->cursor_state.wrapnext = 0;
+   if (ty->termstate.wrap)
+     {
+        if (EINA_UNLIKELY(ty->cursor_state.cx >= (max_right - offset)))
+          ty->cursor_state.wrapnext = 1;
+        else
+          {
+             ty->cursor_state.cx += offset;
+             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
+          }
+     }
+   else
+     {
+        ty->cursor_state.cx += offset;
+        if (ty->cursor_state.cx > (max_right - offset))
+          ty->cursor_state.cx = max_right - offset;
+        TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
+     }
+}
+
+/* Pair `cell` (already marked att.dblwidth) with the zero-codepoint
+ * partner cell that follows it, mirroring att. Shared by the main
+ * text-append loop and the VS16 retro-widen block. */
+static void
+_dblwidth_pair(Termpty *ty, Termcell *cell, Termcell *partner)
+{
+   cell->att.newline = 0;
+   termpty_cell_codepoint_att_fill(ty, 0, cell->att, partner, 1);
+}
+
 void
 termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
@@ -199,6 +236,56 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              max_right = ty->termstate.right_margin;
           }
 
+        g = _termpty_charset_trans(ty, codepoints[i]);
+
+        /* VARIATION SELECTOR-16: retro-widen the character that was just
+         * written narrow, if (and only if) it is emoji-table-only (not in
+         * the base wide table) and there is a valid, un-wrapped previous
+         * write with room for the widened partner cell. This never causes
+         * a wrap or scroll by itself, and must be handled *before* the
+         * pending-wrapnext block below: if wrapnext is set there is by
+         * definition no room to widen (the base char sits in the last
+         * usable column), and consuming the pending wrap here would wrap
+         * as a side effect of a mere presentation selector. See vs16-spec
+         * for rationale (a codepoint + VS16 pair can straddle two
+         * termpty_text_append() calls, so lookahead here is not
+         * sufficient). */
+        if (EINA_UNLIKELY(g == 0xfe0f) && ty->config->emoji_dbl_width)
+          {
+             /* Always consume the VS16 here without falling into the
+              * pending-wrapnext / insert / generic-skip code below: a
+              * pending wrapnext must be left untouched (no wrap, no
+              * scroll) if we cannot widen. The recorded position is the
+              * whole guard: any cursor move since the last text write
+              * (DECSTBM, DECSLRM, DECOM, HT, DECRC, ...) lands vs16_base_x/y
+              * somewhere that no longer matches cx-1/cy, so those paths
+              * need no explicit invalidation here. */
+             if (!ty->cursor_state.wrapnext &&
+                 ty->cursor_state.cx >= 1 && ty->cursor_state.cx < max_right &&
+                 ty->vs16_base_y == ty->cursor_state.cy &&
+                 ty->vs16_base_x == ty->cursor_state.cx - 1)
+               {
+                  int pcx = ty->cursor_state.cx - 1;
+
+                  if (!cells[pcx].att.dblwidth)
+                    {
+                       Eina_Unicode pg = cells[pcx].codepoint;
+                       Eina_Bool emoji_only =
+                          _termpty_is_wide_table(ty, pg, EINA_TRUE) &&
+                          !_termpty_is_wide_table(ty, pg, EINA_FALSE);
+
+                       if (emoji_only)
+                         {
+                            cells[pcx].att.dblwidth = 1;
+                            _dblwidth_pair(ty, &cells[pcx],
+                                           &cells[ty->cursor_state.cx]);
+                            _cursor_advance(ty, 1, max_right);
+                         }
+                    }
+               }
+             continue;
+          }
+
         if (ty->cursor_state.wrapnext)
           {
              cells[max_right-1].att.autowrapped = 1;
@@ -214,13 +301,12 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
                TERMPTY_CELL_COPY(ty, &(cells[j - 1]), &(cells[j]), 1);
           }
 
-        g = _termpty_charset_trans(ty, codepoints[i]);
         /* Skip 0-width space or RTL/LTR marks */
         if (EINA_UNLIKELY(g >= 0x200b && g <= 0x200f))
           {
              continue;
           }
-        /* Skip variation selectors */
+        /* Skip variation selectors (U+FE0F was already handled above) */
         if (EINA_UNLIKELY(g >= 0xfe00 && g <= 0xfe0f))
           {
              continue;
@@ -243,44 +329,25 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
              cells[ty->cursor_state.cx].att.strike = 1;
           }
 
-        cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g);
+        /* Always written narrow here: emoji-table-only codepoints are
+         * retro-widened above when/if a following U+FE0F arrives. Genuine
+         * wide characters (base table) are unaffected. */
+        cells[ty->cursor_state.cx].att.dblwidth = _termpty_is_dblwidth_get(ty, g, EINA_FALSE);
         if (EINA_UNLIKELY((cells[ty->cursor_state.cx].att.dblwidth) && (ty->cursor_state.cx < (max_right - 1))))
           {
-             cells[ty->cursor_state.cx].att.newline = 0;
-             termpty_cell_codepoint_att_fill(ty, 0, cells[ty->cursor_state.cx].att,
-                                             &(cells[ty->cursor_state.cx + 1]), 1);
+             _dblwidth_pair(ty, &cells[ty->cursor_state.cx],
+                            &cells[ty->cursor_state.cx + 1]);
           }
 
-        if (ty->termstate.wrap)
-          {
-             unsigned char offset = 1;
+        /* Record the cell just written before advancing the cursor: this
+         * is the position the VS16 retro-widen guard above checks against. */
+        ty->vs16_base_x = ty->cursor_state.cx;
+        ty->vs16_base_y = ty->cursor_state.cy;
 
-             ty->cursor_state.wrapnext = 0;
-             if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
-               offset = 2;
-             if (EINA_UNLIKELY(ty->cursor_state.cx >= (max_right - offset)))
-               ty->cursor_state.wrapnext = 1;
-             else
-               {
-                  ty->cursor_state.cx += offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
-               }
-          }
-        else
-          {
-             unsigned char offset = 1;
-
-             ty->cursor_state.wrapnext = 0;
-             if (EINA_UNLIKELY(cells[ty->cursor_state.cx].att.dblwidth))
-               offset = 2;
-             ty->cursor_state.cx += offset;
-             if (ty->cursor_state.cx > (max_right - offset))
-               {
-                  ty->cursor_state.cx = max_right - offset;
-                  TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
-               }
-             TERMPTY_RESTRICT_FIELD(ty->cursor_state.cx, 0, max_right);
-          }
+        {
+           unsigned char offset = (cells[ty->cursor_state.cx].att.dblwidth) ? 2 : 1;
+           _cursor_advance(ty, offset, max_right);
+        }
      }
 }
 
@@ -447,6 +514,8 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.appcursor = 0;
    ty->termstate.wrap = 1;
    ty->cursor_state.wrapnext = 0;
+   ty->vs16_base_x = -1;
+   ty->vs16_base_y = -1;
    ty->termstate.crlf = 0;
    ty->termstate.send_bs = 0;
    ty->termstate.reverse = 0;

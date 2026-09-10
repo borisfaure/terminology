@@ -6,15 +6,29 @@ Eina_Bool _termpty_is_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
 Eina_Bool _termpty_is_ambigous_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
 
 static inline Eina_Bool
-_termpty_is_dblwidth_get(const Termpty *ty, const Eina_Unicode g)
+_termpty_is_wide_table(const Termpty *ty, const Eina_Unicode g, Eina_Bool emoji)
+{
+   return ty->termstate.cjk_ambiguous_wide
+      ? _termpty_is_ambigous_wide(g, emoji)
+      : _termpty_is_wide(g, emoji);
+}
+
+/* vs16: whether this codepoint is immediately followed by U+FE0F
+ * (VARIATION SELECTOR-16). Only makes emoji-table-only codepoints wide
+ * when EINA_TRUE; the base (genuinely wide) table is unaffected either
+ * way. Callers writing a base character narrow-first (see
+ * termpty_text_append()'s VS16 retro-widen) should pass EINA_FALSE and
+ * apply the wide table's superset separately once VS16 is seen. */
+static inline Eina_Bool
+_termpty_is_dblwidth_get(const Termpty *ty, const Eina_Unicode g, Eina_Bool vs16)
 {
    /* optimize for latin1 non-ambiguous */
    if (g <= 0xA0)
      return EINA_FALSE;
-   if (!ty->termstate.cjk_ambiguous_wide)
-     return _termpty_is_wide(g, ty->config->emoji_dbl_width);
-   else
-     return _termpty_is_ambigous_wide(g, ty->config->emoji_dbl_width);
+   if (_termpty_is_wide_table(ty, g, EINA_FALSE))
+     return EINA_TRUE;
+   return ty->config->emoji_dbl_width && vs16 &&
+      _termpty_is_wide_table(ty, g, EINA_TRUE);
 }
 
 #endif

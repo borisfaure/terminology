@@ -220,6 +220,16 @@ struct tag_Termpty
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
+   /* Column/row of the cell written by the last text codepoint appended by
+    * termpty_text_append(), or -1 when there is none. Used to validate
+    * VS16 (U+FE0F) retro-widen: a cursor move that lands anywhere else
+    * fails the match automatically, so escape sequences that reposition
+    * the cursor (DECSTBM, DECSLRM, DECOM, HT, DECRC, ...) need no explicit
+    * invalidation. Kept on Termpty rather than Term_Cursor so DECRC's
+    * wholesale cursor_state assignment does not resurrect a stale value.
+    * Reset to -1 in termpty_soft_reset_state() (also reached via
+    * termpty_reset_state()) and on resize. */
+   int vs16_base_x, vs16_base_y;
    int exit_code;
    pid_t pid;
    unsigned int altbuf     : 1;

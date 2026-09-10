@@ -1495,6 +1495,8 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    ty->w = new_w;
    ty->h = new_h;
    ty->cursor_state.wrapnext = 0;
+   ty->vs16_base_x = -1;
+   ty->vs16_base_y = -1;
 
    if (altbuf)
      termpty_screen_swap(ty);
@@ -1863,6 +1865,16 @@ _ty_feed(Termpty *ty, const char *str)
    termpty_handle_buf(ty, buf, j);
 }
 
+/* Feed an array of raw Eina_Unicode codepoints as if the PTY sent them
+ * (bypasses UTF-8 decoding so codepoints such as U+2733 or U+FE0F can be
+ * fed directly, and so a codepoint pair can be split across two calls to
+ * exercise termpty_text_append()'s VS16 retro-widen). */
+static void
+_ty_feed_uni(Termpty *ty, const Eina_Unicode *codepoints, int len)
+{
+   termpty_handle_buf(ty, codepoints, len);
+}
+
 /* Minimal Termpty allocator for unit tests — no fd, no EFL object.
  * Requires eina+ecore init so that ecore_timer_add (watchdog) works. */
 static void
@@ -1878,6 +1890,11 @@ _ty_test_init(Termpty *ty, int w, int h)
    ty->slavefd = -1;
    ty->pid = -1;
    ty->backsize = 50;
+   /* Real defaults (emoji_dbl_width off) so codepoints above 0xA0, such as
+    * emoji, exercise the same ty->config->emoji_dbl_width path production
+    * code takes. */
+   ty->config = config_new();
+   assert(ty->config);
    termpty_resize_tabs(ty, 0, w);
    termpty_reset_state(ty);
    ty->screen  = calloc(1, sizeof(Termcell) * w * h);
@@ -1897,6 +1914,7 @@ _ty_test_shutdown(Termpty *ty)
    free(ty->tabs);
    free(ty->hl.bitmap);
    free(ty->buf);
+   config_del(ty->config);
 
    ecore_shutdown();
    eina_shutdown();
@@ -1910,6 +1928,16 @@ _ty_cell_cp(Termpty *ty, int x, int y)
    const Termcell *cells = termpty_cellrow_get(ty, y, &w);
    if (!cells || x >= w) return 0;
    return cells[x].codepoint;
+}
+
+/* Helper: read att.dblwidth of cell (x,y) via the read accessor. */
+static Eina_Bool
+_ty_cell_dblwidth(Termpty *ty, int x, int y)
+{
+   ssize_t w = 0;
+   const Termcell *cells = termpty_cellrow_get(ty, y, &w);
+   if (!cells || x >= w) return EINA_FALSE;
+   return cells[x].att.dblwidth;
 }
 
 /* Test 1: Frame coherence.
@@ -2335,5 +2363,467 @@ tytest_kitty_keyboard_ignored(void)
    _ty_test_shutdown(&ty);
    return 0;
 }
+
+/* VS16-aware emoji width (retro-widen)
+ *
+ * emoji_dbl_width makes _termpty_is_wide() report double-width for a
+ * superset of codepoints that includes text-presentation symbols such as
+ * U+2733 (East_Asian_Width = Narrow), which wcwidth-based apps (tmux,
+ * readline, ...) count as single-width. Per Unicode TR51 / kitty / foot /
+ * wezterm, such a codepoint is only double-width when immediately
+ * followed by U+FE0F (VARIATION SELECTOR-16); genuinely wide codepoints
+ * (the base table, e.g. U+1100..115F, U+1F600) are unaffected either way.
+ *
+ * The base character is always written narrow first and retro-widened in
+ * place if/when U+FE0F arrives (see termpty_text_append()): a codepoint +
+ * VS16 pair can straddle two termpty_text_append() calls, or even two
+ * termpty_handle_buf() reads, so lookahead is not sufficient. */
+
+#define CP_STAR    0x2733  /* EIGHT SPOKED ASTERISK: emoji-table-only */
+#define CP_VS16    0xfe0f  /* VARIATION SELECTOR-16 */
+#define CP_GRINNING 0x1f600 /* GRINNING FACE: base (genuinely wide) table */
+
+/* Shared setup: a fresh 80x24 Termpty with emoji_dbl_width forced on. */
+static void
+_ty_vs16_test_init(Termpty *ty)
+{
+   _ty_test_init(ty, 80, 24);
+   ty->config->emoji_dbl_width = EINA_TRUE;
+}
+
+/* Test: the actual regression.  80x24, identifiable content on row 1,
+ * cursor forced to row 24, then a full 80-column "status line" containing
+ * one bare U+2733 -- as tmux would draw an 80-col status bar.  With the
+ * bug, wcwidth-based tmux believes this is 80 columns wide, but
+ * emoji_dbl_width made terminology see it as 81 columns, so the 80th
+ * character forces the deferred autowrap and the screen scrolls one line,
+ * pushing row 1 into the backlog. */
+int
+tytest_vs16_regression_no_scroll(void)
+{
+   Termpty ty;
+   Eina_Unicode line[80];
+   int i;
+
+   _ty_vs16_test_init(&ty);
+
+   /* Identifiable content on row 1. */
+   _ty_feed(&ty, "TOP-ROW-MARKER");
+
+   /* Force cursor to row 24 (0-indexed row 23), column 1. */
+   _ty_feed(&ty, "\x1b[24d\r");
+   assert(ty.cursor_state.cy == 23);
+   assert(ty.cursor_state.cx == 0);
+
+   /* Exactly 80 characters, one of them (mid-line) a bare U+2733. */
+   for (i = 0; i < 80; i++)
+     line[i] = (i == 40) ? CP_STAR : 'x';
+   _ty_feed_uni(&ty, line, 80);
+
+   /* No scroll: nothing pushed to the backlog. */
+   assert(ty.backpos == 0);
+
+   /* Row 1 content is still on screen. */
+   assert(_ty_cell_cp(&ty, 0, 0) == 'T');
+   assert(_ty_cell_cp(&ty, 1, 0) == 'O');
+   assert(_ty_cell_cp(&ty, 2, 0) == 'P');
+
+   /* The status text occupies row 24 (index 23) columns 1..80 exactly:
+    * cursor did not overflow past the last column via a spurious wide
+    * cell, and there is exactly one 'x' immediately either side of the
+    * (narrow) asterisk. */
+   assert(_ty_cell_cp(&ty, 39, 23) == 'x');
+   assert(_ty_cell_cp(&ty, 40, 23) == CP_STAR);
+   assert(_ty_cell_cp(&ty, 41, 23) == 'x');
+   assert(_ty_cell_cp(&ty, 79, 23) == 'x');
+
+   /* Cursor at 1;1 after CUP. */
+   _ty_feed(&ty, "\x1b[1;1H");
+   assert(ty.cursor_state.cx == 0);
+   assert(ty.cursor_state.cy == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: bare U+2733 (no VS16) -> width 1, cursor advances by 1. */
+int
+tytest_vs16_bare_narrow(void)
+{
+   Termpty ty;
+   Eina_Unicode cp = CP_STAR;
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, &cp, 1);
+
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_STAR);
+   assert(ty.cursor_state.cx == 1);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: U+2733 + U+FE0F in one termpty_text_append() (one
+ * termpty_handle_buf() call) -> width 2, cursor advances by 2, partner
+ * cell has codepoint 0 and dblwidth set on the base cell. */
+int
+tytest_vs16_widens_one_call(void)
+{
+   Termpty ty;
+   Eina_Unicode cps[2] = { CP_STAR, CP_VS16 };
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, cps, 2);
+
+   assert(ty.cursor_state.cx == 2);
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_STAR);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 1);
+   assert(_ty_cell_cp(&ty, 1, 0) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: same as above, but the base character and U+FE0F are fed via two
+ * separate termpty_text_append()/termpty_handle_buf() calls -- the case
+ * lookahead inside termpty_text_append() would miss, since a read can end
+ * exactly between the emoji and its VS16. */
+int
+tytest_vs16_widens_split_calls(void)
+{
+   Termpty ty;
+   Eina_Unicode star = CP_STAR;
+   Eina_Unicode vs16 = CP_VS16;
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cx == 1); /* still narrow until VS16 arrives */
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   assert(ty.cursor_state.cx == 2);
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_STAR);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 1);
+   assert(_ty_cell_cp(&ty, 1, 0) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: U+FE0F arrives with no room to widen (base U+2733 was written
+ * into the very last column, so wrapnext is now pending) -> stays narrow,
+ * no wrap, no scroll: a mere presentation selector must never itself
+ * trigger the deferred autowrap. */
+int
+tytest_vs16_no_room_no_wrap(void)
+{
+   Termpty ty;
+   Eina_Unicode fill[80];
+   Eina_Unicode vs16 = CP_VS16;
+   int i;
+
+   _ty_vs16_test_init(&ty);
+
+   /* Fill the line so the last codepoint (the asterisk) lands in the last
+    * column, setting wrapnext. */
+   for (i = 0; i < 80; i++)
+     fill[i] = (i == 79) ? CP_STAR : 'x';
+   _ty_feed_uni(&ty, fill, 80);
+
+   assert(ty.cursor_state.wrapnext == 1);
+   assert(ty.cursor_state.cx == 79);
+   assert(ty.backpos == 0);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   /* Still narrow, still pending wrap at the same position, no scroll. */
+   assert(_ty_cell_cp(&ty, 79, 0) == CP_STAR);
+   assert(_ty_cell_dblwidth(&ty, 79, 0) == 0);
+   assert(ty.cursor_state.wrapnext == 1);
+   assert(ty.cursor_state.cx == 79);
+   assert(ty.backpos == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: U+1F600 (base table, genuinely wide) -> width 2 with and without
+ * VS16, unchanged behaviour. */
+int
+tytest_vs16_base_table_unaffected(void)
+{
+   Termpty ty;
+   Eina_Unicode cp = CP_GRINNING;
+   Eina_Unicode pair[2] = { CP_GRINNING, CP_VS16 };
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, &cp, 1);
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_GRINNING);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 1);
+   assert(ty.cursor_state.cx == 2);
+
+   _ty_test_shutdown(&ty);
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, pair, 2);
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_GRINNING);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 1);
+   /* VS16 folded away (skipped), no extra column consumed. */
+   assert(ty.cursor_state.cx == 2);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: U+FE0F arriving after a cursor move (the recorded write position
+ * is now invalid) -> no widening, no corruption. */
+int
+tytest_vs16_guard_invalidated_by_cursor_move(void)
+{
+   Termpty ty;
+   Eina_Unicode star = CP_STAR;
+   Eina_Unicode vs16 = CP_VS16;
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cx == 1);
+
+   /* Move the cursor to an unrelated position: the recorded write
+    * position (0,0) no longer matches (cx-1, cy), so the guard must
+    * refuse to widen wherever the cursor now is. (Landing back at
+    * exactly the recorded position is a different, accepted case: see
+    * tytest_vs16_widens_split_calls-style tests -- content still
+    * matches, so widening there is correct.) */
+   _ty_feed(&ty, "\x1b[3;6H");
+   assert(ty.cursor_state.cx == 5);
+   assert(ty.cursor_state.cy == 2);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_STAR);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 0); /* not widened: guard was invalid */
+   assert(_ty_cell_dblwidth(&ty, 4, 2) == 0); /* nor was the unrelated cell */
+   assert(ty.cursor_state.cx == 5);  /* VS16 consumed no column */
+   assert(ty.cursor_state.cy == 2);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: cjk_ambiguous_wide on -- same VS16 gating, but via the ambiguous
+ * tables (_termpty_is_ambigous_wide()) instead of the plain ones. */
+int
+tytest_vs16_cjk_ambiguous_wide(void)
+{
+   Termpty ty;
+   Eina_Unicode cps[2] = { CP_STAR, CP_VS16 };
+
+   _ty_vs16_test_init(&ty);
+   ty.termstate.cjk_ambiguous_wide = 1;
+
+   _ty_feed_uni(&ty, cps, 2);
+
+   assert(_ty_cell_cp(&ty, 0, 0) == CP_STAR);
+   assert(_ty_cell_dblwidth(&ty, 0, 0) == 1);
+   assert(_ty_cell_cp(&ty, 1, 0) == 0);
+   assert(ty.cursor_state.cx == 2);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* --- Regression tests for review findings 1 & 2: DECSTBM, DECSLRM, DECOM
+ * and HT reposition the cursor without going through any of the sites
+ * that clear cursor_state.wrapnext, so a flag-based "is the previous
+ * write still valid" guard living on Term_Cursor would stay stale across
+ * them. Each test below writes a "decoy" emoji-table-only codepoint at
+ * some position, performs an unrelated real write elsewhere (so the
+ * decoy is *not* the actual last write), then uses the operation under
+ * test to reposition the cursor so that it lands exactly one column past
+ * the decoy -- purely by coincidence, not because the decoy was the last
+ * thing written. A correct implementation must not widen the decoy: the
+ * recorded write position (vs16_base_x/y) only matches the real last
+ * write, which is elsewhere. */
+
+/* Test: HT (tab) forward lands the cursor right after an old, unrelated
+ * emoji-table-only cell -> no widening of that unrelated cell. */
+int
+tytest_vs16_guard_invalidated_by_ht(void)
+{
+   Termpty ty;
+   Eina_Unicode vs16 = CP_VS16;
+   Eina_Unicode star = CP_STAR;
+
+   _ty_vs16_test_init(&ty);
+
+   /* Decoy: a star at column 7 (the coming HT will tab to column 8). */
+   _ty_feed(&ty, "\x1b[1;8H");
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cx == 8);
+   assert(_ty_cell_cp(&ty, 7, 0) == CP_STAR);
+
+   /* The real last write: back to column 0, another star (so the guard
+    * legitimately has something valid recorded, just not at column 7). */
+   _ty_feed(&ty, "\x1b[1;1H");
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cx == 1);
+
+   /* HT tabs forward from column 1 to the next default tab stop, column 8
+    * -- exactly one past the column-7 decoy. */
+   _ty_feed(&ty, "\t");
+   assert(ty.cursor_state.cx == 8);
+   assert(ty.cursor_state.cy == 0);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   /* The decoy at column 7 must not have been widened. */
+   assert(_ty_cell_dblwidth(&ty, 7, 0) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: DECOM (origin mode, "ESC[?6h") repositions the cursor to
+ * (left_margin, top_margin) using margins set while origin mode was off
+ * -- landing right after an old, unrelated emoji-table-only cell -> no
+ * widening. */
+int
+tytest_vs16_guard_invalidated_by_decom(void)
+{
+   Termpty ty;
+   Eina_Unicode vs16 = CP_VS16;
+   Eina_Unicode star = CP_STAR;
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed(&ty, "\x1b[?69h");  /* enable DECLRMM */
+   /* Set left_margin=8, top_margin=3 while origin mode is off: these
+    * moves land at (0,0), harmless, but the margins stick. */
+   _ty_feed(&ty, "\x1b[9;80s"); /* DECSLRM: left_margin = 9-1 = 8 */
+   _ty_feed(&ty, "\x1b[4;24r"); /* DECSTBM: top_margin = 4-1 = 3 */
+
+   /* Decoy: a star at row 3, column 7. */
+   _ty_feed(&ty, "\x1b[4;8H");
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cy == 3);
+   assert(ty.cursor_state.cx == 8);
+   assert(_ty_cell_cp(&ty, 7, 3) == CP_STAR);
+
+   /* Real last write, well away from the decoy. */
+   _ty_feed(&ty, "\x1b[11;31H");
+   _ty_feed_uni(&ty, &star, 1);
+
+   /* Enabling DECOM moves the cursor to (left_margin, top_margin) =
+    * (8, 3) -- exactly one column past the decoy, same row. */
+   _ty_feed(&ty, "\x1b[?6h");
+   assert(ty.cursor_state.cy == 3);
+   assert(ty.cursor_state.cx == 8);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   assert(_ty_cell_dblwidth(&ty, 7, 3) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: DECSTBM ("ESC[r") itself repositions the cursor to
+ * (left_margin, top_margin) when origin mode is already on -- landing
+ * right after an old, unrelated emoji-table-only cell -> no widening. */
+int
+tytest_vs16_guard_invalidated_by_decstbm(void)
+{
+   Termpty ty;
+   Eina_Unicode vs16 = CP_VS16;
+   Eina_Unicode star = CP_STAR;
+
+   _ty_vs16_test_init(&ty);
+
+   _ty_feed(&ty, "\x1b[?69h"); /* enable DECLRMM */
+   _ty_feed(&ty, "\x1b[?6h");  /* enable DECOM: restrict_cursor on, margins still 0 */
+
+   /* Decoy: a star at row 3, column 7 (CUP is still unshifted: margins
+    * are 0 at this point, so relative == absolute coordinates). */
+   _ty_feed(&ty, "\x1b[4;8H");
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cy == 3);
+   assert(ty.cursor_state.cx == 8);
+   assert(_ty_cell_cp(&ty, 7, 3) == CP_STAR);
+
+   /* Set left_margin = 8 now (after the decoy was placed, so the decoy's
+    * CUP was not shifted by it). This also bounces the cursor to
+    * (8, top_margin) harmlessly. */
+   _ty_feed(&ty, "\x1b[9;80s"); /* DECSLRM: left_margin = 9-1 = 8 */
+
+   /* Real last write, well away from the decoy: relative cursor motion
+    * (CUD/CUF) is unaffected by margins, unlike absolute CUP. */
+   _ty_feed(&ty, "\x1b[10B\x1b[20C");
+   _ty_feed_uni(&ty, &star, 1);
+
+   /* DECSTBM sets top_margin = 3 and (with origin mode already on)
+    * repositions the cursor to (left_margin, top_margin) = (8, 3) --
+    * exactly one column past the decoy, same row. */
+   _ty_feed(&ty, "\x1b[4;24r");
+   assert(ty.cursor_state.cy == 3);
+   assert(ty.cursor_state.cx == 8);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   assert(_ty_cell_dblwidth(&ty, 7, 3) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Test: DECRC ("ESC 8") restores a saved cursor position -- coinciding,
+ * by construction, with an old emoji-table-only write that is no longer
+ * the real last write -> no widening. This is finding 3: the fields must
+ * live on Termpty, not Term_Cursor, or DECRC's wholesale cursor_state
+ * assignment would resurrect a stale guard along with the position. */
+int
+tytest_vs16_guard_invalidated_by_decrc(void)
+{
+   Termpty ty;
+   Eina_Unicode vs16 = CP_VS16;
+   Eina_Unicode star = CP_STAR;
+
+   _ty_vs16_test_init(&ty);
+
+   /* Write the decoy immediately before saving, so that (were the guard
+    * still on Term_Cursor) it would be captured as "valid" in
+    * cursor_save[]. */
+   _ty_feed(&ty, "\x1b[1;8H");
+   _ty_feed_uni(&ty, &star, 1);
+   assert(ty.cursor_state.cx == 8);
+   _ty_feed(&ty, "\x1b" "7"); /* DECSC: save cursor at (8, 0) */
+
+   /* Intervening output: a real write elsewhere. */
+   _ty_feed(&ty, "\x1b[11;31H");
+   _ty_feed_uni(&ty, &star, 1);
+
+   /* DECRC restores the saved cursor: back to (8, 0), one past the
+    * decoy. */
+   _ty_feed(&ty, "\x1b" "8");
+   assert(ty.cursor_state.cx == 8);
+   assert(ty.cursor_state.cy == 0);
+
+   _ty_feed_uni(&ty, &vs16, 1);
+
+   assert(_ty_cell_dblwidth(&ty, 7, 0) == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+#undef CP_STAR
+#undef CP_VS16
+#undef CP_GRINNING
 
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
