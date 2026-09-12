@@ -3799,6 +3799,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              // No parameter. Restore cursor pos
              termpty_cursor_copy(ty, EINA_FALSE);
           }
+        else if ((*b == '?') || (*b == '>') || (*b == '<') || (*b == '='))
+          {
+             DBG("ignoring kitty keyboard sequence");
+          }
         else
           {
              ERR("unhandled 'u' CSI escape code");

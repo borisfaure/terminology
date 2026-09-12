@@ -2305,4 +2305,29 @@ tytest_xmodkeys_query(void)
    return 0;
 }
 
+/* Unanswered kitty sequences are how a client keeps to legacy encoding */
+int
+tytest_kitty_keyboard_ignored(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?u");       /* query  */
+   _ty_feed(&ty, "\x1b[?0u");      /* query  */
+   _ty_feed(&ty, "\x1b[>1u");      /* push   */
+   _ty_feed(&ty, "\x1b[<1u");      /* pop    */
+   _ty_feed(&ty, "\x1b[=1;1u");    /* set    */
+
+   assert(ty.write_buffer.len == 0);
+
+   /* CSI u with no parameter is still a cursor restore. */
+   _ty_feed(&ty, "\x1b[10;20H\x1b[s\x1b[1;1H\x1b[u");
+   assert(ty.cursor_state.cx == 19);
+   assert(ty.cursor_state.cy == 9);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
