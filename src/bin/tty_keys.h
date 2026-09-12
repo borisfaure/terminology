@@ -1301,5 +1301,413 @@ static const Tty_Key tty_keys_kp_app[] = {
     KH("\033[1;8F"), // cursor Shift+Ctrl+Alt+KP_End
   },
 },
+{
+  "KP_0",
+  sizeof("KP_0") - 1,
+  {
+    KH("\033Op"), // default KP_0
+    KH("\033O3p"), // default Alt+KP_0
+    KH("\033O5p"), // default Ctrl+KP_0
+    KH("\033O7p"), // default Ctrl+Alt+KP_0
+    KH("\033O2p"), // default Shift+KP_0
+    KH("\033O4p"), // default Shift+Alt+KP_0
+    KH("\033O6p"), // default Shift+Ctrl+KP_0
+    KH("\033O8p"), // default Shift+Ctrl+Alt+KP_0
+  },
+  {
+    KH("\033Op"), // cursor KP_0
+    KH("\033O3p"), // cursor Alt+KP_0
+    KH("\033O5p"), // cursor Ctrl+KP_0
+    KH("\033O7p"), // cursor Ctrl+Alt+KP_0
+    KH("\033O2p"), // cursor Shift+KP_0
+    KH("\033O4p"), // cursor Shift+Alt+KP_0
+    KH("\033O6p"), // cursor Shift+Ctrl+KP_0
+    KH("\033O8p"), // cursor Shift+Ctrl+Alt+KP_0
+  },
+},
+{
+  "KP_1",
+  sizeof("KP_1") - 1,
+  {
+    KH("\033Oq"), // default KP_1
+    KH("\033O3q"), // default Alt+KP_1
+    KH("\033O5q"), // default Ctrl+KP_1
+    KH("\033O7q"), // default Ctrl+Alt+KP_1
+    KH("\033O2q"), // default Shift+KP_1
+    KH("\033O4q"), // default Shift+Alt+KP_1
+    KH("\033O6q"), // default Shift+Ctrl+KP_1
+    KH("\033O8q"), // default Shift+Ctrl+Alt+KP_1
+  },
+  {
+    KH("\033Oq"), // cursor KP_1
+    KH("\033O3q"), // cursor Alt+KP_1
+    KH("\033O5q"), // cursor Ctrl+KP_1
+    KH("\033O7q"), // cursor Ctrl+Alt+KP_1
+    KH("\033O2q"), // cursor Shift+KP_1
+    KH("\033O4q"), // cursor Shift+Alt+KP_1
+    KH("\033O6q"), // cursor Shift+Ctrl+KP_1
+    KH("\033O8q"), // cursor Shift+Ctrl+Alt+KP_1
+  },
+},
+{
+  "KP_2",
+  sizeof("KP_2") - 1,
+  {
+    KH("\033Or"), // default KP_2
+    KH("\033O3r"), // default Alt+KP_2
+    KH("\033O5r"), // default Ctrl+KP_2
+    KH("\033O7r"), // default Ctrl+Alt+KP_2
+    KH("\033O2r"), // default Shift+KP_2
+    KH("\033O4r"), // default Shift+Alt+KP_2
+    KH("\033O6r"), // default Shift+Ctrl+KP_2
+    KH("\033O8r"), // default Shift+Ctrl+Alt+KP_2
+  },
+  {
+    KH("\033Or"), // cursor KP_2
+    KH("\033O3r"), // cursor Alt+KP_2
+    KH("\033O5r"), // cursor Ctrl+KP_2
+    KH("\033O7r"), // cursor Ctrl+Alt+KP_2
+    KH("\033O2r"), // cursor Shift+KP_2
+    KH("\033O4r"), // cursor Shift+Alt+KP_2
+    KH("\033O6r"), // cursor Shift+Ctrl+KP_2
+    KH("\033O8r"), // cursor Shift+Ctrl+Alt+KP_2
+  },
+},
+{
+  "KP_3",
+  sizeof("KP_3") - 1,
+  {
+    KH("\033Os"), // default KP_3
+    KH("\033O3s"), // default Alt+KP_3
+    KH("\033O5s"), // default Ctrl+KP_3
+    KH("\033O7s"), // default Ctrl+Alt+KP_3
+    KH("\033O2s"), // default Shift+KP_3
+    KH("\033O4s"), // default Shift+Alt+KP_3
+    KH("\033O6s"), // default Shift+Ctrl+KP_3
+    KH("\033O8s"), // default Shift+Ctrl+Alt+KP_3
+  },
+  {
+    KH("\033Os"), // cursor KP_3
+    KH("\033O3s"), // cursor Alt+KP_3
+    KH("\033O5s"), // cursor Ctrl+KP_3
+    KH("\033O7s"), // cursor Ctrl+Alt+KP_3
+    KH("\033O2s"), // cursor Shift+KP_3
+    KH("\033O4s"), // cursor Shift+Alt+KP_3
+    KH("\033O6s"), // cursor Shift+Ctrl+KP_3
+    KH("\033O8s"), // cursor Shift+Ctrl+Alt+KP_3
+  },
+},
+{
+  "KP_4",
+  sizeof("KP_4") - 1,
+  {
+    KH("\033Ot"), // default KP_4
+    KH("\033O3t"), // default Alt+KP_4
+    KH("\033O5t"), // default Ctrl+KP_4
+    KH("\033O7t"), // default Ctrl+Alt+KP_4
+    KH("\033O2t"), // default Shift+KP_4
+    KH("\033O4t"), // default Shift+Alt+KP_4
+    KH("\033O6t"), // default Shift+Ctrl+KP_4
+    KH("\033O8t"), // default Shift+Ctrl+Alt+KP_4
+  },
+  {
+    KH("\033Ot"), // cursor KP_4
+    KH("\033O3t"), // cursor Alt+KP_4
+    KH("\033O5t"), // cursor Ctrl+KP_4
+    KH("\033O7t"), // cursor Ctrl+Alt+KP_4
+    KH("\033O2t"), // cursor Shift+KP_4
+    KH("\033O4t"), // cursor Shift+Alt+KP_4
+    KH("\033O6t"), // cursor Shift+Ctrl+KP_4
+    KH("\033O8t"), // cursor Shift+Ctrl+Alt+KP_4
+  },
+},
+{
+  "KP_5",
+  sizeof("KP_5") - 1,
+  {
+    KH("\033Ou"), // default KP_5
+    KH("\033O3u"), // default Alt+KP_5
+    KH("\033O5u"), // default Ctrl+KP_5
+    KH("\033O7u"), // default Ctrl+Alt+KP_5
+    KH("\033O2u"), // default Shift+KP_5
+    KH("\033O4u"), // default Shift+Alt+KP_5
+    KH("\033O6u"), // default Shift+Ctrl+KP_5
+    KH("\033O8u"), // default Shift+Ctrl+Alt+KP_5
+  },
+  {
+    KH("\033Ou"), // cursor KP_5
+    KH("\033O3u"), // cursor Alt+KP_5
+    KH("\033O5u"), // cursor Ctrl+KP_5
+    KH("\033O7u"), // cursor Ctrl+Alt+KP_5
+    KH("\033O2u"), // cursor Shift+KP_5
+    KH("\033O4u"), // cursor Shift+Alt+KP_5
+    KH("\033O6u"), // cursor Shift+Ctrl+KP_5
+    KH("\033O8u"), // cursor Shift+Ctrl+Alt+KP_5
+  },
+},
+{
+  "KP_6",
+  sizeof("KP_6") - 1,
+  {
+    KH("\033Ov"), // default KP_6
+    KH("\033O3v"), // default Alt+KP_6
+    KH("\033O5v"), // default Ctrl+KP_6
+    KH("\033O7v"), // default Ctrl+Alt+KP_6
+    KH("\033O2v"), // default Shift+KP_6
+    KH("\033O4v"), // default Shift+Alt+KP_6
+    KH("\033O6v"), // default Shift+Ctrl+KP_6
+    KH("\033O8v"), // default Shift+Ctrl+Alt+KP_6
+  },
+  {
+    KH("\033Ov"), // cursor KP_6
+    KH("\033O3v"), // cursor Alt+KP_6
+    KH("\033O5v"), // cursor Ctrl+KP_6
+    KH("\033O7v"), // cursor Ctrl+Alt+KP_6
+    KH("\033O2v"), // cursor Shift+KP_6
+    KH("\033O4v"), // cursor Shift+Alt+KP_6
+    KH("\033O6v"), // cursor Shift+Ctrl+KP_6
+    KH("\033O8v"), // cursor Shift+Ctrl+Alt+KP_6
+  },
+},
+{
+  "KP_7",
+  sizeof("KP_7") - 1,
+  {
+    KH("\033Ow"), // default KP_7
+    KH("\033O3w"), // default Alt+KP_7
+    KH("\033O5w"), // default Ctrl+KP_7
+    KH("\033O7w"), // default Ctrl+Alt+KP_7
+    KH("\033O2w"), // default Shift+KP_7
+    KH("\033O4w"), // default Shift+Alt+KP_7
+    KH("\033O6w"), // default Shift+Ctrl+KP_7
+    KH("\033O8w"), // default Shift+Ctrl+Alt+KP_7
+  },
+  {
+    KH("\033Ow"), // cursor KP_7
+    KH("\033O3w"), // cursor Alt+KP_7
+    KH("\033O5w"), // cursor Ctrl+KP_7
+    KH("\033O7w"), // cursor Ctrl+Alt+KP_7
+    KH("\033O2w"), // cursor Shift+KP_7
+    KH("\033O4w"), // cursor Shift+Alt+KP_7
+    KH("\033O6w"), // cursor Shift+Ctrl+KP_7
+    KH("\033O8w"), // cursor Shift+Ctrl+Alt+KP_7
+  },
+},
+{
+  "KP_8",
+  sizeof("KP_8") - 1,
+  {
+    KH("\033Ox"), // default KP_8
+    KH("\033O3x"), // default Alt+KP_8
+    KH("\033O5x"), // default Ctrl+KP_8
+    KH("\033O7x"), // default Ctrl+Alt+KP_8
+    KH("\033O2x"), // default Shift+KP_8
+    KH("\033O4x"), // default Shift+Alt+KP_8
+    KH("\033O6x"), // default Shift+Ctrl+KP_8
+    KH("\033O8x"), // default Shift+Ctrl+Alt+KP_8
+  },
+  {
+    KH("\033Ox"), // cursor KP_8
+    KH("\033O3x"), // cursor Alt+KP_8
+    KH("\033O5x"), // cursor Ctrl+KP_8
+    KH("\033O7x"), // cursor Ctrl+Alt+KP_8
+    KH("\033O2x"), // cursor Shift+KP_8
+    KH("\033O4x"), // cursor Shift+Alt+KP_8
+    KH("\033O6x"), // cursor Shift+Ctrl+KP_8
+    KH("\033O8x"), // cursor Shift+Ctrl+Alt+KP_8
+  },
+},
+{
+  "KP_9",
+  sizeof("KP_9") - 1,
+  {
+    KH("\033Oy"), // default KP_9
+    KH("\033O3y"), // default Alt+KP_9
+    KH("\033O5y"), // default Ctrl+KP_9
+    KH("\033O7y"), // default Ctrl+Alt+KP_9
+    KH("\033O2y"), // default Shift+KP_9
+    KH("\033O4y"), // default Shift+Alt+KP_9
+    KH("\033O6y"), // default Shift+Ctrl+KP_9
+    KH("\033O8y"), // default Shift+Ctrl+Alt+KP_9
+  },
+  {
+    KH("\033Oy"), // cursor KP_9
+    KH("\033O3y"), // cursor Alt+KP_9
+    KH("\033O5y"), // cursor Ctrl+KP_9
+    KH("\033O7y"), // cursor Ctrl+Alt+KP_9
+    KH("\033O2y"), // cursor Shift+KP_9
+    KH("\033O4y"), // cursor Shift+Alt+KP_9
+    KH("\033O6y"), // cursor Shift+Ctrl+KP_9
+    KH("\033O8y"), // cursor Shift+Ctrl+Alt+KP_9
+  },
+},
+{
+  "KP_Decimal",
+  sizeof("KP_Decimal") - 1,
+  {
+    KH("\033On"), // default KP_Decimal
+    KH("\033O3n"), // default Alt+KP_Decimal
+    KH("\033O5n"), // default Ctrl+KP_Decimal
+    KH("\033O7n"), // default Ctrl+Alt+KP_Decimal
+    KH("\033O2n"), // default Shift+KP_Decimal
+    KH("\033O4n"), // default Shift+Alt+KP_Decimal
+    KH("\033O6n"), // default Shift+Ctrl+KP_Decimal
+    KH("\033O8n"), // default Shift+Ctrl+Alt+KP_Decimal
+  },
+  {
+    KH("\033On"), // cursor KP_Decimal
+    KH("\033O3n"), // cursor Alt+KP_Decimal
+    KH("\033O5n"), // cursor Ctrl+KP_Decimal
+    KH("\033O7n"), // cursor Ctrl+Alt+KP_Decimal
+    KH("\033O2n"), // cursor Shift+KP_Decimal
+    KH("\033O4n"), // cursor Shift+Alt+KP_Decimal
+    KH("\033O6n"), // cursor Shift+Ctrl+KP_Decimal
+    KH("\033O8n"), // cursor Shift+Ctrl+Alt+KP_Decimal
+  },
+},
+{
+  "KP_Separator",
+  sizeof("KP_Separator") - 1,
+  {
+    KH("\033Ol"), // default KP_Separator
+    KH("\033O3l"), // default Alt+KP_Separator
+    KH("\033O5l"), // default Ctrl+KP_Separator
+    KH("\033O7l"), // default Ctrl+Alt+KP_Separator
+    KH("\033O2l"), // default Shift+KP_Separator
+    KH("\033O4l"), // default Shift+Alt+KP_Separator
+    KH("\033O6l"), // default Shift+Ctrl+KP_Separator
+    KH("\033O8l"), // default Shift+Ctrl+Alt+KP_Separator
+  },
+  {
+    KH("\033Ol"), // cursor KP_Separator
+    KH("\033O3l"), // cursor Alt+KP_Separator
+    KH("\033O5l"), // cursor Ctrl+KP_Separator
+    KH("\033O7l"), // cursor Ctrl+Alt+KP_Separator
+    KH("\033O2l"), // cursor Shift+KP_Separator
+    KH("\033O4l"), // cursor Shift+Alt+KP_Separator
+    KH("\033O6l"), // cursor Shift+Ctrl+KP_Separator
+    KH("\033O8l"), // cursor Shift+Ctrl+Alt+KP_Separator
+  },
+},
+{
+  "KP_Divide",
+  sizeof("KP_Divide") - 1,
+  {
+    KH("\033Oo"), // default KP_Divide
+    KH("\033O3o"), // default Alt+KP_Divide
+    KH("\033O5o"), // default Ctrl+KP_Divide
+    KH("\033O7o"), // default Ctrl+Alt+KP_Divide
+    KH("\033O2o"), // default Shift+KP_Divide
+    KH("\033O4o"), // default Shift+Alt+KP_Divide
+    KH("\033O6o"), // default Shift+Ctrl+KP_Divide
+    KH("\033O8o"), // default Shift+Ctrl+Alt+KP_Divide
+  },
+  {
+    KH("\033Oo"), // cursor KP_Divide
+    KH("\033O3o"), // cursor Alt+KP_Divide
+    KH("\033O5o"), // cursor Ctrl+KP_Divide
+    KH("\033O7o"), // cursor Ctrl+Alt+KP_Divide
+    KH("\033O2o"), // cursor Shift+KP_Divide
+    KH("\033O4o"), // cursor Shift+Alt+KP_Divide
+    KH("\033O6o"), // cursor Shift+Ctrl+KP_Divide
+    KH("\033O8o"), // cursor Shift+Ctrl+Alt+KP_Divide
+  },
+},
+{
+  "KP_Multiply",
+  sizeof("KP_Multiply") - 1,
+  {
+    KH("\033Oj"), // default KP_Multiply
+    KH("\033O3j"), // default Alt+KP_Multiply
+    KH("\033O5j"), // default Ctrl+KP_Multiply
+    KH("\033O7j"), // default Ctrl+Alt+KP_Multiply
+    KH("\033O2j"), // default Shift+KP_Multiply
+    KH("\033O4j"), // default Shift+Alt+KP_Multiply
+    KH("\033O6j"), // default Shift+Ctrl+KP_Multiply
+    KH("\033O8j"), // default Shift+Ctrl+Alt+KP_Multiply
+  },
+  {
+    KH("\033Oj"), // cursor KP_Multiply
+    KH("\033O3j"), // cursor Alt+KP_Multiply
+    KH("\033O5j"), // cursor Ctrl+KP_Multiply
+    KH("\033O7j"), // cursor Ctrl+Alt+KP_Multiply
+    KH("\033O2j"), // cursor Shift+KP_Multiply
+    KH("\033O4j"), // cursor Shift+Alt+KP_Multiply
+    KH("\033O6j"), // cursor Shift+Ctrl+KP_Multiply
+    KH("\033O8j"), // cursor Shift+Ctrl+Alt+KP_Multiply
+  },
+},
+{
+  "KP_Subtract",
+  sizeof("KP_Subtract") - 1,
+  {
+    KH("\033Om"), // default KP_Subtract
+    KH("\033O3m"), // default Alt+KP_Subtract
+    KH("\033O5m"), // default Ctrl+KP_Subtract
+    KH("\033O7m"), // default Ctrl+Alt+KP_Subtract
+    KH("\033O2m"), // default Shift+KP_Subtract
+    KH("\033O4m"), // default Shift+Alt+KP_Subtract
+    KH("\033O6m"), // default Shift+Ctrl+KP_Subtract
+    KH("\033O8m"), // default Shift+Ctrl+Alt+KP_Subtract
+  },
+  {
+    KH("\033Om"), // cursor KP_Subtract
+    KH("\033O3m"), // cursor Alt+KP_Subtract
+    KH("\033O5m"), // cursor Ctrl+KP_Subtract
+    KH("\033O7m"), // cursor Ctrl+Alt+KP_Subtract
+    KH("\033O2m"), // cursor Shift+KP_Subtract
+    KH("\033O4m"), // cursor Shift+Alt+KP_Subtract
+    KH("\033O6m"), // cursor Shift+Ctrl+KP_Subtract
+    KH("\033O8m"), // cursor Shift+Ctrl+Alt+KP_Subtract
+  },
+},
+{
+  "KP_Add",
+  sizeof("KP_Add") - 1,
+  {
+    KH("\033Ok"), // default KP_Add
+    KH("\033O3k"), // default Alt+KP_Add
+    KH("\033O5k"), // default Ctrl+KP_Add
+    KH("\033O7k"), // default Ctrl+Alt+KP_Add
+    KH("\033O2k"), // default Shift+KP_Add
+    KH("\033O4k"), // default Shift+Alt+KP_Add
+    KH("\033O6k"), // default Shift+Ctrl+KP_Add
+    KH("\033O8k"), // default Shift+Ctrl+Alt+KP_Add
+  },
+  {
+    KH("\033Ok"), // cursor KP_Add
+    KH("\033O3k"), // cursor Alt+KP_Add
+    KH("\033O5k"), // cursor Ctrl+KP_Add
+    KH("\033O7k"), // cursor Ctrl+Alt+KP_Add
+    KH("\033O2k"), // cursor Shift+KP_Add
+    KH("\033O4k"), // cursor Shift+Alt+KP_Add
+    KH("\033O6k"), // cursor Shift+Ctrl+KP_Add
+    KH("\033O8k"), // cursor Shift+Ctrl+Alt+KP_Add
+  },
+},
+{
+  "KP_Enter",
+  sizeof("KP_Enter") - 1,
+  {
+    KH("\033OM"), // default KP_Enter
+    KH("\033O3M"), // default Alt+KP_Enter
+    KH("\033O5M"), // default Ctrl+KP_Enter
+    KH("\033O7M"), // default Ctrl+Alt+KP_Enter
+    KH("\033O2M"), // default Shift+KP_Enter
+    KH("\033O4M"), // default Shift+Alt+KP_Enter
+    KH("\033O6M"), // default Shift+Ctrl+KP_Enter
+    KH("\033O8M"), // default Shift+Ctrl+Alt+KP_Enter
+  },
+  {
+    KH("\033OM"), // cursor KP_Enter
+    KH("\033O3M"), // cursor Alt+KP_Enter
+    KH("\033O5M"), // cursor Ctrl+KP_Enter
+    KH("\033O7M"), // cursor Ctrl+Alt+KP_Enter
+    KH("\033O2M"), // cursor Shift+KP_Enter
+    KH("\033O4M"), // cursor Shift+Alt+KP_Enter
+    KH("\033O6M"), // cursor Shift+Ctrl+KP_Enter
+    KH("\033O8M"), // cursor Shift+Ctrl+Alt+KP_Enter
+  },
+},
 };
 #undef KH
