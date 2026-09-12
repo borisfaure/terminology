@@ -106,6 +106,7 @@ typedef enum exmod {
      XMOD_KEYPAD = 3,
      XMOD_OTHER = 4,
      XMOD_STRING = 5,
+     XMOD_LAST = 6,
 } XMod;
 
 typedef struct tag_Term_State {
@@ -134,7 +135,7 @@ typedef struct tag_Term_State {
     unsigned int  sace_rectangular : 1;
     unsigned int  esc_keycode : 1;
     unsigned int  alternate_esc : 1;
-    int xmod[6];
+    int xmod[XMOD_LAST];
 } Term_State;
 
 typedef struct tag_Term_Cursor {

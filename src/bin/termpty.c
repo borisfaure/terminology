@@ -2232,4 +2232,44 @@ tytest_sync_change_cb_altscreen(void)
    return 0;
 }
 
+/* XTMODKEYS: CSI > Pp ; Pv m, Pp selects the resource, Pv is the value. */
+int
+tytest_xmodkeys_set(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[>4;2m");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 2);
+   assert(ty.termstate.xmod[XMOD_FUNCTIONS] == 0);
+
+   _ty_feed(&ty, "\x1b[>1;3m");
+   assert(ty.termstate.xmod[XMOD_CURSOR] == 3);
+   assert(ty.termstate.xmod[XMOD_OTHER] == 2);
+
+   /* Pv omitted: back to the initial value. */
+   _ty_feed(&ty, "\x1b[>4m");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 0);
+
+   /* No parameter at all: every resource is reset. */
+   _ty_feed(&ty, "\x1b[>4;2m");
+   _ty_feed(&ty, "\x1b[>m");
+   assert(ty.termstate.xmod[XMOD_CURSOR] == 0);
+   assert(ty.termstate.xmod[XMOD_OTHER] == 0);
+
+   /* CSI > Pp n resets a single resource. */
+   _ty_feed(&ty, "\x1b[>4;2m");
+   _ty_feed(&ty, "\x1b[>4n");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 0);
+
+   /* An out of range resource changes nothing. */
+   _ty_feed(&ty, "\x1b[>4;2m");
+   _ty_feed(&ty, "\x1b[>9;1m");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 2);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */

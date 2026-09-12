@@ -3453,6 +3453,29 @@ _handle_window_manipulation(Termpty *ty, Eina_Unicode **ptr)
 }
 
 
+static Eina_Bool
+_xmod_resource_is_valid(int resource)
+{
+   switch (resource)
+     {
+      case XMOD_KEYBOARD:
+        EINA_FALLTHROUGH;
+      case XMOD_CURSOR:
+        EINA_FALLTHROUGH;
+      case XMOD_FUNCTIONS:
+        EINA_FALLTHROUGH;
+      case XMOD_KEYPAD:
+        EINA_FALLTHROUGH;
+      case XMOD_OTHER:
+        EINA_FALLTHROUGH;
+      case XMOD_STRING:
+        return EINA_TRUE;
+      default:
+        return EINA_FALSE;
+     }
+}
+
+/* XTMODKEYS: CSI > Pp ; Pv m and CSI > Pp n */
 static void
 _handle_xmodkeys(Termpty *ty,
                  Eina_Unicode cmd, Eina_Unicode **ptr)
@@ -3462,7 +3485,7 @@ _handle_xmodkeys(Termpty *ty,
    Eina_Unicode param = *b;
    b++;
    if (param == '?')
-     return; // Not actually supported by xterm
+     return;
    if (param != '>')
      {
         ERR("XMODKEYS: Invalid sequence");
@@ -3471,69 +3494,41 @@ _handle_xmodkeys(Termpty *ty,
      }
    if (set)
      {
-        int arg1 = _csi_arg_get(ty, &b);
-        int arg2 = _csi_arg_get(ty, &b);
-        int v, mod;
-        if (arg1 == -ESC_ARG_ERROR)
+        int resource = _csi_arg_get(ty, &b);
+        int v = _csi_arg_get(ty, &b);
+
+        if (resource == -ESC_ARG_ERROR)
           {
              ERR("XMODKEYS set: Invalid sequence");
              ty->decoding_error = EINA_TRUE;
              return;
           }
-        if (arg2 == -ESC_ARG_NO_VALUE)
-          {
-             mod = arg1;
-             v = 0;
+        if (resource == -ESC_ARG_NO_VALUE)
+          { /* reset all */
+             memset(ty->termstate.xmod, 0, sizeof(ty->termstate.xmod));
+             return;
           }
-        else
+        if (!_xmod_resource_is_valid(resource))
           {
-             mod = arg2;
-             v = arg1;
+             ERR("XMODKEYS set: Invalid sequence");
+             ty->decoding_error = EINA_TRUE;
+             return;
           }
-        switch (mod)
-          {
-           case XMOD_KEYBOARD:
-              EINA_FALLTHROUGH;
-           case XMOD_CURSOR:
-              EINA_FALLTHROUGH;
-           case XMOD_FUNCTIONS:
-              EINA_FALLTHROUGH;
-           case XMOD_KEYPAD:
-              EINA_FALLTHROUGH;
-           case XMOD_OTHER:
-              EINA_FALLTHROUGH;
-           case XMOD_STRING:
-              break;
-           default:
-              ERR("XMODKEYS set: Invalid sequence");
-              ty->decoding_error = EINA_TRUE;
-              return;
-          }
-        ty->termstate.xmod[mod] = v;
+        if (v < 0)
+          v = 0;
+        ty->termstate.xmod[resource] = v;
      }
    else
      { /* reset */
-        int arg = _csi_arg_get(ty, &b);
-        switch (arg)
+        int resource = _csi_arg_get(ty, &b);
+
+        if (!_xmod_resource_is_valid(resource))
           {
-           case XMOD_KEYBOARD:
-              EINA_FALLTHROUGH;
-           case XMOD_CURSOR:
-              EINA_FALLTHROUGH;
-           case XMOD_FUNCTIONS:
-              EINA_FALLTHROUGH;
-           case XMOD_KEYPAD:
-              EINA_FALLTHROUGH;
-           case XMOD_OTHER:
-              EINA_FALLTHROUGH;
-           case XMOD_STRING:
-              break;
-           default:
-              ERR("XMODKEYS reset: Invalid sequence");
-              ty->decoding_error = EINA_TRUE;
-              return;
+             ERR("XMODKEYS reset: Invalid sequence");
+             ty->decoding_error = EINA_TRUE;
+             return;
           }
-        ty->termstate.xmod[arg] = 0;
+        ty->termstate.xmod[resource] = 0;
      }
 }
 static int
