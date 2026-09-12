@@ -6,7 +6,7 @@ static const Tty_Key tty_keys[] = {
   sizeof("F1") - 1,
   {
     KH("\033OP"), // default F1
-    KH("\033[O3P"), // default Alt+F1
+    KH("\033[1;3P"), // default Alt+F1
     KH("\033[1;5P"), // default Ctrl+F1
     KH("\033[1;7P"), // default Ctrl+Alt+F1
     KH("\033[1;2P"), // default Shift+F1
@@ -16,7 +16,7 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\033OP"), // cursor F1
-    KH("\033[O3P"), // cursor Alt+F1
+    KH("\033[1;3P"), // cursor Alt+F1
     KH("\033[1;5P"), // cursor Ctrl+F1
     KH("\033[1;7P"), // cursor Ctrl+Alt+F1
     KH("\033[1;2P"), // cursor Shift+F1
@@ -30,7 +30,7 @@ static const Tty_Key tty_keys[] = {
   sizeof("F2") - 1,
   {
     KH("\033OQ"), // default F2
-    KH("\033[O3Q"), // default Alt+F2
+    KH("\033[1;3Q"), // default Alt+F2
     KH("\033[1;5Q"), // default Ctrl+F2
     KH("\033[1;7Q"), // default Ctrl+Alt+F2
     KH("\033[1;2Q"), // default Shift+F2
@@ -40,7 +40,7 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\033OQ"), // cursor F2
-    KH("\033[O3Q"), // cursor Alt+F2
+    KH("\033[1;3Q"), // cursor Alt+F2
     KH("\033[1;5Q"), // cursor Ctrl+F2
     KH("\033[1;7Q"), // cursor Ctrl+Alt+F2
     KH("\033[1;2Q"), // cursor Shift+F2
@@ -54,7 +54,7 @@ static const Tty_Key tty_keys[] = {
   sizeof("F3") - 1,
   {
     KH("\033OR"), // default F3
-    KH("\033[O3R"), // default Alt+F3
+    KH("\033[1;3R"), // default Alt+F3
     KH("\033[1;5R"), // default Ctrl+F3
     KH("\033[1;7R"), // default Ctrl+Alt+F3
     KH("\033[1;2R"), // default Shift+F3
@@ -64,7 +64,7 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\033OR"), // cursor F3
-    KH("\033[O3R"), // cursor Alt+F3
+    KH("\033[1;3R"), // cursor Alt+F3
     KH("\033[1;5R"), // cursor Ctrl+F3
     KH("\033[1;7R"), // cursor Ctrl+Alt+F3
     KH("\033[1;2R"), // cursor Shift+F3
@@ -78,7 +78,7 @@ static const Tty_Key tty_keys[] = {
   sizeof("F4") - 1,
   {
     KH("\033OS"), // default F4
-    KH("\033[O3S"), // default Alt+F4
+    KH("\033[1;3S"), // default Alt+F4
     KH("\033[1;5S"), // default Ctrl+F4
     KH("\033[1;7S"), // default Ctrl+Alt+F4
     KH("\033[1;2S"), // default Shift+F4
@@ -88,7 +88,7 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\033OS"), // cursor F4
-    KH("\033[O3S"), // cursor Alt+F4
+    KH("\033[1;3S"), // cursor Alt+F4
     KH("\033[1;5S"), // cursor Ctrl+F4
     KH("\033[1;7S"), // cursor Ctrl+Alt+F4
     KH("\033[1;2S"), // cursor Shift+F4
