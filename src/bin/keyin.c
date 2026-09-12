@@ -260,7 +260,7 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
                }
           }
      }
-   if (ev->key[0] == 'K' && (ev->key[1] == 'k' || ev->key[1] == 'P'))
+   if (!strncmp(ev->key, "KP_", 3))
      {
         if (!evas_key_lock_is_set(ev->locks, "Num_Lock"))
           {
