@@ -147,7 +147,7 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
           {
              if (alt)
                {
-                  TERMPTY_WRITE_STR("\x9b");
+                  TERMPTY_WRITE_STR("\033\033");
                }
              else
                {
