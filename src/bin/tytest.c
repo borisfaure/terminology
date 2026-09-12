@@ -57,6 +57,7 @@ static struct {
        { "sync_change_cb_altscreen", tytest_sync_change_cb_altscreen},
        { "percent_decode", tytest_percent_decode},
        { "xmodkeys_set", tytest_xmodkeys_set},
+       { "xmodkeys_query", tytest_xmodkeys_query},
        { NULL, NULL},
 };
 

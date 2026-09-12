@@ -2232,6 +2232,17 @@ tytest_sync_change_cb_altscreen(void)
    return 0;
 }
 
+/* Compare what was written back to the application, then drop it. */
+static void
+_ty_reply_is(Termpty *ty, const char *expected)
+{
+   size_t len = strlen(expected);
+
+   assert(ty->write_buffer.len == len);
+   assert(!memcmp(ty->write_buffer.buf + ty->write_buffer.gap, expected, len));
+   ty_sb_free(&ty->write_buffer);
+}
+
 /* XTMODKEYS: CSI > Pp ; Pv m, Pp selects the resource, Pv is the value. */
 int
 tytest_xmodkeys_set(void)
@@ -2267,6 +2278,28 @@ tytest_xmodkeys_set(void)
    _ty_feed(&ty, "\x1b[>4;2m");
    _ty_feed(&ty, "\x1b[>9;1m");
    assert(ty.termstate.xmod[XMOD_OTHER] == 2);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* XTQMODKEYS: CSI ? Pp m, answered as an XTMODKEYS set. */
+int
+tytest_xmodkeys_query(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?4m");
+   _ty_reply_is(&ty, "\x1b[>4;0m");
+
+   _ty_feed(&ty, "\x1b[>4;2m");
+   _ty_feed(&ty, "\x1b[?4m");
+   _ty_reply_is(&ty, "\x1b[>4;2m");
+
+   _ty_feed(&ty, "\x1b[?1m");
+   _ty_reply_is(&ty, "\x1b[>1;0m");
 
    _ty_test_shutdown(&ty);
    return 0;

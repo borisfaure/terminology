@@ -3475,7 +3475,7 @@ _xmod_resource_is_valid(int resource)
      }
 }
 
-/* XTMODKEYS: CSI > Pp ; Pv m and CSI > Pp n */
+/* XTMODKEYS: CSI > Pp ; Pv m and CSI > Pp n. XTQMODKEYS: CSI ? Pp m */
 static void
 _handle_xmodkeys(Termpty *ty,
                  Eina_Unicode cmd, Eina_Unicode **ptr)
@@ -3485,7 +3485,24 @@ _handle_xmodkeys(Termpty *ty,
    Eina_Unicode param = *b;
    b++;
    if (param == '?')
-     return;
+     { /* query */
+        char bf[32];
+        int len;
+        int resource = _csi_arg_get(ty, &b);
+
+        if (resource == -ESC_ARG_NO_VALUE)
+          return;
+        if (!_xmod_resource_is_valid(resource))
+          {
+             ERR("XTQMODKEYS: Invalid sequence");
+             ty->decoding_error = EINA_TRUE;
+             return;
+          }
+        len = snprintf(bf, sizeof(bf), "\033[>%d;%dm",
+                       resource, ty->termstate.xmod[resource]);
+        termpty_write(ty, bf, len);
+        return;
+     }
    if (param != '>')
      {
         ERR("XMODKEYS: Invalid sequence");
