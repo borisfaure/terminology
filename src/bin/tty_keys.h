@@ -538,9 +538,9 @@ static const Tty_Key tty_keys[] = {
     KH("\t"), // default Ctrl+Tab
     KH("\033\t"), // default Ctrl+Alt+Tab
     KH("\033[Z"), // default Shift+Tab
-    KH("\033[Z"), // default Shift+Alt+Tab
+    KH("\033\033[Z"), // default Shift+Alt+Tab
     KH("\033[Z"), // default Shift+Ctrl+Tab
-    KH("\033[Z"), // default Shift+Ctrl+Alt+Tab
+    KH("\033\033[Z"), // default Shift+Ctrl+Alt+Tab
   },
   {
     KH("\t"), // cursor Tab
@@ -548,9 +548,9 @@ static const Tty_Key tty_keys[] = {
     KH("\t"), // cursor Ctrl+Tab
     KH("\033\t"), // cursor Ctrl+Alt+Tab
     KH("\033[Z"), // cursor Shift+Tab
-    KH("\033[Z"), // cursor Shift+Alt+Tab
+    KH("\033\033[Z"), // cursor Shift+Alt+Tab
     KH("\033[Z"), // cursor Shift+Ctrl+Tab
-    KH("\033[Z"), // cursor Shift+Ctrl+Alt+Tab
+    KH("\033\033[Z"), // cursor Shift+Ctrl+Alt+Tab
   },
 },
 {
@@ -562,9 +562,9 @@ static const Tty_Key tty_keys[] = {
     KH("\t"), // default Ctrl+Tab
     KH("\033\t"), // default Ctrl+Alt+Tab
     KH("\033[Z"), // default Shift+Tab
-    KH("\033[Z"), // default Shift+Alt+Tab
+    KH("\033\033[Z"), // default Shift+Alt+Tab
     KH("\033[Z"), // default Shift+Ctrl+Tab
-    KH("\033[Z"), // default Shift+Ctrl+Alt+Tab
+    KH("\033\033[Z"), // default Shift+Ctrl+Alt+Tab
   },
   {
     KH("\t"), // cursor Tab
@@ -572,9 +572,9 @@ static const Tty_Key tty_keys[] = {
     KH("\t"), // cursor Ctrl+Tab
     KH("\033\t"), // cursor Ctrl+Alt+Tab
     KH("\033[Z"), // cursor Shift+Tab
-    KH("\033[Z"), // cursor Shift+Alt+Tab
+    KH("\033\033[Z"), // cursor Shift+Alt+Tab
     KH("\033[Z"), // cursor Shift+Ctrl+Tab
-    KH("\033[Z"), // cursor Shift+Ctrl+Alt+Tab
+    KH("\033\033[Z"), // cursor Shift+Ctrl+Alt+Tab
   },
 },
 {
@@ -584,7 +584,7 @@ static const Tty_Key tty_keys[] = {
     KH("-"), // default minus
     KH("\033-"), // default Alt+minus
     KH("\x1f"), // default Ctrl+minus
-    KH("\033-"), // default Ctrl+Alt+minus
+    KH("\033\x1f"), // default Ctrl+Alt+minus
     KH("_"), // default Shift+minus
     KH("\033_"), // default Shift+Alt+minus
     KH("\x1f"), // default Shift+Ctrl+minus
@@ -594,7 +594,7 @@ static const Tty_Key tty_keys[] = {
     KH("-"), // cursor minus
     KH("\033-"), // cursor Alt+minus
     KH("\x1f"), // cursor Ctrl+minus
-    KH("\033-"), // cursor Ctrl+Alt+minus
+    KH("\033\x1f"), // cursor Ctrl+Alt+minus
     KH("_"), // cursor Shift+minus
     KH("\033_"), // cursor Shift+Alt+minus
     KH("\x1f"), // cursor Shift+Ctrl+minus
