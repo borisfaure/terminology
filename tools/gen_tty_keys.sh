@@ -24,6 +24,9 @@ function do_reset {
 	echo -ne '\e[?1061l' >&2
 	echo -ne '\e[?1l' >&2  # normal cursor mode
 	echo -ne '\e>' >&2     # normal keypad mode
+	echo -ne '\e[?1034l' >&2 # no 8-bit meta, we record a UTF-8 terminal
+	echo -ne '\e[?1036h' >&2 # Meta sends ESC
+	echo -ne '\e[?1039h' >&2 # Alt sends ESC
 }
 
 do_key() {

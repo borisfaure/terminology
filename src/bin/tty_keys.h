@@ -534,9 +534,9 @@ static const Tty_Key tty_keys[] = {
   sizeof("ISO_Left_Tab") - 1,
   {
     KH("\t"), // default Tab
-    KH("\x89"), // default Alt+Tab
+    KH("\033\t"), // default Alt+Tab
     KH("\t"), // default Ctrl+Tab
-    KH("\x89"), // default Ctrl+Alt+Tab
+    KH("\033\t"), // default Ctrl+Alt+Tab
     KH("\033[Z"), // default Shift+Tab
     KH("\033[Z"), // default Shift+Alt+Tab
     KH("\033[Z"), // default Shift+Ctrl+Tab
@@ -544,9 +544,9 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\t"), // cursor Tab
-    KH("\x89"), // cursor Alt+Tab
+    KH("\033\t"), // cursor Alt+Tab
     KH("\t"), // cursor Ctrl+Tab
-    KH("\x89"), // cursor Ctrl+Alt+Tab
+    KH("\033\t"), // cursor Ctrl+Alt+Tab
     KH("\033[Z"), // cursor Shift+Tab
     KH("\033[Z"), // cursor Shift+Alt+Tab
     KH("\033[Z"), // cursor Shift+Ctrl+Tab
@@ -558,9 +558,9 @@ static const Tty_Key tty_keys[] = {
   sizeof("Tab") - 1,
   {
     KH("\t"), // default Tab
-    KH("\x89"), // default Alt+Tab
+    KH("\033\t"), // default Alt+Tab
     KH("\t"), // default Ctrl+Tab
-    KH("\x89"), // default Ctrl+Alt+Tab
+    KH("\033\t"), // default Ctrl+Alt+Tab
     KH("\033[Z"), // default Shift+Tab
     KH("\033[Z"), // default Shift+Alt+Tab
     KH("\033[Z"), // default Shift+Ctrl+Tab
@@ -568,9 +568,9 @@ static const Tty_Key tty_keys[] = {
   },
   {
     KH("\t"), // cursor Tab
-    KH("\x89"), // cursor Alt+Tab
+    KH("\033\t"), // cursor Alt+Tab
     KH("\t"), // cursor Ctrl+Tab
-    KH("\x89"), // cursor Ctrl+Alt+Tab
+    KH("\033\t"), // cursor Ctrl+Alt+Tab
     KH("\033[Z"), // cursor Shift+Tab
     KH("\033[Z"), // cursor Shift+Alt+Tab
     KH("\033[Z"), // cursor Shift+Ctrl+Tab
@@ -586,9 +586,9 @@ static const Tty_Key tty_keys[] = {
     KH("\x1f"), // default Ctrl+minus
     KH("\033-"), // default Ctrl+Alt+minus
     KH("_"), // default Shift+minus
-    KH("\xdf"), // default Shift+Alt+minus
+    KH("\033_"), // default Shift+Alt+minus
     KH("\x1f"), // default Shift+Ctrl+minus
-    KH("\x9f"), // default Shift+Ctrl+Alt+minus
+    KH("\033\x1f"), // default Shift+Ctrl+Alt+minus
   },
   {
     KH("-"), // cursor minus
@@ -596,9 +596,9 @@ static const Tty_Key tty_keys[] = {
     KH("\x1f"), // cursor Ctrl+minus
     KH("\033-"), // cursor Ctrl+Alt+minus
     KH("_"), // cursor Shift+minus
-    KH("\xdf"), // cursor Shift+Alt+minus
+    KH("\033_"), // cursor Shift+Alt+minus
     KH("\x1f"), // cursor Shift+Ctrl+minus
-    KH("\x9f"), // cursor Shift+Ctrl+Alt+minus
+    KH("\033\x1f"), // cursor Shift+Ctrl+Alt+minus
   },
 },
 {
@@ -608,21 +608,21 @@ static const Tty_Key tty_keys[] = {
     KH("_"), // default underscore
     KH("\033_"), // default Alt+underscore
     KH("\x1f"), // default Ctrl+underscore
-    KH("\x9f"), // default Ctrl+Alt+underscore
+    KH("\033\x1f"), // default Ctrl+Alt+underscore
     KH("_"), // default Shift+underscore
     KH("\033_"), // default Shift+Alt+underscore
     KH("\x1f"), // default Shift+Ctrl+underscore
-    KH("\x9f"), // default Shift+Ctrl+Alt+underscore
+    KH("\033\x1f"), // default Shift+Ctrl+Alt+underscore
   },
   {
     KH("_"), // cursor underscore
     KH("\033_"), // cursor Alt+underscore
     KH("\x1f"), // cursor Ctrl+underscore
-    KH("\x9f"), // cursor Ctrl+Alt+underscore
+    KH("\033\x1f"), // cursor Ctrl+Alt+underscore
     KH("_"), // cursor Shift+underscore
     KH("\033_"), // cursor Shift+Alt+underscore
     KH("\x1f"), // cursor Shift+Ctrl+underscore
-    KH("\x9f"), // cursor Shift+Ctrl+Alt+underscore
+    KH("\033\x1f"), // cursor Shift+Ctrl+Alt+underscore
   },
 },
 {
@@ -630,23 +630,23 @@ static const Tty_Key tty_keys[] = {
   sizeof("space") - 1,
   {
     KH(" "), // default space
-    KH("\xa0"), // default Alt+space
+    KH("\033 "), // default Alt+space
     KH("\0"), // default Ctrl+space
-    KH("\x80"), // default Ctrl+Alt+space
+    KH("\033\0"), // default Ctrl+Alt+space
     KH(" "), // default Shift+space
-    KH("\xa0"), // default Shift+Alt+space
+    KH("\033 "), // default Shift+Alt+space
     KH("\0"), // default Shift+Ctrl+space
-    KH("\x80"), // default Shift+Ctrl+Alt+space
+    KH("\033\0"), // default Shift+Ctrl+Alt+space
   },
   {
     KH(" "), // cursor space
-    KH("\xa0"), // cursor Alt+space
+    KH("\033 "), // cursor Alt+space
     KH("\0"), // cursor Ctrl+space
-    KH("\x80"), // cursor Ctrl+Alt+space
+    KH("\033\0"), // cursor Ctrl+Alt+space
     KH(" "), // cursor Shift+space
-    KH("\xa0"), // cursor Shift+Alt+space
+    KH("\033 "), // cursor Shift+Alt+space
     KH("\0"), // cursor Shift+Ctrl+space
-    KH("\x80"), // cursor Shift+Ctrl+Alt+space
+    KH("\033\0"), // cursor Shift+Ctrl+Alt+space
   },
 },
 {
