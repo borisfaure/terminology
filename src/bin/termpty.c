@@ -2263,6 +2263,12 @@ tytest_xmodkeys_set(void)
    _ty_feed(&ty, "\x1b[>4m");
    assert(ty.termstate.xmod[XMOD_OTHER] == 0);
 
+   /* modifyModifierKeys and modifySpecialKeys are resources too. */
+   _ty_feed(&ty, "\x1b[>6;1m");
+   assert(ty.termstate.xmod[XMOD_MODIFIERS] == 1);
+   _ty_feed(&ty, "\x1b[>7;1m");
+   assert(ty.termstate.xmod[XMOD_SPECIAL] == 1);
+
    /* No parameter at all: every resource is reset. */
    _ty_feed(&ty, "\x1b[>4;2m");
    _ty_feed(&ty, "\x1b[>m");
@@ -2276,7 +2282,7 @@ tytest_xmodkeys_set(void)
 
    /* An out of range resource changes nothing. */
    _ty_feed(&ty, "\x1b[>4;2m");
-   _ty_feed(&ty, "\x1b[>9;1m");
+   _ty_feed(&ty, "\x1b[>8;1m");
    assert(ty.termstate.xmod[XMOD_OTHER] == 2);
 
    _ty_test_shutdown(&ty);

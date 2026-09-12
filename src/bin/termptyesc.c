@@ -3469,6 +3469,10 @@ _xmod_resource_is_valid(int resource)
       case XMOD_OTHER:
         EINA_FALLTHROUGH;
       case XMOD_STRING:
+        EINA_FALLTHROUGH;
+      case XMOD_MODIFIERS:
+        EINA_FALLTHROUGH;
+      case XMOD_SPECIAL:
         return EINA_TRUE;
       default:
         return EINA_FALSE;
