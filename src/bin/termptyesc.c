@@ -3216,12 +3216,15 @@ _handle_esc_csi_da(Termpty *ty, Eina_Unicode **ptr)
          * 22      Color
          * 23      Greek
          * 24      Turkish
+         * 28      Rectangular editing
+         * 29      ANSI text locator
          * 42      ISO Latin-2 character set
          * 44      PCTerm
          * 45      Soft key map
          * 46      ASCII emulation
+         * 52      Clipboard access (OSC 52)
          */
-        len = snprintf(bf, sizeof(bf), "\033[?64;1;9;15;18;21;22c");
+        len = snprintf(bf, sizeof(bf), "\033[?64;1;9;15;18;21;22;28;52c");
      }
    termpty_write(ty, bf, len);
 }
