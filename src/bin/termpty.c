@@ -977,7 +977,7 @@ termpty_line_length(const Termcell *cells, ssize_t nb_cells)
     * test below still decides. */
    used = simd_rscan_nonzero((const unsigned char *)cells,
                              (size_t)nb_cells * sizeof(Termcell));
-   pos = (ssize_t)((used + sizeof(Termcell) - 1) / sizeof(Termcell));
+   pos = (ssize_t) DIV_ROUND_UP(used, sizeof(Termcell));
    if (pos > nb_cells) pos = nb_cells;
 
    for (pos = pos - 1; pos >= 0; pos--)
