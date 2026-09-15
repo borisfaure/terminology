@@ -131,6 +131,21 @@ _configure_instance(Ipc_Instance *inst)
         inst->config->term_type = TERM_TYPE_XTERM_256COLOR;
         inst->config->temporary = EINA_TRUE;
      }
+   if (inst->term_type)
+     {
+        int t = config_term_type_from_name(inst->term_type);
+
+        if (t < 0)
+          {
+             ERR(_("Unknown TERM type '%s', keeping '%s'"), inst->term_type,
+                 config_term_type_name(inst->config->term_type));
+          }
+        else
+          {
+             inst->config->term_type = t;
+             inst->config->temporary = EINA_TRUE;
+          }
+     }
    if (inst->video_mute != IPC_INSTANCE_OPT_UNSET)
      {
         config->mute = inst->video_mute;
@@ -223,6 +238,7 @@ main_ipc_new(Ipc_Instance *inst)
    if (inst->hold) nargc += 1;
    if (inst->nowm) nargc += 1;
    if (inst->xterm_256color) nargc += 1;
+   if (inst->term_type) nargc += 2;
    if (inst->active_links) nargc += 1;
    if (inst->video_mute) nargc += 1;
    if (inst->cursor_blink) nargc += 1;
@@ -370,6 +386,11 @@ main_ipc_new(Ipc_Instance *inst)
      {
         nargv[i++] = "-2";
      }
+   if (inst->term_type)
+     {
+        nargv[i++] = "--term-type";
+        nargv[i++] = (char *)inst->term_type;
+     }
    if ((inst->active_links != IPC_INSTANCE_OPT_UNSET)
        && (inst->active_links != 0))
      {
@@ -514,7 +535,9 @@ static Ecore_Getopt options = {
       ECORE_GETOPT_STORE_TRUE('s', "single",
                               gettext_noop("Force single executable if multi-instance is enabled")),
       ECORE_GETOPT_STORE_TRUE('2', "256color",
-                              gettext_noop("Set TERM to 'xterm-256color' instead of 'xterm'")),
+                              gettext_noop("Set TERM to 'xterm-256color' (same as --term-type=xterm-256color)")),
+      ECORE_GETOPT_STORE_STR('\0', "term-type",
+                              gettext_noop("Set TERM to 'xterm', 'xterm-256color' or 'terminology'")),
       ECORE_GETOPT_STORE_DOUBLE('\0', "scale",
                               gettext_noop("Set scaling factor")),
       ECORE_GETOPT_STORE_BOOL('\0', "active-links",
@@ -851,6 +874,7 @@ elm_main(int argc, char **argv)
      ECORE_GETOPT_VALUE_BOOL(instance.hold),            /* -H, --hold */
      ECORE_GETOPT_VALUE_BOOL(single),                   /* -s, --single */
      ECORE_GETOPT_VALUE_BOOL(instance.xterm_256color),  /* -2, --256color */
+     ECORE_GETOPT_VALUE_STR(instance.term_type),        /* --term-type */
      ECORE_GETOPT_VALUE_DOUBLE(scale),                  /* --scale */
      ECORE_GETOPT_VALUE_BOOL(instance.active_links),    /* --active-links */
      ECORE_GETOPT_VALUE_BOOL(no_wizard),                /* --no-wizard */

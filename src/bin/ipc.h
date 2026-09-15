@@ -30,6 +30,7 @@ struct tag_Ipc_Instance
    Eina_Bool hold;
    Eina_Bool nowm;
    Eina_Bool xterm_256color;
+   char *term_type;
    Eina_Bool video_mute;
    Eina_Bool active_links;
    Eina_Bool cursor_blink;

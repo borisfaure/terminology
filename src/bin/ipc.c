@@ -145,6 +145,8 @@ ipc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "xterm_256color", xterm_256color, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
+                                 "term_type", term_type, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "active_links", active_links, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(new_inst_edd, Ipc_Instance,
                                  "video_mute", active_links, EET_T_INT);
