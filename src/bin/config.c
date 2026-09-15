@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 28
+#define CONF_VER 29
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -20,6 +20,36 @@ static const char *
 _config_home_get(void)
 {
    return efreet_config_home_get();
+}
+
+static const char *const _term_type_names[TERM_TYPE_LAST] =
+{
+   [TERM_TYPE_XTERM] = "xterm",
+   [TERM_TYPE_XTERM_256COLOR] = "xterm-256color",
+   [TERM_TYPE_TERMINOLOGY] = "terminology",
+};
+
+const char *
+config_term_type_name(int term_type)
+{
+   if ((term_type < 0) || (term_type >= TERM_TYPE_LAST))
+     term_type = TERM_TYPE_XTERM_256COLOR;
+   return _term_type_names[term_type];
+}
+
+int
+config_term_type_from_name(const char *name)
+{
+   int i;
+
+   if (!name)
+     return -1;
+   for (i = 0; i < TERM_TYPE_LAST; i++)
+     {
+        if (strcmp(_term_type_names[i], name) == 0)
+          return i;
+     }
+   return -1;
 }
 
 void
@@ -153,6 +183,8 @@ config_init(void)
      (edd_base, Config, "multi_instance", multi_instance, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "xterm_256color", xterm_256color, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "term_type", term_type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "erase_is_del", erase_is_del, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -307,6 +339,7 @@ config_sync(const Config *config_src, Config *config)
    config->urg_bell = config_src->urg_bell;
    config->multi_instance = config_src->multi_instance;
    config->xterm_256color = config_src->xterm_256color;
+   config->term_type = config_src->term_type;
    config->erase_is_del = config_src->erase_is_del;
    config->temporary = config_src->temporary;
    config->custom_geometry = config_src->custom_geometry;
@@ -587,6 +620,7 @@ config_new(void)
         config->urg_bell = EINA_TRUE;
         config->multi_instance = EINA_FALSE;
         config->xterm_256color = EINA_TRUE;
+        config->term_type = TERM_TYPE_XTERM_256COLOR;
         config->erase_is_del = EINA_FALSE;
         config->custom_geometry = EINA_FALSE;
         config->drag_links = EINA_FALSE;
@@ -825,7 +859,13 @@ config_load(void)
 #endif
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 28 */
+                case 28:
+                  /* the xterm_256color bool became a 3-way term_type */
+                  config->term_type = config->xterm_256color
+                     ? TERM_TYPE_XTERM_256COLOR : TERM_TYPE_XTERM;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 29 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -914,6 +954,7 @@ config_fork(const Config *config)
    CPY(urg_bell);
    CPY(multi_instance);
    CPY(xterm_256color);
+   CPY(term_type);
    CPY(erase_is_del);
    CPY(custom_geometry);
    CPY(login_shell);

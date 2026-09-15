@@ -36,6 +36,15 @@ typedef enum tag_Cursor_Shape
    CURSOR_SHAPE_BAR = 2
 } Cursor_Shape;
 
+/* Value put in TERM for the child process. */
+typedef enum tag_Term_Type
+{
+   TERM_TYPE_XTERM = 0,
+   TERM_TYPE_XTERM_256COLOR = 1,
+   TERM_TYPE_TERMINOLOGY = 2,
+   TERM_TYPE_LAST
+} Term_Type;
+
 struct tag_Config
 {
    int               version;
@@ -87,7 +96,8 @@ struct tag_Config
    Eina_Bool         visualize;
    Eina_Bool         urg_bell;
    Eina_Bool         multi_instance;
-   Eina_Bool         xterm_256color;
+   Eina_Bool         xterm_256color; /* DEPRECATED, migrated to term_type */
+   int               term_type;
    Eina_Bool         erase_is_del;
    Eina_Bool         custom_geometry;
    Eina_Bool         drag_links;
@@ -110,6 +120,9 @@ struct tag_Config
    Eina_Bool         temporary; /* not in EET */
    Eina_Bool         font_set; /* not in EET */
 };
+
+const char *config_term_type_name(int term_type);
+int config_term_type_from_name(const char *name);
 
 void config_init(void);
 void config_shutdown(void);

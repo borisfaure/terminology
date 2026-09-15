@@ -32,7 +32,6 @@ OPTIONS_CB(Behavior_Ctx, bell_rings, 0);
 OPTIONS_CB(Behavior_Ctx, flicker_on_key, 0);
 OPTIONS_CB(Behavior_Ctx, urg_bell, 0);
 OPTIONS_CB(Behavior_Ctx, multi_instance, 0);
-OPTIONS_CB(Behavior_Ctx, xterm_256color, 0);
 OPTIONS_CB(Behavior_Ctx, erase_is_del, 0);
 OPTIONS_CB(Behavior_Ctx, login_shell, 0);
 OPTIONS_CB(Behavior_Ctx, show_tabs,  0);
@@ -187,6 +186,60 @@ _parent_del_cb(void *data,
 
    eina_stringshare_del(ctx->backlog_msg);
    free(ctx);
+}
+
+static void
+_term_type_changed_cb(void *data, Evas_Object *obj,
+                      void *event_info EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   config->term_type = elm_radio_value_get(obj);
+
+   termio_config_update(ctx->term);
+   windows_update();
+   config_save(config);
+}
+
+static void
+_add_term_type_option(Evas_Object *bx,
+                      Behavior_Ctx *ctx)
+{
+   Evas_Object *lbl, *rd, *rdg = NULL;
+   int i;
+   static const char *const labels[TERM_TYPE_LAST] =
+   {
+      [TERM_TYPE_XTERM] = "xterm",
+      [TERM_TYPE_XTERM_256COLOR] = "xterm-256color",
+      [TERM_TYPE_TERMINOLOGY] = "terminology",
+   };
+
+   lbl = elm_label_add(bx);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
+   elm_layout_text_set(lbl, NULL, _("Set TERM to:"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   for (i = 0; i < TERM_TYPE_LAST; i++)
+     {
+        rd = elm_radio_add(bx);
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+        elm_object_text_set(rd, labels[i]);
+        elm_radio_state_value_set(rd, i);
+        if (!rdg)
+          rdg = rd;
+        else
+          elm_radio_group_add(rd, rdg);
+        elm_box_pack_end(bx, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed",
+                                       _term_type_changed_cb, ctx);
+     }
+
+   elm_radio_value_set(rdg, ctx->config->term_type);
 }
 
 static void
@@ -409,7 +462,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    OPTIONS_CX(_("Urgent Bell"), urg_bell, 0);
    OPTIONS_SEPARATOR;
    OPTIONS_CX(_("Multiple instances, one process"), multi_instance, 0);
-   OPTIONS_CX(_("Set TERM to xterm-256color"), xterm_256color, 0);
+   _add_term_type_option(bx, ctx);
    OPTIONS_CX(_("BackArrow sends Del (instead of BackSpace)"), erase_is_del, 0);
    OPTIONS_CX(_("Start as login shell"), login_shell, 0);
    OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);

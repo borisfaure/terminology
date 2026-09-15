@@ -128,7 +128,7 @@ _configure_instance(Ipc_Instance *inst)
 
    if (inst->xterm_256color)
      {
-        inst->config->xterm_256color = EINA_TRUE;
+        inst->config->term_type = TERM_TYPE_XTERM_256COLOR;
         inst->config->temporary = EINA_TRUE;
      }
    if (inst->video_mute != IPC_INSTANCE_OPT_UNSET)

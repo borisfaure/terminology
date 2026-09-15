@@ -743,14 +743,18 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         unsetenv("COLUMNS");
         unsetenv("LINES");
 
-        /* pretend to be xterm */
-        if (config->xterm_256color)
+        switch (config->term_type)
           {
-             putenv("TERM=xterm-256color");
-          }
-        else
-          {
-             putenv("TERM=xterm");
+           case TERM_TYPE_XTERM:
+              putenv("TERM=xterm");
+              break;
+           case TERM_TYPE_TERMINOLOGY:
+              putenv("TERM=terminology");
+              break;
+           case TERM_TYPE_XTERM_256COLOR:
+           default:
+              putenv("TERM=xterm-256color");
+              break;
           }
         putenv("XTERM_256_COLORS=1");
         putenv("TERM_PROGRAM=terminology");
