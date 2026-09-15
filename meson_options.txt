@@ -20,3 +20,7 @@ option('nls',
        type: 'boolean',
        value: true,
        description: 'enable localization. Requires libintl. (default=true)')
+option('terminfo',
+       type: 'feature',
+       value: 'auto',
+       description: 'Compile and install the terminology terminfo entry with tic. (default=auto)')

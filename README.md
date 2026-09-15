@@ -62,6 +62,20 @@ Terminology ships with some common color schemes.
 To know how to modify or add some new color schemes, please read
 [COLORSCHEMES.md](COLORSCHEMES.md).
 
+## Terminfo
+
+Terminology reports `TERM=xterm-256color` by default. That description is
+missing several capabilities Terminology implements. A such, a matching
+terminfo entry is shipped and installed as `terminology`.
+
+It is not the default because the entry has to exist on every host a session
+reaches.  When Terminology is not installed on the remote host, push the local
+entry over instead:
+
+``` sh
+infocmp -x terminology | ssh remotehost 'mkdir -p ~/.terminfo && tic -x -'
+```
+
 ## Mouse controls
 
 * `Right mouse button` = controls menu
