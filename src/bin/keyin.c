@@ -8,6 +8,7 @@
 #include "termio.h"
 #include "termcmd.h"
 #include "keyin.h"
+#include "utils.h"
 #include "win.h"
 
 typedef struct tag_Tty_Key Tty_Key;
@@ -495,6 +496,7 @@ static Eina_Bool
 cb_term_new(Evas_Object *termio_obj)
 {
    char path[PATH_MAX], cwd[PATH_MAX];
+   char *quoted_path, *quoted_cwd = NULL, *cmd = NULL;
 
    RETURN_FALSE_ON_GROUP_ACTION_ALREADY_HANDLED;
 
@@ -505,25 +507,29 @@ cb_term_new(Evas_Object *termio_obj)
    snprintf(path, sizeof(path), "%s/%s", elm_app_bin_dir_get(),
             "terminology");
 #endif
-   if (termio_cwd_get(termio_obj, cwd, sizeof(cwd)))
-     {
-        const char *template = "%s -d %s";
-        int length;
-        char *cmd;
 
-        length = (strlen(path) + strlen(cwd) + strlen(template) - 3);
-        cmd = malloc(sizeof(char) * length);
-        if (cmd)
-          {
-             snprintf(cmd, length, template, path, cwd);
-             ecore_exe_run(cmd, NULL);
-             free(cmd);
-          }
-     }
-   else
+   /* ecore_exe_run() hands the string to a shell on any metacharacter. */
+   quoted_path = shell_quote(path);
+   if (!quoted_path)
+     return EINA_TRUE;
+   if (termio_cwd_get(termio_obj, cwd, sizeof(cwd)))
+     quoted_cwd = shell_quote(cwd);
+
+   if (quoted_cwd)
      {
-        ecore_exe_run(path, NULL);
+        size_t len = strlen(quoted_path) + sizeof(" -d ") - 1 +
+           strlen(quoted_cwd) + 1;
+
+        cmd = malloc(len);
+        if (cmd)
+          snprintf(cmd, len, "%s -d %s", quoted_path, quoted_cwd);
      }
+
+   ecore_exe_run(cmd ? cmd : quoted_path, NULL);
+
+   free(cmd);
+   free(quoted_cwd);
+   free(quoted_path);
 
    return EINA_TRUE;
 }
