@@ -1353,7 +1353,6 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               ty->termstate.att.encircled = 1;
               break;
            case 53:
-              WRN("TODO: support SGR 51 - overlined attribute");
               ty->termstate.att.overlined = 1;
               break;
            case 54:

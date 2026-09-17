@@ -5,6 +5,15 @@
 typedef void Term;
 #endif
 
+/* textgrid cells only gained an overline field in efl 1.29 */
+#ifdef HAVE_TEXTGRID_OVERLINE
+# define TC_OVERLINE_SET(_tc, _v) ((_tc).overline = (_v))
+# define TC_OVERLINE_DIFFERS(_tc, _v) ((_tc).overline != (_v))
+#else
+# define TC_OVERLINE_SET(_tc, _v) ((void)0)
+# define TC_OVERLINE_DIFFERS(_tc, _v) (0)
+#endif
+
 typedef struct tag_Termio Termio;
 
 struct tag_Termio

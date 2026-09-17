@@ -59,6 +59,7 @@ _row_set(Evas_Object *o, int y, const char *txt)
         tc[x].bg_extended = 0;
         tc[x].underline = 0;
         tc[x].strikethrough = 0;
+        TC_OVERLINE_SET(tc[x], 0);
         tc[x].double_width = 0;
         tc[x].fg_extended = 0;
         tc[x].bg_extended = 0;

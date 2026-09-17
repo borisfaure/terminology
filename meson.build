@@ -107,6 +107,17 @@ endif
 
 message('Checking for ELM_SEL_FORMAT_URILIST: ' + found)
 
+found = 'Not found'
+
+if cc.has_member('struct _Evas_Textgrid_Cell', 'overline',
+                 prefix: '#include <Evas.h>',
+                 dependencies: terminology_dependencies)
+  config_data.set('HAVE_TEXTGRID_OVERLINE', 1)
+  found = 'Found'
+endif
+
+message('Checking for textgrid overline: ' + found)
+
 eet_bin = get_option('eet')
 if eet_bin == ''
   eet_bin = eet_path

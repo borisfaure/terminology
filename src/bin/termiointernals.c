@@ -2537,6 +2537,7 @@ termio_internal_render(Termio *sd,
                   tc[x].bg_extended = 0;
                   tc[x].underline = 0;
                   tc[x].strikethrough = 0;
+                  TC_OVERLINE_SET(tc[x], 0);
                   tc[x].bold = 0;
                   tc[x].italic = 0;
                   tc[x].double_width = 0;
@@ -2568,6 +2569,7 @@ termio_internal_render(Termio *sd,
                        tc[x].bg_extended = 0;
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
+                       TC_OVERLINE_SET(tc[x], 0);
                        tc[x].bold = 0;
                        tc[x].italic = 0;
                        tc[x].double_width = 0;
@@ -2612,6 +2614,7 @@ termio_internal_render(Termio *sd,
                        tc[x].bg_extended = 0;
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
+                       TC_OVERLINE_SET(tc[x], 0);
                        tc[x].bold = 0;
                        tc[x].italic = 0;
                        tc[x].double_width = cells[x].att.dblwidth;
@@ -2693,6 +2696,7 @@ termio_internal_render(Termio *sd,
                           (tc[x].bg_extended != bgext) ||
                           (tc[x].underline != cells[x].att.underline) ||
                           (tc[x].strikethrough != cells[x].att.strike) ||
+                          TC_OVERLINE_DIFFERS(tc[x], cells[x].att.overlined) ||
                           (tc[x].double_width != cells[x].att.dblwidth);
 
                        if (cell_changed)
@@ -2705,6 +2709,7 @@ termio_internal_render(Termio *sd,
                             tc[x].bg_extended = bgext;
                             tc[x].underline = cells[x].att.underline;
                             tc[x].strikethrough = cells[x].att.strike;
+                            TC_OVERLINE_SET(tc[x], cells[x].att.overlined);
                             if (sd->config->font.bolditalic)
                               {
                                  tc[x].bold = cells[x].att.bold;
@@ -2805,6 +2810,7 @@ termio_internal_render(Termio *sd,
                   tc[xx].bg_extended = 0;
                   tc[xx].underline = 1;
                   tc[xx].strikethrough = 0;
+                  TC_OVERLINE_SET(tc[xx], 0);
                   tc[xx].double_width = dbl;
                   tc[xx].codepoint = g;
                   if (dbl)
@@ -2817,6 +2823,7 @@ termio_internal_render(Termio *sd,
                        tc[xx].bg_extended = 0;
                        tc[xx].underline = 1;
                        tc[xx].strikethrough = 0;
+                       TC_OVERLINE_SET(tc[xx], 0);
                        tc[xx].double_width = 0;
                        tc[xx].codepoint = 0;
                     }
