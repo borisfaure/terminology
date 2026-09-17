@@ -158,11 +158,15 @@ enum esc_arg_error {
      ESC_ARG_ERROR = 2
 };
 
+/* sub_follows is set when the argument returned was terminated by ':',
+ * meaning the next argument is a subparameter of it */
 static int
-_csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
+_csi_arg_get_subparam(Termpty *ty, Eina_Unicode **ptr, Eina_Bool *sub_follows)
 {
    Eina_Unicode *b = *ptr;
    int sum = 0;
+
+   *sub_follows = EINA_FALSE;
 
    if ((b == NULL) || (*b == '\0'))
      {
@@ -202,6 +206,7 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
 
    if ((*b == ';') || (*b == ':'))
      {
+        *sub_follows = (*b == ':');
         if (b[1])
           b++;
         *ptr = b;
@@ -221,6 +226,14 @@ error:
    ty->decoding_error = EINA_TRUE;
    *ptr = NULL;
    return -ESC_ARG_ERROR;
+}
+
+static int
+_csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Bool sub_follows;
+
+   return _csi_arg_get_subparam(ty, ptr, &sub_follows);
 }
 
 static void
@@ -1134,7 +1147,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
    DBG("color set");
    while (b && b <= end)
      {
-        int arg = _csi_arg_get(ty, &b);
+        Eina_Bool sub_follows = EINA_FALSE;
+        int arg = _csi_arg_get_subparam(ty, &b, &sub_follows);
         switch (arg)
           {
            case -ESC_ARG_ERROR:
@@ -1153,8 +1167,27 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 3: // italic
               ty->termstate.att.italic = 1;
               break;
-           case 4: // underline
-              ty->termstate.att.underline = 1;
+           case 4: // underline, possibly styled: 4:0 to 4:5
+              if (sub_follows)
+                {
+                   int style = _csi_arg_get_subparam(ty, &b, &sub_follows);
+
+                   if (style == -ESC_ARG_ERROR)
+                     return;
+                   /* only 4:0 removes the underline; terminology draws every
+                    * other style the same way for now */
+                   ty->termstate.att.underline = (style != 0);
+                   while (sub_follows)
+                     {
+                        if (_csi_arg_get_subparam(ty, &b, &sub_follows)
+                            == -ESC_ARG_ERROR)
+                          return;
+                     }
+                }
+              else
+                {
+                   ty->termstate.att.underline = 1;
+                }
               break;
            case 5: // blink
               ty->termstate.att.blink = 1;

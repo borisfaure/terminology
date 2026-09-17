@@ -156,3 +156,4 @@ csi-38-no-value.sh 4cf52fe27bf05e78bdf7eecdda5543f7
 osc_selection.sh 1f53d8ce7ca39989e2f8f8a20c9148d0
 lf_below_bottom_margin.sh 02e4df0e6de5f23e8947245d9a8e4adf
 backlog_scroll_stress.sh 614fa95207570793cb0089243a059eda
+sgr-underline-subparam.sh 527b0d806a768efbae630bf276fa9f6c
