@@ -3221,7 +3221,7 @@ _cb_tab_activate(void *data,
 
 
 static void
-_tabbar_clear(Term *term)
+_tabbar_content_clear(Term *term)
 {
    if (term->tabbar.l.box)
      {
@@ -3235,6 +3235,39 @@ _tabbar_clear(Term *term)
         evas_object_del(term->tabbar.r.box);
         term->tabbar.r.box = NULL;
      }
+   if (term->tab_inactive)
+     {
+        evas_object_hide(term->tab_inactive);
+        edje_object_signal_callback_del(term->tab_inactive,
+                                        "tab,activate", "terminology",
+                                        _cb_tab_activate);
+     }
+}
+
+/* Reserve the tab bar space on a tab that is not the current one: all tabs
+ * must keep the same terminal size or switching resizes their ptys. */
+static void
+_tabbar_space_keep(Term *term)
+{
+   if (!term->tab_spacer)
+     {
+        Evas_Coord w = 0, h = 0;
+
+        term->tab_spacer = evas_object_rectangle_add(
+           evas_object_evas_get(term->bg));
+        evas_object_color_set(term->tab_spacer, 0, 0, 0, 0);
+        elm_coords_finger_size_adjust(1, &w, 1, &h);
+        evas_object_size_hint_min_set(term->tab_spacer, w, h);
+        elm_layout_content_set(term->bg, "terminology.tab", term->tab_spacer);
+     }
+   elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
+   edje_object_message_signal_process(term->bg_edj);
+}
+
+static void
+_tabbar_clear(Term *term)
+{
+   _tabbar_content_clear(term);
 
    if (term->tab_spacer)
      {
@@ -3243,13 +3276,6 @@ _tabbar_clear(Term *term)
         elm_layout_content_unset(term->bg, "terminology.tab");
         evas_object_del(term->tab_spacer);
         term->tab_spacer = NULL;
-     }
-   if (term->tab_inactive)
-     {
-        evas_object_hide(term->tab_inactive);
-        edje_object_signal_callback_del(term->tab_inactive,
-                                        "tab,activate", "terminology",
-                                        _cb_tab_activate);
      }
 }
 
@@ -3659,7 +3685,8 @@ _tabbar_fill(Tabs *tabs)
           {
              Evas_Object *o;
 
-             _tabbar_clear(term);
+             _tabbar_content_clear(term);
+             _tabbar_space_keep(term);
 
              o = _tab_inactive_get_or_create(canvas, term, tab_item);
              evas_object_show(o);
