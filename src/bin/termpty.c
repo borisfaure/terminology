@@ -1442,7 +1442,8 @@ _backlog_remove_latest_nolock(Termpty *ty)
 void
 termpty_resize(Termpty *ty, int new_w, int new_h)
 {
-   Termcell *new_screen = NULL;
+   Termcell *new_screen = NULL,
+            *old_screen2 = NULL;
    int old_y = 0,
        old_w = ty->w,
        old_h = ty->h,
@@ -1466,10 +1467,33 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    new_screen = calloc(1, sizeof(Termcell) * new_w * new_h);
    if (!new_screen)
      goto bad;
-   free(ty->screen2);
+
+   /* The inactive screen is never rewrapped, but it must not be dropped: when
+    * the alternate buffer is on, it holds what the application is showing and
+    * curses applications only send diffs after SIGWINCH. */
+   old_screen2 = ty->screen2;
    ty->screen2 = calloc(1, sizeof(Termcell) * new_w * new_h);
    if (!ty->screen2)
-     goto bad;
+     {
+        ty->screen2 = old_screen2;
+        goto bad;
+     }
+   if (old_screen2)
+     {
+        int copy_w = MIN(old_w, new_w),
+            copy_h = MIN(old_h, new_h),
+            y;
+
+        for (y = 0; y < copy_h; y++)
+          {
+             int src_y = (y + ty->circular_offset2) % old_h;
+
+             memcpy(&ty->screen2[y * new_w],
+                    &old_screen2[src_y * old_w],
+                    copy_w * sizeof(Termcell));
+          }
+     }
+   free(old_screen2);
 
    new_si.screen = new_screen;
    new_si.w = new_w;
@@ -2129,6 +2153,41 @@ tytest_sync_resize(void)
    termpty_resize(&ty, 40, 24);
    assert(ty.sync_output.active == EINA_FALSE);
    assert(ty.sync_output.shadow_rows == NULL);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* A resize must keep the alternate screen's cells that still fit: curses
+ * applications only redraw what they think changed after SIGWINCH, so
+ * dropping them leaves the screen blank (issue #212). */
+int
+tytest_altscreen_resize_keeps_content(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[1;1Hnormal");
+   _ty_feed(&ty, "\x1b[?1049h");
+   assert(ty.altbuf);
+   _ty_feed(&ty, "\x1b[3;1Halpha");
+   assert(_ty_cell_cp(&ty, 1, 2) == 'l');
+
+   /* Shrinking keeps what still fits. */
+   termpty_resize(&ty, 70, 20);
+   assert(ty.altbuf);
+   assert(_ty_cell_cp(&ty, 1, 2) == 'l');
+   assert(_ty_cell_cp(&ty, 4, 2) == 'a');
+
+   /* Growing keeps it too, on the same row. */
+   termpty_resize(&ty, 100, 30);
+   assert(_ty_cell_cp(&ty, 1, 2) == 'l');
+
+   /* The normal screen went through the rewrap path meanwhile. */
+   _ty_feed(&ty, "\x1b[?1049l");
+   assert(!ty.altbuf);
+   assert(_ty_cell_cp(&ty, 1, 0) == 'o');
 
    _ty_test_shutdown(&ty);
    return 0;

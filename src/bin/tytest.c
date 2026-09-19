@@ -51,6 +51,7 @@ static struct {
        { "sync_watchdog_teardown", tytest_sync_watchdog_teardown},
        { "sync_nested", tytest_sync_nested},
        { "sync_resize", tytest_sync_resize},
+       { "altscreen_resize_keeps_content", tytest_altscreen_resize_keeps_content},
        { "sync_soft_reset", tytest_sync_soft_reset},
        { "sync_change_cb_coalesced", tytest_sync_change_cb_coalesced},
        { "sync_change_cb_watchdog", tytest_sync_change_cb_watchdog},
