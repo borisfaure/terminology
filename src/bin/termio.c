@@ -457,6 +457,12 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
 
+   if (sd->pty->prop.cwd)
+     {
+        eina_strlcpy(buf, sd->pty->prop.cwd, size);
+        return EINA_TRUE;
+     }
+
    pid = termpty_pid_get(sd->pty);
 
 #if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
