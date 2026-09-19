@@ -21,6 +21,7 @@ tabs.sh 08ffb95c74fc9ce323b09f60b125526d
 xterm-osc-0-title-icon.sh 5109e84f8640e64ced6bc9fdfa85d321
 xterm-osc-1-icon.sh 1859eb51e97f2bfdd00a347979694596
 xterm-osc-2-title.sh df4151925c192970873ac03101294ee6
+xterm-osc-7-cwd.sh cc335e6d5aa3bf74f8549e4fe1a079a7
 dsr-cpr.sh 01e0e1617b520454065d6b5b6a7383cd
 dsr-dir.sh 8fec9b3816ad08c12b228a34c00f006a
 dsr-kbd.sh e8f5f8372bc8da468d5ddcd7e1742628

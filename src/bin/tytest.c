@@ -246,6 +246,16 @@ _tytest_checksum(Termpty *ty)
      {
         MD5Update(&ctx, (unsigned char const*)"(NULL)", 6);
      }
+   /* Working directory. Hashed only when set, with no "(NULL)" sentinel, so
+    * that the byte stream is unchanged for every test that never sends
+    * OSC 7. An empty value is rejected at parse time, so "unset" and "set to
+    * empty" cannot be confused. */
+   if (ty->prop.cwd)
+     {
+        MD5Update(&ctx,
+                  (unsigned char const*)ty->prop.cwd,
+                  strlen(ty->prop.cwd));
+     }
    /* Cursor shape */
    const char *cursor_shape = tytest_cursor_shape_get();
    MD5Update(&ctx, (unsigned char const*)cursor_shape,
@@ -390,6 +400,7 @@ _tytest_dump(Termpty *ty)
           (int)ty->termstate.restrict_cursor);
    printf("title=%s\n", ty->prop.title ? ty->prop.title : "(NULL)");
    printf("icon=%s\n", ty->prop.icon ? ty->prop.icon : "(NULL)");
+   printf("cwd=%s\n", ty->prop.cwd ? ty->prop.cwd : "(NULL)");
 
    backlog_len = termpty_backlog_length(ty);
    printf("backlog rows=%d\n", (int)backlog_len);
