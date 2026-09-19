@@ -14,6 +14,9 @@
 #include "tytest.h"
 #endif
 #include "utils.h"
+#include "uri_decode.h"
+#include <limits.h>
+#include <unistd.h>
 
 #undef CRITICAL
 #undef ERR
@@ -4628,6 +4631,82 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
+/* Only an empty host, "localhost" or our own name names a directory we can
+ * actually reach. */
+static Eina_Bool
+_osc_7_host_is_local(const char *host, size_t len)
+{
+   static char hostname[256];
+   static Eina_Bool hostname_known = EINA_FALSE;
+
+   if (len == 0)
+     return EINA_TRUE;
+   if ((len == 9) && (strncasecmp(host, "localhost", 9) == 0))
+     return EINA_TRUE;
+
+   if (!hostname_known)
+     {
+        if (gethostname(hostname, sizeof(hostname)) != 0)
+          hostname[0] = '\0';
+        hostname[sizeof(hostname) - 1] = '\0';
+        hostname_known = EINA_TRUE;
+     }
+   return (hostname[0] != '\0') && (strlen(hostname) == len) &&
+          (strncasecmp(host, hostname, len) == 0);
+}
+
+/* OSC 7 ; file://<host>/<percent-encoded path> ST
+ *
+ * Validated here, at the only ingress, because the consumers are spread out
+ * and the next one written will not necessarily be careful.
+ */
+static void
+_handle_osc_7_cwd(Termpty *ty, char *uri)
+{
+   char *path;
+   size_t len, i;
+
+   if (strncmp(uri, "file://", 7) != 0)
+     {
+        WRN("OSC 7: not a file:// URI");
+        goto err;
+     }
+   uri += 7;
+   path = strchr(uri, '/');
+   if (!path)
+     {
+        WRN("OSC 7: URI has no path");
+        goto err;
+     }
+
+   /* A remote shell announcing its own host is behaving correctly. We simply
+    * have nothing to do with its paths, so drop it without an error. */
+   if (!_osc_7_host_is_local(uri, path - uri))
+     return;
+
+   uri_percent_decode_inplace(path);
+   len = strlen(path);
+   if (len >= PATH_MAX)
+     {
+        WRN("OSC 7: path too long (%zu bytes)", len);
+        goto err;
+     }
+   for (i = 0; i < len; i++)
+     {
+        if (((unsigned char)path[i] < 0x20) || (path[i] == 0x7f))
+          {
+             WRN("OSC 7: control character in path");
+             goto err;
+          }
+     }
+
+   eina_stringshare_replace(&ty->prop.cwd, path);
+   return;
+
+err:
+   ty->decoding_error = EINA_TRUE;
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -4737,6 +4816,24 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         WRN("set palette, not supported");
         if ((cc - c) < 3)
           return 0;
+        break;
+      case 7:
+        DBG("set working directory");
+        if (!p)
+          goto err;
+        /* tmux re-emits the active pane's path, and sends it empty when the
+         * pane has none. That means "forget it", not a malformed sequence. */
+        if (!*p)
+          {
+             eina_stringshare_replace(&ty->prop.cwd, NULL);
+             break;
+          }
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (s)
+          {
+             _handle_osc_7_cwd(ty, s);
+             free(s);
+          }
         break;
       case 8:
         DBG("hyperlink");

@@ -893,6 +893,7 @@ termpty_free(Termpty *ty)
    eina_stringshare_del(ty->prop.title);
    eina_stringshare_del(ty->prop.user_title);
    eina_stringshare_del(ty->prop.icon);
+   eina_stringshare_del(ty->prop.cwd);
    termpty_backlog_free(ty);
    free(ty->screen);
    free(ty->screen2);

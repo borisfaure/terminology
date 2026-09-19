@@ -71,6 +71,7 @@ tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'utils.c', 'utils.h',
                   'utf8.c', 'utf8.h',
                   simd_sources,
+                  'uri_decode.c', 'uri_decode.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tyfuzz.c']
 tytest_sources = ['termptyesc.c', 'termptyesc.h',
@@ -112,6 +113,7 @@ tybench_sources = ['termptyesc.c', 'termptyesc.h',
                   'utils.c', 'utils.h',
                   'utf8.c', 'utf8.h',
                   simd_sources,
+                  'uri_decode.c', 'uri_decode.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tybench.c']
 

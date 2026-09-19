@@ -175,6 +175,8 @@ struct tag_Termpty
       const char *title;
       /* set by user */
       const char *user_title;
+      /* working directory reported by the shell through OSC 7 */
+      const char *cwd;
    } prop;
    const char *cur_cmd;
    Termcell *screen, *screen2;
