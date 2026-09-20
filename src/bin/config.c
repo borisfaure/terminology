@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 29
+#define CONF_VER 30
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -117,6 +117,8 @@ config_init(void)
      (edd_base, Config, "font.bitmap", font.bitmap, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "font.bolditalic", font.bolditalic, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "font.ligatures", font.ligatures, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "helper.email", helper.email, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -309,6 +311,7 @@ config_sync(const Config *config_src, Config *config)
    eina_stringshare_replace(&(config->font.name), config_src->font.name);
    config->font.bitmap = config_src->font.bitmap;
    config->font.bolditalic = config_src->font.bolditalic;
+   config->font.ligatures = config_src->font.ligatures;
    config->helper.inline_please = config_src->helper.inline_please;
    eina_stringshare_replace(&(config->helper.email), config_src->helper.email);
    eina_stringshare_replace(&(config->helper.url.general), config_src->helper.url.general);
@@ -554,6 +557,7 @@ config_default_font_set(Config *config, Evas *evas)
         config->font.bitmap = EINA_FALSE;
         config->font.size = 10;
         config->font.bolditalic = EINA_TRUE;
+        config->font.ligatures = EINA_TRUE;
         eina_stringshare_del(fname);
      }
 #undef FONT_DEJAVU
@@ -576,6 +580,7 @@ config_new(void)
         config->font.name = eina_stringshare_add("nexus.pcf");
         config->font.size = 10;
         config->font.bolditalic = EINA_TRUE;
+        config->font.ligatures = EINA_TRUE;
 #ifdef __APPLE__
         config->helper.email = eina_stringshare_add("open");
         config->helper.url.general = eina_stringshare_add("open");
@@ -865,7 +870,11 @@ config_load(void)
                      ? TERM_TYPE_XTERM_256COLOR : TERM_TYPE_XTERM;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 29 */
+                case 29:
+                  config->font.ligatures = EINA_TRUE;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 30 */
                   config->version = CONF_VER;
                   break;
                 default:
@@ -920,6 +929,7 @@ config_fork(const Config *config)
    CPY(font.orig_size);
    CPY(font.orig_bitmap);
    CPY(font.bolditalic);
+   CPY(font.ligatures);
    SCPY(helper.email);
    SCPY(helper.url.general);
    SCPY(helper.url.video);

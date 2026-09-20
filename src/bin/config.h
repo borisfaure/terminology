@@ -57,6 +57,7 @@ struct tag_Config
       unsigned char  bitmap;
       unsigned char  orig_bitmap; /* not in EET */
       unsigned char  bolditalic;
+      unsigned char  ligatures;
    } font;
    struct {
       const char    *email;
