@@ -84,7 +84,14 @@ foreach efl_dep: efl_deps
   if efl_dep == 'eet'
     eet_path = dep.get_variable(pkgconfig: 'prefix') + '/bin/eet'
   endif
+  if efl_dep == 'evas'
+    evas_dep = dep
+  endif
 endforeach
+
+if cc.has_function('evas_object_textgrid_ligatures_set', dependencies: evas_dep)
+  config_data.set('HAVE_TEXTGRID_LIGATURES', 1)
+endif
 
 if cc.has_function('mkstemps')
   config_data.set('HAVE_MKSTEMPS', 1)
