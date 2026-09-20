@@ -23,6 +23,7 @@ typedef struct tag_Font_Ctx
    Evas_Object *op_fsml;
    Evas_Object *op_fbig;
    Evas_Object *cx;
+   Evas_Object *cx_liga;
    Evas_Object *term;
    Evas_Object *filter;
    const char  *filter_data;
@@ -377,6 +378,19 @@ _cb_font_bolditalic(void *data,
    config_save(config);
 }
 
+static void
+_cb_font_ligatures(void *data,
+                   Evas_Object *obj,
+                   void *_event EINA_UNUSED)
+{
+   Font_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   config->font.ligatures = elm_check_state_get(obj);
+   termio_config_update(ctx->term);
+   config_save(config);
+}
+
 static Eina_Bool
 _cb_font_filter_get(void *data,
                     Evas_Object *obj EINA_UNUSED,
@@ -455,6 +469,8 @@ _parent_del_cb(void *data,
                                        _cb_term_resize, ctx);
    evas_object_smart_callback_del_full(ctx->cx, "changed",
                                        _cb_font_bolditalic, ctx);
+   evas_object_smart_callback_del_full(ctx->cx_liga, "changed",
+                                       _cb_font_ligatures, ctx);
    evas_object_smart_callback_del_full(ctx->op_fontslider, "delay,changed",
                                        _cb_op_fontsize_sel, ctx);
 
@@ -684,6 +700,19 @@ options_font(Evas_Object *opbox, Evas_Object *term)
    evas_object_show(o);
    evas_object_smart_callback_add(o, "changed",
                                   _cb_font_bolditalic, ctx);
+
+   ctx->cx_liga = o = elm_check_add(bx0);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, _("Combine characters into ligatures"));
+   elm_check_state_set(o, config->font.ligatures);
+#if !defined(HAVE_TEXTGRID_LIGATURES)
+   elm_object_disabled_set(o, EINA_TRUE);
+#endif
+   elm_box_pack_end(bx0, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed",
+                                  _cb_font_ligatures, ctx);
 
    ctx->expecting_resize = 0;
    evas_object_geometry_get(term, NULL, NULL, &ctx->tsize_w, &ctx->tsize_h);
