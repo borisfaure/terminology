@@ -158,3 +158,4 @@ lf_below_bottom_margin.sh 02e4df0e6de5f23e8947245d9a8e4adf
 backlog_scroll_stress.sh 614fa95207570793cb0089243a059eda
 sgr-underline-subparam.sh 527b0d806a768efbae630bf276fa9f6c
 sgr-overline.sh f9b5f05cd6ef8a2f261f3cf14b8459d8
+apc.sh 2a091bf1bac87b941cc481d1c179768c
