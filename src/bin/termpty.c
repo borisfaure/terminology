@@ -907,7 +907,7 @@ termpty_free(Termpty *ty)
    free(ty->screen2);
    if (ty->hl.links)
      {
-        uint16_t i;
+        uint32_t i;
 
         for (i = 0; i < ty->hl.size; i++)
           {
@@ -915,7 +915,7 @@ termpty_free(Termpty *ty)
 
              term_link_free(ty, l);
           }
-       free(ty->hl.links);
+        free(ty->hl.links);
      }
    free(ty->hl.bitmap);
    free(ty->buf);
@@ -2435,6 +2435,33 @@ tytest_sync_change_cb_altscreen(void)
    assert(fires == 1);
 
    _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* Grow ty->hl.size past 32768 so it reaches HL_LINKS_MAX (65536), then
+ * tear the pty down with termpty_free().  Uses a heap-allocated Termpty,
+ * since termpty_free() ends with free(ty). */
+int
+tytest_hl_links_free_full(void)
+{
+   Termpty *ty = calloc(1, sizeof(Termpty));
+   Config *config;
+   Term_Link *link;
+
+   assert(ty);
+   _ty_test_init(ty, 80, 24);
+
+   while (ty->hl.size < HL_LINKS_MAX)
+     {
+        link = term_link_new(ty);
+        assert(link);
+     }
+
+   config = ty->config;
+   termpty_free(ty);
+   config_del(config);
+   ecore_shutdown();
+   eina_shutdown();
    return 0;
 }
 
