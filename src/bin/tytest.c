@@ -64,6 +64,7 @@ static struct {
        { "sync_change_cb_watchdog", tytest_sync_change_cb_watchdog},
        { "sync_change_cb_altscreen", tytest_sync_change_cb_altscreen},
        { "hl_links_free_full", tytest_hl_links_free_full},
+       { "hl_links_exhausted", tytest_hl_links_exhausted},
        { "percent_decode", tytest_percent_decode},
        { "sgr_58_no_leak", tytest_sgr_58_no_leak},
        { "xmodkeys_set", tytest_xmodkeys_set},

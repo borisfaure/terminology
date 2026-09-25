@@ -1868,7 +1868,7 @@ _find_empty_slot(const Termpty *ty)
      {
      }
 
-   if (pos <= max_pos)
+   if (pos < max_pos)
      {
         int bit;
         for (bit = 0; bit < 8; bit++)
@@ -2462,6 +2462,31 @@ tytest_hl_links_free_full(void)
    config_del(config);
    ecore_shutdown();
    eina_shutdown();
+   return 0;
+}
+
+/* Fill every hyperlink id (id 0 is reserved) so the bitmap is completely
+ * full, then check that one more allocation fails cleanly. */
+int
+tytest_hl_links_exhausted(void)
+{
+   Termpty ty;
+   Term_Link *link;
+   int i;
+
+   _ty_test_init(&ty, 80, 24);
+
+   for (i = 0; i < HL_LINKS_MAX - 1; i++)
+     {
+        link = term_link_new(&ty);
+        assert(link);
+     }
+
+   link = term_link_new(&ty);
+   assert(!link);
+
+   free(ty.hl.links);
+   _ty_test_shutdown(&ty);
    return 0;
 }
 
