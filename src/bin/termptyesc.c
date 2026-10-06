@@ -4687,7 +4687,7 @@ _handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
 static void
 _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
 {
-   static const Eina_Unicode default_sel = 'p';
+   static const Eina_Unicode default_sel = 'c';
    const Eina_Unicode *sel, *sel_end;
    Eina_Unicode *c;
 

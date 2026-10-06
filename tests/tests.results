@@ -153,7 +153,7 @@ xterm-colors-rgb.sh e6a432f17c8e9dde652d749f4261b783
 xterm-colors-rgbi.sh e6a432f17c8e9dde652d749f4261b783
 xterm-set-cursor-color.sh 9867bcaf9cc2fe71a1b1a4ab85f2bea6
 csi-38-no-value.sh 4cf52fe27bf05e78bdf7eecdda5543f7
-osc_selection.sh 8b842e50daca3d15a9d270cf1a7ffd90
+osc_selection.sh 28a36b17c3714d1468ca6625ad2f58e3
 lf_below_bottom_margin.sh 02e4df0e6de5f23e8947245d9a8e4adf
 backlog_scroll_stress.sh 614fa95207570793cb0089243a059eda
 sgr-underline-subparam.sh 527b0d806a768efbae630bf276fa9f6c
@@ -165,3 +165,4 @@ osc52_set_full_buffer.sh 09378a29a1f383a8f3d01e41dd906e4a
 osc52_query_selectors.sh 7f99629b4f7a64eb6c830170cf3fabcf
 osc52_set_targets.sh f8b48e72754147b5cb9c0c151d15952f
 osc52_invalid_clears.sh 3e5f3a2e45ed7ad4d3ef89606cf10448
+osc52_default_clipboard.sh 95f3afa58077e951e983fcbe5c3c07c5

@@ -33,7 +33,7 @@ sleep 0.2
 
 # move
 printf '\033[7;3H'
-# query primary, not explicit
+# query the clipboard, not explicit
 printf "\033]52;;?\033\\"
 sleep 0.2
 
