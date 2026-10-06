@@ -375,25 +375,35 @@ void termio_selection_buffer_get_cb(Evas_Object *obj,
      {
       case ELM_SEL_TYPE_PRIMARY:
          ev.data = _sel_primary;
-         if (_sel_primary)
-              ev.len = strlen(_sel_primary) + 1;
-         else
-              ev.len = 0;
-         cb(data, obj, &ev);
          break;
       case ELM_SEL_TYPE_CLIPBOARD:
          ev.data = _sel_clipboard;
-         if (_sel_clipboard)
-              ev.len = strlen(_sel_clipboard) + 1;
-         else
-              ev.len = 0;
-         cb(data, obj, &ev);
          break;
       default:
          break;
      }
-
+   /* EFL does not call back when there is nothing to get */
+   if (!ev.data)
+     return;
+   ev.len = strlen(ev.data) + 1;
+   cb(data, obj, &ev);
 }
+
+Eina_Bool
+termio_selection_buffer_exists(const Evas_Object *obj EINA_UNUSED,
+                               Elm_Sel_Type type)
+{
+   switch (type)
+     {
+      case ELM_SEL_TYPE_PRIMARY:
+         return _sel_primary != NULL;
+      case ELM_SEL_TYPE_CLIPBOARD:
+         return _sel_clipboard != NULL;
+      default:
+         return EINA_FALSE;
+     }
+}
+
 void
 termio_set_selection_text(Evas_Object *obj EINA_UNUSED,
                           Elm_Sel_Type type, const char *text)

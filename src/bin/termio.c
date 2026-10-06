@@ -1062,6 +1062,34 @@ void termio_selection_buffer_get_cb(Evas_Object *obj,
    elm_cnp_selection_get(obj, type, format, cb, data);
 }
 
+Eina_Bool
+termio_selection_buffer_exists(const Evas_Object *obj, Elm_Sel_Type type)
+{
+   Ecore_Evas_Selection_Buffer buffer;
+   Ecore_Evas *ee;
+   Evas *evas;
+   unsigned int seat;
+
+   switch (type)
+     {
+      case ELM_SEL_TYPE_PRIMARY:
+         buffer = ECORE_EVAS_SELECTION_BUFFER_SELECTION_BUFFER;
+         break;
+      case ELM_SEL_TYPE_CLIPBOARD:
+         buffer = ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER;
+         break;
+      default:
+         return EINA_FALSE;
+     }
+   evas = evas_object_evas_get(obj);
+   ee = ecore_evas_ecore_evas_get(evas);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, EINA_FALSE);
+   /* the seat elm_cnp_selection_get() asks */
+   seat = evas_device_seat_id_get(
+      evas_default_device_get(evas, EVAS_DEVICE_CLASS_SEAT));
+   return ecore_evas_selection_exists(ee, seat, buffer);
+}
+
 /* Set the @type selection to @text.
  * This does not modify the widget itself */
 void

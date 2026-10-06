@@ -4559,60 +4559,133 @@ _elm_sel_type_from_osc52(Eina_Unicode c)
    return sel_type;
 }
 
-typedef struct _Osc52_Cb {
-     Termpty *ty;
-     Elm_Sel_Type sel;
-     Eina_Bool has_data;
-} Osc52_Cb;
+static Eina_Bool
+_osc52_selection_type_get(Eina_Unicode c, Elm_Sel_Type *type)
+{
+   switch (c)
+     {
+      case 'c':
+         *type = ELM_SEL_TYPE_CLIPBOARD;
+         return EINA_TRUE;
+      case 'p':
+         EINA_FALLTHROUGH;
+      case 's':
+         *type = ELM_SEL_TYPE_PRIMARY;
+         return EINA_TRUE;
+      default:
+         return EINA_FALSE;
+     }
+}
+
+static void
+_osc52_reply(Termpty *ty, char letter, const char *data, size_t len)
+{
+   char head[8];
+   int n;
+
+   n = snprintf(head, sizeof(head), "\033]52;%c;", letter);
+   termpty_write(ty, head, n);
+   if (len > 0)
+     {
+        Eina_Binbuf *bb;
+        Eina_Strbuf *sb = NULL;
+
+        bb = eina_binbuf_manage_new((const unsigned char *)data, len,
+                                    EINA_TRUE);
+        if (bb)
+          sb = emile_base64_encode(bb);
+        if (sb)
+          termpty_write(ty, eina_strbuf_string_get(sb),
+                        eina_strbuf_length_get(sb));
+        eina_strbuf_free(sb);
+        eina_binbuf_free(bb);
+     }
+   TERMPTY_WRITE_STR("\033\\");
+}
+
+/* len counts the selection's terminating NUL */
+static void
+_osc52_report(Termpty *ty, char letter, const Elm_Selection_Data *ev)
+{
+   if (ev && ev->data && ev->len > 1)
+     _osc52_reply(ty, letter, ev->data, ev->len - 1);
+   else
+     _osc52_reply(ty, letter, NULL, 0);
+}
+
+/* one callback per letter, so the reply names it without any state */
+static Eina_Bool
+_osc52_report_clipboard_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                           Elm_Selection_Data *ev)
+{
+   _osc52_report(data, 'c', ev);
+   return EINA_TRUE;
+}
 
 static Eina_Bool
-_osc52_report_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
+_osc52_report_primary_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                         Elm_Selection_Data *ev)
 {
-   Osc52_Cb *cb = data;
-   Termpty *ty = cb->ty;
-   if (ev && ev->len > 0)
-     {
-        Eina_Binbuf *bb = eina_binbuf_new();
-        Eina_Strbuf *sb;
-        char bf[32];
-        size_t len;
-        char c;
-
-        if (!bb || ev->len <= 1)
-          return EINA_FALSE;
-
-        eina_binbuf_append_length(bb, ev->data, ev->len-1);
-        sb = emile_base64_encode(bb);
-        if (!sb)
-          goto end;
-        switch (cb->sel)
-          {
-           case ELM_SEL_TYPE_CLIPBOARD:
-              c = 'c';
-              break;
-           default:
-              c = 'p';
-              break;
-          }
-        /* Write header */
-        len = snprintf(bf, sizeof(bf), "\033]52;%c;", c);
-        termpty_write(ty, bf, len);
-        /* Write data */
-        termpty_write(ty, eina_strbuf_string_get(sb), eina_strbuf_length_get(sb));
-        /* Write end*/
-        TERMPTY_WRITE_STR("\033\\");
-        cb->has_data = EINA_TRUE;
-end:
-        eina_binbuf_free(bb);
-        eina_strbuf_free(sb);
-     }
-
+   _osc52_report(data, 'p', ev);
    return EINA_TRUE;
+}
+
+static Eina_Bool
+_osc52_report_select_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                        Elm_Selection_Data *ev)
+{
+   _osc52_report(data, 's', ev);
+   return EINA_TRUE;
+}
+
+static Elm_Drop_Cb
+_osc52_report_cb_for(Eina_Unicode letter)
+{
+   switch (letter)
+     {
+      case 'c':
+         return _osc52_report_clipboard_cb;
+      case 's':
+         return _osc52_report_select_cb;
+      default:
+         return _osc52_report_primary_cb;
+     }
+}
+
+/* EFL never calls back on an empty selection: check before asking */
+static void
+_handle_osc_selection_query(Termpty *ty, const Eina_Unicode *sel,
+                            const Eina_Unicode *sel_end)
+{
+   const Eina_Unicode *c;
+   Eina_Unicode first = 0;
+   Elm_Sel_Type type;
+
+   for (c = sel; c < sel_end; c++)
+     {
+        if (!_osc52_selection_type_get(*c, &type))
+          continue;
+        if (!first)
+          first = *c;
+        if (termio_selection_buffer_exists(ty->obj, type))
+          {
+             termio_selection_buffer_get_cb(ty->obj, type,
+                                            ELM_SEL_FORMAT_TEXT,
+                                            _osc52_report_cb_for(*c), ty);
+             return;
+          }
+     }
+   if (first)
+     _osc52_reply(ty, (char)first, NULL, 0);
+   else
+     WRN("OSC 52: no supported selection to query");
 }
 
 static void
 _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
 {
+   static const Eina_Unicode default_sel = 'p';
+   const Eina_Unicode *sel, *sel_end;
    Eina_Unicode *c;
    Elm_Sel_Type sel_type;
 
@@ -4623,29 +4696,17 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
      c++;
    if (*c != ';')
      goto err;
+   sel = p;
+   sel_end = c;
+   if (sel == sel_end)
+     {
+        sel = &default_sel;
+        sel_end = sel + 1;
+     }
    c++;
    if (*c == '?')
      {
-        /* Report */
-        Osc52_Cb cb;
-
-        cb.ty = ty;
-        cb.has_data = EINA_FALSE;
-        c = p;
-        while (!cb.has_data && *c != ';')
-          {
-             sel_type = _elm_sel_type_from_osc52(*p);
-             cb.sel = sel_type;
-             termio_selection_buffer_get_cb(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
-                                   _osc52_report_cb, &cb);
-             c++;
-          }
-        if (!cb.has_data)
-          {
-             cb.sel = ELM_SEL_TYPE_PRIMARY;
-             termio_selection_buffer_get_cb(ty->obj, cb.sel, ELM_SEL_FORMAT_TEXT,
-                                   _osc52_report_cb, &cb);
-          }
+        _handle_osc_selection_query(ty, sel, sel_end);
      }
    else
      {
