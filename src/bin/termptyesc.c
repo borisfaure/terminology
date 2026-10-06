@@ -4632,33 +4632,45 @@ _osc52_report_cb_for(Eina_Unicode letter)
      }
 }
 
-/* EFL never calls back on an empty selection: check before asking */
+/* the distinct letters of [sel, sel_end) that name a selection, in order */
 static void
-_handle_osc_selection_query(Termpty *ty, const Eina_Unicode *sel,
-                            const Eina_Unicode *sel_end)
+_osc52_letters_get(const Eina_Unicode *sel, const Eina_Unicode *sel_end,
+                   char letters[4])
 {
    const Eina_Unicode *c;
-   Eina_Unicode first = 0;
    Elm_Sel_Type type;
+   int n = 0;
 
    for (c = sel; c < sel_end; c++)
      {
         if (!_osc52_selection_type_get(*c, &type))
           continue;
-        if (!first)
-          first = *c;
-        if (termio_selection_buffer_exists(ty->obj, type))
+        if (memchr(letters, *c, n))
+          continue;
+        letters[n++] = *c;
+     }
+   letters[n] = '\0';
+}
+
+/* EFL never calls back on an empty selection: check before asking */
+static void
+_handle_osc_selection_query(Termpty *ty, const char *letters)
+{
+   const char *l;
+   Elm_Sel_Type type;
+
+   for (l = letters; *l; l++)
+     {
+        if (_osc52_selection_type_get(*l, &type) &&
+            termio_selection_buffer_exists(ty->obj, type))
           {
              termio_selection_buffer_get_cb(ty->obj, type,
                                             ELM_SEL_FORMAT_TEXT,
-                                            _osc52_report_cb_for(*c), ty);
+                                            _osc52_report_cb_for(*l), ty);
              return;
           }
      }
-   if (first)
-     _osc52_reply(ty, (char)first, NULL, 0);
-   else
-     WRN("OSC 52: no supported selection to query");
+   _osc52_reply(ty, letters[0], NULL, 0);
 }
 
 static void
@@ -4708,7 +4720,24 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
    c++;
    if (*c == '?')
      {
-        _handle_osc_selection_query(ty, sel, sel_end);
+        char letters[4];
+
+        _osc52_letters_get(sel, sel_end, letters);
+        if (!letters[0])
+          {
+             WRN("OSC 52: no supported selection to query");
+             return;
+          }
+        switch (ty->config->selection_escapes_read)
+          {
+           case SELECTION_READ_ALWAYS:
+              _handle_osc_selection_query(ty, letters);
+              break;
+           default:
+              /* refused, the same as an empty selection */
+              _osc52_reply(ty, letters[0], NULL, 0);
+              break;
+          }
      }
    else
      {

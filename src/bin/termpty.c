@@ -2938,4 +2938,34 @@ tytest_vs16_guard_invalidated_by_decrc(void)
 #undef CP_VS16
 #undef CP_GRINNING
 
+/* OSC 52 queries honour selection_escapes_read; "clip\n" is Y2xpcAo= */
+int
+tytest_osc52_read_gate(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+   _ty_feed(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   ty.config->selection_escapes_read = SELECTION_READ_NEVER;
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;\x1b\\");
+   _ty_feed(&ty, "\x1b]52;qpc;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;p;\x1b\\");
+
+   ty.config->selection_escapes_read = SELECTION_READ_ALWAYS;
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   ty.config->selection_escapes_write = EINA_FALSE;
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   assert(ty.write_buffer.len == 0);
+
+   /* leave the selection shared by all tests empty */
+   ty.config->selection_escapes_write = EINA_TRUE;
+   _ty_feed(&ty, "\x1b]52;c;\x1b\\");
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */

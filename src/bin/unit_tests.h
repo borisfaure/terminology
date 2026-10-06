@@ -46,5 +46,6 @@ int tytest_vs16_guard_invalidated_by_ht(void);
 int tytest_vs16_guard_invalidated_by_decom(void);
 int tytest_vs16_guard_invalidated_by_decstbm(void);
 int tytest_vs16_guard_invalidated_by_decrc(void);
+int tytest_osc52_read_gate(void);
 
 #endif

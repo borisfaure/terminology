@@ -72,6 +72,7 @@ static struct {
        { "vs16_guard_invalidated_by_decom", tytest_vs16_guard_invalidated_by_decom},
        { "vs16_guard_invalidated_by_decstbm", tytest_vs16_guard_invalidated_by_decstbm},
        { "vs16_guard_invalidated_by_decrc", tytest_vs16_guard_invalidated_by_decrc},
+       { "osc52_read_gate", tytest_osc52_read_gate},
        { NULL, NULL},
 };
 
