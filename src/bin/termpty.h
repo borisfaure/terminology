@@ -111,6 +111,12 @@ typedef enum exmod {
      XMOD_LAST = 8,
 } XMod;
 
+typedef enum _Termpty_Selection_Read_Answer {
+     TERMPTY_SELECTION_READ_DENY = 0,
+     TERMPTY_SELECTION_READ_ALLOW = 1,
+     TERMPTY_SELECTION_READ_ALLOW_UNTIL_CLOSED = 2,
+} Termpty_Selection_Read_Answer;
+
 typedef struct tag_Term_State {
     Termatt       att;
     unsigned char charset;
@@ -219,6 +225,10 @@ struct tag_Termpty
       unsigned char by_line   : 1;
       unsigned char is_top_to_bottom : 1;
    } selection;
+   struct {
+      char letters[4]; /* of the OSC 52 query waiting for the user */
+      unsigned char allowed : 1;
+   } selection_read;
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
@@ -373,6 +383,9 @@ termpty_color_class_get(Termpty *ty, const char *key,
                         int *r, int *g, int *b, int *a);
 void
 termpty_focus_report(Termpty *ty, Eina_Bool focus);
+void
+termpty_selection_read_answer(Termpty *ty,
+                              Termpty_Selection_Read_Answer answer);
 
 extern int _termpty_log_dom;
 

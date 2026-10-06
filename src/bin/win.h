@@ -15,6 +15,7 @@ void term_focus(Term *term);
 Evas_Object *term_termio_get(const Term *term);
 void term_miniview_toggle(Term *term);
 void term_set_title(Term *term);
+Eina_Bool term_selection_read_ask(Term *term);
 void term_miniview_hide(Term *term);
 Eina_Bool term_tab_go(Term *term, int tnum);
 

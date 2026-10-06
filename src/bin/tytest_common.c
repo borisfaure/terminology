@@ -389,6 +389,13 @@ void termio_selection_buffer_get_cb(Evas_Object *obj,
    cb(data, obj, &ev);
 }
 
+/* the test answers through termpty_selection_read_answer() */
+Eina_Bool
+termio_selection_read_ask(Evas_Object *obj EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 Eina_Bool
 termio_selection_buffer_exists(const Evas_Object *obj EINA_UNUSED,
                                Elm_Sel_Type type)

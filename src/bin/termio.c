@@ -1090,6 +1090,19 @@ termio_selection_buffer_exists(const Evas_Object *obj, Elm_Sel_Type type)
    return ecore_evas_selection_exists(ee, seat, buffer);
 }
 
+/* Ask the user whether the program may read a selection. The answer goes
+ * to termpty_selection_read_answer(). */
+Eina_Bool
+termio_selection_read_ask(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+   if (!sd->term)
+     return EINA_FALSE;
+   return term_selection_read_ask(sd->term);
+}
+
 /* Set the @type selection to @text.
  * This does not modify the widget itself */
 void

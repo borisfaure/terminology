@@ -4673,6 +4673,30 @@ _handle_osc_selection_query(Termpty *ty, const char *letters)
    _osc52_reply(ty, letters[0], NULL, 0);
 }
 
+void
+termpty_selection_read_answer(Termpty *ty,
+                              Termpty_Selection_Read_Answer answer)
+{
+   char letters[4];
+
+   if (!ty->selection_read.letters[0])
+     return;
+   memcpy(letters, ty->selection_read.letters, sizeof(letters));
+   ty->selection_read.letters[0] = '\0';
+   switch (answer)
+     {
+      case TERMPTY_SELECTION_READ_ALLOW_UNTIL_CLOSED:
+         ty->selection_read.allowed = 1;
+         EINA_FALLTHROUGH;
+      case TERMPTY_SELECTION_READ_ALLOW:
+         _handle_osc_selection_query(ty, letters);
+         break;
+      default:
+         _osc52_reply(ty, letters[0], NULL, 0);
+         break;
+     }
+}
+
 static void
 _handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
                           const Eina_Unicode *sel_end, Eina_Unicode *data)
@@ -4732,12 +4756,27 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
           {
            case SELECTION_READ_ALWAYS:
               _handle_osc_selection_query(ty, letters);
+              return;
+           case SELECTION_READ_ASK:
+              if (ty->selection_read.allowed)
+                {
+                   _handle_osc_selection_query(ty, letters);
+                   return;
+                }
+              /* one question at a time, as kitty */
+              if (!ty->selection_read.letters[0] &&
+                  termio_selection_read_ask(ty->obj))
+                {
+                   memcpy(ty->selection_read.letters, letters,
+                          sizeof(letters));
+                   return;
+                }
               break;
            default:
-              /* refused, the same as an empty selection */
-              _osc52_reply(ty, letters[0], NULL, 0);
               break;
           }
+        /* refused, the same as an empty selection */
+        _osc52_reply(ty, letters[0], NULL, 0);
      }
    else
      {

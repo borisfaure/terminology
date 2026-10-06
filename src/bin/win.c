@@ -6278,6 +6278,101 @@ term_set_title(Term *term)
 }
 
 static void
+_selection_read_answer_cb(void *data,
+                          Evas_Object *obj,
+                          void *_event_info EINA_UNUSED)
+{
+   Evas_Object *popup = data;
+
+   evas_object_data_set(popup, "answer",
+                        evas_object_data_get(obj, "answer"));
+   elm_popup_dismiss(popup);
+}
+
+static void
+_cb_selection_read_popup_hide(void *data,
+                              Evas *_e EINA_UNUSED,
+                              Evas_Object *obj,
+                              void *_event EINA_UNUSED)
+{
+   Term *term = data;
+   Termpty_Selection_Read_Answer answer;
+   Termpty *ty = termio_pty_get(term->termio);
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_HIDE,
+                                  _cb_selection_read_popup_hide);
+   /* dismissed without a button, by Escape for instance, means no */
+   answer = (uintptr_t)evas_object_data_get(obj, "answer");
+   if (ty)
+     termpty_selection_read_answer(ty, answer);
+
+   _on_popover_done(term->wn);
+   term_unref(term);
+}
+
+static void
+_cb_selection_read_popup_dismissed(void *_data EINA_UNUSED,
+                                   Evas_Object *obj,
+                                   void *_event_info EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
+static Evas_Object *
+_selection_read_button_add(Evas_Object *popup, const char *part,
+                           const char *label,
+                           Termpty_Selection_Read_Answer answer)
+{
+   Evas_Object *o;
+
+   o = elm_button_add(popup);
+   elm_object_text_set(o, label);
+   evas_object_data_set(o, "answer", (void *)(uintptr_t)answer);
+   evas_object_smart_callback_add(o, "clicked",
+                                  _selection_read_answer_cb, popup);
+   elm_object_part_content_set(popup, part, o);
+   return o;
+}
+
+/* Ask whether a program may read a selection through OSC 52 */
+Eina_Bool
+term_selection_read_ask(Term *term)
+{
+   Evas_Object *popup, *deny;
+   Term_Container *tc;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(term, EINA_FALSE);
+   tc = term->container;
+   term->wn->on_popover++;
+
+   term_ref(term);
+   tc->unfocus(tc, NULL);
+
+   popup = elm_popup_add(term->wn->win);
+   evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE,
+                                  _cb_selection_read_popup_hide, term);
+   evas_object_smart_callback_add(popup, "dismissed",
+                                  _cb_selection_read_popup_dismissed, NULL);
+
+   elm_object_part_text_set(popup, "title,text", _("Clipboard access"));
+   elm_object_text_set(popup,
+      _("A program running in this terminal wants to read the clipboard."));
+
+   _selection_read_button_add(popup, "button1", _("Allow once"),
+                              TERMPTY_SELECTION_READ_ALLOW);
+   _selection_read_button_add(popup, "button2", _("Allow until closed"),
+                              TERMPTY_SELECTION_READ_ALLOW_UNTIL_CLOSED);
+   deny = _selection_read_button_add(popup, "button3", _("Deny"),
+                                     TERMPTY_SELECTION_READ_DENY);
+
+   evas_object_show(popup);
+
+   /* a stray Enter must not give the clipboard away */
+   elm_object_focus_set(deny, EINA_TRUE);
+   return EINA_TRUE;
+}
+
+static void
 _set_alpha(Config *config, const char *val, Eina_Bool save)
 {
    int opacity;

@@ -2968,4 +2968,49 @@ tytest_osc52_read_gate(void)
    return 0;
 }
 
+/* In "ask" mode the reply waits for termpty_selection_read_answer() */
+int
+tytest_osc52_read_ask(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+   assert(ty.config->selection_escapes_read == SELECTION_READ_ASK);
+   _ty_feed(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   _ty_feed(&ty, "\x1b]52;qpc;?\x1b\\");
+   assert(ty.write_buffer.len == 0);
+   /* a second query while the first waits is refused at once */
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;\x1b\\");
+   termpty_selection_read_answer(&ty, TERMPTY_SELECTION_READ_ALLOW);
+   _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+   /* answered once only */
+   termpty_selection_read_answer(&ty, TERMPTY_SELECTION_READ_ALLOW);
+   assert(ty.write_buffer.len == 0);
+
+   /* "allow" holds for one query */
+   _ty_feed(&ty, "\x1b]52;pc;?\x1b\\");
+   assert(ty.write_buffer.len == 0);
+   termpty_selection_read_answer(&ty, TERMPTY_SELECTION_READ_DENY);
+   _ty_reply_is(&ty, "\x1b]52;p;\x1b\\");
+
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   termpty_selection_read_answer(&ty,
+                                 TERMPTY_SELECTION_READ_ALLOW_UNTIL_CLOSED);
+   _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   /* "never" still wins over an earlier "allow until closed" */
+   ty.config->selection_escapes_read = SELECTION_READ_NEVER;
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;\x1b\\");
+
+   /* leave the selection shared by all tests empty */
+   _ty_feed(&ty, "\x1b]52;c;\x1b\\");
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
