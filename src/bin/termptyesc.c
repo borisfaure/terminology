@@ -4671,8 +4671,6 @@ _handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
    char *out;
 
    out = ty_eina_unicode_base64_decode(data);
-   if (!out)
-     return;
    for (c = sel; c < sel_end; c++)
      {
         if (!_osc52_selection_type_get(*c, &type))
@@ -4680,7 +4678,8 @@ _handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
         if (done & (1u << type))
           continue;
         done |= 1u << type;
-        termio_set_selection_text(ty->obj, type, out);
+        /* invalid data clears the selection, as in xterm */
+        termio_set_selection_text(ty->obj, type, out ? out : "");
      }
    free(out);
 }
