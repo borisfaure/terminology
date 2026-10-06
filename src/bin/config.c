@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 30
+#define CONF_VER 31
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -224,7 +224,12 @@ config_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "ty_escapes", ty_escapes, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
-     (edd_base, Config, "selection_escapes", selection_escapes, EET_T_UCHAR);
+     /* the EET key keeps the name the option shipped under; it governs
+      * writes only since reads got their own setting */
+     (edd_base, Config, "selection_escapes", selection_escapes_write, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "selection_escapes_read", selection_escapes_read,
+      EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -358,7 +363,8 @@ config_sync(const Config *config_src, Config *config)
    config->show_tabs = config_src->show_tabs;
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
-   config->selection_escapes = config_src->selection_escapes;
+   config->selection_escapes_write = config_src->selection_escapes_write;
+   config->selection_escapes_read = config_src->selection_escapes_read;
    config->changedir_to_current = config_src->changedir_to_current;
    config->emoji_dbl_width = config_src->emoji_dbl_width;
    config->translucent = config_src->translucent;
@@ -641,7 +647,8 @@ config_new(void)
         config->show_tabs = EINA_TRUE;
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
-        config->selection_escapes = EINA_TRUE;
+        config->selection_escapes_write = EINA_TRUE;
+        config->selection_escapes_read = SELECTION_READ_ASK;
         config->changedir_to_current = EINA_TRUE;
         config->emoji_dbl_width = EINA_FALSE;
         for (j = 0; j < 4; j++)
@@ -834,7 +841,7 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 26:
-                  config->selection_escapes = EINA_TRUE;
+                  config->selection_escapes_write = EINA_TRUE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 27:
@@ -874,7 +881,16 @@ config_load(void)
                   config->font.ligatures = EINA_TRUE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 30 */
+                case 30:
+                  config->selection_escapes_read = SELECTION_READ_ASK;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 31 */
+                  /* selection_escapes used to gate reads too; a config
+                   * with it off must not start answering read queries
+                   * through the new ask default */
+                  if (!config->selection_escapes_write)
+                    config->selection_escapes_read = SELECTION_READ_NEVER;
                   config->version = CONF_VER;
                   break;
                 default:
@@ -980,7 +996,8 @@ config_fork(const Config *config)
    CPY(show_tabs);
    CPY(mv_always_show);
    CPY(ty_escapes);
-   CPY(selection_escapes);
+   CPY(selection_escapes_write);
+   CPY(selection_escapes_read);
    CPY(changedir_to_current);
    CPY(emoji_dbl_width);
    CPY(group_all);

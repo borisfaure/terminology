@@ -4962,7 +4962,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 52:
         DBG("Manipulate selection data");
-        if (ty->config->selection_escapes)
+        if (ty->config->selection_escapes_write)
           _handle_osc_selection(ty, p, cc - c - (p - buf));
         break;
       case 110:

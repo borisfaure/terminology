@@ -602,6 +602,7 @@ tytest_common_init(void)
 {
    simd_init();
    _config = config_new();
+   _config->selection_escapes_read = SELECTION_READ_ALWAYS;
    _sd.config = _config;
    _termpty_init(&_ty, _config);
 #if defined(BINARY_TYTEST)

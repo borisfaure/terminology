@@ -45,6 +45,14 @@ typedef enum tag_Term_Type
    TERM_TYPE_LAST
 } Term_Type;
 
+/* Whether escape codes may read a selection */
+typedef enum tag_Selection_Read
+{
+   SELECTION_READ_NEVER = 0,
+   SELECTION_READ_ASK = 1,
+   SELECTION_READ_ALWAYS = 2,
+} Selection_Read;
+
 struct tag_Config
 {
    int               version;
@@ -111,7 +119,8 @@ struct tag_Config
    Eina_Bool         show_tabs;
    Eina_Bool         mv_always_show;
    Eina_Bool         ty_escapes;
-   Eina_Bool         selection_escapes;
+   Eina_Bool         selection_escapes_write;
+   int               selection_escapes_read;
    Eina_Bool         changedir_to_current;
    Eina_Bool         emoji_dbl_width;
    Eina_Bool         group_all;
