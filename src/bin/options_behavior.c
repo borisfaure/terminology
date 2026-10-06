@@ -243,6 +243,60 @@ _add_term_type_option(Evas_Object *bx,
 }
 
 static void
+_selection_read_changed_cb(void *data, Evas_Object *obj,
+                           void *event_info EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   config->selection_escapes_read = elm_radio_value_get(obj);
+
+   termio_config_update(ctx->term);
+   windows_update();
+   config_save(config);
+}
+
+static void
+_add_selection_read_option(Evas_Object *bx,
+                           Behavior_Ctx *ctx)
+{
+   Evas_Object *lbl, *rd, *rdg = NULL;
+   int i;
+   const char *const labels[] =
+   {
+      [SELECTION_READ_NEVER] = _("Never"),
+      [SELECTION_READ_ASK] = _("Ask"),
+      [SELECTION_READ_ALWAYS] = _("Always"),
+   };
+
+   lbl = elm_label_add(bx);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lbl, 0.0, 0.0);
+   elm_layout_text_set(lbl, NULL, _("Let escape codes read selections:"));
+   elm_box_pack_end(bx, lbl);
+   evas_object_show(lbl);
+
+   for (i = 0; i < (int)EINA_C_ARRAY_LENGTH(labels); i++)
+     {
+        rd = elm_radio_add(bx);
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
+        elm_object_text_set(rd, labels[i]);
+        elm_radio_state_value_set(rd, i);
+        if (!rdg)
+          rdg = rd;
+        else
+          elm_radio_group_add(rd, rdg);
+        elm_box_pack_end(bx, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed",
+                                       _selection_read_changed_cb, ctx);
+     }
+
+   elm_radio_value_set(rdg, ctx->config->selection_escapes_read);
+}
+
+static void
 _cursors_changed_cb(void *data, Evas_Object *obj,
                     void *event_info EINA_UNUSED)
 {
@@ -468,7 +522,10 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    OPTIONS_CX(_("Open new terminals in current working directory"), changedir_to_current, 0);
    OPTIONS_CX(_("Always show miniview"), mv_always_show, 0);
    OPTIONS_CX(_("Enable special Terminology escape codes"), ty_escapes, 0);
-   OPTIONS_CX(_("Enable escape codes manipulating selections"), selection_escapes_write, 0);
+   OPTIONS_SEPARATOR;
+   OPTIONS_CX(_("Let escape codes change selections"), selection_escapes_write, 0);
+   _add_selection_read_option(bx, ctx);
+   OPTIONS_SEPARATOR;
    OPTIONS_CX(_("Always treat Emojis as double-width characters"), emoji_dbl_width, 0);
    OPTIONS_CX(_("When grouping input, do it on all terminals and not just the visible ones"), group_all, 0);
 
