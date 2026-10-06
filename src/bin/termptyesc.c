@@ -4697,27 +4697,28 @@ termpty_selection_read_answer(Termpty *ty,
      }
 }
 
+/* text is NULL for invalid data, which clears the selections, as in xterm */
 static void
-_handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
-                          const Eina_Unicode *sel_end, Eina_Unicode *data)
+_osc52_selection_set(Termpty *ty, const char *letters, const char *text)
 {
-   const Eina_Unicode *c;
+   const char *l;
    unsigned int done = 0;
    Elm_Sel_Type type;
-   char *out;
 
-   out = ty_eina_unicode_base64_decode(data);
-   for (c = sel; c < sel_end; c++)
+   if (!ty->config->selection_escapes_write)
      {
-        if (!_osc52_selection_type_get(*c, &type))
+        DBG("OSC 52: changing selections is disabled");
+        return;
+     }
+   for (l = letters; *l; l++)
+     {
+        if (!_osc52_selection_type_get(*l, &type))
           continue;
         if (done & (1u << type))
           continue;
         done |= 1u << type;
-        /* invalid data clears the selection, as in xterm */
-        termio_set_selection_text(ty->obj, type, out ? out : "");
+        termio_set_selection_text(ty->obj, type, text ? text : "");
      }
-   free(out);
 }
 
 static void
@@ -4726,6 +4727,7 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
    static const Eina_Unicode default_sel = 'c';
    const Eina_Unicode *sel, *sel_end;
    Eina_Unicode *c;
+   char letters[4];
 
    if (!p || !*p || len <= 0)
      goto err;
@@ -4742,16 +4744,14 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
         sel_end = sel + 1;
      }
    c++;
+   _osc52_letters_get(sel, sel_end, letters);
+   if (!letters[0])
+     {
+        WRN("OSC 52: no supported selection");
+        return;
+     }
    if (*c == '?')
      {
-        char letters[4];
-
-        _osc52_letters_get(sel, sel_end, letters);
-        if (!letters[0])
-          {
-             WRN("OSC 52: no supported selection to query");
-             return;
-          }
         switch (ty->config->selection_escapes_read)
           {
            case SELECTION_READ_ALWAYS:
@@ -4780,7 +4780,10 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
      }
    else
      {
-        _handle_osc_selection_set(ty, sel, sel_end, c);
+        char *text = ty_eina_unicode_base64_decode(c);
+
+        _osc52_selection_set(ty, letters, text);
+        free(text);
      }
    return;
 err:
@@ -5054,8 +5057,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 52:
         DBG("Manipulate selection data");
-        if (ty->config->selection_escapes_write)
-          _handle_osc_selection(ty, p, cc - c - (p - buf));
+        _handle_osc_selection(ty, p, cc - c - (p - buf));
         break;
       case 110:
         DBG("Reset VT100 text foreground color");

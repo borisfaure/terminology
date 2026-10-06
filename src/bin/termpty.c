@@ -2957,13 +2957,16 @@ tytest_osc52_read_gate(void)
    _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
    _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
 
-   ty.config->selection_escapes_write = EINA_FALSE;
-   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
-   assert(ty.write_buffer.len == 0);
-
    /* leave the selection shared by all tests empty */
-   ty.config->selection_escapes_write = EINA_TRUE;
    _ty_feed(&ty, "\x1b]52;c;\x1b\\");
+
+   /* writes honour selection_escapes_write; reads do not care about it */
+   ty.config->selection_escapes_write = EINA_FALSE;
+   _ty_feed(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;\x1b\\");
+   ty.config->selection_escapes_write = EINA_TRUE;
+
    _ty_test_shutdown(&ty);
    return 0;
 }
