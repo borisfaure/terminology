@@ -4539,26 +4539,6 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
-static Elm_Sel_Type
-_elm_sel_type_from_osc52(Eina_Unicode c)
-{
-   Elm_Sel_Type sel_type;
-   switch (c)
-     {
-      case 'c':
-         sel_type = ELM_SEL_TYPE_CLIPBOARD;
-         break;
-      case ';':
-         EINA_FALLTHROUGH;
-      case 'p':
-         EINA_FALLTHROUGH;
-      default:
-         sel_type = ELM_SEL_TYPE_PRIMARY;
-         break;
-     }
-   return sel_type;
-}
-
 static Eina_Bool
 _osc52_selection_type_get(Eina_Unicode c, Elm_Sel_Type *type)
 {
@@ -4682,12 +4662,35 @@ _handle_osc_selection_query(Termpty *ty, const Eina_Unicode *sel,
 }
 
 static void
+_handle_osc_selection_set(Termpty *ty, const Eina_Unicode *sel,
+                          const Eina_Unicode *sel_end, Eina_Unicode *data)
+{
+   const Eina_Unicode *c;
+   unsigned int done = 0;
+   Elm_Sel_Type type;
+   char *out;
+
+   out = ty_eina_unicode_base64_decode(data);
+   if (!out)
+     return;
+   for (c = sel; c < sel_end; c++)
+     {
+        if (!_osc52_selection_type_get(*c, &type))
+          continue;
+        if (done & (1u << type))
+          continue;
+        done |= 1u << type;
+        termio_set_selection_text(ty->obj, type, out);
+     }
+   free(out);
+}
+
+static void
 _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
 {
    static const Eina_Unicode default_sel = 'p';
    const Eina_Unicode *sel, *sel_end;
    Eina_Unicode *c;
-   Elm_Sel_Type sel_type;
 
    if (!p || !*p || len <= 0)
      goto err;
@@ -4710,16 +4713,7 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
      }
    else
      {
-        /* Set */
-        sel_type = _elm_sel_type_from_osc52(*p);
-        /* Decode base64 from the request */
-        char *out = ty_eina_unicode_base64_decode(c);
-
-        if (out)
-          {
-             termio_set_selection_text(ty->obj, sel_type, out);
-             free(out);
-          }
+        _handle_osc_selection_set(ty, sel, sel_end, c);
      }
    return;
 err:
