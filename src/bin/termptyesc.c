@@ -33,6 +33,8 @@
 #define ST 0x9c // String Terminator
 #define BEL 0x07 // Bell
 #define ESC 033 // Escape
+#define CAN 0x18 // Cancel
+#define SUB 0x1a // Substitute
 #define CSI 0x9b
 #define OSC 0x9d
 #define APC 0x9f
@@ -4969,7 +4971,8 @@ _handle_esc_apc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 
    while (cc < ce)
      {
-        if (*cc == ST)
+        /* As in xterm, CAN and SUB cancel the string (DEC STD 070 3.5.4.4) */
+        if ((*cc == ST) || (*cc == CAN) || (*cc == SUB))
           {
              cc++;
              goto found;
