@@ -48,5 +48,6 @@ int tytest_vs16_guard_invalidated_by_decstbm(void);
 int tytest_vs16_guard_invalidated_by_decrc(void);
 int tytest_osc52_read_gate(void);
 int tytest_osc52_read_ask(void);
+int tytest_osc52_long_max(void);
 
 #endif

@@ -833,6 +833,7 @@ termpty_free(Termpty *ty)
    Termexp *ex;
 
    termpty_save_unregister(ty);
+   free(ty->osc52_long.data);
    EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
    if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
@@ -2967,6 +2968,37 @@ tytest_osc52_read_gate(void)
    _ty_reply_is(&ty, "\x1b]52;c;\x1b\\");
    ty.config->selection_escapes_write = EINA_TRUE;
 
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* An OSC 52 set over TERMPTY_OSC52_LONG_MAX is discarded whole */
+int
+tytest_osc52_long_max(void)
+{
+   Termpty ty;
+   Eina_Unicode chunk[4096];
+   size_t sent;
+   int i;
+
+   _ty_test_init(&ty, 80, 24);
+   ty.config->selection_escapes_read = SELECTION_READ_ALWAYS;
+   _ty_feed(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   for (i = 0; i < 4096; i++)
+     chunk[i] = 'A';
+   _ty_feed(&ty, "\x1b]52;c;");
+   for (sent = 0; sent <= TERMPTY_OSC52_LONG_MAX; sent += 4096)
+     termpty_handle_buf(&ty, chunk, 4096);
+   assert(ty.osc_skip && !ty.osc52_long.data);
+   _ty_feed(&ty, "\x1b\\");
+   assert(!ty.osc_skip);
+   assert(ty.cursor_state.cx == 0 && ty.cursor_state.cy == 0);
+   _ty_feed(&ty, "\x1b]52;c;?\x1b\\");
+   _ty_reply_is(&ty, "\x1b]52;c;Y2xpcAo=\x1b\\");
+
+   /* leave the selection shared by all tests empty */
+   _ty_feed(&ty, "\x1b]52;c;\x1b\\");
    _ty_test_shutdown(&ty);
    return 0;
 }

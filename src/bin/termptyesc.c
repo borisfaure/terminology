@@ -4652,6 +4652,25 @@ _osc52_letters_get(const Eina_Unicode *sel, const Eina_Unicode *sel_end,
    letters[n] = '\0';
 }
 
+/* the letters of the "Pc;" at p, and where its data starts, or NULL */
+static const Eina_Unicode *
+_osc52_selector_parse(const Eina_Unicode *p, const Eina_Unicode *end,
+                      char letters[4])
+{
+   static const Eina_Unicode default_sel = 'c';
+   const Eina_Unicode *c;
+
+   for (c = p; c < end && *c && *c != ';'; c++)
+     ;
+   if (c == end || *c != ';')
+     return NULL;
+   if (c == p)
+     _osc52_letters_get(&default_sel, &default_sel + 1, letters);
+   else
+     _osc52_letters_get(p, c, letters);
+   return c + 1;
+}
+
 /* EFL never calls back on an empty selection: check before asking */
 static void
 _handle_osc_selection_query(Termpty *ty, const char *letters)
@@ -4724,27 +4743,14 @@ _osc52_selection_set(Termpty *ty, const char *letters, const char *text)
 static void
 _handle_osc_selection(Termpty *ty, Eina_Unicode *p)
 {
-   static const Eina_Unicode default_sel = 'c';
-   const Eina_Unicode *sel, *sel_end;
-   Eina_Unicode *c;
+   const Eina_Unicode *c;
    char letters[4];
 
    if (!p || !*p)
      goto err;
-   c = p;
-   while (*c && *c != ';')
-     c++;
-   if (*c != ';')
+   c = _osc52_selector_parse(p, p + eina_unicode_strlen(p), letters);
+   if (!c)
      goto err;
-   sel = p;
-   sel_end = c;
-   if (sel == sel_end)
-     {
-        sel = &default_sel;
-        sel_end = sel + 1;
-     }
-   c++;
-   _osc52_letters_get(sel, sel_end, letters);
    if (!letters[0])
      {
         WRN("OSC 52: no supported selection");
@@ -4780,7 +4786,7 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p)
      }
    else
      {
-        char *text = ty_eina_unicode_base64_decode(c);
+        char *text = ty_eina_unicode_base64_decode((Eina_Unicode *)c);
 
         _osc52_selection_set(ty, letters, text);
         free(text);
@@ -4866,7 +4872,98 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
-/* Discard the rest of an OSC too long for its buffer, across reads */
+static void
+_osc52_long_drop(Termpty *ty)
+{
+   free(ty->osc52_long.data);
+   ty->osc52_long.data = NULL;
+   ty->osc52_long.len = 0;
+   ty->osc52_long.size = 0;
+}
+
+static void
+_osc52_long_append(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   size_t len = ty->osc52_long.len + (ce - c);
+
+   if (!ty->osc52_long.data)
+     return;
+   if (len > TERMPTY_OSC52_LONG_MAX)
+     {
+        WRN("OSC 52 longer than %d bytes, discarding it",
+            TERMPTY_OSC52_LONG_MAX);
+        _osc52_long_drop(ty);
+        return;
+     }
+   if (len >= ty->osc52_long.size)
+     {
+        size_t size = MAX(ty->osc52_long.size * 2, len + 1);
+        char *data = realloc(ty->osc52_long.data, size);
+
+        if (!data)
+          {
+             ERR("memerr: %s", strerror(errno));
+             _osc52_long_drop(ty);
+             return;
+          }
+        ty->osc52_long.data = data;
+        ty->osc52_long.size = size;
+     }
+   for (; c < ce; c++)
+     /* anything but ASCII is invalid base64: keep it invalid */
+     ty->osc52_long.data[ty->osc52_long.len++] =
+        ((*c > 0) && (*c < 0x80)) ? (char)*c : '!';
+}
+
+/* keep the data of an OSC 52 set too long for the OSC buffer */
+static void
+_osc52_long_start(Termpty *ty, const Eina_Unicode *buf, const Eina_Unicode *be)
+{
+   const Eina_Unicode *data;
+
+   if (!ty->config->selection_escapes_write)
+     return;
+   if ((buf[0] != '5') || (buf[1] != '2') || (buf[2] != ';'))
+     return;
+   data = _osc52_selector_parse(buf + 3, be, ty->osc52_long.letters);
+   if (!data || !ty->osc52_long.letters[0])
+     return;
+   ty->osc52_long.size = 2 * (be - buf);
+   ty->osc52_long.data = malloc(ty->osc52_long.size);
+   if (!ty->osc52_long.data)
+     return;
+   _osc52_long_append(ty, data, be);
+}
+
+static void
+_osc52_long_end(Termpty *ty)
+{
+   Eina_Strbuf *sb;
+   Eina_Binbuf *bb = NULL;
+   char *text = NULL;
+
+   if (!ty->osc52_long.data)
+     return;
+   ty->osc52_long.data[ty->osc52_long.len] = '\0';
+   sb = eina_strbuf_manage_new_length(ty->osc52_long.data,
+                                      ty->osc52_long.len);
+   if (sb)
+     {
+        ty->osc52_long.data = NULL;
+        bb = emile_base64_decode(sb);
+        eina_strbuf_free(sb);
+     }
+   _osc52_long_drop(ty);
+   if (bb)
+     {
+        text = (char *)eina_binbuf_string_steal(bb);
+        eina_binbuf_free(bb);
+     }
+   _osc52_selection_set(ty, ty->osc52_long.letters, text);
+   free(text);
+}
+
+/* Consume the rest of an OSC too long for its buffer, across reads */
 static int
 _handle_osc_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -4880,10 +4977,19 @@ _handle_osc_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if ((*cc == ST) || (*cc == BEL))
           goto found;
      }
+   _osc52_long_append(ty, c, cc);
    return cc - c;
 found:
+   if (*cc != '\\')
+     _osc52_long_append(ty, c, cc);
+   else if (cc > c)
+     _osc52_long_append(ty, c, cc - 1);
+   else if (ty->osc52_long.data)
+     /* the ESC of ESC \ ended the previous read, and was kept */
+     ty->osc52_long.len--;
    ty->osc_skip = 0;
    ty->osc_skip_esc = 0;
+   _osc52_long_end(ty);
    return cc + 1 - c;
 }
 
@@ -4917,10 +5023,12 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         /* the last copied codepoint may be the ESC of a split ESC \ */
         if (cc == ce)
           return 0;
-        WRN("OSC longer than %d codepoints, discarding it",
-            (int)(be - buf) - 1);
         ty->osc_skip = 1;
         ty->osc_skip_esc = 0;
+        _osc52_long_start(ty, buf, be);
+        if (!ty->osc52_long.data)
+          WRN("OSC longer than %d codepoints, discarding it",
+              (int)(be - buf) - 1);
         return cc - c;
      }
    *p = '\0';

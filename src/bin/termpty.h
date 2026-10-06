@@ -111,6 +111,9 @@ typedef enum exmod {
      XMOD_LAST = 8,
 } XMod;
 
+/* longest OSC 52 base64 kept past the OSC buffer, as in ghostty */
+#define TERMPTY_OSC52_LONG_MAX (8 * 1024 * 1024)
+
 typedef enum _Termpty_Selection_Read_Answer {
      TERMPTY_SELECTION_READ_DENY = 0,
      TERMPTY_SELECTION_READ_ALLOW = 1,
@@ -229,6 +232,11 @@ struct tag_Termpty
       char letters[4]; /* of the OSC 52 query waiting for the user */
       unsigned char allowed : 1;
    } selection_read;
+   struct {
+      char *data; /* base64 of an OSC 52 set past the OSC buffer */
+      size_t len, size;
+      char letters[4];
+   } osc52_long;
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];

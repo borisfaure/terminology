@@ -74,6 +74,7 @@ static struct {
        { "vs16_guard_invalidated_by_decrc", tytest_vs16_guard_invalidated_by_decrc},
        { "osc52_read_gate", tytest_osc52_read_gate},
        { "osc52_read_ask", tytest_osc52_read_ask},
+       { "osc52_long_max", tytest_osc52_long_max},
        { NULL, NULL},
 };
 
