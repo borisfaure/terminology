@@ -4652,7 +4652,6 @@ _handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
         /* Set */
         sel_type = _elm_sel_type_from_osc52(*p);
         /* Decode base64 from the request */
-        p[len] = '\0';
         char *out = ty_eina_unicode_base64_decode(c);
 
         if (out)

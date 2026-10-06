@@ -161,3 +161,4 @@ sgr-overline.sh f9b5f05cd6ef8a2f261f3cf14b8459d8
 apc.sh 2a091bf1bac87b941cc481d1c179768c
 apc-can.sh ff841245b69d38a77923109af148726b
 osc_full_buffer_split_st.sh 78fd4dd54f93d9aa4e2a5e021ae76201
+osc52_set_full_buffer.sh 09378a29a1f383a8f3d01e41dd906e4a
