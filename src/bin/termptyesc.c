@@ -4769,6 +4769,9 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
      }
    if (p == be)
      {
+        /* the last copied codepoint may be the ESC of a split ESC \ */
+        if (cc == ce)
+          return 0;
         ERR("OSC parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
      }
