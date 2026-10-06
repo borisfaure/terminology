@@ -4722,17 +4722,17 @@ _osc52_selection_set(Termpty *ty, const char *letters, const char *text)
 }
 
 static void
-_handle_osc_selection(Termpty *ty, Eina_Unicode *p, int len)
+_handle_osc_selection(Termpty *ty, Eina_Unicode *p)
 {
    static const Eina_Unicode default_sel = 'c';
    const Eina_Unicode *sel, *sel_end;
    Eina_Unicode *c;
    char letters[4];
 
-   if (!p || !*p || len <= 0)
+   if (!p || !*p)
      goto err;
    c = p;
-   while (*c != ';' && (c - p) < len)
+   while (*c && *c != ';')
      c++;
    if (*c != ';')
      goto err;
@@ -5057,7 +5057,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 52:
         DBG("Manipulate selection data");
-        _handle_osc_selection(ty, p, cc - c - (p - buf));
+        _handle_osc_selection(ty, p);
         break;
       case 110:
         DBG("Reset VT100 text foreground color");
