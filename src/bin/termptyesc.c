@@ -4863,6 +4863,27 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
+/* Discard the rest of an OSC too long for its buffer, across reads */
+static int
+_handle_osc_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   const Eina_Unicode *cc;
+
+   for (cc = c; cc < ce; cc++)
+     {
+        if ((ty->osc_skip_esc) && (*cc == '\\'))
+          goto found;
+        ty->osc_skip_esc = (*cc == ESC);
+        if ((*cc == ST) || (*cc == BEL))
+          goto found;
+     }
+   return cc - c;
+found:
+   ty->osc_skip = 0;
+   ty->osc_skip_esc = 0;
+   return cc + 1 - c;
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -4893,7 +4914,10 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         /* the last copied codepoint may be the ESC of a split ESC \ */
         if (cc == ce)
           return 0;
-        ERR("OSC parsing overflowed, skipping the whole buffer (binary data?)");
+        WRN("OSC longer than %d codepoints, discarding it",
+            (int)(be - buf) - 1);
+        ty->osc_skip = 1;
+        ty->osc_skip_esc = 0;
         return cc - c;
      }
    *p = '\0';
@@ -5562,6 +5586,11 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    int len = 0;
    ty->decoding_error = EINA_FALSE;
 
+   if (ty->osc_skip)
+     {
+        len = _handle_osc_skip(ty, c, ce);
+        goto end;
+     }
    if (c[0] < 0x20)
      {
         switch (c[0])

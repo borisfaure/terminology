@@ -250,6 +250,8 @@ struct tag_Termpty
    unsigned int bracketed_paste : 1;
    unsigned int decoding_error : 1;
    unsigned int focus_reporting : 1;
+   unsigned int osc_skip : 1; /* discarding an OSC too long for the buffer */
+   unsigned int osc_skip_esc : 1; /* and the last codepoint was ESC */
    struct {
        Term_Link *links;
        uint8_t *bitmap;
