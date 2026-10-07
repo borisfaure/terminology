@@ -4976,6 +4976,11 @@ _handle_osc_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->osc_skip_esc = (*cc == ESC);
         if ((*cc == ST) || (*cc == BEL))
           goto found;
+        if ((*cc == CAN) || (*cc == SUB))
+          {
+             _osc52_long_drop(ty);
+             goto found;
+          }
      }
    _osc52_long_append(ty, c, cc);
    return cc - c;
@@ -5007,6 +5012,9 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (p < be))
      {
+        /* As in xterm and ghostty, CAN and SUB cancel the string */
+        if ((*cc == CAN) || (*cc == SUB))
+          return cc + 1 - c;
         if ((cc < ce - 1) &&
             (((*cc == ESC) && (*(cc + 1) == '\\')) ||
              (*cc == ST)))

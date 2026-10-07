@@ -169,3 +169,4 @@ osc52_default_clipboard.sh 95f3afa58077e951e983fcbe5c3c07c5
 osc_overflow_no_bleed.sh 1aefa425bf459dd2a2e2cc5c09b68c74
 osc52_selector_full_buffer.sh 1ef32e63c430e26c33788cc4e40e58d7
 osc52_long.sh e9a6f4e0ea7bb6fbdaba74988d88b67c
+osc-can.sh 74530a1ced8bc249989e9175c8d29e99
