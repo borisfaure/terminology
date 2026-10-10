@@ -202,7 +202,7 @@ termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear)
  * a double-width one), honouring termstate.wrap the same way for any
  * offset. Shared by the main text-append loop and the VS16 retro-widen
  * block (offset == 1 there). */
-static void
+static inline void
 _cursor_advance(Termpty *ty, int offset, int max_right)
 {
    ty->cursor_state.wrapnext = 0;

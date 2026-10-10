@@ -1831,6 +1831,16 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
    if (EINA_UNLIKELY(local.att.link_id))
      term_link_refcount_inc(ty, local.att.link_id, n);
 
+   /* No hyperlink or block was ever created, so no cell carries a link id
+    * or a block codepoint: the bookkeeping below has nothing to do. Same
+    * invariant as TERMPTY_CELL_COPY()'s fast path. */
+   if (EINA_LIKELY((ty->hl.size == 0) && (ty->block.blocks == NULL)))
+     {
+        for (i = 0; i < n; i++)
+          dst[i] = local;
+        return;
+     }
+
    for (i = 0; i < n; i++)
      {
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, codepoint);

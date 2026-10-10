@@ -513,6 +513,23 @@ termpty_cell_fill(Termpty *ty, const Termcell *src, Termcell *dst, int n)
 {
    int i;
 
+   /* No hyperlink or block was ever created, so no cell carries a link id
+    * or a block codepoint: the bookkeeping below has nothing to do. Same
+    * invariant as TERMPTY_CELL_COPY()'s fast path. */
+   if (EINA_LIKELY((ty->hl.size == 0) && (ty->block.blocks == NULL)))
+     {
+        if (src)
+          {
+             for (i = 0; i < n; i++)
+               dst[i] = src[0];
+          }
+        else
+          {
+             memset(dst, 0, (size_t)n * sizeof(*dst));
+          }
+        return;
+     }
+
    if (src)
      {
         for (i = 0; i < n; i++)
