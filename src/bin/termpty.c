@@ -742,6 +742,7 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         unsetenv("TERMCAP");
         unsetenv("COLUMNS");
         unsetenv("LINES");
+        unsetenv("COLORTERM");
 
         switch (config->term_type)
           {
