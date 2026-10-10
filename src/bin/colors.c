@@ -1,8 +1,11 @@
 #include "private.h"
 #include <assert.h>
+#include <limits.h>
 #include <Elementary.h>
 #include "config.h"
 #include "colors.h"
+#include "termpty.h" /* COL_DEF */
+#include "tytest.h"
 
 #define COLORSCHEMES_FILENAME "colorschemes.eet"
 #define COLORSCHEMES_VERSION  1
@@ -1012,3 +1015,193 @@ colors_shutdown(void)
    eet_data_descriptor_free(edd_color);
    edd_color = NULL;
 }
+
+#if !defined(BINARY_TYFUZZ)
+/*********************************
+ * cache true color approximations
+ *********************************
+ * Approximating true colors is costly since it needs to compare 256 colors.
+ * The following considers that a few colors are used a lot.  For example, one
+ * can consider that a text editor with syntax highlighting would only use a
+ * small palette.
+ * Given that, using the cache needs to be efficient: it needs to speed up the
+ * approximation when the color is already in the cache but not knowing the
+ * color requested is not in the cache needs to be efficient too.
+ *
+ * The cache is an array of @TCC_LEN uint32_t.
+ * Each entry has on the MSB the color as 3 uint8_t (R,G,B) and the LSB is
+ * the approximated color.
+ * Searching a color is simply going through the array and testing the mask on
+ * the 3 most significant bytes.
+ * When a color is found, it is bubbled up towards the start of the array by
+ * swapping this entry with the one above.  This way the array is ordered to
+ * get most used colors as fast as possible.
+ * When a color is not found, the slow process of comparing it with the 256
+ * colors is used.  Then the result is inserted in the lower half of the
+ * array.  This ensures that new entries can live a bit and not be removed by
+ * the next new color.  Using a modulo with a prime number makes for a
+ * nice-enough random generator to figure out where to insert.
+ */
+#define TCC_LEN 32
+#define TCC_PRIME 17 /* smallest prime number larger than @TCC_LEN/2 */
+static struct {
+     uint32_t colors[TCC_LEN];
+} _truecolor_cache;
+static int _tcc_random_pos = 0;
+
+static Eina_Bool
+_tcc_find(const uint32_t color_msb, uint8_t *chosen_color)
+{
+   int i;
+   for (i = 0; i < TCC_LEN; i++)
+     {
+        if ((_truecolor_cache.colors[i] & 0xffffff00) == color_msb)
+          {
+             *chosen_color = _truecolor_cache.colors[i] & 0xff;
+             /* bubble up this result */
+             if (i > 0)
+               {
+                  uint32_t prev = _truecolor_cache.colors[i - 1];
+                  _truecolor_cache.colors[i - 1] = _truecolor_cache.colors[i];
+                  _truecolor_cache.colors[i] = prev;
+               }
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+static void
+_tcc_insert(const uint32_t color_msb, const uint8_t approximated)
+{
+   uint32_t c = color_msb | approximated;
+   int i;
+
+   _tcc_random_pos = ((_tcc_random_pos + TCC_PRIME) % (TCC_LEN / 2));
+   i = (TCC_LEN / 2) + _tcc_random_pos;
+
+  _truecolor_cache.colors[i] = c;
+}
+#endif
+
+uint8_t
+colors_rgb_to_palette(Evas_Object *textgrid, uint8_t r0, uint8_t g0, uint8_t b0)
+{
+   uint8_t chosen_color = COL_DEF;
+#if defined(BINARY_TYFUZZ)
+   (void) textgrid;
+   (void) r0;
+   (void) g0;
+   (void) b0;
+#else
+   int c;
+   int distance_min = INT_MAX;
+   const uint32_t color_msb = 0
+      | (((uint32_t)r0) << 24)
+      | (((uint32_t)g0) << 16)
+      | (((uint32_t)b0) << 8);
+
+   if (_tcc_find(color_msb, &chosen_color))
+     return chosen_color;
+
+   for (c = 0; c < 256; c++)
+     {
+        int r1 = 0, g1 = 0, b1 = 0, a1 = 0;
+        int delta_red_sq, delta_green_sq, delta_blue_sq, red_mean;
+        int distance;
+
+        evas_object_textgrid_palette_get(textgrid,
+                                         EVAS_TEXTGRID_PALETTE_EXTENDED,
+                                         c, &r1, &g1, &b1, &a1);
+        /* Compute the color distance
+         * XXX: this is inacurate but should give good enough results.
+         * See https://en.wikipedia.org/wiki/Color_difference
+         */
+        red_mean = (r0 + r1) / 2;
+        delta_red_sq = (r0 - r1) * (r0 - r1);
+        delta_green_sq = (g0 - g1) * (g0 - g1);
+        delta_blue_sq = (b0 - b1) * (b0 - b1);
+
+#if 1
+        distance = 2 * delta_red_sq
+           + 4 * delta_green_sq
+           + 3 * delta_blue_sq
+           + ((red_mean) * (delta_red_sq - delta_blue_sq) / 256);
+#else
+        /* from https://www.compuphase.com/cmetric.htm */
+        distance = (((512 + red_mean) * delta_red_sq) >> 8)
+                 + 4 * delta_green_sq
+                 + (((767 - red_mean) * delta_blue_sq) >> 8);
+        /* euclidian distance */
+        distance = delta_red_sq + delta_green_sq + delta_blue_sq;
+        (void)red_mean;
+#endif
+        if (distance < distance_min)
+          {
+             distance_min = distance;
+             chosen_color = c;
+          }
+     }
+   _tcc_insert(color_msb, chosen_color);
+#endif
+   return chosen_color;
+}
+
+#if defined(BINARY_TYTEST)
+int
+tytest_rgb_to_palette(void)
+{
+   /* Indices recorded from the pre-move approximation with the default
+    * colour scheme, so the move is proven to change nothing. */
+   static const struct {
+      uint8_t r, g, b, idx;
+   } table[] = {
+      {   0,   0,   0,   0 },
+      { 255, 255, 255,  15 },
+      { 255,   0,   0, 196 },
+      {   0, 255,   0,  46 },
+      {   0,   0, 255,  21 },
+      {   1,   2,   3,   0 },
+      { 128, 128, 128,   8 },
+      { 127, 127, 127,   8 },
+      {  95, 135, 175,  67 },
+      { 215, 135,  95, 173 },
+      {   0,  95,   0,  22 },
+      { 250, 240, 230, 255 },
+      {  59,  34,  76, 237 },
+      {  12,  34, 200,   4 },
+      { 200, 100,  50, 167 },
+      { 100, 200,  50,  77 },
+      {  50, 100, 200,  62 },
+      { 222, 222, 222, 253 },
+      {  16,  16,  16, 233 },
+      { 238, 238, 238, 255 },
+      {  48,  48,  48, 236 },
+      { 114, 114, 114, 243 },
+      { 135, 135, 255, 105 },
+      { 255, 135,   0, 208 },
+      {  40,  40,  40, 235 },
+      {  88,  88,  88, 240 },
+      { 188, 188, 188, 250 },
+      {   3, 200, 150,  42 },
+      { 180,  60, 130, 132 },
+      {  90,  90,  90, 240 },
+      { 192, 168, 100, 143 },
+      {  66,  33, 222,  56 },
+   };
+   size_t i;
+
+   for (i = 0; i < sizeof(table) / sizeof(table[0]); i++)
+     {
+        uint8_t idx = colors_rgb_to_palette(NULL, table[i].r, table[i].g,
+                                            table[i].b);
+        assert(idx == table[i].idx);
+     }
+   /* Repeating one entry exercises the cache: the answer must not depend
+    * on which path (cache hit or full scan) produced it. */
+   assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
+   assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
+
+   return 0;
+}
+#endif

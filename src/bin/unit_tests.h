@@ -7,6 +7,7 @@ typedef int (*tytest_func)(void);
 /* list of tests */
 int tytest_dummy(void);
 int tytest_simd_parity(void);
+int tytest_rgb_to_palette(void);
 int tytest_sb_skip(void);
 int tytest_sb_trim(void);
 int tytest_sb_gap(void);

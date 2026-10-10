@@ -832,139 +832,6 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
    return sum;
 }
 
-#if !defined(BINARY_TYFUZZ)
-/*********************************
- * cache true color approximations
- *********************************
- * Approximating true colors is costly since it needs to compare 256 colors.
- * The following considers that a few colors are used a lot.  For example, one
- * can consider that a text editor with syntax highlighting would only use a
- * small palette.
- * Given that, using the cache needs to be efficient: it needs to speed up the
- * approximation when the color is already in the cache but not knowing the
- * color requested is not in the cache needs to be efficient too.
- *
- * The cache is an array of @TCC_LEN uint32_t.
- * Each entry has on the MSB the color as 3 uint8_t (R,G,B) and the LSB is
- * the approximated color.
- * Searching a color is simply going through the array and testing the mask on
- * the 3 most significant bytes.
- * When a color is found, it is bubbled up towards the start of the array by
- * swapping this entry with the one above.  This way the array is ordered to
- * get most used colors as fast as possible.
- * When a color is not found, the slow process of comparing it with the 256
- * colors is used.  Then the result is inserted in the lower half of the
- * array.  This ensures that new entries can live a bit and not be removed by
- * the next new color.  Using a modulo with a prime number makes for a
- * nice-enough random generator to figure out where to insert.
- */
-#define TCC_LEN 32
-#define TCC_PRIME 17 /* smallest prime number larger than @TCC_LEN/2 */
-static struct {
-     uint32_t colors[TCC_LEN];
-} _truecolor_cache;
-static int _tcc_random_pos = 0;
-
-static Eina_Bool
-_tcc_find(const uint32_t color_msb, uint8_t *chosen_color)
-{
-   int i;
-   for (i = 0; i < TCC_LEN; i++)
-     {
-        if ((_truecolor_cache.colors[i] & 0xffffff00) == color_msb)
-          {
-             *chosen_color = _truecolor_cache.colors[i] & 0xff;
-             /* bubble up this result */
-             if (i > 0)
-               {
-                  uint32_t prev = _truecolor_cache.colors[i - 1];
-                  _truecolor_cache.colors[i - 1] = _truecolor_cache.colors[i];
-                  _truecolor_cache.colors[i] = prev;
-               }
-             return EINA_TRUE;
-          }
-     }
-   return EINA_FALSE;
-}
-
-static void
-_tcc_insert(const uint32_t color_msb, const uint8_t approximated)
-{
-   uint32_t c = color_msb | approximated;
-   int i;
-
-   _tcc_random_pos = ((_tcc_random_pos + TCC_PRIME) % (TCC_LEN / 2));
-   i = (TCC_LEN / 2) + _tcc_random_pos;
-
-  _truecolor_cache.colors[i] = c;
-}
-#endif
-
-static uint8_t
-_approximate_truecolor_rgb(Termpty *ty, uint8_t r0, uint8_t g0, uint8_t b0)
-{
-   uint8_t chosen_color = COL_DEF;
-#if defined(BINARY_TYFUZZ)
-   (void) ty;
-   (void) r0;
-   (void) g0;
-   (void) b0;
-#else
-   int c;
-   int distance_min = INT_MAX;
-   Evas_Object *textgrid;
-   const uint32_t color_msb = 0
-      | (((uint32_t)r0) << 24)
-      | (((uint32_t)g0) << 16)
-      | (((uint32_t)b0) << 8);
-
-   if (_tcc_find(color_msb, &chosen_color))
-     return chosen_color;
-
-   textgrid = termio_textgrid_get(ty->obj);
-   for (c = 0; c < 256; c++)
-     {
-        int r1 = 0, g1 = 0, b1 = 0, a1 = 0;
-        int delta_red_sq, delta_green_sq, delta_blue_sq, red_mean;
-        int distance;
-
-        evas_object_textgrid_palette_get(textgrid,
-                                         EVAS_TEXTGRID_PALETTE_EXTENDED,
-                                         c, &r1, &g1, &b1, &a1);
-        /* Compute the color distance
-         * XXX: this is inacurate but should give good enough results.
-         * See https://en.wikipedia.org/wiki/Color_difference
-         */
-        red_mean = (r0 + r1) / 2;
-        delta_red_sq = (r0 - r1) * (r0 - r1);
-        delta_green_sq = (g0 - g1) * (g0 - g1);
-        delta_blue_sq = (b0 - b1) * (b0 - b1);
-
-#if 1
-        distance = 2 * delta_red_sq
-           + 4 * delta_green_sq
-           + 3 * delta_blue_sq
-           + ((red_mean) * (delta_red_sq - delta_blue_sq) / 256);
-#else
-        /* from https://www.compuphase.com/cmetric.htm */
-        distance = (((512 + red_mean) * delta_red_sq) >> 8)
-                 + 4 * delta_green_sq
-                 + (((767 - red_mean) * delta_blue_sq) >> 8);
-        /* euclidian distance */
-        distance = delta_red_sq + delta_green_sq + delta_blue_sq;
-        (void)red_mean;
-#endif
-        if (distance < distance_min)
-          {
-             distance_min = distance;
-             chosen_color = c;
-          }
-     }
-   _tcc_insert(color_msb, chosen_color);
-#endif
-   return chosen_color;
-}
-
 static uint8_t
 _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
 {
@@ -1015,7 +882,7 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
    if (b == -ESC_ARG_NO_VALUE)
      b = 0;
 
-   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
 static uint8_t
@@ -1074,7 +941,7 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
    g = 255 - ((m * 255) / 100);
    b = 255 - ((y * 255) / 100);
 
-   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
 static uint8_t
@@ -1138,7 +1005,7 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
    g = (255 * (100 - m) * (100 - k)) / 100 / 100;
    b = (255 * (100 - y) * (100 - k)) / 100 / 100;
 
-   return _approximate_truecolor_rgb(ty, (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
 static void
