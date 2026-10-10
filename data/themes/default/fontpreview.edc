@@ -6,7 +6,7 @@ group { name: "terminology/fontpreview";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "/bg/normal/term/font_preview";
+            color_class: "BG";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             offscale;
