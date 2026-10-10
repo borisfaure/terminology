@@ -1772,32 +1772,51 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
                                        Eina_Unicode codepoint, int count)
 {
    int i;
-   Termcell local = { .codepoint = codepoint, .att = ty->termstate.att};
+   Termatt att = ty->termstate.att;
+   Termcell local = { .codepoint = codepoint, .att = att };
 
    if (EINA_UNLIKELY(local.att.link_id))
      term_link_refcount_inc(ty, local.att.link_id, count);
 
+   /* The SGR state is the same for the whole fill, so "are its colours
+    * default" is answered once and each case becomes a plain loop rather
+    * than a per-cell test. */
+   if (att.fg != 0 || att.fgrgb != 0 || att.bg != 0 || att.bgrgb != 0)
+     {
+        for (i = 0; i < count; i++)
+          {
+             HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
+             if (EINA_UNLIKELY(cells[i].att.link_id))
+               term_link_refcount_dec(ty, cells[i].att.link_id, 1);
+
+             cells[i] = local;
+          }
+        return;
+     }
+
    for (i = 0; i < count; i++)
      {
-        Termatt att = cells[i].att;
+        Termatt old = cells[i].att;
+        Termcell c;
+
         HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
         if (EINA_UNLIKELY(cells[i].att.link_id))
           term_link_refcount_dec(ty, cells[i].att.link_id, 1);
 
-        cells[i] = local;
-        if (ty->termstate.att.fg == 0 && ty->termstate.att.fgrgb == 0 &&
-            ty->termstate.att.bg == 0 && ty->termstate.att.bgrgb == 0)
-          {
-             cells[i].att.fg = att.fg;
-             cells[i].att.fgrgb = att.fgrgb;
-             cells[i].att.fg256 = att.fg256;
-             cells[i].att.fgintense = att.fgintense;
+        /* The cell keeps its colours. Built once and stored once, for the
+         * same reason as in the ASCII run path. */
+        c.codepoint = codepoint;
+        c.att = att;
+        c.att.fg = old.fg;
+        c.att.fgrgb = old.fgrgb;
+        c.att.fg256 = old.fg256;
+        c.att.fgintense = old.fgintense;
 
-             cells[i].att.bg = att.bg;
-             cells[i].att.bgrgb = att.bgrgb;
-             cells[i].att.bg256 = att.bg256;
-             cells[i].att.bgintense = att.bgintense;
-          }
+        c.att.bg = old.bg;
+        c.att.bgrgb = old.bgrgb;
+        c.att.bg256 = old.bg256;
+        c.att.bgintense = old.bgintense;
+        cells[i] = c;
      }
 }
 

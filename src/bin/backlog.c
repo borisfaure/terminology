@@ -82,9 +82,14 @@ termpty_save_new(Termpty *ty, Termsave *ts, int w)
    if (ts->cells && !ts->comp && (ts->cap >= (unsigned int)w))
      {
         _ts_links_release(ty, ts);
-        /* The caller decrements the link refcount of what it overwrites, so
-         * the cells must not still hold the previous row's link ids. */
-        if (w > 0) memset(ts->cells, 0, (size_t)w * sizeof(Termcell));
+        /* Zeroing is only needed when the caller's copy does bookkeeping:
+         * with hyperlinks, it stops TERMPTY_CELL_COPY from decrementing
+         * the refcounts _ts_links_release() already released; with
+         * blocks, it keeps stale block codepoints from firing the
+         * overwrite handler. Otherwise the copy overwrites every cell
+         * anyway and this would write the same bytes twice. */
+        if ((w > 0) && ((ty->hl.size != 0) || (ty->block.blocks != NULL)))
+          memset(ts->cells, 0, (size_t)w * sizeof(Termcell));
         ts->w = w;
         return ts;
      }
