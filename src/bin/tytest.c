@@ -139,11 +139,177 @@ _run_tytests(int argc, char **argv)
 
 /* }}} */
 
+/* Frozen copy of the Termatt layout used when these checksums were
+ * recorded.
+ *
+ * _tytest_checksum() hashes terminal state as raw bytes, so any change to
+ * the size or layout of Termatt, Termcell or Term_State would invalidate
+ * every line of tests/tests.results at once. Hashing through this frozen
+ * image instead keeps the byte stream stable: cells are converted to it
+ * field by field, so a layout change only shows up in the checksum when it
+ * actually changes the terminal state. New fields with no equivalent here
+ * are hashed separately, after the image, only when they are set -- the
+ * same trick used for the working directory below. */
+typedef struct tag_tytest_termatt_v1
+{
+   uint8_t fg, bg;
+   unsigned short bold : 1;
+   unsigned short faint : 1;
+   unsigned short italic : 1;
+   unsigned short dblwidth : 1;
+   unsigned short underline : 1;
+   unsigned short blink : 1;
+   unsigned short blink2 : 1;
+   unsigned short inverse : 1;
+   unsigned short invisible : 1;
+   unsigned short strike : 1;
+   unsigned short fg256 : 1;
+   unsigned short bg256 : 1;
+   unsigned short fgintense : 1;
+   unsigned short bgintense : 1;
+   unsigned short autowrapped : 1;
+   unsigned short newline : 1;
+   unsigned short fraktur : 1;
+   unsigned short framed : 1;
+   unsigned short encircled : 1;
+   unsigned short overlined : 1;
+   unsigned short tab_inserted : 1;
+   unsigned short tab_last : 1;
+#if defined(SUPPORT_80_132_COLUMNS)
+   unsigned short is_80_132_mode_allowed : 1;
+   unsigned short bit_padding :  9;
+#else
+   unsigned short bit_padding : 10;
+#endif
+   uint16_t       link_id;
+} __attribute((__packed__)) tytest_termatt_v1;
+
+typedef struct tag_Term_State_V1 {
+    tytest_termatt_v1 att;
+    unsigned char charset;
+    unsigned char charsetch;
+    unsigned char chset[4];
+    int           top_margin, bottom_margin;
+    int           left_margin, right_margin;
+    int           had_cr_x, had_cr_y;
+    unsigned int  lr_margins : 1;
+    unsigned int  restrict_cursor : 1;
+    unsigned int  multibyte : 1;
+    unsigned int  alt_kp : 1;
+    unsigned int  insert : 1;
+    unsigned int  appcursor : 1;
+    unsigned int  wrap : 1;
+    unsigned int  crlf : 1;
+    unsigned int  send_bs : 1;
+    unsigned int  kbd_lock : 1;
+    unsigned int  reverse : 1;
+    unsigned int  no_autorepeat : 1;
+    unsigned int  cjk_ambiguous_wide : 1;
+    unsigned int  hide_cursor : 1;
+    unsigned int  combining_strike : 1;
+    unsigned int  sace_rectangular : 1;
+    unsigned int  esc_keycode : 1;
+    unsigned int  alternate_esc : 1;
+    int xmod[XMOD_LAST];
+} Term_State_V1;
+
+typedef struct tag_tytest_termcell_v1
+{
+   Eina_Unicode codepoint;
+   tytest_termatt_v1 att;
+} tytest_termcell_v1;
+
+/* The V1 images have no implicit padding: every field is copied, and the
+ * padding bits are memset to zero, which is how they are always left. */
+_Static_assert(sizeof(tytest_termatt_v1) == 8, "frozen Termatt layout changed");
+_Static_assert(sizeof(tytest_termcell_v1) == 12, "frozen Termcell layout changed");
+
+static void
+_termatt_to_v1(const Termatt *att, tytest_termatt_v1 *v1)
+{
+   memset(v1, '\0', sizeof(*v1));
+   v1->fg = att->fg;
+   v1->bg = att->bg;
+   v1->bold = att->bold;
+   v1->faint = att->faint;
+   v1->italic = att->italic;
+   v1->dblwidth = att->dblwidth;
+   v1->underline = att->underline;
+   v1->blink = att->blink;
+   v1->blink2 = att->blink2;
+   v1->inverse = att->inverse;
+   v1->invisible = att->invisible;
+   v1->strike = att->strike;
+   v1->fg256 = att->fg256;
+   v1->bg256 = att->bg256;
+   v1->fgintense = att->fgintense;
+   v1->bgintense = att->bgintense;
+   v1->autowrapped = att->autowrapped;
+   v1->newline = att->newline;
+   v1->fraktur = att->fraktur;
+   v1->framed = att->framed;
+   v1->encircled = att->encircled;
+   v1->overlined = att->overlined;
+   v1->tab_inserted = att->tab_inserted;
+   v1->tab_last = att->tab_last;
+#if defined(SUPPORT_80_132_COLUMNS)
+   v1->is_80_132_mode_allowed = att->is_80_132_mode_allowed;
+#endif
+   v1->link_id = att->link_id;
+}
+
+static void
+_termstate_to_v1(const Term_State *ts, Term_State_V1 *v1)
+{
+   memset(v1, '\0', sizeof(*v1));
+   _termatt_to_v1(&ts->att, &v1->att);
+   v1->charset = ts->charset;
+   v1->charsetch = ts->charsetch;
+   memcpy(v1->chset, ts->chset, sizeof(v1->chset));
+   v1->top_margin = ts->top_margin;
+   v1->bottom_margin = ts->bottom_margin;
+   v1->left_margin = ts->left_margin;
+   v1->right_margin = ts->right_margin;
+   v1->had_cr_x = ts->had_cr_x;
+   v1->had_cr_y = ts->had_cr_y;
+   v1->lr_margins = ts->lr_margins;
+   v1->restrict_cursor = ts->restrict_cursor;
+   v1->multibyte = ts->multibyte;
+   v1->alt_kp = ts->alt_kp;
+   v1->insert = ts->insert;
+   v1->appcursor = ts->appcursor;
+   v1->wrap = ts->wrap;
+   v1->crlf = ts->crlf;
+   v1->send_bs = ts->send_bs;
+   v1->kbd_lock = ts->kbd_lock;
+   v1->reverse = ts->reverse;
+   v1->no_autorepeat = ts->no_autorepeat;
+   v1->cjk_ambiguous_wide = ts->cjk_ambiguous_wide;
+   v1->hide_cursor = ts->hide_cursor;
+   v1->combining_strike = ts->combining_strike;
+   v1->sace_rectangular = ts->sace_rectangular;
+   v1->esc_keycode = ts->esc_keycode;
+   v1->alternate_esc = ts->alternate_esc;
+   memcpy(v1->xmod, ts->xmod, sizeof(v1->xmod));
+}
+
+static void
+_termcells_to_v1(const Termcell *cells, ssize_t w, tytest_termcell_v1 *out)
+{
+   ssize_t i;
+
+   for (i = 0; i < w; i++)
+     {
+        out[i].codepoint = cells[i].codepoint;
+        _termatt_to_v1(&cells[i].att, &out[i].att);
+     }
+}
+
 typedef struct tag_Termpty_Tests
 {
    uint64_t backsize, backpos;
    Backlog_Beacon backlog_beacon;
-   Term_State termstate;
+   Term_State_V1 termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
    int w, h;
@@ -160,7 +326,13 @@ _termpty_to_termpty_tests(Termpty *ty, Termpty_Tests *tt)
    tt->backsize = ty->backsize;
    tt->backpos = ty->backpos;
    tt->backlog_beacon = ty->backlog_beacon;
-   tt->termstate = ty->termstate;
+   {
+      /* Local copy: tt is a packed struct, so &tt->termstate is unaligned. */
+      Term_State_V1 v1;
+
+      _termstate_to_v1(&ty->termstate, &v1);
+      memcpy(&tt->termstate, &v1, sizeof(v1));
+   }
    tt->cursor_state = ty->cursor_state;
    tt->cursor_save[0] = ty->cursor_save[0];
    tt->cursor_save[1] = ty->cursor_save[1];
@@ -199,8 +371,28 @@ _checksum_backlog(Termpty *ty, MD5_CTX *ctx)
         width = (uint32_t)w;
         MD5Update(ctx, (unsigned char const*)&width, sizeof(width));
         if (cells && (w > 0))
-          MD5Update(ctx, (unsigned char const*)cells, sizeof(Termcell) * w);
+          {
+             tytest_termcell_v1 *v1 = malloc(w * sizeof(*v1));
+
+             if (v1)
+               {
+                  _termcells_to_v1(cells, w, v1);
+                  MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * w);
+                  free(v1);
+               }
+          }
      }
+}
+
+static void
+_checksum_screen(MD5_CTX *ctx, const Termcell *cells, int w, int h)
+{
+   tytest_termcell_v1 *v1 = malloc((size_t)w * h * sizeof(*v1));
+
+   if (!v1) return;
+   _termcells_to_v1(cells, (ssize_t)w * h, v1);
+   MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * (size_t)w * h);
+   free(v1);
 }
 
 static void
@@ -221,12 +413,8 @@ _tytest_checksum(Termpty *ty)
              (unsigned char const*)&tests,
              sizeof(tests));
    /* The screens */
-   MD5Update(&ctx,
-             (unsigned char const*)ty->screen,
-             sizeof(Termcell) * ty->w * ty->h);
-   MD5Update(&ctx,
-             (unsigned char const*)ty->screen2,
-             sizeof(Termcell) * ty->w * ty->h);
+   _checksum_screen(&ctx, ty->screen, ty->w, ty->h);
+   _checksum_screen(&ctx, ty->screen2, ty->w, ty->h);
    /* The scrollback */
    _checksum_backlog(ty, &ctx);
    /* Icon/Title */
