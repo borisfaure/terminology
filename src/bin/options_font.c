@@ -4,11 +4,13 @@
 #include <assert.h>
 #include "config.h"
 #include "termio.h"
+#include "termpty.h"
+#include "colors.h"
 #include "options.h"
 #include "options_font.h"
 #include "theme.h"
 
-#define TEST_STRING "oislOIS.015!|,"
+#define TEST_STRING "oislOIS.015!|,>=->"
 #define FONT_MIN 5
 #define FONT_MAX 45
 #define FONT_STEP (1.0 / (FONT_MAX - FONT_MIN))
@@ -215,6 +217,32 @@ _cb_op_font_preview_del(void *_data EINA_UNUSED,
      }
 }
 
+/* Fill the row y of the preview textgrid with the ASCII string txt,
+ * padded with spaces up to the grid width. */
+static void
+_preview_row_set(Evas_Object *grid, int y, const char *txt)
+{
+   Evas_Textgrid_Cell *tc;
+   size_t len = strlen(txt);
+   int x, tw, th;
+
+   evas_object_textgrid_size_get(grid, &tw, &th);
+   if (y >= th)
+     return;
+   tc = evas_object_textgrid_cellrow_get(grid, y);
+   if (!tc)
+     return;
+   for (x = 0; x < tw; x++)
+     {
+        tc[x] = (Evas_Textgrid_Cell) {
+             .fg = COL_DEF,
+             .bg = COL_INVIS,
+             .codepoint = ((size_t)x < len) ? (Eina_Unicode)txt[x] : ' ',
+        };
+     }
+   evas_object_textgrid_cellrow_set(grid, y, tc);
+}
+
 static Eina_Bool
 _cb_op_font_preview_delayed_eval(void *data)
 {
@@ -240,28 +268,36 @@ _cb_op_font_preview_delayed_eval(void *data)
      goto done;
    if (ELM_RECTS_INTERSECT(ox, oy, ow, oh, vx, vy, vw, vh))
      {
-        int r, g, b, a;
         Evas *evas = evas_object_evas_get(obj);
-        Evas_Object *textgrid = termio_textgrid_get(f->ctx->term);
+        Evas_Coord cw, ch;
+        int cols;
 
-        evas_object_textgrid_palette_get(textgrid, EVAS_TEXTGRID_PALETTE_STANDARD,
-                                         0, &r, &g, &b, &a);
-
-        o = evas_object_text_add(evas);
-        evas_object_color_set(o, r, g, b, a);
-        evas_object_text_text_set(o, TEST_STRING);
-        evas_object_scale_set(o, elm_config_scale_get());
+        o = evas_object_textgrid_add(evas);
+        colors_term_init(o, config->color_scheme);
         if (f->bitmap)
           {
              char buf[4096];
              snprintf(buf, sizeof(buf), "%s/fonts/%s",
                       elm_app_data_dir_get(), f->full_name);
-             evas_object_text_font_set(o, buf, config->font.size);
+             evas_object_textgrid_font_set(o, buf, config->font.size);
           }
         else
-          evas_object_text_font_set(o, f->full_name, config->font.size);
-        evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
-        evas_object_size_hint_min_set(o, ow, oh);
+          evas_object_textgrid_font_set(o, f->full_name, config->font.size);
+        evas_object_scale_set(o, elm_config_scale_get());
+#if defined(HAVE_TEXTGRID_LIGATURES)
+        evas_object_textgrid_ligatures_set(o, config->font.ligatures);
+#endif
+        cols = strlen(TEST_STRING);
+        evas_object_textgrid_size_set(o, cols, 1);
+        _preview_row_set(o, 0, TEST_STRING);
+        evas_object_textgrid_update_add(o, 0, 0, cols, 1);
+
+        evas_object_textgrid_cell_size_get(o, &cw, &ch);
+        if (cw < 1)
+          cw = 1;
+        if (ch < 1)
+          ch = 1;
+        evas_object_size_hint_min_set(o, cols * cw, ch);
         edje_object_part_swallow(obj, "terminology.text.preview", o);
      }
 done:
@@ -317,7 +353,7 @@ _cb_op_font_content_get(void *data, Evas_Object *obj, const char *part)
                     NULL, NULL, EINA_FALSE);
         theme_auto_reload_enable(o);
         evas_object_size_hint_min_set(o,
-                                      96 * elm_config_scale_get(),
+                                      strlen(TEST_STRING) * 8 * elm_config_scale_get(),
                                       40 * elm_config_scale_get());
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE,
                                        _cb_op_font_preview_eval, f);
@@ -388,6 +424,7 @@ _cb_font_ligatures(void *data,
 
    config->font.ligatures = elm_check_state_get(obj);
    termio_config_update(ctx->term);
+   elm_genlist_realized_items_update(ctx->op_fontlist);
    config_save(config);
 }
 
