@@ -454,6 +454,20 @@ Queue media files or URI to be popped up
 .B tysend
 Send files to the terminal (useful through ssh)
 
+.SH CLIPBOARD AND SELECTION ACCESS FROM PROGRAMS:
+Terminology supports the \fBOSC 52\fP escape sequence, with which a
+program running in the terminal can change the clipboard or the
+primary selection, or read them back, over ssh included.
+.PP
+Changing selections can be turned off in the settings panel
+(Behavior, \fILet escape codes change selections\fP).
+.PP
+Reading is \fIasked\fP by default: a popup offers to allow it once,
+to allow it until the window closes, or to deny it. It can be set to
+never ask or to always allow in the settings panel (Behavior, \fILet
+escape codes read selections\fP). A denied or refused read gets an
+empty reply, so the program asking does not hang.
+
 .SH EXTENDED ESCAPES FOR TERMINOLOGY:
 .
 .TP
