@@ -744,7 +744,11 @@ termpty_new(const char *cmd, Eina_Bool login_shell, const char *cd,
         unsetenv("TERMCAP");
         unsetenv("COLUMNS");
         unsetenv("LINES");
+#if defined(HAVE_TEXTGRID_RGB)
+        putenv("COLORTERM=truecolor");
+#else
         unsetenv("COLORTERM");
+#endif
 
         switch (config->term_type)
           {
