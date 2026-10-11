@@ -114,7 +114,8 @@ simd_records_or_byte_neon(void *buf, size_t n, size_t rec, size_t off,
    size_t i = 0;
 
    /* A 12-byte stride lines up with the vector every four records, so the mask
-    * repeats every 48 bytes. Other strides use the scalar form. */
+    * repeats every 48 bytes. A 16-byte stride gives each record its own vector,
+    * so the mask is one register. Other strides use the scalar form. */
    if ((rec == 12) && (off < rec))
      {
         unsigned char pat[48];
@@ -135,6 +136,18 @@ simd_records_or_byte_neon(void *buf, size_t n, size_t rec, size_t off,
              vst1q_u8(p + 16, vorrq_u8(vld1q_u8(p + 16), m1));
              vst1q_u8(p + 32, vorrq_u8(vld1q_u8(p + 32), m2));
           }
+     }
+   else if ((rec == 16) && (off < rec))
+     {
+        unsigned char pat[16];
+        uint8x16_t m;
+
+        memset(pat, 0, sizeof(pat));
+        pat[off] = bit;
+        m = vld1q_u8(pat);
+
+        for (; i + 1 <= n; i += 1, p += 16)
+          vst1q_u8(p, vorrq_u8(vld1q_u8(p), m));
      }
 
    for (; i < n; i++, p += rec)

@@ -342,8 +342,8 @@ _test_ref_records_or(void)
 {
    size_t n, off, rec, i;
 
-   /* Both the vectorised 12-byte stride and one that must fall back. */
-   for (rec = 11; rec <= 12; rec++)
+   /* Both vectorised strides (12 and 16 bytes) and ones that fall back. */
+   for (rec = 11; rec <= 16; rec++)
      {
         for (n = 0; n <= 40; n++)
           {
@@ -529,8 +529,8 @@ _test_records_or(void)
 {
    size_t n, off, rec, i;
 
-   /* Both the vectorised 12-byte stride and one that must fall back. */
-   for (rec = 11; rec <= 12; rec++)
+   /* Both vectorised strides (12 and 16 bytes) and ones that fall back. */
+   for (rec = 11; rec <= 16; rec++)
      {
         for (n = 0; n <= 40; n++)
           {
