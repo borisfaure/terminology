@@ -243,8 +243,10 @@ static void
 _termatt_to_v1(const Termatt *att, tytest_termatt_v1 *v1)
 {
    memset(v1, '\0', sizeof(*v1));
-   v1->fg = att->fg;
-   v1->bg = att->bg;
+   /* An RGB colour does not fit the frozen 8-bit field: zero it here, and
+    * whoever hashes the image appends the value separately, tagged. */
+   v1->fg = (att->fgrgb) ? 0 : att->fg;
+   v1->bg = (att->bgrgb) ? 0 : att->bg;
    v1->bold = att->bold;
    v1->faint = att->faint;
    v1->italic = att->italic;
@@ -308,8 +310,32 @@ _termstate_to_v1(const Term_State *ts, Term_State_V1 *v1)
    memcpy(v1->xmod, ts->xmod, sizeof(v1->xmod));
 }
 
+/* Append the RGB values the frozen image cannot hold, each tagged with its
+ * slot ('F' or 'B') and only when set, so that the byte stream is unchanged
+ * for every cell that carries a palette colour. */
 static void
-_termcells_to_v1(const Termcell *cells, ssize_t w, tytest_termcell_v1 *out)
+_termatt_rgb_to_extra(const Termatt *att, unsigned char *extra,
+                      size_t *extra_len)
+{
+   if (att->fgrgb)
+     {
+        extra[(*extra_len)++] = 'F';
+        extra[(*extra_len)++] = (att->fg >> 16) & 0xff;
+        extra[(*extra_len)++] = (att->fg >> 8) & 0xff;
+        extra[(*extra_len)++] = att->fg & 0xff;
+     }
+   if (att->bgrgb)
+     {
+        extra[(*extra_len)++] = 'B';
+        extra[(*extra_len)++] = (att->bg >> 16) & 0xff;
+        extra[(*extra_len)++] = (att->bg >> 8) & 0xff;
+        extra[(*extra_len)++] = att->bg & 0xff;
+     }
+}
+
+static void
+_termcells_to_v1(const Termcell *cells, ssize_t w, tytest_termcell_v1 *out,
+                 unsigned char *extra, size_t *extra_len)
 {
    ssize_t i;
 
@@ -317,6 +343,7 @@ _termcells_to_v1(const Termcell *cells, ssize_t w, tytest_termcell_v1 *out)
      {
         out[i].codepoint = cells[i].codepoint;
         _termatt_to_v1(&cells[i].att, &out[i].att);
+        _termatt_rgb_to_extra(&cells[i].att, extra, extra_len);
      }
 }
 
@@ -388,13 +415,17 @@ _checksum_backlog(Termpty *ty, MD5_CTX *ctx)
         if (cells && (w > 0))
           {
              tytest_termcell_v1 *v1 = malloc(w * sizeof(*v1));
+             unsigned char *extra = malloc((size_t)w * 8);
+             size_t extra_len = 0;
 
-             if (v1)
+             if (v1 && extra)
                {
-                  _termcells_to_v1(cells, w, v1);
+                  _termcells_to_v1(cells, w, v1, extra, &extra_len);
                   MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * w);
-                  free(v1);
+                  MD5Update(ctx, (unsigned char const*)extra, extra_len);
                }
+             free(v1);
+             free(extra);
           }
      }
 }
@@ -403,11 +434,20 @@ static void
 _checksum_screen(MD5_CTX *ctx, const Termcell *cells, int w, int h)
 {
    tytest_termcell_v1 *v1 = malloc((size_t)w * h * sizeof(*v1));
+   unsigned char *extra = malloc((size_t)w * h * 8);
+   size_t extra_len = 0;
 
-   if (!v1) return;
-   _termcells_to_v1(cells, (ssize_t)w * h, v1);
+   if (!v1 || !extra)
+     {
+        free(v1);
+        free(extra);
+        return;
+     }
+   _termcells_to_v1(cells, (ssize_t)w * h, v1, extra, &extra_len);
    MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * (size_t)w * h);
+   MD5Update(ctx, (unsigned char const*)extra, extra_len);
    free(v1);
+   free(extra);
 }
 
 static void
@@ -427,6 +467,15 @@ _tytest_checksum(Termpty *ty)
    MD5Update(&ctx,
              (unsigned char const*)&tests,
              sizeof(tests));
+   /* The SGR state may hold RGB colours, which the frozen image cannot
+    * carry: append them, tagged, only when set. */
+   {
+      unsigned char extra[8];
+      size_t extra_len = 0;
+
+      _termatt_rgb_to_extra(&ty->termstate.att, extra, &extra_len);
+      MD5Update(&ctx, (unsigned char const*)extra, extra_len);
+   }
    /* The screens */
    _checksum_screen(&ctx, ty->screen, ty->w, ty->h);
    _checksum_screen(&ctx, ty->screen2, ty->w, ty->h);
@@ -553,10 +602,12 @@ _dump_row(const Termcell *cells, int w, const char *label)
             a->invisible || a->strike || a->fg256 || a->bg256 ||
             a->fgintense || a->bgintense || a->dblwidth || a->autowrapped ||
             a->newline || a->fraktur || a->framed || a->encircled ||
-            a->overlined || a->link_id)
+            a->overlined || a->link_id || a->fgrgb || a->bgrgb)
           {
              printf("%s  att %d-%d fg=%u bg=%u", label, start, x - 1,
                     (unsigned)a->fg, (unsigned)a->bg);
+             if (a->fgrgb)      printf(" fgrgb=#%06x", (unsigned)a->fg);
+             if (a->bgrgb)      printf(" bgrgb=#%06x", (unsigned)a->bg);
              if (a->fg256)      printf(" fg256");
              if (a->bg256)      printf(" bg256");
              if (a->fgintense)  printf(" fgint");
