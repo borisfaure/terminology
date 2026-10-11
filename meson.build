@@ -125,6 +125,16 @@ endif
 
 message('Checking for textgrid overline: ' + found)
 
+found = 'Not found'
+
+if cc.has_function('evas_object_textgrid_truecolor_cellrow_get',
+                   dependencies: terminology_dependencies)
+  config_data.set('HAVE_TEXTGRID_RGB', 1)
+  found = 'Found'
+endif
+
+message('Checking for textgrid truecolor: ' + found)
+
 eet_bin = get_option('eet')
 if eet_bin == ''
   eet_bin = eet_path
