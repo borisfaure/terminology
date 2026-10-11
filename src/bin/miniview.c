@@ -84,6 +84,7 @@ static void
 _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigned int *colors)
 {
    int fg, bg, fgext, bgext;
+   Eina_Bool fg_is_rgb, bg_is_rgb;
    int inv = ty->termstate.reverse;
    Eina_Unicode codepoint;
 
@@ -98,29 +99,37 @@ _draw_cell(const Termpty *ty, unsigned int *pixel, const Termcell *cell, unsigne
    bg = cell->att.bg;
    fgext = cell->att.fg256;
    bgext = cell->att.bg256;
+   fg_is_rgb = cell->att.fgrgb;
+   bg_is_rgb = cell->att.bgrgb;
 
-   if ((fg == COL_DEF) && (cell->att.inverse ^ inv)) fg = COL_INVERSEBG;
-   if (bg == COL_DEF)
+   if ((!fg_is_rgb) && (fg == COL_DEF) && (cell->att.inverse ^ inv))
+     fg = COL_INVERSEBG;
+   if ((!bg_is_rgb) && (bg == COL_DEF))
      {
         if (cell->att.inverse ^ inv) bg = COL_INVERSE;
         else if (!bgext) bg = COL_INVIS;
      }
-   if ((cell->att.fgintense) && (!fgext)) fg += 48;
-   if ((cell->att.bgintense) && (!bgext)) bg += 48;
+   if ((cell->att.fgintense) && (!fgext) && (!fg_is_rgb)) fg += 48;
+   if ((cell->att.bgintense) && (!bgext) && (!bg_is_rgb)) bg += 48;
    if (cell->att.inverse ^ inv)
      {
         int t;
+        Eina_Bool trgb;
+
         t = fgext; fgext = bgext; bgext = t;
         t = fg; fg = bg; bg = t;
+        trgb = fg_is_rgb; fg_is_rgb = bg_is_rgb; bg_is_rgb = trgb;
      }
-   if ((cell->att.bold) && (!fgext)) fg += 12;
-   if ((cell->att.faint) && (!fgext)) fg += 24;
+   if ((cell->att.bold) && (!fgext) && (!fg_is_rgb)) fg += 12;
+   if ((cell->att.faint) && (!fgext) && (!fg_is_rgb)) fg += 24;
 
-   if (bgext) *pixel = colors[bg + 256];
+   if (bg_is_rgb) *pixel = 0xff000000u | (unsigned int)bg;
+   else if (bgext) *pixel = colors[bg + 256];
    else if (bg && ((bg % 12) != COL_INVIS)) *pixel = colors[bg];
    else if ((codepoint > 32) && (codepoint < 0x00110000))
      {
-        if (fgext) *pixel = colors[fg + 256];
+        if (fg_is_rgb) *pixel = 0xff000000u | (unsigned int)fg;
+        else if (fgext) *pixel = colors[fg + 256];
         else *pixel = colors[fg];
      }
    else
