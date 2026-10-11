@@ -52,6 +52,10 @@ static Color _fg = { .r = 0xaa, .g = 0xaa, .b = 0xaa, .a = 0xff };
 static const char *_cursor_shape = "undefined";
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
+/* Truecolour side of the textgrid, mirroring EFL: allocated with the grid,
+ * returned row by row, and only when enabled. */
+static Evas_Textgrid_Truecolor *_tc_cells;
+static Eina_Bool _tc_enabled = EINA_TRUE;
 
 const char *
 tytest_cursor_shape_get(void)
@@ -67,6 +71,42 @@ tytest_textgrid_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
 }
 
 void
+tytest_textgrid_truecolor_set(Evas_Object *obj EINA_UNUSED, Eina_Bool enabled)
+{
+   _tc_enabled = enabled;
+   if (!enabled)
+     {
+        free(_tc_cells);
+        _tc_cells = NULL;
+     }
+   else if ((_tc_cells == NULL) && (_sd.grid.w > 0))
+     {
+        _tc_cells = calloc(_sd.grid.w * _sd.grid.h,
+                           sizeof(Evas_Textgrid_Truecolor));
+        assert(_tc_cells);
+     }
+}
+
+Evas_Textgrid_Truecolor *
+tytest_textgrid_truecolor_row_get(Evas_Object *obj EINA_UNUSED, int y)
+{
+   /* termio.c is not in the tytest build, so nothing calls
+    * tytest_textgrid_truecolor_set(): allocate lazily, like a caller
+    * enabling truecolour right after creating the grid would. */
+   if (_tc_enabled && (_tc_cells == NULL) &&
+       (_sd.grid.w > 0) && (_sd.grid.h > 0))
+     {
+        _tc_cells = calloc((size_t)_sd.grid.w * _sd.grid.h,
+                           sizeof(Evas_Textgrid_Truecolor));
+        assert(_tc_cells);
+     }
+   if ((!_tc_enabled) || (!_tc_cells))
+     return NULL;
+   assert (y >= 0 && y < _sd.pty->h);
+   return &_tc_cells[y * _sd.pty->w];
+}
+
+void
 tytest_termio_resize(int w, int h)
 {
    Evas_Textgrid_Cell *cells = realloc(_cells,
@@ -75,6 +115,13 @@ tytest_termio_resize(int w, int h)
    _sd.grid.w = w;
    _sd.grid.h = h;
    _cells = cells;
+   if (_tc_cells)
+     {
+        Evas_Textgrid_Truecolor *tcs =
+           realloc(_tc_cells, w * h * sizeof(Evas_Textgrid_Truecolor));
+        assert (tcs);
+        _tc_cells = tcs;
+     }
 }
 
 Termpty *
