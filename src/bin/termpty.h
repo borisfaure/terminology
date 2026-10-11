@@ -61,21 +61,28 @@ struct tag_Termlink
 
 struct tag_Termatt
 {
-   uint8_t fg, bg;
-   unsigned short bold : 1;
-   unsigned short faint : 1;
-   unsigned short italic : 1;
-   unsigned short dblwidth : 1;
-   unsigned short underline : 1;
-   unsigned short blink : 1; // don't intend to support this currently
-   unsigned short blink2 : 1; // don't intend to support this currently
-   unsigned short inverse : 1;
-   unsigned short invisible : 1;
-   unsigned short strike : 1;
-   unsigned short fg256 : 1;
-   unsigned short bg256 : 1;
-   unsigned short fgintense : 1;
-   unsigned short bgintense : 1;
+   /* A colour is RGB, 0xRRGGBB, iff fgrgb/bgrgb is set; otherwise fg/bg is
+    * a palette index. RGB black (0x000000) is numerically COL_DEF, so any
+    * fg/bg comparison against a COL_* constant must also exclude the RGB
+    * flag. */
+   uint32_t       fg : 24;
+   uint32_t       fgrgb : 1;
+   uint32_t       bold : 1;
+   uint32_t       faint : 1;
+   uint32_t       italic : 1;
+   uint32_t       dblwidth : 1;
+   uint32_t       underline : 1;
+   uint32_t       blink : 1; // don't intend to support this currently
+   uint32_t       blink2 : 1; // don't intend to support this currently
+   uint32_t       bg : 24;
+   uint32_t       bgrgb : 1;
+   uint32_t       inverse : 1;
+   uint32_t       invisible : 1;
+   uint32_t       strike : 1;
+   uint32_t       fg256 : 1;
+   uint32_t       bg256 : 1;
+   uint32_t       fgintense : 1;
+   uint32_t       bgintense : 1;
    // below used for working out text from selections
    unsigned short autowrapped : 1;
    unsigned short newline : 1;
@@ -87,12 +94,14 @@ struct tag_Termatt
    unsigned short tab_last : 1;
 #if defined(SUPPORT_80_132_COLUMNS)
    unsigned short is_80_132_mode_allowed : 1;
-   unsigned short bit_padding :  9;
+   unsigned short bit_padding :  7;
 #else
-   unsigned short bit_padding : 10;
+   unsigned short bit_padding : 8;
 #endif
    uint16_t       link_id;
 };
+
+_Static_assert(sizeof(Termatt) == 12, "Termatt is expected to be 12 bytes");
 
 typedef struct tag_Backlog_Beacon{
     int screen_y;
@@ -273,6 +282,8 @@ struct tag_Termcell
    Eina_Unicode   codepoint;
    Termatt        att;
 };
+
+_Static_assert(sizeof(Termcell) == 16, "Termcell is expected to be 16 bytes");
 
 struct tag_Termsave
 {

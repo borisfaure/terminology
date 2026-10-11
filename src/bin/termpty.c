@@ -944,8 +944,11 @@ _termpty_cell_is_empty(const Termcell *cell)
 {
    return ((cell->codepoint == 0) ||
            (cell->att.invisible) ||
-           ((cell->att.fg256 == 0) && (cell->att.fg == COL_INVIS))) &&
-      (((cell->att.bg256 == 0) && (cell->att.bg == COL_INVIS)) || (cell->att.bg == COL_DEF));
+           ((cell->att.fgrgb == 0) && (cell->att.fg256 == 0) &&
+            (cell->att.fg == COL_INVIS))) &&
+      (((cell->att.bgrgb == 0) && (cell->att.bg256 == 0) &&
+        (cell->att.bg == COL_INVIS)) ||
+       ((cell->att.bgrgb == 0) && (cell->att.bg == COL_DEF)));
 }
 
 static Eina_Bool
@@ -1041,9 +1044,10 @@ _mark_autowrapped(Termcell *cells, ssize_t n)
         return;
      }
 
-   _Static_assert(sizeof(Termcell) == 12,
-                  "Termcell size changed: simd_records_or_byte() vectorises a "
-                  "12-byte stride and silently falls back to scalar otherwise");
+   _Static_assert(sizeof(Termcell) == 16,
+                  "Termcell size changed: simd_records_or_byte() vectorises "
+                  "12- and 16-byte strides and silently falls back to scalar "
+                  "otherwise");
    simd_records_or_byte(cells, (size_t)n, sizeof(Termcell), off, bit);
 #undef NOT_PROBED
 }
@@ -1781,13 +1785,16 @@ termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
           term_link_refcount_dec(ty, cells[i].att.link_id, 1);
 
         cells[i] = local;
-        if (ty->termstate.att.fg == 0 && ty->termstate.att.bg == 0)
+        if (ty->termstate.att.fg == 0 && ty->termstate.att.fgrgb == 0 &&
+            ty->termstate.att.bg == 0 && ty->termstate.att.bgrgb == 0)
           {
              cells[i].att.fg = att.fg;
+             cells[i].att.fgrgb = att.fgrgb;
              cells[i].att.fg256 = att.fg256;
              cells[i].att.fgintense = att.fgintense;
 
              cells[i].att.bg = att.bg;
+             cells[i].att.bgrgb = att.bgrgb;
              cells[i].att.bg256 = att.bg256;
              cells[i].att.bgintense = att.bgintense;
           }
@@ -3046,6 +3053,57 @@ tytest_osc52_read_ask(void)
    /* leave the selection shared by all tests empty */
    _ty_feed(&ty, "\x1b]52;c;\x1b\\");
    _ty_test_shutdown(&ty);
+   return 0;
+}
+
+int
+tytest_termatt_layout(void)
+{
+   Termcell cell;
+
+   assert(sizeof(Termatt) == 12);
+   assert(sizeof(Termcell) == 16);
+
+   /* termpty_reset_att() clears the RGB flags along with the rest of the
+    * colours: resetting from an RGB state must land on the all-zero
+    * attributes, which termpty_cells_clear() relies on to memset() whole
+    * rows. */
+   memset(&cell, 0, sizeof(cell));
+   cell.att.fg = 0x123456;
+   cell.att.fgrgb = 1;
+   cell.att.bg = 0x654321;
+   cell.att.bgrgb = 1;
+   termpty_reset_att(&cell.att);
+   {
+      static const Termcell zero_cell = { 0 };
+
+      assert(memcmp(&cell, &zero_cell, sizeof(cell)) == 0);
+   }
+
+   return 0;
+}
+
+int
+tytest_cell_is_empty_rgb(void)
+{
+   Termcell cell;
+
+   memset(&cell, 0, sizeof(cell));
+   assert(_termpty_cell_is_empty(&cell));
+
+   /* RGB black is numerically COL_DEF but is a colour, not the absence of
+    * one: a cell holding it is not to be trimmed as blank. */
+   cell.att.bgrgb = 1;
+   assert(!_termpty_cell_is_empty(&cell));
+
+   /* An RGB foreground whose value happens to equal COL_INVIS (9) must not
+    * read as an invisible foreground. */
+   memset(&cell, 0, sizeof(cell));
+   cell.codepoint = 'X';
+   cell.att.fgrgb = 1;
+   cell.att.fg = COL_INVIS;
+   assert(!_termpty_cell_is_empty(&cell));
+
    return 0;
 }
 

@@ -34,6 +34,8 @@ static struct {
        { "dummy", tytest_dummy },
        { "simd_parity", tytest_simd_parity},
        { "rgb_to_palette", tytest_rgb_to_palette},
+       { "termatt_layout", tytest_termatt_layout},
+       { "cell_is_empty_rgb", tytest_cell_is_empty_rgb},
        { "sb_skip", tytest_sb_skip},
        { "sb_trim", tytest_sb_trim},
        { "sb_gap", tytest_sb_gap},

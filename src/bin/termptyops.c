@@ -570,7 +570,9 @@ void
 termpty_reset_att(Termatt *att)
 {
    att->fg = COL_DEF;
+   att->fgrgb = 0;
    att->bg = COL_DEF;
+   att->bgrgb = 0;
    att->bold = 0;
    att->faint = 0;
    att->italic = 0;

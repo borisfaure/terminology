@@ -8,6 +8,8 @@ typedef int (*tytest_func)(void);
 int tytest_dummy(void);
 int tytest_simd_parity(void);
 int tytest_rgb_to_palette(void);
+int tytest_termatt_layout(void);
+int tytest_cell_is_empty_rgb(void);
 int tytest_sb_skip(void);
 int tytest_sb_trim(void);
 int tytest_sb_gap(void);
