@@ -2433,7 +2433,12 @@ termio_internal_render(Termio *sd,
      {
         const Termcell *cells;
         Evas_Textgrid_Cell *tc;
+#if defined(HAVE_TEXTGRID_RGB)
         Evas_Textgrid_Truecolor *tr = NULL;
+#endif
+        /* No truecolour row to write to (EFL without the API, or out of
+         * memory): RGB cells fall back to the palette approximation. */
+        Eina_Bool tr_missing = EINA_TRUE;
         Eina_Unicode *cp = NULL;
         int cur_sel_start_x = -1, cur_sel_end_x = -1;
         int rel_y = y - sd->scroll;
@@ -2447,9 +2452,8 @@ termio_internal_render(Termio *sd,
         if (!tc)
           continue;
 #if defined(HAVE_TEXTGRID_RGB)
-        /* NULL when truecolor is off or EFL ran out of memory; cells then
-         * fall back to the palette approximation below. */
         tr = evas_object_textgrid_truecolor_cellrow_get(sd->grid.obj, y);
+        tr_missing = (tr == NULL);
 #endif
 
         /* Compute @cur_sel_start_x, @cur_sel_end_x */
@@ -2696,7 +2700,7 @@ termio_internal_render(Termio *sd,
                             bg_is_rgb = trgb;
                          }
 
-                       if (fg_is_rgb && (tr == NULL))
+                       if (fg_is_rgb && tr_missing)
                          {
                             /* No truecolour row available (EFL without the
                              * API, or it ran out of memory): approximate,
@@ -2709,7 +2713,7 @@ termio_internal_render(Termio *sd,
                             fgext = 1;
                             fg_is_rgb = EINA_FALSE;
                          }
-                       if (bg_is_rgb && (tr == NULL))
+                       if (bg_is_rgb && tr_missing)
                          {
                             bg = colors_rgb_to_palette(sd->grid.obj,
                                                        (bg >> 16) & 0xff,

@@ -3332,8 +3332,9 @@ tytest_cell_is_empty_rgb(void)
 /* Render an RGB cell and check what reached the textgrid: the truecolour
  * row must carry the exact RGB, not the 8-bit palette index the cell also
  * holds. Catches the render writing its normalised index (black) into the
- * truecolour entry. */
-#if defined(BINARY_TYTEST)
+ * truecolour entry. Only built when EFL has the truecolour API: without it
+ * the render path never touches a truecolour row. */
+#if defined(BINARY_TYTEST) && defined(HAVE_TEXTGRID_RGB)
 int
 tytest_truecolor_render(void)
 {

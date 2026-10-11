@@ -52,10 +52,12 @@ static Color _fg = { .r = 0xaa, .g = 0xaa, .b = 0xaa, .a = 0xff };
 static const char *_cursor_shape = "undefined";
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
+#if defined(HAVE_TEXTGRID_RGB)
 /* Truecolour side of the textgrid, mirroring EFL: allocated with the grid,
  * returned row by row, and only when enabled. */
 static Evas_Textgrid_Truecolor *_tc_cells;
 static Eina_Bool _tc_enabled = EINA_TRUE;
+#endif
 
 const char *
 tytest_cursor_shape_get(void)
@@ -70,6 +72,7 @@ tytest_textgrid_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
    return &_cells[y * _sd.pty->w];
 }
 
+#if defined(HAVE_TEXTGRID_RGB)
 void
 tytest_textgrid_truecolor_set(Evas_Object *obj EINA_UNUSED, Eina_Bool enabled)
 {
@@ -105,6 +108,7 @@ tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
    assert (y >= 0 && y < _sd.pty->h);
    return &_tc_cells[y * _sd.pty->w];
 }
+#endif
 
 void
 tytest_termio_resize(int w, int h)
@@ -115,6 +119,7 @@ tytest_termio_resize(int w, int h)
    _sd.grid.w = w;
    _sd.grid.h = h;
    _cells = cells;
+#if defined(HAVE_TEXTGRID_RGB)
    if (_tc_cells)
      {
         Evas_Textgrid_Truecolor *tcs =
@@ -122,6 +127,7 @@ tytest_termio_resize(int w, int h)
         assert (tcs);
         _tc_cells = tcs;
      }
+#endif
 }
 
 Termpty *

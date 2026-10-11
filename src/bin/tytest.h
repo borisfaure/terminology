@@ -16,6 +16,7 @@ test_textgrid_palette_get(const Evas_Object *obj,
 Evas_Textgrid_Cell *
 tytest_textgrid_cellrow_get(Evas_Object *obj, int y);
 
+#if defined(HAVE_TEXTGRID_RGB)
 #define evas_object_textgrid_truecolor_set  tytest_textgrid_truecolor_set
 void
 tytest_textgrid_truecolor_set(Evas_Object *obj, Eina_Bool enabled);
@@ -23,6 +24,7 @@ tytest_textgrid_truecolor_set(Evas_Object *obj, Eina_Bool enabled);
 #define evas_object_textgrid_truecolor_cellrow_get  tytest_textgrid_truecolor_cellrow_get
 Evas_Textgrid_Truecolor *
 tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj, int y);
+#endif
 
 #define edje_object_color_class_get  tytest_edje_object_color_class_get
 Eina_Bool
