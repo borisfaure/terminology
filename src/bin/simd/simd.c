@@ -28,6 +28,14 @@ simd_enabled(void)
    return _use_simd;
 }
 
+/* Vector kernel of the current target, if any. Both implement the same set,
+ * so callers can be written once. */
+#if defined(TERMINOLOGY_HAVE_NEON)
+#define VEC(name) simd_##name##_neon
+#elif defined(TERMINOLOGY_HAVE_SSE2)
+#define VEC(name) simd_##name##_sse2
+#endif
+
 size_t
 simd_scan_plain_ascii(const unsigned char *buf, size_t len)
 {
@@ -448,13 +456,8 @@ _test_ref_widen(void)
 }
 
 /* From here on, the vector kernels against the scalar ones. Both targets
- * implement the same set, so the tests are written once, against whichever
- * kernel this build has. */
-#if defined(TERMINOLOGY_HAVE_NEON)
-#define VEC(name) simd_##name##_neon
-#elif defined(TERMINOLOGY_HAVE_SSE2)
-#define VEC(name) simd_##name##_sse2
-#endif
+ * implement the same set, so the tests are written once, against the
+ * kernel defined by VEC above. */
 #if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
 
 static void
