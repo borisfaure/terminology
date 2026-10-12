@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(TERMINOLOGY_HAVE_NEON)
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
 static Eina_Bool _use_simd = EINA_TRUE;
 #else
 static Eina_Bool _use_simd = EINA_FALSE;
@@ -13,7 +13,7 @@ static Eina_Bool _use_simd = EINA_FALSE;
 void
 simd_init(void)
 {
-#if defined(TERMINOLOGY_HAVE_NEON)
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
    const char *s = getenv("TERMINOLOGY_SIMD_DISABLE");
 
    /* Any non-empty value other than "0" disables. */
@@ -33,7 +33,11 @@ simd_scan_plain_ascii(const unsigned char *buf, size_t len)
 {
 #if defined(TERMINOLOGY_HAVE_NEON)
    if (EINA_LIKELY(_use_simd))
-     return simd_scan_plain_ascii_neon(buf, len);
+     return VEC(scan_plain_ascii)(buf, len);
+#endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   if (EINA_LIKELY(_use_simd))
+     return simd_scan_plain_ascii_sse2(buf, len);
 #endif
    return simd_scan_plain_ascii_scalar(buf, len);
 }
@@ -43,7 +47,11 @@ simd_scan_plain_ascii_u32(const Eina_Unicode *buf, size_t len)
 {
 #if defined(TERMINOLOGY_HAVE_NEON)
    if (EINA_LIKELY(_use_simd))
-     return simd_scan_plain_ascii_u32_neon(buf, len);
+     return VEC(scan_plain_ascii_u32)(buf, len);
+#endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   if (EINA_LIKELY(_use_simd))
+     return simd_scan_plain_ascii_u32_sse2(buf, len);
 #endif
    return simd_scan_plain_ascii_u32_scalar(buf, len);
 }
@@ -54,6 +62,10 @@ simd_rscan_nonzero(const unsigned char *buf, size_t len)
 #if defined(TERMINOLOGY_HAVE_NEON)
    if (EINA_LIKELY(_use_simd))
      return simd_rscan_nonzero_neon(buf, len);
+#endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   if (EINA_LIKELY(_use_simd))
+     return simd_rscan_nonzero_sse2(buf, len);
 #endif
    return simd_rscan_nonzero_scalar(buf, len);
 }
@@ -69,6 +81,13 @@ simd_records_or_byte(void *buf, size_t n, size_t rec, size_t off,
         return;
      }
 #endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   if (EINA_LIKELY(_use_simd))
+     {
+        simd_records_or_byte_sse2(buf, n, rec, off, bit);
+        return;
+     }
+#endif
    simd_records_or_byte_scalar(buf, n, rec, off, bit);
 }
 
@@ -79,6 +98,13 @@ simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
    if (EINA_LIKELY(_use_simd))
      {
         simd_widen_ascii_neon(buf, len, out);
+        return;
+     }
+#endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   if (EINA_LIKELY(_use_simd))
+     {
+        simd_widen_ascii_sse2(buf, len, out);
         return;
      }
 #endif
@@ -421,9 +447,15 @@ _test_ref_widen(void)
      }
 }
 
-/* From here on, the vector kernels against the scalar ones. */
+/* From here on, the vector kernels against the scalar ones. Both targets
+ * implement the same set, so the tests are written once, against whichever
+ * kernel this build has. */
 #if defined(TERMINOLOGY_HAVE_NEON)
 #define VEC(name) simd_##name##_neon
+#elif defined(TERMINOLOGY_HAVE_SSE2)
+#define VEC(name) simd_##name##_sse2
+#endif
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
 
 static void
 _test_scan(void)
@@ -659,7 +691,7 @@ tytest_simd_parity(void)
    _test_ref_rscan();
    _test_ref_records_or();
    _test_ref_widen();
-#if defined(TERMINOLOGY_HAVE_NEON)
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
    _test_scan();
    _test_scan_u32();
    _test_rscan();

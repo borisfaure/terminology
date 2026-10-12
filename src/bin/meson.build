@@ -1,6 +1,7 @@
 simd_sources = ['simd/simd.c',
                 'simd/simd_scalar.c',
                 'simd/simd_neon.c',
+                'simd/simd_sse2.c',
                 'simd/simd.h']
 
 terminology_sources = ['private.h',
