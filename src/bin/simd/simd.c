@@ -423,6 +423,7 @@ _test_ref_widen(void)
 
 /* From here on, the vector kernels against the scalar ones. */
 #if defined(TERMINOLOGY_HAVE_NEON)
+#define VEC(name) simd_##name##_neon
 
 static void
 _test_scan(void)
@@ -441,7 +442,7 @@ _test_scan(void)
 
                   _fill(p, len, density);
                   assert(simd_scan_plain_ascii_scalar(p, len) ==
-                         simd_scan_plain_ascii_neon(p, len));
+                         VEC(scan_plain_ascii)(p, len));
                   assert(_guards_intact(base, off + len));
                   free(base);
                }
@@ -452,7 +453,7 @@ _test_scan(void)
 static void
 _test_scan_u32(void)
 {
-   size_t len, off, i;
+   size_t len, off;
    int density;
 
    for (len = 0; len <= 40; len++)
@@ -469,7 +470,7 @@ _test_scan_u32(void)
 
                   _fill_u32(p, len, density);
                   assert(simd_scan_plain_ascii_u32_scalar(p, len) ==
-                         simd_scan_plain_ascii_u32_neon(p, len));
+                         VEC(scan_plain_ascii_u32)(p, len));
                   assert(_guards_intact(base,
                                         (off + len) * sizeof(Eina_Unicode)));
                   free(base);
@@ -501,7 +502,7 @@ _test_rscan(void)
                     }
 
                   assert(simd_rscan_nonzero_scalar(p, len) ==
-                         simd_rscan_nonzero_neon(p, len));
+                         VEC(rscan_nonzero)(p, len));
                   assert(_guards_intact(base, off + len));
                   free(base);
                }
@@ -519,7 +520,7 @@ _test_rscan(void)
              memset(buf, 0, sizeof(buf));
              buf[pos] = 0x01;
              assert(simd_rscan_nonzero_scalar(buf, len) == pos + 1);
-             assert(simd_rscan_nonzero_neon(buf, len) == pos + 1);
+             assert(VEC(rscan_nonzero)(buf, len) == pos + 1);
           }
      }
 }
@@ -548,7 +549,7 @@ _test_records_or(void)
                     }
 
                   simd_records_or_byte_scalar(a + GUARD, n, rec, off, 0x40);
-                  simd_records_or_byte_neon(b + GUARD, n, rec, off, 0x40);
+                  VEC(records_or_byte)(b + GUARD, n, rec, off, 0x40);
 
                   assert(memcmp(a + GUARD, b + GUARD, n * rec) == 0);
                   assert(_guards_intact(a, n * rec));
@@ -584,7 +585,7 @@ _test_widen(void)
                }
 
              simd_widen_ascii_scalar(p, len, o1);
-             simd_widen_ascii_neon(p, len, o2);
+             VEC(widen_ascii)(p, len, o2);
 
              assert(memcmp(o1, o2, (len + 8) * sizeof(Eina_Unicode)) == 0);
              for (i = 0; i < 8; i++)
@@ -616,7 +617,7 @@ _test_every_byte(void)
                   memset(buf, 'x', sizeof(buf));
                   buf[pos] = (unsigned char)v;
                   assert(simd_scan_plain_ascii_scalar(buf, len) ==
-                         simd_scan_plain_ascii_neon(buf, len));
+                         VEC(scan_plain_ascii)(buf, len));
                }
           }
      }
@@ -642,7 +643,7 @@ _test_every_u32_boundary(void)
                   for (i = 0; i < len; i++) buf[i] = 'x';
                   buf[pos] = vals[v];
                   assert(simd_scan_plain_ascii_u32_scalar(buf, len) ==
-                         simd_scan_plain_ascii_u32_neon(buf, len));
+                         VEC(scan_plain_ascii_u32)(buf, len));
                }
           }
      }
