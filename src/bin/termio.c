@@ -28,10 +28,9 @@
 # include <sys/proc_info.h>
 # include <libproc.h>
 #elif defined (__FreeBSD__)
-#include <sys/sysctl.h>
-#include <sys/param.h>
-#include <sys/user.h>
-#include <string.h>
+# include <sys/param.h>
+# include <sys/sysctl.h>
+# include <sys/user.h>
 #endif
 
 
@@ -484,24 +483,20 @@ termio_cwd_get(const Evas_Object *obj, char *buf, size_t size)
 
 #elif defined (__FreeBSD__)
 
-    int mib[4];
-    struct kinfo_file kfile;
-    size_t sz = sizeof(kfile);
-    memset(&kfile, 0, sz);
+   int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_CWD, (int)pid };
+   struct kinfo_file kfile = { 0 };
+   size_t sz = sizeof(kfile);
 
-    mib[0] = CTL_KERN;
-    mib[1] = KERN_PROC;
-    mib[2] = KERN_PROC_CWD;
-    mib[3] = (int) pid;
-    if (sysctl(mib, 4, &kfile, &sz, NULL, 0) == -1)
-      {
-        /* Common failure may be due to security.bsd.unprivileged_proc_debug=0
-         * sysctl setting */
+   if (sysctl(mib, 4, &kfile, &sz, NULL, 0) < 0)
+     {
+        /* fails with EPERM when security.bsd.unprivileged_proc_debug=0 */
         ERR(_("Could not get working directory of pid %i: %s"),
             pid, strerror(errno));
         return EINA_FALSE;
-      }
-   strncpy(buf, kfile.kf_path, PATH_MAX);
+     }
+   if (kfile.kf_path[0] == '\0')
+     return EINA_FALSE;
+   eina_strlcpy(buf, kfile.kf_path, size);
 
 #else
 
