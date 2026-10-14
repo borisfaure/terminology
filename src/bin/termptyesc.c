@@ -868,25 +868,40 @@ _dec_private_mode_status(const Termpty *ty, int mode)
      }
 }
 
+static enum decrpm_status
+_ansi_mode_status(const Termpty *ty, int mode)
+{
+   switch (mode)
+     {
+      case 4:
+         return _decrpm_from_bool(ty->termstate.insert);
+      default:
+         return DECRPM_NOT_RECOGNIZED;
+     }
+}
+
 static void
 _handle_esc_csi_decrqm(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
+   Eina_Bool priv = (*b == '?');
    enum decrpm_status status;
    char bf[32];
    int len, mode;
 
-   if (*b != '?')
-     /* only the DEC private form is answered */
-     return;
-   b++;
+   if (priv)
+     b++;
    if ((*b < '0') || (*b > '9'))
      return;
    mode = _csi_arg_get(ty, &b);
    if (mode < 0)
      return;
-   status = _dec_private_mode_status(ty, mode);
-   len = snprintf(bf, sizeof(bf), "\033[?%d;%d$y", mode, (int)status);
+   if (priv)
+     status = _dec_private_mode_status(ty, mode);
+   else
+     status = _ansi_mode_status(ty, mode);
+   len = snprintf(bf, sizeof(bf), "\033[%s%d;%d$y",
+                  priv ? "?" : "", mode, (int)status);
    termpty_write(ty, bf, len);
 }
 

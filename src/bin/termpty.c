@@ -2489,7 +2489,8 @@ tytest_xmodkeys_query(void)
    return 0;
 }
 
-/* DECRQM: CSI ? Ps $ p is answered with a DECRPM, CSI ? Ps ; Pm $ y */
+/* DECRQM: CSI ? Ps $ p and CSI Ps $ p, answered with a DECRPM,
+ * CSI ? Ps ; Pm $ y resp. CSI Ps ; Pm $ y */
 int
 tytest_decrqm(void)
 {
@@ -2527,6 +2528,9 @@ tytest_decrqm(void)
 
    _ty_feed(&ty, "\x1b[?$p\x1b[>4$p");
    assert(ty.write_buffer.len == 0);
+
+   _ty_feed(&ty, "\x1b[4$p\x1b[4h\x1b[4$p\x1b[20$p");
+   _ty_reply_is(&ty, "\x1b[4;2$y\x1b[4;1$y\x1b[20;0$y");
 
    _ty_test_shutdown(&ty);
    return 0;
