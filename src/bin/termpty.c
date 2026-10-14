@@ -2489,6 +2489,49 @@ tytest_xmodkeys_query(void)
    return 0;
 }
 
+/* DECRQM: CSI ? Ps $ p is answered with a DECRPM, CSI ? Ps ; Pm $ y */
+int
+tytest_decrqm(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?1$p");
+   _ty_reply_is(&ty, "\x1b[?1;2$y");
+   _ty_feed(&ty, "\x1b[?1h\x1b[?1$p");
+   _ty_reply_is(&ty, "\x1b[?1;1$y");
+
+   _ty_feed(&ty, "\x1b[?7$p");
+   _ty_reply_is(&ty, "\x1b[?7;1$y");
+   _ty_feed(&ty, "\x1b[?25$p");
+   _ty_reply_is(&ty, "\x1b[?25;1$y");
+
+   _ty_feed(&ty, "\x1b[?1002h\x1b[?1000$p\x1b[?1002$p");
+   _ty_reply_is(&ty, "\x1b[?1000;2$y\x1b[?1002;1$y");
+
+   _ty_feed(&ty, "\x1b[?1005h\x1b[?1005$p\x1b[?1006$p\x1b[?1015$p");
+   _ty_reply_is(&ty, "\x1b[?1005;1$y\x1b[?1006;2$y\x1b[?1015;2$y");
+
+   /* DECSET 1004 sends a focus-out report first: drop it */
+   _ty_feed(&ty, "\x1b[?1004h");
+   ty_sb_free(&ty.write_buffer);
+   _ty_feed(&ty, "\x1b[?1004$p");
+   _ty_reply_is(&ty, "\x1b[?1004;1$y");
+
+   _ty_feed(&ty, "\x1b[?2$p\x1b[?4$p\x1b[?2027$p");
+   _ty_reply_is(&ty, "\x1b[?2;3$y\x1b[?4;4$y\x1b[?2027;4$y");
+
+   _ty_feed(&ty, "\x1b[?1016$p\x1b[?9999$p");
+   _ty_reply_is(&ty, "\x1b[?1016;0$y\x1b[?9999;0$y");
+
+   _ty_feed(&ty, "\x1b[?$p\x1b[>4$p");
+   assert(ty.write_buffer.len == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* Unanswered kitty sequences are how a client keeps to legacy encoding */
 int
 tytest_kitty_keyboard_ignored(void)

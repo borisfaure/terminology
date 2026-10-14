@@ -763,6 +763,133 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
      }
 }
 
+/* DECRPM reply values, from DEC STD 070 / VT510,
+ * https://vt100.net/docs/vt510-rm/DECRPM.html */
+enum decrpm_status
+{
+   DECRPM_NOT_RECOGNIZED = 0,
+   DECRPM_SET = 1,
+   DECRPM_RESET = 2,
+   DECRPM_PERMANENTLY_SET = 3,
+   DECRPM_PERMANENTLY_RESET = 4
+};
+
+static enum decrpm_status
+_decrpm_from_bool(Eina_Bool is_set)
+{
+   return is_set ? DECRPM_SET : DECRPM_RESET;
+}
+
+static enum decrpm_status
+_dec_private_mode_status(const Termpty *ty, int mode)
+{
+   switch (mode)
+     {
+      case 1:
+         return _decrpm_from_bool(ty->termstate.appcursor);
+      case 2: /* DECANM: there is no VT52 mode, always ANSI */
+         return DECRPM_PERMANENTLY_SET;
+      case 3: /* DECCOLM */
+#if defined(SUPPORT_80_132_COLUMNS)
+         return _decrpm_from_bool(ty->w == 132);
+#else
+         return DECRPM_PERMANENTLY_RESET;
+#endif
+      case 4: /* DECSCLM: always jump scrolling */
+         return DECRPM_PERMANENTLY_RESET;
+      case 5:
+         return _decrpm_from_bool(ty->termstate.reverse);
+      case 6:
+         return _decrpm_from_bool(ty->termstate.restrict_cursor);
+      case 7:
+         return _decrpm_from_bool(ty->termstate.wrap);
+      case 8:
+         return _decrpm_from_bool(!ty->termstate.no_autorepeat);
+      case 9:
+         return _decrpm_from_bool(ty->mouse_mode == MOUSE_X10);
+      case 12: /* blinking cursor: accepted and ignored */
+         return DECRPM_NOT_RECOGNIZED;
+      case 20:
+         return _decrpm_from_bool(ty->termstate.crlf);
+      case 25:
+         return _decrpm_from_bool(!ty->termstate.hide_cursor);
+      case 40:
+#if defined(SUPPORT_80_132_COLUMNS)
+         return _decrpm_from_bool(ty->termstate.att.is_80_132_mode_allowed);
+#else
+         return DECRPM_PERMANENTLY_RESET;
+#endif
+      case 47:
+         return _decrpm_from_bool(ty->altbuf);
+      case 66: /* DECNKM is a TODO */
+         return DECRPM_NOT_RECOGNIZED;
+      case 67:
+         return _decrpm_from_bool(ty->termstate.send_bs);
+      case 69:
+         return _decrpm_from_bool(ty->termstate.lr_margins);
+      case 1000:
+         return _decrpm_from_bool(ty->mouse_mode == MOUSE_NORMAL);
+      case 1002:
+         return _decrpm_from_bool(ty->mouse_mode == MOUSE_NORMAL_BTN_MOVE);
+      case 1003:
+         return _decrpm_from_bool(ty->mouse_mode == MOUSE_NORMAL_ALL_MOVE);
+      case 1004:
+         return _decrpm_from_bool(ty->focus_reporting);
+      case 1005:
+         return _decrpm_from_bool(ty->mouse_ext == MOUSE_EXT_UTF8);
+      case 1006:
+         return _decrpm_from_bool(ty->mouse_ext == MOUSE_EXT_SGR);
+      case 1015:
+         return _decrpm_from_bool(ty->mouse_ext == MOUSE_EXT_URXVT);
+      case 1016: /* SGR with pixel coordinates, not implemented */
+         return DECRPM_NOT_RECOGNIZED;
+      case 1034: /* eightBitInput: Alt always sends ESC */
+         return DECRPM_PERMANENTLY_RESET;
+      case 1047:
+         return _decrpm_from_bool(ty->altbuf);
+      case 1048: /* save cursor is an action, there is no state to report */
+         return DECRPM_NOT_RECOGNIZED;
+      case 1049:
+         return _decrpm_from_bool(ty->altbuf);
+      case 2004:
+         return _decrpm_from_bool(ty->bracketed_paste);
+      case 2026:
+         return _decrpm_from_bool(ty->sync_output.active);
+      case 2027: /* grapheme clustering is not implemented */
+         return DECRPM_PERMANENTLY_RESET;
+      case 2031: /* colour scheme updates, not implemented */
+         return DECRPM_NOT_RECOGNIZED;
+      case 7727:
+         return _decrpm_from_bool(ty->termstate.esc_keycode);
+      case 7728:
+         return _decrpm_from_bool(ty->termstate.alternate_esc);
+      default:
+         return DECRPM_NOT_RECOGNIZED;
+     }
+}
+
+static void
+_handle_esc_csi_decrqm(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   enum decrpm_status status;
+   char bf[32];
+   int len, mode;
+
+   if (*b != '?')
+     /* only the DEC private form is answered */
+     return;
+   b++;
+   if ((*b < '0') || (*b > '9'))
+     return;
+   mode = _csi_arg_get(ty, &b);
+   if (mode < 0)
+     return;
+   status = _dec_private_mode_status(ty, mode);
+   len = snprintf(bf, sizeof(bf), "\033[?%d;%d$y", mode, (int)status);
+   termpty_write(ty, bf, len);
+}
+
 static int
 _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
 {
@@ -3621,37 +3748,14 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         else
           _handle_esc_csi_dsr(ty, b);
         break;
-      case 'p': // define key assignments based on keycode
+      case 'p':
         if (b && *b == '!')
           {
              DBG("soft reset (DECSTR)");
              termpty_soft_reset_state(ty);
           }
-        else if (*(cc-1) == '$' && b && *b == '?')
-          {
-             /* DECRQM — DEC Request Mode (private).
-              * Parse ?<mode>$p and reply \e[?<mode>;<status>$y
-              * Status: 1 = set, 2 = reset, 0 = not recognized.
-              */
-             char bf[32];
-             int len, qarg;
-             b++; /* skip '?' */
-             qarg = _csi_arg_get(ty, &b);
-             if (qarg < 0) break; /* malformed: no response */
-             if (qarg == 2026)
-               {
-                  /* Known mode: report current state */
-                  len = snprintf(bf, sizeof(bf), "\033[?2026;%d$y",
-                                 ty->sync_output.active ? 1 : 2);
-                  termpty_write(ty, bf, len);
-               }
-             else
-               {
-                  /* Unknown/unrecognized mode: report 0 */
-                  len = snprintf(bf, sizeof(bf), "\033[?%d;0$y", qarg);
-                  termpty_write(ty, bf, len);
-               }
-          }
+        else if (*(cc-1) == '$')
+          _handle_esc_csi_decrqm(ty, &b);
         else
           {
              goto unhandled;

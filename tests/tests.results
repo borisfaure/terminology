@@ -30,6 +30,8 @@ dsr-deccksr.sh d85b416d43e79beff25e9f7a881a5d85
 dsr-os.sh 80b24965e01d6e3733fc800d9b39296f
 dsr-pp.sh b762ecbf226745d65fc6f94b74c8e8a6
 dsr-udk.sh 542e6579a3744576cf07476ba620ea5c
+decrqm.sh 0ddb08916a3cf9b55f0b27958b7db60b
+decrqm-reset.sh b36b82a8d4a471b08efd46e7970be261
 colors.sh 0f615472fcbc6c623117ea4409ff412d
 colors_regression.sh 448410f26d58dc8dfa9383d747cc3d92
 sgr-leading-trailing-semicolon.sh 8bba9806b565b6a2a8330f985c27e915

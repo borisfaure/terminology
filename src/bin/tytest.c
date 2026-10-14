@@ -62,6 +62,7 @@ static struct {
        { "percent_decode", tytest_percent_decode},
        { "xmodkeys_set", tytest_xmodkeys_set},
        { "xmodkeys_query", tytest_xmodkeys_query},
+       { "decrqm", tytest_decrqm},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},
        { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
        { "vs16_bare_narrow", tytest_vs16_bare_narrow},
