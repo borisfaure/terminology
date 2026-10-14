@@ -673,6 +673,7 @@ main(int argc, char **argv)
 
    eina_init();
    emile_init();
+   ecore_init();
 
    _log_domain = eina_log_domain_register("tytest", NULL);
 
@@ -686,6 +687,7 @@ main(int argc, char **argv)
 
    tytest_common_shutdown();
 
+   ecore_shutdown();
    emile_shutdown();
    eina_shutdown();
 
