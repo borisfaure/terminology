@@ -71,17 +71,6 @@ _xmod_level1_wants_return_or_escape(int shift, int ctrl)
    return shift || ctrl;
 }
 
-/* Shift+Tab alone keeps CSI Z, Alt+Tab alone keeps ESC Tab */
-static Eina_Bool
-_xmod_level1_wants_tab(const char *key, int alt, int shift, int ctrl)
-{
-   if (!strcmp(key, "ISO_Left_Tab"))
-     shift = 1;
-   if (ctrl)
-     return EINA_TRUE;
-   return shift && alt;
-}
-
 /* modifyOtherKeys=1: Ctrl on a key that has no C0 meaning, like foot's
  * !ctrl_seq. Keysym 0x40..0x7f and xterm's control aliases (Ctrl+Space,
  * Ctrl+2..8, Ctrl+'/') stay C0, and so does anything evas already turned
@@ -268,15 +257,17 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
           }
      }
    if ((level == 1) &&
-       (!strcmp(key, "Tab") || !strcmp(key, "ISO_Left_Tab")) &&
-       _xmod_level1_wants_tab(key, alt, shift, ctrl))
+       (!strcmp(key, "Tab") || !strcmp(key, "ISO_Left_Tab")))
      {
-        /* Evas reports Shift+Tab as ISO_Left_Tab with Shift set; force
-         * the bit on for that keysym so Pm stays right if a layout
-         * delivers it without the modifier */
-        _xmod_write(ty, '\t', alt, shift || !strcmp(key, "ISO_Left_Tab"),
-                    ctrl);
-        return;
+        /* evas reports Shift+Tab as ISO_Left_Tab, sometimes without the
+         * Shift bit, so the keysym carries it */
+        int tab_shift = shift || !strcmp(key, "ISO_Left_Tab");
+
+        if (ctrl || (tab_shift && alt))
+          {
+             _xmod_write(ty, '\t', alt, tab_shift, ctrl);
+             return;
+          }
      }
    if (level == 1)
      {
