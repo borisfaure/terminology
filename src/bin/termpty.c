@@ -2347,7 +2347,10 @@ tytest_sync_change_cb_watchdog(void)
 {
    Termpty ty;
    int fires = 0;
-   Ecore_Timer *safety;
+   /* ecore_timer_add() assigns safety before the main loop runs, so the
+    * callback never sees it uninitialized; the NULL only silences clang's
+    * -Wuninitialized-const-pointer on passing &safety */
+   Ecore_Timer *safety = NULL;
 
    _ty_test_init(&ty, 80, 24);
    ty.cb.change.func = _ty_change_cb_count_quit;
