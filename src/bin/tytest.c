@@ -64,6 +64,8 @@ static struct {
        { "xmodkeys_query", tytest_xmodkeys_query},
        { "decrqm", tytest_decrqm},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},
+       { "keyin_legacy", tytest_keyin_legacy},
+       { "keyin_modify_other_keys", tytest_keyin_modify_other_keys},
        { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
        { "vs16_bare_narrow", tytest_vs16_bare_narrow},
        { "vs16_widens_one_call", tytest_vs16_widens_one_call},

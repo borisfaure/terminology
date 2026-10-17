@@ -56,3 +56,5 @@ int tytest_osc52_long_max(void);
 int tytest_osc_arg_get(void);
 
 #endif
+int tytest_keyin_legacy(void);
+int tytest_keyin_modify_other_keys(void);

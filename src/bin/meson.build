@@ -98,6 +98,8 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'uri_decode.c', 'uri_decode.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tytest_percent_decode.c',
+                  'keyin_encode.c', 'keyin_encode.h',
+                  'tty_keys.h', 'tytest_keyin.c',
                   'tytest.c', 'tytest.h']
 tybench_sources = ['termptyesc.c', 'termptyesc.h',
                   'backlog.c', 'backlog.h',
