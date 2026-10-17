@@ -60,3 +60,5 @@ int tytest_osc_arg_get(void);
 int tytest_keyin_legacy(void);
 int tytest_keyin_modify_other_keys(void);
 int tytest_keyin_modify_other_keys_level1(void);
+int tytest_keyin_backspace(void);
+int tytest_config_erase_is_del_upgrade(void);

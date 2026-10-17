@@ -277,6 +277,40 @@ tytest_keyin_modify_other_keys_level1(void)
    return bad;
 }
 
+/* BackSpace: DEL by default, BS for Ctrl, under DECBKM, and when
+ * erase_is_del is off. */
+int
+tytest_keyin_backspace(void)
+{
+   Config *cfg;
+   int bad = 0;
+
+   _init();
+
+   /* the harness starts from a zeroed config; take the default from
+    * config_new(), which is what a fresh Terminology runs with */
+   cfg = config_new();
+   _cfg.erase_is_del = cfg->erase_is_del;
+   config_del(cfg);
+
+   /*      key          alt shift ctrl   expected */
+   PRESS("BackSpace",     0,  0,   0,   "\177");
+   PRESS("BackSpace",     0,  0,   1,   "\b");
+
+   /* DECBKM set (CSI ? 67 h): the backarrow key sends BS */
+   _ty->termstate.send_bs = EINA_TRUE;
+   PRESS("BackSpace",     0,  0,   0,   "\b");
+   _ty->termstate.send_bs = EINA_FALSE;
+
+   _cfg.erase_is_del = EINA_FALSE;
+   PRESS("BackSpace",     0,  0,   0,   "\b");
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   _shutdown();
+   return bad;
+}
+
 #undef PRESS
 #undef PRESS_S
 

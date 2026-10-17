@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 31
+#define CONF_VER 32
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -632,7 +632,7 @@ config_new(void)
         config->multi_instance = EINA_FALSE;
         config->xterm_256color = EINA_TRUE;
         config->term_type = TERM_TYPE_XTERM_256COLOR;
-        config->erase_is_del = EINA_FALSE;
+        config->erase_is_del = EINA_TRUE;
         config->custom_geometry = EINA_FALSE;
         config->drag_links = EINA_FALSE;
 #ifdef __APPLE__
@@ -885,7 +885,11 @@ config_load(void)
                   config->selection_escapes_read = SELECTION_READ_ASK;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 31 */
+                case 31:
+                  config->erase_is_del = EINA_TRUE;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 32 */
                   /* selection_escapes used to gate reads too; a config
                    * with it off must not start answering read queries
                    * through the new ask default */
@@ -1050,3 +1054,50 @@ config_del(Config *config)
    free(config);
 }
 
+#if defined(BINARY_TYTEST)
+#include <assert.h>
+#include "unit_tests.h"
+
+static Eina_Bool
+_config_erase_is_del_after_reload(int version, Eina_Bool erase_is_del)
+{
+   Config *config = config_new();
+   Eina_Bool reloaded;
+
+   config->version = version;
+   config->erase_is_del = erase_is_del;
+   config_save(config);
+   config_del(config);
+
+   config = config_load();
+   assert(config->version == CONF_VER);
+   reloaded = config->erase_is_del;
+   config_del(config);
+   return reloaded;
+}
+
+int
+tytest_config_erase_is_del_upgrade(void)
+{
+   char dir[] = "/tmp/tytest-config-XXXXXX";
+   const char *old_home = getenv("XDG_CONFIG_HOME");
+   char *saved_home = old_home ? strdup(old_home) : NULL;
+
+   assert(mkdtemp(dir));
+   setenv("XDG_CONFIG_HOME", dir, 1);
+   config_init();
+
+   assert(_config_erase_is_del_after_reload(31, EINA_FALSE) == EINA_TRUE);
+   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_FALSE) == EINA_FALSE);
+   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_TRUE) == EINA_TRUE);
+
+   config_shutdown();
+   ecore_file_recursive_rm(dir);
+   if (saved_home)
+     setenv("XDG_CONFIG_HOME", saved_home, 1);
+   else
+     unsetenv("XDG_CONFIG_HOME");
+   free(saved_home);
+   return 0;
+}
+#endif
