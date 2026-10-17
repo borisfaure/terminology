@@ -3941,13 +3941,13 @@ _osc_arg_get(Termpty *ty, Eina_Unicode **ptr)
              goto error;
           }
      }
-   if (*b != ';' && *b != BEL && *b != 0)
+   if (*b == ';')
+     b++;
+   else if (*b != '\0')
      {
         sum = -ESC_ARG_ERROR;
         goto error;
      }
-   else
-     b++;
    *ptr = b;
 
    return sum;
@@ -3957,6 +3957,56 @@ error:
    ty->decoding_error = EINA_TRUE;
    return sum;
 }
+
+#if defined(BINARY_TYTEST)
+/* 'X' stands for the uninitialised stack past the NUL */
+static int
+_osc_arg_get_check(Termpty *ty, const char *input,
+                   int expected_arg, int expected_offset)
+{
+   Eina_Unicode buf[4096], *p = buf;
+   int i;
+
+   for (i = 0; i < (int)(sizeof(buf) / sizeof(buf[0])); i++)
+     buf[i] = 'X';
+   for (i = 0; input[i]; i++)
+     buf[i] = input[i];
+   buf[i] = '\0';
+
+   if (_osc_arg_get(ty, &p) != expected_arg)
+     return 0;
+   if (expected_offset < 0)
+     return p == NULL;
+   return p == buf + expected_offset;
+}
+
+int
+tytest_osc_arg_get(void)
+{
+   Termpty ty;
+
+   memset(&ty, 0, sizeof(ty));
+
+   assert(_osc_arg_get_check(&ty, "0", 0, 1));
+   assert(_osc_arg_get_check(&ty, "4", 4, 1));
+   assert(_osc_arg_get_check(&ty, "104", 104, 3));
+   assert(_osc_arg_get_check(&ty, "2;title", 2, 2));
+   assert(_osc_arg_get_check(&ty, "4;", 4, 2));
+   assert(_osc_arg_get_check(&ty, "", -ESC_ARG_NO_VALUE, -1));
+   /* an invalid argument leaves *ptr alone */
+   assert(_osc_arg_get_check(&ty, "12x", -ESC_ARG_ERROR, 0));
+   assert(_osc_arg_get_check(&ty, "70000", -ESC_ARG_ERROR, 0));
+
+     {
+        Eina_Unicode *p = NULL;
+
+        assert(_osc_arg_get(&ty, &p) == -ESC_ARG_NO_VALUE);
+        assert(p == NULL);
+     }
+
+   return 0;
+}
+#endif
 
 static int
 _eina_unicode_to_hex(Eina_Unicode u)

@@ -79,6 +79,7 @@ static struct {
        { "osc52_read_gate", tytest_osc52_read_gate},
        { "osc52_read_ask", tytest_osc52_read_ask},
        { "osc52_long_max", tytest_osc52_long_max},
+       { "osc_arg_get", tytest_osc_arg_get},
        { NULL, NULL},
 };
 
