@@ -639,6 +639,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.sace_rectangular = 0;
    ty->termstate.esc_keycode = 0;
    ty->termstate.alternate_esc = 0;
+   memset(ty->termstate.xmod, 0, sizeof(ty->termstate.xmod));
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;

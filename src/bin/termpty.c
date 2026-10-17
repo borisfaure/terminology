@@ -2489,6 +2489,27 @@ tytest_xmodkeys_query(void)
    return 0;
 }
 
+/* DECSTR and RIS put every XTMODKEYS resource back to its initial value */
+int
+tytest_xmodkeys_reset(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[>4;1m\x1b[>1;3m");
+   _ty_feed(&ty, "\x1b[!p");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 0);
+   assert(ty.termstate.xmod[XMOD_CURSOR] == 0);
+
+   _ty_feed(&ty, "\x1b[>4;2m");
+   _ty_feed(&ty, "\x1b" "c");
+   assert(ty.termstate.xmod[XMOD_OTHER] == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* DECRQM: CSI ? Ps $ p and CSI Ps $ p, answered with a DECRPM,
  * CSI ? Ps ; Pm $ y resp. CSI Ps ; Pm $ y */
 int
