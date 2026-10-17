@@ -195,10 +195,81 @@ tytest_keyin_modify_other_keys(void)
    PRESS("F1",            0,  0,   1,   "\033[1;5P");
    PRESS("Left",          1,  0,   0,   "\033[1;3D");
 
-   /* level 1 is not level 2: nothing is re-encoded */
-   _ty->termstate.xmod[XMOD_OTHER] = 1;
+   /* level 0 is unchanged: nothing is re-encoded */
+   _ty->termstate.xmod[XMOD_OTHER] = 0;
    PRESS("Escape",        1,  0,   0,   "\033\033");
    PRESS_S("a", "\001",   0,  0,   1,   "\001");
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   _shutdown();
+   return bad;
+}
+
+/* modifyOtherKeys=1, foot and ghostty's tables for Return, Escape, Tab */
+int
+tytest_keyin_modify_other_keys_level1(void)
+{
+   int bad = 0;
+
+   _init();
+   _ty->termstate.xmod[XMOD_OTHER] = 1;
+
+   /*      key          alt shift ctrl   expected */
+   PRESS("Return",        0,  0,   0,   "\r");
+   PRESS("Return",        1,  0,   0,   "\033\r");
+   PRESS("Return",        0,  1,   0,   "\033[27;2;13~");
+   PRESS("Return",        0,  0,   1,   "\033[27;5;13~");
+   PRESS("Return",        0,  1,   1,   "\033[27;6;13~");
+   PRESS("Return",        1,  1,   0,   "\033[27;4;13~");
+   PRESS("Return",        1,  0,   1,   "\033[27;7;13~");
+   PRESS("Return",        1,  1,   1,   "\033[27;8;13~");
+
+   PRESS("Escape",        0,  0,   0,   "\033");
+   PRESS("Escape",        1,  0,   0,   "\033\033");
+   PRESS("Escape",        0,  1,   0,   "\033[27;2;27~");
+   PRESS("Escape",        0,  0,   1,   "\033[27;5;27~");
+   PRESS("Escape",        1,  0,   1,   "\033[27;7;27~");
+
+   PRESS("Tab",           0,  0,   0,   "\t");
+   PRESS("Tab",           1,  0,   0,   "\033\t");
+   PRESS("Tab",           0,  0,   1,   "\033[27;5;9~");
+   PRESS("Tab",           1,  0,   1,   "\033[27;7;9~");
+   PRESS("ISO_Left_Tab",  0,  1,   0,   "\033[Z");
+   PRESS("ISO_Left_Tab",  0,  1,   1,   "\033[27;6;9~");
+   PRESS("ISO_Left_Tab",  1,  1,   0,   "\033[27;4;9~");
+
+   /* BackSpace is never reported at level 1 */
+   PRESS("BackSpace",     0,  1,   0,   "\b");
+   PRESS("BackSpace",     1,  0,   0,   "\033\b");
+   PRESS("BackSpace",     0,  0,   1,   "\b");
+
+   /* Ctrl on a key with no C0 meaning */
+   PRESS_S("1", "1",      0,  0,   1,   "\033[27;5;49~");
+   PRESS_S("1", "1",      1,  0,   1,   "\033[27;7;49~");
+   PRESS_S("semicolon", ";", 0, 0, 1,   "\033[27;5;59~");
+   PRESS_S("exclam", "!", 0,  1,   1,   "\033[27;6;33~");
+   /* ... but Ctrl+letter, Ctrl+2..8 and Alt or Shift alone stay legacy */
+   PRESS_S("a", "\001",   0,  0,   1,   "\001");
+   PRESS_S("A", "\001",   0,  1,   1,   "\001");
+   PRESS_S("3", "3",      0,  0,   1,   "\033");
+   PRESS_S("1", "1",      1,  0,   0,   "\033" "1");
+   PRESS_S("exclam", "!", 0,  1,   0,   "!");
+
+   /* function and cursor keys keep their own modifier encoding */
+   PRESS("F1",            0,  0,   1,   "\033[1;5P");
+   PRESS("Left",          0,  1,   0,   "\033[1;2D");
+
+   /* application escape (7727) still wins */
+   _ty->termstate.esc_keycode = 1;
+   PRESS("Escape",        0,  0,   1,   "\033O[");
+   _ty->termstate.esc_keycode = 0;
+
+   /* level 0 is unchanged */
+   _ty->termstate.xmod[XMOD_OTHER] = 0;
+   PRESS("Return",        0,  1,   0,   "\r");
+   PRESS("Tab",           0,  0,   1,   "\t");
+   PRESS_S("1", "1",      0,  0,   1,   "1");
 
    if (bad)
      fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");

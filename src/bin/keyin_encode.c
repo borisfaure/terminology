@@ -34,10 +34,10 @@ struct tag_Tty_Key
 
 /* {{{ modifyOtherKeys */
 
-static Eina_Bool
-_xmod_other_keys(const Termpty *ty)
+static int
+_xmod_other_keys_level(const Termpty *ty)
 {
-   return ty->termstate.xmod[XMOD_OTHER] == 2;
+   return ty->termstate.xmod[XMOD_OTHER];
 }
 
 static void
@@ -61,6 +61,44 @@ _xmod_wants_other(int code, int alt, int shift, int ctrl)
    if (alt || ctrl)
      return EINA_TRUE;
    return (code == ' ');
+}
+
+/* modifyOtherKeys=1, foot and ghostty's tables: Return and Escape are
+ * reported whenever Shift or Ctrl is held, Alt included in Pm */
+static Eina_Bool
+_xmod_level1_wants_return_or_escape(int shift, int ctrl)
+{
+   return shift || ctrl;
+}
+
+/* Shift+Tab alone keeps CSI Z, Alt+Tab alone keeps ESC Tab */
+static Eina_Bool
+_xmod_level1_wants_tab(const char *key, int alt, int shift, int ctrl)
+{
+   if (!strcmp(key, "ISO_Left_Tab"))
+     shift = 1;
+   if (ctrl)
+     return EINA_TRUE;
+   return shift && alt;
+}
+
+/* modifyOtherKeys=1: Ctrl on a key that has no C0 meaning, like foot's
+ * !ctrl_seq. Keysym 0x40..0x7f and xterm's control aliases (Ctrl+Space,
+ * Ctrl+2..8, Ctrl+'/') stay C0, and so does anything evas already turned
+ * into a single control byte. */
+static Eina_Bool
+_xmod_level1_wants_other(int code, const char *string, int ctrl)
+{
+   if (!ctrl)
+     return EINA_FALSE;
+   if ((code >= 0x40) && (code <= 0x7f))
+     return EINA_FALSE;
+   if ((code == ' ') || (code == '/') || ((code >= '2') && (code <= '8')))
+     return EINA_FALSE;
+   if (string && string[0] && !string[1] &&
+       (((unsigned char)string[0] < 0x20) || (string[0] == 0x7f)))
+     return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /* Keysym name -> the character xterm would report for it, or -1 */
@@ -136,6 +174,8 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
                  Eina_Bool numlock, const int alt, const int shift,
                  const int ctrl)
 {
+   int level = _xmod_other_keys_level(ty);
+
    if (!strcmp(key, "BackSpace"))
      {
         const Config *cfg = ty->config;
@@ -145,7 +185,7 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
           code = '\177';
 
         /* xterm strips Control here, as per IsBackarrowToggle() */
-        if (_xmod_other_keys(ty) && (alt || shift))
+        if ((level == 2) && (alt || shift))
           {
              _xmod_write(ty, code, alt, shift, ctrl);
              return;
@@ -165,7 +205,9 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
           {
              TERMPTY_WRITE_STR("\034");
           }
-        else if (_xmod_other_keys(ty) && (alt || shift || ctrl))
+        else if (((level == 2) && (alt || shift || ctrl)) ||
+                 ((level == 1) &&
+                  _xmod_level1_wants_return_or_escape(shift, ctrl)))
           {
              _xmod_write(ty, '\033', alt, shift, ctrl);
           }
@@ -184,7 +226,9 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
      }
    if (!strcmp(key, "Return"))
      {
-        if (_xmod_other_keys(ty) && (alt || shift || ctrl))
+        if (((level == 2) && (alt || shift || ctrl)) ||
+            ((level == 1) &&
+             _xmod_level1_wants_return_or_escape(shift, ctrl)))
           {
              _xmod_write(ty, '\r', alt, shift, ctrl);
              return;
@@ -202,7 +246,7 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
              return;
           }
      }
-   if (_xmod_other_keys(ty))
+   if (level == 2)
      {
         if (!strcmp(key, "Tab") || !strcmp(key, "ISO_Left_Tab"))
           {
@@ -221,6 +265,27 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
                   _xmod_write(ty, code, alt, shift, ctrl);
                   return;
                }
+          }
+     }
+   if ((level == 1) &&
+       (!strcmp(key, "Tab") || !strcmp(key, "ISO_Left_Tab")) &&
+       _xmod_level1_wants_tab(key, alt, shift, ctrl))
+     {
+        /* Evas reports Shift+Tab as ISO_Left_Tab with Shift set; force
+         * the bit on for that keysym so Pm stays right if a layout
+         * delivers it without the modifier */
+        _xmod_write(ty, '\t', alt, shift || !strcmp(key, "ISO_Left_Tab"),
+                    ctrl);
+        return;
+     }
+   if (level == 1)
+     {
+        int code = _xmod_key_code(key);
+
+        if ((code >= 0) && _xmod_level1_wants_other(code, string, ctrl))
+          {
+             _xmod_write(ty, code, alt, shift, ctrl);
+             return;
           }
      }
    if (!strncmp(key, "KP_", 3))
