@@ -5044,6 +5044,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    char *s;
    int len = 0;
    int arg;
+   int payload_len; /* the OSC string length, without its terminator */
 
    cc = c;
    p = buf;
@@ -5077,6 +5078,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
               (int)(be - buf) - 1);
         return cc - c;
      }
+   payload_len = p - buf;
    *p = '\0';
    p = buf;
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\'))
@@ -5184,17 +5186,17 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 10:
         DBG("Set foreground color");
-        _handle_xterm_10_command(ty, p, cc - c - (p - buf));
+        _handle_xterm_10_command(ty, p, payload_len - (p - buf) + 1);
         break;
       case 11:
         DBG("Set background color");
-        _handle_xterm_set_color_class(ty, p, cc - c - (p - buf),
+        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
                                       termio_bg_get(ty->obj),
                                       "BG", 11);
         break;
       case 12:
         DBG("Set cursor color");
-        _handle_xterm_set_color_class(ty, p, cc - c - (p - buf),
+        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
                                       termio_get_cursor(ty->obj),
                                       "CURSOR", 12);
         break;
