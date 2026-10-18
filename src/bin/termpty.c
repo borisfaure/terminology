@@ -2544,6 +2544,12 @@ tytest_osc_color_reset(void)
    _ty_feed(&ty, "\x1b]10;#ff0000\x07\x1b]110\x07\x1b]10;?\x07");
    _ty_reply_is(&ty, "\x1b]10;rgb:aaaa/aaaa/aaaa\x1b\\");
 
+   /* a "default" value resets like OSC 110/111/112 do */
+   _ty_feed(&ty, "\x1b]12;#0000ff\x07\x1b]12;default\x07\x1b]12;?\x07");
+   _ty_reply_is(&ty, "\x1b]12;rgb:8787/8888/8989\x1b\\");
+   _ty_feed(&ty, "\x1b]10;#ff0000\x07\x1b]10;default\x07\x1b]10;?\x07");
+   _ty_reply_is(&ty, "\x1b]10;rgb:aaaa/aaaa/aaaa\x1b\\");
+
    _ty_test_shutdown(&ty);
    return 0;
 }

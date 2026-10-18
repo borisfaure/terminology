@@ -39,6 +39,7 @@ printf '\033]12;?\007'
 # not names: the colour stays as it was
 printf '\033]10;notacolor\007'
 printf '\033]10;?\007'
+# "default" resets to the configured colour
 printf '\033]10;default\007'
 printf '\033]10;?\007'
 

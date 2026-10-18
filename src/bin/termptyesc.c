@@ -4299,6 +4299,21 @@ _xterm_parse_color_rgb(Eina_Unicode *p,
 }
 
 
+/* kitty accepts a "default" value as a reset of the dynamic colour
+ * (window.py, change(): to_color() fails, delattr() restores the
+ * configured one); opentui sends it before OSC 112 */
+static Eina_Bool
+_xterm_color_is_default(const Eina_Unicode *p)
+{
+   static const char def[] = "default";
+   int i;
+
+   for (i = 0; def[i]; i++)
+     if (p[i] != def[i])
+       return EINA_FALSE;
+   return !p[i];
+}
+
 static int
 _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
                    unsigned char *r, unsigned char *g, unsigned char *b,
@@ -4581,6 +4596,11 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
 {
    if (!p || !*p)
      goto err;
+   if (_xterm_color_is_default(p))
+     {
+        termio_reset_fg_color(ty->obj);
+        return;
+     }
    if (*p == '?')
      {
         int r, g, b;
@@ -4604,10 +4624,16 @@ static void
 _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
                               Evas_Object *obj,
                               const char *color_class,
-                              uint8_t number)
+                              uint8_t number,
+                              void (*reset)(Evas_Object *termio))
 {
    if (!p || !*p)
      goto err;
+   if (_xterm_color_is_default(p))
+     {
+        reset(ty->obj);
+        return;
+     }
 #if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
    if (!obj)
      goto err;
@@ -5259,13 +5285,15 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         DBG("Set background color");
         _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
                                       termio_bg_get(ty->obj),
-                                      "BG", 11);
+                                      "BG", 11,
+                                      termio_reset_bg_color);
         break;
       case 12:
         DBG("Set cursor color");
         _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
                                       termio_get_cursor(ty->obj),
-                                      "CURSOR", 12);
+                                      "CURSOR", 12,
+                                      termio_reset_cursor_color);
         break;
       case 50:
         DBG("xterm font support");

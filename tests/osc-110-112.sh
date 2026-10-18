@@ -32,3 +32,14 @@ printf '\033]117\007\033]118\007\033]119\007'
 # reset when nothing was changed
 printf '\033]111\007'
 printf '\033]11;?\007'
+# a "default" value resets like OSC 110/111/112 do
+printf '\033]12;#0000ff\007'
+printf '\033]12;default\007'
+printf '\033]12;?\007'
+# all three, with an ESC \ terminator as opentui may send it
+printf '\033]10;#ff0000\007\033]11;#00ff00\007\033]12;#0000ff\007'
+printf '\033]10;default\033\\\033]11;default\033\\\033]12;default\033\\'
+printf '\033]10;?\007\033]11;?\007\033]12;?\007'
+# a near miss is still an invalid colour
+printf '\033]12;#0000ff\007\033]12;defaults\007'
+printf '\033]12;?\007'
