@@ -692,6 +692,9 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                    else
                      _sync_output_end(ty);
                    break;
+                case 2031: /* colour scheme change reporting */
+                   ty->color_scheme_reporting = mode;
+                   break;
                 case 7700: // ignore
                    WRN("TODO: ambiguous width reporting %i", mode);
                    ty->decoding_error = EINA_TRUE;
@@ -857,8 +860,8 @@ _dec_private_mode_status(const Termpty *ty, int mode)
          return _decrpm_from_bool(ty->sync_output.active);
       case 2027: /* grapheme clustering is not implemented */
          return DECRPM_PERMANENTLY_RESET;
-      case 2031: /* colour scheme updates, not implemented */
-         return DECRPM_NOT_RECOGNIZED;
+      case 2031:
+         return _decrpm_from_bool(ty->color_scheme_reporting);
       case 7727:
          return _decrpm_from_bool(ty->termstate.esc_keycode);
       case 7728:

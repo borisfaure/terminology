@@ -659,6 +659,7 @@ void
 termpty_reset_state(Termpty *ty)
 {
    termpty_soft_reset_state(ty);
+   ty->color_scheme_reporting = 0;
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
    termpty_clear_backlog(ty);
