@@ -5956,6 +5956,7 @@ void change_theme(Evas_Object *win, Config *config)
           ERR("Couldn't find terminology theme!");
         colors_term_init(termio_textgrid_get(term->termio),
                          config->color_scheme);
+        termio_theme_set(term->termio, term->bg_edj);
         termio_config_set(term->termio, config);
         if (config->color_scheme && term->mediatype == MEDIA_TYPE_RECT)
           {
