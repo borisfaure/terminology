@@ -408,6 +408,8 @@ termpty_focus_report(Termpty *ty, Eina_Bool focus);
 void
 termpty_color_scheme_report(Termpty *ty);
 void
+termpty_color_scheme_notify(Termpty *ty);
+void
 termpty_selection_read_answer(Termpty *ty,
                               Termpty_Selection_Read_Answer answer);
 

@@ -190,6 +190,15 @@ termio_bg_is_dark(const Evas_Object *obj)
 }
 
 void
+termio_color_scheme_changed(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   termpty_color_scheme_notify(sd->pty);
+}
+
+void
 termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
 {
    Termio *sd = evas_object_smart_data_get(obj);

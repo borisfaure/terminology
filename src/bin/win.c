@@ -5958,6 +5958,7 @@ void change_theme(Evas_Object *win, Config *config)
                          config->color_scheme);
         termio_theme_set(term->termio, term->bg_edj);
         termio_config_set(term->termio, config);
+        termio_color_scheme_changed(term->termio);
         if (config->color_scheme && term->mediatype == MEDIA_TYPE_RECT)
           {
              evas_object_color_set(term->media,

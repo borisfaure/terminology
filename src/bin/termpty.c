@@ -1916,6 +1916,14 @@ termpty_color_scheme_report(Termpty *ty)
      TERMPTY_WRITE_STR("\033[?997;2n");
 }
 
+void
+termpty_color_scheme_notify(Termpty *ty)
+{
+   if (!ty || !ty->color_scheme_reporting)
+     return;
+   termpty_color_scheme_report(ty);
+}
+
 Term_Link *
 term_link_new(Termpty *ty)
 {
@@ -2568,6 +2576,45 @@ tytest_decrqm(void)
    _ty_reply_is(&ty, "\x1b[4;2$y\x1b[4;1$y\x1b[20;0$y");
 
    _ty_test_shutdown(&ty);
+   return 0;
+}
+
+int
+tytest_color_scheme_notify(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   /* mode off: no report */
+   termpty_color_scheme_notify(&ty);
+   assert(ty.write_buffer.len == 0);
+
+   /* enabling sends nothing by itself */
+   _ty_feed(&ty, "\x1b[?2031h");
+   assert(ty.write_buffer.len == 0);
+
+   /* the fake default background 131/132/133 is light */
+   termpty_color_scheme_notify(&ty);
+   _ty_reply_is(&ty, "\x1b[?997;2n");
+
+   /* the report follows a live OSC 11 */
+   _ty_feed(&ty, "\x1b]11;#000000\x07");
+   termpty_color_scheme_notify(&ty);
+   _ty_reply_is(&ty, "\x1b[?997;1n");
+
+   /* mode reset: no report */
+   _ty_feed(&ty, "\x1b[?2031l");
+   termpty_color_scheme_notify(&ty);
+   assert(ty.write_buffer.len == 0);
+
+   /* RIS clears the mode in the same step that restores the background */
+   _ty_feed(&ty, "\x1b[?2031h\x1b" "c");
+   termpty_color_scheme_notify(&ty);
+   assert(ty.write_buffer.len == 0);
+
+   _ty_test_shutdown(&ty);
+   termio_reset_main_colors(NULL); /* other unit tests read the fake _bg */
    return 0;
 }
 
