@@ -206,6 +206,8 @@ from it:
 
 Do not list the functions you edited, walk through the diff, or paste test
 output. Wrap at 72 columns. A trivial change may have no body at all.
+Try to keep the body short and focused on the change. One or two paragraphs is
+usually enough.
 
 Good:
 
@@ -233,12 +235,14 @@ termptyesc: add APC support
 
 ### AI disclosure
 
-Commits written with the help of an AI tool say so with a trailer naming the
-tool, for example:
-
-```
-Co-Authored-By: <Tool and model name> <noreply@example.com>
-```
+No need to disclose that you used an AI tool to help write a commit.  Do not
+add a `Co-Authored-By` trailer or any other note about it. The commit message
+is for humans, not for machines.
+If you used an AI tool to generate code, you are responsible for it. Make sure
+you understand every line, and that it meets the same standards as any other
+contribution. If you cannot explain why a line is there, it does not belong in
+the patch.  If you are not confident in your ability to review the code, be
+transparent about it in the pull request and ask for help from a maintainer.
 
 ## Pull requests and reviews
 
