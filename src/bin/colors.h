@@ -77,6 +77,9 @@ colors_256_get(int col,
                unsigned char *b,
                unsigned char *a);
 
+Eina_Bool
+colors_is_dark(int r, int g, int b);
+
 
 void
 color_scheme_apply_from_config(Evas_Object *edje,

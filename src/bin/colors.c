@@ -605,6 +605,12 @@ colors_256_get(int col,
    *a = default_colors256[col].a;
 }
 
+Eina_Bool
+colors_is_dark(int r, int g, int b)
+{
+   return (299 * r + 587 * g + 114 * b) < 127500;
+}
+
 void
 color_scheme_apply(Evas_Object *edje,
                    const Color_Scheme *cs)
@@ -1201,6 +1207,43 @@ tytest_rgb_to_palette(void)
     * on which path (cache hit or full scan) produced it. */
    assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
    assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
+
+   return 0;
+}
+
+/* The formula is 299·R + 587·G + 114·B < 127500, so greys flip between
+ * 0x7f (127000, dark) and 0x80 (128000, light). */
+int
+tytest_colors_is_dark(void)
+{
+   static const struct {
+      uint8_t r, g, b;
+      Eina_Bool dark;
+   } table[] = {
+      {   0,   0,   0, EINA_TRUE  },   /* black */
+      { 255, 255, 255, EINA_FALSE },   /* white */
+      { 127, 127, 127, EINA_TRUE  },
+      { 128, 128, 128, EINA_FALSE },
+      {   0,   0, 255, EINA_TRUE  },   /* 29070 */
+      { 255,   0,   0, EINA_TRUE  },   /* 76245 */
+      { 255, 255,   0, EINA_FALSE },   /* 225930 */
+      {   0, 255,   0, EINA_FALSE },   /* 149685 */
+      /* shipped scheme backgrounds */
+      { 0x20, 0x20, 0x20, EINA_TRUE  },   /* Default */
+      { 0x2e, 0x34, 0x40, EINA_TRUE  },   /* Nord */
+      { 0x00, 0x2b, 0x36, EINA_TRUE  },   /* Solarized */
+      { 0x30, 0x30, 0x30, EINA_TRUE  },   /* Mild */
+      { 0xfd, 0xf6, 0xe3, EINA_FALSE },   /* Solarized Light */
+      { 0xee, 0xee, 0xee, EINA_FALSE },   /* PaperColor */
+      { 0xd5, 0xcc, 0xba, EINA_FALSE },   /* Belafonte Day */
+   };
+   size_t i;
+
+   for (i = 0; i < sizeof(table) / sizeof(table[0]); i++)
+     {
+        assert(colors_is_dark(table[i].r, table[i].g, table[i].b)
+               == table[i].dark);
+     }
 
    return 0;
 }
