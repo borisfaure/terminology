@@ -86,12 +86,13 @@ jobs:
       - uses: actions/checkout@v7
 
       # EFL 1.27 from noble/universe is new enough for the 1.26 the build asks
-      # for, so there is nothing to build from source here.
+      # for, so there is nothing to build from source here. gperf generates
+      # the X11 colour name table from color_names.gperf.
       - name: Install build dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential meson ninja-build pkg-config gettext python3 \
+            build-essential meson ninja-build pkg-config gettext python3 gperf \
             libefl-all-dev libedje-bin libeet-bin libelementary-bin
 
       # libclang-rt carries the sanitizer runtimes; clang cannot even link a
@@ -160,7 +161,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            build-essential meson ninja-build pkg-config gettext python3 \
+            build-essential meson ninja-build pkg-config gettext python3 gperf \
             libefl-all-dev libedje-bin libeet-bin libelementary-bin gcovr
 
       - name: Configure
