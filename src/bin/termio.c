@@ -117,60 +117,83 @@ termio_theme_set(Evas_Object *obj, Evas_Object *theme)
 }
 
 void
+termio_reset_bg_color(Evas_Object *termio)
+{
+   Termio *sd = termio ? evas_object_smart_data_get(termio) : NULL;
+   Evas_Object *bg;
+
+   if (!sd)
+     return;
+   bg = term_bg_get(sd->term);
+   EINA_SAFETY_ON_NULL_RETURN(bg);
+   if (edje_object_color_class_set(bg, "BG",
+                                   sd->saved_bg.r,
+                                   sd->saved_bg.g,
+                                   sd->saved_bg.b,
+                                   sd->saved_bg.a,
+                                   sd->saved_bg.r,
+                                   sd->saved_bg.g,
+                                   sd->saved_bg.b,
+                                   sd->saved_bg.a,
+                                   sd->saved_bg.r,
+                                   sd->saved_bg.g,
+                                   sd->saved_bg.b,
+                                   sd->saved_bg.a)
+       != EINA_TRUE)
+     {
+        ERR("error setting color class '%s'", "BG");
+     }
+}
+
+void
+termio_reset_cursor_color(Evas_Object *termio)
+{
+   Termio *sd = termio ? evas_object_smart_data_get(termio) : NULL;
+
+   if (!sd)
+     return;
+   if (edje_object_color_class_set(sd->cursor.obj, "CURSOR",
+                                   sd->saved_cursor.r,
+                                   sd->saved_cursor.g,
+                                   sd->saved_cursor.b,
+                                   sd->saved_cursor.a,
+                                   sd->saved_cursor.r,
+                                   sd->saved_cursor.g,
+                                   sd->saved_cursor.b,
+                                   sd->saved_cursor.a,
+                                   sd->saved_cursor.r,
+                                   sd->saved_cursor.g,
+                                   sd->saved_cursor.b,
+                                   sd->saved_cursor.a)
+       != EINA_TRUE)
+     {
+        ERR("error setting color class '%s'", "CURSOR");
+     }
+}
+
+void
+termio_reset_fg_color(Evas_Object *termio)
+{
+   Termio *sd = termio ? evas_object_smart_data_get(termio) : NULL;
+
+   if (!sd)
+     return;
+   EINA_SAFETY_ON_NULL_RETURN(sd->grid.obj);
+   evas_object_textgrid_palette_set(
+      sd->grid.obj,
+      EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+      sd->saved_fg.r,
+      sd->saved_fg.g,
+      sd->saved_fg.b,
+      sd->saved_fg.a);
+}
+
+void
 termio_reset_main_colors(Evas_Object *termio)
 {
-   if (termio)
-     {
-        Termio *sd = evas_object_smart_data_get(termio);
-        Evas_Object *bg;
-
-        EINA_SAFETY_ON_NULL_RETURN(sd);
-        EINA_SAFETY_ON_NULL_RETURN(sd->grid.obj);
-
-        bg = term_bg_get(sd->term);
-        EINA_SAFETY_ON_NULL_RETURN(bg);
-        if (edje_object_color_class_set(bg, "BG",
-                               sd->saved_bg.r,
-                               sd->saved_bg.g,
-                               sd->saved_bg.b,
-                               sd->saved_bg.a,
-                               sd->saved_bg.r,
-                               sd->saved_bg.g,
-                               sd->saved_bg.b,
-                               sd->saved_bg.a,
-                               sd->saved_bg.r,
-                               sd->saved_bg.g,
-                               sd->saved_bg.b,
-                               sd->saved_bg.a)
-            != EINA_TRUE)
-          {
-             ERR("error setting color class '%s'", "BG");
-          }
-        if (edje_object_color_class_set(sd->cursor.obj, "CURSOR",
-                                    sd->saved_cursor.r,
-                                    sd->saved_cursor.g,
-                                    sd->saved_cursor.b,
-                                    sd->saved_cursor.a,
-                                    sd->saved_cursor.r,
-                                    sd->saved_cursor.g,
-                                    sd->saved_cursor.b,
-                                    sd->saved_cursor.a,
-                                    sd->saved_cursor.r,
-                                    sd->saved_cursor.g,
-                                    sd->saved_cursor.b,
-                                    sd->saved_cursor.a)
-            != EINA_TRUE)
-          {
-             ERR("error setting color class '%s'", "CURSOR");
-          }
-        evas_object_textgrid_palette_set(
-           sd->grid.obj,
-           EVAS_TEXTGRID_PALETTE_STANDARD, 0,
-           sd->saved_fg.r,
-           sd->saved_fg.g,
-           sd->saved_fg.b,
-           sd->saved_fg.a);
-     }
+   termio_reset_bg_color(termio);
+   termio_reset_cursor_color(termio);
+   termio_reset_fg_color(termio);
 }
 
 Eina_Bool

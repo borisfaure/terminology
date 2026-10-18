@@ -337,16 +337,35 @@ tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *
 }
 
 void
-termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
+termio_reset_bg_color(Evas_Object *termio EINA_UNUSED)
 {
    _bg.r = 131;
    _bg.g = 132;
    _bg.b = 133;
    _bg.a = 134;
+}
+
+void
+termio_reset_cursor_color(Evas_Object *termio EINA_UNUSED)
+{
    _cursor.r = 135;
    _cursor.g = 136;
    _cursor.b = 137;
    _cursor.a = 138;
+}
+
+/* There is no foreground fake yet: nothing can change it. */
+void
+termio_reset_fg_color(Evas_Object *termio EINA_UNUSED)
+{
+}
+
+void
+termio_reset_main_colors(Evas_Object *termio)
+{
+   termio_reset_bg_color(termio);
+   termio_reset_cursor_color(termio);
+   termio_reset_fg_color(termio);
 }
 
 Eina_Bool
