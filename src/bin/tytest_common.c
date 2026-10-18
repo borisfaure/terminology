@@ -15,9 +15,9 @@
 #include "simd/simd.h"
 #include "tytest_common.h"
 #if defined(BINARY_TYTEST)
-#include "colors.h"
 #include "tytest.h"
 #endif
+#include "colors.h"
 #include <assert.h>
 
 static Config *_config = NULL;
@@ -347,6 +347,12 @@ termio_reset_main_colors(Evas_Object *termio EINA_UNUSED)
    _cursor.g = 136;
    _cursor.b = 137;
    _cursor.a = 138;
+}
+
+Eina_Bool
+termio_bg_is_dark(const Evas_Object *obj EINA_UNUSED)
+{
+   return colors_is_dark(_bg.r, _bg.g, _bg.b);
 }
 
 Evas_Object *

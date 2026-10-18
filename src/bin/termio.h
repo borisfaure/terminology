@@ -75,6 +75,7 @@ Evas_Object * termio_miniview_get(const Evas_Object *obj);
 Term* termio_term_get(const Evas_Object *obj);
 Eina_Bool termio_is_focused(const Evas_Object *obj);
 Evas_Object *termio_bg_get(const Evas_Object *obj);
+Eina_Bool termio_bg_is_dark(const Evas_Object *obj);
 
 void termio_key_down(Evas_Object *termio,
                      Evas_Event_Key_Down *ev,

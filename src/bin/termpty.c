@@ -1905,6 +1905,17 @@ termpty_focus_report(Termpty *ty, Eina_Bool focus)
      TERMPTY_WRITE_STR("\033[O");
 }
 
+/* Contour's "Dark and Light Mode detection" extension:
+ * https://contour-terminal.org/vt-extensions/color-palette-update-notifications/ */
+void
+termpty_color_scheme_report(Termpty *ty)
+{
+   if (termio_bg_is_dark(ty->obj))
+     TERMPTY_WRITE_STR("\033[?997;1n");
+   else
+     TERMPTY_WRITE_STR("\033[?997;2n");
+}
+
 Term_Link *
 term_link_new(Termpty *ty)
 {

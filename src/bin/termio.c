@@ -173,6 +173,22 @@ termio_reset_main_colors(Evas_Object *termio)
      }
 }
 
+Eina_Bool
+termio_bg_is_dark(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Evas_Object *bg;
+   int r = 0, g = 0, b = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_TRUE);
+   bg = term_bg_get(sd->term);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(bg, EINA_TRUE);
+   edje_object_color_class_get(bg, "BG", &r, &g, &b, NULL,
+                               NULL, NULL, NULL, NULL,
+                               NULL, NULL, NULL, NULL);
+   return colors_is_dark(r, g, b);
+}
+
 void
 termio_mouseover_suspend_pushpop(Evas_Object *obj, int dir)
 {

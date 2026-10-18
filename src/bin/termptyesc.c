@@ -1694,6 +1694,19 @@ _handle_esc_csi_dsr(Termpty *ty, Eina_Unicode *b)
            }
          break;
       /* TODO: -ESC_ARG_NO_VALUE */
+      case 996:
+         if (question_mark)
+           {
+              /* DSR-ColorScheme */
+              termpty_color_scheme_report(ty);
+           }
+         else
+           {
+              WRN("unhandled DSR (dec specific: %s) %d",
+                  (question_mark)? "yes": "no", arg);
+              ty->decoding_error = EINA_TRUE;
+           }
+         break;
       default:
          WRN("unhandled DSR (dec specific: %s) %d",
              (question_mark)? "yes": "no", arg);
