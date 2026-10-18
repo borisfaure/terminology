@@ -4,7 +4,15 @@ simd_sources = ['simd/simd.c',
                 'simd/simd_sse2.c',
                 'simd/simd.h']
 
+# X11 colour names for the OSC 10/11/12 parsers
+color_names = custom_target('color_names.c',
+                            input: 'color_names.gperf',
+                            output: 'color_names.c',
+                            capture: true,
+                            command: [find_program('gperf'), '--ignore-case', '@INPUT@'])
+
 terminology_sources = ['private.h',
+                       'color_names.h', color_names,
                        'about.c', 'about.h',
                        'colors.c', 'colors.h',
                        'config.c', 'config.h',
@@ -57,7 +65,8 @@ tyq_sources = ['tycommon.c', 'tycommon.h', 'tyq.c']
 tycat_sources = ['tycommon.c', 'tycommon.h', 'tycat.c', 'extns.c', 'extns.h']
 tyls_sources = ['extns.c', 'extns.h', 'tyls.c', 'tycommon.c', 'tycommon.h']
 tysend_sources = ['tycommon.c', 'tycommon.h', 'tysend.c']
-tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
+tyfuzz_sources = [color_names,
+                  'termptyesc.c', 'termptyesc.h',
                   'backlog.c', 'backlog.h',
                   'termptyops.c', 'termptyops.h',
                   'termptydbl.c', 'termptydbl.h',
@@ -76,7 +85,8 @@ tyfuzz_sources = ['termptyesc.c', 'termptyesc.h',
                   'uri_decode.c', 'uri_decode.h',
                   'tytest_common.c', 'tytest_common.h',
                   'tyfuzz.c']
-tytest_sources = ['termptyesc.c', 'termptyesc.h',
+tytest_sources = [color_names,
+                  'termptyesc.c', 'termptyesc.h',
                   'backlog.c', 'backlog.h',
                   'termptyops.c', 'termptyops.h',
                   'termptydbl.c', 'termptydbl.h',
@@ -101,7 +111,8 @@ tytest_sources = ['termptyesc.c', 'termptyesc.h',
                   'keyin_encode.c', 'keyin_encode.h',
                   'tty_keys.h', 'tytest_keyin.c',
                   'tytest.c', 'tytest.h']
-tybench_sources = ['termptyesc.c', 'termptyesc.h',
+tybench_sources = [color_names,
+                  'termptyesc.c', 'termptyesc.h',
                   'backlog.c', 'backlog.h',
                   'termptyops.c', 'termptyops.h',
                   'termptydbl.c', 'termptydbl.h',

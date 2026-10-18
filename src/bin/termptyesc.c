@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include "colors.h"
+#include "color_names.h"
 #include "termio.h"
 #include "termpty.h"
 #include "termptydbl.h"
@@ -4328,7 +4329,29 @@ _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
           goto err;
      }
    else
-     goto err;
+     {
+        char name[32];
+        const struct color_name *e;
+        int i;
+
+        /* len counts the terminating NUL, as in the sharp and rgb forms */
+        len--;
+        if (len <= 0 || len >= (int)sizeof(name))
+          goto err;
+        for (i = 0; i < len; i++)
+          {
+             if (p[i] > 0x7f)
+               goto err;
+             name[i] = p[i];
+          }
+        name[i] = '\0';
+        e = color_name_lookup(name, len);
+        if (!e)
+          goto err;
+        *r = e->r;
+        *g = e->g;
+        *b = e->b;
+     }
 
    return 0;
 
@@ -4337,6 +4360,50 @@ err:
    ty->decoding_error = EINA_TRUE;
    return -1;
 }
+
+#if defined(BINARY_TYTEST)
+static int
+_xterm_parse_color_check(Termpty *ty, const char *input,
+                         int expected, int r, int g, int b)
+{
+   Eina_Unicode buf[4096], *p = buf;
+   unsigned char rr = 0, gg = 0, bb = 0;
+   int i, ret;
+
+   for (i = 0; input[i]; i++)
+     buf[i] = input[i];
+   buf[i] = '\0';
+
+   ret = _xterm_parse_color(ty, &p, &rr, &gg, &bb, i + 1);
+   return (ret == expected) && (rr == r) && (gg == g) && (bb == b);
+}
+
+int
+tytest_osc_color_name(void)
+{
+   Termpty ty;
+
+   memset(&ty, 0, sizeof(ty));
+
+   /* X11 names, case-insensitive, spaces allowed */
+   assert(_xterm_parse_color_check(&ty, "red", 0, 255, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "RED", 0, 255, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "navy blue", 0, 0, 0, 128));
+   assert(_xterm_parse_color_check(&ty, "NavyBlue", 0, 0, 0, 128));
+   assert(_xterm_parse_color_check(&ty, "gray42", 0, 107, 107, 107));
+   /* the other forms still parse */
+   assert(_xterm_parse_color_check(&ty, "#ff0000", 0, 255, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgb:ff/00/00", 0, 255, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgbi:1.0/0/0", 0, 255, 0, 0));
+   /* not colour names */
+   assert(_xterm_parse_color_check(&ty, "default", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "notacolor", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "reDd", -1, 0, 0, 0));
+   assert(ty.decoding_error == EINA_TRUE);
+
+   return 0;
+}
+#endif
 
 static void
 _handle_hyperlink(Termpty *ty,

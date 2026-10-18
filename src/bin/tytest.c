@@ -89,6 +89,7 @@ static struct {
        { "osc52_long_max", tytest_osc52_long_max},
        { "osc_arg_get", tytest_osc_arg_get},
        { "osc_color_reset", tytest_osc_color_reset},
+       { "osc_color_name", tytest_osc_color_name},
        { NULL, NULL},
 };
 

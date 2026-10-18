@@ -58,6 +58,7 @@ int tytest_osc52_read_ask(void);
 int tytest_osc52_long_max(void);
 int tytest_osc_arg_get(void);
 int tytest_osc_color_reset(void);
+int tytest_osc_color_name(void);
 
 #endif
 int tytest_keyin_legacy(void);
