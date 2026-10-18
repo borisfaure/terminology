@@ -720,6 +720,7 @@ termio_config_set(Evas_Object *obj, Config *config)
    sd->font.chw = w;
    sd->font.chh = h;
 
+   sd->cursor.force = EINA_TRUE;
    termio_set_cursor_shape(obj, sd->cursor.shape);
 
    theme_apply(sd->sel.theme, config, "terminology/selection",
