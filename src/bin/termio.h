@@ -97,6 +97,10 @@ termio_block_activate(Evas_Object *obj, Termblock *blk);
 const char *
 term_preedit_str_get(Term *term);
 void
+termio_fg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
+void
+termio_fg_color_set(Evas_Object *obj, int r, int g, int b);
+void
 termio_reset_fg_color(Evas_Object *termio);
 void
 termio_reset_bg_color(Evas_Object *termio);

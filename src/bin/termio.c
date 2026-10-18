@@ -196,6 +196,35 @@ termio_reset_main_colors(Evas_Object *termio)
    termio_reset_fg_color(termio);
 }
 
+void
+termio_fg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   *r = 0;
+   *g = 0;
+   *b = 0;
+   if (!sd)
+     return;
+   evas_object_textgrid_palette_get(
+      sd->grid.obj,
+      EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+      r, g, b, NULL);
+}
+
+void
+termio_fg_color_set(Evas_Object *obj, int r, int g, int b)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   if (!sd)
+     return;
+   evas_object_textgrid_palette_set(
+      sd->grid.obj,
+      EVAS_TEXTGRID_PALETTE_STANDARD, 0,
+      r, g, b, 0xff);
+}
+
 Eina_Bool
 termio_bg_is_dark(const Evas_Object *obj)
 {

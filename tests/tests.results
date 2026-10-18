@@ -130,7 +130,7 @@ selection_with_tabs.sh 213c7c2d9a8acc731e0b326a88bb71ef
 selection_empty_lines.sh 2ae3aa22572ef150457b63ed9a78efdc
 osc-invalid.sh e5933e7dd49d52b80240e352f4ff8965
 osc-no-payload.sh 8aa7b12e298dfbeb5a48dcc48ea2f9a8
-osc-colors-ris.sh 6c293396e0be918dba2c798b05d9e5a9
+osc-colors-ris.sh b9cde87fbfcf5e02a0d906a8dee7dff3
 title_icon_stack_simple.sh 466827743ff8de9cdfb46e9033552cfc
 title_icon_stack_unset.sh fbdac41cbf1e5f2ec6e0053737911ddb
 title_icon_stack_default.sh fbdac41cbf1e5f2ec6e0053737911ddb
@@ -150,7 +150,7 @@ color_link_edc.sh 5e07d738e6cf44af2fb4fd65d1ee7bb3
 color_link_css_rgb.sh 72b7cb4595072ac488906f82e3887192
 color_link_css_hsl.sh 3ff5de5ddb3497395516c81cea80dea4
 crash_empty_osc.sh b8e76e1c3e4e0b6d37278c84909f9ce7
-xterm-osc-10.sh 6431660f0b76987f02b84b919d9a233c
+xterm-osc-10.sh 7eac024a79690beea20b08cb8f51cf18
 xterm-osc-11.sh d95b1b23a773568db74f8aa55d38a02a
 xterm-osc-12.sh 68b5e093b25182617e0b512c96e6aea7
 xterm-colors-sharp.sh c279098fd5e3c39702cf36bc94686ff9

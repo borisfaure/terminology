@@ -4517,17 +4517,8 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
    if (*p == '?')
      {
         int r, g, b;
-#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
-        evas_object_textgrid_palette_get(
-           termio_textgrid_get(ty->obj),
-           EVAS_TEXTGRID_PALETTE_STANDARD, 0,
-           &r, &g, &b, NULL);
-#else
-        Config *config = termio_config_get(ty->obj);
-        r = config->colors[0].r;
-        g = config->colors[0].g;
-        b = config->colors[0].b;
-#endif
+
+        termio_fg_color_get(ty->obj, &r, &g, &b);
         _write_xterm_color_response(ty, 10, r, g, b);
      }
    else
@@ -4535,12 +4526,7 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
         unsigned char r, g, b;
         if (_xterm_parse_color(ty, &p, &r, &g, &b, len) < 0)
           goto err;
-#if !defined(BINARY_TYFUZZ) && !defined(BINARY_TYTEST)
-        evas_object_textgrid_palette_set(
-           termio_textgrid_get(ty->obj),
-           EVAS_TEXTGRID_PALETTE_STANDARD, 0,
-           r, g, b, 0xff);
-#endif
+        termio_fg_color_set(ty->obj, r, g, b);
      }
    return;
 err:

@@ -47,6 +47,8 @@ static Termio _sd = {
 };
 static Color _bg = { .r = 131, .g = 132, .b = 133, .a = 134 };
 static Color _cursor = { .r = 135, .g = 136, .b = 137, .a = 138 };
+/* COL_DEF, the first standard palette entry, like config->colors[0] */
+static Color _fg = { .r = 0xaa, .g = 0xaa, .b = 0xaa, .a = 0xff };
 static const char *_cursor_shape = "undefined";
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
@@ -354,10 +356,31 @@ termio_reset_cursor_color(Evas_Object *termio EINA_UNUSED)
    _cursor.a = 138;
 }
 
-/* There is no foreground fake yet: nothing can change it. */
 void
 termio_reset_fg_color(Evas_Object *termio EINA_UNUSED)
 {
+   _fg.r = 0xaa;
+   _fg.g = 0xaa;
+   _fg.b = 0xaa;
+   _fg.a = 0xff;
+}
+
+void
+termio_fg_color_get(const Evas_Object *obj EINA_UNUSED,
+                    int *r, int *g, int *b)
+{
+   *r = _fg.r;
+   *g = _fg.g;
+   *b = _fg.b;
+}
+
+void
+termio_fg_color_set(Evas_Object *obj EINA_UNUSED, int r, int g, int b)
+{
+   _fg.r = r;
+   _fg.g = g;
+   _fg.b = b;
+   _fg.a = 0xff;
 }
 
 void
