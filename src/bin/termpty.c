@@ -2532,6 +2532,22 @@ tytest_xmodkeys_reset(void)
    return 0;
 }
 
+int
+tytest_osc_color_reset(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b]12;#0000ff\x07\x1b]112\x07\x1b]12;?\x07");
+   _ty_reply_is(&ty, "\x1b]12;rgb:8787/8888/8989\x1b\\");
+   _ty_feed(&ty, "\x1b]10;#ff0000\x07\x1b]110\x07\x1b]10;?\x07");
+   _ty_reply_is(&ty, "\x1b]10;rgb:aaaa/aaaa/aaaa\x1b\\");
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* DECRQM: CSI ? Ps $ p and CSI Ps $ p, answered with a DECRPM,
  * CSI ? Ps ; Pm $ y resp. CSI Ps ; Pm $ y */
 int

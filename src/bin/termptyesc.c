@@ -5215,12 +5215,15 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 110:
         DBG("Reset VT100 text foreground color");
+        termio_reset_fg_color(ty->obj);
         break;
       case 111:
         DBG("Reset VT100 text background color");
+        termio_reset_bg_color(ty->obj);
         break;
       case 112:
         DBG("Reset text cursor color");
+        termio_reset_cursor_color(ty->obj);
         break;
       case 113:
         DBG("Reset mouse foreground color");
