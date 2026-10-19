@@ -38,8 +38,9 @@ colors_regression.sh 448410f26d58dc8dfa9383d747cc3d92
 sgr-leading-trailing-semicolon.sh 8bba9806b565b6a2a8330f985c27e915
 sgr-truecolors.sh 6f649a3932448304da311ed912bc7e0b
 hang-invalid-truecolors.sh 48b053df6ad681b834032250c53d3316
-sgr-long.sh 46ae9dd10659c9f7a012e8e6387ae684
+sgr-long.sh 12bac5f60d2476c92155d8fd91f35bd6
 sgr-subparam-ignored.sh 980af28724ed47aae56ff31d3e9f4cb4
+sgr-58-59.sh 237ffe5b60fdbb0f77ced45aab5b4ea3
 decsclm.sh 48b053df6ad681b834032250c53d3316
 cha.sh 6659226975d06786a9651da14299cb82
 dch.sh 384554eb0ae94f22f03504a48d77c851

@@ -2443,6 +2443,41 @@ _ty_reply_is(Termpty *ty, const char *expected)
    ty_sb_free(&ty->write_buffer);
 }
 
+/* The memcmp against zero is deliberate: storing the colour must break it. */
+int
+tytest_sgr_58_no_leak(void)
+{
+   static const char *const probes[] = {
+      "\x1b[58;5;1m",
+      "\x1b[58:5:1m",
+      "\x1b[58;2;59;34;76m",
+      "\x1b[58:2::59:34:76m",
+      "\x1b[58:2:0:59:34:76m",
+      "\x1b[58:2:59:34:76m",
+      "\x1b[59m",
+   };
+   Termpty ty;
+   Termatt zero;
+   unsigned int i;
+
+   _ty_test_init(&ty, 80, 24);
+   memset(&zero, 0, sizeof(zero));
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(probes); i++)
+     {
+        _ty_feed(&ty, probes[i]);
+        assert(!memcmp(&ty.termstate.att, &zero, sizeof(zero)));
+     }
+
+   _ty_feed(&ty, "\x1b[58;2;59;34;76;1m");
+   assert(ty.termstate.att.bold);
+   assert(!ty.termstate.att.faint);
+   assert(ty.termstate.att.fg == COL_DEF);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* XTMODKEYS: CSI > Pp ; Pv m, Pp selects the resource, Pv is the value. */
 int
 tytest_xmodkeys_set(void)

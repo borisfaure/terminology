@@ -1176,11 +1176,11 @@ enum sgr_color_status {
 static Eina_Bool
 _sgr_takes_subparams(int code)
 {
-   return (code == 4) || (code == 38) || (code == 48);
+   return (code == 4) || (code == 38) || (code == 48) || (code == 58);
 }
 
-/* Parse the colour argument of SGR 38 and 48: the colour type, then the
- * colour itself, as a palette index and a 256-palette flag. */
+/* Parse the colour argument of SGR 38, 48 and 58: the colour type, then
+ * the colour itself, as a palette index and a 256-palette flag. */
 static enum sgr_color_status
 _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
                         uint8_t *color, Eina_Bool *palette256)
@@ -1415,6 +1415,13 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               break;
            case 55:
               ty->termstate.att.overlined = 0;
+              break;
+           case 58: // underline color, not stored yet
+              if (_sgr_extended_color_get(ty, &b, &color, &palette256)
+                  == SGR_COLOR_ABORT)
+                return;
+              break;
+           case 59: // default underline color
               break;
            case 90: // fg
            case 91:

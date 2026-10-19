@@ -35,6 +35,7 @@ int tytest_sync_change_cb_coalesced(void);
 int tytest_sync_change_cb_watchdog(void);
 int tytest_sync_change_cb_altscreen(void);
 int tytest_percent_decode(void);
+int tytest_sgr_58_no_leak(void);
 int tytest_xmodkeys_set(void);
 int tytest_xmodkeys_query(void);
 int tytest_xmodkeys_reset(void);
