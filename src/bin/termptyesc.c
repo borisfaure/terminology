@@ -1154,6 +1154,62 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
    return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
 }
 
+enum sgr_color_status {
+     SGR_COLOR_SET,
+     SGR_COLOR_INVALID,
+     SGR_COLOR_ABORT
+};
+
+/* Parse the colour argument of SGR 38 and 48: the colour type, then the
+ * colour itself, as a palette index and a 256-palette flag. */
+static enum sgr_color_status
+_sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
+                        uint8_t *color, Eina_Bool *palette256)
+{
+   int arg = _csi_arg_get(ty, ptr);
+
+   switch (arg)
+     {
+      case -ESC_ARG_ERROR:
+         EINA_FALLTHROUGH;
+      case -ESC_ARG_NO_VALUE:
+         return SGR_COLOR_ABORT;
+      case 1:
+         *palette256 = EINA_FALSE;
+         *color = COL_INVIS;
+         return SGR_COLOR_SET;
+      case 2:
+         *palette256 = EINA_TRUE;
+         *color = _handle_esc_csi_truecolor_rgb(ty, ptr);
+         return SGR_COLOR_SET;
+      case 3:
+         *palette256 = EINA_TRUE;
+         *color = _handle_esc_csi_truecolor_cmy(ty, ptr);
+         return SGR_COLOR_SET;
+      case 4:
+         *palette256 = EINA_TRUE;
+         *color = _handle_esc_csi_truecolor_cmyk(ty, ptr);
+         return SGR_COLOR_SET;
+      case 5:
+         arg = _csi_arg_get(ty, ptr);
+         if ((arg <= -ESC_ARG_ERROR) || (arg > 255))
+           {
+              ERR("Invalid indexed color %d", arg);
+              ty->decoding_error = EINA_TRUE;
+              return SGR_COLOR_INVALID;
+           }
+         if (arg == -ESC_ARG_NO_VALUE)
+           arg = 0;
+         *palette256 = EINA_TRUE;
+         *color = arg;
+         return SGR_COLOR_SET;
+      default:
+         ERR("Unknown extended color type %d", arg);
+         ty->decoding_error = EINA_TRUE;
+         return SGR_COLOR_INVALID;
+     }
+}
+
 static void
 _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
                           const Eina_Unicode * const end)
@@ -1164,6 +1220,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
    while (b && b <= end)
      {
         Eina_Bool sub_follows = EINA_FALSE;
+        enum sgr_color_status status;
+        uint8_t color = 0;
+        Eina_Bool palette256 = EINA_FALSE;
         int arg = _csi_arg_get_subparam(ty, &b, &sub_follows);
         switch (arg)
           {
@@ -1262,58 +1321,14 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               ty->termstate.att.fg = (arg - 30) + COL_BLACK;
               ty->termstate.att.fgintense = 0;
               break;
-           case 38: // xterm 256 fg color ???
-              arg = _csi_arg_get(ty, &b);
-              switch (arg)
+           case 38: // extended fg color
+              status = _sgr_extended_color_get(ty, &b, &color, &palette256);
+              if (status == SGR_COLOR_ABORT)
+                return;
+              if (status == SGR_COLOR_SET)
                 {
-                 case -ESC_ARG_ERROR:
-                    EINA_FALLTHROUGH;
-                 case -ESC_ARG_NO_VALUE:
-                    return;
-                 case 1:
-                    ty->termstate.att.fg256 = 0;
-                    ty->termstate.att.fg = COL_INVIS;
-                    break;
-                 case 2:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_rgb(ty, &b);
-                    DBG("truecolor RGB fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 3:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_cmy(ty, &b);
-                    DBG("truecolor CMY fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 4:
-                    ty->termstate.att.fg256 = 1;
-                    ty->termstate.att.fg =
-                       _handle_esc_csi_truecolor_cmyk(ty, &b);
-                    DBG("truecolor CMYK fg: approximation got color %d",
-                        ty->termstate.att.fg);
-                    break;
-                 case 5:
-                    // then get next arg - should be color index 0-255
-                    arg = _csi_arg_get(ty, &b);
-                    if (arg <= -ESC_ARG_ERROR || arg > 255)
-                      {
-                         ERR("Invalid fg color %d", arg);
-                         ty->decoding_error = EINA_TRUE;
-                      }
-                    else
-                      {
-                         if (arg == -ESC_ARG_NO_VALUE)
-                           arg = 0;
-                         ty->termstate.att.fg256 = 1;
-                         ty->termstate.att.fg = arg;
-                      }
-                    break;
-                 default:
-                    ERR("Failed xterm 256 color fg (got %d)", arg);
-                    ty->decoding_error = EINA_TRUE;
+                   ty->termstate.att.fg256 = palette256;
+                   ty->termstate.att.fg = color;
                 }
               ty->termstate.att.fgintense = 0;
               break;
@@ -1334,58 +1349,14 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               ty->termstate.att.bg = (arg - 40) + COL_BLACK;
               ty->termstate.att.bgintense = 0;
               break;
-           case 48: // xterm 256 bg color ???
-              arg = _csi_arg_get(ty, &b);
-              switch (arg)
+           case 48: // extended bg color
+              status = _sgr_extended_color_get(ty, &b, &color, &palette256);
+              if (status == SGR_COLOR_ABORT)
+                return;
+              if (status == SGR_COLOR_SET)
                 {
-                 case -ESC_ARG_ERROR:
-                    EINA_FALLTHROUGH;
-                 case -ESC_ARG_NO_VALUE:
-                    return;
-                 case 1:
-                    ty->termstate.att.bg256 = 0;
-                    ty->termstate.att.bg = COL_INVIS;
-                    break;
-                 case 2:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_rgb(ty, &b);
-                    DBG("truecolor RGB bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 3:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_cmy(ty, &b);
-                    DBG("truecolor CMY bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 4:
-                    ty->termstate.att.bg256 = 1;
-                    ty->termstate.att.bg =
-                       _handle_esc_csi_truecolor_cmyk(ty, &b);
-                    DBG("truecolor CMYK bg: approximation got color %d",
-                        ty->termstate.att.bg);
-                    break;
-                 case 5:
-                    // then get next arg - should be color index 0-255
-                    arg = _csi_arg_get(ty, &b);
-                    if (arg <= -ESC_ARG_ERROR || arg > 255)
-                      {
-                         ERR("Invalid bg color %d", arg);
-                         ty->decoding_error = EINA_TRUE;
-                      }
-                    else
-                      {
-                         if (arg == -ESC_ARG_NO_VALUE)
-                           arg = 0;
-                         ty->termstate.att.bg256 = 1;
-                         ty->termstate.att.bg = arg;
-                      }
-                    break;
-                 default:
-                    ERR("Failed xterm 256 color bg (got %d)", arg);
-                    ty->decoding_error = EINA_TRUE;
+                   ty->termstate.att.bg256 = palette256;
+                   ty->termstate.att.bg = color;
                 }
               ty->termstate.att.bgintense = 0;
               break;
