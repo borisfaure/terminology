@@ -240,6 +240,18 @@ _csi_arg_get(Termpty *ty, Eina_Unicode **ptr)
    return _csi_arg_get_subparam(ty, ptr, &sub_follows);
 }
 
+static Eina_Bool
+_csi_subparams_skip(Termpty *ty, Eina_Unicode **ptr,
+                    Eina_Bool *sub_follows)
+{
+   while (*sub_follows)
+     {
+        if (_csi_arg_get_subparam(ty, ptr, sub_follows) == -ESC_ARG_ERROR)
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 static void
 _tab_forward(Termpty *ty, int n)
 {
@@ -1160,13 +1172,21 @@ enum sgr_color_status {
      SGR_COLOR_ABORT
 };
 
+/* ECMA-48 5.4.2 */
+static Eina_Bool
+_sgr_takes_subparams(int code)
+{
+   return (code == 4) || (code == 38) || (code == 48);
+}
+
 /* Parse the colour argument of SGR 38 and 48: the colour type, then the
  * colour itself, as a palette index and a 256-palette flag. */
 static enum sgr_color_status
 _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
                         uint8_t *color, Eina_Bool *palette256)
 {
-   int arg = _csi_arg_get(ty, ptr);
+   Eina_Bool more;
+   int arg = _csi_arg_get_subparam(ty, ptr, &more);
 
    switch (arg)
      {
@@ -1191,21 +1211,27 @@ _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
          *color = _handle_esc_csi_truecolor_cmyk(ty, ptr);
          return SGR_COLOR_SET;
       case 5:
-         arg = _csi_arg_get(ty, ptr);
+         arg = _csi_arg_get_subparam(ty, ptr, &more);
          if ((arg <= -ESC_ARG_ERROR) || (arg > 255))
            {
               ERR("Invalid indexed color %d", arg);
               ty->decoding_error = EINA_TRUE;
+              if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
+                return SGR_COLOR_ABORT;
               return SGR_COLOR_INVALID;
            }
          if (arg == -ESC_ARG_NO_VALUE)
            arg = 0;
+         if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
+           return SGR_COLOR_ABORT;
          *palette256 = EINA_TRUE;
          *color = arg;
          return SGR_COLOR_SET;
       default:
          ERR("Unknown extended color type %d", arg);
          ty->decoding_error = EINA_TRUE;
+         if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
+           return SGR_COLOR_ABORT;
          return SGR_COLOR_INVALID;
      }
 }
@@ -1224,6 +1250,14 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
         uint8_t color = 0;
         Eina_Bool palette256 = EINA_FALSE;
         int arg = _csi_arg_get_subparam(ty, &b, &sub_follows);
+        if ((sub_follows) && (arg >= 0) && (!_sgr_takes_subparams(arg)))
+          {
+             WRN("Ignored SGR %d with subparameters", arg);
+             ty->decoding_error = EINA_TRUE;
+             if (!_csi_subparams_skip(ty, &b, &sub_follows))
+               return;
+             continue;
+          }
         switch (arg)
           {
            case -ESC_ARG_ERROR:
