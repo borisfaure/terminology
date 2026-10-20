@@ -3616,6 +3616,11 @@ _smart_add(Evas_Object *obj)
    evas_object_smart_member_add(o, obj);
    evas_object_show(o);
    sd->grid.obj = o;
+#if defined(HAVE_TEXTGRID_RGB)
+   /* Per-cell direct colours: allocates w * h *
+    * sizeof(Evas_Textgrid_Truecolor), freed by EFL on resize and destroy. */
+   evas_object_textgrid_truecolor_set(o, EINA_TRUE);
+#endif
 
    /* Setup cursor */
    o = edje_object_add(evas_object_evas_get(obj));

@@ -9,6 +9,7 @@
 #include "termptydbl.h"
 #include "termptyops.h"
 #include "termiointernals.h"
+#include "colors.h"
 #include "utf8.h"
 #if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
@@ -2432,6 +2433,7 @@ termio_internal_render(Termio *sd,
      {
         const Termcell *cells;
         Evas_Textgrid_Cell *tc;
+        Evas_Textgrid_Truecolor *tr = NULL;
         Eina_Unicode *cp = NULL;
         int cur_sel_start_x = -1, cur_sel_end_x = -1;
         int rel_y = y - sd->scroll;
@@ -2444,6 +2446,11 @@ termio_internal_render(Termio *sd,
         tc = evas_object_textgrid_cellrow_get(sd->grid.obj, y);
         if (!tc)
           continue;
+#if defined(HAVE_TEXTGRID_RGB)
+        /* NULL when truecolor is off or EFL ran out of memory; cells then
+         * fall back to the palette approximation below. */
+        tr = evas_object_textgrid_truecolor_cellrow_get(sd->grid.obj, y);
+#endif
 
         /* Compute @cur_sel_start_x, @cur_sel_end_x */
         if (sd->pty->selection.codepoints)
@@ -2535,6 +2542,7 @@ termio_internal_render(Termio *sd,
                   tc[x].codepoint = 0;
                   tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
                   tc[x].bg_extended = 0;
+                  TC_TRUECOLOR_CLEAR(tc[x], tr, x);
                   tc[x].underline = 0;
                   tc[x].strikethrough = 0;
                   TC_OVERLINE_SET(tc[x], 0);
@@ -2567,6 +2575,7 @@ termio_internal_render(Termio *sd,
                        tc[x].codepoint = 0;
                        tc[x].fg_extended = 0;
                        tc[x].bg_extended = 0;
+                       TC_TRUECOLOR_CLEAR(tc[x], tr, x);
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
                        TC_OVERLINE_SET(tc[x], 0);
@@ -2612,6 +2621,7 @@ termio_internal_render(Termio *sd,
                        tc[x].codepoint = 0;
                        tc[x].bg = (inv) ? COL_INVERSEBG : COL_INVIS;
                        tc[x].bg_extended = 0;
+                       TC_TRUECOLOR_CLEAR(tc[x], tr, x);
                        tc[x].underline = 0;
                        tc[x].strikethrough = 0;
                        TC_OVERLINE_SET(tc[x], 0);
@@ -2636,17 +2646,23 @@ termio_internal_render(Termio *sd,
                     {
                        int fg, bg, fgext, bgext, bold, italic;
                        Eina_Unicode codepoint;
+                       /* fg/bg hold a palette index, or 0xRRGGBB when the
+                        * matching *_is_rgb flag is set */
+                       Eina_Bool fg_is_rgb, bg_is_rgb;
 
                        // colors
                        fg = cells[x].att.fg;
                        bg = cells[x].att.bg;
                        fgext = cells[x].att.fg256;
                        bgext = cells[x].att.bg256;
+                       fg_is_rgb = cells[x].att.fgrgb;
+                       bg_is_rgb = cells[x].att.bgrgb;
                        codepoint = cells[x].codepoint;
 
-                       if ((fg == COL_DEF) && (cells[x].att.inverse ^ inv))
+                       if ((!fg_is_rgb) && (fg == COL_DEF) &&
+                           (cells[x].att.inverse ^ inv))
                          fg = COL_INVERSEBG;
-                       if (bg == COL_DEF)
+                       if ((!bg_is_rgb) && (bg == COL_DEF))
                          {
                             if (cells[x].att.inverse ^ inv)
                               bg = COL_INVERSE;
@@ -2654,10 +2670,14 @@ termio_internal_render(Termio *sd,
                               bg = COL_INVIS;
                          }
 
-                       if ((cells[x].att.bgintense) && (!bgext))
+                       if ((!bg_is_rgb) && (cells[x].att.bgintense) &&
+                           (!bgext))
                          bg += 12;
 
-                       if (!fgext)
+                       /* Bold does not brighten an RGB colour, and neither
+                        * do the intense nor faint adjustments: kitty, foot
+                        * and xterm all leave direct colours alone. */
+                       if ((!fg_is_rgb) && (!fgext))
                          {
                             if ((cells[x].att.fgintense) || (cells[x].att.bold))
                               fg += 12;
@@ -2668,8 +2688,35 @@ termio_internal_render(Termio *sd,
                        if (cells[x].att.inverse ^ inv)
                          {
                             int t;
+                            Eina_Bool trgb;
+
                             t = fgext; fgext = bgext; bgext = t;
                             t = fg; fg = bg; bg = t;
+                            trgb = fg_is_rgb; fg_is_rgb = bg_is_rgb;
+                            bg_is_rgb = trgb;
+                         }
+
+                       if (fg_is_rgb && (tr == NULL))
+                         {
+                            /* No truecolour row available (EFL without the
+                             * API, or it ran out of memory): approximate,
+                             * but the cell keeps the true value for next
+                             * time. */
+                            fg = colors_rgb_to_palette(sd->grid.obj,
+                                                       (fg >> 16) & 0xff,
+                                                       (fg >> 8) & 0xff,
+                                                       fg & 0xff);
+                            fgext = 1;
+                            fg_is_rgb = EINA_FALSE;
+                         }
+                       if (bg_is_rgb && (tr == NULL))
+                         {
+                            bg = colors_rgb_to_palette(sd->grid.obj,
+                                                       (bg >> 16) & 0xff,
+                                                       (bg >> 8) & 0xff,
+                                                       bg & 0xff);
+                            bgext = 1;
+                            bg_is_rgb = EINA_FALSE;
                          }
 
                        /* if font does not have bolditalic, bright/bold
@@ -2686,18 +2733,50 @@ termio_internal_render(Termio *sd,
                             italic = 0;
                          }
 
+                       /* EFL's palette index is 8 bits and ignored while
+                        * the truecolour flag is set: give the cell a
+                        * defined index, and compare cells through it. The
+                        * RGB value itself stays in fg/bg for the
+                        * truecolour row below. */
+                       int fg_idx = (fg_is_rgb) ? COL_DEF : fg;
+                       int bg_idx = (bg_is_rgb) ? COL_DEF : bg;
+
                        Eina_Bool cell_changed =
                           (tc[x].codepoint != codepoint) ||
                           (tc[x].bold != bold) ||
                           (tc[x].italic != italic) ||
-                          (tc[x].fg != fg) ||
-                          (tc[x].bg != bg) ||
+                          (tc[x].fg != fg_idx) ||
+                          (tc[x].bg != bg_idx) ||
                           (tc[x].fg_extended != fgext) ||
                           (tc[x].bg_extended != bgext) ||
                           (tc[x].underline != cells[x].att.underline) ||
                           (tc[x].strikethrough != cells[x].att.strike) ||
                           TC_OVERLINE_DIFFERS(tc[x], cells[x].att.overlined) ||
                           (tc[x].double_width != cells[x].att.dblwidth);
+
+#if defined(HAVE_TEXTGRID_RGB)
+                       if ((!cell_changed) && (tr != NULL))
+                         {
+                            /* Truecolour is part of the cell's identity:
+                             * two cells may share a palette index while
+                             * their direct colours differ. */
+                            if (((Eina_Bool)tc[x].fg_truecolor != fg_is_rgb) ||
+                                ((Eina_Bool)tc[x].bg_truecolor != bg_is_rgb))
+                              cell_changed = EINA_TRUE;
+                            else if (fg_is_rgb &&
+                                     ((tr[x].fg.r != ((fg >> 16) & 0xff)) ||
+                                      (tr[x].fg.g != ((fg >> 8) & 0xff)) ||
+                                      (tr[x].fg.b != (fg & 0xff)) ||
+                                      (tr[x].fg.a != 0xff)))
+                              cell_changed = EINA_TRUE;
+                            else if (bg_is_rgb &&
+                                     ((tr[x].bg.r != ((bg >> 16) & 0xff)) ||
+                                      (tr[x].bg.g != ((bg >> 8) & 0xff)) ||
+                                      (tr[x].bg.b != (bg & 0xff)) ||
+                                      (tr[x].bg.a != 0xff)))
+                              cell_changed = EINA_TRUE;
+                         }
+#endif
 
                        if (cell_changed)
                          {
@@ -2707,6 +2786,27 @@ termio_internal_render(Termio *sd,
 
                             tc[x].fg_extended = fgext;
                             tc[x].bg_extended = bgext;
+#if defined(HAVE_TEXTGRID_RGB)
+                            tc[x].fg_truecolor = fg_is_rgb;
+                            tc[x].bg_truecolor = bg_is_rgb;
+                            if (tr != NULL)
+                              {
+                                 if (fg_is_rgb)
+                                   {
+                                      tr[x].fg.r = (fg >> 16) & 0xff;
+                                      tr[x].fg.g = (fg >> 8) & 0xff;
+                                      tr[x].fg.b = fg & 0xff;
+                                      tr[x].fg.a = 0xff;
+                                   }
+                                 if (bg_is_rgb)
+                                   {
+                                      tr[x].bg.r = (bg >> 16) & 0xff;
+                                      tr[x].bg.g = (bg >> 8) & 0xff;
+                                      tr[x].bg.b = bg & 0xff;
+                                      tr[x].bg.a = 0xff;
+                                   }
+                              }
+#endif
                             tc[x].underline = cells[x].att.underline;
                             tc[x].strikethrough = cells[x].att.strike;
                             TC_OVERLINE_SET(tc[x], cells[x].att.overlined);
@@ -2721,8 +2821,8 @@ termio_internal_render(Termio *sd,
                                  tc[x].italic = 0;
                               }
                             tc[x].double_width = cells[x].att.dblwidth;
-                            tc[x].fg = fg;
-                            tc[x].bg = bg;
+                            tc[x].fg = fg_idx;
+                            tc[x].bg = bg_idx;
                             if (tc[x].codepoint != codepoint &&
                                 EINA_UNLIKELY(l1 >= 0 && x >= l1 && x <= l2))
                               {

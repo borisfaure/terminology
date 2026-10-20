@@ -88,7 +88,7 @@ tytest_textgrid_truecolor_set(Evas_Object *obj EINA_UNUSED, Eina_Bool enabled)
 }
 
 Evas_Textgrid_Truecolor *
-tytest_textgrid_truecolor_row_get(Evas_Object *obj EINA_UNUSED, int y)
+tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
 {
    /* termio.c is not in the tytest build, so nothing calls
     * tytest_textgrid_truecolor_set(): allocate lazily, like a caller

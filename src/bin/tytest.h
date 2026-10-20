@@ -20,9 +20,9 @@ tytest_textgrid_cellrow_get(Evas_Object *obj, int y);
 void
 tytest_textgrid_truecolor_set(Evas_Object *obj, Eina_Bool enabled);
 
-#define evas_object_textgrid_truecolor_row_get  tytest_textgrid_truecolor_row_get
+#define evas_object_textgrid_truecolor_cellrow_get  tytest_textgrid_truecolor_cellrow_get
 Evas_Textgrid_Truecolor *
-tytest_textgrid_truecolor_row_get(Evas_Object *obj, int y);
+tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj, int y);
 
 #define edje_object_color_class_get  tytest_edje_object_color_class_get
 Eina_Bool

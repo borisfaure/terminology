@@ -14,6 +14,22 @@ typedef void Term;
 # define TC_OVERLINE_DIFFERS(_tc, _v) (0)
 #endif
 
+/* textgrid cells only gained truecolour in efl 1.29; _tr is the row's
+ * Evas_Textgrid_Truecolor array, NULL when unavailable */
+#ifdef HAVE_TEXTGRID_RGB
+# define TC_TRUECOLOR_CLEAR(_tc, _tr, _x)            \
+   do                                                \
+     {                                               \
+        (_tc).fg_truecolor = 0;                      \
+        (_tc).bg_truecolor = 0;                      \
+        if (_tr)                                     \
+          memset(&(_tr)[_x], 0, sizeof((_tr)[_x]));  \
+     }                                               \
+   while (0)
+#else
+# define TC_TRUECOLOR_CLEAR(_tc, _tr, _x) ((void)0)
+#endif
+
 typedef struct tag_Termio Termio;
 
 struct tag_Termio
