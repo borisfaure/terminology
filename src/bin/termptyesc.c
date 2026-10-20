@@ -990,7 +990,7 @@ _csi_truecolor_arg_get(Termpty *ty, Eina_Unicode **ptr)
    return sum;
 }
 
-static uint8_t
+static uint32_t
 _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b;
@@ -999,7 +999,7 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
 
    if ((u == NULL) || (*u == '\0'))
      {
-        return COL_DEF;
+        return 0;
      }
    separator = *(u-1);
 
@@ -1009,7 +1009,7 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
    if ((r == -ESC_ARG_ERROR) ||
        (g == -ESC_ARG_ERROR) ||
        (b == -ESC_ARG_ERROR))
-     return COL_DEF;
+     return 0;
 
    if (separator == ':' && *ptr)
      {
@@ -1040,10 +1040,12 @@ _handle_esc_csi_truecolor_rgb(Termpty *ty, Eina_Unicode **ptr)
    if (b == -ESC_ARG_NO_VALUE)
      b = 0;
 
-   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return (((uint32_t)r & 0xff) << 16) |
+      (((uint32_t)g & 0xff) << 8) |
+      ((uint32_t)b & 0xff);
 }
 
-static uint8_t
+static uint32_t
 _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b, c, m, y;
@@ -1052,7 +1054,7 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
 
    if ((u == NULL) || (*u == '\0'))
      {
-        return COL_DEF;
+        return 0;
      }
    separator = *(u-1);
 
@@ -1064,7 +1066,7 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
    if ((c == -ESC_ARG_ERROR) ||
        (m == -ESC_ARG_ERROR) ||
        (y == -ESC_ARG_ERROR))
-     return COL_DEF;
+     return 0;
 
    if (separator == ':' && *ptr)
      {
@@ -1099,10 +1101,12 @@ _handle_esc_csi_truecolor_cmy(Termpty *ty, Eina_Unicode **ptr)
    g = 255 - ((m * 255) / 100);
    b = 255 - ((y * 255) / 100);
 
-   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return (((uint32_t)r & 0xff) << 16) |
+      (((uint32_t)g & 0xff) << 8) |
+      ((uint32_t)b & 0xff);
 }
 
-static uint8_t
+static uint32_t
 _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 {
    int r, g, b, c, m, y, k;
@@ -1111,7 +1115,7 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
 
    if ((u == NULL) || (*u == '\0'))
      {
-        return COL_DEF;
+        return 0;
      }
    separator = *(u-1);
 
@@ -1125,7 +1129,7 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
        (m == -ESC_ARG_ERROR) ||
        (y == -ESC_ARG_ERROR) ||
        (k == -ESC_ARG_ERROR))
-     return COL_DEF;
+     return 0;
 
    if (separator == ':' && *ptr)
      {
@@ -1163,7 +1167,9 @@ _handle_esc_csi_truecolor_cmyk(Termpty *ty, Eina_Unicode **ptr)
    g = (255 * (100 - m) * (100 - k)) / 100 / 100;
    b = (255 * (100 - y) * (100 - k)) / 100 / 100;
 
-   return colors_rgb_to_palette(termio_textgrid_get(ty->obj), (uint8_t)r, (uint8_t)g, (uint8_t)b);
+   return (((uint32_t)r & 0xff) << 16) |
+      (((uint32_t)g & 0xff) << 8) |
+      ((uint32_t)b & 0xff);
 }
 
 enum sgr_color_status {
@@ -1180,10 +1186,12 @@ _sgr_takes_subparams(int code)
 }
 
 /* Parse the colour argument of SGR 38, 48 and 58: the colour type, then
- * the colour itself, as a palette index and a 256-palette flag. */
+ * the colour itself, as a palette index and a 256-palette flag, or as a
+ * packed 0xRRGGBB value when is_rgb is set. */
 static enum sgr_color_status
 _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
-                        uint8_t *color, Eina_Bool *palette256)
+                        uint32_t *color, Eina_Bool *palette256,
+                        Eina_Bool *is_rgb)
 {
    Eina_Bool more;
    int arg = _csi_arg_get_subparam(ty, ptr, &more);
@@ -1198,18 +1206,22 @@ _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
          if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
            return SGR_COLOR_ABORT;
          *palette256 = EINA_FALSE;
+         *is_rgb = EINA_FALSE;
          *color = COL_INVIS;
          return SGR_COLOR_SET;
       case 2:
-         *palette256 = EINA_TRUE;
+         *palette256 = EINA_FALSE;
+         *is_rgb = EINA_TRUE;
          *color = _handle_esc_csi_truecolor_rgb(ty, ptr);
          return SGR_COLOR_SET;
       case 3:
-         *palette256 = EINA_TRUE;
+         *palette256 = EINA_FALSE;
+         *is_rgb = EINA_TRUE;
          *color = _handle_esc_csi_truecolor_cmy(ty, ptr);
          return SGR_COLOR_SET;
       case 4:
-         *palette256 = EINA_TRUE;
+         *palette256 = EINA_FALSE;
+         *is_rgb = EINA_TRUE;
          *color = _handle_esc_csi_truecolor_cmyk(ty, ptr);
          return SGR_COLOR_SET;
       case 5:
@@ -1227,6 +1239,7 @@ _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
          if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
            return SGR_COLOR_ABORT;
          *palette256 = EINA_TRUE;
+         *is_rgb = EINA_FALSE;
          *color = arg;
          return SGR_COLOR_SET;
       default:
@@ -1249,8 +1262,9 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
      {
         Eina_Bool sub_follows = EINA_FALSE;
         enum sgr_color_status status;
-        uint8_t color = 0;
+        uint32_t color = 0;
         Eina_Bool palette256 = EINA_FALSE;
+        Eina_Bool is_rgb = EINA_FALSE;
         int arg = _csi_arg_get_subparam(ty, &b, &sub_follows);
         if ((sub_follows) && (arg >= 0) && (!_sgr_takes_subparams(arg)))
           {
@@ -1353,22 +1367,26 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 35:
            case 36:
            case 37:
+              ty->termstate.att.fgrgb = 0;
               ty->termstate.att.fg256 = 0;
               ty->termstate.att.fg = (arg - 30) + COL_BLACK;
               ty->termstate.att.fgintense = 0;
               break;
            case 38: // extended fg color
-              status = _sgr_extended_color_get(ty, &b, &color, &palette256);
+              status = _sgr_extended_color_get(ty, &b, &color, &palette256,
+                                               &is_rgb);
               if (status == SGR_COLOR_ABORT)
                 return;
               if (status == SGR_COLOR_SET)
                 {
+                   ty->termstate.att.fgrgb = is_rgb;
                    ty->termstate.att.fg256 = palette256;
                    ty->termstate.att.fg = color;
                 }
               ty->termstate.att.fgintense = 0;
               break;
            case 39: // default fg color
+              ty->termstate.att.fgrgb = 0;
               ty->termstate.att.fg256 = 0;
               ty->termstate.att.fg = COL_DEF;
               ty->termstate.att.fgintense = 0;
@@ -1381,22 +1399,26 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 45:
            case 46:
            case 47:
+              ty->termstate.att.bgrgb = 0;
               ty->termstate.att.bg256 = 0;
               ty->termstate.att.bg = (arg - 40) + COL_BLACK;
               ty->termstate.att.bgintense = 0;
               break;
            case 48: // extended bg color
-              status = _sgr_extended_color_get(ty, &b, &color, &palette256);
+              status = _sgr_extended_color_get(ty, &b, &color, &palette256,
+                                               &is_rgb);
               if (status == SGR_COLOR_ABORT)
                 return;
               if (status == SGR_COLOR_SET)
                 {
+                   ty->termstate.att.bgrgb = is_rgb;
                    ty->termstate.att.bg256 = palette256;
                    ty->termstate.att.bg = color;
                 }
               ty->termstate.att.bgintense = 0;
               break;
            case 49: // default bg color
+              ty->termstate.att.bgrgb = 0;
               ty->termstate.att.bg256 = 0;
               ty->termstate.att.bg = COL_DEF;
               ty->termstate.att.bgintense = 0;
@@ -1419,7 +1441,8 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
               ty->termstate.att.overlined = 0;
               break;
            case 58: // underline color, not stored yet
-              if (_sgr_extended_color_get(ty, &b, &color, &palette256)
+              if (_sgr_extended_color_get(ty, &b, &color, &palette256,
+                                          &is_rgb)
                   == SGR_COLOR_ABORT)
                 return;
               break;
@@ -1433,11 +1456,13 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 95:
            case 96:
            case 97:
+              ty->termstate.att.fgrgb = 0;
               ty->termstate.att.fg256 = 0;
               ty->termstate.att.fg = (arg - 90) + COL_BLACK;
               ty->termstate.att.fgintense = 1;
               break;
            case 99: // default fg color
+              ty->termstate.att.fgrgb = 0;
               ty->termstate.att.fg256 = 0;
               ty->termstate.att.fg = COL_DEF;
               ty->termstate.att.fgintense = 1;
@@ -1450,11 +1475,13 @@ _handle_esc_csi_color_set(Termpty *ty, Eina_Unicode **ptr,
            case 105:
            case 106:
            case 107:
+              ty->termstate.att.bgrgb = 0;
               ty->termstate.att.bg256 = 0;
               ty->termstate.att.bg = (arg - 100) + COL_BLACK;
               ty->termstate.att.bgintense = 1;
               break;
            case 109: // default bg color
+              ty->termstate.att.bgrgb = 0;
               ty->termstate.att.bg256 = 0;
               ty->termstate.att.bg = COL_DEF;
               ty->termstate.att.bgintense = 1;

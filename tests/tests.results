@@ -36,7 +36,9 @@ decrqm-ansi.sh 5c4f6c6386099415c4755252b025b29d
 colors.sh 0f615472fcbc6c623117ea4409ff412d
 colors_regression.sh 448410f26d58dc8dfa9383d747cc3d92
 sgr-leading-trailing-semicolon.sh 8bba9806b565b6a2a8330f985c27e915
-sgr-truecolors.sh 6f649a3932448304da311ed912bc7e0b
+sgr-truecolors.sh 4fb703a6390f44052d7f87ccb08a0e24
+sgr-truecolor-store.sh 3b1310dfbf6667147e10f5f70785a2ef
+sgr-truecolor-resize.sh 96588d1543081d54c4fbaeb58977ec10
 hang-invalid-truecolors.sh 48b053df6ad681b834032250c53d3316
 sgr-long.sh 12bac5f60d2476c92155d8fd91f35bd6
 sgr-subparam-ignored.sh 980af28724ed47aae56ff31d3e9f4cb4
@@ -147,8 +149,8 @@ selection_box_in_history.sh 7ee08df0894faca03acf905544e87910
 selection_box_scrolls_up.sh 154afe673efb23b4b999dc9896ad03ea
 selection_scrolls_down.sh 154afe673efb23b4b999dc9896ad03ea
 selection_box_scrolls_down.sh 154afe673efb23b4b999dc9896ad03ea
-true_color_cache_thrashing.sh f02cfa642a5d78c08685d0da9ce0e58b
-true_color_cache_reuse.sh 193183c600d0baf7b9fd534d40368f15
+true_color_cache_thrashing.sh 9d52a0e7d5255d211ce840e30df075e4
+true_color_cache_reuse.sh 09fe2453cf84bb06d9166b2ffe37ad03
 selection_word_low_ascii_separators.sh 5ec5101954299981c7fdc4d572f01167
 color_link_sharp.sh 221b969f0970826dfe0d739ff47623f0
 color_link_edc.sh 5e07d738e6cf44af2fb4fd65d1ee7bb3
@@ -162,7 +164,7 @@ xterm-colors-sharp.sh c279098fd5e3c39702cf36bc94686ff9
 xterm-colors-rgb.sh e6a432f17c8e9dde652d749f4261b783
 xterm-colors-rgbi.sh e6a432f17c8e9dde652d749f4261b783
 xterm-set-cursor-color.sh 9867bcaf9cc2fe71a1b1a4ab85f2bea6
-csi-38-no-value.sh 4cf52fe27bf05e78bdf7eecdda5543f7
+csi-38-no-value.sh 320a1a1dc583d6ce1109efdc796c4df1
 osc_selection.sh 28a36b17c3714d1468ca6625ad2f58e3
 lf_below_bottom_margin.sh 02e4df0e6de5f23e8947245d9a8e4adf
 backlog_scroll_stress.sh 614fa95207570793cb0089243a059eda
