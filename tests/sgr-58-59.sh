@@ -52,3 +52,13 @@ printf '\033[58mK\033[m '
 printf '\033[58;mL\033[m '
 printf '\033[58;7;1mbold\033[m '
 printf '\033[58:7:1;3mitalic\033[m'
+
+##
+# the transparent type: extra subparameters are dropped in the colon
+# form, kept as separate parameters in the semicolon form
+##
+
+printf '\033[13;1H'
+printf '\033[58:1:5mplain\033[m '
+printf '\033[38:1:5minvisible\033[m '
+printf '\033[38;1;5minvisible blink\033[m'

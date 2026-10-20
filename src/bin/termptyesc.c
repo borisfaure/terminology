@@ -1195,6 +1195,8 @@ _sgr_extended_color_get(Termpty *ty, Eina_Unicode **ptr,
       case -ESC_ARG_NO_VALUE:
          return SGR_COLOR_ABORT;
       case 1:
+         if ((more) && (!_csi_subparams_skip(ty, ptr, &more)))
+           return SGR_COLOR_ABORT;
          *palette256 = EINA_FALSE;
          *color = COL_INVIS;
          return SGR_COLOR_SET;
