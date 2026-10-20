@@ -14,6 +14,8 @@
 # include "win.h"
 #endif
 #include "termio.h"
+#include "tytest.h"
+#include "tytest_common.h"
 #include <sys/types.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -3322,5 +3324,65 @@ tytest_cell_is_empty_rgb(void)
 
    return 0;
 }
+
+/* Render an RGB cell and check what reached the textgrid: the truecolour
+ * row must carry the exact RGB, not the 8-bit palette index the cell also
+ * holds. Catches the render writing its normalised index (black) into the
+ * truecolour entry. */
+#if defined(BINARY_TYTEST)
+int
+tytest_truecolor_render(void)
+{
+   Termpty *ty = tytest_termpty_get();
+   Evas_Textgrid_Cell *tc;
+   Evas_Textgrid_Truecolor *tr;
+   Termio *sd;
+   int preedit_x = 0, preedit_y = 0;
+
+   /* The render path reads sd->config, which only the harness init sets;
+    * unit tests otherwise return before it runs. */
+   eina_init();
+   ecore_init();
+   tytest_common_init();
+   tytest_termio_resize(ty->w, ty->h);
+
+   _ty_feed(ty, "\033[2J\033[H"
+                "\033[38;2;250;179;20mY\033[48;2;56;142;245mB\033[m"
+                "\033[31mp\033[m");
+   sd = termio_get_from_obj(ty->obj);
+   termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
+
+   tc = tytest_textgrid_cellrow_get(NULL, 0);
+   tr = tytest_textgrid_truecolor_cellrow_get(NULL, 0);
+
+   /* The RGB foreground: exact value in the truecolour row, a defined
+    * palette index in the cell. */
+   assert(tc[0].fg_truecolor == 1);
+   assert(tr[0].fg.r == 250 && tr[0].fg.g == 179 && tr[0].fg.b == 20);
+   assert(tr[0].fg.a == 0xff);
+   assert(tc[0].fg == COL_DEF && tc[0].fg_extended == 0);
+
+   /* The RGB background: likewise, opaque. The foreground stays RGB too:
+    * 48;2 does not disturb the fg set before it. */
+   assert(tc[1].bg_truecolor == 1);
+   assert(tc[1].fg_truecolor == 1);
+   assert(tr[1].bg.r == 56 && tr[1].bg.g == 142 && tr[1].bg.b == 245);
+   assert(tr[1].bg.a == 0xff);
+   assert(tr[1].fg.r == 250 && tr[1].fg.g == 179 && tr[1].fg.b == 20);
+
+   /* The palette cell next to it: no truecolour. */
+   assert(tc[2].fg_truecolor == 0);
+   assert(tc[2].fg == COL_RED);
+
+   /* Repaint with the palette colour: the truecolour flag must clear. */
+   _ty_feed(ty, "\033[H\033[31mX\033[m");
+   termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
+   assert(tc[0].fg_truecolor == 0);
+   assert(tc[0].fg == COL_RED);
+
+   tytest_common_shutdown();
+   return 0;
+}
+#endif
 
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */

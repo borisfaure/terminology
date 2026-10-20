@@ -37,6 +37,7 @@ static struct {
        { "colors_is_dark", tytest_colors_is_dark},
        { "termatt_layout", tytest_termatt_layout},
        { "cell_is_empty_rgb", tytest_cell_is_empty_rgb},
+       { "truecolor_render", tytest_truecolor_render},
        { "sb_skip", tytest_sb_skip},
        { "sb_trim", tytest_sb_trim},
        { "sb_gap", tytest_sb_gap},
