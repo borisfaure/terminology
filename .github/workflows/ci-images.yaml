@@ -1,0 +1,57 @@
+name: ci-images
+
+on:
+  schedule:
+    - cron: '47 3 * * 1'        # Monday 03:47 UTC
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: ['scripts/ci/**']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  targets:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.t.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: t
+        run: echo "matrix=$(scripts/ci/targets.sh --json)" >> "$GITHUB_OUTPUT"
+
+  # The shared apt layer, rebuilt from a fresh ubuntu:24.04 on every run
+  # so that it follows the release's package updates. The target builds
+  # below start FROM the image pushed here, so they rebuild only EFL and
+  # all share its layers.
+  deps:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: scripts/ci/image.sh build-deps
+      - run: scripts/ci/image.sh push-deps
+
+  image:
+    needs: [targets, deps]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - run: echo "${{ github.token }}" | podman login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: scripts/ci/image.sh build ${{ matrix.target }}
+      # Test inside the new image before pushing, so a master that breaks
+      # Terminology never replaces last week's good image.
+      - run: scripts/ci/image.sh test ${{ matrix.target }} --logs "$PWD/build"
+      - run: scripts/ci/image.sh push ${{ matrix.target }}
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: meson-logs-${{ matrix.target }}
+          path: build/meson-logs/
