@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1
+
+# The deps image to build on; image.sh passes the one it just built or
+# pulled, so that every target shares its layers.
+ARG DEPS=ghcr.io/borisfaure/terminology-ci:deps-ubuntu24
+
+# -dev packages, not only libraries: EFL's .pc files require theirs.
+FROM ubuntu:24.04 AS deps
+LABEL org.opencontainers.image.source=https://github.com/borisfaure/terminology
+COPY scripts/ci/efl-deps.sh /ci/
+RUN /ci/efl-deps.sh
+
+FROM ${DEPS} AS efl
+ARG EFL_REF
+# Unused by the build, but keys its cache: master is rebuilt when it moves.
+ARG EFL_COMMIT
+ARG EXPECT_FEATURES
+COPY scripts/ci/efl-build.sh /ci/
+# ca-certificates: the deps image should have it, but a stale published
+# image breaks the git clone with "CAfile: none".
+RUN apt-get update \
+   && apt-get install -y --no-install-recommends ca-certificates \
+   && rm -rf /var/lib/apt/lists/* \
+   && /ci/efl-build.sh "$EFL_REF" /usr/local && ldconfig
+LABEL org.opencontainers.image.revision=$EFL_COMMIT
+ENV EXPECT_FEATURES=$EXPECT_FEATURES

@@ -1,0 +1,6 @@
+# One CI image per line: name, EFL git branch or tag, and the features a
+# Terminology build against that EFL must detect (see build-and-test.sh).
+efl-1.26	v1.26.3
+efl-1.27	v-1.27.0	URILIST
+efl-1.28	v1.28.1		URILIST
+efl-master	master		URILIST LIGATURES OVERLINE RGB
