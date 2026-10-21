@@ -136,6 +136,84 @@ jobs:
           name: meson-logs-${{ matrix.name }}
           path: build/meson-logs/
 
+  targets:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.t.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: t
+        run: echo "matrix=$(scripts/ci/targets.sh --json)" >> "$GITHUB_OUTPUT"
+
+  # One job per EFL version, inside the images built by ci-images.yaml.
+  # The image is pulled from GHCR; the job only checks out and builds, so
+  # a PR's efl-compat jobs log the EFL commit and contain no apt or EFL
+  # build step.
+  efl-compat:
+    name: ${{ matrix.target }}
+    needs: targets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    container: ghcr.io/borisfaure/terminology-ci:${{ matrix.target }}-ubuntu24
+    env:
+      COLUMNS: 150
+      TERM: xterm-256color
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      # The checkout is in $GITHUB_WORKSPACE, not the /src the script
+      # defaults to for local podman runs.
+      - run: scripts/ci/build-and-test.sh --src . --build build
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: meson-logs-${{ matrix.target }}
+          path: build/meson-logs/
+
+  # A PR that changes scripts/ci/ still runs against the published images;
+  # its new Containerfile is checked by building and testing every target
+  # from it, without pushing.
+  ci-scripts-diff:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    outputs:
+      changed: ${{ steps.c.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: c
+        run: |
+          if git diff --name-only --diff-filter=ACMRTUXB "origin/${{ github.base_ref }}...HEAD" | grep -q '^scripts/ci/'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  ci-scripts:
+    name: ci-scripts-${{ matrix.target }}
+    needs: [targets, ci-scripts-diff]
+    if: needs.ci-scripts-diff.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      # From this PR's efl-deps.sh: the target build would otherwise start
+      # FROM the published deps image.
+      - run: scripts/ci/image.sh build-deps
+      - run: scripts/ci/image.sh build ${{ matrix.target }}
+      - run: scripts/ci/image.sh test ${{ matrix.target }} --logs "$PWD/build"
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: meson-logs-${{ matrix.target }}
+          path: build/meson-logs/
+
   coverage:
     name: coverage-${{ matrix.arch }}
     runs-on: ${{ matrix.runner }}
