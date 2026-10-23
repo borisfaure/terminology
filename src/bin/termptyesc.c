@@ -5559,6 +5559,27 @@ _decrqss_sgr_reply(Termpty *ty)
    termpty_write(ty, bf, len);
 }
 
+/* DECSTBM and DECSLRM report the margins 1-based, both always present.
+ * A stored margin of 0 means "the last line/column". */
+static void
+_decrqss_margins_reply(Termpty *ty, Eina_Bool left_right)
+{
+   char bf[64];
+   int len;
+
+   if (left_right)
+     len = snprintf(bf, sizeof(bf), "\033P1$r%d;%ds\033\\",
+                    ty->termstate.left_margin + 1,
+                    (ty->termstate.right_margin) ?
+                    ty->termstate.right_margin : ty->w);
+   else
+     len = snprintf(bf, sizeof(bf), "\033P1$r%d;%dr\033\\",
+                    ty->termstate.top_margin + 1,
+                    (ty->termstate.bottom_margin) ?
+                    ty->termstate.bottom_margin : ty->h);
+   termpty_write(ty, bf, len);
+}
+
 static void
 _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
 {
@@ -5566,6 +5587,10 @@ _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
      TERMPTY_WRITE_STR("\033P1$r64;1\"p\033\\");
    else if (_dcs_request_is(request, "m"))
      _decrqss_sgr_reply(ty);
+   else if (_dcs_request_is(request, "r"))
+     _decrqss_margins_reply(ty, EINA_FALSE);
+   else if (_dcs_request_is(request, "s"))
+     _decrqss_margins_reply(ty, EINA_TRUE);
    else
      {
         DBG("unsupported DECRQSS '%s'", termptyesc_safechar(request[0]));

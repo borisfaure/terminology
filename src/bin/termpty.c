@@ -2668,6 +2668,41 @@ tytest_decrqss_sgr(void)
    return 0;
 }
 
+/* DECRQSS for the settings Terminology keeps: DECSTBM and DECSLRM
+ * report the margins 1-based, both always present. */
+int
+tytest_decrqss_settings(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1bP$qr\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r1;24r\x1b\\");
+
+   _ty_feed(&ty, "\x1b[5;10r\x1bP$qr\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r5;10r\x1b\\");
+
+   _ty_feed(&ty, "\x1b[5;24r\x1bP$qr\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r5;24r\x1b\\");
+
+   _ty_feed(&ty, "\x1b[r\x1bP$qr\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r1;24r\x1b\\");
+
+   _ty_feed(&ty, "\x1bP$qs\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r1;80s\x1b\\");
+
+   _ty_feed(&ty, "\x1b[?69h\x1b[5;10s\x1bP$qs\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r5;10s\x1b\\");
+
+   /* resetting DECLRMM resets the margins */
+   _ty_feed(&ty, "\x1b[?69l\x1bP$qs\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r1;80s\x1b\\");
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 int
 tytest_osc_color_reset(void)
 {
