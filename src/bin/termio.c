@@ -778,6 +778,15 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
      }
 }
 
+Cursor_Shape
+termio_cursor_shape_get(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, CURSOR_SHAPE_BLOCK);
+   return sd->cursor.shape;
+}
+
 /* }}} */
 /* {{{ Links */
 

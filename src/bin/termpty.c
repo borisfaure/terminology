@@ -2699,6 +2699,18 @@ tytest_decrqss_settings(void)
    _ty_feed(&ty, "\x1b[?69l\x1bP$qs\x1b\\");
    _ty_reply_is(&ty, "\x1bP1$r1;80s\x1b\\");
 
+   /* DECSCUSR: the shape set last, blinking unless the user disabled it */
+   _ty_feed(&ty, "\x1b[4 q\x1bP$q q\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r3 q\x1b\\");
+
+   ty.config->disable_cursor_blink = EINA_TRUE;
+   _ty_feed(&ty, "\x1b[6 q\x1bP$q q\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r6 q\x1b\\");
+   ty.config->disable_cursor_blink = EINA_FALSE;
+
+   _ty_feed(&ty, "\x1b[0 q\x1bP$q q\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r1 q\x1b\\");
+
    _ty_test_shutdown(&ty);
    return 0;
 }

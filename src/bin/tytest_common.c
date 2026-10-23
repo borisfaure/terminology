@@ -50,6 +50,7 @@ static Color _cursor = { .r = 135, .g = 136, .b = 137, .a = 138 };
 /* COL_DEF, the first standard palette entry, like config->colors[0] */
 static Color _fg = { .r = 0xaa, .g = 0xaa, .b = 0xaa, .a = 0xff };
 static const char *_cursor_shape = "undefined";
+static Cursor_Shape _cursor_shape_value = CURSOR_SHAPE_BLOCK;
 #if defined(BINARY_TYTEST)
 static Evas_Textgrid_Cell *_cells;
 #if defined(HAVE_TEXTGRID_RGB)
@@ -316,8 +317,9 @@ termio_remove_links(Termio *sd)
 
 void
 termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
-                        Cursor_Shape shape EINA_UNUSED)
+                        Cursor_Shape shape)
 {
+   _cursor_shape_value = shape;
    switch (shape)
      {
       case CURSOR_SHAPE_UNDERLINE:
@@ -330,6 +332,12 @@ termio_set_cursor_shape(Evas_Object *obj EINA_UNUSED,
       case CURSOR_SHAPE_BLOCK:
          _cursor_shape = "block";
      }
+}
+
+Cursor_Shape
+termio_cursor_shape_get(const Evas_Object *obj EINA_UNUSED)
+{
+   return _cursor_shape_value;
 }
 
 

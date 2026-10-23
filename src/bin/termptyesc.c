@@ -5580,6 +5580,26 @@ _decrqss_margins_reply(Termpty *ty, Eina_Bool left_right)
    termpty_write(ty, bf, len);
 }
 
+/* DECSCUSR: the steady code, or the blinking one when the cursor blinks. */
+static void
+_decrqss_cursor_style_reply(Termpty *ty)
+{
+   char bf[32];
+   int code, len;
+
+   switch (termio_cursor_shape_get(ty->obj))
+     {
+      case CURSOR_SHAPE_UNDERLINE: code = 4; break;
+      case CURSOR_SHAPE_BAR: code = 6; break;
+      case CURSOR_SHAPE_BLOCK:
+      default: code = 2; break;
+     }
+   if ((!ty->config) || (!ty->config->disable_cursor_blink))
+     code--;
+   len = snprintf(bf, sizeof(bf), "\033P1$r%d q\033\\", code);
+   termpty_write(ty, bf, len);
+}
+
 static void
 _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
 {
@@ -5591,6 +5611,8 @@ _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
      _decrqss_margins_reply(ty, EINA_FALSE);
    else if (_dcs_request_is(request, "s"))
      _decrqss_margins_reply(ty, EINA_TRUE);
+   else if (_dcs_request_is(request, " q"))
+     _decrqss_cursor_style_reply(ty);
    else
      {
         DBG("unsupported DECRQSS '%s'", termptyesc_safechar(request[0]));
