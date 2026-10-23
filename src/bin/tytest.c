@@ -69,6 +69,7 @@ static struct {
        { "xmodkeys_query", tytest_xmodkeys_query},
        { "xmodkeys_reset", tytest_xmodkeys_reset},
        { "decrqss_invalid", tytest_decrqss_invalid},
+       { "decrqss_sgr", tytest_decrqss_sgr},
        { "decrqm", tytest_decrqm},
        { "color_scheme_notify", tytest_color_scheme_notify},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},

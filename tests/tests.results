@@ -34,6 +34,7 @@ decrqm.sh 1f7b1ed07dfe2048e4c10a7c01035661
 decrqm-reset.sh df5394cbdee00974daf94118ef980f33
 decrqm-ansi.sh 5c4f6c6386099415c4755252b025b29d
 decrqss-invalid.sh 55dc9457646511e1d78b87344d78a7a1
+decrqss-sgr.sh db9d3cb36b3b4bea61cee774d8d5e7bc
 colors.sh 0f615472fcbc6c623117ea4409ff412d
 colors_regression.sh 448410f26d58dc8dfa9383d747cc3d92
 sgr-leading-trailing-semicolon.sh 8bba9806b565b6a2a8330f985c27e915

@@ -5498,11 +5498,74 @@ _dcs_request_is(const Eina_Unicode *request, const char *expected)
    return (*request == 0) && (*expected == 0);
 }
 
+/* Format one SGR colour parameter; base is 30 for fg, 40 for bg. */
+static int
+_sgr_color_format(char *buf, size_t size, int base, uint32_t color,
+                  Eina_Bool is_rgb, Eina_Bool palette256, Eina_Bool intense)
+{
+   if (is_rgb)
+     return snprintf(buf, size, ";%d:2::%u:%u:%u", base + 8,
+                     (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+   if (palette256)
+     return snprintf(buf, size, ";%d:5:%u", base + 8, color);
+   if (color == COL_DEF)
+     return (intense) ? snprintf(buf, size, ";%d", base + 69) : 0;
+   if (color == COL_INVIS)
+     return snprintf(buf, size, ";%d:1", base + 8);
+   return snprintf(buf, size, ";%d",
+                   base + ((intense) ? 60 : 0) + (int)color - COL_BLACK);
+}
+
+/* The reply is the SGR that restores the state. */
+static void
+_decrqss_sgr_reply(Termpty *ty)
+{
+   const Termatt *att = &ty->termstate.att;
+   char bf[128];
+   size_t len;
+
+   len = snprintf(bf, sizeof(bf), "\033P1$r0");
+#define SGR_FLAG(_flag, _code) \
+   if ((att->_flag) && (len < sizeof(bf))) \
+     len += snprintf(bf + len, sizeof(bf) - len, ";" _code)
+   SGR_FLAG(bold, "1");
+   SGR_FLAG(faint, "2");
+   SGR_FLAG(italic, "3");
+   SGR_FLAG(underline, "4");
+   SGR_FLAG(blink, "5");
+   SGR_FLAG(blink2, "6");
+   SGR_FLAG(inverse, "7");
+   SGR_FLAG(invisible, "8");
+   SGR_FLAG(strike, "9");
+   SGR_FLAG(fraktur, "20");
+   SGR_FLAG(framed, "51");
+   SGR_FLAG(encircled, "52");
+   SGR_FLAG(overlined, "53");
+#undef SGR_FLAG
+   if (len < sizeof(bf))
+     len += _sgr_color_format(bf + len, sizeof(bf) - len, 30, att->fg,
+                              att->fgrgb, att->fg256, att->fgintense);
+   if (len < sizeof(bf))
+     len += _sgr_color_format(bf + len, sizeof(bf) - len, 40, att->bg,
+                              att->bgrgb, att->bg256, att->bgintense);
+   if (len < sizeof(bf))
+     len += snprintf(bf + len, sizeof(bf) - len, "m\033\\");
+   if (len >= sizeof(bf))
+     {
+        ERR("DECRQSS SGR reply does not fit");
+        TERMPTY_WRITE_STR("\033P0$r\033\\");
+        return;
+     }
+   termpty_write(ty, bf, len);
+}
+
 static void
 _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
 {
    if (_dcs_request_is(request, "\"p"))
      TERMPTY_WRITE_STR("\033P1$r64;1\"p\033\\");
+   else if (_dcs_request_is(request, "m"))
+     _decrqss_sgr_reply(ty);
    else
      {
         DBG("unsupported DECRQSS '%s'", termptyesc_safechar(request[0]));

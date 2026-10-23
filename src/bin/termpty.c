@@ -2602,6 +2602,72 @@ tytest_decrqss_invalid(void)
    return 0;
 }
 
+/* DECRQSS SGR: the reply is the SGR that restores the state. */
+int
+tytest_decrqss_sgr(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0m\x1b\\");
+
+   _ty_feed(&ty, "\x1b[1;2;3;4;5;7;8;9m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;1;2;3;4;5;7;8;9m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[6m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;6m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[20;51;52;53m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;20;51;52;53m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[31;42m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;31;42m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[97;107m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;97;107m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[99;109m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;99;109m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[38;5;1;48;5;200m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;38:5:1;48:5:200m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[38;1;48;1m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;38:1;48:1m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[38;2;59;34;76m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;38:2::59:34:76m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[48;2;59;34;76m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;48:2::59:34:76m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   /* RGB black is not the default colour */
+   _ty_feed(&ty, "\x1b[38;2;0;0;0;48;2;0;0;0m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0;38:2::0:0:0;48:2::0:0:0m\x1b\\");
+   _ty_feed(&ty, "\x1b[m");
+
+   _ty_feed(&ty, "\x1b[1;31m\x1b[22;39m\x1bP$qm\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0m\x1b\\");
+
+   _ty_feed(&ty, "\x1b[7m\x1b" "c\x1bP$qm\x1b\\"); /* RIS */
+   _ty_reply_is(&ty, "\x1bP1$r0m\x1b\\");
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 int
 tytest_osc_color_reset(void)
 {
