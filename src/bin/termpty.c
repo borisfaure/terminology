@@ -2711,6 +2711,17 @@ tytest_decrqss_settings(void)
    _ty_feed(&ty, "\x1b[0 q\x1bP$q q\x1b\\");
    _ty_reply_is(&ty, "\x1bP1$r1 q\x1b\\");
 
+   /* DECSCA: nothing is ever protected */
+   _ty_feed(&ty, "\x1bP$q\"q\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0\"q\x1b\\");
+
+   /* DECSACE: stream is reported as 0, rectangle as 2 */
+   _ty_feed(&ty, "\x1bP$q*x\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r0*x\x1b\\");
+
+   _ty_feed(&ty, "\x1b[2*x\x1bP$q*x\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1$r2*x\x1b\\");
+
    _ty_test_shutdown(&ty);
    return 0;
 }

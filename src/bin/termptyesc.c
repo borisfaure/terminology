@@ -5613,6 +5613,20 @@ _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
      _decrqss_margins_reply(ty, EINA_TRUE);
    else if (_dcs_request_is(request, " q"))
      _decrqss_cursor_style_reply(ty);
+   else if (_dcs_request_is(request, "\"q"))
+     {
+        /* DECSCA: CSI " q is not implemented, so nothing is ever protected */
+        TERMPTY_WRITE_STR("\033P1$r0\"q\033\\");
+     }
+   else if (_dcs_request_is(request, "*x"))
+     {
+        /* DECSACE: 0 and 1 both select stream, reported as 0, xterm's
+         * initial value */
+        if (ty->termstate.sace_rectangular)
+          TERMPTY_WRITE_STR("\033P1$r2*x\033\\");
+        else
+          TERMPTY_WRITE_STR("\033P1$r0*x\033\\");
+     }
    else
      {
         DBG("unsupported DECRQSS '%s'", termptyesc_safechar(request[0]));

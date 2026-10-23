@@ -37,6 +37,7 @@ decrqss-invalid.sh 55dc9457646511e1d78b87344d78a7a1
 decrqss-sgr.sh db9d3cb36b3b4bea61cee774d8d5e7bc
 decrqss-margins.sh e992408da8477d23e212f29c124e0313
 decrqss-decscusr.sh 9e02df329af5088cd1f39785da6610b6
+decrqss-decsca-decsace.sh 3daf6de382bbf18fa098ca8758883209
 colors.sh 0f615472fcbc6c623117ea4409ff412d
 colors_regression.sh 448410f26d58dc8dfa9383d747cc3d92
 sgr-leading-trailing-semicolon.sh 8bba9806b565b6a2a8330f985c27e915
