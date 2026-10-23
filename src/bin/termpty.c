@@ -2574,6 +2574,34 @@ tytest_xmodkeys_reset(void)
    return 0;
 }
 
+/* DECRQSS: an unsupported request is answered "invalid", DECSCL keeps its
+ * reply, and a DCS that is not DECRQSS stays silent. */
+int
+tytest_decrqss_invalid(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1bP$qz\x1b\\");
+   _ty_reply_is(&ty, "\x1bP0$r\x1b\\");
+   _ty_feed(&ty, "\x1bP$q\x1b\\");            /* empty request */
+   _ty_reply_is(&ty, "\x1bP0$r\x1b\\");
+   _ty_feed(&ty, "\x1bP$q\x9c");              /* empty, 8-bit ST */
+   _ty_reply_is(&ty, "\x1bP0$r\x1b\\");
+   _ty_feed(&ty, "\x1bP$q\"px\x1b\\");        /* not DECSCL */
+   _ty_reply_is(&ty, "\x1bP0$r\x1b\\");
+   _ty_feed(&ty, "\x1bP$q$|\x1b\\");          /* DECSCPP: no */
+   _ty_reply_is(&ty, "\x1bP0$r\x1b\\");
+   _ty_feed(&ty, "\x1bP$q\"p\x1b\\");         /* DECSCL unchanged */
+   _ty_reply_is(&ty, "\x1bP1$r64;1\"p\x1b\\");
+   _ty_feed(&ty, "\x1bP$p\x1b\\");            /* not DECRQSS: silent */
+   assert(ty.write_buffer.len == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 int
 tytest_osc_color_reset(void)
 {

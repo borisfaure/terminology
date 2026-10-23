@@ -5484,6 +5484,32 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
    return cc - c;
 }
 
+/* DECRQSS: the request is the intermediate and final bytes of the control,
+ * without parameters. Match the whole request, as xterm does: "$q\"px" is
+ * not DECSCL. */
+static Eina_Bool
+_dcs_request_is(const Eina_Unicode *request, const char *expected)
+{
+   while ((*expected) && (*request == (unsigned char)*expected))
+     {
+        request++;
+        expected++;
+     }
+   return (*request == 0) && (*expected == 0);
+}
+
+static void
+_handle_decrqss(Termpty *ty, const Eina_Unicode *request)
+{
+   if (_dcs_request_is(request, "\"p"))
+     TERMPTY_WRITE_STR("\033P1$r64;1\"p\033\\");
+   else
+     {
+        DBG("unsupported DECRQSS '%s'", termptyesc_safechar(request[0]));
+        TERMPTY_WRITE_STR("\033P0$r\033\\");
+     }
+}
+
 static int
 _handle_esc_dcs(Termpty *ty,
                 const Eina_Unicode *c,
@@ -5553,41 +5579,7 @@ _handle_esc_dcs(Termpty *ty,
               ty->decoding_error = EINA_TRUE;
               goto end;
            }
-         if (len < 4)
-           goto end;
-         switch (buf[2])
-           {
-            case '"':
-               if (buf[3] == 'p') /* DECSCL */
-                 {
-                    char bf[32];
-                    snprintf(bf, sizeof(bf), "\033P1$r64;1\"p\033\\");
-                    termpty_write(ty, bf, strlen(bf));
-                 }
-               else if (buf[3] == 'q') /* DECSCA */
-                 {
-                    WRN("unhandled DECSCA '$qq'");
-                    ty->decoding_error = EINA_TRUE;
-                    goto end;
-                 }
-               else
-                 {
-                    WRN("invalid/unhandled dsc esc '$q\"%s'",
-                        termptyesc_safechar(buf[3]));
-                    ty->decoding_error = EINA_TRUE;
-                    goto end;
-                 }
-               break;
-            case 'm': /* SGR */
-               /* TODO: */
-            case 'r': /* DECSTBM */
-               /* TODO: */
-            default:
-               ty->decoding_error = EINA_TRUE;
-               WRN("unhandled dsc request status string '$q%s'",
-                   termptyesc_safechar(buf[2]));
-               goto end;
-           }
+         _handle_decrqss(ty, buf + 2);
          break;
       default:
         // many others
