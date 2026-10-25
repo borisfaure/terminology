@@ -18,6 +18,12 @@ void termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear);
 void termpty_text_scroll_test(Termpty *ty, Eina_Bool clear);
 void termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear);
 void termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len);
+/* Same, for a caller that already scanned the run: 'plain_ascii_len' must not
+ * exceed the length of the plain ASCII (0x20..0x7e) run at codepoints[0]. A
+ * smaller value is fine, the rest is rescanned. */
+void termpty_text_append_known_ascii(Termpty *ty,
+                                     const Eina_Unicode *codepoints, int len,
+                                     size_t plain_ascii_len);
 void termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit);
 void termpty_clear_screen(Termpty *ty, Termpty_Clear mode);
 void termpty_clear_all(Termpty *ty);

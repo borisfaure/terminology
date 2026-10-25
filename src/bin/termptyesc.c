@@ -10,6 +10,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#include "simd/simd.h"
 #include "theme.h"
 #if defined(BINARY_TYTEST)
 #include "tytest.h"
@@ -5997,6 +5998,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    Eina_Unicode *cc;
    Eina_Unicode last_char = 0;
    int len = 0;
+   size_t plain_ascii_len;
    ty->decoding_error = EINA_FALSE;
 
    if (ty->osc_skip)
@@ -6110,7 +6112,9 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len = 1;
         goto end;
      }
-   cc = (Eina_Unicode *)c;
+   plain_ascii_len = simd_scan_plain_ascii_u32(c, (size_t)(ce - c));
+   len = (int)plain_ascii_len;
+   cc = (Eina_Unicode *)c + len;
 
    while ((cc < ce) && (*cc >= 0x20) && (*cc != DEL) && (*cc != CSI)
           && (*cc != OSC) && (*cc != APC))
@@ -6119,7 +6123,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len++;
      }
    _log_text_run(c, len);
-   termpty_text_append(ty, c, len);
+   termpty_text_append_known_ascii(ty, c, len, plain_ascii_len);
    if (len > 0)
        last_char = c[len-1];
 

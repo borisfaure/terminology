@@ -305,6 +305,13 @@ _append_ascii_run(Termpty *ty, Termcell *cells, const Eina_Unicode *cp, int n,
 void
 termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
+   termpty_text_append_known_ascii(ty, codepoints, len, 0);
+}
+
+void
+termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
+                                int len, size_t plain_ascii_len)
+{
    Termcell *cells;
    int i, j;
    int origin = ty->termstate.left_margin;
@@ -399,8 +406,10 @@ termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
              if (avail > 0)
                {
-                  size_t run = simd_scan_plain_ascii_u32(codepoints + i,
-                                                         (size_t)(len - i));
+                  size_t run = ((size_t)i < plain_ascii_len)
+                     ? plain_ascii_len - (size_t)i
+                     : simd_scan_plain_ascii_u32(codepoints + i,
+                                                 (size_t)(len - i));
 
                   if (run > (size_t)avail) run = (size_t)avail;
                   if (run >= 2)
