@@ -149,11 +149,14 @@ simd_records_or_byte_sse2(void *buf, size_t n, size_t rec, size_t off,
         pat[off] = bit;
         m = _mm_loadu_si128((const __m128i *)pat);
 
-        for (; i + 1 <= n; i += 1, p += 16)
+        for (; i + 4 <= n; i += 4, p += 64)
           {
-             __m128i v = _mm_loadu_si128((const __m128i *)p);
+             __m128i *q = (__m128i *)p;
 
-             _mm_storeu_si128((__m128i *)p, _mm_or_si128(v, m));
+             _mm_storeu_si128(q,     _mm_or_si128(_mm_loadu_si128(q),     m));
+             _mm_storeu_si128(q + 1, _mm_or_si128(_mm_loadu_si128(q + 1), m));
+             _mm_storeu_si128(q + 2, _mm_or_si128(_mm_loadu_si128(q + 2), m));
+             _mm_storeu_si128(q + 3, _mm_or_si128(_mm_loadu_si128(q + 3), m));
           }
      }
 

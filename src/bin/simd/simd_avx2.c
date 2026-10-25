@@ -167,9 +167,10 @@ simd_records_or_byte_avx2(void *buf, size_t n, size_t rec, size_t off,
    size_t i = 0;
 
    /* Only the 16-byte stride, which is Termcell's: a 256-bit register covers
-    * two records and an odd last record goes to the scalar loop. The 12-byte
-    * stride the SSE2 and NEON kernels also handle predates the current
-    * Termcell and is left to the scalar form. */
+    * two records, the loop does two registers (four records) per iteration,
+    * and the last 0-3 records go to the scalar loop. The 12-byte stride the
+    * SSE2 and NEON kernels also handle predates the current Termcell and is
+    * left to the scalar form. */
    if ((rec == 16) && (off < rec))
      {
         unsigned char pat[32];
@@ -180,11 +181,14 @@ simd_records_or_byte_avx2(void *buf, size_t n, size_t rec, size_t off,
         pat[rec + off] = bit;
         m = _mm256_loadu_si256((const __m256i *)pat);
 
-        for (; i + 2 <= n; i += 2, p += 32)
+        for (; i + 4 <= n; i += 4, p += 64)
           {
-             __m256i v = _mm256_loadu_si256((const __m256i *)p);
+             __m256i *q = (__m256i *)p;
+             __m256i a = _mm256_loadu_si256(q);
+             __m256i b = _mm256_loadu_si256(q + 1);
 
-             _mm256_storeu_si256((__m256i *)p, _mm256_or_si256(v, m));
+             _mm256_storeu_si256(q, _mm256_or_si256(a, m));
+             _mm256_storeu_si256(q + 1, _mm256_or_si256(b, m));
           }
      }
 
