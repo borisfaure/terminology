@@ -42,12 +42,9 @@ simd_scan_plain_ascii_sse2(const unsigned char *buf, size_t len)
 size_t
 simd_scan_plain_ascii_u32_sse2(const Eina_Unicode *buf, size_t len)
 {
-   /* One unsigned compare instead of two: g - 0x20 wraps for anything below
-    * 0x20, pushing it above the 0x5e span that 0x20..0x7e occupies. SSE2 has
-    * no unsigned compare, so the wrap is caught by the sign bit of the
-    * subtraction and the span by a signed compare: every g that is unsigned
-    * greater than 0x7e is either signed greater than 0x7e or negative, and
-    * negatives already failed the first test. */
+   /* SSE2 has no unsigned compare: a wrapping subtraction folds g < 0x20
+    * and g >= 0x80000000 into values with a byte whose top bit is set, and a
+    * signed compare takes the rest of g >= 0x7f. */
    const __m128i bias = _mm_set1_epi32(0x20);
    const __m128i span = _mm_set1_epi32(0x7e);
    size_t i = 0;
@@ -57,9 +54,13 @@ simd_scan_plain_ascii_u32_sse2(const Eina_Unicode *buf, size_t len)
         __m128i v = _mm_loadu_si128((const __m128i *)(buf + i));
         __m128i under = _mm_sub_epi32(v, bias);
         __m128i over = _mm_cmpgt_epi32(v, span);
-        /* movemask maps byte lanes to bits, so lane k owns bits 4k..4k+3:
-         * 4k+3 from the sign of the subtraction, 4k..4k+2 from the compare.
-         * The lowest set bit is the first offending lane. */
+        /* movemask keeps the top bit of every byte, so lane k owns bits
+         * 4k..4k+3 and the lowest set bit gives the first offending lane
+         * through ctz >> 2. 'over' sets all four bits of a lane for
+         * 0x7f..0x7fffffff. 'under' catches the rest: g - 0x20 has a byte
+         * with its top bit set for every g below 0x20 and every g from
+         * 0x80000000 up (the low byte for 0x80000000..0x8000001f, the high
+         * byte beyond), while it is below 0x80 in every byte for 0x20..0x7e. */
         unsigned int m = (unsigned int)(_mm_movemask_epi8(under) |
                                         _mm_movemask_epi8(over));
 
