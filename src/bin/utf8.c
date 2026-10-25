@@ -55,7 +55,7 @@ utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
                    int *consumed)
 {
    int i = 0, j = 0;
-#if defined(TERMINOLOGY_HAVE_NEON)
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
    /* Hoisted out of the loop: simd_enabled() is a call, and what it reports
     * cannot change mid-buffer. */
    Eina_Bool fast = simd_enabled();
@@ -64,7 +64,7 @@ utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
    while (i < len)
      {
         Eina_Unicode g;
-#if defined(TERMINOLOGY_HAVE_NEON)
+#if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
         size_t run;
 
         /* Plain printable ASCII needs none of the per-character work below, so
@@ -74,7 +74,7 @@ utf8_to_codepoints(const char *buf, int len, Eina_Unicode *codepoints,
          * Compiled in only where there is a vector kernel to call. The scalar
          * kernel walks the run exactly as the loop below does, so it can only
          * pay for the same bytes twice -- and merely leaving this in the loop
-         * to be branched over costs the decoder ~8% on a non-NEON target. */
+         * to be branched over costs the decoder ~8% on a scalar-only target. */
         if (fast &&
             ((unsigned char)buf[i] >= 0x20) && ((unsigned char)buf[i] < 0x7f))
           run = simd_scan_plain_ascii((const unsigned char *)buf + i,
