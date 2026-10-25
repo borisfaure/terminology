@@ -16,6 +16,10 @@ option('benchmarks',
        type: 'boolean',
        value: false,
        description: 'Enable generating tybench, used to benchmark the pty intake path. (default=false)')
+option('simd-avx2',
+       type: 'boolean',
+       value: false,
+       description: 'Build the AVX2 intake kernels, used when the CPU supports them. Requires an Eina providing EINA_CPU_AVX2 (newer than EFL 1.28.1). (default=false)')
 option('nls',
        type: 'boolean',
        value: true,

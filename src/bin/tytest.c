@@ -725,7 +725,9 @@ main(int argc, char **argv)
    /* Before the argument loop: the unit-test path returns out of it without
     * ever reaching tytest_common_init(), and several of those tests drive the
     * real parser. Leaving the kernels un-dispatched there would make
-    * TERMINOLOGY_SIMD_DISABLE silently ineffective for 'tytest all'. */
+    * TERMINOLOGY_SIMD_DISABLE silently ineffective for 'tytest all'. Eina
+    * comes first so that simd_init() sees the CPU features. */
+   eina_init();
    simd_init();
 
    for (i = 1; i < argc; i++)
@@ -741,7 +743,6 @@ main(int argc, char **argv)
         else return _run_tytests(argc, argv);
      }
 
-   eina_init();
    emile_init();
    ecore_init();
 

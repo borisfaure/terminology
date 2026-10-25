@@ -2,6 +2,7 @@ simd_sources = ['simd/simd.c',
                 'simd/simd_scalar.c',
                 'simd/simd_neon.c',
                 'simd/simd_sse2.c',
+                'simd/simd_avx2.c',
                 'simd/simd.h']
 
 # X11 colour names for the OSC 10/11/12 parsers

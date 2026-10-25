@@ -9,6 +9,9 @@ static Eina_Bool _use_simd = EINA_TRUE;
 #else
 static Eina_Bool _use_simd = EINA_FALSE;
 #endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+static Eina_Bool _use_avx2 = EINA_FALSE;
+#endif
 
 void
 simd_init(void)
@@ -19,6 +22,10 @@ simd_init(void)
    /* Any non-empty value other than "0" disables. */
    if (s && s[0] && strcmp(s, "0") != 0)
      _use_simd = EINA_FALSE;
+#endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   _use_avx2 = (_use_simd && (eina_cpu_features_get() & EINA_CPU_AVX2))
+      ? EINA_TRUE : EINA_FALSE;
 #endif
 }
 
@@ -43,6 +50,10 @@ simd_scan_plain_ascii(const unsigned char *buf, size_t len)
    if (EINA_LIKELY(_use_simd))
      return VEC(scan_plain_ascii)(buf, len);
 #endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   if (EINA_LIKELY(_use_avx2))
+     return simd_scan_plain_ascii_avx2(buf, len);
+#endif
 #if defined(TERMINOLOGY_HAVE_SSE2)
    if (EINA_LIKELY(_use_simd))
      return simd_scan_plain_ascii_sse2(buf, len);
@@ -57,6 +68,10 @@ simd_scan_plain_ascii_u32(const Eina_Unicode *buf, size_t len)
    if (EINA_LIKELY(_use_simd))
      return VEC(scan_plain_ascii_u32)(buf, len);
 #endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   if (EINA_LIKELY(_use_avx2))
+     return simd_scan_plain_ascii_u32_avx2(buf, len);
+#endif
 #if defined(TERMINOLOGY_HAVE_SSE2)
    if (EINA_LIKELY(_use_simd))
      return simd_scan_plain_ascii_u32_sse2(buf, len);
@@ -70,6 +85,10 @@ simd_rscan_nonzero(const unsigned char *buf, size_t len)
 #if defined(TERMINOLOGY_HAVE_NEON)
    if (EINA_LIKELY(_use_simd))
      return simd_rscan_nonzero_neon(buf, len);
+#endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   if (EINA_LIKELY(_use_avx2))
+     return simd_rscan_nonzero_avx2(buf, len);
 #endif
 #if defined(TERMINOLOGY_HAVE_SSE2)
    if (EINA_LIKELY(_use_simd))
@@ -86,6 +105,13 @@ simd_records_or_byte(void *buf, size_t n, size_t rec, size_t off,
    if (EINA_LIKELY(_use_simd))
      {
         simd_records_or_byte_neon(buf, n, rec, off, bit);
+        return;
+     }
+#endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   if (EINA_LIKELY(_use_avx2))
+     {
+        simd_records_or_byte_avx2(buf, n, rec, off, bit);
         return;
      }
 #endif
@@ -106,6 +132,13 @@ simd_widen_ascii(const unsigned char *buf, size_t len, Eina_Unicode *out)
    if (EINA_LIKELY(_use_simd))
      {
         simd_widen_ascii_neon(buf, len, out);
+        return;
+     }
+#endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   if (EINA_LIKELY(_use_avx2))
+     {
+        simd_widen_ascii_avx2(buf, len, out);
         return;
      }
 #endif
@@ -455,13 +488,51 @@ _test_ref_widen(void)
      }
 }
 
-/* From here on, the vector kernels against the scalar ones. Both targets
- * implement the same set, so the tests are written once, against the
- * kernel defined by VEC above. */
+/* From here on, the vector kernels against the scalar ones. Every kernel set
+ * implements the same functions, so the tests are written once and run for
+ * each set in the table below. */
 #if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
 
+typedef struct tag_SimdVector
+{
+   Eina_Cpu_Features required;
+   size_t (*scan)(const unsigned char *buf, size_t len);
+   size_t (*scan_u32)(const Eina_Unicode *buf, size_t len);
+   size_t (*rscan)(const unsigned char *buf, size_t len);
+   void (*records_or)(void *buf, size_t n, size_t rec, size_t off,
+                      unsigned char bit);
+   void (*widen)(const unsigned char *buf, size_t len, Eina_Unicode *out);
+} SimdVector;
+
+static const SimdVector _vectors[] = {
+#if defined(TERMINOLOGY_HAVE_NEON)
+   { 0,
+     simd_scan_plain_ascii_neon,
+     simd_scan_plain_ascii_u32_neon,
+     simd_rscan_nonzero_neon,
+     simd_records_or_byte_neon,
+     simd_widen_ascii_neon },
+#endif
+#if defined(TERMINOLOGY_HAVE_SSE2)
+   { 0,
+     simd_scan_plain_ascii_sse2,
+     simd_scan_plain_ascii_u32_sse2,
+     simd_rscan_nonzero_sse2,
+     simd_records_or_byte_sse2,
+     simd_widen_ascii_sse2 },
+#endif
+#if defined(TERMINOLOGY_HAVE_AVX2)
+   { EINA_CPU_AVX2,
+     simd_scan_plain_ascii_avx2,
+     simd_scan_plain_ascii_u32_avx2,
+     simd_rscan_nonzero_avx2,
+     simd_records_or_byte_avx2,
+     simd_widen_ascii_avx2 },
+#endif
+};
+
 static void
-_test_scan(void)
+_test_scan(const SimdVector *set)
 {
    size_t len, off;
    int density;
@@ -477,7 +548,7 @@ _test_scan(void)
 
                   _fill(p, len, density);
                   assert(simd_scan_plain_ascii_scalar(p, len) ==
-                         VEC(scan_plain_ascii)(p, len));
+                         set->scan(p, len));
                   assert(_guards_intact(base, off + len));
                   free(base);
                }
@@ -486,7 +557,7 @@ _test_scan(void)
 }
 
 static void
-_test_scan_u32(void)
+_test_scan_u32(const SimdVector *set)
 {
    size_t len, off;
    int density;
@@ -505,7 +576,7 @@ _test_scan_u32(void)
 
                   _fill_u32(p, len, density);
                   assert(simd_scan_plain_ascii_u32_scalar(p, len) ==
-                         VEC(scan_plain_ascii_u32)(p, len));
+                         set->scan_u32(p, len));
                   assert(_guards_intact(base,
                                         (off + len) * sizeof(Eina_Unicode)));
                   free(base);
@@ -515,7 +586,7 @@ _test_scan_u32(void)
 }
 
 static void
-_test_rscan(void)
+_test_rscan(const SimdVector *set)
 {
    size_t len, off, pos;
    int density;
@@ -537,7 +608,7 @@ _test_rscan(void)
                     }
 
                   assert(simd_rscan_nonzero_scalar(p, len) ==
-                         VEC(rscan_nonzero)(p, len));
+                         set->rscan(p, len));
                   assert(_guards_intact(base, off + len));
                   free(base);
                }
@@ -555,17 +626,18 @@ _test_rscan(void)
              memset(buf, 0, sizeof(buf));
              buf[pos] = 0x01;
              assert(simd_rscan_nonzero_scalar(buf, len) == pos + 1);
-             assert(VEC(rscan_nonzero)(buf, len) == pos + 1);
+             assert(set->rscan(buf, len) == pos + 1);
           }
      }
 }
 
 static void
-_test_records_or(void)
+_test_records_or(const SimdVector *set)
 {
    size_t n, off, rec, i;
 
-   /* Both vectorised strides (12 and 16 bytes) and ones that fall back. */
+   /* The 16-byte stride every kernel set vectorises, the 12-byte one only
+    * some do, and the others fall back to scalar. */
    for (rec = 11; rec <= 16; rec++)
      {
         for (n = 0; n <= 40; n++)
@@ -584,7 +656,7 @@ _test_records_or(void)
                     }
 
                   simd_records_or_byte_scalar(a + GUARD, n, rec, off, 0x40);
-                  VEC(records_or_byte)(b + GUARD, n, rec, off, 0x40);
+                  set->records_or(b + GUARD, n, rec, off, 0x40);
 
                   assert(memcmp(a + GUARD, b + GUARD, n * rec) == 0);
                   assert(_guards_intact(a, n * rec));
@@ -597,7 +669,7 @@ _test_records_or(void)
 }
 
 static void
-_test_widen(void)
+_test_widen(const SimdVector *set)
 {
    size_t len, off, i;
 
@@ -620,7 +692,7 @@ _test_widen(void)
                }
 
              simd_widen_ascii_scalar(p, len, o1);
-             VEC(widen_ascii)(p, len, o2);
+             set->widen(p, len, o2);
 
              assert(memcmp(o1, o2, (len + 8) * sizeof(Eina_Unicode)) == 0);
              for (i = 0; i < 8; i++)
@@ -636,7 +708,7 @@ _test_widen(void)
 
 /* Every byte value, at every position, exhaustively. */
 static void
-_test_every_byte(void)
+_test_every_byte(const SimdVector *set)
 {
    unsigned int v;
    size_t len, pos;
@@ -652,14 +724,14 @@ _test_every_byte(void)
                   memset(buf, 'x', sizeof(buf));
                   buf[pos] = (unsigned char)v;
                   assert(simd_scan_plain_ascii_scalar(buf, len) ==
-                         VEC(scan_plain_ascii)(buf, len));
+                         set->scan(buf, len));
                }
           }
      }
 }
 
 static void
-_test_every_u32_boundary(void)
+_test_every_u32_boundary(const SimdVector *set)
 {
    static const Eina_Unicode vals[] = {
         0x00, 0x01, 0x1f, 0x20, 0x21, 0x7d, 0x7e, 0x7f, 0x80, 0xa0,
@@ -679,7 +751,7 @@ _test_every_u32_boundary(void)
                   for (i = 0; i < len; i++) buf[i] = 'x';
                   buf[pos] = vals[v];
                   assert(simd_scan_plain_ascii_u32_scalar(buf, len) ==
-                         VEC(scan_plain_ascii_u32)(buf, len));
+                         set->scan_u32(buf, len));
                }
           }
      }
@@ -696,13 +768,26 @@ tytest_simd_parity(void)
    _test_ref_records_or();
    _test_ref_widen();
 #if defined(TERMINOLOGY_HAVE_NEON) || defined(TERMINOLOGY_HAVE_SSE2)
-   _test_scan();
-   _test_scan_u32();
-   _test_rscan();
-   _test_records_or();
-   _test_widen();
-   _test_every_byte();
-   _test_every_u32_boundary();
+   {
+      size_t k;
+
+      for (k = 0; k < sizeof(_vectors) / sizeof(_vectors[0]); k++)
+        {
+           const SimdVector *set = &_vectors[k];
+
+           /* Calls the kernels directly, so a kernel set the CPU lacks must
+            * be skipped here whatever TERMINOLOGY_SIMD_DISABLE says. */
+           if ((eina_cpu_features_get() & set->required) != set->required)
+             continue;
+           _test_scan(set);
+           _test_scan_u32(set);
+           _test_rscan(set);
+           _test_records_or(set);
+           _test_widen(set);
+           _test_every_byte(set);
+           _test_every_u32_boundary(set);
+        }
+   }
 #endif
    return 0;
 }

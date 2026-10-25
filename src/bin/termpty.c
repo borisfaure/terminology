@@ -1051,9 +1051,9 @@ _mark_autowrapped(Termcell *cells, ssize_t n)
      }
 
    _Static_assert(sizeof(Termcell) == 16,
-                  "Termcell size changed: simd_records_or_byte() vectorises "
-                  "12- and 16-byte strides and silently falls back to scalar "
-                  "otherwise");
+                  "Termcell size changed: simd_records_or_byte() only "
+                  "vectorises a 16-byte stride on every target and silently "
+                  "falls back to scalar otherwise");
    simd_records_or_byte(cells, (size_t)n, sizeof(Termcell), off, bit);
 #undef NOT_PROBED
 }

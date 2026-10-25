@@ -81,6 +81,9 @@ foreach efl_dep: efl_deps
   if efl_dep == 'edje'
     edje_cc_path = dep.get_variable(pkgconfig: 'prefix') + '/bin/edje_cc'
   endif
+  if efl_dep == 'eina'
+    eina_dep = dep
+  endif
   if efl_dep == 'eet'
     eet_path = dep.get_variable(pkgconfig: 'prefix') + '/bin/eet'
   endif
@@ -91,6 +94,20 @@ endforeach
 
 if cc.has_function('evas_object_textgrid_ligatures_set', dependencies: evas_dep)
   config_data.set('HAVE_TEXTGRID_LIGATURES', 1)
+endif
+
+if get_option('simd-avx2')
+  if host_machine.cpu_family() != 'x86_64'
+    error('simd-avx2 is only supported on x86_64')
+  endif
+  # Eina gained EINA_CPU_AVX2 after 1.28.1, and git builds of that period
+  # report the same version, so the symbol is probed rather than the version.
+  if not cc.has_header_symbol('Eina.h', 'EINA_CPU_AVX2',
+                              dependencies: eina_dep)
+    error('simd-avx2 needs an Eina that provides EINA_CPU_AVX2 ' +
+          '(EFL newer than 1.28.1)')
+  endif
+  add_project_arguments('-DTERMINOLOGY_ENABLE_AVX2', language: 'c')
 endif
 
 if cc.has_function('mkstemps')
