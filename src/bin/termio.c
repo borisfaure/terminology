@@ -251,6 +251,18 @@ termio_palette_apply(Evas_Object *obj)
    termpty_palette_changed(sd->pty);
 }
 
+/* drops one entry's override, without re-applying the palette */
+void
+termio_palette_color_override_clear(Evas_Object *obj, int idx)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if ((idx < 0) || (idx > 255))
+     return;
+   sd->palette.overridden[idx / 32] &= ~(1u << (idx % 32));
+}
+
 void
 termio_palette_reset(Evas_Object *obj)
 {

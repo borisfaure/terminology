@@ -115,6 +115,8 @@ termio_palette_color_get(const Evas_Object *obj, int idx,
 void
 termio_palette_color_set(Evas_Object *obj, int idx, int r, int g, int b);
 void
+termio_palette_color_override_clear(Evas_Object *obj, int idx);
+void
 termio_palette_reset(Evas_Object *obj);
 void
 termio_palette_apply(Evas_Object *obj);

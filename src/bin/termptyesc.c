@@ -5279,6 +5279,30 @@ err:
    ty->decoding_error = EINA_TRUE;
 }
 
+/* OSC 104: no parameter resets them all; a non-number stops, as in xterm */
+static void
+_handle_osc_palette_reset(Termpty *ty, Eina_Unicode *p)
+{
+   if (!p || !*p)
+     {
+        termio_palette_reset(ty->obj);
+        return;
+     }
+
+   while (*p)
+     {
+        int idx;
+
+        /* _osc_arg_get consumes the ';' separating two indices */
+        idx = _osc_arg_get(ty, &p);
+        if (idx < 0)
+          break;
+        if (idx <= 255)
+          termio_palette_color_override_clear(ty->obj, idx);
+     }
+   termio_palette_apply(ty->obj);
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -5455,6 +5479,10 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 52:
         DBG("Manipulate selection data");
         _handle_osc_selection(ty, p);
+        break;
+      case 104:
+        DBG("Reset palette colors");
+        _handle_osc_palette_reset(ty, p);
         break;
       case 110:
         DBG("Reset VT100 text foreground color");
