@@ -556,24 +556,27 @@ test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
                           int *b,
                           int *a)
 {
+   /* The colors_*_get() helpers hand back single bytes: copy them through
+    * local unsigned char variables rather than punning the int pointers,
+    * which would write the value into the wrong byte on big-endian
+    * machines. */
+   unsigned char cr = 0, cg = 0, cb = 0, ca = 0;
+
    if (pal == EVAS_TEXTGRID_PALETTE_EXTENDED)
      {
-        colors_256_get(idx,
-                       (unsigned char *)r,
-                       (unsigned char *)g,
-                       (unsigned char *)b,
-                       (unsigned char *)a);
+        colors_256_get(idx, &cr, &cg, &cb, &ca);
      }
    else
      {
         int set = idx / 12;
         int col = idx % 12;
-        colors_standard_get(set, col,
-                            (unsigned char*)r,
-                            (unsigned char*)g,
-                            (unsigned char*)b,
-                            (unsigned char*)a);
+
+        colors_standard_get(set, col, &cr, &cg, &cb, &ca);
      }
+   *r = cr;
+   *g = cg;
+   *b = cb;
+   *a = ca;
 }
 #endif
 
