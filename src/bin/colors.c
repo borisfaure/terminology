@@ -521,18 +521,18 @@ colors_term_init(Evas_Object *textgrid,
    CS_SET(35 /* inverse bg */, faint.inverse_bg);
 
    /* BrightFaint */
-   CS_SET(36 /* def */,     faint.def);
-   CS_SET(37 /* black */,   faint.black);
-   CS_SET(38 /* red */,     faint.red);
-   CS_SET(39 /* green */,   faint.green);
-   CS_SET(40 /* yellow */,  faint.yellow);
-   CS_SET(41 /* blue */,    faint.blue);
-   CS_SET(42 /* magenta */, faint.magenta);
-   CS_SET(43 /* cyan */,    faint.cyan);
-   CS_SET(44 /* white */,   faint.white);
+   CS_SET(36 /* def */,     brightfaint.def);
+   CS_SET(37 /* black */,   brightfaint.black);
+   CS_SET(38 /* red */,     brightfaint.red);
+   CS_SET(39 /* green */,   brightfaint.green);
+   CS_SET(40 /* yellow */,  brightfaint.yellow);
+   CS_SET(41 /* blue */,    brightfaint.blue);
+   CS_SET(42 /* magenta */, brightfaint.magenta);
+   CS_SET(43 /* cyan */,    brightfaint.cyan);
+   CS_SET(44 /* white */,   brightfaint.white);
    CS_SET_INVISIBLE(45);
-   CS_SET(46 /* inverse fg */, faint.inverse_fg);
-   CS_SET(47 /* inverse bg */, faint.inverse_bg);
+   CS_SET(46 /* inverse fg */, brightfaint.inverse_fg);
+   CS_SET(47 /* inverse bg */, brightfaint.inverse_bg);
 #undef CS_SET
 
 #define CS_SET(c_, F_) do {                                \
