@@ -6,3 +6,10 @@
 # allocated, and nothing it can free, so ignore that whole library rather than
 # giving up on leak detection altogether.
 leak:libdbus-1
+
+# EFL's eo keeps the class structures and vtables of every class ever
+# instantiated for the life of the process; there is no shutdown API that
+# releases them. Anything that runs ecore_init() therefore ends with a few
+# hundred bytes still referenced only from eo's internal class table.
+leak:efl_class_new
+leak:_vtable_alloc
