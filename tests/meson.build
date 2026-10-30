@@ -23,6 +23,14 @@ if tests
 
   # Each script's output is piped through tytest and the resulting state
   # checksum compared against tests.results.
+  #
+  # LSAN_OPTIONS points at the shared suppressions file: EFL's eo keeps the
+  # class structures and vtables of every class ever instantiated for the
+  # life of the process, and eldbus retains the error strings of a failed
+  # bus connection. Neither is a leak in the code under test, so tell
+  # LeakSanitizer to skip them rather than aborting every run.
+  lsan_env = {'LSAN_OPTIONS': 'suppressions=' + meson.current_source_dir() / 'lsan.supp'}
+
   test('escape-codes',
        run_tests,
        args: ['-v',
@@ -30,6 +38,7 @@ if tests
               '-r', meson.current_source_dir() / 'tests.results',
               '-d', meson.current_source_dir(),
               '-s', test_shell],
+       env: lsan_env,
        depends: tytest,
        workdir: meson.current_source_dir(),
        timeout: 300)
@@ -45,6 +54,7 @@ if tests
                 '-d', meson.current_source_dir(),
                 '-s', test_shell,
                 '--chunk=' + chunk],
+         env: lsan_env,
          depends: tytest,
          workdir: meson.current_source_dir(),
          timeout: 600)
@@ -59,15 +69,15 @@ if tests
               '-r', meson.current_source_dir() / 'tests.results',
               '-d', meson.current_source_dir(),
               '-s', test_shell],
-       env: {'TERMINOLOGY_SIMD_DISABLE': '1'},
+       env: {'TERMINOLOGY_SIMD_DISABLE': '1'} + lsan_env,
        depends: tytest,
        workdir: meson.current_source_dir(),
        timeout: 300)
 
   # The in-process C unit tests compiled into tytest itself.
-  test('unit', tytest, args: ['all'], timeout: 120)
+  test('unit', tytest, args: ['all'], env: lsan_env, timeout: 120)
   test('unit-scalar', tytest, args: ['all'],
-       env: {'TERMINOLOGY_SIMD_DISABLE': '1'}, timeout: 120)
+       env: {'TERMINOLOGY_SIMD_DISABLE': '1'} + lsan_env, timeout: 120)
 endif
 
 if benchmarks
