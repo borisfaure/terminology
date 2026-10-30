@@ -165,14 +165,18 @@ _run_tytests(int argc, char **argv)
 /* Frozen copy of the Termatt layout used when these checksums were
  * recorded.
  *
- * _tytest_checksum() hashes terminal state as raw bytes, so any change to
- * the size or layout of Termatt, Termcell or Term_State would invalidate
- * every line of tests/tests.results at once. Hashing through this frozen
- * image instead keeps the byte stream stable: cells are converted to it
- * field by field, so a layout change only shows up in the checksum when it
- * actually changes the terminal state. New fields with no equivalent here
- * are hashed separately, after the image, only when they are set -- the
- * same trick used for the working directory below. */
+ * _tytest_checksum() hashes terminal state through frozen images of Termatt,
+ * Termcell and Term_State, so any change to the fields of those types would
+ * invalidate every line of tests/tests.results at once. Hashing through
+ * these frozen images instead keeps the byte stream stable: cells are
+ * converted to it field by field, so a layout change only shows up in the
+ * checksum when it actually changes the terminal state. New fields with no
+ * equivalent here are hashed separately, after the image, only when they
+ * are set -- the same trick used for the working directory below.
+ *
+ * The images are never hashed from raw struct memory: every integer is
+ * emitted little-endian, byte by byte, so the stream -- and the checksum --
+ * is the same on big-endian machines. */
 typedef struct tag_tytest_termatt_v1
 {
    uint8_t fg, bg;
@@ -236,16 +240,9 @@ typedef struct tag_Term_State_V1 {
     int xmod[XMOD_LAST];
 } Term_State_V1;
 
-typedef struct tag_tytest_termcell_v1
-{
-   Eina_Unicode codepoint;
-   tytest_termatt_v1 att;
-} tytest_termcell_v1;
-
 /* The V1 images have no implicit padding: every field is copied, and the
  * padding bits are memset to zero, which is how they are always left. */
 _Static_assert(sizeof(tytest_termatt_v1) == 8, "frozen Termatt layout changed");
-_Static_assert(sizeof(tytest_termcell_v1) == 12, "frozen Termcell layout changed");
 
 static void
 _termatt_to_v1(const Termatt *att, tytest_termatt_v1 *v1)
@@ -341,17 +338,157 @@ _termatt_rgb_to_extra(const Termatt *att, unsigned char *extra,
      }
 }
 
+/* Every integer that enters the checksum is emitted byte by byte, in
+ * little-endian order, instead of being hashed from raw struct memory:
+ * multi-byte fields would otherwise be laid out differently on big-endian
+ * machines, and every checksum in tests/tests.results was recorded on a
+ * little-endian one. */
 static void
-_termcells_to_v1(const Termcell *cells, ssize_t w, tytest_termcell_v1 *out,
-                 unsigned char *extra, size_t *extra_len)
+_md5_u16le(MD5_CTX *ctx, uint16_t v)
+{
+   unsigned char b[2];
+
+   b[0] = (unsigned char)(v & 0xff);
+   b[1] = (unsigned char)((v >> 8) & 0xff);
+   MD5Update(ctx, b, sizeof(b));
+}
+
+static void
+_md5_u32le(MD5_CTX *ctx, uint32_t v)
+{
+   unsigned char b[4];
+   int i;
+
+   for (i = 0; i < 4; i++)
+     b[i] = (unsigned char)((v >> (8 * i)) & 0xff);
+   MD5Update(ctx, b, sizeof(b));
+}
+
+static void
+_md5_u64le(MD5_CTX *ctx, uint64_t v)
+{
+   unsigned char b[8];
+   int i;
+
+   for (i = 0; i < 8; i++)
+     b[i] = (unsigned char)((v >> (8 * i)) & 0xff);
+   MD5Update(ctx, b, sizeof(b));
+}
+
+/* Emit the frozen image of the attributes: fg, bg, the one-bit flags packed
+ * LSB-first into two 16-bit units, then the link id -- the byte stream the
+ * packed struct image had on the little-endian machine the checksums were
+ * recorded on. */
+static void
+_tytest_termatt_to_md5(MD5_CTX *ctx, const tytest_termatt_v1 *v1)
+{
+   uint16_t flags;
+   uint8_t fg = v1->fg;
+   uint8_t bg = v1->bg;
+
+   flags = (uint16_t)(v1->bold | (v1->faint << 1) | (v1->italic << 2) |
+                      (v1->dblwidth << 3) | (v1->underline << 4) |
+                      (v1->blink << 5) | (v1->blink2 << 6) |
+                      (v1->inverse << 7) | (v1->invisible << 8) |
+                      (v1->strike << 9) | (v1->fg256 << 10) |
+                      (v1->bg256 << 11) | (v1->fgintense << 12) |
+                      (v1->bgintense << 13) | (v1->autowrapped << 14) |
+                      (v1->newline << 15));
+   MD5Update(ctx, &fg, 1);
+   MD5Update(ctx, &bg, 1);
+   _md5_u16le(ctx, flags);
+   flags = (uint16_t)(v1->fraktur | (v1->framed << 1) |
+                      (v1->encircled << 2) | (v1->overlined << 3) |
+                      (v1->tab_inserted << 4) | (v1->tab_last << 5));
+#if defined(SUPPORT_80_132_COLUMNS)
+   flags |= (uint16_t)(v1->is_80_132_mode_allowed << 6);
+#endif
+   _md5_u16le(ctx, flags);
+   _md5_u16le(ctx, v1->link_id);
+}
+
+/* Emit the frozen image of the terminal state: the attributes, the character
+ * set, the margins, the one-bit flags packed LSB-first into one 32-bit unit,
+ * then the xmod table. The two zero bytes stand for the padding the frozen
+ * struct image carried between chset[] and the margins. */
+static void
+_tytest_termstate_to_md5(MD5_CTX *ctx, const Term_State_V1 *v1)
+{
+   static const unsigned char pad[2] = {0, 0};
+   uint32_t flags;
+   uint8_t charset = v1->charset;
+   uint8_t charsetch = v1->charsetch;
+   int i;
+
+   _tytest_termatt_to_md5(ctx, &v1->att);
+   MD5Update(ctx, &charset, 1);
+   MD5Update(ctx, &charsetch, 1);
+   MD5Update(ctx, (unsigned char const*)v1->chset, sizeof(v1->chset));
+   MD5Update(ctx, pad, sizeof(pad));
+   _md5_u32le(ctx, (uint32_t)v1->top_margin);
+   _md5_u32le(ctx, (uint32_t)v1->bottom_margin);
+   _md5_u32le(ctx, (uint32_t)v1->left_margin);
+   _md5_u32le(ctx, (uint32_t)v1->right_margin);
+   _md5_u32le(ctx, (uint32_t)v1->had_cr_x);
+   _md5_u32le(ctx, (uint32_t)v1->had_cr_y);
+   flags = (uint32_t)(v1->lr_margins | (v1->restrict_cursor << 1) |
+                      (v1->multibyte << 2) | (v1->alt_kp << 3) |
+                      (v1->insert << 4) | (v1->appcursor << 5) |
+                      (v1->wrap << 6) | (v1->crlf << 7) |
+                      (v1->send_bs << 8) | (v1->kbd_lock << 9) |
+                      (v1->reverse << 10) | (v1->no_autorepeat << 11) |
+                      (v1->cjk_ambiguous_wide << 12) |
+                      (v1->hide_cursor << 13) |
+                      (v1->combining_strike << 14) |
+                      (v1->sace_rectangular << 15) |
+                      (v1->esc_keycode << 16) |
+                      (v1->alternate_esc << 17));
+   _md5_u32le(ctx, flags);
+   for (i = 0; i < (int)(sizeof(v1->xmod) / sizeof(v1->xmod[0])); i++)
+     _md5_u32le(ctx, (uint32_t)v1->xmod[i]);
+}
+
+/* Emit the frozen image of a cursor: cx, cy, then the wrapnext flag in the
+ * low bit of its byte, followed by the three zero padding bytes the frozen
+ * struct image carried. */
+static void
+_tytest_cursor_to_md5(MD5_CTX *ctx, const Term_Cursor *c)
+{
+   static const unsigned char pad[3] = {0, 0, 0};
+   unsigned char wrapnext = c->wrapnext ? 1 : 0;
+
+   _md5_u32le(ctx, (uint32_t)c->cx);
+   _md5_u32le(ctx, (uint32_t)c->cy);
+   MD5Update(ctx, &wrapnext, 1);
+   MD5Update(ctx, pad, sizeof(pad));
+}
+
+/* Emit the frozen images of a run of cells, then the RGB colours those
+ * images cannot hold, in cell order, tagged -- the same two-pass order the
+ * raw struct images were hashed in. */
+static void
+_tytest_termcells_to_md5(MD5_CTX *ctx, const Termcell *cells, ssize_t count)
 {
    ssize_t i;
 
-   for (i = 0; i < w; i++)
+   for (i = 0; i < count; i++)
      {
-        out[i].codepoint = cells[i].codepoint;
-        _termatt_to_v1(&cells[i].att, &out[i].att);
-        _termatt_rgb_to_extra(&cells[i].att, extra, extra_len);
+        tytest_termatt_v1 v1;
+
+        _termatt_to_v1(&cells[i].att, &v1);
+        _md5_u32le(ctx, (uint32_t)cells[i].codepoint);
+        _tytest_termatt_to_md5(ctx, &v1);
+     }
+   for (i = 0; i < count; i++)
+     {
+        unsigned char extra[8];
+        size_t extra_len = 0;
+
+        _termatt_rgb_to_extra(&cells[i].att, extra, &extra_len);
+        if (extra_len > 0)
+          {
+             MD5Update(ctx, extra, extra_len);
+          }
      }
 }
 
@@ -412,50 +549,21 @@ _checksum_backlog(Termpty *ty, MD5_CTX *ctx)
      {
         const Termcell *cells;
         ssize_t w = 0;
-        uint32_t width;
 
         cells = termpty_cellrow_get(ty, -y, &w);
         if (!cells || (w < 0)) w = 0;
         /* Fixed width, not sizeof(ssize_t): the checksum is compared across
          * machines and must not depend on the size of a pointer. */
-        width = (uint32_t)w;
-        MD5Update(ctx, (unsigned char const*)&width, sizeof(width));
+        _md5_u32le(ctx, (uint32_t)w);
         if (cells && (w > 0))
-          {
-             tytest_termcell_v1 *v1 = malloc(w * sizeof(*v1));
-             unsigned char *extra = malloc((size_t)w * 8);
-             size_t extra_len = 0;
-
-             if (v1 && extra)
-               {
-                  _termcells_to_v1(cells, w, v1, extra, &extra_len);
-                  MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * w);
-                  MD5Update(ctx, (unsigned char const*)extra, extra_len);
-               }
-             free(v1);
-             free(extra);
-          }
+          _tytest_termcells_to_md5(ctx, cells, w);
      }
 }
 
 static void
 _checksum_screen(MD5_CTX *ctx, const Termcell *cells, int w, int h)
 {
-   tytest_termcell_v1 *v1 = malloc((size_t)w * h * sizeof(*v1));
-   unsigned char *extra = malloc((size_t)w * h * 8);
-   size_t extra_len = 0;
-
-   if (!v1 || !extra)
-     {
-        free(v1);
-        free(extra);
-        return;
-     }
-   _termcells_to_v1(cells, (ssize_t)w * h, v1, extra, &extra_len);
-   MD5Update(ctx, (unsigned char const*)v1, sizeof(*v1) * (size_t)w * h);
-   MD5Update(ctx, (unsigned char const*)extra, extra_len);
-   free(v1);
-   free(extra);
+   _tytest_termcells_to_md5(ctx, cells, (ssize_t)w * h);
 }
 
 static void
@@ -463,18 +571,44 @@ _tytest_checksum(Termpty *ty)
 {
    MD5_CTX ctx;
    Termpty_Tests tests;
+   /* Local copies: Termpty_Tests is packed, so the addresses of its
+    * sub-structs would be unaligned. */
+   Term_State_V1 termstate;
+   Term_Cursor cursor_state, cursor_save0, cursor_save1;
    char md5out[(2 * MD5_HASHBYTES) + 1];
    unsigned char hash[MD5_HASHBYTES];
    static const char hex[] = "0123456789abcdef";
    int n;
 
    _termpty_to_termpty_tests(ty, &tests);
+   termstate = tests.termstate;
+   cursor_state = tests.cursor_state;
+   cursor_save0 = tests.cursor_save[0];
+   cursor_save1 = tests.cursor_save[1];
 
    MD5Init(&ctx);
-   /* Termpty */
-   MD5Update(&ctx,
-             (unsigned char const*)&tests,
-             sizeof(tests));
+   _md5_u64le(&ctx, tests.backsize);
+   _md5_u64le(&ctx, tests.backpos);
+   _md5_u32le(&ctx, (uint32_t)tests.backlog_beacon.screen_y);
+   _md5_u32le(&ctx, (uint32_t)tests.backlog_beacon.backlog_y);
+   _tytest_termstate_to_md5(&ctx, &termstate);
+   _tytest_cursor_to_md5(&ctx, &cursor_state);
+   _tytest_cursor_to_md5(&ctx, &cursor_save0);
+   _tytest_cursor_to_md5(&ctx, &cursor_save1);
+   _md5_u32le(&ctx, (uint32_t)tests.w);
+   _md5_u32le(&ctx, (uint32_t)tests.h);
+   /* altbuf, mouse_mode, mouse_ext and bracketed_paste packed LSB-first into
+    * the 7 bits the packed struct's bit-field occupied, not into a full
+    * 64-bit unit: GCC stores the 7 declared bits tightly in a packed
+    * struct, and the raw struct image hashed only that one byte. */
+   {
+      unsigned char modes = (unsigned char)(tests.altbuf |
+                                            (tests.mouse_mode << 1) |
+                                            (tests.mouse_ext << 4) |
+                                            (tests.bracketed_paste << 6));
+
+      MD5Update(&ctx, &modes, sizeof(modes));
+   }
    /* The SGR state may hold RGB colours, which the frozen image cannot
     * carry: append them, tagged, only when set. */
    {
