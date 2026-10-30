@@ -655,6 +655,7 @@ termpty_soft_reset_state(Termpty *ty)
    termpty_sync_output_reset(ty);
 
    termio_reset_main_colors(ty->obj);
+   termio_palette_reset(ty->obj);
    termpty_clear_tabs_on_screen(ty);
    for (i = 0; i < ty->w; i += TAB_WIDTH)
      {
