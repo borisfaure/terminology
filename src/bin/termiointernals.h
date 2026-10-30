@@ -91,6 +91,12 @@ struct tag_Termio
         int b;
         int a;
    } saved_bg, saved_fg, saved_cursor;
+   /* palette colours set by the application with OSC 4, re-applied when
+    * the scheme is re-written */
+   struct {
+      Color colors[256];
+      uint32_t overridden[256 / 32];
+   } palette;
    Evas_Object *ctxpopup;
    int zoom_fontsize_start;
    int scroll;

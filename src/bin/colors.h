@@ -56,6 +56,13 @@ void
 colors_term_init(Evas_Object *textgrid,
                  const Color_Scheme *cs);
 
+/* write @idx's colour into the textgrid, and its faint slots for 0-15 */
+void
+colors_palette_color_set(Evas_Object *textgrid,
+                         const Color_Scheme *cs,
+                         int idx,
+                         const Color *c);
+
 /* Approximate an RGB colour by the closest entry of @textgrid's extended
  * 256-colour palette, weighted redmean distance, with a small cache of
  * recent results. Under tyfuzz this always returns COL_DEF. */

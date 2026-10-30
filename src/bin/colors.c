@@ -576,6 +576,63 @@ colors_term_init(Evas_Object *textgrid,
 #undef CS_SET
 }
 
+/* faint text is the colour blended with the background at 75%, as
+ * data/colorschemes/gen_faint.py builds the shipped schemes */
+static int
+_colors_faint(int bg, int c)
+{
+   return bg + ((c - bg) * 75) / 100;
+}
+
+/* the standard palette slots an ANSI colour 0-15 is served through: the
+ * normal (or bright) one and the matching faint one, -1 when idx is out
+ * of the range the standard palette serves */
+static void
+_colors_palette_slots(int idx, int *normal, int *faint)
+{
+   int set, slot;
+
+   if ((idx < 0) || (idx > 15))
+     {
+        *normal = -1;
+        *faint = -1;
+        return;
+     }
+   set = (idx < 8) ? 0 : 1;
+   slot = 1 + (idx % 8);
+   *normal = set * 12 + slot;
+   *faint = (set + 2) * 12 + slot;
+}
+
+void
+colors_palette_color_set(Evas_Object *textgrid,
+                         const Color_Scheme *cs,
+                         int idx,
+                         const Color *c)
+{
+   int normal, faint;
+
+   if (!cs)
+     cs = &default_colorscheme;
+   if ((idx < 0) || (idx > 255))
+     return;
+   evas_object_textgrid_palette_set(textgrid,
+                                    EVAS_TEXTGRID_PALETTE_EXTENDED, idx,
+                                    c->r, c->g, c->b, 0xff);
+   _colors_palette_slots(idx, &normal, &faint);
+   if (normal < 0)
+     return;
+   evas_object_textgrid_palette_set(textgrid,
+                                    EVAS_TEXTGRID_PALETTE_STANDARD, normal,
+                                    c->r, c->g, c->b, 0xff);
+   evas_object_textgrid_palette_set(textgrid,
+                                    EVAS_TEXTGRID_PALETTE_STANDARD, faint,
+                                    _colors_faint(cs->bg.r, c->r),
+                                    _colors_faint(cs->bg.g, c->g),
+                                    _colors_faint(cs->bg.b, c->b),
+                                    0xff);
+}
+
 void
 colors_standard_get(int set, int col,
                     unsigned char *r,
@@ -1244,6 +1301,39 @@ tytest_colors_is_dark(void)
         assert(colors_is_dark(table[i].r, table[i].g, table[i].b)
                == table[i].dark);
      }
+
+   return 0;
+}
+
+int
+tytest_palette_slots(void)
+{
+   static const struct {
+      int idx;
+      int normal;
+      int faint;
+   } table[] = {
+      {  0,  1, 25 },
+      {  7,  8, 32 },
+      {  8, 13, 37 },
+      { 15, 20, 44 },
+      { 16, -1, -1 },
+      { 255, -1, -1 },
+      { -1, -1, -1 },
+   };
+   size_t i;
+   int normal, faint;
+
+   for (i = 0; i < sizeof(table) / sizeof(table[0]); i++)
+     {
+        _colors_palette_slots(table[i].idx, &normal, &faint);
+        assert(normal == table[i].normal);
+        assert(faint == table[i].faint);
+     }
+
+   /* the blend of Default.ini's [Normal] red with bg #202020, as
+    * gen_faint.py computes it */
+   assert(_colors_faint(0x20, 0xcc) == 0xa1);
 
    return 0;
 }

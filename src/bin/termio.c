@@ -218,6 +218,48 @@ termio_palette_color_get(const Evas_Object *obj, int idx,
 }
 
 void
+termio_palette_color_set(Evas_Object *obj, int idx, int r, int g, int b)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   Color c = { .r = r, .g = g, .b = b, .a = 0xff };
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if ((idx < 0) || (idx > 255))
+     return;
+   sd->palette.colors[idx] = c;
+   sd->palette.overridden[idx / 32] |= 1u << (idx % 32);
+   colors_palette_color_set(sd->grid.obj, sd->config->color_scheme,
+                            idx, &c);
+}
+
+/* rewrites the scheme, then the application's palette overrides on top */
+void
+termio_palette_apply(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   int i;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   colors_term_init(sd->grid.obj, sd->config->color_scheme);
+   for (i = 0; i < 256; i++)
+     {
+        if (sd->palette.overridden[i / 32] & (1u << (i % 32)))
+          colors_palette_color_set(sd->grid.obj, sd->config->color_scheme,
+                                   i, &sd->palette.colors[i]);
+     }
+}
+
+void
+termio_palette_reset(Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   memset(sd->palette.overridden, 0, sizeof(sd->palette.overridden));
+   termio_palette_apply(obj);
+}
+
+void
 termio_fg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
 {
    Termio *sd = evas_object_smart_data_get(obj);
@@ -680,7 +722,7 @@ termio_config_update(Evas_Object *obj)
    termpty_config_update(sd->pty, sd->config);
    sd->scroll = 0;
 
-   colors_term_init(sd->grid.obj, sd->config->color_scheme);
+   termio_palette_apply(obj);
 
    evas_object_textgrid_font_set(sd->grid.obj, sd->font.name, sd->font.size);
    _termio_ligatures_update(sd);

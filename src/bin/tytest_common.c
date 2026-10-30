@@ -452,19 +452,81 @@ termio_reset_main_colors(Evas_Object *termio)
    termio_reset_fg_color(termio);
 }
 
+/* the palette the application sets with OSC 4, on top of the default
+ * colours; the real textgrid would hold it, but there is none here */
+static Color _palette[256];
+static uint32_t _palette_overridden[256 / 32];
+static Eina_Bool _palette_ready = EINA_FALSE;
+
+static void
+_palette_init_defaults(void)
+{
+   int i;
+
+   for (i = 0; i < 256; i++)
+     colors_256_get(i, &_palette[i].r, &_palette[i].g, &_palette[i].b,
+                    &_palette[i].a);
+   _palette_ready = EINA_TRUE;
+}
+
 Eina_Bool
 termio_palette_color_get(const Evas_Object *obj EINA_UNUSED, int idx,
                          int *r, int *g, int *b)
 {
-   unsigned char cr, cg, cb, ca;
-
    if ((idx < 0) || (idx > 255))
      return EINA_FALSE;
-   colors_256_get(idx, &cr, &cg, &cb, &ca);
-   *r = cr;
-   *g = cg;
-   *b = cb;
+   if (!_palette_ready)
+     _palette_init_defaults();
+   *r = _palette[idx].r;
+   *g = _palette[idx].g;
+   *b = _palette[idx].b;
    return EINA_TRUE;
+}
+
+void
+termio_palette_color_set(Evas_Object *obj EINA_UNUSED, int idx,
+                         int r, int g, int b)
+{
+   if ((idx < 0) || (idx > 255))
+     return;
+   if (!_palette_ready)
+     _palette_init_defaults();
+   _palette[idx].r = r;
+   _palette[idx].g = g;
+   _palette[idx].b = b;
+   _palette[idx].a = 0xff;
+   _palette_overridden[idx / 32] |= 1u << (idx % 32);
+}
+
+/* a scheme rewrite restores the entries the application did not override */
+void
+termio_palette_apply(Evas_Object *obj EINA_UNUSED)
+{
+   int i;
+
+   if (!_palette_ready)
+     _palette_init_defaults();
+   for (i = 0; i < 256; i++)
+     {
+        if (!(_palette_overridden[i / 32] & (1u << (i % 32))))
+          colors_256_get(i, &_palette[i].r, &_palette[i].g, &_palette[i].b,
+                         &_palette[i].a);
+     }
+}
+
+void
+termio_palette_color_override_clear(Evas_Object *obj EINA_UNUSED, int idx)
+{
+   if ((idx < 0) || (idx > 255))
+     return;
+   _palette_overridden[idx / 32] &= ~(1u << (idx % 32));
+}
+
+void
+termio_palette_reset(Evas_Object *obj EINA_UNUSED)
+{
+   memset(_palette_overridden, 0, sizeof(_palette_overridden));
+   termio_palette_apply(obj);
 }
 
 Eina_Bool
@@ -579,7 +641,14 @@ test_textgrid_palette_get(const Evas_Object *obj EINA_UNUSED,
 
    if (pal == EVAS_TEXTGRID_PALETTE_EXTENDED)
      {
-        colors_256_get(idx, &cr, &cg, &cb, &ca);
+        /* the live palette, so that OSC 4 sets are seen the way the
+         * real textgrid would show them */
+        if (!_palette_ready)
+          _palette_init_defaults();
+        cr = _palette[idx].r;
+        cg = _palette[idx].g;
+        cb = _palette[idx].b;
+        ca = _palette[idx].a;
      }
    else
      {
