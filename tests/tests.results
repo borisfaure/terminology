@@ -138,6 +138,7 @@ link_detection.sh 9b1fa98961f82d55d98ff9c00e2ee960
 selection_with_tabs.sh 213c7c2d9a8acc731e0b326a88bb71ef
 selection_empty_lines.sh 2ae3aa22572ef150457b63ed9a78efdc
 osc-invalid.sh e5933e7dd49d52b80240e352f4ff8965
+osc-4-query.sh 931d15bee6dffe2631cd127d6528a733
 osc-no-payload.sh 8aa7b12e298dfbeb5a48dcc48ea2f9a8
 osc-colors-ris.sh b9cde87fbfcf5e02a0d906a8dee7dff3
 osc-110-112.sh 15d223b8ed1276fdc5fe2a708bc3b3db

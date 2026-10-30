@@ -4673,11 +4673,17 @@ _handle_xterm_777_command(Termpty *ty,
    *title_end = ';';
 }
 
+/* the reply echoes the request's terminator, as xterm does: BEL in,
+ * BEL out, ST in, ST out (ctlseqs.txt, "Terminator") */
 static void
-_write_xterm_color_response(Termpty *ty, uint8_t number, int r, int g, int b)
+_write_xterm_color_response(Termpty *ty, const char *prefix,
+                            int r, int g, int b, Eina_Bool bel)
 {
    char buf[64];
-   int l = snprintf(buf, sizeof(buf), "\033]%d;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x\033\\", number, r, r, g, g, b, b);
+   int l = snprintf(buf, sizeof(buf),
+                    "\033]%s;rgb:%.2x%.2x/%.2x%.2x/%.2x%.2x%s",
+                    prefix, r, r, g, g, b, b,
+                    bel ? "\007" : "\033\\");
    termpty_write(ty, buf, l);
 }
 
@@ -4696,7 +4702,7 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
         int r, g, b;
 
         termio_fg_color_get(ty->obj, &r, &g, &b);
-        _write_xterm_color_response(ty, 10, r, g, b);
+        _write_xterm_color_response(ty, "10", r, g, b, EINA_FALSE);
      }
    else
      {
@@ -4732,6 +4738,7 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
    if (*p == '?')
      {
         int r = 0, g = 0, b = 0;
+        char pfx[8];
 
         if (edje_object_color_class_get(obj, color_class, &r, &g, &b, NULL,
                                         NULL, NULL, NULL, NULL,
@@ -4739,7 +4746,8 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
           {
              ERR("error getting color class '%s' on obj %p", color_class, obj);
           }
-        _write_xterm_color_response(ty, number, r, g, b);
+        snprintf(pfx, sizeof(pfx), "%u", (unsigned int)number);
+        _write_xterm_color_response(ty, pfx, r, g, b, EINA_FALSE);
      }
    else
      {
@@ -5219,6 +5227,57 @@ found:
    return cc + 1 - c;
 }
 
+/* OSC 4: query (and, to come, set) palette colours. Each entry is
+ * "idx;spec", the spec running to the next ';' or to the end of the
+ * payload. An out-of-range index or a bad spec stops the parsing and
+ * drops the rest, as xterm does (misc.c, ChangeAnsiColorRequest) */
+static void
+_handle_osc_palette_set(Termpty *ty, Eina_Unicode *p, Eina_Bool bel)
+{
+   if (!p || !*p)
+     goto err;
+
+   while (*p)
+     {
+        Eina_Unicode *spec;
+        int idx, spec_len;
+
+        idx = _osc_arg_get(ty, &p);
+        if (idx < 0)
+          return;
+        if (idx > 255)
+          break;
+        spec = p;
+        while (*p && (*p != ';'))
+          p++;
+        spec_len = p - spec;
+
+        if ((spec_len == 1) && (*spec == '?'))
+          {
+             int r, g, b;
+             char pfx[16];
+
+             if (!termio_palette_color_get(ty->obj, idx, &r, &g, &b))
+               break;
+             snprintf(pfx, sizeof(pfx), "4;%d", idx);
+             _write_xterm_color_response(ty, pfx, r, g, b, bel);
+          }
+        else
+          {
+             WRN("set palette, not supported");
+             break;
+          }
+
+        if (!*p)
+          break;
+        p++;
+     }
+   return;
+
+err:
+   ty->decoding_error = EINA_TRUE;
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -5228,6 +5287,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    int len = 0;
    int arg;
    int payload_len; /* the OSC string length, without its terminator */
+   Eina_Bool bel;   /* the request was terminated by BEL, not ST */
 
    cc = c;
    p = buf;
@@ -5264,6 +5324,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    payload_len = p - buf;
    *p = '\0';
    p = buf;
+   bel = (*cc == BEL);
    if ((*cc == ST) || (*cc == BEL) || (*cc == '\\'))
      cc++;
    else
@@ -5334,13 +5395,7 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (ty->cb.set_title.func) ty->cb.set_title.func(ty->cb.set_title.data);
         break;
       case 4:
-        if (!p || !*p)
-          goto err;
-        // XXX: set palette entry. not supported.
-        ty->decoding_error = EINA_TRUE;
-        WRN("set palette, not supported");
-        if ((cc - c) < 3)
-          return 0;
+        _handle_osc_palette_set(ty, p, bel);
         break;
       case 7:
         DBG("set working directory");

@@ -453,6 +453,21 @@ termio_reset_main_colors(Evas_Object *termio)
 }
 
 Eina_Bool
+termio_palette_color_get(const Evas_Object *obj EINA_UNUSED, int idx,
+                         int *r, int *g, int *b)
+{
+   unsigned char cr, cg, cb, ca;
+
+   if ((idx < 0) || (idx > 255))
+     return EINA_FALSE;
+   colors_256_get(idx, &cr, &cg, &cb, &ca);
+   *r = cr;
+   *g = cg;
+   *b = cb;
+   return EINA_TRUE;
+}
+
+Eina_Bool
 termio_bg_is_dark(const Evas_Object *obj EINA_UNUSED)
 {
    return colors_is_dark(_bg.r, _bg.g, _bg.b);

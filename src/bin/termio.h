@@ -109,4 +109,7 @@ void
 termio_reset_cursor_color(Evas_Object *termio);
 void
 termio_reset_main_colors(Evas_Object *termio);
+Eina_Bool
+termio_palette_color_get(const Evas_Object *obj, int idx,
+                         int *r, int *g, int *b);
 #endif
