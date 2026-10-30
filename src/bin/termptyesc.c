@@ -5227,10 +5227,7 @@ found:
    return cc + 1 - c;
 }
 
-/* OSC 4: query (and, to come, set) palette colours. Each entry is
- * "idx;spec", the spec running to the next ';' or to the end of the
- * payload. An out-of-range index or a bad spec stops the parsing and
- * drops the rest, as xterm does (misc.c, ChangeAnsiColorRequest) */
+/* OSC 4: entries are "idx;spec"; a bad one stops the parsing, as in xterm */
 static void
 _handle_osc_palette_set(Termpty *ty, Eina_Unicode *p, Eina_Bool bel)
 {
@@ -5264,8 +5261,12 @@ _handle_osc_palette_set(Termpty *ty, Eina_Unicode *p, Eina_Bool bel)
           }
         else
           {
-             WRN("set palette, not supported");
-             break;
+             unsigned char cr, cg, cb;
+
+             /* stop on a bad spec; earlier pairs stay applied, as in xterm */
+             if (_xterm_parse_color(ty, &spec, &cr, &cg, &cb, spec_len) < 0)
+               break;
+             termio_palette_color_set(ty->obj, idx, cr, cg, cb);
           }
 
         if (!*p)
