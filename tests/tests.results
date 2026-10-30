@@ -133,7 +133,7 @@ mouse_reporting_mode_normal_ext_urxvt.sh e3f88dfa3ec6cb0337df52012c90a150
 mouse_reporting_mode_mouse_move_pressed_ext_urxvt.sh f0855a96780cf3797e5a72c9a708b767
 mouse_reporting_mode_all_ext_urxvt.sh 229af4cfcbfff66c93fbe21f493853fd
 shift_in_out.sh d930f1688708a5a65a36e5b49004ceab
-osc-11-query.sh 003decc6cc863d926af6ffe2b2dd204a
+osc-11-query.sh 19bb94fb6002ce679aa7773cd94f8a57
 link_detection.sh 9b1fa98961f82d55d98ff9c00e2ee960
 selection_with_tabs.sh 213c7c2d9a8acc731e0b326a88bb71ef
 selection_empty_lines.sh 2ae3aa22572ef150457b63ed9a78efdc
@@ -143,10 +143,10 @@ osc-4-set.sh fc0c231e5ae1fda14d355e22f56099c4
 osc-104.sh 773d4be48c4ef99cb5a34c59fe771e25
 osc-4-reset.sh 76f6b1317c3ced32c16da58c2967efb5
 osc-no-payload.sh 8aa7b12e298dfbeb5a48dcc48ea2f9a8
-osc-colors-ris.sh b9cde87fbfcf5e02a0d906a8dee7dff3
-osc-110-112.sh 15d223b8ed1276fdc5fe2a708bc3b3db
-osc-colors-st.sh c22281e85b1138745566d6d1074c8e5a
-xterm-colors-names.sh 89400b3219a2998936c49b1261750156
+osc-colors-ris.sh ae9b8008e2cb1fa2bae13a471c90733f
+osc-110-112.sh 318a0f4da4b07567353e057bb2de5b2b
+osc-colors-st.sh 84636d0d4589573e1e9b3c0fcceb2091
+xterm-colors-names.sh d348708551f5ab340c457bd3a8a71b20
 title_icon_stack_simple.sh 466827743ff8de9cdfb46e9033552cfc
 title_icon_stack_unset.sh fbdac41cbf1e5f2ec6e0053737911ddb
 title_icon_stack_default.sh fbdac41cbf1e5f2ec6e0053737911ddb
@@ -166,9 +166,9 @@ color_link_edc.sh 5e07d738e6cf44af2fb4fd65d1ee7bb3
 color_link_css_rgb.sh 72b7cb4595072ac488906f82e3887192
 color_link_css_hsl.sh 3ff5de5ddb3497395516c81cea80dea4
 crash_empty_osc.sh b8e76e1c3e4e0b6d37278c84909f9ce7
-xterm-osc-10.sh 7eac024a79690beea20b08cb8f51cf18
-xterm-osc-11.sh d95b1b23a773568db74f8aa55d38a02a
-xterm-osc-12.sh 68b5e093b25182617e0b512c96e6aea7
+xterm-osc-10.sh 096d4ca9b0b7aac8442f5e7119cb14bd
+xterm-osc-11.sh 7e18c1d4052b74efee80202cd1f47626
+xterm-osc-12.sh fe7622f2707c96200913b626344178b6
 xterm-colors-sharp.sh c279098fd5e3c39702cf36bc94686ff9
 xterm-colors-rgb.sh e6a432f17c8e9dde652d749f4261b783
 xterm-colors-rgbi.sh e6a432f17c8e9dde652d749f4261b783

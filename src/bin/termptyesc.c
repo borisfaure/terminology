@@ -4688,7 +4688,7 @@ _write_xterm_color_response(Termpty *ty, const char *prefix,
 }
 
 static void
-_handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
+_handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len, Eina_Bool bel)
 {
    if (!p || !*p)
      goto err;
@@ -4702,7 +4702,7 @@ _handle_xterm_10_command(Termpty *ty, Eina_Unicode *p, int len)
         int r, g, b;
 
         termio_fg_color_get(ty->obj, &r, &g, &b);
-        _write_xterm_color_response(ty, "10", r, g, b, EINA_FALSE);
+        _write_xterm_color_response(ty, "10", r, g, b, bel);
      }
    else
      {
@@ -4721,7 +4721,8 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
                               Evas_Object *obj,
                               const char *color_class,
                               uint8_t number,
-                              void (*reset)(Evas_Object *termio))
+                              void (*reset)(Evas_Object *termio),
+                              Eina_Bool bel)
 {
    if (!p || !*p)
      goto err;
@@ -4747,7 +4748,7 @@ _handle_xterm_set_color_class(Termpty *ty, Eina_Unicode *p, int len,
              ERR("error getting color class '%s' on obj %p", color_class, obj);
           }
         snprintf(pfx, sizeof(pfx), "%u", (unsigned int)number);
-        _write_xterm_color_response(ty, pfx, r, g, b, EINA_FALSE);
+        _write_xterm_color_response(ty, pfx, r, g, b, bel);
      }
    else
      {
@@ -5449,21 +5450,21 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 10:
         DBG("Set foreground color");
-        _handle_xterm_10_command(ty, p, payload_len - (p - buf));
+        _handle_xterm_10_command(ty, p, payload_len - (p - buf), bel);
         break;
       case 11:
         DBG("Set background color");
         _handle_xterm_set_color_class(ty, p, payload_len - (p - buf),
                                       termio_bg_get(ty->obj),
                                       "BG", 11,
-                                      termio_reset_bg_color);
+                                      termio_reset_bg_color, bel);
         break;
       case 12:
         DBG("Set cursor color");
         _handle_xterm_set_color_class(ty, p, payload_len - (p - buf),
                                       termio_get_cursor(ty->obj),
                                       "CURSOR", 12,
-                                      termio_reset_cursor_color);
+                                      termio_reset_cursor_color, bel);
         break;
       case 50:
         DBG("xterm font support");
