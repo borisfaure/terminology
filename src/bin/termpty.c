@@ -945,6 +945,17 @@ termpty_config_update(Termpty *ty, Config *config)
    termpty_backlog_size_set(ty, config->scrollback);
 }
 
+void
+termpty_palette_changed(Termpty *ty)
+{
+   /* shared by all terminals, so a reused address never matches the cache */
+   static unsigned int generation;
+
+   if (!ty)
+     return;
+   ty->palette_generation = ++generation;
+}
+
 static Eina_Bool
 _termpty_cell_is_empty(const Termcell *cell)
 {

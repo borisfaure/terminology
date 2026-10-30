@@ -63,11 +63,12 @@ colors_palette_color_set(Evas_Object *textgrid,
                          int idx,
                          const Color *c);
 
-/* Approximate an RGB colour by the closest entry of @textgrid's extended
- * 256-colour palette, weighted redmean distance, with a small cache of
- * recent results. Under tyfuzz this always returns COL_DEF. */
+struct tag_Termpty;
+
+/* closest extended-palette entry for an RGB, cached per @ty */
 uint8_t
 colors_rgb_to_palette(Evas_Object *textgrid,
+                      const struct tag_Termpty *ty,
                       uint8_t r, uint8_t g, uint8_t b);
 void
 colors_standard_get(int set,

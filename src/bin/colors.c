@@ -1109,6 +1109,9 @@ colors_shutdown(void)
 #define TCC_PRIME 17 /* smallest prime number larger than @TCC_LEN/2 */
 static struct {
      uint32_t colors[TCC_LEN];
+     /* answers for one terminal's palette generation */
+     const Termpty *owner;
+     unsigned int generation;
 } _truecolor_cache;
 static int _tcc_random_pos = 0;
 
@@ -1148,11 +1151,13 @@ _tcc_insert(const uint32_t color_msb, const uint8_t approximated)
 #endif
 
 uint8_t
-colors_rgb_to_palette(Evas_Object *textgrid, uint8_t r0, uint8_t g0, uint8_t b0)
+colors_rgb_to_palette(Evas_Object *textgrid, const Termpty *ty,
+                      uint8_t r0, uint8_t g0, uint8_t b0)
 {
    uint8_t chosen_color = COL_DEF;
 #if defined(BINARY_TYFUZZ)
    (void) textgrid;
+   (void) ty;
    (void) r0;
    (void) g0;
    (void) b0;
@@ -1163,6 +1168,14 @@ colors_rgb_to_palette(Evas_Object *textgrid, uint8_t r0, uint8_t g0, uint8_t b0)
       | (((uint32_t)r0) << 24)
       | (((uint32_t)g0) << 16)
       | (((uint32_t)b0) << 8);
+
+   if (!ty || (_truecolor_cache.owner != ty) ||
+       (_truecolor_cache.generation != ty->palette_generation))
+     {
+        memset(_truecolor_cache.colors, 0, sizeof(_truecolor_cache.colors));
+        _truecolor_cache.owner = ty;
+        _truecolor_cache.generation = ty ? ty->palette_generation : 0;
+     }
 
    if (_tcc_find(color_msb, &chosen_color))
      return chosen_color;
@@ -1253,17 +1266,48 @@ tytest_rgb_to_palette(void)
       {  66,  33, 222,  56 },
    };
    size_t i;
+   Termpty ty;
+
+   memset(&ty, 0, sizeof(ty));
 
    for (i = 0; i < sizeof(table) / sizeof(table[0]); i++)
      {
-        uint8_t idx = colors_rgb_to_palette(NULL, table[i].r, table[i].g,
+        uint8_t idx = colors_rgb_to_palette(NULL, &ty, table[i].r, table[i].g,
                                             table[i].b);
         assert(idx == table[i].idx);
      }
-   /* Repeating one entry exercises the cache: the answer must not depend
-    * on which path (cache hit or full scan) produced it. */
-   assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
-   assert(colors_rgb_to_palette(NULL, 215, 135, 95) == 173);
+   /* repeating one entry exercises the cache */
+   assert(colors_rgb_to_palette(NULL, &ty, 215, 135, 95) == 173);
+   assert(colors_rgb_to_palette(NULL, &ty, 215, 135, 95) == 173);
+
+   return 0;
+}
+
+/* the cache must not answer with colours from an older palette */
+int
+tytest_truecolor_cache_generation(void)
+{
+   Termpty ty, ty2;
+
+   memset(&ty, 0, sizeof(ty));
+   memset(&ty2, 0, sizeof(ty2));
+
+   /* a shared counter: two terminals never share a generation */
+   termpty_palette_changed(&ty);
+   termpty_palette_changed(&ty2);
+   assert(ty.palette_generation != ty2.palette_generation);
+
+   assert(colors_rgb_to_palette(NULL, &ty, 215, 135, 95) == 173);
+   /* a sentinel the generation bump must flush */
+   _truecolor_cache.colors[0] = 0xdeadbeef;
+   termpty_palette_changed(&ty);
+   assert(colors_rgb_to_palette(NULL, &ty, 215, 135, 95) == 173);
+   assert(_truecolor_cache.colors[0] != 0xdeadbeef);
+
+   /* another terminal's palette does not answer either */
+   _truecolor_cache.colors[0] = 0xdeadbeef;
+   assert(colors_rgb_to_palette(NULL, NULL, 215, 135, 95) == 173);
+   assert(_truecolor_cache.colors[0] != 0xdeadbeef);
 
    return 0;
 }

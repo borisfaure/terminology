@@ -230,6 +230,7 @@ termio_palette_color_set(Evas_Object *obj, int idx, int r, int g, int b)
    sd->palette.overridden[idx / 32] |= 1u << (idx % 32);
    colors_palette_color_set(sd->grid.obj, sd->config->color_scheme,
                             idx, &c);
+   termpty_palette_changed(sd->pty);
 }
 
 /* rewrites the scheme, then the application's palette overrides on top */
@@ -247,6 +248,7 @@ termio_palette_apply(Evas_Object *obj)
           colors_palette_color_set(sd->grid.obj, sd->config->color_scheme,
                                    i, &sd->palette.colors[i]);
      }
+   termpty_palette_changed(sd->pty);
 }
 
 void

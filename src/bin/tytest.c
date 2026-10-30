@@ -101,6 +101,7 @@ static struct {
        { "osc_color_name", tytest_osc_color_name},
        { "xterm_parse_color", tytest_xterm_parse_color},
        { "palette_slots", tytest_palette_slots},
+       { "truecolor_cache_generation", tytest_truecolor_cache_generation},
        { NULL, NULL},
 };
 

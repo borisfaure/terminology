@@ -270,6 +270,8 @@ struct tag_Termpty
    unsigned int color_scheme_reporting : 1;
    unsigned int osc_skip : 1; /* discarding an OSC too long for the buffer */
    unsigned int osc_skip_esc : 1; /* and the last codepoint was ESC */
+   /* bumped on each palette rewrite (OSC 4); scopes the truecolour cache */
+   unsigned int palette_generation;
    struct {
        Term_Link *links;
        uint8_t *bitmap;
@@ -354,6 +356,8 @@ void       termpty_sync_output_reset(Termpty *ty);
 /* private — called from termptyesc.c _sync_output_end only */
 void       termpty_sync_output_snapshot_free(Termpty *ty);
 void       termpty_config_update(Termpty *ty, Config *config);
+/* the application rewrote the palette; invalidates the truecolour cache */
+void       termpty_palette_changed(Termpty *ty);
 
 const Termcell *termpty_cellrow_get(Termpty *ty, int y, ssize_t *wret);
 Termcell       *termpty_cellrow_get_writeable(Termpty *ty, int y, ssize_t *wret);

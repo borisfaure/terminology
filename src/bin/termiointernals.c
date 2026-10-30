@@ -2707,6 +2707,7 @@ termio_internal_render(Termio *sd,
                              * but the cell keeps the true value for next
                              * time. */
                             fg = colors_rgb_to_palette(sd->grid.obj,
+                                                       sd->pty,
                                                        (fg >> 16) & 0xff,
                                                        (fg >> 8) & 0xff,
                                                        fg & 0xff);
@@ -2716,6 +2717,7 @@ termio_internal_render(Termio *sd,
                        if (bg_is_rgb && tr_missing)
                          {
                             bg = colors_rgb_to_palette(sd->grid.obj,
+                                                       sd->pty,
                                                        (bg >> 16) & 0xff,
                                                        (bg >> 8) & 0xff,
                                                        bg & 0xff);
