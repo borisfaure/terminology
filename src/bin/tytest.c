@@ -856,7 +856,7 @@ main(int argc, char **argv)
 {
    Eina_Bool dump = EINA_FALSE;
    int chunk = 0;
-   int i;
+   int i, res;
 
    /* Before the argument loop: the unit-test path returns out of it without
     * ever reaching tytest_common_init(), and several of those tests drive the
@@ -876,7 +876,16 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "--dump")) dump = EINA_TRUE;
         else if (!strncmp(argv[i], "--chunk=", 8)) chunk = atoi(argv[i] + 8);
         /* Anything else is a unit test name, and those take over entirely. */
-        else return _run_tytests(argc, argv);
+        else
+          {
+             res = _run_tytests(argc, argv);
+             /* Unit tests may run ecore_shutdown(), which queues the eo
+              * class and vtable frees on eina's main freeq. A running main
+              * loop drains that queue; there is none on this path, so the
+              * queued memory would be reported as leaked. */
+             eina_freeq_clear(eina_freeq_main_get());
+             return res;
+          }
      }
 
    emile_init();
