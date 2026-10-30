@@ -99,6 +99,7 @@ static struct {
        { "osc_arg_get", tytest_osc_arg_get},
        { "osc_color_reset", tytest_osc_color_reset},
        { "osc_color_name", tytest_osc_color_name},
+       { "xterm_parse_color", tytest_xterm_parse_color},
        { NULL, NULL},
 };
 

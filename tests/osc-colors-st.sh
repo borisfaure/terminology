@@ -19,3 +19,12 @@ printf '\033]10;?\007'
 # an invalid colour is still rejected with ESC \ as the terminator
 printf '\033]10;#ff00\033\\'
 printf '\033]10;?\007'
+# the 9-digit # form: two digits per channel, the third checked but dropped
+printf '\033]11;#123456789\033\\'
+printf '\033]11;?\007'
+# a one-digit rgb: component scales to a full byte
+printf '\033]12;rgb:f/0/8\033\\'
+printf '\033]12;?\007'
+# under #, a nibble is the most significant bits, not scaled
+printf '\033]12;#fff\033\\'
+printf '\033]12;?\007'

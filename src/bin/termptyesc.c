@@ -4079,6 +4079,26 @@ _eina_unicode_to_hex(Eina_Unicode u)
    return -1;
 }
 
+/* reads n hex digits, most significant first, or -1 if any of them is
+ * not a hex digit */
+static int
+_xterm_hex_digits(Eina_Unicode *p, int n)
+{
+   int v = 0;
+   int i;
+
+   for (i = 0; i < n; i++)
+     {
+        int d;
+
+        d = _eina_unicode_to_hex(p[i]);
+        if (d < 0)
+          return -1;
+        v = v * 16 + d;
+     }
+   return v;
+}
+
 static int
 _xterm_parse_color_sharp(Eina_Unicode *p,
                    unsigned char *r, unsigned char *g, unsigned char *b,
@@ -4088,100 +4108,59 @@ _xterm_parse_color_sharp(Eina_Unicode *p,
 
    switch (len)
      {
-      case 3*4+1:
-         i = _eina_unicode_to_hex(p[0]);
+      case 3*4:
+         /* #rrrrggggbbbb: the top byte of each channel */
+         i = _xterm_hex_digits(p, 2);
          if (i < 0) return -1;
          *r = i;
+         if (_xterm_hex_digits(p + 2, 2) < 0) return -1;
+         i = _xterm_hex_digits(p + 4, 2);
+         if (i < 0) return -1;
+         *g = i;
+         if (_xterm_hex_digits(p + 6, 2) < 0) return -1;
+         i = _xterm_hex_digits(p + 8, 2);
+         if (i < 0) return -1;
+         *b = i;
+         if (_xterm_hex_digits(p + 10, 2) < 0) return -1;
+         break;
+      case 3*3:
+         /* #rrrgggbbb: XParseColor takes the most significant bits, so
+          * the third digit of each channel is checked but dropped */
+         i = _xterm_hex_digits(p, 2);
+         if (i < 0) return -1;
+         *r = i;
+         if (_xterm_hex_digits(p + 2, 1) < 0) return -1;
+         i = _xterm_hex_digits(p + 3, 2);
+         if (i < 0) return -1;
+         *g = i;
+         if (_xterm_hex_digits(p + 5, 1) < 0) return -1;
+         i = _xterm_hex_digits(p + 6, 2);
+         if (i < 0) return -1;
+         *b = i;
+         if (_xterm_hex_digits(p + 8, 1) < 0) return -1;
+         break;
+      case 3*2:
+         i = _xterm_hex_digits(p, 2);
+         if (i < 0) return -1;
+         *r = i;
+         i = _xterm_hex_digits(p + 2, 2);
+         if (i < 0) return -1;
+         *g = i;
+         i = _xterm_hex_digits(p + 4, 2);
+         if (i < 0) return -1;
+         *b = i;
+         break;
+      case 3*1:
+         /* #rgb: the nibbles are the most significant bits of the channel */
+         i = _eina_unicode_to_hex(p[0]);
+         if (i < 0) return -1;
+         *r = i << 4;
          i = _eina_unicode_to_hex(p[1]);
          if (i < 0) return -1;
-         *r = *r * 16 + i;
+         *g = i << 4;
          i = _eina_unicode_to_hex(p[2]);
          if (i < 0) return -1;
-         i = _eina_unicode_to_hex(p[3]);
-         if (i < 0) return -1;
-
-         i = _eina_unicode_to_hex(p[4]);
-         if (i < 0) return -1;
-         *g = i;
-         i = _eina_unicode_to_hex(p[5]);
-         if (i < 0) return -1;
-         *g = *g * 16 + i;
-         i = _eina_unicode_to_hex(p[6]);
-         if (i < 0) return -1;
-         i = _eina_unicode_to_hex(p[7]);
-         if (i < 0) return -1;
-
-         i = _eina_unicode_to_hex(p[8]);
-         if (i < 0) return -1;
-         *b = i;
-         i = _eina_unicode_to_hex(p[9]);
-         if (i < 0) return -1;
-         *b = *b * 16 + i;
-         i = _eina_unicode_to_hex(p[10]);
-         if (i < 0) return -1;
-         i = _eina_unicode_to_hex(p[11]);
-         if (i < 0) return -1;
-         break;
-      case 3*3+1:
-         i = _eina_unicode_to_hex(p[0]);
-         if (i < 0) return -1;
-         *r = i;
-         i = _eina_unicode_to_hex(p[1]);
-         if (i < 0) return -1;
-         *r = *r * 16 + i;
-         i = _eina_unicode_to_hex(p[3]);
-         if (i < 0) return -1;
-
-         i = _eina_unicode_to_hex(p[4]);
-         if (i < 0) return -1;
-         *g = i;
-         i = _eina_unicode_to_hex(p[5]);
-         if (i < 0) return -1;
-         *g = *g * 16 + i;
-         i = _eina_unicode_to_hex(p[3]);
-         if (i < 0) return -1;
-
-         i = _eina_unicode_to_hex(p[7]);
-         if (i < 0) return -1;
-         *b = i;
-         i = _eina_unicode_to_hex(p[8]);
-         if (i < 0) return -1;
-         *b = *b * 16 + i;
-         i = _eina_unicode_to_hex(p[3]);
-         if (i < 0) return -1;
-         break;
-      case 3*2+1:
-         i = _eina_unicode_to_hex(p[0]);
-         if (i < 0) return -1;
-         *r = i;
-         i = _eina_unicode_to_hex(p[1]);
-         if (i < 0) return -1;
-         *r = *r * 16 + i;
-
-         i = _eina_unicode_to_hex(p[2]);
-         if (i < 0) return -1;
-         *g = i;
-         i = _eina_unicode_to_hex(p[3]);
-         if (i < 0) return -1;
-         *g = *g * 16 + i;
-
-         i = _eina_unicode_to_hex(p[4]);
-         if (i < 0) return -1;
-         *b = i;
-         i = _eina_unicode_to_hex(p[5]);
-         if (i < 0) return -1;
-         *b = *b * 16 + i;
-         break;
-      case 3*1+1:
-         i = _eina_unicode_to_hex(p[0]);
-         if (i < 0) return -1;
-         *r = i;
-         i = _eina_unicode_to_hex(p[1]);
-         if (i < 0) return -1;
-         *g = i;
-         i = _eina_unicode_to_hex(p[2]);
-         if (i < 0) return -1;
-         *b = i;
+         *b = i << 4;
          break;
       default:
          return -1;
@@ -4303,8 +4282,9 @@ _xterm_parse_hex(Eina_Unicode *p, unsigned char *c, int len)
      goto end;
 
 end:
+   /* rgb: scales the value by digit count, as XParseColor does */
    if (l == 1)
-     v <<= 4;
+     v = v * 255 / 15;
    *c = v;
    return l;
 }
@@ -4391,8 +4371,6 @@ _xterm_parse_color(Termpty *ty, Eina_Unicode **ptr,
         const struct color_name *e;
         int i;
 
-        /* len counts the terminating NUL, as in the sharp and rgb forms */
-        len--;
         if (len <= 0 || len >= (int)sizeof(name))
           goto err;
         for (i = 0; i < len; i++)
@@ -4431,8 +4409,12 @@ _xterm_parse_color_check(Termpty *ty, const char *input,
      buf[i] = input[i];
    buf[i] = '\0';
 
-   ret = _xterm_parse_color(ty, &p, &rr, &gg, &bb, i + 1);
-   return (ret == expected) && (rr == r) && (gg == g) && (bb == b);
+   ret = _xterm_parse_color(ty, &p, &rr, &gg, &bb, i);
+   if (ret != expected)
+     return 0;
+   if (ret != 0)
+     return 1;
+   return (rr == r) && (gg == g) && (bb == b);
 }
 
 int
@@ -4457,6 +4439,72 @@ tytest_osc_color_name(void)
    assert(_xterm_parse_color_check(&ty, "notacolor", -1, 0, 0, 0));
    assert(_xterm_parse_color_check(&ty, "reDd", -1, 0, 0, 0));
    assert(ty.decoding_error == EINA_TRUE);
+
+   return 0;
+}
+
+int
+tytest_xterm_parse_color(void)
+{
+   Termpty ty;
+   char buf[32];
+   unsigned int i;
+
+   memset(&ty, 0, sizeof(ty));
+
+   /* every form XParseColor accepts, with the exact spec length */
+   assert(_xterm_parse_color_check(&ty, "#f00", 0, 0xf0, 0x00, 0x00));
+   assert(_xterm_parse_color_check(&ty, "#ff0000", 0, 255, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "#123456789", 0, 0x12, 0x45, 0x78));
+   assert(_xterm_parse_color_check(&ty, "#123456789abc", 0, 0x12, 0x56, 0x9a));
+
+   /* every digit position of every form must be a valid hex digit */
+   for (i = 1; i < strlen("#123456789abc"); i++)
+     {
+        strcpy(buf, "#123456789abc");
+        buf[i] = 'g';
+        assert(_xterm_parse_color_check(&ty, buf, -1, 0, 0, 0));
+     }
+   for (i = 1; i < strlen("#123456789"); i++)
+     {
+        strcpy(buf, "#123456789");
+        buf[i] = 'g';
+        assert(_xterm_parse_color_check(&ty, buf, -1, 0, 0, 0));
+     }
+   for (i = 1; i < strlen("#123456"); i++)
+     {
+        strcpy(buf, "#123456");
+        buf[i] = 'g';
+        assert(_xterm_parse_color_check(&ty, buf, -1, 0, 0, 0));
+     }
+   for (i = 1; i < strlen("#123"); i++)
+     {
+        strcpy(buf, "#123");
+        buf[i] = 'g';
+        assert(_xterm_parse_color_check(&ty, buf, -1, 0, 0, 0));
+     }
+
+   /* wrong lengths */
+   assert(_xterm_parse_color_check(&ty, "#", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "#ff", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "#ffff", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "#ffffff0", -1, 0, 0, 0));
+
+   /* rgb: forms, scaled by digit count */
+   assert(_xterm_parse_color_check(&ty, "rgb:f/0/8", 0, 255, 0, 136));
+   assert(_xterm_parse_color_check(&ty, "rgb:12/34/56", 0, 0x12, 0x34, 0x56));
+   assert(_xterm_parse_color_check(&ty, "rgb:123/456/789", 0, 0x12, 0x45, 0x78));
+   assert(_xterm_parse_color_check(&ty, "rgb:1234/5678/9abc", 0, 0x12, 0x56, 0x9a));
+   /* a missing or empty component, and too many digits */
+   assert(_xterm_parse_color_check(&ty, "rgb:1/2", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgb:1//2", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgb:/1/2", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgb:12345/0/0", -1, 0, 0, 0));
+
+   /* rgbi: floats, out of range rejected */
+   assert(_xterm_parse_color_check(&ty, "rgbi:1/0.5/0", 0, 255, 128, 0));
+   assert(_xterm_parse_color_check(&ty, "rgbi:1.5/0/0", -1, 0, 0, 0));
+   assert(_xterm_parse_color_check(&ty, "rgbi:-1/0/0", -1, 0, 0, 0));
 
    return 0;
 }
@@ -5321,18 +5369,18 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 10:
         DBG("Set foreground color");
-        _handle_xterm_10_command(ty, p, payload_len - (p - buf) + 1);
+        _handle_xterm_10_command(ty, p, payload_len - (p - buf));
         break;
       case 11:
         DBG("Set background color");
-        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
+        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf),
                                       termio_bg_get(ty->obj),
                                       "BG", 11,
                                       termio_reset_bg_color);
         break;
       case 12:
         DBG("Set cursor color");
-        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf) + 1,
+        _handle_xterm_set_color_class(ty, p, payload_len - (p - buf),
                                       termio_get_cursor(ty->obj),
                                       "CURSOR", 12,
                                       termio_reset_cursor_color);

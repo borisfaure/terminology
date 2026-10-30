@@ -141,7 +141,7 @@ osc-invalid.sh e5933e7dd49d52b80240e352f4ff8965
 osc-no-payload.sh 8aa7b12e298dfbeb5a48dcc48ea2f9a8
 osc-colors-ris.sh b9cde87fbfcf5e02a0d906a8dee7dff3
 osc-110-112.sh 15d223b8ed1276fdc5fe2a708bc3b3db
-osc-colors-st.sh c278b29ead41787bf3ecc4aa3a1753f8
+osc-colors-st.sh c22281e85b1138745566d6d1074c8e5a
 xterm-colors-names.sh 89400b3219a2998936c49b1261750156
 title_icon_stack_simple.sh 466827743ff8de9cdfb46e9033552cfc
 title_icon_stack_unset.sh fbdac41cbf1e5f2ec6e0053737911ddb
