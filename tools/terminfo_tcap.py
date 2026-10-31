@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+
+"""
+Generate src/bin/termptytcap.h from data/terminfo/terminology.terminfo.
+
+The header holds the table the XTGETTCAP query (DCS + q Pt ST, see
+<https://invisible-island.net/xterm/ctlseqs/ctlseqs.html>) is answered
+from: every capability of the shipped terminfo entry, sorted with C
+strcmp() order so that bsearch() works.
+
+The terminfo entry is the document that says what Terminology does, so
+the table is generated from it rather than hand-picked; run this script
+after editing the entry and commit both files:
+
+  tools/terminfo_tcap.py data/terminfo/terminology.terminfo \
+      src/bin/termptytcap.h
+
+With --check, regenerate to memory and exit 1 if the committed file
+differs.
+"""
+
+import argparse
+import sys
+
+# terminfo(5) escapes in string capabilities.  \a is not in the classic
+# set but ncurses accepts it, and the shipped entry uses it in Ms.
+SIMPLE_ESCAPES = {
+    'E': 0x1b, 'e': 0x1b,
+    'n': 0x0a, 'l': 0x0a,
+    'r': 0x0d, 't': 0x09,
+    'b': 0x08, 'f': 0x0c,
+    's': 0x20,
+    'a': 0x07,
+    '\\': 0x5c, ',': 0x2c, ':': 0x3a, '^': 0x5e,
+}
+
+
+def decode_string(s, capname):
+    """Decode a terminfo string capability to its runtime bytes."""
+    out = bytearray()
+    i = 0
+    while i < len(s):
+        c = s[i]
+        if c == '\\':
+            i += 1
+            if i >= len(s):
+                raise ValueError(f'{capname}: trailing backslash in {s!r}')
+            e = s[i]
+            if e in SIMPLE_ESCAPES:
+                out.append(SIMPLE_ESCAPES[e])
+                i += 1
+            elif e.isdigit():
+                # \NNN is octal, at most three digits.  A NUL byte,
+                # however it is spelled, becomes \200 as ncurses does,
+                # so that it cannot truncate the C string.
+                j = i
+                while (j < len(s)) and (j < i + 3) and s[j].isdigit():
+                    j += 1
+                digits = s[i:j]
+                value = int(digits, 8) & 0xff
+                out.append(0x80 if value == 0 else value)
+                i = j
+            else:
+                raise ValueError(f'{capname}: unknown escape \\{e} in {s!r}')
+        elif c == '^':
+            i += 1
+            if i >= len(s):
+                raise ValueError(f'{capname}: trailing ^ in {s!r}')
+            e = s[i]
+            if e == '?':
+                out.append(0x7f)
+            elif e == '@':
+                out.append(0x80)
+            else:
+                out.append(ord(e.upper()) & 0x1f)
+            i += 1
+        else:
+            out.append(ord(c))
+            i += 1
+    return bytes(out)
+
+
+def split_fields(body):
+    """Split on commas, where \\, is not a separator."""
+    fields = []
+    start = 0
+    escaped = False
+    for i, c in enumerate(body):
+        if escaped:
+            escaped = False
+        elif c == '\\':
+            escaped = True
+        elif c == ',':
+            fields.append(body[start:i])
+            start = i + 1
+    tail = body[start:]
+    if tail.strip():
+        fields.append(tail)
+    return fields
+
+
+def parse_terminfo(path):
+    """Return {name: bytes or None} for every non-cancelled capability."""
+    caps = {}
+    with open(path, 'r', encoding='utf-8') as f:
+        text = f.read()
+
+    # Drop comment lines, then the first field, the names.
+    lines = [ln for ln in text.splitlines()
+             if ln.strip() and not ln.strip().startswith('#')]
+    if not lines:
+        raise ValueError('empty terminfo source')
+    fields = split_fields(''.join(lines))
+    if not fields:
+        raise ValueError('no capabilities found')
+
+    for field in fields[1:]:
+        field = field.strip()
+        if not field:
+            continue
+        eq = field.find('=')
+        hash_ = field.find('#')
+        if field.endswith('@') and (eq < 0) and (hash_ < 0):
+            continue  # cancelled capability
+        if (eq >= 0) and ((hash_ < 0) or (eq < hash_)):
+            name = field[:eq]
+            caps[name] = decode_string(field[eq + 1:], name)
+        elif hash_ >= 0:
+            name = field[:hash_]
+            caps[name] = str(int(field[hash_ + 1:], 0)).encode('ascii')
+        else:
+            name = field
+            caps[name] = None  # boolean
+        if name == 'use':
+            raise ValueError('use= entries are not supported')
+
+    if 'colors' not in caps:
+        raise ValueError('colors# is missing from the entry')
+    # Co is the termcap spelling of colors, always asked as Co.
+    caps['Co'] = caps['colors']
+    return caps
+
+
+def c_quote(b):
+    """A C string literal for the bytes, octal escapes three digits wide."""
+    if 0 in b:
+        raise ValueError('a NUL byte would truncate the C string')
+    out = []
+    for byte in b:
+        if (0x20 <= byte < 0x7f) and byte not in (0x22, 0x5c):
+            out.append(chr(byte))
+        else:
+            out.append(f'\\{byte:03o}')
+    return '"' + ''.join(out) + '"'
+
+
+def generate_header(caps):
+    lines = [
+        '/* XXX: Code generated by tool terminfo_tcap.py */',
+        '#ifndef TERMINOLOGY_TERMPTY_TCAP_H_',
+        '#define TERMINOLOGY_TERMPTY_TCAP_H_ 1',
+    ]
+    lines.extend([
+        '',
+        'typedef struct _Termpty_Tcap',
+        '{',
+        '   const char *name;',
+        '   const char *value; /* NULL for a boolean */',
+        '} Termpty_Tcap;',
+        '',
+        'static const Termpty_Tcap _termpty_tcaps[] =',
+        '{',
+    ])
+    for name in sorted(caps):
+        value = caps[name]
+        if value is None:
+            lines.append(f'   {{ {c_quote(name.encode("ascii"))}, NULL }},')
+        else:
+            lines.append(f'   {{ {c_quote(name.encode("ascii"))}, '
+                         f'{c_quote(value)} }},')
+    lines.extend([
+        '};',
+        '',
+        '#endif',
+        '',
+    ])
+    return '\n'.join(lines)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('terminfo')
+    ap.add_argument('output')
+    ap.add_argument('--check', action='store_true',
+                    help='compare with the committed file instead of writing')
+    args = ap.parse_args()
+
+    content = generate_header(parse_terminfo(args.terminfo))
+    if args.check:
+        with open(args.output, 'r', encoding='utf-8') as f:
+            committed = f.read()
+        if committed != content:
+            print(f'{args.output} is out of date: run '
+                  f'tools/terminfo_tcap.py {args.terminfo} {args.output} '
+                  'and commit both files', file=sys.stderr)
+            return 1
+        return 0
+    with open(args.output, 'w', encoding='utf-8') as f:
+        f.write(content)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

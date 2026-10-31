@@ -8,3 +8,12 @@ This is done by using `tools/unicode_dbl_width.py`.
 2. Extract it
 3. Run `tools/unicode_dbl_width.py ucd.all.flat.xml src/bin/termptydbl.h src/bin/termptydbl.c`_
 4. Commit the files modified
+
+# Terminfo capabilities
+
+The table that answers XTGETTCAP queries is generated from the shipped
+terminfo entry, so that the two cannot drift apart.
+
+After editing `data/terminfo/terminology.terminfo`, run
+`tools/terminfo_tcap.py data/terminfo/terminology.terminfo src/bin/termptytcap.h`
+and commit both files.
