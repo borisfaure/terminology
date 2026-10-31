@@ -9,6 +9,7 @@
 #include "private.h"
 #include <Elementary.h>
 #include "termpty.h"
+#include "termptynotify.h"
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
@@ -859,6 +860,7 @@ tytest_common_init(void)
 void
 tytest_common_shutdown(void)
 {
+   termpty_notify_free(&_ty);
    free(_feed_buf);
    _feed_buf = NULL;
    free(_feed_codepoint);
