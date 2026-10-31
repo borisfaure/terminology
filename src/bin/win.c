@@ -3620,6 +3620,37 @@ _tabs_set_main_tab(Term *term,
    edje_object_message_signal_process(term->bg_edj);
 }
 
+/* The theme signal for this terminal's OSC 9;4 progress; fill gets the
+ * width of the bar, from 0.0 to 1.0 */
+static const char *
+_term_progress_get(const Term *term, double *fill)
+{
+   static const char *signals[] = {
+      "progress,none", "progress,normal", "progress,error",
+      "progress,indeterminate", "progress,paused",
+   };
+   Termpty_Progress_State state;
+   int value = 0;
+
+   state = termio_progress_get(term->termio, &value);
+   /* an empty error or paused bar would not show at all */
+   if ((value == 0) &&
+       ((state == TERMPTY_PROGRESS_ERROR) ||
+        (state == TERMPTY_PROGRESS_PAUSED)))
+     value = 100;
+   *fill = value / 100.0;
+   return signals[state];
+}
+
+/* a theme without the progress parts simply shows nothing */
+static void
+_theme_progress_set(Evas_Object *edje, const char *signal, double fill)
+{
+   edje_object_part_drag_size_set(edje, "terminology.progress.fill",
+                                  fill, 1.0);
+   edje_object_signal_emit(edje, signal, "terminology");
+}
+
 static Evas_Object*
 _tab_inactive_get_or_create(Evas *canvas,
                             Term *term,
@@ -5953,6 +5984,24 @@ term_is_in_focused_view(const Term *term)
    return term_is_visible(term) && term->container->is_focused;
 }
 
+
+static void
+_term_progress_update(Term *term)
+{
+   double fill;
+   const char *signal = _term_progress_get(term, &fill);
+
+   _theme_progress_set(term->bg_edj, signal, fill);
+}
+
+static void
+_cb_progress_change(void *data,
+                    Evas_Object *_obj EINA_UNUSED,
+                    void *_event EINA_UNUSED)
+{
+   _term_progress_update(data);
+}
+
 void change_theme(Evas_Object *win, Config *config)
 {
    const Eina_List *terms, *l;
@@ -5970,6 +6019,7 @@ void change_theme(Evas_Object *win, Config *config)
         termio_config_set(term->termio, config);
         termio_theme_set(term->termio, term->bg_edj);
         termio_color_scheme_changed(term->termio);
+        _term_progress_update(term);
         if (config->color_scheme && term->mediatype == MEDIA_TYPE_RECT)
           {
              evas_object_color_set(term->media,
@@ -7618,6 +7668,8 @@ term_new(Win *wn, Config *config, const char *cmd,
    evas_object_smart_callback_add(o, "title,change", _cb_title, term);
    evas_object_smart_callback_add(o, "icon,change", _cb_icon, term);
    evas_object_smart_callback_add(o, "send,progress", _cb_send_progress, term);
+   evas_object_smart_callback_add(o, "progress,change", _cb_progress_change,
+                                  term);
    evas_object_smart_callback_add(o, "send,end", _cb_send_end, term);
    evas_object_show(o);
 
