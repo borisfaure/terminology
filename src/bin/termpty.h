@@ -278,6 +278,8 @@ struct tag_Termpty
        uint32_t size;
    } hl;
    TitleIconElem *title_icon_stack;
+   /* OSC 99 notifications still waiting for their last chunk, oldest first */
+   Eina_List *notify_pending;
 };
 
 struct tag_Termcell

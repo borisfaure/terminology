@@ -32,6 +32,7 @@ A simple documentation to navigate through the C files:
 * `src/bin/termptydbl.c`: code to hande double-width characters
 * `src/bin/termptyesc.c`: escape codes parsing
 * `src/bin/termptyext.c`: extented terminology escape handling
+* `src/bin/termptynotify.c`: desktop notification escape codes (OSC 99)
 * `src/bin/termptygfx.c`: charset translations
 * `src/bin/termptyops.c`: handling history
 * `src/bin/tyalpha.c`: the `tyalpha` tool

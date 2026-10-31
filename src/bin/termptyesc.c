@@ -10,6 +10,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#include "termptynotify.h"
 #include "termptytcap.h"
 #include "simd/simd.h"
 #include "theme.h"
@@ -4662,8 +4663,8 @@ _handle_xterm_777_command(Termpty *ty,
    *title_end = '\0';
    message = title_end + 1;
 
-   termio_notification_send(ty->obj, title, message,
-                            ELM_SYS_NOTIFY_URGENCY_NORMAL, -1);
+   termpty_notify_show(ty, title, message,
+                        ELM_SYS_NOTIFY_URGENCY_NORMAL, -1);
    *cmd_end = ';';
    *title_end = ';';
 }
@@ -5523,6 +5524,17 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (s)
           {
              _handle_xterm_777_command(ty, s, len);
+             free(s);
+          }
+        break;
+      case 99:
+        DBG("kitty desktop notification");
+        if (!p)
+          goto err;
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (s)
+          {
+             termpty_notify_osc99(ty, s, len, bel);
              free(s);
           }
         break;

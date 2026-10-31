@@ -5,6 +5,7 @@
 #include <Ecore_IMF_Evas.h>
 #include "termpty.h"
 #include "termptyesc.h"
+#include "termptynotify.h"
 #include "termptyops.h"
 #include "backlog.h"
 #include "utf8.h"
@@ -840,6 +841,7 @@ termpty_free(Termpty *ty)
    Termexp *ex;
 
    termpty_save_unregister(ty);
+   termpty_notify_free(ty);
    free(ty->osc52_long.data);
    EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);
@@ -2059,6 +2061,7 @@ static void
 _ty_test_shutdown(Termpty *ty)
 {
    termpty_sync_output_reset(ty);
+   termpty_notify_free(ty);
    termpty_backlog_free(ty);
    free(ty->screen);
    free(ty->screen2);
@@ -2702,6 +2705,33 @@ tytest_notify_gated(void)
    ty.config->notification_escapes = EINA_TRUE;
    _ty_feed(&ty, "\x1b]777;notify;Shown;again\x07");
    assert(strstr(tytest_notifications_get(), "again"));
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* A flood of d=0 chunks with distinct ids only recycles entries: making
+ * a new pending notification past NOTIFY_PENDING_MAX evicts the oldest. */
+int
+tytest_notify_pending_cap(void)
+{
+   Termpty ty;
+   char seq[64];
+   int i;
+
+   _ty_test_init(&ty, 80, 24);
+
+   for (i = 0; i < NOTIFY_PENDING_MAX + 1; i++)
+     {
+        snprintf(seq, sizeof(seq), "\x1b]99;i=p%d:d=0;chunk %d\x1b\\", i, i);
+        _ty_feed(&ty, seq);
+     }
+   assert(eina_list_count(ty.notify_pending) == NOTIFY_PENDING_MAX);
+   /* the oldest, p0, was evicted: completing it now shows on its own */
+   tytest_notifications_clear();
+   _ty_feed(&ty, "\x1b]99;i=p0;done\x1b\\");
+   assert(strstr(tytest_notifications_get(), "chunk 0") == NULL);
+   assert(strstr(tytest_notifications_get(), "done") != NULL);
 
    _ty_test_shutdown(&ty);
    return 0;
