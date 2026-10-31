@@ -4648,11 +4648,6 @@ _handle_xterm_777_command(Termpty *ty,
         return;
      }
 
-   if (!elm_need_sys_notify())
-     {
-        WRN("no elementary system notification support");
-        return;
-     }
    cmd_end = s + strlen("notify");
    if (*cmd_end != ';')
      return;
@@ -4667,9 +4662,8 @@ _handle_xterm_777_command(Termpty *ty,
    *title_end = '\0';
    message = title_end + 1;
 
-   elm_sys_notify_send(0, "dialog-information", title, message,
-                       ELM_SYS_NOTIFY_URGENCY_NORMAL, -1,
-                       NULL, NULL);
+   termio_notification_send(ty->obj, title, message,
+                            ELM_SYS_NOTIFY_URGENCY_NORMAL, -1);
    *cmd_end = ';';
    *title_end = ';';
 }

@@ -670,6 +670,15 @@ termio_is_focused(const Evas_Object *obj EINA_UNUSED)
    return EINA_FALSE;
 }
 
+void
+termio_notification_send(Evas_Object *obj EINA_UNUSED,
+                         const char *title EINA_UNUSED,
+                         const char *body EINA_UNUSED,
+                         Elm_Sys_Notify_Urgency urgency EINA_UNUSED,
+                         int timeout_ms EINA_UNUSED)
+{
+}
+
 static void
 _termpty_init(Termpty *ty, Config *config)
 {

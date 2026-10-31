@@ -75,6 +75,9 @@ Termpty *termio_pty_get(const Evas_Object *obj);
 Evas_Object * termio_miniview_get(const Evas_Object *obj);
 Term* termio_term_get(const Evas_Object *obj);
 Eina_Bool termio_is_focused(const Evas_Object *obj);
+void termio_notification_send(Evas_Object *obj, const char *title,
+                              const char *body,
+                              Elm_Sys_Notify_Urgency urgency, int timeout_ms);
 Evas_Object *termio_bg_get(const Evas_Object *obj);
 Eina_Bool termio_bg_is_dark(const Evas_Object *obj);
 void termio_color_scheme_changed(Evas_Object *obj);

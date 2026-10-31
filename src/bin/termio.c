@@ -526,6 +526,34 @@ termio_is_focused(const Evas_Object *obj)
    return term_is_focused(sd->term);
 }
 
+void
+termio_notification_send(Evas_Object *obj EINA_UNUSED,
+                         const char *title, const char *body,
+                         Elm_Sys_Notify_Urgency urgency, int timeout_ms)
+{
+   /* elm_need_sys_notify() returns EINA_FALSE once the callbacks are set,
+    * so it must only be called once per process */
+   static Eina_Bool has_sys_notify = EINA_FALSE;
+   static Eina_Bool has_sys_notify_checked = EINA_FALSE;
+   char *message = NULL;
+
+   if (!has_sys_notify_checked)
+     {
+        has_sys_notify_checked = EINA_TRUE;
+        has_sys_notify = elm_need_sys_notify();
+        if (!has_sys_notify)
+          WRN("no elementary system notification support");
+     }
+   if (!has_sys_notify)
+     return;
+   /* the freedesktop notification spec sends the body as markup */
+   if (body)
+     message = elm_entry_utf8_to_markup(body);
+   elm_sys_notify_send(0, "dialog-information", title, message,
+                       urgency, timeout_ms, NULL, NULL);
+   free(message);
+}
+
 Evas_Object *
 termio_bg_get(const Evas_Object *obj)
 {
