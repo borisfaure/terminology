@@ -5941,6 +5941,18 @@ term_is_focused(const Term *term)
    return tc->is_focused;
 }
 
+/* term_is_visible() and the window has the focus; occlusion is undetectable */
+Eina_Bool
+term_is_in_focused_view(const Term *term)
+{
+   if (!term)
+     return EINA_FALSE;
+   if (!term->container)
+     return EINA_FALSE;
+
+   return term_is_visible(term) && term->container->is_focused;
+}
+
 void change_theme(Evas_Object *win, Config *config)
 {
    const Eina_List *terms, *l;

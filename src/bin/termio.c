@@ -526,6 +526,15 @@ termio_is_focused(const Evas_Object *obj)
    return term_is_focused(sd->term);
 }
 
+Eina_Bool
+termio_is_in_focused_view(const Evas_Object *obj)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+
+   return term_is_in_focused_view(sd->term);
+}
+
 void
 termio_notification_send(Evas_Object *obj EINA_UNUSED,
                          const char *title, const char *body,

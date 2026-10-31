@@ -4664,7 +4664,7 @@ _handle_xterm_777_command(Termpty *ty,
    message = title_end + 1;
 
    termpty_notify_show(ty, title, message,
-                        ELM_SYS_NOTIFY_URGENCY_NORMAL, -1);
+                        ELM_SYS_NOTIFY_URGENCY_NORMAL, -1, -1);
    *cmd_end = ';';
    *title_end = ';';
 }

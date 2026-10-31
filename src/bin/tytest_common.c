@@ -670,6 +670,12 @@ termio_is_focused(const Evas_Object *obj EINA_UNUSED)
    return EINA_FALSE;
 }
 
+Eina_Bool
+termio_is_in_focused_view(const Evas_Object *obj EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
 #if defined(BINARY_TYTEST)
 static Eina_Strbuf *_notifications = NULL;
 #endif

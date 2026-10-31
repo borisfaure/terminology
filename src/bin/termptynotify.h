@@ -15,7 +15,7 @@ void termpty_notify_osc99(Termpty *ty, const char *s, size_t len,
 
 /* Sanitize (NOTIFY_TEXT_MAX) and show unless gated; -1 args mean unset */
 void termpty_notify_show(Termpty *ty, const char *title, const char *body,
-                         int urgency, int timeout_ms);
+                         int urgency, int timeout_ms, int occasion);
 
 /* Drop the notifications still waiting for their last chunk */
 void termpty_notify_free(Termpty *ty);

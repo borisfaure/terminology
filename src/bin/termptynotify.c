@@ -210,6 +210,24 @@ _notify_text_append(Eina_Strbuf *dst, const char *src, size_t len,
      }
 }
 
+/* kitty spec: unfocused = no focus, invisible = also no view (no occlusion) */
+static Eina_Bool
+_notify_occasion_allows(Notify_Occasion occasion,
+                        Eina_Bool focused, Eina_Bool visible)
+{
+   switch (occasion)
+     {
+      case NOTIFY_OCCASION_UNSET:
+      case NOTIFY_OCCASION_ALWAYS:
+        return EINA_TRUE;
+      case NOTIFY_OCCASION_UNFOCUSED:
+        return !focused;
+      case NOTIFY_OCCASION_INVISIBLE:
+        return !focused && !visible;
+     }
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _notify_pending_matches(const Notify_Pending *pending, const Notify_Meta *meta)
 {
@@ -366,18 +384,23 @@ _notify_pending_show(Termpty *ty, const Notify_Pending *pending)
      urgency = ELM_SYS_NOTIFY_URGENCY_NORMAL;
    termpty_notify_show(ty, eina_strbuf_string_get(title),
                        eina_strbuf_string_get(body), urgency,
-                       pending->timeout_ms == -2 ? -1 : pending->timeout_ms);
+                       pending->timeout_ms == -2 ? -1 : pending->timeout_ms,
+                       (int)pending->occasion);
    eina_strbuf_free(title);
    eina_strbuf_free(body);
 }
 
 void
 termpty_notify_show(Termpty *ty, const char *title, const char *body,
-                    int urgency, int timeout_ms)
+                    int urgency, int timeout_ms, int occasion)
 {
    Eina_Strbuf *title_sb, *body_sb;
 
    if (!ty->config->notification_escapes)
+     return;
+   if (!_notify_occasion_allows((Notify_Occasion)occasion,
+                                termio_is_focused(ty->obj),
+                                termio_is_in_focused_view(ty->obj)))
      return;
 
    title_sb = eina_strbuf_new();
@@ -415,7 +438,8 @@ _notify_query_reply(Termpty *ty, const Notify_Meta *meta, Eina_Bool bel)
    int l;
 
    l = snprintf(buf, sizeof(buf),
-                "\033]99;i=%s:p=?;p=title,body,?:o=always:u=0,1,2:w=1%s",
+                "\033]99;i=%s:p=?;"
+                "p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1%s",
                 meta->has_id ? meta->id : "0",
                 bel ? "\007" : "\033\\");
    if ((l > 0) && (l < (int)sizeof(buf)))
@@ -646,6 +670,30 @@ tytest_notify_text_append(void)
    assert((size_t)eina_strbuf_length_get(sb) % 3 == 0);
 
    eina_strbuf_free(sb);
+   return 0;
+}
+
+/* The truth table of the occasion check, with the tytest stubs
+ * reporting "visible but not focused". */
+int
+tytest_notify_occasion(void)
+{
+   Eina_Bool focused = EINA_FALSE;
+   Eina_Bool visible = EINA_TRUE;
+
+   /* ALWAYS and UNSET always pass */
+   assert(_notify_occasion_allows(NOTIFY_OCCASION_ALWAYS, EINA_TRUE, EINA_TRUE));
+   assert(_notify_occasion_allows(NOTIFY_OCCASION_UNSET, EINA_TRUE, EINA_TRUE));
+   assert(_notify_occasion_allows(NOTIFY_OCCASION_ALWAYS, focused, visible));
+   /* UNFOCUSED passes only when the window lost the focus */
+   assert(_notify_occasion_allows(NOTIFY_OCCASION_UNFOCUSED, focused, visible));
+   assert(!_notify_occasion_allows(NOTIFY_OCCASION_UNFOCUSED, EINA_TRUE, visible));
+   assert(!_notify_occasion_allows(NOTIFY_OCCASION_UNFOCUSED, EINA_TRUE, EINA_FALSE));
+   /* INVISIBLE also requires the term to be out of sight */
+   assert(!_notify_occasion_allows(NOTIFY_OCCASION_INVISIBLE, focused, visible));
+   assert(!_notify_occasion_allows(NOTIFY_OCCASION_INVISIBLE, EINA_TRUE, EINA_FALSE));
+   assert(_notify_occasion_allows(NOTIFY_OCCASION_INVISIBLE, EINA_FALSE, EINA_FALSE));
+
    return 0;
 }
 #endif

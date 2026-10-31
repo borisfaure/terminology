@@ -78,6 +78,7 @@ static struct {
        { "notify_pending_cap", tytest_notify_pending_cap},
        { "notify_query_gated", tytest_notify_query_gated},
        { "notify_text_append", tytest_notify_text_append},
+       { "notify_occasion", tytest_notify_occasion},
        { "decrqss_invalid", tytest_decrqss_invalid},
        { "decrqss_sgr", tytest_decrqss_sgr},
        { "decrqss_settings", tytest_decrqss_settings},

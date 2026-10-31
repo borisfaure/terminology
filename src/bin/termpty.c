@@ -2749,37 +2749,37 @@ tytest_notify_query_gated(void)
    _ty_feed(&ty, "\x1b]99;i=opentui-notifications:p=?;\x1b\\");
    _ty_reply_is(&ty,
                 "\x1b]99;i=opentui-notifications:p=?;"
-                "p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
 
    /* ended with BEL: answered with BEL */
    _ty_feed(&ty, "\x1b]99;i=q2:p=?;\x07");
    _ty_reply_is(&ty,
-                "\x1b]99;i=q2:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x07");
+                "\x1b]99;i=q2:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x07");
 
    /* no id: i=0 */
    _ty_feed(&ty, "\x1b]99;p=?;\x1b\\");
    _ty_reply_is(&ty,
-                "\x1b]99;i=0:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "\x1b]99;i=0:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
 
    /* an id with characters outside the set: not echoed, i=0 */
    _ty_feed(&ty, "\x1b]99;i=evil$(id):p=?;\x1b\\");
    _ty_reply_is(&ty,
-                "\x1b]99;i=0:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "\x1b]99;i=0:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
 
    /* key order does not matter */
    _ty_feed(&ty, "\x1b]99;p=?:i=late;\x1b\\");
    _ty_reply_is(&ty,
-                "\x1b]99;i=late:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "\x1b]99;i=late:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
 
    /* a query in the middle of a chunked notification keeps it */
    _ty_feed(&ty, "\x1b]99;i=k:d=0;kept \x1b\\");
    _ty_feed(&ty, "\x1b]99;i=k2:p=?;\x1b\\");
    _ty_reply_is(&ty,
-                "\x1b]99;i=k2:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "\x1b]99;i=k2:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
    _ty_feed(&ty, "\x1b]99;i=k;title\x1b\\");
    _ty_feed(&ty, "\x1b]99;i=k2:p=?;\x1b\\");
    _ty_reply_is(&ty,
-                "\x1b]99;i=k2:p=?;p=title,body,?:o=always:u=0,1,2:w=1\x1b\\");
+                "\x1b]99;i=k2:p=?;p=title,body,?:o=always,unfocused,invisible:u=0,1,2:w=1\x1b\\");
    assert(strstr(tytest_notifications_get(), "kept title"));
 
    /* with the option off, no reply and no notification */

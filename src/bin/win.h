@@ -75,6 +75,8 @@ term_imf_context_get(Term *term);
 
 Eina_Bool term_is_visible(const Term *term);
 Eina_Bool term_is_focused(const Term *term);
+/* In view in its window, and that window has the focus */
+Eina_Bool term_is_in_focused_view(const Term *term);
 
 void win_font_size_set(Win *wn, int new_size);
 void win_font_update(Term *term);
