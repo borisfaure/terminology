@@ -88,6 +88,11 @@ struct tag_Termio
       Eina_Bool active : 1;
    } sendfile;
    struct {
+      unsigned char state; /* a Termpty_Progress_State, as last shown */
+      unsigned char value;
+   } progress;
+   Ecore_Timer *progress_stale_timer;
+   struct {
         int r;
         int g;
         int b;

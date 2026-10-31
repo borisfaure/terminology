@@ -3457,6 +3457,19 @@ termio_file_send_progress_get(const Evas_Object *obj)
    return sd->sendfile.progress;
 }
 
+Termpty_Progress_State
+termio_progress_get(const Evas_Object *obj, int *value)
+{
+   Termio *sd = evas_object_smart_data_get(obj);
+
+   if (value)
+     *value = 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, TERMPTY_PROGRESS_NONE);
+   if (value)
+     *value = sd->pty->progress.value;
+   return (Termpty_Progress_State)sd->pty->progress.state;
+}
+
 /* {{{ Smart */
 
 static void
@@ -3835,6 +3848,7 @@ _smart_del(Evas_Object *obj)
    if (sd->link_do_timer) ecore_timer_del(sd->link_do_timer);
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
+   if (sd->progress_stale_timer) ecore_timer_del(sd->progress_stale_timer);
    eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    eina_stringshare_del(sd->link.string);
@@ -4034,6 +4048,12 @@ _smart_pty_exited(void *data)
         sd->event = NULL;
      }
 
+   if (sd->progress_stale_timer)
+     {
+        ecore_timer_del(sd->progress_stale_timer);
+        sd->progress_stale_timer = NULL;
+     }
+   termpty_progress_reset(sd->pty);
    term_close(sd->win, sd->self, EINA_TRUE);
 }
 
@@ -4047,6 +4067,51 @@ _smart_pty_bell(void *data)
    edje_object_signal_emit(sd->cursor.obj, "bell", "terminology");
    if (sd->config->bell_rings)
      edje_object_signal_emit(sd->cursor.obj, "bell,ring", "terminology");
+}
+
+/* The OSC 9;4 progress indicator went stale: the program stopped
+ * reporting or died, so forget the state, which hides the bar. */
+static Eina_Bool
+_smart_pty_progress_stale(void *data)
+{
+   Termio *sd = data;
+
+   sd->progress_stale_timer = NULL;
+   termpty_progress_reset(sd->pty);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_smart_pty_progress(void *data)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   /* Re-arm the staleness timer on every report: a program reporting the
+    * same value over and over is still alive. A completed bar expires
+    * faster, so that it does not outstay the build it reported. */
+   if (sd->progress_stale_timer)
+     {
+        ecore_timer_del(sd->progress_stale_timer);
+        sd->progress_stale_timer = NULL;
+     }
+   if (sd->pty->progress.state != TERMPTY_PROGRESS_NONE)
+     {
+        double timeout = 60.0;
+
+        if ((sd->pty->progress.state == TERMPTY_PROGRESS_NORMAL) &&
+            (sd->pty->progress.value == 100))
+          timeout = 5.0;
+        sd->progress_stale_timer =
+          ecore_timer_add(timeout, _smart_pty_progress_stale, sd);
+     }
+   if ((sd->progress.state != sd->pty->progress.state) ||
+       (sd->progress.value != sd->pty->progress.value))
+     {
+        sd->progress.state = sd->pty->progress.state;
+        sd->progress.value = sd->pty->progress.value;
+        evas_object_smart_callback_call(data, "progress,change", NULL);
+     }
 }
 
 static void
@@ -4652,6 +4717,8 @@ termio_add(Evas_Object *win, Config *config,
    sd->pty->cb.bell.data = obj;
    sd->pty->cb.command.func = _smart_pty_command;
    sd->pty->cb.command.data = obj;
+   sd->pty->cb.progress.func = _smart_pty_progress;
+   sd->pty->cb.progress.data = obj;
    _smart_size(obj, w, h, EINA_TRUE);
    return obj;
 }

@@ -67,6 +67,8 @@ Config      *termio_config_get(const Evas_Object *obj);
 Eina_Bool    termio_file_send_ok(const Evas_Object *obj, const char *file);
 void         termio_file_send_cancel(const Evas_Object *obj);
 double       termio_file_send_progress_get(const Evas_Object *obj);
+Termpty_Progress_State termio_progress_get(const Evas_Object *obj,
+                                           int *value);
 
 void
 termio_imf_cursor_set(Evas_Object *obj, Ecore_IMF_Context *imf);
