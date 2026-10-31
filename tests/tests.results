@@ -194,3 +194,4 @@ osc-can.sh 74530a1ced8bc249989e9175c8d29e99
 dsr-color-scheme.sh 68f86326864cc9988c84dc20babe4156
 decset-2031.sh 60c4f2ca88a2a4dbae8f7453c633d074
 ascii_run_prefix.sh 5413bed756d01dc51d09609c8512b8ec
+xtgettcap.sh 300a0521bca0f2bf50bc00161f8fc195

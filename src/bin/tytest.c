@@ -70,6 +70,8 @@ static struct {
        { "xmodkeys_set", tytest_xmodkeys_set},
        { "xmodkeys_query", tytest_xmodkeys_query},
        { "xmodkeys_reset", tytest_xmodkeys_reset},
+       { "xtgettcap", tytest_xtgettcap},
+       { "tcap_table_sorted", tytest_tcap_table_sorted},
        { "decrqss_invalid", tytest_decrqss_invalid},
        { "decrqss_sgr", tytest_decrqss_sgr},
        { "decrqss_settings", tytest_decrqss_settings},

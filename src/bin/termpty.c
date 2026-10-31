@@ -2637,6 +2637,50 @@ tytest_xmodkeys_reset(void)
    return 0;
 }
 
+/* XTGETTCAP: DCS + q <hex names> ST, one reply per name. */
+int
+tytest_xtgettcap(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   /* Ms, the capability opentui asks for, lowercase hex as it sends it */
+   _ty_feed(&ty, "\x1bP+q4d73\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1+r4d73=1B5D35323B25703125733B257032257307\x1b\\");
+   /* unknown, then known: one reply each, processing goes on */
+   _ty_feed(&ty, "\x1bP+q787878;616d\x1b\\");
+   _ty_reply_is(&ty, "\x1bP0+r787878\x1b\\\x1bP1+r616d\x1b\\");
+   /* empty list */
+   _ty_feed(&ty, "\x1bP+q\x1b\\");
+   _ty_reply_is(&ty, "\x1bP0+r\x1b\\");
+   /* an ESC inside the name is not hex: rejected, nothing echoed */
+   _ty_feed(&ty, "\x1bP+q4\x1b" "1\x1b\\");
+   _ty_reply_is(&ty, "\x1bP0+r\x1b\\");
+   /* a name too long for the buffers: unknown, but echoed back whole */
+   {
+      char half[2 * 75 + 1], reply[6 + 2 * 150 + 2 + 2];
+      int i;
+
+      for (i = 0; i < (int)sizeof(half) - 1; i += 2)
+        memcpy(half + i, "78", 2);
+      half[sizeof(half) - 1] = '\0';
+      _ty_feed(&ty, "\x1bP+q");
+      _ty_feed(&ty, half);
+      _ty_feed(&ty, half);
+      _ty_feed(&ty, "\x1b\\");
+      snprintf(reply, sizeof(reply), "\x1bP0+r%s%s\x1b\\", half, half);
+      _ty_reply_is(&ty, reply);
+   }
+   /* TN follows the configured TERM */
+   ty.config->term_type = TERM_TYPE_TERMINOLOGY;
+   _ty_feed(&ty, "\x1bP+q544e\x1b\\");
+   _ty_reply_is(&ty, "\x1bP1+r544e=7465726D696E6F6C6F6779\x1b\\");
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* DECRQSS: an unsupported request is answered "invalid", DECSCL keeps its
  * reply, and a DCS that is not DECRQSS stays silent. */
 int

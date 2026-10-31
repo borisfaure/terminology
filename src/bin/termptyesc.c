@@ -10,6 +10,7 @@
 #include "termptyesc.h"
 #include "termptyops.h"
 #include "termptyext.h"
+#include "termptytcap.h"
 #include "simd/simd.h"
 #include "theme.h"
 #if defined(BINARY_TYTEST)
@@ -5768,6 +5769,145 @@ _handle_decrqss(Termpty *ty, const Eina_Unicode *request)
      }
 }
 
+/* XTGETTCAP: DCS + q Pt ST, hex-encoded names, separated by ';'
+ * (xterm ctlseqs.txt), answered from the generated terminfo table. */
+
+/* A name is hex digits and encodes no NUL, so what is echoed back is
+ * printable and strcmp cannot be fooled. */
+static Eina_Bool
+_xtgettcap_name_is_hex(const Eina_Unicode *hex, int len)
+{
+   int i;
+
+   if ((len <= 0) || (len % 2))
+     return EINA_FALSE;
+   for (i = 0; i < len; i += 2)
+     {
+        int hi = _eina_unicode_to_hex(hex[i]);
+        int lo = _eina_unicode_to_hex(hex[i + 1]);
+
+        if ((hi < 0) || (lo < 0) || (((hi << 4) | lo) == 0))
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+/* Decode a validated name; fails when it does not fit in out_size. */
+static Eina_Bool
+_xtgettcap_name_decode(const Eina_Unicode *hex, int len,
+                      char *out, size_t out_size)
+{
+   int i;
+
+   if ((size_t)(len / 2) >= out_size)
+     return EINA_FALSE;
+   for (i = 0; i < len; i += 2)
+     out[i / 2] = (char)((_eina_unicode_to_hex(hex[i]) << 4)
+                         | _eina_unicode_to_hex(hex[i + 1]));
+   out[len / 2] = '\0';
+   return EINA_TRUE;
+}
+
+static int
+_tcap_cmp(const void *key, const void *elt)
+{
+   return strcmp(key, ((const Termpty_Tcap *)elt)->name);
+}
+
+/* Names too long for name_size answer as unknown, but are echoed. */
+static const char *
+_xtgettcap_lookup(const Termpty *ty, const Eina_Unicode *hex, int len,
+                  char *name, size_t name_size, Eina_Bool *found)
+{
+   const Termpty_Tcap *tcap;
+
+   *found = EINA_FALSE;
+   if (!_xtgettcap_name_decode(hex, len, name, name_size))
+     return NULL;
+   if ((strcmp(name, "TN") == 0) || (strcmp(name, "name") == 0))
+     {
+        *found = EINA_TRUE;
+        return config_term_type_name(ty->config->term_type);
+     }
+   tcap = bsearch(name, _termpty_tcaps,
+                  EINA_C_ARRAY_LENGTH(_termpty_tcaps),
+                  sizeof(_termpty_tcaps[0]), _tcap_cmp);
+   if (!tcap)
+     return NULL;
+   *found = EINA_TRUE;
+   return tcap->value;
+}
+
+/* The name is echoed whenever it is hex, whatever its length. */
+static void
+_xtgettcap_reply(Termpty *ty, const Eina_Unicode *hex, int len)
+{
+   static const char digits[] = "0123456789ABCDEF";
+   char name[33], out[64];
+   const char *value;
+   Eina_Bool found;
+   int i, n = 0;
+
+   if (!_xtgettcap_name_is_hex(hex, len))
+     {
+        TERMPTY_WRITE_STR("\033P0+r\033\\");
+        return;
+     }
+   value = _xtgettcap_lookup(ty, hex, len, name, sizeof(name), &found);
+   TERMPTY_WRITE_STR(found ? "\033P1+r" : "\033P0+r");
+   for (i = 0; i < len; i++)
+     {
+        if (n == (int)sizeof(out))
+          {
+             termpty_write(ty, out, n);
+             n = 0;
+          }
+        out[n++] = (char)hex[i];
+     }
+   termpty_write(ty, out, n);
+   if (value)
+     {
+        const unsigned char *v;
+
+        n = 0;
+        out[n++] = '=';
+        for (v = (const unsigned char *)value; *v; v++)
+          {
+             if (n + 2 > (int)sizeof(out))
+               {
+                  termpty_write(ty, out, n);
+                  n = 0;
+               }
+             out[n++] = digits[*v >> 4];
+             out[n++] = digits[*v & 0x0f];
+          }
+        termpty_write(ty, out, n);
+     }
+   TERMPTY_WRITE_STR("\033\\");
+}
+
+/* One reply per name, as foot does: opentui rejects combined replies. */
+static void
+_handle_xtgettcap(Termpty *ty, const Eina_Unicode *list)
+{
+   const Eina_Unicode *name = list, *end;
+
+   if (!*list)
+     {
+        TERMPTY_WRITE_STR("\033P0+r\033\\");
+        return;
+     }
+   for (;;)
+     {
+        for (end = name; *end && (*end != ';'); end++)
+          ;
+        _xtgettcap_reply(ty, name, end - name);
+        if (!*end)
+          break;
+        name = end + 1;
+     }
+}
+
 static int
 _handle_esc_dcs(Termpty *ty,
                 const Eina_Unicode *c,
@@ -5806,22 +5946,15 @@ _handle_esc_dcs(Termpty *ty,
    switch (buf[0])
      {
       case '+':
-         if (len < 4)
-           goto end;
          switch (buf[1])
            {
             case 'q':
-              WRN("unhandled dsc request to get termcap/terminfo");
-              ty->decoding_error = EINA_TRUE;
-              /* TODO */
+              _handle_xtgettcap(ty, buf + 2);
               goto end;
-               break;
             case 'p':
               WRN("unhandled dsc request to set termcap/terminfo");
               ty->decoding_error = EINA_TRUE;
-              /* TODO */
               goto end;
-               break;
             default:
               ERR("invalid dsc request about termcap/terminfo");
               ty->decoding_error = EINA_TRUE;
@@ -6282,3 +6415,15 @@ end:
      ty->last_char = last_char;
    return len;
 }
+
+#if defined(BINARY_TYTEST)
+int
+tytest_tcap_table_sorted(void)
+{
+   size_t i;
+
+   for (i = 1; i < EINA_C_ARRAY_LENGTH(_termpty_tcaps); i++)
+     assert(strcmp(_termpty_tcaps[i - 1].name, _termpty_tcaps[i].name) < 0);
+   return 0;
+}
+#endif
