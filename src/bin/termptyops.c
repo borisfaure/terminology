@@ -705,6 +705,7 @@ termpty_reset_state(Termpty *ty)
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
    termpty_clear_backlog(ty);
+   termpty_progress_reset(ty);
 }
 
 void

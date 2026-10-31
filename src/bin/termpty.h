@@ -132,6 +132,17 @@ typedef enum _Termpty_Selection_Read_Answer {
      TERMPTY_SELECTION_READ_ALLOW_UNTIL_CLOSED = 2,
 } Termpty_Selection_Read_Answer;
 
+/* The state of the progress indicator requested by OSC 9;4 (ConEmu).
+ * The values match ConEmu's states and tmux's enum progress_bar_state. */
+typedef enum tag_Termpty_Progress_State
+{
+   TERMPTY_PROGRESS_NONE = 0,   /* remove the indicator */
+   TERMPTY_PROGRESS_NORMAL = 1, /* set a value */
+   TERMPTY_PROGRESS_ERROR,      /* error; keep the value */
+   TERMPTY_PROGRESS_INDETERMINATE, /* busy, no value */
+   TERMPTY_PROGRESS_PAUSED      /* paused; keep the value */
+} Termpty_Progress_State;
+
 typedef struct tag_Term_State {
     Termatt       att;
     unsigned char charset;
@@ -177,7 +188,8 @@ struct tag_Termpty
       struct {
          void (*func) (void *data);
          void *data;
-      } change, set_title, set_icon, cancel_sel, exited, bell, command;
+      } change, set_title, set_icon, cancel_sel, exited, bell, command,
+        progress;
    } cb;
    struct {
       Ecore_Timer *watchdog;
@@ -250,6 +262,13 @@ struct tag_Termpty
       size_t len, size;
       char letters[4];
    } osc52_long;
+   /* OSC 9;4 progress report: state and, when it has one, its value.
+      Kept outside Term_State, which the test checksum covers raw, so
+      reporting progress does not shift any existing checksum. */
+   struct {
+      unsigned char state; /* a Termpty_Progress_State */
+      unsigned char value; /* 0-100 */
+   } progress;
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
@@ -425,6 +444,14 @@ void
 termpty_color_scheme_report(Termpty *ty);
 void
 termpty_color_scheme_notify(Termpty *ty);
+/* ConEmu progress report, OSC 9;4;<state>[;<progress>]. A negative value
+ * keeps the current one where the state allows it; see termpty_progress_set().
+ * Fires ty->cb.progress on every well-formed report; the caller compares
+ * against the state it last showed to detect changes. */
+void termpty_progress_set(Termpty *ty, Termpty_Progress_State state,
+                          int value);
+/* Remove the indicator and forget its value. */
+void termpty_progress_reset(Termpty *ty);
 void
 termpty_selection_read_answer(Termpty *ty,
                               Termpty_Selection_Read_Answer answer);

@@ -1979,6 +1979,48 @@ termpty_focus_report(Termpty *ty, Eina_Bool focus)
    else
      TERMPTY_WRITE_STR("\033[O");
 }
+/* A progress report from OSC 9;4. A negative value keeps the current one
+ * for the states that carry no value of their own: tmux keeps the value
+ * across error, pause and indeterminate reports, and a remove report keeps
+ * it too, so that a later "set value" report restores it. A NORMAL report
+ * without a value starts over at 0. Values are clamped to 0-100. The
+ * callback fires on every well-formed report, so that the terminal widget
+ * can re-arm its staleness timer from the last report rather than the last
+ * change; the widget itself only forwards changes, so a program reporting
+ * the same percentage over and over does not flood the UI. */
+void
+termpty_progress_set(Termpty *ty, Termpty_Progress_State state, int value)
+{
+   unsigned char new_value = ty->progress.value;
+
+   if (value > 100)
+     value = 100;
+   switch (state)
+     {
+      case TERMPTY_PROGRESS_NONE:
+      case TERMPTY_PROGRESS_INDETERMINATE:
+         break;
+      case TERMPTY_PROGRESS_NORMAL:
+         new_value = (value < 0) ? 0 : value;
+         break;
+      case TERMPTY_PROGRESS_ERROR:
+      case TERMPTY_PROGRESS_PAUSED:
+         if (value >= 0)
+           new_value = value;
+         break;
+     }
+   ty->progress.state = state;
+   ty->progress.value = new_value;
+   if (ty->cb.progress.func)
+     ty->cb.progress.func(ty->cb.progress.data);
+}
+
+void
+termpty_progress_reset(Termpty *ty)
+{
+   ty->progress.value = 0;
+   termpty_progress_set(ty, TERMPTY_PROGRESS_NONE, -1);
+}
 
 /* Contour's "Dark and Light Mode detection" extension:
  * https://contour-terminal.org/vt-extensions/color-palette-update-notifications/ */
