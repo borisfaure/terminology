@@ -78,6 +78,17 @@ if tests
   test('unit', tytest, args: ['all'], env: lsan_env, timeout: 120)
   test('unit-scalar', tytest, args: ['all'],
        env: {'TERMINOLOGY_SIMD_DISABLE': '1'} + lsan_env, timeout: 120)
+
+  # The generated table must stay in step with the terminfo it comes from.
+  python3_opt = find_program('python3', required: false)
+  if python3_opt.found()
+    test('tcap-table',
+         python3_opt,
+         args: [meson.project_source_root() / 'tools' / 'terminfo_tcap.py',
+                '--check',
+                meson.project_source_root() / 'data' / 'terminfo' / 'terminology.terminfo',
+                meson.project_source_root() / 'src' / 'bin' / 'termptytcap.h'])
+  endif
 endif
 
 if benchmarks
