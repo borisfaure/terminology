@@ -2901,6 +2901,62 @@ tytest_notify_query_gated(void)
    _ty_test_shutdown(&ty);
    return 0;
 }
+
+/* iTerm2 notifications through OSC 9; ConEmu sequences, malformed
+ * progress reports and a gated option never reach the recorder. */
+int
+tytest_osc9_notify(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   tytest_notifications_clear();
+   /* the whole payload is the summary, semicolons included */
+   _ty_feed(&ty, "\x1b]9;Build finished\x07");
+   _ty_feed(&ty, "\x1b]9;done; 3 warnings\x1b\\");
+   assert(strstr(tytest_notifications_get(), "title=Build finished"));
+   assert(strstr(tytest_notifications_get(), "title=done; 3 warnings"));
+
+   /* ConEmu sequences are never notifications */
+   tytest_notifications_clear();
+   _ty_feed(&ty, "\x1b]9;5\x07");
+   _ty_feed(&ty, "\x1b]9;1;100\x07");
+   _ty_feed(&ty, "\x1b]9;9;/tmp\x1b\\");
+   _ty_feed(&ty, "\x1b]9;42\x1b\\");
+   assert(tytest_notifications_get() == NULL ||
+          tytest_notifications_get()[0] == '\0');
+
+   /* malformed progress is not a notification either */
+   _ty_feed(&ty, "\x1b]9;4\x07");
+   _ty_feed(&ty, "\x1b]9;4;\x07");
+   _ty_feed(&ty, "\x1b]9;4;5\x07");
+   _ty_feed(&ty, "\x1b]9;4;tests failed\x07");
+   assert(tytest_notifications_get() == NULL ||
+          tytest_notifications_get()[0] == '\0');
+
+   /* text that only looks numeric is text */
+   tytest_notifications_clear();
+   _ty_feed(&ty, "\x1b]9;4x\x07");
+   _ty_feed(&ty, "\x1b]9;12 done\x07");
+   assert(strstr(tytest_notifications_get(), "title=4x"));
+   assert(strstr(tytest_notifications_get(), "title=12 done"));
+
+   /* empty payload: nothing */
+   tytest_notifications_clear();
+   _ty_feed(&ty, "\x1b]9;\x07");
+   assert(tytest_notifications_get() == NULL ||
+          tytest_notifications_get()[0] == '\0');
+
+   /* gated off: nothing */
+   ty.config->notification_escapes = EINA_FALSE;
+   _ty_feed(&ty, "\x1b]9;hidden\x07");
+   assert(tytest_notifications_get() == NULL ||
+          tytest_notifications_get()[0] == '\0');
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
 #endif
 
 /* DECRQSS: an unsupported request is answered "invalid", DECSCL keeps its

@@ -5417,6 +5417,24 @@ _handle_osc_palette_reset(Termpty *ty, Eina_Unicode *p)
    termio_palette_apply(ty->obj);
 }
 
+/* ConEmu numbers its OSC 9 extensions; a payload starting with decimal
+ * digits followed by ';' or by the end is one of them, never notification
+ * text. */
+static void
+_handle_osc_9(Termpty *ty, const char *s, int len)
+{
+   int digits = 0;
+
+   while ((digits < len) && (s[digits] >= '0') && (s[digits] <= '9'))
+     digits++;
+   if ((digits > 0) && ((digits == len) || (s[digits] == ';')))
+     {
+        DBG("ignoring ConEmu OSC 9;%.*s", digits, s);
+        return;
+     }
+   termpty_notify_show(ty, s, NULL, -1, -1, -1);
+}
+
 static int
 _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -5570,6 +5588,17 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (s)
           {
              _handle_hyperlink(ty, s, len);
+             free(s);
+          }
+        break;
+      case 9:
+        DBG("iTerm2 notification or ConEmu sequence");
+        if (!p)
+          goto err;
+        s = eina_unicode_unicode_to_utf8(p, &len);
+        if (s)
+          {
+             _handle_osc_9(ty, s, len);
              free(s);
           }
         break;
