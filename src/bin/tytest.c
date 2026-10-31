@@ -53,6 +53,7 @@ static struct {
        { "color_parse_css_hsl", tytest_color_parse_css_hsl},
        { "extn_matching", tytest_extn_matching},
        { "base64", tytest_base64},
+       { "base64_stream", tytest_base64_stream},
        { "shell_quote", tytest_shell_quote},
        { "sync_frame_coherence", tytest_sync_frame_coherence},
        { "sync_watchdog_teardown", tytest_sync_watchdog_teardown},

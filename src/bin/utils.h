@@ -9,6 +9,16 @@ void open_url(const Config *config, const char *url);
 
 char * ty_eina_unicode_base64_decode(Eina_Unicode *c);
 
+/* Streaming base64: input may split anywhere; EINA_FALSE on a bad byte */
+typedef struct tag_Ty_Base64_Stream
+{
+   unsigned int bits;
+   unsigned int nbits;
+} Ty_Base64_Stream;
+
+Eina_Bool ty_base64_stream_decode(Ty_Base64_Stream *st, const char *src,
+                                  size_t len, Eina_Binbuf *dst);
+
 /* POSIX single-quote shell escaping.  Wraps arg in single quotes and
  * escapes any embedded single-quote via the standard '"'"' dance.
  *

@@ -150,8 +150,56 @@ ty_eina_unicode_base64_decode(Eina_Unicode *unicode)
    return res;
 }
 
-#if defined(BINARY_TYTEST)
+static int
+_base64_value(char c)
+{
+   if ((c >= 'A') && (c <= 'Z'))
+     return c - 'A';
+   if ((c >= 'a') && (c <= 'z'))
+     return c - 'a' + 26;
+   if ((c >= '0') && (c <= '9'))
+     return c - '0' + 52;
+   if (c == '+')
+     return 62;
+   if (c == '/')
+     return 63;
+   return -1;
+}
 
+Eina_Bool
+ty_base64_stream_decode(Ty_Base64_Stream *st, const char *src, size_t len,
+                        Eina_Binbuf *dst)
+{
+   size_t i;
+
+   for (i = 0; i < len; i++)
+     {
+        int v;
+
+        if (src[i] == '=')
+          {
+             /* the zero padding bits of a quantum: drop them, so that
+              * separately padded chunks can be concatenated */
+             st->bits = 0;
+             st->nbits = 0;
+             continue;
+          }
+        v = _base64_value(src[i]);
+        if (v < 0)
+          return EINA_FALSE;
+        st->bits = (st->bits << 6) | (unsigned int)v;
+        st->nbits += 6;
+        if (st->nbits >= 8)
+          {
+             st->nbits -= 8;
+             eina_binbuf_append_char(dst, (st->bits >> st->nbits) & 0xff);
+             st->bits &= (1u << st->nbits) - 1;
+          }
+     }
+   return EINA_TRUE;
+}
+
+#if defined(BINARY_TYTEST)
 
 int tytest_base64(void)
 {
@@ -187,6 +235,81 @@ int tytest_base64(void)
    free(src);
    free(res);
 
+   return 0;
+}
+
+/* The streaming decoder must accept what the OSC 99 chunking rules
+ * produce: chunks cut before or after encoding, padded or not. */
+int
+tytest_base64_stream(void)
+{
+   Eina_Binbuf *dst;
+   Ty_Base64_Stream st;
+
+#if defined(__has_feature)
+#  if __has_feature(memory_sanitizer)
+   return 0;
+#  endif
+#endif
+
+   dst = eina_binbuf_new();
+
+   /* one padded quantum */
+   memset(&st, 0, sizeof(st));
+   assert(ty_base64_stream_decode(&st, "YWI=", 4, dst));
+   assert(eina_binbuf_length_get(dst) == 2);
+   assert(memcmp(eina_binbuf_string_get(dst), "ab", 2) == 0);
+   eina_binbuf_reset(dst);
+
+   /* two chunks, each padded, cut before encoding */
+   memset(&st, 0, sizeof(st));
+   assert(ty_base64_stream_decode(&st, "SGVs", 4, dst));
+   assert(ty_base64_stream_decode(&st, "bG8=", 4, dst));
+   assert(eina_binbuf_length_get(dst) == 5);
+   assert(memcmp(eina_binbuf_string_get(dst), "Hello", 5) == 0);
+   eina_binbuf_reset(dst);
+
+   /* one chunk cut after encoding, in the middle of a quantum */
+   memset(&st, 0, sizeof(st));
+   assert(ty_base64_stream_decode(&st, "SGVsbG", 6, dst));
+   assert(ty_base64_stream_decode(&st, "8gd29ybGQ=", 10, dst));
+   assert(eina_binbuf_length_get(dst) == 11);
+   assert(memcmp(eina_binbuf_string_get(dst), "Hello world", 11) == 0);
+   eina_binbuf_reset(dst);
+
+   /* the same, cut at every offset */
+   {
+      const char *all = "SGVsbG8gd29ybGQ=";
+      size_t cut;
+
+      for (cut = 0; cut <= 8; cut++)
+        {
+           memset(&st, 0, sizeof(st));
+           eina_binbuf_reset(dst);
+           assert(ty_base64_stream_decode(&st, all, cut, dst));
+           assert(ty_base64_stream_decode(&st, all + cut, 16 - cut, dst));
+           assert(memcmp(eina_binbuf_string_get(dst), "Hello world", 11) == 0);
+        }
+   }
+   eina_binbuf_reset(dst);
+
+   /* an unpadded last chunk: the dangling bits are dropped */
+   memset(&st, 0, sizeof(st));
+   assert(ty_base64_stream_decode(&st, "SGVsbG8gd29ybGQ", 15, dst));
+   assert(eina_binbuf_length_get(dst) == 11);
+   assert(memcmp(eina_binbuf_string_get(dst), "Hello world", 11) == 0);
+   eina_binbuf_reset(dst);
+
+   /* a byte outside the alphabet fails */
+   memset(&st, 0, sizeof(st));
+   assert(!ty_base64_stream_decode(&st, "!!", 2, dst));
+
+   /* empty input appends nothing */
+   memset(&st, 0, sizeof(st));
+   assert(ty_base64_stream_decode(&st, "", 0, dst));
+   assert(eina_binbuf_length_get(dst) == 0);
+
+   eina_binbuf_free(dst);
    return 0;
 }
 
