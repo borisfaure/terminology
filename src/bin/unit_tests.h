@@ -46,6 +46,7 @@ int tytest_xmodkeys_query(void);
 int tytest_xmodkeys_reset(void);
 int tytest_xtgettcap(void);
 int tytest_tcap_table_sorted(void);
+int tytest_notify_gated(void);
 int tytest_decrqss_invalid(void);
 int tytest_decrqss_sgr(void);
 int tytest_decrqss_settings(void);

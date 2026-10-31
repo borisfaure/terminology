@@ -5515,6 +5515,8 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         break;
       case 777:
         DBG("xterm notification support");
+        if (!ty->config->notification_escapes)
+          break;
         if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);

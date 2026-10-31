@@ -72,6 +72,7 @@ static struct {
        { "xmodkeys_reset", tytest_xmodkeys_reset},
        { "xtgettcap", tytest_xtgettcap},
        { "tcap_table_sorted", tytest_tcap_table_sorted},
+       { "notify_gated", tytest_notify_gated},
        { "decrqss_invalid", tytest_decrqss_invalid},
        { "decrqss_sgr", tytest_decrqss_sgr},
        { "decrqss_settings", tytest_decrqss_settings},

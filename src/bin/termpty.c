@@ -2681,6 +2681,33 @@ tytest_xtgettcap(void)
    return 0;
 }
 
+#if defined(BINARY_TYTEST)
+/* OSC 777 is dropped entirely, notifications included, when gated off. */
+int
+tytest_notify_gated(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   tytest_notifications_clear();
+   _ty_feed(&ty, "\x1b]777;notify;Visible;yes\x07");
+   assert(tytest_notifications_get());
+
+   ty.config->notification_escapes = EINA_FALSE;
+   _ty_feed(&ty, "\x1b]777;notify;Hidden;no\x07");
+   assert(tytest_notifications_get());
+   assert(!strstr(tytest_notifications_get(), "Hidden"));
+
+   ty.config->notification_escapes = EINA_TRUE;
+   _ty_feed(&ty, "\x1b]777;notify;Shown;again\x07");
+   assert(strstr(tytest_notifications_get(), "again"));
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+#endif
+
 /* DECRQSS: an unsupported request is answered "invalid", DECSCL keeps its
  * reply, and a DCS that is not DECRQSS stays silent. */
 int
