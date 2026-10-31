@@ -681,6 +681,15 @@ _tytest_checksum_hex(Termpty *ty, char *md5out)
         MD5Update(&ctx, (unsigned char const*)notifications,
                   strlen(notifications));
      }
+
+   /* Progress (OSC 9;4). Hashed only when the indicator is shown, so the
+    * byte stream is unchanged for every test that never reports one. */
+   if (ty->progress.state != TERMPTY_PROGRESS_NONE)
+     {
+        MD5Update(&ctx, (unsigned char const*)&ty->progress.state, 1);
+        MD5Update(&ctx, &ty->progress.value, 1);
+     }
+
    /* Cursor shape */
    const char *cursor_shape = tytest_cursor_shape_get();
    MD5Update(&ctx, (unsigned char const*)cursor_shape,
@@ -959,6 +968,8 @@ _tytest_dump(Termpty *ty)
    printf("title=%s\n", ty->prop.title ? ty->prop.title : "(NULL)");
    printf("icon=%s\n", ty->prop.icon ? ty->prop.icon : "(NULL)");
    printf("cwd=%s\n", ty->prop.cwd ? ty->prop.cwd : "(NULL)");
+   printf("progress state=%d value=%d\n",
+          (int)ty->progress.state, (int)ty->progress.value);
    printf("notifications=%s\n",
           tytest_notifications_get() ? tytest_notifications_get() : "(none)");
 
