@@ -670,14 +670,41 @@ termio_is_focused(const Evas_Object *obj EINA_UNUSED)
    return EINA_FALSE;
 }
 
+#if defined(BINARY_TYTEST)
+static Eina_Strbuf *_notifications = NULL;
+#endif
+
 void
 termio_notification_send(Evas_Object *obj EINA_UNUSED,
-                         const char *title EINA_UNUSED,
-                         const char *body EINA_UNUSED,
-                         Elm_Sys_Notify_Urgency urgency EINA_UNUSED,
-                         int timeout_ms EINA_UNUSED)
+                         const char *title, const char *body,
+                         Elm_Sys_Notify_Urgency urgency, int timeout_ms)
 {
+#if defined(BINARY_TYTEST)
+   if (!_notifications)
+     _notifications = eina_strbuf_new();
+   eina_strbuf_append_printf(_notifications,
+                             "notify urgency=%d timeout=%d title=%s body=%s\n",
+                             (int)urgency, timeout_ms,
+                             title ? title : "", body ? body : "");
+#else
+   (void)title; (void)body; (void)urgency; (void)timeout_ms;
+#endif
 }
+
+#if defined(BINARY_TYTEST)
+const char *
+tytest_notifications_get(void)
+{
+   return _notifications ? eina_strbuf_string_get(_notifications) : NULL;
+}
+
+void
+tytest_notifications_clear(void)
+{
+   if (_notifications)
+     eina_strbuf_reset(_notifications);
+}
+#endif
 
 static void
 _termpty_init(Termpty *ty, Config *config)
@@ -834,6 +861,11 @@ tytest_common_shutdown(void)
    config_del(_config);
 #if defined(BINARY_TYTEST)
    free(_cells);
+   if (_notifications)
+     {
+        eina_strbuf_free(_notifications);
+        _notifications = NULL;
+     }
 #endif
 }
 

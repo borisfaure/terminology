@@ -17,6 +17,8 @@ void tytest_common_shutdown(void);
 void tytest_common_set_fd(int fd);
 #if defined(BINARY_TYTEST)
 const char *tytest_cursor_shape_get(void);
+void tytest_notifications_clear(void);
+const char *tytest_notifications_get(void);
 Termpty *tytest_termpty_get(void);
 #endif
 

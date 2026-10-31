@@ -659,6 +659,13 @@ _tytest_checksum(Termpty *ty)
                   (unsigned char const*)ty->prop.cwd,
                   strlen(ty->prop.cwd));
      }
+   /* Hashed only when there are some, so tests that send none are unchanged. */
+   const char *notifications = tytest_notifications_get();
+   if (notifications)
+     {
+        MD5Update(&ctx, (unsigned char const*)notifications,
+                  strlen(notifications));
+     }
    /* Cursor shape */
    const char *cursor_shape = tytest_cursor_shape_get();
    MD5Update(&ctx, (unsigned char const*)cursor_shape,
@@ -806,6 +813,8 @@ _tytest_dump(Termpty *ty)
    printf("title=%s\n", ty->prop.title ? ty->prop.title : "(NULL)");
    printf("icon=%s\n", ty->prop.icon ? ty->prop.icon : "(NULL)");
    printf("cwd=%s\n", ty->prop.cwd ? ty->prop.cwd : "(NULL)");
+   printf("notifications=%s\n",
+          tytest_notifications_get() ? tytest_notifications_get() : "(none)");
 
    backlog_len = termpty_backlog_length(ty);
    printf("backlog rows=%d\n", (int)backlog_len);
