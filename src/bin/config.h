@@ -120,6 +120,7 @@ struct tag_Config
    Eina_Bool         mv_always_show;
    Eina_Bool         ty_escapes;
    Eina_Bool         selection_escapes_write;
+   Eina_Bool         notification_escapes;
    int               selection_escapes_read;
    Eina_Bool         changedir_to_current;
    Eina_Bool         emoji_dbl_width;

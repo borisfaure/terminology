@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 32
+#define CONF_VER 33
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -231,6 +231,8 @@ config_init(void)
      (edd_base, Config, "selection_escapes_read", selection_escapes_read,
       EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "notification_escapes", notification_escapes, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "changedir_to_current", changedir_to_current, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "emoji_dbl_width", emoji_dbl_width, EET_T_UCHAR);
@@ -364,6 +366,7 @@ config_sync(const Config *config_src, Config *config)
    config->mv_always_show = config_src->mv_always_show;
    config->ty_escapes = config_src->ty_escapes;
    config->selection_escapes_write = config_src->selection_escapes_write;
+   config->notification_escapes = config_src->notification_escapes;
    config->selection_escapes_read = config_src->selection_escapes_read;
    config->changedir_to_current = config_src->changedir_to_current;
    config->emoji_dbl_width = config_src->emoji_dbl_width;
@@ -648,6 +651,7 @@ config_new(void)
         config->mv_always_show = EINA_FALSE;
         config->ty_escapes = EINA_TRUE;
         config->selection_escapes_write = EINA_TRUE;
+        config->notification_escapes = EINA_TRUE;
         config->selection_escapes_read = SELECTION_READ_ASK;
         config->changedir_to_current = EINA_TRUE;
         config->emoji_dbl_width = EINA_FALSE;
@@ -889,7 +893,11 @@ config_load(void)
                   config->erase_is_del = EINA_TRUE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 32 */
+                case 32:
+                  config->notification_escapes = EINA_TRUE;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 33 */
                   /* selection_escapes used to gate reads too; a config
                    * with it off must not start answering read queries
                    * through the new ask default */
@@ -1001,6 +1009,7 @@ config_fork(const Config *config)
    CPY(mv_always_show);
    CPY(ty_escapes);
    CPY(selection_escapes_write);
+   CPY(notification_escapes);
    CPY(selection_escapes_read);
    CPY(changedir_to_current);
    CPY(emoji_dbl_width);
