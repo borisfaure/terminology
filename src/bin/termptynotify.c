@@ -407,9 +407,24 @@ termpty_notify_show(Termpty *ty, const char *title, const char *body,
    eina_strbuf_free(body_sb);
 }
 
+/* The capability query, answered with what is implemented and nothing else */
+static void
+_notify_query_reply(Termpty *ty, const Notify_Meta *meta, Eina_Bool bel)
+{
+   char buf[NOTIFY_ID_MAX + 128];
+   int l;
+
+   l = snprintf(buf, sizeof(buf),
+                "\033]99;i=%s:p=?;p=title,body,?:o=always:u=0,1,2:w=1%s",
+                meta->has_id ? meta->id : "0",
+                bel ? "\007" : "\033\\");
+   if ((l > 0) && (l < (int)sizeof(buf)))
+     termpty_write(ty, buf, l);
+}
+
 void
 termpty_notify_osc99(Termpty *ty, const char *s, size_t len,
-                     Eina_Bool bel EINA_UNUSED)
+                     Eina_Bool bel)
 {
    const char *sep;
    Notify_Meta meta;
@@ -440,7 +455,8 @@ termpty_notify_osc99(Termpty *ty, const char *s, size_t len,
    switch (meta.payload)
      {
       case NOTIFY_PAYLOAD_QUERY:
-         /* the capability query is answered in a later commit */
+         _notify_query_reply(ty, &meta, bel);
+         return;
       case NOTIFY_PAYLOAD_CLOSE:
       case NOTIFY_PAYLOAD_ALIVE:
          return;

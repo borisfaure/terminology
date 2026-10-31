@@ -50,6 +50,7 @@ int tytest_tcap_table_sorted(void);
 int tytest_notify_gated(void);
 int tytest_notify_meta_parse(void);
 int tytest_notify_pending_cap(void);
+int tytest_notify_query_gated(void);
 int tytest_notify_text_append(void);
 int tytest_decrqss_invalid(void);
 int tytest_decrqss_sgr(void);

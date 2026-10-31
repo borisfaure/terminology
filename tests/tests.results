@@ -146,6 +146,7 @@ osc-no-payload.sh 8aa7b12e298dfbeb5a48dcc48ea2f9a8
 xterm-osc-777.sh 5fa189116a5358ed87aec7460f3785ad
 osc-99-chunks.sh 7b65134890f0cff0c1f06664a45135b2
 osc-99-notify.sh fd9e2e812e2a035c87971e141a0dd4db
+osc-99-query.sh a771ef85e99e1f8d1c032f3f709b3a72
 osc-colors-ris.sh ae9b8008e2cb1fa2bae13a471c90733f
 osc-110-112.sh 318a0f4da4b07567353e057bb2de5b2b
 osc-colors-st.sh 84636d0d4589573e1e9b3c0fcceb2091
