@@ -1,0 +1,202 @@
+//// OSC 9;4 progress bar, shared by the background, the tab buttons and
+//// the tab selector items
+#define PROGRESS_NONE 0
+#define PROGRESS_NORMAL 1
+#define PROGRESS_ERROR 2
+#define PROGRESS_INDETERMINATE 3
+#define PROGRESS_PAUSED 4
+#define PROGRESS_ALPHA 160
+
+/* for the group's script block; the group defines
+ * progress_state_changed(), run once per actual state change */
+#define PROGRESS_SCRIPT \
+      public progress_state; \
+      public progress_state_set(s) { \
+         if (get_int(progress_state) == s) \
+           return; \
+         set_int(progress_state, s); \
+         if (s == PROGRESS_NORMAL) \
+           run_program(PROGRAM:"progress_show_normal"); \
+         else if (s == PROGRESS_ERROR) \
+           run_program(PROGRAM:"progress_show_error"); \
+         else if (s == PROGRESS_PAUSED) \
+           run_program(PROGRAM:"progress_show_paused"); \
+         else if (s == PROGRESS_INDETERMINATE) \
+           run_program(PROGRAM:"progress_show_indeterminate"); \
+         else \
+           run_program(PROGRAM:"progress_hide"); \
+         progress_state_changed(); \
+      }
+
+/* a _h pixels high bar along the bottom of _anchor; C sets the width of
+ * terminology.progress.fill with edje_object_part_drag_size_set().
+ * The fill's dragable confine is an invisible spacer: Edje does not draw
+ * a part used as a confine. */
+#define PROGRESS_BAR(_anchor, _h) \
+      images.image: "progress_stripes.png" COMP; \
+      part { name: "progress_area"; type: SPACER; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+            rel1.to: _anchor; \
+            rel1.relative: 0.0 1.0; \
+            rel1.offset: 0 (-_h); \
+            rel2.to: _anchor; \
+            rel2.relative: 1.0 1.0; \
+            rel2.offset: -1 -1; \
+         } \
+      } \
+      part { name: "progress_track"; type: RECT; \
+         mouse_events: 0; \
+         description { state: "default" 0.0; \
+            rel.to: "progress_area"; \
+            color: 255 255 255 0; \
+            color_class: "FG"; \
+            visible: 0; \
+         } \
+         description { state: "on" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 48; \
+            visible: 1; \
+         } \
+         description { state: "busy" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 PROGRESS_ALPHA; \
+            color_class: "BG_PROGRESS"; \
+            visible: 1; \
+         } \
+      } \
+      part { name: "terminology.progress.fill"; type: RECT; \
+         mouse_events: 0; \
+         dragable.x: 1 1 0; \
+         dragable.confine: "progress_area"; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+            rel.to: "progress_area"; \
+            color: 255 255 255 0; \
+            color_class: "BG_PROGRESS"; \
+            visible: 0; \
+         } \
+         description { state: "on" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 PROGRESS_ALPHA; \
+            visible: 1; \
+         } \
+         description { state: "error" 0.0; \
+            inherit: "on" 0.0; \
+            color_class: "BG_PROGRESS_ERROR"; \
+         } \
+         description { state: "paused" 0.0; \
+            inherit: "on" 0.0; \
+            color_class: "BG_PROGRESS_PAUSED"; \
+         } \
+      } \
+      part { name: "progress_stripes_clip"; type: RECT; \
+         description { state: "default" 0.0; \
+            rel.to: "terminology.progress.fill"; \
+            color: 255 255 255 0; \
+            visible: 0; \
+         } \
+         description { state: "fill" 0.0; \
+            inherit: "default" 0.0; \
+            color: 255 255 255 255; \
+            visible: 1; \
+         } \
+         description { state: "busy" 0.0; \
+            inherit: "fill" 0.0; \
+            rel.to: "progress_area"; \
+         } \
+      } \
+      part { name: "progress_stripes"; \
+         mouse_events: 0; \
+         clip_to: "progress_stripes_clip"; \
+         description { state: "default" 0.0; \
+            rel.to: "progress_area"; \
+            image.normal: "progress_stripes.png"; \
+            fill.smooth: 0; \
+            fill.size.relative: 0.0 0.0; \
+            fill.size.offset: 8 4; \
+            color: 255 255 255 80; \
+         } \
+         description { state: "moved" 0.0; \
+            inherit: "default" 0.0; \
+            fill.origin.offset: 8 0; \
+         } \
+      } \
+      program { signal: "progress,none"; source: "terminology"; \
+         script { progress_state_set(PROGRESS_NONE); } \
+      } \
+      program { signal: "progress,normal"; source: "terminology"; \
+         script { progress_state_set(PROGRESS_NORMAL); } \
+      } \
+      program { signal: "progress,error"; source: "terminology"; \
+         script { progress_state_set(PROGRESS_ERROR); } \
+      } \
+      program { signal: "progress,indeterminate"; source: "terminology"; \
+         script { progress_state_set(PROGRESS_INDETERMINATE); } \
+      } \
+      program { signal: "progress,paused"; source: "terminology"; \
+         script { progress_state_set(PROGRESS_PAUSED); } \
+      } \
+      program { name: "progress_show_normal"; \
+         action: STATE_SET "on" 0.0; \
+         transition: DECELERATE 0.3; \
+         target: "progress_track"; \
+         after: "progress_fill_on"; \
+         after: "progress_stripes_on_fill"; \
+      } \
+      program { name: "progress_show_error"; \
+         action: STATE_SET "on" 0.0; \
+         transition: DECELERATE 0.3; \
+         target: "progress_track"; \
+         after: "progress_fill_error"; \
+         after: "progress_stripes_hide"; \
+      } \
+      program { name: "progress_show_paused"; \
+         action: STATE_SET "on" 0.0; \
+         transition: DECELERATE 0.3; \
+         target: "progress_track"; \
+         after: "progress_fill_paused"; \
+         after: "progress_stripes_on_fill"; \
+      } \
+      program { name: "progress_show_indeterminate"; \
+         action: STATE_SET "busy" 0.0; \
+         transition: DECELERATE 0.3; \
+         target: "progress_track"; \
+         after: "progress_fill_hide"; \
+         after: "progress_stripes_on_track"; \
+      } \
+      program { name: "progress_hide"; \
+         action: STATE_SET "default" 0.0; \
+         transition: DECELERATE 0.3; \
+         target: "progress_track"; \
+         target: "terminology.progress.fill"; \
+         target: "progress_stripes_clip"; \
+      } \
+      program { name: "progress_fill_on"; \
+         action: STATE_SET "on" 0.0; \
+         target: "terminology.progress.fill"; \
+      } \
+      program { name: "progress_fill_error"; \
+         action: STATE_SET "error" 0.0; \
+         target: "terminology.progress.fill"; \
+      } \
+      program { name: "progress_fill_paused"; \
+         action: STATE_SET "paused" 0.0; \
+         target: "terminology.progress.fill"; \
+      } \
+      program { name: "progress_fill_hide"; \
+         action: STATE_SET "default" 0.0; \
+         target: "terminology.progress.fill"; \
+      } \
+      program { name: "progress_stripes_on_fill"; \
+         action: STATE_SET "fill" 0.0; \
+         target: "progress_stripes_clip"; \
+      } \
+      program { name: "progress_stripes_on_track"; \
+         action: STATE_SET "busy" 0.0; \
+         target: "progress_stripes_clip"; \
+      } \
+      program { name: "progress_stripes_hide"; \
+         action: STATE_SET "default" 0.0; \
+         target: "progress_stripes_clip"; \
+      }

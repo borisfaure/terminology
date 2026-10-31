@@ -215,6 +215,7 @@ collections {
    #include "default/keybinding.edc"
    #include "default/miniview.edc"
    #include "default/core.edc"
+   #include "default/progress.edc"
    #include "default/background.edc"
    #include "default/tabbar_back.edc"
    #include "default/base.edc"

@@ -3,6 +3,10 @@ color_class { name: "HIGHLIGHT";  color: 255 255 255 255; }
 
 color_class { name: "BG_SENDFILE";      color:  64  64  64 255; }
 
+color_class { name: "BG_PROGRESS";       color:  64 160 255 255; }
+color_class { name: "BG_PROGRESS_ERROR"; color: 255  64  64 255; }
+color_class { name: "BG_PROGRESS_PAUSED"; color: 255 200  64 255; }
+
 color_class { name: "BG";               color:  32  32  32 255; }
 color_class { name: "FG";               color: 170 170 170 255; }
 color_class { name: "CURSOR";           color: 255 255 255 255; }

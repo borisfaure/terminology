@@ -1,4 +1,5 @@
 //// the background and general container for the terminal
+#define PROGRESS_ANIM_IDLE 10.0
 group { name: "terminology/background";
    images {
       image: "pm_shadow.png" COMP;
@@ -21,6 +22,41 @@ group { name: "terminology/background";
    }
 
    script {
+      PROGRESS_SCRIPT
+      public progress_focused;
+      public progress_idle_timer;
+
+      public progress_idle(val) {
+         set_int(progress_idle_timer, 0);
+         run_program(PROGRAM:"progress_anim_stop");
+      }
+      /* stripes move while focused, for PROGRESS_ANIM_IDLE seconds after
+       * the state or the focus changed, to save redraws */
+      public progress_anim_update() {
+         new t = get_int(progress_idle_timer);
+         new s = get_int(progress_state);
+
+         if (t) {
+            cancel_timer(t);
+            set_int(progress_idle_timer, 0);
+         }
+         if (get_int(progress_focused) &&
+             ((s == PROGRESS_NORMAL) || (s == PROGRESS_INDETERMINATE))) {
+            run_program(PROGRAM:"progress_anim_start");
+            set_int(progress_idle_timer,
+                    timer(PROGRESS_ANIM_IDLE, "progress_idle", 0));
+         } else {
+            run_program(PROGRAM:"progress_anim_stop");
+         }
+      }
+      public progress_state_changed() {
+         progress_anim_update();
+      }
+      public progress_focus_set(f) {
+         set_int(progress_focused, f);
+         progress_anim_update();
+      }
+
       public message(Msg_Type:type, id, ...) {
          new r, g, b, a, v;
 
@@ -414,6 +450,48 @@ group { name: "terminology/background";
       // }}}
 
       ////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////
+      // OSC 9;4 progress indicator {{{
+      PROGRESS_BAR("terminology.content", 3)
+      program { signal: "focus,in"; source: "terminology";
+         script { progress_focus_set(1); }
+      }
+      program { signal: "focused,set"; source: "terminology";
+         script { progress_focus_set(1); }
+      }
+      program { signal: "focus,out"; source: "terminology";
+         script { progress_focus_set(0); }
+      }
+      program { name: "progress_anim_start";
+         action: ACTION_STOP;
+         target: "progress_stripes_loop";
+         target: "progress_stripes_back";
+         after: "progress_stripes_back";
+      }
+      program { name: "progress_anim_stop";
+         action: ACTION_STOP;
+         target: "progress_stripes_loop";
+         target: "progress_stripes_back";
+         after: "progress_stripes_rest";
+      }
+      program { name: "progress_stripes_rest";
+         action: STATE_SET "default" 0.0;
+         target: "progress_stripes";
+      }
+      /* one stripe period per step, so the loop is seamless */
+      program { name: "progress_stripes_loop";
+         action: STATE_SET "moved" 0.0;
+         transition: LINEAR 0.6;
+         target: "progress_stripes";
+         after: "progress_stripes_back";
+      }
+      program { name: "progress_stripes_back";
+         action: STATE_SET "default" 0.0;
+         target: "progress_stripes";
+         after: "progress_stripes_loop";
+      }
+      // }}}
+
       // miniview {{{
       part { name: "terminology.miniview"; type: SWALLOW;
          description { state: "default" 0.0;

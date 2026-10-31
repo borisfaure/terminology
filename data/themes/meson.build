@@ -12,6 +12,7 @@ default_deps = [
   'default/keybinding.edc',
   'default/miniview.edc',
   'default/core.edc',
+  'default/progress.edc',
   'default/background.edc',
   'default/tabbar_back.edc',
   'default/base.edc',
