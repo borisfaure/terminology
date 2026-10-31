@@ -230,3 +230,5 @@ decslrm-two-columns.sh 2bc3f2840cc2e18a5e68b3d9e053a5f2
 decstbm-one-row.sh 1657d126de08379e16ac0e7ec5693309
 irm-runs.sh d3a480e2a58939db077a06b95712371a
 xterm-osc-9.sh 09d136a6b7f579c0d23e95f406f65bf4
+xterm-osc-9-4.sh 5e1e81fce6d8d7dbe261ea21ed2491b8
+xterm-osc-9-4-reset.sh 418469754b84535141326790ebf8e941

@@ -2791,6 +2791,109 @@ tytest_xtgettcap(void)
    return 0;
 }
 
+/* How many times ty->cb.progress fired */
+static int _osc9_progress_calls = 0;
+
+static void
+_osc9_progress_count(void *data EINA_UNUSED)
+{
+   _osc9_progress_calls++;
+}
+
+/* Every row of the ConEmu state/value table, as tmux's Spb sends it */
+int
+tytest_osc9_progress(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b]9;4;1;50\x1b\\");
+   assert(ty.progress.state == TERMPTY_PROGRESS_NORMAL);
+   assert(ty.progress.value == 50);
+   /* clamped */
+   _ty_feed(&ty, "\x1b]9;4;1;150\x07");
+   assert(ty.progress.value == 100);
+   /* a set report without a value starts over at 0 */
+   _ty_feed(&ty, "\x1b]9;4;1\x07");
+   assert(ty.progress.value == 0);
+   _ty_feed(&ty, "\x1b]9;4;1;\x07");
+   assert(ty.progress.value == 0);
+   /* a trailing ';' is accepted */
+   _ty_feed(&ty, "\x1b]9;4;1;50;\x1b\\");
+   assert(ty.progress.value == 50);
+   /* error and pause keep the value */
+   _ty_feed(&ty, "\x1b]9;4;2\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_ERROR);
+   assert(ty.progress.value == 50);
+   _ty_feed(&ty, "\x1b]9;4;4\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_PAUSED);
+   assert(ty.progress.value == 50);
+   /* unless they carry one of their own */
+   _ty_feed(&ty, "\x1b]9;4;2;30\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_ERROR);
+   assert(ty.progress.value == 30);
+   /* remove and indeterminate leave the value alone, as tmux sends them */
+   _ty_feed(&ty, "\x1b]9;4;0;57\x1b\\");
+   assert(ty.progress.state == TERMPTY_PROGRESS_NONE);
+   assert(ty.progress.value == 30);
+   _ty_feed(&ty, "\x1b]9;4;3;57\x1b\\");
+   assert(ty.progress.state == TERMPTY_PROGRESS_INDETERMINATE);
+   assert(ty.progress.value == 30);
+   /* so a later error restores it */
+   _ty_feed(&ty, "\x1b]9;4;2\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_ERROR);
+   assert(ty.progress.value == 30);
+   /* a huge value does not overflow */
+   _ty_feed(&ty, "\x1b]9;4;1;99999999999999\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_NORMAL);
+   assert(ty.progress.value == 100);
+   /* malformed reports change nothing */
+   _ty_feed(&ty, "\x1b]9;4;1;5x\x07");
+   _ty_feed(&ty, "\x1b]9;4;7;10\x07");
+   assert(ty.progress.state == TERMPTY_PROGRESS_NORMAL);
+   assert(ty.progress.value == 100);
+   /* RIS forgets everything */
+   _ty_feed(&ty, "\033c");
+   assert(ty.progress.state == TERMPTY_PROGRESS_NONE);
+   assert(ty.progress.value == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* The callback fires only when (state, value) actually changed */
+int
+tytest_osc9_progress_cb(void)
+{
+   Termpty ty;
+
+   _ty_test_init(&ty, 80, 24);
+   ty.cb.progress.func = _osc9_progress_count;
+   _osc9_progress_calls = 0;
+
+   /* one call per well-formed report; the change filter lives in
+    * termio, which compares against what it last showed */
+   _ty_feed(&ty, "\x1b]9;4;1;50\x1b\\");
+   _ty_feed(&ty, "\x1b]9;4;1;50\x1b\\");
+   assert(_osc9_progress_calls == 2);
+   /* a value change: one more */
+   _ty_feed(&ty, "\x1b]9;4;1;60\x1b\\");
+   assert(_osc9_progress_calls == 3);
+   /* a state change keeping the value: one more */
+   _ty_feed(&ty, "\x1b]9;4;4\x1b\\");
+   assert(_osc9_progress_calls == 4);
+   /* the same report again: one more */
+   _ty_feed(&ty, "\x1b]9;4;4\x1b\\");
+   assert(_osc9_progress_calls == 5);
+   /* malformed: none */
+   _ty_feed(&ty, "\x1b]9;4;1;5x\x1b\\");
+   assert(_osc9_progress_calls == 5);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 #if defined(BINARY_TYTEST)
 /* OSC 777 is dropped entirely, notifications included, when gated off. */
 int

@@ -79,6 +79,8 @@ static struct {
        { "tcap_table_sorted", tytest_tcap_table_sorted},
        { "notify_gated", tytest_notify_gated},
        { "osc9_notify", tytest_osc9_notify},
+       { "osc9_progress", tytest_osc9_progress},
+       { "osc9_progress_cb", tytest_osc9_progress_cb},
        { "notify_meta_parse", tytest_notify_meta_parse},
        { "notify_pending_cap", tytest_notify_pending_cap},
        { "notify_query_gated", tytest_notify_query_gated},

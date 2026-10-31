@@ -5417,6 +5417,44 @@ _handle_osc_palette_reset(Termpty *ty, Eina_Unicode *p)
    termio_palette_apply(ty->obj);
 }
 
+/* ";<state>[;<progress>]", as tmux's Spb sends it. The value is clamped
+ * to 0-100 by termpty_progress_set(). A trailing ';' is accepted;
+ * anything else malformed is rejected and changes nothing. */
+static void
+_handle_osc_9_4_progress(Termpty *ty, const char *s, int len)
+{
+   Termpty_Progress_State state;
+   int value = -1;
+   int i;
+
+   if ((len < 2) || (s[0] != ';') || (s[1] < '0') || (s[1] > '4'))
+     goto bad;
+   state = (Termpty_Progress_State)(s[1] - '0');
+   i = 2;
+   if ((i < len) && (s[i] == ';'))
+     {
+        i++;
+        if ((i < len) && (s[i] >= '0') && (s[i] <= '9'))
+          {
+             value = 0;
+             while ((i < len) && (s[i] >= '0') && (s[i] <= '9'))
+               {
+                  if (value <= 100)
+                    value = value * 10 + (s[i] - '0');
+                  i++;
+               }
+          }
+     }
+   if ((i < len) && (s[i] != ';'))
+     goto bad;
+   termpty_progress_set(ty, state, value);
+   return;
+
+bad:
+   WRN("invalid OSC 9;4 progress report");
+   ty->decoding_error = EINA_TRUE;
+}
+
 /* ConEmu numbers its OSC 9 extensions; a payload starting with decimal
  * digits followed by ';' or by the end is one of them, never notification
  * text. */
@@ -5429,6 +5467,9 @@ _handle_osc_9(Termpty *ty, const char *s, int len)
      digits++;
    if ((digits > 0) && ((digits == len) || (s[digits] == ';')))
      {
+        if ((digits == 1) && (s[0] == '4'))
+          _handle_osc_9_4_progress(ty, s + 1, len - 1);
+        else
         DBG("ignoring ConEmu OSC 9;%.*s", digits, s);
         return;
      }
