@@ -83,6 +83,7 @@ static struct {
        { "decrqss_sgr", tytest_decrqss_sgr},
        { "decrqss_settings", tytest_decrqss_settings},
        { "decrqm", tytest_decrqm},
+       { "kam", tytest_kam},
        { "color_scheme_notify", tytest_color_scheme_notify},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},
        { "keyin_legacy", tytest_keyin_legacy},

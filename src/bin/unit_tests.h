@@ -57,6 +57,7 @@ int tytest_decrqss_invalid(void);
 int tytest_decrqss_sgr(void);
 int tytest_decrqss_settings(void);
 int tytest_decrqm(void);
+int tytest_kam(void);
 int tytest_color_scheme_notify(void);
 int tytest_kitty_keyboard_ignored(void);
 int tytest_vs16_regression_no_scroll(void);

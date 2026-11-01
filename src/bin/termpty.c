@@ -3017,6 +3017,26 @@ tytest_decrqm(void)
    return 0;
 }
 
+/* DECSET 2 is DECANM, not a keyboard lock; KAM is CSI 2 h */
+int
+tytest_kam(void)
+{
+   Termpty ty;
+   Keys_Handler khdl = { 0 };
+   Evas_Event_Key_Down ev = { 0 };
+
+   ev.timestamp = 1;
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b[?2h");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   _ty_feed(&ty, "\x1b[?2l");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 int
 tytest_color_scheme_notify(void)
 {
