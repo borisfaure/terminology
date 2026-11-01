@@ -643,6 +643,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.send_bs = 0;
    ty->termstate.reverse = 0;
    ty->termstate.no_autorepeat = 0;
+   ty->termstate.kbd_lock = 0;
    ty->termstate.cjk_ambiguous_wide = 0;
    ty->termstate.hide_cursor = 0;
    ty->termstate.sace_rectangular = 0;

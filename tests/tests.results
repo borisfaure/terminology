@@ -32,7 +32,8 @@ dsr-pp.sh b762ecbf226745d65fc6f94b74c8e8a6
 dsr-udk.sh 542e6579a3744576cf07476ba620ea5c
 decrqm.sh 1f7b1ed07dfe2048e4c10a7c01035661
 decrqm-reset.sh df5394cbdee00974daf94118ef980f33
-decrqm-ansi.sh 5c4f6c6386099415c4755252b025b29d
+decrqm-ansi.sh 226de63aab78c0a5fe9d1ed9e971d9d8
+kam.sh c9cc4dfabd524bf45ad1d8d01b12ccb1
 decrqss-invalid.sh 55dc9457646511e1d78b87344d78a7a1
 decrqss-sgr.sh db9d3cb36b3b4bea61cee774d8d5e7bc
 decrqss-margins.sh e992408da8477d23e212f29c124e0313

@@ -757,6 +757,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                 case 1:
                    ty->termstate.appcursor = mode;
                    break;
+                case 2:
+                   DBG("KAM: keyboard %s", mode ? "locked" : "unlocked");
+                   ty->termstate.kbd_lock = mode;
+                   break;
                 case 3:
                    WRN("CRM - Show Control Character Mode: %i", mode);
                    ty->decoding_error = EINA_TRUE;
@@ -891,6 +895,8 @@ _ansi_mode_status(const Termpty *ty, int mode)
 {
    switch (mode)
      {
+      case 2:
+         return _decrpm_from_bool(ty->termstate.kbd_lock);
       case 4:
          return _decrpm_from_bool(ty->termstate.insert);
       default:

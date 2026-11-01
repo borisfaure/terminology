@@ -3033,6 +3033,18 @@ tytest_kam(void)
    _ty_feed(&ty, "\x1b[?2l");
    assert(termpty_can_handle_key(&ty, &khdl, &ev));
 
+   _ty_feed(&ty, "\x1b[2h");
+   assert(!termpty_can_handle_key(&ty, &khdl, &ev));
+   _ty_feed(&ty, "\x1b[2$p");
+   _ty_reply_is(&ty, "\x1b[2;1$y");
+   _ty_feed(&ty, "\x1b[2l");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+
+   _ty_feed(&ty, "\x1b[2h\x1b[!p");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   _ty_feed(&ty, "\x1b[2h\x1b" "c");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+
    _ty_test_shutdown(&ty);
    return 0;
 }
