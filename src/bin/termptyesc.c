@@ -276,7 +276,12 @@ _tab_forward(Termpty *ty, int n)
 static void
 _cursor_to_start_of_line(Termpty *ty)
 {
-   ty->cursor_state.cx = ty->termstate.left_margin;
+   // a cursor left of the left margin goes to column 0
+   if ((ty->termstate.restrict_cursor) ||
+       (ty->cursor_state.cx >= ty->termstate.left_margin))
+     ty->cursor_state.cx = ty->termstate.left_margin;
+   else
+     ty->cursor_state.cx = 0;
 }
 
 static void
@@ -6175,10 +6180,10 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ty->cursor_state.cy++;
         termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
-      case 'E': // add \n\r
-        DBG("add \\n\\r");
+      case 'E': // NEL
+        DBG("NEL");
         ty->cursor_state.wrapnext = 0;
-        ty->cursor_state.cx = 0;
+        _cursor_to_start_of_line(ty);
         ty->cursor_state.cy++;
         termpty_text_scroll_test(ty, EINA_FALSE);
         return 1;
