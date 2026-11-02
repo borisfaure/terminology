@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-13 22:21+0100\n"
+"POT-Creation-Date: 2026-11-02 23:23+0100\n"
 "PO-Revision-Date: 2016-09-21 17:18+0200\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -18,25 +18,25 @@ msgstr ""
 "X-Launchpad-Export-Date: 2016-09-16 20:20+0000\n"
 "X-Generator: Poedit 1.8.9\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1339
-#: src/bin/termio.c:1348
+#: src/bin/about.c:139 src/bin/about.c:214 src/bin/termio.c:1644
+#: src/bin/termio.c:1653
 #, fuzzy, c-format
 msgid "Copy '%s'"
 msgstr "Kopiraj"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1410
+#: src/bin/about.c:144 src/bin/about.c:219 src/bin/termio.c:1715
 msgid "Open"
 msgstr "Odpri"
 
-#: src/bin/about.c:273
+#: src/bin/about.c:283
 msgid "Twitter: @_Terminology_"
 msgstr ""
 
-#: src/bin/about.c:275
+#: src/bin/about.c:285
 msgid "YouTube channel"
 msgstr ""
 
-#: src/bin/about.c:289
+#: src/bin/about.c:299
 #, c-format
 msgid ""
 "<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
@@ -52,7 +52,7 @@ msgstr ""
 "<br><br>%s<br><br>Razdeljuje se pod 2-klavzulo BSD licence podrobneje spodaj:"
 "<br><br>%s"
 
-#: src/bin/colors.c:17
+#: src/bin/colors.c:20
 msgid "Terminology's developers"
 msgstr ""
 
@@ -76,11 +76,11 @@ msgstr "Split V"
 msgid "Miniview"
 msgstr "Mini pogled"
 
-#: src/bin/controls.c:413 src/bin/win.c:6205
+#: src/bin/controls.c:413 src/bin/win.c:6261
 msgid "Set title"
 msgstr "Nastavi ime"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1424 src/bin/termio.c:2834
+#: src/bin/controls.c:424 src/bin/termio.c:1729 src/bin/termio.c:3139
 msgid "Copy"
 msgstr "Kopiraj"
 
@@ -104,278 +104,283 @@ msgstr ""
 msgid "Close Terminal"
 msgstr "Zapri terminal"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:922 src/bin/miniview.c:41
 #, fuzzy, c-format
 msgid "Could not create logging domain '%s'"
 msgstr "Ni bilo mogoče ustvariti prijavne domene '%s'"
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:514
 msgid "Scrolling"
 msgstr "Drsenje"
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:515
 msgid "Scroll one page up"
 msgstr "Zadrsaj za eno stran navzgor"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:516
 msgid "Scroll one page down"
 msgstr "Zadrsaj za eno stran navzdol"
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:517
 msgid "Scroll one line up"
 msgstr "Zadrsaj za eno vrstico navzgor"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:518
 msgid "Scroll one line down"
 msgstr "Zadrsaj za eno vrstico navzdol"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:519
 msgid "Go to the top of the backlog"
 msgstr "Pojdi na vrh dnevnika"
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:520
 msgid "Reset scroll"
 msgstr "Ponovno zaženi drsenje"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:522
 msgid "Copy/Paste"
 msgstr "Kopiraj/Prilepi"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:523
 msgid "Copy selection to Primary buffer"
 msgstr "Kopiraj izbrano v primarni predpomnilnik"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:524
 msgid "Copy selection to Clipboard buffer"
 msgstr "Kopiraj izbrano v predpomnilnik odložišča"
 
-#: src/bin/keyin.c:692
+#: src/bin/keyin.c:525
 msgid "Paste Primary buffer (highlight)"
 msgstr "Primarni predpomnilnik (označeno)"
 
-#: src/bin/keyin.c:693
+#: src/bin/keyin.c:526
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr "Predpomnilnik Prilepljanja iz odložišča (ctrl+c/v)"
 
-#: src/bin/keyin.c:695
+#: src/bin/keyin.c:528
 msgid "Splits/Tabs"
 msgstr "Razdelitve/Zavihki"
 
-#: src/bin/keyin.c:696
+#: src/bin/keyin.c:529
 #, fuzzy
 msgid "Focus the previous terminal"
 msgstr "Fokusiraj se na prejšnji terminal"
 
-#: src/bin/keyin.c:697
+#: src/bin/keyin.c:530
 #, fuzzy
 msgid "Focus the next terminal"
 msgstr "Fokusiraj se na naslednji terminal"
 
-#: src/bin/keyin.c:698
+#: src/bin/keyin.c:531
 #, fuzzy
 msgid "Focus the terminal above"
 msgstr "Fokusiraj se na naslednji terminal"
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:532
 #, fuzzy
 msgid "Focus the terminal below"
 msgstr "Fokusiraj se na naslednji terminal"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:533
 #, fuzzy
 msgid "Focus the terminal on the left"
 msgstr "Fokusiraj se na naslednji terminal"
 
-#: src/bin/keyin.c:701
+#: src/bin/keyin.c:534
 #, fuzzy
 msgid "Focus the terminal on the right"
 msgstr "Fokusiraj se na naslednji terminal"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:535
 msgid "Split horizontally (new below)"
 msgstr "Razdeli vodoravno (nov spodaj)"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:536
 msgid "Split vertically (new on right)"
 msgstr "Razdeli navpično (nov desno)"
 
-#: src/bin/keyin.c:704
+#: src/bin/keyin.c:537
 msgid "Create a new \"tab\""
 msgstr "Ustvari nov zavihek"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:538
 msgid "Close the focused terminal"
 msgstr "Zapri terminal v fokusu"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:539
 msgid "Bring up \"tab\" switcher"
 msgstr "Dvigni preklopnik \"zavihka\""
 
-#: src/bin/keyin.c:707
+#: src/bin/keyin.c:540
 msgid "Switch to terminal tab 1"
 msgstr "Preklopi na terminalov 1. zavihek"
 
-#: src/bin/keyin.c:708
+#: src/bin/keyin.c:541
 msgid "Switch to terminal tab 2"
 msgstr "Preklopi na terminalov 2. zavihek"
 
-#: src/bin/keyin.c:709
+#: src/bin/keyin.c:542
 msgid "Switch to terminal tab 3"
 msgstr "Preklopi na terminalov 3. zavihek"
 
-#: src/bin/keyin.c:710
+#: src/bin/keyin.c:543
 msgid "Switch to terminal tab 4"
 msgstr "Preklopi na terminalov 4. zavihek"
 
-#: src/bin/keyin.c:711
+#: src/bin/keyin.c:544
 msgid "Switch to terminal tab 5"
 msgstr "Preklopi na terminalov 5. zavihek"
 
-#: src/bin/keyin.c:712
+#: src/bin/keyin.c:545
 msgid "Switch to terminal tab 6"
 msgstr "Preklopi na terminalov 6. zavihek"
 
-#: src/bin/keyin.c:713
+#: src/bin/keyin.c:546
 msgid "Switch to terminal tab 7"
 msgstr "Preklopi na terminalov 7. zavihek"
 
-#: src/bin/keyin.c:714
+#: src/bin/keyin.c:547
 msgid "Switch to terminal tab 8"
 msgstr "Preklopi na terminalov 8. zavihek"
 
-#: src/bin/keyin.c:715
+#: src/bin/keyin.c:548
 msgid "Switch to terminal tab 9"
 msgstr "Preklopi na terminalov 9. zavihek"
 
-#: src/bin/keyin.c:716
+#: src/bin/keyin.c:549
 msgid "Switch to terminal tab 10"
 msgstr "Preklopi na terminalov 10. zavihek"
 
-#: src/bin/keyin.c:717
+#: src/bin/keyin.c:550
 msgid "Change title"
 msgstr "Spremeni ime"
 
-#: src/bin/keyin.c:718 src/bin/keyin.c:719
+#: src/bin/keyin.c:551 src/bin/keyin.c:552
 msgid "Toggle whether input goes to all visible terminals"
 msgstr ""
 
-#: src/bin/keyin.c:722
+#: src/bin/keyin.c:555
 msgid "Font size"
 msgstr "Velikost pisave"
 
-#: src/bin/keyin.c:723
+#: src/bin/keyin.c:556
 msgid "Font size up 1"
 msgstr "Velikost pisave povečaj za 1"
 
-#: src/bin/keyin.c:724
+#: src/bin/keyin.c:557
 msgid "Font size down 1"
 msgstr "Velikost pisave pomanjšaj za 1"
 
-#: src/bin/keyin.c:725
+#: src/bin/keyin.c:558
 msgid "Display big font size"
 msgstr "Prikaži veliko pisavo"
 
-#: src/bin/keyin.c:726
+#: src/bin/keyin.c:559
 msgid "Reset font size"
 msgstr "Resetiraj velikost pisave"
 
-#: src/bin/keyin.c:728
+#: src/bin/keyin.c:561
 msgid "Actions"
 msgstr "Dejanja"
 
-#: src/bin/keyin.c:729
+#: src/bin/keyin.c:562
 msgid "Open a new terminal window"
 msgstr "Odpri v novem terminalskem oknu"
 
-#: src/bin/keyin.c:730
+#: src/bin/keyin.c:563
 msgid "Toggle Fullscreen of the window"
 msgstr "Vključi celozaslonskost okna"
 
-#: src/bin/keyin.c:731
+#: src/bin/keyin.c:564
 msgid "Display the history miniview"
 msgstr "Prikaži mini pogled zgodovine"
 
-#: src/bin/keyin.c:732
+#: src/bin/keyin.c:565
 msgid "Display the command box"
 msgstr "Prikaži ukazno škatlo"
 
-#: src/bin/main.c:406 src/bin/main.c:602
+#: src/bin/main.c:140
+#, c-format
+msgid "Unknown TERM type '%s', keeping '%s'"
+msgstr ""
+
+#: src/bin/main.c:427 src/bin/main.c:625
 #, fuzzy
 msgid "Could not create window"
 msgstr "Ni bilo mogoče ustvariti okna"
 
-#: src/bin/main.c:425 src/bin/main.c:613
+#: src/bin/main.c:446 src/bin/main.c:636
 #, fuzzy
 msgid "Could not create terminal widget"
 msgstr "Ni bilo mogoče ustvariti terminalskega gradnika"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:481
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler in ostali"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:483
 #, fuzzy
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
 "Terminalski posnemovalnik spisan z EFL - Enlightenment Foundation Libraries, "
 "v prevodu Enlightenmentove temeljne knjižnice"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:487
 #, fuzzy
 msgid "Use the named file as a background wallpaper"
 msgstr "Uporabi imenovano datoteko kot ozadje"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:489
 #, fuzzy
 msgid "Change to directory for execution of terminal command"
 msgstr "Spremeni v imenik za izvršbo terminalskega ukaza"
 
-#: src/bin/main.c:470
+#: src/bin/main.c:491
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr "Izvršni ukaz. Privzeto $SHELL (ali passwd shell ali /bin/sh)"
 
-#: src/bin/main.c:472
+#: src/bin/main.c:493
 #, fuzzy
 msgid "Use the named edje theme or path to theme file"
 msgstr "Uporabi imenovano edje temo ali pot do datoteke teme"
 
-#: src/bin/main.c:474
+#: src/bin/main.c:495
 msgid "Use the named color scheme"
 msgstr ""
 
-#: src/bin/main.c:476
+#: src/bin/main.c:497
 #, fuzzy
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr ""
 "Terminalova geometrija, ki naj se uporabi (npr. 80x24 ali 80x24+50+20 itd.)"
 
-#: src/bin/main.c:478
+#: src/bin/main.c:499
 #, fuzzy
 msgid "Set window name"
 msgstr "Določi ime okna"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:501
 #, fuzzy
 msgid "Set window role"
 msgstr "Določi vlogo okna"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:503
 #, fuzzy
 msgid "Set window title"
 msgstr "Določi naziv okna"
 
-#: src/bin/main.c:484
+#: src/bin/main.c:505
 #, fuzzy
 msgid "Set icon name"
 msgstr "Določi ime ikone"
 
-#: src/bin/main.c:486
+#: src/bin/main.c:507
 #, fuzzy
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Določi pisavo (IME/VELIKOST za spremenljive, IME za bitmap pisavo"
 
-#: src/bin/main.c:488
+#: src/bin/main.c:509
 #, fuzzy
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
@@ -386,133 +391,138 @@ msgstr ""
 "( horizontal). Lahko se uporabi večkrat, npr.. -S vhvv ali --split hv Več "
 "opisov v priročniku - man"
 
-#: src/bin/main.c:493
+#: src/bin/main.c:514
 #, fuzzy
 msgid "Run the shell as a login shell"
 msgstr "Zaženi lupino kot prijavno lupino"
 
-#: src/bin/main.c:495
+#: src/bin/main.c:516
 #, fuzzy
 msgid "Set mute mode for video playback"
 msgstr "Nastavi Nemi način za predvajanje videa"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:518
 #, fuzzy
 msgid "Set cursor blink mode"
 msgstr "Določi način utripanja kazalca"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:520
 #, fuzzy
 msgid "Set visual bell mode"
 msgstr "Določi način vidnega zvonca"
 
-#: src/bin/main.c:501
+#: src/bin/main.c:522
 #, fuzzy
 msgid "Go into the fullscreen mode from the start"
 msgstr "Pojdi v celozaslonski način že v začetku"
 
-#: src/bin/main.c:503
+#: src/bin/main.c:524
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:526
 msgid "Start borderless"
 msgstr ""
 
-#: src/bin/main.c:507
+#: src/bin/main.c:528
 #, fuzzy
 msgid "Start as a override-redirect window"
 msgstr "Postani prepisano-preusmerjeno okno"
 
-#: src/bin/main.c:509
+#: src/bin/main.c:530
 msgid "Start maximized"
 msgstr ""
 
-#: src/bin/main.c:511
+#: src/bin/main.c:532
 #, fuzzy
 msgid "Terminology is run without a window manager"
 msgstr "Terminology deluje brez okenskega upravitelja"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:534
 #, fuzzy
 msgid "Do not exit when the command process exits"
 msgstr "Ne končaj ob koncu procesa ukaza"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:536
 #, fuzzy
 msgid "Force single executable if multi-instance is enabled"
 msgstr "Prisili enojno izvedljivo, ko je omogočen način več primerkov"
 
-#: src/bin/main.c:517
+#: src/bin/main.c:538
 #, fuzzy
-msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+msgid "Set TERM to 'xterm-256color' (same as --term-type=xterm-256color)"
 msgstr "Nastavi TERM na 'xterm-256color' namesto 'xterm'"
 
-#: src/bin/main.c:519
+#: src/bin/main.c:540
+#, fuzzy
+msgid "Set TERM to 'xterm', 'xterm-256color' or 'terminology'"
+msgstr "Nastavi TERM na 'xterm-256color' namesto 'xterm'"
+
+#: src/bin/main.c:542
 msgid "Set scaling factor"
 msgstr ""
 
-#: src/bin/main.c:521
+#: src/bin/main.c:544
 #, fuzzy
 msgid "Highlight links"
 msgstr "Označi bližnjice"
 
-#: src/bin/main.c:523
+#: src/bin/main.c:546
 msgid "Do not display wizard on start up"
 msgstr ""
 
-#: src/bin/main.c:549
+#: src/bin/main.c:572
 #, fuzzy
 msgid "show program version"
 msgstr "Prikaži različico programa"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:575
 #, fuzzy
 msgid "show copyright"
 msgstr "Prikaži copyright"
 
-#: src/bin/main.c:555
+#: src/bin/main.c:578
 #, fuzzy
 msgid "show license"
 msgstr "Prikaži licenco"
 
-#: src/bin/main.c:558
+#: src/bin/main.c:581
 #, fuzzy
 msgid "show this message"
 msgstr "Prikaži to sporočilo"
 
-#: src/bin/main.c:655
+#: src/bin/main.c:678
 #, fuzzy
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr "najden je bil nepravilen argument za možnost -S/--split. Glej --help"
 
-#: src/bin/main.c:909
+#: src/bin/main.c:933
 #, fuzzy
 msgid "Could not initialize key bindings"
 msgstr "Ni bilo mogoče začeti navez tipk"
 
-#: src/bin/main.c:925
+#: src/bin/main.c:949
 #, fuzzy
 msgid "Could not parse command line options"
 msgstr "Ni bilo mogoče razčleniti možnosti ukazne vrstice"
 
-#: src/bin/main.c:949
+#: src/bin/main.c:973
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "možnost %s zahteva nek argument!"
 
-#: src/bin/main.c:950
+#: src/bin/main.c:974
 #, fuzzy
 msgid "invalid options found. See --help"
 msgstr "najdene nepravilne možnosti. Glej --help"
 
-#: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
-#: src/bin/termpty.c:655
+#: src/bin/media.c:1338 src/bin/termpty.c:625 src/bin/termpty.c:630
+#: src/bin/termpty.c:634
 #, c-format
 msgid "Function %s failed: %s"
 msgstr "Funkcija %s spodletela: %s"
 
-#: src/bin/media.c:1434
+#: src/bin/media.c:1435
 msgid "Media visualizing is not supported"
 msgstr "Pregledovanje medije ni podprto"
 
@@ -580,129 +590,149 @@ msgstr "%'d vrst"
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:218
+#: src/bin/options_behavior.c:222
+msgid "Set TERM to:"
+msgstr ""
+
+#: src/bin/options_behavior.c:268
+msgid "Never"
+msgstr ""
+
+#: src/bin/options_behavior.c:269
+msgid "Ask"
+msgstr ""
+
+#: src/bin/options_behavior.c:270
+msgid "Always"
+msgstr ""
+
+#: src/bin/options_behavior.c:276
+msgid "Let escape codes read selections:"
+msgstr ""
+
+#: src/bin/options_behavior.c:326
 #, fuzzy
 msgid "Default cursor:"
 msgstr "Privzeto"
 
-#: src/bin/options_behavior.c:227
+#: src/bin/options_behavior.c:335
 msgid "Blinking Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:246
+#: src/bin/options_behavior.c:354
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:266
+#: src/bin/options_behavior.c:374
 msgid "Blinking Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:286
+#: src/bin/options_behavior.c:394
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:306
+#: src/bin/options_behavior.c:414
 msgid "Blinking Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:326
+#: src/bin/options_behavior.c:434
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:366 src/bin/options.c:217
+#: src/bin/options_behavior.c:474 src/bin/options.c:217
 msgid "Behavior"
 msgstr "Vedenje"
 
-#: src/bin/options_behavior.c:386
+#: src/bin/options_behavior.c:494
 msgid "Show tabs"
 msgstr "Prikaži zavihke"
 
-#: src/bin/options_behavior.c:389
+#: src/bin/options_behavior.c:497
 msgid "Scroll to bottom on new content"
 msgstr "Zadrsaj do dna ob novi vsebini"
 
-#: src/bin/options_behavior.c:390
+#: src/bin/options_behavior.c:498
 msgid "Scroll to bottom when a key is pressed"
 msgstr "Zadrsaj do dna ob pritisnjeni tipki"
 
-#: src/bin/options_behavior.c:396
+#: src/bin/options_behavior.c:504
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
 
-#: src/bin/options_behavior.c:403
+#: src/bin/options_behavior.c:511
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
 
-#: src/bin/options_behavior.c:407
+#: src/bin/options_behavior.c:515
 msgid "Visual Bell"
 msgstr "Vidni zvonec"
 
-#: src/bin/options_behavior.c:408
+#: src/bin/options_behavior.c:516
 msgid "Bell rings"
 msgstr "Zvonjenja zvonca"
 
-#: src/bin/options_behavior.c:409
+#: src/bin/options_behavior.c:517
 msgid "Urgent Bell"
 msgstr "Nujni zvonec"
 
-#: src/bin/options_behavior.c:411
+#: src/bin/options_behavior.c:519
 msgid "Multiple instances, one process"
 msgstr "Večkratni primerki, en proces"
 
-#: src/bin/options_behavior.c:412
-msgid "Set TERM to xterm-256color"
-msgstr "Nastavi TERM na xterm-256color"
-
-#: src/bin/options_behavior.c:413
+#: src/bin/options_behavior.c:521
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr "Puščica nazaj pošlje signal izbris (namesto BackSpace)"
 
-#: src/bin/options_behavior.c:414
+#: src/bin/options_behavior.c:522
 msgid "Start as login shell"
 msgstr "Začni kot prijavna lupina"
 
-#: src/bin/options_behavior.c:415
+#: src/bin/options_behavior.c:523
 msgid "Open new terminals in current working directory"
 msgstr "Odpri nove terminale v trenutnem delujočem imeniku"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:524
 msgid "Always show miniview"
 msgstr "Vedno pokaži mini pogled"
 
-#: src/bin/options_behavior.c:417
+#: src/bin/options_behavior.c:525
 msgid "Enable special Terminology escape codes"
 msgstr "Omogoči posebne escape kode Terminology"
 
-#: src/bin/options_behavior.c:418
-msgid "Enable escape codes manipulating selections"
+#: src/bin/options_behavior.c:527
+msgid "Let escape codes change selections"
 msgstr ""
 
-#: src/bin/options_behavior.c:419
+#: src/bin/options_behavior.c:528
+msgid "Enable escape codes showing desktop notifications"
+msgstr ""
+
+#: src/bin/options_behavior.c:531
 msgid "Always treat Emojis as double-width characters"
 msgstr ""
 
-#: src/bin/options_behavior.c:420
+#: src/bin/options_behavior.c:532
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
 
-#: src/bin/options_behavior.c:427
+#: src/bin/options_behavior.c:539
 msgid "Always open at size:"
 msgstr "Vedno odpri ob velikosti:"
 
-#: src/bin/options_behavior.c:437
+#: src/bin/options_behavior.c:549
 msgid "Set Current:"
 msgstr ""
 
-#: src/bin/options_behavior.c:448
+#: src/bin/options_behavior.c:560
 msgid "Width:"
 msgstr "Širina:"
 
-#: src/bin/options_behavior.c:470
+#: src/bin/options_behavior.c:582
 msgid "Height:"
 msgstr "Višina:"
 
-#: src/bin/options_behavior.c:529
+#: src/bin/options_behavior.c:641
 #, fuzzy
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
@@ -711,11 +741,11 @@ msgstr ""
 "Nastavi čas animacije, ki<br>se zgodi ob preklopu zavihkov,<br>najsibo "
 "zaradi tipkovnih povezav, miške<br>koleščka ali premikanja vrstice zavihkov"
 
-#: src/bin/options_behavior.c:534
+#: src/bin/options_behavior.c:646
 msgid "Tab zoom/switch animation time:"
 msgstr "Čas animiranosti zavihka približaj/preklopi"
 
-#: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
+#: src/bin/options_behavior.c:654 src/bin/options_behavior.c:655
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
@@ -729,7 +759,7 @@ msgstr "Možnosti"
 msgid "Mouse"
 msgstr ""
 
-#: src/bin/options.c:219 src/bin/options_font.c:499
+#: src/bin/options.c:219 src/bin/options_font.c:552
 msgid "Font"
 msgstr "Pisava"
 
@@ -799,21 +829,25 @@ msgid ""
 "hilight>'s configuration panel"
 msgstr ""
 
-#: src/bin/options_font.c:550
+#: src/bin/options_font.c:603
 msgid "Search font"
 msgstr ""
 
-#: src/bin/options_font.c:578
+#: src/bin/options_font.c:631
 msgid "Bitmap"
 msgstr "Bitna slika"
 
-#: src/bin/options_font.c:619
+#: src/bin/options_font.c:672
 msgid "Standard"
 msgstr "Običajen"
 
-#: src/bin/options_font.c:681
+#: src/bin/options_font.c:734
 msgid "Display bold and italic in the terminal"
 msgstr "Prikaži poudarjeno in zvrnjeno pisavo v terminalu"
+
+#: src/bin/options_font.c:744
+msgid "Combine characters into ligatures"
+msgstr ""
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -960,77 +994,77 @@ msgstr "Datoteka ozadja se ni mogla prebrati: %s"
 msgid "Unknown command: %s"
 msgstr "Neznan ukaz: %s"
 
-#: src/bin/termio.c:467
+#: src/bin/termio.c:669 src/bin/termio.c:684
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr "Ni bilo možno dobiti delovnega imenika za pid %i: %s"
 
-#: src/bin/termio.c:482
+#: src/bin/termio.c:701
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr "Ni bilo možno naložiti delovnega imenika %s: %s"
 
-#: src/bin/termio.c:1247
+#: src/bin/termio.c:1552
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nepodprti izbrani format '%s'"
 
-#: src/bin/termio.c:1407
+#: src/bin/termio.c:1712
 msgid "Preview"
 msgstr "Predogled"
 
-#: src/bin/termio.c:1417
+#: src/bin/termio.c:1722
 msgid "Copy relative path"
 msgstr ""
 
-#: src/bin/termio.c:1419
+#: src/bin/termio.c:1724
 msgid "Copy full path"
 msgstr ""
 
-#: src/bin/termio.c:2836
+#: src/bin/termio.c:3141
 msgid "Open as URL"
 msgstr "Odpri kot URL"
 
-#: src/bin/termio.c:4279
+#: src/bin/termio.c:4635
 msgid "Could not allocate termpty"
 msgstr "Ni bilo možno dodeliti termpty"
 
-#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
+#: src/bin/termpty.c:106 src/bin/termpty.c:148 src/bin/termpty.c:195
 #, c-format
 msgid "memerr: %s"
 msgstr "memerr: %s"
 
-#: src/bin/termpty.c:225
+#: src/bin/termpty.c:232
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr "Določitev velikosti ioctl spodletela: %s"
 
-#: src/bin/termpty.c:361
+#: src/bin/termpty.c:340
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr "Ni bilo mogoče pisati v opisnik datoteke %d: %s"
 
-#: src/bin/termpty.c:615
+#: src/bin/termpty.c:594
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr "Ni bilo mogoče najti lupine. Vračam se na %s"
 
-#: src/bin/termpty.c:662
+#: src/bin/termpty.c:641
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr "open() za pty '%s' spodletel: %s"
 
-#: src/bin/termpty.c:669 src/bin/termpty.c:675
+#: src/bin/termpty.c:648 src/bin/termpty.c:654
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr "fcntl() za pty '%s' spodletel: %s"
 
-#: src/bin/termpty.c:684
+#: src/bin/termpty.c:663
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr "ioctl() za pty '%s' spodletel: %s"
 
-#: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
+#: src/bin/termpty.c:704 src/bin/termpty.c:712 src/bin/termpty.c:721
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Ni bilo mogoče spremeniti trenutnega imenika v '%s': %s"
@@ -1051,21 +1085,44 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2334
+#: src/bin/win.c:2335
 msgid "Ecore IMF failed"
 msgstr "Ecore IMF spodletelo"
 
-#: src/bin/win.c:6209
+#: src/bin/win.c:6265
 msgid "Ok"
 msgstr "V redu"
 
-#: src/bin/win.c:6214
+#: src/bin/win.c:6270
 msgid "Cancel"
 msgstr "Prekliči"
 
-#: src/bin/win.c:7413
+#: src/bin/win.c:6370
+msgid "Clipboard access"
+msgstr ""
+
+#: src/bin/win.c:6372
+msgid "A program running in this terminal wants to read the clipboard."
+msgstr ""
+
+#: src/bin/win.c:6374
+msgid "Allow once"
+msgstr ""
+
+#: src/bin/win.c:6376
+msgid "Allow until closed"
+msgstr ""
+
+#: src/bin/win.c:6378
+msgid "Deny"
+msgstr ""
+
+#: src/bin/win.c:7564
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
 msgstr "Ni bilo mogoče najti teme za terminology! Pozabljen 'ninja install?"
+
+#~ msgid "Set TERM to xterm-256color"
+#~ msgstr "Nastavi TERM na xterm-256color"
 
 #~ msgid "React to key presses"
 #~ msgstr "Odzovi se na pritiske tipk"

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-17 12:36+0200\n"
+"POT-Creation-Date: 2026-11-02 23:23+0100\n"
 "PO-Revision-Date: 2024-05-30 19:09+0000\n"
 "Last-Translator: \"Benedek Vigh (冯白诺)\" <benedek.vigh@gmail.com>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/terminology/"
@@ -17,25 +17,25 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.6-dev\n"
 
-#: src/bin/about.c:129 src/bin/about.c:204 src/bin/termio.c:1308
-#: src/bin/termio.c:1317
+#: src/bin/about.c:139 src/bin/about.c:214 src/bin/termio.c:1644
+#: src/bin/termio.c:1653
 #, c-format
 msgid "Copy '%s'"
 msgstr "'%s' másolása"
 
-#: src/bin/about.c:134 src/bin/about.c:209 src/bin/termio.c:1379
+#: src/bin/about.c:144 src/bin/about.c:219 src/bin/termio.c:1715
 msgid "Open"
 msgstr "Megnyitás"
 
-#: src/bin/about.c:273
+#: src/bin/about.c:283
 msgid "Twitter: @_Terminology_"
 msgstr "Twitter: @_Terminology_"
 
-#: src/bin/about.c:275
+#: src/bin/about.c:285
 msgid "YouTube channel"
 msgstr "YouTube csatorna"
 
-#: src/bin/about.c:289
+#: src/bin/about.c:299
 #, c-format
 msgid ""
 "<b>Terminology %s</b><br>Why should terminals be boring?<br><br>This "
@@ -44,14 +44,14 @@ msgid ""
 "it.<br><br>Copyright © 2012-%d by:<br><br>%s<br><br>Distributed under the 2-"
 "clause BSD license detailed below:<br><br>%s"
 msgstr ""
-"<b>Terminology %s</b><br>Miért kéne a termináloknak unalmasnak "
-"lenniük?<br><br>Ez a terminál az Enlightenment-hez készült, hogy ez EFL-t "
-"használja, és hogy feszegesse egy modern terminál emulátor lehetőségeinek a "
-"határait. Reméljük tetszeni fog.<br><br>Copyright © 2012-%d by:"
-"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed "
-"below:<br><br>%s"
+"<b>Terminology %s</b><br>Miért kéne a termináloknak unalmasnak lenniük?"
+"<br><br>Ez a terminál az Enlightenment-hez készült, hogy ez EFL-t használja, "
+"és hogy feszegesse egy modern terminál emulátor lehetőségeinek a határait. "
+"Reméljük tetszeni fog.<br><br>Copyright © 2012-%d by:"
+"<br><br>%s<br><br>Distributed under the 2-clause BSD license detailed below:"
+"<br><br>%s"
 
-#: src/bin/colors.c:17
+#: src/bin/colors.c:20
 msgid "Terminology's developers"
 msgstr "A Terminology fejlesztői"
 
@@ -75,11 +75,11 @@ msgstr "Vízszintes felosztás"
 msgid "Miniview"
 msgstr "Kisméretű nézet"
 
-#: src/bin/controls.c:413 src/bin/win.c:6205
+#: src/bin/controls.c:413 src/bin/win.c:6261
 msgid "Set title"
 msgstr "Cím beállítása"
 
-#: src/bin/controls.c:424 src/bin/termio.c:1393 src/bin/termio.c:2803
+#: src/bin/controls.c:424 src/bin/termio.c:1729 src/bin/termio.c:3139
 msgid "Copy"
 msgstr "Másolás"
 
@@ -103,372 +103,381 @@ msgstr "Csoportos bevitel"
 msgid "Close Terminal"
 msgstr "Terminál bezárása"
 
-#: src/bin/gravatar.c:121 src/bin/main.c:898 src/bin/miniview.c:41
+#: src/bin/gravatar.c:121 src/bin/main.c:922 src/bin/miniview.c:41
 #, c-format
 msgid "Could not create logging domain '%s'"
 msgstr ""
 
-#: src/bin/keyin.c:681
+#: src/bin/keyin.c:514
 msgid "Scrolling"
 msgstr "Görgetés"
 
-#: src/bin/keyin.c:682
+#: src/bin/keyin.c:515
 msgid "Scroll one page up"
 msgstr "Egy oldal görgetése felfelé"
 
-#: src/bin/keyin.c:683
+#: src/bin/keyin.c:516
 msgid "Scroll one page down"
 msgstr "Egy oldal görgetése lefelé"
 
-#: src/bin/keyin.c:684
+#: src/bin/keyin.c:517
 msgid "Scroll one line up"
 msgstr "Görgetés egy sorral feljebb"
 
-#: src/bin/keyin.c:685
+#: src/bin/keyin.c:518
 msgid "Scroll one line down"
 msgstr "Görgetés egy sorral lejjebb"
 
-#: src/bin/keyin.c:686
+#: src/bin/keyin.c:519
 msgid "Go to the top of the backlog"
 msgstr ""
 
-#: src/bin/keyin.c:687
+#: src/bin/keyin.c:520
 msgid "Reset scroll"
 msgstr "Görgetés visszaállítása"
 
-#: src/bin/keyin.c:689
+#: src/bin/keyin.c:522
 msgid "Copy/Paste"
 msgstr "Másolás/Beillesztés"
 
-#: src/bin/keyin.c:690
+#: src/bin/keyin.c:523
 msgid "Copy selection to Primary buffer"
 msgstr "A kijelölés Másolása az Elsődleges pufferre"
 
-#: src/bin/keyin.c:691
+#: src/bin/keyin.c:524
 msgid "Copy selection to Clipboard buffer"
 msgstr ""
 
-#: src/bin/keyin.c:692
+#: src/bin/keyin.c:525
 msgid "Paste Primary buffer (highlight)"
 msgstr "Elsődleges puffer beillesztése (kiemelés)"
 
-#: src/bin/keyin.c:693
+#: src/bin/keyin.c:526
 msgid "Paste Clipboard buffer (ctrl+c/v)"
 msgstr ""
 
-#: src/bin/keyin.c:695
+#: src/bin/keyin.c:528
 msgid "Splits/Tabs"
 msgstr ""
 
-#: src/bin/keyin.c:696
+#: src/bin/keyin.c:529
 msgid "Focus the previous terminal"
 msgstr "Fókusz az előző terminálra"
 
-#: src/bin/keyin.c:697
+#: src/bin/keyin.c:530
 msgid "Focus the next terminal"
 msgstr "Fókusz a következő terminálra"
 
-#: src/bin/keyin.c:698
+#: src/bin/keyin.c:531
 msgid "Focus the terminal above"
 msgstr "Fókusz a fenti terminálra"
 
-#: src/bin/keyin.c:699
+#: src/bin/keyin.c:532
 msgid "Focus the terminal below"
 msgstr "Fókusz a lenti terminálra"
 
-#: src/bin/keyin.c:700
+#: src/bin/keyin.c:533
 msgid "Focus the terminal on the left"
 msgstr "Fókusz a bal oldali terminálra"
 
-#: src/bin/keyin.c:701
+#: src/bin/keyin.c:534
 msgid "Focus the terminal on the right"
 msgstr "Fókusz a jobb oldali terminálra"
 
-#: src/bin/keyin.c:702
+#: src/bin/keyin.c:535
 msgid "Split horizontally (new below)"
 msgstr "Vízszintes szétválasztás (új alul)"
 
-#: src/bin/keyin.c:703
+#: src/bin/keyin.c:536
 msgid "Split vertically (new on right)"
 msgstr "Függőleges szétválasztás (új jobbra)"
 
-#: src/bin/keyin.c:704
+#: src/bin/keyin.c:537
 msgid "Create a new \"tab\""
 msgstr "Új \"lap\" létrehozása"
 
-#: src/bin/keyin.c:705
+#: src/bin/keyin.c:538
 msgid "Close the focused terminal"
 msgstr "Fókuszban lévő terminál bezárása"
 
-#: src/bin/keyin.c:706
+#: src/bin/keyin.c:539
 msgid "Bring up \"tab\" switcher"
 msgstr "\"Lapválasztó\" mutatása"
 
-#: src/bin/keyin.c:707
+#: src/bin/keyin.c:540
 msgid "Switch to terminal tab 1"
 msgstr "Váltás az 1. terminállapra"
 
-#: src/bin/keyin.c:708
+#: src/bin/keyin.c:541
 msgid "Switch to terminal tab 2"
 msgstr "Váltás a 2. terminállapra"
 
-#: src/bin/keyin.c:709
+#: src/bin/keyin.c:542
 msgid "Switch to terminal tab 3"
 msgstr "Váltás a 3. terminállapra"
 
-#: src/bin/keyin.c:710
+#: src/bin/keyin.c:543
 msgid "Switch to terminal tab 4"
 msgstr "Váltás a 4. terminállapra"
 
-#: src/bin/keyin.c:711
+#: src/bin/keyin.c:544
 msgid "Switch to terminal tab 5"
 msgstr "Váltás az 5. terminállapra"
 
-#: src/bin/keyin.c:712
+#: src/bin/keyin.c:545
 msgid "Switch to terminal tab 6"
 msgstr "Váltás a 6. terminállapra"
 
-#: src/bin/keyin.c:713
+#: src/bin/keyin.c:546
 msgid "Switch to terminal tab 7"
 msgstr "Váltás a 7. terminállapra"
 
-#: src/bin/keyin.c:714
+#: src/bin/keyin.c:547
 msgid "Switch to terminal tab 8"
 msgstr "Váltás a 8. terminállapra"
 
-#: src/bin/keyin.c:715
+#: src/bin/keyin.c:548
 msgid "Switch to terminal tab 9"
 msgstr "Váltás a 9. terminállapra"
 
-#: src/bin/keyin.c:716
+#: src/bin/keyin.c:549
 msgid "Switch to terminal tab 10"
 msgstr "Váltás a 10. terminállapra"
 
-#: src/bin/keyin.c:717
+#: src/bin/keyin.c:550
 msgid "Change title"
 msgstr "Cím megváltoztatása"
 
-#: src/bin/keyin.c:718 src/bin/keyin.c:719
+#: src/bin/keyin.c:551 src/bin/keyin.c:552
 msgid "Toggle whether input goes to all visible terminals"
 msgstr ""
 
-#: src/bin/keyin.c:722
+#: src/bin/keyin.c:555
 msgid "Font size"
 msgstr "Betűméret"
 
-#: src/bin/keyin.c:723
+#: src/bin/keyin.c:556
 msgid "Font size up 1"
 msgstr "Betűméret növelése 1-el"
 
-#: src/bin/keyin.c:724
+#: src/bin/keyin.c:557
 msgid "Font size down 1"
 msgstr "Betűméret csökkentése 1-el"
 
-#: src/bin/keyin.c:725
+#: src/bin/keyin.c:558
 msgid "Display big font size"
 msgstr "Nagy betűk megjelenítése"
 
-#: src/bin/keyin.c:726
+#: src/bin/keyin.c:559
 msgid "Reset font size"
 msgstr "Betűméret visszaállítása"
 
-#: src/bin/keyin.c:728
+#: src/bin/keyin.c:561
 msgid "Actions"
 msgstr ""
 
-#: src/bin/keyin.c:729
+#: src/bin/keyin.c:562
 msgid "Open a new terminal window"
 msgstr "Új terminálablak megnyitása"
 
-#: src/bin/keyin.c:730
+#: src/bin/keyin.c:563
 msgid "Toggle Fullscreen of the window"
 msgstr "Váltás Teljes képernyős ablakra"
 
-#: src/bin/keyin.c:731
+#: src/bin/keyin.c:564
 msgid "Display the history miniview"
 msgstr "Az előzmények kisméretű megjelenítése"
 
-#: src/bin/keyin.c:732
+#: src/bin/keyin.c:565
 msgid "Display the command box"
 msgstr "Parancsdoboz megjelenítése"
 
-#: src/bin/main.c:406 src/bin/main.c:602
+#: src/bin/main.c:140
+#, c-format
+msgid "Unknown TERM type '%s', keeping '%s'"
+msgstr ""
+
+#: src/bin/main.c:427 src/bin/main.c:625
 msgid "Could not create window"
 msgstr "Nem sikerült az ablak létrehozása"
 
-#: src/bin/main.c:425 src/bin/main.c:613
+#: src/bin/main.c:446 src/bin/main.c:636
 msgid "Could not create terminal widget"
 msgstr "Nem sikerült a terminálmodul létrehozása"
 
-#: src/bin/main.c:460
+#: src/bin/main.c:481
 #, c-format
 msgid "(C) 2012-%d Carsten Haitzler and others"
 msgstr "(C) 2012-%d Carsten Haitzler és társai"
 
-#: src/bin/main.c:462
+#: src/bin/main.c:483
 msgid "Terminal emulator written with Enlightenment Foundation Libraries"
 msgstr ""
 "Terminál emulátor az Enlightenment Foundation Libraries felhasználásával"
 
-#: src/bin/main.c:466
+#: src/bin/main.c:487
 msgid "Use the named file as a background wallpaper"
 msgstr "A megnevezett fájl háttérképként való használata"
 
-#: src/bin/main.c:468
+#: src/bin/main.c:489
 msgid "Change to directory for execution of terminal command"
 msgstr ""
 
-#: src/bin/main.c:470
+#: src/bin/main.c:491
 msgid "Command to execute. Defaults to $SHELL (or passwd shell or /bin/sh)"
 msgstr ""
 
-#: src/bin/main.c:472
+#: src/bin/main.c:493
 msgid "Use the named edje theme or path to theme file"
 msgstr ""
 
-#: src/bin/main.c:474
+#: src/bin/main.c:495
 msgid "Use the named color scheme"
 msgstr ""
 
-#: src/bin/main.c:476
+#: src/bin/main.c:497
 msgid "Terminal geometry to use (eg 80x24 or 80x24+50+20 etc.)"
 msgstr ""
 
-#: src/bin/main.c:478
+#: src/bin/main.c:499
 msgid "Set window name"
 msgstr "Ablak nevének beállítása"
 
-#: src/bin/main.c:480
+#: src/bin/main.c:501
 msgid "Set window role"
 msgstr "Ablak szerepének beállítása"
 
-#: src/bin/main.c:482
+#: src/bin/main.c:503
 msgid "Set window title"
 msgstr "Ablak címének beállítása"
 
-#: src/bin/main.c:484
+#: src/bin/main.c:505
 msgid "Set icon name"
 msgstr "Ikon nevének beállítása"
 
-#: src/bin/main.c:486
+#: src/bin/main.c:507
 msgid "Set font (NAME/SIZE for scalable, NAME for bitmap)"
 msgstr "Betűtípus beállítása (NÉV/MÉRET - változtatható méretű, NÉV - bitmap)"
 
-#: src/bin/main.c:488
+#: src/bin/main.c:509
 msgid ""
 "Split the terminal window. 'v' for vertical and 'h' for horizontal. Can be "
 "used multiple times. eg -S vhvv or --split hv More description available on "
 "the man page"
 msgstr ""
 
-#: src/bin/main.c:493
+#: src/bin/main.c:514
 msgid "Run the shell as a login shell"
 msgstr ""
 
-#: src/bin/main.c:495
+#: src/bin/main.c:516
 msgid "Set mute mode for video playback"
 msgstr "Néma mód használata a videólejátszáshoz"
 
-#: src/bin/main.c:497
+#: src/bin/main.c:518
 msgid "Set cursor blink mode"
 msgstr "Kurzorvillogás módjának beállítása"
 
-#: src/bin/main.c:499
+#: src/bin/main.c:520
 msgid "Set visual bell mode"
 msgstr ""
 
-#: src/bin/main.c:501
+#: src/bin/main.c:522
 msgid "Go into the fullscreen mode from the start"
 msgstr ""
 
-#: src/bin/main.c:503
+#: src/bin/main.c:524
 msgid "Start iconified"
 msgstr ""
 
-#: src/bin/main.c:505
+#: src/bin/main.c:526
 msgid "Start borderless"
 msgstr "Keret nélküli indítás"
 
-#: src/bin/main.c:507
+#: src/bin/main.c:528
 msgid "Start as a override-redirect window"
 msgstr ""
 
-#: src/bin/main.c:509
+#: src/bin/main.c:530
 msgid "Start maximized"
 msgstr "Teljes képernyős indítás"
 
-#: src/bin/main.c:511
+#: src/bin/main.c:532
 msgid "Terminology is run without a window manager"
 msgstr "A Terminology ablakkezelő nélküli fut"
 
-#: src/bin/main.c:513
+#: src/bin/main.c:534
 msgid "Do not exit when the command process exits"
 msgstr "Ne lépjen ki amikor a parancs folyamata befejeződik"
 
-#: src/bin/main.c:515
+#: src/bin/main.c:536
 msgid "Force single executable if multi-instance is enabled"
 msgstr ""
 
-#: src/bin/main.c:517
-msgid "Set TERM to 'xterm-256color' instead of 'xterm'"
+#: src/bin/main.c:538
+msgid "Set TERM to 'xterm-256color' (same as --term-type=xterm-256color)"
 msgstr ""
 
-#: src/bin/main.c:519
+#: src/bin/main.c:540
+msgid "Set TERM to 'xterm', 'xterm-256color' or 'terminology'"
+msgstr ""
+
+#: src/bin/main.c:542
 msgid "Set scaling factor"
 msgstr ""
 
-#: src/bin/main.c:521
+#: src/bin/main.c:544
 msgid "Highlight links"
 msgstr "Hivatkozások kiemelése"
 
-#: src/bin/main.c:523
+#: src/bin/main.c:546
 msgid "Do not display wizard on start up"
 msgstr "Ne mutassa a varázslót induláskor"
 
-#: src/bin/main.c:549
+#: src/bin/main.c:572
 msgid "show program version"
 msgstr "program verziójának mutatása"
 
-#: src/bin/main.c:552
+#: src/bin/main.c:575
 msgid "show copyright"
 msgstr ""
 
-#: src/bin/main.c:555
+#: src/bin/main.c:578
 msgid "show license"
 msgstr "licensz mutatása"
 
-#: src/bin/main.c:558
+#: src/bin/main.c:581
 msgid "show this message"
 msgstr "ez az üzenet mutatása"
 
-#: src/bin/main.c:655
+#: src/bin/main.c:678
 msgid "invalid argument found for option -S/--split. See --help"
 msgstr ""
 
-#: src/bin/main.c:909
+#: src/bin/main.c:933
 msgid "Could not initialize key bindings"
 msgstr ""
 
-#: src/bin/main.c:925
+#: src/bin/main.c:949
 msgid "Could not parse command line options"
 msgstr ""
 
-#: src/bin/main.c:949
+#: src/bin/main.c:973
 #, c-format
 msgid "option %s requires an argument!"
 msgstr "a %s opció egy argumentumot vár!"
 
-#: src/bin/main.c:950
+#: src/bin/main.c:974
 msgid "invalid options found. See --help"
 msgstr ""
 
-#: src/bin/media.c:1337 src/bin/termpty.c:646 src/bin/termpty.c:651
-#: src/bin/termpty.c:655
+#: src/bin/media.c:1338 src/bin/termpty.c:625 src/bin/termpty.c:630
+#: src/bin/termpty.c:634
 #, c-format
 msgid "Function %s failed: %s"
 msgstr ""
 
-#: src/bin/media.c:1434
+#: src/bin/media.c:1435
 msgid "Media visualizing is not supported"
 msgstr "Média megjelenítése nem támogatott"
 
@@ -501,7 +510,7 @@ msgid "Opacity:"
 msgstr "Átlátszatlanság:"
 
 #: src/bin/options_background.c:573 src/bin/options_background.c:574
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "%1.0f%%"
 msgstr "%1.0f%%"
 
@@ -535,138 +544,158 @@ msgstr "%'d sorok"
 msgid "Scrollback (current memory usage: %'.2f%cB):"
 msgstr ""
 
-#: src/bin/options_behavior.c:218
+#: src/bin/options_behavior.c:222
+msgid "Set TERM to:"
+msgstr ""
+
+#: src/bin/options_behavior.c:268
+msgid "Never"
+msgstr ""
+
+#: src/bin/options_behavior.c:269
+msgid "Ask"
+msgstr ""
+
+#: src/bin/options_behavior.c:270
+msgid "Always"
+msgstr ""
+
+#: src/bin/options_behavior.c:276
+msgid "Let escape codes read selections:"
+msgstr ""
+
+#: src/bin/options_behavior.c:326
 msgid "Default cursor:"
 msgstr "Alapértelmezett kurzor:"
 
-#: src/bin/options_behavior.c:227
+#: src/bin/options_behavior.c:335
 msgid "Blinking Block"
 msgstr "Villogó Négyzet"
 
-#: src/bin/options_behavior.c:246
+#: src/bin/options_behavior.c:354
 msgid "Steady Block"
 msgstr ""
 
-#: src/bin/options_behavior.c:266
+#: src/bin/options_behavior.c:374
 msgid "Blinking Underline"
 msgstr "Villogó Aláhúzás"
 
-#: src/bin/options_behavior.c:286
+#: src/bin/options_behavior.c:394
 msgid "Steady Underline"
 msgstr ""
 
-#: src/bin/options_behavior.c:306
+#: src/bin/options_behavior.c:414
 msgid "Blinking Bar"
 msgstr "Villogó Vonal"
 
-#: src/bin/options_behavior.c:326
+#: src/bin/options_behavior.c:434
 msgid "Steady Bar"
 msgstr ""
 
-#: src/bin/options_behavior.c:366 src/bin/options.c:217
+#: src/bin/options_behavior.c:474 src/bin/options.c:217
 msgid "Behavior"
 msgstr "Viselkedés"
 
-#: src/bin/options_behavior.c:386
+#: src/bin/options_behavior.c:494
 msgid "Show tabs"
 msgstr "Lapok mutatása"
 
-#: src/bin/options_behavior.c:389
+#: src/bin/options_behavior.c:497
 msgid "Scroll to bottom on new content"
 msgstr ""
 
-#: src/bin/options_behavior.c:390
+#: src/bin/options_behavior.c:498
 msgid "Scroll to bottom when a key is pressed"
 msgstr ""
 
-#: src/bin/options_behavior.c:396
+#: src/bin/options_behavior.c:504
 msgid "React to key presses (typing sounds and animations)"
 msgstr ""
 
-#: src/bin/options_behavior.c:403
+#: src/bin/options_behavior.c:511
 msgid "Audio Support for key presses <failure>DISABLED</failure>!"
 msgstr ""
 
-#: src/bin/options_behavior.c:407
+#: src/bin/options_behavior.c:515
 msgid "Visual Bell"
 msgstr ""
 
-#: src/bin/options_behavior.c:408
+#: src/bin/options_behavior.c:516
 msgid "Bell rings"
 msgstr ""
 
-#: src/bin/options_behavior.c:409
+#: src/bin/options_behavior.c:517
 msgid "Urgent Bell"
 msgstr ""
 
-#: src/bin/options_behavior.c:411
+#: src/bin/options_behavior.c:519
 msgid "Multiple instances, one process"
 msgstr ""
 
-#: src/bin/options_behavior.c:412
-msgid "Set TERM to xterm-256color"
-msgstr ""
-
-#: src/bin/options_behavior.c:413
+#: src/bin/options_behavior.c:521
 msgid "BackArrow sends Del (instead of BackSpace)"
 msgstr ""
 
-#: src/bin/options_behavior.c:414
+#: src/bin/options_behavior.c:522
 msgid "Start as login shell"
 msgstr ""
 
-#: src/bin/options_behavior.c:415
+#: src/bin/options_behavior.c:523
 msgid "Open new terminals in current working directory"
 msgstr "Új terminálok megnyitása a jelenlegi könyvtárban"
 
-#: src/bin/options_behavior.c:416
+#: src/bin/options_behavior.c:524
 msgid "Always show miniview"
 msgstr "Kis nézet folyamatos mutatása"
 
-#: src/bin/options_behavior.c:417
+#: src/bin/options_behavior.c:525
 msgid "Enable special Terminology escape codes"
 msgstr ""
 
-#: src/bin/options_behavior.c:418
-msgid "Enable escape codes manipulating selections"
+#: src/bin/options_behavior.c:527
+msgid "Let escape codes change selections"
 msgstr ""
 
-#: src/bin/options_behavior.c:419
+#: src/bin/options_behavior.c:528
+msgid "Enable escape codes showing desktop notifications"
+msgstr ""
+
+#: src/bin/options_behavior.c:531
 msgid "Always treat Emojis as double-width characters"
 msgstr ""
 
-#: src/bin/options_behavior.c:420
+#: src/bin/options_behavior.c:532
 msgid ""
 "When grouping input, do it on all terminals and not just the visible ones"
 msgstr ""
 
-#: src/bin/options_behavior.c:427
+#: src/bin/options_behavior.c:539
 msgid "Always open at size:"
 msgstr "Megnyitáskor mindig használja ezt a méretet:"
 
-#: src/bin/options_behavior.c:437
+#: src/bin/options_behavior.c:549
 msgid "Set Current:"
 msgstr "Jelenlegi beállítása:"
 
-#: src/bin/options_behavior.c:448
+#: src/bin/options_behavior.c:560
 msgid "Width:"
 msgstr "Szélesség:"
 
-#: src/bin/options_behavior.c:470
+#: src/bin/options_behavior.c:582
 msgid "Height:"
 msgstr "Magasság:"
 
-#: src/bin/options_behavior.c:529
+#: src/bin/options_behavior.c:641
 msgid ""
 "Set the time of the animation that<br>takes places during tab switches,"
 "<br>be those done due to key bindings or <br>mouse wheel over the tabs panel"
 msgstr ""
 
-#: src/bin/options_behavior.c:534
+#: src/bin/options_behavior.c:646
 msgid "Tab zoom/switch animation time:"
 msgstr ""
 
-#: src/bin/options_behavior.c:542 src/bin/options_behavior.c:543
+#: src/bin/options_behavior.c:654 src/bin/options_behavior.c:655
 #: src/bin/options_mouse.c:186 src/bin/options_mouse.c:187
 #, c-format
 msgid "%1.1f s"
@@ -680,7 +709,7 @@ msgstr "Opciók"
 msgid "Mouse"
 msgstr "Egér"
 
-#: src/bin/options.c:219 src/bin/options_font.c:499
+#: src/bin/options.c:219 src/bin/options_font.c:552
 msgid "Font"
 msgstr "Betű"
 
@@ -749,21 +778,25 @@ msgid ""
 "hilight>'s configuration panel"
 msgstr ""
 
-#: src/bin/options_font.c:550
+#: src/bin/options_font.c:603
 msgid "Search font"
 msgstr "Betű keresése"
 
-#: src/bin/options_font.c:578
+#: src/bin/options_font.c:631
 msgid "Bitmap"
 msgstr "Bitmap"
 
-#: src/bin/options_font.c:619
+#: src/bin/options_font.c:672
 msgid "Standard"
 msgstr "Standard"
 
-#: src/bin/options_font.c:681
+#: src/bin/options_font.c:734
 msgid "Display bold and italic in the terminal"
 msgstr "Félkövér és dőlt betűk megjelenítése a terminálban"
+
+#: src/bin/options_font.c:744
+msgid "Combine characters into ligatures"
+msgstr ""
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -906,77 +939,77 @@ msgstr "A háttérképként választott fájl nem olvasható: %s"
 msgid "Unknown command: %s"
 msgstr "Ismeretlen parancs: %s"
 
-#: src/bin/termio.c:467
+#: src/bin/termio.c:669 src/bin/termio.c:684
 #, c-format
 msgid "Could not get working directory of pid %i: %s"
 msgstr ""
 
-#: src/bin/termio.c:482
+#: src/bin/termio.c:701
 #, c-format
 msgid "Could not load working directory %s: %s"
 msgstr ""
 
-#: src/bin/termio.c:1216
+#: src/bin/termio.c:1552
 #, c-format
 msgid "unsupported selection format '%s'"
 msgstr "nem támogatott kiválasztási formátum '%s'"
 
-#: src/bin/termio.c:1376
+#: src/bin/termio.c:1712
 msgid "Preview"
 msgstr "Előnézet"
 
-#: src/bin/termio.c:1386
+#: src/bin/termio.c:1722
 msgid "Copy relative path"
 msgstr "Relatív útvonal másolása"
 
-#: src/bin/termio.c:1388
+#: src/bin/termio.c:1724
 msgid "Copy full path"
 msgstr "Teljes útvonal másolása"
 
-#: src/bin/termio.c:2805
+#: src/bin/termio.c:3141
 msgid "Open as URL"
 msgstr "URL-ként való megnyitás"
 
-#: src/bin/termio.c:4248
+#: src/bin/termio.c:4635
 msgid "Could not allocate termpty"
 msgstr ""
 
-#: src/bin/termpty.c:99 src/bin/termpty.c:141 src/bin/termpty.c:188
-#, c-format, fuzzy
+#: src/bin/termpty.c:106 src/bin/termpty.c:148 src/bin/termpty.c:195
+#, fuzzy, c-format
 msgid "memerr: %s"
 msgstr "memerr: %s"
 
-#: src/bin/termpty.c:225
+#: src/bin/termpty.c:232
 #, c-format
 msgid "Size set ioctl failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:361
+#: src/bin/termpty.c:340
 #, c-format
 msgid "Could not write to file descriptor %d: %s"
 msgstr ""
 
-#: src/bin/termpty.c:615
+#: src/bin/termpty.c:594
 #, c-format
 msgid "Could not find shell, falling back to %s"
 msgstr ""
 
-#: src/bin/termpty.c:662
+#: src/bin/termpty.c:641
 #, c-format
 msgid "open() of pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:669 src/bin/termpty.c:675
+#: src/bin/termpty.c:648 src/bin/termpty.c:654
 #, c-format
 msgid "fcntl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:684
+#: src/bin/termpty.c:663
 #, c-format
 msgid "ioctl() on pty '%s' failed: %s"
 msgstr ""
 
-#: src/bin/termpty.c:725 src/bin/termpty.c:733 src/bin/termpty.c:742
+#: src/bin/termpty.c:704 src/bin/termpty.c:712 src/bin/termpty.c:721
 #, c-format
 msgid "Could not change current directory to '%s': %s"
 msgstr "Nem sikerült átváltani a '%s' könyvtárra: %s"
@@ -997,18 +1030,39 @@ msgid ""
 "keyword>"
 msgstr ""
 
-#: src/bin/win.c:2334
+#: src/bin/win.c:2335
 msgid "Ecore IMF failed"
 msgstr ""
 
-#: src/bin/win.c:6209
+#: src/bin/win.c:6265
 msgid "Ok"
 msgstr "Oké"
 
-#: src/bin/win.c:6214
+#: src/bin/win.c:6270
 msgid "Cancel"
 msgstr "Mégse"
 
-#: src/bin/win.c:7412
+#: src/bin/win.c:6370
+msgid "Clipboard access"
+msgstr ""
+
+#: src/bin/win.c:6372
+msgid "A program running in this terminal wants to read the clipboard."
+msgstr ""
+
+#: src/bin/win.c:6374
+msgid "Allow once"
+msgstr ""
+
+#: src/bin/win.c:6376
+msgid "Allow until closed"
+msgstr ""
+
+#: src/bin/win.c:6378
+msgid "Deny"
+msgstr ""
+
+#: src/bin/win.c:7564
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
-msgstr "Terminology téma nem található! Nem felejtetted el a 'ninja install'-t?"
+msgstr ""
+"Terminology téma nem található! Nem felejtetted el a 'ninja install'-t?"
