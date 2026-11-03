@@ -186,7 +186,7 @@ executable('tysend',
 if fuzzing
   executable('tyfuzz',
              tyfuzz_sources,
-             install: true,
+             install: false,
              include_directories: config_dir,
              c_args: '-DBINARY_TYFUZZ=1',
              dependencies: terminology_dependencies)
