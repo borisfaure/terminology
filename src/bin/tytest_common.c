@@ -821,17 +821,38 @@ tytest_common_set_chunk(int chunk)
    if (chunk > 0) _read_chunk = chunk;
 }
 
+/* Feed len bytes in chunks of chunk bytes, as if read() kept returning that
+ * size. chunk <= 0 hands everything over in one call, which is what a burst
+ * of up to 64 reads in one wakeup approximates. */
+void
+tytest_common_feed_chunked(const char *data, int len, int chunk)
+{
+   int i;
+
+   if (chunk <= 0)
+     {
+        tytest_common_feed(data, len);
+        return;
+     }
+   for (i = 0; i < len; i += chunk)
+     tytest_common_feed(data + i, MIN(chunk, len - i));
+}
+
 void
 tytest_common_main_loop(void)
 {
-   char buf[4096];
-   int len, want;
+   char *buf;
+   int len;
 
-   want = MIN((int)sizeof(buf), _read_chunk);
+   /* Sized to the whole read: a chunk larger than 4096 is the point, not the
+    * exception -- _handle_read() reads 4096 bytes per read() and the buffer
+    * must let --chunk explore beyond it. */
+   buf = malloc(_read_chunk);
+   assert(buf);
 
    do
      {
-        len = read(_ty.fd, buf, want);
+        len = read(_ty.fd, buf, _read_chunk);
         if (len < 0 && errno != EAGAIN)
           {
              ERR("error while reading from tty slave fd");
@@ -842,6 +863,7 @@ tytest_common_main_loop(void)
         tytest_common_feed(buf, len);
      }
    while (1);
+   free(buf);
 }
 
 /* Restore every piece of state the parser reaches through the termio_* stubs,
