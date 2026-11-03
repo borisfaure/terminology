@@ -190,6 +190,31 @@ if fuzzing
              include_directories: config_dir,
              c_args: '-DBINARY_TYFUZZ=1',
              dependencies: terminology_dependencies)
+
+  # The colour-parser fuzzer wants libFuzzer, which ships with clang only,
+  # so the target only exists under clang. has_link_argument() cannot be
+  # used for -fsanitize=fuzzer: its probe has a main() that conflicts with
+  # libFuzzer's own FuzzerMain.o.
+  # termiolink.c compiled with BINARY_TYFUZZ_COLOR_PARSER drops the EFL
+  # parts of termio_color_find() and exposes LLVMFuzzerTestOneInput().
+  if cc.get_id() == 'clang' and cc.has_argument('-fsanitize=fuzzer-no-link')
+    tyfuzz_color_parser = executable('tyfuzz-color-parser',
+                                     ['termiolink.c', 'termiolink.h',
+                                      'sb.c', 'sb.h'],
+                                     install: false,
+                                     include_directories: config_dir,
+                                     c_args: ['-DBINARY_TYFUZZ_COLOR_PARSER=1',
+                                              '-fsanitize=fuzzer-no-link'],
+                                     link_args: ['-fsanitize=fuzzer'],
+                                     dependencies: terminology_dependencies)
+    # A short libFuzzer run, from scratch each time. No corpus directory is
+    # passed: which one exists and whether libFuzzer may create it varies
+    # across libFuzzer builds.
+    test('fuzz-color-parser', tyfuzz_color_parser,
+         args: ['-max_total_time=30', '-print_final_stats=1'],
+         timeout: 120,
+         suite: 'fuzzing')
+  endif
 endif
 if tests
   tytest = executable('tytest',

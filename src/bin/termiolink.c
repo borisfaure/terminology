@@ -684,6 +684,7 @@ end:
 }
 #endif
 
+#if !defined(BINARY_TYFUZZ_COLOR_PARSER)
 __attribute__((const))
 static Eina_Bool
 _is_authorized_in_color(const int codepoint)
@@ -734,6 +735,7 @@ _is_authorized_in_color(const int codepoint)
      }
    return EINA_FALSE;
 }
+#endif
 
 static Eina_Bool
 _parse_hex(const char c, uint8_t *v)
@@ -1253,6 +1255,7 @@ _parse_edc_color(struct ty_sb *sb,
    return EINA_TRUE;
 }
 
+#if !defined(BINARY_TYFUZZ_COLOR_PARSER)
 __attribute__((const))
 static Eina_Bool
 _is_authorized_in_color_sharp(const Eina_Unicode g)
@@ -1264,6 +1267,7 @@ _is_authorized_in_color_sharp(const Eina_Unicode g)
      return EINA_TRUE;
    return EINA_FALSE;
 }
+#endif
 
 static Eina_Bool
 _parse_color(struct ty_sb *sb,
