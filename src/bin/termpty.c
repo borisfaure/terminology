@@ -1341,10 +1341,30 @@ termpty_cell_get(Termpty *ty, int y_requested, int x_requested)
 void
 termpty_write(Termpty *ty, const char *input, int len)
 {
+   int res;
+
 #if defined(BINARY_TYFUZZ)
+# if defined(BINARY_TYBENCH)
+   /* tybench measures the shipping intake path: no reply side. */
    return;
+# else
+   /* The fuzzer has no consumer on the other side of the pty, but the
+    * reply formatting code (DA, DECRQM, XTGETTCAP, OSC colour queries,
+    * OSC 52 read) must run so that the sanitizers see the replies being
+    * built and buffered. The buffer has to be dropped once it grows:
+    * nothing drains it, and a stream of CSI c would otherwise turn a
+    * fuzzing run into an allocation benchmark. */
+   if (ty->write_buffer.len > 8192)
+     ty_sb_free(&ty->write_buffer);
+   res = ty_sb_add(&ty->write_buffer, input, len);
+   if (res < 0)
+     {
+        ERR("failure to add %d characters to write buffer", len);
+     }
+   return;
+# endif
 #endif
-   int res = ty_sb_add(&ty->write_buffer, input, len);
+   res = ty_sb_add(&ty->write_buffer, input, len);
 
    if (res < 0)
      {
