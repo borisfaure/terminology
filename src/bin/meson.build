@@ -197,23 +197,45 @@ if fuzzing
   # libFuzzer's own FuzzerMain.o.
   # termiolink.c compiled with BINARY_TYFUZZ_COLOR_PARSER drops the EFL
   # parts of termio_color_find() and exposes LLVMFuzzerTestOneInput().
+  # Under afl-clang-fast, -fsanitize=fuzzer links AFL++'s own driver, and
+  # that compiler instruments the code itself: passing -fsanitize=
+  # fuzzer-no-link would pile clang's sancov on top, and its module
+  # constructors call runtime functions AFL++ does not define.
+  cc_is_afl = false
+  foreach cmd : cc.cmd_array()
+    if cmd.contains('afl-clang')
+      cc_is_afl = true
+    endif
+  endforeach
   if cc.get_id() == 'clang' and cc.has_argument('-fsanitize=fuzzer-no-link')
+    if not cc_is_afl
+      # stack-depth is switched off explicitly: -fsanitize=fuzzer-no-link
+      # turns it on, its __sancov_lowest_stack variable is defined by
+      # libFuzzer's runtime but not by AFL++'s libAFLDriver, and recent
+      # clangs forbid declaring it in user code.
+      tyfuzz_color_parser_c_args = ['-DBINARY_TYFUZZ_COLOR_PARSER=1',
+                                    '-fsanitize=fuzzer-no-link',
+                                    '-fno-sanitize-coverage=stack-depth']
+    else
+      tyfuzz_color_parser_c_args = ['-DBINARY_TYFUZZ_COLOR_PARSER=1']
+    endif
     tyfuzz_color_parser = executable('tyfuzz-color-parser',
                                      ['termiolink.c', 'termiolink.h',
                                       'sb.c', 'sb.h'],
                                      install: false,
                                      include_directories: config_dir,
-                                     c_args: ['-DBINARY_TYFUZZ_COLOR_PARSER=1',
-                                              '-fsanitize=fuzzer-no-link'],
+                                     c_args: tyfuzz_color_parser_c_args,
                                      link_args: ['-fsanitize=fuzzer'],
                                      dependencies: terminology_dependencies)
-    # A short libFuzzer run, from scratch each time. No corpus directory is
-    # passed: which one exists and whether libFuzzer may create it varies
-    # across libFuzzer builds.
-    test('fuzz-color-parser', tyfuzz_color_parser,
-         args: ['-max_total_time=30', '-print_final_stats=1'],
-         timeout: 120,
-         suite: 'fuzzing')
+    if not cc_is_afl
+      # A short libFuzzer run, from scratch each time. No corpus directory
+      # is passed: which one exists and whether libFuzzer may create it
+      # varies across libFuzzer builds.
+      test('fuzz-color-parser', tyfuzz_color_parser,
+           args: ['-max_total_time=30', '-print_final_stats=1'],
+           timeout: 120,
+           suite: 'fuzzing')
+    endif
   endif
 endif
 if tests
