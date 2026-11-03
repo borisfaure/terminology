@@ -115,6 +115,7 @@ static struct {
        { "xterm_parse_color", tytest_xterm_parse_color},
        { "palette_slots", tytest_palette_slots},
        { "truecolor_cache_generation", tytest_truecolor_cache_generation},
+       { "reset", tytest_reset},
        { NULL, NULL},
 };
 
@@ -583,7 +584,7 @@ _checksum_screen(MD5_CTX *ctx, const Termcell *cells, int w, int h)
 }
 
 static void
-_tytest_checksum(Termpty *ty)
+_tytest_checksum_hex(Termpty *ty, char *md5out)
 {
    MD5_CTX ctx;
    Termpty_Tests tests;
@@ -591,7 +592,6 @@ _tytest_checksum(Termpty *ty)
     * sub-structs would be unaligned. */
    Term_State_V1 termstate;
    Term_Cursor cursor_state, cursor_save0, cursor_save1;
-   char md5out[(2 * MD5_HASHBYTES) + 1];
    unsigned char hash[MD5_HASHBYTES];
    static const char hex[] = "0123456789abcdef";
    int n;
@@ -696,7 +696,56 @@ _tytest_checksum(Termpty *ty)
         md5out[2 * n + 1] = hex[hash[n] & 0x0f];
      }
    md5out[2 * MD5_HASHBYTES] = '\0';
+}
+
+static void
+_tytest_checksum(Termpty *ty)
+{
+   char md5out[(2 * MD5_HASHBYTES) + 1];
+
+   _tytest_checksum_hex(ty, md5out);
    printf("%s", md5out);
+}
+
+/* A reset state is a fresh state: feed sequences that allocate (title,
+ * hyperlink, synchronized-update snapshot, OSC 52, backlog rows), reset,
+ * and check the checksum equals the one right after a fresh
+ * tytest_common_init(). A parse-only reset returning a different state
+ * would make fuzzer crashes depend on previous inputs. */
+int
+tytest_reset(void)
+{
+   static const char data[] =
+      "\x1b]0;hello\x07"                       /* sets the title */
+      "\x1b]8;;https://example.org\x1b\\link"  /* allocates a hyperlink */
+      "\x1b]8;;\x1b\\"
+      "\x1b[?2026h\x1b[?2026l"                 /* synchronized update */
+      "\x1b]52;c;aGVsbG8=\x07"                 /* OSC 52 accumulation */
+      "\x1b[2Khello world\r\n的所有人类\r\n";   /* scrolls the backlog */
+   Termpty *ty;
+   char fresh[(2 * MD5_HASHBYTES) + 1];
+   char after[(2 * MD5_HASHBYTES) + 1];
+   int len = sizeof(data) - 1;
+   int i;
+
+   /* The synchronized-update watchdog runs on an ecore timer; the sync
+    * unit tests ecore_init() for the same reason. */
+   ecore_init();
+   tytest_common_init();
+   ty = tytest_termpty_get();
+   _tytest_checksum_hex(ty, fresh);
+
+   for (i = 0; i < len; i += 3)
+     tytest_common_feed(data + i, MIN(3, len - i));
+
+   tytest_common_reset();
+
+   _tytest_checksum_hex(ty, after);
+   assert(strcmp(fresh, after) == 0);
+
+   tytest_common_shutdown();
+   ecore_shutdown();
+   return 0;
 }
 
 

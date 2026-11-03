@@ -10,6 +10,7 @@
 #include <Elementary.h>
 #include "termpty.h"
 #include "termptynotify.h"
+#include "backlog.h"
 #include "termptyops.h"
 #include "termiointernals.h"
 #include "utf8.h"
@@ -843,6 +844,28 @@ tytest_common_main_loop(void)
    while (1);
 }
 
+/* Restore every piece of state the parser reaches through the termio_* stubs,
+ * outside the Termpty: the palette OSC 4 overrides, the colours OSC 10/11/12
+ * set, DECSCUSR's shape and OSC 52's selections. tytest_common_init() starts
+ * from this state, so tytest_common_reset() ends there too and one fed input
+ * cannot colour the next. */
+static void
+_termio_state_reset(void)
+{
+   termio_reset_main_colors(NULL);
+   termio_palette_reset(NULL);
+   termio_remove_links(&_sd);
+   _cursor_shape = "undefined";
+   _cursor_shape_value = CURSOR_SHAPE_BLOCK;
+   free(_sel_primary);
+   _sel_primary = NULL;
+   free(_sel_clipboard);
+   _sel_clipboard = NULL;
+#if defined(BINARY_TYTEST)
+   tytest_notifications_clear();
+#endif
+}
+
 void
 tytest_common_init(void)
 {
@@ -851,16 +874,70 @@ tytest_common_init(void)
    _config->selection_escapes_read = SELECTION_READ_ALWAYS;
    _sd.config = _config;
    _termpty_init(&_ty, _config);
+   _termio_state_reset();
 #if defined(BINARY_TYTEST)
    _cells = calloc(TY_H * TY_W, sizeof(Evas_Textgrid_Cell));
    assert(_cells != NULL);
 #endif
 }
 
+/* Free what _termpty_init() and the feeds allocated in the shared Termpty.
+ *
+ * This must NOT be termpty_free(): after _termpty_init()'s memset, ty->pid is
+ * 0, and termpty_free() would kill(0, SIGHUP) - the whole process group, the
+ * fuzzer included - and close ty->fd. It also frees the Termpty itself, which
+ * is a static of this module. Free by hand instead, in termpty_free()'s
+ * order. termpty_save_unregister() is skipped on purpose: _termpty_init()
+ * never registered the pty, unlike termpty_init() which only serves the real
+ * binary. */
+static void
+_termpty_release(Termpty *ty)
+{
+   Termexp *ex;
+
+   termpty_notify_free(ty);
+   free(ty->osc52_long.data);
+   EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
+   if (ty->block.blocks) eina_hash_free(ty->block.blocks);
+   if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
+   if (ty->block.active) eina_list_free(ty->block.active);
+   termpty_sync_output_reset(ty);
+   eina_stringshare_del(ty->prop.title);
+   eina_stringshare_del(ty->prop.user_title);
+   eina_stringshare_del(ty->prop.icon);
+   eina_stringshare_del(ty->prop.cwd);
+   termpty_backlog_free(ty);
+   free(ty->screen);
+   free(ty->screen2);
+   if (ty->hl.links)
+     {
+        uint32_t i;
+
+        for (i = 0; i < ty->hl.size; i++)
+          term_link_free(ty, ty->hl.links + i);
+        free(ty->hl.links);
+     }
+   free(ty->hl.bitmap);
+   free(ty->buf);
+   free(ty->tabs);
+   ty_sb_free(&ty->write_buffer);
+}
+
+/* Bring the shared Termpty back to the state tytest_common_init() leaves it
+ * in, keeping ty->fd: a fuzzing loop must pay for the parser's work, not for
+ * execve() and eina_init() per input. */
+void
+tytest_common_reset(void)
+{
+   _termpty_release(&_ty);
+   _termpty_init(&_ty, _config);
+   _termio_state_reset();
+}
+
 void
 tytest_common_shutdown(void)
 {
-   termpty_notify_free(&_ty);
+   _termpty_release(&_ty);
    free(_feed_buf);
    _feed_buf = NULL;
    free(_feed_codepoint);

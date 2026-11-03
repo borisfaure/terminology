@@ -84,6 +84,7 @@ int tytest_osc_color_name(void);
 int tytest_xterm_parse_color(void);
 int tytest_palette_slots(void);
 int tytest_truecolor_cache_generation(void);
+int tytest_reset(void);
 
 #endif
 int tytest_keyin_legacy(void);
