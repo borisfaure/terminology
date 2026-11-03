@@ -821,6 +821,93 @@ tytest_common_set_chunk(int chunk)
    if (chunk > 0) _read_chunk = chunk;
 }
 
+/* Test case format for the fuzzers: a 3-byte header, then the body.
+ *
+ * byte 0, low nibble: how the body is split into reads, an index into
+ *   _chunk_sizes. 4096 takes several entries because it is what Terminology
+ *   really reads; index 12 is "the whole body in one read", which is what a
+ *   64-read burst approximates. High nibble: reserved for a SIMD path
+ *   switch.
+ * byte 1: repeat exponent k: the span from byte 2's offset to the end of
+ *   the body is fed 2^(k mod 21) times. A small test case, ESC ] 0 ; once
+ *   then A a million times, thereby expands into the megabytes the
+ *   buffering paths need, sizes mutators do not grow inputs to by
+ *   themselves.
+ * byte 2: start of the span, as byte * body_len / 256.
+ *
+ * The header is three plain bytes, so CmpLog and the mutators reach every
+ * value. Seeds from the escape-codes runs carry 0x07 0x00 0x00: 4096-byte
+ * reads, no repeat. The persistent and one-shot fuzzers share the format,
+ * so a crash file replays through the non-persistent build as-is. */
+
+static const int _chunk_sizes[16] = {
+   1, 2, 3, 7, 64, 1024, 4095, 4096, 4097, 8192, 65536, 262144,
+   0 /* whole body in one read */, 4096, 4096, 4096
+};
+
+/* The expanded stream. Grown once and kept across persistent iterations:
+ * expanding into a fresh allocation per input would put the allocator back
+ * on the fuzzer's critical path. */
+static char *_stream = NULL;
+static int _stream_len = 0;
+
+/* Expand data (header + body) into the _stream buffer. */
+static void
+_stream_expand(const unsigned char *data, int len)
+{
+   const char *body = (const char *)data + TY_FUZZ_HEADER_SIZE;
+   int body_len = len - TY_FUZZ_HEADER_SIZE;
+   int start = ((int)data[2] * body_len) / 256;
+   int span_len = body_len - start;
+   int repeat = 1 << (data[1] % 21);
+   int stream_len, i, room;
+
+   if (_stream == NULL)
+     {
+        _stream = malloc(TY_FUZZ_STREAM_MAX + 1);
+        assert(_stream);
+     }
+
+   memcpy(_stream, body, start);
+   stream_len = start;
+   for (i = 0; (i < repeat) && (stream_len < TY_FUZZ_STREAM_MAX); i++)
+     {
+        int add = span_len;
+
+        room = TY_FUZZ_STREAM_MAX - stream_len;
+        if (add > room) add = room;
+        memcpy(_stream + stream_len, body + start, add);
+        stream_len += add;
+     }
+   _stream_len = stream_len;
+}
+
+/* Feed one fuzzing test case: expand the header'd body, then hand it to the
+ * parser in the reads the header asks for. */
+void
+tytest_common_feed_input(const unsigned char *data, int len)
+{
+   int chunk;
+
+   if (len <= TY_FUZZ_HEADER_SIZE) return;
+
+   _stream_expand(data, len);
+   if (_stream_len <= 0) return;
+
+   chunk = _chunk_sizes[data[0] & 0x0f];
+   tytest_common_feed_chunked(_stream, _stream_len, chunk);
+}
+
+#if defined(BINARY_TYTEST)
+/* The expanded stream, for the fuzz-header unit test. */
+const char *
+tytest_common_stream_get(int *len)
+{
+   if (len) *len = _stream_len;
+   return _stream;
+}
+#endif
+
 /* Feed len bytes in chunks of chunk bytes, as if read() kept returning that
  * size. chunk <= 0 hands everything over in one call, which is what a burst
  * of up to 64 reads in one wakeup approximates. */
@@ -962,6 +1049,8 @@ tytest_common_shutdown(void)
    _termpty_release(&_ty);
    free(_feed_buf);
    _feed_buf = NULL;
+   free(_stream);
+   _stream = NULL;
    free(_feed_codepoint);
    _feed_codepoint = NULL;
    _feed_size = 0;

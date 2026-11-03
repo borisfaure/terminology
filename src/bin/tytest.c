@@ -116,6 +116,7 @@ static struct {
        { "palette_slots", tytest_palette_slots},
        { "truecolor_cache_generation", tytest_truecolor_cache_generation},
        { "reset", tytest_reset},
+       { "fuzz_header", tytest_fuzz_header},
        { NULL, NULL},
 };
 
@@ -705,6 +706,57 @@ _tytest_checksum(Termpty *ty)
 
    _tytest_checksum_hex(ty, md5out);
    printf("%s", md5out);
+}
+
+/* The fuzzers' test case format: a 3-byte header then the body. Feed the
+ * header'd cases and check what reaches the parser: the expansion decides
+ * what a fuzzer input turns into, so a wrong expansion would silently fuzz
+ * something else than the test case says. */
+int
+tytest_fuzz_header(void)
+{
+   static const char body[] = "ABCDEFGHIJKLMNOP";
+   unsigned char data[TY_FUZZ_HEADER_SIZE + sizeof(body) - 1];
+   const char *stream;
+   int len;
+
+   /* feed_input() feeds, and feeding needs the shared Termpty */
+   tytest_common_init();
+
+   memcpy(data + TY_FUZZ_HEADER_SIZE, body, sizeof(body) - 1);
+
+   /* The seeds' default header, 0x07 0x00 0x00: 4096-byte reads, no
+    * repeat. The stream is the body as it stands. */
+   data[0] = 0x07;
+   data[1] = 0x00;
+   data[2] = 0x00;
+   tytest_common_feed_input(data, sizeof(data));
+   stream = tytest_common_stream_get(&len);
+   assert(len == (int)sizeof(body) - 1);
+   assert(stream && memcmp(stream, body, sizeof(body) - 1) == 0);
+
+   /* Byte 2 selects where the repeated span starts: 255 puts it on the
+    * last byte, and byte 1 = 2 feeds that byte 2^2 = 4 times. */
+   data[0] = 0x07;
+   data[1] = 0x02;
+   data[2] = 0xff;
+   tytest_common_feed_input(data, sizeof(data));
+   stream = tytest_common_stream_get(&len);
+   assert(len == 19);
+   assert(stream && memcmp(stream, "ABCDEFGHIJKLMNO" "PPPP", 19) == 0);
+
+   /* Byte 1 is an exponent: 2^20 additions of the 16-byte span overflow
+    * the 4 MiB stream cap, so the stream is truncated at exactly that. */
+   data[0] = 0x07;
+   data[1] = 20;
+   data[2] = 0x00;
+   tytest_common_feed_input(data, sizeof(data));
+   stream = tytest_common_stream_get(&len);
+   assert(len == TY_FUZZ_STREAM_MAX);
+   assert(stream && memcmp(stream, body, sizeof(body) - 1) == 0);
+
+   tytest_common_shutdown();
+   return 0;
 }
 
 /* A reset state is a fresh state: feed sequences that allocate (title,
