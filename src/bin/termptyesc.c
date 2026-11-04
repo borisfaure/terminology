@@ -200,7 +200,11 @@ _csi_arg_get_subparam(Termpty *ty, Eina_Unicode **ptr, Eina_Bool *sub_follows)
 
    while ((*b >= '0') && (*b <= '9'))
      {
-        if (sum > INT32_MAX/10 )
+        /* The digit-by-digit add overflows int exactly at
+         * INT32_MAX/10,9 / INT32_MAX, so the boundary has to be
+         * checked before the add, not just past it. */
+        if ((sum > INT32_MAX / 10) ||
+            ((sum == INT32_MAX / 10) && (*b - '0' > INT32_MAX % 10)))
           {
              ERR("Invalid sequence: argument is too large");
              ty->decoding_error = EINA_TRUE;
@@ -2495,6 +2499,12 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    cx--;
    if (cx < 0)
      cx = 0;
+   /* Clamp before the origin-mode margins come in: with margins set and an
+    * argument at int's ceiling, cx + left_margin would overflow and sneak
+    * past every clamp below as a negative value, and the next write would
+    * go through a wild cells pointer. */
+   if (cx >= ty->w)
+     cx = ty->w - 1;
    if (ty->termstate.restrict_cursor)
      {
         cx += ty->termstate.left_margin;
@@ -2509,6 +2519,8 @@ _handle_esc_csi_cursor_pos_set(Termpty *ty, Eina_Unicode **b,
    cy--;
    if (cy < 0)
      cy = 0;
+   if (cy >= ty->h)
+     cy = ty->h - 1;
    if (ty->termstate.restrict_cursor)
      {
         cy += ty->termstate.top_margin;
