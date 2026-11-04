@@ -3701,20 +3701,23 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
+   const Eina_Unicode *ccmax = c + sizeof(buf) / sizeof(buf[0]);
    unsigned int scanned = ty->seq_scanned;
 
    ty->seq_scanned = 0;
    cc = c + scanned;
-   b = buf + scanned;
-   be = buf + sizeof(buf) / sizeof(buf[0]);
-   while ((cc < ce) && (*cc <= '?') && (b < be))
+   b = buf;
+   /* C0 controls are executed and are not part of the sequence, as in the
+    * DEC parser: https://vt100.net/emu/dec_ansi_parser */
+   while ((cc < ce) && (*cc <= '?') && (cc < ccmax))
      {
-        _handle_cursor_control(ty, cc);
-        *b = *cc;
-        b++;
+        if (*cc < ' ')
+          _handle_cursor_control(ty, cc);
+        else if (!scanned)
+          *b++ = *cc;
         cc++;
      }
-   if (b == be)
+   if (cc == ccmax)
      {
         ERR("csi parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
@@ -3722,7 +3725,13 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    if (cc == ce)
      return _seq_incomplete(ty, c, cc);
    if (scanned)
-     memcpy(buf, c, scanned * sizeof(Eina_Unicode));
+     {
+        const Eina_Unicode *p;
+
+        for (p = c; p < cc; p++)
+          if (*p >= ' ')
+            *b++ = *p;
+     }
    *b = 0;
    be = b;
    b = buf;

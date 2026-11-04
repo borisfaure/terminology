@@ -208,6 +208,6 @@ dcs-cancel.sh 5802db97bcbf6f2ab0d8e49723fcfea8
 dcs-long.sh 56028fb44070f1bf64f323f751f0d79a
 backlog-long-line.sh f4423fa1c7069b9bf8a62045cc97dda3
 ty-escape-long.sh 83d61b472b818eb3d699021e14e45452
-csi-c0.sh 68f5a8be4feacac8b7b8d4d5b9b026af
+csi-c0.sh eae470a815753e4af0a094089ca16fc9
 dcs-full-buffer.sh f4cb1513ca59539f373e8d389e6ac01d
 osc-long.sh a94cb70dd58d07f52bbdf0cc5e7b95e1
