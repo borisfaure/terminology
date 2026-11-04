@@ -3,13 +3,14 @@
 # Pjotr <pjotrvertaalt@gmail.com>, 2020.
 # Ruud Bos <ruud.bos@gmail.com>, 2022, 2024.
 # Heimen Stoffels <vistausss@fastmail.com>, 2023, 2024.
+# Heimen Stoffels <vistaus@users.noreply.hosted.weblate.org>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: terminology\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-02 23:23+0100\n"
-"PO-Revision-Date: 2024-01-07 19:06+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"PO-Revision-Date: 2026-11-04 09:51+0000\n"
+"Last-Translator: Heimen Stoffels <vistaus@users.noreply.hosted.weblate.org>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/terminology/"
 "terminology/nl/>\n"
 "Language: nl\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4-dev\n"
+"X-Generator: Weblate 2026.11.1.dev0\n"
 
 #: src/bin/about.c:139 src/bin/about.c:214 src/bin/termio.c:1644
 #: src/bin/termio.c:1653
@@ -296,7 +297,7 @@ msgstr "Opdrachtvenster tonen"
 #: src/bin/main.c:140
 #, c-format
 msgid "Unknown TERM type '%s', keeping '%s'"
-msgstr ""
+msgstr "Onbekende term “%s” — “%s” wordt gebruikt"
 
 #: src/bin/main.c:427 src/bin/main.c:625
 msgid "Could not create window"
@@ -421,14 +422,14 @@ msgstr ""
 "Enkel uitvoerbaar bestand afdwingen als ‘meerdere instanties’ is ingeschakeld"
 
 #: src/bin/main.c:538
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' (same as --term-type=xterm-256color)"
-msgstr "TERM instellen op ‘xterm-256color’ in plaats van op ‘xterm’"
+msgstr ""
+"TERM instellen op ‘xterm-256color’ in plaats van op ‘xterm’ (gelijk aan --"
+"term-type=xterm-256color)"
 
 #: src/bin/main.c:540
-#, fuzzy
 msgid "Set TERM to 'xterm', 'xterm-256color' or 'terminology'"
-msgstr "TERM instellen op ‘xterm-256color’ in plaats van op ‘xterm’"
+msgstr "TERM instellen op ‘xterm’, ‘xterm-256color’ of ‘terminology’"
 
 #: src/bin/main.c:542
 msgid "Set scaling factor"
@@ -554,24 +555,23 @@ msgstr "Terugscrollen (huidig geheugengebruik: %'.2f%cB):"
 
 #: src/bin/options_behavior.c:222
 msgid "Set TERM to:"
-msgstr ""
+msgstr "TERM instellen op:"
 
 #: src/bin/options_behavior.c:268
 msgid "Never"
-msgstr ""
+msgstr "Nooit"
 
 #: src/bin/options_behavior.c:269
 msgid "Ask"
-msgstr ""
+msgstr "Vragen"
 
 #: src/bin/options_behavior.c:270
 msgid "Always"
-msgstr ""
+msgstr "Altijd"
 
 #: src/bin/options_behavior.c:276
-#, fuzzy
 msgid "Let escape codes read selections:"
-msgstr "Escapecodes voor het beheren van selecties inschakelen"
+msgstr "Escapecodes voor het beheren van selecties inschakelen:"
 
 #: src/bin/options_behavior.c:326
 msgid "Default cursor:"
@@ -663,14 +663,12 @@ msgid "Enable special Terminology escape codes"
 msgstr "Speciale Terminology-escapecodes inschakelen"
 
 #: src/bin/options_behavior.c:527
-#, fuzzy
 msgid "Let escape codes change selections"
-msgstr "Escapecodes voor het beheren van selecties inschakelen"
+msgstr "Escapecodes voor het wijzigen van selecties inschakelen"
 
 #: src/bin/options_behavior.c:528
-#, fuzzy
 msgid "Enable escape codes showing desktop notifications"
-msgstr "Escapecodes voor het beheren van selecties inschakelen"
+msgstr "Escapecodes voor het tonen van meldingen inschakelen"
 
 #: src/bin/options_behavior.c:531
 msgid "Always treat Emojis as double-width characters"
@@ -815,7 +813,7 @@ msgstr "Vetgedrukt en cursief tonen in terminalvenster"
 
 #: src/bin/options_font.c:744
 msgid "Combine characters into ligatures"
-msgstr ""
+msgstr "Tekens combineren tot ligaturen"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -1066,23 +1064,23 @@ msgstr "Annuleren"
 
 #: src/bin/win.c:6370
 msgid "Clipboard access"
-msgstr ""
+msgstr "Klembordtoegang"
 
 #: src/bin/win.c:6372
 msgid "A program running in this terminal wants to read the clipboard."
-msgstr ""
+msgstr "Een toepassing binnen deze terminal wil toegang tot het klembord."
 
 #: src/bin/win.c:6374
 msgid "Allow once"
-msgstr ""
+msgstr "Eenmalig toestaan"
 
 #: src/bin/win.c:6376
 msgid "Allow until closed"
-msgstr ""
+msgstr "Toestaan tot aan afsluiten"
 
 #: src/bin/win.c:6378
 msgid "Deny"
-msgstr ""
+msgstr "Weigeren"
 
 #: src/bin/win.c:7564
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
