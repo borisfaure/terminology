@@ -6035,19 +6035,19 @@ _handle_esc_dcs(Termpty *ty,
         b++;
         cc++;
      }
-   if (b == be)
-     {
-        WRN("DCS longer than %d codepoints, discarding it", (int)(be - buf));
-        ty->dcs_skip = 1;
-        len = cc - c;
-        goto end;
-     }
    if (cc == ce)
      {
         /* the last codepoint may be the ESC of a split ESC \ */
         if ((cc > c) && (*(cc - 1) == ESC))
           cc--;
         return _seq_incomplete(ty, c, cc);
+     }
+   if (b == be)
+     {
+        WRN("DCS longer than %d codepoints, discarding it", (int)(be - buf));
+        ty->dcs_skip = 1;
+        len = cc - c;
+        goto end;
      }
    if (scanned)
      memcpy(buf, c, scanned * sizeof(Eina_Unicode));
