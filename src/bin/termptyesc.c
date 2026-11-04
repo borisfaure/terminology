@@ -5578,6 +5578,9 @@ err:
     return cc - c;
 }
 
+/* An unterminated APC is consumed as it arrives, with ty->apc_skip set for
+ * the next read to resume it: buffered until its ST, it would be rescanned
+ * whole on every read. */
 static int
 _handle_esc_apc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -5591,18 +5594,26 @@ _handle_esc_apc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              cc++;
              goto found;
           }
-        /* An ESC at the very end may yet become a ST: wait for more data. */
-        if ((*cc == ESC) && (cc + 1 < ce) && (*(cc + 1) == '\\'))
+        if (*cc == ESC)
           {
-             cc += 2;
-             goto found;
+             /* An ESC at the very end may yet become a ST: keep it. */
+             if (cc + 1 == ce)
+               break;
+             if (*(cc + 1) == '\\')
+               {
+                  cc += 2;
+                  goto found;
+               }
           }
         cc++;
      }
 
-   return 0;
+   if (cc > c)
+     ty->apc_skip = 1;
+   return cc - c;
 
 found:
+   ty->apc_skip = 0;
    WRN("unhandled application program command");
    ty->decoding_error = EINA_TRUE;
    return cc - c;
@@ -6341,6 +6352,11 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    if (ty->dcs_skip)
      {
         len = _handle_dcs_skip(ty, c, ce);
+        goto end;
+     }
+   if (ty->apc_skip)
+     {
+        len = _handle_esc_apc(ty, c, ce);
         goto end;
      }
    if (c[0] < 0x20)
