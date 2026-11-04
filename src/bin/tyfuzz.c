@@ -21,6 +21,7 @@ int
 main(int argc, char **argv)
 {
    eina_init();
+   ecore_init();
 
    _log_domain = eina_log_domain_register("tyfuzz", NULL);
 
@@ -34,6 +35,7 @@ main(int argc, char **argv)
    tytest_common_main_loop();
 
    tytest_common_shutdown();
+   ecore_shutdown();
    eina_shutdown();
 
    return 0;
