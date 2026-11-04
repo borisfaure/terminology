@@ -3696,6 +3696,8 @@ _seq_incomplete(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *cc)
    return 0;
 }
 
+/* Returns the codepoints consumed after the CSI introducer, 0 when the CSI
+ * is incomplete, or -1 when an ESC right after the introducer aborts it. */
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -3712,7 +3714,15 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    while ((cc < ce) && (*cc <= '?') && (cc < ccmax))
      {
         if (*cc < ' ')
-          _handle_cursor_control(ty, cc);
+          {
+             /* ESC aborts the CSI to start a new sequence, CAN and SUB cancel
+              * it (DEC STD 070 3.5.4.4) */
+             if (*cc == ESC)
+               return (cc > c) ? cc - c : -1;
+             if ((*cc == CAN) || (*cc == SUB))
+               return cc + 1 - c;
+             _handle_cursor_control(ty, cc);
+          }
         else if (!scanned)
           *b++ = *cc;
         cc++;
@@ -6271,6 +6281,7 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case '[':
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0) return 0;
+        if (len < 0) len = 0;
         return 1 + len;
       case ']':
         len = _handle_esc_osc(ty, c + 1, ce);
@@ -6480,6 +6491,8 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         len = _handle_esc_csi(ty, c + 1, ce);
         if (len == 0)
           goto end;
+        if (len < 0)
+          len = 0;
         len++;
         goto end;
      }
