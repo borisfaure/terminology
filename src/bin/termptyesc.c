@@ -5348,9 +5348,11 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    int arg;
    int payload_len; /* the OSC string length, without its terminator */
    Eina_Bool bel;   /* the request was terminated by BEL, not ST */
+   unsigned int scanned = ty->seq_scanned;
 
-   cc = c;
-   p = buf;
+   ty->seq_scanned = 0;
+   cc = c + scanned;
+   p = buf + scanned;
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (*cc != BEL) && (p < be))
      {
@@ -5368,11 +5370,17 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         p++;
         cc++;
      }
+   if (cc == ce)
+     {
+        /* the last codepoint may be the ESC of a split ESC \ */
+        if ((cc > c) && (*(cc - 1) == ESC))
+          cc--;
+        return _seq_incomplete(ty, c, cc);
+     }
+   if (scanned)
+     memcpy(buf, c, scanned * sizeof(Eina_Unicode));
    if (p == be)
      {
-        /* the last copied codepoint may be the ESC of a split ESC \ */
-        if (cc == ce)
-          return 0;
         ty->osc_skip = 1;
         ty->osc_skip_esc = 0;
         _osc52_long_start(ty, buf, be);
