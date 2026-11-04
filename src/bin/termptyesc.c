@@ -3685,14 +3685,27 @@ _handle_xmodkeys(Termpty *ty,
         ty->termstate.xmod[resource] = 0;
      }
 }
+
+/* For a sequence that is not complete yet: the next read resumes its scan
+ * where this one stopped, at cc, rather than rescanning it whole. A scanner
+ * clears ty->seq_scanned as it reads it. */
+static int
+_seq_incomplete(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *cc)
+{
+   ty->seq_scanned = cc - c;
+   return 0;
+}
+
 static int
 _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
+   unsigned int scanned = ty->seq_scanned;
 
-   cc = (Eina_Unicode *)c;
-   b = buf;
+   ty->seq_scanned = 0;
+   cc = c + scanned;
+   b = buf + scanned;
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc <= '?') && (b < be))
      {
@@ -3706,7 +3719,10 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         ERR("csi parsing overflowed, skipping the whole buffer (binary data?)");
         return cc - c;
      }
-   if (cc == ce) return 0;
+   if (cc == ce)
+     return _seq_incomplete(ty, c, cc);
+   if (scanned)
+     memcpy(buf, c, scanned * sizeof(Eina_Unicode));
    *b = 0;
    be = b;
    b = buf;

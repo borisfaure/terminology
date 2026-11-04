@@ -273,6 +273,8 @@ struct tag_Termpty
    unsigned int osc_skip_esc : 1; /* and the last codepoint was ESC */
    unsigned int dcs_skip : 1; /* discarding a DCS too long for the buffer */
    unsigned int apc_skip : 1; /* inside an APC split across reads */
+   /* how far the scan of the incomplete sequence at the head of buf went */
+   unsigned int seq_scanned;
    /* bumped on each palette rewrite (OSC 4); scopes the truecolour cache */
    unsigned int palette_generation;
    struct {
