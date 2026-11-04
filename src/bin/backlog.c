@@ -117,12 +117,15 @@ termpty_save_expand(Termpty *ty, Termsave *ts, Termcell *cells, size_t delta)
 
    if (need > ts->cap)
      {
-        newcells = realloc(ts->cells, need * sizeof(Termcell));
+        /* grown geometrically, else each wrapped row copies the line whole */
+        size_t cap = MAX(need, (size_t)ts->cap * 2);
+
+        newcells = realloc(ts->cells, cap * sizeof(Termcell));
         if (!newcells)
           return NULL;
         _accounting_change((-1) * (int64_t)(ts->cap * sizeof(Termcell)));
-        _accounting_change(need * sizeof(Termcell));
-        ts->cap = need;
+        _accounting_change(cap * sizeof(Termcell));
+        ts->cap = cap;
         ts->cells = newcells;
      }
    else
