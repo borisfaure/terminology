@@ -123,6 +123,9 @@ typedef enum exmod {
 /* longest OSC 52 base64 kept past the OSC buffer, as in ghostty */
 #define TERMPTY_OSC52_LONG_MAX (8 * 1024 * 1024)
 
+/* longest terminology escape: twice tysend's largest data packet */
+#define TERMPTY_TY_ESCAPE_MAX (128 * 1024)
+
 typedef enum _Termpty_Selection_Read_Answer {
      TERMPTY_SELECTION_READ_DENY = 0,
      TERMPTY_SELECTION_READ_ALLOW = 1,
@@ -273,6 +276,7 @@ struct tag_Termpty
    unsigned int osc_skip_esc : 1; /* and the last codepoint was ESC */
    unsigned int dcs_skip : 1; /* discarding a DCS too long for the buffer */
    unsigned int apc_skip : 1; /* inside an APC split across reads */
+   unsigned int ty_escape_skip : 1; /* discarding a too long ESC } */
    /* how far the scan of the incomplete sequence at the head of buf went */
    unsigned int seq_scanned;
    /* bumped on each palette rewrite (OSC 4); scopes the truecolour cache */

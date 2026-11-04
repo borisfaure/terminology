@@ -3696,6 +3696,37 @@ tytest_osc52_read_ask(void)
    return 0;
 }
 
+/* An ESC } over TERMPTY_TY_ESCAPE_MAX is discarded, not buffered to its NUL */
+int
+tytest_ty_escape_max(void)
+{
+   Termpty ty;
+   Eina_Unicode chunk[4096];
+   const Eina_Unicode end[] = { 0x0, 'B' };
+   size_t sent;
+   int i;
+
+   _ty_test_init(&ty, 80, 24);
+   for (i = 0; i < 4096; i++)
+     chunk[i] = 'A';
+
+   /* as long as a tysend data packet: still waiting for its NUL */
+   _ty_feed(&ty, "\x1b}x");
+   for (sent = 0; sent < 2 * 37268; sent += 4096)
+     termpty_handle_buf(&ty, chunk, 4096);
+   assert(!ty.ty_escape_skip && ty.buflen == 3 + sent);
+
+   for (; sent <= TERMPTY_TY_ESCAPE_MAX; sent += 4096)
+     termpty_handle_buf(&ty, chunk, 4096);
+   assert(ty.ty_escape_skip && ty.buflen == 0);
+   termpty_handle_buf(&ty, end, 2);
+   assert(!ty.ty_escape_skip);
+   assert(ty.cursor_state.cx == 1 && ty.cursor_state.cy == 0);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 int
 tytest_termatt_layout(void)
 {

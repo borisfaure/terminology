@@ -108,6 +108,7 @@ static struct {
        { "osc52_read_gate", tytest_osc52_read_gate},
        { "osc52_read_ask", tytest_osc52_read_ask},
        { "osc52_long_max", tytest_osc52_long_max},
+       { "ty_escape_max", tytest_ty_escape_max},
        { "osc_arg_get", tytest_osc_arg_get},
        { "osc_color_reset", tytest_osc_color_reset},
        { "osc_color_name", tytest_osc_color_name},

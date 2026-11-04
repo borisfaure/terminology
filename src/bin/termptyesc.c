@@ -5643,6 +5643,23 @@ found:
    return cc - c;
 }
 
+/* Consume the rest of a too long terminology escape, up to its NUL */
+static int
+_handle_ty_escape_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   const Eina_Unicode *cc;
+
+   for (cc = c; cc < ce; cc++)
+     {
+        if (*cc == 0x0)
+          {
+             ty->ty_escape_skip = 0;
+             return cc + 1 - c;
+          }
+     }
+   return cc - c;
+}
+
 static int
 _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
 {
@@ -5652,18 +5669,23 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
    size_t blen = 0;
    Config *config;
 
-   if (!ty->buf_have_zero)
+   if ((!ty->buf_have_zero) && (ce - c <= TERMPTY_TY_ESCAPE_MAX))
      return 0;
-
-   config = termio_config_get(ty->obj);
 
    cc = (Eina_Unicode *)c;
    if ((cc < ce) && (*cc == 0x0))
      cc_zero = cc;
-   while ((cc < ce) && (*cc != 0x0))
+   while ((cc < ce) && (*cc != 0x0) && (blen < TERMPTY_TY_ESCAPE_MAX))
      {
         blen++;
         cc++;
+     }
+   if (blen == TERMPTY_TY_ESCAPE_MAX)
+     {
+        WRN("terminology escape longer than %d codepoints, discarding it",
+            TERMPTY_TY_ESCAPE_MAX);
+        ty->ty_escape_skip = 1;
+        return cc - c;
      }
    if ((cc < ce) && (*cc == 0x0))
      cc_zero = cc;
@@ -5671,6 +5693,7 @@ _handle_esc_terminology(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *
      return 0;
    buf = (Eina_Unicode *)c;
    cc = cc_zero;
+   config = termio_config_get(ty->obj);
 
    // commands are stored in the buffer, 0 bytes not allowed (end marker)
    cmd = eina_unicode_unicode_to_utf8(buf, NULL);
@@ -6392,6 +6415,11 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    if (ty->apc_skip)
      {
         len = _handle_esc_apc(ty, c, ce);
+        goto end;
+     }
+   if (ty->ty_escape_skip)
+     {
+        len = _handle_ty_escape_skip(ty, c, ce);
         goto end;
      }
    if (c[0] < 0x20)
