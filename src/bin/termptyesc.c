@@ -6013,9 +6013,11 @@ _handle_esc_dcs(Termpty *ty,
    const Eina_Unicode *cc, *be;
    Eina_Unicode buf[4096], *b;
    int len = 0;
+   unsigned int scanned = ty->seq_scanned;
 
-   cc = c;
-   b = buf;
+   ty->seq_scanned = 0;
+   cc = c + scanned;
+   b = buf + scanned;
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (b < be))
      {
@@ -6040,6 +6042,15 @@ _handle_esc_dcs(Termpty *ty,
         len = cc - c;
         goto end;
      }
+   if (cc == ce)
+     {
+        /* the last codepoint may be the ESC of a split ESC \ */
+        if ((cc > c) && (*(cc - 1) == ESC))
+          cc--;
+        return _seq_incomplete(ty, c, cc);
+     }
+   if (scanned)
+     memcpy(buf, c, scanned * sizeof(Eina_Unicode));
    *b = 0;
    if ((*cc == ST) || (*cc == '\\')) cc++;
    else return 0;
