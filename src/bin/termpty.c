@@ -99,14 +99,21 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
 
    if (ty->buf)
      {
-        bytes = (ty->buflen + len + 1) * sizeof(int);
-        b = realloc(ty->buf, bytes);
-        if (!b)
+        b = ty->buf;
+        /* grown geometrically, else realloc() copies it on each small read */
+        if (ty->buflen + len + 1 > ty->bufsize)
           {
-             ERR(_("memerr: %s"), strerror(errno));
-             return;
+             size_t size = MAX(ty->bufsize * 2, ty->buflen + len + 1);
+
+             b = realloc(ty->buf, size * sizeof(Eina_Unicode));
+             if (!b)
+               {
+                  ERR(_("memerr: %s"), strerror(errno));
+                  return;
+               }
+             ty->bufsize = size;
+             DBG("realloc to %zu codepoints", size);
           }
-        DBG("realloc add %i + %i", (int)(ty->buflen * sizeof(int)), (int)(len * sizeof(int)));
         if (!ty->buf_have_zero)
           {
              d = &(b[ty->buflen]);
@@ -149,6 +156,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                        free(tmp);
                        return;
                     }
+                  ty->bufsize = bytes / sizeof(Eina_Unicode);
                   ty->buf_have_zero = EINA_FALSE;
                   for (d = ty->buf, c2 = c; c2 < ce; c2++, d++)
                     {
@@ -190,6 +198,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);
                   ty->buf_have_zero = EINA_FALSE;
                   ty->buf = malloc(bytes);
+                  ty->bufsize = bytes / sizeof(Eina_Unicode);
                   DBG("malloc %i", (int)(bytes - sizeof(Eina_Unicode)));
                   if (!ty->buf)
                     {

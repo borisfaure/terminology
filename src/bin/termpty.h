@@ -203,6 +203,7 @@ struct tag_Termpty
    int circular_offset2;
    Eina_Unicode *buf;
    size_t buflen;
+   size_t bufsize; /* allocated codepoints of buf */
    Eina_Unicode last_char;
    Eina_Bool buf_have_zero;
    unsigned char oldbuf[4];
