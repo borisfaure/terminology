@@ -145,6 +145,8 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
              if (n == 0)
                {
                   Eina_Unicode *tmp = ty->buf;
+
+                  if (c == ty->buf) break;
                   ty->buf = NULL;
                   ty->buflen = 0;
                   bytes = ((char *)ce - (char *)c) + sizeof(Eina_Unicode);

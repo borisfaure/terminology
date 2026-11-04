@@ -206,3 +206,4 @@ crash_cup_col_over_margin.sh 400a5215c6e74782cbab076e2a81fff7
 dcs-cancel.sh 5802db97bcbf6f2ab0d8e49723fcfea8
 dcs-long.sh 56028fb44070f1bf64f323f751f0d79a
 backlog-long-line.sh f4423fa1c7069b9bf8a62045cc97dda3
+ty-escape-long.sh 83d61b472b818eb3d699021e14e45452
