@@ -99,7 +99,7 @@ if benchmarks
   # generator is deterministic so the bytes are reproducible. It writes to
   # @OUTDIR@ so that what it produces is what 'output' declares.
   bench_corpus = custom_target('bench-corpus',
-      output: ['plain-ascii', 'scroll', 'sgr', 'unicode'],
+      output: ['plain-ascii', 'scroll', 'sgr', 'strings', 'unicode'],
       command: [python3,
                 meson.current_source_dir() / 'bench' / 'gen_corpus.py',
                 '@OUTDIR@'],
@@ -113,6 +113,14 @@ if benchmarks
                    bench_corpus_dir / 'scroll',
                    bench_corpus_dir / 'sgr',
                    bench_corpus_dir / 'unicode'],
+            depends: bench_corpus,
+            timeout: 600)
+
+  # Sequences split over many small reads, as from a slow writer.
+  benchmark('pty-intake-small-reads',
+            tybench,
+            args: ['-i', '5', '-c', '3',
+                   bench_corpus_dir / 'strings'],
             depends: bench_corpus,
             timeout: 600)
 endif

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Four workloads, chosen so that a change to one part of the intake path shows up
+Five workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -13,6 +13,9 @@ in one column rather than being averaged away:
   unicode      CJK, emoji, combining marks and accented Latin. Exercises
                multibyte decode, double-width handling, and the paths a
                byte-space fast path has to bail out of correctly.
+  strings      long OSC titles, sixel DCS, kitty graphics APC and long SGR
+               parameter lists. Exercises sequences that span many reads,
+               to be benchmarked with a small --chunk.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -134,10 +137,41 @@ def gen_unicode(target):
     return data[:cut]
 
 
+def gen_strings(target):
+    """Sequences hundreds to thousands of bytes long, between short lines."""
+    rng = _rng("strings")
+    sixel = "#0;2;0;0;0#1;2;100;0;0#0~~@@vv@@~~$#1??}}GG}}??-"
+    base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    out = bytearray()
+    cut = 0
+    while len(out) < target:
+        kind = rng.randrange(4)
+        if kind == 0:
+            words = " ".join(rng.choice(WORDS) for _ in range(rng.randint(20, 250)))
+            seq = "\033]2;%s\033\\" % words
+        elif kind == 1:
+            seq = "\033Pq%s\033\\" % (sixel * rng.randint(10, 60))
+        elif kind == 2:
+            payload = "".join(rng.choice(base64) for _ in range(rng.randint(1000, 4000)))
+            seq = "\033_Ga=T,f=100;%s\033\\" % payload
+        else:
+            params = ";".join("38;5;%d" % rng.randint(0, 255)
+                              for _ in range(rng.randint(10, 50)))
+            seq = "\033[%sm" % params
+        out += (seq + rng.choice(WORDS) + "\n").encode("ascii")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    if cut == 0:
+        cut = len(out)
+    return bytes(out[:cut]) + b"\033[0m\n"
+
+
 GENERATORS = {
     "plain-ascii": gen_plain_ascii,
     "scroll": gen_scroll,
     "sgr": gen_sgr,
+    "strings": gen_strings,
     "unicode": gen_unicode,
 }
 
