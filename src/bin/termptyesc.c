@@ -288,6 +288,14 @@ _cursor_to_start_of_line(Termpty *ty)
      ty->cursor_state.cx = 0;
 }
 
+/* Map the character set Gn into GL */
+static void
+_charset_lock(Termpty *ty, int n)
+{
+   ty->termstate.charset = n;
+   ty->termstate.charsetch = ty->termstate.chset[n];
+}
+
 static void
 _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
 {
@@ -332,6 +340,13 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
               ty->cursor_state.wrapnext = 0;
            }
          _cursor_to_start_of_line(ty);
+         return;
+      /* only reached from within a CSI, which xterm executes them in */
+      case 0x0e: // SO
+         _charset_lock(ty, 1);
+         return;
+      case 0x0f: // SI
+         _charset_lock(ty, 0);
          return;
       default:
          return;
@@ -6458,13 +6473,11 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              goto end;
 
            case 0x0e: // SO  (shift out) // Maps G1 character set into GL.
-             ty->termstate.charset = 1;
-             ty->termstate.charsetch = ty->termstate.chset[1];
+             _charset_lock(ty, 1);
              len = 1;
              goto end;
            case 0x0f: // SI  (shift in) // Maps G0 character set into GL.
-             ty->termstate.charset = 0;
-             ty->termstate.charsetch = ty->termstate.chset[0];
+             _charset_lock(ty, 0);
              len = 1;
              goto end;
            case 0x1b: // ESC (escape)
