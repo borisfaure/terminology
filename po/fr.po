@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: terminology 0.6.99\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-11-02 23:23+0100\n"
-"PO-Revision-Date: 2026-09-09 08:51+0000\n"
+"PO-Revision-Date: 2026-11-03 08:32+0000\n"
 "Last-Translator: Philippe Jean Guillaumie <batden@sfr.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/terminology/"
 "terminology/fr/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 2026.9.1\n"
+"X-Generator: Weblate 2026.11.1.dev0\n"
 "X-Launchpad-Export-Date: 2015-02-14 12:32+0000\n"
 
 #: src/bin/about.c:139 src/bin/about.c:214 src/bin/termio.c:1644
@@ -301,7 +301,7 @@ msgstr "Afficher la boîte de commande"
 #: src/bin/main.c:140
 #, c-format
 msgid "Unknown TERM type '%s', keeping '%s'"
-msgstr ""
+msgstr "Type de TERM inconnu « %s », conservation de « %s »"
 
 #: src/bin/main.c:427 src/bin/main.c:625
 msgid "Could not create window"
@@ -424,14 +424,13 @@ msgid "Force single executable if multi-instance is enabled"
 msgstr "Imposer un exécutable unique si la multi-instance est activée"
 
 #: src/bin/main.c:538
-#, fuzzy
 msgid "Set TERM to 'xterm-256color' (same as --term-type=xterm-256color)"
-msgstr "Définir TERM sur « xterm-256color » au lieu de « xterm »"
+msgstr ""
+"Définir TERM sur « xterm-256color » (équivaut à --term-type=xterm-256color)"
 
 #: src/bin/main.c:540
-#, fuzzy
 msgid "Set TERM to 'xterm', 'xterm-256color' or 'terminology'"
-msgstr "Définir TERM sur « xterm-256color » au lieu de « xterm »"
+msgstr "Définir TERM sur « xterm », « xterm-256color » ou « terminology »"
 
 #: src/bin/main.c:542
 msgid "Set scaling factor"
@@ -557,24 +556,23 @@ msgstr "Lignes d'historique (utilisation mémoire en ce moment : %'.2f%cB) :"
 
 #: src/bin/options_behavior.c:222
 msgid "Set TERM to:"
-msgstr ""
+msgstr "Définir TERM sur :"
 
 #: src/bin/options_behavior.c:268
 msgid "Never"
-msgstr ""
+msgstr "Jamais"
 
 #: src/bin/options_behavior.c:269
 msgid "Ask"
-msgstr ""
+msgstr "Demander"
 
 #: src/bin/options_behavior.c:270
 msgid "Always"
-msgstr ""
+msgstr "Toujours"
 
 #: src/bin/options_behavior.c:276
-#, fuzzy
 msgid "Let escape codes read selections:"
-msgstr "Activer les séquences d'échappement pour manipuler les sélections"
+msgstr "Autoriser la lecture des sélections par les codes d’échappement :"
 
 #: src/bin/options_behavior.c:326
 msgid "Default cursor:"
@@ -667,14 +665,13 @@ msgid "Enable special Terminology escape codes"
 msgstr "Activer les séquences d'échappement spécifiques à Terminology"
 
 #: src/bin/options_behavior.c:527
-#, fuzzy
 msgid "Let escape codes change selections"
-msgstr "Activer les séquences d'échappement pour manipuler les sélections"
+msgstr "Autoriser les codes d’échappement à modifier les sélections"
 
 #: src/bin/options_behavior.c:528
-#, fuzzy
 msgid "Enable escape codes showing desktop notifications"
-msgstr "Activer les séquences d'échappement pour manipuler les sélections"
+msgstr ""
+"Activer l'affichage des notifications de bureau par les codes d'échappement"
 
 #: src/bin/options_behavior.c:531
 msgid "Always treat Emojis as double-width characters"
@@ -821,7 +818,7 @@ msgstr "Activer les styles gras et italique"
 
 #: src/bin/options_font.c:744
 msgid "Combine characters into ligatures"
-msgstr ""
+msgstr "Combiner les caractères en ligatures"
 
 #: src/bin/options_keys.c:66
 msgid "Ctrl+"
@@ -1072,23 +1069,25 @@ msgstr "Annuler"
 
 #: src/bin/win.c:6370
 msgid "Clipboard access"
-msgstr ""
+msgstr "Accès au presse-papiers"
 
 #: src/bin/win.c:6372
 msgid "A program running in this terminal wants to read the clipboard."
 msgstr ""
+"Un programme en cours d'exécution dans ce terminal souhaite lire le contenu "
+"du presse-papiers."
 
 #: src/bin/win.c:6374
 msgid "Allow once"
-msgstr ""
+msgstr "Autoriser une fois"
 
 #: src/bin/win.c:6376
 msgid "Allow until closed"
-msgstr ""
+msgstr "Autoriser jusqu'à la fermeture"
 
 #: src/bin/win.c:6378
 msgid "Deny"
-msgstr ""
+msgstr "Refuser"
 
 #: src/bin/win.c:7564
 msgid "Couldn't find terminology theme! Forgot 'ninja install'?"
