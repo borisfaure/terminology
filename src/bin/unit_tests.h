@@ -15,6 +15,7 @@ int tytest_cell_is_empty_rgb(void);
 int tytest_truecolor_render(void);
 #endif
 int tytest_sb_add(void);
+int tytest_sb_prepend(void);
 int tytest_sb_skip(void);
 int tytest_sb_trim(void);
 int tytest_sb_gap(void);

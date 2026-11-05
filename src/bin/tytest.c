@@ -41,6 +41,7 @@ static struct {
        { "truecolor_render", tytest_truecolor_render},
 #endif
        { "sb_add", tytest_sb_add},
+       { "sb_prepend", tytest_sb_prepend},
        { "sb_skip", tytest_sb_skip},
        { "sb_trim", tytest_sb_trim},
        { "sb_gap", tytest_sb_gap},

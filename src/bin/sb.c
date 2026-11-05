@@ -39,6 +39,9 @@ ty_sb_add(struct ty_sb *sb, const char *s, size_t len)
 int
 ty_sb_prepend(struct ty_sb *sb, const char *s, size_t len)
 {
+   if (!sb->buf)
+     return ty_sb_add(sb, s, len);
+
    if (len >= sb->gap)
      {
         size_t aligned_gap = ((len + 15) / 16) * 24;
@@ -188,6 +191,25 @@ tytest_sb_add(void)
    assert(ty_sb_add(&sb, "", 0) == 0);
    assert(sb.len == 3 && sb.alloc > sb.len);
    assert(strcmp(sb.buf, "foo") == 0);
+   ty_sb_free(&sb);
+
+   return 0;
+}
+
+int
+tytest_sb_prepend(void)
+{
+   struct ty_sb sb = {};
+
+   /* to an empty buffer, as an add: with room for the NUL */
+   assert(ty_sb_prepend(&sb, "ab", 2) == 0);
+   assert(sb.buf && sb.len == 2 && sb.alloc > sb.gap + sb.len);
+   assert(strcmp(sb.buf, "ab") == 0);
+   ty_sb_free(&sb);
+
+   assert(ty_sb_prepend(&sb, "", 0) == 0);
+   assert(sb.buf && sb.len == 0 && sb.alloc > sb.gap);
+   assert(sb.buf[0] == '\0');
    ty_sb_free(&sb);
 
    return 0;
