@@ -146,6 +146,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                   if (!ty->buf)
                     {
                        ERR(_("memerr: %s"), strerror(errno));
+                       free(tmp);
                        return;
                     }
                   ty->buf_have_zero = EINA_FALSE;
