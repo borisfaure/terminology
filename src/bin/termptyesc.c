@@ -5464,7 +5464,11 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
         if (!p || !*p)
           goto err;
         s = eina_unicode_unicode_to_utf8(p, &len);
-        _handle_hyperlink(ty, s, len);
+        if (s)
+          {
+             _handle_hyperlink(ty, s, len);
+             free(s);
+          }
         break;
       case 10:
         DBG("Set foreground color");
