@@ -18,7 +18,7 @@ ty_sb_add(struct ty_sb *sb, const char *s, size_t len)
 
    if ((new_len + sb->gap >= sb->alloc) || !sb->buf)
      {
-        size_t new_alloc = ((new_len + sb->gap + 15) / 16) * 24;
+        size_t new_alloc = ((new_len + sb->gap + 1 + 15) / 16) * 24;
         char *new_buf;
         char *buf = sb->buf;
 
@@ -174,6 +174,25 @@ ty_sb_free(struct ty_sb *sb)
 }
 
 #if defined(BINARY_TYTEST)
+int
+tytest_sb_add(void)
+{
+   struct ty_sb sb = {};
+
+   /* an empty add still allocates room for the NUL */
+   assert(ty_sb_add(&sb, "", 0) == 0);
+   assert(sb.buf && sb.len == 0 && sb.alloc > sb.len);
+   assert(sb.buf[0] == '\0');
+
+   assert(ty_sb_add(&sb, "foo", 3) == 0);
+   assert(ty_sb_add(&sb, "", 0) == 0);
+   assert(sb.len == 3 && sb.alloc > sb.len);
+   assert(strcmp(sb.buf, "foo") == 0);
+   ty_sb_free(&sb);
+
+   return 0;
+}
+
 int
 tytest_sb_skip(void)
 {
