@@ -156,6 +156,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                     {
                        ERR(_("memerr: %s"), strerror(errno));
                        free(tmp);
+                       ty->seq_scanned = 0;
                        return;
                     }
                   ty->bufsize = bytes / sizeof(Eina_Unicode);
@@ -205,6 +206,7 @@ termpty_handle_buf(Termpty *ty, const Eina_Unicode *codepoints, int len)
                   if (!ty->buf)
                     {
                        ERR(_("memerr: %s"), strerror(errno));
+                       ty->seq_scanned = 0;
                     }
                   else
                     {
