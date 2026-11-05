@@ -5938,6 +5938,34 @@ _handle_xtgettcap(Termpty *ty, const Eina_Unicode *list)
      }
 }
 
+/* Consume the rest of a too long DCS, up to its ST or a CAN or SUB */
+static int
+_handle_dcs_skip(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
+{
+   const Eina_Unicode *cc;
+
+   for (cc = c; cc < ce; cc++)
+     {
+        if ((*cc == ST) || (*cc == CAN) || (*cc == SUB))
+          {
+             ty->dcs_skip = 0;
+             return cc + 1 - c;
+          }
+        if (*cc == ESC)
+          {
+             /* An ESC at the very end may yet become a ST: keep it. */
+             if (cc + 1 == ce)
+               break;
+             if (*(cc + 1) == '\\')
+               {
+                  ty->dcs_skip = 0;
+                  return cc + 2 - c;
+               }
+          }
+     }
+   return cc - c;
+}
+
 static int
 _handle_esc_dcs(Termpty *ty,
                 const Eina_Unicode *c,
@@ -5968,7 +5996,8 @@ _handle_esc_dcs(Termpty *ty,
      }
    if (b == be)
      {
-        ERR("dcs parsing overflowed, skipping the whole buffer (binary data?)");
+        WRN("DCS longer than %d codepoints, discarding it", (int)(be - buf));
+        ty->dcs_skip = 1;
         len = cc - c;
         goto end;
      }
@@ -6303,6 +6332,11 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
    if (ty->osc_skip)
      {
         len = _handle_osc_skip(ty, c, ce);
+        goto end;
+     }
+   if (ty->dcs_skip)
+     {
+        len = _handle_dcs_skip(ty, c, ce);
         goto end;
      }
    if (c[0] < 0x20)
