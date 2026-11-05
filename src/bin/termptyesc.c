@@ -5952,6 +5952,9 @@ _handle_esc_dcs(Termpty *ty,
    be = buf + sizeof(buf) / sizeof(buf[0]);
    while ((cc < ce) && (*cc != ST) && (b < be))
      {
+        /* As in xterm, CAN and SUB cancel the string */
+        if ((*cc == CAN) || (*cc == SUB))
+          return cc + 1 - c;
         if ((cc < ce - 1) &&
             (((*cc == ESC) && (*(cc + 1) == '\\')) ||
              (*cc == ST)))

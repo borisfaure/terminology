@@ -203,3 +203,4 @@ decset-2031.sh 60c4f2ca88a2a4dbae8f7453c633d074
 ascii_run_prefix.sh 5413bed756d01dc51d09609c8512b8ec
 xtgettcap.sh 300a0521bca0f2bf50bc00161f8fc195
 crash_cup_col_over_margin.sh 400a5215c6e74782cbab076e2a81fff7
+dcs-cancel.sh 5802db97bcbf6f2ab0d8e49723fcfea8
