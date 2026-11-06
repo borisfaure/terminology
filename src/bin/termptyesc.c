@@ -6173,7 +6173,7 @@ _handle_decaln(Termpty *ty)
    ty->cursor_state.cy = 0;
    ty->termstate.att.link_id = 0;
 
-   termpty_clear_screen(ty, TERMPTY_CLR_ALL);
+   ty->circular_offset = 0;
    if (ty->cb.cancel_sel.func)
      ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
    cells = ty->screen;
