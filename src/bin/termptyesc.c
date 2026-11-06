@@ -3279,8 +3279,9 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
 
    if (ty->last_char)
      {
+        Eina_Unicode run[256];
         int screen_size = ty->w * ty->h;
-        int i;
+        int i, n;
 
         if (arg <= 0)
           {
@@ -3293,9 +3294,13 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
               */
              arg = screen_size + (arg % screen_size);
           }
-        for (i = 0; i < arg; i++)
+        n = MIN(arg, (int)EINA_C_ARRAY_LENGTH(run));
+        for (i = 0; i < n; i++)
+          run[i] = ty->last_char;
+        for (; arg > 0; arg -= n)
           {
-             termpty_text_append(ty, &ty->last_char, 1);
+             n = MIN(arg, (int)EINA_C_ARRAY_LENGTH(run));
+             termpty_text_append(ty, run, n);
           }
      }
 }
