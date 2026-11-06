@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Six workloads, chosen so that a change to one part of the intake path shows up
+Seven workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -18,6 +18,8 @@ in one column rather than being averaged away:
                to be benchmarked with a small --chunk.
   rep          a character then REP (CSI b), as curses draws rules and fills
                when terminfo has rep. Exercises the REP expansion.
+  fill         DECFRA rectangles under default and set colours, and DECALN.
+               Exercises the rectangle and screen fills.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -187,7 +189,32 @@ def gen_rep(target):
     return bytes(out[:cut])
 
 
+def gen_fill(target):
+    """DECFRA rectangles, some under an SGR colour, a DECALN now and then."""
+    rng = _rng("fill")
+    out = bytearray()
+    cut = 0
+    while len(out) < target:
+        if rng.random() < 0.05:
+            seq = "\033#8"
+        else:
+            top, left = rng.randint(1, 24), rng.randint(1, 80)
+            sgr = rng.choice(["\033[0m", "\033[0;%dm" % rng.randint(31, 37),
+                              "\033[0;48;5;%dm" % rng.randint(0, 255)])
+            seq = "%s\033[%d;%d;%d;%d;%d$x" % (sgr, rng.randint(33, 126), top, left,
+                                              rng.randint(top, 24),
+                                              rng.randint(left, 80))
+        out += (seq + rng.choice(WORDS)).encode("ascii")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    if cut == 0:
+        cut = len(out)
+    return bytes(out[:cut]) + b"\033[0m\n"
+
+
 GENERATORS = {
+    "fill": gen_fill,
     "plain-ascii": gen_plain_ascii,
     "rep": gen_rep,
     "scroll": gen_scroll,
