@@ -1800,56 +1800,69 @@ termpty_cells_set_content(Termpty *ty, Termcell *cells,
      }
 }
 
+_Static_assert(sizeof(Termatt) % sizeof(uint32_t) == 0,
+               "Termatt is merged as 32-bit words");
+
 void
 termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
                                        Eina_Unicode codepoint, int count)
 {
-   int i;
+   enum { ATT_WORDS = sizeof(Termatt) / sizeof(uint32_t) };
    Termatt att = ty->termstate.att;
-   Termcell local = { .codepoint = codepoint, .att = att };
+   Termatt colors;
+   uint32_t att_words[ATT_WORDS], color_words[ATT_WORDS];
+   int i, k;
 
-   if (EINA_UNLIKELY(local.att.link_id))
-     term_link_refcount_inc(ty, local.att.link_id, count);
+   if (count <= 0) return;
 
-   /* The SGR state is the same for the whole fill, so "are its colours
-    * default" is answered once and each case becomes a plain loop rather
-    * than a per-cell test. */
-   if (att.fg != 0 || att.fgrgb != 0 || att.bg != 0 || att.bgrgb != 0)
+   if (EINA_UNLIKELY(att.link_id))
+     term_link_refcount_inc(ty, att.link_id, count);
+
+   /* Same invariant as TERMPTY_CELL_COPY()'s fast path. */
+   if (EINA_UNLIKELY((ty->hl.size != 0) || (ty->block.blocks != NULL)))
      {
         for (i = 0; i < count; i++)
           {
              HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
              if (EINA_UNLIKELY(cells[i].att.link_id))
                term_link_refcount_dec(ty, cells[i].att.link_id, 1);
-
-             cells[i] = local;
           }
+     }
+
+   /* Colours set by SGR replace the cells' own. */
+   if (att.fg != 0 || att.fgrgb != 0 || att.bg != 0 || att.bgrgb != 0)
+     {
+        cells[0].codepoint = codepoint;
+        cells[0].att = att;
+        termpty_cells_replicate(cells, count);
         return;
      }
 
+   /* Default colours: each cell keeps its own, merged in by a mask of the
+    * colour bits rather than field by field. */
+   memset(&colors, 0, sizeof(colors));
+   colors.fg = 0xffffff;
+   colors.fgrgb = 1;
+   colors.fg256 = 1;
+   colors.fgintense = 1;
+   colors.bg = 0xffffff;
+   colors.bgrgb = 1;
+   colors.bg256 = 1;
+   colors.bgintense = 1;
+   memcpy(color_words, &colors, sizeof(colors));
+   memcpy(att_words, &att, sizeof(att));
+   for (k = 0; k < ATT_WORDS; k++)
+     att_words[k] &= ~color_words[k];
+
    for (i = 0; i < count; i++)
      {
-        Termatt old = cells[i].att;
-        Termcell c;
+        uint32_t words[ATT_WORDS];
 
-        HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, cells[i].codepoint, codepoint);
-        if (EINA_UNLIKELY(cells[i].att.link_id))
-          term_link_refcount_dec(ty, cells[i].att.link_id, 1);
-
-        /* The cell keeps its colours. Built once and stored once, for the
-         * same reason as in the ASCII run path. */
-        c.codepoint = codepoint;
-        c.att = att;
-        c.att.fg = old.fg;
-        c.att.fgrgb = old.fgrgb;
-        c.att.fg256 = old.fg256;
-        c.att.fgintense = old.fgintense;
-
-        c.att.bg = old.bg;
-        c.att.bgrgb = old.bgrgb;
-        c.att.bg256 = old.bg256;
-        c.att.bgintense = old.bgintense;
-        cells[i] = c;
+        memcpy(words, &cells[i].att, sizeof(words));
+        for (k = 0; k < ATT_WORDS; k++)
+          words[k] = att_words[k] | (words[k] & color_words[k]);
+        cells[i].codepoint = codepoint;
+        memcpy(&cells[i].att, words, sizeof(words));
      }
 }
 
