@@ -214,3 +214,4 @@ csi-abort.sh 9dcaf308eaedd756a5f451ada391ba3e
 csi-shift.sh 1514d14cac76eb4d43f2a99a0c06179d
 osc-8.sh d8810df219faf4a8fe84fd08ed922695
 osc-long.sh a94cb70dd58d07f52bbdf0cc5e7b95e1
+decfra-keep-colors.sh 84900ad5b5ffd5a14cb3318f63690691
