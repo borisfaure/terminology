@@ -528,6 +528,19 @@ term_link_eq(Termpty *ty, Term_Link *hl, uint16_t link_id)
     return (strcmp(hl->url, hl2->url) == 0);
 }
 
+/* Copy dst[0] over dst[1] to dst[n - 1], doubling the copied span: a
+ * per-cell struct assignment loop is compiled into a store-forwarding
+ * stall per cell. */
+static inline void
+termpty_cells_replicate(Termcell *dst, int n)
+{
+   int done;
+
+   for (done = 1; done < n; done *= 2)
+     memcpy(dst + done, dst,
+            (size_t)((done < n - done) ? done : n - done) * sizeof(*dst));
+}
+
 static inline void
 termpty_cell_fill(Termpty *ty, const Termcell *src, Termcell *dst, int n)
 {
@@ -540,8 +553,9 @@ termpty_cell_fill(Termpty *ty, const Termcell *src, Termcell *dst, int n)
      {
         if (src)
           {
-             for (i = 0; i < n; i++)
-               dst[i] = src[0];
+             if (n <= 0) return;
+             dst[0] = src[0];
+             termpty_cells_replicate(dst, n);
           }
         else
           {

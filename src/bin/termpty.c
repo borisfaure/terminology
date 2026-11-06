@@ -1869,8 +1869,10 @@ termpty_cell_codepoint_att_fill(Termpty *ty, Eina_Unicode codepoint,
     * invariant as TERMPTY_CELL_COPY()'s fast path. */
    if (EINA_LIKELY((ty->hl.size == 0) && (ty->block.blocks == NULL)))
      {
-        for (i = 0; i < n; i++)
-          dst[i] = local;
+        if (n <= 0) return;
+        dst[0].codepoint = codepoint;
+        dst[0].att = att;
+        termpty_cells_replicate(dst, n);
         return;
      }
 
