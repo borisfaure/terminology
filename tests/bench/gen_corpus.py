@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Five workloads, chosen so that a change to one part of the intake path shows up
+Six workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -16,6 +16,8 @@ in one column rather than being averaged away:
   strings      long OSC titles, sixel DCS, kitty graphics APC and long SGR
                parameter lists. Exercises sequences that span many reads,
                to be benchmarked with a small --chunk.
+  rep          a character then REP (CSI b), as curses draws rules and fills
+               when terminfo has rep. Exercises the REP expansion.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -167,8 +169,27 @@ def gen_strings(target):
     return bytes(out[:cut]) + b"\033[0m\n"
 
 
+def gen_rep(target):
+    """Cursor moves, a character and a REP of it, between short words."""
+    rng = _rng("rep")
+    out = bytearray()
+    cut = 0
+    while len(out) < target:
+        ch = rng.choice("-=_.#* \u2500\u2501\u2550\u2588")
+        seq = "\033[%d;%dH%s\033[%db%s" % (rng.randint(1, 24), rng.randint(1, 10),
+                                         ch, rng.randint(1, 79), rng.choice(WORDS))
+        out += seq.encode("utf-8")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    if cut == 0:
+        cut = len(out)
+    return bytes(out[:cut])
+
+
 GENERATORS = {
     "plain-ascii": gen_plain_ascii,
+    "rep": gen_rep,
     "scroll": gen_scroll,
     "sgr": gen_sgr,
     "strings": gen_strings,
