@@ -2638,16 +2638,31 @@ _handle_esc_csi_decsace(Termpty *ty, Eina_Unicode **b)
     }
 }
 
+/* Shift cells [x, max_right) of a row right by n, losing those pushed past
+ * max_right, and blank the n cells opened at x. */
+static void
+_cells_insert_blanks(Termpty *ty, Termcell *cells, int x, int max_right,
+                     int n)
+{
+   int j;
+
+   if (n > max_right - x)
+     n = max_right - x;
+   if (n <= 0)
+     return;
+   for (j = max_right - 1; j >= x + n; j--)
+     TERMPTY_CELL_COPY(ty, &(cells[j - n]), &(cells[j]), 1);
+   termpty_cell_codepoint_att_fill(ty, ' ', ty->termstate.att,
+                                   &(cells[x]), n);
+}
+
 static void
 _handle_esc_csi_decic(Termpty *ty, Eina_Unicode **b)
 {
    int arg = _csi_arg_get(ty, b);
-   int old_insert = ty->termstate.insert;
-   Eina_Unicode blank[1] = { ' ' };
    int top = 0;
    int bottom = ty->h;
-   int old_cx = ty->cursor_state.cx;
-   int old_cy = ty->cursor_state.cy;
+   int max_right = ty->w;
 
    DBG("DECIC Insert %d Column", arg);
 
@@ -2673,22 +2688,13 @@ _handle_esc_csi_decic(Termpty *ty, Eina_Unicode **b)
        || ((ty->termstate.right_margin > 0)
            && (ty->cursor_state.cx >= ty->termstate.right_margin)))
      return;
+   if (ty->termstate.right_margin > 0)
+     max_right = ty->termstate.right_margin;
 
-   ty->termstate.insert = 1;
+   ty->cursor_state.wrapnext = 0;
    for (; top < bottom; top++)
-     {
-        int i;
-
-        /* Insert a left column */
-        ty->cursor_state.cy = top;
-        ty->cursor_state.cx = old_cx;
-        ty->cursor_state.wrapnext = 0;
-        for (i = 0; i < arg; i++)
-          termpty_text_append(ty, blank, 1);
-     }
-   ty->termstate.insert = old_insert;
-   ty->cursor_state.cx = old_cx;
-   ty->cursor_state.cy = old_cy;
+     _cells_insert_blanks(ty, &(TERMPTY_SCREEN(ty, 0, top)),
+                          ty->cursor_state.cx, max_right, arg);
 }
 
 static void
