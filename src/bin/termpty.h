@@ -414,6 +414,7 @@ void termpty_handle_block_codepoint_overwrite_heavy(Termpty *ty, int oldc, int n
 
 Term_Link * term_link_new(Termpty *ty);
 void term_link_free(Termpty *ty, Term_Link *link);
+void term_link_free_if_unused(Termpty *ty, uint16_t link_id);
 
 int
 termpty_color_class_get(Termpty *ty, const char *key,

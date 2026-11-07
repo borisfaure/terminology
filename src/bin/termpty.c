@@ -2053,6 +2053,15 @@ term_link_free(Termpty *ty, Term_Link *link)
    hl_bitmap_clear_bit(ty, id);
 }
 
+/* For the link the termstate drops: no cell counts it, so a link never
+ * written to would otherwise hold its slot forever. */
+void
+term_link_free_if_unused(Termpty *ty, uint16_t link_id)
+{
+   if (link_id && (ty->hl.links[link_id].refcount == 0))
+     term_link_free(ty, ty->hl.links + link_id);
+}
+
 #if defined(BINARY_TYFUZZ) || defined(BINARY_TYTEST)
 
 /* Feed a NUL-terminated ASCII string as if the PTY sent it. */

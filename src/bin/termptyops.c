@@ -624,6 +624,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.had_cr_y = 0;
    ty->termstate.restrict_cursor = 0;
    termpty_reset_att(&(ty->termstate.att));
+   term_link_free_if_unused(ty, ty->termstate.att.link_id);
    ty->termstate.att.link_id = 0;
    ty->termstate.charset = 0;
    ty->termstate.charsetch = 'B';

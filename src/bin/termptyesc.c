@@ -4625,6 +4625,7 @@ _handle_hyperlink(Termpty *ty,
     const char *url = NULL;
     const char *key = NULL;
     Term_Link *hl = NULL;
+    uint16_t old_id;
 
     if (!s || len <= 0)
       {
@@ -4639,7 +4640,9 @@ _handle_hyperlink(Termpty *ty,
          /* Closing escape code */
          if (ty->termstate.att.link_id)
            {
+              old_id = ty->termstate.att.link_id;
               ty->termstate.att.link_id = 0;
+              term_link_free_if_unused(ty, old_id);
            }
          else
            {
@@ -4705,8 +4708,10 @@ _handle_hyperlink(Termpty *ty,
     key = NULL;
     url = NULL;
 
+    old_id = ty->termstate.att.link_id;
     ty->termstate.att.link_id = hl - ty->hl.links;
     hl = NULL;
+    term_link_free_if_unused(ty, old_id);
 
 end:
     term_link_free(ty, hl);
@@ -6200,6 +6205,7 @@ _handle_decaln(Termpty *ty)
    ty->termstate.had_cr_y = 0;
    ty->cursor_state.cx = 0;
    ty->cursor_state.cy = 0;
+   term_link_free_if_unused(ty, ty->termstate.att.link_id);
    ty->termstate.att.link_id = 0;
 
    ty->circular_offset = 0;
