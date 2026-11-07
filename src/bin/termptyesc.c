@@ -2805,6 +2805,7 @@ _handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
      termpty_text_append(ty, blank, 1);
    ty->termstate.insert = old_insert;
    ty->cursor_state.cx = old_cx;
+   ty->cursor_state.wrapnext = 0;
 }
 
 static void
