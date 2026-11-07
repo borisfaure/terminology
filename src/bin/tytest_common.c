@@ -12,6 +12,7 @@
 #include "termptynotify.h"
 #include "backlog.h"
 #include "termptyops.h"
+#include "termptyesc.h"
 #include "termiointernals.h"
 #include "utf8.h"
 #include "simd/simd.h"
@@ -1031,6 +1032,7 @@ _termpty_release(Termpty *ty)
    if (ty->block.chid_map) eina_hash_free(ty->block.chid_map);
    if (ty->block.active) eina_list_free(ty->block.active);
    termpty_sync_output_reset(ty);
+   termpty_title_icon_stack_free(ty);
    eina_stringshare_del(ty->prop.title);
    eina_stringshare_del(ty->prop.user_title);
    eina_stringshare_del(ty->prop.icon);

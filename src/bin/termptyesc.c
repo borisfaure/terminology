@@ -3532,6 +3532,26 @@ _title_icon_stack_push(Termpty *ty, Eina_Unicode **p)
 }
 
 static void
+_title_icon_elem_free(TitleIconElem *elem)
+{
+   eina_stringshare_del(elem->icon);
+   eina_stringshare_del(elem->title);
+   free(elem);
+}
+
+void
+termpty_title_icon_stack_free(Termpty *ty)
+{
+   while (ty->title_icon_stack)
+     {
+        TitleIconElem *elem = ty->title_icon_stack;
+
+        ty->title_icon_stack = elem->next;
+        _title_icon_elem_free(elem);
+     }
+}
+
+static void
 _title_icon_stack_pop(Termpty *ty, Eina_Unicode **p)
 {
    int arg = _csi_arg_get(ty, p);
@@ -3571,10 +3591,8 @@ _title_icon_stack_pop(Termpty *ty, Eina_Unicode **p)
       default:
          break;
      }
-   eina_stringshare_del(elem->icon);
-   eina_stringshare_del(elem->title);
    ty->title_icon_stack = elem->next;
-   free(elem);
+   _title_icon_elem_free(elem);
 }
 
 static void

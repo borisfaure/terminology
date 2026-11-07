@@ -761,8 +761,8 @@ tytest_fuzz_header(void)
 }
 
 /* A reset state is a fresh state: feed sequences that allocate (title,
- * hyperlink, synchronized-update snapshot, OSC 52, backlog rows), reset,
- * and check the checksum equals the one right after a fresh
+ * title stack, hyperlink, synchronized-update snapshot, OSC 52, backlog
+ * rows), reset, and check the checksum equals the one right after a fresh
  * tytest_common_init(). A parse-only reset returning a different state
  * would make fuzzer crashes depend on previous inputs. */
 int
@@ -770,6 +770,7 @@ tytest_reset(void)
 {
    static const char data[] =
       "\x1b]0;hello\x07"                       /* sets the title */
+      "\x1b[22t"                               /* pushes it */
       "\x1b]8;;https://example.org\x1b\\link"  /* allocates a hyperlink */
       "\x1b]8;;\x1b\\"
       "\x1b[?2026h\x1b[?2026l"                 /* synchronized update */

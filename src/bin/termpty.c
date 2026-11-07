@@ -914,6 +914,7 @@ termpty_free(Termpty *ty)
      ecore_event_handler_del(ty->hand_exe_exit);
    if (ty->hand_fd)
      ecore_main_fd_handler_del(ty->hand_fd);
+   termpty_title_icon_stack_free(ty);
    eina_stringshare_del(ty->prop.title);
    eina_stringshare_del(ty->prop.user_title);
    eina_stringshare_del(ty->prop.icon);
