@@ -3489,11 +3489,17 @@ struct tag_TitleIconElem {
      struct tag_TitleIconElem *next;
 };
 
+/* As in xterm and kitty: a push past the limit drops the oldest entry */
+#define TITLE_ICON_STACK_MAX 10
+
+static void _title_icon_elem_free(TitleIconElem *elem);
+
 static void
 _title_icon_stack_push(Termpty *ty, Eina_Unicode **p)
 {
    int arg = _csi_arg_get(ty, p);
    TitleIconElem *elem = calloc(1, sizeof(*elem));
+   int i;
 
    if (!elem)
      return;
@@ -3529,6 +3535,16 @@ _title_icon_stack_push(Termpty *ty, Eina_Unicode **p)
         eina_stringshare_ref(ty->prop.icon);
    elem->next = ty->title_icon_stack;
    ty->title_icon_stack = elem;
+
+   for (i = 1; elem->next && i < TITLE_ICON_STACK_MAX; i++)
+     elem = elem->next;
+   while (elem->next)
+     {
+        TitleIconElem *oldest = elem->next;
+
+        elem->next = oldest->next;
+        _title_icon_elem_free(oldest);
+     }
 }
 
 static void
