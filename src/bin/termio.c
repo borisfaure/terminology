@@ -266,9 +266,10 @@ termio_palette_color_override_clear(Evas_Object *obj, int idx)
 void
 termio_palette_reset(Evas_Object *obj)
 {
-   Termio *sd = evas_object_smart_data_get(obj);
+   Termio *sd = obj ? evas_object_smart_data_get(obj) : NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN(sd);
+   if (!sd)
+     return;
    memset(sd->palette.overridden, 0, sizeof(sd->palette.overridden));
    termio_palette_apply(obj);
 }
