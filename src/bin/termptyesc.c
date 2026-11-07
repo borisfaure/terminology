@@ -1885,7 +1885,7 @@ _clean_up_rect_coordinates(Termpty *ty,
      }
    left--;
 
-   if (right < 1)
+   if ((right < 1) || (right > ty->w))
      right = ty->w;
    if (ty->termstate.restrict_cursor)
      {
@@ -1896,7 +1896,7 @@ _clean_up_rect_coordinates(Termpty *ty,
    if (right > ty->w)
      right = ty->w;
 
-   if (bottom < 1)
+   if ((bottom < 1) || (bottom > ty->h))
      bottom = ty->h;
    if (ty->termstate.restrict_cursor)
      {
@@ -1905,7 +1905,7 @@ _clean_up_rect_coordinates(Termpty *ty,
           bottom = ty->termstate.bottom_margin;
      }
    bottom--;
-   if (bottom > ty->h)
+   if (bottom >= ty->h)
      bottom = ty->h - 1;
 
    if ((bottom < top) || (right < left))
@@ -1951,7 +1951,7 @@ _clean_up_from_to_coordinates(Termpty *ty,
      }
    left--;
 
-   if (right < 1)
+   if ((right < 1) || (right > ty->w))
      right = ty->w;
    if (ty->termstate.restrict_cursor)
      {
@@ -1962,7 +1962,7 @@ _clean_up_from_to_coordinates(Termpty *ty,
    if (right > ty->w)
      right = ty->w;
 
-   if (bottom < 1)
+   if ((bottom < 1) || (bottom > ty->h))
      bottom = ty->h;
    if (ty->termstate.restrict_cursor)
      {
@@ -1971,7 +1971,7 @@ _clean_up_from_to_coordinates(Termpty *ty,
           bottom = ty->termstate.bottom_margin;
      }
    bottom--;
-   if (bottom > ty->h)
+   if (bottom >= ty->h)
      bottom = ty->h - 1;
 
    if ((bottom == top) && (right < left))
