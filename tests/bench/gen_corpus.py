@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Seven workloads, chosen so that a change to one part of the intake path shows up
+Eight workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -20,6 +20,8 @@ in one column rather than being averaged away:
                when terminfo has rep. Exercises the REP expansion.
   fill         DECFRA rectangles under default and set colours, and DECALN.
                Exercises the rectangle and screen fills.
+  insert       ICH (CSI @) on a row, as editors open room for typed text, and
+               DECIC (CSI ' }) now and then. Exercises the in-row shifts.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -213,8 +215,28 @@ def gen_fill(target):
     return bytes(out[:cut]) + b"\033[0m\n"
 
 
+def gen_insert(target):
+    """Cursor moves, an ICH or a DECIC of random count, then a word."""
+    rng = _rng("insert")
+    out = bytearray()
+    cut = 0
+    while len(out) < target:
+        final = "'}" if rng.random() < 0.05 else "@"
+        seq = "\033[%d;%dH\033[%d%s%s" % (rng.randint(1, 24), rng.randint(1, 80),
+                                          rng.randint(1, 80), final,
+                                          rng.choice(WORDS))
+        out += seq.encode("ascii")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    if cut == 0:
+        cut = len(out)
+    return bytes(out[:cut])
+
+
 GENERATORS = {
     "fill": gen_fill,
+    "insert": gen_insert,
     "plain-ascii": gen_plain_ascii,
     "rep": gen_rep,
     "scroll": gen_scroll,
