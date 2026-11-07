@@ -538,7 +538,7 @@ termpty_cells_replicate(Termcell *dst, int n)
 
    for (done = 1; done < n; done *= 2)
      memcpy(dst + done, dst,
-            (size_t)((done < n - done) ? done : n - done) * sizeof(*dst));
+            (size_t)MIN(n - done, done) * sizeof(*dst));
 }
 
 static inline void
