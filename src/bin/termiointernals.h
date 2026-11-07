@@ -26,8 +26,10 @@ typedef void Term;
           memset(&(_tr)[_x], 0, sizeof((_tr)[_x]));  \
      }                                               \
    while (0)
+# define TC_TRUECOLOR_IS_SET(_tc) ((_tc).fg_truecolor || (_tc).bg_truecolor)
 #else
 # define TC_TRUECOLOR_CLEAR(_tc, _tr, _x) ((void)0)
+# define TC_TRUECOLOR_IS_SET(_tc) (0)
 #endif
 
 typedef struct tag_Termio Termio;

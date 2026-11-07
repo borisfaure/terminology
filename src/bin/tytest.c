@@ -40,6 +40,7 @@ static struct {
 #if defined(HAVE_TEXTGRID_RGB)
        { "truecolor_render", tytest_truecolor_render},
 #endif
+       { "block_render_idle", tytest_block_render_idle},
        { "sb_add", tytest_sb_add},
        { "sb_prepend", tytest_sb_prepend},
        { "sb_skip", tytest_sb_skip},

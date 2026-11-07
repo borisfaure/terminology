@@ -39,6 +39,12 @@ tytest_edje_object_color_class_set(Evas_Object *termio EINA_UNUSED, const char *
                                  int r1 EINA_UNUSED, int g1 EINA_UNUSED, int b1 EINA_UNUSED, int a1 EINA_UNUSED,
                                  int r2 EINA_UNUSED, int g2 EINA_UNUSED, int b2 EINA_UNUSED, int a2 EINA_UNUSED);
 
+#define evas_object_textgrid_update_add  tytest_textgrid_update_add
+void
+tytest_textgrid_update_add(Evas_Object *obj, int x, int y, int w, int h);
+int
+tytest_textgrid_updated_cells_take(void);
+
 void
 tytest_termio_resize(int w, int h);
 #endif

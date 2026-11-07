@@ -3876,4 +3876,39 @@ tytest_truecolor_render(void)
 }
 #endif
 
+/* A media block left untouched must not dirty its cells on every render:
+ * the textgrid and the image above it would be redrawn on each keystroke. */
+#if defined(BINARY_TYTEST)
+int
+tytest_block_render_idle(void)
+{
+   Termpty *ty = tytest_termpty_get();
+   Termblock *blk;
+   Termio *sd;
+   int preedit_x = 0, preedit_y = 0;
+
+   eina_init();
+   ecore_init();
+   tytest_common_init();
+   tytest_termio_resize(ty->w, ty->h);
+   sd = termio_get_from_obj(ty->obj);
+
+   blk = termpty_block_new(ty, 2, 1, "/img.png", NULL);
+   assert(blk);
+   termpty_block_insert(ty, '#', blk);
+   ty->block.on = EINA_TRUE;
+   _ty_feed(ty, "\033[2J\033[H##");
+   ty->block.on = EINA_FALSE;
+
+   termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
+   assert(tytest_textgrid_updated_cells_take() >= 2);
+
+   termio_internal_render(sd, 0, 0, &preedit_x, &preedit_y);
+   assert(tytest_textgrid_updated_cells_take() == 0);
+
+   tytest_common_shutdown();
+   return 0;
+}
+#endif
+
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */

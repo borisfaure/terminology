@@ -133,6 +133,26 @@ tytest_termio_resize(int w, int h)
 #endif
 }
 
+/* number of cells passed to evas_object_textgrid_update_add() */
+static int _updated_cells;
+
+void
+tytest_textgrid_update_add(Evas_Object *obj EINA_UNUSED,
+                           int x EINA_UNUSED, int y EINA_UNUSED,
+                           int w, int h)
+{
+   _updated_cells += w * h;
+}
+
+int
+tytest_textgrid_updated_cells_take(void)
+{
+   int updated = _updated_cells;
+
+   _updated_cells = 0;
+   return updated;
+}
+
 Termpty *
 tytest_termpty_get(void)
 {

@@ -14,6 +14,7 @@ int tytest_cell_is_empty_rgb(void);
 #if defined(HAVE_TEXTGRID_RGB)
 int tytest_truecolor_render(void);
 #endif
+int tytest_block_render_idle(void);
 int tytest_sb_add(void);
 int tytest_sb_prepend(void);
 int tytest_sb_skip(void);

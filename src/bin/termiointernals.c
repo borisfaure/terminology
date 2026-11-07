@@ -2573,9 +2573,23 @@ termio_internal_render(Termio *sd,
                     bid = termpty_block_id_get(&(cells[x]), &bx, &by);
                   if (bid >= 0)
                     {
-                       if (ch1 < 0)
-                         ch1 = x;
-                       ch2 = x;
+                       if ((tc[x].codepoint != 0) ||
+                           (tc[x].fg != COL_INVIS) ||
+                           (tc[x].bg != COL_INVIS) ||
+                           (tc[x].fg_extended) ||
+                           (tc[x].bg_extended) ||
+                           TC_TRUECOLOR_IS_SET(tc[x]) ||
+                           (tc[x].underline) ||
+                           (tc[x].strikethrough) ||
+                           TC_OVERLINE_DIFFERS(tc[x], 0) ||
+                           (tc[x].bold) ||
+                           (tc[x].italic) ||
+                           (tc[x].double_width))
+                         {
+                            if (ch1 < 0)
+                              ch1 = x;
+                            ch2 = x;
+                         }
                        tc[x].codepoint = 0;
                        tc[x].fg_extended = 0;
                        tc[x].bg_extended = 0;
