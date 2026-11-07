@@ -2763,12 +2763,8 @@ _handle_esc_csi_decdc(Termpty *ty, Eina_Unicode **b)
 static void
 _handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
 {
-   Eina_Unicode blank[1] = { ' ' };
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
-   int i;
-   int old_insert = ty->termstate.insert;
-   int old_cx = ty->cursor_state.cx;
    int max = ty->w;
 
    if (arg == -ESC_ARG_ERROR)
@@ -2794,18 +2790,9 @@ _handle_esc_csi_ich(Termpty *ty, Eina_Unicode **ptr)
           }
      }
 
-   if (ty->cursor_state.cx + arg > max)
-     {
-        arg = max - ty->cursor_state.cx;
-     }
-
    ty->cursor_state.wrapnext = 0;
-   ty->termstate.insert = 1;
-   for (i = 0; i < arg; i++)
-     termpty_text_append(ty, blank, 1);
-   ty->termstate.insert = old_insert;
-   ty->cursor_state.cx = old_cx;
-   ty->cursor_state.wrapnext = 0;
+   _cells_insert_blanks(ty, &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy)),
+                        ty->cursor_state.cx, max, arg);
 }
 
 static void
