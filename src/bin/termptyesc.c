@@ -4700,6 +4700,7 @@ _handle_xterm_50_command(Termpty *ty,
             int size;
 
             s += pattern_len;
+            len -= pattern_len;
             errno = 0;
             size = strtol(s, &endptr, 10);
             if (endptr != s && errno == 0)
