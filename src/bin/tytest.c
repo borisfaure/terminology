@@ -747,7 +747,7 @@ tytest_fuzz_header(void)
    assert(stream && memcmp(stream, "ABCDEFGHIJKLMNO" "PPPP", 19) == 0);
 
    /* Byte 1 is an exponent: 2^20 additions of the 16-byte span overflow
-    * the 4 MiB stream cap, so the stream is truncated at exactly that. */
+    * the 1 MiB stream cap, so the stream is truncated at exactly that. */
    data[0] = 0x07;
    data[1] = 20;
    data[2] = 0x00;

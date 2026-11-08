@@ -16,7 +16,7 @@
 # 3. a hang is replayed twice more, at repeat exponent k (byte 1) and k+1:
 #    a replay whose time more than doubles is a quadratic re-parse and goes
 #    to the fix list, one whose time merely grows with the input is a big
-#    but legitimate 4 MiB stream, not a bug;
+#    but legitimate 1 MiB stream, not a bug;
 # 4. what reproduces is bucketed by the top of the ASAN stack, and the
 #    first input of each bucket is minimized with afl-tmin.
 #

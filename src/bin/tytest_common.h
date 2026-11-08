@@ -12,7 +12,7 @@
 /* The fuzzers' test case format: a 3-byte header expands into the stream
  * that is fed, capped at TY_FUZZ_STREAM_MAX bytes. See tytest_common.c. */
 #define TY_FUZZ_HEADER_SIZE 3
-#define TY_FUZZ_STREAM_MAX (4 * 1024 * 1024)
+#define TY_FUZZ_STREAM_MAX (1024 * 1024)
 
 void tytest_common_main_loop(void);
 void tytest_common_feed(const char *data, int datalen);

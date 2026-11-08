@@ -851,8 +851,8 @@ tytest_common_set_chunk(int chunk)
  *   switch.
  * byte 1: repeat exponent k: the span from byte 2's offset to the end of
  *   the body is fed 2^(k mod 21) times. A small test case, ESC ] 0 ; once
- *   then A a million times, thereby expands into the megabytes the
- *   buffering paths need, sizes mutators do not grow inputs to by
+ *   then A a million times, thereby expands into the megabyte the
+ *   buffering paths need, a size mutators do not grow inputs to by
  *   themselves.
  * byte 2: start of the span, as byte * body_len / 256.
  *

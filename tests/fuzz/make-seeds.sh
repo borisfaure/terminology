@@ -36,7 +36,7 @@ done
 
 # Unterminated introducers, so the sequences sit in ty->buf until the
 # parser gives up on them. Byte 1 is the exponent written raw: 2^(k mod 21)
-# repetitions of the span, capped at 4 MiB by the harness. Byte 0x00 puts
+# repetitions of the span, capped at 1 MiB by the harness. Byte 0x00 puts
 # the span at the introducer; 0x02, right after it.
 for k in 10 12 14 16 18 20; do
     oct=$(printf '%03o' "$k")
