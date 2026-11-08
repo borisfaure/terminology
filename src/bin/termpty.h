@@ -472,20 +472,7 @@ do {                                                                         \
 #define TERMPTY_CELL_COPY(Tpty, Tsrc, Tdst, N)                               \
 do {                                                                         \
    if (EINA_UNLIKELY(((Tpty)->hl.size != 0) || ((Tpty)->block.blocks)))      \
-     {                                                                       \
-        int __i;                                                             \
-                                                                             \
-        for (__i = 0; __i < N; __i++)                                        \
-          {                                                                  \
-             HANDLE_BLOCK_CODEPOINT_OVERWRITE(Tpty,                          \
-                                              (Tdst)[__i].codepoint,         \
-                                              (Tsrc)[__i].codepoint);        \
-             if (EINA_UNLIKELY((Tdst)[__i].att.link_id))                     \
-               term_link_refcount_dec(Tpty, (Tdst)[__i].att.link_id, 1);     \
-             if (EINA_UNLIKELY((Tsrc)[__i].att.link_id))                     \
-               term_link_refcount_inc(Tpty, (Tsrc)[__i].att.link_id, 1);     \
-          }                                                                  \
-     }                                                                       \
+     termpty_cells_copy_refs(Tpty, Tsrc, Tdst, N);                           \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
 
@@ -508,6 +495,42 @@ term_link_refcount_dec(Termpty *ty, uint16_t link_id, uint16_t count)
    link->refcount -= count;
    if (EINA_UNLIKELY(link->refcount == 0))
      term_link_free(ty, link);
+}
+
+/* The block and link references of n cells copied from src over dst.
+ * Links are counted per run of one id: a per-cell update chains every
+ * cell on the same refcount. */
+static inline void
+termpty_cells_copy_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
+                        int n)
+{
+   int i, j;
+
+   if (ty->block.blocks)
+     for (i = 0; i < n; i++)
+       HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[i].codepoint);
+   if (ty->hl.size == 0)
+     return;
+   for (i = 0; i < n; i = j)
+     {
+        uint16_t link_id = src[i].att.link_id;
+
+        j = i + 1;
+        while ((j < n) && (src[j].att.link_id == link_id))
+          j++;
+        if (link_id)
+          term_link_refcount_inc(ty, link_id, j - i);
+     }
+   for (i = 0; i < n; i = j)
+     {
+        uint16_t link_id = dst[i].att.link_id;
+
+        j = i + 1;
+        while ((j < n) && (dst[j].att.link_id == link_id))
+          j++;
+        if (link_id)
+          term_link_refcount_dec(ty, link_id, j - i);
+     }
 }
 
 static inline Eina_Bool
