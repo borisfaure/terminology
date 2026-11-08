@@ -3274,19 +3274,15 @@ _handle_esc_csi_rep(Termpty *ty, Eina_Unicode **ptr)
    if (ty->last_char)
      {
         Eina_Unicode run[256];
-        int screen_size = ty->w * ty->h;
         int i, n;
 
         if (arg <= 0)
           {
              arg = 1;
           }
-        else if (arg > screen_size)
+        else
           {
-             /* if value is too large, restrict it to something that makes
-              * rendering correct (but not in the backlog, but who cares…)
-              */
-             arg = screen_size + (arg % screen_size);
+             arg = termpty_text_repeat_count(ty, ty->last_char, arg);
           }
         n = MIN(arg, (int)EINA_C_ARRAY_LENGTH(run));
         for (i = 0; i < n; i++)

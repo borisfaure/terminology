@@ -311,6 +311,25 @@ _append_ascii_run(Termpty *ty, Termcell *cells, const Eina_Unicode *cp, int n,
      }
 }
 
+/* After a screen's worth of lines, each line leaves the same state. */
+int
+termpty_text_repeat_count(const Termpty *ty, Eina_Unicode codepoint,
+                          int count)
+{
+   Eina_Unicode g = _termpty_charset_trans(ty, codepoint);
+   int cell_w = _termpty_is_dblwidth_get(ty, g, EINA_FALSE) ? 2 : 1;
+   int right = ty->termstate.right_margin ? ty->termstate.right_margin : ty->w;
+   int line_w = right - ty->termstate.left_margin;
+   int per_line, settled;
+
+   if (line_w < 1) line_w = 1;
+   per_line = (line_w + cell_w - 1) / cell_w;
+   settled = ty->w + (ty->h * per_line);
+   if (count <= settled + per_line)
+     return count;
+   return settled + ((count - settled) % per_line);
+}
+
 void
 termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {

@@ -24,6 +24,9 @@ void termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len);
 void termpty_text_append_known_ascii(Termpty *ty,
                                      const Eina_Unicode *codepoints, int len,
                                      size_t plain_ascii_len);
+/* A count no larger than 'count' leaving the same screen and cursor. */
+int termpty_text_repeat_count(const Termpty *ty, Eina_Unicode codepoint,
+                              int count);
 void termpty_clear_line(Termpty *ty, Termpty_Clear mode, int limit);
 void termpty_clear_screen(Termpty *ty, Termpty_Clear mode);
 void termpty_clear_all(Termpty *ty);
