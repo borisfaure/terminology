@@ -409,7 +409,7 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
                   size_t run = ((size_t)i < plain_ascii_len)
                      ? plain_ascii_len - (size_t)i
                      : simd_scan_plain_ascii_u32(codepoints + i,
-                                                 (size_t)(len - i));
+                                                 (size_t)MIN(len - i, avail));
 
                   if (run > (size_t)avail) run = (size_t)avail;
                   if (run >= 2)
