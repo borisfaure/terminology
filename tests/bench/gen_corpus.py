@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Eight workloads, chosen so that a change to one part of the intake path shows up
+Nine workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -22,6 +22,9 @@ in one column rather than being averaged away:
                Exercises the rectangle and screen fills.
   insert       ICH (CSI @) on a row, as editors open room for typed text, and
                DECIC (CSI ' }) now and then. Exercises the in-row shifts.
+  long-lines   lines kilobytes long, as minified JSON or one-line logs, with
+               an accented word now and then. Exercises the ASCII runs that
+               follow a non-ASCII character within one read.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -234,9 +237,28 @@ def gen_insert(target):
     return bytes(out[:cut])
 
 
+def gen_long_lines(target):
+    """Lines of 4 to 16 KiB of words, about one in 200 of them accented."""
+    rng = _rng("long-lines")
+    out = bytearray()
+    while len(out) < target:
+        line = []
+        width = 0
+        limit = rng.randint(4096, 16384)
+        while width < limit:
+            w = rng.choice(WORDS)
+            if rng.random() < 0.005:
+                w = rng.choice(["caf\u00e9", "na\u00efve", "\u00fcber", "se\u00f1or"])
+            line.append(w)
+            width += len(w) + 1
+        out += (" ".join(line) + "\n").encode("utf-8")
+    return bytes(out)
+
+
 GENERATORS = {
     "fill": gen_fill,
     "insert": gen_insert,
+    "long-lines": gen_long_lines,
     "plain-ascii": gen_plain_ascii,
     "rep": gen_rep,
     "scroll": gen_scroll,
