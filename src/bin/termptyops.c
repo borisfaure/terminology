@@ -92,14 +92,19 @@ termpty_text_scroll(Termpty *ty, Eina_Bool clear)
         if (ty->termstate.right_margin)
           w = ty->termstate.right_margin - x;
 
+        /* Each middle row's references are added and dropped once: the
+         * net is the top row's dropped and the bottom row's doubled. */
         cells = &(TERMPTY_SCREEN(ty, x, end_y));
+        if (EINA_UNLIKELY((ty->hl.size != 0) || (ty->block.blocks)))
+          termpty_cells_copy_refs(ty, cells, &(TERMPTY_SCREEN(ty, x, start_y)),
+                                  w);
         for (y = start_y; y < end_y; y++)
           {
              Termcell *cells2;
 
              cells = &(TERMPTY_SCREEN(ty, x, (y + 1)));
              cells2 = &(TERMPTY_SCREEN(ty, x, y));
-             TERMPTY_CELL_COPY(ty, cells, cells2, w);
+             memcpy(cells2, cells, w * sizeof(Termcell));
           }
         if (clear)
           termpty_cells_clear(ty, cells, w);
@@ -142,14 +147,18 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
         if (ty->termstate.right_margin)
           w = ty->termstate.right_margin - x;
 
+        /* As in termpty_text_scroll(), upside down. */
         cells = &(TERMPTY_SCREEN(ty, x, end_y));
+        if (EINA_UNLIKELY((ty->hl.size != 0) || (ty->block.blocks)))
+          termpty_cells_copy_refs(ty, &(TERMPTY_SCREEN(ty, x, start_y)), cells,
+                                  w);
         for (y = end_y; y > start_y; y--)
           {
              Termcell *cells2;
 
              cells = &(TERMPTY_SCREEN(ty, x, (y - 1)));
              cells2 = &(TERMPTY_SCREEN(ty, x, y));
-             TERMPTY_CELL_COPY(ty, cells, cells2, w);
+             memcpy(cells2, cells, w * sizeof(Termcell));
           }
         if (clear)
           termpty_cells_clear(ty, cells, w);
