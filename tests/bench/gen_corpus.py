@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Nine workloads, chosen so that a change to one part of the intake path shows up
+Ten workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -25,6 +25,9 @@ in one column rather than being averaged away:
   long-lines   lines kilobytes long, as minified JSON or one-line logs, with
                an accented word now and then. Exercises the ASCII runs that
                follow a non-ASCII character within one read.
+  hyperlink    file paths behind OSC 8 hyperlinks, as ls --hyperlink prints,
+               scrolling in a scroll region, as under a status line.
+               Exercises the link refcounts kept when cells are copied.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -255,8 +258,22 @@ def gen_long_lines(target):
     return bytes(out)
 
 
+def gen_hyperlink(target):
+    """Hyperlinked paths, one or two per line, in a 23-row scroll region."""
+    rng = _rng("hyperlink")
+    out = bytearray(b"\033[1;23r\033[23;1H")
+    while len(out) < target:
+        line = ""
+        for _ in range(rng.randint(1, 2)):
+            path = "/".join(rng.choice(WORDS) for _ in range(rng.randint(1, 4)))
+            line += "  \033]8;;file://host/%s\033\\%s\033]8;;\033\\" % (path, path)
+        out += (line + "\n").encode("ascii")
+    return bytes(out) + b"\033[r"
+
+
 GENERATORS = {
     "fill": gen_fill,
+    "hyperlink": gen_hyperlink,
     "insert": gen_insert,
     "long-lines": gen_long_lines,
     "plain-ascii": gen_plain_ascii,
