@@ -44,7 +44,9 @@ void
 tytest_textgrid_update_add(Evas_Object *obj, int x, int y, int w, int h);
 int
 tytest_textgrid_updated_cells_take(void);
+#endif
 
+#if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ)
 void
 tytest_termio_resize(int w, int h);
 #endif

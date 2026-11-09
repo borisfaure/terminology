@@ -14,7 +14,7 @@
 #include "termptytcap.h"
 #include "simd/simd.h"
 #include "theme.h"
-#if defined(BINARY_TYTEST)
+#if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ)
 #include "tytest.h"
 #endif
 #include "utils.h"
@@ -3453,8 +3453,14 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
      }
    DBG("Window manipulation: resize to %dx%d", w, h);
 
+#if defined(BINARY_TYFUZZ)
+   /* sizes a window could have, small enough to keep the fuzzers fast */
+   if ((w < 1) || (h < 1) || (w > 300) || (h > 100))
+     return;
+#endif
+
    /* ONLY FOR TESTING PURPOSE FTM */
-#if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
+#if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ) || defined(ENABLE_TEST_UI)
      {
 #if defined(ENABLE_TEST_UI)
         Evas_Object *wn;

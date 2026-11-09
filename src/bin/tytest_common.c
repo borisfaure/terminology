@@ -114,14 +114,15 @@ tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
 }
 #endif
 
+#endif
+
 void
 tytest_termio_resize(int w, int h)
 {
+#if defined(BINARY_TYTEST)
    Evas_Textgrid_Cell *cells = realloc(_cells,
                                        w * h * sizeof(Evas_Textgrid_Cell));
    assert (cells);
-   _sd.grid.w = w;
-   _sd.grid.h = h;
    _cells = cells;
 #if defined(HAVE_TEXTGRID_RGB)
    if (_tc_cells)
@@ -132,8 +133,12 @@ tytest_termio_resize(int w, int h)
         _tc_cells = tcs;
      }
 #endif
+#endif
+   _sd.grid.w = w;
+   _sd.grid.h = h;
 }
 
+#if defined(BINARY_TYTEST)
 /* number of cells passed to evas_object_textgrid_update_add() */
 static int _updated_cells;
 
@@ -1063,6 +1068,7 @@ tytest_common_reset(void)
    _termpty_release(&_ty);
    _termpty_init(&_ty, _config);
    _termio_state_reset();
+   tytest_termio_resize(TY_W, TY_H);
 }
 
 void
