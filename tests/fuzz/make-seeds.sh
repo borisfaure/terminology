@@ -56,5 +56,44 @@ for k in 10 12 14 16 18 20; do
     done
 done
 
+# Reflow: a backlog of wrapped lines, then resizes narrower, wider, tiny
+# and back, so the rewrap of the screen and of the backlog both run.
+resizes='\033[8;24;40t\033[8;10;133t\033[8;3;7t\033[8;24;80t'
+{
+    printf '\x07\x00\x00'
+    for i in $(seq 60); do
+        printf 'line %03d ' "$i"
+        printf 'abcdefghij%.0s' $(seq 15)
+        printf '\r\n'
+    done
+    printf "$resizes"
+} > "$raw/reflow-wrapped"
+{
+    printf '\x07\x00\x00'
+    for i in $(seq 40); do
+        printf '%03d ' "$i"
+        printf '中文字符e\xcc\x81%.0s' $(seq 12)
+        printf '\r\n'
+    done
+    printf '\033[8;24;41t\033[8;24;3t\033[8;24;80t'
+} > "$raw/reflow-wide"
+{
+    printf '\x07\x00\x00'
+    printf 'endless%.0s' $(seq 600)
+    printf "$resizes"
+} > "$raw/reflow-endless"
+{
+    printf '\x07\x00\x00'
+    for i in $(seq 30); do
+        printf 'main %03d ' "$i"
+        printf 'abcdefghij%.0s' $(seq 12)
+        printf '\r\n'
+    done
+    printf '\033[?1049h\033[2;20r\033[10;10Halt screen'
+    printf "$resizes"
+    printf '\033[?1049l'
+    printf "$resizes"
+} > "$raw/reflow-altscreen"
+
 echo "$raw:" >&2
 echo "  afl-cmin -i '$raw' -o '${raw%seeds-raw}seeds' -- '$tyfuzz' @@" >&2
