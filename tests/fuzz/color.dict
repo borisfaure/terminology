@@ -1,0 +1,30 @@
+# AFL++ dictionary for the colour parser fuzzer (tyfuzz-color-parser).
+#
+# The keywords _parse_color() and its helpers in termiolink.c compare
+# against: without them a plain run never gets past "color" or "hsl".
+
+"color"
+"color2"
+"color3"
+"color:"
+"rgb"
+"rgba"
+"rgb("
+"rgba("
+"rgb:"
+"rgba:"
+"hsl"
+"hsla"
+"hsl("
+"hsla("
+"#"
+"deg"
+"grad"
+"rad"
+"turn"
+"transparent"
+"%"
+","
+";"
+"/"
+")"
