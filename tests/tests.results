@@ -226,3 +226,4 @@ rect-huge-args.sh ba2946480420ed690b567f7263766b7c
 resize-shrink-margins.sh ba1d05b35f8a21f3f398c334a82aeeab
 tab-one-column.sh 95a395357401ea44a1308017842c3677
 rect-last-column.sh b9ebef7c23ee278b65d7ea16371cdd27
+decslrm-two-columns.sh 2bc3f2840cc2e18a5e68b3d9e053a5f2
