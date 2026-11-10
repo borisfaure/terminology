@@ -87,6 +87,7 @@ int tytest_palette_slots(void);
 int tytest_truecolor_cache_generation(void);
 int tytest_reset(void);
 int tytest_fuzz_header(void);
+int tytest_fuzz_resize_max(void);
 
 #endif
 int tytest_keyin_legacy(void);

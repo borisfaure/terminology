@@ -116,6 +116,19 @@ tytest_textgrid_truecolor_cellrow_get(Evas_Object *obj EINA_UNUSED, int y)
 
 #endif
 
+/* resizes left for the fuzzer input being fed, -1 for no limit */
+static int _resizes_left = -1;
+
+Eina_Bool
+tytest_resize_budget_take(void)
+{
+   if (_resizes_left == 0)
+     return EINA_FALSE;
+   if (_resizes_left > 0)
+     _resizes_left--;
+   return EINA_TRUE;
+}
+
 void
 tytest_termio_resize(int w, int h)
 {
@@ -917,6 +930,7 @@ tytest_common_feed_input(const unsigned char *data, int len)
 
    if (len <= TY_FUZZ_HEADER_SIZE) return;
 
+   _resizes_left = TY_FUZZ_RESIZE_MAX;
    _stream_expand(data, len);
    if (_stream_len <= 0) return;
 
@@ -1005,6 +1019,7 @@ void
 tytest_common_init(void)
 {
    simd_init();
+   _resizes_left = -1;
    _config = config_new();
    _config->selection_escapes_read = SELECTION_READ_ALWAYS;
    _sd.config = _config;

@@ -49,6 +49,8 @@ tytest_textgrid_updated_cells_take(void);
 #if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ)
 void
 tytest_termio_resize(int w, int h);
+Eina_Bool
+tytest_resize_budget_take(void);
 #endif
 
 #if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)

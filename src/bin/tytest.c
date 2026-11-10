@@ -118,6 +118,7 @@ static struct {
        { "truecolor_cache_generation", tytest_truecolor_cache_generation},
        { "reset", tytest_reset},
        { "fuzz_header", tytest_fuzz_header},
+       { "fuzz_resize_max", tytest_fuzz_resize_max},
        { NULL, NULL},
 };
 
@@ -755,6 +756,36 @@ tytest_fuzz_header(void)
    stream = tytest_common_stream_get(&len);
    assert(len == TY_FUZZ_STREAM_MAX);
    assert(stream && memcmp(stream, body, sizeof(body) - 1) == 0);
+
+   tytest_common_shutdown();
+   return 0;
+}
+
+/* A fuzzer input gets TY_FUZZ_RESIZE_MAX resizes: feed one more, each to
+ * a new width, and check the last one is ignored. */
+int
+tytest_fuzz_resize_max(void)
+{
+   unsigned char data[TY_FUZZ_HEADER_SIZE + (TY_FUZZ_RESIZE_MAX + 1) * 16];
+   int len = TY_FUZZ_HEADER_SIZE, i;
+   Termpty *ty;
+
+   tytest_common_init();
+   ty = tytest_termpty_get();
+
+   data[0] = 0x07;
+   data[1] = 0x00;
+   data[2] = 0x00;
+   for (i = 0; i <= TY_FUZZ_RESIZE_MAX; i++)
+     len += snprintf((char *)data + len, sizeof(data) - len,
+                     "\x1b[8;24;%dt", TY_W + 1 + i);
+   tytest_common_feed_input(data, len);
+   assert(ty->w == TY_W + TY_FUZZ_RESIZE_MAX);
+
+   /* the budget is per input */
+   tytest_common_reset();
+   tytest_common_feed_input(data, len);
+   assert(ty->w == TY_W + TY_FUZZ_RESIZE_MAX);
 
    tytest_common_shutdown();
    return 0;

@@ -13,6 +13,8 @@
  * that is fed, capped at TY_FUZZ_STREAM_MAX bytes. See tytest_common.c. */
 #define TY_FUZZ_HEADER_SIZE 3
 #define TY_FUZZ_STREAM_MAX (1024 * 1024)
+/* each resize reflows the newest backlog line, up to a megabyte long */
+#define TY_FUZZ_RESIZE_MAX 64
 
 void tytest_common_main_loop(void);
 void tytest_common_feed(const char *data, int datalen);

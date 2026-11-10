@@ -3458,6 +3458,10 @@ _handle_resize_by_chars(Termpty *ty, Eina_Unicode **ptr)
    if ((w < 1) || (h < 1) || (w > 300) || (h > 100))
      return;
 #endif
+#if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ)
+   if (!tytest_resize_budget_take())
+     return;
+#endif
 
    /* ONLY FOR TESTING PURPOSE FTM */
 #if defined(BINARY_TYTEST) || defined(BINARY_TYFUZZ) || defined(ENABLE_TEST_UI)
