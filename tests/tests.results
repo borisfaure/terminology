@@ -227,3 +227,4 @@ resize-shrink-margins.sh ba1d05b35f8a21f3f398c334a82aeeab
 tab-one-column.sh 95a395357401ea44a1308017842c3677
 rect-last-column.sh b9ebef7c23ee278b65d7ea16371cdd27
 decslrm-two-columns.sh 2bc3f2840cc2e18a5e68b3d9e053a5f2
+decstbm-one-row.sh 1657d126de08379e16ac0e7ec5693309
