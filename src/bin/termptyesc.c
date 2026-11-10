@@ -1868,7 +1868,7 @@ _clean_up_rect_coordinates(Termpty *ty,
    int bottom = *bottom_ptr;
    int right = *right_ptr;
 
-   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+   TERMPTY_RESTRICT_FIELD(top, 1, ty->h + 1);
    if (ty->termstate.restrict_cursor)
      {
         top += ty->termstate.top_margin;
@@ -1877,7 +1877,7 @@ _clean_up_rect_coordinates(Termpty *ty,
      }
    top--;
 
-   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+   TERMPTY_RESTRICT_FIELD(left, 1, ty->w + 1);
    if (ty->termstate.restrict_cursor)
      {
         left += ty->termstate.left_margin;
@@ -1934,7 +1934,7 @@ _clean_up_from_to_coordinates(Termpty *ty,
    int bottom = *bottom_ptr;
    int right = *right_ptr;
 
-   TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+   TERMPTY_RESTRICT_FIELD(top, 1, ty->h + 1);
    if (ty->termstate.restrict_cursor)
      {
         top += ty->termstate.top_margin;
@@ -1943,7 +1943,7 @@ _clean_up_from_to_coordinates(Termpty *ty,
      }
    top--;
 
-   TERMPTY_RESTRICT_FIELD(left, 1, ty->w);
+   TERMPTY_RESTRICT_FIELD(left, 1, ty->w + 1);
    if (ty->termstate.restrict_cursor)
      {
         left += ty->termstate.left_margin;
@@ -2403,7 +2403,7 @@ _handle_esc_csi_deccra(Termpty *ty, Eina_Unicode **b)
    if (_clean_up_rect_coordinates(ty, &top, &left, &bottom, &right) < 0)
      return;
 
-   TERMPTY_RESTRICT_FIELD(to_top, 1, ty->h);
+   TERMPTY_RESTRICT_FIELD(to_top, 1, ty->h + 1);
    if (ty->termstate.restrict_cursor)
      {
         to_top += ty->termstate.top_margin;
@@ -2417,7 +2417,7 @@ _handle_esc_csi_deccra(Termpty *ty, Eina_Unicode **b)
    to_top--;
    if (to_bottom - to_top > bottom - top)
      to_bottom = to_top + bottom - top;
-   TERMPTY_RESTRICT_FIELD(to_left, 1, ty->w);
+   TERMPTY_RESTRICT_FIELD(to_left, 1, ty->w + 1);
    if (ty->termstate.restrict_cursor)
      {
         to_left += ty->termstate.left_margin;
