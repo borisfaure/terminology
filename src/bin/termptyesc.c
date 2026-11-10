@@ -318,7 +318,8 @@ _handle_cursor_control(Termpty *ty, const Eina_Unicode *cc)
          cell = &(TERMPTY_SCREEN(ty, ty->cursor_state.cx, ty->cursor_state.cy));
          cell->att.tab_inserted = 1;
          _tab_forward(ty, 1);
-         cell = &(TERMPTY_SCREEN(ty, ty->cursor_state.cx -1, ty->cursor_state.cy));
+         cell = &(TERMPTY_SCREEN(ty, MAX(ty->cursor_state.cx - 1, 0),
+                                 ty->cursor_state.cy));
          cell->att.tab_last = 1;
          return;
       case 0x0a: // LF  '\n' (new line)
