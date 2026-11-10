@@ -1638,6 +1638,12 @@ termpty_resize(Termpty *ty, int new_w, int new_h)
    if (altbuf)
      termpty_screen_swap(ty);
 
+   /* reset margins: they could lie past the new edges */
+   ty->termstate.top_margin = 0;
+   ty->termstate.bottom_margin = 0;
+   ty->termstate.left_margin = 0;
+   ty->termstate.right_margin = 0;
+
    _limit_coord(ty);
 
    _pty_size(ty);
