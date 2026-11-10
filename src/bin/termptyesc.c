@@ -1808,7 +1808,7 @@ _handle_esc_csi_decslrm(Termpty *ty, Eina_Unicode **b)
     right = ty->w;
   TERMPTY_RESTRICT_FIELD(right, 3, ty->w+1);
 
-  if (left >= right)
+  if ((left >= right) || (right > ty->w))
     goto bad;
   if (right - left < 2)
     goto bad;
