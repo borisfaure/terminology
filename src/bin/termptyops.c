@@ -323,7 +323,7 @@ termpty_text_repeat_count(const Termpty *ty, Eina_Unicode codepoint,
    int per_line, settled;
 
    if (line_w < 1) line_w = 1;
-   per_line = (line_w + cell_w - 1) / cell_w;
+   per_line = DIV_ROUND_UP(line_w, cell_w);
    settled = ty->w + (ty->h * per_line);
    if (count <= settled + per_line)
      return count;
