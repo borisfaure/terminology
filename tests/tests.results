@@ -224,3 +224,4 @@ decfra-keep-colors.sh 84900ad5b5ffd5a14cb3318f63690691
 osc-50-size.sh 54d79d82f23d7bfaeb693d60bffa17dc
 rect-huge-args.sh ba2946480420ed690b567f7263766b7c
 resize-shrink-margins.sh ba1d05b35f8a21f3f398c334a82aeeab
+tab-one-column.sh 95a395357401ea44a1308017842c3677
