@@ -6579,7 +6579,7 @@ termpty_handle_seq(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
                {
                   Eina_Unicode cp;
 
-                  cp = (1 << 31) | ((ex->id & 0x1fff) << 18) |
+                  cp = (1u << 31) | ((ex->id & 0x1fff) << 18) |
                     ((ex->x & 0x1ff) << 9) | (ex->y & 0x1ff);
                   ex->x++;
                   if (ex->x >= ex->w)
