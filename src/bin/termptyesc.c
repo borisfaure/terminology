@@ -1837,7 +1837,7 @@ _handle_esc_csi_decstbm(Termpty *ty, Eina_Unicode **b)
   if ((top == -ESC_ARG_ERROR) || (bottom == -ESC_ARG_ERROR))
     goto bad;
 
-  TERMPTY_RESTRICT_FIELD(top, 1, ty->h);
+  TERMPTY_RESTRICT_FIELD(top, 1, ty->h+1);
   TERMPTY_RESTRICT_FIELD(bottom, 1, ty->h+1);
 
   if (top >= bottom) goto bad;
