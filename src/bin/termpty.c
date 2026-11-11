@@ -3925,6 +3925,50 @@ tytest_block_render_idle(void)
    tytest_common_shutdown();
    return 0;
 }
+
+/* Each in-row shift moves a one-cell block along its row: its cell must
+ * take the new reference before dropping the old one, or the block is
+ * freed while still on screen. */
+int
+tytest_block_row_shifts(void)
+{
+   static const char *shifts[] = {
+      "\033[1;1H\033[4h \033[4l", /* IRM */
+      "\033[1;1H\033[@",          /* ICH */
+      "\033[1;1H\033[P",          /* DCH */
+      "\033[1;1H\033['}",         /* DECIC */
+      "\033[1;1H\033['~",         /* DECDC */
+      "\033[1;1H\0336",           /* DECBI */
+      "\033[1;80H\0339",          /* DECFI */
+   };
+   Termpty *ty = tytest_termpty_get();
+   unsigned int i;
+
+   eina_init();
+   ecore_init();
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(shifts); i++)
+     {
+        Termblock *blk;
+        int id;
+
+        tytest_common_init();
+        blk = termpty_block_new(ty, 1, 1, "/img.png", NULL);
+        assert(blk);
+        id = blk->id;
+        termpty_block_insert(ty, '#', blk);
+        ty->block.on = EINA_TRUE;
+        _ty_feed(ty, "\033[2J\033[1;3H#");
+        ty->block.on = EINA_FALSE;
+        assert(termpty_block_get(ty, id) == blk);
+        assert(blk->refs == 1);
+
+        _ty_feed(ty, shifts[i]);
+        assert(termpty_block_get(ty, id) == blk);
+        assert(blk->refs == 1);
+        tytest_common_shutdown();
+     }
+   return 0;
+}
 #endif
 
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
