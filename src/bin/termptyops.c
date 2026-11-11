@@ -255,8 +255,6 @@ _append_fast_ok(const Termpty *ty)
      return EINA_FALSE;
    if (ty->termstate.att.fraktur || ty->termstate.att.encircled)
      return EINA_FALSE;
-   /* Insert mode shifts the rest of the line for every character. */
-   if (ty->termstate.insert) return EINA_FALSE;
    /* Autowrap off clamps the cursor instead of wrapping it, with different
     * enough semantics that it is not worth duplicating here. */
    if (!ty->termstate.wrap) return EINA_FALSE;
@@ -418,11 +416,6 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
              wrapped = EINA_TRUE;
           }
-        if (ty->termstate.insert && (ty->cursor_state.cx < max_right - 1))
-          TERMPTY_CELL_MOVE(ty, &(cells[ty->cursor_state.cx]),
-                            &(cells[ty->cursor_state.cx + 1]),
-                            max_right - 1 - ty->cursor_state.cx);
-
         /* Not on an iteration that just wrapped: max_right was computed above
          * from the pre-wrap cursor, and a whole run written against that stale
          * value would sail past the right margin. */
@@ -441,6 +434,11 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
                   if (run > (size_t)avail) run = (size_t)avail;
                   if (run >= 2)
                     {
+                       /* one shift for the run, as many as it has cells */
+                       if (ty->termstate.insert)
+                         TERMPTY_CELL_MOVE(ty, &(cells[ty->cursor_state.cx]),
+                                           &(cells[ty->cursor_state.cx + run]),
+                                           avail - (int)run);
                        _append_ascii_run(ty, cells, codepoints + i, (int)run,
                                          max_right);
                        i += (int)run - 1;
@@ -448,6 +446,11 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
                     }
                }
           }
+
+        if (ty->termstate.insert && (ty->cursor_state.cx < max_right - 1))
+          TERMPTY_CELL_MOVE(ty, &(cells[ty->cursor_state.cx]),
+                            &(cells[ty->cursor_state.cx + 1]),
+                            max_right - 1 - ty->cursor_state.cx);
 
         /* Skip 0-width space or RTL/LTR marks */
         if (EINA_UNLIKELY(g >= 0x200b && g <= 0x200f))
