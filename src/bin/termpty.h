@@ -476,6 +476,14 @@ do {                                                                         \
    memcpy(Tdst, Tsrc, N * sizeof(Termcell));                                 \
 } while (0)
 
+/* As TERMPTY_CELL_COPY(), for ranges of one row that may overlap */
+#define TERMPTY_CELL_MOVE(Tpty, Tsrc, Tdst, N)                               \
+do {                                                                         \
+   if (EINA_UNLIKELY(((Tpty)->hl.size != 0) || ((Tpty)->block.blocks)))      \
+     termpty_cells_move_refs(Tpty, Tsrc, Tdst, N);                           \
+   memmove(Tdst, Tsrc, (N) * sizeof(Termcell));                              \
+} while (0)
+
 
 static inline void
 term_link_refcount_inc(Termpty *ty, uint16_t link_id, uint16_t count)
@@ -497,18 +505,14 @@ term_link_refcount_dec(Termpty *ty, uint16_t link_id, uint16_t count)
      term_link_free(ty, link);
 }
 
-/* The block and link references of n cells copied from src over dst.
- * Links are counted per run of one id: a per-cell update chains every
- * cell on the same refcount. */
+/* The link references of n cells copied from src over dst, counted per run
+ * of one id: a per-cell update chains every cell on the same refcount. */
 static inline void
-termpty_cells_copy_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
+termpty_cells_link_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
                         int n)
 {
    int i, j;
 
-   if (ty->block.blocks)
-     for (i = 0; i < n; i++)
-       HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[i].codepoint);
    if (ty->hl.size == 0)
      return;
    for (i = 0; i < n; i = j)
@@ -531,6 +535,39 @@ termpty_cells_copy_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
         if (link_id)
           term_link_refcount_dec(ty, link_id, j - i);
      }
+}
+
+/* The block and link references of n cells copied from src over dst. */
+static inline void
+termpty_cells_copy_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
+                        int n)
+{
+   int i;
+
+   if (ty->block.blocks)
+     for (i = 0; i < n; i++)
+       HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[i].codepoint);
+   termpty_cells_link_refs(ty, src, dst, n);
+}
+
+/* As termpty_cells_copy_refs(), for overlapping ranges: blocks are walked
+ * so that a cell gains its new reference before losing its old one. */
+static inline void
+termpty_cells_move_refs(Termpty *ty, const Termcell *src, const Termcell *dst,
+                        int n)
+{
+   int i;
+
+   if (ty->block.blocks)
+     {
+        if (dst > src)
+          for (i = n - 1; i >= 0; i--)
+            HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[i].codepoint);
+        else
+          for (i = 0; i < n; i++)
+            HANDLE_BLOCK_CODEPOINT_OVERWRITE(ty, dst[i].codepoint, src[i].codepoint);
+     }
+   termpty_cells_link_refs(ty, src, dst, n);
 }
 
 static inline Eina_Bool

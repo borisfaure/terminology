@@ -341,7 +341,7 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
                                 int len, size_t plain_ascii_len)
 {
    Termcell *cells;
-   int i, j;
+   int i;
    int origin = ty->termstate.left_margin;
    Eina_Bool fast_ok = _append_fast_ok(ty);
 
@@ -418,11 +418,10 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
              cells = &(TERMPTY_SCREEN(ty, 0, ty->cursor_state.cy));
              wrapped = EINA_TRUE;
           }
-        if (ty->termstate.insert)
-          {
-             for (j = max_right-1; j > ty->cursor_state.cx; j--)
-               TERMPTY_CELL_COPY(ty, &(cells[j - 1]), &(cells[j]), 1);
-          }
+        if (ty->termstate.insert && (ty->cursor_state.cx < max_right - 1))
+          TERMPTY_CELL_MOVE(ty, &(cells[ty->cursor_state.cx]),
+                            &(cells[ty->cursor_state.cx + 1]),
+                            max_right - 1 - ty->cursor_state.cx);
 
         /* Not on an iteration that just wrapped: max_right was computed above
          * from the pre-wrap cursor, and a whole run written against that stale

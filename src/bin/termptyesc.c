@@ -1605,19 +1605,20 @@ _handle_esc_csi_dch(Termpty *ty, Eina_Unicode **ptr)
      }
    TERMPTY_RESTRICT_FIELD(arg, 1, max + 1);
    lim = max - arg;
-   for (x = ty->cursor_state.cx; x < max; x++)
+   x = ty->cursor_state.cx;
+   if (x < lim)
      {
-        if (x < lim)
-          TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
-        else
-          {
-             cells[x].codepoint = ' ';
-             if (EINA_UNLIKELY(cells[x].att.link_id))
-               term_link_refcount_dec(ty, cells[x].att.link_id, 1);
-             cells[x].att = ty->termstate.att;
-             cells[x].att.link_id = 0;
-             cells[x].att.dblwidth = 0;
-          }
+        TERMPTY_CELL_MOVE(ty, &(cells[x + arg]), &(cells[x]), lim - x);
+        x = lim;
+     }
+   for (; x < max; x++)
+     {
+        cells[x].codepoint = ' ';
+        if (EINA_UNLIKELY(cells[x].att.link_id))
+          term_link_refcount_dec(ty, cells[x].att.link_id, 1);
+        cells[x].att = ty->termstate.att;
+        cells[x].att.link_id = 0;
+        cells[x].att.dblwidth = 0;
      }
 }
 
@@ -2645,14 +2646,11 @@ static void
 _cells_insert_blanks(Termpty *ty, Termcell *cells, int x, int max_right,
                      int n)
 {
-   int j;
-
    if (n > max_right - x)
      n = max_right - x;
    if (n <= 0)
      return;
-   for (j = max_right - 1; j >= x + n; j--)
-     TERMPTY_CELL_COPY(ty, &(cells[j - n]), &(cells[j]), 1);
+   TERMPTY_CELL_MOVE(ty, &(cells[x]), &(cells[x + n]), max_right - x - n);
    termpty_cell_codepoint_att_fill(ty, ' ', ty->termstate.att,
                                    &(cells[x]), n);
 }
@@ -2744,19 +2742,20 @@ _handle_esc_csi_decdc(Termpty *ty, Eina_Unicode **b)
         int x;
         Termcell *cells = &(TERMPTY_SCREEN(ty, 0, y));
 
-        for (x = ty->cursor_state.cx; x < max_x; x++)
+        x = ty->cursor_state.cx;
+        if (x < lim)
           {
-             if (x < lim)
-               TERMPTY_CELL_COPY(ty, &(cells[x + arg]), &(cells[x]), 1);
-             else
-               {
-                  cells[x].codepoint = ' ';
-                  if (EINA_UNLIKELY(cells[x].att.link_id))
-                    term_link_refcount_dec(ty, cells[x].att.link_id, 1);
-                  cells[x].att = ty->termstate.att;
-                  cells[x].att.link_id = 0;
-                  cells[x].att.dblwidth = 0;
-               }
+             TERMPTY_CELL_MOVE(ty, &(cells[x + arg]), &(cells[x]), lim - x);
+             x = lim;
+          }
+        for (; x < max_x; x++)
+          {
+             cells[x].codepoint = ' ';
+             if (EINA_UNLIKELY(cells[x].att.link_id))
+               term_link_refcount_dec(ty, cells[x].att.link_id, 1);
+             cells[x].att = ty->termstate.att;
+             cells[x].att.link_id = 0;
+             cells[x].att.dblwidth = 0;
           }
      }
 }
@@ -6305,20 +6304,16 @@ _handle_decfi(Termpty *ty)
              int x;
              Termcell *cells = &(TERMPTY_SCREEN(ty, 0, y));
 
-             for (x = ty->termstate.left_margin; x <= max_x; x++)
-               {
-                  if (x < max_x)
-                    TERMPTY_CELL_COPY(ty, &(cells[x + 1]), &(cells[x]), 1);
-                  else
-                    {
-                       cells[x].codepoint = ' ';
-                       if (EINA_UNLIKELY(cells[x].att.link_id))
-                         term_link_refcount_dec(ty, cells[x].att.link_id, 1);
-                       cells[x].att = ty->termstate.att;
-                       cells[x].att.link_id = 0;
-                       cells[x].att.dblwidth = 0;
-                    }
-               }
+             x = ty->termstate.left_margin;
+             if (x > max_x)
+               continue;
+             TERMPTY_CELL_MOVE(ty, &(cells[x + 1]), &(cells[x]), max_x - x);
+             cells[max_x].codepoint = ' ';
+             if (EINA_UNLIKELY(cells[max_x].att.link_id))
+               term_link_refcount_dec(ty, cells[max_x].att.link_id, 1);
+             cells[max_x].att = ty->termstate.att;
+             cells[max_x].att.link_id = 0;
+             cells[max_x].att.dblwidth = 0;
           }
      }
    else
