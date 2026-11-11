@@ -3658,6 +3658,8 @@ _tab_inactive_get_or_create(Evas *canvas,
 {
    Evas_Object *o;
    Evas_Coord w, h;
+   const char *signal;
+   double fill;
 
    if (term->tab_inactive)
      {
@@ -3685,6 +3687,8 @@ created:
      edje_object_signal_emit(o, "bell,off", "terminology");
    edje_object_part_text_set(o, "terminology.title",
                              tab_item->tc->title);
+   signal = _term_progress_get(term, &fill);
+   _theme_progress_set(o, signal, fill);
    return o;
 }
 
@@ -5992,6 +5996,8 @@ _term_progress_update(Term *term)
    const char *signal = _term_progress_get(term, &fill);
 
    _theme_progress_set(term->bg_edj, signal, fill);
+   if (term->tab_inactive)
+     _theme_progress_set(term->tab_inactive, signal, fill);
 }
 
 static void
