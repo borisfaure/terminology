@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Ten workloads, chosen so that a change to one part of the intake path shows up
+Eleven workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -22,6 +22,9 @@ in one column rather than being averaged away:
                Exercises the rectangle and screen fills.
   insert       ICH (CSI @) on a row, as editors open room for typed text, and
                DECIC (CSI ' }) now and then. Exercises the in-row shifts.
+  insert-mode  words and REPs typed under IRM (CSI 4 h), as when terminfo
+               has smir, with DCH and DECBI/DECFI now and then. Exercises
+               the row shift every character pays in insert mode.
   long-lines   lines kilobytes long, as minified JSON or one-line logs, with
                an accented word now and then. Exercises the ASCII runs that
                follow a non-ASCII character within one read.
@@ -240,6 +243,34 @@ def gen_insert(target):
     return bytes(out[:cut])
 
 
+def gen_insert_mode(target):
+    """Cursor moves, then a word or a REP typed in insert mode."""
+    rng = _rng("insert-mode")
+    out = bytearray(b"\033[4h")
+    cut = len(out)
+    while len(out) < target:
+        r = rng.random()
+        if r < 0.05:
+            seq = "\033[%d;1H\0336" % rng.randint(1, 24)
+        elif r < 0.10:
+            seq = "\033[%d;80H\0339" % rng.randint(1, 24)
+        elif r < 0.20:
+            seq = "\033[%d;%dH\033[%dP" % (rng.randint(1, 24), rng.randint(1, 80),
+                                           rng.randint(1, 80))
+        elif r < 0.40:
+            seq = "\033[%d;%dH%s\033[%db" % (rng.randint(1, 24), rng.randint(1, 40),
+                                             rng.choice("-=_.# "),
+                                             rng.randint(1, 79))
+        else:
+            seq = "\033[%d;%dH%s " % (rng.randint(1, 24), rng.randint(1, 80),
+                                     rng.choice(WORDS))
+        out += seq.encode("ascii")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    return bytes(out[:cut]) + b"\033[4l"
+
+
 def gen_long_lines(target):
     """Lines of 4 to 16 KiB of words, about one in 200 of them accented."""
     rng = _rng("long-lines")
@@ -275,6 +306,7 @@ GENERATORS = {
     "fill": gen_fill,
     "hyperlink": gen_hyperlink,
     "insert": gen_insert,
+    "insert-mode": gen_insert_mode,
     "long-lines": gen_long_lines,
     "plain-ascii": gen_plain_ascii,
     "rep": gen_rep,
