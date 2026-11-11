@@ -29,6 +29,7 @@ static const Termpty_Tcap _termpty_tcaps[] =
    { "RV", "\033[>c" },
    { "Rect", "\033" },
    { "Se", "\033[2 q" },
+   { "Spb", "\033]9;4;%p1%d;%p2%d\033\134" },
    { "Ss", "\033[%p1%d q" },
    { "Swd", "\033]7;" },
    { "Sync", "\033[?2026%?%p1%{1}%-%tl%eh%;" },
