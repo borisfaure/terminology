@@ -4516,6 +4516,8 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
         Eina_Bool is_selected, missed_bell;
         Solo *solo;
         Term *term;
+        const char *signal;
+        double fill;
 
         solo = (Solo*)tab_item->tc;
         term = solo->term;
@@ -4541,6 +4543,8 @@ _cb_tab_selector_show(Tabs *tabs, Tab_Item *to_item)
         tab_item->selector_entry = sel_entry_add(tabs->selector, img,
                                                  is_selected,
                                                  missed_bell, wn->config);
+        signal = _term_progress_get(term, &fill);
+        sel_entry_progress_set(tab_item->selector_entry, signal, fill);
      }
    edje_object_part_swallow(tabs->selector_bg, "terminology.content",
                             tabs->selector);
@@ -5998,6 +6002,8 @@ _term_progress_update(Term *term)
    _theme_progress_set(term->bg_edj, signal, fill);
    if (term->tab_inactive)
      _theme_progress_set(term->tab_inactive, signal, fill);
+   if (term->tab_item && term->tab_item->selector_entry)
+     sel_entry_progress_set(term->tab_item->selector_entry, signal, fill);
 }
 
 static void

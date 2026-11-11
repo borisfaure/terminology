@@ -546,6 +546,16 @@ sel_entry_title_set(void *entry, const char *title)
 }
 
 void
+sel_entry_progress_set(void *entry, const char *signal, double fill)
+{
+   Entry *en = entry;
+
+   edje_object_part_drag_size_set(en->bg, "terminology.progress.fill",
+                                  fill, 1.0);
+   edje_object_signal_emit(en->bg, signal, "terminology");
+}
+
+void
 sel_entry_close(void *data)
 {
    Entry *en = data;

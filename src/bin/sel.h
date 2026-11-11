@@ -6,6 +6,7 @@
 Evas_Object *sel_add(Evas_Object *parent);
 void *sel_entry_add(Evas_Object *obj, Evas_Object *entry, Eina_Bool selected, Eina_Bool bell, Config *config);
 void sel_entry_title_set(void *entry, const char *title);
+void sel_entry_progress_set(void *entry, const char *signal, double fill);
 void sel_entry_close(void *entry);
 void sel_entry_update(void *entry);
 void sel_go(Evas_Object *obj);

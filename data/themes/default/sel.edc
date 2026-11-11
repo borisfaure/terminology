@@ -66,6 +66,11 @@ group { name: "terminology/sel/base";
 
 group { name: "terminology/sel/item";
    images.image: "pm_shadow.png" COMP;
+   script {
+      PROGRESS_SCRIPT
+      public progress_state_changed() {
+      }
+   }
    parts {
       ////////////////////////////////////////////////////////////////////
       // base background and selection image
@@ -170,6 +175,8 @@ group { name: "terminology/sel/item";
             color_class: "/fg/selected/term/sel/title/text";
          }
       }
+
+      PROGRESS_BAR("terminology.content", 3)
 
       ////////////////////////////////////////////////////////////////////
       // visual bell - spinning red siren light
