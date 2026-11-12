@@ -16,6 +16,7 @@ int tytest_truecolor_render(void);
 #endif
 int tytest_block_render_idle(void);
 int tytest_block_row_shifts(void);
+int tytest_block_region_scrolls(void);
 int tytest_sb_add(void);
 int tytest_sb_prepend(void);
 int tytest_sb_skip(void);

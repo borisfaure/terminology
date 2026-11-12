@@ -42,6 +42,7 @@ static struct {
 #endif
        { "block_render_idle", tytest_block_render_idle},
        { "block_row_shifts", tytest_block_row_shifts},
+       { "block_region_scrolls", tytest_block_region_scrolls},
        { "sb_add", tytest_sb_add},
        { "sb_prepend", tytest_sb_prepend},
        { "sb_skip", tytest_sb_skip},

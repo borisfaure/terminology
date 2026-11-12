@@ -4170,6 +4170,58 @@ tytest_block_row_shifts(void)
      }
    return 0;
 }
+
+/* A one-cell block on row 5, scrolled by several lines in a region: it
+ * keeps its one reference while on screen, and is freed once off it. */
+int
+tytest_block_region_scrolls(void)
+{
+   static const struct {
+      const char *seq;
+      Eina_Bool kept;
+   } scrolls[] = {
+      { "\033[2;10r\033[3S", EINA_TRUE },             /* SU */
+      { "\033[2;10r\033[3T", EINA_TRUE },             /* SD */
+      { "\033[2;10r\033[3;1H\033[2M", EINA_TRUE },    /* DL */
+      { "\033[2;10r\033[3;1H\033[4L", EINA_TRUE },    /* IL */
+      { "\033[?69h\033[2;40s\033[2;10r\033[3S", EINA_TRUE },
+      { "\033[2;10r\033[7S", EINA_FALSE },
+      { "\033[2;10r\033[6T", EINA_FALSE },
+      { "\033[2;10r\033[5;1H\033[9M", EINA_FALSE },
+   };
+   Termpty *ty = tytest_termpty_get();
+   unsigned int i;
+
+   eina_init();
+   ecore_init();
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(scrolls); i++)
+     {
+        Termblock *blk;
+        int id;
+
+        tytest_common_init();
+        blk = termpty_block_new(ty, 1, 1, "/img.png", NULL);
+        assert(blk);
+        id = blk->id;
+        termpty_block_insert(ty, '#', blk);
+        ty->block.on = EINA_TRUE;
+        _ty_feed(ty, "\033[2J\033[5;3H#");
+        ty->block.on = EINA_FALSE;
+        assert(termpty_block_get(ty, id) == blk);
+        assert(blk->refs == 1);
+
+        _ty_feed(ty, scrolls[i].seq);
+        if (scrolls[i].kept)
+          {
+             assert(termpty_block_get(ty, id) == blk);
+             assert(blk->refs == 1);
+          }
+        else
+          assert(termpty_block_get(ty, id) == NULL);
+        tytest_common_shutdown();
+     }
+   return 0;
+}
 #endif
 
 #endif /* BINARY_TYFUZZ || BINARY_TYTEST */
