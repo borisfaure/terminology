@@ -233,3 +233,4 @@ xterm-osc-9.sh 09d136a6b7f579c0d23e95f406f65bf4
 xterm-osc-9-4.sh 5e1e81fce6d8d7dbe261ea21ed2491b8
 xterm-osc-9-4-reset.sh 418469754b84535141326790ebf8e941
 sd-region-to-bottom.sh a102ef27ade17a979473302b02ae78ea
+scroll-region-counts.sh 342c990e76a9bcc7a6be7a939685d841
