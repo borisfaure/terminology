@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic benchmark corpora for tybench.
 
-Eleven workloads, chosen so that a change to one part of the intake path shows up
+Twelve workloads, chosen so that a change to one part of the intake path shows up
 in one column rather than being averaged away:
 
   plain-ascii  long lines of printable ASCII, almost no escapes. The pure
@@ -31,6 +31,10 @@ in one column rather than being averaged away:
   hyperlink    file paths behind OSC 8 hyperlinks, as ls --hyperlink prints,
                scrolling in a scroll region, as under a status line.
                Exercises the link refcounts kept when cells are copied.
+  scroll-region  IL, DL, SU and SD of a line to a page in a scroll region,
+                 then a few of the opened lines redrawn, as editors and
+                 pagers scroll under a status line. Exercises the
+                 multi-line scroll of a region.
 
 Output is byte-identical across runs (fixed seed, no clock, no locale) so that
 numbers from different days are comparable.
@@ -302,6 +306,30 @@ def gen_hyperlink(target):
     return bytes(out) + b"\033[r"
 
 
+def gen_scroll_region(target):
+    """IL, DL, SU and SD inside a scroll region, then the opened lines drawn."""
+    rng = _rng("scroll-region")
+    out = bytearray()
+    cut = 0
+    while len(out) < target:
+        top = rng.randint(1, 12)
+        bottom = rng.randint(top + 1, 23)
+        count = rng.randint(1, bottom - top + 1)
+        final = rng.choice("LMST")
+        seq = "\033[%d;%dr\033[%d;1H\033[%d%s" % (top, bottom,
+                                                 rng.randint(top, bottom),
+                                                 count, final)
+        for _ in range(min(count, 4)):
+            seq += "\033[%d;1H%s" % (rng.randint(top, bottom),
+                                     " ".join(rng.choice(WORDS)
+                                              for _ in range(8)))
+        out += seq.encode("ascii")
+        # Whole sequences only, as in gen_sgr.
+        if len(out) <= target:
+            cut = len(out)
+    return bytes(out[:cut]) + b"\033[r"
+
+
 GENERATORS = {
     "fill": gen_fill,
     "hyperlink": gen_hyperlink,
@@ -311,6 +339,7 @@ GENERATORS = {
     "plain-ascii": gen_plain_ascii,
     "rep": gen_rep,
     "scroll": gen_scroll,
+    "scroll-region": gen_scroll_region,
     "sgr": gen_sgr,
     "strings": gen_strings,
     "unicode": gen_unicode,

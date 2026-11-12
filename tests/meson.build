@@ -99,7 +99,7 @@ if benchmarks
   # generator is deterministic so the bytes are reproducible. It writes to
   # @OUTDIR@ so that what it produces is what 'output' declares.
   bench_corpus = custom_target('bench-corpus',
-      output: ['fill', 'hyperlink', 'insert', 'insert-mode', 'long-lines', 'plain-ascii', 'rep', 'scroll', 'sgr', 'strings', 'unicode'],
+      output: ['fill', 'hyperlink', 'insert', 'insert-mode', 'long-lines', 'plain-ascii', 'rep', 'scroll', 'scroll-region', 'sgr', 'strings', 'unicode'],
       command: [python3,
                 meson.current_source_dir() / 'bench' / 'gen_corpus.py',
                 '@OUTDIR@'],
@@ -117,6 +117,7 @@ if benchmarks
                    bench_corpus_dir / 'plain-ascii',
                    bench_corpus_dir / 'rep',
                    bench_corpus_dir / 'scroll',
+                   bench_corpus_dir / 'scroll-region',
                    bench_corpus_dir / 'sgr',
                    bench_corpus_dir / 'unicode'],
             depends: bench_corpus,
