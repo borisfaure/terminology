@@ -115,13 +115,10 @@ void
 termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
 {
    Termcell *cells;
-   int start_y = 0, end_y = ty->h - 1;
+   int start_y = ty->termstate.top_margin, end_y = ty->h - 1;
 
    if (ty->termstate.bottom_margin != 0)
-     {
-        start_y = ty->termstate.top_margin;
-        end_y = ty->termstate.bottom_margin - 1;
-     }
+     end_y = ty->termstate.bottom_margin - 1;
    DBG("... scroll rev!!!!! [%i->%i]", start_y, end_y);
    termio_scroll(ty->obj, 1, start_y, end_y);
 
