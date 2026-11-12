@@ -81,12 +81,28 @@
 "17;"
 "19;"
 "52;"
+"99;"
 "104;"
 "110;"
 "111;"
 "112;"
 "777;"
 "1337;"
+
+# OSC 99 metadata keys and the values termptynotify acts on
+"i="
+"p=title"
+"p=body"
+"p=?"
+"p=close"
+"p=alive"
+"d=0"
+"e=1"
+"u=2"
+"o=always"
+"o=unfocused"
+"o=invisible"
+"w="
 
 # Terminology's block escapes (tysend/tycat) and their sub-commands
 "\x1b}bn"
