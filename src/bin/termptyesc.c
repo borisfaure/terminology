@@ -3016,7 +3016,7 @@ _handle_esc_csi_il(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
-   int sy1, sy2, i;
+   int sy1, sy2;
 
    if (arg == -ESC_ARG_ERROR)
      return;
@@ -3040,10 +3040,7 @@ _handle_esc_csi_il(Termpty *ty, Eina_Unicode **ptr)
         if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
           ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
      }
-   for (i = 0; i < arg; i++)
-     {
-        termpty_text_scroll_rev(ty, EINA_TRUE);
-     }
+   termpty_text_scroll_rev_lines(ty, arg);
    ty->termstate.top_margin = sy1;
    ty->termstate.bottom_margin = sy2;
    ty->cursor_state.cx = ty->termstate.left_margin;
@@ -3054,7 +3051,7 @@ _handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
-   int sy1, sy2, i;
+   int sy1, sy2;
 
    if (arg == -ESC_ARG_ERROR)
      return;
@@ -3078,10 +3075,7 @@ _handle_esc_csi_dl(Termpty *ty, Eina_Unicode **ptr)
         if (ty->termstate.bottom_margin <= ty->termstate.top_margin)
           ty->termstate.bottom_margin = ty->termstate.top_margin + 1;
      }
-   for (i = 0; i < arg; i++)
-     {
-        termpty_text_scroll(ty, EINA_TRUE);
-     }
+   termpty_text_scroll_lines(ty, arg);
    ty->termstate.top_margin = sy1;
    ty->termstate.bottom_margin = sy2;
    ty->cursor_state.cx = ty->termstate.left_margin;
@@ -3092,15 +3086,13 @@ _handle_esc_csi_su(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
-   int i;
 
    if (arg == -ESC_ARG_ERROR)
      return;
 
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
    DBG("SU - Scroll Up: %d", arg);
-   for (i = 0; i < arg; i++)
-     termpty_text_scroll(ty, EINA_TRUE);
+   termpty_text_scroll_lines(ty, arg);
 }
 
 static void
@@ -3108,7 +3100,6 @@ _handle_esc_csi_sd(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
    int arg = _csi_arg_get(ty, &b);
-   int i;
 
    if (arg == -ESC_ARG_ERROR)
      return;
@@ -3120,8 +3111,7 @@ _handle_esc_csi_sd(Termpty *ty, Eina_Unicode **ptr)
 
    TERMPTY_RESTRICT_FIELD(arg, 1, ty->h);
    DBG("SD - Scroll Down: %d", arg);
-   for (i = 0; i < arg; i++)
-     termpty_text_scroll_rev(ty, EINA_TRUE);
+   termpty_text_scroll_rev_lines(ty, arg);
 }
 
 static void

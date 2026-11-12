@@ -162,6 +162,85 @@ termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear)
      }
 }
 
+/* The rows and columns of the scroll region. Returns EINA_FALSE when it is
+ * the whole screen, which scrolls by rotating the circular buffer. */
+static Eina_Bool
+_scroll_region_get(const Termpty *ty, int *start_y, int *end_y,
+                   int *x, int *w)
+{
+   *start_y = ty->termstate.top_margin;
+   *end_y = ty->h - 1;
+   if (ty->termstate.bottom_margin != 0)
+     *end_y = ty->termstate.bottom_margin - 1;
+   *x = ty->termstate.left_margin;
+   *w = ty->w - *x;
+   if (ty->termstate.right_margin)
+     *w = ty->termstate.right_margin - *x;
+   return !((*start_y == 0) && (*end_y == ty->h - 1) &&
+            (ty->termstate.left_margin == 0) &&
+            (ty->termstate.right_margin == 0));
+}
+
+/* As n termpty_text_scroll(ty, EINA_TRUE), moving each row of a region
+ * once rather than n times. */
+void
+termpty_text_scroll_lines(Termpty *ty, int n)
+{
+   int start_y, end_y, x, w, y, i, kept;
+
+   if ((n <= 1) || !_scroll_region_get(ty, &start_y, &end_y, &x, &w))
+     {
+        for (i = 0; i < n; i++)
+          termpty_text_scroll(ty, EINA_TRUE);
+        return;
+     }
+   for (i = 0; i < n; i++)
+     termio_scroll(ty->obj, -1, start_y, end_y);
+
+   n = MIN(n, end_y - start_y + 1);
+   kept = end_y - start_y + 1 - n;
+   /* The n top rows lose their references and the n bottom ones gain a
+    * second, dropped when they are cleared. A row both lost and gained
+    * gains first, for no block to be freed in between. */
+   if ((kept > 0) && EINA_UNLIKELY((ty->hl.size != 0) || (ty->block.blocks)))
+     for (i = 0; i < n; i++)
+       termpty_cells_copy_refs(ty, &(TERMPTY_SCREEN(ty, x, start_y + kept + i)),
+                               &(TERMPTY_SCREEN(ty, x, start_y + i)), w);
+   for (y = start_y; y < start_y + kept; y++)
+     memcpy(&(TERMPTY_SCREEN(ty, x, y)), &(TERMPTY_SCREEN(ty, x, y + n)),
+            w * sizeof(Termcell));
+   for (; y <= end_y; y++)
+     termpty_cells_clear(ty, &(TERMPTY_SCREEN(ty, x, y)), w);
+}
+
+/* As n termpty_text_scroll_rev(ty, EINA_TRUE). */
+void
+termpty_text_scroll_rev_lines(Termpty *ty, int n)
+{
+   int start_y, end_y, x, w, y, i, kept;
+
+   if ((n <= 1) || !_scroll_region_get(ty, &start_y, &end_y, &x, &w))
+     {
+        for (i = 0; i < n; i++)
+          termpty_text_scroll_rev(ty, EINA_TRUE);
+        return;
+     }
+   for (i = 0; i < n; i++)
+     termio_scroll(ty->obj, 1, start_y, end_y);
+
+   n = MIN(n, end_y - start_y + 1);
+   kept = end_y - start_y + 1 - n;
+   if ((kept > 0) && EINA_UNLIKELY((ty->hl.size != 0) || (ty->block.blocks)))
+     for (i = n - 1; i >= 0; i--)
+       termpty_cells_copy_refs(ty, &(TERMPTY_SCREEN(ty, x, start_y + i)),
+                               &(TERMPTY_SCREEN(ty, x, start_y + kept + i)), w);
+   for (y = end_y; y >= start_y + n; y--)
+     memcpy(&(TERMPTY_SCREEN(ty, x, y)), &(TERMPTY_SCREEN(ty, x, y - n)),
+            w * sizeof(Termcell));
+   for (; y >= start_y; y--)
+     termpty_cells_clear(ty, &(TERMPTY_SCREEN(ty, x, y)), w);
+}
+
 void
 termpty_text_scroll_test(Termpty *ty, Eina_Bool clear)
 {

@@ -15,6 +15,8 @@ void termpty_cells_att_fill_preserve_colors(Termpty *ty, Termcell *cells,
                                        Eina_Unicode codepoint, int count);
 void termpty_text_scroll(Termpty *ty, Eina_Bool clear);
 void termpty_text_scroll_rev(Termpty *ty, Eina_Bool clear);
+void termpty_text_scroll_lines(Termpty *ty, int n);
+void termpty_text_scroll_rev_lines(Termpty *ty, int n);
 void termpty_text_scroll_test(Termpty *ty, Eina_Bool clear);
 void termpty_text_scroll_rev_test(Termpty *ty, Eina_Bool clear);
 void termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len);
