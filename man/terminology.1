@@ -468,6 +468,54 @@ never ask or to always allow in the settings panel (Behavior, \fILet
 escape codes read selections\fP). A denied or refused read gets an
 empty reply, so the program asking does not hang.
 
+.SH NOTIFICATIONS AND PROGRESS FROM PROGRAMS:
+A program running in the terminal can show a desktop notification with
+any of these escape sequences, ended by \fBBEL\fP or \fBST\fP:
+.TP
+.B OSC 9 ; text
+The text is the notification's title. A text starting with digits
+followed by \fB;\fP is not a notification but another \fBOSC 9\fP
+command, such as the progress report below.
+.TP
+.B OSC 777 ; notify ; title ; body
+.TP
+.B OSC 99 ; metadata ; payload
+With the metadata keys for an identifier, chunked payloads, urgency,
+expiry and showing only when the terminal is unfocused or not visible.
+.PP
+Notifications can be turned off in the settings panel (Behavior,
+\fIEnable escape codes showing desktop notifications\fP).
+.PP
+A program can report its progress with
+\fBOSC 9 ; 4 ; \fIstate\fB ; \fIvalue\fR, where \fIvalue\fP is a
+percentage from 0 to 100 and \fIstate\fP is one of:
+.TP
+.B 0
+remove the progress bar
+.TP
+.B 1
+show \fIvalue\fP
+.TP
+.B 2
+error, in red
+.TP
+.B 3
+busy, without a known value
+.TP
+.B 4
+paused, in yellow
+.PP
+An error or paused report without a value keeps the previous one, or
+fills the bar when there is none. The bar runs along the bottom edge of
+the terminal, on its tab button in the tab bar when the tab is not
+shown, and on its thumbnail in the tab selector. A bar that gets no new
+report for 60 seconds goes away, 5 seconds once it reached 100%, so
+that a program which died does not leave it behind. A terminal reset
+removes it too.
+.PP
+The \fBterminology\fP terminfo entry advertises the sequence as
+\fBSpb\fP, so that programs such as tmux can pass it on.
+
 .SH EXTENDED ESCAPES FOR TERMINOLOGY:
 .
 .TP
