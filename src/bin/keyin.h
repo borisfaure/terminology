@@ -12,6 +12,7 @@ typedef struct tag_Keyin_Pressed_Key
 {
    unsigned int keycode;
    const char *key;              /* stringshare, for the modifier side check */
+   unsigned int locks;           /* KEYIN_MOD_LOCKS bits sent with the press */
    unsigned char reported : 1;   /* the press reached keyin_encode_event() */
 } Keyin_Pressed_Key;
 
@@ -26,14 +27,21 @@ struct tag_Keys_Handler
 };
 
 void
-keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                        Keyin_Action action);
+keyin_handle_key_to_pty(Termpty *ty, Keys_Handler *khdl,
+                        const Evas_Event_Key_Down *ev, Keyin_Action action);
 void
 keyin_handle_key_up_to_pty(Termpty *ty, const Keys_Handler *khdl,
                            const Evas_Event_Key_Up *ev);
+unsigned int
+keyin_mods_with_modifier_key(unsigned int mods, const Keys_Handler *khdl,
+                             const char *key, Keyin_Action action);
 Keyin_Action
 keyin_key_down_track(Keys_Handler *khdl, const Evas_Event_Key_Down *ev);
-void keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode);
+void
+keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode,
+                       unsigned int mods);
+Eina_Bool
+keyin_key_reported_get(const Keys_Handler *khdl, unsigned int keycode);
 Eina_Bool
 keyin_key_up_track(Keys_Handler *khdl, const Evas_Event_Key_Up *ev);
 void keyin_pressed_reset(Keys_Handler *khdl);

@@ -246,5 +246,5 @@ kitty-kbd-query.sh 2aeecb0992989a62a9b4cf5ce687852f
 kitty-kbd-stack.sh 1940619ffdbe765b2495edbce9cf22cc
 kitty-kbd-altscreen.sh df9913f9d85f856c75dd525a806da4f6
 kitty-kbd-reset.sh bd10ee95b6b71d150fbe1a11c7b6ac94
-kitty-kbd-unsupported.sh 37ed332e16676c21a2ccfe719760dfca
+kitty-kbd-unsupported.sh 3cf7cfe08b0d5fee7c38d0dc570f7c53
 kitty-kbd-malformed.sh bd10ee95b6b71d150fbe1a11c7b6ac94

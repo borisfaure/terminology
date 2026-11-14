@@ -1819,21 +1819,8 @@ _win_key_up_to_term(Term *term, Keys_Handler *khdl,
 }
 
 static void
-_cb_win_key_up(void *data,
-               Evas *_e EINA_UNUSED,
-               Evas_Object *_obj EINA_UNUSED,
-               void *event)
+_win_key_up_to_terms(Win *wn, const Evas_Event_Key_Up *ev)
 {
-   Win *wn = data;
-   Evas_Event_Key_Up *ev = event;
-   Eina_Bool reported;
-
-   DBG("GROUP key up (%p) (ctrl:%d)",
-       wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
-   keyin_handle_up(&wn->khdl, ev);
-   reported = keyin_key_up_track(&wn->khdl, ev);
-   if (!reported || wn->on_popover || wn->cmdbox_up)
-     return;
    if (wn->group_input)
      {
         Eina_List *l;
@@ -1850,6 +1837,25 @@ _cb_win_key_up(void *data,
         if (term)
           _win_key_up_to_term(term, &wn->khdl, ev);
      }
+}
+
+static void
+_cb_win_key_up(void *data,
+               Evas *_e EINA_UNUSED,
+               Evas_Object *_obj EINA_UNUSED,
+               void *event)
+{
+   Win *wn = data;
+   Evas_Event_Key_Up *ev = event;
+
+   DBG("GROUP key up (%p) (ctrl:%d)",
+       wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
+   keyin_handle_up(&wn->khdl, ev);
+   if (keyin_key_reported_get(&wn->khdl, ev->keycode) &&
+       !wn->on_popover && !wn->cmdbox_up)
+     _win_key_up_to_terms(wn, ev);
+   /* only now: the encoder reads the lock bits stored with the press */
+   keyin_key_up_track(&wn->khdl, ev);
 }
 
 const char *
@@ -2193,8 +2199,7 @@ _cb_win_key_down(void *data,
              if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
                {
                   termpty_program_status_drop_unseen(ty);
-                  keyin_handle_key_to_pty(ty, ev, action);
-                  keyin_key_reported_set(&wn->khdl, ev->keycode);
+                  keyin_handle_key_to_pty(ty, &wn->khdl, ev, action);
                }
           }
      }
@@ -2205,8 +2210,7 @@ _cb_win_key_down(void *data,
         if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
           {
              termpty_program_status_drop_unseen(ty);
-             keyin_handle_key_to_pty(ty, ev, action);
-             keyin_key_reported_set(&wn->khdl, ev->keycode);
+             keyin_handle_key_to_pty(ty, &wn->khdl, ev, action);
           }
      }
 

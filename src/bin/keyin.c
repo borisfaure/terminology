@@ -63,85 +63,44 @@ _keyin_mods_get(const Evas_Modifier *modifiers, const Evas_Lock *locks)
    return mods;
 }
 
-/* The event's own modifier key, as the spec defines the mods field of a
- * modifier key event: set on press, cleared on release unless the other
- * side of the keyboard is still held. For the lock keys the new state
- * can only be read from the next event, so the bit is toggled. */
+/* Returns the mods sent */
 static unsigned int
-_keyin_mods_with_modifier_key(unsigned int mods, const Keys_Handler *khdl,
-                              const char *key, Keyin_Action action)
-{
-   static const struct {
-      const char *left, *right;
-      unsigned int mod;
-   } modifiers[] = {
-      { "Shift_L",   "Shift_R",   KEYIN_MOD_SHIFT },
-      { "Control_L", "Control_R", KEYIN_MOD_CTRL },
-      { "Alt_L",     "Alt_R",     KEYIN_MOD_ALT },
-      { "Super_L",   "Super_R",   KEYIN_MOD_SUPER },
-      { "Meta_L",    "Meta_R",    KEYIN_MOD_META },
-   };
-   unsigned int i, j;
-
-   for (i = 0; i < sizeof(modifiers) / sizeof(modifiers[0]); i++)
-     {
-        const char *other_side = NULL;
-
-        if (!strcmp(key, modifiers[i].left))
-          other_side = modifiers[i].right;
-        else if (!strcmp(key, modifiers[i].right))
-          other_side = modifiers[i].left;
-        if (!other_side)
-          continue;
-        if (action != KEYIN_ACTION_RELEASE)
-          return mods | modifiers[i].mod;
-        /* the released key is already out of the pressed table, so a hit
-         * is the other side */
-        for (j = 0; j < khdl->pressed_count; j++)
-          if (khdl->pressed[j].key &&
-              !strcmp(khdl->pressed[j].key, other_side))
-            return mods;
-        return mods & ~modifiers[i].mod;
-     }
-
-   if (!strcmp(key, "Caps_Lock"))
-     return mods ^ KEYIN_MOD_CAPS_LOCK;
-   if (!strcmp(key, "Num_Lock"))
-     return mods ^ KEYIN_MOD_NUM_LOCK;
-   return mods;
-}
-
-void
-keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                        Keyin_Action action)
+_keyin_event_to_pty(Termpty *ty, const Keys_Handler *khdl,
+                    const char *key, const char *keyname, const char *string,
+                    const Evas_Modifier *modifiers, const Evas_Lock *locks,
+                    Keyin_Action action)
 {
    Keyin_Event kev = {
-      .key = ev->key,
-      .keyname = ev->keyname,
-      .string = ev->string,
-      .mods = _keyin_mods_get(ev->modifiers, ev->locks),
+      .key = key,
+      .keyname = keyname,
+      .string = string,
+      .mods = _keyin_mods_get(modifiers, locks),
       .action = action,
    };
 
+   if (key_is_modifier(key))
+     kev.mods = keyin_mods_with_modifier_key(kev.mods, khdl, key, action);
    keyin_encode_event(ty, &kev);
+   return kev.mods;
+}
+
+void
+keyin_handle_key_to_pty(Termpty *ty, Keys_Handler *khdl,
+                        const Evas_Event_Key_Down *ev, Keyin_Action action)
+{
+   unsigned int mods;
+
+   mods = _keyin_event_to_pty(ty, khdl, ev->key, ev->keyname, ev->string,
+                              ev->modifiers, ev->locks, action);
+   keyin_key_reported_set(khdl, ev->keycode, mods);
 }
 
 void
 keyin_handle_key_up_to_pty(Termpty *ty, const Keys_Handler *khdl,
                            const Evas_Event_Key_Up *ev)
 {
-   Keyin_Event kev = {
-      .key = ev->key,
-      .keyname = ev->keyname,
-      .string = ev->string,
-      .mods = _keyin_mods_get(ev->modifiers, ev->locks),
-      .action = KEYIN_ACTION_RELEASE,
-   };
-
-   if (key_is_modifier(ev->key))
-     kev.mods = _keyin_mods_with_modifier_key(kev.mods, khdl, ev->key,
-                                              kev.action);
-   keyin_encode_event(ty, &kev);
+   _keyin_event_to_pty(ty, khdl, ev->key, ev->keyname, ev->string,
+                       ev->modifiers, ev->locks, KEYIN_ACTION_RELEASE);
 }
 
 static Key_Binding *

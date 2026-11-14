@@ -420,15 +420,18 @@ typedef struct tag_Kitty_Case
 #define R  KEYIN_ACTION_REPEAT
 #define U  KEYIN_ACTION_RELEASE
 
+/* The handlers adjust the mods of a modifier key event through
+ * keyin_mods_with_modifier_key() before encoding; 'khdl' is the pressed
+ * table it reads, empty when there is none to drive. */
 static int
-_kitty_case_is(const Kitty_Case *c)
+_kitty_case_adjusted_is(const Kitty_Case *c, const Keys_Handler *khdl)
 {
    struct ty_sb *sb = &_ty->write_buffer;
    Keyin_Event kev = {
       .key = c->key,
       .keyname = c->keyname,
       .string = c->string,
-      .mods = c->mods,
+      .mods = keyin_mods_with_modifier_key(c->mods, khdl, c->key, c->action),
       .action = c->action,
    };
    size_t expected_len = strlen(c->expected);
@@ -453,6 +456,14 @@ _kitty_case_is(const Kitty_Case *c)
      }
    ty_sb_free(sb);
    return bad;
+}
+
+static int
+_kitty_case_is(const Kitty_Case *c)
+{
+   static Keys_Handler no_pressed;   /* zeroed: no keys held */
+
+   return _kitty_case_adjusted_is(c, &no_pressed);
 }
 
 int
@@ -659,6 +670,105 @@ tytest_keyin_kitty_events(void)
    return bad;
 }
 
+int
+tytest_keyin_kitty_all_keys(void)
+{
+   static const Kitty_Case cases[] = {
+        /* flags key             keyname  string   mods    action expected */
+        { 8, "a",                "a",     "a",     0,      P,     "\033[97u" },
+        { 8, "A",                "a",     "A",     S,      P,     "\033[97;2u" },
+        { 8, "A",                "a",     "A",     CL,     P,     "\033[97;65u" },
+        { 8, "Return",           "Return", "\r",   0,      P,     "\033[13u" },
+        { 8, "Tab",              "Tab",   "\t",    0,      P,     "\033[9u" },
+        { 8, "BackSpace",        "BackSpace", "\b", 0,     P,     "\033[127u" },
+        { 8, "Escape",           "Escape", NULL,   0,      P,     "\033[27u" },
+        { 8, "KP_1",             "KP_End", "1",    NL,     P,     "\033[57400;129u" },
+        /* modifier keys are reported too, their own bit set on press */
+        { 8, "Shift_L",          "Shift_L", NULL,  0,      P,     "\033[57441;2u" },
+        { 8, "Control_L",        "Control_L", NULL, 0,     P,     "\033[57442;5u" },
+        /* without flag 2 a release is not reported */
+        { 8, "Shift_L",          "Shift_L", NULL,  S,      U,     "" },
+        { 10, "Shift_L",         "Shift_L", NULL,  S,      U,     "\033[57441;1:3u" },
+        { 10, "Return",          "Return", NULL,   0,      U,     "\033[13;1:3u" },
+        /* a key with no code and text passes the text through */
+        { 8, "Keycode-200",      "Keycode-200", "\303\273", 0,    P,     "\303\273" },
+   };
+   const Kitty_Case shift_r = { 10, "Shift_R", "Shift_R", NULL, S, U,
+                                "\033[57447;2:3u" };
+   /* the event carries the lock state from before the key: Caps Lock is
+    * still shown on when the release that turns it off comes */
+   const Kitty_Case caps[] = {
+        { 10, "Caps_Lock", "Caps_Lock", NULL, 0,  P, "\033[57358;65u" },
+        { 10, "Caps_Lock", "Caps_Lock", NULL, CL, U, "\033[57358;65:3u" },
+        { 10, "Caps_Lock", "Caps_Lock", NULL, CL, P, "\033[57358u" },
+        { 10, "Caps_Lock", "Caps_Lock", NULL, CL, U, "\033[57358;1:3u" },
+   };
+   Keys_Handler khdl;
+   Evas_Event_Key_Down down;
+   Evas_Event_Key_Up up;
+   char *saved_locale;
+   size_t i;
+   int bad = 0;
+
+   /* towlower() needs a UTF-8 locale; the real terminal gets one from
+    * elm_init(), the harness does not */
+   saved_locale = strdup(setlocale(LC_CTYPE, NULL));
+   assert(saved_locale);
+   if (!setlocale(LC_CTYPE, "C.UTF-8"))
+     {
+        fprintf(stderr, "\n  no C.UTF-8 locale, skipping");
+        free(saved_locale);
+        return 0;
+     }
+
+   _init();
+   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
+     bad += _kitty_case_is(&cases[i]);
+
+   /* Shift_R released while Shift_L is still held: the Shift bit survives
+    * through the pressed table */
+   memset(&khdl, 0, sizeof(khdl));
+   memset(&down, 0, sizeof(down));
+   down.key = "Shift_L";
+   down.keyname = "Shift_L";
+   down.keycode = 50;
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   down.key = "Shift_R";
+   down.keyname = "Shift_R";
+   down.keycode = 62;
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   memset(&up, 0, sizeof(up));
+   up.keycode = 62;
+   /* the presses were not reported, so the release is not either */
+   assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
+   bad += _kitty_case_adjusted_is(&shift_r, &khdl);
+   keyin_pressed_reset(&khdl);
+
+   /* a lock key's release sends the lock bit its press sent */
+   down.key = "Caps_Lock";
+   down.keyname = "Caps_Lock";
+   down.keycode = 66;
+   up.keycode = 66;
+   for (i = 0; i < sizeof(caps) / sizeof(caps[0]); i += 2)
+     {
+        assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+        bad += _kitty_case_adjusted_is(&caps[i], &khdl);
+        keyin_key_reported_set(&khdl, 66,
+                               keyin_mods_with_modifier_key(caps[i].mods, &khdl,
+                                                            "Caps_Lock", P));
+        bad += _kitty_case_adjusted_is(&caps[i + 1], &khdl);
+        assert(keyin_key_up_track(&khdl, &up) == EINA_TRUE);
+     }
+
+   _shutdown();
+   setlocale(LC_CTYPE, saved_locale);
+   free(saved_locale);
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   return bad;
+}
+
 #undef S
 #undef A
 #undef C
@@ -729,7 +839,7 @@ tytest_keyin_pressed(void)
    /* the press was not reported, so no release */
    assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
    assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
-   keyin_key_reported_set(&khdl, 24);
+   keyin_key_reported_set(&khdl, 24, 0);
    assert(keyin_key_up_track(&khdl, &up) == EINA_TRUE);
    assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
 

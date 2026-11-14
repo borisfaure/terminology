@@ -362,6 +362,59 @@ keyin_encode_event(Termpty *ty, const Keyin_Event *kev)
 
 /* the spec reports a release only for a key whose press was reported */
 
+/* mods with the spec's bit for a modifier key's own press or release */
+unsigned int
+keyin_mods_with_modifier_key(unsigned int mods, const Keys_Handler *khdl,
+                             const char *key, Keyin_Action action)
+{
+   static const struct {
+      const char *left, *right;
+      unsigned int mod;
+   } modifiers[] = {
+      { "Shift_L",   "Shift_R",   KEYIN_MOD_SHIFT },
+      { "Control_L", "Control_R", KEYIN_MOD_CTRL },
+      { "Alt_L",     "Alt_R",     KEYIN_MOD_ALT },
+      { "Super_L",   "Super_R",   KEYIN_MOD_SUPER },
+      { "Meta_L",    "Meta_R",    KEYIN_MOD_META },
+   };
+   unsigned int i, j, lock;
+
+   for (i = 0; i < sizeof(modifiers) / sizeof(modifiers[0]); i++)
+     {
+        const char *other_side = NULL;
+
+        if (!strcmp(key, modifiers[i].left))
+          other_side = modifiers[i].right;
+        else if (!strcmp(key, modifiers[i].right))
+          other_side = modifiers[i].left;
+        if (!other_side)
+          continue;
+        if (action != KEYIN_ACTION_RELEASE)
+          return mods | modifiers[i].mod;
+        for (j = 0; j < khdl->pressed_count; j++)
+          if (khdl->pressed[j].key &&
+              !strcmp(khdl->pressed[j].key, other_side))
+            return mods;
+        return mods & ~modifiers[i].mod;
+     }
+
+   if (!strcmp(key, "Caps_Lock"))
+     lock = KEYIN_MOD_CAPS_LOCK;
+   else if (!strcmp(key, "Num_Lock"))
+     lock = KEYIN_MOD_NUM_LOCK;
+   else
+     return mods;
+   /* a lock key's new state shows in the next event only: toggle it on
+    * press, and keep on release what the press sent, whenever the
+    * platform applies the change */
+   if (action != KEYIN_ACTION_RELEASE)
+     return mods ^ lock;
+   for (j = 0; j < khdl->pressed_count; j++)
+     if (khdl->pressed[j].key && !strcmp(khdl->pressed[j].key, key))
+       return (mods & ~lock) | (khdl->pressed[j].locks & lock);
+   return mods;
+}
+
 static Keyin_Pressed_Key *
 _pressed_key_get(Keys_Handler *khdl, unsigned int keycode)
 {
@@ -387,17 +440,32 @@ keyin_key_down_track(Keys_Handler *khdl, const Evas_Event_Key_Down *ev)
    pk = &khdl->pressed[khdl->pressed_count++];
    pk->keycode = ev->keycode;
    pk->key = eina_stringshare_add(ev->key);
+   pk->locks = 0;
    pk->reported = 0;
    return KEYIN_ACTION_PRESS;
 }
 
 void
-keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode)
+keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode,
+                       unsigned int mods)
 {
    Keyin_Pressed_Key *pk = _pressed_key_get(khdl, keycode);
 
-   if (pk)
-     pk->reported = 1;
+   if (!pk)
+     return;
+   pk->reported = 1;
+   pk->locks = mods & KEYIN_MOD_LOCKS;
+}
+
+Eina_Bool
+keyin_key_reported_get(const Keys_Handler *khdl, unsigned int keycode)
+{
+   unsigned int i;
+
+   for (i = 0; i < khdl->pressed_count; i++)
+     if (khdl->pressed[i].keycode == keycode)
+       return khdl->pressed[i].reported;
+   return EINA_FALSE;
 }
 
 Eina_Bool
