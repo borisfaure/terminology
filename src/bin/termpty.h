@@ -179,6 +179,20 @@ typedef struct tag_Term_Cursor {
     unsigned char wrapnext : 1;
 } Term_Cursor;
 
+/* kitty keyboard protocol, https://sw.kovidgoyal.net/kitty/keyboard-protocol/ */
+#define TERMPTY_KITTY_KBD_DISAMBIGUATE       (1 << 0)
+#define TERMPTY_KITTY_KBD_REPORT_EVENTS      (1 << 1)
+#define TERMPTY_KITTY_KBD_REPORT_ALTERNATES  (1 << 2)
+#define TERMPTY_KITTY_KBD_REPORT_ALL         (1 << 3)
+#define TERMPTY_KITTY_KBD_REPORT_TEXT        (1 << 4)
+#define TERMPTY_KITTY_KBD_STACK_SIZE 8
+
+typedef struct tag_Termpty_Kitty_Kbd
+{
+   uint8_t flags[TERMPTY_KITTY_KBD_STACK_SIZE];
+   uint8_t depth;
+} Termpty_Kitty_Kbd;
+
 struct tag_Termpty
 {
    Evas_Object *obj;
@@ -279,6 +293,7 @@ struct tag_Termpty
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];
+   Termpty_Kitty_Kbd kitty_kbd[2]; /* indexed by altbuf */
    /* Column/row of the cell written by the last text codepoint appended by
     * termpty_text_append(), or -1 when there is none. Used to validate
     * VS16 (U+FE0F) retro-widen: a cursor move that lands anywhere else

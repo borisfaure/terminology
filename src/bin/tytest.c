@@ -100,6 +100,7 @@ static struct {
        { "kam", tytest_kam},
        { "color_scheme_notify", tytest_color_scheme_notify},
        { "kitty_keyboard_ignored", tytest_kitty_keyboard_ignored},
+       { "kitty_kbd_stack", tytest_kitty_kbd_stack},
        { "keyin_legacy", tytest_keyin_legacy},
        { "keyin_modify_other_keys", tytest_keyin_modify_other_keys},
        { "keyin_modify_other_keys_level1", tytest_keyin_modify_other_keys_level1},

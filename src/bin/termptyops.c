@@ -709,6 +709,74 @@ termpty_reset_att(Termatt *att)
    att->tab_last = 0;
 }
 
+unsigned int
+termpty_kitty_kbd_flags_get(const Termpty *ty)
+{
+   const Termpty_Kitty_Kbd *kk = &ty->kitty_kbd[ty->altbuf];
+
+   if (!kk->depth)
+     return 0;
+   return kk->flags[kk->depth - 1];
+}
+
+static Termpty_Kitty_Kbd *
+_kitty_kbd_top_ensure(Termpty *ty)
+{
+   Termpty_Kitty_Kbd *kk = &ty->kitty_kbd[ty->altbuf];
+
+   if (!kk->depth)
+     {
+        kk->flags[0] = 0;
+        kk->depth = 1;
+     }
+   return kk;
+}
+
+void
+termpty_kitty_kbd_set(Termpty *ty, unsigned int flags, int mode)
+{
+   Termpty_Kitty_Kbd *kk;
+   uint8_t *top;
+
+   if ((mode < 1) || (mode > 3))
+     return;
+   kk = _kitty_kbd_top_ensure(ty);
+   top = &kk->flags[kk->depth - 1];
+   if (mode == 1)
+     *top = flags;
+   else if (mode == 2)
+     *top |= flags;
+   else
+     *top &= ~flags;
+}
+
+void
+termpty_kitty_kbd_push(Termpty *ty, unsigned int flags)
+{
+   Termpty_Kitty_Kbd *kk = _kitty_kbd_top_ensure(ty);
+
+   if (kk->depth == TERMPTY_KITTY_KBD_STACK_SIZE)
+     {
+        memmove(kk->flags, kk->flags + 1, TERMPTY_KITTY_KBD_STACK_SIZE - 1);
+        kk->depth--;
+     }
+   kk->flags[kk->depth++] = flags;
+}
+
+void
+termpty_kitty_kbd_pop(Termpty *ty, unsigned int count)
+{
+   Termpty_Kitty_Kbd *kk = &ty->kitty_kbd[ty->altbuf];
+
+   kk->depth = (count >= kk->depth) ? 0 : kk->depth - count;
+}
+
+void
+termpty_kitty_kbd_reset(Termpty *ty)
+{
+   memset(ty->kitty_kbd, 0, sizeof(ty->kitty_kbd));
+}
+
 void
 termpty_soft_reset_state(Termpty *ty)
 {
@@ -758,6 +826,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->mouse_mode = MOUSE_OFF;
    ty->mouse_ext = MOUSE_EXT_NONE;
    ty->bracketed_paste = 0;
+   termpty_kitty_kbd_reset(ty);
    termpty_sync_output_reset(ty);
 
    termio_reset_main_colors(ty->obj);

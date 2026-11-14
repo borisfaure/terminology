@@ -35,6 +35,15 @@ void termpty_clear_all(Termpty *ty);
 void termpty_reset_att(Termatt *att);
 void termpty_reset_state(Termpty *ty);
 void termpty_soft_reset_state(Termpty *ty);
+
+/* kitty keyboard protocol: the flags implemented so far */
+#define TERMPTY_KITTY_KBD_SUPPORTED (TERMPTY_KITTY_KBD_DISAMBIGUATE)
+
+unsigned int termpty_kitty_kbd_flags_get(const Termpty *ty);
+void termpty_kitty_kbd_set(Termpty *ty, unsigned int flags, int mode);
+void termpty_kitty_kbd_push(Termpty *ty, unsigned int flags);
+void termpty_kitty_kbd_pop(Termpty *ty, unsigned int count);
+void termpty_kitty_kbd_reset(Termpty *ty);
 void termpty_cursor_copy(Termpty *ty, Eina_Bool save);
 void termpty_clear_tabs_on_screen(Termpty *ty);
 void termpty_clear_backlog(Termpty *ty);

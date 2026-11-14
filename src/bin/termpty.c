@@ -3443,6 +3443,99 @@ tytest_kitty_keyboard_ignored(void)
    return 0;
 }
 
+/* The kitty keyboard flag stack. Values are not masked here: the escape
+ * handler masks, the stack functions store anything. */
+int
+tytest_kitty_kbd_stack(void)
+{
+   Termpty ty;
+   int i;
+
+   _ty_test_init(&ty, 80, 24);
+
+   /* fresh state */
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+   assert(ty.kitty_kbd[0].depth == 0);
+   assert(ty.kitty_kbd[1].depth == 0);
+
+   /* a push creates the base entry, a pop returns to it */
+   termpty_kitty_kbd_push(&ty, 5);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 5);
+   assert(ty.kitty_kbd[0].depth == 2);
+   termpty_kitty_kbd_pop(&ty, 1);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+   assert(ty.kitty_kbd[0].depth == 1);
+
+   /* 9 pushes into 8 slots evict the base and the first value */
+   termpty_kitty_kbd_pop(&ty, 10);
+   for (i = 1; i <= 9; i++)
+     termpty_kitty_kbd_push(&ty, i);
+   assert(ty.kitty_kbd[0].depth == TERMPTY_KITTY_KBD_STACK_SIZE);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 9);
+   for (i = 8; i >= 2; i--)
+     {
+        termpty_kitty_kbd_pop(&ty, 1);
+        assert(termpty_kitty_kbd_flags_get(&ty) == i);
+     }
+   termpty_kitty_kbd_pop(&ty, 1);
+   assert(ty.kitty_kbd[0].depth == 0);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+
+   /* a set on an empty stack creates the base entry */
+   termpty_kitty_kbd_set(&ty, 3, 1);
+   termpty_kitty_kbd_set(&ty, 4, 2);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 7);
+   termpty_kitty_kbd_set(&ty, 1, 3);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 6);
+   /* modes outside 1..3 are ignored */
+   termpty_kitty_kbd_set(&ty, 1, 0);
+   termpty_kitty_kbd_set(&ty, 1, 4);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 6);
+
+   /* over-pop clamps to an empty stack */
+   termpty_kitty_kbd_push(&ty, 1);
+   termpty_kitty_kbd_push(&ty, 1);
+   assert(ty.kitty_kbd[0].depth == 3);
+   termpty_kitty_kbd_pop(&ty, 200);
+   assert(ty.kitty_kbd[0].depth == 0);
+
+   /* one stack per screen */
+   ty.altbuf = 1;
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+   termpty_kitty_kbd_push(&ty, 2);
+   ty.altbuf = 0;
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+   ty.altbuf = 1;
+   assert(termpty_kitty_kbd_flags_get(&ty) == 2);
+
+   /* RIS and DECSTR clear both screens */
+   termpty_soft_reset_state(&ty);
+   assert(ty.kitty_kbd[0].depth == 0);
+   assert(ty.kitty_kbd[1].depth == 0);
+
+   /* the index follows altbuf through a screen switch; the soft reset
+    * above did not leave the alt screen, so switch back first */
+   _ty_feed(&ty, "\033[?1049l");
+   _ty_feed(&ty, "\033[>1u");
+   _ty_feed(&ty, "\033[?1049h");
+   assert(ty.altbuf == 1);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 0);
+   _ty_feed(&ty, "\033[?1049l");
+   assert(termpty_kitty_kbd_flags_get(&ty) == 1);
+
+   /* a resize does not touch the stacks, on either screen */
+   _ty_feed(&ty, "\033[?1049h");
+   _ty_feed(&ty, "\033[>1u");
+   assert(termpty_kitty_kbd_flags_get(&ty) == 1);
+   termpty_resize(&ty, 100, 30);
+   assert(termpty_kitty_kbd_flags_get(&ty) == 1);
+   _ty_feed(&ty, "\033[?1049l");
+   assert(termpty_kitty_kbd_flags_get(&ty) == 1);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
 /* VS16-aware emoji width (retro-widen)
  *
  * emoji_dbl_width makes _termpty_is_wide() report double-width for a

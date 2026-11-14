@@ -3747,6 +3747,46 @@ _seq_incomplete(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *cc)
    return 0;
 }
 
+/* https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement */
+static void
+_handle_esc_csi_kitty_kbd(Termpty *ty, Eina_Unicode **ptr)
+{
+   Eina_Unicode *b = *ptr;
+   Eina_Unicode cmd = *b;
+   int flags, arg;
+
+   switch (cmd)
+     {
+      case '?':
+         DBG("ignoring kitty keyboard query");
+         break;
+      case '>':
+         flags = _csi_arg_get(ty, &b);
+         if (flags == -ESC_ARG_ERROR)
+           return;
+         termpty_kitty_kbd_push(ty, (flags < 0 ? 0 : flags)
+                                & TERMPTY_KITTY_KBD_SUPPORTED);
+         break;
+      case '<':
+         arg = _csi_arg_get(ty, &b);
+         if (arg == -ESC_ARG_ERROR)
+           return;
+         termpty_kitty_kbd_pop(ty, arg < 0 ? 1 : arg);
+         break;
+      case '=':
+         flags = _csi_arg_get(ty, &b);
+         if (flags == -ESC_ARG_ERROR)
+           return;
+         arg = _csi_arg_get(ty, &b);
+         if (arg == -ESC_ARG_ERROR)
+           return;
+         termpty_kitty_kbd_set(ty, (flags < 0 ? 0 : flags)
+                               & TERMPTY_KITTY_KBD_SUPPORTED,
+                               arg < 0 ? 1 : arg);
+         break;
+     }
+}
+
 /* Returns the codepoints consumed after the CSI introducer, 0 when the CSI
  * is incomplete, or -1 when an ESC right after the introducer aborts it. */
 static int
@@ -4001,7 +4041,7 @@ _handle_esc_csi(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
           }
         else if ((*b == '?') || (*b == '>') || (*b == '<') || (*b == '='))
           {
-             DBG("ignoring kitty keyboard sequence");
+             _handle_esc_csi_kitty_kbd(ty, &b);
           }
         else
           {
