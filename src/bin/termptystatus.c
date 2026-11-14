@@ -478,6 +478,25 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
    if (!body || !*body)
      return;
 
+   /* feature detection: the whole body, once trimmed, is a question mark.
+    * The lists are the ones from the spec's example, and are fixed there */
+   p = body;
+   while ((*p == ' ') || (*p == '\t'))
+     p++;
+   if (*p == '?')
+     {
+        p++;
+        while ((*p == ' ') || (*p == '\t'))
+          p++;
+        if (!*p)
+          {
+             TERMPTY_WRITE_STR("\033]7501;? : states=idle,working,done,"
+                               "blocked,error : kinds=permission,question,"
+                               "auth\033\\");
+             return;
+          }
+     }
+
    /* the payload grammar is bytes; a codepoint above 0x7f makes its
     * pair fail the value check, and so is skipped */
    for (p = body; *p; p++)
