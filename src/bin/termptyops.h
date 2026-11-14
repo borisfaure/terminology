@@ -39,7 +39,8 @@ void termpty_soft_reset_state(Termpty *ty);
 /* kitty keyboard protocol: the flags implemented so far */
 #define TERMPTY_KITTY_KBD_SUPPORTED \
    (TERMPTY_KITTY_KBD_DISAMBIGUATE | TERMPTY_KITTY_KBD_REPORT_EVENTS | \
-    TERMPTY_KITTY_KBD_REPORT_ALTERNATES | TERMPTY_KITTY_KBD_REPORT_ALL)
+    TERMPTY_KITTY_KBD_REPORT_ALTERNATES | TERMPTY_KITTY_KBD_REPORT_ALL | \
+    TERMPTY_KITTY_KBD_REPORT_TEXT)
 
 unsigned int termpty_kitty_kbd_flags_get(const Termpty *ty);
 void termpty_kitty_kbd_set(Termpty *ty, unsigned int flags, int mode);

@@ -111,6 +111,7 @@ static struct {
        { "keyin_kitty_alternates", tytest_keyin_kitty_alternates},
        { "keyin_kitty_events", tytest_keyin_kitty_events},
        { "keyin_kitty_all_keys", tytest_keyin_kitty_all_keys},
+       { "keyin_kitty_text", tytest_keyin_kitty_text},
        { "keyin_pressed", tytest_keyin_pressed},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
        { "config_selection_read_upgrade", tytest_config_selection_read_upgrade},

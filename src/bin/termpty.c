@@ -3433,15 +3433,15 @@ tytest_kitty_kbd_query(void)
    _ty_feed(&ty, "\x1b[?0u");
    _ty_reply_is(&ty, "\x1b[?0u");
 
-   /* only implemented flags are stored and answered: 31 is 1|2|4|8|16,
-    * the report-text flag 16 is not implemented yet */
-   _ty_feed(&ty, "\x1b[>31u");     /* push */
+   /* only implemented flags are stored and answered: 63 is all the
+    * defined flags plus the undefined bit 32, masked to 31 */
+   _ty_feed(&ty, "\x1b[>63u");     /* push */
    _ty_feed(&ty, "\x1b[?u");
-   _ty_reply_is(&ty, "\x1b[?15u");
+   _ty_reply_is(&ty, "\x1b[?31u");
    _ty_feed(&ty, "\x1b[<u");       /* pop */
-   _ty_feed(&ty, "\x1b[=31;1u");   /* set */
+   _ty_feed(&ty, "\x1b[=63;1u");   /* set */
    _ty_feed(&ty, "\x1b[?u");
-   _ty_reply_is(&ty, "\x1b[?15u");
+   _ty_reply_is(&ty, "\x1b[?31u");
    _ty_feed(&ty, "\x1b[=0;1u");    /* set */
 
    assert(ty.write_buffer.len == 0);

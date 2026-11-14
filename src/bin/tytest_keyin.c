@@ -769,6 +769,53 @@ tytest_keyin_kitty_all_keys(void)
    return bad;
 }
 
+int
+tytest_keyin_kitty_text(void)
+{
+   static const Kitty_Case cases[] = {
+        /* flags key             keyname  string       mods    action expected */
+        { 24, "a",               "a",     "a",         0,      P,     "\033[97;;97u" },
+        { 24, "A",               "a",     "A",         S,      P,     "\033[97;2;65u" },
+        /* a control codepoint in the text suppresses it entirely */
+        { 24, "a",               "a",     "\001",      C,      P,     "\033[97;5u" },
+        { 24, "Return",          "Return", "\r",       0,      P,     "\033[13u" },
+        { 24, "KP_1",            "KP_End", "1",        NL,     P,     "\033[57400;129;49u" },
+        { 31, "A",               "a",     "A",         S,      P,     "\033[97:65;2;65u" },
+        { 31, "A",               "a",     NULL,        S,      U,     "\033[97:65;2:3u" },
+        /* the base-layout alternate of a Cyrillic key is its latin name */
+        { 31, "Cyrillic_ES",     "c",     "\320\241",  S,      P,     "\033[1089:1057:99;2;1057u" },
+        /* a C1 codepoint anywhere in the text rejects all of it */
+        { 24, "a",               "a",     "a\302\205", 0,      P,     "\033[97u" },
+        /* flag 16 without 8 is undefined in the spec; the text goes raw */
+        { 17, "a",               "a",     "a",         0,      P,     "a" },
+   };
+   char *saved_locale;
+   size_t i;
+   int bad = 0;
+
+   /* towlower() needs a UTF-8 locale; the real terminal gets one from
+    * elm_init(), the harness does not */
+   saved_locale = strdup(setlocale(LC_CTYPE, NULL));
+   assert(saved_locale);
+   if (!setlocale(LC_CTYPE, "C.UTF-8"))
+     {
+        fprintf(stderr, "\n  no C.UTF-8 locale, skipping");
+        free(saved_locale);
+        return 0;
+     }
+
+   _init();
+   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
+     bad += _kitty_case_is(&cases[i]);
+   _shutdown();
+   setlocale(LC_CTYPE, saved_locale);
+   free(saved_locale);
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   return bad;
+}
+
 #undef S
 #undef A
 #undef C
