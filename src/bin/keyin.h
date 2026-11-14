@@ -5,17 +5,37 @@
 
 typedef struct tag_Keys_Handler Keys_Handler;
 
+/* the keys currently held, for the event types of the kitty protocol */
+#define KEYIN_PRESSED_MAX 16
+
+typedef struct tag_Keyin_Pressed_Key
+{
+   unsigned int keycode;
+   const char *key;              /* stringshare, for the modifier side check */
+   unsigned char reported : 1;   /* the press reached keyin_encode_event() */
+} Keyin_Pressed_Key;
+
 struct tag_Keys_Handler
 {
    Ecore_IMF_Context *imf;
    unsigned int last_keyup;
    Eina_List *seq;
+   Keyin_Pressed_Key pressed[KEYIN_PRESSED_MAX];
+   unsigned int pressed_count;
    unsigned char composing : 1;
 };
 
 void
 keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
                         Keyin_Action action);
+void
+keyin_handle_key_up_to_pty(Termpty *ty, const Evas_Event_Key_Up *ev);
+Keyin_Action
+keyin_key_down_track(Keys_Handler *khdl, const Evas_Event_Key_Down *ev);
+void keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode);
+Eina_Bool
+keyin_key_up_track(Keys_Handler *khdl, const Evas_Event_Key_Up *ev);
+void keyin_pressed_reset(Keys_Handler *khdl);
 Eina_Bool
 termpty_can_handle_key(const Termpty *ty,
                        const Keys_Handler *khdl,

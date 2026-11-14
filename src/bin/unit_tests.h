@@ -109,6 +109,7 @@ int tytest_keyin_keypad(void);
 int tytest_keyin_keysyms(void);
 int tytest_keyin_kitty_disambiguate(void);
 int tytest_keyin_kitty_alternates(void);
+int tytest_keyin_pressed(void);
 int tytest_config_erase_is_del_upgrade(void);
 int tytest_config_selection_read_upgrade(void);
 int tytest_config_cursor_blink_timeout_upgrade(void);

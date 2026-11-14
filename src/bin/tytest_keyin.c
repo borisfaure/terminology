@@ -12,6 +12,7 @@
 #include "termpty.h"
 #include "termptyops.h"
 #include "keyin_encode.h"
+#include "keyin.h"
 #include "unit_tests.h"
 
 /* keyin_encode_key() writes through termpty_write(), which appends to
@@ -642,6 +643,57 @@ tytest_keyin_keysyms(void)
 #undef IS
 
    return bad;
+}
+
+int
+tytest_keyin_pressed(void)
+{
+   Keys_Handler khdl;
+   Evas_Event_Key_Down down;
+   Evas_Event_Key_Up up;
+   unsigned int i;
+
+   /* keyin_key_down_track() only reads keycode, key and keyname, so a
+    * stack-allocated event is enough */
+   memset(&khdl, 0, sizeof(khdl));
+   memset(&down, 0, sizeof(down));
+   down.key = "q";
+   down.keyname = "q";
+   down.keycode = 24;
+   memset(&up, 0, sizeof(up));
+   up.keycode = 24;
+
+   _init();
+
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_REPEAT);
+   /* the press was not reported, so no release */
+   assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   keyin_key_reported_set(&khdl, 24);
+   assert(keyin_key_up_track(&khdl, &up) == EINA_TRUE);
+   assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
+
+   /* a 17th key is not tracked: no release for it */
+   for (i = 0; i < KEYIN_PRESSED_MAX; i++)
+     {
+        down.keycode = 100 + i;
+        assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+     }
+   down.keycode = 200;
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   up.keycode = 200;
+   assert(keyin_key_up_track(&khdl, &up) == EINA_FALSE);
+
+   /* a key held across a focus out is a fresh press afterwards */
+   down.keycode = 100;
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_REPEAT);
+   keyin_pressed_reset(&khdl);
+   assert(keyin_key_down_track(&khdl, &down) == KEYIN_ACTION_PRESS);
+   keyin_pressed_reset(&khdl);
+
+   _shutdown();
+   return 0;
 }
 
 #endif

@@ -78,6 +78,20 @@ keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
    keyin_encode_event(ty, &kev);
 }
 
+void
+keyin_handle_key_up_to_pty(Termpty *ty, const Evas_Event_Key_Up *ev)
+{
+   Keyin_Event kev = {
+      .key = ev->key,
+      .keyname = ev->keyname,
+      .string = ev->string,
+      .mods = _keyin_mods_get(ev->modifiers, ev->locks),
+      .action = KEYIN_ACTION_RELEASE,
+   };
+
+   keyin_encode_event(ty, &kev);
+}
+
 static Key_Binding *
 key_binding_lookup(const char *keyname,
                    Eina_Bool ctrl, Eina_Bool alt, Eina_Bool shift,

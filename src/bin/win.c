@@ -817,6 +817,8 @@ _solo_unfocus(Term_Container *tc, Term_Container *relative)
 
    tc->is_focused = EINA_FALSE;
    termio_focus_out(term->termio);
+   /* a release must not reach a terminal its press did not */
+   keyin_pressed_reset(&term->wn->khdl);
 
    if (tc->parent != relative)
      tc->parent->unfocus(tc->parent, tc);
@@ -1103,6 +1105,8 @@ _cb_win_focus_out(void *data,
 
    DBG("FOCUS OUT tc:%p tc->is_focused:%d",
        tc, tc->is_focused);
+   /* releases are not seen while unfocused: forget the keys held */
+   keyin_pressed_reset(&wn->khdl);
    tc->unfocus(tc, NULL);
    if (wn->group_input)
      {
@@ -1276,6 +1280,7 @@ win_free(Win *wn)
    config_del(wn->config);
    eina_stringshare_del(wn->preedit_str);
    keyin_compose_seq_reset(&wn->khdl);
+   keyin_pressed_reset(&wn->khdl);
    if (wn->khdl.imf)
      {
         ecore_imf_context_event_callback_del
@@ -1804,6 +1809,15 @@ win_has_single_child(const Win *wn)
 }
 
 static void
+_win_key_up_to_term(Term *term, const Evas_Event_Key_Up *ev)
+{
+   Termpty *ty = termio_pty_get(term->termio);
+
+   if (ty && !ty->termstate.kbd_lock)
+     keyin_handle_key_up_to_pty(ty, ev);
+}
+
+static void
 _cb_win_key_up(void *data,
                Evas *_e EINA_UNUSED,
                Evas_Object *_obj EINA_UNUSED,
@@ -1811,10 +1825,30 @@ _cb_win_key_up(void *data,
 {
    Win *wn = data;
    Evas_Event_Key_Up *ev = event;
+   Eina_Bool reported;
 
    DBG("GROUP key up (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
    keyin_handle_up(&wn->khdl, ev);
+   reported = keyin_key_up_track(&wn->khdl, ev);
+   if (!reported || wn->on_popover || wn->cmdbox_up)
+     return;
+   if (wn->group_input)
+     {
+        Eina_List *l;
+        Term *term;
+
+        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
+          _win_key_up_to_term(term, ev);
+     }
+   else
+     {
+        Term_Container *tc = (Term_Container*) wn;
+        Term *term = tc->focused_term_get(tc);
+
+        if (term)
+          _win_key_up_to_term(term, ev);
+     }
 }
 
 const char *
@@ -1932,11 +1966,14 @@ _cb_win_key_down(void *data,
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool done = EINA_FALSE;
    int ctrl, alt, shift, win, meta, hyper;
+   Keyin_Action action;
 
    DBG("GROUP key down (%p) (ctrl:%d)",
        wn, evas_key_modifier_is_set(ev->modifiers, "Control"));
    _focus_validator();
    if ((wn->on_popover) || (wn->cmdbox_up)) return;
+
+   action = keyin_key_down_track(&wn->khdl, ev);
 
    ctrl = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
@@ -2155,7 +2192,8 @@ _cb_win_key_down(void *data,
              if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
                {
                   termpty_program_status_drop_unseen(ty);
-                  keyin_handle_key_to_pty(ty, ev, KEYIN_ACTION_PRESS);
+                  keyin_handle_key_to_pty(ty, ev, action);
+                  keyin_key_reported_set(&wn->khdl, ev->keycode);
                }
           }
      }
@@ -2166,7 +2204,8 @@ _cb_win_key_down(void *data,
         if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
           {
              termpty_program_status_drop_unseen(ty);
-             keyin_handle_key_to_pty(ty, ev, KEYIN_ACTION_PRESS);
+             keyin_handle_key_to_pty(ty, ev, action);
+             keyin_key_reported_set(&wn->khdl, ev->keycode);
           }
      }
 

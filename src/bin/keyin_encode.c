@@ -1,10 +1,12 @@
 #include "private.h"
 
 #include <Elementary.h>
+#include <Ecore_IMF.h>
 #include "termpty.h"
 #include "termptyops.h"
 #include "keyin_encode.h"
 #include "keyin_kitty.h"
+#include "keyin.h"
 
 typedef struct tag_Tty_Key Tty_Key;
 typedef struct tag_Key_Values Key_Values;
@@ -355,3 +357,71 @@ keyin_encode_event(Termpty *ty, const Keyin_Event *kev)
 
    _encode_legacy(ty, kev);
 }
+
+/* {{{ Pressed key tracking */
+
+/* the spec reports a release only for a key whose press was reported */
+
+static Keyin_Pressed_Key *
+_pressed_key_get(Keys_Handler *khdl, unsigned int keycode)
+{
+   unsigned int i;
+
+   for (i = 0; i < khdl->pressed_count; i++)
+     if (khdl->pressed[i].keycode == keycode)
+       return &khdl->pressed[i];
+   return NULL;
+}
+
+Keyin_Action
+keyin_key_down_track(Keys_Handler *khdl, const Evas_Event_Key_Down *ev)
+{
+   Keyin_Pressed_Key *pk;
+
+   pk = _pressed_key_get(khdl, ev->keycode);
+   if (pk)
+     return KEYIN_ACTION_REPEAT;
+   /* a key past the table gets no release: 16 held keys is plenty */
+   if (khdl->pressed_count >= KEYIN_PRESSED_MAX)
+     return KEYIN_ACTION_PRESS;
+   pk = &khdl->pressed[khdl->pressed_count++];
+   pk->keycode = ev->keycode;
+   pk->key = eina_stringshare_add(ev->key);
+   pk->reported = 0;
+   return KEYIN_ACTION_PRESS;
+}
+
+void
+keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode)
+{
+   Keyin_Pressed_Key *pk = _pressed_key_get(khdl, keycode);
+
+   if (pk)
+     pk->reported = 1;
+}
+
+Eina_Bool
+keyin_key_up_track(Keys_Handler *khdl, const Evas_Event_Key_Up *ev)
+{
+   Keyin_Pressed_Key *pk = _pressed_key_get(khdl, ev->keycode);
+   Eina_Bool reported = EINA_FALSE;
+
+   if (!pk)
+     return EINA_FALSE;
+   reported = pk->reported;
+   eina_stringshare_del(pk->key);
+   *pk = khdl->pressed[--khdl->pressed_count];
+   return reported;
+}
+
+void
+keyin_pressed_reset(Keys_Handler *khdl)
+{
+   unsigned int i;
+
+   for (i = 0; i < khdl->pressed_count; i++)
+     eina_stringshare_del(khdl->pressed[i].key);
+   khdl->pressed_count = 0;
+}
+
+/* }}} */
