@@ -600,6 +600,65 @@ tytest_keyin_kitty_alternates(void)
    return bad;
 }
 
+int
+tytest_keyin_kitty_events(void)
+{
+   static const Kitty_Case cases[] = {
+        /* flags key             keyname  string   mods    action expected */
+        { 3, "a",                "a",     "a",     0,      R,     "a" },
+        { 3, "a",                "a",     NULL,    0,      U,     "\033[97;1:3u" },
+        { 3, "a",                "a",     "\001",  C,      R,     "\033[97;5:2u" },
+        { 3, "a",                "a",     NULL,    C,      U,     "\033[97;5:3u" },
+        /* Return, Tab and BackSpace stay legacy without modifiers */
+        { 3, "Return",           "Return", NULL,   0,      U,     "" },
+        { 3, "Return",           "Return", "\r",   0,      R,     "\r" },
+        { 3, "Tab",              "Tab",   NULL,    0,      U,     "" },
+        { 3, "BackSpace",        "BackSpace", NULL, 0,     U,     "" },
+        { 3, "Return",           "Return", NULL,   S,      U,     "\033[13;2:3u" },
+        { 3, "Escape",           "Escape", NULL,   0,      U,     "\033[27;1:3u" },
+        { 3, "Left",             "Left",  NULL,    0,      P,     "\033[D" },
+        { 3, "Left",             "Left",  NULL,    0,      R,     "\033[1;1:2D" },
+        { 3, "Left",             "Left",  NULL,    0,      U,     "\033[1;1:3D" },
+        /* without flag 1, presses stay legacy, keeping DECCKM */
+        { 2, "a",                "a",     "\001",  C,      P,     "\001" },
+        { 2, "a",                "a",     NULL,    C,      U,     "\033[97;5:3u" },
+        { 2, "Escape",           "Escape", NULL,   0,      U,     "\033[27;1:3u" },
+        { 7, "A",                "a",     NULL,    S,      U,     "\033[97:65;2:3u" },
+        /* a release keeps the base key of its press */
+        { 7, "Cyrillic_es",      "c",     NULL,    C,      P,     "\033[1089::99;5u" },
+        { 7, "Cyrillic_es",      "c",     NULL,    C,      U,     "\033[1089::99;5:3u" },
+   };
+   Kitty_Case appcursor = { 2, "Left", "Left", NULL, 0, P, "\033OD" };
+   char *saved_locale;
+   size_t i;
+   int bad = 0;
+
+   /* towlower() needs a UTF-8 locale; the real terminal gets one from
+    * elm_init(), the harness does not */
+   saved_locale = strdup(setlocale(LC_CTYPE, NULL));
+   assert(saved_locale);
+   if (!setlocale(LC_CTYPE, "C.UTF-8"))
+     {
+        fprintf(stderr, "\n  no C.UTF-8 locale, skipping");
+        free(saved_locale);
+        return 0;
+     }
+
+   _init();
+   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
+     bad += _kitty_case_is(&cases[i]);
+   _ty->termstate.appcursor = EINA_TRUE;
+   bad += _kitty_case_is(&appcursor);
+   _ty->termstate.appcursor = EINA_FALSE;
+   _shutdown();
+   setlocale(LC_CTYPE, saved_locale);
+   free(saved_locale);
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   return bad;
+}
+
 #undef S
 #undef A
 #undef C

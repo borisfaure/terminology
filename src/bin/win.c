@@ -1809,12 +1809,13 @@ win_has_single_child(const Win *wn)
 }
 
 static void
-_win_key_up_to_term(Term *term, const Evas_Event_Key_Up *ev)
+_win_key_up_to_term(Term *term, Keys_Handler *khdl,
+                    const Evas_Event_Key_Up *ev)
 {
    Termpty *ty = termio_pty_get(term->termio);
 
    if (ty && !ty->termstate.kbd_lock)
-     keyin_handle_key_up_to_pty(ty, ev);
+     keyin_handle_key_up_to_pty(ty, khdl, ev);
 }
 
 static void
@@ -1839,7 +1840,7 @@ _cb_win_key_up(void *data,
         Term *term;
 
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
-          _win_key_up_to_term(term, ev);
+          _win_key_up_to_term(term, &wn->khdl, ev);
      }
    else
      {
@@ -1847,7 +1848,7 @@ _cb_win_key_up(void *data,
         Term *term = tc->focused_term_get(tc);
 
         if (term)
-          _win_key_up_to_term(term, ev);
+          _win_key_up_to_term(term, &wn->khdl, ev);
      }
 }
 

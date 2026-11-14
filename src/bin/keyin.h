@@ -29,7 +29,8 @@ void
 keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
                         Keyin_Action action);
 void
-keyin_handle_key_up_to_pty(Termpty *ty, const Evas_Event_Key_Up *ev);
+keyin_handle_key_up_to_pty(Termpty *ty, const Keys_Handler *khdl,
+                           const Evas_Event_Key_Up *ev);
 Keyin_Action
 keyin_key_down_track(Keys_Handler *khdl, const Evas_Event_Key_Down *ev);
 void keyin_key_reported_set(Keys_Handler *khdl, unsigned int keycode);
