@@ -5738,6 +5738,12 @@ _handle_esc_osc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
              free(s);
           }
         break;
+      case 133:
+        DBG("shell integration");
+        /* A marks a new prompt: the previous program is no longer running */
+        if (p && (*p == 'A'))
+          termpty_program_status_drop_transient(ty);
+        break;
       case 7501:
         DBG("program status report");
         termpty_program_status_handle(ty, p);
