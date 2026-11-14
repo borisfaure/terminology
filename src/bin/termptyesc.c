@@ -695,6 +695,10 @@ _handle_esc_csi_reset_mode(Termpty *ty, Eina_Unicode cc, Eina_Unicode *b,
                       */
                    WRN("Ignored screen mode %i", arg);
                    break;
+                case 1035:
+                   DBG("%s numLock mode", mode ? "enable" : "disable");
+                   ty->termstate.numlock_mode = mode;
+                   break;
                 case 1047:
                    if (!mode && ty->altbuf)
                      /* clear screen before switching back to normal */
@@ -892,6 +896,8 @@ _dec_private_mode_status(const Termpty *ty, int mode)
          return DECRPM_NOT_RECOGNIZED;
       case 1034: /* eightBitInput: Alt always sends ESC */
          return DECRPM_PERMANENTLY_RESET;
+      case 1035: /* numLock: set, Num_Lock overrides DECPAM */
+         return _decrpm_from_bool(ty->termstate.numlock_mode);
       case 1047:
          return _decrpm_from_bool(ty->altbuf);
       case 1048: /* save cursor is an action, there is no state to report */

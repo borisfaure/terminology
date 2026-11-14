@@ -98,6 +98,7 @@ static struct {
        { "keyin_modify_other_keys", tytest_keyin_modify_other_keys},
        { "keyin_modify_other_keys_level1", tytest_keyin_modify_other_keys_level1},
        { "keyin_backspace", tytest_keyin_backspace},
+       { "keyin_keypad", tytest_keyin_keypad},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
        { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
        { "vs16_bare_narrow", tytest_vs16_bare_narrow},

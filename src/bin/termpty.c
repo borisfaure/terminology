@@ -3267,6 +3267,16 @@ tytest_decrqm(void)
    _ty_feed(&ty, "\x1b[?1004$p");
    _ty_reply_is(&ty, "\x1b[?1004;1$y");
 
+   _ty_feed(&ty, "\x1b[?1035$p");
+   _ty_reply_is(&ty, "\x1b[?1035;1$y");
+   _ty_feed(&ty, "\x1b[?1035l\x1b[?1035$p");
+   _ty_reply_is(&ty, "\x1b[?1035;2$y");
+   /* DECSTR and RIS restore the default */
+   _ty_feed(&ty, "\x1b[?1035l\x1b[!p\x1b[?1035$p");
+   _ty_reply_is(&ty, "\x1b[?1035;1$y");
+   _ty_feed(&ty, "\x1b[?1035l\x1b" "c\x1b[?1035$p");
+   _ty_reply_is(&ty, "\x1b[?1035;1$y");
+
    _ty_feed(&ty, "\x1b[?2$p\x1b[?4$p\x1b[?2027$p");
    _ty_reply_is(&ty, "\x1b[?2;3$y\x1b[?4;4$y\x1b[?2027;4$y");
 

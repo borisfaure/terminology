@@ -60,7 +60,7 @@ _show(const char *s, size_t len)
 
 /* Press a key and compare every byte it put on the pty. */
 static int
-_press_is(const char *key, const char *string,
+_press_is(const char *key, Eina_Bool numlock, const char *string,
           int alt, int shift, int ctrl,
           const char *expected, size_t expected_len)
 {
@@ -68,7 +68,7 @@ _press_is(const char *key, const char *string,
    int bad = 0;
 
    ty_sb_free(sb);
-   keyin_encode_key(_ty, key, string, EINA_FALSE, alt, shift, ctrl);
+   keyin_encode_key(_ty, key, string, numlock, alt, shift, ctrl);
 
    if ((sb->len != expected_len) ||
        memcmp(sb->buf + sb->gap, expected, expected_len))
@@ -88,11 +88,15 @@ _press_is(const char *key, const char *string,
 
 /* For a named key, where ev->string is never reached. */
 #define PRESS(Key, Alt, Shift, Ctrl, Expected) \
-   bad += _press_is(Key, NULL, Alt, Shift, Ctrl, Expected, sizeof(Expected) - 1)
+   bad += _press_is(Key, EINA_FALSE, NULL, Alt, Shift, Ctrl, Expected, sizeof(Expected) - 1)
 
 /* For an ordinary character, with the ev->string evas would deliver. */
 #define PRESS_S(Key, String, Alt, Shift, Ctrl, Expected) \
-   bad += _press_is(Key, String, Alt, Shift, Ctrl, Expected, sizeof(Expected) - 1)
+   bad += _press_is(Key, EINA_FALSE, String, Alt, Shift, Ctrl, Expected, sizeof(Expected) - 1)
+
+/* For a keypad key, where Num_Lock is a dimension of the case. */
+#define PRESS_KP(Key, Numlock, String, Alt, Shift, Ctrl, Expected) \
+   bad += _press_is(Key, Numlock, String, Alt, Shift, Ctrl, Expected, sizeof(Expected) - 1)
 
 /* Legacy encoding, i.e. modifyOtherKeys off. */
 int
@@ -311,7 +315,75 @@ tytest_keyin_backspace(void)
    return bad;
 }
 
+/* Keypad keys under DECPAM (\033=) and Num_Lock: the numLock mode
+ * (?1035) decides which of the two wins. */
+int
+tytest_keyin_keypad(void)
+{
+   int bad = 0;
+
+   _init();
+
+   /* ?1035 set, the default: Num_Lock wins, the digits come from
+    * ev->string, whatever DECPAM says */
+   _ty->termstate.numlock_mode = EINA_TRUE;
+   _ty->termstate.alt_kp = EINA_TRUE;
+   /*      key            nl string alt shift ctrl  expected */
+   PRESS_KP("KP_7",       1, "7",   0,  0,    0,    "7");
+   PRESS_KP("KP_Add",     1, "+",   0,  0,    0,    "+");
+   PRESS_KP("KP_Enter",   1, "\r",  0,  0,    0,    "\r");
+   _ty->termstate.alt_kp = EINA_FALSE;
+   PRESS_KP("KP_7",       1, "7",   0,  0,    0,    "7");
+
+   /* ?1035 reset, DECPAM set: DECPAM wins over Num_Lock, with the SS3
+    * forms the terminfo entry advertises (ka1=\EOw, kb2=\EOu, kc3=\EOs,
+    * kent=\EOM) */
+   _ty->termstate.numlock_mode = EINA_FALSE;
+   _ty->termstate.alt_kp = EINA_TRUE;
+   PRESS_KP("KP_7",       1, "7",   0,  0,    0,    "\033Ow");
+   PRESS_KP("KP_5",       1, "5",   0,  0,    0,    "\033Ou");
+   PRESS_KP("KP_3",       1, "3",   0,  0,    0,    "\033Os");
+   PRESS_KP("KP_1",       1, "1",   0,  0,    0,    "\033Oq");
+   PRESS_KP("KP_Enter",   1, "\r",  0,  0,    0,    "\033OM");
+   PRESS_KP("KP_Add",     1, "+",   0,  0,    0,    "\033Ok");
+   PRESS_KP("KP_Decimal", 1, ".",   0,  0,    0,    "\033On");
+   PRESS_KP("KP_7",       1, "7",   0,  1,    0,    "\033O2w");
+   PRESS_KP("KP_5",       1, "5",   0,  0,    1,    "\033O5u");
+
+   /* ?1035 reset, no DECPAM: Num_Lock keeps sending the digits */
+   _ty->termstate.alt_kp = EINA_FALSE;
+   PRESS_KP("KP_7",       1, "7",   0,  0,    0,    "7");
+
+   /* Num_Lock off: unchanged for either mode and either DECPAM state */
+   _ty->termstate.alt_kp = EINA_TRUE;
+   _ty->termstate.appcursor = EINA_TRUE;
+   PRESS_KP("KP_Home",    0, NULL,  0,  0,    0,    "\033OH");
+   PRESS_KP("KP_Begin",   0, NULL,  0,  0,    0,    "\033OE");
+   _ty->termstate.appcursor = EINA_FALSE;
+   PRESS_KP("KP_Next",    0, NULL,  0,  0,    0,    "\033[6~");
+   PRESS_KP("KP_Enter",   0, NULL,  0,  0,    0,    "\033OM");
+   PRESS_KP("KP_Add",     0, NULL,  0,  0,    0,    "\033Ok");
+
+   _ty->termstate.alt_kp = EINA_FALSE;
+   PRESS_KP("KP_Up",      0, NULL,  0,  0,    0,    "\033[A");
+   PRESS_KP("KP_Up",      0, NULL,  0,  1,    0,    "8");
+   _ty->termstate.appcursor = EINA_TRUE;
+   PRESS_KP("KP_Up",      0, NULL,  0,  0,    0,    "\033OA");
+   _ty->termstate.appcursor = EINA_FALSE;
+
+   /* ?1035 set again: Num_Lock off, DECPAM still wins */
+   _ty->termstate.numlock_mode = EINA_TRUE;
+   _ty->termstate.alt_kp = EINA_TRUE;
+   PRESS_KP("KP_7",       0, NULL,  0,  0,    0,    "\033Ow");
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   _shutdown();
+   return bad;
+}
+
 #undef PRESS
 #undef PRESS_S
+#undef PRESS_KP
 
 #endif

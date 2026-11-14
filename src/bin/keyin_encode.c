@@ -281,22 +281,20 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
      }
    if (!strncmp(key, "KP_", 3))
      {
-        if (!numlock)
+        /* ?1035, numLock, default set: Num_Lock overrides DECPAM */
+        if (ty->termstate.alt_kp && !(ty->termstate.numlock_mode && numlock))
           {
-             if (ty->termstate.alt_kp)
-               {
-                  if (_key_try(ty, tty_keys_kp_app,
-                               sizeof(tty_keys_kp_app)/sizeof(tty_keys_kp_app[0]),
-                               key, alt, shift, ctrl))
-                    return;
-               }
-             else
-               {
-                  if (_key_try(ty, tty_keys_kp_plain,
-                               sizeof(tty_keys_kp_plain)/sizeof(tty_keys_kp_plain[0]),
-                               key, alt, shift, ctrl))
-                    return;
-               }
+             if (_key_try(ty, tty_keys_kp_app,
+                          sizeof(tty_keys_kp_app)/sizeof(tty_keys_kp_app[0]),
+                          key, alt, shift, ctrl))
+               return;
+          }
+        else if (!numlock)
+          {
+             if (_key_try(ty, tty_keys_kp_plain,
+                          sizeof(tty_keys_kp_plain)/sizeof(tty_keys_kp_plain[0]),
+                          key, alt, shift, ctrl))
+               return;
           }
      }
    else

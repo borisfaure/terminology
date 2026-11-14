@@ -740,6 +740,7 @@ termpty_soft_reset_state(Termpty *ty)
    ty->termstate.chset[3] = 'B';
    ty->termstate.multibyte = 0;
    ty->termstate.alt_kp = 0;
+   ty->termstate.numlock_mode = 1;
    ty->termstate.insert = 0;
    ty->termstate.appcursor = 0;
    ty->termstate.wrap = 1;

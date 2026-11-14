@@ -155,6 +155,7 @@ typedef struct tag_Term_State {
     unsigned int  restrict_cursor : 1;
     unsigned int  multibyte : 1;
     unsigned int  alt_kp : 1;
+    unsigned int  numlock_mode : 1;
     unsigned int  insert : 1;
     unsigned int  appcursor : 1;
     unsigned int  wrap : 1;
