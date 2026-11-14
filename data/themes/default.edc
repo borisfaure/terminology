@@ -190,12 +190,20 @@ collections {
          "/bg/selected/media/position";
          "/fg/selected/term/miniview/screen";
          "/bg/selected/term/text";
+         "/fg/selected/term/tab/title/text/working";
       };
       ":selected-alt" {
          "/fg/normal/term/text/tabcount/missed";
          "/fg/selected/term/tab/title/text/bell";
          "/fg/disabled/term/miniview/screen";
          "/bg/selected/term/drag/target";
+         "/fg/selected/term/tab/title/text/blocked";
+      };
+      ":success" {
+         "/fg/selected/term/tab/title/text/done";
+      };
+      ":danger" {
+         "/fg/selected/term/tab/title/text/error";
       };
       ":shadow" {
          "/shadow/normal/tab";
