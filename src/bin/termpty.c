@@ -3418,19 +3418,30 @@ tytest_color_scheme_notify(void)
    return 0;
 }
 
-/* Unanswered kitty sequences are how a client keeps to legacy encoding */
+/* The kitty keyboard query answers the stored, masked flags */
 int
-tytest_kitty_keyboard_ignored(void)
+tytest_kitty_kbd_query(void)
 {
    Termpty ty;
 
    _ty_test_init(&ty, 80, 24);
 
-   _ty_feed(&ty, "\x1b[?u");       /* query  */
-   _ty_feed(&ty, "\x1b[?0u");      /* query  */
-   _ty_feed(&ty, "\x1b[>1u");      /* push   */
-   _ty_feed(&ty, "\x1b[<1u");      /* pop    */
-   _ty_feed(&ty, "\x1b[=1;1u");    /* set    */
+   _ty_feed(&ty, "\x1b[?u");       /* query */
+   _ty_reply_is(&ty, "\x1b[?0u");
+
+   /* a parameter is ignored */
+   _ty_feed(&ty, "\x1b[?0u");
+   _ty_reply_is(&ty, "\x1b[?0u");
+
+   /* only implemented flags are stored and answered */
+   _ty_feed(&ty, "\x1b[>5u");      /* push */
+   _ty_feed(&ty, "\x1b[?u");
+   _ty_reply_is(&ty, "\x1b[?1u");
+   _ty_feed(&ty, "\x1b[<u");       /* pop */
+   _ty_feed(&ty, "\x1b[=5;1u");    /* set */
+   _ty_feed(&ty, "\x1b[?u");
+   _ty_reply_is(&ty, "\x1b[?1u");
+   _ty_feed(&ty, "\x1b[=0;1u");    /* set */
 
    assert(ty.write_buffer.len == 0);
 

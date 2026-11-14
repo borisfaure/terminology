@@ -242,3 +242,9 @@ scroll-region-counts.sh 342c990e76a9bcc7a6be7a939685d841
 zero-width-wrapnext.sh 24fc65e89f6438b48ee2882e2cf2bb21
 wide-unicode-18.sh 720a9c33382672f78d2045722b69d610
 zero-width.sh 13feb72c327f04b5891b256de112d1d9
+kitty-kbd-query.sh 2aeecb0992989a62a9b4cf5ce687852f
+kitty-kbd-stack.sh 1940619ffdbe765b2495edbce9cf22cc
+kitty-kbd-altscreen.sh df9913f9d85f856c75dd525a806da4f6
+kitty-kbd-reset.sh bd10ee95b6b71d150fbe1a11c7b6ac94
+kitty-kbd-unsupported.sh e1de2502f1ec6c40e2bee6f0f2f54bf3
+kitty-kbd-malformed.sh bd10ee95b6b71d150fbe1a11c7b6ac94

@@ -3749,6 +3749,17 @@ _seq_incomplete(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *cc)
 
 /* https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement */
 static void
+_kitty_kbd_reply(Termpty *ty)
+{
+   char bf[16];
+   int len;
+
+   len = snprintf(bf, sizeof(bf), "\033[?%uu",
+                  termpty_kitty_kbd_flags_get(ty));
+   termpty_write(ty, bf, len);
+}
+
+static void
 _handle_esc_csi_kitty_kbd(Termpty *ty, Eina_Unicode **ptr)
 {
    Eina_Unicode *b = *ptr;
@@ -3758,7 +3769,7 @@ _handle_esc_csi_kitty_kbd(Termpty *ty, Eina_Unicode **ptr)
    switch (cmd)
      {
       case '?':
-         DBG("ignoring kitty keyboard query");
+         _kitty_kbd_reply(ty);
          break;
       case '>':
          flags = _csi_arg_get(ty, &b);
