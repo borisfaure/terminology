@@ -111,6 +111,22 @@ group { name: "terminology/tabbar_back";
             inherit: "default" 0.0;
             color_class: "/fg/selected/term/tab/title/text/bell";
          }
+         description { state: "working" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/term/tab/title/text/working";
+         }
+         description { state: "done" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/term/tab/title/text/done";
+         }
+         description { state: "error" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/term/tab/title/text/error";
+         }
+         description { state: "blocked" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/term/tab/title/text/blocked";
+         }
       }
       PROGRESS_BAR("tab_bevel_top2", 2)
       part { name: "clip"; type: RECT;
@@ -131,6 +147,31 @@ group { name: "terminology/tabbar_back";
             target: "terminology.title";
          }
          program { signal: "bell,off"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.title";
+         }
+         program { signal: "program,status,working"; source: "terminology";
+            action: STATE_SET "working" 0.0;
+            target: "terminology.title";
+         }
+         program { signal: "program,status,done"; source: "terminology";
+            action: STATE_SET "done" 0.0;
+            target: "terminology.title";
+         }
+         program { signal: "program,status,error"; source: "terminology";
+            action: STATE_SET "error" 0.0;
+            target: "terminology.title";
+         }
+         program { signal: "program,status,blocked"; source: "terminology";
+            action: STATE_SET "blocked" 0.0;
+            target: "terminology.title";
+         }
+         /* idle and none are the plain title colour */
+         program { signal: "program,status,idle"; source: "terminology";
+            action: STATE_SET "default" 0.0;
+            target: "terminology.title";
+         }
+         program { signal: "program,status,none"; source: "terminology";
             action: STATE_SET "default" 0.0;
             target: "terminology.title";
          }

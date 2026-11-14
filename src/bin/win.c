@@ -644,6 +644,18 @@ _program_status_signal_name(Termpty_Program_State state)
      }
 }
 
+/* The theme signal naming a program status state, so a theme can colour
+ * the tab title as it does for the bell */
+static void
+_program_status_signal_emit(Evas_Object *o, Termpty_Program_State state)
+{
+   char sig[32];
+
+   snprintf(sig, sizeof(sig), "program,status,%s",
+            _program_status_signal_name(state));
+   edje_object_signal_emit(o, sig, "terminology");
+}
+
 /* The tab title with the program status summary as a prefix: ⚠ blocked,
  * ✗ error, ✓ done, ⋯ working or its progress in percent. Plain Unicode,
  * so it does not rely on an icon font. The window title stays as is.
@@ -757,7 +769,6 @@ _solo_program_status(Term_Container *tc, Term_Container *_child EINA_UNUSED)
    Term *term;
    Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
    int progress = -1;
-   char sig[32];
    const char *title;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
@@ -766,9 +777,7 @@ _solo_program_status(Term_Container *tc, Term_Container *_child EINA_UNUSED)
 
    termpty_program_status_summary_get(termio_pty_get(term->termio),
                                       &state, &progress);
-   snprintf(sig, sizeof(sig), "program,status,%s",
-            _program_status_signal_name(state));
-   elm_layout_signal_emit(term->bg, sig, "terminology");
+   _program_status_signal_emit(term->bg_edj, state);
 
    /* blocked and error want the user's attention, without a sound */
    if (((state == TERMPTY_PROGRAM_STATE_BLOCKED) ||
@@ -3799,6 +3808,8 @@ _tab_inactive_get_or_create(Evas *canvas,
    Evas_Coord w, h;
    const char *signal;
    double fill;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
 
    if (term->tab_inactive)
      {
@@ -3828,6 +3839,10 @@ created:
                              _term_tab_title(term, tab_item->tc->title));
    signal = _term_progress_get(term, &fill);
    _theme_progress_set(o, signal, fill);
+   /* the object missed the status signal while this tab was current */
+   termpty_program_status_summary_get(termio_pty_get(term->termio),
+                                      &state, &progress);
+   _program_status_signal_emit(o, state);
    return o;
 }
 
@@ -5454,7 +5469,6 @@ _tabs_program_status(Term_Container *tc, Term_Container *child)
    Term *term;
    Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
    int progress = -1;
-   char sig[32];
 
    assert (tc->type == TERM_CONTAINER_TYPE_TABS);
    tabs = (Tabs*) tc;
@@ -5472,9 +5486,7 @@ _tabs_program_status(Term_Container *tc, Term_Container *child)
           {
              termpty_program_status_summary_get(termio_pty_get(term->termio),
                                                 &state, &progress);
-             snprintf(sig, sizeof(sig), "program,status,%s",
-                      _program_status_signal_name(state));
-             edje_object_signal_emit(term->tab_inactive, sig, "terminology");
+             _program_status_signal_emit(term->tab_inactive, state);
              edje_object_message_signal_process(term->tab_inactive);
           }
      }
