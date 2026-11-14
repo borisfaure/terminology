@@ -106,4 +106,5 @@ int tytest_keyin_modify_other_keys_level1(void);
 int tytest_keyin_backspace(void);
 int tytest_keyin_keypad(void);
 int tytest_config_erase_is_del_upgrade(void);
+int tytest_config_selection_read_upgrade(void);
 int tytest_config_cursor_blink_timeout_upgrade(void);

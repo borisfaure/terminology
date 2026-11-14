@@ -106,6 +106,7 @@ static struct {
        { "keyin_backspace", tytest_keyin_backspace},
        { "keyin_keypad", tytest_keyin_keypad},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
+       { "config_selection_read_upgrade", tytest_config_selection_read_upgrade},
        { "config_cursor_blink_timeout_upgrade", tytest_config_cursor_blink_timeout_upgrade},
        { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
        { "vs16_bare_narrow", tytest_vs16_bare_narrow},

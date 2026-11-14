@@ -894,7 +894,13 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 30:
-                  config->selection_escapes_read = SELECTION_READ_ASK;
+                  /* selection_escapes used to gate reads too; a config
+                   * with it off must not start answering read queries
+                   * through the new ask default */
+                  if (config->selection_escapes_write)
+                    config->selection_escapes_read = SELECTION_READ_ASK;
+                  else
+                    config->selection_escapes_read = SELECTION_READ_NEVER;
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case 31:
@@ -910,11 +916,6 @@ config_load(void)
                   EINA_FALLTHROUGH;
                   /*pass through*/
                 case CONF_VER: /* 34 */
-                  /* selection_escapes used to gate reads too; a config
-                   * with it off must not start answering read queries
-                   * through the new ask default */
-                  if (!config->selection_escapes_write)
-                    config->selection_escapes_read = SELECTION_READ_NEVER;
                   config->version = CONF_VER;
                   break;
                 default:
@@ -1098,21 +1099,43 @@ _config_erase_is_del_after_reload(int version, Eina_Bool erase_is_del)
    return reloaded;
 }
 
-int
-tytest_config_erase_is_del_upgrade(void)
+static int
+_config_selection_read_after_reload(int version, Eina_Bool write,
+                                    int read)
 {
-   char dir[] = "/tmp/tytest-config-XXXXXX";
+   Config *config = config_new();
+   int reloaded;
+
+   config->version = version;
+   config->selection_escapes_write = write;
+   config->selection_escapes_read = read;
+   config_save(config);
+   config_del(config);
+
+   config = config_load();
+   assert(config->version == CONF_VER);
+   reloaded = config->selection_escapes_read;
+   config_del(config);
+   return reloaded;
+}
+
+/* Points XDG_CONFIG_HOME at dir, a mkdtemp() template, and returns the
+ * previous value for _config_test_home_leave(). */
+static char *
+_config_test_home_enter(char *dir)
+{
    const char *old_home = getenv("XDG_CONFIG_HOME");
    char *saved_home = old_home ? strdup(old_home) : NULL;
 
    assert(mkdtemp(dir));
    setenv("XDG_CONFIG_HOME", dir, 1);
    config_init();
+   return saved_home;
+}
 
-   assert(_config_erase_is_del_after_reload(31, EINA_FALSE) == EINA_TRUE);
-   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_FALSE) == EINA_FALSE);
-   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_TRUE) == EINA_TRUE);
-
+static void
+_config_test_home_leave(const char *dir, char *saved_home)
+{
    config_shutdown();
    ecore_file_recursive_rm(dir);
    if (saved_home)
@@ -1120,6 +1143,43 @@ tytest_config_erase_is_del_upgrade(void)
    else
      unsetenv("XDG_CONFIG_HOME");
    free(saved_home);
+}
+
+int
+tytest_config_erase_is_del_upgrade(void)
+{
+   char dir[] = "/tmp/tytest-config-XXXXXX";
+   char *saved_home = _config_test_home_enter(dir);
+
+   assert(_config_erase_is_del_after_reload(31, EINA_FALSE) == EINA_TRUE);
+   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_FALSE) == EINA_FALSE);
+   assert(_config_erase_is_del_after_reload(CONF_VER, EINA_TRUE) == EINA_TRUE);
+
+   _config_test_home_leave(dir, saved_home);
+   return 0;
+}
+
+int
+tytest_config_selection_read_upgrade(void)
+{
+   char dir[] = "/tmp/tytest-config-XXXXXX";
+   char *saved_home = _config_test_home_enter(dir);
+
+   assert(_config_selection_read_after_reload(30, EINA_TRUE,
+                                              SELECTION_READ_NEVER)
+          == SELECTION_READ_ASK);
+   assert(_config_selection_read_after_reload(30, EINA_FALSE,
+                                              SELECTION_READ_ALWAYS)
+          == SELECTION_READ_NEVER);
+   /* once migrated, reads are set on their own */
+   assert(_config_selection_read_after_reload(CONF_VER, EINA_FALSE,
+                                              SELECTION_READ_ALWAYS)
+          == SELECTION_READ_ALWAYS);
+   assert(_config_selection_read_after_reload(CONF_VER, EINA_FALSE,
+                                              SELECTION_READ_ASK)
+          == SELECTION_READ_ASK);
+
+   _config_test_home_leave(dir, saved_home);
    return 0;
 }
 
