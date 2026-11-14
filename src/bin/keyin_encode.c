@@ -158,12 +158,19 @@ _key_try(Termpty *ty, const Tty_Key *map, int len, const char *key,
 
 #include "tty_keys.h"
 
-void
-keyin_encode_key(Termpty *ty, const char *key, const char *string,
-                 Eina_Bool numlock, const int alt, const int shift,
-                 const int ctrl)
+static void
+_encode_legacy(Termpty *ty, const Keyin_Event *kev)
 {
+   const char *key = kev->key;
+   const char *string = kev->string;
+   const int alt = (kev->mods & KEYIN_MOD_ALT) != 0;
+   const int shift = (kev->mods & KEYIN_MOD_SHIFT) != 0;
+   const int ctrl = (kev->mods & KEYIN_MOD_CTRL) != 0;
+   const Eina_Bool numlock = (kev->mods & KEYIN_MOD_NUM_LOCK) != 0;
    int level = _xmod_other_keys_level(ty);
+
+   if (kev->action == KEYIN_ACTION_RELEASE)
+     return;
 
    if (!strcmp(key, "BackSpace"))
      {
@@ -330,4 +337,13 @@ keyin_encode_key(Termpty *ty, const char *key, const char *string,
           termpty_write(ty, "\033", 1);
         termpty_write(ty, string, strlen(string));
      }
+}
+
+void
+keyin_encode_event(Termpty *ty, const Keyin_Event *kev)
+{
+   if (!kev->key)
+     return;
+
+   _encode_legacy(ty, kev);
 }

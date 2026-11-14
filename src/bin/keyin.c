@@ -42,16 +42,40 @@ keyin_compose_seq_reset(Keys_Handler *khdl)
    khdl->composing = EINA_FALSE;
 }
 
+/* no Hyper nor Meta: ecore sets Hyper along with Super, never Meta */
+static unsigned int
+_keyin_mods_get(const Evas_Modifier *modifiers, const Evas_Lock *locks)
+{
+   unsigned int mods = 0;
+
+   if (evas_key_modifier_is_set(modifiers, "Shift"))
+     mods |= KEYIN_MOD_SHIFT;
+   if (evas_key_modifier_is_set(modifiers, "Alt"))
+     mods |= KEYIN_MOD_ALT;
+   if (evas_key_modifier_is_set(modifiers, "Control"))
+     mods |= KEYIN_MOD_CTRL;
+   if (evas_key_modifier_is_set(modifiers, "Super"))
+     mods |= KEYIN_MOD_SUPER;
+   if (evas_key_lock_is_set(locks, "Caps_Lock"))
+     mods |= KEYIN_MOD_CAPS_LOCK;
+   if (evas_key_lock_is_set(locks, "Num_Lock"))
+     mods |= KEYIN_MOD_NUM_LOCK;
+   return mods;
+}
+
 void
 keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                        const int alt, const int shift, const int ctrl)
+                        Keyin_Action action)
 {
-   if (!ev->key)
-     return;
+   Keyin_Event kev = {
+      .key = ev->key,
+      .keyname = ev->keyname,
+      .string = ev->string,
+      .mods = _keyin_mods_get(ev->modifiers, ev->locks),
+      .action = action,
+   };
 
-   keyin_encode_key(ty, ev->key, ev->string,
-                    evas_key_lock_is_set(ev->locks, "Num_Lock"),
-                    alt, shift, ctrl);
+   keyin_encode_event(ty, &kev);
 }
 
 static Key_Binding *

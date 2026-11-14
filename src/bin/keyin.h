@@ -1,6 +1,8 @@
 #ifndef TERMINOLOGY_KEYIN_H_
 #define TERMINOLOGY_KEYIN_H_ 1
 
+#include "keyin_encode.h"
+
 typedef struct tag_Keys_Handler Keys_Handler;
 
 struct tag_Keys_Handler
@@ -13,7 +15,7 @@ struct tag_Keys_Handler
 
 void
 keyin_handle_key_to_pty(Termpty *ty, const Evas_Event_Key_Down *ev,
-                        const int alt, const int shift, const int ctrl);
+                        Keyin_Action action);
 Eina_Bool
 termpty_can_handle_key(const Termpty *ty,
                        const Keys_Handler *khdl,

@@ -65,10 +65,19 @@ _press_is(const char *key, Eina_Bool numlock, const char *string,
           const char *expected, size_t expected_len)
 {
    struct ty_sb *sb = &_ty->write_buffer;
+   Keyin_Event kev = {
+      .key = key,
+      .string = string,
+      .mods = (alt ? KEYIN_MOD_ALT : 0) |
+              (shift ? KEYIN_MOD_SHIFT : 0) |
+              (ctrl ? KEYIN_MOD_CTRL : 0) |
+              (numlock ? KEYIN_MOD_NUM_LOCK : 0),
+      .action = KEYIN_ACTION_PRESS,
+   };
    int bad = 0;
 
    ty_sb_free(sb);
-   keyin_encode_key(_ty, key, string, numlock, alt, shift, ctrl);
+   keyin_encode_event(_ty, &kev);
 
    if ((sb->len != expected_len) ||
        memcmp(sb->buf + sb->gap, expected, expected_len))

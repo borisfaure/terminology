@@ -2155,7 +2155,7 @@ _cb_win_key_down(void *data,
              if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
                {
                   termpty_program_status_drop_unseen(ty);
-                  keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+                  keyin_handle_key_to_pty(ty, ev, KEYIN_ACTION_PRESS);
                }
           }
      }
@@ -2166,7 +2166,7 @@ _cb_win_key_down(void *data,
         if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
           {
              termpty_program_status_drop_unseen(ty);
-             keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+             keyin_handle_key_to_pty(ty, ev, KEYIN_ACTION_PRESS);
           }
      }
 
