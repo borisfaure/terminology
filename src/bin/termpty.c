@@ -2001,7 +2001,7 @@ termpty_progress_set(Termpty *ty, Termpty_Progress_State state, int value)
       case TERMPTY_PROGRESS_INDETERMINATE:
          break;
       case TERMPTY_PROGRESS_NORMAL:
-         new_value = (value < 0) ? 0 : value;
+         new_value = MAX(0, value);
          break;
       case TERMPTY_PROGRESS_ERROR:
       case TERMPTY_PROGRESS_PAUSED:
