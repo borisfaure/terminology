@@ -516,6 +516,54 @@ removes it too.
 The \fBterminology\fP terminfo entry advertises the sequence as
 \fBSpb\fP, so that programs such as tmux can pass it on.
 
+.SH PROGRAM STATUS FROM PROGRAMS:
+A program running in the terminal can report what it is doing with
+\fBOSC 7501 ; \fIkey\fB=\fIvalue\fB\fR pairs separated by \fB:\fP, ended
+by \fBBEL\fP or \fBST\fP. The \fIstate\fP key is one of:
+.TP
+.B idle
+nothing is running
+.TP
+.B working
+on it, with an optional \fIprogress\fP percentage
+.TP
+.B done
+finished
+.TP
+.B blocked
+waiting for the user, with an optional \fIkind\fP: permission,
+question or auth
+.TP
+.B error
+it failed
+.TP
+.B clear
+the report's records are forgotten, all of them when no \fIid\fP is given
+.PP
+An \fIid\fP names one segment of a bigger job, such as one step of a
+build, so the steps of one job can report side by side; a report
+without one is the root record. A report can also carry a base64 \fItitle\fP or
+\fImsg\fP, and the \fIapp\fP reporting. Sending \fBOSC 7501 ; ?\fP gets
+a fixed reply listing the supported states and kinds, so a program can
+detect the feature.
+.PP
+The tab title gets a prefix, coloured by state: a warning sign for
+blocked, a cross for error, a check mark for done, an ellipsis for
+working, or the \fIprogress\fP in percent. A blocked or errored program
+in a terminal without the focus raises the same marks as a bell: the
+missed-bell marker on the tab, the counter in the tab bar and the
+window urgency hint, without playing a sound.
+.PP
+A status does not outlive its purpose. Working, blocked and idle
+records go at a new prompt (\fBOSC 133 ; A\fP) or when the program
+exits. Done and error records stay until the user comes back: they go
+when the terminal gains the focus, or on the next key press. A full
+reset (RIS) forgets everything. Once a program reported a status,
+\fBOSC 9 ; 4\fP progress reports are ignored until the next RIS.
+.PP
+The protocol is the Program Status Protocol, revision 0.4:
+https://superlogical.com/rex/docs/build/program-status
+
 .SH EXTENDED ESCAPES FOR TERMINOLOGY:
 .
 .TP
