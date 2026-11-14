@@ -2,7 +2,9 @@
 
 #include <Elementary.h>
 #include "termpty.h"
+#include "termptyops.h"
 #include "keyin_encode.h"
+#include "keyin_kitty.h"
 
 typedef struct tag_Tty_Key Tty_Key;
 typedef struct tag_Key_Values Key_Values;
@@ -342,7 +344,13 @@ _encode_legacy(Termpty *ty, const Keyin_Event *kev)
 void
 keyin_encode_event(Termpty *ty, const Keyin_Event *kev)
 {
+   unsigned int flags;
+
    if (!kev->key)
+     return;
+
+   flags = termpty_kitty_kbd_flags_get(ty);
+   if (flags && keyin_kitty_encode(ty, kev, flags))
      return;
 
    _encode_legacy(ty, kev);

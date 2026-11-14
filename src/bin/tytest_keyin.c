@@ -5,10 +5,12 @@
 #include <Elementary.h>
 #include <Ecore_Input.h>
 #include <assert.h>
+#include <locale.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "termpty.h"
+#include "termptyops.h"
 #include "keyin_encode.h"
 #include "unit_tests.h"
 
@@ -394,6 +396,175 @@ tytest_keyin_keypad(void)
 #undef PRESS
 #undef PRESS_S
 #undef PRESS_KP
+
+/* Flag 1, disambiguate escape codes:
+ * https://sw.kovidgoyal.net/kitty/keyboard-protocol/ */
+typedef struct tag_Kitty_Case
+{
+   unsigned int flags;
+   const char *key;
+   const char *keyname;
+   const char *string;
+   unsigned int mods;
+   Keyin_Action action;
+   const char *expected;   /* "" means nothing is written */
+} Kitty_Case;
+
+#define S  KEYIN_MOD_SHIFT
+#define A  KEYIN_MOD_ALT
+#define C  KEYIN_MOD_CTRL
+#define CL KEYIN_MOD_CAPS_LOCK
+#define NL KEYIN_MOD_NUM_LOCK
+#define P  KEYIN_ACTION_PRESS
+#define R  KEYIN_ACTION_REPEAT
+#define U  KEYIN_ACTION_RELEASE
+
+static int
+_kitty_case_is(const Kitty_Case *c)
+{
+   struct ty_sb *sb = &_ty->write_buffer;
+   Keyin_Event kev = {
+      .key = c->key,
+      .keyname = c->keyname,
+      .string = c->string,
+      .mods = c->mods,
+      .action = c->action,
+   };
+   size_t expected_len = strlen(c->expected);
+   int bad = 0;
+
+   termpty_kitty_kbd_set(_ty, c->flags, 1);
+   ty_sb_free(sb);
+   keyin_encode_event(_ty, &kev);
+
+   /* an empty buffer has no storage: memcmp() must not see its NULL */
+   if ((sb->len != expected_len) ||
+       ((expected_len > 0) &&
+        (memcmp(sb->buf + sb->gap, c->expected, expected_len) != 0)))
+     {
+        fprintf(stderr, "\n  %s (mods %#x, action %d): got '",
+                c->key, c->mods, c->action);
+        _show(sb->buf + sb->gap, sb->len);
+        fprintf(stderr, "' want '");
+        _show(c->expected, expected_len);
+        fprintf(stderr, "'");
+        bad = 1;
+     }
+   ty_sb_free(sb);
+   return bad;
+}
+
+int
+tytest_keyin_kitty_disambiguate(void)
+{
+   static const Kitty_Case cases[] = {
+        /* flags key             keyname  string   mods    action expected */
+        { 1, "a",                "a",     "a",     0,      P,     "a" },
+        { 1, "A",                "a",     "A",     S,      P,     "A" },
+        { 1, "A",                "a",     "A",     CL,     P,     "A" },
+        { 1, "a",                "a",     "\001",  C,      P,     "\033[97;5u" },
+        { 1, "a",                "a",     "a",     A,      P,     "\033[97;3u" },
+        { 1, "A",                "a",     "A",     C|S,    P,     "\033[97;6u" },
+        { 1, "A",                "a",     "A",     A|S,    P,     "\033[97;4u" },
+        { 1, "a",                "a",     "\001",  C|CL,   P,     "\033[97;69u" },
+        { 1, "i",                "i",     "\t",    C,      P,     "\033[105;5u" },
+        { 1, "Escape",           "Escape","\033",   0,      P,     "\033[27u" },
+        { 1, "Escape",           "Escape","\033",   S,      P,     "\033[27;2u" },
+        { 1, "Return",           "Return","\r",    0,      P,     "\r" },
+        { 1, "Return",           "Return","\r",    NL,     P,     "\r" },
+        { 1, "Return",           "Return","\r",    S,      P,     "\033[13;2u" },
+        { 1, "Return",           "Return","\r",    C,      P,     "\033[13;5u" },
+        { 1, "Tab",              "Tab",   "\t",    0,      P,     "\t" },
+        { 1, "ISO_Left_Tab",     "Tab",   NULL,    S,      P,     "\033[9;2u" },
+        { 1, "BackSpace",        "BackSpace", "\b", 0,     P,     "\b" },
+        { 1, "BackSpace",        "BackSpace", "\b", C,     P,     "\033[127;5u" },
+        { 1, "BackSpace",        "BackSpace", "\b", A,     P,     "\033[127;3u" },
+        { 1, "Left",             "Left",  NULL,    0,      P,     "\033[D" },
+        { 1, "Left",             "Left",  NULL,    C,      P,     "\033[1;5D" },
+        { 1, "F1",               "F1",    NULL,    0,      P,     "\033[P" },
+        { 1, "F3",               "F3",    NULL,    S,      P,     "\033[13;2~" },
+        { 1, "F5",               "F5",    NULL,    0,      P,     "\033[15~" },
+        { 1, "Delete",           "Delete","\177",  0,      P,     "\033[3~" },
+        { 1, "Prior",            "Prior", NULL,    A,      P,     "\033[5;3~" },
+        { 1, "F13",              "F13",   NULL,    0,      P,     "\033[57376u" },
+        { 1, "KP_1",             "KP_End","1",     NL,     P,     "1" },
+        { 1, "KP_End",           "KP_End", NULL,   0,      P,     "\033[57424u" },
+        { 1, "KP_Enter",         "KP_Enter", "\r", NL,     P,     "\033[57414;129u" },
+        { 1, "KP_Begin",         "KP_Begin", NULL, 0,      P,     "\033[E" },
+        { 1, "Shift_L",          "Shift_L", NULL,  0,      P,     "" },
+        { 1, "a",                "a",     NULL,    0,      U,     "" },
+        { 1, "space",            "space", NULL,    C,      P,     "\033[32;5u" },
+        { 1, "Cyrillic_es",      "c",     "\003",  C,      P,     "\033[1089;5u" },
+        { 1, "exclam",           "1",     "!",     S,      P,     "!" },
+        { 1, "exclam",           "1",     "!",     C|S,    P,     "\033[49;6u" },
+        { 1, "at",               "q",     "@",     0,      P,     "@" },
+        { 1, "XF86AudioMute",    "XF86AudioMute", NULL, 0, P,     "\033[57440u" },
+        { 1, "a",                "a",     "a",     0,      R,     "a" },
+        { 1, "eacute",           "eacute","\xc3\xa9", C,   P,     "\033[233;5u" },
+   };
+   char *saved_locale;
+   size_t i;
+   int bad = 0;
+
+   /* towlower() needs a UTF-8 locale; the real terminal gets one from
+    * elm_init(), the harness does not */
+   saved_locale = strdup(setlocale(LC_CTYPE, NULL));
+   assert(saved_locale);
+   if (!setlocale(LC_CTYPE, "C.UTF-8"))
+     {
+        fprintf(stderr, "\n  no C.UTF-8 locale, skipping");
+        free(saved_locale);
+        return 0;
+     }
+
+   _init();
+   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
+     bad += _kitty_case_is(&cases[i]);
+
+   /* DECCKM stays legacy: the protocol has no application cursor keys */
+   {
+      const Kitty_Case c = { 1, "Left", "Left", NULL, 0, P, "\033[D" };
+
+      _ty->termstate.appcursor = EINA_TRUE;
+      bad += _kitty_case_is(&c);
+      _ty->termstate.appcursor = EINA_FALSE;
+   }
+
+   /* erase_is_del still decides what a legacy BackSpace sends */
+   {
+      const Kitty_Case c = { 1, "BackSpace", "BackSpace", "\b", 0, P, "\177" };
+
+      _cfg.erase_is_del = EINA_TRUE;
+      bad += _kitty_case_is(&c);
+      _cfg.erase_is_del = EINA_FALSE;
+   }
+
+   /* LNM still decides what a legacy Return sends */
+   {
+      const Kitty_Case c = { 1, "Return", "Return", "\r", 0, P, "\r\n" };
+
+      _ty->termstate.crlf = 1;
+      bad += _kitty_case_is(&c);
+      _ty->termstate.crlf = 0;
+   }
+
+   _shutdown();
+   setlocale(LC_CTYPE, saved_locale);
+   free(saved_locale);
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   return bad;
+}
+
+#undef S
+#undef A
+#undef C
+#undef CL
+#undef NL
+#undef P
+#undef R
+#undef U
 
 static int
 _keysym_is(const char *name, Eina_Unicode want)
