@@ -37,4 +37,8 @@ typedef struct tag_Keyin_Event
 void
 keyin_encode_event(Termpty *ty, const Keyin_Event *kev);
 
+/* The codepoint of a keysym name, 0 when it has none */
+Eina_Unicode
+keyin_keysym_codepoint(const char *name);
+
 #endif

@@ -12,6 +12,13 @@ color_names = custom_target('color_names.c',
                             capture: true,
                             command: [find_program('gperf'), '--ignore-case', '@INPUT@'])
 
+# X11 keysym names for the kitty keyboard protocol encoder
+keyin_keysyms = custom_target('keyin_keysyms_table.c',
+                              input: 'keyin_keysyms.gperf',
+                              output: 'keyin_keysyms_table.c',
+                              capture: true,
+                              command: [find_program('gperf'), '@INPUT@'])
+
 terminology_sources = ['private.h',
                        'color_names.h', color_names,
                        'about.c', 'about.h',
@@ -21,6 +28,8 @@ terminology_sources = ['private.h',
                        'ipc.c', 'ipc.h',
                        'keyin.c', 'keyin.h',
                        'keyin_encode.c', 'keyin_encode.h',
+                       keyin_keysyms,
+                       'keyin_keysyms.c', 'keyin_keysyms.h',
                        'main.c', 'main.h',
                        'media.c', 'media.h',
                        'options.c', 'options.h',
@@ -119,6 +128,8 @@ tytest_sources = [color_names,
                   'tytest_common.c', 'tytest_common.h',
                   'tytest_percent_decode.c',
                   'keyin_encode.c', 'keyin_encode.h',
+                  keyin_keysyms,
+                  'keyin_keysyms.c', 'keyin_keysyms.h',
                   'tty_keys.h', 'tytest_keyin.c',
                   'tytest.c', 'tytest.h']
 tybench_sources = [color_names,

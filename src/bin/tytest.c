@@ -105,6 +105,7 @@ static struct {
        { "keyin_modify_other_keys_level1", tytest_keyin_modify_other_keys_level1},
        { "keyin_backspace", tytest_keyin_backspace},
        { "keyin_keypad", tytest_keyin_keypad},
+       { "keyin_keysyms", tytest_keyin_keysyms},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
        { "config_selection_read_upgrade", tytest_config_selection_read_upgrade},
        { "config_cursor_blink_timeout_upgrade", tytest_config_cursor_blink_timeout_upgrade},

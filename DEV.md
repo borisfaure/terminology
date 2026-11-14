@@ -18,6 +18,17 @@ After editing `data/terminfo/terminology.terminfo`, run
 `tools/terminfo_tcap.py data/terminfo/terminology.terminfo src/bin/termptytcap.h`
 and commit both files.
 
+# Keysym names
+
+The table that maps X11 keysym names to codepoints, used by the kitty
+keyboard protocol encoder, is generated from `keysymdef.h`. Only the
+keysyms with a Unicode mapping are kept. gperf turns it into a perfect
+hash at build time.
+
+After a keysymdef.h update, run
+`tools/gen_keysyms.sh /usr/include/X11/keysymdef.h src/bin/keyin_keysyms.gperf`
+and commit the generated file.
+
 # Headless runs
 
 Terminology can run without a display server when Elementary renders

@@ -395,4 +395,40 @@ tytest_keyin_keypad(void)
 #undef PRESS_S
 #undef PRESS_KP
 
+static int
+_keysym_is(const char *name, Eina_Unicode want)
+{
+   Eina_Unicode cp = keyin_keysym_codepoint(name);
+
+   if (cp == want)
+     return 0;
+   fprintf(stderr, "\n  %s: got %#x, want %#x", name, (unsigned)cp,
+           (unsigned)want);
+   return 1;
+}
+
+int
+tytest_keyin_keysyms(void)
+{
+   int bad = 0;
+
+#define IS(Name, Cp) bad += _keysym_is(Name, Cp)
+
+   IS("a", 0x61);
+   IS("exclam", 0x21);
+   IS("Cyrillic_es", 0x0441);
+   IS("Cyrillic_ES", 0x0421);
+   IS("eacute", 0x00e9);
+   IS("U1F600", 0x1f600);
+   /* too short for the Uxxxx form, and not in the table either */
+   IS("U20", 0);
+   IS("F1", 0);
+   IS("", 0);
+   IS("Keycode-123", 0);
+
+#undef IS
+
+   return bad;
+}
+
 #endif
