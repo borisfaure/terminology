@@ -36,5 +36,13 @@ printf '\033[!p'
 printf '\033[?1049l'
 printf '\033]7501;id=s1:state=done\033\\'
 printf '\033]7501;id=s2:state=error\007'
+# 133 A starts a new prompt: working, blocked and idle go, done and error
+# stay; B, C and D change nothing
+printf '\033]7501;id=i3:state=idle\033\\'
+printf '\033]7501;id=b3:state=blocked\033\\'
+printf '\033]133;A\033\\'
+printf '\033]133;B\033\\'
+printf '\033]133;C\033\\'
+printf '\033]133;D\033\\'
 # now that a 7501 report was applied, 9;4 is ignored until the next RIS
 printf '\033]9;4;1;90\007'
