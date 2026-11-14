@@ -108,6 +108,7 @@ static struct {
        { "keyin_keypad", tytest_keyin_keypad},
        { "keyin_keysyms", tytest_keyin_keysyms},
        { "keyin_kitty_disambiguate", tytest_keyin_kitty_disambiguate},
+       { "keyin_kitty_alternates", tytest_keyin_kitty_alternates},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
        { "config_selection_read_upgrade", tytest_config_selection_read_upgrade},
        { "config_cursor_blink_timeout_upgrade", tytest_config_cursor_blink_timeout_upgrade},

@@ -346,6 +346,20 @@ keyin_kitty_encode(Termpty *ty, const Keyin_Event *kev, unsigned int flags)
      }
 
    seq.mods = kev->mods;
+
+   /* the spec defines alternates for keys reported by codepoint only */
+   if ((flags & TERMPTY_KITTY_KBD_REPORT_ALTERNATES) && !fk)
+     {
+        Eina_Unicode shifted = (kev->mods & KEYIN_MOD_SHIFT) ?
+                               keyin_keysym_codepoint(kev->key) : 0;
+        Eina_Unicode base = keyin_keysym_codepoint(kev->keyname);
+
+        if (shifted != seq.number)
+          seq.shifted = shifted;
+        if (base != seq.number && base != seq.shifted)
+          seq.base = base;
+     }
+
    if ((flags & TERMPTY_KITTY_KBD_REPORT_EVENTS) &&
        kev->action != KEYIN_ACTION_PRESS)
      seq.action = kev->action;

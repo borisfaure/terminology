@@ -3433,14 +3433,15 @@ tytest_kitty_kbd_query(void)
    _ty_feed(&ty, "\x1b[?0u");
    _ty_reply_is(&ty, "\x1b[?0u");
 
-   /* only implemented flags are stored and answered */
-   _ty_feed(&ty, "\x1b[>5u");      /* push */
+   /* only implemented flags are stored and answered: 7 is 1|4, the
+    * event-types flag 2 is not implemented yet */
+   _ty_feed(&ty, "\x1b[>7u");      /* push */
    _ty_feed(&ty, "\x1b[?u");
-   _ty_reply_is(&ty, "\x1b[?1u");
+   _ty_reply_is(&ty, "\x1b[?5u");
    _ty_feed(&ty, "\x1b[<u");       /* pop */
-   _ty_feed(&ty, "\x1b[=5;1u");    /* set */
+   _ty_feed(&ty, "\x1b[=7;1u");    /* set */
    _ty_feed(&ty, "\x1b[?u");
-   _ty_reply_is(&ty, "\x1b[?1u");
+   _ty_reply_is(&ty, "\x1b[?5u");
    _ty_feed(&ty, "\x1b[=0;1u");    /* set */
 
    assert(ty.write_buffer.len == 0);

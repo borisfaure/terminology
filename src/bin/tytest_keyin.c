@@ -557,6 +557,48 @@ tytest_keyin_kitty_disambiguate(void)
    return bad;
 }
 
+int
+tytest_keyin_kitty_alternates(void)
+{
+   static const Kitty_Case cases[] = {
+        /* flags key             keyname  string     mods    action expected */
+        { 5, "A",                "a",     "A",       S,      P,     "A" },
+        { 5, "A",                "a",     "A",       C|S,    P,     "\033[97:65;6u" },
+        { 5, "a",                "a",     "\001",    C,      P,     "\033[97;5u" },
+        { 5, "exclam",           "1",     "!",       C|S,    P,     "\033[49:33;6u" },
+        { 5, "Cyrillic_es",      "c",     NULL,      C,      P,     "\033[1089::99;5u" },
+        { 5, "Cyrillic_ES",      "c",     "\xd0\xa1", C|S,   P,     "\033[1089:1057:99;6u" },
+        { 5, "Left",             "Left",  NULL,      C|S,    P,     "\033[1;6D" },
+        { 5, "KP_1",             "KP_End", NULL,     C|NL,   P,     "\033[57400;133u" },
+        { 5, "plus",             "equal", "+",       C|S,    P,     "\033[61:43;6u" },
+   };
+   char *saved_locale;
+   size_t i;
+   int bad = 0;
+
+   /* towlower() needs a UTF-8 locale; the real terminal gets one from
+    * elm_init(), the harness does not */
+   saved_locale = strdup(setlocale(LC_CTYPE, NULL));
+   assert(saved_locale);
+   if (!setlocale(LC_CTYPE, "C.UTF-8"))
+     {
+        fprintf(stderr, "\n  no C.UTF-8 locale, skipping");
+        free(saved_locale);
+        return 0;
+     }
+
+   _init();
+   for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
+     bad += _kitty_case_is(&cases[i]);
+   _shutdown();
+   setlocale(LC_CTYPE, saved_locale);
+   free(saved_locale);
+
+   if (bad)
+     fprintf(stderr, "\n  %d wrong encoding%s", bad, bad == 1 ? "" : "s");
+   return bad;
+}
+
 #undef S
 #undef A
 #undef C
