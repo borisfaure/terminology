@@ -16,6 +16,7 @@ int tytest_truecolor_render(void);
 #endif
 int tytest_block_render_idle(void);
 int tytest_cursor_focus_signals(void);
+int tytest_cursor_blink_left(void);
 int tytest_block_row_shifts(void);
 int tytest_block_region_scrolls(void);
 int tytest_sb_add(void);
@@ -105,3 +106,4 @@ int tytest_keyin_modify_other_keys_level1(void);
 int tytest_keyin_backspace(void);
 int tytest_keyin_keypad(void);
 int tytest_config_erase_is_del_upgrade(void);
+int tytest_config_cursor_blink_timeout_upgrade(void);

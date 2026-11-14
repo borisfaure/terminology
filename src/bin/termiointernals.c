@@ -2991,6 +2991,16 @@ termio_cursor_focus_signals_get(Eina_Bool focused, Eina_Bool blink,
    return 2;
 }
 
+double
+termio_cursor_blink_left(int timeout, double since_key)
+{
+   if (timeout <= 0)
+     return -1.0;
+   if (since_key >= timeout)
+     return 0.0;
+   return timeout - since_key;
+}
+
 #if defined(BINARY_TYTEST)
 int
 tytest_cursor_focus_signals(void)
@@ -3020,6 +3030,21 @@ tytest_cursor_focus_signals(void)
    assert(strcmp(signals[0], "focus,out") == 0);
    assert(strcmp(signals[1], "focus,in,noblink") == 0);
 
+   return 0;
+}
+
+int
+tytest_cursor_blink_left(void)
+{
+   assert(termio_cursor_blink_left(0, 0.0) < 0.0);
+   assert(termio_cursor_blink_left(0, 3600.0) < 0.0);
+   assert(termio_cursor_blink_left(-5, 1.0) < 0.0);
+
+   assert(termio_cursor_blink_left(10, 0.0) == 10.0);
+   assert(termio_cursor_blink_left(10, 4.0) == 6.0);
+   assert(termio_cursor_blink_left(10, 9.5) == 0.5);
+   assert(termio_cursor_blink_left(10, 10.0) == 0.0);
+   assert(termio_cursor_blink_left(10, 25.0) == 0.0);
    return 0;
 }
 #endif

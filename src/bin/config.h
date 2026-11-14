@@ -91,6 +91,7 @@ struct tag_Config
    Eina_Bool         jump_on_change;
    Eina_Bool         flicker_on_key;
    Eina_Bool         disable_cursor_blink;
+   int               cursor_blink_timeout; /* seconds, 0 to never stop */
    int               cursor_shape;
    Eina_Bool         disable_visual_bell;
    Eina_Bool         bell_rings;

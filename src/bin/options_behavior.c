@@ -19,6 +19,7 @@ typedef struct tag_Behavior_Ctx {
      Evas_Object *op_w;
      Evas_Object *op_h;
      Evas_Object *op_wh_current;
+     Evas_Object *op_blink_timeout;
      Evas_Object *backlock_label;
      char *backlog_msg;
 } Behavior_Ctx;
@@ -307,12 +308,56 @@ _cursors_changed_cb(void *data, Evas_Object *obj,
 
    config->disable_cursor_blink = value % 2;
    config->cursor_shape = value / 2;
+   elm_object_disabled_set(ctx->op_blink_timeout,
+                           config->disable_cursor_blink);
 
    termio_config_update(ctx->term);
    windows_update();
    config_save(config);
 }
 
+
+static void
+_cb_op_behavior_cursor_blink_timeout(void *data,
+                                     Evas_Object *obj,
+                                     void *_event EINA_UNUSED)
+{
+   Behavior_Ctx *ctx = data;
+   Config *config = ctx->config;
+
+   config->cursor_blink_timeout = (int) elm_spinner_value_get(obj);
+   termio_config_update(ctx->term);
+   windows_update();
+   config_save(config);
+}
+
+static void
+_add_cursor_blink_timeout_option(Evas_Object *bx,
+                                 Behavior_Ctx *ctx)
+{
+   Evas_Object *o;
+
+   o = elm_label_add(bx);
+   evas_object_size_hint_weight_set(o, 0.0, 0.0);
+   evas_object_size_hint_align_set(o, 0.0, 0.5);
+   elm_object_text_set(o, _("Stop blinking after this long without a key press:"));
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   ctx->op_blink_timeout = o = elm_spinner_add(bx);
+   elm_spinner_editable_set(o, EINA_TRUE);
+   elm_spinner_min_max_set(o, 0.0, 3600.0);
+   elm_spinner_label_format_set(o, _("%1.0f s"));
+   elm_spinner_special_value_add(o, 0.0, _("Never"));
+   elm_spinner_value_set(o, ctx->config->cursor_blink_timeout);
+   elm_object_disabled_set(o, ctx->config->disable_cursor_blink);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+   evas_object_smart_callback_add(o, "delay,changed",
+                                  _cb_op_behavior_cursor_blink_timeout, ctx);
+}
 
 static void
 _add_cursors_option(Evas_Object *bx,
@@ -500,6 +545,7 @@ options_behavior(Evas_Object *opbox, Evas_Object *term)
    OPTIONS_SEPARATOR;
 
    _add_cursors_option(bx, ctx);
+   _add_cursor_blink_timeout_option(bx, ctx);
 
    OPTIONS_CX(_("React to key presses (typing sounds and animations)"), flicker_on_key, 0);
    if (!multisense_available)

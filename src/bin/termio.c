@@ -865,6 +865,63 @@ termio_get_cursor(const Evas_Object *obj)
    return sd->cursor.obj;
 }
 
+static Eina_Bool
+_cursor_blinks(const Termio *sd)
+{
+   return !sd->config->disable_cursor_blink && !sd->cursor.blink_expired;
+}
+
+static double
+_cursor_blink_left(const Termio *sd)
+{
+   return termio_cursor_blink_left(sd->config->cursor_blink_timeout,
+                                   ecore_loop_time_get() - sd->cursor.last_key);
+}
+
+static Eina_Bool
+_cb_cursor_blink_timeout(void *data)
+{
+   Termio *sd = data;
+   double left = _cursor_blink_left(sd);
+
+   if (left > 0.0)
+     {
+        ecore_timer_interval_set(sd->cursor.blink_timer, left);
+        return ECORE_CALLBACK_RENEW;
+     }
+   sd->cursor.blink_timer = NULL;
+   if (left < 0.0)
+     return ECORE_CALLBACK_CANCEL;
+   sd->cursor.blink_expired = EINA_TRUE;
+   edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
+   edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
+   return ECORE_CALLBACK_CANCEL;
+}
+
+/* A key press only records its time: the timer, when it fires, waits for
+ * whatever is left since the last one. */
+static void
+_cursor_blink_timer_update(Termio *sd)
+{
+   double left = _cursor_blink_left(sd);
+
+   if (sd->cursor.blink_timer)
+     ecore_timer_del(sd->cursor.blink_timer);
+   sd->cursor.blink_timer = NULL;
+   if (_cursor_blinks(sd) && (left >= 0.0))
+     sd->cursor.blink_timer = ecore_timer_add(left, _cb_cursor_blink_timeout,
+                                              sd);
+}
+
+static void
+_cursor_blink_unfocus(Termio *sd)
+{
+   if (sd->cursor.blink_timer)
+     ecore_timer_del(sd->cursor.blink_timer);
+   sd->cursor.blink_timer = NULL;
+   sd->cursor.blink_expired = EINA_FALSE;
+}
+
 void
 termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
 {
@@ -886,10 +943,11 @@ termio_set_cursor_shape(Evas_Object *obj, Cursor_Shape shape)
    if (term_is_focused(sd->term))
      {
         edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
-        if (sd->config->disable_cursor_blink)
-          edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
-        else
+        if (_cursor_blinks(sd))
           edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
+        else
+          edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
+        _cursor_blink_timer_update(sd);
      }
 }
 
@@ -2894,8 +2952,7 @@ _cursor_focus_signals_emit(Termio *sd, Eina_Bool focused)
    const char *signals[2];
    int i, n;
 
-   n = termio_cursor_focus_signals_get(focused,
-                                       !sd->config->disable_cursor_blink,
+   n = termio_cursor_focus_signals_get(focused, _cursor_blinks(sd),
                                        !sd->config->disable_focus_visuals,
                                        signals);
    for (i = 0; i < n; i++)
@@ -2908,7 +2965,10 @@ termio_focus_in(Evas_Object *termio)
    Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   sd->cursor.blink_expired = EINA_FALSE;
+   sd->cursor.last_key = ecore_loop_time_get();
    _cursor_focus_signals_emit(sd, EINA_TRUE);
+   _cursor_blink_timer_update(sd);
    if (!sd->win) return;
    termpty_focus_report(sd->pty, EINA_TRUE);
 }
@@ -2919,6 +2979,7 @@ termio_focus_out(Evas_Object *termio)
    Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
+   _cursor_blink_unfocus(sd);
    _cursor_focus_signals_emit(sd, EINA_FALSE);
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
@@ -3859,6 +3920,7 @@ _smart_del(Evas_Object *obj)
    if (sd->mouse_move_job) ecore_job_del(sd->mouse_move_job);
    if (sd->mouseover_delay) ecore_timer_del(sd->mouseover_delay);
    if (sd->progress_stale_timer) ecore_timer_del(sd->progress_stale_timer);
+   if (sd->cursor.blink_timer) ecore_timer_del(sd->cursor.blink_timer);
    eina_stringshare_del(sd->font.name);
    if (sd->pty) termpty_free(sd->pty);
    eina_stringshare_del(sd->link.string);
@@ -4762,5 +4824,15 @@ termio_key_down(Evas_Object *termio,
      }
    if (sd->config->flicker_on_key)
      edje_object_signal_emit(sd->cursor.obj, "key,down", "terminology");
+   sd->cursor.last_key = ecore_loop_time_get();
+   if (sd->cursor.blink_expired)
+     {
+        sd->cursor.blink_expired = EINA_FALSE;
+        if (_cursor_blinks(sd))
+          {
+             edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
+             _cursor_blink_timer_update(sd);
+          }
+     }
    ev->event_flags = EVAS_EVENT_FLAG_ON_HOLD;
 }

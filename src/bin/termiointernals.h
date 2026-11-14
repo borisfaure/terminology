@@ -53,7 +53,10 @@ struct tag_Termio
       Evas_Object *obj;
       int x, y;
       Cursor_Shape shape;
+      Ecore_Timer *blink_timer;
+      double last_key;
       Eina_Bool force : 1;
+      Eina_Bool blink_expired : 1;
    } cursor;
    struct {
       int cx, cy;
@@ -201,4 +204,9 @@ int
 termio_cursor_focus_signals_get(Eina_Bool focused, Eina_Bool blink,
                                 Eina_Bool focus_visuals,
                                 const char *signals[2]);
+/* Seconds the cursor keeps blinking, since_key seconds after the last key
+ * press: 0 once it must stop, negative when timeout is 0, blinking
+ * forever. */
+double
+termio_cursor_blink_left(int timeout, double since_key);
 #endif

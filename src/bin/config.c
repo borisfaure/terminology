@@ -7,7 +7,7 @@
 #include "colors.h"
 #include "theme.h"
 
-#define CONF_VER 33
+#define CONF_VER 34
 #define CONFIG_KEY "config"
 
 #define LIM(v, min, max) {if (v >= max) v = max; else if (v <= min) v = min;}
@@ -155,6 +155,9 @@ config_init(void)
      (edd_base, Config, "flicker_on_key", flicker_on_key, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "disable_cursor_blink", disable_cursor_blink, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC
+     (edd_base, Config, "cursor_blink_timeout", cursor_blink_timeout,
+      EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
      (edd_base, Config, "cursor_shape", cursor_shape, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC
@@ -336,6 +339,7 @@ config_sync(const Config *config_src, Config *config)
    config->jump_on_change = config_src->jump_on_change;
    config->flicker_on_key = config_src->flicker_on_key;
    config->disable_cursor_blink = config_src->disable_cursor_blink;
+   config->cursor_blink_timeout = config_src->cursor_blink_timeout;
    config->cursor_shape = config_src->cursor_shape;
    config->disable_visual_bell = config_src->disable_visual_bell;
    config->bell_rings = config_src->bell_rings;
@@ -620,6 +624,7 @@ config_new(void)
         config->jump_on_keypress = EINA_TRUE;
         config->flicker_on_key = EINA_FALSE;
         config->disable_cursor_blink = EINA_FALSE;
+        config->cursor_blink_timeout = 10;
         config->cursor_shape = CURSOR_SHAPE_BLOCK;
         config->disable_visual_bell = EINA_FALSE;
         config->bell_rings = EINA_TRUE;
@@ -897,7 +902,11 @@ config_load(void)
                   config->notification_escapes = EINA_TRUE;
                   EINA_FALLTHROUGH;
                   /*pass through*/
-                case CONF_VER: /* 33 */
+                case 33:
+                  config->cursor_blink_timeout = 10;
+                  EINA_FALLTHROUGH;
+                  /*pass through*/
+                case CONF_VER: /* 34 */
                   /* selection_escapes used to gate reads too; a config
                    * with it off must not start answering read queries
                    * through the new ask default */
@@ -977,6 +986,7 @@ config_fork(const Config *config)
    CPY(jump_on_keypress);
    CPY(flicker_on_key);
    CPY(disable_cursor_blink);
+   CPY(cursor_blink_timeout);
    CPY(cursor_shape);
    CPY(disable_visual_bell);
    CPY(bell_rings);
@@ -1099,6 +1109,54 @@ tytest_config_erase_is_del_upgrade(void)
    assert(_config_erase_is_del_after_reload(31, EINA_FALSE) == EINA_TRUE);
    assert(_config_erase_is_del_after_reload(CONF_VER, EINA_FALSE) == EINA_FALSE);
    assert(_config_erase_is_del_after_reload(CONF_VER, EINA_TRUE) == EINA_TRUE);
+
+   config_shutdown();
+   ecore_file_recursive_rm(dir);
+   if (saved_home)
+     setenv("XDG_CONFIG_HOME", saved_home, 1);
+   else
+     unsetenv("XDG_CONFIG_HOME");
+   free(saved_home);
+   return 0;
+}
+
+static int
+_config_cursor_blink_timeout_after_reload(int version, int timeout)
+{
+   Config *config = config_new();
+   int reloaded;
+
+   config->version = version;
+   config->cursor_blink_timeout = timeout;
+   config_save(config);
+   config_del(config);
+
+   config = config_load();
+   assert(config->version == CONF_VER);
+   reloaded = config->cursor_blink_timeout;
+   config_del(config);
+   return reloaded;
+}
+
+int
+tytest_config_cursor_blink_timeout_upgrade(void)
+{
+   char dir[] = "/tmp/tytest-config-XXXXXX";
+   const char *old_home = getenv("XDG_CONFIG_HOME");
+   char *saved_home = old_home ? strdup(old_home) : NULL;
+   Config *config;
+
+   assert(mkdtemp(dir));
+   setenv("XDG_CONFIG_HOME", dir, 1);
+   config_init();
+
+   config = config_new();
+   assert(config->cursor_blink_timeout == 10);
+   config_del(config);
+   /* a config saved before the option existed has 0, blinking forever */
+   assert(_config_cursor_blink_timeout_after_reload(33, 0) == 10);
+   assert(_config_cursor_blink_timeout_after_reload(CONF_VER, 0) == 0);
+   assert(_config_cursor_blink_timeout_after_reload(CONF_VER, 25) == 25);
 
    config_shutdown();
    ecore_file_recursive_rm(dir);

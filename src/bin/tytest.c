@@ -43,6 +43,7 @@ static struct {
 #endif
        { "block_render_idle", tytest_block_render_idle},
        { "cursor_focus_signals", tytest_cursor_focus_signals},
+       { "cursor_blink_left", tytest_cursor_blink_left},
        { "block_row_shifts", tytest_block_row_shifts},
        { "block_region_scrolls", tytest_block_region_scrolls},
        { "sb_add", tytest_sb_add},
@@ -105,6 +106,7 @@ static struct {
        { "keyin_backspace", tytest_keyin_backspace},
        { "keyin_keypad", tytest_keyin_keypad},
        { "config_erase_is_del_upgrade", tytest_config_erase_is_del_upgrade},
+       { "config_cursor_blink_timeout_upgrade", tytest_config_cursor_blink_timeout_upgrade},
        { "vs16_regression_no_scroll", tytest_vs16_regression_no_scroll},
        { "vs16_bare_narrow", tytest_vs16_bare_narrow},
        { "vs16_widens_one_call", tytest_vs16_widens_one_call},
