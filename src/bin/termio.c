@@ -2888,16 +2888,27 @@ termio_imf_cursor_set(Evas_Object *obj, Ecore_IMF_Context *imf)
    ecore_imf_context_cursor_position_set(imf, (sd->cursor.y * sd->grid.w) + sd->cursor.x);
 }
 
+static void
+_cursor_focus_signals_emit(Termio *sd, Eina_Bool focused)
+{
+   const char *signals[2];
+   int i, n;
+
+   n = termio_cursor_focus_signals_get(focused,
+                                       !sd->config->disable_cursor_blink,
+                                       !sd->config->disable_focus_visuals,
+                                       signals);
+   for (i = 0; i < n; i++)
+     edje_object_signal_emit(sd->cursor.obj, signals[i], "terminology");
+}
+
 void
 termio_focus_in(Evas_Object *termio)
 {
    Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (sd->config->disable_cursor_blink)
-     edje_object_signal_emit(sd->cursor.obj, "focus,in,noblink", "terminology");
-   else
-     edje_object_signal_emit(sd->cursor.obj, "focus,in", "terminology");
+   _cursor_focus_signals_emit(sd, EINA_TRUE);
    if (!sd->win) return;
    termpty_focus_report(sd->pty, EINA_TRUE);
 }
@@ -2908,8 +2919,7 @@ termio_focus_out(Evas_Object *termio)
    Termio *sd = evas_object_smart_data_get(termio);
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   if (!sd->config->disable_focus_visuals)
-     edje_object_signal_emit(sd->cursor.obj, "focus,out", "terminology");
+   _cursor_focus_signals_emit(sd, EINA_FALSE);
    if (!sd->win) return;
    sd->pty->selection.last_click = 0;
    if (!sd->ctxpopup)

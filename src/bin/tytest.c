@@ -42,6 +42,7 @@ static struct {
        { "truecolor_render", tytest_truecolor_render},
 #endif
        { "block_render_idle", tytest_block_render_idle},
+       { "cursor_focus_signals", tytest_cursor_focus_signals},
        { "block_row_shifts", tytest_block_row_shifts},
        { "block_region_scrolls", tytest_block_region_scrolls},
        { "sb_add", tytest_sb_add},

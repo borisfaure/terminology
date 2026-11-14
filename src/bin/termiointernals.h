@@ -195,4 +195,10 @@ termio_internal_render(Termio *sd,
                        int *preedit_xp, int *preedit_yp);
 const char *
 termio_internal_get_selection(Termio *sd, size_t *lenp);
+/* Fills signals[] with what to emit to the cursor on a focus change,
+ * returns how many. */
+int
+termio_cursor_focus_signals_get(Eina_Bool focused, Eina_Bool blink,
+                                Eina_Bool focus_visuals,
+                                const char *signals[2]);
 #endif

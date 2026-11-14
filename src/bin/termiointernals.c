@@ -14,6 +14,9 @@
 #if defined(BINARY_TYTEST) || defined(ENABLE_TEST_UI)
 #include "tytest.h"
 #endif
+#if defined(BINARY_TYTEST)
+#include <assert.h>
+#endif
 
 /* {{{ Selection */
 
@@ -2967,3 +2970,57 @@ termio_internal_render(Termio *sd,
    *preedit_xp = preedit_x;
    *preedit_yp = preedit_y;
 }
+
+/* {{{ Cursor */
+
+/* "focus,in,noblink" does not stop a running blink, "focus,out" does. */
+int
+termio_cursor_focus_signals_get(Eina_Bool focused, Eina_Bool blink,
+                                Eina_Bool focus_visuals,
+                                const char *signals[2])
+{
+   if (focused)
+     {
+        signals[0] = blink ? "focus,in" : "focus,in,noblink";
+        return 1;
+     }
+   signals[0] = "focus,out";
+   if (focus_visuals)
+     return 1;
+   signals[1] = "focus,in,noblink";
+   return 2;
+}
+
+#if defined(BINARY_TYTEST)
+int
+tytest_cursor_focus_signals(void)
+{
+   const char *signals[2];
+   int n;
+
+   n = termio_cursor_focus_signals_get(EINA_TRUE, EINA_TRUE, EINA_TRUE,
+                                       signals);
+   assert(n == 1);
+   assert(strcmp(signals[0], "focus,in") == 0);
+
+   n = termio_cursor_focus_signals_get(EINA_TRUE, EINA_FALSE, EINA_TRUE,
+                                       signals);
+   assert(n == 1);
+   assert(strcmp(signals[0], "focus,in,noblink") == 0);
+
+   n = termio_cursor_focus_signals_get(EINA_FALSE, EINA_TRUE, EINA_TRUE,
+                                       signals);
+   assert(n == 1);
+   assert(strcmp(signals[0], "focus,out") == 0);
+
+   /* no focus visuals: keep the focused look, only stop the blink */
+   n = termio_cursor_focus_signals_get(EINA_FALSE, EINA_TRUE, EINA_FALSE,
+                                       signals);
+   assert(n == 2);
+   assert(strcmp(signals[0], "focus,out") == 0);
+   assert(strcmp(signals[1], "focus,in,noblink") == 0);
+
+   return 0;
+}
+#endif
+/* }}} */
