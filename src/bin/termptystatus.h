@@ -56,4 +56,8 @@ void termpty_program_status_summary_get(const Termpty *ty,
 
 void termpty_program_status_clear_all(Termpty *ty);
 
+#if defined(BINARY_TYTEST)
+int tytest_program_status_parse(void);
+#endif
+
 #endif

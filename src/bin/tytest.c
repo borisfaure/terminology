@@ -83,6 +83,7 @@ static struct {
        { "osc9_notify", tytest_osc9_notify},
        { "osc9_progress", tytest_osc9_progress},
        { "osc9_progress_cb", tytest_osc9_progress_cb},
+       { "program_status_parse", tytest_program_status_parse},
        { "notify_meta_parse", tytest_notify_meta_parse},
        { "notify_pending_cap", tytest_notify_pending_cap},
        { "notify_query_gated", tytest_notify_query_gated},
@@ -700,11 +701,15 @@ _tytest_checksum_hex(Termpty *ty, char *md5out)
     * so tests that send none are unchanged. */
    if (ty->program_records)
      {
-        const Termpty_Program_Record *rec;
+        const Eina_Inlist *l;
         char line[TERMPTY_PROGRAM_STATUS_LINE_MAX];
 
-        EINA_INLIST_FOREACH(ty->program_records, rec)
+        /* no EINA_INLIST_FOREACH: it trips the undefined-behavior sanitizer */
+        for (l = ty->program_records; l; l = l->next)
           {
+             const Termpty_Program_Record *rec =
+                EINA_INLIST_CONTAINER_GET(l, Termpty_Program_Record);
+
              snprintf(line, sizeof(line), "%s|%d|%d|%d|%s|%s|%s\n",
                       rec->id, (int)rec->state, (int)rec->kind,
                       (int)rec->progress, rec->app,
@@ -996,10 +1001,13 @@ _tytest_dump(Termpty *ty)
           (int)ty->progress.state, (int)ty->progress.value);
    if (ty->program_records)
      {
-        const Termpty_Program_Record *rec;
+        const Eina_Inlist *l;
 
-        EINA_INLIST_FOREACH(ty->program_records, rec)
+        for (l = ty->program_records; l; l = l->next)
           {
+             const Termpty_Program_Record *rec =
+                EINA_INLIST_CONTAINER_GET(l, Termpty_Program_Record);
+
              printf("program_status id=%s state=%d kind=%d progress=%d "
                     "app=%s title=%s msg=%s\n",
                     rec->id, (int)rec->state, (int)rec->kind,
