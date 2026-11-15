@@ -39,6 +39,9 @@ struct ps_staging
    const char *msg;
 };
 
+static void _ps_summary_notify(Termpty *ty, Termpty_Program_State prev_state,
+                               int prev_progress);
+
 static void
 _ps_record_free(Termpty_Program_Record *rec)
 {
@@ -466,6 +469,8 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
    signed char progress = -1;
    char *title = NULL, *msg = NULL;
    Termpty_Program_Record *rec;
+   Termpty_Program_State prev_state = TERMPTY_PROGRAM_STATE_NONE;
+   int prev_progress = -1;
 
    if (!body || !*body)
      return;
@@ -547,6 +552,8 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
    if (staging.app && !_ps_app_ok(staging.app))
      staging.app = NULL;
 
+   termpty_program_status_summary_get(ty, &prev_state, &prev_progress);
+
    ty->program_status_seen = EINA_TRUE;
 
    if (is_clear)
@@ -567,6 +574,7 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
                   _ps_record_free(rec);
                }
           }
+        _ps_summary_notify(ty, prev_state, prev_progress);
         return;
      }
 
@@ -584,6 +592,13 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
      }
    else
      {
+        rec = calloc(1, sizeof(*rec));
+        if (!rec)
+          {
+             free(title);
+             free(msg);
+             return;
+          }
         if (ty->program_records_count >= PS_RECORDS_MAX)
           {
              /* the least recently updated record is the head of the list */
@@ -593,13 +608,6 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
                                                       ty->program_records);
              ty->program_records_count--;
              _ps_record_free(old);
-          }
-        rec = calloc(1, sizeof(*rec));
-        if (!rec)
-          {
-             free(title);
-             free(msg);
-             return;
           }
         ty->program_records_count++;
      }
@@ -613,6 +621,22 @@ termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
    rec->msg = msg;
    ty->program_records = eina_inlist_append(ty->program_records,
                                             EINA_INLIST_GET(rec));
+
+   _ps_summary_notify(ty, prev_state, prev_progress);
+}
+
+static void
+_ps_summary_notify(Termpty *ty, Termpty_Program_State prev_state,
+                   int prev_progress)
+{
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+
+   termpty_program_status_summary_get(ty, &state, &progress);
+   if ((state == prev_state) && (progress == prev_progress))
+     return;
+   if (ty->cb.program_status.func)
+     ty->cb.program_status.func(ty->cb.program_status.data);
 }
 
 void
@@ -661,6 +685,10 @@ void
 termpty_program_status_drop_transient(Termpty *ty)
 {
    Eina_Inlist *l = ty->program_records;
+   Termpty_Program_State prev_state = TERMPTY_PROGRAM_STATE_NONE;
+   int prev_progress = -1;
+
+   termpty_program_status_summary_get(ty, &prev_state, &prev_progress);
 
    while (l)
      {
@@ -677,6 +705,9 @@ termpty_program_status_drop_transient(Termpty *ty)
           }
         l = next;
      }
+
+   /* the drop is a summary change, and notifies like a report does */
+   _ps_summary_notify(ty, prev_state, prev_progress);
 }
 
 #if defined(BINARY_TYTEST)
@@ -875,6 +906,95 @@ tytest_program_status_parse(void)
    assert(_ty_ps_record_get(&ty, "b") == NULL);
    assert(_ty_ps_record_get(&ty, "d"));
    assert(_ty_ps_record_get(&ty, "e"));
+
+   return 0;
+}
+
+static int _ty_ps_summary_cb_count;
+
+static void
+_ty_ps_summary_cb(void *data EINA_UNUSED)
+{
+   _ty_ps_summary_cb_count++;
+}
+
+int
+tytest_program_status_summary(void)
+{
+   Termpty ty;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -2;
+
+   memset(&ty, 0, sizeof(ty));
+   _ty_ps_summary_cb_count = 0;
+
+   /* no record at all */
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_NONE);
+   assert(progress == -1);
+
+   /* the most urgent state wins, and carries its own progress */
+   _ty_ps_feed(&ty, "id=w:state=working:progress=40");
+   _ty_ps_feed(&ty, "id=i:state=idle");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_WORKING);
+   assert(progress == 40);
+   _ty_ps_feed(&ty, "id=d:state=done");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_DONE);
+   assert(progress == -1);
+   _ty_ps_feed(&ty, "id=e:state=error");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_ERROR);
+   _ty_ps_feed(&ty, "id=b:state=blocked:progress=60");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_BLOCKED);
+   assert(progress == 60);
+
+   /* ties go to the most recently updated record */
+   termpty_program_status_clear_all(&ty);
+   _ty_ps_feed(&ty, "id=w1:state=working:progress=30");
+   _ty_ps_feed(&ty, "id=w2:state=working:progress=70");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_WORKING);
+   assert(progress == 70);
+   _ty_ps_feed(&ty, "id=w1:state=working:progress=30");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(progress == 30);
+
+   /* the callback fires on every summary change, and only then */
+   ty.cb.program_status.func = _ty_ps_summary_cb;
+   /* a report with no state is discarded before the summary is read */
+   _ty_ps_feed(&ty, "id=x");
+   assert(_ty_ps_summary_cb_count == 0);
+   /* a record below the summary changes nothing */
+   _ty_ps_feed(&ty, "id=i:state=idle");
+   assert(_ty_ps_summary_cb_count == 0);
+   /* the same values again on the winning record */
+   _ty_ps_feed(&ty, "id=w1:state=working:progress=30");
+   assert(_ty_ps_summary_cb_count == 0);
+   /* a progress change on the winning record is a change */
+   _ty_ps_feed(&ty, "id=w1:state=working:progress=31");
+   assert(_ty_ps_summary_cb_count == 1);
+   /* so is a more urgent state */
+   _ty_ps_feed(&ty, "id=e:state=error");
+   assert(_ty_ps_summary_cb_count == 2);
+   /* and a clear report */
+   _ty_ps_feed(&ty, "state=clear");
+   assert(_ty_ps_summary_cb_count == 3);
+   /* clear_all is a full reset, not a report: it does not notify */
+   termpty_program_status_clear_all(&ty);
+   assert(_ty_ps_summary_cb_count == 3);
+
+   /* the transient drop is a summary change too: the pushed summary
+    * must not linger after a prompt start or a child exit */
+   _ty_ps_feed(&ty, "id=w:state=working");
+   assert(_ty_ps_summary_cb_count == 4);
+   termpty_program_status_drop_transient(&ty);
+   assert(_ty_ps_summary_cb_count == 5);
+   /* nothing left to drop: the summary did not move */
+   termpty_program_status_drop_transient(&ty);
+   assert(_ty_ps_summary_cb_count == 5);
 
    return 0;
 }
