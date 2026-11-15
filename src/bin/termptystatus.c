@@ -415,6 +415,46 @@ discard:
    return NULL;
 }
 
+/* no EINA_INLIST_FOREACH: it trips the undefined-behavior sanitizer */
+static Termpty_Program_Record *
+_ps_record_find(Termpty *ty, const char *id)
+{
+   Eina_Inlist *l;
+
+   for (l = ty->program_records; l; l = l->next)
+     {
+        Termpty_Program_Record *rec = _PS_REC(l);
+
+        if (strcmp(rec->id, id) == 0)
+          return rec;
+     }
+   return NULL;
+}
+
+/* clear with an id takes the record and every record beneath it;
+ * a sibling that only shares the prefix stays */
+static void
+_ps_apply_clear(Termpty *ty, const char *id)
+{
+   size_t id_len = strlen(id);
+   Eina_Inlist *l = ty->program_records;
+
+   while (l)
+     {
+        Eina_Inlist *next = l->next;
+        Termpty_Program_Record *rec = _PS_REC(l);
+
+        if ((strncmp(rec->id, id, id_len) == 0) &&
+            ((rec->id[id_len] == '\0') || (rec->id[id_len] == '/')))
+          {
+             ty->program_records = eina_inlist_remove(ty->program_records, l);
+             ty->program_records_count--;
+             _ps_record_free(rec);
+          }
+        l = next;
+     }
+}
+
 void
 termpty_program_status_summary_get(const Termpty *ty,
                                    Termpty_Program_State *state,
