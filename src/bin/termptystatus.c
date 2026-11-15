@@ -175,6 +175,92 @@ next_pair:
      }
 }
 
+static Eina_Bool
+_ps_state_parse(const char *s, Termpty_Program_State *state,
+                Eina_Bool *is_clear)
+{
+   struct { const char *name; Termpty_Program_State value; } const states[] = {
+       { "idle",    TERMPTY_PROGRAM_STATE_IDLE    },
+       { "working", TERMPTY_PROGRAM_STATE_WORKING },
+       { "done",    TERMPTY_PROGRAM_STATE_DONE    },
+       { "error",   TERMPTY_PROGRAM_STATE_ERROR   },
+       { "blocked", TERMPTY_PROGRAM_STATE_BLOCKED },
+   };
+   size_t i;
+
+   for (i = 0; i < sizeof(states) / sizeof(states[0]); i++)
+     {
+        if (strcmp(s, states[i].name) == 0)
+          {
+             *state = states[i].value;
+             *is_clear = EINA_FALSE;
+             return EINA_TRUE;
+          }
+     }
+   if (strcmp(s, "clear") == 0)
+     {
+        *is_clear = EINA_TRUE;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+/* "segment(/segment)*", each segment 1-32 bytes of [A-Za-z0-9_.+-],
+ * at most 8 levels and 128 bytes in total */
+static Eina_Bool
+_ps_id_ok(const char *id)
+{
+   size_t len = strlen(id), segment = 0;
+   int levels = 1;
+   const char *p;
+
+   if ((len == 0) || (len > PS_ID_MAX))
+     return EINA_FALSE;
+   for (p = id; ; p++)
+     {
+        if ((*p == '/') || (*p == '\0'))
+          {
+             if (segment == 0)
+               return EINA_FALSE; /* empty segment, as in "a//b" */
+             if (*p == '\0')
+               break;
+             levels++;
+             segment = 0;
+             if (levels > PS_ID_LEVELS_MAX)
+               return EINA_FALSE;
+          }
+        else if (((*p >= 'A') && (*p <= 'Z')) ||
+                 ((*p >= 'a') && (*p <= 'z')) ||
+                 ((*p >= '0') && (*p <= '9')) ||
+                 (*p == '_') || (*p == '.') || (*p == '+') || (*p == '-'))
+          segment++;
+        else
+          return EINA_FALSE;
+        if (segment > PS_ID_SEGMENT_MAX)
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_ps_app_ok(const char *app)
+{
+   size_t len = strlen(app), i;
+
+   if ((len == 0) || (len > PS_APP_MAX))
+     return EINA_FALSE;
+   for (i = 0; i < len; i++)
+     {
+        char c = app[i];
+
+        if (((c < 'A') || (c > 'Z')) && ((c < 'a') || (c > 'z')) &&
+            ((c < '0') || (c > '9')) &&
+            (c != '_') && (c != '.') && (c != '+') && (c != '-'))
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 void
 termpty_program_status_summary_get(const Termpty *ty,
                                    Termpty_Program_State *state,
