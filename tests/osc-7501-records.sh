@@ -27,6 +27,8 @@ printf '\033]7501;id=m1:state=working\033\\'
 printf '\033]7501;id=m2:state=done\033\\'
 printf '\033c'
 
+# after RIS a 9;4 report is honored again, until the next 7501 report
+printf '\033]9;4;1;70\033\\'
 # records survive the alternate screen and DECSTR
 printf '\033[?1049h'
 printf '\033]7501;id=alt:state=working\033\\'
@@ -34,3 +36,5 @@ printf '\033[!p'
 printf '\033[?1049l'
 printf '\033]7501;id=s1:state=done\033\\'
 printf '\033]7501;id=s2:state=error\007'
+# now that a 7501 report was applied, 9;4 is ignored until the next RIS
+printf '\033]9;4;1;90\007'

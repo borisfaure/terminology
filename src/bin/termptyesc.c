@@ -5424,6 +5424,10 @@ _handle_osc_9_4_progress(Termpty *ty, const char *s, int len)
    int value = -1;
    int i;
 
+   /* once a 7501 report was applied, progress comes only from 7501,
+    * until RIS (which clears program_status_seen) */
+   if (ty->program_status_seen)
+     return;
    if ((len < 2) || (s[0] != ';') || (s[1] < '0') || (s[1] > '4'))
      goto bad;
    state = (Termpty_Progress_State)(s[1] - '0');
