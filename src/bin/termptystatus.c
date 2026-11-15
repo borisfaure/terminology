@@ -261,6 +261,27 @@ _ps_app_ok(const char *app)
    return EINA_TRUE;
 }
 
+/* ty_base64_stream_decode() is deliberately lenient (it must accept
+ * chunks cut anywhere), so 7501 checks the shape itself: padding only
+ * closes the last quantum, at most two '=', never leaving 4n+1
+ * characters. Padding is optional. */
+static Eina_Bool
+_ps_b64_shape_ok(const char *value, size_t len)
+{
+   size_t tail = 0, i;
+
+   while ((tail < 2) && (tail < len) && (value[len - 1 - tail] == '='))
+     tail++;
+   if (((len - tail) % 4) == 1)
+     return EINA_FALSE;
+   for (i = 0; i < len - tail; i++)
+     {
+        if (value[i] == '=')
+          return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 /* Decode one UTF-8 character, as strictly as eina does: no overlong
  * forms, no surrogates, nothing above U+10FFFF. */
 static int
@@ -324,6 +345,74 @@ _ps_cp_stripped(Eina_Unicode cp)
            (cp >= 0x2060 && cp <= 0x2064) ||
            (cp >= 0x2066 && cp <= 0x2069) ||
            cp == 0xfeff);
+}
+
+/* Decode the base64 of msg or title, check its size, reject control
+ * characters and strip the invisible ones. Returns a malloc'd string,
+ * or NULL with *discard set when the whole report is invalid. */
+static char *
+_ps_text_decode(const char *value, size_t max_encoded, size_t max_decoded,
+                Eina_Bool *discard)
+{
+   Eina_Binbuf *bb;
+   Ty_Base64_Stream st = { 0, 0 };
+   size_t encoded_len = strlen(value);
+   const unsigned char *raw;
+   size_t raw_len, i;
+   char *res, *w;
+
+   *discard = EINA_FALSE;
+   if (encoded_len > max_encoded)
+     goto discard;
+   if (!_ps_b64_shape_ok(value, encoded_len))
+     goto discard;
+
+   bb = eina_binbuf_new();
+   if (!bb)
+     return NULL;
+   if (!ty_base64_stream_decode(&st, value, encoded_len, bb))
+     goto discard_free;
+   raw_len = eina_binbuf_length_get(bb);
+   if (raw_len > max_decoded)
+     goto discard_free;
+   raw = (const unsigned char *)eina_binbuf_string_get(bb);
+
+   res = malloc(raw_len + 1);
+   if (!res)
+     {
+        eina_binbuf_free(bb);
+        return NULL;
+     }
+   w = res;
+   i = 0;
+   while (i < raw_len)
+     {
+        Eina_Unicode cp;
+        int n = _ps_utf8_next(raw + i, raw_len - i, &cp);
+
+        if (n == 0)
+          goto discard_free_res; /* not UTF-8 */
+        /* C0, DEL and the C1 codepoints, an embedded NUL included */
+        if ((cp < 0x20) || (cp == 0x7f) || (cp >= 0x80 && cp <= 0x9f))
+          goto discard_free_res;
+        if (!_ps_cp_stripped(cp))
+          {
+             memcpy(w, raw + i, n);
+             w += n;
+          }
+        i += n;
+     }
+   *w = '\0';
+   eina_binbuf_free(bb);
+   return res;
+
+discard_free_res:
+   free(res);
+discard_free:
+   eina_binbuf_free(bb);
+discard:
+   *discard = EINA_TRUE;
+   return NULL;
 }
 
 void
