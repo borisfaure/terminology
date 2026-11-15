@@ -13,6 +13,7 @@
 #include "config.h"
 #include "termpty.h"
 #include "termptyops.h"
+#include "termptystatus.h"
 #include "backlog.h"
 #include "utf8.h"
 #include "simd/simd.h"
@@ -695,6 +696,24 @@ _tytest_checksum_hex(Termpty *ty, char *md5out)
         MD5Update(&ctx, &ty->progress.value, 1);
      }
 
+   /* Program status records (OSC 7501), least recently updated first,
+    * so tests that send none are unchanged. */
+   if (ty->program_records)
+     {
+        const Termpty_Program_Record *rec;
+        char line[TERMPTY_PROGRAM_STATUS_LINE_MAX];
+
+        EINA_INLIST_FOREACH(ty->program_records, rec)
+          {
+             snprintf(line, sizeof(line), "%s|%d|%d|%d|%s|%s|%s\n",
+                      rec->id, (int)rec->state, (int)rec->kind,
+                      (int)rec->progress, rec->app,
+                      rec->title ? rec->title : "-",
+                      rec->msg ? rec->msg : "-");
+             MD5Update(&ctx, (unsigned char const*)line, strlen(line));
+          }
+     }
+
    /* Cursor shape */
    const char *cursor_shape = tytest_cursor_shape_get();
    MD5Update(&ctx, (unsigned char const*)cursor_shape,
@@ -975,6 +994,20 @@ _tytest_dump(Termpty *ty)
    printf("cwd=%s\n", ty->prop.cwd ? ty->prop.cwd : "(NULL)");
    printf("progress state=%d value=%d\n",
           (int)ty->progress.state, (int)ty->progress.value);
+   if (ty->program_records)
+     {
+        const Termpty_Program_Record *rec;
+
+        EINA_INLIST_FOREACH(ty->program_records, rec)
+          {
+             printf("program_status id=%s state=%d kind=%d progress=%d "
+                    "app=%s title=%s msg=%s\n",
+                    rec->id, (int)rec->state, (int)rec->kind,
+                    (int)rec->progress, rec->app,
+                    rec->title ? rec->title : "(none)",
+                    rec->msg ? rec->msg : "(none)");
+          }
+     }
    printf("notifications=%s\n",
           tytest_notifications_get() ? tytest_notifications_get() : "(none)");
 
