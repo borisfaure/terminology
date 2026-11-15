@@ -4069,6 +4069,15 @@ _smart_pty_bell(void *data)
      edje_object_signal_emit(sd->cursor.obj, "bell,ring", "terminology");
 }
 
+static void
+_smart_pty_program_status(void *data)
+{
+   Termio *sd = evas_object_smart_data_get(data);
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   evas_object_smart_callback_call(data, "program,status", NULL);
+}
+
 /* The OSC 9;4 progress indicator went stale: the program stopped
  * reporting or died, so forget the state, which hides the bar. */
 static Eina_Bool
@@ -4719,6 +4728,8 @@ termio_add(Evas_Object *win, Config *config,
    sd->pty->cb.command.data = obj;
    sd->pty->cb.progress.func = _smart_pty_progress;
    sd->pty->cb.progress.data = obj;
+   sd->pty->cb.program_status.func = _smart_pty_program_status;
+   sd->pty->cb.program_status.data = obj;
    _smart_size(obj, w, h, EINA_TRUE);
    return obj;
 }

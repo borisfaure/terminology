@@ -190,7 +190,7 @@ struct tag_Termpty
          void (*func) (void *data);
          void *data;
       } change, set_title, set_icon, cancel_sel, exited, bell, command,
-        progress;
+        progress, program_status;
    } cb;
    struct {
       Ecore_Timer *watchdog;
