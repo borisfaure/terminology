@@ -329,6 +329,8 @@ _handle_read(Termpty *ty, Eina_Bool false_on_empty)
         ty->hand_fd = NULL;
         ty->fd = -1;
         ty->slavefd = -1;
+        /* the child is gone: its working, blocked and idle records are stale */
+        termpty_program_status_drop_transient(ty);
         if (ty->cb.exited.func)
           ty->cb.exited.func(ty->cb.exited.data);
         return ECORE_CALLBACK_CANCEL;
@@ -444,6 +446,8 @@ _cb_exe_exit(void *data,
      close(ty->slavefd);
    ty->slavefd = -1;
 
+   /* the child is gone: its working, blocked and idle records are stale */
+   termpty_program_status_drop_transient(ty);
    if (ty->cb.exited.func)
      ty->cb.exited.func(ty->cb.exited.data);
 
@@ -2171,6 +2175,7 @@ _ty_test_shutdown(Termpty *ty)
 {
    termpty_sync_output_reset(ty);
    termpty_notify_free(ty);
+   termpty_program_status_clear_all(ty);
    termpty_backlog_free(ty);
    free(ty->screen);
    free(ty->screen2);
@@ -2944,6 +2949,53 @@ tytest_notify_pending_cap(void)
    _ty_feed(&ty, "\x1b]99;i=p0;done\x1b\\");
    assert(strstr(tytest_notifications_get(), "chunk 0") == NULL);
    assert(strstr(tytest_notifications_get(), "done") != NULL);
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+static Eina_Bool _ps_exit_cb_gone = EINA_FALSE;
+
+static void
+_ps_exit_cb(void *data)
+{
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+
+   termpty_program_status_summary_get(data, &state, &progress);
+   /* the drop must have happened before the exited callback runs */
+   _ps_exit_cb_gone = (state == TERMPTY_PROGRAM_STATE_ERROR);
+}
+
+int
+tytest_program_status_exit(void)
+{
+   Termpty ty;
+   Ecore_Exe_Event_Del ev;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+
+   _ty_test_init(&ty, 80, 24);
+
+   _ty_feed(&ty, "\x1b]7501;id=w:state=working\x1b\\");
+   _ty_feed(&ty, "\x1b]7501;id=i:state=idle\x1b\\");
+   _ty_feed(&ty, "\x1b]7501;id=b:state=blocked\x1b\\");
+   _ty_feed(&ty, "\x1b]7501;id=d:state=done\x1b\\");
+   _ty_feed(&ty, "\x1b]7501;id=e:state=error\x1b\\");
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_BLOCKED);
+
+   ty.pid = 42;
+   ty.cb.exited.func = _ps_exit_cb;
+   ty.cb.exited.data = &ty;
+   memset(&ev, 0, sizeof(ev));
+   ev.pid = 42;
+   _cb_exe_exit(&ty, 0, &ev);
+
+   assert(_ps_exit_cb_gone);
+   assert(ty.pid == -1);
+   termpty_program_status_summary_get(&ty, &state, &progress);
+   assert(state == TERMPTY_PROGRAM_STATE_ERROR);
 
    _ty_test_shutdown(&ty);
    return 0;
