@@ -7,6 +7,7 @@
 #include "termptyesc.h"
 #include "termptynotify.h"
 #include "termptyops.h"
+#include "termptystatus.h"
 #include "backlog.h"
 #include "utf8.h"
 #include "simd/simd.h"
@@ -856,6 +857,7 @@ termpty_free(Termpty *ty)
 
    termpty_save_unregister(ty);
    termpty_notify_free(ty);
+   termpty_program_status_clear_all(ty);
    free(ty->osc52_long.data);
    EINA_LIST_FREE(ty->block.expecting, ex) free(ex);
    if (ty->block.blocks) eina_hash_free(ty->block.blocks);

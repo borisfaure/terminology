@@ -11,6 +11,7 @@
 #include "termptyops.h"
 #include "termptyext.h"
 #include "termptynotify.h"
+#include "termptystatus.h"
 #include "termptytcap.h"
 #include "simd/simd.h"
 #include "theme.h"
@@ -6453,6 +6454,8 @@ _handle_esc(Termpty *ty, const Eina_Unicode *c, const Eina_Unicode *ce)
       case 'c': // reset terminal to initial state
         DBG("reset to init mode and clear");
         termpty_reset_state(ty);
+        /* RIS drops every program status record; DECSTR does not */
+        termpty_program_status_clear_all(ty);
         termpty_clear_screen(ty, TERMPTY_CLR_ALL);
         if (ty->cb.cancel_sel.func)
           ty->cb.cancel_sel.func(ty->cb.cancel_sel.data);
