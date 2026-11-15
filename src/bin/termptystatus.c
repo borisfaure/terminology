@@ -656,3 +656,190 @@ termpty_program_status_clear_all(Termpty *ty)
    ty->program_records_count = 0;
    ty->program_status_seen = EINA_FALSE;
 }
+
+#if defined(BINARY_TYTEST)
+#include <assert.h>
+
+static void
+_ty_ps_feed(Termpty *ty, const char *body)
+{
+   Eina_Unicode *uni = eina_unicode_utf8_to_unicode(body, NULL);
+
+   assert(uni);
+   termpty_program_status_handle(ty, uni);
+   free(uni);
+}
+
+static Termpty_Program_Record *
+_ty_ps_record_get(Termpty *ty, const char *id)
+{
+   Termpty_Program_Record *rec;
+
+   EINA_INLIST_FOREACH(ty->program_records, rec)
+     {
+        if (strcmp(rec->id, id) == 0)
+          return rec;
+     }
+   return NULL;
+}
+
+int
+tytest_program_status_parse(void)
+{
+   Termpty ty;
+   Termpty_Program_Record *rec;
+   int i;
+
+   memset(&ty, 0, sizeof(ty));
+
+   /* a full report: progress, a decoded msg */
+   _ty_ps_feed(&ty, "state=working:progress=40:msg=Y2FyZ28gdGVzdA==");
+   rec = _ty_ps_record_get(&ty, "");
+   assert(rec);
+   assert(rec->state == TERMPTY_PROGRAM_STATE_WORKING);
+   assert(rec->progress == 40);
+   assert(rec->msg);
+   assert(strcmp(rec->msg, "cargo test") == 0);
+
+   /* the root record is replaced completely: the msg is gone */
+   _ty_ps_feed(&ty, "state=working");
+   rec = _ty_ps_record_get(&ty, "");
+   assert(rec);
+   assert(rec->msg == NULL);
+   assert(rec->title == NULL);
+
+   /* unpadded base64 */
+   _ty_ps_feed(&ty, "id=tf:state=blocked:kind=permission:app=terraform:"
+                    "msg=QXBwbHkgMyBjaGFuZ2VzPw");
+   rec = _ty_ps_record_get(&ty, "tf");
+   assert(rec);
+   assert(rec->state == TERMPTY_PROGRAM_STATE_BLOCKED);
+   assert(rec->kind == TERMPTY_PROGRAM_KIND_PERMISSION);
+   assert(rec->progress == -1);
+   assert(strcmp(rec->app, "terraform") == 0);
+   assert(rec->msg);
+   assert(strcmp(rec->msg, "Apply 3 changes?") == 0);
+
+   /* out of place or out of range values are absent, the rest applies */
+   _ty_ps_feed(&ty, "id=a:state=working:progress=101:kind=auth");
+   rec = _ty_ps_record_get(&ty, "a");
+   assert(rec);
+   assert(rec->progress == -1);
+   assert(rec->kind == TERMPTY_PROGRAM_KIND_NONE);
+   _ty_ps_feed(&ty, "id=b:state=done:progress=50:app=bad!app");
+   rec = _ty_ps_record_get(&ty, "b");
+   assert(rec);
+   assert(rec->progress == -1);
+   assert(rec->app[0] == '\0');
+   /* progress=42.5 parses as a value, but not as an integer */
+   _ty_ps_feed(&ty, "id=a:state=working:progress=42.5");
+   rec = _ty_ps_record_get(&ty, "a");
+   assert(rec);
+   assert(rec->progress == -1);
+   /* an empty progress is not a number either */
+   _ty_ps_feed(&ty, "id=a:state=working:progress=");
+   rec = _ty_ps_record_get(&ty, "a");
+   assert(rec);
+   assert(rec->progress == -1);
+   /* kind on a non-blocked state */
+   _ty_ps_feed(&ty, "id=b:state=done:kind=auth");
+   rec = _ty_ps_record_get(&ty, "b");
+   assert(rec);
+   assert(rec->kind == TERMPTY_PROGRAM_KIND_NONE);
+
+   /* whitespace, repeated keys (last wins), unknown keys */
+   _ty_ps_feed(&ty, " id = c : state=idle : state=error : colour=red ");
+   rec = _ty_ps_record_get(&ty, "c");
+   assert(rec);
+   assert(rec->state == TERMPTY_PROGRAM_STATE_ERROR);
+
+   /* a malformed pair is skipped, the rest applies */
+   _ty_ps_feed(&ty, "id=d:nonsense:STATE=x:state=done");
+   rec = _ty_ps_record_get(&ty, "d");
+   assert(rec);
+   assert(rec->state == TERMPTY_PROGRAM_STATE_DONE);
+   /* the root record, tf, a, b, c and d */
+   assert(ty.program_records_count == 6);
+
+   /* a non-ascii codepoint makes its pair malformed */
+   _ty_ps_feed(&ty, "id=e:state=working:id=\xc3\xa9:state=error");
+   rec = _ty_ps_record_get(&ty, "e");
+   assert(rec);
+   assert(strcmp(rec->id, "e") == 0);
+   assert(rec->state == TERMPTY_PROGRAM_STATE_ERROR);
+
+   /* U+202E is stripped from the text, the report still applies */
+   _ty_ps_feed(&ty, "id=f:state=done:msg=4oCuZXZpbA==");
+   rec = _ty_ps_record_get(&ty, "f");
+   assert(rec);
+   assert(rec->msg);
+   assert(strcmp(rec->msg, "evil") == 0);
+
+   /* reports that change nothing */
+   i = ty.program_records_count;
+   _ty_ps_feed(&ty, "id=x");                     /* no state */
+   _ty_ps_feed(&ty, "id=x:state=sleeping");      /* unknown state */
+   _ty_ps_feed(&ty, "id=a//b:state=idle");       /* empty id segment */
+   _ty_ps_feed(&ty, "id=a/b/c/d/e/f/g/h/i:state=idle"); /* 9 levels */
+   _ty_ps_feed(&ty, "id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:state=idle"); /* 33 bytes */
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=YQpi");  /* a newline */
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=YQli");  /* a tab */
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=Q");     /* 4n+1 characters */
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=Q==");
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=A===");  /* '=' before padding */
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=AB=CD");
+   _ty_ps_feed(&ty, "id=keep:state=idle:msg=YQ");    /* a decoded NUL */
+   _ty_ps_feed(&ty, "id=keep:state=idle:title=");    /* empty is fine */
+   rec = _ty_ps_record_get(&ty, "keep");
+   assert(rec);
+   assert(rec->msg == NULL);
+   assert(rec->title && rec->title[0] == '\0');
+   assert(ty.program_records_count == i + 1);
+   assert(ty.program_status_seen == EINA_TRUE);
+
+   /* clear with an id takes the record and its children; a sibling
+    * sharing the prefix stays */
+   _ty_ps_feed(&ty, "id=parent:state=done");
+   _ty_ps_feed(&ty, "id=parent/child:state=error");
+   _ty_ps_feed(&ty, "id=parentx:state=idle");
+   _ty_ps_feed(&ty, "id=parent:state=clear");
+   assert(_ty_ps_record_get(&ty, "parent") == NULL);
+   assert(_ty_ps_record_get(&ty, "parent/child") == NULL);
+   assert(_ty_ps_record_get(&ty, "parentx"));
+
+   /* a global clear may carry a title and a msg, which this path frees */
+   _ty_ps_feed(&ty, "state=clear:title=aGk=:msg=ZXZpbA==");
+   assert(ty.program_records_count == 0);
+
+   /* LRU eviction: the least recently updated record goes first */
+   termpty_program_status_clear_all(&ty);
+   for (i = 0; i < 260; i++)
+     {
+        char body[64];
+
+        snprintf(body, sizeof(body), "id=j%d:state=working", i);
+        _ty_ps_feed(&ty, body);
+     }
+   assert(ty.program_records_count == PS_RECORDS_MAX);
+   /* four records more than the cap: j0 to j3 were evicted */
+   assert(_ty_ps_record_get(&ty, "j0") == NULL);
+   assert(_ty_ps_record_get(&ty, "j3") == NULL);
+   assert(_ty_ps_record_get(&ty, "j4"));
+   assert(_ty_ps_record_get(&ty, "j259"));
+
+   /* updating a record makes it the most recently updated one */
+   _ty_ps_feed(&ty, "id=j4:state=done");
+   _ty_ps_feed(&ty, "id=new:state=idle");
+   assert(_ty_ps_record_get(&ty, "j4"));
+   assert(_ty_ps_record_get(&ty, "j5") == NULL);
+   assert(_ty_ps_record_get(&ty, "new"));
+   assert(ty.program_records_count == PS_RECORDS_MAX);
+
+   /* clear_all resets the seen flag too */
+   termpty_program_status_clear_all(&ty);
+   assert(ty.program_records_count == 0);
+   assert(ty.program_status_seen == EINA_FALSE);
+
+   return 0;
+}
+#endif

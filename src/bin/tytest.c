@@ -83,6 +83,7 @@ static struct {
        { "osc9_notify", tytest_osc9_notify},
        { "osc9_progress", tytest_osc9_progress},
        { "osc9_progress_cb", tytest_osc9_progress_cb},
+       { "program_status_parse", tytest_program_status_parse},
        { "notify_meta_parse", tytest_notify_meta_parse},
        { "notify_pending_cap", tytest_notify_pending_cap},
        { "notify_query_gated", tytest_notify_query_gated},

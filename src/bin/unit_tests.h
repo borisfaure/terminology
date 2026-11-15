@@ -56,6 +56,7 @@ int tytest_notify_gated(void);
 int tytest_osc9_notify(void);
 int tytest_osc9_progress(void);
 int tytest_osc9_progress_cb(void);
+int tytest_program_status_parse(void);
 int tytest_notify_meta_parse(void);
 int tytest_notify_pending_cap(void);
 int tytest_notify_query_gated(void);
