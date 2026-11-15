@@ -261,6 +261,71 @@ _ps_app_ok(const char *app)
    return EINA_TRUE;
 }
 
+/* Decode one UTF-8 character, as strictly as eina does: no overlong
+ * forms, no surrogates, nothing above U+10FFFF. */
+static int
+_ps_utf8_next(const unsigned char *s, size_t len, Eina_Unicode *cp)
+{
+   unsigned char b = s[0];
+   int n, i;
+   Eina_Unicode v;
+
+   if (b < 0x80)
+     {
+        *cp = b;
+        return 1;
+     }
+   if ((b & 0xe0) == 0xc0)
+     {
+        n = 1;
+        v = b & 0x1f;
+        if (v < 2)
+          return 0; /* overlong */
+     }
+   else if ((b & 0xf0) == 0xe0)
+     {
+        n = 2;
+        v = b & 0x0f;
+     }
+   else if ((b & 0xf8) == 0xf0)
+     {
+        n = 3;
+        v = b & 0x07;
+        if (v > 4)
+          return 0; /* above U+10FFFF */
+     }
+   else
+     return 0;
+   if ((size_t)n + 1 > len)
+     return 0;
+   for (i = 1; i <= n; i++)
+     {
+        if ((s[i] & 0xc0) != 0x80)
+          return 0;
+        v = (v << 6) | (s[i] & 0x3f);
+     }
+   if ((n == 2) && (v < 0x800))
+     return 0; /* overlong */
+   if ((n == 3) && (v < 0x10000))
+     return 0; /* overlong */
+   if ((v >= 0xd800) && (v <= 0xdfff))
+     return 0; /* surrogate */
+   *cp = v;
+   return n + 1;
+}
+
+static Eina_Bool
+_ps_cp_stripped(Eina_Unicode cp)
+{
+   /* bidi marks, zero-width joiners and friends: invisible, but they
+    * can reorder or hide the text around them */
+   return ((cp >= 0x200b && cp <= 0x200f) ||
+           (cp >= 0x202a && cp <= 0x202e) ||
+           (cp >= 0x2060 && cp <= 0x2064) ||
+           (cp >= 0x2066 && cp <= 0x2069) ||
+           cp == 0xfeff);
+}
+
 void
 termpty_program_status_summary_get(const Termpty *ty,
                                    Termpty_Program_State *state,
