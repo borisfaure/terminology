@@ -56,6 +56,10 @@ void termpty_program_status_summary_get(const Termpty *ty,
 
 void termpty_program_status_clear_all(Termpty *ty);
 
+/* Child exit or a new prompt (OSC 133 A): idle, working and blocked
+ * records do not outlive the program that reported them. */
+void termpty_program_status_drop_transient(Termpty *ty);
+
 #if defined(BINARY_TYTEST)
 int tytest_program_status_parse(void);
 #endif

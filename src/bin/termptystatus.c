@@ -664,6 +664,28 @@ termpty_program_status_clear_all(Termpty *ty)
    ty->program_status_seen = EINA_FALSE;
 }
 
+void
+termpty_program_status_drop_transient(Termpty *ty)
+{
+   Eina_Inlist *l = ty->program_records;
+
+   while (l)
+     {
+        Eina_Inlist *next = l->next;
+        Termpty_Program_Record *rec = _PS_REC(l);
+
+        if ((rec->state == TERMPTY_PROGRAM_STATE_IDLE) ||
+            (rec->state == TERMPTY_PROGRAM_STATE_WORKING) ||
+            (rec->state == TERMPTY_PROGRAM_STATE_BLOCKED))
+          {
+             ty->program_records = eina_inlist_remove(ty->program_records, l);
+             ty->program_records_count--;
+             _ps_record_free(rec);
+          }
+        l = next;
+     }
+}
+
 #if defined(BINARY_TYTEST)
 #include <assert.h>
 
@@ -848,6 +870,20 @@ tytest_program_status_parse(void)
    termpty_program_status_clear_all(&ty);
    assert(ty.program_records_count == 0);
    assert(ty.program_status_seen == EINA_FALSE);
+
+   /* the transient drop: idle, working and blocked do not outlive the
+    * program that reported them */
+   _ty_ps_feed(&ty, "id=w:state=working");
+   _ty_ps_feed(&ty, "id=i:state=idle");
+   _ty_ps_feed(&ty, "id=b:state=blocked");
+   _ty_ps_feed(&ty, "id=d:state=done");
+   _ty_ps_feed(&ty, "id=e:state=error");
+   termpty_program_status_drop_transient(&ty);
+   assert(_ty_ps_record_get(&ty, "w") == NULL);
+   assert(_ty_ps_record_get(&ty, "i") == NULL);
+   assert(_ty_ps_record_get(&ty, "b") == NULL);
+   assert(_ty_ps_record_get(&ty, "d"));
+   assert(_ty_ps_record_get(&ty, "e"));
 
    return 0;
 }
