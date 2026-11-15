@@ -40,6 +40,9 @@ typedef struct _Termpty_Program_Record
    char *msg;      /* NULL when the report had none */
 } Termpty_Program_Record;
 
+/* A text line holding one whole record, as tytest dumps and hashes */
+#define TERMPTY_PROGRAM_STATUS_LINE_MAX 2432
+
 /* Parse and apply the payload of an OSC 7501. body is the text after
  * "7501;"; an empty or malformed payload changes nothing and is not a
  * decoding error. */
