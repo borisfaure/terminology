@@ -69,6 +69,7 @@ struct tag_Term_Container {
      void (*unfocus)(Term_Container *tc, Term_Container *relative);
      void (*set_title)(Term_Container *tc, Term_Container *child, const char *title);
      void (*bell)(Term_Container *tc, Term_Container *child);
+     void (*program_status)(Term_Container *tc, Term_Container *child);
      void (*close)(Term_Container *container, Term_Container *child);
      void (*update)(Term_Container *tc);
      Eina_Bool (*is_visible)(const Term_Container *tc, const Term_Container *child);
