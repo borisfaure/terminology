@@ -270,6 +270,12 @@ struct tag_Termpty
       unsigned char state; /* a Termpty_Progress_State */
       unsigned char value; /* 0-100 */
    } progress;
+   /* OSC 7501 program status records, from the least to the most
+      recently updated. Kept outside Term_State for the same reason as
+      the progress report above. The type lives in termptystatus.h. */
+   Eina_Inlist *program_records;
+   unsigned short program_records_count;
+   Eina_Bool program_status_seen; /* a 7501 report was applied since RIS */
    Term_State termstate;
    Term_Cursor cursor_state;
    Term_Cursor cursor_save[2];

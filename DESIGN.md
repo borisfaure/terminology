@@ -35,6 +35,7 @@ A simple documentation to navigate through the C files:
 * `src/bin/termptynotify.c`: desktop notification escape codes (OSC 99)
 * `src/bin/termptygfx.c`: charset translations
 * `src/bin/termptyops.c`: handling history
+* `src/bin/termptystatus.c`: program status escape codes (OSC 7501)
 * `src/bin/tyalpha.c`: the `tyalpha` tool
 * `src/bin/tybg.c`: the `tybg` tool
 * `src/bin/tycat.c`: the `tycat` tool
