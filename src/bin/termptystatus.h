@@ -60,6 +60,9 @@ void termpty_program_status_clear_all(Termpty *ty);
  * records do not outlive the program that reported them. */
 void termpty_program_status_drop_transient(Termpty *ty);
 
+/* The user came back: done and error records have been seen. */
+void termpty_program_status_drop_unseen(Termpty *ty);
+
 #if defined(BINARY_TYTEST)
 int tytest_program_status_parse(void);
 #endif
