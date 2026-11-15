@@ -644,6 +644,48 @@ _program_status_signal_name(Termpty_Program_State state)
      }
 }
 
+/* The tab title with the program status summary as a prefix: ⚠ blocked,
+ * ✗ error, ✓ done, ⋯ working or its progress in percent. Plain Unicode,
+ * so it does not rely on an icon font. The window title stays as is.
+ * The buffer is reused on the next call. */
+static const char *
+_term_tab_title(Term *term, const char *title)
+{
+   static Eina_Strbuf *buf = NULL;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+   const char *prefix = "";
+
+   termpty_program_status_summary_get(termio_pty_get(term->termio),
+                                      &state, &progress);
+   if (state == TERMPTY_PROGRAM_STATE_BLOCKED)
+     prefix = "⚠ ";
+   else if (state == TERMPTY_PROGRAM_STATE_ERROR)
+     prefix = "✗ ";
+   else if (state == TERMPTY_PROGRAM_STATE_DONE)
+     prefix = "✓ ";
+   else if (state == TERMPTY_PROGRAM_STATE_WORKING)
+     {
+        if (progress < 0)
+          prefix = "⋯ ";
+        else
+          {
+             if (!buf)
+               buf = eina_strbuf_new();
+             eina_strbuf_reset(buf);
+             eina_strbuf_append_printf(buf, "%d%% %s", progress, title);
+             return eina_strbuf_string_get(buf);
+          }
+     }
+   if (prefix[0] == '\0')
+     return title;
+   if (!buf)
+     buf = eina_strbuf_new();
+   eina_strbuf_reset(buf);
+   eina_strbuf_append_printf(buf, "%s%s", prefix, title);
+   return eina_strbuf_string_get(buf);
+}
+
 static void
 _solo_set_title(Term_Container *tc,
                 Term_Container *_child EINA_UNUSED,
@@ -660,11 +702,13 @@ _solo_set_title(Term_Container *tc,
    tc->title = eina_stringshare_add(title);
    if (term->config->show_tabs)
      {
-        elm_layout_text_set(term->bg, "terminology.tab.title", title);
+        elm_layout_text_set(term->bg, "terminology.tab.title",
+                            _term_tab_title(term, title));
      }
    if (_tab_drag && _tab_drag->term == term && _tab_drag->icon)
      {
-        elm_layout_text_set(_tab_drag->icon, "terminology.title", title);
+        elm_layout_text_set(_tab_drag->icon,
+                            "terminology.title", _term_tab_title(term, title));
      }
    tc->parent->set_title(tc->parent, tc, title);
 }
@@ -714,6 +758,7 @@ _solo_program_status(Term_Container *tc, Term_Container *_child EINA_UNUSED)
    Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
    int progress = -1;
    char sig[32];
+   const char *title;
 
    assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*) tc;
@@ -737,6 +782,11 @@ _solo_program_status(Term_Container *tc, Term_Container *_child EINA_UNUSED)
         tc->parent->bell(tc->parent, tc);
      }
    edje_object_message_signal_process(term->bg_edj);
+
+   /* the title now carries a different status prefix */
+   title = termio_title_get(term->termio);
+   if (title)
+     tc->set_title(tc, tc, title);
 
    tc->parent->program_status(tc->parent, tc);
 }
@@ -859,7 +909,8 @@ _solo_tab_show(Term_Container *tc)
                                         "terminology.tabl", 0.0, 0.0);
         edje_object_part_drag_value_set(term->bg_edj,
                                         "terminology.tabr", 1.0, 0.0);
-        elm_layout_text_set(term->bg, "terminology.tab.title", solo->tc.title);
+        elm_layout_text_set(term->bg, "terminology.tab.title",
+                            _term_tab_title(term, solo->tc.title));
         elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
         edje_object_message_signal_process(term->bg_edj);
      }
@@ -3693,7 +3744,8 @@ _tabs_set_main_tab(Term *term,
         elm_layout_content_set(term->bg, "terminology.tab", term->tab_spacer);
      }
    evas_object_show(term->tab_spacer);
-   elm_layout_text_set(term->bg, "terminology.tab.title", tab_item->tc->title);
+   elm_layout_text_set(term->bg, "terminology.tab.title",
+                       _term_tab_title(term, tab_item->tc->title));
    elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
    elm_layout_signal_emit(term->bg, "tab_btn,on", "terminology");
    edje_object_message_signal_process(term->bg_edj);
@@ -3764,7 +3816,8 @@ created:
      edje_object_signal_emit(o, "bell", "terminology");
    else
      edje_object_signal_emit(o, "bell,off", "terminology");
-   edje_object_part_text_set(o, "terminology.title", tab_item->tc->title);
+   edje_object_part_text_set(o, "terminology.title",
+                             _term_tab_title(term, tab_item->tc->title));
    signal = _term_progress_get(term, &fill);
    _theme_progress_set(o, signal, fill);
    return o;
@@ -5438,14 +5491,15 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
      return;
    tab_item = l->data;
 
-   if (tabs->selector && tab_item->selector_entry)
-     {
-        sel_entry_title_set(tab_item->selector_entry, title);
-     }
-
    assert (tab_item->tc->type == TERM_CONTAINER_TYPE_SOLO);
    solo = (Solo*)tab_item->tc;
    term = solo->term;
+
+   if (tabs->selector && tab_item->selector_entry)
+     {
+        sel_entry_title_set(tab_item->selector_entry,
+                            _term_tab_title(term, title));
+     }
 
    if (tab_item == tabs->current)
      {
@@ -5455,14 +5509,16 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
 
         if (term->config->show_tabs)
           {
-             elm_layout_text_set(term->bg, "terminology.tab.title", title);
+             elm_layout_text_set(term->bg, "terminology.tab.title",
+                                 _term_tab_title(term, title));
           }
      }
    else
      {
         if (term->tab_inactive)
           edje_object_part_text_set(term->tab_inactive,
-                                    "terminology.title", title);
+                                    "terminology.title",
+                                    _term_tab_title(term, title));
      }
 }
 
