@@ -86,8 +86,10 @@
 "110;"
 "111;"
 "112;"
+"133;"
 "777;"
 "1337;"
+"7501;"
 
 # OSC 99 metadata keys and the values termptynotify acts on
 "i="
@@ -104,6 +106,23 @@
 "o=invisible"
 "w="
 
+# OSC 7501 program status keys and the values termptystatus acts on
+"id="
+"app="
+"msg="
+"kind="
+"title="
+"progress="
+"state=idle"
+"state=working"
+"state=done"
+"state=blocked"
+"state=error"
+"state=clear"
+"kind=permission"
+"kind=question"
+"kind=auth"
+
 # Terminology's block escapes (tysend/tycat) and their sub-commands
 "\x1b}bn"
 "\x1b}bs"
@@ -118,6 +137,7 @@
 # DECSET modes worth reaching
 "?1049"
 "?2004"
+"?1035"
 "?2026"
 "?1006"
 "?1002"
