@@ -40,6 +40,11 @@ typedef struct _Termpty_Program_Record
    char *msg;      /* NULL when the report had none */
 } Termpty_Program_Record;
 
+/* Parse and apply the payload of an OSC 7501. body is the text after
+ * "7501;"; an empty or malformed payload changes nothing and is not a
+ * decoding error. */
+void termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body);
+
 /* The state of the most urgent record, and its progress (-1 if it has
  * none). No records: TERMPTY_PROGRAM_STATE_NONE. */
 void termpty_program_status_summary_get(const Termpty *ty,

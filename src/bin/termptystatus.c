@@ -456,6 +456,169 @@ _ps_apply_clear(Termpty *ty, const char *id)
 }
 
 void
+termpty_program_status_handle(Termpty *ty, const Eina_Unicode *body)
+{
+   char ascii[PS_BODY_MAX];
+   size_t n = 0;
+   const Eina_Unicode *p;
+   struct ps_staging staging;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   Termpty_Program_Kind kind = TERMPTY_PROGRAM_KIND_NONE;
+   Eina_Bool is_clear = EINA_FALSE;
+   Eina_Bool discard = EINA_FALSE;
+   signed char progress = -1;
+   char *title = NULL, *msg = NULL;
+   Termpty_Program_Record *rec;
+
+   if (!body || !*body)
+     return;
+
+   /* the payload grammar is bytes; a codepoint above 0x7f makes its
+    * pair fail the value check, and so is skipped */
+   for (p = body; *p; p++)
+     {
+        if (n >= sizeof(ascii) - 1)
+          return;
+        ascii[n++] = (*p < 0x80) ? (char)*p : '\x01';
+     }
+   ascii[n] = '\0';
+
+   memset(&staging, 0, sizeof(staging));
+   _ps_pairs_parse(ascii, &staging);
+
+   /* no state, or a state outside the grammar: the report is ignored */
+   if (!staging.state)
+     return;
+   if (!_ps_state_parse(staging.state, &state, &is_clear))
+     return;
+   if (staging.id && !_ps_id_ok(staging.id))
+     return;
+
+   /* msg and title make the whole report invalid when they are over
+    * their limits, undecodable or hold control characters */
+   if (staging.title)
+     {
+        title = _ps_text_decode(staging.title, PS_TITLE_ENCODED_MAX,
+                                PS_TITLE_DECODED_MAX, &discard);
+        if (discard)
+          return;
+     }
+   if (staging.msg)
+     {
+        msg = _ps_text_decode(staging.msg, PS_MSG_ENCODED_MAX,
+                              PS_MSG_DECODED_MAX, &discard);
+        if (discard)
+          {
+             free(title);
+             return;
+          }
+     }
+
+   /* a value that is valid but out of place or out of range is absent;
+    * the rest of the report applies */
+   if (staging.kind)
+     {
+        if (state != TERMPTY_PROGRAM_STATE_BLOCKED)
+          staging.kind = NULL;
+        else if (strcmp(staging.kind, "permission") == 0)
+          kind = TERMPTY_PROGRAM_KIND_PERMISSION;
+        else if (strcmp(staging.kind, "question") == 0)
+          kind = TERMPTY_PROGRAM_KIND_QUESTION;
+        else if (strcmp(staging.kind, "auth") == 0)
+          kind = TERMPTY_PROGRAM_KIND_AUTH;
+     }
+   if (staging.progress && (state != TERMPTY_PROGRAM_STATE_WORKING) &&
+       (state != TERMPTY_PROGRAM_STATE_BLOCKED))
+     staging.progress = NULL;
+   if (staging.progress)
+     {
+        int v = 0;
+        const char *s = staging.progress;
+
+        for (; *s; s++)
+          {
+             if ((*s < '0') || (*s > '9'))
+               break;
+             v = v * 10 + (*s - '0');
+             if (v > 100)
+               break;
+          }
+        /* every character a digit, at least one, and 100 at most */
+        if ((s != staging.progress) && (*s == '\0'))
+          progress = (signed char)v;
+     }
+   if (staging.app && !_ps_app_ok(staging.app))
+     staging.app = NULL;
+
+   ty->program_status_seen = EINA_TRUE;
+
+   if (is_clear)
+     {
+        /* decoded above, owned by nobody on this path */
+        free(title);
+        free(msg);
+        if (staging.id)
+          _ps_apply_clear(ty, staging.id);
+        else
+          {
+             while (ty->program_records)
+               {
+                  rec = _PS_REC(ty->program_records);
+                  ty->program_records = eina_inlist_remove(
+                     ty->program_records, ty->program_records);
+                  ty->program_records_count--;
+                  _ps_record_free(rec);
+               }
+          }
+        return;
+     }
+
+   if (!staging.id)
+     staging.id = "";
+   rec = _ps_record_find(ty, staging.id);
+   if (rec)
+     {
+        ty->program_records = eina_inlist_remove(ty->program_records,
+                                                 EINA_INLIST_GET(rec));
+        free(rec->title);
+        rec->title = NULL;
+        free(rec->msg);
+        rec->msg = NULL;
+     }
+   else
+     {
+        if (ty->program_records_count >= PS_RECORDS_MAX)
+          {
+             /* the least recently updated record is the head of the list */
+             Termpty_Program_Record *old = _PS_REC(ty->program_records);
+
+             ty->program_records = eina_inlist_remove(ty->program_records,
+                                                      ty->program_records);
+             ty->program_records_count--;
+             _ps_record_free(old);
+          }
+        rec = calloc(1, sizeof(*rec));
+        if (!rec)
+          {
+             free(title);
+             free(msg);
+             return;
+          }
+        ty->program_records_count++;
+     }
+
+   rec->state = state;
+   rec->kind = kind;
+   rec->progress = progress;
+   eina_strlcpy(rec->id, staging.id, sizeof(rec->id));
+   eina_strlcpy(rec->app, staging.app ? staging.app : "", sizeof(rec->app));
+   rec->title = title;
+   rec->msg = msg;
+   ty->program_records = eina_inlist_append(ty->program_records,
+                                            EINA_INLIST_GET(rec));
+}
+
+void
 termpty_program_status_summary_get(const Termpty *ty,
                                    Termpty_Program_State *state,
                                    int *progress)
