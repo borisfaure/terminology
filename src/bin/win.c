@@ -14,6 +14,7 @@
 #include "gravatar.h"
 #include "media.h"
 #include "termio.h"
+#include "termptystatus.h"
 #include "theme.h"
 #include "sel.h"
 #include "controls.h"
@@ -621,6 +622,28 @@ _solo_term_last(const Term_Container *tc)
    return solo->term;
 }
 
+/* The name of the theme signal telling the state of the program status
+ * summary, "none" when there is no record */
+static const char *
+_program_status_signal_name(Termpty_Program_State state)
+{
+   switch (state)
+     {
+      case TERMPTY_PROGRAM_STATE_IDLE:
+         return "idle";
+      case TERMPTY_PROGRAM_STATE_WORKING:
+         return "working";
+      case TERMPTY_PROGRAM_STATE_DONE:
+         return "done";
+      case TERMPTY_PROGRAM_STATE_ERROR:
+         return "error";
+      case TERMPTY_PROGRAM_STATE_BLOCKED:
+         return "blocked";
+      default:
+         return "none";
+     }
+}
+
 static void
 _solo_set_title(Term_Container *tc,
                 Term_Container *_child EINA_UNUSED,
@@ -641,8 +664,7 @@ _solo_set_title(Term_Container *tc,
      }
    if (_tab_drag && _tab_drag->term == term && _tab_drag->icon)
      {
-        elm_layout_text_set(_tab_drag->icon,
-                            "terminology.title", title);
+        elm_layout_text_set(_tab_drag->icon, "terminology.title", title);
      }
    tc->parent->set_title(tc->parent, tc, title);
 }
@@ -682,6 +704,41 @@ _solo_bell(Term_Container *tc,
      }
    edje_object_message_signal_process(term->bg_edj);
    tc->parent->bell(tc->parent, tc);
+}
+
+static void
+_solo_program_status(Term_Container *tc, Term_Container *_child EINA_UNUSED)
+{
+   Solo *solo;
+   Term *term;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+   char sig[32];
+
+   assert (tc->type == TERM_CONTAINER_TYPE_SOLO);
+   solo = (Solo*) tc;
+   term = solo->term;
+
+   termpty_program_status_summary_get(termio_pty_get(term->termio),
+                                      &state, &progress);
+   snprintf(sig, sizeof(sig), "program,status,%s",
+            _program_status_signal_name(state));
+   elm_layout_signal_emit(term->bg, sig, "terminology");
+
+   /* blocked and error want the user's attention, without a sound */
+   if (((state == TERMPTY_PROGRAM_STATE_BLOCKED) ||
+        (state == TERMPTY_PROGRAM_STATE_ERROR))
+       && (!tc->is_focused))
+     {
+        term->missed_bell = EINA_TRUE;
+        if ((term->config->show_tabs) &&
+            (tc->parent->type == TERM_CONTAINER_TYPE_SPLIT))
+          elm_layout_signal_emit(term->bg, "tab,bell,on", "terminology");
+        tc->parent->bell(tc->parent, tc);
+     }
+   edje_object_message_signal_process(term->bg_edj);
+
+   tc->parent->program_status(tc->parent, tc);
 }
 
 static void
@@ -802,8 +859,7 @@ _solo_tab_show(Term_Container *tc)
                                         "terminology.tabl", 0.0, 0.0);
         edje_object_part_drag_value_set(term->bg_edj,
                                         "terminology.tabr", 1.0, 0.0);
-        elm_layout_text_set(term->bg, "terminology.tab.title",
-                            solo->tc.title);
+        elm_layout_text_set(term->bg, "terminology.tab.title", solo->tc.title);
         elm_layout_signal_emit(term->bg, "tabbar,on", "terminology");
         edje_object_message_signal_process(term->bg_edj);
      }
@@ -888,6 +944,7 @@ _solo_new(Term *term, Win *wn)
    tc->unfocus = _solo_unfocus;
    tc->set_title = _solo_set_title;
    tc->bell = _solo_bell;
+   tc->program_status = _solo_program_status;
    tc->close = _solo_close;
    tc->update = _solo_update;
    tc->title = eina_stringshare_add("Terminology");
@@ -1473,6 +1530,14 @@ _win_bell(Term_Container *tc,
      {
         elm_win_urgent_set(wn->win, EINA_TRUE);
      }
+}
+
+static void
+_win_program_status(Term_Container *_tc EINA_UNUSED,
+                    Term_Container *_child EINA_UNUSED)
+{
+   /* the window title shows no status; a blocked or errored program
+    * already made the window urgent through the bell chain */
 }
 
 static void
@@ -2221,6 +2286,7 @@ win_new(const char *name, const char *role, const char *title,
    tc->unfocus = _win_unfocus;
    tc->set_title = _win_set_title;
    tc->bell = _win_bell;
+   tc->program_status = _win_program_status;
    tc->close = _win_close;
    tc->update = _win_update;
    tc->is_visible = _win_is_visible;
@@ -2877,6 +2943,18 @@ _split_bell(Term_Container *tc,
 }
 
 static void
+_split_program_status(Term_Container *tc,
+                      Term_Container *_child EINA_UNUSED)
+{
+   assert (tc->type == TERM_CONTAINER_TYPE_SPLIT);
+
+   if (tc->is_focused)
+     return;
+
+   tc->parent->program_status(tc->parent, tc);
+}
+
+static void
 _split_split(Term_Container *tc, Term_Container *child,
              Term *from,
              const char *cmd, Eina_Bool is_horizontal)
@@ -3070,6 +3148,7 @@ _split_new(Term_Container *tc1, Term_Container *tc2,
    tc->unfocus = _split_unfocus;
    tc->set_title = _split_set_title;
    tc->bell = _split_bell;
+   tc->program_status = _split_program_status;
    tc->close = _split_close;
    tc->update = _split_update;
    tc->is_visible = _split_is_visible;
@@ -3685,8 +3764,7 @@ created:
      edje_object_signal_emit(o, "bell", "terminology");
    else
      edje_object_signal_emit(o, "bell,off", "terminology");
-   edje_object_part_text_set(o, "terminology.title",
-                             tab_item->tc->title);
+   edje_object_part_text_set(o, "terminology.title", tab_item->tc->title);
    signal = _term_progress_get(term, &fill);
    _theme_progress_set(o, signal, fill);
    return o;
@@ -5307,6 +5385,42 @@ _tabs_bell(Term_Container *tc,
 }
 
 static void
+_tabs_program_status(Term_Container *tc, Term_Container *child)
+{
+   Tabs *tabs;
+   Tab_Item *tab_item;
+   Eina_List *l;
+   Term *term;
+   Termpty_Program_State state = TERMPTY_PROGRAM_STATE_NONE;
+   int progress = -1;
+   char sig[32];
+
+   assert (tc->type == TERM_CONTAINER_TYPE_TABS);
+   tabs = (Tabs*) tc;
+
+   l = _tab_item_find(tabs, child, NULL);
+   if (!l)
+     return;
+   tab_item = l->data;
+
+   /* the current tab was already signalled by the solo itself */
+   if (tab_item != tabs->current)
+     {
+        term = _tab_item_to_term(tab_item);
+        if (term->tab_inactive)
+          {
+             termpty_program_status_summary_get(termio_pty_get(term->termio),
+                                                &state, &progress);
+             snprintf(sig, sizeof(sig), "program,status,%s",
+                      _program_status_signal_name(state));
+             edje_object_signal_emit(term->tab_inactive, sig, "terminology");
+             edje_object_message_signal_process(term->tab_inactive);
+          }
+     }
+   tc->parent->program_status(tc->parent, tc);
+}
+
+static void
 _tabs_set_title(Term_Container *tc, Term_Container *child,
                 const char *title)
 {
@@ -5348,8 +5462,7 @@ _tabs_set_title(Term_Container *tc, Term_Container *child,
      {
         if (term->tab_inactive)
           edje_object_part_text_set(term->tab_inactive,
-                                    "terminology.title",
-                                    title);
+                                    "terminology.title", title);
      }
 }
 
@@ -5523,6 +5636,7 @@ _tabs_new(Term_Container *child, Term_Container *parent)
    tc->unfocus = _tabs_unfocus;
    tc->set_title = _tabs_set_title;
    tc->bell = _tabs_bell;
+   tc->program_status = _tabs_program_status;
    tc->close = _tabs_close;
    tc->update = _tabs_update;
    tc->is_visible = _tabs_is_visible;
@@ -7533,6 +7647,19 @@ _cb_bell(void *data,
    tc->bell(tc, tc);
 }
 
+static void
+_cb_program_status(void *data,
+                   Evas_Object *_obj EINA_UNUSED,
+                   void *_event EINA_UNUSED)
+{
+   Term *term = data;
+   Term_Container *tc;
+
+   tc = term->container;
+
+   tc->program_status(tc, tc);
+}
+
 
 static void
 _cb_options_done(void *data)
@@ -7666,6 +7793,7 @@ term_new(Win *wn, Config *config, const char *cmd,
 
    evas_object_smart_callback_add(o, "options", _cb_options, term);
    evas_object_smart_callback_add(o, "bell", _cb_bell, term);
+   evas_object_smart_callback_add(o, "program,status", _cb_program_status, term);
    evas_object_smart_callback_add(o, "popup", _cb_popup, term);
    evas_object_smart_callback_add(o, "popup,queue", _cb_popup_queue, term);
    evas_object_smart_callback_add(o, "cmdbox", _cb_cmdbox, term);
