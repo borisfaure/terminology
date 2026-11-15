@@ -844,6 +844,8 @@ _solo_focus(Term_Container *tc, Term_Container *relative)
      {
         elm_layout_signal_emit(term->bg, "tab,bell,off", "terminology");
      }
+   /* the user is back: a done or errored program has been seen */
+   termpty_program_status_drop_unseen(termio_pty_get(term->termio));
 
    if (term->config->disable_focus_visuals)
      {
@@ -2142,7 +2144,10 @@ _cb_win_key_down(void *data,
           {
              ty = termio_pty_get(term->termio);
              if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
-               keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+               {
+                  termpty_program_status_drop_unseen(ty);
+                  keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+               }
           }
      }
    else
@@ -2150,7 +2155,10 @@ _cb_win_key_down(void *data,
         ty = termio_pty_get(term->termio);
         DBG("ty:%p", ty);
         if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
-          keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+          {
+             termpty_program_status_drop_unseen(ty);
+             keyin_handle_key_to_pty(ty, ev, alt, shift, ctrl);
+          }
      }
 
    /* 7th: specifics: jump on keypress / flicker on key */

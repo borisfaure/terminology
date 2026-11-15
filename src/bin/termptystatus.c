@@ -717,6 +717,36 @@ termpty_program_status_drop_transient(Termpty *ty)
    _ps_summary_notify(ty, prev_state, prev_progress);
 }
 
+void
+termpty_program_status_drop_unseen(Termpty *ty)
+{
+   Eina_Inlist *l = ty->program_records;
+   Termpty_Program_State prev_state = TERMPTY_PROGRAM_STATE_NONE;
+   int prev_progress = -1;
+
+   termpty_program_status_summary_get(ty, &prev_state, &prev_progress);
+
+   while (l)
+     {
+        Eina_Inlist *next = l->next;
+        Termpty_Program_Record *rec = _PS_REC(l);
+
+        if ((rec->state == TERMPTY_PROGRAM_STATE_DONE) ||
+            (rec->state == TERMPTY_PROGRAM_STATE_ERROR))
+          {
+             ty->program_records = eina_inlist_remove(ty->program_records, l);
+             ty->program_records_count--;
+             _ps_record_free(rec);
+          }
+        l = next;
+     }
+
+   /* the dropped summary must not linger in the tab title. A remaining
+    * blocked record keeps the summary it already had, so this can not
+    * raise the attention path again */
+   _ps_summary_notify(ty, prev_state, prev_progress);
+}
+
 #if defined(BINARY_TYTEST)
 #include <assert.h>
 
@@ -916,6 +946,12 @@ tytest_program_status_parse(void)
    assert(_ty_ps_record_get(&ty, "d"));
    assert(_ty_ps_record_get(&ty, "e"));
 
+   /* the unseen drop: done and error are news only until looked at */
+   termpty_program_status_drop_unseen(&ty);
+   assert(_ty_ps_record_get(&ty, "d") == NULL);
+   assert(_ty_ps_record_get(&ty, "e") == NULL);
+   assert(ty.program_records_count == 0);
+
    return 0;
 }
 
@@ -1004,6 +1040,16 @@ tytest_program_status_summary(void)
    /* nothing left to drop: the summary did not move */
    termpty_program_status_drop_transient(&ty);
    assert(_ty_ps_summary_cb_count == 5);
+
+   /* dropping the records the user has not seen yet is a summary change:
+    * the tab title must lose its prefix */
+   _ty_ps_feed(&ty, "id=d:state=done");
+   assert(_ty_ps_summary_cb_count == 6);
+   termpty_program_status_drop_unseen(&ty);
+   assert(_ty_ps_summary_cb_count == 7);
+   /* nothing left to drop: the summary did not move */
+   termpty_program_status_drop_unseen(&ty);
+   assert(_ty_ps_summary_cb_count == 7);
 
    return 0;
 }
