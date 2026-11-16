@@ -253,6 +253,9 @@ config_shutdown(void)
    eet_data_descriptor_free(edd_base);
    edd_base = NULL;
 
+   eet_data_descriptor_free(edd_keys);
+   edd_keys = NULL;
+
    eet_data_descriptor_free(edd_color);
    edd_color = NULL;
 
