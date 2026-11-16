@@ -404,6 +404,23 @@ termpty_text_repeat_count(const Termpty *ty, Eina_Unicode codepoint,
    return settled + ((count - settled) % per_line);
 }
 
+/* Zero-width code points take no cell: they neither consume a pending wrap
+ * nor shift the row in insert mode. U+0336 strikes the next character. */
+static inline Eina_Bool
+_zero_width_skip(Termpty *ty, Eina_Unicode g)
+{
+   /* 0-width space, RTL/LTR marks and variation selectors (U+FE0F was
+    * already handled) */
+   if (EINA_UNLIKELY((g >= 0x200b && g <= 0x200f) ||
+                     (g >= 0xfe00 && g <= 0xfe0f)))
+     return EINA_TRUE;
+   if (EINA_LIKELY(g < 0x300 || g > 0x36f))
+     return EINA_FALSE;
+   if (EINA_UNLIKELY(g == 0x336))
+     ty->termstate.combining_strike = 1;
+   return EINA_TRUE;
+}
+
 void
 termpty_text_append(Termpty *ty, const Eina_Unicode *codepoints, int len)
 {
@@ -484,6 +501,8 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
 
         if (ty->cursor_state.wrapnext)
           {
+             if (_zero_width_skip(ty, g))
+               continue;
              cells[max_right-1].att.autowrapped = 1;
              ty->cursor_state.wrapnext = 0;
              ty->cursor_state.cx = origin;
@@ -523,30 +542,13 @@ termpty_text_append_known_ascii(Termpty *ty, const Eina_Unicode *codepoints,
                }
           }
 
+        if (_zero_width_skip(ty, g))
+          continue;
+
         if (ty->termstate.insert && (ty->cursor_state.cx < max_right - 1))
           TERMPTY_CELL_MOVE(ty, &(cells[ty->cursor_state.cx]),
                             &(cells[ty->cursor_state.cx + 1]),
                             max_right - 1 - ty->cursor_state.cx);
-
-        /* Skip 0-width space or RTL/LTR marks */
-        if (EINA_UNLIKELY(g >= 0x200b && g <= 0x200f))
-          {
-             continue;
-          }
-        /* Skip variation selectors (U+FE0F was already handled above) */
-        if (EINA_UNLIKELY(g >= 0xfe00 && g <= 0xfe0f))
-          {
-             continue;
-          }
-        if (EINA_UNLIKELY(g >= 0x300 && g <=0x36f))
-          {
-             /* combining chars */
-             if (EINA_UNLIKELY(g == 0x336))
-               {
-                  ty->termstate.combining_strike = 1;
-               }
-             continue;
-          }
 
         termpty_cell_codepoint_att_fill(ty, g, ty->termstate.att,
                                         &(cells[ty->cursor_state.cx]), 1);
