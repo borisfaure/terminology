@@ -4,6 +4,8 @@
 
 Eina_Bool _termpty_is_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
 Eina_Bool _termpty_is_ambigous_wide(const Eina_Unicode g, Eina_Bool emoji_dbl_width);
+extern const unsigned char _termpty_zero_width_block[];
+extern const unsigned int _termpty_zero_width_bits[][8];
 
 static inline Eina_Bool
 _termpty_is_wide_table(const Termpty *ty, const Eina_Unicode g, Eina_Bool emoji)
@@ -29,6 +31,21 @@ _termpty_is_dblwidth_get(const Termpty *ty, const Eina_Unicode g, Eina_Bool vs16
      return EINA_TRUE;
    return ty->config->emoji_dbl_width && vs16 &&
       _termpty_is_wide_table(ty, g, EINA_TRUE);
+}
+
+/* Combining marks, format characters and Hangul medial vowels and final
+ * consonants: they take no cell. */
+static inline Eina_Bool
+_termpty_is_zero_width_get(const Eina_Unicode g)
+{
+   const unsigned int *bits;
+
+   if (g < 0x300)
+     return EINA_FALSE;
+   if (g >= 0x20000)
+     return ((g >= 0xE0001) && (g <= 0xE01EF));
+   bits = _termpty_zero_width_bits[_termpty_zero_width_block[g >> 8]];
+   return (bits[(g >> 5) & 7] >> (g & 31)) & 1;
 }
 
 #endif

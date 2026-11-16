@@ -409,12 +409,7 @@ termpty_text_repeat_count(const Termpty *ty, Eina_Unicode codepoint,
 static inline Eina_Bool
 _zero_width_skip(Termpty *ty, Eina_Unicode g)
 {
-   /* 0-width space, RTL/LTR marks and variation selectors (U+FE0F was
-    * already handled) */
-   if (EINA_UNLIKELY((g >= 0x200b && g <= 0x200f) ||
-                     (g >= 0xfe00 && g <= 0xfe0f)))
-     return EINA_TRUE;
-   if (EINA_LIKELY(g < 0x300 || g > 0x36f))
+   if (EINA_LIKELY(!_termpty_is_zero_width_get(g)))
      return EINA_FALSE;
    if (EINA_UNLIKELY(g == 0x336))
      ty->termstate.combining_strike = 1;
