@@ -71,6 +71,7 @@ int tytest_decrqss_sgr(void);
 int tytest_decrqss_settings(void);
 int tytest_decrqm(void);
 int tytest_kam(void);
+int tytest_decarm(void);
 int tytest_color_scheme_notify(void);
 int tytest_kitty_kbd_query(void);
 int tytest_kitty_kbd_stack(void);

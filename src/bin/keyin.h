@@ -48,7 +48,8 @@ void keyin_pressed_reset(Keys_Handler *khdl);
 Eina_Bool
 termpty_can_handle_key(const Termpty *ty,
                        const Keys_Handler *khdl,
-                       const Evas_Event_Key_Down *ev);
+                       const Evas_Event_Key_Down *ev,
+                       Keyin_Action action);
 void keyin_compose_seq_reset(Keys_Handler *khdl);
 Eina_Bool key_is_modifier(const char *key);
 Eina_Bool

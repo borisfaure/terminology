@@ -2171,14 +2171,14 @@ _cb_win_key_down(void *data,
                        GROUPED_INPUT_TERM_FOREACH(wn, l, term)
                          {
                             ty = termio_pty_get(term->termio);
-                            if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
+                            if (ty && termpty_can_handle_key(ty, &wn->khdl, ev, action))
                               termpty_write(ty, compres, len);
                          }
                     }
                  else
                     {
                        ty = termio_pty_get(term->termio);
-                       if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
+                       if (ty && termpty_can_handle_key(ty, &wn->khdl, ev, action))
                          termpty_write(ty, compres, len);
                     }
                   free(compres);
@@ -2196,7 +2196,7 @@ _cb_win_key_down(void *data,
         GROUPED_INPUT_TERM_FOREACH(wn, l, term)
           {
              ty = termio_pty_get(term->termio);
-             if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
+             if (ty && termpty_can_handle_key(ty, &wn->khdl, ev, action))
                {
                   termpty_program_status_drop_unseen(ty);
                   keyin_handle_key_to_pty(ty, &wn->khdl, ev, action);
@@ -2207,7 +2207,7 @@ _cb_win_key_down(void *data,
      {
         ty = termio_pty_get(term->termio);
         DBG("ty:%p", ty);
-        if (ty && termpty_can_handle_key(ty, &wn->khdl, ev))
+        if (ty && termpty_can_handle_key(ty, &wn->khdl, ev, action))
           {
              termpty_program_status_drop_unseen(ty);
              keyin_handle_key_to_pty(ty, &wn->khdl, ev, action);

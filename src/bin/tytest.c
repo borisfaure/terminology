@@ -98,6 +98,7 @@ static struct {
        { "decrqss_settings", tytest_decrqss_settings},
        { "decrqm", tytest_decrqm},
        { "kam", tytest_kam},
+       { "decarm", tytest_decarm},
        { "color_scheme_notify", tytest_color_scheme_notify},
        { "kitty_kbd_query", tytest_kitty_kbd_query},
        { "kitty_kbd_stack", tytest_kitty_kbd_stack},

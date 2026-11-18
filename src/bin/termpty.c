@@ -73,7 +73,8 @@ termpty_shutdown(void)
 Eina_Bool
 termpty_can_handle_key(const Termpty *ty,
                        const Keys_Handler *khdl,
-                       const Evas_Event_Key_Down *ev)
+                       const Evas_Event_Key_Down *ev,
+                       Keyin_Action action)
 {
    // if term app asked for kbd lock - don't handle here
    if (ty->termstate.kbd_lock)
@@ -81,7 +82,8 @@ termpty_can_handle_key(const Termpty *ty,
    // if app asked us to not do autorepeat - ignore press if is it is the same
    // timestamp as last one
    if ((ty->termstate.no_autorepeat) &&
-       (ev->timestamp == khdl->last_keyup))
+       ((action == KEYIN_ACTION_REPEAT) ||
+        (ev->timestamp == khdl->last_keyup)))
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -3359,21 +3361,54 @@ tytest_kam(void)
    _ty_test_init(&ty, 80, 24);
 
    _ty_feed(&ty, "\x1b[?2h");
-   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
    _ty_feed(&ty, "\x1b[?2l");
-   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
 
    _ty_feed(&ty, "\x1b[2h");
-   assert(!termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(!termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
    _ty_feed(&ty, "\x1b[2$p");
    _ty_reply_is(&ty, "\x1b[2;1$y");
    _ty_feed(&ty, "\x1b[2l");
-   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
 
    _ty_feed(&ty, "\x1b[2h\x1b[!p");
-   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
    _ty_feed(&ty, "\x1b[2h\x1b" "c");
-   assert(termpty_can_handle_key(&ty, &khdl, &ev));
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
+
+   _ty_test_shutdown(&ty);
+   return 0;
+}
+
+/* With DECARM reset, a repeat is dropped. Platforms with detectable
+ * autorepeat send it as a press of a key still held; the others as a
+ * release and a press sharing a timestamp. */
+int
+tytest_decarm(void)
+{
+   Termpty ty;
+   Keys_Handler khdl = { 0 };
+   Evas_Event_Key_Down ev = { 0 };
+
+   ev.timestamp = 2;
+   _ty_test_init(&ty, 80, 24);
+
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_REPEAT));
+
+   _ty_feed(&ty, "\x1b[?8l");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
+   assert(!termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_REPEAT));
+   khdl.last_keyup = 2;
+   assert(!termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_PRESS));
+   khdl.last_keyup = 1;
+
+   _ty_feed(&ty, "\x1b[?8h");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_REPEAT));
+
+   /* RIS sets DECARM back */
+   _ty_feed(&ty, "\x1b[?8l\x1b" "c");
+   assert(termpty_can_handle_key(&ty, &khdl, &ev, KEYIN_ACTION_REPEAT));
 
    _ty_test_shutdown(&ty);
    return 0;
