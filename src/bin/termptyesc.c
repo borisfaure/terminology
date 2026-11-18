@@ -3775,7 +3775,7 @@ _handle_esc_csi_kitty_kbd(Termpty *ty, Eina_Unicode **ptr)
          flags = _csi_arg_get(ty, &b);
          if (flags == -ESC_ARG_ERROR)
            return;
-         termpty_kitty_kbd_push(ty, (flags < 0 ? 0 : flags)
+         termpty_kitty_kbd_push(ty, MAX(0, flags)
                                 & TERMPTY_KITTY_KBD_SUPPORTED);
          break;
       case '<':
@@ -3791,7 +3791,7 @@ _handle_esc_csi_kitty_kbd(Termpty *ty, Eina_Unicode **ptr)
          arg = _csi_arg_get(ty, &b);
          if (arg == -ESC_ARG_ERROR)
            return;
-         termpty_kitty_kbd_set(ty, (flags < 0 ? 0 : flags)
+         termpty_kitty_kbd_set(ty, MAX(0, flags)
                                & TERMPTY_KITTY_KBD_SUPPORTED,
                                arg < 0 ? 1 : arg);
          break;
